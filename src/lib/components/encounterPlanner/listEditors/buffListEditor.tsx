@@ -1,0 +1,121 @@
+/**
+ * @fileoverview Buff List Editor Component
+ * @description Reusable component for managing buff lists (add/remove).
+ * Simple text-based list with inline input field for adding new buffs.
+ * Used in both CreatureRow (design mode) and PlayModeCombatantRow (play mode).
+ *
+ * @module buffListEditor
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ *
+ * @requires react Client-side state and callbacks
+ * @requires ../creatureRow.module.scss Shared component styles
+ *
+ * @example
+ * ```tsx
+ * <BuffListEditor
+ *   buffs={creature.buffs}
+ *   onChange={(buffs) => updateCreature({ buffs })}
+ * />
+ * ```
+ */
+
+'use client';
+
+import { useCallback, useState } from 'react';
+import styles from '../creatureRow.module.scss';
+
+/**
+ * Props for BuffListEditor component
+ * @interface BuffListEditorProps
+ * @property {string[]} buffs - Current buff list
+ * @property {Function} onChange - Callback when buff list changes
+ * @property {boolean} [readOnly=false] - Whether editing is disabled
+ * @property {string} [addBuffLabel] - Placeholder for input field
+ * @property {string} [removeChipAriaLabel] - Accessibility label for remove button
+ */
+interface BuffListEditorProps {
+  buffs: string[];
+  onChange: (buffs: string[]) => void;
+  readOnly?: boolean;
+  addBuffLabel?: string;
+  removeChipAriaLabel?: string;
+}
+
+/**
+ * Buff list editor with inline text input.
+ * Displays buff chips and allows adding new buffs via input field.
+ *
+ * @component
+ * @param {BuffListEditorProps} props - Component props
+ * @returns {JSX.Element} Rendered buff list with add/remove controls
+ *
+ * @example
+ * ```tsx
+ * <BuffListEditor
+ *   buffs={['Haste', 'Bless']}
+ *   onChange={setBuffs}
+ *   readOnly={false}
+ * />
+ * ```
+ */
+export const BuffListEditor: React.FC<BuffListEditorProps> = ({
+  buffs,
+  onChange,
+  readOnly = false,
+  addBuffLabel = 'Add buff',
+  removeChipAriaLabel = 'Remove buff',
+}) => {
+  const [newBuff, setNewBuff] = useState('');
+
+  const handleAddBuff = useCallback(() => {
+    if (!newBuff.trim()) return;
+    onChange([...buffs, newBuff.trim()]);
+    setNewBuff('');
+  }, [newBuff, buffs, onChange]);
+
+  const handleRemoveBuff = useCallback(
+    (index: number) => {
+      onChange(buffs.filter((_, i) => i !== index));
+    },
+    [buffs, onChange]
+  );
+
+  return (
+    <>
+      <div className={styles.chips}>
+        {buffs.map((buff, idx) => (
+          <div key={idx} className={styles.chip}>
+            {buff}
+            {!readOnly && (
+              <button
+                onClick={() => handleRemoveBuff(idx)}
+                className={styles.removeChip}
+                aria-label={removeChipAriaLabel}>
+                ✕
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {!readOnly && (
+        <div className={styles.addConditionContainer}>
+          <input
+            type='text'
+            className={styles.addConditionInput}
+            value={newBuff}
+            onChange={(e) => setNewBuff(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleAddBuff()}
+            placeholder={addBuffLabel}
+          />
+          <button
+            onClick={handleAddBuff}
+            className={styles.addConditionButton}>
+            +
+          </button>
+        </div>
+      )}
+    </>
+  );
+};

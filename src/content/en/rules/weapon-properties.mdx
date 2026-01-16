@@ -1,0 +1,71 @@
+# Weapon Properties
+
+## Passive Properties
+
+The following properties appear in the Weapons tables.
+
+| Property      | Description                                                                                                                                                                                                                                                                        |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ammunition    | You must have the specified ammunition to make a ranged attack. Each shot expends one piece. Drawing ammunition is part of the attack (you need a free hand to load a one‑handed weapon). After combat you can spend 1 minute to recover half (rounded down) of what you expended. |
+| Finesse       | You choose Strength or Dexterity for attack and damage rolls with the weapon; both rolls use the same modifier.                                                                                                                                                                    |
+| Heavy         | If your Strength is below 15, you have disadvantage on attack rolls with it.                                                                                                                                                                                                       |
+| Light         | When you take the Attack action and attack with a Light weapon, you can make one extra attack later in the turn as a bonus action with a different Light weapon. Don’t add your ability modifier to the bonus attack’s damage unless the modifier is negative.                     |
+| Loading       | You can fire only one piece of ammunition from this weapon per action, bonus action, or reaction, regardless of how many attacks you normally have.                                                                                                                                |
+| Range         | A ranged or thrown weapon lists normal range and long range. Attacking beyond normal range imposes disadvantage. You can’t attack beyond long range.                                                                                                                               |
+| Reach         | Your reach for attacks and opportunity attacks with the weapon increases by 5 feet.                                                                                                                                                                                                |
+| Thrown        | You can throw the weapon to make a ranged attack. If it is normally a melee weapon, use the same ability modifier as for its melee attacks. Drawing it is part of the attack.                                                                                                      |
+| Two-Handed    | You must use two hands to make an attack with the weapon.                                                                                                                                                                                                                          |
+| Versatile     | The weapon can be used one‑handed or two‑handed. A damage value in parentheses indicates the damage when used with two hands.                                                                                                                                                      |
+| Draw          | The weapon requires drawing (e.g. bowstring) as part of each attack; you can use your Strength in place of Dexterity for the attack and damage rolls.                                                                                                                              |
+| Special       | The weapon has rules not covered here; see its individual description.                                                                                                                                                                                                             |
+| Focus         | The weapon can be used as a spellcasting focus.                                                                                                                                                                                                                                    |
+| Large/Huge... | The weapon's damage die are doubled. The weapon is intended for a creature of the specified Size. Creatures of smaller sizes suffer disadvantage when using them, and creatures of two sizes or less cannot use them as weapons.                                                   |
+
+## Mastery Properties
+
+Unless stated otherwise, you apply the effect when you hit a creature with a weapon that has the listed property.
+
+### Mastery Save DC
+
+Some masteries call for a saving throw.
+
+- Save DC = 8 + your proficiency bonus + the ability modifier used for the attack.
+
+| Property | Description                                                                                                                                                                                                                                                                                                                                                                                              |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cleave   | If you hit a creature with a melee attack roll using this weapon, you can make a melee attack roll with the weapon against a second creature within 5 feet of the first that is also within your reach. On a hit, the second creature takes the weapon’s damage, but don't add your ability modifier to that damage unless that modifier is negative. You can make this extra attack only once per turn. |
+| Graze    | If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll. This damage is the same type dealt by the weapon, and the damage can be increased only by increasing the ability modifier.                                                                                                                  |
+| Nick     | When you make the extra attack of the Light property, you can make it as part of the Attack action instead of as a Bonus Action. You can make this extra attack only once per turn.                                                                                                                                                                                                                      |
+| Push     | If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is a creature you can effectively grapple.                                                                                                                                                                                                                                             |
+| Sap      | If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn.                                                                                                                                                                                                                                                                       |
+| Slow     | If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction doesn’t exceed 10 feet.                                                                                                                                               |
+| Topple   | If you hit a creature with this weapon, you can force the creature to make a Constitution saving throw. On a failed save, the creature has the Prone condition.                                                                                                                                                                                                                                          |
+| Vex      | If you hit a creature with this weapon and deal damage to the creature, you have Advantage on your next attack roll against that creature before the end of your next turn.                                                                                                                                                                                                                              |
+
+### Masterful blows
+
+Each weapon type has a special masterful technique listed in the Mastery column of the Weapons tables.
+
+#### Assignment and Uses
+
+A weapon can have one Active Mastery.
+You can use a weapon’s Active once per short rest; if you have Mastery with that weapon’s type, you have three uses per short rest instead.
+When you hit a creature with that weapon, you can expend a use to invoke the Active.
+If the Active calls for a saving throw, use the Mastery Save DC.
+Unless noted otherwise, the effect ends at the start of your next turn.
+The same Active on the same target doesn’t stack; a new application only refreshes its duration.
+A creature can be affected by only one Active Mastery per turn.
+
+| Name         | Save | Effect                                                                                                                               |
+| ------------ | ---- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Concussing   | Wis  | The target can’t take reactions until the end of your next turn.                                                                     |
+| Hamstringing | Con  | The target’s speed is halved until the end of your next turn.                                                                        |
+| Muddling     | Wis  | On its next turn, the target can’t use Multiattack and can make only one weapon attack.                                              |
+| Confusing    | Wis  | The target has disadvantage on the next saving throw it makes before the end of your next turn.                                      |
+| Tackling     | Str  | The target is pushed 20 feet straight away from you.                                                                                 |
+| Flaying      | Str  | The target is pulled 10 feet straight toward you (or as far as space allows).                                                        |
+| Muzzling     | Int  | The target can cast only cantrips (no leveled spells) until the end of your next turn.                                               |
+| Hemorrhaging | Con  | The target gains 1d4 stacks of [Bleeding](/en/library/rules/conditions).                                                             |
+| Disarming    | Str  | You choose one item the target is holding; it drops that item in its space.                                                          |
+| Sundering    | Con  | The target’s AC is reduced by 1 (doesn’t stack with itself; new applications refresh the duration). until the end of your next turn. |
+| Dazzling     | Con  | The target can’t take a bonus action on its next turn.                                                                               |

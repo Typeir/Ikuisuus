@@ -1,0 +1,95 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "searchPlaceholder": "Search by title...",
+    "showingResults": "Showing {current} of {total} items",
+    "showingResultsFiltered": "Showing {current} of {total} items (filtered from {original})",
+    "all": "All",
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {current} of {total}",
+    "noDataFound": "No data found.",
+    "sortAscending": "▲",
+    "sortDescending": "▼"
+  },
+  "filters": {
+    "allOption": "All",
+    "minPlaceholder": "Min",
+    "maxPlaceholder": "Max",
+    "rangeSeparator": "-"
+  },
+  "spells": {
+    "loading": "Loading spells...",
+    "error": "Error",
+    "noSpells": "No spells found for this level.",
+    "levelLabels": {
+      "0": "Cantrip",
+      "1": "1st Level",
+      "2": "2nd Level",
+      "3": "3rd Level",
+      "4": "4th Level",
+      "5": "5th Level",
+      "6": "6th Level",
+      "7": "7th Level",
+      "8": "8th Level",
+      "9": "9th Level",
+      "10": "10th Level",
+      "11": "11th Level",
+      "12": "12th Level",
+      "all": "All"
+    },
+    "columns": {
+      "spellName": "Spell Name",
+      "school": "School",
+      "castingTime": "Casting Time",
+      "range": "Range",
+      "duration": "Duration",
+      "components": "Components"
+    }
+  },
+  "monsters": {
+    "loading": "Loading monsters...",
+    "error": "Error",
+    "noMonsters": "No monsters found. Run <code>npm run generate-monster-metadata</code>",
+    "columns": {
+      "name": "Name",
+      "size": "Size",
+      "type": "Type",
+      "cr": "CR",
+      "ac": "AC",
+      "hp": "HP",
+      "alignment": "Alignment"
+    }
+  },
+  "heirlooms": {
+    "loading": "Loading heirlooms...",
+    "error": "Error",
+    "noHeirlooms": "No heirlooms found. Run <code>npm run generate-heirloom-metadata</code>",
+    "columns": {
+      "name": "Name",
+      "rarity": "Rarity",
+      "type": "Type",
+      "subtype": "Subtype",
+      "attunement": "Attunement"
+    },
+    "attunementValues": {
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "trinkets": {
+    "loading": "Loading trinkets...",
+    "error": "Error",
+    "noTrinkets": "No trinkets found. Run <code>npm run generate-trinket-metadata</code>",
+    "columns": {
+      "name": "Name",
+      "type": "Type",
+      "damage": "Damage",
+      "range": "Range",
+      "effects": "Effects",
+      "conditions": "Conditions",
+      "weight": "Weight"
+    }
+  }
+}

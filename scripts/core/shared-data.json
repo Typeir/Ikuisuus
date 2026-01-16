@@ -1,0 +1,155 @@
+{
+  "gameData": {
+    "damageTypes": [
+      "acid", "bludgeoning", "cold", "fire", "force", "lightning", "necrotic",
+      "piercing", "poison", "psychic", "radiant", "slashing", "thunder", "true"
+    ],
+    "conditions": [
+      "blinded", "charmed", "deafened", "frightened", "grappled", "incapacitated",
+      "invisible", "paralyzed", "petrified", "poisoned", "prone", "restrained",
+      "stunned", "unconscious", "exhausted"
+    ],
+    "abilities": [
+      {
+        "short": "str",
+        "long": "strength"
+      },
+      {
+        "short": "dex", 
+        "long": "dexterity"
+      },
+      {
+        "short": "con",
+        "long": "constitution"
+      },
+      {
+        "short": "int",
+        "long": "intelligence"
+      },
+      {
+        "short": "wis",
+        "long": "wisdom"
+      },
+      {
+        "short": "cha",
+        "long": "charisma"
+      }
+    ],
+    "sizes": [
+      "tiny", "small", "medium", "large", "huge", "gargantuan", "colossal", "titanic"
+    ],
+    "creatureTypes": [
+      "aberration", "beast", "celestial", "construct", "dragon", "elemental",
+      "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"
+    ],
+    "senses": [
+      "blindsight", "darkvision", "tremorsense", "truesight"
+    ],
+    "movementTypes": [
+      "flight", "swimming", "burrowing", "climbing", "teleportation", "enhanced", 
+      "hover", "phasing", "ethereal", "dimensional"
+    ],
+    "mechanicTypes": [
+      "advantage-disadvantage", "critical-hits", "reaction", "bonus-action", 
+      "opportunity-attacks", "damage-resistance", "damage-immunity", 
+      "damage-vulnerability", "reroll", "no-opportunity-attacks", "spellcasting", 
+      "cantrips", "charges", "limited-uses", "recharge", "attack-bonus", 
+      "damage-bonus", "ac-bonus", "saving-throw-bonus"
+    ]
+  },
+  "itemData": {
+    "rarities": [
+      "mythic artifact", "very rare", "common", "uncommon", "rare", "legendary", 
+      "artifact", "mythic", "unique", "nonmagical"
+    ],
+    "baseCategoryTypes": [
+      "weapon", "armor", "clothing", "scroll", "consumable", "monstrous graft", "focus"
+    ],
+    "itemTypes": [
+      "weapon", "armor", "shield", "cloak", "robe", "clothing", "wand", "staff", "rod",
+      "ring", "amulet", "necklace", "bracers", "gloves", "boots", "belt", "helmet", "helm",
+      "potion", "scroll", "wondrous item", "consumable", "tool", "instrument", "monstrous graft", "focus"
+    ],
+    "weaponTypes": [
+      "sword", "rapier", "longsword", "shortsword", "greatsword", "scimitar", "katana", 
+      "saber", "cutlass", "falchion", "blade", "spear", "lance", "pike", "halberd", 
+      "glaive", "trident", "javelin", "axe", "mace", "club", "hammer", "warhammer", 
+      "maul", "flail", "morningstar", "quarterstaff", "dagger", "bow", "crossbow", 
+      "gun", "rifle", "pistol", "handgun", "ballista", "dart", "sling", "whip", 
+      "chain", "chains"
+    ],
+    "armorTypes": [
+      "plate", "chainmail", "chain mail", "scale mail", "breastplate", "half plate", 
+      "splint", "studded leather", "leather armor", "hide armor", "padded armor",
+      "gauntlet", "helmet", "helm", "shield", "greatshield", "buckler"
+    ],
+    "clothingTypes": [
+      "hat", "cap", "crown", "circlet", "diadem", "cloak", "cape", "scarf", 
+      "mantle", "glove", "robe"
+    ],
+    "weaponProperties": [
+      "light", "finesse", "thrown", "two-handed", "versatile", "heavy", "reach",
+      "loading", "ammunition", "special", "martial", "simple", "ranged", "melee", 
+      "draw", "focus", "magical"
+    ],
+    "masteryProperties": [
+      "cleave", "graze", "nick", "push", "sap", "slow", "topple", "vex",
+      "thrust", "riposte", "frozen riposte"
+    ]
+  },
+  "spellData": {
+    "schools": [
+      "Abjuration", "Conjuration", "Divination", "Enchantment",
+      "Evocation", "Illusion", "Necromancy", "Transmutation"
+    ],
+    "qualities": [
+      "Legendary", "Epic", "Mythic", "Ancient", "Forbidden", "Lost"
+    ]
+  },
+  "worldData": {
+    "factions": [
+      "hiisi", "empyreans", "platonians", "borderlanders", "cavari", "ventralians"
+    ],
+    "locations": [
+      "damocles", "ventralis", "acheron", "poppy town", "brine sea", "underworld"
+    ],
+    "themes": [
+      "cosmic horror", "political intrigue", "exploration", "combat", "mystery", "tragedy"
+    ]
+  },
+  "taxonomies": {
+    "tagCategories": [
+      "content", "mechanical", "damage", "condition", "creature", "rarity", 
+      "size", "movement", "mechanic", "item", "weapon", "property", "unique",
+      "faction", "location", "theme", "category", "locale", "source"
+    ],
+    "rarityThresholds": [
+      {
+        "minCR": 17,
+        "tag": "rarity:legendary"
+      },
+      {
+        "minCR": 11,
+        "tag": "rarity:epic"
+      },
+      {
+        "minCR": 5,
+        "tag": "rarity:rare"
+      },
+      {
+        "minCR": 0,
+        "tag": "rarity:common"
+      }
+    ]
+  },
+  "patterns": {
+    "regexPatterns": {
+      "savingThrows": "\\\\b(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma|Str|Dex|Con|Int|Wis|Cha)\\\\s+(saving throw|save)\\\\b",
+      "damageDealing": "\\\\b({TYPE})\\\\s+damage\\\\b",
+      "regeneration": "\\\\b(regains?|recover)\\\\s+\\\\d+\\\\s+(hit points?|hp)\\\\b",
+      "spellcasting": "\\\\b(spellcasting|cantrips?|spell slots?)\\\\b",
+      "conditions": "\\\\b({CONDITION})\\\\b",
+      "movement": "\\\\b(fly|flying|flight|burrow|swim|climb|teleport)\\\\b"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "toggleSidebar": "Toggle Sidebar",
+  "libraryTitle": "Library of Ikuisuus",
+  "libraryTitleSmall": "The",
+  "libraryTitleLarge": "Library of Ikuisuus",
+  "tools": {
+    "title": "Tools",
+    "encounterCreator": "Encounter Creator",
+    "toggleTools": "Toggle Tools"
+  }
+}

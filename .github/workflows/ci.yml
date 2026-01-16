@@ -1,0 +1,77 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    name: Test & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.21.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.21.1
+
+      - name: Update npm to latest
+        run: npm install -g npm@latest
+
+      - name: Remove node_modules
+        run: rm -rf node_modules
+
+      - name: Install dependencies
+        env:
+          CI: 1
+        run: npm install
+
+      - name: Run pre-initialization scripts (CI-safe)
+        run: npm run pre-init:ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.21.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.21.1
+
+      - name: Update npm to latest
+        run: npm install -g npm@latest
+
+      - name: Remove node_modules
+        run: rm -rf node_modules
+
+      - name: Install dependencies
+        env:
+          CI: 1
+        run: npm install
+
+      - name: Run pre-initialization scripts (CI-safe)
+        run: npm run pre-init:ci
+
+      - name: Run linter
+        run: npm run lint

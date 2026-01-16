@@ -1,0 +1,77 @@
+.combobox {
+  position: relative;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--color-secondary);
+  border-radius: 6px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.8rem;
+  
+  &:focus {
+    outline: 2px solid var(--color-accent);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.dropdown {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: var(--color-bg);
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgb(var(--color-shadow-medium));
+  z-index: 2000;
+  max-height: 300px;
+  overflow-y: auto;
+  will-change: transform;
+  /* Width and position are set dynamically via transform/width inline styles */
+}
+
+.noResults {
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.listItem {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border-bottom: 1px solid var(--color-secondary);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover,
+  &.selected {
+    background: var(--color-bg-alt);
+  }
+}
+
+.spellTitle {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.spellMeta {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}

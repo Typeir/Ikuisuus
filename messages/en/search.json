@@ -1,0 +1,12 @@
+{
+  "placeholder": "Search the Library...",
+  "ariaLabel": "Search the Library",
+  "searching": "Searching...",
+  "checkbox": "Search beyond the Clone Worlds",
+  "localResults": "Local Results",
+  "searchingArchives": "Searching the archives",
+  "noResults": "This subject has been redacted. Only the Archivist holds this knowledge.",
+  "cloneWorldsHint": "The Clone Worlds may hold the answers.",
+  "waiting": "Waiting for input",
+  "externalToggle": "Enable the checkbox above to access off-world sources."
+}

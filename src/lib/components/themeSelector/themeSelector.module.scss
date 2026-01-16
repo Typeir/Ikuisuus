@@ -1,0 +1,21 @@
+.theme-toggle {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  width: 15ch;
+  text-align: left;
+}
+
+.theme-toggle::after {
+  padding-left: 0.5rem;
+  position: absolute;
+  content: 'dark';
+}
+
+html[data-theme='dark'] .theme-toggle::after {
+  content: 'dark';
+}
+
+html[data-theme='sepia'] .theme-toggle::after {
+  content: 'sepia';
+}

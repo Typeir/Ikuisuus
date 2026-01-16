@@ -1,0 +1,81 @@
+.accordion {
+  overflow: hidden;
+}
+
+.accordion * {
+  background-color: var(--color-transparent);
+}
+
+.accordion.open {
+  border-bottom: 1px solid var(--color-text);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.label {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0;
+  user-select: none;
+  transition: border-bottom 0.4s var(--springy-bezier),
+    margin-bottom 0.4s var(--springy-bezier) !important;
+  & > p {
+    transition: border-bottom 0.3s 0.1s var(--springy-bezier),
+      margin-bottom 0.3s 0.1s var(--springy-bezier), filter linear 0.5s !important;
+  }
+  &:hover,
+  &.open {
+    & > p {
+      filter: drop-shadow(0px 0px 2px var(--color-text));
+    }
+    & > .arrow {
+      filter: drop-shadow(0px 0px 2px var(--color-text));
+      opacity: 1;
+    }
+  }
+}
+
+.label.open {
+  border-bottom: 1px solid var(--color-text);
+  margin-bottom: 1rem;
+}
+
+.arrow {
+  svg path {
+    fill: green !important;
+  }
+  svg text {
+    fill: green !important;
+  }
+  display: inline-block;
+  width: 3.15rem; // ~32px
+  height: 3.15rem;
+  margin-left: 0.5rem;
+  transition: transform 0.2s ease;
+  vertical-align: middle;
+  object-fit: contain; // ensures it doesn't stretch
+  transition: opacity 0.3s var(--springy-bezier),
+    transform 0.4s var(--springy-bezier), filter linear 0.5s !important;
+  margin-left: 0.5rem;
+  background-color: var(--color-transparent) !important;
+  opacity: 0;
+  filter: drop-shadow(0px 0px 0px var(--color-text));
+
+  &.open {
+    transform: rotate(90deg);
+    opacity: 1;
+  }
+}
+
+.content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in !important;
+  // margin-bottom: 1rem;
+}
+
+// .expanded {
+//   max-height: 1000px;
+// }

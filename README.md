@@ -1,0 +1,30 @@
+# Library of Ikuisuus
+
+[![CI Pipeline](https://github.com/Typeir/Ikuisuus/actions/workflows/ci.yml/badge.svg)](https://github.com/Typeir/Ikuisuus/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Typeir/Ikuisuus/graph/badge.svg?token=HD302GF78G)](https://codecov.io/gh/Typeir/Ikuisuus)
+
+A Next.js 15 internationalized documentation site for D&D content, featuring MDX-based content management and a custom theme system.
+
+---
+
+## 📦 Features
+
+- **Dark / Light Themes** with persistent storage
+- **Multi-language Support** (currently only hosts content in English)
+- **MDX Content System** with dynamic routing and metadata extraction
+- **Filterable Tables** for monsters and items with search and sorting
+- **Responsive Sidebar Navigation** generated from content structure
+- **Print Optimization** with two-column layout
+- **Static Site Generation** for fast page loads
+- **Comprehensive Testing** with 1118 tests across 112 files (70%+ coverage)
+
+---
+
+## 🚀 Getting Started
+
+Run the development server:
+
+```bash
+npm install
+npm run dev
+```

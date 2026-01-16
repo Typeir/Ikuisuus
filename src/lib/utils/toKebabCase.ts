@@ -1,0 +1,55 @@
+/**
+ * @fileoverview Kebab Case Converter - String formatting utility for URL slugs
+ * @description Converts camelCase, PascalCase, snake_case, and space-separated strings
+ * to kebab-case format. Used throughout the codebase for URL generation, filename
+ * normalization, and CSS class naming. Handles multiple formatting conventions.
+ * 
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ * 
+ * @requires None - Pure string utility
+ * 
+ * @example
+ * ```typescript
+ * import { toKebabCase } from '@/lib/utils/toKebabCase';
+ * 
+ * toKebabCase('MyExampleString'); // 'my-example-string'
+ * toKebabCase('my_example_string'); // 'my-example-string'
+ * toKebabCase('My Example String'); // 'my-example-string'
+ * ```
+ */
+
+/**
+ * Converts a string to kebab-case.
+ *
+ * Handles:
+ * - camelCase → kebab-case
+ * - PascalCase → kebab-case
+ * - snake_case → kebab-case
+ * - Space-separated → kebab-case
+ * - Special characters (removed)
+ * - Multiple spaces (collapsed)
+ * - Leading/trailing whitespace (trimmed)
+ * - Number-letter transitions (Level5Monster → level5-monster)
+ * - Decimal points (Version 2.0 → version-20)
+ *
+ * Example:
+ *   "My Example String" -> "my-example-string"
+ *   "Albedo, the Bleak Bloom" -> "albedo-the-bleak-bloom"
+ *
+ * @param {string} str - The input string to convert.
+ * @returns {string} The kebab-case formatted string.
+ */
+export const toKebabCase = (str: string): string =>
+  str
+    .trim()                                    // Remove leading/trailing whitespace
+    .replace(/([a-z])([A-Z])/g, '$1-$2')      // camelCase/PascalCase → kebab-case
+    .replace(/([0-9])([A-Z])/g, '$1-$2')      // Number-Letter transitions (Level5Monster)
+    .replace(/\./g, '')                       // Remove decimal points (Version 2.0 → version-20)
+    .replace(/[^a-zA-Z0-9\s_-]/g, '')         // Remove special characters except spaces, underscores, hyphens
+    .replace(/\s+/g, '-')                     // Replace spaces with hyphens
+    .replace(/_/g, '-')                       // Replace underscores with hyphens
+    .replace(/-+/g, '-')                      // Collapse multiple hyphens
+    .replace(/^-+|-+$/g, '')                  // Remove leading/trailing hyphens
+    .toLowerCase();

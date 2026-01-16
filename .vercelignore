@@ -1,0 +1,16 @@
+# Git history — huge pack files not needed
+.git
+.gitignore
+
+# Webpack + Next cache
+.next/cache
+
+# Local dependencies and lockfiles (Vercel installs clean)
+node_modules
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Heavy assets not needed server-side
+public/library/resources
+.next/cache/webpack  

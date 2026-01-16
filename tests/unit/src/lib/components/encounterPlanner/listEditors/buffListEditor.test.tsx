@@ -1,0 +1,34 @@
+/**
+ * @fileoverview Unit tests for Buff List Editor component
+ * @module tests/unit/src/lib/components/encounterPlanner/listEditors/buffListEditor.test
+ * @description Validates BuffListEditor export and component signature.
+ * Tests list editor component for managing buffs in encounter planner.
+ * 
+ * @version 1.0.0
+ * @author Typeir
+ * 
+ * @requires vitest
+ * @requires @/lib/components/encounterPlanner/listEditors/buffListEditor
+ */
+
+import { describe, it, expect } from 'vitest';
+import * as BuffListEditorModule from '@/lib/components/encounterPlanner/listEditors/buffListEditor';
+
+describe('buffListEditor', () => {
+  it('should export BuffListEditor component', () => {
+    expect(BuffListEditorModule.BuffListEditor).toBeDefined();
+    expect(typeof BuffListEditorModule.BuffListEditor).toBe('function');
+  });
+
+  it('should be a React component', () => {
+    const componentString = BuffListEditorModule.BuffListEditor.toString();
+    expect(componentString).toBeDefined();
+    expect(componentString.length).toBeGreaterThan(0);
+  });
+
+  it('should export exactly one member', () => {
+    const exports = Object.keys(BuffListEditorModule);
+    expect(exports).toHaveLength(1);
+    expect(exports).toContain('BuffListEditor');
+  });
+});

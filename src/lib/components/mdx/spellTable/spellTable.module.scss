@@ -1,0 +1,155 @@
+.spellTables {
+  width: 100%;
+  margin: 2rem 0;
+}
+
+// Wrapper for tab navigation - handles scrolling
+.tabNavWrapper {
+  position: relative;
+  border-radius: 6px 6px 0 0;
+  margin-bottom: -1px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-secondary) var(--color-surface);
+  background: linear-gradient(0deg, var(--color-surface) 20%, var(--color-transparent) 30%);
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-surface);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-secondary);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--color-text-secondary);
+    }
+  }
+}
+
+// Container for tab navigation with side fade borders
+.gradientContainer {
+  position: relative;
+  border: 0.2rem solid var(--color-surface);
+  border-radius: 10px 10px 0 0;
+  padding-top: 2rem;
+}
+
+.tabNav {
+  position: relative;
+  width: 100%;
+}
+
+.tabList {
+  display: flex;
+  gap: 0.25rem;
+  min-width: max-content;
+  position: relative;
+  padding: 0 2rem;
+
+  // Vertical gradient overlay (bottom fade)
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(0deg, var(--color-surface) 20%, var(--color-transparent) 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.tab {
+  position: relative;
+  flex-shrink: 0;
+
+  button {
+    padding: 0.5rem 0.875rem 1rem;
+    border: 1px solid var(--color-surface);
+    border-bottom: none;
+    background: var(--color-bg);
+    color: var(--color-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    border-radius: 6px 6px 0 0;
+    position: relative;
+
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-bg);
+      filter: brightness(1.05);
+    }
+  }
+
+  &.active {
+    button {
+      background: var(--color-surface);
+      color: var(--color-accent);
+
+      // Extend the bottom border to cover the content box border
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--color-surface);
+      }
+    }
+  }
+}
+
+// Content box with background
+.tabContent {
+  position: relative;
+  min-height: 200px;
+  background: var(--color-surface);
+  border-radius: 0 0 6px 6px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgb(var(--color-shadow-light));
+}
+
+.tabPane {
+  display: none;
+  animation: fadeIn 0.2s ease-in;
+
+  &.active {
+    display: block;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading,
+.error,
+.noSpells {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.error {
+  color: var(--color-error);
+}
