@@ -15,6 +15,7 @@ import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
 import { getCombinedInitScript } from '@/lib/utils/persistentUiScript';
 import { walk } from '@/lib/utils/walk';
+import { logger } from '@/lib/logging/logger';
 
 import { hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
@@ -33,6 +34,13 @@ export default async function RootLayout({
   const { locale } = await params;
   const contentDir = path.join(getContentFolder(locale));
   const tree = walk(contentDir);
+
+  console.log('[Layout] Tree Debug:', {
+    locale,
+    contentDir,
+    treeLength: tree?.length || 0,
+    treeItems: tree?.slice(0, 3).map((t) => t.name),
+  });
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
