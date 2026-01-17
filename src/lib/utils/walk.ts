@@ -98,7 +98,7 @@ export const walk = (
 
   const deduplicatedFiles = deduplicateFiles(files);
 
-  return entries
+  const result = entries
     .map((entry) => {
       const fullPath = path.join(dir, entry.name);
       const fileName = entry.name.replace(REGEX_EXTENSION, '');
