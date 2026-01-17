@@ -60,6 +60,8 @@ export const walk = (
   dir: string,
   base = ''
 ): { name: string; path: string; children?: any[] }[] => {
+  logger.message('[walk] Starting', { dir, base, exists: fs.existsSync(dir) });
+  
   // Check if path exists and is a directory
   if (!fs.existsSync(dir)) {
     logger.warning('[walk] Directory does not exist', { dir, base });
@@ -79,7 +81,7 @@ export const walk = (
     .filter((e) => !IGNORED_FOLDERS_SET.has(e.name) && !e.name.includes(".hidden."))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  logger.message('[walk] Reading directory', {
+  logger.message('[walk] Found entries', {
     dir,
     base,
     entryCount: entries.length,
@@ -140,4 +142,11 @@ export const walk = (
       return null;
     })
     .filter(Boolean) as any[];
+
+  if (base === '') {
+    // Only log at root level to avoid spam
+    logger.message('[walk] Returning results', { dir, resultCount: result.length });
+  }
+  
+  return result;
 };
