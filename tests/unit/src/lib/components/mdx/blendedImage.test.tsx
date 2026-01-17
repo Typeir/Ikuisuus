@@ -13,7 +13,7 @@ import Component from '@/lib/components/mdx/blendedImage';
 describe('blendedImage', () => {
   it('should render without crashing', () => {
     expect(() => {
-      render(<Component />);
+      render(<Component src="/library/images/test.webp" alt="Test image" />);
     }).not.toThrow();
   });
 });

@@ -3,11 +3,11 @@
  * Tests that clicking slain checkbox adds the slain class to the combatant row
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { PlayModeCombatantRow } from '@/lib/components/encounterPlanner/playMode';
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-dom')>();
@@ -51,7 +51,12 @@ const createMockCombatant = (slain: boolean = false): InProgressCombatant => ({
     bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
-  mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: false },
+  mechanics: {
+    lair: false,
+    stratagem: false,
+    legendaryDeed: false,
+    resist: false,
+  },
   legendaryDeedsUsed: [],
   resistRemaining: 0,
   locked: [],
@@ -66,36 +71,36 @@ describe('Slain Visual Test', () => {
 
   it('should NOT have slain class when slain is false', () => {
     const combatant = createMockCombatant(false);
-    
+
     render(
       <PlayModeCombatantRow
         combatant={combatant}
         onUpdate={mockOnUpdate}
         onRemoveSessionOnly={vi.fn()}
-        locale="en"
-      />
+        locale='en'
+      />,
     );
 
     const row = screen.getByTestId('combatant-row');
-    
+
     // Should NOT have slain class
     expect(row.className).not.toMatch(/slain/i);
   });
 
   it('should HAVE slain class when slain is true', () => {
     const combatant = createMockCombatant(true);
-    
+
     render(
       <PlayModeCombatantRow
         combatant={combatant}
         onUpdate={mockOnUpdate}
         onRemoveSessionOnly={vi.fn()}
-        locale="en"
-      />
+        locale='en'
+      />,
     );
 
     const row = screen.getByTestId('combatant-row');
-    
+
     // SHOULD have slain class
     console.log('Row className:', row.className);
     expect(row.className).toMatch(/slain/i);
@@ -104,14 +109,14 @@ describe('Slain Visual Test', () => {
   it('should add slain class when checkbox is clicked', async () => {
     const user = userEvent.setup();
     const combatant = createMockCombatant(false);
-    
+
     render(
       <PlayModeCombatantRow
         combatant={combatant}
         onUpdate={mockOnUpdate}
         onRemoveSessionOnly={vi.fn()}
-        locale="en"
-      />
+        locale='en'
+      />,
     );
 
     const row = screen.getByTestId('combatant-row');
@@ -125,9 +130,8 @@ describe('Slain Visual Test', () => {
     await user.click(checkbox);
 
     // Check onUpdate was called with slain: true
-    console.log('onUpdate called with:', mockOnUpdate.mock.calls);
     expect(mockOnUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ slain: true })
+      expect.objectContaining({ slain: true }),
     );
   });
 });

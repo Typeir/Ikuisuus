@@ -20,6 +20,15 @@ vi.mock('next-intl/middleware', () => ({
   default: vi.fn(() => (req: any) => null),
 }));
 
+// Mock next-intl useTranslations hook while keeping real provider
+vi.mock('next-intl', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('next-intl')>();
+  return {
+    ...actual,
+    useTranslations: () => (key: string) => key,
+  };
+});
+
 // Create mock SVG components
 import React from 'react';
 const createMockSvg = (testId: string) => {
