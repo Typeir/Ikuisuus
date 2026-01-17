@@ -11,11 +11,11 @@
  */
 
 import { routing } from '@/i18n/routing';
+import { logger } from '@/lib/logging/logger';
 import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
 import { getCombinedInitScript } from '@/lib/utils/persistentUiScript';
 import { walk } from '@/lib/utils/walk';
-import { logger } from '@/lib/logging/logger';
 
 import { hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
@@ -33,14 +33,14 @@ export default async function RootLayout({
 }) {
   const { locale } = await params;
   const contentDir = path.join(getContentFolder(locale));
-  
+
   logger.message('[Layout] Starting tree generation', {
     locale,
     contentDir,
   });
-  
+
   const tree = walk(contentDir);
-  
+
   logger.message('[Layout] Tree generated', {
     locale,
     contentDir,
@@ -72,4 +72,4 @@ export default async function RootLayout({
   );
 }
 
-// export const dynamic = 'force-static';
+export const dynamic = 'force-static';
