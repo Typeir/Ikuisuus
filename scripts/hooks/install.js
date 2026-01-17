@@ -1,7 +1,7 @@
 /**
  * Git Hooks Installation Script
  *
- * @fileoverview Installs pre-commit hook
+ * @fileoverview Installs pre-commit and commit-msg hooks
  * @module scripts/hooks/install
  * @version 1.0.0
  */
@@ -9,11 +9,15 @@
 const fs = require('fs');
 const path = require('path');
 
-function installHook() {
+/**
+ * Installs a git hook
+ * @param {string} hookName - Name of the hook (e.g., 'pre-commit', 'commit-msg')
+ */
+function installHook(hookName) {
   try {
-    const sourceHook = path.join(__dirname, 'pre-commit.js');
+    const sourceHook = path.join(__dirname, `${hookName}.js`);
     const gitDir = path.join(process.cwd(), '.git', 'hooks');
-    const targetHook = path.join(gitDir, 'pre-commit');
+    const targetHook = path.join(gitDir, hookName);
 
     if (!fs.existsSync(gitDir)) {
       console.error('❌ .git/hooks directory not found');
@@ -26,7 +30,7 @@ function installHook() {
     }
 
     fs.copyFileSync(sourceHook, targetHook);
-    console.log('✅ Pre-commit hook installed');
+    console.log(`✅ ${hookName} hook installed`);
 
     if (process.platform !== 'win32') {
       fs.chmodSync(targetHook, '755');
@@ -34,13 +38,23 @@ function installHook() {
 
     console.log(`📍 Location: ${targetHook}`);
   } catch (error) {
-    console.error('❌ Installation failed:', error.message);
+    console.error(`❌ ${hookName} installation failed:`, error.message);
     process.exit(1);
   }
 }
 
-if (require.main === module) {
-  installHook();
+/**
+ * Installs all hooks
+ */
+function installAllHooks() {
+  console.log('Installing git hooks...\n');
+  installHook('pre-commit');
+  installHook('commit-msg');
+  console.log('\n✨ All hooks installed successfully');
 }
 
-module.exports = { installHook };
+if (require.main === module) {
+  installAllHooks();
+}
+
+module.exports = { installHook, installAllHooks };
