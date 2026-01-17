@@ -154,6 +154,15 @@ export const Sidebar = ({
   const [localPathStore] = useState(new SidebarActivePathStore());
   const [layoutItems] = useState(calculateHeights(items));
 
+  // Debug logging
+  if (typeof window !== 'undefined') {
+    console.log('[Sidebar] Rendering with items:', {
+      itemCount: items.length,
+      layoutItemCount: layoutItems.length,
+      firstItems: items.slice(0, 3).map(i => ({ name: i.name, path: i.path, hasChildren: Boolean(i.children?.length) })),
+    });
+  }
+
   return (
     <ul className='space-y-1 text-sm'>
       {layoutItems.map((item) => (

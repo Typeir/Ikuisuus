@@ -24,6 +24,7 @@
  */
 import { join } from 'path';
 import { FolderName } from '../enums/constants';
+import { logger } from '@/lib/logging/logger';
 
 /**
  * Returns the absolute path to the content folder.
@@ -34,5 +35,14 @@ import { FolderName } from '../enums/constants';
  * @returns {string} The absolute path to the content directory.
  */
 export const getContentFolder = (locale: string = 'en'): string => {
-  return join(process.cwd(), FolderName.Src, FolderName.Content, locale);
+  const cwd = process.cwd();
+  const contentFolder = join(cwd, FolderName.Src, FolderName.Content, locale);
+  
+  logger.message('[getContentFolder] Resolved path', {
+    locale,
+    cwd,
+    contentFolder,
+  });
+  
+  return contentFolder;
 };

@@ -62,13 +62,13 @@ export const walk = (
 ): { name: string; path: string; children?: any[] }[] => {
   // Check if path exists and is a directory
   if (!fs.existsSync(dir)) {
-    logger.debug('Path does not exist', { path: dir });
+    logger.warning('[walk] Directory does not exist', { dir, base });
     return [];
   }
   
   const stats = fs.statSync(dir);
   if (!stats.isDirectory()) {
-    logger.debug('Path is not a directory', { path: dir });
+    logger.warning('[walk] Path is not a directory', { dir, base, isDir: stats.isDirectory() });
     return [];
   }
 
@@ -76,9 +76,15 @@ export const walk = (
 
   const entries = fs
     .readdirSync(dir, { withFileTypes: true })
-    .filter((e) => !IGNORED_FOLDERS_SET.has(e.name))
-    .filter((e) => !e.name.includes(".hidden."))
+    .filter((e) => !IGNORED_FOLDERS_SET.has(e.name) && !e.name.includes(".hidden."))
     .sort((a, b) => a.name.localeCompare(b.name));
+
+  logger.message('[walk] Reading directory', {
+    dir,
+    base,
+    entryCount: entries.length,
+    entries: entries.slice(0, 5).map(e => ({ name: e.name, isDir: e.isDirectory() })),
+  });
 
   const files = entries
     .filter(

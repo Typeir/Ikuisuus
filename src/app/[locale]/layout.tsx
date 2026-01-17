@@ -33,13 +33,19 @@ export default async function RootLayout({
 }) {
   const { locale } = await params;
   const contentDir = path.join(getContentFolder(locale));
+  
+  logger.message('[Layout] Starting tree generation', {
+    locale,
+    contentDir,
+  });
+  
   const tree = walk(contentDir);
-
-  console.log('[Layout] Tree Debug:', {
+  
+  logger.message('[Layout] Tree generated', {
     locale,
     contentDir,
     treeLength: tree?.length || 0,
-    treeItems: tree?.slice(0, 3).map((t) => t.name),
+    firstItems: tree?.slice(0, 3).map((t) => t.name) || [],
   });
 
   if (!hasLocale(routing.locales, locale)) {
