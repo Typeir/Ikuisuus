@@ -114,7 +114,7 @@ const calculateHeights = (items: Item[]): Array<LayoutItem> => {
     const children = calculateHeights(item.children);
     const totalChildrenHeight = children.reduce(
       (sum, child) => sum + child.expandedHeight,
-      0
+      0,
     );
 
     return {
@@ -153,15 +153,6 @@ export const Sidebar = ({
   const shouldCollapse = items.length > 1;
   const [localPathStore] = useState(new SidebarActivePathStore());
   const [layoutItems] = useState(calculateHeights(items));
-
-  // Debug logging
-  if (typeof window !== 'undefined') {
-    console.log('[Sidebar] Rendering with items:', {
-      itemCount: items.length,
-      layoutItemCount: layoutItems.length,
-      firstItems: items.slice(0, 3).map(i => ({ name: i.name, path: i.path, hasChildren: Boolean(i.children?.length) })),
-    });
-  }
 
   return (
     <ul className='space-y-1 text-sm'>
@@ -217,7 +208,7 @@ const SidebarItem = ({
   const params = useParams();
   const locale = params?.locale as string;
   const index = item?.children?.findIndex(
-    (child) => child.name.toLowerCase() === 'main'
+    (child) => child.name.toLowerCase() === 'main',
   );
 
   // Hydration sync - run once after mount to sync with persisted state
@@ -266,13 +257,13 @@ const SidebarItem = ({
           onClick={() => open && onNavigate && onNavigate()}
           className={cn(
             'text-accent hover:underline block',
-            styles['link-item']
+            styles['link-item'],
           )}>
           <div
             className={cn(
               'text-lg cursor-pointer font-bold',
               styles.label,
-              open && styles.open
+              open && styles.open,
             )}
             onClick={() => !open && toggle()}>
             <p>{item.name}</p>
@@ -309,7 +300,7 @@ const SidebarItem = ({
           className={cn(
             'text-lg cursor-pointer font-bold',
             styles.label,
-            open && styles.open
+            open && styles.open,
           )}
           onClick={toggle}>
           <p>{item.name}</p>
@@ -342,7 +333,7 @@ const SidebarItem = ({
         onClick={onNavigate}
         className={cn(
           'text-accent hover:underline block',
-          styles['link-item']
+          styles['link-item'],
         )}>
         {item.name}
       </Link>

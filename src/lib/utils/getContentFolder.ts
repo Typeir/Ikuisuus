@@ -3,28 +3,27 @@
  * @description Constructs absolute filesystem paths to locale-specific content directories.
  * Uses process.cwd() for build-time and runtime compatibility. Central utility for all
  * content file operations including metadata generation, API routes, and dynamic routing.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires path
  * @requires @/lib/enums/constants
- * 
+ *
  * @example
  * ```typescript
  * import { getContentFolder } from '@/lib/utils/getContentFolder';
- * 
+ *
  * const enFolder = getContentFolder('en');
  * // Returns: '/absolute/path/to/src/content/en'
- * 
+ *
  * const esFolder = getContentFolder('es');
  * // Returns: '/absolute/path/to/src/content/es'
  * ```
  */
 import { join } from 'path';
 import { FolderName } from '../enums/constants';
-import { logger } from '@/lib/logging/logger';
 
 /**
  * Returns the absolute path to the content folder.
@@ -35,14 +34,5 @@ import { logger } from '@/lib/logging/logger';
  * @returns {string} The absolute path to the content directory.
  */
 export const getContentFolder = (locale: string = 'en'): string => {
-  const cwd = process.cwd();
-  const contentFolder = join(cwd, FolderName.Src, FolderName.Content, locale);
-  
-  logger.message('[getContentFolder] Resolved path', {
-    locale,
-    cwd,
-    contentFolder,
-  });
-  
-  return contentFolder;
+  return join(process.cwd(), FolderName.Src, FolderName.Content, locale);
 };

@@ -11,7 +11,6 @@
  */
 
 import { routing } from '@/i18n/routing';
-import { logger } from '@/lib/logging/logger';
 import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
 import { getCombinedInitScript } from '@/lib/utils/persistentUiScript';
@@ -34,19 +33,7 @@ export default async function RootLayout({
   const { locale } = await params;
   const contentDir = path.join(getContentFolder(locale));
 
-  logger.message('[Layout] Starting tree generation', {
-    locale,
-    contentDir,
-  });
-
   const tree = walk(contentDir);
-
-  logger.message('[Layout] Tree generated', {
-    locale,
-    contentDir,
-    treeLength: tree?.length || 0,
-    firstItems: tree?.slice(0, 3).map((t) => t.name) || [],
-  });
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();

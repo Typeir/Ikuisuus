@@ -68,12 +68,6 @@ function BaseResponsiveLayoutShell({
   const router = useRouter();
   const locale = params?.locale as string;
 
-  // Debug logging
-  console.log('[ResponsiveLayoutShell] Received tree:', {
-    treeLength: tree?.length || 0,
-    firstItems: tree?.slice(0, 3).map(i => ({ name: i.name, path: i.path, hasChildren: Boolean(i.children?.length) })) || [],
-  });
-
   const toolItems: ToolMenuItem[] = [
     {
       id: 'encounter-creator',
