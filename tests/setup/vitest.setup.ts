@@ -40,9 +40,9 @@ const createMockSvg = (testId: string) => {
         'data-testid': testId,
         ...props,
       });
-    }
+    },
   ) as React.FC<React.SVGProps<SVGSVGElement>>;
-  
+
   Component.displayName = `MockSvg`;
   return Component;
 };
@@ -67,7 +67,12 @@ vi.mock('@/lib/components/icon/icons/unlock.svg', () => ({
 
 // Suppress Dart Sass legacy-js-api deprecation warnings during tests only
 const originalStderrWrite = process.stderr.write;
-process.stderr.write = function (this: typeof process.stderr, chunk: string | Uint8Array, encoding?: BufferEncoding | ((err?: Error | null) => void), cb?: (err?: Error | null) => void) {
+process.stderr.write = function (
+  this: typeof process.stderr,
+  chunk: string | Uint8Array,
+  encoding?: BufferEncoding | ((err?: Error | null) => void),
+  cb?: (err?: Error | null) => void,
+) {
   if (typeof chunk === 'string' && chunk.includes('legacy-js-api')) {
     return true; // suppress
   }

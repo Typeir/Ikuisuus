@@ -26,12 +26,12 @@ const path = require('path');
 function isValidCommitMessage(message) {
   // Trim the message and remove any trailing newlines
   const cleanMessage = message.trim();
-  
+
   // Match format: [action]: some text
   // Action can contain letters, numbers, hyphens, underscores
   // Text can be anything (imperative, random, etc.)
   const pattern = /^\[[\w\-]+\]:\s+.+$/;
-  
+
   return pattern.test(cleanMessage);
 }
 
@@ -48,13 +48,13 @@ function getCommitMessage() {
     }
 
     const message = fs.readFileSync(commitMsgFile, 'utf-8');
-    
+
     // Filter out comments (lines starting with #)
     const lines = message
       .split('\n')
       .filter((line) => !line.startsWith('#'))
       .join('\n');
-    
+
     return lines;
   } catch (error) {
     console.error('❌ Error reading commit message:', error.message);
@@ -67,7 +67,7 @@ function getCommitMessage() {
  */
 function validateCommitMessage() {
   const message = getCommitMessage();
-  
+
   if (!isValidCommitMessage(message)) {
     console.error('\n❌ INVALID COMMIT MESSAGE FORMAT\n');
     console.error('Expected format: [action]: imperative text');
@@ -79,7 +79,7 @@ function validateCommitMessage() {
     console.error('Your message: ' + message.split('\n')[0] + '\n');
     process.exit(1);
   }
-  
+
   process.exit(0);
 }
 

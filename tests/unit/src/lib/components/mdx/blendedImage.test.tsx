@@ -6,14 +6,14 @@
  * - Integration scenarios
  */
 
-import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
 import Component from '@/lib/components/mdx/blendedImage';
+import { render } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 describe('blendedImage', () => {
   it('should render without crashing', () => {
     expect(() => {
-      render(<Component src="/library/images/test.webp" alt="Test image" />);
+      render(<Component src='/library/images/test.webp' alt='Test image' />);
     }).not.toThrow();
   });
 });

@@ -5,8 +5,11 @@
  * Tests end-to-end cookie lifecycle including encoding edge cases
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { getServerPersistentData, getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
+import {
+    getServerExpandedPaths,
+    getServerPersistentData,
+} from '@/lib/utils/getServerPersistentData';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Next.js cookies API
 vi.mock('next/headers', () => ({
@@ -25,7 +28,11 @@ describe('getServerPersistentData Integration', () => {
   it('should handle complex nested state with special characters', async () => {
     const state = {
       sidebarMenu: {
-        expandedPaths: ['monsters/dragons', 'items/weapons', 'spells/evocation'],
+        expandedPaths: [
+          'monsters/dragons',
+          'items/weapons',
+          'spells/evocation',
+        ],
       },
       theme: 'dark' as const,
     };

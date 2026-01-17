@@ -5,9 +5,11 @@
  * Tests cookie decoding, JSON parsing, error handling, and expanded paths extraction
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { getServerPersistentData, getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
-import { PERSISTENT_UI_STORAGE_KEY } from '@/lib/types/persistentUiState';
+import {
+    getServerExpandedPaths,
+    getServerPersistentData,
+} from '@/lib/utils/getServerPersistentData';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Next.js cookies API
 vi.mock('next/headers', () => ({
