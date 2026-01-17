@@ -58,7 +58,7 @@ export default function ClientProviders({
   children,
 }: ClientProvidersProps) {
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone='UTC'>
       <PersistentUiProvider initialExpandedPaths={initialExpandedPaths}>
         {/* @ts-ignore */}
         <ResponsiveLayoutShell tree={tree}>{children}</ResponsiveLayoutShell>

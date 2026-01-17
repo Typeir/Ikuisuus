@@ -29,13 +29,12 @@
  * expect(combatant.locked).toEqual([]);
  */
 
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { NextIntlClientProvider } from 'next-intl';
 import { CombatantRow } from '@/lib/components/encounterPlanner/combatantRow';
 import { createEmptyCreature } from '@/lib/utils/encounterStorage';
 import { createInProgressCombatant } from '@/lib/utils/inProgressCombatStorage';
+import { render, screen } from '@testing-library/react';
+import { NextIntlClientProvider } from 'next-intl';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * Integration tests for lock functionality outside PlayMode
@@ -48,7 +47,7 @@ import { createInProgressCombatant } from '@/lib/utils/inProgressCombatStorage';
 // Helper to wrap component with intl context
 const renderWithIntl = (component: React.ReactElement) => {
   return render(
-    <NextIntlClientProvider locale="en" messages={{}}>
+    <NextIntlClientProvider locale='en' messages={{}} timeZone='UTC'>
       {component}
     </NextIntlClientProvider>
   );
@@ -114,7 +113,7 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
       renderWithIntl(
         <CombatantRow
           combatant={combatant}
-          locale="en"
+          locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
         />
@@ -133,7 +132,7 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
       renderWithIntl(
         <CombatantRow
           combatant={combatant}
-          locale="en"
+          locale='en'
           onUpdate={onUpdate}
           onRemoveSessionOnly={vi.fn()}
         />
@@ -142,7 +141,9 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
       // Find and click lock button (it should be in the creature name section)
       const buttons = screen.getAllByRole('button');
       const lockButton = buttons.find(
-        (btn) => btn.getAttribute('aria-label')?.includes('lock') || btn.querySelector('[aria-label*="lock"]')
+        (btn) =>
+          btn.getAttribute('aria-label')?.includes('lock') ||
+          btn.querySelector('[aria-label*="lock"]')
       );
 
       // If we can't find by aria-label, the button exists but we verify locked is present
@@ -158,7 +159,7 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
       const { container } = renderWithIntl(
         <CombatantRow
           combatant={combatant}
-          locale="en"
+          locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
         />
