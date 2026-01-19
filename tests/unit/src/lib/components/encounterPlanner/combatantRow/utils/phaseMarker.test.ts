@@ -3,6 +3,11 @@
  *
  * @fileoverview Unit tests for phaseMarker utility module.
  * Verifies phase marker styles and utilities.
+ * @description This test suite ensures that the phase marker
+ * 
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
  *
  * @module phaseMarker.test
  * @requires vitest Test framework

@@ -6,6 +6,12 @@
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0
+ * 
+ * @requires vitest
+ * @requires @testing-library/react
+ * @requires @testing-library/react-hooks
+ * @requires @/lib/components/encounterPlanner/combatantRow/utils/context/combatantContext
+ * @requires @/lib/types/inProgressCombat
  */
 
 import { renderHook, act } from '@testing-library/react';

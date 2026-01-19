@@ -1,6 +1,18 @@
 /**
  * @fileoverview Simple visual test for slain checkbox
  * Tests that clicking slain checkbox adds the slain class to the combatant row
+ * @description Validates slain visual state changes in CombatantRow component
+ * 
+ * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/slainVisualTest
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ * 
+ * @requires vitest
+ * @requires @testing-library/react
+ * @requires @testing-library/user-event
+ * @requires @/lib/components/encounterPlanner/combatantRow
+ * @requires @/lib/types/inProgressCombat 
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';

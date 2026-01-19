@@ -1,5 +1,18 @@
 /**
  * @fileoverview Test that slain checkbox is rendered and clickable
+ * @description This test ensures that the slain checkbox in the CombatantRow component
+ * renders correctly and can be interacted with.
+ * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/slainCheckboxBasic
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ * 
+ * @requires vitest
+ * @requires @testing-library/react
+ * @requires @testing-library/user-event
+ * @requires @/lib/components/encounterPlanner/combatantRow
+ * @requires @/lib/types/inProgressCombat 
+ * 
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';

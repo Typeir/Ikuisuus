@@ -1,6 +1,16 @@
 /**
  * @fileoverview Comprehensive unit tests for slain checkbox functionality
  * @description Tests slain checkbox behavior, styling, state persistence, and visual feedback
+ * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/slainCheckbox
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ * 
+ * @requires vitest
+ * @requires @testing-library/react
+ * @requires @testing-library/user-event
+ * @requires @/lib/components/encounterPlanner/combatantRow
+ * @requires @/lib/types/inProgressCombat
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

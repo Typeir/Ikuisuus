@@ -3,6 +3,12 @@
  *
  * @fileoverview Unit tests for combatantRow utils barrel export.
  * Verifies all utilities are properly exported.
+ * @description This test suite ensures that all utility functions and constants
+ * from the combatantRow utils module are correctly exported through the index file.
+ * 
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
  *
  * @module utils/index.test
  * @requires vitest Test framework

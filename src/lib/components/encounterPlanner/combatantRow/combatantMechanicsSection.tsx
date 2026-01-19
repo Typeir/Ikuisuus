@@ -21,7 +21,6 @@
 
 'use client';
 
-import type { CombatantMechanics, InProgressCombatant } from '@/lib/types/inProgressCombat';
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import { useCombatant } from './utils/context/combatantContext';

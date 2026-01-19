@@ -1,6 +1,8 @@
 /**
  * @fileoverview Tests for Combobox Components Barrel Export
+ * @description Validates all component exports from the comboboxes barrel.
  * @module tests/unit/src/lib/components/encounterPlanner/comboboxes/index
+ * 
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

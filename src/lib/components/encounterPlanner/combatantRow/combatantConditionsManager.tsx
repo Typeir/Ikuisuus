@@ -21,7 +21,7 @@
 
 'use client';
 
-import type { ConditionEntry, InProgressCombatant } from '@/lib/types/inProgressCombat';
+import type { ConditionEntry } from '@/lib/types/inProgressCombat';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import { useCombatant } from './utils/context/combatantContext';
@@ -40,7 +40,7 @@ export interface CombatantConditionsManagerProps {}
  * @returns {string} Random 9-character ID
  */
 function generateConditionId(): string {
-  return Math.random().toString(36).substr(2, 9);
+  return Math.random().toString(36).slice(2, 11);
 }
 
 /**

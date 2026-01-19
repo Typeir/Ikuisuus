@@ -7,6 +7,7 @@
  *
  * @version 3.0.0
  * @author Typeir
+ * @since 1.0.0
  *
  * @requires vitest
  * @requires @testing-library/react
