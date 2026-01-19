@@ -48,12 +48,19 @@ const CHECKED_EXTENSIONS = [
   '.jsx',
   '.json',
   '.md',
+  '.mdx',
   '.env',
   '.env.local',
   '.env.production',
   '.yml',
   '.yaml',
   '.toml',
+  '.npmrc',
+  '.gitignore',
+  '.gitattributes',
+  '.vercelignore',
+  '.ps1',
+  '.sh',
 ];
 
 function getStagedFiles() {
