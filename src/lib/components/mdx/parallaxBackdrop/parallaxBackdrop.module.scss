@@ -15,6 +15,10 @@
   transform: translateX(-10%);
 }
 
+html[data-theme='light'] .backdrop {
+  filter: brightness(1.4) contrast(1.2) saturate(1.2) invert(55%);
+}
+
 .image {
   object-fit: cover;
 

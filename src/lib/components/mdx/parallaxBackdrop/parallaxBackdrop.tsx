@@ -132,13 +132,13 @@ export const ParallaxBackdrop: React.FC<ParallaxBackdropProps> = ({
       style={{
         zIndex,
         opacity,
-        filter: blurPx > 0 ? `blur(${blurPx}px)` : undefined,
       }}>
       <Image
         className={styles.image}
         ref={imgRef}
         src={src}
         alt={ariaHidden ? '' : alt}
+        style={{ filter: blurPx > 0 ? `blur(${blurPx}px)` : undefined }}
         unoptimized={true}
         fill
         draggable={false}
