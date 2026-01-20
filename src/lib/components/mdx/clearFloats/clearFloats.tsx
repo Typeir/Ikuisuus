@@ -1,3 +1,14 @@
+/**
+/**
+ * @file clearFloats.tsx
+ * @description A React component that clears floated elements on the specified side.
+ *
+ * @module clearFloats
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+*/
+
 import React, { CSSProperties } from 'react';
 import { toCssValue } from '../../../utils/toCssValue';
 import styles from './clearFloats.module.scss';
