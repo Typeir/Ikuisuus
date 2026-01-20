@@ -13,10 +13,11 @@
   user-select: none;
 
   transform: translateX(-10%);
+  filter: invert(25%);
 }
 
 html[data-theme='light'] .backdrop {
-  filter: brightness(1.4) contrast(1.2) saturate(1.2) invert(55%);
+  filter: invert(55%);
 }
 
 .image {
