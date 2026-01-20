@@ -1,0 +1,23 @@
+/* parallaxBackdrop.module.scss */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  overflow: hidden;
+
+  pointer-events: none;
+  user-select: none;
+
+  transform: translateX(-10%);
+}
+
+.image {
+  object-fit: cover;
+
+  transform: translate3d(0, 0, 0) scale(1.06);
+  will-change: transform;
+}

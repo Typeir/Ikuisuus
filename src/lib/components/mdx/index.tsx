@@ -9,6 +9,7 @@ import mdxComponents from './mdxComponents';
 import HeirloomTableWrapper from './metadataTables/heirloomTableWrapper';
 import MonsterTableWrapper from './metadataTables/monsterTableWrapper';
 import TrinketTableWrapper from './metadataTables/trinketTableWrapper';
+import ParallaxBackdrop from './parallaxBackdrop/parallaxBackdrop';
 import { SpellTable } from './spellTable';
 
 const components = {
@@ -21,6 +22,7 @@ const components = {
   HorizontalSplit,
   FloatedContainer,
   ClearFloats,
+  ParallaxBackdrop,
   // eslint-disable-next-line jsx-a11y/alt-text
   Image: (props: any) => <Image {...props} width={600} height={600} />,
   h1: H1,
