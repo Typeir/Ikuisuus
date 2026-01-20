@@ -1,0 +1,14 @@
+/* floatedContainer.module.css */
+
+.floated {
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .floated {
+    float: none !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}

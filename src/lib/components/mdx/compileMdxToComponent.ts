@@ -1,3 +1,14 @@
+/**
+ * @file compileMdxToComponent.ts
+ * @description Compiles raw MDX source into a React component at runtime.
+ *
+ * @module compileMdxToComponent
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ *
+ */
+
 import { compile } from '@mdx-js/mdx';
 import { Fragment } from 'react';
 import { jsx, jsxs } from 'react/jsx-runtime';
@@ -19,7 +30,7 @@ export const compileMdxToComponent = async (source: string) => {
     recmaPlugins: [
       () => (tree) => {
         tree.body = tree.body.filter(
-          (node: any) => node.type !== 'ExportDefaultDeclaration'
+          (node: any) => node.type !== 'ExportDefaultDeclaration',
         );
       },
     ],
@@ -27,7 +38,7 @@ export const compileMdxToComponent = async (source: string) => {
 
   const fn = new Function(
     'bindings',
-    `${compiled.value}; return { default: MDXContent };`
+    `${compiled.value}; return { default: MDXContent };`,
   );
 
   const { default: MDXContent } = fn({

@@ -1,3 +1,21 @@
+/**
+ * @fileoverview Wikidot  Scraper - Automated D&D  metadata extraction
+ * @description Scrapes  data from dnd5e.wikidot.com  lists and individual pages.
+ *
+ * @version 1.1.0
+ * @author Typeir
+ * @since 1.0.0
+ *
+ * @requires fs
+ * @requires path
+ * @requires playwright
+ *
+ * @example
+ * ```bash
+ * node scripts/utils/scrapWikidot.js
+ * ```
+ */
+
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
@@ -35,7 +53,7 @@ const fixTablePipes = (mdx) => {
         ? headerRow
         : headerRow.trim() + ' |';
       return `${fixedHeader}\n${separatorRow}`;
-    }
+    },
   );
 };
 
@@ -51,7 +69,7 @@ const fixExternalLinks = (mdx, className) => {
       } else {
         return `[${link}](${BASE_URL}${link})`;
       }
-    }
+    },
   );
 
   // Fix standard markdown links
@@ -65,7 +83,7 @@ const fixExternalLinks = (mdx, className) => {
       } else {
         return `[${text}](${BASE_URL}${link})`;
       }
-    }
+    },
   );
 
   return output;
@@ -106,7 +124,7 @@ const transformMdx = (mdx, title, className) => {
       } else {
         return `[${link}](${BASE_URL}${link})`;
       }
-    }
+    },
   );
 
   // Fix links to Wikidot temporarily
@@ -156,7 +174,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
   await page.goto(START_URL);
 
   const classLinks = await page.$$eval('#page-content a', (anchors) =>
-    anchors.map((a) => a.href).filter((href) => /\/[a-z]+:main$/.test(href))
+    anchors.map((a) => a.href).filter((href) => /\/[a-z]+:main$/.test(href)),
   );
 
   for (const classMainUrl of classLinks) {
@@ -173,7 +191,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
       const mdx = transformMdx(
         mdxRaw,
         className.charAt(0).toUpperCase() + className.slice(1),
-        className
+        className,
       );
 
       const filename = `main.mdx`;
@@ -203,12 +221,12 @@ if (!fs.existsSync(OUTPUT_DIR)) {
           await page.goto(subclassUrl);
           const subContent = await page.$eval(
             '#page-content',
-            (el) => el.innerHTML
+            (el) => el.innerHTML,
           );
           const subMdxRaw = turndownService.turndown(subContent);
 
           const match = subclassUrl.match(
-            new RegExp(`/${className}:([\\w-]+)`)
+            new RegExp(`/${className}:([\\w-]+)`),
           );
           const subclassName = match ? match[1] : 'unknown-specialization';
 
@@ -217,7 +235,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
             subclassName
               .replace(/_/g, ' ')
               .replace(/\b\w/g, (c) => c.toUpperCase()),
-            className
+            className,
           );
 
           const subDir = path.join(OUTPUT_DIR, className);
@@ -233,13 +251,13 @@ if (!fs.existsSync(OUTPUT_DIR)) {
           }
         } catch (subErr) {
           console.warn(
-            `    [Skipped] Failed to scrape subclass at ${subclassUrl}: ${subErr.message}`
+            `    [Skipped] Failed to scrape subclass at ${subclassUrl}: ${subErr.message}`,
           );
         }
       }
     } catch (err) {
       console.warn(
-        `[Skipped] Failed to process ${classMainUrl}: ${err.message}`
+        `[Skipped] Failed to process ${classMainUrl}: ${err.message}`,
       );
     }
   }

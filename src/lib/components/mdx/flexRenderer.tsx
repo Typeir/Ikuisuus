@@ -1,3 +1,14 @@
+/**
+ * @fileoverview Flex Renderer Component
+ * @description Generic horizontal flex container that lays out its children in a row,
+ * with spacing and horizontal scrolling support.
+ *
+ * @module flexRenderer
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ */
+
 import React from 'react';
 
 type FlexRendererProps = {

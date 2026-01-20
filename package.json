@@ -51,7 +51,8 @@
     "test:enforce": "node tests/scripts/enforceCoverage.mjs",
     "test:templates": "node tests/scripts/generateTestTemplates.mjs",
     "test:all": "npm run test:enforce && npm run test && npm run test:e2e",
-    "install-hooks": "node scripts/hooks/install.js"
+    "install-hooks": "node scripts/hooks/install.js",
+    "lottery": "node scripts/utils/mdxLottery.mjs"
   },
   "dependencies": {
     "19": "^0.0.0",

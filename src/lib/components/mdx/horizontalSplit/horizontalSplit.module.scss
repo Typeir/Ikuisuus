@@ -1,0 +1,24 @@
+/* Root container for the horizontal split */
+.horizontalSplit {
+  display: flex;
+  align-items: flex-start;
+  // vertical-align: middle;
+  width: 100%;
+}
+
+/* Left / Right slot base */
+.horizontalSlot {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Responsive: stack vertically, right slot first */
+@media (max-width: 768px) {
+  .horizontalSplit {
+    flex-direction: column-reverse;
+  }
+
+  .horizontalSlot {
+    width: 100%;
+  }
+}
