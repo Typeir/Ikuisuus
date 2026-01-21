@@ -68,22 +68,24 @@ import {
  * ```
  */
 function parseRarityAndAttunement(lines, sharedData = null) {
-  // Look for italic lines near the top (within first 10 lines after title)
-  const italicLines = lines
-    .slice(0, 15)
+  // Look for italic lines under the item heading, up until the first '---' separator
+  const cutoffIndex = lines.findIndex(l => /^\s*---\s*$/.test(l));
+  const headerLines = cutoffIndex === -1 ? lines : lines.slice(0, cutoffIndex);
+
+  const italicLines = headerLines
     .filter(l => /^_.*_$/.test(l.trim()))
     .map(l => TextUtils.clean(l.replace(/^_/, '').replace(/_$/, '')));
-  
+
   let rarity = undefined;
   let requiresAttunement = false;
   let attunementRequirements = undefined;
   let weaponInfo = undefined;
-  
+
   const rarityKeywords = ItemData.getRarities(sharedData);
-  
+
   for (const line of italicLines) {
     const lowerLine = line.toLowerCase();
-    
+
     // Check for rarity
     for (const rarityKeyword of rarityKeywords) {
       if (lowerLine.includes(rarityKeyword)) {
@@ -91,36 +93,39 @@ function parseRarityAndAttunement(lines, sharedData = null) {
         break;
       }
     }
-    
+
     // Check for attunement
     if (lowerLine.includes('attunement')) {
       requiresAttunement = true;
-      
+
       // Extract specific attunement requirements
       const attunementMatch = line.match(/requires attunement(?:\s+by\s+(.+?))?(?:\)|$)/i);
       if (attunementMatch && attunementMatch[1]) {
         attunementRequirements = TextUtils.stripMarkdown(attunementMatch[1].trim());
       }
     }
-    
+
     // Check for weapon info line: "Handgun +3 (Heavy, Ranged 30/90, Loading, Special, Mastery: Slow)"
     // Must have parentheses and not be attunement, rarity, descriptive text, or subtype format
     // Skip if it matches "Type, Subtype (details)" pattern (e.g., "Clothing, cloak (magical)")
     const isSubtypeFormat = /^[^,]+,\s*[^,]+\s*\([^)]+\)\s*$/.test(line);
-    if (line.includes('(') && 
-        !lowerLine.includes('attunement') && 
-        !rarityKeywords.some(r => lowerLine.includes(r)) &&
-        !/property|applies/i.test(line) &&
-        !isSubtypeFormat) {
+    if (
+      line.includes('(') &&
+      !lowerLine.includes('attunement') &&
+      !rarityKeywords.some(r => lowerLine.includes(r)) &&
+      !/property|applies/i.test(line) &&
+      !isSubtypeFormat
+    ) {
       const parsed = parseWeaponTitleLine(line, sharedData);
       if (parsed && Object.keys(parsed).length > 0) {
         weaponInfo = parsed;
       }
     }
   }
-  
+
   return { rarity, requiresAttunement, attunementRequirements, weaponInfo };
 }
+
 
 /**
  * Parses weapon title line for detailed info.
