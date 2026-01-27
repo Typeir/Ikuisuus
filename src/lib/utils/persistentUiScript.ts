@@ -2,11 +2,16 @@
  * Persistent UI State Initialization Script Generator
  *
  * @fileoverview Generates an inline JavaScript IIFE that runs before DOM render
- * to restore persistent UI state from localStorage. Prevents flash of incorrect
- * state (FOUC) by setting data attributes synchronously on the document element.
+ * to restore persistent UI state from storage. Reads from cookies first (SSR source
+ * of truth), then falls back to sessionStorage and localStorage. Prevents flash of
+ * incorrect state (FOUC) by setting data-theme attribute synchronously.
+ *
+ * CRITICAL: This script MUST be placed in <head> (not <body>) to run before
+ * first paint. Combined with the CSS rule `html:not([data-theme]) body { visibility: hidden; }`,
+ * this ensures zero FOUC for both dark and light themes.
  *
  * @module lib/utils/persistentUiScript
- * @version 1.0.0
+ * @version 1.2.0
  * @author Typeir
  * @since 1.0.0
  *
@@ -14,12 +19,14 @@
  *
  * @example
  * ```tsx
- * // In root layout.tsx
+ * // In root layout.tsx - MUST be in <head>
  * import { getPersistentUiInitScript } from '@/lib/utils/persistentUiScript';
  *
  * <html>
- *   <body>
+ *   <head>
  *     <script dangerouslySetInnerHTML={{ __html: getPersistentUiInitScript() }} />
+ *   </head>
+ *   <body>
  *     {children}
  *   </body>
  * </html>
@@ -27,8 +34,8 @@
  */
 
 import {
-    LEGACY_THEME_KEY,
-    PERSISTENT_UI_STORAGE_KEY,
+  LEGACY_THEME_KEY,
+  PERSISTENT_UI_STORAGE_KEY,
 } from '../types/persistentUiState';
 
 /**
@@ -39,8 +46,9 @@ import {
  *
  * @description
  * Creates a self-executing script that:
- * 1. Reads theme from localStorage (unified state or legacy key)
- * 2. Sets data-theme attribute on document element
+ * 1. Reads theme from cookies (source of truth for SSR compatibility)
+ * 2. Falls back to sessionStorage, then localStorage
+ * 3. Sets data-theme attribute on document element
  *
  * This runs synchronously before React hydration to prevent FOUC.
  * Sidebar expansion is handled client-side by PersistentUiProvider
@@ -50,13 +58,35 @@ export function getPersistentUiInitScript(): string {
   return `
     (function() {
       try {
-        // Read from localStorage only (no cookies)
+        var theme = 'dark';
         var stored = null;
-        if (typeof localStorage !== 'undefined') {
-          stored = localStorage.getItem('${PERSISTENT_UI_STORAGE_KEY}');
+        
+        // Helper to read cookie by name
+        function readCookie(name) {
+          if (typeof document === 'undefined' || !document.cookie) return null;
+          var encoded = encodeURIComponent(name);
+          var cookies = document.cookie.split('; ');
+          for (var i = 0; i < cookies.length; i++) {
+            var parts = cookies[i].split('=');
+            if (parts[0] === encoded) {
+              try {
+                return decodeURIComponent(parts[1] || '');
+              } catch (e) {
+                return parts[1] || '';
+              }
+            }
+          }
+          return null;
         }
         
-        var theme = 'dark';
+        // Priority: cookies → sessionStorage → localStorage
+        stored = readCookie('${PERSISTENT_UI_STORAGE_KEY}');
+        if (!stored && typeof sessionStorage !== 'undefined') {
+          stored = sessionStorage.getItem('${PERSISTENT_UI_STORAGE_KEY}');
+        }
+        if (!stored && typeof localStorage !== 'undefined') {
+          stored = localStorage.getItem('${PERSISTENT_UI_STORAGE_KEY}');
+        }
         
         // Try unified state
         if (stored) {
@@ -70,9 +100,15 @@ export function getPersistentUiInitScript(): string {
           }
         }
         
-        // Fallback to legacy theme key
-        if (theme === 'dark' && typeof localStorage !== 'undefined') {
-          var legacyTheme = localStorage.getItem('${LEGACY_THEME_KEY}');
+        // Fallback to legacy theme key (same priority order)
+        if (theme === 'dark') {
+          var legacyTheme = readCookie('${LEGACY_THEME_KEY}');
+          if (!legacyTheme && typeof sessionStorage !== 'undefined') {
+            legacyTheme = sessionStorage.getItem('${LEGACY_THEME_KEY}');
+          }
+          if (!legacyTheme && typeof localStorage !== 'undefined') {
+            legacyTheme = localStorage.getItem('${LEGACY_THEME_KEY}');
+          }
           if (legacyTheme === 'dark' || legacyTheme === 'light') {
             theme = legacyTheme;
           }

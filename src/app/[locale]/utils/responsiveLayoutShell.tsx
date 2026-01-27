@@ -143,9 +143,7 @@ function BaseResponsiveLayoutShell({
                 onClick={toggleTheme}
                 className={tertiaryStyles.tertiaryButton}
                 aria-label='Toggle theme'>
-                <span className={styles.emojiIcon} data-theme={currentTheme}>
-                  {currentTheme === Theme.Dark ? '🌙' : '☀️'}
-                </span>
+                <span className={styles.emojiIcon} />
               </button>
             </div>
           </div>
@@ -170,9 +168,7 @@ function BaseResponsiveLayoutShell({
               onSelect={handleToolSelect}
               trigger={
                 <>
-                  <span className={styles.toolsEmoji} data-theme={currentTheme}>
-                    🛠️
-                  </span>
+                  <span className={styles.toolsEmoji} />
                   <span className='hidden lg:inline text-sm'>Tools</span>
                 </>
               }

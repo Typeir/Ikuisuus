@@ -44,9 +44,11 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body suppressHydrationWarning>
-        {/* Theme init script - runs synchronously before React hydration */}
+      {/* Theme init script - runs synchronously before React hydration */}
+      <head>
         <script dangerouslySetInnerHTML={{ __html: getCombinedInitScript() }} />
+      </head>
+      <body suppressHydrationWarning>
         <ClientProviders
           locale={locale}
           tree={tree}

@@ -3,7 +3,9 @@
   filter: drop-shadow(1px 2px 2px var(--color-text));
 
   rect {
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transition:
+      transform 0.3s ease-in-out,
+      opacity 0.3s ease-in-out;
     transform-origin: center;
   }
 
@@ -67,30 +69,60 @@ h1.title {
 .emojiIcon,
 .toolsEmoji {
   display: inline-block;
-  font-size: 1.25rem;
   user-select: none;
-  
-  &[data-theme="dark"] {
-    filter: saturate(0.05) contrast(0.3) brightness(2.5);
-  }
-  
-  &[data-theme="light"] {
-    filter: saturate(0.05) contrast(0.3) brightness(0);
-  }
+  font-size: 1.25rem;
 }
 
 .emojiIcon {
   font-size: 1rem;
-  
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '☀️';
+  }
+
   @media (min-width: 1024px) {
     font-size: 1.25rem;
   }
 }
 
+html[data-theme='dark'] .emojiIcon {
+  filter: saturate(0.05) contrast(0.3) brightness(2.5);
+
+  &::before {
+    content: '🌙';
+  }
+}
+
+html[data-theme='light'] .emojiIcon {
+  filter: saturate(0.05) contrast(0.3) brightness(0);
+}
+
 .toolsEmoji {
   font-size: 1rem;
-  
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '🛠️';
+  }
+
   @media (min-width: 1024px) {
     font-size: 1.125rem;
   }
+}
+
+html[data-theme='dark'] .toolsEmoji {
+  filter: saturate(0.05) contrast(0.3) brightness(2.5);
+}
+
+html[data-theme='light'] .toolsEmoji {
+  filter: saturate(0.05) contrast(0.3) brightness(0);
 }
