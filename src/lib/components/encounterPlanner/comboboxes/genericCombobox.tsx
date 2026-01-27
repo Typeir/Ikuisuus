@@ -5,12 +5,16 @@
  * Implements arrow key selection, Enter to select, Escape to close, click-outside-to-close,
  * viewport-aware positioning with scroll tracking, and full screen reader accessibility.
  *
+ * Uses React Portal to render dropdown to document.body, escaping any ancestor
+ * overflow clipping from scrollable containers, modals, or other stacking contexts.
+ *
  * @module genericCombobox
- * @version 2.0.0
+ * @version 2.1.0
  * @author Typeir
  * @since 1.0.0
  *
  * @requires react Client-side state, effects, and refs
+ * @requires react-dom Portal rendering for dropdown
  * @requires ./combobox.module.scss Shared combobox styles
  *
  * @example
@@ -31,6 +35,7 @@
 'use client';
 
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './combobox.module.scss';
 
 const OFFSET_Y = 4;
@@ -41,14 +46,14 @@ const VIEWPORT_MARGIN = 8;
 /**
  * Custom hook for imperative dropdown positioning with rAF batching.
  * Directly manipulates DOM via transform for minimal layout work and zero React rerender lag.
- * 
+ *
  * @param {React.RefObject<HTMLInputElement>} inputRef - Input element reference
  * @param {React.RefObject<HTMLDivElement>} dropdownRef - Dropdown element reference
  * @returns {Object} Position update functions
  */
 const useRafPositioner = (
   inputRef: React.RefObject<HTMLInputElement>,
-  dropdownRef: React.RefObject<HTMLDivElement>
+  dropdownRef: React.RefObject<HTMLDivElement>,
 ) => {
   const rafIdRef = useRef<number | null>(null);
 
@@ -61,7 +66,6 @@ const useRafPositioner = (
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const width = Math.max(rect.width, DROPDOWN_MIN_WIDTH);
-
 
     let top = rect.bottom + OFFSET_Y;
     let left = rect.left;
@@ -164,17 +168,22 @@ export function GenericCombobox<T extends ComboboxItem>({
 }: GenericComboboxProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
-  const { updatePositionNow, scheduleUpdate } = useRafPositioner(inputRef, dropdownRef);
 
-  const defaultFilter = useCallback(
-    (item: T, query: string) => {
-      return item.searchableText.toLowerCase().includes(query.toLowerCase());
-    },
-    []
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const { updatePositionNow, scheduleUpdate } = useRafPositioner(
+    inputRef,
+    dropdownRef,
   );
+
+  const defaultFilter = useCallback((item: T, query: string) => {
+    return item.searchableText.toLowerCase().includes(query.toLowerCase());
+  }, []);
 
   const filterFn = filterItem || defaultFilter;
 
@@ -209,14 +218,18 @@ export function GenericCombobox<T extends ComboboxItem>({
 
     const scrollableAncestors: (Element | Window)[] = [];
     let element: HTMLElement | null = inputRef.current.parentElement;
-    
+
     while (element) {
-      const { overflow, overflowY, overflowX } = window.getComputedStyle(element);
-      const isScrollable = 
-        overflow === 'auto' || overflow === 'scroll' ||
-        overflowY === 'auto' || overflowY === 'scroll' ||
-        overflowX === 'auto' || overflowX === 'scroll';
-      
+      const { overflow, overflowY, overflowX } =
+        window.getComputedStyle(element);
+      const isScrollable =
+        overflow === 'auto' ||
+        overflow === 'scroll' ||
+        overflowY === 'auto' ||
+        overflowY === 'scroll' ||
+        overflowX === 'auto' ||
+        overflowX === 'scroll';
+
       if (isScrollable) {
         scrollableAncestors.push(element);
       }
@@ -245,7 +258,7 @@ export function GenericCombobox<T extends ComboboxItem>({
       setIsOpen(false);
       setSelectedIndex(0);
     },
-    [onSelect, onSearchChange]
+    [onSelect, onSearchChange],
   );
 
   const handleKeyDown = useCallback(
@@ -262,7 +275,7 @@ export function GenericCombobox<T extends ComboboxItem>({
         case 'ArrowDown':
           e.preventDefault();
           setSelectedIndex((prev) =>
-            prev < filteredItems.length - 1 ? prev + 1 : prev
+            prev < filteredItems.length - 1 ? prev + 1 : prev,
           );
           break;
         case 'ArrowUp':
@@ -280,25 +293,26 @@ export function GenericCombobox<T extends ComboboxItem>({
           break;
       }
     },
-    [isOpen, filteredItems, selectedIndex, handleSelect]
+    [isOpen, filteredItems, selectedIndex, handleSelect],
   );
 
   const listboxId = `combobox-listbox-${useRef(Math.random().toString(36).slice(2, 9)).current}`;
-  const activeDescendantId = isOpen && filteredItems[selectedIndex]
-    ? `${listboxId}-option-${selectedIndex}`
-    : undefined;
+  const activeDescendantId =
+    isOpen && filteredItems[selectedIndex]
+      ? `${listboxId}-option-${selectedIndex}`
+      : undefined;
 
   return (
     <div className={styles.combobox}>
       <input
         ref={inputRef}
-        type="text"
-        role="combobox"
+        type='text'
+        role='combobox'
         aria-expanded={isOpen}
         aria-controls={listboxId}
         aria-activedescendant={activeDescendantId}
-        aria-autocomplete="list"
-        aria-haspopup="listbox"
+        aria-autocomplete='list'
+        aria-haspopup='listbox'
         className={styles.input}
         value={searchQuery}
         onChange={(e) => {
@@ -312,40 +326,44 @@ export function GenericCombobox<T extends ComboboxItem>({
         disabled={isLoading}
       />
 
-      {isOpen && (
-        <div 
-          ref={dropdownRef}
-          id={listboxId}
-          role="listbox"
-          aria-label={placeholder}
-          className={styles.dropdown}
-          style={{
-            transform: 'translate3d(0, 0, 0)',
-            willChange: 'transform',
-          }}
-        >
-          {filteredItems.length === 0 ? (
-            <div className={styles.noResults} role="status">{noResultsMessage}</div>
-          ) : (
-            <ul className={styles.list}>
-              {filteredItems.map((item, index) => (
-                <li
-                  key={item.id}
-                  id={`${listboxId}-option-${index}`}
-                  role="option"
-                  aria-selected={index === selectedIndex}
-                  className={`${styles.listItem} ${
-                    index === selectedIndex ? styles.selected : ''
-                  }`}
-                  onClick={() => handleSelect(item)}
-                  onMouseEnter={() => setSelectedIndex(index)}>
-                  {renderItem(item, index === selectedIndex)}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+      {isOpen &&
+        isMounted &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            id={listboxId}
+            role='listbox'
+            aria-label={placeholder}
+            className={styles.dropdown}
+            style={{
+              transform: 'translate3d(0, 0, 0)',
+              willChange: 'transform',
+            }}>
+            {filteredItems.length === 0 ? (
+              <div className={styles.noResults} role='status'>
+                {noResultsMessage}
+              </div>
+            ) : (
+              <ul className={styles.list}>
+                {filteredItems.map((item, index) => (
+                  <li
+                    key={item.id}
+                    id={`${listboxId}-option-${index}`}
+                    role='option'
+                    aria-selected={index === selectedIndex}
+                    className={`${styles.listItem} ${
+                      index === selectedIndex ? styles.selected : ''
+                    }`}
+                    onClick={() => handleSelect(item)}
+                    onMouseEnter={() => setSelectedIndex(index)}>
+                    {renderItem(item, index === selectedIndex)}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
