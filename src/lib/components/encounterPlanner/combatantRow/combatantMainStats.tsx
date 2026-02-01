@@ -26,12 +26,12 @@
 'use client';
 
 import type { CreatureStats } from '@/lib/types/encounterPlanner';
-import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
+import { rollInitiative } from '@/lib/utils/encounterStorage';
 import { useTranslations } from 'next-intl';
 import { useCallback, useRef, useState } from 'react';
-import { useCombatant } from './utils/context/combatantContext';
-import { getPhaseMarker } from './utils';
 import styles from './combatantRow.module.scss';
+import { getPhaseMarker } from './utils';
+import { useCombatant } from './utils/context/combatantContext';
 
 /**
  * Props for CombatantMainStats component.
@@ -104,7 +104,8 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
   showSlain = true,
   locked = [],
 }) => {
-  const { combatant, onUpdate, updateField, updateStats, disableLocking } = useCombatant();
+  const { combatant, onUpdate, updateField, updateStats, disableLocking } =
+    useCombatant();
   const {
     hpCurrent,
     hpMax,
@@ -113,12 +114,15 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
     ac,
     stats,
     initiativeValue,
+    initiativeBonus,
     slain = false,
   } = combatant;
 
   const t = useTranslations('encounterPlanner');
 
-  const isStatsLocked = disableLocking ? false : (locked ?? []).includes('stats');
+  const isStatsLocked = disableLocking
+    ? false
+    : (locked ?? []).includes('stats');
 
   const effectiveHpMax = hpMaxOverride !== null ? hpMaxOverride : hpMax;
   const phaseMarker = getPhaseMarker(hpCurrent, effectiveHpMax);
@@ -126,12 +130,14 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
   const [editingHpMax, setEditingHpMax] = useState<string | null>(null);
   const [editingAc, setEditingAc] = useState<string | null>(null);
   const [editingInit, setEditingInit] = useState<string | null>(null);
-  const [editingStats, setEditingStats] = useState<Record<string, string | null>>({});
+  const [editingStats, setEditingStats] = useState<
+    Record<string, string | null>
+  >({});
 
   const hpMaxInputRef = useRef<HTMLInputElement>(null);
   const acInputRef = useRef<HTMLInputElement>(null);
   const initInputRef = useRef<HTMLInputElement>(null);
-  
+
   const cancelPendingRef = useRef(false);
 
   const handleToggleSlain = useCallback(() => {
@@ -147,12 +153,9 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
    * Handles HP Max edit. When hpMaxOverride is in use, edits that field;
    * otherwise edits hpMax directly.
    */
-  const handleHpMaxChange = useCallback(
-    (value: string) => {
-      setEditingHpMax(value);
-    },
-    []
-  );
+  const handleHpMaxChange = useCallback((value: string) => {
+    setEditingHpMax(value);
+  }, []);
 
   const commitHpMax = useCallback(() => {
     if (cancelPendingRef.current) {
@@ -198,6 +201,12 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
     setEditingInit(value);
   }, []);
 
+  const handleRollInitiative = useCallback(() => {
+    const rolled = rollInitiative(initiativeBonus);
+    updateField('initiativeValue', rolled);
+    setEditingInit(null);
+  }, [initiativeBonus, updateField]);
+
   const commitInit = useCallback(() => {
     if (cancelPendingRef.current) {
       cancelPendingRef.current = false;
@@ -231,7 +240,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
       updateStats(newStats);
       setEditingStats((prev) => ({ ...prev, [stat]: null }));
     },
-    [editingStats, stats, updateStats]
+    [editingStats, stats, updateStats],
   );
 
   const cancelStat = useCallback((stat: string) => {
@@ -247,7 +256,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
     (
       e: React.KeyboardEvent<HTMLInputElement>,
       commitFn: () => void,
-      cancelFn: () => void
+      cancelFn: () => void,
     ) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -259,7 +268,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
         e.currentTarget.blur();
       }
     },
-    []
+    [],
   );
 
   return (
@@ -272,7 +281,8 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
             className={styles.numberInput}
             value={hpCurrent}
             onChange={(e) => {
-              const parsed = clampNonNegative(parseIntSafe(e.target.value, false)) ?? 0;
+              const parsed =
+                clampNonNegative(parseIntSafe(e.target.value, false)) ?? 0;
               updateField('hpCurrent', parsed);
             }}
             placeholder={t('current')}
@@ -342,57 +352,74 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
       </div>
 
       <div className={styles.initiativeSection}>
-        <label className={styles.label}>{t('initiative')}</label>
-        <input
-          ref={initInputRef}
-          type='text'
-          className={`${styles.numberInput} ${isStatsLocked ? styles.lockedInput : ''}`}
-          value={
-            editingInit !== null
-              ? editingInit
-              : initiativeValue !== null
-                ? String(initiativeValue)
-                : ''
-          }
-          onChange={(e) => handleInitChange(e.target.value)}
-          onFocus={() => setEditingInit(initiativeValue !== null ? String(initiativeValue) : '')}
-          onBlur={commitInit}
-          onKeyDown={(e) => handleKeyDown(e, commitInit, cancelInit)}
+        <div className={styles.initiativeField}>
+          <label className={styles.label}>{t('initiative')}</label>
+          <input
+            ref={initInputRef}
+            type='text'
+            className={`${styles.numberInput} ${isStatsLocked ? styles.lockedInput : ''}`}
+            value={
+              editingInit !== null
+                ? editingInit
+                : initiativeValue !== null
+                  ? String(initiativeValue)
+                  : ''
+            }
+            onChange={(e) => handleInitChange(e.target.value)}
+            onFocus={() =>
+              setEditingInit(
+                initiativeValue !== null ? String(initiativeValue) : '',
+              )
+            }
+            onBlur={commitInit}
+            onKeyDown={(e) => handleKeyDown(e, commitInit, cancelInit)}
+            disabled={isStatsLocked}
+            placeholder='—'
+            aria-label={t('initiative')}
+          />
+        </div>
+        <button
+          onClick={handleRollInitiative}
           disabled={isStatsLocked}
-          placeholder='—'
-          aria-label={t('initiative')}
-        />
+          className={styles.rollInitiativeButton}
+          title={t('rollInitiative')}
+          aria-label={t('rollInitiative')}>
+          🎲
+        </button>
       </div>
 
       <div className={styles.statsSection}>
-        {(Object.entries(stats) as [keyof CreatureStats, number][]).map(([stat, value]) => {
-          const isEditing = editingStats[stat] !== null && editingStats[stat] !== undefined;
-          const displayValue = isEditing ? editingStats[stat] : String(value);
+        {(Object.entries(stats) as [keyof CreatureStats, number][]).map(
+          ([stat, value]) => {
+            const isEditing =
+              editingStats[stat] !== null && editingStats[stat] !== undefined;
+            const displayValue = isEditing ? editingStats[stat] : String(value);
 
-          return (
-            <div key={stat} className={styles.statDisplay}>
-              <div className={styles.statLabel}>{t(`stats.${stat}`)}</div>
-              <input
-                type='text'
-                className={`${styles.statInput} ${isStatsLocked ? styles.lockedInput : ''}`}
-                value={displayValue ?? ''}
-                onChange={(e) => handleStatChange(stat, e.target.value)}
-                onFocus={() => handleStatChange(stat, String(value))}
-                onBlur={() => commitStat(stat)}
-                onKeyDown={(e) =>
-                  handleKeyDown(
-                    e,
-                    () => commitStat(stat),
-                    () => cancelStat(stat)
-                  )
-                }
-                disabled={isStatsLocked}
-                aria-label={t(`stats.${stat}`)}
-              />
-              <div className={styles.statMod}>{getModifierString(value)}</div>
-            </div>
-          );
-        })}
+            return (
+              <div key={stat} className={styles.statDisplay}>
+                <div className={styles.statLabel}>{t(`stats.${stat}`)}</div>
+                <input
+                  type='text'
+                  className={`${styles.statInput} ${isStatsLocked ? styles.lockedInput : ''}`}
+                  value={displayValue ?? ''}
+                  onChange={(e) => handleStatChange(stat, e.target.value)}
+                  onFocus={() => handleStatChange(stat, String(value))}
+                  onBlur={() => commitStat(stat)}
+                  onKeyDown={(e) =>
+                    handleKeyDown(
+                      e,
+                      () => commitStat(stat),
+                      () => cancelStat(stat),
+                    )
+                  }
+                  disabled={isStatsLocked}
+                  aria-label={t(`stats.${stat}`)}
+                />
+                <div className={styles.statMod}>{getModifierString(value)}</div>
+              </div>
+            );
+          },
+        )}
       </div>
     </div>
   );

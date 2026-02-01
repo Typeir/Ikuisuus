@@ -24,14 +24,16 @@
 
 'use client';
 
-import type { HeroicAwakeningState, CombatantMechanics } from '@/lib/types/inProgressCombat';
-import { computeAwakeningClasses, AwakeningClassResult } from '@/lib/utils/heroicAwakeningStyles';
-import { Tooltip } from '@/lib/components/ui';
 import Icon from '@/lib/components/icon/icon';
+import { Tooltip } from '@/lib/components/ui';
+import {
+  AwakeningClassResult,
+  computeAwakeningClasses,
+} from '@/lib/utils/heroicAwakeningStyles';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
-import { useCombatant } from './utils/context/combatantContext';
 import styles from './combatantRow.module.scss';
+import { useCombatant } from './utils/context/combatantContext';
 
 /**
  * Props for CombatantNameSection component.
@@ -72,12 +74,11 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
 
   const t = useTranslations('encounterPlanner');
 
-
   const isStatsLocked = (locked ?? []).includes('stats');
 
   const awakeningResult: AwakeningClassResult = useMemo(
     () => computeAwakeningClasses(heroicAwakening),
-    [heroicAwakening]
+    [heroicAwakening],
   );
 
   const renderAwakeningBadge = (): React.ReactNode => {
@@ -95,8 +96,7 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
         {awakeningResult.tier && (
           <span
             className={`${styles.awakenedBadge} ${tierBadgeClass}`}
-            data-testid={`${awakeningResult.tier}-badge`}
-          >
+            data-testid={`${awakeningResult.tier}-badge`}>
             {t(`heroic.${awakeningResult.tier}`)}
           </span>
         )}
@@ -107,45 +107,51 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
   return (
     <div className={styles.nameSection}>
       {onToggleLock && !disableLocking && (
-        <Tooltip content={isStatsLocked ? t('unlockStats') : t('lockStats')} placement='top'>
+        <Tooltip
+          content={isStatsLocked ? t('unlockStats') : t('lockStats')}
+          placement='top'>
           <button
             onClick={() => onToggleLock('stats')}
             className={styles.lockToggle}
             aria-label={isStatsLocked ? t('unlockStats') : t('lockStats')}
-            data-testid='lock-toggle'
-          >
-            <Icon type={isStatsLocked ? 'lock' : 'unlock'} className={styles.lockIcon} />
+            data-testid='lock-toggle'>
+            <Icon
+              type={isStatsLocked ? 'lock' : 'unlock'}
+              className={styles.lockIcon}
+            />
           </button>
         </Tooltip>
       )}
       <span className={styles.name}>{name}</span>
-      {crText && <span className={styles.crBadge}>{crText}</span>}
-      {renderAwakeningBadge()}
-      {mechanics?.stratagem && (
-        <div className={styles.stratagemBadgeWrapper}>
-          <Tooltip content={t('stratagemTooltip')} placement='top'>
-            <span className={styles.stratagemBadge} data-testid='stratagem-badge'>
-              {t('stratagem')}
-            </span>
-          </Tooltip>
-        </div>
-      )}
-      {sourceHref && (
-        <a
-          href={sourceHref}
-          target='_blank'
-          rel='noopener noreferrer'
-          className={styles.sourceLink}
-        >
-          Wiki
-        </a>
-      )}
+      <span className={styles.nameBadgesWrapper}>
+        {crText && <span className={styles.crBadge}>{crText}</span>}
+        {renderAwakeningBadge()}
+        {mechanics?.stratagem && (
+          <div className={styles.stratagemBadgeWrapper}>
+            <Tooltip content={t('stratagemTooltip')} placement='top'>
+              <span
+                className={styles.stratagemBadge}
+                data-testid='stratagem-badge'>
+                {t('stratagem')}
+              </span>
+            </Tooltip>
+          </div>
+        )}
+        {sourceHref && (
+          <a
+            href={sourceHref}
+            target='_blank'
+            rel='noopener noreferrer'
+            className={styles.sourceLink}>
+            Wiki
+          </a>
+        )}
+      </span>
       {onRemoveSessionOnly && (
         <button
           onClick={onRemoveSessionOnly}
           className={`${styles.button} ${styles.buttonDanger}`}
-          title={t('removeCombatant')}
-        >
+          title={t('removeCombatant')}>
           ✕
         </button>
       )}

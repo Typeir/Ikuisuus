@@ -8,7 +8,9 @@
   background: var(--color-surface);
   border-radius: 6px;
   border: 1px solid var(--color-secondary);
-  transition: opacity 0.2s ease, filter 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    filter 0.2s ease;
 }
 
 .slain {
@@ -36,17 +38,6 @@
     font-size: 1.1rem;
     color: var(--color-text);
     flex: 1;
-  }
-
-  .crBadge {
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--color-accent);
-    border-radius: 4px;
-    background: var(--color-transparent);
-    color: var(--color-accent);
-    font-size: 0.75rem;
-    font-weight: 600;
-    white-space: nowrap;
   }
 
   .sourceLink {
@@ -115,12 +106,46 @@
 }
 
 .acSection,
-.initiativeSection,
+.initiativeField,
 .slainSection {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   align-items: center;
+}
+
+.initiativeSection {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  align-items: flex-end;
+  vertical-align: bottom;
+
+  .rollInitiativeButton {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 4px;
+    background: var(--color-transparent);
+    color: var(--color-accent);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+
+    &:hover:not(:disabled) {
+      background: var(--color-bg-secondary);
+      transform: scale(1.1);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 }
 
 .hpSection {
@@ -205,19 +230,25 @@
   font-weight: 600;
   white-space: nowrap;
   pointer-events: none;
-  
+
   &.Wounded {
     background: var(--color-phase-wounded);
     color: #000;
     border: 1px solid var(--color-phase-wounded-border);
   }
-  
+
   &.Bloodied {
     background: var(--color-phase-bloodied);
     color: #fff;
     border: 1px solid var(--color-phase-bloodied-border);
   }
-  
+
+  &.Dying {
+    background: var(--color-phase-dying);
+    color: #fff;
+    border: 1px solid var(--color-phase-dying-border);
+  }
+
   &.Doomed {
     background: var(--color-phase-doomed);
     color: #fff;
@@ -229,7 +260,7 @@
     color: #fff;
     border: 1px solid #fff;
   }
-}
+} // Moved to .nameBadgesWrapper
 
 .acValue {
   font-size: 1rem;
@@ -357,49 +388,50 @@
   padding: 0;
 }
 
-.actions {
+.button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+  min-width: 32px;
+  height: 32px;
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 
-  .button {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-secondary);
-    border-radius: 4px;
+  &:hover {
+    background: var(--color-secondary);
+    color: var(--color-surface);
+  }
+
+  &.buttonSecondary {
     background: var(--color-bg);
-    color: var(--color-text);
-    cursor: pointer;
-    font-size: 0.75rem;
-    line-height: 1;
-    min-width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
 
     &:hover {
       background: var(--color-secondary);
-      color: var(--color-surface);
-    }
-
-    &.buttonSecondary {
-      background: var(--color-bg);
-
-      &:hover {
-        background: var(--color-secondary);
-      }
-    }
-
-    &.buttonDanger {
-      border-color: var(--color-danger);
-      color: var(--color-danger);
-
-      &:hover {
-        background: var(--color-danger);
-        color: var(--color-surface);
-      }
     }
   }
+
+  &.buttonDanger {
+    border-radius: 4px;
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+
+    &:hover {
+      background: var(--color-danger);
+      color: var(--color-surface);
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .heroicInfo {
@@ -678,7 +710,7 @@
       @media screen and (max-width: 500px) {
         margin: 0.5rem;
       }
-      
+
       &:focus {
         outline: none;
         border-color: var(--color-accent);
@@ -708,19 +740,63 @@
   }
 }
 
-// Stratagem Badge
-.stratagemBadge {
-  position: relative;
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--color-stratagem);
-  border-radius: 3px;
-  background: rgb(var(--color-stratagem-a15));
-  color: var(--color-stratagem);
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: help;
+.nameBadgesWrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .crBadge {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 4px;
+    background: var(--color-transparent);
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .stratagemBadge {
+    position: relative;
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--color-stratagem);
+    border-radius: 3px;
+    background: rgb(var(--color-stratagem-a15));
+    color: var(--color-stratagem);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: help;
+  }
+
+  .awakenedBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--ha-badge-bg);
+    color: var(--ha-badge-text);
+    border: 1px solid var(--ha-badge-border);
+    white-space: nowrap;
+  }
+
+  .awakenedBadge--legendary {
+    background: var(--ha-legendary-shimmer-1);
+    color: var(--ha-legendary-border);
+    border-color: var(--ha-legendary-border);
+  }
+
+  .awakenedBadge--mythic {
+    background: var(--ha-mythic-shimmer-1);
+    color: var(--ha-mythic-border);
+    border-color: var(--ha-mythic-border);
+  }
 }
 
 // Mechanics Section (Legendary Deeds and Resist)
@@ -903,55 +979,57 @@
 .awakened {
   position: relative;
   border-width: 2px;
-  transition: background 0.3s ease, border-color 0.3s ease;
-  
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease;
+
   /* Override all child elements to use contextual tokens */
   & .label,
   & .statLabel,
   & .initiativeMod {
     color: var(--ha-ctx-text-secondary) !important;
   }
-  
+
   & .name {
     color: var(--ha-ctx-text) !important;
   }
-  
+
   & .index {
     color: var(--ha-ctx-text-secondary) !important;
   }
-  
+
   & .numberInput,
   & .initiativeInput,
   & .addConditionInput {
     background: var(--ha-ctx-input-bg) !important;
     border-color: var(--ha-ctx-input-border) !important;
     color: var(--ha-ctx-text) !important;
-    
+
     &:focus {
       border-color: var(--ha-ctx-accent) !important;
       box-shadow: 0 0 0 3px var(--ha-ctx-glow) !important;
     }
   }
-  
+
   & .hpMax {
     color: var(--ha-ctx-text) !important;
   }
-  
+
   & .acValue,
   & .initiativeValue {
     color: var(--ha-ctx-accent) !important;
   }
-  
+
   & .statValue {
     background: var(--ha-ctx-input-bg) !important;
     border-color: var(--ha-ctx-input-border) !important;
     color: var(--ha-ctx-text) !important;
   }
-  
+
   & .statMod {
     color: var(--ha-ctx-text-secondary) !important;
   }
-  
+
   & .slainCheckbox {
     width: 20px;
     height: 20px;
@@ -959,75 +1037,75 @@
     margin: 0;
     padding: 0;
   }
-  
+
   & .crBadge {
     border-color: var(--ha-ctx-accent) !important;
     color: var(--ha-ctx-accent) !important;
     background: var(--ha-ctx-button-bg) !important;
   }
-  
+
   & .sourceLink {
     border-color: var(--ha-ctx-input-border) !important;
     color: var(--ha-ctx-text-secondary) !important;
     background: var(--ha-ctx-button-bg) !important;
-    
+
     &:hover {
       background: var(--ha-ctx-text-secondary) !important;
       color: var(--ha-ctx-bg) !important;
     }
   }
-  
+
   /* Actions buttons */
   & .actions .button {
     border-color: var(--ha-ctx-input-border) !important;
     background: var(--ha-ctx-button-bg) !important;
     color: var(--ha-ctx-text) !important;
-    
+
     &:hover {
       background: var(--ha-ctx-text-secondary) !important;
       color: var(--ha-ctx-bg) !important;
     }
-    
+
     &.buttonDanger {
       border-color: var(--color-danger) !important;
       color: var(--color-danger) !important;
-      
+
       &:hover {
         background: var(--color-danger) !important;
         color: var(--ha-ctx-bg) !important;
       }
     }
   }
-  
+
   /* Heroic Info Section */
   & .heroicInfo {
     background: var(--ha-ctx-bg-secondary) !important;
     border-left-color: var(--ha-ctx-accent) !important;
-    
+
     .heroicTier {
       color: var(--ha-ctx-accent) !important;
     }
-    
+
     .fateDie {
       color: var(--ha-ctx-text-secondary) !important;
     }
-    
+
     .heroicAffix {
       background: var(--ha-ctx-button-bg) !important;
       border-color: var(--ha-ctx-accent) !important;
       color: var(--ha-ctx-accent) !important;
-      
+
       &:hover {
         background: var(--ha-ctx-accent) !important;
         color: var(--ha-ctx-bg) !important;
       }
     }
-    
+
     .heroicBonuses {
       color: var(--ha-ctx-text-secondary) !important;
     }
   }
-  
+
   /* Details Section */
   & .detailsSection {
     border-top-color: var(--ha-ctx-divider) !important;
@@ -1037,7 +1115,7 @@
   & .chips {
     background: transparent !important;
   }
-  
+
   /* Tag elements */
   & .buffTag,
   & .itemTag,
@@ -1047,17 +1125,17 @@
     border-color: var(--ha-ctx-input-border) !important;
     color: var(--ha-ctx-text) !important;
   }
-  
+
   /* Conditions Section */
   & .conditionsSection {
     .forceAwakeningButtons {
       border-bottom-color: var(--ha-ctx-divider) !important;
-      
+
       .button {
         border-color: var(--ha-ctx-input-border) !important;
         background: var(--ha-ctx-button-bg) !important;
         color: var(--ha-ctx-text) !important;
-        
+
         &:hover {
           background: var(--ha-ctx-accent) !important;
           border-color: var(--ha-ctx-accent) !important;
@@ -1065,88 +1143,88 @@
         }
       }
     }
-    
+
     .conditionItem {
       border-bottom-color: var(--ha-ctx-divider) !important;
-      
+
       .removeCondition {
         color: var(--ha-ctx-text-secondary) !important;
-        
+
         &:hover {
           color: var(--ha-ctx-text-emphasis) !important;
         }
       }
     }
-    
+
     .addConditionButton {
       border-color: var(--ha-ctx-input-border) !important;
       background: var(--ha-ctx-button-bg) !important;
       color: var(--ha-ctx-text-secondary) !important;
-      
+
       &:hover {
         background: var(--ha-ctx-text-secondary) !important;
         color: var(--ha-ctx-bg) !important;
       }
     }
   }
-  
+
   /* Mechanics Section */
   & .mechanicsSection {
     background: var(--ha-ctx-bg-secondary) !important;
     border-color: var(--ha-ctx-input-border) !important;
   }
-  
+
   & .deedPip {
     border-color: var(--ha-ctx-accent) !important;
     color: var(--ha-ctx-accent) !important;
     background: var(--color-transparent) !important;
-    
+
     &:hover {
       background: var(--ha-ctx-glow) !important;
     }
-    
+
     &.deedUsed {
       background: var(--ha-ctx-accent) !important;
       color: var(--ha-ctx-bg) !important;
     }
   }
-  
+
   & .resistCount {
     color: var(--ha-ctx-text-emphasis) !important;
   }
-  
+
   & .resistButton {
     border-color: var(--ha-ctx-text-emphasis) !important;
     color: var(--ha-ctx-text-emphasis) !important;
-    
+
     &:hover:not(.disabled) {
       background: var(--ha-ctx-text-emphasis) !important;
       color: var(--ha-ctx-bg) !important;
     }
   }
-  
+
   & .resetButton {
     border-color: var(--ha-ctx-input-border) !important;
     color: var(--ha-ctx-text-secondary) !important;
-    
+
     &:hover {
       background: var(--ha-ctx-text-secondary) !important;
       color: var(--ha-ctx-bg) !important;
     }
   }
-  
+
   /* Details Toggle */
   & .detailsToggle {
     border-color: var(--ha-ctx-input-border) !important;
     background: var(--ha-ctx-button-bg) !important;
     color: var(--ha-ctx-text-secondary) !important;
-    
+
     &:hover {
       background: var(--ha-ctx-text-secondary) !important;
       color: var(--ha-ctx-bg) !important;
     }
   }
-  
+
   /* HpInputs span separator */
   & .hpInputs span {
     color: var(--ha-ctx-text-secondary) !important;
@@ -1159,9 +1237,13 @@
 ============================================ */
 
 .awakened--bloodthirsty {
-  background: linear-gradient(135deg, var(--ha-bloodthirsty-bg-1), var(--ha-bloodthirsty-bg-2));
+  background: linear-gradient(
+    135deg,
+    var(--ha-bloodthirsty-bg-1),
+    var(--ha-bloodthirsty-bg-2)
+  );
   border-color: var(--ha-bloodthirsty-border);
-  
+
   --ha-ctx-bg: var(--ha-bloodthirsty-bg-1);
   --ha-ctx-bg-secondary: var(--ha-bloodthirsty-bg-2);
   --ha-ctx-border: var(--ha-bloodthirsty-border);
@@ -1180,9 +1262,13 @@
 }
 
 .awakened--championed {
-  background: linear-gradient(135deg, var(--ha-championed-bg-1), var(--ha-championed-bg-2));
+  background: linear-gradient(
+    135deg,
+    var(--ha-championed-bg-1),
+    var(--ha-championed-bg-2)
+  );
   border-color: var(--ha-championed-border);
-  
+
   --ha-ctx-bg: var(--ha-championed-bg-1);
   --ha-ctx-bg-secondary: var(--ha-championed-bg-2);
   --ha-ctx-border: var(--ha-championed-border);
@@ -1201,9 +1287,13 @@
 }
 
 .awakened--crusading {
-  background: linear-gradient(135deg, var(--ha-crusading-bg-1), var(--ha-crusading-bg-2));
+  background: linear-gradient(
+    135deg,
+    var(--ha-crusading-bg-1),
+    var(--ha-crusading-bg-2)
+  );
   border-color: var(--ha-crusading-border);
-  
+
   --ha-ctx-bg: var(--ha-crusading-bg-1);
   --ha-ctx-bg-secondary: var(--ha-crusading-bg-2);
   --ha-ctx-border: var(--ha-crusading-border);
@@ -1222,9 +1312,13 @@
 }
 
 .awakened--flametongued {
-  background: linear-gradient(135deg, var(--ha-flametongued-bg-1), var(--ha-flametongued-bg-2));
+  background: linear-gradient(
+    135deg,
+    var(--ha-flametongued-bg-1),
+    var(--ha-flametongued-bg-2)
+  );
   border-color: var(--ha-flametongued-border);
-  
+
   --ha-ctx-bg: var(--ha-flametongued-bg-1);
   --ha-ctx-bg-secondary: var(--ha-flametongued-bg-2);
   --ha-ctx-border: var(--ha-flametongued-border);
@@ -1243,9 +1337,13 @@
 }
 
 .awakened--frostveined {
-  background: linear-gradient(135deg, var(--ha-frostveined-bg-1), var(--ha-frostveined-bg-2));
+  background: linear-gradient(
+    135deg,
+    var(--ha-frostveined-bg-1),
+    var(--ha-frostveined-bg-2)
+  );
   border-color: var(--ha-frostveined-border);
-  
+
   --ha-ctx-bg: var(--ha-frostveined-bg-1);
   --ha-ctx-bg-secondary: var(--ha-frostveined-bg-2);
   --ha-ctx-border: var(--ha-frostveined-border);
@@ -1264,9 +1362,13 @@
 }
 
 .awakened--psionic {
-  background: linear-gradient(135deg, var(--ha-psionic-bg-1), var(--ha-psionic-bg-2));
+  background: linear-gradient(
+    135deg,
+    var(--ha-psionic-bg-1),
+    var(--ha-psionic-bg-2)
+  );
   border-color: var(--ha-psionic-border);
-  
+
   --ha-ctx-bg: var(--ha-psionic-bg-1);
   --ha-ctx-bg-secondary: var(--ha-psionic-bg-2);
   --ha-ctx-border: var(--ha-psionic-border);
@@ -1285,9 +1387,13 @@
 }
 
 .awakened--rakish {
-  background: linear-gradient(135deg, var(--ha-rakish-bg-1), var(--ha-rakish-bg-2));
+  background: linear-gradient(
+    135deg,
+    var(--ha-rakish-bg-1),
+    var(--ha-rakish-bg-2)
+  );
   border-color: var(--ha-rakish-border);
-  
+
   --ha-ctx-bg: var(--ha-rakish-bg-1);
   --ha-ctx-bg-secondary: var(--ha-rakish-bg-2);
   --ha-ctx-border: var(--ha-rakish-border);
@@ -1306,9 +1412,13 @@
 }
 
 .awakened--stormbound {
-  background: linear-gradient(135deg, var(--ha-stormbound-bg-1), var(--ha-stormbound-bg-2));
+  background: linear-gradient(
+    135deg,
+    var(--ha-stormbound-bg-1),
+    var(--ha-stormbound-bg-2)
+  );
   border-color: var(--ha-stormbound-border);
-  
+
   --ha-ctx-bg: var(--ha-stormbound-bg-1);
   --ha-ctx-bg-secondary: var(--ha-stormbound-bg-2);
   --ha-ctx-border: var(--ha-stormbound-border);
@@ -1327,9 +1437,13 @@
 }
 
 .awakened--sulphurous {
-  background: linear-gradient(135deg, var(--ha-sulphurous-bg-1), var(--ha-sulphurous-bg-2));
+  background: linear-gradient(
+    135deg,
+    var(--ha-sulphurous-bg-1),
+    var(--ha-sulphurous-bg-2)
+  );
   border-color: var(--ha-sulphurous-border);
-  
+
   --ha-ctx-bg: var(--ha-sulphurous-bg-1);
   --ha-ctx-bg-secondary: var(--ha-sulphurous-bg-2);
   --ha-ctx-border: var(--ha-sulphurous-border);
@@ -1358,52 +1472,57 @@
     border-color: var(--ha-ctx-input-border) !important;
     background: var(--ha-ctx-input-bg) !important;
     color: var(--ha-ctx-text) !important;
-    
+
     &:focus {
       border-color: var(--ha-ctx-accent) !important;
     }
-    
+
     &::placeholder {
       color: var(--ha-ctx-text-secondary) !important;
       opacity: 0.6 !important;
     }
   }
-  
+
   /* All buttons within details section */
   button {
     border-color: var(--ha-ctx-button-border) !important;
     background: var(--ha-ctx-button-bg) !important;
     color: var(--ha-ctx-button-text) !important;
-    
+
     &:hover {
       filter: brightness(0.9) !important;
     }
   }
-  
+
   /* Text content: headings, titles, labels */
-  strong, b, .heading, [class*="Title"], [class*="Label"] {
+  strong,
+  b,
+  .heading,
+  [class*='Title'],
+  [class*='Label'] {
     color: var(--ha-ctx-text) !important;
   }
-  
+
   /* Specific to column titles (BUFFS, ITEMS, SPELLS, AFFIXES) */
-  [class*="ColumnTitle"] {
+  [class*='ColumnTitle'] {
     color: var(--ha-ctx-accent) !important;
     border-bottom-color: var(--ha-ctx-divider) !important;
   }
-  
+
   /* Chip/entry elements */
-  [class*="chip"] {
-    &:not([class*="chips"]) {
+  [class*='chip'] {
+    &:not([class*='chips']) {
       background: var(--ha-ctx-input-bg) !important;
     }
     border-color: var(--ha-ctx-input-border) !important;
     color: var(--ha-ctx-text) !important;
   }
-  
+
   /* Links (affix names) */
-  a, [class*="Link"] {
+  a,
+  [class*='Link'] {
     color: var(--ha-ctx-accent) !important;
-    
+
     &:hover {
       color: var(--ha-ctx-accent-hover) !important;
     }
@@ -1425,7 +1544,7 @@
   );
   border-color: var(--ha-legendary-border);
   animation: legendaryShimmer 4s ease infinite;
-  
+
   --ha-ctx-bg: var(--ha-legendary-shimmer-1);
   --ha-ctx-bg-secondary: var(--ha-legendary-shimmer-2);
   --ha-ctx-border: var(--ha-legendary-border);
@@ -1459,7 +1578,7 @@
   );
   border-color: var(--ha-mythic-border);
   animation: mythicShimmer 8s ease infinite;
-  
+
   --ha-ctx-bg: var(--ha-mythic-shimmer-1);
   --ha-ctx-bg-secondary: var(--ha-mythic-shimmer-2);
   --ha-ctx-border: var(--ha-mythic-border);
@@ -1532,7 +1651,7 @@
     --ha-ctx-glow: rgba(156, 64, 80, 0.15);
     --ha-ctx-text-emphasis: #9c4050;
   }
-  
+
   .awakened--championed {
     --ha-ctx-text: #2d3038;
     --ha-ctx-text-secondary: #585e70;
@@ -1545,7 +1664,7 @@
     --ha-ctx-glow: rgba(96, 104, 128, 0.15);
     --ha-ctx-text-emphasis: #606880;
   }
-  
+
   .awakened--crusading {
     --ha-ctx-text: #3d3826;
     --ha-ctx-text-secondary: #706840;
@@ -1558,7 +1677,7 @@
     --ha-ctx-glow: rgba(156, 136, 48, 0.15);
     --ha-ctx-text-emphasis: #9c8830;
   }
-  
+
   .awakened--flametongued {
     --ha-ctx-text: #3d2e26;
     --ha-ctx-text-secondary: #785848;
@@ -1573,7 +1692,7 @@
     --ha-ctx-glow: rgba(176, 112, 64, 0.15);
     --ha-ctx-text-emphasis: #b07040;
   }
-  
+
   .awakened--frostveined {
     --ha-ctx-text: #262d3d;
     --ha-ctx-text-secondary: #486078;
@@ -1588,7 +1707,7 @@
     --ha-ctx-glow: rgba(64, 136, 176, 0.15);
     --ha-ctx-text-emphasis: #4088b0;
   }
-  
+
   .awakened--psionic {
     --ha-ctx-text: #38263d;
     --ha-ctx-text-secondary: #684878;
@@ -1603,7 +1722,7 @@
     --ha-ctx-glow: rgba(144, 80, 168, 0.15);
     --ha-ctx-text-emphasis: #9050a8;
   }
-  
+
   .awakened--rakish {
     --ha-ctx-text: #333540;
     --ha-ctx-text-secondary: #606878;
@@ -1618,7 +1737,7 @@
     --ha-ctx-glow: rgba(112, 128, 160, 0.15);
     --ha-ctx-text-emphasis: #7080a0;
   }
-  
+
   .awakened--stormbound {
     --ha-ctx-text: #30263d;
     --ha-ctx-text-secondary: #584870;
@@ -1633,7 +1752,7 @@
     --ha-ctx-glow: rgba(120, 88, 160, 0.15);
     --ha-ctx-text-emphasis: #7858a0;
   }
-  
+
   .awakened--sulphurous {
     --ha-ctx-text: #2d3826;
     --ha-ctx-text-secondary: #506848;
@@ -1648,7 +1767,7 @@
     --ha-ctx-glow: rgba(96, 136, 56, 0.15);
     --ha-ctx-text-emphasis: #608838;
   }
-  
+
   .awakened--legendary {
     --ha-ctx-text: #3d3520;
     --ha-ctx-text-secondary: #806830;
@@ -1661,7 +1780,7 @@
     --ha-ctx-glow: rgba(184, 152, 32, 0.2);
     --ha-ctx-text-emphasis: #b89820;
   }
-  
+
   .awakened--mythic {
     --ha-ctx-text: #302838;
     --ha-ctx-text-secondary: #685080;
@@ -1676,31 +1795,4 @@
   }
 }
 
-/* Awakened tier badges */
-.awakenedBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: var(--ha-badge-bg);
-  color: var(--ha-badge-text);
-  border: 1px solid var(--ha-badge-border);
-  white-space: nowrap;
-}
-
-.awakenedBadge--legendary {
-  background: var(--ha-legendary-shimmer-1);
-  color: var(--ha-legendary-border);
-  border-color: var(--ha-legendary-border);
-}
-
-.awakenedBadge--mythic {
-  background: var(--ha-mythic-shimmer-1);
-  color: var(--ha-mythic-border);
-  border-color: var(--ha-mythic-border);
-}
-
+// Moved to .nameBadgesWrapper

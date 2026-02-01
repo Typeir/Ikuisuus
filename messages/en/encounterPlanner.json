@@ -41,6 +41,7 @@
   "proficiencyBonus": "Prof Bonus",
   "speed": "Speed",
   "initiative": "Initiative",
+  "rollInitiative": "Roll Initiative",
   "roll": "Roll",
   "clear": "Clear",
   "conditions": "Conditions",
