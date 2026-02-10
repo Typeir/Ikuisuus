@@ -10,6 +10,7 @@ package-lock.json
 /coverage
 /playwright-report
 /test-results
+vitest-report.json
 
 # next.js
 /.next/

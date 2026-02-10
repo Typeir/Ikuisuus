@@ -5,6 +5,7 @@ This guide walks you through setting up the CI/CD pipeline for automated testing
 ## 📋 What's Configured
 
 ### 1. Continuous Integration (`.github/workflows/ci.yml`)
+
 - Runs on every push/PR to `main` and `develop` branches
 - Executes pre-init scripts (asset compression, metadata generation)
 - Runs full test suite with coverage
@@ -13,11 +14,13 @@ This guide walks you through setting up the CI/CD pipeline for automated testing
 - Runs linter
 
 ### 2. Production Deployment (`.github/workflows/deploy.yml`)
+
 - Triggers on push to `main` or manual dispatch
 - Runs tests before deployment
 - Deploys to Vercel on success
 
 ### 3. Build Script Updates
+
 - **`npm run build`** - Now includes test execution (fails if tests fail)
 - **`npm run build:skip-tests`** - Skips tests (for CI where tests already ran)
 
@@ -53,14 +56,15 @@ Codecov provides coverage badges and detailed coverage reports.
 Only needed if using the deploy workflow.
 
 1. **Get Vercel credentials**:
+
    ```bash
    # Install Vercel CLI
    npm i -g vercel
-   
+
    # Login and link project
    vercel login
    vercel link
-   
+
    # Get required tokens
    vercel --prod
    ```
@@ -80,6 +84,7 @@ Replace `YOUR_USERNAME` in `README.md` with your actual GitHub username:
 ```
 
 Example:
+
 ```markdown
 [![CI Pipeline](https://github.com/johndoe/Ikuisuus/actions/workflows/ci.yml/badge.svg)](https://github.com/johndoe/Ikuisuus/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/johndoe/Ikuisuus/branch/main/graph/badge.svg)](https://codecov.io/gh/johndoe/Ikuisuus)
@@ -105,8 +110,9 @@ npm run build
 ### First Push
 
 1. **Commit the new workflows**:
+
    ```bash
-   git add .github/workflows/ package.json vitest.config.ts README.md
+   git add .github/workflows/ package.json vitest.config.mts README.md
    git commit -m "feat: add CI/CD pipeline with testing and coverage"
    git push
    ```
@@ -171,7 +177,8 @@ Push to main (or manual trigger)
 
 **Cause**: Missing or incorrect `CODECOV_TOKEN`
 
-**Solution**: 
+**Solution**:
+
 1. Check token exists in GitHub Secrets
 2. Verify token is valid in Codecov
 3. Check Codecov status page for outages
@@ -181,6 +188,7 @@ Push to main (or manual trigger)
 **Cause**: Missing Vercel credentials or build errors
 
 **Solution**:
+
 1. Verify all Vercel secrets are set correctly
 2. Check Vercel dashboard for build logs
 3. Test build locally: `npm run build`
@@ -188,21 +196,24 @@ Push to main (or manual trigger)
 ### Build Takes Too Long
 
 **Optimization Options**:
+
 1. **Cache node_modules**: Already configured in workflows
 2. **Run tests separately**: Tests run in parallel with build in CI
 3. **Skip tests on second build**: Use `build:skip-tests` in deploy workflow
 
 ## 🎯 Coverage Goals
 
-Current thresholds (configured in `vitest.config.ts`):
+Current thresholds (configured in `vitest.config.mts`):
+
 - **Statements**: 70%
 - **Branches**: 60%
 - **Functions**: 70%
 - **Lines**: 70%
 
 To adjust:
+
 ```typescript
-// vitest.config.ts
+// vitest.config.mts
 coverage: {
   statements: 80,  // Increase as you add tests
   branches: 70,
@@ -214,17 +225,21 @@ coverage: {
 ## 📈 Monitoring
 
 ### GitHub Actions
+
 - View workflow runs: Repository → **Actions** tab
 - Download artifacts: Click on workflow run → **Artifacts** section
 
 ### Codecov Dashboard
+
 - Coverage trends over time
 - File-level coverage breakdown
 - Pull request coverage diffs
 - Coverage sunburst charts
 
 ### Badges
+
 Once set up, badges show real-time status:
+
 - **CI Badge**: Green = all tests passing
 - **Coverage Badge**: Shows current coverage percentage
 - **Tests Badge**: Shows number of passing tests
