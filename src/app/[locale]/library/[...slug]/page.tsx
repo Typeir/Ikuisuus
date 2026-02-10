@@ -9,7 +9,7 @@
 import fs from "fs/promises";
 import { evaluate, EvaluateOptions } from "next-mdx-remote-client/rsc";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { logger } from "@/lib/logging/logger";
 
 import components, { HashNavigationProvider } from "@/lib/components/mdx";
@@ -134,9 +134,19 @@ const Page = async ({ params }: PageProps) => {
   const slugPath = slugSegments.join("/");
 
   const contentRoot = getContentFolder(locale);
-  const resolvedPath = await resolveContentFilePath(contentRoot, slugPath);
+  let resolvedPath = await resolveContentFilePath(contentRoot, slugPath);
 
+  // If the slug doesn't resolve, try redirecting to slug/main
   if (!resolvedPath) {
+    const mainPath = `${slugPath}/main`;
+    const mainResolvedPath = await resolveContentFilePath(contentRoot, mainPath);
+    
+    if (mainResolvedPath) {
+      // Redirect to the main path
+      redirect(`/${locale}/library/${slugPath}/main`);
+    }
+    
+    // Neither the slug nor slug/main exist
     notFound();
   }
 
