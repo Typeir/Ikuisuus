@@ -22,9 +22,9 @@
  * ```
  */
 
-import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
+import { chromium } from 'playwright';
 
 /** @type {string} Base URL for wikidot spell list pages */
 const BASE_URL = 'https://dnd5e.wikidot.com/spells';
@@ -133,7 +133,9 @@ const MAX_RETRIES = 3;
  */
 async function scrapeClassSpells(page, className, attempt = 1) {
   const url = `${BASE_URL}:${className}`;
-  console.log(`\n📖 Navigating to ${url}${attempt > 1 ? ` (attempt ${attempt}/${MAX_RETRIES})` : ''}`);
+  console.log(
+    `\n📖 Navigating to ${url}${attempt > 1 ? ` (attempt ${attempt}/${MAX_RETRIES})` : ''}`,
+  );
 
   await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
 
@@ -146,7 +148,9 @@ async function scrapeClassSpells(page, className, attempt = 1) {
       await page.waitForTimeout(2000);
       return scrapeClassSpells(page, className, attempt + 1);
     }
-    throw new Error(`Tab container .yui-navset not found after ${MAX_RETRIES} attempts`);
+    throw new Error(
+      `Tab container .yui-navset not found after ${MAX_RETRIES} attempts`,
+    );
   }
 
   /** Get all tab buttons */
@@ -165,7 +169,9 @@ async function scrapeClassSpells(page, className, attempt = 1) {
     await page.waitForTimeout(500);
 
     /** Get all visible tab content panels */
-    const activePanel = await page.$('.yui-navset .yui-content > div:not([style*="display: none"])');
+    const activePanel = await page.$(
+      '.yui-navset .yui-content > div:not([style*="display: none"])',
+    );
 
     if (!activePanel) {
       console.log(`  ⚠️ No active panel for tab ${i}`);
@@ -176,8 +182,9 @@ async function scrapeClassSpells(page, className, attempt = 1) {
      * Extract spell names from the first column links in the table.
      * Each row's first cell contains an anchor with the spell name as text.
      */
-    const spellNames = await activePanel.$$eval('table tr td:first-child a', (anchors) =>
-      anchors.map((a) => a.textContent.trim())
+    const spellNames = await activePanel.$$eval(
+      'table tr td:first-child a',
+      (anchors) => anchors.map((a) => a.textContent.trim()),
     );
 
     const slugs = spellNames.map(toKebabCase).filter((s) => s.length > 0);
@@ -230,11 +237,8 @@ ${spellEntries}
 async function main() {
   /** Determine which classes to scrape from CLI args or default to all */
   const args = process.argv.slice(2);
-  const classesToScrape = args.length > 0
-    ? args.map((a) => a.toLowerCase())
-    : VANILLA_CLASSES;
-
-
+  const classesToScrape =
+    args.length > 0 ? args.map((a) => a.toLowerCase()) : VANILLA_CLASSES;
 
   console.log('🚀 Launching browser...');
   const browser = await chromium.launch({ headless: true });
@@ -255,7 +259,9 @@ async function main() {
       fs.writeFileSync(outputPath, mdx, 'utf-8');
 
       summary[className] = spells.length;
-      console.log(`  ✅ ${capitalize(className)}: ${spells.length} spells → ${outputPath}`);
+      console.log(
+        `  ✅ ${capitalize(className)}: ${spells.length} spells → ${outputPath}`,
+      );
     } catch (error) {
       console.error(`  ❌ Failed to scrape ${className}: ${error.message}`);
       summary[className] = -1;
