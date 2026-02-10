@@ -17,13 +17,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.3rem 0;
   user-select: none;
-  transition: border-bottom 0.4s var(--springy-bezier),
+  transition:
+    border-bottom 0.4s var(--springy-bezier),
     margin-bottom 0.4s var(--springy-bezier) !important;
   & > p {
-    transition: border-bottom 0.3s 0.1s var(--springy-bezier),
-      margin-bottom 0.3s 0.1s var(--springy-bezier), filter linear 0.5s !important;
+    transition:
+      border-bottom 0.3s 0.1s var(--springy-bezier),
+      margin-bottom 0.3s 0.1s var(--springy-bezier),
+      filter linear 0.5s !important;
   }
   &:hover,
   &.open {
@@ -56,8 +58,10 @@
   transition: transform 0.2s ease;
   vertical-align: middle;
   object-fit: contain; // ensures it doesn't stretch
-  transition: opacity 0.3s var(--springy-bezier),
-    transform 0.4s var(--springy-bezier), filter linear 0.5s !important;
+  transition:
+    opacity 0.3s var(--springy-bezier),
+    transform 0.4s var(--springy-bezier),
+    filter linear 0.5s !important;
   margin-left: 0.5rem;
   background-color: var(--color-transparent) !important;
   opacity: 0;
