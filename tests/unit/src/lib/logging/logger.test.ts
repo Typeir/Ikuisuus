@@ -1,21 +1,21 @@
 /**
  * Logger Unit Tests
- * 
+ *
  * @fileoverview Tests for the structured logging system including level gating,
  * environment configuration, metadata serialization, and child logger scoping.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Unmock the logger for this test file - we need to test the real logger
 vi.unmock('@/lib/logging/logger');
 
-import { logger, createLogger, LogLevel, Level } from '@/lib/logging/logger';
+import { createLogger, Level, logger, LogLevel } from '@/lib/logging/logger';
 
 describe('Logger', () => {
   let consoleLogSpy: ReturnType<typeof vi.spyOn>;
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
-  
+
   beforeEach(() => {
     // Spy on console methods
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -40,10 +40,18 @@ describe('Logger', () => {
 
       // Only warning and error should be logged
       expect(consoleLogSpy).toHaveBeenCalledTimes(2);
-      expect(consoleLogSpy).not.toHaveBeenCalledWith(expect.stringContaining('debug message'));
-      expect(consoleLogSpy).not.toHaveBeenCalledWith(expect.stringContaining('info message'));
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('warning message'));
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('error message'));
+      expect(consoleLogSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('debug message'),
+      );
+      expect(consoleLogSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('info message'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('warning message'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('error message'),
+      );
     });
 
     it('should emit debug logs when level is DEBUG', () => {
@@ -51,8 +59,12 @@ describe('Logger', () => {
 
       logger.debug('debug message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('debug message'));
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('[DEBUG]'));
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('debug message'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[DEBUG]'),
+      );
     });
 
     it('should silence all logs when level is SILENT', () => {
@@ -72,7 +84,9 @@ describe('Logger', () => {
 
       logger.message('should appear');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('should appear'));
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('should appear'),
+      );
     });
   });
 
@@ -84,29 +98,45 @@ describe('Logger', () => {
     it('should format debug messages correctly', () => {
       logger.debug('Debug message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('[DEBUG]'));
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Debug message'));
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[DEBUG]'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Debug message'),
+      );
     });
 
     it('should format message logs correctly', () => {
       logger.message('Info message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('[MESSAGE]'));
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Info message'));
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[MESSAGE]'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Info message'),
+      );
     });
 
     it('should format warning logs correctly', () => {
       logger.warning('Warning message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('[WARNING]'));
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Warning message'));
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[WARNING]'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Warning message'),
+      );
     });
 
     it('should format error logs correctly', () => {
       logger.error('Error message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('[ERROR]'));
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Error message'));
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[ERROR]'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Error message'),
+      );
     });
 
     it('should include timestamp in all logs', () => {
@@ -126,10 +156,10 @@ describe('Logger', () => {
       logger.message('Test', { userId: 123, action: 'login' });
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('userId=123')
+        expect.stringContaining('userId=123'),
       );
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('action=login')
+        expect.stringContaining('action=login'),
       );
     });
 
@@ -184,7 +214,10 @@ describe('Logger', () => {
     });
 
     it('should handle null and undefined', () => {
-      logger.message('Null/undefined', { nullVal: null, undefinedVal: undefined });
+      logger.message('Null/undefined', {
+        nullVal: null,
+        undefinedVal: undefined,
+      });
 
       const call = consoleLogSpy.mock.calls[0][0];
       expect(call).toContain('nullVal=null');
@@ -221,7 +254,7 @@ describe('Logger', () => {
 
     it('should limit object keys', () => {
       const manyKeys = Object.fromEntries(
-        Array.from({ length: 30 }, (_, i) => [`key${i}`, i])
+        Array.from({ length: 30 }, (_, i) => [`key${i}`, i]),
       );
 
       logger.message('Many keys', { data: manyKeys });
@@ -242,7 +275,7 @@ describe('Logger', () => {
       childLogger.message('Test message');
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('module=TestModule')
+        expect.stringContaining('module=TestModule'),
       );
     });
 
@@ -268,7 +301,7 @@ describe('Logger', () => {
 
       expect(consoleLogSpy).toHaveBeenCalledTimes(1);
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Should appear')
+        expect.stringContaining('Should appear'),
       );
     });
   });
@@ -284,7 +317,7 @@ describe('Logger', () => {
       scopedLogger.message('Rendering');
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('component=MonsterTable')
+        expect.stringContaining('component=MonsterTable'),
       );
     });
   });
@@ -300,10 +333,10 @@ describe('Logger', () => {
 
     it('should allow runtime level changes', () => {
       const originalLevel = logger.getMinLevel();
-      
+
       logger.setMinLevel(LogLevel.ERROR);
       expect(logger.getMinLevel()).toBe(LogLevel.ERROR);
-      
+
       // Restore
       logger.setMinLevel(originalLevel);
     });
@@ -332,16 +365,16 @@ describe('Logger', () => {
       // Message goes to stdout
       expect(consoleLogSpy).toHaveBeenCalledTimes(1);
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Message')
+        expect.stringContaining('Message'),
       );
 
       // Warning and error go to stderr
       expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Warning')
+        expect.stringContaining('Warning'),
       );
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Error')
+        expect.stringContaining('Error'),
       );
     });
 
@@ -370,13 +403,13 @@ describe('Logger', () => {
   describe('getMinLevel and setMinLevel', () => {
     it('should get current minimum level', () => {
       logger.setMinLevel(LogLevel.ERROR);
-      
+
       expect(logger.getMinLevel()).toBe(LogLevel.ERROR);
     });
 
     it('should set minimum level', () => {
       logger.setMinLevel(LogLevel.DEBUG);
-      
+
       expect(logger.getMinLevel()).toBe(LogLevel.DEBUG);
 
       logger.debug('Should appear');
@@ -401,13 +434,15 @@ describe('Logger', () => {
       logger.message('Message with "quotes" and [brackets] and {braces}');
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Message with "quotes" and [brackets] and {braces}')
+        expect.stringContaining(
+          'Message with "quotes" and [brackets] and {braces}',
+        ),
       );
     });
 
     it('should handle Error objects in metadata', () => {
       const error = new Error('Test error');
-      
+
       logger.error('Error occurred', { error });
 
       const call = consoleLogSpy.mock.calls[0][0];
@@ -417,7 +452,7 @@ describe('Logger', () => {
 
     it('should handle Date objects', () => {
       const date = new Date('2024-01-01T00:00:00.000Z');
-      
+
       logger.message('Date test', { timestamp: date });
 
       const call = consoleLogSpy.mock.calls[0][0];
@@ -426,7 +461,7 @@ describe('Logger', () => {
 
     it('should handle Symbol in metadata gracefully', () => {
       const sym = Symbol('test');
-      
+
       logger.message('Symbol test', { symbol: sym });
 
       const call = consoleLogSpy.mock.calls[0][0];

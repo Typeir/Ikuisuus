@@ -9,21 +9,23 @@ import { vi } from 'vitest';
 // Preserve all exports for logger's own tests
 vi.mock('@/lib/logging/logger', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/logging/logger')>();
-  
+
   // Create a mock logger that mimics the Logger class interface but suppresses output
   const mockLogger = {
     debug: vi.fn(),
     message: vi.fn(),
     warning: vi.fn(),
     error: vi.fn(),
-    child: vi.fn(function(this: any) { return this; }),
+    child: vi.fn(function (this: any) {
+      return this;
+    }),
     getMinLevel: vi.fn(() => actual.LogLevel.MESSAGE),
     setMinLevel: vi.fn(),
     enableStderrForErrors: vi.fn(),
     disableStderrForErrors: vi.fn(),
   };
-  
-  return { 
+
+  return {
     ...actual,
     logger: mockLogger,
   };
@@ -105,7 +107,10 @@ process.stderr.write = function (
       return true;
     }
     // Suppress Vite CJS deprecation (vitest internal dependency issue)
-    if (chunk.includes('CJS build of Vite') || chunk.includes('vite-cjs-node-api-deprecated')) {
+    if (
+      chunk.includes('CJS build of Vite') ||
+      chunk.includes('vite-cjs-node-api-deprecated')
+    ) {
       return true;
     }
   }
@@ -118,8 +123,8 @@ console.error = function (...args: any[]) {
   if (
     typeof message === 'string' &&
     (message.includes('cannot be a child of') ||
-     message.includes('hydration error') ||
-     message.includes('Hydration failed'))
+      message.includes('hydration error') ||
+      message.includes('Hydration failed'))
   ) {
     return; // suppress
   }

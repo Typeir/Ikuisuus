@@ -12,7 +12,7 @@ const vitest = spawn('vitest', ['run'], {
 
 vitest.stderr.on('data', (data) => {
   const output = data.toString();
-  
+
   // Filter out known deprecation warnings
   if (
     output.includes('CJS build of Vite') ||
@@ -20,7 +20,7 @@ vitest.stderr.on('data', (data) => {
   ) {
     return; // suppress
   }
-  
+
   // Pass through other stderr
   process.stderr.write(data);
 });

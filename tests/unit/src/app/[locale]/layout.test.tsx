@@ -39,7 +39,7 @@ vi.mock('next-intl/server', () => ({
 // Mock ClientProviders
 vi.mock('@/app/[locale]/ClientProviders', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="client-providers">{children}</div>
+    <div data-testid='client-providers'>{children}</div>
   ),
 }));
 
@@ -88,7 +88,7 @@ describe('RootLayout', () => {
     expect(() => {
       render(componentEn);
     }).not.toThrow();
-    
+
     cleanup();
 
     const componentEs = await RootLayout({

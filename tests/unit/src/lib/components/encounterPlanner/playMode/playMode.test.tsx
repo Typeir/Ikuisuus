@@ -3,21 +3,24 @@
  * @module tests/unit/src/lib/components/encounterPlanner/playMode/playMode.test
  * @description Tests turn advancement, round counting, combatant management, initiative sorting,
  * state persistence, and error handling for the PlayMode combat runner.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @testing-library/react
  * @requires @/lib/components/encounterPlanner/playMode/playMode
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, cleanup } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { PlayMode } from '@/lib/components/encounterPlanner/playMode/playMode';
-import type { InProgressCombat, InProgressCombatant } from '@/lib/types/inProgressCombat';
+import type {
+    InProgressCombat,
+    InProgressCombatant,
+} from '@/lib/types/inProgressCombat';
 import * as inProgressCombatStorage from '@/lib/utils/inProgressCombatStorage';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({
@@ -65,33 +68,47 @@ vi.mock('@/lib/utils/encounterStorage', () => ({
 // Mock ComboBox component
 vi.mock('@/lib/components/encounterPlanner/comboboxes', () => ({
   CreatureCombobox: ({ onSelect }: { onSelect: (slug: string) => void }) => (
-    <button data-testid="creature-combobox" onClick={() => onSelect('test-slug')}>
+    <button
+      data-testid='creature-combobox'
+      onClick={() => onSelect('test-slug')}>
       Add Creature
     </button>
   ),
 }));
 
 // Mock PlayModeCombatantRow
-vi.mock('@/lib/components/encounterPlanner/playMode/playModeCombatantRow', () => ({
-  PlayModeCombatantRow: ({ combatant, onUpdate, onRemoveSessionOnly }: any) => (
-    <div data-testid={`combatant-${combatant.id}`}>
-      <span>{combatant.name}</span>
-      <button onClick={() => onUpdate({ ...combatant, hpCurrent: combatant.hpCurrent - 10 })}>
-        Damage
-      </button>
-      {onRemoveSessionOnly && (
-        <button onClick={onRemoveSessionOnly}>Remove</button>
-      )}
-    </div>
-  ),
-}));
+vi.mock(
+  '@/lib/components/encounterPlanner/playMode/playModeCombatantRow',
+  () => ({
+    PlayModeCombatantRow: ({
+      combatant,
+      onUpdate,
+      onRemoveSessionOnly,
+    }: any) => (
+      <div data-testid={`combatant-${combatant.id}`}>
+        <span>{combatant.name}</span>
+        <button
+          onClick={() =>
+            onUpdate({ ...combatant, hpCurrent: combatant.hpCurrent - 10 })
+          }>
+          Damage
+        </button>
+        {onRemoveSessionOnly && (
+          <button onClick={onRemoveSessionOnly}>Remove</button>
+        )}
+      </div>
+    ),
+  }),
+);
 
 /**
  * Creates a mock combatant for testing
  * @param overrides - Partial combatant properties to override
  * @returns Mock InProgressCombatant instance
  */
-const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InProgressCombatant => ({
+const createMockCombatant = (
+  overrides: Partial<InProgressCombatant> = {},
+): InProgressCombatant => ({
   id: 'combatant-1',
   name: 'Test Combatant',
   hpCurrent: 50,
@@ -113,7 +130,13 @@ const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InPr
   sourceHref: '/library/monsters/test',
   crText: 'CR 2',
   legendaryDeedsUsed: [],
-  mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: false, phase: false },
+  mechanics: {
+    lair: false,
+    stratagem: false,
+    legendaryDeed: false,
+    resist: false,
+    phase: false,
+  },
   resistRemaining: 0,
   phaseDeeds: { wounded: false, bloodied: false, doomed: false },
   heroicAwakening: {
@@ -133,13 +156,27 @@ const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InPr
  * @param overrides - Partial combat properties to override
  * @returns Mock InProgressCombat instance
  */
-const createMockCombat = (overrides: Partial<InProgressCombat> = {}): InProgressCombat => ({
+const createMockCombat = (
+  overrides: Partial<InProgressCombat> = {},
+): InProgressCombat => ({
   id: 'combat-1',
   encounterName: 'Test Combat',
   combatants: [
-    createMockCombatant({ id: 'combatant-1', name: 'Fighter', initiativeValue: 18 }),
-    createMockCombatant({ id: 'combatant-2', name: 'Wizard', initiativeValue: 12 }),
-    createMockCombatant({ id: 'combatant-3', name: 'Goblin', initiativeValue: 10 }),
+    createMockCombatant({
+      id: 'combatant-1',
+      name: 'Fighter',
+      initiativeValue: 18,
+    }),
+    createMockCombatant({
+      id: 'combatant-2',
+      name: 'Wizard',
+      initiativeValue: 12,
+    }),
+    createMockCombatant({
+      id: 'combatant-3',
+      name: 'Goblin',
+      initiativeValue: 10,
+    }),
   ],
   turnOrder: ['combatant-1', 'combatant-2', 'combatant-3'],
   activeTurnIndex: 0,
@@ -163,15 +200,24 @@ describe('PlayMode Component', () => {
     mockSaveInProgressCombat = vi.fn();
     mockDeleteInProgressCombat = vi.fn();
     mockSetActiveInProgressCombatId = vi.fn();
-    mockGetNextActiveCombatantIndex = vi.fn((combatants, turnOrder, currentIndex) => {
-      return (currentIndex + 1) % turnOrder.length;
-    });
+    mockGetNextActiveCombatantIndex = vi.fn(
+      (combatants, turnOrder, currentIndex) => {
+        return (currentIndex + 1) % turnOrder.length;
+      },
+    );
     mockResortCombatants = vi.fn((combat) => ({
       ...combat,
       turnOrder: [...combat.turnOrder].sort((a, b) => {
-        const combatantA = combat.combatants.find((c: InProgressCombatant) => c.id === a);
-        const combatantB = combat.combatants.find((c: InProgressCombatant) => c.id === b);
-        return (combatantB?.initiativeValue || 0) - (combatantA?.initiativeValue || 0);
+        const combatantA = combat.combatants.find(
+          (c: InProgressCombatant) => c.id === a,
+        );
+        const combatantB = combat.combatants.find(
+          (c: InProgressCombatant) => c.id === b,
+        );
+        return (
+          (combatantB?.initiativeValue || 0) -
+          (combatantA?.initiativeValue || 0)
+        );
       }),
     }));
     mockCreateInProgressCombatant = vi.fn((baseCreature) => ({
@@ -190,13 +236,33 @@ describe('PlayMode Component', () => {
     }));
     mockExportInProgressCombat = vi.fn((combat) => JSON.stringify(combat));
 
-    vi.spyOn(inProgressCombatStorage, 'saveInProgressCombat').mockImplementation(mockSaveInProgressCombat);
-    vi.spyOn(inProgressCombatStorage, 'deleteInProgressCombat').mockImplementation(mockDeleteInProgressCombat);
-    vi.spyOn(inProgressCombatStorage, 'setActiveInProgressCombatId').mockImplementation(mockSetActiveInProgressCombatId);
-    vi.spyOn(inProgressCombatStorage, 'getNextActiveCombatantIndex').mockImplementation(mockGetNextActiveCombatantIndex);
-    vi.spyOn(inProgressCombatStorage, 'resortCombatants').mockImplementation(mockResortCombatants);
-    vi.spyOn(inProgressCombatStorage, 'createInProgressCombatant').mockImplementation(mockCreateInProgressCombatant);
-    vi.spyOn(inProgressCombatStorage, 'exportInProgressCombat').mockImplementation(mockExportInProgressCombat);
+    vi.spyOn(
+      inProgressCombatStorage,
+      'saveInProgressCombat',
+    ).mockImplementation(mockSaveInProgressCombat);
+    vi.spyOn(
+      inProgressCombatStorage,
+      'deleteInProgressCombat',
+    ).mockImplementation(mockDeleteInProgressCombat);
+    vi.spyOn(
+      inProgressCombatStorage,
+      'setActiveInProgressCombatId',
+    ).mockImplementation(mockSetActiveInProgressCombatId);
+    vi.spyOn(
+      inProgressCombatStorage,
+      'getNextActiveCombatantIndex',
+    ).mockImplementation(mockGetNextActiveCombatantIndex);
+    vi.spyOn(inProgressCombatStorage, 'resortCombatants').mockImplementation(
+      mockResortCombatants,
+    );
+    vi.spyOn(
+      inProgressCombatStorage,
+      'createInProgressCombatant',
+    ).mockImplementation(mockCreateInProgressCombatant);
+    vi.spyOn(
+      inProgressCombatStorage,
+      'exportInProgressCombat',
+    ).mockImplementation(mockExportInProgressCombat);
 
     // Mock window.open to prevent "navigation to another Document" error
     global.open = vi.fn();
@@ -205,17 +271,19 @@ describe('PlayMode Component', () => {
     global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
     global.URL.revokeObjectURL = vi.fn();
     global.Blob = vi.fn((content, options) => ({ content, options })) as any;
-    
+
     // Mock anchor element click to prevent navigation
     const mockClick = vi.fn();
     const originalCreateElement = document.createElement.bind(document);
-    vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
-      const element = originalCreateElement(tagName);
-      if (tagName === 'a') {
-        element.click = mockClick;
-      }
-      return element;
-    });
+    vi.spyOn(document, 'createElement').mockImplementation(
+      (tagName: string) => {
+        const element = originalCreateElement(tagName);
+        if (tagName === 'a') {
+          element.click = mockClick;
+        }
+        return element;
+      },
+    );
   });
 
   afterEach(() => {
@@ -232,14 +300,14 @@ describe('PlayMode Component', () => {
 
     it('should render combat info correctly', () => {
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       // Verify combat info structure exists (text appears in multiple elements)
       const roundElements = screen.getAllByText(/round/i);
       const turnElements = screen.getAllByText(/turn/i);
       expect(roundElements.length).toBeGreaterThan(0);
       expect(turnElements.length).toBeGreaterThan(0);
-      
+
       // Verify combatInfo div contains the round/turn data
       const combatInfo = document.querySelector('._combatInfo_52814c');
       expect(combatInfo).toBeInTheDocument();
@@ -248,7 +316,7 @@ describe('PlayMode Component', () => {
 
     it('should render all combatants in turn order', () => {
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const combatantRows = screen.getAllByTestId('combatant-row');
       expect(combatantRows.length).toBe(3);
@@ -262,7 +330,7 @@ describe('PlayMode Component', () => {
     it('should advance to next combatant on end turn', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat({ activeTurnIndex: 0 });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -272,7 +340,7 @@ describe('PlayMode Component', () => {
         expect(mockGetNextActiveCombatantIndex).toHaveBeenCalledWith(
           expect.any(Array),
           expect.any(Array),
-          0
+          0,
         );
       });
     });
@@ -281,7 +349,7 @@ describe('PlayMode Component', () => {
       const user = userEvent.setup();
       mockGetNextActiveCombatantIndex.mockReturnValue(0);
       const combat = createMockCombat({ activeTurnIndex: 2 });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -296,7 +364,7 @@ describe('PlayMode Component', () => {
       const user = userEvent.setup();
       mockGetNextActiveCombatantIndex.mockReturnValue(1);
       const combat = createMockCombat({ activeTurnIndex: 0 });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -323,9 +391,9 @@ describe('PlayMode Component', () => {
         turnOrder: ['combatant-1', 'combatant-2'],
         activeTurnIndex: 1,
       });
-      
+
       mockGetNextActiveCombatantIndex.mockReturnValue(0);
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -333,7 +401,11 @@ describe('PlayMode Component', () => {
       await waitFor(() => {
         const savedCombat = mockSaveInProgressCombat.mock.calls[0][0];
         // The combatant whose turn is starting should have deeds reset
-        expect(savedCombat.combatants[0].legendaryDeedsUsed).toEqual([false, false, false]);
+        expect(savedCombat.combatants[0].legendaryDeedsUsed).toEqual([
+          false,
+          false,
+          false,
+        ]);
       });
     });
 
@@ -352,9 +424,9 @@ describe('PlayMode Component', () => {
         turnOrder: ['combatant-1', 'combatant-2'],
         activeTurnIndex: 0,
       });
-      
+
       mockGetNextActiveCombatantIndex.mockReturnValue(1);
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -362,8 +434,16 @@ describe('PlayMode Component', () => {
       await waitFor(() => {
         const savedCombat = mockSaveInProgressCombat.mock.calls[0][0];
         // Only the new active combatant should have deeds reset
-        expect(savedCombat.combatants[0].legendaryDeedsUsed).toEqual([true, true, true]);
-        expect(savedCombat.combatants[1].legendaryDeedsUsed).toEqual([false, false, false]);
+        expect(savedCombat.combatants[0].legendaryDeedsUsed).toEqual([
+          true,
+          true,
+          true,
+        ]);
+        expect(savedCombat.combatants[1].legendaryDeedsUsed).toEqual([
+          false,
+          false,
+          false,
+        ]);
       });
     });
 
@@ -371,13 +451,23 @@ describe('PlayMode Component', () => {
       const user = userEvent.setup();
       const lairCreatureWithDeeds = createMockCombatant({
         id: 'lair-1',
-        mechanics: { lair: true, stratagem: false, legendaryDeed: false, resist: false },
+        mechanics: {
+          lair: true,
+          stratagem: false,
+          legendaryDeed: false,
+          resist: false,
+        },
         legendaryDeedsUsed: [true, false], // Has remaining deeds
       });
       const lairCreatureNoDeeds = createMockCombatant({
         id: 'lair-2',
         name: 'Exhausted Lair',
-        mechanics: { lair: true, stratagem: false, legendaryDeed: false, resist: false },
+        mechanics: {
+          lair: true,
+          stratagem: false,
+          legendaryDeed: false,
+          resist: false,
+        },
         legendaryDeedsUsed: [true, true], // No remaining deeds
       });
       const combat = createMockCombat({
@@ -386,12 +476,12 @@ describe('PlayMode Component', () => {
         activeTurnIndex: 1,
         roundNumber: 1,
       });
-      
+
       mockGetNextActiveCombatantIndex.mockReturnValue(0);
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const endTurnButton = screen.getByText('endTurn');
-      
+
       // Manually trigger round advance to test lair warning
       // Since we're at index 1 and returning 0, it should be a new round
       await user.click(endTurnButton);
@@ -409,7 +499,7 @@ describe('PlayMode Component', () => {
     it('should resort combatants by initiative', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const sortButton = screen.getByText('sortByInitiative');
       await user.click(sortButton);
@@ -425,7 +515,7 @@ describe('PlayMode Component', () => {
     it('should add session-only combatant with manual input', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const input = screen.getByPlaceholderText('addSessionOnlyCombatant');
       const addButton = screen.getByText('addCombatant');
@@ -444,7 +534,7 @@ describe('PlayMode Component', () => {
     it('should not add session-only combatant with empty name', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const addButton = screen.getByText('addCombatant');
       await user.click(addButton);
@@ -461,12 +551,14 @@ describe('PlayMode Component', () => {
         ],
         turnOrder: ['session-1', 'combatant-2'],
       });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       // Find remove buttons by searching for the ✕ symbol or by title
       const removeButtons = screen.getAllByTitle(/remove/i);
       if (removeButtons.length === 0) {
-        throw new Error('No remove buttons found. Session-only combatant may not be rendering remove button.');
+        throw new Error(
+          'No remove buttons found. Session-only combatant may not be rendering remove button.',
+        );
       }
       await user.click(removeButtons[0]);
 
@@ -486,17 +578,18 @@ describe('PlayMode Component', () => {
             Promise.resolve([
               { slug: 'test-slug', title: 'Test Monster', ac: { value: 15 } },
             ]),
-        })
+        }),
       ) as any;
     });
 
     it('should render MonsterImporter component', () => {
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       // MonsterImporter is rendered in PlayMode
       // The actual import functionality is tested comprehensively in MonsterImporter.test.tsx
-      const screen_rendered = screen.queryByTestId('creature-combobox') !== null;
+      const screen_rendered =
+        screen.queryByTestId('creature-combobox') !== null;
       expect(screen_rendered || true).toBeTruthy();
     });
 
@@ -505,7 +598,7 @@ describe('PlayMode Component', () => {
       // The actual error handling is tested in MonsterImporter.test.tsx
       const combat = createMockCombat();
       expect(() => {
-        render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+        render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
       }).not.toThrow();
     });
   });
@@ -514,7 +607,7 @@ describe('PlayMode Component', () => {
     it('should end combat and exit', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const endCombatButton = screen.getByText('endCombat');
       await user.click(endCombatButton);
@@ -527,7 +620,7 @@ describe('PlayMode Component', () => {
     it('should export combat as JSON', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       const exportButton = screen.getByText('exportInProgress');
       await user.click(exportButton);
@@ -536,7 +629,7 @@ describe('PlayMode Component', () => {
       await waitFor(() => {
         expect(mockExportInProgressCombat).toHaveBeenCalledWith(combat);
       });
-      
+
       // Verify the export function produces valid JSON
       const exportedJson = mockExportInProgressCombat.mock.results[0].value;
       expect(() => JSON.parse(exportedJson)).not.toThrow();
@@ -546,7 +639,7 @@ describe('PlayMode Component', () => {
   describe('Edge Cases', () => {
     it('should handle empty turn order', () => {
       const combat = createMockCombat({ combatants: [], turnOrder: [] });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
       // Text is split across elements, use regex\n      expect(screen.getByText(/turn/i)).toBeInTheDocument();
     });
@@ -555,9 +648,13 @@ describe('PlayMode Component', () => {
       const combat = createMockCombat({
         turnOrder: ['combatant-1', 'invalid-id', 'combatant-3'],
       });
-      const { container } = render(<PlayMode combat={combat} onExit={mockOnExit} locale="en" />);
+      const { container } = render(
+        <PlayMode combat={combat} onExit={mockOnExit} locale='en' />,
+      );
 
-      const combatantRows = container.querySelectorAll('[data-testid^="combatant-"]');
+      const combatantRows = container.querySelectorAll(
+        '[data-testid^="combatant-"]',
+      );
       expect(combatantRows.length).toBe(2);
     });
   });

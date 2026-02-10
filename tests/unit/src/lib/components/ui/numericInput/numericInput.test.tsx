@@ -3,10 +3,15 @@
  * @description Unit tests for the NumericInput UI component.
  */
 
-import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NumericInput } from '@/lib/components/ui/numericInput';
+import {
+    act,
+    fireEvent,
+    render,
+    screen
+} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('NumericInput', () => {
   const defaultProps = {
@@ -33,13 +38,19 @@ describe('NumericInput', () => {
     });
 
     it('renders with placeholder when no value', () => {
-      render(<NumericInput {...defaultProps} value={undefined} placeholder="Enter..." />);
+      render(
+        <NumericInput
+          {...defaultProps}
+          value={undefined}
+          placeholder='Enter...'
+        />,
+      );
       const input = screen.getByRole('spinbutton');
       expect(input).toHaveAttribute('placeholder', 'Enter...');
     });
 
     it('renders with id attribute', () => {
-      render(<NumericInput {...defaultProps} id="test-input" />);
+      render(<NumericInput {...defaultProps} id='test-input' />);
       const input = screen.getByRole('spinbutton');
       expect(input).toHaveAttribute('id', 'test-input');
     });
@@ -51,7 +62,7 @@ describe('NumericInput', () => {
     });
 
     it('renders with aria-label', () => {
-      render(<NumericInput {...defaultProps} ariaLabel="Number input" />);
+      render(<NumericInput {...defaultProps} ariaLabel='Number input' />);
       const input = screen.getByRole('spinbutton');
       expect(input).toHaveAttribute('aria-label', 'Number input');
     });
@@ -59,7 +70,7 @@ describe('NumericInput', () => {
 
   describe('Size Variants', () => {
     it('renders with sm size class', () => {
-      render(<NumericInput {...defaultProps} size="sm" />);
+      render(<NumericInput {...defaultProps} size='sm' />);
       const wrapper = screen.getByRole('spinbutton').parentElement;
       expect(wrapper?.className).toContain('sm');
     });
@@ -71,7 +82,7 @@ describe('NumericInput', () => {
     });
 
     it('renders with lg size class', () => {
-      render(<NumericInput {...defaultProps} size="lg" />);
+      render(<NumericInput {...defaultProps} size='lg' />);
       const wrapper = screen.getByRole('spinbutton').parentElement;
       expect(wrapper?.className).toContain('lg');
     });
@@ -82,11 +93,11 @@ describe('NumericInput', () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
       render(<NumericInput {...defaultProps} onChange={onChange} />);
-      
+
       const input = screen.getByRole('spinbutton');
       await user.clear(input);
       await user.type(input, '7');
-      
+
       // Should call with parsed number value
       expect(onChange).toHaveBeenCalled();
     });
@@ -95,12 +106,12 @@ describe('NumericInput', () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
       render(<NumericInput {...defaultProps} max={10} onChange={onChange} />);
-      
+
       const input = screen.getByRole('spinbutton');
       await user.clear(input);
       await user.type(input, '15');
       fireEvent.blur(input);
-      
+
       // Check the last call was with clamped value
       const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1];
       expect(lastCall[0]).toBeLessThanOrEqual(10);
@@ -109,13 +120,20 @@ describe('NumericInput', () => {
     it('clamps value to min on blur', async () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
-      render(<NumericInput {...defaultProps} min={0} value={5} onChange={onChange} />);
-      
+      render(
+        <NumericInput
+          {...defaultProps}
+          min={0}
+          value={5}
+          onChange={onChange}
+        />,
+      );
+
       const input = screen.getByRole('spinbutton');
       await user.clear(input);
       await user.type(input, '-5');
       fireEvent.blur(input);
-      
+
       // Check the last call was with clamped value
       const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1];
       expect(lastCall[0]).toBeGreaterThanOrEqual(0);
@@ -133,11 +151,20 @@ describe('NumericInput', () => {
     it('increments value on step up button click', async () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
-      render(<NumericInput {...defaultProps} value={5} onChange={onChange} showButtons />);
-      
+      render(
+        <NumericInput
+          {...defaultProps}
+          value={5}
+          onChange={onChange}
+          showButtons
+        />,
+      );
+
       const buttons = screen.getAllByRole('button');
-      const incrementBtn = buttons.find(btn => btn.getAttribute('aria-label')?.includes('Increment'));
-      
+      const incrementBtn = buttons.find((btn) =>
+        btn.getAttribute('aria-label')?.includes('Increment'),
+      );
+
       if (incrementBtn) {
         await user.click(incrementBtn);
         expect(onChange).toHaveBeenCalledWith(6);
@@ -147,11 +174,20 @@ describe('NumericInput', () => {
     it('decrements value on step down button click', async () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
-      render(<NumericInput {...defaultProps} value={5} onChange={onChange} showButtons />);
-      
+      render(
+        <NumericInput
+          {...defaultProps}
+          value={5}
+          onChange={onChange}
+          showButtons
+        />,
+      );
+
       const buttons = screen.getAllByRole('button');
-      const decrementBtn = buttons.find(btn => btn.getAttribute('aria-label')?.includes('Decrement'));
-      
+      const decrementBtn = buttons.find((btn) =>
+        btn.getAttribute('aria-label')?.includes('Decrement'),
+      );
+
       if (decrementBtn) {
         await user.click(decrementBtn);
         expect(onChange).toHaveBeenCalledWith(4);
@@ -161,11 +197,21 @@ describe('NumericInput', () => {
     it('respects custom step value', async () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
-      render(<NumericInput {...defaultProps} value={5} step={5} onChange={onChange} showButtons />);
-      
+      render(
+        <NumericInput
+          {...defaultProps}
+          value={5}
+          step={5}
+          onChange={onChange}
+          showButtons
+        />,
+      );
+
       const buttons = screen.getAllByRole('button');
-      const incrementBtn = buttons.find(btn => btn.getAttribute('aria-label')?.includes('Increment'));
-      
+      const incrementBtn = buttons.find((btn) =>
+        btn.getAttribute('aria-label')?.includes('Increment'),
+      );
+
       if (incrementBtn) {
         await user.click(incrementBtn);
         expect(onChange).toHaveBeenCalledWith(10);
@@ -175,11 +221,21 @@ describe('NumericInput', () => {
     it('does not exceed max on increment', async () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
-      render(<NumericInput {...defaultProps} value={10} max={10} onChange={onChange} showButtons />);
-      
+      render(
+        <NumericInput
+          {...defaultProps}
+          value={10}
+          max={10}
+          onChange={onChange}
+          showButtons
+        />,
+      );
+
       const buttons = screen.getAllByRole('button');
-      const incrementBtn = buttons.find(btn => btn.getAttribute('aria-label')?.includes('Increment'));
-      
+      const incrementBtn = buttons.find((btn) =>
+        btn.getAttribute('aria-label')?.includes('Increment'),
+      );
+
       if (incrementBtn) {
         await user.click(incrementBtn);
         expect(onChange).toHaveBeenCalledWith(10);
@@ -189,11 +245,21 @@ describe('NumericInput', () => {
     it('does not go below min on decrement', async () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
-      render(<NumericInput {...defaultProps} value={0} min={0} onChange={onChange} showButtons />);
-      
+      render(
+        <NumericInput
+          {...defaultProps}
+          value={0}
+          min={0}
+          onChange={onChange}
+          showButtons
+        />,
+      );
+
       const buttons = screen.getAllByRole('button');
-      const decrementBtn = buttons.find(btn => btn.getAttribute('aria-label')?.includes('Decrement'));
-      
+      const decrementBtn = buttons.find((btn) =>
+        btn.getAttribute('aria-label')?.includes('Decrement'),
+      );
+
       if (decrementBtn) {
         await user.click(decrementBtn);
         expect(onChange).toHaveBeenCalledWith(0);
@@ -212,10 +278,10 @@ describe('NumericInput', () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
       render(<NumericInput {...defaultProps} onChange={onChange} showClear />);
-      
+
       const clearBtn = screen.getByRole('button', { name: /clear/i });
       await user.click(clearBtn);
-      
+
       expect(onChange).toHaveBeenCalledWith(undefined);
     });
   });
@@ -225,14 +291,14 @@ describe('NumericInput', () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
       render(<NumericInput {...defaultProps} value={5} onChange={onChange} />);
-      
+
       const input = screen.getByRole('spinbutton');
       await act(async () => {
         input.focus();
       });
-      
+
       await user.keyboard('{ArrowUp}');
-      
+
       expect(onChange).toHaveBeenCalledWith(6);
     });
 
@@ -240,14 +306,14 @@ describe('NumericInput', () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
       render(<NumericInput {...defaultProps} value={5} onChange={onChange} />);
-      
+
       const input = screen.getByRole('spinbutton');
       await act(async () => {
         input.focus();
       });
-      
+
       await user.keyboard('{ArrowDown}');
-      
+
       expect(onChange).toHaveBeenCalledWith(4);
     });
 
@@ -255,15 +321,15 @@ describe('NumericInput', () => {
       const onChange = vi.fn();
       const user = userEvent.setup();
       render(<NumericInput {...defaultProps} value={5} onChange={onChange} />);
-      
+
       const input = screen.getByRole('spinbutton');
       await act(async () => {
         input.focus();
       });
       expect(document.activeElement).toBe(input);
-      
+
       await user.keyboard('{Escape}');
-      
+
       // Escape might blur or might not depending on implementation
       // Just check no crash happens
       expect(input).toBeInTheDocument();
@@ -294,7 +360,7 @@ describe('NumericInput', () => {
     it('disables step buttons when input is disabled', () => {
       render(<NumericInput {...defaultProps} disabled showButtons />);
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(btn => {
+      buttons.forEach((btn) => {
         expect(btn).toBeDisabled();
       });
     });

@@ -3,19 +3,26 @@
  * @module tests/unit/src/lib/components/encounterPlanner/importer/quantityPopup.test
  * @description Tests quantity selection, keyboard navigation (Enter/Escape),
  * autofocus behavior, and accessibility attributes.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @testing-library/react
  * @requires @/lib/components/encounterPlanner/importer/quantityPopup
  */
 
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QuantityPopup } from '@/lib/components/encounterPlanner/importer/quantityPopup';
+import {
+    act,
+    cleanup,
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { QuantityPopup } from '@/lib/components/encounterPlanner/importer/quantityPopup';
 
 describe('QuantityPopup Component', () => {
   let mockOnConfirm: ReturnType<typeof vi.fn>;
@@ -42,10 +49,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={false}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -55,10 +62,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -68,10 +75,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Ancient Red Dragon"
+          creatureName='Ancient Red Dragon'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(screen.getByText('Ancient Red Dragon')).toBeInTheDocument();
@@ -81,13 +88,13 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-          confirmLabel="Import"
-          cancelLabel="Abort"
-          quantityLabel="Amount"
-        />
+          confirmLabel='Import'
+          cancelLabel='Abort'
+          quantityLabel='Amount'
+        />,
       );
 
       expect(screen.getByText('Import')).toBeInTheDocument();
@@ -99,10 +106,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(screen.getByText('Add')).toBeInTheDocument();
@@ -116,10 +123,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const input = screen.getByRole('spinbutton');
@@ -130,10 +137,10 @@ describe('QuantityPopup Component', () => {
       const { rerender } = render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const user = userEvent.setup();
@@ -145,19 +152,19 @@ describe('QuantityPopup Component', () => {
       rerender(
         <QuantityPopup
           isOpen={false}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       rerender(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const newInput = screen.getByRole('spinbutton');
@@ -170,11 +177,11 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-          confirmLabel="Add"
-        />
+          confirmLabel='Add'
+        />,
       );
 
       await waitFor(() => {
@@ -189,10 +196,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       await user.click(screen.getByText('Add').closest('button')!);
@@ -206,10 +213,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const input = screen.getByRole('spinbutton');
@@ -226,10 +233,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const input = screen.getByRole('spinbutton');
@@ -247,10 +254,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       await user.click(screen.getByText('Cancel').closest('button')!);
@@ -266,17 +273,17 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const input = screen.getByRole('spinbutton');
       await act(async () => {
         input.focus();
       });
-      
+
       await user.keyboard('{Enter}');
 
       expect(mockOnConfirm).toHaveBeenCalledTimes(1);
@@ -288,10 +295,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const input = screen.getByRole('spinbutton') as HTMLInputElement;
@@ -307,10 +314,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const dialog = screen.getByRole('dialog');
@@ -324,10 +331,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       // Verify all focusable elements are present and accessible
@@ -352,10 +359,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const input = screen.getByRole('spinbutton');
@@ -371,10 +378,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const input = screen.getByRole('spinbutton');
@@ -391,10 +398,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -404,10 +411,10 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Goblin"
+          creatureName='Goblin'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
@@ -417,15 +424,15 @@ describe('QuantityPopup Component', () => {
       render(
         <QuantityPopup
           isOpen={true}
-          creatureName="Ancient Red Dragon"
+          creatureName='Ancient Red Dragon'
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(screen.getByRole('dialog')).toHaveAttribute(
         'aria-label',
-        'Add Ancient Red Dragon'
+        'Add Ancient Red Dragon',
       );
     });
   });
