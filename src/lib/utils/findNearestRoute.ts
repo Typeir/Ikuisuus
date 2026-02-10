@@ -179,31 +179,43 @@ export async function findNearestRoute(pathname: string): Promise<RouteMatch | n
     return null;
   }
   
-  // Normalize pathname (remove locale prefix)
+  /** Extract locale prefix from pathname for use in returned path */
+  const localeMatch = pathname.match(/^\/(en|es|fi)/);
+  const locale = localeMatch ? localeMatch[1] : 'en';
+
+  /** Normalize pathname (remove locale prefix) for comparison */
   const normalizedPath = pathname.replace(/^\/(en|es|fi)/, '');
   
-  // Calculate similarity for each route
+  /** Calculate similarity for each route */
   const matches = routes.map(route => ({
     path: route,
     similarity: calculateSimilarity(normalizedPath, route)
   }));
   
-  // Sort by similarity (highest first)
+  /** Sort by similarity (highest first) */
   matches.sort((a, b) => b.similarity - a.similarity);
   
-  // Return best match if similarity is above threshold (60%)
+  /** Return best match if similarity is above threshold (60%) */
   const bestMatch = matches[0];
   if (bestMatch && bestMatch.similarity >= 0.6) {
-    // Try to extract title from route
+    /** Extract title from route's last segment */
     const segments = bestMatch.path.split('/').filter(Boolean);
     const lastSegment = segments[segments.length - 1];
     const title = (lastSegment == "main" ? segments[segments.length - 2] : lastSegment) 
       ?.split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+
+    /** Prefix with locale so the link resolves correctly */
+    const fullPath = `/${locale}${bestMatch.path}`;
     
+    /** Prevent infinite loop: don't suggest the same path that 404'd */
+    if (fullPath === pathname) {
+      return null;
+    }
+
     return {
-      path: bestMatch.path,
+      path: fullPath,
       title,
       similarity: bestMatch.similarity
     };
