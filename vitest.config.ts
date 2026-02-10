@@ -1,17 +1,24 @@
 //@ts-ignore-file
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { defineConfig } from "vitest/config";
+import { defineConfig } from "vite";
+import { configDefaults } from "vitest/config";
 
 //@ts-ignore
 export default defineConfig({
   plugins: [react()],
+  clearScreen: false,
+  logLevel: 'warn',
   css: {
     preprocessorOptions: {
       scss: {
         api: 'modern-compiler',
       },
     },
+  },
+  future: {
+    removePluginHooks: 'warn',
+    removeSsrLoadModule: 'warn',
   },
   test: {
     globals: true,

@@ -39,7 +39,7 @@
     "util:tree-size": "node scripts/utils/treeSize.js ./src",
     "util:test-metadata": "node scripts/utils/testMetadataSystem.mjs",
     "wip:bundle-metadata": "node scripts/wip/bundleMonsterMetadata.js && node scripts/wip/bundleHeirloomMetadata.js",
-    "test": "npm run test:enforce && vitest run",
+    "test": "npm run test:enforce && node tests/scripts/runTests.mjs",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage --reporter=default --reporter=json --outputFile=vitest-report.json",

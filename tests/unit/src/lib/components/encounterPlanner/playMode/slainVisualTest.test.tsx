@@ -102,7 +102,7 @@ describe('Slain Visual Test', () => {
     const row = screen.getByTestId('combatant-row');
 
     // SHOULD have slain class
-    console.log('Row className:', row.className);
+
     expect(row.className).toMatch(/slain/i);
   });
 
@@ -123,7 +123,7 @@ describe('Slain Visual Test', () => {
     const checkbox = screen.getByRole('checkbox', { name: /slain/i });
 
     // Before click - no slain class
-    console.log('Before click className:', row.className);
+
     expect(row.className).not.toMatch(/slain/i);
 
     // Click checkbox

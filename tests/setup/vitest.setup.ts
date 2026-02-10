@@ -5,6 +5,30 @@ import { vi } from 'vitest';
 // The jsdom environment should provide React.act automatically when React is imported
 // If React.act is missing, it's typically a test environment configuration issue
 
+// Mock logger globally to suppress all logging output during tests
+// Preserve all exports for logger's own tests
+vi.mock('@/lib/logging/logger', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/logging/logger')>();
+  
+  // Create a mock logger that mimics the Logger class interface but suppresses output
+  const mockLogger = {
+    debug: vi.fn(),
+    message: vi.fn(),
+    warning: vi.fn(),
+    error: vi.fn(),
+    child: vi.fn(function(this: any) { return this; }),
+    getMinLevel: vi.fn(() => actual.LogLevel.MESSAGE),
+    setMinLevel: vi.fn(),
+    enableStderrForErrors: vi.fn(),
+    disableStderrForErrors: vi.fn(),
+  };
+  
+  return { 
+    ...actual,
+    logger: mockLogger,
+  };
+});
+
 // Mock next-intl modules that require Next.js runtime
 vi.mock('next-intl/navigation', () => ({
   createNavigation: vi.fn(() => ({
@@ -65,16 +89,39 @@ vi.mock('@/lib/components/icon/icons/unlock.svg', () => ({
   default: createMockSvg('unlock-icon'),
 }));
 
-// Suppress Dart Sass legacy-js-api deprecation warnings during tests only
+// Suppress deprecation and hydration warnings during tests only
 const originalStderrWrite = process.stderr.write;
+const originalConsoleError = console.error;
+
 process.stderr.write = function (
   this: typeof process.stderr,
   chunk: string | Uint8Array,
   encoding?: BufferEncoding | ((err?: Error | null) => void),
   cb?: (err?: Error | null) => void,
 ) {
-  if (typeof chunk === 'string' && chunk.includes('legacy-js-api')) {
-    return true; // suppress
+  if (typeof chunk === 'string') {
+    // Suppress Dart Sass legacy-js-api deprecation
+    if (chunk.includes('legacy-js-api')) {
+      return true;
+    }
+    // Suppress Vite CJS deprecation (vitest internal dependency issue)
+    if (chunk.includes('CJS build of Vite') || chunk.includes('vite-cjs-node-api-deprecated')) {
+      return true;
+    }
   }
   return originalStderrWrite.call(this, chunk, encoding as any, cb);
 } as typeof process.stderr.write;
+
+// Suppress React hydration warnings in tests (expected when testing layout components)
+console.error = function (...args: any[]) {
+  const message = args[0];
+  if (
+    typeof message === 'string' &&
+    (message.includes('cannot be a child of') ||
+     message.includes('hydration error') ||
+     message.includes('Hydration failed'))
+  ) {
+    return; // suppress
+  }
+  return originalConsoleError.apply(console, args);
+};

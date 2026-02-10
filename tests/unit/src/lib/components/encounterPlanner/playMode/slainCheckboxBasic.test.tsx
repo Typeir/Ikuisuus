@@ -2,11 +2,11 @@
  * @fileoverview Test that slain checkbox is rendered and clickable
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { PlayModeCombatantRow } from '@/lib/components/encounterPlanner/playMode';
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-dom')>();
@@ -50,7 +50,12 @@ const createCombatant = (slain: boolean = false): InProgressCombatant => ({
     bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
-  mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: false },
+  mechanics: {
+    lair: false,
+    stratagem: false,
+    legendaryDeed: false,
+    resist: false,
+  },
   legendaryDeedsUsed: [],
   resistRemaining: 0,
   locked: [],
@@ -65,81 +70,81 @@ describe('Slain Checkbox - Visual Only', () => {
 
   it('Step 1: Checkbox should render', () => {
     const combatant = createCombatant(false);
-    
+
     render(
       <PlayModeCombatantRow
         combatant={combatant}
         onUpdate={mockOnUpdate}
         onRemoveSessionOnly={vi.fn()}
-        locale="en"
-      />
+        locale='en'
+      />,
     );
 
     // Find the checkbox by its role
     const checkbox = screen.getByRole('checkbox', { name: /slain/i });
-    
+
     expect(checkbox).toBeInTheDocument();
-    console.log('✅ Step 1: Checkbox renders');
   });
 
   it('Step 2: Checkbox should be clickable', async () => {
     const user = userEvent.setup();
     const combatant = createCombatant(false);
-    
+
     render(
       <PlayModeCombatantRow
         combatant={combatant}
         onUpdate={mockOnUpdate}
         onRemoveSessionOnly={vi.fn()}
-        locale="en"
-      />
+        locale='en'
+      />,
     );
 
     const checkbox = screen.getByRole('checkbox', { name: /slain/i });
-    
+
     // Click it
     await user.click(checkbox);
-    
+
     // Verify it called onUpdate
     expect(mockOnUpdate).toHaveBeenCalled();
-    console.log('✅ Step 2: Checkbox is clickable');
   });
 
   it('Step 3: Checkbox should display as checked when slain=true', () => {
     const combatant = createCombatant(true);
-    
+
     render(
       <PlayModeCombatantRow
         combatant={combatant}
         onUpdate={mockOnUpdate}
         onRemoveSessionOnly={vi.fn()}
-        locale="en"
-      />
+        locale='en'
+      />,
     );
 
-    const checkbox = screen.getByRole('checkbox', { name: /slain/i }) as HTMLInputElement;
-    
+    const checkbox = screen.getByRole('checkbox', {
+      name: /slain/i,
+    }) as HTMLInputElement;
+
     // Should be checked
     expect(checkbox.checked).toBe(true);
-    console.log('✅ Step 3: Checkbox shows as checked');
   });
 
   it('Step 4: Checkbox should display as unchecked when slain=false', () => {
     const combatant = createCombatant(false);
-    
+
     render(
       <PlayModeCombatantRow
         combatant={combatant}
         onUpdate={mockOnUpdate}
         onRemoveSessionOnly={vi.fn()}
-        locale="en"
-      />
+        locale='en'
+      />,
     );
 
-    const checkbox = screen.getByRole('checkbox', { name: /slain/i }) as HTMLInputElement;
-    
+    const checkbox = screen.getByRole('checkbox', {
+      name: /slain/i,
+    }) as HTMLInputElement;
+
     // Should NOT be checked
     expect(checkbox.checked).toBe(false);
-    console.log('✅ Step 4: Checkbox shows as unchecked');
   });
 });

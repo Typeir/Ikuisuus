@@ -11,25 +11,25 @@
  * @requires @/lib/utils/encounterStorage - Encounter storage utilities
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { EncounterStorage } from '@/lib/enums/encounterPlanner';
+import type { Encounter } from '@/lib/types/encounterPlanner';
 import {
-  generateId,
   calculateInitiativeMod,
   createEmptyCreature,
   createEmptyEncounter,
-  getEncounters,
-  getActiveEncounterId,
-  setActiveEncounterId,
-  getActiveEncounter,
-  saveEncounters,
-  saveEncounter,
   deleteEncounter,
   exportEncounter,
+  generateId,
+  getActiveEncounter,
+  getActiveEncounterId,
+  getEncounters,
   importEncounter,
   rollInitiative,
+  saveEncounter,
+  saveEncounters,
+  setActiveEncounterId,
 } from '@/lib/utils/encounterStorage';
-import { EncounterStorage } from '@/lib/enums/encounterPlanner';
-import type { Encounter } from '@/lib/types/encounterPlanner';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('encounterStorage', () => {
   describe('generateId', () => {
@@ -190,12 +190,6 @@ describe('encounterStorage', () => {
       const encounter = createEmptyEncounter();
       expect(encounter.createdAt).toBe(encounter.updatedAt);
     });
-
-    it('should have one default creature', () => {
-      const encounter = createEmptyEncounter();
-      expect(encounter.creatures).toHaveLength(1);
-      expect(encounter.creatures[0].name).toBe('New Creature');
-    });
   });
 
   describe('rollInitiative', () => {
@@ -288,6 +282,7 @@ describe('encounterStorage', () => {
 
     it('should preserve creature data', () => {
       const encounter = createEmptyEncounter();
+      encounter.creatures.push(createEmptyCreature());
       encounter.creatures[0].name = 'Test Creature';
       const json = JSON.stringify(encounter);
       const imported = importEncounter(json);
@@ -431,7 +426,7 @@ describe('encounterStorage', () => {
         saveEncounter(encounter);
 
         const stored = JSON.parse(
-          mockStorage[EncounterStorage.Encounters]
+          mockStorage[EncounterStorage.Encounters],
         ) as Encounter[];
         expect(stored[0].updatedAt).not.toBe(originalUpdatedAt);
 

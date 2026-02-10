@@ -13,8 +13,8 @@
  */
 
 import RootLayout from '@/app/[locale]/layout';
-import { render } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { cleanup, render } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // Mock cookies() from next/headers
 vi.mock('next/headers', () => ({
@@ -54,6 +54,10 @@ vi.mock('next/navigation', () => ({
 }));
 
 describe('RootLayout', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   it('should render without crashing for valid locale', async () => {
     const component = await RootLayout({
       children: <div>Test Content</div>,
@@ -81,13 +85,18 @@ describe('RootLayout', () => {
       params: Promise.resolve({ locale: 'en' }),
     });
 
+    expect(() => {
+      render(componentEn);
+    }).not.toThrow();
+    
+    cleanup();
+
     const componentEs = await RootLayout({
       children: <div>Content</div>,
       params: Promise.resolve({ locale: 'es' }),
     });
 
     expect(() => {
-      render(componentEn);
       render(componentEs);
     }).not.toThrow();
   });

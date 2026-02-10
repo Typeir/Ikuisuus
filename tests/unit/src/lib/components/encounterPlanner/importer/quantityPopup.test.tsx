@@ -12,7 +12,7 @@
  * @requires @/lib/components/encounterPlanner/importer/quantityPopup
  */
 
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { QuantityPopup } from '@/lib/components/encounterPlanner/importer/quantityPopup';
@@ -273,7 +273,10 @@ describe('QuantityPopup Component', () => {
       );
 
       const input = screen.getByRole('spinbutton');
-      input.focus();
+      await act(async () => {
+        input.focus();
+      });
+      
       await user.keyboard('{Enter}');
 
       expect(mockOnConfirm).toHaveBeenCalledTimes(1);

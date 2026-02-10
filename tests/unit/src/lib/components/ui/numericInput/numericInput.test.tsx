@@ -3,7 +3,7 @@
  * @description Unit tests for the NumericInput UI component.
  */
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NumericInput } from '@/lib/components/ui/numericInput';
@@ -227,7 +227,10 @@ describe('NumericInput', () => {
       render(<NumericInput {...defaultProps} value={5} onChange={onChange} />);
       
       const input = screen.getByRole('spinbutton');
-      input.focus();
+      await act(async () => {
+        input.focus();
+      });
+      
       await user.keyboard('{ArrowUp}');
       
       expect(onChange).toHaveBeenCalledWith(6);
@@ -239,7 +242,10 @@ describe('NumericInput', () => {
       render(<NumericInput {...defaultProps} value={5} onChange={onChange} />);
       
       const input = screen.getByRole('spinbutton');
-      input.focus();
+      await act(async () => {
+        input.focus();
+      });
+      
       await user.keyboard('{ArrowDown}');
       
       expect(onChange).toHaveBeenCalledWith(4);
@@ -251,7 +257,9 @@ describe('NumericInput', () => {
       render(<NumericInput {...defaultProps} value={5} onChange={onChange} />);
       
       const input = screen.getByRole('spinbutton');
-      input.focus();
+      await act(async () => {
+        input.focus();
+      });
       expect(document.activeElement).toBe(input);
       
       await user.keyboard('{Escape}');

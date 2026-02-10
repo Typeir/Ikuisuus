@@ -220,6 +220,7 @@ describe('EncounterPlanner Component', () => {
     global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
     global.URL.revokeObjectURL = vi.fn();
     global.Blob = vi.fn((content, options) => ({ content, options })) as any;
+    global.alert = vi.fn();
   });
 
   afterEach(() => {

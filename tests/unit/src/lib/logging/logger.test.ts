@@ -6,6 +6,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+// Unmock the logger for this test file - we need to test the real logger
+vi.unmock('@/lib/logging/logger');
+
 import { logger, createLogger, LogLevel, Level } from '@/lib/logging/logger';
 
 describe('Logger', () => {

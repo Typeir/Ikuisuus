@@ -198,10 +198,24 @@ describe('PlayMode Component', () => {
     vi.spyOn(inProgressCombatStorage, 'createInProgressCombatant').mockImplementation(mockCreateInProgressCombatant);
     vi.spyOn(inProgressCombatStorage, 'exportInProgressCombat').mockImplementation(mockExportInProgressCombat);
 
+    // Mock window.open to prevent "navigation to another Document" error
+    global.open = vi.fn();
+
     Element.prototype.scrollIntoView = vi.fn();
     global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
     global.URL.revokeObjectURL = vi.fn();
     global.Blob = vi.fn((content, options) => ({ content, options })) as any;
+    
+    // Mock anchor element click to prevent navigation
+    const mockClick = vi.fn();
+    const originalCreateElement = document.createElement.bind(document);
+    vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
+      const element = originalCreateElement(tagName);
+      if (tagName === 'a') {
+        element.click = mockClick;
+      }
+      return element;
+    });
   });
 
   afterEach(() => {
