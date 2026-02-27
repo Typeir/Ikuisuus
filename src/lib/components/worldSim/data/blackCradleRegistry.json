@@ -1,0 +1,261 @@
+{
+  "bodies": [
+    {
+      "id": "kultharja",
+      "name": "Kultharja",
+      "subtitle": "The Sun",
+      "loreOrigin": "The Golden One's mane",
+      "type": "star",
+      "contentPath": "world/the-lands-of-damocles/kultharja",
+      "orbit": null,
+      "radius": 300,
+      "renderConfig": {
+        "renderer": "star",
+        "glowIntensity": 2.5,
+        "coronaScale": 1.8,
+        "pulseSpeed": 0.5
+      },
+      "regions": []
+    },
+    {
+      "id": "damocles",
+      "name": "Damocles",
+      "subtitle": "The Heart-World",
+      "loreOrigin": "The Golden One's heart",
+      "type": "planet",
+      "contentPath": "world/the-lands-of-damocles/damocles",
+      "orbit": {
+        "semiMajorAxis": 1500,
+        "eccentricity": 0.02,
+        "inclination": 0,
+        "period": 365,
+        "phase": 0
+      },
+      "radius": 45,
+      "renderConfig": {
+        "renderer": "planet",
+        "baseColor": "#b0dcf8",
+        "hasAtmosphere": true,
+        "atmosphereColor": "#d0ecff",
+        "atmosphereOpacity": 0.3,
+        "rotationSpeed": 0.001
+      },
+      "regions": [
+        {
+          "id": "thule",
+          "name": "Thule",
+          "contentPath": "world/the-lands-of-damocles/thule",
+          "surfacePosition": { "lat": -50, "lon": 30 },
+          "areaScale": 0.18
+        },
+        {
+          "id": "thealas",
+          "name": "Thealas",
+          "contentPath": "world/the-lands-of-damocles/thealas",
+          "surfacePosition": { "lat": 10, "lon": -20 },
+          "areaScale": 0.14
+        },
+        {
+          "id": "ordovica",
+          "name": "Ordovica",
+          "contentPath": "world/the-lands-of-damocles/ordovica",
+          "surfacePosition": { "lat": 25, "lon": 60 },
+          "areaScale": 0.16
+        },
+        {
+          "id": "pyknos",
+          "name": "Pyknos",
+          "contentPath": "world/the-lands-of-damocles/pyknos",
+          "surfacePosition": { "lat": 40, "lon": -80 },
+          "areaScale": 0.1
+        },
+        {
+          "id": "binturia",
+          "name": "Binturia",
+          "contentPath": "world/the-lands-of-damocles/binturia",
+          "surfacePosition": { "lat": -15, "lon": 120 },
+          "areaScale": 0.12
+        },
+        {
+          "id": "borossa",
+          "name": "Borossa",
+          "contentPath": "world/the-lands-of-damocles/borossa",
+          "surfacePosition": { "lat": 5, "lon": -140 },
+          "areaScale": 0.11
+        },
+        {
+          "id": "brume-empire",
+          "name": "Brume Empire",
+          "contentPath": "world/the-lands-of-damocles/brume-empire",
+          "surfacePosition": { "lat": 55, "lon": -30 },
+          "areaScale": 0.13
+        }
+      ]
+    },
+    {
+      "id": "opaline-belt",
+      "name": "The Opaline Belt",
+      "subtitle": "The Tears",
+      "loreOrigin": "The Golden One's tears",
+      "type": "asteroidBelt",
+      "contentPath": "world/the-lands-of-damocles/opaline-belt",
+      "parentBodyId": "damocles",
+      "orbit": null,
+      "radius": 110,
+      "renderConfig": {
+        "renderer": "asteroidBelt",
+        "baseColor": "#ece4d8",
+        "particleCount": 500,
+        "beltWidth": 20,
+        "particleMinSize": 0.3,
+        "particleMaxSize": 1.5
+      },
+      "regions": []
+    },
+    {
+      "id": "lansihenki",
+      "name": "Länsihenki",
+      "subtitle": "The Western Lung",
+      "loreOrigin": "The Golden One's lungs (west)",
+      "type": "gasGiant",
+      "contentPath": "world/the-lands-of-damocles/lansihenki",
+      "orbit": {
+        "semiMajorAxis": 2600,
+        "eccentricity": 0.05,
+        "inclination": 3,
+        "period": 1200,
+        "phase": 45
+      },
+      "radius": 87,
+      "renderConfig": {
+        "renderer": "gasGiant",
+        "baseColor": "#dcf0f8",
+        "bandColor": "#c8e4f4",
+        "atmosphereColor": "#e8f4fc",
+        "bandCount": 8,
+        "rotationSpeed": 0.0008,
+        "stormScale": 0.4
+      },
+      "regions": []
+    },
+    {
+      "id": "itahenki",
+      "name": "Itähenki",
+      "subtitle": "The Eastern Lung",
+      "loreOrigin": "The Golden One's lungs (east)",
+      "type": "gasGiant",
+      "contentPath": "world/the-lands-of-damocles/itahenki",
+      "orbit": {
+        "semiMajorAxis": 2600,
+        "eccentricity": 0.05,
+        "inclination": -3,
+        "period": -1200,
+        "phase": 225
+      },
+      "radius": 82,
+      "renderConfig": {
+        "renderer": "gasGiant",
+        "baseColor": "#e4dcf8",
+        "bandColor": "#d4c8f4",
+        "atmosphereColor": "#f0e8fc",
+        "bandCount": 6,
+        "rotationSpeed": -0.0008,
+        "stormScale": 0.3
+      },
+      "regions": []
+    },
+    {
+      "id": "kalmora",
+      "name": "Kalmora",
+      "subtitle": "The Rotworld",
+      "loreOrigin": "The Golden One's liver",
+      "type": "planet",
+      "contentPath": "world/the-lands-of-damocles/kalmora",
+      "orbit": {
+        "semiMajorAxis": 1100,
+        "eccentricity": 0.08,
+        "inclination": 7,
+        "period": 250,
+        "phase": 120
+      },
+      "radius": 44,
+      "renderConfig": {
+        "renderer": "planet",
+        "baseColor": "#c0f0d0",
+        "hasAtmosphere": true,
+        "atmosphereColor": "#dcf8e4",
+        "atmosphereOpacity": 0.5,
+        "rotationSpeed": 0.0005,
+        "isRotworld": true
+      },
+      "regions": []
+    },
+    {
+      "id": "selkara",
+      "name": "Selkara",
+      "subtitle": "The Tower-World",
+      "loreOrigin": "The Golden One's marrow & spine",
+      "type": "towerWorld",
+      "contentPath": "world/the-lands-of-damocles/selkara",
+      "orbit": {
+        "semiMajorAxis": 840,
+        "eccentricity": 0.01,
+        "inclination": 12,
+        "period": 180,
+        "phase": 200
+      },
+      "radius": 32,
+      "renderConfig": {
+        "renderer": "towerWorld",
+        "towerColor": "#9c826d",
+        "towerHeight": 40,
+        "towerRadius": 6,
+        "segmentCount": 5,
+        "beaconPulseSpeed": 1.2
+      },
+      "regions": []
+    },
+    {
+      "id": "mana",
+      "name": "Mana",
+      "subtitle": "The Ring-Worlds",
+      "loreOrigin": "The Golden One's shadow",
+      "type": "ringWorld",
+      "contentPath": "world/the-lands-of-damocles/mana",
+      "orbit": {
+        "semiMajorAxis": 3400,
+        "eccentricity": 0.44,
+        "inclination": 5,
+        "period": 2000,
+        "phase": 90
+      },
+      "radius": 80,
+      "renderConfig": {
+        "renderer": "ringWorld",
+        "coreColor": "#88d0ff",
+        "coreRadius": 16,
+        "ringColor": "#e8dcc0",
+        "ringCount": 7,
+        "ringSpacing": 10.0,
+        "ringTubeRadius": 1.8,
+        "rotationSpeed": 0.006
+      },
+      "regions": []
+    }
+  ],
+  "boundary": {
+    "id": "everdark",
+    "name": "The Everdark",
+    "subtitle": "The Burning Barrier",
+    "loreOrigin": "The Dragon's breath",
+    "type": "boundary",
+    "contentPath": "world/gods-and-demigods/everdark",
+    "radius": 5000,
+    "renderConfig": {
+      "renderer": "everdark",
+      "fireIntensity": 0.8,
+      "opacity": 0.12,
+      "animationSpeed": 0.3
+    }
+  }
+}

@@ -185,6 +185,32 @@ html:not([data-theme]) body {
   --ha-ctx-divider: var(--color-secondary);
   --ha-ctx-glow: var(--color-accent-a10);
   --ha-ctx-text-emphasis: var(--color-emphasis);
+
+  /* ============================================
+     WORLD SIM TOKENS - Solar system renderer
+  ============================================ */
+  --worldsim-bg: #050508;
+  --worldsim-panel-bg: var(--color-surface);
+  --worldsim-panel-border: var(--color-border);
+  --worldsim-label-text: var(--color-text);
+  --worldsim-label-accent: var(--color-accent);
+  --worldsim-label-bg: 0 0 0 / 0.65;
+  --worldsim-star-emissive: #ffcc44;
+  --worldsim-star-corona: #ff8800;
+  --worldsim-atmosphere: #6fa8dc;
+  --worldsim-atmosphere-light: #8ec0ee;
+  --worldsim-everdark-fire: #1a0a00;
+  --worldsim-everdark-glow: #cc4400;
+  --worldsim-marker-bg: var(--color-accent);
+  --worldsim-marker-pulse: var(--color-accent-a20);
+  --worldsim-region-hover: var(--color-emphasis);
+  --worldsim-gas-band-1: #c4a882;
+  --worldsim-gas-band-2: #8c7060;
+  --worldsim-rot-surface: #3a2a1a;
+  --worldsim-tower-beacon: #88ccff;
+  --worldsim-ring-inner: #2a2a3a;
+  --worldsim-ring-outer: #1a1a2a;
+  --worldsim-opaline-glow: #aaddff;
 }
 
 /* Light theme explicit */
@@ -317,6 +343,14 @@ html[data-theme='light'] {
   /* Override contextual button text for readability in light mode */
   --ha-ctx-button-text: #0070f3;
   --ha-ctx-button-border: #0070f3;
+
+  /* World Sim tokens - light theme */
+  --worldsim-bg: #0a0a10;
+  --worldsim-panel-bg: var(--color-surface);
+  --worldsim-panel-border: var(--color-border);
+  --worldsim-label-text: #ffffff;
+  --worldsim-label-accent: #88ddaa;
+  --worldsim-label-bg: 0 0 0 / 0.75;
 }
 
 /* Dark theme */
@@ -436,6 +470,12 @@ html[data-theme='dark'] {
   --ha-badge-bg: #2d303a;
   --ha-badge-text: #b8c0d0;
   --ha-badge-border: #505868;
+
+  /* World Sim tokens - dark theme */
+  --worldsim-bg: #050508;
+  --worldsim-label-text: var(--color-text);
+  --worldsim-label-accent: var(--color-accent);
+  --worldsim-label-bg: 0 0 0 / 0.65;
 }
 
 /* ============================================

@@ -1,0 +1,73 @@
+/**
+ * @fileoverview World Sim Styles
+ * @description SCSS module for the root WorldSim component. Handles full-viewport
+ * layout for the Three.js canvas container and header overlay.
+ */
+
+.worldSimWrapper {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 64px);
+  min-height: 400px;
+  background: var(--worldsim-bg);
+  overflow: hidden;
+  border-radius: 8px;
+
+  @media (max-width: 768px) {
+    height: calc(100vh - 56px);
+    border-radius: 0;
+  }
+}
+
+.canvasContainer {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.header {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.headerTitle {
+  color: var(--worldsim-label-text);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.headerSubtitle {
+  color: var(--worldsim-label-accent);
+  font-size: 0.8rem;
+  font-weight: 400;
+  margin: 2px 0 0;
+  opacity: 0.8;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--worldsim-bg);
+  z-index: 100;
+  transition: opacity 0.5s ease;
+}
+
+.loadingText {
+  color: var(--worldsim-label-text);
+  font-size: 1rem;
+  opacity: 0.6;
+}

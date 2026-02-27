@@ -22,10 +22,10 @@ import { Sidebar } from '@/lib/components/sidebar/sidebar';
 import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
-  useSidebarMenuActions,
-  useSidebarMenuState,
-  useThemeActions,
-  useThemeState,
+    useSidebarMenuActions,
+    useSidebarMenuState,
+    useThemeActions,
+    useThemeState,
 } from '@/lib/context/PersistentUiContext';
 import { Theme } from '@/lib/enums/themes';
 import { useTranslations } from 'next-intl';
@@ -73,6 +73,11 @@ function BaseResponsiveLayoutShell({
       id: 'encounter-creator',
       label: t('tools.encounterCreator'),
       href: `/${locale}/utils/encounter-planner`,
+    },
+    {
+      id: 'world-sim',
+      label: t('tools.worldSim'),
+      href: `/${locale}/utils/world-sim`,
     },
   ];
 

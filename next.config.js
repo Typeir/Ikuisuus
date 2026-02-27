@@ -7,7 +7,9 @@ const withMDX = require('@next/mdx')({
     remarkPlugins: [remarkGfm],
   },
 });
-const withNextIntl = createNextIntlPlugin({ requestConfig: './src/i18n/request.ts' });
+const withNextIntl = createNextIntlPlugin({
+  requestConfig: './src/i18n/request.ts',
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -26,6 +28,10 @@ const nextConfig = {
       test: /\.svg$/,
       issuer: /\.[jt]sx?$/,
       use: ['@svgr/webpack'],
+    });
+    config.module.rules.push({
+      test: /\.glsl$/,
+      type: 'asset/source',
     });
     config.resolve.alias['@content'] = path.resolve(__dirname, 'src/content');
     config.resolve.alias['@lib'] = path.resolve(__dirname, 'src/lib');

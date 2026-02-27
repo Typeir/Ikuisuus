@@ -1,0 +1,40 @@
+{
+  "title": "The Black Cradle",
+  "subtitle": "Solar System of Damocles",
+  "zoomIn": "Zoom In",
+  "zoomOut": "Zoom Out",
+  "resetView": "Reset View",
+  "viewInLibrary": "View in Library",
+  "regions": "Regions",
+  "loreOrigin": "Origin",
+  "bodyInfo": "Body Information",
+  "systemView": "System View",
+  "bodyView": "Body View",
+  "regionView": "Region View",
+  "loading": "Loading World Sim...",
+  "clickToExplore": "Click to explore",
+  "noRegions": "No known regions",
+  "controls": {
+    "title": "Scene Controls",
+    "back": "Back",
+    "orbit": "Drag to orbit",
+    "zoom": "Scroll to zoom",
+    "select": "Click to select",
+    "labels": "Labels",
+    "orbits": "Orbits",
+    "reset": "Reset View",
+    "toggleLabels": "Toggle body labels",
+    "toggleOrbits": "Toggle orbit animation"
+  },
+  "bodies": {
+    "kultharja": "Kultharja",
+    "damocles": "Damocles",
+    "opalineBelt": "The Opaline Belt",
+    "lansihenki": "Länsihenki",
+    "itahenki": "Itähenki",
+    "kalmora": "Kalmora",
+    "selkara": "Selkara",
+    "mana": "Mana",
+    "everdark": "The Everdark"
+  }
+}

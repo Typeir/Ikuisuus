@@ -1,0 +1,86 @@
+/**
+ * @fileoverview Camera Follow System — Dynamic Target Tracking
+ * @description Manages the follow-target concept for the camera system.
+ * When a follow target is active, the orbit center moves with the body
+ * each frame so orbit controls naturally work relative to the moving body.
+ *
+ * @module worldSim/camera/CameraFollowSystem
+ * @version 2.0.0
+ * @author Typeir
+ * @since 2.0.0
+ */
+
+import { Vector3 } from 'three';
+
+/**
+ * Tracks a moving celestial body as the camera's orbit center.
+ * Each frame, call `update()` to get the new target position.
+ * The delta between frames is used by the controller to shift the camera.
+ *
+ * @class CameraFollowSystem
+ */
+export class CameraFollowSystem {
+  /** @property {(() => Vector3) | null} positionGetter - Function returning the current world position of the followed body */
+  private positionGetter: (() => Vector3) | null = null;
+
+  /** @property {Vector3} lastPosition - Cached position from the previous frame */
+  private lastPosition: Vector3 = new Vector3();
+
+  /** @property {boolean} hasTarget - Whether a follow target is active */
+  private hasTarget: boolean = false;
+
+  /**
+   * Set the follow target. The camera orbit center will track this body.
+   *
+   * @param {() => Vector3} getter - Function returning the body's current world position
+   */
+  setTarget(getter: () => Vector3): void {
+    this.positionGetter = getter;
+    this.lastPosition.copy(getter());
+    this.hasTarget = true;
+  }
+
+  /**
+   * Clear the follow target. The orbit center stays where it was.
+   */
+  clearTarget(): void {
+    this.positionGetter = null;
+    this.hasTarget = false;
+  }
+
+  /**
+   * Check whether a follow target is currently active.
+   *
+   * @returns {boolean} True if following a body
+   */
+  isFollowing(): boolean {
+    return this.hasTarget;
+  }
+
+  /**
+   * Get the current target position. Returns null if not following.
+   *
+   * @returns {Vector3 | null} Current world position of the followed body
+   */
+  getTargetPosition(): Vector3 | null {
+    if (!this.positionGetter) return null;
+    return this.positionGetter();
+  }
+
+  /**
+   * Compute the frame delta — how much the followed body moved since last frame.
+   * Updates the internal cached position. Returns zero vector if not following.
+   *
+   * @returns {Vector3} Movement delta of the followed body
+   */
+  computeDelta(): Vector3 {
+    if (!this.positionGetter || !this.hasTarget) {
+      return new Vector3();
+    }
+
+    const currentPos = this.positionGetter();
+    const delta = new Vector3().subVectors(currentPos, this.lastPosition);
+    this.lastPosition.copy(currentPos);
+    return delta;
+  }
+}

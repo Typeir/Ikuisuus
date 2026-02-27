@@ -6,6 +6,7 @@
   "tools": {
     "title": "Tools",
     "encounterCreator": "Encounter Creator",
+    "worldSim": "World Sim",
     "toggleTools": "Toggle Tools"
   }
 }
