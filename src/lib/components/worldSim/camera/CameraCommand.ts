@@ -23,6 +23,9 @@ const EASE_FACTOR = 0.08;
 /** @constant {number} COMPLETION_THRESHOLD - Distance threshold to consider transition complete */
 const COMPLETION_THRESHOLD = 0.5;
 
+/** @constant {number} REGION_TRANSITION_DURATION - Duration of region camera transitions in seconds */
+const REGION_TRANSITION_DURATION = 1.6;
+
 /**
  * Camera transition state shared by all commands during execution.
  *
@@ -150,8 +153,76 @@ export class ZoomToBodyCommand implements ICameraCommand {
 }
 
 /**
+ * Slerp (spherical linear interpolation) between two unit-length direction vectors.
+ * Produces an arc path instead of a straight line, preventing the camera from
+ * cutting through the planet interior.
+ *
+ * @param {Vector3} a - Start direction (unit length)
+ * @param {Vector3} b - End direction (unit length)
+ * @param {number} t - Interpolation factor (0 = a, 1 = b)
+ * @returns {Vector3} Interpolated direction (unit length)
+ */
+function slerpDirections(a: Vector3, b: Vector3, t: number): Vector3 {
+  const dot = Math.max(-1, Math.min(1, a.dot(b)));
+  const omega = Math.acos(dot);
+  if (omega < 1e-4) return a.clone().lerp(b, t).normalize();
+  const sinOmega = Math.sin(omega);
+  const s0 = Math.sin((1 - t) * omega) / sinOmega;
+  const s1 = Math.sin(t * omega) / sinOmega;
+  return new Vector3(
+    s0 * a.x + s1 * b.x,
+    s0 * a.y + s1 * b.y,
+    s0 * a.z + s1 * b.z,
+  ).normalize();
+}
+
+/**
+ * Cosine ease-in-out: starts slow, accelerates through the middle, decelerates to a stop.
+ * Produces a smooth S-curve that feels natural for camera orbiting.
+ * Formula: $\frac{1 - \cos(\pi t)}{2}$
+ *
+ * @param {number} t - Linear progress from 0 to 1
+ * @returns {number} Eased progress from 0 to 1
+ */
+function easeInOut(t: number): number {
+  return (1 - Math.cos(Math.PI * t)) / 2;
+}
+
+/**
+ * Transition state for region camera commands using spherical interpolation.
+ * Stores directions and radii relative to the planet center so the camera
+ * arcs around the surface instead of cutting through the interior.
+ * Uses time-based progression with ease-in-out for satellite-like orbiting.
+ *
+ * @interface RegionTransitionState
+ * @property {Vector3} startDirection - Normalized direction from planet center to initial camera position
+ * @property {Vector3} endDirection - Normalized surface normal at the region (outward from planet center)
+ * @property {number} startRadius - Initial distance from planet center to camera
+ * @property {number} endRadius - Final distance from planet center to target position
+ * @property {number} elapsed - Accumulated transition time in seconds
+ * @property {boolean} initialized - Whether the transition has been set up
+ */
+interface RegionTransitionState {
+  /** @property {Vector3} startDirection - Direction from planet center to initial camera pos */
+  startDirection: Vector3;
+  /** @property {Vector3} endDirection - Surface normal at region (planet center → region) */
+  endDirection: Vector3;
+  /** @property {number} startRadius - Initial distance from planet center */
+  startRadius: number;
+  /** @property {number} endRadius - Final distance from planet center */
+  endRadius: number;
+  /** @property {number} elapsed - Accumulated transition time in seconds */
+  elapsed: number;
+  /** @property {boolean} initialized - Whether transition is set up */
+  initialized: boolean;
+}
+
+/**
  * Smoothly transitions the camera to focus on a specific surface region.
- * Used when a user clicks a landmass marker on a celestial body.
+ * Uses spherical interpolation to arc the camera around the planet surface
+ * rather than cutting through the interior via linear interpolation.
+ * The camera ends positioned along the planet's outward surface normal
+ * at the region and oriented to face toward the planet center.
  *
  * @class ZoomToRegionCommand
  * @implements {ICameraCommand}
@@ -160,11 +231,14 @@ export class ZoomToRegionCommand implements ICameraCommand {
   /** @property {string} type - Command identifier */
   public readonly type = 'zoom-to-region';
 
-  /** @property {CameraTransitionState} state - Internal transition state */
-  private state: CameraTransitionState;
+  /** @property {RegionTransitionState} state - Spherical transition state */
+  private state: RegionTransitionState;
 
   /** @property {Vector3} regionWorldPosition - Region position in world space */
   private regionWorldPosition: Vector3;
+
+  /** @property {Vector3} planetCenter - World-space center of the parent body */
+  private planetCenter: Vector3;
 
   /** @property {number} viewDistance - Distance from the region surface */
   private viewDistance: number;
@@ -174,71 +248,105 @@ export class ZoomToRegionCommand implements ICameraCommand {
 
   /**
    * @param {Vector3} regionWorldPosition - World-space position of the region
+   * @param {Vector3} planetCenter - World-space center of the parent body
    * @param {number} viewDistance - Desired distance from the region
    * @param {string} regionId - Identifier of the region being targeted
    */
   constructor(
     regionWorldPosition: Vector3,
+    planetCenter: Vector3,
     viewDistance: number,
     regionId: string,
   ) {
     this.regionWorldPosition = regionWorldPosition.clone();
+    this.planetCenter = planetCenter.clone();
     this.viewDistance = viewDistance;
     this.regionId = regionId;
     this.state = {
-      targetPosition: new Vector3(),
-      targetLookAt: regionWorldPosition.clone(),
-      currentLookAt: new Vector3(),
+      startDirection: new Vector3(),
+      endDirection: new Vector3(),
+      startRadius: 0,
+      endRadius: 0,
+      elapsed: 0,
       initialized: false,
     };
   }
 
   /**
    * Advance the camera transition by one frame.
+   * Uses time-based progression with a cosine ease-in-out curve to produce
+   * a smooth satellite-like orbit: starts slow, accelerates through the middle
+   * of the arc, and decelerates to a gentle stop at the target.
+   * The camera always faces the planet center throughout the transition.
    *
    * @param {PerspectiveCamera} camera - The camera to move
-   * @param {number} _deltaTime - Time since last frame
+   * @param {number} deltaTime - Time since last frame in seconds
    * @returns {boolean} True when the transition is complete
    */
-  execute(camera: PerspectiveCamera, _deltaTime: number): boolean {
+  execute(camera: PerspectiveCamera, deltaTime: number): boolean {
     if (!this.state.initialized) {
-      this.initializeTransition();
+      this.initializeTransition(camera);
     }
 
-    camera.position.lerp(this.state.targetPosition, EASE_FACTOR);
-    this.state.currentLookAt.lerp(this.state.targetLookAt, EASE_FACTOR);
-    camera.lookAt(this.state.currentLookAt);
+    this.state.elapsed += deltaTime;
+    const linearT = Math.min(this.state.elapsed / REGION_TRANSITION_DURATION, 1);
+    const easedT = easeInOut(linearT);
 
-    const distance = camera.position.distanceTo(this.state.targetPosition);
-    return distance < COMPLETION_THRESHOLD;
+    const currentDir = slerpDirections(
+      this.state.startDirection,
+      this.state.endDirection,
+      easedT,
+    );
+    const currentRadius =
+      this.state.startRadius +
+      (this.state.endRadius - this.state.startRadius) * easedT;
+
+    camera.position
+      .copy(this.planetCenter)
+      .add(currentDir.multiplyScalar(currentRadius));
+
+    camera.lookAt(this.planetCenter);
+
+    return linearT >= 1;
   }
 
   /**
-   * Apply the follow system's frame delta to the command's target positions.
+   * Apply the follow system's frame delta to world-space positions.
+   * Directions and radii are relative to planetCenter so they stay valid.
    *
    * @param {Vector3} delta - Frame-to-frame movement of the followed body
    */
   applyFollowDelta(delta: Vector3): void {
     if (!this.state.initialized) return;
     this.regionWorldPosition.add(delta);
-    this.state.targetPosition.add(delta);
-    this.state.targetLookAt.add(delta);
+    this.planetCenter.add(delta);
   }
 
   /**
-   * Set up the target position outward from the region's surface normal.
+   * Compute start/end directions and radii for the spherical arc.
+   * The start direction is from the planet center toward the camera's current position.
+   * The end direction is the surface normal at the region (planet center → region).
    *
    * @private
+   * @param {PerspectiveCamera} camera - Current camera for initial direction/radius
    */
-  private initializeTransition(): void {
-    const surfaceNormal = this.regionWorldPosition.clone().normalize();
-
-    this.state.targetPosition.copy(
-      this.regionWorldPosition
-        .clone()
-        .add(surfaceNormal.multiplyScalar(this.viewDistance)),
+  private initializeTransition(camera: PerspectiveCamera): void {
+    const toCamera = new Vector3().subVectors(
+      camera.position,
+      this.planetCenter,
     );
-    this.state.currentLookAt.copy(this.regionWorldPosition);
+    this.state.startDirection = toCamera.clone().normalize();
+    this.state.startRadius = toCamera.length();
+
+    const surfaceNormal = new Vector3()
+      .subVectors(this.regionWorldPosition, this.planetCenter)
+      .normalize();
+    this.state.endDirection = surfaceNormal;
+
+    const bodyRadius = this.regionWorldPosition.distanceTo(this.planetCenter);
+    this.state.endRadius = bodyRadius + this.viewDistance;
+
+    this.state.elapsed = 0;
     this.state.initialized = true;
   }
 }

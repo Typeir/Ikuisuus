@@ -59,10 +59,10 @@ interface CelestialEntry {
 const VIEW_DISTANCE_MULTIPLIER = 3;
 
 /** @constant {number} REGION_VIEW_DISTANCE - View distance when zooming to a region */
-const REGION_VIEW_DISTANCE = 15;
+const REGION_VIEW_DISTANCE = 40;
 
 /** @constant {number} LOCAL_COORD_VIEW_DISTANCE - Default view distance for local coordinate focus */
-const LOCAL_COORD_VIEW_DISTANCE = 10;
+const LOCAL_COORD_VIEW_DISTANCE = 30;
 
 /**
  * Central mediator coordinating all World Sim subsystems.
@@ -319,6 +319,7 @@ export class WorldSimMediator {
 
     const command = new ZoomToRegionCommand(
       worldPos,
+      entry.mesh.position.clone(),
       REGION_VIEW_DISTANCE,
       regionId,
     );
@@ -355,6 +356,7 @@ export class WorldSimMediator {
     const distance = viewDist ?? LOCAL_COORD_VIEW_DISTANCE;
     const command = new ZoomToRegionCommand(
       worldPos,
+      entry.mesh.position.clone(),
       distance,
       `local-${bodyId}`,
     );
