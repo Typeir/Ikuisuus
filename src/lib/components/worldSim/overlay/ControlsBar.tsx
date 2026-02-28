@@ -14,9 +14,10 @@
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import {
-    useWorldSimDispatch,
-    useWorldSimState,
+  useWorldSimDispatch,
+  useWorldSimState,
 } from '../context/WorldSimContext';
+import { WorldSimActionType } from '../context/worldSimTypes';
 import type { WorldSimMediator } from '../WorldSimMediator';
 import styles from './overlay.module.scss';
 
@@ -45,12 +46,12 @@ export function ControlsBar({
   const t = useTranslations('worldSim');
 
   const handleToggleLabels = useCallback(() => {
-    dispatch({ type: 'TOGGLE_LABELS' });
+    dispatch({ type: WorldSimActionType.ToggleLabels });
   }, [dispatch]);
 
   const handleToggleOrbits = useCallback(() => {
     mediatorRef.current?.toggleOrbitLines();
-    dispatch({ type: 'TOGGLE_ORBITS' });
+    dispatch({ type: WorldSimActionType.ToggleOrbits });
   }, [dispatch, mediatorRef]);
 
   const handleReset = useCallback(() => {

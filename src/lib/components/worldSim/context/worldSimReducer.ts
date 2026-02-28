@@ -10,10 +10,11 @@
  */
 
 import {
-    INITIAL_WORLD_SIM_STATE,
-    ZoomLevel,
-    type WorldSimAction,
-    type WorldSimState,
+  INITIAL_WORLD_SIM_STATE,
+  WorldSimActionType,
+  ZoomLevel,
+  type WorldSimAction,
+  type WorldSimState,
 } from './worldSimTypes';
 
 /**
@@ -30,10 +31,10 @@ export function worldSimReducer(
   action: WorldSimAction,
 ): WorldSimState {
   switch (action.type) {
-    case 'INITIALIZE':
+    case WorldSimActionType.Initialize:
       return { ...state, isInitialized: true };
 
-    case 'SELECT_BODY':
+    case WorldSimActionType.SelectBody:
       return {
         ...state,
         selectedBodyId: action.bodyId,
@@ -42,7 +43,7 @@ export function worldSimReducer(
         hoveredBodyId: null,
       };
 
-    case 'SELECT_REGION':
+    case WorldSimActionType.SelectRegion:
       return {
         ...state,
         selectedBodyId: action.bodyId,
@@ -50,7 +51,7 @@ export function worldSimReducer(
         zoomLevel: ZoomLevel.Region,
       };
 
-    case 'DESELECT':
+    case WorldSimActionType.Deselect:
       return {
         ...state,
         selectedBodyId: null,
@@ -58,29 +59,29 @@ export function worldSimReducer(
         zoomLevel: ZoomLevel.System,
       };
 
-    case 'DESELECT_REGION':
+    case WorldSimActionType.DeselectRegion:
       return {
         ...state,
         selectedRegionId: null,
         zoomLevel: ZoomLevel.Body,
       };
 
-    case 'SET_ZOOM_LEVEL':
+    case WorldSimActionType.SetZoomLevel:
       return { ...state, zoomLevel: action.level };
 
-    case 'SET_TRANSITIONING':
+    case WorldSimActionType.SetTransitioning:
       return { ...state, isTransitioning: action.isTransitioning };
 
-    case 'HOVER_BODY':
+    case WorldSimActionType.HoverBody:
       return { ...state, hoveredBodyId: action.bodyId };
 
-    case 'TOGGLE_LABELS':
+    case WorldSimActionType.ToggleLabels:
       return { ...state, labelsVisible: !state.labelsVisible };
 
-    case 'TOGGLE_ORBITS':
+    case WorldSimActionType.ToggleOrbits:
       return { ...state, orbitsPaused: !state.orbitsPaused };
 
-    case 'RESET':
+    case WorldSimActionType.Reset:
       return { ...INITIAL_WORLD_SIM_STATE, isInitialized: state.isInitialized };
 
     default:

@@ -46,21 +46,50 @@ export interface WorldSimState {
 }
 
 /**
+ * Action type enum for all World Sim reducer actions.
+ * @enum {string}
+ */
+export enum WorldSimActionType {
+  /** Scene finished mounting */
+  Initialize = 'INITIALIZE',
+  /** Select a celestial body */
+  SelectBody = 'SELECT_BODY',
+  /** Select a surface region on a body */
+  SelectRegion = 'SELECT_REGION',
+  /** Clear body and region selection */
+  Deselect = 'DESELECT',
+  /** Clear region selection only */
+  DeselectRegion = 'DESELECT_REGION',
+  /** Set navigation zoom level */
+  SetZoomLevel = 'SET_ZOOM_LEVEL',
+  /** Set camera transition state */
+  SetTransitioning = 'SET_TRANSITIONING',
+  /** Set hovered body */
+  HoverBody = 'HOVER_BODY',
+  /** Toggle floating label visibility */
+  ToggleLabels = 'TOGGLE_LABELS',
+  /** Toggle orbit line visibility */
+  ToggleOrbits = 'TOGGLE_ORBITS',
+  /** Reset to initial state */
+  Reset = 'RESET',
+}
+
+/**
  * Union of all actions the World Sim reducer can handle.
  * @typedef {Object} WorldSimAction
  */
 export type WorldSimAction =
-  | { type: 'INITIALIZE' }
-  | { type: 'SELECT_BODY'; bodyId: string }
-  | { type: 'SELECT_REGION'; regionId: string; bodyId: string }
-  | { type: 'DESELECT' }
-  | { type: 'DESELECT_REGION' }
-  | { type: 'SET_ZOOM_LEVEL'; level: ZoomLevel }
-  | { type: 'SET_TRANSITIONING'; isTransitioning: boolean }
-  | { type: 'HOVER_BODY'; bodyId: string | null }
-  | { type: 'TOGGLE_LABELS' }
-  | { type: 'TOGGLE_ORBITS' }
-  | { type: 'RESET' };
+  | { type: WorldSimActionType.Initialize }
+  | { type: WorldSimActionType.SelectBody; bodyId: string }
+  | { type: WorldSimActionType.SelectRegion; regionId: string; bodyId: string }
+  | { type: WorldSimActionType.Deselect }
+  | { type: WorldSimActionType.DeselectRegion }
+  | { type: WorldSimActionType.SetZoomLevel; level: ZoomLevel }
+  | { type: WorldSimActionType.SetTransitioning; isTransitioning: boolean }
+  | { type: WorldSimActionType.HoverBody; bodyId: string | null }
+  | { type: WorldSimActionType.ToggleLabels }
+  | { type: WorldSimActionType.ToggleOrbits }
+  | { type: WorldSimActionType.Reset };
 
 /**
  * Initial state for the World Sim reducer.

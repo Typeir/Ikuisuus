@@ -30,7 +30,10 @@ import {
   surfacePositionToWorld,
 } from './celestials/OrbitalMechanics';
 import { createAllOrbitLines } from './celestials/OrbitLineFactory';
-import type { WorldSimAction } from './context/worldSimTypes';
+import {
+  WorldSimActionType,
+  type WorldSimAction,
+} from './context/worldSimTypes';
 import { RaycastService } from './RaycastService';
 
 /**
@@ -173,14 +176,14 @@ export class WorldSimMediator {
 
     this.cameraController.onPanUnlock = () => {
       this.followedBodyId = null;
-      this.dispatch({ type: 'DESELECT' });
+      this.dispatch({ type: WorldSimActionType.Deselect });
     };
 
     this.sceneManager.onAnimate((time, deltaTime) => {
       this.update(time, deltaTime);
     });
 
-    this.dispatch({ type: 'INITIALIZE' });
+    this.dispatch({ type: WorldSimActionType.Initialize });
   }
 
   /**
@@ -265,7 +268,7 @@ export class WorldSimMediator {
     this.followedBodyId = bodyId;
     this.cameraController.setFollowTarget(positionGetter);
     this.cameraController.executeCommand(command);
-    this.dispatch({ type: 'SELECT_BODY', bodyId });
+    this.dispatch({ type: WorldSimActionType.SelectBody, bodyId });
   }
 
   /**
@@ -295,7 +298,7 @@ export class WorldSimMediator {
     const positionGetter = () => entry.mesh.position.clone();
     this.cameraController.setFollowTarget(positionGetter);
     this.cameraController.executeCommand(command);
-    this.dispatch({ type: 'SELECT_REGION', regionId, bodyId });
+    this.dispatch({ type: WorldSimActionType.SelectRegion, regionId, bodyId });
   }
 
   /**
@@ -331,7 +334,7 @@ export class WorldSimMediator {
     const positionGetter = () => entry.mesh.position.clone();
     this.cameraController.setFollowTarget(positionGetter);
     this.cameraController.executeCommand(command);
-    this.dispatch({ type: 'SELECT_BODY', bodyId });
+    this.dispatch({ type: WorldSimActionType.SelectBody, bodyId });
   }
 
   /**
@@ -341,7 +344,7 @@ export class WorldSimMediator {
   resetView(): void {
     this.followedBodyId = null;
     this.cameraController.resetToDefault();
-    this.dispatch({ type: 'DESELECT' });
+    this.dispatch({ type: WorldSimActionType.Deselect });
   }
 
   /**
@@ -521,14 +524,14 @@ export class WorldSimMediator {
     if (bodyId !== this.hoveredBodyId) {
       if (this.hoveredBodyId) {
         this.eventBus.emit('body:unhover', { bodyId: this.hoveredBodyId });
-        this.dispatch({ type: 'HOVER_BODY', bodyId: null });
+        this.dispatch({ type: WorldSimActionType.HoverBody, bodyId: null });
       }
 
       this.hoveredBodyId = bodyId;
 
       if (bodyId) {
         this.eventBus.emit('body:hover', { bodyId });
-        this.dispatch({ type: 'HOVER_BODY', bodyId });
+        this.dispatch({ type: WorldSimActionType.HoverBody, bodyId });
       }
     }
   }
