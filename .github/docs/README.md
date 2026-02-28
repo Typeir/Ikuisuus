@@ -161,6 +161,24 @@ MDX-based content system with filesystem routing.
 
 ---
 
+### 🌌 [World Sim Module](./world-sim-module.md)
+
+**When to read**: When working with the Three.js solar system, celestial renderers, or DOM overlays
+
+Three.js-powered interactive solar system with mediator architecture.
+
+**Key Topics**:
+
+- Mediator pattern (subsystems never communicate directly)
+- RenderLifecycle phase bus (PreUpdate → PostRender)
+- Celestial renderer strategy pattern
+- ProjectionBridge DOM overlay binding
+- Camera follow system and command transitions
+
+**Essential for**: World Sim feature work
+
+---
+
 ## Cross-Document Navigation
 
 ```
@@ -179,6 +197,11 @@ Testing Rules
 
 SCSS Theme Rules
     └─> Theme System (token definitions)
+
+World Sim Module
+    ├─> RenderLifecycle (phase bus for frame events)
+    ├─> ProjectionBridge (3D→2D, uses finalized camera matrix)
+    └─> Content System (body/region deep-links to MDX content)
 ```
 
 ## File Reference Map
@@ -222,6 +245,21 @@ Quick reference for where key files are located:
 - `src/lib/types/encounterPlanner.ts` - Core types (EncounterConfig, Combatant)
 - `src/lib/types/inProgressCombat.ts` - Combat state types (CombatantMechanics)
 - `src/lib/utils/encounterUtils.ts` - Tag-to-mechanics flag mapping
+
+**World Sim Module**:
+
+- `src/lib/components/worldSim/WorldSim.tsx` - Root entry point
+- `src/lib/components/worldSim/WorldSimMediator.ts` - Central coordinator
+- `src/lib/components/worldSim/canvas/RenderLifecycle.ts` - Phase-based frame events
+- `src/lib/components/worldSim/canvas/SceneManager.ts` - Three.js lifecycle, owns `lifecycle` instance
+- `src/lib/components/worldSim/bridge/ProjectionBridge.ts` - 3D→2D projection with direct DOM binding
+- `src/lib/components/worldSim/bridge/SceneEventBus.ts` - Typed pub/sub events
+- `src/lib/components/worldSim/camera/CameraController.ts` - Orbit + follow + command facade
+- `src/lib/components/worldSim/celestials/interfaces.ts` - All type definitions
+- `src/lib/components/worldSim/celestials/CelestialBodyFactory.ts` - Renderer strategy factory
+- `src/lib/components/worldSim/data/blackCradleRegistry.json` - Solar system data
+- `src/lib/components/worldSim/hooks/useWorldSimCanvas.ts` - React↔Three.js bridge hook
+- `src/lib/components/worldSim/context/WorldSimContext.tsx` - React state (useReducer)
 
 **Notifications**:
 

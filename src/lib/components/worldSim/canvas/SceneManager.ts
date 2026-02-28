@@ -1,11 +1,12 @@
 /**
  * @fileoverview Scene Manager — Three.js Lifecycle Owner
  * @description Creates and manages the Three.js renderer, scene, camera, lights,
- * and animation loop. Single Responsibility: only owns the rendering lifecycle.
- * Does not handle user input (CameraController) or React state (Context).
+ * and animation loop. Delegates frame-phase dispatch to RenderLifecycle so
+ * subsystems can subscribe to typed phases (PreUpdate → PostRender) with
+ * priority ordering and full pipeline access.
  *
  * @module worldSim/canvas/SceneManager
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -23,6 +24,12 @@ import {
   WebGLRenderer,
 } from 'three';
 import { DEFAULT_CAMERA_LOOK_AT, DEFAULT_CAMERA_POSITION } from '../constants';
+import {
+  RenderLifecycle,
+  RenderPhase,
+  type FrameContext,
+  type LifecycleCallback,
+} from './RenderLifecycle';
 
 /** @constant {number} STARFIELD_COUNT - Number of background starfield particles */
 const STARFIELD_COUNT = 2000;
@@ -31,26 +38,23 @@ const STARFIELD_COUNT = 2000;
 const STARFIELD_SPREAD = 12000;
 
 /**
- * Callback signature for the animation loop.
- * @typedef {Function} AnimationLoopCallback
- * @param {number} time - Elapsed time in seconds
- * @param {number} deltaTime - Time since last frame in seconds
- */
-type AnimationLoopCallback = (time: number, deltaTime: number) => void;
-
-/**
  * Manages the Three.js rendering lifecycle.
  * Creates renderer, scene, camera, base lighting, and starfield background.
- * Runs the animation loop and handles resize events.
+ * Runs the animation loop, delegates phase dispatch to RenderLifecycle,
+ * and handles resize events.
  *
  * @class SceneManager
  *
  * @example
  * ```ts
  * const manager = new SceneManager(canvasElement);
- * manager.onAnimate((time, dt) => { ... });
+ * manager.lifecycle.on(RenderPhase.Update, (ctx) => {
+ *   updateOrbits(ctx.time, ctx.deltaTime);
+ * }, { priority: 10, label: 'orbits' });
+ * manager.lifecycle.on(RenderPhase.PostRender, (ctx) => {
+ *   projectLabels(ctx.camera, ctx.canvas);
+ * }, { label: 'labels' });
  * manager.start();
- * // Later:
  * manager.dispose();
  * ```
  */
@@ -64,17 +68,20 @@ export class SceneManager {
   /** @property {PerspectiveCamera} camera - The perspective camera */
   public readonly camera: PerspectiveCamera;
 
+  /** @property {RenderLifecycle} lifecycle - Phase-based frame event system */
+  public readonly lifecycle: RenderLifecycle;
+
   /** @property {HTMLElement} container - The DOM element hosting the canvas */
   private container: HTMLElement;
 
   /** @property {number | null} animationFrameId - Current rAF handle */
   private animationFrameId: number | null = null;
 
-  /** @property {AnimationLoopCallback[]} animationCallbacks - Registered animation callbacks */
-  private animationCallbacks: AnimationLoopCallback[] = [];
-
   /** @property {number} lastTime - Timestamp of the last frame (seconds) */
   private lastTime: number = 0;
+
+  /** @property {number} frameCount - Monotonic frame counter */
+  private frameCount: number = 0;
 
   /** @property {boolean} isRunning - Whether the animation loop is active */
   private isRunning: boolean = false;
@@ -89,6 +96,7 @@ export class SceneManager {
    */
   constructor(container: HTMLElement) {
     this.container = container;
+    this.lifecycle = new RenderLifecycle();
 
     this.renderer = new WebGLRenderer({
       antialias: true,
@@ -116,12 +124,27 @@ export class SceneManager {
   }
 
   /**
-   * Register a callback to be called each animation frame.
+   * Register a callback for the Update phase (before WebGL render).
+   * Convenience wrapper — prefer `lifecycle.on(RenderPhase.*, ...)` for
+   * full phase and priority control.
    *
-   * @param {AnimationLoopCallback} callback - Function called with (time, deltaTime)
+   * @param {LifecycleCallback} callback - Function called with FrameContext
+   * @returns {Function} Unsubscribe function
    */
-  onAnimate(callback: AnimationLoopCallback): void {
-    this.animationCallbacks.push(callback);
+  onAnimate(callback: LifecycleCallback): () => void {
+    return this.lifecycle.on(RenderPhase.Update, callback);
+  }
+
+  /**
+   * Register a callback for the PostRender phase (after WebGL render).
+   * Convenience wrapper — prefer `lifecycle.on(RenderPhase.*, ...)` for
+   * full phase and priority control.
+   *
+   * @param {LifecycleCallback} callback - Function called with FrameContext
+   * @returns {Function} Unsubscribe function
+   */
+  onPostRender(callback: LifecycleCallback): () => void {
+    return this.lifecycle.on(RenderPhase.PostRender, callback);
   }
 
   /**
@@ -161,7 +184,7 @@ export class SceneManager {
   dispose(): void {
     this.stop();
     this.resizeObserver.disconnect();
-    this.animationCallbacks = [];
+    this.lifecycle.clear();
 
     this.scene.traverse((object) => {
       if ('geometry' in object && object.geometry) {
@@ -187,7 +210,9 @@ export class SceneManager {
   }
 
   /**
-   * Main animation loop tick.
+   * Main animation loop tick. Builds a FrameContext and dispatches
+   * lifecycle phases around the WebGL render call:
+   * PreUpdate → Update → PostUpdate → PreRender → render() → PostRender
    *
    * @private
    */
@@ -199,12 +224,21 @@ export class SceneManager {
     const now = performance.now() / 1000;
     const deltaTime = now - this.lastTime;
     this.lastTime = now;
+    this.frameCount++;
 
-    for (const callback of this.animationCallbacks) {
-      callback(now, deltaTime);
-    }
+    const ctx: FrameContext = {
+      renderer: this.renderer,
+      scene: this.scene,
+      camera: this.camera,
+      canvas: this.renderer.domElement,
+      time: now,
+      deltaTime,
+      frame: this.frameCount,
+    };
 
+    this.lifecycle.runPreRenderPhases(ctx);
     this.renderer.render(this.scene, this.camera);
+    this.lifecycle.runPostRenderPhases(ctx);
   }
 
   /**

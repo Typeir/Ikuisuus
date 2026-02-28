@@ -14,10 +14,17 @@ These rules are **strictly enforced**. Violations will cause build failures, tes
 | Use NotificationProvider, not `alert()` | [Testing Rules](./docs/testing-rules.md) | `grep -rn "alert(" src/` returns 0 |
 | Run `npm run pre-init` before dev/build | [Build Pipeline](./docs/build-pipeline.md) | Build succeeds |
 
-## Recent Changes (2025)
+## Recent Changes
 
 Major architectural changes to be aware of:
 
+### 2026
+| Change | Impact | Documentation |
+|--------|--------|---------------|
+| **World Sim Module** | Three.js solar system with phase-based render lifecycle, DOM overlay bridge, and celestial body renderers | [World Sim Module](./docs/world-sim-module.md) |
+| **RenderLifecycle System** | Unity-style phase bus (PreUpdate → Update → PostUpdate → PreRender → render → PostRender) replaces ad-hoc callback arrays in SceneManager | [World Sim Module](./docs/world-sim-module.md) |
+
+### 2025
 | Change | Impact | Documentation |
 |--------|--------|---------------|
 | **Play Mode Turn Tracker** | Encounter planner now has live combat tracking with round-start notifications | [Encounter Module](./docs/encounter-module.md) |
@@ -204,6 +211,58 @@ npm run scaffold:world      # Generate placeholder .mdx files for broken links
 
 This keeps the project clean and prevents documentation clutter.
 
+## World Sim Module (Three.js)
+> **📚 Deep Dive**: [World Sim Architecture](./docs/world-sim-module.md) - Full design document with data model, rendering pipeline, and interaction model
+
+A Three.js-powered interactive solar system renderer. Three.js owns the 3D canvas, React owns all DOM UI, and a **Bridge Layer** projects 3D positions to 2D screen coordinates each frame.
+
+### Architecture (Mediator Pattern)
+`WorldSimMediator` is the single coordinator — subsystems never communicate directly:
+```
+SceneManager ← manages renderer, scene, camera, animation loop
+CameraController ← orbit controls + follow system + command transitions
+ProjectionBridge ← 3D→2D projection, direct DOM element binding
+SceneEventBus ← typed pub/sub (body:click, body:hover, camera:transition:*)
+CelestialRegistry ← static data query layer (from data/blackCradleRegistry.json)
+```
+
+### Render Lifecycle (Phase Bus)
+The `RenderLifecycle` class in `canvas/RenderLifecycle.ts` provides Unity-style frame phases:
+```
+PreUpdate → Update → PostUpdate → PreRender → renderer.render() → PostRender
+```
+Subscribe with priority and label:
+```typescript
+sceneManager.lifecycle.on(RenderPhase.Update, (ctx: FrameContext) => {
+  updateOrbits(ctx.time, ctx.deltaTime);
+}, { priority: 10, label: 'orbits' });
+```
+The mediator registers: simulation in `Update`, camera in `PostUpdate`, DOM label projection in `PostRender` (after WebGL draw, so labels use the finalized camera matrix).
+
+### Celestial Renderers (Strategy Pattern)
+Each body type has a renderer in `celestials/`: `StarRenderer`, `PlanetRenderer`, `GasGiantRenderer`, `RingWorldRenderer`, `TowerWorldRenderer`, `AsteroidBeltRenderer`, `EverdarkRenderer`. All implement `ICelestialRenderer` (see `interfaces.ts`). `CelestialBodyFactory` instantiates them by discriminant.
+
+### DOM Overlay Bridge
+- `ProjectionBridge.bindElement(id, element)` — bridge directly sets `el.style.transform` each frame (no React re-renders)
+- `CelestialLabel` uses `forwardRef` so the bridge mutates the DOM element at 60fps
+- Labels are positioned in `PostRender` phase to avoid frame desync with the canvas
+- `OverlayContainer` binds label refs to the bridge via `useWorldSimCanvas()` hook
+
+### Camera System
+- `CameraController` composes `CameraOrbitControls` (input) + `CameraFollowSystem` (body tracking) + `CameraCommand` (animated transitions)
+- Follow delta only shifts the orbit center (`target`), camera position is always computed from `target + spherical offset` in a single write to prevent jitter
+- Commands: `ZoomToBodyCommand`, `ZoomToRegionCommand`, `ResetViewCommand`
+
+### Key Files
+- **Entry point**: `src/lib/components/worldSim/WorldSim.tsx`
+- **Mediator**: `WorldSimMediator.ts` — central coordinator
+- **Lifecycle**: `canvas/RenderLifecycle.ts` — phase-based frame events
+- **Scene**: `canvas/SceneManager.ts` — Three.js lifecycle, owns `lifecycle` instance
+- **Projection**: `bridge/ProjectionBridge.ts` — 3D→2D with direct DOM binding
+- **Hook**: `hooks/useWorldSimCanvas.ts` — React↔Three.js bridge
+- **Data**: `data/blackCradleRegistry.json` — celestial body definitions
+- **Context**: `context/WorldSimContext.tsx` — React state (useReducer)
+
 ## Common Pitfalls
 
 ### CSS Specificity Issues
@@ -268,9 +327,13 @@ export { main, parseFile };  // Export for orchestrator
 - **Theme System**: `./docs/theme-system.md` - CSS variables, FOUC prevention, cascade order, specificity patterns, and common pitfalls
 - **Content System**: `./docs/content-system.md` - MDX architecture, filesystem routing, locale handling, translation workflows, and auto-linking
 - **Encounter Module**: `./docs/encounter-module.md` - Play Mode turn tracker, mechanics flags (lair, stratagem, legendaryDeed), round-start notifications
+- **World Sim Module**: `./docs/world-sim-module.md` - Three.js solar system, mediator pattern, render lifecycle, celestial renderers, DOM overlay bridge
 
 ### Key Source Files
 - **Shared Data**: `scripts/core/shared-data.json` - Single source of truth for game data (damage types, conditions, abilities, item rarities, spell schools)
 - **Shared Utils**: `scripts/core/shared-utils.mjs` - All common generator utilities (MetadataGeneratorUtils, GameData, TextUtils, ParsingUtils, FileUtils, etc.)
 - **Theme Tokens**: `src/app/[locale]/globals.scss` - All CSS color variables (the ONLY place for color literals)
 - **Notification Constants**: `src/lib/components/pushNotification/pushNotification.constants.ts` - Timing constants for tests
+- **World Sim Mediator**: `src/lib/components/worldSim/WorldSimMediator.ts` - Central coordinator for the Three.js module
+- **Render Lifecycle**: `src/lib/components/worldSim/canvas/RenderLifecycle.ts` - Phase-based frame event system (PreUpdate → PostRender)
+- **Celestial Registry**: `src/lib/components/worldSim/data/blackCradleRegistry.json` - Solar system data definitions

@@ -172,22 +172,36 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Main per-frame update. Handles three phases in order:
-   * 1. Follow system — move orbit center with the tracked body
-   * 2. Command execution — advance any active animated transition
-   * 3. Manual orbit — apply damping and user input
+   * Main per-frame update. The follow delta only shifts the orbit center
+   * (target), never the camera directly. The camera position is always
+   * resolved in a single deterministic path — either by a command, by orbit
+   * recomputation, or by an explicit reposition when following a moving body.
+   * This eliminates double-write jitter when a body moves while the user
+   * orbits the camera simultaneously.
    *
    * @param {number} deltaTime - Time since last frame in seconds
    */
   update(deltaTime: number): void {
-    this.updateFollowTarget();
+    const followDelta = this.followSystem.computeDelta();
+    const hasFollowDelta = followDelta.lengthSq() > 0;
+
+    if (hasFollowDelta) {
+      this.target.add(followDelta);
+
+      if (this.activeCommand?.applyFollowDelta) {
+        this.activeCommand.applyFollowDelta(followDelta);
+      }
+    }
 
     if (this.activeCommand) {
+      if (hasFollowDelta) {
+        this.camera.position.add(followDelta);
+      }
       this.updateCommand(deltaTime);
       return;
     }
 
-    this.updateManualOrbit();
+    this.updateManualOrbit(hasFollowDelta);
   }
 
   /**
@@ -209,26 +223,7 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Phase 1: Move the orbit center (and camera) by the body's frame-to-frame delta.
-   * This runs every frame regardless of command/manual state so the camera
-   * tracks the body during transitions too.
-   *
-   * @private
-   */
-  private updateFollowTarget(): void {
-    const delta = this.followSystem.computeDelta();
-    if (delta.lengthSq() === 0) return;
-
-    this.target.add(delta);
-    this.camera.position.add(delta);
-
-    if (this.activeCommand?.applyFollowDelta) {
-      this.activeCommand.applyFollowDelta(delta);
-    }
-  }
-
-  /**
-   * Phase 2: Advance the active camera command. Re-enables orbit controls
+   * Advance the active camera command. Re-enables orbit controls
    * when the command completes.
    *
    * @private
@@ -248,24 +243,26 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Phase 3: Apply orbit damping and recompute camera position from
-   * spherical coordinates + orbit center.
+   * Apply orbit damping, pan, and recompute the camera position from
+   * spherical coordinates + orbit center. When the followed body moved
+   * this frame, the camera is always repositioned from the updated target
+   * so both transforms are applied in a single write.
    *
    * @private
+   * @param {boolean} hasFollowDelta - Whether the follow target moved this frame
    */
-  private updateManualOrbit(): void {
+  private updateManualOrbit(hasFollowDelta: boolean): void {
     this.orbitControls.applyDamping();
 
     const pan = this.orbitControls.panDelta;
     if (pan.lengthSq() > 0) {
       TEMP_PAN.copy(pan).applyQuaternion(this.camera.quaternion);
       this.target.add(TEMP_PAN);
-      this.camera.position.add(TEMP_PAN);
       this.orbitControls.panDelta.set(0, 0, 0);
       this.orbitControls.isDirty = true;
     }
 
-    if (this.orbitControls.isDirty) {
+    if (this.orbitControls.isDirty || hasFollowDelta) {
       this.applyCameraPosition();
       this.orbitControls.isDirty = false;
     } else if (this.followSystem.isFollowing()) {

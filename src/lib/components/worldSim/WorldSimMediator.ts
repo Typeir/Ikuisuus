@@ -16,6 +16,8 @@ import type { ProjectionBridge } from './bridge/ProjectionBridge';
 import type { SceneEventBus } from './bridge/SceneEventBus';
 import { ZoomToBodyCommand, ZoomToRegionCommand } from './camera/CameraCommand';
 import type { CameraController } from './camera/CameraController';
+import type { FrameContext } from './canvas/RenderLifecycle';
+import { RenderPhase } from './canvas/RenderLifecycle';
 import type { SceneManager } from './canvas/SceneManager';
 import { CelestialBodyFactory } from './celestials/CelestialBodyFactory';
 import { CelestialRegistry } from './celestials/CelestialRegistry';
@@ -73,8 +75,7 @@ const LOCAL_COORD_VIEW_DISTANCE = 10;
  * ```ts
  * const mediator = new WorldSimMediator(sceneManager, cameraController, projection, eventBus, dispatch);
  * mediator.initialize();
- * // On each frame (called by SceneManager.onAnimate):
- * mediator.update(time, deltaTime);
+ * // Simulation, camera, and projections are registered as lifecycle phases.
  * // Cleanup:
  * mediator.dispose();
  * ```
@@ -179,21 +180,42 @@ export class WorldSimMediator {
       this.dispatch({ type: WorldSimActionType.Deselect });
     };
 
-    this.sceneManager.onAnimate((time, deltaTime) => {
-      this.update(time, deltaTime);
-    });
+    this.sceneManager.lifecycle.on(
+      RenderPhase.Update,
+      (ctx: FrameContext) => {
+        this.updateSimulation(ctx);
+      },
+      { priority: 10, label: 'mediator:simulation' },
+    );
+
+    this.sceneManager.lifecycle.on(
+      RenderPhase.PostUpdate,
+      (ctx: FrameContext) => {
+        this.cameraController.update(ctx.deltaTime);
+      },
+      { priority: 10, label: 'mediator:camera' },
+    );
+
+    this.sceneManager.lifecycle.on(
+      RenderPhase.PostRender,
+      () => {
+        this.updateProjections();
+      },
+      { priority: 10, label: 'mediator:projections' },
+    );
 
     this.dispatch({ type: WorldSimActionType.Initialize });
   }
 
   /**
-   * Main per-frame update: advance orbits, update renderers, update camera,
-   * and refresh projections.
+   * Update phase: advance orbital positions and tick renderer strategies.
+   * Runs during RenderPhase.Update.
    *
-   * @param {number} time - Elapsed time in seconds
-   * @param {number} deltaTime - Time since last frame
+   * @private
+   * @param {FrameContext} frameCtx - Shared frame context from the lifecycle
    */
-  update(time: number, deltaTime: number): void {
+  private updateSimulation(frameCtx: FrameContext): void {
+    const { time, deltaTime } = frameCtx;
     const ctx: SceneContext = {
       camera: this.sceneManager.camera,
       scene: this.sceneManager.scene,
@@ -230,9 +252,16 @@ export class WorldSimMediator {
     if (this.everdarkRenderer && this.everdarkMesh) {
       this.everdarkRenderer.update(this.everdarkMesh, time, deltaTime, ctx);
     }
+  }
 
-    this.cameraController.update(deltaTime);
-
+  /**
+   * Post-render projection pass: runs after renderer.render() so the camera's
+   * matrixWorldInverse is fully finalized. This eliminates compositor-layer
+   * desync between the WebGL canvas and DOM overlay labels during rotation.
+   *
+   * @private
+   */
+  private updateProjections(): void {
     this.occlusionFrame++;
     if (this.occlusionFrame % 3 === 0) {
       this.cachedOcclusion = this.raycastService.computeOcclusion(
