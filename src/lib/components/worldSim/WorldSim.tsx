@@ -15,6 +15,7 @@
 import { useTranslations } from 'next-intl';
 import { useWorldSimState, WorldSimProvider } from './context/WorldSimContext';
 import { useWorldSimCanvas } from './hooks/useWorldSimCanvas';
+import { ContentPanel } from './overlay/ContentPanel';
 import { ControlsBar } from './overlay/ControlsBar';
 import { InfoPanel } from './overlay/InfoPanel';
 import { OverlayContainer } from './overlay/OverlayContainer';
@@ -54,6 +55,8 @@ function WorldSimInner(): React.ReactElement {
       />
 
       <InfoPanel mediatorRef={mediatorRef} />
+
+      <ContentPanel />
 
       <ControlsBar mediatorRef={mediatorRef} />
     </div>

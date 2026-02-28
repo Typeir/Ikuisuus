@@ -198,6 +198,89 @@
   }
 }
 
+/* ── Content Panel (Iframe Embed) ─────────────────────────────── */
+
+.contentPanelDraggable {
+  max-height: calc(100% - 32px);
+  pointer-events: auto;
+  z-index: 18;
+  animation: contentPanelSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.contentPanel {
+  position: relative;
+  border: 1px solid var(--worldsim-panel-border);
+  border-radius: 0 0 10px 10px;
+  background: var(--color-bg);
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-secondary) var(--color-transparent);
+  height: 100%;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-transparent);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-secondary);
+    border-radius: 3px;
+  }
+}
+
+@keyframes contentPanelSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.contentPanelIframe {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  border: none;
+  border-radius: 0 0 10px 10px;
+  background: var(--color-bg);
+}
+
+.contentPanelLoading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  z-index: 2;
+}
+
+.contentPanelSpinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--worldsim-panel-border);
+  border-top-color: var(--worldsim-label-accent);
+  border-radius: 50%;
+  animation: contentPanelSpin 0.8s linear infinite;
+}
+
+@keyframes contentPanelSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ── Controls Bar ────────────────────────────────────────────── */
 
 .controlsBar {

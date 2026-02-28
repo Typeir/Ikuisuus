@@ -1,0 +1,122 @@
+/**
+ * @fileoverview Draggable Container Styles
+ * @description SCSS module for the generic draggable container.
+ * Handles drag handle appearance, cursor states, resize handle,
+ * close button, and base positioning.
+ */
+
+.draggable {
+  position: absolute;
+  touch-action: none;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.dragHandle {
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #aaa);
+  letter-spacing: 0.03em;
+  user-select: none;
+  flex-shrink: 0;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.dragLabel {
+  flex: 1;
+}
+
+.dragGrip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0.4;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+  }
+}
+
+.dragContent {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--color-text-secondary, #aaa);
+  font-size: 0.75rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background: var(--color-danger, rgba(255, 80, 80, 0.2));
+    color: var(--color-danger-text, #ff5050);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--worldsim-label-accent, #4f9cf7);
+    outline-offset: 1px;
+  }
+}
+
+.resizeHandle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  touch-action: none;
+  z-index: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--color-text-secondary, #aaa);
+    border-bottom: 2px solid var(--color-text-secondary, #aaa);
+    opacity: 0.4;
+  }
+}
+
+.isDragging {
+  cursor: grabbing;
+  opacity: 0.92;
+}
+
+.isResizing {
+  cursor: nwse-resize;
+}

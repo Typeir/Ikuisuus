@@ -289,7 +289,10 @@ export class ZoomToRegionCommand implements ICameraCommand {
     }
 
     this.state.elapsed += deltaTime;
-    const linearT = Math.min(this.state.elapsed / REGION_TRANSITION_DURATION, 1);
+    const linearT = Math.min(
+      this.state.elapsed / REGION_TRANSITION_DURATION,
+      1,
+    );
     const easedT = easeInOut(linearT);
 
     const currentDir = slerpDirections(

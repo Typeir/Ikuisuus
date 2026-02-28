@@ -126,3 +126,54 @@ html[data-theme='dark'] .toolsEmoji {
 html[data-theme='light'] .toolsEmoji {
   filter: saturate(0.05) contrast(0.3) brightness(0);
 }
+
+/* ── Embed Mode ──────────────────────────────────────────────── */
+
+.embedShell {
+  min-height: 100vh;
+  background: var(--color-bg);
+  font-size: 0.82rem;
+}
+
+.embedContent {
+  padding: 1rem 1.5rem;
+  overflow-y: auto;
+  max-height: 100vh;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-secondary) var(--color-transparent);
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-transparent);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-secondary);
+    border-radius: 3px;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 0.95rem;
+  }
+
+  h3 {
+    font-size: 0.85rem;
+  }
+
+  p,
+  li,
+  td,
+  th,
+  dd,
+  dt {
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+}

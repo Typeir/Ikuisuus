@@ -31,7 +31,8 @@ import { Theme } from '@/lib/enums/themes';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import styles from './responsiveLayoutShell.module.scss';
 
 type Item = {
@@ -67,6 +68,45 @@ function BaseResponsiveLayoutShell({
   const params = useParams();
   const router = useRouter();
   const locale = params?.locale as string;
+
+  const searchParams = useSearchParams();
+  const isEmbed = searchParams.get('embed') === 'true';
+
+  /**
+   * Intercept link clicks in embed mode to preserve ?embed=true across
+   * in-iframe navigations. Without this, clicking a link inside the embedded
+   * page loses the query param and the full layout (with sidebar) renders.
+   */
+  useEffect(() => {
+    if (!isEmbed) return;
+    const handleClick = (e: MouseEvent) => {
+      const anchor = (e.target as HTMLElement).closest('a');
+      if (!anchor) return;
+      const href = anchor.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('mailto:')) return;
+      try {
+        const url = new URL(href, window.location.origin);
+        if (url.origin !== window.location.origin) return;
+        if (url.searchParams.has('embed')) return;
+        e.preventDefault();
+        url.searchParams.set('embed', 'true');
+        router.push(`${url.pathname}${url.search}`);
+      } catch {
+        return;
+      }
+    };
+    document.addEventListener('click', handleClick, true);
+    return () => document.removeEventListener('click', handleClick, true);
+  }, [isEmbed, router]);
+
+  /** In embed mode, render only the bare page content — no sidebar, no header */
+  if (isEmbed) {
+    return (
+      <div className={styles.embedShell}>
+        <main className={styles.embedContent}>{children}</main>
+      </div>
+    );
+  }
 
   const toolItems: ToolMenuItem[] = [
     {
