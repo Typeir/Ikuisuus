@@ -11,9 +11,8 @@
       "radius": 300,
       "renderConfig": {
         "renderer": "star",
-        "glowIntensity": 2.5,
-        "coronaScale": 1.8,
-        "pulseSpeed": 0.5
+        "emissiveColor": "#ffcc44",
+        "coronaColor": "#ff8800"
       },
       "regions": []
     },
@@ -35,9 +34,8 @@
       "renderConfig": {
         "renderer": "planet",
         "baseColor": "#b0dcf8",
-        "hasAtmosphere": true,
         "atmosphereColor": "#d0ecff",
-        "atmosphereOpacity": 0.3,
+        "atmosphereIntensity": 1.5,
         "rotationSpeed": 0.001
       },
       "regions": [
@@ -106,9 +104,7 @@
         "renderer": "asteroidBelt",
         "baseColor": "#ece4d8",
         "particleCount": 500,
-        "beltWidth": 20,
-        "particleMinSize": 0.3,
-        "particleMaxSize": 1.5
+        "rotationSpeed": 0.005
       },
       "regions": []
     },
@@ -132,9 +128,7 @@
         "baseColor": "#dcf0f8",
         "bandColor": "#c8e4f4",
         "atmosphereColor": "#e8f4fc",
-        "bandCount": 8,
-        "rotationSpeed": 0.0008,
-        "stormScale": 0.4
+        "rotationSpeed": 0.0008
       },
       "regions": []
     },
@@ -158,9 +152,7 @@
         "baseColor": "#e4dcf8",
         "bandColor": "#d4c8f4",
         "atmosphereColor": "#f0e8fc",
-        "bandCount": 6,
-        "rotationSpeed": -0.0008,
-        "stormScale": 0.3
+        "rotationSpeed": -0.0008
       },
       "regions": []
     },
@@ -182,11 +174,9 @@
       "renderConfig": {
         "renderer": "planet",
         "baseColor": "#c0f0d0",
-        "hasAtmosphere": true,
         "atmosphereColor": "#dcf8e4",
-        "atmosphereOpacity": 0.5,
-        "rotationSpeed": 0.0005,
-        "isRotworld": true
+        "atmosphereIntensity": 1.5,
+        "rotationSpeed": 0.0005
       },
       "regions": []
     },
@@ -208,10 +198,8 @@
       "renderConfig": {
         "renderer": "towerWorld",
         "towerColor": "#9c826d",
-        "towerHeight": 40,
-        "towerRadius": 6,
-        "segmentCount": 5,
-        "beaconPulseSpeed": 1.2
+        "towerHeightMultiplier": 8,
+        "rotationSpeed": 0.03
       },
       "regions": []
     },
@@ -252,10 +240,7 @@
     "contentPath": "world/gods-and-demigods/everdark",
     "radius": 5000,
     "renderConfig": {
-      "renderer": "everdark",
-      "fireIntensity": 0.8,
-      "opacity": 0.12,
-      "animationSpeed": 0.3
+      "renderer": "everdark"
     }
   }
 }

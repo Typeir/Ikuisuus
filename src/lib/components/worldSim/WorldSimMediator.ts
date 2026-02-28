@@ -11,14 +11,10 @@
  * @since 1.0.0
  */
 
-import { Material, Mesh, Object3D, Raycaster, Vector2 } from 'three';
+import { Material, Mesh, Object3D } from 'three';
 import type { ProjectionBridge } from './bridge/ProjectionBridge';
 import type { SceneEventBus } from './bridge/SceneEventBus';
-import {
-  ResetViewCommand,
-  ZoomToBodyCommand,
-  ZoomToRegionCommand,
-} from './camera/CameraCommand';
+import { ZoomToBodyCommand, ZoomToRegionCommand } from './camera/CameraCommand';
 import type { CameraController } from './camera/CameraController';
 import type { SceneManager } from './canvas/SceneManager';
 import { CelestialBodyFactory } from './celestials/CelestialBodyFactory';
@@ -35,6 +31,7 @@ import {
 } from './celestials/OrbitalMechanics';
 import { createAllOrbitLines } from './celestials/OrbitLineFactory';
 import type { WorldSimAction } from './context/worldSimTypes';
+import { RaycastService } from './RaycastService';
 
 /**
  * Runtime entry for a celestial body in the scene.
@@ -107,11 +104,8 @@ export class WorldSimMediator {
   /** @property {ICelestialRenderer | null} everdarkRenderer - The Everdark renderer */
   private everdarkRenderer: ICelestialRenderer | null = null;
 
-  /** @property {Raycaster} raycaster - For picking celestial bodies */
-  private raycaster: Raycaster;
-
-  /** @property {Vector2} mouseNDC - Normalized device coordinates for raycasting */
-  private mouseNDC: Vector2;
+  /** @property {RaycastService} raycastService - Handles mouse picking and occlusion raycasting */
+  private raycastService: RaycastService;
 
   /** @property {string | null} hoveredBodyId - Currently hovered body ID */
   private hoveredBodyId: string | null = null;
@@ -124,6 +118,12 @@ export class WorldSimMediator {
 
   /** @property {Map<string, Mesh>} orbitLines - Orbit ring meshes by body ID */
   private orbitLines: Map<string, Mesh> = new Map();
+
+  /** @property {number} occlusionFrame - Frame counter for throttling occlusion raycasts */
+  private occlusionFrame: number = 0;
+
+  /** @property {Set<string>} cachedOcclusion - Cached occlusion result reused between throttled frames */
+  private cachedOcclusion: Set<string> = new Set();
 
   /** @property {Function} boundOnCanvasClick - Bound click handler */
   private boundOnCanvasClick: (e: MouseEvent) => void;
@@ -152,9 +152,8 @@ export class WorldSimMediator {
     this.projectionBridge = projectionBridge;
     this.eventBus = eventBus;
     this.dispatch = dispatch;
-    this.registry = new CelestialRegistry();
-    this.raycaster = new Raycaster();
-    this.mouseNDC = new Vector2();
+    this.registry = CelestialRegistry.shared();
+    this.raycastService = new RaycastService();
 
     this.boundOnCanvasClick = this.onCanvasClick.bind(this);
     this.boundOnCanvasMove = this.onCanvasMove.bind(this);
@@ -169,6 +168,7 @@ export class WorldSimMediator {
     this.createOrbitLines();
     this.createEverdark();
     this.registerProjections();
+    this.buildMeshCaches();
     this.attachInputListeners();
 
     this.cameraController.onPanUnlock = () => {
@@ -198,9 +198,7 @@ export class WorldSimMediator {
       deltaTime,
     };
 
-    const entries = Array.from(this.celestials.entries());
-    for (let i = 0; i < entries.length; i++) {
-      const [, entry] = entries[i];
+    this.celestials.forEach((entry) => {
       if (entry.data.orbit) {
         const orbitalOffset = computeOrbitalPosition(entry.data.orbit, time);
 
@@ -224,18 +222,22 @@ export class WorldSimMediator {
       }
 
       entry.renderer.update(entry.mesh, time, deltaTime, ctx);
-
-      this.projectionBridge.updatePosition(
-        entry.data.id,
-        entry.mesh.position.clone(),
-      );
-    }
+    });
 
     if (this.everdarkRenderer && this.everdarkMesh) {
       this.everdarkRenderer.update(this.everdarkMesh, time, deltaTime, ctx);
     }
 
     this.cameraController.update(deltaTime);
+
+    this.occlusionFrame++;
+    if (this.occlusionFrame % 3 === 0) {
+      this.cachedOcclusion = this.raycastService.computeOcclusion(
+        this.sceneManager.camera,
+        this.celestials,
+      );
+    }
+    this.projectionBridge.setOccluded(this.cachedOcclusion);
     this.projectionBridge.update(
       this.sceneManager.camera,
       this.sceneManager.getCanvasRect(),
@@ -334,12 +336,11 @@ export class WorldSimMediator {
 
   /**
    * Reset the camera to the default system overview.
+   * Delegates all camera state cleanup to the controller's resetToDefault.
    */
   resetView(): void {
     this.followedBodyId = null;
-    this.cameraController.clearFollowTarget();
-    const command = new ResetViewCommand();
-    this.cameraController.executeCommand(command);
+    this.cameraController.resetToDefault();
     this.dispatch({ type: 'DESELECT' });
   }
 
@@ -348,10 +349,9 @@ export class WorldSimMediator {
    */
   toggleOrbitLines(): void {
     this.orbitLinesVisible = !this.orbitLinesVisible;
-    const entries = Array.from(this.orbitLines.values());
-    for (let i = 0; i < entries.length; i++) {
-      entries[i].visible = this.orbitLinesVisible;
-    }
+    this.orbitLines.forEach((line) => {
+      line.visible = this.orbitLinesVisible;
+    });
   }
 
   /**
@@ -360,12 +360,10 @@ export class WorldSimMediator {
   dispose(): void {
     this.detachInputListeners();
 
-    const disposeEntries = Array.from(this.celestials.values());
-    for (let i = 0; i < disposeEntries.length; i++) {
-      const entry = disposeEntries[i];
+    this.celestials.forEach((entry) => {
       entry.renderer.dispose(entry.mesh);
       this.sceneManager.scene.remove(entry.mesh);
-    }
+    });
     this.celestials.clear();
 
     if (this.everdarkRenderer && this.everdarkMesh) {
@@ -373,15 +371,13 @@ export class WorldSimMediator {
       this.sceneManager.scene.remove(this.everdarkMesh);
     }
 
-    const orbitLineEntries = Array.from(this.orbitLines.values());
-    for (let i = 0; i < orbitLineEntries.length; i++) {
-      const ring = orbitLineEntries[i];
+    this.orbitLines.forEach((ring) => {
       ring.geometry.dispose();
       (ring.material as Material).dispose();
       if (ring.parent) {
         ring.parent.remove(ring);
       }
-    }
+    });
     this.orbitLines.clear();
 
     this.projectionBridge.clear();
@@ -424,22 +420,18 @@ export class WorldSimMediator {
   private createOrbitLines(): void {
     const bodies = this.registry.getAllBodies();
     const meshMap = new Map<string, Object3D>();
-    const bodyEntries = Array.from(this.celestials.entries());
-    for (let i = 0; i < bodyEntries.length; i++) {
-      const [id, entry] = bodyEntries[i];
+    this.celestials.forEach((entry, id) => {
       meshMap.set(id, entry.mesh);
-    }
+    });
 
     this.orbitLines = createAllOrbitLines(bodies, meshMap);
 
-    const lineEntries = Array.from(this.orbitLines.entries());
-    for (let i = 0; i < lineEntries.length; i++) {
-      const [bodyId, line] = lineEntries[i];
+    this.orbitLines.forEach((line, bodyId) => {
       const bodyData = this.registry.getBodyById(bodyId);
       if (!bodyData?.parentBodyId) {
         this.sceneManager.scene.add(line);
       }
-    }
+    });
   }
 
   /**
@@ -458,15 +450,15 @@ export class WorldSimMediator {
 
   /**
    * Register all celestial bodies with the ProjectionBridge for 2D overlay tracking.
+   * Passes live mesh.position references so the bridge always reads current positions
+   * without needing per-frame updatePosition() calls.
    *
    * @private
    */
   private registerProjections(): void {
-    const projEntries = Array.from(this.celestials.entries());
-    for (let i = 0; i < projEntries.length; i++) {
-      const [id, entry] = projEntries[i];
-      this.projectionBridge.track(id, entry.mesh.position.clone());
-    }
+    this.celestials.forEach((entry, id) => {
+      this.projectionBridge.track(id, entry.mesh.position);
+    });
   }
 
   /**
@@ -500,7 +492,11 @@ export class WorldSimMediator {
   private onCanvasClick(event: MouseEvent): void {
     if (this.cameraController.isTransitioning()) return;
 
-    const bodyId = this.raycastBody(event);
+    const bodyId = this.raycastService.raycastBody(
+      event,
+      this.sceneManager.camera,
+      this.sceneManager.getCanvasRect(),
+    );
     if (bodyId && bodyId !== this.followedBodyId) {
       this.eventBus.emit('body:click', { bodyId });
       this.zoomToBody(bodyId);
@@ -516,7 +512,11 @@ export class WorldSimMediator {
   private onCanvasMove(event: MouseEvent): void {
     if (this.cameraController.isTransitioning()) return;
 
-    const bodyId = this.raycastBody(event);
+    const bodyId = this.raycastService.raycastBody(
+      event,
+      this.sceneManager.camera,
+      this.sceneManager.getCanvasRect(),
+    );
 
     if (bodyId !== this.hoveredBodyId) {
       if (this.hoveredBodyId) {
@@ -534,41 +534,16 @@ export class WorldSimMediator {
   }
 
   /**
-   * Perform a raycast from a mouse event and return the ID of the hit body.
+   * Build cached mesh arrays for raycasting and occlusion testing.
+   * Delegates to RaycastService. Called once after all bodies are created.
    *
    * @private
-   * @param {MouseEvent} event - The mouse event with client coordinates
-   * @returns {string | null} The body ID if hit, null otherwise
    */
-  private raycastBody(event: MouseEvent): string | null {
-    const rect = this.sceneManager.getCanvasRect();
-    this.mouseNDC.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    this.mouseNDC.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-    this.raycaster.setFromCamera(this.mouseNDC, this.sceneManager.camera);
-
-    const meshes: Object3D[] = [];
-    const rayEntries = Array.from(this.celestials.values());
-    for (let i = 0; i < rayEntries.length; i++) {
-      rayEntries[i].mesh.traverse((child) => {
-        if ('isMesh' in child) {
-          meshes.push(child);
-        }
-      });
-    }
-
-    const intersects = this.raycaster.intersectObjects(meshes, false);
-
-    if (intersects.length > 0) {
-      let hitObject: Object3D | null = intersects[0].object;
-      while (hitObject) {
-        if (hitObject.userData?.bodyId) {
-          return hitObject.userData.bodyId as string;
-        }
-        hitObject = hitObject.parent;
-      }
-    }
-
-    return null;
+  private buildMeshCaches(): void {
+    const rootMeshes: Object3D[] = [];
+    this.celestials.forEach((entry) => {
+      rootMeshes.push(entry.mesh);
+    });
+    this.raycastService.buildMeshCaches(rootMeshes);
   }
 }

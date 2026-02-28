@@ -20,11 +20,15 @@ import {
   ShaderMaterial,
   SphereGeometry,
 } from 'three';
+import atmosphereFrag from '../shaders/atmosphere.frag.glsl';
+import atmosphereVert from '../shaders/atmosphere.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
+import { disposeSceneGraph } from './disposeUtils';
 import type {
   BoundaryData,
   CelestialBodyData,
   ICelestialRenderer,
+  PlanetRenderConfig,
   SceneContext,
 } from './interfaces';
 
@@ -33,32 +37,6 @@ const DEFAULT_ROTATION_SPEED = 0.05;
 
 /** @constant {number} ATMOSPHERE_SCALE - Scale of atmosphere shell relative to planet radius */
 const ATMOSPHERE_SCALE = 1.08;
-
-/**
- * Vertex shader for the atmosphere glow effect.
- * @constant {string}
- */
-const ATMOSPHERE_VERT = `
-  varying vec3 vNormal;
-  void main() {
-    vNormal = normalize(normalMatrix * normal);
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
-
-/**
- * Fragment shader for the atmosphere glow effect.
- * @constant {string}
- */
-const ATMOSPHERE_FRAG = `
-  uniform vec3 uColor;
-  uniform float uIntensity;
-  varying vec3 vNormal;
-  void main() {
-    float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0) * uIntensity;
-    gl_FragColor = vec4(uColor, intensity);
-  }
-`;
 
 /**
  * Renders terrestrial planet bodies with solid surface and optional atmosphere.
@@ -70,6 +48,9 @@ export class PlanetRenderer implements ICelestialRenderer {
   /** @property {number} rotationSpeed - Axial rotation speed in rad/s */
   private rotationSpeed: number = DEFAULT_ROTATION_SPEED;
 
+  /** @property {Mesh | null} surfaceMesh - Stored reference to the planet surface mesh */
+  private surfaceMesh: Mesh | null = null;
+
   /**
    * Create a planet mesh with optional atmosphere shell.
    *
@@ -80,7 +61,7 @@ export class PlanetRenderer implements ICelestialRenderer {
     const group = new Object3D();
     group.name = `planet-${data.id}`;
 
-    const config = data.renderConfig;
+    const config = data.renderConfig as PlanetRenderConfig;
     const baseColor = new Color((config.baseColor as string) ?? '#4488cc');
     this.rotationSpeed =
       (config.rotationSpeed as number) ?? DEFAULT_ROTATION_SPEED;
@@ -94,6 +75,7 @@ export class PlanetRenderer implements ICelestialRenderer {
 
     const planetMesh = new Mesh(geometry, material);
     planetMesh.name = 'planet-surface';
+    this.surfaceMesh = planetMesh;
     group.add(planetMesh);
 
     const glowColor =
@@ -111,8 +93,8 @@ export class PlanetRenderer implements ICelestialRenderer {
         32,
       );
       const atmosphereMaterial = new ShaderMaterial({
-        vertexShader: ATMOSPHERE_VERT,
-        fragmentShader: ATMOSPHERE_FRAG,
+        vertexShader: atmosphereVert,
+        fragmentShader: atmosphereFrag,
         uniforms: {
           uColor: { value: atmosphereColor },
           uIntensity: { value: (config.atmosphereIntensity as number) ?? 1.5 },
@@ -144,9 +126,8 @@ export class PlanetRenderer implements ICelestialRenderer {
     deltaTime: number,
     _ctx: SceneContext,
   ): void {
-    const surface = mesh.getObjectByName('planet-surface');
-    if (surface) {
-      surface.rotation.y += this.rotationSpeed * deltaTime;
+    if (this.surfaceMesh) {
+      this.surfaceMesh.rotation.y += this.rotationSpeed * deltaTime;
     }
   }
 
@@ -156,27 +137,6 @@ export class PlanetRenderer implements ICelestialRenderer {
    * @param {Object3D} mesh - The planet group
    */
   dispose(mesh: Object3D): void {
-    mesh.traverse((child) => {
-      if ('geometry' in child && child.geometry) {
-        (child.geometry as SphereGeometry).dispose();
-      }
-      if ('material' in child && child.material) {
-        const materials = Array.isArray(child.material)
-          ? child.material
-          : [child.material];
-        for (const mat of materials) {
-          mat.dispose();
-        }
-      }
-    });
-  }
-
-  /**
-   * Get LOD distance thresholds.
-   *
-   * @returns {{ near: number; far: number }} LOD thresholds
-   */
-  getLODDistance(): { near: number; far: number } {
-    return { near: 30, far: 500 };
+    disposeSceneGraph(mesh);
   }
 }

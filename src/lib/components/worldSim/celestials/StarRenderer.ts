@@ -11,8 +11,8 @@
 
 import {
   AdditiveBlending,
-  CanvasTexture,
   Color,
+  DoubleSide,
   Mesh,
   MeshBasicMaterial,
   Object3D,
@@ -21,11 +21,14 @@ import {
   Sprite,
   SpriteMaterial,
 } from 'three';
+import { createRadialGradientTexture } from './CelestialGlow';
+import { disposeSceneGraph } from './disposeUtils';
 import type {
   BoundaryData,
   CelestialBodyData,
   ICelestialRenderer,
   SceneContext,
+  StarRenderConfig,
 } from './interfaces';
 
 /** @constant {number} CORONA_SCALE - Scale multiplier for the corona sprite relative to body radius */
@@ -41,31 +44,17 @@ const PULSE_AMPLITUDE = 0.15;
 const GLOW_TEXTURE_SIZE = 256;
 
 /**
- * Generate a radial gradient canvas texture for a soft round glow.
- * Draws a circle from opaque center to fully transparent edge.
- *
- * @param {number} size - Texture resolution (square)
- * @returns {CanvasTexture} Round radial gradient texture
+ * Gradient stops for the star corona glow texture.
+ * Brighter center with smooth falloff for a hot emissive look.
+ * @constant {import('./CelestialGlow').GradientStop[]}
  */
-function createGlowTexture(size: number): CanvasTexture {
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d')!;
-
-  const half = size / 2;
-  const gradient = ctx.createRadialGradient(half, half, 0, half, half, half);
-  gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
-  gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.8)');
-  gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
-  gradient.addColorStop(0.8, 'rgba(255, 255, 255, 0.05)');
-  gradient.addColorStop(1.0, 'rgba(255, 255, 255, 0.0)');
-
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, size, size);
-
-  return new CanvasTexture(canvas);
-}
+const CORONA_GLOW_STOPS = [
+  { offset: 0, color: 'rgba(255, 255, 255, 1.0)' },
+  { offset: 0.2, color: 'rgba(255, 255, 255, 0.8)' },
+  { offset: 0.5, color: 'rgba(255, 255, 255, 0.3)' },
+  { offset: 0.8, color: 'rgba(255, 255, 255, 0.05)' },
+  { offset: 1.0, color: 'rgba(255, 255, 255, 0.0)' },
+];
 
 /**
  * Renders a star body with emissive material and corona glow effect.
@@ -93,7 +82,7 @@ export class StarRenderer implements ICelestialRenderer {
     const group = new Object3D();
     group.name = `star-${data.id}`;
 
-    const config = data.renderConfig;
+    const config = data.renderConfig as StarRenderConfig;
     const emissiveColor = new Color(
       (config.emissiveColor as string) ?? '#ffcc44',
     );
@@ -108,7 +97,7 @@ export class StarRenderer implements ICelestialRenderer {
     group.add(this.coreMesh);
 
     const coronaMaterial = new SpriteMaterial({
-      map: createGlowTexture(GLOW_TEXTURE_SIZE),
+      map: createRadialGradientTexture(GLOW_TEXTURE_SIZE, CORONA_GLOW_STOPS),
       color: coronaColor,
       transparent: true,
       opacity: 0.7,
@@ -129,7 +118,7 @@ export class StarRenderer implements ICelestialRenderer {
       color: coronaColor,
       transparent: true,
       opacity: 0.35,
-      side: 2,
+      side: DoubleSide,
       blending: AdditiveBlending,
       depthWrite: false,
     });
@@ -173,27 +162,6 @@ export class StarRenderer implements ICelestialRenderer {
    * @param {Object3D} mesh - The star group
    */
   dispose(mesh: Object3D): void {
-    mesh.traverse((child) => {
-      if ('geometry' in child && child.geometry) {
-        (child.geometry as SphereGeometry).dispose();
-      }
-      if ('material' in child && child.material) {
-        const materials = Array.isArray(child.material)
-          ? child.material
-          : [child.material];
-        for (const mat of materials) {
-          mat.dispose();
-        }
-      }
-    });
-  }
-
-  /**
-   * Get LOD distance thresholds.
-   *
-   * @returns {{ near: number; far: number }} LOD thresholds
-   */
-  getLODDistance(): { near: number; far: number } {
-    return { near: 100, far: 800 };
+    disposeSceneGraph(mesh);
   }
 }

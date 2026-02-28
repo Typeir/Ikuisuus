@@ -211,6 +211,13 @@ html:not([data-theme]) body {
   --worldsim-ring-inner: #2a2a3a;
   --worldsim-ring-outer: #1a1a2a;
   --worldsim-opaline-glow: #aaddff;
+  --worldsim-controls-bg: rgba(8, 8, 14, 0.85);
+  --worldsim-controls-shadow: rgba(0, 0, 0, 0.5);
+  --worldsim-controls-btn-bg: rgba(255, 255, 255, 0.06);
+  --worldsim-controls-btn-hover: rgba(255, 255, 255, 0.12);
+  --worldsim-controls-btn-active: rgba(255, 255, 255, 0.14);
+  --worldsim-text-shadow: rgba(0, 0, 0, 0.6);
+  --worldsim-text-shadow-light: rgba(0, 0, 0, 0.5);
 }
 
 /* Light theme explicit */

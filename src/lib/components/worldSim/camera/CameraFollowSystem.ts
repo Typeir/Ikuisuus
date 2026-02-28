@@ -29,6 +29,9 @@ export class CameraFollowSystem {
   /** @property {boolean} hasTarget - Whether a follow target is active */
   private hasTarget: boolean = false;
 
+  /** @property {Vector3} tempDelta - Reusable vector for frame delta computation */
+  private tempDelta: Vector3 = new Vector3();
+
   /**
    * Set the follow target. The camera orbit center will track this body.
    *
@@ -75,12 +78,12 @@ export class CameraFollowSystem {
    */
   computeDelta(): Vector3 {
     if (!this.positionGetter || !this.hasTarget) {
-      return new Vector3();
+      return this.tempDelta.set(0, 0, 0);
     }
 
     const currentPos = this.positionGetter();
-    const delta = new Vector3().subVectors(currentPos, this.lastPosition);
+    this.tempDelta.subVectors(currentPos, this.lastPosition);
     this.lastPosition.copy(currentPos);
-    return delta;
+    return this.tempDelta;
   }
 }

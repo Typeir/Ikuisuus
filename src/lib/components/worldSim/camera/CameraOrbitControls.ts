@@ -105,6 +105,9 @@ export class CameraOrbitControls {
   /** @property {(e: MouseEvent) => void} boundOnContextMenu - Bound handler to suppress context menu */
   private boundOnContextMenu: (e: MouseEvent) => void;
 
+  /** @property {Vector3} tempOffset - Reusable vector for getOffset computation */
+  private tempOffset: Vector3 = new Vector3();
+
   /**
    * Create orbit controls attached to a canvas element.
    *
@@ -140,6 +143,19 @@ export class CameraOrbitControls {
       this.angularVelocity.theta = 0;
       this.angularVelocity.phi = 0;
     }
+  }
+
+  /**
+   * Reset all transient state — angular velocity, pan delta, drag/pan flags.
+   * Called during a full camera reset to ensure a clean slate.
+   */
+  resetState(): void {
+    this.isDragging = false;
+    this.isPanning = false;
+    this.angularVelocity.theta = 0;
+    this.angularVelocity.phi = 0;
+    this.panDelta.set(0, 0, 0);
+    this.isDirty = false;
   }
 
   /**
@@ -180,7 +196,7 @@ export class CameraOrbitControls {
    * @returns {Vector3} Offset from target to camera position
    */
   getOffset(): Vector3 {
-    return new Vector3().setFromSpherical(this.spherical);
+    return this.tempOffset.setFromSpherical(this.spherical);
   }
 
   /**

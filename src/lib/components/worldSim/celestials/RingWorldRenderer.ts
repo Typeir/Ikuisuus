@@ -21,10 +21,12 @@ import {
   TorusGeometry,
 } from 'three';
 import { createCelestialGlow } from './CelestialGlow';
+import { disposeSceneGraph } from './disposeUtils';
 import type {
   BoundaryData,
   CelestialBodyData,
   ICelestialRenderer,
+  RingWorldRenderConfig,
   SceneContext,
 } from './interfaces';
 
@@ -40,8 +42,8 @@ const DEFAULT_RING_TUBE_RADIUS = 0.4;
 /** @constant {number} DEFAULT_RING_SPACING - Distance between successive ring radii */
 const DEFAULT_RING_SPACING = 3.2;
 
-/** @constant {number} DEFAULT_BASE_ROTATION_SPEED - Base rotation speed for the outermost ring */
-const DEFAULT_BASE_ROTATION_SPEED = 0.002;
+/** @constant {number} DEFAULT_BASE_ROTATION_SPEED - Base rotation speed for the outermost ring (rad/s) */
+const DEFAULT_BASE_ROTATION_SPEED = 0.12;
 
 /** @constant {number} RING_TILT_MAX - Maximum tilt angle in radians for ring variation */
 const RING_TILT_MAX = 0.35;
@@ -60,6 +62,9 @@ export class RingWorldRenderer implements ICelestialRenderer {
   /** @property {number} ringCount - Number of rings around the core */
   private ringCount: number = DEFAULT_RING_COUNT;
 
+  /** @property {Object3D[]} ringPivots - Stored references to ring pivot objects */
+  private ringPivots: Object3D[] = [];
+
   /**
    * Create the ring world mesh: a frozen core sphere with multiple torus rings.
    *
@@ -70,7 +75,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
     const group = new Object3D();
     group.name = `ringWorld-${data.id}`;
 
-    const config = data.renderConfig;
+    const config = data.renderConfig as RingWorldRenderConfig;
     const coreColor = new Color((config.coreColor as string) ?? '#c8dde8');
     const ringColor = new Color((config.ringColor as string) ?? '#9ab8d0');
     this.ringCount = (config.ringCount as number) ?? DEFAULT_RING_COUNT;
@@ -123,6 +128,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
       ringPivot.rotation.z = tiltAngle * 0.5;
 
       group.add(ringPivot);
+      this.ringPivots.push(ringPivot);
     }
 
     const glowColor = (config.coreColor as string) ?? '#c8dde8';
@@ -145,14 +151,12 @@ export class RingWorldRenderer implements ICelestialRenderer {
     deltaTime: number,
     _ctx: SceneContext,
   ): void {
-    for (let i = 0; i < this.ringCount; i++) {
-      const pivot = mesh.getObjectByName(`ring-pivot-${i}`);
-      if (pivot) {
-        const speedMultiplier = (this.ringCount - i) / this.ringCount;
-        const direction = i % 2 === 0 ? 1 : -1;
-        pivot.rotation.y +=
-          this.baseRotationSpeed * speedMultiplier * direction * deltaTime * 60;
-      }
+    for (let i = 0; i < this.ringPivots.length; i++) {
+      const pivot = this.ringPivots[i];
+      const speedMultiplier = (this.ringCount - i) / this.ringCount;
+      const direction = i % 2 === 0 ? 1 : -1;
+      pivot.rotation.y +=
+        this.baseRotationSpeed * speedMultiplier * direction * deltaTime;
     }
   }
 
@@ -162,27 +166,6 @@ export class RingWorldRenderer implements ICelestialRenderer {
    * @param {Object3D} mesh - The ring world group
    */
   dispose(mesh: Object3D): void {
-    mesh.traverse((child) => {
-      if ('geometry' in child && child.geometry) {
-        (child.geometry as TorusGeometry | SphereGeometry).dispose();
-      }
-      if ('material' in child && child.material) {
-        const materials = Array.isArray(child.material)
-          ? child.material
-          : [child.material];
-        for (const mat of materials) {
-          mat.dispose();
-        }
-      }
-    });
-  }
-
-  /**
-   * Get LOD distance thresholds.
-   *
-   * @returns {{ near: number; far: number }} LOD thresholds
-   */
-  getLODDistance(): { near: number; far: number } {
-    return { near: 40, far: 500 };
+    disposeSceneGraph(mesh);
   }
 }

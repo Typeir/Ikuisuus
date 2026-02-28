@@ -15,6 +15,7 @@
 
 import { PerspectiveCamera, Vector3 } from 'three';
 import type { ICameraCommand } from '../celestials/interfaces';
+import { DEFAULT_CAMERA_LOOK_AT, DEFAULT_CAMERA_POSITION } from '../constants';
 
 /** @constant {number} EASE_FACTOR - Smoothing factor for lerp transitions (0-1) */
 const EASE_FACTOR = 0.08;
@@ -269,8 +270,8 @@ export class ResetViewCommand implements ICameraCommand {
    * @param {Vector3} [defaultLookAt] - Override for default look-at target
    */
   constructor(defaultPosition?: Vector3, defaultLookAt?: Vector3) {
-    this.defaultPosition = defaultPosition ?? new Vector3(0, 800, 2500);
-    this.defaultLookAt = defaultLookAt ?? new Vector3(0, 0, 0);
+    this.defaultPosition = defaultPosition ?? DEFAULT_CAMERA_POSITION.clone();
+    this.defaultLookAt = defaultLookAt ?? DEFAULT_CAMERA_LOOK_AT.clone();
     this.currentLookAt = new Vector3();
   }
 
@@ -300,7 +301,5 @@ export class ResetViewCommand implements ICameraCommand {
    *
    * @param {Vector3} _delta - Unused movement delta
    */
-  applyFollowDelta(_delta: Vector3): void {
-    /* no-op — reset always targets a fixed world position */
-  }
+  applyFollowDelta(_delta: Vector3): void {}
 }

@@ -11,11 +11,11 @@
 
 import registryData from '../data/blackCradleRegistry.json';
 import type {
-    BoundaryData,
-    CelestialBodyData,
-    CelestialBodyType,
-    CelestialRegion,
-    CelestialRegistryData,
+  BoundaryData,
+  CelestialBodyData,
+  CelestialBodyType,
+  CelestialRegion,
+  CelestialRegistryData,
 } from './interfaces';
 
 /**
@@ -37,6 +37,23 @@ export class CelestialRegistry {
 
   /** @property {Map<string, CelestialBodyData>} bodyIndex - Index of bodies by ID */
   private bodyIndex: Map<string, CelestialBodyData>;
+
+  /** @property {CelestialRegistry | null} instance - Lazy singleton instance */
+  private static instance: CelestialRegistry | null = null;
+
+  /**
+   * Get the shared singleton CelestialRegistry instance.
+   * Creates it on first call; subsequent calls return the same instance.
+   *
+   * @static
+   * @returns {CelestialRegistry} The shared registry instance
+   */
+  static shared(): CelestialRegistry {
+    if (!CelestialRegistry.instance) {
+      CelestialRegistry.instance = new CelestialRegistry();
+    }
+    return CelestialRegistry.instance;
+  }
 
   /**
    * Create a new registry instance, building internal indexes.
@@ -111,25 +128,5 @@ export class CelestialRegistry {
   getRegion(bodyId: string, regionId: string): CelestialRegion | undefined {
     const regions = this.getRegions(bodyId);
     return regions.find((r) => r.id === regionId);
-  }
-
-  /**
-   * Get the total count of celestial bodies (excluding boundary).
-   *
-   * @returns {number} Number of bodies
-   */
-  getBodyCount(): number {
-    return this.data.bodies.length;
-  }
-
-  /**
-   * Get all body IDs that have surface regions.
-   *
-   * @returns {string[]} Array of body IDs with regions
-   */
-  getBodiesWithRegions(): string[] {
-    return this.data.bodies
-      .filter((body) => body.regions.length > 0)
-      .map((body) => body.id);
   }
 }

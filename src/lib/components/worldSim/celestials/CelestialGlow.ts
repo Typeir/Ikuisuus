@@ -4,8 +4,11 @@
  * any celestial body. Uses a procedural radial gradient CanvasTexture so no image
  * assets are needed. The texture is cached and shared across all instances.
  *
+ * Also exports a generic radial-gradient texture factory used by StarRenderer
+ * (corona glow) and GasGiantRenderer (atmospheric haze).
+ *
  * @module worldSim/celestials/CelestialGlow
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -31,6 +34,59 @@ const DEFAULT_GLOW_OPACITY = 0.18;
 let cachedGlowTexture: CanvasTexture | null = null;
 
 /**
+ * A color stop for a radial gradient texture.
+ *
+ * @interface GradientStop
+ * @property {number} offset - Position in the gradient (0 to 1)
+ * @property {string} color - CSS color string (typically rgba)
+ */
+export interface GradientStop {
+  /** @property {number} offset - Position in the gradient (0 to 1) */
+  offset: number;
+  /** @property {string} color - CSS color string */
+  color: string;
+}
+
+/**
+ * Create a square CanvasTexture with a customizable radial gradient.
+ * Used by star corona, gas giant haze, and celestial glow sprites.
+ *
+ * @function createRadialGradientTexture
+ * @param {number} size - Texture resolution in pixels (square)
+ * @param {GradientStop[]} stops - Ordered gradient color stops
+ * @returns {CanvasTexture} Procedural radial gradient texture
+ */
+export function createRadialGradientTexture(
+  size: number,
+  stops: GradientStop[],
+): CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+
+  const half = size / 2;
+  const gradient = ctx.createRadialGradient(half, half, 0, half, half, half);
+  for (const stop of stops) {
+    gradient.addColorStop(stop.offset, stop.color);
+  }
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+
+  return new CanvasTexture(canvas);
+}
+
+/** @constant {GradientStop[]} GLOW_STOPS - Default glow gradient stops */
+const GLOW_STOPS: GradientStop[] = [
+  { offset: 0, color: 'rgba(255, 255, 255, 1.0)' },
+  { offset: 0.15, color: 'rgba(255, 255, 255, 0.7)' },
+  { offset: 0.4, color: 'rgba(255, 255, 255, 0.25)' },
+  { offset: 0.7, color: 'rgba(255, 255, 255, 0.05)' },
+  { offset: 1.0, color: 'rgba(255, 255, 255, 0.0)' },
+];
+
+/**
  * Create or return the cached radial gradient glow texture.
  * The texture is a white radial gradient from opaque center to transparent edge.
  *
@@ -38,24 +94,10 @@ let cachedGlowTexture: CanvasTexture | null = null;
  */
 function getGlowTexture(): CanvasTexture {
   if (cachedGlowTexture) return cachedGlowTexture;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = GLOW_TEXTURE_SIZE;
-  canvas.height = GLOW_TEXTURE_SIZE;
-  const ctx = canvas.getContext('2d')!;
-
-  const half = GLOW_TEXTURE_SIZE / 2;
-  const gradient = ctx.createRadialGradient(half, half, 0, half, half, half);
-  gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
-  gradient.addColorStop(0.15, 'rgba(255, 255, 255, 0.7)');
-  gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.25)');
-  gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.05)');
-  gradient.addColorStop(1.0, 'rgba(255, 255, 255, 0.0)');
-
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, GLOW_TEXTURE_SIZE, GLOW_TEXTURE_SIZE);
-
-  cachedGlowTexture = new CanvasTexture(canvas);
+  cachedGlowTexture = createRadialGradientTexture(
+    GLOW_TEXTURE_SIZE,
+    GLOW_STOPS,
+  );
   return cachedGlowTexture;
 }
 

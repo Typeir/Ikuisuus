@@ -29,7 +29,7 @@ import styles from './WorldSim.module.scss';
 function WorldSimInner(): React.ReactElement {
   const t = useTranslations('worldSim');
   const state = useWorldSimState();
-  const { containerRef, mediatorRef, subscribeToProjections } =
+  const { containerRef, mediatorRef, bindElement, unbindElement } =
     useWorldSimCanvas();
 
   return (
@@ -48,7 +48,8 @@ function WorldSimInner(): React.ReactElement {
       </div>
 
       <OverlayContainer
-        subscribeToProjections={subscribeToProjections}
+        bindElement={bindElement}
+        unbindElement={unbindElement}
         mediatorRef={mediatorRef}
       />
 

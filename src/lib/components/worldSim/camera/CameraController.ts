@@ -18,6 +18,7 @@ import type {
     ICameraCommand,
     ICameraController,
 } from '../celestials/interfaces';
+import { ResetViewCommand } from './CameraCommand';
 import { CameraFollowSystem } from './CameraFollowSystem';
 import { CameraOrbitControls } from './CameraOrbitControls';
 
@@ -121,6 +122,20 @@ export class CameraController implements ICameraController {
   }
 
   /**
+   * Fully reset the camera to the initial system overview state.
+   * Clears follow target, cancels any active command, resets the orbit center
+   * to the origin, zeros all control state, and executes a smooth transition
+   * back to the default position.
+   */
+  resetToDefault(): void {
+    this.followSystem.clearTarget();
+    this.activeCommand = null;
+    this.target.set(0, 0, 0);
+    this.orbitControls.resetState();
+    this.executeCommand(new ResetViewCommand());
+  }
+
+  /**
    * Set the orbit target (look-at center point).
    *
    * @param {Vector3} newTarget - The new orbit center
@@ -141,7 +156,6 @@ export class CameraController implements ICameraController {
     this.target.copy(positionGetter());
     this.followSystem.setTarget(positionGetter);
 
-    /* Re-arm the pan-unlock callback for this follow session */
     this.orbitControls.onPan = () => {
       this.clearFollowTarget();
       if (this.onPanUnlock) {
@@ -174,7 +188,6 @@ export class CameraController implements ICameraController {
     }
 
     this.updateManualOrbit();
-    this.emitCameraPosition();
   }
 
   /**
@@ -232,8 +245,6 @@ export class CameraController implements ICameraController {
       this.syncOrbitFromCamera();
       this.eventBus.emit('camera:transition:end', { command: completedType });
     }
-
-    this.emitCameraPosition();
   }
 
   /**
@@ -245,7 +256,6 @@ export class CameraController implements ICameraController {
   private updateManualOrbit(): void {
     this.orbitControls.applyDamping();
 
-    /* Apply middle-click pan delta in camera-local space */
     const pan = this.orbitControls.panDelta;
     if (pan.lengthSq() > 0) {
       TEMP_PAN.copy(pan).applyQuaternion(this.camera.quaternion);
@@ -283,16 +293,5 @@ export class CameraController implements ICameraController {
   private syncOrbitFromCamera(): void {
     const offset = new Vector3().subVectors(this.camera.position, this.target);
     this.orbitControls.syncFromOffset(offset);
-  }
-
-  /**
-   * Emit the camera:moved event with current position.
-   *
-   * @private
-   */
-  private emitCameraPosition(): void {
-    this.eventBus.emit('camera:moved', {
-      position: this.camera.position.clone(),
-    });
   }
 }

@@ -19,7 +19,9 @@ import {
     PointsMaterial,
 } from 'three';
 import { createCelestialGlow } from './CelestialGlow';
+import { disposeSceneGraph } from './disposeUtils';
 import type {
+    AsteroidBeltRenderConfig,
     BoundaryData,
     CelestialBodyData,
     ICelestialRenderer,
@@ -55,7 +57,7 @@ export class AsteroidBeltRenderer implements ICelestialRenderer {
     const group = new Object3D();
     group.name = `asteroidBelt-${data.id}`;
 
-    const config = data.renderConfig;
+    const config = data.renderConfig as AsteroidBeltRenderConfig;
     const particleCount =
       (config.particleCount as number) ?? DEFAULT_PARTICLE_COUNT;
     const innerRadius = (config.innerRadius as number) ?? data.radius * 0.8;
@@ -120,27 +122,6 @@ export class AsteroidBeltRenderer implements ICelestialRenderer {
    * @param {Object3D} mesh - The belt group
    */
   dispose(mesh: Object3D): void {
-    mesh.traverse((child) => {
-      if ('geometry' in child && child.geometry) {
-        (child.geometry as BufferGeometry).dispose();
-      }
-      if ('material' in child && child.material) {
-        const materials = Array.isArray(child.material)
-          ? child.material
-          : [child.material];
-        for (const mat of materials) {
-          mat.dispose();
-        }
-      }
-    });
-  }
-
-  /**
-   * Get LOD distance thresholds.
-   *
-   * @returns {{ near: number; far: number }} LOD thresholds
-   */
-  getLODDistance(): { near: number; far: number } {
-    return { near: 80, far: 1000 };
+    disposeSceneGraph(mesh);
   }
 }

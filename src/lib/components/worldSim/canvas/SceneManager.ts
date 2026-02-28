@@ -22,6 +22,7 @@ import {
   Scene,
   WebGLRenderer,
 } from 'three';
+import { DEFAULT_CAMERA_LOOK_AT, DEFAULT_CAMERA_POSITION } from '../constants';
 
 /** @constant {number} STARFIELD_COUNT - Number of background starfield particles */
 const STARFIELD_COUNT = 2000;
@@ -101,8 +102,8 @@ export class SceneManager {
 
     const { width, height } = this.getContainerSize();
     this.camera = new PerspectiveCamera(60, width / height, 0.1, 15000);
-    this.camera.position.set(0, 800, 2500);
-    this.camera.lookAt(0, 0, 0);
+    this.camera.position.copy(DEFAULT_CAMERA_POSITION);
+    this.camera.lookAt(DEFAULT_CAMERA_LOOK_AT);
 
     this.renderer.setSize(width, height);
     this.container.appendChild(this.renderer.domElement);

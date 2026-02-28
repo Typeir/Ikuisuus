@@ -27,14 +27,59 @@
     "toggleOrbits": "Toggle orbit animation"
   },
   "bodies": {
-    "kultharja": "Kultharja",
-    "damocles": "Damocles",
-    "opalineBelt": "The Opaline Belt",
-    "lansihenki": "Länsihenki",
-    "itahenki": "Itähenki",
-    "kalmora": "Kalmora",
-    "selkara": "Selkara",
-    "mana": "Mana",
-    "everdark": "The Everdark"
+    "kultharja": {
+      "name": "Kultharja",
+      "subtitle": "The Sun",
+      "loreOrigin": "The Golden One's mane"
+    },
+    "damocles": {
+      "name": "Damocles",
+      "subtitle": "The Heart-World",
+      "loreOrigin": "The Golden One's heart",
+      "regions": {
+        "thule": "Thule",
+        "thealas": "Thealas",
+        "ordovica": "Ordovica",
+        "pyknos": "Pyknos",
+        "binturia": "Binturia",
+        "borossa": "Borossa",
+        "brume-empire": "Brume Empire"
+      }
+    },
+    "opaline-belt": {
+      "name": "The Opaline Belt",
+      "subtitle": "The Tears",
+      "loreOrigin": "The Golden One's tears"
+    },
+    "lansihenki": {
+      "name": "Länsihenki",
+      "subtitle": "The Western Lung",
+      "loreOrigin": "The Golden One's lungs (west)"
+    },
+    "itahenki": {
+      "name": "Itähenki",
+      "subtitle": "The Eastern Lung",
+      "loreOrigin": "The Golden One's lungs (east)"
+    },
+    "kalmora": {
+      "name": "Kalmora",
+      "subtitle": "The Rotworld",
+      "loreOrigin": "The Golden One's liver"
+    },
+    "selkara": {
+      "name": "Selkara",
+      "subtitle": "The Tower-World",
+      "loreOrigin": "The Golden One's marrow & spine"
+    },
+    "mana": {
+      "name": "Mana",
+      "subtitle": "The Ring-Worlds",
+      "loreOrigin": "The Golden One's shadow"
+    },
+    "everdark": {
+      "name": "The Everdark",
+      "subtitle": "The Burning Barrier",
+      "loreOrigin": "The Dragon's breath"
+    }
   }
 }

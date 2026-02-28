@@ -14,7 +14,7 @@ import { Vector3 } from 'three';
 import type { OrbitalParameters, SurfacePosition } from './interfaces';
 
 /** @constant {number} DEG_TO_RAD - Conversion factor from degrees to radians */
-const DEG_TO_RAD = Math.PI / 180;
+export const DEG_TO_RAD = Math.PI / 180;
 
 /**
  * Compute the 3D world position of a body in its Keplerian orbit at a given time.
@@ -105,30 +105,5 @@ export function surfacePositionToWorld(
     centerPosition.x + x,
     centerPosition.y + y,
     centerPosition.z + z,
-  );
-}
-
-/**
- * Compute the orbital velocity at a given eccentric anomaly.
- * Useful for trailing effects or motion blur.
- *
- * @function computeOrbitalSpeed
- * @param {OrbitalParameters} orbit - Orbital parameters
- * @param {number} eccentricAnomaly - Eccentric anomaly in radians
- * @returns {number} Speed in scene units per time unit
- */
-export function computeOrbitalSpeed(
-  orbit: OrbitalParameters,
-  eccentricAnomaly: number,
-): number {
-  const { semiMajorAxis, eccentricity, period } = orbit;
-  const meanMotion = (2 * Math.PI) / period;
-  const r = semiMajorAxis * (1 - eccentricity * Math.cos(eccentricAnomaly));
-  return (
-    (meanMotion *
-      semiMajorAxis *
-      semiMajorAxis *
-      Math.sqrt(1 - eccentricity * eccentricity)) /
-    r
   );
 }

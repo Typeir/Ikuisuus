@@ -11,7 +11,6 @@
 
 import {
     AdditiveBlending,
-    CanvasTexture,
     Color,
     Mesh,
     MeshPhongMaterial,
@@ -20,10 +19,15 @@ import {
     Sprite,
     SpriteMaterial,
 } from 'three';
-import { createCelestialGlow } from './CelestialGlow';
+import {
+    createCelestialGlow,
+    createRadialGradientTexture,
+} from './CelestialGlow';
+import { disposeSceneGraph } from './disposeUtils';
 import type {
     BoundaryData,
     CelestialBodyData,
+    GasGiantRenderConfig,
     ICelestialRenderer,
     SceneContext,
 } from './interfaces';
@@ -41,30 +45,16 @@ const STORM_SPEED = 0.3;
 const HAZE_TEXTURE_SIZE = 256;
 
 /**
- * Generate a radial gradient canvas texture for a soft atmospheric haze.
- * Draws a circle from opaque center to fully transparent edge.
- *
- * @param {number} size - Texture resolution (square)
- * @returns {CanvasTexture} Round radial gradient texture
+ * Gradient stops for the gas giant atmospheric haze texture.
+ * Softer center with faster falloff than star corona.
+ * @constant {import('./CelestialGlow').GradientStop[]}
  */
-function createHazeTexture(size: number): CanvasTexture {
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d')!;
-
-  const half = size / 2;
-  const gradient = ctx.createRadialGradient(half, half, 0, half, half, half);
-  gradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
-  gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.3)');
-  gradient.addColorStop(0.6, 'rgba(255, 255, 255, 0.1)');
-  gradient.addColorStop(1.0, 'rgba(255, 255, 255, 0.0)');
-
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, size, size);
-
-  return new CanvasTexture(canvas);
-}
+const HAZE_GLOW_STOPS = [
+  { offset: 0, color: 'rgba(255, 255, 255, 0.6)' },
+  { offset: 0.3, color: 'rgba(255, 255, 255, 0.3)' },
+  { offset: 0.6, color: 'rgba(255, 255, 255, 0.1)' },
+  { offset: 1.0, color: 'rgba(255, 255, 255, 0.0)' },
+];
 
 /**
  * Renders gas giant celestial bodies with banded surface and atmospheric haze.
@@ -79,6 +69,9 @@ export class GasGiantRenderer implements ICelestialRenderer {
   /** @property {Sprite | null} hazeSprite - Atmospheric haze sprite */
   private hazeSprite: Sprite | null = null;
 
+  /** @property {Mesh | null} bodyMesh - Stored reference to the gas giant body mesh */
+  private bodyMesh: Mesh | null = null;
+
   /**
    * Create a gas giant mesh with banded material and haze sprite.
    *
@@ -89,7 +82,7 @@ export class GasGiantRenderer implements ICelestialRenderer {
     const group = new Object3D();
     group.name = `gasGiant-${data.id}`;
 
-    const config = data.renderConfig;
+    const config = data.renderConfig as GasGiantRenderConfig;
     const baseColor = new Color((config.baseColor as string) ?? '#cc8844');
     const bandColor = new Color((config.bandColor as string) ?? '#aa6633');
     this.rotationSpeed =
@@ -106,13 +99,14 @@ export class GasGiantRenderer implements ICelestialRenderer {
 
     const body = new Mesh(geometry, material);
     body.name = 'gasGiant-body';
+    this.bodyMesh = body;
     group.add(body);
 
     const hazeColor = new Color(
       (config.atmosphereColor as string) ?? '#ffddaa',
     );
     const hazeMaterial = new SpriteMaterial({
-      map: createHazeTexture(HAZE_TEXTURE_SIZE),
+      map: createRadialGradientTexture(HAZE_TEXTURE_SIZE, HAZE_GLOW_STOPS),
       color: hazeColor,
       transparent: true,
       opacity: 0.15,
@@ -144,9 +138,8 @@ export class GasGiantRenderer implements ICelestialRenderer {
     deltaTime: number,
     _ctx: SceneContext,
   ): void {
-    const body = mesh.getObjectByName('gasGiant-body');
-    if (body) {
-      body.rotation.y += this.rotationSpeed * deltaTime;
+    if (this.bodyMesh) {
+      this.bodyMesh.rotation.y += this.rotationSpeed * deltaTime;
     }
 
     if (this.hazeSprite) {
@@ -161,27 +154,6 @@ export class GasGiantRenderer implements ICelestialRenderer {
    * @param {Object3D} mesh - The gas giant group
    */
   dispose(mesh: Object3D): void {
-    mesh.traverse((child) => {
-      if ('geometry' in child && child.geometry) {
-        (child.geometry as SphereGeometry).dispose();
-      }
-      if ('material' in child && child.material) {
-        const materials = Array.isArray(child.material)
-          ? child.material
-          : [child.material];
-        for (const mat of materials) {
-          mat.dispose();
-        }
-      }
-    });
-  }
-
-  /**
-   * Get LOD distance thresholds.
-   *
-   * @returns {{ near: number; far: number }} LOD thresholds
-   */
-  getLODDistance(): { near: number; far: number } {
-    return { near: 50, far: 600 };
+    disposeSceneGraph(mesh);
   }
 }

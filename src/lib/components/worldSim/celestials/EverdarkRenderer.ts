@@ -23,6 +23,8 @@ import {
 } from 'three';
 import everdarkFrag from '../shaders/everdark.frag.glsl';
 import everdarkVert from '../shaders/everdark.vert.glsl';
+import noise3d from '../shaders/noise3d.glsl';
+import { disposeSceneGraph } from './disposeUtils';
 import type {
   BoundaryData,
   CelestialBodyData,
@@ -117,6 +119,12 @@ const LAYER_CONFIGS: EverdarkLayerConfig[] = [
   },
 ];
 
+/** @constant {string} vertWithNoise - Vertex shader with noise functions prepended */
+const vertWithNoise = noise3d + '\n' + everdarkVert;
+
+/** @constant {string} fragWithNoise - Fragment shader with noise functions prepended */
+const fragWithNoise = noise3d + '\n' + everdarkFrag;
+
 /**
  * Create a ShaderMaterial for one Everdark shell layer.
  *
@@ -126,8 +134,8 @@ const LAYER_CONFIGS: EverdarkLayerConfig[] = [
  */
 function createLayerMaterial(layer: EverdarkLayerConfig): ShaderMaterial {
   return new ShaderMaterial({
-    vertexShader: everdarkVert,
-    fragmentShader: everdarkFrag,
+    vertexShader: vertWithNoise,
+    fragmentShader: fragWithNoise,
     uniforms: {
       uTime: { value: 0 },
       uFlameSpeed: { value: layer.flameSpeed },
@@ -214,28 +222,7 @@ export class EverdarkRenderer implements ICelestialRenderer {
    * @param {Object3D} mesh - The Everdark group
    */
   dispose(mesh: Object3D): void {
-    mesh.traverse((child) => {
-      if ('geometry' in child && child.geometry) {
-        (child.geometry as SphereGeometry).dispose();
-      }
-      if ('material' in child && child.material) {
-        const childMaterials = Array.isArray(child.material)
-          ? child.material
-          : [child.material];
-        for (const mat of childMaterials) {
-          mat.dispose();
-        }
-      }
-    });
+    disposeSceneGraph(mesh);
     this.materials = [];
-  }
-
-  /**
-   * Get LOD distance thresholds.
-   *
-   * @returns {{ near: number; far: number }} LOD thresholds
-   */
-  getLODDistance(): { near: number; far: number } {
-    return { near: 200, far: 2000 };
   }
 }

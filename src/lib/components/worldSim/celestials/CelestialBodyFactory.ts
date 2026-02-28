@@ -70,15 +70,4 @@ export class CelestialBodyFactory {
 
     return factory();
   }
-
-  /**
-   * Check whether a renderer type is supported.
-   *
-   * @static
-   * @param {string} type - Type string to check
-   * @returns {boolean} True if the type has a registered renderer
-   */
-  static isValidType(type: string): type is CelestialRendererType {
-    return type in RENDERER_MAP;
-  }
 }

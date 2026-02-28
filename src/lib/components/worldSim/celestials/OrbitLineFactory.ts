@@ -21,6 +21,7 @@ import {
   Vector3,
 } from 'three';
 import type { OrbitalParameters } from './interfaces';
+import { DEG_TO_RAD } from './OrbitalMechanics';
 
 /** @constant {number} ORBIT_TUBE_SEGMENTS - Segments around the orbit path */
 const ORBIT_TUBE_SEGMENTS = 128;
@@ -36,9 +37,6 @@ const ORBIT_LINE_OPACITY = 0.45;
 
 /** @constant {number} ORBIT_LINE_COLOR - Default color for orbit rings (accent green) */
 const ORBIT_LINE_COLOR = 0x8fd3a1;
-
-/** @constant {number} DEG_TO_RAD - Conversion factor from degrees to radians */
-const DEG_TO_RAD = Math.PI / 180;
 
 /**
  * 3D curve adaptor that lifts a 2D EllipseCurve into 3D space with inclination.

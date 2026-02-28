@@ -28,6 +28,8 @@ import { WorldSimMediator } from '../WorldSimMediator';
  * @property {React.RefObject<HTMLDivElement | null>} containerRef - Ref to attach to the container div
  * @property {React.MutableRefObject<WorldSimMediator | null>} mediatorRef - Ref to the mediator for imperative access
  * @property {Function} subscribeToProjections - Subscribe to projection position updates
+ * @property {Function} bindElement - Bind a DOM element for direct transform updates
+ * @property {Function} unbindElement - Unbind a DOM element from projection updates
  */
 export interface UseWorldSimCanvasReturn {
   /** @property {React.RefObject<HTMLDivElement | null>} containerRef - Container element ref */
@@ -38,6 +40,10 @@ export interface UseWorldSimCanvasReturn {
   subscribeToProjections: (
     callback: (positions: Map<string, ProjectedPosition>) => void,
   ) => (() => void) | undefined;
+  /** @property {Function} bindElement - Bind a DOM element for direct transform updates */
+  bindElement: (id: string, element: HTMLElement) => void;
+  /** @property {Function} unbindElement - Unbind a DOM element from projection updates */
+  unbindElement: (id: string) => void;
 }
 
 /**
@@ -62,6 +68,15 @@ export function useWorldSimCanvas(): UseWorldSimCanvasReturn {
   const cameraControllerRef = useRef<CameraController | null>(null);
   const projectionBridgeRef = useRef<ProjectionBridge | null>(null);
   const eventBusRef = useRef<SceneEventBus | null>(null);
+
+  /** @property {Set} pendingSubscribers - Queued callbacks awaiting bridge creation */
+  const pendingSubscribers = useRef<
+    Set<(pos: Map<string, ProjectedPosition>) => void>
+  >(new Set());
+
+  /** @property {Map} cleanupMap - Unsubscribe functions for flushed pending subscribers */
+  const cleanupMap = useRef<Map<Function, () => void>>(new Map());
+
   const dispatch = useWorldSimDispatch();
 
   useEffect(() => {
@@ -84,6 +99,15 @@ export function useWorldSimCanvas(): UseWorldSimCanvasReturn {
     const projectionBridge = new ProjectionBridge();
     projectionBridgeRef.current = projectionBridge;
 
+    /** Flush pending subscribers that were queued before the bridge existed */
+    const pending = Array.from(pendingSubscribers.current);
+    for (let i = 0; i < pending.length; i++) {
+      const cb = pending[i];
+      const unsub = projectionBridge.subscribe(cb);
+      cleanupMap.current.set(cb, unsub);
+    }
+    pendingSubscribers.current.clear();
+
     const mediator = new WorldSimMediator(
       sceneManager,
       cameraController,
@@ -105,16 +129,56 @@ export function useWorldSimCanvas(): UseWorldSimCanvasReturn {
       cameraControllerRef.current = null;
       projectionBridgeRef.current = null;
       eventBusRef.current = null;
+      cleanupMap.current.clear();
     };
   }, [dispatch]);
 
   const subscribeToProjections = useCallback(
     (callback: (positions: Map<string, ProjectedPosition>) => void) => {
-      if (!projectionBridgeRef.current) return undefined;
-      return projectionBridgeRef.current.subscribe(callback);
+      const bridge = projectionBridgeRef.current;
+
+      if (bridge) {
+        return bridge.subscribe(callback);
+      }
+
+      /** Bridge not ready yet — queue for deferred subscription */
+      pendingSubscribers.current.add(callback);
+      return () => {
+        pendingSubscribers.current.delete(callback);
+        const cleanup = cleanupMap.current.get(callback);
+        if (cleanup) {
+          cleanup();
+          cleanupMap.current.delete(callback);
+        }
+      };
     },
     [],
   );
 
-  return { containerRef, mediatorRef, subscribeToProjections };
+  /**
+   * Bind a DOM element to the projection bridge for direct CSS transform updates.
+   *
+   * @param {string} id - Identifier matching a tracked celestial body
+   * @param {HTMLElement} element - DOM element to position
+   */
+  const bindElement = useCallback((id: string, element: HTMLElement) => {
+    projectionBridgeRef.current?.bindElement(id, element);
+  }, []);
+
+  /**
+   * Unbind a DOM element from the projection bridge.
+   *
+   * @param {string} id - Identifier of the tracked body to unbind
+   */
+  const unbindElement = useCallback((id: string) => {
+    projectionBridgeRef.current?.unbindElement(id);
+  }, []);
+
+  return {
+    containerRef,
+    mediatorRef,
+    subscribeToProjections,
+    bindElement,
+    unbindElement,
+  };
 }

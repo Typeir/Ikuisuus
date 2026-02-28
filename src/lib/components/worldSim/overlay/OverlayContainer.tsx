@@ -1,20 +1,20 @@
 /**
  * @fileoverview Overlay Container — Positions DOM Elements Over 3D Scene
- * @description Subscribes to ProjectionBridge updates and renders CelestialLabel
- * components at the correct 2D screen positions. Acts as the bridge between
- * the Three.js coordinate system and React DOM overlay elements.
+ * @description Binds CelestialLabel DOM elements to the ProjectionBridge for direct
+ * CSS transform updates each frame. The bridge applies position, visibility, and
+ * scale transforms without React re-renders or subscriber indirection.
  *
  * @module worldSim/overlay/OverlayContainer
- * @version 1.0.0
+ * @version 3.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useState } from 'react';
 import { CelestialRegistry } from '../celestials/CelestialRegistry';
-import type { ProjectedPosition } from '../celestials/interfaces';
 import { useWorldSimState } from '../context/WorldSimContext';
 import type { WorldSimMediator } from '../WorldSimMediator';
 import { CelestialLabel } from './CelestialLabel';
@@ -24,50 +24,58 @@ import styles from './overlay.module.scss';
  * Props for the OverlayContainer component.
  *
  * @interface OverlayContainerProps
- * @property {Function} subscribeToProjections - Subscription function from useWorldSimCanvas
+ * @property {Function} bindElement - Bind a DOM element for direct transform updates
+ * @property {Function} unbindElement - Unbind a DOM element from projection updates
  * @property {React.MutableRefObject<WorldSimMediator | null>} mediatorRef - Ref to the mediator
  */
 interface OverlayContainerProps {
-  /** @property {Function} subscribeToProjections - Projection subscription callback */
-  subscribeToProjections: (
-    callback: (positions: Map<string, ProjectedPosition>) => void,
-  ) => (() => void) | undefined;
+  /** @property {Function} bindElement - Bind a DOM element for direct CSS transform updates */
+  bindElement: (id: string, element: HTMLElement) => void;
+  /** @property {Function} unbindElement - Unbind a DOM element from projection updates */
+  unbindElement: (id: string) => void;
   /** @property {React.MutableRefObject<WorldSimMediator | null>} mediatorRef - Ref to mediator */
   mediatorRef: React.MutableRefObject<WorldSimMediator | null>;
 }
 
 /**
  * Renders floating DOM labels positioned over celestial bodies in the 3D scene.
- * Subscribes to the ProjectionBridge for per-frame position updates.
+ * Each label element is bound directly to the ProjectionBridge, which applies
+ * CSS transforms (position, visibility, scale) each frame without React re-renders.
  *
  * @param {OverlayContainerProps} props - Component props
  * @returns {React.ReactElement} The overlay container with positioned labels
  */
 export function OverlayContainer({
-  subscribeToProjections,
+  bindElement,
+  unbindElement,
   mediatorRef,
 }: OverlayContainerProps): React.ReactElement {
-  const [positions, setPositions] = useState<Map<string, ProjectedPosition>>(
-    new Map(),
-  );
   const state = useWorldSimState();
-  const [registry] = useState(() => new CelestialRegistry());
-
-  useEffect(() => {
-    const unsubscribe = subscribeToProjections((newPositions) => {
-      setPositions(new Map(newPositions));
-    });
-
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [subscribeToProjections]);
+  const t = useTranslations('worldSim');
+  const [registry] = useState(() => CelestialRegistry.shared());
 
   const handleBodyClick = useCallback(
     (bodyId: string) => {
       mediatorRef.current?.zoomToBody(bodyId);
     },
     [mediatorRef],
+  );
+
+  /**
+   * Bind or unbind a label element to the projection bridge.
+   *
+   * @param {string} bodyId - Body identifier
+   * @param {HTMLButtonElement | null} el - DOM element or null on unmount
+   */
+  const setLabelRef = useCallback(
+    (bodyId: string, el: HTMLButtonElement | null) => {
+      if (el) {
+        bindElement(bodyId, el);
+      } else {
+        unbindElement(bodyId);
+      }
+    },
+    [bindElement, unbindElement],
   );
 
   if (!state.labelsVisible || !state.isInitialized) {
@@ -78,23 +86,18 @@ export function OverlayContainer({
 
   return (
     <div className={styles.overlayContainer}>
-      {bodies.map((body) => {
-        const position = positions.get(body.id);
-        if (!position || !position.visible) return null;
-
-        return (
-          <CelestialLabel
-            key={body.id}
-            bodyId={body.id}
-            name={body.name}
-            subtitle={body.subtitle}
-            position={position}
-            isHovered={state.hoveredBodyId === body.id}
-            isSelected={state.selectedBodyId === body.id}
-            onClick={handleBodyClick}
-          />
-        );
-      })}
+      {bodies.map((body) => (
+        <CelestialLabel
+          key={body.id}
+          ref={(el: HTMLButtonElement | null) => setLabelRef(body.id, el)}
+          bodyId={body.id}
+          name={t(`bodies.${body.id}.name`)}
+          subtitle={t(`bodies.${body.id}.subtitle`)}
+          isHovered={state.hoveredBodyId === body.id}
+          isSelected={state.selectedBodyId === body.id}
+          onClick={handleBodyClick}
+        />
+      ))}
     </div>
   );
 }

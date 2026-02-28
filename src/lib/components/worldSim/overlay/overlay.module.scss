@@ -29,6 +29,7 @@
   backdrop-filter: blur(4px);
   cursor: pointer;
   pointer-events: auto;
+  visibility: hidden;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
@@ -209,18 +210,18 @@
   padding: 10px 18px;
   border: 1px solid var(--worldsim-label-accent);
   border-radius: 10px;
-  background: rgba(8, 8, 14, 0.85);
+  background: var(--worldsim-controls-bg);
   backdrop-filter: blur(10px);
   pointer-events: auto;
   z-index: 20;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 16px var(--worldsim-controls-shadow);
 }
 
 .controlButton {
   padding: 6px 14px;
   border: 1px solid var(--worldsim-panel-border);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--worldsim-controls-btn-bg);
   color: var(--worldsim-label-text);
   font-size: 0.8rem;
   font-weight: 500;
@@ -232,12 +233,12 @@
   letter-spacing: 0.02em;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--worldsim-controls-btn-hover);
     border-color: var(--worldsim-label-accent);
   }
 
   &.active {
-    background: rgba(255, 255, 255, 0.14);
+    background: var(--worldsim-controls-btn-active);
     border-color: var(--worldsim-label-accent);
     color: var(--worldsim-label-accent);
   }

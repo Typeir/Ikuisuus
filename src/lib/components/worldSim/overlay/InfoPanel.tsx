@@ -43,7 +43,7 @@ export function InfoPanel({
 }: InfoPanelProps): React.ReactElement | null {
   const state = useWorldSimState();
   const t = useTranslations('worldSim');
-  const registry = useMemo(() => new CelestialRegistry(), []);
+  const registry = useMemo(() => CelestialRegistry.shared(), []);
 
   const selectedBody = useMemo(() => {
     if (!state.selectedBodyId) return null;
@@ -84,9 +84,15 @@ export function InfoPanel({
         ← {t('controls.back')}
       </button>
 
-      <h2 className={styles.infoPanelTitle}>{selectedBody.name}</h2>
-      <p className={styles.infoPanelSubtitle}>{selectedBody.subtitle}</p>
-      <p className={styles.infoPanelLore}>{selectedBody.loreOrigin}</p>
+      <h2 className={styles.infoPanelTitle}>
+        {t(`bodies.${selectedBody.id}.name`)}
+      </h2>
+      <p className={styles.infoPanelSubtitle}>
+        {t(`bodies.${selectedBody.id}.subtitle`)}
+      </p>
+      <p className={styles.infoPanelLore}>
+        {t(`bodies.${selectedBody.id}.loreOrigin`)}
+      </p>
 
       {selectedBody.regions.length > 0 && (
         <div className={styles.regionList}>
@@ -102,8 +108,10 @@ export function InfoPanel({
                   }`}
                   onClick={() => handleRegionClick(region.id)}
                   type='button'
-                  aria-label={region.name}>
-                  {region.name}
+                  aria-label={t(
+                    `bodies.${selectedBody.id}.regions.${region.id}`,
+                  )}>
+                  {t(`bodies.${selectedBody.id}.regions.${region.id}`)}
                 </button>
               </li>
             ))}

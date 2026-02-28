@@ -1,10 +1,10 @@
 /**
  * @fileoverview World Sim Celestial Body Interfaces
- * @description Type definitions for the celestial body system, including renderable,
- * interactable, orbital, and labelable interfaces following Interface Segregation Principle.
+ * @description Type definitions for the celestial body system, including renderer
+ * strategy, camera command, and data interfaces.
  *
  * @module worldSim/celestials/interfaces
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -73,15 +73,163 @@ export interface CelestialRegion {
 }
 
 /**
- * Renderer-specific configuration for a celestial body.
- * Extended by each concrete renderer with additional properties.
- * @interface RenderConfig
- * @property {CelestialRendererType} renderer - Which renderer strategy to use
+ * Star renderer configuration.
+ * @interface StarRenderConfig
+ * @property {'star'} renderer - Discriminant
+ * @property {string} [emissiveColor] - Core emissive color hex
+ * @property {string} [coronaColor] - Corona glow color hex
  */
-export interface RenderConfig {
-  renderer: CelestialRendererType;
-  [key: string]: unknown;
+export interface StarRenderConfig {
+  /** @property {'star'} renderer - Renderer discriminant */
+  renderer: 'star';
+  /** @property {string} [emissiveColor] - Core emissive color hex */
+  emissiveColor?: string;
+  /** @property {string} [coronaColor] - Corona glow color hex */
+  coronaColor?: string;
 }
+
+/**
+ * Planet renderer configuration.
+ * @interface PlanetRenderConfig
+ * @property {'planet'} renderer - Discriminant
+ * @property {string} [baseColor] - Surface base color hex
+ * @property {number} [rotationSpeed] - Rotation speed in rad/s
+ * @property {string} [atmosphereColor] - Atmosphere glow color hex (falsy = no atmosphere)
+ * @property {number} [atmosphereIntensity] - Atmosphere rim light intensity
+ */
+export interface PlanetRenderConfig {
+  /** @property {'planet'} renderer - Renderer discriminant */
+  renderer: 'planet';
+  /** @property {string} [baseColor] - Surface base color hex */
+  baseColor?: string;
+  /** @property {number} [rotationSpeed] - Rotation speed in rad/s */
+  rotationSpeed?: number;
+  /** @property {string} [atmosphereColor] - Atmosphere glow color hex */
+  atmosphereColor?: string;
+  /** @property {number} [atmosphereIntensity] - Atmosphere rim light intensity */
+  atmosphereIntensity?: number;
+}
+
+/**
+ * Gas giant renderer configuration.
+ * @interface GasGiantRenderConfig
+ * @property {'gasGiant'} renderer - Discriminant
+ * @property {string} [baseColor] - Base sphere color hex
+ * @property {string} [bandColor] - Band stripe color hex
+ * @property {number} [rotationSpeed] - Rotation speed in rad/s
+ * @property {string} [atmosphereColor] - Haze glow color hex
+ */
+export interface GasGiantRenderConfig {
+  /** @property {'gasGiant'} renderer - Renderer discriminant */
+  renderer: 'gasGiant';
+  /** @property {string} [baseColor] - Base sphere color hex */
+  baseColor?: string;
+  /** @property {string} [bandColor] - Band stripe color hex */
+  bandColor?: string;
+  /** @property {number} [rotationSpeed] - Rotation speed in rad/s */
+  rotationSpeed?: number;
+  /** @property {string} [atmosphereColor] - Haze glow color hex */
+  atmosphereColor?: string;
+}
+
+/**
+ * Ring world renderer configuration.
+ * @interface RingWorldRenderConfig
+ * @property {'ringWorld'} renderer - Discriminant
+ * @property {string} [coreColor] - Core sphere color hex
+ * @property {string} [ringColor] - Ring torus color hex
+ * @property {number} [ringCount] - Number of orbital rings
+ * @property {number} [rotationSpeed] - Base rotation speed in rad/s
+ * @property {number} [coreRadius] - Core sphere radius override
+ * @property {number} [ringSpacing] - Spacing between ring orbits
+ * @property {number} [ringTubeRadius] - Tube radius of each ring torus
+ */
+export interface RingWorldRenderConfig {
+  /** @property {'ringWorld'} renderer - Renderer discriminant */
+  renderer: 'ringWorld';
+  /** @property {string} [coreColor] - Core sphere color hex */
+  coreColor?: string;
+  /** @property {string} [ringColor] - Ring torus color hex */
+  ringColor?: string;
+  /** @property {number} [ringCount] - Number of orbital rings */
+  ringCount?: number;
+  /** @property {number} [rotationSpeed] - Base rotation speed in rad/s */
+  rotationSpeed?: number;
+  /** @property {number} [coreRadius] - Core sphere radius override */
+  coreRadius?: number;
+  /** @property {number} [ringSpacing] - Spacing between ring orbits */
+  ringSpacing?: number;
+  /** @property {number} [ringTubeRadius] - Tube radius of each ring torus */
+  ringTubeRadius?: number;
+}
+
+/**
+ * Tower world renderer configuration.
+ * @interface TowerWorldRenderConfig
+ * @property {'towerWorld'} renderer - Discriminant
+ * @property {string} [towerColor] - Tower mesh color hex
+ * @property {number} [rotationSpeed] - Orbiter rotation speed in rad/s
+ * @property {number} [towerHeightMultiplier] - Tower height as multiplier of radius
+ */
+export interface TowerWorldRenderConfig {
+  /** @property {'towerWorld'} renderer - Renderer discriminant */
+  renderer: 'towerWorld';
+  /** @property {string} [towerColor] - Tower mesh color hex */
+  towerColor?: string;
+  /** @property {number} [rotationSpeed] - Orbiter rotation speed in rad/s */
+  rotationSpeed?: number;
+  /** @property {number} [towerHeightMultiplier] - Tower height as multiplier of radius */
+  towerHeightMultiplier?: number;
+}
+
+/**
+ * Asteroid belt renderer configuration.
+ * @interface AsteroidBeltRenderConfig
+ * @property {'asteroidBelt'} renderer - Discriminant
+ * @property {number} [particleCount] - Number of particles in the belt
+ * @property {number} [innerRadius] - Inner belt radius
+ * @property {number} [outerRadius] - Outer belt radius
+ * @property {string} [baseColor] - Particle base color hex
+ * @property {number} [rotationSpeed] - Belt rotation speed in rad/s
+ */
+export interface AsteroidBeltRenderConfig {
+  /** @property {'asteroidBelt'} renderer - Renderer discriminant */
+  renderer: 'asteroidBelt';
+  /** @property {number} [particleCount] - Number of particles */
+  particleCount?: number;
+  /** @property {number} [innerRadius] - Inner belt radius */
+  innerRadius?: number;
+  /** @property {number} [outerRadius] - Outer belt radius */
+  outerRadius?: number;
+  /** @property {string} [baseColor] - Particle base color hex */
+  baseColor?: string;
+  /** @property {number} [rotationSpeed] - Belt rotation speed in rad/s */
+  rotationSpeed?: number;
+}
+
+/**
+ * Everdark boundary renderer configuration.
+ * @interface EverdarkRenderConfig
+ * @property {'everdark'} renderer - Discriminant
+ */
+export interface EverdarkRenderConfig {
+  /** @property {'everdark'} renderer - Renderer discriminant */
+  renderer: 'everdark';
+}
+
+/**
+ * Discriminated union of all renderer configurations.
+ * The `renderer` field serves as the discriminant.
+ * @typedef {StarRenderConfig | PlanetRenderConfig | GasGiantRenderConfig | RingWorldRenderConfig | TowerWorldRenderConfig | AsteroidBeltRenderConfig | EverdarkRenderConfig} RenderConfig
+ */
+export type RenderConfig =
+  | StarRenderConfig
+  | PlanetRenderConfig
+  | GasGiantRenderConfig
+  | RingWorldRenderConfig
+  | TowerWorldRenderConfig
+  | AsteroidBeltRenderConfig
+  | EverdarkRenderConfig;
 
 /**
  * Allowed renderer strategy types.
@@ -179,6 +327,7 @@ export interface CelestialRegistryData {
  * @property {number} x - Screen X coordinate in pixels
  * @property {number} y - Screen Y coordinate in pixels
  * @property {boolean} visible - Whether the point is in front of the camera
+ * @property {boolean} occluded - Whether another body blocks the line of sight
  * @property {number} distance - Distance from camera to world point
  * @property {number} scale - Distance-based scale factor for DOM elements
  */
@@ -186,69 +335,30 @@ export interface ProjectedPosition {
   x: number;
   y: number;
   visible: boolean;
+  occluded: boolean;
   distance: number;
   scale: number;
 }
 
 /**
- * Interface for objects that can be rendered in the Three.js scene.
- * @interface IRenderable
+ * Renderer strategy interface for celestial bodies.
+ * Each concrete renderer (star, planet, etc.) implements this contract.
+ *
+ * @interface ICelestialRenderer
  * @property {Function} createMesh - Create the Three.js Object3D for this body
  * @property {Function} update - Called each frame to animate the mesh
  * @property {Function} dispose - Clean up GPU resources
- */
-export interface IRenderable {
-  createMesh(data: CelestialBodyData | BoundaryData): Object3D;
-  update(mesh: Object3D, time: number, deltaTime: number, ctx: SceneContext): void;
-  dispose(mesh: Object3D): void;
-}
-
-/**
- * Interface for objects that respond to raycaster interactions.
- * @interface IInteractable
- * @property {Function} getHitTargets - Return meshes that should be raycast-tested
- * @property {Function} onHover - Called when raycaster enters this body
- * @property {Function} onUnhover - Called when raycaster exits this body
- * @property {Function} onClick - Called when this body is clicked
- */
-export interface IInteractable {
-  getHitTargets(): Object3D[];
-  onHover(mesh: Object3D): void;
-  onUnhover(mesh: Object3D): void;
-  onClick(mesh: Object3D): void;
-}
-
-/**
- * Interface for objects with orbital motion.
- * @interface IOrbitable
- * @property {Function} getWorldPosition - Return current world-space position
- * @property {Function} updateOrbit - Advance orbital position by time delta
- */
-export interface IOrbitable {
-  getWorldPosition(): Vector3;
-  updateOrbit(time: number): void;
-}
-
-/**
- * Interface for objects that should have a DOM label projected onto the screen.
- * @interface ILabelable
- * @property {Function} getLabelAnchor - Return the 3D world point to project for this label
- * @property {Function} getLabelOffset - Return pixel offset from projected point
- */
-export interface ILabelable {
-  getLabelAnchor(): Vector3;
-  getLabelOffset(): { x: number; y: number };
-}
-
-/**
- * Combined renderer strategy interface implementing all segregated interfaces.
- * Each celestial body renderer must implement this contract.
- * @interface ICelestialRenderer
- * @extends IRenderable
  * @property {Function} getLODDistance - Return near/far thresholds for LOD switching
  */
-export interface ICelestialRenderer extends IRenderable {
-  getLODDistance(): { near: number; far: number };
+export interface ICelestialRenderer {
+  createMesh(data: CelestialBodyData | BoundaryData): Object3D;
+  update(
+    mesh: Object3D,
+    time: number,
+    deltaTime: number,
+    ctx: SceneContext,
+  ): void;
+  dispose(mesh: Object3D): void;
 }
 
 /**
@@ -282,6 +392,7 @@ export interface ICameraCommand {
 export interface ICameraController {
   executeCommand(command: ICameraCommand): void;
   cancelCommand(): void;
+  resetToDefault(): void;
   setTarget(target: Vector3): void;
   setFollowTarget(positionGetter: () => Vector3): void;
   clearFollowTarget(): void;

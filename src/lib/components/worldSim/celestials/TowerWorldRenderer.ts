@@ -19,11 +19,13 @@ import {
   Object3D,
 } from 'three';
 import { createCelestialGlow } from './CelestialGlow';
+import { disposeSceneGraph } from './disposeUtils';
 import type {
   BoundaryData,
   CelestialBodyData,
   ICelestialRenderer,
   SceneContext,
+  TowerWorldRenderConfig,
 } from './interfaces';
 
 /** @constant {number} TOWER_SEGMENTS - Number of cylinder segments composing the main tower */
@@ -35,8 +37,8 @@ const DEFAULT_ROTATION_SPEED = 0.03;
 /** @constant {number} ORBITER_COUNT - Number of smaller pillars orbiting the main tower */
 const ORBITER_COUNT = 10;
 
-/** @constant {number} ORBITER_BASE_SPEED - Base orbital speed for orbiting pillars */
-const ORBITER_BASE_SPEED = 0.008;
+/** @constant {number} ORBITER_BASE_SPEED - Base orbital speed for orbiting pillars (rad/s) */
+const ORBITER_BASE_SPEED = 0.48;
 
 /**
  * Simple deterministic pseudo-random number generator using a hash-style seed.
@@ -64,6 +66,9 @@ export class TowerWorldRenderer implements ICelestialRenderer {
   /** @property {number} orbiterCount - Number of orbiting pillars */
   private orbiterCount: number = ORBITER_COUNT;
 
+  /** @property {Object3D[]} orbiterPivots - Stored references to orbiter pivot objects */
+  private orbiterPivots: Object3D[] = [];
+
   /**
    * Create the tower world mesh: a thick tapered tower with orbiting pillars.
    *
@@ -74,7 +79,7 @@ export class TowerWorldRenderer implements ICelestialRenderer {
     const group = new Object3D();
     group.name = `towerWorld-${data.id}`;
 
-    const config = data.renderConfig;
+    const config = data.renderConfig as TowerWorldRenderConfig;
     const towerColor = new Color((config.towerColor as string) ?? '#aaaaaa');
     this.rotationSpeed =
       (config.rotationSpeed as number) ?? DEFAULT_ROTATION_SPEED;
@@ -153,6 +158,7 @@ export class TowerWorldRenderer implements ICelestialRenderer {
       pivot.add(pillarGlow);
 
       group.add(pivot);
+      this.orbiterPivots.push(pivot);
     }
 
     const glowColor = (config.towerColor as string) ?? '#aaaaaa';
@@ -177,13 +183,11 @@ export class TowerWorldRenderer implements ICelestialRenderer {
   ): void {
     mesh.rotation.y += this.rotationSpeed * deltaTime;
 
-    for (let i = 0; i < this.orbiterCount; i++) {
-      const pivot = mesh.getObjectByName(`orbiter-pivot-${i}`);
-      if (pivot) {
-        const speed = ORBITER_BASE_SPEED * (1 + seededRandom(i * 7) * 0.6);
-        const direction = i % 2 === 0 ? 1 : -1;
-        pivot.rotation.y += speed * direction * deltaTime * 60;
-      }
+    for (let i = 0; i < this.orbiterPivots.length; i++) {
+      const pivot = this.orbiterPivots[i];
+      const speed = ORBITER_BASE_SPEED * (1 + seededRandom(i * 7) * 0.6);
+      const direction = i % 2 === 0 ? 1 : -1;
+      pivot.rotation.y += speed * direction * deltaTime;
     }
   }
 
@@ -193,27 +197,6 @@ export class TowerWorldRenderer implements ICelestialRenderer {
    * @param {Object3D} mesh - The tower world group
    */
   dispose(mesh: Object3D): void {
-    mesh.traverse((child) => {
-      if ('geometry' in child && child.geometry) {
-        (child.geometry as CylinderGeometry).dispose();
-      }
-      if ('material' in child && child.material) {
-        const materials = Array.isArray(child.material)
-          ? child.material
-          : [child.material];
-        for (const mat of materials) {
-          mat.dispose();
-        }
-      }
-    });
-  }
-
-  /**
-   * Get LOD distance thresholds.
-   *
-   * @returns {{ near: number; far: number }} LOD thresholds
-   */
-  getLODDistance(): { near: number; far: number } {
-    return { near: 25, far: 400 };
+    disposeSceneGraph(mesh);
   }
 }

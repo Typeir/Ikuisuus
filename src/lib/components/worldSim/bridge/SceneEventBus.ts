@@ -9,8 +9,6 @@
  * @since 1.0.0
  */
 
-import type { Vector3 } from 'three';
-
 /**
  * Map of all event types to their payload shapes.
  * @interface WorldSimEvents
@@ -19,9 +17,6 @@ export interface WorldSimEvents {
   'body:hover': { bodyId: string };
   'body:click': { bodyId: string };
   'body:unhover': { bodyId: string };
-  'region:hover': { regionId: string; bodyId: string };
-  'region:click': { regionId: string; bodyId: string };
-  'camera:moved': { position: Vector3 };
   'camera:transition:start': { command: string };
   'camera:transition:end': { command: string };
 }
@@ -90,10 +85,9 @@ export class SceneEventBus {
     const handlers = this.listeners.get(event);
     if (!handlers) return;
 
-    const handlerArray = Array.from(handlers);
-    for (let i = 0; i < handlerArray.length; i++) {
-      (handlerArray[i] as (...a: unknown[]) => void)(...args);
-    }
+    handlers.forEach((handler) => {
+      (handler as (...a: unknown[]) => void)(...args);
+    });
   }
 
   /**
