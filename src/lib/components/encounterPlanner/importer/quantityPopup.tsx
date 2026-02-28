@@ -76,6 +76,13 @@ export interface QuantityPopupProps {
  * 
  * @component
  * @param {QuantityPopupProps} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is visible
+ * @param {string} props.creatureName - Name of the creature being imported
+ * @param {(quantity: number) => void} props.onConfirm - Callback with selected quantity
+ * @param {() => void} props.onCancel - Callback when modal is cancelled
+ * @param {string} [props.confirmLabel='Confirm'] - Label for the confirm button
+ * @param {string} [props.cancelLabel='Cancel'] - Label for the cancel button
+ * @param {string} [props.quantityLabel='Quantity'] - Label for the quantity input
  * @returns {JSX.Element | null} Rendered modal or null when closed
  * 
  * @example

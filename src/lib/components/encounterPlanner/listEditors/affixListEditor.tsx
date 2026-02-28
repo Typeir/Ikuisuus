@@ -55,6 +55,11 @@ interface AffixListEditorProps {
  *
  * @component
  * @param {AffixListEditorProps} props - Component props
+ * @param {AffixEntry[]} props.affixes - Current affix entries
+ * @param {(affixes: AffixEntry[]) => void} props.onChange - Callback when affix list changes
+ * @param {string} props.locale - Current locale for API requests
+ * @param {boolean} [props.readOnly] - Whether the editor is read-only
+ * @param {string} [props.removeChipAriaLabel] - Aria label for remove chip buttons
  * @returns {JSX.Element} Rendered affix list with add/remove controls
  *
  * @example

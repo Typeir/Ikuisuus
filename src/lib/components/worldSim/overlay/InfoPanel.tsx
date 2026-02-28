@@ -36,6 +36,7 @@ interface InfoPanelProps {
  * Renders body name, subtitle, lore origin description, and clickable region list.
  *
  * @param {InfoPanelProps} props - Component props
+ * @param {React.MutableRefObject<WorldSimMediator | null>} props.mediatorRef - Ref to the WorldSim mediator instance
  * @returns {React.ReactElement | null} The info panel, or null if no body selected
  */
 export function InfoPanel({

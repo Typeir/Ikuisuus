@@ -142,6 +142,15 @@ interface GenericComboboxProps<T extends ComboboxItem> {
  * @component
  * @template T - Item type extending ComboboxItem
  * @param {GenericComboboxProps<T>} props - Component props
+ * @param {T[]} props.items - Array of items to display in the dropdown
+ * @param {boolean} props.isLoading - Whether items are currently being loaded
+ * @param {string} props.searchQuery - Current search input value
+ * @param {(query: string) => void} props.onSearchChange - Callback when search input changes
+ * @param {(item: T) => void} props.onSelect - Callback when an item is selected
+ * @param {string} props.placeholder - Placeholder text for the search input
+ * @param {string} props.noResultsMessage - Message displayed when no items match
+ * @param {(item: T, isSelected: boolean) => ReactNode} props.renderItem - Custom renderer for dropdown items
+ * @param {(item: T, query: string) => boolean} [props.filterItem] - Optional custom filter function
  * @returns {JSX.Element} Rendered combobox with input and dropdown
  *
  * @example

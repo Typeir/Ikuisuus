@@ -194,6 +194,11 @@ const CombatantRowContent: React.FC = () => {
  *
  * @component
  * @param {CombatantRowProps} props - Component props
+ * @param {InProgressCombatant} props.combatant - The combatant data to display
+ * @param {string} props.locale - Current locale for API requests and wiki links
+ * @param {(combatant: InProgressCombatant) => void} props.onUpdate - Callback when combatant data changes
+ * @param {() => void} [props.onRemoveSessionOnly] - Callback to remove session-only combatants
+ * @param {boolean} [props.disableLocking] - Whether to disable field locking controls
  * @returns {React.ReactElement} CombatantProvider wrapping row content
  *
  * @example

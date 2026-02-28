@@ -55,6 +55,8 @@ export interface CombatantNameSectionProps {
  *
  * @component
  * @param {CombatantNameSectionProps} props - Component props
+ * @param {string[]} [props.locked] - Array of locked field names
+ * @param {(fieldName: string) => void} [props.onToggleLock] - Callback to toggle field lock state
  * @returns {JSX.Element} Rendered name section
  *
  * @example

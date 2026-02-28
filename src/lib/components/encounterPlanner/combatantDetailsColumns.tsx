@@ -53,6 +53,11 @@ interface CombatantDetailsColumnsProps {
  *
  * @component
  * @param {CombatantDetailsColumnsProps} props - Component props
+ * @param {ReactNode} [props.buffs] - Buff list editor component
+ * @param {ReactNode} [props.items] - Item list editor component
+ * @param {ReactNode} [props.spells] - Spell list editor component
+ * @param {ReactNode} [props.affixes] - Affix list editor component
+ * @param {boolean} [props.showEmpty=false] - Whether to show columns with no content
  * @returns {JSX.Element} Rendered details grid with visible columns
  *
  * @example

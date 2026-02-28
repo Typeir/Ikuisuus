@@ -139,6 +139,12 @@ export const HorizontalSlot: React.FC<HorizontalSplitSlotProps> = ({
  * @function HorizontalSplit
  * @description A two-column horizontal split layout component for Wikipedia-style headers.
  * @param {HorizontalSplitProps} props - Component props.
+ * @param {ReactNode} [props.left] - Content for the left column (prop-based API)
+ * @param {ReactNode} [props.right] - Content for the right column (prop-based API)
+ * @param {HorizontalSplitWidth} [props.leftWidth] - CSS width for the left column
+ * @param {HorizontalSplitWidth} [props.rightWidth] - CSS width for the right column
+ * @param {HorizontalSplitPadding} [props.leftPadding] - CSS padding for the left column
+ * @param {HorizontalSplitPadding} [props.rightPadding] - CSS padding for the right column
  * @param {HorizontalSplitGap} [props.gap='24px'] - CSS gap between columns
  * @param {string} [props.className] - Additional CSS classes for the root container
  * @param {ReactNode} [props.children] - Child nodes for slot-based content

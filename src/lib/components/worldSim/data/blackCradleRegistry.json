@@ -12,7 +12,8 @@
       "renderConfig": {
         "renderer": "star",
         "emissiveColor": "#ffcc44",
-        "coronaColor": "#ff8800"
+        "coronaColor": "#ff8800",
+        "displacementScale": 12
       },
       "regions": []
     },
@@ -36,7 +37,22 @@
         "baseColor": "#b0dcf8",
         "atmosphereColor": "#d0ecff",
         "atmosphereIntensity": 1.5,
-        "rotationSpeed": 0.001
+        "rotationSpeed": 0.001,
+        "displacementScale": 1.8,
+        "continentScale": 0.025,
+        "detailScale": 0.14,
+        "oceanThreshold": -0.30,
+        "noiseSeed": 42,
+        "polarIce": true,
+        "polarLatitude": 0.85,
+        "iceColor": "#e4eef8",
+        "terrainColors": [
+          { "color": "#1a3a5c", "threshold": 0.42 },
+          { "color": "#3a8c5a", "threshold": 0.54 },
+          { "color": "#8c7a4a", "threshold": 0.72 },
+          { "color": "#a09080", "threshold": 0.88 },
+          { "color": "#f0f0f0", "threshold": 1.00 }
+        ]
       },
       "regions": [
         {
@@ -128,7 +144,10 @@
         "baseColor": "#dcf0f8",
         "bandColor": "#c8e4f4",
         "atmosphereColor": "#e8f4fc",
-        "rotationSpeed": 0.0008
+        "rotationSpeed": 0.0008,
+        "stormColor": "#ffffff",
+        "bandFrequency": 3.0,
+        "timeScale": 0.08
       },
       "regions": []
     },
@@ -152,7 +171,10 @@
         "baseColor": "#e4dcf8",
         "bandColor": "#d4c8f4",
         "atmosphereColor": "#f0e8fc",
-        "rotationSpeed": -0.0008
+        "rotationSpeed": -0.0008,
+        "stormColor": "#f8e0ff",
+        "bandFrequency": 2.5,
+        "timeScale": 0.06
       },
       "regions": []
     },
@@ -176,7 +198,19 @@
         "baseColor": "#c0f0d0",
         "atmosphereColor": "#dcf8e4",
         "atmosphereIntensity": 1.5,
-        "rotationSpeed": 0.0005
+        "rotationSpeed": 0.0005,
+        "displacementScale": 2.2,
+        "continentScale": 0.06,
+        "detailScale": 0.18,
+        "oceanThreshold": -0.25,
+        "noiseSeed": 137,
+        "terrainColors": [
+          { "color": "#33ff44", "threshold": 0.28 },
+          { "color": "#1a8c2a", "threshold": 0.42 },
+          { "color": "#2a2a1a", "threshold": 0.58 },
+          { "color": "#1a1a0e", "threshold": 0.75 },
+          { "color": "#0d0d08", "threshold": 1.00 }
+        ]
       },
       "regions": []
     },
@@ -198,6 +232,7 @@
       "renderConfig": {
         "renderer": "towerWorld",
         "towerColor": "#9c826d",
+        "towerRidgeColor": "#d4c8a0",
         "towerHeightMultiplier": 8,
         "rotationSpeed": 0.03
       },
@@ -226,7 +261,8 @@
         "ringCount": 7,
         "ringSpacing": 10.0,
         "ringTubeRadius": 1.8,
-        "rotationSpeed": 0.006
+        "rotationSpeed": 0.006,
+        "icyCore": true
       },
       "regions": []
     }

@@ -31,6 +31,17 @@ vi.mock('@/lib/components/worldSim/shaders/atmosphere.vert.glsl', () => ({
   default: 'void main() {}',
 }));
 
+/** Mock terrain shaders */
+vi.mock('@/lib/components/worldSim/shaders/noise3d.glsl', () => ({
+  default: '',
+}));
+vi.mock('@/lib/components/worldSim/shaders/planet.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/planet.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+
 /** Minimal planet body data */
 const PLANET_DATA: CelestialBodyData = {
   id: 'damocles',
@@ -116,5 +127,62 @@ describe('PlanetRenderer', () => {
     renderer = new PlanetRenderer();
     mesh = renderer.createMesh(PLANET_DATA);
     expect(() => renderer.dispose(mesh)).not.toThrow();
+  });
+
+  it('surface uses ShaderMaterial for terrain displacement', () => {
+    renderer = new PlanetRenderer();
+    mesh = renderer.createMesh(PLANET_DATA);
+    const surface = mesh.children.find((c) => c.name === 'planet-surface')!;
+    expect((surface as any).material.type).toBe('ShaderMaterial');
+  });
+
+  it('terrain shader has 5 colour uniforms', () => {
+    renderer = new PlanetRenderer();
+    mesh = renderer.createMesh(PLANET_DATA);
+    const surface = mesh.children.find((c) => c.name === 'planet-surface')!;
+    const uniforms = (surface as any).material.uniforms;
+    expect(uniforms.uColor0).toBeDefined();
+    expect(uniforms.uColor1).toBeDefined();
+    expect(uniforms.uColor2).toBeDefined();
+    expect(uniforms.uColor3).toBeDefined();
+    expect(uniforms.uColor4).toBeDefined();
+  });
+
+  it('terrain shader has two-tier noise uniforms', () => {
+    renderer = new PlanetRenderer();
+    mesh = renderer.createMesh(PLANET_DATA);
+    const surface = mesh.children.find((c) => c.name === 'planet-surface')!;
+    const uniforms = (surface as any).material.uniforms;
+    expect(uniforms.uContinentScale).toBeDefined();
+    expect(uniforms.uDetailScale).toBeDefined();
+    expect(uniforms.uOceanThreshold).toBeDefined();
+  });
+
+  it('polar ice uniforms are set when polarIce config is true', () => {
+    const polarData: CelestialBodyData = {
+      ...PLANET_DATA,
+      id: 'polar-planet',
+      renderConfig: {
+        renderer: 'planet',
+        baseColor: '#4488cc',
+        polarIce: true,
+        polarLatitude: 0.72,
+        iceColor: '#e4eef8',
+      },
+    };
+    renderer = new PlanetRenderer();
+    mesh = renderer.createMesh(polarData);
+    const surface = mesh.children.find((c) => c.name === 'planet-surface')!;
+    const uniforms = (surface as any).material.uniforms;
+    expect(uniforms.uPolarIce.value).toBe(1.0);
+    expect(uniforms.uPolarLatitude.value).toBe(0.72);
+  });
+
+  it('polar ice defaults to off', () => {
+    renderer = new PlanetRenderer();
+    mesh = renderer.createMesh(PLANET_DATA);
+    const surface = mesh.children.find((c) => c.name === 'planet-surface')!;
+    const uniforms = (surface as any).material.uniforms;
+    expect(uniforms.uPolarIce.value).toBe(0.0);
   });
 });

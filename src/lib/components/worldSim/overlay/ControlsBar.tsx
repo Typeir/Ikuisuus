@@ -36,6 +36,7 @@ interface ControlsBarProps {
  * Floating control bar with scene toggle buttons.
  *
  * @param {ControlsBarProps} props - Component props
+ * @param {React.MutableRefObject<WorldSimMediator | null>} props.mediatorRef - Ref to the WorldSim mediator instance
  * @returns {React.ReactElement | null} The controls bar, or null if not initialized
  */
 export function ControlsBar({

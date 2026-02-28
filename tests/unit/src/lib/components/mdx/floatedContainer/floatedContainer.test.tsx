@@ -4,9 +4,9 @@
  * @module floatedContainer.test
  */
 
-import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
 import { FloatedContainer } from '@/lib/components/mdx/floatedContainer/floatedContainer';
+import { render } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 describe('FloatedContainer', () => {
   describe('rendering', () => {
@@ -39,13 +39,13 @@ describe('FloatedContainer', () => {
     });
 
     it('should float left when side is "left"', () => {
-      const { container } = render(<FloatedContainer side="left" />);
+      const { container } = render(<FloatedContainer side='left' />);
       const div = container.querySelector('div');
       expect(div).toHaveStyle({ float: 'left' });
     });
 
     it('should float right when side is "right"', () => {
-      const { container } = render(<FloatedContainer side="right" />);
+      const { container } = render(<FloatedContainer side='right' />);
       const div = container.querySelector('div');
       expect(div).toHaveStyle({ float: 'right' });
     });
@@ -65,13 +65,13 @@ describe('FloatedContainer', () => {
     });
 
     it('should apply string width as-is', () => {
-      const { container } = render(<FloatedContainer width="50%" />);
+      const { container } = render(<FloatedContainer width='50%' />);
       const div = container.querySelector('div');
       expect(div).toHaveStyle({ width: '50%' });
     });
 
     it('should handle rem values', () => {
-      const { container } = render(<FloatedContainer width="20rem" />);
+      const { container } = render(<FloatedContainer width='20rem' />);
       const div = container.querySelector('div');
       expect(div).toHaveStyle({ width: '20rem' });
     });
@@ -92,7 +92,7 @@ describe('FloatedContainer', () => {
 
     it('should apply marginLeft when floated right', () => {
       const { container } = render(
-        <FloatedContainer side="right" margin={16} />,
+        <FloatedContainer side='right' margin={16} />,
       );
       const div = container.querySelector('div');
       expect(div).toHaveStyle({
@@ -104,7 +104,7 @@ describe('FloatedContainer', () => {
 
     it('should apply marginRight when floated left', () => {
       const { container } = render(
-        <FloatedContainer side="left" margin={16} />,
+        <FloatedContainer side='left' margin={16} />,
       );
       const div = container.querySelector('div');
       expect(div).toHaveStyle({
@@ -115,7 +115,7 @@ describe('FloatedContainer', () => {
     });
 
     it('should apply string margin values', () => {
-      const { container } = render(<FloatedContainer margin="2rem" />);
+      const { container } = render(<FloatedContainer margin='2rem' />);
       const div = container.querySelector('div');
       expect(div).toHaveStyle({
         marginLeft: '2rem',
@@ -135,7 +135,7 @@ describe('FloatedContainer', () => {
   describe('className prop', () => {
     it('should apply custom className', () => {
       const { container } = render(
-        <FloatedContainer className="custom-float" />,
+        <FloatedContainer className='custom-float' />,
       );
       const div = container.querySelector('div');
       expect(div?.className).toContain('custom-float');
@@ -143,7 +143,7 @@ describe('FloatedContainer', () => {
 
     it('should preserve module className', () => {
       const { container } = render(
-        <FloatedContainer className="custom-float" />,
+        <FloatedContainer className='custom-float' />,
       );
       const div = container.querySelector('div');
       expect(div?.className).toContain('floated');
@@ -152,7 +152,7 @@ describe('FloatedContainer', () => {
 
     it('should handle multiple classNames', () => {
       const { container } = render(
-        <FloatedContainer className="class1 class2" />,
+        <FloatedContainer className='class1 class2' />,
       );
       const div = container.querySelector('div');
       expect(div?.className).toContain('class1');
@@ -175,7 +175,7 @@ describe('FloatedContainer', () => {
     it('should merge custom styles with component styles', () => {
       const { container } = render(
         <FloatedContainer
-          side="left"
+          side='left'
           width={200}
           margin={10}
           style={{ border: '1px solid red' }}
@@ -208,7 +208,7 @@ describe('FloatedContainer', () => {
     it('should render React element children', () => {
       const { getByRole } = render(
         <FloatedContainer>
-          <img src="/test.jpg" alt="Test" />
+          <img src='/test.jpg' alt='Test' />
         </FloatedContainer>,
       );
       expect(getByRole('img')).toBeInTheDocument();
@@ -219,7 +219,7 @@ describe('FloatedContainer', () => {
         <FloatedContainer>
           <h3>Title</h3>
           <p>Content</p>
-          <img src="/test.jpg" alt="Test" />
+          <img src='/test.jpg' alt='Test' />
         </FloatedContainer>,
       );
       expect(getByText('Title')).toBeInTheDocument();
@@ -238,10 +238,10 @@ describe('FloatedContainer', () => {
     it('should apply all props together correctly', () => {
       const { container, getByText } = render(
         <FloatedContainer
-          side="left"
-          width="30%"
-          margin="16px"
-          className="my-container"
+          side='left'
+          width='30%'
+          margin='16px'
+          className='my-container'
           style={{ padding: '10px' }}>
           <p>Test</p>
         </FloatedContainer>,
@@ -274,7 +274,7 @@ describe('FloatedContainer', () => {
     });
 
     it('should handle empty string className', () => {
-      const { container } = render(<FloatedContainer className="" />);
+      const { container } = render(<FloatedContainer className='' />);
       expect(container.querySelector('div')).toBeInTheDocument();
     });
 
@@ -292,7 +292,7 @@ describe('FloatedContainer', () => {
   describe('layout behavior', () => {
     it('should apply correct margins for right float', () => {
       const { container } = render(
-        <FloatedContainer side="right" margin={20} />,
+        <FloatedContainer side='right' margin={20} />,
       );
       const div = container.querySelector('div');
       expect(div).toHaveStyle({
@@ -304,7 +304,7 @@ describe('FloatedContainer', () => {
 
     it('should apply correct margins for left float', () => {
       const { container } = render(
-        <FloatedContainer side="left" margin={20} />,
+        <FloatedContainer side='left' margin={20} />,
       );
       const div = container.querySelector('div');
       expect(div).toHaveStyle({
@@ -316,10 +316,10 @@ describe('FloatedContainer', () => {
 
     it('should always apply marginBottom regardless of side', () => {
       const { container: rightContainer } = render(
-        <FloatedContainer side="right" margin={15} />,
+        <FloatedContainer side='right' margin={15} />,
       );
       const { container: leftContainer } = render(
-        <FloatedContainer side="left" margin={15} />,
+        <FloatedContainer side='left' margin={15} />,
       );
 
       expect(rightContainer.querySelector('div')).toHaveStyle({

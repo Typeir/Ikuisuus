@@ -38,6 +38,11 @@ interface ClientProvidersProps {
  *
  * @component
  * @param {ClientProvidersProps} props - Component props
+ * @param {string} props.locale - Current locale code (e.g., 'en', 'es', 'fi')
+ * @param {any} props.tree - Navigation tree structure for sidebar
+ * @param {any} props.messages - Internationalization messages for current locale
+ * @param {string[]} props.initialExpandedPaths - Server-read expanded paths from cookies
+ * @param {React.ReactNode} props.children - Child components to render
  * @returns {JSX.Element} Nested provider tree with children
  *
  * @description

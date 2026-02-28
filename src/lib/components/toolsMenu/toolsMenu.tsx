@@ -65,6 +65,10 @@ interface ToolsMenuProps {
  *
  * @component
  * @param {ToolsMenuProps} props - Component props
+ * @param {ToolMenuItem[]} props.items - Array of menu items to display
+ * @param {(item: ToolMenuItem) => void} props.onSelect - Callback when an item is selected
+ * @param {ReactNode} props.trigger - Custom trigger button content (icon + text)
+ * @param {boolean} [props.closeOnClickOutside=false] - Whether to close menu when clicking outside
  * @returns {JSX.Element} Rendered menu with button trigger and dropdown
  *
  * @description

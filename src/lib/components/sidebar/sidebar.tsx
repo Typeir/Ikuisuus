@@ -143,6 +143,9 @@ interface SidebarProps {
  * Renders a recursive sidebar menu with optional sibling-collapsing behavior.
  *
  * @param {SidebarProps} props - Component props.
+ * @param {Item[]} props.items - The root navigation items
+ * @param {() => void} [props.onNavigate] - Callback when a link is clicked
+ * @param {boolean} [props.collapseSiblings=false] - If true, opening one item collapses siblings
  * @returns {JSX.Element} The sidebar navigation tree.
  */
 export const Sidebar = ({

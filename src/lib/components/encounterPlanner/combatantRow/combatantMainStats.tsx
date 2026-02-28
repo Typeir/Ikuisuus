@@ -90,6 +90,8 @@ const getModifierString = (score: number): string => {
  *
  * @component
  * @param {CombatantMainStatsProps} props - Component props
+ * @param {boolean} [props.showSlain] - Whether to show the slain checkbox
+ * @param {string[]} [props.locked] - Array of locked field names
  * @returns {JSX.Element} Rendered main stats section
  *
  * @example

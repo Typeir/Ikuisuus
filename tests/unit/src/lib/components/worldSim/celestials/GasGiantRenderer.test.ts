@@ -24,6 +24,17 @@ vi.mock('@/lib/components/worldSim/celestials/CelestialGlow', () => ({
   },
 }));
 
+/** Mock gas giant shaders */
+vi.mock('@/lib/components/worldSim/shaders/noise3d.glsl', () => ({
+  default: '',
+}));
+vi.mock('@/lib/components/worldSim/shaders/gasGiant.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/gasGiant.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+
 /** Minimal gas giant data */
 const GAS_GIANT_DATA: CelestialBodyData = {
   id: 'lansihenki',
@@ -74,19 +85,20 @@ describe('GasGiantRenderer', () => {
     expect(mesh.name).toBe('gasGiant-lansihenki');
   });
 
-  it('group contains body, haze, and glow children', () => {
+  it('group contains cloud layers, haze, and glow children', () => {
     renderer = new GasGiantRenderer();
     mesh = renderer.createMesh(GAS_GIANT_DATA);
     const names = mesh.children.map((c) => c.name);
-    expect(names).toContain('gasGiant-body');
+    expect(names).toContain('gasGiant-cloud-0');
+    expect(names).toContain('gasGiant-cloud-1');
     expect(names).toContain('gasGiant-haze');
     expect(names).toContain('celestial-glow');
   });
 
-  it('update rotates the body mesh', () => {
+  it('update rotates the outermost cloud layer mesh', () => {
     renderer = new GasGiantRenderer();
     mesh = renderer.createMesh(GAS_GIANT_DATA);
-    const body = mesh.children.find((c) => c.name === 'gasGiant-body')!;
+    const body = mesh.children.find((c) => c.name === 'gasGiant-cloud-0')!;
     const initialY = body.rotation.y;
 
     renderer.update(mesh, 1.0, 0.5, makeCtx());
@@ -97,5 +109,38 @@ describe('GasGiantRenderer', () => {
     renderer = new GasGiantRenderer();
     mesh = renderer.createMesh(GAS_GIANT_DATA);
     expect(() => renderer.dispose(mesh)).not.toThrow();
+  });
+
+  it('outermost cloud layer uses ShaderMaterial for cloud bands', () => {
+    renderer = new GasGiantRenderer();
+    mesh = renderer.createMesh(GAS_GIANT_DATA);
+    const body = mesh.children.find((c) => c.name === 'gasGiant-cloud-0')!;
+    expect((body as any).material.type).toBe('ShaderMaterial');
+  });
+
+  it('update advances uTime uniform on both cloud layer shaders', () => {
+    renderer = new GasGiantRenderer();
+    mesh = renderer.createMesh(GAS_GIANT_DATA);
+    const cloud0 = mesh.children.find((c) => c.name === 'gasGiant-cloud-0')!;
+    const cloud1 = mesh.children.find((c) => c.name === 'gasGiant-cloud-1')!;
+
+    renderer.update(mesh, 7.5, 0.016, makeCtx());
+    expect((cloud0 as any).material.uniforms.uTime.value).toBe(7.5);
+    expect((cloud1 as any).material.uniforms.uTime.value).toBe(7.5);
+  });
+
+  it('overlay cloud layer is transparent with distinct band frequency', () => {
+    renderer = new GasGiantRenderer();
+    mesh = renderer.createMesh(GAS_GIANT_DATA);
+    const cloud0 = mesh.children.find((c) => c.name === 'gasGiant-cloud-0')!;
+    const cloud1 = mesh.children.find((c) => c.name === 'gasGiant-cloud-1')!;
+    const mat0 = (cloud0 as any).material;
+    const mat1 = (cloud1 as any).material;
+
+    expect(mat0.transparent).toBe(false);
+    expect(mat1.transparent).toBe(true);
+    expect(mat1.uniforms.uBandFrequency.value).toBeGreaterThan(
+      mat0.uniforms.uBandFrequency.value,
+    );
   });
 });

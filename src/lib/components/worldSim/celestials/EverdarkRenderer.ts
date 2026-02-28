@@ -94,7 +94,7 @@ const LAYER_CONFIGS: EverdarkLayerConfig[] = [
     segments: 64,
   },
   {
-    radiusScale: 0.97,
+    radiusScale: 0.88,
     opacity: 0.65,
     opaqueBlack: true,
     flameScale: 0.0002,
@@ -106,7 +106,7 @@ const LAYER_CONFIGS: EverdarkLayerConfig[] = [
     segments: 48,
   },
   {
-    radiusScale: 0.93,
+    radiusScale: 0.75,
     opacity: 0.05,
     opaqueBlack: false,
     flameScale: 0.00045,
@@ -149,6 +149,9 @@ function createLayerMaterial(layer: EverdarkLayerConfig): ShaderMaterial {
     blending: layer.opaqueBlack ? NormalBlending : AdditiveBlending,
     side: BackSide,
     depthWrite: layer.opaqueBlack,
+    ...(layer.opaqueBlack
+      ? { polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }
+      : {}),
   });
 }
 
@@ -186,6 +189,7 @@ export class EverdarkRenderer implements ICelestialRenderer {
 
       const shell = new Mesh(geometry, material);
       shell.name = `everdark-shell-${i}`;
+      shell.renderOrder = i;
 
       if (layer.noiseOffset !== 0) {
         shell.position.y = layer.noiseOffset * 0.001;

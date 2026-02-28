@@ -3,10 +3,10 @@
  * @description Renders Mana as a small frozen ice core surrounded by multiple
  * independently spinning torus rings at varying radii and tilts. Each ring
  * rotates at a different speed and axis angle, creating a dynamic orrery-like
- * appearance.
+ * appearance. Optionally applies noise-displaced icy surface shaders to the core.
  *
  * @module worldSim/celestials/RingWorldRenderer
- * @version 2.0.0
+ * @version 3.0.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -17,9 +17,16 @@ import {
   Mesh,
   MeshPhongMaterial,
   Object3D,
+  ShaderMaterial,
   SphereGeometry,
   TorusGeometry,
+  Vector3,
 } from 'three';
+import noise3d from '../shaders/noise3d.glsl';
+import icyCoreFrag from '../shaders/icyCore.frag.glsl';
+import icyCoreVert from '../shaders/icyCore.vert.glsl';
+import ringWorldFrag from '../shaders/ringWorld.frag.glsl';
+import ringWorldVert from '../shaders/ringWorld.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
@@ -40,17 +47,36 @@ const DEFAULT_CORE_RADIUS_RATIO = 0.32;
 const DEFAULT_RING_TUBE_RADIUS = 0.4;
 
 /** @constant {number} DEFAULT_RING_SPACING - Distance between successive ring radii */
-const DEFAULT_RING_SPACING = 3.2;
+const DEFAULT_RING_SPACING = 4.5;
 
 /** @constant {number} DEFAULT_BASE_ROTATION_SPEED - Base rotation speed for the outermost ring (rad/s) */
-const DEFAULT_BASE_ROTATION_SPEED = 0.12;
+const DEFAULT_BASE_ROTATION_SPEED = 0.22;
 
 /** @constant {number} RING_TILT_MAX - Maximum tilt angle in radians for ring variation */
 const RING_TILT_MAX = 0.35;
 
+/** @constant {number} ICY_CORE_SEGMENTS - Sphere segments for icy displacement detail */
+const ICY_CORE_SEGMENTS = 48;
+
+/** @constant {number} DEFAULT_ICY_DISPLACEMENT - Default icy core displacement amplitude */
+const DEFAULT_ICY_DISPLACEMENT = 1.2;
+
+/** @constant {number} DEFAULT_RING_NOISE_SCALE - Noise frequency for ring surface detail */
+const DEFAULT_RING_NOISE_SCALE = 0.8;
+
+/** @constant {number} DEFAULT_RING_DISPLACEMENT - Default ring surface displacement amplitude */
+const DEFAULT_RING_DISPLACEMENT = 0.25;
+
+/** @constant {number} RING_TORUS_RADIAL_SEGMENTS - Radial segments for ring torus geometry (enough for displacement) */
+const RING_TORUS_RADIAL_SEGMENTS = 24;
+
+/** @constant {number} RING_TORUS_TUBULAR_SEGMENTS - Tubular segments for ring torus geometry */
+const RING_TORUS_TUBULAR_SEGMENTS = 120;
+
 /**
  * Renders a ring world as a frozen core sphere surrounded by independently
- * spinning rings at different radii and tilt angles.
+ * spinning rings at different radii and tilt angles. When `icyCore` is set,
+ * the core uses noise-displaced icy surface shaders.
  *
  * @class RingWorldRenderer
  * @implements {ICelestialRenderer}
@@ -64,6 +90,12 @@ export class RingWorldRenderer implements ICelestialRenderer {
 
   /** @property {Object3D[]} ringPivots - Stored references to ring pivot objects */
   private ringPivots: Object3D[] = [];
+
+  /** @property {ShaderMaterial | null} coreMaterial - Icy core shader material (null if not icy) */
+  private coreMaterial: ShaderMaterial | null = null;
+
+  /** @property {ShaderMaterial[]} ringMaterials - Shader materials for noise-textured rings */
+  private ringMaterials: ShaderMaterial[] = [];
 
   /**
    * Create the ring world mesh: a frozen core sphere with multiple torus rings.
@@ -88,36 +120,78 @@ export class RingWorldRenderer implements ICelestialRenderer {
     const tubeRadius =
       (config.ringTubeRadius as number) ?? DEFAULT_RING_TUBE_RADIUS;
 
-    const coreGeometry = new SphereGeometry(coreRadius, 32, 32);
-    const coreMaterial = new MeshPhongMaterial({
-      color: coreColor,
-      emissive: coreColor,
-      emissiveIntensity: 0.35,
-      shininess: 80,
-    });
-    const coreMesh = new Mesh(coreGeometry, coreMaterial);
+    const coreGeometry = new SphereGeometry(
+      coreRadius,
+      config.icyCore ? ICY_CORE_SEGMENTS : 32,
+      config.icyCore ? ICY_CORE_SEGMENTS : 32,
+    );
+
+    let coreMesh: Mesh;
+
+    if (config.icyCore) {
+      this.coreMaterial = new ShaderMaterial({
+        vertexShader: noise3d + '\n' + icyCoreVert,
+        fragmentShader: icyCoreFrag,
+        uniforms: {
+          uTime: { value: 0 },
+          uDisplacementScale: { value: DEFAULT_ICY_DISPLACEMENT },
+          uDeepColor: { value: new Color('#1a3a6c') },
+          uIceColor: { value: new Color(coreColor) },
+          uFrostColor: { value: new Color('#e8f4ff') },
+          uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
+          uAmbient: { value: 0.3 },
+        },
+      });
+      coreMesh = new Mesh(coreGeometry, this.coreMaterial);
+    } else {
+      const coreMaterial = new MeshPhongMaterial({
+        color: coreColor,
+        emissive: coreColor,
+        emissiveIntensity: 0.35,
+        shininess: 80,
+      });
+      coreMesh = new Mesh(coreGeometry, coreMaterial);
+    }
+
     coreMesh.name = 'ring-core';
     group.add(coreMesh);
 
-    const startRadius = coreRadius + ringSpacing;
+    const startRadius = coreRadius + ringSpacing * 1.5;
 
     for (let i = 0; i < this.ringCount; i++) {
       const ringRadius = startRadius + i * ringSpacing;
       const shade = 0.7 + (i / this.ringCount) * 0.3;
 
-      const torusGeometry = new TorusGeometry(ringRadius, tubeRadius, 8, 80);
-      const torusMaterial = new MeshPhongMaterial({
-        color: ringColor.clone().multiplyScalar(shade),
-        emissive: ringColor,
-        emissiveIntensity: 0.05,
-        shininess: 40,
+      const torusGeometry = new TorusGeometry(
+        ringRadius,
+        tubeRadius,
+        RING_TORUS_RADIAL_SEGMENTS,
+        RING_TORUS_TUBULAR_SEGMENTS,
+      );
+
+      const ringMat = new ShaderMaterial({
+        vertexShader: noise3d + '\n' + ringWorldVert,
+        fragmentShader: ringWorldFrag,
+        uniforms: {
+          uTime: { value: 0 },
+          uNoiseScale: { value: DEFAULT_RING_NOISE_SCALE },
+          uDisplacementScale: { value: DEFAULT_RING_DISPLACEMENT },
+          uBaseColor: { value: ringColor.clone().multiplyScalar(shade) },
+          uVeinColor: {
+            value: new Color(coreColor).lerp(ringColor, 0.5).multiplyScalar(1.2),
+          },
+          uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
+          uAmbient: { value: 0.3 },
+        },
         side: DoubleSide,
       });
+
+      this.ringMaterials.push(ringMat);
 
       const ringPivot = new Object3D();
       ringPivot.name = `ring-pivot-${i}`;
 
-      const ring = new Mesh(torusGeometry, torusMaterial);
+      const ring = new Mesh(torusGeometry, ringMat);
       ring.name = `ring-${i}`;
       ring.rotation.x = Math.PI / 2;
       ringPivot.add(ring);
@@ -139,11 +213,12 @@ export class RingWorldRenderer implements ICelestialRenderer {
   }
 
   /**
-   * Spin each ring at a different speed each frame. Inner rings spin faster.
+   * Spin each ring at a different speed and update icy core shader each frame.
    *
    * @param {Object3D} mesh - The ring world group
    * @param {number} _time - Elapsed time
    * @param {number} deltaTime - Frame delta
+   * @param {SceneContext} _ctx - Scene context
    */
   update(
     mesh: Object3D,
@@ -151,6 +226,14 @@ export class RingWorldRenderer implements ICelestialRenderer {
     deltaTime: number,
     _ctx: SceneContext,
   ): void {
+    if (this.coreMaterial) {
+      this.coreMaterial.uniforms.uTime.value = _time;
+    }
+
+    for (const mat of this.ringMaterials) {
+      mat.uniforms.uTime.value = _time;
+    }
+
     for (let i = 0; i < this.ringPivots.length; i++) {
       const pivot = this.ringPivots[i];
       const speedMultiplier = (this.ringCount - i) / this.ringCount;

@@ -112,6 +112,14 @@ type MetadataTableProps = {
  * configuration functions (getValue, compareValues, render) to handle data-specific logic.
  * 
  * @param {MetadataTableProps} props - Component props
+ * @param {MetadataRow[]} props.data - Array of data rows to display
+ * @param {ColumnConfig[]} props.columns - Column configuration array
+ * @param {string} [props.basePath=''] - Base URL path for row navigation
+ * @param {{ key: string; direction: SortDirection }} [props.defaultSort] - Initial sort configuration
+ * @param {string} [props.locale='en'] - Current locale for URL construction
+ * @param {number} [props.pageSize=50] - Number of rows per page
+ * @param {(row: MetadataRow) => string} [props.getRowSlug] - Function to extract slug from row data
+ * @param {string[]} [props.searchKeys] - Row properties to search across
  * @returns {JSX.Element} Rendered interactive table with controls
  * 
  * @example

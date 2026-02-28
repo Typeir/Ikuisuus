@@ -48,6 +48,12 @@ interface CelestialLabelProps {
  * 60fps without triggering React re-renders.
  *
  * @param {CelestialLabelProps} props - Component props
+ * @param {string} props.bodyId - Unique identifier of the celestial body
+ * @param {string} props.name - Display name of the body
+ * @param {string} props.subtitle - Short descriptor text
+ * @param {boolean} props.isHovered - Whether the body is currently hovered
+ * @param {boolean} props.isSelected - Whether the body is currently selected
+ * @param {(bodyId: string) => void} props.onClick - Callback when the label is clicked
  * @param {React.Ref<HTMLButtonElement>} ref - Forwarded ref to the root DOM element
  * @returns {React.ReactElement} Positioned label element
  */

@@ -118,6 +118,17 @@ interface DraggableProps {
  * for reliable drag tracking even when the cursor leaves the element.
  *
  * @param {DraggableProps} props - Component props
+ * @param {ReactNode} props.children - Content rendered inside the draggable container
+ * @param {string} [props.handleLabel] - Optional text label shown in the drag handle bar
+ * @param {string} [props.className] - Additional CSS class for the outer container
+ * @param {CSSProperties} [props.style] - Additional inline styles for the outer container
+ * @param {CSSProperties['width']} [props.defaultWidth] - Default width in CSS syntax; overridden by user resize
+ * @param {CSSProperties['height']} [props.defaultHeight] - Default height in CSS syntax; overridden by user resize
+ * @param {PositionValue | PositionFromBounds} [props.initialPosition] - Starting position; static coordinates or a function receiving parent bounds
+ * @param {React.RefObject<HTMLElement | null>} [props.boundsRef] - Ref to the bounding container element
+ * @param {string} [props.testId] - data-testid for testing
+ * @param {boolean} [props.resizable] - Whether the container can be resized via a corner handle
+ * @param {Function} [props.onClose] - Callback when the close button is clicked; shows close button when provided
  * @returns {React.ReactElement} The draggable container
  *
  * @example

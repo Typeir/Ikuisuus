@@ -165,6 +165,8 @@ interface PersistentUiProviderProps {
  *
  * @component
  * @param {PersistentUiProviderProps} props - Component props
+ * @param {ReactNode} props.children - Child components to render
+ * @param {string[]} props.initialExpandedPaths - Server-read expanded paths for SSR hydration match
  * @returns {JSX.Element} Context providers wrapping children
  *
  * @description

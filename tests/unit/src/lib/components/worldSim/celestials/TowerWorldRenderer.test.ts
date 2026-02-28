@@ -24,6 +24,17 @@ vi.mock('@/lib/components/worldSim/celestials/CelestialGlow', () => ({
   },
 }));
 
+/** Mock tower shaders */
+vi.mock('@/lib/components/worldSim/shaders/noise3d.glsl', () => ({
+  default: '',
+}));
+vi.mock('@/lib/components/worldSim/shaders/tower.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/tower.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+
 /** Minimal tower world body data */
 const TOWER_DATA: CelestialBodyData = {
   id: 'selkara',
@@ -109,5 +120,26 @@ describe('TowerWorldRenderer', () => {
     renderer = new TowerWorldRenderer();
     mesh = renderer.createMesh(TOWER_DATA);
     expect(() => renderer.dispose(mesh)).not.toThrow();
+  });
+
+  it('tower segments use ShaderMaterial for noise displacement', () => {
+    renderer = new TowerWorldRenderer();
+    mesh = renderer.createMesh(TOWER_DATA);
+    const segment = mesh.children.find(
+      (c) => c.name === 'tower-segment-0',
+    )!;
+    expect((segment as any).material.type).toBe('ShaderMaterial');
+  });
+
+  it('update advances uTime uniform on tower materials', () => {
+    renderer = new TowerWorldRenderer();
+    mesh = renderer.createMesh(TOWER_DATA);
+    const segment = mesh.children.find(
+      (c) => c.name === 'tower-segment-0',
+    )!;
+    const material = (segment as any).material;
+
+    renderer.update(mesh, 5.0, 0.016, makeCtx());
+    expect(material.uniforms.uTime.value).toBe(5.0);
   });
 });

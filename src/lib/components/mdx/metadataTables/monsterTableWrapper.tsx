@@ -77,6 +77,7 @@ type MonsterTableWrapperProps = {
  * 
  * @component
  * @param {MonsterTableWrapperProps} props - Component props
+ * @param {string} [props.locale] - Optional locale override (defaults to route param or 'en')
  * @returns {JSX.Element} The rendered monster table with client-side data fetching
  */
 export default function MonsterTableWrapper({ locale: localeProp }: MonsterTableWrapperProps = {}) {

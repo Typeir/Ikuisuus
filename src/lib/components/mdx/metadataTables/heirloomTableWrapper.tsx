@@ -78,6 +78,7 @@ type HeirloomTableWrapperProps = {
  * 
  * @component
  * @param {HeirloomTableWrapperProps} props - Component props
+ * @param {string} [props.locale] - Optional locale override (defaults to route param or 'en')
  * @returns {JSX.Element} The rendered heirloom table with client-side data fetching
  */
 export default function HeirloomTableWrapper({ locale: localeProp }: HeirloomTableWrapperProps = {}) {

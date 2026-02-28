@@ -7,8 +7,8 @@
 
 import { RingWorldRenderer } from '@/lib/components/worldSim/celestials/RingWorldRenderer';
 import type {
-    CelestialBodyData,
-    SceneContext,
+  CelestialBodyData,
+  SceneContext,
 } from '@/lib/components/worldSim/celestials/interfaces';
 import { Object3D, PerspectiveCamera, Scene } from 'three';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -21,6 +21,25 @@ vi.mock('@/lib/components/worldSim/celestials/CelestialGlow', () => ({
     s.name = 'celestial-glow';
     return s;
   },
+}));
+
+/** Mock icy core shaders */
+vi.mock('@/lib/components/worldSim/shaders/noise3d.glsl', () => ({
+  default: '',
+}));
+vi.mock('@/lib/components/worldSim/shaders/icyCore.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/icyCore.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+
+/** Mock ring world shaders */
+vi.mock('@/lib/components/worldSim/shaders/ringWorld.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/ringWorld.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
 }));
 
 /** Minimal ring world data */
@@ -47,6 +66,20 @@ const RING_WORLD_DATA: CelestialBodyData = {
     rotationSpeed: 0.12,
   },
   regions: [],
+};
+
+/** Ring world data with icy core enabled */
+const ICY_RING_WORLD_DATA: CelestialBodyData = {
+  ...RING_WORLD_DATA,
+  id: 'mana-icy',
+  renderConfig: {
+    renderer: 'ringWorld',
+    coreColor: '#88d0ff',
+    ringColor: '#e8dcc0',
+    ringCount: 3,
+    rotationSpeed: 0.12,
+    icyCore: true,
+  },
 };
 
 /** Create a minimal SceneContext */
@@ -98,5 +131,19 @@ describe('RingWorldRenderer', () => {
     renderer = new RingWorldRenderer();
     mesh = renderer.createMesh(RING_WORLD_DATA);
     expect(() => renderer.dispose(mesh)).not.toThrow();
+  });
+
+  it('creates icy core with ShaderMaterial when icyCore is set', () => {
+    renderer = new RingWorldRenderer();
+    mesh = renderer.createMesh(ICY_RING_WORLD_DATA);
+    const core = mesh.children.find((c) => c.name === 'ring-core')!;
+    expect(core).toBeDefined();
+    expect((core as any).material.type).toBe('ShaderMaterial');
+  });
+
+  it('icy core update does not throw', () => {
+    renderer = new RingWorldRenderer();
+    mesh = renderer.createMesh(ICY_RING_WORLD_DATA);
+    expect(() => renderer.update(mesh, 2.0, 0.016, makeCtx())).not.toThrow();
   });
 });

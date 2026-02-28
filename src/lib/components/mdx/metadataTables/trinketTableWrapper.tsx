@@ -77,6 +77,7 @@ type TrinketTableWrapperProps = {
  * 
  * @component
  * @param {TrinketTableWrapperProps} props - Component props
+ * @param {string} [props.locale] - Optional locale override (defaults to route param or 'en')
  * @returns {JSX.Element} The rendered trinket table with client-side data fetching
  */
 export default function TrinketTableWrapper({ locale: localeProp }: TrinketTableWrapperProps = {}) {

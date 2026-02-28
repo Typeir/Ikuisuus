@@ -78,6 +78,9 @@ interface PendingImport {
  * 
  * @component
  * @param {MonsterImporterProps} props - Component props
+ * @param {string} props.locale - Locale for API requests
+ * @param {(monsterData: MonsterData, quantity: number) => void} props.onImport - Callback with monster data and quantity
+ * @param {boolean} [props.disabled] - Whether the importer is disabled
  * @returns {JSX.Element} Rendered monster importer
  * 
  * @example
@@ -187,6 +190,9 @@ interface CreatureComboboxWithTitleProps {
  * 
  * @component
  * @param {CreatureComboboxWithTitleProps} props - Component props
+ * @param {string} props.locale - Locale for API requests
+ * @param {(slug: string, title: string) => void} props.onSelect - Callback with slug AND title
+ * @param {boolean} [props.disabled] - Whether the combobox is disabled
  * @returns {JSX.Element} Rendered combobox wrapper
  */
 const CreatureComboboxWithTitle: React.FC<CreatureComboboxWithTitleProps> = ({
@@ -237,6 +243,10 @@ interface CreatureComboboxWrapperProps {
  * 
  * @component
  * @param {CreatureComboboxWrapperProps} props - Component props
+ * @param {string} props.locale - Locale for API requests
+ * @param {(slug: string) => void} props.onSelect - Callback when creature is selected
+ * @param {(index: Array<{ slug: string; title: string }>) => void} props.onIndexLoaded - Callback when monster index loads
+ * @param {boolean} [props.disabled] - Whether the combobox is disabled
  * @returns {JSX.Element} Rendered creature combobox with index capture
  */
 const CreatureComboboxWrapper: React.FC<CreatureComboboxWrapperProps> = ({
@@ -289,6 +299,10 @@ interface CreatureComboboxWithCaptureProps {
  * 
  * @component
  * @param {CreatureComboboxWithCaptureProps} props - Component props
+ * @param {string} props.locale - Locale for API requests
+ * @param {(slug: string) => void} props.onSelect - Callback when creature is selected
+ * @param {(data: Array<{ slug: string; title: string }>) => void} props.onDataCapture - Callback with loaded data for parent components
+ * @param {boolean} [props.disabled] - Whether the combobox is disabled
  * @returns {JSX.Element} Rendered combobox with data capture
  */
 const CreatureComboboxWithCapture: React.FC<CreatureComboboxWithCaptureProps> = ({

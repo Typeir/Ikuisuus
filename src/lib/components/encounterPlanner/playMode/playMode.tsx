@@ -84,6 +84,9 @@ function createMultipleCombatantsFromMonster(
  * 
  * @component
  * @param {PlayModeProps} props - Component props
+ * @param {InProgressCombat} props.combat - Initial combat state
+ * @param {() => void} props.onExit - Callback when exiting play mode
+ * @param {string} props.locale - Current locale for API requests
  * @returns {JSX.Element} Rendered play mode interface
  */
 export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExit, locale }) => {

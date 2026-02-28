@@ -49,6 +49,11 @@ interface BuffListEditorProps {
  *
  * @component
  * @param {BuffListEditorProps} props - Component props
+ * @param {string[]} props.buffs - Current buff names
+ * @param {(buffs: string[]) => void} props.onChange - Callback when buff list changes
+ * @param {boolean} [props.readOnly] - Whether the editor is read-only
+ * @param {string} [props.addBuffLabel] - Label for the add buff input
+ * @param {string} [props.removeChipAriaLabel] - Aria label for remove chip buttons
  * @returns {JSX.Element} Rendered buff list with add/remove controls
  *
  * @example

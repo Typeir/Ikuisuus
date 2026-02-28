@@ -24,6 +24,17 @@ vi.mock('@/lib/components/worldSim/celestials/CelestialGlow', () => ({
   },
 }));
 
+/** Mock GLSL shaders */
+vi.mock('@/lib/components/worldSim/shaders/noise3d.glsl', () => ({
+  default: '',
+}));
+vi.mock('@/lib/components/worldSim/shaders/star.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/star.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+
 /** Minimal star body data */
 const STAR_DATA: CelestialBodyData = {
   id: 'kultharja',
@@ -89,5 +100,22 @@ describe('StarRenderer', () => {
     renderer = new StarRenderer();
     mesh = renderer.createMesh(STAR_DATA);
     expect(() => renderer.dispose(mesh)).not.toThrow();
+  });
+
+  it('core mesh uses ShaderMaterial for noise displacement', () => {
+    renderer = new StarRenderer();
+    mesh = renderer.createMesh(STAR_DATA);
+    const core = mesh.children.find((c) => c.name === 'star-core')!;
+    expect((core as any).material.type).toBe('ShaderMaterial');
+  });
+
+  it('update sets uTime uniform on surface material', () => {
+    renderer = new StarRenderer();
+    mesh = renderer.createMesh(STAR_DATA);
+    const core = mesh.children.find((c) => c.name === 'star-core')!;
+    const material = (core as any).material;
+
+    renderer.update(mesh, 5.0, 0.016, makeCtx());
+    expect(material.uniforms.uTime.value).toBe(5.0);
   });
 });

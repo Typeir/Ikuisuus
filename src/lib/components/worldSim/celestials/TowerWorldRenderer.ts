@@ -15,9 +15,13 @@ import {
   Color,
   CylinderGeometry,
   Mesh,
-  MeshPhongMaterial,
   Object3D,
+  ShaderMaterial,
+  Vector3,
 } from 'three';
+import noise3d from '../shaders/noise3d.glsl';
+import towerFrag from '../shaders/tower.frag.glsl';
+import towerVert from '../shaders/tower.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
@@ -39,6 +43,30 @@ const ORBITER_COUNT = 10;
 
 /** @constant {number} ORBITER_BASE_SPEED - Base orbital speed for orbiting pillars (rad/s) */
 const ORBITER_BASE_SPEED = 0.48;
+
+/** @constant {number} DEFAULT_TOWER_NOISE_SCALE - Noise sampling scale for tower surface detail */
+const DEFAULT_TOWER_NOISE_SCALE = 0.6;
+
+/** @constant {number} DEFAULT_TOWER_DISPLACEMENT - Vertex displacement amplitude for carved stone */
+const DEFAULT_TOWER_DISPLACEMENT = 0.2;
+
+/** @constant {number} TOWER_RADIAL_SEGMENTS - Cylinder radial segments for displacement detail */
+const TOWER_RADIAL_SEGMENTS = 32;
+
+/** @constant {number} TOWER_HEIGHT_SEGMENTS - Cylinder height segments for displacement detail */
+const TOWER_HEIGHT_SEGMENTS = 24;
+
+/** @constant {number} ORBITER_RADIAL_SEGMENTS - Orbiter pillar radial segments */
+const ORBITER_RADIAL_SEGMENTS = 16;
+
+/** @constant {number} ORBITER_HEIGHT_SEGMENTS - Orbiter pillar height segments */
+const ORBITER_HEIGHT_SEGMENTS = 12;
+
+/** @constant {string} vertWithNoise - Vertex shader with noise functions prepended */
+const vertWithNoise = noise3d + '\n' + towerVert;
+
+/** @constant {string} DEFAULT_RIDGE_COLOR - Default ridge accent colour for tower */
+const DEFAULT_RIDGE_COLOR = '#d4c8a0';
 
 /**
  * Simple deterministic pseudo-random number generator using a hash-style seed.
@@ -69,6 +97,9 @@ export class TowerWorldRenderer implements ICelestialRenderer {
   /** @property {Object3D[]} orbiterPivots - Stored references to orbiter pivot objects */
   private orbiterPivots: Object3D[] = [];
 
+  /** @property {ShaderMaterial[]} towerMaterials - All tower/pillar shader materials for time updates */
+  private towerMaterials: ShaderMaterial[] = [];
+
   /**
    * Create the tower world mesh: a thick tapered tower with orbiting pillars.
    *
@@ -81,6 +112,9 @@ export class TowerWorldRenderer implements ICelestialRenderer {
 
     const config = data.renderConfig as TowerWorldRenderConfig;
     const towerColor = new Color((config.towerColor as string) ?? '#aaaaaa');
+    const ridgeColor = new Color(
+      (config.towerRidgeColor as string) ?? DEFAULT_RIDGE_COLOR,
+    );
     this.rotationSpeed =
       (config.rotationSpeed as number) ?? DEFAULT_ROTATION_SPEED;
 
@@ -96,21 +130,30 @@ export class TowerWorldRenderer implements ICelestialRenderer {
         baseRadius * topTaper,
         baseRadius * taper,
         segmentHeight,
-        14,
+        TOWER_RADIAL_SEGMENTS,
+        TOWER_HEIGHT_SEGMENTS,
       );
 
       const shade = 0.85 + (i / TOWER_SEGMENTS) * 0.15;
-      const segmentMaterial = new MeshPhongMaterial({
-        color: towerColor.clone().multiplyScalar(shade),
-        emissive: towerColor.clone().multiplyScalar(shade * 0.4),
-        emissiveIntensity: 1.0,
-        shininess: 40,
+      const segmentMaterial = new ShaderMaterial({
+        vertexShader: vertWithNoise,
+        fragmentShader: towerFrag,
+        uniforms: {
+          uTime: { value: 0 },
+          uNoiseScale: { value: DEFAULT_TOWER_NOISE_SCALE },
+          uDisplacementScale: { value: DEFAULT_TOWER_DISPLACEMENT },
+          uBaseColor: { value: towerColor.clone().multiplyScalar(shade) },
+          uRidgeColor: { value: ridgeColor.clone().multiplyScalar(shade) },
+          uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
+          uAmbient: { value: 0.35 },
+        },
       });
 
       const segment = new Mesh(segmentGeometry, segmentMaterial);
       segment.position.y = segmentHeight * (i + 0.5) - towerHeight * 0.5;
       segment.name = `tower-segment-${i}`;
       group.add(segment);
+      this.towerMaterials.push(segmentMaterial);
     }
 
     this.orbiterCount = ORBITER_COUNT;
@@ -129,18 +172,27 @@ export class TowerWorldRenderer implements ICelestialRenderer {
         pillarRadius * 0.7,
         pillarRadius,
         pillarHeight,
-        8,
+        ORBITER_RADIAL_SEGMENTS,
+        ORBITER_HEIGHT_SEGMENTS,
       );
       const shade = 0.7 + r1 * 0.3;
-      const pillarMaterial = new MeshPhongMaterial({
-        color: towerColor.clone().multiplyScalar(shade),
-        emissive: towerColor.clone().multiplyScalar(shade * 0.4),
-        emissiveIntensity: 1.0,
-        shininess: 30,
+      const pillarMaterial = new ShaderMaterial({
+        vertexShader: vertWithNoise,
+        fragmentShader: towerFrag,
+        uniforms: {
+          uTime: { value: 0 },
+          uNoiseScale: { value: DEFAULT_TOWER_NOISE_SCALE * 1.5 },
+          uDisplacementScale: { value: DEFAULT_TOWER_DISPLACEMENT * 0.6 },
+          uBaseColor: { value: towerColor.clone().multiplyScalar(shade) },
+          uRidgeColor: { value: ridgeColor.clone().multiplyScalar(shade) },
+          uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
+          uAmbient: { value: 0.35 },
+        },
       });
       const pillar = new Mesh(pillarGeometry, pillarMaterial);
       pillar.position.x = orbitRadius;
       pillar.position.y = heightOffset;
+      this.towerMaterials.push(pillarMaterial);
 
       const pillarGlow = createCelestialGlow(
         pillarRadius * 2,
@@ -182,6 +234,10 @@ export class TowerWorldRenderer implements ICelestialRenderer {
     _ctx: SceneContext,
   ): void {
     mesh.rotation.y += this.rotationSpeed * deltaTime;
+
+    for (const mat of this.towerMaterials) {
+      mat.uniforms.uTime.value = _time;
+    }
 
     for (let i = 0; i < this.orbiterPivots.length; i++) {
       const pivot = this.orbiterPivots[i];

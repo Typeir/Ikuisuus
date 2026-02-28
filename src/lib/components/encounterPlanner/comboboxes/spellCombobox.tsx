@@ -59,6 +59,8 @@ interface SpellComboboxProps {
  *
  * @component
  * @param {SpellComboboxProps} props - Component props
+ * @param {string} props.locale - Current locale for API requests
+ * @param {(spell: SpellRef) => void} props.onSelect - Callback with selected spell reference
  * @returns {JSX.Element} Rendered spell combobox
  *
  * @example

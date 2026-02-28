@@ -61,6 +61,9 @@ interface AffixComboboxProps {
  *
  * @component
  * @param {AffixComboboxProps} props - Component props
+ * @param {string} props.locale - Current locale for API requests
+ * @param {string[]} props.existingAffixes - Affix names already selected (filtered out of dropdown)
+ * @param {(affix: AffixEntry) => void} props.onSelect - Callback when an affix is selected
  * @returns {JSX.Element} Rendered affix combobox
  *
  * @example

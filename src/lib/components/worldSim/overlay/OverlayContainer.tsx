@@ -43,6 +43,9 @@ interface OverlayContainerProps {
  * CSS transforms (position, visibility, scale) each frame without React re-renders.
  *
  * @param {OverlayContainerProps} props - Component props
+ * @param {(id: string, element: HTMLElement) => void} props.bindElement - Bind a DOM element for direct CSS transform updates
+ * @param {(id: string) => void} props.unbindElement - Unbind a DOM element from projection updates
+ * @param {React.MutableRefObject<WorldSimMediator | null>} props.mediatorRef - Ref to the WorldSim mediator instance
  * @returns {React.ReactElement} The overlay container with positioned labels
  */
 export function OverlayContainer({

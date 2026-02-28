@@ -57,6 +57,11 @@ interface SpellListEditorProps {
  *
  * @component
  * @param {SpellListEditorProps} props - Component props
+ * @param {SpellRef[]} props.spells - Current spell references
+ * @param {(spells: SpellRef[]) => void} props.onChange - Callback when spell list changes
+ * @param {string} props.locale - Current locale for API requests
+ * @param {boolean} [props.readOnly] - Whether the editor is read-only
+ * @param {string} [props.removeChipAriaLabel] - Aria label for remove chip buttons
  * @returns {JSX.Element} Rendered spell list with add/remove controls
  *
  * @example

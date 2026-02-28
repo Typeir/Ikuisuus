@@ -1,11 +1,12 @@
 /**
- * @fileoverview Planet Renderer — Sphere with Surface Features
- * @description Renders terrestrial planets (like Damocles / Selkara / Mana) as
- * solid spheres with customizable base color and optional atmosphere glow.
- * Supports slow axial rotation.
+ * @fileoverview Planet Renderer — Terrain-Displaced Sphere with Surface Features
+ * @description Renders terrestrial planets with procedural noise-driven vertex
+ * displacement and a 5-band terrain colour ramp. The same noise mask drives
+ * both geometry displacement and colour interpolation so terrain features
+ * (oceans, grasslands, mountains, snow) align naturally.
  *
  * @module worldSim/celestials/PlanetRenderer
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -15,13 +16,16 @@ import {
   BackSide,
   Color,
   Mesh,
-  MeshPhongMaterial,
   Object3D,
   ShaderMaterial,
   SphereGeometry,
+  Vector3,
 } from 'three';
 import atmosphereFrag from '../shaders/atmosphere.frag.glsl';
 import atmosphereVert from '../shaders/atmosphere.vert.glsl';
+import noise3d from '../shaders/noise3d.glsl';
+import planetFrag from '../shaders/planet.frag.glsl';
+import planetVert from '../shaders/planet.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
@@ -30,6 +34,7 @@ import type {
   ICelestialRenderer,
   PlanetRenderConfig,
   SceneContext,
+  TerrainColorStop,
 } from './interfaces';
 
 /** @constant {number} DEFAULT_ROTATION_SPEED - Default planet axial rotation (radians/sec) */
@@ -38,8 +43,42 @@ const DEFAULT_ROTATION_SPEED = 0.05;
 /** @constant {number} ATMOSPHERE_SCALE - Scale of atmosphere shell relative to planet radius */
 const ATMOSPHERE_SCALE = 1.08;
 
+/** @constant {number} DEFAULT_DISPLACEMENT_SCALE - Default terrain displacement amplitude */
+const DEFAULT_DISPLACEMENT_SCALE = 1.5;
+
+/** @constant {number} DEFAULT_CONTINENT_SCALE - Default continent layer noise frequency */
+const DEFAULT_CONTINENT_SCALE = 0.03;
+
+/** @constant {number} DEFAULT_DETAIL_SCALE - Default detail layer noise frequency */
+const DEFAULT_DETAIL_SCALE = 0.12;
+
+/** @constant {number} DEFAULT_OCEAN_THRESHOLD - Default ocean floor clamp value */
+const DEFAULT_OCEAN_THRESHOLD = -0.15;
+
+/** @constant {number} DEFAULT_NOISE_SEED - Default noise seed */
+const DEFAULT_NOISE_SEED = 0;
+
+/** @constant {number} DEFAULT_POLAR_LATITUDE - Default polar ice start as normal.y threshold */
+const DEFAULT_POLAR_LATITUDE = 0.75;
+
+/** @constant {number} PLANET_SEGMENTS - Sphere segment count for displacement detail */
+const PLANET_SEGMENTS = 64;
+
 /**
- * Renders terrestrial planet bodies with solid surface and optional atmosphere.
+ * Default terrain colour stops: ocean → lowland → highlands → mountains → peaks.
+ * @constant {TerrainColorStop[]}
+ */
+const DEFAULT_TERRAIN_COLORS: TerrainColorStop[] = [
+  { color: '#2244aa', threshold: 0.3 },
+  { color: '#44aa44', threshold: 0.45 },
+  { color: '#888844', threshold: 0.6 },
+  { color: '#aa8866', threshold: 0.78 },
+  { color: '#ffffff', threshold: 1.0 },
+];
+
+/**
+ * Renders terrestrial planet bodies with noise-displaced terrain and
+ * 5-band elevation colour ramp, plus optional atmosphere.
  *
  * @class PlanetRenderer
  * @implements {ICelestialRenderer}
@@ -51,8 +90,11 @@ export class PlanetRenderer implements ICelestialRenderer {
   /** @property {Mesh | null} surfaceMesh - Stored reference to the planet surface mesh */
   private surfaceMesh: Mesh | null = null;
 
+  /** @property {ShaderMaterial | null} surfaceMaterial - Terrain shader material */
+  private surfaceMaterial: ShaderMaterial | null = null;
+
   /**
-   * Create a planet mesh with optional atmosphere shell.
+   * Create a planet mesh with terrain displacement and optional atmosphere shell.
    *
    * @param {CelestialBodyData | BoundaryData} data - Body definition data
    * @returns {Object3D} Group containing the planet and optional atmosphere
@@ -62,18 +104,63 @@ export class PlanetRenderer implements ICelestialRenderer {
     group.name = `planet-${data.id}`;
 
     const config = data.renderConfig as PlanetRenderConfig;
-    const baseColor = new Color((config.baseColor as string) ?? '#4488cc');
     this.rotationSpeed =
       (config.rotationSpeed as number) ?? DEFAULT_ROTATION_SPEED;
 
-    const geometry = new SphereGeometry(data.radius, 48, 48);
-    const material = new MeshPhongMaterial({
-      color: baseColor,
-      shininess: 20,
-      flatShading: false,
+    const terrainColors = config.terrainColors ?? DEFAULT_TERRAIN_COLORS;
+    const colors = terrainColors.map((s) => new Color(s.color));
+
+    const geometry = new SphereGeometry(
+      data.radius,
+      PLANET_SEGMENTS,
+      PLANET_SEGMENTS,
+    );
+    const polarIce = config.polarIce ?? false;
+
+    this.surfaceMaterial = new ShaderMaterial({
+      vertexShader: noise3d + '\n' + planetVert,
+      fragmentShader: planetFrag,
+      uniforms: {
+        uTime: { value: 0 },
+        uDisplacementScale: {
+          value:
+            (config.displacementScale as number) ?? DEFAULT_DISPLACEMENT_SCALE,
+        },
+        uContinentScale: {
+          value:
+            (config.continentScale as number) ?? DEFAULT_CONTINENT_SCALE,
+        },
+        uDetailScale: {
+          value: (config.detailScale as number) ?? DEFAULT_DETAIL_SCALE,
+        },
+        uOceanThreshold: {
+          value:
+            (config.oceanThreshold as number) ?? DEFAULT_OCEAN_THRESHOLD,
+        },
+        uSeed: { value: (config.noiseSeed as number) ?? DEFAULT_NOISE_SEED },
+        uColor0: { value: colors[0] ?? new Color('#2244aa') },
+        uColor1: { value: colors[1] ?? new Color('#44aa44') },
+        uColor2: { value: colors[2] ?? new Color('#888844') },
+        uColor3: { value: colors[3] ?? new Color('#aa8866') },
+        uColor4: { value: colors[4] ?? new Color('#ffffff') },
+        uThreshold01: { value: terrainColors[0]?.threshold ?? 0.3 },
+        uThreshold12: { value: terrainColors[1]?.threshold ?? 0.45 },
+        uThreshold23: { value: terrainColors[2]?.threshold ?? 0.6 },
+        uThreshold34: { value: terrainColors[3]?.threshold ?? 0.78 },
+        uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
+        uAmbient: { value: 0.25 },
+        uPolarIce: { value: polarIce ? 1.0 : 0.0 },
+        uPolarLatitude: {
+          value:
+            (config.polarLatitude as number) ?? DEFAULT_POLAR_LATITUDE,
+        },
+        uIceColor: {
+          value: new Color(config.iceColor ?? '#e8f0ff'),
+        },
+      },
     });
 
-    const planetMesh = new Mesh(geometry, material);
+    const planetMesh = new Mesh(geometry, this.surfaceMaterial);
     planetMesh.name = 'planet-surface';
     this.surfaceMesh = planetMesh;
     group.add(planetMesh);
@@ -97,7 +184,9 @@ export class PlanetRenderer implements ICelestialRenderer {
         fragmentShader: atmosphereFrag,
         uniforms: {
           uColor: { value: atmosphereColor },
-          uIntensity: { value: (config.atmosphereIntensity as number) ?? 1.5 },
+          uIntensity: {
+            value: (config.atmosphereIntensity as number) ?? 1.5,
+          },
         },
         transparent: true,
         blending: AdditiveBlending,
@@ -114,11 +203,12 @@ export class PlanetRenderer implements ICelestialRenderer {
   }
 
   /**
-   * Rotate the planet on its axis each frame.
+   * Rotate the planet on its axis and update the light direction uniform.
    *
    * @param {Object3D} mesh - The planet group
    * @param {number} _time - Elapsed time
    * @param {number} deltaTime - Frame delta
+   * @param {SceneContext} _ctx - Scene context
    */
   update(
     mesh: Object3D,

@@ -26,6 +26,42 @@ vi.mock('@/lib/components/worldSim/shaders/atmosphere.frag.glsl', () => ({
 vi.mock('@/lib/components/worldSim/shaders/atmosphere.vert.glsl', () => ({
   default: 'void main() { gl_Position = vec4(0.0); }',
 }));
+vi.mock('@/lib/components/worldSim/shaders/star.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/star.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/planet.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/planet.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/gasGiant.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/gasGiant.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/icyCore.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/icyCore.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/ringWorld.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/ringWorld.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/tower.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/tower.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
 
 /** Mock CelestialGlow to avoid canvas dependency */
 vi.mock('@/lib/components/worldSim/celestials/CelestialGlow', () => ({

@@ -58,6 +58,8 @@ interface CreatureComboboxProps {
  *
  * @component
  * @param {CreatureComboboxProps} props - Component props
+ * @param {string} props.locale - Current locale for API requests
+ * @param {(slug: string) => void} props.onSelect - Callback with selected monster slug
  * @returns {JSX.Element} Rendered creature combobox
  *
  * @example

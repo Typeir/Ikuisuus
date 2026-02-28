@@ -78,6 +78,7 @@ interface EncounterPlannerProps {
  *
  * @component
  * @param {EncounterPlannerProps} props - Component props
+ * @param {string} [props.locale='en'] - Locale for translations and API requests
  * @returns {JSX.Element} Rendered encounter planner interface
  *
  * @example

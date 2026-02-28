@@ -78,6 +78,7 @@ export interface CelestialRegion {
  * @property {'star'} renderer - Discriminant
  * @property {string} [emissiveColor] - Core emissive color hex
  * @property {string} [coronaColor] - Corona glow color hex
+ * @property {number} [displacementScale] - Vertex displacement amplitude for solar surface turbulence
  */
 export interface StarRenderConfig {
   /** @property {'star'} renderer - Renderer discriminant */
@@ -86,16 +87,41 @@ export interface StarRenderConfig {
   emissiveColor?: string;
   /** @property {string} [coronaColor] - Corona glow color hex */
   coronaColor?: string;
+  /** @property {number} [displacementScale] - Vertex displacement amplitude */
+  displacementScale?: number;
+}
+
+/**
+ * Terrain colour stop for planet surface profile. Defines a colour band
+ * that the fragment shader interpolates based on elevation.
+ * @interface TerrainColorStop
+ * @property {string} color - Hex colour for this elevation band
+ * @property {number} threshold - Elevation threshold (0–1) separating this band from the next
+ */
+export interface TerrainColorStop {
+  /** @property {string} color - Hex colour for this elevation band */
+  color: string;
+  /** @property {number} threshold - Elevation threshold (0–1) */
+  threshold: number;
 }
 
 /**
  * Planet renderer configuration.
  * @interface PlanetRenderConfig
  * @property {'planet'} renderer - Discriminant
- * @property {string} [baseColor] - Surface base color hex
+ * @property {string} [baseColor] - Surface base color hex (fallback if no terrain profile)
  * @property {number} [rotationSpeed] - Rotation speed in rad/s
  * @property {string} [atmosphereColor] - Atmosphere glow color hex (falsy = no atmosphere)
  * @property {number} [atmosphereIntensity] - Atmosphere rim light intensity
+ * @property {number} [displacementScale] - Vertex displacement amplitude for terrain relief
+ * @property {number} [continentScale] - Low-frequency noise scale for continent/ocean shapes
+ * @property {number} [detailScale] - High-frequency noise scale for local features (coastlines, ridges)
+ * @property {number} [oceanThreshold] - Elevation floor below which terrain is clamped flat
+ * @property {number} [noiseSeed] - Body-unique seed offset for noise generation
+ * @property {TerrainColorStop[]} [terrainColors] - 5 colour stops for terrain elevation bands
+ * @property {boolean} [polarIce] - Whether the planet renders frozen polar caps
+ * @property {number} [polarLatitude] - Normal-Y threshold where polar ice begins (0–1)
+ * @property {string} [iceColor] - Hex colour for polar ice caps
  */
 export interface PlanetRenderConfig {
   /** @property {'planet'} renderer - Renderer discriminant */
@@ -108,6 +134,24 @@ export interface PlanetRenderConfig {
   atmosphereColor?: string;
   /** @property {number} [atmosphereIntensity] - Atmosphere rim light intensity */
   atmosphereIntensity?: number;
+  /** @property {number} [displacementScale] - Terrain displacement amplitude */
+  displacementScale?: number;
+  /** @property {number} [continentScale] - Low-frequency noise scale for continent shapes */
+  continentScale?: number;
+  /** @property {number} [detailScale] - High-frequency noise scale for local features */
+  detailScale?: number;
+  /** @property {number} [oceanThreshold] - Elevation floor below which terrain is clamped flat (ocean) */
+  oceanThreshold?: number;
+  /** @property {number} [noiseSeed] - Body-unique seed offset */
+  noiseSeed?: number;
+  /** @property {TerrainColorStop[]} [terrainColors] - Colour stops for terrain bands */
+  terrainColors?: TerrainColorStop[];
+  /** @property {boolean} [polarIce] - Whether the planet has frozen polar caps */
+  polarIce?: boolean;
+  /** @property {number} [polarLatitude] - Normal-Y threshold where ice begins (0–1, higher = smaller caps) */
+  polarLatitude?: number;
+  /** @property {string} [iceColor] - Hex colour for polar ice caps */
+  iceColor?: string;
 }
 
 /**
@@ -118,6 +162,9 @@ export interface PlanetRenderConfig {
  * @property {string} [bandColor] - Band stripe color hex
  * @property {number} [rotationSpeed] - Rotation speed in rad/s
  * @property {string} [atmosphereColor] - Haze glow color hex
+ * @property {string} [stormColor] - Colour of storm spots in cloud bands
+ * @property {number} [bandFrequency] - Vertical frequency of cloud band noise (higher = more bands)
+ * @property {number} [timeScale] - Animation speed multiplier for cloud drift
  */
 export interface GasGiantRenderConfig {
   /** @property {'gasGiant'} renderer - Renderer discriminant */
@@ -130,6 +177,12 @@ export interface GasGiantRenderConfig {
   rotationSpeed?: number;
   /** @property {string} [atmosphereColor] - Haze glow color hex */
   atmosphereColor?: string;
+  /** @property {string} [stormColor] - Storm spot colour hex */
+  stormColor?: string;
+  /** @property {number} [bandFrequency] - Cloud band noise frequency */
+  bandFrequency?: number;
+  /** @property {number} [timeScale] - Animation speed multiplier for cloud drift */
+  timeScale?: number;
 }
 
 /**
@@ -143,6 +196,7 @@ export interface GasGiantRenderConfig {
  * @property {number} [coreRadius] - Core sphere radius override
  * @property {number} [ringSpacing] - Spacing between ring orbits
  * @property {number} [ringTubeRadius] - Tube radius of each ring torus
+ * @property {boolean} [icyCore] - Whether to apply icy displacement shader to the core
  */
 export interface RingWorldRenderConfig {
   /** @property {'ringWorld'} renderer - Renderer discriminant */
@@ -161,6 +215,8 @@ export interface RingWorldRenderConfig {
   ringSpacing?: number;
   /** @property {number} [ringTubeRadius] - Tube radius of each ring torus */
   ringTubeRadius?: number;
+  /** @property {boolean} [icyCore] - Apply icy displacement to the core sphere */
+  icyCore?: boolean;
 }
 
 /**
@@ -168,6 +224,7 @@ export interface RingWorldRenderConfig {
  * @interface TowerWorldRenderConfig
  * @property {'towerWorld'} renderer - Discriminant
  * @property {string} [towerColor] - Tower mesh color hex
+ * @property {string} [towerRidgeColor] - Ridge accent colour hex for carved stone highlights
  * @property {number} [rotationSpeed] - Orbiter rotation speed in rad/s
  * @property {number} [towerHeightMultiplier] - Tower height as multiplier of radius
  */
@@ -176,6 +233,8 @@ export interface TowerWorldRenderConfig {
   renderer: 'towerWorld';
   /** @property {string} [towerColor] - Tower mesh color hex */
   towerColor?: string;
+  /** @property {string} [towerRidgeColor] - Ridge accent colour for stone highlights */
+  towerRidgeColor?: string;
   /** @property {number} [rotationSpeed] - Orbiter rotation speed in rad/s */
   rotationSpeed?: number;
   /** @property {number} [towerHeightMultiplier] - Tower height as multiplier of radius */

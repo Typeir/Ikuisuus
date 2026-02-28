@@ -49,6 +49,11 @@ interface ItemListEditorProps {
  *
  * @component
  * @param {ItemListEditorProps} props - Component props
+ * @param {string[]} props.items - Current item names
+ * @param {(items: string[]) => void} props.onChange - Callback when item list changes
+ * @param {boolean} [props.readOnly] - Whether the editor is read-only
+ * @param {string} [props.addItemLabel] - Label for the add item input
+ * @param {string} [props.removeChipAriaLabel] - Aria label for remove chip buttons
  * @returns {JSX.Element} Rendered item list with add/remove controls
  *
  * @example
