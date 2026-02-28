@@ -13,6 +13,7 @@
 'use client';
 
 import { forwardRef, memo, useCallback } from 'react';
+import { cn } from '@/lib/utils/classNameMerge';
 import styles from './overlay.module.scss';
 
 /**
@@ -69,18 +70,13 @@ export const CelestialLabel = memo(
       [bodyId, onClick],
     );
 
-    const classNames = [
-      styles.celestialLabel,
-      isHovered ? styles.hovered : '',
-      isSelected ? styles.selected : '',
-    ]
-      .filter(Boolean)
-      .join(' ');
-
     return (
       <button
         ref={ref}
-        className={classNames}
+        className={cn(styles.celestialLabel, {
+          [styles.hovered]: isHovered,
+          [styles.selected]: isSelected,
+        })}
         style={{ willChange: 'transform' }}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
