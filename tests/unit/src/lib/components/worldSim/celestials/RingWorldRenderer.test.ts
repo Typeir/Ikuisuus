@@ -7,8 +7,8 @@
 
 import { RingWorldRenderer } from '@/lib/components/worldSim/celestials/RingWorldRenderer';
 import type {
-  CelestialBodyData,
-  SceneContext,
+    CelestialBodyData,
+    SceneContext,
 } from '@/lib/components/worldSim/celestials/interfaces';
 import { Object3D, PerspectiveCamera, Scene } from 'three';
 import { afterEach, describe, expect, it, vi } from 'vitest';

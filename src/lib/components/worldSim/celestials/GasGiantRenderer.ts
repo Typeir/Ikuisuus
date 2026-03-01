@@ -14,30 +14,31 @@
  */
 
 import {
-  AdditiveBlending,
-  Color,
-  Mesh,
-  Object3D,
-  ShaderMaterial,
-  SphereGeometry,
-  Sprite,
-  SpriteMaterial,
-  Vector3,
+    AdditiveBlending,
+    Color,
+    Mesh,
+    Object3D,
+    ShaderMaterial,
+    SphereGeometry,
+    Sprite,
+    SpriteMaterial,
+    Vector3,
 } from 'three';
-import noise3d from '../shaders/noise3d.glsl';
 import gasGiantFrag from '../shaders/gasGiant.frag.glsl';
 import gasGiantVert from '../shaders/gasGiant.vert.glsl';
+import noise3d from '../shaders/noise3d.glsl';
 import {
-  createCelestialGlow,
-  createRadialGradientTexture,
+    createCelestialGlow,
+    createRadialGradientTexture,
 } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
-  BoundaryData,
-  CelestialBodyData,
-  GasGiantRenderConfig,
-  ICelestialRenderer,
-  SceneContext,
+    BoundaryData,
+    CelestialBodyData,
+    GasGiantRenderConfig,
+    ICelestialRenderer,
+    SceneContext,
 } from './interfaces';
 
 /** @constant {number} DEFAULT_ROTATION_SPEED - Default axial rotation speed */
@@ -60,6 +61,13 @@ const GAS_GIANT_SEGMENTS = 48;
 
 /** @constant {number} DEFAULT_TIME_SCALE - Default time scale for cloud animation speed */
 const DEFAULT_TIME_SCALE = 0.08;
+
+/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
+const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
+  high: 2,
+  medium: 1,
+  low: 0,
+};
 
 /**
  * Gradient stops for the gas giant atmospheric haze texture.
@@ -156,6 +164,26 @@ export class GasGiantRenderer implements ICelestialRenderer {
   /** @property {ShaderMaterial[]} layerMaterials - All cloud layer materials for time updates */
   private layerMaterials: ShaderMaterial[] = [];
 
+  /** @property {RenderQualityLevel} qualityLevel - Current adaptive quality level */
+  private qualityLevel: RenderQualityLevel = 'high';
+
+  /**
+   * Apply adaptive quality level to cloud shader detail and secondary effects.
+   *
+   * @param {RenderQualityLevel} level - New quality level
+   */
+  setQualityLevel(level: RenderQualityLevel): void {
+    this.qualityLevel = level;
+
+    for (const mat of this.layerMaterials) {
+      mat.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
+    }
+
+    if (this.hazeSprite) {
+      this.hazeSprite.visible = level !== 'low';
+    }
+  }
+
   /**
    * Create a gas giant mesh with two concentric cloud shells and haze sprite.
    * The opaque base layer carries the main band pattern; a slightly larger
@@ -200,6 +228,7 @@ export class GasGiantRenderer implements ICelestialRenderer {
           uTimeScale: { value: timeScale * layer.timeScaleMultiplier },
           uLayerOpacity: { value: layer.opacity },
           uNoiseOffset: { value: layer.noiseOffset },
+          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uBandColor1: { value: bandColor1.clone() },
           uBandColor2: { value: bandColor2.clone() },
           uStormColor: { value: stormColor.clone() },
@@ -215,6 +244,7 @@ export class GasGiantRenderer implements ICelestialRenderer {
 
       const shell = new Mesh(geometry, material);
       shell.name = `gasGiant-cloud-${i}`;
+      shell.frustumCulled = true;
       group.add(shell);
       this.layerMaterials.push(material);
 
@@ -238,11 +268,14 @@ export class GasGiantRenderer implements ICelestialRenderer {
     this.hazeSprite = new Sprite(hazeMaterial);
     this.hazeSprite.scale.setScalar(data.radius * HAZE_SCALE);
     this.hazeSprite.name = 'gasGiant-haze';
+    this.hazeSprite.frustumCulled = true;
     group.add(this.hazeSprite);
 
     const glowColor = (config.atmosphereColor as string) ?? '#ffddaa';
     const glow = createCelestialGlow(data.radius, glowColor, 7.0, 0.35);
     group.add(glow);
+
+    this.setQualityLevel(this.qualityLevel);
 
     return group;
   }
@@ -270,7 +303,7 @@ export class GasGiantRenderer implements ICelestialRenderer {
       mat.uniforms.uTime.value = time;
     }
 
-    if (this.hazeSprite) {
+    if (this.hazeSprite && this.hazeSprite.visible) {
       const material = this.hazeSprite.material as SpriteMaterial;
       material.opacity = 0.12 + Math.sin(time * STORM_SPEED) * 0.05;
     }
@@ -284,5 +317,8 @@ export class GasGiantRenderer implements ICelestialRenderer {
   dispose(mesh: Object3D): void {
     disposeSceneGraph(mesh);
     this.layerMaterials = [];
+    this.hazeSprite = null;
+    this.bodyMesh = null;
+    this.bodyMaterial = null;
   }
 }

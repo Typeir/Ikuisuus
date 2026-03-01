@@ -36,6 +36,10 @@ import {
   WorldSimActionType,
   type WorldSimAction,
 } from './context/worldSimTypes';
+import {
+  AdaptivePerformanceController,
+  type RenderQualityProfile,
+} from './optimization/AdaptivePerformanceController';
 import { RaycastService } from './RaycastService';
 
 /**
@@ -129,6 +133,10 @@ export class WorldSimMediator {
   /** @property {Set<string>} cachedOcclusion - Cached occlusion result reused between throttled frames */
   private cachedOcclusion: Set<string> = new Set();
 
+  /** @property {AdaptivePerformanceController} performanceController - Adaptive quality selector from frame timing */
+  private performanceController: AdaptivePerformanceController =
+    new AdaptivePerformanceController();
+
   /** @property {Function} boundOnCanvasClick - Bound click handler */
   private boundOnCanvasClick: (e: MouseEvent) => void;
 
@@ -173,6 +181,7 @@ export class WorldSimMediator {
     this.createEverdark();
     this.registerProjections();
     this.buildMeshCaches();
+    this.applyQualityToRenderers();
     this.attachInputListeners();
 
     this.cameraController.onPanUnlock = () => {
@@ -216,6 +225,13 @@ export class WorldSimMediator {
    */
   private updateSimulation(frameCtx: FrameContext): void {
     const { time, deltaTime } = frameCtx;
+    const qualityChanged = this.performanceController.sample(deltaTime);
+    if (qualityChanged) {
+      this.applyQualityToRenderers();
+    }
+
+    const qualityProfile = this.performanceController.getProfile();
+
     const ctx: SceneContext = {
       camera: this.sceneManager.camera,
       scene: this.sceneManager.scene,
@@ -246,7 +262,15 @@ export class WorldSimMediator {
         }
       }
 
-      entry.renderer.update(entry.mesh, time, deltaTime, ctx);
+      const updateStride = this.getBodyUpdateStride(
+        entry,
+        qualityProfile,
+        frameCtx.frame,
+      );
+
+      if (frameCtx.frame % updateStride === 0) {
+        entry.renderer.update(entry.mesh, time, deltaTime, ctx);
+      }
     });
 
     if (this.everdarkRenderer && this.everdarkMesh) {
@@ -438,6 +462,7 @@ export class WorldSimMediator {
       }
 
       mesh.userData = { bodyId: body.id };
+      this.applyDefaultCulling(mesh);
 
       this.sceneManager.scene.add(mesh);
       this.celestials.set(body.id, { data: body, renderer, mesh });
@@ -479,6 +504,7 @@ export class WorldSimMediator {
       boundary.renderConfig.renderer as CelestialRendererType,
     );
     this.everdarkMesh = this.everdarkRenderer.createMesh(boundary);
+    this.applyDefaultCulling(this.everdarkMesh);
     this.sceneManager.scene.add(this.everdarkMesh);
   }
 
@@ -579,5 +605,66 @@ export class WorldSimMediator {
       rootMeshes.push(entry.mesh);
     });
     this.raycastService.buildMeshCaches(rootMeshes);
+  }
+
+  /**
+   * Apply default frustum-culling flags to all renderable descendants.
+   *
+   * @private
+   * @param {Object3D} root - Root object to traverse
+   */
+  private applyDefaultCulling(root: Object3D): void {
+    root.traverse((node) => {
+      if ('frustumCulled' in node) {
+        node.frustumCulled = true;
+      }
+    });
+  }
+
+  /**
+   * Apply the currently selected adaptive quality level to all registered renderers.
+   *
+   * @private
+   */
+  private applyQualityToRenderers(): void {
+    const level = this.performanceController.getLevel();
+
+    this.celestials.forEach((entry) => {
+      entry.renderer.setQualityLevel?.(level);
+    });
+
+    if (this.everdarkRenderer) {
+      this.everdarkRenderer.setQualityLevel?.(level);
+    }
+  }
+
+  /**
+   * Compute frame-stride for renderer updates using distance-based LOD throttling.
+   * Followed body remains real-time regardless of profile.
+   *
+   * @private
+   * @param {CelestialEntry} entry - Celestial runtime entry
+   * @param {RenderQualityProfile} profile - Active adaptive quality profile
+   * @param {number} _frame - Current frame counter
+   * @returns {number} Update stride in frames
+   */
+  private getBodyUpdateStride(
+    entry: CelestialEntry,
+    profile: RenderQualityProfile,
+    _frame: number,
+  ): number {
+    if (entry.data.id === this.followedBodyId) {
+      return 1;
+    }
+
+    const distance = this.sceneManager.camera.position.distanceTo(
+      entry.mesh.position,
+    );
+
+    if (distance > profile.farDistance) {
+      return profile.farUpdateStride;
+    }
+
+    return profile.nearUpdateStride;
   }
 }

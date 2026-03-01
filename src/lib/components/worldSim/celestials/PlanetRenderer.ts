@@ -12,14 +12,14 @@
  */
 
 import {
-  AdditiveBlending,
-  BackSide,
-  Color,
-  Mesh,
-  Object3D,
-  ShaderMaterial,
-  SphereGeometry,
-  Vector3,
+    AdditiveBlending,
+    BackSide,
+    Color,
+    Mesh,
+    Object3D,
+    ShaderMaterial,
+    SphereGeometry,
+    Vector3,
 } from 'three';
 import atmosphereFrag from '../shaders/atmosphere.frag.glsl';
 import atmosphereVert from '../shaders/atmosphere.vert.glsl';
@@ -28,13 +28,14 @@ import planetFrag from '../shaders/planet.frag.glsl';
 import planetVert from '../shaders/planet.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
-  BoundaryData,
-  CelestialBodyData,
-  ICelestialRenderer,
-  PlanetRenderConfig,
-  SceneContext,
-  TerrainColorStop,
+    BoundaryData,
+    CelestialBodyData,
+    ICelestialRenderer,
+    PlanetRenderConfig,
+    SceneContext,
+    TerrainColorStop,
 } from './interfaces';
 
 /** @constant {number} DEFAULT_ROTATION_SPEED - Default planet axial rotation (radians/sec) */
@@ -64,6 +65,13 @@ const DEFAULT_POLAR_LATITUDE = 0.75;
 /** @constant {number} PLANET_SEGMENTS - Sphere segment count for displacement detail */
 const PLANET_SEGMENTS = 64;
 
+/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
+const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
+  high: 2,
+  medium: 1,
+  low: 0,
+};
+
 /**
  * Default terrain colour stops: ocean → lowland → highlands → mountains → peaks.
  * @constant {TerrainColorStop[]}
@@ -92,6 +100,30 @@ export class PlanetRenderer implements ICelestialRenderer {
 
   /** @property {ShaderMaterial | null} surfaceMaterial - Terrain shader material */
   private surfaceMaterial: ShaderMaterial | null = null;
+
+  /** @property {Mesh | null} atmosphereMesh - Optional atmosphere shell mesh */
+  private atmosphereMesh: Mesh | null = null;
+
+  /** @property {RenderQualityLevel} qualityLevel - Current adaptive quality level */
+  private qualityLevel: RenderQualityLevel = 'high';
+
+  /**
+   * Apply adaptive quality level to terrain shader detail and secondary effects.
+   *
+   * @param {RenderQualityLevel} level - New quality level
+   */
+  setQualityLevel(level: RenderQualityLevel): void {
+    this.qualityLevel = level;
+
+    if (this.surfaceMaterial) {
+      this.surfaceMaterial.uniforms.uDetailLevel.value =
+        QUALITY_TO_DETAIL[level];
+    }
+
+    if (this.atmosphereMesh) {
+      this.atmosphereMesh.visible = level !== 'low';
+    }
+  }
 
   /**
    * Create a planet mesh with terrain displacement and optional atmosphere shell.
@@ -137,6 +169,7 @@ export class PlanetRenderer implements ICelestialRenderer {
           value:
             (config.oceanThreshold as number) ?? DEFAULT_OCEAN_THRESHOLD,
         },
+        uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
         uSeed: { value: (config.noiseSeed as number) ?? DEFAULT_NOISE_SEED },
         uColor0: { value: colors[0] ?? new Color('#2244aa') },
         uColor1: { value: colors[1] ?? new Color('#44aa44') },
@@ -162,6 +195,7 @@ export class PlanetRenderer implements ICelestialRenderer {
 
     const planetMesh = new Mesh(geometry, this.surfaceMaterial);
     planetMesh.name = 'planet-surface';
+    planetMesh.frustumCulled = true;
     this.surfaceMesh = planetMesh;
     group.add(planetMesh);
 
@@ -196,8 +230,12 @@ export class PlanetRenderer implements ICelestialRenderer {
 
       const atmosphere = new Mesh(atmosphereGeometry, atmosphereMaterial);
       atmosphere.name = 'planet-atmosphere';
+      atmosphere.frustumCulled = true;
+      this.atmosphereMesh = atmosphere;
       group.add(atmosphere);
     }
+
+    this.setQualityLevel(this.qualityLevel);
 
     return group;
   }
@@ -228,5 +266,8 @@ export class PlanetRenderer implements ICelestialRenderer {
    */
   dispose(mesh: Object3D): void {
     disposeSceneGraph(mesh);
+    this.surfaceMesh = null;
+    this.surfaceMaterial = null;
+    this.atmosphereMesh = null;
   }
 }

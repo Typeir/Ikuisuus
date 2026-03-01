@@ -64,6 +64,33 @@ describe('createRadialGradientTexture', () => {
     expect(canvas.width).toBe(256);
     expect(canvas.height).toBe(256);
   });
+
+  it('reuses cached texture for identical size and stops', () => {
+    mockGradient.addColorStop.mockClear();
+
+    const stops: GradientStop[] = [
+      { offset: 0, color: 'rgba(17, 23, 31, 1)' },
+      { offset: 1, color: 'rgba(17, 23, 31, 0)' },
+    ];
+
+    const tex1 = createRadialGradientTexture(96, stops);
+    const tex2 = createRadialGradientTexture(96, stops);
+
+    expect(tex1).toBe(tex2);
+    expect(mockGradient.addColorStop).toHaveBeenCalledTimes(2);
+  });
+
+  it('creates distinct textures when cache key differs', () => {
+    const stops: GradientStop[] = [
+      { offset: 0, color: 'rgba(9, 9, 9, 1)' },
+      { offset: 1, color: 'rgba(9, 9, 9, 0)' },
+    ];
+
+    const texA = createRadialGradientTexture(80, stops);
+    const texB = createRadialGradientTexture(120, stops);
+
+    expect(texA).not.toBe(texB);
+  });
 });
 
 describe('createCelestialGlow', () => {

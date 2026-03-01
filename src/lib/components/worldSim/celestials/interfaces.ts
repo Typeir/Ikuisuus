@@ -10,6 +10,7 @@
  */
 
 import type { Object3D, PerspectiveCamera, Scene, Vector3 } from 'three';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 
 /**
  * Shared per-frame context passed to all renderers during the update loop.
@@ -407,7 +408,7 @@ export interface ProjectedPosition {
  * @property {Function} createMesh - Create the Three.js Object3D for this body
  * @property {Function} update - Called each frame to animate the mesh
  * @property {Function} dispose - Clean up GPU resources
- * @property {Function} getLODDistance - Return near/far thresholds for LOD switching
+ * @property {Function} [setQualityLevel] - Optional adaptive quality hook
  */
 export interface ICelestialRenderer {
   createMesh(data: CelestialBodyData | BoundaryData): Object3D;
@@ -418,6 +419,7 @@ export interface ICelestialRenderer {
     ctx: SceneContext,
   ): void;
   dispose(mesh: Object3D): void;
+  setQualityLevel?(level: RenderQualityLevel): void;
 }
 
 /**

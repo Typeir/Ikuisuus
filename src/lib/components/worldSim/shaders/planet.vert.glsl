@@ -17,6 +17,7 @@ uniform float uSeed;
 uniform float uContinentScale;
 uniform float uDetailScale;
 uniform float uOceanThreshold;
+uniform float uDetailLevel;
 
 varying vec3  vNormal;
 varying vec3  vWorldPosition;
@@ -35,7 +36,9 @@ void main() {
    */
   vec3 contCoord = pos * uContinentScale + seedOffset;
   float continent  = snoise(contCoord) * 0.65;
-  continent       += snoise(contCoord * 2.1 + vec3(3.7, 1.2, 5.9)) * 0.35;
+  continent       += uDetailLevel > 0.5
+    ? snoise(contCoord * 2.1 + vec3(3.7, 1.2, 5.9)) * 0.35
+    : 0.0;
 
   /**
    * Layer 2 — Detail noise (high frequency, local features).
@@ -43,8 +46,12 @@ void main() {
    */
   vec3 detCoord = pos * uDetailScale + seedOffset + vec3(50.3, 17.1, 83.7);
   float detail  = snoise(detCoord) * 0.45;
-  detail       += snoise(detCoord * 2.3 + vec3(5.2, 1.3, 2.8)) * 0.30;
-  detail       += snoise(detCoord * 5.1 + vec3(2.8, 7.1, 4.3)) * 0.25;
+  detail       += uDetailLevel > 0.5
+    ? snoise(detCoord * 2.3 + vec3(5.2, 1.3, 2.8)) * 0.30
+    : 0.0;
+  detail       += uDetailLevel > 1.5
+    ? snoise(detCoord * 5.1 + vec3(2.8, 7.1, 4.3)) * 0.25
+    : 0.0;
 
   /**
    * Composite — the continental layer is dominant.  The detail layer is

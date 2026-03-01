@@ -24,6 +24,7 @@ import towerFrag from '../shaders/tower.frag.glsl';
 import towerVert from '../shaders/tower.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
   BoundaryData,
   CelestialBodyData,
@@ -68,6 +69,13 @@ const vertWithNoise = noise3d + '\n' + towerVert;
 /** @constant {string} DEFAULT_RIDGE_COLOR - Default ridge accent colour for tower */
 const DEFAULT_RIDGE_COLOR = '#d4c8a0';
 
+/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
+const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
+  high: 2,
+  medium: 1,
+  low: 0,
+};
+
 /**
  * Simple deterministic pseudo-random number generator using a hash-style seed.
  * Produces values in [0, 1) that are stable across sessions for a given seed.
@@ -99,6 +107,22 @@ export class TowerWorldRenderer implements ICelestialRenderer {
 
   /** @property {ShaderMaterial[]} towerMaterials - All tower/pillar shader materials for time updates */
   private towerMaterials: ShaderMaterial[] = [];
+
+  /** @property {RenderQualityLevel} qualityLevel - Current adaptive quality level */
+  private qualityLevel: RenderQualityLevel = 'high';
+
+  /**
+   * Apply adaptive quality level to tower shader detail.
+   *
+   * @param {RenderQualityLevel} level - New quality level
+   */
+  setQualityLevel(level: RenderQualityLevel): void {
+    this.qualityLevel = level;
+
+    for (const mat of this.towerMaterials) {
+      mat.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
+    }
+  }
 
   /**
    * Create the tower world mesh: a thick tapered tower with orbiting pillars.
@@ -140,6 +164,7 @@ export class TowerWorldRenderer implements ICelestialRenderer {
         fragmentShader: towerFrag,
         uniforms: {
           uTime: { value: 0 },
+          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uNoiseScale: { value: DEFAULT_TOWER_NOISE_SCALE },
           uDisplacementScale: { value: DEFAULT_TOWER_DISPLACEMENT },
           uBaseColor: { value: towerColor.clone().multiplyScalar(shade) },
@@ -152,6 +177,7 @@ export class TowerWorldRenderer implements ICelestialRenderer {
       const segment = new Mesh(segmentGeometry, segmentMaterial);
       segment.position.y = segmentHeight * (i + 0.5) - towerHeight * 0.5;
       segment.name = `tower-segment-${i}`;
+      segment.frustumCulled = true;
       group.add(segment);
       this.towerMaterials.push(segmentMaterial);
     }
@@ -181,6 +207,7 @@ export class TowerWorldRenderer implements ICelestialRenderer {
         fragmentShader: towerFrag,
         uniforms: {
           uTime: { value: 0 },
+          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uNoiseScale: { value: DEFAULT_TOWER_NOISE_SCALE * 1.5 },
           uDisplacementScale: { value: DEFAULT_TOWER_DISPLACEMENT * 0.6 },
           uBaseColor: { value: towerColor.clone().multiplyScalar(shade) },
@@ -192,6 +219,7 @@ export class TowerWorldRenderer implements ICelestialRenderer {
       const pillar = new Mesh(pillarGeometry, pillarMaterial);
       pillar.position.x = orbitRadius;
       pillar.position.y = heightOffset;
+      pillar.frustumCulled = true;
       this.towerMaterials.push(pillarMaterial);
 
       const pillarGlow = createCelestialGlow(
@@ -216,6 +244,8 @@ export class TowerWorldRenderer implements ICelestialRenderer {
     const glowColor = (config.towerColor as string) ?? '#aaaaaa';
     const glow = createCelestialGlow(data.radius, glowColor, 8.0, 0.35);
     group.add(glow);
+
+    this.setQualityLevel(this.qualityLevel);
 
     return group;
   }

@@ -11,29 +11,30 @@
  */
 
 import {
-  AdditiveBlending,
-  Color,
-  DoubleSide,
-  Mesh,
-  MeshBasicMaterial,
-  Object3D,
-  RingGeometry,
-  ShaderMaterial,
-  SphereGeometry,
-  Sprite,
-  SpriteMaterial,
+    AdditiveBlending,
+    Color,
+    DoubleSide,
+    Mesh,
+    MeshBasicMaterial,
+    Object3D,
+    RingGeometry,
+    ShaderMaterial,
+    SphereGeometry,
+    Sprite,
+    SpriteMaterial,
 } from 'three';
 import noise3d from '../shaders/noise3d.glsl';
 import starFrag from '../shaders/star.frag.glsl';
 import starVert from '../shaders/star.vert.glsl';
 import { createRadialGradientTexture } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
-  BoundaryData,
-  CelestialBodyData,
-  ICelestialRenderer,
-  SceneContext,
-  StarRenderConfig,
+    BoundaryData,
+    CelestialBodyData,
+    ICelestialRenderer,
+    SceneContext,
+    StarRenderConfig,
 } from './interfaces';
 
 /** @constant {number} CORONA_SCALE - Scale multiplier for the corona sprite relative to body radius */
@@ -53,6 +54,13 @@ const DEFAULT_DISPLACEMENT_SCALE = 12;
 
 /** @constant {number} SPHERE_SEGMENTS - Sphere segment count for sufficient displacement detail */
 const SPHERE_SEGMENTS = 64;
+
+/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
+const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
+  high: 2,
+  medium: 1,
+  low: 0,
+};
 
 /**
  * Gradient stops for the star corona glow texture.
@@ -86,6 +94,31 @@ export class StarRenderer implements ICelestialRenderer {
   /** @property {ShaderMaterial | null} surfaceMaterial - ShaderMaterial with noise displacement */
   private surfaceMaterial: ShaderMaterial | null = null;
 
+  /** @property {RenderQualityLevel} qualityLevel - Current adaptive quality level */
+  private qualityLevel: RenderQualityLevel = 'high';
+
+  /**
+   * Apply adaptive quality level to shader detail and secondary effects.
+   *
+   * @param {RenderQualityLevel} level - New quality level
+   */
+  setQualityLevel(level: RenderQualityLevel): void {
+    this.qualityLevel = level;
+
+    if (this.surfaceMaterial) {
+      this.surfaceMaterial.uniforms.uDetailLevel.value =
+        QUALITY_TO_DETAIL[level];
+    }
+
+    if (this.coronaSprite) {
+      this.coronaSprite.visible = level !== 'low';
+    }
+
+    if (this.ringMesh) {
+      this.ringMesh.visible = level !== 'low';
+    }
+  }
+
   /**
    * Create the star mesh group with noise-displaced surface and corona sprite.
    *
@@ -115,12 +148,14 @@ export class StarRenderer implements ICelestialRenderer {
       uniforms: {
         uTime: { value: 0 },
         uDisplacementScale: { value: displacementScale },
+        uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
         uEmissiveColor: { value: emissiveColor },
         uCoronaColor: { value: coronaColor },
       },
     });
     this.coreMesh = new Mesh(coreGeometry, this.surfaceMaterial);
     this.coreMesh.name = 'star-core';
+    this.coreMesh.frustumCulled = true;
     group.add(this.coreMesh);
 
     const coronaMaterial = new SpriteMaterial({
@@ -134,6 +169,7 @@ export class StarRenderer implements ICelestialRenderer {
     this.coronaSprite = new Sprite(coronaMaterial);
     this.coronaSprite.scale.setScalar(data.radius * CORONA_SCALE);
     this.coronaSprite.name = 'star-corona';
+    this.coronaSprite.frustumCulled = true;
     group.add(this.coronaSprite);
 
     const ringGeometry = new RingGeometry(
@@ -151,8 +187,11 @@ export class StarRenderer implements ICelestialRenderer {
     });
     const ring = new Mesh(ringGeometry, ringMaterial);
     ring.name = 'star-ring';
+    ring.frustumCulled = true;
     this.ringMesh = ring;
     group.add(ring);
+
+    this.setQualityLevel(this.qualityLevel);
 
     return group;
   }
@@ -175,7 +214,7 @@ export class StarRenderer implements ICelestialRenderer {
       this.surfaceMaterial.uniforms.uTime.value = time;
     }
 
-    if (this.coronaSprite) {
+    if (this.coronaSprite && this.coronaSprite.visible) {
       const pulse = 1 + Math.sin(time * PULSE_SPEED) * PULSE_AMPLITUDE;
       const radius = this.coreMesh
         ? (this.coreMesh.geometry as SphereGeometry).parameters.radius

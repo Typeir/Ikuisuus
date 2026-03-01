@@ -12,29 +12,30 @@
  */
 
 import {
-  Color,
-  DoubleSide,
-  Mesh,
-  MeshPhongMaterial,
-  Object3D,
-  ShaderMaterial,
-  SphereGeometry,
-  TorusGeometry,
-  Vector3,
+    Color,
+    DoubleSide,
+    Mesh,
+    MeshPhongMaterial,
+    Object3D,
+    ShaderMaterial,
+    SphereGeometry,
+    TorusGeometry,
+    Vector3,
 } from 'three';
-import noise3d from '../shaders/noise3d.glsl';
 import icyCoreFrag from '../shaders/icyCore.frag.glsl';
 import icyCoreVert from '../shaders/icyCore.vert.glsl';
+import noise3d from '../shaders/noise3d.glsl';
 import ringWorldFrag from '../shaders/ringWorld.frag.glsl';
 import ringWorldVert from '../shaders/ringWorld.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
-  BoundaryData,
-  CelestialBodyData,
-  ICelestialRenderer,
-  RingWorldRenderConfig,
-  SceneContext,
+    BoundaryData,
+    CelestialBodyData,
+    ICelestialRenderer,
+    RingWorldRenderConfig,
+    SceneContext,
 } from './interfaces';
 
 /** @constant {number} DEFAULT_RING_COUNT - Default number of orbiting rings */
@@ -73,6 +74,13 @@ const RING_TORUS_RADIAL_SEGMENTS = 24;
 /** @constant {number} RING_TORUS_TUBULAR_SEGMENTS - Tubular segments for ring torus geometry */
 const RING_TORUS_TUBULAR_SEGMENTS = 120;
 
+/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
+const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
+  high: 2,
+  medium: 1,
+  low: 0,
+};
+
 /**
  * Renders a ring world as a frozen core sphere surrounded by independently
  * spinning rings at different radii and tilt angles. When `icyCore` is set,
@@ -96,6 +104,26 @@ export class RingWorldRenderer implements ICelestialRenderer {
 
   /** @property {ShaderMaterial[]} ringMaterials - Shader materials for noise-textured rings */
   private ringMaterials: ShaderMaterial[] = [];
+
+  /** @property {RenderQualityLevel} qualityLevel - Current adaptive quality level */
+  private qualityLevel: RenderQualityLevel = 'high';
+
+  /**
+   * Apply adaptive quality level to ring/core shader detail.
+   *
+   * @param {RenderQualityLevel} level - New quality level
+   */
+  setQualityLevel(level: RenderQualityLevel): void {
+    this.qualityLevel = level;
+
+    if (this.coreMaterial && this.coreMaterial.uniforms.uDetailLevel) {
+      this.coreMaterial.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
+    }
+
+    for (const mat of this.ringMaterials) {
+      mat.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
+    }
+  }
 
   /**
    * Create the ring world mesh: a frozen core sphere with multiple torus rings.
@@ -134,6 +162,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
         fragmentShader: icyCoreFrag,
         uniforms: {
           uTime: { value: 0 },
+          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uDisplacementScale: { value: DEFAULT_ICY_DISPLACEMENT },
           uDeepColor: { value: new Color('#1a3a6c') },
           uIceColor: { value: new Color(coreColor) },
@@ -154,6 +183,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
     }
 
     coreMesh.name = 'ring-core';
+    coreMesh.frustumCulled = true;
     group.add(coreMesh);
 
     const startRadius = coreRadius + ringSpacing * 1.5;
@@ -174,6 +204,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
         fragmentShader: ringWorldFrag,
         uniforms: {
           uTime: { value: 0 },
+          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uNoiseScale: { value: DEFAULT_RING_NOISE_SCALE },
           uDisplacementScale: { value: DEFAULT_RING_DISPLACEMENT },
           uBaseColor: { value: ringColor.clone().multiplyScalar(shade) },
@@ -193,6 +224,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
 
       const ring = new Mesh(torusGeometry, ringMat);
       ring.name = `ring-${i}`;
+      ring.frustumCulled = true;
       ring.rotation.x = Math.PI / 2;
       ringPivot.add(ring);
 
@@ -208,6 +240,8 @@ export class RingWorldRenderer implements ICelestialRenderer {
     const glowColor = (config.coreColor as string) ?? '#c8dde8';
     const glow = createCelestialGlow(data.radius, glowColor, 2.5, 0.12);
     group.add(glow);
+
+    this.setQualityLevel(this.qualityLevel);
 
     return group;
   }

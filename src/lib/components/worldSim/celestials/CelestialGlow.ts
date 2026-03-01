@@ -33,6 +33,9 @@ const DEFAULT_GLOW_OPACITY = 0.18;
 /** @type {CanvasTexture | null} Cached glow texture shared by all instances */
 let cachedGlowTexture: CanvasTexture | null = null;
 
+/** @type {Map<string, CanvasTexture>} Cached gradient textures by size+stops key */
+const gradientTextureCache: Map<string, CanvasTexture> = new Map();
+
 /**
  * A color stop for a radial gradient texture.
  *
@@ -60,6 +63,13 @@ export function createRadialGradientTexture(
   size: number,
   stops: GradientStop[],
 ): CanvasTexture {
+  const cacheKey = `${size}|${JSON.stringify(stops)}`;
+  const cached = gradientTextureCache.get(cacheKey);
+
+  if (cached) {
+    return cached;
+  }
+
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
@@ -74,7 +84,10 @@ export function createRadialGradientTexture(
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, size, size);
 
-  return new CanvasTexture(canvas);
+  const texture = new CanvasTexture(canvas);
+  gradientTextureCache.set(cacheKey, texture);
+
+  return texture;
 }
 
 /** @constant {GradientStop[]} GLOW_STOPS - Default glow gradient stops */
