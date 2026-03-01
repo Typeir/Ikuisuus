@@ -196,26 +196,22 @@ describe('Renderer adaptive optimization behavior', () => {
     trackedMeshes.length = 0;
   });
 
-  it('StarRenderer lowers shader detail and swaps LOD geometry in low quality', () => {
+  it('StarRenderer swaps LOD geometry across quality levels', () => {
     const renderer = new StarRenderer();
     const mesh = renderer.createMesh(STAR_DATA);
     trackedMeshes.push({ renderer, mesh });
 
     const core = mesh.children.find((c) => c.name === 'star-core') as any;
-
-    expect(core.material.uniforms.uDetailLevel.value).toBe(2);
     const highGeometry = core.geometry;
 
     renderer.setQualityLevel?.('low');
-    expect(core.material.uniforms.uDetailLevel.value).toBe(0);
     expect(core.geometry).not.toBe(highGeometry);
 
     renderer.setQualityLevel?.('high');
-    expect(core.material.uniforms.uDetailLevel.value).toBe(2);
     expect(core.geometry).toBe(highGeometry);
   });
 
-  it('PlanetRenderer degrades shader detail, swaps LOD geometry and hides atmosphere at low quality', () => {
+  it('PlanetRenderer swaps LOD geometry and hides atmosphere at low quality', () => {
     const renderer = new PlanetRenderer();
     const mesh = renderer.createMesh(PLANET_DATA);
     trackedMeshes.push({ renderer, mesh });
@@ -227,68 +223,41 @@ describe('Renderer adaptive optimization behavior', () => {
       (c) => c.name === 'planet-atmosphere',
     ) as any;
 
-    expect(surface.material.uniforms.uDetailLevel.value).toBe(2);
     const highGeometry = surface.geometry;
 
     renderer.setQualityLevel?.('low');
-    expect(surface.material.uniforms.uDetailLevel.value).toBe(0);
     expect(atmosphere.visible).toBe(false);
     expect(surface.geometry).not.toBe(highGeometry);
 
     renderer.setQualityLevel?.('medium');
-    expect(surface.material.uniforms.uDetailLevel.value).toBe(1);
     expect(atmosphere.visible).toBe(true);
   });
 
-  it('GasGiantRenderer reduces cloud detail, hides overlay and haze at low quality', () => {
+  it('GasGiantRenderer hides overlay and haze at low quality, restores at high', () => {
     const renderer = new GasGiantRenderer();
     const mesh = renderer.createMesh(GAS_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const cloud0 = mesh.children.find(
-      (c) => c.name === 'gasGiant-cloud-0',
-    ) as any;
     const cloud1 = mesh.children.find(
       (c) => c.name === 'gasGiant-cloud-1',
     ) as any;
     const haze = mesh.children.find((c) => c.name === 'gasGiant-haze') as any;
 
-    expect(cloud0.material.uniforms.uDetailLevel.value).toBe(2);
-    expect(cloud1.material.uniforms.uDetailLevel.value).toBe(2);
-
     renderer.setQualityLevel?.('low');
-    expect(cloud0.material.uniforms.uDetailLevel.value).toBe(0);
-    expect(cloud1.material.uniforms.uDetailLevel.value).toBe(0);
     expect(cloud1.visible).toBe(false);
     expect(haze.visible).toBe(false);
 
     renderer.setQualityLevel?.('high');
-    expect(cloud0.material.uniforms.uDetailLevel.value).toBe(2);
-    expect(cloud1.material.uniforms.uDetailLevel.value).toBe(2);
     expect(cloud1.visible).toBe(true);
     expect(haze.visible).toBe(true);
   });
 
-  it('RingWorldRenderer applies quality detail to icy core and ring materials, hides rings at low', () => {
+  it('RingWorldRenderer hides rings at low quality', () => {
     const renderer = new RingWorldRenderer();
     const mesh = renderer.createMesh(RING_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const core = mesh.children.find((c) => c.name === 'ring-core') as any;
-    const ring = mesh.children
-      .flatMap((c) => c.children)
-      .find((c) => c.name === 'ring-0') as any;
-
-    expect(core.material.uniforms.uDetailLevel.value).toBe(2);
-    expect(ring.material.uniforms.uDetailLevel.value).toBe(2);
-
-    renderer.setQualityLevel?.('medium');
-    expect(core.material.uniforms.uDetailLevel.value).toBe(1);
-    expect(ring.material.uniforms.uDetailLevel.value).toBe(1);
-
     renderer.setQualityLevel?.('low');
-    expect(core.material.uniforms.uDetailLevel.value).toBe(0);
-    expect(ring.material.uniforms.uDetailLevel.value).toBe(0);
 
     const pivots = mesh.children.filter((c) =>
       c.name.startsWith('ring-pivot-'),
@@ -297,19 +266,12 @@ describe('Renderer adaptive optimization behavior', () => {
     expect(visibleCount).toBe(Math.min(2, 3));
   });
 
-  it('TowerWorldRenderer reduces tower segment detail and hides orbiters at low quality', () => {
+  it('TowerWorldRenderer hides orbiters at low quality and shows them at high', () => {
     const renderer = new TowerWorldRenderer();
     const mesh = renderer.createMesh(TOWER_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const segment = mesh.children.find(
-      (c) => c.name === 'tower-segment-0',
-    ) as any;
-
-    expect(segment.material.uniforms.uDetailLevel.value).toBe(2);
-
     renderer.setQualityLevel?.('low');
-    expect(segment.material.uniforms.uDetailLevel.value).toBe(0);
 
     const pivots = mesh.children.filter((c) =>
       c.name.startsWith('orbiter-pivot-'),
@@ -318,7 +280,6 @@ describe('Renderer adaptive optimization behavior', () => {
     expect(visibleCount).toBe(3);
 
     renderer.setQualityLevel?.('high');
-    expect(segment.material.uniforms.uDetailLevel.value).toBe(2);
     const visibleCountHigh = pivots.filter((p) => p.visible).length;
     expect(visibleCountHigh).toBe(10);
   });

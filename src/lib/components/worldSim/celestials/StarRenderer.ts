@@ -58,13 +58,6 @@ const GLOW_TEXTURE_SIZE = 256;
 /** @constant {number} DEFAULT_DISPLACEMENT_SCALE - Default vertex displacement amplitude for the star surface */
 const DEFAULT_DISPLACEMENT_SCALE = 12;
 
-/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
-const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
-  high: 2,
-  medium: 1,
-  low: 0,
-};
-
 /**
  * Gradient stops for the star corona glow texture.
  * Brighter center with smooth falloff for a hot emissive look.
@@ -111,11 +104,6 @@ export class StarRenderer implements ICelestialRenderer {
   setQualityLevel(level: RenderQualityLevel): void {
     this.qualityLevel = level;
 
-    if (this.surfaceMaterial) {
-      this.surfaceMaterial.uniforms.uDetailLevel.value =
-        QUALITY_TO_DETAIL[level];
-    }
-
     if (this.coreMesh && this.coreLOD) {
       this.coreMesh.geometry = this.coreLOD[level];
     }
@@ -147,14 +135,13 @@ export class StarRenderer implements ICelestialRenderer {
       uniforms: {
         uTime: { value: 0 },
         uDisplacementScale: { value: displacementScale },
-        uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
         uEmissiveColor: { value: emissiveColor },
         uCoronaColor: { value: coronaColor },
       },
     });
     this.coreMesh = new Mesh(coreGeometry, this.surfaceMaterial);
     this.coreMesh.name = 'star-core';
-    this.coreMesh.frustumCulled = true;
+    this.coreMesh.frustumCulled = false;
     group.add(this.coreMesh);
 
     const coronaMaterial = new SpriteMaterial({

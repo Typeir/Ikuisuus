@@ -63,13 +63,6 @@ const DEFAULT_BAND_FREQUENCY = 3.0;
 /** @constant {number} DEFAULT_TIME_SCALE - Default time scale for cloud animation speed */
 const DEFAULT_TIME_SCALE = 0.08;
 
-/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
-const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
-  high: 2,
-  medium: 1,
-  low: 0,
-};
-
 /**
  * Gradient stops for the gas giant atmospheric haze texture.
  * Softer center with faster falloff than star corona.
@@ -182,10 +175,6 @@ export class GasGiantRenderer implements ICelestialRenderer {
   setQualityLevel(level: RenderQualityLevel): void {
     this.qualityLevel = level;
 
-    for (const mat of this.layerMaterials) {
-      mat.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
-    }
-
     for (let i = 0; i < this.layerMeshes.length; i++) {
       const mesh = this.layerMeshes[i];
       const lod = this.layerLOD[i];
@@ -260,7 +249,6 @@ export class GasGiantRenderer implements ICelestialRenderer {
           uTimeScale: { value: timeScale * layer.timeScaleMultiplier },
           uLayerOpacity: { value: layer.opacity },
           uNoiseOffset: { value: layer.noiseOffset },
-          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uBandColor1: { value: bandColor1.clone() },
           uBandColor2: { value: bandColor2.clone() },
           uStormColor: { value: stormColor.clone() },

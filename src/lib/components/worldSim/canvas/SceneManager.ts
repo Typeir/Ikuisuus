@@ -12,23 +12,24 @@
  */
 
 import {
-    AmbientLight,
-    BufferGeometry,
-    Color,
-    Float32BufferAttribute,
-    PerspectiveCamera,
-    PointLight,
-    Points,
-    PointsMaterial,
-    Scene,
-    WebGLRenderer,
+  AmbientLight,
+  BufferGeometry,
+  Color,
+  Float32BufferAttribute,
+  PerspectiveCamera,
+  PointLight,
+  Points,
+  PointsMaterial,
+  Scene,
+  WebGLRenderer,
 } from 'three';
 import { DEFAULT_CAMERA_LOOK_AT, DEFAULT_CAMERA_POSITION } from '../constants';
+import { PixelatePass } from './PixelatePass';
 import {
-    RenderLifecycle,
-    RenderPhase,
-    type FrameContext,
-    type LifecycleCallback,
+  RenderLifecycle,
+  RenderPhase,
+  type FrameContext,
+  type LifecycleCallback,
 } from './RenderLifecycle';
 
 /** @constant {number} STARFIELD_COUNT - Number of background starfield particles */
@@ -98,6 +99,9 @@ export class SceneManager {
   /** @property {RenderLifecycle} lifecycle - Phase-based frame event system */
   public readonly lifecycle: RenderLifecycle;
 
+  /** @property {PixelatePass} pixelatePass - Post-processing pixelation pass */
+  public readonly pixelatePass: PixelatePass;
+
   /** @property {HTMLElement} container - The DOM element hosting the canvas */
   private container: HTMLElement;
 
@@ -144,6 +148,11 @@ export class SceneManager {
 
     this.renderer.setSize(width, height);
     this.container.appendChild(this.renderer.domElement);
+
+    this.pixelatePass = new PixelatePass(
+      width * this.renderer.getPixelRatio(),
+      height * this.renderer.getPixelRatio(),
+    );
 
     this.setupLighting();
     this.createStarfield();
@@ -209,6 +218,10 @@ export class SceneManager {
     this.renderer.setPixelRatio(effective);
     const { width, height } = this.getContainerSize();
     this.renderer.setSize(width, height);
+    this.pixelatePass.handleResize(
+      width * this.renderer.getPixelRatio(),
+      height * this.renderer.getPixelRatio(),
+    );
   }
 
   /**
@@ -243,6 +256,7 @@ export class SceneManager {
       }
     });
 
+    this.pixelatePass.dispose();
     this.renderer.dispose();
 
     if (this.renderer.domElement.parentElement) {
@@ -280,7 +294,7 @@ export class SceneManager {
     };
 
     this.lifecycle.runPreRenderPhases(ctx);
-    this.renderer.render(this.scene, this.camera);
+    this.pixelatePass.render(this.renderer, this.scene, this.camera);
     this.lifecycle.runPostRenderPhases(ctx);
   }
 
@@ -342,6 +356,10 @@ export class SceneManager {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
+    this.pixelatePass.handleResize(
+      width * this.renderer.getPixelRatio(),
+      height * this.renderer.getPixelRatio(),
+    );
   }
 
   /**

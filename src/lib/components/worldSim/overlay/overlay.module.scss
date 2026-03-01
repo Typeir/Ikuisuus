@@ -205,6 +205,11 @@
   pointer-events: auto;
   z-index: 18;
   animation: contentPanelSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  border: 1px solid var(--worldsim-panel-border);
+  border-radius: 8px;
+  background: var(--worldsim-panel-bg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
 
   @media (max-width: 768px) {
     display: none;
@@ -213,11 +218,8 @@
 
 .contentPanel {
   position: relative;
-  border: 1px solid var(--worldsim-panel-border);
-  border-radius: 0 0 10px 10px;
   background: var(--color-bg);
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   scrollbar-width: thin;
   scrollbar-color: var(--color-secondary) var(--color-transparent);
   height: 100%;
@@ -252,7 +254,6 @@
   height: 100%;
   min-height: 300px;
   border: none;
-  border-radius: 0 0 10px 10px;
   background: var(--color-bg);
 }
 

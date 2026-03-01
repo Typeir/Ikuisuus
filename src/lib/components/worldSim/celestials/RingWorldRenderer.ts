@@ -19,7 +19,7 @@ import {
     Object3D,
     ShaderMaterial,
     TorusGeometry,
-    Vector3
+    Vector3,
 } from 'three';
 import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import {
@@ -73,13 +73,6 @@ const DEFAULT_RING_NOISE_SCALE = 0.8;
 /** @constant {number} DEFAULT_RING_DISPLACEMENT - Default ring surface displacement amplitude */
 const DEFAULT_RING_DISPLACEMENT = 0.25;
 
-/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
-const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
-  high: 2,
-  medium: 1,
-  low: 0,
-};
-
 /**
  * Renders a ring world as a frozen core sphere surrounded by independently
  * spinning rings at different radii and tilt angles. When `icyCore` is set,
@@ -124,19 +117,11 @@ export class RingWorldRenderer implements ICelestialRenderer {
   setQualityLevel(level: RenderQualityLevel): void {
     this.qualityLevel = level;
 
-    if (this.coreMaterial && this.coreMaterial.uniforms.uDetailLevel) {
-      this.coreMaterial.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
-    }
-
     if (this.coreMesh) {
       const lodSet = this.coreLOD ?? this.coreBasicLOD;
       if (lodSet) {
         this.coreMesh.geometry = lodSet[level];
       }
-    }
-
-    for (const mat of this.ringMaterials) {
-      mat.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
     }
 
     const maxRings = MAX_VISIBLE_RINGS[level];
@@ -190,7 +175,6 @@ export class RingWorldRenderer implements ICelestialRenderer {
         fragmentShader: icyCoreFrag,
         uniforms: {
           uTime: { value: 0 },
-          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uDisplacementScale: { value: DEFAULT_ICY_DISPLACEMENT },
           uDeepColor: { value: new Color('#1a3a6c') },
           uIceColor: { value: new Color(coreColor) },
@@ -211,7 +195,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
     }
 
     coreMesh.name = 'ring-core';
-    coreMesh.frustumCulled = true;
+    coreMesh.frustumCulled = false;
     this.coreMesh = coreMesh;
     group.add(coreMesh);
 
@@ -233,7 +217,6 @@ export class RingWorldRenderer implements ICelestialRenderer {
         fragmentShader: ringWorldFrag,
         uniforms: {
           uTime: { value: 0 },
-          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uNoiseScale: { value: DEFAULT_RING_NOISE_SCALE },
           uDisplacementScale: { value: DEFAULT_RING_DISPLACEMENT },
           uBaseColor: { value: ringColor.clone().multiplyScalar(shade) },
@@ -255,7 +238,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
 
       const ring = new Mesh(torusGeometry, ringMat);
       ring.name = `ring-${i}`;
-      ring.frustumCulled = true;
+      ring.frustumCulled = false;
       ring.rotation.x = Math.PI / 2;
       ringPivot.add(ring);
 

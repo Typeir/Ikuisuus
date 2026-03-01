@@ -64,13 +64,6 @@ const vertWithNoise = noise3d + '\n' + towerVert;
 /** @constant {string} DEFAULT_RIDGE_COLOR - Default ridge accent colour for tower */
 const DEFAULT_RIDGE_COLOR = '#d4c8a0';
 
-/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
-const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
-  high: 2,
-  medium: 1,
-  low: 0,
-};
-
 /**
  * Simple deterministic pseudo-random number generator using a hash-style seed.
  * Produces values in [0, 1) that are stable across sessions for a given seed.
@@ -113,10 +106,6 @@ export class TowerWorldRenderer implements ICelestialRenderer {
    */
   setQualityLevel(level: RenderQualityLevel): void {
     this.qualityLevel = level;
-
-    for (const mat of this.towerMaterials) {
-      mat.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
-    }
 
     const maxOrbiters = MAX_VISIBLE_ORBITERS[level];
     for (let i = 0; i < this.orbiterPivots.length; i++) {
@@ -164,7 +153,6 @@ export class TowerWorldRenderer implements ICelestialRenderer {
         fragmentShader: towerFrag,
         uniforms: {
           uTime: { value: 0 },
-          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uNoiseScale: { value: DEFAULT_TOWER_NOISE_SCALE },
           uDisplacementScale: { value: DEFAULT_TOWER_DISPLACEMENT },
           uBaseColor: { value: towerColor.clone().multiplyScalar(shade) },
@@ -177,7 +165,7 @@ export class TowerWorldRenderer implements ICelestialRenderer {
       const segment = new Mesh(segmentGeometry, segmentMaterial);
       segment.position.y = segmentHeight * (i + 0.5) - towerHeight * 0.5;
       segment.name = `tower-segment-${i}`;
-      segment.frustumCulled = true;
+      segment.frustumCulled = false;
       group.add(segment);
       this.towerMaterials.push(segmentMaterial);
     }
@@ -207,7 +195,6 @@ export class TowerWorldRenderer implements ICelestialRenderer {
         fragmentShader: towerFrag,
         uniforms: {
           uTime: { value: 0 },
-          uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
           uNoiseScale: { value: DEFAULT_TOWER_NOISE_SCALE * 1.5 },
           uDisplacementScale: { value: DEFAULT_TOWER_DISPLACEMENT * 0.6 },
           uBaseColor: { value: towerColor.clone().multiplyScalar(shade) },
@@ -219,7 +206,7 @@ export class TowerWorldRenderer implements ICelestialRenderer {
       const pillar = new Mesh(pillarGeometry, pillarMaterial);
       pillar.position.x = orbitRadius;
       pillar.position.y = heightOffset;
-      pillar.frustumCulled = true;
+      pillar.frustumCulled = false;
       this.towerMaterials.push(pillarMaterial);
 
       const pillarGlow = createCelestialGlow(

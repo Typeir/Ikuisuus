@@ -7,7 +7,6 @@
 uniform float uTime;
 uniform float uNoiseScale;
 uniform float uDisplacementScale;
-uniform float uDetailLevel;
 
 varying vec3 vNormal;
 varying vec3 vWorldPosition;
@@ -26,12 +25,8 @@ void main() {
   /* Vertical striations — stretch noise along Y for column-like ridges */
   vec3 striated = vec3(noiseCoord.x * 2.0, noiseCoord.y * 0.3, noiseCoord.z * 2.0);
   float n1 = snoise(striated) * 0.5;
-  float n2 = uDetailLevel > 0.5
-    ? snoise(striated * 3.1 + vec3(2.4, 7.1, 4.3)) * 0.3
-    : 0.0;
-  float n3 = uDetailLevel > 1.5
-    ? snoise(noiseCoord * 6.0 + vec3(1.1, 3.8, 9.5)) * 0.2
-    : 0.0;
+  float n2 = snoise(striated * 3.1 + vec3(2.4, 7.1, 4.3)) * 0.3;
+  float n3 = snoise(noiseCoord * 6.0 + vec3(1.1, 3.8, 9.5)) * 0.2;
   float elevation = n1 + n2 + n3;
 
   vElevation = elevation;

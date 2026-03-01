@@ -69,10 +69,7 @@ vi.mock('@/lib/components/ui/draggable/Draggable', () => ({
       data-resizable={resizable ? 'true' : undefined}
       data-default-height={defaultHeight ?? undefined}>
       {onClose && (
-        <button
-          onClick={onClose}
-          type='button'
-          aria-label='Close panel'>
+        <button onClick={onClose} type='button' aria-label='Close panel'>
           ✕
         </button>
       )}
@@ -227,11 +224,7 @@ describe('ContentPanel', () => {
 
   it('reopens panel when body selection changes after close', async () => {
     /** Helper that exposes dispatch for dynamic selection changes */
-    function DynamicSelector({
-      children,
-    }: {
-      children: React.ReactNode;
-    }) {
+    function DynamicSelector({ children }: { children: React.ReactNode }) {
       const dispatch = useWorldSimDispatch();
       React.useEffect(() => {
         dispatch({ type: WorldSimActionType.Initialize });
@@ -310,6 +303,9 @@ describe('ContentPanel', () => {
     );
 
     const draggable = screen.getByTestId('content-panel-draggable');
-    expect(draggable).toHaveAttribute('data-default-height', 'calc(100% - 48px)');
+    expect(draggable).toHaveAttribute(
+      'data-default-height',
+      'calc(100% - 132px)',
+    );
   });
 });

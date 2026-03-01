@@ -1,7 +1,7 @@
 /**
  * @fileoverview WorldSimMediator Performance Tests
- * @description Verifies adaptive quality propagation and frame-stride update
- * throttling for far and near celestial bodies.
+ * @description Verifies adaptive quality propagation to celestial renderers
+ * and consistent per-frame update scheduling.
  *
  * @module tests/unit/worldSim/optimization/WorldSimMediator.performance
  */
@@ -210,7 +210,7 @@ describe('WorldSimMediator performance behavior', () => {
     mediator.dispose();
   });
 
-  it('reduces far-body update frequency at low quality using frame stride', () => {
+  it('calls renderer.update every frame regardless of quality or body distance', () => {
     const mediator = new WorldSimMediator(
       createMockSceneManager() as never,
       createMockCameraController() as never,
@@ -220,39 +220,18 @@ describe('WorldSimMediator performance behavior', () => {
     );
 
     mediator.initialize();
+
+    /* Degrade to low quality via sustained low FPS */
     runSimulationFrames(1, 220, 1 / 20);
 
-    bodyRenderer.update.mockClear();
-    runSimulationFrames(1001, 20, 1 / 20);
-
-    expect(bodyRenderer.update.mock.calls.length).toBeLessThanOrEqual(6);
-
-    mediator.dispose();
-  });
-
-  it('keeps near-body updates denser than far-body updates at low quality', () => {
-    const mediator = new WorldSimMediator(
-      createMockSceneManager() as never,
-      createMockCameraController() as never,
-      createMockProjectionBridge() as never,
-      createMockEventBus() as never,
-      vi.fn(),
-    );
-
-    mediator.initialize();
-    runSimulationFrames(1, 220, 1 / 20);
-
-    bodyRenderer.update.mockClear();
-    orbitPosition = new Vector3(500, 0, 0);
-    runSimulationFrames(2001, 20, 1 / 20);
-    const nearUpdates = bodyRenderer.update.mock.calls.length;
-
-    bodyRenderer.update.mockClear();
+    /* Body is far away (5000 units) and quality is low */
     orbitPosition = new Vector3(5000, 0, 0);
-    runSimulationFrames(3001, 20, 1 / 20);
-    const farUpdates = bodyRenderer.update.mock.calls.length;
+    bodyRenderer.update.mockClear();
+    const frameCount = 20;
+    runSimulationFrames(1001, frameCount, 1 / 20);
 
-    expect(nearUpdates).toBeGreaterThan(farUpdates);
+    /* update must be called once per frame — no stride throttling */
+    expect(bodyRenderer.update.mock.calls.length).toBe(frameCount);
 
     mediator.dispose();
   });

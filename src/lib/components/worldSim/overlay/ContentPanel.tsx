@@ -4,8 +4,8 @@
  * site page for the selected celestial body or region. Uses the `?embed=true`
  * query parameter so the loaded page strips its sidebar/navigation, showing
  * only the content. Slides in when a body or region with a valid contentPath
- * is selected. Positioned to the left of the InfoPanel and can be dragged,
- * resized, and closed.
+ * is selected. Positioned on the left side of the screen under the world sim
+ * title and can be dragged, resized, and closed.
  *
  * @module worldSim/overlay/ContentPanel
  * @version 2.0.0
@@ -23,24 +23,17 @@ import { useWorldSimState } from '../context/WorldSimContext';
 import { ZoomLevel } from '../context/worldSimTypes';
 import styles from './overlay.module.scss';
 
-/** @constant {number} INFO_PANEL_WIDTH - Width of the info panel in pixels */
-const INFO_PANEL_WIDTH = 280;
-
-/** @constant {number} INFO_PANEL_GAP - Gap between info panel right edge and viewport right edge */
-const INFO_PANEL_GAP = 16;
-
-/** @constant {number} PANEL_SPACING - Gap between content panel and info panel */
-const PANEL_SPACING = 12;
-
 /** @constant {number} CONTENT_PANEL_WIDTH - Default width of the content panel in pixels */
 const CONTENT_PANEL_WIDTH = 420;
 
-/** @constant {number} CONTENT_PANEL_TOP - Top margin from the overlay edge */
-const CONTENT_PANEL_TOP = 16;
+/** @constant {number} CONTENT_PANEL_LEFT - Left margin from the overlay edge */
+const CONTENT_PANEL_LEFT = 32;
+
+/** @constant {number} CONTENT_PANEL_TOP - Top position, accounting for header height (~80px) */
+const CONTENT_PANEL_TOP = 100;
 
 /**
- * Compute initial position from the parent container bounds so the panel
- * sits to the left of the InfoPanel with proper spacing.
+ * Compute initial position so the panel sits on the left side under the header.
  *
  * @param {{ width: number; height: number }} parentBounds - Dimensions of the bounding parent
  * @returns {{ x: number; y: number }} Computed initial position
@@ -49,9 +42,8 @@ function computeInitialPosition(parentBounds: {
   width: number;
   height: number;
 }): { x: number; y: number } {
-  const infoPanelRight = INFO_PANEL_GAP + INFO_PANEL_WIDTH + PANEL_SPACING;
   return {
-    x: Math.max(0, parentBounds.width - infoPanelRight - CONTENT_PANEL_WIDTH),
+    x: CONTENT_PANEL_LEFT,
     y: CONTENT_PANEL_TOP,
   };
 }
@@ -149,7 +141,7 @@ export function ContentPanel(): React.ReactElement | null {
       initialPosition={computeInitialPosition}
       className={styles.contentPanelDraggable}
       defaultWidth={CONTENT_PANEL_WIDTH}
-      defaultHeight='calc(100% - 48px)'
+      defaultHeight={`calc(100% - ${CONTENT_PANEL_TOP + 32}px)`}
       testId='content-panel-draggable'
       resizable
       onClose={handleClose}>

@@ -16,7 +16,6 @@ uniform float uTimeScale;
 uniform float uBandFrequency;
 uniform float uLayerOpacity;
 uniform float uNoiseOffset;
-uniform float uDetailLevel;
 
 varying vec3 vNormal;
 varying vec3 vWorldPosition;
@@ -33,9 +32,7 @@ void main() {
     wp.z * 0.02
   );
   float bandN = snoise(bandCoord + vec3(0.0, uTime * uTimeScale * 0.5, 0.0));
-  float bandFine = uDetailLevel > 0.5
-    ? snoise(bandCoord * 2.5 + vec3(uTime * uTimeScale, 0.0, 0.0))
-    : 0.0;
+  float bandFine = snoise(bandCoord * 2.5 + vec3(uTime * uTimeScale, 0.0, 0.0));
   bandN += bandFine * 0.3;
 
   float t = clamp(bandN * 0.5 + 0.5, 0.0, 1.0);
@@ -46,9 +43,7 @@ void main() {
   /* Swirl detail — low-frequency turbulence for depth variation */
   vec3 swirlCoord = wp * 0.015 + vec3(uTime * uTimeScale * 0.3);
   float swirl = snoise(swirlCoord) * 0.5
-              + (uDetailLevel > 1.5
-                ? snoise(swirlCoord * 2.3 + vec3(5.2, 1.3, 2.8)) * 0.3
-                : 0.0);
+              + snoise(swirlCoord * 2.3 + vec3(5.2, 1.3, 2.8)) * 0.3;
   float turbulence = clamp(swirl * 0.5 + 0.5, 0.0, 1.0);
 
   color *= 0.8 + turbulence * 0.4;

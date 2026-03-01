@@ -22,24 +22,21 @@ import type { SceneManager } from './canvas/SceneManager';
 import { CelestialBodyFactory } from './celestials/CelestialBodyFactory';
 import { CelestialRegistry } from './celestials/CelestialRegistry';
 import type {
-    CelestialBodyData,
-    CelestialRendererType,
-    ICelestialRenderer,
-    SceneContext,
+  CelestialBodyData,
+  CelestialRendererType,
+  ICelestialRenderer,
+  SceneContext,
 } from './celestials/interfaces';
 import {
-    computeOrbitalPosition,
-    surfacePositionToWorld,
+  computeOrbitalPosition,
+  surfacePositionToWorld,
 } from './celestials/OrbitalMechanics';
 import { createAllOrbitLines } from './celestials/OrbitLineFactory';
 import {
-    WorldSimActionType,
-    type WorldSimAction,
+  WorldSimActionType,
+  type WorldSimAction,
 } from './context/worldSimTypes';
-import {
-    AdaptivePerformanceController,
-    type RenderQualityProfile,
-} from './optimization/AdaptivePerformanceController';
+import { AdaptivePerformanceController } from './optimization/AdaptivePerformanceController';
 import { DPR_CAP } from './optimization/GeometryBudgets';
 import { RaycastService } from './RaycastService';
 
@@ -231,8 +228,6 @@ export class WorldSimMediator {
       this.applyQualityToRenderers();
     }
 
-    const qualityProfile = this.performanceController.getProfile();
-
     const ctx: SceneContext = {
       camera: this.sceneManager.camera,
       scene: this.sceneManager.scene,
@@ -263,15 +258,7 @@ export class WorldSimMediator {
         }
       }
 
-      const updateStride = this.getBodyUpdateStride(
-        entry,
-        qualityProfile,
-        frameCtx.frame,
-      );
-
-      if (frameCtx.frame % updateStride === 0) {
-        entry.renderer.update(entry.mesh, time, deltaTime, ctx);
-      }
+      entry.renderer.update(entry.mesh, time, deltaTime, ctx);
     });
 
     if (this.everdarkRenderer && this.everdarkMesh) {
@@ -639,35 +626,5 @@ export class WorldSimMediator {
     }
 
     this.sceneManager.setPixelRatioCap(DPR_CAP[level]);
-  }
-
-  /**
-   * Compute frame-stride for renderer updates using distance-based LOD throttling.
-   * Followed body remains real-time regardless of profile.
-   *
-   * @private
-   * @param {CelestialEntry} entry - Celestial runtime entry
-   * @param {RenderQualityProfile} profile - Active adaptive quality profile
-   * @param {number} _frame - Current frame counter
-   * @returns {number} Update stride in frames
-   */
-  private getBodyUpdateStride(
-    entry: CelestialEntry,
-    profile: RenderQualityProfile,
-    _frame: number,
-  ): number {
-    if (entry.data.id === this.followedBodyId) {
-      return 1;
-    }
-
-    const distance = this.sceneManager.camera.position.distanceTo(
-      entry.mesh.position,
-    );
-
-    if (distance > profile.farDistance) {
-      return profile.farUpdateStride;
-    }
-
-    return profile.nearUpdateStride;
   }
 }

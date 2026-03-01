@@ -25,8 +25,10 @@ vi.mock('three', async () => {
   class MockWebGLRenderer {
     domElement = document.createElement('canvas');
     setPixelRatio = vi.fn();
+    getPixelRatio = vi.fn(() => 1);
     setClearColor = vi.fn();
     setSize = vi.fn();
+    setRenderTarget = vi.fn();
     render = vi.fn();
     dispose = vi.fn();
   }
@@ -38,6 +40,13 @@ vi.mock('three', async () => {
 });
 
 import { SceneManager } from '@/lib/components/worldSim/canvas/SceneManager';
+
+vi.mock('@/lib/components/worldSim/shaders/pixelate.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0.0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/pixelate.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1.0); }',
+}));
 
 describe('SceneManager', () => {
   let container: HTMLDivElement;
@@ -68,6 +77,12 @@ describe('SceneManager', () => {
 
   it('creates a lifecycle instance', () => {
     expect(manager.lifecycle).toBeDefined();
+  });
+
+  it('exposes a pixelatePass instance', () => {
+    expect(manager.pixelatePass).toBeDefined();
+    expect(typeof manager.pixelatePass.setPixelCount).toBe('function');
+    expect(typeof manager.pixelatePass.setEnabled).toBe('function');
   });
 
   it('onAnimate registers an Update phase callback', () => {

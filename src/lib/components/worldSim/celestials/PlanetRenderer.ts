@@ -18,7 +18,7 @@ import {
   Mesh,
   Object3D,
   ShaderMaterial,
-  Vector3
+  Vector3,
 } from 'three';
 import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import {
@@ -66,13 +66,6 @@ const DEFAULT_NOISE_SEED = 0;
 
 /** @constant {number} DEFAULT_POLAR_LATITUDE - Default polar ice start as normal.y threshold */
 const DEFAULT_POLAR_LATITUDE = 0.75;
-
-/** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
-const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
-  high: 2,
-  medium: 1,
-  low: 0,
-};
 
 /**
  * Default terrain colour stops: ocean → lowland → highlands → mountains → peaks.
@@ -122,11 +115,6 @@ export class PlanetRenderer implements ICelestialRenderer {
    */
   setQualityLevel(level: RenderQualityLevel): void {
     this.qualityLevel = level;
-
-    if (this.surfaceMaterial) {
-      this.surfaceMaterial.uniforms.uDetailLevel.value =
-        QUALITY_TO_DETAIL[level];
-    }
 
     if (this.surfaceMesh && this.surfaceLOD) {
       this.surfaceMesh.geometry = this.surfaceLOD[level];
@@ -179,7 +167,6 @@ export class PlanetRenderer implements ICelestialRenderer {
         uOceanThreshold: {
           value: (config.oceanThreshold as number) ?? DEFAULT_OCEAN_THRESHOLD,
         },
-        uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
         uSeed: { value: (config.noiseSeed as number) ?? DEFAULT_NOISE_SEED },
         uColor0: { value: colors[0] ?? new Color('#2244aa') },
         uColor1: { value: colors[1] ?? new Color('#44aa44') },
@@ -204,7 +191,7 @@ export class PlanetRenderer implements ICelestialRenderer {
 
     const planetMesh = new Mesh(geometry, this.surfaceMaterial);
     planetMesh.name = 'planet-surface';
-    planetMesh.frustumCulled = true;
+    planetMesh.frustumCulled = false;
     this.surfaceMesh = planetMesh;
     group.add(planetMesh);
 
