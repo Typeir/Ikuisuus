@@ -32,10 +32,37 @@ import {
 } from './RenderLifecycle';
 
 /** @constant {number} STARFIELD_COUNT - Number of background starfield particles */
-const STARFIELD_COUNT = 2000;
+const STARFIELD_COUNT = 1200;
 
 /** @constant {number} STARFIELD_SPREAD - Spread radius for starfield particles */
 const STARFIELD_SPREAD = 12000;
+
+/**
+ * Detect whether the current device is likely a mobile/touch device.
+ * Combines touch-capability with viewport width for reliability.
+ *
+ * @function isMobileDevice
+ * @returns {boolean} True if the device appears to be mobile
+ */
+function isMobileDevice(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const hasTouch = navigator.maxTouchPoints > 0;
+  const isSmall = window.innerWidth <= 768;
+  return hasTouch && isSmall;
+}
+
+/**
+ * Compute the initial maximum pixel ratio based on device capability.
+ * Mobile devices get DPR 1 to cut fill rate by 4× vs DPR 2.
+ *
+ * @function getInitialMaxDPR
+ * @returns {number} Maximum pixel ratio for the WebGL renderer
+ */
+function getInitialMaxDPR(): number {
+  if (isMobileDevice()) return 1;
+  if (navigator.maxTouchPoints > 0) return 1.5;
+  return 2;
+}
 
 /**
  * Manages the Three.js rendering lifecycle.
@@ -99,11 +126,11 @@ export class SceneManager {
     this.lifecycle = new RenderLifecycle();
 
     this.renderer = new WebGLRenderer({
-      antialias: true,
+      antialias: !isMobileDevice(),
       alpha: false,
       powerPreference: 'high-performance',
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, getInitialMaxDPR()));
     this.renderer.setClearColor(new Color('#050508'), 1);
 
     this.scene = new Scene();
@@ -166,6 +193,20 @@ export class SceneManager {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
     }
+  }
+
+  /**
+   * Adaptively cap the WebGL pixel ratio. Called by the mediator when
+   * the performance controller transitions between quality tiers.
+   * Reduces fill rate on struggling devices without a full resize.
+   *
+   * @param {number} maxDPR - Maximum device pixel ratio to allow
+   */
+  setPixelRatioCap(maxDPR: number): void {
+    const effective = Math.min(window.devicePixelRatio, maxDPR);
+    this.renderer.setPixelRatio(effective);
+    const { width, height } = this.getContainerSize();
+    this.renderer.setSize(width, height);
   }
 
   /**

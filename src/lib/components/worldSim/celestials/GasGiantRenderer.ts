@@ -27,12 +27,16 @@ import {
 import gasGiantFrag from '../shaders/gasGiant.frag.glsl';
 import gasGiantVert from '../shaders/gasGiant.vert.glsl';
 import noise3d from '../shaders/noise3d.glsl';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
+import {
+    GAS_GIANT_LOD,
+    type SphereLODSet,
+} from '../optimization/GeometryBudgets';
 import {
     createCelestialGlow,
     createRadialGradientTexture,
 } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
-import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
     BoundaryData,
     CelestialBodyData,
@@ -55,9 +59,6 @@ const HAZE_TEXTURE_SIZE = 256;
 
 /** @constant {number} DEFAULT_BAND_FREQUENCY - Default vertical frequency for cloud bands */
 const DEFAULT_BAND_FREQUENCY = 3.0;
-
-/** @constant {number} GAS_GIANT_SEGMENTS - Sphere segments for the base cloud layer */
-const GAS_GIANT_SEGMENTS = 48;
 
 /** @constant {number} DEFAULT_TIME_SCALE - Default time scale for cloud animation speed */
 const DEFAULT_TIME_SCALE = 0.08;
@@ -164,6 +165,12 @@ export class GasGiantRenderer implements ICelestialRenderer {
   /** @property {ShaderMaterial[]} layerMaterials - All cloud layer materials for time updates */
   private layerMaterials: ShaderMaterial[] = [];
 
+  /** @property {Mesh[]} layerMeshes - All cloud layer meshes for LOD swapping */
+  private layerMeshes: Mesh[] = [];
+
+  /** @property {SphereLODSet[]} layerLOD - Per-layer LOD geometry sets */
+  private layerLOD: SphereLODSet[] = [];
+
   /** @property {RenderQualityLevel} qualityLevel - Current adaptive quality level */
   private qualityLevel: RenderQualityLevel = 'high';
 
@@ -177,6 +184,17 @@ export class GasGiantRenderer implements ICelestialRenderer {
 
     for (const mat of this.layerMaterials) {
       mat.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
+    }
+
+    for (let i = 0; i < this.layerMeshes.length; i++) {
+      const mesh = this.layerMeshes[i];
+      const lod = this.layerLOD[i];
+      if (mesh && lod) {
+        mesh.geometry = lod[level];
+      }
+      if (i > 0) {
+        mesh.visible = level !== 'low';
+      }
     }
 
     if (this.hazeSprite) {
@@ -211,11 +229,27 @@ export class GasGiantRenderer implements ICelestialRenderer {
 
     for (let i = 0; i < CLOUD_LAYER_CONFIGS.length; i++) {
       const layer = CLOUD_LAYER_CONFIGS[i];
-      const geometry = new SphereGeometry(
-        data.radius * layer.radiusScale,
-        layer.segments,
-        layer.segments,
-      );
+      const isBase = i === 0;
+      const segTable = isBase ? GAS_GIANT_LOD : GAS_GIANT_LOD;
+      const lodSet: SphereLODSet = {
+        high: new SphereGeometry(
+          data.radius * layer.radiusScale,
+          isBase ? segTable.high.base : segTable.high.overlay,
+          isBase ? segTable.high.base : segTable.high.overlay,
+        ),
+        medium: new SphereGeometry(
+          data.radius * layer.radiusScale,
+          isBase ? segTable.medium.base : segTable.medium.overlay,
+          isBase ? segTable.medium.base : segTable.medium.overlay,
+        ),
+        low: new SphereGeometry(
+          data.radius * layer.radiusScale,
+          isBase ? segTable.low.base : segTable.low.overlay,
+          isBase ? segTable.low.base : segTable.low.overlay,
+        ),
+      };
+      this.layerLOD.push(lodSet);
+      const geometry = lodSet[this.qualityLevel];
 
       const material = new ShaderMaterial({
         vertexShader: noise3d + '\n' + gasGiantVert,
@@ -247,6 +281,7 @@ export class GasGiantRenderer implements ICelestialRenderer {
       shell.frustumCulled = true;
       group.add(shell);
       this.layerMaterials.push(material);
+      this.layerMeshes.push(shell);
 
       if (i === 0) {
         this.bodyMesh = shell;
@@ -317,6 +352,13 @@ export class GasGiantRenderer implements ICelestialRenderer {
   dispose(mesh: Object3D): void {
     disposeSceneGraph(mesh);
     this.layerMaterials = [];
+    this.layerMeshes = [];
+    for (const lodSet of this.layerLOD) {
+      lodSet.high.dispose();
+      lodSet.medium.dispose();
+      lodSet.low.dispose();
+    }
+    this.layerLOD = [];
     this.hazeSprite = null;
     this.bodyMesh = null;
     this.bodyMaterial = null;

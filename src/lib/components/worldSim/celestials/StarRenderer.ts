@@ -26,9 +26,15 @@ import {
 import noise3d from '../shaders/noise3d.glsl';
 import starFrag from '../shaders/star.frag.glsl';
 import starVert from '../shaders/star.vert.glsl';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
+import {
+    createSphereLODSet,
+    disposeSphereLODSet,
+    STAR_RING_SEGMENTS,
+    type SphereLODSet,
+} from '../optimization/GeometryBudgets';
 import { createRadialGradientTexture } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
-import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
     BoundaryData,
     CelestialBodyData,
@@ -51,9 +57,6 @@ const GLOW_TEXTURE_SIZE = 256;
 
 /** @constant {number} DEFAULT_DISPLACEMENT_SCALE - Default vertex displacement amplitude for the star surface */
 const DEFAULT_DISPLACEMENT_SCALE = 12;
-
-/** @constant {number} SPHERE_SEGMENTS - Sphere segment count for sufficient displacement detail */
-const SPHERE_SEGMENTS = 64;
 
 /** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
 const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
@@ -94,6 +97,9 @@ export class StarRenderer implements ICelestialRenderer {
   /** @property {ShaderMaterial | null} surfaceMaterial - ShaderMaterial with noise displacement */
   private surfaceMaterial: ShaderMaterial | null = null;
 
+  /** @property {SphereLODSet | null} coreLOD - Pre-built sphere geometries at three LOD tiers */
+  private coreLOD: SphereLODSet | null = null;
+
   /** @property {RenderQualityLevel} qualityLevel - Current adaptive quality level */
   private qualityLevel: RenderQualityLevel = 'high';
 
@@ -110,12 +116,8 @@ export class StarRenderer implements ICelestialRenderer {
         QUALITY_TO_DETAIL[level];
     }
 
-    if (this.coronaSprite) {
-      this.coronaSprite.visible = level !== 'low';
-    }
-
-    if (this.ringMesh) {
-      this.ringMesh.visible = level !== 'low';
+    if (this.coreMesh && this.coreLOD) {
+      this.coreMesh.geometry = this.coreLOD[level];
     }
   }
 
@@ -137,11 +139,8 @@ export class StarRenderer implements ICelestialRenderer {
     const displacementScale =
       (config.displacementScale as number) ?? DEFAULT_DISPLACEMENT_SCALE;
 
-    const coreGeometry = new SphereGeometry(
-      data.radius,
-      SPHERE_SEGMENTS,
-      SPHERE_SEGMENTS,
-    );
+    this.coreLOD = createSphereLODSet(data.radius);
+    const coreGeometry = this.coreLOD[this.qualityLevel];
     this.surfaceMaterial = new ShaderMaterial({
       vertexShader: noise3d + '\n' + starVert,
       fragmentShader: starFrag,
@@ -175,7 +174,7 @@ export class StarRenderer implements ICelestialRenderer {
     const ringGeometry = new RingGeometry(
       data.radius * 1.05,
       data.radius * 1.2,
-      64,
+      STAR_RING_SEGMENTS,
     );
     const ringMaterial = new MeshBasicMaterial({
       color: coronaColor,
@@ -234,5 +233,7 @@ export class StarRenderer implements ICelestialRenderer {
    */
   dispose(mesh: Object3D): void {
     disposeSceneGraph(mesh);
+    disposeSphereLODSet(this.coreLOD);
+    this.coreLOD = null;
   }
 }

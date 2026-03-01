@@ -26,9 +26,15 @@ import atmosphereVert from '../shaders/atmosphere.vert.glsl';
 import noise3d from '../shaders/noise3d.glsl';
 import planetFrag from '../shaders/planet.frag.glsl';
 import planetVert from '../shaders/planet.vert.glsl';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
+import {
+    ATMOSPHERE_LOD,
+    createSphereLODSet,
+    disposeSphereLODSet,
+    type SphereLODSet,
+} from '../optimization/GeometryBudgets';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
-import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
     BoundaryData,
     CelestialBodyData,
@@ -61,9 +67,6 @@ const DEFAULT_NOISE_SEED = 0;
 
 /** @constant {number} DEFAULT_POLAR_LATITUDE - Default polar ice start as normal.y threshold */
 const DEFAULT_POLAR_LATITUDE = 0.75;
-
-/** @constant {number} PLANET_SEGMENTS - Sphere segment count for displacement detail */
-const PLANET_SEGMENTS = 64;
 
 /** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
 const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
@@ -104,6 +107,12 @@ export class PlanetRenderer implements ICelestialRenderer {
   /** @property {Mesh | null} atmosphereMesh - Optional atmosphere shell mesh */
   private atmosphereMesh: Mesh | null = null;
 
+  /** @property {SphereLODSet | null} surfaceLOD - Surface geometry LOD set */
+  private surfaceLOD: SphereLODSet | null = null;
+
+  /** @property {SphereLODSet | null} atmosphereLOD - Atmosphere geometry LOD set */
+  private atmosphereLOD: SphereLODSet | null = null;
+
   /** @property {RenderQualityLevel} qualityLevel - Current adaptive quality level */
   private qualityLevel: RenderQualityLevel = 'high';
 
@@ -120,8 +129,15 @@ export class PlanetRenderer implements ICelestialRenderer {
         QUALITY_TO_DETAIL[level];
     }
 
+    if (this.surfaceMesh && this.surfaceLOD) {
+      this.surfaceMesh.geometry = this.surfaceLOD[level];
+    }
+
     if (this.atmosphereMesh) {
       this.atmosphereMesh.visible = level !== 'low';
+      if (this.atmosphereLOD) {
+        this.atmosphereMesh.geometry = this.atmosphereLOD[level];
+      }
     }
   }
 
@@ -142,11 +158,8 @@ export class PlanetRenderer implements ICelestialRenderer {
     const terrainColors = config.terrainColors ?? DEFAULT_TERRAIN_COLORS;
     const colors = terrainColors.map((s) => new Color(s.color));
 
-    const geometry = new SphereGeometry(
-      data.radius,
-      PLANET_SEGMENTS,
-      PLANET_SEGMENTS,
-    );
+    this.surfaceLOD = createSphereLODSet(data.radius);
+    const geometry = this.surfaceLOD[this.qualityLevel];
     const polarIce = config.polarIce ?? false;
 
     this.surfaceMaterial = new ShaderMaterial({
@@ -208,11 +221,11 @@ export class PlanetRenderer implements ICelestialRenderer {
 
     if (config.atmosphereColor) {
       const atmosphereColor = new Color(config.atmosphereColor as string);
-      const atmosphereGeometry = new SphereGeometry(
+      this.atmosphereLOD = createSphereLODSet(
         data.radius * ATMOSPHERE_SCALE,
-        32,
-        32,
+        ATMOSPHERE_LOD,
       );
+      const atmosphereGeometry = this.atmosphereLOD[this.qualityLevel];
       const atmosphereMaterial = new ShaderMaterial({
         vertexShader: atmosphereVert,
         fragmentShader: atmosphereFrag,
@@ -269,5 +282,9 @@ export class PlanetRenderer implements ICelestialRenderer {
     this.surfaceMesh = null;
     this.surfaceMaterial = null;
     this.atmosphereMesh = null;
+    disposeSphereLODSet(this.surfaceLOD);
+    disposeSphereLODSet(this.atmosphereLOD);
+    this.surfaceLOD = null;
+    this.atmosphereLOD = null;
   }
 }

@@ -22,9 +22,16 @@ import {
 import noise3d from '../shaders/noise3d.glsl';
 import towerFrag from '../shaders/tower.frag.glsl';
 import towerVert from '../shaders/tower.vert.glsl';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
+import {
+    MAX_VISIBLE_ORBITERS,
+    ORBITER_CYLINDER_HEIGHT,
+    ORBITER_CYLINDER_RADIAL,
+    TOWER_CYLINDER_HEIGHT,
+    TOWER_CYLINDER_RADIAL,
+} from '../optimization/GeometryBudgets';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
-import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
   BoundaryData,
   CelestialBodyData,
@@ -50,18 +57,6 @@ const DEFAULT_TOWER_NOISE_SCALE = 0.6;
 
 /** @constant {number} DEFAULT_TOWER_DISPLACEMENT - Vertex displacement amplitude for carved stone */
 const DEFAULT_TOWER_DISPLACEMENT = 0.2;
-
-/** @constant {number} TOWER_RADIAL_SEGMENTS - Cylinder radial segments for displacement detail */
-const TOWER_RADIAL_SEGMENTS = 32;
-
-/** @constant {number} TOWER_HEIGHT_SEGMENTS - Cylinder height segments for displacement detail */
-const TOWER_HEIGHT_SEGMENTS = 24;
-
-/** @constant {number} ORBITER_RADIAL_SEGMENTS - Orbiter pillar radial segments */
-const ORBITER_RADIAL_SEGMENTS = 16;
-
-/** @constant {number} ORBITER_HEIGHT_SEGMENTS - Orbiter pillar height segments */
-const ORBITER_HEIGHT_SEGMENTS = 12;
 
 /** @constant {string} vertWithNoise - Vertex shader with noise functions prepended */
 const vertWithNoise = noise3d + '\n' + towerVert;
@@ -122,6 +117,11 @@ export class TowerWorldRenderer implements ICelestialRenderer {
     for (const mat of this.towerMaterials) {
       mat.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
     }
+
+    const maxOrbiters = MAX_VISIBLE_ORBITERS[level];
+    for (let i = 0; i < this.orbiterPivots.length; i++) {
+      this.orbiterPivots[i].visible = i < maxOrbiters;
+    }
   }
 
   /**
@@ -154,8 +154,8 @@ export class TowerWorldRenderer implements ICelestialRenderer {
         baseRadius * topTaper,
         baseRadius * taper,
         segmentHeight,
-        TOWER_RADIAL_SEGMENTS,
-        TOWER_HEIGHT_SEGMENTS,
+        TOWER_CYLINDER_RADIAL,
+        TOWER_CYLINDER_HEIGHT,
       );
 
       const shade = 0.85 + (i / TOWER_SEGMENTS) * 0.15;
@@ -198,8 +198,8 @@ export class TowerWorldRenderer implements ICelestialRenderer {
         pillarRadius * 0.7,
         pillarRadius,
         pillarHeight,
-        ORBITER_RADIAL_SEGMENTS,
-        ORBITER_HEIGHT_SEGMENTS,
+        ORBITER_CYLINDER_RADIAL,
+        ORBITER_CYLINDER_HEIGHT,
       );
       const shade = 0.7 + r1 * 0.3;
       const pillarMaterial = new ShaderMaterial({

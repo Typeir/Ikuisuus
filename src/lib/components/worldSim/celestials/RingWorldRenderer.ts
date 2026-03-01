@@ -27,9 +27,18 @@ import icyCoreVert from '../shaders/icyCore.vert.glsl';
 import noise3d from '../shaders/noise3d.glsl';
 import ringWorldFrag from '../shaders/ringWorld.frag.glsl';
 import ringWorldVert from '../shaders/ringWorld.vert.glsl';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
+import {
+    createSphereLODSet,
+    disposeSphereLODSet,
+    ICY_CORE_LOD,
+    MAX_VISIBLE_RINGS,
+    TORUS_RADIAL_SEGMENTS,
+    TORUS_TUBULAR_SEGMENTS,
+    type SphereLODSet,
+} from '../optimization/GeometryBudgets';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
-import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import type {
     BoundaryData,
     CelestialBodyData,
@@ -47,17 +56,14 @@ const DEFAULT_CORE_RADIUS_RATIO = 0.32;
 /** @constant {number} DEFAULT_RING_TUBE_RADIUS - Tube radius of each torus ring */
 const DEFAULT_RING_TUBE_RADIUS = 0.4;
 
-/** @constant {number} DEFAULT_RING_SPACING - Distance between successive ring radii */
-const DEFAULT_RING_SPACING = 4.5;
-
 /** @constant {number} DEFAULT_BASE_ROTATION_SPEED - Base rotation speed for the outermost ring (rad/s) */
 const DEFAULT_BASE_ROTATION_SPEED = 0.22;
 
+/** @constant {number} DEFAULT_RING_SPACING - Distance between successive ring radii */
+const DEFAULT_RING_SPACING = 4.5;
+
 /** @constant {number} RING_TILT_MAX - Maximum tilt angle in radians for ring variation */
 const RING_TILT_MAX = 0.35;
-
-/** @constant {number} ICY_CORE_SEGMENTS - Sphere segments for icy displacement detail */
-const ICY_CORE_SEGMENTS = 48;
 
 /** @constant {number} DEFAULT_ICY_DISPLACEMENT - Default icy core displacement amplitude */
 const DEFAULT_ICY_DISPLACEMENT = 1.2;
@@ -67,12 +73,6 @@ const DEFAULT_RING_NOISE_SCALE = 0.8;
 
 /** @constant {number} DEFAULT_RING_DISPLACEMENT - Default ring surface displacement amplitude */
 const DEFAULT_RING_DISPLACEMENT = 0.25;
-
-/** @constant {number} RING_TORUS_RADIAL_SEGMENTS - Radial segments for ring torus geometry (enough for displacement) */
-const RING_TORUS_RADIAL_SEGMENTS = 24;
-
-/** @constant {number} RING_TORUS_TUBULAR_SEGMENTS - Tubular segments for ring torus geometry */
-const RING_TORUS_TUBULAR_SEGMENTS = 120;
 
 /** @constant {Record<RenderQualityLevel, number>} QUALITY_TO_DETAIL - Quality-to-shader detail mapping */
 const QUALITY_TO_DETAIL: Record<RenderQualityLevel, number> = {
@@ -102,6 +102,15 @@ export class RingWorldRenderer implements ICelestialRenderer {
   /** @property {ShaderMaterial | null} coreMaterial - Icy core shader material (null if not icy) */
   private coreMaterial: ShaderMaterial | null = null;
 
+  /** @property {Mesh | null} coreMesh - Core sphere mesh for LOD swapping */
+  private coreMesh: Mesh | null = null;
+
+  /** @property {SphereLODSet | null} coreLOD - Core geometry LOD set (icy cores only) */
+  private coreLOD: SphereLODSet | null = null;
+
+  /** @property {SphereLODSet | null} coreBasicLOD - Core geometry LOD set (non-icy cores) */
+  private coreBasicLOD: SphereLODSet | null = null;
+
   /** @property {ShaderMaterial[]} ringMaterials - Shader materials for noise-textured rings */
   private ringMaterials: ShaderMaterial[] = [];
 
@@ -120,8 +129,20 @@ export class RingWorldRenderer implements ICelestialRenderer {
       this.coreMaterial.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
     }
 
+    if (this.coreMesh) {
+      const lodSet = this.coreLOD ?? this.coreBasicLOD;
+      if (lodSet) {
+        this.coreMesh.geometry = lodSet[level];
+      }
+    }
+
     for (const mat of this.ringMaterials) {
       mat.uniforms.uDetailLevel.value = QUALITY_TO_DETAIL[level];
+    }
+
+    const maxRings = MAX_VISIBLE_RINGS[level];
+    for (let i = 0; i < this.ringPivots.length; i++) {
+      this.ringPivots[i].visible = i < maxRings;
     }
   }
 
@@ -148,11 +169,19 @@ export class RingWorldRenderer implements ICelestialRenderer {
     const tubeRadius =
       (config.ringTubeRadius as number) ?? DEFAULT_RING_TUBE_RADIUS;
 
-    const coreGeometry = new SphereGeometry(
-      coreRadius,
-      config.icyCore ? ICY_CORE_SEGMENTS : 32,
-      config.icyCore ? ICY_CORE_SEGMENTS : 32,
-    );
+    const coreGeometry = config.icyCore
+      ? (() => {
+          this.coreLOD = createSphereLODSet(coreRadius, ICY_CORE_LOD);
+          return this.coreLOD[this.qualityLevel];
+        })()
+      : (() => {
+          this.coreBasicLOD = createSphereLODSet(coreRadius, {
+            high: 16,
+            medium: 12,
+            low: 8,
+          });
+          return this.coreBasicLOD[this.qualityLevel];
+        })();
 
     let coreMesh: Mesh;
 
@@ -184,6 +213,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
 
     coreMesh.name = 'ring-core';
     coreMesh.frustumCulled = true;
+    this.coreMesh = coreMesh;
     group.add(coreMesh);
 
     const startRadius = coreRadius + ringSpacing * 1.5;
@@ -195,8 +225,8 @@ export class RingWorldRenderer implements ICelestialRenderer {
       const torusGeometry = new TorusGeometry(
         ringRadius,
         tubeRadius,
-        RING_TORUS_RADIAL_SEGMENTS,
-        RING_TORUS_TUBULAR_SEGMENTS,
+        TORUS_RADIAL_SEGMENTS,
+        TORUS_TUBULAR_SEGMENTS,
       );
 
       const ringMat = new ShaderMaterial({
@@ -284,5 +314,10 @@ export class RingWorldRenderer implements ICelestialRenderer {
    */
   dispose(mesh: Object3D): void {
     disposeSceneGraph(mesh);
+    disposeSphereLODSet(this.coreLOD);
+    disposeSphereLODSet(this.coreBasicLOD);
+    this.coreLOD = null;
+    this.coreBasicLOD = null;
+    this.coreMesh = null;
   }
 }

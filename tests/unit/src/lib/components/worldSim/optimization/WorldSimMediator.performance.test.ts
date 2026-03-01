@@ -127,6 +127,7 @@ function createMockSceneManager() {
       ),
     },
     getCanvasRect: vi.fn(() => ({ x: 0, y: 0, width: 800, height: 600 })),
+    setPixelRatioCap: vi.fn(),
   };
 }
 

@@ -40,6 +40,7 @@ import {
   AdaptivePerformanceController,
   type RenderQualityProfile,
 } from './optimization/AdaptivePerformanceController';
+import { DPR_CAP } from './optimization/GeometryBudgets';
 import { RaycastService } from './RaycastService';
 
 /**
@@ -636,6 +637,8 @@ export class WorldSimMediator {
     if (this.everdarkRenderer) {
       this.everdarkRenderer.setQualityLevel?.(level);
     }
+
+    this.sceneManager.setPixelRatioCap(DPR_CAP[level]);
   }
 
   /**

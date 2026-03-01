@@ -24,6 +24,8 @@ import {
 import everdarkFrag from '../shaders/everdark.frag.glsl';
 import everdarkVert from '../shaders/everdark.vert.glsl';
 import noise3d from '../shaders/noise3d.glsl';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
+import { EVERDARK_LOD, type SphereLODSet } from '../optimization/GeometryBudgets';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
   BoundaryData,
@@ -167,6 +169,15 @@ export class EverdarkRenderer implements ICelestialRenderer {
   /** @property {ShaderMaterial[]} materials - All layer materials for time updates */
   private materials: ShaderMaterial[] = [];
 
+  /** @property {Mesh[]} shells - All layer meshes for LOD geometry swapping */
+  private shells: Mesh[] = [];
+
+  /** @property {SphereLODSet[]} shellLOD - Per-layer LOD geometry sets */
+  private shellLOD: SphereLODSet[] = [];
+
+  /** @property {RenderQualityLevel} qualityLevel - Current adaptive quality level */
+  private qualityLevel: RenderQualityLevel = 'high';
+
   /**
    * Create the multi-layer Everdark boundary.
    *
@@ -179,11 +190,27 @@ export class EverdarkRenderer implements ICelestialRenderer {
 
     for (let i = 0; i < LAYER_CONFIGS.length; i++) {
       const layer = LAYER_CONFIGS[i];
-      const geometry = new SphereGeometry(
-        data.radius * layer.radiusScale,
-        layer.segments,
-        layer.segments,
-      );
+      const layerRadius = data.radius * layer.radiusScale;
+      const lodSet: SphereLODSet = {
+        high: new SphereGeometry(
+          layerRadius,
+          EVERDARK_LOD.high[i] ?? 16,
+          EVERDARK_LOD.high[i] ?? 16,
+        ),
+        medium: new SphereGeometry(
+          layerRadius,
+          EVERDARK_LOD.medium[i] ?? 8,
+          EVERDARK_LOD.medium[i] ?? 8,
+        ),
+        low: new SphereGeometry(
+          layerRadius,
+          EVERDARK_LOD.low[i] ?? 8,
+          EVERDARK_LOD.low[i] ?? 8,
+        ),
+      };
+      this.shellLOD.push(lodSet);
+
+      const geometry = lodSet[this.qualityLevel];
 
       const material = createLayerMaterial(layer);
 
@@ -196,10 +223,32 @@ export class EverdarkRenderer implements ICelestialRenderer {
       }
 
       group.add(shell);
+      this.shells.push(shell);
       this.materials.push(material);
     }
 
     return group;
+  }
+
+  /**
+   * Apply adaptive quality level — swap LOD geometry and hide innermost layer
+   * at low quality to save a full draw call.
+   *
+   * @param {RenderQualityLevel} level - New quality level
+   */
+  setQualityLevel(level: RenderQualityLevel): void {
+    this.qualityLevel = level;
+
+    for (let i = 0; i < this.shells.length; i++) {
+      const shell = this.shells[i];
+      const lodSet = this.shellLOD[i];
+      if (shell && lodSet) {
+        shell.geometry = lodSet[level];
+      }
+      if (i === this.shells.length - 1) {
+        shell.visible = level !== 'low';
+      }
+    }
   }
 
   /**
@@ -228,5 +277,12 @@ export class EverdarkRenderer implements ICelestialRenderer {
   dispose(mesh: Object3D): void {
     disposeSceneGraph(mesh);
     this.materials = [];
+    this.shells = [];
+    for (const lodSet of this.shellLOD) {
+      lodSet.high.dispose();
+      lodSet.medium.dispose();
+      lodSet.low.dispose();
+    }
+    this.shellLOD = [];
   }
 }

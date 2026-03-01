@@ -193,29 +193,26 @@ describe('Renderer adaptive optimization behavior', () => {
     trackedMeshes.length = 0;
   });
 
-  it('StarRenderer lowers shader detail and hides secondary effects in low quality', () => {
+  it('StarRenderer lowers shader detail and swaps LOD geometry in low quality', () => {
     const renderer = new StarRenderer();
     const mesh = renderer.createMesh(STAR_DATA);
     trackedMeshes.push({ renderer, mesh });
 
     const core = mesh.children.find((c) => c.name === 'star-core') as any;
-    const corona = mesh.children.find((c) => c.name === 'star-corona') as any;
-    const ring = mesh.children.find((c) => c.name === 'star-ring') as any;
 
     expect(core.material.uniforms.uDetailLevel.value).toBe(2);
+    const highGeometry = core.geometry;
 
     renderer.setQualityLevel?.('low');
     expect(core.material.uniforms.uDetailLevel.value).toBe(0);
-    expect(corona.visible).toBe(false);
-    expect(ring.visible).toBe(false);
+    expect(core.geometry).not.toBe(highGeometry);
 
     renderer.setQualityLevel?.('high');
     expect(core.material.uniforms.uDetailLevel.value).toBe(2);
-    expect(corona.visible).toBe(true);
-    expect(ring.visible).toBe(true);
+    expect(core.geometry).toBe(highGeometry);
   });
 
-  it('PlanetRenderer degrades shader detail and hides atmosphere at low quality', () => {
+  it('PlanetRenderer degrades shader detail, swaps LOD geometry and hides atmosphere at low quality', () => {
     const renderer = new PlanetRenderer();
     const mesh = renderer.createMesh(PLANET_DATA);
     trackedMeshes.push({ renderer, mesh });
@@ -224,17 +221,19 @@ describe('Renderer adaptive optimization behavior', () => {
     const atmosphere = mesh.children.find((c) => c.name === 'planet-atmosphere') as any;
 
     expect(surface.material.uniforms.uDetailLevel.value).toBe(2);
+    const highGeometry = surface.geometry;
 
     renderer.setQualityLevel?.('low');
     expect(surface.material.uniforms.uDetailLevel.value).toBe(0);
     expect(atmosphere.visible).toBe(false);
+    expect(surface.geometry).not.toBe(highGeometry);
 
     renderer.setQualityLevel?.('medium');
     expect(surface.material.uniforms.uDetailLevel.value).toBe(1);
     expect(atmosphere.visible).toBe(true);
   });
 
-  it('GasGiantRenderer reduces cloud detail and disables haze at low quality', () => {
+  it('GasGiantRenderer reduces cloud detail, hides overlay and haze at low quality', () => {
     const renderer = new GasGiantRenderer();
     const mesh = renderer.createMesh(GAS_DATA);
     trackedMeshes.push({ renderer, mesh });
@@ -249,15 +248,17 @@ describe('Renderer adaptive optimization behavior', () => {
     renderer.setQualityLevel?.('low');
     expect(cloud0.material.uniforms.uDetailLevel.value).toBe(0);
     expect(cloud1.material.uniforms.uDetailLevel.value).toBe(0);
+    expect(cloud1.visible).toBe(false);
     expect(haze.visible).toBe(false);
 
     renderer.setQualityLevel?.('high');
     expect(cloud0.material.uniforms.uDetailLevel.value).toBe(2);
     expect(cloud1.material.uniforms.uDetailLevel.value).toBe(2);
+    expect(cloud1.visible).toBe(true);
     expect(haze.visible).toBe(true);
   });
 
-  it('RingWorldRenderer applies quality detail to icy core and ring materials', () => {
+  it('RingWorldRenderer applies quality detail to icy core and ring materials, hides rings at low', () => {
     const renderer = new RingWorldRenderer();
     const mesh = renderer.createMesh(RING_DATA);
     trackedMeshes.push({ renderer, mesh });
@@ -277,9 +278,13 @@ describe('Renderer adaptive optimization behavior', () => {
     renderer.setQualityLevel?.('low');
     expect(core.material.uniforms.uDetailLevel.value).toBe(0);
     expect(ring.material.uniforms.uDetailLevel.value).toBe(0);
+
+    const pivots = mesh.children.filter((c) => c.name.startsWith('ring-pivot-'));
+    const visibleCount = pivots.filter((p) => p.visible).length;
+    expect(visibleCount).toBe(Math.min(2, 3));
   });
 
-  it('TowerWorldRenderer reduces tower segment detail at low quality', () => {
+  it('TowerWorldRenderer reduces tower segment detail and hides orbiters at low quality', () => {
     const renderer = new TowerWorldRenderer();
     const mesh = renderer.createMesh(TOWER_DATA);
     trackedMeshes.push({ renderer, mesh });
@@ -291,7 +296,13 @@ describe('Renderer adaptive optimization behavior', () => {
     renderer.setQualityLevel?.('low');
     expect(segment.material.uniforms.uDetailLevel.value).toBe(0);
 
+    const pivots = mesh.children.filter((c) => c.name.startsWith('orbiter-pivot-'));
+    const visibleCount = pivots.filter((p) => p.visible).length;
+    expect(visibleCount).toBe(3);
+
     renderer.setQualityLevel?.('high');
     expect(segment.material.uniforms.uDetailLevel.value).toBe(2);
+    const visibleCountHigh = pivots.filter((p) => p.visible).length;
+    expect(visibleCountHigh).toBe(10);
   });
 });
