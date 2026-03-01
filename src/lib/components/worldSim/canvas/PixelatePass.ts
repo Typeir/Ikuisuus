@@ -120,10 +120,10 @@ export class PixelatePass {
         uPixelCount: {
           value: new Vector2(DEFAULT_PIXEL_COUNT_X, DEFAULT_PIXEL_COUNT_Y),
         },
-        uResolution:      { value: new Vector2(width, height) },
-        uCAStrength:      { value: DEFAULT_CA_STRENGTH },
+        uResolution: { value: new Vector2(width, height) },
+        uCAStrength: { value: DEFAULT_CA_STRENGTH },
         uSharpenStrength: { value: DEFAULT_SHARPEN_STRENGTH },
-        uEmbossStrength:  { value: DEFAULT_EMBOSS_STRENGTH },
+        uEmbossStrength: { value: DEFAULT_EMBOSS_STRENGTH },
       },
       depthTest: false,
       depthWrite: false,
