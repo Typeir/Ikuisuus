@@ -6,9 +6,7 @@
  * @module tests/unit/worldSim/optimization/AdaptivePerformanceController
  */
 
-import {
-  AdaptivePerformanceController,
-} from '@/lib/components/worldSim/optimization/AdaptivePerformanceController';
+import { AdaptivePerformanceController } from '@/lib/components/worldSim/optimization/AdaptivePerformanceController';
 import { describe, expect, it } from 'vitest';
 
 /**

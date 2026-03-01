@@ -24,14 +24,14 @@ import {
     SpriteMaterial,
     Vector3,
 } from 'three';
-import gasGiantFrag from '../shaders/gasGiant.frag.glsl';
-import gasGiantVert from '../shaders/gasGiant.vert.glsl';
-import noise3d from '../shaders/noise3d.glsl';
 import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import {
     GAS_GIANT_LOD,
     type SphereLODSet,
 } from '../optimization/GeometryBudgets';
+import gasGiantFrag from '../shaders/gasGiant.frag.glsl';
+import gasGiantVert from '../shaders/gasGiant.vert.glsl';
+import noise3d from '../shaders/noise3d.glsl';
 import {
     createCelestialGlow,
     createRadialGradientTexture,
@@ -217,9 +217,7 @@ export class GasGiantRenderer implements ICelestialRenderer {
     const config = data.renderConfig as GasGiantRenderConfig;
     const bandColor1 = new Color((config.baseColor as string) ?? '#cc8844');
     const bandColor2 = new Color((config.bandColor as string) ?? '#aa6633');
-    const stormColor = new Color(
-      (config.stormColor as string) ?? '#ffffff',
-    );
+    const stormColor = new Color((config.stormColor as string) ?? '#ffffff');
     this.rotationSpeed =
       (config.rotationSpeed as number) ?? DEFAULT_ROTATION_SPEED;
 
@@ -272,7 +270,11 @@ export class GasGiantRenderer implements ICelestialRenderer {
         transparent: !layer.opaque,
         depthWrite: layer.opaque,
         ...(layer.opaque
-          ? { polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }
+          ? {
+              polygonOffset: true,
+              polygonOffsetFactor: 1,
+              polygonOffsetUnits: 1,
+            }
           : { blending: AdditiveBlending }),
       });
 

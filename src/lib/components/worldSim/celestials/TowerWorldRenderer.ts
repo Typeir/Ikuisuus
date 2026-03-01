@@ -12,16 +12,13 @@
  */
 
 import {
-  Color,
-  CylinderGeometry,
-  Mesh,
-  Object3D,
-  ShaderMaterial,
-  Vector3,
+    Color,
+    CylinderGeometry,
+    Mesh,
+    Object3D,
+    ShaderMaterial,
+    Vector3,
 } from 'three';
-import noise3d from '../shaders/noise3d.glsl';
-import towerFrag from '../shaders/tower.frag.glsl';
-import towerVert from '../shaders/tower.vert.glsl';
 import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import {
     MAX_VISIBLE_ORBITERS,
@@ -30,14 +27,17 @@ import {
     TOWER_CYLINDER_HEIGHT,
     TOWER_CYLINDER_RADIAL,
 } from '../optimization/GeometryBudgets';
+import noise3d from '../shaders/noise3d.glsl';
+import towerFrag from '../shaders/tower.frag.glsl';
+import towerVert from '../shaders/tower.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
-  BoundaryData,
-  CelestialBodyData,
-  ICelestialRenderer,
-  SceneContext,
-  TowerWorldRenderConfig,
+    BoundaryData,
+    CelestialBodyData,
+    ICelestialRenderer,
+    SceneContext,
+    TowerWorldRenderConfig,
 } from './interfaces';
 
 /** @constant {number} TOWER_SEGMENTS - Number of cylinder segments composing the main tower */

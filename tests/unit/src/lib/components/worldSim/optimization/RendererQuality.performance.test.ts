@@ -184,7 +184,10 @@ const TOWER_DATA: CelestialBodyData = {
 };
 
 describe('Renderer adaptive optimization behavior', () => {
-  const trackedMeshes: Array<{ renderer: { dispose: (mesh: Object3D) => void }; mesh: Object3D }> = [];
+  const trackedMeshes: Array<{
+    renderer: { dispose: (mesh: Object3D) => void };
+    mesh: Object3D;
+  }> = [];
 
   afterEach(() => {
     for (const entry of trackedMeshes) {
@@ -217,8 +220,12 @@ describe('Renderer adaptive optimization behavior', () => {
     const mesh = renderer.createMesh(PLANET_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const surface = mesh.children.find((c) => c.name === 'planet-surface') as any;
-    const atmosphere = mesh.children.find((c) => c.name === 'planet-atmosphere') as any;
+    const surface = mesh.children.find(
+      (c) => c.name === 'planet-surface',
+    ) as any;
+    const atmosphere = mesh.children.find(
+      (c) => c.name === 'planet-atmosphere',
+    ) as any;
 
     expect(surface.material.uniforms.uDetailLevel.value).toBe(2);
     const highGeometry = surface.geometry;
@@ -238,8 +245,12 @@ describe('Renderer adaptive optimization behavior', () => {
     const mesh = renderer.createMesh(GAS_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const cloud0 = mesh.children.find((c) => c.name === 'gasGiant-cloud-0') as any;
-    const cloud1 = mesh.children.find((c) => c.name === 'gasGiant-cloud-1') as any;
+    const cloud0 = mesh.children.find(
+      (c) => c.name === 'gasGiant-cloud-0',
+    ) as any;
+    const cloud1 = mesh.children.find(
+      (c) => c.name === 'gasGiant-cloud-1',
+    ) as any;
     const haze = mesh.children.find((c) => c.name === 'gasGiant-haze') as any;
 
     expect(cloud0.material.uniforms.uDetailLevel.value).toBe(2);
@@ -279,7 +290,9 @@ describe('Renderer adaptive optimization behavior', () => {
     expect(core.material.uniforms.uDetailLevel.value).toBe(0);
     expect(ring.material.uniforms.uDetailLevel.value).toBe(0);
 
-    const pivots = mesh.children.filter((c) => c.name.startsWith('ring-pivot-'));
+    const pivots = mesh.children.filter((c) =>
+      c.name.startsWith('ring-pivot-'),
+    );
     const visibleCount = pivots.filter((p) => p.visible).length;
     expect(visibleCount).toBe(Math.min(2, 3));
   });
@@ -289,14 +302,18 @@ describe('Renderer adaptive optimization behavior', () => {
     const mesh = renderer.createMesh(TOWER_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const segment = mesh.children.find((c) => c.name === 'tower-segment-0') as any;
+    const segment = mesh.children.find(
+      (c) => c.name === 'tower-segment-0',
+    ) as any;
 
     expect(segment.material.uniforms.uDetailLevel.value).toBe(2);
 
     renderer.setQualityLevel?.('low');
     expect(segment.material.uniforms.uDetailLevel.value).toBe(0);
 
-    const pivots = mesh.children.filter((c) => c.name.startsWith('orbiter-pivot-'));
+    const pivots = mesh.children.filter((c) =>
+      c.name.startsWith('orbiter-pivot-'),
+    );
     const visibleCount = pivots.filter((p) => p.visible).length;
     expect(visibleCount).toBe(3);
 

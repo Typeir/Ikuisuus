@@ -12,23 +12,23 @@
  */
 
 import {
-  AmbientLight,
-  BufferGeometry,
-  Color,
-  Float32BufferAttribute,
-  PerspectiveCamera,
-  PointLight,
-  Points,
-  PointsMaterial,
-  Scene,
-  WebGLRenderer,
+    AmbientLight,
+    BufferGeometry,
+    Color,
+    Float32BufferAttribute,
+    PerspectiveCamera,
+    PointLight,
+    Points,
+    PointsMaterial,
+    Scene,
+    WebGLRenderer,
 } from 'three';
 import { DEFAULT_CAMERA_LOOK_AT, DEFAULT_CAMERA_POSITION } from '../constants';
 import {
-  RenderLifecycle,
-  RenderPhase,
-  type FrameContext,
-  type LifecycleCallback,
+    RenderLifecycle,
+    RenderPhase,
+    type FrameContext,
+    type LifecycleCallback,
 } from './RenderLifecycle';
 
 /** @constant {number} STARFIELD_COUNT - Number of background starfield particles */
@@ -130,7 +130,9 @@ export class SceneManager {
       alpha: false,
       powerPreference: 'high-performance',
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, getInitialMaxDPR()));
+    this.renderer.setPixelRatio(
+      Math.min(window.devicePixelRatio, getInitialMaxDPR()),
+    );
     this.renderer.setClearColor(new Color('#050508'), 1);
 
     this.scene = new Scene();

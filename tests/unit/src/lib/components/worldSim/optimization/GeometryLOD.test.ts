@@ -7,15 +7,15 @@
  * @module tests/unit/worldSim/optimization/GeometryLOD
  */
 
+import { EverdarkRenderer } from '@/lib/components/worldSim/celestials/EverdarkRenderer';
 import { GasGiantRenderer } from '@/lib/components/worldSim/celestials/GasGiantRenderer';
 import { PlanetRenderer } from '@/lib/components/worldSim/celestials/PlanetRenderer';
-import { StarRenderer } from '@/lib/components/worldSim/celestials/StarRenderer';
-import { EverdarkRenderer } from '@/lib/components/worldSim/celestials/EverdarkRenderer';
 import { RingWorldRenderer } from '@/lib/components/worldSim/celestials/RingWorldRenderer';
+import { StarRenderer } from '@/lib/components/worldSim/celestials/StarRenderer';
 import { TowerWorldRenderer } from '@/lib/components/worldSim/celestials/TowerWorldRenderer';
 import type {
-  BoundaryData,
-  CelestialBodyData,
+    BoundaryData,
+    CelestialBodyData,
 } from '@/lib/components/worldSim/celestials/interfaces';
 import { SPHERE_LOD } from '@/lib/components/worldSim/optimization/GeometryBudgets';
 import { Object3D, SphereGeometry } from 'three';
@@ -31,23 +31,57 @@ vi.mock('@/lib/components/worldSim/celestials/CelestialGlow', () => ({
   },
 }));
 
-vi.mock('@/lib/components/worldSim/shaders/noise3d.glsl', () => ({ default: '' }));
-vi.mock('@/lib/components/worldSim/shaders/star.vert.glsl', () => ({ default: 'void main() { gl_Position = vec4(0); }' }));
-vi.mock('@/lib/components/worldSim/shaders/star.frag.glsl', () => ({ default: 'void main() { gl_FragColor = vec4(1); }' }));
-vi.mock('@/lib/components/worldSim/shaders/planet.vert.glsl', () => ({ default: 'void main() { gl_Position = vec4(0); }' }));
-vi.mock('@/lib/components/worldSim/shaders/planet.frag.glsl', () => ({ default: 'void main() { gl_FragColor = vec4(1); }' }));
-vi.mock('@/lib/components/worldSim/shaders/atmosphere.vert.glsl', () => ({ default: 'void main() { gl_Position = vec4(0); }' }));
-vi.mock('@/lib/components/worldSim/shaders/atmosphere.frag.glsl', () => ({ default: 'void main() { gl_FragColor = vec4(1); }' }));
-vi.mock('@/lib/components/worldSim/shaders/gasGiant.vert.glsl', () => ({ default: 'void main() { gl_Position = vec4(0); }' }));
-vi.mock('@/lib/components/worldSim/shaders/gasGiant.frag.glsl', () => ({ default: 'void main() { gl_FragColor = vec4(1); }' }));
-vi.mock('@/lib/components/worldSim/shaders/everdark.vert.glsl', () => ({ default: 'void main() { gl_Position = vec4(0); }' }));
-vi.mock('@/lib/components/worldSim/shaders/everdark.frag.glsl', () => ({ default: 'void main() { gl_FragColor = vec4(1); }' }));
-vi.mock('@/lib/components/worldSim/shaders/icyCore.vert.glsl', () => ({ default: 'void main() { gl_Position = vec4(0); }' }));
-vi.mock('@/lib/components/worldSim/shaders/icyCore.frag.glsl', () => ({ default: 'void main() { gl_FragColor = vec4(1); }' }));
-vi.mock('@/lib/components/worldSim/shaders/ringWorld.vert.glsl', () => ({ default: 'void main() { gl_Position = vec4(0); }' }));
-vi.mock('@/lib/components/worldSim/shaders/ringWorld.frag.glsl', () => ({ default: 'void main() { gl_FragColor = vec4(1); }' }));
-vi.mock('@/lib/components/worldSim/shaders/tower.vert.glsl', () => ({ default: 'void main() { gl_Position = vec4(0); }' }));
-vi.mock('@/lib/components/worldSim/shaders/tower.frag.glsl', () => ({ default: 'void main() { gl_FragColor = vec4(1); }' }));
+vi.mock('@/lib/components/worldSim/shaders/noise3d.glsl', () => ({
+  default: '',
+}));
+vi.mock('@/lib/components/worldSim/shaders/star.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/star.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/planet.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/planet.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/atmosphere.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/atmosphere.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/gasGiant.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/gasGiant.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/everdark.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/everdark.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/icyCore.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/icyCore.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/ringWorld.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/ringWorld.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/tower.vert.glsl', () => ({
+  default: 'void main() { gl_Position = vec4(0); }',
+}));
+vi.mock('@/lib/components/worldSim/shaders/tower.frag.glsl', () => ({
+  default: 'void main() { gl_FragColor = vec4(1); }',
+}));
 
 const STAR_DATA: CelestialBodyData = {
   id: 'lod-star',
@@ -58,7 +92,11 @@ const STAR_DATA: CelestialBodyData = {
   contentPath: 'world/star',
   orbit: null,
   radius: 100,
-  renderConfig: { renderer: 'star', emissiveColor: '#ff0', coronaColor: '#f80' },
+  renderConfig: {
+    renderer: 'star',
+    emissiveColor: '#ff0',
+    coronaColor: '#f80',
+  },
   regions: [],
 };
 
@@ -69,7 +107,13 @@ const PLANET_DATA: CelestialBodyData = {
   loreOrigin: 'test',
   type: 'planet',
   contentPath: 'world/planet',
-  orbit: { semiMajorAxis: 100, eccentricity: 0, inclination: 0, period: 10, phase: 0 },
+  orbit: {
+    semiMajorAxis: 100,
+    eccentricity: 0,
+    inclination: 0,
+    period: 10,
+    phase: 0,
+  },
   radius: 20,
   renderConfig: {
     renderer: 'planet',
@@ -86,9 +130,19 @@ const GAS_DATA: CelestialBodyData = {
   loreOrigin: 'test',
   type: 'gasGiant',
   contentPath: 'world/gas',
-  orbit: { semiMajorAxis: 200, eccentricity: 0, inclination: 0, period: 50, phase: 0 },
+  orbit: {
+    semiMajorAxis: 200,
+    eccentricity: 0,
+    inclination: 0,
+    period: 50,
+    phase: 0,
+  },
   radius: 40,
-  renderConfig: { renderer: 'gasGiant', baseColor: '#cc8844', bandColor: '#aa6633' },
+  renderConfig: {
+    renderer: 'gasGiant',
+    baseColor: '#cc8844',
+    bandColor: '#aa6633',
+  },
   regions: [],
 };
 
@@ -111,9 +165,21 @@ const RING_DATA: CelestialBodyData = {
   loreOrigin: 'test',
   type: 'ringWorld',
   contentPath: 'world/ring',
-  orbit: { semiMajorAxis: 300, eccentricity: 0, inclination: 0, period: 100, phase: 0 },
+  orbit: {
+    semiMajorAxis: 300,
+    eccentricity: 0,
+    inclination: 0,
+    period: 100,
+    phase: 0,
+  },
   radius: 30,
-  renderConfig: { renderer: 'ringWorld', coreColor: '#c8dde8', ringColor: '#9ab8d0', ringCount: 7, icyCore: true },
+  renderConfig: {
+    renderer: 'ringWorld',
+    coreColor: '#c8dde8',
+    ringColor: '#9ab8d0',
+    ringCount: 7,
+    icyCore: true,
+  },
   regions: [],
 };
 
@@ -124,7 +190,13 @@ const TOWER_DATA: CelestialBodyData = {
   loreOrigin: 'test',
   type: 'towerWorld',
   contentPath: 'world/tower',
-  orbit: { semiMajorAxis: 150, eccentricity: 0, inclination: 0, period: 80, phase: 0 },
+  orbit: {
+    semiMajorAxis: 150,
+    eccentricity: 0,
+    inclination: 0,
+    period: 80,
+    phase: 0,
+  },
   radius: 15,
   renderConfig: { renderer: 'towerWorld', towerColor: '#aaa' },
   regions: [],
@@ -140,7 +212,10 @@ function sphereVertexCount(geo: SphereGeometry): number {
 }
 
 describe('Geometry LOD system', () => {
-  const trackedMeshes: Array<{ renderer: { dispose: (mesh: Object3D) => void }; mesh: Object3D }> = [];
+  const trackedMeshes: Array<{
+    renderer: { dispose: (mesh: Object3D) => void };
+    mesh: Object3D;
+  }> = [];
 
   afterEach(() => {
     for (const entry of trackedMeshes) {
@@ -190,8 +265,12 @@ describe('Geometry LOD system', () => {
     const mesh = renderer.createMesh(PLANET_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const surface = mesh.children.find((c) => c.name === 'planet-surface') as any;
-    const atmo = mesh.children.find((c) => c.name === 'planet-atmosphere') as any;
+    const surface = mesh.children.find(
+      (c) => c.name === 'planet-surface',
+    ) as any;
+    const atmo = mesh.children.find(
+      (c) => c.name === 'planet-atmosphere',
+    ) as any;
 
     expect(surface.geometry.parameters.widthSegments).toBe(32);
     expect(atmo.geometry.parameters.widthSegments).toBe(16);
@@ -207,8 +286,12 @@ describe('Geometry LOD system', () => {
     const mesh = renderer.createMesh(GAS_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const cloud0 = mesh.children.find((c) => c.name === 'gasGiant-cloud-0') as any;
-    const cloud1 = mesh.children.find((c) => c.name === 'gasGiant-cloud-1') as any;
+    const cloud0 = mesh.children.find(
+      (c) => c.name === 'gasGiant-cloud-0',
+    ) as any;
+    const cloud1 = mesh.children.find(
+      (c) => c.name === 'gasGiant-cloud-1',
+    ) as any;
 
     expect(cloud0.geometry.parameters.widthSegments).toBe(24);
     expect(cloud1.geometry.parameters.widthSegments).toBe(16);
@@ -227,7 +310,9 @@ describe('Geometry LOD system', () => {
     const mesh = renderer.createMesh(EVERDARK_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const shells = mesh.children.filter((c) => c.name.startsWith('everdark-shell-'));
+    const shells = mesh.children.filter((c) =>
+      c.name.startsWith('everdark-shell-'),
+    );
     expect(shells.length).toBe(3);
 
     const outerGeo = (shells[0] as any).geometry as SphereGeometry;
@@ -248,7 +333,9 @@ describe('Geometry LOD system', () => {
     const mesh = renderer.createMesh(RING_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const pivots = mesh.children.filter((c) => c.name.startsWith('ring-pivot-'));
+    const pivots = mesh.children.filter((c) =>
+      c.name.startsWith('ring-pivot-'),
+    );
     expect(pivots.length).toBe(7);
 
     renderer.setQualityLevel?.('low');
@@ -269,7 +356,9 @@ describe('Geometry LOD system', () => {
     const mesh = renderer.createMesh(TOWER_DATA);
     trackedMeshes.push({ renderer, mesh });
 
-    const pivots = mesh.children.filter((c) => c.name.startsWith('orbiter-pivot-'));
+    const pivots = mesh.children.filter((c) =>
+      c.name.startsWith('orbiter-pivot-'),
+    );
     expect(pivots.length).toBe(10);
 
     renderer.setQualityLevel?.('low');

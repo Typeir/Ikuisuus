@@ -12,36 +12,35 @@
  */
 
 import {
-    AdditiveBlending,
-    BackSide,
-    Color,
-    Mesh,
-    Object3D,
-    ShaderMaterial,
-    SphereGeometry,
-    Vector3,
+  AdditiveBlending,
+  BackSide,
+  Color,
+  Mesh,
+  Object3D,
+  ShaderMaterial,
+  Vector3
 } from 'three';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
+import {
+  ATMOSPHERE_LOD,
+  createSphereLODSet,
+  disposeSphereLODSet,
+  type SphereLODSet,
+} from '../optimization/GeometryBudgets';
 import atmosphereFrag from '../shaders/atmosphere.frag.glsl';
 import atmosphereVert from '../shaders/atmosphere.vert.glsl';
 import noise3d from '../shaders/noise3d.glsl';
 import planetFrag from '../shaders/planet.frag.glsl';
 import planetVert from '../shaders/planet.vert.glsl';
-import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
-import {
-    ATMOSPHERE_LOD,
-    createSphereLODSet,
-    disposeSphereLODSet,
-    type SphereLODSet,
-} from '../optimization/GeometryBudgets';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
-    BoundaryData,
-    CelestialBodyData,
-    ICelestialRenderer,
-    PlanetRenderConfig,
-    SceneContext,
-    TerrainColorStop,
+  BoundaryData,
+  CelestialBodyData,
+  ICelestialRenderer,
+  PlanetRenderConfig,
+  SceneContext,
+  TerrainColorStop,
 } from './interfaces';
 
 /** @constant {number} DEFAULT_ROTATION_SPEED - Default planet axial rotation (radians/sec) */
@@ -172,15 +171,13 @@ export class PlanetRenderer implements ICelestialRenderer {
             (config.displacementScale as number) ?? DEFAULT_DISPLACEMENT_SCALE,
         },
         uContinentScale: {
-          value:
-            (config.continentScale as number) ?? DEFAULT_CONTINENT_SCALE,
+          value: (config.continentScale as number) ?? DEFAULT_CONTINENT_SCALE,
         },
         uDetailScale: {
           value: (config.detailScale as number) ?? DEFAULT_DETAIL_SCALE,
         },
         uOceanThreshold: {
-          value:
-            (config.oceanThreshold as number) ?? DEFAULT_OCEAN_THRESHOLD,
+          value: (config.oceanThreshold as number) ?? DEFAULT_OCEAN_THRESHOLD,
         },
         uDetailLevel: { value: QUALITY_TO_DETAIL[this.qualityLevel] },
         uSeed: { value: (config.noiseSeed as number) ?? DEFAULT_NOISE_SEED },
@@ -197,8 +194,7 @@ export class PlanetRenderer implements ICelestialRenderer {
         uAmbient: { value: 0.25 },
         uPolarIce: { value: polarIce ? 1.0 : 0.0 },
         uPolarLatitude: {
-          value:
-            (config.polarLatitude as number) ?? DEFAULT_POLAR_LATITUDE,
+          value: (config.polarLatitude as number) ?? DEFAULT_POLAR_LATITUDE,
         },
         uIceColor: {
           value: new Color(config.iceColor ?? '#e8f0ff'),

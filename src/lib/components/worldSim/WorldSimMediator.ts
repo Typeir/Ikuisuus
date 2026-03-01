@@ -22,23 +22,23 @@ import type { SceneManager } from './canvas/SceneManager';
 import { CelestialBodyFactory } from './celestials/CelestialBodyFactory';
 import { CelestialRegistry } from './celestials/CelestialRegistry';
 import type {
-  CelestialBodyData,
-  CelestialRendererType,
-  ICelestialRenderer,
-  SceneContext,
+    CelestialBodyData,
+    CelestialRendererType,
+    ICelestialRenderer,
+    SceneContext,
 } from './celestials/interfaces';
 import {
-  computeOrbitalPosition,
-  surfacePositionToWorld,
+    computeOrbitalPosition,
+    surfacePositionToWorld,
 } from './celestials/OrbitalMechanics';
 import { createAllOrbitLines } from './celestials/OrbitLineFactory';
 import {
-  WorldSimActionType,
-  type WorldSimAction,
+    WorldSimActionType,
+    type WorldSimAction,
 } from './context/worldSimTypes';
 import {
-  AdaptivePerformanceController,
-  type RenderQualityProfile,
+    AdaptivePerformanceController,
+    type RenderQualityProfile,
 } from './optimization/AdaptivePerformanceController';
 import { DPR_CAP } from './optimization/GeometryBudgets';
 import { RaycastService } from './RaycastService';

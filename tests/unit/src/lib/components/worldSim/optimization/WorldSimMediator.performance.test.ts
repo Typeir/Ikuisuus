@@ -8,8 +8,8 @@
 
 import { WorldSimMediator } from '@/lib/components/worldSim/WorldSimMediator';
 import type {
-  BoundaryData,
-  CelestialBodyData,
+    BoundaryData,
+    CelestialBodyData,
 } from '@/lib/components/worldSim/celestials/interfaces';
 import { Object3D, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

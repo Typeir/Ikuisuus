@@ -23,9 +23,6 @@ import {
     Sprite,
     SpriteMaterial,
 } from 'three';
-import noise3d from '../shaders/noise3d.glsl';
-import starFrag from '../shaders/star.frag.glsl';
-import starVert from '../shaders/star.vert.glsl';
 import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import {
     createSphereLODSet,
@@ -33,6 +30,9 @@ import {
     STAR_RING_SEGMENTS,
     type SphereLODSet,
 } from '../optimization/GeometryBudgets';
+import noise3d from '../shaders/noise3d.glsl';
+import starFrag from '../shaders/star.frag.glsl';
+import starVert from '../shaders/star.vert.glsl';
 import { createRadialGradientTexture } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
 import type {

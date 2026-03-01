@@ -18,15 +18,9 @@ import {
     MeshPhongMaterial,
     Object3D,
     ShaderMaterial,
-    SphereGeometry,
     TorusGeometry,
-    Vector3,
+    Vector3
 } from 'three';
-import icyCoreFrag from '../shaders/icyCore.frag.glsl';
-import icyCoreVert from '../shaders/icyCore.vert.glsl';
-import noise3d from '../shaders/noise3d.glsl';
-import ringWorldFrag from '../shaders/ringWorld.frag.glsl';
-import ringWorldVert from '../shaders/ringWorld.vert.glsl';
 import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import {
     createSphereLODSet,
@@ -37,6 +31,11 @@ import {
     TORUS_TUBULAR_SEGMENTS,
     type SphereLODSet,
 } from '../optimization/GeometryBudgets';
+import icyCoreFrag from '../shaders/icyCore.frag.glsl';
+import icyCoreVert from '../shaders/icyCore.vert.glsl';
+import noise3d from '../shaders/noise3d.glsl';
+import ringWorldFrag from '../shaders/ringWorld.frag.glsl';
+import ringWorldVert from '../shaders/ringWorld.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
@@ -239,7 +238,9 @@ export class RingWorldRenderer implements ICelestialRenderer {
           uDisplacementScale: { value: DEFAULT_RING_DISPLACEMENT },
           uBaseColor: { value: ringColor.clone().multiplyScalar(shade) },
           uVeinColor: {
-            value: new Color(coreColor).lerp(ringColor, 0.5).multiplyScalar(1.2),
+            value: new Color(coreColor)
+              .lerp(ringColor, 0.5)
+              .multiplyScalar(1.2),
           },
           uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
           uAmbient: { value: 0.3 },

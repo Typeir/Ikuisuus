@@ -13,25 +13,28 @@
  */
 
 import {
-  AdditiveBlending,
-  BackSide,
-  Mesh,
-  NormalBlending,
-  Object3D,
-  ShaderMaterial,
-  SphereGeometry,
+    AdditiveBlending,
+    BackSide,
+    Mesh,
+    NormalBlending,
+    Object3D,
+    ShaderMaterial,
+    SphereGeometry,
 } from 'three';
+import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
+import {
+    EVERDARK_LOD,
+    type SphereLODSet,
+} from '../optimization/GeometryBudgets';
 import everdarkFrag from '../shaders/everdark.frag.glsl';
 import everdarkVert from '../shaders/everdark.vert.glsl';
 import noise3d from '../shaders/noise3d.glsl';
-import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
-import { EVERDARK_LOD, type SphereLODSet } from '../optimization/GeometryBudgets';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
-  BoundaryData,
-  CelestialBodyData,
-  ICelestialRenderer,
-  SceneContext,
+    BoundaryData,
+    CelestialBodyData,
+    ICelestialRenderer,
+    SceneContext,
 } from './interfaces';
 
 /**
