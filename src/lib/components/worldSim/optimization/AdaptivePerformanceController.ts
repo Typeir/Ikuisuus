@@ -76,17 +76,20 @@ const UPSHIFT_CONFIRMATION_FRAMES = 90;
  * - Downgrading requires lower FPS (easier to drop quality)
  * - Upgrading requires higher FPS (harder to gain quality, must run very well)
  *
+ * Note: Browser rendering is capped at ~60 FPS, so upgrade thresholds must be
+ * achievable within that constraint (e.g., 55-57 range for headroom).
+ *
  * @constant {Object} QUALITY_THRESHOLDS
  * @property {number} downgradeToMedium - From high to medium when FPS drops below this
- * @property {number} upgradeToHigh - From medium to high when FPS rises above this (must run exceptionally well)
+ * @property {number} upgradeToHigh - From medium to high when FPS rises above this (achievable within 60 FPS cap)
  * @property {number} downgradeToLow - From medium to low when FPS drops below this
- * @property {number} upgradeToMedium - From low to medium when FPS rises above this (must run exceptionally well)
+ * @property {number} upgradeToMedium - From low to medium when FPS rises above this (achievable within 60 FPS cap)
  */
 const QUALITY_THRESHOLDS = {
   downgradeToMedium: 48,
-  upgradeToHigh: 62,
+  upgradeToHigh: 56,
   downgradeToLow: 38,
-  upgradeToMedium: 58,
+  upgradeToMedium: 56,
 } as const;
 
 /**
