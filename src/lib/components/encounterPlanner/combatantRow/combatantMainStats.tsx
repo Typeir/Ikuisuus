@@ -28,6 +28,7 @@
 import type { CreatureStats } from '@/lib/types/encounterPlanner';
 import { rollInitiative } from '@/lib/utils/encounterStorage';
 import { useTranslations } from 'next-intl';
+import { Dices } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import styles from './combatantRow.module.scss';
 import { getPhaseMarker } from './utils';
@@ -386,7 +387,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
           className={styles.rollInitiativeButton}
           title={t('rollInitiative')}
           aria-label={t('rollInitiative')}>
-          🎲
+          <Dices size={18} aria-hidden='true' />
         </button>
       </div>
 

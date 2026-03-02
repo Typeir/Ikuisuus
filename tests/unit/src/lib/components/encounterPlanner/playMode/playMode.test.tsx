@@ -553,7 +553,7 @@ describe('PlayMode Component', () => {
       });
       render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
 
-      // Find remove buttons by searching for the ✕ symbol or by title
+      // Find remove buttons by title attribute
       const removeButtons = screen.getAllByTitle(/remove/i);
       if (removeButtons.length === 0) {
         throw new Error(

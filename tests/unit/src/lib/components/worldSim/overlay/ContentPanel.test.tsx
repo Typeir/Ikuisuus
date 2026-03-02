@@ -70,7 +70,7 @@ vi.mock('@/lib/components/ui/draggable/Draggable', () => ({
       data-default-height={defaultHeight ?? undefined}>
       {onClose && (
         <button onClick={onClose} type='button' aria-label='Close panel'>
-          ✕
+          Close
         </button>
       )}
       {children}

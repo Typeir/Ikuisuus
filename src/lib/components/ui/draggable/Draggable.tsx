@@ -22,6 +22,7 @@ import {
     type CSSProperties,
     type ReactNode,
 } from 'react';
+import { X } from 'lucide-react';
 import styles from './draggable.module.scss';
 
 /** @constant {number} MIN_WIDTH - Minimum resize width in pixels */
@@ -368,7 +369,7 @@ export function Draggable({
             onClick={onClose}
             type='button'
             aria-label='Close panel'>
-            ✕
+            <X size={16} aria-hidden='true' />
           </button>
         )}
       </div>

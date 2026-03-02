@@ -13,6 +13,7 @@
 
 import { useEffect, useRef, ReactNode, memo } from 'react';
 import { createPortal } from 'react-dom';
+import { X } from 'lucide-react';
 import styles from './modal.module.scss';
 
 /**
@@ -133,7 +134,7 @@ export const Modal = memo(function Modal({
                 type="button"
                 className={styles.closeButton}
               >
-                ✕
+                <X size={18} aria-hidden='true' />
               </button>
             )}
           </div>

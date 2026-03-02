@@ -30,6 +30,7 @@ import { logger } from '@/lib/logging/logger';
 import type { SpellRef } from '@/lib/types/encounterPlanner';
 import { useCallback, useEffect, useState } from 'react';
 import { SpellCombobox } from '../comboboxes';
+import { X } from 'lucide-react';
 import styles from '../creatureRow.module.scss';
 
 const log = logger.child({ module: 'SpellListEditor' });
@@ -176,7 +177,7 @@ export const SpellListEditor: React.FC<SpellListEditorProps> = ({
                   onClick={() => handleRemoveSpell(spell.slug)}
                   className={styles.removeChip}
                   aria-label={removeChipAriaLabel}>
-                  ✕
+                  <X size={12} aria-hidden='true' />
                 </button>
               )}
             </div>

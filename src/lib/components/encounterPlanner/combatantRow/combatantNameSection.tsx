@@ -26,6 +26,7 @@
 
 import Icon from '@/lib/components/icon/icon';
 import { Tooltip } from '@/lib/components/ui';
+import { X } from 'lucide-react';
 import {
   AwakeningClassResult,
   computeAwakeningClasses,
@@ -154,7 +155,7 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
           onClick={onRemoveSessionOnly}
           className={`${styles.button} ${styles.buttonDanger}`}
           title={t('removeCombatant')}>
-          ✕
+          <X size={14} aria-hidden='true' />
         </button>
       )}
     </div>

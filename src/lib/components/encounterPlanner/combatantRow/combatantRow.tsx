@@ -48,6 +48,7 @@
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
 import { computeAwakeningClasses } from '@/lib/utils/heroicAwakeningStyles';
 import { useTranslations } from 'next-intl';
+import { AlignJustify } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { CombatantDetailsColumns } from '../combatantDetailsColumns';
 import { AffixListEditor, BuffListEditor, ItemListEditor, SpellListEditor } from '../listEditors';
@@ -150,7 +151,7 @@ const CombatantRowContent: React.FC = () => {
           onClick={() => setDetailsExpanded(!detailsExpanded)}
           title={detailsExpanded ? t('hideDetails') : t('showDetails')}
         >
-          <span className={styles.hamburgerIcon}>☰</span>
+          <span className={styles.hamburgerIcon}><AlignJustify size={14} aria-hidden='true' /></span>
           <span>{detailsExpanded ? t('hideDetails') : t('showDetails')}</span>
         </button>
 

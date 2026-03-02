@@ -66,20 +66,18 @@ h1.title {
   text-decoration: none !important;
 }
 
-.emojiIcon,
-.toolsEmoji {
-  display: inline-block;
+.ssrThemeIcon,
+.ssrToolsIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   user-select: none;
-  font-size: 1.25rem;
 }
 
-.emojiIcon {
+.ssrThemeIcon {
   font-size: 1rem;
   width: 1.5rem;
   height: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
   &::before {
     content: '☀️';
@@ -90,7 +88,7 @@ h1.title {
   }
 }
 
-html[data-theme='dark'] .emojiIcon {
+html[data-theme='dark'] .ssrThemeIcon {
   filter: saturate(0.05) contrast(0.3) brightness(2.5);
 
   &::before {
@@ -98,17 +96,14 @@ html[data-theme='dark'] .emojiIcon {
   }
 }
 
-html[data-theme='light'] .emojiIcon {
+html[data-theme='light'] .ssrThemeIcon {
   filter: saturate(0.05) contrast(0.3) brightness(0);
 }
 
-.toolsEmoji {
+.ssrToolsIcon {
   font-size: 1rem;
   width: 1.5rem;
   height: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
   &::before {
     content: '🛠️';
@@ -119,13 +114,15 @@ html[data-theme='light'] .emojiIcon {
   }
 }
 
-html[data-theme='dark'] .toolsEmoji {
+html[data-theme='dark'] .ssrToolsIcon {
   filter: saturate(0.05) contrast(0.3) brightness(2.5);
 }
 
-html[data-theme='light'] .toolsEmoji {
+html[data-theme='light'] .ssrToolsIcon {
   filter: saturate(0.05) contrast(0.3) brightness(0);
 }
+
+
 
 /* ── Embed Mode ──────────────────────────────────────────────── */
 

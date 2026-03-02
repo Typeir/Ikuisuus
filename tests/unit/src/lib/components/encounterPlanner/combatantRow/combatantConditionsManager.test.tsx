@@ -175,7 +175,7 @@ describe('CombatantConditionsManager condition display', () => {
       ],
     });
 
-    const removeButtons = screen.getAllByRole('button', { name: '✕' });
+    const removeButtons = screen.getAllByRole('button', { name: 'removeCondition' });
     expect(removeButtons).toHaveLength(2);
   });
 });
@@ -264,7 +264,7 @@ describe('CombatantConditionsManager remove condition', () => {
     const conditions = [createConditionEntry('abc123', 'Stunned')];
     const { onUpdate } = renderWithProvider({ conditions });
 
-    const removeButton = screen.getByRole('button', { name: '✕' });
+    const removeButton = screen.getByRole('button', { name: 'removeCondition' });
     await user.click(removeButton);
 
     expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({
@@ -281,7 +281,7 @@ describe('CombatantConditionsManager remove condition', () => {
     ];
     const { onUpdate } = renderWithProvider({ conditions });
 
-    const removeButtons = screen.getAllByRole('button', { name: '✕' });
+    const removeButtons = screen.getAllByRole('button', { name: 'removeCondition' });
     await user.click(removeButtons[1]);
 
     expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({

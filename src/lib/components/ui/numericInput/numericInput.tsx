@@ -57,6 +57,7 @@ import {
   ChangeEvent,
   KeyboardEvent,
 } from 'react';
+import { X } from 'lucide-react';
 import styles from './numericInput.module.scss';
 
 /**
@@ -267,7 +268,7 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(func
           aria-label="Clear value"
           tabIndex={-1}
         >
-          ✕
+          <X size={14} aria-hidden='true' />
         </button>
       )}
 

@@ -29,6 +29,7 @@
 import type { AffixEntry } from '@/lib/types/encounterPlanner';
 import { useCallback, useMemo } from 'react';
 import { AffixCombobox } from '../comboboxes';
+import { X } from 'lucide-react';
 import styles from '../creatureRow.module.scss';
 
 /**
@@ -131,7 +132,7 @@ export const AffixListEditor: React.FC<AffixListEditorProps> = ({
                   onClick={() => handleRemoveAffix(idx)}
                   className={styles.removeChip}
                   aria-label={removeChipAriaLabel}>
-                  ✕
+                  <X size={12} aria-hidden='true' />
                 </button>
               )}
             </div>

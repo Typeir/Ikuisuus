@@ -26,6 +26,7 @@
 import type { HeroicAwakeningState, InProgressCombatant } from '@/lib/types/inProgressCombat';
 import { forceHeroicAwakening } from '@/lib/utils/inProgressCombatStorage';
 import { Tooltip } from '@/lib/components/ui';
+import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import { useCombatant } from './utils/context/combatantContext';
@@ -165,8 +166,9 @@ export const CombatantHeroicSection: React.FC<CombatantHeroicSectionProps> = () 
               <button
                 onClick={handleUnawaken}
                 className={styles.awakeningButtonDanger}
+                aria-label={t('removeAwakening')}
               >
-                ✕
+                <X size={14} aria-hidden='true' />
               </button>
             </Tooltip>
           </div>

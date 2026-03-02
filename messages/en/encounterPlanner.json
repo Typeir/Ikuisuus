@@ -21,6 +21,8 @@
   "showHeroicInfo": "Show Heroic Info",
   "hideHeroicInfo": "Hide Heroic Info",
   "addCondition": "Add Condition...",
+  "removeCondition": "Remove Condition",
+  "removeAwakening": "Remove Awakening",
   "round": "Round",
   "turn": "Turn",
   "encounterName": "Encounter Name",

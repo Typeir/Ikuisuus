@@ -13,6 +13,7 @@
 
 import { useEffect, useRef, ReactNode, memo } from 'react';
 import { createPortal } from 'react-dom';
+import { X } from 'lucide-react';
 
 /**
  * @interface MobileModalProps
@@ -167,7 +168,7 @@ export const MobileModal = memo(function MobileModal({
                   color: 'var(--color-text-secondary)',
                 }}
               >
-                ✕
+                <X size={24} aria-hidden='true' />
               </button>
             )}
           </div>

@@ -18,6 +18,7 @@
 
 import tertiaryStyles from '@/lib/components/button/tertiaryButton.module.scss';
 import Icon from '@/lib/components/icon/icon';
+import { Moon, Sun, Wrench } from 'lucide-react';
 import { Sidebar } from '@/lib/components/sidebar/sidebar';
 import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
@@ -32,7 +33,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './responsiveLayoutShell.module.scss';
 
 type Item = {
@@ -64,6 +65,7 @@ function BaseResponsiveLayoutShell({
     useSidebarMenuActions();
   const { theme: currentTheme } = useThemeState();
   const { setTheme } = useThemeActions();
+  const [mounted, setMounted] = useState(false);
   const t = useTranslations('layout');
   const params = useParams();
   const router = useRouter();
@@ -71,6 +73,10 @@ function BaseResponsiveLayoutShell({
 
   const searchParams = useSearchParams();
   const isEmbed = searchParams.get('embed') === 'true';
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   /**
    * Intercept link clicks in embed mode to preserve ?embed=true across
@@ -188,7 +194,15 @@ function BaseResponsiveLayoutShell({
                 onClick={toggleTheme}
                 className={tertiaryStyles.tertiaryButton}
                 aria-label='Toggle theme'>
-                <span className={styles.emojiIcon} />
+                {mounted ? (
+                  currentTheme === Theme.Dark ? (
+                    <Moon size={20} aria-hidden='true' />
+                  ) : (
+                    <Sun size={20} aria-hidden='true' />
+                  )
+                ) : (
+                  <span className={styles.ssrThemeIcon} aria-hidden='true' />
+                )}
               </button>
             </div>
           </div>
@@ -213,7 +227,11 @@ function BaseResponsiveLayoutShell({
               onSelect={handleToolSelect}
               trigger={
                 <>
-                  <span className={styles.toolsEmoji} />
+                  {mounted ? (
+                    <Wrench size={18} aria-hidden='true' />
+                  ) : (
+                    <span className={styles.ssrToolsIcon} aria-hidden='true' />
+                  )}
                   <span className='hidden lg:inline text-sm'>Tools</span>
                 </>
               }

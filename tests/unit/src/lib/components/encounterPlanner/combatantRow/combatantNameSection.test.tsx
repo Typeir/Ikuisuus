@@ -236,14 +236,14 @@ describe('CombatantNameSection remove button', () => {
   it('should not render remove button when onRemoveSessionOnly is undefined', () => {
     renderWithProvider({}, {}, vi.fn(), undefined);
 
-    expect(screen.queryByRole('button', { name: '✕' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'removeCombatant' })).not.toBeInTheDocument();
   });
 
   it('should render remove button when onRemoveSessionOnly is provided', () => {
     const mockRemove = vi.fn();
     renderWithProvider({}, {}, vi.fn(), mockRemove);
 
-    expect(screen.getByRole('button', { name: '✕' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'removeCombatant' })).toBeInTheDocument();
   });
 
   it('should call onRemoveSessionOnly when remove button is clicked', async () => {
@@ -251,7 +251,7 @@ describe('CombatantNameSection remove button', () => {
     const mockRemove = vi.fn();
     renderWithProvider({}, {}, vi.fn(), mockRemove);
 
-    await user.click(screen.getByRole('button', { name: '✕' }));
+    await user.click(screen.getByRole('button', { name: 'removeCombatant' }));
 
     expect(mockRemove).toHaveBeenCalledTimes(1);
   });

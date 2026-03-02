@@ -24,6 +24,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { X } from 'lucide-react';
 import styles from '../creatureRow.module.scss';
 
 /**
@@ -98,7 +99,7 @@ export const BuffListEditor: React.FC<BuffListEditorProps> = ({
                 onClick={() => handleRemoveBuff(idx)}
                 className={styles.removeChip}
                 aria-label={removeChipAriaLabel}>
-                ✕
+                <X size={12} aria-hidden='true' />
               </button>
             )}
           </div>

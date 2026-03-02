@@ -23,6 +23,7 @@ import {
   useImperativeHandle,
 } from 'react';
 import { MobileModal } from '../modal';
+import { ChevronDown } from 'lucide-react';
 import styles from './filterSelect.module.scss';
 
 /**
@@ -402,7 +403,7 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(fun
           aria-label={ariaLabel}
         >
           <span className={styles.triggerText}>{displayText}</span>
-          <span className={styles.triggerIcon} aria-hidden="true">▼</span>
+          <ChevronDown size={14} className={styles.triggerIcon} aria-hidden='true' />
         </button>
         <FilterMobileModal
           isOpen={isOpen}
@@ -441,7 +442,7 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(fun
         aria-controls={isOpen ? `${id}-listbox` : undefined}
       >
         <span className={styles.triggerText}>{displayText}</span>
-        <span className={styles.triggerIcon} aria-hidden="true">▼</span>
+        <ChevronDown size={14} className={styles.triggerIcon} aria-hidden='true' />
       </button>
 
       {isOpen && (

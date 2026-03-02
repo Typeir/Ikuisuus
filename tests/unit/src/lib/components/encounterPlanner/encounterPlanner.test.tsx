@@ -49,7 +49,7 @@ vi.mock('@/lib/components/encounterPlanner/combatantRow', () => ({
     <div data-testid={`combatant-row-${combatant.id}`}>
       <span>{combatant.name}</span>
       <button onClick={() => onUpdate({ ...combatant, hpCurrent: 100 })}>Update</button>
-      <button title="removeCombatant" onClick={onRemoveSessionOnly}>✕</button>
+      <button title="removeCombatant" onClick={onRemoveSessionOnly}>Remove</button>
     </div>
   ),
 }));

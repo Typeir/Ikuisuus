@@ -23,6 +23,7 @@
 
 import type { ConditionEntry } from '@/lib/types/inProgressCombat';
 import { useTranslations } from 'next-intl';
+import { X } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useCombatant } from './utils/context/combatantContext';
 import styles from './combatantRow.module.scss';
@@ -93,8 +94,9 @@ export const CombatantConditionsManager: React.FC<CombatantConditionsManagerProp
             <button
               onClick={() => handleRemoveCondition(condition.id)}
               className={styles.removeCondition}
+              aria-label={t('removeCondition')}
             >
-              ✕
+              <X size={12} aria-hidden='true' />
             </button>
           </div>
         ))}

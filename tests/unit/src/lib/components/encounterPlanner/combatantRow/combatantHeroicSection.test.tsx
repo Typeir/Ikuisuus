@@ -269,7 +269,7 @@ describe('CombatantHeroicSection force awakening', () => {
   it('should render unawaken button when crText is present', () => {
     renderWithProvider({ crText: 'CR 5' });
 
-    expect(screen.getByRole('button', { name: '✕' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'removeAwakening' })).toBeInTheDocument();
   });
 
   it('should call onUpdate with reset state when unawaken is clicked', async () => {
@@ -283,7 +283,7 @@ describe('CombatantHeroicSection force awakening', () => {
       crText: 'CR 5',
     });
 
-    await user.click(screen.getByRole('button', { name: '✕' }));
+    await user.click(screen.getByRole('button', { name: 'removeAwakening' }));
 
     expect(onUpdate).toHaveBeenCalled();
     const calledWith = onUpdate.mock.calls[0][0];

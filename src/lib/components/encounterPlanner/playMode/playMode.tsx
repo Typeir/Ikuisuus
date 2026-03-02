@@ -28,6 +28,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MonsterImporter } from '../importer';
 import { Tooltip, useNotifications } from '@/lib/components/ui';
+import { X } from 'lucide-react';
 import styles from './playMode.module.scss';
 import { CombatantRow } from '../combatantRow';
 
@@ -328,7 +329,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
           </span>
         </div>
         <button onClick={onExit} className={`${styles.button} ${styles.exitButton}`} aria-label={t('exitPlayMode')}>
-          ✕
+          <X size={18} aria-hidden='true' />
         </button>
       </div>
 

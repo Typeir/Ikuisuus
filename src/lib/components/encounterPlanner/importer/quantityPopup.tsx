@@ -27,6 +27,7 @@
 'use client';
 
 import { Modal, NumericInput } from '@/lib/components/ui';
+import { X, Check } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './quantityPopup.module.scss';
 
@@ -167,7 +168,7 @@ export const QuantityPopup: React.FC<QuantityPopupProps> = ({
             onClick={onCancel}
             aria-label={cancelLabel}
           >
-            <span className={styles.buttonIcon} aria-hidden="true">✕</span>
+            <span className={styles.buttonIcon} aria-hidden="true"><X size={14} /></span>
             <span className={styles.buttonText}>{cancelLabel}</span>
           </button>
           
@@ -178,7 +179,7 @@ export const QuantityPopup: React.FC<QuantityPopupProps> = ({
             onClick={handleConfirm}
             aria-label={`${confirmLabel} ${getValidQuantity(quantity)} ${creatureName}`}
           >
-            <span className={styles.buttonIcon} aria-hidden="true">✓</span>
+            <span className={styles.buttonIcon} aria-hidden="true"><Check size={14} /></span>
             <span className={styles.buttonText}>{confirmLabel}</span>
           </button>
         </div>
