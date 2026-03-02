@@ -64,17 +64,30 @@ const FRAME_TIME_ALPHA = 0.08;
 /** @constant {number} DEFAULT_FRAME_TIME_MS - Default frame time estimate used before sampling */
 const DEFAULT_FRAME_TIME_MS = 16.67;
 
-/** @constant {number} LOW_FPS_THRESHOLD - Switch target to low quality below this FPS */
-const LOW_FPS_THRESHOLD = 40;
-
-/** @constant {number} MEDIUM_FPS_THRESHOLD - Switch target to medium quality below this FPS */
-const MEDIUM_FPS_THRESHOLD = 53;
-
 /** @constant {number} DOWNSHIFT_CONFIRMATION_FRAMES - Consecutive frames required to lower quality */
 const DOWNSHIFT_CONFIRMATION_FRAMES = 20;
 
 /** @constant {number} UPSHIFT_CONFIRMATION_FRAMES - Consecutive frames required to raise quality */
 const UPSHIFT_CONFIRMATION_FRAMES = 90;
+
+/**
+ * Hysteretic FPS thresholds for quality level transitions.
+ * Using asymmetric thresholds prevents toggle oscillation:
+ * - Downgrading requires lower FPS (easier to drop quality)
+ * - Upgrading requires higher FPS (harder to gain quality, must run very well)
+ *
+ * @constant {Object} QUALITY_THRESHOLDS
+ * @property {number} downgradeToMedium - From high to medium when FPS drops below this
+ * @property {number} upgradeToHigh - From medium to high when FPS rises above this (must run exceptionally well)
+ * @property {number} downgradeToLow - From medium to low when FPS drops below this
+ * @property {number} upgradeToMedium - From low to medium when FPS rises above this (must run exceptionally well)
+ */
+const QUALITY_THRESHOLDS = {
+  downgradeToMedium: 48,
+  upgradeToHigh: 62,
+  downgradeToLow: 38,
+  upgradeToMedium: 58,
+} as const;
 
 /**
  * Quality profile lookup table.
@@ -211,7 +224,8 @@ export class AdaptivePerformanceController {
   }
 
   /**
-   * Compute target quality level from smoothed FPS.
+   * Compute target quality level from smoothed FPS using hysteretic thresholds.
+   * Different thresholds apply for upgrading vs downgrading to prevent oscillation.
    *
    * @private
    * @returns {RenderQualityLevel} Candidate target level
@@ -219,12 +233,28 @@ export class AdaptivePerformanceController {
   private computeTargetLevel(): RenderQualityLevel {
     const fps = 1000 / this.averageFrameTimeMs;
 
-    if (fps < LOW_FPS_THRESHOLD) {
-      return 'low';
+    if (this.currentLevel === 'high') {
+      if (fps < QUALITY_THRESHOLDS.downgradeToMedium) {
+        return 'medium';
+      }
+      return 'high';
     }
 
-    if (fps < MEDIUM_FPS_THRESHOLD) {
+    if (this.currentLevel === 'medium') {
+      if (fps > QUALITY_THRESHOLDS.upgradeToHigh) {
+        return 'high';
+      }
+      if (fps < QUALITY_THRESHOLDS.downgradeToLow) {
+        return 'low';
+      }
       return 'medium';
+    }
+
+    if (this.currentLevel === 'low') {
+      if (fps > QUALITY_THRESHOLDS.upgradeToMedium) {
+        return 'medium';
+      }
+      return 'low';
     }
 
     return 'high';
