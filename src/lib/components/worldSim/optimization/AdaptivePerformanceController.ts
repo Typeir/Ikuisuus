@@ -88,7 +88,7 @@ const UPSHIFT_CONFIRMATION_FRAMES = 90;
 const QUALITY_THRESHOLDS = {
   downgradeToMedium: 48,
   upgradeToHigh: 58,
-  downgradeToLow: 38,
+  downgradeToLow: 36,
   upgradeToMedium: 56,
 } as const;
 
