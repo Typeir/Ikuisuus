@@ -1,0 +1,4 @@
+[submodule "src/content"]
+	path = src/content
+	url = https://github.com/Typeir/ikuisuus-content.git
+	branch = main
