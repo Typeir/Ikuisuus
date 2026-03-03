@@ -18,7 +18,6 @@
 
 import tertiaryStyles from '@/lib/components/button/tertiaryButton.module.scss';
 import Icon from '@/lib/components/icon/icon';
-import { Moon, Sun, Wrench } from 'lucide-react';
 import { Sidebar } from '@/lib/components/sidebar/sidebar';
 import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
@@ -29,6 +28,7 @@ import {
     useThemeState,
 } from '@/lib/context/PersistentUiContext';
 import { Theme } from '@/lib/enums/themes';
+import { Moon, Sun, Wrench } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';

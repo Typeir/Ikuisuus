@@ -48,17 +48,16 @@ const EditPageButton = ({ slug, locale }: EditPageButtonProps): JSX.Element => {
 
   const handleClick = useCallback(() => {
     router.push(
-      `/${locale}/utils/mdx-editor?slug=${encodeURIComponent(slug)}&locale=${encodeURIComponent(locale)}`
+      `/${locale}/utils/mdx-editor?slug=${encodeURIComponent(slug)}&locale=${encodeURIComponent(locale)}`,
     );
   }, [router, locale, slug]);
 
   return (
     <button
-      type="button"
+      type='button'
       className={styles.editButton}
       onClick={handleClick}
-      aria-label={t('editButton')}
-    >
+      aria-label={t('editButton')}>
       <Pencil size={14} aria-hidden='true' />
       {t('editButton')}
     </button>

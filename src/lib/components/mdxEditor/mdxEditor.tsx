@@ -15,13 +15,13 @@
 
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import {
-  useCorrectionsTokenState,
-  useCorrectionsTokenActions,
+    useCorrectionsTokenActions,
+    useCorrectionsTokenState,
 } from '@/lib/hooks/useCorrectionsToken';
+import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './mdxEditor.module.scss';
 
 /**
@@ -68,7 +68,9 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
   const initialSlug = searchParams.get('slug') ?? '';
   const initialLocale = searchParams.get('locale') ?? locale;
 
-  const [mode, setMode] = useState<'edit' | 'new'>(initialSlug ? 'edit' : 'new');
+  const [mode, setMode] = useState<'edit' | 'new'>(
+    initialSlug ? 'edit' : 'new',
+  );
   const [status, setStatus] = useState<EditorStatus>({ phase: 'idle' });
   const [content, setContent] = useState('');
   const [filePath, setFilePath] = useState('');
@@ -78,33 +80,42 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
   /**
    * Loads the raw MDX content from the corrections read API.
    */
-  const loadContent = useCallback(async (targetSlug: string, targetLocale: string) => {
-    if (!targetSlug.trim()) {
-      setStatus({ phase: 'error', message: t('slugRequired') });
-      return;
-    }
-
-    setStatus({ phase: 'loading' });
-    try {
-      const res = await fetch(
-        `/api/corrections/read?slug=${encodeURIComponent(targetSlug)}&locale=${encodeURIComponent(targetLocale)}`
-      );
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ error: 'Unknown error' }));
-        setStatus({ phase: 'error', message: data.error || `HTTP ${res.status}` });
+  const loadContent = useCallback(
+    async (targetSlug: string, targetLocale: string) => {
+      if (!targetSlug.trim()) {
+        setStatus({ phase: 'error', message: t('slugRequired') });
         return;
       }
-      const data = await res.json();
-      setContent(data.content);
-      setFilePath(data.path);
-      setStatus({ phase: 'ready', sha: data.sha, resolvedPath: data.path });
-    } catch (err) {
-      setStatus({
-        phase: 'error',
-        message: err instanceof Error ? err.message : 'Failed to load content',
-      });
-    }
-  }, [t]);
+
+      setStatus({ phase: 'loading' });
+      try {
+        const res = await fetch(
+          `/api/corrections/read?slug=${encodeURIComponent(targetSlug)}&locale=${encodeURIComponent(targetLocale)}`,
+        );
+        if (!res.ok) {
+          const data = await res
+            .json()
+            .catch(() => ({ error: 'Unknown error' }));
+          setStatus({
+            phase: 'error',
+            message: data.error || `HTTP ${res.status}`,
+          });
+          return;
+        }
+        const data = await res.json();
+        setContent(data.content);
+        setFilePath(data.path);
+        setStatus({ phase: 'ready', sha: data.sha, resolvedPath: data.path });
+      } catch (err) {
+        setStatus({
+          phase: 'error',
+          message:
+            err instanceof Error ? err.message : 'Failed to load content',
+        });
+      }
+    },
+    [t],
+  );
 
   /**
    * Auto-loads content when the component mounts with a slug parameter.
@@ -122,7 +133,10 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
    * Focus the textarea when content loads.
    */
   useEffect(() => {
-    if ((status.phase === 'ready' || status.phase === 'new') && editorRef.current) {
+    if (
+      (status.phase === 'ready' || status.phase === 'new') &&
+      editorRef.current
+    ) {
       editorRef.current.focus();
     }
   }, [status.phase]);
@@ -185,7 +199,10 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
       const data = await res.json();
 
       if (!res.ok) {
-        setStatus({ phase: 'error', message: data.error || `HTTP ${res.status}` });
+        setStatus({
+          phase: 'error',
+          message: data.error || `HTTP ${res.status}`,
+        });
         return;
       }
 
@@ -218,17 +235,19 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
         </div>
         <div className={styles.modeToggle}>
           <button
-            type="button"
-            className={mode === 'edit' ? styles.modeLabelActive : styles.modeLabel}
-            onClick={() => handleModeSwitch('edit')}
-          >
+            type='button'
+            className={
+              mode === 'edit' ? styles.modeLabelActive : styles.modeLabel
+            }
+            onClick={() => handleModeSwitch('edit')}>
             {t('modeEdit')}
           </button>
           <button
-            type="button"
-            className={mode === 'new' ? styles.modeLabelActive : styles.modeLabel}
-            onClick={() => handleModeSwitch('new')}
-          >
+            type='button'
+            className={
+              mode === 'new' ? styles.modeLabelActive : styles.modeLabel
+            }
+            onClick={() => handleModeSwitch('new')}>
             {t('modeNew')}
           </button>
         </div>
@@ -236,49 +255,48 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
 
       {/* Token */}
       <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel} htmlFor="mdx-editor-token">
+        <label className={styles.fieldLabel} htmlFor='mdx-editor-token'>
           {t('tokenLabel')}
         </label>
         <input
-          id="mdx-editor-token"
-          type="password"
+          id='mdx-editor-token'
+          type='password'
           className={styles.tokenInput}
           placeholder={t('tokenPlaceholder')}
           value={token ?? ''}
           onChange={(e) => setToken(e.target.value || null)}
-          autoComplete="off"
+          autoComplete='off'
         />
       </div>
 
       {/* File path / slug */}
       <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel} htmlFor="mdx-editor-path">
+        <label className={styles.fieldLabel} htmlFor='mdx-editor-path'>
           {mode === 'edit' ? t('slugLabel') : t('pathLabel')}
         </label>
         <div className={styles.fieldRow}>
           {mode === 'edit' ? (
             <>
               <input
-                id="mdx-editor-path"
-                type="text"
+                id='mdx-editor-path'
+                type='text'
                 className={styles.pathInput}
                 placeholder={t('slugPlaceholder')}
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
               />
               <button
-                type="button"
+                type='button'
                 className={styles.submitButton}
                 onClick={handleLoad}
-                disabled={!slug.trim() || status.phase === 'loading'}
-              >
+                disabled={!slug.trim() || status.phase === 'loading'}>
                 {t('loadButton')}
               </button>
             </>
           ) : (
             <input
-              id="mdx-editor-path"
-              type="text"
+              id='mdx-editor-path'
+              type='text'
               className={styles.pathInput}
               placeholder={t('pathPlaceholder')}
               value={filePath}
@@ -294,7 +312,7 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
       )}
 
       {/* Editor */}
-      {(status.phase !== 'idle' && status.phase !== 'loading') && (
+      {status.phase !== 'idle' && status.phase !== 'loading' && (
         <textarea
           ref={editorRef}
           className={styles.editor}
@@ -315,9 +333,8 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
               {t('success')}{' '}
               <a
                 href={(status as { prUrl: string }).prUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+                target='_blank'
+                rel='noopener noreferrer'>
                 {t('viewPr')}
               </a>
             </span>
@@ -329,17 +346,17 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
           )}
           {status.phase === 'ready' && (
             <span>
-              {t('editing')}: <code>{(status as { resolvedPath: string }).resolvedPath}</code>
+              {t('editing')}:{' '}
+              <code>{(status as { resolvedPath: string }).resolvedPath}</code>
             </span>
           )}
           {status.phase === 'new' && t('newFileMode')}
         </div>
         <button
-          type="button"
+          type='button'
           className={styles.submitButton}
           onClick={handleSubmit}
-          disabled={!canSubmit}
-        >
+          disabled={!canSubmit}>
           {mode === 'new' ? t('submitNew') : t('submitEdit')}
         </button>
       </div>

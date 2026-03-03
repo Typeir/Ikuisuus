@@ -11,9 +11,9 @@
  * @module lib/security/profanityFilter
  */
 
+import { logger } from '@/lib/logging/logger';
 import fs from 'fs';
 import path from 'path';
-import { logger } from '@/lib/logging/logger';
 
 const log = logger.child({ module: 'ProfanityFilter' });
 
@@ -46,10 +46,13 @@ const loadBannedTerms = (): string[] => {
       .map((line) => line.trim())
       .filter((line) => line.length > 0 && !line.startsWith('#'));
   } catch (error) {
-    log.error('Failed to load banned-terms.txt — profanity filter will be empty', {
-      error: error instanceof Error ? error.message : String(error),
-      filePath,
-    });
+    log.error(
+      'Failed to load banned-terms.txt — profanity filter will be empty',
+      {
+        error: error instanceof Error ? error.message : String(error),
+        filePath,
+      },
+    );
     return [];
   }
 };
@@ -65,7 +68,9 @@ let cachedTerms: string[] | null = null;
 const getBannedTerms = (): string[] => {
   if (!cachedTerms) {
     cachedTerms = loadBannedTerms();
-    log.debug(`Loaded ${cachedTerms.length} banned terms from banned-terms.txt`);
+    log.debug(
+      `Loaded ${cachedTerms.length} banned terms from banned-terms.txt`,
+    );
   }
   return cachedTerms;
 };
@@ -90,7 +95,7 @@ const getProfanityRegex = (): RegExp => {
       return cachedRegex;
     }
     const escaped = terms.map((term) =>
-      term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
     );
     cachedRegex = new RegExp(`\\b(${escaped.join('|')})\\b`, 'gi');
   }
@@ -120,7 +125,7 @@ export const checkProfanity = (text: string): ProfanityCheckResult => {
     matches.push(match[0].toLowerCase());
   }
 
-  const unique = [...new Set(matches)];
+  const unique = Array.from(new Set(matches));
 
   if (unique.length > 0) {
     log.message('Profanity detected', {
@@ -142,7 +147,9 @@ export const checkProfanity = (text: string): ProfanityCheckResult => {
  * @param {string[]} texts - Array of strings to scan
  * @returns {ProfanityCheckResult} Combined result across all inputs
  */
-export const checkProfanityMultiple = (texts: string[]): ProfanityCheckResult => {
+export const checkProfanityMultiple = (
+  texts: string[],
+): ProfanityCheckResult => {
   const allMatches: string[] = [];
 
   for (const text of texts) {
@@ -152,7 +159,7 @@ export const checkProfanityMultiple = (texts: string[]): ProfanityCheckResult =>
     }
   }
 
-  const unique = [...new Set(allMatches)];
+  const unique = Array.from(new Set(allMatches));
   return {
     flagged: unique.length > 0,
     matches: unique,

@@ -7,12 +7,12 @@
  * @module app/api/corrections/route
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken, tokenAuditId } from '@/lib/utils/auth/hmacToken';
 import { writeAuditLog } from '@/lib/db/auditLog';
 import { logger } from '@/lib/logging/logger';
+import { banIp, isIpBanned } from '@/lib/security/bannedIps';
 import { checkProfanityMultiple } from '@/lib/security/profanityFilter';
-import { isIpBanned, banIp } from '@/lib/security/bannedIps';
+import { tokenAuditId, verifyToken } from '@/lib/utils/auth/hmacToken';
+import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Corrections' });
 
@@ -27,7 +27,10 @@ interface CorrectionPayload {
   message?: string;
 }
 
-const ghFetch = async (endpoint: string, init?: RequestInit): Promise<Response> => {
+const ghFetch = async (
+  endpoint: string,
+  init?: RequestInit,
+): Promise<Response> => {
   const token = process.env.GITHUB_PAT;
   return fetch(`https://api.github.com/${endpoint}`, {
     ...init,
@@ -40,7 +43,11 @@ const ghFetch = async (endpoint: string, init?: RequestInit): Promise<Response> 
   });
 };
 
-const createBranch = async (owner: string, repo: string, branchName: string): Promise<void> => {
+const createBranch = async (
+  owner: string,
+  repo: string,
+  branchName: string,
+): Promise<void> => {
   const refRes = await ghFetch(`repos/${owner}/${repo}/git/ref/heads/main`);
   if (!refRes.ok) {
     throw new Error(`Failed to get main ref: ${await refRes.text()}`);
@@ -66,7 +73,7 @@ const commitFile = async (
   content: string,
   baseSha: string,
   branch: string,
-  message: string
+  message: string,
 ): Promise<void> => {
   const payload: Record<string, string> = {
     message,
@@ -75,15 +82,21 @@ const commitFile = async (
   };
   if (baseSha) payload.sha = baseSha;
 
-  const res = await ghFetch(`repos/${owner}/${repo}/contents/${encodeURI(filePath)}`, {
-    method: 'PUT',
-    body: JSON.stringify(payload),
-  });
+  const res = await ghFetch(
+    `repos/${owner}/${repo}/contents/${encodeURI(filePath)}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    },
+  );
 
   if (res.status === 409) {
-    throw Object.assign(new Error('Conflict: file has been modified since you loaded it'), {
-      code: 'CONFLICT',
-    });
+    throw Object.assign(
+      new Error('Conflict: file has been modified since you loaded it'),
+      {
+        code: 'CONFLICT',
+      },
+    );
   }
 
   if (!res.ok) {
@@ -96,7 +109,7 @@ const openPullRequest = async (
   repo: string,
   branch: string,
   title: string,
-  body: string
+  body: string,
 ): Promise<string> => {
   const res = await ghFetch(`repos/${owner}/${repo}/pulls`, {
     method: 'POST',
@@ -117,7 +130,10 @@ export async function POST(req: NextRequest) {
   const repo = process.env.CONTENT_REPO_NAME;
 
   if (!secret || !owner || !repo || !process.env.GITHUB_PAT) {
-    return NextResponse.json({ error: 'Corrections module is not configured' }, { status: 503 });
+    return NextResponse.json(
+      { error: 'Corrections module is not configured' },
+      { status: 503 },
+    );
   }
 
   const clientIp =
@@ -136,7 +152,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json(
       { error: 'Your network has been blocked due to a policy violation.' },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
@@ -153,7 +169,10 @@ export async function POST(req: NextRequest) {
       url: req.url,
     });
 
-    return NextResponse.json({ error: 'Missing authorization' }, { status: 401 });
+    return NextResponse.json(
+      { error: 'Missing authorization' },
+      { status: 401 },
+    );
   }
 
   const rawToken = authHeader.slice(7);
@@ -171,7 +190,10 @@ export async function POST(req: NextRequest) {
       url: req.url,
     });
 
-    return NextResponse.json({ error: verify.error ?? 'Invalid token' }, { status: 401 });
+    return NextResponse.json(
+      { error: verify.error ?? 'Invalid token' },
+      { status: 401 },
+    );
   }
 
   if (verify.payload.scope !== 'content:write') {
@@ -222,7 +244,10 @@ export async function POST(req: NextRequest) {
       bodyFull: JSON.stringify(body),
       auditId,
     });
-    return NextResponse.json({ error: 'Missing or invalid: path' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Missing or invalid: path' },
+      { status: 400 },
+    );
   }
 
   if (!content || typeof content !== 'string') {
@@ -236,18 +261,27 @@ export async function POST(req: NextRequest) {
       bodyFull: JSON.stringify(body),
       auditId,
     });
-    return NextResponse.json({ error: 'Missing or invalid: content' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Missing or invalid: content' },
+      { status: 400 },
+    );
   }
 
   if (!isNew && (!baseSha || typeof baseSha !== 'string')) {
     // Verbose logging — include everything unmasked for debugging
-    const authHeaderFull = headersObjAll['authorization'] ?? headersObjAll['Authorization'] ?? null;
+    const authHeaderFull =
+      headersObjAll['authorization'] ?? headersObjAll['Authorization'] ?? null;
 
     log.message('Missing or invalid payload field: baseSha', {
       level: 'warn',
       filePath,
       isNew: Boolean(isNew),
-      baseShaRaw: baseSha === undefined ? 'undefined' : baseSha === null ? 'null' : String(baseSha),
+      baseShaRaw:
+        baseSha === undefined
+          ? 'undefined'
+          : baseSha === null
+            ? 'null'
+            : String(baseSha),
       baseShaType: typeof baseSha,
       authHeader: authHeaderFull,
       headers: headersObjAll,
@@ -265,7 +299,10 @@ export async function POST(req: NextRequest) {
       token_id: auditId,
     });
 
-    return NextResponse.json({ error: 'Missing or invalid: baseSha' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Missing or invalid: baseSha' },
+      { status: 400 },
+    );
   }
 
   /** Reject paths that attempt directory traversal */
@@ -290,7 +327,7 @@ export async function POST(req: NextRequest) {
 
     await banIp(
       clientIp,
-      `Profanity in correction submission (terms: ${profanityResult.matches.join(', ')})`
+      `Profanity in correction submission (terms: ${profanityResult.matches.join(', ')})`,
     );
 
     await writeAuditLog({
@@ -301,15 +338,20 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { error: 'Submission rejected: prohibited content detected. Your network has been blocked.' },
-      { status: 403 }
+      {
+        error:
+          'Submission rejected: prohibited content detected. Your network has been blocked.',
+      },
+      { status: 403 },
     );
   }
 
   const timestamp = Date.now();
   const actionLabel = isNew ? 'new' : 'corrections';
   const branchName = `${actionLabel}/${filePath.replace(/[^a-zA-Z0-9\-_/]/g, '-')}-${timestamp}`;
-  const commitMsg = message || (isNew ? `[new]: create ${filePath}` : `[correction]: update ${filePath}`);
+  const commitMsg =
+    message ||
+    (isNew ? `[new]: create ${filePath}` : `[correction]: update ${filePath}`);
   const prTitle = isNew ? `New file: ${filePath}` : `Correction: ${filePath}`;
   const prBody = isNew
     ? `New file submitted via the Library editor.\n\n**File**: \`${filePath}\`\n**Token label**: \`${auditId}\``
@@ -317,8 +359,22 @@ export async function POST(req: NextRequest) {
 
   try {
     await createBranch(owner, repo, branchName);
-    await commitFile(owner, repo, filePath, content, isNew ? '' : baseSha, branchName, commitMsg);
-    const prUrl = await openPullRequest(owner, repo, branchName, prTitle, prBody);
+    await commitFile(
+      owner,
+      repo,
+      filePath,
+      content,
+      isNew ? '' : baseSha,
+      branchName,
+      commitMsg,
+    );
+    const prUrl = await openPullRequest(
+      owner,
+      repo,
+      branchName,
+      prTitle,
+      prBody,
+    );
 
     await writeAuditLog({
       content_path: filePath,
@@ -342,8 +398,11 @@ export async function POST(req: NextRequest) {
         token_id: auditId,
       });
       return NextResponse.json(
-        { error: 'The file has been modified since you loaded it. Refresh and try again.' },
-        { status: 409 }
+        {
+          error:
+            'The file has been modified since you loaded it. Refresh and try again.',
+        },
+        { status: 409 },
       );
     }
 
@@ -366,6 +425,9 @@ export async function POST(req: NextRequest) {
       token_id: auditId,
     });
 
-    return NextResponse.json({ error: 'Failed to create correction' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create correction' },
+      { status: 500 },
+    );
   }
 }

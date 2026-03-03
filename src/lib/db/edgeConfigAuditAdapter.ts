@@ -76,7 +76,7 @@ const writeToEdgeConfig = async (records: AuditRecord[]): Promise<void> => {
           },
         ],
       }),
-    }
+    },
   );
 
   if (!res.ok) {

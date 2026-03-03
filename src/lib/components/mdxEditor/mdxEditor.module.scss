@@ -152,7 +152,9 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.15s ease, opacity 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    opacity 0.15s ease;
 
   &:hover:not(:disabled) {
     background-color: var(--color-accent-hover);
@@ -184,7 +186,9 @@
   color: var(--color-text-secondary);
   font-size: 0.75rem;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
     border-color: var(--color-accent);

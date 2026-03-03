@@ -15,8 +15,8 @@
 
 import { useCallback, useMemo } from 'react';
 import {
-  usePersistentUiDispatch,
-  usePersistentUiState,
+    usePersistentUiDispatch,
+    usePersistentUiState,
 } from '../context/PersistentUiContext';
 import { PERSISTED_UI_ACTION_TYPES } from '../types/persistentUiState';
 
@@ -73,10 +73,10 @@ export interface CorrectionsTokenActions {
  * @example
  * ```tsx
  * const { setToken } = useCorrectionsTokenActions();
- * 
+ *
  * // Store token after user pastes it
  * setToken('eyJleHAiOjE3NzI1Njg5MjgsInNjb3BlIjoiY29udGVudDp3cml0ZSJ9...');
- * 
+ *
  * // Clear token on logout
  * setToken(null);
  * ```
@@ -91,7 +91,7 @@ export function useCorrectionsTokenActions(): CorrectionsTokenActions {
         payload: { token },
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   return useMemo(() => ({ setToken }), [setToken]);

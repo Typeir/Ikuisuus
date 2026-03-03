@@ -19,8 +19,8 @@
  * ```
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logging/logger';
+import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Corrections:Read' });
 
@@ -34,14 +34,16 @@ const PATH_VARIANTS = ['.mdx', '.sheet.mdx', '.md'] as const;
  * @returns {Promise<{ content: string; sha: string; path: string } | null>} File data or null if not found
  */
 const fetchFileFromGitHub = async (
-  filePath: string
+  filePath: string,
 ): Promise<{ content: string; sha: string; path: string } | null> => {
   const owner = process.env.CONTENT_REPO_OWNER;
   const repo = process.env.CONTENT_REPO_NAME;
   const token = process.env.GITHUB_PAT;
 
   if (!owner || !repo || !token) {
-    throw new Error('Missing GitHub configuration (CONTENT_REPO_OWNER, CONTENT_REPO_NAME, GITHUB_PAT)');
+    throw new Error(
+      'Missing GitHub configuration (CONTENT_REPO_OWNER, CONTENT_REPO_NAME, GITHUB_PAT)',
+    );
   }
 
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURI(filePath)}`;
@@ -94,7 +96,10 @@ export async function GET(req: NextRequest) {
   const locale = searchParams.get('locale') || 'en';
 
   if (!slug) {
-    return NextResponse.json({ error: 'Missing required query parameter: slug' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Missing required query parameter: slug' },
+      { status: 400 },
+    );
   }
 
   const basePath = `${locale}/${slug}`;
@@ -114,13 +119,19 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(mainResult);
     }
 
-    return NextResponse.json({ error: 'Content file not found' }, { status: 404 });
+    return NextResponse.json(
+      { error: 'Content file not found' },
+      { status: 404 },
+    );
   } catch (error) {
     log.error('Error reading content from GitHub', {
       error: error instanceof Error ? error.message : String(error),
       slug,
       locale,
     });
-    return NextResponse.json({ error: 'Failed to fetch content' }, { status: 502 });
+    return NextResponse.json(
+      { error: 'Failed to fetch content' },
+      { status: 502 },
+    );
   }
 }

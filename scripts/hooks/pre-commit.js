@@ -79,7 +79,7 @@ function getStagedFiles() {
 function shouldCheckFile(filePath) {
   if (
     IGNORE_PATTERNS.some(
-      (dir) => filePath.includes(`/${dir}/`) || filePath.includes(`\\${dir}\\`)
+      (dir) => filePath.includes(`/${dir}/`) || filePath.includes(`\\${dir}\\`),
     )
   ) {
     return false;
@@ -177,7 +177,7 @@ function runSubmoduleGuard() {
   const stagedFiles = getStagedFiles();
   const submodulePrefix = SUBMODULE_PATH.replace(/\\/g, '/');
   const violations = stagedFiles.filter(
-    (f) => f.startsWith(submodulePrefix + '/') || f === submodulePrefix
+    (f) => f.startsWith(submodulePrefix + '/') || f === submodulePrefix,
   );
 
   if (violations.length === 0) {
@@ -188,7 +188,7 @@ function runSubmoduleGuard() {
   console.error(
     'You have staged changes inside the content submodule (' +
       SUBMODULE_PATH +
-      ').'
+      ').',
   );
   console.error('Commit them in the content repo instead.\n');
 

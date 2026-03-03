@@ -72,7 +72,7 @@ const PersistentUiDispatchContext =
  * Theme is read from unified storage with legacy key migration.
  */
 function readPersistedState(
-  serverExpandedPaths: string[]
+  serverExpandedPaths: string[],
 ): SerializedPersistentUiState {
   let expandedPaths: string[] = [];
   const isStatic = isStaticContentRoute();
@@ -109,7 +109,10 @@ function readPersistedState(
       if (parsed.theme === 'dark' || parsed.theme === 'light') {
         theme = parsed.theme;
       }
-      if (typeof parsed.correctionsToken === 'string' || parsed.correctionsToken === null) {
+      if (
+        typeof parsed.correctionsToken === 'string' ||
+        parsed.correctionsToken === null
+      ) {
         correctionsToken = parsed.correctionsToken;
       }
     } catch {
@@ -125,7 +128,11 @@ function readPersistedState(
     }
   }
 
-  return { theme, correctionsToken, sidebarMenu: { expandedPaths, isOpen: false } };
+  return {
+    theme,
+    correctionsToken,
+    sidebarMenu: { expandedPaths, isOpen: false },
+  };
 }
 
 /**
@@ -202,11 +209,11 @@ export function PersistentUiProvider({
 
   const stateValue = useMemo<PersistentUiStateContextValue>(
     () => ({ state }),
-    [state]
+    [state],
   );
   const dispatchValue = useMemo<PersistentUiDispatchContextValue>(
     () => ({ dispatch }),
-    []
+    [],
   );
 
   return (
@@ -225,7 +232,7 @@ export function usePersistentUiState(): PersistentUiState {
   const context = useContext(PersistentUiStateContext);
   if (!context) {
     throw new Error(
-      'usePersistentUiState must be used within a PersistentUiProvider'
+      'usePersistentUiState must be used within a PersistentUiProvider',
     );
   }
   return context.state;
@@ -235,12 +242,12 @@ export function usePersistentUiState(): PersistentUiState {
  * Hook to access dispatch function
  */
 export function usePersistentUiDispatch(): (
-  action: PersistentUiAction
+  action: PersistentUiAction,
 ) => void {
   const context = useContext(PersistentUiDispatchContext);
   if (!context) {
     throw new Error(
-      'usePersistentUiDispatch must be used within a PersistentUiProvider'
+      'usePersistentUiDispatch must be used within a PersistentUiProvider',
     );
   }
   return context.dispatch;
@@ -261,10 +268,10 @@ export type { ThemeActions, ThemeState } from '../hooks/useThemeState';
 
 export {
   useCorrectionsTokenActions,
-  useCorrectionsTokenState,
+  useCorrectionsTokenState
 } from '../hooks/useCorrectionsToken';
 export type {
   CorrectionsTokenActions,
-  CorrectionsTokenState,
+  CorrectionsTokenState
 } from '../hooks/useCorrectionsToken';
 

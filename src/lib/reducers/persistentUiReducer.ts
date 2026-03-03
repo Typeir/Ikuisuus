@@ -25,10 +25,10 @@
  */
 
 import {
-  DEFAULT_PERSISTENT_UI_STATE,
-  PERSISTED_UI_ACTION_TYPES,
-  PersistentUiAction,
-  PersistentUiState,
+    DEFAULT_PERSISTENT_UI_STATE,
+    PERSISTED_UI_ACTION_TYPES,
+    PersistentUiAction,
+    PersistentUiState,
 } from '../types/persistentUiState';
 
 /**
@@ -52,7 +52,7 @@ import {
  */
 export function persistentUiReducer(
   state: PersistentUiState,
-  action: PersistentUiAction
+  action: PersistentUiAction,
 ): PersistentUiState {
   switch (action.type) {
     case PERSISTED_UI_ACTION_TYPES.HYDRATE_FROM_STORAGE: {
@@ -106,22 +106,22 @@ export function persistentUiReducer(
     case PERSISTED_UI_ACTION_TYPES.SET_SIDEBAR_EXPANSION: {
       const { path, expanded } = action.payload;
       const currentPaths = state.sidebarMenu.expandedPaths ?? [];
-      
+
       let expandedPaths: string[];
       if (expanded) {
         // When expanding, close siblings (paths at same depth)
         const pathDepth = path.split('/').length;
         const parentPath = path.split('/').slice(0, -1).join('/');
-        
+
         // Keep paths that are:
         // 1. Ancestors of the new path (parent folders)
         // 2. Descendants of the new path (children)
         // 3. Not siblings (different parent or different depth)
-        expandedPaths = currentPaths.filter(p => {
+        expandedPaths = currentPaths.filter((p) => {
           if (p === path) return false; // Will be re-added
           const pDepth = p.split('/').length;
           const pParent = p.split('/').slice(0, -1).join('/');
-          
+
           // Keep if different depth (not a sibling)
           if (pDepth !== pathDepth) return true;
           // Keep if different parent (not a sibling)
@@ -132,9 +132,9 @@ export function persistentUiReducer(
         expandedPaths.push(path);
       } else {
         // When collapsing, just remove this path
-        expandedPaths = currentPaths.filter(p => p !== path);
+        expandedPaths = currentPaths.filter((p) => p !== path);
       }
-      
+
       return {
         ...state,
         sidebarMenu: {
@@ -148,11 +148,11 @@ export function persistentUiReducer(
       const { path } = action.payload;
       const currentPaths = state.sidebarMenu.expandedPaths ?? [];
       const isExpanded = currentPaths.includes(path);
-      
+
       const expandedPaths = isExpanded
-        ? currentPaths.filter(p => p !== path)
+        ? currentPaths.filter((p) => p !== path)
         : [...currentPaths, path];
-      
+
       return {
         ...state,
         sidebarMenu: {

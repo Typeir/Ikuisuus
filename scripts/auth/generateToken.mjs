@@ -53,7 +53,9 @@ const loadSecret = () => {
 
 const secret = loadSecret();
 if (!secret) {
-  console.error('❌ CORRECTIONS_SECRET is not set. Provide it via environment or .env.local');
+  console.error(
+    '❌ CORRECTIONS_SECRET is not set. Provide it via environment or .env.local',
+  );
   process.exit(1);
 }
 
@@ -63,19 +65,26 @@ const scope = getArg('--scope', 'content:write');
 
 const payload = {
   scope,
-  ...(hoursRaw ? { exp: Math.floor(Date.now() / 1000) + parseInt(hoursRaw, 10) * 3600 } : {}),
+  ...(hoursRaw
+    ? { exp: Math.floor(Date.now() / 1000) + parseInt(hoursRaw, 10) * 3600 }
+    : {}),
   ...(label ? { label } : {}),
 };
 
 const payloadB64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
-const signature = crypto.createHmac('sha256', secret).update(payloadB64).digest('base64url');
+const signature = crypto
+  .createHmac('sha256', secret)
+  .update(payloadB64)
+  .digest('base64url');
 const token = `${payloadB64}.${signature}`;
 
 console.log('');
 console.log('=== Capability Token ===');
 console.log(`Scope  : ${scope}`);
 console.log(`Label  : ${label || '(none)'}`);
-console.log(`Expires: ${payload.exp ? new Date(payload.exp * 1000).toISOString() + ` (${hoursRaw}h)` : 'never'}`);
+console.log(
+  `Expires: ${payload.exp ? new Date(payload.exp * 1000).toISOString() + ` (${hoursRaw}h)` : 'never'}`,
+);
 console.log('');
 console.log(token);
 console.log('');

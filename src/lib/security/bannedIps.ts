@@ -104,7 +104,9 @@ const writeBannedIps = async (entries: BannedIpEntry[]): Promise<void> => {
   const vercelToken = process.env.VERCEL_API_TOKEN;
 
   if (!edgeConfigId || !vercelToken) {
-    log.debug('EDGE_CONFIG_ID or VERCEL_API_TOKEN not set — banned IP write skipped');
+    log.debug(
+      'EDGE_CONFIG_ID or VERCEL_API_TOKEN not set — banned IP write skipped',
+    );
     return;
   }
 
@@ -125,12 +127,14 @@ const writeBannedIps = async (entries: BannedIpEntry[]): Promise<void> => {
           },
         ],
       }),
-    }
+    },
   );
 
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`Edge Config banned-IP write failed (${res.status}): ${body}`);
+    throw new Error(
+      `Edge Config banned-IP write failed (${res.status}): ${body}`,
+    );
   }
 };
 
@@ -147,7 +151,7 @@ const writeBannedIps = async (entries: BannedIpEntry[]): Promise<void> => {
  * ```
  */
 export const isIpBanned = async (
-  ip: string
+  ip: string,
 ): Promise<{ banned: boolean; entry?: BannedIpEntry }> => {
   const range = ipToRange(ip);
   const entries = await readBannedIps();
@@ -169,7 +173,10 @@ export const isIpBanned = async (
  * await banIp('10.0.0.5', 'Profanity in correction submission');
  * ```
  */
-export const banIp = async (ip: string, reason: string): Promise<BannedIpEntry> => {
+export const banIp = async (
+  ip: string,
+  reason: string,
+): Promise<BannedIpEntry> => {
   const range = ipToRange(ip);
   const existing = await readBannedIps();
 

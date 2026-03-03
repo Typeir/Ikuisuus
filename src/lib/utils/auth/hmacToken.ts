@@ -93,7 +93,10 @@ export const createToken = (payload: TokenPayload, secret: string): string => {
  * if (!result.valid) return NextResponse.json({ error: result.error }, { status: 401 });
  * ```
  */
-export const verifyToken = (token: string, secret: string): TokenVerifyResult => {
+export const verifyToken = (
+  token: string,
+  secret: string,
+): TokenVerifyResult => {
   const parts = token.split('.');
   if (parts.length !== 2) {
     return { valid: false, error: 'Malformed token' };
@@ -117,7 +120,10 @@ export const verifyToken = (token: string, secret: string): TokenVerifyResult =>
     return { valid: false, error: 'Missing required field: scope' };
   }
 
-  if (typeof payload.exp === 'number' && payload.exp < Math.floor(Date.now() / 1000)) {
+  if (
+    typeof payload.exp === 'number' &&
+    payload.exp < Math.floor(Date.now() / 1000)
+  ) {
     return { valid: false, error: 'Token expired' };
   }
 

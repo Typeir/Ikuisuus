@@ -19,11 +19,11 @@ export { useThemeActions, useThemeState } from './useThemeState';
 export type { ThemeActions, ThemeState } from './useThemeState';
 
 export {
-  useCorrectionsTokenActions,
-  useCorrectionsTokenState,
+    useCorrectionsTokenActions,
+    useCorrectionsTokenState
 } from './useCorrectionsToken';
 export type {
-  CorrectionsTokenActions,
-  CorrectionsTokenState,
+    CorrectionsTokenActions,
+    CorrectionsTokenState
 } from './useCorrectionsToken';
 
