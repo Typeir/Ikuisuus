@@ -1,0 +1,85 @@
+name: Auto-merge corrections
+
+on:
+  # Runs after content-check completes on a PR
+  check_suite:
+    types: [completed]
+  # Also trigger when content-check reports status
+  workflow_run:
+    workflows: ['content-check']
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Auto-merge bot PRs
+    runs-on: ubuntu-latest
+    # Only run when the triggering workflow/check succeeded
+    if: >-
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      (github.event_name == 'check_suite' && github.event.check_suite.conclusion == 'success')
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Debug runner environment
+        run: |
+          # Safely check for gh CLI without failing the job
+          if command -v gh >/dev/null 2>&1; then
+            echo "gh found:"; gh --version || true
+            gh auth status || true
+          else
+            echo "gh CLI not available on runner"
+          fi
+
+      - name: Find open correction PRs from the bot
+        id: find-prs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # List open PRs whose branch starts with "corrections/" or "new/"
+          PRS=$(gh pr list --state open --json number,headRefName \
+            --jq '[.[] | select(.headRefName | test("^(corrections|new)/"))] | .[].number' 2>/dev/null || echo "")
+
+          if [ -z "$PRS" ]; then
+            echo "No correction PRs found."
+            echo "prs=" >> "$GITHUB_OUTPUT"
+          else
+            echo "Found PRs: $PRS"
+            echo "prs=$PRS" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Merge each qualifying PR
+        if: steps.find-prs.outputs.prs != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for PR in ${{ steps.find-prs.outputs.prs }}; do
+            echo "Attempting to merge PR #${PR}..."
+
+            # Get PR head SHA for combined status
+            SHA=$(gh pr view "$PR" --json headRefOid --jq '.headRefOid' 2>/dev/null || echo "")
+            echo "PR #${PR} head SHA: $SHA"
+
+            if [ -z "$SHA" ]; then
+              echo "Unable to determine head SHA for PR #${PR}, skipping."
+              continue
+            fi
+
+            # Fetch combined commit status via REST API (returns 'success'/'failure'/'pending')
+            REPO_FULL="${{ github.repository }}"
+            COMBINED_STATE=$(gh api repos/${REPO_FULL}/commits/${SHA}/status --jq '.state' 2>/dev/null || echo "")
+            echo "Combined status for ${SHA}: $COMBINED_STATE"
+
+            if [ "$COMBINED_STATE" = "success" ]; then
+              echo "Checks passed -> attempting merge"
+              gh pr merge "$PR" --squash --delete-branch --auto \
+                && echo "✅ PR #${PR} merged." \
+                || echo "⚠️  PR #${PR} merge failed (may need approvals or branch protection)."
+            else
+              echo "⏳ PR #${PR} has combined status '$COMBINED_STATE' — skipping."
+            fi
+          done
