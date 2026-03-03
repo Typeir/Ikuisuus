@@ -161,5 +161,49 @@ function runSecurityChecks() {
   return 1;
 }
 
-const exitCode = runSecurityChecks();
-process.exit(exitCode);
+/**
+ * Content submodule path (relative to repo root).
+ * Staged files under this path should be committed in the content repo, not here.
+ */
+const SUBMODULE_PATH = 'src/content';
+
+/**
+ * Checks whether any staged files reside inside the content submodule directory.
+ * If so, prints an error message and returns exit code 1.
+ *
+ * @returns {number} 0 if clean, 1 if submodule files are staged
+ */
+function runSubmoduleGuard() {
+  const stagedFiles = getStagedFiles();
+  const submodulePrefix = SUBMODULE_PATH.replace(/\\/g, '/');
+  const violations = stagedFiles.filter(
+    (f) => f.startsWith(submodulePrefix + '/') || f === submodulePrefix
+  );
+
+  if (violations.length === 0) {
+    return 0;
+  }
+
+  console.error('\n❌ SUBMODULE GUARD FAILED\n');
+  console.error(
+    'You have staged changes inside the content submodule (' +
+      SUBMODULE_PATH +
+      ').'
+  );
+  console.error('Commit them in the content repo instead.\n');
+
+  for (const file of violations) {
+    console.error(`  📄 ${file}`);
+  }
+
+  console.error('');
+  return 1;
+}
+
+const securityExit = runSecurityChecks();
+if (securityExit !== 0) {
+  process.exit(securityExit);
+}
+
+const submoduleExit = runSubmoduleGuard();
+process.exit(submoduleExit);

@@ -1,0 +1,75 @@
+name: content-check
+
+on:
+  pull_request:
+    paths:
+      - '**/*.mdx'
+      - '**/*.md'
+
+jobs:
+  banned-terms:
+    name: Scan for banned terms
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed content files
+        id: changed
+        run: |
+          FILES=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }}...HEAD -- '*.mdx' '*.md')
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$FILES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          if [ -z "$FILES" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Scan for banned terms
+        if: steps.changed.outputs.skip == 'false'
+        run: |
+          BANNED_FILE=".github/banned_terms.txt"
+          if [ ! -f "$BANNED_FILE" ]; then
+            echo "No banned_terms.txt found — skipping."
+            exit 0
+          fi
+
+          # Build grep pattern from banned_terms.txt (skip comments and blanks)
+          PATTERNS=""
+          while IFS= read -r line || [ -n "$line" ]; do
+            # Trim whitespace
+            line="$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+            # Skip comments and empty lines
+            [[ -z "$line" || "$line" == \#* ]] && continue
+            if [ -z "$PATTERNS" ]; then
+              PATTERNS="$line"
+            else
+              PATTERNS="$PATTERNS|$line"
+            fi
+          done < "$BANNED_FILE"
+
+          if [ -z "$PATTERNS" ]; then
+            echo "No banned terms configured — skipping."
+            exit 0
+          fi
+
+          FOUND=0
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            if grep -inP "$PATTERNS" "$file"; then
+              echo "::error file=$file::Banned term found in $file"
+              FOUND=1
+            fi
+          done <<< "${{ steps.changed.outputs.files }}"
+
+          if [ "$FOUND" -ne 0 ]; then
+            echo ""
+            echo "❌ Banned terms detected in changed files. See errors above."
+            exit 1
+          fi
+
+          echo "✅ No banned terms found."
