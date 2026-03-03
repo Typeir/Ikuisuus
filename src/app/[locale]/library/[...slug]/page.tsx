@@ -21,6 +21,7 @@ import path from "path";
 import remarkGfm from "remark-gfm";
 import { pathToFileURL } from "url";
 import ClientRenderer from "../../utils/clientRenderer";
+import EditPageButton from "@/lib/components/mdxEditor/editPageButton";
 import styles from "./page.module.scss";
 import { MDRawPage } from "./utils/mdRawPage";
 
@@ -189,6 +190,7 @@ const Page = async ({ params }: PageProps) => {
           <article className={styles.markdown}>
             <ClientRenderer locale={locale} slug={slugPath} />
           </article>
+          <EditPageButton slug={slugPath} locale={locale} />
         </div>
       );
     }
@@ -200,6 +202,7 @@ const Page = async ({ params }: PageProps) => {
     <div className="prose prose-invert mx-auto">
       <HashNavigationProvider />
       <article className={styles.markdown}>{content}</article>
+      <EditPageButton slug={slugPath} locale={locale} />
     </div>
   );
 };

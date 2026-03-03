@@ -47,6 +47,7 @@ import {
  * - SET_THEME: Updates theme value
  * - SET_SIDEBAR_EXPANSION: Sets expansion with sibling auto-close
  * - TOGGLE_SIDEBAR_PATH: Toggles expansion with sibling auto-close
+ * - SET_CORRECTIONS_TOKEN: Updates corrections API token
  * - RESET: Returns to default state
  */
 export function persistentUiReducer(
@@ -55,7 +56,7 @@ export function persistentUiReducer(
 ): PersistentUiState {
   switch (action.type) {
     case PERSISTED_UI_ACTION_TYPES.HYDRATE_FROM_STORAGE: {
-      const { sidebarMenu, theme } = action.payload;
+      const { sidebarMenu, theme, correctionsToken } = action.payload;
       return {
         ...state,
         sidebarMenu: {
@@ -63,6 +64,7 @@ export function persistentUiReducer(
           expandedPaths: sidebarMenu?.expandedPaths ?? [],
         },
         theme: theme ?? state.theme,
+        correctionsToken: correctionsToken ?? state.correctionsToken,
         isHydrated: true,
       };
     }
@@ -91,6 +93,13 @@ export function persistentUiReducer(
       return {
         ...state,
         theme: action.payload.theme,
+      };
+    }
+
+    case PERSISTED_UI_ACTION_TYPES.SET_CORRECTIONS_TOKEN: {
+      return {
+        ...state,
+        correctionsToken: action.payload.token,
       };
     }
 

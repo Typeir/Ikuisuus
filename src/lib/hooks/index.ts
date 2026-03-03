@@ -18,3 +18,12 @@ export type {
 export { useThemeActions, useThemeState } from './useThemeState';
 export type { ThemeActions, ThemeState } from './useThemeState';
 
+export {
+  useCorrectionsTokenActions,
+  useCorrectionsTokenState,
+} from './useCorrectionsToken';
+export type {
+  CorrectionsTokenActions,
+  CorrectionsTokenState,
+} from './useCorrectionsToken';
+

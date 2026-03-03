@@ -40,6 +40,7 @@ export const PERSISTED_UI_ACTION_TYPES = {
   SET_THEME: 'PERSISTED_UI/SET_THEME',
   SET_SIDEBAR_EXPANSION: 'PERSISTED_UI/SET_SIDEBAR_EXPANSION',
   TOGGLE_SIDEBAR_PATH: 'PERSISTED_UI/TOGGLE_SIDEBAR_PATH',
+  SET_CORRECTIONS_TOKEN: 'PERSISTED_UI/SET_CORRECTIONS_TOKEN',
   RESET: 'PERSISTED_UI/RESET',
 } as const;
 
@@ -68,11 +69,13 @@ export type ThemeValue = 'dark' | 'light';
  * @interface PersistentUiState
  * @property {SidebarMenuState} sidebarMenu - Sidebar menu state
  * @property {ThemeValue} theme - Current theme value
+ * @property {string | null} correctionsToken - HMAC token for corrections API (persists annually)
  * @property {boolean} isHydrated - Whether state has been hydrated from storage
  */
 export interface PersistentUiState {
   sidebarMenu: SidebarMenuState;
   theme: ThemeValue;
+  correctionsToken: string | null;
   isHydrated: boolean;
 }
 
@@ -83,10 +86,12 @@ export interface PersistentUiState {
  * @interface SerializedPersistentUiState
  * @property {SidebarMenuState} [sidebarMenu] - Optional sidebar menu state
  * @property {ThemeValue} [theme] - Optional theme value
+ * @property {string | null} [correctionsToken] - Optional corrections API token
  */
 export interface SerializedPersistentUiState {
   sidebarMenu?: SidebarMenuState;
   theme?: ThemeValue;
+  correctionsToken?: string | null;
 }
 
 /**
@@ -171,6 +176,18 @@ export interface ToggleSidebarPathAction {
 }
 
 /**
+ * Action to set corrections token
+ *
+ * @interface SetCorrectionsTokenAction
+ * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_CORRECTIONS_TOKEN} type - Action type identifier
+ * @property {{ token: string | null }} payload - New token value (null to clear)
+ */
+export interface SetCorrectionsTokenAction {
+  type: typeof PERSISTED_UI_ACTION_TYPES.SET_CORRECTIONS_TOKEN;
+  payload: { token: string | null };
+}
+
+/**
  * Action to reset state to defaults
  *
  * @interface ResetAction
@@ -183,7 +200,7 @@ export interface ResetAction {
 /**
  * Union type of all possible persistent UI actions
  *
- * @typedef {HydrateFromStorageAction | SetSidebarOpenAction | ToggleSidebarAction | SetThemeAction | SetSidebarExpansionAction | ToggleSidebarPathAction | ResetAction} PersistentUiAction
+ * @typedef {HydrateFromStorageAction | SetSidebarOpenAction | ToggleSidebarAction | SetThemeAction | SetSidebarExpansionAction | ToggleSidebarPathAction | SetCorrectionsTokenAction | ResetAction} PersistentUiAction
  */
 export type PersistentUiAction =
   | HydrateFromStorageAction
@@ -192,6 +209,7 @@ export type PersistentUiAction =
   | SetThemeAction
   | SetSidebarExpansionAction
   | ToggleSidebarPathAction
+  | SetCorrectionsTokenAction
   | ResetAction;
 
 /**
@@ -205,6 +223,7 @@ export const DEFAULT_PERSISTENT_UI_STATE: PersistentUiState = {
     expandedPaths: [],
   },
   theme: 'dark',
+  correctionsToken: null,
   isHydrated: false,
 };
 

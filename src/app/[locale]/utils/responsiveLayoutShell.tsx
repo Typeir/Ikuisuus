@@ -125,6 +125,11 @@ function BaseResponsiveLayoutShell({
       label: t('tools.worldSim'),
       href: `/${locale}/utils/world-sim`,
     },
+    {
+      id: 'mdx-editor',
+      label: t('tools.mdxEditor'),
+      href: `/${locale}/utils/mdx-editor`,
+    },
   ];
 
   const toggleTheme = () => {
@@ -227,11 +232,7 @@ function BaseResponsiveLayoutShell({
               onSelect={handleToolSelect}
               trigger={
                 <>
-                  {mounted ? (
-                    <Wrench size={18} aria-hidden='true' />
-                  ) : (
-                    <span className={styles.ssrToolsIcon} aria-hidden='true' />
-                  )}
+                  <Wrench size={18} aria-hidden='true' />
                   <span className='hidden lg:inline text-sm'>Tools</span>
                 </>
               }

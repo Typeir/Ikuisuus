@@ -101,12 +101,16 @@ function readPersistedState(
   }
 
   let theme: ThemeValue = 'dark';
+  let correctionsToken: string | null = null;
   const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
   if (stored) {
     try {
       const parsed = JSON.parse(stored) as SerializedPersistentUiState;
       if (parsed.theme === 'dark' || parsed.theme === 'light') {
         theme = parsed.theme;
+      }
+      if (typeof parsed.correctionsToken === 'string' || parsed.correctionsToken === null) {
+        correctionsToken = parsed.correctionsToken;
       }
     } catch {
       const legacyTheme = fetchPersistentData(LEGACY_THEME_KEY);
@@ -121,7 +125,7 @@ function readPersistedState(
     }
   }
 
-  return { theme, sidebarMenu: { expandedPaths, isOpen: false } };
+  return { theme, correctionsToken, sidebarMenu: { expandedPaths, isOpen: false } };
 }
 
 /**
@@ -141,6 +145,7 @@ function writePersistedState(state: PersistentUiState): void {
   const serialized: SerializedPersistentUiState = {
     sidebarMenu: state.sidebarMenu,
     theme: state.theme,
+    correctionsToken: state.correctionsToken,
   };
 
   storePersistentData(PERSISTENT_UI_STORAGE_KEY, JSON.stringify(serialized));
@@ -253,4 +258,13 @@ export type {
 
 export { useThemeActions, useThemeState } from '../hooks/useThemeState';
 export type { ThemeActions, ThemeState } from '../hooks/useThemeState';
+
+export {
+  useCorrectionsTokenActions,
+  useCorrectionsTokenState,
+} from '../hooks/useCorrectionsToken';
+export type {
+  CorrectionsTokenActions,
+  CorrectionsTokenState,
+} from '../hooks/useCorrectionsToken';
 

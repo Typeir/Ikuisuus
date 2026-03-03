@@ -52,6 +52,8 @@
     "test:templates": "node tests/scripts/generateTestTemplates.mjs",
     "test:all": "npm run test:enforce && npm run test && npm run test:e2e",
     "install-hooks": "node scripts/hooks/install.js",
+    "generate-token": "node scripts/auth/generateToken.mjs",
+    "test-pat": "node scripts/test-pat.js",
     "lottery": "node scripts/utils/mdxLottery.mjs"
   },
   "dependencies": {
@@ -62,12 +64,15 @@
     "@next/mdx": "^15.3.5",
     "@tailwindcss/typography": "^0.5.16",
     "@types/three": "^0.183.1",
+    "@vercel/edge-config": "^1.4.3",
+    
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.576.0",
     "mdx-bundler": "^10.1.1",
     "next": "^15.4.8",
     "next-intl": "^4.3.4",
     "next-mdx-remote-client": "^2.1.2",
+    
     "react": "^19.1.2",
     "react-dom": "^19.1.2",
     "remark": "^15.0.1",
@@ -112,5 +117,8 @@
     "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^5",
     "vitest": "^1.1.0"
+    ,
+    "dotenv": "^17.3.1",
+    "node-fetch": "^3.3.2"
   }
 }
