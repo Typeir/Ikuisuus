@@ -15,9 +15,21 @@ import fs from 'fs';
 import path from 'path';
 
 /**
+ * Returns the `.meta/{locale}` directory at the project root.
+ * @param {string} locale - Locale code
+ * @returns {string} Absolute path to `.meta/{locale}`
+ */
+const getMetaFolder = (locale: string): string => {
+  return path.join(process.cwd(), '.meta', locale);
+};
+
+/**
  * Reads and parses all `.metadata.json` files from a content subdirectory.
  *
- * Returns an empty array if the directory does not exist or cannot be read.
+ * Checks `.meta/{locale}/{subdir}` first (used in pg mode), then falls back
+ * to `src/content/{locale}/{subdir}` (classic sidecar files).
+ *
+ * Returns an empty array if neither directory exists or cannot be read.
  * Multi-record files (arrays) are automatically flattened.
  *
  * @template T - The expected metadata record type
@@ -26,7 +38,9 @@ import path from 'path';
  * @returns {T[]} Flattened metadata records
  */
 export const readMetadataFiles = <T>(locale: string, subdir: string): T[] => {
-  const dirPath = path.join(getContentFolder(locale), subdir);
+  const metaPath = path.join(getMetaFolder(locale), subdir);
+  const contentPath = path.join(getContentFolder(locale), subdir);
+  const dirPath = fs.existsSync(metaPath) ? metaPath : contentPath;
 
   if (!fs.existsSync(dirPath)) {
     return [];

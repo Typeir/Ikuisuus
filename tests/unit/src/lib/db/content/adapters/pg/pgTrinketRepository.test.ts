@@ -2,6 +2,8 @@
  * pgTrinketRepository Unit Tests
  *
  * @fileoverview Tests for the PostgreSQL trinket repository adapter.
+ * Verifies row-mapping from flat `trinkets` columns to `TrinketMetadata`
+ * and that the correct parameterised SQL is issued.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgTrinketRepository
  */
@@ -29,14 +31,51 @@ beforeEach(async () => {
 
 afterEach(() => vi.restoreAllMocks());
 
+/** Minimal flat DB row that exercises the row mapper. */
+const flatRow = {
+  slug: 'lucky-coin',
+  title: 'Lucky Coin',
+  file: 'src/content/en/items/trinkets/lucky-coin.mdx',
+  link: '/library/items/trinkets/lucky-coin',
+  item_type: 'coin',
+  damage: null,
+  damage_type: null,
+  range: null,
+  weight: null,
+  saving_throw_dc: null,
+  saving_throw_ability: null,
+  properties: ['shiny'],
+  special_effects: ['reroll one d20 per day'],
+  inflicts_conditions: null,
+  tags: ['luck', 'passive'],
+};
+
 describe('pgTrinketRepository', () => {
   describe('list', () => {
-    it('should return trinket data from query rows', async () => {
-      const trinket = { slug: 'lucky-coin', title: 'Lucky Coin' };
-      query.mockResolvedValue({ rows: [{ data: trinket }] });
+    it('should map flat rows to TrinketMetadata objects', async () => {
+      query.mockResolvedValue({ rows: [flatRow] });
 
       const result = await pgTrinketRepository.list('en');
-      expect(result).toEqual([trinket]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        slug: 'lucky-coin',
+        title: 'Lucky Coin',
+        itemType: 'coin',
+        properties: ['shiny'],
+        specialEffects: ['reroll one d20 per day'],
+        inflictsConditions: undefined,
+        tags: ['luck', 'passive'],
+      });
+    });
+
+    it('should query the trinkets table with locale', async () => {
+      query.mockResolvedValue({ rows: [] });
+      await pgTrinketRepository.list('en');
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining('FROM trinkets'),
+        ['en'],
+      );
     });
 
     it('should return empty array on error', async () => {
@@ -47,12 +86,23 @@ describe('pgTrinketRepository', () => {
   });
 
   describe('getBySlug', () => {
-    it('should return trinket when found', async () => {
-      const trinket = { slug: 'lucky-coin', title: 'Lucky Coin' };
-      query.mockResolvedValue({ rows: [{ data: trinket }] });
+    it('should return mapped TrinketMetadata when found', async () => {
+      query.mockResolvedValue({ rows: [flatRow] });
 
       const result = await pgTrinketRepository.getBySlug('en', 'lucky-coin');
-      expect(result).toEqual(trinket);
+
+      expect(result).not.toBeNull();
+      expect(result?.slug).toBe('lucky-coin');
+      expect(result?.itemType).toBe('coin');
+    });
+
+    it('should query by locale and slug', async () => {
+      query.mockResolvedValue({ rows: [] });
+      await pgTrinketRepository.getBySlug('en', 'lucky-coin');
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining('slug = $2'),
+        ['en', 'lucky-coin'],
+      );
     });
 
     it('should return null when not found', async () => {

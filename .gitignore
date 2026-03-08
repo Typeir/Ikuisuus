@@ -54,3 +54,4 @@ next-env.d.ts
 scripts/hooks/.patterns
 *.bak
 /src/**/*.metadata.json
+/.meta/

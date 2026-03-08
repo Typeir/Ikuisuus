@@ -16,6 +16,19 @@
 /* ──────────────────────  Nested Value Objects  ────────────────────── */
 
 /**
+ * Charge economy info parsed from the item description.
+ *
+ * @property {string} [initial] - Initial charge count or dice expression (e.g. "10", "1d6+4")
+ * @property {string} [recharge] - Recharge formula (e.g. "1d6+4 at dawn")
+ * @property {boolean} [depletes] - True if the item becomes permanently inert when charges are exhausted
+ */
+export interface HeirloomCharges {
+  initial?: string;
+  recharge?: string;
+  depletes?: boolean;
+}
+
+/**
  * Weapon damage extracted from Properties section.
  *
  * @property {string} damage - Dice expression (e.g. "1d10", "2d6")
@@ -71,8 +84,8 @@ export interface HeirloomMetadata {
   damageTypesDealt?: string[];
   /** Saving throw types the item requires */
   savingThrowTypes?: string[];
-  /** Number of charges or uses */
-  charges?: number;
+  /** Charge economy info (initial count, recharge formula, depletion flag) */
+  charges?: HeirloomCharges;
   /** Gameplay tags for filtering and search */
   tags?: string[];
   /** Metadata format version */

@@ -5,7 +5,7 @@
  * @author Typeir
  */
 
-import { promises as fs } from 'fs';
+import { promises as fs, readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createLogger } from './logger.mjs';
@@ -18,6 +18,38 @@ const __dirname = path.dirname(__filename);
 
 // Project root constant (go up from scripts/core/ to project root)
 const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
+
+/** @type {string|null} Cached metadata backend value */
+let _metadataBackend = null;
+
+/**
+ * Reads `METADATA_BACKEND` from process.env or `.env.local` with caching.
+ * @returns {string} 'pg' or 'fs'
+ */
+function getMetadataBackend() {
+  if (_metadataBackend !== null) return _metadataBackend;
+  if (process.env.METADATA_BACKEND) {
+    _metadataBackend = process.env.METADATA_BACKEND;
+    return _metadataBackend;
+  }
+  try {
+    const envPath = path.join(PROJECT_ROOT, '.env.local');
+    const raw = readFileSync(envPath, 'utf8');
+    for (const line of raw.split('\n')) {
+      const t = line.trim();
+      if (!t || t.startsWith('#')) continue;
+      const eq = t.indexOf('=');
+      if (eq === -1) continue;
+      const key = t.slice(0, eq).trim();
+      if (key === 'METADATA_BACKEND') {
+        _metadataBackend = t.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
+        return _metadataBackend;
+      }
+    }
+  } catch { /* absent — default to fs */ }
+  _metadataBackend = 'fs';
+  return _metadataBackend;
+}
 
 /** @type {Object} Cached shared data loaded from JSON */
 let sharedData = null;
@@ -1601,6 +1633,42 @@ export class MetadataGeneratorUtils {
   }
 
   /**
+   * Maps content type to its subdirectory under `.meta/{locale}/`.
+   * @static
+   * @param {string} contentType - 'monsters', 'heirlooms', 'spells', 'trinkets'
+   * @returns {string} Subdirectory name (e.g. 'monsters', 'items/heirlooms')
+   */
+  static getMetaSubdir(contentType) {
+    const subdirs = {
+      monsters: 'monsters',
+      heirlooms: path.join('items', 'heirlooms'),
+      spells: 'spells',
+      trinkets: path.join('items', 'trinkets'),
+    };
+    return subdirs[contentType] || contentType;
+  }
+
+  /**
+   * Resolves the output path for a `.metadata.json` file.
+   * In `pg` mode, outputs to `.meta/{locale}/{subdir}/` instead of alongside source.
+   * @static
+   * @param {string} sourceFilePath - Original source file path (e.g. src/content/en/monsters/foo.sheet.mdx)
+   * @param {RegExp} filePattern - Pattern to replace with `.metadata.json`
+   * @param {string} contentType - Content type key
+   * @param {string} backend - 'pg' or 'fs'
+   * @param {string} locale - Locale code
+   * @returns {string} Absolute path for the metadata file
+   */
+  static getMetadataOutputPath(sourceFilePath, filePattern, contentType, backend, locale) {
+    if (backend !== 'pg') {
+      return sourceFilePath.replace(filePattern, '.metadata.json');
+    }
+    const baseName = path.basename(sourceFilePath).replace(filePattern, '.metadata.json');
+    const subdir = this.getMetaSubdir(contentType);
+    return path.join(PROJECT_ROOT, '.meta', locale, subdir, baseName);
+  }
+
+  /**
    * Orchestrates metadata generation with standardized pattern
    * @static
    * @async
@@ -1665,11 +1733,15 @@ export class MetadataGeneratorUtils {
               ? processResult(parseResult)
               : { metadata: parseResult };
 
-            // Write metadata file with error handling
-            const metadataFilePath = filePath.replace(
-              filePattern,
-              '.metadata.json',
+            // Resolve output path — in pg mode, write to .meta/ instead of alongside source
+            const backend = getMetadataBackend();
+            const metadataFilePath = this.getMetadataOutputPath(
+              filePath, filePattern, contentType, backend, locale,
             );
+
+            // Ensure target directory exists (critical for .meta/ which won't pre-exist)
+            await FileUtils.ensureDirectory(path.dirname(metadataFilePath));
+
             const success = await FileUtils.safeWriteFile(
               metadataFilePath,
               JSON.stringify(processed.metadata, null, 2),
@@ -1735,7 +1807,8 @@ export class MetadataGeneratorUtils {
       }
 
       log.message(statsMessage);
-      log.message(`Wrote ${successful.length} metadata files`);
+      const outputLocation = getMetadataBackend() === 'pg' ? '.meta/' : 'alongside source';
+      log.message(`Wrote ${successful.length} metadata files (${outputLocation})`);
 
       if (failed.length > 0) {
         log.warning(`${failed.length} processing errors encountered`);

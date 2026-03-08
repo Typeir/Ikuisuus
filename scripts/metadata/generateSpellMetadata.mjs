@@ -589,7 +589,7 @@ async function generateSpellMetadata(options = {}) {
     storage: options.storage,
   });
 
-  // Then, check for external spell metadata and copy it as a single file to the content folder
+  // Then, check for external spell metadata and copy it as a single file
   const externalMetadataPath = path.join(
     process.cwd(),
     'scripts',
@@ -608,18 +608,25 @@ async function generateSpellMetadata(options = {}) {
       const externalContent = await fs.readFile(externalMetadataPath, 'utf8');
       const externalSpells = JSON.parse(externalContent);
 
-      // Get spells content folder
-      const spellsFolder = path.join(
-        process.cwd(),
-        'src',
-        'content',
-        'en',
-        'spells',
-      );
+      // Determine output folder based on METADATA_BACKEND
+      const backend = process.env.METADATA_BACKEND || 'fs';
+      let destinationFolder;
+      if (backend === 'pg') {
+        destinationFolder = path.join(process.cwd(), '.meta', 'en', 'spells');
+      } else {
+        destinationFolder = path.join(
+          process.cwd(),
+          'src',
+          'content',
+          'en',
+          'spells',
+        );
+      }
+      await fs.mkdir(destinationFolder, { recursive: true });
 
-      // Copy the entire external metadata file as-is to the spells folder
+      // Copy the entire external metadata file as-is
       const destinationPath = path.join(
-        spellsFolder,
+        destinationFolder,
         'spells-external.metadata.json',
       );
       await fs.writeFile(
