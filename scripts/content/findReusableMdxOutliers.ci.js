@@ -1,16 +1,27 @@
 /**
  * CI Mode: Minimal MDX Components Generator
- * 
+ *
  * Generates a minimal mdxComponents.tsx file without analyzing for reusable outliers.
  * This is used in CI environments where the full analysis step is skipped.
- * 
+ *
  * @fileoverview Minimal version for CI pipelines
  */
 
 const fs = require('fs');
 const path = require('path');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'findReusableMdxOutliers.ci' });
 
-const outputPath = path.join(__dirname, '..', '..', 'src', 'lib', 'components', 'mdx', 'mdxComponents.tsx');
+const outputPath = path.join(
+  __dirname,
+  '..',
+  '..',
+  'src',
+  'lib',
+  'components',
+  'mdx',
+  'mdxComponents.tsx',
+);
 const outputDir = path.dirname(outputPath);
 
 // Ensure output directory exists
@@ -34,5 +45,6 @@ export const mdxComponents = {};
 
 fs.writeFileSync(outputPath, minimalContent, 'utf-8');
 
-console.log('✅ Generated minimal mdxComponents.tsx for CI environment');
-console.log(`   Path: ${outputPath}`);
+log.message('✅ Generated minimal mdxComponents.tsx for CI environment', {
+  path: outputPath,
+});

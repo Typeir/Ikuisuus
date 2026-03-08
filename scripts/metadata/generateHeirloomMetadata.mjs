@@ -1,23 +1,23 @@
 /**
  * @fileoverview Heirloom Metadata Generator - Specialized parser for magical items and equipment
  * @description Parses `.mdx` files from the heirlooms directory and extracts comprehensive metadata
- * including rarity classification, item types, attunement requirements, weapon properties, 
+ * including rarity classification, item types, attunement requirements, weapon properties,
  * and gameplay mechanics tags. Generates JSON index files for efficient content querying.
- * 
+ *
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires fs/promises
  * @requires path
  * @requires ../core/shared-utils.mjs
- * 
+ *
  * @example
  * ```bash
  * # Generate heirloom metadata
  * node scripts/generateHeirloomMetadata.mjs
  * ```
- * 
+ *
  * @example
  * ```javascript
  * // Programmatic usage
@@ -28,18 +28,21 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-import {  
-  TextUtils, 
+import { createLogger } from '../core/logger.mjs';
+import {
   ItemData,
+  MetadataGeneratorUtils,
   ParsingUtils,
   TaggingUtils,
-  MetadataGeneratorUtils
+  TextUtils,
 } from '../core/shared-utils.mjs';
 
+/** @type {import('../core/logger.mjs').Logger} */
+const log = createLogger({ module: 'HeirloomMetadataGenerator' });
 
 /**
  * Parses rarity, attunement requirements, and weapon properties from italic metadata lines
- * 
+ *
  * @function parseRarityAndAttunement
  * @param {string[]} lines - Array of file lines to parse (searches first 15 lines)
  * @returns {{
@@ -53,13 +56,13 @@ import {
  *     mastery?: string[]
  *   }
  * }} Parsed metadata object containing item properties
- * 
+ *
  * @description Analyzes italic lines (wrapped in underscores) to extract:
  * - Item rarity classification (e.g., "Very rare", "Legendary")
  * - Attunement requirements and restrictions
  * - Weapon type and enhancement bonuses
  * - Weapon properties like range, mastery, and special abilities
- * 
+ *
  * @example
  * ```javascript
  * const lines = ['# Magic Sword', '_Very rare weapon +2 (requires attunement by a paladin)_'];
@@ -69,12 +72,12 @@ import {
  */
 function parseRarityAndAttunement(lines, sharedData = null) {
   // Look for italic lines under the item heading, up until the first '---' separator
-  const cutoffIndex = lines.findIndex(l => /^\s*---\s*$/.test(l));
+  const cutoffIndex = lines.findIndex((l) => /^\s*---\s*$/.test(l));
   const headerLines = cutoffIndex === -1 ? lines : lines.slice(0, cutoffIndex);
 
   const italicLines = headerLines
-    .filter(l => /^_.*_$/.test(l.trim()))
-    .map(l => TextUtils.clean(l.replace(/^_/, '').replace(/_$/, '')));
+    .filter((l) => /^_.*_$/.test(l.trim()))
+    .map((l) => TextUtils.clean(l.replace(/^_/, '').replace(/_$/, '')));
 
   let rarity = undefined;
   let requiresAttunement = false;
@@ -99,9 +102,13 @@ function parseRarityAndAttunement(lines, sharedData = null) {
       requiresAttunement = true;
 
       // Extract specific attunement requirements
-      const attunementMatch = line.match(/requires attunement(?:\s+by\s+(.+?))?(?:\)|$)/i);
+      const attunementMatch = line.match(
+        /requires attunement(?:\s+by\s+(.+?))?(?:\)|$)/i,
+      );
       if (attunementMatch && attunementMatch[1]) {
-        attunementRequirements = TextUtils.stripMarkdown(attunementMatch[1].trim());
+        attunementRequirements = TextUtils.stripMarkdown(
+          attunementMatch[1].trim(),
+        );
       }
     }
 
@@ -112,7 +119,7 @@ function parseRarityAndAttunement(lines, sharedData = null) {
     if (
       line.includes('(') &&
       !lowerLine.includes('attunement') &&
-      !rarityKeywords.some(r => lowerLine.includes(r)) &&
+      !rarityKeywords.some((r) => lowerLine.includes(r)) &&
       !/property|applies/i.test(line) &&
       !isSubtypeFormat
     ) {
@@ -126,7 +133,6 @@ function parseRarityAndAttunement(lines, sharedData = null) {
   return { rarity, requiresAttunement, attunementRequirements, weaponInfo };
 }
 
-
 /**
  * Parses weapon title line for detailed info.
  * Format: "Handgun +3 (Heavy, Ranged 30/90, Loading, Special, Mastery: Slow)"
@@ -136,7 +142,7 @@ function parseRarityAndAttunement(lines, sharedData = null) {
  */
 function parseWeaponTitleLine(line, sharedData = null) {
   const info = {};
-  
+
   // Extract weapon type and hit modifier
   // Format: "Handgun +3" or "Large Greatsword +4" or "Sword-Spear +1" or just "Handgun"
   // Extract everything before the opening paren
@@ -152,13 +158,13 @@ function parseWeaponTitleLine(line, sharedData = null) {
       info.weaponType = fullText;
     }
   }
-  
+
   // Extract parenthetical content - handle nested parentheses by taking the outermost match
   const firstParen = line.indexOf('(');
   const lastParen = line.lastIndexOf(')');
   if (firstParen !== -1 && lastParen !== -1 && lastParen > firstParen) {
     const content = line.substring(firstParen + 1, lastParen);
-    
+
     // Split by commas but be careful with nested parentheses
     const parts = [];
     let current = '';
@@ -175,14 +181,14 @@ function parseWeaponTitleLine(line, sharedData = null) {
       current += char;
     }
     if (current.trim()) parts.push(current.trim());
-    
+
     const properties = [];
     const mastery = [];
     let capturingMastery = false;
-    
+
     for (const part of parts) {
       const trimmed = part.trim();
-      
+
       // Check for mastery start
       const masteryMatch = trimmed.match(/^Mastery:\s*(.+)$/i);
       if (masteryMatch) {
@@ -194,7 +200,7 @@ function parseWeaponTitleLine(line, sharedData = null) {
         }
         continue;
       }
-      
+
       // If we're capturing mastery, continue until we hit a known keyword
       if (capturingMastery) {
         // Stop capturing if we hit Special, Range, Reach, or other known patterns
@@ -207,14 +213,16 @@ function parseWeaponTitleLine(line, sharedData = null) {
           continue;
         }
       }
-      
+
       // Check for range (with or without parentheses)
-      const rangeMatch = trimmed.match(/^(?:Ranged?|Range)\s+(\d+\/\d+|\(\d+\s+ft\))$/i);
+      const rangeMatch = trimmed.match(
+        /^(?:Ranged?|Range)\s+(\d+\/\d+|\(\d+\s+ft\))$/i,
+      );
       if (rangeMatch) {
         info.range = rangeMatch[1].replace(/[()]/g, '').trim();
         continue;
       }
-      
+
       // Check for reach with units
       const reachMatch = trimmed.match(/^Reach\s+\((\d+\s+ft\.?)\)$/i);
       if (reachMatch) {
@@ -222,18 +230,18 @@ function parseWeaponTitleLine(line, sharedData = null) {
         properties.push('reach');
         continue;
       }
-      
+
       // Check for special properties with details
       const specialMatch = trimmed.match(/^Special:\s*(.+)$/i);
       if (specialMatch) {
         properties.push(`special: ${specialMatch[1].toLowerCase()}`);
         continue;
       }
-      
+
       // Regular property
       properties.push(trimmed.toLowerCase());
     }
-    
+
     if (properties.length > 0) {
       info.properties = properties;
     }
@@ -241,7 +249,7 @@ function parseWeaponTitleLine(line, sharedData = null) {
       info.mastery = mastery;
     }
   }
-  
+
   return Object.keys(info).length > 0 ? info : undefined;
 }
 
@@ -263,28 +271,26 @@ function parseItemType(lines, sharedData = null) {
  */
 function parseWeaponDamageFromProperties(properties) {
   if (!properties || !properties.Damage) return undefined;
-  
+
   const damageInfo = {};
   const damageText = properties.Damage;
-  
+
   // Format: "2d10 piercing" or "1d8 slashing (1d10)"
-  const damageMatch = damageText.match(/([\dd+]+)\s+(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)(?:\s*\(([\dd+]+)\s*(?:versatile)?\))?/i);
-  
+  const damageMatch = damageText.match(
+    /([\dd+]+)\s+(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)(?:\s*\(([\dd+]+)\s*(?:versatile)?\))?/i,
+  );
+
   if (damageMatch) {
     damageInfo.damage = damageMatch[1];
     damageInfo.damageType = damageMatch[2].toLowerCase();
-    
+
     if (damageMatch[3]) {
       damageInfo.versatileDamage = damageMatch[3];
     }
   }
-  
+
   return Object.keys(damageInfo).length > 0 ? damageInfo : undefined;
 }
-
-
-
-
 
 /**
  * Parses Type property and extracts weapon properties and weapon type.
@@ -296,47 +302,53 @@ function parseWeaponDamageFromProperties(properties) {
  */
 function parseTypeProperty(properties, sharedData = null) {
   if (!properties || !properties.Type) return {};
-  
+
   const typeText = properties.Type;
   const result = { weaponProperties: [], uniqueTags: [], mastery: [] };
-  
+
   // Extract weapon type before parentheses
   const typeMatch = typeText.match(/^([A-Za-z][A-Za-z\s-]+?)(?:\s*\(|$)/i);
   let baseType = null;
   if (typeMatch) {
     baseType = typeMatch[1].trim();
   }
-  
+
   // Extract parenthetical content
   const parenMatch = typeText.match(/\(([^)]+)\)/i);
   if (parenMatch) {
     const content = parenMatch[1];
     const parts = content.split(/,\s*/);
-    
+
     for (const part of parts) {
       const trimmed = part.trim();
       const lower = trimmed.toLowerCase();
-      
+
       // Check for mastery properties
       const masteryMatch = trimmed.match(/^Mastery:\s*(.+)$/i);
       if (masteryMatch) {
-        result.mastery.push(...masteryMatch[1].split(/\s*,\s*/).map(m => m.trim().toLowerCase()));
+        result.mastery.push(
+          ...masteryMatch[1]
+            .split(/\s*,\s*/)
+            .map((m) => m.trim().toLowerCase()),
+        );
         continue;
       }
-      
+
       // Check for special properties with details like "Special: Overheat"
       const specialMatch = trimmed.match(/^Special:\s*(.+)$/i);
       if (specialMatch) {
-        result.uniqueTags.push(`unique:${specialMatch[1].toLowerCase().replace(/\s+/g, '-')}`);
+        result.uniqueTags.push(
+          `unique:${specialMatch[1].toLowerCase().replace(/\s+/g, '-')}`,
+        );
         continue;
       }
-      
+
       // Check for reach with units (don't add as unique tag)
       if (/^reach\s*\(\d+\s*ft\.?\)$/i.test(trimmed)) {
         result.weaponProperties.push('reach');
         continue;
       }
-      
+
       // Check if it's a known weapon property
       const weaponProperties = ItemData.getWeaponProperties(sharedData);
       if (weaponProperties.includes(lower)) {
@@ -347,12 +359,14 @@ function parseTypeProperty(properties, sharedData = null) {
       }
     }
   }
-  
+
   // Determine final weaponType:
   // If baseType is a category (weapon, armor, clothing), use first parenthetical item as subtype
   // Otherwise, use baseType as-is
   const lowerBase = baseType?.toLowerCase();
-  const baseCategoryTypes = ItemData.getBaseCategoryTypes(sharedData).map(t => t.toLowerCase());
+  const baseCategoryTypes = ItemData.getBaseCategoryTypes(sharedData).map((t) =>
+    t.toLowerCase(),
+  );
   if (baseCategoryTypes.includes(lowerBase)) {
     // Extract first item from parentheses as subtype
     if (parenMatch) {
@@ -366,7 +380,7 @@ function parseTypeProperty(properties, sharedData = null) {
     // For specific types (like "Handgun"), use baseType
     result.weaponType = baseType;
   }
-  
+
   return result;
 }
 
@@ -380,23 +394,24 @@ async function parseHeirloomFile(filePath, sharedData = null) {
   const raw = await fs.readFile(filePath, 'utf8');
   const lines = TextUtils.readLines(raw);
   const baseSlug = TextUtils.filePathToSlug(filePath);
-  
+
   const title = ParsingUtils.parseTitle(lines);
-  const { rarity, requiresAttunement, attunementRequirements, weaponInfo } = parseRarityAndAttunement(lines, sharedData);
+  const { rarity, requiresAttunement, attunementRequirements, weaponInfo } =
+    parseRarityAndAttunement(lines, sharedData);
   const itemType = parseItemType(lines, sharedData);
   const properties = ParsingUtils.parseProperties(raw);
-  
+
   // Parse structured data from Properties section and weapon info line
   const typeInfo = parseTypeProperty(properties, sharedData);
   const weaponDamage = parseWeaponDamageFromProperties(properties);
   const weight = ParsingUtils.parseWeight(properties);
   const rangeFromProps = ParsingUtils.parseRange(properties);
-  
+
   // Consolidate weapon info from both sources (title line and Properties section)
   let weaponType = weaponInfo?.weaponType || typeInfo.weaponType;
   const hitModifier = weaponInfo?.hitModifier;
   const range = weaponInfo?.range || rangeFromProps;
-  
+
   // Extract subtype for non-weapon items (armor, clothing, etc.)
   // Priority: Type property > standalone italic subtype line > comma-separated format
   if (!weaponType) {
@@ -408,47 +423,53 @@ async function parseHeirloomFile(filePath, sharedData = null) {
         weaponType = parenMatch[1].split(',')[0].trim();
       }
     }
-    
+
     // If not found, check italic lines
     if (!weaponType) {
       const italicLines = lines
         .slice(0, 10)
-        .filter(l => /^_.*_$/.test(l.trim()))
-        .map(l => l.replace(/^_/, '').replace(/_$/, '').trim());
-      
+        .filter((l) => /^_.*_$/.test(l.trim()))
+        .map((l) => l.replace(/^_/, '').replace(/_$/, '').trim());
+
       // Get known item types for validation
       const itemTypes = ItemData.getItemTypes(sharedData);
       const clothingTypes = ItemData.getClothingTypes(sharedData);
       const armorTypes = ItemData.getArmorTypes(sharedData);
-      const allValidTypes = [...itemTypes, ...clothingTypes, ...armorTypes].map(t => t.toLowerCase());
-      
+      const allValidTypes = [...itemTypes, ...clothingTypes, ...armorTypes].map(
+        (t) => t.toLowerCase(),
+      );
+
       for (const line of italicLines) {
         const lower = line.toLowerCase();
-        
+
         // Skip rarity lines (contains rarity keywords)
         const rarityKeywords = ItemData.getRarities(sharedData);
-        if (rarityKeywords.some(r => lower.includes(r))) {
+        if (rarityKeywords.some((r) => lower.includes(r))) {
           continue;
         }
-        
+
         // Skip lines with "property" or "applies" (descriptive text, not subtypes)
         if (/property|applies/i.test(line)) {
           continue;
         }
-        
+
         // Check for standalone subtype line (e.g., "_Scroll_", "_Cloak_")
-        if (allValidTypes.includes(lower) || clothingTypes.map(t => t.toLowerCase()).includes(lower) || armorTypes.map(t => t.toLowerCase()).includes(lower)) {
+        if (
+          allValidTypes.includes(lower) ||
+          clothingTypes.map((t) => t.toLowerCase()).includes(lower) ||
+          armorTypes.map((t) => t.toLowerCase()).includes(lower)
+        ) {
           weaponType = line;
           break;
         }
-        
+
         // Check for comma-separated format: "ItemType, Subtype" or "ItemType, Subtype (details)"
         // Only if first part is a valid item type
         const commaMatch = line.match(/^([^,]+),\s*([^,]+)$/);
         if (commaMatch) {
           const firstPart = commaMatch[1].trim().toLowerCase();
           let secondPart = commaMatch[2].trim();
-          
+
           // Only capture second part if first part is a valid item type
           if (allValidTypes.includes(firstPart)) {
             // Strip parenthetical details like "(magical)" from subtype
@@ -464,67 +485,73 @@ async function parseHeirloomFile(filePath, sharedData = null) {
       }
     }
   }
-  
+
   // Combine weapon properties from both sources
   const allWeaponProps = new Set();
   if (weaponInfo?.properties) {
-    weaponInfo.properties.forEach(p => allWeaponProps.add(p));
+    weaponInfo.properties.forEach((p) => allWeaponProps.add(p));
   }
   if (typeInfo.weaponProperties) {
-    typeInfo.weaponProperties.forEach(p => allWeaponProps.add(p));
+    typeInfo.weaponProperties.forEach((p) => allWeaponProps.add(p));
   }
-  const weaponProperties = allWeaponProps.size > 0 ? Array.from(allWeaponProps).sort() : undefined;
-  
+  const weaponProperties =
+    allWeaponProps.size > 0 ? Array.from(allWeaponProps).sort() : undefined;
+
   // Combine mastery from both sources
   const allMastery = new Set();
   if (weaponInfo?.mastery) {
-    weaponInfo.mastery.forEach(m => allMastery.add(m));
+    weaponInfo.mastery.forEach((m) => allMastery.add(m));
   }
   if (typeInfo.mastery) {
-    typeInfo.mastery.forEach(m => allMastery.add(m));
+    typeInfo.mastery.forEach((m) => allMastery.add(m));
   }
-  const mastery = allMastery.size > 0 ? Array.from(allMastery).sort() : undefined;
-  
+  const mastery =
+    allMastery.size > 0 ? Array.from(allMastery).sort() : undefined;
+
   // Get additional metadata
   const damageTypesDealt = ParsingUtils.parseDamageTypesDealt(raw, sharedData);
   const savingThrowTypes = ParsingUtils.parseSavingThrowTypes(raw, sharedData);
   const charges = ParsingUtils.parseCharges(raw);
-  
+
   // Extract tags using unified tagging system
-  const tags = TaggingUtils.extractAllTags(raw, filePath, sharedData, { contentType: 'item' });
+  const tags = TaggingUtils.extractAllTags(raw, filePath, sharedData, {
+    contentType: 'item',
+  });
   if (typeInfo.uniqueTags) {
     tags.push(...typeInfo.uniqueTags);
   }
-  
+
   // Add item type tag if available
   if (itemType) {
     tags.push(`item:${itemType.toLowerCase().replace(/\s+/g, '-')}`);
   }
-  
+
   // Add rarity tag if available
   if (rarity) {
     tags.push(`rarity:${rarity.toLowerCase().replace(/\s+/g, '-')}`);
   }
-  
+
   // Add weapon type tag if it's a weapon
   if (weaponType) {
     tags.push(`weapon:${weaponType.toLowerCase().replace(/\s+/g, '-')}`);
   }
-  
+
   // Sort tags for consistency
   tags.sort();
-  
+
   // Warnings for missing critical fields
   if (!rarity) {
-    console.warn(`⚠️  No rarity found for ${title || baseSlug}`);
+    log.warning(`No rarity found for ${title || baseSlug}`);
   }
   if (!itemType) {
-    console.warn(`⚠️  No item type found for ${title || baseSlug}`);
+    log.warning(`No item type found for ${title || baseSlug}`);
   }
-  
+
   return {
     slug: baseSlug,
-    title: title || baseSlug.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+    title:
+      title ||
+      baseSlug.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
     file: path.relative(process.cwd(), filePath).replace(/\\/g, '/'),
     link: `/library/items/heirlooms/${baseSlug}`,
     rarity,
@@ -548,7 +575,7 @@ async function parseHeirloomFile(filePath, sharedData = null) {
 
 /**
  * Main execution function with performance monitoring and parallel processing
- * 
+ *
  * @async
  * @function main
  * @param {Object} [options] - Optional configuration for testing
@@ -556,14 +583,14 @@ async function parseHeirloomFile(filePath, sharedData = null) {
  * @param {RegExp} [options.filePattern] - Override file pattern (for testing with custom files)
  * @returns {Promise<void>}
  * @throws {Error} If critical failures occur during processing
- * 
+ *
  * @description Orchestrates the complete heirloom metadata generation pipeline
  * using the standardized MetadataGeneratorUtils pattern.
- * 
+ *
  * @example
  * // Normal usage
  * await main();
- * 
+ *
  * // Testing with fixtures
  * await main({ contentDir: 'tests/fixtures/heirlooms', filePattern: /\.mdx$/i });
  */
@@ -573,14 +600,15 @@ async function main(options = {}) {
     contentType: 'heirlooms',
     filePattern: options.filePattern || /\.mdx$/i,
     parseFile: parseHeirloomFile,
-    contentDir: options.contentDir  // Pass through contentDir if provided
+    contentDir: options.contentDir,
+    storage: options.storage,
   });
 }
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(error => {
-    console.error('❌ Fatal error:', error);
+  MetadataGeneratorUtils.runWithCli(main).catch((error) => {
+    log.error('Fatal error', { error: error.message, stack: error.stack });
     process.exit(1);
   });
 }

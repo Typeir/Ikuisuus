@@ -22,6 +22,9 @@
 import fsSync from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { createLogger } from '../core/logger.mjs';
+
+const log = createLogger({ script: 'mdxLottery' });
 
 /**
  * @type {Set<string>}
@@ -133,7 +136,7 @@ const main = async () => {
   const files = await walk(rootAbs, ignore);
 
   const pats = patterns.map(norm);
-  console.log(pats.length);
+  log.message(pats.length);
 
   const matches =
     pats.length === 0
@@ -146,7 +149,7 @@ const main = async () => {
         });
 
   if (matches.length === 0) {
-    console.error(
+    log.error(
       `No matching .mdx files under ${rootAbs}\nPatterns: ${patterns.join(', ')}`,
     );
     process.exit(1);
@@ -157,6 +160,6 @@ const main = async () => {
 };
 
 main().catch((err) => {
-  console.error(err.stack || String(err));
+  log.error('Fatal error in mdxLottery', { error: err.stack || String(err) });
   process.exit(1);
 });

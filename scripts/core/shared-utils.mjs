@@ -8,6 +8,10 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createLogger } from './logger.mjs';
+
+/** @type {import('./logger.mjs').Logger} */
+const log = createLogger({ module: 'shared-utils' });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,7 +55,9 @@ export class GameData {
    */
   static getDamageTypes(data = null) {
     if (!data?.gameData?.damageTypes) {
-      throw new Error('Missing required gameData.damageTypes in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required gameData.damageTypes in shared data - system cannot function without source of truth',
+      );
     }
     return data.gameData.damageTypes;
   }
@@ -65,7 +71,9 @@ export class GameData {
    */
   static getConditions(data = null) {
     if (!data?.gameData?.conditions) {
-      throw new Error('Missing required gameData.conditions in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required gameData.conditions in shared data - system cannot function without source of truth',
+      );
     }
     return data.gameData.conditions;
   }
@@ -79,7 +87,9 @@ export class GameData {
    */
   static getAbilities(data = null) {
     if (!data?.gameData?.abilities) {
-      throw new Error('Missing required gameData.abilities in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required gameData.abilities in shared data - system cannot function without source of truth',
+      );
     }
     return data.gameData.abilities;
   }
@@ -93,7 +103,9 @@ export class GameData {
    */
   static getSizes(data = null) {
     if (!data?.gameData?.sizes) {
-      throw new Error('Missing required gameData.sizes in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required gameData.sizes in shared data - system cannot function without source of truth',
+      );
     }
     return data.gameData.sizes;
   }
@@ -107,7 +119,9 @@ export class GameData {
    */
   static getSenses(data = null) {
     if (!data?.gameData?.senses) {
-      throw new Error('Missing required gameData.senses in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required gameData.senses in shared data - system cannot function without source of truth',
+      );
     }
     return data.gameData.senses;
   }
@@ -121,7 +135,9 @@ export class GameData {
    */
   static getMovementTypes(data = null) {
     if (!data?.gameData?.movementTypes) {
-      throw new Error('Missing required gameData.movementTypes in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required gameData.movementTypes in shared data - system cannot function without source of truth',
+      );
     }
     return data.gameData.movementTypes;
   }
@@ -135,7 +151,9 @@ export class GameData {
    */
   static getMechanicTypes(data = null) {
     if (!data?.gameData?.mechanicTypes) {
-      throw new Error('Missing required gameData.mechanicTypes in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required gameData.mechanicTypes in shared data - system cannot function without source of truth',
+      );
     }
     return data.gameData.mechanicTypes;
   }
@@ -149,7 +167,9 @@ export class GameData {
    */
   static getCreatureTypes(data = null) {
     if (!data?.gameData?.creatureTypes) {
-      throw new Error('Missing required gameData.creatureTypes in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required gameData.creatureTypes in shared data - system cannot function without source of truth',
+      );
     }
     return data.gameData.creatureTypes;
   }
@@ -168,7 +188,9 @@ export class ItemData {
    */
   static getRarities(data = null) {
     if (!data?.itemData?.rarities) {
-      throw new Error('Missing required itemData.rarities in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required itemData.rarities in shared data - system cannot function without source of truth',
+      );
     }
     return data.itemData.rarities;
   }
@@ -182,7 +204,9 @@ export class ItemData {
    */
   static getItemTypes(data = null) {
     if (!data?.itemData?.itemTypes) {
-      throw new Error('Missing required itemData.itemTypes in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required itemData.itemTypes in shared data - system cannot function without source of truth',
+      );
     }
     return data.itemData.itemTypes;
   }
@@ -196,7 +220,9 @@ export class ItemData {
    */
   static getWeaponProperties(data = null) {
     if (!data?.itemData?.weaponProperties) {
-      throw new Error('Missing required itemData.weaponProperties in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required itemData.weaponProperties in shared data - system cannot function without source of truth',
+      );
     }
     return data.itemData.weaponProperties;
   }
@@ -210,7 +236,9 @@ export class ItemData {
    */
   static getMasteryProperties(data = null) {
     if (!data?.itemData?.masteryProperties) {
-      throw new Error('Missing required itemData.masteryProperties in shared data - system cannot function without source of truth');
+      throw new Error(
+        'Missing required itemData.masteryProperties in shared data - system cannot function without source of truth',
+      );
     }
     return data.itemData.masteryProperties;
   }
@@ -266,11 +294,11 @@ export class ItemData {
    * @param {string[]} lines - File lines to analyze
    * @param {Object} [data=null] - Shared data object
    * @returns {string | undefined} Detected item type or undefined
-   * 
+   *
    * @description Detects item type using two strategies:
    * 1. Checks italic lines in first 5 lines (e.g., "_Legendary Armor_")
    * 2. Checks "Type:" property declaration (e.g., "- **Type**: Handgun")
-   * 
+   *
    * Also maps specific item subtypes to generic categories:
    * - Weapon names (rapier, rifle, handgun, etc.) → "weapon"
    * - Armor types (plate, chainmail, etc.) → "armor"
@@ -281,26 +309,38 @@ export class ItemData {
     const weaponTypes = this.getWeaponTypes(data);
     const armorTypes = this.getArmorTypes(data);
     const clothingTypes = this.getClothingTypes(data);
-    
+
     // Build dynamic regex patterns from shared data
-    const weaponPattern = weaponTypes.length > 0 
-      ? new RegExp(`\\b(${weaponTypes.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|weapon)\\b`, 'i')
-      : /\bweapon\b/i;
-    
-    const armorPattern = armorTypes.length > 0
-      ? new RegExp(`\\b(${armorTypes.map(a => a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|armor)\\b`, 'i')
-      : /\barmor\b/i;
-    
-    const clothingPattern = clothingTypes.length > 0
-      ? new RegExp(`\\b(${clothingTypes.map(c => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|clothing)\\b`, 'i')
-      : /\bclothing\b/i;
-    
+    const weaponPattern =
+      weaponTypes.length > 0
+        ? new RegExp(
+            `\\b(${weaponTypes.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|weapon)\\b`,
+            'i',
+          )
+        : /\bweapon\b/i;
+
+    const armorPattern =
+      armorTypes.length > 0
+        ? new RegExp(
+            `\\b(${armorTypes.map((a) => a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|armor)\\b`,
+            'i',
+          )
+        : /\barmor\b/i;
+
+    const clothingPattern =
+      clothingTypes.length > 0
+        ? new RegExp(
+            `\\b(${clothingTypes.map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|clothing)\\b`,
+            'i',
+          )
+        : /\bclothing\b/i;
+
     // Strategy 1: Check the italic line immediately after the title (first 5 lines)
     const italicLines = lines
       .slice(0, 5)
-      .filter(l => /^_.*_$/.test(l.trim()))
-      .map(l => l.replace(/^_/, '').replace(/_$/, '').trim().toLowerCase());
-    
+      .filter((l) => /^_.*_$/.test(l.trim()))
+      .map((l) => l.replace(/^_/, '').replace(/_$/, '').trim().toLowerCase());
+
     for (const italicLine of italicLines) {
       // Check for base category types first (weapon, armor, clothing)
       // These take priority over specific subtypes
@@ -313,7 +353,7 @@ export class ItemData {
       if (/\bclothing\b/i.test(italicLine)) {
         return 'clothing';
       }
-      
+
       // Then check for exact item type matches
       for (const itemType of itemTypes) {
         const escapedType = itemType.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -322,18 +362,23 @@ export class ItemData {
           return itemType;
         }
       }
-      
+
       // Check for weapon-specific patterns (subtypes like sword, bow, etc.)
       if (weaponPattern.test(italicLine)) {
         return 'weapon';
       }
     }
-    
+
     // Strategy 2: Check for explicit "Type:" property declaration
-    const typePropertyLine = lines.find(l => /^-?\s*\*\*Type\*\*\s*:/i.test(l));
+    const typePropertyLine = lines.find((l) =>
+      /^-?\s*\*\*Type\*\*\s*:/i.test(l),
+    );
     if (typePropertyLine) {
-      const typeValue = typePropertyLine.replace(/^-?\s*\*\*Type\*\*\s*:/i, '').trim().toLowerCase();
-      
+      const typeValue = typePropertyLine
+        .replace(/^-?\s*\*\*Type\*\*\s*:/i, '')
+        .trim()
+        .toLowerCase();
+
       // First, check for exact item type matches
       for (const itemType of itemTypes) {
         const escapedType = itemType.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -342,34 +387,34 @@ export class ItemData {
           return itemType;
         }
       }
-      
+
       // Check for weapon patterns (dynamically built from shared data)
       if (weaponPattern.test(typeValue)) {
         return 'weapon';
       }
-      
+
       // Check for armor patterns (dynamically built from shared data)
       if (armorPattern.test(typeValue)) {
         return 'armor';
       }
-      
+
       // Check for clothing patterns (dynamically built from shared data)
       if (clothingPattern.test(typeValue)) {
         return 'clothing';
       }
-      
+
       // Fallback: extract the first word/phrase from typeValue as a custom type
       // This handles unique item types like "Memory", "Siege Weapon", "Heirloom", etc.
       const customType = typeValue
-        .split(/[,(]/)[0]  // Take everything before comma or opening parenthesis
+        .split(/[,(]/)[0] // Take everything before comma or opening parenthesis
         .trim()
         .toLowerCase();
-      
+
       if (customType) {
         return customType;
       }
     }
-    
+
     return undefined;
   }
 }
@@ -381,7 +426,7 @@ export class ItemData {
 export class CompiledPatterns {
   /** @private @type {Map<string, RegExp>} */
   #patterns = new Map();
-  
+
   /** @private @type {Object} */
   #data = null;
 
@@ -410,7 +455,7 @@ export class CompiledPatterns {
       this.#patterns.set(`damage:${damageType}`, pattern);
     }
 
-    // Compile condition patterns  
+    // Compile condition patterns
     for (const condition of conditions) {
       const pattern = new RegExp(`\\\\b${condition}\\\\b`, 'gi');
       this.#patterns.set(`condition:${condition}`, pattern);
@@ -418,17 +463,32 @@ export class CompiledPatterns {
 
     // Compile ability patterns
     for (const ability of this.#data.gameData.abilities) {
-      const pattern = new RegExp(`\\\\b${ability.long}\\\\s+(?:saving throw|save)\\\\b`, 'gi');
+      const pattern = new RegExp(
+        `\\\\b${ability.long}\\\\s+(?:saving throw|save)\\\\b`,
+        'gi',
+      );
       this.#patterns.set(`save:${ability.long}`, pattern);
-      
-      const shortPattern = new RegExp(`\\\\b${ability.short}\\\\s+(?:saving throw|save)\\\\b`, 'gi');
+
+      const shortPattern = new RegExp(
+        `\\\\b${ability.short}\\\\s+(?:saving throw|save)\\\\b`,
+        'gi',
+      );
       this.#patterns.set(`save:${ability.short}`, pattern);
     }
 
     // Compile common patterns
-    this.#patterns.set('regeneration', new RegExp(regexPatterns.regeneration, 'gi'));
-    this.#patterns.set('spellcasting', new RegExp(regexPatterns.spellcasting, 'gi'));
-    this.#patterns.set('movement:flight', /\\\\b(fly|flying|flight)\\\\b.*?\\\\d+\\\\s*ft/gi);
+    this.#patterns.set(
+      'regeneration',
+      new RegExp(regexPatterns.regeneration, 'gi'),
+    );
+    this.#patterns.set(
+      'spellcasting',
+      new RegExp(regexPatterns.spellcasting, 'gi'),
+    );
+    this.#patterns.set(
+      'movement:flight',
+      /\\\\b(fly|flying|flight)\\\\b.*?\\\\d+\\\\s*ft/gi,
+    );
     this.#patterns.set('movement:burrow', /\\\\bburrow/gi);
     this.#patterns.set('movement:swim', /\\\\bswim/gi);
     this.#patterns.set('movement:climb', /\\\\bclimb/gi);
@@ -473,9 +533,12 @@ export class CompiledPatterns {
    */
   extractTags(text, categories = []) {
     const matchedTags = new Set();
-    
+
     for (const [key, pattern] of this.#patterns) {
-      if (categories.length === 0 || categories.some(cat => key.startsWith(cat + ':'))) {
+      if (
+        categories.length === 0 ||
+        categories.some((cat) => key.startsWith(cat + ':'))
+      ) {
         if (pattern.test(text)) {
           matchedTags.add(key);
         }
@@ -483,7 +546,7 @@ export class CompiledPatterns {
         pattern.lastIndex = 0;
       }
     }
-    
+
     return Array.from(matchedTags).sort();
   }
 }
@@ -514,10 +577,10 @@ export class TextUtils {
   static stripMarkdown(text) {
     if (!text) return text;
     return text
-      .replace(/\\*\\*(.+?)\\*\\*/g, '$1')  // Remove **bold**
-      .replace(/\\*(.+?)\\*/g, '$1')       // Remove *italic*
-      .replace(/_(.+?)_/g, '$1')         // Remove _italic_
-      .replace(/`(.+?)`/g, '$1')         // Remove `code`
+      .replace(/\\*\\*(.+?)\\*\\*/g, '$1') // Remove **bold**
+      .replace(/\\*(.+?)\\*/g, '$1') // Remove *italic*
+      .replace(/_(.+?)_/g, '$1') // Remove _italic_
+      .replace(/`(.+?)`/g, '$1') // Remove `code`
       .trim();
   }
 
@@ -543,7 +606,10 @@ export class TextUtils {
    * @returns {string} Slug identifier
    */
   static filePathToSlug(filePath) {
-    return path.basename(filePath).replace(/\.(?:sheet\.)?mdx$/i, '').replace(/\..+$/, '');
+    return path
+      .basename(filePath)
+      .replace(/\.(?:sheet\.)?mdx$/i, '')
+      .replace(/\..+$/, '');
   }
 
   /**
@@ -584,7 +650,7 @@ export class ValidationUtils {
   validateTag(tag) {
     const [category, value] = tag.split(':');
     const validCategories = this.#sharedData.taxonomies.tagCategories;
-    
+
     if (!validCategories.includes(category)) {
       return false;
     }
@@ -615,15 +681,18 @@ export class ValidationUtils {
    * @returns {string} The appropriate rarity tag
    */
   getRarityFromCR(challengeRating) {
-    const crValue = typeof challengeRating === 'string' ? parseFloat(challengeRating) : challengeRating;
+    const crValue =
+      typeof challengeRating === 'string'
+        ? parseFloat(challengeRating)
+        : challengeRating;
     const thresholds = this.#sharedData.taxonomies.rarityThresholds;
-    
+
     for (const threshold of thresholds) {
       if (crValue >= threshold.minCR) {
         return threshold.tag;
       }
     }
-    
+
     return 'rarity:common';
   }
 
@@ -636,20 +705,20 @@ export class ValidationUtils {
    */
   validateMetadata(metadata, type) {
     const errors = [];
-    
+
     // Common validations
     if (!metadata.slug || typeof metadata.slug !== 'string') {
       errors.push('Missing or invalid slug');
     }
-    
+
     if (!metadata.title || typeof metadata.title !== 'string') {
       errors.push('Missing or invalid title');
     }
-    
+
     if (metadata.tags && !Array.isArray(metadata.tags)) {
       errors.push('Tags must be an array');
     }
-    
+
     // Validate individual tags
     if (metadata.tags) {
       for (const tag of metadata.tags) {
@@ -658,7 +727,7 @@ export class ValidationUtils {
         }
       }
     }
-    
+
     // Type-specific validations
     if (type === 'monster') {
       if (!metadata.creatureType) {
@@ -675,10 +744,10 @@ export class ValidationUtils {
         errors.push('Missing item type');
       }
     }
-    
+
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }
@@ -701,7 +770,7 @@ export class FileUtils {
     try {
       return await fs.readFile(filePath, encoding);
     } catch (error) {
-      console.error(`Error reading file ${filePath}:`, error.message);
+      log.error(`Error reading file ${filePath}`, { error: error.message });
       return null;
     }
   }
@@ -721,7 +790,7 @@ export class FileUtils {
       await fs.writeFile(filePath, content, encoding);
       return true;
     } catch (error) {
-      console.error(`Error writing file ${filePath}:`, error.message);
+      log.error(`Error writing file ${filePath}`, { error: error.message });
       return false;
     }
   }
@@ -739,10 +808,17 @@ export class FileUtils {
     try {
       const entries = await fs.readdir(directory, { withFileTypes: true });
       return entries
-        .filter(entry => entry.isFile() && pattern.test(entry.name) && entry.name !== 'main.mdx')
-        .map(entry => path.join(directory, entry.name));
+        .filter(
+          (entry) =>
+            entry.isFile() &&
+            pattern.test(entry.name) &&
+            entry.name !== 'main.mdx',
+        )
+        .map((entry) => path.join(directory, entry.name));
     } catch (error) {
-      console.error(`Error reading directory ${directory}:`, error.message);
+      log.error(`Error reading directory ${directory}`, {
+        error: error.message,
+      });
       return [];
     }
   }
@@ -760,7 +836,9 @@ export class FileUtils {
       await fs.mkdir(dirPath, { recursive: true });
       return true;
     } catch (error) {
-      console.error(`Error creating directory ${dirPath}:`, error.message);
+      log.error(`Error creating directory ${dirPath}`, {
+        error: error.message,
+      });
       return false;
     }
   }
@@ -773,7 +851,7 @@ export class FileUtils {
 export class PerformanceUtils {
   /** @private @type {Map<string, number>} */
   static #timers = new Map();
-  
+
   /** @private @type {Map<string, {heapUsed: number, external: number}>} */
   static #memorySnapshots = new Map();
 
@@ -787,7 +865,7 @@ export class PerformanceUtils {
     this.#timers.set(label, performance.now());
     this.#memorySnapshots.set(label, {
       heapUsed: process.memoryUsage().heapUsed,
-      external: process.memoryUsage().external
+      external: process.memoryUsage().external,
     });
   }
 
@@ -801,24 +879,26 @@ export class PerformanceUtils {
   static endTimer(label) {
     const startTime = this.#timers.get(label);
     const startMemory = this.#memorySnapshots.get(label);
-    
+
     if (!startTime || !startMemory) {
-      console.warn(`Timer '${label}' was not started`);
+      log.warning(`Timer '${label}' was not started`);
       return 0;
     }
-    
+
     const elapsed = performance.now() - startTime;
     const currentMemory = process.memoryUsage();
     const memoryDelta = {
       heapUsed: currentMemory.heapUsed - startMemory.heapUsed,
-      external: currentMemory.external - startMemory.external
+      external: currentMemory.external - startMemory.external,
     };
-    
-    console.log(`⏱️  ${label}: ${elapsed.toFixed(2)}ms (heap: ${(memoryDelta.heapUsed / 1024 / 1024).toFixed(2)}MB)`);
-    
+
+    log.message(
+      `⏱️  ${label}: ${elapsed.toFixed(2)}ms (heap: ${(memoryDelta.heapUsed / 1024 / 1024).toFixed(2)}MB)`,
+    );
+
     this.#timers.delete(label);
     this.#memorySnapshots.delete(label);
-    
+
     return elapsed;
   }
 }
@@ -835,7 +915,7 @@ export class ParsingUtils {
    * @returns {string} Clean title without markdown formatting
    */
   static parseTitle(lines) {
-    const h1 = lines.find(l => /^#\s+/.test(l));
+    const h1 = lines.find((l) => /^#\s+/.test(l));
     return h1 ? TextUtils.clean(h1.replace(/^#\s+/, '')) : '';
   }
 
@@ -848,13 +928,15 @@ export class ParsingUtils {
    */
   static parseProperties(text) {
     const properties = {};
-    
+
     // Look for Properties sections
-    const propertiesMatch = text.match(/##\s+(Item\s+|Weapon\s+|Armor\s+)?Properties\s*\n([\s\S]*?)(?=\n##|\n---|\n$)/i);
+    const propertiesMatch = text.match(
+      /##\s+(Item\s+|Weapon\s+|Armor\s+)?Properties\s*\n([\s\S]*?)(?=\n##|\n---|\n$)/i,
+    );
     if (!propertiesMatch) return undefined;
-    
+
     const propertiesSection = propertiesMatch[2];
-    
+
     // Extract bullet points with property: value format
     // Handle both "**Type**: Value" and "**Type:** Value"
     const bulletPattern = /^[-*]\s+\*\*(.+?)(?::)?\*\*\s*:?\s*(.+?)\s*$/gm;
@@ -864,7 +946,7 @@ export class ParsingUtils {
       const value = TextUtils.stripMarkdown(match[2].trim());
       properties[key] = value;
     }
-    
+
     return Object.keys(properties).length > 0 ? properties : undefined;
   }
 
@@ -877,13 +959,13 @@ export class ParsingUtils {
    */
   static parseWeight(properties) {
     if (!properties || !properties.Weight) return undefined;
-    
+
     const weightText = properties.Weight;
     const weightMatch = weightText.match(/([\d.]+)\s*lbs?\.?/i);
     if (weightMatch) {
       return `${weightMatch[1]} lb${weightMatch[1] !== '1' ? 's' : ''}`;
     }
-    
+
     return undefined;
   }
 
@@ -927,24 +1009,28 @@ export class ParsingUtils {
    */
   static parseCharges(text) {
     const chargesInfo = {};
-    
+
     // Look for initial charges
-    const initialMatch = text.match(/holds?\s+(?:up to\s+)?(\d+d\d+|\d+)\s+charges/i);
+    const initialMatch = text.match(
+      /holds?\s+(?:up to\s+)?(\d+d\d+|\d+)\s+charges/i,
+    );
     if (initialMatch) {
       chargesInfo.initial = initialMatch[1];
     }
-    
+
     // Look for recharge information
-    const rechargeMatch = text.match(/(?:regain|recover)(?:ing|s)?\s+(\d+\s*\+\s*\d+d\d+|\d+d\d+|\d+)\s+charges?\s+(?:at|each)\s+(\w+)/i);
+    const rechargeMatch = text.match(
+      /(?:regain|recover)(?:ing|s)?\s+(\d+\s*\+\s*\d+d\d+|\d+d\d+|\d+)\s+charges?\s+(?:at|each)\s+(\w+)/i,
+    );
     if (rechargeMatch) {
       chargesInfo.recharge = `${rechargeMatch[1]} at ${rechargeMatch[2]}`;
     }
-    
+
     // Check if item becomes inert when depleted
     if (/becomes?\s+inert|cannot be recharged|burns? away/i.test(text)) {
       chargesInfo.depletes = true;
     }
-    
+
     return Object.keys(chargesInfo).length > 0 ? chargesInfo : undefined;
   }
 
@@ -959,14 +1045,17 @@ export class ParsingUtils {
   static parseDamageTypesDealt(text, data = null) {
     const damageTypes = new Set();
     const damageKeywords = GameData.getDamageTypes(data);
-    
+
     for (const type of damageKeywords) {
-      const dealPattern = new RegExp(`(?:deals?|additional|extra)\\s+(?:\\d+d\\d+|\\d+)\\s+${type}\\s+damage`, 'i');
+      const dealPattern = new RegExp(
+        `(?:deals?|additional|extra)\\s+(?:\\d+d\\d+|\\d+)\\s+${type}\\s+damage`,
+        'i',
+      );
       if (dealPattern.test(text)) {
         damageTypes.add(type);
       }
     }
-    
+
     return damageTypes.size > 0 ? Array.from(damageTypes).sort() : undefined;
   }
 
@@ -981,22 +1070,28 @@ export class ParsingUtils {
   static parseSavingThrowTypes(text, data = null) {
     const saveTypes = new Set();
     const abilities = GameData.getAbilities(data);
-    
-    const abilityNames = abilities.flatMap(a => [a.long, a.short]);
-    const pattern = new RegExp(`\\b(${abilityNames.join('|')})\\s+(saving throw|save)`, 'gi');
+
+    const abilityNames = abilities.flatMap((a) => [a.long, a.short]);
+    const pattern = new RegExp(
+      `\\b(${abilityNames.join('|')})\\s+(saving throw|save)`,
+      'gi',
+    );
     let match;
-    
+
     while ((match = pattern.exec(text)) !== null) {
       const matchedAbility = match[1].toLowerCase();
-      const ability = abilities.find(a => 
-        a.long.toLowerCase() === matchedAbility || a.short.toLowerCase() === matchedAbility
+      const ability = abilities.find(
+        (a) =>
+          a.long.toLowerCase() === matchedAbility ||
+          a.short.toLowerCase() === matchedAbility,
       );
       if (ability) {
-        const fullAbility = ability.long.charAt(0).toUpperCase() + ability.long.slice(1);
+        const fullAbility =
+          ability.long.charAt(0).toUpperCase() + ability.long.slice(1);
         saveTypes.add(fullAbility);
       }
     }
-    
+
     return saveTypes.size > 0 ? Array.from(saveTypes).sort() : undefined;
   }
 
@@ -1012,7 +1107,7 @@ export class ParsingUtils {
    */
   static parseKeyBullets(text) {
     const map = {};
-    const re = /^-\s*\*\*([^*]+)\*\*\s*:\s*(.+?)\s*$/gmi;
+    const re = /^-\s*\*\*([^*]+)\*\*\s*:\s*(.+?)\s*$/gim;
     let m;
     while ((m = re.exec(text)) !== null) {
       map[m[1].trim()] = m[2].trim();
@@ -1034,7 +1129,7 @@ export class ParsingUtils {
     if (!raw || raw === '—' || raw.toLowerCase() === 'none') return [];
     return raw
       .split(/[,;]/)
-      .map(s => TextUtils.stripMarkdown(s.trim()))
+      .map((s) => TextUtils.stripMarkdown(s.trim()))
       .filter(Boolean);
   }
 
@@ -1052,41 +1147,41 @@ export class ParsingUtils {
    */
   static splitListWithGrouping(raw, groupPattern) {
     if (!raw || raw === '—' || raw.toLowerCase() === 'none') return [];
-    
+
     const match = raw.match(groupPattern);
-    
+
     if (match) {
       // Extract the full grouped phrase
       const grouped = TextUtils.stripMarkdown(match[0].trim());
       const remainder = raw.replace(groupPattern, '').trim();
-      
+
       // Split remainder by comma or semicolon
       const others = remainder
         .split(/[,;]/)
-        .map(s => TextUtils.stripMarkdown(s.trim()))
+        .map((s) => TextUtils.stripMarkdown(s.trim()))
         .filter(Boolean)
-        .filter(s => s !== 'and');
-      
+        .filter((s) => s !== 'and');
+
       // Return grouped phrase first, then others
       return [grouped, ...others];
     }
-    
+
     // Normal split by comma or semicolon
     return raw
       .split(/[,;]/)
-      .map(s => TextUtils.stripMarkdown(s.trim()))
+      .map((s) => TextUtils.stripMarkdown(s.trim()))
       .filter(Boolean);
   }
 }
 
 /**
  * Unified tagging utilities for extracting gameplay mechanics, lore, and organizational tags from content
- * 
+ *
  * @class TaggingUtils
  * @description Centralized tagging system that combines mechanics-based tagging (damage types, conditions,
  * abilities) with organizational and lore-based tagging (factions, locations, categories). Used by both
  * specialized generators (monsters, heirlooms) and the generic orchestrator for consistent tag extraction.
- * 
+ *
  * @example
  * ```javascript
  * const tags = TaggingUtils.extractAllTags(content, filePath, sharedData);
@@ -1103,13 +1198,13 @@ export class TaggingUtils {
   static extractDamageTags(text, sharedData) {
     const tags = [];
     const damageTypes = GameData.getDamageTypes(sharedData);
-    
+
     for (const type of damageTypes) {
       if (new RegExp(`\\b${type}\\s+damage\\b`, 'gi').test(text)) {
         tags.push(`damage:${type}`);
       }
     }
-    
+
     return tags;
   }
 
@@ -1122,13 +1217,13 @@ export class TaggingUtils {
   static extractConditionTags(text, sharedData) {
     const tags = [];
     const conditions = GameData.getConditions(sharedData);
-    
+
     for (const condition of conditions) {
       if (new RegExp(`\\b${condition}\\b`, 'gi').test(text)) {
         tags.push(`condition:${condition}`);
       }
     }
-    
+
     return tags;
   }
 
@@ -1141,20 +1236,25 @@ export class TaggingUtils {
   static extractAbilitySaveTags(text, sharedData) {
     const tags = [];
     const abilities = GameData.getAbilities(sharedData);
-    const abilityNames = abilities.flatMap(a => [a.long, a.short]);
-    const pattern = new RegExp(`\\b(${abilityNames.join('|')})\\s+(saving throw|save)`, 'gi');
-    
+    const abilityNames = abilities.flatMap((a) => [a.long, a.short]);
+    const pattern = new RegExp(
+      `\\b(${abilityNames.join('|')})\\s+(saving throw|save)`,
+      'gi',
+    );
+
     let match;
     while ((match = pattern.exec(text)) !== null) {
       const matchedAbility = match[1].toLowerCase();
-      const ability = abilities.find(a => 
-        a.long.toLowerCase() === matchedAbility || a.short.toLowerCase() === matchedAbility
+      const ability = abilities.find(
+        (a) =>
+          a.long.toLowerCase() === matchedAbility ||
+          a.short.toLowerCase() === matchedAbility,
       );
       if (ability) {
         tags.push(`mechanic:${ability.long}-save`);
       }
     }
-    
+
     return tags;
   }
 
@@ -1169,22 +1269,27 @@ export class TaggingUtils {
     const tags = [];
     const movementTypes = GameData.getMovementTypes(sharedData);
     const movementPatterns = {
-      'flight': /\b(fly|flying|flight)\b/i,
-      'burrowing': /\bburrow/i,
-      'swimming': /\bswim/i,
-      'climbing': /\bclimb/i,
-      'teleportation': /\bteleport/i,
-      'enhanced': /\bmovement\s+speed/i
+      flight: /\b(fly|flying|flight)\b/i,
+      burrowing: /\bburrow/i,
+      swimming: /\bswim/i,
+      climbing: /\bclimb/i,
+      teleportation: /\bteleport/i,
+      enhanced: /\bmovement\s+speed/i,
     };
-    
+
     for (const movement of movementTypes) {
       if (movementPatterns[movement] && movementPatterns[movement].test(text)) {
         // Special case for flight - optionally require feet measurement
-        if (movement === 'flight' && requireMeasurement && !/\d+\s*ft/i.test(text)) continue;
+        if (
+          movement === 'flight' &&
+          requireMeasurement &&
+          !/\d+\s*ft/i.test(text)
+        )
+          continue;
         tags.push(`movement:${movement}`);
       }
     }
-    
+
     return tags;
   }
 
@@ -1195,39 +1300,50 @@ export class TaggingUtils {
    */
   static extractMonsterMechanicTags(text) {
     const tags = [];
-    
+
     // Action types
-    if (/\b(Legendary Deed: act?|Legendary Deed: resist)\b/i.test(text)) tags.push('mechanic:legendary-deed');
+    if (/\b(Legendary Deed: act?|Legendary Deed: resist)\b/i.test(text))
+      tags.push('mechanic:legendary-deed');
     if (/\bLegendary Deed: resist?\b/i.test(text)) tags.push('mechanic:resist');
     if (/\bLegendary Deed: lair?\b/i.test(text)) tags.push('mechanic:lair');
-    if (/\bLegendary Deed: Stratagem?\b/i.test(text)) tags.push('mechanic:stratagem');
-    if (/\bLegendary Deed: Phase?\b/i.test(text)) tags.push('mechanic:phase-actions');
+    if (/\bLegendary Deed: Stratagem?\b/i.test(text))
+      tags.push('mechanic:stratagem');
+    if (/\bLegendary Deed: Phase?\b/i.test(text))
+      tags.push('mechanic:phase-actions');
     if (/\bmultiattack\b/i.test(text)) tags.push('mechanic:multiattack');
     if (/\breactions?\b/i.test(text)) tags.push('mechanic:reactions');
     if (/\bbonus actions?\b/i.test(text)) tags.push('mechanic:bonus-actions');
-    
+
     // Regeneration and healing
     if (/\bregenerat(e|ion)\b/i.test(text)) tags.push('mechanic:regeneration');
-    if (/\b(regains?|recover)\s+\d+\s+(hit points?|hp)\b/i.test(text)) tags.push('mechanic:regeneration');
-    
+    if (/\b(regains?|recover)\s+\d+\s+(hit points?|hp)\b/i.test(text))
+      tags.push('mechanic:regeneration');
+
     // Spellcasting
-    if (/\b(spellcasting|cantrips?|spell slots?)\b/i.test(text)) tags.push('mechanic:spellcasting');
-    if (/\b(innate spellcasting)\b/i.test(text)) tags.push('mechanic:innate-spellcasting');
-    
+    if (/\b(spellcasting|cantrips?|spell slots?)\b/i.test(text))
+      tags.push('mechanic:spellcasting');
+    if (/\b(innate spellcasting)\b/i.test(text))
+      tags.push('mechanic:innate-spellcasting');
+
     // Special abilities
-    if (/\b(magic resistance)\b/i.test(text)) tags.push('mechanic:magic-resistance');
+    if (/\b(magic resistance)\b/i.test(text))
+      tags.push('mechanic:magic-resistance');
     if (/\b(magic weapons?)\b/i.test(text)) tags.push('mechanic:magic-weapons');
     if (/\b(pack tactics)\b/i.test(text)) tags.push('mechanic:pack-tactics');
     if (/\b(sneak attack)\b/i.test(text)) tags.push('mechanic:sneak-attack');
     if (/\b(aura)\b/i.test(text)) tags.push('mechanic:aura');
     if (/\b(summon|summoning)\b/i.test(text)) tags.push('mechanic:summoning');
-    if (/\b(shapechange|polymorph)\b/i.test(text)) tags.push('mechanic:shapeshifting');
-    
+    if (/\b(shapechange|polymorph)\b/i.test(text))
+      tags.push('mechanic:shapeshifting');
+
     // Vulnerabilities/resistances/immunities
-    if (/\b(resistant|resistance)\b/i.test(text)) tags.push('mechanic:damage-resistance');
-    if (/\b(immune|immunity)\b/i.test(text)) tags.push('mechanic:damage-immunity');
-    if (/\b(vulnerable|vulnerability)\b/i.test(text)) tags.push('mechanic:damage-vulnerability');
-    
+    if (/\b(resistant|resistance)\b/i.test(text))
+      tags.push('mechanic:damage-resistance');
+    if (/\b(immune|immunity)\b/i.test(text))
+      tags.push('mechanic:damage-immunity');
+    if (/\b(vulnerable|vulnerability)\b/i.test(text))
+      tags.push('mechanic:damage-vulnerability');
+
     return tags;
   }
 
@@ -1238,39 +1354,57 @@ export class TaggingUtils {
    */
   static extractItemMechanicTags(text) {
     const tags = [];
-    
+
     // Attack modifiers
-    if (/\+\d+\s+(?:to\s+)?(?:attack|hit)/i.test(text)) tags.push('mechanic:attack-bonus');
-    if (/\+\d+\s+(?:to\s+)?(?:damage|AC)/i.test(text)) tags.push('mechanic:damage-bonus');
-    if (/\+\d+\s+(?:to\s+|bonus\s+to\s+)?AC/i.test(text)) tags.push('mechanic:ac-bonus');
-    if (/\+\d+\s+(?:to\s+|bonus\s+to\s+)?saving throws?/i.test(text)) tags.push('mechanic:saving-throw-bonus');
-    
+    if (/\+\d+\s+(?:to\s+)?(?:attack|hit)/i.test(text))
+      tags.push('mechanic:attack-bonus');
+    if (/\+\d+\s+(?:to\s+)?(?:damage|AC)/i.test(text))
+      tags.push('mechanic:damage-bonus');
+    if (/\+\d+\s+(?:to\s+|bonus\s+to\s+)?AC/i.test(text))
+      tags.push('mechanic:ac-bonus');
+    if (/\+\d+\s+(?:to\s+|bonus\s+to\s+)?saving throws?/i.test(text))
+      tags.push('mechanic:saving-throw-bonus');
+
     // Advantage/disadvantage and combat mechanics
-    if (/\b(advantage|disadvantage)\b/i.test(text)) tags.push('mechanic:advantage-disadvantage');
-    if (/\bcritical(?:\s+hit)?/i.test(text)) tags.push('mechanic:critical-hits');
+    if (/\b(advantage|disadvantage)\b/i.test(text))
+      tags.push('mechanic:advantage-disadvantage');
+    if (/\bcritical(?:\s+hit)?/i.test(text))
+      tags.push('mechanic:critical-hits');
     if (/\breaction\b/i.test(text)) tags.push('mechanic:reaction');
     if (/\bbonus action\b/i.test(text)) tags.push('mechanic:bonus-action');
-    if (/\bopportunity attack/i.test(text)) tags.push('mechanic:opportunity-attacks');
-    if (/does\s+not\s+provoke\s+opportunity\s+attacks?/i.test(text)) tags.push('mechanic:no-opportunity-attacks');
-    
+    if (/\bopportunity attack/i.test(text))
+      tags.push('mechanic:opportunity-attacks');
+    if (/does\s+not\s+provoke\s+opportunity\s+attacks?/i.test(text))
+      tags.push('mechanic:no-opportunity-attacks');
+
     // Damage resistances/immunities/vulnerabilities
-    if (/\bresistance\s+to/i.test(text)) tags.push('mechanic:damage-resistance');
-    if (/\bimmun(?:e|ity)\s+to/i.test(text)) tags.push('mechanic:damage-immunity');
-    if (/\bvulnerab(?:le|ility)\s+to/i.test(text)) tags.push('mechanic:damage-vulnerability');
-    
+    if (/\bresistance\s+to/i.test(text))
+      tags.push('mechanic:damage-resistance');
+    if (/\bimmun(?:e|ity)\s+to/i.test(text))
+      tags.push('mechanic:damage-immunity');
+    if (/\bvulnerab(?:le|ility)\s+to/i.test(text))
+      tags.push('mechanic:damage-vulnerability');
+
     // Spellcasting and usage mechanics
-    if (/\bcasts?\s+\[?_?[A-Z][a-z]+|spell/i.test(text)) tags.push('mechanic:spellcasting');
+    if (/\bcasts?\s+\[?_?[A-Z][a-z]+|spell/i.test(text))
+      tags.push('mechanic:spellcasting');
     if (/\bcantrips?\b/i.test(text)) tags.push('mechanic:cantrips');
     if (/\bcharges?\b/i.test(text)) tags.push('mechanic:charges');
-    if (/\b\d+\/(?:short|long)\s+rest/i.test(text)) tags.push('mechanic:limited-uses');
+    if (/\b\d+\/(?:short|long)\s+rest/i.test(text))
+      tags.push('mechanic:limited-uses');
     if (/\brecharge\s+\d+/i.test(text)) tags.push('mechanic:recharge');
     if (/\breroll/i.test(text)) tags.push('mechanic:reroll');
-    
+
     // Special item properties
-    if (/\bconsumable\b/i.test(text) || /burns? away|destroyed|inert/i.test(text)) tags.push('property:consumable');
+    if (
+      /\bconsumable\b/i.test(text) ||
+      /burns? away|destroyed|inert/i.test(text)
+    )
+      tags.push('property:consumable');
     if (/\battunement\b/i.test(text)) tags.push('property:attunement-required');
-    if (/\bproficiency\b/i.test(text)) tags.push('property:proficiency-required');
-    
+    if (/\bproficiency\b/i.test(text))
+      tags.push('property:proficiency-required');
+
     return tags;
   }
 
@@ -1283,21 +1417,21 @@ export class TaggingUtils {
    */
   static extractLoreTags(text, factions, locations) {
     const tags = [];
-    
+
     // Factions
     for (const faction of factions) {
       if (new RegExp(`\\b${faction}\\b`, 'i').test(text)) {
         tags.push(`faction:${faction.toLowerCase()}`);
       }
     }
-    
+
     // Locations
     for (const location of locations) {
       if (new RegExp(`\\b${location}\\b`, 'i').test(text)) {
         tags.push(`location:${location.toLowerCase()}`);
       }
     }
-    
+
     return tags;
   }
 
@@ -1310,27 +1444,30 @@ export class TaggingUtils {
   static extractOrganizationalTags(filePath, projectRoot = process.cwd()) {
     const tags = [];
     // Use simple string splitting instead of path module
-    const relativePath = filePath.replace(projectRoot, '').replace(/^[/\\]+/, '');
+    const relativePath = filePath
+      .replace(projectRoot, '')
+      .replace(/^[/\\]+/, '');
     const pathParts = relativePath.split(/[/\\]/);
-    
+
     // Content hierarchy tags
     if (pathParts.includes('monsters')) tags.push('category:monsters');
     if (pathParts.includes('items')) tags.push('category:items');
     if (pathParts.includes('heirlooms')) tags.push('category:heirlooms');
-    if (pathParts.includes('character-creation')) tags.push('category:character-creation');
+    if (pathParts.includes('character-creation'))
+      tags.push('category:character-creation');
     if (pathParts.includes('vocations')) tags.push('category:vocations');
     if (pathParts.includes('spells')) tags.push('category:spells');
     if (pathParts.includes('world')) tags.push('category:world');
     if (pathParts.includes('rules')) tags.push('category:rules');
-    
+
     // Language/locale tags
     if (pathParts.includes('en')) tags.push('locale:en');
     if (pathParts.includes('es')) tags.push('locale:es');
     if (pathParts.includes('fi')) tags.push('locale:fi');
-    
+
     // Source tags
     tags.push('source:official');
-    
+
     return tags;
   }
 
@@ -1342,24 +1479,37 @@ export class TaggingUtils {
    */
   static extractContentTypeTags(filePath, content) {
     const tags = [];
-    
+
     // File extension based tags
     if (filePath.includes('.sheet.mdx')) {
       tags.push('sheet', 'statblock');
     } else if (filePath.endsWith('.mdx')) {
       tags.push('content');
     }
-    
+
     // Content pattern based tags
     if (content.includes('**Armor Class**')) tags.push('statblock', 'creature');
-    if (content.includes('**Challenge Rating**')) tags.push('monster', 'encounter');
-    if (content.includes('_Spell level_') || content.includes('**Casting Time**')) tags.push('spell');
-    if (content.includes('**Rarity**') || content.includes('_weapon_') || content.includes('_armor_')) {
+    if (content.includes('**Challenge Rating**'))
+      tags.push('monster', 'encounter');
+    if (
+      content.includes('_Spell level_') ||
+      content.includes('**Casting Time**')
+    )
+      tags.push('spell');
+    if (
+      content.includes('**Rarity**') ||
+      content.includes('_weapon_') ||
+      content.includes('_armor_')
+    ) {
       tags.push('item', 'equipment');
     }
-    if (content.includes('**Class Features**') || content.includes('**Subclass**')) tags.push('class');
-    
-    return tags.map(tag => `content:${tag}`);
+    if (
+      content.includes('**Class Features**') ||
+      content.includes('**Subclass**')
+    )
+      tags.push('class');
+
+    return tags.map((tag) => `content:${tag}`);
   }
 
   /**
@@ -1379,17 +1529,23 @@ export class TaggingUtils {
       contentType = 'generic',
       factions = [],
       locations = [],
-      requireFlightMeasurement = false
+      requireFlightMeasurement = false,
     } = options;
-    
+
     const allTags = [];
-    
+
     // Core mechanic tags (common to all content types)
     allTags.push(...this.extractDamageTags(content, sharedData));
     allTags.push(...this.extractConditionTags(content, sharedData));
     allTags.push(...this.extractAbilitySaveTags(content, sharedData));
-    allTags.push(...this.extractMovementTags(content, sharedData, requireFlightMeasurement));
-    
+    allTags.push(
+      ...this.extractMovementTags(
+        content,
+        sharedData,
+        requireFlightMeasurement,
+      ),
+    );
+
     // Content-specific mechanic tags
     if (contentType === 'monster') {
       allTags.push(...this.extractMonsterMechanicTags(content));
@@ -1400,18 +1556,18 @@ export class TaggingUtils {
       allTags.push(...this.extractMonsterMechanicTags(content));
       allTags.push(...this.extractItemMechanicTags(content));
     }
-    
+
     // Lore tags (if provided)
     if (factions.length > 0 || locations.length > 0) {
       allTags.push(...this.extractLoreTags(content, factions, locations));
     }
-    
+
     // Organizational tags
     allTags.push(...this.extractOrganizationalTags(filePath, process.cwd()));
-    
+
     // Content type tags
     allTags.push(...this.extractContentTypeTags(filePath, content));
-    
+
     // Deduplicate and sort
     return [...new Set(allTags)].sort();
   }
@@ -1429,16 +1585,18 @@ export class MetadataGeneratorUtils {
    */
   static getContentDirectory(contentType) {
     const contentPaths = {
-      'monsters': ['src', 'content', 'en', 'monsters'],
-      'heirlooms': ['src', 'content', 'en', 'items', 'heirlooms'],
-      'spells': ['src', 'content', 'en', 'spells'],
-      'trinkets': ['src', 'content', 'en', 'items', 'trinkets']
+      monsters: ['src', 'content', 'en', 'monsters'],
+      heirlooms: ['src', 'content', 'en', 'items', 'heirlooms'],
+      spells: ['src', 'content', 'en', 'spells'],
+      trinkets: ['src', 'content', 'en', 'items', 'trinkets'],
     };
-    
+
     if (!contentPaths[contentType]) {
-      throw new Error(`Unknown content type: ${contentType}. Valid types: ${Object.keys(contentPaths).join(', ')}`);
+      throw new Error(
+        `Unknown content type: ${contentType}. Valid types: ${Object.keys(contentPaths).join(', ')}`,
+      );
     }
-    
+
     return path.resolve(PROJECT_ROOT, ...contentPaths[contentType]);
   }
 
@@ -1453,6 +1611,8 @@ export class MetadataGeneratorUtils {
    * @param {Function} config.parseFile - Async function to parse a single file
    * @param {Function} [config.processResult] - Optional function to process parse result (for arrays)
    * @param {string} [config.contentDir] - Optional content directory override (for testing with fixtures)
+   * @param {object} [config.storage] - Optional storage adapter with `upsert(category, locale, slug, data)` method
+   * @param {string} [config.locale] - Locale for storage persistence (defaults to 'en')
    * @returns {Promise<void>}
    */
   static async runGenerator(config) {
@@ -1462,66 +1622,109 @@ export class MetadataGeneratorUtils {
       filePattern,
       parseFile,
       processResult = null,
-      contentDir = null
+      contentDir = null,
+      storage = null,
+      locale = 'en',
     } = config;
 
     const timerKey = `${contentType}-metadata-generation`;
     PerformanceUtils.startTimer(timerKey);
-    
+
     try {
-      console.log(`🔍 Scanning for ${contentType} files...`);
-      
+      log.message(`Scanning for ${contentType} files`);
+      if (storage) {
+        log.message(`Database persistence enabled for ${contentType}`);
+      }
+
       // Load shared data - required for system to function
       const sharedData = await loadSharedData();
-      console.log('📊 Loaded shared data for optimized processing');
-      
+      log.message('Loaded shared data for optimized processing');
+
       // Use provided contentDir or get default from contentType
-      const resolvedContentDir = contentDir || this.getContentDirectory(contentType);
-      const files = await FileUtils.getMatchingFiles(resolvedContentDir, filePattern);
-      console.log(`📄 Found ${files.length} ${contentType} files\n`);
-      
+      const resolvedContentDir =
+        contentDir || this.getContentDirectory(contentType);
+      const files = await FileUtils.getMatchingFiles(
+        resolvedContentDir,
+        filePattern,
+      );
+      log.message(`Found ${files.length} ${contentType} files`);
+
       if (files.length === 0) {
-        console.log(`ℹ️  No ${contentType} files found to process`);
+        log.message(`No ${contentType} files found to process`);
         return;
       }
-      
+
       // Process files with enhanced error tracking
       const results = await Promise.allSettled(
         files.map(async (filePath) => {
           try {
             const parseResult = await parseFile(filePath, sharedData);
-            
+
             // Allow custom processing (e.g., counting stat blocks in arrays)
-            const processed = processResult 
+            const processed = processResult
               ? processResult(parseResult)
               : { metadata: parseResult };
-            
+
             // Write metadata file with error handling
-            const metadataFilePath = filePath.replace(filePattern, '.metadata.json');
-            const success = await FileUtils.safeWriteFile(
-              metadataFilePath, 
-              JSON.stringify(processed.metadata, null, 2)
+            const metadataFilePath = filePath.replace(
+              filePattern,
+              '.metadata.json',
             );
-            
+            const success = await FileUtils.safeWriteFile(
+              metadataFilePath,
+              JSON.stringify(processed.metadata, null, 2),
+            );
+
             if (!success) {
-              throw new Error(`Failed to write metadata file: ${metadataFilePath}`);
+              throw new Error(
+                `Failed to write metadata file: ${metadataFilePath}`,
+              );
             }
-            
-            return { 
-              filePath, 
+
+            // Persist to storage adapter if configured (non-blocking — sidecar is primary)
+            if (storage && processed.metadata) {
+              const records = Array.isArray(processed.metadata)
+                ? processed.metadata
+                : [processed.metadata];
+              for (const record of records) {
+                if (record?.slug) {
+                  try {
+                    await storage.upsert(
+                      contentType,
+                      locale,
+                      record.slug,
+                      record,
+                    );
+                  } catch (storageErr) {
+                    log.warning(`DB upsert failed for ${record.slug}`, {
+                      error: storageErr.message,
+                    });
+                  }
+                }
+              }
+            }
+
+            return {
+              filePath,
               success: true,
-              ...processed
+              ...processed,
             };
           } catch (error) {
             return { filePath, success: false, error: error.message };
           }
-        })
+        }),
       );
-      
+
       // Analyze results and report statistics
-      const successful = results.filter(r => r.status === 'fulfilled' && r.value.success);
-      const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.success));
-      
+      const successful = results.filter(
+        (r) => r.status === 'fulfilled' && r.value.success,
+      );
+      const failed = results.filter(
+        (r) =>
+          r.status === 'rejected' ||
+          (r.status === 'fulfilled' && !r.value.success),
+      );
+
       // Custom stats display
       let statsMessage = `✅ Successfully parsed ${successful.length} files`;
       if (processResult && successful.length > 0) {
@@ -1530,32 +1733,71 @@ export class MetadataGeneratorUtils {
         }, 0);
         statsMessage += ` → ${totalItems} items`;
       }
-      
-      console.log(`\n${statsMessage}`);
-      console.log(`📝 Wrote ${successful.length} metadata files`);
-      
+
+      log.message(statsMessage);
+      log.message(`Wrote ${successful.length} metadata files`);
+
       if (failed.length > 0) {
-        console.log(`⚠️  ${failed.length} processing errors encountered:`);
-        failed.forEach(failure => {
-          const fileName = failure.status === 'fulfilled' 
-            ? path.basename(failure.value.filePath)
-            : 'Unknown file';
-          const error = failure.status === 'fulfilled' 
-            ? failure.value.error 
-            : failure.reason?.message || 'Unknown error';
-          console.log(`   ❌ ${fileName}: ${error}`);
+        log.warning(`${failed.length} processing errors encountered`);
+        failed.forEach((failure) => {
+          const fileName =
+            failure.status === 'fulfilled'
+              ? path.basename(failure.value.filePath)
+              : 'Unknown file';
+          const error =
+            failure.status === 'fulfilled'
+              ? failure.value.error
+              : failure.reason?.message || 'Unknown error';
+          log.error(`${fileName}: ${error}`);
         });
       }
-      
+
       // Performance summary
       const elapsed = PerformanceUtils.endTimer(timerKey);
-      const avgTime = successful.length > 0 ? (elapsed / successful.length).toFixed(2) : 0;
-      console.log(`⚡ Average processing time: ${avgTime}ms per file`);
-      
+      const avgTime =
+        successful.length > 0 ? (elapsed / successful.length).toFixed(2) : 0;
+      log.message(`Average processing time: ${avgTime}ms per file`);
+
+      if (storage) {
+        log.message(
+          `Persisted ${contentType} records to database alongside sidecar files`,
+        );
+      }
     } catch (error) {
-      console.error(`❌ Fatal error in ${name}:`, error.message);
-      console.error('Stack trace:', error.stack);
+      log.error(`Fatal error in ${name}`, {
+        error: error.message,
+        stack: error.stack,
+      });
       process.exitCode = 1;
+    }
+  }
+
+  /**
+   * Wraps a generator main function with CLI `--persist` flag handling.
+   * Creates a storage adapter from `DATABASE_URL` when the flag is present,
+   * passes it as `options.storage`, and closes it when done.
+   *
+   * @static
+   * @async
+   * @param {Function} mainFn - Generator main function `(options) => Promise<void>`
+   * @returns {Promise<void>}
+   *
+   * @example
+   * if (import.meta.url === `file://${process.argv[1]}`) {
+   *   MetadataGeneratorUtils.runWithCli(main).catch(err => { process.exit(1); });
+   * }
+   */
+  static async runWithCli(mainFn) {
+    let storage = null;
+    try {
+      if (process.argv.includes('--persist')) {
+        const { createStorageFromEnv } = await import('./metadataStorage.mjs');
+        storage = await createStorageFromEnv();
+        log.message('--persist flag detected, database storage enabled');
+      }
+      await mainFn({ storage });
+    } finally {
+      if (storage) await storage.close();
     }
   }
 }

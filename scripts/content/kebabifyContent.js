@@ -8,6 +8,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'kebabifyContent' });
 
 /** Folder and file names to ignore */
 const IGNORED = new Set([
@@ -52,7 +54,7 @@ function kebabifyDirectory(dir) {
       if (entry.name !== kebabName) {
         const kebabPath = path.join(dir, kebabName);
         fs.renameSync(fullPath, kebabPath);
-        console.log(`📁 Renamed folder: ${entry.name} → ${kebabName}`);
+        log.message('📁 Renamed folder', { from: entry.name, to: kebabName });
       }
     }
   }
@@ -69,22 +71,26 @@ function kebabifyDirectory(dir) {
 
       if (entry.name !== `${kebabName}.mdx`) {
         fs.renameSync(fullPath, newFile);
-        console.log(`📝 Renamed file: ${entry.name} → ${kebabName}.mdx`);
+        log.message('📝 Renamed file', {
+          from: entry.name,
+          to: `${kebabName}.mdx`,
+        });
       }
     }
   }
 }
 
 // Entry point
-console.log('🔁 Kebabifying content folder...\n');
+log.message('🔁 Kebabifying content folder...');
 
 try {
   ['en'].forEach((locale) =>
-    kebabifyDirectory(path.join(process.cwd(), 'src', 'content', locale))
+    kebabifyDirectory(path.join(process.cwd(), 'src', 'content', locale)),
   );
-  console.log('\n✅ All done.');
+  log.message('✅ All done.');
 } catch (err) {
-  console.error('\n✖ Error during kebabification');
-  console.error(err);
+  log.error('✖ Error during kebabification', {
+    error: err.message || String(err),
+  });
   process.exit(1);
 }

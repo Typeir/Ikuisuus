@@ -12,6 +12,8 @@ const fs = require('fs/promises');
 // Third-party modules
 const { bundleMDX } = require('mdx-bundler');
 const { sassPlugin } = require('esbuild-sass-plugin');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'precompileMdx' });
 
 // Windows fix for esbuild binary in Next.js
 if (process.platform === 'win32') {
@@ -19,7 +21,7 @@ if (process.platform === 'win32') {
     process.cwd(),
     'node_modules',
     'esbuild',
-    'esbuild.exe'
+    'esbuild.exe',
   );
 }
 
@@ -75,7 +77,7 @@ const walkDir = async (dir) => {
       if (entry.isDirectory()) return walkDir(res);
       if (res.endsWith('.mdx')) return res;
       return [];
-    })
+    }),
   );
 
   return files.flat();
@@ -101,16 +103,16 @@ const run = async () => {
         .replace(/\.mdx$/, '.js');
       const outPath = path.join(outRoot, locale, relativePath);
 
-      console.log(`📦 Bundling: ${file} -> ${outPath}`);
+      log.message('📦 Bundling', { from: file, to: outPath });
       await precompileMdx(file, outPath);
     }
   }
 
-  console.log('✅ MDX precompile complete');
+  log.message('✅ MDX precompile complete');
 };
 
 // Run the script
 run().catch((err) => {
-  console.error('❌ MDX precompile failed:', err);
+  log.error('❌ MDX precompile failed', { error: err.message || String(err) });
   process.exit(1);
 });

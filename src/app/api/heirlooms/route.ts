@@ -19,7 +19,7 @@
  * const heirlooms = await response.json();
  * ```
  */
-import { listHeirlooms } from '@/lib/db/content';
+import { heirloomRepository } from '@/lib/db/content/repositories/heirloomRepository';
 import { logger } from '@/lib/logging/logger';
 import { NextResponse } from 'next/server';
 
@@ -28,7 +28,7 @@ const log = logger.child({ module: 'API:Heirlooms' });
 /**
  * GET /api/heirlooms
  *
- * Returns array of heirloom item metadata from the active content adapter.
+ * Returns array of heirloom item metadata from the active content repository.
  * Accepts optional locale query parameter (defaults to 'en').
  *
  * @param {Request} req - Next.js request object
@@ -42,7 +42,7 @@ export async function GET(req: Request) {
   const locale = searchParams.get('locale') || 'en';
 
   try {
-    const heirlooms = await listHeirlooms(locale);
+    const heirlooms = await heirloomRepository.list(locale);
     return NextResponse.json(heirlooms);
   } catch (error) {
     log.error('Error loading heirloom metadata', {

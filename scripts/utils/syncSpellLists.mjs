@@ -27,6 +27,9 @@
 
 import fs from 'fs';
 import path from 'path';
+import { createLogger } from '../core/logger.mjs';
+
+const log = createLogger({ script: 'syncSpellLists' });
 
 /** @type {string} Directory containing custom spell .mdx files */
 const SPELLS_DIR = './src/content/en/spells';
@@ -142,7 +145,7 @@ function rewriteClassSpellFile(classSpellsPath, allSlugs) {
    */
   const spellsOpenIdx = content.indexOf('spells={[');
   if (spellsOpenIdx === -1) {
-    console.error(`   ❌ Could not find spells={[ in ${classSpellsPath}`);
+    log.error(`   ❌ Could not find spells={[ in ${classSpellsPath}`);
     return;
   }
 
@@ -169,12 +172,12 @@ function main() {
   const normalize = args.includes('--normalize');
 
   if (dryRun) {
-    console.log('🔍 DRY RUN — no files will be modified.\n');
+    log.message('🔍 DRY RUN — no files will be modified.\n');
   }
 
   /** Normalize mode: rewrite all class spell files with consistent formatting */
   if (normalize) {
-    console.log(
+    log.message(
       '🔧 NORMALIZE — rewriting all class spell files with consistent formatting.\n',
     );
     const vocDirs = fs
@@ -189,15 +192,15 @@ function main() {
       }
       const slugs = readClassSpells(classSpellsPath);
       if (slugs.length === 0) {
-        console.log(`  ⚠️ ${className}: no spells found, skipping`);
+        log.message(`  ⚠️ ${className}: no spells found, skipping`);
         continue;
       }
       if (!dryRun) {
         rewriteClassSpellFile(classSpellsPath, slugs);
       }
-      console.log(`  ✅ ${className}: ${slugs.length} spells normalized`);
+      log.message(`  ✅ ${className}: ${slugs.length} spells normalized`);
     }
-    console.log(
+    log.message(
       dryRun ? '\n🔍 Dry run complete.' : '\n✅ Normalization complete!',
     );
     return;
@@ -209,7 +212,7 @@ function main() {
     .filter((f) => f.endsWith('.mdx') && f !== 'main.mdx')
     .map((f) => path.join(SPELLS_DIR, f));
 
-  console.log(`📚 Found ${spellFiles.length} custom spell files.\n`);
+  log.message(`📚 Found ${spellFiles.length} custom spell files.\n`);
 
   /** @type {Record<string, string[]>} Map of className → slugs to add */
   const additions = {};
@@ -259,13 +262,13 @@ function main() {
   const classNames = Object.keys(additions).sort();
 
   if (classNames.length === 0) {
-    console.log('✅ All spell lists are in sync. No changes needed.');
+    log.message('✅ All spell lists are in sync. No changes needed.');
   } else {
     for (const className of classNames) {
       const slugs = additions[className].sort();
-      console.log(`📝 ${className} — adding ${slugs.length} spell(s):`);
+      log.message(`📝 ${className} — adding ${slugs.length} spell(s):`);
       for (const slug of slugs) {
-        console.log(`   + ${slug}`);
+        log.message(`   + ${slug}`);
       }
 
       if (!dryRun) {
@@ -277,32 +280,32 @@ function main() {
         const existingSlugs = readClassSpells(classSpellsPath);
         const allSlugs = [...existingSlugs, ...slugs];
         rewriteClassSpellFile(classSpellsPath, allSlugs);
-        console.log(`   ✅ Written to ${classSpellsPath}`);
+        log.message(`   ✅ Written to ${classSpellsPath}`);
       }
-      console.log('');
+      log.message('');
     }
   }
 
   /** Report warnings */
   if (noListSection.length > 0) {
-    console.log(
+    log.message(
       `\n⚠️  ${noListSection.length} spell(s) have no "Spell Lists" section:`,
     );
     for (const slug of noListSection.sort()) {
-      console.log(`   - ${slug}`);
+      log.message(`   - ${slug}`);
     }
   }
 
   if (missingClassFiles.size > 0) {
-    console.log(
+    log.message(
       `\n⚠️  ${missingClassFiles.size} class(es) referenced but have no spells.mdx:`,
     );
     for (const cls of [...missingClassFiles].sort()) {
-      console.log(`   - ${cls}`);
+      log.message(`   - ${cls}`);
     }
   }
 
-  console.log(dryRun ? '\n🔍 Dry run complete.' : '\n✅ Sync complete!');
+  log.message(dryRun ? '\n🔍 Dry run complete.' : '\n✅ Sync complete!');
 }
 
 main();

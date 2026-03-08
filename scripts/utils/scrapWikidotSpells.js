@@ -4,15 +4,15 @@
  * Generates a single external.metadata.json file matching the structure produced by
  * generateSpellMetadata.mjs. Includes level, school, casting time, range, components,
  * duration, concentration, ritual detection, and auto-generated tags.
- * 
+ *
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires fs
  * @requires path
  * @requires playwright
- * 
+ *
  * @example
  * ```bash
  * # Scrape all spells from Wikidot into metadata JSON
@@ -24,6 +24,8 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 const { JSDOM } = require('jsdom');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'scrapWikidotSpells' });
 
 const INPUT_HTML = './scripts/utils/wikidotspelllist.html';
 const SPELL_LIST_URL = 'http://dnd5e.wikidot.com/spells';
@@ -34,7 +36,7 @@ const cleanAll = false;
 
 /**
  * Converts spell name to kebab-case slug.
- * 
+ *
  * @param {string} name - Spell display name
  * @returns {string} Kebab-cased slug
  */
@@ -48,14 +50,14 @@ const toKebabCase = (name) => {
 /**
  * Parses casting time string into structured array.
  * Focuses on action economy keywords (bonus action, action, reaction).
- * 
+ *
  * @param {string} castingTime - Raw casting time text
  * @returns {string[]} Array of action economy keywords
  */
 const parseCastingTimeToArray = (castingTime) => {
   const lower = castingTime.toLowerCase();
   const result = [];
-  
+
   // Priority order: bonus action > action > reaction > time durations > ritual
   if (lower.includes('bonus action')) {
     result.push('bonus action');
@@ -66,62 +68,62 @@ const parseCastingTimeToArray = (castingTime) => {
   if (lower.includes('reaction')) {
     result.push('reaction');
   }
-  
+
   // Time durations
   if (lower.includes('minute')) result.push('minute');
   if (lower.includes('hour')) result.push('hour');
   if (lower.includes('day')) result.push('day');
-  
+
   // Ritual
   if (lower.includes('ritual')) result.push('ritual');
-  
+
   return result.length > 0 ? result : ['action']; // Default to action
 };
 
 /**
  * Generates tags from spell metadata following project standards.
  * Mirrors the tagging logic from generateSpellMetadata.mjs
- * 
+ *
  * @param {{level: number, school: string, castingTime: string[], range: string, components: string, duration: string, concentration: boolean, verbal: boolean, somatic: boolean, material: boolean, hasRitual: boolean}} metadata - Spell metadata
  * @returns {string[]} Array of tags (e.g., ["level:3", "school:evocation", "component:verbal"])
  */
 const generateTags = (metadata) => {
   const tags = [];
-  
+
   // Level tag
   if (metadata.level === 0) {
     tags.push('level:cantrip');
   } else {
     tags.push(`level:${metadata.level}`);
   }
-  
+
   // School tag
   if (metadata.school) {
     tags.push(`school:${metadata.school.toLowerCase()}`);
   }
-  
+
   // Concentration
   if (metadata.concentration) {
     tags.push('mechanic:concentration');
   }
-  
+
   // Ritual casting
   if (metadata.hasRitual) {
     tags.push('mechanic:ritual');
   }
-  
+
   // Components
   if (metadata.verbal) tags.push('component:verbal');
   if (metadata.somatic) tags.push('component:somatic');
   if (metadata.material) tags.push('component:material');
-  
+
   return [...new Set(tags)]; // Remove duplicates
 };
 
 /**
  * Extracts spell metadata from table row data and per-spell HTML content.
  * Parses table cells to create metadata object matching generateSpellMetadata.mjs output.
- * 
+ *
  * @param {{name: string, school: string, castingTime: string, range: string, duration: string, components: string, level: number}} rowData - Data extracted from table row
  * @param {string} spellHtmlContent - HTML content for THIS SPECIFIC SPELL (not entire page)
  * @returns {{slug: string, title: string, file: string, link: string, level: number, school: string, castingTimeRaw: string, castingTime: string[], range: string, concentration: boolean, duration: string, verbal: boolean, somatic: boolean, material: boolean, materialDescription?: string, hasRitual: boolean, tags: string[]}} Parsed spell metadata
@@ -130,10 +132,10 @@ const extractSpellMetadata = (rowData, spellHtmlContent = '') => {
   // Use slug from rowData if available (extracted from href), otherwise derive from name
   const slug = rowData.slug || toKebabCase(rowData.name);
   const wikidotUrl = `http://dnd5e.wikidot.com/spell:${slug}`;
-  
+
   // Use the ritual flag extracted from the table row's casting time cell
   const hasRitual = rowData.hasRitual || false;
-  
+
   const metadata = {
     slug: slug,
     title: rowData.name,
@@ -149,7 +151,7 @@ const extractSpellMetadata = (rowData, spellHtmlContent = '') => {
     verbal: false,
     somatic: false,
     material: false,
-    hasRitual: hasRitual
+    hasRitual: hasRitual,
   };
 
   // Parse components
@@ -157,7 +159,7 @@ const extractSpellMetadata = (rowData, spellHtmlContent = '') => {
   metadata.verbal = /\bV\b/i.test(components);
   metadata.somatic = /\bS\b/i.test(components);
   metadata.material = /\bM\b/i.test(components);
-  
+
   // Extract material description from parentheses
   const materialMatch = components.match(/\bM\s*\(([^)]+)\)/i);
   if (materialMatch) {
@@ -172,13 +174,13 @@ const extractSpellMetadata = (rowData, spellHtmlContent = '') => {
 
 // Handle cleanAll
 if (cleanAll && fs.existsSync(OUTPUT_FILE)) {
-  console.log(`🧹 Deleting existing file: ${OUTPUT_FILE}`);
+  log.message('🧹 Deleting existing file', { path: OUTPUT_FILE });
   fs.unlinkSync(OUTPUT_FILE);
 }
 
 /**
  * Loads existing metadata from file, or returns empty array if file doesn't exist.
- * 
+ *
  * @returns {Array} Existing metadata array
  */
 const loadExistingMetadata = () => {
@@ -187,7 +189,9 @@ const loadExistingMetadata = () => {
       const content = fs.readFileSync(OUTPUT_FILE, 'utf8');
       return JSON.parse(content);
     } catch (err) {
-      console.warn(`⚠️  Failed to parse existing metadata: ${err.message}`);
+      log.warning('⚠️  Failed to parse existing metadata', {
+        error: err.message,
+      });
       return [];
     }
   }
@@ -196,7 +200,7 @@ const loadExistingMetadata = () => {
 
 /**
  * Writes metadata array to file immediately after each scrape.
- * 
+ *
  * @param {Array} metadata - Current metadata array
  * @returns {void}
  */
@@ -210,42 +214,49 @@ const saveMetadata = (metadata) => {
 
 /**
  * Extracts spell data from HTML (either local file or fetched page).
- * 
+ *
  * @param {Document} document - DOM document to parse
  * @returns {Array} Array of spell data objects
  */
 const extractSpellsFromDOM = (document) => {
-  const tabDivs = document.querySelectorAll('.yui-content > div[id^="wiki-tab-0-"]');
+  const tabDivs = document.querySelectorAll(
+    '.yui-content > div[id^="wiki-tab-0-"]',
+  );
   const allSpells = [];
-  
+
   tabDivs.forEach((tabDiv, tabIndex) => {
     const level = tabIndex; // Tab 0 = cantrips (level 0), Tab 1 = 1st level, etc.
     const rows = tabDiv.querySelectorAll('table.wiki-content-table tbody tr');
-    
+
     rows.forEach((row) => {
       const cells = row.querySelectorAll('td');
       if (cells.length < 6) return; // Skip header rows
-      
+
       // Extract spell name link and get both name and href
       const nameCell = cells[0].querySelector('a');
-      const name = nameCell ? nameCell.textContent.trim() : cells[0].textContent.trim();
-      
+      const name = nameCell
+        ? nameCell.textContent.trim()
+        : cells[0].textContent.trim();
+
       // Extract slug directly from href (e.g., "/spell:hand-of-radiance" -> "hand-of-radiance")
       let slug = null;
       if (nameCell && nameCell.getAttribute('href')) {
         const href = nameCell.getAttribute('href');
         slug = href.replace(/^\/spell:/, '');
       }
-      
+
       // Extract school (remove <em> tags)
       const schoolCell = cells[1].querySelector('em');
-      const school = schoolCell ? schoolCell.textContent.trim() : cells[1].textContent.trim();
-      
+      const school = schoolCell
+        ? schoolCell.textContent.trim()
+        : cells[1].textContent.trim();
+
       // Extract casting time and check for ritual indicator
       const castingTimeCell = cells[2];
       const castingTimeRaw = castingTimeCell?.textContent.trim() || '';
-      const hasRitualInCastingTime = castingTimeCell?.innerHTML.includes('<sup>R</sup>') || false;
-      
+      const hasRitualInCastingTime =
+        castingTimeCell?.innerHTML.includes('<sup>R</sup>') || false;
+
       allSpells.push({
         name: name,
         slug: slug,
@@ -255,12 +266,14 @@ const extractSpellsFromDOM = (document) => {
         duration: cells[4]?.textContent.trim() || '',
         components: cells[5]?.textContent.trim() || '',
         level: level,
-        hasRitual: hasRitualInCastingTime
+        hasRitual: hasRitualInCastingTime,
       });
     });
   });
-  
-  return allSpells.filter((spell) => spell && spell.name && spell.name.length > 0);
+
+  return allSpells.filter(
+    (spell) => spell && spell.name && spell.name.length > 0,
+  );
 };
 
 /**
@@ -268,22 +281,24 @@ const extractSpellsFromDOM = (document) => {
  * Uses local HTML file if available, falls back to fetching from Wikidot.
  * Ritual detection via <sup>R</sup> happens in extractSpellsFromDOM.
  * WRITES TO DISK AFTER EACH SPELL to prevent data loss from IP blocks.
- * 
+ *
  * @returns {Promise<void>}
  */
 (async () => {
   let spellsData = [];
-  
+
   // Try to use local HTML file first
   if (fs.existsSync(INPUT_HTML)) {
-    console.log(`📂 Using local HTML file: ${INPUT_HTML}`);
+    log.message('📂 Using local HTML file', { path: INPUT_HTML });
     const htmlContent = fs.readFileSync(INPUT_HTML, 'utf8');
     const dom = new JSDOM(htmlContent);
     spellsData = extractSpellsFromDOM(dom.window.document);
-    console.log(`✨ Found ${spellsData.length} spells in local file\n`);
+    log.message('✨ Found spells in local file', { count: spellsData.length });
   } else {
     // Fallback to scraping from website
-    console.log(`🌐 Local file not found, fetching from ${SPELL_LIST_URL}`);
+    log.message('🌐 Local file not found, fetching from URL', {
+      url: SPELL_LIST_URL,
+    });
     const browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
 
@@ -295,14 +310,14 @@ const extractSpellsFromDOM = (document) => {
     });
 
     await page.close();
-    console.log(`✨ Found ${spellsData.length} spells from website\n`);
+    log.message('✨ Found spells from website', { count: spellsData.length });
   }
 
   // Load existing metadata to resume from interruptions
   let allMetadata = loadExistingMetadata();
-  const existingSlugs = new Set(allMetadata.map(m => m.slug));
-  
-  console.log(`📦 Loaded ${allMetadata.length} existing entries\n`);
+  const existingSlugs = new Set(allMetadata.map((m) => m.slug));
+
+  log.message('📦 Loaded existing entries', { count: allMetadata.length });
 
   const processedSpells = new Set();
   let successCount = 0;
@@ -317,42 +332,49 @@ const extractSpellsFromDOM = (document) => {
     processedSpells.add(spellData.name);
 
     const slug = toKebabCase(spellData.name);
-    
+
     // Skip if already scraped previously
     if (existingSlugs.has(slug)) {
-      console.log(`  ⏭️  Skipping (already scraped): ${spellData.name}`);
+      log.message('⏭️  Skipping (already scraped)', { spell: spellData.name });
       skipCount++;
       continue;
     }
 
     try {
-      console.log(`  📜 Processing: ${spellData.name}`);
-      
+      log.message('📜 Processing', { spell: spellData.name });
+
       // Extract metadata from table row data (ritual already detected in extractSpellsFromDOM)
       const metadata = extractSpellMetadata(spellData, '');
-      
+
       // Add to array
       allMetadata.push(metadata);
       existingSlugs.add(metadata.slug);
-      
+
       // SAVE IMMEDIATELY AFTER EACH SPELL
       saveMetadata(allMetadata);
-      
+
       const ritualTag = metadata.hasRitual ? ' [RITUAL]' : '';
-      console.log(`    ✅ Saved: Level ${metadata.level} ${metadata.school}${ritualTag} (${allMetadata.length} total)`);
+      log.message('✅ Saved spell', {
+        level: metadata.level,
+        school: metadata.school,
+        ritual: metadata.hasRitual,
+        total: allMetadata.length,
+      });
       successCount++;
-      
     } catch (err) {
-      console.error(`    ❌ Failed to process ${spellData.name}: ${err.message}`);
+      log.error('❌ Failed to process', {
+        spell: spellData.name,
+        error: err.message || String(err),
+      });
       errorCount++;
     }
   }
 
-  console.log(`\n${'='.repeat(50)}`);
-  console.log(`✅ Successfully scraped: ${successCount} spells`);
-  console.log(`⏭️  Skipped (already scraped): ${skipCount} spells`);
-  console.log(`❌ Failed: ${errorCount} spells`);
-  console.log(`📁 Output file: ${OUTPUT_FILE}`);
-  console.log(`📊 Total metadata entries: ${allMetadata.length}`);
-  console.log(`${'='.repeat(50)}\n`);
+  log.message('Scraping complete', {
+    success: successCount,
+    skipped: skipCount,
+    failed: errorCount,
+    outputFile: OUTPUT_FILE,
+    totalEntries: allMetadata.length,
+  });
 })();

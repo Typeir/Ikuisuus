@@ -1,27 +1,85 @@
 /**
- * @fileoverview Content Metadata Service
- * @description Facade that sits between API routes and the content storage adapter.
- * Provides typed helpers for each content category and adapter hot-swapping via
- * `setContentAdapter()`. Defaults to the filesystem adapter.
+ * @fileoverview Legacy Content Service Shim
+ * @description Deprecated compatibility bridge that preserves the old
+ * `ContentAdapter` / `setContentAdapter()` / `listMonsters()` API surface
+ * for existing tests. All calls delegate to the factory-resolved repository
+ * instances exported from each repository module.
  *
+ * **New code should import the resolved repository directly:**
+ * ```typescript
+ * import { monsterRepository } from '@/lib/db/content/repositories/monsterRepository';
+ *
+ * const monsters = await monsterRepository.list('en');
+ * ```
+ *
+ * @deprecated Use typed repository imports from `repositories/`.
  * @module lib/db/content/contentService
- * @version 1.0.0
+ * @version 4.0.0
  * @author Typeir
  * @since 3.0.0
  */
 
 import type { ContentAdapter, ContentCategory } from './contentAdapter';
-import { fsContentAdapter } from './fsContentAdapter';
+import { heirloomRepository } from './repositories/heirloomRepository';
+import { monsterRepository } from './repositories/monsterRepository';
+import { spellRepository } from './repositories/spellRepository';
+import { trinketRepository } from './repositories/trinketRepository';
 
-/* ────────────────────────  Adapter wiring  ─────────────────────────── */
+/* ──────────────  Legacy ContentAdapter Bridge  ──────────────────── */
 
-/** Active adapter — defaults to filesystem, override via `setContentAdapter`. */
-let adapter: ContentAdapter = fsContentAdapter;
+/**
+ * Maps category strings to the corresponding factory-resolved repository.
+ * Bridges the old `ContentAdapter.listMetadata(category, locale)` call shape
+ * into typed repository method calls.
+ */
+const factoryBridge: ContentAdapter = {
+  listMetadata: async (
+    category: ContentCategory,
+    locale: string,
+  ): Promise<Record<string, unknown>[]> => {
+    switch (category) {
+      case 'monsters':
+        return monsterRepository.list(locale) as Promise<
+          Record<string, unknown>[]
+        >;
+      case 'heirlooms':
+        return heirloomRepository.list(locale) as Promise<
+          Record<string, unknown>[]
+        >;
+      case 'spells':
+        return spellRepository.list(locale) as Promise<
+          Record<string, unknown>[]
+        >;
+      case 'trinkets':
+        return trinketRepository.list(locale) as Promise<
+          Record<string, unknown>[]
+        >;
+      default:
+        throw new Error(`Unknown content category: ${category}`);
+    }
+  },
+
+  listMetadataBySlugs: async (
+    category: ContentCategory,
+    locale: string,
+    slugs?: string[],
+  ): Promise<Record<string, unknown>[]> => {
+    if (category === 'spells' && slugs && slugs.length > 0) {
+      return spellRepository.listBySlugs(locale, slugs) as Promise<
+        Record<string, unknown>[]
+      >;
+    }
+    return factoryBridge.listMetadata(category, locale);
+  },
+};
+
+/** @deprecated Active legacy adapter — use typed repositories instead. */
+let adapter: ContentAdapter = factoryBridge;
 
 /**
  * Replaces the active content storage adapter.
- * Call this once at startup (e.g. in an instrumentation file) to switch backends.
  *
+ * @deprecated Inject mock repositories via `vi.mock()`.
  * @param {ContentAdapter} newAdapter - Adapter to use
  */
 export const setContentAdapter = (newAdapter: ContentAdapter): void => {
@@ -31,83 +89,76 @@ export const setContentAdapter = (newAdapter: ContentAdapter): void => {
 /**
  * Returns the currently active content adapter.
  *
+ * @deprecated Import repository directly from its module.
  * @returns {ContentAdapter} Current adapter
  */
 export const getContentAdapter = (): ContentAdapter => adapter;
 
-/* ─────────────────────  Category helpers  ──────────────────────────── */
+/* ─────────────────  Legacy Category helpers  ──────────────────────── */
 
 /**
- * Fetches all metadata records for a given category and locale.
- *
- * @param {ContentCategory} category - Content type (monsters, heirlooms, spells, trinkets)
- * @param {string} locale - Locale code (defaults to 'en')
- * @returns {Promise<Record<string, unknown>[]>} Flattened metadata array
- */
-export const listMetadata = async (
-  category: ContentCategory,
-  locale: string = 'en',
-): Promise<Record<string, unknown>[]> => {
-  return adapter.listMetadata(category, locale);
-};
-
-/**
- * Fetches metadata records filtered by slug list.
- *
- * @param {ContentCategory} category - Content type
+ * @deprecated Use `monsterRepository.list(locale)` from `repositories/monsterRepository`.
  * @param {string} locale - Locale code
- * @param {string[]} [slugs] - Optional slug filter (returns all if empty/undefined)
- * @returns {Promise<Record<string, unknown>[]>} Filtered metadata array
- */
-export const listMetadataBySlugs = async (
-  category: ContentCategory,
-  locale: string = 'en',
-  slugs?: string[],
-): Promise<Record<string, unknown>[]> => {
-  return adapter.listMetadataBySlugs(category, locale, slugs);
-};
-
-/* ─────────────────  Convenience per-category exports  ─────────────── */
-
-/**
- * Fetches all monster metadata for a locale.
- *
- * @param {string} locale - Locale code
- * @returns {Promise<Record<string, unknown>[]>} Monster metadata array
+ * @returns {Promise<Record<string, unknown>[]>} Monster metadata
  */
 export const listMonsters = (
   locale: string = 'en',
-): Promise<Record<string, unknown>[]> => listMetadata('monsters', locale);
+): Promise<Record<string, unknown>[]> =>
+  adapter.listMetadata('monsters', locale);
 
 /**
- * Fetches all heirloom metadata for a locale.
- *
+ * @deprecated Use `heirloomRepository.list(locale)` from `repositories/heirloomRepository`.
  * @param {string} locale - Locale code
- * @returns {Promise<Record<string, unknown>[]>} Heirloom metadata array
+ * @returns {Promise<Record<string, unknown>[]>} Heirloom metadata
  */
 export const listHeirlooms = (
   locale: string = 'en',
-): Promise<Record<string, unknown>[]> => listMetadata('heirlooms', locale);
+): Promise<Record<string, unknown>[]> =>
+  adapter.listMetadata('heirlooms', locale);
 
 /**
- * Fetches all spell metadata for a locale, optionally filtered by slugs.
- *
+ * @deprecated Use `spellRepository.list(locale)` / `spellRepository.listBySlugs(locale, slugs)`.
  * @param {string} locale - Locale code
  * @param {string[]} [slugs] - Optional slug filter
- * @returns {Promise<Record<string, unknown>[]>} Spell metadata array
+ * @returns {Promise<Record<string, unknown>[]>} Spell metadata
  */
 export const listSpells = (
   locale: string = 'en',
   slugs?: string[],
 ): Promise<Record<string, unknown>[]> =>
-  listMetadataBySlugs('spells', locale, slugs);
+  adapter.listMetadataBySlugs('spells', locale, slugs);
 
 /**
- * Fetches all trinket metadata for a locale.
- *
+ * @deprecated Use `trinketRepository.list(locale)` from `repositories/trinketRepository`.
  * @param {string} locale - Locale code
- * @returns {Promise<Record<string, unknown>[]>} Trinket metadata array
+ * @returns {Promise<Record<string, unknown>[]>} Trinket metadata
  */
 export const listTrinkets = (
   locale: string = 'en',
-): Promise<Record<string, unknown>[]> => listMetadata('trinkets', locale);
+): Promise<Record<string, unknown>[]> =>
+  adapter.listMetadata('trinkets', locale);
+
+/**
+ * @deprecated Use `adapter.listMetadata(category, locale)` is no longer the primary pattern.
+ * @param {ContentCategory} category - Content category
+ * @param {string} locale - Locale code
+ * @returns {Promise<Record<string, unknown>[]>} Metadata records
+ */
+export const listMetadata = (
+  category: ContentCategory,
+  locale: string = 'en',
+): Promise<Record<string, unknown>[]> => adapter.listMetadata(category, locale);
+
+/**
+ * @deprecated Use typed repository methods directly.
+ * @param {ContentCategory} category - Content category
+ * @param {string} locale - Locale code
+ * @param {string[]} [slugs] - Optional slug filter
+ * @returns {Promise<Record<string, unknown>[]>} Metadata records
+ */
+export const listMetadataBySlugs = (
+  category: ContentCategory,
+  locale: string = 'en',
+  slugs?: string[],
+): Promise<Record<string, unknown>[]> =>
+  adapter.listMetadataBySlugs(category, locale, slugs);

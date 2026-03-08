@@ -13,19 +13,17 @@
  * @requires @/lib/components/icon/icon Component under test
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import Icon, {
+    type IconProps,
+    type IconType,
+} from '@/lib/components/icon/icon';
+import { logger } from '@/lib/logging/logger';
 import { render } from '@testing-library/react';
-import Icon, { type IconType, type IconProps } from '@/lib/components/icon/icon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('Icon', () => {
-  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
-
   beforeEach(() => {
-    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    consoleWarnSpy.mockRestore();
+    vi.clearAllMocks();
   });
 
   describe('exports', () => {
@@ -43,18 +41,18 @@ describe('Icon', () => {
 
   describe('rendering valid icons', () => {
     it('should render arrow icon', () => {
-      const { container } = render(<Icon type="arrow" />);
+      const { container } = render(<Icon type='arrow' />);
       expect(container.firstChild).toBeTruthy();
     });
 
     it('should render hamburger icon', () => {
-      const { container } = render(<Icon type="hamburger" />);
+      const { container } = render(<Icon type='hamburger' />);
       expect(container.firstChild).toBeTruthy();
     });
 
     it('should render without warning for valid icon types', () => {
-      render(<Icon type="arrow" />);
-      expect(consoleWarnSpy).not.toHaveBeenCalled();
+      render(<Icon type='arrow' />);
+      expect(logger.warning).not.toHaveBeenCalled();
     });
   });
 
@@ -66,38 +64,48 @@ describe('Icon', () => {
 
     it('should log warning for unknown icon type', () => {
       render(<Icon type={'nonexistent' as IconType} />);
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Unknown icon type')
+      expect(logger.warning).toHaveBeenCalledWith(
+        'Unknown icon type',
+        expect.objectContaining({ type: 'nonexistent' }),
       );
     });
 
     it('should include icon type name in warning message', () => {
       render(<Icon type={'custom-missing' as IconType} />);
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('custom-missing')
+      expect(logger.warning).toHaveBeenCalledWith(
+        'Unknown icon type',
+        expect.objectContaining({ type: 'custom-missing' }),
       );
     });
   });
 
   describe('className prop', () => {
     it('should apply custom className to icon', () => {
-      const { container } = render(<Icon type="arrow" className="my-icon-class" />);
+      const { container } = render(
+        <Icon type='arrow' className='my-icon-class' />,
+      );
       expect(container.firstChild).toBeTruthy();
       if (container.firstChild) {
-        const classAttr = (container.firstChild as Element).getAttribute('class');
+        const classAttr = (container.firstChild as Element).getAttribute(
+          'class',
+        );
         expect(classAttr).toContain('my-icon-class');
       }
     });
 
     it('should use empty string as default className', () => {
-      const { container } = render(<Icon type="arrow" />);
+      const { container } = render(<Icon type='arrow' />);
       expect(container.firstChild).toBeTruthy();
     });
 
     it('should handle multiple class names', () => {
-      const { container } = render(<Icon type="hamburger" className="class-a class-b" />);
+      const { container } = render(
+        <Icon type='hamburger' className='class-a class-b' />,
+      );
       if (container.firstChild) {
-        const classAttr = (container.firstChild as Element).getAttribute('class');
+        const classAttr = (container.firstChild as Element).getAttribute(
+          'class',
+        );
         expect(classAttr).toContain('class-a');
         expect(classAttr).toContain('class-b');
       }
@@ -106,7 +114,7 @@ describe('Icon', () => {
 
   describe('SVG props passthrough', () => {
     it('should pass width prop to SVG', () => {
-      const { container } = render(<Icon type="arrow" width={24} />);
+      const { container } = render(<Icon type='arrow' width={24} />);
       const svg = container.firstChild as SVGElement;
       if (svg) {
         expect(svg.getAttribute('width')).toBe('24');
@@ -114,7 +122,7 @@ describe('Icon', () => {
     });
 
     it('should pass height prop to SVG', () => {
-      const { container } = render(<Icon type="arrow" height={24} />);
+      const { container } = render(<Icon type='arrow' height={24} />);
       const svg = container.firstChild as SVGElement;
       if (svg) {
         expect(svg.getAttribute('height')).toBe('24');
@@ -122,7 +130,9 @@ describe('Icon', () => {
     });
 
     it('should pass aria-label prop for accessibility', () => {
-      const { container } = render(<Icon type="hamburger" aria-label="Menu icon" />);
+      const { container } = render(
+        <Icon type='hamburger' aria-label='Menu icon' />,
+      );
       const svg = container.firstChild as SVGElement;
       if (svg) {
         expect(svg.getAttribute('aria-label')).toBe('Menu icon');
@@ -130,7 +140,7 @@ describe('Icon', () => {
     });
 
     it('should pass role prop for accessibility', () => {
-      const { container } = render(<Icon type="arrow" role="img" />);
+      const { container } = render(<Icon type='arrow' role='img' />);
       const svg = container.firstChild as SVGElement;
       if (svg) {
         expect(svg.getAttribute('role')).toBe('img');
@@ -138,7 +148,9 @@ describe('Icon', () => {
     });
 
     it('should pass data attributes', () => {
-      const { container } = render(<Icon type="arrow" data-testid="custom-icon" />);
+      const { container } = render(
+        <Icon type='arrow' data-testid='custom-icon' />,
+      );
       const svg = container.firstChild as SVGElement;
       if (svg) {
         expect(svg.getAttribute('data-testid')).toBe('custom-icon');

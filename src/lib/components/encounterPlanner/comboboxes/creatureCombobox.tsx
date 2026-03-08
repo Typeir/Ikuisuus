@@ -27,8 +27,8 @@
 import { logger } from '@/lib/logging/logger';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { ComboboxItem, GenericCombobox } from './genericCombobox';
 import styles from './combobox.module.scss';
+import { ComboboxItem, GenericCombobox } from './genericCombobox';
 
 /**
  * Monster index entry with metadata fields
@@ -93,7 +93,9 @@ export const CreatureCombobox: React.FC<CreatureComboboxProps> = ({
         }));
         setMonsterIndex(mappedData);
       } catch (error) {
-        logger.error('Failed to load monster index', { error: error instanceof Error ? error.message : String(error) });
+        logger.error('Failed to load monster index', {
+          error: error instanceof Error ? error.message : String(error),
+        });
       } finally {
         setIsLoading(false);
       }

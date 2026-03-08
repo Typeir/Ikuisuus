@@ -17,6 +17,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'commit-msg' });
 
 /**
  * Validates commit message format
@@ -43,7 +45,7 @@ function getCommitMessage() {
   try {
     const commitMsgFile = process.argv[2];
     if (!commitMsgFile) {
-      console.error('❌ No commit message file provided');
+      log.error('❌ No commit message file provided');
       process.exit(1);
     }
 
@@ -57,7 +59,7 @@ function getCommitMessage() {
 
     return lines;
   } catch (error) {
-    console.error('❌ Error reading commit message:', error.message);
+    log.error('❌ Error reading commit message', { error: error.message });
     process.exit(1);
   }
 }
@@ -69,14 +71,18 @@ function validateCommitMessage() {
   const message = getCommitMessage();
 
   if (!isValidCommitMessage(message)) {
-    console.error('\n❌ INVALID COMMIT MESSAGE FORMAT\n');
-    console.error('Expected format: [action]: imperative text');
-    console.error('\nExamples:');
-    console.error('  [fix]: resolve authentication issue');
-    console.error('  [feat]: add new export modal');
-    console.error('  [TICKET-123]: implement feature request');
-    console.error('  [dirty]: quick test commit\n');
-    console.error('Your message: ' + message.split('\n')[0] + '\n');
+    log.error(
+      [
+        '\n❌ INVALID COMMIT MESSAGE FORMAT\n',
+        'Expected format: [action]: imperative text',
+        '\nExamples:',
+        '  [fix]: resolve authentication issue',
+        '  [feat]: add new export modal',
+        '  [TICKET-123]: implement feature request',
+        '  [dirty]: quick test commit\n',
+        'Your message: ' + message.split('\n')[0] + '\n',
+      ].join('\n'),
+    );
     process.exit(1);
   }
 

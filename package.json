@@ -53,6 +53,7 @@
     "test:all": "npm run test:enforce && npm run test && npm run test:e2e",
     "install-hooks": "node scripts/hooks/install.js",
     "generate-token": "node scripts/auth/generateToken.mjs",
+    "seed-admin": "node scripts/auth/seedAdmin.mjs",
     "test-pat": "node scripts/test-pat.js",
     "lottery": "node scripts/utils/mdxLottery.mjs"
   },
@@ -63,6 +64,7 @@
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.3.5",
     "@tailwindcss/typography": "^0.5.16",
+    "@types/pg": "^8.18.0",
     "@types/three": "^0.183.1",
     "@vercel/edge-config": "^1.4.3",
     "gray-matter": "^4.0.3",
@@ -71,13 +73,15 @@
     "next": "^15.4.8",
     "next-intl": "^4.3.4",
     "next-mdx-remote-client": "^2.1.2",
+    "pg": "^8.20.0",
     "react": "^19.1.2",
     "react-dom": "^19.1.2",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1",
     "sass": "^1.89.2",
-    "three": "^0.183.1"
+    "three": "^0.183.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
@@ -97,6 +101,7 @@
     "acorn-jsx": "^5.3.2",
     "acorn-walk": "^8.3.2",
     "autoprefixer": "^10",
+    "dotenv": "^17.3.1",
     "esbuild-sass-plugin": "^3.3.1",
     "eslint": "^8",
     "eslint-config-next": "13.5.11",
@@ -104,6 +109,7 @@
     "happy-dom": "^12.10.3",
     "is-arguments": "^1.1.1",
     "jsdom": "^27.2.0",
+    "node-fetch": "^3.3.2",
     "pagefind": "^1.4.0",
     "playwright": "^1.54.1",
     "postcss": "^8",
@@ -114,8 +120,6 @@
     "turndown": "^7.2.0",
     "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^5",
-    "vitest": "^1.1.0",
-    "dotenv": "^17.3.1",
-    "node-fetch": "^3.3.2"
+    "vitest": "^1.1.0"
   }
 }

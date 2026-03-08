@@ -25,6 +25,9 @@
 import fs from 'fs';
 import path from 'path';
 import { chromium } from 'playwright';
+import { createLogger } from '../core/logger.mjs';
+
+const log = createLogger({ script: 'scrapWikidotSpellList' });
 
 /** @type {string} Base URL for wikidot spell list pages */
 const BASE_URL = 'https://dnd5e.wikidot.com/spells';
@@ -133,7 +136,7 @@ const MAX_RETRIES = 3;
  */
 async function scrapeClassSpells(page, className, attempt = 1) {
   const url = `${BASE_URL}:${className}`;
-  console.log(
+  log.message(
     `\n📖 Navigating to ${url}${attempt > 1 ? ` (attempt ${attempt}/${MAX_RETRIES})` : ''}`,
   );
 
@@ -144,7 +147,7 @@ async function scrapeClassSpells(page, className, attempt = 1) {
     await page.waitForSelector('.yui-navset', { timeout: 15000 });
   } catch {
     if (attempt < MAX_RETRIES) {
-      console.log(`  ⚠️ Tab container not found, retrying...`);
+      log.message(`  ⚠️ Tab container not found, retrying...`);
       await page.waitForTimeout(2000);
       return scrapeClassSpells(page, className, attempt + 1);
     }
@@ -155,7 +158,7 @@ async function scrapeClassSpells(page, className, attempt = 1) {
 
   /** Get all tab buttons */
   const tabs = await page.$$('.yui-navset .yui-nav li a');
-  console.log(`  Found ${tabs.length} spell level tabs`);
+  log.message(`  Found ${tabs.length} spell level tabs`);
 
   /** @type {string[]} All spell slugs across all levels */
   const allSpells = [];
@@ -174,7 +177,7 @@ async function scrapeClassSpells(page, className, attempt = 1) {
     );
 
     if (!activePanel) {
-      console.log(`  ⚠️ No active panel for tab ${i}`);
+      log.message(`  ⚠️ No active panel for tab ${i}`);
       continue;
     }
 
@@ -188,7 +191,7 @@ async function scrapeClassSpells(page, className, attempt = 1) {
     );
 
     const slugs = spellNames.map(toKebabCase).filter((s) => s.length > 0);
-    console.log(`  Tab ${i}: ${slugs.length} spells`);
+    log.message(`  Tab ${i}: ${slugs.length} spells`);
     allSpells.push(...slugs);
   }
 
@@ -240,7 +243,7 @@ async function main() {
   const classesToScrape =
     args.length > 0 ? args.map((a) => a.toLowerCase()) : VANILLA_CLASSES;
 
-  console.log('🚀 Launching browser...');
+  log.message('🚀 Launching browser...');
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
   const page = await context.newPage();
@@ -259,26 +262,26 @@ async function main() {
       fs.writeFileSync(outputPath, mdx, 'utf-8');
 
       summary[className] = spells.length;
-      console.log(
+      log.message(
         `  ✅ ${capitalize(className)}: ${spells.length} spells → ${outputPath}`,
       );
     } catch (error) {
-      console.error(`  ❌ Failed to scrape ${className}: ${error.message}`);
+      log.error(`  ❌ Failed to scrape ${className}`, { error: error.message });
       summary[className] = -1;
     }
   }
 
   await browser.close();
 
-  console.log('\n📊 Summary:');
+  log.message('\n📊 Summary:');
   for (const [cls, count] of Object.entries(summary)) {
     const status = count >= 0 ? `${count} spells` : 'FAILED';
-    console.log(`  ${capitalize(cls)}: ${status}`);
+    log.message(`  ${capitalize(cls)}: ${status}`);
   }
-  console.log('\n✅ Done!');
+  log.message('\n✅ Done!');
 }
 
 main().catch((error) => {
-  console.error('❌ Fatal error:', error);
+  log.error('❌ Fatal error', { error: error.message || String(error) });
   process.exit(1);
 });

@@ -22,7 +22,7 @@
  * const response = await fetch('/api/monsters?locale=es');
  * ```
  */
-import { listMonsters } from '@/lib/db/content';
+import { monsterRepository } from '@/lib/db/content/repositories/monsterRepository';
 import { logger } from '@/lib/logging/logger';
 import { NextResponse } from 'next/server';
 
@@ -31,7 +31,7 @@ const log = logger.child({ module: 'API:Monsters' });
 /**
  * GET /api/monsters
  *
- * Returns array of monster metadata from the active content adapter.
+ * Returns array of monster metadata from the active content repository.
  * Accepts optional locale query parameter (defaults to 'en').
  *
  * @param {Request} req - Next.js request object
@@ -45,7 +45,7 @@ export async function GET(req: Request) {
   const locale = searchParams.get('locale') || 'en';
 
   try {
-    const monsters = await listMonsters(locale);
+    const monsters = await monsterRepository.list(locale);
     return NextResponse.json(monsters);
   } catch (error) {
     log.error('Error loading monster metadata', {

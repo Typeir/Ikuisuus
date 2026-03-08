@@ -8,6 +8,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'install-hooks' });
 
 /**
  * Installs a git hook
@@ -20,25 +22,25 @@ function installHook(hookName) {
     const targetHook = path.join(gitDir, hookName);
 
     if (!fs.existsSync(gitDir)) {
-      console.error('❌ .git/hooks directory not found');
+      log.error('❌ .git/hooks directory not found');
       process.exit(1);
     }
 
     if (!fs.existsSync(sourceHook)) {
-      console.error(`❌ Source hook not found at ${sourceHook}`);
+      log.error('❌ Source hook not found', { path: sourceHook });
       process.exit(1);
     }
 
     fs.copyFileSync(sourceHook, targetHook);
-    console.log(`✅ ${hookName} hook installed`);
+    log.message(`✅ ${hookName} hook installed`);
 
     if (process.platform !== 'win32') {
       fs.chmodSync(targetHook, '755');
     }
 
-    console.log(`📍 Location: ${targetHook}`);
+    log.message(`📍 Location: ${targetHook}`);
   } catch (error) {
-    console.error(`❌ ${hookName} installation failed:`, error.message);
+    log.error(`❌ ${hookName} installation failed`, { error: error.message });
     process.exit(1);
   }
 }
@@ -47,10 +49,10 @@ function installHook(hookName) {
  * Installs all hooks
  */
 function installAllHooks() {
-  console.log('Installing git hooks...\n');
+  log.message('Installing git hooks...');
   installHook('pre-commit');
   installHook('commit-msg');
-  console.log('\n✨ All hooks installed successfully');
+  log.message('\n✨ All hooks installed successfully');
 }
 
 if (require.main === module) {

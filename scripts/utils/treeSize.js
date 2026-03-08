@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'treeSize' });
 
 let totalItems = 0;
 let totalBytes = 0;
@@ -30,7 +32,7 @@ const printTree = (dir, prefix = '') => {
   totalBytes += folderSize;
 
   const sizeMB = (folderSize / (1024 * 1024)).toFixed(2);
-  console.log(`${prefix}${path.basename(dir)}/ — ${sizeMB} MB`);
+  log.message(`${prefix}${path.basename(dir)}/ — ${sizeMB} MB`);
 
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
@@ -45,12 +47,13 @@ const printTree = (dir, prefix = '') => {
 const targetDir = process.argv[2];
 
 if (!targetDir) {
-  console.error('Usage: node treeSize.js /path/to/folder');
+  log.error('Usage: node treeSize.js /path/to/folder');
   process.exit(1);
 }
 
 printTree(path.resolve(targetDir));
 
-console.log('\nSummary:');
-console.log(`Total items: ${totalItems}`);
-console.log(`Total size: ${(totalBytes / (1024 * 1024)).toFixed(2)} MB`);
+log.message('Summary', {
+  totalItems,
+  totalSize: `${(totalBytes / (1024 * 1024)).toFixed(2)} MB`,
+});

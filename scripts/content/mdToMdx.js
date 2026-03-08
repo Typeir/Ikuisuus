@@ -1,20 +1,20 @@
 /**
  * Markdown to MDX Extension Converter
- * 
+ *
  * @fileoverview Converts .md files to .mdx extension for Next.js MDX processing.
  * Part of the pre-initialization build pipeline (Stage 3).
- * 
+ *
  * @module mdToMdx
  * @version 1.0.0
  * @since 1.0.0
- * 
+ *
  * @requires fs Node.js file system module
  * @requires path Node.js path utilities
- * 
+ *
  * @description
  * Recursively scans content directories and renames all .md files to .mdx.
  * Required because Next.js MDX plugin only processes .mdx files.
- * 
+ *
  * @example
  * node mdToMdx.js
  * // Output: ✅ Renamed: src/content/en/rules/combat.md → combat.mdx
@@ -22,6 +22,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'mdToMdx' });
 
 /**
  * Recursively walks a directory and renames all `.md` files to `.mdx`.
@@ -29,13 +31,13 @@ const path = require('path');
  * @function renameMarkdownToMdx
  * @param {string} dir - The directory to traverse
  * @returns {void}
- * 
+ *
  * @description
  * - Only affects files ending in `.md`
  * - Preserves directory structure
  * - Logs each rename to the console
  * - Continues on errors
- * 
+ *
  * @example
  * renameMarkdownToMdx('src/content/en');
  */
@@ -54,9 +56,12 @@ function renameMarkdownToMdx(dir) {
 
       try {
         fs.renameSync(fullPath, newPath);
-        console.log(`✅ Renamed: ${fullPath} → ${newPath}`);
+        log.message('✅ Renamed', { from: fullPath, to: newPath });
       } catch (err) {
-        console.error(`❌ Failed to rename ${fullPath}:`, err);
+        log.error('❌ Failed to rename', {
+          path: fullPath,
+          error: err.message || String(err),
+        });
       }
     }
   }
@@ -64,5 +69,5 @@ function renameMarkdownToMdx(dir) {
 
 // Start the recursive rename process
 ['en'].forEach((locale) =>
-  renameMarkdownToMdx(path.join(process.cwd(), 'src', 'content', locale))
+  renameMarkdownToMdx(path.join(process.cwd(), 'src', 'content', locale)),
 );

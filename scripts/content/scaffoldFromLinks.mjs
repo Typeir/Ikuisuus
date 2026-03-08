@@ -22,6 +22,9 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { createLogger } from '../core/logger.mjs';
+
+const log = createLogger({ script: 'scaffoldFromLinks' });
 
 /** argv helpers */
 const arg = (flag, fallback = null) => {
@@ -38,7 +41,7 @@ const loadSpecs = async (linksPath) => {
         const chunks = [];
         process.stdin.on('data', (c) => chunks.push(c));
         process.stdin.on('end', () =>
-          res(Buffer.concat(chunks).toString('utf8'))
+          res(Buffer.concat(chunks).toString('utf8')),
         );
         process.stdin.on('error', rej);
       });
@@ -46,7 +49,7 @@ const loadSpecs = async (linksPath) => {
   const txt = (raw || '').trim();
   if (!txt)
     throw new Error(
-      'No JSON provided. Use --links <file.json> or pipe JSON to STDIN.'
+      'No JSON provided. Use --links <file.json> or pipe JSON to STDIN.',
     );
 
   let data;
@@ -61,7 +64,7 @@ const loadSpecs = async (linksPath) => {
   for (const [i, x] of data.entries()) {
     if (!x || typeof x.term !== 'string' || typeof x.path !== 'string') {
       throw new Error(
-        `Bad spec at index ${i}: expected { term: string, path: string }`
+        `Bad spec at index ${i}: expected { term: string, path: string }`,
       );
     }
   }
@@ -83,8 +86,8 @@ const main = async () => {
     const st = await stat(worldRoot);
     if (!st.isDirectory()) throw new Error();
   } catch {
-    console.error(
-      `[scaffold] world root does not exist or is not a directory: ${worldRoot}`
+    log.error(
+      `[scaffold] world root does not exist or is not a directory: ${worldRoot}`,
     );
     process.exit(1);
   }
@@ -93,7 +96,7 @@ const main = async () => {
   try {
     specs = await loadSpecs(linksPath);
   } catch (e) {
-    console.error('[scaffold] ' + e.message);
+    log.error('[scaffold] ' + e.message);
     process.exit(1);
   }
 
@@ -124,24 +127,25 @@ const main = async () => {
     // If file exists and not forcing, skip
     if (!FORCE && existsSync(destFile)) {
       skipped++;
-      console.log(`SKIP (exists): ${destFile}`);
+      log.message(`SKIP (exists): ${destFile}`);
       continue;
     }
 
     // Generate title from slug (e.g., "crimson-order" → "Crimson Order")
     const title = slug
       .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-    
+
     // Generate category name from parent folder (e.g., "factions" → "Factions")
-    const category = segments.length > 0 
-      ? segments[segments.length - 1]
-          .split('-')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ')
-      : 'World';
-    
+    const category =
+      segments.length > 0
+        ? segments[segments.length - 1]
+            .split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ')
+        : 'World';
+
     // Generate placeholder content
     const placeholder = `# ${title}
 
@@ -163,17 +167,19 @@ TODO: Add content here
     }
 
     created++;
-    console.log(`${DRY ? 'WOULD CREATE' : 'CREATED'}: ${destFile}`);
+    log.message(`${DRY ? 'WOULD CREATE' : 'CREATED'}: ${destFile}`);
   }
 
-  console.log(
+  log.message(
     `[scaffold] ${DRY ? 'Dry run' : 'Done'} — ${created} file(s) ${
       DRY ? 'to create' : 'created'
-    }, ${skipped} skipped.`
+    }, ${skipped} skipped.`,
   );
 };
 
 main().catch((err) => {
-  console.error(err);
+  log.error('Fatal error in scaffoldFromLinks', {
+    error: err.message || String(err),
+  });
   process.exit(1);
 });

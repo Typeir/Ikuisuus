@@ -21,6 +21,9 @@
 import crypto from 'crypto';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { createLogger } from '../core/logger.mjs';
+
+const log = createLogger({ script: 'generateToken' });
 
 /**
  * Reads a CLI argument value by flag name.
@@ -53,7 +56,7 @@ const loadSecret = () => {
 
 const secret = loadSecret();
 if (!secret) {
-  console.error(
+  log.error(
     '❌ CORRECTIONS_SECRET is not set. Provide it via environment or .env.local',
   );
   process.exit(1);
@@ -78,13 +81,13 @@ const signature = crypto
   .digest('base64url');
 const token = `${payloadB64}.${signature}`;
 
-console.log('');
-console.log('=== Capability Token ===');
-console.log(`Scope  : ${scope}`);
-console.log(`Label  : ${label || '(none)'}`);
-console.log(
+log.message('');
+log.message('=== Capability Token ===');
+log.message(`Scope  : ${scope}`);
+log.message(`Label  : ${label || '(none)'}`);
+log.message(
   `Expires: ${payload.exp ? new Date(payload.exp * 1000).toISOString() + ` (${hoursRaw}h)` : 'never'}`,
 );
-console.log('');
-console.log(token);
-console.log('');
+log.message('');
+log.message(token);
+log.message('');

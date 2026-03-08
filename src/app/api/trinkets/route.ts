@@ -19,7 +19,7 @@
  * const trinkets = await response.json();
  * ```
  */
-import { listTrinkets } from '@/lib/db/content';
+import { trinketRepository } from '@/lib/db/content/repositories/trinketRepository';
 import { logger } from '@/lib/logging/logger';
 import { NextResponse } from 'next/server';
 
@@ -28,7 +28,7 @@ const log = logger.child({ module: 'API:Trinkets' });
 /**
  * GET /api/trinkets
  *
- * Returns array of trinket item metadata from the active content adapter.
+ * Returns array of trinket item metadata from the active content repository.
  * Accepts optional locale query parameter (defaults to 'en').
  *
  * @param {Request} req - Next.js request object
@@ -42,7 +42,7 @@ export async function GET(req: Request) {
   const locale = searchParams.get('locale') || 'en';
 
   try {
-    const trinkets = await listTrinkets(locale);
+    const trinkets = await trinketRepository.list(locale);
     return NextResponse.json(trinkets);
   } catch (error) {
     log.error('Error loading trinket metadata', {

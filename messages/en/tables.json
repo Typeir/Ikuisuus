@@ -51,7 +51,7 @@
   "monsters": {
     "loading": "Loading monsters...",
     "error": "Error",
-    "noMonsters": "No monsters found. Run <code>npm run generate-monster-metadata</code>",
+    "noMonsters": "No monsters found. Run <code>{code}</code>",
     "columns": {
       "name": "Name",
       "size": "Size",
@@ -65,7 +65,7 @@
   "heirlooms": {
     "loading": "Loading heirlooms...",
     "error": "Error",
-    "noHeirlooms": "No heirlooms found. Run <code>npm run generate-heirloom-metadata</code>",
+    "noHeirlooms": "No heirlooms found. Run npm run generate-heirloom-metadata",
     "columns": {
       "name": "Name",
       "rarity": "Rarity",
@@ -81,7 +81,7 @@
   "trinkets": {
     "loading": "Loading trinkets...",
     "error": "Error",
-    "noTrinkets": "No trinkets found. Run <code>npm run generate-trinket-metadata</code>",
+    "noTrinkets": "No trinkets found. Run npm run generate-trinket-metadata",
     "columns": {
       "name": "Name",
       "type": "Type",

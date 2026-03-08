@@ -23,7 +23,7 @@
  * const spells = await response.json();
  * ```
  */
-import { listSpells } from '@/lib/db/content';
+import { spellRepository } from '@/lib/db/content/repositories/spellRepository';
 import { logger } from '@/lib/logging/logger';
 import { NextResponse } from 'next/server';
 
@@ -32,7 +32,7 @@ const log = logger.child({ module: 'API:Spells:List' });
 /**
  * POST /api/spells
  *
- * Returns array of spell metadata from the active content adapter.
+ * Returns array of spell metadata from the active content repository.
  * Accepts optional locale and spells array in request body.
  *
  * @param {Request} req - Next.js request object
@@ -51,7 +51,10 @@ export async function POST(req: Request) {
   const spellSlugs: string[] | undefined = body.spells;
 
   try {
-    const spells = await listSpells(locale, spellSlugs);
+    const spells =
+      spellSlugs && spellSlugs.length > 0
+        ? await spellRepository.listBySlugs(locale, spellSlugs)
+        : await spellRepository.list(locale);
     return NextResponse.json(spells);
   } catch (error) {
     log.error('Error loading spell metadata', {

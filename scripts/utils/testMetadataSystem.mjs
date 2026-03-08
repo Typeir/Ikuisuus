@@ -1,12 +1,14 @@
 /**
  * Integration test helper for MetadataTable components
- * 
+ *
  * This file helps verify that the metadata table system is working correctly.
  * Run this to check if all pieces are in place.
  */
 
 import fs from 'fs/promises';
 import path from 'path';
+import { createLogger } from '../core/logger.mjs';
+const log = createLogger({ module: 'testMetadataSystem' });
 
 async function testMetadataSystem() {
   const results = {
@@ -25,13 +27,21 @@ async function testMetadataSystem() {
 
   try {
     // Check monsters directory
-    const monstersDir = path.join(process.cwd(), 'src', 'content', 'en', 'monsters');
+    const monstersDir = path.join(
+      process.cwd(),
+      'src',
+      'content',
+      'en',
+      'monsters',
+    );
     await fs.access(monstersDir);
     results.monstersDir = true;
 
     // Count monster metadata files
     const monsterFiles = await fs.readdir(monstersDir);
-    results.monsterMetadata = monsterFiles.filter(f => f.endsWith('.metadata.json')).length;
+    results.monsterMetadata = monsterFiles.filter((f) =>
+      f.endsWith('.metadata.json'),
+    ).length;
 
     // Check for main.mdx
     try {
@@ -41,18 +51,27 @@ async function testMetadataSystem() {
       results.monsterMainMdx = false;
     }
   } catch (error) {
-    console.error('Error checking monsters directory:', error);
+    log.error('Error checking monsters directory', { error: error.message });
   }
 
   try {
     // Check heirlooms directory
-    const heirloomsDir = path.join(process.cwd(), 'src', 'content', 'en', 'items', 'heirlooms');
+    const heirloomsDir = path.join(
+      process.cwd(),
+      'src',
+      'content',
+      'en',
+      'items',
+      'heirlooms',
+    );
     await fs.access(heirloomsDir);
     results.heirloomsDir = true;
 
     // Count heirloom metadata files
     const heirloomFiles = await fs.readdir(heirloomsDir);
-    results.heirloomMetadata = heirloomFiles.filter(f => f.endsWith('.metadata.json')).length;
+    results.heirloomMetadata = heirloomFiles.filter((f) =>
+      f.endsWith('.metadata.json'),
+    ).length;
 
     // Check for main.mdx
     try {
@@ -62,13 +81,20 @@ async function testMetadataSystem() {
       results.heirloomMainMdx = false;
     }
   } catch (error) {
-    console.error('Error checking heirlooms directory:', error);
+    log.error('Error checking heirlooms directory', { error: error.message });
   }
 
   try {
     // Check component files
-    const componentsDir = path.join(process.cwd(), 'src', 'lib', 'components', 'mdx', 'MetadataTable');
-    
+    const componentsDir = path.join(
+      process.cwd(),
+      'src',
+      'lib',
+      'components',
+      'mdx',
+      'MetadataTable',
+    );
+
     try {
       await fs.access(path.join(componentsDir, 'MetadataTable.tsx'));
       results.components.MetadataTable = true;
@@ -84,30 +110,36 @@ async function testMetadataSystem() {
       results.components.HeirloomTable = true;
     } catch {}
   } catch (error) {
-    console.error('Error checking components:', error);
+    log.error('Error checking components', { error: error.message });
   }
 
   // Print results
-  console.log('\n=== Metadata Table System Status ===\n');
-  
-  console.log('📁 Directories:');
-  console.log(`  Monsters: ${results.monstersDir ? '✅' : '❌'}`);
-  console.log(`  Heirlooms: ${results.heirloomsDir ? '✅' : '❌'}`);
-  
-  console.log('\n📊 Metadata Files:');
-  console.log(`  Monsters: ${results.monsterMetadata} files`);
-  console.log(`  Heirlooms: ${results.heirloomMetadata} files`);
-  
-  console.log('\n📄 Index Pages (main.mdx):');
-  console.log(`  Monsters: ${results.monsterMainMdx ? '✅' : '❌'}`);
-  console.log(`  Heirlooms: ${results.heirloomMainMdx ? '✅' : '❌'}`);
-  
-  console.log('\n⚛️  Components:');
-  console.log(`  MetadataTable: ${results.components.MetadataTable ? '✅' : '❌'}`);
-  console.log(`  MonsterTable: ${results.components.MonsterTable ? '✅' : '❌'}`);
-  console.log(`  HeirloomTable: ${results.components.HeirloomTable ? '✅' : '❌'}`);
-  
-  const allGood = 
+  log.message('\n=== Metadata Table System Status ===\n');
+
+  log.message('📁 Directories:');
+  log.message(`  Monsters: ${results.monstersDir ? '✅' : '❌'}`);
+  log.message(`  Heirlooms: ${results.heirloomsDir ? '✅' : '❌'}`);
+
+  log.message('\n📊 Metadata Files:');
+  log.message(`  Monsters: ${results.monsterMetadata} files`);
+  log.message(`  Heirlooms: ${results.heirloomMetadata} files`);
+
+  log.message('\n📄 Index Pages (main.mdx):');
+  log.message(`  Monsters: ${results.monsterMainMdx ? '✅' : '❌'}`);
+  log.message(`  Heirlooms: ${results.heirloomMainMdx ? '✅' : '❌'}`);
+
+  log.message('\n⚛️  Components:');
+  log.message(
+    `  MetadataTable: ${results.components.MetadataTable ? '✅' : '❌'}`,
+  );
+  log.message(
+    `  MonsterTable: ${results.components.MonsterTable ? '✅' : '❌'}`,
+  );
+  log.message(
+    `  HeirloomTable: ${results.components.HeirloomTable ? '✅' : '❌'}`,
+  );
+
+  const allGood =
     results.monstersDir &&
     results.heirloomsDir &&
     results.monsterMetadata > 0 &&
@@ -118,25 +150,29 @@ async function testMetadataSystem() {
     results.components.MonsterTable &&
     results.components.HeirloomTable;
 
-  console.log('\n' + '='.repeat(35));
+  log.message('\n' + '='.repeat(35));
   if (allGood) {
-    console.log('✅ All systems operational!\n');
-    console.log('Next steps:');
-    console.log('  1. Run: npm run dev');
-    console.log('  2. Visit: http://localhost:3000/en/library/monsters/main');
-    console.log('  3. Visit: http://localhost:3000/en/library/items/heirlooms/main');
+    log.message('✅ All systems operational!\n');
+    log.message('Next steps:');
+    log.message('  1. Run: npm run dev');
+    log.message('  2. Visit: http://localhost:3000/en/library/monsters/main');
+    log.message(
+      '  3. Visit: http://localhost:3000/en/library/items/heirlooms/main',
+    );
   } else {
-    console.log('⚠️  Some issues detected. Review the checks above.\n');
-    
+    log.message('⚠️  Some issues detected. Review the checks above.\n');
+
     if (results.monsterMetadata === 0) {
-      console.log('💡 Tip: Run "npm run generate-monster-metadata"');
+      log.message('💡 Tip: Run "npm run generate-monster-metadata"');
     }
     if (results.heirloomMetadata === 0) {
-      console.log('💡 Tip: Run "npm run generate-heirloom-metadata"');
+      log.message('💡 Tip: Run "npm run generate-heirloom-metadata"');
     }
   }
-  console.log('');
+  log.message('');
 }
 
 // Run the test
-testMetadataSystem().catch(console.error);
+testMetadataSystem().catch((error) =>
+  log.error('Fatal error', { error: error.message }),
+);

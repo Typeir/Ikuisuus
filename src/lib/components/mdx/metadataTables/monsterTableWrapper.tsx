@@ -4,37 +4,37 @@
  * D&D 5e creature statistics (size, type, CR, AC, HP, alignment). Includes inline
  * Challenge Rating parsing for fractional values (e.g., "1/2", "1/4"). Uses SIZE_SORT_ORDER
  * for consistent size-based sorting.
- * 
+ *
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires react
  * @requires next/navigation
  * @requires next-intl
  * @requires ./metadataTable
  * @requires @/lib/utils/tableUtils
  * @requires @/lib/enums/tableConstants
- * 
+ *
  * @example
  * ```mdx
  * <!-- In MDX content file -->
  * <MonsterTable />
- * 
+ *
  * <!-- With locale override -->
  * <MonsterTable locale="fi" />
  * ```
  */
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { SIZE_SORT_ORDER } from '@/lib/enums/tableConstants';
 import { logger } from '@/lib/logging/logger';
+import { compareByOrder } from '@/lib/utils/tableUtils';
+import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import MetadataTable, { type ColumnConfig } from './metadataTable';
 import { MetadataTableSkeleton } from './metadataTableSkeleton';
-import { SIZE_SORT_ORDER } from '@/lib/enums/tableConstants';
-import { compareByOrder } from '@/lib/utils/tableUtils';
 
 /**
  * Monster metadata structure from API
@@ -75,13 +75,15 @@ type MonsterTableWrapperProps = {
 /**
  * Client-side wrapper for MonsterTable that fetches locale-aware data via API.
  * Can use locale from props, route params, or defaults to 'en'.
- * 
+ *
  * @component
  * @param {MonsterTableWrapperProps} props - Component props
  * @param {string} [props.locale] - Optional locale override (defaults to route param or 'en')
  * @returns {JSX.Element} The rendered monster table with client-side data fetching
  */
-export default function MonsterTableWrapper({ locale: localeProp }: MonsterTableWrapperProps = {}) {
+export default function MonsterTableWrapper({
+  locale: localeProp,
+}: MonsterTableWrapperProps = {}) {
   const t = useTranslations('tables.monsters');
   const tColumns = useTranslations('tables.monsters.columns');
   const params = useParams();
@@ -92,44 +94,58 @@ export default function MonsterTableWrapper({ locale: localeProp }: MonsterTable
 
   useEffect(() => {
     fetch(`/api/monsters?locale=${locale}`)
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then(monsters => {
+      .then((monsters) => {
         logger.debug('Loaded monsters', { count: monsters.length });
         setData(monsters);
         setLoading(false);
       })
-      .catch(err => {
-        logger.error('Failed to load monsters', { error: err instanceof Error ? err.message : String(err) });
+      .catch((err) => {
+        logger.error('Failed to load monsters', {
+          error: err instanceof Error ? err.message : String(err),
+        });
         setError(err.message);
         setLoading(false);
       });
   }, [locale]);
 
   if (loading) {
-    return <MetadataTableSkeleton 
-      rows={15} 
-      columns={7}
-      filters={[
-        { label: 'Size', type: 'select' },
-        { label: 'Type', type: 'select' },
-        { label: 'CR', type: 'range' },
-        { label: 'AC', type: 'range' },
-        { label: 'HP', type: 'range' }
-      ]}
-    />;
+    return (
+      <MetadataTableSkeleton
+        rows={15}
+        columns={7}
+        filters={[
+          { label: 'Size', type: 'select' },
+          { label: 'Type', type: 'select' },
+          { label: 'CR', type: 'range' },
+          { label: 'AC', type: 'range' },
+          { label: 'HP', type: 'range' },
+        ]}
+      />
+    );
   }
 
   if (error) {
-    return <div className="text-center py-8 text-red-500">{t('error')}: {error}</div>;
+    return (
+      <div className='text-center py-8 text-red-500'>
+        {t('error')}: {error}
+      </div>
+    );
   }
 
   if (data.length === 0) {
     return (
-      <div className="text-center py-8" 
-        dangerouslySetInnerHTML={{ __html: t('noMonsters', { code: 'npm run generate-monster-metadata' }) }} />
+      <div
+        className='text-center py-8'
+        dangerouslySetInnerHTML={{
+          __html: t('noMonsters', {
+            code: 'npm run generate-monster-metadata',
+          }),
+        }}
+      />
     );
   }
 
@@ -176,17 +192,19 @@ export default function MonsterTableWrapper({ locale: localeProp }: MonsterTable
         if (!a && !b) return 0;
         if (!a) return 1;
         if (!b) return -1;
-        
+
         const parseC = (cr: unknown): number => {
           if (typeof cr === 'number') return cr;
           const str = String(cr).trim();
           if (str.includes('/')) {
-            const [num, denom] = str.split('/').map(s => parseFloat(s.trim()));
+            const [num, denom] = str
+              .split('/')
+              .map((s) => parseFloat(s.trim()));
             return num / denom;
           }
           return parseFloat(str) || 0;
         };
-        
+
         return parseC(a) - parseC(b);
       },
       sortable: true,
@@ -216,9 +234,13 @@ export default function MonsterTableWrapper({ locale: localeProp }: MonsterTable
       render: (value: any) => {
         if (!value) return '—';
         const str = String(value);
-        return str.split(' ').map(word => 
-          word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        ).join(' ');
+        return str
+          .split(' ')
+          .map(
+            (word) =>
+              word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+          )
+          .join(' ');
       },
       sortable: true,
       filterable: true,
@@ -232,8 +254,15 @@ export default function MonsterTableWrapper({ locale: localeProp }: MonsterTable
       columns={columns}
       getRowSlug={(row) => {
         const path = `/monsters/${row.slug}`;
-        const result = row.subSlug && row.subSlug !== row.slug ? `${path}#${row.subSlug}` : path;
-        logger.debug('getRowSlug', { slug: row.slug, subSlug: row.subSlug, result });
+        const result =
+          row.subSlug && row.subSlug !== row.slug
+            ? `${path}#${row.subSlug}`
+            : path;
+        logger.debug('getRowSlug', {
+          slug: row.slug,
+          subSlug: row.subSlug,
+          result,
+        });
         return result;
       }}
       searchKeys={['title', 'creatureType', 'size']}

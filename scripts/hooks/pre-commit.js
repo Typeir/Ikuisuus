@@ -11,6 +11,8 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'pre-commit' });
 
 function loadPatterns() {
   try {
@@ -23,7 +25,7 @@ function loadPatterns() {
       .filter((line) => line.length > 0)
       .map((encoded) => Buffer.from(encoded, 'base64').toString('utf-8'));
   } catch (error) {
-    console.error('❌ Error loading patterns file:', error.message);
+    log.error('❌ Error loading patterns file', { error: error.message });
     process.exit(1);
   }
 }
@@ -71,7 +73,7 @@ function getStagedFiles() {
     });
     return output.split('\n').filter(Boolean);
   } catch (error) {
-    console.error('Error reading staged files');
+    log.error('Error reading staged files');
     process.exit(1);
   }
 }
@@ -148,15 +150,14 @@ function runSecurityChecks() {
     return 0;
   }
 
-  console.error('\n❌ SECURITY CHECK FAILED\n');
-  console.error('Staged files contain restricted patterns:\n');
-
-  for (const match of matches) {
-    console.error(`📄 ${match.file}:${match.line}`);
-    console.error(`   ${match.preview}\n`);
-  }
-
-  console.error('Please review these files before committing.\n');
+  const details = matches
+    .map((match) => `📄 ${match.file}:${match.line}\n   ${match.preview}`)
+    .join('\n');
+  log.error(
+    '\n❌ SECURITY CHECK FAILED\n\nStaged files contain restricted patterns:\n\n' +
+      details +
+      '\n\nPlease review these files before committing.',
+  );
 
   return 1;
 }
@@ -184,19 +185,15 @@ function runSubmoduleGuard() {
     return 0;
   }
 
-  console.error('\n❌ SUBMODULE GUARD FAILED\n');
-  console.error(
-    'You have staged changes inside the content submodule (' +
+  const fileList = violations.map((file) => `  📄 ${file}`).join('\n');
+  log.error(
+    '\n❌ SUBMODULE GUARD FAILED\n\n' +
+      'You have staged changes inside the content submodule (' +
       SUBMODULE_PATH +
-      ').',
+      ').\n' +
+      'Commit them in the content repo instead.\n\n' +
+      fileList,
   );
-  console.error('Commit them in the content repo instead.\n');
-
-  for (const file of violations) {
-    console.error(`  📄 ${file}`);
-  }
-
-  console.error('');
   return 1;
 }
 

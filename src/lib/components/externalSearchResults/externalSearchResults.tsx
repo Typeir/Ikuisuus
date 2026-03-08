@@ -36,7 +36,7 @@ export const ExternalSearchResults = ({ query }: { query: string }) => {
       setLoading(true);
       try {
         const res = await fetch(
-          `/api/web-search?q=${encodeURIComponent(query)}`
+          `/api/web-search?q=${encodeURIComponent(query)}`,
         );
 
         const data = await res.json();
@@ -50,7 +50,9 @@ export const ExternalSearchResults = ({ query }: { query: string }) => {
         }
       } catch (err) {
         if (requestIdRef.current === currentRequestId) {
-          logger.error('External search failed', { error: err instanceof Error ? err.message : String(err) });
+          logger.error('External search failed', {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       } finally {
         if (requestIdRef.current === currentRequestId) {
@@ -63,18 +65,14 @@ export const ExternalSearchResults = ({ query }: { query: string }) => {
   }, [query]);
 
   const LoadingText = () => (
-    <p className='text-sm secondary mt-2 italic'>
-      {t('loading')}
-    </p>
+    <p className='text-sm secondary mt-2 italic'>{t('loading')}</p>
   );
 
   if (!extResults.length) {
     return loading ? (
       <LoadingText />
     ) : query ? (
-      <p className='text-sm secondary mt-2 italic'>
-        {t('noResults')}
-      </p>
+      <p className='text-sm secondary mt-2 italic'>{t('noResults')}</p>
     ) : null;
   }
 
@@ -82,9 +80,7 @@ export const ExternalSearchResults = ({ query }: { query: string }) => {
     <>
       {loading ? <LoadingText /> : null}
       <ul className='space-y-1 text-sm mt-2'>
-        <h3 className='text-sm font-semibold mb-2 mt-2'>
-          {t('header')}
-        </h3>
+        <h3 className='text-sm font-semibold mb-2 mt-2'>{t('header')}</h3>
 
         {extResults.map((r) => (
           <li key={r.link}>

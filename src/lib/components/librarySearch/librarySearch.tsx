@@ -4,11 +4,11 @@
  * and optional Google Custom Search Engine for Wikidot results. Features debounced input,
  * race condition protection, locale-aware routing, and lore-themed empty state messaging.
  * Keyboard navigation and click-outside-to-close behavior included.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires react
  * @requires next-intl
  * @requires next/link
@@ -16,11 +16,11 @@
  * @requires @/lib/hooks/useDebounce
  * @requires @/lib/components/externalSearchResults/externalSearchResults
  * @requires ./librarySearch.module.scss
- * 
+ *
  * @example
  * ```tsx
  * import { LibrarySearch } from '@/lib/components/librarySearch/librarySearch';
- * 
+ *
  * <LibrarySearch />
  * ```
  */
@@ -85,7 +85,7 @@ export const LibrarySearch = (): JSX.Element => {
       setLoading(true);
       try {
         const res = await fetch(
-          `/api/search?q=${encodeURIComponent(debouncedQuery)}`
+          `/api/search?q=${encodeURIComponent(debouncedQuery)}`,
         );
         const data: SearchResult[] = await res.json();
 
@@ -98,7 +98,9 @@ export const LibrarySearch = (): JSX.Element => {
         }
       } catch (err) {
         if (requestIdRef.current === currentRequestId) {
-          logger.error('Search error', { error: err instanceof Error ? err.message : String(err) });
+          logger.error('Search error', {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       } finally {
         if (requestIdRef.current === currentRequestId) {
