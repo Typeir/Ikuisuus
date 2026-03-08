@@ -89,15 +89,17 @@ ik push origin main
 # You accidentally do:
 git commit -m "oops"
 
-# Post-commit hook warns:
-# ⚠️  MULTIREPO OUT OF SYNC
-# Main repo and content submodule are at different commits!
-# SOLUTION: ik commit -m "sync: <your message>"
+# Post-commit hook warns only if BOTH repos have changes:
+# ⚠️  BOTH REPOS HAVE CHANGES AND ARE OUT OF SYNC
+# Both main repo and content submodule have changes but are at different commits.
+# SOLUTION: ik commit -m "your message"
 
 # Fix it:
 git reset --soft HEAD~1    # Undo main commit (keeps staging)
 ik commit -m "Add encounters"  # Now sync properly
 ```
+
+**Note**: If only one repo has changes, there's no warning — repos can be at different commits without issue. No need for empty sync commits.
 
 ---
 

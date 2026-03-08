@@ -80,9 +80,9 @@ ik push         # Runs git push in both repos
 
 ### The Validation Hook
 
-After you commit, `.git/hooks/post-commit` checks if both repos are at the same commit. If they're not (e.g., you ran `git commit` instead of `ik commit`), it warns you.
+After you commit, `.git/hooks/post-commit` checks if both repos have changes **and** are at different commits. If so, it warns you.
 
-This is **not** a blocker—just a friendly reminder.
+**Note**: The hook only warns if *both* repos have changes. If one repo is clean (no changes), repos can be at different commits without warning — no need for empty sync commits.
 
 ### The Pre-Commit Warning Hook
 

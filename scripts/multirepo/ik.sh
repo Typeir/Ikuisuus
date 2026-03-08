@@ -147,16 +147,18 @@ cmd_validate() {
     content_dirty=1
   fi
 
-  if [ $main_dirty -eq 1 ] && [ $content_dirty -eq 0 ]; then
-    log_warn "Main repo has changes, but content repo is clean"
-    echo "   Did you forget to stage content changes?"
-    echo "   Run: ik add . && ik commit -m \"...\" "
+  # Only warn if both repos have changes AND are at different commits
+  if [ $main_dirty -eq 1 ] && [ $content_dirty -eq 1 ]; then
+    local main_head=$(git -C "$MAIN_REPO" rev-parse HEAD 2>/dev/null || echo "unknown")
+    local content_head=$(git -C "$CONTENT_REPO" rev-parse HEAD 2>/dev/null || echo "unknown")
+    
+    if [ "$main_head" != "$content_head" ]; then
+      log_warn "Both repos have changes but are at different commits"
+      echo "   Run: ik commit -m \"your message\""
+    fi
   fi
-
-  if [ $main_dirty -eq 0 ] && [ $content_dirty -eq 1 ]; then
-    log_warn "Content repo has changes, but main repo is clean"
-    echo "   Run: ik add . && ik commit -m \"...\""
-  fi
+  
+  # If one repo is clean and the other has changes, that's fine — no warning needed
 }
 
 # ---- Dispatch ----

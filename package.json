@@ -58,6 +58,7 @@
     "install-hooks": "node scripts/hooks/install.js",
     "generate-token": "node scripts/auth/generateToken.mjs",
     "seed-admin": "node scripts/auth/seedAdmin.mjs",
+    "seed-admin-pg": "node scripts/auth/seedAdminPg.mjs",
     "test-pat": "node scripts/test-pat.js",
     "lottery": "node scripts/utils/mdxLottery.mjs"
   },

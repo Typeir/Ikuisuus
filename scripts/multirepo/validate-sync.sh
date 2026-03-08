@@ -16,37 +16,47 @@ set -euo pipefail
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 MAIN_REPO="$( cd "$SCRIPT_DIR/../.." && pwd )"
 CONTENT_REPO="$MAIN_REPO/src/content"
-MAIN_HEAD=$(git -C "$MAIN_REPO" rev-parse HEAD 2>/dev/null || echo "unknown")
 
 # Only validate if content submodule exists
 if [ ! -e "$CONTENT_REPO/.git" ]; then
   exit 0
 fi
 
-CONTENT_HEAD=$(git -C "$CONTENT_REPO" rev-parse HEAD 2>/dev/null || echo "unknown")
+# Check if repos have actual changes
+main_has_changes=0
+if ! git -C "$MAIN_REPO" diff --quiet || ! git -C "$MAIN_REPO" diff --cached --quiet; then
+  main_has_changes=1
+fi
 
-# If commits are out of sync, warn user
-if [ "$MAIN_HEAD" != "$CONTENT_HEAD" ]; then
-  cat << 'EOF'
+content_has_changes=0
+if ! git -C "$CONTENT_REPO" diff --quiet 2>/dev/null || ! git -C "$CONTENT_REPO" diff --cached --quiet 2>/dev/null; then
+  content_has_changes=1
+fi
+
+# Only warn if BOTH have changes but are at different commits
+if [ $main_has_changes -eq 1 ] && [ $content_has_changes -eq 1 ]; then
+  MAIN_HEAD=$(git -C "$MAIN_REPO" rev-parse HEAD 2>/dev/null || echo "unknown")
+  CONTENT_HEAD=$(git -C "$CONTENT_REPO" rev-parse HEAD 2>/dev/null || echo "unknown")
+  
+  if [ "$MAIN_HEAD" != "$CONTENT_HEAD" ]; then
+    cat << 'EOF'
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️  MULTIREPO OUT OF SYNC
+⚠️  BOTH REPOS HAVE CHANGES AND ARE OUT OF SYNC
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Main repo and content submodule are at different commits!
+Both main repo and content submodule have changes but are at different commits.
 
-This usually means you ran `git commit` instead of `ik commit`.
+To sync them:
+  ik commit -m "your message"
 
-SOLUTION:
-  ik commit -m "sync: <your message>"
-
-Or check what happened:
+Check status:
   ik status
-  ik validate
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
+  fi
 fi
 
 exit 0
