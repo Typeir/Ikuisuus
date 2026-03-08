@@ -30,6 +30,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { logger } from '@/lib/logging/logger';
 import MetadataTable, { type ColumnConfig } from './metadataTable';
 import { MetadataTableSkeleton } from './metadataTableSkeleton';
 import { SIZE_SORT_ORDER } from '@/lib/enums/tableConstants';
@@ -96,12 +97,12 @@ export default function MonsterTableWrapper({ locale: localeProp }: MonsterTable
         return res.json();
       })
       .then(monsters => {
-        console.log('Loaded monsters:', monsters.length, monsters);
+        logger.debug('Loaded monsters', { count: monsters.length });
         setData(monsters);
         setLoading(false);
       })
       .catch(err => {
-        console.error('Failed to load monsters:', err);
+        logger.error('Failed to load monsters', { error: err instanceof Error ? err.message : String(err) });
         setError(err.message);
         setLoading(false);
       });
@@ -126,7 +127,10 @@ export default function MonsterTableWrapper({ locale: localeProp }: MonsterTable
   }
 
   if (data.length === 0) {
-    return <div className="text-center py-8" dangerouslySetInnerHTML={{ __html: t('noMonsters') }} />;
+    return (
+      <div className="text-center py-8" 
+        dangerouslySetInnerHTML={{ __html: t('noMonsters', { code: 'npm run generate-monster-metadata' }) }} />
+    );
   }
 
   const columns: ColumnConfig[] = [
@@ -229,7 +233,7 @@ export default function MonsterTableWrapper({ locale: localeProp }: MonsterTable
       getRowSlug={(row) => {
         const path = `/monsters/${row.slug}`;
         const result = row.subSlug && row.subSlug !== row.slug ? `${path}#${row.subSlug}` : path;
-        console.log('getRowSlug:', { slug: row.slug, subSlug: row.subSlug, result });
+        logger.debug('getRowSlug', { slug: row.slug, subSlug: row.subSlug, result });
         return result;
       }}
       searchKeys={['title', 'creatureType', 'size']}

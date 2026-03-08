@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logging/logger';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -49,7 +50,7 @@ export const ExternalSearchResults = ({ query }: { query: string }) => {
         }
       } catch (err) {
         if (requestIdRef.current === currentRequestId) {
-          console.error('External search failed', err);
+          logger.error('External search failed', { error: err instanceof Error ? err.message : String(err) });
         }
       } finally {
         if (requestIdRef.current === currentRequestId) {

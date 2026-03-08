@@ -1,0 +1,21 @@
+/**
+ * @fileoverview MDX Editor Page Styles
+ * @description Left-aligned, non-prose layout for the editor tool page.
+ * Removes the default prose/centered content styling used by library pages.
+ *
+ * @module app/[locale]/utils/mdx-editor/page.module
+ */
+
+.editorPage {
+  max-width: 100%;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+
+  /** Override any inherited prose / centered styles */
+  &,
+  & * {
+    text-align: left;
+  }
+}

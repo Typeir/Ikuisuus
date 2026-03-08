@@ -10,6 +10,7 @@
  * @since 1.0.0
  */
 
+import { logger } from '@/lib/logging/logger';
 import arrow from "./icons/arrow.svg";
 import hamburger from "./icons/hamburger.svg";
 import lock from "./icons/lock.svg";
@@ -34,7 +35,7 @@ const Icon: FC<IconProps> = ({ type, className = "", ...rest }) => {
   const SvgIcon = iconMap[type];
 
   if (!SvgIcon) {
-    console.warn(`⚠️ Unknown icon type: "${type}"`);
+    logger.warning('Unknown icon type', { type });
     return null;
   }
 

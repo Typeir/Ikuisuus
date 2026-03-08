@@ -21,6 +21,7 @@
 
 import { MdxEditor } from '@/lib/components/mdxEditor/mdxEditor';
 import { Metadata } from 'next';
+import styles from './page.module.scss';
 
 /**
  * Page props interface
@@ -47,6 +48,7 @@ export const generateMetadata = (): Metadata => ({
 /**
  * MDX Editor page component.
  * Renders the MdxEditor with locale from route parameters.
+ * Uses a left-aligned, non-prose layout for tool-style display.
  *
  * @async
  * @param {PageProps} props - Page props with locale parameter
@@ -56,7 +58,7 @@ export default async function MdxEditorPage({ params }: PageProps) {
   const { locale } = await params;
 
   return (
-    <div>
+    <div className={styles.editorPage}>
       <MdxEditor locale={locale} />
     </div>
   );

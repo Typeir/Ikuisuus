@@ -28,6 +28,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { logger } from '@/lib/logging/logger';
 import MetadataTable, { type ColumnConfig } from './metadataTable';
 import { MetadataTableSkeleton } from './metadataTableSkeleton';
 
@@ -96,12 +97,12 @@ export default function TrinketTableWrapper({ locale: localeProp }: TrinketTable
         return res.json();
       })
       .then(trinkets => {
-        console.log('Loaded trinkets:', trinkets.length, trinkets);
+        logger.debug('Loaded trinkets', { count: trinkets.length });
         setData(trinkets);
         setLoading(false);
       })
       .catch(err => {
-        console.error('Failed to load trinkets:', err);
+        logger.error('Failed to load trinkets', { error: err instanceof Error ? err.message : String(err) });
         setError(err.message);
         setLoading(false);
       });

@@ -27,3 +27,10 @@ export type {
     CorrectionsTokenState
 } from './useCorrectionsToken';
 
+export { useCorrectionsAuth } from './useCorrectionsAuth';
+export type {
+    AuthUser,
+    CorrectionsAuthActions,
+    CorrectionsAuthState
+} from './useCorrectionsAuth';
+

@@ -26,6 +26,7 @@
 
 'use client';
 
+import { logger } from '@/lib/logging/logger';
 import type { AffixEntry } from '@/lib/types/encounterPlanner';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
@@ -99,7 +100,7 @@ export const AffixCombobox: React.FC<AffixComboboxProps> = ({
         }));
         setAllAffixes(mappedData);
       } catch (error) {
-        console.error('Failed to load affix index:', error);
+        logger.error('Failed to load affix index', { error: error instanceof Error ? error.message : String(error) });
       } finally {
         setIsLoading(false);
       }

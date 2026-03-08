@@ -12,6 +12,7 @@
 
 import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import { ApiRoutes } from '@/lib/enums/apiRoutes';
+import { logger } from '@/lib/logging/logger';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -58,7 +59,7 @@ export function NotFoundContent(): JSX.Element {
           setNearestRoute(data.match);
         }
       } catch (err) {
-        console.error('Failed to find nearest route:', err);
+        logger.error('Failed to find nearest route', { error: err instanceof Error ? err.message : String(err) });
       } finally {
         setLoading(false);
       }

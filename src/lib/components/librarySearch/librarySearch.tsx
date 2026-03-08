@@ -26,6 +26,7 @@
  */
 'use client';
 
+import { logger } from '@/lib/logging/logger';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -97,7 +98,7 @@ export const LibrarySearch = (): JSX.Element => {
         }
       } catch (err) {
         if (requestIdRef.current === currentRequestId) {
-          console.error('Search error:', err);
+          logger.error('Search error', { error: err instanceof Error ? err.message : String(err) });
         }
       } finally {
         if (requestIdRef.current === currentRequestId) {

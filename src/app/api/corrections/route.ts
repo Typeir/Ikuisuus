@@ -8,10 +8,11 @@
  */
 
 import { writeAuditLog } from '@/lib/db/auditLog';
+import { extractSession } from '@/lib/db/auth';
 import { logger } from '@/lib/logging/logger';
 import { banIp, isIpBanned } from '@/lib/security/bannedIps';
 import { checkProfanityMultiple } from '@/lib/security/profanityFilter';
-import { tokenAuditId, verifyToken } from '@/lib/utils/auth/hmacToken';
+import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Corrections' });
@@ -157,63 +158,21 @@ export async function POST(req: NextRequest) {
   }
 
   const authHeader = req.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    const headersObj: Record<string, string> = {};
-    req.headers.forEach((v, k) => {
-      headersObj[k] = v;
-    });
-    log.message('Missing or invalid Authorization header', {
+  const session = await extractSession(authHeader);
+  if (!session) {
+    log.message('Missing or invalid session', {
       level: 'warn',
-      reason: 'missing_or_malformed',
-      headers: headersObj,
+      reason: 'invalid_session',
       url: req.url,
     });
 
     return NextResponse.json(
-      { error: 'Missing authorization' },
+      { error: 'Missing or invalid authorization' },
       { status: 401 },
     );
   }
 
-  const rawToken = authHeader.slice(7);
-  const verify = verifyToken(rawToken, secret);
-  if (!verify.valid || !verify.payload) {
-    const headersObj2: Record<string, string> = {};
-    req.headers.forEach((v, k) => {
-      headersObj2[k] = v;
-    });
-    log.message('Token verification failed', {
-      level: 'warn',
-      error: verify.error ?? 'invalid_token',
-      rawToken,
-      headers: headersObj2,
-      url: req.url,
-    });
-
-    return NextResponse.json(
-      { error: verify.error ?? 'Invalid token' },
-      { status: 401 },
-    );
-  }
-
-  if (verify.payload.scope !== 'content:write') {
-    const headersObj3: Record<string, string> = {};
-    req.headers.forEach((v, k) => {
-      headersObj3[k] = v;
-    });
-    log.message('Token scope insufficient', {
-      level: 'warn',
-      providedScope: verify.payload.scope,
-      requiredScope: 'content:write',
-      rawToken,
-      headers: headersObj3,
-      url: req.url,
-    });
-
-    return NextResponse.json({ error: 'Insufficient scope' }, { status: 403 });
-  }
-
-  const auditId = tokenAuditId(rawToken, verify.payload);
+  const auditId = session.username;
 
   const contentLength = parseInt(req.headers.get('content-length') || '0', 10);
   if (contentLength > MAX_BODY_BYTES) {
@@ -385,6 +344,22 @@ export async function POST(req: NextRequest) {
     });
 
     log.message('Correction PR created', { prUrl, filePath, auditId });
+
+    /** Trigger ISR revalidation for the affected content page */
+    try {
+      const slugFromPath = filePath
+        .replace(/^[a-z]{2}\//, '')
+        .replace(/\.(sheet\.)?mdx$/, '');
+      revalidatePath(`/library/${slugFromPath}`);
+      log.debug('ISR revalidation triggered', { slug: slugFromPath });
+    } catch (revalidateError) {
+      log.debug('ISR revalidation failed (non-blocking)', {
+        error:
+          revalidateError instanceof Error
+            ? revalidateError.message
+            : String(revalidateError),
+      });
+    }
 
     return NextResponse.json({ prUrl }, { status: 201 });
   } catch (error: unknown) {

@@ -15,10 +15,7 @@
 
 'use client';
 
-import {
-    useCorrectionsTokenActions,
-    useCorrectionsTokenState,
-} from '@/lib/hooks/useCorrectionsToken';
+import { useCorrectionsAuth } from '@/lib/hooks/useCorrectionsAuth';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -62,8 +59,18 @@ type EditorStatus =
 export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
   const t = useTranslations('mdxEditor');
   const searchParams = useSearchParams();
-  const { token } = useCorrectionsTokenState();
-  const { setToken } = useCorrectionsTokenActions();
+  const {
+    token,
+    user,
+    isLoggingIn,
+    error: authError,
+    login: doLogin,
+    logout,
+    clearError: clearAuthError,
+  } = useCorrectionsAuth();
+
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
 
   const initialSlug = searchParams.get('slug') ?? '';
   const initialLocale = searchParams.get('locale') ?? locale;
@@ -163,8 +170,8 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
    * Submits the edited/new content to the corrections API.
    */
   const handleSubmit = useCallback(async () => {
-    if (!token?.trim()) {
-      setStatus({ phase: 'error', message: t('tokenRequired') });
+    if (!token) {
+      setStatus({ phase: 'error', message: t('loginRequired') });
       return;
     }
     if (!filePath.trim()) {
@@ -253,20 +260,66 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
         </div>
       </div>
 
-      {/* Token */}
+      {/* Auth */}
       <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel} htmlFor='mdx-editor-token'>
-          {t('tokenLabel')}
-        </label>
-        <input
-          id='mdx-editor-token'
-          type='password'
-          className={styles.tokenInput}
-          placeholder={t('tokenPlaceholder')}
-          value={token ?? ''}
-          onChange={(e) => setToken(e.target.value || null)}
-          autoComplete='off'
-        />
+        {user ? (
+          <div className={styles.authStatus}>
+            <span className={styles.authUser}>
+              {t('loggedInAs', { username: user.username, role: user.role })}
+            </span>
+            <button
+              type='button'
+              className={styles.logoutButton}
+              onClick={logout}>
+              {t('logout')}
+            </button>
+          </div>
+        ) : (
+          <div className={styles.loginForm}>
+            <label className={styles.fieldLabel}>{t('loginLabel')}</label>
+            <div className={styles.fieldRow}>
+              <input
+                type='text'
+                className={styles.loginInput}
+                placeholder={t('usernamePlaceholder')}
+                value={loginUsername}
+                onChange={(e) => setLoginUsername(e.target.value)}
+                autoComplete='username'
+              />
+              <input
+                type='password'
+                className={styles.loginInput}
+                placeholder={t('passwordPlaceholder')}
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                autoComplete='current-password'
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && loginUsername && loginPassword) {
+                    doLogin(loginUsername, loginPassword);
+                  }
+                }}
+              />
+              <button
+                type='button'
+                className={styles.submitButton}
+                disabled={isLoggingIn || !loginUsername || !loginPassword}
+                onClick={() => doLogin(loginUsername, loginPassword)}>
+                {isLoggingIn ? t('loggingIn') : t('loginButton')}
+              </button>
+            </div>
+            {authError && (
+              <span className={styles.statusError}>
+                {authError}{' '}
+                <button
+                  type='button'
+                  className={styles.dismissButton}
+                  onClick={clearAuthError}>
+                  ✕
+                </button>
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* File path / slug */}
