@@ -5,11 +5,13 @@
 You now have a **wrapper + validation** system for syncing commits across your main wiki and content submodule.
 
 ### One-Time Setup
+
 ```bash
 npm run multirepo:setup
 ```
 
 ### Use It
+
 ```bash
 # Instead of `git add/commit/push`, use `ik`:
 ik add .
@@ -31,6 +33,7 @@ scripts/multirepo/
 ```
 
 Plus:
+
 - `.github/docs/MULTIREPO_SETUP.md` — Setup guide
 - `.github/docs/multirepo-sync-analysis.md` — Why this approach
 - npm scripts in package.json
@@ -40,16 +43,19 @@ Plus:
 ## How It Works
 
 **You run:**
+
 ```bash
 ik commit -m "message"
 ```
 
 **Behind the scenes:**
+
 1. `ik.sh` runs `git commit` in main repo ✓
 2. `ik.sh` runs `git commit` in content repo ✓
 3. Post-commit hook validates they're in sync ✓
 
 **If you slip up:**
+
 ```bash
 git commit -m "oops"        # Forgot to use `ik`
 # Post-commit hook warns: ⚠️  MULTIREPO OUT OF SYNC
@@ -62,32 +68,35 @@ ik commit -m "message"      # Do it right
 
 ## All Commands
 
-| Command | What It Does |
-|---------|-------------|
-| `ik add .` | Stage in both repos |
-| `ik commit -m "msg"` | Commit in both repos |
-| `ik push origin main` | Push both repos |
-| `ik status` | Show status of both |
-| `ik diff --cached` | Show diffs |
-| `ik log` | Last 10 commits |
-| `ik validate` | Check sync status |
-| `ik help` | Show help |
+| Command               | What It Does         |
+| --------------------- | -------------------- |
+| `ik add .`            | Stage in both repos  |
+| `ik commit -m "msg"`  | Commit in both repos |
+| `ik push origin main` | Push both repos      |
+| `ik status`           | Show status of both  |
+| `ik diff --cached`    | Show diffs           |
+| `ik log`              | Last 10 commits      |
+| `ik validate`         | Check sync status    |
+| `ik help`             | Show help            |
 
 ---
 
 ## Optional: Global Shell Alias
 
 Add to `~/.bashrc` or `~/.zshrc`:
+
 ```bash
 alias ik='bash ~/path/to/ikuisuus/scripts/multirepo/ik.sh'
 ```
 
 Then reload:
+
 ```bash
 source ~/.bashrc
 ```
 
 Now you can just type `ik` anywhere:
+
 ```bash
 ik status
 ik add .
@@ -99,6 +108,7 @@ ik commit -m "..."
 ## What's Next?
 
 1. **Test it:**
+
    ```bash
    npm run multirepo:setup
    ik status
@@ -125,4 +135,3 @@ That's it!
 - Full docs: `scripts/multirepo/README.md`
 - Why this over other options: `.github/docs/multirepo-sync-analysis.md`
 - Setup details: `.github/docs/MULTIREPO_SETUP.md`
-

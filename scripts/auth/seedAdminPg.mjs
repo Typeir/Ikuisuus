@@ -19,9 +19,9 @@
  */
 
 import crypto from 'crypto';
-import pg from 'pg';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import pg from 'pg';
 import { createLogger } from '../core/logger.mjs';
 
 const log = createLogger({ script: 'seedAdminPg' });
@@ -68,15 +68,14 @@ const password = getArg('--password');
 
 if (!password) {
   log.error('❌ --password is required.');
-  log.message('   Usage: npm run seed-admin-pg -- --username admin --password JOHN_SUNSHINE');
+  log.message(
+    '   Usage: npm run seed-admin-pg -- --username admin --password JOHN_SUNSHINE',
+  );
   process.exit(1);
 }
 
 const id = crypto.randomUUID();
-const passwordHash = crypto
-  .createHash('sha256')
-  .update(password)
-  .digest('hex');
+const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
 
 log.message('');
 log.message('=== Seed Admin User (PostgreSQL) ===');

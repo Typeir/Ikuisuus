@@ -152,10 +152,10 @@ describe('pgSpellRepository', () => {
       const result = await pgSpellRepository.listBySlugs('en', ['fireball']);
 
       expect(result[0].slug).toBe('fireball');
-      expect(query).toHaveBeenCalledWith(
-        expect.stringContaining('ANY($2)'),
-        ['en', ['fireball']],
-      );
+      expect(query).toHaveBeenCalledWith(expect.stringContaining('ANY($2)'), [
+        'en',
+        ['fireball'],
+      ]);
     });
 
     it('should return empty array on error', async () => {

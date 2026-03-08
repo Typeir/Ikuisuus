@@ -1,6 +1,7 @@
 # Multirepo Sync Strategy Analysis
 
 ## Your Setup
+
 - **Main repo**: Ikuisuus (Next.js + metadata)
 - **Content submodule**: `src/content` → `https://github.com/Typeir/ikuisuus-content.git`
 - **Challenge**: Keep both repos in sync when committing changes that span both
@@ -10,9 +11,11 @@
 ## Option 1: Interactive CLI
 
 ### How It Works
+
 Custom Node.js script with prompts: select action (add/commit/push), scope (main/content/both), message, then execute commands on appropriate repos.
 
 ### Implementation
+
 ```javascript
 // scripts/multirepo-cli.mjs
 import inquirer from 'inquirer';
@@ -20,16 +23,26 @@ import { execSync } from 'child_process';
 
 async function main() {
   const action = await inquirer.prompt([
-    { type: 'list', name: 'action', message: 'Action?', choices: ['add', 'commit', 'push', 'status'] }
+    {
+      type: 'list',
+      name: 'action',
+      message: 'Action?',
+      choices: ['add', 'commit', 'push', 'status'],
+    },
   ]);
-  
+
   const scope = await inquirer.prompt([
-    { type: 'list', name: 'scope', message: 'Scope?', choices: ['main', 'content', 'both'] }
+    {
+      type: 'list',
+      name: 'scope',
+      message: 'Scope?',
+      choices: ['main', 'content', 'both'],
+    },
   ]);
-  
+
   if (action === 'commit') {
     const msg = await inquirer.prompt([
-      { type: 'input', name: 'message', message: 'Commit message:' }
+      { type: 'input', name: 'message', message: 'Commit message:' },
     ]);
     // execute on both if scope === 'both'
   }
@@ -37,12 +50,14 @@ async function main() {
 ```
 
 ### Pros ✅
+
 - **Maximum control**: Can handle complex logic (conditional commits, partial staging)
 - **Clear feedback**: Prompts guide users step-by-step
 - **Auditable**: Full record of what was synced and where
 - **Flexible**: Easy to add advanced features (cherry-pick, tags, etc.)
 
 ### Cons ❌
+
 - **User dislike**: You said you're not fond of CLIs
 - **Slow workflow**: Extra prompts add friction to rapid iteration
 - **Breaking from git muscle memory**: Can't use `git` directly
@@ -54,9 +69,11 @@ async function main() {
 ## Option 2: Wrapper Commands (npm scripts + shell aliases)
 
 ### How It Works
+
 Create `ik` command that wraps git operations. Runs the same git command on both repos automatically.
 
 ### Implementation (Recommended)
+
 ```bash
 #!/usr/bin/env bash
 # scripts/multirepo/ik.sh
@@ -73,24 +90,24 @@ case "$1" in
     git -C "$CONTENT_REPO" add "${@:2}" 2>/dev/null || true
     echo "✅ Staged in both repos"
     ;;
-  
+
   commit)
     git -C "$MAIN_REPO" commit "${@:2}"
     git -C "$CONTENT_REPO" commit "${@:2}" 2>/dev/null || true
     echo "✅ Committed in both repos"
     ;;
-  
+
   push)
     git -C "$MAIN_REPO" push "${@:2}"
     git -C "$CONTENT_REPO" push "${@:2}" 2>/dev/null || true
     echo "✅ Pushed both repos"
     ;;
-  
+
   status)
     echo "=== Main Repo ===" && git -C "$MAIN_REPO" status
     echo "" && echo "=== Content Repo ===" && git -C "$CONTENT_REPO" status
     ;;
-  
+
   *)
     echo "ik: unknown command '$1'"
     echo "Available: add, commit, push, status"
@@ -100,6 +117,7 @@ esac
 ```
 
 **Setup** (add to `.bashrc` or `.zshrc`, or use npm script):
+
 ```json
 {
   "scripts": {
@@ -112,12 +130,14 @@ esac
 ```
 
 Or create shell alias:
+
 ```bash
 alias ik='bash scripts/multirepo/ik.sh'
 # Then: ik add ., ik commit -m "msg", ik push
 ```
 
 ### Pros ✅
+
 - **Familiar interface**: Just `git`-like commands with `ik` prefix
 - **Fast**: No prompts, direct execution
 - **Simple to implement**: ~50 lines of bash
@@ -125,6 +145,7 @@ alias ik='bash scripts/multirepo/ik.sh'
 - **Fallback**: Can still use `git` directly if needed
 
 ### Cons ❌
+
 - **User error risk**: If user forgets `ik` and runs `git commit`, only main repo commits
 - **Partial failures**: If content repo is dirty, commands might error (handled with `2>/dev/null`)
 - **Not truly bidirectional**: Doesn't detect which repo changed first
@@ -136,9 +157,11 @@ alias ik='bash scripts/multirepo/ik.sh'
 ## Option 3: Git Hooks Middleware
 
 ### How It Works
+
 Use `post-commit` hook in **main repo** to automatically detect changes and propagate to content submodule. Also detect parent repo changes from **within** content submodule with reverse hook.
 
 ### Implementation (Advanced)
+
 ```bash
 #!/usr/bin/env bash
 # .git/hooks/post-commit (main repo)
@@ -159,6 +182,7 @@ fi
 ```
 
 **For reverse sync** (content → main), add hook in content submodule:
+
 ```bash
 #!/usr/bin/env bash
 # src/content/.git/hooks/post-commit
@@ -174,12 +198,14 @@ fi
 ```
 
 ### Pros ✅
+
 - **Transparent**: Syncing happens automatically, no new mental model
 - **Zero friction**: Normal `git commit` works on both repos
 - **Automatic conflict detection**: Hooks can validate before committing
 - **Fire and forget**: Users work with `git` normally
 
 ### Cons ❌
+
 - **Magic/surprises**: Users may not realize commits happened in both repos
 - **Hook installation**: Requires custom setup for each clone
 - **Debugging confusion**: Errors in hooks are hard to diagnose
@@ -211,6 +237,7 @@ fi
 ```
 
 This gives you:
+
 - **Speed of Option 2** (wrapper commands)
 - **Safety of Option 1** (validation warnings)
 - **Simplicity**: No complex middleware
@@ -219,14 +246,14 @@ This gives you:
 
 ## Implementation Decision Matrix
 
-| Factor | CLI | Wrapper | Hooks |
-|--------|-----|---------|-------|
-| **Friction** | High (prompts) | Low | None (auto) |
-| **Error safety** | High | Medium | Low |
-| **Debugging** | Easy | Easy | Hard |
-| **Learning curve** | Medium | Low | High |
-| **Git muscle memory** | Breaks it | Preserves it | Preserves it |
-| **Complexity** | ~200 LOC | ~50 LOC | ~80 LOC + hook config |
+| Factor                | CLI            | Wrapper      | Hooks                 |
+| --------------------- | -------------- | ------------ | --------------------- |
+| **Friction**          | High (prompts) | Low          | None (auto)           |
+| **Error safety**      | High           | Medium       | Low                   |
+| **Debugging**         | Easy           | Easy         | Hard                  |
+| **Learning curve**    | Medium         | Low          | High                  |
+| **Git muscle memory** | Breaks it      | Preserves it | Preserves it          |
+| **Complexity**        | ~200 LOC       | ~50 LOC      | ~80 LOC + hook config |
 
 ---
 
@@ -240,4 +267,3 @@ This gives you:
 
 **Total time**: ~30 minutes
 **Maintenance**: ~5 minutes/month
-

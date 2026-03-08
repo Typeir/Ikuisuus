@@ -17,6 +17,7 @@ import type {
   MonsterIndexEntry,
   MonsterMetadata,
 } from '../../schemas/monsterMetadata';
+import { asBoolean, asNumber, asString, asStringArray } from './rowParsers';
 
 const log = logger.child({ module: 'PGMonsterRepo' });
 
@@ -42,8 +43,9 @@ const buildSavingThrows = (
   const throws: Record<string, number> = {};
   let hasAny = false;
   for (const [col, key] of map) {
-    if (row[col] != null) {
-      throws[key] = Number(row[col]);
+    const n = asNumber(row[col]);
+    if (n !== undefined) {
+      throws[key] = n;
       hasAny = true;
     }
   }
@@ -58,89 +60,69 @@ const buildSavingThrows = (
  */
 const rowToMonster = (row: Record<string, unknown>): MonsterMetadata => ({
   slug: String(row.slug),
-  subSlug: row.sub_slug != null ? String(row.sub_slug) : undefined,
+  subSlug: asString(row.sub_slug),
   title: String(row.title),
   file: String(row.file),
   link: String(row.link),
-  size: row.size != null ? String(row.size) : undefined,
-  creatureType: row.creature_type != null ? String(row.creature_type) : undefined,
-  alignment: row.alignment != null ? String(row.alignment) : undefined,
-  cr: row.cr != null ? String(row.cr) : undefined,
-  proficiencyBonus: row.proficiency_bonus != null ? Number(row.proficiency_bonus) : undefined,
+  size: asString(row.size),
+  creatureType: asString(row.creature_type),
+  alignment: asString(row.alignment),
+  cr: asString(row.cr),
+  proficiencyBonus: asNumber(row.proficiency_bonus),
 
-  ac:
-    row.ac_value != null
-      ? {
-          value: Number(row.ac_value),
-          notes: row.ac_notes != null ? String(row.ac_notes) : undefined,
-          raw: row.ac_raw != null ? String(row.ac_raw) : undefined,
-        }
-      : undefined,
+  ac: {
+    value: asNumber(row.ac_value) ?? 0,
+    notes: asString(row.ac_notes),
+    raw: asString(row.ac_raw),
+  },
 
-  hp:
-    row.hp_average != null
-      ? {
-          average: Number(row.hp_average),
-          formula: row.hp_formula != null ? String(row.hp_formula) : undefined,
-          raw: row.hp_raw != null ? String(row.hp_raw) : undefined,
-        }
-      : undefined,
+  hp: {
+    average: asNumber(row.hp_average) ?? 0,
+    formula: asString(row.hp_formula),
+    raw: asString(row.hp_raw),
+  },
 
-  speed:
-    row.speed_raw != null
-      ? {
-          raw: String(row.speed_raw),
-          modes: {
-            walk: row.speed_walk != null ? Number(row.speed_walk) : undefined,
-            fly: row.speed_fly != null ? Number(row.speed_fly) : undefined,
-            climb: row.speed_climb != null ? Number(row.speed_climb) : undefined,
-            swim: row.speed_swim != null ? Number(row.speed_swim) : undefined,
-            burrow: row.speed_burrow != null ? Number(row.speed_burrow) : undefined,
-            land: row.speed_land != null ? Number(row.speed_land) : undefined,
-            hover: row.speed_hover === true,
-          },
-        }
-      : undefined,
+  speed: {
+    raw: asString(row.speed_raw) ?? '',
+    modes: {
+      walk: asNumber(row.speed_walk),
+      fly: asNumber(row.speed_fly),
+      climb: asNumber(row.speed_climb),
+      swim: asNumber(row.speed_swim),
+      burrow: asNumber(row.speed_burrow),
+      land: asNumber(row.speed_land),
+      hover: asBoolean(row.speed_hover),
+    },
+  },
 
-  abilities:
-    row.str_score != null ||
-    row.dex_score != null ||
-    row.con_score != null ||
-    row.int_score != null ||
-    row.wis_score != null ||
-    row.cha_score != null
-      ? {
-          str: { score: row.str_score != null ? Number(row.str_score) : undefined, mod: row.str_mod != null ? Number(row.str_mod) : undefined },
-          dex: { score: row.dex_score != null ? Number(row.dex_score) : undefined, mod: row.dex_mod != null ? Number(row.dex_mod) : undefined },
-          con: { score: row.con_score != null ? Number(row.con_score) : undefined, mod: row.con_mod != null ? Number(row.con_mod) : undefined },
-          int: { score: row.int_score != null ? Number(row.int_score) : undefined, mod: row.int_mod != null ? Number(row.int_mod) : undefined },
-          wis: { score: row.wis_score != null ? Number(row.wis_score) : undefined, mod: row.wis_mod != null ? Number(row.wis_mod) : undefined },
-          cha: { score: row.cha_score != null ? Number(row.cha_score) : undefined, mod: row.cha_mod != null ? Number(row.cha_mod) : undefined },
-        }
-      : undefined,
+  abilities: {
+    str: { score: asNumber(row.str_score), mod: asNumber(row.str_mod) },
+    dex: { score: asNumber(row.dex_score), mod: asNumber(row.dex_mod) },
+    con: { score: asNumber(row.con_score), mod: asNumber(row.con_mod) },
+    int: { score: asNumber(row.int_score), mod: asNumber(row.int_mod) },
+    wis: { score: asNumber(row.wis_score), mod: asNumber(row.wis_mod) },
+    cha: { score: asNumber(row.cha_score), mod: asNumber(row.cha_mod) },
+  },
 
   savingThrows: buildSavingThrows(row),
 
-  senses:
-    row.senses_raw != null
-      ? {
-          raw: String(row.senses_raw),
-          passivePerception: row.passive_perception != null ? Number(row.passive_perception) : undefined,
-          darkvision: row.darkvision != null ? Number(row.darkvision) : undefined,
-          blindsight: row.blindsight != null ? Number(row.blindsight) : undefined,
-          tremorsense: row.tremorsense != null ? Number(row.tremorsense) : undefined,
-          truesight: row.truesight != null ? Number(row.truesight) : undefined,
-        }
-      : undefined,
+  senses: {
+    raw: asString(row.senses_raw) ?? '',
+    passivePerception: asNumber(row.passive_perception),
+    darkvision: asNumber(row.darkvision),
+    blindsight: asNumber(row.blindsight),
+    tremorsense: asNumber(row.tremorsense),
+    truesight: asNumber(row.truesight),
+  },
 
-  skills: (row.skills as string[] | null) ?? undefined,
-  damageResistances: (row.damage_resistances as string[] | null) ?? undefined,
-  damageImmunities: (row.damage_immunities as string[] | null) ?? undefined,
-  damageVulnerabilities: (row.damage_vulnerabilities as string[] | null) ?? undefined,
-  conditionImmunities: (row.condition_immunities as string[] | null) ?? undefined,
-  languages: (row.languages as string[] | null) ?? undefined,
-  tags: (row.tags as string[] | null) ?? undefined,
-  indexVersion: row.index_version != null ? Number(row.index_version) : undefined,
+  skills: asStringArray(row.skills),
+  damageResistances: asStringArray(row.damage_resistances),
+  damageImmunities: asStringArray(row.damage_immunities),
+  damageVulnerabilities: asStringArray(row.damage_vulnerabilities),
+  conditionImmunities: asStringArray(row.condition_immunities),
+  languages: asStringArray(row.languages),
+  tags: asStringArray(row.tags),
+  indexVersion: asNumber(row.index_version),
 });
 
 /* ──────────────────────────────  Repository  ─────────────────────────── */

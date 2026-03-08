@@ -42,11 +42,16 @@ function getMetadataBackend() {
       if (eq === -1) continue;
       const key = t.slice(0, eq).trim();
       if (key === 'METADATA_BACKEND') {
-        _metadataBackend = t.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
+        _metadataBackend = t
+          .slice(eq + 1)
+          .trim()
+          .replace(/^["']|["']$/g, '');
         return _metadataBackend;
       }
     }
-  } catch { /* absent — default to fs */ }
+  } catch {
+    /* absent — default to fs */
+  }
   _metadataBackend = 'fs';
   return _metadataBackend;
 }
@@ -1659,11 +1664,19 @@ export class MetadataGeneratorUtils {
    * @param {string} locale - Locale code
    * @returns {string} Absolute path for the metadata file
    */
-  static getMetadataOutputPath(sourceFilePath, filePattern, contentType, backend, locale) {
+  static getMetadataOutputPath(
+    sourceFilePath,
+    filePattern,
+    contentType,
+    backend,
+    locale,
+  ) {
     if (backend !== 'pg') {
       return sourceFilePath.replace(filePattern, '.metadata.json');
     }
-    const baseName = path.basename(sourceFilePath).replace(filePattern, '.metadata.json');
+    const baseName = path
+      .basename(sourceFilePath)
+      .replace(filePattern, '.metadata.json');
     const subdir = this.getMetaSubdir(contentType);
     return path.join(PROJECT_ROOT, '.meta', locale, subdir, baseName);
   }
@@ -1736,7 +1749,11 @@ export class MetadataGeneratorUtils {
             // Resolve output path — in pg mode, write to .meta/ instead of alongside source
             const backend = getMetadataBackend();
             const metadataFilePath = this.getMetadataOutputPath(
-              filePath, filePattern, contentType, backend, locale,
+              filePath,
+              filePattern,
+              contentType,
+              backend,
+              locale,
             );
 
             // Ensure target directory exists (critical for .meta/ which won't pre-exist)
@@ -1807,8 +1824,11 @@ export class MetadataGeneratorUtils {
       }
 
       log.message(statsMessage);
-      const outputLocation = getMetadataBackend() === 'pg' ? '.meta/' : 'alongside source';
-      log.message(`Wrote ${successful.length} metadata files (${outputLocation})`);
+      const outputLocation =
+        getMetadataBackend() === 'pg' ? '.meta/' : 'alongside source';
+      log.message(
+        `Wrote ${successful.length} metadata files (${outputLocation})`,
+      );
 
       if (failed.length > 0) {
         log.warning(`${failed.length} processing errors encountered`);

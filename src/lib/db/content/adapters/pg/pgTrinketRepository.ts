@@ -13,6 +13,7 @@ import { query } from '@/lib/db/postgres/pool';
 import { logger } from '@/lib/logging/logger';
 import type { TrinketRepository } from '../../repositories/trinketRepository';
 import type { TrinketMetadata } from '../../schemas/trinketMetadata';
+import { asNumber, asString, asStringArray } from './rowParsers';
 
 const log = logger.child({ module: 'PGTrinketRepo' });
 
@@ -30,16 +31,16 @@ const rowToTrinket = (row: Record<string, unknown>): TrinketMetadata => ({
   file: String(row.file),
   link: String(row.link),
   itemType: String(row.item_type),
-  damage: row.damage != null ? String(row.damage) : undefined,
-  damageType: row.damage_type != null ? String(row.damage_type) : undefined,
-  range: row.range != null ? String(row.range) : undefined,
-  weight: row.weight != null ? String(row.weight) : undefined,
-  savingThrowDC: row.saving_throw_dc != null ? Number(row.saving_throw_dc) : undefined,
-  savingThrowAbility: row.saving_throw_ability != null ? String(row.saving_throw_ability) : undefined,
-  properties: (row.properties as string[] | null) ?? undefined,
-  specialEffects: (row.special_effects as string[] | null) ?? undefined,
-  inflictsConditions: (row.inflicts_conditions as string[] | null) ?? undefined,
-  tags: (row.tags as string[] | null) ?? undefined,
+  damage: asString(row.damage),
+  damageType: asString(row.damage_type),
+  range: asString(row.range),
+  weight: asString(row.weight),
+  savingThrowDC: asNumber(row.saving_throw_dc),
+  savingThrowAbility: asString(row.saving_throw_ability),
+  properties: asStringArray(row.properties),
+  specialEffects: asStringArray(row.special_effects),
+  inflictsConditions: asStringArray(row.inflicts_conditions),
+  tags: asStringArray(row.tags),
 });
 
 /* ──────────────────────────────  Repository  ─────────────────────────── */

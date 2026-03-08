@@ -74,7 +74,11 @@ describe('pgHeirloomRepository', () => {
         itemType: 'weapon',
         weaponType: 'longsword',
         requiresAttunement: true,
-        weaponDamage: { damage: '1d8', damageType: 'slashing', versatileDamage: '1d10' },
+        weaponDamage: {
+          damage: '1d8',
+          damageType: 'slashing',
+          versatileDamage: '1d10',
+        },
         weight: '3 lb.',
         charges: { initial: '10', recharge: '1d6+4 at dawn', depletes: true },
         mastery: ['vex'],
@@ -114,10 +118,10 @@ describe('pgHeirloomRepository', () => {
     it('should query by locale and slug', async () => {
       query.mockResolvedValue({ rows: [] });
       await pgHeirloomRepository.getBySlug('en', 'flame-tongue');
-      expect(query).toHaveBeenCalledWith(
-        expect.stringContaining('slug = $2'),
-        ['en', 'flame-tongue'],
-      );
+      expect(query).toHaveBeenCalledWith(expect.stringContaining('slug = $2'), [
+        'en',
+        'flame-tongue',
+      ]);
     });
 
     it('should return null when not found', async () => {

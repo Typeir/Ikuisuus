@@ -18,10 +18,10 @@
  *   DATABASE_URL — Neon / Postgres connection string
  */
 
-import pg from 'pg';
-import { readFileSync, readdirSync, existsSync } from 'fs';
-import { fileURLToPath } from 'url';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import { dirname, join } from 'path';
+import pg from 'pg';
+import { fileURLToPath } from 'url';
 
 const { Pool } = pg;
 
@@ -39,10 +39,15 @@ try {
     const eq = t.indexOf('=');
     if (eq === -1) continue;
     const key = t.slice(0, eq).trim();
-    const val = t.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
+    const val = t
+      .slice(eq + 1)
+      .trim()
+      .replace(/^["']|["']$/g, '');
     if (!process.env[key]) process.env[key] = val;
   }
-} catch { /* absent — rely on system env */ }
+} catch {
+  /* absent — rely on system env */
+}
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -177,15 +182,25 @@ async function seedMonsters(client, locale) {
         modes.land ?? null,
         modes.hover ?? null,
         // Ability Scores
-        ab.str?.score ?? null, ab.str?.mod ?? null,
-        ab.dex?.score ?? null, ab.dex?.mod ?? null,
-        ab.con?.score ?? null, ab.con?.mod ?? null,
-        ab.int?.score ?? null, ab.int?.mod ?? null,
-        ab.wis?.score ?? null, ab.wis?.mod ?? null,
-        ab.cha?.score ?? null, ab.cha?.mod ?? null,
+        ab.str?.score ?? null,
+        ab.str?.mod ?? null,
+        ab.dex?.score ?? null,
+        ab.dex?.mod ?? null,
+        ab.con?.score ?? null,
+        ab.con?.mod ?? null,
+        ab.int?.score ?? null,
+        ab.int?.mod ?? null,
+        ab.wis?.score ?? null,
+        ab.wis?.mod ?? null,
+        ab.cha?.score ?? null,
+        ab.cha?.mod ?? null,
         // Saving Throws
-        st.str ?? null, st.dex ?? null, st.con ?? null,
-        st.int ?? null, st.wis ?? null, st.cha ?? null,
+        st.str ?? null,
+        st.dex ?? null,
+        st.con ?? null,
+        st.int ?? null,
+        st.wis ?? null,
+        st.cha ?? null,
         // Senses
         senses.raw ?? null,
         senses.passivePerception ?? null,

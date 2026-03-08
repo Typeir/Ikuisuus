@@ -99,10 +99,10 @@ describe('pgTrinketRepository', () => {
     it('should query by locale and slug', async () => {
       query.mockResolvedValue({ rows: [] });
       await pgTrinketRepository.getBySlug('en', 'lucky-coin');
-      expect(query).toHaveBeenCalledWith(
-        expect.stringContaining('slug = $2'),
-        ['en', 'lucky-coin'],
-      );
+      expect(query).toHaveBeenCalledWith(expect.stringContaining('slug = $2'), [
+        'en',
+        'lucky-coin',
+      ]);
     });
 
     it('should return null when not found', async () => {

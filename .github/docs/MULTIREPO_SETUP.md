@@ -30,6 +30,7 @@ scripts/multirepo/
 ## Getting Started (3 Steps)
 
 ### Step 1: Install Hooks
+
 ```bash
 npm run multirepo:setup
 ```
@@ -37,6 +38,7 @@ npm run multirepo:setup
 This installs the post-commit validation hook into `.git/hooks/post-commit`. You only need to run this once.
 
 ### Step 2: Test the Wrapper
+
 ```bash
 bash scripts/multirepo/ik.sh help
 bash scripts/multirepo/ik.sh status
@@ -108,21 +110,25 @@ ik commit -m "Add encounters"  # Now sync properly
 Make `ik` work globally without the bash path:
 
 **For Bash** (`~/.bashrc` or `~/.bash_profile`):
+
 ```bash
 alias ik='bash /Users/david/OneDrive/Desktop/Ikuisuus/scripts/multirepo/ik.sh'
 ```
 
 **For Zsh** (`~/.zshrc`):
+
 ```bash
 alias ik='bash /Users/david/OneDrive/Desktop/Ikuisuus/scripts/multirepo/ik.sh'
 ```
 
 Then reload:
+
 ```bash
 source ~/.bashrc  # (or ~/.zshrc)
 ```
 
 After that, you can just type:
+
 ```bash
 ik add .
 ik commit -m "..."
@@ -133,22 +139,23 @@ ik push
 
 ## Available Commands
 
-| Command | Purpose | Example |
-|---------|---------|---------|
-| `ik add [files...]` | Stage in both repos | `ik add .` |
-| `ik commit [opts]` | Commit in both repos | `ik commit -m "msg"` |
-| `ik push [opts]` | Push both repos | `ik push origin main` |
-| `ik status` / `ik st` | Show both repo status | `ik status` |
-| `ik diff [opts]` | Show diffs | `ik diff --cached` |
-| `ik log` | Last 10 commits | `ik log` |
-| `ik validate` | Manual sync check | `ik validate` |
-| `ik help` | Show help | `ik help` |
+| Command               | Purpose               | Example               |
+| --------------------- | --------------------- | --------------------- |
+| `ik add [files...]`   | Stage in both repos   | `ik add .`            |
+| `ik commit [opts]`    | Commit in both repos  | `ik commit -m "msg"`  |
+| `ik push [opts]`      | Push both repos       | `ik push origin main` |
+| `ik status` / `ik st` | Show both repo status | `ik status`           |
+| `ik diff [opts]`      | Show diffs            | `ik diff --cached`    |
+| `ik log`              | Last 10 commits       | `ik log`              |
+| `ik validate`         | Manual sync check     | `ik validate`         |
+| `ik help`             | Show help             | `ik help`             |
 
 ---
 
 ## Why This Approach?
 
 ### Pros
+
 - ✅ **Familiar**: Just like `git` but with `ik` prefix
 - ✅ **Fast**: No prompts, no friction
 - ✅ **Safe**: Validation hook catches mistakes
@@ -156,6 +163,7 @@ ik push
 - ✅ **Fallback**: You can still use `git` directly if needed
 
 ### Cons (Minimal)
+
 - ⚠️ **Easy to forget**: Must remember to use `ik` instead of `git`
   - **Mitigated by**: Post-commit hook warns you
 - ⚠️ **Repo-specific**: Only works for this project (unless you make shell alias)
@@ -166,6 +174,7 @@ ik push
 ## Comparison to Other Approaches
 
 See [.github/docs/multirepo-sync-analysis.md](./.github/docs/multirepo-sync-analysis.md) for:
+
 - **Option 1: Interactive CLI** — More control, but slow + you don't like CLIs
 - **Option 3: Pure Git Hooks** — Transparent but fragile and hard to debug
 
@@ -174,7 +183,9 @@ See [.github/docs/multirepo-sync-analysis.md](./.github/docs/multirepo-sync-anal
 ## Troubleshooting
 
 ### "bash: ik: command not found"
+
 You either forgot the full path or didn't set up the shell alias. Try:
+
 ```bash
 bash scripts/multirepo/ik.sh status
 ```
@@ -182,13 +193,17 @@ bash scripts/multirepo/ik.sh status
 Or set up the alias (see above).
 
 ### "Content submodule not found"
+
 The submodule isn't initialized. Restore it:
+
 ```bash
 bash scripts/migration/toggle-content-submodule.sh restore
 ```
 
 ### "run_command returned non-zero status"
+
 The content submodule might be in a weird state. Check:
+
 ```bash
 cd src/content
 git status
@@ -197,7 +212,9 @@ cd ../..
 ```
 
 ### Both repos have changes but one didn't commit
+
 You can check what happened:
+
 ```bash
 ik validate
 ik status
@@ -212,11 +229,13 @@ Both commands show what's out of sync so you can fix manually.
 If others work with this repo, make sure they:
 
 1. **First clone** includes the submodule:
+
    ```bash
    git clone --recurse-submodules https://github.com/Typeir/ikuisuus.git
    ```
 
 2. **Install hooks** (one-time):
+
    ```bash
    npm run multirepo:setup
    ```
@@ -233,6 +252,7 @@ If others work with this repo, make sure they:
 ## What's Next?
 
 1. **Test it now:**
+
    ```bash
    npm run multirepo:setup
    ik status
@@ -251,4 +271,3 @@ The validation hook will remind you if you ever slip up.
 - **How does it work?** See `scripts/multirepo/ik.sh` (well-commented)
 - **Why this approach?** See `.github/docs/multirepo-sync-analysis.md`
 - **Usage guide?** See `scripts/multirepo/README.md`
-

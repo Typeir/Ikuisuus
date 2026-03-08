@@ -110,7 +110,11 @@ describe('pgMonsterRepository', () => {
         speed: { raw: '10 ft., swim 40 ft.', modes: { walk: 10, swim: 40 } },
         abilities: { str: { score: 21, mod: 5 }, int: { score: 18, mod: 4 } },
         savingThrows: { int: 8, wis: 6, cha: 8 },
-        senses: { raw: 'darkvision 120 ft., passive Perception 20', passivePerception: 20, darkvision: 120 },
+        senses: {
+          raw: 'darkvision 120 ft., passive Perception 20',
+          passivePerception: 20,
+          darkvision: 120,
+        },
         skills: ['history +12', 'perception +10'],
         languages: ['deep speech', 'telepathy 120 ft.'],
         tags: ['aberration', 'legendary'],

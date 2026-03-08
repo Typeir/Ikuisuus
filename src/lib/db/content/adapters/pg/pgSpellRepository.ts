@@ -14,10 +14,11 @@ import { query } from '@/lib/db/postgres/pool';
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
 import type {
-  SpellIndexEntry,
-  SpellListRef,
-  SpellMetadata,
+    SpellIndexEntry,
+    SpellListRef,
+    SpellMetadata,
 } from '../../schemas/spellMetadata';
+import { asBoolean, asNumber, asString, asStringArray } from './rowParsers';
 
 const log = logger.child({ module: 'PGSpellRepo' });
 
@@ -34,20 +35,20 @@ const rowToSpell = (row: Record<string, unknown>): SpellMetadata => ({
   title: String(row.title),
   file: String(row.file),
   link: String(row.link),
-  level: row.level != null ? Number(row.level) : undefined,
-  school: row.school != null ? String(row.school) : undefined,
-  quality: row.quality != null ? String(row.quality) : undefined,
-  castingTimeRaw: row.casting_time_raw != null ? String(row.casting_time_raw) : undefined,
-  castingTime: (row.casting_time as string[] | null) ?? undefined,
-  range: row.range != null ? String(row.range) : undefined,
-  concentration: row.concentration != null ? Boolean(row.concentration) : undefined,
-  duration: row.duration != null ? String(row.duration) : undefined,
-  verbal: row.verbal != null ? Boolean(row.verbal) : undefined,
-  somatic: row.somatic != null ? Boolean(row.somatic) : undefined,
-  material: row.material != null ? Boolean(row.material) : undefined,
-  materialDescription: row.material_description != null ? String(row.material_description) : undefined,
-  hasRitual: row.has_ritual != null ? Boolean(row.has_ritual) : undefined,
-  tags: (row.tags as string[] | null) ?? undefined,
+  level: asNumber(row.level),
+  school: asString(row.school),
+  quality: asString(row.quality),
+  castingTimeRaw: asString(row.casting_time_raw),
+  castingTime: asStringArray(row.casting_time),
+  range: asString(row.range),
+  concentration: asBoolean(row.concentration),
+  duration: asString(row.duration),
+  verbal: asBoolean(row.verbal),
+  somatic: asBoolean(row.somatic),
+  material: asBoolean(row.material),
+  materialDescription: asString(row.material_description),
+  hasRitual: asBoolean(row.has_ritual),
+  tags: asStringArray(row.tags),
   spellLists:
     Array.isArray(row.spell_lists) && (row.spell_lists as unknown[]).length > 0
       ? (row.spell_lists as SpellListRef[])
