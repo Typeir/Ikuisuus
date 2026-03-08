@@ -62,34 +62,3 @@ export type { MonsterRepository } from './repositories/monsterRepository';
 export type { SpellRepository } from './repositories/spellRepository';
 export type { TrinketRepository } from './repositories/trinketRepository';
 
-/**
- * @deprecated Use typed repository imports from `./repositories` instead.
- * Kept for backward compatibility with existing tests.
- */
-export type { ContentAdapter, ContentCategory } from './contentAdapter';
-
-/**
- * @deprecated Use `getRepository<T>(key)` / `registerRepository<T>(key, repo)` instead.
- * Kept for backward compatibility with existing tests.
- */
-export {
-  getContentAdapter,
-  listHeirlooms,
-  listMetadata,
-  listMetadataBySlugs,
-  listMonsters,
-  listSpells,
-  listTrinkets,
-  setContentAdapter
-} from './contentService';
-
-/**
- * @deprecated Use entity-specific adapters from `./adapters/fs` or `./adapters/pg`.
- */
-export { fsContentAdapter } from './fsContentAdapter';
-
-/**
- * @deprecated Use entity-specific adapters from `./adapters/pg`.
- */
-export { postgresContentAdapter } from './postgresContentAdapter';
-
