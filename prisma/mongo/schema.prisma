@@ -1,0 +1,215 @@
+// Prisma schema for Library of Ikuisuus — MongoDB adapter
+//
+// datasource: MongoDB Atlas or local replica set (MONGODB_URL)
+// generator:  prisma-client-js (output to generated/mongo)
+//
+// NOTE: Prisma Migrate does NOT support MongoDB. Collections and indexes
+// must be managed via mongosh scripts or application-level seeding.
+//
+// SpellList is embedded in Spell as a composite type (no separate collection).
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../src/lib/db/prisma/generated/mongo"
+}
+
+// ─────────────────────────────  AUTH  ────────────────────────────────────────
+
+/// Auth user persisted in corrections_users collection.
+model CorrectionsUser {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  username     String   @unique
+  passwordHash String   @map("password_hash")
+  role         String   @default("editor")
+  createdAt    DateTime @default(now()) @map("created_at")
+  lastLoginAt  DateTime? @map("last_login_at")
+
+  @@map("corrections_users")
+}
+
+// ─────────────────────────────  MONSTERS  ────────────────────────────────────
+
+/// One document per stat block.
+model Monster {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  locale          String
+  slug            String
+  subSlug         String?  @map("sub_slug")
+  title           String
+  file            String
+  link            String
+
+  size            String?
+  creatureType    String?  @map("creature_type")
+  alignment       String?
+  cr              String?
+  proficiencyBonus Int?    @map("proficiency_bonus")
+
+  acValue         Int?     @map("ac_value")
+  acNotes         String?  @map("ac_notes")
+  acRaw           String?  @map("ac_raw")
+
+  hpAverage       Int?     @map("hp_average")
+  hpFormula       String?  @map("hp_formula")
+  hpRaw           String?  @map("hp_raw")
+
+  speedRaw        String?  @map("speed_raw")
+  speedWalk       Int?     @map("speed_walk")
+  speedFly        Int?     @map("speed_fly")
+  speedClimb      Int?     @map("speed_climb")
+  speedSwim       Int?     @map("speed_swim")
+  speedBurrow     Int?     @map("speed_burrow")
+  speedHover      Boolean? @map("speed_hover")
+
+  strScore        Int?     @map("str_score")
+  dexScore        Int?     @map("dex_score")
+  conScore        Int?     @map("con_score")
+  intScore        Int?     @map("int_score")
+  wisScore        Int?     @map("wis_score")
+  chaScore        Int?     @map("cha_score")
+
+  saveStr         Int?     @map("save_str")
+  saveDex         Int?     @map("save_dex")
+  saveCon         Int?     @map("save_con")
+  saveInt         Int?     @map("save_int")
+  saveWis         Int?     @map("save_wis")
+  saveCha         Int?     @map("save_cha")
+
+  sensesRaw          String?  @map("senses_raw")
+  passivePerception  Int?     @map("passive_perception")
+  darkvision         Int?
+  blindsight         Int?
+  tremorsense        Int?
+  truesight          Int?
+
+  skills               String[]
+  damageResistances    String[] @map("damage_resistances")
+  damageImmunities     String[] @map("damage_immunities")
+  damageVulnerabilities String[] @map("damage_vulnerabilities")
+  conditionImmunities  String[] @map("condition_immunities")
+  languages            String[]
+  tags                 String[]
+
+  indexVersion         Int?     @map("index_version")
+
+  @@index([locale, slug])
+  @@index([locale, cr])
+  @@index([locale, creatureType])
+  @@map("monsters")
+}
+
+// ─────────────────────────────  HEIRLOOMS  ───────────────────────────────────
+
+/// Magical items and equipment.
+model Heirloom {
+  id                     String   @id @default(auto()) @map("_id") @db.ObjectId
+  locale                 String
+  slug                   String
+  title                  String
+  file                   String
+  link                   String
+
+  rarity                 String?
+  itemType               String?  @map("item_type")
+  weaponType             String?  @map("weapon_type")
+  requiresAttunement     Boolean? @map("requires_attunement")
+  attunementRequirements String?  @map("attunement_requirements")
+
+  weaponDamage           String?  @map("weapon_damage")
+  weaponDamageType       String?  @map("weapon_damage_type")
+  versatileDamage        String?  @map("versatile_damage")
+
+  hitModifier      Int?     @map("hit_modifier")
+  range            String?
+  weight           String?
+  chargesInitial   String?  @map("charges_initial")
+  chargesRecharge  String?  @map("charges_recharge")
+  chargesDepletes  Boolean? @map("charges_depletes")
+
+  mastery          String[]
+  weaponProperties String[] @map("weapon_properties")
+  damageTypesDealt String[] @map("damage_types_dealt")
+  savingThrowTypes String[] @map("saving_throw_types")
+  tags             String[]
+  indexVersion     Int?     @map("index_version")
+
+  @@unique([locale, slug])
+  @@index([locale, rarity])
+  @@index([locale, itemType])
+  @@map("heirlooms")
+}
+
+// ─────────────────────────────  SPELLS  ──────────────────────────────────────
+
+/// Embedded composite type for spell-list membership.
+type SpellListEmbed {
+  name String
+  link String
+}
+
+/// Spell entry with embedded spell lists (no separate collection in MongoDB).
+model Spell {
+  id                  String           @id @default(auto()) @map("_id") @db.ObjectId
+  locale              String
+  slug                String
+  title               String
+  file                String
+  link                String
+
+  level               Int?
+  school              String?
+  quality             String?
+  castingTimeRaw      String?          @map("casting_time_raw")
+  range               String?
+  concentration       Boolean?
+  duration            String?
+  verbal              Boolean?
+  somatic             Boolean?
+  material            Boolean?
+  materialDescription String?          @map("material_description")
+  hasRitual           Boolean?         @map("has_ritual")
+
+  castingTime         String[]         @map("casting_time")
+  tags                String[]
+
+  spellLists          SpellListEmbed[]  @map("spell_lists")
+
+  @@unique([locale, slug])
+  @@index([locale, level])
+  @@index([locale, school])
+  @@map("spells")
+}
+
+// ─────────────────────────────  TRINKETS  ────────────────────────────────────
+
+/// Consumable / minor magic items.
+model Trinket {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  locale              String
+  slug                String
+  title               String
+  file                String
+  link                String
+
+  itemType            String   @map("item_type")
+  damage              String?
+  damageType          String?  @map("damage_type")
+  range               String?
+  weight              String?
+  savingThrowDc       Int?     @map("saving_throw_dc")
+  savingThrowAbility  String?  @map("saving_throw_ability")
+
+  properties         String[]
+  specialEffects     String[] @map("special_effects")
+  inflictsConditions String[] @map("inflicts_conditions")
+  tags               String[]
+
+  @@unique([locale, slug])
+  @@index([locale, itemType])
+  @@map("trinkets")
+}

@@ -80,21 +80,24 @@ describe('MonsterMetadata Schema', () => {
     expect(speed.modes.fly).toBe(60);
   });
 
-  it('should accept AbilityScores', () => {
-    const score: AbilityScore = { score: 20, mod: 5 };
+  it('should accept AbilityScores (mod derived, not stored)', () => {
+    const score: AbilityScore = { score: 20 };
     expect(score.score).toBe(20);
 
     const abilities: AbilityScores = {
-      str: { score: 20, mod: 5 },
-      dex: { score: 10, mod: 0 },
-      con: { score: 16, mod: 3 },
-      int: { score: 8, mod: -1 },
-      wis: { score: 12, mod: 1 },
-      cha: { score: 14, mod: 2 },
+      str: { score: 20 },
+      dex: { score: 10 },
+      con: { score: 16 },
+      int: { score: 8 },
+      wis: { score: 12 },
+      cha: { score: 14 },
     };
 
-    expect(abilities.str.mod).toBe(5);
-    expect(abilities.int.mod).toBe(-1);
+    expect(abilities.str.score).toBe(20);
+    expect(abilities.int.score).toBe(8);
+    // modifiers are derived at runtime: floor((score - 10) / 2)
+    expect(Math.floor(((abilities.str.score ?? 10) - 10) / 2)).toBe(5);
+    expect(Math.floor(((abilities.int.score ?? 10) - 10) / 2)).toBe(-1);
   });
 
   it('should accept MonsterSenses', () => {

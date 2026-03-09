@@ -1,56 +1,56 @@
 /**
- * @fileoverview PostgreSQL User Adapter (Prisma)
- * @description Implements the `UserAdapter` interface using Prisma ORM.
- * Queries the `corrections_users` table via the shared Prisma client.
+ * @fileoverview MongoDB User Adapter (Prisma)
+ * @description Implements the `UserAdapter` interface using Prisma ORM against
+ * the `corrections_users` MongoDB collection. Maps between MongoDB ObjectId-based
+ * documents and the string-ID `StoredUser` domain type.
  *
  * Required environment variables:
- *   - `DATABASE_URL` — PostgreSQL connection string
+ *   - `MONGODB_URL` — MongoDB connection string
  *
- * @module lib/db/auth/postgresUserAdapter
- * @version 3.0.0
+ * @module lib/db/auth/mongoUserAdapter
+ * @version 1.0.0
  * @author Typeir
  * @since 4.0.0
  */
 
-import { prisma } from '@/lib/db/prisma/client';
-import type { CorrectionsUser } from '@/lib/db/prisma/generated/sql';
+import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
+import type { CorrectionsUser } from '@/lib/db/prisma/generated/mongo';
 import { logger } from '@/lib/logging/logger';
 import { formatDate } from '../content/adapters/pg/rowParsers';
 import type { StoredUser } from './schemas';
 import type { UserAdapter } from './userAdapter';
 
-const log = logger.child({ module: 'PostgresUser' });
+const log = logger.child({ module: 'MongoUser' });
 
-/* ────────────────────────  Row mapper  ─────────────────────────────── */
+/* ────────────────────────  Doc mapper  ─────────────────────────────── */
 
 /**
- * Maps a Prisma `CorrectionsUser` row to a `StoredUser` domain object.
- * Delegates date formatting to `formatDate` helper.
+ * Maps a Prisma MongoDB `CorrectionsUser` document to a `StoredUser` domain object.
  *
- * @param {CorrectionsUser} row - Prisma row
+ * @param {CorrectionsUser} doc - Prisma document
  * @returns {StoredUser} Domain model
  */
-const rowToUser = (row: CorrectionsUser): StoredUser => ({
-  id: row.id,
-  username: row.username,
-  passwordHash: row.passwordHash,
-  role: row.role as StoredUser['role'],
-  createdAt: formatDate(row.createdAt) ?? new Date().toISOString(),
-  lastLoginAt: formatDate(row.lastLoginAt),
+const docToUser = (doc: CorrectionsUser): StoredUser => ({
+  id: doc.id,
+  username: doc.username,
+  passwordHash: doc.passwordHash,
+  role: doc.role as StoredUser['role'],
+  createdAt: formatDate(doc.createdAt) ?? new Date().toISOString(),
+  lastLoginAt: formatDate(doc.lastLoginAt),
 });
 
 /* ───────────────────────────  Adapter  ─────────────────────────────── */
 
 /**
- * Prisma-backed user adapter for the `corrections_users` table.
+ * Prisma-backed user adapter for the `corrections_users` MongoDB collection.
  */
-export const postgresUserAdapter: UserAdapter = {
+export const mongoUserAdapter: UserAdapter = {
   findByUsername: async (username: string): Promise<StoredUser | null> => {
     try {
-      const row = await prisma.correctionsUser.findFirst({
+      const doc = await mongoPrisma.correctionsUser.findFirst({
         where: { username: { equals: username, mode: 'insensitive' } },
       });
-      return row ? rowToUser(row) : null;
+      return doc ? docToUser(doc) : null;
     } catch (error) {
       log.error('findByUsername failed', {
         error: error instanceof Error ? error.message : String(error),
@@ -61,8 +61,8 @@ export const postgresUserAdapter: UserAdapter = {
 
   findById: async (id: string): Promise<StoredUser | null> => {
     try {
-      const row = await prisma.correctionsUser.findUnique({ where: { id } });
-      return row ? rowToUser(row) : null;
+      const doc = await mongoPrisma.correctionsUser.findUnique({ where: { id } });
+      return doc ? docToUser(doc) : null;
     } catch (error) {
       log.error('findById failed', {
         error: error instanceof Error ? error.message : String(error),
@@ -72,9 +72,8 @@ export const postgresUserAdapter: UserAdapter = {
   },
 
   create: async (user: StoredUser): Promise<void> => {
-    await prisma.correctionsUser.create({
+    await mongoPrisma.correctionsUser.create({
       data: {
-        id: user.id,
         username: user.username,
         passwordHash: user.passwordHash,
         role: user.role,
@@ -97,15 +96,15 @@ export const postgresUserAdapter: UserAdapter = {
 
     if (Object.keys(data).length === 0) return;
 
-    await prisma.correctionsUser.update({ where: { id }, data });
+    await mongoPrisma.correctionsUser.update({ where: { id }, data });
   },
 
   listAll: async (): Promise<StoredUser[]> => {
     try {
-      const rows = await prisma.correctionsUser.findMany({
+      const docs = await mongoPrisma.correctionsUser.findMany({
         orderBy: { createdAt: 'asc' },
       });
-      return rows.map(rowToUser);
+      return docs.map(docToUser);
     } catch (error) {
       log.error('listAll failed', {
         error: error instanceof Error ? error.message : String(error),
@@ -116,7 +115,7 @@ export const postgresUserAdapter: UserAdapter = {
 
   delete: async (id: string): Promise<void> => {
     try {
-      await prisma.correctionsUser.delete({ where: { id } });
+      await mongoPrisma.correctionsUser.delete({ where: { id } });
     } catch (error) {
       throw new Error(`User not found: ${id}`);
     }

@@ -1,63 +1,65 @@
 /**
- * @fileoverview PostgreSQL Trinket Repository
- * @description Implements `TrinketRepository` against the normalised `trinkets`
- * table. All array fields (tags, properties, etc.) use native Postgres TEXT[].
+ * @fileoverview PostgreSQL Trinket Repository (Prisma)
+ * @description Implements `TrinketRepository` via Prisma ORM against the
+ * normalised `trinkets` table. Replaces raw `pg` SQL with type-safe Prisma
+ * queries.
  *
  * @module lib/db/content/adapters/pg/pgTrinketRepository
- * @version 2.0.0
+ * @version 3.0.0
  * @author Typeir
- * @since 3.0.0
+ * @since 4.0.0
  */
 
-import { query } from '@/lib/db/postgres/pool';
+import { prisma } from '@/lib/db/prisma/client';
+import type { Trinket } from '@/lib/db/prisma/generated/sql';
 import { logger } from '@/lib/logging/logger';
 import type { TrinketRepository } from '../../repositories/trinketRepository';
 import type { TrinketMetadata } from '../../schemas/trinketMetadata';
-import { asNumber, asString, asStringArray } from './rowParsers';
+import { nonEmpty, orUndef } from './rowParsers';
 
 const log = logger.child({ module: 'PGTrinketRepo' });
 
 /* ─────────────────────────────  Row mapper  ──────────────────────────── */
 
 /**
- * Maps a flat `trinkets` row to a typed `TrinketMetadata` object.
+ * Maps a Prisma `Trinket` row to a typed `TrinketMetadata` domain object.
  *
- * @param {Record<string, unknown>} row - Raw row from the `trinkets` table
- * @returns {TrinketMetadata} Fully typed trinket metadata
+ * @param {Trinket} row - Prisma trinket row
+ * @returns {TrinketMetadata} Domain model
  */
-const rowToTrinket = (row: Record<string, unknown>): TrinketMetadata => ({
-  slug: String(row.slug),
-  title: String(row.title),
-  file: String(row.file),
-  link: String(row.link),
-  itemType: String(row.item_type),
-  damage: asString(row.damage),
-  damageType: asString(row.damage_type),
-  range: asString(row.range),
-  weight: asString(row.weight),
-  savingThrowDC: asNumber(row.saving_throw_dc),
-  savingThrowAbility: asString(row.saving_throw_ability),
-  properties: asStringArray(row.properties),
-  specialEffects: asStringArray(row.special_effects),
-  inflictsConditions: asStringArray(row.inflicts_conditions),
-  tags: asStringArray(row.tags),
+const rowToTrinket = (row: Trinket): TrinketMetadata => ({
+  slug: row.slug,
+  title: row.title,
+  file: row.file,
+  link: row.link,
+  itemType: row.itemType,
+  damage: orUndef(row.damage),
+  damageType: orUndef(row.damageType),
+  range: orUndef(row.range),
+  weight: orUndef(row.weight),
+  savingThrowDC: orUndef(row.savingThrowDc),
+  savingThrowAbility: orUndef(row.savingThrowAbility),
+  properties: nonEmpty(row.properties),
+  specialEffects: nonEmpty(row.specialEffects),
+  inflictsConditions: nonEmpty(row.inflictsConditions),
+  tags: nonEmpty(row.tags),
 });
 
 /* ──────────────────────────────  Repository  ─────────────────────────── */
 
 /**
- * PostgreSQL-backed trinket repository.
+ * Prisma-backed trinket repository.
  *
- * Queries the normalised `trinkets` table.
+ * Queries the `trinkets` table via the shared Prisma client.
  */
 export const pgTrinketRepository: TrinketRepository = {
   list: async (locale: string): Promise<TrinketMetadata[]> => {
     try {
-      const result = await query(
-        'SELECT * FROM trinkets WHERE locale = $1 ORDER BY slug ASC',
-        [locale],
-      );
-      return result.rows.map(rowToTrinket);
+      const rows = await prisma.trinket.findMany({
+        where: { locale },
+        orderBy: { slug: 'asc' },
+      });
+      return rows.map(rowToTrinket);
     } catch (error) {
       log.error('Error reading trinket metadata from PostgreSQL', {
         error: error instanceof Error ? error.message : String(error),
@@ -72,11 +74,10 @@ export const pgTrinketRepository: TrinketRepository = {
     slug: string,
   ): Promise<TrinketMetadata | null> => {
     try {
-      const result = await query(
-        'SELECT * FROM trinkets WHERE locale = $1 AND slug = $2 LIMIT 1',
-        [locale, slug],
-      );
-      return result.rows.length > 0 ? rowToTrinket(result.rows[0]) : null;
+      const row = await prisma.trinket.findUnique({
+        where: { locale_slug: { locale, slug } },
+      });
+      return row ? rowToTrinket(row) : null;
     } catch (error) {
       log.error('Error reading single trinket from PostgreSQL', {
         error: error instanceof Error ? error.message : String(error),

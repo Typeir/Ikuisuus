@@ -57,20 +57,18 @@ export interface MonsterSpeed {
     climb?: number;
     swim?: number;
     burrow?: number;
-    land?: number;
     hover?: boolean;
   };
 }
 
 /**
  * Single ability score entry.
+ * The modifier is not stored — it is always computed: `floor((score - 10) / 2)`.
  *
  * @property {number} [score] - Ability score (3–30)
- * @property {number} [mod] - Ability modifier (-5 to +10)
  */
 export interface AbilityScore {
   score?: number;
-  mod?: number;
 }
 
 /**

@@ -3,14 +3,14 @@
  * @description Client-safe monster data caching layer to reduce redundant API calls.
  * Provides locale-aware caching for monster index data and individual monster lookups.
  * Cache is stored in memory (module scope) and is cleared on page reload.
- * 
+ *
  * @module monsterCache
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires @/lib/logging/logger Structured logging for cache operations
- * 
+ *
  * @example
  * ```typescript
  * const monster = await getMonsterBySlug('ancient-red-dragon', 'en');
@@ -23,7 +23,7 @@ import { logger } from '@/lib/logging/logger';
 /**
  * Minimal monster index entry for combobox display.
  * Contains only fields needed for search/filter operations.
- * 
+ *
  * @interface MonsterIndexEntry
  * @property {string} slug - Unique identifier/URL slug for the monster
  * @property {string} title - Display name of the monster
@@ -42,7 +42,7 @@ export interface MonsterIndexEntry {
 /**
  * Full monster data returned from individual monster API.
  * Includes all combat-relevant fields for creature creation.
- * 
+ *
  * @interface MonsterData
  * @property {string} slug - Unique identifier
  * @property {string} title - Display name
@@ -51,7 +51,7 @@ export interface MonsterIndexEntry {
  * @property {string} creatureType - Monster type
  * @property {Object} [hp] - Hit points with average and formula
  * @property {Object} [ac] - Armor class with value and notes
- * @property {Object} [abilities] - Ability scores
+ * @property {Object} [abilities] - Ability scores (modifiers derived via floor((score - 10) / 2))
  * @property {number} [proficiencyBonus] - Proficiency bonus
  * @property {Object} [speed] - Speed information
  * @property {string} [link] - Wiki link path
@@ -73,12 +73,12 @@ export interface MonsterData {
     notes?: string;
   };
   abilities?: {
-    str?: { score: number; mod: number };
-    dex?: { score: number; mod: number };
-    con?: { score: number; mod: number };
-    int?: { score: number; mod: number };
-    wis?: { score: number; mod: number };
-    cha?: { score: number; mod: number };
+    str?: { score: number };
+    dex?: { score: number };
+    con?: { score: number };
+    int?: { score: number };
+    wis?: { score: number };
+    cha?: { score: number };
   };
   proficiencyBonus?: number;
   speed?: {
@@ -114,7 +114,7 @@ const monsterFetchPromises = new Map<string, Promise<MonsterData | null>>();
 
 /**
  * Builds a cache key for individual monster lookups.
- * 
+ *
  * @function buildMonsterCacheKey
  * @param {string} locale - Locale code
  * @param {string} slug - Monster slug
@@ -128,17 +128,19 @@ function buildMonsterCacheKey(locale: string, slug: string): string {
  * Fetches and caches the monster index for a given locale.
  * Returns cached data if available, otherwise fetches from API.
  * Prevents duplicate concurrent requests through promise tracking.
- * 
+ *
  * @async
  * @function getMonsterIndex
  * @param {string} locale - Locale code for API request
  * @returns {Promise<MonsterIndexEntry[]>} Array of monster index entries
- * 
+ *
  * @example
  * const monsters = await getMonsterIndex('en');
  * const filtered = monsters.filter(m => m.cr === '5');
  */
-export async function getMonsterIndex(locale: string): Promise<MonsterIndexEntry[]> {
+export async function getMonsterIndex(
+  locale: string,
+): Promise<MonsterIndexEntry[]> {
   const cached = indexCache.get(locale);
   if (cached) {
     return cached;
@@ -163,7 +165,7 @@ export async function getMonsterIndex(locale: string): Promise<MonsterIndexEntry
 
 /**
  * Internal fetch implementation for monster index.
- * 
+ *
  * @async
  * @function fetchMonsterIndex
  * @param {string} locale - Locale code
@@ -174,13 +176,19 @@ async function fetchMonsterIndex(locale: string): Promise<MonsterIndexEntry[]> {
   try {
     const response = await fetch(`/api/monsters/index?locale=${locale}`);
     if (!response.ok) {
-      logger.error('Failed to fetch monster index from API', { status: response.status, locale });
+      logger.error('Failed to fetch monster index from API', {
+        status: response.status,
+        locale,
+      });
       return [];
     }
     const data = await response.json();
     return Array.isArray(data) ? data : [];
   } catch (error) {
-    logger.error('Error fetching monster index', { error: error instanceof Error ? error.message : String(error), locale });
+    logger.error('Error fetching monster index', {
+      error: error instanceof Error ? error.message : String(error),
+      locale,
+    });
     return [];
   }
 }
@@ -189,13 +197,13 @@ async function fetchMonsterIndex(locale: string): Promise<MonsterIndexEntry[]> {
  * Fetches and caches a single monster by slug for a given locale.
  * Returns cached data if available, otherwise fetches from API.
  * Prevents duplicate concurrent requests through promise tracking.
- * 
+ *
  * @async
  * @function getMonsterBySlug
  * @param {string} slug - Monster slug identifier
  * @param {string} locale - Locale code for API request
  * @returns {Promise<MonsterData | null>} Monster data or null if not found
- * 
+ *
  * @example
  * const dragon = await getMonsterBySlug('ancient-red-dragon', 'en');
  * if (dragon) {
@@ -204,10 +212,10 @@ async function fetchMonsterIndex(locale: string): Promise<MonsterIndexEntry[]> {
  */
 export async function getMonsterBySlug(
   slug: string,
-  locale: string
+  locale: string,
 ): Promise<MonsterData | null> {
   const cacheKey = buildMonsterCacheKey(locale, slug);
-  
+
   const cached = monsterCache.get(cacheKey);
   if (cached) {
     return cached;
@@ -234,7 +242,7 @@ export async function getMonsterBySlug(
 
 /**
  * Internal fetch implementation for single monster.
- * 
+ *
  * @async
  * @function fetchMonsterBySlug
  * @param {string} slug - Monster slug
@@ -244,7 +252,7 @@ export async function getMonsterBySlug(
  */
 async function fetchMonsterBySlug(
   slug: string,
-  locale: string
+  locale: string,
 ): Promise<MonsterData | null> {
   try {
     const response = await fetch(`/api/monsters/${slug}?locale=${locale}`);
@@ -252,12 +260,20 @@ async function fetchMonsterBySlug(
       if (response.status === 404) {
         return null;
       }
-      logger.error('Failed to fetch monster', { status: response.status, slug, locale });
+      logger.error('Failed to fetch monster', {
+        status: response.status,
+        slug,
+        locale,
+      });
       return null;
     }
     return await response.json();
   } catch (error) {
-    logger.error('Error fetching monster', { error: error instanceof Error ? error.message : String(error), slug, locale });
+    logger.error('Error fetching monster', {
+      error: error instanceof Error ? error.message : String(error),
+      slug,
+      locale,
+    });
     return null;
   }
 }
@@ -265,10 +281,10 @@ async function fetchMonsterBySlug(
 /**
  * Clears all cached monster data.
  * Useful for testing or when locale changes globally.
- * 
+ *
  * @function clearMonsterCache
  * @returns {void}
- * 
+ *
  * @example
  * clearMonsterCache();
  */
@@ -281,19 +297,19 @@ export function clearMonsterCache(): void {
 
 /**
  * Clears cached data for a specific locale only.
- * 
+ *
  * @function clearMonsterCacheForLocale
  * @param {string} locale - Locale to clear
  * @returns {void}
  */
 export function clearMonsterCacheForLocale(locale: string): void {
   indexCache.delete(locale);
-  
+
   const keysToDelete: string[] = [];
   monsterCache.forEach((_, key) => {
     if (key.startsWith(`${locale}:`)) {
       keysToDelete.push(key);
     }
   });
-  keysToDelete.forEach(key => monsterCache.delete(key));
+  keysToDelete.forEach((key) => monsterCache.delete(key));
 }

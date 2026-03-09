@@ -1,91 +1,47 @@
 /**
- * @fileoverview Row parsing utilities for PostgreSQL repositories.
- * @description Provides type-safe helpers to convert raw `pg` driver values
- * (which arrive as `unknown`) into typed primitives. Centralising these
- * eliminates repetitive ternary chains across every row-mapper function.
- *
- * Postgres driver quirks handled:
- *  - Booleans may arrive as `true`/`false`, `1`/`0`, or strings `'t'`/`'f'`/`'true'`/`'false'`.
- *  - Array columns (TEXT[]) arrive as JS arrays when using the `pg` driver with
- *    the default type parser; `asStringArray` also handles the raw `{a,b}` text
- *    format as a fallback.
+ * @fileoverview Shared Prisma Row Parsing Utilities
+ * @description Reusable helper functions for mapping Prisma rows to domain
+ * objects. Prisma returns `null` for absent nullable columns and empty arrays
+ * for unpopulated list columns — these helpers normalise those values to the
+ * `undefined` semantics used by our domain schemas.
  *
  * @module lib/db/content/adapters/pg/rowParsers
- * @version 1.0.0
+ * @version 4.0.0
+ * @author Typeir
+ * @since 3.0.0
  */
 
 /**
- * Coerces a raw DB value to a `string`, or `undefined` if the value is null/undefined.
+ * Converts a Prisma `null` to `undefined` for domain objects.
+ * Prisma returns `null` for absent nullable columns; our domain types
+ * use `undefined` to express optionality.
  *
- * @param {unknown} v - Raw value from a DB row
- * @returns {string | undefined}
+ * @param {T | null} val - Prisma field value
+ * @returns {T | undefined} The value or undefined
  */
-export const asString = (v: unknown): string | undefined => {
-  if (v == null) return undefined;
-  return String(v);
-};
+export const orUndef = <T>(val: T | null): T | undefined => val ?? undefined;
 
 /**
- * Coerces a raw DB value to a finite `number`, or `undefined` if the value is
- * null/undefined or cannot be parsed as a finite number.
+ * Returns the array when it has entries, otherwise `undefined`.
+ * Prisma always returns an array (never null) for `String[]` / `Int[]`
+ * columns — this converts empty arrays to `undefined` for optional
+ * domain fields.
  *
- * @param {unknown} v - Raw value from a DB row
- * @returns {number | undefined}
+ * @param {T[]} arr - Prisma array column value
+ * @returns {T[] | undefined} Non-empty array or undefined
  */
-export const asNumber = (v: unknown): number | undefined => {
-  if (v == null) return undefined;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : undefined;
-};
+export const nonEmpty = <T>(arr: T[]): T[] | undefined =>
+  arr.length > 0 ? arr : undefined;
 
 /**
- * Coerces a raw DB value to a `boolean`.
- * Handles native JS booleans, numeric `1`/`0`, and the Postgres text
- * representations `'t'`, `'f'`, `'true'`, `'false'`, `'1'`, `'0'`.
- * Returns `false` when the value is null/undefined.
+ * Formats a Prisma `Date | null` to an ISO-8601 string, or `undefined`
+ * if absent. Handles both `Date` objects and unexpected string
+ * representations from edge-case driver behaviour.
  *
- * @param {unknown} v - Raw value from a DB row
- * @returns {boolean}
+ * @param {Date | null} date - Prisma date field
+ * @returns {string | undefined} ISO-8601 string or undefined
  */
-export const asBoolean = (v: unknown): boolean => {
-  if (v == null || v === false || v === 0) return false;
-  if (v === true || v === 1) return true;
-  const s = String(v).toLowerCase();
-  return s === 't' || s === 'true' || s === '1';
-};
-
-/**
- * Coerces a raw DB value to a `string[]`, or `undefined` if the value is
- * null/undefined. Handles:
- *  - Native JS arrays (normal `pg` driver behaviour for `TEXT[]` columns)
- *  - Postgres text-array format `{a,b,"c d"}` (fallback)
- *  - JSON string fallback `["a","b"]`
- *
- * @param {unknown} v - Raw value from a DB row
- * @returns {string[] | undefined}
- */
-export const asStringArray = (v: unknown): string[] | undefined => {
-  if (v == null) return undefined;
-  if (Array.isArray(v)) return v.map(String);
-
-  if (typeof v === 'string') {
-    const trimmed = v.trim();
-
-    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-      const inner = trimmed.slice(1, -1);
-      if (!inner) return [];
-      return inner.split(',').map((s) => s.replace(/^"(.*)"$/, '$1').trim());
-    }
-
-    try {
-      const parsed: unknown = JSON.parse(trimmed);
-      if (Array.isArray(parsed)) return parsed.map(String);
-    } catch {
-      // not JSON — fall through
-    }
-
-    return trimmed ? [trimmed] : [];
-  }
-
-  return undefined;
+export const formatDate = (date: Date | null): string | undefined => {
+  if (date == null) return undefined;
+  return date instanceof Date ? date.toISOString() : String(date);
 };

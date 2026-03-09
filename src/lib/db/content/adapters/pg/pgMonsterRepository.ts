@@ -1,51 +1,120 @@
 /**
- * @fileoverview PostgreSQL Monster Repository
- * @description Implements `MonsterRepository` against the normalised `monsters`
- * table. Every stat-block is one row; multi-block source files are distinguished
- * by `sub_slug` (the canonical lookup key) alongside `slug` (the source file).
+ * @fileoverview PostgreSQL Monster Repository (Prisma)
+ * @description Implements `MonsterRepository` via Prisma ORM against the
+ * normalised `monsters` table. Replaces raw `pg` SQL with type-safe Prisma
+ * queries. Every stat-block is one row; multi-block source files are
+ * distinguished by `subSlug` (the canonical lookup key).
+ *
+ * Ability modifiers are NOT stored in the DB — consumers compute them:
+ *   `mod = Math.floor((score - 10) / 2)`
  *
  * @module lib/db/content/adapters/pg/pgMonsterRepository
- * @version 2.0.0
+ * @version 3.0.0
  * @author Typeir
- * @since 3.0.0
+ * @since 4.0.0
  */
 
-import { query } from '@/lib/db/postgres/pool';
+import { prisma } from '@/lib/db/prisma/client';
+import type { Monster } from '@/lib/db/prisma/generated/sql';
 import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {
+  AbilityScores,
+  MonsterAC,
+  MonsterHP,
   MonsterIndexEntry,
   MonsterMetadata,
+  MonsterSenses,
+  MonsterSpeed,
 } from '../../schemas/monsterMetadata';
-import { asBoolean, asNumber, asString, asStringArray } from './rowParsers';
+import { nonEmpty, orUndef } from './rowParsers';
 
 const log = logger.child({ module: 'PGMonsterRepo' });
 
-/* ─────────────────────────────  Row mapper  ──────────────────────────── */
+/* ─────────────────────  Sub-object builders  ─────────────────────────── */
 
 /**
- * Builds a `Record<string, number>` of saving throws from flat DB columns.
+ * Builds an `MonsterAC` value object from flat row columns.
  *
- * @param {Record<string, unknown>} row - Raw DB row
- * @returns {Record<string, number> | undefined} Saving throws map, or undefined if none set
+ * @param {Monster} row - Prisma monster row
+ * @returns {MonsterAC} Armor class value object
+ */
+const buildAC = (row: Monster): MonsterAC => ({
+  value: row.acValue ?? 0,
+  notes: orUndef(row.acNotes),
+  raw: orUndef(row.acRaw),
+});
+
+/**
+ * Builds a `MonsterHP` value object from flat row columns.
+ *
+ * @param {Monster} row - Prisma monster row
+ * @returns {MonsterHP} Hit points value object
+ */
+const buildHP = (row: Monster): MonsterHP => ({
+  average: row.hpAverage ?? 0,
+  formula: orUndef(row.hpFormula),
+  raw: orUndef(row.hpRaw),
+});
+
+/**
+ * Builds a `MonsterSpeed` value object from flat row columns.
+ *
+ * @param {Monster} row - Prisma monster row
+ * @returns {MonsterSpeed} Speed value object with parsed modes
+ */
+const buildSpeed = (row: Monster): MonsterSpeed => ({
+  raw: row.speedRaw ?? '',
+  modes: {
+    walk: orUndef(row.speedWalk),
+    fly: orUndef(row.speedFly),
+    climb: orUndef(row.speedClimb),
+    swim: orUndef(row.speedSwim),
+    burrow: orUndef(row.speedBurrow),
+    hover: orUndef(row.speedHover),
+  },
+});
+
+/**
+ * Builds `AbilityScores` from the six flat score columns.
+ * Modifiers are NOT stored — consumers derive them:
+ *   `mod = Math.floor((score - 10) / 2)`
+ *
+ * @param {Monster} row - Prisma monster row
+ * @returns {AbilityScores} Six ability scores
+ */
+const buildAbilities = (row: Monster): AbilityScores => ({
+  str: { score: orUndef(row.strScore) },
+  dex: { score: orUndef(row.dexScore) },
+  con: { score: orUndef(row.conScore) },
+  int: { score: orUndef(row.intScore) },
+  wis: { score: orUndef(row.wisScore) },
+  cha: { score: orUndef(row.chaScore) },
+});
+
+/**
+ * Builds a saving throws map from the six flat save columns.
+ * Only entries with non-null values are included.
+ *
+ * @param {Monster} row - Prisma monster row
+ * @returns {Record<string, number> | undefined} Saving throws or undefined
  */
 const buildSavingThrows = (
-  row: Record<string, unknown>,
+  row: Monster,
 ): Record<string, number> | undefined => {
-  const map = [
-    ['save_str', 'str'],
-    ['save_dex', 'dex'],
-    ['save_con', 'con'],
-    ['save_int', 'int'],
-    ['save_wis', 'wis'],
-    ['save_cha', 'cha'],
-  ] as const;
+  const entries: [string, number | null][] = [
+    ['str', row.saveStr],
+    ['dex', row.saveDex],
+    ['con', row.saveCon],
+    ['int', row.saveInt],
+    ['wis', row.saveWis],
+    ['cha', row.saveCha],
+  ];
   const throws: Record<string, number> = {};
   let hasAny = false;
-  for (const [col, key] of map) {
-    const n = asNumber(row[col]);
-    if (n !== undefined) {
-      throws[key] = n;
+  for (const [key, val] of entries) {
+    if (val != null) {
+      throws[key] = val;
       hasAny = true;
     }
   }
@@ -53,93 +122,71 @@ const buildSavingThrows = (
 };
 
 /**
- * Maps a flat `monsters` row to a typed `MonsterMetadata` object.
+ * Builds a `MonsterSenses` value object from flat row columns.
  *
- * @param {Record<string, unknown>} row - Raw row from the `monsters` table
- * @returns {MonsterMetadata} Fully typed monster metadata
+ * @param {Monster} row - Prisma monster row
+ * @returns {MonsterSenses} Senses value object
  */
-const rowToMonster = (row: Record<string, unknown>): MonsterMetadata => ({
-  slug: String(row.slug),
-  subSlug: asString(row.sub_slug),
-  title: String(row.title),
-  file: String(row.file),
-  link: String(row.link),
-  size: asString(row.size),
-  creatureType: asString(row.creature_type),
-  alignment: asString(row.alignment),
-  cr: asString(row.cr),
-  proficiencyBonus: asNumber(row.proficiency_bonus),
+const buildSenses = (row: Monster): MonsterSenses => ({
+  raw: row.sensesRaw ?? '',
+  passivePerception: orUndef(row.passivePerception),
+  darkvision: orUndef(row.darkvision),
+  blindsight: orUndef(row.blindsight),
+  tremorsense: orUndef(row.tremorsense),
+  truesight: orUndef(row.truesight),
+});
 
-  ac: {
-    value: asNumber(row.ac_value) ?? 0,
-    notes: asString(row.ac_notes),
-    raw: asString(row.ac_raw),
-  },
+/* ─────────────────────────────  Row mapper  ──────────────────────────── */
 
-  hp: {
-    average: asNumber(row.hp_average) ?? 0,
-    formula: asString(row.hp_formula),
-    raw: asString(row.hp_raw),
-  },
-
-  speed: {
-    raw: asString(row.speed_raw) ?? '',
-    modes: {
-      walk: asNumber(row.speed_walk),
-      fly: asNumber(row.speed_fly),
-      climb: asNumber(row.speed_climb),
-      swim: asNumber(row.speed_swim),
-      burrow: asNumber(row.speed_burrow),
-      land: asNumber(row.speed_land),
-      hover: asBoolean(row.speed_hover),
-    },
-  },
-
-  abilities: {
-    str: { score: asNumber(row.str_score), mod: asNumber(row.str_mod) },
-    dex: { score: asNumber(row.dex_score), mod: asNumber(row.dex_mod) },
-    con: { score: asNumber(row.con_score), mod: asNumber(row.con_mod) },
-    int: { score: asNumber(row.int_score), mod: asNumber(row.int_mod) },
-    wis: { score: asNumber(row.wis_score), mod: asNumber(row.wis_mod) },
-    cha: { score: asNumber(row.cha_score), mod: asNumber(row.cha_mod) },
-  },
-
+/**
+ * Maps a Prisma `Monster` row to a typed `MonsterMetadata` domain object.
+ * Delegates nested sub-objects to dedicated builder functions.
+ *
+ * @param {Monster} row - Prisma monster row (camelCase from schema)
+ * @returns {MonsterMetadata} Domain model
+ */
+const rowToMonster = (row: Monster): MonsterMetadata => ({
+  slug: row.slug,
+  subSlug: orUndef(row.subSlug),
+  title: row.title,
+  file: row.file,
+  link: row.link,
+  size: orUndef(row.size),
+  creatureType: orUndef(row.creatureType),
+  alignment: orUndef(row.alignment),
+  cr: orUndef(row.cr),
+  proficiencyBonus: orUndef(row.proficiencyBonus),
+  ac: buildAC(row),
+  hp: buildHP(row),
+  speed: buildSpeed(row),
+  abilities: buildAbilities(row),
   savingThrows: buildSavingThrows(row),
-
-  senses: {
-    raw: asString(row.senses_raw) ?? '',
-    passivePerception: asNumber(row.passive_perception),
-    darkvision: asNumber(row.darkvision),
-    blindsight: asNumber(row.blindsight),
-    tremorsense: asNumber(row.tremorsense),
-    truesight: asNumber(row.truesight),
-  },
-
-  skills: asStringArray(row.skills),
-  damageResistances: asStringArray(row.damage_resistances),
-  damageImmunities: asStringArray(row.damage_immunities),
-  damageVulnerabilities: asStringArray(row.damage_vulnerabilities),
-  conditionImmunities: asStringArray(row.condition_immunities),
-  languages: asStringArray(row.languages),
-  tags: asStringArray(row.tags),
-  indexVersion: asNumber(row.index_version),
+  senses: buildSenses(row),
+  skills: nonEmpty(row.skills),
+  damageResistances: nonEmpty(row.damageResistances),
+  damageImmunities: nonEmpty(row.damageImmunities),
+  damageVulnerabilities: nonEmpty(row.damageVulnerabilities),
+  conditionImmunities: nonEmpty(row.conditionImmunities),
+  languages: nonEmpty(row.languages),
+  tags: nonEmpty(row.tags),
+  indexVersion: orUndef(row.indexVersion),
 });
 
 /* ──────────────────────────────  Repository  ─────────────────────────── */
 
 /**
- * PostgreSQL-backed monster repository.
+ * Prisma-backed monster repository.
  *
- * Queries the normalised `monsters` table — one row per stat block.
+ * Queries the `monsters` table via the shared Prisma client.
  */
 export const pgMonsterRepository: MonsterRepository = {
   list: async (locale: string): Promise<MonsterMetadata[]> => {
     try {
-      const result = await query(
-        'SELECT * FROM monsters WHERE locale = $1 ORDER BY slug ASC',
-        [locale],
-      );
-      return result.rows.map(rowToMonster);
+      const rows = await prisma.monster.findMany({
+        where: { locale },
+        orderBy: { slug: 'asc' },
+      });
+      return rows.map(rowToMonster);
     } catch (error) {
       log.error('Error reading monster metadata from PostgreSQL', {
         error: error instanceof Error ? error.message : String(error),
@@ -151,19 +198,25 @@ export const pgMonsterRepository: MonsterRepository = {
 
   listIndex: async (locale: string): Promise<MonsterIndexEntry[]> => {
     try {
-      const result = await query(
-        `SELECT
-           COALESCE(sub_slug, slug) AS slug,
-           title,
-           cr,
-           size,
-           creature_type AS "creatureType"
-         FROM monsters
-         WHERE locale = $1
-         ORDER BY slug ASC`,
-        [locale],
-      );
-      return result.rows as MonsterIndexEntry[];
+      const rows = await prisma.monster.findMany({
+        where: { locale },
+        orderBy: { slug: 'asc' },
+        select: {
+          slug: true,
+          subSlug: true,
+          title: true,
+          cr: true,
+          size: true,
+          creatureType: true,
+        },
+      });
+      return rows.map((r) => ({
+        slug: r.subSlug ?? r.slug,
+        title: r.title,
+        cr: r.cr ?? undefined,
+        size: r.size ?? undefined,
+        creatureType: r.creatureType ?? undefined,
+      }));
     } catch (error) {
       log.error('Error reading monster index from PostgreSQL', {
         error: error instanceof Error ? error.message : String(error),
@@ -178,14 +231,13 @@ export const pgMonsterRepository: MonsterRepository = {
     slug: string,
   ): Promise<MonsterMetadata | null> => {
     try {
-      const result = await query(
-        `SELECT * FROM monsters
-         WHERE locale = $1
-           AND (sub_slug = $2 OR slug = $2)
-         LIMIT 1`,
-        [locale, slug],
-      );
-      return result.rows.length > 0 ? rowToMonster(result.rows[0]) : null;
+      const row = await prisma.monster.findFirst({
+        where: {
+          locale,
+          OR: [{ subSlug: slug }, { slug }],
+        },
+      });
+      return row ? rowToMonster(row) : null;
     } catch (error) {
       log.error('Error reading single monster from PostgreSQL', {
         error: error instanceof Error ? error.message : String(error),

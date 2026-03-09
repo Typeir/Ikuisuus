@@ -55,3 +55,6 @@ scripts/hooks/.patterns
 *.bak
 /src/**/*.metadata.json
 /.meta/
+
+# Prisma generated client
+src/lib/db/prisma/generated/

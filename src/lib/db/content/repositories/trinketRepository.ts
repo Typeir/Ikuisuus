@@ -11,6 +11,7 @@
  */
 
 import { fsTrinketRepository } from '../adapters/fs/fsTrinketRepository';
+import { mongoTrinketRepository } from '../adapters/mongo/mongoTrinketRepository';
 import { pgTrinketRepository } from '../adapters/pg/pgTrinketRepository';
 import type { TrinketMetadata } from '../schemas/trinketMetadata';
 
@@ -39,19 +40,21 @@ export interface TrinketRepository {
   getBySlug(locale: string, slug: string): Promise<TrinketMetadata | null>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
+/** @property {string} metadataBackend - Active backend: `'fs'` (default), `'pg'`, or `'mongo'`. */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**
  * Resolves the trinket repository for the active backend.
  *
  * @returns {TrinketRepository} Trinket metadata repository
- * @throws {Error} If `METADATA_BACKEND` is not `'fs'` or `'pg'`
+ * @throws {Error} If `METADATA_BACKEND` is not `'fs'`, `'pg'`, or `'mongo'`
  */
 const createTrinketRepository = (): TrinketRepository => {
   switch (metadataBackend) {
     case 'pg':
       return pgTrinketRepository;
+    case 'mongo':
+      return mongoTrinketRepository;
     case 'fs':
       return fsTrinketRepository;
     default:

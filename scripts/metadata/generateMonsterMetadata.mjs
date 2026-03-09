@@ -28,11 +28,11 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { createLogger } from '../core/logger.mjs';
 import {
-    GameData,
-    MetadataGeneratorUtils,
-    ParsingUtils,
-    TaggingUtils,
-    TextUtils,
+  GameData,
+  MetadataGeneratorUtils,
+  ParsingUtils,
+  TaggingUtils,
+  TextUtils,
 } from '../core/shared-utils.mjs';
 
 const log = createLogger({ module: 'MonsterMetadataGenerator' });
@@ -212,7 +212,7 @@ function findArmorHpSpeed(lines) {
  *
  * Movement modes parsed:
  * - walk (default for first unspecified speed)
- * - climb, fly, swim, burrow, land
+ * - climb, fly, swim, burrow
  * - hover (special flag for flight)
  *
  * Supported formats:
@@ -246,27 +246,18 @@ function parseSpeed(raw) {
 
   const parts = raw.split(/\s*,\s*/);
   const modes = {};
-  let walkSet = false;
 
   for (const p of parts) {
     const isHover = /\bhover\b/i.test(p);
     if (isHover) modes.hover = true;
 
     // Match "mode distance ft" or "distance ft"
-    const m = p.match(
-      /(?:(walk|climb|fly|swim|burrow|land)\s+)?(\d+)\s*ft\.?/i,
-    );
+    const m = p.match(/(?:(walk|climb|fly|swim|burrow)\s+)?(\d+)\s*ft\.?/i);
     if (m) {
       let mode = (m[1] || '').toLowerCase();
       const ft = Number(m[2]);
 
-      if (!mode) {
-        // First bare distance is walk, subsequent are land
-        mode = walkSet ? 'land' : 'walk';
-      }
-
       modes[mode] = ft;
-      if (mode === 'walk') walkSet = true;
     } else {
       // Handle "hover 35 ft." variant
       const mh = p.match(/hover\s+(\d+)\s*ft\.?/i);
@@ -296,33 +287,33 @@ function parseSpeed(raw) {
  * | 16 (+3) | 14 (+2) | 18 (+4) | 10 (+0) | 12 (+1) | 8 (-1)  |
  * ```
  *
+ * Only the score is extracted — the modifier is omitted because it is always
+ * derivable: `mod = floor((score - 10) / 2)`. Consumers compute it on read.
+ *
  * Supported formats per cell:
- * - "16 (+3)" → score: 16, mod: +3
- * - "16" → score: 16, mod: undefined
- * - "(+3)" → score: undefined, mod: +3
- * - "" → score: undefined, mod: undefined
+ * - "16 (+3)" → score: 16  (written modifier discarded)
+ * - "16"      → score: 16
+ * - ""        → score: undefined
  *
  * @returns {Object} Ability scores object with:
- * @returns {Object} returns.str - Strength ability
+ * @returns {Object} returns.str - Strength
  * @returns {number} [returns.str.score] - Ability score (3-30)
- * @returns {number} [returns.str.mod] - Ability modifier (-5 to +10)
- * @returns {Object} returns.dex - Dexterity ability
- * @returns {Object} returns.con - Constitution ability
- * @returns {Object} returns.int - Intelligence ability
- * @returns {Object} returns.wis - Wisdom ability
- * @returns {Object} returns.cha - Charisma ability
+ * @returns {Object} returns.dex - Dexterity
+ * @returns {Object} returns.con - Constitution
+ * @returns {Object} returns.int - Intelligence
+ * @returns {Object} returns.wis - Wisdom
+ * @returns {Object} returns.cha - Charisma
  *
  * @example
- * // Input table with header: | STR | DEX | CON | INT | WIS | CHA |
- * // Input values: | 16 (+3) | 14 (+2) | 18 (+4) | 10 (+0) | 12 (+1) | 8 (-1) |
+ * // Input: | 16 (+3) | 14 (+2) | 18 (+4) | 10 (+0) | 12 (+1) | 8 (-1) |
  * const abilities = parseAbilities(lines);
  * // Returns: {
- * //   str: { score: 16, mod: 3 },
- * //   dex: { score: 14, mod: 2 },
- * //   con: { score: 18, mod: 4 },
- * //   int: { score: 10, mod: 0 },
- * //   wis: { score: 12, mod: 1 },
- * //   cha: { score: 8, mod: -1 }
+ * //   str: { score: 16 },
+ * //   dex: { score: 14 },
+ * //   con: { score: 18 },
+ * //   int: { score: 10 },
+ * //   wis: { score: 12 },
+ * //   cha: { score: 8 }
  * // }
  */
 function parseAbilities(lines) {
@@ -352,21 +343,19 @@ function parseAbilities(lines) {
   const cells = parseTableRowCells(valuesRow);
 
   /**
-   * Converts ability cell text to score/modifier pair
+   * Converts ability cell text to just the score.
+   * Modifiers are redundant — always derivable via `floor((score - 10) / 2)`.
+   *
    * @param {string} cell - Cell content like "16 (+3)" or "16"
-   * @returns {{ score?: number, mod?: number }} Parsed ability data
+   * @returns {{ score?: number }} Parsed ability score
    */
   const toPair = (cell) => {
-    // Match "16 (+3)" format
-    const m = cell.match(/(\d+)\s*\(\s*([+-]?\d+)\s*\)/);
-    if (m) return { score: Number(m[1]), mod: Number(m[2]) };
-
-    // Match standalone number "16"
-    const m2 = cell.match(/(\d+)/);
-    if (m2) return { score: Number(m2[1]), mod: undefined };
+    // Match "16 (+3)" or "16" — capture only the score, discard the written mod
+    const m = cell.match(/(\d+)/);
+    if (m) return { score: Number(m[1]) };
 
     // No valid data found
-    return { score: undefined, mod: undefined };
+    return { score: undefined };
   };
 
   if (cells.length < 6) return undefined;
@@ -856,3 +845,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export { main, parseMonsterFile };
+
