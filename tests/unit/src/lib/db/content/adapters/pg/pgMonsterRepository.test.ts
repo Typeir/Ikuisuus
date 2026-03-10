@@ -96,7 +96,9 @@ const prismaRow = {
 describe('pgMonsterRepository', () => {
   describe('list', () => {
     it('should map Prisma rows to MonsterMetadata objects', async () => {
-      vi.mocked(prisma.monster.findMany).mockResolvedValue([prismaRow as never]);
+      vi.mocked(prisma.monster.findMany).mockResolvedValue([
+        prismaRow as never,
+      ]);
 
       const result = await pgMonsterRepository.list('en');
 
@@ -219,9 +221,7 @@ describe('pgMonsterRepository', () => {
     });
 
     it('should return null on error', async () => {
-      vi.mocked(prisma.monster.findFirst).mockRejectedValue(
-        new Error('fail'),
-      );
+      vi.mocked(prisma.monster.findFirst).mockRejectedValue(new Error('fail'));
       const result = await pgMonsterRepository.getBySlug('en', 'aboleth');
       expect(result).toBeNull();
     });

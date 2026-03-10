@@ -13,18 +13,18 @@
  * @since 4.0.0
  */
 
-import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import type { Monster } from '@/lib/db/prisma/generated/mongo';
+import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {
-  AbilityScores,
-  MonsterAC,
-  MonsterHP,
-  MonsterIndexEntry,
-  MonsterMetadata,
-  MonsterSenses,
-  MonsterSpeed,
+    AbilityScores,
+    MonsterAC,
+    MonsterHP,
+    MonsterIndexEntry,
+    MonsterMetadata,
+    MonsterSenses,
+    MonsterSpeed,
 } from '../../schemas/monsterMetadata';
 import { nonEmpty, orUndef } from '../pg/rowParsers';
 

@@ -13,8 +13,8 @@
  * @since 4.0.0
  */
 
-import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import type { CorrectionsUser } from '@/lib/db/prisma/generated/mongo';
+import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import { logger } from '@/lib/logging/logger';
 import { formatDate } from '../content/adapters/pg/rowParsers';
 import type { StoredUser } from './schemas';
@@ -61,7 +61,9 @@ export const mongoUserAdapter: UserAdapter = {
 
   findById: async (id: string): Promise<StoredUser | null> => {
     try {
-      const doc = await mongoPrisma.correctionsUser.findUnique({ where: { id } });
+      const doc = await mongoPrisma.correctionsUser.findUnique({
+        where: { id },
+      });
       return doc ? docToUser(doc) : null;
     } catch (error) {
       log.error('findById failed', {

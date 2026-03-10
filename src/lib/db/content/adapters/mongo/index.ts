@@ -8,7 +8,8 @@
  * @since 4.0.0
  */
 
-export { mongoMonsterRepository } from './mongoMonsterRepository';
 export { mongoHeirloomRepository } from './mongoHeirloomRepository';
+export { mongoMonsterRepository } from './mongoMonsterRepository';
 export { mongoSpellRepository } from './mongoSpellRepository';
 export { mongoTrinketRepository } from './mongoTrinketRepository';
+

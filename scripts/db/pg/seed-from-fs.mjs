@@ -337,9 +337,8 @@ async function seedLocale(prisma, locale) {
 }
 
 async function main() {
-  const { PrismaClient } = await import(
-    '../../../src/lib/db/prisma/generated/sql/index.js'
-  );
+  const { PrismaClient } =
+    await import('../../../src/lib/db/prisma/generated/sql/index.js');
   const prisma = new PrismaClient();
 
   try {

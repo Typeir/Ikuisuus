@@ -47,6 +47,8 @@
     "postinstall": "prisma generate --schema prisma/sql/schema.prisma && prisma generate --schema prisma/mongo/schema.prisma",
     "multirepo:setup": "bash scripts/multirepo/setup-hooks.sh",
     "multirepo:help": "bash scripts/multirepo/ik.sh help",
+    "multirepo:extract": "bash scripts/migration/extract-content-repo.sh",
+    "multirepo:toggle": "bash scripts/migration/toggle-content-submodule.sh",
     "wip:bundle-metadata": "node scripts/wip/bundleMonsterMetadata.js && node scripts/wip/bundleHeirloomMetadata.js",
     "test": "npm run test:enforce && node tests/scripts/runTests.mjs",
     "test:watch": "vitest",

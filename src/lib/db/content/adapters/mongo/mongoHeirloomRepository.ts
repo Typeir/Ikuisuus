@@ -10,14 +10,14 @@
  * @since 4.0.0
  */
 
-import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import type { Heirloom } from '@/lib/db/prisma/generated/mongo';
+import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import { logger } from '@/lib/logging/logger';
 import type { HeirloomRepository } from '../../repositories/heirloomRepository';
 import type {
-  HeirloomCharges,
-  HeirloomMetadata,
-  HeirloomWeaponDamage,
+    HeirloomCharges,
+    HeirloomMetadata,
+    HeirloomWeaponDamage,
 } from '../../schemas/heirloomMetadata';
 import { nonEmpty, orUndef } from '../pg/rowParsers';
 

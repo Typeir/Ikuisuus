@@ -10,14 +10,14 @@
  * @since 4.0.0
  */
 
-import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import type { Spell } from '@/lib/db/prisma/generated/mongo';
+import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
 import type {
-  SpellIndexEntry,
-  SpellListRef,
-  SpellMetadata,
+    SpellIndexEntry,
+    SpellListRef,
+    SpellMetadata,
 } from '../../schemas/spellMetadata';
 import { nonEmpty, orUndef } from '../pg/rowParsers';
 
@@ -32,7 +32,9 @@ const log = logger.child({ module: 'MongoSpellRepo' });
  * @param {Spell['spellLists']} lists - Embedded spell list documents
  * @returns {SpellListRef[] | undefined} Spell list refs or undefined
  */
-const buildSpellLists = (lists: Spell['spellLists']): SpellListRef[] | undefined => {
+const buildSpellLists = (
+  lists: Spell['spellLists'],
+): SpellListRef[] | undefined => {
   if (lists.length === 0) return undefined;
   return lists.map((sl): SpellListRef => ({ name: sl.name, link: sl.link }));
 };

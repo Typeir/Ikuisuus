@@ -19,13 +19,13 @@ import type { Monster } from '@/lib/db/prisma/generated/sql';
 import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {
-  AbilityScores,
-  MonsterAC,
-  MonsterHP,
-  MonsterIndexEntry,
-  MonsterMetadata,
-  MonsterSenses,
-  MonsterSpeed,
+    AbilityScores,
+    MonsterAC,
+    MonsterHP,
+    MonsterIndexEntry,
+    MonsterMetadata,
+    MonsterSenses,
+    MonsterSpeed,
 } from '../../schemas/monsterMetadata';
 import { nonEmpty, orUndef } from './rowParsers';
 

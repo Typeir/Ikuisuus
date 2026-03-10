@@ -31,8 +31,7 @@ type GlobalWithMongo = typeof globalThis & {
  *
  * @returns {PrismaClient} Ready-to-query Prisma client for MongoDB
  */
-const createMongoClient = (): PrismaClient =>
-  new PrismaClient();
+const createMongoClient = (): PrismaClient => new PrismaClient();
 
 /**
  * Singleton MongoDB `PrismaClient` instance.

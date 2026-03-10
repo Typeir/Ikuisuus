@@ -10,8 +10,8 @@
  * @since 4.0.0
  */
 
-import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import type { Trinket } from '@/lib/db/prisma/generated/mongo';
+import { mongoPrisma } from '@/lib/db/prisma/mongoClient';
 import { logger } from '@/lib/logging/logger';
 import type { TrinketRepository } from '../../repositories/trinketRepository';
 import type { TrinketMetadata } from '../../schemas/trinketMetadata';
