@@ -31,6 +31,18 @@ else
   exit 0
 fi
 
+# ---- Check if current repo has staged changes (about to commit) ---------------
+
+current_has_staged=0
+if ! git diff --cached --quiet 2>/dev/null; then
+  current_has_staged=1
+fi
+
+# Only check other repo if we're actually committing something
+if [ $current_has_staged -eq 0 ]; then
+  exit 0
+fi
+
 # ---- Check if the other repo has uncommitted changes -----------------------
 
 other_is_dirty=0

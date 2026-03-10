@@ -1,0 +1,2 @@
+# Multirepo sync check (advisory, never blocks)
+bash scripts/multirepo/validate-sync.sh

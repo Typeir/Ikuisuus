@@ -57,12 +57,13 @@
     "test:enforce": "node tests/scripts/enforceCoverage.mjs",
     "test:templates": "node tests/scripts/generateTestTemplates.mjs",
     "test:all": "npm run test:enforce && npm run test && npm run test:e2e",
-    "install-hooks": "node scripts/hooks/install.js",
+    "test:hooks": "bash scripts/hooks/test-hooks.sh",
     "generate-token": "node scripts/auth/generateToken.mjs",
     "seed-admin": "node scripts/auth/seedAdmin.mjs",
     "seed-admin-pg": "node scripts/auth/seedAdminPg.mjs",
     "test-pat": "node scripts/test-pat.js",
-    "lottery": "node scripts/utils/mdxLottery.mjs"
+    "lottery": "node scripts/utils/mdxLottery.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
@@ -117,6 +118,7 @@
     "eslint-config-next": "13.5.11",
     "globby": "^14.1.0",
     "happy-dom": "^12.10.3",
+    "husky": "^9.1.7",
     "is-arguments": "^1.1.1",
     "jsdom": "^27.2.0",
     "node-fetch": "^3.3.2",
