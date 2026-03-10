@@ -8,14 +8,14 @@ export const REGEX_EXTENSION = /\.(md|mdx)$/;
 export const REGEX_SHEET_SUFFIX = /\.sheet$/;
 
 /**
- * Folder names to ignore during directory traversal.
+ * Patterns for entries to ignore during directory traversal.
+ * Any entry whose name matches at least one pattern is excluded.
+ * Covers dot-prefixed folders/files and known tooling directories.
  */
-export const IGNORED_FOLDERS = [
-  '.obsidian',
-  '.git',
-  'node_modules',
-  '.vscode',
-] as const;
+export const IGNORED_FOLDERS: RegExp[] = [
+  /^\./, // any dot-prefixed name (.git, .obsidian, .draft, …)
+  /^node_modules$/,
+];
 
 /**
  * Supported markdown file extensions.

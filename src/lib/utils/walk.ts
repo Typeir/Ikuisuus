@@ -1,21 +1,21 @@
 /**
  * Directory Walker Utility
- * 
+ *
  * @fileoverview Recursive directory traversal for building navigation trees.
  * Converts filesystem structure to URL-friendly paths with proper deduplication.
- * 
+ *
  * @module walk
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires fs Node.js file system module
  * @requires path Node.js path module
  * @requires ../enums/constants File patterns and ignored folders
  * @requires ./deduplicateFiles File deduplication utility
  * @requires ./toKebabCase String formatting utility
  * @requires ./toTitleCase String formatting utility
- * 
+ *
  * @description
  * Builds navigation tree structure from content directories:
  * - Recursively traverses directory structure
@@ -23,13 +23,13 @@
  * - Handles .sheet.mdx suffix for monster stat blocks
  * - Deduplicates files with same base name (prefers longer names)
  * - Filters out ignored directories and hidden files
- * 
+ *
  * @example
  * ```typescript
  * const tree = walk('/path/to/content');
  * // Returns: [{ name: 'Monsters', path: 'monsters', children: [...] }]
  * ```
- * 
+ *
  * @todo For purely dynamic routes that need runtime directory listings without forcing
  * the layout to be dynamic, consider implementing a separate API endpoint (e.g., GET /api/directories)
  * to fetch directory trees on-demand from client-side code instead of during SSR.
@@ -38,11 +38,11 @@
 import fs from 'fs';
 import path from 'path';
 import {
-  FILE_EXT_MD,
-  FILE_EXT_MDX,
-  IGNORED_FOLDERS,
-  REGEX_EXTENSION,
-  RegexPatterns,
+    FILE_EXT_MD,
+    FILE_EXT_MDX,
+    IGNORED_FOLDERS,
+    REGEX_EXTENSION,
+    RegexPatterns,
 } from '../enums/constants';
 import { deduplicateFiles } from './deduplicateFiles';
 import { toKebabCase } from './toKebabCase';
@@ -61,30 +61,32 @@ import { toTitleCase } from './toTitleCase';
  */
 export const walk = (
   dir: string,
-  base = ''
+  base = '',
 ): { name: string; path: string; children?: any[] }[] => {
   // Check if path exists and is a directory
   if (!fs.existsSync(dir)) {
     return [];
   }
-  
+
   const stats = fs.statSync(dir);
   if (!stats.isDirectory()) {
     return [];
   }
 
-  const IGNORED_FOLDERS_SET = new Set<string>(IGNORED_FOLDERS);
-
   const entries = fs
     .readdirSync(dir, { withFileTypes: true })
-    .filter((e) => !IGNORED_FOLDERS_SET.has(e.name) && !e.name.includes(".hidden."))
+    .filter(
+      (e) =>
+        !IGNORED_FOLDERS.some((r) => r.test(e.name)) &&
+        !e.name.includes('.hidden.'),
+    )
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const files = entries
     .filter(
       (e) =>
         !e.isDirectory() &&
-        (e.name.endsWith(FILE_EXT_MD) || e.name.endsWith(FILE_EXT_MDX))
+        (e.name.endsWith(FILE_EXT_MD) || e.name.endsWith(FILE_EXT_MDX)),
     )
     .map((e) => e.name);
 
@@ -94,7 +96,7 @@ export const walk = (
     .map((entry) => {
       const fullPath = path.join(dir, entry.name);
       const fileName = entry.name.replace(REGEX_EXTENSION, '');
-      
+
       // CRITICAL: Handle .sheet suffix before kebab-case conversion
       // toKebabCase removes ALL dots, so we must:
       // 1. Check if filename has .sheet suffix
