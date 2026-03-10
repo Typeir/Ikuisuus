@@ -1,42 +1,57 @@
 #!/usr/bin/env bash
 
 # ============================================================================
-# Pre-Commit Warning Hook
+# Pre-Commit Warning Hook  (installed in BOTH repos)
 #
-# Warns user when they attempt to commit with `git commit` instead of `ik`.
-# This is a friendly reminder, not a blocker—they can commit anyway.
+# Detects which repo it's running in, then checks the OTHER repo for
+# uncommitted changes. Only warns when the other repo is dirty.
 #
-# Install: bash scripts/multirepo/setup-hooks.sh
+#   Committing on main repo  → warns if content repo has changes
+#   Committing on content repo → warns if main repo has changes
 #
 # ============================================================================
 
 set -euo pipefail
 
-# Get project root
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-MAIN_REPO="$( cd "$SCRIPT_DIR/../.." && pwd )"
-CONTENT_REPO="$MAIN_REPO/src/content"
+CURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 
-# Only warn if content submodule exists
-if [ ! -e "$CONTENT_REPO/.git" ]; then
-  exit 0
+# ---- Detect which repo we're in and find the other -------------------------
+
+if [ -e "$CURRENT_REPO/src/content/.git" ]; then
+  # Running in the MAIN repo — other is the content submodule
+  OTHER_REPO="$CURRENT_REPO/src/content"
+  OTHER_LABEL="content"
+else
+  # Running in the CONTENT repo — other is the main repo (2 levels up)
+  CANDIDATE="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0
+  if [ -e "$CANDIDATE/scripts/multirepo/ik.sh" ]; then
+    OTHER_REPO="$CANDIDATE"
+    OTHER_LABEL="main"
+  else
+    exit 0
+  fi
 fi
 
-# Check if there are staged changes
-if ! git diff --cached --quiet 2>/dev/null; then
-  cat << 'EOF'
+# ---- Check if the other repo has uncommitted changes -----------------------
+
+other_is_dirty=0
+if ! git -C "$OTHER_REPO" diff --quiet 2>/dev/null || \
+   ! git -C "$OTHER_REPO" diff --cached --quiet 2>/dev/null; then
+  other_is_dirty=1
+fi
+
+if [ $other_is_dirty -eq 1 ]; then
+  cat << EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 💡 MULTIREPO TIP
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-You're about to commit with `git commit`.
+You're committing here, but the $OTHER_LABEL repo also has uncommitted changes.
 
-For this multirepo setup, use `ik` to sync both repos:
+Use \`ik\` to commit both repos together:
 
   ik commit -m "your message"
-
-This will commit to BOTH the main wiki and content submodule.
 
 To disable this warning, edit: .git/hooks/pre-commit
 
@@ -46,3 +61,4 @@ EOF
 fi
 
 exit 0
+

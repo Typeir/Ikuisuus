@@ -37,18 +37,36 @@ fi
 # ---- Install Hooks ----
 log_info "Installing multirepo validation hooks..."
 
-# Pre-commit hook (warning)
+# Pre-commit hook (warning) — main repo
 cp "$PROJECT_ROOT/scripts/multirepo/pre-commit-warn.sh" "$HOOKS_DIR/pre-commit"
 chmod +x "$HOOKS_DIR/pre-commit"
-log_success "Installed pre-commit hook"
+log_success "Installed pre-commit hook (main repo)"
 
-# Post-commit hook
+# Post-commit hook — main repo
 cp "$PROJECT_ROOT/scripts/multirepo/validate-sync.sh" "$HOOKS_DIR/post-commit"
 chmod +x "$HOOKS_DIR/post-commit"
-log_success "Installed post-commit hook"
+log_success "Installed post-commit hook (main repo)"
 
-log_success "All hooks installed!"
-echo ""
+# Content repo hooks (if submodule exists)
+CONTENT_REPO="$PROJECT_ROOT/src/content"
+if [ -e "$CONTENT_REPO/.git" ]; then
+  CONTENT_HOOKS_DIR="$CONTENT_REPO/.git/hooks"
+  # .git for a submodule may be a file pointing to the real hooks dir
+  if [ -f "$CONTENT_REPO/.git" ]; then
+    GITDIR=$(sed 's/^gitdir: //' "$CONTENT_REPO/.git")
+    # Resolve relative path
+    CONTENT_HOOKS_DIR="$(cd "$CONTENT_REPO" && cd "$GITDIR" && pwd)/hooks"
+  fi
+  mkdir -p "$CONTENT_HOOKS_DIR"
+  cp "$PROJECT_ROOT/scripts/multirepo/pre-commit-warn.sh" "$CONTENT_HOOKS_DIR/pre-commit"
+  chmod +x "$CONTENT_HOOKS_DIR/pre-commit"
+  log_success "Installed pre-commit hook (content repo)"
+  cp "$PROJECT_ROOT/scripts/multirepo/validate-sync.sh" "$CONTENT_HOOKS_DIR/post-commit"
+  chmod +x "$CONTENT_HOOKS_DIR/post-commit"
+  log_success "Installed post-commit hook (content repo)"
+else
+  log_info "Content submodule not found — skipping content repo hooks"
+fi
 echo "Next steps:"
 echo "  1. Make sure ik.sh is executable:"
 echo "     chmod +x scripts/multirepo/ik.sh"

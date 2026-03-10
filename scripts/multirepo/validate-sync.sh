@@ -1,62 +1,62 @@
 #!/usr/bin/env bash
 
 # ============================================================================
-# Post-Commit Validation Hook
+# Post-Commit Validation Hook  (installed in BOTH repos)
 #
-# Warns user if main and content repos are out of sync after a commit.
-# This helps catch the case where user ran `git commit` instead of `ik commit`.
+# After a commit, checks if the OTHER repo is still dirty. If so, the user
+# committed here without committing there — warn them to sync.
 #
-# Install: bash scripts/multirepo/setup-hooks.sh
+#   Post-commit on main repo  → warns if content repo still has changes
+#   Post-commit on content repo → warns if main repo still has changes
 #
 # ============================================================================
 
 set -euo pipefail
 
-# Get project root from script location
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-MAIN_REPO="$( cd "$SCRIPT_DIR/../.." && pwd )"
-CONTENT_REPO="$MAIN_REPO/src/content"
+CURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 
-# Only validate if content submodule exists
-if [ ! -e "$CONTENT_REPO/.git" ]; then
-  exit 0
+# ---- Detect which repo we're in and find the other -------------------------
+
+if [ -e "$CURRENT_REPO/src/content/.git" ]; then
+  OTHER_REPO="$CURRENT_REPO/src/content"
+  OTHER_LABEL="content"
+else
+  CANDIDATE="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0
+  if [ -e "$CANDIDATE/scripts/multirepo/ik.sh" ]; then
+    OTHER_REPO="$CANDIDATE"
+    OTHER_LABEL="main"
+  else
+    exit 0
+  fi
 fi
 
-# Check if repos have actual changes
-main_has_changes=0
-if ! git -C "$MAIN_REPO" diff --quiet || ! git -C "$MAIN_REPO" diff --cached --quiet; then
-  main_has_changes=1
+# ---- Check if the other repo is still dirty --------------------------------
+
+other_is_dirty=0
+if ! git -C "$OTHER_REPO" diff --quiet 2>/dev/null || \
+   ! git -C "$OTHER_REPO" diff --cached --quiet 2>/dev/null; then
+  other_is_dirty=1
 fi
 
-content_has_changes=0
-if ! git -C "$CONTENT_REPO" diff --quiet 2>/dev/null || ! git -C "$CONTENT_REPO" diff --cached --quiet 2>/dev/null; then
-  content_has_changes=1
-fi
-
-# Only warn if BOTH have changes but are at different commits
-if [ $main_has_changes -eq 1 ] && [ $content_has_changes -eq 1 ]; then
-  MAIN_HEAD=$(git -C "$MAIN_REPO" rev-parse HEAD 2>/dev/null || echo "unknown")
-  CONTENT_HEAD=$(git -C "$CONTENT_REPO" rev-parse HEAD 2>/dev/null || echo "unknown")
-  
-  if [ "$MAIN_HEAD" != "$CONTENT_HEAD" ]; then
-    cat << 'EOF'
+if [ $other_is_dirty -eq 1 ]; then
+  cat << EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️  BOTH REPOS HAVE CHANGES AND ARE OUT OF SYNC
+⚠️  MULTIREPO OUT OF SYNC
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Both main repo and content submodule have changes but are at different commits.
+Commit recorded here, but the $OTHER_LABEL repo still has uncommitted changes.
 
-To sync them:
-  ik commit -m "your message"
+SOLUTION:
+  ik commit -m "sync: <your message>"
 
-Check status:
+Or check status:
   ik status
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-  fi
 fi
 
 exit 0
+
