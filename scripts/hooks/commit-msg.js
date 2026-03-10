@@ -17,7 +17,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const { createLogger } = require('../core/logger.cjs');
+const { execSync } = require('child_process');
+
+// Resolve git repository root to find scripts/core/logger.cjs
+const gitRoot = execSync('git rev-parse --show-toplevel', { encoding: 'utf-8' }).trim();
+const { createLogger } = require(path.join(gitRoot, 'scripts/core/logger.cjs'));
 const log = createLogger({ script: 'commit-msg' });
 
 /**

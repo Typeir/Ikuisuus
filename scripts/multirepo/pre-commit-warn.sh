@@ -17,19 +17,18 @@ CURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 
 # ---- Detect which repo we're in and find the other -------------------------
 
-if [ -e "$CURRENT_REPO/src/content/.git" ]; then
-  # Running in the MAIN repo — other is the content submodule
+if [ -d "$CURRENT_REPO/.git" ]; then
+  # .git is a DIRECTORY — we're in the MAIN repo
+  # Other is the content submodule (2 levels down)
   OTHER_REPO="$CURRENT_REPO/src/content"
   OTHER_LABEL="content"
+elif [ -f "$CURRENT_REPO/.git" ]; then
+  # .git is a FILE (gitdir pointer) — we're in the CONTENT repo (submodule)
+  # Other is the main repo (2 levels up)
+  OTHER_REPO="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0
+  OTHER_LABEL="main"
 else
-  # Running in the CONTENT repo — other is the main repo (2 levels up)
-  CANDIDATE="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0
-  if [ -e "$CANDIDATE/scripts/multirepo/ik.sh" ]; then
-    OTHER_REPO="$CANDIDATE"
-    OTHER_LABEL="main"
-  else
-    exit 0
-  fi
+  exit 0
 fi
 
 # ---- Check if the other repo has uncommitted changes -----------------------
