@@ -45,7 +45,7 @@ fi
 
 # ---- Check if the other repo has uncommitted changes -----------------------
 # Unset git env vars so git -C actually uses the other repo's context
-unset GIT_DIR GIT_WORK_TREE 2>/dev/null || true
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE 2>/dev/null || true
 
 other_is_dirty=0
 if ! git -C "$OTHER_REPO" diff --quiet 2>/dev/null || \
