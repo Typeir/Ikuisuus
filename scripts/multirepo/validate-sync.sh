@@ -35,14 +35,6 @@ fi
 # Unset git env vars so git -C actually uses the other repo's context
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE 2>/dev/null || true
 
-# DEBUG: trace detection
-echo "[DEBUG validate-sync] CURRENT_REPO=$CURRENT_REPO" >&2
-echo "[DEBUG validate-sync] OTHER_REPO=$OTHER_REPO OTHER_LABEL=$OTHER_LABEL" >&2
-diff_exit=0; git -C "$OTHER_REPO" diff --quiet 2>/dev/null || diff_exit=$?
-cached_exit=0; git -C "$OTHER_REPO" diff --cached --quiet 2>/dev/null || cached_exit=$?
-echo "[DEBUG] diff exit=$diff_exit  cached exit=$cached_exit" >&2
-echo "[DEBUG] GIT_INDEX_FILE=${GIT_INDEX_FILE:-unset}" >&2
-
 other_is_dirty=0
 if ! git -C "$OTHER_REPO" diff --quiet 2>/dev/null || \
    ! git -C "$OTHER_REPO" diff --cached --quiet 2>/dev/null; then
