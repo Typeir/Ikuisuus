@@ -13,10 +13,9 @@
  * @requires @/lib/utils/walk Module under test
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as WalkModule from '@/lib/utils/walk';
 import fs from 'fs';
-import path from 'path';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock fs module
 vi.mock('fs');
@@ -75,11 +74,16 @@ describe('walk', () => {
   describe('.sheet.mdx file handling', () => {
     it('should preserve .sheet in path for .sheet.mdx files', () => {
       const testDir = '/test/monsters';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
-        { name: 'abandoned-old-war-machine.sheet.mdx', isDirectory: () => false } as any,
+        {
+          name: 'abandoned-old-war-machine.sheet.mdx',
+          isDirectory: () => false,
+        } as any,
       ] as any);
 
       const result = WalkModule.walk(testDir);
@@ -91,11 +95,16 @@ describe('walk', () => {
 
     it('should handle .sheet.mdx files with spaces in names', () => {
       const testDir = '/test/monsters';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
-        { name: 'Ancient Red Dragon.sheet.mdx', isDirectory: () => false } as any,
+        {
+          name: 'Ancient Red Dragon.sheet.mdx',
+          isDirectory: () => false,
+        } as any,
       ] as any);
 
       const result = WalkModule.walk(testDir);
@@ -106,11 +115,16 @@ describe('walk', () => {
 
     it('should handle .sheet.mdx files with special characters', () => {
       const testDir = '/test/monsters';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
-        { name: 'Albedo, the Bleak Bloom.sheet.mdx', isDirectory: () => false } as any,
+        {
+          name: 'Albedo, the Bleak Bloom.sheet.mdx',
+          isDirectory: () => false,
+        } as any,
       ] as any);
 
       const result = WalkModule.walk(testDir);
@@ -122,9 +136,11 @@ describe('walk', () => {
 
     it('should not add .sheet to regular .mdx files', () => {
       const testDir = '/test/items';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
         { name: 'magic-sword.mdx', isDirectory: () => false } as any,
       ] as any);
@@ -138,9 +154,11 @@ describe('walk', () => {
 
     it('should handle mixed .sheet.mdx and .mdx files correctly', () => {
       const testDir = '/test/content';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
         { name: 'monster.sheet.mdx', isDirectory: () => false } as any,
         { name: 'item.mdx', isDirectory: () => false } as any,
@@ -150,9 +168,11 @@ describe('walk', () => {
       const result = WalkModule.walk(testDir);
 
       expect(result).toHaveLength(3);
-      expect(result.find(r => r.name === 'Monster')?.path).toBe('monster.sheet');
-      expect(result.find(r => r.name === 'Item')?.path).toBe('item');
-      expect(result.find(r => r.name === 'Spell')?.path).toBe('spell');
+      expect(result.find((r) => r.name === 'Monster')?.path).toBe(
+        'monster.sheet',
+      );
+      expect(result.find((r) => r.name === 'Item')?.path).toBe('item');
+      expect(result.find((r) => r.name === 'Spell')?.path).toBe('spell');
     });
   });
 
@@ -160,9 +180,11 @@ describe('walk', () => {
     it('should construct correct nested paths for .sheet.mdx files', () => {
       const testDir = '/test/monsters';
       const basePath = 'library/monsters';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
         { name: 'dragon.sheet.mdx', isDirectory: () => false } as any,
       ] as any);
@@ -176,17 +198,21 @@ describe('walk', () => {
 
     it('should handle deeply nested .sheet.mdx files', () => {
       const testDir = '/test/content';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      
+
       // First call - root directory
-      vi.mocked(fs.statSync).mockReturnValueOnce({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValueOnce({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValueOnce([
         { name: 'monsters', isDirectory: () => true } as any,
       ] as any);
-      
+
       // Second call - monsters subdirectory
-      vi.mocked(fs.statSync).mockReturnValueOnce({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValueOnce({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValueOnce([
         { name: 'boss.sheet.mdx', isDirectory: () => false } as any,
       ] as any);
@@ -202,9 +228,11 @@ describe('walk', () => {
   describe('edge cases and conventions', () => {
     it('should handle files with multiple dots correctly', () => {
       const testDir = '/test/content';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
         { name: 'v2.0.draft.mdx', isDirectory: () => false } as any,
       ] as any);
@@ -218,9 +246,11 @@ describe('walk', () => {
 
     it('should deduplicate .sheet.mdx and .mdx files with same base name', () => {
       const testDir = '/test/content';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
         { name: 'dragon.sheet.mdx', isDirectory: () => false } as any,
         { name: 'dragon.mdx', isDirectory: () => false } as any,
@@ -235,9 +265,11 @@ describe('walk', () => {
 
     it('should ignore .hidden. files', () => {
       const testDir = '/test/content';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
         { name: 'visible.mdx', isDirectory: () => false } as any,
         { name: 'file.hidden.mdx', isDirectory: () => false } as any,
@@ -251,9 +283,11 @@ describe('walk', () => {
 
     it('should ignore configured folders', () => {
       const testDir = '/test/content';
-      
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
       vi.mocked(fs.readdirSync).mockReturnValue([
         { name: 'content.mdx', isDirectory: () => false } as any,
         { name: '.obsidian', isDirectory: () => true } as any,
@@ -264,6 +298,28 @@ describe('walk', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].name).toBe('Content');
+    });
+
+    it('should ignore any folder whose name starts with a dot', () => {
+      const testDir = '/test/content';
+
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.statSync).mockReturnValue({
+        isDirectory: () => true,
+      } as any);
+      vi.mocked(fs.readdirSync).mockReturnValue([
+        { name: 'visible-folder', isDirectory: () => true } as any,
+        { name: '.draft', isDirectory: () => true } as any,
+        { name: '.wip', isDirectory: () => true } as any,
+        { name: 'article.mdx', isDirectory: () => false } as any,
+      ] as any);
+
+      const result = WalkModule.walk(testDir);
+
+      const names = result.map((r) => r.name);
+      expect(names).not.toContain('Draft');
+      expect(names).not.toContain('Wip');
+      expect(names).toContain('Article');
     });
   });
 });

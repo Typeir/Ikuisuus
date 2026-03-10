@@ -12,17 +12,17 @@
  * @requires @/lib/enums/constants Constants under test
  */
 
-import { describe, it, expect } from 'vitest';
 import {
-  FILE_EXT_MD,
-  FILE_EXT_MDX,
-  REGEX_EXTENSION,
-  REGEX_SHEET_SUFFIX,
-  IGNORED_FOLDERS,
-  FileExtension,
-  RegexPatterns,
-  FolderName,
+    FILE_EXT_MD,
+    FILE_EXT_MDX,
+    FileExtension,
+    FolderName,
+    IGNORED_FOLDERS,
+    REGEX_EXTENSION,
+    REGEX_SHEET_SUFFIX,
+    RegexPatterns,
 } from '@/lib/enums/constants';
+import { describe, expect, it } from 'vitest';
 
 describe('File Extension Constants', () => {
   describe('FILE_EXT_MD', () => {
@@ -73,25 +73,25 @@ describe('REGEX_SHEET_SUFFIX', () => {
 });
 
 describe('IGNORED_FOLDERS', () => {
-  it('should include .obsidian', () => {
-    expect(IGNORED_FOLDERS).toContain('.obsidian');
-  });
-
-  it('should include .git', () => {
-    expect(IGNORED_FOLDERS).toContain('.git');
-  });
-
-  it('should include node_modules', () => {
-    expect(IGNORED_FOLDERS).toContain('node_modules');
-  });
-
-  it('should include .vscode', () => {
-    expect(IGNORED_FOLDERS).toContain('.vscode');
-  });
-
-  it('should be readonly array', () => {
+  it('should be an array of RegExp', () => {
     expect(Array.isArray(IGNORED_FOLDERS)).toBe(true);
-    expect(IGNORED_FOLDERS.length).toBe(4);
+    IGNORED_FOLDERS.forEach((r) => expect(r).toBeInstanceOf(RegExp));
+  });
+
+  it('should match dot-prefixed names', () => {
+    expect(IGNORED_FOLDERS.some((r) => r.test('.obsidian'))).toBe(true);
+    expect(IGNORED_FOLDERS.some((r) => r.test('.git'))).toBe(true);
+    expect(IGNORED_FOLDERS.some((r) => r.test('.vscode'))).toBe(true);
+    expect(IGNORED_FOLDERS.some((r) => r.test('.draft'))).toBe(true);
+  });
+
+  it('should match node_modules', () => {
+    expect(IGNORED_FOLDERS.some((r) => r.test('node_modules'))).toBe(true);
+  });
+
+  it('should not match regular folder names', () => {
+    expect(IGNORED_FOLDERS.some((r) => r.test('monsters'))).toBe(false);
+    expect(IGNORED_FOLDERS.some((r) => r.test('spells'))).toBe(false);
   });
 });
 

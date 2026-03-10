@@ -1,25 +1,25 @@
 /**
  * Content Search Utility
- * 
+ *
  * @fileoverview Filename-based search for MDX content files in the library.
  * Walks content directories recursively and returns matching files with URL-friendly paths.
- * 
+ *
  * @module search
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires fs Node.js file system module
  * @requires path Node.js path module
  * @requires ./getContentFolder Locale-aware content directory resolver
- * 
+ *
  * @description
  * Provides filesystem-based content search for the library:
  * - Recursively walks content directories
  * - Matches filenames against query (case-insensitive)
  * - Returns kebab-case paths suitable for URLs
  * - Ignores infrastructure directories (.git, node_modules, etc.)
- * 
+ *
  * @example
  * ```typescript
  * const results = await searchContent('dragon');
@@ -29,20 +29,8 @@
 
 import fs from 'fs';
 import path from 'path';
+import { IGNORED_FOLDERS } from '../enums/constants';
 import { getContentFolder } from './getContentFolder';
-
-/**
- * Set of folder names to exclude from content search.
- * Includes version control, IDE, and dependency directories.
- * 
- * @constant {Set<string>}
- */
-const IGNORED_FOLDERS = new Set([
-  '.obsidian',
-  '.git',
-  'node_modules',
-  '.vscode',
-]);
 
 /**
  * Converts a string to kebab-case format.
@@ -51,7 +39,7 @@ const IGNORED_FOLDERS = new Set([
  * @function toKebabCase
  * @param {string} str - The input string to convert
  * @returns {string} The kebab-case version of the input
- * 
+ *
  * @example
  * toKebabCase('MyFileName') // 'my-file-name'
  * toKebabCase('snake_case') // 'snake-case'
@@ -74,7 +62,7 @@ const toKebabCase = (str: string) => {
  * @returns {Promise<Array<{ name: string, path: string }>>} A list of matched markdown files with their relative kebab-case paths.
  */
 export const searchContent = async (
-  query: string
+  query: string,
 ): Promise<{ name: string; path: string }[]> => {
   const contentDir = getContentFolder();
 
@@ -89,12 +77,14 @@ export const searchContent = async (
     const matches: { name: string; path: string }[] = [];
 
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (IGNORED_FOLDERS.has(entry.name)) continue;
+      if (IGNORED_FOLDERS.some((r) => r.test(entry.name))) continue;
 
       const fullPath = path.join(dir, entry.name);
       const fileName = entry.name.replace(/\.(md|mdx)$/, '');
       // Normalize to forward slashes for URL consistency (works on Windows and Unix)
-      const kebabPath = path.join(base, toKebabCase(fileName)).replace(/\\/g, '/');
+      const kebabPath = path
+        .join(base, toKebabCase(fileName))
+        .replace(/\\/g, '/');
 
       if (entry.isDirectory()) {
         walk(fullPath, kebabPath); // recurse into subdirectories
