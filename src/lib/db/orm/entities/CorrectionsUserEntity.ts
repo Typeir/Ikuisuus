@@ -28,6 +28,7 @@ export class CorrectionsUserEntity {
   role!: string;
 
   @Property({
+    type: 'Date',
     fieldName: 'created_at',
     columnType: 'timestamptz',
     defaultRaw: 'now()',
@@ -35,6 +36,7 @@ export class CorrectionsUserEntity {
   createdAt!: Date;
 
   @Property({
+    type: 'Date',
     fieldName: 'last_login_at',
     columnType: 'timestamptz',
     nullable: true,
