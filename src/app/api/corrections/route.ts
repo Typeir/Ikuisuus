@@ -312,9 +312,10 @@ export async function POST(req: NextRequest) {
     message ||
     (isNew ? `[new]: create ${filePath}` : `[correction]: update ${filePath}`);
   const prTitle = isNew ? `New file: ${filePath}` : `Correction: ${filePath}`;
-  const prBody = isNew
+  const prBodyBase = isNew
     ? `New file submitted via the Library editor.\n\n**File**: \`${filePath}\`\n**Token label**: \`${auditId}\``
     : `Automated correction submitted via the Library editor.\n\n**File**: \`${filePath}\`\n**Based on SHA**: \`${baseSha}\`\n**Token label**: \`${auditId}\``;
+  const prBody = `${prBodyBase}\n\n<!-- meta:ip=${clientIp} -->`;
 
   try {
     await createBranch(owner, repo, branchName);

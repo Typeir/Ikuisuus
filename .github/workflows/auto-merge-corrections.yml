@@ -25,16 +25,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Debug runner environment
-        run: |
-          # Safely check for gh CLI without failing the job
-          if command -v gh >/dev/null 2>&1; then
-            echo "gh found:"; gh --version || true
-            gh auth status || true
-          else
-            echo "gh CLI not available on runner"
-          fi
-
       - name: Find open correction PRs from the bot
         id: find-prs
         env:
@@ -54,9 +44,11 @@ jobs:
 
       - name: Merge each qualifying PR
         if: steps.find-prs.outputs.prs != ''
+        id: merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          MERGED_FILES=""
           for PR in ${{ steps.find-prs.outputs.prs }}; do
             echo "Attempting to merge PR #${PR}..."
 
@@ -75,11 +67,61 @@ jobs:
             echo "Combined status for ${SHA}: $COMBINED_STATE"
 
             if [ "$COMBINED_STATE" = "success" ]; then
+              # Extract the file path from the PR body before merging
+              BODY=$(gh pr view "$PR" --json body --jq '.body' 2>/dev/null || echo "")
+              FILE_PATH=$(echo "$BODY" | grep -oP '(?<=\*\*File\*\*: `)[^`]+' || echo "")
+
               echo "Checks passed -> attempting merge"
-              gh pr merge "$PR" --squash --delete-branch --auto \
+              gh pr merge "$PR" --squash --delete-branch \
                 && echo "✅ PR #${PR} merged." \
-                || echo "⚠️  PR #${PR} merge failed (may need approvals or branch protection)."
+                || { echo "⚠️  PR #${PR} merge failed (may need approvals or branch protection)."; continue; }
+
+              if [ -n "$FILE_PATH" ]; then
+                MERGED_FILES="${MERGED_FILES}${FILE_PATH}\n"
+              fi
             else
               echo "⏳ PR #${PR} has combined status '$COMBINED_STATE' — skipping."
             fi
           done
+
+          echo "merged_files<<EOF" >> "$GITHUB_OUTPUT"
+          echo -e "$MERGED_FILES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger ISR revalidation
+        if: steps.merge.outputs.merged_files != ''
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          REVALIDATION_SECRET: ${{ secrets.REVALIDATION_SECRET }}
+        run: |
+          if [ -z "$SITE_URL" ] || [ -z "$REVALIDATION_SECRET" ]; then
+            echo "⚠️  SITE_URL or REVALIDATION_SECRET not configured — skipping revalidation."
+            exit 0
+          fi
+
+          # Build JSON array of paths from merged file paths
+          PATHS="[]"
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            # Strip locale prefix (e.g. "en/") and .mdx extension to build the library path
+            SLUG=$(echo "$file" | sed 's|^[a-z]\{2\}/||' | sed 's|\.sheet\.mdx$||' | sed 's|\.mdx$||')
+            PATHS=$(echo "$PATHS" | jq --arg p "/library/$SLUG" '. + [$p]')
+          done <<< "${{ steps.merge.outputs.merged_files }}"
+
+          echo "Revalidating paths: $PATHS"
+
+          HTTP_STATUS=$(curl -s -o /tmp/revalidate-response.json -w "%{http_code}" \
+            -X POST "${SITE_URL}/api/revalidate" \
+            -H "Content-Type: application/json" \
+            -H "x-revalidation-secret: ${REVALIDATION_SECRET}" \
+            -d "{\"paths\": $PATHS}")
+
+          echo "Revalidation response ($HTTP_STATUS):"
+          cat /tmp/revalidate-response.json
+          echo ""
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✅ ISR revalidation triggered successfully."
+          else
+            echo "⚠️  ISR revalidation returned status $HTTP_STATUS (non-blocking)."
+          fi
