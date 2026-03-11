@@ -13,6 +13,11 @@ const withNextIntl = createNextIntlPlugin({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverExternalPackages: [
+    '@mikro-orm/core',
+    '@mikro-orm/postgresql',
+    '@mikro-orm/knex',
+  ],
   pageExtensions: ['ts', 'tsx', 'mdx'],
   async redirects() {
     return [

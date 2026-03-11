@@ -29,13 +29,13 @@ import {
  */
 @Embeddable()
 export class HeirloomChargesEmbed {
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   initial?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   recharge?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'boolean', nullable: true })
   depletes?: boolean | null;
 }
 
@@ -58,43 +58,51 @@ export class HeirloomEntity {
   @PrimaryKey({ autoincrement: true })
   id!: number;
 
-  @Property()
+  @Property({ type: 'string' })
   locale!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   slug!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   title!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   file!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   link!: string;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   rarity?: string | null;
 
-  @Property({ fieldName: 'item_type', nullable: true })
+  @Property({ type: 'string', fieldName: 'item_type', nullable: true })
   itemType?: string | null;
 
-  @Property({ fieldName: 'weapon_type', nullable: true })
+  @Property({ type: 'string', fieldName: 'weapon_type', nullable: true })
   weaponType?: string | null;
 
-  @Property({ fieldName: 'requires_attunement', nullable: true })
+  @Property({
+    type: 'boolean',
+    fieldName: 'requires_attunement',
+    nullable: true,
+  })
   requiresAttunement?: boolean | null;
 
-  @Property({ fieldName: 'attunement_requirements', nullable: true })
+  @Property({
+    type: 'string',
+    fieldName: 'attunement_requirements',
+    nullable: true,
+  })
   attunementRequirements?: string | null;
 
-  @Property({ fieldName: 'weapon_damage', nullable: true })
+  @Property({ type: 'string', fieldName: 'weapon_damage', nullable: true })
   weaponDamage?: string | null;
 
-  @Property({ fieldName: 'weapon_damage_type', nullable: true })
+  @Property({ type: 'string', fieldName: 'weapon_damage_type', nullable: true })
   weaponDamageType?: string | null;
 
-  @Property({ fieldName: 'versatile_damage', nullable: true })
+  @Property({ type: 'string', fieldName: 'versatile_damage', nullable: true })
   versatileDamage?: string | null;
 
   @Property({
@@ -104,10 +112,10 @@ export class HeirloomEntity {
   })
   hitModifier?: number | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   range?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   weight?: string | null;
 
   @Embedded(() => HeirloomChargesEmbed, { prefix: 'charges_', object: false })

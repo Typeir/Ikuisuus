@@ -29,7 +29,7 @@ export class TrinketSavingThrowEmbed {
   @Property({ columnType: 'smallint', nullable: true })
   dc?: number | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   ability?: string | null;
 }
 
@@ -48,34 +48,34 @@ export class TrinketEntity {
   @PrimaryKey({ autoincrement: true })
   id!: number;
 
-  @Property()
+  @Property({ type: 'string' })
   locale!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   slug!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   title!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   file!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   link!: string;
 
-  @Property({ fieldName: 'item_type' })
+  @Property({ type: 'string', fieldName: 'item_type' })
   itemType!: string;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   damage?: string | null;
 
-  @Property({ fieldName: 'damage_type', nullable: true })
+  @Property({ type: 'string', fieldName: 'damage_type', nullable: true })
   damageType?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   range?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   weight?: string | null;
 
   @Embedded(() => TrinketSavingThrowEmbed, {

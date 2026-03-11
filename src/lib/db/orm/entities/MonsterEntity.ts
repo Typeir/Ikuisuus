@@ -31,10 +31,10 @@ export class MonsterACEmbed {
   @Property({ columnType: 'smallint', nullable: true })
   value?: number | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   notes?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   raw?: string | null;
 }
 
@@ -46,10 +46,10 @@ export class MonsterHPEmbed {
   @Property({ columnType: 'smallint', nullable: true })
   average?: number | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   formula?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   raw?: string | null;
 }
 
@@ -59,7 +59,7 @@ export class MonsterHPEmbed {
  */
 @Embeddable()
 export class MonsterSpeedEmbed {
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   raw?: string | null;
 
   @Property({ columnType: 'smallint', nullable: true })
@@ -77,7 +77,7 @@ export class MonsterSpeedEmbed {
   @Property({ columnType: 'smallint', nullable: true })
   burrow?: number | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'boolean', nullable: true })
   hover?: boolean | null;
 }
 
@@ -135,7 +135,7 @@ export class MonsterSaveEmbed {
  */
 @Embeddable()
 export class MonsterSenseEmbed {
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   raw?: string | null;
 
   @Property({
@@ -177,34 +177,34 @@ export class MonsterEntity {
   @PrimaryKey({ autoincrement: true })
   id!: number;
 
-  @Property()
+  @Property({ type: 'string' })
   locale!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   slug!: string;
 
-  @Property({ fieldName: 'sub_slug', nullable: true })
+  @Property({ type: 'string', fieldName: 'sub_slug', nullable: true })
   subSlug?: string | null;
 
-  @Property()
+  @Property({ type: 'string' })
   title!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   file!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   link!: string;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   size?: string | null;
 
-  @Property({ fieldName: 'creature_type', nullable: true })
+  @Property({ type: 'string', fieldName: 'creature_type', nullable: true })
   creatureType?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   alignment?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   cr?: string | null;
 
   @Property({

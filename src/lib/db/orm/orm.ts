@@ -10,7 +10,6 @@
  */
 
 import { MikroORM, type EntityManager } from '@mikro-orm/postgresql';
-import { ormConfig } from './ormConfig';
 
 /** @property {symbol} ormKey - Global symbol used to cache the ORM instance in dev. */
 const ormKey = Symbol.for('mikro-orm.instance');
@@ -27,6 +26,9 @@ let initPromise: Promise<MikroORM> | null = null;
  * In development the instance is cached on `globalThis` so HMR restarts
  * do not open duplicate connection pools.
  *
+ * Uses dynamic `import()` for ormConfig to defer entity module evaluation
+ * and avoid TDZ errors during webpack module concatenation.
+ *
  * @returns {Promise<MikroORM>} Ready-to-use ORM instance
  */
 export const getORM = async (): Promise<MikroORM> => {
@@ -34,12 +36,14 @@ export const getORM = async (): Promise<MikroORM> => {
   if (g[ormKey]) return g[ormKey];
 
   if (!initPromise) {
-    initPromise = MikroORM.init(ormConfig).then((orm) => {
-      if (process.env.NODE_ENV !== 'production') {
-        g[ormKey] = orm;
-      }
-      return orm;
-    });
+    initPromise = import('./ormConfig').then(({ ormConfig }) =>
+      MikroORM.init(ormConfig).then((orm) => {
+        if (process.env.NODE_ENV !== 'production') {
+          g[ormKey] = orm;
+        }
+        return orm;
+      }),
+    );
   }
 
   return initPromise;

@@ -18,13 +18,13 @@ export class CorrectionsUserEntity {
   @PrimaryKey({ type: 'string' })
   id!: string;
 
-  @Property({ unique: true })
+  @Property({ type: 'string', unique: true })
   username!: string;
 
-  @Property({ fieldName: 'password_hash' })
+  @Property({ type: 'string', fieldName: 'password_hash' })
   passwordHash!: string;
 
-  @Property({ default: 'editor' })
+  @Property({ type: 'string', default: 'editor' })
   role!: string;
 
   @Property({

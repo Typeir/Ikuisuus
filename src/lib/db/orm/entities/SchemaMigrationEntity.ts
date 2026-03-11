@@ -19,6 +19,7 @@ export class SchemaMigrationEntity {
   name!: string;
 
   @Property({
+    type: 'Date',
     fieldName: 'applied_at',
     columnType: 'timestamptz',
     defaultRaw: 'now()',

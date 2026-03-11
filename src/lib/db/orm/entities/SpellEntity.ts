@@ -31,16 +31,20 @@ import {
  */
 @Embeddable()
 export class SpellComponentEmbed {
-  @Property({ nullable: true })
+  @Property({ type: 'boolean', nullable: true })
   verbal?: boolean | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'boolean', nullable: true })
   somatic?: boolean | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'boolean', nullable: true })
   material?: boolean | null;
 
-  @Property({ fieldName: 'material_description', nullable: true })
+  @Property({
+    type: 'string',
+    fieldName: 'material_description',
+    nullable: true,
+  })
   materialDescription?: string | null;
 }
 
@@ -62,10 +66,10 @@ export class SpellListEntity {
   })
   spell!: SpellEntity;
 
-  @Property()
+  @Property({ type: 'string' })
   name!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   link!: string;
 }
 
@@ -80,46 +84,46 @@ export class SpellEntity {
   @PrimaryKey({ autoincrement: true })
   id!: number;
 
-  @Property()
+  @Property({ type: 'string' })
   locale!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   slug!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   title!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   file!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   link!: string;
 
   @Property({ columnType: 'smallint', nullable: true })
   level?: number | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   school?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   quality?: string | null;
 
-  @Property({ fieldName: 'casting_time_raw', nullable: true })
+  @Property({ type: 'string', fieldName: 'casting_time_raw', nullable: true })
   castingTimeRaw?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   range?: string | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'boolean', nullable: true })
   concentration?: boolean | null;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   duration?: string | null;
 
   @Embedded(() => SpellComponentEmbed, { prefix: 'component_', object: false })
   components = new SpellComponentEmbed();
 
-  @Property({ fieldName: 'has_ritual', nullable: true })
+  @Property({ type: 'boolean', fieldName: 'has_ritual', nullable: true })
   hasRitual?: boolean | null;
 
   @Property({ fieldName: 'casting_time', type: 'string[]' })
