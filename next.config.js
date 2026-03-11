@@ -28,7 +28,16 @@ const nextConfig = {
       },
     ];
   },
-  webpack(config) {
+  webpack(config, { isServer, dev }) {
+    // MikroORM relies on class constructor.name to register entities.
+    // Next.js/SWC minifies class names in production (MonsterEntity → n,
+    // HeirloomEntity → h, etc.), causing "Duplicate entity names" and
+    // "type attribute missing in n.id" errors at runtime. Disabling server-side
+    // minification preserves class names without affecting client bundles.
+    if (isServer && !dev) {
+      config.optimization.minimize = false;
+    }
+
     config.module.rules.push({
       test: /\.svg$/,
       issuer: /\.[jt]sx?$/,
