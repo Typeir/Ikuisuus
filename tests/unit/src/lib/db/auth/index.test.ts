@@ -8,15 +8,17 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/db/auth/edgeConfigUserAdapter', () => ({
-  edgeConfigUserAdapter: {
-    findByUsername: vi.fn(),
-    findById: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    listAll: vi.fn(),
-    delete: vi.fn(),
-  },
+const mockAdapter = {
+  findByUsername: vi.fn(),
+  findById: vi.fn(),
+  create: vi.fn(),
+  update: vi.fn(),
+  listAll: vi.fn(),
+  delete: vi.fn(),
+};
+
+vi.mock('@/lib/db/auth/authAdapterFactory', () => ({
+  userAdapter: mockAdapter,
 }));
 vi.mock('@/lib/logging/logger', () => ({
   logger: {

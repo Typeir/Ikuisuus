@@ -1,36 +1,59 @@
 /**
  * PostgreSQL User Adapter Unit Tests
  *
- * @fileoverview Tests for the PostgreSQL user adapter.
+ * @fileoverview Tests for the MikroORM-backed PostgreSQL user adapter.
+ * Mocks `@/lib/db/orm/orm` (getEM) to avoid real DB connections.
  *
  * @module tests/unit/lib/db/auth/postgresUserAdapter
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/db/postgres/pool');
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
     child: () => ({ error: vi.fn(), debug: vi.fn(), message: vi.fn() }),
   },
 }));
 
-let postgresUserAdapter: typeof import('@/lib/db/auth/postgresUserAdapter').postgresUserAdapter;
-let query: ReturnType<typeof vi.fn>;
-
-const DB_ROW = {
-  id: 'u-1',
-  username: 'admin',
-  password_hash: 'a'.repeat(64),
-  role: 'admin',
-  created_at: new Date('2025-01-01T00:00:00.000Z'),
-  last_login_at: null,
+const mockEm = {
+  findOne: vi.fn(),
+  find: vi.fn(),
+  create: vi.fn(),
+  flush: vi.fn(),
+  findOneOrFail: vi.fn(),
+  removeAndFlush: vi.fn(),
 };
+
+vi.mock('@/lib/db/orm/orm', () => ({
+  getEM: vi.fn().mockResolvedValue(mockEm),
+}));
+
+/**
+ * Production row shape as returned by MikroORM after entity mapping.
+ * `password_hash` column maps to `passwordHash` via the `@Property({ fieldName })` decorator.
+ *
+ * @type {object}
+ */
+const REAL_DB_ROW = {
+  id: '09ff29d0-2f9e-40d2-88f6-013a92990d16',
+  username: 'admin',
+  passwordHash: 'dd4046a6aca3cece1f069c9ca87b23d21b9038ebda60a7efbf2b67caded9719e',
+  role: 'admin',
+  createdAt: new Date('2026-03-08T22:56:09.688487Z'),
+  lastLoginAt: null,
+};
+
+let postgresUserAdapter: typeof import('@/lib/db/auth/postgresUserAdapter').postgresUserAdapter;
 
 beforeEach(async () => {
   vi.resetModules();
-  const pool = await import('@/lib/db/postgres/pool');
-  query = pool.query as ReturnType<typeof vi.fn>;
+  vi.clearAllMocks();
+  mockEm.findOne.mockReset();
+  mockEm.find.mockReset();
+  mockEm.create.mockReset();
+  mockEm.flush.mockReset();
+  mockEm.findOneOrFail.mockReset();
+  mockEm.removeAndFlush.mockReset();
 
   const mod = await import('@/lib/db/auth/postgresUserAdapter');
   postgresUserAdapter = mod.postgresUserAdapter;
@@ -40,22 +63,38 @@ afterEach(() => vi.restoreAllMocks());
 
 describe('postgresUserAdapter', () => {
   describe('findByUsername', () => {
-    it('should return mapped user', async () => {
-      query.mockResolvedValue({ rows: [DB_ROW] });
+    it('should return mapped user matching real production row', async () => {
+      mockEm.findOne.mockResolvedValue(REAL_DB_ROW);
+
       const result = await postgresUserAdapter.findByUsername('admin');
-      expect(result?.id).toBe('u-1');
+
+      expect(result?.id).toBe('09ff29d0-2f9e-40d2-88f6-013a92990d16');
       expect(result?.username).toBe('admin');
-      expect(result?.passwordHash).toBe('a'.repeat(64));
+      expect(result?.passwordHash).toBe(
+        'dd4046a6aca3cece1f069c9ca87b23d21b9038ebda60a7efbf2b67caded9719e',
+      );
+      expect(result?.role).toBe('admin');
+    });
+
+    it('should use case-insensitive lookup ($ilike)', async () => {
+      mockEm.findOne.mockResolvedValue(REAL_DB_ROW);
+
+      await postgresUserAdapter.findByUsername('ADMIN');
+
+      expect(mockEm.findOne).toHaveBeenCalledWith(
+        expect.anything(),
+        { username: { $ilike: 'ADMIN' } },
+      );
     });
 
     it('should return null when not found', async () => {
-      query.mockResolvedValue({ rows: [] });
+      mockEm.findOne.mockResolvedValue(null);
       const result = await postgresUserAdapter.findByUsername('ghost');
       expect(result).toBeNull();
     });
 
-    it('should return null on error', async () => {
-      query.mockRejectedValue(new Error('connection refused'));
+    it('should return null on DB error', async () => {
+      mockEm.findOne.mockRejectedValue(new Error('connection refused'));
       const result = await postgresUserAdapter.findByUsername('admin');
       expect(result).toBeNull();
     });
@@ -63,21 +102,28 @@ describe('postgresUserAdapter', () => {
 
   describe('findById', () => {
     it('should return mapped user', async () => {
-      query.mockResolvedValue({ rows: [DB_ROW] });
-      const result = await postgresUserAdapter.findById('u-1');
+      mockEm.findOne.mockResolvedValue(REAL_DB_ROW);
+
+      const result = await postgresUserAdapter.findById(
+        '09ff29d0-2f9e-40d2-88f6-013a92990d16',
+      );
+
       expect(result?.username).toBe('admin');
+      expect(result?.id).toBe('09ff29d0-2f9e-40d2-88f6-013a92990d16');
     });
 
     it('should return null when not found', async () => {
-      query.mockResolvedValue({ rows: [] });
+      mockEm.findOne.mockResolvedValue(null);
       const result = await postgresUserAdapter.findById('missing');
       expect(result).toBeNull();
     });
   });
 
   describe('create', () => {
-    it('should insert user record', async () => {
-      query.mockResolvedValue({ rowCount: 1 });
+    it('should create and flush a new user entity', async () => {
+      mockEm.create.mockReturnValue({});
+      mockEm.flush.mockResolvedValue(undefined);
+
       await postgresUserAdapter.create({
         id: 'u-2',
         username: 'editor1',
@@ -85,61 +131,66 @@ describe('postgresUserAdapter', () => {
         role: 'editor',
         createdAt: '2025-01-01T00:00:00.000Z',
       });
-      expect(query).toHaveBeenCalledWith(
-        expect.stringContaining('INSERT INTO corrections_users'),
-        expect.arrayContaining(['u-2', 'editor1']),
-      );
+
+      expect(mockEm.create).toHaveBeenCalledOnce();
+      expect(mockEm.flush).toHaveBeenCalledOnce();
     });
   });
 
   describe('update', () => {
-    it('should update specified fields', async () => {
-      query.mockResolvedValue({ rowCount: 1 });
-      await postgresUserAdapter.update('u-1', {
-        lastLoginAt: '2025-06-01T00:00:00.000Z',
-      });
-      expect(query).toHaveBeenCalledWith(
-        expect.stringContaining('UPDATE corrections_users'),
-        expect.any(Array),
-      );
-    });
+    it('should merge lastLoginAt and flush', async () => {
+      const row = { ...REAL_DB_ROW };
+      mockEm.findOneOrFail.mockResolvedValue(row);
+      mockEm.flush.mockResolvedValue(undefined);
 
-    it('should no-op when no fields provided', async () => {
-      await postgresUserAdapter.update('u-1', {});
-      expect(query).not.toHaveBeenCalled();
+      await postgresUserAdapter.update(
+        '09ff29d0-2f9e-40d2-88f6-013a92990d16',
+        { lastLoginAt: '2026-03-11T00:00:00.000Z' },
+      );
+
+      expect(row.lastLoginAt).toEqual(new Date('2026-03-11T00:00:00.000Z'));
+      expect(mockEm.flush).toHaveBeenCalledOnce();
     });
   });
 
   describe('listAll', () => {
-    it('should return mapped users', async () => {
-      query.mockResolvedValue({ rows: [DB_ROW] });
+    it('should return all mapped users', async () => {
+      mockEm.find.mockResolvedValue([REAL_DB_ROW]);
+
       const result = await postgresUserAdapter.listAll();
+
       expect(result).toHaveLength(1);
       expect(result[0].username).toBe('admin');
+      expect(result[0].passwordHash).toBe(
+        'dd4046a6aca3cece1f069c9ca87b23d21b9038ebda60a7efbf2b67caded9719e',
+      );
     });
 
-    it('should return empty array on error', async () => {
-      query.mockRejectedValue(new Error('fail'));
+    it('should return empty array on DB error', async () => {
+      mockEm.find.mockRejectedValue(new Error('fail'));
       const result = await postgresUserAdapter.listAll();
       expect(result).toEqual([]);
     });
   });
 
   describe('delete', () => {
-    it('should delete user', async () => {
-      query.mockResolvedValue({ rowCount: 1 });
-      await postgresUserAdapter.delete('u-1');
-      expect(query).toHaveBeenCalledWith(
-        expect.stringContaining('DELETE FROM corrections_users'),
-        ['u-1'],
+    it('should remove user and flush', async () => {
+      mockEm.findOne.mockResolvedValue(REAL_DB_ROW);
+      mockEm.removeAndFlush.mockResolvedValue(undefined);
+
+      await postgresUserAdapter.delete(
+        '09ff29d0-2f9e-40d2-88f6-013a92990d16',
       );
+
+      expect(mockEm.removeAndFlush).toHaveBeenCalledWith(REAL_DB_ROW);
     });
 
     it('should throw if user not found', async () => {
-      query.mockResolvedValue({ rowCount: 0 });
-      await expect(postgresUserAdapter.delete('ghost')).rejects.toThrow(
-        'User not found',
-      );
+      mockEm.findOne.mockResolvedValue(null);
+
+      await expect(
+        postgresUserAdapter.delete('09ff29d0-2f9e-40d2-88f6-013a92990d16'),
+      ).rejects.toThrow('User not found');
     });
   });
 });

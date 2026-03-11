@@ -8,15 +8,17 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/db/auth/edgeConfigUserAdapter', () => ({
-  edgeConfigUserAdapter: {
-    findByUsername: vi.fn(),
-    findById: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    listAll: vi.fn(),
-    delete: vi.fn(),
-  },
+const mockAdapter = {
+  findByUsername: vi.fn(),
+  findById: vi.fn(),
+  create: vi.fn(),
+  update: vi.fn(),
+  listAll: vi.fn(),
+  delete: vi.fn(),
+};
+
+vi.mock('@/lib/db/auth/authAdapterFactory', () => ({
+  userAdapter: mockAdapter,
 }));
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
@@ -312,6 +314,97 @@ describe('authService', () => {
 
       setUserAdapter(custom);
       expect(getUserAdapter()).toBe(custom);
+    });
+  });
+
+  describe('real production credentials (admin user from corrections_users)', () => {
+    /**
+     * Verifies that the SHA-256 hash used by hashPassword matches the exact
+     * value stored in the production database row.
+     */
+    it('should produce the known production hash for the admin password', async () => {
+      const { hashPassword } = await import('@/lib/db/auth/authService');
+      expect(hashPassword('JOHN_SUNSHINE')).toBe(
+        'dd4046a6aca3cece1f069c9ca87b23d21b9038ebda60a7efbf2b67caded9719e',
+      );
+    });
+
+    /**
+     * Verifies verifyPassword passes when given the plain-text password and
+     * the exact hash from the production row.
+     */
+    it('should verify password against production hash', async () => {
+      const { verifyPassword } = await import('@/lib/db/auth/authService');
+      expect(
+        verifyPassword(
+          'JOHN_SUNSHINE',
+          'dd4046a6aca3cece1f069c9ca87b23d21b9038ebda60a7efbf2b67caded9719e',
+        ),
+      ).toBe(true);
+    });
+
+    /**
+     * Full login flow using the production row. Simulates what happens when
+     * the PostgreSQL adapter returns the real `corrections_users` row.
+     */
+    it('should successfully log in with production user data', async () => {
+      const { login, setUserAdapter } = await import('@/lib/db/auth/authService');
+
+      setUserAdapter({
+        findByUsername: vi.fn().mockResolvedValue({
+          id: '09ff29d0-2f9e-40d2-88f6-013a92990d16',
+          username: 'admin',
+          passwordHash:
+            'dd4046a6aca3cece1f069c9ca87b23d21b9038ebda60a7efbf2b67caded9719e',
+          role: 'admin' as const,
+          createdAt: '2026-03-08T22:56:09.688487Z',
+          lastLoginAt: undefined,
+        }),
+        findById: vi.fn(),
+        create: vi.fn(),
+        update: vi.fn().mockResolvedValue(undefined),
+        listAll: vi.fn(),
+        delete: vi.fn(),
+      });
+
+      const result = await login({ username: 'admin', password: 'JOHN_SUNSHINE' });
+
+      expect('error' in result).toBe(false);
+      if ('token' in result) {
+        expect(result.token).toHaveLength(64);
+        expect(result.user.id).toBe('09ff29d0-2f9e-40d2-88f6-013a92990d16');
+        expect(result.user.username).toBe('admin');
+        expect(result.user.role).toBe('admin');
+      }
+    });
+
+    /**
+     * Ensures a wrong password still fails even when the username matches
+     * the production row.
+     */
+    it('should reject login with wrong password for production user', async () => {
+      const { login, setUserAdapter } = await import('@/lib/db/auth/authService');
+
+      setUserAdapter({
+        findByUsername: vi.fn().mockResolvedValue({
+          id: '09ff29d0-2f9e-40d2-88f6-013a92990d16',
+          username: 'admin',
+          passwordHash:
+            'dd4046a6aca3cece1f069c9ca87b23d21b9038ebda60a7efbf2b67caded9719e',
+          role: 'admin' as const,
+          createdAt: '2026-03-08T22:56:09.688487Z',
+          lastLoginAt: undefined,
+        }),
+        findById: vi.fn(),
+        create: vi.fn(),
+        update: vi.fn(),
+        listAll: vi.fn(),
+        delete: vi.fn(),
+      });
+
+      const result = await login({ username: 'admin', password: 'wrong' });
+
+      expect('error' in result).toBe(true);
     });
   });
 });

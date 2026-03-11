@@ -15,7 +15,7 @@
 
 import { logger } from '@/lib/logging/logger';
 import crypto from 'crypto';
-import { edgeConfigUserAdapter } from './edgeConfigUserAdapter';
+import { userAdapter as initialAdapter } from './authAdapterFactory';
 import type {
     CreateUserRequest,
     LoginRequest,
@@ -30,8 +30,8 @@ const log = logger.child({ module: 'AuthService' });
 
 /* ────────────────────────  Adapter wiring  ─────────────────────────── */
 
-/** Active adapter — defaults to Edge Config, override via `setUserAdapter`. */
-let adapter: UserAdapter = edgeConfigUserAdapter;
+/** Active adapter — resolved from factory based on `METADATA_BACKEND`. */
+let adapter: UserAdapter = initialAdapter;
 
 /**
  * Replaces the active user storage adapter.
