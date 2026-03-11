@@ -31,6 +31,14 @@ import {
 
 export const ormConfig = defineConfig({
   clientUrl: process.env.DATABASE_URL,
+  driverOptions: {
+    connection: {
+      ssl:
+        process.env.DATABASE_SSL === 'false'
+          ? false
+          : { rejectUnauthorized: false },
+    },
+  },
   entities: [
     MonsterEntity,
     MonsterACEmbed,
