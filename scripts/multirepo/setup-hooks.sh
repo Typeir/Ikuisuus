@@ -50,6 +50,21 @@ cp "$PROJECT_ROOT/scripts/multirepo/validate-sync.sh" "$CONTENT_HOOKS_DIR/post-c
 chmod +x "$CONTENT_HOOKS_DIR/post-commit"
 log_success "Installed post-commit hook (content repo)"
 
+# commit-msg: thin wrapper that delegates to main repo's commit-msg.js
+cat > "$CONTENT_HOOKS_DIR/commit-msg" << 'HOOKEOF'
+#!/usr/bin/env bash
+set -euo pipefail
+CURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+if [ -f "$CURRENT_REPO/.git" ]; then
+  MAIN_REPO="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0
+else
+  MAIN_REPO="$CURRENT_REPO"
+fi
+node "$MAIN_REPO/scripts/hooks/commit-msg.js" "$1"
+HOOKEOF
+chmod +x "$CONTENT_HOOKS_DIR/commit-msg"
+log_success "Installed commit-msg hook (content repo)"
+
 echo ""
 log_info "Main repo hooks are managed by husky (.husky/ directory)"
 log_info "Run 'npm run test:hooks' to verify all hooks"

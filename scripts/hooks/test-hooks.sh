@@ -200,7 +200,7 @@ if [ -e "$CONTENT_REPO/.git" ]; then
     CONTENT_HOOKS_DIR="$CONTENT_REPO/.git/hooks"
   fi
 
-  for hook in pre-commit post-commit; do
+  for hook in pre-commit post-commit commit-msg; do
     if [ -f "$CONTENT_HOOKS_DIR/$hook" ]; then
       if [ -x "$CONTENT_HOOKS_DIR/$hook" ]; then
         pass "Content repo $hook installed and executable"
