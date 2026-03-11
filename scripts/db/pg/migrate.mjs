@@ -69,6 +69,9 @@ function getMigrationFiles() {
 
 /* ──────────────────────  Core runner  ──────────────────────────────── */
 
+/** Advisory lock key to prevent concurrent migration runs. */
+const MIGRATION_LOCK_ID = 73917391;
+
 async function main() {
   const pool = new pg.Pool({
     connectionString: process.env.DATABASE_URL,
@@ -84,46 +87,63 @@ async function main() {
       )
     `);
 
-    const { rows: applied } = await pool.query(
-      'SELECT name FROM schema_migrations',
+    /** Acquire advisory lock — prevents concurrent migration runs on the same DB. */
+    const { rows: lockRows } = await pool.query(
+      'SELECT pg_try_advisory_lock($1) AS acquired',
+      [MIGRATION_LOCK_ID],
     );
-    const appliedSet = new Set(applied.map((m) => m.name));
-
-    const files = getMigrationFiles();
-    const pending = files.filter((f) => !appliedSet.has(basename(f)));
-
-    if (pending.length === 0) {
-      log.message('✅  No pending migrations — database is up to date.');
+    if (!lockRows[0].acquired) {
+      log.message(
+        '⏳  Another migration runner holds the lock — skipping this run.',
+      );
       return;
     }
 
-    log.message(`🔄  Running ${pending.length} pending migration(s)…`);
+    try {
+      const { rows: applied } = await pool.query(
+        'SELECT name FROM schema_migrations',
+      );
+      const appliedSet = new Set(applied.map((m) => m.name));
 
-    for (const file of pending) {
-      const name = basename(file);
-      const sql = readFileSync(file, 'utf8');
+      const files = getMigrationFiles();
+      const pending = files.filter((f) => !appliedSet.has(basename(f)));
 
-      log.message(`   ▶  ${name}`);
-
-      const client = await pool.connect();
-      try {
-        await client.query('BEGIN');
-        await client.query(sql);
-        await client.query('INSERT INTO schema_migrations (name) VALUES ($1)', [
-          name,
-        ]);
-        await client.query('COMMIT');
-        log.message(`   ✓  ${name} applied.`);
-      } catch (err) {
-        await client.query('ROLLBACK');
-        log.error(`   ✗  ${name} FAILED: ${err.message}`);
-        throw err;
-      } finally {
-        client.release();
+      if (pending.length === 0) {
+        log.message('✅  No pending migrations — database is up to date.');
+        return;
       }
-    }
 
-    log.message('🎉  All migrations complete.');
+      log.message(`🔄  Running ${pending.length} pending migration(s)…`);
+
+      for (const file of pending) {
+        const name = basename(file);
+        const sql = readFileSync(file, 'utf8');
+
+        log.message(`   ▶  ${name}`);
+
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          await client.query(sql);
+          await client.query(
+            'INSERT INTO schema_migrations (name) VALUES ($1)',
+            [name],
+          );
+          await client.query('COMMIT');
+          log.message(`   ✓  ${name} applied.`);
+        } catch (err) {
+          await client.query('ROLLBACK');
+          log.error(`   ✗  ${name} FAILED: ${err.message}`);
+          throw err;
+        } finally {
+          client.release();
+        }
+      }
+
+      log.message('🎉  All migrations complete.');
+    } finally {
+      await pool.query('SELECT pg_advisory_unlock($1)', [MIGRATION_LOCK_ID]);
+    }
   } finally {
     await pool.end();
   }

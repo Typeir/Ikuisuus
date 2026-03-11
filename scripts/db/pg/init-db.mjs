@@ -122,6 +122,7 @@ const TABLE_DDL = [
      languages              text[]       NOT NULL DEFAULT '{}',
      tags                   text[]       NOT NULL DEFAULT '{}',
      index_version          smallint,
+     version_hash           text,
      UNIQUE (locale, slug, sub_slug)
    )`,
 
@@ -152,6 +153,7 @@ const TABLE_DDL = [
      saving_throw_types       text[]    NOT NULL DEFAULT '{}',
      tags                     text[]    NOT NULL DEFAULT '{}',
      index_version            smallint,
+     version_hash             text,
      UNIQUE (locale, slug)
    )`,
 
@@ -176,6 +178,7 @@ const TABLE_DDL = [
      component_material_description text,
      has_ritual            boolean,
      tags                  text[]    NOT NULL DEFAULT '{}',
+     version_hash          text,
      UNIQUE (locale, slug)
    )`,
 
@@ -204,6 +207,7 @@ const TABLE_DDL = [
      special_effects       text[]    NOT NULL DEFAULT '{}',
      inflicts_conditions   text[]    NOT NULL DEFAULT '{}',
      tags                  text[]    NOT NULL DEFAULT '{}',
+     version_hash          text,
      UNIQUE (locale, slug)
    )`,
 ];
