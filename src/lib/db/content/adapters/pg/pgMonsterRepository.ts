@@ -1,118 +1,109 @@
 /**
- * @fileoverview PostgreSQL Monster Repository (Prisma)
- * @description Implements `MonsterRepository` via Prisma ORM against the
- * normalised `monsters` table. Replaces raw `pg` SQL with type-safe Prisma
- * queries. Every stat-block is one row; multi-block source files are
- * distinguished by `subSlug` (the canonical lookup key).
+ * @fileoverview PostgreSQL Monster Repository (MikroORM)
+ * @description Implements `MonsterRepository` via MikroORM `EntityManager`
+ * against the `monsters` table. Embedded value objects (AC, HP, Speed,
+ * Scores, Saves, Senses) are mapped directly from the entity — no manual
+ * field-by-field reconstruction needed.
  *
- * Ability modifiers are NOT stored in the DB — consumers compute them:
+ * Ability modifiers are NOT stored — consumers compute them:
  *   `mod = Math.floor((score - 10) / 2)`
  *
  * @module lib/db/content/adapters/pg/pgMonsterRepository
- * @version 3.0.0
+ * @version 5.0.0
  * @author Typeir
- * @since 4.0.0
+ * @since 5.0.0
  */
 
-import { prisma } from '@/lib/db/prisma/client';
-import type { Monster } from '@/lib/db/prisma/generated/sql';
+import { MonsterEntity } from '@/lib/db/orm/entities/MonsterEntity';
+import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
+import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {
-    AbilityScores,
-    MonsterAC,
-    MonsterHP,
-    MonsterIndexEntry,
-    MonsterMetadata,
-    MonsterSenses,
-    MonsterSpeed,
+  AbilityScores,
+  MonsterAC,
+  MonsterHP,
+  MonsterIndexEntry,
+  MonsterMetadata,
+  MonsterSenses,
+  MonsterSpeed,
 } from '../../schemas/monsterMetadata';
-import { nonEmpty, orUndef } from './rowParsers';
 
 const log = logger.child({ module: 'PGMonsterRepo' });
 
-/* ─────────────────────  Sub-object builders  ─────────────────────────── */
+/* ─────────────────────  Embed → Domain mappers  ─────────────────────── */
 
 /**
- * Builds an `MonsterAC` value object from flat row columns.
+ * Maps the AC embed to a domain `MonsterAC`.
  *
- * @param {Monster} row - Prisma monster row
+ * @param {MonsterEntity} row - Monster entity row
  * @returns {MonsterAC} Armor class value object
  */
-const buildAC = (row: Monster): MonsterAC => ({
-  value: row.acValue ?? 0,
-  notes: orUndef(row.acNotes),
-  raw: orUndef(row.acRaw),
+const mapAC = (row: MonsterEntity): MonsterAC => ({
+  value: row.ac.value ?? 0,
+  notes: orUndef(row.ac.notes),
+  raw: orUndef(row.ac.raw),
 });
 
 /**
- * Builds a `MonsterHP` value object from flat row columns.
+ * Maps the HP embed to a domain `MonsterHP`.
  *
- * @param {Monster} row - Prisma monster row
+ * @param {MonsterEntity} row - Monster entity row
  * @returns {MonsterHP} Hit points value object
  */
-const buildHP = (row: Monster): MonsterHP => ({
-  average: row.hpAverage ?? 0,
-  formula: orUndef(row.hpFormula),
-  raw: orUndef(row.hpRaw),
+const mapHP = (row: MonsterEntity): MonsterHP => ({
+  average: row.hp.average ?? 0,
+  formula: orUndef(row.hp.formula),
+  raw: orUndef(row.hp.raw),
 });
 
 /**
- * Builds a `MonsterSpeed` value object from flat row columns.
+ * Maps the Speed embed to a domain `MonsterSpeed`.
  *
- * @param {Monster} row - Prisma monster row
- * @returns {MonsterSpeed} Speed value object with parsed modes
+ * @param {MonsterEntity} row - Monster entity row
+ * @returns {MonsterSpeed} Speed value object
  */
-const buildSpeed = (row: Monster): MonsterSpeed => ({
-  raw: row.speedRaw ?? '',
+const mapSpeed = (row: MonsterEntity): MonsterSpeed => ({
+  raw: row.speed.raw ?? '',
   modes: {
-    walk: orUndef(row.speedWalk),
-    fly: orUndef(row.speedFly),
-    climb: orUndef(row.speedClimb),
-    swim: orUndef(row.speedSwim),
-    burrow: orUndef(row.speedBurrow),
-    hover: orUndef(row.speedHover),
+    walk: orUndef(row.speed.walk),
+    fly: orUndef(row.speed.fly),
+    climb: orUndef(row.speed.climb),
+    swim: orUndef(row.speed.swim),
+    burrow: orUndef(row.speed.burrow),
+    hover: orUndef(row.speed.hover),
   },
 });
 
 /**
- * Builds `AbilityScores` from the six flat score columns.
- * Modifiers are NOT stored — consumers derive them:
- *   `mod = Math.floor((score - 10) / 2)`
+ * Maps the Score embed to domain `AbilityScores`.
  *
- * @param {Monster} row - Prisma monster row
+ * @param {MonsterEntity} row - Monster entity row
  * @returns {AbilityScores} Six ability scores
  */
-const buildAbilities = (row: Monster): AbilityScores => ({
-  str: { score: orUndef(row.strScore) },
-  dex: { score: orUndef(row.dexScore) },
-  con: { score: orUndef(row.conScore) },
-  int: { score: orUndef(row.intScore) },
-  wis: { score: orUndef(row.wisScore) },
-  cha: { score: orUndef(row.chaScore) },
+const mapAbilities = (row: MonsterEntity): AbilityScores => ({
+  str: { score: orUndef(row.scores.str) },
+  dex: { score: orUndef(row.scores.dex) },
+  con: { score: orUndef(row.scores.con) },
+  int: { score: orUndef(row.scores.int) },
+  wis: { score: orUndef(row.scores.wis) },
+  cha: { score: orUndef(row.scores.cha) },
 });
 
 /**
- * Builds a saving throws map from the six flat save columns.
- * Only entries with non-null values are included.
+ * Maps the Save embed to a saving-throws record.
  *
- * @param {Monster} row - Prisma monster row
+ * @param {MonsterEntity} row - Monster entity row
  * @returns {Record<string, number> | undefined} Saving throws or undefined
  */
-const buildSavingThrows = (
-  row: Monster,
+const mapSavingThrows = (
+  row: MonsterEntity,
 ): Record<string, number> | undefined => {
-  const entries: [string, number | null][] = [
-    ['str', row.saveStr],
-    ['dex', row.saveDex],
-    ['con', row.saveCon],
-    ['int', row.saveInt],
-    ['wis', row.saveWis],
-    ['cha', row.saveCha],
-  ];
+  const s = row.saves;
   const throws: Record<string, number> = {};
   let hasAny = false;
-  for (const [key, val] of entries) {
+  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha'] as const) {
+    const val = s[key];
     if (val != null) {
       throws[key] = val;
       hasAny = true;
@@ -122,30 +113,29 @@ const buildSavingThrows = (
 };
 
 /**
- * Builds a `MonsterSenses` value object from flat row columns.
+ * Maps the Sense embed to a domain `MonsterSenses`.
  *
- * @param {Monster} row - Prisma monster row
+ * @param {MonsterEntity} row - Monster entity row
  * @returns {MonsterSenses} Senses value object
  */
-const buildSenses = (row: Monster): MonsterSenses => ({
-  raw: row.sensesRaw ?? '',
-  passivePerception: orUndef(row.passivePerception),
-  darkvision: orUndef(row.darkvision),
-  blindsight: orUndef(row.blindsight),
-  tremorsense: orUndef(row.tremorsense),
-  truesight: orUndef(row.truesight),
+const mapSenses = (row: MonsterEntity): MonsterSenses => ({
+  raw: row.senses.raw ?? '',
+  passivePerception: orUndef(row.senses.passivePerception),
+  darkvision: orUndef(row.senses.darkvision),
+  blindsight: orUndef(row.senses.blindsight),
+  tremorsense: orUndef(row.senses.tremorsense),
+  truesight: orUndef(row.senses.truesight),
 });
 
 /* ─────────────────────────────  Row mapper  ──────────────────────────── */
 
 /**
- * Maps a Prisma `Monster` row to a typed `MonsterMetadata` domain object.
- * Delegates nested sub-objects to dedicated builder functions.
+ * Maps a MikroORM `Monster` entity to a typed `MonsterMetadata` domain object.
  *
- * @param {Monster} row - Prisma monster row (camelCase from schema)
+ * @param {MonsterEntity} row - MikroORM entity row
  * @returns {MonsterMetadata} Domain model
  */
-const rowToMonster = (row: Monster): MonsterMetadata => ({
+const rowToMonster = (row: MonsterEntity): MonsterMetadata => ({
   slug: row.slug,
   subSlug: orUndef(row.subSlug),
   title: row.title,
@@ -156,12 +146,12 @@ const rowToMonster = (row: Monster): MonsterMetadata => ({
   alignment: orUndef(row.alignment),
   cr: orUndef(row.cr),
   proficiencyBonus: orUndef(row.proficiencyBonus),
-  ac: buildAC(row),
-  hp: buildHP(row),
-  speed: buildSpeed(row),
-  abilities: buildAbilities(row),
-  savingThrows: buildSavingThrows(row),
-  senses: buildSenses(row),
+  ac: mapAC(row),
+  hp: mapHP(row),
+  speed: mapSpeed(row),
+  abilities: mapAbilities(row),
+  savingThrows: mapSavingThrows(row),
+  senses: mapSenses(row),
   skills: nonEmpty(row.skills),
   damageResistances: nonEmpty(row.damageResistances),
   damageImmunities: nonEmpty(row.damageImmunities),
@@ -175,17 +165,17 @@ const rowToMonster = (row: Monster): MonsterMetadata => ({
 /* ──────────────────────────────  Repository  ─────────────────────────── */
 
 /**
- * Prisma-backed monster repository.
- *
- * Queries the `monsters` table via the shared Prisma client.
+ * MikroORM-backed monster repository.
  */
 export const pgMonsterRepository: MonsterRepository = {
   list: async (locale: string): Promise<MonsterMetadata[]> => {
     try {
-      const rows = await prisma.monster.findMany({
-        where: { locale },
-        orderBy: { slug: 'asc' },
-      });
+      const em = await getEM();
+      const rows = await em.find(
+        MonsterEntity,
+        { locale },
+        { orderBy: { slug: 'asc' } },
+      );
       return rows.map(rowToMonster);
     } catch (error) {
       log.error('Error reading monster metadata from PostgreSQL', {
@@ -198,18 +188,15 @@ export const pgMonsterRepository: MonsterRepository = {
 
   listIndex: async (locale: string): Promise<MonsterIndexEntry[]> => {
     try {
-      const rows = await prisma.monster.findMany({
-        where: { locale },
-        orderBy: { slug: 'asc' },
-        select: {
-          slug: true,
-          subSlug: true,
-          title: true,
-          cr: true,
-          size: true,
-          creatureType: true,
+      const em = await getEM();
+      const rows = await em.find(
+        MonsterEntity,
+        { locale },
+        {
+          fields: ['slug', 'subSlug', 'title', 'cr', 'size', 'creatureType'],
+          orderBy: { slug: 'asc' },
         },
-      });
+      );
       return rows.map((r) => ({
         slug: r.subSlug ?? r.slug,
         title: r.title,
@@ -231,11 +218,10 @@ export const pgMonsterRepository: MonsterRepository = {
     slug: string,
   ): Promise<MonsterMetadata | null> => {
     try {
-      const row = await prisma.monster.findFirst({
-        where: {
-          locale,
-          OR: [{ subSlug: slug }, { slug }],
-        },
+      const em = await getEM();
+      const row = await em.findOne(MonsterEntity, {
+        locale,
+        $or: [{ subSlug: slug }, { slug }],
       });
       return row ? rowToMonster(row) : null;
     } catch (error) {

@@ -11,7 +11,6 @@
  */
 
 import { fsHeirloomRepository } from '../adapters/fs/fsHeirloomRepository';
-import { mongoHeirloomRepository } from '../adapters/mongo/mongoHeirloomRepository';
 import { pgHeirloomRepository } from '../adapters/pg/pgHeirloomRepository';
 import type { HeirloomMetadata } from '../schemas/heirloomMetadata';
 
@@ -40,21 +39,19 @@ export interface HeirloomRepository {
   getBySlug(locale: string, slug: string): Promise<HeirloomMetadata | null>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default), `'pg'`, or `'mongo'`. */
+/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**
  * Resolves the heirloom repository for the active backend.
  *
  * @returns {HeirloomRepository} Heirloom metadata repository
- * @throws {Error} If `METADATA_BACKEND` is not `'fs'`, `'pg'`, or `'mongo'`
+ * @throws {Error} If `METADATA_BACKEND` is not `'fs'` or `'pg'`
  */
 const createHeirloomRepository = (): HeirloomRepository => {
   switch (metadataBackend) {
     case 'pg':
       return pgHeirloomRepository;
-    case 'mongo':
-      return mongoHeirloomRepository;
     case 'fs':
       return fsHeirloomRepository;
     default:

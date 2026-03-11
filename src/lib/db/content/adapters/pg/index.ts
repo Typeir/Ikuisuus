@@ -1,11 +1,11 @@
 /**
- * @fileoverview PostgreSQL Adapters Barrel Export
- * @description Re-exports all PostgreSQL repository implementations.
+ * @fileoverview PostgreSQL Content Adapters — Barrel Export
+ * @description Re-exports all MikroORM-backed content repository adapters.
  *
  * @module lib/db/content/adapters/pg
- * @version 1.0.0
+ * @version 4.0.0
  * @author Typeir
- * @since 3.0.0
+ * @since 5.0.0
  */
 
 export { pgHeirloomRepository } from './pgHeirloomRepository';

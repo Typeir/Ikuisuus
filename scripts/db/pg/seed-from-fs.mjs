@@ -1,11 +1,10 @@
 /**
- * @fileoverview PostgreSQL Seed Script — FS → Prisma (Postgres)
+ * @fileoverview PostgreSQL Seed Script — FS → Postgres (raw SQL)
  * @description Reads every `.metadata.json` sidecar file from the local content
- * tree and upserts it into the corresponding Postgres table via Prisma ORM.
+ * tree and upserts it into the corresponding Postgres table via raw pg queries.
  *
- * Safe to run multiple times: each locale is fully replaced per run (deleteMany
- * then createMany inside a Prisma interactive transaction), so stale rows never
- * accumulate.
+ * Safe to run multiple times: each locale is fully replaced per run (DELETE
+ * then INSERT inside a transaction), so stale rows never accumulate.
  *
  * Tables populated:
  *   monsters, heirlooms, spells + spell_lists, trinkets
@@ -21,6 +20,7 @@
 
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { dirname, join } from 'path';
+import pg from 'pg';
 import { fileURLToPath } from 'url';
 import { createLogger } from '../../core/logger.mjs';
 
@@ -94,222 +94,287 @@ const readMetadata = (locale, subdir) => {
     });
 };
 
+/* ─────────────────────  SQL helpers  ──────────────────────────────── */
+
+/**
+ * Converts a JS value to a Postgres-compatible parameter.
+ * Arrays become `{a,b,c}` text format.
+ *
+ * @param {unknown} v - Value to convert
+ * @returns {unknown} Postgres-safe parameter
+ */
+const pgVal = (v) => {
+  if (v === undefined) return null;
+  return v;
+};
+
 /* ─────────────────────────  Seeders  ───────────────────────────────── */
 
 /**
- * Seeds the `monsters` table for one locale via Prisma `createMany`.
+ * Seeds the `monsters` table for one locale.
  *
- * @param {import('@prisma/client').Prisma.TransactionClient} tx - Prisma transaction client
+ * @param {pg.PoolClient} client - Transaction-bound pg client
  * @param {string} locale - Locale code
  * @returns {Promise<number>} Number of rows inserted
  */
-async function seedMonsters(tx, locale) {
+async function seedMonsters(client, locale) {
   const records = readMetadata(locale, 'monsters');
   if (records.length === 0) return 0;
 
-  await tx.monster.deleteMany({ where: { locale } });
+  await client.query('DELETE FROM monsters WHERE locale = $1', [locale]);
 
-  await tx.monster.createMany({
-    data: records.map((m) => {
-      const ab = m.abilities ?? {};
-      const st = m.savingThrows ?? {};
-      const sp = m.speed ?? {};
-      const modes = sp.modes ?? {};
-      const senses = m.senses ?? {};
-      const ac = m.ac ?? {};
-      const hp = m.hp ?? {};
+  for (const m of records) {
+    const ab = m.abilities ?? {};
+    const st = m.savingThrows ?? {};
+    const sp = m.speed ?? {};
+    const modes = sp.modes ?? {};
+    const senses = m.senses ?? {};
+    const ac = m.ac ?? {};
+    const hp = m.hp ?? {};
 
-      return {
+    await client.query(
+      `INSERT INTO monsters (
+        locale, slug, sub_slug, title, file, link, size, creature_type, alignment, cr,
+        proficiency_bonus, ac_value, ac_notes, ac_raw, hp_average, hp_formula, hp_raw,
+        speed_raw, speed_walk, speed_fly, speed_climb, speed_swim, speed_burrow, speed_hover,
+        score_str, score_dex, score_con, score_int, score_wis, score_cha,
+        save_str, save_dex, save_con, save_int, save_wis, save_cha,
+        sense_raw, sense_passive_perception, sense_darkvision, sense_blindsight, sense_tremorsense, sense_truesight,
+        skills, damage_resistances, damage_immunities, damage_vulnerabilities,
+        condition_immunities, languages, tags, index_version
+      ) VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
+        $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,
+        $39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50
+      )`,
+      [
         locale,
-        slug: m.slug ?? '',
-        subSlug: m.subSlug ?? null,
-        title: m.title ?? '',
-        file: m.file ?? '',
-        link: m.link ?? '',
-        size: m.size ?? null,
-        creatureType: m.creatureType ?? null,
-        alignment: m.alignment ?? null,
-        cr: m.cr ?? null,
-        proficiencyBonus: m.proficiencyBonus ?? null,
-        acValue: ac.value ?? null,
-        acNotes: ac.notes ?? null,
-        acRaw: ac.raw ?? null,
-        hpAverage: hp.average ?? null,
-        hpFormula: hp.formula ?? null,
-        hpRaw: hp.raw ?? null,
-        speedRaw: sp.raw ?? null,
-        speedWalk: modes.walk ?? null,
-        speedFly: modes.fly ?? null,
-        speedClimb: modes.climb ?? null,
-        speedSwim: modes.swim ?? null,
-        speedBurrow: modes.burrow ?? null,
-        speedHover: modes.hover ?? null,
-        strScore: ab.str?.score ?? null,
-        dexScore: ab.dex?.score ?? null,
-        conScore: ab.con?.score ?? null,
-        intScore: ab.int?.score ?? null,
-        wisScore: ab.wis?.score ?? null,
-        chaScore: ab.cha?.score ?? null,
-        saveStr: st.str ?? null,
-        saveDex: st.dex ?? null,
-        saveCon: st.con ?? null,
-        saveInt: st.int ?? null,
-        saveWis: st.wis ?? null,
-        saveCha: st.cha ?? null,
-        sensesRaw: senses.raw ?? null,
-        passivePerception: senses.passivePerception ?? null,
-        darkvision: senses.darkvision ?? null,
-        blindsight: senses.blindsight ?? null,
-        tremorsense: senses.tremorsense ?? null,
-        truesight: senses.truesight ?? null,
-        skills: m.skills ?? [],
-        damageResistances: m.damageResistances ?? [],
-        damageImmunities: m.damageImmunities ?? [],
-        damageVulnerabilities: m.damageVulnerabilities ?? [],
-        conditionImmunities: m.conditionImmunities ?? [],
-        languages: m.languages ?? [],
-        tags: m.tags ?? [],
-        indexVersion: m.indexVersion ?? null,
-      };
-    }),
-  });
-
-  return records.length;
-}
-
-/**
- * Seeds the `heirlooms` table for one locale via Prisma `createMany`.
- *
- * @param {import('@prisma/client').Prisma.TransactionClient} tx - Prisma transaction client
- * @param {string} locale - Locale code
- * @returns {Promise<number>} Number of rows inserted
- */
-async function seedHeirlooms(tx, locale) {
-  const records = readMetadata(locale, join('items', 'heirlooms'));
-  if (records.length === 0) return 0;
-
-  await tx.heirloom.deleteMany({ where: { locale } });
-
-  await tx.heirloom.createMany({
-    data: records.map((h) => {
-      const wd = h.weaponDamage ?? {};
-      const ch = h.charges ?? {};
-      return {
-        locale,
-        slug: h.slug ?? '',
-        title: h.title ?? '',
-        file: h.file ?? '',
-        link: h.link ?? '',
-        rarity: h.rarity ?? null,
-        itemType: h.itemType ?? null,
-        weaponType: h.weaponType ?? null,
-        requiresAttunement: h.requiresAttunement ?? null,
-        attunementRequirements: h.attunementRequirements ?? null,
-        weaponDamage: wd.damage ?? null,
-        weaponDamageType: wd.damageType ?? null,
-        versatileDamage: wd.versatileDamage ?? null,
-        hitModifier: h.hitModifier ?? null,
-        range: h.range ?? null,
-        weight: h.weight ?? null,
-        chargesInitial: ch.initial ?? null,
-        chargesRecharge: ch.recharge ?? null,
-        chargesDepletes: ch.depletes ?? null,
-        mastery: h.mastery ?? [],
-        weaponProperties: h.weaponProperties ?? [],
-        damageTypesDealt: h.damageTypesDealt ?? [],
-        savingThrowTypes: h.savingThrowTypes ?? [],
-        tags: h.tags ?? [],
-        indexVersion: h.indexVersion ?? null,
-      };
-    }),
-  });
-
-  return records.length;
-}
-
-/**
- * Seeds the `spells` and `spell_lists` tables for one locale.
- * Uses Prisma nested writes so each spell is inserted along with its
- * spell_lists children in a single operation.
- *
- * @param {import('@prisma/client').Prisma.TransactionClient} tx - Prisma transaction client
- * @param {string} locale - Locale code
- * @returns {Promise<number>} Number of spell rows inserted
- */
-async function seedSpells(tx, locale) {
-  const records = readMetadata(locale, 'spells');
-  if (records.length === 0) return 0;
-
-  await tx.spell.deleteMany({ where: { locale } });
-
-  for (const s of records) {
-    await tx.spell.create({
-      data: {
-        locale,
-        slug: s.slug ?? '',
-        title: s.title ?? '',
-        file: s.file ?? '',
-        link: s.link ?? '',
-        level: s.level ?? null,
-        school: s.school ?? null,
-        quality: s.quality ?? null,
-        castingTimeRaw: s.castingTimeRaw ?? null,
-        castingTime: s.castingTime ?? [],
-        range: s.range ?? null,
-        concentration: s.concentration ?? null,
-        duration: s.duration ?? null,
-        verbal: s.verbal ?? null,
-        somatic: s.somatic ?? null,
-        material: s.material ?? null,
-        materialDescription: s.materialDescription ?? null,
-        hasRitual: s.hasRitual ?? null,
-        tags: s.tags ?? [],
-        spellLists: {
-          create: (s.spellLists ?? []).map((ref) => ({
-            name: ref.name,
-            link: ref.link,
-          })),
-        },
-      },
-    });
+        m.slug ?? '',
+        pgVal(m.subSlug),
+        m.title ?? '',
+        m.file ?? '',
+        m.link ?? '',
+        pgVal(m.size),
+        pgVal(m.creatureType),
+        pgVal(m.alignment),
+        pgVal(m.cr),
+        pgVal(m.proficiencyBonus),
+        pgVal(ac.value),
+        pgVal(ac.notes),
+        pgVal(ac.raw),
+        pgVal(hp.average),
+        pgVal(hp.formula),
+        pgVal(hp.raw),
+        pgVal(sp.raw),
+        pgVal(modes.walk),
+        pgVal(modes.fly),
+        pgVal(modes.climb),
+        pgVal(modes.swim),
+        pgVal(modes.burrow),
+        pgVal(modes.hover),
+        pgVal(ab.str?.score),
+        pgVal(ab.dex?.score),
+        pgVal(ab.con?.score),
+        pgVal(ab.int?.score),
+        pgVal(ab.wis?.score),
+        pgVal(ab.cha?.score),
+        pgVal(st.str),
+        pgVal(st.dex),
+        pgVal(st.con),
+        pgVal(st.int),
+        pgVal(st.wis),
+        pgVal(st.cha),
+        pgVal(senses.raw),
+        pgVal(senses.passivePerception),
+        pgVal(senses.darkvision),
+        pgVal(senses.blindsight),
+        pgVal(senses.tremorsense),
+        pgVal(senses.truesight),
+        m.skills ?? [],
+        m.damageResistances ?? [],
+        m.damageImmunities ?? [],
+        m.damageVulnerabilities ?? [],
+        m.conditionImmunities ?? [],
+        m.languages ?? [],
+        m.tags ?? [],
+        pgVal(m.indexVersion),
+      ],
+    );
   }
 
   return records.length;
 }
 
 /**
- * Seeds the `trinkets` table for one locale via Prisma `createMany`.
+ * Seeds the `heirlooms` table for one locale.
  *
- * @param {import('@prisma/client').Prisma.TransactionClient} tx - Prisma transaction client
+ * @param {pg.PoolClient} client - Transaction-bound pg client
  * @param {string} locale - Locale code
  * @returns {Promise<number>} Number of rows inserted
  */
-async function seedTrinkets(tx, locale) {
+async function seedHeirlooms(client, locale) {
+  const records = readMetadata(locale, join('items', 'heirlooms'));
+  if (records.length === 0) return 0;
+
+  await client.query('DELETE FROM heirlooms WHERE locale = $1', [locale]);
+
+  for (const h of records) {
+    const wd = h.weaponDamage ?? {};
+    const ch = h.charges ?? {};
+
+    await client.query(
+      `INSERT INTO heirlooms (
+        locale, slug, title, file, link, rarity, item_type, weapon_type,
+        requires_attunement, attunement_requirements,
+        weapon_damage, weapon_damage_type, versatile_damage,
+        hit_modifier, range, weight,
+        charges_initial, charges_recharge, charges_depletes,
+        mastery, weapon_properties, damage_types_dealt,
+        saving_throw_types, tags, index_version
+      ) VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,
+        $20,$21,$22,$23,$24,$25
+      )`,
+      [
+        locale,
+        h.slug ?? '',
+        h.title ?? '',
+        h.file ?? '',
+        h.link ?? '',
+        pgVal(h.rarity),
+        pgVal(h.itemType),
+        pgVal(h.weaponType),
+        pgVal(h.requiresAttunement),
+        pgVal(h.attunementRequirements),
+        pgVal(wd.damage),
+        pgVal(wd.damageType),
+        pgVal(wd.versatileDamage),
+        pgVal(h.hitModifier),
+        pgVal(h.range),
+        pgVal(h.weight),
+        pgVal(ch.initial),
+        pgVal(ch.recharge),
+        pgVal(ch.depletes),
+        h.mastery ?? [],
+        h.weaponProperties ?? [],
+        h.damageTypesDealt ?? [],
+        h.savingThrowTypes ?? [],
+        h.tags ?? [],
+        pgVal(h.indexVersion),
+      ],
+    );
+  }
+
+  return records.length;
+}
+
+/**
+ * Seeds the `spells` and `spell_lists` tables for one locale.
+ * Inserts each spell, retrieves its generated ID, then batch-inserts
+ * its spell_lists children.
+ *
+ * @param {pg.PoolClient} client - Transaction-bound pg client
+ * @param {string} locale - Locale code
+ * @returns {Promise<number>} Number of spell rows inserted
+ */
+async function seedSpells(client, locale) {
+  const records = readMetadata(locale, 'spells');
+  if (records.length === 0) return 0;
+
+  await client.query(
+    'DELETE FROM spell_lists WHERE spell_id IN (SELECT id FROM spells WHERE locale = $1)',
+    [locale],
+  );
+  await client.query('DELETE FROM spells WHERE locale = $1', [locale]);
+
+  for (const s of records) {
+    const { rows } = await client.query(
+      `INSERT INTO spells (
+        locale, slug, title, file, link, level, school, quality,
+        casting_time_raw, casting_time, range, concentration, duration,
+        component_verbal, component_somatic, component_material, component_material_description, has_ritual, tags
+      ) VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19
+      ) RETURNING id`,
+      [
+        locale,
+        s.slug ?? '',
+        s.title ?? '',
+        s.file ?? '',
+        s.link ?? '',
+        pgVal(s.level),
+        pgVal(s.school),
+        pgVal(s.quality),
+        pgVal(s.castingTimeRaw),
+        s.castingTime ?? [],
+        pgVal(s.range),
+        pgVal(s.concentration),
+        pgVal(s.duration),
+        pgVal(s.verbal),
+        pgVal(s.somatic),
+        pgVal(s.material),
+        pgVal(s.materialDescription),
+        pgVal(s.hasRitual),
+        s.tags ?? [],
+      ],
+    );
+
+    const spellId = rows[0].id;
+    const lists = s.spellLists ?? [];
+    for (const ref of lists) {
+      await client.query(
+        'INSERT INTO spell_lists (spell_id, name, link) VALUES ($1, $2, $3)',
+        [spellId, ref.name, ref.link],
+      );
+    }
+  }
+
+  return records.length;
+}
+
+/**
+ * Seeds the `trinkets` table for one locale.
+ *
+ * @param {pg.PoolClient} client - Transaction-bound pg client
+ * @param {string} locale - Locale code
+ * @returns {Promise<number>} Number of rows inserted
+ */
+async function seedTrinkets(client, locale) {
   const records = readMetadata(locale, join('items', 'trinkets'));
   if (records.length === 0) return 0;
 
-  await tx.trinket.deleteMany({ where: { locale } });
+  await client.query('DELETE FROM trinkets WHERE locale = $1', [locale]);
 
-  await tx.trinket.createMany({
-    data: records.map((t) => ({
-      locale,
-      slug: t.slug ?? '',
-      title: t.title ?? '',
-      file: t.file ?? '',
-      link: t.link ?? '',
-      itemType: t.itemType ?? '',
-      damage: t.damage ?? null,
-      damageType: t.damageType ?? null,
-      range: t.range ?? null,
-      weight: t.weight ?? null,
-      savingThrowDc: t.savingThrowDC ?? null,
-      savingThrowAbility: t.savingThrowAbility ?? null,
-      properties: t.properties ?? [],
-      specialEffects: t.specialEffects ?? [],
-      inflictsConditions: t.inflictsConditions ?? [],
-      tags: t.tags ?? [],
-    })),
-  });
+  for (const t of records) {
+    await client.query(
+      `INSERT INTO trinkets (
+        locale, slug, title, file, link, item_type,
+        damage, damage_type, range, weight,
+        saving_throw_dc, saving_throw_ability,
+        properties, special_effects, inflicts_conditions, tags
+      ) VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16
+      )`,
+      [
+        locale,
+        t.slug ?? '',
+        t.title ?? '',
+        t.file ?? '',
+        t.link ?? '',
+        t.itemType ?? '',
+        pgVal(t.damage),
+        pgVal(t.damageType),
+        pgVal(t.range),
+        pgVal(t.weight),
+        pgVal(t.savingThrowDC),
+        pgVal(t.savingThrowAbility),
+        t.properties ?? [],
+        t.specialEffects ?? [],
+        t.inflictsConditions ?? [],
+        t.tags ?? [],
+      ],
+    );
+  }
 
   return records.length;
 }
@@ -319,27 +384,39 @@ async function seedTrinkets(tx, locale) {
 /**
  * Seeds all content tables for a single locale inside one transaction.
  *
- * @param {import('@prisma/client').PrismaClient} prisma - Prisma client
+ * @param {pg.Pool} pool - pg connection pool
  * @param {string} locale - Locale code
  * @returns {Promise<void>}
  */
-async function seedLocale(prisma, locale) {
-  await prisma.$transaction(async (tx) => {
-    const monsters = await seedMonsters(tx, locale);
-    const heirlooms = await seedHeirlooms(tx, locale);
-    const spells = await seedSpells(tx, locale);
-    const trinkets = await seedTrinkets(tx, locale);
+async function seedLocale(pool, locale) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const monsters = await seedMonsters(client, locale);
+    const heirlooms = await seedHeirlooms(client, locale);
+    const spells = await seedSpells(client, locale);
+    const trinkets = await seedTrinkets(client, locale);
+
+    await client.query('COMMIT');
 
     log.message(
       `  ✅  ${locale}:  monsters=${monsters}  heirlooms=${heirlooms}  spells=${spells}  trinkets=${trinkets}`,
     );
-  });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 async function main() {
-  const { PrismaClient } =
-    await import('../../../src/lib/db/prisma/generated/sql/index.js');
-  const prisma = new PrismaClient();
+  const pool = new pg.Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 3,
+    connectionTimeoutMillis: 10_000,
+  });
 
   try {
     const arg = process.argv[2];
@@ -347,11 +424,11 @@ async function main() {
 
     log.message(`🌱  Seeding locales: ${locales.join(', ')}`);
     for (const locale of locales) {
-      await seedLocale(prisma, locale);
+      await seedLocale(pool, locale);
     }
     log.message('🏁  Seed complete.');
   } finally {
-    await prisma.$disconnect();
+    await pool.end();
   }
 }
 

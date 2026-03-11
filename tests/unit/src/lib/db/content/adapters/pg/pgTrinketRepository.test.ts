@@ -1,16 +1,23 @@
 /**
  * pgTrinketRepository Unit Tests
  *
- * @fileoverview Tests for the PostgreSQL trinket repository adapter.
- * Verifies row-mapping from flat `trinkets` columns to `TrinketMetadata`
- * and that the correct parameterised SQL is issued.
+ * @fileoverview Tests for the MikroORM-backed PostgreSQL trinket repository.
+ * Verifies row-mapping from `TrinketEntity` rows (with embedded saving throw)
+ * to `TrinketMetadata` domain objects.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgTrinketRepository
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/db/postgres/pool');
+const mockEM = {
+  find: vi.fn(),
+  findOne: vi.fn(),
+};
+
+vi.mock('@/lib/db/orm/orm', () => ({
+  getEM: vi.fn().mockResolvedValue(mockEM),
+}));
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
     child: () => ({ error: vi.fn(), debug: vi.fn(), message: vi.fn() }),
@@ -18,42 +25,48 @@ vi.mock('@/lib/logging/logger', () => ({
 }));
 
 let pgTrinketRepository: typeof import('@/lib/db/content/adapters/pg/pgTrinketRepository').pgTrinketRepository;
-let query: ReturnType<typeof vi.fn>;
 
 beforeEach(async () => {
   vi.resetModules();
-  const pool = await import('@/lib/db/postgres/pool');
-  query = pool.query as ReturnType<typeof vi.fn>;
+
+  vi.doMock('@/lib/db/orm/orm', () => ({
+    getEM: vi.fn().mockResolvedValue(mockEM),
+  }));
 
   const mod = await import('@/lib/db/content/adapters/pg/pgTrinketRepository');
   pgTrinketRepository = mod.pgTrinketRepository;
 });
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => {
+  vi.restoreAllMocks();
+  mockEM.find.mockReset();
+  mockEM.findOne.mockReset();
+});
 
-/** Minimal flat DB row that exercises the row mapper. */
-const flatRow = {
+/** MikroORM TrinketEntity row (matches embedded VO structure). */
+const entityRow = {
+  id: 1,
+  locale: 'en',
   slug: 'lucky-coin',
   title: 'Lucky Coin',
   file: 'src/content/en/items/trinkets/lucky-coin.mdx',
   link: '/library/items/trinkets/lucky-coin',
-  item_type: 'coin',
+  itemType: 'coin',
   damage: null,
-  damage_type: null,
+  damageType: null,
   range: null,
   weight: null,
-  saving_throw_dc: null,
-  saving_throw_ability: null,
+  savingThrow: { dc: null, ability: null },
   properties: ['shiny'],
-  special_effects: ['reroll one d20 per day'],
-  inflicts_conditions: null,
+  specialEffects: ['reroll one d20 per day'],
+  inflictsConditions: [],
   tags: ['luck', 'passive'],
 };
 
 describe('pgTrinketRepository', () => {
   describe('list', () => {
-    it('should map flat rows to TrinketMetadata objects', async () => {
-      query.mockResolvedValue({ rows: [flatRow] });
+    it('should map entity rows to TrinketMetadata objects', async () => {
+      mockEM.find.mockResolvedValue([entityRow]);
 
       const result = await pgTrinketRepository.list('en');
 
@@ -64,22 +77,22 @@ describe('pgTrinketRepository', () => {
         itemType: 'coin',
         properties: ['shiny'],
         specialEffects: ['reroll one d20 per day'],
-        inflictsConditions: undefined,
         tags: ['luck', 'passive'],
       });
     });
 
-    it('should query the trinkets table with locale', async () => {
-      query.mockResolvedValue({ rows: [] });
+    it('should query with locale filter and slug ordering', async () => {
+      mockEM.find.mockResolvedValue([]);
       await pgTrinketRepository.list('en');
-      expect(query).toHaveBeenCalledWith(
-        expect.stringContaining('FROM trinkets'),
-        ['en'],
+      expect(mockEM.find).toHaveBeenCalledWith(
+        expect.anything(),
+        { locale: 'en' },
+        { orderBy: { title: 'asc' } },
       );
     });
 
     it('should return empty array on error', async () => {
-      query.mockRejectedValue(new Error('fail'));
+      mockEM.find.mockRejectedValue(new Error('fail'));
       const result = await pgTrinketRepository.list('en');
       expect(result).toEqual([]);
     });
@@ -87,7 +100,7 @@ describe('pgTrinketRepository', () => {
 
   describe('getBySlug', () => {
     it('should return mapped TrinketMetadata when found', async () => {
-      query.mockResolvedValue({ rows: [flatRow] });
+      mockEM.findOne.mockResolvedValue(entityRow);
 
       const result = await pgTrinketRepository.getBySlug('en', 'lucky-coin');
 
@@ -97,22 +110,22 @@ describe('pgTrinketRepository', () => {
     });
 
     it('should query by locale and slug', async () => {
-      query.mockResolvedValue({ rows: [] });
+      mockEM.findOne.mockResolvedValue(null);
       await pgTrinketRepository.getBySlug('en', 'lucky-coin');
-      expect(query).toHaveBeenCalledWith(expect.stringContaining('slug = $2'), [
-        'en',
-        'lucky-coin',
-      ]);
+      expect(mockEM.findOne).toHaveBeenCalledWith(expect.anything(), {
+        locale: 'en',
+        slug: 'lucky-coin',
+      });
     });
 
     it('should return null when not found', async () => {
-      query.mockResolvedValue({ rows: [] });
+      mockEM.findOne.mockResolvedValue(null);
       const result = await pgTrinketRepository.getBySlug('en', 'missing');
       expect(result).toBeNull();
     });
 
     it('should return null on error', async () => {
-      query.mockRejectedValue(new Error('fail'));
+      mockEM.findOne.mockRejectedValue(new Error('fail'));
       const result = await pgTrinketRepository.getBySlug('en', 'lucky-coin');
       expect(result).toBeNull();
     });

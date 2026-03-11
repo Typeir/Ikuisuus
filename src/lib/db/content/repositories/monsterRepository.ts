@@ -15,7 +15,6 @@
  */
 
 import { fsMonsterRepository } from '../adapters/fs/fsMonsterRepository';
-import { mongoMonsterRepository } from '../adapters/mongo/mongoMonsterRepository';
 import { pgMonsterRepository } from '../adapters/pg/pgMonsterRepository';
 import type {
     MonsterIndexEntry,
@@ -58,21 +57,19 @@ export interface MonsterRepository {
   getBySlug(locale: string, slug: string): Promise<MonsterMetadata | null>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default), `'pg'`, or `'mongo'`. */
+/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**
  * Resolves the monster repository for the active backend.
  *
  * @returns {MonsterRepository} Monster metadata repository
- * @throws {Error} If `METADATA_BACKEND` is not `'fs'`, `'pg'`, or `'mongo'`
+ * @throws {Error} If `METADATA_BACKEND` is not `'fs'` or `'pg'`
  */
 const createMonsterRepository = (): MonsterRepository => {
   switch (metadataBackend) {
     case 'pg':
       return pgMonsterRepository;
-    case 'mongo':
-      return mongoMonsterRepository;
     case 'fs':
       return fsMonsterRepository;
     default:

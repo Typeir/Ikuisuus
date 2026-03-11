@@ -1,22 +1,22 @@
 /**
  * pgMonsterRepository Unit Tests
  *
- * @fileoverview Tests for the Prisma-backed PostgreSQL monster repository.
- * Verifies row-mapping from Prisma `Monster` rows to `MonsterMetadata`
- * domain objects and that the correct Prisma queries are used.
+ * @fileoverview Tests for the MikroORM-backed PostgreSQL monster repository.
+ * Verifies row-mapping from `MonsterEntity` rows to `MonsterMetadata`
+ * domain objects and that the correct MikroORM queries are used.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgMonsterRepository
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/db/prisma/client', () => ({
-  prisma: {
-    monster: {
-      findMany: vi.fn(),
-      findFirst: vi.fn(),
-    },
-  },
+const mockEM = {
+  find: vi.fn(),
+  findOne: vi.fn(),
+};
+
+vi.mock('@/lib/db/orm/orm', () => ({
+  getEM: vi.fn().mockResolvedValue(mockEM),
 }));
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
@@ -25,21 +25,26 @@ vi.mock('@/lib/logging/logger', () => ({
 }));
 
 let pgMonsterRepository: typeof import('@/lib/db/content/adapters/pg/pgMonsterRepository').pgMonsterRepository;
-let prisma: typeof import('@/lib/db/prisma/client').prisma;
 
 beforeEach(async () => {
   vi.resetModules();
-  const client = await import('@/lib/db/prisma/client');
-  prisma = client.prisma;
+
+  vi.doMock('@/lib/db/orm/orm', () => ({
+    getEM: vi.fn().mockResolvedValue(mockEM),
+  }));
 
   const mod = await import('@/lib/db/content/adapters/pg/pgMonsterRepository');
   pgMonsterRepository = mod.pgMonsterRepository;
 });
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => {
+  vi.restoreAllMocks();
+  mockEM.find.mockReset();
+  mockEM.findOne.mockReset();
+});
 
-/** Prisma Monster row (camelCase, no modifiers). */
-const prismaRow = {
+/** MikroORM MonsterEntity row (matches embedded VO structure). */
+const entityRow = {
   id: 1,
   locale: 'en',
   slug: 'aboleth',
@@ -52,37 +57,41 @@ const prismaRow = {
   alignment: 'lawful evil',
   cr: '10',
   proficiencyBonus: 4,
-  acValue: 17,
-  acNotes: 'natural armor',
-  acRaw: null,
-  hpAverage: 135,
-  hpFormula: '18d10+36',
-  hpRaw: null,
-  speedRaw: '10 ft., swim 40 ft.',
-  speedWalk: 10,
-  speedFly: null,
-  speedClimb: null,
-  speedSwim: 40,
-  speedBurrow: null,
-  speedHover: false,
-  strScore: 21,
-  dexScore: 9,
-  conScore: 15,
-  intScore: 18,
-  wisScore: 15,
-  chaScore: 18,
-  saveStr: null,
-  saveDex: null,
-  saveCon: null,
-  saveInt: 8,
-  saveWis: 6,
-  saveCha: 8,
-  sensesRaw: 'darkvision 120 ft., passive Perception 20',
-  passivePerception: 20,
-  darkvision: 120,
-  blindsight: null,
-  tremorsense: null,
-  truesight: null,
+  ac: { value: 17, notes: 'natural armor', raw: null },
+  hp: { average: 135, formula: '18d10+36', raw: null },
+  speed: {
+    raw: '10 ft., swim 40 ft.',
+    walk: 10,
+    fly: null,
+    climb: null,
+    swim: 40,
+    burrow: null,
+    hover: false,
+  },
+  scores: {
+    str: 21,
+    dex: 9,
+    con: 15,
+    int: 18,
+    wis: 15,
+    cha: 18,
+  },
+  saves: {
+    str: null,
+    dex: null,
+    con: null,
+    int: 8,
+    wis: 6,
+    cha: 8,
+  },
+  senses: {
+    raw: 'darkvision 120 ft., passive Perception 20',
+    passivePerception: 20,
+    darkvision: 120,
+    blindsight: null,
+    tremorsense: null,
+    truesight: null,
+  },
   skills: ['history +12', 'perception +10'],
   damageResistances: [],
   damageImmunities: [],
@@ -95,10 +104,8 @@ const prismaRow = {
 
 describe('pgMonsterRepository', () => {
   describe('list', () => {
-    it('should map Prisma rows to MonsterMetadata objects', async () => {
-      vi.mocked(prisma.monster.findMany).mockResolvedValue([
-        prismaRow as never,
-      ]);
+    it('should map entity rows to MonsterMetadata objects', async () => {
+      mockEM.find.mockResolvedValue([entityRow]);
 
       const result = await pgMonsterRepository.list('en');
 
@@ -126,18 +133,17 @@ describe('pgMonsterRepository', () => {
     });
 
     it('should query with locale filter and slug ordering', async () => {
-      vi.mocked(prisma.monster.findMany).mockResolvedValue([]);
+      mockEM.find.mockResolvedValue([]);
       await pgMonsterRepository.list('en');
-      expect(prisma.monster.findMany).toHaveBeenCalledWith({
-        where: { locale: 'en' },
-        orderBy: { slug: 'asc' },
-      });
+      expect(mockEM.find).toHaveBeenCalledWith(
+        expect.anything(),
+        { locale: 'en' },
+        { orderBy: { slug: 'asc' } },
+      );
     });
 
     it('should return empty array on error', async () => {
-      vi.mocked(prisma.monster.findMany).mockRejectedValue(
-        new Error('connection refused'),
-      );
+      mockEM.find.mockRejectedValue(new Error('connection refused'));
       const result = await pgMonsterRepository.list('en');
       expect(result).toEqual([]);
     });
@@ -145,7 +151,7 @@ describe('pgMonsterRepository', () => {
 
   describe('listIndex', () => {
     it('should return index projection with subSlug fallback', async () => {
-      vi.mocked(prisma.monster.findMany).mockResolvedValue([
+      mockEM.find.mockResolvedValue([
         {
           slug: 'aboleth',
           subSlug: null,
@@ -153,7 +159,7 @@ describe('pgMonsterRepository', () => {
           cr: '10',
           size: 'large',
           creatureType: 'aberration',
-        } as never,
+        },
       ]);
 
       const result = await pgMonsterRepository.listIndex('en');
@@ -170,7 +176,7 @@ describe('pgMonsterRepository', () => {
     });
 
     it('should use subSlug when present', async () => {
-      vi.mocked(prisma.monster.findMany).mockResolvedValue([
+      mockEM.find.mockResolvedValue([
         {
           slug: 'dragon-file',
           subSlug: 'ancient-red-dragon',
@@ -178,7 +184,7 @@ describe('pgMonsterRepository', () => {
           cr: '24',
           size: 'gargantuan',
           creatureType: 'dragon',
-        } as never,
+        },
       ]);
 
       const result = await pgMonsterRepository.listIndex('en');
@@ -186,7 +192,7 @@ describe('pgMonsterRepository', () => {
     });
 
     it('should return empty array on error', async () => {
-      vi.mocked(prisma.monster.findMany).mockRejectedValue(new Error('fail'));
+      mockEM.find.mockRejectedValue(new Error('fail'));
       const result = await pgMonsterRepository.listIndex('en');
       expect(result).toEqual([]);
     });
@@ -194,7 +200,7 @@ describe('pgMonsterRepository', () => {
 
   describe('getBySlug', () => {
     it('should return mapped MonsterMetadata when found', async () => {
-      vi.mocked(prisma.monster.findFirst).mockResolvedValue(prismaRow as never);
+      mockEM.findOne.mockResolvedValue(entityRow);
 
       const result = await pgMonsterRepository.getBySlug('en', 'aboleth');
 
@@ -203,25 +209,23 @@ describe('pgMonsterRepository', () => {
       expect(result?.cr).toBe('10');
     });
 
-    it('should query with OR condition for subSlug/slug', async () => {
-      vi.mocked(prisma.monster.findFirst).mockResolvedValue(null);
+    it('should query with $or condition for subSlug/slug', async () => {
+      mockEM.findOne.mockResolvedValue(null);
       await pgMonsterRepository.getBySlug('en', 'aboleth');
-      expect(prisma.monster.findFirst).toHaveBeenCalledWith({
-        where: {
-          locale: 'en',
-          OR: [{ subSlug: 'aboleth' }, { slug: 'aboleth' }],
-        },
+      expect(mockEM.findOne).toHaveBeenCalledWith(expect.anything(), {
+        locale: 'en',
+        $or: [{ subSlug: 'aboleth' }, { slug: 'aboleth' }],
       });
     });
 
     it('should return null when not found', async () => {
-      vi.mocked(prisma.monster.findFirst).mockResolvedValue(null);
+      mockEM.findOne.mockResolvedValue(null);
       const result = await pgMonsterRepository.getBySlug('en', 'nonexistent');
       expect(result).toBeNull();
     });
 
     it('should return null on error', async () => {
-      vi.mocked(prisma.monster.findFirst).mockRejectedValue(new Error('fail'));
+      mockEM.findOne.mockRejectedValue(new Error('fail'));
       const result = await pgMonsterRepository.getBySlug('en', 'aboleth');
       expect(result).toBeNull();
     });

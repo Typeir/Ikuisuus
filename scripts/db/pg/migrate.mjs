@@ -1,7 +1,7 @@
 /**
- * @fileoverview PostgreSQL Migration Runner (Prisma)
+ * @fileoverview PostgreSQL Migration Runner
  * @description Runs pending SQL migrations from `scripts/db/migrations/` in
- * alphabetical order. Uses Prisma ORM to execute raw SQL and track applied
+ * alphabetical order. Uses raw pg Pool to execute SQL and track applied
  * migrations in the `schema_migrations` table.
  *
  * Idempotent — safe to run on every deploy. Migrations that have already been
@@ -19,6 +19,7 @@
 
 import { readFileSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
+import pg from 'pg';
 import { fileURLToPath } from 'url';
 import { createLogger } from '../../core/logger.mjs';
 
@@ -69,20 +70,23 @@ function getMigrationFiles() {
 /* ──────────────────────  Core runner  ──────────────────────────────── */
 
 async function main() {
-  const { PrismaClient } =
-    await import('../../../src/lib/db/prisma/generated/sql/index.js');
-  const prisma = new PrismaClient();
+  const pool = new pg.Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 3,
+    connectionTimeoutMillis: 10_000,
+  });
 
   try {
-    // Bootstrap: create the tracking table if this is the first run ever.
-    await prisma.$executeRawUnsafe(`
-      CREATE TABLE IF NOT EXISTS public.schema_migrations (
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS schema_migrations (
         name       text        PRIMARY KEY,
         applied_at timestamptz NOT NULL DEFAULT now()
       )
     `);
 
-    const applied = await prisma.schemaMigration.findMany();
+    const { rows: applied } = await pool.query(
+      'SELECT name FROM schema_migrations',
+    );
     const appliedSet = new Set(applied.map((m) => m.name));
 
     const files = getMigrationFiles();
@@ -101,21 +105,27 @@ async function main() {
 
       log.message(`   ▶  ${name}`);
 
+      const client = await pool.connect();
       try {
-        await prisma.$transaction(async (tx) => {
-          await tx.$executeRawUnsafe(sql);
-          await tx.schemaMigration.create({ data: { name } });
-        });
+        await client.query('BEGIN');
+        await client.query(sql);
+        await client.query('INSERT INTO schema_migrations (name) VALUES ($1)', [
+          name,
+        ]);
+        await client.query('COMMIT');
         log.message(`   ✓  ${name} applied.`);
       } catch (err) {
+        await client.query('ROLLBACK');
         log.error(`   ✗  ${name} FAILED: ${err.message}`);
         throw err;
+      } finally {
+        client.release();
       }
     }
 
     log.message('🎉  All migrations complete.');
   } finally {
-    await prisma.$disconnect();
+    await pool.end();
   }
 }
 

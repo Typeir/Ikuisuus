@@ -1,0 +1,43 @@
+/**
+ * @fileoverview MikroORM Entity — CorrectionsUser
+ * @description Decorator-based entity for the `corrections_users` table.
+ *
+ * @module lib/db/orm/entities/CorrectionsUserEntity
+ * @version 2.0.0
+ * @author Typeir
+ * @since 5.0.0
+ */
+
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+
+/**
+ * MikroORM entity for the `corrections_users` table.
+ */
+@Entity({ tableName: 'corrections_users' })
+export class CorrectionsUserEntity {
+  @PrimaryKey({ type: 'string' })
+  id!: string;
+
+  @Property({ unique: true })
+  username!: string;
+
+  @Property({ fieldName: 'password_hash' })
+  passwordHash!: string;
+
+  @Property({ default: 'editor' })
+  role!: string;
+
+  @Property({
+    fieldName: 'created_at',
+    columnType: 'timestamptz',
+    defaultRaw: 'now()',
+  })
+  createdAt!: Date;
+
+  @Property({
+    fieldName: 'last_login_at',
+    columnType: 'timestamptz',
+    nullable: true,
+  })
+  lastLoginAt?: Date | null;
+}

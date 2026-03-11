@@ -1,21 +1,21 @@
 /**
- * @fileoverview PostgreSQL User Adapter (Prisma)
- * @description Implements the `UserAdapter` interface using Prisma ORM.
- * Queries the `corrections_users` table via the shared Prisma client.
+ * @fileoverview PostgreSQL User Adapter (MikroORM)
+ * @description Implements the `UserAdapter` interface using MikroORM.
+ * Queries the `corrections_users` table via the shared ORM singleton.
  *
  * Required environment variables:
  *   - `DATABASE_URL` — PostgreSQL connection string
  *
  * @module lib/db/auth/postgresUserAdapter
- * @version 3.0.0
+ * @version 4.0.0
  * @author Typeir
- * @since 4.0.0
+ * @since 5.0.0
  */
 
-import { prisma } from '@/lib/db/prisma/client';
-import type { CorrectionsUser } from '@/lib/db/prisma/generated/sql';
+import { CorrectionsUserEntity } from '@/lib/db/orm/entities/CorrectionsUserEntity';
+import { formatDate } from '@/lib/db/orm/helpers';
+import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
-import { formatDate } from '../content/adapters/pg/rowParsers';
 import type { StoredUser } from './schemas';
 import type { UserAdapter } from './userAdapter';
 
@@ -24,13 +24,12 @@ const log = logger.child({ module: 'PostgresUser' });
 /* ────────────────────────  Row mapper  ─────────────────────────────── */
 
 /**
- * Maps a Prisma `CorrectionsUser` row to a `StoredUser` domain object.
- * Delegates date formatting to `formatDate` helper.
+ * Maps a MikroORM `CorrectionsUser` entity to a `StoredUser` domain object.
  *
- * @param {CorrectionsUser} row - Prisma row
+ * @param {CorrectionsUserEntity} row - MikroORM entity
  * @returns {StoredUser} Domain model
  */
-const rowToUser = (row: CorrectionsUser): StoredUser => ({
+const rowToUser = (row: CorrectionsUserEntity): StoredUser => ({
   id: row.id,
   username: row.username,
   passwordHash: row.passwordHash,
@@ -42,13 +41,14 @@ const rowToUser = (row: CorrectionsUser): StoredUser => ({
 /* ───────────────────────────  Adapter  ─────────────────────────────── */
 
 /**
- * Prisma-backed user adapter for the `corrections_users` table.
+ * MikroORM-backed user adapter for the `corrections_users` table.
  */
 export const postgresUserAdapter: UserAdapter = {
   findByUsername: async (username: string): Promise<StoredUser | null> => {
     try {
-      const row = await prisma.correctionsUser.findFirst({
-        where: { username: { equals: username, mode: 'insensitive' } },
+      const em = await getEM();
+      const row = await em.findOne(CorrectionsUserEntity, {
+        username: { $ilike: username },
       });
       return row ? rowToUser(row) : null;
     } catch (error) {
@@ -61,7 +61,8 @@ export const postgresUserAdapter: UserAdapter = {
 
   findById: async (id: string): Promise<StoredUser | null> => {
     try {
-      const row = await prisma.correctionsUser.findUnique({ where: { id } });
+      const em = await getEM();
+      const row = await em.findOne(CorrectionsUserEntity, { id });
       return row ? rowToUser(row) : null;
     } catch (error) {
       log.error('findById failed', {
@@ -72,39 +73,41 @@ export const postgresUserAdapter: UserAdapter = {
   },
 
   create: async (user: StoredUser): Promise<void> => {
-    await prisma.correctionsUser.create({
-      data: {
-        id: user.id,
-        username: user.username,
-        passwordHash: user.passwordHash,
-        role: user.role,
-        createdAt: new Date(user.createdAt),
-        lastLoginAt: user.lastLoginAt ? new Date(user.lastLoginAt) : null,
-      },
+    const em = await getEM();
+    em.create(CorrectionsUserEntity, {
+      id: user.id,
+      username: user.username,
+      passwordHash: user.passwordHash,
+      role: user.role,
+      createdAt: new Date(user.createdAt),
+      lastLoginAt: user.lastLoginAt ? new Date(user.lastLoginAt) : null,
     });
+    await em.flush();
   },
 
   update: async (id: string, fields: Partial<StoredUser>): Promise<void> => {
-    const data: Record<string, unknown> = {};
+    const em = await getEM();
+    const row = await em.findOneOrFail(CorrectionsUserEntity, { id });
 
-    if (fields.username !== undefined) data.username = fields.username;
+    if (fields.username !== undefined) row.username = fields.username;
     if (fields.passwordHash !== undefined)
-      data.passwordHash = fields.passwordHash;
-    if (fields.role !== undefined) data.role = fields.role;
+      row.passwordHash = fields.passwordHash;
+    if (fields.role !== undefined) row.role = fields.role;
     if (fields.lastLoginAt !== undefined) {
-      data.lastLoginAt = new Date(fields.lastLoginAt);
+      row.lastLoginAt = new Date(fields.lastLoginAt);
     }
 
-    if (Object.keys(data).length === 0) return;
-
-    await prisma.correctionsUser.update({ where: { id }, data });
+    await em.flush();
   },
 
   listAll: async (): Promise<StoredUser[]> => {
     try {
-      const rows = await prisma.correctionsUser.findMany({
-        orderBy: { createdAt: 'asc' },
-      });
+      const em = await getEM();
+      const rows = await em.find(
+        CorrectionsUserEntity,
+        {},
+        { orderBy: { createdAt: 'asc' } },
+      );
       return rows.map(rowToUser);
     } catch (error) {
       log.error('listAll failed', {
@@ -115,10 +118,9 @@ export const postgresUserAdapter: UserAdapter = {
   },
 
   delete: async (id: string): Promise<void> => {
-    try {
-      await prisma.correctionsUser.delete({ where: { id } });
-    } catch (error) {
-      throw new Error(`User not found: ${id}`);
-    }
+    const em = await getEM();
+    const row = await em.findOne(CorrectionsUserEntity, { id });
+    if (!row) throw new Error(`User not found: ${id}`);
+    await em.removeAndFlush(row);
   },
 };

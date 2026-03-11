@@ -1,33 +1,32 @@
 /**
- * @fileoverview PostgreSQL Trinket Repository (Prisma)
- * @description Implements `TrinketRepository` via Prisma ORM against the
- * normalised `trinkets` table. Replaces raw `pg` SQL with type-safe Prisma
- * queries.
+ * @fileoverview PostgreSQL Trinket Repository (MikroORM)
+ * @description Implements `TrinketRepository` via MikroORM against the
+ * `trinkets` table.
  *
  * @module lib/db/content/adapters/pg/pgTrinketRepository
- * @version 3.0.0
+ * @version 4.0.0
  * @author Typeir
- * @since 4.0.0
+ * @since 5.0.0
  */
 
-import { prisma } from '@/lib/db/prisma/client';
-import type { Trinket } from '@/lib/db/prisma/generated/sql';
+import { TrinketEntity } from '@/lib/db/orm/entities/TrinketEntity';
+import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
+import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { TrinketRepository } from '../../repositories/trinketRepository';
 import type { TrinketMetadata } from '../../schemas/trinketMetadata';
-import { nonEmpty, orUndef } from './rowParsers';
 
 const log = logger.child({ module: 'PGTrinketRepo' });
 
-/* ─────────────────────────────  Row mapper  ──────────────────────────── */
+/* ──────────────────────────────  Row mapper  ─────────────────────────── */
 
 /**
- * Maps a Prisma `Trinket` row to a typed `TrinketMetadata` domain object.
+ * Maps a MikroORM `Trinket` entity to a `TrinketMetadata` domain object.
  *
- * @param {Trinket} row - Prisma trinket row
+ * @param {TrinketEntity} row - MikroORM trinket entity
  * @returns {TrinketMetadata} Domain model
  */
-const rowToTrinket = (row: Trinket): TrinketMetadata => ({
+const rowToTrinket = (row: TrinketEntity): TrinketMetadata => ({
   slug: row.slug,
   title: row.title,
   file: row.file,
@@ -35,11 +34,11 @@ const rowToTrinket = (row: Trinket): TrinketMetadata => ({
   itemType: row.itemType,
   damage: orUndef(row.damage),
   damageType: orUndef(row.damageType),
+  properties: nonEmpty(row.properties),
   range: orUndef(row.range),
   weight: orUndef(row.weight),
-  savingThrowDC: orUndef(row.savingThrowDc),
-  savingThrowAbility: orUndef(row.savingThrowAbility),
-  properties: nonEmpty(row.properties),
+  savingThrowDC: orUndef(row.savingThrow.dc),
+  savingThrowAbility: orUndef(row.savingThrow.ability),
   specialEffects: nonEmpty(row.specialEffects),
   inflictsConditions: nonEmpty(row.inflictsConditions),
   tags: nonEmpty(row.tags),
@@ -48,17 +47,17 @@ const rowToTrinket = (row: Trinket): TrinketMetadata => ({
 /* ──────────────────────────────  Repository  ─────────────────────────── */
 
 /**
- * Prisma-backed trinket repository.
- *
- * Queries the `trinkets` table via the shared Prisma client.
+ * MikroORM-backed trinket repository.
  */
 export const pgTrinketRepository: TrinketRepository = {
   list: async (locale: string): Promise<TrinketMetadata[]> => {
     try {
-      const rows = await prisma.trinket.findMany({
-        where: { locale },
-        orderBy: { slug: 'asc' },
-      });
+      const em = await getEM();
+      const rows = await em.find(
+        TrinketEntity,
+        { locale },
+        { orderBy: { title: 'asc' } },
+      );
       return rows.map(rowToTrinket);
     } catch (error) {
       log.error('Error reading trinket metadata from PostgreSQL', {
@@ -74,9 +73,8 @@ export const pgTrinketRepository: TrinketRepository = {
     slug: string,
   ): Promise<TrinketMetadata | null> => {
     try {
-      const row = await prisma.trinket.findUnique({
-        where: { locale_slug: { locale, slug } },
-      });
+      const em = await getEM();
+      const row = await em.findOne(TrinketEntity, { locale, slug });
       return row ? rowToTrinket(row) : null;
     } catch (error) {
       log.error('Error reading single trinket from PostgreSQL', {

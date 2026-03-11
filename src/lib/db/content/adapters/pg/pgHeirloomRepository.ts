@@ -1,17 +1,18 @@
 /**
- * @fileoverview PostgreSQL Heirloom Repository (Prisma)
- * @description Implements `HeirloomRepository` via Prisma ORM against the
- * normalised `heirlooms` table. Replaces raw `pg` SQL with type-safe Prisma
- * queries. Weapon damage fields are reconstructed from flattened DB columns.
+ * @fileoverview PostgreSQL Heirloom Repository (MikroORM)
+ * @description Implements `HeirloomRepository` via MikroORM against the
+ * `heirlooms` table. Charges are read directly from the embedded VO.
+ * Weapon damage is reconstructed from flat columns (no shared prefix).
  *
  * @module lib/db/content/adapters/pg/pgHeirloomRepository
- * @version 3.0.0
+ * @version 5.0.0
  * @author Typeir
- * @since 4.0.0
+ * @since 5.0.0
  */
 
-import { prisma } from '@/lib/db/prisma/client';
-import type { Heirloom } from '@/lib/db/prisma/generated/sql';
+import { HeirloomEntity } from '@/lib/db/orm/entities/HeirloomEntity';
+import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
+import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { HeirloomRepository } from '../../repositories/heirloomRepository';
 import type {
@@ -19,20 +20,20 @@ import type {
   HeirloomMetadata,
   HeirloomWeaponDamage,
 } from '../../schemas/heirloomMetadata';
-import { nonEmpty, orUndef } from './rowParsers';
 
 const log = logger.child({ module: 'PGHeirloomRepo' });
 
-/* ─────────────────────  Sub-object builders  ─────────────────────────── */
+/* ─────────────────────  Embed → Domain mappers  ─────────────────────── */
 
 /**
  * Builds weapon damage info from flat row columns.
- * Returns `undefined` when the item has no weapon damage data.
  *
- * @param {Heirloom} row - Prisma heirloom row
+ * @param {HeirloomEntity} row - Heirloom entity row
  * @returns {HeirloomWeaponDamage | undefined} Weapon damage or undefined
  */
-const buildWeaponDamage = (row: Heirloom): HeirloomWeaponDamage | undefined => {
+const mapWeaponDamage = (
+  row: HeirloomEntity,
+): HeirloomWeaponDamage | undefined => {
   if (row.weaponDamage == null) return undefined;
   return {
     damage: row.weaponDamage,
@@ -42,35 +43,31 @@ const buildWeaponDamage = (row: Heirloom): HeirloomWeaponDamage | undefined => {
 };
 
 /**
- * Builds charge economy info from flat row columns.
- * Returns `undefined` when no charge-related columns are populated.
+ * Maps the Charges embed to a domain `HeirloomCharges`.
  *
- * @param {Heirloom} row - Prisma heirloom row
+ * @param {HeirloomEntity} row - Heirloom entity row
  * @returns {HeirloomCharges | undefined} Charges or undefined
  */
-const buildCharges = (row: Heirloom): HeirloomCharges | undefined => {
-  const hasData =
-    row.chargesInitial != null ||
-    row.chargesRecharge != null ||
-    row.chargesDepletes != null;
+const mapCharges = (row: HeirloomEntity): HeirloomCharges | undefined => {
+  const c = row.charges;
+  const hasData = c.initial != null || c.recharge != null || c.depletes != null;
   if (!hasData) return undefined;
   return {
-    initial: orUndef(row.chargesInitial),
-    recharge: orUndef(row.chargesRecharge),
-    depletes: row.chargesDepletes ?? false,
+    initial: orUndef(c.initial),
+    recharge: orUndef(c.recharge),
+    depletes: c.depletes ?? false,
   };
 };
 
 /* ─────────────────────────────  Row mapper  ──────────────────────────── */
 
 /**
- * Maps a Prisma `Heirloom` row to a typed `HeirloomMetadata` domain object.
- * Delegates nested sub-objects to dedicated builder functions.
+ * Maps a MikroORM `Heirloom` entity to a typed `HeirloomMetadata` domain object.
  *
- * @param {Heirloom} row - Prisma heirloom row
+ * @param {HeirloomEntity} row - MikroORM entity row
  * @returns {HeirloomMetadata} Domain model
  */
-const rowToHeirloom = (row: Heirloom): HeirloomMetadata => ({
+const rowToHeirloom = (row: HeirloomEntity): HeirloomMetadata => ({
   slug: row.slug,
   title: row.title,
   file: row.file,
@@ -80,11 +77,11 @@ const rowToHeirloom = (row: Heirloom): HeirloomMetadata => ({
   weaponType: orUndef(row.weaponType),
   requiresAttunement: row.requiresAttunement ?? false,
   attunementRequirements: orUndef(row.attunementRequirements),
-  weaponDamage: buildWeaponDamage(row),
+  weaponDamage: mapWeaponDamage(row),
   hitModifier: orUndef(row.hitModifier),
   range: orUndef(row.range),
   weight: orUndef(row.weight),
-  charges: buildCharges(row),
+  charges: mapCharges(row),
   mastery: nonEmpty(row.mastery),
   weaponProperties: nonEmpty(row.weaponProperties),
   damageTypesDealt: nonEmpty(row.damageTypesDealt),
@@ -96,17 +93,17 @@ const rowToHeirloom = (row: Heirloom): HeirloomMetadata => ({
 /* ──────────────────────────────  Repository  ─────────────────────────── */
 
 /**
- * Prisma-backed heirloom repository.
- *
- * Queries the `heirlooms` table via the shared Prisma client.
+ * MikroORM-backed heirloom repository.
  */
 export const pgHeirloomRepository: HeirloomRepository = {
   list: async (locale: string): Promise<HeirloomMetadata[]> => {
     try {
-      const rows = await prisma.heirloom.findMany({
-        where: { locale },
-        orderBy: { slug: 'asc' },
-      });
+      const em = await getEM();
+      const rows = await em.find(
+        HeirloomEntity,
+        { locale },
+        { orderBy: { slug: 'asc' } },
+      );
       return rows.map(rowToHeirloom);
     } catch (error) {
       log.error('Error reading heirloom metadata from PostgreSQL', {
@@ -122,9 +119,8 @@ export const pgHeirloomRepository: HeirloomRepository = {
     slug: string,
   ): Promise<HeirloomMetadata | null> => {
     try {
-      const row = await prisma.heirloom.findUnique({
-        where: { locale_slug: { locale, slug } },
-      });
+      const em = await getEM();
+      const row = await em.findOne(HeirloomEntity, { locale, slug });
       return row ? rowToHeirloom(row) : null;
     } catch (error) {
       log.error('Error reading single heirloom from PostgreSQL', {

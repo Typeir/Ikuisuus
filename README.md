@@ -38,6 +38,7 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000).
 
 ### Requirements
+
 - Node.js 18+
 - Git LFS (`git lfs install`)
 - PostgreSQL 14+ (optional, for database features)

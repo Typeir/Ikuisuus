@@ -6,14 +6,19 @@
  * @module tests/unit/lib/db/content/adapters/pg/index
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/db/postgres/pool', () => ({
-  query: vi.fn(),
-  getPool: vi.fn(),
+vi.mock('@/lib/db/orm/orm', () => ({
+  getEM: vi.fn().mockResolvedValue({
+    find: vi.fn(),
+    findOne: vi.fn(),
+  }),
 }));
-
-import { vi } from 'vitest';
+vi.mock('@/lib/logging/logger', () => ({
+  logger: {
+    child: () => ({ error: vi.fn(), debug: vi.fn(), message: vi.fn() }),
+  },
+}));
 
 describe('adapters/pg/index barrel', () => {
   it('should re-export all PG repository implementations', async () => {

@@ -1,17 +1,21 @@
 /**
- * @fileoverview PostgreSQL Spell Repository (Prisma)
- * @description Implements `SpellRepository` via Prisma ORM against the
- * normalised `spells` + `spell_lists` tables. Prisma's `include` replaces
- * the previous LEFT JOIN + json_agg single-trip query.
+ * @fileoverview PostgreSQL Spell Repository (MikroORM)
+ * @description Implements `SpellRepository` via MikroORM against the
+ * `spells` and `spell_lists` tables. Uses `populate` to eagerly load
+ * the SpellList one-to-many relation.
  *
  * @module lib/db/content/adapters/pg/pgSpellRepository
- * @version 3.0.0
+ * @version 4.0.0
  * @author Typeir
- * @since 4.0.0
+ * @since 5.0.0
  */
 
-import { prisma } from '@/lib/db/prisma/client';
-import type { Spell, SpellList } from '@/lib/db/prisma/generated/sql';
+import {
+    SpellEntity,
+    SpellListEntity,
+} from '@/lib/db/orm/entities/SpellEntity';
+import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
+import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
 import type {
@@ -19,37 +23,33 @@ import type {
     SpellListRef,
     SpellMetadata,
 } from '../../schemas/spellMetadata';
-import { nonEmpty, orUndef } from './rowParsers';
 
 const log = logger.child({ module: 'PGSpellRepo' });
 
 /* ─────────────────────  Sub-object builders  ─────────────────────────── */
 
-/** Prisma spell row with spell_lists included. */
-type SpellWithLists = Spell & { spellLists: SpellList[] };
-
 /**
- * Maps Prisma `SpellList` relations to domain `SpellListRef` objects.
- * Returns `undefined` when the spell has no associated class lists.
+ * Maps loaded SpellList entities to domain `SpellListRef` objects.
  *
- * @param {SpellList[]} lists - Related spell_lists rows
+ * @param {SpellListEntity[]} lists - Loaded spell list entities
  * @returns {SpellListRef[] | undefined} Spell list refs or undefined
  */
-const buildSpellLists = (lists: SpellList[]): SpellListRef[] | undefined => {
-  if (lists.length === 0) return undefined;
+const buildSpellLists = (
+  lists: SpellListEntity[],
+): SpellListRef[] | undefined => {
+  if (!lists || lists.length === 0) return undefined;
   return lists.map((sl): SpellListRef => ({ name: sl.name, link: sl.link }));
 };
 
 /* ─────────────────────────────  Row mapper  ──────────────────────────── */
 
 /**
- * Maps a Prisma `Spell` row (with included `spellLists`) to `SpellMetadata`.
- * Delegates nested sub-objects to dedicated builder functions.
+ * Maps a MikroORM `Spell` entity (with loaded spellLists) to `SpellMetadata`.
  *
- * @param {SpellWithLists} row - Prisma spell row with relations
+ * @param {SpellEntity} row - MikroORM spell entity
  * @returns {SpellMetadata} Domain model
  */
-const rowToSpell = (row: SpellWithLists): SpellMetadata => ({
+const rowToSpell = (row: SpellEntity): SpellMetadata => ({
   slug: row.slug,
   title: row.title,
   file: row.file,
@@ -62,33 +62,29 @@ const rowToSpell = (row: SpellWithLists): SpellMetadata => ({
   range: orUndef(row.range),
   concentration: orUndef(row.concentration),
   duration: orUndef(row.duration),
-  verbal: orUndef(row.verbal),
-  somatic: orUndef(row.somatic),
-  material: orUndef(row.material),
-  materialDescription: orUndef(row.materialDescription),
+  verbal: orUndef(row.components.verbal),
+  somatic: orUndef(row.components.somatic),
+  material: orUndef(row.components.material),
+  materialDescription: orUndef(row.components.materialDescription),
   hasRitual: orUndef(row.hasRitual),
   tags: nonEmpty(row.tags),
-  spellLists: buildSpellLists(row.spellLists),
+  spellLists: buildSpellLists(row.spellLists.getItems()),
 });
-
-/** Prisma include clause — always fetch related spell_lists. */
-const WITH_LISTS = { spellLists: true } as const;
 
 /* ──────────────────────────────  Repository  ─────────────────────────── */
 
 /**
- * Prisma-backed spell repository.
- *
- * Queries the `spells` / `spell_lists` tables via the shared Prisma client.
+ * MikroORM-backed spell repository.
  */
 export const pgSpellRepository: SpellRepository = {
   list: async (locale: string): Promise<SpellMetadata[]> => {
     try {
-      const rows = await prisma.spell.findMany({
-        where: { locale },
-        orderBy: { title: 'asc' },
-        include: WITH_LISTS,
-      });
+      const em = await getEM();
+      const rows = await em.find(
+        SpellEntity,
+        { locale },
+        { orderBy: { title: 'asc' }, populate: ['spellLists'] },
+      );
       return rows.map(rowToSpell);
     } catch (error) {
       log.error('Error reading spell metadata from PostgreSQL', {
@@ -101,11 +97,15 @@ export const pgSpellRepository: SpellRepository = {
 
   listIndex: async (locale: string): Promise<SpellIndexEntry[]> => {
     try {
-      const rows = await prisma.spell.findMany({
-        where: { locale },
-        orderBy: { title: 'asc' },
-        select: { slug: true, title: true, level: true, school: true },
-      });
+      const em = await getEM();
+      const rows = await em.find(
+        SpellEntity,
+        { locale },
+        {
+          fields: ['slug', 'title', 'level', 'school'],
+          orderBy: { title: 'asc' },
+        },
+      );
       return rows.map((r) => ({
         slug: r.slug,
         title: r.title,
@@ -129,11 +129,12 @@ export const pgSpellRepository: SpellRepository = {
       return pgSpellRepository.list(locale);
     }
     try {
-      const rows = await prisma.spell.findMany({
-        where: { locale, slug: { in: slugs } },
-        orderBy: { slug: 'asc' },
-        include: WITH_LISTS,
-      });
+      const em = await getEM();
+      const rows = await em.find(
+        SpellEntity,
+        { locale, slug: { $in: slugs } },
+        { orderBy: { slug: 'asc' }, populate: ['spellLists'] },
+      );
       return rows.map(rowToSpell);
     } catch (error) {
       log.error('Error reading spells by slugs from PostgreSQL', {
@@ -150,10 +151,12 @@ export const pgSpellRepository: SpellRepository = {
     slug: string,
   ): Promise<SpellMetadata | null> => {
     try {
-      const row = await prisma.spell.findUnique({
-        where: { locale_slug: { locale, slug } },
-        include: WITH_LISTS,
-      });
+      const em = await getEM();
+      const row = await em.findOne(
+        SpellEntity,
+        { locale, slug },
+        { populate: ['spellLists'] },
+      );
       return row ? rowToSpell(row) : null;
     } catch (error) {
       log.error('Error reading single spell from PostgreSQL', {

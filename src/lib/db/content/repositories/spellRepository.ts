@@ -14,7 +14,6 @@
  */
 
 import { fsSpellRepository } from '../adapters/fs/fsSpellRepository';
-import { mongoSpellRepository } from '../adapters/mongo/mongoSpellRepository';
 import { pgSpellRepository } from '../adapters/pg/pgSpellRepository';
 import type { SpellIndexEntry, SpellMetadata } from '../schemas/spellMetadata';
 
@@ -62,21 +61,19 @@ export interface SpellRepository {
   getBySlug(locale: string, slug: string): Promise<SpellMetadata | null>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default), `'pg'`, or `'mongo'`. */
+/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**
  * Resolves the spell repository for the active backend.
  *
  * @returns {SpellRepository} Spell metadata repository
- * @throws {Error} If `METADATA_BACKEND` is not `'fs'`, `'pg'`, or `'mongo'`
+ * @throws {Error} If `METADATA_BACKEND` is not `'fs'` or `'pg'`
  */
 const createSpellRepository = (): SpellRepository => {
   switch (metadataBackend) {
     case 'pg':
       return pgSpellRepository;
-    case 'mongo':
-      return mongoSpellRepository;
     case 'fs':
       return fsSpellRepository;
     default:
