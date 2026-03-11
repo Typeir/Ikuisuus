@@ -26,7 +26,7 @@ import {
  */
 @Embeddable()
 export class TrinketSavingThrowEmbed {
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   dc?: number | null;
 
   @Property({ type: 'string', nullable: true })
@@ -45,7 +45,7 @@ export class TrinketSavingThrowEmbed {
   name: 'trinkets_locale_item_type_idx',
 })
 export class TrinketEntity {
-  @PrimaryKey({ autoincrement: true })
+  @PrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
   @Property({ type: 'string' })

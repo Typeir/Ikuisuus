@@ -55,7 +55,7 @@ export class HeirloomChargesEmbed {
   name: 'heirlooms_locale_item_type_idx',
 })
 export class HeirloomEntity {
-  @PrimaryKey({ autoincrement: true })
+  @PrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
   @Property({ type: 'string' })
@@ -106,6 +106,7 @@ export class HeirloomEntity {
   versatileDamage?: string | null;
 
   @Property({
+    type: 'number',
     fieldName: 'hit_modifier',
     columnType: 'smallint',
     nullable: true,
@@ -137,6 +138,7 @@ export class HeirloomEntity {
   tags: string[] = [];
 
   @Property({
+    type: 'number',
     fieldName: 'index_version',
     columnType: 'smallint',
     nullable: true,

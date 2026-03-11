@@ -57,7 +57,7 @@ export class SpellComponentEmbed {
 @Entity({ tableName: 'spell_lists' })
 @Index({ properties: ['spell'], name: 'spell_lists_spell_id_idx' })
 export class SpellListEntity {
-  @PrimaryKey({ autoincrement: true })
+  @PrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
   @ManyToOne(() => SpellEntity, {
@@ -81,7 +81,7 @@ export class SpellListEntity {
 @Index({ properties: ['locale', 'level'], name: 'spells_locale_level_idx' })
 @Index({ properties: ['locale', 'school'], name: 'spells_locale_school_idx' })
 export class SpellEntity {
-  @PrimaryKey({ autoincrement: true })
+  @PrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
   @Property({ type: 'string' })
@@ -99,7 +99,7 @@ export class SpellEntity {
   @Property({ type: 'string' })
   link!: string;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   level?: number | null;
 
   @Property({ type: 'string', nullable: true })

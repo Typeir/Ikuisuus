@@ -28,7 +28,7 @@ import {
  */
 @Embeddable()
 export class MonsterACEmbed {
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   value?: number | null;
 
   @Property({ type: 'string', nullable: true })
@@ -43,7 +43,7 @@ export class MonsterACEmbed {
  */
 @Embeddable()
 export class MonsterHPEmbed {
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   average?: number | null;
 
   @Property({ type: 'string', nullable: true })
@@ -62,19 +62,19 @@ export class MonsterSpeedEmbed {
   @Property({ type: 'string', nullable: true })
   raw?: string | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   walk?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   fly?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   climb?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   swim?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   burrow?: number | null;
 
   @Property({ type: 'boolean', nullable: true })
@@ -86,22 +86,22 @@ export class MonsterSpeedEmbed {
  */
 @Embeddable()
 export class MonsterScoreEmbed {
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   str?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   dex?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   con?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   int?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   wis?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   cha?: number | null;
 }
 
@@ -110,22 +110,22 @@ export class MonsterScoreEmbed {
  */
 @Embeddable()
 export class MonsterSaveEmbed {
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   str?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   dex?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   con?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   int?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   wis?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   cha?: number | null;
 }
 
@@ -139,22 +139,23 @@ export class MonsterSenseEmbed {
   raw?: string | null;
 
   @Property({
+    type: 'number',
     fieldName: 'passive_perception',
     columnType: 'smallint',
     nullable: true,
   })
   passivePerception?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   darkvision?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   blindsight?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   tremorsense?: number | null;
 
-  @Property({ columnType: 'smallint', nullable: true })
+  @Property({ type: 'number', columnType: 'smallint', nullable: true })
   truesight?: number | null;
 }
 
@@ -174,7 +175,7 @@ export class MonsterSenseEmbed {
   name: 'monsters_locale_type_idx',
 })
 export class MonsterEntity {
-  @PrimaryKey({ autoincrement: true })
+  @PrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
   @Property({ type: 'string' })
@@ -208,6 +209,7 @@ export class MonsterEntity {
   cr?: string | null;
 
   @Property({
+    type: 'number',
     fieldName: 'proficiency_bonus',
     columnType: 'smallint',
     nullable: true,
@@ -254,6 +256,7 @@ export class MonsterEntity {
   tags: string[] = [];
 
   @Property({
+    type: 'number',
     fieldName: 'index_version',
     columnType: 'smallint',
     nullable: true,
