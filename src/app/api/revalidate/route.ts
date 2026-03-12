@@ -8,10 +8,26 @@
  */
 
 import { logger } from '@/lib/logging/logger';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Revalidate' });
+
+/**
+ * @function extractLocale
+ * @description Extracts the locale from a given path. Assumes the locale is the first segment of the path.
+ * @param {string} path - The path to extract the locale from (e.g., "/en/library/monsters").
+ * @returns {string | null} The extracted locale, or null if no valid locale is found.
+ */
+const extractLocale = (path: string): string | null => {
+  const parts = path.split('/').filter(Boolean);
+  if (parts.length > 0) {
+    const locale = parts[0];
+    // Add validation for supported locales if necessary
+    return locale;
+  }
+  return null;
+};
 
 /**
  * POST /api/revalidate
@@ -98,11 +114,15 @@ export async function POST(req: NextRequest) {
         pushVariant(p.endsWith('/main') ? p : `${p}/main`);
       }
 
-      log.message('Revalidating path variants', { path: p, variants });
-
+      log.message('Revalidating path variants', {
+        path: p,
+        variants,
+        cacheKeys: variants.map((v) => `cacheKey:${v}`),
+      });
       for (const v of variants) {
         try {
-          await revalidatePath(v, 'page');
+          revalidateTag(`content-${extractLocale(v)}-${v}`); // Invalidate the cache for the tag
+          await revalidatePath(v, 'page'); // Revalidate the path
           log.message('Revalidated', { path: v });
         } catch (err) {
           log.warning('Failed to revalidate variant', {
@@ -130,3 +150,9 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ results }, { status: 200 });
 }
+
+/**
+ * @todo Migrate GitHub integration to the project standard adapter pattern.
+ * This section directly interacts with GitHub-related cache tags.
+ * Refactor to use the adapter pattern for better modularity and testability.
+ */

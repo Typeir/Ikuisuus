@@ -86,6 +86,9 @@ const fetchFromFilesystem = async (
  * Fetches content from GitHub's raw content API (used at runtime for ISR).
  *
  * @returns {Promise<{ content: string; resolvedPath: string } | null>} Content and virtual path, or null
+ * @todo Migrate GitHub integration to the project standard adapter pattern.
+ * This function currently fetches content directly from GitHub using hardcoded URLs.
+ * Refactor to use the adapter pattern for better modularity and testability.
  */
 const fetchFromGitHub = async (
   locale: string,
@@ -94,7 +97,10 @@ const fetchFromGitHub = async (
   for (const ext of EXTENSIONS) {
     const url = `${GITHUB_RAW_BASE}/${locale}/${slugPath}${ext}`;
     try {
-      const res = await fetch(url, { cache: 'no-store' });
+      const res = await fetch(url, {
+        cache: 'force-cache',
+        next: { tags: [`content-${locale}-${slugPath}`] },
+      });
       if (res.ok) {
         const content = await res.text();
         const virtualPath = `${locale}/${slugPath}${ext}`;
