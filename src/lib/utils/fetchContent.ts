@@ -13,27 +13,50 @@ import path from 'path';
 
 const log = logger.child({ module: 'ContentFetcher' });
 
+/** @property {string} CONTENT_REPO_OWNER - GitHub repository owner */
+const CONTENT_REPO_OWNER = process.env.CONTENT_REPO_OWNER;
+/** @property {string} CONTENT_REPO_NAME - GitHub repository name */
+const CONTENT_REPO_NAME = process.env.CONTENT_REPO_NAME;
 /** @property {string} GITHUB_RAW_BASE - Base URL for raw content from the content repo */
-const GITHUB_RAW_BASE =
-  'https://raw.githubusercontent.com/Typeir/ikuisuus-content/main';
+const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${CONTENT_REPO_OWNER}/${CONTENT_REPO_NAME}/main`;
 
 /** @property {string[]} EXTENSIONS - File extension variants to try, in priority order */
 const EXTENSIONS = ['.mdx', '.sheet.mdx', '.md'];
 
 /**
- * Determines whether the current execution context is a build-time render.
+ * @function isBuildTime
+ * @description
+ * Determines whether we should prefer filesystem fetching.
  *
- * @returns {boolean} True during `next build`, false at runtime
+ * Use the filesystem during development and build phases so local content is
+ * used for `next dev` and `next build` operations. At runtime (production
+ * server) we prefer the GitHub remote fetch to allow ISR updates from the
+ * content repo.
+ *
+ * Relies on `process.env.NEXT_PHASE` values emitted by Next.js:
+ *  - `phase-development-server` (dev)
+ *  - `phase-production-build` (build)
+ *
+ * @returns {boolean} True when running dev or build, false in production runtime
  */
 const isBuildTime = (): boolean => {
-  return process.env.NEXT_PHASE === 'phase-production-build';
+  // Prefer an explicit build marker when available (set in next.config.js)
+  if (process.env.CONTENT_FETCH_MODE === 'build') return true;
+
+  const phase = process.env.NEXT_PHASE;
+  if (!phase) return process.env.NODE_ENV === 'development';
+  return (
+    phase === 'phase-production-build' || phase === 'phase-development-server'
+  );
 };
 
 /**
- * Fetches content from the local filesystem (used during build).
- *
+ * @function fetchContent
  * @param {string} locale - Content locale (e.g. "en")
  * @param {string} slugPath - Slash-separated content path (e.g. "monsters/albedo")
+ * @description
+ * Fetches content from the local filesystem (used during build).
+ *
  * @returns {Promise<{ content: string; resolvedPath: string } | null>} Content and resolved path, or null
  */
 const fetchFromFilesystem = async (
@@ -57,10 +80,12 @@ const fetchFromFilesystem = async (
 };
 
 /**
- * Fetches content from GitHub's raw content API (used at runtime for ISR).
- *
+ * @function fetchFromGitHub
  * @param {string} locale - Content locale (e.g. "en")
  * @param {string} slugPath - Slash-separated content path (e.g. "monsters/albedo")
+ * @description
+ * Fetches content from GitHub's raw content API (used at runtime for ISR).
+ *
  * @returns {Promise<{ content: string; resolvedPath: string } | null>} Content and virtual path, or null
  */
 const fetchFromGitHub = async (
@@ -89,12 +114,14 @@ const fetchFromGitHub = async (
 };
 
 /**
+ * @function fetchContent
+ * @description
+ * @param {string} locale - Content locale (e.g. "en")
+ * @param {string} slugPath - Slash-separated content path (e.g. "monsters/albedo")
  * Fetches MDX content using filesystem at build time and GitHub API at runtime.
  * This enables ISR revalidation to pick up content changes from the repo
  * without requiring a full rebuild.
  *
- * @param {string} locale - Content locale (e.g. "en")
- * @param {string} slugPath - Slash-separated content path (e.g. "monsters/albedo")
  * @returns {Promise<{ content: string; resolvedPath: string } | null>} Content and path, or null
  */
 export const fetchContent = async (

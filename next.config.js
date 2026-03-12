@@ -10,6 +10,10 @@ const withMDX = require('@next/mdx')({
 const withNextIntl = createNextIntlPlugin({
   requestConfig: './src/i18n/request.ts',
 });
+const {
+  PHASE_DEVELOPMENT_SERVER,
+  PHASE_PRODUCTION_BUILD,
+} = require('next/constants');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -54,4 +58,18 @@ const nextConfig = {
   },
 };
 
-module.exports = withNextIntl(withMDX(nextConfig));
+module.exports = (phase, { defaultConfig }) => {
+  if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
+    // Development or build-time specific config may be applied here.
+    // Expose a build-time marker so server-side build steps can detect
+    // build/dev mode deterministically without requiring CI changes.
+    // This value is assigned here (during config evaluation) and will be
+    // available to Node code that runs at build time (e.g. `next build`).
+    process.env.CONTENT_FETCH_MODE = 'build';
+    return withNextIntl(withMDX(nextConfig));
+  }
+
+  // Default config for other phases (production server, test, export, etc.)
+  process.env.CONTENT_FETCH_MODE = 'runtime';
+  return withNextIntl(withMDX(nextConfig));
+};
