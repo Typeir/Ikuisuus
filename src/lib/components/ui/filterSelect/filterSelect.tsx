@@ -2,7 +2,7 @@
  * @fileoverview Filter Select Component
  * @description Accessible, virtualized dropdown select for table filters with mobile modal support.
  * Provides consistent styling, keyboard navigation, and responsive behavior.
- * 
+ *
  * @module filterSelect
  * @version 1.0.0
  * @author Typeir
@@ -11,20 +11,39 @@
 
 'use client';
 
+import { ChevronDown } from 'lucide-react';
 import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  KeyboardEvent,
-  memo,
-  forwardRef,
-  useImperativeHandle,
+    forwardRef,
+    KeyboardEvent,
+    memo,
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useMemo,
+    useRef,
+    useState,
 } from 'react';
 import { MobileModal } from '../modal';
-import { ChevronDown } from 'lucide-react';
 import styles from './filterSelect.module.scss';
+
+/**
+ * Filters options array by a search query string
+ *
+ * @function filterOptionsByQuery
+ * @param {FilterSelectOption[]} options - Options to filter
+ * @param {string} searchQuery - Current search query
+ * @returns {FilterSelectOption[]} Filtered options matching the query
+ */
+function filterOptionsByQuery(
+  options: FilterSelectOption[],
+  searchQuery: string,
+): FilterSelectOption[] {
+  if (!searchQuery.trim()) return options;
+  const query = searchQuery.toLowerCase();
+  return options.filter(
+    (opt) => opt.value === '' || opt.label.toLowerCase().includes(query),
+  );
+}
 
 /**
  * @interface FilterSelectOption
@@ -95,13 +114,12 @@ const VirtualizedOption = memo(function VirtualizedOption({
 }) {
   return (
     <div
-      role="option"
+      role='option'
       aria-selected={isSelected}
       className={`${styles.option} ${isSelected ? styles.selected : ''} ${isHighlighted ? styles.highlighted : ''}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
-      style={style}
-    >
+      style={style}>
       {option.label}
     </div>
   );
@@ -132,55 +150,51 @@ const FilterMobileModal = memo(function FilterMobileModal({
   ariaLabel?: string;
   allLabel: string;
 }) {
-  const filteredOptions = useMemo(() => {
-    if (!searchQuery.trim()) return options;
-    const query = searchQuery.toLowerCase();
-    return options.filter(opt => opt.label.toLowerCase().includes(query));
-  }, [options, searchQuery]);
+  const filteredOptions = useMemo(
+    () => filterOptionsByQuery(options, searchQuery),
+    [options, searchQuery],
+  );
 
   return (
     <MobileModal
       isOpen={isOpen}
       onClose={onClose}
       ariaLabel={ariaLabel || 'Select option'}
-      title="Select an option"
-      showCloseButton
-    >
+      title='Select an option'
+      showCloseButton>
       <div>
-        <div style={{ marginBottom: '12px' }}>
+        <div className={styles.modalSearchContainer}>
           <input
-            type="text"
+            type='text'
             className={styles.modalSearch}
-            placeholder="Search..."
+            placeholder='Search...'
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            aria-label="Search options"
+            aria-label='Search options'
             autoFocus
           />
         </div>
-        <div role="listbox" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <div role='listbox' className={styles.modalOptionsList}>
           <div
-            role="option"
+            role='option'
             aria-selected={value === ''}
             className={`${styles.modalOption} ${value === '' ? styles.selected : ''}`}
             onClick={() => {
               onSelect('');
               onClose();
-            }}
-          >
+            }}>
             {allLabel}
           </div>
           {filteredOptions.map((option) => (
             <div
               key={option.value}
-              role="option"
+              role='option'
               aria-selected={value === option.value}
               className={`${styles.modalOption} ${value === option.value ? styles.selected : ''}`}
               onClick={() => {
                 onSelect(option.value);
                 onClose();
-              }}
-            >
+              }}>
               {option.label}
             </div>
           ))}
@@ -195,7 +209,7 @@ const FilterMobileModal = memo(function FilterMobileModal({
 
 /**
  * Accessible filter select component with mobile modal support and virtualization.
- * 
+ *
  * @component
  * @param {FilterSelectProps} props - Component configuration
  * @property {(value: string) => void} props.onChange - Callback fired when selection changes
@@ -215,280 +229,295 @@ const FilterMobileModal = memo(function FilterMobileModal({
  * />
  * ```
  */
-export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(function FilterSelect(
-  {
-    id,
-    value,
-    options,
-    onChange,
-    placeholder = 'Select...',
-    allLabel = 'All',
-    disabled = false,
-    ariaLabel,
-    modalThreshold = 15,
-    className = '',
-    searchable = false,
-    size = 'md',
-  },
-  forwardedRef
-) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [useMobileModal, setUseMobileModal] = useState(false);
+export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
+  function FilterSelect(
+    {
+      id,
+      value,
+      options,
+      onChange,
+      placeholder = 'Select...',
+      allLabel = 'All',
+      disabled = false,
+      ariaLabel,
+      modalThreshold = 15,
+      className = '',
+      searchable = false,
+      size = 'md',
+    },
+    forwardedRef,
+  ) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [useMobileModal, setUseMobileModal] = useState(false);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const listRef = useRef<HTMLDivElement>(null);
 
-  /** Expose button ref for external focus management */
-  useImperativeHandle(forwardedRef, () => buttonRef.current!);
+    /** Expose button ref for external focus management */
+    useImperativeHandle(forwardedRef, () => buttonRef.current!);
 
-  /** Determine if mobile modal should be used */
-  useEffect(() => {
-    const checkMobile = () => {
-      const isMobileWidth = window.innerWidth < 640;
-      const hasLargeList = options.length > modalThreshold;
-      setUseMobileModal(isMobileWidth && hasLargeList);
-    };
+    /** Determine if mobile modal should be used */
+    useEffect(() => {
+      const checkMobile = () => {
+        const isMobileWidth = window.innerWidth < 640;
+        const hasLargeList = options.length > modalThreshold;
+        setUseMobileModal(isMobileWidth && hasLargeList);
+      };
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, [options.length, modalThreshold]);
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      return () => window.removeEventListener('resize', checkMobile);
+    }, [options.length, modalThreshold]);
 
-  /** Filter options by search query, always include 'All' option */
-  const filteredOptions = useMemo(() => {
-    const allOption: FilterSelectOption = { value: '', label: allLabel };
-    const baseOptions = [allOption, ...options];
-    
-    if (!searchable || !searchQuery.trim()) return baseOptions;
-    
-    const query = searchQuery.toLowerCase();
-    return baseOptions.filter(opt => 
-      opt.value === '' || opt.label.toLowerCase().includes(query)
-    );
-  }, [options, allLabel, searchable, searchQuery]);
+    /** Filter options by search query, always include 'All' option */
+    const filteredOptions = useMemo(() => {
+      const allOption: FilterSelectOption = { value: '', label: allLabel };
+      const baseOptions = [allOption, ...options];
 
-  /** Resolve display text from current value */
-  const displayText = useMemo(() => {
-    if (!value) return placeholder;
-    const selected = options.find(opt => opt.value === value);
-    return selected?.label || value;
-  }, [value, options, placeholder]);
+      if (!searchable || !searchQuery.trim()) return baseOptions;
 
-  /** Close dropdown when clicking outside */
-  useEffect(() => {
-    if (!isOpen || useMobileModal) return;
+      return filterOptionsByQuery(baseOptions, searchQuery);
+    }, [options, allLabel, searchable, searchQuery]);
 
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+    /** Resolve display text from current value */
+    const displayText = useMemo(() => {
+      if (!value) return placeholder;
+      const selected = options.find((opt) => opt.value === value);
+      return selected?.label || value;
+    }, [value, options, placeholder]);
+
+    /** Close dropdown when clicking outside */
+    useEffect(() => {
+      if (!isOpen || useMobileModal) return;
+
+      const handleClickOutside = (e: MouseEvent) => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(e.target as Node)
+        ) {
+          setIsOpen(false);
+          setSearchQuery('');
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return () =>
+        document.removeEventListener('mousedown', handleClickOutside);
+    }, [isOpen, useMobileModal]);
+
+    /** Scroll highlighted option into view for keyboard navigation */
+    useEffect(() => {
+      if (!isOpen || highlightedIndex < 0 || !listRef.current) return;
+
+      const highlighted = listRef.current.querySelector(
+        `.${styles.highlighted}`,
+      );
+      highlighted?.scrollIntoView({ block: 'nearest' });
+    }, [isOpen, highlightedIndex]);
+
+    const handleSelect = useCallback(
+      (newValue: string) => {
+        onChange(newValue);
         setIsOpen(false);
         setSearchQuery('');
-      }
-    };
+        setHighlightedIndex(-1);
+        buttonRef.current?.focus();
+      },
+      [onChange],
+    );
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen, useMobileModal]);
+    const handleKeyDown = useCallback(
+      (e: KeyboardEvent<HTMLDivElement>) => {
+        if (disabled) return;
 
-  /** Scroll highlighted option into view for keyboard navigation */
-  useEffect(() => {
-    if (!isOpen || highlightedIndex < 0 || !listRef.current) return;
+        switch (e.key) {
+          case 'Enter':
+          case ' ':
+            e.preventDefault();
+            if (!isOpen) {
+              setIsOpen(true);
+              setHighlightedIndex(0);
+            } else if (
+              highlightedIndex >= 0 &&
+              filteredOptions[highlightedIndex]
+            ) {
+              handleSelect(filteredOptions[highlightedIndex].value);
+            }
+            break;
 
-    const highlighted = listRef.current.querySelector(`.${styles.highlighted}`);
-    highlighted?.scrollIntoView({ block: 'nearest' });
-  }, [isOpen, highlightedIndex]);
+          case 'ArrowDown':
+            e.preventDefault();
+            if (!isOpen) {
+              setIsOpen(true);
+              setHighlightedIndex(0);
+            } else {
+              setHighlightedIndex((prev) =>
+                prev < filteredOptions.length - 1 ? prev + 1 : prev,
+              );
+            }
+            break;
 
-  const handleSelect = useCallback((newValue: string) => {
-    onChange(newValue);
-    setIsOpen(false);
-    setSearchQuery('');
-    setHighlightedIndex(-1);
-    buttonRef.current?.focus();
-  }, [onChange]);
+          case 'ArrowUp':
+            e.preventDefault();
+            if (isOpen) {
+              setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+            }
+            break;
 
-  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
-    if (disabled) return;
+          case 'Escape':
+            if (isOpen) {
+              e.preventDefault();
+              setIsOpen(false);
+              setSearchQuery('');
+              buttonRef.current?.focus();
+            }
+            break;
 
-    switch (e.key) {
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
-        if (!isOpen) {
-          setIsOpen(true);
-          setHighlightedIndex(0);
-        } else if (highlightedIndex >= 0 && filteredOptions[highlightedIndex]) {
-          handleSelect(filteredOptions[highlightedIndex].value);
+          case 'Tab':
+            if (isOpen) {
+              setIsOpen(false);
+              setSearchQuery('');
+            }
+            break;
+
+          case 'Home':
+            if (isOpen) {
+              e.preventDefault();
+              setHighlightedIndex(0);
+            }
+            break;
+
+          case 'End':
+            if (isOpen) {
+              e.preventDefault();
+              setHighlightedIndex(filteredOptions.length - 1);
+            }
+            break;
         }
-        break;
+      },
+      [disabled, isOpen, highlightedIndex, filteredOptions, handleSelect],
+    );
 
-      case 'ArrowDown':
-        e.preventDefault();
+    const handleButtonClick = useCallback(() => {
+      if (!disabled) {
+        setIsOpen((prev) => !prev);
         if (!isOpen) {
-          setIsOpen(true);
-          setHighlightedIndex(0);
-        } else {
-          setHighlightedIndex(prev => 
-            prev < filteredOptions.length - 1 ? prev + 1 : prev
+          setHighlightedIndex(
+            filteredOptions.findIndex((opt) => opt.value === value),
           );
         }
-        break;
-
-      case 'ArrowUp':
-        e.preventDefault();
-        if (isOpen) {
-          setHighlightedIndex(prev => prev > 0 ? prev - 1 : 0);
-        }
-        break;
-
-      case 'Escape':
-        if (isOpen) {
-          e.preventDefault();
-          setIsOpen(false);
-          setSearchQuery('');
-          buttonRef.current?.focus();
-        }
-        break;
-
-      case 'Tab':
-        if (isOpen) {
-          setIsOpen(false);
-          setSearchQuery('');
-        }
-        break;
-
-      case 'Home':
-        if (isOpen) {
-          e.preventDefault();
-          setHighlightedIndex(0);
-        }
-        break;
-
-      case 'End':
-        if (isOpen) {
-          e.preventDefault();
-          setHighlightedIndex(filteredOptions.length - 1);
-        }
-        break;
-
-      default:
-        if (isOpen && searchable && e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-        }
-        break;
-    }
-  }, [disabled, isOpen, highlightedIndex, filteredOptions, handleSelect, searchable]);
-
-  const handleButtonClick = useCallback(() => {
-    if (!disabled) {
-      setIsOpen(prev => !prev);
-      if (!isOpen) {
-        setHighlightedIndex(filteredOptions.findIndex(opt => opt.value === value));
       }
-    }
-  }, [disabled, isOpen, filteredOptions, value]);
+    }, [disabled, isOpen, filteredOptions, value]);
 
-  if (useMobileModal) {
+    if (useMobileModal) {
+      return (
+        <div className={`${styles.filterSelect} ${className}`}>
+          <button
+            ref={buttonRef}
+            id={id}
+            type='button'
+            className={`${styles.trigger} ${styles[size]} ${disabled ? styles.disabled : ''}`}
+            onClick={() => !disabled && setIsOpen(true)}
+            disabled={disabled}
+            aria-haspopup='listbox'
+            aria-expanded={isOpen}
+            aria-label={ariaLabel}>
+            <span className={styles.triggerText}>{displayText}</span>
+            <ChevronDown
+              size={14}
+              className={styles.triggerIcon}
+              aria-hidden='true'
+            />
+          </button>
+          <FilterMobileModal
+            isOpen={isOpen}
+            onClose={() => {
+              setIsOpen(false);
+              setSearchQuery('');
+            }}
+            options={options}
+            value={value}
+            onSelect={handleSelect}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            ariaLabel={ariaLabel}
+            allLabel={allLabel}
+          />
+        </div>
+      );
+    }
+
     return (
-      <div className={`${styles.filterSelect} ${className}`}>
+      <div
+        ref={containerRef}
+        className={`${styles.filterSelect} ${className}`}
+        onKeyDown={handleKeyDown}>
         <button
           ref={buttonRef}
           id={id}
-          type="button"
-          className={`${styles.trigger} ${styles[size]} ${disabled ? styles.disabled : ''}`}
-          onClick={() => !disabled && setIsOpen(true)}
+          type='button'
+          className={`${styles.trigger} ${styles[size]} ${disabled ? styles.disabled : ''} ${isOpen ? styles.open : ''}`}
+          onClick={handleButtonClick}
           disabled={disabled}
-          aria-haspopup="listbox"
+          aria-haspopup='listbox'
           aria-expanded={isOpen}
           aria-label={ariaLabel}
-        >
+          aria-controls={isOpen ? `${id}-listbox` : undefined}>
           <span className={styles.triggerText}>{displayText}</span>
-          <ChevronDown size={14} className={styles.triggerIcon} aria-hidden='true' />
+          <ChevronDown
+            size={14}
+            className={styles.triggerIcon}
+            aria-hidden='true'
+          />
         </button>
-        <FilterMobileModal
-          isOpen={isOpen}
-          onClose={() => {
-            setIsOpen(false);
-            setSearchQuery('');
-          }}
-          options={options}
-          value={value}
-          onSelect={handleSelect}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          ariaLabel={ariaLabel}
-          allLabel={allLabel}
-        />
+
+        {isOpen && (
+          <div
+            ref={listRef}
+            id={`${id}-listbox`}
+            className={styles.dropdown}
+            role='listbox'
+            aria-label={ariaLabel}>
+            {searchable && (
+              <div className={styles.searchContainer}>
+                <input
+                  type='text'
+                  className={styles.searchInput}
+                  placeholder='Search...'
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setHighlightedIndex(0);
+                  }}
+                  aria-label='Search options'
+                  autoFocus
+                />
+              </div>
+            )}
+            <div className={styles.optionsList}>
+              {filteredOptions.map((option, index) => (
+                <VirtualizedOption
+                  key={option.value || '__all__'}
+                  option={option}
+                  isSelected={value === option.value}
+                  isHighlighted={index === highlightedIndex}
+                  onClick={() => handleSelect(option.value)}
+                  onMouseEnter={() => setHighlightedIndex(index)}
+                  style={{}}
+                />
+              ))}
+              {filteredOptions.length === 0 && searchQuery && (
+                <div className={styles.noResults}>No matches found</div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     );
-  }
-
-  return (
-    <div 
-      ref={containerRef}
-      className={`${styles.filterSelect} ${className}`}
-      onKeyDown={handleKeyDown}
-    >
-      <button
-        ref={buttonRef}
-        id={id}
-        type="button"
-        className={`${styles.trigger} ${styles[size]} ${disabled ? styles.disabled : ''} ${isOpen ? styles.open : ''}`}
-        onClick={handleButtonClick}
-        disabled={disabled}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        aria-label={ariaLabel}
-        aria-controls={isOpen ? `${id}-listbox` : undefined}
-      >
-        <span className={styles.triggerText}>{displayText}</span>
-        <ChevronDown size={14} className={styles.triggerIcon} aria-hidden='true' />
-      </button>
-
-      {isOpen && (
-        <div 
-          ref={listRef}
-          id={`${id}-listbox`}
-          className={styles.dropdown}
-          role="listbox"
-          aria-label={ariaLabel}
-        >
-          {searchable && (
-            <div className={styles.searchContainer}>
-              <input
-                type="text"
-                className={styles.searchInput}
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setHighlightedIndex(0);
-                }}
-                aria-label="Search options"
-                autoFocus
-              />
-            </div>
-          )}
-          <div className={styles.optionsList}>
-            {filteredOptions.map((option, index) => (
-              <VirtualizedOption
-                key={option.value || '__all__'}
-                option={option}
-                isSelected={value === option.value}
-                isHighlighted={index === highlightedIndex}
-                onClick={() => handleSelect(option.value)}
-                onMouseEnter={() => setHighlightedIndex(index)}
-                style={{}}
-              />
-            ))}
-            {filteredOptions.length === 0 && searchQuery && (
-              <div className={styles.noResults}>No matches found</div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-});
+  },
+);
 
 export default FilterSelect;

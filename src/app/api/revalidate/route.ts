@@ -7,8 +7,8 @@
  * @module app/api/revalidate/route
  */
 
-import { logger } from '@/lib/logging/logger';
 import { contentCacheTag } from '@/lib/db/content/contentCacheTags';
+import { logger } from '@/lib/logging/logger';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -177,4 +177,3 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ results }, { status: 200 });
 }
-

@@ -10,9 +10,9 @@
 import { logger } from '@/lib/logging/logger';
 import { cache } from 'react';
 
-import type { ContentSourceAdapter } from '@/lib/db/content/contentSourceAdapter';
 import { fsContentSource } from '@/lib/db/content/adapters/fs/fsContentSource';
 import { githubContentSource } from '@/lib/db/content/adapters/github/githubContentSource';
+import type { ContentSourceAdapter } from '@/lib/db/content/contentSourceAdapter';
 
 const log = logger.child({ module: 'ContentFetcher' });
 

@@ -33,26 +33,29 @@ import { useNotifications } from '@/lib/components/ui';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { logger } from '@/lib/logging/logger';
 import type { Encounter } from '@/lib/types/encounterPlanner';
-import type { InProgressCombat, InProgressCombatant } from '@/lib/types/inProgressCombat';
+import type {
+    InProgressCombat,
+    InProgressCombatant,
+} from '@/lib/types/inProgressCombat';
 import {
-  createEmptyCreature,
-  createEmptyEncounter,
-  createMultipleCreaturesFromMonster,
-  deleteEncounter as deleteEncounterUtil,
-  exportEncounter,
-  getActiveEncounter,
-  getEncounters,
-  importEncounter,
-  saveEncounter,
-  setActiveEncounterId,
+    createEmptyCreature,
+    createEmptyEncounter,
+    createMultipleCreaturesFromMonster,
+    deleteEncounter as deleteEncounterUtil,
+    exportEncounter,
+    getActiveEncounter,
+    getEncounters,
+    importEncounter,
+    saveEncounter,
+    setActiveEncounterId,
 } from '@/lib/utils/encounterStorage';
 import {
-  createInProgressCombat,
-  createInProgressCombatant,
-  getActiveInProgressCombatId,
-  getInProgressCombat,
-  saveInProgressCombat,
-  setActiveInProgressCombatId,
+    createInProgressCombat,
+    createInProgressCombatant,
+    getActiveInProgressCombatId,
+    getInProgressCombat,
+    saveInProgressCombat,
+    setActiveInProgressCombatId,
 } from '@/lib/utils/inProgressCombatStorage';
 import type { MonsterData } from '@/lib/utils/monsterCache';
 import { useTranslations } from 'next-intl';
@@ -93,7 +96,8 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [showCreatureImport, setShowCreatureImport] = useState(false);
-  const [inProgressCombat, setInProgressCombat] = useState<InProgressCombat | null>(null);
+  const [inProgressCombat, setInProgressCombat] =
+    useState<InProgressCombat | null>(null);
   const hasShownResumeNotificationRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -123,7 +127,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
   /** Show resume combat notification on mount if active combat exists */
   useEffect(() => {
     if (hasShownResumeNotificationRef.current) return;
-    
+
     const activeCombatId = getActiveInProgressCombatId();
     if (activeCombatId && !inProgressCombat) {
       const combat = getInProgressCombat(activeCombatId);
@@ -160,7 +164,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
     (updater: (prev: Encounter) => Encounter) => {
       setEncounter((prev) => (prev ? updater(prev) : null));
     },
-    []
+    [],
   );
 
   const handleNewEncounter = useCallback(() => {
@@ -183,23 +187,30 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
   const handleDeleteEncounter = useCallback(() => {
     if (!encounter) return;
 
-    if (confirm(t('confirmDelete'))) {
-      deleteEncounterUtil(encounter.id);
-      const remaining = getEncounters();
-      setEncounters(remaining);
+    notifications.warning(t('confirmDelete'), {
+      title: t('deleteEncounter'),
+      duration: 0,
+      action: {
+        label: t('confirmDeleteAction'),
+        onClick: () => {
+          deleteEncounterUtil(encounter.id);
+          const remaining = getEncounters();
+          setEncounters(remaining);
 
-      if (remaining.length > 0) {
-        setEncounter(remaining[0]);
-        setActiveEncounterId(remaining[0].id);
-      } else {
-        const newEncounter = createEmptyEncounter();
-        setEncounter(newEncounter);
-        setActiveEncounterId(newEncounter.id);
-        saveEncounter(newEncounter);
-        setEncounters([newEncounter]);
-      }
-    }
-  }, [encounter, t]);
+          if (remaining.length > 0) {
+            setEncounter(remaining[0]);
+            setActiveEncounterId(remaining[0].id);
+          } else {
+            const newEncounter = createEmptyEncounter();
+            setEncounter(newEncounter);
+            setActiveEncounterId(newEncounter.id);
+            saveEncounter(newEncounter);
+            setEncounters([newEncounter]);
+          }
+        },
+      },
+    });
+  }, [encounter, notifications, t]);
 
   const handleStartCombat = useCallback(() => {
     if (!encounter) return;
@@ -231,7 +242,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
 
     try {
       await navigator.clipboard.writeText(json);
-      alert(t('exportSuccess'));
+      notifications.success(t('exportSuccess'));
     } catch {
       const blob = new Blob([json], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -241,7 +252,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
       a.click();
       URL.revokeObjectURL(url);
     }
-  }, [encounter, t]);
+  }, [encounter, notifications, t]);
 
   const handleImport = useCallback(() => {
     fileInputRef.current?.click();
@@ -261,24 +272,26 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
         saveEncounter(imported);
         setEncounters(getEncounters());
 
-        alert(t('importSuccess'));
+        notifications.success(t('importSuccess'));
       } catch (error) {
-        logger.error('Failed to import encounter', { error: error instanceof Error ? error.message : String(error) });
-        alert(t('importError'));
+        logger.error('Failed to import encounter', {
+          error: error instanceof Error ? error.message : String(error),
+        });
+        notifications.error(t('importError'));
       }
 
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     },
-    [t]
+    [notifications, t],
   );
 
   const handleNameChange = useCallback(
     (name: string) => {
       updateEncounter((prev) => ({ ...prev, name }));
     },
-    [updateEncounter]
+    [updateEncounter],
   );
 
   const handleAddCreature = useCallback(() => {
@@ -290,7 +303,11 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
 
   const handleImportCreatures = useCallback(
     (monsterData: MonsterData, quantity: number) => {
-      const newCreatures = createMultipleCreaturesFromMonster(monsterData, locale, quantity);
+      const newCreatures = createMultipleCreaturesFromMonster(
+        monsterData,
+        locale,
+        quantity,
+      );
 
       updateEncounter((prev) => ({
         ...prev,
@@ -299,7 +316,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
 
       setShowCreatureImport(false);
     },
-    [locale, updateEncounter]
+    [locale, updateEncounter],
   );
 
   const handleUpdateCreature = useCallback(
@@ -319,7 +336,9 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
             conditions: updatedCombatant.conditions,
             initiativeValue: updatedCombatant.initiativeValue,
             initiativeBonus: updatedCombatant.initiativeBonus,
-            proficiencyBonus: updatedCombatant.proficiencyBonusOverride ?? updatedCombatant.proficiencyBonus,
+            proficiencyBonus:
+              updatedCombatant.proficiencyBonusOverride ??
+              updatedCombatant.proficiencyBonus,
             speed: updatedCombatant.speed,
             hpFormula: updatedCombatant.hpFormula,
             details: updatedCombatant.details,
@@ -331,7 +350,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
         }),
       }));
     },
-    [updateEncounter]
+    [updateEncounter],
   );
 
   const handleRemoveCreature = useCallback(
@@ -341,7 +360,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
         creatures: prev.creatures.filter((_, i) => i !== index),
       }));
     },
-    [updateEncounter]
+    [updateEncounter],
   );
 
   if (!encounter) {
@@ -349,18 +368,31 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
   }
 
   const activeCombatId = getActiveInProgressCombatId();
-  const resumeCombatAvailable = activeCombatId && !inProgressCombat ? !!getInProgressCombat(activeCombatId) : false;
+  const resumeCombatAvailable =
+    activeCombatId && !inProgressCombat
+      ? !!getInProgressCombat(activeCombatId)
+      : false;
 
   if (inProgressCombat) {
-    return <PlayMode combat={inProgressCombat} onExit={handleExitPlayMode} locale={locale} />;
+    return (
+      <PlayMode
+        combat={inProgressCombat}
+        onExit={handleExitPlayMode}
+        locale={locale}
+      />
+    );
   }
 
   return (
     <div className={styles.encounterPlanner}>
       {resumeCombatAvailable && (
         <div className={styles.resumeBanner}>
-          <span className={styles.resumeText}>{t('resumeCombatAvailable')}</span>
-          <button onClick={handleResumeCombat} className={`${styles.button} ${styles.buttonPrimary}`}>
+          <span className={styles.resumeText}>
+            {t('resumeCombatAvailable')}
+          </span>
+          <button
+            onClick={handleResumeCombat}
+            className={`${styles.button} ${styles.buttonPrimary}`}>
             {t('resumeCombat')}
           </button>
         </div>

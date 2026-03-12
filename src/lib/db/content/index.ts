@@ -21,39 +21,39 @@
 
 /** Factory-resolved repository instances — the primary public API */
 export {
-  heirloomRepository,
-  monsterRepository,
-  spellRepository,
-  trinketRepository
+    heirloomRepository,
+    monsterRepository,
+    spellRepository,
+    trinketRepository
 } from './repositories';
 
 /** Entity-specific domain schemas */
 export type {
-  HeirloomIndexEntry,
-  HeirloomMetadata,
-  HeirloomWeaponDamage
+    HeirloomIndexEntry,
+    HeirloomMetadata,
+    HeirloomWeaponDamage
 } from './schemas/heirloomMetadata';
 
 export type {
-  AbilityScore,
-  AbilityScores,
-  MonsterAC,
-  MonsterHP,
-  MonsterIndexEntry,
-  MonsterMetadata,
-  MonsterSenses,
-  MonsterSpeed
+    AbilityScore,
+    AbilityScores,
+    MonsterAC,
+    MonsterHP,
+    MonsterIndexEntry,
+    MonsterMetadata,
+    MonsterSenses,
+    MonsterSpeed
 } from './schemas/monsterMetadata';
 
 export type {
-  SpellIndexEntry,
-  SpellListRef,
-  SpellMetadata
+    SpellIndexEntry,
+    SpellListRef,
+    SpellMetadata
 } from './schemas/spellMetadata';
 
 export type {
-  TrinketIndexEntry,
-  TrinketMetadata
+    TrinketIndexEntry,
+    TrinketMetadata
 } from './schemas/trinketMetadata';
 
 /** Repository port interfaces */
@@ -63,6 +63,9 @@ export type { SpellRepository } from './repositories/spellRepository';
 export type { TrinketRepository } from './repositories/trinketRepository';
 
 /** Content source adapter interface and cache tag utility */
-export type { ContentFetchResult, ContentSourceAdapter } from './contentSourceAdapter';
 export { contentCacheTag } from './contentCacheTags';
+export type {
+    ContentFetchResult,
+    ContentSourceAdapter
+} from './contentSourceAdapter';
 

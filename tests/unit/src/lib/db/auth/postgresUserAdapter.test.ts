@@ -15,14 +15,14 @@ vi.mock('@/lib/logging/logger', () => ({
   },
 }));
 
-const mockEm = {
+const mockEm = vi.hoisted(() => ({
   findOne: vi.fn(),
   find: vi.fn(),
   create: vi.fn(),
   flush: vi.fn(),
   findOneOrFail: vi.fn(),
   removeAndFlush: vi.fn(),
-};
+}));
 
 vi.mock('@/lib/db/orm/orm', () => ({
   getEM: vi.fn().mockResolvedValue(mockEm),
@@ -59,7 +59,7 @@ beforeEach(async () => {
   postgresUserAdapter = mod.postgresUserAdapter;
 });
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => vi.clearAllMocks());
 
 describe('postgresUserAdapter', () => {
   describe('findByUsername', () => {

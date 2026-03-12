@@ -22,10 +22,10 @@ import { Sidebar } from '@/lib/components/sidebar/sidebar';
 import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
-    useSidebarMenuActions,
-    useSidebarMenuState,
-    useThemeActions,
-    useThemeState,
+  useSidebarMenuActions,
+  useSidebarMenuState,
+  useThemeActions,
+  useThemeState,
 } from '@/lib/context/PersistentUiContext';
 import { Theme } from '@/lib/enums/themes';
 import { Moon, Sun, Wrench } from 'lucide-react';
@@ -36,6 +36,14 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import styles from './responsiveLayoutShell.module.scss';
 
+/**
+ * Sidebar navigation item with optional nested children.
+ *
+ * @typedef {Object} Item
+ * @property {string} name - Display name
+ * @property {string} path - URL path segment
+ * @property {Item[]} [children] - Nested child items
+ */
 type Item = {
   name: string;
   path: string;

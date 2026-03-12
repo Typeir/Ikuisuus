@@ -31,5 +31,6 @@
   "submitNew": "Submit New File",
   "editing": "Editing",
   "newFileMode": "Creating a new content file.",
-  "newPlaceholder": "# My New Page\n\nStart writing MDX content here…"
+  "newPlaceholder": "# My New Page\n\nStart writing MDX content here…",
+  "newFile": "New file"
 }

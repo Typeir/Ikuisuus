@@ -14,12 +14,28 @@ import { banIp, isIpBanned } from '@/lib/security/bannedIps';
 import { checkProfanityMultiple } from '@/lib/security/profanityFilter';
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+    buildBranchName,
+    buildCommitMessage,
+    buildPrContent,
+    commitFile,
+    createBranch,
+    openPullRequest,
+} from './corrections.service';
 
 const log = logger.child({ module: 'API:Corrections' });
 
 /** Maximum accepted request body size in bytes (256 KB). */
 const MAX_BODY_BYTES = 256 * 1024;
 
+/**
+ * @typedef {Object} CorrectionPayload
+ * @property {string} path - Content file path
+ * @property {string} content - MDX content body
+ * @property {string} baseSha - SHA of the file being replaced
+ * @property {boolean} [isNew] - Whether this is a new file creation
+ * @property {string} [message] - Optional custom commit message
+ */
 interface CorrectionPayload {
   path: string;
   content: string;
@@ -27,103 +43,6 @@ interface CorrectionPayload {
   isNew?: boolean;
   message?: string;
 }
-
-const ghFetch = async (
-  endpoint: string,
-  init?: RequestInit,
-): Promise<Response> => {
-  const token = process.env.GITHUB_PAT;
-  return fetch(`https://api.github.com/${endpoint}`, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-  });
-};
-
-const createBranch = async (
-  owner: string,
-  repo: string,
-  branchName: string,
-): Promise<void> => {
-  const refRes = await ghFetch(`repos/${owner}/${repo}/git/ref/heads/main`);
-  if (!refRes.ok) {
-    throw new Error(`Failed to get main ref: ${await refRes.text()}`);
-  }
-  const refData = await refRes.json();
-  const mainSha = refData.object.sha;
-
-  const createRes = await ghFetch(`repos/${owner}/${repo}/git/refs`, {
-    method: 'POST',
-    body: JSON.stringify({ ref: `refs/heads/${branchName}`, sha: mainSha }),
-  });
-
-  if (!createRes.ok) {
-    const body = await createRes.text();
-    throw new Error(`Failed to create branch: ${body}`);
-  }
-};
-
-const commitFile = async (
-  owner: string,
-  repo: string,
-  filePath: string,
-  content: string,
-  baseSha: string,
-  branch: string,
-  message: string,
-): Promise<void> => {
-  const payload: Record<string, string> = {
-    message,
-    content: Buffer.from(content).toString('base64'),
-    branch,
-  };
-  if (baseSha) payload.sha = baseSha;
-
-  const res = await ghFetch(
-    `repos/${owner}/${repo}/contents/${encodeURI(filePath)}`,
-    {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    },
-  );
-
-  if (res.status === 409) {
-    throw Object.assign(
-      new Error('Conflict: file has been modified since you loaded it'),
-      {
-        code: 'CONFLICT',
-      },
-    );
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to commit file: ${await res.text()}`);
-  }
-};
-
-const openPullRequest = async (
-  owner: string,
-  repo: string,
-  branch: string,
-  title: string,
-  body: string,
-): Promise<string> => {
-  const res = await ghFetch(`repos/${owner}/${repo}/pulls`, {
-    method: 'POST',
-    body: JSON.stringify({ title, body, head: branch, base: 'main' }),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to open PR: ${await res.text()}`);
-  }
-
-  const data = await res.json();
-  return data.html_url as string;
-};
 
 export async function POST(req: NextRequest) {
   const secret = process.env.CORRECTIONS_SECRET;
@@ -188,7 +107,6 @@ export async function POST(req: NextRequest) {
 
   const { path: filePath, content, baseSha, isNew, message } = body;
 
-  // Build a full headers object for verbose logging
   const headersObjAll: Record<string, string> = {};
   req.headers.forEach((v, k) => {
     headersObjAll[k] = v;
@@ -227,7 +145,6 @@ export async function POST(req: NextRequest) {
   }
 
   if (!isNew && (!baseSha || typeof baseSha !== 'string')) {
-    // Verbose logging — include everything unmasked for debugging
     const authHeaderFull =
       headersObjAll['authorization'] ?? headersObjAll['Authorization'] ?? null;
 
@@ -305,17 +222,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const timestamp = Date.now();
-  const actionLabel = isNew ? 'new' : 'corrections';
-  const branchName = `${actionLabel}/${filePath.replace(/[^a-zA-Z0-9\-_/]/g, '-')}-${timestamp}`;
-  const commitMsg =
-    message ||
-    (isNew ? `[new]: create ${filePath}` : `[correction]: update ${filePath}`);
-  const prTitle = isNew ? `New file: ${filePath}` : `Correction: ${filePath}`;
-  const prBodyBase = isNew
-    ? `New file submitted via the Library editor.\n\n**File**: \`${filePath}\`\n**Token label**: \`${auditId}\``
-    : `Automated correction submitted via the Library editor.\n\n**File**: \`${filePath}\`\n**Based on SHA**: \`${baseSha}\`\n**Token label**: \`${auditId}\``;
-  const prBody = `${prBodyBase}\n\n<!-- meta:ip=${clientIp} -->`;
+  const branchName = buildBranchName(filePath, !!isNew);
+  const commitMsg = buildCommitMessage(filePath, !!isNew, message);
+  const { title: prTitle, body: prBody } = buildPrContent(
+    filePath,
+    !!isNew,
+    baseSha,
+    auditId,
+    clientIp,
+  );
 
   try {
     await createBranch(owner, repo, branchName);

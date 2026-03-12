@@ -1,0 +1,150 @@
+/**
+ * @fileoverview Editor Path Section
+ * @description Slug/path input with load button for the MDX editor.
+ * In new-file mode, shows a FileTreeSelect to pick a folder, plus a text input
+ * for the filename. In edit mode, shows a slug input with a load button.
+ *
+ * @module lib/components/mdxEditor/editorPathSection
+ * @version 2.0.0
+ * @author Typeir
+ * @since 2.0.0
+ */
+
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
+import { FileTreeSelect, type TreeNode } from './fileTreeSelect';
+import styles from './mdxEditor.module.scss';
+
+/**
+ * @property {'edit' | 'new'} mode - Editor mode
+ * @property {string} slug - Content slug
+ * @property {(v: string) => void} setSlug - Update slug
+ * @property {string} filePath - File path for new content
+ * @property {(v: string) => void} setFilePath - Update file path
+ * @property {() => void} handleLoad - Trigger content load
+ * @property {boolean} isLoading - Whether content is loading
+ * @property {string} locale - Current locale
+ * @property {(key: string) => string} t - Translation function
+ */
+interface EditorPathSectionProps {
+  /** Editor mode */
+  mode: 'edit' | 'new';
+  /** Content slug */
+  slug: string;
+  /** Update slug */
+  setSlug: (v: string) => void;
+  /** File path for new content */
+  filePath: string;
+  /** Update file path */
+  setFilePath: (v: string) => void;
+  /** Trigger content load */
+  handleLoad: () => void;
+  /** Whether content is loading */
+  isLoading: boolean;
+  /** Current locale */
+  locale: string;
+  /** Translation function */
+  t: (key: string) => string;
+}
+
+/**
+ * Path/slug input section for the MDX editor.
+ * In edit mode shows a slug input with a load button.
+ * In new mode shows a folder tree picker and filename input.
+ *
+ * @component
+ * @param {EditorPathSectionProps} props - Component properties
+ * @returns {JSX.Element} Path section
+ */
+export function EditorPathSection({
+  mode,
+  slug,
+  setSlug,
+  filePath,
+  setFilePath,
+  handleLoad,
+  isLoading,
+  locale,
+  t,
+}: EditorPathSectionProps): JSX.Element {
+  const [tree, setTree] = useState<TreeNode[]>([]);
+  const [treeLoading, setTreeLoading] = useState(false);
+  const [selectedFolder, setSelectedFolder] = useState('');
+  const [fileName, setFileName] = useState('');
+
+  useEffect(() => {
+    if (mode !== 'new') return;
+    setTreeLoading(true);
+    fetch(`/api/corrections/tree?locale=${encodeURIComponent(locale)}`)
+      .then((res) => (res.ok ? res.json() : { tree: [] }))
+      .then((data) => setTree(data.tree || []))
+      .catch(() => setTree([]))
+      .finally(() => setTreeLoading(false));
+  }, [mode, locale]);
+
+  const handleFolderSelect = useCallback(
+    (folderPath: string) => {
+      setSelectedFolder(folderPath);
+      setFilePath(fileName ? folderPath + fileName : folderPath);
+    },
+    [fileName, setFilePath],
+  );
+
+  const handleFileNameChange = useCallback(
+    (name: string) => {
+      setFileName(name);
+      setFilePath(selectedFolder + name);
+    },
+    [selectedFolder, setFilePath],
+  );
+
+  return (
+    <div className={styles.fieldGroup}>
+      <label className={styles.fieldLabel} htmlFor='mdx-editor-path'>
+        {mode === 'edit' ? t('slugLabel') : t('pathLabel')}
+      </label>
+      <div className={styles.fieldRow}>
+        {mode === 'edit' ? (
+          <>
+            <input
+              id='mdx-editor-path'
+              type='text'
+              className={styles.pathInput}
+              placeholder={t('slugPlaceholder')}
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+            />
+            <button
+              type='button'
+              className={styles.submitButton}
+              onClick={handleLoad}
+              disabled={!slug.trim() || isLoading}>
+              {t('loadButton')}
+            </button>
+          </>
+        ) : (
+          <>
+            <FileTreeSelect
+              value={selectedFolder}
+              onSelect={handleFolderSelect}
+              tree={tree}
+              loading={treeLoading}
+              placeholder={t('pathPlaceholder')}
+              newFileLabel={t('newFile')}
+              disabled={isLoading}
+            />
+            <input
+              id='mdx-editor-path'
+              type='text'
+              className={styles.pathInput}
+              placeholder='filename.mdx'
+              value={fileName}
+              onChange={(e) => handleFileNameChange(e.target.value)}
+            />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

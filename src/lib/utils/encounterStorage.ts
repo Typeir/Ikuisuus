@@ -29,10 +29,15 @@ import { EncounterStorage } from '@/lib/enums/encounterPlanner';
 import { logger } from '@/lib/logging/logger';
 import type {
   AffixEntry,
-  CreatureEntry,
-  CreatureStats,
-  Encounter,
+  Encounter
 } from '@/lib/types/encounterPlanner';
+
+export {
+  createCreatureFromMonster,
+  createEmptyCreature,
+  createEmptyEncounter,
+  createMultipleCreaturesFromMonster
+} from './encounterFactory';
 
 /**
  * Generate a unique ID for encounters or creatures using timestamp and random string.
@@ -63,75 +68,6 @@ export const generateId = (): string => {
  */
 export const calculateInitiativeMod = (dex: number): number => {
   return Math.floor((dex - 10) / 2);
-};
-
-/**
- * Create a new empty creature entry with default values.
- * All ability scores default to 10 (modifier +0), HP and AC default to 10.
- * Initiative modifier is recalculated when dexterity changes.
- *
- * @function createEmptyCreature
- * @returns {CreatureEntry} Newly created creature with default values
- *
- * @example
- * const creature = createEmptyCreature();
- * // { id: "...", name: "New Creature", hpCurrent: 10, hpMax: 10, ... }
- */
-export const createEmptyCreature = (): CreatureEntry => {
-  const stats: CreatureStats = {
-    str: 10,
-    dex: 10,
-    con: 10,
-    int: 10,
-    wis: 10,
-    cha: 10,
-  };
-
-  const initiativeBonus = calculateInitiativeMod(stats.dex);
-
-  return {
-    id: generateId(),
-    name: 'New Creature',
-    hpCurrent: 10,
-    hpMax: 10,
-    tempHp: null,
-    ac: 10,
-    stats,
-    conditions: [],
-    initiativeValue: null,
-    initiativeBonus,
-    proficiencyBonus: null,
-    speed: null,
-    hpFormula: null,
-    details: {
-      buffs: [],
-      items: [],
-      spells: [],
-      affixes: [],
-    },
-  };
-};
-
-/**
- * Create a new empty encounter with default name and one creature.
- * Automatically sets creation and update timestamps to current ISO time.
- *
- * @function createEmptyEncounter
- * @returns {Encounter} Newly created encounter with one default creature
- *
- * @example
- * const encounter = createEmptyEncounter();
- * // { id: "...", name: "New Encounter", creatures: [defaultCreature], ... }
- */
-export const createEmptyEncounter = (): Encounter => {
-  const now = new Date().toISOString();
-  return {
-    id: generateId(),
-    name: 'New Encounter',
-    createdAt: now,
-    updatedAt: now,
-    creatures: [],
-  };
 };
 
 /**
@@ -322,7 +258,6 @@ export const saveEncounter = (encounter: Encounter): void => {
   const encounters = getEncounters();
   const existingIndex = encounters.findIndex((e) => e.id === encounter.id);
 
-  // Update timestamp
   encounter.updatedAt = new Date().toISOString();
 
   if (existingIndex >= 0) {
@@ -351,7 +286,6 @@ export const deleteEncounter = (id: string): void => {
   const filtered = encounters.filter((e) => e.id !== id);
   saveEncounters(filtered);
 
-  // Clear active ID if deleting active encounter
   if (getActiveEncounterId() === id) {
     setActiveEncounterId(null);
   }
@@ -394,20 +328,16 @@ export const exportEncounter = (encounter: Encounter): string => {
 export const importEncounter = (jsonString: string): Encounter => {
   const encounter = JSON.parse(jsonString);
 
-  // Validate structure
   if (!encounter.id || !encounter.name || !Array.isArray(encounter.creatures)) {
     throw new Error('Invalid encounter structure');
   }
 
-  // Generate new ID to avoid conflicts
   encounter.id = generateId();
 
-  // Ensure timestamps exist
   const now = new Date().toISOString();
   encounter.createdAt = encounter.createdAt || now;
   encounter.updatedAt = now;
 
-  // Validate creature structure
   encounter.creatures.forEach((creature: any) => {
     if (!creature.id || !creature.name) {
       throw new Error('Invalid creature structure');
@@ -415,121 +345,6 @@ export const importEncounter = (jsonString: string): Encounter => {
   });
 
   return encounter;
-};
-
-/**
- * Create a new creature entry from monster library metadata.
- * Hydrates a CreatureEntry with combat-relevant data from monster stat block.
- * Generates new unique runtime ID to allow multiple instances.
- * Stores sourceHref for wiki link rendering and extracts CR/proficiency/speed from metadata.
- *
- * @function createCreatureFromMonster
- * @param {any} monsterData - Full monster metadata object from library
- * @param {string} locale - Current locale for generating wiki URL
- * @returns {CreatureEntry} New creature entry initialized with monster stats
- *
- * @example
- * const monster = await fetch('/api/monsters/ancient-red-dragon').then(r => r.json());
- * const creature = createCreatureFromMonster(monster, 'en');
- * // { id: "unique-runtime-id", name: "Ancient Red Dragon", hp: 546, ac: 22, sourceHref: "/en/library/monsters/ancient-red-dragon", ... }
- */
-export const createCreatureFromMonster = (
-  monsterData: any,
-  locale: string = 'en',
-): CreatureEntry => {
-  // Extract HP from metadata (average value)
-  const hp = monsterData.hp?.average || 10;
-
-  // Extract AC from metadata (value)
-  const ac = monsterData.ac?.value || 10;
-
-  // Extract ability scores with fallback to 10
-  const stats: CreatureStats = {
-    str: monsterData.abilities?.str?.score || 10,
-    dex: monsterData.abilities?.dex?.score || 10,
-    con: monsterData.abilities?.con?.score || 10,
-    int: monsterData.abilities?.int?.score || 10,
-    wis: monsterData.abilities?.wis?.score || 10,
-    cha: monsterData.abilities?.cha?.score || 10,
-  };
-
-  // Calculate initiative modifier from dexterity
-  const initiativeBonus = calculateInitiativeMod(stats.dex);
-
-  // Generate wiki source URL from metadata link field
-  const sourceHref = monsterData.link
-    ? `/${locale}${monsterData.link}`
-    : undefined;
-
-  // Extract CR as display text
-  const crText = monsterData.cr ? `CR ${monsterData.cr}` : undefined;
-
-  // Extract proficiency bonus from metadata
-  const proficiencyBonus = monsterData.proficiencyBonus || null;
-
-  // Extract speed (parsed modes or raw string)
-  const speed = monsterData.speed?.raw || null;
-
-  // Extract HP formula
-  const hpFormula = monsterData.hp?.formula || null;
-
-  // Extract tags for mechanics flags
-  const tags = Array.isArray(monsterData.tags) ? monsterData.tags : [];
-
-  return {
-    id: generateId(),
-    name: monsterData.title || 'Imported Creature',
-    hpCurrent: hp,
-    hpMax: hp,
-    tempHp: null,
-    ac,
-    stats,
-    conditions: [],
-    initiativeValue: null,
-    initiativeBonus,
-    proficiencyBonus,
-    speed,
-    hpFormula,
-    details: {
-      buffs: [],
-      items: [],
-      spells: [],
-      affixes: [],
-    },
-    sourceHref,
-    crText,
-    tags,
-  };
-};
-
-/**
- * Create multiple creature entries from monster library metadata.
- * Each creature gets a unique runtime ID to prevent conflicts.
- *
- * @function createMultipleCreaturesFromMonster
- * @param {any} monsterData - Full monster metadata object from library
- * @param {string} locale - Current locale for generating wiki URL
- * @param {number} quantity - Number of creatures to create
- * @returns {CreatureEntry[]} Array of new creature entries initialized with monster stats
- *
- * @example
- * const monster = await fetch('/api/monsters/goblin').then(r => r.json());
- * const creatures = createMultipleCreaturesFromMonster(monster, 'en', 4);
- * // Returns 4 goblins with unique IDs
- */
-export const createMultipleCreaturesFromMonster = (
-  monsterData: any,
-  locale: string = 'en',
-  quantity: number = 1,
-): CreatureEntry[] => {
-  const safeQuantity = Math.max(1, Math.min(20, Math.floor(quantity)));
-  const creatures: CreatureEntry[] = [];
-
-  for (let i = 0; i < safeQuantity; i++) {
-    creatures.push(createCreatureFromMonster(monsterData, locale));
-  }
-
-  return creatures;
 };
 
 /**

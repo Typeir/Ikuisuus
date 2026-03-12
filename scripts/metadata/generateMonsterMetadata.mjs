@@ -254,7 +254,7 @@ function parseSpeed(raw) {
     // Match "mode distance ft" or "distance ft"
     const m = p.match(/(?:(walk|climb|fly|swim|burrow)\s+)?(\d+)\s*ft\.?/i);
     if (m) {
-      let mode = (m[1] || '').toLowerCase();
+      let mode = (m[1] || 'walk').toLowerCase();
       const ft = Number(m[2]);
 
       modes[mode] = ft;
@@ -350,11 +350,12 @@ function parseAbilities(lines) {
    * @returns {{ score?: number }} Parsed ability score
    */
   const toPair = (cell) => {
-    // Match "16 (+3)" or "16" — capture only the score, discard the written mod
     const m = cell.match(/(\d+)/);
-    if (m) return { score: Number(m[1]) };
+    if (m) {
+      const score = Number(m[1]);
+      return { score, mod: Math.floor((score - 10) / 2) };
+    }
 
-    // No valid data found
     return { score: undefined };
   };
 

@@ -2,7 +2,7 @@
  * @fileoverview Play Mode Component
  * @description Turn tracker and combat runner for in-progress encounters.
  * Displays combatants in initiative order with runtime editing and auto-scroll to active combatant.
- * 
+ *
  * @module playMode
  * @version 1.0.0
  * @author Typeir
@@ -11,12 +11,16 @@
 
 'use client';
 
+import { useNotifications } from '@/lib/components/ui';
 import { logger } from '@/lib/logging/logger';
-import type { InProgressCombat, InProgressCombatant } from '@/lib/types/inProgressCombat';
-import { createCreatureFromMonster, generateId } from '@/lib/utils/encounterStorage';
-import type { MonsterData } from '@/lib/utils/monsterCache';
+import type {
+    InProgressCombat,
+    InProgressCombatant,
+} from '@/lib/types/inProgressCombat';
+import { generateId } from '@/lib/utils/encounterStorage';
 import {
     createInProgressCombatant,
+    createMultipleCombatantsFromMonster,
     deleteInProgressCombat,
     exportInProgressCombat,
     getNextActiveCombatantIndex,
@@ -24,19 +28,19 @@ import {
     saveInProgressCombat,
     setActiveInProgressCombatId,
 } from '@/lib/utils/inProgressCombatStorage';
+import type { MonsterData } from '@/lib/utils/monsterCache';
+import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { MonsterImporter } from '../importer';
-import { Tooltip, useNotifications } from '@/lib/components/ui';
-import { X } from 'lucide-react';
-import styles from './playMode.module.scss';
 import { CombatantRow } from '../combatantRow';
+import { MonsterImporter } from '../importer';
+import styles from './playMode.module.scss';
 
 const log = logger.child({ module: 'PlayMode' });
 
 /**
  * Props for PlayMode component
- * 
+ *
  * @interface PlayModeProps
  * @property {InProgressCombat} combat - Initial combat state
  * @property {() => void} onExit - Callback when exiting play mode
@@ -49,40 +53,8 @@ interface PlayModeProps {
 }
 
 /**
- * Creates multiple in-progress combatants from monster data.
- * Each combatant gets unique ID and is marked as session-only.
- * 
- * @function createMultipleCombatantsFromMonster
- * @param {MonsterData} monsterData - Monster metadata from API
- * @param {string} locale - Locale for wiki links
- * @param {number} quantity - Number of combatants to create
- * @param {Function} createCreature - Factory for base creature
- * @param {Function} createCombatant - Factory for in-progress combatant
- * @returns {InProgressCombatant[]} Array of session-only combatants
- */
-function createMultipleCombatantsFromMonster(
-  monsterData: MonsterData,
-  locale: string,
-  quantity: number,
-  createCreature: (data: any, locale: string) => any,
-  createCombatant: (creature: any) => InProgressCombatant
-): InProgressCombatant[] {
-  const safeQuantity = Math.max(1, Math.min(20, Math.floor(quantity)));
-  const combatants: InProgressCombatant[] = [];
-
-  for (let i = 0; i < safeQuantity; i++) {
-    const baseCreature = createCreature(monsterData, locale);
-    const newCombatant = createCombatant(baseCreature);
-    newCombatant.sessionOnly = true;
-    combatants.push(newCombatant);
-  }
-
-  return combatants;
-}
-
-/**
  * Play Mode component for running combats as a turn tracker
- * 
+ *
  * @component
  * @param {PlayModeProps} props - Component props
  * @param {InProgressCombat} props.combat - Initial combat state
@@ -90,12 +62,18 @@ function createMultipleCombatantsFromMonster(
  * @param {string} props.locale - Current locale for API requests
  * @returns {JSX.Element} Rendered play mode interface
  */
-export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExit, locale }) => {
+export const PlayMode: React.FC<PlayModeProps> = ({
+  combat: initialCombat,
+  onExit,
+  locale,
+}) => {
   const t = useTranslations('encounterPlanner');
   const notifications = useNotifications();
   const [combat, setCombat] = useState<InProgressCombat>(initialCombat);
   const [sessionOnlyName, setSessionOnlyName] = useState('');
-  const [prevRoundNumber, setPrevRoundNumber] = useState(initialCombat.roundNumber);
+  const [prevRoundNumber, setPrevRoundNumber] = useState(
+    initialCombat.roundNumber,
+  );
   const combatantRefs = useRef<Record<string, HTMLDivElement>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,10 +81,11 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
   useEffect(() => {
     if (combat.roundNumber > prevRoundNumber) {
       setPrevRoundNumber(combat.roundNumber);
-      const hasLairCreaturesWithDeeds = combat.combatants.some(c => 
-        !c.slain && 
-        c.mechanics?.lair &&
-        c.legendaryDeedsUsed.some(used => !used)
+      const hasLairCreaturesWithDeeds = combat.combatants.some(
+        (c) =>
+          !c.slain &&
+          c.mechanics?.lair &&
+          c.legendaryDeedsUsed.some((used) => !used),
       );
       if (hasLairCreaturesWithDeeds) {
         notifications.warning(t('lairAlert'), {
@@ -115,7 +94,13 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
         });
       }
     }
-  }, [combat.roundNumber, combat.combatants, prevRoundNumber, notifications, t]);
+  }, [
+    combat.roundNumber,
+    combat.combatants,
+    prevRoundNumber,
+    notifications,
+    t,
+  ]);
 
   useEffect(() => {
     const activeCombatantId = combat.turnOrder[combat.activeTurnIndex];
@@ -125,32 +110,43 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
     }
   }, [combat.activeTurnIndex, combat.turnOrder]);
 
-  const updateCombat = useCallback((updater: (c: InProgressCombat) => InProgressCombat) => {
-    setCombat((prev) => {
-      const updated = updater(prev);
-      saveInProgressCombat(updated);
-      return updated;
-    });
-  }, []);
+  const updateCombat = useCallback(
+    (updater: (c: InProgressCombat) => InProgressCombat) => {
+      setCombat((prev) => {
+        const updated = updater(prev);
+        saveInProgressCombat(updated);
+        return updated;
+      });
+    },
+    [],
+  );
 
   const handleUpdateCombatant = useCallback(
-    (index: number, updater: (c: InProgressCombatant) => InProgressCombatant) => {
+    (
+      index: number,
+      updater: (c: InProgressCombatant) => InProgressCombatant,
+    ) => {
       updateCombat((prev) => {
         const combatants = [...prev.combatants];
         combatants[index] = updater(combatants[index]);
         return { ...prev, combatants };
       });
     },
-    [updateCombat]
+    [updateCombat],
   );
 
   const handleEndTurn = useCallback(() => {
     updateCombat((prev) => {
-      const nextIndex = getNextActiveCombatantIndex(prev.combatants, prev.turnOrder, prev.activeTurnIndex);
+      const nextIndex = getNextActiveCombatantIndex(
+        prev.combatants,
+        prev.turnOrder,
+        prev.activeTurnIndex,
+      );
       let roundNumber = prev.roundNumber;
       let combatants = [...prev.combatants];
 
-      const isNewRound = nextIndex <= prev.activeTurnIndex && prev.turnOrder.length > 0;
+      const isNewRound =
+        nextIndex <= prev.activeTurnIndex && prev.turnOrder.length > 0;
       if (isNewRound) {
         roundNumber++;
       }
@@ -159,7 +155,9 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
       if (nextIndex < combatants.length) {
         combatants[nextIndex] = {
           ...combatants[nextIndex],
-          legendaryDeedsUsed: combatants[nextIndex].legendaryDeedsUsed.map(() => false)
+          legendaryDeedsUsed: combatants[nextIndex].legendaryDeedsUsed.map(
+            () => false,
+          ),
         };
       }
 
@@ -229,7 +227,10 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
       updateCombat((prev) => {
         const combatants = prev.combatants.filter((c) => c.id !== id);
         const turnOrder = prev.turnOrder.filter((cid) => cid !== id);
-        const activeTurnIndex = Math.min(prev.activeTurnIndex, combatants.length - 1);
+        const activeTurnIndex = Math.min(
+          prev.activeTurnIndex,
+          combatants.length - 1,
+        );
 
         return {
           ...prev,
@@ -239,7 +240,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
         };
       });
     },
-    [updateCombat]
+    [updateCombat],
   );
 
   const handleImportCreatures = useCallback(
@@ -248,8 +249,6 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
         monsterData,
         locale,
         quantity,
-        createCreatureFromMonster,
-        createInProgressCombatant
       );
 
       updateCombat((prev) => {
@@ -263,7 +262,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
         };
       });
     },
-    [locale, updateCombat]
+    [locale, updateCombat],
   );
 
   const handleEndCombat = useCallback(() => {
@@ -303,15 +302,15 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
         }
       } catch (error) {
         log.error('Failed to import combat', {
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
         });
-        alert(t('importError'));
+        notifications.error(t('importError'));
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
       }
     },
-    [t]
+    [notifications, t],
   );
 
   const activeCombatantId = combat.turnOrder[combat.activeTurnIndex];
@@ -325,32 +324,46 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
             {t('round')} {combat.roundNumber}
           </span>
           <span>
-            {t('turn')} {combat.activeTurnIndex + 1} / {combat.combatants.length}
+            {t('turn')} {combat.activeTurnIndex + 1} /{' '}
+            {combat.combatants.length}
           </span>
         </div>
-        <button onClick={onExit} className={`${styles.button} ${styles.exitButton}`} aria-label={t('exitPlayMode')}>
+        <button
+          onClick={onExit}
+          className={`${styles.button} ${styles.exitButton}`}
+          aria-label={t('exitPlayMode')}>
           <X size={18} aria-hidden='true' />
         </button>
       </div>
 
       <div className={styles.playModeControls}>
-        <button onClick={handleEndTurn} className={`${styles.button} ${styles.buttonPrimary}`}>
+        <button
+          onClick={handleEndTurn}
+          className={`${styles.button} ${styles.buttonPrimary}`}>
           {t('endTurn')}
         </button>
 
-        <button onClick={handleSortByInitiative} className={`${styles.button} ${styles.buttonSecondary}`}>
+        <button
+          onClick={handleSortByInitiative}
+          className={`${styles.button} ${styles.buttonSecondary}`}>
           {t('sortByInitiative')}
         </button>
 
-        <button onClick={handleImportCombat} className={`${styles.button} ${styles.buttonSecondary}`}>
+        <button
+          onClick={handleImportCombat}
+          className={`${styles.button} ${styles.buttonSecondary}`}>
           {t('importCombat')}
         </button>
 
-        <button onClick={handleExport} className={`${styles.button} ${styles.buttonSecondary}`}>
+        <button
+          onClick={handleExport}
+          className={`${styles.button} ${styles.buttonSecondary}`}>
           {t('exportInProgress')}
         </button>
 
-        <button onClick={handleEndCombat} className={`${styles.button} ${styles.buttonDanger}`} style={{ marginLeft: 'auto' }}>
+        <button
+          onClick={handleEndCombat}
+          className={`${styles.button} ${styles.buttonDanger} ${styles.endCombatButton}`}>
           {t('endCombat')}
         </button>
 
@@ -359,7 +372,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
           type='file'
           accept='.json'
           onChange={handleCombatFileChange}
-          style={{ display: 'none' }}
+          className={styles.hiddenFileInput}
         />
       </div>
 
@@ -370,10 +383,14 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
             className={styles.sessionOnlyInput}
             value={sessionOnlyName}
             onChange={(e) => setSessionOnlyName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAddSessionOnlyCombatant()}
+            onKeyDown={(e) =>
+              e.key === 'Enter' && handleAddSessionOnlyCombatant()
+            }
             placeholder={t('addSessionOnlyCombatant')}
           />
-          <button onClick={handleAddSessionOnlyCombatant} className={`${styles.button} ${styles.buttonSecondary}`}>
+          <button
+            onClick={handleAddSessionOnlyCombatant}
+            className={`${styles.button} ${styles.buttonSecondary}`}>
             {t('addCombatant')}
           </button>
         </div>
@@ -387,7 +404,9 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
         {combat.turnOrder.map((combatantId) => {
           const combatant = combat.combatants.find((c) => c.id === combatantId);
           if (!combatant) return null;
-          const index = combat.combatants.findIndex((c) => c.id === combatantId);
+          const index = combat.combatants.findIndex(
+            (c) => c.id === combatantId,
+          );
           const isActive = combatantId === activeCombatantId;
           return (
             <div
@@ -399,8 +418,14 @@ export const PlayMode: React.FC<PlayModeProps> = ({ combat: initialCombat, onExi
               <CombatantRow
                 combatant={combatant}
                 locale={locale}
-                onUpdate={(updated: InProgressCombatant) => handleUpdateCombatant(index, () => updated)}
-                onRemoveSessionOnly={combatant.sessionOnly ? () => handleRemoveSessionOnly(combatant.id) : undefined}
+                onUpdate={(updated: InProgressCombatant) =>
+                  handleUpdateCombatant(index, () => updated)
+                }
+                onRemoveSessionOnly={
+                  combatant.sessionOnly
+                    ? () => handleRemoveSessionOnly(combatant.id)
+                    : undefined
+                }
               />
             </div>
           );

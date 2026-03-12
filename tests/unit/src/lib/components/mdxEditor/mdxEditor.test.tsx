@@ -6,7 +6,7 @@
  * @module tests/unit/lib/components/mdxEditor/mdxEditor
  */
 
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('next-intl', () => ({
@@ -51,15 +51,25 @@ import { MdxEditor } from '@/lib/components/mdxEditor/mdxEditor';
 
 afterEach(() => cleanup());
 
+/** Mock global fetch so the tree-fetch useEffect resolves synchronously. */
+const mockFetch = vi.fn().mockResolvedValue({
+  ok: true,
+  json: () => Promise.resolve({ tree: [] }),
+});
+vi.stubGlobal('fetch', mockFetch);
+
 describe('MdxEditor', () => {
-  it('should render without crashing', () => {
-    render(<MdxEditor locale='en' />);
+  it('should render without crashing', async () => {
+    await act(async () => {
+      render(<MdxEditor locale='en' />);
+    });
     expect(document.body.innerHTML).toBeTruthy();
   });
 
-  it('should show login form when not authenticated', () => {
-    render(<MdxEditor locale='en' />);
-    /** The login form inputs should be present when token is null */
+  it('should show login form when not authenticated', async () => {
+    await act(async () => {
+      render(<MdxEditor locale='en' />);
+    });
     const inputs = screen.queryAllByRole('textbox');
     expect(inputs.length).toBeGreaterThanOrEqual(0);
   });

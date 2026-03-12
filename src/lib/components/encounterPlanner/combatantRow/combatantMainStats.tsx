@@ -27,8 +27,13 @@
 
 import type { CreatureStats } from '@/lib/types/encounterPlanner';
 import { rollInitiative } from '@/lib/utils/encounterStorage';
-import { useTranslations } from 'next-intl';
+import {
+    clampNonNegative,
+    getModifierString,
+    parseIntSafe,
+} from '@/lib/utils/statEditing';
 import { Dices } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCallback, useRef, useState } from 'react';
 import styles from './combatantRow.module.scss';
 import { getPhaseMarker } from './utils';
@@ -46,42 +51,6 @@ export interface CombatantMainStatsProps {
   showSlain?: boolean;
   locked?: string[];
 }
-
-/**
- * Parses a string to an integer with validation.
- * Returns null for empty strings, 0 for NaN results.
- *
- * @param {string} value - String to parse
- * @param {boolean} [allowEmpty=false] - Whether empty string returns null
- * @returns {number | null} Parsed integer or null
- */
-const parseIntSafe = (value: string, allowEmpty = false): number | null => {
-  if (value === '' && allowEmpty) return null;
-  const parsed = parseInt(value, 10);
-  return isNaN(parsed) ? 0 : parsed;
-};
-
-/**
- * Clamps a value to a minimum of 0 (no negative values).
- *
- * @param {number | null} value - Value to clamp
- * @returns {number | null} Clamped value
- */
-const clampNonNegative = (value: number | null): number | null => {
-  if (value === null) return null;
-  return Math.max(0, value);
-};
-
-/**
- * Computes the modifier string for an ability score.
- *
- * @param {number} score - Ability score (1-30)
- * @returns {string} Modifier string (e.g., "+2" or "-1")
- */
-const getModifierString = (score: number): string => {
-  const mod = Math.floor((score - 10) / 2);
-  return mod >= 0 ? `+${mod}` : `${mod}`;
-};
 
 /**
  * Main stats section for Play Mode combatants.
@@ -137,11 +106,10 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
     Record<string, string | null>
   >({});
 
+  const cancelPendingRef = useRef(false);
   const hpMaxInputRef = useRef<HTMLInputElement>(null);
   const acInputRef = useRef<HTMLInputElement>(null);
   const initInputRef = useRef<HTMLInputElement>(null);
-
-  const cancelPendingRef = useRef(false);
 
   const handleToggleSlain = useCallback(() => {
     const newSlain = !slain;

@@ -1,9 +1,9 @@
 /**
  * @fileoverview Monster Table Wrapper - Client-side data fetching for creature stat blocks
  * @description Fetches monster metadata from API and configures MetadataTable with
- * D&D 5e creature statistics (size, type, CR, AC, HP, alignment). Includes inline
- * Challenge Rating parsing for fractional values (e.g., "1/2", "1/4"). Uses SIZE_SORT_ORDER
- * for consistent size-based sorting.
+ * D&D 5e creature statistics (size, type, CR, AC, HP, alignment). Uses shared
+ * compareChallengeRating utility for fractional values (e.g., "1/2", "1/4") and
+ * SIZE_SORT_ORDER for consistent size-based sorting.
  *
  * @version 2.0.0
  * @author Typeir
@@ -29,7 +29,7 @@
 
 import { SIZE_SORT_ORDER } from '@/lib/enums/tableConstants';
 import { logger } from '@/lib/logging/logger';
-import { compareByOrder } from '@/lib/utils/tableUtils';
+import { compareByOrder, compareChallengeRating } from '@/lib/utils/tableUtils';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -188,25 +188,7 @@ export default function MonsterTableWrapper({
       label: tColumns('cr'),
       getValue: (row: any) => row.cr,
       render: (value: any) => value || '—',
-      compareValues: (a, b) => {
-        if (!a && !b) return 0;
-        if (!a) return 1;
-        if (!b) return -1;
-
-        const parseC = (cr: unknown): number => {
-          if (typeof cr === 'number') return cr;
-          const str = String(cr).trim();
-          if (str.includes('/')) {
-            const [num, denom] = str
-              .split('/')
-              .map((s) => parseFloat(s.trim()));
-            return num / denom;
-          }
-          return parseFloat(str) || 0;
-        };
-
-        return parseC(a) - parseC(b);
-      },
+      compareValues: (a, b) => compareChallengeRating(a, b),
       sortable: true,
       filterable: true,
       filterType: 'range',
