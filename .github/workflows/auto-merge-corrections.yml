@@ -69,6 +69,7 @@ jobs:
         env:
           SITE_URL: ${{ secrets.SITE_URL }}
           REVALIDATION_SECRET: ${{ secrets.REVALIDATION_SECRET }}
+          VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
         run: |
           if [ -z "$SITE_URL" ] || [ -z "$REVALIDATION_SECRET" ]; then
             echo "⚠️  SITE_URL or REVALIDATION_SECRET not configured — skipping revalidation."
@@ -86,10 +87,17 @@ jobs:
 
           echo "Revalidating paths: $PATHS"
 
+          # Build bypass header if configured (bypasses Vercel Deployment Protection)
+          BYPASS_HEADER=""
+          if [ -n "$VERCEL_PROTECTION_BYPASS" ]; then
+            BYPASS_HEADER="x-vercel-protection-bypass: ${VERCEL_PROTECTION_BYPASS}"
+          fi
+
           HTTP_STATUS=$(curl -s -o /tmp/revalidate-response.json -w "%{http_code}" \
             -X POST "${SITE_URL}/api/revalidate" \
             -H "Content-Type: application/json" \
             -H "x-revalidation-secret: ${REVALIDATION_SECRET}" \
+            ${BYPASS_HEADER:+-H "$BYPASS_HEADER"} \
             -d "{\"paths\": $PATHS}")
 
           echo "Revalidation response ($HTTP_STATUS):"
