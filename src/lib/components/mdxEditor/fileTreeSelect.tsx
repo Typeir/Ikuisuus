@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ChevronRight,
   FilePlus,
+  FileText,
   Folder,
   FolderOpen,
 } from 'lucide-react';
@@ -23,19 +24,22 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './fileTreeSelect.module.scss';
 
 /**
- * Tree node representing a content folder.
+ * Tree node representing a content folder or file.
  *
- * @property {string} name - Display name of the folder
- * @property {string} path - Full path (e.g. `"en/monsters"`)
- * @property {TreeNode[]} children - Nested subfolders
+ * @property {string} name - Display name
+ * @property {string} path - Full path (e.g. `"en/monsters"` or `"en/monsters/aboleth.sheet.mdx"`)
+ * @property {TreeNode[]} children - Nested children (empty for files)
+ * @property {boolean} [isFile] - True for file nodes
  */
 export interface TreeNode {
-  /** Folder display name */
+  /** Display name */
   name: string;
   /** Full relative path */
   path: string;
-  /** Nested subfolders */
+  /** Nested children */
   children: TreeNode[];
+  /** True for file nodes */
+  isFile?: boolean;
 }
 
 /**
@@ -92,6 +96,21 @@ function TreeNodeRow({
 }): JSX.Element {
   const isOpen = expanded.has(node.path);
   const indent = depth * 16;
+
+  if (node.isFile) {
+    return (
+      <button
+        type='button'
+        className={styles.fileNode}
+        style={{ paddingLeft: `${indent + 8}px` }}
+        onClick={() => onSelect(node.path)}>
+        <span className={styles.nodeIcon}>
+          <FileText size={14} />
+        </span>
+        <span className={styles.nodeName}>{node.name}</span>
+      </button>
+    );
+  }
 
   return (
     <>

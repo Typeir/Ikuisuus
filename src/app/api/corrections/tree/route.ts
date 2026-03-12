@@ -15,19 +15,22 @@ import { NextRequest, NextResponse } from 'next/server';
 const log = logger.child({ module: 'API:Corrections:Tree' });
 
 /**
- * Tree node representing a folder in the content directory.
+ * Tree node representing a folder or file in the content directory.
  *
- * @property {string} name - Folder display name
- * @property {string} path - Full relative path (e.g. `"en/monsters"`)
- * @property {TreeNode[]} children - Nested subfolders
+ * @property {string} name - Display name
+ * @property {string} path - Full relative path (e.g. `"en/monsters"` or `"en/monsters/aboleth.sheet.mdx"`)
+ * @property {TreeNode[]} children - Nested children (empty for files)
+ * @property {boolean} [isFile] - True for file nodes
  */
 interface TreeNode {
-  /** Folder display name */
+  /** Display name */
   name: string;
   /** Relative path */
   path: string;
-  /** Nested folders */
+  /** Nested children */
   children: TreeNode[];
+  /** True for file nodes */
+  isFile?: boolean;
 }
 
 /**
@@ -42,21 +45,30 @@ function buildTree(
   entries: { path: string; type: string }[],
   prefix: string,
 ): TreeNode[] {
-  const dirs = entries
-    .filter((e) => e.type === 'tree' && e.path.startsWith(prefix))
-    .map((e) => e.path.slice(prefix.length))
-    .filter((p) => p.length > 0 && !p.startsWith('.'));
+  const filtered = entries
+    .filter(
+      (e) =>
+        e.path.startsWith(prefix) &&
+        (e.type === 'tree' || (e.type === 'blob' && e.path.endsWith('.mdx'))),
+    )
+    .map((e) => ({
+      relPath: e.path.slice(prefix.length),
+      fullPath: e.path,
+      type: e.type,
+    }))
+    .filter((p) => p.relPath.length > 0 && !p.relPath.startsWith('.'));
 
   const root: TreeNode[] = [];
   const nodeMap = new Map<string, TreeNode>();
 
-  dirs.sort();
+  const dirs = filtered.filter((e) => e.type === 'tree');
+  dirs.sort((a, b) => a.relPath.localeCompare(b.relPath));
 
-  for (const dir of dirs) {
-    const parts = dir.split('/');
+  for (const { relPath, fullPath } of dirs) {
+    const parts = relPath.split('/');
     const name = parts[parts.length - 1];
-    const node: TreeNode = { name, path: prefix + dir, children: [] };
-    nodeMap.set(dir, node);
+    const node: TreeNode = { name, path: fullPath, children: [] };
+    nodeMap.set(relPath, node);
 
     if (parts.length === 1) {
       root.push(node);
@@ -65,6 +77,30 @@ function buildTree(
       const parent = nodeMap.get(parentPath);
       if (parent) {
         parent.children.push(node);
+      }
+    }
+  }
+
+  const files = filtered.filter((e) => e.type === 'blob');
+  files.sort((a, b) => a.relPath.localeCompare(b.relPath));
+
+  for (const { relPath, fullPath } of files) {
+    const parts = relPath.split('/');
+    const name = parts[parts.length - 1];
+    const fileNode: TreeNode = {
+      name,
+      path: fullPath,
+      children: [],
+      isFile: true,
+    };
+
+    if (parts.length === 1) {
+      root.push(fileNode);
+    } else {
+      const parentPath = parts.slice(0, -1).join('/');
+      const parent = nodeMap.get(parentPath);
+      if (parent) {
+        parent.children.push(fileNode);
       }
     }
   }

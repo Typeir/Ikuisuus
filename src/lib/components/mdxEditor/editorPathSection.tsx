@@ -83,21 +83,28 @@ export function EditorPathSection({
   const [fileName, setFileName] = useState('');
 
   useEffect(() => {
-    if (mode !== 'new') return;
     setTreeLoading(true);
     fetch(`/api/corrections/tree?locale=${encodeURIComponent(locale)}`)
       .then((res) => (res.ok ? res.json() : { tree: [] }))
       .then((data) => setTree(data.tree || []))
       .catch(() => setTree([]))
       .finally(() => setTreeLoading(false));
-  }, [mode, locale]);
+  }, [locale]);
 
   const handleFolderSelect = useCallback(
     (folderPath: string) => {
       setSelectedFolder(folderPath);
-      setFilePath(fileName ? folderPath + fileName : folderPath);
+      if (mode === 'edit') {
+        const stripped = folderPath
+          .replace(/\/$/, '')
+          .replace(new RegExp(`^${locale}/`), '')
+          .replace(/\.(sheet\.mdx|mdx|md)$/, '');
+        setSlug(stripped);
+      } else {
+        setFilePath(fileName ? folderPath + fileName : folderPath);
+      }
     },
-    [fileName, setFilePath],
+    [mode, locale, fileName, setFilePath, setSlug],
   );
 
   const handleFileNameChange = useCallback(
@@ -114,6 +121,15 @@ export function EditorPathSection({
         {mode === 'edit' ? t('slugLabel') : t('pathLabel')}
       </label>
       <div className={styles.fieldRow}>
+        <FileTreeSelect
+          value={selectedFolder}
+          onSelect={handleFolderSelect}
+          tree={tree}
+          loading={treeLoading}
+          placeholder={mode === 'edit' ? t('slugPlaceholder') : t('pathPlaceholder')}
+          newFileLabel={t('newFile')}
+          disabled={isLoading}
+        />
         {mode === 'edit' ? (
           <>
             <input
@@ -133,25 +149,14 @@ export function EditorPathSection({
             </button>
           </>
         ) : (
-          <>
-            <FileTreeSelect
-              value={selectedFolder}
-              onSelect={handleFolderSelect}
-              tree={tree}
-              loading={treeLoading}
-              placeholder={t('pathPlaceholder')}
-              newFileLabel={t('newFile')}
-              disabled={isLoading}
-            />
-            <input
-              id='mdx-editor-path'
-              type='text'
-              className={styles.pathInput}
-              placeholder='filename.mdx'
-              value={fileName}
-              onChange={(e) => handleFileNameChange(e.target.value)}
-            />
-          </>
+          <input
+            id='mdx-editor-path'
+            type='text'
+            className={styles.pathInput}
+            placeholder='filename.mdx'
+            value={fileName}
+            onChange={(e) => handleFileNameChange(e.target.value)}
+          />
         )}
       </div>
     </div>
