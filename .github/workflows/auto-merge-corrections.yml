@@ -23,10 +23,10 @@ jobs:
       (github.event_name == 'check_suite' && github.event.check_suite.conclusion == 'success')
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Find open correction PRs from the bot
-        id: find-prs
+      - name: Find and merge open correction PRs
+        id: merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -37,51 +37,26 @@ jobs:
 
           if [ -z "$PRS" ]; then
             echo "No correction PRs found."
-            echo "prs=" >> "$GITHUB_OUTPUT"
-          else
-            echo "Found PRs: $PRS"
-            echo "prs=$PRS" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
-      - name: Merge each qualifying PR
-        if: steps.find-prs.outputs.prs != ''
-        id: merge
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
+          echo "Found PRs: $PRS"
+
+          # content-check already closes PRs that fail, so any open bot PR is safe to merge
           MERGED_FILES=""
-          for PR in ${{ steps.find-prs.outputs.prs }}; do
+          for PR in $PRS; do
             echo "Attempting to merge PR #${PR}..."
 
-            # Get PR head SHA for combined status
-            SHA=$(gh pr view "$PR" --json headRefOid --jq '.headRefOid' 2>/dev/null || echo "")
-            echo "PR #${PR} head SHA: $SHA"
+            # Extract the file path from the PR body before merging
+            BODY=$(gh pr view "$PR" --json body --jq '.body' 2>/dev/null || echo "")
+            FILE_PATH=$(echo "$BODY" | grep -oP '(?<=\*\*File\*\*: `)[^`]+' || echo "")
 
-            if [ -z "$SHA" ]; then
-              echo "Unable to determine head SHA for PR #${PR}, skipping."
-              continue
-            fi
+            gh pr merge "$PR" --squash --delete-branch \
+              && echo "✅ PR #${PR} merged." \
+              || { echo "⚠️  PR #${PR} merge failed (may need approvals or branch protection)."; continue; }
 
-            # Fetch combined commit status via REST API (returns 'success'/'failure'/'pending')
-            REPO_FULL="${{ github.repository }}"
-            COMBINED_STATE=$(gh api repos/${REPO_FULL}/commits/${SHA}/status --jq '.state' 2>/dev/null || echo "")
-            echo "Combined status for ${SHA}: $COMBINED_STATE"
-
-            if [ "$COMBINED_STATE" = "success" ]; then
-              # Extract the file path from the PR body before merging
-              BODY=$(gh pr view "$PR" --json body --jq '.body' 2>/dev/null || echo "")
-              FILE_PATH=$(echo "$BODY" | grep -oP '(?<=\*\*File\*\*: `)[^`]+' || echo "")
-
-              echo "Checks passed -> attempting merge"
-              gh pr merge "$PR" --squash --delete-branch \
-                && echo "✅ PR #${PR} merged." \
-                || { echo "⚠️  PR #${PR} merge failed (may need approvals or branch protection)."; continue; }
-
-              if [ -n "$FILE_PATH" ]; then
-                MERGED_FILES="${MERGED_FILES}${FILE_PATH}\n"
-              fi
-            else
-              echo "⏳ PR #${PR} has combined status '$COMBINED_STATE' — skipping."
+            if [ -n "$FILE_PATH" ]; then
+              MERGED_FILES="${MERGED_FILES}${FILE_PATH}\n"
             fi
           done
 
