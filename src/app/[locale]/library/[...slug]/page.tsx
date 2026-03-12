@@ -205,10 +205,11 @@ const Page = async ({ params }: PageProps) => {
 
   return (
     <div className='prose prose-invert mx-auto'>
-      <DraftOverlay locale={locale} slug={slugPath} />
-      <HashNavigationProvider />
-      <article className={styles.markdown}>{content}</article>
-      <EditPageButton slug={slugPath} locale={locale} />
+      <DraftOverlay locale={locale} slug={slugPath}>
+        <HashNavigationProvider />
+        <article className={styles.markdown}>{content}</article>
+        <EditPageButton slug={slugPath} locale={locale} />
+      </DraftOverlay>
     </div>
   );
 };
