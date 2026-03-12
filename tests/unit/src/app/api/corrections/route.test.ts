@@ -56,7 +56,12 @@ beforeEach(async () => {
   process.env.GITHUB_PAT = 'ghp_test';
 
   mockIsIpBanned.mockResolvedValue({ banned: false });
-  mockDraftUpsert.mockResolvedValue({ id: 'draft-1', locale: 'en', slug: 'test', status: 'active' });
+  mockDraftUpsert.mockResolvedValue({
+    id: 'draft-1',
+    locale: 'en',
+    slug: 'test',
+    status: 'active',
+  });
   mockWriteAuditLog.mockResolvedValue(undefined);
 
   const mod = await import('@/app/api/corrections/route');

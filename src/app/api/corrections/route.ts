@@ -237,9 +237,7 @@ export async function POST(req: NextRequest) {
     } catch (draftError) {
       log.warning('Failed to save draft (non-blocking)', {
         error:
-          draftError instanceof Error
-            ? draftError.message
-            : String(draftError),
+          draftError instanceof Error ? draftError.message : String(draftError),
       });
     }
 
