@@ -16,17 +16,32 @@ const log = logger.child({ module: 'API:Revalidate' });
 /**
  * @function extractLocale
  * @description Extracts the locale from a given path. Assumes the locale is the first segment of the path.
- * @param {string} path - The path to extract the locale from (e.g., "/en/library/monsters").
+ * @param {string} urlPath - The path to extract the locale from (e.g., "/en/library/monsters").
  * @returns {string | null} The extracted locale, or null if no valid locale is found.
  */
-const extractLocale = (path: string): string | null => {
-  const parts = path.split('/').filter(Boolean);
+const extractLocale = (urlPath: string): string | null => {
+  const parts = urlPath.split('/').filter(Boolean);
   if (parts.length > 0) {
-    const locale = parts[0];
-    // Add validation for supported locales if necessary
-    return locale;
+    return parts[0];
   }
   return null;
+};
+
+/**
+ * @function extractSlugPath
+ * @description Extracts the content slug from a full URL path by stripping the
+ * locale and /library/ prefix. This produces a slug that matches the tag format
+ * used by fetchContent (e.g. "items/heirlooms/sacred-heresy").
+ * @param {string} urlPath - Full URL path (e.g. "/en/library/items/heirlooms/sacred-heresy")
+ * @returns {string} The content slug path without locale or /library/ prefix
+ */
+const extractSlugPath = (urlPath: string): string => {
+  const parts = urlPath.split('/').filter(Boolean);
+  const libraryIndex = parts.indexOf('library');
+  if (libraryIndex !== -1) {
+    return parts.slice(libraryIndex + 1).join('/');
+  }
+  return parts.slice(1).join('/');
 };
 
 /**
@@ -114,15 +129,26 @@ export async function POST(req: NextRequest) {
         pushVariant(p.endsWith('/main') ? p : `${p}/main`);
       }
 
+      const locale = extractLocale(p);
+      const slugPath = extractSlugPath(p);
+      const fetchTag = locale ? `content-${locale}-${slugPath}` : null;
+
       log.message('Revalidating path variants', {
         path: p,
         variants,
-        cacheKeys: variants.map((v) => `cacheKey:${v}`),
+        locale,
+        slugPath,
+        fetchTag,
       });
+
+      if (fetchTag) {
+        revalidateTag(fetchTag);
+        log.message('Invalidated fetch cache tag', { tag: fetchTag });
+      }
+
       for (const v of variants) {
         try {
-          revalidateTag(`content-${extractLocale(v)}-${v}`); // Invalidate the cache for the tag
-          await revalidatePath(v, 'page'); // Revalidate the path
+          revalidatePath(v, 'page');
           log.message('Revalidated', { path: v });
         } catch (err) {
           log.warning('Failed to revalidate variant', {
