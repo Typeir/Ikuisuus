@@ -16,6 +16,9 @@
 
 set -euo pipefail
 
+# Signal hooks that ik is managing both repos — suppress cross-repo warnings
+export IK_RUNNING=1
+
 # Get project root from script location
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 MAIN_REPO="$( cd "$SCRIPT_DIR/../.." && pwd )"
@@ -52,46 +55,66 @@ cmd_add() {
     files=(".")
   fi
 
-  log_main "git add ${files[*]}"
-  git -C "$MAIN_REPO" add "${files[@]}" || {
-    log_error "Failed to stage in main repo"
-    exit 1
-  }
-
   log_content "git add ${files[*]}"
   if ! git -C "$CONTENT_REPO" add "${files[@]}" 2>/dev/null; then
-    log_warn "Content repo add failed (may be untracked, OK)"
+    log_warn "Content repo add had no effect (may be untracked, OK)"
+  fi
+
+  log_main "git add ${files[*]}"
+  # Filter "short read" errors (Windows reserved filename 'nul' noise)
+  local add_output
+  if add_output=$(git -C "$MAIN_REPO" add "${files[@]}" 2>&1); then
+    : # success
+  else
+    # If the only errors are "short read" warnings, treat as success
+    if echo "$add_output" | grep -qv "short read"; then
+      log_error "Failed to stage in main repo"
+      echo "$add_output" >&2
+      exit 1
+    fi
   fi
 
   log_success "Staged in both repos"
 }
 
 cmd_commit() {
+  local content_committed=0
+
+  # Content repo FIRST (so submodule SHA updates before main records it)
+  log_content "git commit $*"
+  if git -C "$CONTENT_REPO" commit "$@" 2>/dev/null; then
+    content_committed=1
+  else
+    log_warn "Content repo commit skipped (no staged changes)"
+  fi
+
+  # Stage updated submodule ref in main so the pointer stays in sync
+  if [ $content_committed -eq 1 ]; then
+    log_main "Staging updated submodule ref"
+    git -C "$MAIN_REPO" add src/content
+  fi
+
   log_main "git commit $*"
   if ! git -C "$MAIN_REPO" commit "$@"; then
     log_error "Failed to commit in main repo"
     exit 1
   fi
 
-  log_content "git commit $*"
-  if ! git -C "$CONTENT_REPO" commit "$@" 2>/dev/null; then
-    log_warn "Content repo commit skipped (no staged changes)"
-  fi
-
   log_success "Committed in both repos"
 }
 
 cmd_push() {
+  # Content repo FIRST (main's submodule ref points to content commits)
+  log_content "git push $*"
+  if ! git -C "$CONTENT_REPO" push "$@" 2>/dev/null; then
+    log_warn "Content repo push skipped (check status)"
+  fi
+
   log_main "git push $*"
   git -C "$MAIN_REPO" push "$@" || {
     log_error "Failed to push main repo"
     exit 1
   }
-
-  log_content "git push $*"
-  if ! git -C "$CONTENT_REPO" push "$@" 2>/dev/null; then
-    log_warn "Content repo push skipped (check status)"
-  fi
 
   log_success "Pushed both repos"
 }

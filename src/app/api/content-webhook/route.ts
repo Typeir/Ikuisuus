@@ -86,12 +86,12 @@ export async function POST(req: NextRequest) {
         error: err instanceof Error ? err.message : String(err),
       });
 
-      return NextResponse.json(
-        { error: 'Failed to ban IP' },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: 'Failed to ban IP' }, { status: 500 });
     }
   }
 
-  return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
+  return NextResponse.json(
+    { error: `Unknown action: ${action}` },
+    { status: 400 },
+  );
 }

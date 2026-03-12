@@ -139,13 +139,14 @@ async function loadExistingHashes(client, table, locale, slugExpr = 'slug') {
  */
 async function seedMonsters(client, locale) {
   const records = readMetadata(locale, 'monsters');
-  if (records.length === 0) return { inserted: 0, updated: 0, skipped: 0, deleted: 0 };
+  if (records.length === 0)
+    return { inserted: 0, updated: 0, skipped: 0, deleted: 0 };
 
   const existing = await loadExistingHashes(
     client,
     'monsters',
     locale,
-    "COALESCE(sub_slug, slug)",
+    'COALESCE(sub_slug, slug)',
   );
 
   const incomingSlugs = new Set();
@@ -285,7 +286,8 @@ async function seedMonsters(client, locale) {
  */
 async function seedHeirlooms(client, locale) {
   const records = readMetadata(locale, join('items', 'heirlooms'));
-  if (records.length === 0) return { inserted: 0, updated: 0, skipped: 0, deleted: 0 };
+  if (records.length === 0)
+    return { inserted: 0, updated: 0, skipped: 0, deleted: 0 };
 
   const existing = await loadExistingHashes(client, 'heirlooms', locale);
   const incomingSlugs = new Set();
@@ -392,7 +394,8 @@ async function seedHeirlooms(client, locale) {
  */
 async function seedSpells(client, locale) {
   const records = readMetadata(locale, 'spells');
-  if (records.length === 0) return { inserted: 0, updated: 0, skipped: 0, deleted: 0 };
+  if (records.length === 0)
+    return { inserted: 0, updated: 0, skipped: 0, deleted: 0 };
 
   const existing = await loadExistingHashes(client, 'spells', locale);
 
@@ -456,7 +459,9 @@ async function seedSpells(client, locale) {
         WHERE locale=$1 AND slug=$2`,
         params,
       );
-      await client.query('DELETE FROM spell_lists WHERE spell_id = $1', [spellId]);
+      await client.query('DELETE FROM spell_lists WHERE spell_id = $1', [
+        spellId,
+      ]);
       updated++;
     } else {
       const { rows } = await client.query(
@@ -503,7 +508,8 @@ async function seedSpells(client, locale) {
  */
 async function seedTrinkets(client, locale) {
   const records = readMetadata(locale, join('items', 'trinkets'));
-  if (records.length === 0) return { inserted: 0, updated: 0, skipped: 0, deleted: 0 };
+  if (records.length === 0)
+    return { inserted: 0, updated: 0, skipped: 0, deleted: 0 };
 
   const existing = await loadExistingHashes(client, 'trinkets', locale);
   const incomingSlugs = new Set();

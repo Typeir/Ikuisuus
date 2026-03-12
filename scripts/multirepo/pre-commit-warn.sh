@@ -13,6 +13,11 @@
 
 set -euo pipefail
 
+# When ik is coordinating both repos, skip cross-repo warnings
+if [ "${IK_RUNNING:-}" = "1" ]; then
+  exit 0
+fi
+
 CURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 
 # ---- Detect which repo we're in and find the other -------------------------
