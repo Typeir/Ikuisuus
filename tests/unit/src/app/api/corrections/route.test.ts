@@ -10,9 +10,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockExtractSession = vi.fn();
 const mockIsIpBanned = vi.fn();
-const mockBanIp = vi.fn();
-const mockCheckProfanityMultiple = vi.fn();
 const mockWriteAuditLog = vi.fn();
+const mockDraftUpsert = vi.fn();
 
 vi.mock('@/lib/db/auth', () => ({
   extractSession: (...args: unknown[]) => mockExtractSession(...args),
@@ -22,11 +21,11 @@ vi.mock('@/lib/db/auditLog', () => ({
 }));
 vi.mock('@/lib/security/bannedIps', () => ({
   isIpBanned: (...args: unknown[]) => mockIsIpBanned(...args),
-  banIp: (...args: unknown[]) => mockBanIp(...args),
 }));
-vi.mock('@/lib/security/profanityFilter', () => ({
-  checkProfanityMultiple: (...args: unknown[]) =>
-    mockCheckProfanityMultiple(...args),
+vi.mock('@/lib/db/content/repositories/draftRepository', () => ({
+  draftRepository: {
+    upsert: (...args: unknown[]) => mockDraftUpsert(...args),
+  },
 }));
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
@@ -57,7 +56,7 @@ beforeEach(async () => {
   process.env.GITHUB_PAT = 'ghp_test';
 
   mockIsIpBanned.mockResolvedValue({ banned: false });
-  mockCheckProfanityMultiple.mockReturnValue({ flagged: false, matches: [] });
+  mockDraftUpsert.mockResolvedValue({ id: 'draft-1', locale: 'en', slug: 'test', status: 'active' });
   mockWriteAuditLog.mockResolvedValue(undefined);
 
   const mod = await import('@/app/api/corrections/route');
@@ -166,20 +165,35 @@ describe('POST /api/corrections', () => {
     expect((await res.json()).error).toBe('Invalid path');
   });
 
-  it('should return 403 and ban IP on profanity', async () => {
+  it('should save a draft on successful PR creation', async () => {
     mockExtractSession.mockResolvedValue({ username: 'editor' });
-    mockCheckProfanityMultiple.mockReturnValue({
-      flagged: true,
-      matches: ['badword'],
-    });
-    mockBanIp.mockResolvedValue({ range: '1.2.3.0/24' });
+
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ object: { sha: 'mainSha' } }),
+      })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({}) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({}) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ html_url: 'https://github.com/org/repo/pull/50' }),
+      });
 
     const res = await POST(
-      makeReq({ path: 'en/test.mdx', content: 'badword', baseSha: 'sha' }),
+      makeReq({
+        path: 'en/world/aeridas.mdx',
+        content: '# Edited Aeridas',
+        baseSha: 'abc123',
+      }),
     );
-    expect(res.status).toBe(403);
-    expect(mockBanIp).toHaveBeenCalled();
-    expect(mockWriteAuditLog).toHaveBeenCalled();
+
+    expect(res.status).toBe(201);
+    expect(mockDraftUpsert).toHaveBeenCalledWith({
+      locale: 'en',
+      slug: 'world/aeridas',
+      content: '# Edited Aeridas',
+    });
   });
 
   it('should return 201 on successful PR creation', async () => {

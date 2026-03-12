@@ -9,9 +9,9 @@
 
 import { writeAuditLog } from '@/lib/db/auditLog';
 import { extractSession } from '@/lib/db/auth';
+import { draftRepository } from '@/lib/db/content/repositories/draftRepository';
 import { logger } from '@/lib/logging/logger';
-import { banIp, isIpBanned } from '@/lib/security/bannedIps';
-import { checkProfanityMultiple } from '@/lib/security/profanityFilter';
+import { isIpBanned } from '@/lib/security/bannedIps';
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import {
@@ -186,42 +186,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
   }
 
-  const profanityResult = checkProfanityMultiple([
-    content,
-    filePath,
-    message ?? '',
-  ]);
-
-  if (profanityResult.flagged) {
-    log.message('Profanity detected — banning IP range', {
-      level: 'warn',
-      ip: clientIp,
-      terms: profanityResult.matches,
-      filePath,
-      auditId,
-    });
-
-    await banIp(
-      clientIp,
-      `Profanity in correction submission (terms: ${profanityResult.matches.join(', ')})`,
-    );
-
-    await writeAuditLog({
-      content_path: filePath,
-      base_sha: baseSha ?? '',
-      status: 'error',
-      token_id: auditId,
-    });
-
-    return NextResponse.json(
-      {
-        error:
-          'Submission rejected: prohibited content detected. Your network has been blocked.',
-      },
-      { status: 403 },
-    );
-  }
-
   const branchName = buildBranchName(filePath, !!isNew);
   const commitMsg = buildCommitMessage(filePath, !!isNew, message);
   const { title: prTitle, body: prBody } = buildPrContent(
@@ -261,11 +225,31 @@ export async function POST(req: NextRequest) {
 
     log.message('Correction PR created', { prUrl, filePath, auditId });
 
-    /** Trigger ISR revalidation for the affected content page */
+    /** Save a draft so the DraftOverlay renders the change while ISR catches up */
+    const locale = filePath.match(/^([a-z]{2})\//)?.[1] ?? 'en';
+    const slugFromPath = filePath
+      .replace(/^[a-z]{2}\//, '')
+      .replace(/\.(sheet\.)?mdx$/, '');
+
     try {
-      const slugFromPath = filePath
-        .replace(/^[a-z]{2}\//, '')
-        .replace(/\.(sheet\.)?mdx$/, '');
+      await draftRepository.upsert({ locale, slug: slugFromPath, content });
+      log.message('Draft saved for correction', { locale, slug: slugFromPath });
+    } catch (draftError) {
+      log.warning('Failed to save draft (non-blocking)', {
+        error:
+          draftError instanceof Error
+            ? draftError.message
+            : String(draftError),
+      });
+    }
+
+    /** Trigger ISR revalidation for the affected content page.
+     * Note: The auto-merge workflow also calls /api/revalidate after the PR
+     * is merged, which performs a more thorough revalidation (path variants,
+     * cache tag invalidation, draft archival). This call is a best-effort
+     * early invalidation so the page re-renders sooner when content hasn't
+     * diverged from main. */
+    try {
       revalidatePath(`/library/${slugFromPath}`);
       log.debug('ISR revalidation triggered', { slug: slugFromPath });
     } catch (revalidateError) {

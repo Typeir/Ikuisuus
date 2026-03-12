@@ -76,6 +76,14 @@ export const fetchContent = cache(
       slugPath,
       adapter: isBuildTime() ? 'fs' : 'github',
     });
-    return source.fetch(locale, slugPath);
+    const result = await source.fetch(locale, slugPath);
+    if (result && process.env.NODE_ENV === 'development') {
+      log.debug('Fetched MDX content', {
+        slugPath,
+        resolvedPath: result.resolvedPath,
+        content: result.content,
+      });
+    }
+    return result;
   },
 );
