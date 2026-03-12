@@ -7,7 +7,6 @@
  */
 
 import { logger } from '@/lib/logging/logger';
-import fs from 'fs/promises';
 import { Metadata } from 'next';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import { notFound, redirect } from 'next/navigation';
@@ -16,8 +15,7 @@ import components, { HashNavigationProvider } from '@/lib/components/mdx';
 import EditPageButton from '@/lib/components/mdxEditor/editPageButton';
 import { isMdFile } from '@/lib/md/isMdFile';
 import findAllMdxFiles from '@/lib/mdx/findAllMdxFiles';
-import { getContentFolder } from '@/lib/utils/getContentFolder';
-import { resolveContentFilePath } from '@/lib/utils/resolveContentFilePath';
+import { fetchContent } from '@/lib/utils/fetchContent';
 import path from 'path';
 import remarkGfm from 'remark-gfm';
 import { pathToFileURL } from 'url';
@@ -86,18 +84,16 @@ export async function generateMetadata({
   const slugSegments = slug[0] === locale ? slug.slice(1) : slug;
   const slugPath = slugSegments.join('/');
 
-  const contentRoot = getContentFolder(locale);
-  const resolvedPath = await resolveContentFilePath(contentRoot, slugPath);
+  const result = await fetchContent(locale, slugPath);
 
-  if (!resolvedPath) {
+  if (!result) {
     return {
       title: 'Not Found | Library of Ikuisuus',
     };
   }
 
   try {
-    const rawContent = await fs.readFile(resolvedPath, 'utf8');
-    const h1Title = extractH1FromMdx(rawContent);
+    const h1Title = extractH1FromMdx(result.content);
 
     if (h1Title) {
       return {
@@ -136,27 +132,20 @@ const Page = async ({ params }: PageProps) => {
   const slugSegments = slug[0] === locale ? slug.slice(1) : slug;
   const slugPath = slugSegments.join('/');
 
-  const contentRoot = getContentFolder(locale);
-  let resolvedPath = await resolveContentFilePath(contentRoot, slugPath);
+  let result = await fetchContent(locale, slugPath);
 
   // If the slug doesn't resolve, try redirecting to slug/main
-  if (!resolvedPath) {
-    const mainPath = `${slugPath}/main`;
-    const mainResolvedPath = await resolveContentFilePath(
-      contentRoot,
-      mainPath,
-    );
+  if (!result) {
+    const mainResult = await fetchContent(locale, `${slugPath}/main`);
 
-    if (mainResolvedPath) {
-      // Redirect to the main path
+    if (mainResult) {
       redirect(`/${locale}/library/${slugPath}/main`);
     }
 
-    // Neither the slug nor slug/main exist
     notFound();
   }
 
-  const rawContent = await fs.readFile(resolvedPath, 'utf8');
+  const { content: rawContent, resolvedPath } = result;
 
   // Render raw .md as-is
   if (isMdFile(resolvedPath)) {
@@ -164,17 +153,22 @@ const Page = async ({ params }: PageProps) => {
   }
 
   // Try to precompile MDX via `evaluate`
-  let result;
+  let evalResult;
 
   try {
-    result = await evaluate({
+    // pathToFileURL requires an absolute path; use a placeholder for GitHub-sourced content
+    const baseUrl = path.isAbsolute(resolvedPath)
+      ? pathToFileURL(resolvedPath).toString()
+      : undefined;
+
+    evalResult = await evaluate({
       source: rawContent,
       components,
       options: {
         parseFrontmatter: true,
         mdxOptions: {
           remarkPlugins: [remarkGfm],
-          baseUrl: pathToFileURL(resolvedPath).toString(),
+          ...(baseUrl ? { baseUrl } : {}),
         },
       } as unknown as EvaluateOptions,
     });
@@ -187,10 +181,10 @@ const Page = async ({ params }: PageProps) => {
       },
     );
   } finally {
-    if (!result || result.error) {
+    if (!evalResult || evalResult.error) {
       log.warning('MDX precompilation failed, falling back to ClientRenderer', {
         slugPath,
-        error: result?.error ? String(result.error) : 'Unknown error',
+        error: evalResult?.error ? String(evalResult.error) : 'Unknown error',
       });
       return (
         <div className='prose prose-invert mx-auto'>
@@ -204,7 +198,7 @@ const Page = async ({ params }: PageProps) => {
     }
   }
 
-  const { content, frontmatter } = result;
+  const { content, frontmatter } = evalResult;
 
   return (
     <div className='prose prose-invert mx-auto'>
