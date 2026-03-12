@@ -256,6 +256,7 @@ const SidebarItem = ({
     return (
       <li className={cn('ml-2', styles.accordion, open && styles.open)}>
         <Link
+          prefetch={false}
           href={`/${locale}/library/${indexedItem.path}`}
           onClick={() => open && onNavigate && onNavigate()}
           className={cn(
@@ -332,6 +333,7 @@ const SidebarItem = ({
   return (
     <li className='ml-4'>
       <Link
+        prefetch={false}
         href={`/${locale}/library/${item.path}`}
         onClick={onNavigate}
         className={cn(
