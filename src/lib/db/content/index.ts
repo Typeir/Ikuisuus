@@ -62,3 +62,7 @@ export type { MonsterRepository } from './repositories/monsterRepository';
 export type { SpellRepository } from './repositories/spellRepository';
 export type { TrinketRepository } from './repositories/trinketRepository';
 
+/** Content source adapter interface and cache tag utility */
+export type { ContentFetchResult, ContentSourceAdapter } from './contentSourceAdapter';
+export { contentCacheTag } from './contentCacheTags';
+

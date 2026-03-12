@@ -8,6 +8,7 @@
  */
 
 import { logger } from '@/lib/logging/logger';
+import { contentCacheTag } from '@/lib/db/content/contentCacheTags';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -131,7 +132,7 @@ export async function POST(req: NextRequest) {
 
       const locale = extractLocale(p);
       const slugPath = extractSlugPath(p);
-      const fetchTag = locale ? `content-${locale}-${slugPath}` : null;
+      const fetchTag = locale ? contentCacheTag(locale, slugPath) : null;
 
       log.message('Revalidating path variants', {
         path: p,
@@ -177,8 +178,3 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ results }, { status: 200 });
 }
 
-/**
- * @todo Migrate GitHub integration to the project standard adapter pattern.
- * This section directly interacts with GitHub-related cache tags.
- * Refactor to use the adapter pattern for better modularity and testability.
- */
