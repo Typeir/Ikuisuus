@@ -15,6 +15,7 @@ import mdxComponents from '@/lib/components/mdx';
 import { compileMdxToComponent } from '@/lib/components/mdx/compileMdxToComponent';
 import { Suspense, useEffect, useRef, useState, useTransition } from 'react';
 import styles from './mdxEditor.module.scss';
+import contentStyles from '@/styles/mdxContent.module.scss';
 
 /**
  * @property {string} source - Raw MDX string to compile and preview
@@ -52,7 +53,7 @@ function PreviewContent({
   return (
     <div
       key={renderKey}
-      className={`prose prose-invert max-w-none ${styles.previewFadeIn}`}>
+      className={`prose prose-invert ${contentStyles.mdxContent} ${styles.previewFadeIn}`}>
       <Component components={mdxComponents} />
     </div>
   );

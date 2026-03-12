@@ -50,7 +50,7 @@
     background-color 0.2s ease,
     color 0.2s ease,
     box-shadow 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgb(var(--color-shadow));
 }
 
 .toggleButton:hover {
@@ -65,9 +65,6 @@
 
 .draftArticle {
   max-width: 50vw;
-  font-size: 1rem;
-  line-height: 1.75;
-  color: var(--color-text);
 
   @media (max-width: 1024px) {
     max-width: 100vw;

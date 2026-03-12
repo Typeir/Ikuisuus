@@ -23,6 +23,7 @@ import type { DraftMetadata } from '@/lib/db/content/schemas/draftMetadata';
 import { useCallback, useEffect, useState } from 'react';
 import * as runtime from 'react/jsx-runtime';
 import styles from './draftOverlay.module.scss';
+import contentStyles from '@/styles/mdxContent.module.scss';
 
 /**
  * Props for the DraftOverlay component.
@@ -180,7 +181,7 @@ const DraftOverlay: React.FC<DraftOverlayProps> = ({
           createdAt={state.draft.createdAt}
           updatedAt={state.draft.updatedAt}
         />
-        <article className={styles.draftArticle}>
+        <article className={`prose prose-invert ${contentStyles.mdxContent} ${styles.draftArticle}`}>
           {state.MdxContent ? (
             <state.MdxContent />
           ) : (

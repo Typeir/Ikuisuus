@@ -266,6 +266,7 @@
 
   &:hover {
     opacity: 1;
+    background-color: var(--color-bg);
     border-color: var(--color-accent);
     color: var(--color-accent);
   }
@@ -291,6 +292,7 @@
 
   &:hover {
     opacity: 1;
+    background-color: var(--color-bg);
     border-color: var(--color-accent);
     color: var(--color-accent);
   }
@@ -479,10 +481,15 @@
   color: var(--color-text-secondary);
   font-size: 0.75rem;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
 
   &:hover {
+    background: transparent;
     border-color: var(--color-accent);
     color: var(--color-accent);
+    box-shadow: 0 0 8px rgb(var(--color-accent-a10));
   }
 }

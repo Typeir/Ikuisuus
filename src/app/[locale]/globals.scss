@@ -67,6 +67,13 @@ html:not([data-theme]) body {
   --color-phase-bloodied-border: #ef4444;
   --color-phase-doomed: #7f1d1d; /* Doomed: 25%-0% (dark red) */
   --color-phase-doomed-border: #991b1b;
+  --color-phase-slain: #000000;
+  --color-phase-slain-border: #ffffff;
+  --color-phase-text-dark: #000000;
+  --color-phase-text-light: #ffffff;
+
+  /* Danger subtle background for close/dismiss hover states */
+  --color-danger-subtle: rgba(248, 113, 113, 0.2);
 
   /* Lair/special event colors - muted gold and brown */
   --color-lair-bg-start: #8b5a2b;
@@ -269,6 +276,11 @@ html[data-theme='light'] {
   --color-phase-bloodied-border: #dc2626;
   --color-phase-doomed: #be123c; /* Doomed: 25%-0% (rose) */
   --color-phase-doomed-border: #9f1239;
+  --color-phase-slain: #000000;
+  --color-phase-slain-border: #374151;
+  --color-phase-text-dark: #000000;
+  --color-phase-text-light: #ffffff;
+  --color-danger-subtle: rgba(239, 68, 68, 0.15);
 
   /* Lair/special event colors - muted gold for light theme */
   --color-lair-bg-start: #c4a35a;
@@ -604,6 +616,19 @@ html[data-theme='dark'] {
     transition: background-color 5000s ease-in-out 0s;
     caret-color: var(--color-autofill-text);
   }
+
+  button,
+  .actionable {
+    color: var(--color-bg);
+    background-color: var(--color-actionable);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s var(--springy-bezier);
+
+    &:hover {
+      background-color: var(--color-primary);
+    }
+  }
 }
 
 /* ============================================
@@ -693,18 +718,6 @@ body {
     color: var(--color-text);
     border-color: var(--color-secondary);
   }
-
-  button,
-  .actionable {
-    color: var(--color-bg);
-    background-color: var(--color-actionable);
-    border: none;
-    transition: background-color 0.2s var(--springy-bezier);
-
-    &:hover {
-      background-color: var(--color-primary);
-    }
-  }
 }
 
 /* ============================================
@@ -737,10 +750,6 @@ body {
     color: var(--color-secondary) !important;
   }
 
-  .actionable {
-    color: var(--color-actionable);
-    cursor: pointer;
-  }
 }
 
 /* ============================================
