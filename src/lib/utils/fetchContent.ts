@@ -43,6 +43,11 @@ const isBuildTime = (): boolean => {
   // Prefer an explicit build marker when available (set in next.config.js)
   if (process.env.CONTENT_FETCH_MODE === 'build') return true;
 
+  if (process.env.CONTENT_FETCH_MODE === 'runtime') return false;
+
+  if (process.env.NODE_ENV === 'development') {
+    return false; // In production runtime, prefer GitHub
+  }
   const phase = process.env.NEXT_PHASE;
   return (
     phase === 'phase-production-build' || phase === 'phase-development-server'
