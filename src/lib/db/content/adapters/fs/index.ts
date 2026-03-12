@@ -8,6 +8,7 @@
  * @since 3.0.0
  */
 
+export { fsDirectorySource } from './fsDirectorySource';
 export { fsHeirloomRepository } from './fsHeirloomRepository';
 export { fsMonsterRepository } from './fsMonsterRepository';
 export { fsSpellRepository } from './fsSpellRepository';

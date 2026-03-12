@@ -25,12 +25,12 @@ afterEach(() => {
 });
 
 describe('ormConfig', () => {
-  it('should include all 16 entity classes', async () => {
+  it('should include all 17 entity classes', async () => {
     vi.resetModules();
     const { ormConfig } = await import('@/lib/db/orm/ormConfig');
 
     expect(ormConfig.entities).toBeDefined();
-    expect(ormConfig.entities).toHaveLength(16);
+    expect(ormConfig.entities).toHaveLength(17);
   });
 
   it('should use DATABASE_URL as clientUrl', async () => {

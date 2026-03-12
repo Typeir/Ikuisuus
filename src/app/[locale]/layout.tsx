@@ -11,7 +11,6 @@
  */
 
 import { routing } from '@/i18n/routing';
-import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
 import { getCombinedInitScript } from '@/lib/utils/persistentUiScript';
 import { walk } from '@/lib/utils/walk';
@@ -19,7 +18,6 @@ import { walk } from '@/lib/utils/walk';
 import { hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import path from 'path';
 import ClientProviders from './ClientProviders';
 import './globals.scss';
 
@@ -31,9 +29,8 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const contentDir = path.join(getContentFolder(locale));
 
-  const tree = walk(contentDir);
+  const tree = await walk(locale);
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
