@@ -23,16 +23,6 @@ const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${CONTENT_REPO_OWNER}
 /** @property {string[]} EXTENSIONS - File extension variants to try, in priority order */
 const EXTENSIONS = ['.mdx', '.sheet.mdx', '.md'];
 
-// Simple process-local memoization to avoid duplicate remote fetches during
-// a single render or burst of requests. Cache entries live for a short TTL.
-const FETCH_CACHE_TTL_MS = 5000; // 5s
-const fetchCache = new Map<
-  string,
-  { ts: number; value: { content: string; resolvedPath: string } | null }
->();
-
-const cacheKey = (locale: string, slugPath: string) => `${locale}::${slugPath}`;
-
 /**
  * @function isBuildTime
  * @description
@@ -54,7 +44,6 @@ const isBuildTime = (): boolean => {
   if (process.env.CONTENT_FETCH_MODE === 'build') return true;
 
   const phase = process.env.NEXT_PHASE;
-  if (!phase) return process.env.NODE_ENV === 'development';
   return (
     phase === 'phase-production-build' || phase === 'phase-development-server'
   );
@@ -139,20 +128,10 @@ export const fetchContent = async (
   slugPath: string,
 ): Promise<{ content: string; resolvedPath: string } | null> => {
   const buildTime = isBuildTime();
-  const key = cacheKey(locale, slugPath);
-  const cached = fetchCache.get(key);
-  if (cached && Date.now() - cached.ts < FETCH_CACHE_TTL_MS) {
-    log.message('fetchContent cache hit', { slugPath, locale });
-    return cached.value;
-  }
   if (buildTime) {
     log.message('Using filesystem for content fetch', { slugPath });
-    const v = await fetchFromFilesystem(locale, slugPath);
-    fetchCache.set(key, { ts: Date.now(), value: v });
-    return v;
+    return await fetchFromFilesystem(locale, slugPath);
   }
   log.message('Using GitHub for content fetch', { slugPath });
-  const v = await fetchFromGitHub(locale, slugPath);
-  fetchCache.set(key, { ts: Date.now(), value: v });
-  return v;
+  return await fetchFromGitHub(locale, slugPath);
 };
