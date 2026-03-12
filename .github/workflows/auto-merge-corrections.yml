@@ -80,9 +80,10 @@ jobs:
           PATHS="[]"
           while IFS= read -r file; do
             [ -z "$file" ] && continue
-            # Strip locale prefix (e.g. "en/") and .mdx extension to build the library path
-            SLUG=$(echo "$file" | sed 's|^[a-z]\{2\}/||' | sed 's|\.sheet\.mdx$||' | sed 's|\.mdx$||')
-            PATHS=$(echo "$PATHS" | jq --arg p "/library/$SLUG" '. + [$p]')
+            # Extract locale (e.g. "en") and content path, strip .mdx extension
+            LOCALE=$(echo "$file" | cut -d'/' -f1)
+            CONTENT_PATH=$(echo "$file" | cut -d'/' -f2- | sed 's|\.sheet\.mdx$||' | sed 's|\.mdx$||')
+            PATHS=$(echo "$PATHS" | jq --arg p "/${LOCALE}/library/${CONTENT_PATH}" '. + [$p]')
           done <<< "${{ steps.merge.outputs.merged_files }}"
 
           echo "Revalidating paths: $PATHS"
