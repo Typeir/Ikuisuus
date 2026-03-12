@@ -32,7 +32,8 @@ jobs:
         run: |
           # List open PRs whose branch starts with "corrections/" or "new/"
           PRS=$(gh pr list --state open --json number,headRefName \
-            --jq '[.[] | select(.headRefName | test("^(corrections|new)/"))] | .[].number' 2>/dev/null || echo "")
+            --jq '[.[] | select(.headRefName | test("^(corrections|new)/"))] | .[].number' 2>/dev/null \
+            | tr '\n' ' ' | xargs)
 
           if [ -z "$PRS" ]; then
             echo "No correction PRs found."
