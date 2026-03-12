@@ -202,5 +202,9 @@ if (securityExit !== 0) {
   process.exit(securityExit);
 }
 
-const submoduleExit = runSubmoduleGuard();
-process.exit(submoduleExit);
+/* Skip the submodule guard when ik is coordinating both repos —
+   ik intentionally stages src/content to update the submodule pointer. */
+if (process.env.IK_RUNNING !== '1') {
+  const submoduleExit = runSubmoduleGuard();
+  process.exit(submoduleExit);
+}
