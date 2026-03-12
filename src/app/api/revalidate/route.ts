@@ -69,8 +69,11 @@ export async function POST(req: NextRequest) {
 
     try {
       // Expand common variants to handle .sheet suffixes and /main fallbacks.
-      const variants = new Set<string>();
-      const pushVariant = (v: string) => variants.add(v.replace(/\/+$|\s+/g, ''));
+      const variants: string[] = [];
+      const pushVariant = (v: string) => {
+        const normalized = v.replace(/\/+$|\s+/g, '');
+        if (!variants.includes(normalized)) variants.push(normalized);
+      };
 
       pushVariant(p);
 
@@ -79,24 +82,33 @@ export async function POST(req: NextRequest) {
       if (parts.length > 0) {
         const last = parts[parts.length - 1];
         if (!/\.sheet$/.test(last)) {
-          const withSheet = '/' + parts.slice(0, -1).concat(`${last}.sheet`).join('/');
+          const withSheet =
+            '/' + parts.slice(0, -1).concat(`${last}.sheet`).join('/');
           pushVariant(withSheet);
         } else {
-          const withoutSheet = '/' + parts.slice(0, -1).concat(last.replace(/\.sheet$/, '')).join('/');
+          const withoutSheet =
+            '/' +
+            parts
+              .slice(0, -1)
+              .concat(last.replace(/\.sheet$/, ''))
+              .join('/');
           pushVariant(withoutSheet);
         }
         // also try /main variant
         pushVariant(p.endsWith('/main') ? p : `${p}/main`);
       }
 
-      log.message('Revalidating path variants', { path: p, variants: Array.from(variants) });
+      log.message('Revalidating path variants', { path: p, variants });
 
       for (const v of variants) {
         try {
           await revalidatePath(v, 'page');
           log.message('Revalidated', { path: v });
         } catch (err) {
-          log.warning('Failed to revalidate variant', { path: v, error: err instanceof Error ? err.message : String(err) });
+          log.warning('Failed to revalidate variant', {
+            path: v,
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       }
 
