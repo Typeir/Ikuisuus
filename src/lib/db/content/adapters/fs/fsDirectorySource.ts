@@ -11,8 +11,8 @@ import fs from 'fs';
 import path from 'path';
 
 import type {
-  DirectoryEntry,
-  DirectorySourceAdapter,
+    DirectoryEntry,
+    DirectorySourceAdapter,
 } from '../../directorySourceAdapter';
 
 /**

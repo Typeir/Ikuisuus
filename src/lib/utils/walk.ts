@@ -72,7 +72,8 @@ export interface WalkNode {
  * @returns {DirectorySourceAdapter} The resolved directory source adapter
  */
 const resolveDirectorySource = (): DirectorySourceAdapter => {
-  if (process.env.CONTENT_FETCH_MODE === 'runtime') return githubDirectorySource;
+  if (process.env.CONTENT_FETCH_MODE === 'runtime')
+    return githubDirectorySource;
   if (process.env.CONTENT_FETCH_MODE === 'build') return fsDirectorySource;
   if (process.env.NODE_ENV === 'development') return fsDirectorySource;
   const phase = process.env.NEXT_PHASE;
@@ -93,10 +94,7 @@ const resolveDirectorySource = (): DirectorySourceAdapter => {
  * @param {string} [base=''] - Base path prefix for URL construction (used internally for recursion)
  * @returns {Promise<WalkNode[]>} Navigation tree nodes
  */
-export const walk = async (
-  locale: string,
-  base = '',
-): Promise<WalkNode[]> => {
+export const walk = async (locale: string, base = ''): Promise<WalkNode[]> => {
   const adapter = resolveDirectorySource();
   return walkTree(adapter, locale, '', base);
 };
@@ -155,7 +153,12 @@ export const walkTree = async (
         return {
           name: toTitleCase(baseFileName),
           path: kebabPath,
-          children: await walkTree(adapter, locale, childRelativePath, kebabPath),
+          children: await walkTree(
+            adapter,
+            locale,
+            childRelativePath,
+            kebabPath,
+          ),
         };
       }
 

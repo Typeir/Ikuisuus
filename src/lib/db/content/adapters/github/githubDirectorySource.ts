@@ -13,8 +13,8 @@
 import { logger } from '@/lib/logging/logger';
 
 import type {
-  DirectoryEntry,
-  DirectorySourceAdapter,
+    DirectoryEntry,
+    DirectorySourceAdapter,
 } from '../../directorySourceAdapter';
 
 const log = logger.child({ module: 'GitHubDirectorySource' });
@@ -105,9 +105,7 @@ export const githubDirectorySource: DirectorySourceAdapter = {
     relativePath: string,
   ): Promise<DirectoryEntry[]> {
     const tree = await getCachedTree();
-    const prefix = relativePath
-      ? `${locale}/${relativePath}/`
-      : `${locale}/`;
+    const prefix = relativePath ? `${locale}/${relativePath}/` : `${locale}/`;
 
     return tree
       .filter((entry) => {

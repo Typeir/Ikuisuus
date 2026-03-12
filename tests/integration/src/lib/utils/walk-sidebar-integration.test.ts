@@ -19,10 +19,10 @@
 
 import type { DirectorySourceAdapter } from '@/lib/db/content/directorySourceAdapter';
 import { walkTree } from '@/lib/utils/walk';
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fs from 'fs';
-import path from 'path';
 import { tmpdir } from 'os';
+import path from 'path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 /**
  * Creates a DirectorySourceAdapter backed by a real filesystem directory.
@@ -67,10 +67,19 @@ describe('walk-sidebar integration', () => {
     it('should generate correct paths for .sheet.mdx files without concatenation', async () => {
       const monstersDir = path.join(testDir, 'monsters');
       fs.mkdirSync(monstersDir, { recursive: true });
-      
-      fs.writeFileSync(path.join(monstersDir, 'abandoned-old-war-machine.sheet.mdx'), '# Test');
-      fs.writeFileSync(path.join(monstersDir, 'ancient-red-dragon.sheet.mdx'), '# Test');
-      fs.writeFileSync(path.join(monstersDir, 'albedo-the-bleak-bloom.sheet.mdx'), '# Test');
+
+      fs.writeFileSync(
+        path.join(monstersDir, 'abandoned-old-war-machine.sheet.mdx'),
+        '# Test',
+      );
+      fs.writeFileSync(
+        path.join(monstersDir, 'ancient-red-dragon.sheet.mdx'),
+        '# Test',
+      );
+      fs.writeFileSync(
+        path.join(monstersDir, 'albedo-the-bleak-bloom.sheet.mdx'),
+        '# Test',
+      );
 
       const result = await walkTree(adapter, 'en', '', '');
 
@@ -79,31 +88,37 @@ describe('walk-sidebar integration', () => {
       expect(result[0].children).toBeDefined();
       expect(result[0].children).toHaveLength(3);
 
-      const paths = result[0].children!.map(c => c.path);
+      const paths = result[0].children!.map((c) => c.path);
 
       expect(paths).toContain('monsters/abandoned-old-war-machine.sheet');
       expect(paths).toContain('monsters/ancient-red-dragon.sheet');
       expect(paths).toContain('monsters/albedo-the-bleak-bloom.sheet');
 
       expect(paths).not.toContain('monsters/abandoned-old-war-machinesheet');
-      expect(paths.every(p => !p.includes('machinesheet'))).toBe(true);
-      expect(paths.every(p => !p.includes('dragonsheet'))).toBe(true);
+      expect(paths.every((p) => !p.includes('machinesheet'))).toBe(true);
+      expect(paths.every((p) => !p.includes('dragonsheet'))).toBe(true);
     });
 
     it('should handle .sheet.mdx files with spaces and special chars', async () => {
       const monstersDir = path.join(testDir, 'monsters-special');
       fs.mkdirSync(monstersDir, { recursive: true });
-      
-      fs.writeFileSync(path.join(monstersDir, 'Albedo, the Bleak Bloom.sheet.mdx'), '# Test');
-      fs.writeFileSync(path.join(monstersDir, 'Ancient Red Dragon.sheet.mdx'), '# Test');
+
+      fs.writeFileSync(
+        path.join(monstersDir, 'Albedo, the Bleak Bloom.sheet.mdx'),
+        '# Test',
+      );
+      fs.writeFileSync(
+        path.join(monstersDir, 'Ancient Red Dragon.sheet.mdx'),
+        '# Test',
+      );
 
       const result = await walkTree(adapter, 'en', '', '');
-      const monstersFolder = result.find(r => r.name === 'Monsters Special');
+      const monstersFolder = result.find((r) => r.name === 'Monsters Special');
 
       expect(monstersFolder).toBeDefined();
       expect(monstersFolder?.children).toBeDefined();
 
-      const paths = monstersFolder!.children!.map(c => c.path);
+      const paths = monstersFolder!.children!.map((c) => c.path);
 
       expect(paths).toContain('monsters-special/albedo-the-bleak-bloom.sheet');
       expect(paths).toContain('monsters-special/ancient-red-dragon.sheet');
@@ -112,18 +127,18 @@ describe('walk-sidebar integration', () => {
     it('should handle mixed .sheet.mdx and .mdx files correctly', async () => {
       const mixedDir = path.join(testDir, 'mixed-content');
       fs.mkdirSync(mixedDir, { recursive: true });
-      
+
       fs.writeFileSync(path.join(mixedDir, 'monster.sheet.mdx'), '# Monster');
       fs.writeFileSync(path.join(mixedDir, 'item.mdx'), '# Item');
       fs.writeFileSync(path.join(mixedDir, 'spell.mdx'), '# Spell');
 
       const result = await walkTree(adapter, 'en', '', '');
-      const mixedFolder = result.find(r => r.name === 'Mixed Content');
+      const mixedFolder = result.find((r) => r.name === 'Mixed Content');
 
       expect(mixedFolder?.children).toHaveLength(3);
 
-      const paths = mixedFolder!.children!.map(c => c.path);
-      const names = mixedFolder!.children!.map(c => c.name);
+      const paths = mixedFolder!.children!.map((c) => c.path);
+      const names = mixedFolder!.children!.map((c) => c.name);
 
       expect(paths).toContain('mixed-content/monster.sheet');
       expect(paths).toContain('mixed-content/item');
@@ -139,12 +154,15 @@ describe('walk-sidebar integration', () => {
     it('should prefer .sheet.mdx over .mdx with same base name', async () => {
       const dupDir = path.join(testDir, 'dedup-test');
       fs.mkdirSync(dupDir, { recursive: true });
-      
-      fs.writeFileSync(path.join(dupDir, 'dragon.sheet.mdx'), '# Sheet version');
+
+      fs.writeFileSync(
+        path.join(dupDir, 'dragon.sheet.mdx'),
+        '# Sheet version',
+      );
       fs.writeFileSync(path.join(dupDir, 'dragon.mdx'), '# Regular version');
 
       const result = await walkTree(adapter, 'en', '', '');
-      const dupFolder = result.find(r => r.name === 'Dedup Test');
+      const dupFolder = result.find((r) => r.name === 'Dedup Test');
 
       expect(dupFolder?.children).toHaveLength(1);
       expect(dupFolder?.children?.[0].path).toBe('dedup-test/dragon.sheet');
@@ -156,21 +174,21 @@ describe('walk-sidebar integration', () => {
     it('should convert all paths to kebab-case', async () => {
       const caseDir = path.join(testDir, 'Case Convention Test');
       fs.mkdirSync(caseDir, { recursive: true });
-      
+
       fs.writeFileSync(path.join(caseDir, 'CamelCaseFile.mdx'), '# Test');
       fs.writeFileSync(path.join(caseDir, 'UPPERCASE FILE.mdx'), '# Test');
       fs.writeFileSync(path.join(caseDir, 'snake_case_file.mdx'), '# Test');
 
       const result = await walkTree(adapter, 'en', '', '');
-      const caseFolder = result.find(r => r.name === 'Case Convention Test');
+      const caseFolder = result.find((r) => r.name === 'Case Convention Test');
 
-      const paths = caseFolder!.children!.map(c => c.path);
+      const paths = caseFolder!.children!.map((c) => c.path);
 
       expect(paths).toContain('case-convention-test/camel-case-file');
       expect(paths).toContain('case-convention-test/uppercase-file');
       expect(paths).toContain('case-convention-test/snake-case-file');
 
-      paths.forEach(p => {
+      paths.forEach((p) => {
         expect(p).toBe(p.toLowerCase());
         expect(p).not.toContain('_');
         expect(p).not.toContain(' ');
@@ -182,20 +200,23 @@ describe('walk-sidebar integration', () => {
     it('should generate paths that work as URLs without encoding', async () => {
       const urlDir = path.join(testDir, 'url-ready');
       fs.mkdirSync(urlDir, { recursive: true });
-      
+
       fs.writeFileSync(path.join(urlDir, 'test@file!name.mdx'), '# Test');
-      fs.writeFileSync(path.join(urlDir, 'file with (parentheses).sheet.mdx'), '# Test');
+      fs.writeFileSync(
+        path.join(urlDir, 'file with (parentheses).sheet.mdx'),
+        '# Test',
+      );
 
       const result = await walkTree(adapter, 'en', '', '');
-      const urlFolder = result.find(r => r.name === 'Url Ready');
+      const urlFolder = result.find((r) => r.name === 'Url Ready');
 
-      const paths = urlFolder!.children!.map(c => c.path);
+      const paths = urlFolder!.children!.map((c) => c.path);
 
-      paths.forEach(p => {
+      paths.forEach((p) => {
         expect(p).toMatch(/^[a-z0-9\-\/.]+$/);
       });
 
-      const sheetPath = paths.find(p => p.includes('.sheet'));
+      const sheetPath = paths.find((p) => p.includes('.sheet'));
       expect(sheetPath).toBeDefined();
       expect(sheetPath).toMatch(/\.sheet$/);
     });
@@ -205,21 +226,21 @@ describe('walk-sidebar integration', () => {
     it('should maintain correct paths through multiple levels', async () => {
       const deepDir = path.join(testDir, 'level1', 'level2', 'level3');
       fs.mkdirSync(deepDir, { recursive: true });
-      
+
       fs.writeFileSync(path.join(deepDir, 'deep-file.sheet.mdx'), '# Deep');
 
       const result = await walkTree(adapter, 'en', '', '');
 
-      const level1 = result.find(r => r.name === 'Level1');
+      const level1 = result.find((r) => r.name === 'Level1');
       expect(level1).toBeDefined();
-      
-      const level2 = level1?.children?.find(c => c.name === 'Level2');
+
+      const level2 = level1?.children?.find((c) => c.name === 'Level2');
       expect(level2).toBeDefined();
-      
-      const level3 = level2?.children?.find(c => c.name === 'Level3');
+
+      const level3 = level2?.children?.find((c) => c.name === 'Level3');
       expect(level3).toBeDefined();
-      
-      const file = level3?.children?.find(c => c.name === 'Deep File');
+
+      const file = level3?.children?.find((c) => c.name === 'Deep File');
       expect(file).toBeDefined();
       expect(file?.path).toBe('level1/level2/level3/deep-file.sheet');
     });
@@ -229,36 +250,36 @@ describe('walk-sidebar integration', () => {
     it('should never produce paths with consecutive dots except .sheet', async () => {
       const regressDir = path.join(testDir, 'regression');
       fs.mkdirSync(regressDir, { recursive: true });
-      
+
       fs.writeFileSync(path.join(regressDir, 'file.v2.0.mdx'), '# Version');
       fs.writeFileSync(path.join(regressDir, 'monster.sheet.mdx'), '# Monster');
 
       const result = await walkTree(adapter, 'en', '', '');
-      const regressFolder = result.find(r => r.name === 'Regression');
+      const regressFolder = result.find((r) => r.name === 'Regression');
 
-      const paths = regressFolder!.children!.map(c => c.path);
+      const paths = regressFolder!.children!.map((c) => c.path);
 
-      paths.forEach(p => {
+      paths.forEach((p) => {
         const withoutSheet = p.replace(/\.sheet$/, '');
         expect(withoutSheet).not.toContain('.');
       });
 
-      expect(paths.some(p => p.endsWith('.sheet'))).toBe(true);
+      expect(paths.some((p) => p.endsWith('.sheet'))).toBe(true);
     });
 
     it('should match expected URL pattern for all paths', async () => {
       const patternDir = path.join(testDir, 'url-pattern');
       fs.mkdirSync(patternDir, { recursive: true });
-      
+
       fs.writeFileSync(path.join(patternDir, 'Test File.sheet.mdx'), '# Test');
       fs.writeFileSync(path.join(patternDir, 'Another File.mdx'), '# Test');
 
       const result = await walkTree(adapter, 'en', '', '');
-      const patternFolder = result.find(r => r.name === 'Url Pattern');
+      const patternFolder = result.find((r) => r.name === 'Url Pattern');
 
-      const paths = patternFolder!.children!.map(c => c.path);
+      const paths = patternFolder!.children!.map((c) => c.path);
 
-      paths.forEach(p => {
+      paths.forEach((p) => {
         expect(p).toMatch(/^[a-z0-9\-\/]+(\.sheet)?$/);
       });
     });

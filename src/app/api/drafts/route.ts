@@ -45,15 +45,14 @@ const authenticateRequest = (req: NextRequest): NextResponse | null => {
  * GET /api/drafts
  *
  * @description Fetches the active draft for a locale+slug pair.
+ * No authentication required — draft content is pending-public and
+ * must be readable by the client-side DraftOverlay component.
  * Returns 404 if no active draft exists.
  *
  * @param {NextRequest} req - Request with ?locale and ?slug query params
  * @returns {Promise<NextResponse>} Draft JSON or error
  */
 export async function GET(req: NextRequest) {
-  const authError = authenticateRequest(req);
-  if (authError) return authError;
-
   const locale = req.nextUrl.searchParams.get('locale') || 'en';
   const slug = req.nextUrl.searchParams.get('slug');
 

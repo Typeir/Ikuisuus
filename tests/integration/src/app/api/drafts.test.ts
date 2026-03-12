@@ -165,15 +165,12 @@ describe('Drafts API (POST /api/drafts)', () => {
 });
 
 describe('Drafts API (GET /api/drafts)', () => {
-  it('should return a draft when one exists', async () => {
+  it('should return a draft without requiring auth', async () => {
     mockFindActive.mockResolvedValue(sampleDraft);
     const { GET } = await import('@/app/api/drafts/route');
 
     const req = new NextRequest(
       'http://localhost:3000/api/drafts?locale=en&slug=monsters/albedo',
-      {
-        headers: { 'x-revalidation-secret': 'test-secret-123' },
-      },
     );
 
     const res = await GET(req);
@@ -189,9 +186,6 @@ describe('Drafts API (GET /api/drafts)', () => {
 
     const req = new NextRequest(
       'http://localhost:3000/api/drafts?locale=en&slug=nonexistent',
-      {
-        headers: { 'x-revalidation-secret': 'test-secret-123' },
-      },
     );
 
     const res = await GET(req);
@@ -201,9 +195,7 @@ describe('Drafts API (GET /api/drafts)', () => {
   it('should return 400 when slug is missing', async () => {
     const { GET } = await import('@/app/api/drafts/route');
 
-    const req = new NextRequest('http://localhost:3000/api/drafts?locale=en', {
-      headers: { 'x-revalidation-secret': 'test-secret-123' },
-    });
+    const req = new NextRequest('http://localhost:3000/api/drafts?locale=en');
 
     const res = await GET(req);
     expect(res.status).toBe(400);
@@ -215,9 +207,6 @@ describe('Drafts API (GET /api/drafts)', () => {
 
     const req = new NextRequest(
       'http://localhost:3000/api/drafts?slug=monsters/albedo',
-      {
-        headers: { 'x-revalidation-secret': 'test-secret-123' },
-      },
     );
 
     await GET(req);

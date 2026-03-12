@@ -159,12 +159,7 @@ describe('walk', () => {
         '': [{ name: 'dragon.sheet.mdx', isDirectory: false }],
       });
 
-      const result = await walkTree(
-        adapter,
-        'en',
-        '',
-        'library/monsters',
-      );
+      const result = await walkTree(adapter, 'en', '', 'library/monsters');
 
       expect(result).toHaveLength(1);
       expect(result[0].path).toBe('library/monsters/dragon.sheet');
