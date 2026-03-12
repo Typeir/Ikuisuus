@@ -21,6 +21,7 @@
 
 /** Factory-resolved repository instances — the primary public API */
 export {
+    draftRepository,
     heirloomRepository,
     monsterRepository,
     spellRepository,
@@ -56,7 +57,14 @@ export type {
     TrinketMetadata
 } from './schemas/trinketMetadata';
 
+export type {
+    DraftInput,
+    DraftMetadata,
+    DraftStatus
+} from './schemas/draftMetadata';
+
 /** Repository port interfaces */
+export type { DraftRepository } from './repositories/draftRepository';
 export type { HeirloomRepository } from './repositories/heirloomRepository';
 export type { MonsterRepository } from './repositories/monsterRepository';
 export type { SpellRepository } from './repositories/spellRepository';

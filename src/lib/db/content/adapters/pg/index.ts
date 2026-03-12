@@ -8,6 +8,7 @@
  * @since 5.0.0
  */
 
+export { pgDraftRepository } from './pgDraftRepository';
 export { pgHeirloomRepository } from './pgHeirloomRepository';
 export { pgMonsterRepository } from './pgMonsterRepository';
 export { pgSpellRepository } from './pgSpellRepository';

@@ -11,6 +11,7 @@ import { Metadata } from 'next';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import { notFound, redirect } from 'next/navigation';
 
+import DraftOverlay from '@/lib/components/draftOverlay/draftOverlay';
 import components, { HashNavigationProvider } from '@/lib/components/mdx';
 import EditPageButton from '@/lib/components/mdxEditor/editPageButton';
 import { isMdFile } from '@/lib/md/isMdFile';
@@ -204,6 +205,7 @@ const Page = async ({ params }: PageProps) => {
 
   return (
     <div className='prose prose-invert mx-auto'>
+      <DraftOverlay locale={locale} slug={slugPath} />
       <HashNavigationProvider />
       <article className={styles.markdown}>{content}</article>
       <EditPageButton slug={slugPath} locale={locale} />

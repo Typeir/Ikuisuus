@@ -4,10 +4,14 @@
  * to revalidate. Called by the content repo's auto-merge GitHub Action after
  * a correction PR is merged, ensuring the affected pages are regenerated.
  *
+ * When revalidation succeeds for a path, any active draft for that
+ * locale+slug pair is archived in the drafts table.
+ *
  * @module app/api/revalidate/route
  */
 
 import { contentCacheTag } from '@/lib/db/content/contentCacheTags';
+import { draftRepository } from '@/lib/db/content/repositories/draftRepository';
 import { logger } from '@/lib/logging/logger';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
@@ -43,6 +47,36 @@ const extractSlugPath = (urlPath: string): string => {
     return parts.slice(libraryIndex + 1).join('/');
   }
   return parts.slice(1).join('/');
+};
+
+/**
+ * @function archiveDraftForPath
+ * @description Archives the active draft for a locale+slug pair after successful
+ * ISR revalidation. Failures are logged but do not block the revalidation response.
+ * @param {string | null} locale - Content locale, or null if extraction failed
+ * @param {string} slugPath - Content slug path
+ */
+const archiveDraftForPath = async (
+  locale: string | null,
+  slugPath: string,
+): Promise<void> => {
+  if (!locale || !slugPath) return;
+
+  try {
+    const archived = await draftRepository.archive(locale, slugPath);
+    if (archived) {
+      log.message('Archived draft after revalidation', {
+        locale,
+        slug: slugPath,
+      });
+    }
+  } catch (err) {
+    log.warning('Failed to archive draft (non-blocking)', {
+      locale,
+      slug: slugPath,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 };
 
 /**
@@ -160,6 +194,8 @@ export async function POST(req: NextRequest) {
       }
 
       results.push({ path: p, status: 'ok' });
+
+      await archiveDraftForPath(locale, slugPath);
     } catch (err) {
       results.push({
         path: p,

@@ -1,6 +1,13 @@
 /**
  * @fileoverview Shared utilities for metadata generators
  * @description Provides common parsing functions, pre-compiled regex patterns, and shared data
+ *
+ * @todo: Migrate metadata generators into a shared library that can be used by
+ * both the standalone .mjs scripts (build-time) and the built Next.js
+ * application (runtime). This would allow the revalidation endpoint and
+ * draft system to regenerate metadata on-the-fly without invoking external
+ * scripts. Tracked as part of the eventual concurrency system.
+ *
  * @version 2.0.0
  * @author Typeir
  */

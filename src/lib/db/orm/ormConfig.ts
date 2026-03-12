@@ -12,6 +12,7 @@
 import { defineConfig } from '@mikro-orm/postgresql';
 import {
     CorrectionsUserEntity,
+    DraftEntity,
     HeirloomChargesEmbed,
     HeirloomEntity,
     MonsterACEmbed,
@@ -40,6 +41,7 @@ export const ormConfig = defineConfig({
     },
   },
   entities: [
+    DraftEntity,
     MonsterEntity,
     MonsterACEmbed,
     MonsterHPEmbed,

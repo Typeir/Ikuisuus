@@ -31,4 +31,6 @@ export type {
     SpellMetadata
 } from './spellMetadata';
 
+export type { DraftInput, DraftMetadata, DraftStatus } from './draftMetadata';
 export type { TrinketIndexEntry, TrinketMetadata } from './trinketMetadata';
+

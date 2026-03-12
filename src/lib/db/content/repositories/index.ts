@@ -9,6 +9,8 @@
  * @since 3.0.0
  */
 
+export { draftRepository } from './draftRepository';
+export type { DraftRepository } from './draftRepository';
 export { heirloomRepository } from './heirloomRepository';
 export type { HeirloomRepository } from './heirloomRepository';
 export { monsterRepository } from './monsterRepository';
