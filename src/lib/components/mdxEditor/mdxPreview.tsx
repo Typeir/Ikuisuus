@@ -38,6 +38,8 @@ function PreviewFallback(): JSX.Element {
  * Applies a fade-in animation each time the content re-compiles.
  *
  * @param {{ Component: React.ComponentType<any>; renderKey: number }} props - Compiled MDX component and render key
+ * @param {React.ComponentType<any>} props.Component - Compiled MDX component
+ * @param {number} props.renderKey - Render key for animation reset
  * @returns {JSX.Element} Rendered MDX
  */
 function PreviewContent({
@@ -63,6 +65,7 @@ function PreviewContent({
  *
  * @component
  * @param {MdxPreviewProps} props - Component properties
+ * @param {string} props.source - Raw MDX source text
  * @returns {JSX.Element} Rendered preview or status message
  */
 export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {

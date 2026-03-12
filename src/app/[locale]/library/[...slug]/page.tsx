@@ -74,6 +74,7 @@ function extractH1FromMdx(content: string): string | null {
  * Generates metadata for the page, extracting title from MDX H1.
  *
  * @param {PageProps} props - Route params
+ * @param {Promise<{ slug: string[], locale: string }>} props.params - Async route parameters
  * @returns {Promise<Metadata>} Page metadata
  */
 export async function generateMetadata({
@@ -123,6 +124,7 @@ export async function generateMetadata({
  * Dynamic content page with fallback to ClientRenderer if MDX precompilation fails.
  *
  * @param {PageProps} props - Route params
+ * @param {Promise<{ slug: string[], locale: string }>} props.params - Async route parameters
  * @returns {JSX.Element} Rendered page or fallback
  */
 const Page = async ({ params }: PageProps) => {

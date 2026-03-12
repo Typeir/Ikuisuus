@@ -40,6 +40,11 @@ interface EditorFooterProps {
  *
  * @component
  * @param {EditorFooterProps} props - Component properties
+ * @param {EditorStatus} props.status - Current editor state
+ * @param {'edit' | 'new'} props.mode - Editor mode
+ * @param {boolean} props.canSubmit - Whether submit is allowed
+ * @param {Function} props.handleSubmit - Submit handler
+ * @param {Function} props.t - Translation function
  * @returns {JSX.Element} Footer bar
  */
 export function EditorFooter({

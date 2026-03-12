@@ -52,6 +52,7 @@ export const generateMetadata = (): Metadata => ({
  *
  * @async
  * @param {PageProps} props - Page props with locale parameter
+ * @param {Promise<{ locale: string }>} props.params - Async route parameters
  * @returns {Promise<JSX.Element>} Rendered page with MDX editor
  */
 export default async function MdxEditorPage({ params }: PageProps) {

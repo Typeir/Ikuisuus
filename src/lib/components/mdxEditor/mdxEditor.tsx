@@ -46,6 +46,7 @@ interface MdxEditorProps {
  *
  * @component
  * @param {MdxEditorProps} props - Component properties
+ * @param {string} props.locale - Current locale
  * @returns {JSX.Element} Full editor view
  *
  * @example

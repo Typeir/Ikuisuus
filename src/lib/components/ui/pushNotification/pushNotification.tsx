@@ -237,6 +237,9 @@ export interface NotificationProviderProps {
  * 
  * @component NotificationProvider
  * @param {NotificationProviderProps} props - Provider configuration
+ * @param {ReactNode} props.children - Child components that can access notifications
+ * @param {NotificationPosition} [props.position='top-right'] - Where notifications appear on screen
+ * @param {number} [props.maxNotifications=NOTIFICATION_MAX_VISIBLE] - Maximum notifications shown at once
  * @returns {JSX.Element} Provider with notification portal
  * 
  * @description

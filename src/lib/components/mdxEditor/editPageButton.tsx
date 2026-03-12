@@ -37,6 +37,8 @@ interface EditPageButtonProps {
  *
  * @component
  * @param {EditPageButtonProps} props - Component properties
+ * @param {string} props.slug - Content slug relative to locale
+ * @param {string} props.locale - Current locale
  * @returns {JSX.Element} Edit trigger button
  *
  * @example

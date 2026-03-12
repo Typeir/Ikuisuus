@@ -15,6 +15,7 @@ This document defines the JSDoc formatting standards used throughout the project
 | Function callbacks in props | Include full type signature: `{(arg: T) => R}` |
 | Inline comments inside logic | **PROHIBITED** - extract to helper functions with JSDoc |
 | `@component` tag for React components | Required with function prop signatures |
+| Component `@param` exhaustiveness | **REQUIRED** - every prop must have a `@param {Type} [props.x]` line |
 
 ---
 
@@ -211,6 +212,90 @@ Constants should document their type and purpose:
  * @default defaultValue (if applicable)
  */
 const MY_CONSTANT = value;
+```
+
+## React Component Documentation
+
+> **HARD RULE**: Every React component's JSDoc **must** list each prop individually via `@param {Type} [props.x]` lines between the `@param {PropsType} props` line and the `@returns` line. A bare `@param` + `@returns` without per-prop lines is a violation.
+
+This applies to **all** component-level JSDoc blocks — functional components, providers, page components, and inner render helpers.
+
+### Why
+
+A single `@param {MyProps} props` tells consumers nothing about the actual contract. Exhaustive `@param [props.x]` lines make every prop visible in IDE hover tooltips, enforce documentation coverage, and prevent props from being added without documentation.
+
+### ✅ Correct: Exhaustive per-prop `@param` lines
+
+```tsx
+/**
+ * Split-pane editor layout with a draggable divider.
+ *
+ * @component
+ * @param {EditorSplitPaneProps} props - Component properties
+ * @param {string} props.textareaId - DOM id of the code editor textarea
+ * @param {string} props.content - Editor text content
+ * @param {Function} props.setContent - Update editor content callback
+ * @param {boolean} props.disabled - Whether the editor is inactive
+ * @param {'edit' | 'new'} props.mode - Editor mode
+ * @param {string} props.newPlaceholder - Placeholder text for new file mode
+ * @returns {JSX.Element} Split pane editor
+ */
+```
+
+### ❌ Wrong: Missing per-prop lines
+
+```tsx
+/**
+ * Split-pane editor layout with a draggable divider.
+ *
+ * @component
+ * @param {EditorSplitPaneProps} props - Component properties
+ * @returns {JSX.Element} Split pane editor
+ */
+```
+
+### Formatting Rules
+
+| Scenario | Format |
+|----------|--------|
+| Required prop | `@param {Type} props.name - Description` |
+| Optional prop | `@param {Type} [props.name] - Description` |
+| Optional with default | `@param {Type} [props.name=default] - Description` |
+| Callback/function prop | `@param {Function} props.onChange - Description of when it fires` |
+| Union literal prop | `@param {'edit' \| 'new'} props.mode - Description` |
+| Complex object prop | `@param {{ username: string, role: string } \| null} props.user - Description` |
+| Promise prop (Next.js pages) | `@param {Promise<{ locale: string }>} props.params - Async route parameters` |
+
+### Provider / Context Components
+
+Providers follow the same rule — `children` and config props must all be listed:
+
+```tsx
+/**
+ * Provider component that wraps a combatant row.
+ *
+ * @component CombatantProvider
+ * @param {CombatantProviderProps} props - Provider props
+ * @param {InProgressCombatant} props.combatant - The combatant data object
+ * @param {string} props.locale - Current locale
+ * @param {Function} props.onUpdate - Callback when combatant data changes
+ * @param {Function} [props.onRemoveSessionOnly] - Remove combatant from session
+ * @param {ReactNode} props.children - Child components to wrap
+ * @param {boolean} [props.disableLocking=false] - Whether to disable row locking
+ * @returns {React.ReactElement} Provider with children
+ */
+```
+
+### Empty Props Interfaces
+
+Components with empty prop interfaces (e.g., components that get all data from context) are exempt — there are no props to document:
+
+```tsx
+/**
+ * @component
+ * @param {CombatantConditionsManagerProps} props - Component props
+ * @returns {JSX.Element} Rendered conditions manager
+ */
 ```
 
 ## Class Documentation

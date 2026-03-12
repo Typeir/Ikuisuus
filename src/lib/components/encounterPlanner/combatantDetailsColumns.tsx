@@ -31,7 +31,7 @@ import { ReactNode } from 'react';
 import styles from './creatureRow.module.scss';
 
 /**
- * Props for CombatantDetailsColumns component
+ * @description Props for CombatantDetailsColumns component
  * @interface CombatantDetailsColumnsProps
  * @property {ReactNode} [buffs] - Buff list editor component
  * @property {ReactNode} [items] - Item list editor component
@@ -48,10 +48,11 @@ interface CombatantDetailsColumnsProps {
 }
 
 /**
+ * @component
+ * @description
  * Four-column layout wrapper for combatant details.
  * Each column conditionally renders based on content presence.
  *
- * @component
  * @param {CombatantDetailsColumnsProps} props - Component props
  * @param {ReactNode} [props.buffs] - Buff list editor component
  * @param {ReactNode} [props.items] - Item list editor component
@@ -68,13 +69,9 @@ interface CombatantDetailsColumnsProps {
  * />
  * ```
  */
-export const CombatantDetailsColumns: React.FC<CombatantDetailsColumnsProps> = ({
-  buffs,
-  items,
-  spells,
-  affixes,
-  showEmpty = false,
-}) => {
+export const CombatantDetailsColumns: React.FC<
+  CombatantDetailsColumnsProps
+> = ({ buffs, items, spells, affixes, showEmpty = false }) => {
   const t = useTranslations('encounterPlanner');
 
   return (

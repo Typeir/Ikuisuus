@@ -62,6 +62,12 @@ const highlight = (code: string): string =>
  *
  * @component
  * @param {EditorSplitPaneProps} props - Component properties
+ * @param {string} props.textareaId - DOM id of the code editor textarea
+ * @param {string} props.content - Editor text content
+ * @param {Function} props.setContent - Update editor content callback
+ * @param {boolean} props.disabled - Whether the editor is inactive
+ * @param {'edit' | 'new'} props.mode - Editor mode
+ * @param {string} props.newPlaceholder - Placeholder text for new file mode
  * @returns {JSX.Element} Split pane editor
  */
 export function EditorSplitPane({

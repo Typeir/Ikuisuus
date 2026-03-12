@@ -78,6 +78,9 @@ interface ToolbarButton {
  *
  * @component
  * @param {EditorToolbarProps} props - Component properties
+ * @param {string} props.textareaId - DOM id of the underlying textarea
+ * @param {string} props.value - Current editor value
+ * @param {boolean} props.disabled - Whether the editor is disabled
  * @returns {JSX.Element} Toolbar strip
  */
 export function EditorToolbar({

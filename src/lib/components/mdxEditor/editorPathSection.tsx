@@ -55,6 +55,15 @@ interface EditorPathSectionProps {
  *
  * @component
  * @param {EditorPathSectionProps} props - Component properties
+ * @param {'edit' | 'new'} props.mode - Editor mode
+ * @param {string} props.slug - Content slug
+ * @param {Function} props.setSlug - Update slug callback
+ * @param {string} props.filePath - File path for new content
+ * @param {Function} props.setFilePath - Update file path callback
+ * @param {Function} props.handleLoad - Trigger content load
+ * @param {boolean} props.isLoading - Whether content is loading
+ * @param {string} props.locale - Current locale
+ * @param {Function} props.t - Translation function
  * @returns {JSX.Element} Path section
  */
 export function EditorPathSection({

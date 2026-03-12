@@ -47,6 +47,13 @@ interface EditorAuthSectionProps {
  *
  * @component
  * @param {EditorAuthSectionProps} props - Component properties
+ * @param {{ username: string, role: string } | null} props.user - Authenticated user or null
+ * @param {boolean} props.isLoggingIn - Whether login is in progress
+ * @param {string | null} props.authError - Authentication error message
+ * @param {Function} props.doLogin - Login handler accepting username and password
+ * @param {Function} props.logout - Logout handler
+ * @param {Function} props.clearAuthError - Clear auth error callback
+ * @param {Function} props.t - Translation function
  * @returns {JSX.Element} Auth section
  */
 export function EditorAuthSection({

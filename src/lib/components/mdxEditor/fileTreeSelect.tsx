@@ -145,6 +145,13 @@ function TreeNodeRow({
  *
  * @component
  * @param {FileTreeSelectProps} props - Component properties
+ * @param {string} props.value - Currently selected path
+ * @param {Function} props.onSelect - Callback when a folder is selected
+ * @param {TreeNode[]} props.tree - Tree data
+ * @param {boolean} [props.loading=false] - Whether tree data is loading
+ * @param {string} [props.placeholder='Select folder...'] - Placeholder text
+ * @param {string} [props.newFileLabel='New file'] - Label for the "New file" row
+ * @param {boolean} [props.disabled=false] - Whether the select is disabled
  * @returns {JSX.Element} Tree select dropdown
  */
 export function FileTreeSelect({
