@@ -101,7 +101,14 @@ export const fetchContent = async (
   locale: string,
   slugPath: string,
 ): Promise<{ content: string; resolvedPath: string } | null> => {
-  if (isBuildTime()) {
+  const buildTime = isBuildTime();
+  log.message('fetchContent called', {
+    locale,
+    slugPath,
+    source: buildTime ? 'filesystem' : 'github',
+    NEXT_PHASE: process.env.NEXT_PHASE ?? 'undefined',
+  });
+  if (buildTime) {
     return fetchFromFilesystem(locale, slugPath);
   }
   return fetchFromGitHub(locale, slugPath);

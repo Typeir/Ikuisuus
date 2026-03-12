@@ -68,7 +68,9 @@ export async function POST(req: NextRequest) {
     }
 
     try {
+      log.message('Revalidating path', { path: p });
       revalidatePath(p);
+      revalidatePath(p, 'page');
       results.push({ path: p, status: 'ok' });
     } catch (err) {
       results.push({
