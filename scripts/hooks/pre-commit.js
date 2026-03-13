@@ -111,7 +111,10 @@ function scanFileForPatterns(filePath, content) {
     const line = lines[lineNum];
 
     for (const pattern of ENCODED_PATTERNS) {
-      const regex = new RegExp(`\\b${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      const regex = new RegExp(
+        `\\b${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`,
+        'i',
+      );
       if (regex.test(line)) {
         return {
           file: filePath,
