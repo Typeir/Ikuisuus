@@ -2,7 +2,7 @@
  * @fileoverview Tooltip Component
  * @description Accessible tooltip with hover/focus activation, delay, and placement options.
  * Provides both a wrapper component and a curry-style HOC for easy integration.
- * 
+ *
  * @module tooltip
  * @version 1.0.0
  * @author Typeir
@@ -12,25 +12,26 @@
 'use client';
 
 import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  memo,
-  ReactNode,
-  ReactElement,
-  cloneElement,
-  isValidElement,
-  Children,
-  HTMLAttributes,
-  ComponentType,
+    Children,
+    ComponentType,
+    isValidElement,
+    memo,
+    ReactElement,
+    ReactNode,
+    useCallback,
+    useEffect,
+    useRef,
+    useState
 } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './tooltip.module.scss';
 
 /**
- * @type {TooltipPlacement}
- * Tooltip placement options relative to trigger element
+ * Allowed tooltip placement values relative to the trigger element.
+ * The tooltip will auto-flip to the opposite placement if there is
+ * insufficient viewport space.
+ *
+ * @typedef {'top' | 'bottom' | 'left' | 'right'} TooltipPlacement
  */
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
@@ -62,13 +63,22 @@ export interface TooltipProps {
 }
 
 /**
- * Calculate tooltip position relative to trigger element
+ * Calculates absolute tooltip position relative to a trigger element.
+ * Adjusts for scroll offsets and flips placement when the tooltip would
+ * overflow the viewport.
+ *
+ * @function calculatePosition
+ * @param {DOMRect} triggerRect - Bounding rect of the trigger element
+ * @param {DOMRect} tooltipRect - Bounding rect of the tooltip element
+ * @param {TooltipPlacement} placement - Desired placement direction
+ * @param {number} [offset=8] - Pixel gap between trigger and tooltip
+ * @returns {{ x: number; y: number; actualPlacement: TooltipPlacement }} Computed position and resolved placement
  */
 function calculatePosition(
   triggerRect: DOMRect,
   tooltipRect: DOMRect,
   placement: TooltipPlacement,
-  offset = 8
+  offset = 8,
 ): { x: number; y: number; actualPlacement: TooltipPlacement } {
   const { innerWidth, innerHeight } = window;
   const scrollX = window.scrollX;
@@ -80,47 +90,68 @@ function calculatePosition(
 
   switch (placement) {
     case 'top':
-      x = triggerRect.left + scrollX + (triggerRect.width - tooltipRect.width) / 2;
+      x =
+        triggerRect.left +
+        scrollX +
+        (triggerRect.width - tooltipRect.width) / 2;
       y = triggerRect.top + scrollY - tooltipRect.height - offset;
       break;
     case 'bottom':
-      x = triggerRect.left + scrollX + (triggerRect.width - tooltipRect.width) / 2;
+      x =
+        triggerRect.left +
+        scrollX +
+        (triggerRect.width - tooltipRect.width) / 2;
       y = triggerRect.bottom + scrollY + offset;
       break;
     case 'left':
       x = triggerRect.left + scrollX - tooltipRect.width - offset;
-      y = triggerRect.top + scrollY + (triggerRect.height - tooltipRect.height) / 2;
+      y =
+        triggerRect.top +
+        scrollY +
+        (triggerRect.height - tooltipRect.height) / 2;
       break;
     case 'right':
       x = triggerRect.right + scrollX + offset;
-      y = triggerRect.top + scrollY + (triggerRect.height - tooltipRect.height) / 2;
+      y =
+        triggerRect.top +
+        scrollY +
+        (triggerRect.height - tooltipRect.height) / 2;
       break;
   }
 
   const viewportMargin = 8;
-  
+
   if (placement === 'top' && y < scrollY + viewportMargin) {
     y = triggerRect.bottom + scrollY + offset;
     actualPlacement = 'bottom';
-  } else if (placement === 'bottom' && y + tooltipRect.height > scrollY + innerHeight - viewportMargin) {
+  } else if (
+    placement === 'bottom' &&
+    y + tooltipRect.height > scrollY + innerHeight - viewportMargin
+  ) {
     y = triggerRect.top + scrollY - tooltipRect.height - offset;
     actualPlacement = 'top';
   } else if (placement === 'left' && x < scrollX + viewportMargin) {
     x = triggerRect.right + scrollX + offset;
     actualPlacement = 'right';
-  } else if (placement === 'right' && x + tooltipRect.width > scrollX + innerWidth - viewportMargin) {
+  } else if (
+    placement === 'right' &&
+    x + tooltipRect.width > scrollX + innerWidth - viewportMargin
+  ) {
     x = triggerRect.left + scrollX - tooltipRect.width - offset;
     actualPlacement = 'left';
   }
 
-  x = Math.max(scrollX + viewportMargin, Math.min(x, scrollX + innerWidth - tooltipRect.width - viewportMargin));
+  x = Math.max(
+    scrollX + viewportMargin,
+    Math.min(x, scrollX + innerWidth - tooltipRect.width - viewportMargin),
+  );
 
   return { x, y, actualPlacement };
 }
 
 /**
  * Accessible tooltip component with hover/focus activation.
- * 
+ *
  * @component
  * @param {TooltipProps} props - Configuration for tooltip behavior
  * @property {ReactNode} props.content - Tooltip content to display
@@ -162,12 +193,12 @@ export const Tooltip = memo(function Tooltip({
 
     const triggerRect = triggerRef.current.getBoundingClientRect();
     const tooltipRect = tooltipRef.current.getBoundingClientRect();
-    
-    const { x, y, actualPlacement: newPlacement } = calculatePosition(
-      triggerRect,
-      tooltipRect,
-      placement
-    );
+
+    const {
+      x,
+      y,
+      actualPlacement: newPlacement,
+    } = calculatePosition(triggerRect, tooltipRect, placement);
 
     setPosition({ x, y });
     setActualPlacement(newPlacement);
@@ -176,7 +207,7 @@ export const Tooltip = memo(function Tooltip({
   /** Show tooltip after delay */
   const show = useCallback(() => {
     if (disabled) return;
-    
+
     clearTimeout(hideTimeoutRef.current);
     showTimeoutRef.current = setTimeout(() => {
       setIsVisible(true);
@@ -245,33 +276,32 @@ export const Tooltip = memo(function Tooltip({
         onFocus={() => show()}
         onBlur={() => hide()}
         style={{ display: 'contents' }}
-        aria-describedby={isVisible ? tooltipId : undefined}
-      >
+        aria-describedby={isVisible ? tooltipId : undefined}>
         {child}
       </span>
-      {isVisible && createPortal(
-        <div
-          ref={tooltipRef}
-          id={tooltipId}
-          role="tooltip"
-          className={`${styles.tooltip} ${styles[actualPlacement]} ${className}`}
-          style={{
-            transform: `translate(${position.x}px, ${position.y}px)`,
-            maxWidth,
-          }}
-        >
-          {content}
-          {showArrow && <div className={styles.arrow} />}
-        </div>,
-        document.body
-      )}
+      {isVisible &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            id={tooltipId}
+            role='tooltip'
+            className={`${styles.tooltip} ${styles[actualPlacement]} ${className}`}
+            style={{
+              transform: `translate(${position.x}px, ${position.y}px)`,
+              maxWidth,
+            }}>
+            {content}
+            {showArrow && <div className={styles.arrow} />}
+          </div>,
+          document.body,
+        )}
     </>
   );
 });
 
 /**
  * HOC-style wrapper for adding tooltips to existing components
- * 
+ *
  * @example
  * ```tsx
  * const ButtonWithTooltip = withTooltip(Button);
@@ -281,8 +311,10 @@ export const Tooltip = memo(function Tooltip({
  * ```
  */
 export function withTooltip<P extends object>(
-  WrappedComponent: ComponentType<P>
-): ComponentType<P & { tooltip?: ReactNode; tooltipPlacement?: TooltipPlacement }> {
+  WrappedComponent: ComponentType<P>,
+): ComponentType<
+  P & { tooltip?: ReactNode; tooltipPlacement?: TooltipPlacement }
+> {
   const WithTooltipComponent = ({
     tooltip,
     tooltipPlacement = 'top',
@@ -300,13 +332,13 @@ export function withTooltip<P extends object>(
   };
 
   WithTooltipComponent.displayName = `WithTooltip(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
-  
+
   return WithTooltipComponent;
 }
 
 /**
  * Simple wrapper that just applies tooltip to children without modifying props
- * 
+ *
  * @example
  * ```tsx
  * <WithTooltip content="Helpful info">
@@ -316,4 +348,9 @@ export function withTooltip<P extends object>(
  */
 export const WithTooltip = Tooltip;
 
+/**
+ * Re-export of Tooltip component as default for convenient imports.
+ *
+ * @see {@link Tooltip} for configuration options and usage examples
+ */
 export default Tooltip;

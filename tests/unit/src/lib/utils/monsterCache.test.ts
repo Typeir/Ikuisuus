@@ -11,14 +11,14 @@
  * @requires @/lib/utils/monsterCache - Monster cache utilities
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  clearMonsterCache,
-  getMonsterBySlug,
-  getMonsterIndex,
-} from '@/lib/utils/monsterCache';
-import type { MonsterData, MonsterIndexEntry } from '@/lib/utils/monsterCache';
 import { logger } from '@/lib/logging/logger';
+import type { MonsterData, MonsterIndexEntry } from '@/lib/utils/monsterCache';
+import {
+    clearMonsterCache,
+    getMonsterBySlug,
+    getMonsterIndex,
+} from '@/lib/utils/monsterCache';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockMonsterIndex: MonsterIndexEntry[] = [
   { slug: 'goblin', title: 'Goblin', cr: '1/4' },
@@ -35,12 +35,12 @@ const mockGoblinData: MonsterData = {
   ac: { value: 15, raw: '15 (leather armor, shield)' },
   hp: { average: 7, formula: '2d6', raw: '7 (2d6)' },
   abilities: {
-    str: { score: 8, mod: -1 },
-    dex: { score: 14, mod: 2 },
-    con: { score: 10, mod: 0 },
-    int: { score: 10, mod: 0 },
-    wis: { score: 8, mod: -1 },
-    cha: { score: 8, mod: -1 },
+    str: { score: 8 },
+    dex: { score: 14 },
+    con: { score: 10 },
+    int: { score: 10 },
+    wis: { score: 8 },
+    cha: { score: 8 },
   },
   speed: { raw: '30 ft.', modes: { walk: 30 } },
   tags: ['creature:humanoid', 'size:small'],
@@ -55,12 +55,12 @@ const mockOrcData: MonsterData = {
   ac: { value: 13, raw: '13 (hide armor)' },
   hp: { average: 15, formula: '2d8+6', raw: '15 (2d8+6)' },
   abilities: {
-    str: { score: 16, mod: 3 },
-    dex: { score: 12, mod: 1 },
-    con: { score: 16, mod: 3 },
-    int: { score: 7, mod: -2 },
-    wis: { score: 11, mod: 0 },
-    cha: { score: 10, mod: 0 },
+    str: { score: 16 },
+    dex: { score: 12 },
+    con: { score: 16 },
+    int: { score: 7 },
+    wis: { score: 11 },
+    cha: { score: 10 },
   },
   speed: { raw: '30 ft.', modes: { walk: 30 } },
   tags: ['creature:humanoid', 'size:medium'],
@@ -112,7 +112,8 @@ describe('monsterCache', () => {
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: () => Promise.resolve([{ slug: 'goblin', title: 'Goblin', cr: '1/4' }]),
+          json: () =>
+            Promise.resolve([{ slug: 'goblin', title: 'Goblin', cr: '1/4' }]),
         });
 
       await getMonsterIndex('en');

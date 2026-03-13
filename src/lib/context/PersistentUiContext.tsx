@@ -72,7 +72,7 @@ const PersistentUiDispatchContext =
  * Theme is read from unified storage with legacy key migration.
  */
 function readPersistedState(
-  serverExpandedPaths: string[]
+  serverExpandedPaths: string[],
 ): SerializedPersistentUiState {
   let expandedPaths: string[] = [];
   const isStatic = isStaticContentRoute();
@@ -101,12 +101,19 @@ function readPersistedState(
   }
 
   let theme: ThemeValue = 'dark';
+  let correctionsToken: string | null = null;
   const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
   if (stored) {
     try {
       const parsed = JSON.parse(stored) as SerializedPersistentUiState;
       if (parsed.theme === 'dark' || parsed.theme === 'light') {
         theme = parsed.theme;
+      }
+      if (
+        typeof parsed.correctionsToken === 'string' ||
+        parsed.correctionsToken === null
+      ) {
+        correctionsToken = parsed.correctionsToken;
       }
     } catch {
       const legacyTheme = fetchPersistentData(LEGACY_THEME_KEY);
@@ -121,7 +128,11 @@ function readPersistedState(
     }
   }
 
-  return { theme, sidebarMenu: { expandedPaths, isOpen: false } };
+  return {
+    theme,
+    correctionsToken,
+    sidebarMenu: { expandedPaths, isOpen: false },
+  };
 }
 
 /**
@@ -141,6 +152,7 @@ function writePersistedState(state: PersistentUiState): void {
   const serialized: SerializedPersistentUiState = {
     sidebarMenu: state.sidebarMenu,
     theme: state.theme,
+    correctionsToken: state.correctionsToken,
   };
 
   storePersistentData(PERSISTENT_UI_STORAGE_KEY, JSON.stringify(serialized));
@@ -197,11 +209,11 @@ export function PersistentUiProvider({
 
   const stateValue = useMemo<PersistentUiStateContextValue>(
     () => ({ state }),
-    [state]
+    [state],
   );
   const dispatchValue = useMemo<PersistentUiDispatchContextValue>(
     () => ({ dispatch }),
-    []
+    [],
   );
 
   return (
@@ -220,7 +232,7 @@ export function usePersistentUiState(): PersistentUiState {
   const context = useContext(PersistentUiStateContext);
   if (!context) {
     throw new Error(
-      'usePersistentUiState must be used within a PersistentUiProvider'
+      'usePersistentUiState must be used within a PersistentUiProvider',
     );
   }
   return context.state;
@@ -230,12 +242,12 @@ export function usePersistentUiState(): PersistentUiState {
  * Hook to access dispatch function
  */
 export function usePersistentUiDispatch(): (
-  action: PersistentUiAction
+  action: PersistentUiAction,
 ) => void {
   const context = useContext(PersistentUiDispatchContext);
   if (!context) {
     throw new Error(
-      'usePersistentUiDispatch must be used within a PersistentUiProvider'
+      'usePersistentUiDispatch must be used within a PersistentUiProvider',
     );
   }
   return context.dispatch;
@@ -253,4 +265,13 @@ export type {
 
 export { useThemeActions, useThemeState } from '../hooks/useThemeState';
 export type { ThemeActions, ThemeState } from '../hooks/useThemeState';
+
+export {
+  useCorrectionsTokenActions,
+  useCorrectionsTokenState
+} from '../hooks/useCorrectionsToken';
+export type {
+  CorrectionsTokenActions,
+  CorrectionsTokenState
+} from '../hooks/useCorrectionsToken';
 

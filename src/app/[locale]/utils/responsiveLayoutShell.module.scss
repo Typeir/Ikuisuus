@@ -66,8 +66,7 @@ h1.title {
   text-decoration: none !important;
 }
 
-.ssrThemeIcon,
-.ssrToolsIcon {
+.ssrThemeIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -99,30 +98,6 @@ html[data-theme='dark'] .ssrThemeIcon {
 html[data-theme='light'] .ssrThemeIcon {
   filter: saturate(0.05) contrast(0.3) brightness(0);
 }
-
-.ssrToolsIcon {
-  font-size: 1rem;
-  width: 1.5rem;
-  height: 1.5rem;
-
-  &::before {
-    content: '🛠️';
-  }
-
-  @media (min-width: 1024px) {
-    font-size: 1.125rem;
-  }
-}
-
-html[data-theme='dark'] .ssrToolsIcon {
-  filter: saturate(0.05) contrast(0.3) brightness(2.5);
-}
-
-html[data-theme='light'] .ssrToolsIcon {
-  filter: saturate(0.05) contrast(0.3) brightness(0);
-}
-
-
 
 /* ── Embed Mode ──────────────────────────────────────────────── */
 

@@ -38,6 +38,7 @@ interface PageProps {
  * @async
  * @function WorldSimPage
  * @param {PageProps} props - Page props with locale parameter
+ * @param {Promise<{ locale: string }>} props.params - Route parameters (async in Next.js 15)
  * @returns {Promise<JSX.Element>} Rendered page with World Sim
  */
 export default async function WorldSimPage({ params }: PageProps) {

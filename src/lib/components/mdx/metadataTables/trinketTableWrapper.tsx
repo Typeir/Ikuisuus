@@ -4,30 +4,31 @@
  * equipment-specific columns (item type, damage, damage type, properties, range, weight).
  * Supports locale-aware content via route params or props override. Handles thrown weapons,
  * special items, and saving throw mechanics.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires react
  * @requires next/navigation
  * @requires next-intl
  * @requires ./metadataTable
- * 
+ *
  * @example
  * ```mdx
  * <!-- In MDX content file -->
  * <TrinketTable />
- * 
+ *
  * <!-- With locale override -->
  * <TrinketTable locale="en" />
  * ```
  */
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { logger } from '@/lib/logging/logger';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import MetadataTable, { type ColumnConfig } from './metadataTable';
 import { MetadataTableSkeleton } from './metadataTableSkeleton';
 
@@ -74,13 +75,15 @@ type TrinketTableWrapperProps = {
 /**
  * Client-side wrapper for TrinketTable that fetches locale-aware data via API.
  * Can use locale from props, route params, or defaults to 'en'.
- * 
+ *
  * @component
  * @param {TrinketTableWrapperProps} props - Component props
  * @param {string} [props.locale] - Optional locale override (defaults to route param or 'en')
  * @returns {JSX.Element} The rendered trinket table with client-side data fetching
  */
-export default function TrinketTableWrapper({ locale: localeProp }: TrinketTableWrapperProps = {}) {
+export default function TrinketTableWrapper({
+  locale: localeProp,
+}: TrinketTableWrapperProps = {}) {
   const t = useTranslations('tables.trinkets');
   const tColumns = useTranslations('tables.trinkets.columns');
   const params = useParams();
@@ -91,38 +94,49 @@ export default function TrinketTableWrapper({ locale: localeProp }: TrinketTable
 
   useEffect(() => {
     fetch(`/api/trinkets?locale=${locale}`)
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then(trinkets => {
-        console.log('Loaded trinkets:', trinkets.length, trinkets);
+      .then((trinkets) => {
+        logger.debug('Loaded trinkets', { count: trinkets.length });
         setData(trinkets);
         setLoading(false);
       })
-      .catch(err => {
-        console.error('Failed to load trinkets:', err);
+      .catch((err) => {
+        logger.error('Failed to load trinkets', {
+          error: err instanceof Error ? err.message : String(err),
+        });
         setError(err.message);
         setLoading(false);
       });
   }, [locale]);
 
   if (loading) {
-    return <MetadataTableSkeleton 
-      rows={10} 
-      columns={6}
-      filters={[
-        { label: 'Type', type: 'select' }
-      ]}
-    />;
+    return (
+      <MetadataTableSkeleton
+        rows={10}
+        columns={6}
+        filters={[{ label: 'Type', type: 'select' }]}
+      />
+    );
   }
 
   if (error) {
-    return <div className="text-center py-8 text-red-500">{t('error')}: {error}</div>;
+    return (
+      <div className='text-center py-8 text-red-500'>
+        {t('error')}: {error}
+      </div>
+    );
   }
 
   if (data.length === 0) {
-    return <div className="text-center py-8" dangerouslySetInnerHTML={{ __html: t('noTrinkets') }} />;
+    return (
+      <div
+        className='text-center py-8'
+        dangerouslySetInnerHTML={{ __html: t('noTrinkets') }}
+      />
+    );
   }
 
   const columns: ColumnConfig[] = [
@@ -173,9 +187,10 @@ export default function TrinketTableWrapper({ locale: localeProp }: TrinketTable
       render: (value: any) => {
         if (!value || value === '—') return '—';
         const str = String(value);
-        return str.split(', ').map(effect => 
-          effect.charAt(0).toUpperCase() + effect.slice(1)
-        ).join(', ');
+        return str
+          .split(', ')
+          .map((effect) => effect.charAt(0).toUpperCase() + effect.slice(1))
+          .join(', ');
       },
       sortable: false,
       filterable: true,
@@ -188,9 +203,13 @@ export default function TrinketTableWrapper({ locale: localeProp }: TrinketTable
       render: (value: any) => {
         if (!value || value === '—') return '—';
         const str = String(value);
-        return str.split(', ').map(condition => 
-          condition.charAt(0).toUpperCase() + condition.slice(1)
-        ).join(', ');
+        return str
+          .split(', ')
+          .map(
+            (condition) =>
+              condition.charAt(0).toUpperCase() + condition.slice(1),
+          )
+          .join(', ');
       },
       sortable: false,
       filterable: true,

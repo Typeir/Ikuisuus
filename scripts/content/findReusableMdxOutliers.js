@@ -1,13 +1,13 @@
 /**
  * Reusable MDX Component Detector
- * 
+ *
  * @fileoverview Analyzes MDX content files to identify and extract reusable components.
  * Compiles detected components into a centralized TypeScript module for import.
- * 
+ *
  * @module findReusableMdxOutliers
  * @version 1.0.0
  * @since 1.0.0
- * 
+ *
  * @requires fs.promises File system operations with promises
  * @requires path Path utilities
  * @requires next-mdx-remote-client/rsc MDX evaluation for server components
@@ -16,12 +16,12 @@
  * @requires acorn-jsx JSX syntax support for acorn
  * @requires react-dom/server Server-side rendering
  * @requires ts-morph TypeScript AST manipulation
- * 
+ *
  * @description
  * Scans all MDX files in src/content/en/ to detect custom React components
  * used within MDX content. Extracts these components and compiles them into
  * a single TypeScript file (mdxComponents.tsx) for centralized import.
- * 
+ *
  * Process:
  * 1. Recursively scans MDX files
  * 2. Parses JSX/MDX syntax with acorn
@@ -29,7 +29,7 @@
  * 4. Extracts source components
  * 5. Compiles to TypeScript module
  * 6. Validates TypeScript syntax
- * 
+ *
  * @example
  * // Run from command line
  * node findReusableMdxOutliers.js
@@ -48,21 +48,23 @@ const acorn = require('acorn');
 const jsx = require('acorn-jsx');
 const ReactDOMServer = require('react-dom/server');
 const { Project } = require('ts-morph');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'findReusableMdxOutliers' });
 
 /** @constant {string} OUTPUT_FILE - Path to generated components module */
 const OUTPUT_FILE = path.join(
   process.cwd(),
-  'src/lib/components/mdx/mdxComponents.tsx'
+  'src/lib/components/mdx/mdxComponents.tsx',
 );
 
 /**
  * Recursively finds all .mdx files in a directory.
- * 
+ *
  * @async
  * @function findMdxFiles
  * @param {string} dir - Root directory to search
  * @returns {Promise<string[]>} Array of absolute paths to .mdx files
- * 
+ *
  * @example
  * const mdxFiles = await findMdxFiles('src/content/en');
  * // Returns: ['C:/project/src/content/en/spells/fireball.mdx', ...]
@@ -76,7 +78,7 @@ const findMdxFiles = async (dir) => {
       if (entry.isDirectory()) return findMdxFiles(res);
       if (res.endsWith('.mdx')) return res;
       return [];
-    })
+    }),
   );
 
   return files.flat();
@@ -180,12 +182,12 @@ const extractTags = (compiledJs) => {
     }
   }
 
-  console.log(`Found ${outliers.size} reusable MDX components:\n`);
+  log.message('Found reusable MDX components', { count: outliers.size });
 
   // Delete the output file if it exists, ignore errors if not
   try {
     await fs.unlink(OUTPUT_FILE);
-    console.log(`Deleted existing output file: ${OUTPUT_FILE}`);
+    log.message('Deleted existing output file', { path: OUTPUT_FILE });
   } catch (err) {
     if (err.code !== 'ENOENT') throw err; // only ignore if file doesn't exist
   }
@@ -278,8 +280,8 @@ ${componentDocs}
           initializer: (writer) => {
             writer.write(
               `(props: any): JSX.Element => _jsx('div', { dangerouslySetInnerHTML: { __html: ${JSON.stringify(
-                html
-              )} }, ...props })`
+                html,
+              )} }, ...props })`,
             );
           },
         },
@@ -288,7 +290,7 @@ ${componentDocs}
 
     sourceFile.addStatements(`mdxComponents["${tag}"] = ${tag};`);
 
-    console.log(`✅ ${tag}: compiled and rendered from ${filePath}`);
+    log.message(`✅ ${tag}: compiled and rendered`, { path: filePath });
   }
 
   // Export mdxComponents as default
@@ -297,5 +299,5 @@ ${componentDocs}
   // Save file
   await sourceFile.save();
 
-  console.log(`\n✨ Wrote compiled components to ${OUTPUT_FILE}`);
+  log.message('✨ Wrote compiled components', { path: OUTPUT_FILE });
 })();

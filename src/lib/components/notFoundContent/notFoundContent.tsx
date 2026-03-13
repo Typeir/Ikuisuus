@@ -1,7 +1,7 @@
 /**
  * @fileoverview Not Found Content Component
  * @description 404 page with smart route suggestion using nearest match algorithm
- * 
+ *
  * @module NotFoundContent
  * @version 1.0.0
  * @author Typeir
@@ -12,6 +12,7 @@
 
 import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import { ApiRoutes } from '@/lib/enums/apiRoutes';
+import { logger } from '@/lib/logging/logger';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,7 +21,7 @@ import styles from './notFound.module.scss';
 
 /**
  * Route match result from API
- * 
+ *
  * @interface RouteMatch
  * @property {string} path - Matched route path
  * @property {string} [title] - Display title for route
@@ -34,7 +35,7 @@ interface RouteMatch {
 
 /**
  * Not Found content component with smart suggestions
- * 
+ *
  * @component
  * @returns {JSX.Element} 404 page content
  */
@@ -50,15 +51,17 @@ export function NotFoundContent(): JSX.Element {
         const response = await fetch(ApiRoutes.FindNearestRoute, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pathname })
+          body: JSON.stringify({ pathname }),
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           setNearestRoute(data.match);
         }
       } catch (err) {
-        console.error('Failed to find nearest route:', err);
+        logger.error('Failed to find nearest route', {
+          error: err instanceof Error ? err.message : String(err),
+        });
       } finally {
         setLoading(false);
       }
@@ -76,32 +79,32 @@ export function NotFoundContent(): JSX.Element {
       <h1 className={styles.heading}>{t('heading')}</h1>
       <h2 className={styles.title}>{t('subtitle')}</h2>
       <p className={styles.description}>{t('description')}</p>
-      
+
       {loading && (
         <div className={styles.skeletonCard}>
           <SkeletonGroup>
-            <Skeleton variant="text" width="80%" />
-            <Skeleton variant="button" width="200px" height="3rem" />
-            <Skeleton variant="text" width="40%" />
+            <Skeleton variant='text' width='80%' />
+            <Skeleton variant='button' width='200px' height='3rem' />
+            <Skeleton variant='text' width='40%' />
           </SkeletonGroup>
         </div>
       )}
-      
+
       {!loading && nearestRoute && (
-          <Link href={nearestRoute.path} >
-        <div className={styles.suggestionCard}>
-          <p className={styles.suggestionLabel}>{t('didYouMean')}</p>
-          <p className={styles.suggestionLink}>
-            {nearestRoute.title || nearestRoute.path}
-          </p>
-          <p className={styles.similarityScore}>
-            {t('similarity')}: {Math.round(nearestRoute.similarity * 100)}%
-          </p>
-        </div>
-          </Link>
+        <Link href={nearestRoute.path}>
+          <div className={styles.suggestionCard}>
+            <p className={styles.suggestionLabel}>{t('didYouMean')}</p>
+            <p className={styles.suggestionLink}>
+              {nearestRoute.title || nearestRoute.path}
+            </p>
+            <p className={styles.similarityScore}>
+              {t('similarity')}: {Math.round(nearestRoute.similarity * 100)}%
+            </p>
+          </div>
+        </Link>
       )}
-      
-      <Link href="/" className={styles.backLink}>
+
+      <Link href='/' className={styles.backLink}>
         ← {t('backToLibrary')}
       </Link>
     </div>

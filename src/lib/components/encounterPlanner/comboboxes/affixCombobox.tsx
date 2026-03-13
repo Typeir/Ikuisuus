@@ -26,11 +26,12 @@
 
 'use client';
 
+import { logger } from '@/lib/logging/logger';
 import type { AffixEntry } from '@/lib/types/encounterPlanner';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { ComboboxItem, GenericCombobox } from './genericCombobox';
 import styles from './combobox.module.scss';
+import { ComboboxItem, GenericCombobox } from './genericCombobox';
 
 /**
  * Affix index entry with metadata fields
@@ -99,7 +100,9 @@ export const AffixCombobox: React.FC<AffixComboboxProps> = ({
         }));
         setAllAffixes(mappedData);
       } catch (error) {
-        console.error('Failed to load affix index:', error);
+        logger.error('Failed to load affix index', {
+          error: error instanceof Error ? error.message : String(error),
+        });
       } finally {
         setIsLoading(false);
       }
@@ -109,7 +112,9 @@ export const AffixCombobox: React.FC<AffixComboboxProps> = ({
   }, [locale]);
 
   // Filter out existing affixes on render (no effect needed)
-  const filteredAffixes = allAffixes.filter((affix) => !existingAffixes.includes(affix.title));
+  const filteredAffixes = allAffixes.filter(
+    (affix) => !existingAffixes.includes(affix.title),
+  );
 
   return (
     <GenericCombobox
@@ -125,7 +130,9 @@ export const AffixCombobox: React.FC<AffixComboboxProps> = ({
       }
       placeholder={t('searchAffixes')}
       noResultsMessage={t('noAffixesFound')}
-      renderItem={(affix) => <div className={styles.spellTitle}>{affix.title}</div>}
+      renderItem={(affix) => (
+        <div className={styles.spellTitle}>{affix.title}</div>
+      )}
     />
   );
 };

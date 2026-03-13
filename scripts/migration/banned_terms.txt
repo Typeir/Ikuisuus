@@ -1,0 +1,8 @@
+# Banned terms for content repo CI.
+# One term per line. Lines starting with # and blank lines are ignored.
+# Keep this list conservative to minimize false positives.
+# Terms are matched case-insensitively against changed file content.
+
+# Slurs / hate speech (abbreviated examples — extend as needed)
+# NOTE: Add actual terms your project needs to block.
+# The CI workflow reads this file at runtime.

@@ -13,6 +13,7 @@
  */
 
 import { ExternalSearchResults } from '@/lib/components/externalSearchResults/externalSearchResults';
+import { logger } from '@/lib/logging/logger';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import mockSearchResults from '../../../../../fixtures/externalSearch/googleSearchResults.json';
@@ -233,24 +234,19 @@ describe('ExternalSearchResults', () => {
 
   describe('Error Handling', () => {
     it('should handle fetch errors gracefully', async () => {
-      const consoleErrorSpy = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {});
       mockFetch.mockRejectedValue(new Error('Network error'));
 
       render(<ExternalSearchResults query='error' />);
 
       await waitFor(
         () => {
-          expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect(logger.error).toHaveBeenCalledWith(
             'External search failed',
-            expect.any(Error),
+            expect.objectContaining({ error: 'Network error' }),
           );
         },
         { timeout: 1000 },
       );
-
-      consoleErrorSpy.mockRestore();
     });
 
     it('should not crash on malformed response', async () => {

@@ -67,6 +67,12 @@ interface CombatantProviderProps {
  *
  * @component CombatantProvider
  * @param {CombatantProviderProps} props - Provider props
+ * @param {InProgressCombatant} props.combatant - The combatant data object
+ * @param {string} props.locale - Current locale
+ * @param {Function} props.onUpdate - Callback when combatant data changes
+ * @param {Function} [props.onRemoveSessionOnly] - Optional callback to remove combatant from session
+ * @param {ReactNode} props.children - Child components to wrap
+ * @param {boolean} [props.disableLocking=false] - Whether to disable row locking
  * @returns {React.ReactElement} Provider with children
  *
  * @example

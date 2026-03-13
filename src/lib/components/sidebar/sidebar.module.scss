@@ -76,10 +76,9 @@
 .content {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s ease-in !important;
-  // margin-bottom: 1rem;
+  transition: max-height 0.5s var(--springy-bezier);
 }
 
-// .expanded {
-//   max-height: 1000px;
-// }
+.expanded {
+  max-height: var(--expanded-height);
+}

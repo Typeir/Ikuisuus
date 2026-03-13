@@ -1,0 +1,36 @@
+/**
+ * @fileoverview Schema Barrel Export
+ * @description Re-exports all domain metadata schemas from a single entry point.
+ *
+ * @module lib/db/content/schemas
+ * @version 1.0.0
+ * @author Typeir
+ * @since 3.0.0
+ */
+
+export type {
+    AbilityScore,
+    AbilityScores,
+    MonsterAC,
+    MonsterHP,
+    MonsterIndexEntry,
+    MonsterMetadata,
+    MonsterSenses,
+    MonsterSpeed
+} from './monsterMetadata';
+
+export type {
+    HeirloomIndexEntry,
+    HeirloomMetadata,
+    HeirloomWeaponDamage
+} from './heirloomMetadata';
+
+export type {
+    SpellIndexEntry,
+    SpellListRef,
+    SpellMetadata
+} from './spellMetadata';
+
+export type { DraftInput, DraftMetadata, DraftStatus } from './draftMetadata';
+export type { TrinketIndexEntry, TrinketMetadata } from './trinketMetadata';
+

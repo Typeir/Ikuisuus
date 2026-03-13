@@ -280,9 +280,7 @@ const SidebarItem = ({
         <div
           className={cn(styles.content, open && styles.expanded)}
           style={{
-            maxHeight: open ? `${item.expandedHeight}px` : '0px',
-            transition: 'max-height 0.5s var(--springy-bezier)',
-            overflow: 'hidden',
+            ['--expanded-height' as string]: `${item.expandedHeight}px`,
           }}>
           <Sidebar
             items={children as LayoutItem[]}
@@ -315,9 +313,7 @@ const SidebarItem = ({
         <div
           className={cn(styles.content, open && styles.expanded)}
           style={{
-            maxHeight: open ? `${item.expandedHeight}px` : '0px',
-            transition: 'max-height 0.5s var(--springy-bezier)',
-            overflow: 'hidden',
+            ['--expanded-height' as string]: `${item.expandedHeight}px`,
           }}>
           <Sidebar
             items={item.children}

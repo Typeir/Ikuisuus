@@ -22,9 +22,48 @@ A Next.js 15 internationalized documentation site for D&D content, featuring MDX
 
 ## 🚀 Getting Started
 
-Run the development server:
+### Setup
 
 ```bash
+# Install dependencies (includes git hook setup via husky)
 npm install
+
+# Install multirepo hooks (content submodule coordination)
+npm run multirepo:setup
+
+# Run development server (auto-runs pre-init build pipeline)
 npm run dev
 ```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+### Requirements
+
+- Node.js 18+
+- Git LFS (`git lfs install`)
+- PostgreSQL 14+ (optional, for database features)
+
+### Key Commands
+
+```bash
+npm run test           # Run test suite
+npm run build          # Production build
+npm run test:hooks     # Verify git hooks are installed
+
+# Content workflow
+npm run pre-init       # Full build pipeline (compress, kebabify, generate metadata)
+npm run linkify:world  # Auto-link content (with backup)
+
+# Multirepo (both repos together)
+bash scripts/multirepo/ik.sh commit -m "message"
+bash scripts/multirepo/ik.sh status
+
+# Database (if needed)
+npm run db:init       # Create schema
+npm run db:migrate    # Apply migrations
+npm run db:seed       # Load content
+```
+
+See [Copilot Instructions](.github/copilot-instructions.md) for architecture & hard rules, or [Building & Architecture](.github/docs/) for detailed guides.
+
+---

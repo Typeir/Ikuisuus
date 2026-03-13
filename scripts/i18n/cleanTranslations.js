@@ -1,24 +1,24 @@
 /**
  * Translation File Cleanup Script
- * 
+ *
  * @fileoverview Removes individual namespace translation files after merging.
  * Only keeps index.json files. Runs exclusively in Vercel environment.
- * 
+ *
  * @module cleanTranslations
  * @version 1.0.0
  * @since 1.0.0
- * 
+ *
  * @requires fs Node.js file system module
  * @requires path Node.js path utilities
  * @requires glob File pattern matching
- * 
+ *
  * @description
  * After mergeMessages.js creates index.json for each locale, this script
  * removes the individual namespace files (layout.json, search.json, etc.)
  * to reduce deployment size. Only runs when VERCEL=1 environment variable is set.
- * 
+ *
  * Safety: Skips execution outside Vercel to preserve development files.
- * 
+ *
  * @example
  * // In package.json (Vercel environment)
  * "scripts": {
@@ -29,12 +29,14 @@
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'cleanTranslations' });
 
 /** @constant {string} MESSAGES_DIR - Absolute path to translation messages directory */
 const MESSAGES_DIR = path.join(__dirname, '..', '..', 'messages');
 
 if (process.env.VERCEL !== '1') {
-  console.log('🚫 Skipping cleanup: not running in Vercel');
+  log.message('🚫 Skipping cleanup: not running in Vercel');
   process.exit(0);
 }
 
@@ -49,9 +51,9 @@ locales.forEach((locale) => {
   files.forEach((file) => {
     if (!file.endsWith('index.json')) {
       fs.unlinkSync(file);
-      console.log(`🗑️ Deleted ${file}`);
+      log.message('🗑️ Deleted', { path: file });
     }
   });
 });
 
-console.log('✅ Translation cleanup complete (only index.json kept).');
+log.message('✅ Translation cleanup complete (only index.json kept).');

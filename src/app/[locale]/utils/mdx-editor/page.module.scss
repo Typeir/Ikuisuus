@@ -1,0 +1,18 @@
+/**
+ * @fileoverview MDX Editor Page Styles
+ * @description Full-width, non-prose layout for the editor tool page.
+ * Removes the default prose/centered content styling used by library pages.
+ *
+ * @module app/[locale]/utils/mdx-editor/page.module
+ */
+
+.editorPage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  min-height: calc(100vh - 6rem);
+  text-align: left;
+  padding: 0;
+  margin: 0;
+}

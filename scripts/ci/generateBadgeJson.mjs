@@ -1,21 +1,21 @@
 /**
  * Generate Shields endpoint JSON for test count badge
- * 
+ *
  * @fileoverview Reads vitest-report.json and generates a Shields-compatible
  * endpoint JSON file (vitest-tests.json) for dynamic test count badges.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires fs
  * @requires path
- * 
+ *
  * @description
  * Parses Vitest JSON report to extract test counts and generates a badge JSON
  * that follows the Shields endpoint schema. Badge color and message depend on
  * test pass/fail status.
- * 
+ *
  * Output format:
  * ```json
  * {
@@ -25,7 +25,7 @@
  *   "color": "brightgreen" or "red"
  * }
  * ```
- * 
+ *
  * @example
  * node scripts/ci/generateBadgeJson.mjs
  * // Reads: vitest-report.json
@@ -35,6 +35,9 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createLogger } from '../core/logger.mjs';
+
+const log = createLogger({ script: 'generateBadgeJson' });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPORT_FILE = path.join(process.cwd(), 'vitest-report.json');
@@ -42,10 +45,10 @@ const BADGE_FILE = path.join(process.cwd(), 'vitest-tests.json');
 
 /**
  * Extract test counts from Vitest JSON report
- * 
+ *
  * @param {object} report - Parsed vitest-report.json content
  * @returns {object} Object with passed, failed, total counts
- * 
+ *
  * @example
  * extractCounts(report)
  * // Returns: { passed: 1000, failed: 5, total: 1005 }
@@ -75,7 +78,7 @@ function extractCounts(report) {
 
 /**
  * Generate Shields endpoint JSON badge
- * 
+ *
  * @param {number} passed - Number of passing tests
  * @param {number} failed - Number of failing tests
  * @returns {object} Shields-compatible endpoint JSON
@@ -88,7 +91,7 @@ function generateBadgeJson(passed, failed) {
       schemaVersion: 1,
       label: 'tests',
       message: `${failed} failing`,
-      color: 'red'
+      color: 'red',
     };
   }
 
@@ -97,7 +100,7 @@ function generateBadgeJson(passed, failed) {
       schemaVersion: 1,
       label: 'tests',
       message: 'passing',
-      color: 'brightgreen'
+      color: 'brightgreen',
     };
   }
 
@@ -105,7 +108,7 @@ function generateBadgeJson(passed, failed) {
     schemaVersion: 1,
     label: 'tests',
     message: `${passed}/${total} passing`,
-    color: 'brightgreen'
+    color: 'brightgreen',
   };
 }
 
@@ -115,7 +118,7 @@ function generateBadgeJson(passed, failed) {
 async function main() {
   try {
     if (!fs.existsSync(REPORT_FILE)) {
-      console.error(`❌ vitest-report.json not found at ${REPORT_FILE}`);
+      log.error(`❌ vitest-report.json not found`, { path: REPORT_FILE });
       process.exit(1);
     }
 
@@ -127,11 +130,11 @@ async function main() {
 
     fs.writeFileSync(BADGE_FILE, JSON.stringify(badge, null, 2), 'utf-8');
 
-    console.log(`✅ Generated badge JSON at ${BADGE_FILE}`);
-    console.log(`   Tests: ${passed} passed, ${failed} failed, ${total} total`);
-    console.log(`   Badge message: "${badge.message}"`);
+    log.message(`✅ Generated badge JSON at ${BADGE_FILE}`);
+    log.message(`   Tests: ${passed} passed, ${failed} failed, ${total} total`);
+    log.message(`   Badge message: "${badge.message}"`);
   } catch (error) {
-    console.error('❌ Error generating badge JSON:', error.message);
+    log.error('❌ Error generating badge JSON', { error: error.message });
     process.exit(1);
   }
 }

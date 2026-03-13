@@ -3,23 +3,23 @@
  * @module tests/unit/src/lib/components/encounterPlanner/encounterPlanner.test
  * @description Tests encounter CRUD operations, debounced autosave, creature management,
  * import/export functionality, and transition to PlayMode.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @testing-library/react
  * @requires @/lib/components/encounterPlanner/encounterPlanner
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act, cleanup } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { EncounterPlanner } from '@/lib/components/encounterPlanner/encounterPlanner';
 import type { CreatureEntry, Encounter } from '@/lib/types/encounterPlanner';
 import type { InProgressCombat } from '@/lib/types/inProgressCombat';
 import * as encounterStorage from '@/lib/utils/encounterStorage';
 import * as inProgressCombatStorage from '@/lib/utils/inProgressCombatStorage';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({
@@ -37,7 +37,11 @@ vi.mock('@/lib/components/ui', async (importOriginal) => {
       dismissAll: vi.fn(),
       info: vi.fn(),
       success: vi.fn(),
-      warning: vi.fn(),
+      warning: vi.fn(
+        (_msg: string, opts?: { action?: { onClick?: () => void } }) => {
+          opts?.action?.onClick?.();
+        },
+      ),
       error: vi.fn(),
     }),
   };
@@ -48,8 +52,12 @@ vi.mock('@/lib/components/encounterPlanner/combatantRow', () => ({
   CombatantRow: ({ combatant, onUpdate, onRemoveSessionOnly }: any) => (
     <div data-testid={`combatant-row-${combatant.id}`}>
       <span>{combatant.name}</span>
-      <button onClick={() => onUpdate({ ...combatant, hpCurrent: 100 })}>Update</button>
-      <button title="removeCombatant" onClick={onRemoveSessionOnly}>Remove</button>
+      <button onClick={() => onUpdate({ ...combatant, hpCurrent: 100 })}>
+        Update
+      </button>
+      <button title='removeCombatant' onClick={onRemoveSessionOnly}>
+        Remove
+      </button>
     </div>
   ),
 }));
@@ -57,7 +65,9 @@ vi.mock('@/lib/components/encounterPlanner/combatantRow', () => ({
 // Mock ComboBox
 vi.mock('@/lib/components/encounterPlanner/comboboxes', () => ({
   CreatureCombobox: ({ onSelect }: { onSelect: (slug: string) => void }) => (
-    <button data-testid="creature-combobox" onClick={() => onSelect('test-monster')}>
+    <button
+      data-testid='creature-combobox'
+      onClick={() => onSelect('test-monster')}>
       Add Monster
     </button>
   ),
@@ -65,8 +75,14 @@ vi.mock('@/lib/components/encounterPlanner/comboboxes', () => ({
 
 // Mock PlayMode
 vi.mock('@/lib/components/encounterPlanner/playMode', () => ({
-  PlayMode: ({ combat, onExit }: { combat: InProgressCombat; onExit: () => void }) => (
-    <div data-testid="play-mode">
+  PlayMode: ({
+    combat,
+    onExit,
+  }: {
+    combat: InProgressCombat;
+    onExit: () => void;
+  }) => (
+    <div data-testid='play-mode'>
       <h2>Play Mode: {combat.encounterName}</h2>
       <button onClick={onExit}>Exit Play Mode</button>
     </div>
@@ -83,7 +99,9 @@ vi.mock('@/lib/hooks/useDebounce', () => ({
  * @param overrides - Partial creature properties to override
  * @returns Mock CreatureEntry instance
  */
-const createMockCreature = (overrides: Partial<CreatureEntry> = {}): CreatureEntry => ({
+const createMockCreature = (
+  overrides: Partial<CreatureEntry> = {},
+): CreatureEntry => ({
   id: 'creature-1',
   name: 'Test Creature',
   hpCurrent: 10,
@@ -106,7 +124,9 @@ const createMockCreature = (overrides: Partial<CreatureEntry> = {}): CreatureEnt
  * @param overrides - Partial encounter properties to override
  * @returns Mock Encounter instance
  */
-const createMockEncounter = (overrides: Partial<Encounter> = {}): Encounter => ({
+const createMockEncounter = (
+  overrides: Partial<Encounter> = {},
+): Encounter => ({
   id: 'encounter-1',
   name: 'Test Encounter',
   creatures: [],
@@ -143,7 +163,9 @@ describe('EncounterPlanner Component', () => {
     mockSaveEncounter = vi.fn();
     mockDeleteEncounter = vi.fn();
     mockSetActiveEncounterId = vi.fn();
-    mockCreateEmptyEncounter = vi.fn(() => createMockEncounter({ id: 'new-encounter', name: 'New Encounter' }));
+    mockCreateEmptyEncounter = vi.fn(() =>
+      createMockEncounter({ id: 'new-encounter', name: 'New Encounter' }),
+    );
     mockExportEncounter = vi.fn((enc) => JSON.stringify(enc));
     mockImportEncounter = vi.fn((json) => JSON.parse(json));
     mockGetActiveInProgressCombatId = vi.fn(() => null);
@@ -162,59 +184,94 @@ describe('EncounterPlanner Component', () => {
       startedAt: new Date().toISOString(),
     }));
 
-    vi.spyOn(encounterStorage, 'getEncounters').mockImplementation(mockGetEncounters);
-    vi.spyOn(encounterStorage, 'getActiveEncounter').mockImplementation(mockGetActiveEncounter);
-    vi.spyOn(encounterStorage, 'saveEncounter').mockImplementation(mockSaveEncounter);
-    vi.spyOn(encounterStorage, 'deleteEncounter').mockImplementation(mockDeleteEncounter);
-    vi.spyOn(encounterStorage, 'setActiveEncounterId').mockImplementation(mockSetActiveEncounterId);
-    vi.spyOn(encounterStorage, 'createEmptyEncounter').mockImplementation(mockCreateEmptyEncounter);
-    vi.spyOn(encounterStorage, 'exportEncounter').mockImplementation(mockExportEncounter);
-    vi.spyOn(encounterStorage, 'importEncounter').mockImplementation(mockImportEncounter);
-    vi.spyOn(encounterStorage, 'createCreatureFromMonster').mockImplementation((monsterData: any) => ({
-      id: 'creature-' + Math.random(),
-      name: monsterData.title || 'Test Creature',
-      hpCurrent: 50,
-      hpMax: 50,
-      tempHp: null,
-      ac: 15,
-      stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
-      conditions: [],
-      initiativeValue: null,
-      initiativeBonus: 2,
-      proficiencyBonus: 2,
-      speed: null,
-      hpFormula: '5d8',
-      details: { buffs: [], items: [], spells: [], affixes: [] },
-      sourceHref: '/library/monsters/' + (monsterData.slug || 'test'),
-      crText: 'CR 2',
-    }));
-    vi.spyOn(encounterStorage, 'createEmptyCreature').mockImplementation(() => ({
-      id: 'creature-empty',
-      name: 'New Creature',
-      hpCurrent: 10,
-      hpMax: 10,
-      tempHp: null,
-      ac: 10,
-      stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
-      conditions: [],
-      initiativeValue: null,
-      initiativeBonus: 0,
-      proficiencyBonus: null,
-      speed: null,
-      hpFormula: null,
-      details: { buffs: [], items: [], spells: [], affixes: [] },
-    }));
+    vi.spyOn(encounterStorage, 'getEncounters').mockImplementation(
+      mockGetEncounters,
+    );
+    vi.spyOn(encounterStorage, 'getActiveEncounter').mockImplementation(
+      mockGetActiveEncounter,
+    );
+    vi.spyOn(encounterStorage, 'saveEncounter').mockImplementation(
+      mockSaveEncounter,
+    );
+    vi.spyOn(encounterStorage, 'deleteEncounter').mockImplementation(
+      mockDeleteEncounter,
+    );
+    vi.spyOn(encounterStorage, 'setActiveEncounterId').mockImplementation(
+      mockSetActiveEncounterId,
+    );
+    vi.spyOn(encounterStorage, 'createEmptyEncounter').mockImplementation(
+      mockCreateEmptyEncounter,
+    );
+    vi.spyOn(encounterStorage, 'exportEncounter').mockImplementation(
+      mockExportEncounter,
+    );
+    vi.spyOn(encounterStorage, 'importEncounter').mockImplementation(
+      mockImportEncounter,
+    );
+    vi.spyOn(encounterStorage, 'createCreatureFromMonster').mockImplementation(
+      (monsterData: any) => ({
+        id: 'creature-' + Math.random(),
+        name: monsterData.title || 'Test Creature',
+        hpCurrent: 50,
+        hpMax: 50,
+        tempHp: null,
+        ac: 15,
+        stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+        conditions: [],
+        initiativeValue: null,
+        initiativeBonus: 2,
+        proficiencyBonus: 2,
+        speed: null,
+        hpFormula: '5d8',
+        details: { buffs: [], items: [], spells: [], affixes: [] },
+        sourceHref: '/library/monsters/' + (monsterData.slug || 'test'),
+        crText: 'CR 2',
+      }),
+    );
+    vi.spyOn(encounterStorage, 'createEmptyCreature').mockImplementation(
+      () => ({
+        id: 'creature-empty',
+        name: 'New Creature',
+        hpCurrent: 10,
+        hpMax: 10,
+        tempHp: null,
+        ac: 10,
+        stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+        conditions: [],
+        initiativeValue: null,
+        initiativeBonus: 0,
+        proficiencyBonus: null,
+        speed: null,
+        hpFormula: null,
+        details: { buffs: [], items: [], spells: [], affixes: [] },
+      }),
+    );
 
-    vi.spyOn(inProgressCombatStorage, 'getActiveInProgressCombatId').mockImplementation(mockGetActiveInProgressCombatId);
-    vi.spyOn(inProgressCombatStorage, 'getInProgressCombat').mockImplementation(mockGetInProgressCombat);
-    vi.spyOn(inProgressCombatStorage, 'createInProgressCombat').mockImplementation(mockCreateInProgressCombat);
-    vi.spyOn(inProgressCombatStorage, 'saveInProgressCombat').mockImplementation(vi.fn());
-    vi.spyOn(inProgressCombatStorage, 'setActiveInProgressCombatId').mockImplementation(vi.fn());
+    vi.spyOn(
+      inProgressCombatStorage,
+      'getActiveInProgressCombatId',
+    ).mockImplementation(mockGetActiveInProgressCombatId);
+    vi.spyOn(inProgressCombatStorage, 'getInProgressCombat').mockImplementation(
+      mockGetInProgressCombat,
+    );
+    vi.spyOn(
+      inProgressCombatStorage,
+      'createInProgressCombat',
+    ).mockImplementation(mockCreateInProgressCombat);
+    vi.spyOn(
+      inProgressCombatStorage,
+      'saveInProgressCombat',
+    ).mockImplementation(vi.fn());
+    vi.spyOn(
+      inProgressCombatStorage,
+      'setActiveInProgressCombatId',
+    ).mockImplementation(vi.fn());
 
     global.fetch = vi.fn(() =>
       Promise.resolve({
-        json: () => Promise.resolve([{ slug: 'test-monster', title: 'Test Monster' }]),
-      })
+        json: () =>
+          Promise.resolve([{ slug: 'test-monster', title: 'Test Monster' }]),
+      }),
     ) as any;
 
     global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
@@ -225,7 +282,7 @@ describe('EncounterPlanner Component', () => {
 
   afterEach(() => {
     // Clear all tracked timeouts to prevent "window is not defined" errors after teardown
-    timeoutIds.forEach(id => clearTimeout(id));
+    timeoutIds.forEach((id) => clearTimeout(id));
     timeoutIds.length = 0; // Clear the array
     cleanup(); // Clean up DOM after each test
     vi.clearAllMocks();
@@ -239,7 +296,7 @@ describe('EncounterPlanner Component', () => {
     });
 
     it('should load active encounter on mount', () => {
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
       expect(mockGetEncounters).toHaveBeenCalled();
       expect(mockGetActiveEncounter).toHaveBeenCalled();
     });
@@ -248,7 +305,7 @@ describe('EncounterPlanner Component', () => {
       mockGetEncounters.mockReturnValue([]);
       mockGetActiveEncounter.mockReturnValue(null);
 
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       expect(mockCreateEmptyEncounter).toHaveBeenCalled();
       expect(mockSaveEncounter).toHaveBeenCalled();
@@ -256,14 +313,14 @@ describe('EncounterPlanner Component', () => {
     });
 
     it('should not create encounter if active one exists', () => {
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
       expect(mockCreateEmptyEncounter).not.toHaveBeenCalled();
     });
   });
 
   describe('Encounter Management', () => {
     it('should display encounter name', () => {
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
       // Use placeholder to specifically target the input (not select)
       const encounterName = screen.getByPlaceholderText('encounterName');
       expect(encounterName).toBeInTheDocument();
@@ -272,7 +329,7 @@ describe('EncounterPlanner Component', () => {
 
     it('should update encounter name', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       // Use placeholder to specifically target the input
       const nameInput = screen.getByPlaceholderText('encounterName');
@@ -281,14 +338,17 @@ describe('EncounterPlanner Component', () => {
 
       await waitFor(() => {
         expect(mockSaveEncounter).toHaveBeenCalled();
-        const savedEncounter = mockSaveEncounter.mock.calls[mockSaveEncounter.mock.calls.length - 1][0];
+        const savedEncounter =
+          mockSaveEncounter.mock.calls[
+            mockSaveEncounter.mock.calls.length - 1
+          ][0];
         expect(savedEncounter.name).toBe('Updated Name');
       });
     });
 
     it('should create new encounter', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       const newButton = screen.getByText(/newEncounter/);
       await user.click(newButton);
@@ -305,7 +365,7 @@ describe('EncounterPlanner Component', () => {
         createMockEncounter({ id: '2' }),
       ]);
 
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       const deleteButton = screen.getByText(/deleteEncounter/);
       await user.click(deleteButton);
@@ -313,18 +373,20 @@ describe('EncounterPlanner Component', () => {
       expect(mockDeleteEncounter).toHaveBeenCalled();
     });
 
-    it('should not delete if only one encounter', async () => {
+    it('should create new encounter when deleting the last one', async () => {
       const user = userEvent.setup();
-      mockGetEncounters.mockReturnValue([createMockEncounter()]);
-      // Mock confirm to return false (user cancels deletion)
-      vi.mocked(global.confirm).mockReturnValueOnce(false);
+      mockGetEncounters
+        .mockReturnValueOnce([createMockEncounter()])
+        .mockReturnValueOnce([createMockEncounter()])
+        .mockReturnValue([]);
 
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       const deleteButton = screen.getByText(/deleteEncounter/);
       await user.click(deleteButton);
 
-      expect(mockDeleteEncounter).not.toHaveBeenCalled();
+      expect(mockDeleteEncounter).toHaveBeenCalled();
+      expect(mockCreateEmptyEncounter).toHaveBeenCalled();
     });
 
     it('should switch active encounter', async () => {
@@ -334,7 +396,7 @@ describe('EncounterPlanner Component', () => {
         createMockEncounter({ id: '2', name: 'Encounter 2' }),
       ]);
 
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       const select = screen.getByRole('combobox');
       await user.selectOptions(select, '2');
@@ -346,7 +408,7 @@ describe('EncounterPlanner Component', () => {
   describe('Creature Management', () => {
     it('should add creature from API', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       // Use the visible "Add Creature" button
       const addButton = screen.getByText(/addCreature/);
@@ -365,7 +427,9 @@ describe('EncounterPlanner Component', () => {
       });
 
       // Component should throw on initialization error
-      expect(() => render(<EncounterPlanner locale="en" />)).toThrow('Storage Error');
+      expect(() => render(<EncounterPlanner locale='en' />)).toThrow(
+        'Storage Error',
+      );
     });
 
     it('should remove creature', async () => {
@@ -378,13 +442,16 @@ describe('EncounterPlanner Component', () => {
       });
       mockGetActiveEncounter.mockReturnValue(encounterWithCreatures);
 
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       const removeButtons = screen.getAllByTitle('removeCombatant');
       await user.click(removeButtons[0]);
 
       await waitFor(() => {
-        const savedEncounter = mockSaveEncounter.mock.calls[mockSaveEncounter.mock.calls.length - 1][0];
+        const savedEncounter =
+          mockSaveEncounter.mock.calls[
+            mockSaveEncounter.mock.calls.length - 1
+          ][0];
         expect(savedEncounter.creatures.length).toBe(1);
       });
     });
@@ -393,7 +460,7 @@ describe('EncounterPlanner Component', () => {
   describe('Import/Export', () => {
     it('should export encounter as JSON', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       const exportButton = screen.getByText(/exportEncounter/);
       await user.click(exportButton);
@@ -402,7 +469,7 @@ describe('EncounterPlanner Component', () => {
       await waitFor(() => {
         expect(mockExportEncounter).toHaveBeenCalled();
       });
-      
+
       // Verify exported data has correct structure
       const exportedEncounter = mockExportEncounter.mock.calls[0][0];
       expect(exportedEncounter).toHaveProperty('id');
@@ -415,7 +482,7 @@ describe('EncounterPlanner Component', () => {
   describe('PlayMode Transition', () => {
     it('should enter play mode', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       const playButton = screen.getByText(/startCombat/);
       await user.click(playButton);
@@ -428,7 +495,7 @@ describe('EncounterPlanner Component', () => {
 
     it('should exit play mode', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       const playButton = screen.getByText(/startCombat/);
       await user.click(playButton);
@@ -459,15 +526,15 @@ describe('EncounterPlanner Component', () => {
       mockGetActiveInProgressCombatId.mockReturnValue('combat-1');
       mockGetInProgressCombat.mockReturnValue(mockCombat);
 
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       // Component shows resume banner
       expect(screen.getByText(/resumeCombatAvailable/)).toBeInTheDocument();
-      
+
       // Click resume button
       const resumeButtons = screen.getAllByText(/resumeCombat/);
       await user.click(resumeButtons[0]);
-      
+
       // Verify the storage functions were called to retrieve and load the combat
       await waitFor(() => {
         expect(mockGetActiveInProgressCombatId).toHaveBeenCalled();
@@ -479,7 +546,7 @@ describe('EncounterPlanner Component', () => {
   describe('Debounced Autosave', () => {
     it('should save encounter after updates', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       mockSaveEncounter.mockClear();
 
@@ -498,7 +565,7 @@ describe('EncounterPlanner Component', () => {
       mockGetActiveEncounter.mockReturnValue(null);
       mockGetEncounters.mockReturnValue([]);
 
-      render(<EncounterPlanner locale="en" />);
+      render(<EncounterPlanner locale='en' />);
 
       expect(mockCreateEmptyEncounter).toHaveBeenCalled();
     });

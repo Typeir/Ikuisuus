@@ -12,6 +12,8 @@ const fs = require('fs/promises');
 const { globby } = require('globby');
 const path = require('path');
 const sharp = require('sharp');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'compressAssets' });
 
 /** Directory containing original full-resolution assets */
 const SOURCE_DIR = 'public/full-size';
@@ -32,7 +34,7 @@ const formatBytes = (bytes) => {
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 };
 
 /**
@@ -46,8 +48,11 @@ const compressImages = async () => {
     absolute: true,
   });
 
-  console.log(`📦 Compressing assets...`);
-  console.log(`🗂  Found ${files.length} images in ${SOURCE_DIR}\n`);
+  log.message('📦 Compressing assets...');
+  log.message('🗂  Found images to process', {
+    count: files.length,
+    path: SOURCE_DIR,
+  });
 
   let totalOriginalSize = 0;
   let totalCompressedSize = 0;
@@ -61,13 +66,13 @@ const compressImages = async () => {
     /** Output path in OUTPUT_DIR, replacing extension with .webp */
     const outputPath = path.join(
       OUTPUT_DIR,
-      relative.replace(/\.(png|jpe?g)$/i, '.webp')
+      relative.replace(/\.(png|jpe?g)$/i, '.webp'),
     );
 
     try {
       // Skip if already compressed
       await fs.access(outputPath);
-      console.log(`↷ Skipped (already exists): ${relative}`);
+      log.message('↷ Skipped (already exists)', { path: relative });
       skippedCount++;
       continue;
     } catch {
@@ -80,7 +85,7 @@ const compressImages = async () => {
       // Get original file size and metadata
       const originalStats = await fs.stat(file);
       const originalSize = originalStats.size;
-      
+
       // Get original image metadata
       const metadata = await sharp(file).metadata();
       const originalWidth = metadata.width || 0;
@@ -107,30 +112,38 @@ const compressImages = async () => {
 
       // Output detailed info
       const outputFilename = path.basename(outputPath);
-      const dimensionChange = originalWidth !== newWidth 
-        ? ` (${originalWidth}×${originalHeight} → ${newWidth}×${newHeight})` 
-        : ` (${originalWidth}×${originalHeight})`;
+      const dimensionChange =
+        originalWidth !== newWidth
+          ? ` (${originalWidth}×${originalHeight} → ${newWidth}×${newHeight})`
+          : ` (${originalWidth}×${originalHeight})`;
       const sizeChange = ` (${formatBytes(originalSize)} → ${formatBytes(compressedSize)})`;
-      
-      console.log(`✓ Processed: ${path.basename(file)} → ${outputFilename}${dimensionChange}${sizeChange}`);
+
+      log.message(
+        `✓ Processed: ${path.basename(file)} → ${outputFilename}${dimensionChange}${sizeChange}`,
+      );
     } catch (err) {
-      console.error(`✗ Failed: ${relative}`);
-      console.error(err);
+      log.error('✗ Failed', {
+        path: relative,
+        error: err.message || String(err),
+      });
     }
   }
 
   // Final summary
   if (processedCount > 0) {
-    const reduction = Math.round(((totalOriginalSize - totalCompressedSize) / totalOriginalSize) * 100);
-    console.log(`\n✅ Compressed ${processedCount} images (${formatBytes(totalOriginalSize)} → ${formatBytes(totalCompressedSize)}, ${reduction}% reduction)`);
+    const reduction = Math.round(
+      ((totalOriginalSize - totalCompressedSize) / totalOriginalSize) * 100,
+    );
+    log.message(
+      `✅ Compressed ${processedCount} images (${formatBytes(totalOriginalSize)} → ${formatBytes(totalCompressedSize)}, ${reduction}% reduction)`,
+    );
   } else {
-    console.log(`\n✅ All images already processed (${skippedCount} skipped)`);
+    log.message('✅ All images already processed', { skipped: skippedCount });
   }
 };
 
 // Run the script
 compressImages().catch((err) => {
-  console.error('✖ Unexpected script error');
-  console.error(err);
+  log.error('✖ Unexpected script error', { error: err.message || String(err) });
   process.exit(1);
 });

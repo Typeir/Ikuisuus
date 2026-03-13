@@ -39,6 +39,7 @@ interface PageProps {
  * @async
  * @function EncounterPlannerPage
  * @param {PageProps} props - Page props with locale parameter
+ * @param {Promise<{ locale: string }>} props.params - Async route parameters
  * @returns {Promise<JSX.Element>} Rendered page with encounter planner
  */
 export default async function EncounterPlannerPage({ params }: PageProps) {

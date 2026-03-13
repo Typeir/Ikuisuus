@@ -11,6 +11,8 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'pre-commit' });
 
 function loadPatterns() {
   try {
@@ -23,7 +25,7 @@ function loadPatterns() {
       .filter((line) => line.length > 0)
       .map((encoded) => Buffer.from(encoded, 'base64').toString('utf-8'));
   } catch (error) {
-    console.error('❌ Error loading patterns file:', error.message);
+    log.error('❌ Error loading patterns file', { error: error.message });
     process.exit(1);
   }
 }
@@ -71,7 +73,7 @@ function getStagedFiles() {
     });
     return output.split('\n').filter(Boolean);
   } catch (error) {
-    console.error('Error reading staged files');
+    log.error('Error reading staged files');
     process.exit(1);
   }
 }
@@ -79,7 +81,7 @@ function getStagedFiles() {
 function shouldCheckFile(filePath) {
   if (
     IGNORE_PATTERNS.some(
-      (dir) => filePath.includes(`/${dir}/`) || filePath.includes(`\\${dir}\\`)
+      (dir) => filePath.includes(`/${dir}/`) || filePath.includes(`\\${dir}\\`),
     )
   ) {
     return false;
@@ -148,18 +150,61 @@ function runSecurityChecks() {
     return 0;
   }
 
-  console.error('\n❌ SECURITY CHECK FAILED\n');
-  console.error('Staged files contain restricted patterns:\n');
-
-  for (const match of matches) {
-    console.error(`📄 ${match.file}:${match.line}`);
-    console.error(`   ${match.preview}\n`);
-  }
-
-  console.error('Please review these files before committing.\n');
+  const details = matches
+    .map((match) => `📄 ${match.file}:${match.line}\n   ${match.preview}`)
+    .join('\n');
+  log.error(
+    '\n❌ SECURITY CHECK FAILED\n\nStaged files contain restricted patterns:\n\n' +
+      details +
+      '\n\nPlease review these files before committing.',
+  );
 
   return 1;
 }
 
-const exitCode = runSecurityChecks();
-process.exit(exitCode);
+/**
+ * Content submodule path (relative to repo root).
+ * Staged files under this path should be committed in the content repo, not here.
+ */
+const SUBMODULE_PATH = 'src/content';
+
+/**
+ * Checks whether any staged files reside inside the content submodule directory.
+ * If so, prints an error message and returns exit code 1.
+ *
+ * @returns {number} 0 if clean, 1 if submodule files are staged
+ */
+function runSubmoduleGuard() {
+  const stagedFiles = getStagedFiles();
+  const submodulePrefix = SUBMODULE_PATH.replace(/\\/g, '/');
+  const violations = stagedFiles.filter(
+    (f) => f.startsWith(submodulePrefix + '/') || f === submodulePrefix,
+  );
+
+  if (violations.length === 0) {
+    return 0;
+  }
+
+  const fileList = violations.map((file) => `  📄 ${file}`).join('\n');
+  log.error(
+    '\n❌ SUBMODULE GUARD FAILED\n\n' +
+      'You have staged changes inside the content submodule (' +
+      SUBMODULE_PATH +
+      ').\n' +
+      'Commit them in the content repo instead.\n\n' +
+      fileList,
+  );
+  return 1;
+}
+
+const securityExit = runSecurityChecks();
+if (securityExit !== 0) {
+  process.exit(securityExit);
+}
+
+/* Skip the submodule guard when ik is coordinating both repos —
+   ik intentionally stages src/content to update the submodule pointer. */
+if (process.env.IK_RUNNING !== '1') {
+  const submoduleExit = runSubmoduleGuard();
+  process.exit(submoduleExit);
+}

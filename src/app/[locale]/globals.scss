@@ -67,6 +67,13 @@ html:not([data-theme]) body {
   --color-phase-bloodied-border: #ef4444;
   --color-phase-doomed: #7f1d1d; /* Doomed: 25%-0% (dark red) */
   --color-phase-doomed-border: #991b1b;
+  --color-phase-slain: #000000;
+  --color-phase-slain-border: #ffffff;
+  --color-phase-text-dark: #000000;
+  --color-phase-text-light: #ffffff;
+
+  /* Danger subtle background for close/dismiss hover states */
+  --color-danger-subtle: rgba(248, 113, 113, 0.2);
 
   /* Lair/special event colors - muted gold and brown */
   --color-lair-bg-start: #8b5a2b;
@@ -218,6 +225,23 @@ html:not([data-theme]) body {
   --worldsim-controls-btn-active: rgba(255, 255, 255, 0.14);
   --worldsim-text-shadow: rgba(0, 0, 0, 0.6);
   --worldsim-text-shadow-light: rgba(0, 0, 0, 0.5);
+
+  /* Selection + autofill */
+  --color-selection-bg: rgba(143, 211, 161, 0.25);
+  --color-selection-text: inherit;
+  --color-autofill-bg: #1b1d23;
+  --color-autofill-text: #c8ccc7;
+  --color-autofill-border: #2a2c35;
+
+  /* Prism syntax tokens */
+  --prism-comment: #6a737d;
+  --prism-keyword: #8acfd4;
+  --prism-string: #8fd3a1;
+  --prism-title: #d4a8e0;
+  --prism-punctuation: #a1a1aa;
+  --prism-url: #8fd3a1;
+  --prism-bold: #c8ccc7;
+  --prism-italic: #c8ccc7;
 }
 
 /* Light theme explicit */
@@ -252,6 +276,11 @@ html[data-theme='light'] {
   --color-phase-bloodied-border: #dc2626;
   --color-phase-doomed: #be123c; /* Doomed: 25%-0% (rose) */
   --color-phase-doomed-border: #9f1239;
+  --color-phase-slain: #000000;
+  --color-phase-slain-border: #374151;
+  --color-phase-text-dark: #000000;
+  --color-phase-text-light: #ffffff;
+  --color-danger-subtle: rgba(239, 68, 68, 0.15);
 
   /* Lair/special event colors - muted gold for light theme */
   --color-lair-bg-start: #c4a35a;
@@ -358,6 +387,23 @@ html[data-theme='light'] {
   --worldsim-label-text: #ffffff;
   --worldsim-label-accent: #88ddaa;
   --worldsim-label-bg: 0 0 0 / 0.75;
+
+  /* Selection + autofill */
+  --color-selection-bg: rgba(0, 112, 243, 0.2);
+  --color-selection-text: inherit;
+  --color-autofill-bg: #f4f4f5;
+  --color-autofill-text: #1f2937;
+  --color-autofill-border: #e5e7eb;
+
+  /* Prism syntax tokens */
+  --prism-comment: #6a737d;
+  --prism-keyword: #0070f3;
+  --prism-string: #22863a;
+  --prism-title: #6f42c1;
+  --prism-punctuation: #6b7280;
+  --prism-url: #0070f3;
+  --prism-bold: #1f2937;
+  --prism-italic: #1f2937;
 }
 
 /* Dark theme */
@@ -483,6 +529,23 @@ html[data-theme='dark'] {
   --worldsim-label-text: var(--color-text);
   --worldsim-label-accent: var(--color-accent);
   --worldsim-label-bg: 0 0 0 / 0.65;
+
+  /* Selection + autofill */
+  --color-selection-bg: rgba(143, 211, 161, 0.25);
+  --color-selection-text: inherit;
+  --color-autofill-bg: #1b1d23;
+  --color-autofill-text: #c8ccc7;
+  --color-autofill-border: #2a2c35;
+
+  /* Prism syntax tokens */
+  --prism-comment: #6a737d;
+  --prism-keyword: #8acfd4;
+  --prism-string: #8fd3a1;
+  --prism-title: #d4a8e0;
+  --prism-punctuation: #a1a1aa;
+  --prism-url: #8fd3a1;
+  --prism-bold: #c8ccc7;
+  --prism-italic: #c8ccc7;
 }
 
 /* ============================================
@@ -529,6 +592,41 @@ html[data-theme='dark'] {
   @media print {
     .prose {
       max-width: 100vw !important;
+    }
+  }
+
+  /* ── Global text selection ────────────────── */
+  ::selection {
+    background-color: var(--color-selection-bg);
+    color: var(--color-selection-text);
+  }
+
+  /* ── Autofill / autocomplete overrides ────── */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-autofill-text);
+    -webkit-box-shadow: 0 0 0 1000px var(--color-autofill-bg) inset;
+    box-shadow: 0 0 0 1000px var(--color-autofill-bg) inset;
+    border-color: var(--color-autofill-border);
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: var(--color-autofill-text);
+  }
+
+  button,
+  .actionable {
+    color: var(--color-bg);
+    background-color: var(--color-actionable);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s var(--springy-bezier);
+
+    &:hover {
+      background-color: var(--color-primary);
     }
   }
 }
@@ -620,18 +718,6 @@ body {
     color: var(--color-text);
     border-color: var(--color-secondary);
   }
-
-  button,
-  .actionable {
-    color: var(--color-bg);
-    background-color: var(--color-actionable);
-    border: none;
-    transition: background-color 0.2s var(--springy-bezier);
-
-    &:hover {
-      background-color: var(--color-primary);
-    }
-  }
 }
 
 /* ============================================
@@ -662,11 +748,6 @@ body {
 
   .secondary {
     color: var(--color-secondary) !important;
-  }
-
-  .actionable {
-    color: var(--color-actionable);
-    cursor: pointer;
   }
 }
 

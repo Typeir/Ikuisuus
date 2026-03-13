@@ -1,0 +1,2 @@
+# Commit message format validation: [action]: text
+node scripts/hooks/commit-msg.js "$1"

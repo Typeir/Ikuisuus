@@ -25,11 +25,12 @@
 
 'use client';
 
+import { logger } from '@/lib/logging/logger';
 import type { SpellRef } from '@/lib/types/encounterPlanner';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { ComboboxItem, GenericCombobox } from './genericCombobox';
 import styles from './combobox.module.scss';
+import { ComboboxItem, GenericCombobox } from './genericCombobox';
 
 /**
  * Spell index entry with metadata fields
@@ -93,7 +94,9 @@ export const SpellCombobox: React.FC<SpellComboboxProps> = ({
         }));
         setSpellIndex(mappedData);
       } catch (error) {
-        console.error('Failed to load spell index:', error);
+        logger.error('Failed to load spell index', {
+          error: error instanceof Error ? error.message : String(error),
+        });
       } finally {
         setIsLoading(false);
       }

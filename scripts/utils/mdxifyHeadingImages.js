@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'mdxifyHeadingImages' });
 
 const ROOT_DIR = path.resolve(process.cwd(), 'src', 'content'); // Adjust as needed
 
@@ -26,7 +28,7 @@ function replaceHeadingImage(filePath) {
       const src = match[2];
       // Replace markdown image syntax with React component usage
       lines[i] = `<BlendedImage src="${src}" alt="${alt}" />`;
-      console.log(`Replaced image in ${filePath} line ${i + 1}`);
+      log.message('Replaced image', { path: filePath, line: i + 1 });
       break; // Only replace the first matched image
     }
   }
@@ -44,7 +46,9 @@ function main() {
   const pattern = path.join(ROOT_DIR, '**/*.sheet.mdx');
   glob(pattern, (err, files) => {
     if (err) {
-      console.error('Error finding .sheet.mdx files:', err);
+      log.error('Error finding .sheet.mdx files', {
+        error: err.message || String(err),
+      });
       return;
     }
     files.forEach(replaceHeadingImage);

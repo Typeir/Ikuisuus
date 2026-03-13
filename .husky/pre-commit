@@ -1,0 +1,5 @@
+# Security pattern scan (blocks commit if secrets detected)
+node scripts/hooks/pre-commit.js || exit $?
+
+# Multirepo sync warning (advisory, never blocks)
+bash scripts/multirepo/pre-commit-warn.sh

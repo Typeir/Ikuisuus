@@ -1,0 +1,112 @@
+name: Auto-merge corrections
+
+on:
+  # Runs after content-check completes on a PR
+  check_suite:
+    types: [completed]
+  # Also trigger when content-check reports status
+  workflow_run:
+    workflows: ['content-check']
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Auto-merge bot PRs
+    runs-on: ubuntu-latest
+    # Only run when the triggering workflow/check succeeded
+    if: >-
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      (github.event_name == 'check_suite' && github.event.check_suite.conclusion == 'success')
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Find and merge open correction PRs
+        id: merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # List open PRs whose branch starts with "corrections/" or "new/"
+          PRS=$(gh pr list --state open --json number,headRefName \
+            --jq '[.[] | select(.headRefName | test("^(corrections|new)/"))] | .[].number' 2>/dev/null \
+            | tr '\n' ' ' | xargs)
+
+          if [ -z "$PRS" ]; then
+            echo "No correction PRs found."
+            exit 0
+          fi
+
+          echo "Found PRs: $PRS"
+
+          # content-check already closes PRs that fail, so any open bot PR is safe to merge
+          MERGED_FILES=""
+          for PR in $PRS; do
+            echo "Attempting to merge PR #${PR}..."
+
+            # Extract the file path from the PR body before merging
+            BODY=$(gh pr view "$PR" --json body --jq '.body' 2>/dev/null || echo "")
+            FILE_PATH=$(echo "$BODY" | grep -oP '(?<=\*\*File\*\*: `)[^`]+' || echo "")
+
+            gh pr merge "$PR" --squash --delete-branch \
+              && echo "✅ PR #${PR} merged." \
+              || { echo "⚠️  PR #${PR} merge failed (may need approvals or branch protection)."; continue; }
+
+            if [ -n "$FILE_PATH" ]; then
+              MERGED_FILES="${MERGED_FILES}${FILE_PATH}\n"
+            fi
+          done
+
+          echo "merged_files<<EOF" >> "$GITHUB_OUTPUT"
+          echo -e "$MERGED_FILES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger ISR revalidation
+        if: steps.merge.outputs.merged_files != ''
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          REVALIDATION_SECRET: ${{ secrets.REVALIDATION_SECRET }}
+          VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
+        run: |
+          if [ -z "$SITE_URL" ] || [ -z "$REVALIDATION_SECRET" ]; then
+            echo "⚠️  SITE_URL or REVALIDATION_SECRET not configured — skipping revalidation."
+            exit 0
+          fi
+
+          # Build JSON array of paths from merged file paths
+          PATHS="[]"
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            # Extract locale (e.g. "en") and content path, strip .mdx extension
+            LOCALE=$(echo "$file" | cut -d'/' -f1)
+            CONTENT_PATH=$(echo "$file" | cut -d'/' -f2- | sed 's|\.sheet\.mdx$||' | sed 's|\.mdx$||')
+            PATHS=$(echo "$PATHS" | jq --arg p "/${LOCALE}/library/${CONTENT_PATH}" '. + [$p]')
+          done <<< "${{ steps.merge.outputs.merged_files }}"
+
+          echo "Revalidating paths: $PATHS"
+
+          # Build bypass header if configured (bypasses Vercel Deployment Protection)
+          BYPASS_HEADER=""
+          if [ -n "$VERCEL_PROTECTION_BYPASS" ]; then
+            BYPASS_HEADER="x-vercel-protection-bypass: ${VERCEL_PROTECTION_BYPASS}"
+          fi
+
+          HTTP_STATUS=$(curl -s -o /tmp/revalidate-response.json -w "%{http_code}" \
+            -X POST "${SITE_URL}/api/revalidate" \
+            -H "Content-Type: application/json" \
+            -H "x-revalidation-secret: ${REVALIDATION_SECRET}" \
+            ${BYPASS_HEADER:+-H "$BYPASS_HEADER"} \
+            -d "{\"paths\": $PATHS}")
+
+          echo "Revalidation response ($HTTP_STATUS):"
+          cat /tmp/revalidate-response.json
+          echo ""
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✅ ISR revalidation triggered successfully."
+          else
+            echo "⚠️  ISR revalidation returned status $HTTP_STATUS (non-blocking)."
+          fi

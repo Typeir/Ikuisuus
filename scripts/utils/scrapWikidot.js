@@ -19,6 +19,8 @@
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
+const { createLogger } = require('../core/logger.cjs');
+const log = createLogger({ script: 'scrapWikidot' });
 
 const BASE_URL = 'http://dnd2024.wikidot.com';
 const START_URL = `${BASE_URL}/#Classes`;
@@ -158,7 +160,7 @@ const deleteFolderRecursive = (dirPath) => {
 
 // Handle cleanAll
 if (cleanAll && fs.existsSync(OUTPUT_DIR)) {
-  console.log(`Cleaning output directory: ${OUTPUT_DIR}`);
+  log.message('Cleaning output directory', { path: OUTPUT_DIR });
   deleteFolderRecursive(OUTPUT_DIR);
 }
 
@@ -170,7 +172,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
-  console.log(`Fetching class list from ${START_URL}`);
+  log.message('Fetching class list', { url: START_URL });
   await page.goto(START_URL);
 
   const classLinks = await page.$$eval('#page-content a', (anchors) =>
@@ -182,7 +184,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
     const visited = new Set();
 
     try {
-      console.log(`Processing class: ${className}`);
+      log.message('Processing class', { className });
 
       await page.goto(classMainUrl);
       const content = await page.$eval('#page-content', (el) => el.innerHTML);
@@ -217,7 +219,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
         visited.add(subclassUrl);
 
         try {
-          console.log(`  -> Specialization: ${subclassUrl}`);
+          log.message('-> Specialization', { url: subclassUrl });
           await page.goto(subclassUrl);
           const subContent = await page.$eval(
             '#page-content',
@@ -250,18 +252,20 @@ if (!fs.existsSync(OUTPUT_DIR)) {
             fs.writeFileSync(subFilePath, finalMdx, 'utf8');
           }
         } catch (subErr) {
-          console.warn(
-            `    [Skipped] Failed to scrape subclass at ${subclassUrl}: ${subErr.message}`,
-          );
+          log.warning('[Skipped] Failed to scrape subclass', {
+            url: subclassUrl,
+            error: subErr.message || String(subErr),
+          });
         }
       }
     } catch (err) {
-      console.warn(
-        `[Skipped] Failed to process ${classMainUrl}: ${err.message}`,
-      );
+      log.warning('[Skipped] Failed to process', {
+        url: classMainUrl,
+        error: err.message || String(err),
+      });
     }
   }
 
   await browser.close();
-  console.log('Done!');
+  log.message('Done!');
 })();

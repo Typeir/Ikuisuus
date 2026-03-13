@@ -39,6 +39,11 @@ export interface SkeletonProps {
  * 
  * @component
  * @param {SkeletonProps} props - Component properties
+ * @param {SkeletonVariant} [props.variant] - Skeleton shape variant
+ * @param {string} [props.width] - Custom width override
+ * @param {string} [props.height] - Custom height override
+ * @param {string} [props.className] - Additional CSS class names
+ * @param {number} [props.count] - Number of skeleton elements to render
  * @returns {JSX.Element} Skeleton loading placeholder
  * 
  * @example

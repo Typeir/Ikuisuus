@@ -58,6 +58,7 @@ interface WorldSimProviderProps {
  *
  * @component
  * @param {WorldSimProviderProps} props - Provider props
+ * @param {ReactNode} props.children - Child components to wrap
  * @returns {JSX.Element} Provider wrapping children
  */
 export function WorldSimProvider({ children }: WorldSimProviderProps) {
