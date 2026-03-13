@@ -20,10 +20,10 @@
 import DraftBanner from '@/lib/components/draftBanner/draftBanner';
 import mdxComponents from '@/lib/components/mdx';
 import type { DraftMetadata } from '@/lib/db/content/schemas/draftMetadata';
+import contentStyles from '@/styles/mdxContent.module.scss';
 import { useCallback, useEffect, useState } from 'react';
 import * as runtime from 'react/jsx-runtime';
 import styles from './draftOverlay.module.scss';
-import contentStyles from '@/styles/mdxContent.module.scss';
 
 /**
  * Props for the DraftOverlay component.
@@ -181,7 +181,8 @@ const DraftOverlay: React.FC<DraftOverlayProps> = ({
           createdAt={state.draft.createdAt}
           updatedAt={state.draft.updatedAt}
         />
-        <article className={`prose prose-invert ${contentStyles.mdxContent} ${styles.draftArticle}`}>
+        <article
+          className={`prose prose-invert ${contentStyles.mdxContent} ${styles.draftArticle}`}>
           {state.MdxContent ? (
             <state.MdxContent />
           ) : (

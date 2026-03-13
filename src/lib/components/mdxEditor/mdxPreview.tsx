@@ -13,9 +13,9 @@
 
 import mdxComponents from '@/lib/components/mdx';
 import { compileMdxToComponent } from '@/lib/components/mdx/compileMdxToComponent';
+import contentStyles from '@/styles/mdxContent.module.scss';
 import { Suspense, useEffect, useRef, useState, useTransition } from 'react';
 import styles from './mdxEditor.module.scss';
-import contentStyles from '@/styles/mdxContent.module.scss';
 
 /**
  * @property {string} source - Raw MDX string to compile and preview

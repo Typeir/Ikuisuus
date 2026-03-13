@@ -12,6 +12,7 @@
 import { compile } from '@mdx-js/mdx';
 import { Fragment } from 'react';
 import { jsx, jsxs } from 'react/jsx-runtime';
+import remarkGfm from 'remark-gfm';
 
 /**
  * Compiles raw MDX source into a runtime-safe React component.
@@ -27,6 +28,7 @@ export const compileMdxToComponent = async (source: string) => {
     providerImportSource: '',
     development: false,
     jsxImportSource: 'react',
+    remarkPlugins: [remarkGfm],
     recmaPlugins: [
       () => (tree) => {
         tree.body = tree.body.filter(
