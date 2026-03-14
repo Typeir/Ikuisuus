@@ -57,25 +57,27 @@ export default function middleware(req: NextRequest): Response {
   const first = parts[0] ?? "";
   const defaultLocale = routing.defaultLocale;
 
-  // Add your other allowed top-level segments here.
-  // IMPORTANT: This list is checked ONLY for the *first* segment.
+  /**
+   * Whitelist checked ONLY for the first path segment.
+   * Extend this set to allow additional top-level routes.
+   */
   const topLevelWhitelist = new Set<string>([...routing.locales]);
 
-  // "/" -> "/en"
+  /** Root path "/" redirects to default locale */
   if (!first) {
     const url = req.nextUrl.clone();
     url.pathname = `/${defaultLocale}`;
     return NextResponse.redirect(url, 308);
   }
 
-  // If first segment not whitelisted, replace it with default locale (keep rest intact).
+  /** If first segment not whitelisted, replace it with default locale (keep rest intact) */
   if (!topLevelWhitelist.has(first)) {
     const url = req.nextUrl.clone();
     url.pathname = replaceFirstSegment(parts, defaultLocale);
     return NextResponse.redirect(url, 308);
   }
 
-  // Whitelisted (locale or other reserved segment): let next-intl handle it.
+  /** Whitelisted locale or reserved segment: delegate to next-intl */
   return intlMiddleware(req);
 }
 

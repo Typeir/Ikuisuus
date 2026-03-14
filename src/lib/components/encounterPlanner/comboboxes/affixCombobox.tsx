@@ -86,7 +86,7 @@ export const AffixCombobox: React.FC<AffixComboboxProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch all affixes only once per locale
+  /** Fetch all affixes only once per locale */
   useEffect(() => {
     const loadAffixIndex = async () => {
       setIsLoading(true);
@@ -111,7 +111,7 @@ export const AffixCombobox: React.FC<AffixComboboxProps> = ({
     loadAffixIndex();
   }, [locale]);
 
-  // Filter out existing affixes on render (no effect needed)
+  /** Filter out existing affixes on render (no effect needed) */
   const filteredAffixes = allAffixes.filter(
     (affix) => !existingAffixes.includes(affix.title),
   );

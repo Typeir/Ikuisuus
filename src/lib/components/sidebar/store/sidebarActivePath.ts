@@ -16,7 +16,7 @@ class SidebarActivePathStore {
    */
   subscribe(callback: Callback): () => void {
     this.subscribers.add(callback);
-    // Immediately send current value
+    /** Immediately send current value */
     callback(this._value);
     return () => this.subscribers.delete(callback);
   }

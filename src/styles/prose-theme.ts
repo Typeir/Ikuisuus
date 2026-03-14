@@ -35,14 +35,13 @@ const proseColorVariables = {
 } as const;
 
 /**
- * Custom prose layout and element-specific styles
+ * Custom prose layout and element-specific styles.
+ * maxWidth increased for readability.
+ * Blockquote overrides prevent color cascade to children (strong, headings).
  */
 const proseCustomStyles: CSSRuleObject = {
-  // Increase max-width for better readability
   maxWidth: '125ch',
   
-  // Fix blockquote children color inheritance issues
-  // Without these, blockquote color cascades to all children
   'blockquote strong': {
     color: 'var(--color-emphasis)',
   },
@@ -67,8 +66,7 @@ export const proseTheme = {
   },
   invert: {
     css: {
-      // prose-invert variant uses same theme mappings
-      // This ensures consistency across light/dark modes
+      /** prose-invert variant uses same theme mappings for light/dark consistency */
       ...proseColorVariables,
     },
   },

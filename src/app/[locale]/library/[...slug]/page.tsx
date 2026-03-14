@@ -61,7 +61,7 @@ type PageProps = {
  * @returns {string|null} H1 text or null if not found
  */
 function extractH1FromMdx(content: string): string | null {
-  // Match first H1: # Title or <h1>Title</h1>
+  /** Match first H1: # Title or <h1>Title</h1> */
   const mdH1Match = content.match(/^#\s+(.+)$/m);
   if (mdH1Match) return mdH1Match[1].trim();
 
@@ -110,7 +110,7 @@ export async function generateMetadata({
     });
   }
 
-  // Fallback to slug-based title
+  /** Fallback to slug-based title */
   const fallbackTitle = slugSegments[slugSegments.length - 1]
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -131,13 +131,13 @@ export async function generateMetadata({
 const Page = async ({ params }: PageProps) => {
   const { slug, locale } = await params;
 
-  // Normalize slug: handle accidental locale duplication
+  /** Normalize slug: handle accidental locale duplication */
   const slugSegments = slug[0] === locale ? slug.slice(1) : slug;
   const slugPath = slugSegments.join('/');
 
   let result = await fetchContent(locale, slugPath);
 
-  // If the slug doesn't resolve, try redirecting to slug/main
+  /** If the slug doesn't resolve, try redirecting to slug/main */
   if (!result) {
     const mainResult = await fetchContent(locale, `${slugPath}/main`);
 
@@ -150,16 +150,16 @@ const Page = async ({ params }: PageProps) => {
 
   const { content: rawContent, resolvedPath } = result;
 
-  // Render raw .md as-is
+  /** Render raw .md as-is */
   if (isMdFile(resolvedPath)) {
     return <MDRawPage slugPath={slugPath} rawContent={rawContent} />;
   }
 
-  // Try to precompile MDX via `evaluate`
+  /** Try to precompile MDX via evaluate */
   let evalResult;
 
   try {
-    // pathToFileURL requires an absolute path; use a placeholder for GitHub-sourced content
+    /** pathToFileURL requires an absolute path; use a placeholder for GitHub-sourced content */
     const baseUrl = path.isAbsolute(resolvedPath)
       ? pathToFileURL(resolvedPath).toString()
       : undefined;

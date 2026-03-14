@@ -77,7 +77,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({
   const combatantRefs = useRef<Record<string, HTMLDivElement>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Trigger lair notification when round advances
+  /** Trigger lair notification when round advances */
   useEffect(() => {
     if (combat.roundNumber > prevRoundNumber) {
       setPrevRoundNumber(combat.roundNumber);
@@ -151,7 +151,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({
         roundNumber++;
       }
 
-      // Reset deeds for the creature whose turn is starting
+      /** Reset deeds for the creature whose turn is starting */
       if (nextIndex < combatants.length) {
         combatants[nextIndex] = {
           ...combatants[nextIndex],

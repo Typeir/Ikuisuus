@@ -15,6 +15,7 @@ import type {
     HeroicAwakeningState,
     InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
+import { HeroicAffix } from '@/lib/enums/encounterPlanner';
 
 /**
  * Map CR to heroic DC threshold
@@ -31,6 +32,12 @@ export const getHeroicDc = (cr: string | number): number => {
   return 19;
 };
 
+/** Ordered affix list derived from the HeroicAffix enum, indexed 1–9 for d10 rolls */
+const AFFIX_ROLL_TABLE: readonly string[] = Object.freeze([
+  '',
+  ...Object.values(HeroicAffix),
+]);
+
 /**
  * Get affix name from d10 roll (1–9 = affix, 10 = "Reroll")
  *
@@ -38,19 +45,7 @@ export const getHeroicDc = (cr: string | number): number => {
  * @returns {string} Affix name or "Reroll"
  */
 const getAffixFromRoll = (roll: number): string => {
-  const affixes = [
-    '',
-    'Bloodthirsty',
-    'Championed',
-    'Crusading',
-    'Flametongued',
-    'Frostveined',
-    'Psionic',
-    'Rakish',
-    'Stormbound',
-    'Sulphurous',
-  ];
-  return affixes[roll] || 'Reroll';
+  return AFFIX_ROLL_TABLE[roll] || 'Reroll';
 };
 
 /**

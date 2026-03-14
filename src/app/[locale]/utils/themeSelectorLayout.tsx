@@ -47,7 +47,7 @@ export const ThemeSelectorLayout = ({}: ThemeSelectorProps): JSX.Element => {
        */
       onThemeChange={(newTheme) => {
         storePersistentData(PersistentData.Theme, newTheme);
-        // this is very illegal but it's better than react
+        /** Direct DOM mutation bypasses React reconciliation for instant FOUC-free theme swap */
         forceTheme(newTheme);
       }}
     />

@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      // Expand common variants to handle .sheet suffixes and /main fallbacks.
+      /** Expand common variants to handle .sheet suffixes and /main fallbacks */
       const variants: string[] = [];
       const pushVariant = (v: string) => {
         const normalized = v.replace(/\/+$|\s+/g, '');
@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
 
       pushVariant(p);
 
-      // Toggle .sheet on the last segment: add if missing, remove if present
+      /** Toggle .sheet on the last segment: add if missing, remove if present */
       const parts = p.split('/').filter(Boolean);
       if (parts.length > 0) {
         const last = parts[parts.length - 1];
@@ -165,7 +165,7 @@ export async function POST(req: NextRequest) {
               .join('/');
           pushVariant(withoutSheet);
         }
-        // also try /main variant
+        /** Also try /main variant */
         pushVariant(p.endsWith('/main') ? p : `${p}/main`);
       }
 

@@ -24,35 +24,22 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logging/logger';
+import { HeroicAffix } from '@/lib/enums/encounterPlanner';
 
 const log = logger.child({ module: 'API:Affixes:Index' });
-
-/**
- * Heroic Awakening Affixes mapped to wiki slugs
- * Each affix maps to its kebab-case filename in the wiki
- */
-const HEROIC_AFFIXES = [
-  { slug: 'bloodthirsty', title: 'Bloodthirsty' },
-  { slug: 'championed', title: 'Championed' },
-  { slug: 'crusading', title: 'Crusading' },
-  { slug: 'flametongued', title: 'Flametongued' },
-  { slug: 'frostveined', title: 'Frostveined' },
-  { slug: 'psionic', title: 'Psionic' },
-  { slug: 'rakish', title: 'Rakish' },
-  { slug: 'stormbound', title: 'Stormbound' },
-  { slug: 'sulphurous', title: 'Sulphurous' },
-];
 
 export async function GET(request: NextRequest) {
   try {
     const locale = request.nextUrl.searchParams.get('locale') || 'en';
 
-    // Map affixes to include wiki links
-    const affixes = HEROIC_AFFIXES.map(affix => ({
-      slug: affix.slug,
-      title: affix.title,
-      link: `/library/rules/heroic-awakening/${affix.slug}`,
-    }));
+    const affixes = Object.values(HeroicAffix).map(title => {
+      const slug = title.toLowerCase();
+      return {
+        slug,
+        title,
+        link: `/library/rules/heroic-awakening/${slug}`,
+      };
+    });
 
     return NextResponse.json(affixes);
   } catch (error) {

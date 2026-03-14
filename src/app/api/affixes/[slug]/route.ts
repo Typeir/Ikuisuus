@@ -21,24 +21,18 @@
 
 import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logging/logger';
+import { HeroicAffix } from '@/lib/enums/encounterPlanner';
 
 const log = logger.child({ module: 'API:Affix:Single' });
 
-/**
- * Heroic Awakening Affixes mapped to wiki slugs
- * Each affix maps to its kebab-case filename in the wiki
- */
-const HEROIC_AFFIXES_MAP: Record<string, { slug: string; title: string }> = {
-  bloodthirsty: { slug: 'bloodthirsty', title: 'Bloodthirsty' },
-  championed: { slug: 'championed', title: 'Championed' },
-  crusading: { slug: 'crusading', title: 'Crusading' },
-  flametongued: { slug: 'flametongued', title: 'Flametongued' },
-  frostveined: { slug: 'frostveined', title: 'Frostveined' },
-  psionic: { slug: 'psionic', title: 'Psionic' },
-  rakish: { slug: 'rakish', title: 'Rakish' },
-  stormbound: { slug: 'stormbound', title: 'Stormbound' },
-  sulphurous: { slug: 'sulphurous', title: 'Sulphurous' },
-};
+/** Slug→title lookup derived from HeroicAffix enum */
+const HEROIC_AFFIXES_MAP: Record<string, { slug: string; title: string }> =
+  Object.fromEntries(
+    Object.values(HeroicAffix).map(title => {
+      const slug = title.toLowerCase();
+      return [slug, { slug, title }];
+    }),
+  );
 
 export async function GET(
   req: Request,

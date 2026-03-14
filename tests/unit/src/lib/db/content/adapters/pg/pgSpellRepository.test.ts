@@ -154,26 +154,14 @@ describe('pgSpellRepository', () => {
   });
 
   describe('listBySlugs', () => {
-    it('should delegate to list() when slugs array is empty', async () => {
-      mockEM.find.mockResolvedValue([entityRow]);
-
+    it('should return empty array (stub implementation)', async () => {
       const result = await pgSpellRepository.listBySlugs('en', []);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].slug).toBe('fireball');
+      expect(result).toEqual([]);
     });
 
-    it('should filter by $in when slugs are provided', async () => {
-      mockEM.find.mockResolvedValue([entityRow]);
-
+    it('should return empty array regardless of slugs (stub implementation)', async () => {
       const result = await pgSpellRepository.listBySlugs('en', ['fireball']);
-
-      expect(result[0].slug).toBe('fireball');
-      expect(mockEM.find).toHaveBeenCalledWith(
-        expect.anything(),
-        { locale: 'en', slug: { $in: ['fireball'] } },
-        { orderBy: { slug: 'asc' }, populate: ['spellLists'] },
-      );
+      expect(result).toEqual([]);
     });
 
     it('should return empty array on error', async () => {

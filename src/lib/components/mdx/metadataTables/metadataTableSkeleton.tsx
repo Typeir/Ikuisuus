@@ -144,7 +144,7 @@ export function MetadataTableSkeleton({
             {Array.from({ length: rows }).map((_, rowIndex) => (
               <tr key={rowIndex}>
                 {Array.from({ length: columns }).map((_, colIndex) => {
-                  // Deterministic width based on row and column (60-90% range)
+                  /** Deterministic width based on row and column (60–90% range) */
                   const seed = (rowIndex * columns + colIndex) * 0.12345;
                   const width = 60 + ((seed % 1) * 30);
                   

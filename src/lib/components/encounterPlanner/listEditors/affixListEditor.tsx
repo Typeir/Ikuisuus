@@ -80,7 +80,7 @@ export const AffixListEditor: React.FC<AffixListEditorProps> = ({
   readOnly = false,
   removeChipAriaLabel = 'Remove affix',
 }) => {
-  // Track which affixes have no source (not found)
+  /** Track which affixes have no source (not found) */
   const notFoundAffixes = useMemo(
     () => new Set(affixes.filter((a) => !a.source?.href).map((a) => a.text)),
     [affixes]
@@ -88,7 +88,7 @@ export const AffixListEditor: React.FC<AffixListEditorProps> = ({
 
   const handleAddAffix = useCallback(
     (affix: AffixEntry) => {
-      // Check if affix already exists
+      /** Deduplicate: skip if affix already exists */
       if (affixes.some((a) => a.text === affix.text)) return;
       onChange([...affixes, affix]);
     },

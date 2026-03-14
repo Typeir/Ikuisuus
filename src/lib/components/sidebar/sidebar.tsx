@@ -205,7 +205,7 @@ const SidebarItem = ({
   pathStore,
 }: SidebarItemProps): JSX.Element | null => {
   const { isExpanded, setExpanded } = useSidebarExpansionActions();
-  // Initialize as collapsed to match SSR - useEffect will sync after hydration
+  /** Initialize as collapsed to match SSR; useEffect will sync after hydration */
   const [open, setOpen] = useState<boolean>(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const params = useParams();
@@ -214,7 +214,7 @@ const SidebarItem = ({
     (child) => child.name.toLowerCase() === 'main',
   );
 
-  // Hydration sync - run once after mount to sync with persisted state
+  /** Hydration sync — run once after mount to sync with persisted state */
   useEffect(() => {
     const expanded = isExpanded(item.path);
     setOpen(expanded);
@@ -222,7 +222,7 @@ const SidebarItem = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync local state with context when expansion state changes (after hydration)
+  /** Sync local state with context when expansion state changes (after hydration) */
   useEffect(() => {
     if (!isHydrated) return;
     const expanded = isExpanded(item.path);
