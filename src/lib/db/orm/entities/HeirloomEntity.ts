@@ -12,13 +12,13 @@
  */
 
 import {
-  Embeddable,
-  Embedded,
-  Entity,
-  Index,
-  PrimaryKey,
-  Property,
-  Unique,
+    Embeddable,
+    Embedded,
+    Entity,
+    Index,
+    PrimaryKey,
+    Property,
+    Unique,
 } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
@@ -144,4 +144,8 @@ export class HeirloomEntity {
     nullable: true,
   })
   indexVersion?: number | null;
+
+  /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
+  @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
+  versionHash?: string | null;
 }

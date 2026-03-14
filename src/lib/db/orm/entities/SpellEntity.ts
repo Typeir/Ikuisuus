@@ -135,4 +135,8 @@ export class SpellEntity {
 
   @OneToMany(() => SpellListEntity, (sl) => sl.spell, { orphanRemoval: true })
   spellLists = new Collection<SpellListEntity>(this);
+
+  /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
+  @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
+  versionHash?: string | null;
 }

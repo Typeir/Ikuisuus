@@ -1,0 +1,230 @@
+/**
+ * @fileoverview Trinket Metadata Generator
+ * @description Parses .mdx files from the trinkets directory and extracts metadata
+ * including item type, damage, range, weight, saving throws, and gameplay tags.
+ *
+ * @module scripts/metadata/generateTrinketMetadata
+ * @version 2.0.0
+ * @author Typeir
+ * @since 1.0.0
+ */
+
+import { createLogger } from '@/lib/logging/logger';
+import {
+    GameData,
+    clean,
+    extractAllTags,
+    filePathToSlug,
+    parseTitle,
+    runGenerator,
+    runWithCli,
+    type SharedData,
+    type StorageAdapter,
+} from '@/lib/metadata';
+import { promises as fs } from 'fs';
+import path from 'path';
+
+const log = createLogger({ component: 'TrinketMetadataGenerator' });
+
+/**
+ * Parses trinket-specific metadata from content.
+ *
+ * @param {string} content - Full MDX file content
+ * @param {SharedData} sharedData - Shared game data
+ * @returns {Record<string, unknown>} Parsed trinket properties
+ */
+function parseTrinketProperties(
+  content: string,
+  sharedData: SharedData,
+): Record<string, unknown> {
+  const lines = content.split('\n');
+  const result: Record<string, unknown> = {};
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith('**Damage**:')) {
+      const damageMatch = trimmed.match(/\*\*Damage\*\*:\s*(.+)/);
+      if (damageMatch) {
+        const damageText = clean(damageMatch[1]);
+        if (damageText !== '—' && damageText !== '-') {
+          result.damage = damageText;
+        }
+      }
+    }
+
+    if (trimmed.startsWith('**Damage Type**:')) {
+      const typeMatch = trimmed.match(/\*\*Damage Type\*\*:\s*(.+)/);
+      if (typeMatch) {
+        result.damageType = clean(typeMatch[1]).toLowerCase();
+      }
+    }
+
+    if (trimmed.startsWith('**Properties**:')) {
+      const propsMatch = trimmed.match(/\*\*Properties\*\*:\s*(.+)/);
+      if (propsMatch) {
+        const propsText = clean(propsMatch[1]);
+        const cleanedText = propsText.replace(
+          /special\s*\([^)]+\)/gi,
+          'special',
+        );
+        result.properties = cleanedText
+          .split(',')
+          .map((p) => clean(p).toLowerCase())
+          .filter(Boolean);
+      }
+    }
+
+    if (trimmed.startsWith('**Range**:')) {
+      const rangeMatch = trimmed.match(/\*\*Range\*\*:\s*(.+)/);
+      if (rangeMatch) {
+        result.range = clean(rangeMatch[1]);
+      }
+    }
+
+    if (trimmed.startsWith('**Weight**:')) {
+      const weightMatch = trimmed.match(/\*\*Weight\*\*:\s*(.+)/);
+      if (weightMatch) {
+        result.weight = clean(weightMatch[1]);
+      }
+    }
+  }
+
+  const savingThrowMatch = content.match(/DC\s+(\d+)\s+(\w+)\s+saving throw/i);
+  if (savingThrowMatch) {
+    result.savingThrowDC = parseInt(savingThrowMatch[1], 10);
+    result.savingThrowAbility = savingThrowMatch[2].toLowerCase();
+  }
+
+  const specialEffectsMatch = content.match(/Special\s*\(([^)]+)\)/i);
+  if (specialEffectsMatch) {
+    result.specialEffects = specialEffectsMatch[1]
+      .split(',')
+      .map((effect) => clean(effect).toLowerCase())
+      .filter(Boolean);
+  }
+
+  const conditionKeywords = GameData.getConditions(sharedData);
+  const inflictedConditions: string[] = [];
+  const lowerContent = content.toLowerCase();
+
+  for (const condition of conditionKeywords) {
+    const patterns = [
+      new RegExp(
+        `\\b(become|becomes|is|are|fall|falls|be)\\s+${condition}\\b`,
+        'i',
+      ),
+      new RegExp(`\\b${condition}\\s+(until|for)\\b`, 'i'),
+    ];
+    if (patterns.some((pattern) => pattern.test(lowerContent))) {
+      inflictedConditions.push(condition.toLowerCase().trim());
+    }
+  }
+
+  if (inflictedConditions.length > 0) {
+    result.inflictsConditions = inflictedConditions.map((c) =>
+      c
+        .split(',')
+        .map((part) => part.trim())
+        .join(', '),
+    );
+  }
+
+  return result;
+}
+
+/**
+ * Parses the item type from the second line (after title).
+ *
+ * @param {string} content - Full MDX content
+ * @returns {string | undefined} Item type
+ */
+function parseItemType(content: string): string | undefined {
+  const lines = content.split('\n').map((l) => l.trim());
+  if (lines.length > 1) {
+    const secondLine = clean(lines[1]);
+    if (secondLine && !secondLine.startsWith('_')) {
+      return secondLine;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Parses a single trinket MDX file.
+ *
+ * @param {string} filePath - Path to .mdx file
+ * @param {SharedData} sharedData - Shared game data
+ * @returns {Promise<object | null>} Parsed metadata or null on error
+ */
+async function parseTrinketFile(
+  filePath: string,
+  sharedData: SharedData,
+): Promise<object | null> {
+  try {
+    const raw = await fs.readFile(filePath, 'utf-8');
+    const lines = raw.split('\n').map((l) => l.trim());
+
+    const slug = filePathToSlug(filePath);
+    const title = parseTitle(lines);
+    const itemType = parseItemType(raw);
+    const properties = parseTrinketProperties(raw, sharedData);
+
+    return {
+      slug,
+      title,
+      file: path.relative(process.cwd(), filePath).replace(/\\/g, '/'),
+      link: `/library/items/trinkets/${slug}`,
+      itemType: itemType || 'adventuring gear',
+      ...properties,
+      tags: extractAllTags(raw, filePath, sharedData, {
+        contentType: 'generic',
+      }),
+    };
+  } catch (error) {
+    log.warning('Error parsing trinket file', {
+      file: filePath,
+      error: (error as Error).message,
+    });
+    return null;
+  }
+}
+
+/**
+ * Main entry point for trinket metadata generation.
+ *
+ * @param {object} [options] - Configuration
+ * @param {string} [options.contentDir] - Override content directory
+ * @param {RegExp} [options.filePattern] - Override file pattern
+ * @param {StorageAdapter} [options.storage] - Optional DB storage
+ * @returns {Promise<void>}
+ */
+async function main(
+  options: {
+    contentDir?: string;
+    filePattern?: RegExp;
+    storage?: StorageAdapter;
+  } = {},
+): Promise<void> {
+  await runGenerator({
+    name: 'Trinket Metadata Generator',
+    contentType: 'trinkets',
+    filePattern: options.filePattern || /\.mdx$/,
+    parseFile: parseTrinketFile,
+    processResult: (result) => ({ metadata: result, count: 1 }),
+    contentDir: options.contentDir,
+    storage: options.storage,
+  });
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  runWithCli(main).catch((error) => {
+    log.error('Fatal error during trinket metadata generation', {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+    });
+    process.exit(1);
+  });
+}
+
+export { main, parseTrinketFile };
