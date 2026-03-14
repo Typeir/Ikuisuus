@@ -1622,6 +1622,16 @@ export class TaggingUtils {
  */
 export class MetadataGeneratorUtils {
   /**
+   * Returns the resolved metadata backend ('pg' or 'fs').
+   * Reads METADATA_BACKEND from process.env, then .env.local, defaulting to 'fs'.
+   * @static
+   * @returns {string} 'pg' or 'fs'
+   */
+  static getBackend() {
+    return getMetadataBackend();
+  }
+
+  /**
    * Gets content directory for a specific type
    * @static
    * @param {string} contentType - Type of content: 'monsters', 'heirlooms', 'spells'

@@ -608,8 +608,9 @@ async function generateSpellMetadata(options = {}) {
       const externalContent = await fs.readFile(externalMetadataPath, 'utf8');
       const externalSpells = JSON.parse(externalContent);
 
-      // Determine output folder based on METADATA_BACKEND
-      const backend = process.env.METADATA_BACKEND || 'fs';
+      // Determine output folder based on METADATA_BACKEND (use shared resolver
+      // so .env.local is respected — same logic as runGenerator)
+      const backend = MetadataGeneratorUtils.getBackend();
       let destinationFolder;
       if (backend === 'pg') {
         destinationFolder = path.join(process.cwd(), '.meta', 'en', 'spells');

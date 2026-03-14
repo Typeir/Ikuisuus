@@ -2,7 +2,7 @@
    GLOBAL CSS & SCSS VARIABLES
 ============================================ */
 
-$transition-ease-springy: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+@use 'variables' as *;
 
 :root {
   --springy-bezier: #{$transition-ease-springy};
@@ -725,23 +725,6 @@ body {
 ============================================ */
 
 @layer components {
-  .search-bar {
-    background-color: var(--color-surface);
-    border-color: var(--color-accent);
-    color: var(--color-text);
-  }
-
-  .search-button {
-    background-color: var(--color-surface);
-    border-color: var(--color-accent);
-    color: var(--color-text);
-  }
-
-  .search-result {
-    background-color: var(--color-surface);
-    border-color: var(--color-accent);
-  }
-
   .primary {
     color: var(--color-primary);
   }
@@ -780,53 +763,4 @@ body {
       display: none;
     }
   }
-}
-
-/* ============================================
-   HAMBURGER MENU ANIMATIONS
-============================================ */
-
-.hamburger.is-open .bar-top {
-  transform: translateY(25px) rotate(45deg);
-}
-
-.hamburger.is-open .bar-middle {
-  opacity: 0;
-}
-
-.hamburger.is-open .bar-bottom {
-  transform: translateY(-25px) rotate(-45deg);
-}
-
-img.logo {
-  max-height: 3.4rem;
-  max-width: 120px;
-  width: auto;
-  object-fit: contain;
-}
-
-.sidebar {
-  @media (max-width: 1024px) {
-    position: absolute;
-    width: 100%;
-    height: auto;
-    z-index: 50;
-    background-color: var(--background);
-    border-right: none;
-    padding: 1rem;
-    padding-top: 5rem;
-    // max-height: 9999vh;
-  }
-}
-
-aside {
-  @media (max-width: 1024px) {
-    padding-top: 5rem !important;
-  }
-
-  // .noScroll {
-  //   overflow: hidden;
-  //   height: 100vh;
-  //   position: relative;
-  // }
 }

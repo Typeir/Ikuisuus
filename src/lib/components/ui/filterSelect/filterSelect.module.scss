@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 /** Filter Select Component Styles */
 
 .filterSelect {
@@ -30,8 +32,7 @@
   }
 
   &:focus {
-    outline: none;
-    border-color: var(--color-accent);
+    @include focus-ring;
     box-shadow: 0 0 0 2px rgb(var(--color-accent-a20));
   }
 
@@ -95,7 +96,7 @@
   background: var(--color-bg);
   border: 1px solid var(--color-secondary);
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgb(var(--color-shadow-medium));
+  @include shadow-medium;
   z-index: 1000;
 }
 
@@ -114,8 +115,7 @@
   font-size: 0.8125rem;
 
   &:focus {
-    outline: none;
-    border-color: var(--color-accent);
+    @include focus-ring;
   }
 
   &::placeholder {
@@ -127,21 +127,7 @@
 .optionsList {
   overflow-y: auto;
   flex: 1;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-secondary) var(--color-bg);
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--color-bg);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: var(--color-secondary);
-    border-radius: 3px;
-  }
+  @include scrollbar-thin;
 }
 
 .option {
@@ -215,8 +201,7 @@
   font-size: 1rem;
 
   &:focus {
-    outline: none;
-    border-color: var(--color-accent);
+    @include focus-ring;
   }
 
   &::placeholder {

@@ -1,18 +1,20 @@
+@use 'mixins' as *;
+
 .metadataTable {
   width: 100%;
   margin-bottom: 2rem;
   margin-top: 0rem !important;
-  
+
   .controls {
     margin-bottom: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
-  
+
   .searchBar {
     width: 100%;
-    
+
     .searchInput {
       width: 100%;
       max-width: 600px;
@@ -22,40 +24,38 @@
       border-radius: 0.375rem;
       background-color: var(--color-bg-secondary);
       color: var(--color-text);
-      transition: border-color 0.3s ease-in-out, 
-                  filter 0.3s ease-in-out;
-      
+      transition:
+        border-color 0.3s ease-in-out,
+        filter 0.3s ease-in-out;
+
       &:focus {
-        outline: none;
-        border-color: var(--color-accent);
-        filter: drop-shadow(0px 0px 4px var(--color-accent));
+        @include input-field-glow;
       }
-      
+
       &::placeholder {
         color: var(--color-secondary);
       }
     }
   }
-  
+
   .filters {
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
-    
+
     .filterGroup {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
       min-width: 150px;
-      
+
       label {
         font-size: 0.875rem;
         font-weight: 600;
         color: var(--color-emphasis);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        @include label-uppercase;
       }
-      
+
       .filterSelect,
       .filterInput {
         padding: 0.5rem 0.75rem;
@@ -64,21 +64,20 @@
         border-radius: 0.375rem;
         background-color: var(--color-bg-secondary);
         color: var(--color-text);
-        transition: border-color 0.3s ease-in-out,
-                    filter 0.3s ease-in-out;
-        
+        transition:
+          border-color 0.3s ease-in-out,
+          filter 0.3s ease-in-out;
+
         &:focus {
-          outline: none;
-          border-color: var(--color-accent);
-          filter: drop-shadow(0px 0px 3px var(--color-accent));
+          @include input-field-glow;
         }
       }
-      
+
       .rangeFilter {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        
+
         .rangeInput {
           width: 80px;
           padding: 0.5rem 0.75rem;
@@ -87,16 +86,15 @@
           border-radius: 0.375rem;
           background-color: var(--color-bg-secondary);
           color: var(--color-text);
-          transition: border-color 0.3s ease-in-out,
-                      filter 0.3s ease-in-out;
-          
+          transition:
+            border-color 0.3s ease-in-out,
+            filter 0.3s ease-in-out;
+
           &:focus {
-            outline: none;
-            border-color: var(--color-accent);
-            filter: drop-shadow(0px 0px 3px var(--color-accent));
+            @include input-field-glow;
           }
         }
-        
+
         span {
           color: var(--color-secondary);
           font-weight: 600;
@@ -104,31 +102,31 @@
       }
     }
   }
-  
+
   .resultCount {
     font-size: 0.9rem;
     color: var(--color-secondary);
     padding: 0.5rem 0;
     font-weight: 500;
   }
-  
+
   .tableWrapper {
     overflow-x: auto;
     border: 1px solid var(--color-secondary);
     border-radius: 0.375rem;
     background-color: var(--color-bg);
   }
-  
+
   .table {
     width: 100%;
     border-collapse: collapse;
     margin: 0rem !important;
     font-size: 0.95rem;
-    
+
     thead {
       background-color: var(--color-bg-secondary);
       border-bottom: 2px solid var(--color-secondary);
-      
+
       th {
         padding: 0.75rem 1rem;
         text-align: left;
@@ -138,28 +136,28 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         font-size: 0.875rem;
-        
+
         &.sortable {
           cursor: pointer;
           user-select: none;
           border-bottom: 2px solid var(--color-transparent);
           transition: border-color 0.3s ease;
-          
+
           &:hover {
             border-bottom-color: var(--color-text);
-            
+
             .headerContent {
               filter: drop-shadow(0px 0px 1px var(--color-text));
             }
           }
         }
-        
+
         .headerContent {
           display: flex;
           align-items: center;
           gap: 0.5rem;
           transition: filter 0.3s ease;
-          
+
           .sortIndicator {
             font-size: 0.75rem;
             color: var(--color-accent);
@@ -167,26 +165,27 @@
         }
       }
     }
-    
+
     tbody {
       tr {
         border-bottom: 1px solid var(--color-secondary);
-        
+
         &.clickableRow {
           cursor: pointer;
-          transition: background-color 0.3s ease,
-                      filter 0.3s ease;
-          
+          transition:
+            background-color 0.3s ease,
+            filter 0.3s ease;
+
           &:hover {
             background-color: var(--color-bg-secondary);
             filter: drop-shadow(0px 0px 2px var(--color-accent));
           }
         }
-        
+
         td {
           padding: 0.75rem 1rem;
           color: var(--color-text);
-          
+
           &:first-child {
             font-weight: 600;
             color: var(--color-emphasis);
@@ -195,7 +194,7 @@
       }
     }
   }
-  
+
   .pagination {
     display: flex;
     justify-content: center;
@@ -204,7 +203,7 @@
     margin-top: 1.5rem;
     padding-top: 1rem;
     border-top: 1px solid var(--color-secondary);
-    
+
     .paginationButton {
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
@@ -214,16 +213,17 @@
       background-color: var(--color-actionable);
       color: var(--color-bg);
       cursor: pointer;
-      transition: background-color 0.3s ease-in-out,
-                  border-color 0.3s ease-in-out,
-                  filter 0.3s ease-in-out;
-      
+      transition:
+        background-color 0.3s ease-in-out,
+        border-color 0.3s ease-in-out,
+        filter 0.3s ease-in-out;
+
       &:hover:not(:disabled) {
         background-color: var(--color-primary);
         border-color: var(--color-primary);
         filter: drop-shadow(0px 0px 4px var(--color-primary));
       }
-      
+
       &:disabled {
         opacity: 0.4;
         cursor: not-allowed;
@@ -231,7 +231,7 @@
         border-color: var(--color-secondary);
       }
     }
-    
+
     .pageInfo {
       font-size: 0.9rem;
       color: var(--color-text);
@@ -241,44 +241,44 @@
 }
 
 // Responsive adjustments
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
   .metadataTable {
     .controls {
       gap: 1rem;
     }
-    
+
     .filters {
       flex-direction: column;
       gap: 1rem;
-      
+
       .filterGroup {
         width: 100%;
         min-width: unset;
       }
     }
-    
+
     .table {
       font-size: 0.85rem;
-      
+
       thead th {
         padding: 0.5rem 0.75rem;
         font-size: 0.8rem;
       }
-      
+
       tbody td {
         padding: 0.5rem 0.75rem;
       }
     }
-    
+
     .pagination {
       gap: 1rem;
       flex-wrap: wrap;
-      
+
       .paginationButton {
         padding: 0.4rem 0.8rem;
         font-size: 0.85rem;
       }
-      
+
       .pageInfo {
         font-size: 0.85rem;
       }

@@ -1,0 +1,11 @@
+/**
+ * @fileoverview SCSS Variables
+ * @description Shared SCSS compile-time variables used across all modules.
+ * Imported via @use 'variables' (configured in sassOptions.includePaths).
+ */
+
+$transition-ease-springy: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+
+$bp-mobile: 480px;
+$bp-tablet: 768px;
+$bp-desktop: 1024px;

@@ -11,17 +11,17 @@
  */
 
 import {
-    SpellEntity,
-    SpellListEntity,
+  SpellEntity,
+  SpellListEntity,
 } from '@/lib/db/orm/entities/SpellEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
 import type {
-    SpellIndexEntry,
-    SpellListRef,
-    SpellMetadata,
+  SpellIndexEntry,
+  SpellListRef,
+  SpellMetadata,
 } from '../../schemas/spellMetadata';
 
 const log = logger.child({ module: 'PGSpellRepo' });
@@ -125,22 +125,54 @@ export const pgSpellRepository: SpellRepository = {
     locale: string,
     slugs: string[],
   ): Promise<SpellMetadata[]> => {
-    if (slugs.length === 0) {
-      return pgSpellRepository.list(locale);
-    }
+    log.debug('Querying spells by slugs from PostgreSQL', {
+      locale,
+      slugCount: slugs.length,
+    });
+    return [];
+    // if (slugs.length === 0) {
+    //   return pgSpellRepository.list(locale);
+    // }
+    // try {
+    //   const em = await getEM();
+    //   const rows = await em.find(
+    //     SpellEntity,
+    //     { locale, slug: { $in: slugs } },
+    //     { orderBy: { slug: 'asc' }, populate: ['spellLists'] },
+    //   );
+    //   return rows.map(rowToSpell);
+    // } catch (error) {
+    //   log.error('Error reading spells by slugs from PostgreSQL', {
+    //     error: error instanceof Error ? error.message : String(error),
+    //     locale,
+    //     slugCount: slugs.length,
+    //   });
+    //   return [];
+    // }
+  },
+
+  listBySource: async (
+    locale: string,
+    source: string,
+  ): Promise<SpellMetadata[]> => {
     try {
-      const em = await getEM();
-      const rows = await em.find(
-        SpellEntity,
-        { locale, slug: { $in: slugs } },
-        { orderBy: { slug: 'asc' }, populate: ['spellLists'] },
-      );
-      return rows.map(rowToSpell);
+      log.debug('Querying spells by source from PostgreSQL', {
+        locale,
+        source,
+      });
+      return [];
+      //   const em = await getEM();
+      //   const rows = await em.find(
+      //     SpellEntity,
+      //     { locale, spellLists: { name: source } },
+      //     { orderBy: { slug: 'asc' }, populate: ['spellLists'] },
+      //   );
+      //   return rows.map(rowToSpell);
     } catch (error) {
-      log.error('Error reading spells by slugs from PostgreSQL', {
+      log.error('Error reading spells by source from PostgreSQL', {
         error: error instanceof Error ? error.message : String(error),
         locale,
-        slugCount: slugs.length,
+        source,
       });
       return [];
     }

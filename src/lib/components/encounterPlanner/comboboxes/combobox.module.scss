@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 .combobox {
   position: relative;
   width: 100%;
@@ -5,20 +7,15 @@
 
 .input {
   width: 100%;
+  @include input-base(0.8rem);
   padding: 0.35rem 0.65rem;
-  border: 1px solid var(--color-secondary);
-  border-radius: 6px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-size: 0.8rem;
-  
+
   &:focus {
-    outline: 2px solid var(--color-accent);
+    @include focus-outline(0);
   }
-  
+
   &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    @include disabled(0.6);
   }
 }
 
@@ -29,12 +26,11 @@
   background: var(--color-bg);
   border: 1px solid var(--color-secondary);
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgb(var(--color-shadow-medium));
+  @include shadow-medium;
   z-index: 2000;
   max-height: 300px;
   overflow-y: auto;
   will-change: transform;
-  /* Width and position are set dynamically via transform/width inline styles */
 }
 
 .noResults {
@@ -55,11 +51,11 @@
   cursor: pointer;
   transition: background-color 0.15s;
   border-bottom: 1px solid var(--color-secondary);
-  
+
   &:last-child {
     border-bottom: none;
   }
-  
+
   &:hover,
   &.selected {
     background: var(--color-bg-alt);

@@ -49,12 +49,23 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const locale = body.locale || 'en';
   const spellSlugs: string[] | undefined = body.spells;
+  const listSource: string | undefined = body.listSource;
 
   try {
-    const spells =
-      spellSlugs && spellSlugs.length > 0
-        ? await spellRepository.listBySlugs(locale, spellSlugs)
-        : await spellRepository.list(locale);
+    let spells;
+    if (listSource) {
+      spells = await spellRepository.listBySource(locale, listSource);
+    }
+    if (
+      (!spells || spells.length === 0) &&
+      spellSlugs &&
+      spellSlugs.length > 0
+    ) {
+      spells = await spellRepository.listBySlugs(locale, spellSlugs);
+    }
+    if (!spells || spells.length === 0) {
+      spells = await spellRepository.list(locale);
+    }
     return NextResponse.json(spells);
   } catch (error) {
     log.error('Error loading spell metadata', {

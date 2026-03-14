@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 .spellTables {
   width: 100%;
   margin: 2rem 0;
@@ -11,9 +13,12 @@
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-secondary) var(--color-surface);
-  background: linear-gradient(0deg, var(--color-surface) 20%, var(--color-transparent) 30%);
+  @include scrollbar-thin;
+  background: linear-gradient(
+    0deg,
+    var(--color-surface) 20%,
+    var(--color-transparent) 30%
+  );
 
   &::-webkit-scrollbar {
     height: 8px;
@@ -55,13 +60,17 @@
 
   // Vertical gradient overlay (bottom fade)
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 100%;
-    background: linear-gradient(0deg, var(--color-surface) 20%, var(--color-transparent) 50%);
+    background: linear-gradient(
+      0deg,
+      var(--color-surface) 20%,
+      var(--color-transparent) 50%
+    );
     pointer-events: none;
     z-index: 1;
   }
@@ -99,7 +108,7 @@
 
       // Extend the bottom border to cover the content box border
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: -1px;
         left: 0;

@@ -66,14 +66,7 @@ export async function GET(req: NextRequest) {
   try {
     const draft = await draftRepository.findActive(locale, slug);
 
-    if (!draft) {
-      return NextResponse.json(
-        { error: 'No active draft found' },
-        { status: 404 },
-      );
-    }
-
-    return NextResponse.json({ draft }, { status: 200 });
+    return NextResponse.json({ draft: draft ?? null }, { status: 200 });
   } catch (err) {
     log.error('Failed to fetch draft', {
       locale,

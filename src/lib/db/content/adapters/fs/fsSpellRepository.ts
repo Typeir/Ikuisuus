@@ -84,6 +84,23 @@ export const fsSpellRepository: SpellRepository = {
     }
   },
 
+  listBySource: async (
+    locale: string,
+    source: string,
+  ): Promise<SpellMetadata[]> => {
+    try {
+      const all = readMetadataFiles<SpellMetadata>(locale, SUBDIR);
+      return all.filter((s) => s.spellLists?.some((sl) => sl.name === source));
+    } catch (error) {
+      log.error('Error reading spells by source from filesystem', {
+        error: error instanceof Error ? error.message : String(error),
+        locale,
+        source,
+      });
+      return [];
+    }
+  },
+
   getBySlug: async (
     locale: string,
     slug: string,

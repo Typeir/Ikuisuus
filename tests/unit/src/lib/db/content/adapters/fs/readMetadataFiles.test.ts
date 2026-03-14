@@ -101,4 +101,39 @@ describe('readMetadataFiles', () => {
       expect.stringContaining('items'),
     );
   });
+
+  it('should skip .meta/ directory when METADATA_BACKEND is fs', () => {
+    vi.stubEnv('METADATA_BACKEND', 'fs');
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+    vi.mocked(fs.readdirSync).mockReturnValue([
+      'fireball.metadata.json',
+    ] as unknown as ReturnType<typeof fs.readdirSync>);
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      JSON.stringify({ slug: 'fireball' }),
+    );
+
+    readMetadataFiles('en', 'spells');
+
+    expect(fs.existsSync).toHaveBeenCalledTimes(1);
+    expect(fs.existsSync).toHaveBeenCalledWith(
+      expect.stringContaining('content'),
+    );
+  });
+
+  it('should prefer .meta/ directory when METADATA_BACKEND is pg', () => {
+    vi.stubEnv('METADATA_BACKEND', 'pg');
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+    vi.mocked(fs.readdirSync).mockReturnValue([
+      'fireball.metadata.json',
+    ] as unknown as ReturnType<typeof fs.readdirSync>);
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      JSON.stringify({ slug: 'fireball' }),
+    );
+
+    readMetadataFiles('en', 'spells');
+
+    expect(fs.existsSync).toHaveBeenCalledWith(
+      expect.stringContaining('.meta'),
+    );
+  });
 });

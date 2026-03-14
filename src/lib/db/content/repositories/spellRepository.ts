@@ -52,6 +52,16 @@ export interface SpellRepository {
   listBySlugs(locale: string, slugs: string[]): Promise<SpellMetadata[]>;
 
   /**
+   * Returns spells belonging to a named spell list (e.g. 'Wizard', 'Cleric').
+   * Only meaningful for the pg backend; fs falls back to listBySlugs.
+   *
+   * @param {string} locale - Locale code
+   * @param {string} source - Spell list name (vocation/class)
+   * @returns {Promise<SpellMetadata[]>} Matching spells
+   */
+  listBySource(locale: string, source: string): Promise<SpellMetadata[]>;
+
+  /**
    * Returns a single spell by slug.
    *
    * @param {string} locale - Locale code

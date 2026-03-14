@@ -56,6 +56,20 @@ if (!process.env.DATABASE_URL) {
 
 const SUPPORTED_LOCALES = ['en', 'es', 'fi'];
 
+const VOCATIONS = [
+  { name: 'Bard', slug: 'bard' },
+  { name: 'Cleric', slug: 'cleric' },
+  { name: 'Druid', slug: 'druid' },
+  { name: 'Esper', slug: 'esper' },
+  { name: 'Paladin', slug: 'paladin' },
+  { name: 'Ranger', slug: 'ranger' },
+  { name: 'Revenant', slug: 'revenant' },
+  { name: 'Sorcerer', slug: 'sorcerer' },
+  { name: 'Tinker', slug: 'tinker' },
+  { name: 'Warlock', slug: 'warlock' },
+  { name: 'Wizard', slug: 'wizard' },
+];
+
 /* ─────────────────────  Filesystem helpers  ────────────────────────── */
 
 /**
@@ -85,14 +99,28 @@ const metaDir = (locale) => join(ROOT, '.meta', locale);
 const readMetadata = (locale, subdir) => {
   const metaDirPath = join(metaDir(locale), subdir);
   const contentDirPath = join(contentDir(locale), subdir);
-  const dir = existsSync(metaDirPath) ? metaDirPath : contentDirPath;
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir)
-    .filter((f) => f.endsWith('.metadata.json'))
-    .flatMap((f) => {
-      const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
-      return Array.isArray(parsed) ? parsed : [parsed];
-    });
+
+  const readDir = (dir) => {
+    if (!existsSync(dir)) return [];
+    return readdirSync(dir)
+      .filter((f) => f.endsWith('.metadata.json'))
+      .flatMap((f) => {
+        const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
+        return Array.isArray(parsed) ? parsed : [parsed];
+      });
+  };
+
+  const metaRecords = readDir(metaDirPath);
+  const contentRecords = readDir(contentDirPath);
+  const seen = new Set(metaRecords.map((r) => r.slug).filter(Boolean));
+  const merged = [...metaRecords];
+  for (const r of contentRecords) {
+    if (r.slug && !seen.has(r.slug)) {
+      merged.push(r);
+      seen.add(r.slug);
+    }
+  }
+  return merged;
 };
 
 /* ─────────────────────  SQL helpers  ──────────────────────────────── */
@@ -500,6 +528,70 @@ async function seedSpells(client, locale) {
 }
 
 /**
+ * Backfills the `spell_lists` table by parsing vocation spells.mdx files and
+ * cross-referencing slugs against the `spells` table. Ensures that all spells
+ * (including external ones without embedded spellLists metadata) get proper
+ * spell_lists rows for each vocation that includes them.
+ *
+ * @param {pg.PoolClient} client - Transaction-bound pg client
+ * @param {string} locale - Locale code
+ * @returns {Promise<number>} Total spell_lists rows inserted
+ */
+async function backfillSpellLists(client, locale) {
+  let totalInserted = 0;
+
+  for (const vocation of VOCATIONS) {
+    const filePath = join(
+      ROOT,
+      'src/content',
+      locale,
+      'character-creation/vocations',
+      vocation.slug,
+      'spells.mdx',
+    );
+
+    if (!existsSync(filePath)) continue;
+
+    const content = readFileSync(filePath, 'utf8');
+    const arrayMatch = content.match(/spells=\{\[\s*([\s\S]*?)\]\}/);
+    if (!arrayMatch) continue;
+
+    const slugs = [];
+    const slugPattern = /["']([^"']+)["']/g;
+    let m;
+    while ((m = slugPattern.exec(arrayMatch[1])) !== null) {
+      slugs.push(m[1]);
+    }
+    if (slugs.length === 0) continue;
+
+    const link = `/${locale}/library/character-creation/vocations/${vocation.slug}/spells`;
+
+    await client.query('DELETE FROM spell_lists WHERE link = $1', [link]);
+
+    const { rows } = await client.query(
+      'SELECT id, slug FROM spells WHERE locale = $1 AND slug = ANY($2::text[])',
+      [locale, slugs],
+    );
+
+    if (rows.length === 0) continue;
+
+    const placeholders = rows
+      .map((_, i) => `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3})`)
+      .join(', ');
+    const values = rows.flatMap((r) => [r.id, vocation.name, link]);
+
+    await client.query(
+      `INSERT INTO spell_lists (spell_id, name, link) VALUES ${placeholders}`,
+      values,
+    );
+
+    totalInserted += rows.length;
+  }
+
+  return totalInserted;
+}
+
+/**
  * Seeds the `trinkets` table for one locale using hash-based change detection.
  *
  * @param {pg.PoolClient} client - Transaction-bound pg client
@@ -606,6 +698,7 @@ async function seedLocale(pool, locale) {
     const heirlooms = await seedHeirlooms(client, locale);
     const spells = await seedSpells(client, locale);
     const trinkets = await seedTrinkets(client, locale);
+    const spellListRows = await backfillSpellLists(client, locale);
 
     await client.query('COMMIT');
 
@@ -619,7 +712,7 @@ async function seedLocale(pool, locale) {
     };
 
     log.message(
-      `  ✅  ${locale}:  ${fmt('monsters', monsters)}  ${fmt('heirlooms', heirlooms)}  ${fmt('spells', spells)}  ${fmt('trinkets', trinkets)}`,
+      `  ✅  ${locale}:  ${fmt('monsters', monsters)}  ${fmt('heirlooms', heirlooms)}  ${fmt('spells', spells)}  ${fmt('trinkets', trinkets)}  spell_lists(${spellListRows})`,
     );
   } catch (err) {
     await client.query('ROLLBACK');

@@ -240,6 +240,8 @@ const SUPPLEMENTARY_INDEXES = [
      ON spells USING GIN (tags)`,
   `CREATE INDEX IF NOT EXISTS spell_lists_spell_id_idx
      ON spell_lists (spell_id)`,
+  `CREATE INDEX IF NOT EXISTS spell_lists_name_idx
+     ON spell_lists (name)`,
   `CREATE INDEX IF NOT EXISTS trinkets_locale_item_type_idx
      ON trinkets (locale, item_type)`,
   `CREATE INDEX IF NOT EXISTS trinkets_tags_gin_idx

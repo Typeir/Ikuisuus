@@ -17,6 +17,9 @@ const {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  sassOptions: {
+    includePaths: [path.join(__dirname, 'src/styles')],
+  },
   serverExternalPackages: [
     '@mikro-orm/core',
     '@mikro-orm/postgresql',

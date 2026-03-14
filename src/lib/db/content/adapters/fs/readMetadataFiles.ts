@@ -26,8 +26,9 @@ const getMetaFolder = (locale: string): string => {
 /**
  * Reads and parses all `.metadata.json` files from a content subdirectory.
  *
- * Checks `.meta/{locale}/{subdir}` first (used in pg mode), then falls back
- * to `src/content/{locale}/{subdir}` (classic sidecar files).
+ * When METADATA_BACKEND is 'pg', checks `.meta/{locale}/{subdir}` first, then
+ * falls back to `src/content/{locale}/{subdir}`. When 'fs' or unset, reads
+ * directly from `src/content/{locale}/{subdir}` to avoid stale `.meta/` data.
  *
  * Returns an empty array if neither directory exists or cannot be read.
  * Multi-record files (arrays) are automatically flattened.
@@ -38,9 +39,16 @@ const getMetaFolder = (locale: string): string => {
  * @returns {T[]} Flattened metadata records
  */
 export const readMetadataFiles = <T>(locale: string, subdir: string): T[] => {
-  const metaPath = path.join(getMetaFolder(locale), subdir);
   const contentPath = path.join(getContentFolder(locale), subdir);
-  const dirPath = fs.existsSync(metaPath) ? metaPath : contentPath;
+  const backend = process.env.METADATA_BACKEND || 'fs';
+  let dirPath: string;
+
+  if (backend === 'pg') {
+    const metaPath = path.join(getMetaFolder(locale), subdir);
+    dirPath = fs.existsSync(metaPath) ? metaPath : contentPath;
+  } else {
+    dirPath = contentPath;
+  }
 
   if (!fs.existsSync(dirPath)) {
     return [];

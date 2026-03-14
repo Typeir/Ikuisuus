@@ -180,7 +180,7 @@ describe('Drafts API (GET /api/drafts)', () => {
     expect(data.draft.slug).toBe('monsters/albedo');
   });
 
-  it('should return 404 when no active draft exists', async () => {
+  it('should return 200 with null draft when no active draft exists', async () => {
     mockFindActive.mockResolvedValue(null);
     const { GET } = await import('@/app/api/drafts/route');
 
@@ -189,7 +189,9 @@ describe('Drafts API (GET /api/drafts)', () => {
     );
 
     const res = await GET(req);
-    expect(res.status).toBe(404);
+    const data = await res.json();
+    expect(res.status).toBe(200);
+    expect(data.draft).toBeNull();
   });
 
   it('should return 400 when slug is missing', async () => {

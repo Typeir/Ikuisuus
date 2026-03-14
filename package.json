@@ -36,6 +36,7 @@
     "db:init": "node scripts/db/pg/init-db.mjs",
     "db:migrate": "node scripts/db/pg/migrate.mjs",
     "db:seed": "npx tsx scripts/db/pg/seed-from-fs.ts",
+    "db:backfill-spell-lists": "node scripts/db/pg/backfill-spell-lists.mjs",
     "multirepo:setup": "bash scripts/multirepo/setup-hooks.sh",
     "multirepo:help": "bash scripts/multirepo/ik.sh help",
     "multirepo:extract": "bash scripts/migration/extract-content-repo.sh",

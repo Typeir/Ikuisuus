@@ -11,16 +11,16 @@
  */
 
 import {
-  Collection,
-  Embeddable,
-  Embedded,
-  Entity,
-  Index,
-  ManyToOne,
-  OneToMany,
-  PrimaryKey,
-  Property,
-  Unique,
+    Collection,
+    Embeddable,
+    Embedded,
+    Entity,
+    Index,
+    ManyToOne,
+    OneToMany,
+    PrimaryKey,
+    Property,
+    Unique,
 } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
@@ -56,6 +56,7 @@ export class SpellComponentEmbed {
  */
 @Entity({ tableName: 'spell_lists' })
 @Index({ properties: ['spell'], name: 'spell_lists_spell_id_idx' })
+@Index({ properties: ['name'], name: 'spell_lists_name_idx' })
 export class SpellListEntity {
   @PrimaryKey({ type: 'number', autoincrement: true })
   id!: number;

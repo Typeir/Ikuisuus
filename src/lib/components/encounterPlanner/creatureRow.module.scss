@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 /** Creature Row Styling - Layered container design with theme colors */
 
 .creatureRow {
@@ -32,25 +34,14 @@
 }
 
 .iconButton {
-  padding: 0.5rem;
-  border: 1px solid var(--color-secondary);
-  border-radius: 4px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  cursor: pointer;
-  font-size: 0.75rem;
+  @include button-base(0.5rem, 0.75rem);
   line-height: 1;
   min-width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  &:hover {
-    background: var(--color-accent);
-    color: var(--color-surface);
-    border-color: var(--color-accent);
-  }
+  @include button-hover-accent;
 }
 
 .nameSection {
@@ -60,12 +51,8 @@
 
 .nameInput {
   width: 100%;
+  @include input-base(0.95rem);
   padding: 0.5rem;
-  border: 1px solid var(--color-secondary);
-  border-radius: 6px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-size: 0.95rem;
   font-weight: 600;
 
   &:focus {
@@ -83,11 +70,7 @@
 }
 
 .label {
-  font-size: 0.625rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: var(--color-secondary);
-  letter-spacing: 0.5px;
+  @include label-uppercase;
 }
 
 .hpInputs {
@@ -105,14 +88,12 @@
   border-radius: 0.375rem;
   background-color: var(--color-bg-secondary);
   color: var(--color-text);
-  transition: border-color 0.3s ease-in-out, filter 0.3s ease-in-out;
+  @include transition-border-filter;
   text-align: center;
   font-size: 0.75rem;
 
   &:focus {
-    outline: var(--color-accent);
-    border-color: var(--color-accent);
-    filter: drop-shadow(0px 0px 4px var(--color-accent));
+    @include focus-glow;
   }
 }
 
@@ -130,12 +111,8 @@
 }
 
 .statLabel {
-  font-size: 0.625rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: var(--color-secondary);
+  @include label-uppercase;
   text-align: center;
-  letter-spacing: 0.5px;
 }
 
 .statBox {
@@ -165,11 +142,7 @@
 }
 
 .initiativeLabel {
-  font-size: 0.625rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: var(--color-secondary);
-  letter-spacing: 0.5px;
+  @include label-uppercase;
 }
 
 .initiativeControls {
@@ -184,10 +157,9 @@
   width: 50px;
   text-align: center;
   color: var(--color-accent);
+  @include input-base;
   padding: 0.3rem 0.25rem;
-  border: 1px solid var(--color-secondary);
   border-radius: 4px;
-  background: var(--color-bg);
 
   &:focus {
     outline: none;
@@ -201,20 +173,9 @@
 }
 
 .smallButton {
-  padding: 0.3rem 0.55rem;
-  border: 1px solid var(--color-secondary);
-  border-radius: 4px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  cursor: pointer;
-  font-size: 0.7rem;
+  @include button-base(0.3rem 0.55rem, 0.7rem);
   font-weight: 600;
-
-  &:hover {
-    background: var(--color-accent);
-    color: var(--color-surface);
-    border-color: var(--color-accent);
-  }
+  @include button-hover-accent;
 }
 
 .actions {
@@ -223,29 +184,13 @@
 }
 
 .button {
-  padding: 0.3rem 0.55rem;
-  border: 1px solid var(--color-secondary);
-  border-radius: 4px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  cursor: pointer;
-  font-size: 0.7rem;
+  @include button-base(0.3rem 0.55rem, 0.7rem);
   font-weight: 600;
-
-  &:hover {
-    background: var(--color-secondary);
-    border-color: var(--color-secondary);
-  }
+  @include button-hover-secondary;
 }
 
 .buttonDanger {
-  background: var(--color-emphasis);
-  color: var(--color-bg);
-  border-color: var(--color-emphasis);
-
-  &:hover {
-    filter: brightness(0.9);
-  }
+  @include button-danger;
 }
 
 // Conditions Section - Layered container
@@ -263,13 +208,10 @@
 }
 
 .conditionsLabel {
+  @include label-uppercase;
   font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: var(--color-secondary);
   margin-bottom: 0.75rem;
   display: block;
-  letter-spacing: 0.5px;
 }
 
 .conditionsList {
@@ -393,11 +335,12 @@
 }
 
 .detailsColumnTitle {
+  @include label-uppercase;
   font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
   color: var(--color-accent);
-  letter-spacing: 0.5px;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-secondary);
+}
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--color-secondary);
 }
