@@ -10,6 +10,8 @@
  * @since 4.1.0
  */
 
+'use client';
+
 import { useCallback, useState } from 'react';
 
 /**
