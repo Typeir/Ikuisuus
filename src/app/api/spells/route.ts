@@ -55,15 +55,9 @@ export async function POST(req: Request) {
     let spells;
     if (listSource) {
       spells = await spellRepository.listBySource(locale, listSource);
-    }
-    if (
-      (!spells || spells.length === 0) &&
-      spellSlugs &&
-      spellSlugs.length > 0
-    ) {
+    } else if (spellSlugs && spellSlugs.length > 0) {
       spells = await spellRepository.listBySlugs(locale, spellSlugs);
-    }
-    if (!spells || spells.length === 0) {
+    } else {
       spells = await spellRepository.list(locale);
     }
     return NextResponse.json(spells);

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { DEFAULT_SPELL_LEVEL_LABELS } from '@/lib/enums/tableConstants';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import MetadataTable, {
-    type ColumnConfig,
-    type MetadataRow,
-} from '../metadataTables/metadataTable';
-import styles from './spellTable.module.scss';
-import { SpellTableSkeleton } from './spellTableSkeleton';
+  type ColumnConfig,
+  type MetadataRow,
+} from "../metadataTables/metadataTable";
+import { SpellTableSkeleton } from "./spellTableSkeleton";
+import { DEFAULT_SPELL_LEVEL_LABELS } from "@/lib/enums/tableConstants";
+import styles from "./spellTable.module.scss";
 
 /**
  * @interface SpellData
@@ -71,7 +71,7 @@ interface SpellTablesProps {
  * Tabbed spell table component with filtering, sorting, and search.
  * Fetches spell data from API endpoints or accepts direct data arrays.
  * Filters spells by level when tab is selected (efficient single-table approach).
- *
+ * 
  * @component
  * @param {SpellTablesProps} props - Component props
  * @param {(string | SpellData[])[]} props.sources - Array of API endpoint URLs or direct spell data arrays
@@ -81,41 +81,34 @@ interface SpellTablesProps {
  * @param {string} [props.basePath="spells"] - Base path for spell detail links
  * @param {boolean} [props.showAllTab=false] - Whether to show an "All" tab displaying all spell levels
  * @returns {JSX.Element} Rendered spell table with tabs
- *
+ * 
  * @example
  * // Basic usage with API endpoint
  * <SpellTable sources={['/api/spells']} showAllTab={true} />
- *
+ * 
  * @example
  * // With custom levels and labels
- * <SpellTable
- *   sources={['/api/spells']}
+ * <SpellTable 
+ *   sources={['/api/spells']} 
  *   levels={[0, 1, 2, 3]}
  *   levelLabels={{ 0: "Cantrips", 1: "First", 2: "Second", 3: "Third" }}
  * />
  */
 const SpellTable: React.FC<SpellTablesProps> = ({
   sources,
-  locale = 'en',
+  locale = "en",
   levels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
   levelLabels = DEFAULT_SPELL_LEVEL_LABELS,
-  basePath = 'spells',
+  basePath = "spells",
   showAllTab = false,
   spells,
   listSource,
 }) => {
   const t = useTranslations('tables.spells');
   const tColumns = useTranslations('tables.spells.columns');
-  const displayLevels: (number | 'all')[] = showAllTab
-    ? ['all', ...levels]
-    : levels;
-  const allLevelLabels: Record<number, string> &
-    Partial<Record<'all', string>> = showAllTab
-    ? { all: t('levelLabels.all'), ...levelLabels }
-    : levelLabels;
-  const [activeTab, setActiveTab] = useState<number | 'all'>(
-    showAllTab ? 'all' : levels[0],
-  );
+  const displayLevels: (number | 'all')[] = showAllTab ? ['all', ...levels] : levels;
+  const allLevelLabels: Record<number, string> & Partial<Record<'all', string>> = showAllTab ? { all: t('levelLabels.all'), ...levelLabels } : levelLabels;
+  const [activeTab, setActiveTab] = useState<number | 'all'>(showAllTab ? 'all' : levels[0]);
   const [spellData, setSpellData] = useState<SpellData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -129,7 +122,7 @@ const SpellTable: React.FC<SpellTablesProps> = ({
         const allSpells: SpellData[] = [];
 
         for (const source of sources) {
-          if (typeof source === 'string') {
+          if (typeof source === "string") {
             const response = await fetch(source, {
               method: 'POST',
               headers: {
@@ -138,7 +131,7 @@ const SpellTable: React.FC<SpellTablesProps> = ({
               body: JSON.stringify({
                 locale,
                 ...(listSource && { listSource }),
-                ...(spells && spells.length > 0 && { spells }),
+                ...(!listSource && spells && spells.length > 0 && { spells }),
               }),
             });
             if (!response.ok) {
@@ -152,12 +145,12 @@ const SpellTable: React.FC<SpellTablesProps> = ({
         }
 
         const uniqueSpells = Array.from(
-          new Map(allSpells.map((spell) => [spell.slug, spell])).values(),
+          new Map(allSpells.map((spell) => [spell.slug, spell])).values()
         );
 
         setSpellData(uniqueSpells);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load spells');
+        setError(err instanceof Error ? err.message : "Failed to load spells");
       } finally {
         setLoading(false);
       }
@@ -166,37 +159,34 @@ const SpellTable: React.FC<SpellTablesProps> = ({
     fetchSpells();
   }, [sources, locale, spells, listSource]);
 
-  const filteredSpells =
-    activeTab === 'all'
-      ? spellData
-      : spellData.filter((spell) => spell.level === activeTab);
+  const filteredSpells = activeTab === 'all' 
+    ? spellData 
+    : spellData.filter((spell) => spell.level === activeTab);
 
   const columns: ColumnConfig[] = [
     {
-      key: 'title',
+      key: "title",
       label: tColumns('spellName'),
       getValue: (row: MetadataRow) => row.title,
       sortable: true,
     },
     {
-      key: 'school',
+      key: "school",
       label: tColumns('school'),
-      getValue: (row: MetadataRow) => row.school ?? '—',
+      getValue: (row: MetadataRow) => row.school ?? "—",
       render: (value: string) => <em>{value}</em>,
       sortable: true,
     },
     {
-      key: 'castingTime',
+      key: "castingTime",
       label: tColumns('castingTime'),
       getValue: (row: MetadataRow) => row.castingTime ?? [],
       render: (value: string[]) => {
         const isRitual = value && value.includes('ritual');
         const displayTimes = value
           .filter((time: string) => time !== 'ritual')
-          .map((time: string) =>
-            time
-              .replace(/-/g, ' ')
-              .replace(/\b\w/g, (l: string) => l.toUpperCase()),
+          .map((time: string) => 
+            time.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())
           )
           .join(', ');
         return isRitual ? `${displayTimes} (R)` : displayTimes;
@@ -204,22 +194,22 @@ const SpellTable: React.FC<SpellTablesProps> = ({
       sortable: true,
     },
     {
-      key: 'range',
+      key: "range",
       label: tColumns('range'),
-      getValue: (row: MetadataRow) => row.range ?? '—',
+      getValue: (row: MetadataRow) => row.range ?? "—",
       sortable: true,
     },
     {
-      key: 'duration',
+      key: "duration",
       label: tColumns('duration'),
       getValue: (row: MetadataRow) => {
-        const duration = row.duration ?? '—';
+        const duration = row.duration ?? "—";
         return row.concentration ? `Concentration, ${duration}` : duration;
       },
       sortable: true,
     },
     {
-      key: 'components',
+      key: "components",
       label: tColumns('components'),
       getValue: (row: MetadataRow) => {
         const components = [];
@@ -239,9 +229,7 @@ const SpellTable: React.FC<SpellTablesProps> = ({
   if (error) {
     return (
       <div className={styles.error}>
-        <p>
-          {t('error')}: {error}
-        </p>
+        <p>{t('error')}: {error}</p>
       </div>
     );
   }
@@ -256,9 +244,10 @@ const SpellTable: React.FC<SpellTablesProps> = ({
                 <div
                   key={level}
                   className={`${styles.tab} ${
-                    activeTab === level ? styles.active : ''
-                  }`}>
-                  <button type='button' onClick={() => setActiveTab(level)}>
+                    activeTab === level ? styles.active : ""
+                  }`}
+                >
+                  <button type="button" onClick={() => setActiveTab(level)}>
                     {allLevelLabels[level] || `Level ${level}`}
                   </button>
                 </div>
@@ -275,11 +264,11 @@ const SpellTable: React.FC<SpellTablesProps> = ({
             columns={columns}
             getRowSlug={(row) => `${basePath}/${row.slug}`}
             searchKeys={[
-              'title',
-              'school',
-              'castingTimeRaw',
-              'duration',
-              'range',
+              "title",
+              "school",
+              "castingTimeRaw",
+              "duration",
+              "range",
             ]}
             locale={locale}
             pageSize={100}

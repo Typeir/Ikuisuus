@@ -125,11 +125,25 @@ export const pgSpellRepository: SpellRepository = {
     locale: string,
     slugs: string[],
   ): Promise<SpellMetadata[]> => {
-    log.debug('Querying spells by slugs from PostgreSQL', {
-      locale,
-      slugCount: slugs.length,
-    });
-    return [];
+    if (slugs.length === 0) {
+      return pgSpellRepository.list(locale);
+    }
+    try {
+      const em = await getEM();
+      const rows = await em.find(
+        SpellEntity,
+        { locale, slug: { $in: slugs } },
+        { orderBy: { slug: 'asc' }, populate: ['spellLists'] },
+      );
+      return rows.map(rowToSpell);
+    } catch (error) {
+      log.error('Error reading spells by slugs from PostgreSQL', {
+        error: error instanceof Error ? error.message : String(error),
+        locale,
+        slugCount: slugs.length,
+      });
+      return [];
+    }
   },
 
   listBySource: async (
@@ -137,11 +151,16 @@ export const pgSpellRepository: SpellRepository = {
     source: string,
   ): Promise<SpellMetadata[]> => {
     try {
-      log.debug('Querying spells by source from PostgreSQL', {
-        locale,
-        source,
-      });
-      return [];
+      const em = await getEM();
+      const lists = await em.find(
+        SpellListEntity,
+        { name: source },
+        { populate: ['spell', 'spell.spellLists'] },
+      );
+      return lists
+        .map((sl) => sl.spell)
+        .filter((s) => s.locale === locale)
+        .map(rowToSpell);
     } catch (error) {
       log.error('Error reading spells by source from PostgreSQL', {
         error: error instanceof Error ? error.message : String(error),

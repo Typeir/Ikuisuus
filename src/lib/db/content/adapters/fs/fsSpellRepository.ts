@@ -13,8 +13,8 @@
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
 import type {
-    SpellIndexEntry,
-    SpellMetadata,
+  SpellIndexEntry,
+  SpellMetadata,
 } from '../../schemas/spellMetadata';
 import { readMetadataFiles } from './readMetadataFiles';
 
@@ -86,19 +86,9 @@ export const fsSpellRepository: SpellRepository = {
 
   listBySource: async (
     locale: string,
-    source: string,
+    _source: string,
   ): Promise<SpellMetadata[]> => {
-    try {
-      const all = readMetadataFiles<SpellMetadata>(locale, SUBDIR);
-      return all.filter((s) => s.spellLists?.some((sl) => sl.name === source));
-    } catch (error) {
-      log.error('Error reading spells by source from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        source,
-      });
-      return [];
-    }
+    return fsSpellRepository.list(locale);
   },
 
   getBySlug: async (
