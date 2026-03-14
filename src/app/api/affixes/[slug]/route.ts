@@ -19,9 +19,9 @@
  * { slug: "bloodthirsty", title: "Bloodthirsty", link: "/library/rules/heroic-awakening/bloodthirsty" }
  */
 
-import { NextResponse } from 'next/server';
-import { logger } from '@/lib/logging/logger';
 import { HeroicAffix } from '@/lib/enums/encounterPlanner';
+import { logger } from '@/lib/logging/logger';
+import { NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Affix:Single' });
 

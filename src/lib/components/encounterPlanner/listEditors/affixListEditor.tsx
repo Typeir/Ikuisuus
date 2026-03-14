@@ -27,9 +27,9 @@
 'use client';
 
 import type { AffixEntry } from '@/lib/types/encounterPlanner';
+import { X } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { AffixCombobox } from '../comboboxes';
-import { X } from 'lucide-react';
 import styles from '../creatureRow.module.scss';
 
 /**

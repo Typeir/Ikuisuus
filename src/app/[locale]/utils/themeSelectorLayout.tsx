@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  ThemeSelector,
-  ThemeSelectorProps,
+    ThemeSelector,
+    ThemeSelectorProps,
 } from "@/lib/components/themeSelector/themeSelector";
 import { PersistentData } from "@/lib/enums/persistentData";
 import { Theme } from "@/lib/enums/themes";

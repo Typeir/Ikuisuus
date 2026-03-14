@@ -8,6 +8,7 @@
  * @since 1.0.0
  */
 
-export { getPhaseMarker, PHASE_THRESHOLDS } from './phaseMarker';
+export { PHASE_THRESHOLDS, getPhaseMarker } from './phaseMarker';
 export type { PhaseMarkerType } from './phaseMarker';
 export { useEditableField } from './useEditableField';
+

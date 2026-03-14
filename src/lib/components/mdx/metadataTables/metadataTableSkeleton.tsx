@@ -9,8 +9,8 @@
  * @since 1.0.0
  */
 
-import styles from './metadataTable.module.scss';
 import skeletonStyles from '@/lib/components/skeleton/skeleton.module.scss';
+import styles from './metadataTable.module.scss';
 
 /**
  * MetadataTable skeleton loading state

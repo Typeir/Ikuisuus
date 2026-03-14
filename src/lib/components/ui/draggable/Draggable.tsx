@@ -6,6 +6,7 @@
 
 'use client';
 
+import { X } from 'lucide-react';
 import {
     useCallback,
     useEffect,
@@ -15,7 +16,6 @@ import {
     type CSSProperties,
     type ReactNode,
 } from 'react';
-import { X } from 'lucide-react';
 import styles from './draggable.module.scss';
 
 /** @constant {number} MIN_WIDTH - Minimum resize width in pixels */

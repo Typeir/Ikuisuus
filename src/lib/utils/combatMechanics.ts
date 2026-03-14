@@ -9,13 +9,13 @@
  * @since 1.0.0
  */
 
+import { HeroicAffix } from '@/lib/enums/encounterPlanner';
 import type { AffixEntry } from '@/lib/types/encounterPlanner';
 import type {
     CombatantMechanics,
     HeroicAwakeningState,
     InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
-import { HeroicAffix } from '@/lib/enums/encounterPlanner';
 
 /**
  * Map CR to heroic DC threshold

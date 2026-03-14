@@ -22,9 +22,9 @@
  * ]
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { logger } from '@/lib/logging/logger';
 import { HeroicAffix } from '@/lib/enums/encounterPlanner';
+import { logger } from '@/lib/logging/logger';
+import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Affixes:Index' });
 

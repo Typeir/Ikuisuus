@@ -40,18 +40,18 @@
 
 'use client';
 
+import { logger } from '@/lib/logging/logger';
 import {
-  createContext,
-  useContext,
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-  memo,
-  ReactNode,
+    createContext,
+    memo,
+    ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { logger } from '@/lib/logging/logger';
 import styles from './pushNotification.module.scss';
 
 const log = logger.child({ module: 'PushNotification' });
