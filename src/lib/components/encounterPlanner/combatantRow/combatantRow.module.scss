@@ -163,19 +163,11 @@
   height: 20px;
   cursor: pointer;
   accent-color: var(--color-accent);
-  background-color: var(--color-bg);
-  border: 2px solid var(--color-secondary);
-  border-radius: 4px;
-  margin-left: 0.5rem;
-
-  &:hover {
-    border-color: var(--color-accent);
-  }
+  margin: 0;
+  padding: 0;
 
   &:focus {
-    outline: none;
-    border-color: var(--color-accent);
-    filter: drop-shadow(0px 0px 4px var(--color-accent));
+    @include focus-glow;
   }
 }
 
@@ -196,12 +188,9 @@
 }
 
 .numberInput {
+  @include input-base;
   width: 50px;
-  padding: 0.5rem;
-  border: 1px solid var(--color-secondary);
   border-radius: 4px;
-  background: var(--color-bg);
-  color: var(--color-text);
   text-align: center;
   font-weight: 600;
 
@@ -258,7 +247,7 @@
     color: var(--color-phase-text-light);
     border: 1px solid var(--color-phase-slain-border);
   }
-} // Moved to .nameBadgesWrapper
+} /** Moved to .nameBadgesWrapper */
 
 .acValue {
   font-size: 1rem;
@@ -289,13 +278,9 @@
 }
 
 .statValue {
-  padding: 0.5rem;
-  border: 1px solid var(--color-secondary);
+  @include input-base(0.875rem);
   border-radius: 4px;
-  background: var(--color-bg);
-  color: var(--color-text);
   text-align: center;
-  font-size: 0.875rem;
   font-weight: 500;
   min-width: 45px;
 }
@@ -307,13 +292,9 @@
 }
 
 .statInput {
-  padding: 0.5rem;
-  border: 1px solid var(--color-secondary);
+  @include input-base(0.875rem);
   border-radius: 4px;
-  background: var(--color-bg);
-  color: var(--color-text);
   text-align: center;
-  font-size: 0.875rem;
   font-weight: 500;
   min-width: 45px;
   width: 50px;
@@ -350,15 +331,12 @@
 }
 
 .initiativeInput {
+  @include input-base(1rem);
   width: 50px;
   padding: 0.25rem;
-  border: 1px solid var(--color-secondary);
   border-radius: 4px;
-  background: var(--color-bg);
-  color: var(--color-text);
   text-align: center;
   font-weight: 700;
-  font-size: 1rem;
 
   &:focus {
     @include focus-ring;
@@ -370,14 +348,6 @@
   text-align: center;
   font-size: 0.75rem;
   color: var(--color-secondary);
-}
-
-.slainCheckbox {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  margin: 0;
-  padding: 0;
 }
 
 .button {
@@ -493,11 +463,8 @@
   border-radius: 6px;
 
   .label {
-    font-size: 0.625rem;
+    @include label-uppercase;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--color-secondary);
   }
 }
 
@@ -553,11 +520,8 @@
 }
 
 .label {
-  font-size: 0.625rem;
+  @include label-uppercase;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-secondary);
   margin-bottom: 0.25rem;
   display: block;
 }
@@ -600,11 +564,7 @@
   gap: 0.5rem;
 
   .label {
-    font-size: 0.625rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--color-secondary);
-    letter-spacing: 0.5px;
+    @include label-uppercase;
   }
 
   .forceAwakeningButtons {
@@ -685,13 +645,9 @@
     align-items: center;
 
     .addConditionInput {
+      @include input-base(0.875rem);
       flex: 1;
-      padding: 0.5rem;
-      border: 1px solid var(--color-secondary);
       border-radius: 4px;
-      background: var(--color-bg);
-      color: var(--color-text);
-      font-size: 0.875rem;
 
       @media screen and (max-width: 500px) {
         margin: 0.5rem;
@@ -709,12 +665,10 @@
     }
 
     .addConditionButton {
-      padding: 0.5rem 0.75rem;
+      @include button-base(0.5rem 0.75rem);
       border: 1px solid var(--color-secondary);
       border-radius: 4px;
-      background: var(--color-bg);
       color: var(--color-secondary);
-      cursor: pointer;
       font-weight: 600;
       transition: all 0.2s ease;
 
@@ -785,7 +739,7 @@
   }
 }
 
-// Mechanics Section (Legendary Deeds and Resist)
+/** Mechanics Section (Legendary Deeds and Resist) */
 .mechanicsSection {
   display: flex;
   gap: 1.5rem;
@@ -802,11 +756,7 @@
   gap: 0.5rem;
 
   .label {
-    font-size: 0.625rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--color-secondary);
-    letter-spacing: 0.5px;
+    @include label-uppercase;
     margin-right: 0.25rem;
   }
 }
@@ -847,11 +797,7 @@
   gap: 0.75rem;
 
   .label {
-    font-size: 0.625rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--color-secondary);
-    letter-spacing: 0.5px;
+    @include label-uppercase;
     margin-right: 0.25rem;
   }
 }
@@ -913,7 +859,7 @@
   }
 }
 
-// Details Wrapper and Toggle
+/** Details Wrapper and Toggle */
 .detailsWrapper {
   display: flex;
   flex-direction: column;
@@ -921,15 +867,13 @@
 }
 
 .detailsToggle {
+  @include button-base(0.5rem 0.75rem);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-secondary);
   border-radius: 4px;
-  background: var(--color-bg);
   color: var(--color-secondary);
-  cursor: pointer;
   font-size: 0.875rem;
   font-weight: 600;
   transition: all 0.2s ease;
@@ -1781,4 +1725,4 @@
   }
 }
 
-// Moved to .nameBadgesWrapper
+/** Moved to .nameBadgesWrapper */

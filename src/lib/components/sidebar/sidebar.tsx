@@ -1,37 +1,9 @@
 /**
- * Sidebar Navigation Component
- *
  * @fileoverview Collapsible hierarchical content tree for navigation.
  * Renders expandable/collapsible sections with active path highlighting
  * and animated height transitions.
  *
  * @module lib/components/sidebar/sidebar
- * @version 2.0.0
- * @author Typeir
- * @since 1.0.0
- *
- * @requires react
- * @requires next/link
- * @requires next/navigation
- * @requires @/lib/context/PersistentUiContext
- * @requires @/lib/components/icon/icon
- * @requires ./store/sidebarActivePath
- *
- * @description
- * Client-side navigation sidebar with:
- * - Recursive nested item rendering
- * - Sibling auto-collapse behavior
- * - Animated max-height transitions
- * - Integration with PersistentUiContext for state persistence
- *
- * @example
- * ```tsx
- * <Sidebar
- *   items={navigationTree}
- *   onNavigate={() => closeSidebar()}
- *   collapseSiblings={true}
- * />
- * ```
  */
 'use client';
 
@@ -249,74 +221,59 @@ const SidebarItem = ({
     }
   };
 
-  if (index !== undefined && index !== -1) {
-    const children = [...(item.children as LayoutItem[])];
-    const indexedItem = children?.splice(index, 1)[0];
-
-    return (
-      <li className={cn('ml-2', styles.accordion, open && styles.open)}>
-        <Link
-          href={`/${locale}/library/${indexedItem.path}`}
-          onClick={() => open && onNavigate && onNavigate()}
-          className={cn(
-            'text-accent hover:underline block',
-            styles['link-item'],
-          )}>
-          <div
-            className={cn(
-              'text-lg cursor-pointer font-bold',
-              styles.label,
-              open && styles.open,
-            )}
-            onClick={() => !open && toggle()}>
-            <p>{item.name}</p>
-            <Icon
-              onClick={toggle}
-              type='arrow'
-              className={cn(styles.arrow, open && styles.open)}
-            />
-          </div>
-        </Link>
-        <div
-          className={cn(styles.content, open && styles.expanded)}
-          style={{
-            ['--expanded-height' as string]: `${item.expandedHeight}px`,
-          }}>
-          <Sidebar
-            items={children as LayoutItem[]}
-            onNavigate={onNavigate}
-            collapseSiblings={collapseSiblings}
-          />
-        </div>
-      </li>
-    );
-  }
-
   if (item.children?.length === 0) {
     return null;
-  } else if (item.children) {
+  }
+
+  if (item.children) {
+    const hasIndex = index !== undefined && index !== -1;
+    const folderChildren = hasIndex
+      ? (() => {
+          const c = [...(item.children as LayoutItem[])];
+          const main = c.splice(index, 1)[0];
+          return { items: c as LayoutItem[], mainPath: main.path };
+        })()
+      : { items: item.children, mainPath: null };
+
+    const labelEl = (
+      <div
+        className={cn(
+          'text-lg cursor-pointer font-bold',
+          styles.label,
+          open && styles.open,
+        )}
+        onClick={hasIndex ? () => !open && toggle() : toggle}>
+        <p>{item.name}</p>
+        <Icon
+          {...(hasIndex ? { onClick: toggle } : {})}
+          type='arrow'
+          className={cn(styles.arrow, open && styles.open)}
+        />
+      </div>
+    );
+
     return (
       <li className={cn('ml-2', styles.accordion, open && styles.open)}>
-        <div
-          className={cn(
-            'text-lg cursor-pointer font-bold',
-            styles.label,
-            open && styles.open,
-          )}
-          onClick={toggle}>
-          <p>{item.name}</p>
-          <Icon
-            type='arrow'
-            className={cn(styles.arrow, open && styles.open)}
-          />
-        </div>
+        {hasIndex ? (
+          <Link
+            href={`/${locale}/library/${folderChildren.mainPath}`}
+            onClick={() => open && onNavigate?.()}
+            className={cn(
+              'text-accent hover:underline block',
+              styles['link-item'],
+            )}>
+            {labelEl}
+          </Link>
+        ) : (
+          labelEl
+        )}
         <div
           className={cn(styles.content, open && styles.expanded)}
           style={{
             ['--expanded-height' as string]: `${item.expandedHeight}px`,
           }}>
           <Sidebar
-            items={item.children}
+            items={folderChildren.items}
             onNavigate={onNavigate}
             collapseSiblings={collapseSiblings}
           />

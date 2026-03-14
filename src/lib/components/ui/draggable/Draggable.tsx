@@ -1,14 +1,7 @@
 /**
  * @fileoverview Draggable Container — Generic Moveable & Resizable Wrapper
- * @description A headless-ish draggable container that adds a drag handle bar
- * to any children. Uses pointer events for unified mouse/touch support.
- * Constrains movement to a bounding element (defaults to parent) so the
- * panel cannot be dragged off-screen. Supports optional corner-resize.
  *
  * @module ui/draggable/Draggable
- * @version 2.0.0
- * @author Typeir
- * @since 2.0.0
  */
 
 'use client';
@@ -39,9 +32,7 @@ const MIN_HEIGHT = 120;
  * @property {number} y - Vertical offset in pixels
  */
 interface PositionValue {
-  /** @property {number} x - Horizontal offset in pixels */
   x: number;
-  /** @property {number} y - Vertical offset in pixels */
   y: number;
 }
 
@@ -75,71 +66,28 @@ type PositionFromBounds = (parentBounds: {
  * @property {Function} [onClose] - Callback when the close button is clicked; shows close button when provided
  */
 interface DraggableProps {
-  /** @property {ReactNode} children - Content inside the draggable panel */
   children: ReactNode;
-  /** @property {string} [handleLabel] - Text label in the drag handle */
   handleLabel?: string;
-  /** @property {string} [className] - Additional CSS class for the container */
   className?: string;
-  /** @property {CSSProperties} [style] - Additional inline styles (non-dimension) */
   style?: CSSProperties;
-  /** @property {CSSProperties['width']} [defaultWidth] - Default width (e.g. 420, '50%', 'calc(100% - 32px)') */
   defaultWidth?: CSSProperties['width'];
-  /** @property {CSSProperties['height']} [defaultHeight] - Default height (e.g. 300, 'calc(100% - 48px)') */
   defaultHeight?: CSSProperties['height'];
-  /** @property {PositionValue | PositionFromBounds} [initialPosition] - Starting position or function computing it from parent bounds */
   initialPosition?: PositionValue | PositionFromBounds;
-  /** @property {React.RefObject<HTMLElement | null>} [boundsRef] - Bounding container ref */
   boundsRef?: React.RefObject<HTMLElement | null>;
-  /** @property {string} [testId] - data-testid attribute for testing */
   testId?: string;
-  /** @property {boolean} [resizable] - Enable corner-resize handle */
   resizable?: boolean;
-  /** @property {Function} [onClose] - Close callback; enables close button when provided */
   onClose?: () => void;
 }
 
 /**
- * Generic draggable container component. Renders a drag handle bar above
- * the children content. Dragging the handle moves the entire container.
- * Movement is constrained to the bounds of the parent element (or a
- * custom bounds ref).
- *
- * When `resizable` is true, a corner resize handle appears at the bottom-right
- * corner. Dragging it resizes the container (clamped to min dimensions).
- *
- * When `onClose` is provided, a close button appears in the drag handle bar.
- *
- * When `initialPosition` is a function, it receives the parent element's
- * dimensions after mount and returns the computed position. This allows
- * layout-aware positioning (e.g. anchoring relative to the right edge of a
- * container that is narrower than the viewport).
- *
- * Uses pointer events for unified mouse + touch support and pointer capture
- * for reliable drag tracking even when the cursor leaves the element.
+ * Draggable container with pointer-event drag, optional resize, and bounds clamping.
  *
  * @param {DraggableProps} props - Component props
- * @param {ReactNode} props.children - Content rendered inside the draggable container
- * @param {string} [props.handleLabel] - Optional text label shown in the drag handle bar
- * @param {string} [props.className] - Additional CSS class for the outer container
- * @param {CSSProperties} [props.style] - Additional inline styles for the outer container
- * @param {CSSProperties['width']} [props.defaultWidth] - Default width in CSS syntax; overridden by user resize
- * @param {CSSProperties['height']} [props.defaultHeight] - Default height in CSS syntax; overridden by user resize
- * @param {PositionValue | PositionFromBounds} [props.initialPosition] - Starting position; static coordinates or a function receiving parent bounds
- * @param {React.RefObject<HTMLElement | null>} [props.boundsRef] - Ref to the bounding container element
- * @param {string} [props.testId] - data-testid for testing
- * @param {boolean} [props.resizable] - Whether the container can be resized via a corner handle
- * @param {Function} [props.onClose] - Callback when the close button is clicked; shows close button when provided
  * @returns {React.ReactElement} The draggable container
  *
  * @example
  * ```tsx
  * <Draggable handleLabel="Preview" initialPosition={{ x: 100, y: 50 }} resizable>
- *   <iframe src="/content?embed=true" />
- * </Draggable>
- *
- * // Function form — position relative to parent bounds
- * <Draggable initialPosition={(bounds) => ({ x: bounds.width - 420, y: 16 })}>
  *   <iframe src="/content?embed=true" />
  * </Draggable>
  * ```

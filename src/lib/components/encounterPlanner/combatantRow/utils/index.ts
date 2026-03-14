@@ -10,3 +10,4 @@
 
 export { getPhaseMarker, PHASE_THRESHOLDS } from './phaseMarker';
 export type { PhaseMarkerType } from './phaseMarker';
+export { useEditableField } from './useEditableField';

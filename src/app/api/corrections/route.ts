@@ -107,18 +107,10 @@ export async function POST(req: NextRequest) {
 
   const { path: filePath, content, baseSha, isNew, message } = body;
 
-  const headersObjAll: Record<string, string> = {};
-  req.headers.forEach((v, k) => {
-    headersObjAll[k] = v;
-  });
-
   if (!filePath || typeof filePath !== 'string') {
     log.message('Missing or invalid payload field: path', {
       level: 'warn',
-      filePath: String(filePath),
       fieldType: typeof filePath,
-      headers: headersObjAll,
-      bodyFull: JSON.stringify(body),
       auditId,
     });
     return NextResponse.json(
@@ -132,10 +124,6 @@ export async function POST(req: NextRequest) {
       level: 'warn',
       filePath,
       contentType: typeof content,
-      contentLength: content ? content.length : 0,
-      contentFull: content,
-      headers: headersObjAll,
-      bodyFull: JSON.stringify(body),
       auditId,
     });
     return NextResponse.json(
@@ -145,26 +133,11 @@ export async function POST(req: NextRequest) {
   }
 
   if (!isNew && (!baseSha || typeof baseSha !== 'string')) {
-    const authHeaderFull =
-      headersObjAll['authorization'] ?? headersObjAll['Authorization'] ?? null;
-
     log.message('Missing or invalid payload field: baseSha', {
       level: 'warn',
       filePath,
       isNew: Boolean(isNew),
-      baseShaRaw:
-        baseSha === undefined
-          ? 'undefined'
-          : baseSha === null
-            ? 'null'
-            : String(baseSha),
       baseShaType: typeof baseSha,
-      authHeader: authHeaderFull,
-      headers: headersObjAll,
-      contentFull: content,
-      contentLength: content ? content.length : 0,
-      contentLengthHeader: req.headers.get('content-length'),
-      bodyFull: JSON.stringify(body),
       auditId,
     });
 
@@ -241,12 +214,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    /** Trigger ISR revalidation for the affected content page.
-     * Note: The auto-merge workflow also calls /api/revalidate after the PR
-     * is merged, which performs a more thorough revalidation (path variants,
-     * cache tag invalidation, draft archival). This call is a best-effort
-     * early invalidation so the page re-renders sooner when content hasn't
-     * diverged from main. */
+    /** Trigger ISR revalidation for the affected content page. */
     try {
       revalidatePath(`/library/${slugFromPath}`);
       log.debug('ISR revalidation triggered', { slug: slugFromPath });

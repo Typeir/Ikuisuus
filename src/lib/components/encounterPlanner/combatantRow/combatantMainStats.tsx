@@ -38,6 +38,7 @@ import { useCallback, useRef, useState } from 'react';
 import styles from './combatantRow.module.scss';
 import { getPhaseMarker } from './utils';
 import { useCombatant } from './utils/context/combatantContext';
+import { useEditableField } from './utils/useEditableField';
 
 /**
  * Props for CombatantMainStats component.
@@ -99,17 +100,11 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
   const effectiveHpMax = hpMaxOverride !== null ? hpMaxOverride : hpMax;
   const phaseMarker = getPhaseMarker(hpCurrent, effectiveHpMax);
 
-  const [editingHpMax, setEditingHpMax] = useState<string | null>(null);
-  const [editingAc, setEditingAc] = useState<string | null>(null);
-  const [editingInit, setEditingInit] = useState<string | null>(null);
   const [editingStats, setEditingStats] = useState<
     Record<string, string | null>
   >({});
 
   const cancelPendingRef = useRef(false);
-  const hpMaxInputRef = useRef<HTMLInputElement>(null);
-  const acInputRef = useRef<HTMLInputElement>(null);
-  const initInputRef = useRef<HTMLInputElement>(null);
 
   const handleToggleSlain = useCallback(() => {
     const newSlain = !slain;
@@ -120,79 +115,35 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
     }
   }, [combatant, slain, onUpdate, updateField]);
 
-  /**
-   * Handles HP Max edit. When hpMaxOverride is in use, edits that field;
-   * otherwise edits hpMax directly.
-   */
-  const handleHpMaxChange = useCallback((value: string) => {
-    setEditingHpMax(value);
-  }, []);
+  const hpMaxField = useEditableField(
+    cancelPendingRef,
+    useCallback((value: string) => {
+      const parsed = clampNonNegative(parseIntSafe(value, false)) ?? 1;
+      updateField(hpMaxOverride !== null ? 'hpMaxOverride' : 'hpMax', parsed);
+    }, [hpMaxOverride, updateField]),
+  );
 
-  const commitHpMax = useCallback(() => {
-    if (cancelPendingRef.current) {
-      cancelPendingRef.current = false;
-      return;
-    }
-    if (editingHpMax === null) return;
-    const parsed = clampNonNegative(parseIntSafe(editingHpMax, false)) ?? 1;
-    if (hpMaxOverride !== null) {
-      updateField('hpMaxOverride', parsed);
-    } else {
-      updateField('hpMax', parsed);
-    }
-    setEditingHpMax(null);
-  }, [editingHpMax, hpMaxOverride, updateField]);
+  const acField = useEditableField(
+    cancelPendingRef,
+    useCallback((value: string) => {
+      const parsed = clampNonNegative(parseIntSafe(value, false)) ?? 0;
+      updateField('ac', parsed);
+    }, [updateField]),
+  );
 
-  const cancelHpMax = useCallback(() => {
-    cancelPendingRef.current = true;
-    setEditingHpMax(null);
-  }, []);
-
-  const handleAcChange = useCallback((value: string) => {
-    setEditingAc(value);
-  }, []);
-
-  const commitAc = useCallback(() => {
-    if (cancelPendingRef.current) {
-      cancelPendingRef.current = false;
-      return;
-    }
-    if (editingAc === null) return;
-    const parsed = clampNonNegative(parseIntSafe(editingAc, false)) ?? 0;
-    updateField('ac', parsed);
-    setEditingAc(null);
-  }, [editingAc, updateField]);
-
-  const cancelAc = useCallback(() => {
-    cancelPendingRef.current = true;
-    setEditingAc(null);
-  }, []);
-
-  const handleInitChange = useCallback((value: string) => {
-    setEditingInit(value);
-  }, []);
+  const initField = useEditableField(
+    cancelPendingRef,
+    useCallback((value: string) => {
+      const parsed = parseIntSafe(value, true);
+      updateField('initiativeValue', parsed);
+    }, [updateField]),
+  );
 
   const handleRollInitiative = useCallback(() => {
     const rolled = rollInitiative(initiativeBonus);
     updateField('initiativeValue', rolled);
-    setEditingInit(null);
-  }, [initiativeBonus, updateField]);
-
-  const commitInit = useCallback(() => {
-    if (cancelPendingRef.current) {
-      cancelPendingRef.current = false;
-      return;
-    }
-    if (editingInit === null) return;
-    const parsed = parseIntSafe(editingInit, true);
-    updateField('initiativeValue', parsed);
-    setEditingInit(null);
-  }, [editingInit, updateField]);
-
-  const cancelInit = useCallback(() => {
-    cancelPendingRef.current = true;
-    setEditingInit(null);
-  }, []);
+    initField.setEditing('');
+  }, [initiativeBonus, updateField, initField]);
 
   const handleStatChange = useCallback((stat: string, value: string) => {
     setEditingStats((prev) => ({ ...prev, [stat]: value }));
@@ -261,14 +212,13 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
           />
           <span>/</span>
           <input
-            ref={hpMaxInputRef}
             type='text'
             className={`${styles.numberInput} ${isStatsLocked ? styles.lockedInput : ''}`}
-            value={editingHpMax !== null ? editingHpMax : effectiveHpMax}
-            onChange={(e) => handleHpMaxChange(e.target.value)}
-            onFocus={() => setEditingHpMax(String(effectiveHpMax))}
-            onBlur={commitHpMax}
-            onKeyDown={(e) => handleKeyDown(e, commitHpMax, cancelHpMax)}
+            value={hpMaxField.editing !== null ? hpMaxField.editing : effectiveHpMax}
+            onChange={(e) => hpMaxField.onChange(e.target.value)}
+            onFocus={() => hpMaxField.setEditing(String(effectiveHpMax))}
+            onBlur={hpMaxField.commit}
+            onKeyDown={(e) => handleKeyDown(e, hpMaxField.commit, hpMaxField.cancel)}
             disabled={isStatsLocked}
             placeholder={t('max')}
             aria-label={t('hpMax')}
@@ -309,14 +259,13 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
       <div className={styles.acSection}>
         <label className={styles.label}>{t('ac')}</label>
         <input
-          ref={acInputRef}
           type='text'
           className={`${styles.numberInput} ${styles.acInput} ${isStatsLocked ? styles.lockedInput : ''}`}
-          value={editingAc !== null ? editingAc : ac}
-          onChange={(e) => handleAcChange(e.target.value)}
-          onFocus={() => setEditingAc(String(ac))}
-          onBlur={commitAc}
-          onKeyDown={(e) => handleKeyDown(e, commitAc, cancelAc)}
+          value={acField.editing !== null ? acField.editing : ac}
+          onChange={(e) => acField.onChange(e.target.value)}
+          onFocus={() => acField.setEditing(String(ac))}
+          onBlur={acField.commit}
+          onKeyDown={(e) => handleKeyDown(e, acField.commit, acField.cancel)}
           disabled={isStatsLocked}
           aria-label={t('ac')}
         />
@@ -326,24 +275,23 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
         <div className={styles.initiativeField}>
           <label className={styles.label}>{t('initiative')}</label>
           <input
-            ref={initInputRef}
             type='text'
             className={`${styles.numberInput} ${isStatsLocked ? styles.lockedInput : ''}`}
             value={
-              editingInit !== null
-                ? editingInit
+              initField.editing !== null
+                ? initField.editing
                 : initiativeValue !== null
                   ? String(initiativeValue)
                   : ''
             }
-            onChange={(e) => handleInitChange(e.target.value)}
+            onChange={(e) => initField.onChange(e.target.value)}
             onFocus={() =>
-              setEditingInit(
+              initField.setEditing(
                 initiativeValue !== null ? String(initiativeValue) : '',
               )
             }
-            onBlur={commitInit}
-            onKeyDown={(e) => handleKeyDown(e, commitInit, cancelInit)}
+            onBlur={initField.commit}
+            onKeyDown={(e) => handleKeyDown(e, initField.commit, initField.cancel)}
             disabled={isStatsLocked}
             placeholder='—'
             aria-label={t('initiative')}
