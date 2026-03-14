@@ -75,3 +75,39 @@ jobs:
 
       - name: Run linter
         run: npm run lint
+
+  health-check:
+    name: Code Health Gate
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    if: always()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js 22.21.1
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.21.1
+
+      - name: Update npm to latest
+        run: npm install -g npm@latest
+
+      - name: Remove node_modules
+        run: rm -rf node_modules
+
+      - name: Install dependencies
+        env:
+          CI: 1
+        run: npm install
+
+      - name: Run composite health check
+        run: npm run health:check
+
+      - name: Upload health reports
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: health-reports
+          path: .ignore/reports/

@@ -20,10 +20,11 @@ Major architectural changes to be aware of:
 
 ### 2026
 
-| Change                     | Impact                                                                                                                                    | Documentation                                  |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| **World Sim Module**       | Three.js solar system with phase-based render lifecycle, DOM overlay bridge, and celestial body renderers                                 | [World Sim Module](./docs/world-sim-module.md) |
-| **RenderLifecycle System** | Unity-style phase bus (PreUpdate → Update → PostUpdate → PreRender → render → PostRender) replaces ad-hoc callback arrays in SceneManager | [World Sim Module](./docs/world-sim-module.md) |
+| Change                      | Impact                                                                                                                                    | Documentation                                        |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Copilot Workflow System** | Enforced A→B→C task lifecycle: Analysis → Health Gate → Completion Reconciliation with agents, skills, hooks, and health-check scripts    | [Workflow System](./docs/copilot-workflow-system.md) |
+| **World Sim Module**        | Three.js solar system with phase-based render lifecycle, DOM overlay bridge, and celestial body renderers                                 | [World Sim Module](./docs/world-sim-module.md)       |
+| **RenderLifecycle System**  | Unity-style phase bus (PreUpdate → Update → PostUpdate → PreRender → render → PostRender) replaces ad-hoc callback arrays in SceneManager | [World Sim Module](./docs/world-sim-module.md)       |
 
 ### 2025
 
@@ -407,6 +408,18 @@ export { main, parseFile }; // Export for orchestrator
 - **Content System**: `./docs/content-system.md` - MDX architecture, filesystem routing, locale handling, translation workflows, and auto-linking
 - **Encounter Module**: `./docs/encounter-module.md` - Play Mode turn tracker, mechanics flags (lair, stratagem, legendaryDeed), round-start notifications
 - **World Sim Module**: `./docs/world-sim-module.md` - Three.js solar system, mediator pattern, render lifecycle, celestial renderers, DOM overlay bridge
+- **Copilot Workflow**: `./docs/copilot-workflow-system.md` - Enforced A→B→C task lifecycle, agents, skills, hooks, health checks, reconciliation
+
+### Copilot Workflow System
+
+- **Agents**: `.github/agents/` — Analyzer, Implementer, HealthReviewer, CompletionAuditor
+- **Skills**: `.github/skills/task-lifecycle/SKILL.md` — Agile task artifact format and lifecycle validation
+- **Instructions**: `.github/instructions/` — Architecture-scoped analysis (MDX, JSDoc, SCSS, testing, metadata, world-sim)
+- **Prompts**: `.github/prompts/` — `/start-task`, `/run-health`, `/reconcile-completion`, `/full-workflow`
+- **Hooks**: `.github/hooks/copilot-hooks.json` — PostToolUse lint + Stop health gate
+- **Health Scripts**: `scripts/ci/health-check.mjs` — Composite gate (file-length, duplicate-css, jsdoc, antipatterns, test-gaps)
+- **Task Artifacts**: `.ignore/tasks/` — Timestamped agile task summaries
+- **Reports**: `.ignore/reports/` — Timestamped completion reports
 
 ### Key Source Files
 

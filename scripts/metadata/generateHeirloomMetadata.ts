@@ -250,6 +250,7 @@ function parseTypeProperty(
 ) {
   if (!properties?.Type)
     return {
+      weaponType: undefined as string | undefined,
       weaponProperties: [] as string[],
       uniqueTags: [] as string[],
       mastery: [] as string[],
@@ -345,7 +346,7 @@ async function parseHeirloomFile(
   const { rarity, requiresAttunement, attunementRequirements, weaponInfo } =
     parseRarityAndAttunement(lines, sharedData);
   const itemType = ItemData.detectItemType(lines, sharedData);
-  const properties = parseProperties(raw);
+  const properties = parseProperties(raw) ?? {};
 
   const typeInfo = parseTypeProperty(properties, sharedData);
   const weaponDamage = parseWeaponDamageFromProperties(properties);

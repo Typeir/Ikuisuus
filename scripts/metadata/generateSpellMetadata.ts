@@ -286,7 +286,7 @@ function generateSpellTags(
     }
   }
 
-  return [...new Set(tags)];
+  return Array.from(new Set(tags));
 }
 
 /**

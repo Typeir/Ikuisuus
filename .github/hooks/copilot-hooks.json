@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/misc/hooks-schema.json",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "node scripts/ci/hooks/post-edit-lint.mjs \"$TOOL_INPUT_FILE_PATH\"",
+        "description": "Auto-lint after file edits to catch hard rule violations early",
+        "timeout": 15,
+        "events": ["editFile", "createFile"]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node scripts/ci/hooks/on-stop-health.mjs",
+        "description": "Run health check gate before session ends — blocks on critical failures",
+        "timeout": 120
+      }
+    ]
+  }
+}
