@@ -13,6 +13,7 @@
 import { DraftEntity } from '@/lib/db/orm/entities/DraftEntity';
 import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
+import { contentHash } from '@/lib/metadata/contentHash';
 import type { DraftRepository } from '../../repositories/draftRepository';
 import type { DraftInput, DraftMetadata } from '../../schemas/draftMetadata';
 
@@ -32,6 +33,7 @@ const rowToDraft = (row: DraftEntity): DraftMetadata => ({
   status: row.status,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
+  versionHash: row.versionHash ?? null,
 });
 
 /**
@@ -48,10 +50,12 @@ export const pgDraftRepository: DraftRepository = {
    * @param {string} input.locale - Content locale
    * @param {string} input.slug - Content slug path
    * @param {string} input.content - Raw MDX content
+   * @param {DraftStatus} [input.status] - Override lifecycle status; defaults to 'active'
    * @returns {Promise<DraftMetadata>} The created or updated draft
    */
   async upsert(input: DraftInput): Promise<DraftMetadata> {
     const em = await getEM();
+    const hash = contentHash({ locale: input.locale, slug: input.slug, content: input.content });
 
     try {
       const existing = await em.findOne(DraftEntity, {
@@ -62,6 +66,7 @@ export const pgDraftRepository: DraftRepository = {
 
       if (existing) {
         existing.content = input.content;
+        existing.versionHash = hash;
         existing.updatedAt = new Date();
         await em.flush();
 
@@ -78,7 +83,8 @@ export const pgDraftRepository: DraftRepository = {
         locale: input.locale,
         slug: input.slug,
         content: input.content,
-        status: 'active',
+        status: input.status ?? 'active',
+        versionHash: hash,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -89,6 +95,7 @@ export const pgDraftRepository: DraftRepository = {
         id: draft.id,
         locale: input.locale,
         slug: input.slug,
+        status: draft.status,
       });
 
       return rowToDraft(draft);

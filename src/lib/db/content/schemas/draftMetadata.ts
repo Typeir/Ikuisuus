@@ -12,10 +12,11 @@
 /**
  * Valid draft lifecycle statuses.
  *
- * @property {'active'} active - Draft is the current candidate for its slug
+ * @property {'active'} active - Draft is the current candidate for its slug; shown by DraftOverlay
+ * @property {'pending'} pending - Submitted by a non-admin user; awaits explicit review before auto-merge
  * @property {'archived'} archived - Draft was archived after successful revalidation
  */
-export type DraftStatus = 'active' | 'archived';
+export type DraftStatus = 'active' | 'pending' | 'archived';
 
 /**
  * Domain representation of a draft record.
@@ -27,6 +28,7 @@ export type DraftStatus = 'active' | 'archived';
  * @property {DraftStatus} status - Lifecycle status
  * @property {string} createdAt - ISO 8601 timestamp
  * @property {string} updatedAt - ISO 8601 timestamp
+ * @property {string | null} [versionHash] - FNV-1a content hash; null for legacy rows predating hash population
  */
 export interface DraftMetadata {
   id: number;
@@ -36,6 +38,7 @@ export interface DraftMetadata {
   status: DraftStatus;
   createdAt: string;
   updatedAt: string;
+  versionHash?: string | null;
 }
 
 /**
@@ -44,9 +47,11 @@ export interface DraftMetadata {
  * @property {string} locale - Content locale
  * @property {string} slug - Content slug path
  * @property {string} content - Raw MDX content
+ * @property {DraftStatus} [status] - Override lifecycle status; defaults to 'active' when omitted
  */
 export interface DraftInput {
   locale: string;
   slug: string;
   content: string;
+  status?: DraftStatus;
 }

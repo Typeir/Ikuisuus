@@ -205,8 +205,9 @@ export async function POST(req: NextRequest) {
       .replace(/\.(sheet\.)?mdx$/, '');
 
     try {
-      await draftRepository.upsert({ locale, slug: slugFromPath, content });
-      log.message('Draft saved for correction', { locale, slug: slugFromPath });
+      const draftStatus = session.role === 'admin' ? 'active' : 'pending';
+      await draftRepository.upsert({ locale, slug: slugFromPath, content, status: draftStatus });
+      log.message('Draft saved for correction', { locale, slug: slugFromPath, status: draftStatus });
     } catch (draftError) {
       log.warning('Failed to save draft (non-blocking)', {
         error:

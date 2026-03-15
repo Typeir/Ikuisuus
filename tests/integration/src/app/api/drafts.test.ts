@@ -14,6 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const mockUpsert = vi.fn();
 const mockFindActive = vi.fn();
 const mockArchive = vi.fn();
+const mockSyncMetadata = vi.fn();
 
 vi.mock('@/lib/db/content/repositories/draftRepository', () => ({
   draftRepository: {
@@ -21,6 +22,10 @@ vi.mock('@/lib/db/content/repositories/draftRepository', () => ({
     findActive: (...args: unknown[]) => mockFindActive(...args),
     archive: (...args: unknown[]) => mockArchive(...args),
   },
+}));
+
+vi.mock('@/lib/metadata/syncService', () => ({
+  syncMetadata: (...args: unknown[]) => mockSyncMetadata(...args),
 }));
 
 vi.mock('@/lib/logging/logger', () => ({
@@ -43,6 +48,7 @@ const sampleDraft = {
   status: 'active',
   createdAt: '2026-03-12T00:00:00.000Z',
   updatedAt: '2026-03-12T01:00:00.000Z',
+  versionHash: null,
 };
 
 beforeEach(() => {
@@ -54,6 +60,7 @@ afterEach(() => {
   mockUpsert.mockReset();
   mockFindActive.mockReset();
   mockArchive.mockReset();
+  mockSyncMetadata.mockReset();
 });
 
 describe('Drafts API (POST /api/drafts)', () => {
@@ -220,6 +227,7 @@ describe('Drafts API (GET /api/drafts)', () => {
 describe('Revalidation + Draft Archival', () => {
   it('should archive drafts after successful revalidation', async () => {
     mockArchive.mockResolvedValue(true);
+    mockSyncMetadata.mockResolvedValue({});
 
     vi.mock('next/cache', () => ({
       revalidatePath: vi.fn(),
@@ -245,6 +253,10 @@ describe('Revalidation + Draft Archival', () => {
 
     expect(res.status).toBe(200);
     expect(data.results[0].status).toBe('ok');
+    expect(mockSyncMetadata).toHaveBeenCalledWith({
+      locale: 'en',
+      contentTypes: ['monsters'],
+    });
   });
 
   it('should not fail revalidation when draft archival fails', async () => {

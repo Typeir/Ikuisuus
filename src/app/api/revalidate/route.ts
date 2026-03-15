@@ -13,6 +13,7 @@
 import { contentCacheTag } from '@/lib/db/content/contentCacheTags';
 import { draftRepository } from '@/lib/db/content/repositories/draftRepository';
 import { logger } from '@/lib/logging/logger';
+import { syncMetadata } from '@/lib/metadata/syncService';
 import crypto from 'crypto';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
@@ -51,17 +52,33 @@ const extractSlugPath = (urlPath: string): string => {
 };
 
 /**
+ * @function resolveContentType
+ * @description Maps a slug path to the metadata content type key used by the sync service.
+ * Returns null for paths that do not correspond to a synced content table.
+ * @param {string} slugPath - Content slug path (e.g. 'monsters/albedo', 'items/heirlooms/foo')
+ * @returns {string | null} Sync service content type key, or null
+ */
+const resolveContentType = (slugPath: string): string | null => {
+  if (slugPath.startsWith('monsters/')) return 'monsters';
+  if (slugPath.startsWith('items/heirlooms/')) return 'heirlooms';
+  if (slugPath.startsWith('spells/')) return 'spells';
+  if (slugPath.startsWith('items/trinkets/')) return 'trinkets';
+  return null;
+};
+
+/**
  * @function archiveDraftForPath
  * @description Archives the active draft for a locale+slug pair after successful
  * ISR revalidation. Failures are logged but do not block the revalidation response.
  * @param {string | null} locale - Content locale, or null if extraction failed
  * @param {string} slugPath - Content slug path
+ * @returns {Promise<boolean>} True if a draft was archived
  */
 const archiveDraftForPath = async (
   locale: string | null,
   slugPath: string,
-): Promise<void> => {
-  if (!locale || !slugPath) return;
+): Promise<boolean> => {
+  if (!locale || !slugPath) return false;
 
   try {
     const archived = await draftRepository.archive(locale, slugPath);
@@ -71,9 +88,45 @@ const archiveDraftForPath = async (
         slug: slugPath,
       });
     }
+    return archived;
   } catch (err) {
     log.warning('Failed to archive draft (non-blocking)', {
       locale,
+      slug: slugPath,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return false;
+  }
+};
+
+/**
+ * @function syncMetadataForPath
+ * @description Triggers a hash-based incremental metadata sync for the content type
+ * associated with a slug path after a draft is published. Only runs when the slug
+ * resolves to a known content type. Failures are logged but do not block the caller.
+ * @param {string | null} locale - Content locale
+ * @param {string} slugPath - Content slug path
+ * @returns {Promise<void>}
+ */
+const syncMetadataForPath = async (
+  locale: string | null,
+  slugPath: string,
+): Promise<void> => {
+  if (!locale || !slugPath) return;
+  const contentType = resolveContentType(slugPath);
+  if (!contentType) return;
+
+  try {
+    await syncMetadata({ locale, contentTypes: [contentType] });
+    log.message('Post-publish metadata sync completed', {
+      locale,
+      contentType,
+      slug: slugPath,
+    });
+  } catch (err) {
+    log.warning('Post-publish metadata sync failed (non-blocking)', {
+      locale,
+      contentType,
       slug: slugPath,
       error: err instanceof Error ? err.message : String(err),
     });
@@ -200,7 +253,10 @@ export async function POST(req: NextRequest) {
 
       results.push({ path: p, status: 'ok' });
 
-      await archiveDraftForPath(locale, slugPath);
+      const wasArchived = await archiveDraftForPath(locale, slugPath);
+      if (wasArchived) {
+        await syncMetadataForPath(locale, slugPath);
+      }
     } catch (err) {
       results.push({
         path: p,

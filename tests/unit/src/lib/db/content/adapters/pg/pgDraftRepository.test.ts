@@ -17,6 +17,8 @@ const mockEM = {
   flush: vi.fn(),
 };
 
+const mockContentHash = vi.fn();
+
 vi.mock('@/lib/db/orm/orm', () => ({
   getEM: vi.fn().mockResolvedValue(mockEM),
 }));
@@ -30,12 +32,19 @@ vi.mock('@/lib/logging/logger', () => ({
     }),
   },
 }));
+vi.mock('@/lib/metadata/contentHash', () => ({
+  contentHash: (...args: unknown[]) => mockContentHash(...args),
+}));
 
 let pgDraftRepository: typeof import('@/lib/db/content/adapters/pg/pgDraftRepository').pgDraftRepository;
 
 beforeEach(async () => {
   vi.resetModules();
 
+  mockContentHash.mockReturnValue('abc12345');
+  vi.doMock('@/lib/metadata/contentHash', () => ({
+    contentHash: (...args: unknown[]) => mockContentHash(...args),
+  }));
   vi.doMock('@/lib/db/orm/orm', () => ({
     getEM: vi.fn().mockResolvedValue(mockEM),
   }));
@@ -49,6 +58,7 @@ afterEach(() => {
   mockEM.findOne.mockReset();
   mockEM.create.mockReset();
   mockEM.flush.mockReset();
+  mockContentHash.mockReset();
 });
 
 /** @property {Date} fixedDate - Fixed date for deterministic tests */
@@ -69,7 +79,8 @@ const existingRow = {
 describe('pgDraftRepository', () => {
   describe('upsert', () => {
     it('should update existing active draft when one exists', async () => {
-      mockEM.findOne.mockResolvedValue({ ...existingRow });
+      const mutableRow = { ...existingRow };
+      mockEM.findOne.mockResolvedValue(mutableRow);
       mockEM.flush.mockResolvedValue(undefined);
 
       const result = await pgDraftRepository.upsert({
@@ -87,6 +98,8 @@ describe('pgDraftRepository', () => {
       expect(result.status).toBe('active');
       expect(result.locale).toBe('en');
       expect(result.slug).toBe('monsters/albedo');
+      expect(result.versionHash).toBe('abc12345');
+      expect(mutableRow.versionHash).toBe('abc12345');
       expect(mockEM.flush).toHaveBeenCalled();
     });
 
@@ -99,6 +112,7 @@ describe('pgDraftRepository', () => {
         slug: 'spells/fireball',
         content: '# Fireball',
         status: 'active',
+        versionHash: 'abc12345',
         createdAt: fixedDate,
         updatedAt: fixedDate,
       };
@@ -111,10 +125,44 @@ describe('pgDraftRepository', () => {
         content: '# Fireball',
       });
 
-      expect(mockEM.create).toHaveBeenCalled();
+      expect(mockEM.create).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ versionHash: 'abc12345', status: 'active' }),
+      );
       expect(result.id).toBe(43);
       expect(result.slug).toBe('spells/fireball');
       expect(result.status).toBe('active');
+      expect(result.versionHash).toBe('abc12345');
+    });
+
+    it('should create a pending draft when status is pending', async () => {
+      mockEM.findOne.mockResolvedValue(null);
+
+      const pendingRow = {
+        id: 44,
+        locale: 'en',
+        slug: 'spells/icebolt',
+        content: '# Icebolt',
+        status: 'pending',
+        versionHash: 'abc12345',
+        createdAt: fixedDate,
+        updatedAt: fixedDate,
+      };
+      mockEM.create.mockReturnValue(pendingRow);
+      mockEM.flush.mockResolvedValue(undefined);
+
+      const result = await pgDraftRepository.upsert({
+        locale: 'en',
+        slug: 'spells/icebolt',
+        content: '# Icebolt',
+        status: 'pending',
+      });
+
+      expect(mockEM.create).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ status: 'pending' }),
+      );
+      expect(result.status).toBe('pending');
     });
 
     it('should throw on database error', async () => {
