@@ -1,6 +1,6 @@
 ---
 description: 'Run the mandatory code health gate — checks file length, CSS, JSDoc, antipatterns, tests'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # Run Health Check

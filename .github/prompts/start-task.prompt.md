@@ -1,6 +1,6 @@
 ---
 description: 'Start a new implementation task — analyzes architecture, creates agile task summary'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # Start Task

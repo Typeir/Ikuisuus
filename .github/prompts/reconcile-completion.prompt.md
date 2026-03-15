@@ -1,6 +1,6 @@
 ---
 description: 'Reconcile task completion — verify all checklist items, remediate if needed, generate report'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # Reconcile Completion

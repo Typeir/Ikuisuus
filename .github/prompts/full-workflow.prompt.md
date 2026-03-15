@@ -1,6 +1,6 @@
 ---
 description: 'Full workflow — analyze, implement, health-check, and report in one pass'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # Full Task Workflow
