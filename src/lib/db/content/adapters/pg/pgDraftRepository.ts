@@ -55,7 +55,11 @@ export const pgDraftRepository: DraftRepository = {
    */
   async upsert(input: DraftInput): Promise<DraftMetadata> {
     const em = await getEM();
-    const hash = contentHash({ locale: input.locale, slug: input.slug, content: input.content });
+    const hash = contentHash({
+      locale: input.locale,
+      slug: input.slug,
+      content: input.content,
+    });
 
     try {
       const existing = await em.findOne(DraftEntity, {

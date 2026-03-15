@@ -6,7 +6,7 @@ applyTo: 'src/**/*.ts,src/**/*.tsx,scripts/**/*.mjs,scripts/**/*.ts'
 
 Before modifying any TypeScript or script file, you MUST:
 
-1. **Read** `.github/jsdoc.md` for the full JSDoc standards (file-level `@fileoverview`, `@property` tags, component `@param` exhaustiveness).
+1. **Read** `.github/docs/jsdoc.md` for the full JSDoc standards (file-level `@fileoverview`, `@property` tags, component `@param` exhaustiveness).
 2. **NEVER add inline comments** (`// comment`) inside function bodies — extract to helper functions with JSDoc instead.
 3. **Every exported declaration** must have JSDoc: functions, interfaces, types, classes, constants.
 4. **Interface properties** use `@property` tags in the interface JSDoc, not inline `/** */` on each property.

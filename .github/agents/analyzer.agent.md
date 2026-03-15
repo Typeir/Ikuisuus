@@ -26,7 +26,7 @@ When the user describes a task, you:
 
 1. **Identify architecture domains** by matching the task description to relevant files:
    - MDX content → read `.github/docs/content-system.md`
-   - JSDoc/code style → read `.github/jsdoc.md`
+   - JSDoc/code style → read `.github/docs/jsdoc.md`
    - SCSS/theme/CSS → read `.github/docs/scss-theme-rules.md` + `.github/docs/theme-system.md`
    - Testing → read `.github/docs/testing-rules.md`
    - Metadata generators → read `.github/docs/metadata-generation.md`

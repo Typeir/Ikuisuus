@@ -7,6 +7,7 @@
 **Single source of truth**: `src/app/[locale]/globals.scss`
 
 All theme colors are CSS custom properties defined in:
+
 - `:root` (default/fallback)
 - `html[data-theme='light']`
 - `html[data-theme='dark']`
@@ -23,17 +24,25 @@ All theme colors are CSS custom properties defined in:
   color: var(--color-text);
   background-color: var(--color-bg);
   border-color: var(--color-border);
-  
+
   &:hover {
     background-color: var(--color-bg-secondary);
   }
 }
 
 // Use semantic tokens for notifications/states
-.error { color: var(--color-error); }
-.warning { color: var(--color-warning); }
-.success { color: var(--color-success); }
-.info { color: var(--color-info); }
+.error {
+  color: var(--color-error);
+}
+.warning {
+  color: var(--color-warning);
+}
+.success {
+  color: var(--color-success);
+}
+.info {
+  color: var(--color-info);
+}
 
 // Use shadow tokens with rgb() function
 .elevated {
@@ -85,6 +94,7 @@ All theme colors are CSS custom properties defined in:
 ## Available Token Categories
 
 ### Core Colors
+
 ```scss
 --color-bg              // Primary background
 --color-bg-secondary    // Secondary background (cards, panels)
@@ -98,6 +108,7 @@ All theme colors are CSS custom properties defined in:
 ```
 
 ### Semantic Colors
+
 ```scss
 --color-primary         // Primary brand color
 --color-secondary       // Secondary brand color
@@ -106,6 +117,7 @@ All theme colors are CSS custom properties defined in:
 ```
 
 ### Notification/State Colors
+
 ```scss
 --color-success         // Success state (green)
 --color-warning         // Warning state (amber)
@@ -116,6 +128,7 @@ All theme colors are CSS custom properties defined in:
 ```
 
 ### Lair/Special Event Colors
+
 ```scss
 --color-lair-bg-start   // Lair gradient start
 --color-lair-bg-end     // Lair gradient end
@@ -124,6 +137,7 @@ All theme colors are CSS custom properties defined in:
 ```
 
 ### Shadow/Overlay Tokens (use with rgb())
+
 ```scss
 --color-shadow          // Default shadow (e.g., 0 0 0 / 0.3)
 --color-shadow-light    // Light shadow
@@ -135,6 +149,7 @@ All theme colors are CSS custom properties defined in:
 ```
 
 ### Structural
+
 ```scss
 --color-transparent     // Use instead of 'transparent' keyword
 ```
@@ -146,17 +161,18 @@ All theme colors are CSS custom properties defined in:
 When you need a new color token:
 
 1. **Define in both themes** in `globals.scss`:
+
    ```scss
    // In :root (dark default)
    :root {
      --color-my-new-token: #somevalue;
    }
-   
+
    // In light theme
    html[data-theme='light'] {
      --color-my-new-token: #lightvalue;
    }
-   
+
    // In dark theme (explicit)
    html[data-theme='dark'] {
      --color-my-new-token: #darkvalue;
@@ -255,10 +271,14 @@ border-color: var(--color-transparent);
 
 ```scss
 // ❌ Wrong
-&:focus { outline: 2px solid blue; }
+&:focus {
+  outline: 2px solid blue;
+}
 
 // ✅ Correct
-&:focus { outline: 2px solid var(--color-accent); }
+&:focus {
+  outline: 2px solid var(--color-accent);
+}
 ```
 
 ---
@@ -282,4 +302,4 @@ const color = theme === 'dark' ? '#fff' : '#000';
 
 - [Theme System Architecture](./theme-system.md) - Full theme system details
 - [Testing Rules](./testing-rules.md) - Testing patterns
-- [JSDoc Standards](../jsdoc.md) - Documentation requirements
+- [JSDoc Standards](./jsdoc.md) - Documentation requirements

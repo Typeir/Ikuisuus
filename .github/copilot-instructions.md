@@ -8,7 +8,7 @@ These rules are **strictly enforced**. Violations will cause build failures, tes
 
 | Rule                                          | Documentation                                  | Acceptance Check                                           |
 | --------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------- |
-| JSDoc on all declarations, no inline comments | [JSDoc Standards](./jsdoc.md)                  | `grep -rn "// " src/` finds no logic comments              |
+| JSDoc on all declarations, no inline comments | [JSDoc Standards](./docs/jsdoc.md)             | `grep -rn "// " src/` finds no logic comments              |
 | NO color literals outside `globals.scss`      | [SCSS Theme Rules](./docs/scss-theme-rules.md) | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` returns 0 |
 | Zero act() warnings in tests                  | [Testing Rules](./docs/testing-rules.md)       | `npm test` shows no warnings                               |
 | Use NotificationProvider, not `alert()`       | [Testing Rules](./docs/testing-rules.md)       | `grep -rn "alert(" src/` returns 0                         |
@@ -33,7 +33,7 @@ Major architectural changes to be aware of:
 | ------------------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------- |
 | **Play Mode Turn Tracker**     | Encounter planner now has live combat tracking with round-start notifications | [Encounter Module](./docs/encounter-module.md) |
 | **Push Notification Refactor** | Context-based notifications replace alerts; timing constants exported         | [Testing Rules](./docs/testing-rules.md)       |
-| **Strict JSDoc Enforcement**   | No inline comments, `@property` tags required for interfaces                  | [JSDoc Standards](./jsdoc.md)                  |
+| **Strict JSDoc Enforcement**   | No inline comments, `@property` tags required for interfaces                  | [JSDoc Standards](./docs/jsdoc.md)             |
 | **SCSS Theme Token Rules**     | All colors via CSS variables only, grep checks in CI                          | [SCSS Theme Rules](./docs/scss-theme-rules.md) |
 | **Act-Clean Testing**          | Fake timers required for notification tests, async userEvent patterns         | [Testing Rules](./docs/testing-rules.md)       |
 
@@ -397,7 +397,7 @@ export { main, parseFile }; // Export for orchestrator
 
 ### Hard Rules (Read First)
 
-- **JSDoc Standards**: `./jsdoc.md` - Required formatting, inline comment ban, interface @property tags
+- **JSDoc Standards**: `./docs/jsdoc.md` - Required formatting, inline comment ban, interface @property tags
 - **SCSS Theme Rules**: `./docs/scss-theme-rules.md` - NO color literals outside globals.scss, token categories, grep checks
 - **Testing Rules**: `./docs/testing-rules.md` - Act warning prevention, NotificationProvider wrapping, fake timers
 
@@ -413,10 +413,10 @@ export { main, parseFile }; // Export for orchestrator
 
 ### Copilot Workflow System
 
-- **Agents**: `.github/agents/` — Analyzer, Implementer, HealthReviewer, CompletionAuditor
-- **Skills**: `.github/skills/task-lifecycle/SKILL.md` — Agile task artifact format and lifecycle validation
-- **Instructions**: `.github/instructions/` — Architecture-scoped analysis (MDX, JSDoc, SCSS, testing, metadata, world-sim)
-- **Prompts**: `.github/prompts/` — `/start-task`, `/run-health`, `/reconcile-completion`, `/full-workflow`
+- **Agents**: `.github/agents/` — Analyzer, Implementer, HealthReviewer, CompletionAuditor, DamoclesDrafter, DamoclesRefactor
+- **Skills**: `.github/skills/` — task-lifecycle, damocles-lore, damocles-page-types, mdx-format
+- **Instructions**: `.github/instructions/` — jsdoc-standards, mdx-content, metadata-generators, scss-theme, testing, world-sim, damocles-authoring, encounter-module, i18n, build-pipeline
+- **Prompts**: `.github/prompts/` — `/start-task`, `/run-health`, `/reconcile-completion`, `/full-workflow`, `/draft-damocles-page`, `/refactor-damocles-mdx`, `/check-damocles-lore-consistency`, `/convert-notes-to-damocles-mdx`, `/add-component`, `/add-test`, `/fix-health`, `/add-metadata-type`
 - **Hooks**: `.github/hooks/copilot-hooks.json` — PostToolUse lint + Stop health gate
 - **Health Scripts**: `scripts/ci/health-check.mjs` — Composite gate (file-length, duplicate-css, jsdoc, antipatterns, test-gaps, mdx-format)
 - **Task Artifacts**: `.ignore/tasks/` — Timestamped agile task summaries

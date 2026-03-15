@@ -44,8 +44,12 @@ await act(async () => {
 });
 
 // 4. Use fake timers for notification/timer tests
-beforeEach(() => { vi.useFakeTimers(); });
-afterEach(() => { vi.useRealTimers(); });
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 // 5. Mock createPortal for portal-rendered components
 vi.mock('react-dom', async (importOriginal) => {
@@ -60,7 +64,7 @@ vi.mock('react-dom', async (importOriginal) => {
 render(
   <NotificationProvider>
     <ComponentUnderTest />
-  </NotificationProvider>
+  </NotificationProvider>,
 );
 
 // 7. Clean up mocks in afterEach
@@ -105,6 +109,7 @@ render(<ComponentUsingNotifications />); // ❌ Missing provider
 ### Understanding Act Warnings
 
 Act warnings occur when:
+
 1. State updates happen outside of `act()` scope
 2. Async operations complete after test assertions
 3. Timers fire without being wrapped
@@ -112,6 +117,7 @@ Act warnings occur when:
 ### Common Patterns
 
 **Timer-based components** (notifications, tooltips):
+
 ```tsx
 describe('AutoDismiss', () => {
   beforeEach(() => {
@@ -126,7 +132,7 @@ describe('AutoDismiss', () => {
     render(
       <NotificationProvider>
         <TestComponent />
-      </NotificationProvider>
+      </NotificationProvider>,
     );
 
     // Trigger notification
@@ -146,10 +152,15 @@ describe('AutoDismiss', () => {
 ```
 
 **Hover/focus interactions**:
+
 ```tsx
 it('should show tooltip on hover', async () => {
   const user = userEvent.setup();
-  render(<Tooltip content="Tip"><button>Hover me</button></Tooltip>);
+  render(
+    <Tooltip content='Tip'>
+      <button>Hover me</button>
+    </Tooltip>,
+  );
 
   await user.hover(screen.getByRole('button'));
 
@@ -171,11 +182,7 @@ import { NotificationProvider, useNotifications } from '@/lib/components/ui';
 // Test component that uses notifications
 function TestConsumer() {
   const notifications = useNotifications();
-  return (
-    <button onClick={() => notifications.success('Done!')}>
-      Save
-    </button>
-  );
+  return <button onClick={() => notifications.success('Done!')}>Save</button>;
 }
 
 describe('Feature using notifications', () => {
@@ -186,7 +193,7 @@ describe('Feature using notifications', () => {
     render(
       <NotificationProvider>
         <TestConsumer />
-      </NotificationProvider>
+      </NotificationProvider>,
     );
 
     await user.click(screen.getByText('Save'));
@@ -245,8 +252,12 @@ Already configured in `tests/setup/vitest.setup.ts` to prevent jsdom XML parser 
 
 ```tsx
 const mockStorage: Record<string, string> = {};
-vi.spyOn(Storage.prototype, 'getItem').mockImplementation((key) => mockStorage[key] ?? null);
-vi.spyOn(Storage.prototype, 'setItem').mockImplementation((key, value) => { mockStorage[key] = value; });
+vi.spyOn(Storage.prototype, 'getItem').mockImplementation(
+  (key) => mockStorage[key] ?? null,
+);
+vi.spyOn(Storage.prototype, 'setItem').mockImplementation((key, value) => {
+  mockStorage[key] = value;
+});
 ```
 
 ---
@@ -293,6 +304,7 @@ vi.advanceTimersByTime(NOTIFICATION_EXIT_ANIMATION_MS);
 **Cause**: Querying portal-rendered content with `container.querySelector` when portal renders to `document.body`
 
 **Fix**: Use `screen` queries instead:
+
 ```tsx
 // ❌ Won't find portal content
 const dialog = container.querySelector('[role="dialog"]');
@@ -306,6 +318,7 @@ const dialog = screen.getByRole('dialog');
 **Cause**: Async components completing after test ends
 
 **Fix**: Await all async operations:
+
 ```tsx
 await waitFor(() => {
   expect(screen.getByText('Content')).toBeInTheDocument();
@@ -323,5 +336,5 @@ await waitFor(() => {
 ## Related Documentation
 
 - [SCSS Theme Rules](./scss-theme-rules.md) - Color token requirements
-- [JSDoc Standards](../jsdoc.md) - Documentation requirements
+- [JSDoc Standards](./jsdoc.md) - Documentation requirements
 - [Encounter Module](./encounter-module.md) - Play Mode testing patterns

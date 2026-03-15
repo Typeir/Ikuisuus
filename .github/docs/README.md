@@ -16,14 +16,14 @@ Before contributing, understand these non-negotiable requirements:
 
 | Topic            | Rule                                             | Documentation                             |
 | ---------------- | ------------------------------------------------ | ----------------------------------------- |
-| **JSDoc**        | Required on all declarations, no inline comments | [JSDoc Standards](../jsdoc.md)            |
+| **JSDoc**        | Required on all declarations, no inline comments | [JSDoc Standards](./jsdoc.md)             |
 | **Theme Tokens** | NO color literals outside globals.scss           | [SCSS Theme Rules](./scss-theme-rules.md) |
 | **Testing**      | Zero act warnings, fake timers for notifications | [Testing Rules](./testing-rules.md)       |
 | **Build**        | Always run `npm run pre-init` before dev/build   | [Build Pipeline](./build-pipeline.md)     |
 
 ## Document Index
 
-### 📋 [JSDoc Standards](../jsdoc.md)
+### 📋 [JSDoc Standards](./jsdoc.md)
 
 **When to read**: Before writing any code
 
@@ -176,6 +176,70 @@ Three.js-powered interactive solar system with mediator architecture.
 - Camera follow system and command transitions
 
 **Essential for**: World Sim feature work
+
+---
+
+### ⚙️ [Copilot Workflow System](./copilot-workflow-system.md)
+
+**When to read**: When configuring agents, skills, prompts, or the health gate
+
+Enforced A→B→C agentic task lifecycle.
+
+**Key Topics**:
+
+- Three-phase workflow (Analysis → Implementation + Health Gate → Completion)
+- Agent roles and handoff protocol
+- Skills, instructions, and prompt conventions
+- Health check composite gate
+
+**Essential for**: Workflow and CI customization
+
+---
+
+### 🏗️ [Metadata Table System](./metadata-table.md)
+
+**When to read**: When adding new metadata table wrappers or modifying the generic table
+
+Filterable, sortable table components for structured content.
+
+**Key Topics**:
+
+- Generic `MetadataTable` component API
+- Type-specific wrappers (Monster, Heirloom, Spell)
+- Column definitions with `getValue`, `render`, `compareValues`
+- API data fetching pattern
+
+**Essential for**: Table UI work
+
+---
+
+### 🗡️ [Phase Deeds System](./phase-deeds.md)
+
+**When to read**: When working with HP-threshold mechanics or creature lifecycle tracking
+
+Phase Deeds mechanic for combat encounters.
+
+**Key Topics**:
+
+- HP threshold phases (Wounded, Bloodied, Doomed)
+- Phase marker display
+- Integration with encounter planner
+
+**Essential for**: Combat mechanics work
+
+---
+
+### 🔀 Multirepo Sync
+
+Three related docs for the content submodule sync system:
+
+- **[Setup Guide](./MULTIREPO_SETUP.md)** - Implementation summary and file inventory
+- **[Quick Reference](./MULTIREPO_QUICKSTART.md)** - TL;DR usage commands
+- **[Strategy Analysis](./multirepo-sync-analysis.md)** - Design rationale and option comparison
+
+**When to read**: When committing changes that span both the main repo and `src/content` submodule
+
+**Essential for**: Content sync workflows
 
 ---
 

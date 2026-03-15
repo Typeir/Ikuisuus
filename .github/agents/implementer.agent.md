@@ -38,7 +38,7 @@ Before writing ANY code, you MUST:
 
 Follow ALL hard rules from `.github/copilot-instructions.md`:
 
-- **JSDoc** on all declarations, no inline comments (read `.github/jsdoc.md`)
+- **JSDoc** on all declarations, no inline comments (read `.github/docs/jsdoc.md`)
 - **No color literals** outside `globals.scss` (read `.github/docs/scss-theme-rules.md`)
 - **Zero act() warnings** in tests (read `.github/docs/testing-rules.md`)
 - **NotificationProvider**, not `alert()`

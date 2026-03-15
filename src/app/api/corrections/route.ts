@@ -206,8 +206,17 @@ export async function POST(req: NextRequest) {
 
     try {
       const draftStatus = session.role === 'admin' ? 'active' : 'pending';
-      await draftRepository.upsert({ locale, slug: slugFromPath, content, status: draftStatus });
-      log.message('Draft saved for correction', { locale, slug: slugFromPath, status: draftStatus });
+      await draftRepository.upsert({
+        locale,
+        slug: slugFromPath,
+        content,
+        status: draftStatus,
+      });
+      log.message('Draft saved for correction', {
+        locale,
+        slug: slugFromPath,
+        status: draftStatus,
+      });
     } catch (draftError) {
       log.warning('Failed to save draft (non-blocking)', {
         error:

@@ -115,7 +115,11 @@ describe('POST /api/corrections', () => {
       banned: true,
       entry: { range: '1.2.3.0/24', reason: 'spam' },
     });
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
 
     const res = await POST(makeReq({}));
     expect(res.status).toBe(403);
@@ -128,7 +132,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should return 400 for invalid JSON', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
     const req = {
       ...makeReq({}),
       json: vi.fn().mockRejectedValue(new Error('parse')),
@@ -138,7 +146,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should return 400 for missing path', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
     const res = await POST(makeReq({ content: 'abc', baseSha: 'sha' }));
     expect(res.status).toBe(400);
     const json = await res.json();
@@ -146,7 +158,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should return 400 for missing content', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
     const res = await POST(makeReq({ path: 'en/test.mdx', baseSha: 'sha' }));
     expect(res.status).toBe(400);
     const json = await res.json();
@@ -154,7 +170,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should return 400 for missing baseSha on edits', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
     const res = await POST(makeReq({ path: 'en/test.mdx', content: '# hi' }));
     expect(res.status).toBe(400);
     const json = await res.json();
@@ -162,7 +182,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should return 400 for path traversal', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
     const res = await POST(
       makeReq({ path: '../etc/passwd', content: 'x', baseSha: 'sha' }),
     );
@@ -171,7 +195,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should save a draft on successful PR creation', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
 
     mockFetch
       .mockResolvedValueOnce({
@@ -203,7 +231,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should create an active draft when submitter is admin', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'admin', userId: 'admin-1', role: 'admin' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'admin',
+      userId: 'admin-1',
+      role: 'admin' as const,
+    });
 
     mockFetch
       .mockResolvedValueOnce({
@@ -231,7 +263,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should return 201 on successful PR creation', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
 
     /** GitHub API chain: get ref → create branch → commit → open PR */
     mockFetch
@@ -263,7 +299,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should return 409 on conflict', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
 
     /** get ref → create branch → commit returns 409 */
     mockFetch
@@ -290,7 +330,11 @@ describe('POST /api/corrections', () => {
   });
 
   it('should allow new file creation without baseSha', async () => {
-    mockExtractSession.mockResolvedValue({ username: 'editor', userId: 'u1', role: 'editor' as const });
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
 
     mockFetch
       .mockResolvedValueOnce({

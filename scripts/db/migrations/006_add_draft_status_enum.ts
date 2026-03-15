@@ -35,9 +35,7 @@ export async function up(client: PoolClient): Promise<void> {
   await client.query(`DROP INDEX IF EXISTS drafts_one_active_per_slug_idx`);
   await client.query(`DROP INDEX IF EXISTS drafts_locale_slug_status_idx`);
 
-  await client.query(
-    `ALTER TABLE drafts ALTER COLUMN status DROP DEFAULT`,
-  );
+  await client.query(`ALTER TABLE drafts ALTER COLUMN status DROP DEFAULT`);
 
   await client.query(
     `ALTER TABLE drafts
@@ -72,9 +70,7 @@ export async function down(client: PoolClient): Promise<void> {
   await client.query(`DROP INDEX IF EXISTS drafts_one_active_per_slug_idx`);
   await client.query(`DROP INDEX IF EXISTS drafts_locale_slug_status_idx`);
 
-  await client.query(
-    `ALTER TABLE drafts ALTER COLUMN status DROP DEFAULT`,
-  );
+  await client.query(`ALTER TABLE drafts ALTER COLUMN status DROP DEFAULT`);
 
   await client.query(
     `ALTER TABLE drafts

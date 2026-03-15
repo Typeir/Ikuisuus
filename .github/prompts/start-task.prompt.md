@@ -27,7 +27,7 @@ For each relevant domain, read the corresponding documentation:
 | Domain    | Read These                                                         |
 | --------- | ------------------------------------------------------------------ |
 | MDX       | `.github/docs/content-system.md`                                   |
-| JSDoc     | `.github/jsdoc.md`                                                 |
+| JSDoc     | `.github/docs/jsdoc.md`                                            |
 | SCSS      | `.github/docs/scss-theme-rules.md`, `.github/docs/theme-system.md` |
 | Testing   | `.github/docs/testing-rules.md`                                    |
 | Metadata  | `.github/docs/metadata-generation.md`                              |

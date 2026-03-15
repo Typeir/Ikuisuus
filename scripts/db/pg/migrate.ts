@@ -19,9 +19,8 @@
 
 import { readFileSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
-import { pathToFileURL } from 'url';
 import pg, { type PoolClient } from 'pg';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { createLogger } from '../../core/logger.mjs';
 
 /**
@@ -161,10 +160,9 @@ async function runUpCommand(pool: pg.Pool): Promise<void> {
     try {
       await client.query('BEGIN');
       await runUp(client, file);
-      await client.query(
-        'INSERT INTO schema_migrations (name) VALUES ($1)',
-        [name],
-      );
+      await client.query('INSERT INTO schema_migrations (name) VALUES ($1)', [
+        name,
+      ]);
       await client.query('COMMIT');
       log.message(`   ✓  ${name} applied.`);
     } catch (err) {
@@ -201,9 +199,7 @@ async function runDownCommand(pool: pg.Pool): Promise<void> {
   const file = files.find((f) => basename(f) === name);
 
   if (!file) {
-    log.error(
-      `   ✗  Cannot roll back: migration file not found for "${name}"`,
-    );
+    log.error(`   ✗  Cannot roll back: migration file not found for "${name}"`);
     process.exit(1);
   }
 
