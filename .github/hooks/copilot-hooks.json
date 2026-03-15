@@ -3,19 +3,25 @@
   "hooks": {
     "PostToolUse": [
       {
-        "type": "command",
-        "command": "node scripts/ci/hooks/post-edit-lint.mjs \"$TOOL_INPUT_FILE_PATH\"",
-        "description": "Auto-lint after file edits to catch hard rule violations early",
-        "timeout": 15,
-        "events": ["editFile", "createFile"]
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/ci/hooks/post-edit-lint.mjs \"$TOOL_INPUT_FILE_PATH\"",
+            "timeout": 15
+          }
+        ]
       }
     ],
     "Stop": [
       {
-        "type": "command",
-        "command": "node scripts/ci/hooks/on-stop-health.mjs",
-        "description": "Run health check gate before session ends — blocks on critical failures",
-        "timeout": 120
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/ci/hooks/on-stop-health.mjs",
+            "timeout": 120
+          }
+        ]
       }
     ]
   }
