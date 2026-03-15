@@ -49,7 +49,8 @@ next-env.d.ts
 /messages/**/index.json
 /src/compiled-content
 /src/lib/components/mdx/mdxComponents.tsx
-./temp
+/temp/
+/temp/*.ts.json
 
 # pre-commit hook security patterns (never commit)
 scripts/hooks/.patterns
