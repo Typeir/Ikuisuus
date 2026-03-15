@@ -8,13 +8,13 @@
 
 import { X } from 'lucide-react';
 import {
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useRef,
-    useState,
-    type CSSProperties,
-    type ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
 } from 'react';
 import styles from './draggable.module.scss';
 

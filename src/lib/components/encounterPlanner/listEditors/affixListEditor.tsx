@@ -83,7 +83,7 @@ export const AffixListEditor: React.FC<AffixListEditorProps> = ({
   /** Track which affixes have no source (not found) */
   const notFoundAffixes = useMemo(
     () => new Set(affixes.filter((a) => !a.source?.href).map((a) => a.text)),
-    [affixes]
+    [affixes],
   );
 
   const handleAddAffix = useCallback(
@@ -92,14 +92,14 @@ export const AffixListEditor: React.FC<AffixListEditorProps> = ({
       if (affixes.some((a) => a.text === affix.text)) return;
       onChange([...affixes, affix]);
     },
-    [affixes, onChange]
+    [affixes, onChange],
   );
 
   const handleRemoveAffix = useCallback(
     (index: number) => {
       onChange(affixes.filter((_, i) => i !== index));
     },
-    [affixes, onChange]
+    [affixes, onChange],
   );
 
   return (

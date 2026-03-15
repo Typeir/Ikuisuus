@@ -24,9 +24,9 @@ export type { CombatantRowProps as PlayModeCombatantRowProps } from '../combatan
 
 /** Backwards compatibility: re-export sub-components from combatantRow */
 export {
-    CombatantConditionsManager, CombatantHeroicSection, CombatantMainStats, CombatantMechanicsSection, CombatantNameSection, type CombatantConditionsManagerProps, type CombatantHeroicSectionProps, type CombatantMainStatsProps, type CombatantMechanicsSectionProps, type CombatantNameSectionProps
+  CombatantConditionsManager, CombatantHeroicSection, CombatantMainStats, CombatantMechanicsSection, CombatantNameSection, type CombatantConditionsManagerProps, type CombatantHeroicSectionProps, type CombatantMainStatsProps, type CombatantMechanicsSectionProps, type CombatantNameSectionProps
 } from '../combatantRow';
 
-export { PHASE_THRESHOLDS, getPhaseMarker } from '../combatantRow/utils';
+export { getPhaseMarker, PHASE_THRESHOLDS } from '../combatantRow/utils';
 export type { PhaseMarkerType } from '../combatantRow/utils';
 
