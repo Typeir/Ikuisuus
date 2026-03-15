@@ -275,6 +275,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err: Error) => {
-  log.error('❌  Migration runner error:', err.message);
+  log.error('❌  Migration runner error:', { error: err.message });
   process.exit(1);
 });
