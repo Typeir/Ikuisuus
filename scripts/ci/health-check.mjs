@@ -2,8 +2,13 @@
  * Composite Health Check
  *
  * @fileoverview Orchestrates all code health sub-checks and aggregates results.
- * Runs file-length, duplicate-css, jsdoc-quality, antipatterns, and test-gaps checks.
- * Returns a unified JSON report and exits with code 1 if any critical check fails.
+ * Runs file-length, duplicate-css, jsdoc-quality, antipatterns, test-gaps, and
+ * mdx-format checks. Returns a unified JSON report and exits with code 1 if any
+ * critical check fails.
+ *
+ * Supports --changed-only flag: when set, gets the list of uncommitted changed
+ * files from git and post-filters each check's failures to only include violations
+ * in those files. This prevents pre-existing tech debt from blocking sessions.
  *
  * @module scripts/ci/health-check
  */
@@ -14,6 +19,8 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const ROOT = path.resolve(__dirname, '../..');
+const changedOnlyMode = process.argv.includes('--changed-only');
 
 /**
  * @typedef {Object} CheckResult
@@ -30,7 +37,66 @@ const CHECKS = [
   { name: 'jsdoc-quality', script: 'check-jsdoc-quality.mjs' },
   { name: 'antipatterns', script: 'check-antipatterns.mjs' },
   { name: 'test-gaps', script: 'check-test-gaps.mjs' },
+  { name: 'mdx-format', script: 'check-mdx-format.mjs' },
 ];
+
+/**
+ * Get the list of uncommitted changed files (staged + unstaged) relative to ROOT.
+ * Normalizes to forward slashes for cross-platform matching.
+ *
+ * @returns {Set<string>} Set of changed file paths relative to ROOT
+ */
+function getChangedFiles() {
+  const run = (cmd) => {
+    try {
+      return execSync(cmd, {
+        cwd: ROOT,
+        encoding: 'utf-8',
+        timeout: 10000,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }).trim();
+    } catch {
+      return '';
+    }
+  };
+  const unstaged = run('git diff --name-only HEAD');
+  const staged = run('git diff --cached --name-only');
+  const untracked = run('git ls-files --others --exclude-standard');
+  const all = [unstaged, staged, untracked]
+    .filter(Boolean)
+    .join('\n')
+    .split('\n')
+    .filter(Boolean)
+    .map((f) => f.replace(/\\/g, '/'));
+  return new Set(all);
+}
+
+/**
+ * Filter a check result to only include failures from changed files.
+ * Returns a new result object; the original is not mutated.
+ *
+ * @param {CheckResult} result - Original check result
+ * @param {Set<string>} changedFiles - Set of changed file paths
+ * @returns {CheckResult} Filtered result
+ */
+function filterResultToChangedFiles(result, changedFiles) {
+  const filtered = result.failures.filter((f) => {
+    const normalized = (f.file || '').replace(/\\/g, '/');
+    return changedFiles.has(normalized);
+  });
+  const passed = filtered.length === 0;
+  return {
+    ...result,
+    passed,
+    severity: passed ? 'info' : result.severity,
+    failures: filtered,
+    stats: {
+      ...result.stats,
+      violations_found: filtered.length,
+      total_before_filter: result.failures.length,
+    },
+  };
+}
 
 /**
  * Run a single check script and capture its JSON output
@@ -73,7 +139,11 @@ function runCheck(scriptName) {
 }
 
 async function main() {
-  console.log('🏥 Running Composite Health Check...\n');
+  const changedFiles = changedOnlyMode ? getChangedFiles() : null;
+  const modeLabel = changedOnlyMode
+    ? `(diff-scoped: ${changedFiles.size} file(s))`
+    : '(full codebase)';
+  console.log(`🏥 Running Composite Health Check ${modeLabel}...\n`);
 
   const results = [];
   let hasCritical = false;
@@ -81,7 +151,12 @@ async function main() {
 
   for (const check of CHECKS) {
     process.stdout.write(`  ⏳ ${check.name}... `);
-    const result = runCheck(check.script);
+    let result = runCheck(check.script);
+
+    if (changedFiles) {
+      result = filterResultToChangedFiles(result, changedFiles);
+    }
+
     results.push(result);
 
     if (!result.passed && result.severity === 'critical') {
@@ -98,6 +173,8 @@ async function main() {
 
   const report = {
     timestamp: new Date().toISOString(),
+    mode: changedOnlyMode ? 'changed-only' : 'full',
+    changed_files: changedFiles ? [...changedFiles] : null,
     overall: hasCritical ? 'FAIL' : 'PASS',
     summary: {
       total_checks: CHECKS.length,

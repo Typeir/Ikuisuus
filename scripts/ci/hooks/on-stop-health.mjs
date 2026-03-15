@@ -1,9 +1,10 @@
 /**
  * On-Stop Health Hook
  *
- * @fileoverview Runs the composite health check when a Copilot agent session ends.
- * If critical failures are found, blocks the session stop and provides context
- * for the model to self-correct.
+ * @fileoverview Runs the composite health check in diff-scoped mode when a Copilot
+ * agent session ends. Only checks files with uncommitted changes so pre-existing
+ * tech debt does not block the session. Provides actionable context grouped by
+ * file and check type to help the model self-correct.
  *
  * @module scripts/ci/hooks/on-stop-health
  */
@@ -16,6 +17,33 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '../../..');
+
+/**
+ * Check if any source files have uncommitted changes (staged or unstaged).
+ *
+ * @returns {boolean} True if src/ or scripts/ have modifications
+ */
+function hasSourceChanges() {
+  try {
+    const diff = execSync('git diff --name-only HEAD -- src/ scripts/', {
+      cwd: ROOT,
+      encoding: 'utf-8',
+      timeout: 10000,
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).trim();
+
+    const staged = execSync('git diff --cached --name-only -- src/ scripts/', {
+      cwd: ROOT,
+      encoding: 'utf-8',
+      timeout: 10000,
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).trim();
+
+    return diff.length > 0 || staged.length > 0;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Find the latest task file in .ignore/tasks/
@@ -37,11 +65,16 @@ async function findLatestTaskFile() {
 }
 
 async function main() {
+  if (!hasSourceChanges()) {
+    console.log(JSON.stringify({ continue: true }));
+    return;
+  }
+
   let healthOutput = '';
   let hasCritical = false;
 
   try {
-    healthOutput = execSync('node scripts/ci/health-check.mjs', {
+    healthOutput = execSync('node scripts/ci/health-check.mjs --changed-only', {
       cwd: ROOT,
       encoding: 'utf-8',
       timeout: 120000,
@@ -87,28 +120,74 @@ async function main() {
   const result = {};
 
   if (hasCritical) {
+    const context = report
+      ? buildActionableContext(report)
+      : 'Health check failed but could not parse results.';
     result.continue = false;
-    result.stopReason =
-      'Health check found critical issues. Fix them before completing.';
-    if (report) {
-      const criticalChecks =
-        report.checks?.filter((c) => c.severity === 'critical' && !c.passed) ||
-        [];
-      const details = criticalChecks
-        .flatMap((c) =>
-          c.failures.slice(0, 5).map((f) => `${f.file}: ${f.message}`),
-        )
-        .join('\n');
-      result.additionalContext = `🚫 CRITICAL health check failures:\n${details}`;
-    }
+    result.stopReason = context;
+    result.additionalContext = context;
   } else {
     result.continue = true;
     if (report?.summary?.total_violations > 0) {
-      result.additionalContext = `⚠️ Health check passed with ${report.summary.total_violations} warning(s). See task file for details.`;
+      result.additionalContext = `⚠️ Health check passed with ${report.summary.total_violations} non-blocking warning(s) in your changed files. See task file for details.`;
     }
   }
 
   console.log(JSON.stringify(result));
+}
+
+/**
+ * Build actionable context from the health report, grouped by file with
+ * specific instructions on what to fix.
+ *
+ * @param {Object} report - Health check report
+ * @returns {string} Formatted context for the model
+ */
+function buildActionableContext(report) {
+  const failedChecks =
+    report.checks?.filter((c) => !c.passed && c.severity === 'critical') || [];
+
+  if (failedChecks.length === 0) {
+    return '🚫 Health check failed but no specific failures were captured.';
+  }
+
+  const byFile = new Map();
+  for (const check of failedChecks) {
+    for (const f of check.failures) {
+      const file = f.file || 'unknown';
+      if (!byFile.has(file)) byFile.set(file, []);
+      byFile.get(file).push({
+        check: check.check,
+        line: f.line,
+        rule: f.rule,
+        message: f.message,
+        suggestion: f.suggestion,
+      });
+    }
+  }
+
+  const lines = [
+    `🚫 ${failedChecks.length} critical check(s) failed in your changed files:`,
+    '',
+  ];
+
+  for (const [file, issues] of byFile) {
+    lines.push(`📄 ${file}`);
+    for (const issue of issues.slice(0, 8)) {
+      const loc = issue.line ? `:${issue.line}` : '';
+      lines.push(`   [${issue.check}] ${issue.message}${loc}`);
+      if (issue.suggestion) {
+        lines.push(`   → ${issue.suggestion}`);
+      }
+    }
+    if (issues.length > 8) {
+      lines.push(`   ... and ${issues.length - 8} more in this file`);
+    }
+    lines.push('');
+  }
+
+  lines.push('Fix these issues in your changed files, then try again.');
+  return lines.join('\n');
 }
 
 /**
@@ -120,6 +199,7 @@ async function main() {
 function formatHealthResults(report) {
   const lines = [
     `**Run at**: ${report.timestamp}`,
+    `**Mode**: ${report.mode === 'changed-only' ? 'Diff-scoped (changed files only)' : 'Full codebase'}`,
     `**Overall**: ${report.overall}`,
     '',
     '| Check | Result | Violations |',

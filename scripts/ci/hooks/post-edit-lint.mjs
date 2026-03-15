@@ -19,7 +19,7 @@ const filePath = process.argv[2];
  * @returns {Promise<Object>} Hook result with additionalContext
  */
 async function quickCheck(absPath) {
-  if (!absPath || !absPath.match(/\.(ts|tsx|scss)$/)) {
+  if (!absPath || !absPath.match(/\.(ts|tsx|scss|mdx)$/)) {
     return output(true, []);
   }
 
@@ -40,6 +40,29 @@ async function quickCheck(absPath) {
 
   if (/\balert\s*\(/.test(content)) {
     warnings.push('alert() call found — use NotificationProvider instead');
+  }
+
+  if (absPath.endsWith('.mdx')) {
+    if (/src=["']\/full-size\//.test(content)) {
+      warnings.push(
+        'Image references /full-size/ path — use /library/ path instead',
+      );
+    }
+    if (/<img\s/.test(content)) {
+      warnings.push('Raw <img> tag — use <Image> or <BlendedImage> component');
+    }
+    if (/style=["'][^"']*#[0-9a-fA-F]{3,8}/.test(content)) {
+      warnings.push(
+        'Inline color literal in MDX style attribute — use CSS variables',
+      );
+    }
+    const basename = absPath.replace(/\\/g, '/').split('/').pop();
+    if (/[A-Z_]/.test(basename.replace(/\.sheet\.mdx$|\.mdx$/, ''))) {
+      warnings.push(
+        'MDX filename is not kebab-case — rename to lowercase with hyphens',
+      );
+    }
+    return output(warnings.length === 0, warnings);
   }
 
   const lines = content.split('\n');
