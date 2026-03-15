@@ -57,7 +57,7 @@ export class DraftEntity {
   content!: string;
 
   /** @property {DraftStatus} status - Lifecycle status: 'active', 'pending', or 'archived' */
-  @Property({ columnType: 'draft_status', default: 'active' })
+  @Property({ type: 'string', columnType: 'draft_status', default: 'active' })
   status!: DraftStatus;
 
   /** @property {Date} createdAt - Creation timestamp */
