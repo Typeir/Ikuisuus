@@ -121,7 +121,7 @@ describe('CombatantNameSection rendering', () => {
   it('should render combatant name', () => {
     renderWithProvider({ name: 'Test Creature' });
 
-    expect(screen.getByText('Test Creature')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Test Creature')).toBeInTheDocument();
   });
 
   it('should render CR badge when crText is provided', () => {

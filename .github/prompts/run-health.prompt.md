@@ -16,11 +16,11 @@ npm run health:check
 If the composite script is not available, run each check individually:
 
 ```bash
-node scripts/ci/check-file-length.mjs
-node scripts/ci/check-duplicate-css.mjs
-node scripts/ci/check-jsdoc-quality.mjs
-node scripts/ci/check-antipatterns.mjs
-node scripts/ci/check-test-gaps.mjs
+node .github/scripts/check-file-length.mjs
+node .github/scripts/check-duplicate-css.mjs
+node .github/scripts/check-jsdoc-quality.mjs
+node .github/scripts/check-antipatterns.mjs
+node .github/scripts/check-test-gaps.mjs
 npm run lint
 npm test
 ```

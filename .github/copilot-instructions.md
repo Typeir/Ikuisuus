@@ -418,7 +418,7 @@ export { main, parseFile }; // Export for orchestrator
 - **Instructions**: `.github/instructions/` — jsdoc-standards, mdx-content, metadata-generators, scss-theme, testing, world-sim, damocles-authoring, encounter-module, i18n, build-pipeline
 - **Prompts**: `.github/prompts/` — `/start-task`, `/run-health`, `/reconcile-completion`, `/full-workflow`, `/draft-damocles-page`, `/refactor-damocles-mdx`, `/check-damocles-lore-consistency`, `/convert-notes-to-damocles-mdx`, `/add-component`, `/add-test`, `/fix-health`, `/add-metadata-type`
 - **Hooks**: `.github/hooks/copilot-hooks.json` — PostToolUse lint + Stop health gate
-- **Health Scripts**: `scripts/ci/health-check.mjs` — Composite gate (file-length, duplicate-css, jsdoc, antipatterns, test-gaps, mdx-format)
+- **Health Scripts**: `.github/scripts/health-check.mjs` — Composite gate (file-length, duplicate-css, jsdoc, antipatterns, test-gaps, mdx-format)
 - **Task Artifacts**: `.ignore/tasks/` — Timestamped agile task summaries
 - **Reports**: `.ignore/reports/` — Timestamped completion reports
 

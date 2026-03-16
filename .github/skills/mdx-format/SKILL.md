@@ -199,10 +199,10 @@ May reference spells, items, and monsters via internal links.
 
 ```bash
 # Run MDX format check standalone
-node scripts/ci/check-mdx-format.mjs
+node .github/scripts/check-mdx-format.mjs
 
 # Run as part of full health check
-node scripts/ci/health-check.mjs
+node .github/scripts/health-check.mjs
 ```
 
 The script outputs JSON matching the health check schema:
@@ -221,7 +221,7 @@ The script outputs JSON matching the health check schema:
 
 When performing a format refactor:
 
-1. **Run the check**: `node scripts/ci/check-mdx-format.mjs` to identify violations
+1. **Run the check**: `node .github/scripts/check-mdx-format.mjs` to identify violations
 2. **Group by rule**: Violations of the same rule can often be fixed with a consistent pattern
 3. **Fix by content type**: Work through one content type at a time (monsters → spells → heirlooms → world)
 4. **Verify metadata**: After fixing monster/spell/heirloom files, run `npm run generate-all-metadata` to ensure parsers still work

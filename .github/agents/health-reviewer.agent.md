@@ -38,15 +38,15 @@ You ALWAYS run after implementation. Your job:
 
 The composite health check runs these sub-checks:
 
-| Check                  | Script                               | Severity |
-| ---------------------- | ------------------------------------ | -------- |
-| File length >250 lines | `scripts/ci/check-file-length.mjs`   | CRITICAL |
-| Duplicate CSS          | `scripts/ci/check-duplicate-css.mjs` | CRITICAL |
-| JSDoc quality          | `scripts/ci/check-jsdoc-quality.mjs` | CRITICAL |
-| Anti-patterns          | `scripts/ci/check-antipatterns.mjs`  | CRITICAL |
-| Test gaps              | `scripts/ci/check-test-gaps.mjs`     | CRITICAL |
-| ESLint                 | `npm run lint`                       | CRITICAL |
-| Unit tests             | `npm test`                           | CRITICAL |
+| Check                  | Script                                    | Severity |
+| ---------------------- | ----------------------------------------- | -------- |
+| File length >250 lines | `.github/scripts/check-file-length.mjs`   | CRITICAL |
+| Duplicate CSS          | `.github/scripts/check-duplicate-css.mjs` | CRITICAL |
+| JSDoc quality          | `.github/scripts/check-jsdoc-quality.mjs` | CRITICAL |
+| Anti-patterns          | `.github/scripts/check-antipatterns.mjs`  | CRITICAL |
+| Test gaps              | `.github/scripts/check-test-gaps.mjs`     | CRITICAL |
+| ESLint                 | `npm run lint`                            | CRITICAL |
+| Unit tests             | `npm test`                                | CRITICAL |
 
 ## If Critical Issues Found
 
@@ -67,11 +67,11 @@ The composite health check runs these sub-checks:
 If the composite script isn't available, run each check individually:
 
 ```bash
-node scripts/ci/check-file-length.mjs
-node scripts/ci/check-duplicate-css.mjs
-node scripts/ci/check-jsdoc-quality.mjs
-node scripts/ci/check-antipatterns.mjs
-node scripts/ci/check-test-gaps.mjs
+node .github/scripts/check-file-length.mjs
+node .github/scripts/check-duplicate-css.mjs
+node .github/scripts/check-jsdoc-quality.mjs
+node .github/scripts/check-antipatterns.mjs
+node .github/scripts/check-test-gaps.mjs
 npm run lint
 npm test
 ```

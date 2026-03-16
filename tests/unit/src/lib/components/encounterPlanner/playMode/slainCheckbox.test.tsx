@@ -310,7 +310,7 @@ describe('PlayModeCombatantRow - Slain Checkbox', () => {
       expect(row?.className).toMatch(/slain/);
       
       // Verify the monster name is present (will have strikethrough via CSS)
-      expect(screen.getByText('Slain Monster')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Slain Monster')).toBeInTheDocument();
     });
 
     it('should render all stat values when slain', () => {

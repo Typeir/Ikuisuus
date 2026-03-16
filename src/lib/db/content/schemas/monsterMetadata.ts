@@ -1,7 +1,7 @@
 /**
  * @fileoverview Monster Metadata Domain Schema
  * @description Canonical TypeScript types derived from the real metadata output of
- * `scripts/metadata/generateMonsterMetadata.mjs`. Every field corresponds to a
+ * `scripts/metadata/generateMonsterMetadata.ts`. Every field corresponds to a
  * parsed property emitted by `parseStatBlockSection()`.
  *
  * Monsters are unique because a single `.sheet.mdx` file may contain multiple
@@ -109,7 +109,7 @@ export interface MonsterSenses {
  * Complete monster metadata record as emitted by the generator.
  *
  * Derived from `parseStatBlockSection()` output in
- * `scripts/metadata/generateMonsterMetadata.mjs`.
+ * `scripts/metadata/generateMonsterMetadata.ts`.
  */
 export interface MonsterMetadata {
   /** URL-friendly filename base (e.g. "abominable-avian") */

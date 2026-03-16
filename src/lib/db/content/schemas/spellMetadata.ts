@@ -1,7 +1,7 @@
 /**
  * @fileoverview Spell Metadata Domain Schema
  * @description Canonical TypeScript types derived from the real metadata output of
- * `scripts/metadata/generateSpellMetadata.mjs`. Every field corresponds to a
+ * `scripts/metadata/generateSpellMetadata.ts`. Every field corresponds to a
  * parsed property emitted by `parseSpellFile()`.
  *
  * Spells include both local project spells (parsed from `.mdx` files) and external
@@ -34,7 +34,7 @@ export interface SpellListRef {
  * Complete spell metadata record as emitted by the generator.
  *
  * Derived from `parseSpellFile()` output in
- * `scripts/metadata/generateSpellMetadata.mjs` and external spell data
+ * `scripts/metadata/generateSpellMetadata.ts` and external spell data
  * from `scripts/core/spells-external.metadata.json`.
  */
 export interface SpellMetadata {

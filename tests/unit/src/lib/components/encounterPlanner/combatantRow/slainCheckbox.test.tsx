@@ -319,8 +319,7 @@ describe('CombatantRow - Slain Checkbox', () => {
       const row = container.querySelector('[data-testid="combatant-row"]');
       expect(row?.className).toMatch(/slain/);
       
-      // Verify the monster name is present (will have strikethrough via CSS)
-      expect(screen.getByText('Slain Monster')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Slain Monster')).toBeInTheDocument();
     });
 
     it('should render all stat values when slain', () => {

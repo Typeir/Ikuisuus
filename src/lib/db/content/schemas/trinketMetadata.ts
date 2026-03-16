@@ -1,7 +1,7 @@
 /**
  * @fileoverview Trinket Metadata Domain Schema
  * @description Canonical TypeScript types derived from the real metadata output of
- * `scripts/metadata/generateTrinketMetadata.mjs`. Every field corresponds to a
+ * `scripts/metadata/generateTrinketMetadata.ts`. Every field corresponds to a
  * parsed property emitted by `parseTrinketFile()`.
  *
  * Trinkets are consumable adventuring gear with damage, range, weight, and
@@ -20,7 +20,7 @@
  * Complete trinket metadata record as emitted by the generator.
  *
  * Derived from `parseTrinketFile()` output in
- * `scripts/metadata/generateTrinketMetadata.mjs`.
+ * `scripts/metadata/generateTrinketMetadata.ts`.
  */
 export interface TrinketMetadata {
   /** URL-friendly identifier */

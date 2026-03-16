@@ -82,7 +82,7 @@ const SUPPORTED_LOCALES = ['en', 'es', 'fi'];
 /* ────────────────────  Metadata JSON Interfaces  ──────────────────── */
 
 /**
- * @description Monster metadata shape produced by generateMonsterMetadata.mjs.
+ * @description Monster metadata shape produced by generateMonsterMetadata.ts.
  */
 interface MonsterMeta {
   slug: string;
@@ -129,7 +129,7 @@ interface MonsterMeta {
 }
 
 /**
- * @description Spell metadata shape produced by generateSpellMetadata.mjs.
+ * @description Spell metadata shape produced by generateSpellMetadata.ts.
  */
 interface SpellMeta {
   slug: string;
@@ -154,7 +154,7 @@ interface SpellMeta {
 }
 
 /**
- * @description Heirloom metadata shape produced by generateHeirloomMetadata.mjs.
+ * @description Heirloom metadata shape produced by generateHeirloomMetadata.ts.
  */
 interface HeirloomMeta {
   slug: string;
@@ -184,7 +184,7 @@ interface HeirloomMeta {
 }
 
 /**
- * @description Trinket metadata shape produced by generateTrinketMetadata.mjs.
+ * @description Trinket metadata shape produced by generateTrinketMetadata.ts.
  */
 interface TrinketMeta {
   slug: string;

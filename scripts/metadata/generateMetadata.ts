@@ -205,7 +205,7 @@ if (import.meta.url === pathToFileURL(__filename).href) {
       if (persist) {
         const { createStorageFromEnv } = await import(
           /* webpackIgnore: true */
-          '../core/metadataStorage.mjs'
+          '../core/metadataStorage'
         );
         storage = (await createStorageFromEnv()) as unknown as StorageAdapter;
         log.message('Database persistence enabled via --persist flag');

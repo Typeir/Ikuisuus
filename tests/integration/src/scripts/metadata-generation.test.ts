@@ -6,10 +6,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { parseMonsterFile } from '@scripts/metadata/generateMonsterMetadata.mjs';
-import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata.mjs';
-import { parseSpellFile } from '@scripts/metadata/generateSpellMetadata.mjs';
-import { GameData, ItemData } from '@scripts/core/shared-utils.mjs';
+import { parseMonsterFile } from '@scripts/metadata/generateMonsterMetadata';
+import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata';
+import { parseSpellFile } from '@scripts/metadata/generateSpellMetadata';
+import { GameData, ItemData } from '@/lib/metadata';
 
 describe('Metadata Generation Pipeline', () => {
   describe('Generator Module Exports', () => {

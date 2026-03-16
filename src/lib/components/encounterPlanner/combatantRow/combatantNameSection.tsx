@@ -32,9 +32,10 @@ import {
   computeAwakeningClasses,
 } from '@/lib/utils/heroicAwakeningStyles';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import styles from './combatantRow.module.scss';
 import { useCombatant } from './utils/context/combatantContext';
+import { useEditableField } from './utils/useEditableField';
 
 /**
  * Props for CombatantNameSection component.
@@ -72,12 +73,39 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
   locked = [],
   onToggleLock,
 }) => {
-  const { combatant, onRemoveSessionOnly, disableLocking } = useCombatant();
+  const { combatant, onRemoveSessionOnly, disableLocking, updateField } = useCombatant();
   const { name, heroicAwakening, mechanics, sourceHref, crText } = combatant;
 
   const t = useTranslations('encounterPlanner');
 
   const isStatsLocked = (locked ?? []).includes('stats');
+
+  const cancelPendingRef = useRef(false);
+
+  const nameField = useEditableField(
+    cancelPendingRef,
+    useCallback((value: string) => {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) {
+        updateField('name', trimmed);
+      }
+    }, [updateField]),
+  );
+
+  const handleNameKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        nameField.commit();
+        e.currentTarget.blur();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        nameField.cancel();
+        e.currentTarget.blur();
+      }
+    },
+    [nameField],
+  );
 
   const awakeningResult: AwakeningClassResult = useMemo(
     () => computeAwakeningClasses(heroicAwakening),
@@ -125,7 +153,16 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
           </button>
         </Tooltip>
       )}
-      <span className={styles.name}>{name}</span>
+      <input
+        type='text'
+        className={styles.name}
+        value={nameField.editing !== null ? nameField.editing : name}
+        onChange={(e) => nameField.onChange(e.target.value)}
+        onFocus={() => nameField.setEditing(name)}
+        onBlur={nameField.commit}
+        onKeyDown={handleNameKeyDown}
+        aria-label={t('name')}
+      />
       <span className={styles.nameBadgesWrapper}>
         {crText && <span className={styles.crBadge}>{crText}</span>}
         {renderAwakeningBadge()}

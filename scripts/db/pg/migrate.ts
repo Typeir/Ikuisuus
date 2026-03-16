@@ -21,7 +21,7 @@ import { readFileSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import pg, { type PoolClient } from 'pg';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { createLogger } from '../../core/logger.mjs';
+import { createLogger } from '@/lib/logging/logger';
 
 /**
  * Contract for TypeScript migration modules.

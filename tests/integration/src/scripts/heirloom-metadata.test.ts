@@ -11,8 +11,8 @@
  * @since 1.0.0
  * 
  * @requires vitest Testing framework
- * @requires @scripts/metadata/generateHeirloomMetadata.mjs Heirloom metadata generator
- * @requires @scripts/core/shared-utils.mjs Shared utilities and data access
+ * @requires @scripts/metadata/generateHeirloomMetadata Heirloom metadata generator
+ * @requires @/lib/metadata Shared utilities and data access
  * 
  * @example
  * // Run these tests
@@ -21,8 +21,8 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import path from 'path';
-import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata.mjs';
-import { loadSharedData } from '@scripts/core/shared-utils.mjs';
+import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata';
+import { loadSharedData } from '@/lib/metadata';
 
 /**
  * Path to the fixtures directory containing test heirloom files

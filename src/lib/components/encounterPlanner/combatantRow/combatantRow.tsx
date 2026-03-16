@@ -45,8 +45,10 @@
 
 'use client';
 
+import type { AffixEntry } from '@/lib/types/encounterPlanner';
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
 import { computeAwakeningClasses } from '@/lib/utils/heroicAwakeningStyles';
+import { forceHeroicAwakeningWithAffixes } from '@/lib/utils/inProgressCombatStorage';
 import { useTranslations } from 'next-intl';
 import { AlignJustify } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
@@ -89,7 +91,7 @@ export interface CombatantRowProps {
  * @returns {React.ReactElement} Rendered row content with all sections
  */
 const CombatantRowContent: React.FC = () => {
-  const { combatant, locale, updateField } = useCombatant();
+  const { combatant, locale, updateField, onUpdate } = useCombatant();
   const t = useTranslations('encounterPlanner');
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -135,8 +137,10 @@ const CombatantRowContent: React.FC = () => {
     updateField('details', { ...combatant.details, spells: newSpells });
   };
 
-  const handleAffixesChange = (newAffixes: any[]) => {
-    updateField('details', { ...combatant.details, affixes: newAffixes });
+  const handleAffixesChange = (newAffixes: AffixEntry[]) => {
+    const updated = { ...combatant, details: { ...combatant.details, affixes: newAffixes } };
+    forceHeroicAwakeningWithAffixes(updated, newAffixes);
+    onUpdate(updated);
   };
 
   return (

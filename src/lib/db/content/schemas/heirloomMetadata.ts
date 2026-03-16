@@ -1,7 +1,7 @@
 /**
  * @fileoverview Heirloom Metadata Domain Schema
  * @description Canonical TypeScript types derived from the real metadata output of
- * `scripts/metadata/generateHeirloomMetadata.mjs`. Every field corresponds to a
+ * `scripts/metadata/generateHeirloomMetadata.ts`. Every field corresponds to a
  * parsed property emitted by `parseHeirloomFile()`.
  *
  * Heirlooms are magical items and equipment that may be weapons, armor, clothing,
@@ -47,7 +47,7 @@ export interface HeirloomWeaponDamage {
  * Complete heirloom metadata record as emitted by the generator.
  *
  * Derived from `parseHeirloomFile()` output in
- * `scripts/metadata/generateHeirloomMetadata.mjs`.
+ * `scripts/metadata/generateHeirloomMetadata.ts`.
  */
 export interface HeirloomMetadata {
   /** URL-friendly identifier */

@@ -36,21 +36,21 @@ Phase C: Completion Reconciliation & Report
 
 ### Health Check Scripts
 
-| Script                               | npm command                    | What it checks                           | Severity         |
-| ------------------------------------ | ------------------------------ | ---------------------------------------- | ---------------- |
-| `scripts/ci/health-check.mjs`        | `npm run health:check`         | Composite orchestrator                   | —                |
-| `scripts/ci/check-file-length.mjs`   | `npm run health:file-length`   | Files >250 lines                         | CRITICAL         |
-| `scripts/ci/check-duplicate-css.mjs` | `npm run health:duplicate-css` | Duplicate CSS selectors                  | CRITICAL         |
-| `scripts/ci/check-jsdoc-quality.mjs` | `npm run health:jsdoc`         | Inline comments, color literals, alert() | CRITICAL         |
-| `scripts/ci/check-antipatterns.mjs`  | `npm run health:antipatterns`  | console.log, any type, force casts       | CRITICAL/WARNING |
-| `scripts/ci/check-test-gaps.mjs`     | `npm run health:test-gaps`     | Missing test files for changed code      | CRITICAL         |
+| Script                                    | npm command                    | What it checks                           | Severity         |
+| ----------------------------------------- | ------------------------------ | ---------------------------------------- | ---------------- |
+| `.github/scripts/health-check.mjs`        | `npm run health:check`         | Composite orchestrator                   | —                |
+| `.github/scripts/check-file-length.mjs`   | `npm run health:file-length`   | Files >250 lines                         | CRITICAL         |
+| `.github/scripts/check-duplicate-css.mjs` | `npm run health:duplicate-css` | Duplicate CSS selectors                  | CRITICAL         |
+| `.github/scripts/check-jsdoc-quality.mjs` | `npm run health:jsdoc`         | Inline comments, color literals, alert() | CRITICAL         |
+| `.github/scripts/check-antipatterns.mjs`  | `npm run health:antipatterns`  | console.log, any type, force casts       | CRITICAL/WARNING |
+| `.github/scripts/check-test-gaps.mjs`     | `npm run health:test-gaps`     | Missing test files for changed code      | CRITICAL         |
 
 ### Reconciliation Scripts
 
-| Script                          | npm command                | Purpose                     |
-| ------------------------------- | -------------------------- | --------------------------- |
-| `scripts/ci/reconcile-task.mjs` | `npm run health:reconcile` | Verify task file completion |
-| `scripts/ci/write-report.mjs`   | `npm run health:report`    | Generate completion report  |
+| Script                               | npm command                | Purpose                     |
+| ------------------------------------ | -------------------------- | --------------------------- |
+| `.github/scripts/reconcile-task.mjs` | `npm run health:reconcile` | Verify task file completion |
+| `.github/scripts/write-report.mjs`   | `npm run health:report`    | Generate completion report  |
 
 ---
 
@@ -134,9 +134,9 @@ If critical issues cannot be resolved immediately:
 
 ### Adding a New Health Check
 
-1. Create `scripts/ci/check-{name}.mjs` following the existing pattern (JSON output, exit code 0/1)
-2. Add entry to the `CHECKS` array in `scripts/ci/health-check.mjs`
-3. Add npm script: `"health:{name}": "node scripts/ci/check-{name}.mjs"`
+1. Create `.github/scripts/check-{name}.mjs` following the existing pattern (JSON output, exit code 0/1)
+2. Add entry to the `CHECKS` array in `.github/scripts/health-check.mjs`
+3. Add npm script: `"health:{name}": "node .github/scripts/check-{name}.mjs"`
 4. Update this doc's tables
 
 ### Adding a New Architecture Domain
@@ -155,9 +155,18 @@ If critical issues cannot be resolved immediately:
 
 ## Hooks (Preview)
 
-The hooks in `.github/hooks/copilot-hooks.json` use VS Code Copilot's preview hook system:
+The hooks in `.github/hooks/copilot-hooks.json` use VS Code's agent hook system:
 
-- **PostToolUse**: Runs quick lint after every file edit/create to catch hard-rule violations early
-- **Stop**: Runs the full health gate before a session ends — blocks on critical failures
+- **PostToolUse**: Runs quick lint after every file edit/create. Returns `hookSpecificOutput.additionalContext` to inject violation warnings into the conversation so the agent self-corrects.
+- **Stop**: Runs the full health gate before a session ends. Reads `stop_hook_active` from stdin to prevent infinite loops. Returns `hookSpecificOutput.decision: "block"` with a `reason` when critical issues are found, which tells the agent to keep running and fix the problems instead of stopping.
 
 These are deterministic (not model-dependent) and provide the strongest enforcement guarantee.
+
+### Hook Output Protocol
+
+Hooks communicate via stdin (JSON input from VS Code) and stdout (JSON output):
+
+- **Common fields**: `continue`, `stopReason`, `systemMessage`
+- **PostToolUse-specific**: `hookSpecificOutput.additionalContext` injects context into the conversation
+- **Stop-specific**: `hookSpecificOutput.decision: "block"` + `hookSpecificOutput.reason` prevents session end
+- **Exit code 0**: success, **exit code 2**: blocking error, **other**: non-blocking warning

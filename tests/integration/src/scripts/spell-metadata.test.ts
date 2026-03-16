@@ -11,8 +11,8 @@
  * @since 1.0.0
  * 
  * @requires vitest Testing framework
- * @requires @scripts/metadata/generateSpellMetadata.mjs Spell metadata generator
- * @requires @scripts/core/shared-utils.mjs Shared utilities and data access
+ * @requires @scripts/metadata/generateSpellMetadata Spell metadata generator
+ * @requires @/lib/metadata Shared utilities and data access
  * 
  * @example
  * // Run these tests
@@ -21,8 +21,8 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import path from 'path';
-import { parseSpellFile } from '@scripts/metadata/generateSpellMetadata.mjs';
-import { loadSharedData } from '@scripts/core/shared-utils.mjs';
+import { parseSpellFile } from '@scripts/metadata/generateSpellMetadata';
+import { loadSharedData } from '@/lib/metadata';
 
 /**
  * Path to the fixtures directory containing test spell files

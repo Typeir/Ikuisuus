@@ -358,7 +358,7 @@ export async function runWithCli(
   let storage: StorageAdapter | null = null;
   try {
     if (process.argv.includes('--persist')) {
-      const storagePath = '../../../../scripts/core/metadataStorage.mjs';
+      const storagePath = '../../../../scripts/core/metadataStorage';
       const { createStorageFromEnv } = await import(
         /* webpackIgnore: true */
         storagePath
