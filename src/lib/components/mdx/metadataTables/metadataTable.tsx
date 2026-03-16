@@ -424,7 +424,7 @@ export default function MetadataTable({
   const getSelectOptions = useCallback((column: ColumnConfig) => {
     const options = getFilterOptions(column);
     return options.map((opt) => ({ value: opt, label: opt }));
-  }, [data, columns, getFilterOptions]);
+  }, [getFilterOptions]);
 
   return (
     <div className={styles.metadataTable}>

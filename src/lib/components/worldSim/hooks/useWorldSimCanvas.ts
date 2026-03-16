@@ -120,6 +120,7 @@ export function useWorldSimCanvas(): UseWorldSimCanvasReturn {
     mediator.initialize();
     sceneManager.start();
 
+    const currentCleanupMap = cleanupMap.current;
     return () => {
       mediator.dispose();
       cameraController.dispose();
@@ -129,7 +130,7 @@ export function useWorldSimCanvas(): UseWorldSimCanvasReturn {
       cameraControllerRef.current = null;
       projectionBridgeRef.current = null;
       eventBusRef.current = null;
-      cleanupMap.current.clear();
+      currentCleanupMap.clear();
     };
   }, [dispatch]);
 

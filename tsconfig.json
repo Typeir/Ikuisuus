@@ -35,5 +35,5 @@
     "src/lib/mdx/precompileMdx.js",
     "dist/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "scripts"]
 }
