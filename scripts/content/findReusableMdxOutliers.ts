@@ -21,9 +21,9 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { pathToFileURL } from 'url';
-import acorn from 'acorn';
+import * as acorn from 'acorn';
 import jsx from 'acorn-jsx';
-import ReactDOMServer from 'react-dom/server';
+import * as ReactDOMServer from 'react-dom/server';
 import { Project } from 'ts-morph';
 import { createLogger } from '@/lib/logging/logger';
 
