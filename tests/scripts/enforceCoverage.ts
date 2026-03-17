@@ -38,7 +38,10 @@ const EXCLUDED_PATTERNS = [
  * @param fileList - Accumulator array
  * @returns Array of relative file paths
  */
-async function findSourceFiles(dir: string, fileList: string[] = []): Promise<string[]> {
+async function findSourceFiles(
+  dir: string,
+  fileList: string[] = [],
+): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
 
   for (const entry of entries) {
@@ -121,9 +124,7 @@ async function main(): Promise<void> {
   console.error(
     '\n💡 Create at least one test file for each missing source file.',
   );
-  console.error(
-    '   Smoke tests are acceptable if the file is complex.\n',
-  );
+  console.error('   Smoke tests are acceptable if the file is complex.\n');
 
   process.exit(1);
 }

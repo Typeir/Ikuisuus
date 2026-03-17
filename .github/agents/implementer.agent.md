@@ -16,9 +16,9 @@ tools:
   - run_in_terminal
   - get_terminal_output
   - get_errors
-  - memory
+  - vscode/memory
   - manage_todo_list
-  - runSubagent
+  - agent
 ---
 
 # Implementer Agent

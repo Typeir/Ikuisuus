@@ -13,9 +13,9 @@
  * @requires path Node.js path utilities
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs';
 import path from 'path';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'cleanFullSize' });
 

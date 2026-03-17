@@ -17,11 +17,11 @@
  *   --force             Overwrite existing files (default: skip existing)
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'scaffoldFromLinks' });
 

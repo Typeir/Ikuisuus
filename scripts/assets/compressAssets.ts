@@ -16,11 +16,11 @@
  * @requires sharp Image processing library
  */
 
-import fs from 'fs/promises';
+import { createLogger } from '@/lib/logging/logger';
 import fg from 'fast-glob';
+import fs from 'fs/promises';
 import path from 'path';
 import sharp from 'sharp';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'compressAssets' });
 
@@ -52,9 +52,12 @@ const formatBytes = (bytes: number): string => {
  * @returns Promise that resolves when all images are processed
  */
 const compressImages = async (): Promise<void> => {
-  const files: string[] = await fg(`${SOURCE_DIR}/**/*.{png,jpg,jpeg,JPG,webp}`, {
-    absolute: true,
-  });
+  const files: string[] = await fg(
+    `${SOURCE_DIR}/**/*.{png,jpg,jpeg,JPG,webp}`,
+    {
+      absolute: true,
+    },
+  );
 
   log.message('📦 Compressing assets...');
   log.message('🗂  Found images to process', {

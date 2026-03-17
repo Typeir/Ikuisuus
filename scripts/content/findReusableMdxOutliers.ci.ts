@@ -9,10 +9,10 @@
  * @since 1.0.0
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'findReusableMdxOutliers.ci' });
 

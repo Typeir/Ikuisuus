@@ -14,9 +14,9 @@
  * ```
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs';
 import path from 'path';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'syncSpellLists' });
 
@@ -108,7 +108,10 @@ function readClassSpells(classSpellsPath: string): string[] {
  * @param classSpellsPath - Path to the class spells.mdx file
  * @param allSlugs - Complete array of spell slugs
  */
-function rewriteClassSpellFile(classSpellsPath: string, allSlugs: string[]): void {
+function rewriteClassSpellFile(
+  classSpellsPath: string,
+  allSlugs: string[],
+): void {
   const content = fs.readFileSync(classSpellsPath, 'utf-8');
 
   const spellsOpenIdx = content.indexOf('spells={[');

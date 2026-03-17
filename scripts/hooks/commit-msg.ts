@@ -15,8 +15,8 @@
  * @version 1.0.0
  */
 
-import { readFileSync } from 'fs';
 import { createLogger } from '@/lib/logging/logger';
+import { readFileSync } from 'fs';
 
 const log = createLogger({ script: 'commit-msg' });
 

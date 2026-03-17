@@ -19,10 +19,10 @@
  *   --backup       Write .bak files before overwriting
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fg from 'fast-glob';
 import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import process from 'node:process';
-import { createLogger } from '@/lib/logging/logger';
 import { linkifyMarkdown } from './linkifyMarkdown';
 
 const log = createLogger({ script: 'linkifyRunner' });
@@ -35,7 +35,10 @@ interface LinkSpec {
   path: string;
 }
 
-const getArg = (name: string, fallback: string | null = null): string | null => {
+const getArg = (
+  name: string,
+  fallback: string | null = null,
+): string | null => {
   const i = process.argv.indexOf(name);
   return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
 };
@@ -49,7 +52,8 @@ const readSpecsFromFile = async (file: string): Promise<LinkSpec[]> => {
   for (const [i, x] of data.entries()) {
     const termValid =
       typeof x.term === 'string' ||
-      (Array.isArray(x.term) && x.term.every((t: unknown) => typeof t === 'string'));
+      (Array.isArray(x.term) &&
+        x.term.every((t: unknown) => typeof t === 'string'));
     if (!x || !termValid || typeof x.path !== 'string') {
       throw new Error(
         `Bad link spec at index ${i} — expected { term: string | string[], path: string }.`,
@@ -70,7 +74,8 @@ const readSpecsFromStdin = async (): Promise<LinkSpec[]> => {
   for (const [i, x] of data.entries()) {
     const termValid =
       typeof x.term === 'string' ||
-      (Array.isArray(x.term) && x.term.every((t: unknown) => typeof t === 'string'));
+      (Array.isArray(x.term) &&
+        x.term.every((t: unknown) => typeof t === 'string'));
     if (!x || !termValid || typeof x.path !== 'string') {
       throw new Error(
         `Bad link spec at index ${i} — expected { term: string | string[], path: string }.`,

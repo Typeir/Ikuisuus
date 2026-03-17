@@ -7,11 +7,11 @@
  * @version 1.0.0
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import { readFileSync } from 'fs';
 import https from 'https';
-import { resolve, dirname } from 'path';
+import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { createLogger } from '@/lib/logging/logger';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const log = createLogger({ module: 'test-pat' });

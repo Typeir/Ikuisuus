@@ -13,10 +13,10 @@
  * ```
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs';
 import path from 'path';
 import { chromium, type Page } from 'playwright';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'scrapWikidotSpellList' });
 
@@ -94,7 +94,8 @@ const toKebabCase = (name: string): string => {
  * @param str - Input string
  * @returns Capitalized string
  */
-const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
+const capitalize = (str: string): string =>
+  str.charAt(0).toUpperCase() + str.slice(1);
 
 /** Maximum number of retry attempts per class page */
 const MAX_RETRIES = 3;
@@ -107,7 +108,11 @@ const MAX_RETRIES = 3;
  * @param attempt - Current attempt number
  * @returns Array of kebab-cased spell slugs
  */
-async function scrapeClassSpells(page: Page, className: string, attempt = 1): Promise<string[]> {
+async function scrapeClassSpells(
+  page: Page,
+  className: string,
+  attempt = 1,
+): Promise<string[]> {
   const url = `${BASE_URL}:${className}`;
   log.message(
     `\n📖 Navigating to ${url}${attempt > 1 ? ` (attempt ${attempt}/${MAX_RETRIES})` : ''}`,

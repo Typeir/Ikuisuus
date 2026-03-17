@@ -11,12 +11,12 @@
  * ```
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs';
 import path from 'path';
 import { chromium } from 'playwright';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'scrapWikidot' });
 
@@ -102,15 +102,18 @@ const fixExternalLinks = (mdx: string, className: string): string => {
  * @returns Fixed MDX content
  */
 const fixSubclassLinks = (mdx: string, className: string): string => {
-  return mdx.replace(/\[([^\]]+)\]\((\/[^\)]+)\)/g, (match, text: string, link: string) => {
-    const subclassMatch = link.match(new RegExp(`^/${className}:([\\w-]+)$`));
-    if (subclassMatch) {
-      const subclass = subclassMatch[1];
-      const url = `/en/library/character-creation/vocations/${className}/${subclass}`;
-      return `[${text}](${url})`;
-    }
-    return match;
-  });
+  return mdx.replace(
+    /\[([^\]]+)\]\((\/[^\)]+)\)/g,
+    (match, text: string, link: string) => {
+      const subclassMatch = link.match(new RegExp(`^/${className}:([\\w-]+)$`));
+      if (subclassMatch) {
+        const subclass = subclassMatch[1];
+        const url = `/en/library/character-creation/vocations/${className}/${subclass}`;
+        return `[${text}](${url})`;
+      }
+      return match;
+    },
+  );
 };
 
 /**
@@ -121,7 +124,11 @@ const fixSubclassLinks = (mdx: string, className: string): string => {
  * @param className - Class name
  * @returns Transformed MDX
  */
-const transformMdx = (mdx: string, title: string, className: string): string => {
+const transformMdx = (
+  mdx: string,
+  title: string,
+  className: string,
+): string => {
   let output = mdx;
   output = output.replace(/^Source: Player's Handbook\s*/i, '');
   output = `# ${title}\n\n${output}`;

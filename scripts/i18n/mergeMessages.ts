@@ -19,10 +19,10 @@
  * npx tsx scripts/i18n/mergeMessages.ts
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'mergeMessages' });
 

@@ -1,15 +1,15 @@
 /**
  * Metadata Generation Integration Tests
- * 
+ *
  * @fileoverview Integration tests for the metadata generation pipeline,
  * testing monster, heirloom, and spell metadata extraction.
  */
 
-import { describe, it, expect } from 'vitest';
-import { parseMonsterFile } from '@scripts/metadata/generateMonsterMetadata';
-import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata';
-import { parseSpellFile } from '@scripts/metadata/generateSpellMetadata';
 import { GameData, ItemData } from '@/lib/metadata';
+import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata';
+import { parseMonsterFile } from '@scripts/metadata/generateMonsterMetadata';
+import { parseSpellFile } from '@scripts/metadata/generateSpellMetadata';
+import { describe, expect, it } from 'vitest';
 
 describe('Metadata Generation Pipeline', () => {
   describe('Generator Module Exports', () => {

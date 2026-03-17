@@ -12,10 +12,10 @@
  * ```
  */
 
-import { readFileSync, writeFileSync } from 'fs';
-import { join, resolve } from 'path';
-import glob from 'glob';
 import { createLogger } from '@/lib/logging/logger';
+import { readFileSync, writeFileSync } from 'fs';
+import glob from 'glob';
+import { join, resolve } from 'path';
 
 const log = createLogger({ script: 'mdxifyHeadingImages' });
 

@@ -18,14 +18,14 @@
  * @requires ts-morph TypeScript AST manipulation
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import { pathToFileURL } from 'url';
+import { createLogger } from '@/lib/logging/logger';
 import * as acorn from 'acorn';
 import jsx from 'acorn-jsx';
+import fs from 'fs/promises';
+import path from 'path';
 import * as ReactDOMServer from 'react-dom/server';
 import { Project } from 'ts-morph';
-import { createLogger } from '@/lib/logging/logger';
+import { pathToFileURL } from 'url';
 
 const log = createLogger({ script: 'findReusableMdxOutliers' });
 

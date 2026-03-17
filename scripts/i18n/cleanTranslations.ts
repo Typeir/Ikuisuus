@@ -13,11 +13,11 @@
  * @requires glob File pattern matching
  */
 
-import fs from 'fs';
-import path from 'path';
-import glob from 'glob';
-import { fileURLToPath } from 'url';
 import { createLogger } from '@/lib/logging/logger';
+import fs from 'fs';
+import glob from 'glob';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const log = createLogger({ script: 'cleanTranslations' });
 

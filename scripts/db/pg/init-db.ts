@@ -17,11 +17,11 @@
  *   DATABASE_URL — Neon / Postgres connection string
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import { readFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import pg from 'pg';
 import { fileURLToPath } from 'url';
-import { createLogger } from '@/lib/logging/logger';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '../../../');

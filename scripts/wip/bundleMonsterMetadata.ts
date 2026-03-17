@@ -14,9 +14,9 @@
  * ```
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs';
 import path from 'path';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'bundleMonsterMetadata' });
 

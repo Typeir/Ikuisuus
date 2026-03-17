@@ -13,9 +13,9 @@
  * ```
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs/promises';
 import path from 'path';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ module: 'testMetadataSystem' });
 
@@ -127,17 +127,23 @@ async function testMetadataSystem(): Promise<void> {
     try {
       await fs.access(path.join(componentsDir, 'MetadataTable.tsx'));
       results.components.MetadataTable = true;
-    } catch { /* empty */ }
+    } catch {
+      /* empty */
+    }
 
     try {
       await fs.access(path.join(componentsDir, 'MonsterTable.tsx'));
       results.components.MonsterTable = true;
-    } catch { /* empty */ }
+    } catch {
+      /* empty */
+    }
 
     try {
       await fs.access(path.join(componentsDir, 'HeirloomTable.tsx'));
       results.components.HeirloomTable = true;
-    } catch { /* empty */ }
+    } catch {
+      /* empty */
+    }
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
     log.error('Error checking components', { error: msg });

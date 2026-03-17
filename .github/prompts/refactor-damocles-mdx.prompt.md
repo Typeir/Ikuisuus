@@ -1,6 +1,6 @@
 ---
 description: 'Refactor an existing Damocles MDX file — normalize structure, fix tone, remove redundancy'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # Refactor Damocles MDX

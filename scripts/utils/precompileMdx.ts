@@ -13,11 +13,11 @@
  * ```
  */
 
-import path from 'path';
+import { createLogger } from '@/lib/logging/logger';
+import { sassPlugin } from 'esbuild-sass-plugin';
 import fs from 'fs/promises';
 import { bundleMDX } from 'mdx-bundler';
-import { sassPlugin } from 'esbuild-sass-plugin';
-import { createLogger } from '@/lib/logging/logger';
+import path from 'path';
 
 const log = createLogger({ script: 'precompileMdx' });
 
@@ -36,7 +36,10 @@ if (process.platform === 'win32') {
  * @param filePath - Path to the .mdx file
  * @param outPath - Output path for the compiled .js
  */
-const precompileMdx = async (filePath: string, outPath: string): Promise<void> => {
+const precompileMdx = async (
+  filePath: string,
+  outPath: string,
+): Promise<void> => {
   const { code } = await bundleMDX({
     file: filePath,
     cwd: path.dirname(filePath),

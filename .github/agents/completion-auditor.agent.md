@@ -14,9 +14,9 @@ tools:
   - replace_string_in_file
   - run_in_terminal
   - get_terminal_output
-  - memory
+  - vscode/memory
   - manage_todo_list
-  - runSubagent
+  - agent
 ---
 
 # Completion Auditor Agent

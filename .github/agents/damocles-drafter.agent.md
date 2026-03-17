@@ -13,7 +13,7 @@ tools:
   - semantic_search
   - list_dir
   - run_in_terminal
-  - memory
+  - vscode/memory
   - manage_todo_list
 ---
 

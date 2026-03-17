@@ -63,7 +63,10 @@ export const linkifyMarkdown = (
     !!a && !!b && normalize(a.split('#')[0]) === normalize(b.split('#')[0]);
 
   function normalize(p: string): string {
-    return p.replace(/\\/g, '/').replace(/\/index$/, '').replace(/\/+$/, '');
+    return p
+      .replace(/\\/g, '/')
+      .replace(/\/index$/, '')
+      .replace(/\/+$/, '');
   }
 
   let out = markdown;
@@ -72,7 +75,10 @@ export const linkifyMarkdown = (
     if (selfPath && samePath(path, selfPath)) continue;
 
     const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pattern = new RegExp(`(?<!\\w)(\\*\\*)?(${escaped})(\\*\\*)?(?!\\w)`, 'g');
+    const pattern = new RegExp(
+      `(?<!\\w)(\\*\\*)?(${escaped})(\\*\\*)?(?!\\w)`,
+      'g',
+    );
 
     out = out.replace(pattern, (match, preBold, core, postBold, offset) => {
       if (isInsideExistingLink(out, offset)) return match;

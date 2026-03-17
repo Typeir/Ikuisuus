@@ -14,10 +14,10 @@
  * ```
  */
 
+import { createLogger } from '@/lib/logging/logger';
 import fsSync from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { createLogger } from '@/lib/logging/logger';
 
 const log = createLogger({ script: 'mdxLottery' });
 
@@ -153,7 +153,8 @@ const main = async (): Promise<void> => {
 };
 
 main().catch((err: unknown) => {
-  const message = err instanceof Error ? (err as Error).stack ?? String(err) : String(err);
+  const message =
+    err instanceof Error ? ((err as Error).stack ?? String(err)) : String(err);
   log.error('Fatal error in mdxLottery', { error: message });
   process.exit(1);
 });

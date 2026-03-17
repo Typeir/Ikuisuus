@@ -36,7 +36,10 @@ const EXCLUDED_PATTERNS = [
  * @param isComponent - Whether the file is a React component (.tsx)
  * @returns Test file content
  */
-function generateTestTemplate(sourcePath: string, isComponent: boolean): string {
+function generateTestTemplate(
+  sourcePath: string,
+  isComponent: boolean,
+): string {
   const fileName = path.basename(sourcePath);
   const importPath = sourcePath.replace(/\\/g, '/').replace(/^src\//, '@/');
   const moduleNameMatch = fileName.match(/^(.+)\.(ts|tsx)$/);
@@ -122,7 +125,10 @@ describe('${moduleName}', () => {
  * @param fileList - Accumulator array
  * @returns Array of relative file paths
  */
-async function findSourceFiles(dir: string, fileList: string[] = []): Promise<string[]> {
+async function findSourceFiles(
+  dir: string,
+  fileList: string[] = [],
+): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
 
   for (const entry of entries) {

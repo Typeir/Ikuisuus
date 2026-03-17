@@ -57,7 +57,12 @@ interface PostgresStorage {
   /** Creates the `content_metadata` table and index if they do not exist. */
   ensureTable: () => Promise<void>;
   /** Upserts a single metadata record. */
-  upsert: (category: string, locale: string, slug: string, data: Record<string, unknown>) => Promise<void>;
+  upsert: (
+    category: string,
+    locale: string,
+    slug: string,
+    data: Record<string, unknown>,
+  ) => Promise<void>;
   /** Upserts many records in a single transaction. */
   upsertBatch: (records: MetadataRecord[]) => Promise<number>;
   /** Shuts down the connection pool. */
@@ -72,7 +77,9 @@ interface PostgresStorage {
  * @param connectionString - PostgreSQL connection URL (e.g. `DATABASE_URL`)
  * @returns Storage adapter with ensureTable, upsert, upsertBatch, and close methods
  */
-export function createPostgresStorage(connectionString: string): PostgresStorage {
+export function createPostgresStorage(
+  connectionString: string,
+): PostgresStorage {
   const pool = new Pool({
     connectionString,
     max: 5,
@@ -98,7 +105,12 @@ export function createPostgresStorage(connectionString: string): PostgresStorage
       `);
     },
 
-    async upsert(category: string, locale: string, slug: string, data: Record<string, unknown>): Promise<void> {
+    async upsert(
+      category: string,
+      locale: string,
+      slug: string,
+      data: Record<string, unknown>,
+    ): Promise<void> {
       await pool.query(
         `INSERT INTO content_metadata (category, locale, slug, data)
          VALUES ($1, $2, $3, $4::jsonb)

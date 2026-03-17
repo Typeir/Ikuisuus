@@ -3,16 +3,16 @@
  * @description Provides interactive data browsing with search, column filtering, sorting,
  * and pagination. Fully data-agnostic - accepts any JSON structure with configurable
  * column definitions and value extraction logic.
- * 
+ *
  * @module metadataTable
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires react Client-side interactivity hooks
  * @requires next/navigation Client-side routing
  * @requires ./metadataTable.module.scss Component styles
- * 
+ *
  * @example
  * ```tsx
  * <MetadataTable
@@ -29,11 +29,11 @@
 
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useState, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import styles from './metadataTable.module.scss';
+import { useRouter } from 'next/navigation';
+import { useCallback, useMemo, useState } from 'react';
 import { FilterSelect, NumericInput } from '../../ui';
+import styles from './metadataTable.module.scss';
 
 /**
  * Represents a single row of metadata - can contain any JSON structure.
@@ -100,17 +100,17 @@ type MetadataTableProps = {
 
 /**
  * Generic filterable, sortable, paginated table component for metadata display.
- * 
+ *
  * @description This client component provides interactive data browsing with:
  * - Global text search across configured keys
  * - Per-column filtering (text, select, range inputs)
  * - Click-to-sort on column headers (ascending/descending/none)
  * - Pagination for large datasets
  * - Click-to-navigate row interaction
- * 
+ *
  * The component is fully data-agnostic - it accepts any JSON structure and uses
  * configuration functions (getValue, compareValues, render) to handle data-specific logic.
- * 
+ *
  * @param {MetadataTableProps} props - Component props
  * @param {MetadataRow[]} props.data - Array of data rows to display
  * @param {ColumnConfig[]} props.columns - Column configuration array
@@ -121,7 +121,7 @@ type MetadataTableProps = {
  * @param {(row: MetadataRow) => string} [props.getRowSlug] - Function to extract slug from row data
  * @param {string[]} [props.searchKeys] - Row properties to search across
  * @returns {JSX.Element} Rendered interactive table with controls
- * 
+ *
  * @example
  * ```tsx
  * // Basic usage with simple data
@@ -133,7 +133,7 @@ type MetadataTableProps = {
  *   ]}
  * />
  * ```
- * 
+ *
  * @example
  * ```tsx
  * // Advanced usage with nested data
@@ -166,8 +166,12 @@ export default function MetadataTable({
   const t = useTranslations('tables.common');
   const tFilters = useTranslations('tables.filters');
   const router = useRouter();
-  const [sortKey, setSortKey] = useState<string | null>(defaultSort?.key || null);
-  const [sortDirection, setSortDirection] = useState<SortDirection>(defaultSort?.direction || null);
+  const [sortKey, setSortKey] = useState<string | null>(
+    defaultSort?.key || null,
+  );
+  const [sortDirection, setSortDirection] = useState<SortDirection>(
+    defaultSort?.direction || null,
+  );
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -175,17 +179,17 @@ export default function MetadataTable({
   /**
    * Extracts cell value from row data using column configuration.
    * Allows columns to define custom value extraction for nested objects.
-   * 
+   *
    * @function getCellValue
    * @param {MetadataRow} row - Data row
    * @param {ColumnConfig} column - Column configuration
    * @returns {*} Extracted value for filtering/sorting/display
-   * 
+   *
    * @example
    * ```typescript
    * // Without getValue - direct property access
    * getCellValue({ name: 'Item' }, { key: 'name' }) // Returns: 'Item'
-   * 
+   *
    * // With getValue - nested property extraction
    * getCellValue(
    *   { stats: { ac: { value: 18 } } },
@@ -200,10 +204,10 @@ export default function MetadataTable({
   /**
    * Applies global search and column-specific filters to dataset.
    * Memoized to prevent unnecessary recalculations on unrelated state changes.
-   * 
+   *
    * @function filteredData
    * @returns {MetadataRow[]} Filtered array of data rows
-   * 
+   *
    * @description Filtering logic:
    * 1. Global search: Checks if any configured searchKey contains the search term
    * 2. Column filters: Applies filter based on column's filterType:
@@ -234,7 +238,9 @@ export default function MetadataTable({
         if (column.filterType === 'multiselect') {
           if (Array.isArray(cellValue)) {
             const hasMatch = value.some((filterVal: string) =>
-              cellValue.some((cv) => String(cv).toLowerCase().includes(filterVal.toLowerCase()))
+              cellValue.some((cv) =>
+                String(cv).toLowerCase().includes(filterVal.toLowerCase()),
+              ),
             );
             if (!hasMatch) return false;
           }
@@ -261,10 +267,10 @@ export default function MetadataTable({
   /**
    * Applies sorting to filtered dataset based on current sort state.
    * Memoized to prevent re-sorting when unrelated state changes.
-   * 
+   *
    * @function sortedData
    * @returns {MetadataRow[]} Sorted array of filtered data rows
-   * 
+   *
    * @description Sorting behavior:
    * - Uses column's compareValues function if provided
    * - Falls back to default comparison (<, >, ===)
@@ -300,14 +306,17 @@ export default function MetadataTable({
    * @constant {MetadataRow[]} paginatedData - Current page slice of data
    */
   const totalPages = Math.ceil(sortedData.length / pageSize);
-  const paginatedData = sortedData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const paginatedData = sortedData.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   /**
    * Handles column header click to cycle through sort states.
-   * 
+   *
    * @function handleSort
    * @param {string} key - Column key to sort by
-   * 
+   *
    * @description Sort cycle:
    * 1. First click: Sort ascending
    * 2. Second click: Sort descending
@@ -317,7 +326,13 @@ export default function MetadataTable({
    */
   const handleSort = (key: string) => {
     if (sortKey === key) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? null : 'asc');
+      setSortDirection(
+        sortDirection === 'asc'
+          ? 'desc'
+          : sortDirection === 'desc'
+            ? null
+            : 'asc',
+      );
       if (sortDirection === 'desc') setSortKey(null);
     } else {
       setSortKey(key);
@@ -329,7 +344,7 @@ export default function MetadataTable({
   /**
    * Updates filter state for a specific column.
    * Resets pagination to page 1 when filters change.
-   * 
+   *
    * @function handleFilterChange
    * @param {string} key - Column key being filtered
    * @param {*} value - Filter value (varies by filterType)
@@ -343,15 +358,15 @@ export default function MetadataTable({
    * Handles row click to navigate to detail page.
    * Uses the 'link' field if available, otherwise constructs URL from slug.
    * External links (starting with http:// or https://) open in new tab.
-   * 
+   *
    * @function handleRowClick
    * @param {MetadataRow} row - Data row that was clicked
-   * 
+   *
    * @description Priority:
    * 1. If row.link exists and is external (http/https), open in new tab
    * 2. If row.link exists and is internal, navigate to /{locale}{link}
    * 3. Otherwise, construct URL: /{locale}/library{basePath}/{slug}
-   * 
+   *
    * @example
    * // Internal link: { link: "/library/spells/fireball" } → /en/library/spells/fireball
    * // External link: { link: "http://dnd5e.wikidot.com/spell:fireball" } → new tab
@@ -359,41 +374,44 @@ export default function MetadataTable({
    */
   const handleRowClick = (row: MetadataRow) => {
     if (row.link) {
-      const isExternalLink = row.link.startsWith('http://') || row.link.startsWith('https://');
-      
+      const isExternalLink =
+        row.link.startsWith('http://') || row.link.startsWith('https://');
+
       if (isExternalLink) {
         window.open(row.link, '_blank', 'noopener,noreferrer');
         return;
       }
-      
-      const targetPath = row.link.startsWith('/library') 
+
+      const targetPath = row.link.startsWith('/library')
         ? `/${locale}${row.link}`
         : `/${locale}/library${row.link}`;
-      
+
       router.push(targetPath);
       return;
     }
 
     const slug = getRowSlug(row);
-    const [slugPath, hash] = slug.includes('#') ? slug.split('#') : [slug, null];
-    
-    const targetPath = slugPath.startsWith('/') 
+    const [slugPath, hash] = slug.includes('#')
+      ? slug.split('#')
+      : [slug, null];
+
+    const targetPath = slugPath.startsWith('/')
       ? `/${locale}/library${slugPath}`
       : `/${locale}/library${basePath}/${slugPath}`;
-    
+
     const finalPath = hash ? `${targetPath}#${hash}` : targetPath;
-    
+
     router.push(finalPath);
   };
 
   /**
    * Generates filter dropdown options for a column.
    * Uses column's getFilterOptions if defined, otherwise auto-generates from data.
-   * 
+   *
    * @function getFilterOptions
    * @param {ColumnConfig} column - Column configuration
    * @returns {string[]} Sorted array of unique filter options
-   * 
+   *
    * @description Auto-generation:
    * - Extracts values using getCellValue
    * - Flattens array values
@@ -421,17 +439,20 @@ export default function MetadataTable({
    * Converts filter options to FilterSelect-compatible format.
    * Memoized function to avoid recreation on each render.
    */
-  const getSelectOptions = useCallback((column: ColumnConfig) => {
-    const options = getFilterOptions(column);
-    return options.map((opt) => ({ value: opt, label: opt }));
-  }, [getFilterOptions]);
+  const getSelectOptions = useCallback(
+    (column: ColumnConfig) => {
+      const options = getFilterOptions(column);
+      return options.map((opt) => ({ value: opt, label: opt }));
+    },
+    [getFilterOptions],
+  );
 
   return (
     <div className={styles.metadataTable}>
       <div className={styles.controls}>
         <div className={styles.searchBar}>
           <input
-            type="text"
+            type='text'
             placeholder={t('searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => {
@@ -452,18 +473,25 @@ export default function MetadataTable({
                   <FilterSelect
                     id={`filter-${column.key}`}
                     value={filters[column.key] || ''}
-                    onChange={(value) => handleFilterChange(column.key, value || undefined)}
+                    onChange={(value) =>
+                      handleFilterChange(column.key, value || undefined)
+                    }
                     options={getSelectOptions(column)}
                     placeholder={tFilters('allOption')}
-                    size="sm"
+                    size='sm'
                   />
                 )}
                 {column.filterType === 'text' && (
                   <input
                     id={`filter-${column.key}`}
-                    type="text"
+                    type='text'
                     value={filters[column.key] || ''}
-                    onChange={(e) => handleFilterChange(column.key, e.target.value || undefined)}
+                    onChange={(e) =>
+                      handleFilterChange(
+                        column.key,
+                        e.target.value || undefined,
+                      )
+                    }
                     className={styles.filterInput}
                   />
                 )}
@@ -478,7 +506,7 @@ export default function MetadataTable({
                         })
                       }
                       placeholder={tFilters('minPlaceholder')}
-                      size="sm"
+                      size='sm'
                       aria-label={`${column.label} ${tFilters('minPlaceholder')}`}
                     />
                     <span>{tFilters('rangeSeparator')}</span>
@@ -491,7 +519,7 @@ export default function MetadataTable({
                         })
                       }
                       placeholder={tFilters('maxPlaceholder')}
-                      size="sm"
+                      size='sm'
                       aria-label={`${column.label} ${tFilters('maxPlaceholder')}`}
                     />
                   </div>
@@ -501,9 +529,16 @@ export default function MetadataTable({
         </div>
 
         <div className={styles.resultCount}>
-          {filteredData.length !== data.length 
-            ? t('showingResultsFiltered', { current: paginatedData.length, total: filteredData.length, original: data.length })
-            : t('showingResults', { current: paginatedData.length, total: filteredData.length })}
+          {filteredData.length !== data.length
+            ? t('showingResultsFiltered', {
+                current: paginatedData.length,
+                total: filteredData.length,
+                original: data.length,
+              })
+            : t('showingResults', {
+                current: paginatedData.length,
+                total: filteredData.length,
+              })}
         </div>
       </div>
 
@@ -515,13 +550,16 @@ export default function MetadataTable({
                 <th
                   key={column.key}
                   className={column.sortable !== false ? styles.sortable : ''}
-                  onClick={() => column.sortable !== false && handleSort(column.key)}
-                >
+                  onClick={() =>
+                    column.sortable !== false && handleSort(column.key)
+                  }>
                   <div className={styles.headerContent}>
                     <span>{column.label}</span>
                     {column.sortable !== false && sortKey === column.key && (
                       <span className={styles.sortIndicator}>
-                        {sortDirection === 'asc' ? t('sortAscending') : t('sortDescending')}
+                        {sortDirection === 'asc'
+                          ? t('sortAscending')
+                          : t('sortDescending')}
                       </span>
                     )}
                   </div>
@@ -534,13 +572,14 @@ export default function MetadataTable({
               <tr
                 key={getRowSlug(row)}
                 onClick={() => handleRowClick(row)}
-                className={styles.clickableRow}
-              >
+                className={styles.clickableRow}>
                 {columns.map((column) => {
                   const value = getCellValue(row, column);
                   return (
                     <td key={`${getRowSlug(row)}-${column.key}`}>
-                      {column.render ? column.render(value, row) : String(value ?? '-')}
+                      {column.render
+                        ? column.render(value, row)
+                        : String(value ?? '-')}
                     </td>
                   );
                 })}
@@ -555,8 +594,7 @@ export default function MetadataTable({
           <button
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className={styles.paginationButton}
-          >
+            className={styles.paginationButton}>
             {t('previous')}
           </button>
           <span className={styles.pageInfo}>
@@ -565,8 +603,7 @@ export default function MetadataTable({
           <button
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className={styles.paginationButton}
-          >
+            className={styles.paginationButton}>
             {t('next')}
           </button>
         </div>

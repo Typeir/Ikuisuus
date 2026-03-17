@@ -13,10 +13,10 @@
  * ```
  */
 
-import fs from 'fs';
-import path from 'path';
-import { JSDOM } from 'jsdom';
 import { createLogger } from '@/lib/logging/logger';
+import fs from 'fs';
+import { JSDOM } from 'jsdom';
+import path from 'path';
 
 const log = createLogger({ script: 'scrapWikidotSpells' });
 
@@ -272,8 +272,8 @@ const extractSpellsFromDOM = (document: Document): SpellRowData[] => {
 
       const nameCell = cells[0].querySelector('a');
       const name = nameCell
-        ? nameCell.textContent?.trim() ?? ''
-        : cells[0].textContent?.trim() ?? '';
+        ? (nameCell.textContent?.trim() ?? '')
+        : (cells[0].textContent?.trim() ?? '');
 
       let slug: string | null = null;
       if (nameCell && nameCell.getAttribute('href')) {
@@ -283,8 +283,8 @@ const extractSpellsFromDOM = (document: Document): SpellRowData[] => {
 
       const schoolCell = cells[1].querySelector('em');
       const school = schoolCell
-        ? schoolCell.textContent?.trim() ?? ''
-        : cells[1].textContent?.trim() ?? '';
+        ? (schoolCell.textContent?.trim() ?? '')
+        : (cells[1].textContent?.trim() ?? '');
 
       const castingTimeCell = cells[2];
       const castingTimeRaw = castingTimeCell?.textContent?.trim() ?? '';
@@ -323,7 +323,9 @@ const extractSpellsFromDOM = (document: Document): SpellRowData[] => {
     spellsData = extractSpellsFromDOM(dom.window.document);
     log.message('✨ Found spells in local file', { count: spellsData.length });
   } else {
-    log.error('🌐 Local HTML file not found. Place wikidotspelllist.html in scripts/utils/');
+    log.error(
+      '🌐 Local HTML file not found. Place wikidotspelllist.html in scripts/utils/',
+    );
     process.exit(1);
   }
 

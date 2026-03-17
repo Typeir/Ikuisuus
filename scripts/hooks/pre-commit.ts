@@ -8,10 +8,12 @@
  * @version 1.0.0
  */
 
-import { execSync } from 'child_process';
-import { readFileSync, existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync } from 'fs';
-import { join } from 'path';
 import { createLogger } from '@/lib/logging/logger';
+import { execSync } from 'child_process';
+import {
+    readFileSync
+} from 'fs';
+import { join } from 'path';
 
 const log = createLogger({ script: 'pre-commit' });
 
@@ -145,7 +147,10 @@ function getStagedFileContent(filePath: string): string {
  * @param content - File content
  * @returns Match result or null
  */
-function scanFileForPatterns(filePath: string, content: string): PatternMatch | null {
+function scanFileForPatterns(
+  filePath: string,
+  content: string,
+): PatternMatch | null {
   const lines = content.split('\n');
 
   for (let lineNum = 0; lineNum < lines.length; lineNum++) {
