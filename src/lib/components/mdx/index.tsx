@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import BlendedImage from './blendedImage';
 import ClearFloats from './clearFloats/clearFloats';
+import Collapsible from './collapsible/collapsible';
 import FlexRenderer from './flexRenderer';
 import FloatedContainer from './floatedContainer/floatedContainer';
 import { H1, H2, H3, H4, H5, H6 } from './heading/heading';
@@ -11,9 +12,11 @@ import MonsterTableWrapper from './metadataTables/monsterTableWrapper';
 import TrinketTableWrapper from './metadataTables/trinketTableWrapper';
 import ParallaxBackdrop from './parallaxBackdrop/parallaxBackdrop';
 import { SpellTable } from './spellTable';
+import Tooltip from './tooltip/tooltip';
 
 const components = {
   BlendedImage,
+  Collapsible,
   FlexRenderer,
   MonsterTable: MonsterTableWrapper,
   HeirloomTable: HeirloomTableWrapper,
@@ -23,6 +26,7 @@ const components = {
   FloatedContainer,
   ClearFloats,
   ParallaxBackdrop,
+  Tooltip,
   // eslint-disable-next-line jsx-a11y/alt-text
   Image: (props: any) => <Image {...props} width={600} height={600} />,
   h1: H1,
@@ -42,4 +46,3 @@ const components = {
 export default components;
 export { useHashNavigation } from '@/lib/hooks/useHashNavigation';
 export { HashNavigationProvider } from './hashNavigationProvider/hashNavigationProvider';
-

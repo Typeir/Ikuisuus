@@ -1,0 +1,105 @@
+.collapsible {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  background: var(--color-surface);
+  overflow: hidden;
+
+  &[open] .chevron {
+    transform: rotate(90deg);
+  }
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-text);
+  user-select: none;
+  list-style: none;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
+.chevron {
+  color: var(--color-text-secondary);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 0.75rem;
+}
+
+.cost {
+  font-weight: 400;
+  color: var(--color-accent);
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+.content {
+  padding: 0.5rem 1rem 1rem;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+/* ── Dark theme: visible table separators inside collapsible content ── */
+:global(html[data-theme='dark']) .content {
+  th,
+  td {
+    border-color: var(--color-secondary);
+  }
+
+  th {
+    background: var(--color-surface);
+  }
+  blockquote {
+    background: linear-gradient(
+      90deg,
+      var(--color-bg-secondary) 0%,
+      var(--color-bg-secondary) 85%,
+      var(--color-transparent) 97%
+    );
+  }
+}
+
+/* ── Light theme: lighter card bg, visible separators ── */
+:global(html[data-theme='light']) .collapsible {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-bg-tertiary);
+}
+
+:global(html[data-theme='light']) .summary {
+  &:hover {
+    background: var(--color-bg-tertiary);
+  }
+}
+
+:global(html[data-theme='light']) .content {
+  border-top-color: var(--color-bg-tertiary);
+  blockquote {
+    background: linear-gradient(
+      90deg,
+      var(--color-bg-tertiary) 0%,
+      var(--color-bg-tertiary) 85%,
+      var(--color-transparent) 97%
+    );
+  }
+
+  th,
+  td {
+    border-color: var(--color-text-secondary);
+  }
+
+  th {
+    background: var(--color-bg-tertiary);
+  }
+}
