@@ -198,6 +198,7 @@ async function main() {
   }
 
   const metadataBackend = usePg ? 'pg' : 'fs';
+  const contentFetchMode = forceFs ? 'build' : 'runtime';
 
   if (!skipPreInit) {
     console.log('Running pre-init...');
@@ -225,10 +226,11 @@ async function main() {
     }
   }
 
-  console.log(`Starting Next dev with METADATA_BACKEND=${metadataBackend}`);
+  console.log(`Starting Next dev with METADATA_BACKEND=${metadataBackend}, CONTENT_FETCH_MODE=${contentFetchMode}`);
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     METADATA_BACKEND: metadataBackend,
+    CONTENT_FETCH_MODE: contentFetchMode,
   };
 
   nextExitCode = await runCommand(
