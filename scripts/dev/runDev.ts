@@ -8,7 +8,6 @@
  * - `--fs`: force fs backend
  * - `--no-preinit`: skip pre-init pipeline
  * - `--no-replace`: do not auto-stop an existing same-project Next dev process
- * - Defaults to `next dev --webpack` unless `--turbopack` or `--webpack` is provided
  * - Any other args are passed through to `next dev`
  */
 import { spawn } from 'child_process';
@@ -189,11 +188,6 @@ async function main() {
     '--no-replace',
   ]);
   const nextArgs = rawArgs.filter((arg) => !controlFlags.has(arg));
-  const hasBundlerArg =
-    nextArgs.includes('--webpack') || nextArgs.includes('--turbopack');
-  const effectiveNextArgs = hasBundlerArg
-    ? nextArgs
-    : ['--webpack', ...nextArgs];
   const usePg = rawArgs.includes('--pg');
   const forceFs = rawArgs.includes('--fs');
   const skipPreInit = rawArgs.includes('--no-preinit');
@@ -216,7 +210,7 @@ async function main() {
     console.log('Skipping pre-init (passed --no-preinit)');
   }
 
-  let nextExitCode = 1;
+  let nextExitCode: number;
 
   if (!disableReplace) {
     const existingPid = await readNextDevLockPid(process.cwd());
@@ -232,11 +226,6 @@ async function main() {
   }
 
   console.log(`Starting Next dev with METADATA_BACKEND=${metadataBackend}`);
-  if (!hasBundlerArg) {
-    console.log(
-      'No bundler flag provided, defaulting to --webpack for compatibility.',
-    );
-  }
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     METADATA_BACKEND: metadataBackend,
@@ -244,7 +233,7 @@ async function main() {
 
   nextExitCode = await runCommand(
     'npx',
-    ['next', 'dev', ...effectiveNextArgs],
+    ['next', 'dev', ...nextArgs],
     env,
   );
 
