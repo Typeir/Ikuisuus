@@ -10,13 +10,10 @@ export default defineConfig({
   logLevel: 'warn',
   css: {
     preprocessorOptions: {
-      scss: {
-        api: 'modern-compiler',
-      },
+      scss: {},
     },
   },
   future: {
-    removePluginHooks: 'warn',
     removeSsrLoadModule: 'warn',
   },
   test: {
