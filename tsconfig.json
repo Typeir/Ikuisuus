@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -25,12 +21,8 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@content/*": [
-        "./src/content/*"
-      ]
+      "@/*": ["./src/*"],
+      "@content/*": ["./src/content/*"]
     }
   },
   "include": [
@@ -41,11 +33,7 @@
     "scripts/mdToMdx.js",
     "src/lib/mdx/loadCompileMdx.js",
     "src/lib/mdx/precompileMdx.js",
-    "dist/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    "dist/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "scripts"
-  ]
+  "exclude": ["node_modules", "scripts"]
 }
