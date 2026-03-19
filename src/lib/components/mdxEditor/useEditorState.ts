@@ -9,7 +9,7 @@
  * @since 2.0.0
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Internal state machine for the editor.
@@ -99,6 +99,7 @@ export function useEditorState({
   const [content, setContent] = useState('');
   const [filePath, setFilePath] = useState('');
   const [slug, setSlug] = useState(initialSlug);
+  const lastShaRef = useRef('');
 
   const loadContent = useCallback(
     async (targetSlug: string, targetLocale: string) => {
@@ -125,6 +126,7 @@ export function useEditorState({
         const data = await res.json();
         setContent(data.content);
         setFilePath(data.path);
+        lastShaRef.current = data.sha;
         setStatus({ phase: 'ready', sha: data.sha, resolvedPath: data.path });
       } catch (err) {
         setStatus({
@@ -164,7 +166,7 @@ export function useEditorState({
       return;
     }
 
-    const baseSha = status.phase === 'ready' ? status.sha : '';
+    const baseSha = status.phase === 'ready' ? status.sha : lastShaRef.current;
     setStatus({ phase: 'submitting' });
 
     try {
