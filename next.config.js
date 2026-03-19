@@ -1,9 +1,10 @@
 const path = require('path');
+const remarkGfm = require('remark-gfm').default || require('remark-gfm');
 const createNextIntlPlugin = require('next-intl/plugin');
 const withMDX = require('@next/mdx')({
   extension: /\.mdx?$/,
   options: {
-    remarkPlugins: ['remark-gfm'],
+    remarkPlugins: [remarkGfm],
   },
 });
 const withNextIntl = createNextIntlPlugin({
@@ -14,13 +15,10 @@ const {
   PHASE_PRODUCTION_BUILD,
 } = require('next/constants');
 
-const stylesPath = path.join(__dirname, 'src/styles');
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   sassOptions: {
-    includePaths: [stylesPath],
-    loadPaths: [stylesPath],
+    includePaths: [path.join(__dirname, 'src/styles')],
   },
   serverExternalPackages: [
     '@mikro-orm/core',

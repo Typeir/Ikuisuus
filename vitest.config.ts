@@ -1,7 +1,7 @@
 //@ts-ignore-file
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 //@ts-ignore
 export default defineConfig({
@@ -35,7 +35,9 @@ export default defineConfig({
         inline: ['next-intl'],
       },
     },
-    coverage: {
+    // Cast to `any` because CoverageV8Options in this Vitest version
+    // doesn't include some top-level fields we use (e.g. `all`, thresholds).
+    coverage: ({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],
@@ -50,7 +52,7 @@ export default defineConfig({
       branches: 60,
       functions: 70,
       lines: 70,
-    },
+    } as any),
   },
   resolve: {
     alias: {
