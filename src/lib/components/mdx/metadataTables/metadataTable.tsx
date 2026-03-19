@@ -197,9 +197,12 @@ export default function MetadataTable({
    * ) // Returns: 18
    * ```
    */
-  const getCellValue = (row: MetadataRow, column: ColumnConfig) => {
-    return column.getValue ? column.getValue(row) : row[column.key];
-  };
+  const getCellValue = useCallback(
+    (row: MetadataRow, column: ColumnConfig) => {
+      return column.getValue ? column.getValue(row) : row[column.key];
+    },
+    [],
+  );
 
   /**
    * Applies global search and column-specific filters to dataset.
@@ -262,7 +265,7 @@ export default function MetadataTable({
 
       return true;
     });
-  }, [data, filters, searchTerm, columns, searchKeys]);
+  }, [data, filters, searchTerm, columns, searchKeys, getCellValue]);
 
   /**
    * Applies sorting to filtered dataset based on current sort state.
@@ -298,7 +301,7 @@ export default function MetadataTable({
       const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-  }, [filteredData, sortKey, sortDirection, columns]);
+  }, [filteredData, sortKey, sortDirection, columns, getCellValue]);
 
   /**
    * Pagination calculations.
@@ -418,22 +421,25 @@ export default function MetadataTable({
    * - Removes duplicates
    * - Sorts alphabetically
    */
-  const getFilterOptions = (column: ColumnConfig): string[] => {
-    if (column.getFilterOptions) {
-      return column.getFilterOptions(data);
-    }
-
-    const uniqueValues = new Set<string>();
-    data.forEach((row) => {
-      const value = getCellValue(row, column);
-      if (Array.isArray(value)) {
-        value.forEach((v) => uniqueValues.add(String(v)));
-      } else if (value !== undefined && value !== null) {
-        uniqueValues.add(String(value));
+  const getFilterOptions = useCallback(
+    (column: ColumnConfig): string[] => {
+      if (column.getFilterOptions) {
+        return column.getFilterOptions(data);
       }
-    });
-    return Array.from(uniqueValues).sort();
-  };
+
+      const uniqueValues = new Set<string>();
+      data.forEach((row) => {
+        const value = getCellValue(row, column);
+        if (Array.isArray(value)) {
+          value.forEach((v) => uniqueValues.add(String(v)));
+        } else if (value !== undefined && value !== null) {
+          uniqueValues.add(String(value));
+        }
+      });
+      return Array.from(uniqueValues).sort();
+    },
+    [data, getCellValue],
+  );
 
   /**
    * Converts filter options to FilterSelect-compatible format.

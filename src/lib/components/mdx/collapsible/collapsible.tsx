@@ -123,7 +123,7 @@ const Collapsible: React.FC<CollapsibleProps> = ({
 
   const parsedHeading =
     headingNode && React.isValidElement(headingNode)
-      ? parseHeading(headingNode.props.children)
+      ? parseHeading((headingNode.props as { children?: ReactNode }).children)
       : {
           titleNodes: ['Details'],
           cost: null,
