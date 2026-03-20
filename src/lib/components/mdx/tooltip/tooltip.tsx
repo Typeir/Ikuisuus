@@ -10,15 +10,9 @@
  * @since 1.0.0
  */
 
-import React, {
-  ReactNode,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from 'react';
-import { createPortal } from 'react-dom';
 import { CircleHelp } from 'lucide-react';
+import React, { ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './tooltip.module.scss';
 
 /**
@@ -93,7 +87,9 @@ const Tooltip: React.FC<TooltipProps> = ({ children }) => {
   const bubbleRef = useRef<HTMLSpanElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<TooltipPosition | null>(null);
-  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(
+    null,
+  );
   const content = React.Children.toArray(children).filter((node) => {
     if (typeof node === 'string') {
       return node.trim().length > 0;

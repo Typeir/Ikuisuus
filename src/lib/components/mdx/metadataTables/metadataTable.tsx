@@ -197,12 +197,9 @@ export default function MetadataTable({
    * ) // Returns: 18
    * ```
    */
-  const getCellValue = useCallback(
-    (row: MetadataRow, column: ColumnConfig) => {
-      return column.getValue ? column.getValue(row) : row[column.key];
-    },
-    [],
-  );
+  const getCellValue = useCallback((row: MetadataRow, column: ColumnConfig) => {
+    return column.getValue ? column.getValue(row) : row[column.key];
+  }, []);
 
   /**
    * Applies global search and column-specific filters to dataset.
