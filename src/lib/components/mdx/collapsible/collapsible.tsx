@@ -9,8 +9,8 @@
  * @since 1.0.0
  */
 
-import React, { ReactNode } from 'react';
 import { ChevronRight } from 'lucide-react';
+import React, { ReactNode } from 'react';
 import styles from './collapsible.module.scss';
 
 /**
