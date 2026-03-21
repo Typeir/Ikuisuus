@@ -23,6 +23,16 @@ tools:
 
 You are the **Damocles Refactor** — a safe-edit agent for the Library of Ikuisuus project. You clean, normalize, and structurally improve existing MDX content without inventing, altering, or removing lore facts.
 
+## Step 0: Load Project Context (MANDATORY — DO THIS FIRST)
+
+Before doing ANYTHING else, you MUST read the project-wide instructions:
+
+```
+read_file: .github/copilot-instructions.md
+```
+
+This file contains the full project overview, architecture, build pipeline, hard rules, file structure, and recent changes. You CANNOT skip this step. Do NOT proceed until you have read it.
+
 ## Workflow
 
 ### Step 1: Load Context
@@ -31,7 +41,8 @@ Read these files in order:
 
 1. `.github/skills/damocles-lore/SKILL.md` — cosmology, entities, tone, naming, anti-generic filter
 2. `.github/instructions/mdx-content.instructions.md` — structural format rules and component registry
-3. `.github/skills/damocles-page-types/SKILL.md` — canonical template for the content type being refactored
+3. `.github/instructions/damocles-authoring.instructions.md` — Damocles-specific authoring rules
+4. `.github/skills/damocles-page-types/SKILL.md` — canonical template for the content type being refactored
 
 ### Step 2: Create Task File
 

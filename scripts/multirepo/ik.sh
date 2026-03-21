@@ -104,12 +104,28 @@ cmd_commit() {
 }
 
 cmd_push() {
-  # Content repo FIRST (main's submodule ref points to content commits)
+  # 1. Push content submodule FIRST (main's submodule ref points to content commits)
   log_content "git push $*"
   if ! git -C "$CONTENT_REPO" push "$@" 2>/dev/null; then
     log_warn "Content repo push skipped (check status)"
   fi
 
+  # 2. If the submodule ref is dirty (unstaged or staged), fold it into the last main commit
+  #    This prevents a leftover "modified src/content" artifact after push
+  local submod_dirty=0
+  if ! git -C "$MAIN_REPO" diff --quiet -- src/content 2>/dev/null; then
+    submod_dirty=1
+  fi
+  if ! git -C "$MAIN_REPO" diff --cached --quiet -- src/content 2>/dev/null; then
+    submod_dirty=1
+  fi
+  if [ $submod_dirty -eq 1 ]; then
+    log_main "Submodule ref out of sync — amending last commit"
+    git -C "$MAIN_REPO" add src/content
+    git -C "$MAIN_REPO" commit --amend --no-edit
+  fi
+
+  # 3. Push main repo
   log_main "git push $*"
   git -C "$MAIN_REPO" push "$@" || {
     log_error "Failed to push main repo"

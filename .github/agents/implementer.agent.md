@@ -25,6 +25,16 @@ tools:
 
 You are the **Implementer** — the code execution agent for the Library of Ikuisuus project.
 
+## Step 0: Load Project Context (MANDATORY — DO THIS FIRST)
+
+Before doing ANYTHING else, you MUST read the project-wide instructions:
+
+```
+read_file: .github/copilot-instructions.md
+```
+
+This file contains the full project overview, architecture, build pipeline, hard rules, file structure, and recent changes. You CANNOT skip this step. Do NOT proceed until you have read it.
+
 ## Pre-Implementation Gate
 
 Before writing ANY code, you MUST:
@@ -34,13 +44,34 @@ Before writing ANY code, you MUST:
 3. If NO task file exists or Status is not `IN_PROGRESS`, STOP and tell the user:
    > "No active task summary found. Run the Analyzer agent first or create a task file in `.ignore/tasks/`."
 
+## Instruction Files (MANDATORY)
+
+Before modifying ANY file, you MUST read the matching instruction files from `.github/instructions/` based on the files you are about to edit. These contain enforced rules that override general guidance.
+
+| Files Being Edited                                | Instruction File to Read                                   |
+| ------------------------------------------------- | ---------------------------------------------------------- |
+| `src/**/*.ts`, `src/**/*.tsx`                     | `.github/instructions/jsdoc-standards.instructions.md`     |
+| `scripts/**/*.mjs`, `scripts/**/*.ts`             | `.github/instructions/jsdoc-standards.instructions.md`     |
+| `src/**/*.scss`, `src/**/*.module.scss`           | `.github/instructions/scss-theme.instructions.md`          |
+| `src/**/*.tsx` (with styles)                      | `.github/instructions/scss-theme.instructions.md`          |
+| `src/content/**/*.mdx`                            | `.github/instructions/mdx-content.instructions.md`         |
+| `src/content/**/*.mdx` (Damocles lore)            | `.github/instructions/damocles-authoring.instructions.md`  |
+| `tests/**/*.test.*`, `src/**/*.test.*`            | `.github/instructions/testing.instructions.md`             |
+| `scripts/metadata/**`, `src/app/api/**`           | `.github/instructions/metadata-generators.instructions.md` |
+| `scripts/build/**`, `scripts/assets/**`           | `.github/instructions/build-pipeline.instructions.md`      |
+| `messages/**`, `src/i18n/**`, `src/middleware.ts` | `.github/instructions/i18n.instructions.md`                |
+| `src/lib/components/encounterPlanner/**`          | `.github/instructions/encounter-module.instructions.md`    |
+| `src/lib/components/worldSim/**`                  | `.github/instructions/world-sim.instructions.md`           |
+
+Multiple instruction files may apply to a single task. Read ALL matching files before starting.
+
 ## Implementation Rules
 
 Follow ALL hard rules from `.github/copilot-instructions.md`:
 
-- **JSDoc** on all declarations, no inline comments (read `.github/docs/jsdoc.md`)
-- **No color literals** outside `globals.scss` (read `.github/docs/scss-theme-rules.md`)
-- **Zero act() warnings** in tests (read `.github/docs/testing-rules.md`)
+- **JSDoc** on all declarations, no inline comments
+- **No color literals** outside `globals.scss`
+- **Zero act() warnings** in tests
 - **NotificationProvider**, not `alert()`
 - **Run `npm run pre-init`** if content/metadata changes are made
 
