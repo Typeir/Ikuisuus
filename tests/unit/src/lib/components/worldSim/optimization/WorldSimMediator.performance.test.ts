@@ -8,8 +8,8 @@
 
 import { WorldSimMediator } from '@/lib/components/worldSim/WorldSimMediator';
 import type {
-    BoundaryData,
-    CelestialBodyData,
+  BoundaryData,
+  CelestialBodyData,
 } from '@/lib/components/worldSim/celestials/interfaces';
 import { Object3D, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -100,11 +100,13 @@ vi.mock('@/lib/components/worldSim/celestials/OrbitalMechanics', () => ({
 }));
 
 vi.mock('@/lib/components/worldSim/RaycastService', () => ({
-  RaycastService: vi.fn(() => ({
-    buildMeshCaches: vi.fn(),
-    raycastBody: vi.fn(() => null),
-    computeOcclusion: vi.fn(() => new Set()),
-  })),
+  RaycastService: vi.fn().mockImplementation(function MockRaycastService() {
+    return {
+      buildMeshCaches: vi.fn(),
+      raycastBody: vi.fn(() => null),
+      computeOcclusion: vi.fn(() => new Set()),
+    };
+  }),
 }));
 
 const lifecycleHandlers: Map<string, (ctx: unknown) => void> = new Map();

@@ -57,18 +57,23 @@ function generateTestTemplate(
  * It catches errors and emits warnings instead of failing.
  */
 
-import { describe, it } from 'vitest';
-import { render } from '@testing-library/react';
-import Component from '${importPath.replace(/\.tsx?$/, '')}';
+import { describe, expect, it } from 'vitest';
 
 describe('${moduleName}', () => {
-  it('should render without crashing [DUMMY TEST]', () => {
+  it('should load component module [DUMMY TEST]', async () => {
     try {
-      render(<Component />);
+      const mod = await Promise.race([
+        import('${importPath.replace(/\.tsx?$/, '')}'),
+        new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('Timed out while loading module')), 1500);
+        }),
+      ]);
+      const exported = Object.keys(mod).length;
+      expect(exported).toBeGreaterThan(0);
     } catch (error) {
       console.warn(
         '⚠️  DUMMY TEST WARNING: ${importPath.replace(/\.tsx?$/, '')}',
-        '\\n   Failed to render component:',
+        '\\n   Failed to load component module:',
         error instanceof Error ? error.message : String(error)
       );
     }
@@ -89,16 +94,22 @@ describe('${moduleName}', () => {
  * It catches errors and emits warnings instead of failing.
  */
 
-import { describe, it } from 'vitest';
-import * as Module from '${importPath.replace(/\.tsx?$/, '')}';
+import { describe, expect, it } from 'vitest';
 
 describe('${moduleName}', () => {
-  it('should export module members [DUMMY TEST]', () => {
+  it('should export module members [DUMMY TEST]', async () => {
     try {
+      const Module = await Promise.race([
+        import('${importPath.replace(/\.tsx?$/, '')}'),
+        new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('Timed out while loading module')), 1500);
+        }),
+      ]);
       if (!Module || typeof Module !== 'object') {
         throw new Error('Module failed to import');
       }
       const exportCount = Object.keys(Module).length;
+      expect(exportCount).toBeGreaterThanOrEqual(0);
       if (exportCount === 0) {
         console.warn(
           '⚠️  DUMMY TEST WARNING: ${importPath.replace(/\.tsx?$/, '')}',

@@ -7,7 +7,7 @@
  * a bundler.
  *
  * @module scssShim
- * @version 1.1.0
+ * @version 1.2.0
  * @since 2.0.0
  *
  * @example
@@ -23,5 +23,22 @@ register(new URL('./scssLoader.mjs', import.meta.url));
 /** CJS require extension for tsx interop paths */
 const extensions = (Module as any)._extensions;
 extensions['.scss'] = function (_mod: any, filename: string) {
-  _mod._compile('module.exports = {};', filename);
+  _mod._compile(
+    [
+      "const { getCssModuleLocalIdent } = require('next/dist/build/webpack/config/blocks/css/loaders/getCssModuleLocalIdent');",
+      'const resourcePath = __filename;',
+      'const getLocalIdent = (exportName) => getCssModuleLocalIdent({ rootContext: process.cwd(), resourcePath }, "", exportName, {});',
+      'const proxy = new Proxy({}, {',
+      '  get: (_, prop) => {',
+      '    if (prop === "__esModule") return true;',
+      '    if (prop === "default") return proxy;',
+      '    return typeof prop === "string" ? getLocalIdent(prop) : undefined;',
+      '  },',
+      '});',
+      'module.exports = proxy;',
+      'module.exports.default = proxy;',
+      'module.exports.__esModule = true;',
+    ].join('\n'),
+    filename,
+  );
 };

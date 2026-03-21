@@ -10,6 +10,11 @@
     "Stop": [
       {
         "type": "command",
+        "command": "node .github/scripts/hooks/on-stop-missing-tests.mjs",
+        "timeout": 30
+      },
+      {
+        "type": "command",
         "command": "node .github/scripts/hooks/on-stop-health.mjs",
         "timeout": 120
       }

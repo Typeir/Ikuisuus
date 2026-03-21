@@ -9,14 +9,32 @@
 import type { Mock } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('fs');
-vi.mock('@/lib/utils/getContentFolder');
+const existsSyncMock = vi.hoisted(() => vi.fn());
+const readdirSyncMock = vi.hoisted(() => vi.fn());
+const readFileSyncMock = vi.hoisted(() => vi.fn());
+const getContentFolderMock = vi.hoisted(() => vi.fn());
+
+vi.mock('fs', () => ({
+  default: {
+    existsSync: existsSyncMock,
+    readdirSync: readdirSyncMock,
+    readFileSync: readFileSyncMock,
+  },
+  existsSync: existsSyncMock,
+  readdirSync: readdirSyncMock,
+  readFileSync: readFileSyncMock,
+}));
+
+vi.mock('@/lib/utils/getContentFolder', () => ({
+  getContentFolder: getContentFolderMock,
+}));
 
 let readMetadataFiles: typeof import('@/lib/db/content/adapters/fs/readMetadataFiles').readMetadataFiles;
 let fs: typeof import('fs');
 let getContentFolder: Mock;
 
 beforeEach(async () => {
+  vi.clearAllMocks();
   vi.resetModules();
   fs = await import('fs');
   const gcf = await import('@/lib/utils/getContentFolder');

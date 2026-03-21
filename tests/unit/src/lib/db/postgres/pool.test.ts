@@ -12,10 +12,12 @@ const mockQuery = vi.fn();
 const mockEnd = vi.fn();
 
 vi.mock('pg', () => ({
-  Pool: vi.fn().mockImplementation(() => ({
-    query: mockQuery,
-    end: mockEnd,
-  })),
+  Pool: vi.fn().mockImplementation(function MockPool() {
+    return {
+      query: mockQuery,
+      end: mockEnd,
+    };
+  }),
 }));
 
 const originalDatabaseUrl = process.env.DATABASE_URL;

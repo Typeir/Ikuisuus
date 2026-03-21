@@ -3,21 +3,19 @@
  * @module tests/unit/src/lib/components/encounterPlanner/importer/monsterImporter.test
  * @description Tests creature selection, quantity popup flow, confirm/cancel behavior,
  * API integration via monsterCache, and multiple creature imports.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @testing-library/react
  * @requires @/lib/components/encounterPlanner/importer
  */
 
+import { MonsterImporter } from '@/lib/components/encounterPlanner/importer';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MonsterImporter } from '@/lib/components/encounterPlanner/importer';
-import type { MonsterData } from '@/lib/utils/monsterCache';
-import { logger } from '@/lib/logging/logger';
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => {
@@ -52,42 +50,63 @@ vi.mock('@/lib/utils/monsterCache', () => {
     speed: { raw: '30 ft.', modes: { walk: 30 } },
     tags: ['creature:humanoid', 'size:small'],
   };
-  
+
   return {
     getMonsterIndex: vi.fn().mockResolvedValue([
-      { slug: 'goblin', title: 'Goblin', cr: '1/4', size: 'small', creatureType: 'humanoid' },
-      { slug: 'ancient-red-dragon', title: 'Ancient Red Dragon', cr: '24', size: 'gargantuan', creatureType: 'dragon' },
-      { slug: 'orc', title: 'Orc', cr: '1/2', size: 'medium', creatureType: 'humanoid' },
+      {
+        slug: 'goblin',
+        title: 'Goblin',
+        cr: '1/4',
+        size: 'small',
+        creatureType: 'humanoid',
+      },
+      {
+        slug: 'ancient-red-dragon',
+        title: 'Ancient Red Dragon',
+        cr: '24',
+        size: 'gargantuan',
+        creatureType: 'dragon',
+      },
+      {
+        slug: 'orc',
+        title: 'Orc',
+        cr: '1/2',
+        size: 'medium',
+        creatureType: 'humanoid',
+      },
     ]),
     getMonsterBySlug: vi.fn().mockResolvedValue(mockMonsterData),
   };
 });
 
-import * as monsterCache from '@/lib/utils/monsterCache';
 
 /**
  * Helper to select a creature from the combobox dropdown
  */
-async function selectCreature(user: ReturnType<typeof userEvent.setup>, creatureName: string) {
+async function selectCreature(
+  user: ReturnType<typeof userEvent.setup>,
+  creatureName: string,
+) {
   const input = screen.getByPlaceholderText('Search creatures...');
   await user.click(input);
   await user.type(input, creatureName.substring(0, 3));
-  
-  await waitFor(() => {
-    const items = screen.queryAllByText(creatureName);
-    expect(items.length).toBeGreaterThan(0);
-  }, { timeout: 3000 });
-  
-  const listItem = screen.getByText((content, element) => {
-    return element?.classList.contains('_monsterTitle_67118e') && content === creatureName;
-  });
+
+  await waitFor(
+    () => {
+      const items = screen.queryAllByText(creatureName);
+      expect(items.length).toBeGreaterThan(0);
+    },
+    { timeout: 3000 },
+  );
+
+  const listItem = screen.getAllByText(creatureName)[0];
   await user.click(listItem);
 }
 
 describe('MonsterImporter Component', () => {
   let mockOnImport: ReturnType<typeof vi.fn>;
   let mockFetch: ReturnType<typeof vi.fn>;
-  
+
   const mockMonsterData = {
     slug: 'goblin',
     title: 'Goblin',
@@ -109,9 +128,27 @@ describe('MonsterImporter Component', () => {
   };
 
   const mockMonsterIndex = [
-    { slug: 'goblin', title: 'Goblin', cr: '1/4', size: 'small', creatureType: 'humanoid' },
-    { slug: 'ancient-red-dragon', title: 'Ancient Red Dragon', cr: '24', size: 'gargantuan', creatureType: 'dragon' },
-    { slug: 'orc', title: 'Orc', cr: '1/2', size: 'medium', creatureType: 'humanoid' },
+    {
+      slug: 'goblin',
+      title: 'Goblin',
+      cr: '1/4',
+      size: 'small',
+      creatureType: 'humanoid',
+    },
+    {
+      slug: 'ancient-red-dragon',
+      title: 'Ancient Red Dragon',
+      cr: '24',
+      size: 'gargantuan',
+      creatureType: 'dragon',
+    },
+    {
+      slug: 'orc',
+      title: 'Orc',
+      cr: '1/2',
+      size: 'medium',
+      creatureType: 'humanoid',
+    },
   ];
 
   beforeEach(() => {
@@ -119,7 +156,7 @@ describe('MonsterImporter Component', () => {
     mockOnImport = vi.fn();
     mockFetch = vi.fn();
     global.fetch = mockFetch;
-    
+
     mockFetch.mockImplementation((url: string) => {
       if (url.includes('/api/monsters/index')) {
         return Promise.resolve({
@@ -127,7 +164,10 @@ describe('MonsterImporter Component', () => {
           json: () => Promise.resolve(mockMonsterIndex),
         });
       }
-      if (url.includes('/api/monsters/goblin') || url.includes('/api/monsters/orc')) {
+      if (
+        url.includes('/api/monsters/goblin') ||
+        url.includes('/api/monsters/orc')
+      ) {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve(mockMonsterData),
@@ -138,7 +178,7 @@ describe('MonsterImporter Component', () => {
         status: 404,
       });
     });
-    
+
     vi.clearAllMocks();
   });
 
@@ -154,13 +194,15 @@ describe('MonsterImporter Component', () => {
     });
 
     it('should render search input', () => {
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
-      expect(screen.getByPlaceholderText('Search creatures...')).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText('Search creatures...'),
+      ).toBeInTheDocument();
     });
 
     it('should not show quantity popup initially', () => {
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
@@ -169,7 +211,7 @@ describe('MonsterImporter Component', () => {
   describe('Selection Flow', () => {
     it('should show quantity popup when creature is selected', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
 
@@ -180,7 +222,7 @@ describe('MonsterImporter Component', () => {
 
     it('should display creature name in quantity popup', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
 
@@ -192,12 +234,14 @@ describe('MonsterImporter Component', () => {
 
     it('should focus confirm button when popup opens', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
 
       await waitFor(() => {
-        expect(screen.getByText('Add Creature').closest('button')).toHaveFocus();
+        expect(
+          screen.getByText('Add Creature').closest('button'),
+        ).toHaveFocus();
       });
     });
   });
@@ -205,10 +249,12 @@ describe('MonsterImporter Component', () => {
   describe('Confirm Import', () => {
     it('should call onImport with monster data and quantity on confirm', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toBeInTheDocument(),
+      );
       await user.click(screen.getByText('Add Creature').closest('button')!);
 
       await waitFor(() => {
@@ -219,11 +265,13 @@ describe('MonsterImporter Component', () => {
 
     it('should call onImport with correct quantity when changed', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
-      
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toBeInTheDocument(),
+      );
+
       const input = screen.getByRole('spinbutton');
       await user.clear(input);
       await user.type(input, '5');
@@ -236,10 +284,12 @@ describe('MonsterImporter Component', () => {
 
     it('should close popup after confirm', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toBeInTheDocument(),
+      );
       await user.click(screen.getByText('Add Creature').closest('button')!);
 
       await waitFor(() => {
@@ -251,10 +301,12 @@ describe('MonsterImporter Component', () => {
   describe('Cancel Import', () => {
     it('should close popup on cancel without calling onImport', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toBeInTheDocument(),
+      );
       await user.click(screen.getByText('Cancel').closest('button')!);
 
       await waitFor(() => {
@@ -268,10 +320,12 @@ describe('MonsterImporter Component', () => {
   describe('API Integration', () => {
     it('should fetch monster data by slug on confirm', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toBeInTheDocument(),
+      );
       await user.click(screen.getByText('Add Creature').closest('button')!);
 
       await waitFor(() => {
@@ -281,10 +335,12 @@ describe('MonsterImporter Component', () => {
 
     it('should call onImport when creature is successfully imported', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toBeInTheDocument(),
+      );
       await user.click(screen.getByText('Add Creature').closest('button')!);
 
       await waitFor(() => {
@@ -293,7 +349,7 @@ describe('MonsterImporter Component', () => {
 
       expect(mockOnImport).toHaveBeenCalledWith(
         expect.objectContaining({ slug: 'goblin' }),
-        1
+        1,
       );
     });
 
@@ -302,10 +358,12 @@ describe('MonsterImporter Component', () => {
       vi.mocked(getMonsterBySlug).mockResolvedValueOnce(null);
 
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toBeInTheDocument(),
+      );
       await user.click(screen.getByText('Add Creature').closest('button')!);
 
       await waitFor(() => {
@@ -318,7 +376,9 @@ describe('MonsterImporter Component', () => {
 
   describe('Disabled State', () => {
     it('should disable input when disabled prop is true', () => {
-      render(<MonsterImporter locale="en" onImport={mockOnImport} disabled={true} />);
+      render(
+        <MonsterImporter locale='en' onImport={mockOnImport} disabled={true} />,
+      );
 
       const input = screen.getByPlaceholderText('Search creatures...');
       expect(input).toBeDisabled();
@@ -328,15 +388,21 @@ describe('MonsterImporter Component', () => {
   describe('Multiple Imports', () => {
     it('should allow importing different creatures sequentially', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale="en" onImport={mockOnImport} />);
+      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toBeInTheDocument(),
+      );
       await user.click(screen.getByText('Add Creature').closest('button')!);
-      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+      );
 
       await selectCreature(user, 'Orc');
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toBeInTheDocument(),
+      );
       await user.click(screen.getByText('Add Creature').closest('button')!);
 
       await waitFor(() => {

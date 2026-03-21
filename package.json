@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npx tsx --tsconfig tsconfig.scripts.json scripts/dev/runDev.ts",
-    "start": "npm run pre-init && next start",
+    "start": "npm run build:vercel && next start",
     "lint": "next lint",
     "compress-assets": "npx tsx --tsconfig tsconfig.scripts.json scripts/assets/compressAssets.ts",
     "kebabify-content": "npx tsx --tsconfig tsconfig.scripts.json scripts/content/kebabifyContent.ts",

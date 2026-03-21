@@ -13,13 +13,19 @@
  * @requires @/lib/utils/resolveContentFilePath Module under test
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { resolveContentFilePath } from '@/lib/utils/resolveContentFilePath';
 import fs from 'fs/promises';
 import path from 'path';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Mock fs/promises
-vi.mock('fs/promises');
+const accessMock = vi.hoisted(() => vi.fn());
+
+vi.mock('fs/promises', () => ({
+  default: {
+    access: accessMock,
+  },
+  access: accessMock,
+}));
 
 describe('resolveContentFilePath', () => {
   const mockRootDir = '/content/en';
@@ -99,9 +105,14 @@ describe('resolveContentFilePath', () => {
         throw new Error('File not found');
       });
 
-      const result = await resolveContentFilePath(mockRootDir, 'items/heirlooms/sunblade');
+      const result = await resolveContentFilePath(
+        mockRootDir,
+        'items/heirlooms/sunblade',
+      );
 
-      expect(result).toBe(path.join(mockRootDir, 'items', 'heirlooms', 'sunblade.mdx'));
+      expect(result).toBe(
+        path.join(mockRootDir, 'items', 'heirlooms', 'sunblade.mdx'),
+      );
     });
 
     it('should handle single-level slugs', async () => {
@@ -145,7 +156,7 @@ describe('resolveContentFilePath', () => {
 
       const result = await resolveContentFilePath(
         '/definitely/not/real',
-        'missing-file'
+        'missing-file',
       );
 
       expect(result).toBeNull();
@@ -181,8 +192,14 @@ describe('resolveContentFilePath', () => {
 
       // Should have called fs.access for .mdx (failed), then .sheet.mdx (succeeded)
       expect(fs.access).toHaveBeenCalledTimes(2);
-      expect(fs.access).toHaveBeenNthCalledWith(1, path.join(mockRootDir, 'monsters/albedo.mdx'));
-      expect(fs.access).toHaveBeenNthCalledWith(2, path.join(mockRootDir, 'monsters/albedo.sheet.mdx'));
+      expect(fs.access).toHaveBeenNthCalledWith(
+        1,
+        path.join(mockRootDir, 'monsters/albedo.mdx'),
+      );
+      expect(fs.access).toHaveBeenNthCalledWith(
+        2,
+        path.join(mockRootDir, 'monsters/albedo.sheet.mdx'),
+      );
     });
 
     it('should stop checking after finding first match', async () => {
@@ -204,9 +221,14 @@ describe('resolveContentFilePath', () => {
         throw new Error('File not found');
       });
 
-      const result = await resolveContentFilePath(mockRootDir, 'monsters/albedo-the-bleak-bloom');
+      const result = await resolveContentFilePath(
+        mockRootDir,
+        'monsters/albedo-the-bleak-bloom',
+      );
 
-      expect(result).toBe(path.join(mockRootDir, 'monsters/albedo-the-bleak-bloom.mdx'));
+      expect(result).toBe(
+        path.join(mockRootDir, 'monsters/albedo-the-bleak-bloom.mdx'),
+      );
     });
 
     it('should handle slugs with numbers', async () => {
@@ -217,7 +239,10 @@ describe('resolveContentFilePath', () => {
         throw new Error('File not found');
       });
 
-      const result = await resolveContentFilePath(mockRootDir, 'spells/spell-level-5');
+      const result = await resolveContentFilePath(
+        mockRootDir,
+        'spells/spell-level-5',
+      );
 
       expect(result).toBe(path.join(mockRootDir, 'spells/spell-level-5.mdx'));
     });
@@ -225,7 +250,10 @@ describe('resolveContentFilePath', () => {
     it('should construct correct absolute paths', async () => {
       vi.mocked(fs.access).mockResolvedValue(undefined);
 
-      const result = await resolveContentFilePath('/absolute/path/to/content', 'test-slug');
+      const result = await resolveContentFilePath(
+        '/absolute/path/to/content',
+        'test-slug',
+      );
 
       // Normalize for cross-platform testing
       const normalizedResult = result?.replace(/\\/g, '/');
@@ -234,4 +262,3 @@ describe('resolveContentFilePath', () => {
     });
   });
 });
-

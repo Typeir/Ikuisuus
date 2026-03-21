@@ -1,12 +1,12 @@
 //@ts-ignore-file
-import react from "@vitejs/plugin-react";
-import path from "path";
-import { defineConfig } from "vite";
-import { configDefaults } from "vitest/config";
+import react from '@vitejs/plugin-react-oxc';
+import path from 'path';
+import { defineConfig } from 'vite';
 
 //@ts-ignore
 export default defineConfig({
   plugins: [react()],
+  assetsInclude: ['**/*.glsl'],
   clearScreen: false,
   logLevel: 'warn',
   css: {
@@ -22,31 +22,31 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: "jsdom",
+    environment: 'jsdom',
     environmentOptions: {
       jsdom: {
         resources: 'usable',
         pretendToBeVisual: true,
       },
     },
-    setupFiles: ["./tests/setup/vitest.setup.ts"],
+    setupFiles: ['./tests/setup/vitest.setup.ts'],
     include: [
-      "tests/unit/**/*.test.{ts,tsx}",
-      "tests/integration/**/*.test.{ts,tsx}",
+      'tests/unit/**/*.test.{ts,tsx}',
+      'tests/integration/**/*.test.{ts,tsx}',
     ],
     server: {
       deps: {
-        inline: ["next-intl"],
+        inline: ['next-intl'],
       },
     },
     coverage: {
-      provider: "v8",
-      reporter: ["text", "json", "html", "lcov"],
-      include: ["src/**/*.{ts,tsx}"],
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
       exclude: [
-        "src/**/*.d.ts",
-        "src/**/*.config.{ts,js}",
-        "src/**/index.{ts,tsx}",
+        'src/**/*.d.ts',
+        'src/**/*.config.{ts,js}',
+        'src/**/index.{ts,tsx}',
       ],
       all: true,
       //@ts-ignore
@@ -58,10 +58,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@/lib": path.resolve(__dirname, "./src/lib"),
-      "@/app": path.resolve(__dirname, "./src/app"),
-      "@scripts": path.resolve(__dirname, "./scripts"),
+      '@': path.resolve(__dirname, './src'),
+      '@/lib': path.resolve(__dirname, './src/lib'),
+      '@/app': path.resolve(__dirname, './src/app'),
+      '@scripts': path.resolve(__dirname, './scripts'),
     },
   },
 });

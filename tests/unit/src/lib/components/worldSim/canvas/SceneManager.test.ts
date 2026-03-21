@@ -12,11 +12,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 /** Mock ResizeObserver for jsdom */
 const mockObserve = vi.fn();
 const mockDisconnect = vi.fn();
-globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: mockObserve,
-  unobserve: vi.fn(),
-  disconnect: mockDisconnect,
-})) as unknown as typeof ResizeObserver;
+globalThis.ResizeObserver = vi
+  .fn()
+  .mockImplementation(function MockResizeObserver() {
+    return {
+      observe: mockObserve,
+      unobserve: vi.fn(),
+      disconnect: mockDisconnect,
+    };
+  }) as unknown as typeof ResizeObserver;
 
 /** Mock Three.js WebGLRenderer since jsdom has no WebGL context */
 vi.mock('three', async () => {

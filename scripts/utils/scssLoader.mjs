@@ -7,9 +7,11 @@
  * Node/tsx script context without a bundler.
  *
  * @module scssLoader
- * @version 1.0.0
+ * @version 1.1.0
  * @since 2.0.0
  */
+
+import { fileURLToPath } from 'node:url';
 
 /**
  * ESM load hook — short-circuits .scss imports with a Proxy default export.
@@ -21,10 +23,22 @@
  */
 export async function load(url, context, nextLoad) {
   if (url.endsWith('.scss')) {
+    const resourcePath = fileURLToPath(url);
     return {
       format: 'module',
       source: [
-        'const proxy = new Proxy({}, { get: (_, prop) => typeof prop === "string" ? prop : undefined });',
+        "import { createRequire } from 'node:module';",
+        'const require = createRequire(import.meta.url);',
+        "const { getCssModuleLocalIdent } = require('next/dist/build/webpack/config/blocks/css/loaders/getCssModuleLocalIdent');",
+        `const resourcePath = ${JSON.stringify(resourcePath)};`,
+        'const getLocalIdent = (exportName) => getCssModuleLocalIdent({ rootContext: process.cwd(), resourcePath }, "", exportName, {});',
+        'const proxy = new Proxy({}, {',
+        '  get: (_, prop) => {',
+        '    if (prop === "__esModule") return true;',
+        '    if (prop === "default") return proxy;',
+        '    return typeof prop === "string" ? getLocalIdent(prop) : undefined;',
+        '  },',
+        '});',
         'export default proxy;',
       ].join('\n'),
       shortCircuit: true,

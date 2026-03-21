@@ -13,6 +13,7 @@
 import fs from 'fs/promises';
 import React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
+import remarkGfm from 'remark-gfm';
 import { pathToFileURL } from 'url';
 
 /**
@@ -62,6 +63,15 @@ export const compileOutliers = async (
 ): Promise<CompiledOutlier[]> => {
   const { evaluate } = await import('next-mdx-remote-client/rsc');
 
+  const tableComponent: React.FC<{ children?: React.ReactNode }> = ({
+    children,
+  }) =>
+    React.createElement(
+      'div',
+      { className: 'overflow-x-auto max-w-full' },
+      React.createElement('table', null, children),
+    );
+
   const compiledHtml = new Map<string, string>();
   const results: CompiledOutlier[] = [];
 
@@ -71,6 +81,7 @@ export const compileOutliers = async (
 
     const componentMap: Record<string, React.FC<any>> = {
       ...components,
+      table: tableComponent,
     };
     for (const [compiledName, html] of compiledHtml) {
       componentMap[compiledName] = htmlComponent(html);
@@ -82,6 +93,7 @@ export const compileOutliers = async (
       options: {
         parseFrontmatter: true,
         mdxOptions: {
+          remarkPlugins: [remarkGfm],
           baseUrl: pathToFileURL(filePath).toString(),
         },
       },

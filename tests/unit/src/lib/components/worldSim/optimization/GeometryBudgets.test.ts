@@ -9,37 +9,41 @@
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('three', () => ({
-  SphereGeometry: vi
-    .fn()
-    .mockImplementation((radius: number, w: number, h: number) => ({
+  SphereGeometry: vi.fn().mockImplementation(function MockSphereGeometry(
+    radius: number,
+    w: number,
+    h: number,
+  ) {
+    return {
       radius,
       widthSegments: w,
       heightSegments: h,
       dispose: vi.fn(),
-    })),
+    };
+  }),
 }));
 
 vi.mock('./AdaptivePerformanceController', () => ({}));
 
 import {
-    ATMOSPHERE_LOD,
-    createSphereLODSet,
-    disposeSphereLODSet,
-    DPR_CAP,
-    EVERDARK_LOD,
-    GAS_GIANT_LOD,
-    ICY_CORE_LOD,
-    MAX_VISIBLE_ORBITERS,
-    MAX_VISIBLE_RINGS,
-    ORBITER_CYLINDER_HEIGHT,
-    ORBITER_CYLINDER_RADIAL,
-    SPHERE_LOD,
-    STAR_RING_SEGMENTS,
-    STARFIELD_BUDGET,
-    TORUS_RADIAL_SEGMENTS,
-    TORUS_TUBULAR_SEGMENTS,
-    TOWER_CYLINDER_HEIGHT,
-    TOWER_CYLINDER_RADIAL,
+  ATMOSPHERE_LOD,
+  createSphereLODSet,
+  disposeSphereLODSet,
+  DPR_CAP,
+  EVERDARK_LOD,
+  GAS_GIANT_LOD,
+  ICY_CORE_LOD,
+  MAX_VISIBLE_ORBITERS,
+  MAX_VISIBLE_RINGS,
+  ORBITER_CYLINDER_HEIGHT,
+  ORBITER_CYLINDER_RADIAL,
+  SPHERE_LOD,
+  STAR_RING_SEGMENTS,
+  STARFIELD_BUDGET,
+  TORUS_RADIAL_SEGMENTS,
+  TORUS_TUBULAR_SEGMENTS,
+  TOWER_CYLINDER_HEIGHT,
+  TOWER_CYLINDER_RADIAL,
 } from '@/lib/components/worldSim/optimization/GeometryBudgets';
 
 describe('GeometryBudgets constants', () => {

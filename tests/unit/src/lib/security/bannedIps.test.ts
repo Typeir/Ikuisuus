@@ -29,6 +29,7 @@ const originalEnv = { ...process.env };
 
 beforeEach(() => {
   vi.resetModules();
+  mockFetch.mockReset();
   process.env.EDGE_CONFIG_ID = 'test-config-id';
   process.env.VERCEL_API_TOKEN = 'test-token';
 });

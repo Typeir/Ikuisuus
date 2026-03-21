@@ -40,9 +40,17 @@ function getChangedFiles() {
       cwd: ROOT,
       encoding: 'utf-8',
     });
+    const untracked = execSync(
+      'git ls-files --others --exclude-standard -- src/',
+      {
+        cwd: ROOT,
+        encoding: 'utf-8',
+      },
+    );
     const combined = new Set([
       ...output.split('\n').filter(Boolean),
       ...staged.split('\n').filter(Boolean),
+      ...untracked.split('\n').filter(Boolean),
     ]);
     return [...combined].filter((f) => /\.(ts|tsx)$/.test(f));
   } catch {

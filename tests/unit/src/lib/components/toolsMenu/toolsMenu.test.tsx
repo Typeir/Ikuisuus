@@ -31,7 +31,7 @@ describe('ToolsMenu', () => {
         items={mockItems}
         trigger={<span>Open Tools</span>}
         onSelect={mockOnSelect}
-      />
+      />,
     );
 
     expect(screen.getByText('Open Tools')).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe('ToolsMenu', () => {
         items={mockItems}
         trigger={<span>Open Tools</span>}
         onSelect={mockOnSelect}
-      />
+      />,
     );
 
     const button = screen.getByRole('button', { name: /open tools/i });
@@ -71,7 +71,7 @@ describe('ToolsMenu', () => {
         items={mockItems}
         trigger={<span>Open Tools</span>}
         onSelect={mockOnSelect}
-      />
+      />,
     );
 
     const button = screen.getByRole('button', { name: /open tools/i });
@@ -91,7 +91,7 @@ describe('ToolsMenu', () => {
         items={mockItems}
         trigger={<span>Open Tools</span>}
         onSelect={mockOnSelect}
-      />
+      />,
     );
 
     const button = screen.getByRole('button', { name: /open tools/i });
@@ -115,7 +115,7 @@ describe('ToolsMenu', () => {
         items={mockItems}
         trigger={<span>Open Tools</span>}
         onSelect={vi.fn()}
-      />
+      />,
     );
 
     const button = screen.getByRole('button', { name: /open tools/i });
@@ -129,12 +129,12 @@ describe('ToolsMenu', () => {
 
     await user.keyboard('{ArrowDown}');
     await waitFor(() => {
-      expect(items[1]).toHaveClass('_selected_fdaa4b');
+      expect(items[1].className).toMatch(/_selected_/);
     });
 
     await user.keyboard('{ArrowUp}');
     await waitFor(() => {
-      expect(items[0]).toHaveClass('_selected_fdaa4b');
+      expect(items[0].className).toMatch(/_selected_/);
     });
   });
 
@@ -149,7 +149,7 @@ describe('ToolsMenu', () => {
           onSelect={vi.fn()}
           closeOnClickOutside={true}
         />
-      </div>
+      </div>,
     );
 
     const button = screen.getByRole('button', { name: /open tools/i });
@@ -176,7 +176,7 @@ describe('ToolsMenu', () => {
           trigger={<span>Open Tools</span>}
           onSelect={vi.fn()}
         />
-      </div>
+      </div>,
     );
 
     const button = screen.getByRole('button', { name: /open tools/i });
@@ -199,7 +199,7 @@ describe('ToolsMenu', () => {
         items={mockItems}
         trigger={<span>Open Tools</span>}
         onSelect={vi.fn()}
-      />
+      />,
     );
 
     const trigger = screen.getByRole('button', { name: /open tools/i });
@@ -225,7 +225,7 @@ describe('ToolsMenu', () => {
         onSelect={(item) => {
           selectedItem = item;
         }}
-      />
+      />,
     );
 
     const button = screen.getByRole('button', { name: /open tools/i });
@@ -251,7 +251,7 @@ describe('ToolsMenu', () => {
         items={mockItems}
         trigger={<span>Open Tools</span>}
         onSelect={vi.fn()}
-      />
+      />,
     );
 
     const button = screen.getByRole('button', { name: /open tools/i });
@@ -265,17 +265,17 @@ describe('ToolsMenu', () => {
 
     await user.keyboard('{ArrowDown}');
     await waitFor(() => {
-      expect(items[1]).toHaveClass('_selected_fdaa4b');
+      expect(items[1].className).toMatch(/_selected_/);
     });
 
     await user.keyboard('{ArrowDown}');
     await waitFor(() => {
-      expect(items[1]).toHaveClass('_selected_fdaa4b');
+      expect(items[1].className).toMatch(/_selected_/);
     });
 
     await user.keyboard('{ArrowUp}');
     await waitFor(() => {
-      expect(items[0]).toHaveClass('_selected_fdaa4b');
+      expect(items[0].className).toMatch(/_selected_/);
     });
   });
 });

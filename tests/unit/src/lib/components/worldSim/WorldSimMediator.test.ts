@@ -9,8 +9,8 @@
 
 import { WorldSimMediator } from '@/lib/components/worldSim/WorldSimMediator';
 import type {
-    BoundaryData,
-    CelestialBodyData,
+  BoundaryData,
+  CelestialBodyData,
 } from '@/lib/components/worldSim/celestials/interfaces';
 import { WorldSimActionType } from '@/lib/components/worldSim/context/worldSimTypes';
 import { Object3D, PerspectiveCamera, Scene, Vector3 } from 'three';
@@ -116,11 +116,13 @@ vi.mock('@/lib/components/worldSim/celestials/OrbitalMechanics', () => ({
 
 /** Mock RaycastService */
 vi.mock('@/lib/components/worldSim/RaycastService', () => ({
-  RaycastService: vi.fn(() => ({
-    buildMeshCaches: vi.fn(),
-    raycastBody: vi.fn(),
-    computeOcclusion: vi.fn(() => new Set()),
-  })),
+  RaycastService: vi.fn().mockImplementation(function MockRaycastService() {
+    return {
+      buildMeshCaches: vi.fn(),
+      raycastBody: vi.fn(),
+      computeOcclusion: vi.fn(() => new Set()),
+    };
+  }),
 }));
 
 /** Lifecycle phase on-handler storage */

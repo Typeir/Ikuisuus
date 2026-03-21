@@ -9,37 +9,60 @@
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('three', () => {
-  const Vector2Mock = vi.fn().mockImplementation((x = 0, y = 0) => ({
-    x,
-    y,
-    set: vi.fn(),
-  }));
+  const Vector2Mock = vi.fn().mockImplementation(function MockVector2(
+    x = 0,
+    y = 0,
+  ) {
+    return {
+      x,
+      y,
+      set: vi.fn(),
+    };
+  });
 
   return {
     LinearFilter: 1,
     RGBAFormat: 1,
     Vector2: Vector2Mock,
-    WebGLRenderTarget: vi.fn().mockImplementation(() => ({
-      texture: {},
-      setSize: vi.fn(),
-      dispose: vi.fn(),
-    })),
-    ShaderMaterial: vi.fn().mockImplementation((opts: any) => ({
-      uniforms: opts?.uniforms ?? {},
-      dispose: vi.fn(),
-    })),
-    PlaneGeometry: vi.fn().mockImplementation(() => ({
-      dispose: vi.fn(),
-    })),
-    Mesh: vi.fn().mockImplementation((_geo: any, _mat: any) => ({
-      name: '',
-      frustumCulled: true,
-    })),
-    Scene: vi.fn().mockImplementation(() => ({
-      add: vi.fn(),
-      children: [{ geometry: { dispose: vi.fn() } }],
-    })),
-    OrthographicCamera: vi.fn().mockImplementation(() => ({})),
+    WebGLRenderTarget: vi
+      .fn()
+      .mockImplementation(function MockWebGLRenderTarget() {
+        return {
+          texture: {},
+          setSize: vi.fn(),
+          dispose: vi.fn(),
+        };
+      }),
+    ShaderMaterial: vi.fn().mockImplementation(function MockShaderMaterial(
+      opts: any,
+    ) {
+      return {
+        uniforms: opts?.uniforms ?? {},
+        dispose: vi.fn(),
+      };
+    }),
+    PlaneGeometry: vi.fn().mockImplementation(function MockPlaneGeometry() {
+      return {
+        dispose: vi.fn(),
+      };
+    }),
+    Mesh: vi.fn().mockImplementation(function MockMesh(_geo: any, _mat: any) {
+      return {
+        name: '',
+        frustumCulled: true,
+      };
+    }),
+    Scene: vi.fn().mockImplementation(function MockScene() {
+      return {
+        add: vi.fn(),
+        children: [{ geometry: { dispose: vi.fn() } }],
+      };
+    }),
+    OrthographicCamera: vi
+      .fn()
+      .mockImplementation(function MockOrthographicCamera() {
+        return {};
+      }),
   };
 });
 

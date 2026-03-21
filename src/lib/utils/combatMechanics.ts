@@ -19,14 +19,46 @@ import type {
 const heroic_dcs = { '0': 15, '5': 15, '10': 16, '15': 17, '20': 18 };
 
 /**
+ * Parse CR input into a finite numeric value.
+ *
+ * @param {(string | number)} cr - Challenge rating input
+ * @returns {number} Parsed CR number, or 0 when parsing fails
+ */
+const parseCrValue = (cr: string | number): number => {
+  if (typeof cr === 'number') {
+    return Number.isFinite(cr) ? cr : 0;
+  }
+
+  const parsed = Number.parseFloat(cr);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+/**
  * Map CR to heroic DC threshold
  *
  * @param {(string | number)} cr - Challenge rating
  * @returns {number} DC threshold (15–19)
  */
 export const getHeroicDc = (cr: string | number): number => {
-  const crKey = typeof cr === 'string' ? cr : cr.toString();
-  return heroic_dcs[crKey as keyof typeof heroic_dcs] || 19;
+  const crValue = parseCrValue(cr);
+
+  if (crValue <= 5) {
+    return heroic_dcs['5'];
+  }
+
+  if (crValue <= 10) {
+    return heroic_dcs['10'];
+  }
+
+  if (crValue <= 15) {
+    return heroic_dcs['15'];
+  }
+
+  if (crValue <= 20) {
+    return heroic_dcs['20'];
+  }
+
+  return 19;
 };
 
 /** Ordered affix list derived from the HeroicAffix enum, indexed 1–9 for d10 rolls */
@@ -52,7 +84,10 @@ export const getAffixFromRoll = (roll: number): string => {
  * @param {string} [locale='en'] - Locale for URL
  * @returns {string} Wiki link path
  */
-export const getAffixLink = (affixName: string, locale: string = 'en'): string => {
+export const getAffixLink = (
+  affixName: string,
+  locale: string = 'en',
+): string => {
   const slug = affixName.toLowerCase().replace(/\s+/g, '-');
   return `/${locale}/library/rules/heroic-awakening/${slug}`;
 };
@@ -196,5 +231,6 @@ export { applyHeroicAwakening } from './heroicAwakeningApply';
 
 export {
   forceHeroicAwakening,
-  forceHeroicAwakeningWithAffixes,
+  forceHeroicAwakeningWithAffixes
 } from './heroicAwakeningForce';
+

@@ -8,7 +8,14 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('fs');
+const readFileSyncMock = vi.hoisted(() => vi.fn());
+
+vi.mock('fs', () => ({
+  default: {
+    readFileSync: readFileSyncMock,
+  },
+  readFileSync: readFileSyncMock,
+}));
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
     child: () => ({

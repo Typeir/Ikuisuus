@@ -10,9 +10,7 @@
 
 import { createLogger } from '@/lib/logging/logger';
 import { execSync } from 'child_process';
-import {
-    readFileSync
-} from 'fs';
+import { readFileSync } from 'fs';
 import { join } from 'path';
 
 const log = createLogger({ script: 'pre-commit' });
@@ -100,6 +98,122 @@ function getStagedFiles(): string[] {
     log.error('Error reading staged files');
     process.exit(1);
   }
+}
+
+/**
+ * Returns newly added staged source files under src/ that should have tests.
+ *
+ * @returns {string[]} New source file paths from git index
+ */
+function getNewStagedSourceFiles(): string[] {
+  try {
+    const output = execSync('git diff --cached --name-status -- src/', {
+      encoding: 'utf-8',
+      stdio: 'pipe',
+    });
+
+    return output
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => line.split(/\s+/))
+      .filter((parts) => parts[0] === 'A' && Boolean(parts[1]))
+      .map((parts) => parts[1])
+      .filter((filePath) => /\.(ts|tsx)$/.test(filePath))
+      .filter(
+        (filePath) =>
+          !EXCLUDED_PATTERNS.some((pattern) => pattern.test(filePath)),
+      );
+  } catch {
+    return [];
+  }
+}
+
+const EXCLUDED_PATTERNS = [
+  /\.d\.ts$/,
+  /\.config\.(ts|js)$/,
+  /\/index\.(ts|tsx)$/,
+  /\.module\.(scss|css)$/,
+  /\.stories\.(ts|tsx)$/,
+  /\.test\.(ts|tsx)$/,
+];
+
+/**
+ * Checks whether a source file has an accompanying unit or integration test file.
+ *
+ * @param {string} sourcePath - Relative source path (e.g., src/lib/utils/foo.ts)
+ * @returns {boolean} True when at least one test file exists
+ */
+function hasMatchingTestFile(sourcePath: string): boolean {
+  const ext = sourcePath.endsWith('.tsx') ? '.tsx' : '.ts';
+  const baseName = sourcePath.replace(/\.(ts|tsx)$/, '');
+
+  const unitPath = join(
+    process.cwd(),
+    'tests',
+    'unit',
+    `${baseName}.test${ext}`,
+  );
+  const integrationPath = join(
+    process.cwd(),
+    'tests',
+    'integration',
+    `${baseName}.test${ext}`,
+  );
+
+  try {
+    readFileSync(unitPath, 'utf-8');
+    return true;
+  } catch {
+    try {
+      readFileSync(integrationPath, 'utf-8');
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+/**
+ * Enforces test presence for newly added source files.
+ *
+ * @returns {number} Exit code (0 = pass, 1 = violations)
+ */
+function runNewFileTestGuard(): number {
+  const newSourceFiles = getNewStagedSourceFiles();
+
+  if (newSourceFiles.length === 0) {
+    return 0;
+  }
+
+  const missing = newSourceFiles.filter(
+    (sourcePath) => !hasMatchingTestFile(sourcePath),
+  );
+
+  if (missing.length === 0) {
+    return 0;
+  }
+
+  const details = missing
+    .map((sourcePath) => {
+      const ext = sourcePath.endsWith('.tsx') ? '.tsx' : '.ts';
+      const baseName = sourcePath.replace(/\.(ts|tsx)$/, '');
+      return [
+        `📄 ${sourcePath}`,
+        `   → tests/unit/${baseName}.test${ext}`,
+        `   → tests/integration/${baseName}.test${ext}`,
+      ].join('\n');
+    })
+    .join('\n\n');
+
+  log.error(
+    '\n❌ NEW FILE TEST GUARD FAILED\n\n' +
+      'Newly added source files are missing tests:\n\n' +
+      details +
+      '\n\nAdd at least one test file per new source file before committing.',
+  );
+
+  return 1;
 }
 
 /**
@@ -255,6 +369,11 @@ function runSubmoduleGuard(): number {
 const securityExit = runSecurityChecks();
 if (securityExit !== 0) {
   process.exit(securityExit);
+}
+
+const newFileTestExit = runNewFileTestGuard();
+if (newFileTestExit !== 0) {
+  process.exit(newFileTestExit);
 }
 
 /* Skip the submodule guard when ik is coordinating both repos —

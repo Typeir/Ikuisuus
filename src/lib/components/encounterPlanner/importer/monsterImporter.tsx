@@ -184,7 +184,7 @@ export const MonsterImporter: React.FC<MonsterImporterProps> = ({
                   onClick={() => handleCreatureSelect(monster.slug)}>
                   <span className={styles.monsterTitle}>{monster.title}</span>
                   <span className={styles.monsterMeta}>
-                    {monster.size} {monster.creatureType} • CR {monster.cr}
+                    {monster.size} {monster.creatureType} - CR {monster.cr}
                   </span>
                 </li>
               ))}

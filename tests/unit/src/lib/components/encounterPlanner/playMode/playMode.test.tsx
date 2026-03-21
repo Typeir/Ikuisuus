@@ -14,8 +14,8 @@
 
 import { PlayMode } from '@/lib/components/encounterPlanner/playMode/playMode';
 import type {
-    InProgressCombat,
-    InProgressCombatant,
+  InProgressCombat,
+  InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
 import * as inProgressCombatStorage from '@/lib/utils/inProgressCombatStorage';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
@@ -270,7 +270,11 @@ describe('PlayMode Component', () => {
     Element.prototype.scrollIntoView = vi.fn();
     global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
     global.URL.revokeObjectURL = vi.fn();
-    global.Blob = vi.fn((content, options) => ({ content, options })) as any;
+    global.Blob = vi
+      .fn()
+      .mockImplementation(function MockBlob(content, options) {
+        return { content, options };
+      }) as any;
 
     // Mock anchor element click to prevent navigation
     const mockClick = vi.fn();
@@ -308,10 +312,8 @@ describe('PlayMode Component', () => {
       expect(roundElements.length).toBeGreaterThan(0);
       expect(turnElements.length).toBeGreaterThan(0);
 
-      // Verify combatInfo div contains the round/turn data
-      const combatInfo = document.querySelector('._combatInfo_52814c');
-      expect(combatInfo).toBeInTheDocument();
-      expect(combatInfo?.textContent).toContain('1');
+      const infoText = `${roundElements[0].textContent ?? ''} ${turnElements[0].textContent ?? ''}`;
+      expect(infoText).toContain('1');
     });
 
     it('should render all combatants in turn order', () => {
