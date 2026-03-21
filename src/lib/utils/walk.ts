@@ -12,8 +12,7 @@
  * @since 1.0.0
  *
  * @requires ../db/content/directorySourceAdapter Adapter interface
- * @requires ../db/content/adapters/fs/fsDirectorySource Filesystem adapter
- * @requires ../db/content/adapters/github/githubDirectorySource GitHub adapter
+ * @requires ../db/content/directorySourceResolver Adapter resolution factory
  * @requires ../enums/constants File patterns and ignored folders
  * @requires ./deduplicateFiles File deduplication utility
  * @requires ./toKebabCase String formatting utility
@@ -34,9 +33,8 @@
  * ```
  */
 
-import { fsDirectorySource } from '../db/content/adapters/fs/fsDirectorySource';
-import { githubDirectorySource } from '../db/content/adapters/github/githubDirectorySource';
 import type { DirectorySourceAdapter } from '../db/content/directorySourceAdapter';
+import { resolveDirectorySource } from '../db/content/directorySourceResolver';
 import {
   FILE_EXT_MD,
   FILE_EXT_MDX,
@@ -63,28 +61,6 @@ export interface WalkNode {
   /** Child nodes (present only for directories) */
   children?: WalkNode[];
 }
-
-/**
- * Resolves the appropriate directory source adapter based on environment.
- * Uses the filesystem in development and build phases (where local content is
- * available) and GitHub at production runtime.
- *
- * @returns {DirectorySourceAdapter} The resolved directory source adapter
- */
-const resolveDirectorySource = (): DirectorySourceAdapter => {
-  if (process.env.CONTENT_FETCH_MODE === 'runtime')
-    return githubDirectorySource;
-  if (process.env.CONTENT_FETCH_MODE === 'build') return fsDirectorySource;
-  if (process.env.NODE_ENV === 'development') return fsDirectorySource;
-  const phase = process.env.NEXT_PHASE;
-  if (
-    phase === 'phase-production-build' ||
-    phase === 'phase-development-server'
-  ) {
-    return fsDirectorySource;
-  }
-  return githubDirectorySource;
-};
 
 /**
  * Builds a navigation tree for a locale's content directory.

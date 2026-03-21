@@ -19,20 +19,9 @@ import { createLogger } from '@/lib/logging/logger';
 import crypto from 'crypto';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { getArgValue } from '../core/cliArgs';
 
 const log = createLogger({ script: 'generateToken' });
-
-/**
- * Reads a CLI argument value by flag name.
- *
- * @param flag - CLI flag (e.g. '--label')
- * @param fallback - Default if not provided
- * @returns The argument value or fallback
- */
-const getArg = (flag: string, fallback?: string): string | undefined => {
-  const idx = process.argv.indexOf(flag);
-  return idx !== -1 && process.argv[idx + 1] ? process.argv[idx + 1] : fallback;
-};
 
 /**
  * Attempts to load CORRECTIONS_SECRET from .env.local if not set.
@@ -61,9 +50,9 @@ if (!secret) {
   process.exit(1);
 }
 
-const label = getArg('--label', undefined);
-const hoursRaw = getArg('--hours', undefined);
-const scope = getArg('--scope', 'content:write') ?? 'content:write';
+const label = getArgValue('--label');
+const hoursRaw = getArgValue('--hours');
+const scope = getArgValue('--scope') ?? 'content:write';
 
 const payload: Record<string, unknown> = {
   scope,

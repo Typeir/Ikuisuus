@@ -23,6 +23,11 @@ vi.mock('@/lib/db/content/adapters/fs/fsDirectorySource', () => ({
 vi.mock('@/lib/db/content/adapters/github/githubDirectorySource', () => ({
   githubDirectorySource: { listEntries: vi.fn().mockResolvedValue([]) },
 }));
+vi.mock('@/lib/db/content/directorySourceResolver', () => ({
+  resolveDirectorySource: vi
+    .fn()
+    .mockReturnValue({ listEntries: vi.fn().mockResolvedValue([]) }),
+}));
 
 /**
  * Creates a mock DirectorySourceAdapter from a map of relative paths to entries.

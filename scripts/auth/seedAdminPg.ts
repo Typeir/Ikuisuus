@@ -18,22 +18,11 @@ import crypto from 'crypto';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import pg from 'pg';
+import { getArgValue } from '../core/cliArgs';
 
 const log = createLogger({ script: 'seedAdminPg' });
 
 const { Pool } = pg;
-
-/**
- * Reads a CLI argument value by flag name.
- *
- * @param flag - CLI flag (e.g. '--username')
- * @param fallback - Default if not provided
- * @returns The argument value or fallback
- */
-const getArg = (flag: string, fallback?: string): string | undefined => {
-  const idx = process.argv.indexOf(flag);
-  return idx !== -1 && process.argv[idx + 1] ? process.argv[idx + 1] : fallback;
-};
 
 /**
  * Attempts to load an env var from .env.local when not in the environment.
@@ -58,8 +47,8 @@ if (!connectionString) {
   process.exit(1);
 }
 
-const username = getArg('--username', 'admin') ?? 'admin';
-const password = getArg('--password');
+const username = getArgValue('--username') ?? 'admin';
+const password = getArgValue('--password');
 
 if (!password) {
   log.error('❌ --password is required.');

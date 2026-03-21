@@ -23,67 +23,15 @@ import { createLogger } from '@/lib/logging/logger';
 import fg from 'fast-glob';
 import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import process from 'node:process';
+import { getArgOrFallback, getArgValue, hasFlag } from '../core/cliArgs';
+import {
+    type LinkSpec,
+    readLinkSpecsFromFile,
+    readLinkSpecsFromStdin,
+} from './linkSpecs';
 import { linkifyMarkdown } from './linkifyMarkdown';
 
 const log = createLogger({ script: 'linkifyRunner' });
-
-/** Link specification entry */
-interface LinkSpec {
-  /** Term or array of terms to link */
-  term: string | string[];
-  /** Target URL path */
-  path: string;
-}
-
-const getArg = (
-  name: string,
-  fallback: string | null = null,
-): string | null => {
-  const i = process.argv.indexOf(name);
-  return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
-};
-const hasFlag = (name: string): boolean => process.argv.includes(name);
-
-/** Read specs from a JSON file. */
-const readSpecsFromFile = async (file: string): Promise<LinkSpec[]> => {
-  const raw = await readFile(file, 'utf8');
-  const data = JSON.parse(raw);
-  if (!Array.isArray(data)) throw new Error('Links JSON must be an array.');
-  for (const [i, x] of data.entries()) {
-    const termValid =
-      typeof x.term === 'string' ||
-      (Array.isArray(x.term) &&
-        x.term.every((t: unknown) => typeof t === 'string'));
-    if (!x || !termValid || typeof x.path !== 'string') {
-      throw new Error(
-        `Bad link spec at index ${i} — expected { term: string | string[], path: string }.`,
-      );
-    }
-  }
-  return data as LinkSpec[];
-};
-
-/** Read specs from STDIN. */
-const readSpecsFromStdin = async (): Promise<LinkSpec[]> => {
-  const chunks: Buffer[] = [];
-  for await (const chunk of process.stdin) chunks.push(chunk as Buffer);
-  const raw = Buffer.concat(chunks).toString('utf8').trim();
-  if (!raw) throw new Error('No JSON on STDIN.');
-  const data = JSON.parse(raw);
-  if (!Array.isArray(data)) throw new Error('Links JSON must be an array.');
-  for (const [i, x] of data.entries()) {
-    const termValid =
-      typeof x.term === 'string' ||
-      (Array.isArray(x.term) &&
-        x.term.every((t: unknown) => typeof t === 'string'));
-    if (!x || !termValid || typeof x.path !== 'string') {
-      throw new Error(
-        `Bad link spec at index ${i} — expected { term: string | string[], path: string }.`,
-      );
-    }
-  }
-  return data as LinkSpec[];
-};
 
 /** Mask fenced/inline code so linkify doesn't touch it. */
 const maskCode = (input: string): { text: string; masks: string[] } => {
@@ -125,9 +73,9 @@ const toSelfPath = (file: string, normalizedRoot: string): string => {
 };
 
 const main = async (): Promise<void> => {
-  const linksPath = getArg('--links', null);
-  const root = getArg('--root', 'src/app/content/en/world')!;
-  const extList = getArg('--ext', '.md,.mdx')!;
+  const linksPath = getArgValue('--links');
+  const root = getArgOrFallback('--root', 'src/content/en/world');
+  const extList = getArgOrFallback('--ext', '.md,.mdx');
   const exts = new Set(extList.split(',').map((s) => s.trim().toLowerCase()));
   const write = hasFlag('--write');
   const backup = hasFlag('--backup');
@@ -135,8 +83,8 @@ const main = async (): Promise<void> => {
   let specs: LinkSpec[];
   try {
     specs = linksPath
-      ? await readSpecsFromFile(linksPath)
-      : await readSpecsFromStdin();
+      ? await readLinkSpecsFromFile(linksPath)
+      : await readLinkSpecsFromStdin();
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     log.error('[linkify] Failed to load links', { error: message });

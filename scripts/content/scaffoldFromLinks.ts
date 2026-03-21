@@ -19,73 +19,25 @@
 
 import { createLogger } from '@/lib/logging/logger';
 import { existsSync } from 'node:fs';
-import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { mkdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { getArgOrFallback, getArgValue, hasFlag } from '../core/cliArgs';
+import {
+    type LinkSpec,
+    readLinkSpecsFromFile,
+    readLinkSpecsFromStdin,
+} from './linkSpecs';
 
 const log = createLogger({ script: 'scaffoldFromLinks' });
-
-/** Link specification entry */
-interface LinkSpec {
-  /** Term to scaffold */
-  term: string;
-  /** Target URL path */
-  path: string;
-}
-
-/** Get a CLI argument value */
-const arg = (flag: string, fallback: string | null = null): string | null => {
-  const i = process.argv.indexOf(flag);
-  return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
-};
-const has = (flag: string): boolean => process.argv.includes(flag);
-
-/** Load specs JSON from file or STDIN */
-const loadSpecs = async (linksPath: string | null): Promise<LinkSpec[]> => {
-  const raw = linksPath
-    ? await readFile(linksPath, 'utf8')
-    : await new Promise<string>((res, rej) => {
-        const chunks: Buffer[] = [];
-        process.stdin.on('data', (c) => chunks.push(c as Buffer));
-        process.stdin.on('end', () =>
-          res(Buffer.concat(chunks).toString('utf8')),
-        );
-        process.stdin.on('error', rej);
-      });
-
-  const txt = (raw || '').trim();
-  if (!txt)
-    throw new Error(
-      'No JSON provided. Use --links <file.json> or pipe JSON to STDIN.',
-    );
-
-  let data: unknown;
-  try {
-    data = JSON.parse(txt);
-  } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : String(e);
-    throw new Error('Invalid JSON: ' + message);
-  }
-  if (!Array.isArray(data))
-    throw new Error('Expected a JSON array of { term, path }.');
-
-  for (const [i, x] of data.entries()) {
-    if (!x || typeof x.term !== 'string' || typeof x.path !== 'string') {
-      throw new Error(
-        `Bad spec at index ${i}: expected { term: string, path: string }`,
-      );
-    }
-  }
-  return data as LinkSpec[];
-};
 
 const normalizeSlashes = (p: string): string => p.replace(/\\/g, '/');
 
 const main = async (): Promise<void> => {
-  const linksPath = arg('--links', null);
-  const worldRootArg = arg('--world-root', 'src/app/content/en/world')!;
-  const DRY = has('--dry');
-  const FORCE = has('--force');
+  const linksPath = getArgValue('--links');
+  const worldRootArg = getArgOrFallback('--world-root', 'src/content/en/world');
+  const DRY = hasFlag('--dry');
+  const FORCE = hasFlag('--force');
 
   const worldRoot = normalizeSlashes(worldRootArg);
 
@@ -101,7 +53,9 @@ const main = async (): Promise<void> => {
 
   let specs: LinkSpec[];
   try {
-    specs = await loadSpecs(linksPath);
+    specs = linksPath
+      ? await readLinkSpecsFromFile(linksPath)
+      : await readLinkSpecsFromStdin();
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : String(e);
     log.error('[scaffold] ' + message);
