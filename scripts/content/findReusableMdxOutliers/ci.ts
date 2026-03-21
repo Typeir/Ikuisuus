@@ -4,7 +4,7 @@
  * @fileoverview Generates a minimal mdxComponents.tsx file without analyzing for reusable outliers.
  * This is used in CI environments where the full analysis step is skipped.
  *
- * @module findReusableMdxOutliers.ci
+ * @module findReusableMdxOutliers/ci
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -20,6 +20,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const outputPath = path.join(
   __dirname,
+  '..',
   '..',
   '..',
   'src',

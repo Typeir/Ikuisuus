@@ -14,7 +14,7 @@ import ParallaxBackdrop from './parallaxBackdrop/parallaxBackdrop';
 import { SpellTable } from './spellTable';
 import Tooltip from './tooltip/tooltip';
 
-const components = {
+export const components = {
   BlendedImage,
   Collapsible,
   FlexRenderer,
@@ -35,7 +35,6 @@ const components = {
   h4: H4,
   h5: H5,
   h6: H6,
-  ...mdxComponents,
   table: ({ children }: any) => (
     <div className='overflow-x-auto max-w-full'>
       <table>{children}</table>
@@ -43,6 +42,12 @@ const components = {
   ),
 };
 
-export default components;
+const enrichedComponents = {
+  ...mdxComponents,
+  ...components,
+};
+
+export default enrichedComponents;
 export { useHashNavigation } from '@/lib/hooks/useHashNavigation';
 export { HashNavigationProvider } from './hashNavigationProvider/hashNavigationProvider';
+
