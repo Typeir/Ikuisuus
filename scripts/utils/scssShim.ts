@@ -15,8 +15,7 @@
  * // "my-script": "npx tsx --import ./scripts/utils/scssShim.ts scripts/myScript.ts"
  */
 
-import Module from 'node:module';
-import { register } from 'node:module';
+import Module, { register } from 'node:module';
 
 /** ESM loader hook for import statements */
 register(new URL('./scssLoader.mjs', import.meta.url));

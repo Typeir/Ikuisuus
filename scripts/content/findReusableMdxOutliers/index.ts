@@ -18,7 +18,11 @@ import path from 'path';
 import { extractTags } from './astExtractor';
 import { compileOutliers } from './compiler';
 import { topologicalSort } from './dependencyGraph';
-import { OUTPUT_FILE, emitComponentsModule, ensureOutputExists } from './emitter';
+import {
+    OUTPUT_FILE,
+    emitComponentsModule,
+    ensureOutputExists,
+} from './emitter';
 import { findMdxFiles } from './mdxScanner';
 import { componentNameFromPath } from './nameUtils';
 
