@@ -42,6 +42,8 @@ interface CorrectionPayload {
   baseSha: string;
   isNew?: boolean;
   message?: string;
+  expectedDraftUpdatedAt?: string | null;
+  expectedDraftVersionHash?: string | null;
 }
 
 export async function POST(req: NextRequest) {
@@ -107,6 +109,9 @@ export async function POST(req: NextRequest) {
 
   const { path: filePath, content, baseSha, isNew, message } = body;
 
+  const expectedDraftUpdatedAt = body.expectedDraftUpdatedAt;
+  const expectedDraftVersionHash = body.expectedDraftVersionHash;
+
   if (!filePath || typeof filePath !== 'string') {
     log.message('Missing or invalid payload field: path', {
       level: 'warn',
@@ -154,6 +159,28 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  if (
+    expectedDraftUpdatedAt !== undefined &&
+    expectedDraftUpdatedAt !== null &&
+    typeof expectedDraftUpdatedAt !== 'string'
+  ) {
+    return NextResponse.json(
+      { error: 'Missing or invalid: expectedDraftUpdatedAt' },
+      { status: 400 },
+    );
+  }
+
+  if (
+    expectedDraftVersionHash !== undefined &&
+    expectedDraftVersionHash !== null &&
+    typeof expectedDraftVersionHash !== 'string'
+  ) {
+    return NextResponse.json(
+      { error: 'Missing or invalid: expectedDraftVersionHash' },
+      { status: 400 },
+    );
+  }
+
   /** Reject paths that attempt directory traversal */
   if (filePath.includes('..') || filePath.startsWith('/')) {
     return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
@@ -169,7 +196,30 @@ export async function POST(req: NextRequest) {
     clientIp,
   );
 
+  const locale = filePath.match(/^([a-z]{2})\//)?.[1] ?? 'en';
+  const slugFromPath = filePath
+    .replace(/^[a-z]{2}\//, '')
+    .replace(/\.(sheet\.)?mdx$/, '');
+  const draftStatus = session.role === 'admin' ? 'active' : 'pending';
+
   try {
+    await draftRepository.upsertIfUnchanged(
+      {
+        locale,
+        slug: slugFromPath,
+        content,
+        status: draftStatus,
+      },
+      {
+        updatedAt:
+          expectedDraftUpdatedAt === undefined ? undefined : expectedDraftUpdatedAt,
+        versionHash:
+          expectedDraftVersionHash === undefined
+            ? undefined
+            : expectedDraftVersionHash,
+      },
+    );
+
     await createBranch(owner, repo, branchName);
     await commitFile(
       owner,
@@ -197,32 +247,6 @@ export async function POST(req: NextRequest) {
     });
 
     log.message('Correction PR created', { prUrl, filePath, auditId });
-
-    /** Save a draft so the DraftOverlay renders the change while ISR catches up */
-    const locale = filePath.match(/^([a-z]{2})\//)?.[1] ?? 'en';
-    const slugFromPath = filePath
-      .replace(/^[a-z]{2}\//, '')
-      .replace(/\.(sheet\.)?mdx$/, '');
-
-    try {
-      const draftStatus = session.role === 'admin' ? 'active' : 'pending';
-      await draftRepository.upsert({
-        locale,
-        slug: slugFromPath,
-        content,
-        status: draftStatus,
-      });
-      log.message('Draft saved for correction', {
-        locale,
-        slug: slugFromPath,
-        status: draftStatus,
-      });
-    } catch (draftError) {
-      log.warning('Failed to save draft (non-blocking)', {
-        error:
-          draftError instanceof Error ? draftError.message : String(draftError),
-      });
-    }
 
     /** Trigger ISR revalidation for the affected content page. */
     try {
@@ -252,6 +276,22 @@ export async function POST(req: NextRequest) {
         {
           error:
             'The file has been modified since you loaded it. Refresh and try again.',
+        },
+        { status: 409 },
+      );
+    }
+
+    if (err.code === 'STALE_DRAFT') {
+      await writeAuditLog({
+        content_path: filePath,
+        base_sha: baseSha,
+        status: 'conflict',
+        token_id: auditId,
+      });
+      return NextResponse.json(
+        {
+          error:
+            'A newer edit for this page was already submitted. Reload the editor before submitting again.',
         },
         { status: 409 },
       );

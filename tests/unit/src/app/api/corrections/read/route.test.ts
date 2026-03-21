@@ -8,9 +8,16 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+const mockFindActiveDraft = vi.fn();
+
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
     child: () => ({ error: vi.fn(), debug: vi.fn(), message: vi.fn() }),
+  },
+}));
+vi.mock('@/lib/db/content/repositories/draftRepository', () => ({
+  draftRepository: {
+    findActive: (...args: unknown[]) => mockFindActiveDraft(...args),
   },
 }));
 
@@ -24,6 +31,7 @@ beforeEach(() => {
   process.env.CONTENT_REPO_OWNER = 'owner';
   process.env.CONTENT_REPO_NAME = 'repo';
   process.env.GITHUB_PAT = 'token';
+  mockFindActiveDraft.mockResolvedValue(null);
 });
 
 afterEach(() => {
@@ -71,6 +79,7 @@ describe('GET /api/corrections/read', () => {
     expect(res.status).toBe(200);
     expect(json.content).toBe('# Hello');
     expect(json.sha).toBe('abc123');
+    expect(json.draftCursor).toEqual({ updatedAt: null, versionHash: null });
   });
 
   it('should try path variants and return 404 when none match', async () => {

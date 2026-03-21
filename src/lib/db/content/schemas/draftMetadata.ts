@@ -55,3 +55,14 @@ export interface DraftInput {
   content: string;
   status?: DraftStatus;
 }
+
+/**
+ * Concurrency cursor for optimistic draft updates.
+ *
+ * @property {string | null} [updatedAt] - Last seen active draft update timestamp (ISO 8601)
+ * @property {string | null} [versionHash] - Last seen active draft content hash
+ */
+export interface DraftConcurrencyExpectation {
+  updatedAt?: string | null;
+  versionHash?: string | null;
+}

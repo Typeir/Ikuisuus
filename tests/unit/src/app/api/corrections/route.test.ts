@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const mockExtractSession = vi.fn();
 const mockIsIpBanned = vi.fn();
 const mockWriteAuditLog = vi.fn();
-const mockDraftUpsert = vi.fn();
+const mockDraftUpsertIfUnchanged = vi.fn();
 
 vi.mock('@/lib/db/auth', () => ({
   extractSession: (...args: unknown[]) => mockExtractSession(...args),
@@ -24,7 +24,8 @@ vi.mock('@/lib/security/bannedIps', () => ({
 }));
 vi.mock('@/lib/db/content/repositories/draftRepository', () => ({
   draftRepository: {
-    upsert: (...args: unknown[]) => mockDraftUpsert(...args),
+    upsertIfUnchanged: (...args: unknown[]) =>
+      mockDraftUpsertIfUnchanged(...args),
   },
 }));
 vi.mock('@/lib/logging/logger', () => ({
@@ -56,7 +57,7 @@ beforeEach(async () => {
   process.env.GITHUB_PAT = 'ghp_test';
 
   mockIsIpBanned.mockResolvedValue({ banned: false });
-  mockDraftUpsert.mockResolvedValue({
+  mockDraftUpsertIfUnchanged.mockResolvedValue({
     id: 'draft-1',
     locale: 'en',
     slug: 'test',
@@ -222,12 +223,18 @@ describe('POST /api/corrections', () => {
     );
 
     expect(res.status).toBe(201);
-    expect(mockDraftUpsert).toHaveBeenCalledWith({
+    expect(mockDraftUpsertIfUnchanged).toHaveBeenCalledWith(
+      {
       locale: 'en',
       slug: 'world/aeridas',
       content: '# Edited Aeridas',
       status: 'pending',
-    });
+      },
+      {
+        updatedAt: undefined,
+        versionHash: undefined,
+      },
+    );
   });
 
   it('should create an active draft when submitter is admin', async () => {
@@ -257,8 +264,9 @@ describe('POST /api/corrections', () => {
       }),
     );
 
-    expect(mockDraftUpsert).toHaveBeenCalledWith(
+    expect(mockDraftUpsertIfUnchanged).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'active' }),
+      expect.any(Object),
     );
   });
 
@@ -323,6 +331,29 @@ describe('POST /api/corrections', () => {
         path: 'en/test.mdx',
         content: '# x',
         baseSha: 'old',
+      }),
+    );
+
+    expect(res.status).toBe(409);
+  });
+
+  it('should return 409 on stale draft concurrency cursor', async () => {
+    mockExtractSession.mockResolvedValue({
+      username: 'editor',
+      userId: 'u1',
+      role: 'editor' as const,
+    });
+
+    const stale = Object.assign(new Error('stale'), { code: 'STALE_DRAFT' });
+    mockDraftUpsertIfUnchanged.mockRejectedValue(stale);
+
+    const res = await POST(
+      makeReq({
+        path: 'en/test.mdx',
+        content: '# x',
+        baseSha: 'old',
+        expectedDraftUpdatedAt: '2026-03-22T00:00:00.000Z',
+        expectedDraftVersionHash: 'deadbeef',
       }),
     );
 

@@ -20,6 +20,7 @@
  */
 
 import { logger } from '@/lib/logging/logger';
+import { draftRepository } from '@/lib/db/content/repositories/draftRepository';
 import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Corrections:Read' });
@@ -109,14 +110,28 @@ export async function GET(req: NextRequest) {
       const candidate = `${basePath}${ext}`;
       const result = await fetchFileFromGitHub(candidate);
       if (result) {
-        return NextResponse.json(result);
+        const activeDraft = await draftRepository.findActive(locale, slug);
+        return NextResponse.json({
+          ...result,
+          draftCursor: {
+            updatedAt: activeDraft?.updatedAt ?? null,
+            versionHash: activeDraft?.versionHash ?? null,
+          },
+        });
       }
     }
 
     /** Also try slug/main.mdx for category index pages */
     const mainResult = await fetchFileFromGitHub(`${basePath}/main.mdx`);
     if (mainResult) {
-      return NextResponse.json(mainResult);
+      const activeDraft = await draftRepository.findActive(locale, slug);
+      return NextResponse.json({
+        ...mainResult,
+        draftCursor: {
+          updatedAt: activeDraft?.updatedAt ?? null,
+          versionHash: activeDraft?.versionHash ?? null,
+        },
+      });
     }
 
     return NextResponse.json(

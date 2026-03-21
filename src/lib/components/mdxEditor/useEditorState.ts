@@ -100,6 +100,13 @@ export function useEditorState({
   const [filePath, setFilePath] = useState('');
   const [slug, setSlug] = useState(initialSlug);
   const lastShaRef = useRef('');
+  const lastDraftCursorRef = useRef<{
+    updatedAt: string | null;
+    versionHash: string | null;
+  }>({
+    updatedAt: null,
+    versionHash: null,
+  });
 
   const loadContent = useCallback(
     async (targetSlug: string, targetLocale: string) => {
@@ -127,6 +134,13 @@ export function useEditorState({
         setContent(data.content);
         setFilePath(data.path);
         lastShaRef.current = data.sha;
+        const cursor = data.draftCursor as
+          | { updatedAt?: string | null; versionHash?: string | null }
+          | undefined;
+        lastDraftCursorRef.current = {
+          updatedAt: cursor?.updatedAt ?? null,
+          versionHash: cursor?.versionHash ?? null,
+        };
         setStatus({ phase: 'ready', sha: data.sha, resolvedPath: data.path });
       } catch (err) {
         setStatus({
@@ -181,6 +195,8 @@ export function useEditorState({
           content,
           baseSha,
           isNew: mode === 'new',
+          expectedDraftUpdatedAt: lastDraftCursorRef.current.updatedAt,
+          expectedDraftVersionHash: lastDraftCursorRef.current.versionHash,
         }),
       });
 

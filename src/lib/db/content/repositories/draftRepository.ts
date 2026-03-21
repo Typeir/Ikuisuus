@@ -12,7 +12,11 @@
  */
 
 import { pgDraftRepository } from '../adapters/pg/pgDraftRepository';
-import type { DraftInput, DraftMetadata } from '../schemas/draftMetadata';
+import type {
+  DraftConcurrencyExpectation,
+  DraftInput,
+  DraftMetadata,
+} from '../schemas/draftMetadata';
 
 /**
  * Repository contract for draft persistence.
@@ -29,6 +33,22 @@ export interface DraftRepository {
    * @returns {Promise<DraftMetadata>} The created or updated draft
    */
   upsert(input: DraftInput): Promise<DraftMetadata>;
+
+  /**
+   * Creates or updates the active draft only if the provided cursor matches
+   * the current active draft state.
+   *
+   * Use this to prevent stale concurrent editor submissions from overwriting
+   * newer draft state.
+   *
+   * @param {DraftInput} input - Draft payload to upsert
+   * @param {DraftConcurrencyExpectation} expectation - Last-seen draft cursor
+   * @returns {Promise<DraftMetadata>} The created or updated draft
+   */
+  upsertIfUnchanged(
+    input: DraftInput,
+    expectation: DraftConcurrencyExpectation,
+  ): Promise<DraftMetadata>;
 
   /**
    * Returns the latest active draft for a locale+slug pair, or null.
