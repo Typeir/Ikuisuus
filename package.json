@@ -24,7 +24,7 @@
     "clean": "npm run clean-fullsize && npm run clean-translations && rm -rf ./stl",
     "build": "rm -rf .next/cache && npm run pre-init && npm run test && next build",
     "build:ci": "rm -rf .next/cache && npm run pre-init:ci && npm run test && next build",
-    "build:vercel": "rm -rf .next/cache && npm run pre-init && next build",
+    "build:vercel": "git submodule update --init --recursive && rm -rf .next/cache && npm run pre-init && next build",
     "pagefind": "pagefind --site .next --output-path .next/static/chunks/app/pagefind",
     "generate-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/generateMetadata.ts",
     "util:precompile-mdx": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/precompileMdx.ts",
