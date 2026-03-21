@@ -37,12 +37,13 @@ You ALWAYS run after implementation. Your job:
 1. **Read the task file** in `.ignore/tasks/` (most recent by filename timestamp) to identify which files were modified.
 2. **Load matching instruction files** from `.github/instructions/` based on modified files — use the same mapping table as the Implementer agent. This is required to correctly classify findings against the enforced rules.
 3. **Execute the composite health check**: `npm run health:check`
-4. **Read the results** from stdout (JSON-structured output).
-5. **Classify findings**:
+4. **Execute tests**: `npm test` (auto-runs `npm run test:enforce` via `pretest`).
+5. **Read the results** from stdout (JSON-structured output).
+6. **Classify findings**:
    - **CRITICAL** (blocks completion): build/test failures, hard-rule violations (JSDoc, color literals, alert()), files >250 lines, duplicate CSS, anti-patterns, missing tests for changed code.
    - **WARNING** (allowed with report): minor style issues, near-duplicate CSS, non-blocking suggestions.
-6. **Update the task file** in `.ignore/tasks/` with health check results.
-7. **Report verdict**:
+7. **Update the task file** in `.ignore/tasks/` with health check and test results.
+8. **Report verdict**:
    - If ANY critical findings: report them and tell the user completion is BLOCKED.
    - If only warnings: report them and allow completion to proceed.
 

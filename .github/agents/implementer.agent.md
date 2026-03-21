@@ -88,6 +88,7 @@ After completing all checklist items:
 
 1. Update the task file: check all DoD items that are met.
 2. Run `npm run health:check` to execute the health gate.
-3. Paste health check results into the task file's `## Health Check Results` section.
-4. Tell the user:
-   > "Implementation complete. Health check results recorded. Ready for review."
+3. Run `npm test` to execute tests (this auto-runs `npm run test:enforce` via `pretest`).
+4. Paste health check and test results into the task file's `## Health Check Results` section.
+5. Tell the user:
+  > "Implementation complete. Health check and test results recorded. Ready for review."

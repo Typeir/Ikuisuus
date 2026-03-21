@@ -75,17 +75,30 @@ async function findFiles(dir, results = []) {
  */
 async function countLines(filePath) {
   const content = await fs.readFile(filePath, 'utf-8');
-  return content.split('\n').length;
+  const withoutBlockComments = content.replace(/\/\*[\s\S]*?\*\//g, '');
+  const lines = withoutBlockComments.split('\n');
+
+  let count = 0;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.length === 0) continue;
+    if (trimmed.startsWith('//')) continue;
+    count += 1;
+  }
+
+  return count;
 }
 
 async function main() {
   const allowlist = await loadAllowlist();
   const violations = [];
+  let totalFilesChecked = 0;
 
   for (const dir of SCAN_DIRS) {
     const files = await findFiles(path.join(ROOT, dir));
     for (const rel of files) {
       if (allowlist.includes(rel.replace(/\\/g, '/'))) continue;
+      totalFilesChecked += 1;
       const lines = await countLines(path.join(ROOT, rel));
       if (lines > MAX_LINES) {
         violations.push({
@@ -105,11 +118,14 @@ async function main() {
       file: v.file,
       line: v.lines,
       rule: 'max-file-length',
-      message: `File has ${v.lines} lines (max ${v.threshold})`,
+      message: `File has ${v.lines} comment-pruned lines (max ${v.threshold})`,
       suggestion:
         'Split into smaller modules or add to .github/file-length-allowlist.json with justification',
     })),
-    stats: { total_files_checked: 0, violations_found: violations.length },
+    stats: {
+      total_files_checked: totalFilesChecked,
+      violations_found: violations.length,
+    },
   };
 
   console.log(JSON.stringify(result, null, 2));

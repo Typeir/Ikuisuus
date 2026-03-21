@@ -40,6 +40,7 @@ This file contains the full project overview, architecture, build pipeline, hard
 3. **Parse and verify**:
    - ALL `- [ ]` items in DoD, Milestones, and Checklist are checked (`- [x]`).
    - `## Health Check Results` section is populated and shows no CRITICAL findings.
+   - `npm run health:check` and `npm test` have been executed and passed.
    - Status is `IN_PROGRESS` (not `BLOCKED` or `FAILED`).
 
 4. **If incomplete items exist**:

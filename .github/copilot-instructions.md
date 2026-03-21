@@ -14,6 +14,18 @@ These rules are **strictly enforced**. Violations will cause build failures, tes
 | Use NotificationProvider, not `alert()`       | [Testing Rules](./docs/testing-rules.md)       | `grep -rn "alert(" src/` returns 0                         |
 | Run `npm run pre-init` before dev/build       | [Build Pipeline](./docs/build-pipeline.md)     | Build succeeds                                             |
 
+## ✅ Completion Gate (Mandatory)
+
+Before an agent says a task is "done" or "all done", it MUST run:
+
+```bash
+npm run health:check
+npm test
+```
+
+- `npm test` automatically runs `npm run test:enforce` via `pretest`.
+- If either command fails, the agent must report blockers and must NOT mark completion.
+
 ## Recent Changes
 
 Major architectural changes to be aware of:

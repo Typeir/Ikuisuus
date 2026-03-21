@@ -24,3 +24,5 @@ When implementation begins, create a task summary in `.ignore/tasks/` using the 
 ## Hard Rule Verification
 
 After implementation, `npm test` must produce zero act() warnings and zero failures.
+
+Before saying "done" or "all done", agents must run both `npm run health:check` and `npm test`.
