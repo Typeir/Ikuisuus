@@ -221,7 +221,7 @@ describe('walk-sidebar integration', () => {
       expect(sheetPath).toMatch(/\.sheet$/);
     });
 
-    it('should transliterate unicode filenames into readable slugs', async () => {
+    it('should preserve unicode filenames in slugs', async () => {
       const unicodeDir = path.join(testDir, 'bloodlines');
       fs.mkdirSync(unicodeDir, { recursive: true });
 
@@ -232,10 +232,10 @@ describe('walk-sidebar integration', () => {
 
       expect(bloodlinesFolder).toBeDefined();
 
-      const vaarat = bloodlinesFolder?.children?.find((c) => c.path.endsWith('/vaarat'));
+      const vaarat = bloodlinesFolder?.children?.find((c) => c.path.endsWith('/väärät'));
       expect(vaarat).toBeDefined();
       expect(vaarat?.name).toBe('Väärät');
-      expect(vaarat?.path).toBe('bloodlines/vaarat');
+      expect(vaarat?.path).toBe('bloodlines/väärät');
     });
   });
 

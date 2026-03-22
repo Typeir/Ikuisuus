@@ -30,6 +30,37 @@ const IGNORED = new Set([
 ]);
 
 /**
+ * Determines whether a directory entry should be skipped.
+ *
+ * @param {string} name - File or directory name
+ * @returns {boolean} True when the entry is ignored
+ */
+function shouldIgnoreEntry(name: string): boolean {
+  return IGNORED.has(name) || name.startsWith('.');
+}
+
+/**
+ * Kebabifies a `.mdx` basename while preserving dot-separated segments.
+ *
+ * Examples:
+ * - `abandoned-old-war-machine.sheet` -> `abandoned-old-war-machine.sheet`
+ * - `lemao.lol` -> `lemao.lol`
+ * - `My File.Draft V2` -> `my-file.draft-v2`
+ *
+ * @param {string} baseName - Filename without `.mdx` extension
+ * @returns {string} Kebab-cased basename with dot segments preserved
+ */
+function toSegmentedKebabBaseName(baseName: string): string {
+  const segments = baseName.split('.');
+  const kebabSegments = segments
+    .filter((segment) => segment.length > 0)
+    .map((segment) => toKebabCase(segment))
+    .filter((segment) => segment.length > 0);
+
+  return kebabSegments.join('.');
+}
+
+/**
  * Recursively renames folders and `.mdx` files to kebab-case.
  * @param dir - Directory to process
  */
@@ -37,7 +68,7 @@ function kebabifyDirectory(dir: string): void {
   const entries: fs.Dirent[] = fs.readdirSync(dir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (IGNORED.has(entry.name)) continue;
+    if (shouldIgnoreEntry(entry.name)) continue;
     const fullPath = path.join(dir, entry.name);
 
     if (entry.isDirectory()) {
@@ -53,12 +84,12 @@ function kebabifyDirectory(dir: string): void {
   }
 
   for (const entry of entries) {
-    if (IGNORED.has(entry.name)) continue;
+    if (shouldIgnoreEntry(entry.name)) continue;
     const fullPath = path.join(dir, entry.name);
 
     if (entry.isFile() && path.extname(entry.name) === '.mdx') {
       const baseName = path.basename(entry.name, '.mdx');
-      const kebabName = toKebabCase(baseName);
+      const kebabName = toSegmentedKebabBaseName(baseName);
       const newFile = path.join(dir, `${kebabName}.mdx`);
 
       if (entry.name !== `${kebabName}.mdx`) {

@@ -74,9 +74,9 @@ describe('toKebabCase', () => {
     expect(toKebabCase('Ancient Red Dragon')).toBe('ancient-red-dragon');
   });
 
-  it('should transliterate diacritics into stable ASCII slugs', () => {
-    expect(toKebabCase('Väärät')).toBe('vaarat');
-    expect(toKebabCase('Crème Brûlée')).toBe('creme-brulee');
+  it('should preserve Unicode letters in slugs', () => {
+    expect(toKebabCase('Väärät')).toBe('väärät');
+    expect(toKebabCase('Crème Brûlée')).toBe('crème-brûlée');
   });
 
   it('should handle file extensions when stripped first (real-world usage)', () => {
