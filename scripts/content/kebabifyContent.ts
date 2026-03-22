@@ -14,6 +14,7 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import { toKebabCase } from '@/lib/utils/toKebabCase';
 import fs from 'fs';
 import path from 'path';
 
@@ -27,20 +28,6 @@ const IGNORED = new Set([
   '.vscode',
   '.DS_Store',
 ]);
-
-/**
- * Converts a string to kebab-case
- * @param str - Input string
- * @returns Kebab-cased string
- */
-function toKebabCase(str: string): string {
-  return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/\s+/g, '-')
-    .replace(/_+/g, '-')
-    .replace(/--+/g, '-')
-    .toLowerCase();
-}
 
 /**
  * Recursively renames folders and `.mdx` files to kebab-case.

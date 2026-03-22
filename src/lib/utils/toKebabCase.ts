@@ -41,15 +41,58 @@
  * @param {string} str - The input string to convert.
  * @returns {string} The kebab-case formatted string.
  */
+const COMBINING_DIACRITICS_REGEX = /[\u0300-\u036f]/g;
+
+/**
+ * Converts selected non-decomposing Latin letters to ASCII equivalents.
+ *
+ * @param {string} value - Input string
+ * @returns {string} ASCII-transliterated string
+ */
+function transliterateSpecialLatin(value: string): string {
+  return value
+    .replace(/ß/g, 'ss')
+    .replace(/Æ/g, 'AE')
+    .replace(/æ/g, 'ae')
+    .replace(/Œ/g, 'OE')
+    .replace(/œ/g, 'oe')
+    .replace(/Ø/g, 'O')
+    .replace(/ø/g, 'o')
+    .replace(/Þ/g, 'TH')
+    .replace(/þ/g, 'th')
+    .replace(/Ð/g, 'D')
+    .replace(/ð/g, 'd')
+    .replace(/Ł/g, 'L')
+    .replace(/ł/g, 'l');
+}
+
+/**
+ * Normalizes and transliterates Unicode text into an ASCII-compatible string.
+ *
+ * @param {string} value - Input string
+ * @returns {string} Normalized ASCII-compatible string
+ */
+function normalizeForSlug(value: string): string {
+  return transliterateSpecialLatin(value)
+    .normalize('NFKD')
+    .replace(COMBINING_DIACRITICS_REGEX, '');
+}
+
+/**
+ * Converts a string to kebab-case.
+ *
+ * @param {string} str - The input string to convert.
+ * @returns {string} The kebab-case formatted string.
+ */
 export const toKebabCase = (str: string): string =>
-  str
-    .trim()                                    // Remove leading/trailing whitespace
-    .replace(/([a-z])([A-Z])/g, '$1-$2')      // camelCase/PascalCase → kebab-case
-    .replace(/([0-9])([A-Z])/g, '$1-$2')      // Number-Letter transitions (Level5Monster)
-    .replace(/\./g, '')                       // Remove decimal points (Version 2.0 → version-20)
-    .replace(/[^a-zA-Z0-9\s_-]/g, '')         // Remove special characters except spaces, underscores, hyphens
-    .replace(/\s+/g, '-')                     // Replace spaces with hyphens
-    .replace(/_/g, '-')                       // Replace underscores with hyphens
-    .replace(/-+/g, '-')                      // Collapse multiple hyphens
-    .replace(/^-+|-+$/g, '')                  // Remove leading/trailing hyphens
-    .toLowerCase();
+  normalizeForSlug(str)
+    .trim()
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/([0-9])([A-Z])/g, '$1-$2')
+    .replace(/\./g, '')
+    .replace(/[^a-zA-Z0-9\s_-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/_/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLocaleLowerCase();

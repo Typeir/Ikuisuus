@@ -51,19 +51,19 @@ describe('toTitleCase', () => {
     });
 
     it('should handle string with only hyphens', () => {
-      expect(toTitleCase('---')).toBe(' ');
+      expect(toTitleCase('---')).toBe('');
     });
 
-    it('should preserve already capitalized words', () => {
-      expect(toTitleCase('DRAGON-SLAYER')).toBe('DRAGON SLAYER');
+    it('should normalize casing for already capitalized words', () => {
+      expect(toTitleCase('DRAGON-SLAYER')).toBe('Dragon Slayer');
     });
 
     it('should handle strings starting with hyphen', () => {
-      expect(toTitleCase('-test')).toBe(' Test');
+      expect(toTitleCase('-test')).toBe('Test');
     });
 
     it('should handle strings ending with hyphen', () => {
-      expect(toTitleCase('test-')).toBe('Test ');
+      expect(toTitleCase('test-')).toBe('Test');
     });
   });
 
@@ -74,6 +74,11 @@ describe('toTitleCase', () => {
 
     it('should handle mixed content', () => {
       expect(toTitleCase('the-3rd-dragon')).toBe('The 3rd Dragon');
+    });
+
+    it('should preserve and capitalize diacritic words correctly', () => {
+      expect(toTitleCase('vaarat')).toBe('Vaarat');
+      expect(toTitleCase('väärät')).toBe('Väärät');
     });
   });
 });

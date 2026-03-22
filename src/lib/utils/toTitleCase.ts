@@ -30,5 +30,27 @@
  * @param {string} str - The input string using dashes as separators.
  * @returns {string} The converted string in Title Case with normalized spacing.
  */
-export const toTitleCase = (str: string) =>
-  str.replace(/-+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+function capitalizeWord(word: string): string {
+  const normalized = word.toLocaleLowerCase();
+  const [first, ...rest] = Array.from(normalized);
+  if (!first) {
+    return '';
+  }
+  return `${first.toLocaleUpperCase()}${rest.join('')}`;
+}
+
+/**
+ * Converts a dash-separated string (e.g., kebab-case) to Title Case.
+ * Collapses multiple dashes into a single space.
+ *
+ * @param {string} str - The input string using dashes as separators.
+ * @returns {string} The converted string in Title Case with normalized spacing.
+ */
+export const toTitleCase = (str: string): string =>
+  str
+    .replace(/-+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(capitalizeWord)
+    .join(' ');

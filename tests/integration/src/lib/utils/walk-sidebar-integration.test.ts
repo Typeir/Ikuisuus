@@ -220,6 +220,23 @@ describe('walk-sidebar integration', () => {
       expect(sheetPath).toBeDefined();
       expect(sheetPath).toMatch(/\.sheet$/);
     });
+
+    it('should transliterate unicode filenames into readable slugs', async () => {
+      const unicodeDir = path.join(testDir, 'bloodlines');
+      fs.mkdirSync(unicodeDir, { recursive: true });
+
+      fs.writeFileSync(path.join(unicodeDir, 'väärät.mdx'), '# Väärät');
+
+      const result = await walkTree(adapter, 'en', '', '');
+      const bloodlinesFolder = result.find((r) => r.name === 'Bloodlines');
+
+      expect(bloodlinesFolder).toBeDefined();
+
+      const vaarat = bloodlinesFolder?.children?.find((c) => c.path.endsWith('/vaarat'));
+      expect(vaarat).toBeDefined();
+      expect(vaarat?.name).toBe('Väärät');
+      expect(vaarat?.path).toBe('bloodlines/vaarat');
+    });
   });
 
   describe('nested directory structure', () => {

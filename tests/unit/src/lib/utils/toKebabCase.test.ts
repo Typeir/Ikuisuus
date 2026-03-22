@@ -74,6 +74,11 @@ describe('toKebabCase', () => {
     expect(toKebabCase('Ancient Red Dragon')).toBe('ancient-red-dragon');
   });
 
+  it('should transliterate diacritics into stable ASCII slugs', () => {
+    expect(toKebabCase('Väärät')).toBe('vaarat');
+    expect(toKebabCase('Crème Brûlée')).toBe('creme-brulee');
+  });
+
   it('should handle file extensions when stripped first (real-world usage)', () => {
     // Real usage: strip extension first, then kebab-case
     const fileWithExt = 'My File.mdx';
