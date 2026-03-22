@@ -41,19 +41,13 @@
  * @param {string} str - The input string to convert.
  * @returns {string} The kebab-case formatted string.
  */
-/**
- * Converts a string to kebab-case.
- *
- * @param {string} str - The input string to convert.
- * @returns {string} The kebab-case formatted string.
- */
 export const toKebabCase = (str: string): string =>
   str
     .normalize('NFC')
     .trim()
-    .replace(/([\p{Ll}\d])([\p{Lu}])/gu, '$1-$2')
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .replace(/\./g, '')
-    .replace(/[^\p{L}\p{N}\s_-]/gu, '')
+    .replace(/[^0-9A-Za-z\u00C0-\u024F\u1E00-\u1EFF\s_-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/_/g, '-')
     .replace(/-+/g, '-')
