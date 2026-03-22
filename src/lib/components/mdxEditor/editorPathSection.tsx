@@ -12,8 +12,9 @@
 
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { FileTreeSelect, type TreeNode } from './fileTreeSelect';
+import { useCorrectionsTreeData } from '@/lib/hooks/data/useDraftAndRouteData';
+import { useCallback, useState } from 'react';
+import { FileTreeSelect } from './fileTreeSelect';
 import styles from './mdxEditor.module.scss';
 
 /**
@@ -77,19 +78,9 @@ export function EditorPathSection({
   locale,
   t,
 }: EditorPathSectionProps): JSX.Element {
-  const [tree, setTree] = useState<TreeNode[]>([]);
-  const [treeLoading, setTreeLoading] = useState(false);
+  const { tree, loading: treeLoading } = useCorrectionsTreeData(locale);
   const [selectedFolder, setSelectedFolder] = useState('');
   const [fileName, setFileName] = useState('');
-
-  useEffect(() => {
-    setTreeLoading(true);
-    fetch(`/api/corrections/tree?locale=${encodeURIComponent(locale)}`)
-      .then((res) => (res.ok ? res.json() : { tree: [] }))
-      .then((data) => setTree(data.tree || []))
-      .catch(() => setTree([]))
-      .finally(() => setTreeLoading(false));
-  }, [locale]);
 
   const handleFolderSelect = useCallback(
     (folderPath: string) => {
@@ -126,7 +117,9 @@ export function EditorPathSection({
           onSelect={handleFolderSelect}
           tree={tree}
           loading={treeLoading}
-          placeholder={mode === 'edit' ? t('slugPlaceholder') : t('pathPlaceholder')}
+          placeholder={
+            mode === 'edit' ? t('slugPlaceholder') : t('pathPlaceholder')
+          }
           newFileLabel={t('newFile')}
           disabled={isLoading}
         />

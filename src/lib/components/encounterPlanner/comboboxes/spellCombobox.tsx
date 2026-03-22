@@ -25,10 +25,10 @@
 
 'use client';
 
-import { logger } from '@/lib/logging/logger';
+import { useSpellIndex } from '@/lib/hooks/data/useEncounterData';
 import type { SpellRef } from '@/lib/types/encounterPlanner';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './combobox.module.scss';
 import { ComboboxItem, GenericCombobox } from './genericCombobox';
 
@@ -77,33 +77,8 @@ export const SpellCombobox: React.FC<SpellComboboxProps> = ({
   onSelect,
 }) => {
   const t = useTranslations('encounterPlanner');
-  const [spellIndex, setSpellIndex] = useState<SpellIndexEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { items: spellIndex, isLoading } = useSpellIndex(locale);
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    const loadSpellIndex = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`/api/spells/index?locale=${locale}`);
-        const data = await response.json();
-        const mappedData = data.map((spell: any) => ({
-          ...spell,
-          id: spell.slug,
-          searchableText: `${spell.title} ${spell.school} ${spell.slug}`,
-        }));
-        setSpellIndex(mappedData);
-      } catch (error) {
-        logger.error('Failed to load spell index', {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadSpellIndex();
-  }, [locale]);
 
   return (
     <GenericCombobox

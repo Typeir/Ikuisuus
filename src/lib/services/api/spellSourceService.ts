@@ -1,0 +1,97 @@
+/**
+ * @fileoverview Spell Source Service
+ * @description API service helpers for spell-table source loading from mixed
+ * endpoint and inline data sources.
+ *
+ * @module lib/services/api/spellSourceService
+ */
+
+import { postJson } from './jsonClient';
+
+/**
+ * Spell metadata shape consumed by spell table.
+ *
+ * @interface SpellData
+ * @property {string} slug - URL-safe spell identifier
+ * @property {string} title - Display spell title
+ * @property {number} level - Spell level
+ * @property {string} school - Spell school
+ * @property {string[]} castingTime - Normalized casting time tags
+ * @property {string} castingTimeRaw - Raw casting time text
+ * @property {string} range - Spell range
+ * @property {string} duration - Spell duration text
+ * @property {boolean} verbal - Verbal component flag
+ * @property {boolean} somatic - Somatic component flag
+ * @property {boolean} material - Material component flag
+ * @property {string} [materialDescription] - Optional material description
+ * @property {boolean} concentration - Concentration flag
+ */
+export interface SpellData {
+  slug: string;
+  title: string;
+  level: number;
+  school: string;
+  castingTime: string[];
+  castingTimeRaw: string;
+  range: string;
+  duration: string;
+  verbal: boolean;
+  somatic: boolean;
+  material: boolean;
+  materialDescription?: string;
+  concentration: boolean;
+  [key: string]: unknown;
+}
+
+/**
+ * Spell source configuration.
+ *
+ * @interface SpellSourceRequest
+ * @property {(string | SpellData[])[]} sources - Endpoint URLs or inline spell arrays
+ * @property {string} locale - Current locale
+ * @property {string[]} [spells] - Optional spell slug filter
+ * @property {string} [listSource] - Optional listSource filter
+ */
+export interface SpellSourceRequest {
+  sources: (string | SpellData[])[];
+  locale: string;
+  spells?: string[];
+  listSource?: string;
+}
+
+/**
+ * Fetches spell data from configured sources and de-duplicates by slug.
+ *
+ * @param {SpellSourceRequest} request - Source request configuration
+ * @returns {Promise<SpellData[]>} Unique spell data rows
+ */
+export async function fetchSpellSources(
+  request: SpellSourceRequest,
+): Promise<SpellData[]> {
+  const { sources, locale, spells, listSource } = request;
+  const allSpells: SpellData[] = [];
+
+  for (const source of sources) {
+    if (typeof source === 'string') {
+      const payload = await postJson<
+        {
+          locale: string;
+          listSource?: string;
+          spells?: string[];
+        },
+        SpellData[]
+      >(source, {
+        locale,
+        ...(listSource ? { listSource } : {}),
+        ...(!listSource && spells && spells.length > 0 ? { spells } : {}),
+      });
+      allSpells.push(...payload);
+    } else {
+      allSpells.push(...source);
+    }
+  }
+
+  return Array.from(
+    new Map(allSpells.map((spell) => [spell.slug, spell])).values(),
+  );
+}

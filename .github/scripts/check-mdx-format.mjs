@@ -237,6 +237,36 @@ function getContentType(relPath) {
 }
 
 /**
+ * Parse health-check ignore directives from the file head.
+ *
+ * Supported formats:
+ * <!---health:check-ignore rule-name--->
+ * {/*health:check-ignore rule-name*\/}
+ *
+ * @param {string} content - MDX file content
+ * @returns {Set<string>} Ignored rule names
+ */
+function getIgnoredRules(content) {
+  const ignored = new Set();
+  const head = content.split('\n').slice(0, 20).join('\n');
+  const htmlIgnoreRegex =
+    /<!---?\s*health:check-ignore\s+([a-z0-9-]+?)(?:\s*)--+>/gi;
+  const mdxIgnoreRegex =
+    /\{\/\*\s*health:check-ignore\s+([a-z0-9-]+)\s*\*\/\}/gi;
+
+  let match;
+  while ((match = htmlIgnoreRegex.exec(head)) !== null) {
+    ignored.add(match[1]);
+  }
+
+  while ((match = mdxIgnoreRegex.exec(head)) !== null) {
+    ignored.add(match[1]);
+  }
+
+  return ignored;
+}
+
+/**
  * Recursively find all MDX files
  *
  * @param {string} dir - Directory to scan
@@ -273,9 +303,14 @@ async function findMdxFiles(dir, results = []) {
  */
 function checkFile(absPath, content, relPath, allComponents) {
   const contentType = getContentType(relPath);
+  const ignoredRules = getIgnoredRules(content);
   const violations = [];
 
   for (const rule of RULES) {
+    if (ignoredRules.has(rule.name)) {
+      continue;
+    }
+
     if (rule.appliesTo && !rule.appliesTo.includes(contentType)) {
       continue;
     }

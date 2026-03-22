@@ -4,15 +4,9 @@
  * matching the current page's locale+slug. When a draft exists, it compiles the
  * MDX on the client and renders the result over the server-rendered static
  * content with a slide animation. A toggle button lets users dismiss the draft
- * (slides off-screen to the right) to see the underlying ISR content.
- *
- * The MDX compiler (`@mdx-js/mdx evaluate`) is dynamically imported so it
- * only loads when a draft actually exists, keeping the main bundle lean.
+ * to see the underlying ISR content.
  *
  * @module lib/components/draftOverlay/draftOverlay
- * @version 3.0.0
- * @author Typeir
- * @since 6.0.0
  */
 
 'use client';
@@ -20,6 +14,7 @@
 import DraftBanner from '@/lib/components/draftBanner/draftBanner';
 import mdxComponents from '@/lib/components/mdx';
 import type { DraftMetadata } from '@/lib/db/content/schemas/draftMetadata';
+import { useActiveDraft } from '@/lib/hooks/data/useDraftAndRouteData';
 import contentStyles from '@/styles/mdxContent.module.scss';
 import { useCallback, useEffect, useState } from 'react';
 import * as runtime from 'react/jsx-runtime';
@@ -28,65 +23,35 @@ import styles from './draftOverlay.module.scss';
 /**
  * Props for the DraftOverlay component.
  *
- * @property {string} locale - Content locale (e.g. 'en')
- * @property {string} slug - Content slug path (e.g. 'monsters/albedo')
+ * @interface DraftOverlayProps
+ * @property {string} locale - Content locale
+ * @property {string} slug - Content slug path
  * @property {React.ReactNode} children - Static ISR page content
  */
 interface DraftOverlayProps {
-  /** @property {string} locale - Content locale */
   locale: string;
-  /** @property {string} slug - Content slug path */
   slug: string;
-  /** @property {React.ReactNode} children - Static ISR page content */
   children: React.ReactNode;
 }
 
 /**
- * Internal state for the draft fetch + compile lifecycle.
+ * Internal state for draft compile lifecycle.
  *
+ * @interface DraftState
  * @property {DraftMetadata | null} draft - Fetched draft or null
  * @property {React.ComponentType | null} MdxContent - Compiled MDX component
  * @property {boolean} loading - Whether the fetch/compile is in progress
  * @property {string | null} compileError - MDX compilation error message
  */
 interface DraftState {
-  /** @property {DraftMetadata | null} draft - Fetched draft or null */
   draft: DraftMetadata | null;
-  /** @property {React.ComponentType | null} MdxContent - Compiled MDX component */
   MdxContent: React.ComponentType | null;
-  /** @property {boolean} loading - Whether the fetch/compile is in progress */
   loading: boolean;
-  /** @property {string | null} compileError - MDX compilation error message */
   compileError: string | null;
 }
 
 /**
- * Fetches the active draft for a locale+slug from the drafts API.
- *
- * @param {string} locale - Content locale
- * @param {string} slug - Content slug path
- * @returns {Promise<DraftMetadata | null>} Active draft or null
- */
-const fetchDraft = async (
-  locale: string,
-  slug: string,
-): Promise<DraftMetadata | null> => {
-  try {
-    const res = await fetch(
-      `/api/drafts?locale=${encodeURIComponent(locale)}&slug=${encodeURIComponent(slug)}`,
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.draft ?? null;
-  } catch {
-    return null;
-  }
-};
-
-/**
- * Compiles raw MDX source into a renderable React component using the
- * `@mdx-js/mdx` evaluate function. Dynamically imported to avoid pulling
- * the compiler into the main bundle.
+ * Compiles raw MDX source into a renderable React component using dynamic imports.
  *
  * @param {string} source - Raw MDX content
  * @returns {Promise<React.ComponentType>} Compiled MDX component
@@ -96,18 +61,20 @@ const compileMdx = async (source: string): Promise<React.ComponentType> => {
   const remarkGfm = (await import('remark-gfm')).default;
 
   const result = await evaluate(source, {
-    ...(runtime as any),
+    Fragment: runtime.Fragment,
+    jsx: runtime.jsx,
+    jsxs: runtime.jsxs,
     remarkPlugins: [remarkGfm],
     useMDXComponents: () => mdxComponents,
   });
+
   return result.default as React.ComponentType;
 };
 
 /**
  * Client-side overlay that renders compiled draft MDX over the static ISR page.
- * When an active draft exists, it slides in from the right and covers the
- * static content. A toggle button dismisses or restores the draft panel.
  *
+ * @component
  * @param {DraftOverlayProps} props - Component props
  * @param {string} props.locale - Content locale
  * @param {string} props.slug - Content slug path
@@ -119,6 +86,7 @@ const DraftOverlay: React.FC<DraftOverlayProps> = ({
   slug,
   children,
 }) => {
+  const { draft, loading: draftLoading } = useActiveDraft(locale, slug);
   const [state, setState] = useState<DraftState>({
     draft: null,
     MdxContent: null,
@@ -130,15 +98,16 @@ const DraftOverlay: React.FC<DraftOverlayProps> = ({
   useEffect(() => {
     let cancelled = false;
 
-    fetchDraft(locale, slug).then(async (draft) => {
-      if (cancelled || !draft) {
-        if (!cancelled)
+    const compile = async () => {
+      if (!draft) {
+        if (!cancelled) {
           setState({
             draft: null,
             MdxContent: null,
-            loading: false,
+            loading: draftLoading,
             compileError: null,
           });
+        }
         return;
       }
 
@@ -147,28 +116,33 @@ const DraftOverlay: React.FC<DraftOverlayProps> = ({
         if (!cancelled) {
           setState({ draft, MdxContent, loading: false, compileError: null });
         }
-      } catch (err) {
+      } catch (error) {
         if (!cancelled) {
           setState({
             draft,
             MdxContent: null,
             loading: false,
-            compileError: err instanceof Error ? err.message : String(err),
+            compileError:
+              error instanceof Error ? error.message : String(error),
           });
         }
       }
-    });
+    };
+
+    compile();
 
     return () => {
       cancelled = true;
     };
-  }, [locale, slug]);
+  }, [draft, draftLoading]);
 
   const handleToggle = useCallback(() => {
     setShowDraft((prev) => !prev);
   }, []);
 
-  if (state.loading || !state.draft) return <>{children}</>;
+  if (state.loading || !state.draft) {
+    return <>{children}</>;
+  }
 
   return (
     <div className={styles.container}>

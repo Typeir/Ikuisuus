@@ -26,21 +26,17 @@
  */
 'use client';
 
-import { logger } from '@/lib/logging/logger';
+import { useLibrarySearchData } from '@/lib/hooks/data/useSearchData';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebounce } from '../../hooks/useDebounce';
 import { ExternalSearchResults } from '../externalSearchResults/externalSearchResults';
 import styles from './librarySearch.module.scss';
-/**
- * Represents a single local search result item returned by the internal API.
- */
-type SearchResult = {
-  name: string;
-  path: string;
-};
+
+const SEARCH_LOADING_DELAY_MS = 150;
+
 /**
  * Search component for the Ikuisuus project.
  *
@@ -56,69 +52,20 @@ export const LibrarySearch = (): JSX.Element => {
   const t = useTranslations('search');
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 400);
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { results, loading } = useLibrarySearchData(debouncedQuery);
   const [showLoadingText, setShowLoadingText] = useState(false);
   const [searchBeyond, setSearchBeyond] = useState(false);
   const params = useParams();
 
   const locale = params.locale as string;
-  /**
-   * Tracks the most recent request for local search to avoid race conditions.
-   * Only the result from the latest fetch is allowed to update UI state.
-   */
-  const requestIdRef = useRef(0);
-  /**
-   * Runs a debounced local search using the internal API.
-   * Replaces results only if data is present, ensuring graceful fallback.
-   */
-  useEffect(() => {
-    const currentRequestId = ++requestIdRef.current;
 
-    if (debouncedQuery.length < 2) {
-      setResults([]);
-      setLoading(false);
-      return;
-    }
-
-    const search = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `/api/search?q=${encodeURIComponent(debouncedQuery)}`,
-        );
-        const data: SearchResult[] = await res.json();
-
-        if (
-          requestIdRef.current === currentRequestId &&
-          Array.isArray(data) &&
-          data.length > 0
-        ) {
-          setResults(data);
-        }
-      } catch (err) {
-        if (requestIdRef.current === currentRequestId) {
-          logger.error('Search error', {
-            error: err instanceof Error ? err.message : String(err),
-          });
-        }
-      } finally {
-        if (requestIdRef.current === currentRequestId) {
-          setLoading(false);
-        }
-      }
-    };
-
-    search();
-  }, [debouncedQuery]);
-  /**
-   * Controls whether the "Searching..." indicator is visible.
-   * Adds a 150ms delay before showing, to prevent flickering on fast queries.
-   */
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (loading) {
-      timeout = setTimeout(() => setShowLoadingText(true), 150);
+      timeout = setTimeout(
+        () => setShowLoadingText(true),
+        SEARCH_LOADING_DELAY_MS,
+      );
     } else {
       setShowLoadingText(false);
     }

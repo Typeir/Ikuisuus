@@ -63,19 +63,19 @@ export enum LogLevel {
  * @interface LoggerConfig
  * @property {LogLevel} minLevel - Minimum level to output
  * @property {boolean} useStderrForErrors - Route errors/warnings to stderr
- * @property {Record<string, any>} [scope] - Metadata to include in all logs
+ * @property {Record<string, unknown>} [scope] - Metadata to include in all logs
  * @property {string} [logFilePath] - Path to log file (optional)
  */
 interface LoggerConfig {
   minLevel: LogLevel;
   useStderrForErrors: boolean;
-  scope?: Record<string, any>;
+  scope?: Record<string, unknown>;
 }
 
 /**
  * Metadata object for structured logging
  */
-type LogMetadata = Record<string, any>;
+type LogMetadata = Record<string, unknown>;
 
 /**
  * Maximum depth for object serialization
@@ -95,16 +95,16 @@ const MAX_ARRAY_ELEMENTS = 5;
 /**
  * Safely serialize metadata with circular reference handling and truncation
  *
- * @param {any} value - Value to serialize
+ * @param {unknown} value - Value to serialize
  * @param {number} depth - Current depth in object tree
- * @param {WeakSet<any>} seen - Set of already-seen objects (circular detection)
- * @returns {any} Serialized value safe for JSON output
+ * @param {WeakSet<object>} seen - Set of already-seen objects (circular detection)
+ * @returns {unknown} Serialized value safe for JSON output
  */
 function safeSerialize(
-  value: any,
+  value: unknown,
   depth: number = 0,
-  seen: WeakSet<any> = new WeakSet(),
-): any {
+  seen: WeakSet<object> = new WeakSet(),
+): unknown {
   if (depth > MAX_DEPTH) {
     return '[Max Depth Reached]';
   }
@@ -128,10 +128,12 @@ function safeSerialize(
   }
 
   if (type === 'object') {
-    if (seen.has(value)) {
+    if (typeof value === 'object' && value !== null && seen.has(value)) {
       return '[Circular Reference]';
     }
-    seen.add(value);
+    if (typeof value === 'object' && value !== null) {
+      seen.add(value);
+    }
 
     if (Array.isArray(value)) {
       const serialized = value
@@ -146,19 +148,20 @@ function safeSerialize(
       return serialized;
     }
 
-    const result: Record<string, any> = {};
-    const keys = Object.keys(value).slice(0, 20);
+    const result: Record<string, unknown> = {};
+    const typedValue = value as Record<string, unknown>;
+    const keys = Object.keys(typedValue).slice(0, 20);
 
     for (const key of keys) {
       try {
-        result[key] = safeSerialize(value[key], depth + 1, seen);
+        result[key] = safeSerialize(typedValue[key], depth + 1, seen);
       } catch (err) {
         result[key] = '[Serialization Error]';
       }
     }
 
-    if (Object.keys(value).length > 20) {
-      result['...'] = `(${Object.keys(value).length - 20} more keys)`;
+    if (Object.keys(typedValue).length > 20) {
+      result['...'] = `(${Object.keys(typedValue).length - 20} more keys)`;
     }
 
     return result;
@@ -285,7 +288,7 @@ class Logger {
     ) {
       console.error(formattedMessage);
     } else {
-      console.log(formattedMessage);
+      console.info(formattedMessage);
     }
   }
 
@@ -418,3 +421,4 @@ export function createLogger(scope: LogMetadata): Logger {
  * Export LogLevel enum for consumers
  */
 export { LogLevel as Level };
+

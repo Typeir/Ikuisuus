@@ -28,12 +28,16 @@
 'use client';
 
 import { SIZE_SORT_ORDER } from '@/lib/enums/tableConstants';
+import { useMetadataTableData } from '@/lib/hooks/data/useMetadataTableData';
 import { logger } from '@/lib/logging/logger';
+import { fetchMonsterMetadata } from '@/lib/services/api/metadataTableService';
 import { compareByOrder, compareChallengeRating } from '@/lib/utils/tableUtils';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import MetadataTable, { type ColumnConfig } from './metadataTable';
+import MetadataTable, {
+  type ColumnConfig,
+  type MetadataRow,
+} from './metadataTable';
 import { MetadataTableSkeleton } from './metadataTableSkeleton';
 
 /**
@@ -60,8 +64,11 @@ type MonsterMetadata = {
   ac: number | { value: number; notes?: string };
   hp: number | { average: number; formula?: string };
   alignment?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 };
+
+const asMonsterMetadata = (row: MetadataRow): MonsterMetadata =>
+  row as MonsterMetadata;
 
 /**
  * Props for MonsterTableWrapper component.
@@ -88,29 +95,11 @@ export default function MonsterTableWrapper({
   const tColumns = useTranslations('tables.monsters.columns');
   const params = useParams();
   const locale = localeProp || (params?.locale as string) || 'en';
-  const [data, setData] = useState<MonsterMetadata[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch(`/api/monsters?locale=${locale}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((monsters) => {
-        logger.debug('Loaded monsters', { count: monsters.length });
-        setData(monsters);
-        setLoading(false);
-      })
-      .catch((err) => {
-        logger.error('Failed to load monsters', {
-          error: err instanceof Error ? err.message : String(err),
-        });
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [locale]);
+  const { data, loading, error } = useMetadataTableData<MonsterMetadata>(
+    fetchMonsterMetadata,
+    locale,
+    'monsters',
+  );
 
   if (loading) {
     return (
@@ -153,14 +142,14 @@ export default function MonsterTableWrapper({
     {
       key: 'title',
       label: tColumns('name'),
-      getValue: (row: any) => row.title,
+      getValue: (row: MetadataRow) => asMonsterMetadata(row).title,
       sortable: true,
     },
     {
       key: 'size',
       label: tColumns('size'),
-      getValue: (row: any) => row.size,
-      render: (value: any) => {
+      getValue: (row: MetadataRow) => asMonsterMetadata(row).size,
+      render: (value: unknown) => {
         if (!value) return '—';
         const str = String(value);
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -173,8 +162,8 @@ export default function MonsterTableWrapper({
     {
       key: 'creatureType',
       label: tColumns('type'),
-      getValue: (row: any) => row.creatureType,
-      render: (value: any) => {
+      getValue: (row: MetadataRow) => asMonsterMetadata(row).creatureType,
+      render: (value: unknown) => {
         if (!value) return '—';
         const str = String(value);
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -186,8 +175,8 @@ export default function MonsterTableWrapper({
     {
       key: 'cr',
       label: tColumns('cr'),
-      getValue: (row: any) => row.cr,
-      render: (value: any) => value || '—',
+      getValue: (row: MetadataRow) => asMonsterMetadata(row).cr,
+      render: (value: unknown) => value || '—',
       compareValues: (a, b) => compareChallengeRating(a, b),
       sortable: true,
       filterable: true,
@@ -196,7 +185,10 @@ export default function MonsterTableWrapper({
     {
       key: 'ac',
       label: tColumns('ac'),
-      getValue: (row: any) => row.ac?.value ?? row.ac,
+      getValue: (row: MetadataRow) => {
+        const monster = asMonsterMetadata(row);
+        return typeof monster.ac === 'number' ? monster.ac : monster.ac?.value;
+      },
       sortable: true,
       filterable: true,
       filterType: 'range',
@@ -204,7 +196,12 @@ export default function MonsterTableWrapper({
     {
       key: 'hp',
       label: tColumns('hp'),
-      getValue: (row: any) => row.hp?.average ?? row.hp,
+      getValue: (row: MetadataRow) => {
+        const monster = asMonsterMetadata(row);
+        return typeof monster.hp === 'number'
+          ? monster.hp
+          : monster.hp?.average;
+      },
       sortable: true,
       filterable: true,
       filterType: 'range',
@@ -212,8 +209,8 @@ export default function MonsterTableWrapper({
     {
       key: 'alignment',
       label: tColumns('alignment'),
-      getValue: (row: any) => row.alignment,
-      render: (value: any) => {
+      getValue: (row: MetadataRow) => asMonsterMetadata(row).alignment,
+      render: (value: unknown) => {
         if (!value) return '—';
         const str = String(value);
         return str

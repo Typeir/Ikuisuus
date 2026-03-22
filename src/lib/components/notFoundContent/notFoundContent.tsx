@@ -11,27 +11,11 @@
 'use client';
 
 import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
-import { ApiRoutes } from '@/lib/enums/apiRoutes';
-import { logger } from '@/lib/logging/logger';
+import { useNearestRoute } from '@/lib/hooks/data/useDraftAndRouteData';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import styles from './notFound.module.scss';
-
-/**
- * Route match result from API
- *
- * @interface RouteMatch
- * @property {string} path - Matched route path
- * @property {string} [title] - Display title for route
- * @property {number} similarity - Similarity score (0-1)
- */
-interface RouteMatch {
-  path: string;
-  title?: string;
-  similarity: number;
-}
 
 /**
  * Not Found content component with smart suggestions
@@ -42,37 +26,7 @@ interface RouteMatch {
 export function NotFoundContent(): JSX.Element {
   const pathname = usePathname();
   const t = useTranslations('notFound');
-  const [nearestRoute, setNearestRoute] = useState<RouteMatch | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function findMatch() {
-      try {
-        const response = await fetch(ApiRoutes.FindNearestRoute, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pathname }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setNearestRoute(data.match);
-        }
-      } catch (err) {
-        logger.error('Failed to find nearest route', {
-          error: err instanceof Error ? err.message : String(err),
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    if (pathname) {
-      findMatch();
-    } else {
-      setLoading(false);
-    }
-  }, [pathname]);
+  const { nearestRoute, loading } = useNearestRoute(pathname);
 
   return (
     <div className={styles.notFoundContainer}>

@@ -13,12 +13,12 @@ vi.unmock('@/lib/logging/logger');
 import { createLogger, Level, logger, LogLevel } from '@/lib/logging/logger';
 
 describe('Logger', () => {
-  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+  let consoleInfoSpy: ReturnType<typeof vi.spyOn>;
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     // Spy on console methods
-    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -39,17 +39,17 @@ describe('Logger', () => {
       logger.error('error message');
 
       // Only warning and error should be logged
-      expect(consoleLogSpy).toHaveBeenCalledTimes(2);
-      expect(consoleLogSpy).not.toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledTimes(2);
+      expect(consoleInfoSpy).not.toHaveBeenCalledWith(
         expect.stringContaining('debug message'),
       );
-      expect(consoleLogSpy).not.toHaveBeenCalledWith(
+      expect(consoleInfoSpy).not.toHaveBeenCalledWith(
         expect.stringContaining('info message'),
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('warning message'),
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('error message'),
       );
     });
@@ -59,10 +59,10 @@ describe('Logger', () => {
 
       logger.debug('debug message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('debug message'),
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('[DEBUG]'),
       );
     });
@@ -75,7 +75,7 @@ describe('Logger', () => {
       logger.warning('warning');
       logger.error('error');
 
-      expect(consoleLogSpy).not.toHaveBeenCalled();
+      expect(consoleInfoSpy).not.toHaveBeenCalled();
       expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
@@ -84,7 +84,7 @@ describe('Logger', () => {
 
       logger.message('should appear');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('should appear'),
       );
     });
@@ -98,10 +98,10 @@ describe('Logger', () => {
     it('should format debug messages correctly', () => {
       logger.debug('Debug message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('[DEBUG]'),
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('Debug message'),
       );
     });
@@ -109,10 +109,10 @@ describe('Logger', () => {
     it('should format message logs correctly', () => {
       logger.message('Info message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('[MESSAGE]'),
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('Info message'),
       );
     });
@@ -120,10 +120,10 @@ describe('Logger', () => {
     it('should format warning logs correctly', () => {
       logger.warning('Warning message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('[WARNING]'),
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('Warning message'),
       );
     });
@@ -131,10 +131,10 @@ describe('Logger', () => {
     it('should format error logs correctly', () => {
       logger.error('Error message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('[ERROR]'),
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('Error message'),
       );
     });
@@ -142,7 +142,7 @@ describe('Logger', () => {
     it('should include timestamp in all logs', () => {
       logger.message('Test message');
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toMatch(/^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\]/);
     });
   });
@@ -155,10 +155,10 @@ describe('Logger', () => {
     it('should serialize simple metadata', () => {
       logger.message('Test', { userId: 123, action: 'login' });
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('userId=123'),
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('action=login'),
       );
     });
@@ -176,7 +176,7 @@ describe('Logger', () => {
 
       logger.message('Deep object', { data: deepObject });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('data=');
       expect(call).toContain('level1');
       expect(call).toContain('level2');
@@ -190,7 +190,7 @@ describe('Logger', () => {
 
       logger.message('Circular ref', { obj: circular });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('[Circular Reference]');
     });
 
@@ -199,7 +199,7 @@ describe('Logger', () => {
 
       logger.message('Long string', { text: longString });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('(truncated)');
       expect(call).not.toContain('a'.repeat(201));
     });
@@ -209,7 +209,7 @@ describe('Logger', () => {
 
       logger.message('Long array', { numbers: longArray });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('more items');
     });
 
@@ -219,7 +219,7 @@ describe('Logger', () => {
         undefinedVal: undefined,
       });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('nullVal=null');
       expect(call).toContain('undefinedVal=undefined');
     });
@@ -230,7 +230,7 @@ describe('Logger', () => {
 
       logger.message('Functions', { named: namedFunction, anon: anonymous });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('[Function: namedFunction]');
       expect(call).toContain('[Function: anonymous]');
     });
@@ -244,7 +244,7 @@ describe('Logger', () => {
         object: { key: 'value' },
       });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('string=text');
       expect(call).toContain('number=42');
       expect(call).toContain('boolean=true');
@@ -259,7 +259,7 @@ describe('Logger', () => {
 
       logger.message('Many keys', { data: manyKeys });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('more keys');
     });
   });
@@ -274,7 +274,7 @@ describe('Logger', () => {
 
       childLogger.message('Test message');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('module=TestModule'),
       );
     });
@@ -285,7 +285,7 @@ describe('Logger', () => {
 
       child.message('Request', { status: 200 });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('service=API');
       expect(call).toContain('endpoint=/monsters');
       expect(call).toContain('status=200');
@@ -299,8 +299,8 @@ describe('Logger', () => {
       childLogger.message('Should not appear');
       childLogger.warning('Should appear');
 
-      expect(consoleLogSpy).toHaveBeenCalledTimes(1);
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledTimes(1);
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('Should appear'),
       );
     });
@@ -316,7 +316,7 @@ describe('Logger', () => {
 
       scopedLogger.message('Rendering');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('component=MonsterTable'),
       );
     });
@@ -351,7 +351,7 @@ describe('Logger', () => {
       logger.warning('Warning');
       logger.error('Error');
 
-      expect(consoleLogSpy).toHaveBeenCalledTimes(2);
+      expect(consoleInfoSpy).toHaveBeenCalledTimes(2);
       expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
@@ -363,8 +363,8 @@ describe('Logger', () => {
       logger.error('Error');
 
       // Message goes to stdout
-      expect(consoleLogSpy).toHaveBeenCalledTimes(1);
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledTimes(1);
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('Message'),
       );
 
@@ -384,7 +384,7 @@ describe('Logger', () => {
 
       logger.error('Error');
 
-      expect(consoleLogSpy).toHaveBeenCalledTimes(1);
+      expect(consoleInfoSpy).toHaveBeenCalledTimes(1);
       expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
   });
@@ -413,7 +413,7 @@ describe('Logger', () => {
       expect(logger.getMinLevel()).toBe(LogLevel.DEBUG);
 
       logger.debug('Should appear');
-      expect(consoleLogSpy).toHaveBeenCalled();
+      expect(consoleInfoSpy).toHaveBeenCalled();
     });
   });
 
@@ -425,7 +425,7 @@ describe('Logger', () => {
     it('should handle empty metadata', () => {
       logger.message('No metadata', {});
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('No metadata');
       expect(call).not.toContain('[]'); // Empty metadata should not add brackets
     });
@@ -433,7 +433,7 @@ describe('Logger', () => {
     it('should handle messages with special characters', () => {
       logger.message('Message with "quotes" and [brackets] and {braces}');
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining(
           'Message with "quotes" and [brackets] and {braces}',
         ),
@@ -445,7 +445,7 @@ describe('Logger', () => {
 
       logger.error('Error occurred', { error });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       // Error objects serialize mostly as empty, but we should see the key
       expect(call).toContain('error=');
     });
@@ -455,7 +455,7 @@ describe('Logger', () => {
 
       logger.message('Date test', { timestamp: date });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('timestamp=');
     });
 
@@ -464,7 +464,7 @@ describe('Logger', () => {
 
       logger.message('Symbol test', { symbol: sym });
 
-      const call = consoleLogSpy.mock.calls[0][0];
+      const call = consoleInfoSpy.mock.calls[0][0];
       expect(call).toContain('symbol=');
     });
   });

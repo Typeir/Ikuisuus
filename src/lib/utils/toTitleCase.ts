@@ -4,17 +4,17 @@
  * Inverse operation of toKebabCase. Collapses multiple consecutive dashes into single
  * spaces and capitalizes the first letter of each word. Used for displaying slugs
  * as page titles and breadcrumb labels.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires None - Pure string utility
- * 
+ *
  * @example
  * ```typescript
  * import { toTitleCase } from '@/lib/utils/toTitleCase';
- * 
+ *
  * toTitleCase('iron-snail-warrior'); // 'Iron Snail Warrior'
  * toTitleCase('items---heirlooms'); // 'Items Heirlooms'
  * ```

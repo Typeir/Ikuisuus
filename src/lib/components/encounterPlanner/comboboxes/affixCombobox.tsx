@@ -26,10 +26,10 @@
 
 'use client';
 
-import { logger } from '@/lib/logging/logger';
+import { useAffixIndex } from '@/lib/hooks/data/useEncounterData';
 import type { AffixEntry } from '@/lib/types/encounterPlanner';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './combobox.module.scss';
 import { ComboboxItem, GenericCombobox } from './genericCombobox';
 
@@ -82,39 +82,11 @@ export const AffixCombobox: React.FC<AffixComboboxProps> = ({
   onSelect,
 }) => {
   const t = useTranslations('encounterPlanner');
-  const [allAffixes, setAllAffixes] = useState<AffixIndexEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  /** Fetch all affixes only once per locale */
-  useEffect(() => {
-    const loadAffixIndex = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`/api/affixes/index?locale=${locale}`);
-        const data = await response.json();
-        const mappedData = data.map((affix: any) => ({
-          ...affix,
-          id: affix.slug,
-          searchableText: affix.title,
-        }));
-        setAllAffixes(mappedData);
-      } catch (error) {
-        logger.error('Failed to load affix index', {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadAffixIndex();
-  }, [locale]);
-
-  /** Filter out existing affixes on render (no effect needed) */
-  const filteredAffixes = allAffixes.filter(
-    (affix) => !existingAffixes.includes(affix.title),
+  const { items: filteredAffixes, isLoading } = useAffixIndex(
+    locale,
+    existingAffixes,
   );
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <GenericCombobox

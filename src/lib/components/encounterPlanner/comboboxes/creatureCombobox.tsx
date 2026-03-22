@@ -24,9 +24,9 @@
 
 'use client';
 
-import { logger } from '@/lib/logging/logger';
+import { useCreatureIndex } from '@/lib/hooks/data/useEncounterData';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './combobox.module.scss';
 import { ComboboxItem, GenericCombobox } from './genericCombobox';
 
@@ -76,33 +76,8 @@ export const CreatureCombobox: React.FC<CreatureComboboxProps> = ({
   onSelect,
 }) => {
   const t = useTranslations('encounterPlanner');
-  const [monsterIndex, setMonsterIndex] = useState<MonsterIndexEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { items: monsterIndex, isLoading } = useCreatureIndex(locale);
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    const loadMonsterIndex = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`/api/monsters/index?locale=${locale}`);
-        const data = await response.json();
-        const mappedData = data.map((monster: any) => ({
-          ...monster,
-          id: monster.slug,
-          searchableText: `${monster.title} ${monster.creatureType} ${monster.size} ${monster.cr} ${monster.slug}`,
-        }));
-        setMonsterIndex(mappedData);
-      } catch (error) {
-        logger.error('Failed to load monster index', {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadMonsterIndex();
-  }, [locale]);
 
   return (
     <GenericCombobox

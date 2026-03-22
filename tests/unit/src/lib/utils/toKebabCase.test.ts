@@ -1,12 +1,12 @@
 /**
  * toKebabCase Utility Unit Tests
- * 
+ *
  * @fileoverview Tests for the toKebabCase utility function that converts
  * strings to kebab-case format for URLs and filenames.
  */
 
-import { describe, it, expect } from 'vitest';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
+import { describe, expect, it } from 'vitest';
 
 describe('toKebabCase', () => {
   it('should convert space-separated words to kebab-case', () => {
@@ -70,7 +70,9 @@ describe('toKebabCase', () => {
   });
 
   it('should handle D&D monster names', () => {
-    expect(toKebabCase('Albedo, the Bleak Bloom')).toBe('albedo-the-bleak-bloom');
+    expect(toKebabCase('Albedo, the Bleak Bloom')).toBe(
+      'albedo-the-bleak-bloom',
+    );
     expect(toKebabCase('Ancient Red Dragon')).toBe('ancient-red-dragon');
   });
 
@@ -84,7 +86,7 @@ describe('toKebabCase', () => {
     const fileWithExt = 'My File.mdx';
     const withoutExt = fileWithExt.replace(/\.mdx$/, '');
     expect(toKebabCase(withoutExt)).toBe('my-file');
-    
+
     const componentFile = 'Component.tsx';
     const withoutTsx = componentFile.replace(/\.tsx$/, '');
     expect(toKebabCase(withoutTsx)).toBe('component');
@@ -125,7 +127,7 @@ describe('toKebabCase', () => {
       const withoutSheet = filename.replace(/\.sheet$/, '');
       const kebabBase = toKebabCase(withoutSheet);
       const finalPath = kebabBase + '.sheet';
-      
+
       expect(finalPath).toBe('abandoned-old-war-machine.sheet');
       // ✅ Correct!
     });
@@ -135,7 +137,7 @@ describe('toKebabCase', () => {
       const withoutSheet = filename.replace(/\.sheet$/, '');
       const kebabBase = toKebabCase(withoutSheet);
       const finalPath = kebabBase + '.sheet';
-      
+
       expect(finalPath).toBe('monster-v20.sheet');
     });
   });

@@ -232,7 +232,9 @@ describe('walk-sidebar integration', () => {
 
       expect(bloodlinesFolder).toBeDefined();
 
-      const vaarat = bloodlinesFolder?.children?.find((c) => c.path.endsWith('/väärät'));
+      const vaarat = bloodlinesFolder?.children?.find((c) =>
+        c.path.endsWith('/väärät'),
+      );
       expect(vaarat).toBeDefined();
       expect(vaarat?.name).toBe('Väärät');
       expect(vaarat?.path).toBe('bloodlines/väärät');

@@ -3,17 +3,17 @@
  * @description Converts camelCase, PascalCase, snake_case, and space-separated strings
  * to kebab-case format. Used throughout the codebase for URL generation, filename
  * normalization, and CSS class naming. Handles multiple formatting conventions.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires None - Pure string utility
- * 
+ *
  * @example
  * ```typescript
  * import { toKebabCase } from '@/lib/utils/toKebabCase';
- * 
+ *
  * toKebabCase('MyExampleString'); // 'my-example-string'
  * toKebabCase('my_example_string'); // 'my-example-string'
  * toKebabCase('My Example String'); // 'my-example-string'

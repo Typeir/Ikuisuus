@@ -26,14 +26,12 @@
 
 'use client';
 
-import { logger } from '@/lib/logging/logger';
+import { useSpellLinks } from '@/lib/hooks/data/useEncounterData';
 import type { SpellRef } from '@/lib/types/encounterPlanner';
-import { useCallback, useEffect, useState } from 'react';
-import { SpellCombobox } from '../comboboxes';
 import { X } from 'lucide-react';
+import { useCallback } from 'react';
+import { SpellCombobox } from '../comboboxes';
 import styles from '../creatureRow.module.scss';
-
-const log = logger.child({ module: 'SpellListEditor' });
 
 /**
  * @interface SpellListEditorProps
@@ -82,61 +80,10 @@ export const SpellListEditor: React.FC<SpellListEditorProps> = ({
   readOnly = false,
   removeChipAriaLabel = 'Remove spell',
 }) => {
-  const [spellLinks, setSpellLinks] = useState<Record<string, string>>({});
-  const slugsKey = spells.map((s) => s.slug).join(',');
-
-  /** Fetch spell wiki links for all spells in list */
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadSpellLinks = async () => {
-      const slugs = spells.map((s) => s.slug);
-      if (slugs.length === 0) return;
-
-      setSpellLinks((prev) => {
-        const missingSlugs = slugs.filter((slug) => !prev[slug]);
-        if (missingSlugs.length === 0) return prev;
-
-        (async () => {
-          const fetched: Record<string, string> = {};
-
-          for (const slug of missingSlugs) {
-            try {
-              const response = await fetch(`/api/spells/${slug}?locale=${locale}`);
-              if (!response.ok) continue;
-
-              const data = await response.json();
-              if (!data?.link) continue;
-
-              fetched[slug] = /^https?:\/\//i.test(data.link)
-                ? data.link
-                : `/${locale}${data.link.startsWith('/') ? '' : '/'}${data.link}`;
-            } catch (error) {
-              log.error('Failed to load spell link', {
-                slug,
-                locale,
-                error: error instanceof Error ? error.message : String(error)
-              });
-            }
-          }
-
-          if (cancelled) return;
-
-          if (Object.keys(fetched).length > 0) {
-            setSpellLinks((current) => ({ ...current, ...fetched }));
-          }
-        })();
-
-        return prev;
-      });
-    };
-
-    loadSpellLinks();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [slugsKey, locale, spells]);
+  const spellLinks = useSpellLinks(
+    spells.map((spell) => spell.slug),
+    locale,
+  );
 
   const handleAddSpell = useCallback(
     (spell: SpellRef) => {
@@ -144,14 +91,14 @@ export const SpellListEditor: React.FC<SpellListEditorProps> = ({
       if (spellAlreadyExists) return;
       onChange([...spells, spell]);
     },
-    [spells, onChange]
+    [spells, onChange],
   );
 
   const handleRemoveSpell = useCallback(
     (slug: string) => {
       onChange(spells.filter((s) => s.slug !== slug));
     },
-    [spells, onChange]
+    [spells, onChange],
   );
 
   return (

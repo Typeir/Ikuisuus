@@ -13,8 +13,8 @@
  * @requires @/lib/utils/toTitleCase Module under test
  */
 
-import { describe, it, expect } from 'vitest';
 import { toTitleCase } from '@/lib/utils/toTitleCase';
+import { describe, expect, it } from 'vitest';
 
 describe('toTitleCase', () => {
   describe('basic conversion', () => {
