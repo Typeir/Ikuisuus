@@ -14,3 +14,28 @@ yarn.lock
 # Heavy assets not needed server-side
 public/library/resources
 .next/cache/webpack  
+
+# Repo metadata and local tooling
+.github
+.vscode
+.husky
+.ignore
+.logs
+.meta
+
+# Local env files
+.env
+.env.*
+
+# Test and coverage outputs
+coverage
+tests
+playwright-report
+test-results
+vitest-report.json
+
+# Temporary and generated local files
+temp
+*.log
+*.tsbuildinfo
+migrate.log
