@@ -19,8 +19,8 @@
  * ```
  */
 
-import { logger } from '@/lib/logging/logger';
 import { draftRepository } from '@/lib/db/content/repositories/draftRepository';
+import { logger } from '@/lib/logging/logger';
 import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Corrections:Read' });

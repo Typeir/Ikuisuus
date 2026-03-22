@@ -15,12 +15,12 @@ import { isIpBanned } from '@/lib/security/bannedIps';
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import {
-    buildBranchName,
-    buildCommitMessage,
-    buildPrContent,
-    commitFile,
-    createBranch,
-    openPullRequest,
+  buildBranchName,
+  buildCommitMessage,
+  buildPrContent,
+  commitFile,
+  createBranch,
+  openPullRequest,
 } from './corrections.service';
 
 const log = logger.child({ module: 'API:Corrections' });
@@ -212,7 +212,9 @@ export async function POST(req: NextRequest) {
       },
       {
         updatedAt:
-          expectedDraftUpdatedAt === undefined ? undefined : expectedDraftUpdatedAt,
+          expectedDraftUpdatedAt === undefined
+            ? undefined
+            : expectedDraftUpdatedAt,
         versionHash:
           expectedDraftVersionHash === undefined
             ? undefined

@@ -225,10 +225,10 @@ describe('POST /api/corrections', () => {
     expect(res.status).toBe(201);
     expect(mockDraftUpsertIfUnchanged).toHaveBeenCalledWith(
       {
-      locale: 'en',
-      slug: 'world/aeridas',
-      content: '# Edited Aeridas',
-      status: 'pending',
+        locale: 'en',
+        slug: 'world/aeridas',
+        content: '# Edited Aeridas',
+        status: 'pending',
       },
       {
         updatedAt: undefined,
