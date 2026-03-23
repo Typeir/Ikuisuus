@@ -3908,31 +3908,6 @@
     ]
   },
   {
-    "slug": "hunters-mark",
-    "title": "Hunter's Mark",
-    "file": "external",
-    "link": "http://dnd5e.wikidot.com/spell:hunters-mark",
-    "level": 1,
-    "school": "Divination",
-    "castingTimeRaw": "1 Bonus Action",
-    "castingTime": [
-      "bonus action"
-    ],
-    "range": "90 feet",
-    "concentration": true,
-    "duration": "Concentration, up to 1 hour",
-    "verbal": true,
-    "somatic": false,
-    "material": false,
-    "hasRitual": false,
-    "tags": [
-      "level:1",
-      "school:divination",
-      "mechanic:concentration",
-      "component:verbal"
-    ]
-  },
-  {
     "slug": "ice-knife",
     "title": "Ice Knife",
     "file": "external",

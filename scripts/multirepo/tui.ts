@@ -57,6 +57,8 @@ ${C.yellow}SHORTHAND (direct):${C.reset}
   ik fetch [args]   Fetch both repos
   ik status         Short status of both repos
   ik validate       Check for drift between repos
+  ik nuke external spell:<slug>
+                    Delete an external spell from JSON + Postgres
   ik log [args]     Log both repos (default: --oneline -10)
   ik diff [args]    Diff both repos
   ik stash …        Stash both repos

@@ -19,6 +19,7 @@ import { log } from '@clack/prompts';
 
 import { cmdAdd, cmdCommit, cmdPassthrough, cmdPull, cmdPush, cmdStatus, cmdValidate } from './commands';
 import { checkSubmodule } from './git';
+import { cmdNuke } from './nuke';
 import { printHelp, runInteractive } from './tui';
 
 /**
@@ -63,6 +64,10 @@ async function main(): Promise<void> {
 
     case 'validate':
       cmdValidate();
+      break;
+
+    case 'nuke':
+      await cmdNuke(rest);
       break;
 
     case 'log':
