@@ -36,7 +36,7 @@ vi.mock('next/link', () => ({
 // Helper to render with PersistentUiProvider
 const renderWithProvider = (ui: React.ReactElement) => {
   return render(
-    <PersistentUiProvider initialExpandedPaths={[]}>{ui}</PersistentUiProvider>
+    <PersistentUiProvider initialExpandedPaths={[]}>{ui}</PersistentUiProvider>,
   );
 };
 
@@ -151,7 +151,7 @@ describe('calculateHeights utility', () => {
         sensitivity: 'base',
       });
       const sorted = [...items].sort((a, b) =>
-        collator.compare(a.name, b.name)
+        collator.compare(a.name, b.name),
       );
 
       expect(sorted[0].name).toBe('Apple');
@@ -171,7 +171,7 @@ describe('calculateHeights utility', () => {
         sensitivity: 'base',
       });
       const sorted = [...items].sort((a, b) =>
-        collator.compare(a.name, b.name)
+        collator.compare(a.name, b.name),
       );
 
       expect(sorted[0].name).toBe('Chapter 1');
@@ -244,17 +244,17 @@ describe('Sidebar path handling - integration with walk utility', () => {
 
       const links = screen.getAllByRole('link');
       const sheetLink = links.find((link) =>
-        link.getAttribute('href')?.includes('.sheet')
+        link.getAttribute('href')?.includes('.sheet'),
       );
       const regularLink = links.find((link) =>
-        link.getAttribute('href')?.includes('magic-sword')
+        link.getAttribute('href')?.includes('magic-sword'),
       );
 
       expect(sheetLink?.getAttribute('href')).toBe(
-        '/en/library/monsters/ancient-red-dragon.sheet'
+        '/en/library/monsters/ancient-red-dragon.sheet',
       );
       expect(regularLink?.getAttribute('href')).toBe(
-        '/en/library/items/magic-sword'
+        '/en/library/items/magic-sword',
       );
     });
 
@@ -275,13 +275,13 @@ describe('Sidebar path handling - integration with walk utility', () => {
       const links = screen.getAllByRole('link');
       expect(
         links.some((link) =>
-          link.getAttribute('href')?.includes('boss-monster.sheet')
-        )
+          link.getAttribute('href')?.includes('boss-monster.sheet'),
+        ),
       ).toBe(true);
       expect(
         links.some(
-          (link) => link.getAttribute('href') === '/en/library/monsters/info'
-        )
+          (link) => link.getAttribute('href') === '/en/library/monsters/info',
+        ),
       ).toBe(true);
     });
 
@@ -337,7 +337,7 @@ describe('Sidebar path handling - integration with walk utility', () => {
           name: 'Albedo, the Bleak Bloom',
           path: 'monsters/albedo-the-bleak-bloom.sheet',
         },
-        { name: "Hunter's Mark", path: 'spells/hunters-mark' },
+        { name: 'Hex', path: 'spells/hex' },
       ];
 
       renderWithProvider(<Sidebar items={items} />);
@@ -348,15 +348,14 @@ describe('Sidebar path handling - integration with walk utility', () => {
         links.some(
           (link) =>
             link.getAttribute('href') ===
-            '/en/library/monsters/albedo-the-bleak-bloom.sheet'
-        )
+            '/en/library/monsters/albedo-the-bleak-bloom.sheet',
+        ),
       ).toBe(true);
 
       expect(
         links.some(
-          (link) =>
-            link.getAttribute('href') === '/en/library/spells/hunters-mark'
-        )
+          (link) => link.getAttribute('href') === '/en/library/spells/hex',
+        ),
       ).toBe(true);
     });
   });

@@ -98,7 +98,9 @@ describe('toKebabCase', () => {
   });
 
   it('should handle apostrophes and quotes', () => {
-    expect(toKebabCase("Hunter's Mark")).toBe('hunters-mark');
+    expect(toKebabCase("Maximillien's Earthern Grasp")).toBe(
+      'maximilliens-earthern-grasp',
+    );
     expect(toKebabCase('"Quoted Text"')).toBe('quoted-text');
   });
 

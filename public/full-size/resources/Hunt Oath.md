@@ -27,13 +27,13 @@ A paladin who takes this oath has the tenets of The Hunt **seared onto their upp
 
 You gain oath spells at the paladin levels listed.
 
-| Paladin Level | Spells                                                      |
-|---------------|-------------------------------------------------------------|
-| 3rd           | *Zephyr Strike*, *Hunter's Mark*, *Speak With Animals*     |
-| 5th           | *Pass Without Trace*, *Beast Sense*                         |
-| 9th           | *Ashardalon's Stride*, *Conjure Animals*                    |
-| 13th          | *Freedom of Movement*, *Locate Creature*                   |
-| 17th          | *Steel Wind Strike*, *Greater Restoration*                  |
+| Paladin Level | Spells                                                 |
+| ------------- | ------------------------------------------------------ |
+| 3rd           | _Zephyr Strike_, _Hunter's Mark_, _Speak With Animals_ |
+| 5th           | _Pass Without Trace_, _Beast Sense_                    |
+| 9th           | _Ashardalon's Stride_, _Conjure Animals_               |
+| 13th          | _Freedom of Movement_, _Locate Creature_               |
+| 17th          | _Steel Wind Strike_, _Greater Restoration_             |
 
 ---
 
