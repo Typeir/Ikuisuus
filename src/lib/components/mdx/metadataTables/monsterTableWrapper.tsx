@@ -176,7 +176,10 @@ export default function MonsterTableWrapper({
       key: 'cr',
       label: tColumns('cr'),
       getValue: (row: MetadataRow) => asMonsterMetadata(row).cr,
-      render: (value: unknown) => value || '—',
+      render: (value: unknown) => {
+        if (value === null || value === undefined || value === '') return '—';
+        return String(value);
+      },
       compareValues: (a, b) => compareChallengeRating(a, b),
       sortable: true,
       filterable: true,

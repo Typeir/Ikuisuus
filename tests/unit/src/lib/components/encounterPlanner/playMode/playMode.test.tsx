@@ -14,17 +14,33 @@
 
 import { PlayMode } from '@/lib/components/encounterPlanner/playMode/playMode';
 import type {
-  InProgressCombat,
-  InProgressCombatant,
+    InProgressCombat,
+    InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
 import * as inProgressCombatStorage from '@/lib/utils/inProgressCombatStorage';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+const mockNotifications = {
+  push: vi.fn(),
+  dismiss: vi.fn(),
+  dismissAll: vi.fn(),
+  info: vi.fn(),
+  success: vi.fn(),
+  warning: vi.fn(),
+  error: vi.fn(),
+};
+
 // Mock next-intl
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => key,
+  useTranslations:
+    () => (key: string, values?: Record<string, string | number>) => {
+      if (values && Object.keys(values).length > 0) {
+        return `${Object.values(values).join(' ')} ${key}`;
+      }
+      return key;
+    },
 }));
 
 // Mock useNotifications to prevent NotificationProvider requirement in tests
@@ -32,15 +48,7 @@ vi.mock('@/lib/components/ui', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/components/ui')>();
   return {
     ...actual,
-    useNotifications: () => ({
-      push: vi.fn(),
-      dismiss: vi.fn(),
-      dismissAll: vi.fn(),
-      info: vi.fn(),
-      success: vi.fn(),
-      warning: vi.fn(),
-      error: vi.fn(),
-    }),
+    useNotifications: () => mockNotifications,
   };
 });
 
@@ -453,11 +461,13 @@ describe('PlayMode Component', () => {
       const user = userEvent.setup();
       const lairCreatureWithDeeds = createMockCombatant({
         id: 'lair-1',
+        name: 'Lair Tyrant',
         mechanics: {
           lair: true,
           stratagem: false,
           legendaryDeed: false,
           resist: false,
+          phase: false,
         },
         legendaryDeedsUsed: [true, false], // Has remaining deeds
       });
@@ -469,6 +479,7 @@ describe('PlayMode Component', () => {
           stratagem: false,
           legendaryDeed: false,
           resist: false,
+          phase: false,
         },
         legendaryDeedsUsed: [true, true], // No remaining deeds
       });
@@ -488,11 +499,119 @@ describe('PlayMode Component', () => {
       // Since we're at index 1 and returning 0, it should be a new round
       await user.click(endTurnButton);
 
-      // Note: The mock for useNotifications means we can't easily test the warning
-      // This test verifies the state updates, not the notification itself
       await waitFor(() => {
         const savedCombat = mockSaveInProgressCombat.mock.calls[0][0];
         expect(savedCombat.roundNumber).toBe(2);
+        expect(mockNotifications.warning).toHaveBeenCalledWith(
+          expect.stringContaining('Lair Tyrant'),
+          expect.objectContaining({
+            title: 'lairAlertTitle',
+          }),
+        );
+      });
+    });
+
+    it('should emit creature-specific legendary deed reminder from turn end event', async () => {
+      const user = userEvent.setup();
+      const actingCombatant = createMockCombatant({
+        id: 'acting',
+        name: 'Acting Creature',
+        mechanics: {
+          lair: false,
+          stratagem: false,
+          legendaryDeed: true,
+          resist: false,
+          phase: false,
+        },
+        legendaryDeedsUsed: [false],
+      });
+      const nextCombatant = createMockCombatant({
+        id: 'next',
+        name: 'Next Creature',
+        mechanics: {
+          lair: false,
+          stratagem: false,
+          legendaryDeed: true,
+          resist: false,
+          phase: false,
+        },
+        legendaryDeedsUsed: [false],
+      });
+      const legendaryResponder = createMockCombatant({
+        id: 'legendary',
+        name: 'Ancient Dragon',
+        mechanics: {
+          lair: false,
+          stratagem: false,
+          legendaryDeed: true,
+          resist: false,
+          phase: false,
+        },
+        legendaryDeedsUsed: [true, false],
+      });
+
+      const combat = createMockCombat({
+        combatants: [actingCombatant, nextCombatant, legendaryResponder],
+        turnOrder: ['acting', 'next', 'legendary'],
+        activeTurnIndex: 0,
+      });
+
+      mockGetNextActiveCombatantIndex.mockReturnValue(1);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+
+      const endTurnButton = screen.getByText('endTurn');
+      await user.click(endTurnButton);
+
+      await waitFor(() => {
+        expect(mockNotifications.info).toHaveBeenCalledWith(
+          expect.stringContaining('Ancient Dragon'),
+          expect.objectContaining({ title: 'legendaryDeeds' }),
+        );
+      });
+    });
+
+    it('should emit stratagem alerts on turn end and turn start', async () => {
+      const user = userEvent.setup();
+      const mucklord = createMockCombatant({
+        id: 'mucklord',
+        name: 'Mucklord',
+        mechanics: {
+          lair: false,
+          stratagem: true,
+          legendaryDeed: false,
+          resist: false,
+          phase: false,
+        },
+      });
+      const ally = createMockCombatant({
+        id: 'ally',
+        name: 'Ally',
+        mechanics: {
+          lair: false,
+          stratagem: false,
+          legendaryDeed: false,
+          resist: false,
+          phase: false,
+        },
+      });
+
+      const combat = createMockCombat({
+        combatants: [mucklord, ally],
+        turnOrder: ['mucklord', 'ally'],
+        activeTurnIndex: 0,
+      });
+
+      mockGetNextActiveCombatantIndex.mockReturnValue(1);
+      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+
+      const endTurnButton = screen.getByText('endTurn');
+      await user.click(endTurnButton);
+
+      await waitFor(() => {
+        expect(mockNotifications.info).toHaveBeenCalledWith(
+          expect.stringContaining('Mucklord'),
+          expect.objectContaining({ title: 'stratagem' }),
+        );
       });
     });
   });

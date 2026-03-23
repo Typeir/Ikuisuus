@@ -167,7 +167,7 @@ export default function TrinketTableWrapper({
       getValue: (row: MetadataRow) => asTrinketMetadata(row).range || '—',
       render: (value: unknown) => {
         if (!value || value === '—') return '—';
-        return value;
+        return String(value);
       },
       sortable: false,
     },

@@ -42,14 +42,14 @@
 
 import { logger } from '@/lib/logging/logger';
 import {
-  createContext,
-  memo,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
+    createContext,
+    memo,
+    ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './pushNotification.module.scss';

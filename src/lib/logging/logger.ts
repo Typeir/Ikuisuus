@@ -115,16 +115,18 @@ function safeSerialize(
 
   const type = typeof value;
   if (type === 'string') {
-    return value.length > MAX_STRING_LENGTH
-      ? `${value.substring(0, MAX_STRING_LENGTH)}... (truncated)`
-      : value;
+    const stringValue = value as string;
+    return stringValue.length > MAX_STRING_LENGTH
+      ? `${stringValue.substring(0, MAX_STRING_LENGTH)}... (truncated)`
+      : stringValue;
   }
   if (type === 'number' || type === 'boolean') {
     return value;
   }
 
   if (type === 'function') {
-    return `[Function: ${value.name || 'anonymous'}]`;
+    const functionValue = value as Function;
+    return `[Function: ${functionValue.name || 'anonymous'}]`;
   }
 
   if (type === 'object') {
@@ -178,11 +180,17 @@ function safeSerialize(
  */
 function formatMetadata(meta: LogMetadata): string {
   const safe = safeSerialize(meta);
-  const entries = Object.entries(safe).map(([key, value]) => {
-    const stringValue =
-      typeof value === 'object' ? JSON.stringify(value) : String(value);
-    return `${key}=${stringValue}`;
-  });
+  if (!safe || typeof safe !== 'object' || Array.isArray(safe)) {
+    return '';
+  }
+
+  const entries = Object.entries(safe as Record<string, unknown>).map(
+    ([key, value]) => {
+      const stringValue =
+        typeof value === 'object' ? JSON.stringify(value) : String(value);
+      return `${key}=${stringValue}`;
+    },
+  );
 
   return entries.length > 0 ? ` [${entries.join(' ')}]` : '';
 }
