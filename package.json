@@ -73,6 +73,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@clack/prompts": "^1.1.0",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/mdx": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
