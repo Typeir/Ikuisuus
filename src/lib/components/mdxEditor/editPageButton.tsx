@@ -49,8 +49,9 @@ const EditPageButton = ({ slug, locale }: EditPageButtonProps): JSX.Element => {
   const router = useRouter();
 
   const handleClick = useCallback(() => {
+    const encodedSlug = slug.split('/').map(encodeURIComponent).join('/');
     router.push(
-      `/${locale}/utils/mdx-editor?slug=${encodeURIComponent(slug)}&locale=${encodeURIComponent(locale)}`,
+      `/${locale}/utils/mdx-editor?slug=${encodedSlug}&locale=${locale}`,
     );
   }, [router, locale, slug]);
 

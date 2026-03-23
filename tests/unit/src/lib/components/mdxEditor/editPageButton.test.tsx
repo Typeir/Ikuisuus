@@ -49,7 +49,23 @@ describe('EditPageButton', () => {
     await user.click(screen.getByRole('button'));
 
     expect(mockPush).toHaveBeenCalledWith(
-      '/en/utils/mdx-editor?slug=monsters%2Faboleth&locale=en',
+      '/en/utils/mdx-editor?slug=monsters/aboleth&locale=en',
+    );
+  });
+
+  it('should encode non-ASCII characters in slug segments', async () => {
+    const user = userEvent.setup();
+    render(
+      <EditPageButton
+        slug='character-creation/bloodlines/väärät'
+        locale='en'
+      />,
+    );
+
+    await user.click(screen.getByRole('button'));
+
+    expect(mockPush).toHaveBeenCalledWith(
+      '/en/utils/mdx-editor?slug=character-creation/bloodlines/v%C3%A4%C3%A4r%C3%A4t&locale=en',
     );
   });
 

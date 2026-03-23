@@ -148,6 +148,16 @@ export const openPullRequest = async (
 /**
  * Build a sanitized branch name from the action label and file path.
  *
+ * Non-ASCII characters (e.g. Finnish ä, ö) are first decomposed via NFD and
+ * their combining diacritics stripped so that accented letters map to their
+ * ASCII base (väärät → vaarat). Any remaining non-ASCII or special
+ * characters are replaced with `-`. This keeps branch names readable and
+ * avoids ambiguous all-hyphen segments for files whose name contains only
+ * characters outside US-ASCII (e.g. pure CJK or emoji filenames).
+ *
+ * The actual file path passed to commitFile is always the original Unicode
+ * value — this sanitization only affects the git branch label.
+ *
  * @function buildBranchName
  * @param {string} filePath - Content file path
  * @param {boolean} isNew - Whether this is a new file creation
@@ -156,7 +166,11 @@ export const openPullRequest = async (
 export const buildBranchName = (filePath: string, isNew: boolean): string => {
   const timestamp = Date.now();
   const actionLabel = isNew ? 'new' : 'corrections';
-  return `${actionLabel}/${filePath.replace(/[^a-zA-Z0-9\-_/]/g, '-')}-${timestamp}`;
+  const sanitized = filePath
+    .normalize('NFD')
+    .replace(/[\u0300-\u036F]/g, '')
+    .replace(/[^a-zA-Z0-9\-_/]/g, '-');
+  return `${actionLabel}/${sanitized}-${timestamp}`;
 };
 
 /**

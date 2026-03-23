@@ -65,7 +65,14 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
     clearError: clearAuthError,
   } = useCorrectionsAuth();
 
-  const initialSlug = searchParams.get('slug') ?? '';
+  const rawSlug = searchParams.get('slug') ?? '';
+  const initialSlug = (() => {
+    try {
+      return decodeURIComponent(rawSlug);
+    } catch {
+      return rawSlug;
+    }
+  })();
   const initialLocale = searchParams.get('locale') ?? locale;
 
   const editor = useEditorState({
