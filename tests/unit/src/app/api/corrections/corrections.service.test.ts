@@ -14,7 +14,9 @@ import { describe, expect, it } from 'vitest';
 describe('buildBranchName', () => {
   it('should produce an ASCII-only branch name for a standard slug', () => {
     const result = buildBranchName('en/monsters/aboleth.sheet.mdx', false);
-    expect(result).toMatch(/^corrections\/en\/monsters\/aboleth-sheet-mdx-\d+$/);
+    expect(result).toMatch(
+      /^corrections\/en\/monsters\/aboleth-sheet-mdx-\d+$/,
+    );
     expect(result).toMatch(/^[\x00-\x7F]+$/);
   });
 

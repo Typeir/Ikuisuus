@@ -17,7 +17,15 @@
 
 import { log } from '@clack/prompts';
 
-import { cmdAdd, cmdCommit, cmdPassthrough, cmdPull, cmdPush, cmdStatus, cmdValidate } from './commands';
+import {
+  cmdAdd,
+  cmdCommit,
+  cmdPassthrough,
+  cmdPull,
+  cmdPush,
+  cmdStatus,
+  cmdValidate,
+} from './commands';
 import { checkSubmodule } from './git';
 import { cmdNuke } from './nuke';
 import { printHelp, runInteractive } from './tui';
@@ -93,4 +101,3 @@ main().catch((err) => {
   log.error(String(err));
   process.exit(1);
 });
-

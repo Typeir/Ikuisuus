@@ -21,8 +21,14 @@ import {
   text,
 } from '@clack/prompts';
 
+import {
+  cmdAdd,
+  cmdCommit,
+  cmdPassthrough,
+  cmdPull,
+  cmdPush,
+} from './commands';
 import { C, CONTENT_REPO, LOGO, MAIN_REPO, type MenuOption } from './constants';
-import { cmdAdd, cmdCommit, cmdPassthrough, cmdPull, cmdPush } from './commands';
 import { git, listDirtyFiles, logRepo, repoSummaryLine } from './git';
 
 /**
@@ -338,7 +344,10 @@ export async function runInteractive(): Promise<void> {
   const action = await select<MenuOption>({
     message: 'What do you want to do?',
     options: [
-      { value: 'status', label: '📋  status       — show dirty files in both repos' },
+      {
+        value: 'status',
+        label: '📋  status       — show dirty files in both repos',
+      },
       { value: 'add', label: '➕  add          — stage files' },
       { value: 'commit', label: '✅  commit       — commit both repos' },
       { value: 'push', label: '🚀  push         — push both repos' },
@@ -348,7 +357,10 @@ export async function runInteractive(): Promise<void> {
       { value: 'diff', label: '🔍  diff         — show changes' },
       { value: 'stash', label: '📦  stash        — stash / pop' },
       { value: 'branch', label: '🌿  branch       — list / manage branches' },
-      { value: 'passthrough', label: '⚙️   passthrough  — run any git command' },
+      {
+        value: 'passthrough',
+        label: '⚙️   passthrough  — run any git command',
+      },
     ],
   });
   guardCancel(action);
