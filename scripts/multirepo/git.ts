@@ -110,6 +110,11 @@ export function checkSubmodule(): void {
  * guard detects the situation and runs `git checkout main` before ik proceeds
  * with any write operation.
  */
+/**
+ * Guards against operating on a detached HEAD in the content repo.
+ * Prints the detached SHA and instructions, then exits.
+ * NEVER performs an automatic checkout — that risks orphaning commits.
+ */
 export function ensureContentOnBranch(): void {
   const headResult = spawnSync(
     'git',
@@ -118,22 +123,20 @@ export function ensureContentOnBranch(): void {
   );
 
   if (headResult.status !== 0) {
-    // symbolic-ref fails when HEAD is detached — re-attach to main.
-    log.warn('Content repo HEAD is detached — re-attaching to main...');
-    const checkoutResult = spawnSync(
-      'git',
-      ['-C', CONTENT_REPO, 'checkout', 'main'],
-      { stdio: 'pipe', env: CHILD_ENV },
-    );
-    if (checkoutResult.status !== 0) {
-      const err = checkoutResult.stderr?.toString().trim() ?? '';
-      log.error(`Could not re-attach content repo to main:\n${err}`);
-      log.error(
-        'Run `git -C src/content checkout main` manually and resolve any conflicts.',
-      );
-      process.exit(1);
-    }
-    log.success('Content repo re-attached to main');
+    const shaResult = spawnSync('git', ['-C', CONTENT_REPO, 'rev-parse', '--short', 'HEAD'], {
+      stdio: 'pipe',
+      env: CHILD_ENV,
+    });
+    const sha = shaResult.stdout?.toString().trim() ?? '(unknown)';
+    log.error(`Content repo HEAD is detached at ${sha}.`);
+    log.warn('Do NOT run "git checkout main" without first checking for unpushed commits:');
+    log.warn('  git -C src/content log main..HEAD --oneline');
+    log.warn('If you have commits above, cherry-pick them onto main:');
+    log.warn('  git -C src/content checkout main');
+    log.warn('  git -C src/content cherry-pick <sha>');
+    log.warn('If there are no commits above main, it is safe to:');
+    log.warn('  git -C src/content checkout main');
+    process.exit(1);
   }
 }
 
