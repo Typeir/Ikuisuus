@@ -95,4 +95,5 @@ export type MenuOption =
   | 'diff'
   | 'stash'
   | 'branch'
-  | 'passthrough';
+  | 'passthrough'
+  | 'quit';

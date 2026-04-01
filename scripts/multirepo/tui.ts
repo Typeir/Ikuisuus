@@ -317,8 +317,8 @@ async function tuiPassthrough(): Promise<void> {
   cmdPassthrough(parts[0]!, parts.slice(1));
 }
 
-/** Dispatch table mapping each `MenuOption` to its TUI handler. */
-const TUI_HANDLERS: Record<MenuOption, () => Promise<void>> = {
+/** Dispatch table mapping each non-quit `MenuOption` to its TUI handler. */
+const TUI_HANDLERS: Record<Exclude<MenuOption, 'quit'>, () => Promise<void>> = {
   status: tuiStatus,
   add: tuiAdd,
   commit: tuiCommit,
@@ -340,33 +340,40 @@ export async function runInteractive(): Promise<void> {
   console.log(`${C.cyan}${LOGO}${C.reset}`);
   intro(`${C.cyan}ik${C.reset}  — multirepo workspace CLI`);
 
-  note(repoSummaryLine(), 'repo state');
+  while (true) {
+    note(repoSummaryLine(), 'repo state');
 
-  const action = await select<MenuOption>({
-    message: 'What do you want to do?',
-    options: [
-      {
-        value: 'status',
-        label: '📋  status       — show dirty files in both repos',
-      },
-      { value: 'add', label: '➕  add          — stage files' },
-      { value: 'commit', label: '✅  commit       — commit both repos' },
-      { value: 'push', label: '🚀  push         — push both repos' },
-      { value: 'pull', label: '⬇️   pull         — pull both repos' },
-      { value: 'fetch', label: '🔄  fetch        — fetch remotes' },
-      { value: 'log', label: '📜  log          — recent commits' },
-      { value: 'diff', label: '🔍  diff         — show changes' },
-      { value: 'stash', label: '📦  stash        — stash / pop' },
-      { value: 'branch', label: '🌿  branch       — list / manage branches' },
-      {
-        value: 'passthrough',
-        label: '⚙️   passthrough  — run any git command',
-      },
-    ],
-  });
-  guardCancel(action);
+    const action = await select<MenuOption>({
+      message: 'What do you want to do?',
+      options: [
+        {
+          value: 'status',
+          label: '📋  status       — show dirty files in both repos',
+        },
+        { value: 'add', label: '➕  add          — stage files' },
+        { value: 'commit', label: '✅  commit       — commit both repos' },
+        { value: 'push', label: '🚀  push         — push both repos' },
+        { value: 'pull', label: '⬇️   pull         — pull both repos' },
+        { value: 'fetch', label: '🔄  fetch        — fetch remotes' },
+        { value: 'log', label: '📜  log          — recent commits' },
+        { value: 'diff', label: '🔍  diff         — show changes' },
+        { value: 'stash', label: '📦  stash        — stash / pop' },
+        { value: 'branch', label: '🌿  branch       — list / manage branches' },
+        {
+          value: 'passthrough',
+          label: '⚙️   passthrough  — run any git command',
+        },
+        { value: 'quit', label: '🚪  quit         — exit ik' },
+      ],
+    });
+    guardCancel(action);
 
-  await TUI_HANDLERS[action as MenuOption]();
+    if (action === 'quit') {
+      break;
+    }
 
-  outro('Done');
+    await TUI_HANDLERS[action as Exclude<MenuOption, 'quit'>]();
+  }
+
+  outro('Bye');
 }
