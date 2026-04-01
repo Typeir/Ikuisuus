@@ -59,6 +59,7 @@ ${C.yellow}SHORTHAND (direct):${C.reset}
   ik add [files]    Stage in both repos              (default: .)
   ik commit -m …    Commit content-first, sync ref
   ik push [args]    Push content-first, amend if stale
+                    (pass --force-main to override content failures — use with caution)
   ik pull [args]    Pull + submodule update
   ik fetch [args]   Fetch both repos
   ik status         Short status of both repos

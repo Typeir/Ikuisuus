@@ -106,15 +106,37 @@ export async function cmdCommit(args: string[]): Promise<void> {
  */
 export async function cmdPush(args: string[]): Promise<void> {
   const s = spinner();
+  // Allow an explicit override flag to force pushing main even if content
+  // push fails. This is purposely a CLI-only sentinel and removed from the
+  // arguments forwarded to `git push` so it won't be passed to Git.
+  const safeArgs = args.filter((a) => a !== '--force-main');
+  const forceMain = safeArgs.length !== args.length;
 
   s.start('Pushing content repo');
-  const contentResult = spawnSync(
-    'git',
-    ['-C', CONTENT_REPO, 'push', ...args],
-    { stdio: 'pipe', env: CHILD_ENV },
-  );
+  const contentResult = spawnSync('git', ['-C', CONTENT_REPO, 'push', ...safeArgs], {
+    stdio: 'pipe',
+    env: CHILD_ENV,
+  });
+  const contentStdout = contentResult.stdout?.toString() ?? '';
+  const contentStderr = contentResult.stderr?.toString() ?? '';
+
   if (contentResult.status !== 0) {
-    s.stop('Content push skipped (check status)');
+    s.stop('Content push failed');
+    // Provide actionable diagnostics to avoid silent failures.
+    const details = (contentStderr + '\n' + contentStdout).trim();
+    if (details.length > 0) {
+      log.error(`Content push error:\n${details}`);
+    } else {
+      log.error('Content push exited with non-zero status but produced no output.');
+    }
+    log.warn('Tip: run `ik status` and `git -C src/content status` to inspect the content repo.');
+    log.warn('If this is an auth issue, ensure your PAT or SSH credentials are configured for the content remote.');
+    if (!forceMain) {
+      log.error('Aborting main push to avoid pushing a main commit that references an absent content SHA.');
+      process.exit(1);
+    } else {
+      log.warn('Proceeding with main push due to `--force-main` override. This may leave the remote main referencing a missing content commit.');
+    }
   } else {
     s.stop('Content pushed');
   }
