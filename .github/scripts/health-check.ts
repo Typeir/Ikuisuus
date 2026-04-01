@@ -1,0 +1,208 @@
+/**
+ * Composite Health Check
+ *
+ * @fileoverview Orchestrates all code health sub-checks and aggregates results.
+ * Runs file-length, duplicate-css, jsdoc-quality, antipatterns, test-gaps, and
+ * mdx-format checks. Returns a unified JSON report and exits with code 1 if any
+ * critical check fails.
+ *
+ * Supports --changed-only flag: when set, gets the list of uncommitted changed
+ * files from git and post-filters each check's failures to only include violations
+ * in those files. This prevents pre-existing tech debt from blocking sessions.
+ *
+ * @module .github/scripts/health-check
+ */
+
+import { execSync } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { CheckResult, HealthReport } from './health-check-types';
+import { runCheck as checkFileLength } from './check-file-length';
+import { runCheck as checkDuplicateCss } from './check-duplicate-css';
+import { runCheck as checkJsdocQuality } from './check-jsdoc-quality';
+import { runCheck as checkAntipatterns } from './check-antipatterns';
+import { runCheck as checkTestGaps } from './check-test-gaps';
+import { runCheck as checkMdxFormat } from './check-mdx-format';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT = path.resolve(__dirname, '../..');
+const changedOnlyMode = process.argv.includes('--changed-only');
+
+/**
+ * Entry for a single check step in the composite run.
+ */
+interface CheckEntry {
+  /** Display name */
+  name: string;
+  /** Async function that runs the check and returns a result */
+  run: () => Promise<CheckResult>;
+}
+
+const CHECKS: CheckEntry[] = [
+  { name: 'file-length', run: checkFileLength },
+  { name: 'duplicate-css', run: checkDuplicateCss },
+  { name: 'jsdoc-quality', run: checkJsdocQuality },
+  { name: 'antipatterns', run: checkAntipatterns },
+  { name: 'test-gaps', run: checkTestGaps },
+  { name: 'mdx-format', run: checkMdxFormat },
+];
+
+/**
+ * Get the set of uncommitted changed files relative to ROOT.
+ * Normalises all separators to forward slashes.
+ *
+ * @returns Set of relative file paths
+ */
+function getChangedFiles(): Set<string> {
+  const run = (cmd: string): string => {
+    try {
+      return execSync(cmd, {
+        cwd: ROOT,
+        encoding: 'utf-8',
+        timeout: 10000,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }).trim();
+    } catch {
+      return '';
+    }
+  };
+
+  const all = [
+    run('git diff --name-only HEAD'),
+    run('git diff --cached --name-only'),
+    run('git ls-files --others --exclude-standard'),
+  ]
+    .filter(Boolean)
+    .join('\n')
+    .split('\n')
+    .filter(Boolean)
+    .map((f) => f.replace(/\\/g, '/'));
+
+  return new Set(all);
+}
+
+/**
+ * Post-filter a check result to only include failures from changed files.
+ *
+ * @param result Original check result
+ * @param changedFiles Set of changed file paths
+ * @returns Filtered check result (original not mutated)
+ */
+function filterToChangedFiles(result: CheckResult, changedFiles: Set<string>): CheckResult {
+  const filtered = result.failures.filter((failure) =>
+    changedFiles.has((failure.file ?? '').replace(/\\/g, '/')),
+  );
+  const passed = filtered.length === 0;
+  return {
+    ...result,
+    passed,
+    severity: passed ? 'info' : result.severity,
+    failures: filtered,
+    stats: {
+      ...result.stats,
+      violations_found: filtered.length,
+      total_before_filter: result.failures.length,
+    },
+  };
+}
+
+/**
+ * Run a single check entry, returning an error placeholder on failure.
+ *
+ * @param entry Check entry to run
+ * @returns Check result
+ */
+async function runCheck(entry: CheckEntry): Promise<CheckResult> {
+  try {
+    return await entry.run();
+  } catch (err) {
+    const error = err as Error;
+    return {
+      check: entry.name,
+      severity: 'critical',
+      passed: false,
+      failures: [
+        {
+          file: entry.name,
+          rule: 'script-error',
+          message: error.message?.substring(0, 200) ?? 'Unknown error',
+          suggestion: 'Check script execution manually',
+        },
+      ],
+      stats: { total_files_checked: 0, violations_found: 1 },
+    };
+  }
+}
+
+async function main(): Promise<void> {
+  const changedFiles = changedOnlyMode ? getChangedFiles() : null;
+  const modeLabel = changedOnlyMode ? `(diff-scoped: ${changedFiles!.size} file(s))` : '(full codebase)';
+  console.log(`\u{1FA7A} Running Composite Health Check ${modeLabel}...\n`);
+
+  const results: CheckResult[] = [];
+  let hasCritical = false;
+  let totalViolations = 0;
+
+  for (const check of CHECKS) {
+    process.stdout.write(`  \u23f3 ${check.name}... `);
+    let result = await runCheck(check);
+    if (changedFiles) result = filterToChangedFiles(result, changedFiles);
+
+    results.push(result);
+    totalViolations += result.failures.length;
+
+    if (!result.passed && result.severity === 'critical') {
+      hasCritical = true;
+      console.log(`\u274c FAIL (${result.failures.length} issue(s))`);
+    } else if (!result.passed) {
+      console.log(`\u26a0\ufe0f  WARN (${result.failures.length} issue(s))`);
+    } else {
+      console.log('\u2705 PASS');
+    }
+  }
+
+  const report: HealthReport = {
+    timestamp: new Date().toISOString(),
+    mode: changedOnlyMode ? 'changed-only' : 'full',
+    changed_files: changedFiles ? [...changedFiles] : null,
+    overall: hasCritical ? 'FAIL' : 'PASS',
+    summary: {
+      total_checks: CHECKS.length,
+      passed: results.filter((r) => r.passed).length,
+      failed: results.filter((r) => !r.passed).length,
+      total_violations: totalViolations,
+      has_critical: hasCritical,
+    },
+    checks: results,
+  };
+
+  console.log('\n' + '\u2500'.repeat(60));
+  console.log(`\n\u{1F4CA} Overall: ${report.overall}`);
+  console.log(`   Checks: ${report.summary.passed}/${report.summary.total_checks} passed`);
+  console.log(`   Violations: ${report.summary.total_violations}`);
+
+  if (hasCritical) {
+    console.log('\n\u{1F6AB} CRITICAL issues found \u2014 completion is BLOCKED.\n');
+    for (const cr of results.filter((r) => r.severity === 'critical' && !r.passed)) {
+      console.log(`  \u274c ${cr.check}:`);
+      for (const f of cr.failures.slice(0, 10)) {
+        console.log(`     ${f.file}${typeof f.line === 'number' ? ':' + f.line : ''} \u2014 ${f.message}`);
+      }
+      if (cr.failures.length > 10) {
+        console.log(`     ... and ${cr.failures.length - 10} more`);
+      }
+    }
+  }
+
+  console.log('\n---JSON_REPORT_START---');
+  console.log(JSON.stringify(report, null, 2));
+  console.log('---JSON_REPORT_END---');
+
+  process.exit(hasCritical ? 1 : 0);
+}
+
+main().catch((err: Error) => {
+  console.error('\u274c Fatal:', err.message);
+  process.exit(1);
+});

@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "hooks": {
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "bash": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/user-prompt-submitted.ts",
+        "powershell": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/user-prompt-submitted.ts",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/post-tool-use.ts",
+        "powershell": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/post-tool-use.ts",
+        "cwd": ".",
+        "timeoutSec": 15
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/session-end-missing-tests.ts",
+        "powershell": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/session-end-missing-tests.ts",
+        "cwd": ".",
+        "timeoutSec": 30
+      },
+      {
+        "type": "command",
+        "bash": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/session-end-health.ts",
+        "powershell": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/session-end-health.ts",
+        "cwd": ".",
+        "timeoutSec": 120
+      }
+    ]
+  }
+}

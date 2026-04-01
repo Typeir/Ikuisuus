@@ -16,6 +16,6 @@
       "@content/*": ["./src/content/*"]
     }
   },
-  "include": ["scripts/**/*.ts", "src/**/*.ts"],
+  "include": ["scripts/**/*.ts", "src/**/*.ts", ".github/scripts/**/*.ts"],
   "exclude": ["node_modules", ".next"]
 }

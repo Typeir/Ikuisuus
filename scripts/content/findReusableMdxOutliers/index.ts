@@ -55,10 +55,16 @@ const log = createLogger({ script: 'findReusableMdxOutliers' });
 
   for (const file of mdxFiles) {
     const rawContent = await fs.readFile(file, 'utf8');
-    const compiled = await compile(rawContent, {
-      jsx: true,
-      outputFormat: 'program',
-    });
+    let compiled: Awaited<ReturnType<typeof compile>>;
+    try {
+      compiled = await compile(rawContent, {
+        jsx: true,
+        outputFormat: 'program',
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(`MDX compile error in ${path.relative(process.cwd(), file)}:\n${msg}`);
+    }
 
     const tags = extractTags(String(compiled.value));
     tagsByFile.set(file, tags);

@@ -2,14 +2,15 @@
  * Anti-Pattern Check
  *
  * @fileoverview Scans source code for common anti-patterns: console.log usage,
- * hardcoded setTimeout without constants, and other problematic patterns.
+ * hardcoded setTimeout delays, explicit any types, and unsafe any casts.
  *
  * @module .github/scripts/check-antipatterns
  */
 
-import { promises as fs } from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { CheckFailure, CheckResult } from './health-check-types';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,22 +28,27 @@ const EXCLUDED_PATTERNS = [
 ];
 
 /**
- * @typedef {Object} PatternRule
- * @property {string} name - Rule identifier
- * @property {RegExp} pattern - Regex to match
- * @property {string} message - Violation message
- * @property {string} suggestion - Fix suggestion
- * @property {string} severity - critical or warning
+ * A single anti-pattern rule definition.
  */
+interface PatternRule {
+  /** Rule identifier */
+  name: string;
+  /** Pattern to search for per line */
+  pattern: RegExp;
+  /** Violation message */
+  message: string;
+  /** Fix suggestion */
+  suggestion: string;
+  /** Rule severity level */
+  severity: 'critical' | 'warning';
+}
 
-/** @type {PatternRule[]} */
-const RULES = [
+const RULES: PatternRule[] = [
   {
     name: 'console-log',
     pattern: /\bconsole\.log\s*\(/,
     message: 'console.log() found — use logger or remove',
-    suggestion:
-      'Replace with project logger or remove. console.warn/error are acceptable.',
+    suggestion: 'Replace with project logger or remove. console.warn/error are acceptable.',
     severity: 'critical',
   },
   {
@@ -69,13 +75,13 @@ const RULES = [
 ];
 
 /**
- * Recursively find source files
+ * Recursively find TypeScript source files under a directory.
  *
- * @param {string} dir - Directory to scan
- * @param {string[]} results - Accumulator
- * @returns {Promise<string[]>} File paths
+ * @param dir Directory to scan
+ * @param results Accumulator
+ * @returns Relative file paths
  */
-async function findSourceFiles(dir, results = []) {
+async function findSourceFiles(dir: string, results: string[] = []): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
@@ -83,7 +89,7 @@ async function findSourceFiles(dir, results = []) {
       await findSourceFiles(full, results);
     } else if (/\.(ts|tsx)$/.test(entry.name)) {
       const rel = path.relative(ROOT, full);
-      if (!EXCLUDED_PATTERNS.some((p) => p.test(rel))) {
+      if (!EXCLUDED_PATTERNS.some((pattern) => pattern.test(rel))) {
         results.push(rel);
       }
     }
@@ -91,9 +97,14 @@ async function findSourceFiles(dir, results = []) {
   return results;
 }
 
-async function main() {
+/**
+ * Execute the antipatterns check and return a structured result.
+ *
+ * @returns Check result with any violations
+ */
+export async function runCheck(): Promise<CheckResult> {
   const files = await findSourceFiles(path.join(ROOT, 'src'));
-  const failures = [];
+  const failures: CheckFailure[] = [];
   let criticalCount = 0;
 
   for (const rel of files) {
@@ -103,10 +114,10 @@ async function main() {
 
     for (const rule of RULES) {
       for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (line.trim().startsWith('*') || line.trim().startsWith('//'))
-          continue;
-        if (rule.pattern.test(line)) {
+        const lineText = lines[i];
+        const trimmed = lineText.trim();
+        if (trimmed.startsWith('*') || trimmed.startsWith('//')) continue;
+        if (rule.pattern.test(lineText)) {
           failures.push({
             file: normalizedPath,
             line: i + 1,
@@ -121,10 +132,9 @@ async function main() {
     }
   }
 
-  const result = {
+  return {
     check: 'antipatterns',
-    severity:
-      criticalCount > 0 ? 'critical' : failures.length > 0 ? 'warning' : 'info',
+    severity: criticalCount > 0 ? 'critical' : failures.length > 0 ? 'warning' : 'info',
     passed: criticalCount === 0,
     failures,
     stats: {
@@ -134,12 +144,20 @@ async function main() {
       warnings: failures.length - criticalCount,
     },
   };
-
-  console.log(JSON.stringify(result, null, 2));
-  process.exit(criticalCount > 0 ? 1 : 0);
 }
 
-main().catch((err) => {
-  console.error('❌ Fatal:', err.message);
-  process.exit(1);
-});
+/**
+ * Standalone entry point.
+ */
+async function main(): Promise<void> {
+  const result = await runCheck();
+  console.log(JSON.stringify(result, null, 2));
+  process.exit(result.passed ? 0 : 1);
+}
+
+if (path.normalize(process.argv[1] ?? '') === path.normalize(fileURLToPath(import.meta.url))) {
+  main().catch((err: Error) => {
+    console.error('\u274c Fatal:', err.message);
+    process.exit(1);
+  });
+}
