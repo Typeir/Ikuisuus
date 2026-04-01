@@ -101,6 +101,43 @@ export function checkSubmodule(): void {
 }
 
 /**
+ * Re-attaches the content submodule to its `main` tracking branch when it is
+ * in a detached-HEAD state.
+ *
+ * `git submodule update` (without `--rebase`/`--merge`) always checks out a
+ * bare SHA, which leaves the working tree in detached-HEAD mode. Any
+ * subsequent `git commit` in the content repo would then go nowhere. This
+ * guard detects the situation and runs `git checkout main` before ik proceeds
+ * with any write operation.
+ */
+export function ensureContentOnBranch(): void {
+  const headResult = spawnSync(
+    'git',
+    ['-C', CONTENT_REPO, 'symbolic-ref', '--short', 'HEAD'],
+    { stdio: 'pipe', env: CHILD_ENV },
+  );
+
+  if (headResult.status !== 0) {
+    // symbolic-ref fails when HEAD is detached — re-attach to main.
+    log.warn('Content repo HEAD is detached — re-attaching to main...');
+    const checkoutResult = spawnSync(
+      'git',
+      ['-C', CONTENT_REPO, 'checkout', 'main'],
+      { stdio: 'pipe', env: CHILD_ENV },
+    );
+    if (checkoutResult.status !== 0) {
+      const err = checkoutResult.stderr?.toString().trim() ?? '';
+      log.error(`Could not re-attach content repo to main:\n${err}`);
+      log.error(
+        'Run `git -C src/content checkout main` manually and resolve any conflicts.',
+      );
+      process.exit(1);
+    }
+    log.success('Content repo re-attached to main');
+  }
+}
+
+/**
  * Returns a two-part status line for both repos using colour coding.
  */
 export function repoSummaryLine(): string {

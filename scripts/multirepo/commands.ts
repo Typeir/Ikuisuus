@@ -13,6 +13,7 @@ import { spawnSync } from 'child_process';
 
 import { CHILD_ENV, CONTENT_REPO, MAIN_REPO } from './constants';
 import {
+  ensureContentOnBranch,
   git,
   gitCapture,
   isDirty,
@@ -26,6 +27,7 @@ import {
  * @param files - Paths to stage; defaults to `['.']` when empty.
  */
 export async function cmdAdd(files: string[]): Promise<void> {
+  ensureContentOnBranch();
   const targets = files.length > 0 ? files : ['.'];
   const s = spinner();
 
@@ -64,6 +66,7 @@ export async function cmdAdd(files: string[]): Promise<void> {
  * @param args - Arguments forwarded verbatim to `git commit`.
  */
 export async function cmdCommit(args: string[]): Promise<void> {
+  ensureContentOnBranch();
   const s = spinner();
 
   s.start('Committing content repo');
@@ -105,6 +108,7 @@ export async function cmdCommit(args: string[]): Promise<void> {
  * @param args - Arguments forwarded verbatim to `git push`.
  */
 export async function cmdPush(args: string[]): Promise<void> {
+  ensureContentOnBranch();
   const s = spinner();
   // Allow an explicit override flag to force pushing main even if content
   // push fails. This is purposely a CLI-only sentinel and removed from the
@@ -202,9 +206,11 @@ export async function cmdPull(args: string[]): Promise<void> {
   s.stop('Main pulled');
 
   s.start('Updating submodule ref');
+  // Use --rebase so the content submodule stays on its branch rather than
+  // landing in a detached-HEAD state, which is the default for submodule update.
   spawnSync(
     'git',
-    ['-C', MAIN_REPO, 'submodule', 'update', '--init', '--recursive'],
+    ['-C', MAIN_REPO, 'submodule', 'update', '--init', '--recursive', '--rebase'],
     { stdio: 'pipe', env: CHILD_ENV },
   );
   s.stop('Submodule updated');
