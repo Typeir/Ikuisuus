@@ -1,2 +1,2 @@
 # Multirepo sync check (advisory, never blocks)
-bash scripts/multirepo/validate-sync.sh
+npx tsx --tsconfig tsconfig.scripts.json scripts/multirepo/validate-sync.ts

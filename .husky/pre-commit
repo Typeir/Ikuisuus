@@ -2,4 +2,4 @@
 npx tsx --tsconfig tsconfig.scripts.json scripts/hooks/pre-commit.ts || exit $?
 
 # Multirepo sync warning (advisory, never blocks)
-bash scripts/multirepo/pre-commit-warn.sh
+npx tsx --tsconfig tsconfig.scripts.json scripts/multirepo/pre-commit-warn.ts
