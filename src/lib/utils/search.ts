@@ -81,7 +81,6 @@ export const searchContent = async (
 
       const fullPath = path.join(dir, entry.name);
       const fileName = entry.name.replace(/\.(md|mdx)$/, '');
-      // Normalize to forward slashes for URL consistency (works on Windows and Unix)
       const kebabPath = path
         .join(base, toKebabCase(fileName))
         .replace(/\\/g, '/');

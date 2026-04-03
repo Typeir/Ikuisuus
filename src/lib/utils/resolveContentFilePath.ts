@@ -49,7 +49,6 @@ export const resolveContentFilePath = async (
       await fs.access(fullPath);
       return fullPath;
     } catch {
-      // Try next variant
     }
   }
 

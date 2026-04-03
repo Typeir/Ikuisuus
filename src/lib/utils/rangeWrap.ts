@@ -44,10 +44,8 @@ export const rangeWrap = (
   min: number,
   max: number
 ): number => {
-  // Range size (inclusive)
   const range = max - min + 1;
   
-  // Normalize to 0-based range, apply modulo, then shift back
   const normalized = val - min;
   const wrapped = ((normalized % range) + range) % range;
   return wrapped + min;

@@ -1,1 +1,87 @@
-[]
+[
+  {
+    "file": "src/app/api/corrections/route.ts",
+    "maxLines": 300,
+    "justification": "API route handler with validation, processing, and response logic that must remain cohesive"
+  },
+  {
+    "file": "src/lib/components/encounterPlanner/combatantRow/combatantMainStats.tsx",
+    "maxLines": 300,
+    "justification": "Complex stat display component with tightly coupled stat rendering logic"
+  },
+  {
+    "file": "src/lib/components/encounterPlanner/combatantRow/combatantRow.module.scss",
+    "maxLines": 1500,
+    "justification": "Module-scoped SCSS for complex combatant row with multiple sub-components, states, and responsive variants"
+  },
+  {
+    "file": "src/lib/components/encounterPlanner/comboboxes/genericCombobox.tsx",
+    "maxLines": 300,
+    "justification": "Generic combobox with keyboard navigation, filtering, and accessibility that must remain in a single component"
+  },
+  {
+    "file": "src/lib/components/encounterPlanner/creatureRow.module.scss",
+    "maxLines": 400,
+    "justification": "Module-scoped SCSS for creature row with stat display, actions, and responsive layout"
+  },
+  {
+    "file": "src/lib/components/encounterPlanner/encounterPlanner.tsx",
+    "maxLines": 420,
+    "justification": "Top-level encounter planner orchestrator with state management and multiple sub-component coordination"
+  },
+  {
+    "file": "src/lib/components/mdx/metadataTables/metadataTable.tsx",
+    "maxLines": 370,
+    "justification": "Generic metadata table with sorting, filtering, pagination, and responsive column rendering"
+  },
+  {
+    "file": "src/lib/components/mdx/metadataTables/metadataTableSkeleton.tsx",
+    "maxLines": 310,
+    "justification": "Skeleton loading state for metadata table with shimmer animations matching table layout"
+  },
+  {
+    "file": "src/lib/components/mdxEditor/mdxEditor.module.scss",
+    "maxLines": 420,
+    "justification": "Module-scoped SCSS for MDX editor with toolbar, preview pane, and syntax highlighting styles"
+  },
+  {
+    "file": "src/lib/components/ui/filterSelect/filterSelect.module.scss",
+    "maxLines": 300,
+    "justification": "Module-scoped SCSS for filter select with dropdown, tags, search, and responsive states"
+  },
+  {
+    "file": "src/lib/components/ui/filterSelect/filterSelect.tsx",
+    "maxLines": 430,
+    "justification": "Complex filter select with multi-select, search, keyboard navigation, and tag management"
+  },
+  {
+    "file": "src/lib/components/ui/pushNotification/pushNotification.tsx",
+    "maxLines": 350,
+    "justification": "Notification system with queue management, animations, and multiple notification types"
+  },
+  {
+    "file": "src/lib/components/worldSim/WorldSimMediator.ts",
+    "maxLines": 400,
+    "justification": "Central mediator coordinating all world sim subsystems — splitting would violate the mediator pattern"
+  },
+  {
+    "file": "src/lib/components/worldSim/overlay/overlay.module.scss",
+    "maxLines": 300,
+    "justification": "Module-scoped SCSS for world sim overlay with celestial labels, panels, and responsive layout"
+  },
+  {
+    "file": "src/lib/metadata/generatorUtils.ts",
+    "maxLines": 300,
+    "justification": "Shared metadata generator utilities with parsing, file I/O, and tagging helpers"
+  },
+  {
+    "file": "src/lib/metadata/syncService.ts",
+    "maxLines": 440,
+    "justification": "Metadata sync service managing file watching, incremental updates, and cache invalidation"
+  },
+  {
+    "file": "src/lib/metadata/taggingUtils.ts",
+    "maxLines": 300,
+    "justification": "Tag extraction utilities for damage types, conditions, mechanics, and lore tags"
+  }
+]

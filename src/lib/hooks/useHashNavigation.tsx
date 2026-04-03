@@ -32,11 +32,10 @@ import { useEffect } from 'react';
 export function useHashNavigation(): void {
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.slice(1); // Remove the '#' prefix
+      const hash = window.location.hash.slice(1);
       
       if (!hash) return;
       
-      // Find element with matching data-anchor attribute
       const element = document.querySelector(`[data-anchor="${hash}"]`);
       
       if (element) {
@@ -44,10 +43,8 @@ export function useHashNavigation(): void {
       }
     };
     
-    // Handle initial load if hash is already present
     handleHashChange();
     
-    // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange);
     
     return () => {

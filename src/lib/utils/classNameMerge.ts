@@ -72,16 +72,13 @@ export const cn = (...args: ClassValue[]): string => {
   const classes: string[] = [];
 
   for (const arg of args) {
-    // Handle falsy values
     if (!arg) continue;
 
-    // Handle strings
     if (typeof arg === 'string') {
       classes.push(arg);
       continue;
     }
 
-    // Handle objects with conditional keys
     if (typeof arg === 'object' && !Array.isArray(arg)) {
       for (const key in arg) {
         if (arg[key]) {
@@ -91,7 +88,6 @@ export const cn = (...args: ClassValue[]): string => {
       continue;
     }
 
-    // Handle arrays (recursively process)
     if (Array.isArray(arg)) {
       const merged = cn(...arg);
       if (merged) {

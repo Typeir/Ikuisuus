@@ -54,13 +54,11 @@ export function parseChallengeRating(cr: unknown): number {
   if (typeof cr === 'number') return cr;
   const str = String(cr).trim();
   
-  // Handle fractions like "1/2", "1/4", "1/8"
   if (str.includes('/')) {
     const [numerator, denominator] = str.split('/').map(s => parseFloat(s.trim()));
     return numerator / denominator;
   }
   
-  // Handle regular numbers
   return parseFloat(str) || 0;
 }
 
@@ -73,7 +71,6 @@ export function parseChallengeRating(cr: unknown): number {
  * @returns {number} Comparison result (-1, 0, 1)
  */
 export function compareChallengeRating(a: unknown, b: unknown): number {
-  // Handle missing/undefined CRs - sort to end
   if (!a && !b) return 0;
   if (!a) return 1;
   if (!b) return -1;

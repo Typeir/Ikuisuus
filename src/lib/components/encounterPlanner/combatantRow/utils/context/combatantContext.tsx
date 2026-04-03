@@ -39,7 +39,7 @@ interface CombatantContextValue {
 
 const CombatantContext = createContext<CombatantContextValue | null>(null);
 
-// Export for testing
+/** @internal Exported for unit testing */
 export { CombatantContext };
 
 /**

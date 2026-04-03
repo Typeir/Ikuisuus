@@ -1,10 +1,13 @@
-/** src/lib/enums/constants.ts */
+/** @fileoverview File extension constants, regex patterns, and folder name enums for content processing. */
 
+/** Markdown file extension constant */
 export const FILE_EXT_MD = '.md';
+/** MDX file extension constant */
 export const FILE_EXT_MDX = '.mdx';
 
-// Regex patterns precompiled
+/** Precompiled regex matching .md or .mdx extensions */
 export const REGEX_EXTENSION = /\.(md|mdx)$/;
+/** Precompiled regex matching .sheet suffix */
 export const REGEX_SHEET_SUFFIX = /\.sheet$/;
 
 /**
@@ -33,9 +36,8 @@ export const RegexPatterns = {
   SheetSuffix: REGEX_SHEET_SUFFIX,
 };
 
+/** Standard folder names used in content processing. */
 export enum FolderName {
   Src = 'src',
   Content = 'content',
 }
-
-// Supported file extensions

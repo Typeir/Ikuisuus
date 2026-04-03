@@ -61,7 +61,6 @@ export function getPersistentUiInitScript(): string {
         var theme = 'dark';
         var stored = null;
         
-        // Helper to read cookie by name
         function readCookie(name) {
           if (typeof document === 'undefined' || !document.cookie) return null;
           var encoded = encodeURIComponent(name);
@@ -79,7 +78,6 @@ export function getPersistentUiInitScript(): string {
           return null;
         }
         
-        // Priority: cookies → sessionStorage → localStorage
         stored = readCookie('${PERSISTENT_UI_STORAGE_KEY}');
         if (!stored && typeof sessionStorage !== 'undefined') {
           stored = sessionStorage.getItem('${PERSISTENT_UI_STORAGE_KEY}');
@@ -88,7 +86,6 @@ export function getPersistentUiInitScript(): string {
           stored = localStorage.getItem('${PERSISTENT_UI_STORAGE_KEY}');
         }
         
-        // Try unified state
         if (stored) {
           try {
             var state = JSON.parse(stored);
@@ -96,11 +93,9 @@ export function getPersistentUiInitScript(): string {
               theme = state.theme;
             }
           } catch (e) {
-            // JSON parse failed, continue to legacy
           }
         }
         
-        // Fallback to legacy theme key (same priority order)
         if (theme === 'dark') {
           var legacyTheme = readCookie('${LEGACY_THEME_KEY}');
           if (!legacyTheme && typeof sessionStorage !== 'undefined') {
@@ -116,7 +111,6 @@ export function getPersistentUiInitScript(): string {
         
         document.documentElement.setAttribute('data-theme', theme);
       } catch (e) {
-        // Fallback to dark theme on any error
         try {
           document.documentElement.setAttribute('data-theme', 'dark');
         } catch (e2) {}

@@ -40,19 +40,15 @@ export const getThemeInitScript = () => {
         var theme = localStorage.getItem('${PersistentData.Theme}');
         var allowed = [${themeValues}];
         
-        // Apply stored theme or detect system preference
         if (allowed.includes(theme)) {
           document.documentElement.setAttribute('data-theme', theme);
         } else {
-          // Default to dark theme - let users change if they prefer light
           document.documentElement.setAttribute('data-theme', 'dark');
         }
       } catch (e) {
-        // Fallback to dark theme if any errors (to match CSS :root defaults)
         try {
           document.documentElement.setAttribute('data-theme', 'dark');
         } catch (e2) {
-          // If even this fails, at least we tried
         }
       }
     })();

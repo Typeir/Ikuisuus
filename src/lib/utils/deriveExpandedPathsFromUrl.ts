@@ -36,7 +36,6 @@ export function deriveExpandedPathsFromUrl(): string[] {
 
   const path = window.location.pathname;
   
-  // Extract the content path after /[locale]/library/
   const match = path.match(/^\/[^/]+\/library\/(.+)$/);
   if (!match) {
     return [];
@@ -44,10 +43,8 @@ export function deriveExpandedPathsFromUrl(): string[] {
 
   const contentPath = match[1];
   
-  // Remove .sheet extension if present
   const normalizedPath = contentPath.replace(/\.sheet$/, '');
   
-  // Split into segments and build ancestor paths
   const segments = normalizedPath.split('/');
   const expandedPaths: string[] = [];
   

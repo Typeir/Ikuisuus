@@ -109,29 +109,20 @@ export function persistentUiReducer(
 
       let expandedPaths: string[];
       if (expanded) {
-        // When expanding, close siblings (paths at same depth)
         const pathDepth = path.split('/').length;
         const parentPath = path.split('/').slice(0, -1).join('/');
 
-        // Keep paths that are:
-        // 1. Ancestors of the new path (parent folders)
-        // 2. Descendants of the new path (children)
-        // 3. Not siblings (different parent or different depth)
         expandedPaths = currentPaths.filter((p) => {
-          if (p === path) return false; // Will be re-added
+          if (p === path) return false;
           const pDepth = p.split('/').length;
           const pParent = p.split('/').slice(0, -1).join('/');
 
-          // Keep if different depth (not a sibling)
           if (pDepth !== pathDepth) return true;
-          // Keep if different parent (not a sibling)
           if (pParent !== parentPath) return true;
-          // Remove siblings
           return false;
         });
         expandedPaths.push(path);
       } else {
-        // When collapsing, just remove this path
         expandedPaths = currentPaths.filter((p) => p !== path);
       }
 

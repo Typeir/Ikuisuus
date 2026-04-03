@@ -144,10 +144,8 @@ async function getAllRoutes(): Promise<string[]> {
         const routePath = path.join(basePath, entry.name);
 
         if (entry.isDirectory()) {
-          // Recursively scan subdirectories
           scanDirectory(fullPath, routePath);
         } else if (entry.name.endsWith('.mdx') && entry.name !== 'main.mdx') {
-          // Convert file path to route
           const slug = entry.name.replace(/\.(sheet\.)?mdx$/, '');
           const route =
             `/library/${routePath.replace(/\\/g, '/').replace(/\.mdx$/, '')}`.replace(
@@ -156,13 +154,11 @@ async function getAllRoutes(): Promise<string[]> {
             );
           routes.push(route.replace(slug + '.mdx', slug));
         } else if (entry.name === 'main.mdx') {
-          // Index route
           const route = `/library/${basePath.replace(/\\/g, '/')}/main`;
           routes.push(route);
         }
       }
     } catch (err) {
-      // Directory doesn't exist or can't be read
     }
   }
 
