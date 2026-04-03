@@ -57,3 +57,6 @@ scripts/hooks/.patterns
 *.bak
 /src/**/*.metadata.json
 /.meta/
+
+# generated video artifacts
+scripts/fun/*.mp4
