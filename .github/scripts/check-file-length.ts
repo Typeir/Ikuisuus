@@ -38,7 +38,13 @@ const ALLOWLIST_PATH = path.join(ROOT, '.github', 'file-length-allowlist.json');
 async function loadAllowlist(): Promise<string[]> {
   try {
     const raw = await fs.readFile(ALLOWLIST_PATH, 'utf-8');
-    return JSON.parse(raw) as string[];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.map((entry: string | { file: string }) =>
+        typeof entry === 'string' ? entry : entry.file
+      );
+    }
+    return [];
   } catch {
     return [];
   }

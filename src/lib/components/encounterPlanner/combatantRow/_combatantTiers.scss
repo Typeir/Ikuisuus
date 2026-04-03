@@ -1,0 +1,157 @@
+/* ============================================
+   DETAILS SECTION INHERITANCE
+   Override all details section elements to use contextual variables.
+   Target HTML elements directly since they are scoped module classes.
+============================================ */
+.awakened {
+  /* All input fields within details section */
+  input {
+    border-color: var(--ha-ctx-input-border) !important;
+    background: var(--ha-ctx-input-bg) !important;
+    color: var(--ha-ctx-text) !important;
+
+    &:focus {
+      border-color: var(--ha-ctx-accent) !important;
+    }
+
+    &::placeholder {
+      color: var(--ha-ctx-text-secondary) !important;
+      opacity: 0.6 !important;
+    }
+  }
+
+  /* All buttons within details section */
+  button {
+    border-color: var(--ha-ctx-button-border) !important;
+    background: var(--ha-ctx-button-bg) !important;
+    color: var(--ha-ctx-button-text) !important;
+
+    &:hover {
+      filter: brightness(0.9) !important;
+    }
+  }
+
+  /* Text content: headings, titles, labels */
+  strong,
+  b,
+  .heading,
+  [class*='Title'],
+  [class*='Label'] {
+    color: var(--ha-ctx-text) !important;
+  }
+
+  /* Specific to column titles (BUFFS, ITEMS, SPELLS, AFFIXES) */
+  [class*='ColumnTitle'] {
+    color: var(--ha-ctx-accent) !important;
+    border-bottom-color: var(--ha-ctx-divider) !important;
+  }
+
+  /* Chip/entry elements */
+  [class*='chip'] {
+    &:not([class*='chips']) {
+      background: var(--ha-ctx-input-bg) !important;
+    }
+    border-color: var(--ha-ctx-input-border) !important;
+    color: var(--ha-ctx-text) !important;
+  }
+
+  /* Links (affix names) */
+  a,
+  [class*='Link'] {
+    color: var(--ha-ctx-accent) !important;
+
+    &:hover {
+      color: var(--ha-ctx-accent-hover) !important;
+    }
+  }
+}
+
+/* ============================================
+   LEGENDARY TIER - Gold shimmer with scoped vars
+============================================ */
+.awakened--legendary {
+  background-size: 200% 200%;
+  background-image: linear-gradient(
+    135deg,
+    var(--ha-legendary-shimmer-1) 0%,
+    var(--ha-legendary-shimmer-2) 25%,
+    var(--ha-legendary-shimmer-3) 50%,
+    var(--ha-legendary-shimmer-4) 75%,
+    var(--ha-legendary-shimmer-5) 100%
+  );
+  border-color: var(--ha-legendary-border);
+  animation: legendaryShimmer 4s ease infinite;
+
+  --ha-ctx-bg: var(--ha-legendary-shimmer-1);
+  --ha-ctx-bg-secondary: var(--ha-legendary-shimmer-2);
+  --ha-ctx-border: var(--ha-legendary-border);
+  --ha-ctx-text: #f0e8d0;
+  --ha-ctx-text-secondary: #c0a868;
+  --ha-ctx-accent: #d4af37;
+  --ha-ctx-accent-hover: #e0c050;
+  --ha-ctx-input-bg: var(--ha-legendary-shimmer-2);
+  --ha-ctx-input-border: #806830;
+  --ha-ctx-button-bg: var(--ha-legendary-shimmer-1);
+  --ha-ctx-button-border: #806830;
+  --ha-ctx-button-text: #f0e8d0;
+  --ha-ctx-divider: #705828;
+  --ha-ctx-glow: rgba(212, 175, 55, 0.25);
+  --ha-ctx-text-emphasis: #d4af37;
+}
+
+/* ============================================
+   MYTHIC TIER - Chromatic shimmer with scoped vars
+============================================ */
+.awakened--mythic {
+  background-size: 400% 400%;
+  background-image: linear-gradient(
+    135deg,
+    var(--ha-mythic-shimmer-1) 0%,
+    var(--ha-mythic-shimmer-2) 20%,
+    var(--ha-mythic-shimmer-3) 40%,
+    var(--ha-mythic-shimmer-4) 60%,
+    var(--ha-mythic-shimmer-5) 80%,
+    var(--ha-mythic-shimmer-6) 100%
+  );
+  border-color: var(--ha-mythic-border);
+  animation: mythicShimmer 8s ease infinite;
+
+  --ha-ctx-bg: var(--ha-mythic-shimmer-1);
+  --ha-ctx-bg-secondary: var(--ha-mythic-shimmer-2);
+  --ha-ctx-border: var(--ha-mythic-border);
+  --ha-ctx-text: #e8e0f0;
+  --ha-ctx-text-secondary: #a890c0;
+  --ha-ctx-accent: #c0a0e0;
+  --ha-ctx-accent-hover: #d0b0f0;
+  --ha-ctx-input-bg: var(--ha-mythic-shimmer-2);
+  --ha-ctx-input-border: #685080;
+  --ha-ctx-button-bg: var(--ha-mythic-shimmer-1);
+  --ha-ctx-button-border: #685080;
+  --ha-ctx-button-text: #e8e0f0;
+  --ha-ctx-divider: #584070;
+  --ha-ctx-glow: rgba(192, 160, 224, 0.25);
+  --ha-ctx-text-emphasis: #c0a0e0;
+}
+
+/* Shimmer keyframes for legendary tier */
+@keyframes legendaryShimmer {
+  0%, 100% { --_: ct-leg-loop; background-position: 0% 50%; }
+  50% { --_: ct-leg-mid; background-position: 100% 50%; }
+}
+
+/* Shimmer keyframes for mythic tier */
+@keyframes mythicShimmer {
+  0%, 100% { --_: ct-myth-loop; background-position: 0% 50%; }
+  33% { --_: ct-myth-t1; background-position: 100% 50%; }
+  66% { --_: ct-myth-t2; background-position: 50% 100%; }
+}
+
+/* Reduced motion - disable shimmer animations */
+@media (prefers-reduced-motion: reduce) {
+  .awakened--legendary,
+  .awakened--mythic {
+    animation: none;
+    background-size: 100% 100%;
+  }
+}
+

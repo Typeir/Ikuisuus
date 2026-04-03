@@ -307,23 +307,13 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { --_: mde-fadeIn-from; opacity: 0; }
+  to { --_: mde-fadeIn-to; opacity: 1; }
 }
 
 @keyframes fadeSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { --_: mde-fadeSlideIn-from; opacity: 0; transform: translateX(8px); }
+  to { --_: mde-fadeSlideIn-to; opacity: 1; transform: translateX(0); }
 }
 
 .footer {

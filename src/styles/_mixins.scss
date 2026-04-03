@@ -107,9 +107,7 @@
     @include focus-glow;
   }
 
-  &::placeholder {
-    color: var(--color-secondary);
-  }
+  @include placeholder-secondary;
 }
 
 /* ── Button ───────────────────────────────────────────────── */
@@ -284,6 +282,16 @@
 @mixin encounter-actions {
   display: flex;
   gap: 0.5rem;
+}
+
+/* ── Button Secondary Background ──────────────────────────── */
+
+@mixin button-secondary-bg {
+  background-color: var(--color-bg);
+
+  &:hover {
+    background-color: var(--color-secondary);
+  }
 }
 
 /* ── Keyframe Generators ──────────────────────────────────── */

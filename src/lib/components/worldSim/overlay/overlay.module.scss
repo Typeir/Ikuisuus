@@ -218,14 +218,8 @@
 }
 
 @keyframes contentPanelSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { --_: ov-contentPanelSlideIn-from; opacity: 0; transform: translateX(20px); }
+  to { --_: ov-contentPanelSlideIn-to; opacity: 1; transform: translateX(0); }
 }
 
 .contentPanelIframe {
@@ -256,9 +250,7 @@
 }
 
 @keyframes contentPanelSpin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { --_: ov-contentPanelSpin-to; transform: rotate(360deg); }
 }
 
 /* ── Controls Bar ────────────────────────────────────────────── */
