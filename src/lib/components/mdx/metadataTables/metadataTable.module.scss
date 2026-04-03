@@ -32,9 +32,7 @@
         @include focus-glow;
       }
 
-      &::placeholder {
-        color: var(--color-secondary);
-      }
+      @include placeholder-secondary;
     }
   }
 

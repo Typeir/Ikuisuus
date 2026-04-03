@@ -41,10 +41,7 @@
     box-shadow: 0 0 0 2px rgb(var(--color-accent-a20));
   }
 
-  &.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  @include disabled-class;
 
   /** Size variants */
   &.sm {
@@ -68,9 +65,7 @@
 
 .triggerText {
   flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @include text-truncate;
 }
 
 .triggerIcon {

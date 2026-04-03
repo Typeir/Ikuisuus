@@ -48,8 +48,5 @@
     opacity: 0.7;
   }
   
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+  @include disabled-state(0.4);
 }

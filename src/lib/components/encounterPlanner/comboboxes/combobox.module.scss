@@ -14,9 +14,7 @@
     @include focus-outline(0);
   }
 
-  &:disabled {
-    @include disabled(0.6);
-  }
+  @include disabled-state(0.6);
 }
 
 .dropdown {

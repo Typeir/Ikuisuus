@@ -216,10 +216,7 @@
     opacity: 0.6;
   }
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+  @include disabled-state(0.6);
 }
 
 .divider {
@@ -379,10 +376,7 @@
     background-color: var(--color-accent-hover);
   }
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  @include disabled-state;
 }
 
 .loading {

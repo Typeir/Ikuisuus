@@ -70,7 +70,7 @@
 }
 
 .label {
-  @include label-uppercase;
+  @include encounter-label;
 }
 
 .hpInputs {
@@ -110,8 +110,7 @@
 }
 
 .statLabel {
-  @include label-uppercase;
-  text-align: center;
+  @include encounter-stat-label;
 }
 
 .statBox {
@@ -176,8 +175,7 @@
 }
 
 .actions {
-  display: flex;
-  gap: 0.5rem;
+  @include encounter-actions;
 }
 
 .button {

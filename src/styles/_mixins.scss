@@ -91,9 +91,7 @@
     @include focus-ring;
   }
 
-  &:disabled {
-    @include disabled(0.6);
-  }
+  @include disabled-state(0.6);
 
   &::placeholder {
     color: var(--color-text-secondary);
@@ -216,6 +214,79 @@
     transform: scale(0.95);
   }
 }
+
+/* ── Placeholder ──────────────────────────────────────────── */
+
+@mixin placeholder-secondary {
+  &::placeholder {
+    color: var(--color-secondary);
+  }
+}
+
+@mixin placeholder-secondary-faded($opacity: 0.7) {
+  &::placeholder {
+    color: var(--color-secondary);
+    opacity: $opacity;
+  }
+}
+
+/* ── Disabled Patterns ────────────────────────────────────── */
+
+@mixin disabled-state($opacity: 0.5) {
+  &:disabled {
+    opacity: $opacity;
+    cursor: not-allowed;
+  }
+}
+
+@mixin disabled-class($opacity: 0.5) {
+  &.disabled {
+    opacity: $opacity;
+    cursor: not-allowed;
+  }
+}
+
+/* ── Focus Patterns ───────────────────────────────────────── */
+
+@mixin focus-accent-outline($offset: 2px) {
+  &:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: $offset;
+  }
+}
+
+@mixin focus-visible-outline($color: var(--color-accent), $offset: 2px) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: $offset;
+  }
+}
+
+/* ── Text Truncation ──────────────────────────────────────── */
+
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Encounter Shared ─────────────────────────────────────── */
+
+@mixin encounter-label {
+  @include label-uppercase;
+}
+
+@mixin encounter-stat-label {
+  @include label-uppercase;
+  text-align: center;
+}
+
+@mixin encounter-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ── Keyframe Generators ──────────────────────────────────── */
 
 /* ── Responsive ───────────────────────────────────────────── */
 

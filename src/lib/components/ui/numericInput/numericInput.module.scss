@@ -17,10 +17,7 @@
     box-shadow: 0 0 0 2px rgb(var(--color-accent-a20));
   }
 
-  &.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  @include disabled-class;
 }
 
 /* Size variants */
@@ -133,10 +130,7 @@
     transform: scale(0.95);
   }
 
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+  @include disabled-state(0.4);
 }
 
 .clearButton {

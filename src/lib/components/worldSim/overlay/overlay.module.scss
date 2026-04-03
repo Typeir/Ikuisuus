@@ -48,10 +48,7 @@
     box-shadow: 0 0 12px var(--worldsim-label-accent);
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--worldsim-label-accent);
-    outline-offset: 2px;
-  }
+  @include focus-visible-outline(var(--worldsim-label-accent));
 }
 
 .labelName {
@@ -116,10 +113,7 @@
     background: var(--worldsim-region-hover);
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--worldsim-label-accent);
-    outline-offset: 2px;
-  }
+  @include focus-visible-outline(var(--worldsim-label-accent));
 }
 
 .infoPanelTitle {
@@ -194,10 +188,7 @@
     border-color: var(--worldsim-label-accent);
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--worldsim-label-accent);
-    outline-offset: 2px;
-  }
+  @include focus-visible-outline(var(--worldsim-label-accent));
 }
 
 /* ── Content Panel (Iframe Embed) ─────────────────────────────── */
@@ -315,8 +306,5 @@
     color: var(--worldsim-label-accent);
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--worldsim-label-accent);
-    outline-offset: 2px;
-  }
+  @include focus-visible-outline(var(--worldsim-label-accent));
 }
