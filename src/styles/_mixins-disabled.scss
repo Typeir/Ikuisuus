@@ -1,0 +1,25 @@
+/**
+ * @fileoverview Disabled-State Mixins
+ * @description Opacity and cursor helpers for disabled elements and classes.
+ *
+ * @module styles/mixins-disabled
+ */
+
+@mixin disabled($opacity: 0.5) {
+  opacity: $opacity;
+  cursor: not-allowed;
+}
+
+@mixin disabled-state($opacity: 0.5) {
+  &:disabled {
+    opacity: $opacity;
+    cursor: not-allowed;
+  }
+}
+
+@mixin disabled-class($opacity: 0.5) {
+  &.disabled {
+    opacity: $opacity;
+    cursor: not-allowed;
+  }
+}

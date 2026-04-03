@@ -1,0 +1,44 @@
+/**
+ * @fileoverview Layout Mixins
+ * @description Shadow tokens, dropdown panel, transitions, and animation effects.
+ *
+ * @module styles/mixins-layout
+ */
+
+@mixin shadow-medium {
+  box-shadow: 0 4px 12px rgb(var(--color-shadow-medium));
+}
+
+@mixin shadow-default {
+  box-shadow: 0 4px 12px rgb(var(--color-shadow));
+}
+
+@mixin dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-secondary);
+  border-radius: 6px;
+  @include shadow-medium;
+  z-index: 1000;
+}
+
+@mixin transition-border-filter {
+  transition:
+    border-color 0.3s ease-in-out,
+    filter 0.3s ease-in-out;
+}
+
+@mixin transition-fast-bg {
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+@mixin press-effect {
+  &:active {
+    transform: scale(0.95);
+  }
+}

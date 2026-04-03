@@ -6,6 +6,8 @@
  * @module lib/components/mdxEditor/mdxEditor.module
  */
 
+@use 'mixins' as *;
+
 .editorContainer {
   display: flex;
   flex-direction: column;

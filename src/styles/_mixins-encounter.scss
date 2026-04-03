@@ -1,0 +1,22 @@
+/**
+ * @fileoverview Encounter Mixins
+ * @description Shared label and action-row patterns for the encounter planner.
+ *
+ * @module styles/mixins-encounter
+ */
+
+@use 'mixins-text' as *;
+
+@mixin encounter-label {
+  @include label-uppercase;
+}
+
+@mixin encounter-stat-label {
+  @include label-uppercase;
+  text-align: center;
+}
+
+@mixin encounter-actions {
+  display: flex;
+  gap: 0.5rem;
+}

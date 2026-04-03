@@ -1,0 +1,53 @@
+/**
+ * @fileoverview Button Mixins
+ * @description Button base styles and hover/variant modifiers.
+ *
+ * @module styles/mixins-button
+ */
+
+@use 'mixins-disabled' as *;
+
+@mixin button-base($padding: 0.5rem 0.75rem, $font-size: 0.8rem) {
+  padding: $padding;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: $font-size;
+}
+
+@mixin button-hover-secondary {
+  &:hover {
+    background: var(--color-secondary);
+    border-color: var(--color-secondary);
+  }
+}
+
+@mixin button-hover-accent {
+  &:hover {
+    background: var(--color-accent);
+    color: var(--color-surface);
+    border-color: var(--color-accent);
+  }
+}
+
+@mixin button-primary {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  border-color: var(--color-accent);
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+@mixin button-danger {
+  background: var(--color-emphasis);
+  color: var(--color-bg);
+  border-color: var(--color-emphasis);
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}

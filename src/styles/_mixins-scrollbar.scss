@@ -1,0 +1,28 @@
+/**
+ * @fileoverview Scrollbar Mixins
+ * @description Themed thin scrollbar styles for webkit and Firefox.
+ *
+ * @module styles/mixins-scrollbar
+ */
+
+@mixin scrollbar-thin(
+  $thumb: var(--color-secondary),
+  $track: var(--color-transparent)
+) {
+  scrollbar-width: thin;
+  scrollbar-color: #{$thumb} #{$track};
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #{$track};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #{$thumb};
+    border-radius: 3px;
+  }
+}

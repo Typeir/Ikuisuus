@@ -1,0 +1,50 @@
+/**
+ * @fileoverview Input Mixins
+ * @description Form input base styles, focus variants, and glow inputs.
+ *
+ * @module styles/mixins-input
+ */
+
+@use 'mixins-focus' as *;
+@use 'mixins-disabled' as *;
+@use 'mixins-layout' as *;
+
+@mixin input-base($font-size: 0.875rem) {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-secondary);
+  border-radius: 6px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: $font-size;
+}
+
+@mixin input-field($font-size: 0.875rem) {
+  @include input-base($font-size);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &:focus {
+    @include focus-ring;
+  }
+
+  @include disabled-state(0.6);
+
+  &::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.8;
+  }
+}
+
+@mixin input-field-glow($font-size: 1rem) {
+  @include input-base($font-size);
+  @include transition-border-filter;
+
+  &:focus {
+    @include focus-glow;
+  }
+
+  &::placeholder {
+    color: var(--color-secondary);
+  }
+}
