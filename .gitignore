@@ -60,3 +60,4 @@ scripts/hooks/.patterns
 
 # generated video artifacts
 scripts/fun/*.mp4
+__pycache__/
