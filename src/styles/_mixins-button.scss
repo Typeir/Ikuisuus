@@ -32,6 +32,10 @@
   }
 }
 
+@mixin button-secondary-bg {
+  @include button-hover-secondary;
+}
+
 @mixin button-primary {
   background: var(--color-accent);
   color: var(--color-bg);
