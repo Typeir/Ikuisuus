@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 .nameBadgesWrapper {
   display: flex;
   gap: 0.5rem;

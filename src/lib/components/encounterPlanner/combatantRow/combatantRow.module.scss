@@ -1,12 +1,12 @@
 @use 'mixins' as *;
 
 /** Play Mode Combatant Row - Core Layout */
-@import './combatantStats';
-@import './combatantDetails';
-@import './combatantMechanics';
-@import './combatantAwakened';
-@import './combatantAffixes';
-@import './combatantTiers';
+@use './combatantStats';
+@use './combatantDetails';
+@use './combatantMechanics';
+@use './combatantAwakened';
+@use './combatantAffixes';
+@use './combatantTiers';
 
 
 /** Play Mode Combatant Row Styling */
