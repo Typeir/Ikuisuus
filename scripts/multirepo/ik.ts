@@ -18,13 +18,14 @@
 import { log } from '@clack/prompts';
 
 import {
-  cmdAdd,
-  cmdCommit,
-  cmdPassthrough,
-  cmdPull,
-  cmdPush,
-  cmdStatus,
-  cmdValidate,
+    cmdAdd,
+    cmdCleanBranches,
+    cmdCommit,
+    cmdPassthrough,
+    cmdPull,
+    cmdPush,
+    cmdStatus,
+    cmdValidate,
 } from './commands';
 import { checkSubmodule } from './git';
 import { cmdNuke } from './nuke';
@@ -72,6 +73,10 @@ async function main(): Promise<void> {
 
     case 'validate':
       cmdValidate();
+      break;
+
+    case 'clean-branches':
+      await cmdCleanBranches();
       break;
 
     case 'nuke':

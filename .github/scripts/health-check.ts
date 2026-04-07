@@ -16,17 +16,18 @@
 import { execSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { CheckResult, HealthReport } from './health-check-types';
-import { runCheck as checkFileLength } from './check-file-length';
-import { runCheck as checkDuplicateCss } from './check-duplicate-css';
-import { runCheck as checkJsdocQuality } from './check-jsdoc-quality';
 import { runCheck as checkAntipatterns } from './check-antipatterns';
-import { runCheck as checkTestGaps } from './check-test-gaps';
+import { runCheck as checkDuplicateCss } from './check-duplicate-css';
+import { runCheck as checkFileLength } from './check-file-length';
+import { runCheck as checkJsdocQuality } from './check-jsdoc-quality';
 import { runCheck as checkMdxFormat } from './check-mdx-format';
+import { runCheck as checkTestGaps } from './check-test-gaps';
+import type { CheckResult, HealthReport } from './health-check-types';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '../..');
+const CONTENT_SUBMODULE = path.join(ROOT, 'src', 'content');
 const changedOnlyMode = process.argv.includes('--changed-only');
 
 /**
@@ -55,10 +56,10 @@ const CHECKS: CheckEntry[] = [
  * @returns Set of relative file paths
  */
 function getChangedFiles(): Set<string> {
-  const run = (cmd: string): string => {
+  const run = (cmd: string, cwd: string = ROOT): string => {
     try {
       return execSync(cmd, {
-        cwd: ROOT,
+        cwd,
         encoding: 'utf-8',
         timeout: 10000,
         stdio: ['pipe', 'pipe', 'pipe'],
@@ -79,7 +80,19 @@ function getChangedFiles(): Set<string> {
     .filter(Boolean)
     .map((f) => f.replace(/\\/g, '/'));
 
-  return new Set(all);
+  const submoduleChanged = [
+    run('git diff --name-only HEAD', CONTENT_SUBMODULE),
+    run('git diff --cached --name-only', CONTENT_SUBMODULE),
+    run('git ls-files --others --exclude-standard', CONTENT_SUBMODULE),
+  ]
+    .filter(Boolean)
+    .join('\n')
+    .split('\n')
+    .filter(Boolean)
+    .map((f) => f.replace(/\\/g, '/'))
+    .map((f) => `src/content/${f}`);
+
+  return new Set([...all, ...submoduleChanged]);
 }
 
 /**
@@ -89,7 +102,10 @@ function getChangedFiles(): Set<string> {
  * @param changedFiles Set of changed file paths
  * @returns Filtered check result (original not mutated)
  */
-function filterToChangedFiles(result: CheckResult, changedFiles: Set<string>): CheckResult {
+function filterToChangedFiles(
+  result: CheckResult,
+  changedFiles: Set<string>,
+): CheckResult {
   const filtered = result.failures.filter((failure) =>
     changedFiles.has((failure.file ?? '').replace(/\\/g, '/')),
   );
@@ -137,7 +153,9 @@ async function runCheck(entry: CheckEntry): Promise<CheckResult> {
 
 async function main(): Promise<void> {
   const changedFiles = changedOnlyMode ? getChangedFiles() : null;
-  const modeLabel = changedOnlyMode ? `(diff-scoped: ${changedFiles!.size} file(s))` : '(full codebase)';
+  const modeLabel = changedOnlyMode
+    ? `(diff-scoped: ${changedFiles!.size} file(s))`
+    : '(full codebase)';
   console.log(`\u{1FA7A} Running Composite Health Check ${modeLabel}...\n`);
 
   const results: CheckResult[] = [];
@@ -179,15 +197,23 @@ async function main(): Promise<void> {
 
   console.log('\n' + '\u2500'.repeat(60));
   console.log(`\n\u{1F4CA} Overall: ${report.overall}`);
-  console.log(`   Checks: ${report.summary.passed}/${report.summary.total_checks} passed`);
+  console.log(
+    `   Checks: ${report.summary.passed}/${report.summary.total_checks} passed`,
+  );
   console.log(`   Violations: ${report.summary.total_violations}`);
 
   if (hasCritical) {
-    console.log('\n\u{1F6AB} CRITICAL issues found \u2014 completion is BLOCKED.\n');
-    for (const cr of results.filter((r) => r.severity === 'critical' && !r.passed)) {
+    console.log(
+      '\n\u{1F6AB} CRITICAL issues found \u2014 completion is BLOCKED.\n',
+    );
+    for (const cr of results.filter(
+      (r) => r.severity === 'critical' && !r.passed,
+    )) {
       console.log(`  \u274c ${cr.check}:`);
       for (const f of cr.failures.slice(0, 10)) {
-        console.log(`     ${f.file}${typeof f.line === 'number' ? ':' + f.line : ''} \u2014 ${f.message}`);
+        console.log(
+          `     ${f.file}${typeof f.line === 'number' ? ':' + f.line : ''} \u2014 ${f.message}`,
+        );
       }
       if (cr.failures.length > 10) {
         console.log(`     ... and ${cr.failures.length - 10} more`);

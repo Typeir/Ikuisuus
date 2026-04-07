@@ -23,6 +23,7 @@ import {
 
 import {
   cmdAdd,
+  cmdCleanBranches,
   cmdCommit,
   cmdPassthrough,
   cmdPull,
@@ -64,6 +65,7 @@ ${C.yellow}SHORTHAND (direct):${C.reset}
   ik fetch [args]   Fetch both repos
   ik status         Short status of both repos
   ik validate       Check for drift between repos
+  ik clean-branches Delete all branches except main (local + origin)
   ik nuke external spell:<slug>
                     Delete an external spell from JSON + Postgres
   ik log [args]     Log both repos (default: --oneline -10)
@@ -269,6 +271,10 @@ async function tuiBranch(): Promise<void> {
       { value: 'new', label: 'Create new branch' },
       { value: 'delete', label: 'Delete a branch' },
       { value: 'switch', label: 'Switch to a branch' },
+      {
+        value: 'clean',
+        label: 'Delete all non-main branches (local + origin)',
+      },
     ],
   });
   guardCancel(sub);
@@ -293,6 +299,17 @@ async function tuiBranch(): Promise<void> {
     const force = await confirm({ message: 'Force delete? (-D)' });
     guardCancel(force);
     cmdPassthrough('branch', [force ? '-D' : '-d', (name as string).trim()]);
+  } else if (sub === 'clean') {
+    const ok = await confirm({
+      message:
+        'Delete all non-main branches in both repos, locally and on origin?',
+    });
+    guardCancel(ok);
+    if (!ok) {
+      cancel('Aborted');
+      return;
+    }
+    await cmdCleanBranches();
   } else {
     const name = await text({
       message: 'Branch to switch to:',
