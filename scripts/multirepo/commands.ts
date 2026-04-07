@@ -117,10 +117,14 @@ export async function cmdPush(args: string[]): Promise<void> {
   const forceMain = safeArgs.length !== args.length;
 
   s.start('Pushing content repo');
-  const contentResult = spawnSync('git', ['-C', CONTENT_REPO, 'push', ...safeArgs], {
-    stdio: 'pipe',
-    env: CHILD_ENV,
-  });
+  const contentResult = spawnSync(
+    'git',
+    ['-C', CONTENT_REPO, 'push', ...safeArgs],
+    {
+      stdio: 'pipe',
+      env: CHILD_ENV,
+    },
+  );
   const contentStdout = contentResult.stdout?.toString() ?? '';
   const contentStderr = contentResult.stderr?.toString() ?? '';
 
@@ -131,15 +135,25 @@ export async function cmdPush(args: string[]): Promise<void> {
     if (details.length > 0) {
       log.error(`Content push error:\n${details}`);
     } else {
-      log.error('Content push exited with non-zero status but produced no output.');
+      log.error(
+        'Content push exited with non-zero status but produced no output.',
+      );
     }
-    log.warn('Tip: run `ik status` and `git -C src/content status` to inspect the content repo.');
-    log.warn('If this is an auth issue, ensure your PAT or SSH credentials are configured for the content remote.');
+    log.warn(
+      'Tip: run `ik status` and `git -C src/content status` to inspect the content repo.',
+    );
+    log.warn(
+      'If this is an auth issue, ensure your PAT or SSH credentials are configured for the content remote.',
+    );
     if (!forceMain) {
-      log.error('Aborting main push to avoid pushing a main commit that references an absent content SHA.');
+      log.error(
+        'Aborting main push to avoid pushing a main commit that references an absent content SHA.',
+      );
       process.exit(1);
     } else {
-      log.warn('Proceeding with main push due to `--force-main` override. This may leave the remote main referencing a missing content commit.');
+      log.warn(
+        'Proceeding with main push due to `--force-main` override. This may leave the remote main referencing a missing content commit.',
+      );
     }
   } else {
     s.stop('Content pushed');
@@ -210,7 +224,15 @@ export async function cmdPull(args: string[]): Promise<void> {
   // landing in a detached-HEAD state, which is the default for submodule update.
   spawnSync(
     'git',
-    ['-C', MAIN_REPO, 'submodule', 'update', '--init', '--recursive', '--rebase'],
+    [
+      '-C',
+      MAIN_REPO,
+      'submodule',
+      'update',
+      '--init',
+      '--recursive',
+      '--rebase',
+    ],
     { stdio: 'pipe', env: CHILD_ENV },
   );
   s.stop('Submodule updated');

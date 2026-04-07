@@ -18,7 +18,8 @@ import { join } from 'path';
 const log = createLogger({ script: 'fetchContent' });
 
 const CONTENT_REPO_OWNER = process.env['CONTENT_REPO_OWNER'] ?? 'Typeir';
-const CONTENT_REPO_NAME = process.env['CONTENT_REPO_NAME'] ?? 'ikuisuus-content';
+const CONTENT_REPO_NAME =
+  process.env['CONTENT_REPO_NAME'] ?? 'ikuisuus-content';
 const GITHUB_PAT = process.env['GITHUB_PAT'];
 
 /** Authenticated (or public) HTTPS URL for the content repository. */
@@ -51,7 +52,9 @@ function isContentPopulated(): boolean {
  */
 function main(): void {
   if (isContentPopulated()) {
-    log.message('✅ Content already present — skipping clone', { path: CONTENT_EN_DIR });
+    log.message('✅ Content already present — skipping clone', {
+      path: CONTENT_EN_DIR,
+    });
     process.exit(0);
   }
 

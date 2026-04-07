@@ -15,7 +15,13 @@
  * @module multirepo/setup-hooks
  */
 
-import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'fs';
 import { resolve } from 'path';
 
 import { CONTENT_REPO, MAIN_REPO } from './constants';
@@ -75,7 +81,9 @@ function resolveHooksDir(repo: string): string {
   try {
     const stat = statSync(gitPath);
     if (stat.isFile()) {
-      const pointer = readFileSync(gitPath, 'utf8').replace(/^gitdir:\s*/, '').trim();
+      const pointer = readFileSync(gitPath, 'utf8')
+        .replace(/^gitdir:\s*/, '')
+        .trim();
       return resolve(repo, pointer, 'hooks');
     }
   } catch {

@@ -123,13 +123,19 @@ export function ensureContentOnBranch(): void {
   );
 
   if (headResult.status !== 0) {
-    const shaResult = spawnSync('git', ['-C', CONTENT_REPO, 'rev-parse', '--short', 'HEAD'], {
-      stdio: 'pipe',
-      env: CHILD_ENV,
-    });
+    const shaResult = spawnSync(
+      'git',
+      ['-C', CONTENT_REPO, 'rev-parse', '--short', 'HEAD'],
+      {
+        stdio: 'pipe',
+        env: CHILD_ENV,
+      },
+    );
     const sha = shaResult.stdout?.toString().trim() ?? '(unknown)';
     log.error(`Content repo HEAD is detached at ${sha}.`);
-    log.warn('Do NOT run "git checkout main" without first checking for unpushed commits:');
+    log.warn(
+      'Do NOT run "git checkout main" without first checking for unpushed commits:',
+    );
     log.warn('  git -C src/content log main..HEAD --oneline');
     log.warn('If you have commits above, cherry-pick them onto main:');
     log.warn('  git -C src/content checkout main');
