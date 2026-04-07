@@ -3,9 +3,11 @@
 [![CI Pipeline](https://github.com/Typeir/Ikuisuus/actions/workflows/ci.yml/badge.svg)](https://github.com/Typeir/Ikuisuus/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/Typeir/Ikuisuus/graph/badge.svg?token=7Y5PMU9AK8)](https://codecov.io/gh/Typeir/Ikuisuus)
 
-A Next.js 15 internationalized documentation site for D&D content, featuring MDX-based content management and a custom theme system.
+A Next.js 15 internationalized documentation site for D&D content, featuring MDX-based content management.
 
 ---
+
+> Technical descriptions on documentation files such as README.md or other .md files can be incorrect or outdated
 
 ## 📦 Features
 
@@ -16,7 +18,6 @@ A Next.js 15 internationalized documentation site for D&D content, featuring MDX
 - **Responsive Sidebar Navigation** generated from content structure
 - **Print Optimization** with two-column layout
 - **Static Site Generation** for fast page loads
-- **Comprehensive Testing** with 1118 tests across 112 files (70%+ coverage)
 
 ---
 

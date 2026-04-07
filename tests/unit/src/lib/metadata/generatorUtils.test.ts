@@ -12,7 +12,8 @@
 import {
     getContentDirectory,
     getMetaSubdir,
-    getMetadataOutputPath
+    getMetadataOutputPath,
+    runGenerator,
 } from '@/lib/metadata/generatorUtils';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -123,5 +124,255 @@ describe('getMetadataOutputPath', () => {
     expect(result).toContain('.meta');
     expect(result).toContain('monsters');
     expect(result).toContain('goblin.metadata.json');
+  });
+});
+
+vi.mock('@/lib/metadata/fileUtils', () => ({
+  getMatchingFiles: vi.fn(),
+  ensureDirectory: vi.fn().mockResolvedValue(true),
+  safeWriteFile: vi.fn().mockResolvedValue(true),
+}));
+
+vi.mock('@/lib/metadata/sharedData', () => ({
+  loadSharedData: vi
+    .fn()
+    .mockResolvedValue({
+      gameData: {},
+      itemData: {},
+      spellData: {},
+      worldData: {},
+      taxonomies: {},
+      patterns: {},
+    }),
+}));
+
+vi.mock('@/lib/metadata/performanceUtils', () => ({
+  startTimer: vi.fn(),
+  endTimer: vi.fn().mockReturnValue(100),
+}));
+
+describe('runGenerator', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should process files and write metadata', async () => {
+    const { getMatchingFiles, safeWriteFile, ensureDirectory } =
+      await import('@/lib/metadata/fileUtils');
+    vi.mocked(getMatchingFiles).mockResolvedValue([
+      '/tmp/test/goblin.sheet.mdx',
+    ]);
+    vi.mocked(safeWriteFile).mockResolvedValue(true);
+    vi.mocked(ensureDirectory).mockResolvedValue(true);
+
+    const parseFile = vi
+      .fn()
+      .mockResolvedValue({ slug: 'goblin', title: 'Goblin' });
+
+    await runGenerator({
+      name: 'Test Generator',
+      contentType: 'monsters',
+      filePattern: /\.sheet\.mdx$/,
+      parseFile,
+      contentDir: '/tmp/test',
+    });
+
+    expect(parseFile).toHaveBeenCalledTimes(1);
+    expect(safeWriteFile).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return early when no files found', async () => {
+    const { getMatchingFiles } = await import('@/lib/metadata/fileUtils');
+    vi.mocked(getMatchingFiles).mockResolvedValue([]);
+
+    const parseFile = vi.fn();
+
+    await runGenerator({
+      name: 'Test Generator',
+      contentType: 'monsters',
+      filePattern: /\.sheet\.mdx$/,
+      parseFile,
+      contentDir: '/tmp/empty',
+    });
+
+    expect(parseFile).not.toHaveBeenCalled();
+  });
+
+  it('should use processResult transform when provided', async () => {
+    const { getMatchingFiles, safeWriteFile, ensureDirectory } =
+      await import('@/lib/metadata/fileUtils');
+    vi.mocked(getMatchingFiles).mockResolvedValue(['/tmp/test/spell.mdx']);
+    vi.mocked(safeWriteFile).mockResolvedValue(true);
+    vi.mocked(ensureDirectory).mockResolvedValue(true);
+
+    const parseFile = vi.fn().mockResolvedValue([{ slug: 'a' }, { slug: 'b' }]);
+    const processResult = vi.fn().mockImplementation((result) => ({
+      metadata: result,
+      count: (result as unknown[]).length,
+    }));
+
+    await runGenerator({
+      name: 'Test Generator',
+      contentType: 'spells',
+      filePattern: /\.mdx$/,
+      parseFile,
+      processResult,
+      contentDir: '/tmp/test',
+    });
+
+    expect(processResult).toHaveBeenCalledTimes(1);
+    expect(safeWriteFile).toHaveBeenCalled();
+  });
+
+  it('should handle parse failures gracefully', async () => {
+    const { getMatchingFiles, safeWriteFile, ensureDirectory } =
+      await import('@/lib/metadata/fileUtils');
+    vi.mocked(getMatchingFiles).mockResolvedValue([
+      '/tmp/test/good.sheet.mdx',
+      '/tmp/test/bad.sheet.mdx',
+    ]);
+    vi.mocked(safeWriteFile).mockResolvedValue(true);
+    vi.mocked(ensureDirectory).mockResolvedValue(true);
+
+    const parseFile = vi
+      .fn()
+      .mockResolvedValueOnce({ slug: 'good', title: 'Good' })
+      .mockRejectedValueOnce(new Error('Parse failed'));
+
+    await runGenerator({
+      name: 'Test Generator',
+      contentType: 'monsters',
+      filePattern: /\.sheet\.mdx$/,
+      parseFile,
+      contentDir: '/tmp/test',
+    });
+
+    expect(parseFile).toHaveBeenCalledTimes(2);
+  });
+
+  it('should handle safeWriteFile failure', async () => {
+    const { getMatchingFiles, safeWriteFile, ensureDirectory } =
+      await import('@/lib/metadata/fileUtils');
+    vi.mocked(getMatchingFiles).mockResolvedValue(['/tmp/test/fail.sheet.mdx']);
+    vi.mocked(safeWriteFile).mockResolvedValue(false);
+    vi.mocked(ensureDirectory).mockResolvedValue(true);
+
+    const parseFile = vi
+      .fn()
+      .mockResolvedValue({ slug: 'fail', title: 'Fail' });
+
+    await runGenerator({
+      name: 'Test Generator',
+      contentType: 'monsters',
+      filePattern: /\.sheet\.mdx$/,
+      parseFile,
+      contentDir: '/tmp/test',
+    });
+
+    expect(parseFile).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call storage.upsert when storage adapter provided', async () => {
+    const { getMatchingFiles, safeWriteFile, ensureDirectory } =
+      await import('@/lib/metadata/fileUtils');
+    vi.mocked(getMatchingFiles).mockResolvedValue(['/tmp/test/item.mdx']);
+    vi.mocked(safeWriteFile).mockResolvedValue(true);
+    vi.mocked(ensureDirectory).mockResolvedValue(true);
+
+    const parseFile = vi
+      .fn()
+      .mockResolvedValue({ slug: 'sword', title: 'Sword' });
+    const storage = {
+      upsert: vi.fn().mockResolvedValue(undefined),
+      close: vi.fn().mockResolvedValue(undefined),
+    };
+
+    await runGenerator({
+      name: 'Test Generator',
+      contentType: 'heirlooms',
+      filePattern: /\.mdx$/,
+      parseFile,
+      contentDir: '/tmp/test',
+      storage,
+    });
+
+    expect(storage.upsert).toHaveBeenCalledWith('heirlooms', 'en', 'sword', {
+      slug: 'sword',
+      title: 'Sword',
+    });
+  });
+
+  it('should handle storage upsert failure gracefully', async () => {
+    const { getMatchingFiles, safeWriteFile, ensureDirectory } =
+      await import('@/lib/metadata/fileUtils');
+    vi.mocked(getMatchingFiles).mockResolvedValue(['/tmp/test/item.mdx']);
+    vi.mocked(safeWriteFile).mockResolvedValue(true);
+    vi.mocked(ensureDirectory).mockResolvedValue(true);
+
+    const parseFile = vi
+      .fn()
+      .mockResolvedValue({ slug: 'sword', title: 'Sword' });
+    const storage = {
+      upsert: vi.fn().mockRejectedValue(new Error('DB down')),
+      close: vi.fn().mockResolvedValue(undefined),
+    };
+
+    await runGenerator({
+      name: 'Test Generator',
+      contentType: 'heirlooms',
+      filePattern: /\.mdx$/,
+      parseFile,
+      contentDir: '/tmp/test',
+      storage,
+    });
+
+    expect(storage.upsert).toHaveBeenCalled();
+  });
+
+  it('should handle array metadata with storage adapter', async () => {
+    const { getMatchingFiles, safeWriteFile, ensureDirectory } =
+      await import('@/lib/metadata/fileUtils');
+    vi.mocked(getMatchingFiles).mockResolvedValue([
+      '/tmp/test/multi.sheet.mdx',
+    ]);
+    vi.mocked(safeWriteFile).mockResolvedValue(true);
+    vi.mocked(ensureDirectory).mockResolvedValue(true);
+
+    const parsed = [
+      { slug: 'a', title: 'A' },
+      { slug: 'b', title: 'B' },
+    ];
+    const parseFile = vi.fn().mockResolvedValue(parsed);
+    const storage = {
+      upsert: vi.fn().mockResolvedValue(undefined),
+      close: vi.fn().mockResolvedValue(undefined),
+    };
+
+    await runGenerator({
+      name: 'Test Generator',
+      contentType: 'monsters',
+      filePattern: /\.sheet\.mdx$/,
+      parseFile,
+      contentDir: '/tmp/test',
+      storage,
+    });
+
+    expect(storage.upsert).toHaveBeenCalledTimes(2);
+    expect(storage.upsert).toHaveBeenCalledWith(
+      'monsters',
+      'en',
+      'a',
+      expect.objectContaining({ slug: 'a' }),
+    );
+    expect(storage.upsert).toHaveBeenCalledWith(
+      'monsters',
+      'en',
+      'b',
+      expect.objectContaining({ slug: 'b' }),
+    );
   });
 });

@@ -1,43 +1,220 @@
 /**
  * @fileoverview Unit tests for Spell Table component
  * @module tests/unit/src/lib/components/mdx/spellTable/spellTable.test
- * @description Validates SpellTable exports and component signature.
- * Tests client-side data fetching from multiple spell sources (API endpoints or direct data).
- * 
- * @version 1.0.0
+ * @description Validates SpellTable rendering across loading, error, and data states,
+ * tab switching, column rendering, and ritual casting time display.
+ *
+ * @version 2.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
+ * @requires @testing-library/react
  * @requires @/lib/components/mdx/spellTable/spellTable
  */
 
-import { describe, it, expect } from 'vitest';
-import * as SpellTableModule from '@/lib/components/mdx/spellTable/spellTable';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-describe('spellTable', () => {
-  it('should export default component', () => {
-    expect(SpellTableModule.default).toBeDefined();
-    expect(typeof SpellTableModule.default).toBeDefined();
+const mockHook = vi.fn();
+
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string, opts?: Record<string, unknown>) => {
+    if (key === 'error') return 'Error';
+    if (key === 'noSpells') return 'No spells available';
+    if (key === 'levelLabels.all') return 'All';
+    if (key === 'searchPlaceholder') return 'Search...';
+    if (key === 'allOption') return 'All';
+    if (key === 'showingResults') return `${opts?.current} of ${opts?.total}`;
+    if (key === 'showingResultsFiltered') return `${opts?.current} filtered`;
+    if (key === 'previous') return 'Previous';
+    if (key === 'next') return 'Next';
+    if (key === 'pageInfo') return `Page ${opts?.current}`;
+    if (key === 'sortAscending') return '▲';
+    if (key === 'sortDescending') return '▼';
+    return key;
+  },
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
+vi.mock('@/lib/hooks/data/useSpellSources', () => ({
+  useSpellSources: (...args: unknown[]) => mockHook(...args),
+}));
+
+vi.mock('@/lib/components/mdx/spellTable/spellTableSkeleton', () => ({
+  SpellTableSkeleton: () => <div data-testid='skeleton'>Loading...</div>,
+}));
+
+vi.mock('@/lib/components/ui', () => ({
+  FilterSelect: ({ id, placeholder }: any) => (
+    <select data-testid={id}>
+      <option>{placeholder}</option>
+    </select>
+  ),
+  NumericInput: ({ placeholder, ...rest }: any) => (
+    <input type='number' placeholder={placeholder} aria-label={rest['aria-label']} />
+  ),
+}));
+
+import SpellTable from '@/lib/components/mdx/spellTable/spellTable';
+
+/**
+ * Creates a mock spell for testing.
+ *
+ * @param {Partial<Record<string, unknown>>} overrides - Property overrides
+ * @returns {Record<string, unknown>} Mock spell data
+ */
+function makeSpell(overrides: Record<string, unknown> = {}) {
+  return {
+    slug: 'fireball',
+    title: 'Fireball',
+    level: 3,
+    school: 'Evocation',
+    castingTime: ['action'],
+    castingTimeRaw: '1 action',
+    range: '150 feet',
+    duration: 'Instantaneous',
+    verbal: true,
+    somatic: true,
+    material: true,
+    materialDescription: 'a tiny ball of bat guano',
+    concentration: false,
+    ...overrides,
+  };
+}
+
+describe('SpellTable', () => {
+  beforeEach(() => {
+    mockHook.mockReset();
   });
 
-  it('should be a React component', () => {
-    const componentString = SpellTableModule.default.toString();
-    expect(componentString).toBeDefined();
-    expect(componentString.length).toBeGreaterThan(0);
+  it('shows skeleton while loading', () => {
+    mockHook.mockReturnValue({ spellData: [], loading: true, error: null });
+    render(<SpellTable sources={['/api/spells']} />);
+    expect(screen.getByTestId('skeleton')).toBeInTheDocument();
   });
 
-  it('should accept sources prop', () => {
-    const componentString = SpellTableModule.default.toString();
-    expect(componentString).toContain('sources');
+  it('shows error message', () => {
+    mockHook.mockReturnValue({
+      spellData: [],
+      loading: false,
+      error: 'Network error',
+    });
+    render(<SpellTable sources={['/api/spells']} />);
+    expect(screen.getByText(/Network error/)).toBeInTheDocument();
   });
 
-  it('should be a client component', () => {
-    expect(SpellTableModule.default.toString()).toBeDefined();
+  it('shows no spells message when filtered level is empty', () => {
+    mockHook.mockReturnValue({
+      spellData: [makeSpell({ level: 3 })],
+      loading: false,
+      error: null,
+    });
+    render(<SpellTable sources={['/api/spells']} levels={[0, 1, 2, 3]} />);
+    const cantripsTab = screen.getByRole('button', { name: /Cantrip/i });
+    fireEvent.click(cantripsTab);
+    expect(screen.getByText('No spells available')).toBeInTheDocument();
   });
 
-  it('should export exactly one member', () => {
-    const exports = Object.keys(SpellTableModule);
-    expect(exports).toHaveLength(1);
-    expect(exports).toContain('default');
+  it('renders spell data in table', () => {
+    mockHook.mockReturnValue({
+      spellData: [makeSpell()],
+      loading: false,
+      error: null,
+    });
+    render(<SpellTable sources={['/api/spells']} levels={[3]} />);
+    expect(screen.getByText('Fireball')).toBeInTheDocument();
+    expect(screen.getByText('150 feet')).toBeInTheDocument();
+  });
+
+  it('renders school in italic', () => {
+    mockHook.mockReturnValue({
+      spellData: [makeSpell()],
+      loading: false,
+      error: null,
+    });
+    render(<SpellTable sources={['/api/spells']} levels={[3]} />);
+    const schoolCell = screen.getByText('Evocation');
+    expect(schoolCell.tagName).toBe('EM');
+  });
+
+  it('renders casting time with ritual tag', () => {
+    mockHook.mockReturnValue({
+      spellData: [
+        makeSpell({
+          slug: 'detect-magic',
+          title: 'Detect Magic',
+          level: 1,
+          castingTime: ['action', 'ritual'],
+        }),
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<SpellTable sources={['/api/spells']} levels={[1]} />);
+    expect(screen.getByText('Action (R)')).toBeInTheDocument();
+  });
+
+  it('renders concentration prefix on duration', () => {
+    mockHook.mockReturnValue({
+      spellData: [
+        makeSpell({
+          slug: 'bless',
+          title: 'Bless',
+          level: 1,
+          duration: '1 minute',
+          concentration: true,
+        }),
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<SpellTable sources={['/api/spells']} levels={[1]} />);
+    expect(screen.getByText('Concentration, 1 minute')).toBeInTheDocument();
+  });
+
+  it('renders component abbreviations V, S, M', () => {
+    mockHook.mockReturnValue({
+      spellData: [makeSpell()],
+      loading: false,
+      error: null,
+    });
+    render(<SpellTable sources={['/api/spells']} levels={[3]} />);
+    expect(screen.getByText('V, S, M')).toBeInTheDocument();
+  });
+
+  it('filters spells by active tab level', () => {
+    mockHook.mockReturnValue({
+      spellData: [
+        makeSpell({ slug: 'fb', title: 'Fireball', level: 3 }),
+        makeSpell({ slug: 'mm', title: 'Magic Missile', level: 1 }),
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<SpellTable sources={['/api/spells']} levels={[1, 3]} />);
+    const level1Tab = screen.getByRole('button', { name: /1st Level/i });
+    fireEvent.click(level1Tab);
+    expect(screen.getByText('Magic Missile')).toBeInTheDocument();
+    expect(screen.queryByText('Fireball')).not.toBeInTheDocument();
+  });
+
+  it('shows all spells in All tab', () => {
+    mockHook.mockReturnValue({
+      spellData: [
+        makeSpell({ slug: 'fb', title: 'Fireball', level: 3 }),
+        makeSpell({ slug: 'mm', title: 'Magic Missile', level: 1 }),
+      ],
+      loading: false,
+      error: null,
+    });
+    render(
+      <SpellTable sources={['/api/spells']} levels={[1, 3]} showAllTab />,
+    );
+    expect(screen.getByText('All')).toBeInTheDocument();
+    expect(screen.getByText('Fireball')).toBeInTheDocument();
+    expect(screen.getByText('Magic Missile')).toBeInTheDocument();
   });
 });

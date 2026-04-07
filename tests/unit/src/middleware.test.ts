@@ -13,8 +13,8 @@
  * @requires @/middleware Module under test
  */
 
-import { describe, it, expect } from 'vitest';
 import middleware, { config } from '@/middleware';
+import { describe, expect, it } from 'vitest';
 
 describe('middleware', () => {
   describe('exports', () => {
@@ -58,7 +58,10 @@ describe('middleware', () => {
 });
 
 describe('replaceFirstSegment helper logic', () => {
-  const replaceFirstSegment = (parts: string[], replacement: string): string => {
+  const replaceFirstSegment = (
+    parts: string[],
+    replacement: string,
+  ): string => {
     if (parts.length === 0) return `/${replacement}`;
     const rest = parts.slice(1).join('/');
     return rest ? `/${replacement}/${rest}` : `/${replacement}`;
@@ -114,5 +117,56 @@ describe('replaceFirstSegment helper logic', () => {
       const result = replaceFirstSegment(parts, 'en');
       expect(result).toBe('/en/items');
     });
+  });
+});
+
+describe('middleware function behavior', () => {
+  /**
+   * Creates a mock NextRequest for middleware testing.
+   */
+  function createMockRequest(pathname: string): any {
+    const url = new URL(`http://localhost:3000${pathname}`);
+    return {
+      nextUrl: {
+        pathname: url.pathname,
+        clone: () => {
+          const cloned = new URL(url.toString());
+          return {
+            pathname: cloned.pathname,
+            toString: () => cloned.toString(),
+            set pathname(val: string) {
+              cloned.pathname = val;
+            },
+            get pathname() {
+              return cloned.pathname;
+            },
+          };
+        },
+      },
+    };
+  }
+
+  it('should redirect root path to default locale', () => {
+    const req = createMockRequest('/');
+    const response = middleware(req);
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe(308);
+  });
+
+  it('should redirect unsupported locale to default locale', () => {
+    const req = createMockRequest('/fr/library/monsters');
+    const response = middleware(req);
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe(308);
+  });
+
+  it('should redirect path without locale prefix', () => {
+    const req = createMockRequest('/library/monsters');
+    const response = middleware(req);
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe(308);
   });
 });

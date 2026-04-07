@@ -1,43 +1,164 @@
 /**
  * @fileoverview Unit tests for Heirloom Table Wrapper component
  * @module tests/unit/src/lib/components/mdx/metadataTables/heirloomTableWrapper.test
- * @description Validates HeirloomTableWrapper exports, prop handling, locale detection,
- * and API data fetching behavior. Tests default export, component type validation,
- * and integration with next-intl and MetadataTable.
- * 
- * @version 1.0.0
+ * @description Validates HeirloomTableWrapper rendering across loading, error,
+ * empty, and data states using a mocked useMetadataTableData hook.
+ *
+ * @version 2.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
+ * @requires @testing-library/react
  * @requires @/lib/components/mdx/metadataTables/heirloomTableWrapper
  */
 
-import { describe, it, expect } from 'vitest';
-import * as HeirloomTableWrapperModule from '@/lib/components/mdx/metadataTables/heirloomTableWrapper';
+import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('heirloomTableWrapper', () => {
-  it('should export default component', () => {
-    expect(HeirloomTableWrapperModule.default).toBeDefined();
-    expect(typeof HeirloomTableWrapperModule.default).toBe('function');
+const mockHook = vi.fn();
+
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string, opts?: Record<string, unknown>) => {
+    if (key === 'error') return 'Error';
+    if (key === 'noHeirlooms') return 'No heirlooms found';
+    if (key === 'yes') return 'Yes';
+    if (key === 'no') return 'No';
+    if (key === 'searchPlaceholder') return 'Search...';
+    if (key === 'allOption') return 'All';
+    if (key === 'showingResults') return `${opts?.current} of ${opts?.total}`;
+    if (key === 'showingResultsFiltered') return `${opts?.current} filtered`;
+    if (key === 'previous') return 'Previous';
+    if (key === 'next') return 'Next';
+    if (key === 'pageInfo') return `Page ${opts?.current}`;
+    if (key === 'sortAscending') return '▲';
+    if (key === 'sortDescending') return '▼';
+    return key;
+  },
+}));
+
+vi.mock('next/navigation', () => ({
+  useParams: () => ({ locale: 'en' }),
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
+vi.mock('@/lib/hooks/data/useMetadataTableData', () => ({
+  useMetadataTableData: (...args: unknown[]) => mockHook(...args),
+}));
+
+vi.mock('@/lib/components/ui', () => ({
+  FilterSelect: ({ id, placeholder }: any) => (
+    <select data-testid={id}>
+      <option>{placeholder}</option>
+    </select>
+  ),
+  NumericInput: ({ placeholder, ...rest }: any) => (
+    <input
+      type='number'
+      placeholder={placeholder}
+      aria-label={rest['aria-label']}
+    />
+  ),
+}));
+
+vi.mock('@/lib/components/mdx/metadataTables/metadataTableSkeleton', () => ({
+  MetadataTableSkeleton: () => <div data-testid='skeleton'>Loading...</div>,
+}));
+
+import HeirloomTableWrapper from '@/lib/components/mdx/metadataTables/heirloomTableWrapper';
+
+describe('HeirloomTableWrapper', () => {
+  beforeEach(() => {
+    mockHook.mockReset();
   });
 
-  it('should be a React component (accepts props)', () => {
-    const componentString = HeirloomTableWrapperModule.default.toString();
-    expect(componentString).toContain('function');
+  it('shows skeleton while loading', () => {
+    mockHook.mockReturnValue({ data: [], loading: true, error: null });
+    render(<HeirloomTableWrapper />);
+    expect(screen.getByTestId('skeleton')).toBeInTheDocument();
   });
 
-  it('should accept optional locale prop', () => {
-    const componentString = HeirloomTableWrapperModule.default.toString();
-    expect(componentString).toContain('locale');
+  it('shows error message on failure', () => {
+    mockHook.mockReturnValue({
+      data: [],
+      loading: false,
+      error: 'Fetch failed',
+    });
+    render(<HeirloomTableWrapper />);
+    expect(screen.getByText(/Fetch failed/)).toBeInTheDocument();
   });
 
-  it('should be a client component', () => {
-    expect(HeirloomTableWrapperModule.default.toString()).toBeDefined();
+  it('shows empty state when no data', () => {
+    mockHook.mockReturnValue({ data: [], loading: false, error: null });
+    render(<HeirloomTableWrapper />);
+    expect(screen.getByText('No heirlooms found')).toBeInTheDocument();
   });
 
-  it('should export exactly one member', () => {
-    const exports = Object.keys(HeirloomTableWrapperModule);
-    expect(exports).toHaveLength(1);
-    expect(exports).toContain('default');
+  it('renders table with heirloom data', () => {
+    mockHook.mockReturnValue({
+      data: [
+        {
+          slug: 'sacred-heresy',
+          title: 'Sacred Heresy',
+          rarity: 'legendary',
+          itemType: 'weapon',
+          weaponType: 'longsword',
+          requiresAttunement: true,
+        },
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<HeirloomTableWrapper />);
+    expect(screen.getByText('Sacred Heresy')).toBeInTheDocument();
+    expect(screen.getByText('Legendary')).toBeInTheDocument();
+    expect(screen.getByText('Weapon')).toBeInTheDocument();
+    expect(screen.getByText('Longsword')).toBeInTheDocument();
+  });
+
+  it('renders attunement as translated boolean', () => {
+    mockHook.mockReturnValue({
+      data: [
+        {
+          slug: 'ring-of-power',
+          title: 'Ring of Power',
+          rarity: 'rare',
+          itemType: 'wondrous item',
+          requiresAttunement: false,
+        },
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<HeirloomTableWrapper />);
+    const cells = screen.getAllByRole('cell');
+    const attunementCell = cells[cells.length - 1];
+    expect(attunementCell).toHaveTextContent('No');
+  });
+
+  it('uses locale from props', () => {
+    mockHook.mockReturnValue({ data: [], loading: false, error: null });
+    render(<HeirloomTableWrapper locale='es' />);
+    expect(mockHook).toHaveBeenCalledWith(
+      expect.any(Function),
+      'es',
+      'heirlooms',
+    );
+  });
+
+  it('shows dash for missing weaponType', () => {
+    mockHook.mockReturnValue({
+      data: [
+        {
+          slug: 'cloak-of-stars',
+          title: 'Cloak of Stars',
+          rarity: 'uncommon',
+          itemType: 'wondrous item',
+        },
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<HeirloomTableWrapper />);
+    expect(screen.getByText('Cloak of Stars')).toBeInTheDocument();
   });
 });

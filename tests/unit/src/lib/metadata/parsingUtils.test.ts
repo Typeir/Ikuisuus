@@ -171,6 +171,15 @@ describe('parseCharges', () => {
   it('should return undefined when no charges info found', () => {
     expect(parseCharges('Just a normal sword')).toBeUndefined();
   });
+
+  it('should parse recharge info', () => {
+    const result = parseCharges(
+      'This item holds 7 charges and regains 1d6 charges at dawn',
+    );
+    expect(result).toBeDefined();
+    expect(result!.initial).toBe('7');
+    expect(result!.recharge).toBe('1d6 at dawn');
+  });
 });
 
 describe('parseDamageTypesDealt', () => {

@@ -1,43 +1,180 @@
 /**
  * @fileoverview Unit tests for Trinket Table Wrapper component
  * @module tests/unit/src/lib/components/mdx/metadataTables/trinketTableWrapper.test
- * @description Validates TrinketTableWrapper exports, prop handling, locale detection,
- * and API data fetching behavior. Tests default export, component type validation,
- * and integration with next-intl and MetadataTable.
- * 
- * @version 1.0.0
+ * @description Validates TrinketTableWrapper rendering across loading, error,
+ * empty, and data states with complex render logic (damage + type, conditions).
+ *
+ * @version 2.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
+ * @requires @testing-library/react
  * @requires @/lib/components/mdx/metadataTables/trinketTableWrapper
  */
 
-import { describe, it, expect } from 'vitest';
-import * as TrinketTableWrapperModule from '@/lib/components/mdx/metadataTables/trinketTableWrapper';
+import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('trinketTableWrapper', () => {
-  it('should export default component', () => {
-    expect(TrinketTableWrapperModule.default).toBeDefined();
-    expect(typeof TrinketTableWrapperModule.default).toBe('function');
+const mockHook = vi.fn();
+
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string, opts?: Record<string, unknown>) => {
+    if (key === 'error') return 'Error';
+    if (key === 'noTrinkets') return 'No trinkets found';
+    if (key === 'searchPlaceholder') return 'Search...';
+    if (key === 'allOption') return 'All';
+    if (key === 'showingResults') return `${opts?.current} of ${opts?.total}`;
+    if (key === 'showingResultsFiltered') return `${opts?.current} filtered`;
+    if (key === 'previous') return 'Previous';
+    if (key === 'next') return 'Next';
+    if (key === 'pageInfo') return `Page ${opts?.current}`;
+    if (key === 'sortAscending') return '▲';
+    if (key === 'sortDescending') return '▼';
+    return key;
+  },
+}));
+
+vi.mock('next/navigation', () => ({
+  useParams: () => ({ locale: 'en' }),
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
+vi.mock('@/lib/hooks/data/useMetadataTableData', () => ({
+  useMetadataTableData: (...args: unknown[]) => mockHook(...args),
+}));
+
+vi.mock('@/lib/components/ui', () => ({
+  FilterSelect: ({ id, placeholder }: any) => (
+    <select data-testid={id}>
+      <option>{placeholder}</option>
+    </select>
+  ),
+  NumericInput: ({ placeholder, ...rest }: any) => (
+    <input
+      type='number'
+      placeholder={placeholder}
+      aria-label={rest['aria-label']}
+    />
+  ),
+}));
+
+vi.mock('@/lib/components/mdx/metadataTables/metadataTableSkeleton', () => ({
+  MetadataTableSkeleton: () => <div data-testid='skeleton'>Loading...</div>,
+}));
+
+import TrinketTableWrapper from '@/lib/components/mdx/metadataTables/trinketTableWrapper';
+
+describe('TrinketTableWrapper', () => {
+  beforeEach(() => {
+    mockHook.mockReset();
   });
 
-  it('should be a React component (accepts props)', () => {
-    const componentString = TrinketTableWrapperModule.default.toString();
-    expect(componentString).toContain('function');
+  it('shows skeleton while loading', () => {
+    mockHook.mockReturnValue({ data: [], loading: true, error: null });
+    render(<TrinketTableWrapper />);
+    expect(screen.getByTestId('skeleton')).toBeInTheDocument();
   });
 
-  it('should accept optional locale prop', () => {
-    const componentString = TrinketTableWrapperModule.default.toString();
-    expect(componentString).toContain('locale');
+  it('shows error message on failure', () => {
+    mockHook.mockReturnValue({
+      data: [],
+      loading: false,
+      error: 'API Error',
+    });
+    render(<TrinketTableWrapper />);
+    expect(screen.getByText(/API Error/)).toBeInTheDocument();
   });
 
-  it('should be a client component', () => {
-    expect(TrinketTableWrapperModule.default.toString()).toBeDefined();
+  it('shows empty state', () => {
+    mockHook.mockReturnValue({ data: [], loading: false, error: null });
+    render(<TrinketTableWrapper />);
+    expect(screen.getByText('No trinkets found')).toBeInTheDocument();
   });
 
-  it('should export exactly one member', () => {
-    const exports = Object.keys(TrinketTableWrapperModule);
-    expect(exports).toHaveLength(1);
-    expect(exports).toContain('default');
+  it('renders trinket with damage and damageType', () => {
+    mockHook.mockReturnValue({
+      data: [
+        {
+          slug: 'alchemists-fire',
+          title: "Alchemist's Fire",
+          itemType: 'adventuring gear',
+          damage: '1d4',
+          damageType: 'fire',
+          range: '20',
+          weight: '1 lb.',
+        },
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<TrinketTableWrapper />);
+    expect(screen.getByText("Alchemist's Fire")).toBeInTheDocument();
+    expect(screen.getByText('1d4 fire')).toBeInTheDocument();
+    expect(screen.getByText('20')).toBeInTheDocument();
+  });
+
+  it('renders special effects with capitalization', () => {
+    mockHook.mockReturnValue({
+      data: [
+        {
+          slug: 'net',
+          title: 'Net',
+          itemType: 'weapon',
+          specialEffects: ['restrain', 'slow'],
+          inflictsConditions: ['restrained'],
+        },
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<TrinketTableWrapper />);
+    expect(screen.getByText('Net')).toBeInTheDocument();
+    expect(screen.getByText('Restrain, Slow')).toBeInTheDocument();
+    expect(screen.getByText('Restrained')).toBeInTheDocument();
+  });
+
+  it('renders dash for missing optional fields', () => {
+    mockHook.mockReturnValue({
+      data: [
+        {
+          slug: 'torch',
+          title: 'Torch',
+          itemType: 'adventuring gear',
+          weight: '1 lb.',
+        },
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<TrinketTableWrapper />);
+    expect(screen.getByText('Torch')).toBeInTheDocument();
+    const cells = screen.getAllByText('—');
+    expect(cells.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('capitalises itemType', () => {
+    mockHook.mockReturnValue({
+      data: [
+        {
+          slug: 'oil',
+          title: 'Oil',
+          itemType: 'adventuring gear',
+        },
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<TrinketTableWrapper />);
+    expect(screen.getByText('Adventuring gear')).toBeInTheDocument();
+  });
+
+  it('uses locale from props', () => {
+    mockHook.mockReturnValue({ data: [], loading: false, error: null });
+    render(<TrinketTableWrapper locale='fi' />);
+    expect(mockHook).toHaveBeenCalledWith(
+      expect.any(Function),
+      'fi',
+      'trinkets',
+    );
   });
 });

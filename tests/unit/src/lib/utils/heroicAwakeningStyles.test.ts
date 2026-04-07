@@ -15,6 +15,7 @@ import {
   normalizeAffixToKey,
   getAwakeningTier,
   computeAwakeningClasses,
+  getAwakeningClassString,
   type AffixKey,
   type AwakeningTier,
 } from '@/lib/utils/heroicAwakeningStyles';
@@ -221,6 +222,34 @@ describe('heroicAwakeningStyles', () => {
         expect(result.primaryAffix).toBe(expectedKey);
         expect(result.classNames).toContain(`awakened--${expectedKey}`);
       }
+    });
+  });
+
+  describe('getAwakeningClassString', () => {
+    it('should map class names through styles and join them', () => {
+      const state = createMockAwakeningState({
+        awakened: true,
+        tier: 'awakened',
+        affixes: [{ text: 'Bloodthirsty' }],
+      });
+      const styles: Record<string, string> = {
+        awakened: 'css_awakened',
+        'awakened--bloodthirsty': 'css_bloodthirsty',
+      };
+      const result = getAwakeningClassString(state, styles);
+      expect(result).toContain('css_awakened');
+      expect(result).toContain('css_bloodthirsty');
+    });
+
+    it('should fall back to raw class name when style is missing', () => {
+      const state = createMockAwakeningState({
+        awakened: true,
+        tier: 'awakened',
+        affixes: [{ text: 'Bloodthirsty' }],
+      });
+      const result = getAwakeningClassString(state, {});
+      expect(result).toContain('awakened');
+      expect(result).toContain('awakened--bloodthirsty');
     });
   });
 });
