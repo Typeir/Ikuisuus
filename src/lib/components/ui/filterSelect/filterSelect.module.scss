@@ -259,21 +259,13 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { --_: fs-fadeIn-from; opacity: 0; }
+  to { --_: fs-fadeIn-to; opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
+  from { --_: fs-slideUp-from; transform: translateY(100%); }
+  to { --_: fs-slideUp-to; transform: translateY(0); }
 }
 
 /* High contrast focus indicators for accessibility */

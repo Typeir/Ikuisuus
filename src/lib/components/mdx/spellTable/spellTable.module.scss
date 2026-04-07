@@ -140,14 +140,8 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { --_: st-fadeIn-from; opacity: 0; transform: translateY(4px); }
+  to { --_: st-fadeIn-to; opacity: 1; transform: translateY(0); }
 }
 
 .loading,

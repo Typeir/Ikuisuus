@@ -10,9 +10,9 @@
     "justification": "Complex stat display component with tightly coupled stat rendering logic"
   },
   {
-    "file": "src/lib/components/encounterPlanner/combatantRow/combatantRow.module.scss",
-    "maxLines": 1500,
-    "justification": "Module-scoped SCSS for complex combatant row with multiple sub-components, states, and responsive variants"
+    "file": "src/lib/components/encounterPlanner/combatantRow/_combatantAffixes.scss",
+    "maxLines": 420,
+    "justification": "9 affix color context definitions plus light theme variants — repetitive but each affix must define all scoped CSS custom properties"
   },
   {
     "file": "src/lib/components/encounterPlanner/comboboxes/genericCombobox.tsx",

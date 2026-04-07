@@ -1,0 +1,209 @@
+.nameBadgesWrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .crBadge {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 4px;
+    background: var(--color-transparent);
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .stratagemBadge {
+    position: relative;
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--color-stratagem);
+    border-radius: 3px;
+    background: rgb(var(--color-stratagem-a15));
+    color: var(--color-stratagem);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: help;
+  }
+
+  .awakenedBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--ha-badge-bg);
+    color: var(--ha-badge-text);
+    border: 1px solid var(--ha-badge-border);
+    white-space: nowrap;
+  }
+
+  .awakenedBadge--legendary {
+    background: var(--ha-legendary-shimmer-1);
+    color: var(--ha-legendary-border);
+    border-color: var(--ha-legendary-border);
+  }
+
+  .awakenedBadge--mythic {
+    background: var(--ha-mythic-shimmer-1);
+    color: var(--ha-mythic-border);
+    border-color: var(--ha-mythic-border);
+  }
+}
+
+/** Mechanics Section (Legendary Deeds and Resist) */
+.mechanicsSection {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 0.75rem;
+  background: var(--color-bg);
+  border-radius: 6px;
+  border: 1px solid var(--color-secondary);
+}
+
+.legendaryDeedsTracker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .label {
+    @include label-uppercase;
+    margin-right: 0.25rem;
+  }
+}
+
+.deedPips {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.deedPip {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+  background: var(--color-transparent);
+  color: var(--color-accent);
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--color-accent-a10);
+  }
+
+  &.deedUsed {
+    background: var(--color-accent);
+    color: var(--color-surface);
+  }
+}
+
+.resistTracker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  .label {
+    @include label-uppercase;
+    margin-right: 0.25rem;
+  }
+}
+
+.resistCounter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.resistCount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-emphasis);
+  min-width: 24px;
+  text-align: center;
+}
+
+.resistButton {
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--color-emphasis);
+  border-radius: 4px;
+  background: var(--color-transparent);
+  color: var(--color-emphasis);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.15s ease;
+
+  &:hover:not(.disabled) {
+    background: var(--color-emphasis);
+    color: var(--color-surface);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.resetButton {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  background: var(--color-transparent);
+  color: var(--color-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--color-secondary);
+    color: var(--color-surface);
+  }
+}
+
+/** Details Wrapper and Toggle */
+.detailsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detailsToggle {
+  @include button-base(0.5rem 0.75rem);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  color: var(--color-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  width: fit-content;
+
+  &:hover {
+    background: var(--color-secondary);
+    color: var(--color-surface);
+  }
+}
+
+.hamburgerIcon {
+  font-size: 1rem;
+  line-height: 1;
+}

@@ -93,14 +93,8 @@
   animation: notificationSlideIn 0.3s ease-out;
 
   @keyframes notificationSlideIn {
-    from {
-      opacity: 0;
-      transform: translateX(var(--enter-direction, 100%));
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
+    from { --_: pn-slideIn-from; opacity: 0; transform: translateX(var(--enter-direction, 100%)); }
+    to { --_: pn-slideIn-to; opacity: 1; transform: translateX(0); }
   }
 
   // Exit animation
@@ -109,14 +103,8 @@
   }
 
   @keyframes notificationSlideOut {
-    from {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateX(var(--enter-direction, 100%));
-    }
+    from { --_: pn-slideOut-from; opacity: 1; transform: translateX(0); }
+    to { --_: pn-slideOut-to; opacity: 0; transform: translateX(var(--enter-direction, 100%)); }
   }
 
   // Type variants - using theme tokens from globals.scss

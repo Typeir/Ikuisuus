@@ -33,10 +33,7 @@
     background: var(--color-surface);
   }
 
-  &:focus {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 1px;
-  }
+  @include focus-accent-outline(1px);
 
   @include disabled-state;
 }
@@ -44,6 +41,10 @@
 .pathLabel {
   @include text-truncate;
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .triggerPlaceholder {
@@ -78,14 +79,8 @@
 }
 
 @keyframes treeDropdownIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { --_: fts-treeDropdownIn-from; opacity: 0; transform: translateY(-4px); }
+  to { --_: fts-treeDropdownIn-to; opacity: 1; transform: translateY(0); }
 }
 
 .treeNode {

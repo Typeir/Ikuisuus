@@ -1,0 +1,259 @@
+/* ============================================
+   HEROIC AWAKENING STYLING
+   CSS Custom Properties Scoping Pattern (Industry Standard)
+   
+   How it works:
+   1. Each .awakened--{affix} class sets --ha-ctx-* variables
+   2. All children reference --ha-ctx-* instead of --color-*
+   3. This provides full theming without massive duplication
+   
+   References:
+   - Radix UI: data-accent-color pattern
+   - Material Design 3: dynamic color system
+   - Open Props: color scheme scoping
+============================================ */
+
+/* Base awakened state - sets up scoped variable context */
+.awakened {
+  position: relative;
+  border-width: 2px;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease;
+
+  /* Override all child elements to use contextual tokens */
+  & .label,
+  & .statLabel,
+  & .initiativeMod {
+    color: var(--ha-ctx-text-secondary) !important;
+  }
+
+  & .name {
+    color: var(--ha-ctx-text) !important;
+  }
+
+  & .index {
+    color: var(--ha-ctx-text-secondary) !important;
+  }
+
+  & .numberInput,
+  & .initiativeInput,
+  & .addConditionInput {
+    background: var(--ha-ctx-input-bg) !important;
+    border-color: var(--ha-ctx-input-border) !important;
+    color: var(--ha-ctx-text) !important;
+
+    &:focus {
+      border-color: var(--ha-ctx-accent) !important;
+      box-shadow: 0 0 0 3px var(--ha-ctx-glow) !important;
+    }
+  }
+
+  & .hpMax {
+    color: var(--ha-ctx-text) !important;
+  }
+
+  & .acValue,
+  & .initiativeValue {
+    color: var(--ha-ctx-accent) !important;
+  }
+
+  & .statValue {
+    background: var(--ha-ctx-input-bg) !important;
+    border-color: var(--ha-ctx-input-border) !important;
+    color: var(--ha-ctx-text) !important;
+  }
+
+  & .statMod {
+    color: var(--ha-ctx-text-secondary) !important;
+  }
+
+  & .slainCheckbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+  }
+
+  & .crBadge {
+    border-color: var(--ha-ctx-accent) !important;
+    color: var(--ha-ctx-accent) !important;
+    background: var(--ha-ctx-button-bg) !important;
+  }
+
+  & .sourceLink {
+    border-color: var(--ha-ctx-input-border) !important;
+    color: var(--ha-ctx-text-secondary) !important;
+    background: var(--ha-ctx-button-bg) !important;
+
+    &:hover {
+      background: var(--ha-ctx-text-secondary) !important;
+      color: var(--ha-ctx-bg) !important;
+    }
+  }
+
+  /* Actions buttons */
+  & .actions .button {
+    border-color: var(--ha-ctx-input-border) !important;
+    background: var(--ha-ctx-button-bg) !important;
+    color: var(--ha-ctx-text) !important;
+
+    &:hover {
+      background: var(--ha-ctx-text-secondary) !important;
+      color: var(--ha-ctx-bg) !important;
+    }
+
+    &.buttonDanger {
+      border-color: var(--color-danger) !important;
+      color: var(--color-danger) !important;
+
+      &:hover {
+        background: var(--color-danger) !important;
+        color: var(--ha-ctx-bg) !important;
+      }
+    }
+  }
+
+  /* Heroic Info Section */
+  & .heroicInfo {
+    background: var(--ha-ctx-bg-secondary) !important;
+    border-left-color: var(--ha-ctx-accent) !important;
+
+    .heroicTier {
+      color: var(--ha-ctx-accent) !important;
+    }
+
+    .fateDie {
+      color: var(--ha-ctx-text-secondary) !important;
+    }
+
+    .heroicAffix {
+      background: var(--ha-ctx-button-bg) !important;
+      border-color: var(--ha-ctx-accent) !important;
+      color: var(--ha-ctx-accent) !important;
+
+      &:hover {
+        background: var(--ha-ctx-accent) !important;
+        color: var(--ha-ctx-bg) !important;
+      }
+    }
+
+    .heroicBonuses {
+      color: var(--ha-ctx-text-secondary) !important;
+    }
+  }
+
+  /* Details Section */
+  & .detailsSection {
+    border-top-color: var(--ha-ctx-divider) !important;
+  }
+
+  /* Keep chips container always transparent */
+  & .chips {
+    background: transparent !important;
+  }
+
+  /* Tag elements */
+  & .buffTag,
+  & .itemTag,
+  & .spellTag,
+  & .affixTag {
+    background: var(--ha-ctx-button-bg) !important;
+    border-color: var(--ha-ctx-input-border) !important;
+    color: var(--ha-ctx-text) !important;
+  }
+
+  /* Conditions Section */
+  & .conditionsSection {
+    .forceAwakeningButtons {
+      border-bottom-color: var(--ha-ctx-divider) !important;
+
+      .button {
+        border-color: var(--ha-ctx-input-border) !important;
+        background: var(--ha-ctx-button-bg) !important;
+        color: var(--ha-ctx-text) !important;
+
+        &:hover {
+          background: var(--ha-ctx-accent) !important;
+          border-color: var(--ha-ctx-accent) !important;
+          color: var(--ha-ctx-bg) !important;
+        }
+      }
+    }
+
+    .conditionItem {
+      border-bottom-color: var(--ha-ctx-divider) !important;
+
+      .removeCondition {
+        color: var(--ha-ctx-text-secondary) !important;
+
+        &:hover {
+          color: var(--ha-ctx-text-emphasis) !important;
+        }
+      }
+    }
+
+    .addConditionButton,
+    .detailsToggle {
+      border-color: var(--ha-ctx-input-border) !important;
+      background: var(--ha-ctx-button-bg) !important;
+      color: var(--ha-ctx-text-secondary) !important;
+
+      &:hover {
+        background: var(--ha-ctx-text-secondary) !important;
+        color: var(--ha-ctx-bg) !important;
+      }
+    }
+  }
+
+  /* Mechanics Section */
+  & .mechanicsSection {
+    background: var(--ha-ctx-bg-secondary) !important;
+    border-color: var(--ha-ctx-input-border) !important;
+  }
+
+  & .deedPip {
+    border-color: var(--ha-ctx-accent) !important;
+    color: var(--ha-ctx-accent) !important;
+    background: var(--color-transparent) !important;
+
+    &:hover {
+      background: var(--ha-ctx-glow) !important;
+    }
+
+    &.deedUsed {
+      background: var(--ha-ctx-accent) !important;
+      color: var(--ha-ctx-bg) !important;
+    }
+  }
+
+  & .resistCount {
+    color: var(--ha-ctx-text-emphasis) !important;
+  }
+
+  & .resistButton {
+    border-color: var(--ha-ctx-text-emphasis) !important;
+    color: var(--ha-ctx-text-emphasis) !important;
+
+    &:hover:not(.disabled) {
+      background: var(--ha-ctx-text-emphasis) !important;
+      color: var(--ha-ctx-bg) !important;
+    }
+  }
+
+  & .resetButton {
+    border-color: var(--ha-ctx-input-border) !important;
+    color: var(--ha-ctx-text-secondary) !important;
+
+    &:hover {
+      background: var(--ha-ctx-text-secondary) !important;
+      color: var(--ha-ctx-bg) !important;
+    }
+  }
+
+  /* HpInputs span separator */
+  & .hpInputs span {
+    color: var(--ha-ctx-text-secondary) !important;
+  }
+}

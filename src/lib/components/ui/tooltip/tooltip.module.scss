@@ -28,14 +28,8 @@
   animation: tooltipFadeIn 0.15s ease-out;
   
   @keyframes tooltipFadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(4px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { --_: tt-tooltipFadeIn-from; --_: tt-tooltipFadeIn-from; opacity: 0; transform: translateY(4px); }
+    to { --_: tt-tooltipFadeIn-to; opacity: 1; transform: translateY(0); }
   }
   
   // Placement-specific entrance animations
@@ -56,47 +50,23 @@
   }
   
   @keyframes tooltipFadeInTop {
-    from {
-      opacity: 0;
-      transform: translate(var(--x), var(--y)) translateY(4px);
-    }
-    to {
-      opacity: 1;
-      transform: translate(var(--x), var(--y)) translateY(0);
-    }
+    from { --_: tt-tooltipFadeInTop-from; --_: tt-tooltipFadeInTop-from; opacity: 0; transform: translate(var(--x), var(--y)) translateY(4px); }
+    to { --_: tt-tooltipFadeInTop-to; opacity: 1; transform: translate(var(--x), var(--y)) translateY(0); }
   }
   
   @keyframes tooltipFadeInBottom {
-    from {
-      opacity: 0;
-      transform: translate(var(--x), var(--y)) translateY(-4px);
-    }
-    to {
-      opacity: 1;
-      transform: translate(var(--x), var(--y)) translateY(0);
-    }
+    from { --_: tt-tooltipFadeInBottom-from; --_: tt-tooltipFadeInBottom-from; opacity: 0; transform: translate(var(--x), var(--y)) translateY(-4px); }
+    to { --_: tt-tooltipFadeInBottom-to; opacity: 1; transform: translate(var(--x), var(--y)) translateY(0); }
   }
   
   @keyframes tooltipFadeInLeft {
-    from {
-      opacity: 0;
-      transform: translate(var(--x), var(--y)) translateX(4px);
-    }
-    to {
-      opacity: 1;
-      transform: translate(var(--x), var(--y)) translateX(0);
-    }
+    from { --_: tt-tooltipFadeInLeft-from; --_: tt-tooltipFadeInLeft-from; opacity: 0; transform: translate(var(--x), var(--y)) translateX(4px); }
+    to { --_: tt-tooltipFadeInLeft-to; opacity: 1; transform: translate(var(--x), var(--y)) translateX(0); }
   }
   
   @keyframes tooltipFadeInRight {
-    from {
-      opacity: 0;
-      transform: translate(var(--x), var(--y)) translateX(-4px);
-    }
-    to {
-      opacity: 1;
-      transform: translate(var(--x), var(--y)) translateX(0);
-    }
+    from { --_: tt-tooltipFadeInRight-from; --_: tt-tooltipFadeInRight-from; opacity: 0; transform: translate(var(--x), var(--y)) translateX(-4px); }
+    to { --_: tt-tooltipFadeInRight-to; opacity: 1; transform: translate(var(--x), var(--y)) translateX(0); }
   }
 }
 
