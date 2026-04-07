@@ -3,6 +3,8 @@
  * Centered modal with backdrop overlay
  */
 
+@use 'mixins' as *;
+
 .overlay {
   position: fixed;
   inset: 0;

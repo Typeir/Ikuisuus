@@ -19,6 +19,8 @@
  * ```
  */
 
+@use 'mixins' as *;
+
 .tertiaryButton {
   background: var(--color-transparent);
   border: none;

@@ -113,7 +113,7 @@
     @include focus-ring;
   }
 
-  @include placeholder-secondary-faded;
+  @include placeholder-secondary-faded(0.7);
 }
 
 .optionsList {
@@ -196,10 +196,7 @@
     @include focus-ring;
   }
 
-  &::placeholder {
-    color: var(--color-secondary);
-    opacity: 0.7;
-  }
+  @include placeholder-secondary-faded(0.7);
 }
 
 .modalClose {

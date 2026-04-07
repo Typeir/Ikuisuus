@@ -6,6 +6,8 @@
  * @module lib/components/mdxEditor/fileTreeSelect.module
  */
 
+@use 'mixins' as *;
+
 .treeSelect {
   position: relative;
   width: 100%;
@@ -36,7 +38,8 @@
   @include disabled-state;
 }
 
-.triggerText {
+.pathLabel {
+  @include text-truncate;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -138,7 +141,7 @@
     background-color: var(--color-accent-a10);
   }
 
-  @include focus-visible-outline($offset: -2px);
+  @include focus-visible-outline(var(--color-accent), -2px);
 }
 
 .newFileIcon {
@@ -164,10 +167,7 @@
     color: var(--color-text);
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: -2px;
-  }
+  @include focus-visible-outline(var(--color-accent), -2px);
 }
 
 .emptyState {

@@ -1,0 +1,37 @@
+/**
+ * @fileoverview Focus Mixins
+ * @description Outline, ring, and glow focus indicators for interactive elements.
+ *
+ * @module styles/mixins-focus
+ */
+
+@mixin focus-outline($offset: 2px) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: $offset;
+}
+
+@mixin focus-ring {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgb(var(--color-accent-a20));
+}
+
+@mixin focus-glow($size: 4px) {
+  outline: none;
+  border-color: var(--color-accent);
+  filter: drop-shadow(0px 0px #{$size} var(--color-accent));
+}
+
+@mixin focus-accent-outline($offset: 2px) {
+  &:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: $offset;
+  }
+}
+
+@mixin focus-visible-outline($color: var(--color-accent), $offset: 2px) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: $offset;
+  }
+}

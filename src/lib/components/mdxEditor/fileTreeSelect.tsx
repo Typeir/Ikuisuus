@@ -239,7 +239,7 @@ export function FileTreeSelect({
         aria-haspopup='listbox'
         aria-expanded={isOpen}>
         <span
-          className={`${styles.triggerText} ${!value ? styles.triggerPlaceholder : ''}`}>
+          className={`${styles.pathLabel} ${!value ? styles.triggerPlaceholder : ''}`}>
           {loading ? '...' : value || placeholder}
         </span>
         <ChevronDown

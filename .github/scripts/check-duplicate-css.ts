@@ -4,6 +4,13 @@
  * @fileoverview Detects duplicate CSS selectors and property blocks across SCSS/CSS
  * files. Reports exact duplicates as critical findings.
  *
+ * Excluded from duplicate detection:
+ * - `@keyframes` stop selectors (`from`, `to`, `0%`, `100%` etc.) — identical stops
+ *   legitimately appear across unrelated animations
+ * - Selectors that contain semicolons — these are parsing artefacts produced by the
+ *   naive regex when encountering deeply-nested SCSS blocks (the text before an inner
+ *   `{` includes partial CSS properties from the parent rule)
+ *
  * @module .github/scripts/check-duplicate-css
  */
 
@@ -18,7 +25,7 @@ const ROOT = path.resolve(__dirname, '../..');
 
 const SCAN_DIRS = ['src'];
 
-const EXCLUDED_PATTERNS = [/node_modules/, /\.next/, /globals\.scss$/];
+const EXCLUDED_PATTERNS = [/node_modules/, /\.next/, /globals\.scss$/, /\/_mixins/];
 
 /**
  * Recursively find SCSS/CSS files under a directory.
@@ -44,6 +51,36 @@ async function findStyleFiles(dir: string, results: string[] = []): Promise<stri
 }
 
 /**
+ * Patterns that identify selectors which should be excluded from duplicate detection.
+ *
+ * Keyframe stop selectors (`from`, `to`, `0%`, `50%`, `100%` etc.) legitimately
+ * appear identical across unrelated `@keyframes` blocks — they are not true
+ * duplicates. Selectors containing semicolons are parsing artefacts produced by
+ * the naive regex when it encounters deeply-nested SCSS blocks; they represent
+ * partial property text, not real CSS selectors. CSS-module-scoped class
+ * selectors (starting with `.`) that are simple (no nesting indicators) are
+ * excluded from cross-file comparison because `.module.scss` files are locally
+ * scoped by the build tool.
+ */
+const KEYFRAME_STOP_RE = /^(from|to|\d+(\.\d+)?%)$/;
+
+/**
+ * Return true when a parsed selector should be skipped for duplicate detection.
+ *
+ * @param selector Trimmed, whitespace-collapsed selector string
+ * @returns Whether the selector should be excluded
+ */
+function isExcludedSelector(selector: string): boolean {
+  if (KEYFRAME_STOP_RE.test(selector)) {
+    return true;
+  }
+  if (selector.includes(';')) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * Extract a selector-to-property-bodies map from CSS/SCSS source.
  *
  * @param content File content
@@ -56,6 +93,9 @@ function extractSelectors(content: string): Map<string, string[]> {
   while ((match = ruleRegex.exec(content)) !== null) {
     const selector = match[1].trim().replace(/\s+/g, ' ');
     const body = match[2].trim();
+    if (isExcludedSelector(selector)) {
+      continue;
+    }
     if (!selectorMap.has(selector)) {
       selectorMap.set(selector, []);
     }

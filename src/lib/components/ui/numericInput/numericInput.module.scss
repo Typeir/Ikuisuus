@@ -1,5 +1,7 @@
 /** Numeric Input Component Styles */
 
+@use 'mixins' as *;
+
 .numericInput {
   display: inline-flex;
   align-items: stretch;

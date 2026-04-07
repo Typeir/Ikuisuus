@@ -4,6 +4,8 @@
  * @description 404 page styling consistent with MetadataTable and prose design patterns
  */
 
+@use 'mixins' as *;
+
 .notFoundContainer {
   min-height: 60vh;
   display: flex;

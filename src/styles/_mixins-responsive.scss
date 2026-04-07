@@ -1,0 +1,26 @@
+/**
+ * @fileoverview Responsive Mixins
+ * @description Breakpoint media-query wrappers using project SCSS variables.
+ *
+ * @module styles/mixins-responsive
+ */
+
+@use 'variables' as *;
+
+@mixin mobile {
+  @media (max-width: $bp-mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $bp-tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (max-width: $bp-desktop) {
+    @content;
+  }
+}

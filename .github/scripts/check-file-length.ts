@@ -31,22 +31,31 @@ const EXCLUDED_PATTERNS = [
 const ALLOWLIST_PATH = path.join(ROOT, '.github', 'file-length-allowlist.json');
 
 /**
+ * A single allowlist entry that grants an individual file a custom line-count cap.
+ *
+ * @interface AllowlistEntry
+ * @property {string} file - Relative file path (forward-slash separated)
+ * @property {number} maxLines - Custom maximum comment-pruned line count for this file
+ * @property {string} justification - Human-readable reason the file is allowlisted
+ */
+interface AllowlistEntry {
+  file: string;
+  maxLines: number;
+  justification: string;
+}
+
+/**
  * Load the optional allowlist of files permitted to exceed the threshold.
  *
- * @returns Array of relative paths that are exempt
+ * @returns Map of relative path → custom max lines for each allowlisted file
  */
-async function loadAllowlist(): Promise<string[]> {
+async function loadAllowlist(): Promise<Map<string, number>> {
   try {
     const raw = await fs.readFile(ALLOWLIST_PATH, 'utf-8');
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) {
-      return parsed.map((entry: string | { file: string }) =>
-        typeof entry === 'string' ? entry : entry.file
-      );
-    }
-    return [];
+    const entries = JSON.parse(raw) as AllowlistEntry[];
+    return new Map(entries.map((e) => [e.file, e.maxLines]));
   } catch {
-    return [];
+    return new Map();
   }
 }
 
@@ -106,11 +115,12 @@ export async function runCheck(): Promise<CheckResult> {
   for (const dir of SCAN_DIRS) {
     const files = await findFiles(path.join(ROOT, dir));
     for (const rel of files) {
-      if (allowlist.includes(rel.replace(/\\/g, '/'))) continue;
+      const normalized = rel.replace(/\\/g, '/');
+      const threshold = allowlist.get(normalized) ?? MAX_LINES;
       totalFilesChecked += 1;
       const lines = await countLines(path.join(ROOT, rel));
-      if (lines > MAX_LINES) {
-        violations.push({ file: rel, lines, threshold: MAX_LINES });
+      if (lines > threshold) {
+        violations.push({ file: rel, lines, threshold });
       }
     }
   }
