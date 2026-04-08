@@ -11,6 +11,7 @@ import ClearFloats from './clearFloats/clearFloats';
 import Collapsible from './collapsible/collapsible';
 import FlexRenderer from './flexRenderer';
 import FloatedContainer from './floatedContainer/floatedContainer';
+import FilteredSpellTable from './spellTable/filteredSpellTable';
 import { H1, H2, H3, H4, H5, H6 } from './heading/heading';
 import HorizontalSplit from './horizontalSplit/horizontalSplit';
 import mdxComponents from './mdxComponents';
@@ -18,7 +19,7 @@ import HeirloomTableWrapper from './metadataTables/heirloomTableWrapper';
 import MonsterTableWrapper from './metadataTables/monsterTableWrapper';
 import TrinketTableWrapper from './metadataTables/trinketTableWrapper';
 import ParallaxBackdrop from './parallaxBackdrop/parallaxBackdrop';
-import { FilteredSpellTable, SpellTable } from './spellTable';
+import { SpellTable } from './spellTable';
 import Tooltip from './tooltip/tooltip';
 
 export const components = {

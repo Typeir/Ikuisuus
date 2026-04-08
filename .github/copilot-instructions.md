@@ -12,6 +12,7 @@ These rules are **strictly enforced**. Violations will cause build failures, tes
 | NO color literals outside `globals.scss`      | [SCSS Theme Rules](./docs/scss-theme-rules.md) | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` returns 0 |
 | Zero act() warnings in tests                  | [Testing Rules](./docs/testing-rules.md)       | `npm test` shows no warnings                               |
 | Use NotificationProvider, not `alert()`       | [Testing Rules](./docs/testing-rules.md)       | `grep -rn "alert(" src/` returns 0                         |
+| Explicit MikroORM decorator typing            | [MikroORM Instructions](./instructions/mikroorm.instructions.md) | `rg "@PrimaryKey\(\{(?![^}]*type:)(?![^}]*entity:)[^}]*\}\)" src/lib/db/orm/entities -n` returns 0 |
 | Run `npm run pre-init` before dev/build       | [Build Pipeline](./docs/build-pipeline.md)     | Build succeeds                                             |
 
 ## ✅ Completion Gate (Mandatory)

@@ -5,6 +5,5 @@
  * @version 1.0.0
  * @since 2.0.0
  */
-export { default as FilteredSpellTable } from './filteredSpellTable';
 export { default as SpellTable } from './spellTable';
 

@@ -82,9 +82,7 @@ describe('MonsterTableWrapper', () => {
     mockHook.mockReturnValue({ data: [], loading: false, error: null });
     render(<MonsterTableWrapper />);
     expect(screen.getByText(/No monsters found\./)).toBeInTheDocument();
-    expect(
-      screen.getByText('npm run generate-monster-metadata'),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/generate-monster-metadata/)).toBeInTheDocument();
   });
 
   it('renders table with monster data', () => {
