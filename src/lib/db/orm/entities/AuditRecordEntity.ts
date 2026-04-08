@@ -15,7 +15,7 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
  */
 @Entity({ tableName: 'audit_logs' })
 export class AuditRecordEntity {
-  @PrimaryKey({ autoincrement: true })
+  @PrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
   @Property({ type: 'string', fieldName: 'content_path' })

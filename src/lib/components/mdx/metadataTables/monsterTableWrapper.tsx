@@ -128,14 +128,11 @@ export default function MonsterTableWrapper({
 
   if (data.length === 0) {
     return (
-      <div
-        className='text-center py-8'
-        dangerouslySetInnerHTML={{
-          __html: t('noMonsters', {
-            code: 'npm run generate-monster-metadata',
-          }),
-        }}
-      />
+      <div className='text-center py-8'>
+        {t('noMonsters', {
+          code: 'npm run generate-monster-metadata',
+        })}
+      </div>
     );
   }
 

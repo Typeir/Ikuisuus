@@ -15,7 +15,7 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
  */
 @Entity({ tableName: 'banned_ips' })
 export class BannedIpEntity {
-  @PrimaryKey({ autoincrement: true })
+  @PrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
   @Property({ type: 'string', unique: true })

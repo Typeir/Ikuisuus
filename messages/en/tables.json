@@ -60,7 +60,7 @@
   "monsters": {
     "loading": "Loading monsters...",
     "error": "Error",
-    "noMonsters": "No monsters found. Run <code>{code}</code>",
+    "noMonsters": "No monsters found. Run {code}",
     "columns": {
       "name": "Name",
       "size": "Size",
