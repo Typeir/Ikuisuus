@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/app/[locale]/library/[...slug]/utils/mdRawPage.tsx
+ * @module src/app/[locale]/library/[...slug]/utils/mdRawPage
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 import { renderMarkdownToHtml } from "@/lib/md/renderMarkdownToHtml";
 import matter from "gray-matter";
 import styles from "../page.module.scss";

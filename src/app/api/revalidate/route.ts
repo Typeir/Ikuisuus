@@ -8,6 +8,9 @@
  * locale+slug pair is archived in the drafts table.
  *
  * @module app/api/revalidate/route
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { contentCacheTag } from '@/lib/db/content/contentCacheTags';

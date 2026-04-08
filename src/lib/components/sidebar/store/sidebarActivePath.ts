@@ -1,6 +1,11 @@
 /**
  * A simple reactive store for the currently active sidebar path.
  * Subscribers will be notified whenever the active path changes.
+ * @fileoverview Module for src/lib/components/sidebar/store/sidebarActivePath.ts
+ * @module src/lib/components/sidebar/store/sidebarActivePath
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 type Callback = (path: string | null) => void;

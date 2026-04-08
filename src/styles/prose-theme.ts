@@ -7,6 +7,11 @@
  * 
  * @see https://tailwindcss.com/docs/typography-plugin
  * @see src/app/[locale]/globals.scss for theme color definitions
+ * @fileoverview Module for src/styles/prose-theme.ts
+ * @module src/styles/prose-theme
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import type { CSSRuleObject } from 'tailwindcss/types/config';

@@ -5,6 +5,9 @@
  * service modules.
  *
  * @module lib/services/api/jsonClient
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 /**

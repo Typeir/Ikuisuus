@@ -6,6 +6,7 @@
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
+ * @fileoverview Module for src/lib/utils/toCssValue.ts
  */
 
 /**

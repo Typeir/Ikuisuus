@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/app/[locale]/page.tsx
+ * @module src/app/[locale]/page
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 'use client';
 
 import { ArchiveIntro } from '@/lib/components/archiveIntro/archiveIntro';

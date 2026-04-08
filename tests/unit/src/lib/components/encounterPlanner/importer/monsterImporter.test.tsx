@@ -12,22 +12,18 @@
  * @requires @/lib/components/encounterPlanner/importer
  */
 
-import { MonsterImporter } from '@/lib/components/encounterPlanner/importer';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  createUseTranslationsMock,
+  loadMessageFile,
+} from '../../../testUtils/translationMockUtils';
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => {
-    const translations: Record<string, string> = {
-      addCreature: 'Add Creature',
-      cancel: 'Cancel',
-      quantity: 'Quantity',
-      searchCreatures: 'Search creatures...',
-      noCreaturesFound: 'No creatures found',
-    };
-    return translations[key] || key;
-  },
+  useTranslations: createUseTranslationsMock({
+    encounterPlanner: loadMessageFile('messages/en/encounterPlanner.json'),
+  }),
 }));
 
 vi.mock('@/lib/utils/monsterCache', () => {
@@ -79,6 +75,7 @@ vi.mock('@/lib/utils/monsterCache', () => {
   };
 });
 
+import { MonsterImporter } from '@/lib/components/encounterPlanner/importer';
 
 /**
  * Helper to select a creature from the combobox dropdown

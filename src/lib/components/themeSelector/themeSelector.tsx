@@ -23,6 +23,7 @@
  *   onThemeChange={(newTheme) => console.log('Theme changed:', newTheme)}
  * />
  * ```
+ * @module src/lib/components/themeSelector/themeSelector
  */
 'use client';
 

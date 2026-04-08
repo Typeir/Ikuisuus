@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/lib/utils/deduplicateFiles.ts
+ * @module src/lib/utils/deduplicateFiles
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 import { getBaseName } from './getBaseName';
 
 /**

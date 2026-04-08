@@ -21,6 +21,7 @@
  * const esFolder = getContentFolder('es');
  * // Returns: '/absolute/path/to/src/content/es'
  * ```
+ * @module src/lib/utils/getContentFolder
  */
 import { join } from 'path';
 import { FolderName } from '../enums/constants';

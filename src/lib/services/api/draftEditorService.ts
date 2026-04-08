@@ -3,6 +3,9 @@
  * @description API service helpers for draft overlay and MDX editor tree data.
  *
  * @module lib/services/api/draftEditorService
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import type { DraftMetadata } from '@/lib/db/content/schemas/draftMetadata';

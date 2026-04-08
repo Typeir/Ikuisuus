@@ -4,6 +4,9 @@
  * and animated height transitions.
  *
  * @module lib/components/sidebar/sidebar
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 'use client';
 

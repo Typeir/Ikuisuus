@@ -34,6 +34,7 @@ import type { EntityManager } from '@mikro-orm/postgresql';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { contentHash } from './contentHash';
+import { syncBloodlines } from './syncBloodlines';
 import type { SyncResult } from './types';
 
 const log = createLogger({ component: 'MetadataSync' });
@@ -496,6 +497,7 @@ const SYNC_MAP: Record<
   heirlooms: { sync: syncHeirlooms, label: 'heirlooms' },
   spells: { sync: syncSpells, label: 'spells' },
   trinkets: { sync: syncTrinkets, label: 'trinkets' },
+  bloodlines: { sync: syncBloodlines, label: 'bloodlines' },
 };
 
 /**

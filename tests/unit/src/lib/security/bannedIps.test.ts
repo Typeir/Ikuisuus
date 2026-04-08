@@ -1,15 +1,21 @@
 /**
  * Banned IPs Unit Tests
  *
- * @fileoverview Tests for IP banning functionality.
+ * @fileoverview Tests for IP banning functionality using adapter-backed persistence.
  *
  * @module tests/unit/lib/security/bannedIps
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@vercel/edge-config', () => ({
-  get: vi.fn(),
+const mockAdapter = {
+  read: vi.fn(),
+  write: vi.fn(),
+  remove: vi.fn(),
+};
+
+vi.mock('@/lib/security/bannedIpsAdapterFactory', () => ({
+  bannedIpsAdapter: mockAdapter,
 }));
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
@@ -22,21 +28,15 @@ vi.mock('@/lib/logging/logger', () => ({
   },
 }));
 
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
-
-const originalEnv = { ...process.env };
-
 beforeEach(() => {
   vi.resetModules();
-  mockFetch.mockReset();
-  process.env.EDGE_CONFIG_ID = 'test-config-id';
-  process.env.VERCEL_API_TOKEN = 'test-token';
+  mockAdapter.read.mockReset();
+  mockAdapter.write.mockReset();
+  mockAdapter.remove.mockReset();
 });
 
 afterEach(() => {
   vi.restoreAllMocks();
-  process.env = { ...originalEnv };
 });
 
 describe('bannedIps', () => {
@@ -65,8 +65,7 @@ describe('bannedIps', () => {
 
   describe('isIpBanned', () => {
     it('should return true if range is banned', async () => {
-      const { get } = await import('@vercel/edge-config');
-      vi.mocked(get).mockResolvedValue([
+      mockAdapter.read.mockResolvedValue([
         {
           range: '192.168.1.0/24',
           reason: 'spam',
@@ -81,8 +80,7 @@ describe('bannedIps', () => {
     });
 
     it('should return false if not banned', async () => {
-      const { get } = await import('@vercel/edge-config');
-      vi.mocked(get).mockResolvedValue([]);
+      mockAdapter.read.mockResolvedValue([]);
 
       const { isIpBanned } = await import('@/lib/security/bannedIps');
       const result = await isIpBanned('10.0.0.1');
@@ -92,21 +90,19 @@ describe('bannedIps', () => {
 
   describe('banIp', () => {
     it('should add new ban entry', async () => {
-      const { get } = await import('@vercel/edge-config');
-      vi.mocked(get).mockResolvedValue([]);
-      mockFetch.mockResolvedValue({ ok: true });
+      mockAdapter.read.mockResolvedValue([]);
+      mockAdapter.write.mockResolvedValue(undefined);
 
       const { banIp } = await import('@/lib/security/bannedIps');
       const entry = await banIp('192.168.1.50', 'profanity');
 
       expect(entry.range).toBe('192.168.1.0/24');
       expect(entry.reason).toBe('profanity');
-      expect(mockFetch).toHaveBeenCalled();
+      expect(mockAdapter.write).toHaveBeenCalled();
     });
 
     it('should skip write if already banned', async () => {
-      const { get } = await import('@vercel/edge-config');
-      vi.mocked(get).mockResolvedValue([
+      mockAdapter.read.mockResolvedValue([
         {
           range: '192.168.1.0/24',
           reason: 'old ban',
@@ -118,30 +114,22 @@ describe('bannedIps', () => {
       const entry = await banIp('192.168.1.50', 'new reason');
 
       expect(entry.reason).toBe('old ban');
-      expect(mockFetch).not.toHaveBeenCalled();
+      expect(mockAdapter.write).not.toHaveBeenCalled();
     });
   });
 
   describe('unbanRange', () => {
     it('should remove banned range', async () => {
-      const { get } = await import('@vercel/edge-config');
-      vi.mocked(get).mockResolvedValue([
-        {
-          range: '10.0.0.0/24',
-          reason: 'spam',
-          bannedAt: '2025-01-01T00:00:00.000Z',
-        },
-      ]);
-      mockFetch.mockResolvedValue({ ok: true });
+      mockAdapter.remove.mockResolvedValue(true);
 
       const { unbanRange } = await import('@/lib/security/bannedIps');
       const result = await unbanRange('10.0.0.0/24');
       expect(result).toBe(true);
+      expect(mockAdapter.remove).toHaveBeenCalledWith('10.0.0.0/24');
     });
 
     it('should return false if range not found', async () => {
-      const { get } = await import('@vercel/edge-config');
-      vi.mocked(get).mockResolvedValue([]);
+      mockAdapter.remove.mockResolvedValue(false);
 
       const { unbanRange } = await import('@/lib/security/bannedIps');
       const result = await unbanRange('10.0.0.0/24');

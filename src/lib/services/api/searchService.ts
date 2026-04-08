@@ -4,6 +4,9 @@
  * and nearest-route suggestion lookups.
  *
  * @module lib/services/api/searchService
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { ApiRoutes } from '@/lib/enums/apiRoutes';

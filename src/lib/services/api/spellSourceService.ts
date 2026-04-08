@@ -4,6 +4,9 @@
  * endpoint and inline data sources.
  *
  * @module lib/services/api/spellSourceService
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { postJson } from './jsonClient';
@@ -25,6 +28,7 @@ import { postJson } from './jsonClient';
  * @property {boolean} material - Material component flag
  * @property {string} [materialDescription] - Optional material description
  * @property {boolean} concentration - Concentration flag
+ * @property {string} [file] - Source file path; literal `"external"` for SRD spells not native to the Damocles setting
  */
 export interface SpellData {
   slug: string;
@@ -40,6 +44,7 @@ export interface SpellData {
   material: boolean;
   materialDescription?: string;
   concentration: boolean;
+  file?: string;
   [key: string]: unknown;
 }
 

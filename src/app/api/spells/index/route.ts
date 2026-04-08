@@ -16,6 +16,7 @@
  * const response = await fetch('/api/spells/index?locale=en');
  * const spellIndex = await response.json();
  * ```
+ * @module src/app/api/spells/index/route
  */
 import { spellRepository } from '@/lib/db/content/repositories/spellRepository';
 import { logger } from '@/lib/logging/logger';

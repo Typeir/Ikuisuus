@@ -4,6 +4,9 @@
  * spell link hydration.
  *
  * @module lib/hooks/data/useEncounterData
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import type { ComboboxItem } from '@/lib/components/encounterPlanner/comboboxes/genericCombobox';

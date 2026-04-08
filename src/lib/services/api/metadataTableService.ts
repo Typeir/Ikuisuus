@@ -3,6 +3,9 @@
  * @description API service helpers for metadata table wrapper components.
  *
  * @module lib/services/api/metadataTableService
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { getJson } from './jsonClient';

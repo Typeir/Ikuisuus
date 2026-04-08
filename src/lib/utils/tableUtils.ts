@@ -24,6 +24,7 @@
  * // Parse fractional CR values
  * const cr = parseChallengeRating('1/2'); // Returns 0.5
  * ```
+ * @module src/lib/utils/tableUtils
  */
 
 /**

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/lib/md/renderMarkdownToHtml.ts
+ * @module src/lib/md/renderMarkdownToHtml
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 import { remark } from 'remark';
 import gfm from 'remark-gfm';
 import html from 'remark-html';

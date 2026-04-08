@@ -7,6 +7,7 @@
  * @author Typeir
  * @since 1.0.0
  *
+ * @fileoverview Module for src/lib/components/mdx/horizontalSplit/horizontalSplit.tsx
  */
 
 import React, { CSSProperties, ReactNode } from 'react';

@@ -23,6 +23,7 @@
  *
  * <LibrarySearch />
  * ```
+ * @module src/lib/components/librarySearch/librarySearch
  */
 'use client';
 

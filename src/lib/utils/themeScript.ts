@@ -24,6 +24,7 @@
  *   </body>
  * </html>
  * ```
+ * @module src/lib/utils/themeScript
  */
 
 import { PersistentData } from '../enums/persistentData';

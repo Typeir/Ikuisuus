@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/app/[locale]/utils/clientRenderer.tsx
+ * @module src/app/[locale]/utils/clientRenderer
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 'use client';
 
 import mdxComponents from '@/lib/components/mdx';

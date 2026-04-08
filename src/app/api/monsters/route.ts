@@ -21,6 +21,7 @@
  * // Fetch Spanish monsters
  * const response = await fetch('/api/monsters?locale=es');
  * ```
+ * @module src/app/api/monsters/route
  */
 import { monsterRepository } from '@/lib/db/content/repositories/monsterRepository';
 import { logger } from '@/lib/logging/logger';

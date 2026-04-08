@@ -3,6 +3,9 @@
  * @description Hook for loading spell data from mixed source arrays.
  *
  * @module lib/hooks/data/useSpellSources
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import {

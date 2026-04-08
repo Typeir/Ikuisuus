@@ -3,6 +3,9 @@
  * @description Client hooks for local and external search with race control.
  *
  * @module lib/hooks/data/useSearchData
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';

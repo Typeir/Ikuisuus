@@ -10,7 +10,7 @@
  * are handled by updating the entity class; no positional $1…$N arrays to maintain.
  *
  * Tables populated:
- *   monsters, heirlooms, spells + spell_lists, trinkets
+ *   monsters, heirlooms, spells + spell_lists, trinkets, bloodlines + bloodline_boons
  *
  * Usage:
  *   npx tsx scripts/db/pg/seed-from-fs.ts [locale]
@@ -31,6 +31,8 @@ import { existsSync, readdirSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import {
+    BloodlineBoonEntity,
+    BloodlineEntity,
     CorrectionsUserEntity,
     HeirloomChargesEmbed,
     HeirloomEntity,
@@ -48,6 +50,7 @@ import {
     TrinketEntity,
     TrinketSavingThrowEmbed,
 } from '../../../src/lib/db/orm/entities/index';
+import { contentHash } from '../../../src/lib/metadata/contentHash';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '../../../');
@@ -126,6 +129,7 @@ interface MonsterMeta {
   languages?: string[];
   tags?: string[];
   indexVersion?: number;
+  versionHash?: string;
 }
 
 /**
@@ -151,6 +155,7 @@ interface SpellMeta {
   hasRitual?: boolean;
   tags?: string[];
   spellLists?: { name: string; link: string }[];
+  versionHash?: string;
 }
 
 /**
@@ -181,6 +186,7 @@ interface HeirloomMeta {
   savingThrowTypes?: string[];
   tags?: string[];
   indexVersion?: number;
+  versionHash?: string;
 }
 
 /**
@@ -202,6 +208,54 @@ interface TrinketMeta {
   specialEffects?: string[];
   inflictsConditions?: string[];
   tags?: string[];
+  versionHash?: string;
+}
+
+/**
+ * @description Bloodline metadata shape produced by generateBloodlineMetadata.ts.
+ */
+interface BloodlineMeta {
+  slug: string;
+  title: string;
+  file: string;
+  link: string;
+  description?: string;
+  coreFeatures: {
+    abilityScores: string[];
+    movementSpeeds: string[];
+    senses: string[];
+    size: string[];
+    creatureTypes: string[];
+    age?: string;
+  };
+  boonBudget?: number;
+  boons: Array<{
+    name: string;
+    bpLabel: string;
+    bpValue?: number;
+    sortOrder: number;
+    tags: string[];
+  }>;
+  tags?: string[];
+  indexVersion?: number;
+  versionHash?: string;
+}
+
+/**
+ * Resolves record hash from metadata payload or computes a deterministic fallback.
+ *
+ * @param {Record<string, unknown>} record - Metadata record
+ * @returns {string} Version hash
+ */
+function resolveVersionHash(record: Record<string, unknown>): string {
+  const existing = record.versionHash;
+  if (typeof existing === 'string' && existing.trim().length > 0) {
+    return existing;
+  }
+
+  const payload = { ...record };
+  delete payload.versionHash;
+  return contentHash(payload);
 }
 
 /* ─────────────────────  Filesystem helpers  ────────────────────────── */
@@ -320,6 +374,7 @@ async function seedMonsters(
       languages: m.languages ?? [],
       tags: m.tags ?? [],
       indexVersion: m.indexVersion,
+      versionHash: resolveVersionHash(m as unknown as Record<string, unknown>),
     });
   }
 
@@ -378,6 +433,7 @@ async function seedHeirlooms(
       savingThrowTypes: h.savingThrowTypes ?? [],
       tags: h.tags ?? [],
       indexVersion: h.indexVersion,
+      versionHash: resolveVersionHash(h as unknown as Record<string, unknown>),
     });
   }
 
@@ -422,6 +478,7 @@ async function seedSpells(em: EntityManager, locale: string): Promise<number> {
       },
       hasRitual: s.hasRitual,
       tags: s.tags ?? [],
+      versionHash: resolveVersionHash(s as unknown as Record<string, unknown>),
     });
 
     for (const ref of s.spellLists ?? []) {
@@ -473,7 +530,72 @@ async function seedTrinkets(
       specialEffects: t.specialEffects ?? [],
       inflictsConditions: t.inflictsConditions ?? [],
       tags: t.tags ?? [],
+      versionHash: resolveVersionHash(t as unknown as Record<string, unknown>),
     });
+  }
+
+  await em.flush();
+  return records.length;
+}
+
+/**
+ * Seeds the `bloodlines` + `bloodline_boons` tables for one locale.
+ * MikroORM handles FK assignment and insert ordering automatically.
+ *
+ * @param em - Transaction-scoped entity manager
+ * @param locale - Locale code
+ * @returns Number of bloodline rows inserted
+ */
+async function seedBloodlines(
+  em: EntityManager,
+  locale: string,
+): Promise<number> {
+  const records = readMetadata<BloodlineMeta>(
+    locale,
+    join('character-creation', 'bloodlines'),
+  ).filter(Boolean);
+  if (records.length === 0) return 0;
+
+  await em.nativeDelete(BloodlineEntity, { locale });
+
+  for (const b of records) {
+    const cf = b.coreFeatures ?? {
+      abilityScores: [],
+      movementSpeeds: [],
+      senses: [],
+      size: [],
+      creatureTypes: [],
+    };
+
+    const bloodline = em.create(BloodlineEntity, {
+      locale,
+      slug: b.slug,
+      title: b.title,
+      file: b.file,
+      link: b.link,
+      description: b.description,
+      abilityScores: cf.abilityScores ?? [],
+      movementSpeeds: cf.movementSpeeds ?? [],
+      senses: cf.senses ?? [],
+      size: cf.size ?? [],
+      creatureTypes: cf.creatureTypes ?? [],
+      age: cf.age,
+      boonBudget: b.boonBudget,
+      tags: b.tags ?? [],
+      indexVersion: b.indexVersion,
+      versionHash: resolveVersionHash(b as unknown as Record<string, unknown>),
+    });
+
+    for (const boon of b.boons ?? []) {
+      em.create(BloodlineBoonEntity, {
+        bloodline,
+        name: boon.name,
+        bpLabel: boon.bpLabel,
+        bpValue: boon.bpValue,
+        sortOrder: boon.sortOrder,
+        tags: boon.tags ?? [],
+      });
+    }
   }
 
   await em.flush();
@@ -496,9 +618,10 @@ async function seedLocale(orm: MikroORM, locale: string): Promise<void> {
     const heirlooms = await seedHeirlooms(tx, locale);
     const spells = await seedSpells(tx, locale);
     const trinkets = await seedTrinkets(tx, locale);
+    const bloodlines = await seedBloodlines(tx, locale);
 
     console.log(
-      `  ✅  ${locale}:  monsters=${monsters}  heirlooms=${heirlooms}  spells=${spells}  trinkets=${trinkets}`,
+      `  ✅  ${locale}:  monsters=${monsters}  heirlooms=${heirlooms}  spells=${spells}  trinkets=${trinkets}  bloodlines=${bloodlines}`,
     );
   });
 }
@@ -508,8 +631,17 @@ async function main(): Promise<void> {
     defineConfig({
       clientUrl: process.env.DATABASE_URL,
       metadataProvider: TsMorphMetadataProvider,
-      driverOptions: { connection: { ssl: true } },
+      driverOptions: {
+        connection: {
+          ssl:
+            process.env.DATABASE_SSL === 'false'
+              ? false
+              : { rejectUnauthorized: false },
+        },
+      },
       entities: [
+        BloodlineEntity,
+        BloodlineBoonEntity,
         MonsterEntity,
         MonsterACEmbed,
         MonsterHPEmbed,

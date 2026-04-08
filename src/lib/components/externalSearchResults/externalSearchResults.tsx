@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/lib/components/externalSearchResults/externalSearchResults.tsx
+ * @module src/lib/components/externalSearchResults/externalSearchResults
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 import { useExternalSearchData } from '@/lib/hooks/data/useSearchData';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';

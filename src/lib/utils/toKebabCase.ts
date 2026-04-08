@@ -18,6 +18,7 @@
  * toKebabCase('my_example_string'); // 'my-example-string'
  * toKebabCase('My Example String'); // 'my-example-string'
  * ```
+ * @module src/lib/utils/toKebabCase
  */
 
 /**

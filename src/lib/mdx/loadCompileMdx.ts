@@ -12,4 +12,5 @@
  * 
  * @requires fs/promises
  * @requires path
+ * @module src/lib/mdx/loadCompileMdx
  */

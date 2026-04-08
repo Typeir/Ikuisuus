@@ -11,6 +11,7 @@
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
+ * @module src/middleware
  */
 
 import createMiddleware from "next-intl/middleware";

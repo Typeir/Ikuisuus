@@ -4,6 +4,9 @@
  * that need folder/file hierarchies from locale content roots.
  *
  * @module lib/db/content/contentTreeService
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { FILE_EXT_MDX, IGNORED_FOLDERS } from '@/lib/enums/constants';

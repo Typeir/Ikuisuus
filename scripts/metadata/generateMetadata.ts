@@ -67,6 +67,13 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
     contentType: 'trinket',
     subType: 'consumable',
   },
+  bloodlines: {
+    dir: 'src/content/en/character-creation/bloodlines',
+    pattern: /\.mdx$/,
+    generator: 'generateBloodlineMetadata.ts',
+    contentType: 'character-creation',
+    subType: 'bloodline',
+  },
   classes: {
     dir: 'src/content/en/character-creation/vocations',
     pattern: /\.mdx$/,
@@ -115,6 +122,8 @@ class MetadataOrchestrator {
         types.push('heirlooms');
       if (arg === '--spells' || arg === '--spell') types.push('spells');
       if (arg === '--trinkets' || arg === '--trinket') types.push('trinkets');
+      if (arg === '--bloodlines' || arg === '--bloodline')
+        types.push('bloodlines');
     }
 
     return types.length > 0 ? types : null;

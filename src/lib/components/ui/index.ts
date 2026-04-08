@@ -4,6 +4,9 @@
  * These components replace native browser elements with accessible, styled alternatives.
  *
  * @module ui
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 /** FilterSelect — Accessible dropdown with mobile modal & virtualization */

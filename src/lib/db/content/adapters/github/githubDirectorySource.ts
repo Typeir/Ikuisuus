@@ -8,6 +8,9 @@
  * listEntries calls filter the cached tree for O(n) lookups.
  *
  * @module lib/db/content/adapters/github/githubDirectorySource
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';

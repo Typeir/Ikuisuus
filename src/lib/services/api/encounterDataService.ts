@@ -3,6 +3,9 @@
  * @description API service helpers for encounter planner index/search data.
  *
  * @module lib/services/api/encounterDataService
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { getJson } from './jsonClient';

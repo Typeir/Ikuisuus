@@ -18,6 +18,7 @@
  * toTitleCase('iron-snail-warrior'); // 'Iron Snail Warrior'
  * toTitleCase('items---heirlooms'); // 'Items Heirlooms'
  * ```
+ * @module src/lib/utils/toTitleCase
  */
 
 /**

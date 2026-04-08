@@ -8,6 +8,9 @@
  * revalidation API can bust the correct entry via `revalidateTag`.
  *
  * @module lib/db/content/adapters/github/githubContentSource
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';

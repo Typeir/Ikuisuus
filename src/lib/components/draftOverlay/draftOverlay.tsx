@@ -7,6 +7,9 @@
  * to see the underlying ISR content.
  *
  * @module lib/components/draftOverlay/draftOverlay
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 'use client';

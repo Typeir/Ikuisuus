@@ -18,6 +18,7 @@
  * const response = await fetch('/api/trinkets?locale=en');
  * const trinkets = await response.json();
  * ```
+ * @module src/app/api/trinkets/route
  */
 import { trinketRepository } from '@/lib/db/content/repositories/trinketRepository';
 import { logger } from '@/lib/logging/logger';

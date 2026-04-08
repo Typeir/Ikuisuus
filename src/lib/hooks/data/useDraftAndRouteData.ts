@@ -4,6 +4,9 @@
  * nearest route lookups.
  *
  * @module lib/hooks/data/useDraftAndRouteData
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import type { TreeNode } from '@/lib/components/mdxEditor/fileTreeSelect';

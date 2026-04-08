@@ -18,6 +18,7 @@
  * const response = await fetch('/api/heirlooms?locale=en');
  * const heirlooms = await response.json();
  * ```
+ * @module src/app/api/heirlooms/route
  */
 import { heirloomRepository } from '@/lib/db/content/repositories/heirloomRepository';
 import { logger } from '@/lib/logging/logger';

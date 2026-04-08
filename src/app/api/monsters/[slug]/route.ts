@@ -16,6 +16,7 @@
  * const response = await fetch('/api/monsters/ancient-red-dragon?locale=en');
  * const monster = await response.json();
  * ```
+ * @module src/app/api/monsters/[slug]/route
  */
 import { monsterRepository } from '@/lib/db/content/repositories/monsterRepository';
 import { logger } from '@/lib/logging/logger';

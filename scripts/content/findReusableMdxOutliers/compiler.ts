@@ -32,6 +32,15 @@ export const htmlComponent = (
 };
 
 /**
+ * Demotes compiled HTML heading tags from h1 to h2.
+ *
+ * @param html - Rendered static HTML string
+ * @returns HTML with h1 headings replaced by h2 headings
+ */
+const demoteCompiledH1Headings = (html: string): string =>
+  html.replace(/<h1(\b[^>]*)>/g, '<h2$1>').replace(/<\/h1>/g, '</h2>');
+
+/**
  * Result of compiling a single outlier.
  *
  * @property tag - PascalCase component name
@@ -99,7 +108,8 @@ export const compileOutliers = async (
       },
     });
 
-    const html = ReactDOMServer.renderToStaticMarkup(result.content);
+    const renderedHtml = ReactDOMServer.renderToStaticMarkup(result.content);
+    const html = demoteCompiledH1Headings(renderedHtml);
     compiledHtml.set(tag, html);
 
     results.push({

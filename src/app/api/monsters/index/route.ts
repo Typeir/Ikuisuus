@@ -16,6 +16,7 @@
  * const response = await fetch('/api/monsters/index?locale=en');
  * const monsters = await response.json();
  * ```
+ * @module src/app/api/monsters/index/route
  */
 import { monsterRepository } from '@/lib/db/content/repositories/monsterRepository';
 import { logger } from '@/lib/logging/logger';

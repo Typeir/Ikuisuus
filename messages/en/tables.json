@@ -46,6 +46,15 @@
       "range": "Range",
       "duration": "Duration",
       "components": "Components"
+    },
+    "filters": {
+      "damoclesOnly": "Damocles Only",
+      "school": "School",
+      "allSchools": "All Schools",
+      "concentration": "Concentration",
+      "all": "All",
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "monsters": {

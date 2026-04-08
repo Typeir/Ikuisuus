@@ -7,6 +7,7 @@
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
+ * @module src/app/api/search/route
  */
 
 import fs from 'fs';

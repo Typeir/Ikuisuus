@@ -7,6 +7,9 @@
  * Protected by the CONTENT_WEBHOOK_SECRET env var.
  *
  * @module app/api/content-webhook/route
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';

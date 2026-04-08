@@ -17,6 +17,7 @@
  * localStorage.setItem(PersistentData.Theme, 'dark');
  * document.documentElement.setAttribute(PersistentData.Theme, 'dark');
  * ```
+ * @module src/lib/enums/persistentData
  */
 
 export enum PersistentData {

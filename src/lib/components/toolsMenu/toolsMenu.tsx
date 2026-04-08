@@ -23,6 +23,7 @@
  *   trigger={<><Icon />Tools</>}
  * />
  * ```
+ * @module src/lib/components/toolsMenu/toolsMenu
  */
 
 'use client';

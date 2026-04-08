@@ -22,6 +22,7 @@
  * });
  * const spells = await response.json();
  * ```
+ * @module src/app/api/spells/route
  */
 import { spellRepository } from '@/lib/db/content/repositories/spellRepository';
 import { logger } from '@/lib/logging/logger';

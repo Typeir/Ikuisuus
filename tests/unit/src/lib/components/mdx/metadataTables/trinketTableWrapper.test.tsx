@@ -14,24 +14,17 @@
 
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  createUseTranslationsMock,
+  loadMessageFile,
+} from '../../../testUtils/translationMockUtils';
 
 const mockHook = vi.fn();
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string, opts?: Record<string, unknown>) => {
-    if (key === 'error') return 'Error';
-    if (key === 'noTrinkets') return 'No trinkets found';
-    if (key === 'searchPlaceholder') return 'Search...';
-    if (key === 'allOption') return 'All';
-    if (key === 'showingResults') return `${opts?.current} of ${opts?.total}`;
-    if (key === 'showingResultsFiltered') return `${opts?.current} filtered`;
-    if (key === 'previous') return 'Previous';
-    if (key === 'next') return 'Next';
-    if (key === 'pageInfo') return `Page ${opts?.current}`;
-    if (key === 'sortAscending') return '▲';
-    if (key === 'sortDescending') return '▼';
-    return key;
-  },
+  useTranslations: createUseTranslationsMock({
+    tables: loadMessageFile('messages/en/tables.json'),
+  }),
 }));
 
 vi.mock('next/navigation', () => ({
@@ -88,7 +81,8 @@ describe('TrinketTableWrapper', () => {
   it('shows empty state', () => {
     mockHook.mockReturnValue({ data: [], loading: false, error: null });
     render(<TrinketTableWrapper />);
-    expect(screen.getByText('No trinkets found')).toBeInTheDocument();
+    expect(screen.getByText(/No trinkets found\./)).toBeInTheDocument();
+    expect(screen.getByText(/generate-trinket-metadata/)).toBeInTheDocument();
   });
 
   it('renders trinket with damage and damageType', () => {

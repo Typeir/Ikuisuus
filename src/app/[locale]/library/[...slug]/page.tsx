@@ -4,6 +4,9 @@
  *
  * Renders MDX/MD content files from the content directory using
  * next-mdx-remote-client for server-side compilation with client fallback.
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';

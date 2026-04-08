@@ -1,5 +1,10 @@
-/** @fileoverview File extension constants, regex patterns, and folder name enums for content processing. */
-
+/**
+ * @fileoverview File extension constants, regex patterns, and folder name enums for content processing.
+ * @module src/lib/enums/constants
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 /** Markdown file extension constant */
 export const FILE_EXT_MD = '.md';
 /** MDX file extension constant */

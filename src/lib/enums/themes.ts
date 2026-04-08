@@ -17,6 +17,7 @@
  * const currentTheme: Theme = Theme.Dark;
  * document.documentElement.setAttribute('data-theme', currentTheme);
  * ```
+ * @module src/lib/enums/themes
  */
 
 export enum Theme {

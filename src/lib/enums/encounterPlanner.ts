@@ -15,6 +15,7 @@
  * localStorage.setItem(EncounterStorage.Encounters, JSON.stringify(encounters));
  * const affixes = Object.values(HeroicAffix);
  * ```
+ * @module src/lib/enums/encounterPlanner
  */
 
 export enum EncounterStorage {

@@ -5,6 +5,9 @@
  * inline comments in function bodies, color literals in TSX, and alert() calls.
  *
  * @module .github/scripts/check-jsdoc-quality
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { promises as fs } from 'node:fs';
@@ -23,6 +26,14 @@ const EXCLUDED_PATTERNS = [
   /node_modules/,
   /\.next/,
   /\.config\.(ts|js)$/,
+];
+
+const REQUIRED_HEADING_TAGS = [
+  '@fileoverview',
+  '@module',
+  '@author',
+  '@version',
+  '@since',
 ];
 
 /**
@@ -98,6 +109,73 @@ function findInlineComments(content: string): Array<{ line: number; text: string
 }
 
 /**
+ * Find the leading file-level JSDoc heading block.
+ *
+ * @param content File content
+ * @returns Heading JSDoc block and start line when found
+ */
+function findHeadingJSDoc(content: string): { block: string; startLine: number } | null {
+  const lines = content.split('\n');
+  let index = 0;
+
+  while (index < lines.length && lines[index].trim() === '') {
+    index += 1;
+  }
+
+  if (index >= lines.length || !lines[index].trim().startsWith('/**')) {
+    return null;
+  }
+
+  const startLine = index + 1;
+  const blockLines: string[] = [lines[index]];
+  index += 1;
+
+  while (index < lines.length) {
+    blockLines.push(lines[index]);
+    if (lines[index].includes('*/')) {
+      return {
+        block: blockLines.join('\n'),
+        startLine,
+      };
+    }
+    index += 1;
+  }
+
+  return {
+    block: blockLines.join('\n'),
+    startLine,
+  };
+}
+
+/**
+ * Find missing required heading tags in the file-level JSDoc block.
+ *
+ * @param content File content
+ * @returns Missing tags and the heading start line
+ */
+function findMissingHeadingTags(content: string): {
+  missingTags: string[];
+  line: number;
+} {
+  const heading = findHeadingJSDoc(content);
+  if (!heading) {
+    return {
+      missingTags: [...REQUIRED_HEADING_TAGS],
+      line: 1,
+    };
+  }
+
+  const missingTags = REQUIRED_HEADING_TAGS.filter(
+    (tag) => !new RegExp(`${tag}\\b`).test(heading.block),
+  );
+
+  return {
+    missingTags,
+    line: heading.startLine,
+  };
+}
+
+/**
  * Find hex color literals in a TSX file.
  *
  * @param content File content
@@ -143,6 +221,18 @@ export async function runCheck(): Promise<CheckResult> {
   for (const rel of files) {
     const content = await fs.readFile(path.join(ROOT, rel), 'utf-8');
     const normalizedPath = rel.replace(/\\/g, '/');
+
+    const headingCheck = findMissingHeadingTags(content);
+    if (headingCheck.missingTags.length > 0) {
+      failures.push({
+        file: normalizedPath,
+        line: headingCheck.line,
+        rule: 'missing-file-heading-tags',
+        message: `Missing required file heading tags: ${headingCheck.missingTags.join(', ')}`,
+        suggestion:
+          'Add file-level JSDoc with @fileoverview, @module, @author Typeir, @version 1.0.0, @since 2.0.0',
+      });
+    }
 
     for (const v of findInlineComments(content)) {
       failures.push({

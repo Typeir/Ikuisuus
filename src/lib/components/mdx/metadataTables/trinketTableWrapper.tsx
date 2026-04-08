@@ -22,6 +22,7 @@
  * <!-- With locale override -->
  * <TrinketTable locale="en" />
  * ```
+ * @module src/lib/components/mdx/metadataTables/trinketTableWrapper
  */
 'use client';
 

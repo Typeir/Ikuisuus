@@ -18,6 +18,7 @@
  * // Sort items by rarity
  * items.sort((a, b) => compareByOrder(a.rarity, b.rarity, RARITY_SORT_ORDER));
  * ```
+ * @module src/lib/enums/tableConstants
  */
 
 /**

@@ -16,6 +16,7 @@
  * @exports CombatantMechanicsSection - Manages legendary deeds and resists
  * @exports CombatantHeroicSection - Manages heroic awakening state
  * @exports CombatantConditionsManager - Manages active conditions
+ * @since 2.0.0
  */
 
 export { CombatantRow, type CombatantRowProps } from './combatantRow';

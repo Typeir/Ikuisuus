@@ -8,6 +8,7 @@
 @use 'mixins-focus' as *;
 @use 'mixins-disabled' as *;
 @use 'mixins-layout' as *;
+@use 'mixins-text' as *;
 
 @mixin input-base($font-size: 0.875rem) {
   padding: 0.5rem 0.75rem;
@@ -44,7 +45,5 @@
     @include focus-glow;
   }
 
-  &::placeholder {
-    color: var(--color-secondary);
-  }
+  @include placeholder-secondary;
 }

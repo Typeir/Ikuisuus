@@ -5,6 +5,9 @@
  * in `src/content/{locale}/`.
  *
  * @module lib/db/content/adapters/fs/fsDirectorySource
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import fs from 'fs';

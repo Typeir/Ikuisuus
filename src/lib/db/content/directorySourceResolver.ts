@@ -5,6 +5,9 @@
  * production runtime for content revalidation.
  *
  * @module lib/db/content/directorySourceResolver
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { fsDirectorySource } from './adapters/fs/fsDirectorySource';

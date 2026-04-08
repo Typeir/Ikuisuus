@@ -5,6 +5,9 @@
  * in the content repository through the GitHub API. Logs every attempt to the audit table.
  *
  * @module app/api/corrections/route
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { writeAuditLog } from '@/lib/db/auditLog';
@@ -12,15 +15,16 @@ import { extractSession } from '@/lib/db/auth';
 import { draftRepository } from '@/lib/db/content/repositories/draftRepository';
 import { logger } from '@/lib/logging/logger';
 import { isIpBanned } from '@/lib/security/bannedIps';
+import { getClientIp } from '@/lib/security/getClientIp';
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  buildBranchName,
-  buildCommitMessage,
-  buildPrContent,
-  commitFile,
-  createBranch,
-  openPullRequest,
+    buildBranchName,
+    buildCommitMessage,
+    buildPrContent,
+    commitFile,
+    createBranch,
+    openPullRequest,
 } from './corrections.service';
 
 const log = logger.child({ module: 'API:Corrections' });
@@ -58,10 +62,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const clientIp =
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    req.headers.get('x-real-ip') ??
-    'unknown';
+  const clientIp = getClientIp(req);
 
   const { banned, entry: banEntry } = await isIpBanned(clientIp);
   if (banned) {

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/lib/components/mdx/index.tsx
+ * @module src/lib/components/mdx/index
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 import Image from 'next/image';
 import BlendedImage from './blendedImage';
 import ClearFloats from './clearFloats/clearFloats';
@@ -11,7 +18,7 @@ import HeirloomTableWrapper from './metadataTables/heirloomTableWrapper';
 import MonsterTableWrapper from './metadataTables/monsterTableWrapper';
 import TrinketTableWrapper from './metadataTables/trinketTableWrapper';
 import ParallaxBackdrop from './parallaxBackdrop/parallaxBackdrop';
-import { SpellTable } from './spellTable';
+import { FilteredSpellTable, SpellTable } from './spellTable';
 import Tooltip from './tooltip/tooltip';
 
 export const components = {
@@ -20,6 +27,7 @@ export const components = {
   FlexRenderer,
   MonsterTable: MonsterTableWrapper,
   HeirloomTable: HeirloomTableWrapper,
+  FilteredSpellTable,
   SpellTable,
   TrinketTable: TrinketTableWrapper,
   HorizontalSplit,

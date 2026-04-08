@@ -11,6 +11,9 @@
  * in those files. This prevents pre-existing tech debt from blocking sessions.
  *
  * @module .github/scripts/health-check
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { execSync } from 'node:child_process';

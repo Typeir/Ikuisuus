@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/app/[locale]/utils/themeSelectorLayout.tsx
+ * @module src/app/[locale]/utils/themeSelectorLayout
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 "use client";
 
 import {

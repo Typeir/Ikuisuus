@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/lib/md/remarkWrapImages.ts
+ * @module src/lib/md/remarkWrapImages
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 import type { Html, Image } from 'mdast';
 import type { Plugin } from 'unified';
 import type { Parent } from 'unist';

@@ -9,6 +9,9 @@
  * changes required.
  *
  * @module lib/security/profanityFilter
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';

@@ -4,6 +4,9 @@
  * authenticated fetch wrapper, branch creation, file commits, and PR opening.
  *
  * @module app/api/corrections/corrections.service
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 /**

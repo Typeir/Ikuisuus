@@ -11,6 +11,10 @@
 
 import { defineConfig } from '@mikro-orm/postgresql';
 import {
+    AuditRecordEntity,
+    BannedIpEntity,
+    BloodlineBoonEntity,
+    BloodlineEntity,
     CorrectionsUserEntity,
     DraftEntity,
     HeirloomChargesEmbed,
@@ -41,6 +45,10 @@ export const ormConfig = defineConfig({
     },
   },
   entities: [
+    AuditRecordEntity,
+    BannedIpEntity,
+    BloodlineEntity,
+    BloodlineBoonEntity,
     DraftEntity,
     MonsterEntity,
     MonsterACEmbed,

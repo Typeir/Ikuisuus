@@ -1,27 +1,27 @@
 /**
  * @fileoverview Audit Log Facade
  * @description Provides the public `writeAuditLog` function consumed by the corrections
- * API. Delegates to the configured `AuditAdapter` implementation. Swapping storage
- * backends (Edge Config → Postgres → etc.) requires only changing the adapter import.
+ * API. Delegates to the factory-resolved `AuditAdapter` implementation. The active
+ * backend is selected by `METADATA_BACKEND` env var (fs or pg).
  *
  * @module lib/db/auditLog
- * @version 2.0.0
+ * @version 3.0.0
  * @author Typeir
  * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';
 import type { AuditRecord } from './auditAdapter';
-import { edgeConfigAuditAdapter } from './edgeConfigAuditAdapter';
+import { auditAdapter } from './auditAdapterFactory';
 
 export type { AuditRecord } from './auditAdapter';
 
 const log = logger.child({ module: 'AuditLog' });
 
 /**
- * Active adapter instance. Change this import to swap storage backends.
+ * Active adapter instance resolved by the audit adapter factory.
  */
-const adapter = edgeConfigAuditAdapter;
+const adapter = auditAdapter;
 
 /**
  * Persists an audit record via the active adapter.

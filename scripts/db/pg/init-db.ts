@@ -212,6 +212,55 @@ const TABLE_DDL: string[] = [
      version_hash          text,
      UNIQUE (locale, slug)
    )`,
+
+  `CREATE TABLE IF NOT EXISTS bloodlines (
+     id                serial    PRIMARY KEY,
+     locale            text      NOT NULL,
+     slug              text      NOT NULL,
+     title             text      NOT NULL,
+     file              text      NOT NULL,
+     link              text      NOT NULL,
+     description       text,
+     ability_scores    text[]    NOT NULL DEFAULT '{}',
+     movement_speeds   text[]    NOT NULL DEFAULT '{}',
+     senses            text[]    NOT NULL DEFAULT '{}',
+     size              text[]    NOT NULL DEFAULT '{}',
+     creature_types    text[]    NOT NULL DEFAULT '{}',
+     age               text,
+     boon_budget       smallint,
+     tags              text[]    NOT NULL DEFAULT '{}',
+     index_version     smallint,
+     version_hash      text,
+     UNIQUE (locale, slug)
+   )`,
+
+  `CREATE TABLE IF NOT EXISTS bloodline_boons (
+     id              serial    PRIMARY KEY,
+     bloodline_id    integer   NOT NULL REFERENCES bloodlines(id) ON DELETE CASCADE,
+     name            text      NOT NULL,
+     bp_label        text      NOT NULL,
+     bp_value        smallint,
+     sort_order      smallint  NOT NULL DEFAULT 0,
+     tags            text[]    NOT NULL DEFAULT '{}'
+   )`,
+
+  `CREATE TABLE IF NOT EXISTS audit_logs (
+     id              serial       PRIMARY KEY,
+     content_path    text         NOT NULL,
+     base_sha        text         NOT NULL,
+     pr_url          text,
+     status          text         NOT NULL,
+     token_id        text         NOT NULL,
+     timestamp       timestamptz  NOT NULL DEFAULT now()
+   )`,
+
+  `CREATE TABLE IF NOT EXISTS banned_ips (
+     id              serial       PRIMARY KEY,
+     range           text         NOT NULL UNIQUE,
+     reason          text         NOT NULL,
+     banned_at       timestamptz  NOT NULL DEFAULT now(),
+     source_ip       text
+   )`,
 ];
 
 /* ───────────────────  Supplementary Indexes  ─────────────────────── */
@@ -246,6 +295,22 @@ const SUPPLEMENTARY_INDEXES: string[] = [
      ON trinkets (locale, item_type)`,
   `CREATE INDEX IF NOT EXISTS trinkets_tags_gin_idx
      ON trinkets USING GIN (tags)`,
+  `CREATE INDEX IF NOT EXISTS bloodlines_locale_idx
+     ON bloodlines (locale)`,
+  `CREATE INDEX IF NOT EXISTS bloodlines_tags_gin_idx
+     ON bloodlines USING GIN (tags)`,
+  `CREATE INDEX IF NOT EXISTS bloodline_boons_bloodline_id_idx
+     ON bloodline_boons (bloodline_id)`,
+  `CREATE INDEX IF NOT EXISTS bloodline_boons_sort_order_idx
+     ON bloodline_boons (bloodline_id, sort_order)`,
+  `CREATE INDEX IF NOT EXISTS bloodline_boons_tags_gin_idx
+     ON bloodline_boons USING GIN (tags)`,
+  `CREATE INDEX IF NOT EXISTS audit_logs_timestamp_idx
+     ON audit_logs (timestamp DESC)`,
+  `CREATE INDEX IF NOT EXISTS audit_logs_token_id_idx
+     ON audit_logs (token_id)`,
+  `CREATE INDEX IF NOT EXISTS banned_ips_range_idx
+     ON banned_ips (range)`,
 ];
 
 /* ─────────────────────────  Main  ─────────────────────────────────── */

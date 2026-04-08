@@ -21,6 +21,8 @@
  *
  * @module worldSim/canvas/PixelatePass
  * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import type { Camera, WebGLRenderer } from 'three';

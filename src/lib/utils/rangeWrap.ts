@@ -19,6 +19,7 @@
  * circularClamp(-1, 0, 3); // Returns 3 (wraps to max)
  * circularClamp(2, 0, 3); // Returns 2 (within range)
  * ```
+ * @module src/lib/utils/rangeWrap
  */
 
 /**

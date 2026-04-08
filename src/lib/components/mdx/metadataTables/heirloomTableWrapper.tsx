@@ -24,6 +24,7 @@
  * <!-- With locale override -->
  * <HeirloomTable locale="es" />
  * ```
+ * @module src/lib/components/mdx/metadataTables/heirloomTableWrapper
  */
 'use client';
 

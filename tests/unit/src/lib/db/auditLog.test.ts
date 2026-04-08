@@ -1,18 +1,20 @@
 /**
  * Audit Log Facade Unit Tests
  *
- * @fileoverview Tests for the writeAuditLog facade.
+ * @fileoverview Tests for the writeAuditLog facade using adapter-backed persistence.
  *
  * @module tests/unit/lib/db/auditLog
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/db/edgeConfigAuditAdapter', () => ({
-  edgeConfigAuditAdapter: {
-    write: vi.fn(),
-    read: vi.fn(),
-  },
+const mockAdapter = {
+  write: vi.fn(),
+  read: vi.fn(),
+};
+
+vi.mock('@/lib/db/auditAdapterFactory', () => ({
+  auditAdapter: mockAdapter,
 }));
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
@@ -21,12 +23,11 @@ vi.mock('@/lib/logging/logger', () => ({
 }));
 
 let writeAuditLog: typeof import('@/lib/db/auditLog').writeAuditLog;
-let mockWrite: ReturnType<typeof vi.fn>;
 
 beforeEach(async () => {
   vi.resetModules();
-  const adapter = await import('@/lib/db/edgeConfigAuditAdapter');
-  mockWrite = adapter.edgeConfigAuditAdapter.write as ReturnType<typeof vi.fn>;
+  mockAdapter.write.mockReset();
+  mockAdapter.read.mockReset();
 
   const mod = await import('@/lib/db/auditLog');
   writeAuditLog = mod.writeAuditLog;
@@ -36,7 +37,7 @@ afterEach(() => vi.restoreAllMocks());
 
 describe('writeAuditLog', () => {
   it('should delegate to the adapter', async () => {
-    mockWrite.mockResolvedValue(undefined);
+    mockAdapter.write.mockResolvedValue(undefined);
 
     await writeAuditLog({
       content_path: 'en/monsters/aboleth.sheet.mdx',
@@ -45,7 +46,7 @@ describe('writeAuditLog', () => {
       token_id: 'editor-a',
     });
 
-    expect(mockWrite).toHaveBeenCalledWith(
+    expect(mockAdapter.write).toHaveBeenCalledWith(
       expect.objectContaining({
         content_path: 'en/monsters/aboleth.sheet.mdx',
         status: 'submitted',
@@ -54,7 +55,7 @@ describe('writeAuditLog', () => {
   });
 
   it('should swallow errors and not throw', async () => {
-    mockWrite.mockRejectedValue(new Error('Edge Config down'));
+    mockAdapter.write.mockRejectedValue(new Error('Adapter down'));
 
     await expect(
       writeAuditLog({

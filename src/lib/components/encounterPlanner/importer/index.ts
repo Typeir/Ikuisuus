@@ -3,6 +3,9 @@
  * @description Exports all components and types from the importer module.
  * 
  * @module encounterPlanner/importer
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 export { MonsterImporter } from './monsterImporter';

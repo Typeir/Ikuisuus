@@ -1,21 +1,22 @@
 /**
- * @fileoverview Banned IP Manager (Edge Config)
- * @description Manages a list of banned IP ranges stored in Vercel Edge Config.
- * IPs are stored as /24 CIDR ranges so that banning one address blocks the
- * entire local subnet, preventing evasion from the same network.
+ * @fileoverview Banned IP Manager
+ * @description Manages a list of banned IP ranges. IPs are stored as /24 CIDR
+ * ranges so that banning one address blocks the entire local subnet, preventing
+ * evasion from the same network.
  *
- * Read operations use the `@vercel/edge-config` SDK (fast edge reads).
- * Write operations go through the Vercel REST API (same pattern as audit logs).
+ * Persistence is delegated to the adapter resolved by `METADATA_BACKEND`
+ * (filesystem JSON or PostgreSQL).
  *
  * @module lib/security/bannedIps
+ * @author Typeir
+ * @version 2.0.0
+ * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';
+import { bannedIpsAdapter } from './bannedIpsAdapterFactory';
 
 const log = logger.child({ module: 'BannedIPs' });
-
-/** Edge Config key where the banned IP list is stored. */
-const BANNED_IPS_KEY = 'banned_ips';
 
 /** Maximum number of banned ranges to retain (FIFO eviction). */
 const MAX_BANNED_RANGES = 2000;
@@ -76,69 +77,6 @@ export const ipToRange = (ip: string): string => {
 };
 
 /**
- * Reads the banned IP list from Edge Config.
- *
- * @returns {Promise<BannedIpEntry[]>} Current banned entries or empty array
- */
-const readBannedIps = async (): Promise<BannedIpEntry[]> => {
-  try {
-    const { get } = await import('@vercel/edge-config');
-    const data = await get<BannedIpEntry[]>(BANNED_IPS_KEY);
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    log.debug('Edge Config read for banned IPs failed — returning empty', {
-      error: error instanceof Error ? error.message : String(error),
-    });
-    return [];
-  }
-};
-
-/**
- * Writes the banned IP list to Edge Config via the Vercel REST API.
- *
- * @param {BannedIpEntry[]} entries - Full list to persist
- * @returns {Promise<void>}
- */
-const writeBannedIps = async (entries: BannedIpEntry[]): Promise<void> => {
-  const edgeConfigId = process.env.EDGE_CONFIG_ID;
-  const vercelToken = process.env.VERCEL_API_TOKEN;
-
-  if (!edgeConfigId || !vercelToken) {
-    log.debug(
-      'EDGE_CONFIG_ID or VERCEL_API_TOKEN not set — banned IP write skipped',
-    );
-    return;
-  }
-
-  const res = await fetch(
-    `https://api.vercel.com/v1/edge-config/${edgeConfigId}/items`,
-    {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${vercelToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        items: [
-          {
-            operation: 'upsert',
-            key: BANNED_IPS_KEY,
-            value: entries,
-          },
-        ],
-      }),
-    },
-  );
-
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(
-      `Edge Config banned-IP write failed (${res.status}): ${body}`,
-    );
-  }
-};
-
-/**
  * Checks whether a given IP address falls within any banned range.
  *
  * @param {string} ip - The client IP address to check
@@ -154,7 +92,7 @@ export const isIpBanned = async (
   ip: string,
 ): Promise<{ banned: boolean; entry?: BannedIpEntry }> => {
   const range = ipToRange(ip);
-  const entries = await readBannedIps();
+  const entries = await bannedIpsAdapter.read();
 
   const match = entries.find((e) => e.range === range);
   return match ? { banned: true, entry: match } : { banned: false };
@@ -178,7 +116,7 @@ export const banIp = async (
   reason: string,
 ): Promise<BannedIpEntry> => {
   const range = ipToRange(ip);
-  const existing = await readBannedIps();
+  const existing = await bannedIpsAdapter.read();
 
   const alreadyBanned = existing.find((e) => e.range === range);
   if (alreadyBanned) {
@@ -200,7 +138,7 @@ export const banIp = async (
   const updated = [entry, ...existing].slice(0, MAX_BANNED_RANGES);
 
   try {
-    await writeBannedIps(updated);
+    await bannedIpsAdapter.write(updated);
     log.message('IP range banned', {
       level: 'warn',
       range,
@@ -225,17 +163,12 @@ export const banIp = async (
  * @returns {Promise<boolean>} True if the range was found and removed
  */
 export const unbanRange = async (range: string): Promise<boolean> => {
-  const existing = await readBannedIps();
-  const filtered = existing.filter((e) => e.range !== range);
-
-  if (filtered.length === existing.length) {
-    return false;
-  }
-
   try {
-    await writeBannedIps(filtered);
-    log.message('IP range unbanned', { range });
-    return true;
+    const removed = await bannedIpsAdapter.remove(range);
+    if (removed) {
+      log.message('IP range unbanned', { range });
+    }
+    return removed;
   } catch (error) {
     log.error('Failed to persist IP unban', {
       error: error instanceof Error ? error.message : String(error),

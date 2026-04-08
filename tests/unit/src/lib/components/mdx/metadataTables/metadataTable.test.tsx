@@ -14,27 +14,18 @@
 
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  createUseTranslationsMock,
+  loadMessageFile,
+} from '../../../testUtils/translationMockUtils';
 
 const mockPush = vi.fn();
 const mockOpen = vi.fn();
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string, opts?: Record<string, unknown>) => {
-    if (key === 'searchPlaceholder') return 'Search...';
-    if (key === 'allOption') return 'All';
-    if (key === 'minPlaceholder') return 'Min';
-    if (key === 'maxPlaceholder') return 'Max';
-    if (key === 'rangeSeparator') return '–';
-    if (key === 'showingResults') return `${opts?.current} of ${opts?.total}`;
-    if (key === 'showingResultsFiltered')
-      return `${opts?.current} of ${opts?.total} (${opts?.original})`;
-    if (key === 'previous') return 'Previous';
-    if (key === 'next') return 'Next';
-    if (key === 'pageInfo') return `Page ${opts?.current} of ${opts?.total}`;
-    if (key === 'sortAscending') return '▲';
-    if (key === 'sortDescending') return '▼';
-    return key;
-  },
+  useTranslations: createUseTranslationsMock({
+    tables: loadMessageFile('messages/en/tables.json'),
+  }),
 }));
 
 vi.mock('next/navigation', () => ({
@@ -72,8 +63,8 @@ vi.mock('@/lib/components/ui', () => ({
 }));
 
 import type {
-    ColumnConfig,
-    MetadataRow,
+  ColumnConfig,
+  MetadataRow,
 } from '@/lib/components/mdx/metadataTables/metadataTable';
 import MetadataTable from '@/lib/components/mdx/metadataTables/metadataTable';
 
@@ -143,7 +134,7 @@ describe('MetadataTable', () => {
         searchKeys={['title']}
       />,
     );
-    const search = screen.getByPlaceholderText('Search...');
+    const search = screen.getByPlaceholderText('Search by title...');
     fireEvent.change(search, { target: { value: 'Item 3' } });
     expect(screen.getByText('Item 3')).toBeInTheDocument();
     expect(screen.queryByText('Item 0')).not.toBeInTheDocument();
@@ -294,7 +285,17 @@ describe('MetadataTable', () => {
   it('shows result count', () => {
     const data = makeRows(3);
     render(<MetadataTable data={data} columns={baseColumns} />);
-    expect(screen.getByText('3 of 3')).toBeInTheDocument();
+    expect(screen.getByText('Showing 3 of 3 items')).toBeInTheDocument();
+  });
+
+  it('shows filtered result count text', () => {
+    const data = makeRows(4);
+    render(<MetadataTable data={data} columns={baseColumns} />);
+    const search = screen.getByPlaceholderText('Search by title...');
+    fireEvent.change(search, { target: { value: 'Item 1' } });
+    expect(
+      screen.getByText('Showing 1 of 1 items (filtered from 4)'),
+    ).toBeInTheDocument();
   });
 
   it('handles null/undefined values with default display', () => {

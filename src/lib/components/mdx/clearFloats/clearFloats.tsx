@@ -7,6 +7,7 @@
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
+ * @fileoverview Module for src/lib/components/mdx/clearFloats/clearFloats.tsx
 */
 
 import React, { CSSProperties } from 'react';

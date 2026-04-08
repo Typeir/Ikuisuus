@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/app/[locale]/library/beyond/page.tsx
+ * @module src/app/[locale]/library/beyond/page
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 'use client';
 
 import { LibrarySearch } from '@/lib/components/librarySearch/librarySearch';

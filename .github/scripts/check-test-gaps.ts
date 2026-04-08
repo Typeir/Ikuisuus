@@ -48,7 +48,9 @@ function safeGitOutput(command: string): string {
 function getChangedFiles(): string[] {
   const unstaged = safeGitOutput('git diff --name-only HEAD -- src/');
   const staged = safeGitOutput('git diff --cached --name-only -- src/');
-  const untracked = safeGitOutput('git ls-files --others --exclude-standard -- src/');
+  const untracked = safeGitOutput(
+    'git ls-files --others --exclude-standard -- src/',
+  );
 
   const combined = new Set([
     ...unstaged.split('\n').filter(Boolean),
@@ -65,7 +67,10 @@ function getChangedFiles(): string[] {
  * @param results Accumulator
  * @returns Relative file paths
  */
-async function findAllSourceFiles(dir: string, results: string[] = []): Promise<string[]> {
+async function findAllSourceFiles(
+  dir: string,
+  results: string[] = [],
+): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
@@ -119,6 +124,12 @@ export async function runCheck(): Promise<CheckResult> {
 
   const failures = [];
   for (const file of filesToCheck) {
+    const absPath = path.join(ROOT, file);
+    try {
+      await fs.access(absPath);
+    } catch {
+      continue;
+    }
     const hasTest = await hasTestFile(file);
     if (!hasTest) {
       const normalizedPath = file.replace(/\\/g, '/');
@@ -154,7 +165,10 @@ async function main(): Promise<void> {
   process.exit(result.passed ? 0 : 1);
 }
 
-if (path.normalize(process.argv[1] ?? '') === path.normalize(fileURLToPath(import.meta.url))) {
+if (
+  path.normalize(process.argv[1] ?? '') ===
+  path.normalize(fileURLToPath(import.meta.url))
+) {
   main().catch((err: Error) => {
     console.error('\u274c Fatal:', err.message);
     process.exit(1);

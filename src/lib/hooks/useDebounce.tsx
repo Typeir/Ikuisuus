@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Module for src/lib/hooks/useDebounce.tsx
+ * @module src/lib/hooks/useDebounce
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
+ */
 import { useEffect, useState } from 'react';
 
 /**

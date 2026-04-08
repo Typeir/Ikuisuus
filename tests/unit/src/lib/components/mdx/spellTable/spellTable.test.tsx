@@ -12,27 +12,19 @@
  * @requires @/lib/components/mdx/spellTable/spellTable
  */
 
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  createUseTranslationsMock,
+  loadMessageFile,
+} from '../../../testUtils/translationMockUtils';
 
 const mockHook = vi.fn();
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string, opts?: Record<string, unknown>) => {
-    if (key === 'error') return 'Error';
-    if (key === 'noSpells') return 'No spells available';
-    if (key === 'levelLabels.all') return 'All';
-    if (key === 'searchPlaceholder') return 'Search...';
-    if (key === 'allOption') return 'All';
-    if (key === 'showingResults') return `${opts?.current} of ${opts?.total}`;
-    if (key === 'showingResultsFiltered') return `${opts?.current} filtered`;
-    if (key === 'previous') return 'Previous';
-    if (key === 'next') return 'Next';
-    if (key === 'pageInfo') return `Page ${opts?.current}`;
-    if (key === 'sortAscending') return '▲';
-    if (key === 'sortDescending') return '▼';
-    return key;
-  },
+  useTranslations: createUseTranslationsMock({
+    tables: loadMessageFile('messages/en/tables.json'),
+  }),
 }));
 
 vi.mock('next/navigation', () => ({
@@ -54,7 +46,11 @@ vi.mock('@/lib/components/ui', () => ({
     </select>
   ),
   NumericInput: ({ placeholder, ...rest }: any) => (
-    <input type='number' placeholder={placeholder} aria-label={rest['aria-label']} />
+    <input
+      type='number'
+      placeholder={placeholder}
+      aria-label={rest['aria-label']}
+    />
   ),
 }));
 
@@ -115,7 +111,9 @@ describe('SpellTable', () => {
     render(<SpellTable sources={['/api/spells']} levels={[0, 1, 2, 3]} />);
     const cantripsTab = screen.getByRole('button', { name: /Cantrip/i });
     fireEvent.click(cantripsTab);
-    expect(screen.getByText('No spells available')).toBeInTheDocument();
+    expect(
+      screen.getByText('No spells found for this level.'),
+    ).toBeInTheDocument();
   });
 
   it('renders spell data in table', () => {
@@ -210,11 +208,24 @@ describe('SpellTable', () => {
       loading: false,
       error: null,
     });
-    render(
-      <SpellTable sources={['/api/spells']} levels={[1, 3]} showAllTab />,
-    );
+    render(<SpellTable sources={['/api/spells']} levels={[1, 3]} showAllTab />);
     expect(screen.getByText('All')).toBeInTheDocument();
     expect(screen.getByText('Fireball')).toBeInTheDocument();
     expect(screen.getByText('Magic Missile')).toBeInTheDocument();
+  });
+
+  it('falls back to default level label for unmapped levels', () => {
+    mockHook.mockReturnValue({
+      spellData: [
+        makeSpell({ slug: 'mythic-bolt', title: 'Mythic Bolt', level: 99 }),
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<SpellTable sources={['/api/spells']} levels={[99]} />);
+    expect(
+      screen.getByRole('button', { name: 'Level 99' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Mythic Bolt')).toBeInTheDocument();
   });
 });

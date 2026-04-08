@@ -14,7 +14,12 @@ import type { SharedData } from './sharedData';
 /**
  * Content type identifiers supported by the generator pipeline.
  */
-export type ContentType = 'monsters' | 'heirlooms' | 'spells' | 'trinkets';
+export type ContentType =
+  | 'monsters'
+  | 'heirlooms'
+  | 'spells'
+  | 'trinkets'
+  | 'bloodlines';
 
 /**
  * Options passed to a metadata generator's main function.

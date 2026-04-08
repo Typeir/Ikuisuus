@@ -24,6 +24,7 @@
  * <!-- With locale override -->
  * <MonsterTable locale="fi" />
  * ```
+ * @module src/lib/components/mdx/metadataTables/monsterTableWrapper
  */
 'use client';
 

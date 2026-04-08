@@ -12,6 +12,7 @@
 import { createLogger } from '@/lib/logging/logger';
 import { readFileSync } from 'fs';
 import path from 'path';
+import { contentHash } from './contentHash';
 import { ensureDirectory, getMatchingFiles, safeWriteFile } from './fileUtils';
 import { endTimer, startTimer } from './performanceUtils';
 import { loadSharedData, type SharedData } from './sharedData';
@@ -71,6 +72,7 @@ const CONTENT_PATHS: Record<string, string[]> = {
   heirlooms: ['src', 'content', 'en', 'items', 'heirlooms'],
   spells: ['src', 'content', 'en', 'spells'],
   trinkets: ['src', 'content', 'en', 'items', 'trinkets'],
+  bloodlines: ['src', 'content', 'en', 'character-creation', 'bloodlines'],
 };
 
 /**
@@ -102,6 +104,7 @@ export function getMetaSubdir(contentType: string): string {
     heirlooms: path.join('items', 'heirlooms'),
     spells: 'spells',
     trinkets: path.join('items', 'trinkets'),
+    bloodlines: path.join('character-creation', 'bloodlines'),
   };
   return subdirs[contentType] || contentType;
 }
@@ -174,6 +177,35 @@ export interface GeneratorConfig {
 }
 
 /**
+ * Attaches deterministic version hashes to metadata records.
+ *
+ * @param {unknown} metadata - Parsed metadata object, array, or null
+ * @returns {unknown} Metadata with `versionHash` populated for object records
+ */
+function attachVersionHashes(metadata: unknown): unknown {
+  if (metadata === null || metadata === undefined) {
+    return metadata;
+  }
+
+  if (Array.isArray(metadata)) {
+    return metadata.map((item) => attachVersionHashes(item));
+  }
+
+  if (typeof metadata !== 'object') {
+    return metadata;
+  }
+
+  const record = metadata as Record<string, unknown>;
+  const hashPayload = { ...record };
+  delete hashPayload.versionHash;
+
+  return {
+    ...record,
+    versionHash: contentHash(hashPayload),
+  };
+}
+
+/**
  * Orchestrates metadata generation with the standardized pattern:
  * scan → parse → write → optional DB persist → report.
  *
@@ -221,6 +253,7 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
           const processed = processResult
             ? processResult(parseResult)
             : { metadata: parseResult };
+          const metadataWithHash = attachVersionHashes(processed.metadata);
 
           const backend = getMetadataBackend();
           const metadataFilePath = getMetadataOutputPath(
@@ -235,7 +268,7 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
 
           const success = await safeWriteFile(
             metadataFilePath,
-            JSON.stringify(processed.metadata, null, 2),
+            JSON.stringify(metadataWithHash, null, 2),
           );
 
           if (!success) {
@@ -244,10 +277,10 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
             );
           }
 
-          if (storage && processed.metadata) {
-            const records = Array.isArray(processed.metadata)
-              ? processed.metadata
-              : [processed.metadata];
+          if (storage && metadataWithHash) {
+            const records = Array.isArray(metadataWithHash)
+              ? metadataWithHash
+              : [metadataWithHash];
             for (const record of records) {
               if (record && typeof record === 'object' && 'slug' in record) {
                 try {
@@ -271,6 +304,7 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
             filePath,
             success: true,
             ...processed,
+            metadata: metadataWithHash,
           };
         } catch (error) {
           return {

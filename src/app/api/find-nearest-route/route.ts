@@ -7,6 +7,7 @@
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
+ * @module src/app/api/find-nearest-route/route
  */
 
 import { NextResponse } from 'next/server';

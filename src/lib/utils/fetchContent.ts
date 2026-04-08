@@ -5,6 +5,9 @@
  * deduplicates calls within a single server request (e.g. generateMetadata + Page).
  *
  * @module lib/utils/fetchContent
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';

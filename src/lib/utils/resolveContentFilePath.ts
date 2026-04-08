@@ -21,6 +21,7 @@
  * );
  * // Returns: '/path/to/content/en/monsters/albedo.sheet.mdx'
  * ```
+ * @module src/lib/utils/resolveContentFilePath
  */
 import fs from 'fs/promises';
 import path from 'path';

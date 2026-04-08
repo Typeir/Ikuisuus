@@ -1,24 +1,24 @@
 /**
  * @fileoverview Auth Adapter Factory
  * @description Resolves the user storage adapter based on `METADATA_BACKEND` env var.
- * Mirrors the same factory pattern used by the content repositories (heirloomRepository, etc.).
+ * Mirrors the same factory pattern used by the content repositories.
  *
  * Supported backends:
- * - `pg`   → PostgreSQL via MikroORM (`postgresUserAdapter`)
- * - `edge` → Vercel Edge Config (`edgeConfigUserAdapter`) — default for serverless deployments
+ * - `fs`  → Filesystem JSON file (`fsUserAdapter`) — default for local development
+ * - `pg`  → PostgreSQL via MikroORM (`postgresUserAdapter`)
  *
  * @module lib/db/auth/authAdapterFactory
- * @version 1.1.0
+ * @version 2.0.0
  * @author Typeir
  * @since 3.0.0
  */
 
-import { edgeConfigUserAdapter } from './edgeConfigUserAdapter';
+import { fsUserAdapter } from './fsUserAdapter';
 import { postgresUserAdapter } from './postgresUserAdapter';
 import type { UserAdapter } from './userAdapter';
 
-/** @property {string} metadataBackend - Active backend: `'pg'` or `'edge'` (default). */
-const metadataBackend = process.env.METADATA_BACKEND || 'edge';
+/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
+const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**
  * Factory function that resolves the user adapter for the active backend.
@@ -30,8 +30,8 @@ const createUserAdapter = (): UserAdapter => {
   switch (metadataBackend) {
     case 'pg':
       return postgresUserAdapter;
-    case 'edge':
-      return edgeConfigUserAdapter;
+    case 'fs':
+      return fsUserAdapter;
     default:
       throw new Error(`Unsupported auth backend: ${metadataBackend}`);
   }

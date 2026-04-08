@@ -5,6 +5,9 @@
  * Git Trees API (production runtime) without changing consumer code.
  *
  * @module lib/db/content/directorySourceAdapter
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 /**

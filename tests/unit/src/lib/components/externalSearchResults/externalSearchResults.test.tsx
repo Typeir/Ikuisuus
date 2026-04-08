@@ -12,24 +12,19 @@
  * @requires @/lib/components/externalSearchResults/externalSearchResults
  */
 
-import { ExternalSearchResults } from '@/lib/components/externalSearchResults/externalSearchResults';
 import { logger } from '@/lib/logging/logger';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import mockSearchResults from '../../../../../fixtures/externalSearch/googleSearchResults.json';
+import {
+  createUseTranslationsMock,
+  loadMessageFile,
+} from '../../testUtils/translationMockUtils';
 
-/**
- * Mock next-intl translations
- */
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => {
-    const translations: Record<string, string> = {
-      loading: 'Loading external results...',
-      noResults: 'No web results found',
-      header: 'Web Results',
-    };
-    return translations[key] || key;
-  },
+  useTranslations: createUseTranslationsMock({
+    externalSearch: loadMessageFile('messages/en/externalSearch.json'),
+  }),
 }));
 
 /**
@@ -57,6 +52,8 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+import { ExternalSearchResults } from '@/lib/components/externalSearchResults/externalSearchResults';
+
 describe('ExternalSearchResults', () => {
   let mockFetch: ReturnType<typeof vi.fn>;
 
@@ -82,7 +79,10 @@ describe('ExternalSearchResults', () => {
 
     it('should render nothing with query less than 2 characters', () => {
       const { container } = render(<ExternalSearchResults query='a' />);
-      expect(screen.getByText('No web results found')).toBeInTheDocument();
+      expect(
+        screen.getByText('Naught but dragons beyond this place.'),
+      ).toBeInTheDocument();
+      expect(container.firstChild).toBeInTheDocument();
     });
   });
 
@@ -111,7 +111,7 @@ describe('ExternalSearchResults', () => {
       });
 
       expect(
-        screen.getByText('Loading external results...'),
+        screen.getByText('Peering beyond the folds...'),
       ).toBeInTheDocument();
 
       vi.useRealTimers();
@@ -128,7 +128,7 @@ describe('ExternalSearchResults', () => {
       await waitFor(
         () => {
           expect(
-            screen.queryByText('Loading external results...'),
+            screen.queryByText('Peering beyond the folds...'),
           ).not.toBeInTheDocument();
         },
         { timeout: 1000 },
@@ -147,7 +147,9 @@ describe('ExternalSearchResults', () => {
 
       await waitFor(
         () => {
-          expect(screen.getByText('Web Results')).toBeInTheDocument();
+          expect(
+            screen.getByText('Results from beyond the Clone Worlds'),
+          ).toBeInTheDocument();
         },
         { timeout: 1000 },
       );
@@ -209,7 +211,9 @@ describe('ExternalSearchResults', () => {
 
       await waitFor(
         () => {
-          expect(screen.getByText('No web results found')).toBeInTheDocument();
+          expect(
+            screen.getByText('Naught but dragons beyond this place.'),
+          ).toBeInTheDocument();
         },
         { timeout: 1000 },
       );
@@ -225,7 +229,9 @@ describe('ExternalSearchResults', () => {
 
       await waitFor(
         () => {
-          expect(screen.getByText('No web results found')).toBeInTheDocument();
+          expect(
+            screen.getByText('Naught but dragons beyond this place.'),
+          ).toBeInTheDocument();
         },
         { timeout: 1000 },
       );
@@ -259,7 +265,9 @@ describe('ExternalSearchResults', () => {
 
       await waitFor(
         () => {
-          expect(screen.getByText('No web results found')).toBeInTheDocument();
+          expect(
+            screen.getByText('Naught but dragons beyond this place.'),
+          ).toBeInTheDocument();
         },
         { timeout: 1000 },
       );
@@ -412,7 +420,7 @@ describe('ExternalSearchResults', () => {
       });
 
       expect(
-        screen.getByText('Loading external results...'),
+        screen.getByText('Peering beyond the folds...'),
       ).toBeInTheDocument();
 
       rerender(<ExternalSearchResults query='fast-query' />);
@@ -430,7 +438,7 @@ describe('ExternalSearchResults', () => {
 
       await waitFor(() => {
         expect(
-          screen.queryByText('Loading external results...'),
+          screen.queryByText('Peering beyond the folds...'),
         ).not.toBeInTheDocument();
       });
     });

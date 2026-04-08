@@ -8,6 +8,10 @@
  * @since 5.0.0
  */
 
+export { AuditRecordEntity } from './AuditRecordEntity';
+export { BannedIpEntity } from './BannedIpEntity';
+export { BloodlineBoonEntity } from './BloodlineBoonEntity';
+export { BloodlineEntity } from './BloodlineEntity';
 export { CorrectionsUserEntity } from './CorrectionsUserEntity';
 export { DraftEntity } from './DraftEntity';
 export type { DraftStatus } from './DraftEntity';

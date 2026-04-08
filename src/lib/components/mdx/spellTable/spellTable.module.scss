@@ -5,6 +5,62 @@
   margin: 2rem 0;
 }
 
+.filterControls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 150px;
+}
+
+.filterLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-emphasis);
+  @include label-uppercase;
+}
+
+.filterComboboxSkeleton {
+  width: 100%;
+  min-width: 120px;
+  min-height: 26px;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  background: var(--color-bg);
+  cursor: not-allowed;
+}
+
+.filterCheckboxRow {
+  display: flex;
+  align-items: center;
+}
+
+.filterCheckbox {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-accent);
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+
+  &:focus {
+    @include focus-glow;
+  }
+}
+
 // Wrapper for tab navigation - handles scrolling
 .tabNavWrapper {
   position: relative;
@@ -140,8 +196,16 @@
 }
 
 @keyframes fadeIn {
-  from { --_: st-fadeIn-from; opacity: 0; transform: translateY(4px); }
-  to { --_: st-fadeIn-to; opacity: 1; transform: translateY(0); }
+  from {
+    --_: st-fadeIn-from;
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    --_: st-fadeIn-to;
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .loading,
@@ -155,4 +219,16 @@
 
 .error {
   color: var(--color-error);
+}
+
+@media (max-width: $bp-tablet) {
+  .filters {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .filterGroup {
+    width: 100%;
+    min-width: unset;
+  }
 }

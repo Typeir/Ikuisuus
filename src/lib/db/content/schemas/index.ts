@@ -9,6 +9,13 @@
  */
 
 export type {
+    BloodlineBoon,
+    BloodlineCoreFeatures,
+    BloodlineIndexEntry,
+    BloodlineMetadata
+} from './bloodlineMetadata';
+
+export type {
     AbilityScore,
     AbilityScores,
     MonsterAC,

@@ -1,0 +1,159 @@
+/**
+ * @fileoverview Bloodline Metadata Sync Worker
+ * @description Hash-based incremental sync for `bloodlines` and
+ * `bloodline_boons` from local metadata sidecars into PostgreSQL.
+ *
+ * @module lib/metadata/syncBloodlines
+ * @version 1.0.0
+ * @author Typeir
+ * @since 7.0.0
+ */
+
+import { BloodlineBoonEntity, BloodlineEntity } from '@/lib/db/orm/entities';
+import type { EntityManager } from '@mikro-orm/postgresql';
+import { existsSync, readdirSync, readFileSync } from 'fs';
+import { join } from 'path';
+import { contentHash } from './contentHash';
+import type { SyncResult } from './types';
+
+/**
+ * Resolves the root directory of the project.
+ *
+ * @returns {string} Absolute path to project root
+ */
+function getProjectRoot(): string {
+  return join(__dirname, '..', '..', '..');
+}
+
+/**
+ * Reads and flattens `.metadata.json` files from a locale subdirectory.
+ *
+ * @param {string} locale - Locale code
+ * @param {string} subdir - Content subdirectory
+ * @returns {Record<string, unknown>[]} Flattened metadata records
+ */
+function readMetadataFiles(
+  locale: string,
+  subdir: string,
+): Record<string, unknown>[] {
+  const root = getProjectRoot();
+  const metaDirPath = join(root, '.meta', locale, subdir);
+  const contentDirPath = join(root, 'src', 'content', locale, subdir);
+  const dir = existsSync(metaDirPath) ? metaDirPath : contentDirPath;
+  if (!existsSync(dir)) return [];
+
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.metadata.json'))
+    .flatMap((f) => {
+      const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
+      return Array.isArray(parsed) ? parsed : [parsed];
+    });
+}
+
+/**
+ * Syncs the `bloodlines` + `bloodline_boons` tables for one locale.
+ *
+ * @param {EntityManager} em - Transaction-scoped entity manager
+ * @param {string} locale - Locale code
+ * @returns {Promise<SyncResult>} Sync statistics
+ */
+export async function syncBloodlines(
+  em: EntityManager,
+  locale: string,
+): Promise<SyncResult> {
+  const records = readMetadataFiles(
+    locale,
+    join('character-creation', 'bloodlines'),
+  ).filter(Boolean);
+  const result: SyncResult = {
+    inserted: 0,
+    updated: 0,
+    skipped: 0,
+    deleted: 0,
+  };
+
+  const existing = await em.find(
+    BloodlineEntity,
+    { locale },
+    { populate: ['boons'] },
+  );
+  const existingMap = new Map(existing.map((e) => [e.slug, e]));
+  const incomingKeys = new Set<string>();
+
+  for (const rawRecord of records) {
+    const record = rawRecord as Record<string, unknown>;
+    const slug = record.slug as string;
+    incomingKeys.add(slug);
+    const hash = contentHash(record);
+    const entity = existingMap.get(slug);
+
+    if (entity?.versionHash === hash) {
+      result.skipped++;
+      continue;
+    }
+
+    const coreFeatures =
+      (record.coreFeatures as Record<string, unknown> | undefined) ?? {};
+    const boonRows = (record.boons as Array<Record<string, unknown>>) ?? [];
+
+    const data = {
+      locale,
+      slug,
+      title: record.title as string,
+      file: record.file as string,
+      link: record.link as string,
+      description: record.description as string | undefined,
+      abilityScores: (coreFeatures.abilityScores as string[]) ?? [],
+      movementSpeeds: (coreFeatures.movementSpeeds as string[]) ?? [],
+      senses: (coreFeatures.senses as string[]) ?? [],
+      size: (coreFeatures.size as string[]) ?? [],
+      creatureTypes: (coreFeatures.creatureTypes as string[]) ?? [],
+      age: coreFeatures.age as string | undefined,
+      boonBudget: record.boonBudget as number | undefined,
+      tags: (record.tags as string[]) ?? [],
+      indexVersion: record.indexVersion as number | undefined,
+      versionHash: hash,
+    };
+
+    if (entity) {
+      em.assign(entity, data);
+      entity.boons.removeAll();
+      await em.flush();
+
+      for (const boon of boonRows) {
+        em.create(BloodlineBoonEntity, {
+          bloodline: entity,
+          name: boon.name as string,
+          bpLabel: boon.bpLabel as string,
+          bpValue: boon.bpValue as number | undefined,
+          sortOrder: boon.sortOrder as number,
+          tags: (boon.tags as string[]) ?? [],
+        });
+      }
+
+      result.updated++;
+    } else {
+      const bloodline = em.create(BloodlineEntity, data);
+      for (const boon of boonRows) {
+        em.create(BloodlineBoonEntity, {
+          bloodline,
+          name: boon.name as string,
+          bpLabel: boon.bpLabel as string,
+          bpValue: boon.bpValue as number | undefined,
+          sortOrder: boon.sortOrder as number,
+          tags: (boon.tags as string[]) ?? [],
+        });
+      }
+      result.inserted++;
+    }
+  }
+
+  for (const [key, entity] of Array.from(existingMap)) {
+    if (!incomingKeys.has(key)) {
+      em.remove(entity);
+      result.deleted++;
+    }
+  }
+
+  return result;
+}

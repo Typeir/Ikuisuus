@@ -14,26 +14,17 @@
 
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  createUseTranslationsMock,
+  loadMessageFile,
+} from '../../../testUtils/translationMockUtils';
 
 const mockHook = vi.fn();
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string, opts?: Record<string, unknown>) => {
-    if (key === 'error') return 'Error';
-    if (key === 'noHeirlooms') return 'No heirlooms found';
-    if (key === 'yes') return 'Yes';
-    if (key === 'no') return 'No';
-    if (key === 'searchPlaceholder') return 'Search...';
-    if (key === 'allOption') return 'All';
-    if (key === 'showingResults') return `${opts?.current} of ${opts?.total}`;
-    if (key === 'showingResultsFiltered') return `${opts?.current} filtered`;
-    if (key === 'previous') return 'Previous';
-    if (key === 'next') return 'Next';
-    if (key === 'pageInfo') return `Page ${opts?.current}`;
-    if (key === 'sortAscending') return '▲';
-    if (key === 'sortDescending') return '▼';
-    return key;
-  },
+  useTranslations: createUseTranslationsMock({
+    tables: loadMessageFile('messages/en/tables.json'),
+  }),
 }));
 
 vi.mock('next/navigation', () => ({
@@ -90,7 +81,8 @@ describe('HeirloomTableWrapper', () => {
   it('shows empty state when no data', () => {
     mockHook.mockReturnValue({ data: [], loading: false, error: null });
     render(<HeirloomTableWrapper />);
-    expect(screen.getByText('No heirlooms found')).toBeInTheDocument();
+    expect(screen.getByText(/No heirlooms found\./)).toBeInTheDocument();
+    expect(screen.getByText(/generate-heirloom-metadata/)).toBeInTheDocument();
   });
 
   it('renders table with heirloom data', () => {
@@ -133,6 +125,26 @@ describe('HeirloomTableWrapper', () => {
     const cells = screen.getAllByRole('cell');
     const attunementCell = cells[cells.length - 1];
     expect(attunementCell).toHaveTextContent('No');
+  });
+
+  it('renders attunement yes value', () => {
+    mockHook.mockReturnValue({
+      data: [
+        {
+          slug: 'amulet-of-dawn',
+          title: 'Amulet of Dawn',
+          rarity: 'rare',
+          itemType: 'wondrous item',
+          requiresAttunement: true,
+        },
+      ],
+      loading: false,
+      error: null,
+    });
+    render(<HeirloomTableWrapper />);
+    const cells = screen.getAllByRole('cell');
+    const attunementCell = cells[cells.length - 1];
+    expect(attunementCell).toHaveTextContent('Yes');
   });
 
   it('uses locale from props', () => {

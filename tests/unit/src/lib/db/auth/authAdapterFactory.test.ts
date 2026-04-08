@@ -17,7 +17,7 @@ const mockPgAdapter = {
   delete: vi.fn(),
 };
 
-const mockEdgeAdapter = {
+const mockFsAdapter = {
   findByUsername: vi.fn(),
   findById: vi.fn(),
   create: vi.fn(),
@@ -30,8 +30,8 @@ vi.mock('@/lib/db/auth/postgresUserAdapter', () => ({
   postgresUserAdapter: mockPgAdapter,
 }));
 
-vi.mock('@/lib/db/auth/edgeConfigUserAdapter', () => ({
-  edgeConfigUserAdapter: mockEdgeAdapter,
+vi.mock('@/lib/db/auth/fsUserAdapter', () => ({
+  fsUserAdapter: mockFsAdapter,
 }));
 
 const originalEnv = { ...process.env };
@@ -52,33 +52,33 @@ describe('authAdapterFactory', () => {
     expect(userAdapter).toBe(mockPgAdapter);
   });
 
-  it('should resolve to Edge Config adapter when METADATA_BACKEND=edge', async () => {
-    process.env.METADATA_BACKEND = 'edge';
+  it('should resolve to filesystem adapter when METADATA_BACKEND=fs', async () => {
+    process.env.METADATA_BACKEND = 'fs';
 
     const { userAdapter } = await import('@/lib/db/auth/authAdapterFactory');
-    expect(userAdapter).toBe(mockEdgeAdapter);
+    expect(userAdapter).toBe(mockFsAdapter);
   });
 
-  it('should default to Edge Config adapter when METADATA_BACKEND is unset', async () => {
+  it('should default to filesystem adapter when METADATA_BACKEND is unset', async () => {
     delete process.env.METADATA_BACKEND;
 
     const { userAdapter } = await import('@/lib/db/auth/authAdapterFactory');
-    expect(userAdapter).toBe(mockEdgeAdapter);
+    expect(userAdapter).toBe(mockFsAdapter);
   });
 
   it('should throw for unsupported METADATA_BACKEND values', async () => {
     process.env.METADATA_BACKEND = 'redis';
 
-    await expect(
-      import('@/lib/db/auth/authAdapterFactory'),
-    ).rejects.toThrow('Unsupported auth backend: redis');
+    await expect(import('@/lib/db/auth/authAdapterFactory')).rejects.toThrow(
+      'Unsupported auth backend: redis',
+    );
   });
 
   it('should NOT use DATABASE_URL alone to determine adapter', async () => {
     process.env.DATABASE_URL = 'postgresql://...';
-    process.env.METADATA_BACKEND = 'edge';
+    process.env.METADATA_BACKEND = 'fs';
 
     const { userAdapter } = await import('@/lib/db/auth/authAdapterFactory');
-    expect(userAdapter).toBe(mockEdgeAdapter);
+    expect(userAdapter).toBe(mockFsAdapter);
   });
 });

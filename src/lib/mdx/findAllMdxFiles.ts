@@ -18,6 +18,7 @@
  * const mdxFiles = await findAllMdxFiles('/path/to/content/en');
  * // Returns: ['/path/to/content/en/monsters/albedo.sheet.mdx', ...]
  * ```
+ * @module src/lib/mdx/findAllMdxFiles
  */
 import fs from "fs/promises";
 import path from "path";

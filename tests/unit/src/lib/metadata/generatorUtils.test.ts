@@ -134,16 +134,14 @@ vi.mock('@/lib/metadata/fileUtils', () => ({
 }));
 
 vi.mock('@/lib/metadata/sharedData', () => ({
-  loadSharedData: vi
-    .fn()
-    .mockResolvedValue({
-      gameData: {},
-      itemData: {},
-      spellData: {},
-      worldData: {},
-      taxonomies: {},
-      patterns: {},
-    }),
+  loadSharedData: vi.fn().mockResolvedValue({
+    gameData: {},
+    itemData: {},
+    spellData: {},
+    worldData: {},
+    taxonomies: {},
+    patterns: {},
+  }),
 }));
 
 vi.mock('@/lib/metadata/performanceUtils', () => ({
@@ -300,10 +298,16 @@ describe('runGenerator', () => {
       storage,
     });
 
-    expect(storage.upsert).toHaveBeenCalledWith('heirlooms', 'en', 'sword', {
-      slug: 'sword',
-      title: 'Sword',
-    });
+    expect(storage.upsert).toHaveBeenCalledWith(
+      'heirlooms',
+      'en',
+      'sword',
+      expect.objectContaining({
+        slug: 'sword',
+        title: 'Sword',
+        versionHash: expect.any(String),
+      }),
+    );
   });
 
   it('should handle storage upsert failure gracefully', async () => {

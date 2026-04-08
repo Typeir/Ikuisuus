@@ -2,30 +2,29 @@
  * @fileoverview Unit tests for Heroic Awakening Styling Utilities
  * @module tests/unit/src/lib/utils/heroicAwakeningStyles.test
  * @description Tests for affix normalization, tier calculation, and class computation.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @/lib/utils/heroicAwakeningStyles
  */
 
-import { describe, it, expect } from 'vitest';
-import {
-  normalizeAffixToKey,
-  getAwakeningTier,
-  computeAwakeningClasses,
-  getAwakeningClassString,
-  type AffixKey,
-  type AwakeningTier,
-} from '@/lib/utils/heroicAwakeningStyles';
 import type { HeroicAwakeningState } from '@/lib/types/inProgressCombat';
+import {
+    computeAwakeningClasses,
+    getAwakeningClassString,
+    getAwakeningTier,
+    normalizeAffixToKey,
+    type AffixKey
+} from '@/lib/utils/heroicAwakeningStyles';
+import { describe, expect, it } from 'vitest';
 
 /**
  * Creates a mock HeroicAwakeningState for testing
  */
 const createMockAwakeningState = (
-  overrides: Partial<HeroicAwakeningState> = {}
+  overrides: Partial<HeroicAwakeningState> = {},
 ): HeroicAwakeningState => ({
   fateDieResult: 0,
   heroicDc: 0,

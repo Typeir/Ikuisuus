@@ -17,6 +17,7 @@
  * const response = await fetch('/api/spells/fireball?locale=en');
  * const spell = await response.json();
  * ```
+ * @module src/app/api/spells/[slug]/route
  */
 import { spellRepository } from '@/lib/db/content/repositories/spellRepository';
 import { logger } from '@/lib/logging/logger';
