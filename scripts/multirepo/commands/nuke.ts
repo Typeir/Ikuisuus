@@ -1,16 +1,16 @@
 /**
- * @fileoverview ik nuke — Hard-delete command for data management.
+ * @fileoverview `ik nuke` — Hard-delete command for data management.
  * @description Removes entries from external metadata JSON files and the
  * PostgreSQL database atomically.
  *
  * Supported shape:
  *   ik nuke external spell:<slug>
- *     • Removes from `scripts/core/spells-external.metadata.json`
- *     • Removes from`.meta/en/spells/spells-external.metadata.json` (if present)
- *     • Removes from `src/content/en/spells/spells-external.metadata.json` (if present)
- *     • Deletes the row from the `spells` table — FK cascade removes `spell_lists`
+ *     - Removes from `scripts/core/spells-external.metadata.json`
+ *     - Removes from `.meta/en/spells/spells-external.metadata.json` (if present)
+ *     - Removes from `src/content/en/spells/spells-external.metadata.json` (if present)
+ *     - Deletes the row from the `spells` table — FK cascade removes `spell_lists`
  *
- * @module multirepo/nuke
+ * @module multirepo/commands/nuke
  */
 
 import { log, spinner } from '@clack/prompts';
@@ -19,10 +19,18 @@ import { dirname, join } from 'path';
 import pg from 'pg';
 import { fileURLToPath } from 'url';
 
+import type { CommandMeta } from '../../utils/cli-loader';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** Absolute path to the project root. */
-const ROOT = join(__dirname, '../../');
+const ROOT = join(__dirname, '../../../');
+
+/** Command metadata for the fs-based loader. */
+export const meta: CommandMeta = {
+  name: 'nuke',
+  description: 'Hard-delete external data (e.g. spell:<slug>)',
+};
 
 /**
  * Loads environment variables from `.env.local` if present.
@@ -168,7 +176,7 @@ async function nukeExternalSpell(slug: string): Promise<void> {
  *
  * @param args - Remaining args after `nuke`, e.g. `["external", "spell:hunters-mark"]`
  */
-export async function cmdNuke(args: string[]): Promise<void> {
+export async function run(args: string[]): Promise<void> {
   const scope = args[0];
   const typeArg = args[1] ?? '';
 

@@ -21,16 +21,13 @@ import {
   text,
 } from '@clack/prompts';
 
-import {
-  cmdAdd,
-  cmdCleanBranches,
-  cmdCommit,
-  cmdPassthrough,
-  cmdPull,
-  cmdPush,
-} from './commands';
+import { run as cmdAdd } from './commands/add';
+import { run as cmdCleanBranches } from './commands/clean-branches';
+import { run as cmdCommit } from './commands/commit';
+import { run as cmdPull } from './commands/pull';
+import { run as cmdPush } from './commands/push';
 import { C, CONTENT_REPO, LOGO, MAIN_REPO, type MenuOption } from './constants';
-import { git, listDirtyFiles, logRepo, repoSummaryLine } from './git';
+import { cmdPassthrough, git, listDirtyFiles, logRepo, repoSummaryLine } from './git';
 
 /**
  * Exits with a friendly cancellation message when the user presses Ctrl-C.
@@ -309,7 +306,7 @@ async function tuiBranch(): Promise<void> {
       cancel('Aborted');
       return;
     }
-    await cmdCleanBranches();
+    await cmdCleanBranches([]);
   } else {
     const name = await text({
       message: 'Branch to switch to:',

@@ -178,3 +178,20 @@ export function listDirtyFiles(): string[] {
     .map((l) => `content: ${l.slice(3)}`);
   return [...mainFiles, ...contentFiles];
 }
+
+/**
+ * Runs an arbitrary git command in both repos sequentially, inheriting stdio
+ * so interactive output (diff colours, log pager, progress) works as expected.
+ * @param command - Git subcommand name.
+ * @param args    - Additional flags and arguments forwarded verbatim.
+ */
+export function cmdPassthrough(command: string, args: string[]): void {
+  console.log('');
+  logRepo('main', `git ${command} ${args.join(' ')}`);
+  git(MAIN_REPO, [command, ...args]);
+
+  console.log('');
+  logRepo('content', `git ${command} ${args.join(' ')}`);
+  git(CONTENT_REPO, [command, ...args]);
+  console.log('');
+}
