@@ -219,14 +219,7 @@ const SidebarItem = ({
     setOpen(nextState);
     setExpanded(item.path, nextState);
     e?.preventDefault();
-        useEffect(() => {
-          return pathStore.subscribe((path: string | null) => {
-            if (collapseSiblings && path !== item.path) {
-              setOpen(false);
-            }
-          });
-        }, [collapseSiblings, item.path, pathStore]);
-  }
+  };
 
   if (item.children) {
     const hasIndex = index !== undefined && index !== -1;
