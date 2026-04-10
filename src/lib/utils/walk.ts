@@ -22,7 +22,7 @@
  * Builds navigation tree structure from content directories:
  * - Recursively traverses directory structure via adapter
  * - Converts filenames to kebab-case URL paths
- * - Handles .sheet.mdx suffix for monster stat blocks
+ * - Handles double-extension suffixes (.sheet, .specialization, .list, etc.)
  * - Deduplicates files with same base name (prefers longer names)
  * - Filters out ignored directories and hidden files
  *
@@ -36,11 +36,11 @@
 import type { DirectorySourceAdapter } from '../db/content/directorySourceAdapter';
 import { resolveDirectorySource } from '../db/content/directorySourceResolver';
 import {
-  FILE_EXT_MD,
-  FILE_EXT_MDX,
-  IGNORED_FOLDERS,
-  REGEX_EXTENSION,
-  RegexPatterns,
+    FILE_EXT_MD,
+    FILE_EXT_MDX,
+    IGNORED_FOLDERS,
+    REGEX_CONTENT_SUFFIX,
+    REGEX_EXTENSION,
 } from '../enums/constants';
 import { deduplicateFiles } from './deduplicateFiles';
 import { toKebabCase } from './toKebabCase';
@@ -116,10 +116,13 @@ export const walkTree = async (
     filtered.map(async (entry) => {
       const fileName = entry.name.replace(REGEX_EXTENSION, '');
 
-      const hasSheet = fileName.endsWith('.sheet');
-      const baseFileName = fileName.replace(RegexPatterns.SheetSuffix, '');
+      const suffixMatch = fileName.match(REGEX_CONTENT_SUFFIX);
+      const suffix = suffixMatch ? suffixMatch[0] : '';
+      const baseFileName = suffix
+        ? fileName.slice(0, -suffix.length)
+        : fileName;
       const kebabBase = toKebabCase(baseFileName);
-      const kebabFileName = hasSheet ? kebabBase + '.sheet' : kebabBase;
+      const kebabFileName = suffix ? kebabBase + suffix : kebabBase;
       const kebabPath = base ? `${base}/${kebabFileName}` : kebabFileName;
 
       if (entry.isDirectory) {

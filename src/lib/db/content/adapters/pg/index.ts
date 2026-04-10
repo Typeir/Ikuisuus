@@ -8,9 +8,12 @@
  * @since 5.0.0
  */
 
+export { pgBloodlineRepository } from './pgBloodlineRepository';
 export { pgDraftRepository } from './pgDraftRepository';
 export { pgHeirloomRepository } from './pgHeirloomRepository';
 export { pgMonsterRepository } from './pgMonsterRepository';
+export { pgSpecializationRepository } from './pgSpecializationRepository';
 export { pgSpellRepository } from './pgSpellRepository';
 export { pgTrinketRepository } from './pgTrinketRepository';
+export { pgVocationRepository } from './pgVocationRepository';
 

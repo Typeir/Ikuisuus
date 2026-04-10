@@ -41,3 +41,19 @@ export type {
 export type { DraftInput, DraftMetadata, DraftStatus } from './draftMetadata';
 export type { TrinketIndexEntry, TrinketMetadata } from './trinketMetadata';
 
+export type {
+    AlwaysPreparedSpells,
+    SpecializationFeature,
+    SpecializationIndexEntry,
+    SpecializationMetadata,
+    SpecializationSpellcasting
+} from './specializationMetadata';
+
+export type {
+    VocationFeature,
+    VocationIndexEntry,
+    VocationMetadata,
+    VocationSkillProficiencies,
+    VocationSpellcasting
+} from './vocationMetadata';
+

@@ -73,6 +73,8 @@ const CONTENT_PATHS: Record<string, string[]> = {
   spells: ['src', 'content', 'en', 'spells'],
   trinkets: ['src', 'content', 'en', 'items', 'trinkets'],
   bloodlines: ['src', 'content', 'en', 'character-creation', 'bloodlines'],
+  vocations: ['src', 'content', 'en', 'character-creation', 'vocations'],
+  specializations: ['src', 'content', 'en', 'character-creation', 'vocations'],
 };
 
 /**
@@ -105,6 +107,12 @@ export function getMetaSubdir(contentType: string): string {
     spells: 'spells',
     trinkets: path.join('items', 'trinkets'),
     bloodlines: path.join('character-creation', 'bloodlines'),
+    vocations: path.join('character-creation', 'vocations'),
+    specializations: path.join(
+      'character-creation',
+      'vocations',
+      'specializations',
+    ),
   };
   return subdirs[contentType] || contentType;
 }
@@ -164,6 +172,8 @@ export interface StorageAdapter {
  * @property {string} [contentDir] - Override content directory (for testing)
  * @property {StorageAdapter} [storage] - Optional DB storage adapter
  * @property {string} [locale] - Locale for storage (defaults to 'en')
+ * @property {boolean} [recursive] - Scan subdirectories recursively (defaults to false)
+ * @property {Function} [resolveOutputPath] - Custom output path resolver
  */
 export interface GeneratorConfig {
   name: string;
@@ -174,6 +184,13 @@ export interface GeneratorConfig {
   contentDir?: string;
   storage?: StorageAdapter;
   locale?: string;
+  recursive?: boolean;
+  resolveOutputPath?: (
+    sourceFilePath: string,
+    contentType: string,
+    backend: string,
+    locale: string,
+  ) => string;
 }
 
 /**
@@ -222,6 +239,8 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
     contentDir = null,
     storage = null,
     locale = 'en',
+    recursive = false,
+    resolveOutputPath = null,
   } = config;
 
   const timerKey = `${contentType}-metadata-generation`;
@@ -237,7 +256,11 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
     log.message('Loaded shared data for optimized processing');
 
     const resolvedContentDir = contentDir || getContentDirectory(contentType);
-    const files = await getMatchingFiles(resolvedContentDir, filePattern);
+    const files = await getMatchingFiles(
+      resolvedContentDir,
+      filePattern,
+      recursive,
+    );
     log.message(`Found ${files.length} ${contentType} files`);
 
     if (files.length === 0) {
@@ -253,16 +276,28 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
           const processed = processResult
             ? processResult(parseResult)
             : { metadata: parseResult };
+
+          if (processed.metadata === null || processed.metadata === undefined) {
+            return {
+              filePath,
+              success: true,
+              ...processed,
+              metadata: null,
+            };
+          }
+
           const metadataWithHash = attachVersionHashes(processed.metadata);
 
           const backend = getMetadataBackend();
-          const metadataFilePath = getMetadataOutputPath(
-            filePath,
-            filePattern,
-            contentType,
-            backend,
-            locale,
-          );
+          const metadataFilePath = resolveOutputPath
+            ? resolveOutputPath(filePath, contentType, backend, locale)
+            : getMetadataOutputPath(
+                filePath,
+                filePattern,
+                contentType,
+                backend,
+                locale,
+              );
 
           await ensureDirectory(path.dirname(metadataFilePath));
 
@@ -376,32 +411,5 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
       stack: (error as Error).stack,
     });
     process.exitCode = 1;
-  }
-}
-
-/**
- * Wraps a generator main function with CLI --persist flag handling.
- * Creates a storage adapter from DATABASE_URL when --persist is present.
- *
- * @param {Function} mainFn - Generator main function receiving { storage? }
- * @returns {Promise<void>}
- */
-export async function runWithCli(
-  mainFn: (options: { storage?: StorageAdapter }) => Promise<void>,
-): Promise<void> {
-  let storage: StorageAdapter | null = null;
-  try {
-    if (process.argv.includes('--persist')) {
-      const storagePath = '../../../../scripts/core/metadataStorage';
-      const { createStorageFromEnv } = await import(
-        /* webpackIgnore: true */
-        storagePath
-      );
-      storage = (await createStorageFromEnv()) as StorageAdapter;
-      log.message('--persist flag detected, database storage enabled');
-    }
-    await mainFn({ storage: storage ?? undefined });
-  } finally {
-    if (storage) await storage.close();
   }
 }

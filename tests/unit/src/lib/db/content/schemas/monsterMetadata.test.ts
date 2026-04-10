@@ -95,7 +95,6 @@ describe('MonsterMetadata Schema', () => {
 
     expect(abilities.str.score).toBe(20);
     expect(abilities.int.score).toBe(8);
-    // modifiers are derived at runtime: floor((score - 10) / 2)
     expect(Math.floor(((abilities.str.score ?? 10) - 10) / 2)).toBe(5);
     expect(Math.floor(((abilities.int.score ?? 10) - 10) / 2)).toBe(-1);
   });

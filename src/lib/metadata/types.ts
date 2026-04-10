@@ -19,7 +19,9 @@ export type ContentType =
   | 'heirlooms'
   | 'spells'
   | 'trinkets'
-  | 'bloodlines';
+  | 'bloodlines'
+  | 'vocations'
+  | 'specializations';
 
 /**
  * Options passed to a metadata generator's main function.

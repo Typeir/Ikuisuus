@@ -158,6 +158,128 @@ describe('walk', () => {
     });
   });
 
+  describe('content suffix handling (double-extension convention)', () => {
+    it('should preserve .specialization in path', async () => {
+      const adapter = createMockAdapter({
+        '': [
+          {
+            name: 'path-of-the-berserker.specialization.mdx',
+            isDirectory: false,
+          },
+        ],
+      });
+
+      const result = await walkTree(adapter, 'en', '', '');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].path).toBe('path-of-the-berserker.specialization');
+      expect(result[0].name).toBe('Path Of The Berserker');
+    });
+
+    it('should preserve .list in path', async () => {
+      const adapter = createMockAdapter({
+        '': [{ name: 'spells.list.mdx', isDirectory: false }],
+      });
+
+      const result = await walkTree(adapter, 'en', '', '');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].path).toBe('spells.list');
+      expect(result[0].name).toBe('Spells');
+    });
+
+    it('should preserve .reference in path', async () => {
+      const adapter = createMockAdapter({
+        '': [{ name: 'maneuvers.reference.mdx', isDirectory: false }],
+      });
+
+      const result = await walkTree(adapter, 'en', '', '');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].path).toBe('maneuvers.reference');
+      expect(result[0].name).toBe('Maneuvers');
+    });
+
+    it('should preserve .bloodline in path', async () => {
+      const adapter = createMockAdapter({
+        '': [
+          {
+            name: 'bloodline-of-the-void.bloodline.mdx',
+            isDirectory: false,
+          },
+        ],
+      });
+
+      const result = await walkTree(adapter, 'en', '', '');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].path).toBe('bloodline-of-the-void.bloodline');
+      expect(result[0].name).toBe('Bloodline Of The Void');
+    });
+
+    it('should preserve .lore in path', async () => {
+      const adapter = createMockAdapter({
+        '': [{ name: 'the-sunken-city.lore.mdx', isDirectory: false }],
+      });
+
+      const result = await walkTree(adapter, 'en', '', '');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].path).toBe('the-sunken-city.lore');
+      expect(result[0].name).toBe('The Sunken City');
+    });
+
+    it('should handle mixed content suffixes correctly', async () => {
+      const adapter = createMockAdapter({
+        '': [
+          { name: 'berserker.specialization.mdx', isDirectory: false },
+          { name: 'maneuvers.reference.mdx', isDirectory: false },
+          { name: 'spells.list.mdx', isDirectory: false },
+          { name: 'plain-file.mdx', isDirectory: false },
+        ],
+      });
+
+      const result = await walkTree(adapter, 'en', '', '');
+
+      expect(result).toHaveLength(4);
+      expect(result.find((r) => r.name === 'Berserker')?.path).toBe(
+        'berserker.specialization',
+      );
+      expect(result.find((r) => r.name === 'Maneuvers')?.path).toBe(
+        'maneuvers.reference',
+      );
+      expect(result.find((r) => r.name === 'Spells')?.path).toBe(
+        'spells.list',
+      );
+      expect(result.find((r) => r.name === 'Plain File')?.path).toBe(
+        'plain-file',
+      );
+    });
+
+    it('should construct correct nested paths with content suffixes', async () => {
+      const adapter = createMockAdapter({
+        '': [
+          {
+            name: 'life-domain.specialization.mdx',
+            isDirectory: false,
+          },
+        ],
+      });
+
+      const result = await walkTree(
+        adapter,
+        'en',
+        '',
+        'library/vocations/cleric',
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0].path).toBe(
+        'library/vocations/cleric/life-domain.specialization',
+      );
+    });
+  });
+
   describe('path construction with base path', () => {
     it('should construct correct nested paths for .sheet.mdx files', async () => {
       const adapter = createMockAdapter({

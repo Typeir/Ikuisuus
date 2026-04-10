@@ -1,261 +1,322 @@
 [
-  { "term": "Acheron", "path": "/en/library/world/structures/acheron" },
+  {
+    "term": "Acheron",
+    "path": "/en/library/world/structures/acheron.lore"
+  },
   {
     "term": "Age of Creation",
-    "path": "/en/library/world/ages/age-of-creation"
+    "path": "/en/library/world/ages/age-of-creation.lore"
   },
-  { "term": "Age of Fates", "path": "/en/library/world/ages/age-of-fates" },
+  {
+    "term": "Age of Fates",
+    "path": "/en/library/world/ages/age-of-fates.lore"
+  },
   {
     "term": "Age of Nulls",
-    "path": "/en/library/world/ages/age-of-nulls"
+    "path": "/en/library/world/ages/age-of-nulls.lore"
   },
   {
-    "term": ["Age of Wills", "Age of Will", "First Star"],
-    "path": "/en/library/world/ages/age-of-wills"
+    "term": [
+      "Age of Wills",
+      "Age of Will",
+      "First Star"
+    ],
+    "path": "/en/library/world/ages/age-of-wills.lore"
   },
   {
     "term": "Albedo",
-    "path": "/en/library/world/characters-and-actors/albedo"
+    "path": "/en/library/world/characters-and-actors/albedo.lore"
   },
   {
     "term": "Anaximander",
-    "path": "/en/library/world/characters-and-actors/anaximander"
+    "path": "/en/library/world/characters-and-actors/anaximander.lore"
   },
-  { "term": "Baku", "path": "/en/library/world/gods-and-demigods/baku" },
+  {
+    "term": "Baku",
+    "path": "/en/library/world/gods-and-demigods/baku.lore"
+  },
   {
     "term": "Blade of Damocles",
-    "path": "/en/library/world/structures/blade-of-damocles"
+    "path": "/en/library/world/structures/blade-of-damocles.lore"
   },
   {
     "term": "Black Cradle",
-    "path": "/en/library/world/the-lands-of-damocles/black-cradle"
+    "path": "/en/library/world/the-lands-of-damocles/black-cradle.lore"
   },
   {
     "term": "Brine Pools",
-    "path": "/en/library/world/the-lands-of-damocles/brine-pools"
+    "path": "/en/library/world/the-lands-of-damocles/brine-pools.lore"
   },
   {
     "term": "The Brume",
-    "path": "/en/library/world/the-lands-of-damocles/brume-empire"
+    "path": "/en/library/world/the-lands-of-damocles/brume-empire.lore"
   },
-  { "term": "Canvas", "path": "/en/library/world/gods-and-demigods/canvas" },
+  {
+    "term": "Canvas",
+    "path": "/en/library/world/gods-and-demigods/canvas.lore"
+  },
   {
     "term": "Clone Worlds",
-    "path": "/en/library/world/the-lands-of-damocles/clone-worlds"
+    "path": "/en/library/world/the-lands-of-damocles/clone-worlds.lore"
   },
   {
     "term": "Damocles",
-    "path": "/en/library/world/the-lands-of-damocles/damocles"
+    "path": "/en/library/world/the-lands-of-damocles/damocles.lore"
   },
   {
     "term": "Demiurge",
-    "path": "/en/library/world/gods-and-demigods/demiurge"
+    "path": "/en/library/world/gods-and-demigods/demiurge.lore"
   },
   {
     "term": "Dreadlord",
-    "path": "/en/library/world/characters-and-actors/nekarion"
+    "path": "/en/library/world/characters-and-actors/nekarion.lore"
   },
-  { "term": "Dragon", "path": "/en/library/world/gods-and-demigods/dragon" },
+  {
+    "term": "Dragon",
+    "path": "/en/library/world/gods-and-demigods/dragon.lore"
+  },
   {
     "term": "Dreamcatcher",
-    "path": "/en/library/world/gods-and-demigods/dreamcatcher"
+    "path": "/en/library/world/gods-and-demigods/dreamcatcher.lore"
   },
   {
     "term": "Earthmovers",
-    "path": "/en/library/world/gods-and-demigods/earthmovers"
+    "path": "/en/library/world/gods-and-demigods/earthmovers.lore"
   },
-  { "term": "Elû", "path": "/en/library/world/the-lands-of-damocles/elu" },
+  {
+    "term": "Elû",
+    "path": "/en/library/world/the-lands-of-damocles/elu.lore"
+  },
   {
     "term": "Empyreans",
-    "path": "/en/library/world/the-creatures-of-damocles/empyreans"
+    "path": "/en/library/world/the-creatures-of-damocles/empyreans.lore"
   },
   {
     "term": "Everdark",
-    "path": "/en/library/world/the-lands-of-damocles/everdark"
+    "path": "/en/library/world/the-lands-of-damocles/everdark.lore"
   },
   {
     "term": "Felicia",
-    "path": "/en/library/world/characters-and-actors/felicia"
+    "path": "/en/library/world/characters-and-actors/felicia.lore"
   },
   {
     "term": "First Pilgrimage",
-    "path": "/en/library/world/events/the-first-pilgrimage"
+    "path": "/en/library/world/events/the-first-pilgrimage.lore"
   },
-  { "term": "Fold", "path": "/en/library/world/gods-and-demigods/canvas" },
-  { "term": "Folds", "path": "/en/library/world/gods-and-demigods/canvas" },
+  {
+    "term": "Fold",
+    "path": "/en/library/world/gods-and-demigods/canvas.lore"
+  },
+  {
+    "term": "Folds",
+    "path": "/en/library/world/gods-and-demigods/canvas.lore"
+  },
   {
     "term": "Gorgias",
-    "path": "/en/library/world/characters-and-actors/gorgias"
+    "path": "/en/library/world/characters-and-actors/gorgias.lore"
   },
   {
     "term": "God of Ambition",
-    "path": "/en/library/world/gods-and-demigods/dreamcatcher"
+    "path": "/en/library/world/gods-and-demigods/dreamcatcher.lore"
   },
   {
     "term": "God of Creation",
-    "path": "/en/library/world/gods-and-demigods/dragon"
+    "path": "/en/library/world/gods-and-demigods/dragon.lore"
   },
   {
     "term": "Golden One",
-    "path": "/en/library/world/gods-and-demigods/golden-one"
+    "path": "/en/library/world/gods-and-demigods/golden-one.lore"
   },
   {
     "term": "Hidden Kingdom",
-    "path": "/en/library/world/the-lands-of-damocles/hidden-kingdom"
+    "path": "/en/library/world/the-lands-of-damocles/hidden-kingdom.lore"
   },
   {
     "term": "Hiisi",
-    "path": "/en/library/world/the-creatures-of-damocles/hiisi"
+    "path": "/en/library/world/the-creatures-of-damocles/hiisi.lore"
   },
   {
     "term": "Interlocking",
-    "path": "/en/library/world/events/the-interlocking"
+    "path": "/en/library/world/events/the-interlocking.lore"
   },
   {
     "term": "Itähenki",
-    "path": "/en/library/world/the-lands-of-damocles/itahenki"
+    "path": "/en/library/world/the-lands-of-damocles/itahenki.lore"
   },
   {
     "term": "Kalmora",
-    "path": "/en/library/world/the-lands-of-damocles/kalmora"
+    "path": "/en/library/world/the-lands-of-damocles/kalmora.lore"
   },
   {
     "term": "King-Under-Mountain Aeridas",
-    "path": "/en/library/world/characters-and-actors/aeridas"
+    "path": "/en/library/world/characters-and-actors/aeridas.lore"
   },
-  { "term": "Kuutar", "path": "/en/library/world/gods-and-demigods/kuutar" },
+  {
+    "term": "Kuutar",
+    "path": "/en/library/world/gods-and-demigods/kuutar.lore"
+  },
   {
     "term": "Kultharja",
-    "path": "/en/library/world/the-lands-of-damocles/kultharja"
+    "path": "/en/library/world/the-lands-of-damocles/kultharja.lore"
   },
-  { "term": "Last Fleet", "path": "/en/library/world/events/the-last-fleet" },
+  {
+    "term": "Last Fleet",
+    "path": "/en/library/world/events/the-last-fleet.lore"
+  },
   {
     "term": "Library of Ikuisuus",
-    "path": "/en/library/world/the-lands-of-damocles/library-of-ikuisuus"
+    "path": "/en/library/world/the-lands-of-damocles/library-of-ikuisuus.lore"
   },
   {
     "term": "Ludwig Blackstar",
-    "path": "/en/library/world/characters-and-actors/ludwig"
+    "path": "/en/library/world/characters-and-actors/ludwig.lore"
   },
   {
     "term": "Lycophron",
-    "path": "/en/library/world/characters-and-actors/lycophron"
+    "path": "/en/library/world/characters-and-actors/lycophron.lore"
   },
   {
     "term": "Länsihenki",
-    "path": "/en/library/world/the-lands-of-damocles/lansihenki"
+    "path": "/en/library/world/the-lands-of-damocles/lansihenki.lore"
   },
-  { "term": "Mana", "path": "/en/library/world/the-lands-of-damocles/mana" },
+  {
+    "term": "Mana",
+    "path": "/en/library/world/the-lands-of-damocles/mana.lore"
+  },
   {
     "term": "Nekarion",
-    "path": "/en/library/world/characters-and-actors/nekarion"
+    "path": "/en/library/world/characters-and-actors/nekarion.lore"
   },
   {
     "term": "Nigredo",
-    "path": "/en/library/world/characters-and-actors/nigredo"
+    "path": "/en/library/world/characters-and-actors/nigredo.lore"
   },
   {
     "term": "Nulls",
-    "path": "/en/library/world/the-creatures-of-damocles/nulls"
+    "path": "/en/library/world/the-creatures-of-damocles/nulls.lore"
   },
   {
     "term": "Opaline Belt",
-    "path": "/en/library/world/the-lands-of-damocles/opaline-belt"
+    "path": "/en/library/world/the-lands-of-damocles/opaline-belt.lore"
   },
   {
     "term": "Ordovica",
-    "path": "/en/library/world/the-lands-of-damocles/ordovica"
+    "path": "/en/library/world/the-lands-of-damocles/ordovica.lore"
   },
   {
     "term": "Päivätär",
-    "path": "/en/library/world/gods-and-demigods/paivatar"
+    "path": "/en/library/world/gods-and-demigods/paivatar.lore"
   },
   {
     "term": "Pieni",
-    "path": "/en/library/world/the-creatures-of-damocles/pieni"
+    "path": "/en/library/world/the-creatures-of-damocles/pieni.lore"
   },
-  { "term": "Plato", "path": "/en/library/world/characters-and-actors/plato" },
+  {
+    "term": "Plato",
+    "path": "/en/library/world/characters-and-actors/plato.lore"
+  },
   {
     "term": "Plato Station",
-    "path": "/en/library/world/structures/plato-tower"
+    "path": "/en/library/world/structures/plato-tower.lore"
   },
-  { "term": "Plato Tower", "path": "/en/library/world/structures/plato-tower" },
+  {
+    "term": "Plato Tower",
+    "path": "/en/library/world/structures/plato-tower.lore"
+  },
   {
     "term": "Primordial Engine",
-    "path": "/en/library/world/gods-and-demigods/canvas"
+    "path": "/en/library/world/gods-and-demigods/canvas.lore"
   },
   {
     "term": "Primordial Void Giants",
-    "path": "/en/library/world/gods-and-demigods/void-giants"
+    "path": "/en/library/world/gods-and-demigods/void-giants.lore"
   },
   {
     "term": "Pyknos",
-    "path": "/en/library/world/the-lands-of-damocles/pyknos"
+    "path": "/en/library/world/the-lands-of-damocles/pyknos.lore"
   },
   {
     "term": "Rubedo",
-    "path": "/en/library/world/characters-and-actors/rubedo"
+    "path": "/en/library/world/characters-and-actors/rubedo.lore"
   },
-  { "term": "Sampo", "path": "/en/library/world/artifacts/sampo" },
+  {
+    "term": "Sampo",
+    "path": "/en/library/world/artifacts/sampo.lore"
+  },
   {
     "term": "Scala Ad Caelum",
-    "path": "/en/library/world/structures/scala-ad-caelum"
+    "path": "/en/library/world/structures/scala-ad-caelum.lore"
   },
   {
     "term": "Second Pilgrimage",
-    "path": "/en/library/world/events/the-second-pilgrimage"
+    "path": "/en/library/world/events/the-second-pilgrimage.lore"
   },
   {
     "term": "Seed World",
-    "path": "/en/library/world/the-lands-of-damocles/world-seed"
+    "path": "/en/library/world/the-lands-of-damocles/world-seed.lore"
   },
   {
     "term": "Selkara",
-    "path": "/en/library/world/the-lands-of-damocles/selkara"
+    "path": "/en/library/world/the-lands-of-damocles/selkara.lore"
   },
   {
     "term": "Stags of the End",
-    "path": "/en/library/world/gods-and-demigods/earthmovers"
+    "path": "/en/library/world/gods-and-demigods/earthmovers.lore"
   },
-  { "term": "Taiva", "path": "/en/library/world/the-lands-of-damocles/taiva" },
+  {
+    "term": "Taiva",
+    "path": "/en/library/world/the-lands-of-damocles/taiva.lore"
+  },
   {
     "term": "The Four",
-    "path": "/en/library/world/characters-and-actors/factions/the-four"
+    "path": "/en/library/world/characters-and-actors/factions/the-four.lore"
   },
   {
     "term": "The Shifted",
-    "path": "/en/library/world/the-creatures-of-damocles/the-shifted"
+    "path": "/en/library/world/the-creatures-of-damocles/the-shifted.lore"
   },
   {
     "term": "Thealas",
-    "path": "/en/library/world/the-lands-of-damocles/thealas"
+    "path": "/en/library/world/the-lands-of-damocles/thealas.lore"
   },
-  { "term": "Thule", "path": "/en/library/world/the-lands-of-damocles/thule" },
-  { "term": "Tombsteel", "path": "/en/library/world/artifacts/tombsteel" },
+  {
+    "term": "Thule",
+    "path": "/en/library/world/the-lands-of-damocles/thule.lore"
+  },
+  {
+    "term": "Tombsteel",
+    "path": "/en/library/world/artifacts/tombsteel.lore"
+  },
   {
     "term": "Ukkonhemmo",
-    "path": "/en/library/world/gods-and-demigods/ukkonhemmo"
+    "path": "/en/library/world/gods-and-demigods/ukkonhemmo.lore"
   },
   {
     "term": "Void Primordials",
-    "path": "/en/library/world/the-creatures-of-damocles/void-giants"
+    "path": "/en/library/world/the-creatures-of-damocles/void-giants.lore"
   },
-  { "term": "War of Shapes", "path": "/en/library/world/events/war-of-shapes" },
+  {
+    "term": "War of Shapes",
+    "path": "/en/library/world/events/war-of-shapes.lore"
+  },
   {
     "term": "War of the Shapes",
-    "path": "/en/library/world/events/war-of-shapes"
+    "path": "/en/library/world/events/war-of-shapes.lore"
   },
   {
     "term": "White Homunculus",
-    "path": "/en/library/world/gods-and-demigods/white-homunculus"
+    "path": "/en/library/world/gods-and-demigods/white-homunculus.lore"
   },
   {
     "term": "World-Seed",
-    "path": "/en/library/world/the-lands-of-damocles/world-seed"
+    "path": "/en/library/world/the-lands-of-damocles/world-seed.lore"
   },
   {
     "term": "Xanthous",
-    "path": "/en/library/world/characters-and-actors/xanthous"
+    "path": "/en/library/world/characters-and-actors/xanthous.lore"
   },
-  { "term": "Yskeia", "path": "/en/library/world/gods-and-demigods/yskeia" }
+  {
+    "term": "Yskeia",
+    "path": "/en/library/world/gods-and-demigods/yskeia.lore"
+  }
 ]

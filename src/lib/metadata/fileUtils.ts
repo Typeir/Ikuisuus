@@ -61,16 +61,55 @@ export async function safeWriteFile(
 }
 
 /**
- * Gets all files matching a pattern in a directory, excluding main.mdx.
+ * Recursively walks a directory, collecting files matching a pattern.
+ *
+ * @param {string} dir - Directory to walk
+ * @param {RegExp} pattern - Pattern to match filenames against
+ * @param {string[]} results - Accumulator for matched paths
+ * @returns {Promise<void>}
+ */
+async function walkDirectory(
+  dir: string,
+  pattern: RegExp,
+  results: string[],
+): Promise<void> {
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await walkDirectory(fullPath, pattern, results);
+      } else if (entry.isFile() && pattern.test(entry.name)) {
+        results.push(fullPath);
+      }
+    }
+  } catch (error) {
+    log.error(`Error reading directory ${dir}`, {
+      error: (error as Error).message,
+    });
+  }
+}
+
+/**
+ * Gets all files matching a pattern in a directory.
+ * When `recursive` is true, walks subdirectories and does NOT exclude `main.mdx`.
  *
  * @param {string} directory - Directory to search
  * @param {RegExp} pattern - Pattern to match filenames against
+ * @param {boolean} [recursive=false] - Walk subdirectories recursively
  * @returns {Promise<string[]>} Matching file paths
  */
 export async function getMatchingFiles(
   directory: string,
   pattern: RegExp,
+  recursive = false,
 ): Promise<string[]> {
+  if (recursive) {
+    const results: string[] = [];
+    await walkDirectory(directory, pattern, results);
+    return results;
+  }
+
   try {
     const entries = await fs.readdir(directory, { withFileTypes: true });
     return entries

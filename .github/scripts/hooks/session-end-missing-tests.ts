@@ -1,21 +1,25 @@
 /**
- * Session End Missing Tests Hook
+ * PAW Session End Missing Tests Hook
  *
- * @fileoverview Blocks completion when newly added source files under src/
- * do not have corresponding test files.
+ * @fileoverview Blocks session completion when newly added source files don't
+ * have corresponding test files. Runs before the health gate.
  *
- * @module .github/scripts/hooks/session-end-missing-tests
+ * @module .github/PAW/hooks/session-end-missing-tests
+ * @author PAW
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { isNestedHookRun, readHookInput, writeHookOutput } from './hook-runtime';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, '../../..');
+import {
+  isNestedHookRun,
+  readHookInput,
+  writeBlockingOutput,
+  writeHookOutput,
+} from '../../.github/PAW/hook-runtime';
+import { PROJECT_ROOT as ROOT } from '../../.github/PAW/paw-paths';
 
 const EXCLUDED_PATTERNS = [
   /\.d\.ts$/,
@@ -24,15 +28,16 @@ const EXCLUDED_PATTERNS = [
   /\.module\.(scss|css)$/,
   /\.stories\.(ts|tsx)$/,
   /\.test\.(ts|tsx)$/,
+  /\.constants\.(ts|tsx)$/,
 ];
 
 /**
  * Execute a git command in repo root.
  *
- * @param command Command text
+ * @param command - Git command string
  * @returns stdout or empty string
  */
-function runGitCommand(command: string): string {
+function git(command: string): string {
   try {
     return execSync(command, {
       cwd: ROOT,
@@ -46,73 +51,76 @@ function runGitCommand(command: string): string {
 }
 
 /**
- * List newly added source files requiring tests.
+ * List newly added source files that should have tests.
  *
  * @returns Relative source file paths
  */
 function getNewSourceFiles(): string[] {
-  const stagedAdded = runGitCommand('git diff --cached --name-status -- src/');
-  const untracked = runGitCommand('git ls-files --others --exclude-standard -- src/');
+  const stagedAdded = git('git diff --cached --name-status -- src/');
+  const untracked = git('git ls-files --others --exclude-standard -- src/');
 
   const stagedFiles = stagedAdded
     .split('\n')
-    .map((line) => line.trim())
     .filter(Boolean)
-    .map((line) => line.split(/\s+/))
+    .map((line) => line.trim().split(/\s+/))
     .filter((parts) => parts[0] === 'A' && Boolean(parts[1]))
     .map((parts) => parts[1]);
 
-  const untrackedFiles = untracked
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean);
+  const untrackedFiles = untracked.split('\n').filter(Boolean);
 
   const combined = new Set([...stagedFiles, ...untrackedFiles]);
   return [...combined]
-    .map((filePath) => filePath.replace(/\\/g, '/'))
-    .filter((filePath) => /\.(ts|tsx)$/.test(filePath))
-    .filter((filePath) => !EXCLUDED_PATTERNS.some((pattern) => pattern.test(filePath)));
+    .map((f) => f.replace(/\\/g, '/'))
+    .filter((f) => /\.(ts|tsx)$/.test(f))
+    .filter((f) => !EXCLUDED_PATTERNS.some((p) => p.test(f)));
 }
 
 /**
- * Check for an associated unit or integration test file.
+ * Check whether a source file has a corresponding test.
  *
- * @param sourcePath Relative source file path
+ * @param sourcePath - Relative source file path
  * @returns True if test file exists
  */
 function hasTestFile(sourcePath: string): boolean {
   const ext = sourcePath.endsWith('.tsx') ? '.tsx' : '.ts';
   const baseName = sourcePath.replace(/\.(ts|tsx)$/, '');
-  const unitPath = path.join(ROOT, 'tests', 'unit', `${baseName}.test${ext}`);
-  const integrationPath = path.join(ROOT, 'tests', 'integration', `${baseName}.test${ext}`);
-  return existsSync(unitPath) || existsSync(integrationPath);
+
+  const candidates = [
+    path.join(ROOT, 'tests', 'unit', `${baseName}.test${ext}`),
+    path.join(ROOT, 'tests', 'integration', `${baseName}.test${ext}`),
+    path.join(ROOT, 'tests', 'unit', `${path.basename(baseName)}.test${ext}`),
+    path.join(
+      ROOT,
+      'tests',
+      'integration',
+      `${path.basename(baseName)}.test${ext}`,
+    ),
+  ];
+
+  return candidates.some((c) => existsSync(c));
 }
 
 /**
- * Build user-facing blocking reason for missing tests.
+ * Build a blocking context message for missing tests.
  *
- * @param missingFiles Source files missing tests
- * @returns Multi-line block reason text
+ * @param missing - Source files without test files
+ * @returns Multi-line block reason
  */
-function buildBlockReason(missingFiles: string[]): string {
-  const details = missingFiles
-    .map((sourcePath) => {
-      const ext = sourcePath.endsWith('.tsx') ? '.tsx' : '.ts';
-      const baseName = sourcePath.replace(/\.(ts|tsx)$/, '');
-      return [
-        `📄 ${sourcePath}`,
-        `   → tests/unit/${baseName}.test${ext}`,
-        `   → tests/integration/${baseName}.test${ext}`,
-      ].join('\n');
+function buildBlockReason(missing: string[]): string {
+  const details = missing
+    .map((src) => {
+      const ext = src.endsWith('.tsx') ? '.tsx' : '.ts';
+      const base = src.replace(/\.(ts|tsx)$/, '');
+      return `📄 ${src}\n   → tests/unit/${base}.test${ext}`;
     })
     .join('\n\n');
 
   return [
-    `🚫 Missing tests for ${missingFiles.length} newly added source file(s):`,
+    `🚫 Missing tests for ${missing.length} newly added source file(s):`,
     '',
     details,
     '',
-    'Create at least one matching test file for each entry before stopping.',
+    'Create at least one matching test file before completing.',
   ].join('\n');
 }
 
@@ -132,18 +140,20 @@ async function main(): Promise<void> {
     return;
   }
 
-  const missing = newSourceFiles.filter((sourcePath) => !hasTestFile(sourcePath));
+  const missing = newSourceFiles.filter((f) => !hasTestFile(f));
   if (missing.length === 0) {
     writeHookOutput({ continue: true });
     return;
   }
 
-  writeHookOutput({
+  const reason = buildBlockReason(missing);
+  writeBlockingOutput({
     continue: true,
+    systemMessage: reason,
     hookSpecificOutput: {
       hookEventName: 'sessionEnd',
       decision: 'block',
-      reason: buildBlockReason(missing),
+      reason: reason,
     },
   });
 }

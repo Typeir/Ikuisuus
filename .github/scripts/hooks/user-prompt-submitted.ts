@@ -1,28 +1,127 @@
 /**
- * User Prompt Submitted Hook
+ * PAW User Prompt Submitted Hook
  *
- * @fileoverview Logs deterministic hook activity when a user prompt is submitted.
+ * @fileoverview Logs hook activity and injects L1 memory context from paw.sqlite
+ * (when available) into the agent's conversation via systemMessage.
  *
- * @module .github/scripts/hooks/user-prompt-submitted
+ * @module .github/PAW/hooks/user-prompt-submitted
+ * @author PAW
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import { appendFileSync, mkdirSync } from 'node:fs';
-import path from 'node:path';
-import { readHookInput, writeHookOutput } from './hook-runtime';
+import { readHookInput, writeHookOutput } from '../../.github/PAW/hook-runtime';
+import { openDbReadonly } from '../../.github/PAW/paw-db';
+import { LOG_PATH, PAW_DIR } from '../../.github/PAW/paw-paths';
+
+const MAX_L1_CHARS = 800;
 
 /**
- * Append a prompt hook line into the hooks log file.
+ * Append a timestamped log entry.
  *
- * @param event Hook payload object
+ * @param event - Hook payload
  */
-function appendPromptLog(event: Record<string, unknown>): void {
-  const rootDir = process.cwd();
-  const logDir = path.join(rootDir, '.github', 'hooks');
-  const logFile = path.join(logDir, 'hooks.log');
-  const sessionId = typeof event.sessionId === 'string' ? event.sessionId : 'unknown-session';
+function appendLog(event: Record<string, unknown>): void {
+  mkdirSync(PAW_DIR, { recursive: true });
+  const sessionId =
+    typeof event.sessionId === 'string' ? event.sessionId : 'unknown';
   const timestamp = new Date().toISOString();
-  mkdirSync(logDir, { recursive: true });
-  appendFileSync(logFile, `${timestamp} userPromptSubmitted ${sessionId}\n`, 'utf-8');
+  appendFileSync(
+    LOG_PATH,
+    `${timestamp} userPromptSubmitted ${sessionId}\n`,
+    'utf-8',
+  );
+}
+
+/**
+ * Query paw.sqlite for L1 context if the database exists.
+ * Returns empty string if DB has not been created yet.
+ *
+ * @returns Compact memory context string
+ */
+function loadL1Context(): string {
+  const db = openDbReadonly();
+  if (!db) return '';
+
+  const facts: string[] = [];
+
+  try {
+    const decisions = db
+      .prepare(
+        `
+      SELECT context, choice, rationale
+      FROM decisions
+      WHERE superseded_at IS NULL
+      ORDER BY valid_from DESC
+      LIMIT 5
+    `,
+      )
+      .all() as Array<{ context: string; choice: string; rationale: string }>;
+
+    for (const d of decisions) {
+      facts.push(`Decision: ${d.context} → ${d.choice} (${d.rationale})`);
+    }
+  } catch {
+    /* table may not exist yet */
+  }
+
+  try {
+    const patterns = db
+      .prepare(
+        `
+      SELECT name, description, occurrences
+      FROM patterns
+      WHERE occurrences >= 3
+      ORDER BY occurrences DESC
+      LIMIT 5
+    `,
+      )
+      .all() as Array<{
+      name: string;
+      description: string;
+      occurrences: number;
+    }>;
+
+    for (const p of patterns) {
+      facts.push(`Pattern (${p.occurrences}x): ${p.name} — ${p.description}`);
+    }
+  } catch {
+    /* table may not exist yet */
+  }
+
+  try {
+    const violations = db
+      .prepare(
+        `
+      SELECT file_path, rule, message, created_at
+      FROM violations
+      WHERE resolved_at IS NULL
+      ORDER BY created_at DESC
+      LIMIT 5
+    `,
+      )
+      .all() as Array<{
+      file_path: string;
+      rule: string;
+      message: string;
+      created_at: string;
+    }>;
+
+    for (const v of violations) {
+      facts.push(`⚠ Violation: ${v.message} (${v.file_path})`);
+    }
+  } catch {
+    /* table may not exist yet */
+  }
+
+  db.close();
+
+  let context = facts.join('\n');
+  if (context.length > MAX_L1_CHARS) {
+    context = context.slice(0, MAX_L1_CHARS) + '\n[truncated]';
+  }
+  return context;
 }
 
 /**
@@ -30,8 +129,18 @@ function appendPromptLog(event: Record<string, unknown>): void {
  */
 async function main(): Promise<void> {
   const hookInput = await readHookInput();
-  appendPromptLog(hookInput);
-  writeHookOutput({ continue: true });
+  appendLog(hookInput);
+
+  const l1Context = loadL1Context();
+
+  if (l1Context.length > 0) {
+    writeHookOutput({
+      continue: true,
+      systemMessage: `## PAW Memory (L1)\n${l1Context}`,
+    });
+  } else {
+    writeHookOutput({ continue: true });
+  }
 }
 
 main().catch(() => {

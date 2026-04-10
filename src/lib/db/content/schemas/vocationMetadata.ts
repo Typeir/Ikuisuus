@@ -1,0 +1,111 @@
+/**
+ * @fileoverview Vocation Metadata Domain Schema
+ * @description Canonical TypeScript types for vocation metadata generated from
+ * `scripts/metadata/generateVocationMetadata.ts`.
+ *
+ * Each vocation record captures the core traits table, feature progression,
+ * proficiency grants, and optional spellcasting summary. A lightweight index
+ * entry projection is also provided for table display.
+ *
+ * @module lib/db/content/schemas/vocationMetadata
+ * @version 1.0.0
+ * @author Typeir
+ * @since 3.0.0
+ */
+
+/* ──────────────────────  Nested Value Objects  ────────────────────── */
+
+/**
+ * A single feature row from the vocation features table.
+ *
+ * @property {number} level - Character level at which the feature is gained
+ * @property {string} name - Feature display name
+ */
+export interface VocationFeature {
+  level: number;
+  name: string;
+}
+
+/**
+ * Spellcasting summary extracted from the vocation's spellcasting section.
+ *
+ * @property {string} ability - Primary spellcasting ability (e.g. "Charisma")
+ * @property {string} progression - Caster classification ("Full" | "Half" | "Third" | "Pact")
+ */
+export interface VocationSpellcasting {
+  ability: string;
+  progression: string;
+}
+
+/**
+ * Skill proficiency grant structure.
+ *
+ * @property {number} count - Number of skills to choose
+ * @property {string[]} choices - Available skill options
+ */
+export interface VocationSkillProficiencies {
+  count: number;
+  choices: string[];
+}
+
+/* ────────────────────────  Root Entity  ────────────────────────────── */
+
+/**
+ * Complete vocation metadata record as emitted by the generator.
+ *
+ * @property {string} slug - URL-friendly identifier (e.g. "barbarian")
+ * @property {string} title - Display name (e.g. "Barbarian")
+ * @property {string} file - Relative file path from content root
+ * @property {string} link - Public route path
+ * @property {string} archetype - Vocation archetype (e.g. "Martial", "Full Caster")
+ * @property {string[]} primaryAbility - Primary ability scores (e.g. ["Strength"])
+ * @property {string} hitDie - Hit die type (e.g. "d12")
+ * @property {string[]} savingThrows - Saving throw proficiencies (e.g. ["Strength", "Constitution"])
+ * @property {string[]} armorProficiencies - Armor proficiency list
+ * @property {string[]} weaponProficiencies - Weapon proficiency list
+ * @property {string[]} toolProficiencies - Tool proficiency list
+ * @property {VocationSkillProficiencies} skillProficiencies - Skill choice structure
+ * @property {VocationSpellcasting} [spellcasting] - Spellcasting summary if applicable
+ * @property {string[]} specializations - Slugs of available specializations
+ * @property {VocationFeature[]} features - Level-feature progression
+ * @property {string[]} tags - Derived gameplay tags for filtering
+ * @property {number} [indexVersion] - Metadata schema version
+ */
+export interface VocationMetadata {
+  slug: string;
+  title: string;
+  file: string;
+  link: string;
+  archetype: string;
+  primaryAbility: string[];
+  hitDie: string;
+  savingThrows: string[];
+  armorProficiencies: string[];
+  weaponProficiencies: string[];
+  toolProficiencies: string[];
+  skillProficiencies: VocationSkillProficiencies;
+  spellcasting?: VocationSpellcasting;
+  specializations: string[];
+  features: VocationFeature[];
+  tags: string[];
+  indexVersion?: number;
+}
+
+/* ──────────────────────  Index Projection  ─────────────────────────── */
+
+/**
+ * Lightweight projection for table and dropdown display.
+ *
+ * @property {string} slug - Vocation slug
+ * @property {string} title - Vocation title
+ * @property {string} hitDie - Hit die type
+ * @property {string} archetype - Vocation archetype
+ * @property {string[]} primaryAbility - Primary ability scores
+ */
+export interface VocationIndexEntry {
+  slug: string;
+  title: string;
+  hitDie: string;
+  archetype: string;
+  primaryAbility: string[];
+}

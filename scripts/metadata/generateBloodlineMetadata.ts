@@ -8,6 +8,7 @@
  *   `---` → Boons section with Collapsible blocks.
  *
  * Files named `main.mdx` and files inside `shared-boons/` are excluded from
+ * processing (now also excluded by the `.bloodline.mdx` file pattern).
  * metadata generation (they are index/aggregate pages, not individual bloodlines).
  *
  * @module scripts/metadata/generateBloodlineMetadata
@@ -620,7 +621,7 @@ async function main(
   await runGenerator({
     name: 'Bloodline Metadata Generator',
     contentType: 'bloodlines',
-    filePattern: options.filePattern || /\.mdx$/,
+    filePattern: options.filePattern || /\.bloodline\.mdx$/,
     parseFile: parseBloodlineFile,
     processResult: (result) => {
       if (result === null) return { metadata: null, count: 0 };
@@ -642,3 +643,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export { main, parseBloodlineFile };
+

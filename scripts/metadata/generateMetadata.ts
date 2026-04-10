@@ -69,17 +69,24 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
   },
   bloodlines: {
     dir: 'src/content/en/character-creation/bloodlines',
-    pattern: /\.mdx$/,
+    pattern: /\.bloodline\.mdx$/,
     generator: 'generateBloodlineMetadata.ts',
     contentType: 'character-creation',
     subType: 'bloodline',
   },
-  classes: {
+  vocations: {
     dir: 'src/content/en/character-creation/vocations',
-    pattern: /\.mdx$/,
-    generator: null,
+    pattern: /main\.mdx$/,
+    generator: 'generateVocationMetadata.ts',
     contentType: 'character-creation',
-    subType: 'class',
+    subType: 'vocation',
+  },
+  specializations: {
+    dir: 'src/content/en/character-creation/vocations',
+    pattern: /\.specialization\.mdx$/,
+    generator: 'generateSpecializationMetadata.ts',
+    contentType: 'character-creation',
+    subType: 'specialization',
   },
   world: {
     dir: 'src/content/en/world',
@@ -124,6 +131,10 @@ class MetadataOrchestrator {
       if (arg === '--trinkets' || arg === '--trinket') types.push('trinkets');
       if (arg === '--bloodlines' || arg === '--bloodline')
         types.push('bloodlines');
+      if (arg === '--vocations' || arg === '--vocation')
+        types.push('vocations');
+      if (arg === '--specializations' || arg === '--specialization')
+        types.push('specializations');
     }
 
     return types.length > 0 ? types : null;
@@ -235,3 +246,4 @@ if (import.meta.url === pathToFileURL(__filename).href) {
 }
 
 export { MetadataOrchestrator };
+

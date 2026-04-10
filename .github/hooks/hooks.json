@@ -1,38 +1,66 @@
 {
   "version": 1,
   "hooks": {
-    "userPromptSubmitted": [
+    "PostToolUse": [
       {
         "type": "command",
-        "bash": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/user-prompt-submitted.ts",
-        "powershell": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/user-prompt-submitted.ts",
+        "command": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/post-tool-use.ts",
+        "windows": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/post-tool-use.ts",
+        "linux": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/post-tool-use.ts",
+        "osx": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/post-tool-use.ts",
         "cwd": ".",
-        "timeoutSec": 10
+        "timeout": 15
       }
     ],
-    "postToolUse": [
+    "PreToolUse": [
       {
         "type": "command",
-        "bash": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/post-tool-use.ts",
-        "powershell": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/post-tool-use.ts",
+        "command": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/pre-tool-use.ts",
+        "windows": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/pre-tool-use.ts",
+        "linux": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/pre-tool-use.ts",
+        "osx": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/pre-tool-use.ts",
         "cwd": ".",
-        "timeoutSec": 15
+        "timeout": 10
       }
     ],
-    "sessionEnd": [
+    "Stop": [
       {
         "type": "command",
-        "bash": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/session-end-missing-tests.ts",
-        "powershell": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/session-end-missing-tests.ts",
+        "command": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-health.ts",
+        "windows": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-health.ts",
+        "linux": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-health.ts",
+        "osx": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-health.ts",
         "cwd": ".",
-        "timeoutSec": 30
+        "timeout": 120
       },
       {
         "type": "command",
-        "bash": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/session-end-health.ts",
-        "powershell": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/hooks/session-end-health.ts",
+        "command": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-memory-save.ts",
+        "windows": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-memory-save.ts",
+        "linux": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-memory-save.ts",
+        "osx": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-memory-save.ts",
         "cwd": ".",
-        "timeoutSec": 120
+        "timeout": 15
+      },
+      {
+        "type": "command",
+        "command": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-missing-tests.ts",
+        "windows": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-missing-tests.ts",
+        "linux": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-missing-tests.ts",
+        "osx": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/session-end-missing-tests.ts",
+        "cwd": ".",
+        "timeout": 30
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/user-prompt-submitted.ts",
+        "windows": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/user-prompt-submitted.ts",
+        "linux": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/user-prompt-submitted.ts",
+        "osx": "npx tsx --tsconfig .paw/tsconfig.json .paw/hooks/user-prompt-submitted.ts",
+        "cwd": ".",
+        "timeout": 10
       }
     ]
   }

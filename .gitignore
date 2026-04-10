@@ -57,3 +57,6 @@ scripts/hooks/.patterns
 *.bak
 /src/**/*.metadata.json
 /.meta/
+.paw
+.github/PAW
+.pawignore

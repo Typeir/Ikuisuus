@@ -6,14 +6,14 @@
 
 These rules are **strictly enforced**. Violations will cause build failures, test failures, or code review rejections.
 
-| Rule                                          | Documentation                                  | Acceptance Check                                           |
-| --------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------- |
-| JSDoc on all declarations, no inline comments | [JSDoc Standards](./docs/jsdoc.md)             | `grep -rn "// " src/` finds no logic comments              |
-| NO color literals outside `globals.scss`      | [SCSS Theme Rules](./docs/scss-theme-rules.md) | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` returns 0 |
-| Zero act() warnings in tests                  | [Testing Rules](./docs/testing-rules.md)       | `npm test` shows no warnings                               |
-| Use NotificationProvider, not `alert()`       | [Testing Rules](./docs/testing-rules.md)       | `grep -rn "alert(" src/` returns 0                         |
+| Rule                                          | Documentation                                                    | Acceptance Check                                                                                   |
+| --------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| JSDoc on all declarations, no inline comments | [JSDoc Standards](./docs/jsdoc.md)                               | `grep -rn "// " src/` finds no logic comments                                                      |
+| NO color literals outside `globals.scss`      | [SCSS Theme Rules](./docs/scss-theme-rules.md)                   | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` returns 0                                         |
+| Zero act() warnings in tests                  | [Testing Rules](./docs/testing-rules.md)                         | `npm test` shows no warnings                                                                       |
+| Use NotificationProvider, not `alert()`       | [Testing Rules](./docs/testing-rules.md)                         | `grep -rn "alert(" src/` returns 0                                                                 |
 | Explicit MikroORM decorator typing            | [MikroORM Instructions](./instructions/mikroorm.instructions.md) | `rg "@PrimaryKey\(\{(?![^}]*type:)(?![^}]*entity:)[^}]*\}\)" src/lib/db/orm/entities -n` returns 0 |
-| Run `npm run pre-init` before dev/build       | [Build Pipeline](./docs/build-pipeline.md)     | Build succeeds                                             |
+| Run `npm run pre-init` before dev/build       | [Build Pipeline](./docs/build-pipeline.md)                       | Build succeeds                                                                                     |
 
 ## ✅ Completion Gate (Mandatory)
 
@@ -430,7 +430,7 @@ export { main, parseFile }; // Export for orchestrator
 - **Skills**: `.github/skills/` — task-lifecycle, damocles-lore, damocles-page-types, mdx-format
 - **Instructions**: `.github/instructions/` — jsdoc-standards, mdx-content, metadata-generators, scss-theme, testing, world-sim, damocles-authoring, encounter-module, i18n, build-pipeline
 - **Prompts**: `.github/prompts/` — `/start-task`, `/run-health`, `/reconcile-completion`, `/full-workflow`, `/draft-damocles-page`, `/refactor-damocles-mdx`, `/check-damocles-lore-consistency`, `/convert-notes-to-damocles-mdx`, `/add-component`, `/add-test`, `/fix-health`, `/add-metadata-type`
-- **Hooks**: `.github/hooks/copilot-hooks.json` — PostToolUse lint + Stop health gate
+- **Hooks**: `.github/hooks/hooks.json` — PreToolUse violation gate + PostToolUse enforcement + SessionEnd health gates
 - **Health Scripts**: `.github/scripts/health-check.mjs` — Composite gate (file-length, duplicate-css, jsdoc, antipatterns, test-gaps, mdx-format)
 - **Task Artifacts**: `.ignore/tasks/` — Timestamped agile task summaries
 - **Reports**: `.ignore/reports/` — Timestamped completion reports

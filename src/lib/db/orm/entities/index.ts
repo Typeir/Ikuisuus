@@ -27,9 +27,21 @@ export {
 } from './MonsterEntity';
 export { SchemaMigrationEntity } from './SchemaMigrationEntity';
 export {
+    SpecializationEntity,
+    SpecializationFeatureEntity,
+    SpecializationPreparedSpellEntity,
+    SpecializationSpellcastingEmbed
+} from './SpecializationEntity';
+export {
     SpellComponentEmbed,
     SpellEntity,
     SpellListEntity
 } from './SpellEntity';
 export { TrinketEntity, TrinketSavingThrowEmbed } from './TrinketEntity';
+export {
+    VocationEntity,
+    VocationFeatureEntity,
+    VocationSkillProficienciesEmbed,
+    VocationSpellcastingEmbed
+} from './VocationEntity';
 

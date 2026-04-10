@@ -44,11 +44,19 @@ import {
     MonsterSenseEmbed,
     MonsterSpeedEmbed,
     SchemaMigrationEntity,
+    SpecializationEntity,
+    SpecializationFeatureEntity,
+    SpecializationPreparedSpellEntity,
+    SpecializationSpellcastingEmbed,
     SpellComponentEmbed,
     SpellEntity,
     SpellListEntity,
     TrinketEntity,
     TrinketSavingThrowEmbed,
+    VocationEntity,
+    VocationFeatureEntity,
+    VocationSkillProficienciesEmbed,
+    VocationSpellcastingEmbed,
 } from '../../../src/lib/db/orm/entities/index';
 import { contentHash } from '../../../src/lib/metadata/contentHash';
 
@@ -236,6 +244,49 @@ interface BloodlineMeta {
     sortOrder: number;
     tags: string[];
   }>;
+  tags?: string[];
+  indexVersion?: number;
+  versionHash?: string;
+}
+
+/**
+ * @description Vocation metadata shape produced by generateVocationMetadata.ts.
+ */
+interface VocationMeta {
+  slug: string;
+  title: string;
+  file: string;
+  link: string;
+  archetype: string;
+  primaryAbility: string[];
+  hitDie: string;
+  savingThrows: string[];
+  armorProficiencies: string[];
+  weaponProficiencies: string[];
+  toolProficiencies: string[];
+  skillProficiencies: { count: number; choices: string[] };
+  spellcasting?: { ability: string; progression: string };
+  specializations: string[];
+  features: Array<{ level: number; name: string }>;
+  tags?: string[];
+  indexVersion?: number;
+  versionHash?: string;
+}
+
+/**
+ * @description Specialization metadata shape produced by generateSpecializationMetadata.ts.
+ */
+interface SpecializationMeta {
+  slug: string;
+  title: string;
+  file: string;
+  link: string;
+  vocation: string;
+  specializationType: string;
+  flavor?: string;
+  spellcasting?: { ability: string; progression: string };
+  spellsAlwaysPrepared?: Array<{ level: number; spells: string[] }>;
+  features: Array<{ level: number; name: string }>;
   tags?: string[];
   indexVersion?: number;
   versionHash?: string;
@@ -602,6 +653,266 @@ async function seedBloodlines(
   return records.length;
 }
 
+/**
+ * Seeds the `vocations` + `vocation_features` tables for one locale.
+ * MikroORM handles FK assignment and insert ordering automatically.
+ *
+ * @param em - Transaction-scoped entity manager
+ * @param locale - Locale code
+ * @returns Number of rows inserted
+ */
+async function seedVocations(
+  em: EntityManager,
+  locale: string,
+): Promise<number> {
+  const records = readMetadata<VocationMeta>(
+    locale,
+    join('character-creation', 'vocations'),
+  ).filter(Boolean);
+  if (records.length === 0) return 0;
+
+  await em.nativeDelete(VocationEntity, { locale });
+
+  for (const v of records) {
+    const sp = v.skillProficiencies ?? { count: 0, choices: [] };
+    const sc = v.spellcasting;
+
+    const vocation = em.create(VocationEntity, {
+      locale,
+      slug: v.slug,
+      title: v.title,
+      file: v.file,
+      link: v.link,
+      archetype: v.archetype,
+      primaryAbility: v.primaryAbility ?? [],
+      hitDie: v.hitDie,
+      savingThrows: v.savingThrows ?? [],
+      armorProficiencies: v.armorProficiencies ?? [],
+      weaponProficiencies: v.weaponProficiencies ?? [],
+      toolProficiencies: v.toolProficiencies ?? [],
+      skillProficiencies: {
+        count: sp.count,
+        choices: sp.choices,
+      },
+      spellcasting: sc
+        ? { ability: sc.ability, progression: sc.progression }
+        : undefined,
+      specializations: v.specializations ?? [],
+      tags: v.tags ?? [],
+      indexVersion: v.indexVersion,
+      versionHash: resolveVersionHash(v as unknown as Record<string, unknown>),
+    });
+
+    for (let i = 0; i < (v.features ?? []).length; i++) {
+      const f = v.features[i];
+      em.create(VocationFeatureEntity, {
+        vocation,
+        level: f.level,
+        name: f.name,
+        sortOrder: i,
+      });
+    }
+  }
+
+  await em.flush();
+  return records.length;
+}
+
+/**
+ * Seeds the `specializations` + child tables for one locale.
+ * MikroORM handles FK assignment and insert ordering automatically.
+ *
+ * @param em - Transaction-scoped entity manager
+ * @param locale - Locale code
+ * @returns Number of rows inserted
+ */
+async function seedSpecializations(
+  em: EntityManager,
+  locale: string,
+): Promise<number> {
+  const records = readMetadata<SpecializationMeta>(
+    locale,
+    join('character-creation', 'vocations', 'specializations'),
+  ).filter(Boolean);
+  if (records.length === 0) return 0;
+
+  await em.nativeDelete(SpecializationEntity, { locale });
+
+  for (const s of records) {
+    const sc = s.spellcasting;
+
+    const spec = em.create(SpecializationEntity, {
+      locale,
+      slug: s.slug,
+      title: s.title,
+      file: s.file,
+      link: s.link,
+      vocation: s.vocation,
+      specializationType: s.specializationType,
+      flavor: s.flavor,
+      spellcasting: sc
+        ? { ability: sc.ability, progression: sc.progression }
+        : undefined,
+      tags: s.tags ?? [],
+      indexVersion: s.indexVersion,
+      versionHash: resolveVersionHash(s as unknown as Record<string, unknown>),
+    });
+
+    for (let i = 0; i < (s.features ?? []).length; i++) {
+      const f = s.features[i];
+      em.create(SpecializationFeatureEntity, {
+        specialization: spec,
+        level: f.level,
+        name: f.name,
+        sortOrder: i,
+      });
+    }
+
+    for (let i = 0; i < (s.spellsAlwaysPrepared ?? []).length; i++) {
+      const p = s.spellsAlwaysPrepared![i];
+      em.create(SpecializationPreparedSpellEntity, {
+        specialization: spec,
+        level: p.level,
+        spells: p.spells,
+        sortOrder: i,
+      });
+    }
+  }
+
+  await em.flush();
+  return records.length;
+}
+
+/**
+ * Seeds the `vocations` + `vocation_features` tables for one locale.
+ * MikroORM handles FK assignment and insert ordering automatically.
+ *
+ * @param em - Transaction-scoped entity manager
+ * @param locale - Locale code
+ * @returns Number of rows inserted
+ */
+async function seedVocations(
+  em: EntityManager,
+  locale: string,
+): Promise<number> {
+  const records = readMetadata<VocationMeta>(
+    locale,
+    join('character-creation', 'vocations'),
+  ).filter(Boolean);
+  if (records.length === 0) return 0;
+
+  await em.nativeDelete(VocationEntity, { locale });
+
+  for (const v of records) {
+    const sp = v.skillProficiencies ?? { count: 0, choices: [] };
+    const sc = v.spellcasting;
+
+    const vocation = em.create(VocationEntity, {
+      locale,
+      slug: v.slug,
+      title: v.title,
+      file: v.file,
+      link: v.link,
+      archetype: v.archetype,
+      primaryAbility: v.primaryAbility ?? [],
+      hitDie: v.hitDie,
+      savingThrows: v.savingThrows ?? [],
+      armorProficiencies: v.armorProficiencies ?? [],
+      weaponProficiencies: v.weaponProficiencies ?? [],
+      toolProficiencies: v.toolProficiencies ?? [],
+      skillProficiencies: {
+        count: sp.count,
+        choices: sp.choices,
+      },
+      spellcasting: sc
+        ? { ability: sc.ability, progression: sc.progression }
+        : undefined,
+      specializations: v.specializations ?? [],
+      tags: v.tags ?? [],
+      indexVersion: v.indexVersion,
+      versionHash: resolveVersionHash(v as unknown as Record<string, unknown>),
+    });
+
+    for (let i = 0; i < (v.features ?? []).length; i++) {
+      const f = v.features[i];
+      em.create(VocationFeatureEntity, {
+        vocation,
+        level: f.level,
+        name: f.name,
+        sortOrder: i,
+      });
+    }
+  }
+
+  await em.flush();
+  return records.length;
+}
+
+/**
+ * Seeds the `specializations` + child tables for one locale.
+ * MikroORM handles FK assignment and insert ordering automatically.
+ *
+ * @param em - Transaction-scoped entity manager
+ * @param locale - Locale code
+ * @returns Number of rows inserted
+ */
+async function seedSpecializations(
+  em: EntityManager,
+  locale: string,
+): Promise<number> {
+  const records = readMetadata<SpecializationMeta>(
+    locale,
+    join('character-creation', 'vocations', 'specializations'),
+  ).filter(Boolean);
+  if (records.length === 0) return 0;
+
+  await em.nativeDelete(SpecializationEntity, { locale });
+
+  for (const s of records) {
+    const sc = s.spellcasting;
+
+    const spec = em.create(SpecializationEntity, {
+      locale,
+      slug: s.slug,
+      title: s.title,
+      file: s.file,
+      link: s.link,
+      vocation: s.vocation,
+      specializationType: s.specializationType,
+      flavor: s.flavor,
+      spellcasting: sc
+        ? { ability: sc.ability, progression: sc.progression }
+        : undefined,
+      tags: s.tags ?? [],
+      indexVersion: s.indexVersion,
+      versionHash: resolveVersionHash(s as unknown as Record<string, unknown>),
+    });
+
+    for (let i = 0; i < (s.features ?? []).length; i++) {
+      const f = s.features[i];
+      em.create(SpecializationFeatureEntity, {
+        specialization: spec,
+        level: f.level,
+        name: f.name,
+        sortOrder: i,
+      });
+    }
+
+    for (let i = 0; i < (s.spellsAlwaysPrepared ?? []).length; i++) {
+      const p = s.spellsAlwaysPrepared![i];
+      em.create(SpecializationPreparedSpellEntity, {
+        specialization: spec,
+        level: p.level,
+        spells: p.spells,
+        sortOrder: i,
+      });
+    }
+  }
+
+  await em.flush();
+  return records.length;
+}
+
 /* ────────────────────────  Orchestrator  ───────────────────────────── */
 
 /**
@@ -619,9 +930,11 @@ async function seedLocale(orm: MikroORM, locale: string): Promise<void> {
     const spells = await seedSpells(tx, locale);
     const trinkets = await seedTrinkets(tx, locale);
     const bloodlines = await seedBloodlines(tx, locale);
+    const vocations = await seedVocations(tx, locale);
+    const specializations = await seedSpecializations(tx, locale);
 
     console.log(
-      `  ✅  ${locale}:  monsters=${monsters}  heirlooms=${heirlooms}  spells=${spells}  trinkets=${trinkets}  bloodlines=${bloodlines}`,
+      `  ✅  ${locale}:  monsters=${monsters}  heirlooms=${heirlooms}  spells=${spells}  trinkets=${trinkets}  bloodlines=${bloodlines}  vocations=${vocations}  specializations=${specializations}`,
     );
   });
 }
@@ -656,6 +969,14 @@ async function main(): Promise<void> {
         SpellListEntity,
         TrinketEntity,
         TrinketSavingThrowEmbed,
+        VocationEntity,
+        VocationFeatureEntity,
+        VocationSkillProficienciesEmbed,
+        VocationSpellcastingEmbed,
+        SpecializationEntity,
+        SpecializationFeatureEntity,
+        SpecializationPreparedSpellEntity,
+        SpecializationSpellcastingEmbed,
         CorrectionsUserEntity,
         SchemaMigrationEntity,
       ],
