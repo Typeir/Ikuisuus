@@ -152,7 +152,9 @@ export function formatCommandHelp(registry: CommandRegistry): string {
       cmd.meta.aliases && cmd.meta.aliases.length > 0
         ? ` (${cmd.meta.aliases.join(', ')})`
         : '';
-    lines.push(`  ${cmd.meta.name}${aliases}`.padEnd(28) + cmd.meta.description);
+    lines.push(
+      `  ${cmd.meta.name}${aliases}`.padEnd(28) + cmd.meta.description,
+    );
 
     if (cmd.meta.subcommands) {
       for (const [key, def] of Object.entries(cmd.meta.subcommands)) {

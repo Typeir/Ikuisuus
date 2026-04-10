@@ -488,7 +488,7 @@ const NotificationItem = memo(function NotificationItem({
   /** Triggers exit animation before calling onDismiss after 200ms animation completes */
   const handleDismiss = useCallback(() => {
     setIsExiting(true);
-    setTimeout(onDismiss, 200);
+    setTimeout(onDismiss, NOTIFICATION_EXIT_ANIMATION_MS);
   }, [onDismiss]);
 
   /** Returns the appropriate SVG icon based on notification type */

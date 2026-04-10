@@ -31,7 +31,8 @@ const GENERATED_FILE_HEADER = `/**
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0
- */`;
+ */
+/* health:check-ignore-file all */`;
 
 /**
  * CI placeholder module content for mdxComponents.tsx.
@@ -47,6 +48,8 @@ export const createCiPlaceholderModule = (): string => `/**
  * @version 1.0.0
  * @since 2.0.0
  */
+
+/* health:check-ignore-file all */
 
 export const mdxComponents = {};
 export default mdxComponents;

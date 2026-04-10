@@ -169,8 +169,8 @@ async function getAllRoutes(): Promise<string[]> {
 /**
  * Find the nearest matching route for a given pathname
  *
- * @param pathname - The requested path that resulted in 404
- * @returns Route match with similarity score, or null if no good match
+ * @param {string} pathname - The requested path that resulted in 404
+ * @returns {Promise<RouteMatch|null>} Route match with similarity score, or null if no good match
  */
 export async function findNearestRoute(
   pathname: string,

@@ -40,7 +40,7 @@ import styles from './metadataTable.module.scss';
  * @typedef {Object} MetadataRow
  * @property {*} [key] - Any property with any value type
  */
-export type MetadataRow = Record<string, any>;
+export type MetadataRow = Record<string, unknown>;
 
 /**
  * Configuration for a single table column, defining display and interaction behavior.
@@ -60,11 +60,11 @@ export type ColumnConfig = {
   label: string;
   sortable?: boolean;
   filterable?: boolean;
-  render?: (value: any, row: MetadataRow) => React.ReactNode;
+  render?: (value: unknown, row: MetadataRow) => React.ReactNode;
   filterType?: 'text' | 'select' | 'multiselect' | 'range';
   getFilterOptions?: (rows: MetadataRow[]) => string[];
-  getValue?: (row: MetadataRow) => any;
-  compareValues?: (a: any, b: any) => number;
+  getValue?: (row: MetadataRow) => unknown;
+  compareValues?: (a: unknown, b: unknown) => number;
 };
 
 /**
@@ -172,7 +172,7 @@ export default function MetadataTable({
   const [sortDirection, setSortDirection] = useState<SortDirection>(
     defaultSort?.direction || null,
   );
-  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [filters, setFilters] = useState<Record<string, unknown>>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -249,7 +249,7 @@ export default function MetadataTable({
           const filterValueStr = String(value).toLowerCase();
           if (cellValueStr !== filterValueStr) return false;
         } else if (column.filterType === 'range') {
-          const numValue = parseFloat(cellValue);
+          const numValue = parseFloat(String(cellValue));
           if (isNaN(numValue)) return false;
           if (value.min !== undefined && numValue < value.min) return false;
           if (value.max !== undefined && numValue > value.max) return false;
@@ -349,8 +349,8 @@ export default function MetadataTable({
    * @param {string} key - Column key being filtered
    * @param {*} value - Filter value (varies by filterType)
    */
-  const handleFilterChange = (key: string, value: any) => {
-    setFilters((prev: Record<string, any>) => ({ ...prev, [key]: value }));
+  const handleFilterChange = (key: string, value: unknown) => {
+    setFilters((prev: Record<string, unknown>) => ({ ...prev, [key]: value }));
     setCurrentPage(1);
   };
 

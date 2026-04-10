@@ -31,9 +31,14 @@ import type {
  * 3. Add resistRemaining count if missing (0 or 3)
  * 4. Add phaseDeeds tracking if missing
  */
-const migrateCombatant = (combatant: any): InProgressCombatant => {
-  if (!combatant.mechanics) {
-    combatant.mechanics = {
+const migrateCombatant = (combatant: unknown): InProgressCombatant => {
+  const typedCombatant =
+    typeof combatant === 'object' && combatant !== null
+      ? (combatant as Partial<InProgressCombatant>)
+      : {};
+
+  if (!typedCombatant.mechanics) {
+    typedCombatant.mechanics = {
       lair: false,
       stratagem: false,
       legendaryDeed: false,
@@ -42,25 +47,25 @@ const migrateCombatant = (combatant: any): InProgressCombatant => {
     };
   }
 
-  if (!Array.isArray(combatant.legendaryDeedsUsed)) {
-    combatant.legendaryDeedsUsed = combatant.mechanics.legendaryDeed
+  if (!Array.isArray(typedCombatant.legendaryDeedsUsed)) {
+    typedCombatant.legendaryDeedsUsed = typedCombatant.mechanics.legendaryDeed
       ? [false, false, false]
       : [];
   }
 
-  if (typeof combatant.resistRemaining !== 'number') {
-    combatant.resistRemaining = combatant.mechanics.resist ? 3 : 0;
+  if (typeof typedCombatant.resistRemaining !== 'number') {
+    typedCombatant.resistRemaining = typedCombatant.mechanics.resist ? 3 : 0;
   }
 
-  if (!combatant.phaseDeeds) {
-    combatant.phaseDeeds = {
+  if (!typedCombatant.phaseDeeds) {
+    typedCombatant.phaseDeeds = {
       wounded: false,
       bloodied: false,
       doomed: false,
     };
   }
 
-  return combatant as InProgressCombatant;
+  return typedCombatant as InProgressCombatant;
 };
 
 /**
@@ -71,11 +76,20 @@ const migrateCombatant = (combatant: any): InProgressCombatant => {
  * @param {any} combat - Possibly outdated combat data
  * @returns {InProgressCombat} Migrated combat with all required fields
  */
-const migrateInProgressCombat = (combat: any): InProgressCombat => {
+const migrateInProgressCombat = (combat: unknown): InProgressCombat => {
+  const typedCombat =
+    typeof combat === 'object' && combat !== null
+      ? (combat as Partial<InProgressCombat>)
+      : {};
+
+  const combatants = Array.isArray(typedCombat.combatants)
+    ? typedCombat.combatants.map(migrateCombatant)
+    : [];
+
   return {
-    ...combat,
-    combatants: combat.combatants.map(migrateCombatant),
-  };
+    ...typedCombat,
+    combatants,
+  } as InProgressCombat;
 };
 
 /**

@@ -207,7 +207,7 @@ const SidebarItem = ({
   }, [isExpanded, item.path, open, isHydrated]);
 
   useEffect(() => {
-    return pathStore.subscribe((path: any) => {
+    return pathStore.subscribe((path: string | null) => {
       if (collapseSiblings && path !== item.path) {
         setOpen(false);
       }
@@ -219,13 +219,13 @@ const SidebarItem = ({
     setOpen(nextState);
     setExpanded(item.path, nextState);
     e?.preventDefault();
-    if (collapseSiblings && nextState) {
-      pathStore.set(item.path);
-    }
-  };
-
-  if (item.children?.length === 0) {
-    return null;
+        useEffect(() => {
+          return pathStore.subscribe((path: string | null) => {
+            if (collapseSiblings && path !== item.path) {
+              setOpen(false);
+            }
+          });
+        }, [collapseSiblings, item.path, pathStore]);
   }
 
   if (item.children) {

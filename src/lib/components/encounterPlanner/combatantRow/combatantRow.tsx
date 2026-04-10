@@ -45,7 +45,7 @@
 
 'use client';
 
-import type { AffixEntry } from '@/lib/types/encounterPlanner';
+import type { AffixEntry, SpellRef } from '@/lib/types/encounterPlanner';
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
 import { computeAwakeningClasses } from '@/lib/utils/heroicAwakeningStyles';
 import { forceHeroicAwakeningWithAffixes } from '@/lib/utils/inProgressCombatStorage';
@@ -133,7 +133,7 @@ const CombatantRowContent: React.FC = () => {
     updateField('details', { ...combatant.details, items: newItems });
   };
 
-  const handleSpellsChange = (newSpells: any[]) => {
+  const handleSpellsChange = (newSpells: SpellRef[]) => {
     updateField('details', { ...combatant.details, spells: newSpells });
   };
 

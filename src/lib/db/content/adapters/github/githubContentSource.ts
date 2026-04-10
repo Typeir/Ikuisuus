@@ -13,13 +13,16 @@
  * @since 2.0.0
  */
 
+import { CONTENT_SUFFIXES } from '@/lib/enums/constants';
 import { logger } from '@/lib/logging/logger';
+import path from 'path';
 
 import { contentCacheTag } from '../../contentCacheTags';
 import type {
-  ContentFetchResult,
-  ContentSourceAdapter,
+    ContentFetchResult,
+    ContentSourceAdapter,
 } from '../../contentSourceAdapter';
+import { githubDirectorySource } from './githubDirectorySource';
 
 const log = logger.child({ module: 'GitHubContentSource' });
 
@@ -34,6 +37,70 @@ const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${CONTENT_REPO_OWNER}
 const EXTENSIONS = ['.mdx', '.sheet.mdx', '.md'];
 
 /**
+ * Resolves a single semantic-suffixed filename candidate for a base slug.
+ *
+ * @param {string[]} fileNames - File names from a single directory
+ * @param {string} slugLeaf - Base slug segment without directory prefix
+ * @returns {string | null} Unique semantic filename, or null when none/ambiguous
+ */
+const resolveUniqueSemanticFileName = (
+  fileNames: string[],
+  slugLeaf: string,
+): string | null => {
+  const candidates = fileNames.filter((fileName) => {
+    const matchedExtension = EXTENSIONS.find((extension) =>
+      fileName.endsWith(extension),
+    );
+    if (!matchedExtension) {
+      return false;
+    }
+
+    const stem = fileName.slice(0, -matchedExtension.length);
+    return CONTENT_SUFFIXES.some((suffix) => stem === `${slugLeaf}${suffix}`);
+  });
+
+  return candidates.length === 1 ? candidates[0] : null;
+};
+
+/**
+ * Fetches a concrete file path from GitHub raw content.
+ *
+ * @param {string} locale - Content locale
+ * @param {string} relativeFilePath - File path relative to locale root including extension
+ * @param {string[]} tags - Cache tags to attach to the request
+ * @returns {Promise<ContentFetchResult | null>} Resolved content result or null
+ */
+const fetchConcreteFile = async (
+  locale: string,
+  relativeFilePath: string,
+  tags: string[],
+): Promise<ContentFetchResult | null> => {
+  const url = `${GITHUB_RAW_BASE}/${locale}/${relativeFilePath}`;
+
+  try {
+    const res = await fetch(url, {
+      cache: 'force-cache',
+      next: { tags },
+    });
+
+    if (!res.ok) {
+      return null;
+    }
+
+    const content = await res.text();
+    const virtualPath = `${locale}/${relativeFilePath}`;
+    log.message('Fetched content from GitHub', { path: virtualPath });
+    return { content, resolvedPath: virtualPath };
+  } catch (error) {
+    log.warning('GitHub fetch failed for variant', {
+      url,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+};
+
+/**
  * GitHub raw-content-backed content source.
  * Fetches from `raw.githubusercontent.com` with `force-cache` and
  * per-slug cache tags for targeted invalidation.
@@ -44,25 +111,39 @@ export const githubContentSource: ContentSourceAdapter = {
     slugPath: string,
   ): Promise<ContentFetchResult | null> {
     for (const ext of EXTENSIONS) {
-      const url = `${GITHUB_RAW_BASE}/${locale}/${slugPath}${ext}`;
-      try {
-        const res = await fetch(url, {
-          cache: 'force-cache',
-          next: { tags: [contentCacheTag(locale, slugPath)] },
-        });
-        if (res.ok) {
-          const content = await res.text();
-          const virtualPath = `${locale}/${slugPath}${ext}`;
-          log.message('Fetched content from GitHub', { path: virtualPath });
-          return { content, resolvedPath: virtualPath };
-        }
-      } catch (error) {
-        log.warning('GitHub fetch failed for variant', {
-          url,
-          error: error instanceof Error ? error.message : String(error),
-        });
+      const directPath = `${slugPath}${ext}`;
+      const directResult = await fetchConcreteFile(locale, directPath, [
+        contentCacheTag(locale, slugPath),
+      ]);
+      if (directResult) {
+        return directResult;
       }
     }
+
+    const slugDirectory = path.posix.dirname(slugPath);
+    const relativeDirectory = slugDirectory === '.' ? '' : slugDirectory;
+    const slugLeaf = path.posix.basename(slugPath);
+    const entries = await githubDirectorySource.listEntries(
+      locale,
+      relativeDirectory,
+    );
+    const fileNames = entries
+      .filter((entry) => !entry.isDirectory)
+      .map((entry) => entry.name);
+    const semanticFileName = resolveUniqueSemanticFileName(fileNames, slugLeaf);
+
+    if (!semanticFileName) {
+      return null;
+    }
+
+    const semanticPath = relativeDirectory
+      ? `${relativeDirectory}/${semanticFileName}`
+      : semanticFileName;
+    const semanticSlugPath = semanticPath.replace(/\.(md|mdx)$/, '');
+
+    return fetchConcreteFile(locale, semanticPath, [
+      contentCacheTag(locale, slugPath),
+    ]);
 
     return null;
   },

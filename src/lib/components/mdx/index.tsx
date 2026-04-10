@@ -6,6 +6,7 @@
  * @since 2.0.0
  */
 import Image from 'next/image';
+import type { ComponentProps, PropsWithChildren } from 'react';
 import BlendedImage from './blendedImage';
 import ClearFloats from './clearFloats/clearFloats';
 import Collapsible from './collapsible/collapsible';
@@ -37,14 +38,14 @@ export const components = {
   ParallaxBackdrop,
   Tooltip,
   // eslint-disable-next-line jsx-a11y/alt-text
-  Image: (props: any) => <Image {...props} width={600} height={600} />,
+  Image: (props: ComponentProps<typeof Image>) => <Image {...props} width={600} height={600} />,
   h1: H1,
   h2: H2,
   h3: H3,
   h4: H4,
   h5: H5,
   h6: H6,
-  table: ({ children }: any) => (
+  table: ({ children }: PropsWithChildren<{}>) => (
     <div className='overflow-x-auto max-w-full'>
       <table>{children}</table>
     </div>

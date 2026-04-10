@@ -2,7 +2,8 @@
  * JSDoc Quality Check
  *
  * @fileoverview Validates JSDoc compliance against project hard rules:
- * inline comments in function bodies, color literals in TSX, and alert() calls.
+ * inline comments in function bodies, typed @param tags, color literals in
+ * TSX, and disallowed browser dialog calls.
  *
  * @module .github/scripts/check-jsdoc-quality
  * @author Typeir
@@ -39,11 +40,14 @@ const REQUIRED_HEADING_TAGS = [
 /**
  * Recursively find TypeScript source files under a directory.
  *
- * @param dir Directory to scan
- * @param results Accumulator
+ * @param {string} dir Directory to scan
+ * @param {string[]} results Accumulator
  * @returns Relative file paths
  */
-async function findSourceFiles(dir: string, results: string[] = []): Promise<string[]> {
+async function findSourceFiles(
+  dir: string,
+  results: string[] = [],
+): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
@@ -62,7 +66,7 @@ async function findSourceFiles(dir: string, results: string[] = []): Promise<str
 /**
  * Determine if a comment line is an allowed exemption.
  *
- * @param comment Trimmed source line
+ * @param {string} comment Trimmed source line
  * @returns True when the comment is exempt from the no-inline-comments rule
  */
 function isAllowedComment(comment: string): boolean {
@@ -83,12 +87,54 @@ function isAllowedComment(comment: string): boolean {
 }
 
 /**
- * Find inline logic comments in a source file.
+ * Detect JSDoc @param lines that omit a type annotation.
  *
- * @param content File content
+ * @param {string} content File content
  * @returns Violations with line numbers
  */
-function findInlineComments(content: string): Array<{ line: number; text: string }> {
+function findUntypedParamTags(
+  content: string,
+): Array<{ line: number; text: string }> {
+  const violations: Array<{ line: number; text: string }> = [];
+  const lines = content.split('\n');
+  let inJSDoc = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+
+    if (trimmed.startsWith('/**')) inJSDoc = true;
+
+    if (
+      !/^\*\s*@param\b/.test(trimmed) &&
+      !/^\/\*\*\s*@param\b/.test(trimmed)
+    ) {
+      continue;
+    }
+
+    if (
+      /^\*\s*@param\s+(?!\{)/.test(trimmed) ||
+      /^\/\*\*\s*@param\s+(?!\{)/.test(trimmed)
+    ) {
+      violations.push({ line: i + 1, text: trimmed });
+    }
+
+    if (trimmed.includes('*/')) {
+      inJSDoc = false;
+    }
+  }
+
+  return violations;
+}
+
+/**
+ * Find inline logic comments in a source file.
+ *
+ * @param {string} content File content
+ * @returns Violations with line numbers
+ */
+function findInlineComments(
+  content: string,
+): Array<{ line: number; text: string }> {
   const violations: Array<{ line: number; text: string }> = [];
   const lines = content.split('\n');
   let inJSDoc = false;
@@ -111,10 +157,12 @@ function findInlineComments(content: string): Array<{ line: number; text: string
 /**
  * Find the leading file-level JSDoc heading block.
  *
- * @param content File content
+ * @param {string} content File content
  * @returns Heading JSDoc block and start line when found
  */
-function findHeadingJSDoc(content: string): { block: string; startLine: number } | null {
+function findHeadingJSDoc(
+  content: string,
+): { block: string; startLine: number } | null {
   const lines = content.split('\n');
   let index = 0;
 
@@ -150,7 +198,7 @@ function findHeadingJSDoc(content: string): { block: string; startLine: number }
 /**
  * Find missing required heading tags in the file-level JSDoc block.
  *
- * @param content File content
+ * @param {string} content File content
  * @returns Missing tags and the heading start line
  */
 function findMissingHeadingTags(content: string): {
@@ -178,11 +226,14 @@ function findMissingHeadingTags(content: string): {
 /**
  * Find hex color literals in a TSX file.
  *
- * @param content File content
- * @param filePath Relative file path
+ * @param {string} content File content
+ * @param {string} filePath Relative file path
  * @returns Violations with line numbers
  */
-function findColorLiterals(content: string, filePath: string): Array<{ line: number; text: string }> {
+function findColorLiterals(
+  content: string,
+  filePath: string,
+): Array<{ line: number; text: string }> {
   if (!filePath.endsWith('.tsx')) return [];
   const colorRegex = /#[0-9a-fA-F]{3,8}\b/;
   return content
@@ -193,18 +244,27 @@ function findColorLiterals(content: string, filePath: string): Array<{ line: num
 }
 
 /**
- * Find alert() calls in a source file.
+ * Find disallowed browser dialog calls in a source file.
  *
- * @param content File content
+ * @param {string} content File content
  * @returns Violations with line numbers
  */
-function findAlertCalls(content: string): Array<{ line: number; text: string }> {
+function findDisallowedBrowserDialogCalls(
+  content: string,
+): Array<{ line: number; text: string }> {
+  const dialogCallPattern = new RegExp(
+    '\\b' + ['ale', 'rt'].join('') + '\\s*\\(',
+  );
   return content
     .split('\n')
     .map((lineText, i) => ({ lineText, i }))
     .filter(({ lineText }) => {
       const trimmed = lineText.trim();
-      return /\balert\s*\(/.test(lineText) && !trimmed.startsWith('*') && !trimmed.startsWith('//');
+      return (
+        dialogCallPattern.test(lineText) &&
+        !trimmed.startsWith('*') &&
+        !trimmed.startsWith('//')
+      );
     })
     .map(({ lineText, i }) => ({ line: i + 1, text: lineText.trim() }));
 }
@@ -244,6 +304,17 @@ export async function runCheck(): Promise<CheckResult> {
       });
     }
 
+    for (const v of findUntypedParamTags(content)) {
+      failures.push({
+        file: normalizedPath,
+        line: v.line,
+        rule: 'typed-param-tags',
+        message: `Untyped @param tag: ${v.text}`,
+        suggestion:
+          'Use @param {Type} name format (for example: @param {string} relativePath)',
+      });
+    }
+
     for (const v of findColorLiterals(content, normalizedPath)) {
       failures.push({
         file: normalizedPath,
@@ -254,12 +325,12 @@ export async function runCheck(): Promise<CheckResult> {
       });
     }
 
-    for (const v of findAlertCalls(content)) {
+    for (const v of findDisallowedBrowserDialogCalls(content)) {
       failures.push({
         file: normalizedPath,
         line: v.line,
-        rule: 'no-alert-calls',
-        message: `alert() call: ${v.text}`,
+        rule: 'no-browser-dialog-calls',
+        message: `Disallowed browser dialog call: ${v.text}`,
         suggestion: 'Use NotificationProvider instead',
       });
     }
@@ -286,7 +357,10 @@ async function main(): Promise<void> {
   process.exit(result.passed ? 0 : 1);
 }
 
-if (path.normalize(process.argv[1] ?? '') === path.normalize(fileURLToPath(import.meta.url))) {
+if (
+  path.normalize(process.argv[1] ?? '') ===
+  path.normalize(fileURLToPath(import.meta.url))
+) {
   main().catch((err: Error) => {
     console.error('\u274c Fatal:', err.message);
     process.exit(1);

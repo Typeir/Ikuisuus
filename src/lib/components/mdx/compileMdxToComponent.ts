@@ -33,7 +33,7 @@ export const compileMdxToComponent = async (source: string) => {
     recmaPlugins: [
       () => (tree) => {
         tree.body = tree.body.filter(
-          (node: any) => node.type !== 'ExportDefaultDeclaration',
+          (node: { type?: string }) => node.type !== 'ExportDefaultDeclaration',
         );
       },
     ],

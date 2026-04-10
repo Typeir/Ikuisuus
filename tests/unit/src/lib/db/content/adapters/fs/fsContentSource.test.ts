@@ -1,38 +1,124 @@
-/**
- * TODO: Add comprehensive tests for fsContentSource.ts
- * This file contains only smoke tests. Additional test coverage needed for:
- * - Function behavior validation
- * - Edge cases
- * - Error handling
- *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
- */
+import { fsContentSource } from '@/lib/db/content/adapters/fs/fsContentSource';
+import fs from 'fs/promises';
+import path from 'path';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { describe, expect, it } from 'vitest';
+const accessMock = vi.hoisted(() => vi.fn());
+const readFileMock = vi.hoisted(() => vi.fn());
+const readdirMock = vi.hoisted(() => vi.fn());
+
+vi.mock('fs/promises', () => ({
+  default: {
+    access: accessMock,
+    readFile: readFileMock,
+    readdir: readdirMock,
+  },
+  access: accessMock,
+  readFile: readFileMock,
+  readdir: readdirMock,
+}));
+
+type MockDirent = {
+  name: string;
+  isFile: () => boolean;
+  isDirectory: () => boolean;
+};
+
+const buildDirent = (name: string, isDirectory = false): MockDirent => ({
+  name,
+  isFile: () => !isDirectory,
+  isDirectory: () => isDirectory,
+});
 
 describe('fsContentSource', () => {
-  it('should export module members [DUMMY TEST]', async () => {
-    try {
-      const Module = await import('@/lib/db/content/adapters/fs/fsContentSource');
-      if (!Module || typeof Module !== 'object') {
-        throw new Error('Module failed to import');
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns exact file when direct slug exists', async () => {
+    vi.mocked(fs.access).mockImplementation(async (targetPath: any) => {
+      if (String(targetPath).endsWith('battle-master.mdx')) {
+        return;
       }
-      const exportCount = Object.keys(Module).length;
-      expect(exportCount).toBeGreaterThanOrEqual(0);
-      if (exportCount === 0) {
-        console.warn(
-          '⚠️  DUMMY TEST WARNING: @/lib/db/content/adapters/fs/fsContentSource',
-          '\n   Module has no exports'
-        );
-      }
-    } catch (error) {
-      console.warn(
-        '⚠️  DUMMY TEST WARNING: @/lib/db/content/adapters/fs/fsContentSource',
-        '\n   Failed to load module:',
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-    // Dummy test always passes - real tests needed
+      throw new Error('ENOENT');
+    });
+    vi.mocked(fs.readFile).mockResolvedValue('# exact file' as any);
+
+    const result = await fsContentSource.fetch(
+      'en',
+      'character-creation/vocations/fighter/battle-master',
+    );
+
+    const expectedPath = path.join(
+      process.cwd(),
+      'src',
+      'content',
+      'en',
+      'character-creation/vocations/fighter/battle-master.mdx',
+    );
+
+    expect(result).toEqual({
+      content: '# exact file',
+      resolvedPath: expectedPath,
+    });
+    expect(fs.readdir).not.toHaveBeenCalled();
+  });
+
+  it('resolves unique semantic file when direct slug does not exist', async () => {
+    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
+    vi.mocked(fs.readdir).mockResolvedValue([
+      buildDirent('battle-master.specialization.mdx'),
+      buildDirent('main.mdx'),
+    ] as any);
+    vi.mocked(fs.readFile).mockResolvedValue('# semantic file' as any);
+
+    const result = await fsContentSource.fetch(
+      'en',
+      'character-creation/vocations/fighter/battle-master',
+    );
+
+    const expectedPath = path.join(
+      process.cwd(),
+      'src',
+      'content',
+      'en',
+      'character-creation/vocations/fighter',
+      'battle-master.specialization.mdx',
+    );
+
+    expect(result).toEqual({
+      content: '# semantic file',
+      resolvedPath: expectedPath,
+    });
+  });
+
+  it('returns null when semantic fallback is ambiguous', async () => {
+    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
+    vi.mocked(fs.readdir).mockResolvedValue([
+      buildDirent('battle-master.specialization.mdx'),
+      buildDirent('battle-master.reference.mdx'),
+    ] as any);
+
+    const result = await fsContentSource.fetch(
+      'en',
+      'character-creation/vocations/fighter/battle-master',
+    );
+
+    expect(result).toBeNull();
+    expect(fs.readFile).not.toHaveBeenCalled();
+  });
+
+  it('returns null when only non-semantic sibling files exist', async () => {
+    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
+    vi.mocked(fs.readdir).mockResolvedValue([
+      buildDirent('battle-master.notes.mdx'),
+    ] as any);
+
+    const result = await fsContentSource.fetch(
+      'en',
+      'character-creation/vocations/fighter/battle-master',
+    );
+
+    expect(result).toBeNull();
   });
 });

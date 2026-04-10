@@ -1,38 +1,162 @@
-/**
- * TODO: Add comprehensive tests for githubContentSource.ts
- * This file contains only smoke tests. Additional test coverage needed for:
- * - Function behavior validation
- * - Edge cases
- * - Error handling
- *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
- */
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { describe, expect, it } from 'vitest';
+const listEntriesMock = vi.hoisted(() => vi.fn());
+
+vi.mock('@/lib/db/content/adapters/github/githubDirectorySource', () => ({
+  githubDirectorySource: {
+    listEntries: listEntriesMock,
+  },
+}));
+
+vi.mock('@/lib/logging/logger', () => ({
+  logger: {
+    child: () => ({
+      message: vi.fn(),
+      warning: vi.fn(),
+      error: vi.fn(),
+    }),
+  },
+}));
+
+type MockResponse = {
+  ok: boolean;
+  text: () => Promise<string>;
+};
+
+const response = (ok: boolean, body = ''): MockResponse => ({
+  ok,
+  text: async () => body,
+});
 
 describe('githubContentSource', () => {
-  it('should export module members [DUMMY TEST]', async () => {
-    try {
-      const Module = await import('@/lib/db/content/adapters/github/githubContentSource');
-      if (!Module || typeof Module !== 'object') {
-        throw new Error('Module failed to import');
-      }
-      const exportCount = Object.keys(Module).length;
-      expect(exportCount).toBeGreaterThanOrEqual(0);
-      if (exportCount === 0) {
-        console.warn(
-          '⚠️  DUMMY TEST WARNING: @/lib/db/content/adapters/github/githubContentSource',
-          '\n   Module has no exports'
-        );
-      }
-    } catch (error) {
-      console.warn(
-        '⚠️  DUMMY TEST WARNING: @/lib/db/content/adapters/github/githubContentSource',
-        '\n   Failed to load module:',
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-    // Dummy test always passes - real tests needed
+  const originalEnv = { ...process.env };
+
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    process.env.CONTENT_REPO_OWNER = 'owner';
+    process.env.CONTENT_REPO_NAME = 'repo';
+    process.env.GITHUB_PAT = 'token';
+  });
+
+  afterEach(() => {
+    process.env = { ...originalEnv };
+  });
+
+  it('returns exact file when direct slug exists', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(response(true, '# exact file'));
+    global.fetch = fetchMock as any;
+
+    const { githubContentSource } =
+      await import('@/lib/db/content/adapters/github/githubContentSource');
+
+    const result = await githubContentSource.fetch(
+      'en',
+      'character-creation/vocations/fighter/battle-master',
+    );
+
+    expect(result).toEqual({
+      content: '# exact file',
+      resolvedPath: 'en/character-creation/vocations/fighter/battle-master.mdx',
+    });
+    expect(listEntriesMock).not.toHaveBeenCalled();
+  });
+
+  it('resolves unique semantic file when direct slug does not exist', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(true, '# semantic file'));
+    global.fetch = fetchMock as any;
+    listEntriesMock.mockResolvedValue([
+      {
+        name: 'battle-master.specialization.mdx',
+        isDirectory: false,
+      },
+      {
+        name: 'main.mdx',
+        isDirectory: false,
+      },
+    ]);
+
+    const { githubContentSource } =
+      await import('@/lib/db/content/adapters/github/githubContentSource');
+
+    const result = await githubContentSource.fetch(
+      'en',
+      'character-creation/vocations/fighter/battle-master',
+    );
+
+    expect(listEntriesMock).toHaveBeenCalledWith(
+      'en',
+      'character-creation/vocations/fighter',
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(String(fetchMock.mock.calls[3][0])).toContain(
+      'battle-master.specialization.mdx',
+    );
+    expect(result).toEqual({
+      content: '# semantic file',
+      resolvedPath:
+        'en/character-creation/vocations/fighter/battle-master.specialization.mdx',
+    });
+  });
+
+  it('returns null when semantic fallback is ambiguous', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false));
+    global.fetch = fetchMock as any;
+    listEntriesMock.mockResolvedValue([
+      {
+        name: 'battle-master.specialization.mdx',
+        isDirectory: false,
+      },
+      {
+        name: 'battle-master.reference.mdx',
+        isDirectory: false,
+      },
+    ]);
+
+    const { githubContentSource } =
+      await import('@/lib/db/content/adapters/github/githubContentSource');
+
+    const result = await githubContentSource.fetch(
+      'en',
+      'character-creation/vocations/fighter/battle-master',
+    );
+
+    expect(result).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it('returns null when only non-semantic sibling files exist', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false));
+    global.fetch = fetchMock as any;
+    listEntriesMock.mockResolvedValue([
+      {
+        name: 'battle-master.notes.mdx',
+        isDirectory: false,
+      },
+    ]);
+
+    const { githubContentSource } =
+      await import('@/lib/db/content/adapters/github/githubContentSource');
+
+    const result = await githubContentSource.fetch(
+      'en',
+      'character-creation/vocations/fighter/battle-master',
+    );
+
+    expect(result).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 });

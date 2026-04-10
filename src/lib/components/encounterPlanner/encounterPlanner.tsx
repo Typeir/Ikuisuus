@@ -64,6 +64,7 @@ import { CombatantRow } from './combatantRow';
 import styles from './encounterPlanner.module.scss';
 import { MonsterImporter } from './importer';
 import { PlayMode } from './playMode';
+import { ENCOUNTER_SAVE_INDICATOR_MS } from '@/lib/constants/delays';
 
 /**
  * Props for EncounterPlanner component
@@ -156,7 +157,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
       const updatedEncounters = getEncounters();
       setEncounters(updatedEncounters);
 
-      setTimeout(() => setIsSaving(false), 300);
+      setTimeout(() => setIsSaving(false), ENCOUNTER_SAVE_INDICATOR_MS);
     }
   }, [debouncedEncounter]);
 

@@ -11,8 +11,12 @@
 
 'use client';
 
+import type { Item as SidebarItem } from '@/lib/components/sidebar/sidebar';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
-import { NextIntlClientProvider } from 'next-intl';
+import {
+  NextIntlClientProvider,
+  type AbstractIntlMessages,
+} from 'next-intl';
 import ResponsiveLayoutShell from './utils/responsiveLayoutShell';
 
 /**
@@ -20,15 +24,15 @@ import ResponsiveLayoutShell from './utils/responsiveLayoutShell';
  *
  * @interface ClientProvidersProps
  * @property {string} locale - Current locale code (e.g., 'en', 'es', 'fi')
- * @property {any} tree - Navigation tree structure for sidebar
- * @property {any} messages - Internationalization messages for current locale
+ * @property {SidebarItem[]} tree - Navigation tree structure for sidebar
+ * @property {AbstractIntlMessages} messages - Internationalization messages for current locale
  * @property {string[]} initialExpandedPaths - Server-read expanded paths from cookies
  * @property {React.ReactNode} children - Child components to render
  */
 interface ClientProvidersProps {
   locale: string;
-  tree: any;
-  messages: any;
+  tree: SidebarItem[];
+  messages: AbstractIntlMessages;
   initialExpandedPaths: string[];
   children: React.ReactNode;
 }
@@ -39,8 +43,8 @@ interface ClientProvidersProps {
  * @component
  * @param {ClientProvidersProps} props - Component props
  * @param {string} props.locale - Current locale code (e.g., 'en', 'es', 'fi')
- * @param {any} props.tree - Navigation tree structure for sidebar
- * @param {any} props.messages - Internationalization messages for current locale
+ * @param {SidebarItem[]} props.tree - Navigation tree structure for sidebar
+ * @param {AbstractIntlMessages} props.messages - Internationalization messages for current locale
  * @param {string[]} props.initialExpandedPaths - Server-read expanded paths from cookies
  * @param {React.ReactNode} props.children - Child components to render
  * @returns {JSX.Element} Nested provider tree with children

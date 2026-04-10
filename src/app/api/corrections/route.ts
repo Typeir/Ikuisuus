@@ -303,7 +303,7 @@ export async function POST(req: NextRequest) {
     log.error('Correction submission failed', {
       error: err.message,
       stack: err.stack,
-      code: (err as any).code,
+      code: err.code,
       filePath,
       owner,
       repo,

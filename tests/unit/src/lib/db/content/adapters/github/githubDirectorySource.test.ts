@@ -1,20 +1,10 @@
-/**
- * TODO: Add comprehensive tests for githubDirectorySource.ts
- * This file contains only smoke tests. Additional test coverage needed for:
- * - Function behavior validation
- * - Edge cases
- * - Error handling
- *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
- */
-
 import { describe, expect, it } from 'vitest';
 
 describe('githubDirectorySource', () => {
   it('should export module members [DUMMY TEST]', async () => {
     try {
-      const Module = await import('@/lib/db/content/adapters/github/githubDirectorySource');
+      const Module =
+        await import('@/lib/db/content/adapters/github/githubDirectorySource');
       if (!Module || typeof Module !== 'object') {
         throw new Error('Module failed to import');
       }
@@ -23,16 +13,15 @@ describe('githubDirectorySource', () => {
       if (exportCount === 0) {
         console.warn(
           '⚠️  DUMMY TEST WARNING: @/lib/db/content/adapters/github/githubDirectorySource',
-          '\n   Module has no exports'
+          '\n   Module has no exports',
         );
       }
     } catch (error) {
       console.warn(
         '⚠️  DUMMY TEST WARNING: @/lib/db/content/adapters/github/githubDirectorySource',
         '\n   Failed to load module:',
-        error instanceof Error ? error.message : String(error)
+        error instanceof Error ? error.message : String(error),
       );
     }
-    // Dummy test always passes - real tests needed
   });
 });

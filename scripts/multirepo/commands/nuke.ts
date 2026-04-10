@@ -162,7 +162,9 @@ async function nukeExternalSpell(slug: string): Promise<void> {
     log.warn(
       `JSON files cleaned, but Postgres delete failed: ${(err as Error).message}`,
     );
-    log.warn('Run `npm run db:seed` to re-sync when DATABASE_URL is available.');
+    log.warn(
+      'Run `npm run db:seed` to re-sync when DATABASE_URL is available.',
+    );
     return;
   }
 
@@ -186,9 +188,7 @@ export async function run(args: string[]): Promise<void> {
   }
 
   if (scope !== 'external') {
-    log.error(
-      `Unknown scope "${scope}". Currently supported scopes: external`,
-    );
+    log.error(`Unknown scope "${scope}". Currently supported scopes: external`);
     process.exit(1);
   }
 
@@ -202,7 +202,9 @@ export async function run(args: string[]): Promise<void> {
   const slug = typeArg.slice('spell:'.length).trim();
 
   if (!slug) {
-    log.error('Spell slug cannot be empty. Usage: ik nuke external spell:<slug>');
+    log.error(
+      'Spell slug cannot be empty. Usage: ik nuke external spell:<slug>',
+    );
     process.exit(1);
   }
 

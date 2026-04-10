@@ -9,16 +9,16 @@
  */
 
 import {
-  cancel,
-  confirm,
-  intro,
-  isCancel,
-  log,
-  multiselect,
-  note,
-  outro,
-  select,
-  text,
+    cancel,
+    confirm,
+    intro,
+    isCancel,
+    log,
+    multiselect,
+    note,
+    outro,
+    select,
+    text,
 } from '@clack/prompts';
 
 import { run as cmdAdd } from './commands/add';
@@ -27,7 +27,13 @@ import { run as cmdCommit } from './commands/commit';
 import { run as cmdPull } from './commands/pull';
 import { run as cmdPush } from './commands/push';
 import { C, CONTENT_REPO, LOGO, MAIN_REPO, type MenuOption } from './constants';
-import { cmdPassthrough, git, listDirtyFiles, logRepo, repoSummaryLine } from './git';
+import {
+    cmdPassthrough,
+    git,
+    listDirtyFiles,
+    logRepo,
+    repoSummaryLine,
+} from './git';
 
 /**
  * Exits with a friendly cancellation message when the user presses Ctrl-C.

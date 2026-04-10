@@ -17,6 +17,7 @@
  */
 
 import { execSync } from 'node:child_process';
+import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runCheck as checkAntipatterns } from './check-antipatterns';
@@ -32,6 +33,19 @@ const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '../..');
 const CONTENT_SUBMODULE = path.join(ROOT, 'src', 'content');
 const changedOnlyMode = process.argv.includes('--changed-only');
+const IGNORE_DIRECTIVE_PATTERN =
+  /health:check-ignore-(file|nextline)\s+([a-z0-9*_,\s-]+)/gi;
+const WILDCARD_RULE = '*';
+
+/**
+ * Parsed ignore directives for a single source file.
+ */
+interface IgnoreDirectives {
+  /** Rule names ignored for the whole file */
+  fileRules: Set<string>;
+  /** Map of target line number -> ignored rule names */
+  nextLineRules: Map<number, Set<string>>;
+}
 
 /**
  * Entry for a single check step in the composite run.
@@ -51,6 +65,227 @@ const CHECKS: CheckEntry[] = [
   { name: 'test-gaps', run: checkTestGaps },
   { name: 'mdx-format', run: checkMdxFormat },
 ];
+
+/**
+ * Normalize a failure rule token for matching.
+ *
+ * @param token Raw token text
+ * @returns Canonical lowercase token
+ */
+function normalizeRuleToken(token: string): string {
+  const normalized = token.trim().toLowerCase();
+  if (normalized === 'all') {
+    return WILDCARD_RULE;
+  }
+  return normalized;
+}
+
+/**
+ * Parse a directive payload into a set of rule tokens.
+ *
+ * @param rawRules Raw directive payload text
+ * @returns Set of normalized rules
+ */
+function parseRuleList(rawRules: string): Set<string> {
+  const rules = new Set<string>();
+  const sanitizedRawRules = rawRules.replace(/\s+\*+$/g, '');
+  const tokens = sanitizedRawRules
+    .split(/[\s,]+/)
+    .map(normalizeRuleToken)
+    .filter(Boolean);
+
+  if (tokens.length === 0) {
+    rules.add(WILDCARD_RULE);
+    return rules;
+  }
+
+  for (const token of tokens) {
+    rules.add(token);
+  }
+
+  return rules;
+}
+
+/**
+ * Parse file-level and next-line health-check ignore directives from source.
+ *
+ * @param content Source file text
+ * @returns Parsed directive sets
+ */
+function parseIgnoreDirectives(content: string): IgnoreDirectives {
+  const directives: IgnoreDirectives = {
+    fileRules: new Set<string>(),
+    nextLineRules: new Map<number, Set<string>>(),
+  };
+  const lines = content.split('\n');
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    IGNORE_DIRECTIVE_PATTERN.lastIndex = 0;
+    for (const match of line.matchAll(IGNORE_DIRECTIVE_PATTERN)) {
+      const mode = match[1]?.toLowerCase();
+      const rawRules = match[2] ?? '';
+      const parsedRules = parseRuleList(rawRules);
+
+      if (mode === 'file') {
+        for (const rule of parsedRules) {
+          directives.fileRules.add(rule);
+        }
+        continue;
+      }
+
+      const targetLine = index + 2;
+      if (!directives.nextLineRules.has(targetLine)) {
+        directives.nextLineRules.set(targetLine, new Set<string>());
+      }
+      const targetRules = directives.nextLineRules.get(targetLine)!;
+      for (const rule of parsedRules) {
+        targetRules.add(rule);
+      }
+    }
+  }
+
+  return directives;
+}
+
+/**
+ * Load and cache ignore directives for a relative file path.
+ *
+ * @param relativePath Project-relative path from failure payload
+ * @param cache Per-run directive cache
+ * @returns Parsed directives for the file
+ */
+async function getIgnoreDirectivesForFile(
+  relativePath: string,
+  cache: Map<string, IgnoreDirectives>,
+): Promise<IgnoreDirectives> {
+  const normalizedPath = relativePath.replace(/\\/g, '/');
+  if (cache.has(normalizedPath)) {
+    return cache.get(normalizedPath)!;
+  }
+
+  const empty: IgnoreDirectives = {
+    fileRules: new Set<string>(),
+    nextLineRules: new Map<number, Set<string>>(),
+  };
+
+  try {
+    const content = await fs.readFile(path.join(ROOT, normalizedPath), 'utf-8');
+    const parsed = parseIgnoreDirectives(content);
+    cache.set(normalizedPath, parsed);
+    return parsed;
+  } catch {
+    cache.set(normalizedPath, empty);
+    return empty;
+  }
+}
+
+/**
+ * Test whether a rule matches a directive set.
+ *
+ * @param rules Set of directive rules
+ * @param rule Failure rule name
+ * @returns True when the rule is ignored
+ */
+function rulesMatch(rules: Set<string>, rule: string): boolean {
+  const normalizedRule = normalizeRuleToken(rule);
+  return rules.has(WILDCARD_RULE) || rules.has(normalizedRule);
+}
+
+/**
+ * Recompute check severity from filtered failures.
+ *
+ * @param result Original check result
+ * @param failures Filtered failures
+ * @returns Aggregate check severity
+ */
+function getSeverityForFailures(
+  result: CheckResult,
+  failures: CheckResult['failures'],
+): CheckResult['severity'] {
+  if (failures.length === 0) {
+    return 'info';
+  }
+
+  let hasCritical = false;
+  let hasWarning = false;
+
+  for (const failure of failures) {
+    const failureSeverity =
+      failure.severity ?? (result.severity === 'info' ? 'warning' : result.severity);
+    if (failureSeverity === 'critical') {
+      hasCritical = true;
+    }
+    if (failureSeverity === 'warning') {
+      hasWarning = true;
+    }
+  }
+
+  if (hasCritical) {
+    return 'critical';
+  }
+  if (hasWarning) {
+    return 'warning';
+  }
+  return result.severity;
+}
+
+/**
+ * Build a new check result after failure filtering.
+ *
+ * @param result Original check result
+ * @param failures Filtered failures
+ * @param totalBeforeFilter Failure count before filtering
+ * @param beforeKey Stats key for the pre-filter count
+ * @returns Updated check result
+ */
+function buildFilteredResult(
+  result: CheckResult,
+  failures: CheckResult['failures'],
+  totalBeforeFilter: number,
+  beforeKey: string,
+): CheckResult {
+  const severity = getSeverityForFailures(result, failures);
+  const nextStats = {
+    ...result.stats,
+    violations_found: failures.length,
+    [beforeKey]: totalBeforeFilter,
+  };
+  if (
+    Object.prototype.hasOwnProperty.call(result.stats, 'critical_violations') ||
+    Object.prototype.hasOwnProperty.call(result.stats, 'warning_violations')
+  ) {
+    const criticalCount = failures.filter(
+      (failure) =>
+        (failure.severity ??
+          (result.severity === 'info' ? 'warning' : result.severity)) ===
+        'critical',
+    ).length;
+    nextStats.critical_violations = criticalCount;
+    nextStats.warning_violations = failures.length - criticalCount;
+  }
+  if (
+    Object.prototype.hasOwnProperty.call(result.stats, 'critical') ||
+    Object.prototype.hasOwnProperty.call(result.stats, 'warnings')
+  ) {
+    const criticalCount = failures.filter(
+      (failure) =>
+        (failure.severity ??
+          (result.severity === 'info' ? 'warning' : result.severity)) ===
+        'critical',
+    ).length;
+    nextStats.critical = criticalCount;
+    nextStats.warnings = failures.length - criticalCount;
+  }
+
+  return {
+    ...result,
+    passed: failures.length === 0,
+    severity,
+    failures,
+    stats: nextStats,
+  };
+}
 
 /**
  * Get the set of uncommitted changed files relative to ROOT.
@@ -112,18 +347,70 @@ function filterToChangedFiles(
   const filtered = result.failures.filter((failure) =>
     changedFiles.has((failure.file ?? '').replace(/\\/g, '/')),
   );
-  const passed = filtered.length === 0;
-  return {
-    ...result,
-    passed,
-    severity: passed ? 'info' : result.severity,
-    failures: filtered,
-    stats: {
-      ...result.stats,
-      violations_found: filtered.length,
-      total_before_filter: result.failures.length,
-    },
-  };
+  return buildFilteredResult(
+    result,
+    filtered,
+    result.failures.length,
+    'total_before_filter',
+  );
+}
+
+/**
+ * Apply source-level ignore directives to a check result.
+ *
+ * @param result Check result to filter
+ * @param cache Per-run directive cache
+ * @returns Filtered result
+ */
+async function filterIgnoredFailures(
+  result: CheckResult,
+  cache: Map<string, IgnoreDirectives>,
+): Promise<CheckResult> {
+  if (result.failures.length === 0) {
+    return result;
+  }
+
+  const normalizedFailures = result.failures.map((failure) => ({
+    ...failure,
+    file: (failure.file ?? '').replace(/\\/g, '/'),
+  }));
+  const uniqueFiles = [...new Set(normalizedFailures.map((failure) => failure.file))].filter(
+    Boolean,
+  );
+  const directivesByFile = new Map<string, IgnoreDirectives>();
+
+  await Promise.all(
+    uniqueFiles.map(async (file) => {
+      directivesByFile.set(file, await getIgnoreDirectivesForFile(file, cache));
+    }),
+  );
+
+  const filtered = normalizedFailures.filter((failure) => {
+    const directives = directivesByFile.get(failure.file);
+    if (!directives) {
+      return true;
+    }
+
+    if (rulesMatch(directives.fileRules, failure.rule)) {
+      return false;
+    }
+
+    if (typeof failure.line === 'number') {
+      const nextLineRules = directives.nextLineRules.get(failure.line);
+      if (nextLineRules && rulesMatch(nextLineRules, failure.rule)) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  return buildFilteredResult(
+    result,
+    filtered,
+    result.failures.length,
+    'total_before_ignore',
+  );
 }
 
 /**
@@ -156,6 +443,7 @@ async function runCheck(entry: CheckEntry): Promise<CheckResult> {
 
 async function main(): Promise<void> {
   const changedFiles = changedOnlyMode ? getChangedFiles() : null;
+  const ignoreDirectiveCache = new Map<string, IgnoreDirectives>();
   const modeLabel = changedOnlyMode
     ? `(diff-scoped: ${changedFiles!.size} file(s))`
     : '(full codebase)';
@@ -169,6 +457,7 @@ async function main(): Promise<void> {
     process.stdout.write(`  \u23f3 ${check.name}... `);
     let result = await runCheck(check);
     if (changedFiles) result = filterToChangedFiles(result, changedFiles);
+    result = await filterIgnoredFailures(result, ignoreDirectiveCache);
 
     results.push(result);
     totalViolations += result.failures.length;

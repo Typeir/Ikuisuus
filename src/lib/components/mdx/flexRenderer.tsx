@@ -20,9 +20,9 @@ type FlexRendererProps = {
  * Generic horizontal flex container that lays out its children in a row,
  * with spacing and horizontal scrolling support.
  *
- * @param props - Component props.
- * @param props.children - React nodes to render inside the flex container.
- * @returns JSX element rendering children in a horizontal flexbox.
+ * @param {FlexRendererProps} props - Component props.
+ * @param {React.ReactNode} props.children - React nodes to render inside the flex container.
+ * @returns {JSX.Element} JSX element rendering children in a horizontal flexbox.
  */
 const FlexRenderer: React.FC<FlexRendererProps> = ({ children }) => {
   return (

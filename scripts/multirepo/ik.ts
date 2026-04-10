@@ -16,9 +16,9 @@
 import { log } from '@clack/prompts';
 
 import {
-  loadCommands,
-  resolveCommandsDir,
-  type CommandRegistry,
+    loadCommands,
+    resolveCommandsDir,
+    type CommandRegistry,
 } from '../utils/cli-loader';
 import { checkSubmodule, cmdPassthrough } from './git';
 import { runInteractive } from './tui';

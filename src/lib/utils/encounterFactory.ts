@@ -17,6 +17,29 @@ import type {
 import { calculateInitiativeMod, generateId } from './encounterStorage';
 
 /**
+ * Partial shape for monster metadata as provided by the content API
+ * Only fields used by the encounter factory are declared here.
+ */
+type MonsterLibraryData = {
+  hp?: { average?: number; formula?: string } | null;
+  ac?: { value?: number } | null;
+  abilities?: {
+    str?: { score?: number };
+    dex?: { score?: number };
+    con?: { score?: number };
+    int?: { score?: number };
+    wis?: { score?: number };
+    cha?: { score?: number };
+  } | null;
+  link?: string;
+  title?: string;
+  cr?: string | number;
+  proficiencyBonus?: number | null;
+  speed?: { raw?: string } | string | null;
+  tags?: string[];
+};
+
+/**
  * Create a new empty creature entry with default values.
  * All ability scores default to 10 (modifier +0), HP and AC default to 10.
  * Initiative modifier is recalculated when dexterity changes.
@@ -98,7 +121,7 @@ export const createEmptyEncounter = (): Encounter => {
  * const creature = createCreatureFromMonster(monster, 'en');
  */
 export const createCreatureFromMonster = (
-  monsterData: any,
+  monsterData: MonsterLibraryData,
   locale: string = 'en',
 ): CreatureEntry => {
   const hp = monsterData.hp?.average || 10;
@@ -160,7 +183,7 @@ export const createCreatureFromMonster = (
  * @returns {CreatureEntry[]} Array of new creature entries initialized with monster stats
  */
 export const createMultipleCreaturesFromMonster = (
-  monsterData: any,
+  monsterData: MonsterLibraryData,
   locale: string = 'en',
   quantity: number = 1,
 ): CreatureEntry[] => {

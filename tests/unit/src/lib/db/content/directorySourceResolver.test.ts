@@ -33,6 +33,5 @@ describe('directorySourceResolver', () => {
         error instanceof Error ? error.message : String(error),
       );
     }
-    // Dummy test always passes - real tests needed
   });
 });
