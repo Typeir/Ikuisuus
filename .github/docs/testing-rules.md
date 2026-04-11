@@ -4,10 +4,31 @@
 
 ## Stack
 
-- **Framework**: Vitest
+- **Framework**: Vitest 4.x with `test.projects` (inline project definitions)
 - **DOM Environment**: jsdom
 - **React Testing**: `@testing-library/react`, `@testing-library/user-event`
 - **Setup**: `tests/setup/vitest.setup.ts`
+- **Orchestrator**: `tests/scripts/runTests.ts` (sequential project runner to prevent OOM)
+
+## Project Architecture (OOM Prevention)
+
+Tests are split into **9 isolated projects** in `vitest.config.ts` using Vitest's built-in `test.projects` feature. Each project runs in its own process pool to bound memory usage:
+
+| Project           | Glob Pattern                       | Description                 |
+| ----------------- | ---------------------------------- | --------------------------- |
+| `unit:components` | `tests/unit/src/lib/components/**` | React component tests       |
+| `unit:utils`      | `tests/unit/src/lib/utils/**`      | Pure utility function tests |
+| `unit:db`         | `tests/unit/src/lib/db/**`         | Database/ORM entity tests   |
+| `unit:hooks`      | `tests/unit/src/lib/hooks/**`      | React hook tests            |
+| `unit:metadata`   | `tests/unit/src/lib/metadata/**`   | Metadata system tests       |
+| `unit:api`        | `tests/unit/src/app/api/**`        | API route tests             |
+| `unit:app`        | `tests/unit/src/app/**` (non-api)  | App-level tests             |
+| `unit:other`      | `tests/unit/**` (catch-all)        | Everything else             |
+| `integration`     | `tests/integration/**`             | Integration tests           |
+
+Run individual projects: `npx vitest run --project unit:utils`
+
+All projects inherit the root config via `extends: true`, getting shared plugins, aliases, setup files, and coverage settings.
 
 ## File Structure
 
@@ -19,6 +40,7 @@ tests/
 ├── setup/
 │   └── vitest.setup.ts # Global mocks
 └── scripts/
+    ├── runTests.ts      # Sequential project orchestrator
     └── enforceCoverage.mjs  # Coverage enforcement
 ```
 

@@ -15,8 +15,8 @@ import type {
     InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
 import type { MonsterData } from '@/lib/utils/monsterCache';
+import { applyHeroicAwakening } from './heroicAwakeningApply';
 import {
-    applyHeroicAwakening,
     getDefaultDeedCount,
     getDefaultResistCount,
     parseMechanicsFromTags
@@ -28,10 +28,14 @@ import {
     rollInitiative,
 } from './encounterStorage';
 
+export { applyHeroicAwakening } from './heroicAwakeningApply';
+
 export {
-    applyHeroicAwakening,
     forceHeroicAwakening,
     forceHeroicAwakeningWithAffixes,
+} from './heroicAwakeningForce';
+
+export {
     generateUniqueAffixes,
     getDefaultDeedCount,
     getDefaultResistCount,

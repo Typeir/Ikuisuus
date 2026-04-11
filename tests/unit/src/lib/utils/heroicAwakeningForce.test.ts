@@ -65,7 +65,12 @@ function createTestCombatant(
 
 describe('forceHeroicAwakening', () => {
   beforeEach(() => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.1);
+    vi.spyOn(Math, 'random')
+      .mockReturnValueOnce(0.1)
+      .mockReturnValueOnce(0.2)
+      .mockReturnValueOnce(0.3)
+      .mockReturnValueOnce(0.4)
+      .mockReturnValue(0.5);
   });
 
   afterEach(() => {

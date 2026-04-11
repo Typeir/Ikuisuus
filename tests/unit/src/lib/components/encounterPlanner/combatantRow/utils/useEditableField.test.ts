@@ -1,38 +1,123 @@
 /**
- * TODO: Add comprehensive tests for useEditableField.ts
- * This file contains only smoke tests. Additional test coverage needed for:
- * - Function behavior validation
- * - Edge cases
- * - Error handling
- *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
+ * @fileoverview Tests for useEditableField hook
+ * @description Validates the edit/commit/cancel state machine including
+ * the cancel-pending ref coordination that prevents blur-after-Escape commits.
  */
 
-import { describe, expect, it } from 'vitest';
+import { useEditableField } from '@/lib/components/encounterPlanner/combatantRow/utils/useEditableField';
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+
+/**
+ * Create a mock cancel-pending ref for testing.
+ *
+ * @returns MutableRefObject<boolean> with current = false
+ */
+function makeCancelRef(): React.MutableRefObject<boolean> {
+  return { current: false };
+}
 
 describe('useEditableField', () => {
-  it('should export module members [DUMMY TEST]', async () => {
-    try {
-      const Module = await import('@/lib/components/encounterPlanner/combatantRow/utils/useEditableField');
-      if (!Module || typeof Module !== 'object') {
-        throw new Error('Module failed to import');
-      }
-      const exportCount = Object.keys(Module).length;
-      expect(exportCount).toBeGreaterThanOrEqual(0);
-      if (exportCount === 0) {
-        console.warn(
-          '⚠️  DUMMY TEST WARNING: @/lib/components/encounterPlanner/combatantRow/utils/useEditableField',
-          '\n   Module has no exports'
-        );
-      }
-    } catch (error) {
-      console.warn(
-        '⚠️  DUMMY TEST WARNING: @/lib/components/encounterPlanner/combatantRow/utils/useEditableField',
-        '\n   Failed to load module:',
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-    // Dummy test always passes - real tests needed
+  it('should start with editing as null', () => {
+    const updater = vi.fn();
+    const cancelRef = makeCancelRef();
+    const { result } = renderHook(() => useEditableField(cancelRef, updater));
+
+    expect(result.current.editing).toBeNull();
+  });
+
+  it('should set editing value via setEditing', () => {
+    const updater = vi.fn();
+    const cancelRef = makeCancelRef();
+    const { result } = renderHook(() => useEditableField(cancelRef, updater));
+
+    act(() => {
+      result.current.setEditing('42');
+    });
+
+    expect(result.current.editing).toBe('42');
+  });
+
+  it('should update editing value via onChange', () => {
+    const updater = vi.fn();
+    const cancelRef = makeCancelRef();
+    const { result } = renderHook(() => useEditableField(cancelRef, updater));
+
+    act(() => {
+      result.current.setEditing('10');
+    });
+
+    act(() => {
+      result.current.onChange('15');
+    });
+
+    expect(result.current.editing).toBe('15');
+  });
+
+  it('should call updater and reset editing on commit', () => {
+    const updater = vi.fn();
+    const cancelRef = makeCancelRef();
+    const { result } = renderHook(() => useEditableField(cancelRef, updater));
+
+    act(() => {
+      result.current.setEditing('25');
+    });
+
+    act(() => {
+      result.current.commit();
+    });
+
+    expect(updater).toHaveBeenCalledWith('25');
+    expect(result.current.editing).toBeNull();
+  });
+
+  it('should not call updater on commit when editing is null', () => {
+    const updater = vi.fn();
+    const cancelRef = makeCancelRef();
+    const { result } = renderHook(() => useEditableField(cancelRef, updater));
+
+    act(() => {
+      result.current.commit();
+    });
+
+    expect(updater).not.toHaveBeenCalled();
+  });
+
+  it('should reset editing and set cancelPendingRef on cancel', () => {
+    const updater = vi.fn();
+    const cancelRef = makeCancelRef();
+    const { result } = renderHook(() => useEditableField(cancelRef, updater));
+
+    act(() => {
+      result.current.setEditing('50');
+    });
+
+    act(() => {
+      result.current.cancel();
+    });
+
+    expect(result.current.editing).toBeNull();
+    expect(cancelRef.current).toBe(true);
+  });
+
+  it('should skip updater on commit after cancel (blur-after-Escape)', () => {
+    const updater = vi.fn();
+    const cancelRef = makeCancelRef();
+    const { result } = renderHook(() => useEditableField(cancelRef, updater));
+
+    act(() => {
+      result.current.setEditing('99');
+    });
+
+    act(() => {
+      result.current.cancel();
+    });
+
+    act(() => {
+      result.current.commit();
+    });
+
+    expect(updater).not.toHaveBeenCalled();
+    expect(cancelRef.current).toBe(false);
   });
 });

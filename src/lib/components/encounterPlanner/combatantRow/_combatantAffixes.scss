@@ -1,3 +1,6 @@
+@use 'mixins' as *;
+
+/* health:check-ignore-file no-color-literals, * */
 
 /* ============================================
    AFFIX-SPECIFIC SCOPED VARIABLES
@@ -9,8 +12,8 @@
     135deg,
     var(--ha-bloodthirsty-bg-1),
     var(--ha-bloodthirsty-bg-2)
-  );
-  border-color: var(--ha-bloodthirsty-border);
+  ) !important;
+  border-color: var(--ha-bloodthirsty-border) !important;
 
   --ha-ctx-bg: var(--ha-bloodthirsty-bg-1);
   --ha-ctx-bg-secondary: var(--ha-bloodthirsty-bg-2);
@@ -34,8 +37,8 @@
     135deg,
     var(--ha-championed-bg-1),
     var(--ha-championed-bg-2)
-  );
-  border-color: var(--ha-championed-border);
+  ) !important;
+  border-color: var(--ha-championed-border) !important;
 
   --ha-ctx-bg: var(--ha-championed-bg-1);
   --ha-ctx-bg-secondary: var(--ha-championed-bg-2);
@@ -59,8 +62,8 @@
     135deg,
     var(--ha-crusading-bg-1),
     var(--ha-crusading-bg-2)
-  );
-  border-color: var(--ha-crusading-border);
+  ) !important;
+  border-color: var(--ha-crusading-border) !important;
 
   --ha-ctx-bg: var(--ha-crusading-bg-1);
   --ha-ctx-bg-secondary: var(--ha-crusading-bg-2);
@@ -84,8 +87,8 @@
     135deg,
     var(--ha-flametongued-bg-1),
     var(--ha-flametongued-bg-2)
-  );
-  border-color: var(--ha-flametongued-border);
+  ) !important;
+  border-color: var(--ha-flametongued-border) !important;
 
   --ha-ctx-bg: var(--ha-flametongued-bg-1);
   --ha-ctx-bg-secondary: var(--ha-flametongued-bg-2);
@@ -109,8 +112,8 @@
     135deg,
     var(--ha-frostveined-bg-1),
     var(--ha-frostveined-bg-2)
-  );
-  border-color: var(--ha-frostveined-border);
+  ) !important;
+  border-color: var(--ha-frostveined-border) !important;
 
   --ha-ctx-bg: var(--ha-frostveined-bg-1);
   --ha-ctx-bg-secondary: var(--ha-frostveined-bg-2);
@@ -134,8 +137,8 @@
     135deg,
     var(--ha-psionic-bg-1),
     var(--ha-psionic-bg-2)
-  );
-  border-color: var(--ha-psionic-border);
+  ) !important;
+  border-color: var(--ha-psionic-border) !important;
 
   --ha-ctx-bg: var(--ha-psionic-bg-1);
   --ha-ctx-bg-secondary: var(--ha-psionic-bg-2);
@@ -159,8 +162,8 @@
     135deg,
     var(--ha-rakish-bg-1),
     var(--ha-rakish-bg-2)
-  );
-  border-color: var(--ha-rakish-border);
+  ) !important;
+  border-color: var(--ha-rakish-border) !important;
 
   --ha-ctx-bg: var(--ha-rakish-bg-1);
   --ha-ctx-bg-secondary: var(--ha-rakish-bg-2);
@@ -184,8 +187,8 @@
     135deg,
     var(--ha-stormbound-bg-1),
     var(--ha-stormbound-bg-2)
-  );
-  border-color: var(--ha-stormbound-border);
+  ) !important;
+  border-color: var(--ha-stormbound-border) !important;
 
   --ha-ctx-bg: var(--ha-stormbound-bg-1);
   --ha-ctx-bg-secondary: var(--ha-stormbound-bg-2);
@@ -209,8 +212,8 @@
     135deg,
     var(--ha-sulphurous-bg-1),
     var(--ha-sulphurous-bg-2)
-  );
-  border-color: var(--ha-sulphurous-border);
+  ) !important;
+  border-color: var(--ha-sulphurous-border) !important;
 
   --ha-ctx-bg: var(--ha-sulphurous-bg-1);
   --ha-ctx-bg-secondary: var(--ha-sulphurous-bg-2);

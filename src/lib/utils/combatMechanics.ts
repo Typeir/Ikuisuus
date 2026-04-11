@@ -227,10 +227,3 @@ export const generateUniqueAffixes = (
   return affixes;
 };
 
-export { applyHeroicAwakening } from './heroicAwakeningApply';
-
-export {
-  forceHeroicAwakening,
-  forceHeroicAwakeningWithAffixes
-} from './heroicAwakeningForce';
-

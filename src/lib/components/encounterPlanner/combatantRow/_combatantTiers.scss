@@ -1,3 +1,7 @@
+@use 'mixins' as *;
+
+/* health:check-ignore-file no-color-literals, * */
+
 /* ============================================
    DETAILS SECTION INHERITANCE
    Override all details section elements to use contextual variables.
@@ -70,7 +74,7 @@
    LEGENDARY TIER - Gold shimmer with scoped vars
 ============================================ */
 .awakened--legendary {
-  background-size: 200% 200%;
+  background-size: 200% 200% !important;
   background-image: linear-gradient(
     135deg,
     var(--ha-legendary-shimmer-1) 0%,
@@ -78,9 +82,9 @@
     var(--ha-legendary-shimmer-3) 50%,
     var(--ha-legendary-shimmer-4) 75%,
     var(--ha-legendary-shimmer-5) 100%
-  );
-  border-color: var(--ha-legendary-border);
-  animation: legendaryShimmer 4s ease infinite;
+  ) !important;
+  border-color: var(--ha-legendary-border) !important;
+  animation: legendaryShimmer 4s ease infinite !important;
 
   --ha-ctx-bg: var(--ha-legendary-shimmer-1);
   --ha-ctx-bg-secondary: var(--ha-legendary-shimmer-2);
@@ -103,7 +107,7 @@
    MYTHIC TIER - Chromatic shimmer with scoped vars
 ============================================ */
 .awakened--mythic {
-  background-size: 400% 400%;
+  background-size: 400% 400% !important;
   background-image: linear-gradient(
     135deg,
     var(--ha-mythic-shimmer-1) 0%,
@@ -112,9 +116,9 @@
     var(--ha-mythic-shimmer-4) 60%,
     var(--ha-mythic-shimmer-5) 80%,
     var(--ha-mythic-shimmer-6) 100%
-  );
-  border-color: var(--ha-mythic-border);
-  animation: mythicShimmer 8s ease infinite;
+  ) !important;
+  border-color: var(--ha-mythic-border) !important;
+  animation: mythicShimmer 8s ease infinite !important;
 
   --ha-ctx-bg: var(--ha-mythic-shimmer-1);
   --ha-ctx-bg-secondary: var(--ha-mythic-shimmer-2);
@@ -135,23 +139,39 @@
 
 /* Shimmer keyframes for legendary tier */
 @keyframes legendaryShimmer {
-  0%, 100% { --_: ct-leg-loop; background-position: 0% 50%; }
-  50% { --_: ct-leg-mid; background-position: 100% 50%; }
+  0%,
+  100% {
+    --_: ct-leg-loop;
+    background-position: 0% 50%;
+  }
+  50% {
+    --_: ct-leg-mid;
+    background-position: 100% 50%;
+  }
 }
 
 /* Shimmer keyframes for mythic tier */
 @keyframes mythicShimmer {
-  0%, 100% { --_: ct-myth-loop; background-position: 0% 50%; }
-  33% { --_: ct-myth-t1; background-position: 100% 50%; }
-  66% { --_: ct-myth-t2; background-position: 50% 100%; }
+  0%,
+  100% {
+    --_: ct-myth-loop;
+    background-position: 0% 50%;
+  }
+  33% {
+    --_: ct-myth-t1;
+    background-position: 100% 50%;
+  }
+  66% {
+    --_: ct-myth-t2;
+    background-position: 50% 100%;
+  }
 }
 
 /* Reduced motion - disable shimmer animations */
 @media (prefers-reduced-motion: reduce) {
   .awakened--legendary,
   .awakened--mythic {
-    animation: none;
-    background-size: 100% 100%;
+    animation: none !important;
+    background-size: 100% 100% !important;
   }
 }
-

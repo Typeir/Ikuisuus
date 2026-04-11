@@ -4,21 +4,21 @@
  * Uses rangeWrap for wrap-around navigation. Updates DOM data-theme attribute,
  * persists to localStorage, and triggers optional callback for parent state updates.
  * Integrates with themeScript.ts for FOUC prevention.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires react
  * @requires @/lib/enums/themes
  * @requires @/lib/utils/rangeWrap
  * @requires ./themeSelector.module.scss
- * 
+ *
  * @example
  * ```tsx
  * import { ThemeSelector } from '@/lib/components/themeSelector/themeSelector';
- * 
- * <ThemeSelector 
+ *
+ * <ThemeSelector
  *   defaultTheme={Theme.Dark}
  *   onThemeChange={(newTheme) => console.log('Theme changed:', newTheme)}
  * />
@@ -62,7 +62,7 @@ export const ThemeSelector = ({
   onThemeChange = () => {},
 }: ThemeSelectorProps): JSX.Element => {
   const [themeIndex, setThemeIndex] = useState(
-    rangeWrap(THEMES.indexOf(defaultTheme ?? THEMES[0]), 0, THEMES.length - 1)
+    rangeWrap(THEMES.indexOf(defaultTheme ?? THEMES[0]), 0, THEMES.length - 1),
   );
 
   return (

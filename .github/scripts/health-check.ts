@@ -25,6 +25,7 @@ import { runCheck as checkDuplicateCss } from './check-duplicate-css';
 import { runCheck as checkFileLength } from './check-file-length';
 import { runCheck as checkJsdocQuality } from './check-jsdoc-quality';
 import { runCheck as checkMdxFormat } from './check-mdx-format';
+import { runCheck as checkSmokeTests } from './check-smoke-tests';
 import { runCheck as checkTestGaps } from './check-test-gaps';
 import type { CheckResult, HealthReport } from './health-check-types';
 
@@ -64,6 +65,7 @@ const CHECKS: CheckEntry[] = [
   { name: 'antipatterns', run: checkAntipatterns },
   { name: 'test-gaps', run: checkTestGaps },
   { name: 'mdx-format', run: checkMdxFormat },
+  { name: 'smoke-tests', run: checkSmokeTests },
 ];
 
 /**

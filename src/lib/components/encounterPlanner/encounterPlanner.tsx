@@ -30,32 +30,33 @@
 'use client';
 
 import { useNotifications } from '@/lib/components/ui';
+import { ENCOUNTER_SAVE_INDICATOR_MS } from '@/lib/constants/delays';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { logger } from '@/lib/logging/logger';
 import type { Encounter } from '@/lib/types/encounterPlanner';
 import type {
-    InProgressCombat,
-    InProgressCombatant,
+  InProgressCombat,
+  InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
 import {
-    createEmptyCreature,
-    createEmptyEncounter,
-    createMultipleCreaturesFromMonster,
-    deleteEncounter as deleteEncounterUtil,
-    exportEncounter,
-    getActiveEncounter,
-    getEncounters,
-    importEncounter,
-    saveEncounter,
-    setActiveEncounterId,
+  createEmptyCreature,
+  createEmptyEncounter,
+  createMultipleCreaturesFromMonster,
+  deleteEncounter as deleteEncounterUtil,
+  exportEncounter,
+  getActiveEncounter,
+  getEncounters,
+  importEncounter,
+  saveEncounter,
+  setActiveEncounterId,
 } from '@/lib/utils/encounterStorage';
 import {
-    createInProgressCombat,
-    createInProgressCombatant,
-    getActiveInProgressCombatId,
-    getInProgressCombat,
-    saveInProgressCombat,
-    setActiveInProgressCombatId,
+  createInProgressCombat,
+  createInProgressCombatant,
+  getActiveInProgressCombatId,
+  getInProgressCombat,
+  saveInProgressCombat,
+  setActiveInProgressCombatId,
 } from '@/lib/utils/inProgressCombatStorage';
 import type { MonsterData } from '@/lib/utils/monsterCache';
 import { useTranslations } from 'next-intl';
@@ -64,7 +65,6 @@ import { CombatantRow } from './combatantRow';
 import styles from './encounterPlanner.module.scss';
 import { MonsterImporter } from './importer';
 import { PlayMode } from './playMode';
-import { ENCOUNTER_SAVE_INDICATOR_MS } from '@/lib/constants/delays';
 
 /**
  * Props for EncounterPlanner component

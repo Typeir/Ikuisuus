@@ -3,34 +3,31 @@
  * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantRow.test
  * @description Validates CombatantRow export and component signature.
  * Tests row component for displaying combatants during play mode with deed and resist mechanics.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires vitest
  * @requires @testing-library/react
  * @requires @/lib/components/encounterPlanner/playMode/playModeCombatantRow
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import * as CombatantRowModule from '@/lib/components/encounterPlanner/combatantRow';
 import { CombatantRow } from '@/lib/components/encounterPlanner/combatantRow';
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 
-// Mock next-intl
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-// Mock UI components
 vi.mock('@/lib/components/ui', () => ({
   Tooltip: ({ children }: any) => <div>{children}</div>,
 }));
 
-// Mock forceHeroicAwakening
 vi.mock('@/lib/utils/inProgressCombatStorage', () => ({
   forceHeroicAwakening: vi.fn(),
 }));
@@ -38,7 +35,9 @@ vi.mock('@/lib/utils/inProgressCombatStorage', () => ({
 /**
  * Creates a mock combatant for testing
  */
-const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InProgressCombatant => ({
+const createMockCombatant = (
+  overrides: Partial<InProgressCombatant> = {},
+): InProgressCombatant => ({
   id: 'test-combatant',
   name: 'Test Creature',
   hpCurrent: 50,
@@ -60,7 +59,13 @@ const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InPr
   sourceHref: '/library/monsters/test',
   crText: 'CR 2',
   legendaryDeedsUsed: [false, false, false],
-  mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: false, phase: false },
+  mechanics: {
+    lair: false,
+    stratagem: false,
+    legendaryDeed: false,
+    resist: false,
+    phase: false,
+  },
   resistRemaining: 0,
   phaseDeeds: { wounded: false, bloodied: false, doomed: false },
   heroicAwakening: {
@@ -101,7 +106,12 @@ describe('playModeCombatantRow', () => {
 describe('CombatantRow Resist Mechanics', () => {
   it('should display resist count when creature has resist mechanic', () => {
     const combatant = createMockCombatant({
-      mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: true },
+      mechanics: {
+        lair: false,
+        stratagem: false,
+        legendaryDeed: false,
+        resist: true,
+      },
       resistRemaining: 2,
     });
     const mockOnUpdate = vi.fn();
@@ -109,9 +119,9 @@ describe('CombatantRow Resist Mechanics', () => {
     render(
       <CombatantRow
         combatant={combatant}
-        locale="en"
+        locale='en'
         onUpdate={mockOnUpdate}
-      />
+      />,
     );
 
     expect(screen.getByText('2')).toBeInTheDocument();
@@ -119,7 +129,12 @@ describe('CombatantRow Resist Mechanics', () => {
 
   it('should not display resist section when creature lacks resist mechanic', () => {
     const combatant = createMockCombatant({
-      mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: false },
+      mechanics: {
+        lair: false,
+        stratagem: false,
+        legendaryDeed: false,
+        resist: false,
+      },
       resistRemaining: 3,
     });
     const mockOnUpdate = vi.fn();
@@ -127,18 +142,24 @@ describe('CombatantRow Resist Mechanics', () => {
     render(
       <CombatantRow
         combatant={combatant}
-        locale="en"
+        locale='en'
         onUpdate={mockOnUpdate}
-      />
+      />,
     );
 
-    // Should not show resist count if no resist mechanic
-    expect(screen.queryByRole('button', { name: /resistUse/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /resistUse/i }),
+    ).not.toBeInTheDocument();
   });
 
   it('should display resist button when creature has resist mechanic', () => {
     const combatant = createMockCombatant({
-      mechanics: { lair: false, stratagem: false, legendaryDeed: true, resist: true },
+      mechanics: {
+        lair: false,
+        stratagem: false,
+        legendaryDeed: true,
+        resist: true,
+      },
       resistRemaining: 3,
       legendaryDeedsUsed: [false, false, false],
     });
@@ -147,9 +168,9 @@ describe('CombatantRow Resist Mechanics', () => {
     render(
       <CombatantRow
         combatant={combatant}
-        locale="en"
+        locale='en'
         onUpdate={mockOnUpdate}
-      />
+      />,
     );
 
     const resistButton = screen.getByRole('button', { name: /resistUse/i });
@@ -159,7 +180,12 @@ describe('CombatantRow Resist Mechanics', () => {
 
   it('should disable resist button when resistRemaining is 0', () => {
     const combatant = createMockCombatant({
-      mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: true },
+      mechanics: {
+        lair: false,
+        stratagem: false,
+        legendaryDeed: false,
+        resist: true,
+      },
       resistRemaining: 0,
       legendaryDeedsUsed: [false, false, false],
     });
@@ -168,9 +194,9 @@ describe('CombatantRow Resist Mechanics', () => {
     render(
       <CombatantRow
         combatant={combatant}
-        locale="en"
+        locale='en'
         onUpdate={mockOnUpdate}
-      />
+      />,
     );
 
     const resistButton = screen.getByRole('button', { name: /resistUse/i });
@@ -181,7 +207,13 @@ describe('CombatantRow Resist Mechanics', () => {
     const user = userEvent.setup();
     const mockOnUpdate = vi.fn();
     const combatant = createMockCombatant({
-      mechanics: { lair: false, stratagem: false, legendaryDeed: true, resist: true, phase: false },
+      mechanics: {
+        lair: false,
+        stratagem: false,
+        legendaryDeed: true,
+        resist: true,
+        phase: false,
+      },
       resistRemaining: 3,
       legendaryDeedsUsed: [false, false, false],
     });
@@ -189,28 +221,30 @@ describe('CombatantRow Resist Mechanics', () => {
     const { rerender } = render(
       <CombatantRow
         combatant={combatant}
-        locale="en"
+        locale='en'
         onUpdate={mockOnUpdate}
-      />
+      />,
     );
 
-    // Verify initial state - all pips should be empty circles
     const initialPips = screen.getAllByRole('button', { name: '○' });
     expect(initialPips).toHaveLength(3);
 
-    // Click resist button
     const resistButton = screen.getByRole('button', { name: /resistUse/i });
     await user.click(resistButton);
 
-    // Verify onUpdate was called with complete updated combatant
     expect(mockOnUpdate).toHaveBeenCalled();
     const callArgs = mockOnUpdate.mock.calls[0][0];
     expect(callArgs.legendaryDeedsUsed).toEqual([true, false, false]);
     expect(callArgs.resistRemaining).toBe(2);
 
-    // Simulate component re-render with updated state
     const updatedCombatant = createMockCombatant({
-      mechanics: { lair: false, stratagem: false, legendaryDeed: true, resist: true, phase: false },
+      mechanics: {
+        lair: false,
+        stratagem: false,
+        legendaryDeed: true,
+        resist: true,
+        phase: false,
+      },
       resistRemaining: 2,
       legendaryDeedsUsed: [true, false, false],
     });
@@ -218,15 +252,14 @@ describe('CombatantRow Resist Mechanics', () => {
     rerender(
       <CombatantRow
         combatant={updatedCombatant}
-        locale="en"
+        locale='en'
         onUpdate={mockOnUpdate}
-      />
+      />,
     );
 
-    // Verify first pip is now filled and others are empty
     const filledPips = screen.getAllByRole('button', { name: '●' });
     expect(filledPips).toHaveLength(1);
-    
+
     const emptyPips = screen.getAllByRole('button', { name: '○' });
     expect(emptyPips).toHaveLength(2);
   });
@@ -247,11 +280,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     });
 
     render(
-      <CombatantRow
-        combatant={combatant}
-        locale="en"
-        onUpdate={vi.fn()}
-      />
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
     );
 
     expect(screen.queryByTestId('awakened-badge')).not.toBeInTheDocument();
@@ -273,11 +302,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     });
 
     render(
-      <CombatantRow
-        combatant={combatant}
-        locale="en"
-        onUpdate={vi.fn()}
-      />
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
     );
 
     expect(screen.getByTestId('awakened-badge')).toBeInTheDocument();
@@ -299,11 +324,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     });
 
     render(
-      <CombatantRow
-        combatant={combatant}
-        locale="en"
-        onUpdate={vi.fn()}
-      />
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
     );
 
     expect(screen.getByTestId('awakened-badge')).toBeInTheDocument();
@@ -329,11 +350,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     });
 
     render(
-      <CombatantRow
-        combatant={combatant}
-        locale="en"
-        onUpdate={vi.fn()}
-      />
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
     );
 
     expect(screen.getByTestId('awakened-badge')).toBeInTheDocument();
@@ -355,11 +372,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     });
 
     render(
-      <CombatantRow
-        combatant={combatant}
-        locale="en"
-        onUpdate={vi.fn()}
-      />
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
     );
 
     const row = screen.getByTestId('combatant-row');
@@ -380,11 +393,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     });
 
     render(
-      <CombatantRow
-        combatant={combatant}
-        locale="en"
-        onUpdate={vi.fn()}
-      />
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
     );
 
     const row = screen.getByTestId('combatant-row');
@@ -405,14 +414,33 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     });
 
     render(
-      <CombatantRow
-        combatant={combatant}
-        locale="en"
-        onUpdate={vi.fn()}
-      />
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
     );
 
     const row = screen.getByTestId('combatant-row');
+    expect(row.className).toContain('awakened--legendary');
+  });
+
+  it('should apply base, primary affix, and legendary tier classes together', () => {
+    const combatant = createMockCombatant({
+      heroicAwakening: {
+        fateDieResult: 19,
+        heroicDc: 12,
+        awakened: true,
+        tier: 'legendary',
+        affixes: [{ text: 'Stormbound' }, { text: 'Psionic' }],
+        bonuses: { proficiencyBonus: 2, acBonus: 2, savingThrowBonus: 2 },
+        hpOverride: null,
+      },
+    });
+
+    render(
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
+    );
+
+    const row = screen.getByTestId('combatant-row');
+    expect(row.className).toContain('awakened');
+    expect(row.className).toContain('awakened--stormbound');
     expect(row.className).toContain('awakened--legendary');
   });
 
@@ -434,14 +462,37 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     });
 
     render(
-      <CombatantRow
-        combatant={combatant}
-        locale="en"
-        onUpdate={vi.fn()}
-      />
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
     );
 
     const row = screen.getByTestId('combatant-row');
+    expect(row.className).toContain('awakened--mythic');
+  });
+
+  it('should apply base, primary affix, and mythic tier classes together', () => {
+    const combatant = createMockCombatant({
+      heroicAwakening: {
+        fateDieResult: 20,
+        heroicDc: 12,
+        awakened: true,
+        tier: 'mythic',
+        affixes: [
+          { text: 'Sulphurous' },
+          { text: 'Crusading' },
+          { text: 'Flametongued' },
+        ],
+        bonuses: { proficiencyBonus: 3, acBonus: 3, savingThrowBonus: 3 },
+        hpOverride: null,
+      },
+    });
+
+    render(
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
+    );
+
+    const row = screen.getByTestId('combatant-row');
+    expect(row.className).toContain('awakened');
+    expect(row.className).toContain('awakened--sulphurous');
     expect(row.className).toContain('awakened--mythic');
   });
 
@@ -459,11 +510,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     });
 
     render(
-      <CombatantRow
-        combatant={combatant}
-        locale="en"
-        onUpdate={vi.fn()}
-      />
+      <CombatantRow combatant={combatant} locale='en' onUpdate={vi.fn()} />,
     );
 
     const row = screen.getByTestId('combatant-row');

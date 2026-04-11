@@ -13,14 +13,14 @@
 
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
 import {
-    applyHeroicAwakening,
-    forceHeroicAwakening,
     generateUniqueAffixes,
     getDefaultDeedCount,
     getDefaultResistCount,
     getHeroicDc,
     parseMechanicsFromTags,
 } from '@/lib/utils/combatMechanics';
+import { applyHeroicAwakening } from '@/lib/utils/heroicAwakeningApply';
+import { forceHeroicAwakening } from '@/lib/utils/heroicAwakeningForce';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**

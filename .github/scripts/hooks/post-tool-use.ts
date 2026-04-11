@@ -23,24 +23,28 @@
  */
 
 import {
-    promises as fs,
-    readFileSync,
-    renameSync,
-    unlinkSync,
-    writeFileSync,
+  promises as fs,
+  readFileSync,
+  renameSync,
+  unlinkSync,
+  writeFileSync,
 } from 'node:fs';
 import {
-    readHookInput,
-    resolveEditedFilePath,
-    writeHookOutput,
+  readHookInput,
+  resolveEditedFilePath,
+  writeHookOutput,
 } from '../../.github/PAW/hook-runtime';
 import {
-    DEFAULT_DB_PATH,
-    insertViolation,
-    openDb,
-    resolveViolations,
+  DEFAULT_DB_PATH,
+  insertViolation,
+  openDb,
+  resolveViolations,
 } from '../../.github/PAW/paw-db';
 import { VIOLATIONS_PATH } from '../../.github/PAW/paw-paths';
+
+const IGNORE_FILE_DIRECTIVE_PATTERN =
+  /health:check-ignore-file\s+([a-z0-9*_,\s-]+)/gi;
+const WILDCARD_RULE = '*';
 
 /**
  * Determine whether a single-line comment is an exempt tool directive.
@@ -52,6 +56,68 @@ function isExemptComment(comment: string): boolean {
   return /^\/\/\s*(eslint|@ts-|istanbul|vitest|TODO:|FIXME:|HACK:|https?:\/\/|prettier-ignore|region|endregion|noinspection)/.test(
     comment,
   );
+}
+
+/**
+ * Normalize a rule token from a directive payload.
+ *
+ * @param token - Raw token text
+ * @returns Canonical lowercase rule token
+ */
+function normalizeRuleToken(token: string): string {
+  const normalized = token.trim().toLowerCase();
+  if (normalized === 'all') {
+    return WILDCARD_RULE;
+  }
+  return normalized;
+}
+
+/**
+ * Parse rule names from an ignore-file directive payload.
+ *
+ * @param rawRules - Raw directive payload
+ * @returns Set of normalized rules
+ */
+function parseRuleList(rawRules: string): Set<string> {
+  const rules = new Set<string>();
+  const sanitizedRawRules = rawRules.replace(/\s+\*+$/g, '');
+  const tokens = sanitizedRawRules
+    .split(/[\s,]+/)
+    .map(normalizeRuleToken)
+    .filter(Boolean);
+
+  if (tokens.length === 0) {
+    rules.add(WILDCARD_RULE);
+    return rules;
+  }
+
+  for (const token of tokens) {
+    rules.add(token);
+  }
+
+  return rules;
+}
+
+/**
+ * Determine whether a file-level ignore directive suppresses a rule.
+ *
+ * @param content - File contents
+ * @param rule - Rule identifier
+ * @returns True when the rule is ignored for the file
+ */
+function hasIgnoreFileDirective(content: string, rule: string): boolean {
+  const ignoredRules = new Set<string>();
+  IGNORE_FILE_DIRECTIVE_PATTERN.lastIndex = 0;
+
+  for (const match of content.matchAll(IGNORE_FILE_DIRECTIVE_PATTERN)) {
+    const parsedRules = parseRuleList(match[1] ?? '');
+    for (const parsedRule of parsedRules) {
+      ignoredRules.add(parsedRule);
+    }
+  }
+
+  const normalizedRule = normalizeRuleToken(rule);
+  return ignoredRules.has(WILDCARD_RULE) || ignoredRules.has(normalizedRule);
 }
 
 /**
@@ -140,8 +206,10 @@ function checkMdxFile(content: string, filePath: string): string[] {
  */
 function checkScssFile(content: string, filePath: string): string[] {
   const warnings: string[] = [];
+  const colorRuleIgnored = hasIgnoreFileDirective(content, 'no-color-literals');
 
   if (
+    !colorRuleIgnored &&
     !filePath.includes('globals.scss') &&
     /#[0-9a-fA-F]{3,8}\b/.test(content)
   ) {

@@ -21,6 +21,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
+
 /**
  * Route match result with similarity score
  *
@@ -158,8 +160,7 @@ async function getAllRoutes(): Promise<string[]> {
           routes.push(route);
         }
       }
-    } catch (err) {
-    }
+    } catch (err) {}
   }
 
   scanDirectory(contentDir);
@@ -200,12 +201,13 @@ export async function findNearestRoute(
   /** Return best match if similarity is above threshold (60%) */
   const bestMatch = matches[0];
   if (bestMatch && bestMatch.similarity >= 0.6) {
-    /** Extract title from route's last segment */
+    /** Extract title from route's last segment, stripping semantic suffixes */
     const segments = bestMatch.path.split('/').filter(Boolean);
-    const lastSegment = segments[segments.length - 1];
-    const title = (
-      lastSegment == 'main' ? segments[segments.length - 2] : lastSegment
-    )
+    const rawSegment = segments[segments.length - 1];
+    const cleanSegment = (
+      rawSegment === 'main' ? segments[segments.length - 2] : rawSegment
+    )?.replace(REGEX_CONTENT_SUFFIX, '');
+    const title = cleanSegment
       ?.split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');

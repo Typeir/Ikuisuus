@@ -1,38 +1,99 @@
 /**
- * TODO: Add comprehensive tests for useMonsterIndex.ts
- * This file contains only smoke tests. Additional test coverage needed for:
- * - Function behavior validation
- * - Edge cases
- * - Error handling
- *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
+ * @fileoverview Tests for useMonsterIndex hook
+ * @description Validates lazy loading, fetch behavior, caching, loading states,
+ * and error handling for the monster index API hook.
  */
 
-import { describe, expect, it } from 'vitest';
+import { useMonsterIndex } from '@/lib/components/encounterPlanner/importer/useMonsterIndex';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+/** Sample monster data returned by the API */
+const MOCK_MONSTERS = [
+  {
+    slug: 'goblin',
+    title: 'Goblin',
+    cr: '1/4',
+    size: 'Small',
+    creatureType: 'Humanoid',
+  },
+  {
+    slug: 'dragon',
+    title: 'Ancient Red Dragon',
+    cr: '24',
+    size: 'Gargantuan',
+    creatureType: 'Dragon',
+  },
+];
 
 describe('useMonsterIndex', () => {
-  it('should export module members [DUMMY TEST]', async () => {
-    try {
-      const Module = await import('@/lib/components/encounterPlanner/importer/useMonsterIndex');
-      if (!Module || typeof Module !== 'object') {
-        throw new Error('Module failed to import');
-      }
-      const exportCount = Object.keys(Module).length;
-      expect(exportCount).toBeGreaterThanOrEqual(0);
-      if (exportCount === 0) {
-        console.warn(
-          '⚠️  DUMMY TEST WARNING: @/lib/components/encounterPlanner/importer/useMonsterIndex',
-          '\n   Module has no exports'
-        );
-      }
-    } catch (error) {
-      console.warn(
-        '⚠️  DUMMY TEST WARNING: @/lib/components/encounterPlanner/importer/useMonsterIndex',
-        '\n   Failed to load module:',
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-    // Dummy test always passes - real tests needed
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn());
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('should start with empty index and not loading', () => {
+    const { result } = renderHook(() => useMonsterIndex('en'));
+
+    expect(result.current.index).toEqual([]);
+    expect(result.current.isLoading).toBe(false);
+  });
+
+  it('should fetch monsters on loadIndex and map entries with id field', async () => {
+    const mockResponse = {
+      ok: true,
+      json: vi.fn().mockResolvedValue(MOCK_MONSTERS),
+    };
+    vi.mocked(fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+    const { result } = renderHook(() => useMonsterIndex('en'));
+
+    await act(async () => {
+      await result.current.loadIndex();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.index).toHaveLength(2);
+    expect(result.current.index[0]).toEqual(
+      expect.objectContaining({ slug: 'goblin', id: 'goblin' }),
+    );
+  });
+
+  it('should pass locale to the fetch URL', async () => {
+    const mockResponse = {
+      ok: true,
+      json: vi.fn().mockResolvedValue([]),
+    };
+    vi.mocked(fetch).mockResolvedValue(mockResponse as unknown as Response);
+
+    const { result } = renderHook(() => useMonsterIndex('es'));
+
+    await act(async () => {
+      await result.current.loadIndex();
+    });
+
+    expect(fetch).toHaveBeenCalledWith('/api/monsters/index?locale=es');
+  });
+
+  it('should handle fetch errors gracefully', async () => {
+    vi.mocked(fetch).mockRejectedValue(new Error('Network error'));
+
+    const { result } = renderHook(() => useMonsterIndex('en'));
+
+    await act(async () => {
+      await result.current.loadIndex();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.index).toEqual([]);
   });
 });

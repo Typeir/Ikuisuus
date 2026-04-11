@@ -28,7 +28,7 @@ const log = logger.child({ module: 'API:Affix:Single' });
 /** Slug→title lookup derived from HeroicAffix enum */
 const HEROIC_AFFIXES_MAP: Record<string, { slug: string; title: string }> =
   Object.fromEntries(
-    Object.values(HeroicAffix).map(title => {
+    Object.values(HeroicAffix).map((title) => {
       const slug = title.toLowerCase();
       return [slug, { slug, title }];
     }),
@@ -36,7 +36,7 @@ const HEROIC_AFFIXES_MAP: Record<string, { slug: string; title: string }> =
 
 export async function GET(
   req: Request,
-  context: { params: Promise<{ slug: string }> }
+  context: { params: Promise<{ slug: string }> },
 ) {
   try {
     const { slug } = await context.params;
@@ -57,12 +57,12 @@ export async function GET(
   } catch (error) {
     log.error('Error loading affix', {
       error: error instanceof Error ? error.message : String(error),
-      slug: await context.params.then(p => p.slug),
-      locale: new URL(req.url).searchParams.get('locale') || 'en'
+      slug: await context.params.then((p) => p.slug),
+      locale: new URL(req.url).searchParams.get('locale') || 'en',
     });
     return NextResponse.json(
       { error: 'Failed to load affix' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
