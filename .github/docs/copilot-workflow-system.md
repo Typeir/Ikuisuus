@@ -36,21 +36,21 @@ Phase C: Completion Reconciliation & Report
 
 ### Health Check Scripts
 
-| Script                                    | npm command                    | What it checks                           | Severity         |
-| ----------------------------------------- | ------------------------------ | ---------------------------------------- | ---------------- |
-| `.github/scripts/health-check.mjs`        | `npm run health:check`         | Composite orchestrator                   | —                |
-| `.github/scripts/check-file-length.mjs`   | `npm run health:file-length`   | Files >250 lines                         | CRITICAL         |
-| `.github/scripts/check-duplicate-css.mjs` | `npm run health:duplicate-css` | Duplicate CSS selectors                  | CRITICAL         |
-| `.github/scripts/check-jsdoc-quality.mjs` | `npm run health:jsdoc`         | Inline comments, color literals, alert() | CRITICAL         |
-| `.github/scripts/check-antipatterns.mjs`  | `npm run health:antipatterns`  | console.log, any type, force casts       | CRITICAL/WARNING |
-| `.github/scripts/check-test-gaps.mjs`     | `npm run health:test-gaps`     | Missing test files for changed code      | CRITICAL         |
+| Script                                   | npm command                    | What it checks                           | Severity         |
+| ---------------------------------------- | ------------------------------ | ---------------------------------------- | ---------------- |
+| `.github/scripts/health-check.ts`        | `npm run health:check`         | Composite orchestrator                   | —                |
+| `.github/scripts/check-file-length.ts`   | `npm run health:file-length`   | Files >250 lines                         | CRITICAL         |
+| `.github/scripts/check-duplicate-css.ts` | `npm run health:duplicate-css` | Duplicate CSS selectors                  | CRITICAL         |
+| `.github/scripts/check-jsdoc-quality.ts` | `npm run health:jsdoc`         | Inline comments, color literals, alert() | CRITICAL         |
+| `.github/scripts/check-antipatterns.ts`  | `npm run health:antipatterns`  | console.log, any type, force casts       | CRITICAL/WARNING |
+| `.github/scripts/check-test-gaps.ts`     | `npm run health:test-gaps`     | Missing test files for changed code      | CRITICAL         |
 
 ### Reconciliation Scripts
 
-| Script                               | npm command                | Purpose                     |
-| ------------------------------------ | -------------------------- | --------------------------- |
-| `.github/scripts/reconcile-task.mjs` | `npm run health:reconcile` | Verify task file completion |
-| `.github/scripts/write-report.mjs`   | `npm run health:report`    | Generate completion report  |
+| Script                              | npm command                | Purpose                     |
+| ----------------------------------- | -------------------------- | --------------------------- |
+| `.github/scripts/reconcile-task.ts` | `npm run health:reconcile` | Verify task file completion |
+| `.github/scripts/write-report.ts`   | `npm run health:report`    | Generate completion report  |
 
 ---
 
@@ -135,8 +135,8 @@ If critical issues cannot be resolved immediately:
 ### Adding a New Health Check
 
 1. Create `.github/scripts/check-{name}.mjs` following the existing pattern (JSON output, exit code 0/1)
-2. Add entry to the `CHECKS` array in `.github/scripts/health-check.mjs`
-3. Add npm script: `"health:{name}": "node .github/scripts/check-{name}.mjs"`
+2. Add entry to the `CHECKS` array in `.github/scripts/health-check.ts`
+3. Add npm script: `"health:{name}": "node .github/scripts/check-{name}.ts"`
 4. Update this doc's tables
 
 ### Adding a New Architecture Domain

@@ -199,10 +199,10 @@ May reference spells, items, and monsters via internal links.
 
 ```bash
 # Run MDX format check standalone
-node .github/scripts/check-mdx-format.mjs
+node .github/scripts/check-mdx-format.ts
 
 # Run as part of full health check
-node .github/scripts/health-check.mjs
+node .github/scripts/health-check.ts
 ```
 
 The script outputs JSON matching the health check schema:

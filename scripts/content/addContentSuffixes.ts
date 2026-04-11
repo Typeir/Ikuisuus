@@ -4,21 +4,20 @@
  * @fileoverview Renames content files following the double-extension convention:
  *   - `berserker.mdx` → `berserker.specialization.mdx`
  *   - `spells.mdx` → `spells.list.mdx`
- *   - `maneuvers.mdx` → `maneuvers.reference.mdx`
  *   - `bilupine.mdx` → `bilupine.bloodline.mdx`
  *   - `the-sunken-city.mdx` → `the-sunken-city.lore.mdx`
  *
  * Suffix assignment rules (evaluated in priority order):
- *   1. Explicit reference files → `.reference`
- *   2. Spell list files (`spells.mdx` in vocation dirs) → `.list`
- *   3. Remaining vocation subfiles → `.specialization`
- *   4. Bloodline files → `.bloodline`
- *   5. World lore files → `.lore`
+ *   1. Spell list files (`spells.mdx` in vocation dirs) → `.list`
+ *   2. Remaining vocation subfiles → `.specialization`
+ *   3. Bloodline files → `.bloodline`
+ *   4. World lore files → `.lore`
  *
  * Skips `main.mdx` files and any file already carrying a double extension.
  * Also renames co-located `.metadata.json` sidecars when present.
  *
  * @module scripts/content/addContentSuffixes
+ * @author Typeir
  * @version 1.0.0
  * @since 3.0.0
  *
@@ -41,18 +40,6 @@ const CONTENT_ROOT = path.resolve('src', 'content');
 const DRY_RUN = hasFlag('dry');
 
 /**
- * Vocation-relative paths of files that should receive the `.reference` suffix.
- */
-const REFERENCE_FILES = new Set([
-  'fighter/maneuvers',
-  'tinker/gadgets',
-  'sorcerer/metamagic',
-  'warlock/eldritch-invocation',
-  'esper/mind-paths',
-  'ranger/lay-of-the-land',
-]);
-
-/**
  * A single file rename operation with its target suffix.
  *
  * @property {string} from - Absolute path of the original file
@@ -72,7 +59,7 @@ interface RenameEntry {
  * @returns {boolean} True when the file already has a content-type suffix
  */
 function hasContentSuffix(filename: string): boolean {
-  return /\.(sheet|specialization|list|reference|bloodline|lore)\.mdx$/.test(
+  return /\.(sheet|specialization|list|heirloom|trinket|bloodline|lore)\.mdx$/.test(
     filename,
   );
 }
@@ -90,7 +77,7 @@ function insertSuffix(filePath: string, suffix: string): string {
 
 /**
  * Collects rename entries for all vocation subfiles in a locale directory.
- * Assigns `.reference`, `.list`, or `.specialization` based on file identity.
+ * Assigns `.list` or `.specialization` based on file identity.
  *
  * @param {string} localeDir - Absolute path to a locale content root (e.g. `src/content/en`)
  * @param {RenameEntry[]} results - Accumulator array for rename entries
@@ -115,17 +102,9 @@ function collectVocationRenames(
       if (file === 'main.mdx' || hasContentSuffix(file)) continue;
 
       const baseName = file.replace(/\.mdx$/, '');
-      const relKey = `${voc}/${baseName}`;
       const fullPath = path.join(vocDir, file);
 
-      let suffix: string;
-      if (REFERENCE_FILES.has(relKey)) {
-        suffix = '.reference';
-      } else if (baseName === 'spells') {
-        suffix = '.list';
-      } else {
-        suffix = '.specialization';
-      }
+      const suffix = baseName === 'spells' ? '.list' : '.specialization';
 
       results.push({
         from: fullPath,
@@ -163,6 +142,60 @@ function collectBloodlineRenames(
       from: fullPath,
       to: insertSuffix(fullPath, '.bloodline'),
       suffix: '.bloodline',
+    });
+  }
+}
+
+/**
+ * Collects rename entries for heirloom files.
+ *
+ * @param {string} localeDir - Absolute path to a locale content root
+ * @param {RenameEntry[]} results - Accumulator array for rename entries
+ */
+function collectHeirloomRenames(
+  localeDir: string,
+  results: RenameEntry[],
+): void {
+  const heirloomsDir = path.join(localeDir, 'items', 'heirlooms');
+  if (!fs.existsSync(heirloomsDir)) return;
+
+  const files = fs.readdirSync(heirloomsDir).filter((f) => f.endsWith('.mdx'));
+
+  for (const file of files) {
+    if (file === 'main.mdx' || hasContentSuffix(file)) continue;
+
+    const fullPath = path.join(heirloomsDir, file);
+    results.push({
+      from: fullPath,
+      to: insertSuffix(fullPath, '.heirloom'),
+      suffix: '.heirloom',
+    });
+  }
+}
+
+/**
+ * Collects rename entries for trinket files.
+ *
+ * @param {string} localeDir - Absolute path to a locale content root
+ * @param {RenameEntry[]} results - Accumulator array for rename entries
+ */
+function collectTrinketRenames(
+  localeDir: string,
+  results: RenameEntry[],
+): void {
+  const trinketsDir = path.join(localeDir, 'items', 'trinkets');
+  if (!fs.existsSync(trinketsDir)) return;
+
+  const files = fs.readdirSync(trinketsDir).filter((f) => f.endsWith('.mdx'));
+
+  for (const file of files) {
+    if (file === 'main.mdx' || hasContentSuffix(file)) continue;
+
+    const fullPath = path.join(trinketsDir, file);
+    results.push({
+      from: fullPath,
+      to: insertSuffix(fullPath, '.trinket'),
+      suffix: '.trinket',
     });
   }
 }
@@ -230,6 +263,8 @@ function main(): void {
 
   collectVocationRenames(localeDir, allRenames);
   collectBloodlineRenames(localeDir, allRenames);
+  collectHeirloomRenames(localeDir, allRenames);
+  collectTrinketRenames(localeDir, allRenames);
   collectLoreRenames(path.join(localeDir, 'world'), allRenames);
 
   const bySuffix: Record<string, RenameEntry[]> = {};

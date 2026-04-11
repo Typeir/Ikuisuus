@@ -29,7 +29,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { IGNORED_FOLDERS } from '../enums/constants';
+import { IGNORED_FOLDERS, REGEX_CONTENT_SUFFIX } from '../enums/constants';
 import { getContentFolder } from './getContentFolder';
 
 /**
@@ -49,7 +49,7 @@ const toKebabCase = (str: string) => {
     .replace(/([a-z])([A-Z])/g, '$1-$2') // camelCase to kebab-case
     .replace(/\s+/g, '-') // spaces to dashes
     .replace(/_/g, '-') // underscores to dashes
-    .toLowerCase(); // normalize casinge: fileName.replace(/\.sheet\.md$/, '').replace(RegexPatterns.SheetSuffix, ''),e: fileName.replace(/\.sheet\.md$/, '').replace(RegexPatterns.SheetSuffix, ''),
+    .toLowerCase();
 };
 
 /**
@@ -80,18 +80,19 @@ export const searchContent = async (
       if (IGNORED_FOLDERS.some((r) => r.test(entry.name))) continue;
 
       const fullPath = path.join(dir, entry.name);
-      const fileName = entry.name.replace(/\.(md|mdx)$/, '');
+      const rawStem = entry.name.replace(/\.(md|mdx)$/, '');
+      const cleanStem = rawStem.replace(REGEX_CONTENT_SUFFIX, '');
       const kebabPath = path
-        .join(base, toKebabCase(fileName))
+        .join(base, toKebabCase(cleanStem))
         .replace(/\\/g, '/');
 
       if (entry.isDirectory()) {
-        walk(fullPath, kebabPath); // recurse into subdirectories
+        walk(fullPath, kebabPath);
       } else if (
         (entry.name.endsWith('.md') || entry.name.endsWith('.mdx')) &&
-        fileName.toLowerCase().includes(query.toLowerCase())
+        cleanStem.toLowerCase().includes(query.toLowerCase())
       ) {
-        matches.push({ name: fileName, path: kebabPath });
+        matches.push({ name: cleanStem, path: kebabPath });
       }
     }
     return matches;

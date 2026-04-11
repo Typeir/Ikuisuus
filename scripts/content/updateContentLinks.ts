@@ -9,6 +9,7 @@
  * then applies replacements across all content files.
  *
  * @module scripts/content/updateContentLinks
+ * @author Typeir
  * @version 1.0.0
  * @since 3.0.0
  *
@@ -37,7 +38,7 @@ const LIBRARY_PREFIX = '/en/library/';
  * Suffix extraction regex matching recognized double-extension content suffixes.
  */
 const SUFFIX_REGEX =
-  /\.(sheet|specialization|list|reference|bloodline|lore)$/;
+  /\.(sheet|specialization|list|heirloom|trinket|bloodline|lore)$/;
 
 /**
  * Builds a mapping of old URL slugs (without suffix) to new URL slugs (with suffix)
@@ -87,6 +88,14 @@ function buildSlugMap(): Map<string, string> {
   scanDir(
     path.join(CONTENT_ROOT, 'character-creation', 'bloodlines'),
     `${LIBRARY_PREFIX}character-creation/bloodlines/`,
+  );
+  scanDir(
+    path.join(CONTENT_ROOT, 'items', 'heirlooms'),
+    `${LIBRARY_PREFIX}items/heirlooms/`,
+  );
+  scanDir(
+    path.join(CONTENT_ROOT, 'items', 'trinkets'),
+    `${LIBRARY_PREFIX}items/trinkets/`,
   );
   scanDir(path.join(CONTENT_ROOT, 'world'), `${LIBRARY_PREFIX}world/`);
 

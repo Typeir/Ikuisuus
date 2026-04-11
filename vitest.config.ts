@@ -3,12 +3,47 @@
  * @description Root vitest config with inline projects for modularized test execution.
  * Each project runs in its own worker pool to prevent OOM crashes with 374+ test files.
  * Use `--project <name>` to run a single module, or `vitest run` for all projects.
+ *
+ * @module vitestConfig
+ * @author Typeir
+ * @version 1.1.0
+ * @since 1.0.0
  */
 
 /** @ts-expect-error — react-oxc plugin types are incomplete */
 import react from '@vitejs/plugin-react-oxc';
+import os from 'os';
 import path from 'path';
 import { defineConfig } from 'vitest/config';
+
+const CI_MAX_WORKERS = 2;
+const LOCAL_MIN_WORKERS = 2;
+const LOCAL_MAX_WORKERS = 4;
+const LOCAL_CPU_DIVISOR = 4;
+const DEFAULT_MAX_OLD_SPACE_MB = 4096;
+
+const detectedCpuCount = os.cpus().length;
+const localWorkerCount = Math.min(
+  LOCAL_MAX_WORKERS,
+  Math.max(LOCAL_MIN_WORKERS, Math.floor(detectedCpuCount / LOCAL_CPU_DIVISOR)),
+);
+const defaultMaxWorkers = process.env.CI ? CI_MAX_WORKERS : localWorkerCount;
+
+const parsedMaxWorkers = Number.parseInt(
+  process.env.TEST_MAX_WORKERS ?? '',
+  10,
+);
+const maxWorkers = Number.isNaN(parsedMaxWorkers)
+  ? defaultMaxWorkers
+  : Math.max(1, parsedMaxWorkers);
+
+const parsedMaxOldSpaceMb = Number.parseInt(
+  process.env.TEST_MAX_OLD_SPACE_MB ?? '',
+  10,
+);
+const maxOldSpaceMb = Number.isNaN(parsedMaxOldSpaceMb)
+  ? DEFAULT_MAX_OLD_SPACE_MB
+  : Math.max(1024, parsedMaxOldSpaceMb);
 
 /** Shared test settings inherited by all projects via `extends: true` */
 export default defineConfig({
@@ -31,8 +66,12 @@ export default defineConfig({
       },
     },
     setupFiles: ['./tests/setup/vitest.setup.ts'],
-    maxWorkers: 1,
-    execArgv: ['--max-old-space-size=8192'],
+    pool: 'forks',
+    maxWorkers,
+    minWorkers: 1,
+    maxForks: maxWorkers,
+    minForks: 1,
+    execArgv: [`--max-old-space-size=${maxOldSpaceMb}`],
     server: {
       deps: {
         inline: ['next-intl'],

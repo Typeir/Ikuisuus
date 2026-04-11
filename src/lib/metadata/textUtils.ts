@@ -59,8 +59,11 @@ export function toKebabCase(text: string): string {
 export function filePathToSlug(filePath: string): string {
   return path
     .basename(filePath)
-    .replace(/\.(?:sheet\.)?mdx$/i, '')
-    .replace(/\..+$/, '');
+    .replace(/\.mdx$/i, '')
+    .replace(
+      /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/,
+      '',
+    );
 }
 
 /**

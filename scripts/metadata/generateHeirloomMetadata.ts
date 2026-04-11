@@ -483,7 +483,7 @@ async function main(
   await runGenerator({
     name: 'Heirloom Metadata Generator',
     contentType: 'heirlooms',
-    filePattern: options.filePattern || /\.mdx$/i,
+    filePattern: options.filePattern || /\.heirloom\.mdx$/i,
     parseFile: parseHeirloomFile,
     contentDir: options.contentDir,
     storage: options.storage,
@@ -501,3 +501,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export { main, parseHeirloomFile };
+

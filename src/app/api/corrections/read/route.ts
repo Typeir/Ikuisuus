@@ -26,7 +26,13 @@ import { NextRequest, NextResponse } from 'next/server';
 const log = logger.child({ module: 'API:Corrections:Read' });
 
 /** File path variants to try when resolving a slug to a content file. */
-const PATH_VARIANTS = ['.mdx', '.sheet.mdx', '.md'] as const;
+const PATH_VARIANTS = [
+  '.mdx',
+  '.sheet.mdx',
+  '.heirloom.mdx',
+  '.trinket.mdx',
+  '.md',
+] as const;
 
 /**
  * Fetches a single file from the content repo via the GitHub Contents API.

@@ -5,6 +5,7 @@
  * content scripts.
  *
  * @module content/linkSpecs
+ * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -23,7 +24,7 @@ export interface LinkSpec {
 /**
  * Validates a parsed JSON payload as a LinkSpec array.
  *
- * @param data - Parsed JSON payload
+ * @param {unknown} data - Parsed JSON payload
  * @returns Strongly typed LinkSpec array
  */
 export const parseLinkSpecs = (data: unknown): LinkSpec[] => {
@@ -31,7 +32,8 @@ export const parseLinkSpecs = (data: unknown): LinkSpec[] => {
     throw new Error('Links JSON must be an array.');
   }
 
-  for (const [i, x] of data.entries()) {
+  for (let i = 0; i < data.length; i++) {
+    const x = data[i];
     const termValid =
       typeof x?.term === 'string' ||
       (Array.isArray(x?.term) &&
@@ -49,7 +51,7 @@ export const parseLinkSpecs = (data: unknown): LinkSpec[] => {
 /**
  * Reads and validates link specs from a JSON file.
  *
- * @param file - Path to JSON file
+ * @param {string} file - Path to JSON file
  * @returns Parsed LinkSpec array
  */
 export const readLinkSpecsFromFile = async (

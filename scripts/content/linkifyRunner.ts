@@ -1,10 +1,10 @@
-#!/usr/bin/env npx tsx --tsconfig tsconfig.scripts.json
 /**
  * Linkify CLI — applies linkifyMarkdown() to a tree of .md/.mdx files.
  *
  * @fileoverview CLI runner for the markdown linkifier.
  *
  * @module linkifyRunner
+ * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
  *

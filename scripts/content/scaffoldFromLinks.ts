@@ -1,10 +1,10 @@
-#!/usr/bin/env npx tsx --tsconfig tsconfig.scripts.json
 /**
  * Scaffolds MDX files from a links list.
  *
  * @fileoverview Creates placeholder MDX files for broken links.
  *
  * @module scaffoldFromLinks
+ * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
  *

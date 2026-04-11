@@ -1,5 +1,9 @@
 /**
  * @fileoverview PostgreSQL Seed Script — FS → Postgres (MikroORM)
+ * @module scripts/db/pg/seed-from-fs
+ * @author Typeir
+ * @version 1.0.0
+ * @since 1.0.0
  * @description Reads every `.metadata.json` sidecar file from the local content
  * tree and seeds it into PostgreSQL via MikroORM entity manager.
  *
@@ -22,41 +26,41 @@
  */
 
 import {
-    defineConfig,
-    MikroORM,
-    type EntityManager,
+  defineConfig,
+  MikroORM,
+  type EntityManager,
 } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import {
-    BloodlineBoonEntity,
-    BloodlineEntity,
-    CorrectionsUserEntity,
-    HeirloomChargesEmbed,
-    HeirloomEntity,
-    MonsterACEmbed,
-    MonsterEntity,
-    MonsterHPEmbed,
-    MonsterSaveEmbed,
-    MonsterScoreEmbed,
-    MonsterSenseEmbed,
-    MonsterSpeedEmbed,
-    SchemaMigrationEntity,
-    SpecializationEntity,
-    SpecializationFeatureEntity,
-    SpecializationPreparedSpellEntity,
-    SpecializationSpellcastingEmbed,
-    SpellComponentEmbed,
-    SpellEntity,
-    SpellListEntity,
-    TrinketEntity,
-    TrinketSavingThrowEmbed,
-    VocationEntity,
-    VocationFeatureEntity,
-    VocationSkillProficienciesEmbed,
-    VocationSpellcastingEmbed,
+  BloodlineBoonEntity,
+  BloodlineEntity,
+  CorrectionsUserEntity,
+  HeirloomChargesEmbed,
+  HeirloomEntity,
+  MonsterACEmbed,
+  MonsterEntity,
+  MonsterHPEmbed,
+  MonsterSaveEmbed,
+  MonsterScoreEmbed,
+  MonsterSenseEmbed,
+  MonsterSpeedEmbed,
+  SchemaMigrationEntity,
+  SpecializationEntity,
+  SpecializationFeatureEntity,
+  SpecializationPreparedSpellEntity,
+  SpecializationSpellcastingEmbed,
+  SpellComponentEmbed,
+  SpellEntity,
+  SpellListEntity,
+  TrinketEntity,
+  TrinketSavingThrowEmbed,
+  VocationEntity,
+  VocationFeatureEntity,
+  VocationSkillProficienciesEmbed,
+  VocationSpellcastingEmbed,
 } from '../../../src/lib/db/orm/entities/index';
 import { contentHash } from '../../../src/lib/metadata/contentHash';
 
@@ -314,7 +318,7 @@ function resolveVersionHash(record: Record<string, unknown>): string {
 /**
  * Returns the content directory for a given locale.
  *
- * @param locale - Locale code
+ * @param {string} locale - Locale code
  * @returns Absolute path to `src/content/{locale}`
  */
 const contentDir = (locale: string): string =>
@@ -323,7 +327,7 @@ const contentDir = (locale: string): string =>
 /**
  * Returns the `.meta/` directory for a given locale.
  *
- * @param locale - Locale code
+ * @param {string} locale - Locale code
  * @returns Absolute path to `.meta/{locale}`
  */
 const metaDir = (locale: string): string => join(ROOT, '.meta', locale);
@@ -332,8 +336,8 @@ const metaDir = (locale: string): string => join(ROOT, '.meta', locale);
  * Reads and flattens all `.metadata.json` sidecar files from a subdirectory.
  * Checks `.meta/{locale}/{subdir}` first, falls back to `src/content/{locale}/{subdir}`.
  *
- * @param locale - Locale code
- * @param subdir - Subdirectory (e.g. 'monsters', 'items/heirlooms')
+ * @param {string} locale - Locale code
+ * @param {string} subdir - Subdirectory (e.g. 'monsters', 'items/heirlooms')
  * @returns Flattened metadata records
  */
 const readMetadata = <T>(locale: string, subdir: string): T[] => {
@@ -354,8 +358,8 @@ const readMetadata = <T>(locale: string, subdir: string): T[] => {
 /**
  * Seeds the `monsters` table for one locale.
  *
- * @param em - Transaction-scoped entity manager
- * @param locale - Locale code
+ * @param {EntityManager} em - Transaction-scoped entity manager
+ * @param {string} locale - Locale code
  * @returns Number of rows inserted
  */
 async function seedMonsters(
@@ -436,8 +440,8 @@ async function seedMonsters(
 /**
  * Seeds the `heirlooms` table for one locale.
  *
- * @param em - Transaction-scoped entity manager
- * @param locale - Locale code
+ * @param {EntityManager} em - Transaction-scoped entity manager
+ * @param {string} locale - Locale code
  * @returns Number of rows inserted
  */
 async function seedHeirlooms(
@@ -496,8 +500,8 @@ async function seedHeirlooms(
  * Seeds the `spells` + `spell_lists` tables for one locale.
  * MikroORM handles FK assignment and insert ordering automatically.
  *
- * @param em - Transaction-scoped entity manager
- * @param locale - Locale code
+ * @param {EntityManager} em - Transaction-scoped entity manager
+ * @param {string} locale - Locale code
  * @returns Number of spell rows inserted
  */
 async function seedSpells(em: EntityManager, locale: string): Promise<number> {
@@ -548,8 +552,8 @@ async function seedSpells(em: EntityManager, locale: string): Promise<number> {
 /**
  * Seeds the `trinkets` table for one locale.
  *
- * @param em - Transaction-scoped entity manager
- * @param locale - Locale code
+ * @param {EntityManager} em - Transaction-scoped entity manager
+ * @param {string} locale - Locale code
  * @returns Number of rows inserted
  */
 async function seedTrinkets(
@@ -593,8 +597,8 @@ async function seedTrinkets(
  * Seeds the `bloodlines` + `bloodline_boons` tables for one locale.
  * MikroORM handles FK assignment and insert ordering automatically.
  *
- * @param em - Transaction-scoped entity manager
- * @param locale - Locale code
+ * @param {EntityManager} em - Transaction-scoped entity manager
+ * @param {string} locale - Locale code
  * @returns Number of bloodline rows inserted
  */
 async function seedBloodlines(
@@ -657,8 +661,8 @@ async function seedBloodlines(
  * Seeds the `vocations` + `vocation_features` tables for one locale.
  * MikroORM handles FK assignment and insert ordering automatically.
  *
- * @param em - Transaction-scoped entity manager
- * @param locale - Locale code
+ * @param {EntityManager} em - Transaction-scoped entity manager
+ * @param {string} locale - Locale code
  * @returns Number of rows inserted
  */
 async function seedVocations(
@@ -722,138 +726,8 @@ async function seedVocations(
  * Seeds the `specializations` + child tables for one locale.
  * MikroORM handles FK assignment and insert ordering automatically.
  *
- * @param em - Transaction-scoped entity manager
- * @param locale - Locale code
- * @returns Number of rows inserted
- */
-async function seedSpecializations(
-  em: EntityManager,
-  locale: string,
-): Promise<number> {
-  const records = readMetadata<SpecializationMeta>(
-    locale,
-    join('character-creation', 'vocations', 'specializations'),
-  ).filter(Boolean);
-  if (records.length === 0) return 0;
-
-  await em.nativeDelete(SpecializationEntity, { locale });
-
-  for (const s of records) {
-    const sc = s.spellcasting;
-
-    const spec = em.create(SpecializationEntity, {
-      locale,
-      slug: s.slug,
-      title: s.title,
-      file: s.file,
-      link: s.link,
-      vocation: s.vocation,
-      specializationType: s.specializationType,
-      flavor: s.flavor,
-      spellcasting: sc
-        ? { ability: sc.ability, progression: sc.progression }
-        : undefined,
-      tags: s.tags ?? [],
-      indexVersion: s.indexVersion,
-      versionHash: resolveVersionHash(s as unknown as Record<string, unknown>),
-    });
-
-    for (let i = 0; i < (s.features ?? []).length; i++) {
-      const f = s.features[i];
-      em.create(SpecializationFeatureEntity, {
-        specialization: spec,
-        level: f.level,
-        name: f.name,
-        sortOrder: i,
-      });
-    }
-
-    for (let i = 0; i < (s.spellsAlwaysPrepared ?? []).length; i++) {
-      const p = s.spellsAlwaysPrepared![i];
-      em.create(SpecializationPreparedSpellEntity, {
-        specialization: spec,
-        level: p.level,
-        spells: p.spells,
-        sortOrder: i,
-      });
-    }
-  }
-
-  await em.flush();
-  return records.length;
-}
-
-/**
- * Seeds the `vocations` + `vocation_features` tables for one locale.
- * MikroORM handles FK assignment and insert ordering automatically.
- *
- * @param em - Transaction-scoped entity manager
- * @param locale - Locale code
- * @returns Number of rows inserted
- */
-async function seedVocations(
-  em: EntityManager,
-  locale: string,
-): Promise<number> {
-  const records = readMetadata<VocationMeta>(
-    locale,
-    join('character-creation', 'vocations'),
-  ).filter(Boolean);
-  if (records.length === 0) return 0;
-
-  await em.nativeDelete(VocationEntity, { locale });
-
-  for (const v of records) {
-    const sp = v.skillProficiencies ?? { count: 0, choices: [] };
-    const sc = v.spellcasting;
-
-    const vocation = em.create(VocationEntity, {
-      locale,
-      slug: v.slug,
-      title: v.title,
-      file: v.file,
-      link: v.link,
-      archetype: v.archetype,
-      primaryAbility: v.primaryAbility ?? [],
-      hitDie: v.hitDie,
-      savingThrows: v.savingThrows ?? [],
-      armorProficiencies: v.armorProficiencies ?? [],
-      weaponProficiencies: v.weaponProficiencies ?? [],
-      toolProficiencies: v.toolProficiencies ?? [],
-      skillProficiencies: {
-        count: sp.count,
-        choices: sp.choices,
-      },
-      spellcasting: sc
-        ? { ability: sc.ability, progression: sc.progression }
-        : undefined,
-      specializations: v.specializations ?? [],
-      tags: v.tags ?? [],
-      indexVersion: v.indexVersion,
-      versionHash: resolveVersionHash(v as unknown as Record<string, unknown>),
-    });
-
-    for (let i = 0; i < (v.features ?? []).length; i++) {
-      const f = v.features[i];
-      em.create(VocationFeatureEntity, {
-        vocation,
-        level: f.level,
-        name: f.name,
-        sortOrder: i,
-      });
-    }
-  }
-
-  await em.flush();
-  return records.length;
-}
-
-/**
- * Seeds the `specializations` + child tables for one locale.
- * MikroORM handles FK assignment and insert ordering automatically.
- *
- * @param em - Transaction-scoped entity manager
- * @param locale - Locale code
+ * @param {EntityManager} em - Transaction-scoped entity manager
+ * @param {string} locale - Locale code
  * @returns Number of rows inserted
  */
 async function seedSpecializations(
@@ -918,8 +792,8 @@ async function seedSpecializations(
 /**
  * Seeds all content tables for a single locale inside one transaction.
  *
- * @param orm - MikroORM instance
- * @param locale - Locale code
+ * @param {MikroORM} orm - MikroORM instance
+ * @param {string} locale - Locale code
  */
 async function seedLocale(orm: MikroORM, locale: string): Promise<void> {
   const em = orm.em.fork();

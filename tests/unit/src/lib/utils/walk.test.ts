@@ -81,7 +81,7 @@ describe('walk', () => {
   });
 
   describe('.sheet.mdx file handling', () => {
-    it('should preserve .sheet in path for .sheet.mdx files', async () => {
+    it('should strip .sheet from path for .sheet.mdx files', async () => {
       const adapter = createMockAdapter({
         '': [
           {
@@ -94,8 +94,8 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('abandoned-old-war-machine.sheet');
-      expect(result[0].path).not.toContain('machinesheet');
+      expect(result[0].path).toBe('abandoned-old-war-machine');
+      expect(result[0].path).not.toContain('.sheet');
     });
 
     it('should handle .sheet.mdx files with spaces in names', async () => {
@@ -106,7 +106,7 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('ancient-red-dragon.sheet');
+      expect(result[0].path).toBe('ancient-red-dragon');
     });
 
     it('should handle .sheet.mdx files with special characters', async () => {
@@ -122,7 +122,7 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('albedo-the-bleak-bloom.sheet');
+      expect(result[0].path).toBe('albedo-the-bleak-bloom');
       expect(result[0].name).toBe('Albedo, The Bleak Bloom');
     });
 
@@ -150,16 +150,14 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(3);
-      expect(result.find((r) => r.name === 'Monster')?.path).toBe(
-        'monster.sheet',
-      );
+      expect(result.find((r) => r.name === 'Monster')?.path).toBe('monster');
       expect(result.find((r) => r.name === 'Item')?.path).toBe('item');
       expect(result.find((r) => r.name === 'Spell')?.path).toBe('spell');
     });
   });
 
   describe('content suffix handling (double-extension convention)', () => {
-    it('should preserve .specialization in path', async () => {
+    it('should strip .specialization from path', async () => {
       const adapter = createMockAdapter({
         '': [
           {
@@ -172,11 +170,11 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('path-of-the-berserker.specialization');
+      expect(result[0].path).toBe('path-of-the-berserker');
       expect(result[0].name).toBe('Path Of The Berserker');
     });
 
-    it('should preserve .list in path', async () => {
+    it('should strip .list from path', async () => {
       const adapter = createMockAdapter({
         '': [{ name: 'spells.list.mdx', isDirectory: false }],
       });
@@ -184,11 +182,11 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('spells.list');
+      expect(result[0].path).toBe('spells');
       expect(result[0].name).toBe('Spells');
     });
 
-    it('should preserve .reference in path', async () => {
+    it('should strip .reference from path', async () => {
       const adapter = createMockAdapter({
         '': [{ name: 'maneuvers.reference.mdx', isDirectory: false }],
       });
@@ -196,11 +194,11 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('maneuvers.reference');
+      expect(result[0].path).toBe('maneuvers');
       expect(result[0].name).toBe('Maneuvers');
     });
 
-    it('should preserve .bloodline in path', async () => {
+    it('should strip .bloodline from path', async () => {
       const adapter = createMockAdapter({
         '': [
           {
@@ -213,11 +211,11 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('bloodline-of-the-void.bloodline');
+      expect(result[0].path).toBe('bloodline-of-the-void');
       expect(result[0].name).toBe('Bloodline Of The Void');
     });
 
-    it('should preserve .lore in path', async () => {
+    it('should strip .lore from path', async () => {
       const adapter = createMockAdapter({
         '': [{ name: 'the-sunken-city.lore.mdx', isDirectory: false }],
       });
@@ -225,7 +223,7 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('the-sunken-city.lore');
+      expect(result[0].path).toBe('the-sunken-city');
       expect(result[0].name).toBe('The Sunken City');
     });
 
@@ -243,20 +241,18 @@ describe('walk', () => {
 
       expect(result).toHaveLength(4);
       expect(result.find((r) => r.name === 'Berserker')?.path).toBe(
-        'berserker.specialization',
+        'berserker',
       );
       expect(result.find((r) => r.name === 'Maneuvers')?.path).toBe(
-        'maneuvers.reference',
+        'maneuvers',
       );
-      expect(result.find((r) => r.name === 'Spells')?.path).toBe(
-        'spells.list',
-      );
+      expect(result.find((r) => r.name === 'Spells')?.path).toBe('spells');
       expect(result.find((r) => r.name === 'Plain File')?.path).toBe(
         'plain-file',
       );
     });
 
-    it('should construct correct nested paths with content suffixes', async () => {
+    it('should construct correct nested paths with content suffixes stripped', async () => {
       const adapter = createMockAdapter({
         '': [
           {
@@ -274,9 +270,7 @@ describe('walk', () => {
       );
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe(
-        'library/vocations/cleric/life-domain.specialization',
-      );
+      expect(result[0].path).toBe('library/vocations/cleric/life-domain');
     });
   });
 
@@ -289,7 +283,7 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', 'library/monsters');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('library/monsters/dragon.sheet');
+      expect(result[0].path).toBe('library/monsters/dragon');
     });
 
     it('should handle deeply nested .sheet.mdx files', async () => {
@@ -302,7 +296,7 @@ describe('walk', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].children).toBeDefined();
-      expect(result[0].children?.[0]?.path).toBe('monsters/boss.sheet');
+      expect(result[0].children?.[0]?.path).toBe('monsters/boss');
     });
   });
 
@@ -329,7 +323,7 @@ describe('walk', () => {
       const result = await walkTree(adapter, 'en', '', '');
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('dragon.sheet');
+      expect(result[0].path).toBe('dragon');
     });
 
     it('should ignore .hidden. files', async () => {

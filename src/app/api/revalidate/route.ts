@@ -204,22 +204,17 @@ export async function POST(req: NextRequest) {
 
       pushVariant(p);
 
-      /** Toggle .sheet on the last segment: add if missing, remove if present */
+      /** Toggle content suffix on the last segment: try both with and without suffix */
+      const SUFFIX_RE =
+        /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/;
       const parts = p.split('/').filter(Boolean);
       if (parts.length > 0) {
         const last = parts[parts.length - 1];
-        if (!/\.sheet$/.test(last)) {
-          const withSheet =
-            '/' + parts.slice(0, -1).concat(`${last}.sheet`).join('/');
-          pushVariant(withSheet);
-        } else {
-          const withoutSheet =
+        if (SUFFIX_RE.test(last)) {
+          const withoutSuffix =
             '/' +
-            parts
-              .slice(0, -1)
-              .concat(last.replace(/\.sheet$/, ''))
-              .join('/');
-          pushVariant(withoutSheet);
+            parts.slice(0, -1).concat(last.replace(SUFFIX_RE, '')).join('/');
+          pushVariant(withoutSuffix);
         }
         /** Also try /main variant */
         pushVariant(p.endsWith('/main') ? p : `${p}/main`);

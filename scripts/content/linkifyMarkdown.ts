@@ -6,6 +6,7 @@
  * Supports multiple terms per path (use array for term field).
  *
  * @module linkifyMarkdown
+ * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -27,9 +28,9 @@ interface LinkifyOptions {
 /**
  * Applies link specs to markdown text, converting plain text references to markdown links.
  *
- * @param markdown - Source markdown text
- * @param specs - Array of link specifications
- * @param opts - Options including optional selfPath to skip self-links
+ * @param {string} markdown - Source markdown text
+ * @param {LinkSpec[]} specs - Array of link specifications
+ * @param {LinkifyOptions} opts - Options including optional selfPath to skip self-links
  * @returns Linkified markdown text
  */
 export const linkifyMarkdown = (

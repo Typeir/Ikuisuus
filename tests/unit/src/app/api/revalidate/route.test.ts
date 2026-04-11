@@ -166,7 +166,7 @@ describe('POST /api/revalidate', () => {
     expect(mockRevalidateTag).toHaveBeenCalled();
   });
 
-  it('expands .sheet variants for paths', async () => {
+  it('revalidates path and /main variant', async () => {
     await POST(
       makeRequest(
         { paths: ['/en/library/monsters/albedo'] },
@@ -175,7 +175,7 @@ describe('POST /api/revalidate', () => {
     );
     const calls = mockRevalidatePath.mock.calls.map((c: unknown[]) => c[0]);
     expect(calls).toContain('/en/library/monsters/albedo');
-    expect(calls).toContain('/en/library/monsters/albedo.sheet');
+    expect(calls).toContain('/en/library/monsters/albedo/main');
   });
 
   it('marks invalid path entries as errors', async () => {

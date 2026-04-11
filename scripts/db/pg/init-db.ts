@@ -7,6 +7,7 @@
  * Safe to run multiple times — all statements use IF NOT EXISTS.
  *
  * @module init-db
+ * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
  *
@@ -244,6 +245,73 @@ const TABLE_DDL: string[] = [
      tags            text[]    NOT NULL DEFAULT '{}'
    )`,
 
+  `CREATE TABLE IF NOT EXISTS vocations (
+     id                        serial    PRIMARY KEY,
+     locale                    text      NOT NULL,
+     slug                      text      NOT NULL,
+     title                     text      NOT NULL,
+     file                      text      NOT NULL,
+     link                      text      NOT NULL,
+     archetype                 text      NOT NULL,
+     primary_ability           text[]    NOT NULL DEFAULT '{}',
+     hit_die                   text      NOT NULL,
+     saving_throws             text[]    NOT NULL DEFAULT '{}',
+     armor_proficiencies       text[]    NOT NULL DEFAULT '{}',
+     weapon_proficiencies      text[]    NOT NULL DEFAULT '{}',
+     tool_proficiencies        text[]    NOT NULL DEFAULT '{}',
+     skill_count               smallint  NOT NULL DEFAULT 0,
+     skill_choices             text[]    NOT NULL DEFAULT '{}',
+     spellcasting_ability      text,
+     spellcasting_progression  text,
+     specializations           text[]    NOT NULL DEFAULT '{}',
+     tags                      text[]    NOT NULL DEFAULT '{}',
+     index_version             smallint,
+     version_hash              text,
+     UNIQUE (locale, slug)
+   )`,
+
+  `CREATE TABLE IF NOT EXISTS vocation_features (
+     id              serial    PRIMARY KEY,
+     vocation_id     integer   NOT NULL REFERENCES vocations(id) ON DELETE CASCADE,
+     level           smallint  NOT NULL,
+     name            text      NOT NULL,
+     sort_order      smallint  NOT NULL DEFAULT 0
+   )`,
+
+  `CREATE TABLE IF NOT EXISTS specializations (
+     id                        serial    PRIMARY KEY,
+     locale                    text      NOT NULL,
+     slug                      text      NOT NULL,
+     title                     text      NOT NULL,
+     file                      text      NOT NULL,
+     link                      text      NOT NULL,
+     vocation                  text      NOT NULL,
+     specialization_type       text      NOT NULL,
+     flavor                    text,
+     spellcasting_ability      text,
+     spellcasting_progression  text,
+     tags                      text[]    NOT NULL DEFAULT '{}',
+     index_version             smallint,
+     version_hash              text,
+     UNIQUE (locale, slug)
+   )`,
+
+  `CREATE TABLE IF NOT EXISTS specialization_features (
+     id                  serial    PRIMARY KEY,
+     specialization_id   integer   NOT NULL REFERENCES specializations(id) ON DELETE CASCADE,
+     level               smallint  NOT NULL,
+     name                text      NOT NULL,
+     sort_order          smallint  NOT NULL DEFAULT 0
+   )`,
+
+  `CREATE TABLE IF NOT EXISTS specialization_prepared_spells (
+     id                  serial    PRIMARY KEY,
+     specialization_id   integer   NOT NULL REFERENCES specializations(id) ON DELETE CASCADE,
+     level               smallint  NOT NULL,
+     spells              text[]    NOT NULL DEFAULT '{}',
+     sort_order          smallint  NOT NULL DEFAULT 0
+   )`,
+
   `CREATE TABLE IF NOT EXISTS audit_logs (
      id              serial       PRIMARY KEY,
      content_path    text         NOT NULL,
@@ -305,6 +373,20 @@ const SUPPLEMENTARY_INDEXES: string[] = [
      ON bloodline_boons (bloodline_id, sort_order)`,
   `CREATE INDEX IF NOT EXISTS bloodline_boons_tags_gin_idx
      ON bloodline_boons USING GIN (tags)`,
+  `CREATE INDEX IF NOT EXISTS vocations_locale_idx
+     ON vocations (locale)`,
+  `CREATE INDEX IF NOT EXISTS vocations_tags_gin_idx
+     ON vocations USING GIN (tags)`,
+  `CREATE INDEX IF NOT EXISTS vocation_features_vocation_id_idx
+     ON vocation_features (vocation_id)`,
+  `CREATE INDEX IF NOT EXISTS specializations_locale_vocation_idx
+     ON specializations (locale, vocation)`,
+  `CREATE INDEX IF NOT EXISTS specializations_tags_gin_idx
+     ON specializations USING GIN (tags)`,
+  `CREATE INDEX IF NOT EXISTS specialization_features_specialization_id_idx
+     ON specialization_features (specialization_id)`,
+  `CREATE INDEX IF NOT EXISTS specialization_prepared_spells_specialization_id_idx
+     ON specialization_prepared_spells (specialization_id)`,
   `CREATE INDEX IF NOT EXISTS audit_logs_timestamp_idx
      ON audit_logs (timestamp DESC)`,
   `CREATE INDEX IF NOT EXISTS audit_logs_token_id_idx

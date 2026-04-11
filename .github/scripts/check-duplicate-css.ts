@@ -17,7 +17,11 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { CheckFailure, CheckResult } from './health-check-types';
+import type {
+  CheckFailure,
+  CheckOptions,
+  CheckResult,
+} from './health-check-types';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,23 +29,34 @@ const ROOT = path.resolve(__dirname, '../..');
 
 const SCAN_DIRS = ['src'];
 
-const EXCLUDED_PATTERNS = [/node_modules/, /\.next/, /globals\.scss$/, /\/_mixins/];
+const EXCLUDED_PATTERNS = [
+  /node_modules/,
+  /\.next/,
+  /globals\.scss$/,
+  /\/_mixins/,
+];
 
 /**
  * Recursively find SCSS/CSS files under a directory.
  *
- * @param dir Directory to scan
- * @param results Accumulator
+ * @param {string} dir Directory to scan
+ * @param {string} rootDir Root for relative path calculation
+ * @param {string[]} results Accumulator
  * @returns Relative file paths
  */
-async function findStyleFiles(dir: string, results: string[] = []): Promise<string[]> {
+async function findStyleFiles(
+  dir: string,
+  rootDir?: string,
+  results: string[] = [],
+): Promise<string[]> {
+  const root = rootDir ?? ROOT;
   const entries = await fs.readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      await findStyleFiles(full, results);
+      await findStyleFiles(full, root, results);
     } else if (/\.(scss|css)$/.test(entry.name)) {
-      const rel = path.relative(ROOT, full);
+      const rel = path.relative(root, full);
       if (!EXCLUDED_PATTERNS.some((pattern) => pattern.test(rel))) {
         results.push(rel);
       }
@@ -121,33 +136,49 @@ function normalizeProperties(body: string): string {
 
 /**
  * Execute the duplicate-css check and return a structured result.
+ * When options.files is provided, uses those instead of self-discovering.
+ * When options.readFile is provided, uses that instead of fs.readFile.
  *
+ * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations
  */
-export async function runCheck(): Promise<CheckResult> {
+export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
+  const rootDir = options?.rootDir ?? ROOT;
+  const readFile =
+    options?.readFile ??
+    ((rel: string) => fs.readFile(path.join(rootDir, rel), 'utf-8'));
   const seenRules = new Map<string, string>();
   const violations: CheckFailure[] = [];
 
-  for (const dir of SCAN_DIRS) {
-    const files = await findStyleFiles(path.join(ROOT, dir));
-    for (const rel of files) {
-      const content = await fs.readFile(path.join(ROOT, rel), 'utf-8');
-      const selectors = extractSelectors(content);
-      for (const [selector, bodies] of selectors) {
-        for (const body of bodies) {
-          const normalized = normalizeProperties(body);
-          const key = `${selector} { ${normalized} }`;
-          if (seenRules.has(key)) {
-            violations.push({
-              file: rel.replace(/\\/g, '/'),
-              rule: 'duplicate-css',
-              message: `Duplicate rule "${selector}" also found in ${seenRules.get(key)}`,
-              suggestion: 'Extract shared styles to a common mixin or shared class',
-              severity: 'critical',
-            });
-          } else {
-            seenRules.set(key, rel.replace(/\\/g, '/'));
-          }
+  let files: string[];
+  if (options?.files) {
+    files = options.files;
+  } else {
+    files = [];
+    for (const dir of SCAN_DIRS) {
+      files.push(...(await findStyleFiles(path.join(rootDir, dir), rootDir)));
+    }
+  }
+
+  for (const rel of files) {
+    const content = await readFile(rel);
+    const normalizedRel = rel.replace(/\\/g, '/');
+    const selectors = extractSelectors(content);
+    for (const [selector, bodies] of selectors) {
+      for (const body of bodies) {
+        const normalized = normalizeProperties(body);
+        const key = `${selector} { ${normalized} }`;
+        if (seenRules.has(key)) {
+          violations.push({
+            file: normalizedRel,
+            rule: 'duplicate-css',
+            message: `Duplicate rule "${selector}" also found in ${seenRules.get(key)}`,
+            suggestion:
+              'Extract shared styles to a common mixin or shared class',
+            severity: 'critical',
+          });
+        } else {
+          seenRules.set(key, normalizedRel);
         }
       }
     }
@@ -174,7 +205,10 @@ async function main(): Promise<void> {
   process.exit(result.passed ? 0 : 1);
 }
 
-if (path.normalize(process.argv[1] ?? '') === path.normalize(fileURLToPath(import.meta.url))) {
+if (
+  path.normalize(process.argv[1] ?? '') ===
+  path.normalize(fileURLToPath(import.meta.url))
+) {
   main().catch((err: Error) => {
     console.error('\u274c Fatal:', err.message);
     process.exit(1);

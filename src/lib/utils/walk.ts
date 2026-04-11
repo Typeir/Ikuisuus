@@ -36,11 +36,11 @@
 import type { DirectorySourceAdapter } from '../db/content/directorySourceAdapter';
 import { resolveDirectorySource } from '../db/content/directorySourceResolver';
 import {
-    FILE_EXT_MD,
-    FILE_EXT_MDX,
-    IGNORED_FOLDERS,
-    REGEX_CONTENT_SUFFIX,
-    REGEX_EXTENSION,
+  FILE_EXT_MD,
+  FILE_EXT_MDX,
+  IGNORED_FOLDERS,
+  REGEX_CONTENT_SUFFIX,
+  REGEX_EXTENSION,
 } from '../enums/constants';
 import { deduplicateFiles } from './deduplicateFiles';
 import { toKebabCase } from './toKebabCase';
@@ -122,8 +122,7 @@ export const walkTree = async (
         ? fileName.slice(0, -suffix.length)
         : fileName;
       const kebabBase = toKebabCase(baseFileName);
-      const kebabFileName = suffix ? kebabBase + suffix : kebabBase;
-      const kebabPath = base ? `${base}/${kebabFileName}` : kebabFileName;
+      const kebabPath = base ? `${base}/${kebabBase}` : kebabBase;
 
       if (entry.isDirectory) {
         const childRelativePath = relativePath

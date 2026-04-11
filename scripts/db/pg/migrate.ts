@@ -15,6 +15,9 @@
  *   DATABASE_URL — Neon / Postgres connection string
  *
  * @module scripts/db/pg/migrate
+ * @author Typeir
+ * @version 1.0.0
+ * @since 1.0.0
  */
 
 import { createLogger } from '@/lib/logging/logger';

@@ -89,7 +89,11 @@ export function EditorPathSection({
         const stripped = folderPath
           .replace(/\/$/, '')
           .replace(new RegExp(`^${locale}/`), '')
-          .replace(/\.(sheet\.mdx|mdx|md)$/, '');
+          .replace(/\.(md|mdx)$/, '')
+          .replace(
+            /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/,
+            '',
+          );
         setSlug(stripped);
       } else {
         setFilePath(fileName ? folderPath + fileName : folderPath);

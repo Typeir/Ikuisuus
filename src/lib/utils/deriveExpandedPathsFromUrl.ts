@@ -35,23 +35,26 @@ export function deriveExpandedPathsFromUrl(): string[] {
   }
 
   const path = window.location.pathname;
-  
+
   const match = path.match(/^\/[^/]+\/library\/(.+)$/);
   if (!match) {
     return [];
   }
 
   const contentPath = match[1];
-  
-  const normalizedPath = contentPath.replace(/\.sheet$/, '');
-  
+
+  const normalizedPath = contentPath.replace(
+    /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/,
+    '',
+  );
+
   const segments = normalizedPath.split('/');
   const expandedPaths: string[] = [];
-  
+
   for (let i = 0; i < segments.length; i++) {
     const ancestorPath = segments.slice(0, i + 1).join('/');
     expandedPaths.push(ancestorPath);
   }
-  
+
   return expandedPaths;
 }

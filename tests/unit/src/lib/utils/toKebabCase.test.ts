@@ -109,38 +109,38 @@ describe('toKebabCase', () => {
     expect(toKebabCase('Item (Rare, Attunement)')).toBe('item-rare-attunement');
   });
 
-  describe('dot handling - critical for .sheet files', () => {
+  describe('dot handling - critical for content suffix files', () => {
     it('should remove all dots from input', () => {
       expect(toKebabCase('Version 2.0')).toBe('version-20');
       expect(toKebabCase('test.value')).toBe('testvalue');
       expect(toKebabCase('a.b.c')).toBe('abc');
     });
 
-    it('should remove dots which is why .sheet must be added back', () => {
-      // This documents WHY walk.ts needs to handle .sheet specially
+    it('should remove dots which is why suffixes must be stripped before kebab-case', () => {
       const filename = 'abandoned-old-war-machine.sheet';
       expect(toKebabCase(filename)).toBe('abandoned-old-war-machinesheet');
-      // ❌ Wrong! The .sheet got removed and concatenated
     });
 
-    it('should work correctly when .sheet is removed before kebab-case', () => {
-      // This is the CORRECT pattern used in walk.ts
+    it('should work correctly when suffix is removed before kebab-case', () => {
       const filename = 'Abandoned Old War Machine.sheet';
-      const withoutSheet = filename.replace(/\.sheet$/, '');
-      const kebabBase = toKebabCase(withoutSheet);
-      const finalPath = kebabBase + '.sheet';
+      const withoutSuffix = filename.replace(
+        /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/,
+        '',
+      );
+      const kebabBase = toKebabCase(withoutSuffix);
 
-      expect(finalPath).toBe('abandoned-old-war-machine.sheet');
-      // ✅ Correct!
+      expect(kebabBase).toBe('abandoned-old-war-machine');
     });
 
-    it('should handle filenames with dots and .sheet suffix', () => {
+    it('should handle filenames with dots and content suffix', () => {
       const filename = 'Monster v2.0.sheet';
-      const withoutSheet = filename.replace(/\.sheet$/, '');
-      const kebabBase = toKebabCase(withoutSheet);
-      const finalPath = kebabBase + '.sheet';
+      const withoutSuffix = filename.replace(
+        /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/,
+        '',
+      );
+      const kebabBase = toKebabCase(withoutSuffix);
 
-      expect(finalPath).toBe('monster-v20.sheet');
+      expect(kebabBase).toBe('monster-v20');
     });
   });
 });

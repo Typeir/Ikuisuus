@@ -13,14 +13,17 @@
  */
 
 import {
-    FILE_EXT_MD,
-    FILE_EXT_MDX,
-    FileExtension,
-    FolderName,
-    IGNORED_FOLDERS,
-    REGEX_EXTENSION,
-    REGEX_SHEET_SUFFIX,
-    RegexPatterns,
+  CONTENT_SUFFIXES,
+  FILE_EXT_MD,
+  FILE_EXT_MDX,
+  FileExtension,
+  FolderName,
+  IGNORED_FOLDERS,
+  REGEX_CONTENT_SUFFIX,
+  REGEX_EXTENSION,
+  REGEX_SHEET_SUFFIX,
+  RegexPatterns,
+  stripContentSuffix,
 } from '@/lib/enums/constants';
 import { describe, expect, it } from 'vitest';
 
@@ -123,6 +126,63 @@ describe('RegexPatterns', () => {
 
   it('should reference REGEX_SHEET_SUFFIX', () => {
     expect(RegexPatterns.SheetSuffix).toBe(REGEX_SHEET_SUFFIX);
+  });
+
+  it('should reference REGEX_CONTENT_SUFFIX', () => {
+    expect(RegexPatterns.ContentSuffix).toBe(REGEX_CONTENT_SUFFIX);
+  });
+});
+
+describe('Content suffixes', () => {
+  it('should include heirloom and trinket semantic suffixes', () => {
+    expect(CONTENT_SUFFIXES).toContain('.heirloom');
+    expect(CONTENT_SUFFIXES).toContain('.trinket');
+  });
+
+  it('should match heirloom and trinket suffixes', () => {
+    expect(REGEX_CONTENT_SUFFIX.test('sunblade.heirloom')).toBe(true);
+    expect(REGEX_CONTENT_SUFFIX.test('clockwork-bomb.trinket')).toBe(true);
+  });
+});
+
+describe('stripContentSuffix', () => {
+  it('should strip .sheet suffix', () => {
+    expect(stripContentSuffix('ancient-red-dragon.sheet')).toBe(
+      'ancient-red-dragon',
+    );
+  });
+
+  it('should strip .heirloom suffix', () => {
+    expect(stripContentSuffix('blackbone-crusher.heirloom')).toBe(
+      'blackbone-crusher',
+    );
+  });
+
+  it('should strip .trinket suffix', () => {
+    expect(stripContentSuffix('clockwork-bomb.trinket')).toBe('clockwork-bomb');
+  });
+
+  it('should strip .specialization suffix', () => {
+    expect(stripContentSuffix('battle-master.specialization')).toBe(
+      'battle-master',
+    );
+  });
+
+  it('should strip all recognized suffixes', () => {
+    expect(stripContentSuffix('name.list')).toBe('name');
+    expect(stripContentSuffix('name.reference')).toBe('name');
+    expect(stripContentSuffix('name.bloodline')).toBe('name');
+    expect(stripContentSuffix('name.lore')).toBe('name');
+  });
+
+  it('should not modify strings without a suffix', () => {
+    expect(stripContentSuffix('fireball')).toBe('fireball');
+    expect(stripContentSuffix('ancient-red-dragon')).toBe('ancient-red-dragon');
+  });
+
+  it('should not strip unrecognized suffixes', () => {
+    expect(stripContentSuffix('file.txt')).toBe('file.txt');
+    expect(stripContentSuffix('file.unknown')).toBe('file.unknown');
   });
 });
 

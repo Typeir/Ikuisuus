@@ -24,13 +24,31 @@ export const CONTENT_SUFFIXES = [
   '.specialization',
   '.list',
   '.reference',
+  '.heirloom',
+  '.trinket',
   '.bloodline',
   '.lore',
 ] as const;
 
 /** Precompiled regex matching any content-type suffix from the double-extension convention */
 export const REGEX_CONTENT_SUFFIX =
-  /\.(sheet|specialization|list|reference|bloodline|lore)$/;
+  /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/;
+
+/**
+ * Strips any recognized content-type suffix from a slug or filename stem.
+ * This is the single canonical way to convert a suffixed name to a clean URL slug.
+ *
+ * @param {string} slug - Slug or filename stem that may contain a content suffix
+ * @returns {string} Clean slug with content suffix removed
+ *
+ * @example
+ * stripContentSuffix('blackbone-crusher.heirloom') // 'blackbone-crusher'
+ * stripContentSuffix('ancient-red-dragon.sheet')   // 'ancient-red-dragon'
+ * stripContentSuffix('fireball')                    // 'fireball'
+ */
+export function stripContentSuffix(slug: string): string {
+  return slug.replace(REGEX_CONTENT_SUFFIX, '');
+}
 
 /**
  * Patterns for entries to ignore during directory traversal.

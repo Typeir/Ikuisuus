@@ -1,5 +1,9 @@
 /**
  * @fileoverview Backfill missing content version hashes in PostgreSQL
+ * @module scripts/db/pg/backfill-version-hashes
+ * @author Typeir
+ * @version 1.0.0
+ * @since 1.0.0
  * @description Scans content tables, computes deterministic hashes from the
  * canonical metadata payload shape, and updates rows where `version_hash` is
  * null or empty.
@@ -12,20 +16,20 @@
  */
 
 import {
-    defineConfig,
-    MikroORM,
-    type EntityManager,
+  defineConfig,
+  MikroORM,
+  type EntityManager,
 } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import {
-    BloodlineEntity,
-    HeirloomEntity,
-    MonsterEntity,
-    SpellEntity,
-    TrinketEntity,
+  BloodlineEntity,
+  HeirloomEntity,
+  MonsterEntity,
+  SpellEntity,
+  TrinketEntity,
 } from '../../../src/lib/db/orm/entities/index';
 import { nonEmpty, orUndef } from '../../../src/lib/db/orm/helpers';
 import { contentHash } from '../../../src/lib/metadata/contentHash';

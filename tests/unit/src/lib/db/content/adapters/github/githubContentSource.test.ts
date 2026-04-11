@@ -1,3 +1,14 @@
+/**
+ * GitHub Content Source Adapter Unit Tests
+ *
+ * @fileoverview Verifies exact-path and semantic-suffix fallback resolution
+ * behavior for the GitHub-backed content source adapter.
+ * @module tests/unit/src/lib/db/content/adapters/github/githubContentSource.test
+ * @author Typeir
+ * @version 3.1.0
+ * @since 1.0.0
+ */
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const listEntriesMock = vi.hoisted(() => vi.fn());
@@ -158,5 +169,63 @@ describe('githubContentSource', () => {
 
     expect(result).toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it('resolves .heirloom.mdx semantic fallback', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(true, '# heirloom file'));
+    global.fetch = fetchMock as any;
+    listEntriesMock.mockResolvedValue([
+      { name: 'sundered-chain.heirloom.mdx', isDirectory: false },
+    ]);
+
+    const { githubContentSource } =
+      await import('@/lib/db/content/adapters/github/githubContentSource');
+
+    const result = await githubContentSource.fetch(
+      'en',
+      'items/heirlooms/sundered-chain',
+    );
+
+    expect(result).toEqual({
+      content: '# heirloom file',
+      resolvedPath: 'en/items/heirlooms/sundered-chain.heirloom.mdx',
+    });
+    expect(String(fetchMock.mock.calls[3][0])).toContain(
+      'sundered-chain.heirloom.mdx',
+    );
+  });
+
+  it('resolves .trinket.mdx semantic fallback', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(false))
+      .mockResolvedValueOnce(response(true, '# trinket file'));
+    global.fetch = fetchMock as any;
+    listEntriesMock.mockResolvedValue([
+      { name: 'bone-coin.trinket.mdx', isDirectory: false },
+    ]);
+
+    const { githubContentSource } =
+      await import('@/lib/db/content/adapters/github/githubContentSource');
+
+    const result = await githubContentSource.fetch(
+      'en',
+      'items/trinkets/bone-coin',
+    );
+
+    expect(result).toEqual({
+      content: '# trinket file',
+      resolvedPath: 'en/items/trinkets/bone-coin.trinket.mdx',
+    });
+    expect(String(fetchMock.mock.calls[3][0])).toContain(
+      'bone-coin.trinket.mdx',
+    );
   });
 });

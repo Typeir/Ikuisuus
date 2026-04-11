@@ -1,71 +1,87 @@
 /**
- * Health Check Shared Types
+ * Health Check Types
  *
- * @fileoverview Canonical type definitions shared across all health-check scripts
- * and the composite orchestrator.
+ * @fileoverview Type definitions shared by all health check scripts and the
+ * composite orchestrator. Gates in .paw/gates/ import these types to adapt
+ * script results into gate results.
  *
  * @module .github/scripts/health-check-types
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2.0.0
  */
 
 /**
- * A single rule violation found during a health check.
+ * A single violation found by a health check script.
+ *
+ * @interface CheckFailure
+ * @property {string} file - File path relative to project root
+ * @property {number} [line] - Line number (1-based)
+ * @property {string} rule - Rule identifier within this check
+ * @property {string} message - Human-readable violation description
+ * @property {string} [suggestion] - Actionable fix suggestion
+ * @property {'critical' | 'warning'} [severity] - Per-finding severity override
+ * @property {boolean} [indirectFix] - True if this finding cannot be fixed by editing the violated file
  */
 export interface CheckFailure {
-  /** Source file relative to project root */
   file: string;
-  /** Line number of the violation, if applicable */
   line?: number;
-  /** Rule identifier that was violated */
   rule: string;
-  /** Human-readable violation description */
   message: string;
-  /** Actionable fix suggestion */
   suggestion?: string;
-  /** Per-failure severity override (some checks mix severities) */
   severity?: 'critical' | 'warning';
+  indirectFix?: boolean;
 }
 
 /**
- * Numeric summary produced by a check run.
- */
-export interface CheckStats {
-  /** Number of files examined */
-  total_files_checked: number;
-  /** Number of violations found */
-  violations_found: number;
-  /** Any additional check-specific counters */
-  [key: string]: number;
-}
-
-/**
- * Result object emitted by every individual check script.
+ * Output from a single health check script execution.
+ *
+ * @interface CheckResult
+ * @property {string} check - Check identifier
+ * @property {'critical' | 'warning' | 'info'} severity - Aggregate severity
+ * @property {boolean} passed - True if no blocking violations found
+ * @property {CheckFailure[]} failures - Individual violations
+ * @property {Record<string, number>} stats - Execution statistics
  */
 export interface CheckResult {
-  /** Check identifier (e.g. "file-length") */
   check: string;
-  /** Aggregate severity of failures */
   severity: 'critical' | 'warning' | 'info';
-  /** True when no violations were found */
   passed: boolean;
-  /** List of individual violations */
   failures: CheckFailure[];
-  /** Summary statistics */
-  stats: CheckStats;
+  stats: Record<string, number>;
 }
 
 /**
- * Top-level report produced by the composite health-check orchestrator.
+ * Optional execution context passed to runCheck() by PAW gates or other
+ * callers. When omitted, scripts self-discover files from the filesystem.
+ *
+ * @interface CheckOptions
+ * @property {string} [rootDir] - Project root directory. Defaults to auto-detected.
+ * @property {string[]} [files] - Pre-resolved relative file paths. Skips file discovery when provided.
+ * @property {Function} [readFile] - Cached file reader. Defaults to fs.readFile.
+ */
+export interface CheckOptions {
+  rootDir?: string;
+  files?: string[];
+  readFile?: (relativePath: string) => Promise<string>;
+}
+
+/**
+ * Top-level report produced by the composite health check orchestrator.
+ *
+ * @interface HealthReport
+ * @property {string} timestamp - ISO timestamp of the run
+ * @property {'full' | 'changed-only'} mode - Execution mode
+ * @property {string[] | null} changed_files - Changed file list when scoped
+ * @property {'PASS' | 'FAIL'} overall - Aggregate result
+ * @property {object} summary - Aggregate counters
+ * @property {CheckResult[]} checks - Per-check results
  */
 export interface HealthReport {
-  /** ISO timestamp of the run */
   timestamp: string;
-  /** "full" or "changed-only" */
-  mode: string;
-  /** Changed file list when mode is "changed-only", otherwise null */
+  mode: 'full' | 'changed-only';
   changed_files: string[] | null;
-  /** "PASS" or "FAIL" */
-  overall: string;
-  /** Aggregate summary counters */
+  overall: 'PASS' | 'FAIL';
   summary: {
     total_checks: number;
     passed: number;
@@ -73,6 +89,5 @@ export interface HealthReport {
     total_violations: number;
     has_critical: boolean;
   };
-  /** Per-check results */
   checks: CheckResult[];
 }

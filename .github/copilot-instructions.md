@@ -36,7 +36,7 @@ Major architectural changes to be aware of:
 | Change                      | Impact                                                                                                                                    | Documentation                                                          |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | **Copilot Workflow System** | Enforced A→B→C task lifecycle: Analysis → Health Gate → Completion Reconciliation with agents, skills, hooks, and health-check scripts    | [Workflow System](./docs/copilot-workflow-system.md)                   |
-| **MDX Format Health Check** | `check-mdx-format.mjs` validates content structure, naming, components; integrated into composite health gate and post-edit lint hook     | [MDX Content Instructions](./instructions/mdx-content.instructions.md) |
+| **MDX Format Health Check** | `check-mdx-format.ts` validates content structure, naming, components; integrated into composite health gate and post-edit lint hook      | [MDX Content Instructions](./instructions/mdx-content.instructions.md) |
 | **World Sim Module**        | Three.js solar system with phase-based render lifecycle, DOM overlay bridge, and celestial body renderers                                 | [World Sim Module](./docs/world-sim-module.md)                         |
 | **RenderLifecycle System**  | Unity-style phase bus (PreUpdate → Update → PostUpdate → PreRender → render → PostRender) replaces ad-hoc callback arrays in SceneManager | [World Sim Module](./docs/world-sim-module.md)                         |
 
@@ -431,7 +431,7 @@ export { main, parseFile }; // Export for orchestrator
 - **Instructions**: `.github/instructions/` — jsdoc-standards, mdx-content, metadata-generators, scss-theme, testing, world-sim, damocles-authoring, encounter-module, i18n, build-pipeline
 - **Prompts**: `.github/prompts/` — `/start-task`, `/run-health`, `/reconcile-completion`, `/full-workflow`, `/draft-damocles-page`, `/refactor-damocles-mdx`, `/check-damocles-lore-consistency`, `/convert-notes-to-damocles-mdx`, `/add-component`, `/add-test`, `/fix-health`, `/add-metadata-type`
 - **Hooks**: `.github/hooks/hooks.json` — PreToolUse violation gate + PostToolUse enforcement + SessionEnd health gates
-- **Health Scripts**: `.github/scripts/health-check.mjs` — Composite gate (file-length, duplicate-css, jsdoc, antipatterns, test-gaps, mdx-format)
+- **Health Scripts**: `.github/scripts/health-check.ts` — Composite gate (file-length, duplicate-css, jsdoc, antipatterns, test-gaps, mdx-format)
 - **Task Artifacts**: `.ignore/tasks/` — Timestamped agile task summaries
 - **Reports**: `.ignore/reports/` — Timestamped completion reports
 

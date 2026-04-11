@@ -214,7 +214,9 @@ export default function TrinketTableWrapper({
     <MetadataTable
       data={data}
       columns={columns}
-      getRowSlug={(row) => `/items/trinkets/${row.slug.replace(/\.mdx$/, '')}`}
+      getRowSlug={(row) =>
+        `/items/trinkets/${row.slug.replace(/\.mdx$/, '').replace(/\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/, '')}`
+      }
       searchKeys={['title', 'itemType', 'specialEffects', 'inflictsConditions']}
       defaultSort={{ key: 'title', direction: 'asc' }}
     />

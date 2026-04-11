@@ -90,9 +90,9 @@ describe('walk-sidebar integration', () => {
 
       const paths = result[0].children!.map((c) => c.path);
 
-      expect(paths).toContain('monsters/abandoned-old-war-machine.sheet');
-      expect(paths).toContain('monsters/ancient-red-dragon.sheet');
-      expect(paths).toContain('monsters/albedo-the-bleak-bloom.sheet');
+      expect(paths).toContain('monsters/abandoned-old-war-machine');
+      expect(paths).toContain('monsters/ancient-red-dragon');
+      expect(paths).toContain('monsters/albedo-the-bleak-bloom');
 
       expect(paths).not.toContain('monsters/abandoned-old-war-machinesheet');
       expect(paths.every((p) => !p.includes('machinesheet'))).toBe(true);
@@ -120,8 +120,8 @@ describe('walk-sidebar integration', () => {
 
       const paths = monstersFolder!.children!.map((c) => c.path);
 
-      expect(paths).toContain('monsters-special/albedo-the-bleak-bloom.sheet');
-      expect(paths).toContain('monsters-special/ancient-red-dragon.sheet');
+      expect(paths).toContain('monsters-special/albedo-the-bleak-bloom');
+      expect(paths).toContain('monsters-special/ancient-red-dragon');
     });
 
     it('should handle mixed .sheet.mdx and .mdx files correctly', async () => {
@@ -140,7 +140,7 @@ describe('walk-sidebar integration', () => {
       const paths = mixedFolder!.children!.map((c) => c.path);
       const names = mixedFolder!.children!.map((c) => c.name);
 
-      expect(paths).toContain('mixed-content/monster.sheet');
+      expect(paths).toContain('mixed-content/monster');
       expect(paths).toContain('mixed-content/item');
       expect(paths).toContain('mixed-content/spell');
 
@@ -165,7 +165,7 @@ describe('walk-sidebar integration', () => {
       const dupFolder = result.find((r) => r.name === 'Dedup Test');
 
       expect(dupFolder?.children).toHaveLength(1);
-      expect(dupFolder?.children?.[0].path).toBe('dedup-test/dragon.sheet');
+      expect(dupFolder?.children?.[0].path).toBe('dedup-test/dragon');
       expect(dupFolder?.children?.[0].name).toBe('Dragon');
     });
   });
@@ -215,10 +215,6 @@ describe('walk-sidebar integration', () => {
       paths.forEach((p) => {
         expect(p).toMatch(/^[a-z0-9\-\/.]+$/);
       });
-
-      const sheetPath = paths.find((p) => p.includes('.sheet'));
-      expect(sheetPath).toBeDefined();
-      expect(sheetPath).toMatch(/\.sheet$/);
     });
 
     it('should preserve unicode filenames in slugs', async () => {
@@ -261,12 +257,12 @@ describe('walk-sidebar integration', () => {
 
       const file = level3?.children?.find((c) => c.name === 'Deep File');
       expect(file).toBeDefined();
-      expect(file?.path).toBe('level1/level2/level3/deep-file.sheet');
+      expect(file?.path).toBe('level1/level2/level3/deep-file');
     });
   });
 
   describe('regression prevention', () => {
-    it('should never produce paths with consecutive dots except .sheet', async () => {
+    it('should never produce paths with dots (suffixes are stripped)', async () => {
       const regressDir = path.join(testDir, 'regression');
       fs.mkdirSync(regressDir, { recursive: true });
 
@@ -279,11 +275,8 @@ describe('walk-sidebar integration', () => {
       const paths = regressFolder!.children!.map((c) => c.path);
 
       paths.forEach((p) => {
-        const withoutSheet = p.replace(/\.sheet$/, '');
-        expect(withoutSheet).not.toContain('.');
+        expect(p).not.toContain('.');
       });
-
-      expect(paths.some((p) => p.endsWith('.sheet'))).toBe(true);
     });
 
     it('should match expected URL pattern for all paths', async () => {
@@ -299,7 +292,7 @@ describe('walk-sidebar integration', () => {
       const paths = patternFolder!.children!.map((c) => c.path);
 
       paths.forEach((p) => {
-        expect(p).toMatch(/^[a-z0-9\-\/]+(\.sheet)?$/);
+        expect(p).toMatch(/^[a-z0-9\-\/]+$/);
       });
     });
   });

@@ -532,10 +532,10 @@ After completing all edits for a session, run the following. **Do not claim the 
 
 ```bash
 # 1. MDX format check
-node .github/scripts/check-mdx-format.mjs
+node .github/scripts/check-mdx-format.ts
 
 # 2. Full composite health gate
-node .github/scripts/health-check.mjs
+node .github/scripts/health-check.ts
 
 # 3. Test suite
 npm test

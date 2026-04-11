@@ -6,6 +6,7 @@
  * its pre-compiled HTML via dangerouslySetInnerHTML.
  *
  * @module findReusableMdxOutliers/emitter
+ * @author Typeir
  * @version 1.0.0
  * @since 3.0.0
  */
@@ -32,7 +33,7 @@ const GENERATED_FILE_HEADER = `/**
  * @version 1.0.0
  * @since 2.0.0
  */
-/* health:check-ignore-file all */`;
+/* paw:gate:* ignore */`;
 
 /**
  * CI placeholder module content for mdxComponents.tsx.
@@ -49,7 +50,7 @@ export const createCiPlaceholderModule = (): string => `/**
  * @since 2.0.0
  */
 
-/* health:check-ignore-file all */
+/* paw:gate:* ignore */
 
 export const mdxComponents = {};
 export default mdxComponents;
@@ -86,7 +87,7 @@ export const writeCiPlaceholderModule = async (): Promise<void> => {
 /**
  * Emits the mdxComponents.tsx file from compiled outlier data.
  *
- * @param results - Array of compiled outlier results in compile order
+ * @param {CompiledOutlier[]} results - Array of compiled outlier results in compile order
  * @returns Number of components written
  */
 export const emitComponentsModule = async (

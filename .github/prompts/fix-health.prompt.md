@@ -45,6 +45,18 @@ For each critical finding:
 3. Apply the minimum fix required
 4. Do NOT refactor surrounding code
 
+**Suppressing a finding (false positives only):**
+If the violation is a confirmed false positive (e.g. a generated file, or an intentional structural deviation), suppress it inline with a `paw:gate:` directive instead of commenting out the check:
+
+```ts
+/* paw:gate:{gate-id}:{rule} ignore */ // whole file
+/* paw:gate:{gate-id} ignore-nextline */ // next line only
+```
+
+For MDX: `{/* paw:gate:content-format:missing-h1 ignore */}`
+
+Never suppress `missing-test` — create the test file instead. See the PAW skill for full syntax.
+
 ## Step 4: Re-run Health Gate
 
 ```bash

@@ -83,5 +83,25 @@
     "file": "src/lib/metadata/taggingUtils.ts",
     "maxLines": 300,
     "justification": "Tag extraction utilities for damage types, conditions, mechanics, and lore tags"
+  },
+  {
+    "file": "scripts/metadata/generateHeirloomMetadata.ts",
+    "maxLines": 420,
+    "justification": "Complex heirloom parser keeps tightly coupled extraction logic for item headers, weapon properties, and metadata assembly"
+  },
+  {
+    "file": "scripts/db/pg/seed-from-fs.ts",
+    "maxLines": 650,
+    "justification": "CLI seed script with per-entity-type seed functions — splitting would break transactional seeding"
+  },
+  {
+    "file": "scripts/db/pg/init-db.ts",
+    "maxLines": 350,
+    "justification": "DDL initialisation script with sequential CREATE TABLE statements that must remain cohesive"
+  },
+  {
+    "file": "scripts/db/pg/backfill-version-hashes.ts",
+    "maxLines": 400,
+    "justification": "CLI backfill script with per-entity hash computation and update logic"
   }
 ]

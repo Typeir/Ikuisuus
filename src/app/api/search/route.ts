@@ -1,9 +1,9 @@
 /**
  * Content Search API Route
- * 
+ *
  * @fileoverview Next.js API route for searching MDX content files.
  * Performs filesystem-based search with title and body matching.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -13,18 +13,18 @@
 import fs from 'fs';
 import { NextResponse } from 'next/server';
 import path from 'path';
-import { RegexPatterns } from '../../../lib/enums/constants';
+import { REGEX_CONTENT_SUFFIX } from '../../../lib/enums/constants';
 import { getContentFolder } from '../../../lib/utils/getContentFolder';
 
 /**
  * Converts a string to kebab-case format.
- * 
+ *
  * Transforms camelCase, PascalCase, snake_case, and spaces into lowercase
  * hyphen-separated format commonly used in URLs and file paths.
- * 
+ *
  * @param {string} str - The string to convert
  * @returns {string} The kebab-cased string
- * 
+ *
  * @example
  * toKebabCase('MyFileName') // 'my-file-name'
  * toKebabCase('snake_case_name') // 'snake-case-name'
@@ -40,20 +40,20 @@ function toKebabCase(str: string): string {
 
 /**
  * GET /api/search
- * 
+ *
  * Searches MDX content files by filename matching.
  * Recursively walks the content directory and returns files whose names
  * contain the search query (case-insensitive).
- * 
+ *
  * Query Parameters:
  * - q: Search query string (minimum 2 characters)
- * 
+ *
  * Returns empty array if query is too short or no matches found.
  * Strips .sheet suffix and converts paths to kebab-case for URLs.
- * 
+ *
  * @param {Request} req - Next.js request object with search params
  * @returns {NextResponse} JSON array of {name: string, path: string} objects
- * 
+ *
  * @example
  * fetch('/api/search?q=dragon')
  * // Returns: [{name: 'Ancient Dragon', path: 'monsters/ancient-dragon'}, ...]
@@ -69,26 +69,27 @@ export async function GET(req: Request) {
 
   /**
    * Recursively walks directory tree to find matching MDX files.
-   * 
+   *
    * @param {string} dir - Current directory path to scan
    * @param {string} base - Accumulated relative path for URL construction
    */
   function walk(dir: string, base: string = ''): void {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const fullPath = path.join(dir, entry.name);
-      const fileName = entry.name.replace(/\.(md|mdx)$/, '');
-      const kebabPath = path.join(base, toKebabCase(fileName)).replace(/\\/g, '/');
+      const rawStem = entry.name.replace(/\.(md|mdx)$/, '');
+      const cleanStem = rawStem.replace(REGEX_CONTENT_SUFFIX, '');
+      const kebabPath = path
+        .join(base, toKebabCase(cleanStem))
+        .replace(/\\/g, '/');
 
       if (entry.isDirectory()) {
         walk(fullPath, kebabPath);
       } else if (
         (entry.name.endsWith('.md') || entry.name.endsWith('.mdx')) &&
-        fileName.toLowerCase().includes(q)
+        cleanStem.toLowerCase().includes(q)
       ) {
         matches.push({
-          name: fileName
-            .replace(/\.sheet\.(md|mdx)$/, '')
-            .replace(RegexPatterns.SheetSuffix, ''),
+          name: cleanStem,
           path: kebabPath,
         });
       }

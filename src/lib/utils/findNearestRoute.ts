@@ -148,13 +148,11 @@ async function getAllRoutes(): Promise<string[]> {
         if (entry.isDirectory()) {
           scanDirectory(fullPath, routePath);
         } else if (entry.name.endsWith('.mdx') && entry.name !== 'main.mdx') {
-          const slug = entry.name.replace(/\.(sheet\.)?mdx$/, '');
-          const route =
-            `/library/${routePath.replace(/\\/g, '/').replace(/\.mdx$/, '')}`.replace(
-              /\.(sheet)?$/,
-              '',
-            );
-          routes.push(route.replace(slug + '.mdx', slug));
+          const slug = entry.name
+            .replace(/\.mdx$/, '')
+            .replace(REGEX_CONTENT_SUFFIX, '');
+          const route = `/library/${basePath.replace(/\\/g, '/')}/${slug}`;
+          routes.push(route);
         } else if (entry.name === 'main.mdx') {
           const route = `/library/${basePath.replace(/\\/g, '/')}/main`;
           routes.push(route);

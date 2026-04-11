@@ -1,3 +1,14 @@
+/**
+ * FS Content Source Adapter Unit Tests
+ *
+ * @fileoverview Verifies exact-path and semantic-suffix fallback resolution
+ * behavior for the filesystem content source adapter.
+ * @module tests/unit/src/lib/db/content/adapters/fs/fsContentSource.test
+ * @author Typeir
+ * @version 3.1.0
+ * @since 1.0.0
+ */
+
 import { fsContentSource } from '@/lib/db/content/adapters/fs/fsContentSource';
 import fs from 'fs/promises';
 import path from 'path';
@@ -120,5 +131,59 @@ describe('fsContentSource', () => {
     );
 
     expect(result).toBeNull();
+  });
+
+  it('resolves .heirloom.mdx semantic fallback', async () => {
+    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
+    vi.mocked(fs.readdir).mockResolvedValue([
+      buildDirent('sundered-chain.heirloom.mdx'),
+    ] as any);
+    vi.mocked(fs.readFile).mockResolvedValue('# heirloom file' as any);
+
+    const result = await fsContentSource.fetch(
+      'en',
+      'items/heirlooms/sundered-chain',
+    );
+
+    const expectedPath = path.join(
+      process.cwd(),
+      'src',
+      'content',
+      'en',
+      'items/heirlooms',
+      'sundered-chain.heirloom.mdx',
+    );
+
+    expect(result).toEqual({
+      content: '# heirloom file',
+      resolvedPath: expectedPath,
+    });
+  });
+
+  it('resolves .trinket.mdx semantic fallback', async () => {
+    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
+    vi.mocked(fs.readdir).mockResolvedValue([
+      buildDirent('bone-coin.trinket.mdx'),
+    ] as any);
+    vi.mocked(fs.readFile).mockResolvedValue('# trinket file' as any);
+
+    const result = await fsContentSource.fetch(
+      'en',
+      'items/trinkets/bone-coin',
+    );
+
+    const expectedPath = path.join(
+      process.cwd(),
+      'src',
+      'content',
+      'en',
+      'items/trinkets',
+      'bone-coin.trinket.mdx',
+    );
+
+    expect(result).toEqual({
+      content: '# trinket file',
+      resolvedPath: expectedPath,
+    });
   });
 });

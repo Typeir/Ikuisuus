@@ -3,6 +3,8 @@
  *
  * @fileoverview Verifies that changed source files (compared to git HEAD) have
  * corresponding test files. Falls back to full src/ scan if git is unavailable.
+ * Only files rooted under src/ are evaluated — test infrastructure, setup, and
+ * config files are excluded regardless of what PAW passes via options.files.
  *
  * @module .github/scripts/check-test-gaps
  */
@@ -11,7 +13,7 @@ import { execSync } from 'node:child_process';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { CheckResult } from './health-check-types';
+import type { CheckOptions, CheckResult } from './health-check-types';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,21 +65,24 @@ function getChangedFiles(): string[] {
 /**
  * Recursively find all TypeScript source files under a directory.
  *
- * @param dir Directory to scan
- * @param results Accumulator
+ * @param {string} dir Directory to scan
+ * @param {string} rootDir Root for relative path calculation
+ * @param {string[]} results Accumulator
  * @returns Relative file paths
  */
 async function findAllSourceFiles(
   dir: string,
+  rootDir?: string,
   results: string[] = [],
 ): Promise<string[]> {
+  const root = rootDir ?? ROOT;
   const entries = await fs.readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      await findAllSourceFiles(full, results);
+      await findAllSourceFiles(full, root, results);
     } else if (/\.(ts|tsx)$/.test(entry.name)) {
-      results.push(path.relative(ROOT, full));
+      results.push(path.relative(root, full));
     }
   }
   return results;
@@ -86,15 +91,19 @@ async function findAllSourceFiles(
 /**
  * Check whether a corresponding test file exists for a source file.
  *
- * @param sourcePath Relative source file path
+ * @param {string} sourcePath Relative source file path
+ * @param {string} rootDir Project root directory
  * @returns True when at least one matching test file exists
  */
-async function hasTestFile(sourcePath: string): Promise<boolean> {
+async function hasTestFile(
+  sourcePath: string,
+  rootDir: string,
+): Promise<boolean> {
   const ext = path.extname(sourcePath);
   const baseName = sourcePath.replace(/\.(ts|tsx)$/, '');
   const candidates = [
-    path.join(ROOT, 'tests', 'unit', `${baseName}.test${ext}`),
-    path.join(ROOT, 'tests', 'integration', `${baseName}.test${ext}`),
+    path.join(rootDir, 'tests', 'unit', `${baseName}.test${ext}`),
+    path.join(rootDir, 'tests', 'integration', `${baseName}.test${ext}`),
   ];
   for (const candidate of candidates) {
     try {
@@ -109,28 +118,42 @@ async function hasTestFile(sourcePath: string): Promise<boolean> {
 
 /**
  * Execute the test-gaps check and return a structured result.
+ * When options.files is provided, uses those instead of git/filesystem discovery.
  *
+ * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations
  */
-export async function runCheck(): Promise<CheckResult> {
-  let filesToCheck = getChangedFiles();
-  if (filesToCheck.length === 0) {
-    filesToCheck = await findAllSourceFiles(path.join(ROOT, 'src'));
+export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
+  const rootDir = options?.rootDir ?? ROOT;
+
+  let filesToCheck: string[];
+  if (options?.files) {
+    filesToCheck = options.files;
+  } else {
+    filesToCheck = getChangedFiles();
+    if (filesToCheck.length === 0) {
+      filesToCheck = await findAllSourceFiles(
+        path.join(rootDir, 'src'),
+        rootDir,
+      );
+    }
   }
 
   filesToCheck = filesToCheck.filter(
-    (f) => !EXCLUDED_PATTERNS.some((pattern) => pattern.test(f)),
+    (f) =>
+      (f.startsWith('src/') || f.startsWith('src\\')) &&
+      !EXCLUDED_PATTERNS.some((pattern) => pattern.test(f)),
   );
 
   const failures = [];
   for (const file of filesToCheck) {
-    const absPath = path.join(ROOT, file);
+    const absPath = path.join(rootDir, file);
     try {
       await fs.access(absPath);
     } catch {
       continue;
     }
-    const hasTest = await hasTestFile(file);
+    const hasTest = await hasTestFile(file, rootDir);
     if (!hasTest) {
       const normalizedPath = file.replace(/\\/g, '/');
       const ext = path.extname(normalizedPath);
@@ -140,6 +163,7 @@ export async function runCheck(): Promise<CheckResult> {
         rule: 'missing-test',
         message: `No test file found for ${normalizedPath}`,
         suggestion: `Create tests/unit/${base}.test${ext}`,
+        indirectFix: true,
       });
     }
   }

@@ -4,6 +4,9 @@
  * @fileoverview Tests for GET /api/corrections/read.
  *
  * @module tests/unit/app/api/corrections/read/route
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -123,5 +126,52 @@ describe('GET /api/corrections/read', () => {
     const res = await GET(makeReq({ slug: 'monsters/aboleth', locale: 'es' }));
     const json = await res.json();
     expect(json.content).toBe('# Hola');
+  });
+
+  it('should resolve .heirloom path variant for unsuffixed slug', async () => {
+    mockFetch
+      .mockResolvedValueOnce({ status: 404, ok: false, text: async () => '' })
+      .mockResolvedValueOnce({ status: 404, ok: false, text: async () => '' })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          type: 'file',
+          content: Buffer.from('# Heirloom').toString('base64'),
+          sha: 'h1',
+          path: 'en/items/heirlooms/sunblade.heirloom.mdx',
+        }),
+      });
+
+    const { GET } = await import('@/app/api/corrections/read/route');
+    const res = await GET(makeReq({ slug: 'items/heirlooms/sunblade' }));
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.path).toBe('en/items/heirlooms/sunblade.heirloom.mdx');
+  });
+
+  it('should resolve .trinket path variant for unsuffixed slug', async () => {
+    mockFetch
+      .mockResolvedValueOnce({ status: 404, ok: false, text: async () => '' })
+      .mockResolvedValueOnce({ status: 404, ok: false, text: async () => '' })
+      .mockResolvedValueOnce({ status: 404, ok: false, text: async () => '' })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          type: 'file',
+          content: Buffer.from('# Trinket').toString('base64'),
+          sha: 't1',
+          path: 'en/items/trinkets/smoke-pellet.trinket.mdx',
+        }),
+      });
+
+    const { GET } = await import('@/app/api/corrections/read/route');
+    const res = await GET(makeReq({ slug: 'items/trinkets/smoke-pellet' }));
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.path).toBe('en/items/trinkets/smoke-pellet.trinket.mdx');
   });
 });

@@ -189,7 +189,9 @@ export default function HeirloomTableWrapper({
     <MetadataTable
       data={data}
       columns={columns}
-      getRowSlug={(row) => `/items/heirlooms/${row.slug.replace(/\.mdx$/, '')}`}
+      getRowSlug={(row) =>
+        `/items/heirlooms/${row.slug.replace(/\.mdx$/, '').replace(/\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/, '')}`
+      }
       searchKeys={['title', 'itemType']}
       defaultSort={{ key: 'title', direction: 'asc' }}
     />

@@ -1,5 +1,3 @@
-#!/usr/bin/env npx tsx --tsconfig tsconfig.scripts.json
-
 /**
  * @fileoverview Metadata Generation Orchestrator
  * @description Coordinates metadata generation across all content types.
@@ -48,7 +46,7 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
   },
   heirlooms: {
     dir: 'src/content/en/items/heirlooms',
-    pattern: /\.mdx$/,
+    pattern: /\.heirloom\.mdx$/,
     generator: 'generateHeirloomMetadata.ts',
     contentType: 'item',
     subType: 'heirloom',
@@ -62,7 +60,7 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
   },
   trinkets: {
     dir: 'src/content/en/items/trinkets',
-    pattern: /\.mdx$/,
+    pattern: /\.trinket\.mdx$/,
     generator: 'generateTrinketMetadata.ts',
     contentType: 'trinket',
     subType: 'consumable',

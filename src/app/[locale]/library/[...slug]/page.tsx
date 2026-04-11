@@ -9,6 +9,7 @@
  * @since 2.0.0
  */
 
+import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
 import { logger } from '@/lib/logging/logger';
 import { Metadata } from 'next';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
@@ -43,7 +44,10 @@ export async function generateStaticParams(): Promise<
   const mdxFiles = await findAllMdxFiles(CONTENT_ROOT);
   return mdxFiles.map((filePath) => {
     const relativePath = path.relative(CONTENT_ROOT, filePath);
-    const slug = relativePath.replace(/\.mdx$/, '').split(path.sep);
+    const slug = relativePath
+      .replace(REGEX_CONTENT_SUFFIX, '')
+      .replace(/\.mdx$/, '')
+      .split(path.sep);
     return { slug };
   });
 }

@@ -14,7 +14,11 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { CheckFailure, CheckResult } from './health-check-types';
+import type {
+  CheckFailure,
+  CheckOptions,
+  CheckResult,
+} from './health-check-types';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,20 +45,23 @@ const REQUIRED_HEADING_TAGS = [
  * Recursively find TypeScript source files under a directory.
  *
  * @param {string} dir Directory to scan
+ * @param {string} rootDir Root for relative path calculation
  * @param {string[]} results Accumulator
  * @returns Relative file paths
  */
 async function findSourceFiles(
   dir: string,
+  rootDir?: string,
   results: string[] = [],
 ): Promise<string[]> {
+  const root = rootDir ?? ROOT;
   const entries = await fs.readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      await findSourceFiles(full, results);
+      await findSourceFiles(full, root, results);
     } else if (/\.(ts|tsx)$/.test(entry.name)) {
-      const rel = path.relative(ROOT, full);
+      const rel = path.relative(root, full);
       if (!EXCLUDED_PATTERNS.some((pattern) => pattern.test(rel))) {
         results.push(rel);
       }
@@ -271,15 +278,29 @@ function findDisallowedBrowserDialogCalls(
 
 /**
  * Execute the jsdoc-quality check and return a structured result.
+ * When options.files is provided, uses those instead of self-discovering.
+ * When options.readFile is provided, uses that instead of fs.readFile.
  *
+ * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations
  */
-export async function runCheck(): Promise<CheckResult> {
-  const files = await findSourceFiles(path.join(ROOT, 'src'));
+export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
+  const rootDir = options?.rootDir ?? ROOT;
+  const readFile =
+    options?.readFile ??
+    ((rel: string) => fs.readFile(path.join(rootDir, rel), 'utf-8'));
+
+  let files: string[];
+  if (options?.files) {
+    files = options.files;
+  } else {
+    files = await findSourceFiles(path.join(rootDir, 'src'), rootDir);
+  }
+
   const failures: CheckFailure[] = [];
 
   for (const rel of files) {
-    const content = await fs.readFile(path.join(ROOT, rel), 'utf-8');
+    const content = await readFile(rel);
     const normalizedPath = rel.replace(/\\/g, '/');
 
     const headingCheck = findMissingHeadingTags(content);

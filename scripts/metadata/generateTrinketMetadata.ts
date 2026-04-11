@@ -209,7 +209,7 @@ async function main(
   await runGenerator({
     name: 'Trinket Metadata Generator',
     contentType: 'trinkets',
-    filePattern: options.filePattern || /\.mdx$/,
+    filePattern: options.filePattern || /\.trinket\.mdx$/,
     parseFile: parseTrinketFile,
     processResult: (result) => ({ metadata: result, count: 1 }),
     contentDir: options.contentDir,
@@ -228,3 +228,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export { main, parseTrinketFile };
+
