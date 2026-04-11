@@ -27,7 +27,11 @@
 
 import { EncounterStorage } from '@/lib/enums/encounterPlanner';
 import { logger } from '@/lib/logging/logger';
-import type { AffixEntry, Encounter } from '@/lib/types/encounterPlanner';
+import type {
+  AffixEntry,
+  CreatureEntry,
+  Encounter,
+} from '@/lib/types/encounterPlanner';
 
 export {
   createCreatureFromMonster,
@@ -78,6 +82,7 @@ export const calculateInitiativeMod = (dex: number): number => {
  * @description
  * Old format: affixes: string[] = ['Bloodthirsty', 'Crusading']
  * New format: affixes: AffixEntry[] = [{text: 'Bloodthirsty'}, {text: 'Crusading'}]
+ * @deprecated Legacy migration path retained for reference; current encounter reads no longer invoke this helper.
  *
  * @example
  * const old = { creatures: [{ details: { affixes: ['Bloodthirsty'] } }] };
@@ -134,7 +139,7 @@ export const getEncounters = (): Encounter[] => {
     const parsed = JSON.parse(data);
     const encounters = Array.isArray(parsed) ? parsed : [];
 
-    return encounters.map(migrateEncounter);
+    return encounters as Encounter[];
   } catch (error) {
     logger.warning('Error loading encounters from localStorage', {
       error: error instanceof Error ? error.message : String(error),
@@ -335,7 +340,7 @@ export const importEncounter = (jsonString: string): Encounter => {
   encounter.createdAt = encounter.createdAt || now;
   encounter.updatedAt = now;
 
-  encounter.creatures.forEach((creature: any) => {
+  encounter.creatures.forEach((creature: CreatureEntry) => {
     if (!creature.id || !creature.name) {
       throw new Error('Invalid creature structure');
     }
