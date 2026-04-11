@@ -34,16 +34,19 @@ export function useSpellColumns(): ColumnConfig[] {
         key: 'school',
         label: tColumns('school'),
         getValue: (row: MetadataRow) => row.school ?? '—',
-        render: (value: string) => <em>{value}</em>,
+        render: (value: unknown) => <em>{String(value ?? '—')}</em>,
         sortable: true,
       },
       {
         key: 'castingTime',
         label: tColumns('castingTime'),
         getValue: (row: MetadataRow) => row.castingTime ?? [],
-        render: (value: string[]) => {
-          const isRitual = value && value.includes('ritual');
-          const displayTimes = value
+        render: (value: unknown) => {
+          const castingTime = Array.isArray(value)
+            ? value.map((item) => String(item))
+            : [];
+          const isRitual = castingTime.includes('ritual');
+          const displayTimes = castingTime
             .filter((time: string) => time !== 'ritual')
             .map((time: string) =>
               time

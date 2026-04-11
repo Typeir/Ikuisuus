@@ -12,8 +12,8 @@
 import { EncounterStorage } from '@/lib/enums/encounterPlanner';
 import { logger } from '@/lib/logging/logger';
 import type {
-  InProgressCombat,
-  InProgressCombatant,
+    InProgressCombat,
+    InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
 
 /**

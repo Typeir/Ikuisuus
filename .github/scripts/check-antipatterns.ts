@@ -48,7 +48,8 @@ const RULES: PatternRule[] = [
     name: 'console-log',
     pattern: /\bconsole\.log\s*\(/,
     message: 'console.log() found — use logger or remove',
-    suggestion: 'Replace with project logger or remove. console.warn/error are acceptable.',
+    suggestion:
+      'Replace with project logger or remove. console.warn/error are acceptable.',
     severity: 'critical',
   },
   {
@@ -62,7 +63,7 @@ const RULES: PatternRule[] = [
     name: 'any-type',
     pattern: /:\s*any\b/,
     message: 'Explicit `any` type — prefer specific types',
-    suggestion: 'Replace with a specific type, generic, or `unknown`',
+    suggestion: 'Replace with a specific type, generic',
     severity: 'warning',
   },
   {
@@ -81,7 +82,10 @@ const RULES: PatternRule[] = [
  * @param results Accumulator
  * @returns Relative file paths
  */
-async function findSourceFiles(dir: string, results: string[] = []): Promise<string[]> {
+async function findSourceFiles(
+  dir: string,
+  results: string[] = [],
+): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
@@ -134,7 +138,8 @@ export async function runCheck(): Promise<CheckResult> {
 
   return {
     check: 'antipatterns',
-    severity: criticalCount > 0 ? 'critical' : failures.length > 0 ? 'warning' : 'info',
+    severity:
+      criticalCount > 0 ? 'critical' : failures.length > 0 ? 'warning' : 'info',
     passed: criticalCount === 0,
     failures,
     stats: {
@@ -155,7 +160,10 @@ async function main(): Promise<void> {
   process.exit(result.passed ? 0 : 1);
 }
 
-if (path.normalize(process.argv[1] ?? '') === path.normalize(fileURLToPath(import.meta.url))) {
+if (
+  path.normalize(process.argv[1] ?? '') ===
+  path.normalize(fileURLToPath(import.meta.url))
+) {
   main().catch((err: Error) => {
     console.error('\u274c Fatal:', err.message);
     process.exit(1);

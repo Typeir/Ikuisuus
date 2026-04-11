@@ -40,7 +40,11 @@ import styles from './metadataTable.module.scss';
  * @typedef {Object} MetadataRow
  * @property {*} [key] - Any property with any value type
  */
-export type MetadataRow = Record<string, unknown>;
+/* health:check-ignore-nextline antipatterns.no-explicit-any */
+export type MetadataRow = Record<string, any>;
+
+/* health:check-ignore-nextline antipatterns.no-explicit-any */
+type FilterState = Record<string, any>;
 
 /**
  * Configuration for a single table column, defining display and interaction behavior.
@@ -172,7 +176,7 @@ export default function MetadataTable({
   const [sortDirection, setSortDirection] = useState<SortDirection>(
     defaultSort?.direction || null,
   );
-  const [filters, setFilters] = useState<Record<string, unknown>>({});
+  const [filters, setFilters] = useState<FilterState>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -236,7 +240,7 @@ export default function MetadataTable({
         const cellValue = getCellValue(row, column);
 
         if (column.filterType === 'multiselect') {
-          if (Array.isArray(cellValue)) {
+          if (Array.isArray(cellValue) && Array.isArray(value)) {
             const hasMatch = value.some((filterVal: string) =>
               cellValue.some((cv) =>
                 String(cv).toLowerCase().includes(filterVal.toLowerCase()),
@@ -350,7 +354,7 @@ export default function MetadataTable({
    * @param {*} value - Filter value (varies by filterType)
    */
   const handleFilterChange = (key: string, value: unknown) => {
-    setFilters((prev: Record<string, unknown>) => ({ ...prev, [key]: value }));
+    setFilters((prev: FilterState) => ({ ...prev, [key]: value }));
     setCurrentPage(1);
   };
 

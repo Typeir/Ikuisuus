@@ -65,9 +65,6 @@ type HeirloomMetadata = {
   [key: string]: unknown;
 };
 
-const asHeirloomMetadata = (row: MetadataRow): HeirloomMetadata =>
-  row as HeirloomMetadata;
-
 /**
  * Props for HeirloomTableWrapper component.
  * @typedef {Object} HeirloomTableWrapperProps
@@ -135,13 +132,13 @@ export default function HeirloomTableWrapper({
     {
       key: 'title',
       label: tColumns('name'),
-      getValue: (row: MetadataRow) => asHeirloomMetadata(row).title,
+      getValue: (row: MetadataRow) => row.title,
       sortable: true,
     },
     {
       key: 'rarity',
       label: tColumns('rarity'),
-      getValue: (row: MetadataRow) => asHeirloomMetadata(row).rarity,
+      getValue: (row: MetadataRow) => row.rarity,
       render: (value: unknown) => {
         const str = String(value);
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -154,7 +151,7 @@ export default function HeirloomTableWrapper({
     {
       key: 'itemType',
       label: tColumns('type'),
-      getValue: (row: MetadataRow) => asHeirloomMetadata(row).itemType,
+      getValue: (row: MetadataRow) => row.itemType,
       render: (value: unknown) => {
         if (!value) return '—';
         const str = String(value);
@@ -167,7 +164,7 @@ export default function HeirloomTableWrapper({
     {
       key: 'weaponType',
       label: tColumns('subtype'),
-      getValue: (row: MetadataRow) => asHeirloomMetadata(row).weaponType || '—',
+      getValue: (row: MetadataRow) => row.weaponType || '—',
       render: (value: unknown) => {
         if (!value || value === '—') return '—';
         const str = String(value);
@@ -181,9 +178,7 @@ export default function HeirloomTableWrapper({
       key: 'requiresAttunement',
       label: tColumns('attunement'),
       getValue: (row: MetadataRow) =>
-        asHeirloomMetadata(row).requiresAttunement
-          ? tAttunement('yes')
-          : tAttunement('no'),
+        row.requiresAttunement ? tAttunement('yes') : tAttunement('no'),
       sortable: true,
       filterable: true,
       filterType: 'select',

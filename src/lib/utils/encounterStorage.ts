@@ -27,10 +27,7 @@
 
 import { EncounterStorage } from '@/lib/enums/encounterPlanner';
 import { logger } from '@/lib/logging/logger';
-import type {
-  AffixEntry,
-  Encounter
-} from '@/lib/types/encounterPlanner';
+import type { AffixEntry, Encounter } from '@/lib/types/encounterPlanner';
 
 export {
   createCreatureFromMonster,
@@ -87,27 +84,9 @@ export const calculateInitiativeMod = (dex: number): number => {
  * const new_ = migrateEncounter(old);
  * // Affixes now have shape { text: 'Bloodthirsty' }
  */
-const migrateEncounter = (encounter: unknown): Encounter => {
-  const typedEncounter =
-    typeof encounter === 'object' && encounter !== null
-      ? (encounter as {
-          creatures?: unknown[];
-          [key: string]: unknown;
-        })
-      : {};
-
-  const creatures = (typedEncounter.creatures || []).map((creature: unknown) => {
-    const typedCreature =
-      typeof creature === 'object' && creature !== null
-        ? (creature as {
-            details?: {
-              affixes?: Array<string | AffixEntry>;
-              [key: string]: unknown;
-            };
-            [key: string]: unknown;
-          })
-        : {};
-    const details = typedCreature.details || {};
+const migrateEncounter = (encounter: any): Encounter => {
+  const creatures = (encounter.creatures || []).map((creature: any) => {
+    const details = creature.details || {};
 
     if (Array.isArray(details.affixes)) {
       details.affixes = details.affixes.map((affix: string | AffixEntry) => {
@@ -120,10 +99,10 @@ const migrateEncounter = (encounter: unknown): Encounter => {
       details.affixes = [];
     }
 
-    return { ...typedCreature, details };
+    return { ...creature, details };
   });
 
-  return { ...typedEncounter, creatures } as Encounter;
+  return { ...encounter, creatures };
 };
 
 /**
@@ -344,9 +323,7 @@ export const exportEncounter = (encounter: Encounter): string => {
  * }
  */
 export const importEncounter = (jsonString: string): Encounter => {
-  const encounter = JSON.parse(jsonString) as Partial<Encounter> & {
-    creatures?: unknown[];
-  };
+  const encounter = JSON.parse(jsonString);
 
   if (!encounter.id || !encounter.name || !Array.isArray(encounter.creatures)) {
     throw new Error('Invalid encounter structure');
@@ -358,18 +335,13 @@ export const importEncounter = (jsonString: string): Encounter => {
   encounter.createdAt = encounter.createdAt || now;
   encounter.updatedAt = now;
 
-  encounter.creatures.forEach((creature: unknown) => {
-    if (
-      typeof creature !== 'object' ||
-      creature === null ||
-      !('id' in creature) ||
-      !('name' in creature)
-    ) {
+  encounter.creatures.forEach((creature: any) => {
+    if (!creature.id || !creature.name) {
       throw new Error('Invalid creature structure');
     }
   });
 
-  return encounter as Encounter;
+  return encounter;
 };
 
 /**

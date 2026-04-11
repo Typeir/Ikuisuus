@@ -49,18 +49,26 @@ import type { AffixEntry, SpellRef } from '@/lib/types/encounterPlanner';
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
 import { computeAwakeningClasses } from '@/lib/utils/heroicAwakeningStyles';
 import { forceHeroicAwakeningWithAffixes } from '@/lib/utils/inProgressCombatStorage';
-import { useTranslations } from 'next-intl';
 import { AlignJustify } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import { CombatantDetailsColumns } from '../combatantDetailsColumns';
-import { AffixListEditor, BuffListEditor, ItemListEditor, SpellListEditor } from '../listEditors';
-import { CombatantProvider, useCombatant } from './utils/context/combatantContext';
+import {
+    AffixListEditor,
+    BuffListEditor,
+    ItemListEditor,
+    SpellListEditor,
+} from '../listEditors';
 import { CombatantConditionsManager } from './combatantConditionsManager';
 import { CombatantHeroicSection } from './combatantHeroicSection';
 import { CombatantMainStats } from './combatantMainStats';
 import { CombatantMechanicsSection } from './combatantMechanicsSection';
 import { CombatantNameSection } from './combatantNameSection';
 import styles from './combatantRow.module.scss';
+import {
+    CombatantProvider,
+    useCombatant,
+} from './utils/context/combatantContext';
 
 /**
  * Props for CombatantRow component.
@@ -97,7 +105,7 @@ const CombatantRowContent: React.FC = () => {
 
   const awakeningResult = useMemo(
     () => computeAwakeningClasses(combatant.heroicAwakening),
-    [combatant.heroicAwakening]
+    [combatant.heroicAwakening],
   );
 
   const handleToggleLock = useCallback(
@@ -109,7 +117,7 @@ const CombatantRowContent: React.FC = () => {
         : [...currentLocked, fieldName];
       updateField('locked', newLocked);
     },
-    [combatant.locked, updateField]
+    [combatant.locked, updateField],
   );
 
   const rowClassName = useMemo(() => {
@@ -138,14 +146,20 @@ const CombatantRowContent: React.FC = () => {
   };
 
   const handleAffixesChange = (newAffixes: AffixEntry[]) => {
-    const updated = { ...combatant, details: { ...combatant.details, affixes: newAffixes } };
+    const updated = {
+      ...combatant,
+      details: { ...combatant.details, affixes: newAffixes },
+    };
     forceHeroicAwakeningWithAffixes(updated, newAffixes);
     onUpdate(updated);
   };
 
   return (
     <div className={rowClassName} data-testid='combatant-row'>
-      <CombatantNameSection locked={combatant.locked} onToggleLock={handleToggleLock} />
+      <CombatantNameSection
+        locked={combatant.locked}
+        onToggleLock={handleToggleLock}
+      />
       <CombatantMainStats locked={combatant.locked} />
       <CombatantMechanicsSection />
 
@@ -153,9 +167,10 @@ const CombatantRowContent: React.FC = () => {
         <button
           className={styles.detailsToggle}
           onClick={() => setDetailsExpanded(!detailsExpanded)}
-          title={detailsExpanded ? t('hideDetails') : t('showDetails')}
-        >
-          <span className={styles.hamburgerIcon}><AlignJustify size={14} aria-hidden='true' /></span>
+          title={detailsExpanded ? t('hideDetails') : t('showDetails')}>
+          <span className={styles.hamburgerIcon}>
+            <AlignJustify size={14} aria-hidden='true' />
+          </span>
           <span>{detailsExpanded ? t('hideDetails') : t('showDetails')}</span>
         </button>
 
@@ -165,10 +180,16 @@ const CombatantRowContent: React.FC = () => {
 
             <CombatantDetailsColumns
               buffs={
-                <BuffListEditor buffs={combatant.details.buffs} onChange={handleBuffsChange} />
+                <BuffListEditor
+                  buffs={combatant.details.buffs}
+                  onChange={handleBuffsChange}
+                />
               }
               items={
-                <ItemListEditor items={combatant.details.items} onChange={handleItemsChange} />
+                <ItemListEditor
+                  items={combatant.details.items}
+                  onChange={handleItemsChange}
+                />
               }
               spells={
                 <SpellListEditor
@@ -231,8 +252,7 @@ export const CombatantRow: React.FC<CombatantRowProps> = ({
       locale={locale}
       onUpdate={onUpdate}
       onRemoveSessionOnly={onRemoveSessionOnly}
-      disableLocking={disableLocking}
-    >
+      disableLocking={disableLocking}>
       <CombatantRowContent />
     </CombatantProvider>
   );

@@ -212,7 +212,8 @@ function getSeverityForFailures(
 
   for (const failure of failures) {
     const failureSeverity =
-      failure.severity ?? (result.severity === 'info' ? 'warning' : result.severity);
+      failure.severity ??
+      (result.severity === 'info' ? 'warning' : result.severity);
     if (failureSeverity === 'critical') {
       hasCritical = true;
     }
@@ -374,9 +375,9 @@ async function filterIgnoredFailures(
     ...failure,
     file: (failure.file ?? '').replace(/\\/g, '/'),
   }));
-  const uniqueFiles = [...new Set(normalizedFailures.map((failure) => failure.file))].filter(
-    Boolean,
-  );
+  const uniqueFiles = [
+    ...new Set(normalizedFailures.map((failure) => failure.file)),
+  ].filter(Boolean);
   const directivesByFile = new Map<string, IgnoreDirectives>();
 
   await Promise.all(

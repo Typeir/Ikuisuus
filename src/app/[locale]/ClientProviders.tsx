@@ -13,10 +13,7 @@
 
 import type { Item as SidebarItem } from '@/lib/components/sidebar/sidebar';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
-import {
-  NextIntlClientProvider,
-  type AbstractIntlMessages,
-} from 'next-intl';
+import { NextIntlClientProvider, type AbstractIntlMessages } from 'next-intl';
 import ResponsiveLayoutShell from './utils/responsiveLayoutShell';
 
 /**

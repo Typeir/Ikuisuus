@@ -68,9 +68,6 @@ type TrinketMetadata = {
   [key: string]: unknown;
 };
 
-const asTrinketMetadata = (row: MetadataRow): TrinketMetadata =>
-  row as TrinketMetadata;
-
 /**
  * Props for TrinketTableWrapper component.
  * @typedef {Object} TrinketTableWrapperProps
@@ -133,13 +130,13 @@ export default function TrinketTableWrapper({
     {
       key: 'title',
       label: tColumns('name'),
-      getValue: (row: MetadataRow) => asTrinketMetadata(row).title,
+      getValue: (row: MetadataRow) => row.title,
       sortable: true,
     },
     {
       key: 'itemType',
       label: tColumns('type'),
-      getValue: (row: MetadataRow) => asTrinketMetadata(row).itemType,
+      getValue: (row: MetadataRow) => row.itemType,
       render: (value: unknown) => {
         if (!value) return '—';
         const str = String(value);
@@ -152,12 +149,10 @@ export default function TrinketTableWrapper({
     {
       key: 'damage',
       label: tColumns('damage'),
-      getValue: (row: MetadataRow) => asTrinketMetadata(row).damage || '—',
+      getValue: (row: MetadataRow) => row.damage || '—',
       render: (value: unknown, row: MetadataRow) => {
         if (!value || value === '—') return '—';
-        const damageType = asTrinketMetadata(row).damageType
-          ? ` ${asTrinketMetadata(row).damageType}`
-          : '';
+        const damageType = row.damageType ? ` ${row.damageType}` : '';
         return `${value}${damageType}`;
       },
       sortable: false,
@@ -165,7 +160,7 @@ export default function TrinketTableWrapper({
     {
       key: 'range',
       label: tColumns('range'),
-      getValue: (row: MetadataRow) => asTrinketMetadata(row).range || '—',
+      getValue: (row: MetadataRow) => row.range || '—',
       render: (value: unknown) => {
         if (!value || value === '—') return '—';
         return String(value);
@@ -175,8 +170,7 @@ export default function TrinketTableWrapper({
     {
       key: 'specialEffects',
       label: tColumns('effects'),
-      getValue: (row: MetadataRow) =>
-        asTrinketMetadata(row).specialEffects?.join(', ') || '—',
+      getValue: (row: MetadataRow) => row.specialEffects?.join(', ') || '—',
       render: (value: unknown) => {
         if (!value || value === '—') return '—';
         const str = String(value);
@@ -192,8 +186,7 @@ export default function TrinketTableWrapper({
     {
       key: 'inflictsConditions',
       label: tColumns('conditions'),
-      getValue: (row: MetadataRow) =>
-        asTrinketMetadata(row).inflictsConditions?.join(', ') || '—',
+      getValue: (row: MetadataRow) => row.inflictsConditions?.join(', ') || '—',
       render: (value: unknown) => {
         if (!value || value === '—') return '—';
         const str = String(value);
@@ -212,7 +205,7 @@ export default function TrinketTableWrapper({
     {
       key: 'weight',
       label: tColumns('weight'),
-      getValue: (row: MetadataRow) => asTrinketMetadata(row).weight || '—',
+      getValue: (row: MetadataRow) => row.weight || '—',
       sortable: false,
     },
   ];

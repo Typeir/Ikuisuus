@@ -142,7 +142,10 @@ export const createCreatureFromMonster = (
     : undefined;
   const crText = monsterData.cr ? `CR ${monsterData.cr}` : undefined;
   const proficiencyBonus = monsterData.proficiencyBonus || null;
-  const speed = monsterData.speed?.raw || null;
+  const speed =
+    typeof monsterData.speed === 'string'
+      ? monsterData.speed
+      : monsterData.speed?.raw || null;
   const hpFormula = monsterData.hp?.formula || null;
   const tags = Array.isArray(monsterData.tags) ? monsterData.tags : [];
 
