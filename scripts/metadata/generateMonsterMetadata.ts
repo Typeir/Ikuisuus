@@ -420,9 +420,15 @@ function findMonsterImage(
       ? 0
       : (allPositions[statBlockIndex - 1]?.lineIndex ?? 0);
 
+  let scanEnd = statBlockLineIdx;
+  for (let i = statBlockLineIdx + 1; i < Math.min(statBlockLineIdx + 15, allLines.length); i++) {
+    if (/^\|/.test(allLines[i])) break;
+    scanEnd = i + 1;
+  }
+
   let lastImage: string | undefined;
   let inBlendedImage = false;
-  for (let i = scanStart; i < statBlockLineIdx; i++) {
+  for (let i = scanStart; i < scanEnd; i++) {
     const line = allLines[i];
     const singleMatch = line.match(BLENDED_IMAGE_SINGLE);
     if (singleMatch) {

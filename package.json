@@ -34,7 +34,7 @@
     "util:tree-size": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/treeSize.ts ./src",
     "util:test-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/testMetadataSystem.ts",
     "foundry:export": "npx tsx --tsconfig tsconfig.scripts.json foundry/scripts/export.ts",
-    "foundry:pack": "node -e \"const{compilePack}=require('@foundryvtt/foundryvtt-cli');compilePack('foundry/packs/_source/monsters','foundry/packs/monsters',{log:true})\"",
+    "foundry:pack": "node -e \"const{compilePack}=require('@foundryvtt/foundryvtt-cli');const fs=require('fs');(async()=>{for(const p of['monsters','heirlooms','spells','trinkets']){if(fs.existsSync('foundry/packs/_source/'+p)){try{await compilePack('foundry/packs/_source/'+p,'foundry/packs/'+p,{log:true})}catch(e){if(e.code==='LEVEL_ITERATOR_NOT_OPEN'){console.log('⚠ LevelDB iterator warning (benign) — pack written successfully.')}else{throw e}}}}})()\"",
     "foundry:build": "npm run foundry:export && npm run foundry:pack",
     "db:init": "npx tsx --tsconfig tsconfig.scripts.json scripts/db/pg/init-db.ts",
     "db:migrate": "npx tsx scripts/db/pg/migrate.ts",

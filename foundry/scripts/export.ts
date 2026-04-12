@@ -16,11 +16,21 @@
  * @see {@link exportMonsters} for the main orchestration entry
  */
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, copyFileSync } from 'node:fs';
 import { join, resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 import type { MonsterMetadata } from '../../src/lib/db/content/schemas/monsterMetadata';
 import { transformMonster } from './transformers/monsterTransformer';
+
+/** Module ID used in Foundry asset paths. */
+const MODULE_ID = 'ikuisuus-damocles';
+
+/** Prefix for module-relative asset paths in Foundry. */
+const MODULE_IMG_PREFIX = `modules/${MODULE_ID}/assets/images`;
+
+/** Prefix for module-relative token paths in Foundry. */
+const MODULE_TOKEN_PREFIX = `modules/${MODULE_ID}/assets/tokens`;
 
 /** Workspace root directory. */
 const __filename = fileURLToPath(import.meta.url);
@@ -34,6 +44,21 @@ const META_DIR = join(ROOT, '.meta/en/monsters');
 
 /** Output directory for compendium source JSON. */
 const OUTPUT_DIR = join(ROOT, 'foundry/packs/_source/monsters');
+
+/** Output directory for bundled images. */
+const ASSETS_IMG_DIR = join(ROOT, 'foundry/assets/images');
+
+/** Source directory for WebP images (Next.js public). */
+const PUBLIC_IMG_DIR = join(ROOT, 'public/library/images');
+
+/** Frame overlay for token generation. */
+const FRAME_PATH = join(ROOT, 'foundry/assets/frames/frame.png');
+
+/** Output directory for generated token images. */
+const TOKENS_DIR = join(ROOT, 'foundry/assets/tokens');
+
+/** Token size in pixels (matches frame dimensions). */
+const TOKEN_SIZE = 256;
 
 /**
  * Discovers all metadata JSON files, preferring .meta/ (pg backend) over
@@ -64,6 +89,115 @@ function resolveMdxPath(monster: MonsterMetadata): string {
 }
 
 /**
+ * Rewrites `/library/images/X.webp` paths to module-relative Foundry paths
+ * and collects referenced image filenames for bundling.
+ *
+ * @param {string} imgPath - Original image path from metadata (e.g. "/library/images/X.webp")
+ * @returns {string} Module-relative path (e.g. "modules/ikuisuus-damocles/assets/images/X.webp")
+ */
+function toModuleImgPath(imgPath: string): string {
+  const filename = basename(imgPath);
+  return `${MODULE_IMG_PREFIX}/${filename}`;
+}
+
+/**
+ * Rewrites all `/library/images/` references in HTML to module-relative paths.
+ *
+ * @param {string} html - Biography HTML string
+ * @returns {string} HTML with rewritten image paths
+ */
+function rewriteBiographyImages(html: string): string {
+  return html.replace(/\/library\/images\//g, `${MODULE_IMG_PREFIX}/`);
+}
+
+/**
+ * Copies referenced images from public/library/images/ to foundry/assets/images/.
+ *
+ * @param {Set<string>} imageFiles - Set of image filenames to copy
+ */
+function bundleImages(imageFiles: Set<string>): void {
+  mkdirSync(ASSETS_IMG_DIR, { recursive: true });
+  let copied = 0;
+  let missing = 0;
+
+  for (const filename of imageFiles) {
+    const src = join(PUBLIC_IMG_DIR, filename);
+    const dest = join(ASSETS_IMG_DIR, filename);
+
+    if (existsSync(src)) {
+      copyFileSync(src, dest);
+      copied++;
+    } else {
+      process.stderr.write(`  WARN: Image not found: ${src}\n`);
+      missing++;
+    }
+  }
+
+  process.stdout.write(`Images: ${copied} copied, ${missing} missing\n`);
+}
+
+/**
+ * Generates circular token images by cropping portraits to center-square,
+ * clipping to a circle, and compositing the frame overlay on top.
+ *
+ * @param {Set<string>} imageFiles - Set of image filenames to generate tokens for
+ * @returns {Promise<Map<string, string>>} Map of source filename → token filename
+ */
+async function generateTokens(imageFiles: Set<string>): Promise<Map<string, string>> {
+  mkdirSync(TOKENS_DIR, { recursive: true });
+
+  const frameBuffer = readFileSync(FRAME_PATH);
+  const maskRadius = Math.round(TOKEN_SIZE / 2 * 0.95);
+  const circleMask = Buffer.from(
+    `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
+    `<circle cx="${TOKEN_SIZE / 2}" cy="${TOKEN_SIZE / 2}" r="${maskRadius}" fill="white"/>` +
+    `</svg>`,
+  );
+
+  const tokenMap = new Map<string, string>();
+  let generated = 0;
+
+  for (const filename of imageFiles) {
+    const src = join(ASSETS_IMG_DIR, filename);
+    if (!existsSync(src)) continue;
+
+    const tokenFilename = filename.replace(/\.\w+$/, '.token.webp');
+    const dest = join(TOKENS_DIR, tokenFilename);
+
+    try {
+      const portrait = sharp(src);
+      const meta = await portrait.metadata();
+      const w = meta.width ?? TOKEN_SIZE;
+      const h = meta.height ?? TOKEN_SIZE;
+      const cropSize = Math.min(w, h);
+      const left = Math.round((w - cropSize) / 2);
+      const top = Math.round((h - cropSize) * 0.15);
+
+      const cropped = await portrait
+        .extract({ left, top, width: cropSize, height: Math.min(cropSize, h - top) })
+        .resize(TOKEN_SIZE, TOKEN_SIZE, { fit: 'cover' })
+        .composite([{ input: circleMask, blend: 'dest-in' }])
+        .png()
+        .toBuffer();
+
+      await sharp(cropped)
+        .composite([{ input: frameBuffer, blend: 'over' }])
+        .webp({ quality: 90 })
+        .toFile(dest);
+
+      tokenMap.set(filename, tokenFilename);
+      generated++;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      process.stderr.write(`  WARN: Token generation failed for ${filename}: ${msg}\n`);
+    }
+  }
+
+  process.stdout.write(`Tokens: ${generated} generated\n`);
+  return tokenMap;
+}
+
+/**
  * Exports all monsters to Foundry VTT compendium source JSON files.
  */
 async function exportMonsters(): Promise<void> {
@@ -72,6 +206,7 @@ async function exportMonsters(): Promise<void> {
   const metadataFiles = discoverMetadataFiles();
   let totalActors = 0;
   let errors = 0;
+  const referencedImages = new Set<string>();
 
   process.stdout.write(`Found ${metadataFiles.length} metadata files in ${MONSTERS_DIR}\n`);
 
@@ -88,6 +223,17 @@ async function exportMonsters(): Promise<void> {
 
       for (const monster of monsters) {
         const actor = await transformMonster(monster, mdxContent);
+
+        if (monster.image && monster.image.startsWith('/library/images/')) {
+          actor.img = toModuleImgPath(monster.image);
+          referencedImages.add(basename(monster.image));
+        }
+
+        const bio = (actor.system as any)?.details?.biography;
+        if (bio?.value) {
+          bio.value = rewriteBiographyImages(bio.value);
+        }
+
         const outPath = join(OUTPUT_DIR, `${actor._id}.json`);
         writeFileSync(outPath, JSON.stringify(actor, null, 2), 'utf-8');
         totalActors++;
@@ -98,6 +244,36 @@ async function exportMonsters(): Promise<void> {
       const msg = err instanceof Error ? err.message : String(err);
       process.stderr.write(`  ERROR ${slug}: ${msg}\n`);
     }
+  }
+
+  bundleImages(referencedImages);
+  const tokenMap = await generateTokens(referencedImages);
+
+  for (const metaPath of metadataFiles) {
+    try {
+      const raw = readFileSync(metaPath, 'utf-8');
+      const records: MonsterMetadata[] = JSON.parse(raw);
+      const monsters = Array.isArray(records) ? records : [records];
+
+      for (const monster of monsters) {
+        if (!monster.image) continue;
+        const imgFilename = basename(monster.image);
+        const tokenFilename = tokenMap.get(imgFilename);
+        if (!tokenFilename) continue;
+
+        const idSlug = monster.subSlug ?? monster.slug;
+        const { generateFoundryId } = await import('./utils/idGenerator');
+        const actorId = generateFoundryId(idSlug, 'monster');
+        const actorPath = join(OUTPUT_DIR, `${actorId}.json`);
+
+        if (!existsSync(actorPath)) continue;
+        const actor = JSON.parse(readFileSync(actorPath, 'utf-8'));
+        actor.prototypeToken.texture = {
+          src: `${MODULE_TOKEN_PREFIX}/${tokenFilename}`,
+        };
+        writeFileSync(actorPath, JSON.stringify(actor, null, 2), 'utf-8');
+      }
+    } catch { /* skip — errors already logged in first pass */ }
   }
 
   process.stdout.write(`\nExport complete: ${totalActors} actors, ${errors} errors\n`);

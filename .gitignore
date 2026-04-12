@@ -67,4 +67,6 @@ scripts/hooks/.patterns
 /foundry/packs/heirlooms/
 /foundry/packs/spells/
 /foundry/packs/trinkets/
+/foundry/assets/images/
+/foundry/assets/tokens/
 /foundry/dist/
