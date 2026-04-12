@@ -6,7 +6,9 @@
  * inter-outlier dependencies resolve correctly.
  *
  * @module findReusableMdxOutliers/compiler
+ * @author Typeir
  * @version 1.0.0
+ * @see {@link compileOutliers} for the main compilation function
  * @since 3.0.0
  */
 
@@ -20,7 +22,7 @@ import { pathToFileURL } from 'url';
  * Creates a React FC that renders pre-compiled HTML via dangerouslySetInnerHTML.
  * Used to inject already-compiled outlier HTML into dependent MDX evaluations.
  *
- * @param html - Pre-rendered HTML string
+ * @param {string} html - Pre-rendered HTML string
  * @returns React FC that renders the HTML
  */
 export const htmlComponent = (
@@ -34,7 +36,7 @@ export const htmlComponent = (
 /**
  * Demotes compiled HTML heading tags from h1 to h2.
  *
- * @param html - Rendered static HTML string
+ * @param {string} html - Rendered static HTML string
  * @returns HTML with h1 headings replaced by h2 headings
  */
 const demoteCompiledH1Headings = (html: string): string =>
@@ -58,10 +60,10 @@ export interface CompiledOutlier {
 /**
  * Compiles outlier MDX files in topological order, producing static HTML for each.
  *
- * @param compileOrder - Topologically sorted outlier names (leaves first)
- * @param mdxMap - Map of PascalCase name → absolute file path
- * @param deps - Dependency graph (name → set of names it depends on)
- * @param components - Real app component map from src/lib/components/mdx
+ * @param {string[]} compileOrder - Topologically sorted outlier names (leaves first)
+ * @param {Record<string, string>} mdxMap - Map of PascalCase name → absolute file path
+ * @param {Map<string, Set<string>>} deps - Dependency graph (name → set of names it depends on)
+ * @param {Record<string, React.FC>} components - Real app component map from src/lib/components/mdx
  * @returns Array of compiled outlier results in compile order
  */
 export const compileOutliers = async (

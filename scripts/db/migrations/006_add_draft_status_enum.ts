@@ -14,6 +14,9 @@
  * concurrent corrections for the same slug; only one active draft is allowed.
  *
  * @module scripts/db/migrations/006_add_draft_status_enum
+ * @author Typeir
+ * @version 1.0.0
+ * @since 1.0.0
  */
 
 import type { PoolClient } from 'pg';

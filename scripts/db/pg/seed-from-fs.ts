@@ -140,6 +140,7 @@ interface MonsterMeta {
   conditionImmunities?: string[];
   languages?: string[];
   tags?: string[];
+  image?: string;
   indexVersion?: number;
   versionHash?: string;
 }
@@ -428,6 +429,7 @@ async function seedMonsters(
       conditionImmunities: m.conditionImmunities ?? [],
       languages: m.languages ?? [],
       tags: m.tags ?? [],
+      image: m.image,
       indexVersion: m.indexVersion,
       versionHash: resolveVersionHash(m as unknown as Record<string, unknown>),
     });

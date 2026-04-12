@@ -10,6 +10,8 @@
  * @since 3.0.0
  */
 
+/* paw:gate:file-length ignore */
+
 import { GameData } from './gameData';
 import type { SharedData } from './sharedData';
 

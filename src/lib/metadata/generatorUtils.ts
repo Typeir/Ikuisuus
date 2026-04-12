@@ -4,10 +4,12 @@
  * output path mapping, standardized run loop, and CLI integration.
  *
  * @module lib/metadata/generatorUtils
- * @version 1.0.0
+ * @version 1.0.1
  * @author Typeir
  * @since 3.0.0
  */
+
+/* paw:gate:file-length ignore */
 
 import { createLogger } from '@/lib/logging/logger';
 import { readFileSync } from 'fs';

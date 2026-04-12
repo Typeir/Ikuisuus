@@ -158,6 +158,8 @@ export interface MonsterMetadata {
   proficiencyBonus?: number;
   /** Gameplay tags for filtering and search */
   tags?: string[];
+  /** Image path extracted from BlendedImage in MDX (e.g. "/library/images/Albedo.webp") */
+  image?: string;
   /** Metadata format version */
   indexVersion?: number;
 }

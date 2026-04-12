@@ -386,6 +386,86 @@ function findStatBlockTitle(
   return '';
 }
 
+/** Regex matching a BlendedImage JSX tag with a src attribute (single line). */
+const BLENDED_IMAGE_SINGLE =
+  /<BlendedImage\s[^>]*?src\s*=\s*['"]([^'"]+)['"]/i;
+
+/** Regex matching a src attribute on any line (for multi-line JSX). */
+const SRC_ATTR_PATTERN = /^\s*src\s*=\s*['"]([^'"]+)['"]/i;
+
+/**
+ * Finds the image path closest to a stat block by scanning backwards from the
+ * italic creature-type line towards the variant heading. For the first stat
+ * block (index 0) also scans from the file start.
+ *
+ * For multi-variant files with per-variant images (e.g. xanthous.sheet.mdx),
+ * each variant gets the BlendedImage between its heading and the italic line.
+ * When no per-variant image is found, falls back to the first BlendedImage in
+ * the entire file (shared header pattern, e.g. cornucopios.sheet.mdx).
+ *
+ * @param {string[]} allLines - All file lines
+ * @param {number} statBlockLineIdx - Index of the italic stat block line
+ * @param {number} statBlockIndex - 0-based stat block index in the file
+ * @param {{ lineIndex: number }[]} allPositions - Positions of all stat blocks
+ * @returns {string | undefined} Image `src` path or undefined
+ */
+function findMonsterImage(
+  allLines: string[],
+  statBlockLineIdx: number,
+  statBlockIndex: number,
+  allPositions: { lineIndex: number }[],
+): string | undefined {
+  const scanStart =
+    statBlockIndex === 0
+      ? 0
+      : (allPositions[statBlockIndex - 1]?.lineIndex ?? 0);
+
+  let lastImage: string | undefined;
+  let inBlendedImage = false;
+  for (let i = scanStart; i < statBlockLineIdx; i++) {
+    const line = allLines[i];
+    const singleMatch = line.match(BLENDED_IMAGE_SINGLE);
+    if (singleMatch) {
+      lastImage = singleMatch[1];
+      inBlendedImage = false;
+      continue;
+    }
+    if (/<BlendedImage\b/i.test(line)) {
+      inBlendedImage = true;
+      continue;
+    }
+    if (inBlendedImage) {
+      const srcMatch = line.match(SRC_ATTR_PATTERN);
+      if (srcMatch) {
+        lastImage = srcMatch[1];
+        inBlendedImage = false;
+      }
+      if (/\/>/.test(line)) inBlendedImage = false;
+    }
+  }
+
+  if (lastImage) return lastImage;
+
+  if (statBlockIndex > 0) {
+    let fallbackImage: string | undefined;
+    let inTag = false;
+    for (let i = 0; i < allPositions[0].lineIndex; i++) {
+      const line = allLines[i];
+      const singleMatch = line.match(BLENDED_IMAGE_SINGLE);
+      if (singleMatch) { fallbackImage = singleMatch[1]; inTag = false; continue; }
+      if (/<BlendedImage\b/i.test(line)) { inTag = true; continue; }
+      if (inTag) {
+        const srcMatch = line.match(SRC_ATTR_PATTERN);
+        if (srcMatch) { fallbackImage = srcMatch[1]; inTag = false; }
+        if (/\/>/.test(line)) inTag = false;
+      }
+    }
+    if (fallbackImage) return fallbackImage;
+  }
+
+  return undefined;
+}
+
 /**
  * Parses a stat block section and extracts metadata.
  *
@@ -397,6 +477,7 @@ function findStatBlockTitle(
  * @param {string} filePath - Original file path
  * @param {number} statBlockIndex - Index of this stat block (0 for first/main)
  * @param {SharedData} sharedData - Shared data object
+ * @param {{ lineIndex: number }[]} allPositions - All stat block positions in file
  * @returns {object} Stat block metadata
  */
 function parseStatBlockSection(
@@ -408,6 +489,7 @@ function parseStatBlockSection(
   filePath: string,
   statBlockIndex: number,
   sharedData: SharedData,
+  allPositions: { lineIndex: number }[],
 ) {
   const sectionText = sectionLines.join('\n');
   const title = findStatBlockTitle(allLines, statBlockLineIdx, isBlockquote);
@@ -539,6 +621,13 @@ function parseStatBlockSection(
       nested: isNested,
     });
 
+  const image = findMonsterImage(
+    allLines,
+    statBlockLineIdx,
+    statBlockIndex,
+    allPositions,
+  );
+
   return {
     slug: baseSlug,
     subSlug,
@@ -568,6 +657,7 @@ function parseStatBlockSection(
     cr,
     proficiencyBonus,
     tags: tags.length ? tags : undefined,
+    image,
     indexVersion: 2,
   };
 }
@@ -620,6 +710,7 @@ async function parseMonsterFile(
       filePath,
       i,
       sharedData,
+      statBlockPositions,
     );
     results.push(metadata);
   }
@@ -657,7 +748,11 @@ async function main(
   });
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+const isDirectRun =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === new URL(`file://${process.argv[1]}`).href;
+
+if (isDirectRun) {
   runWithCli(main).catch((error) => {
     log.error('Fatal error during monster metadata generation', {
       error: (error as Error).message,

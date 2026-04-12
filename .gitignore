@@ -60,3 +60,11 @@ scripts/hooks/.patterns
 .paw
 .github/PAW
 .pawignore
+
+# foundry vtt compiled packs and build output (source JSON is tracked)
+/foundry/packs/_source/
+/foundry/packs/monsters/
+/foundry/packs/heirlooms/
+/foundry/packs/spells/
+/foundry/packs/trinkets/
+/foundry/dist/

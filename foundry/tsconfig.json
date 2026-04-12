@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.scripts.json",
+  "compilerOptions": {
+    "rootDir": "..",
+    "paths": {
+      "@/*": ["../src/*"],
+      "@content/*": ["../src/content/*"]
+    }
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "../src/lib/db/content/schemas/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist", "packs"]
+}

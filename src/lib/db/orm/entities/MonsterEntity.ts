@@ -255,6 +255,10 @@ export class MonsterEntity {
   @Property({ type: 'string[]' })
   tags: string[] = [];
 
+  /** @property {string | null} image - Image path extracted from BlendedImage in MDX */
+  @Property({ type: 'string', nullable: true })
+  image?: string | null;
+
   @Property({
     type: 'number',
     fieldName: 'index_version',

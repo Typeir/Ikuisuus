@@ -66,6 +66,12 @@ The enforcement loop will block all other tools until the violated file is clean
 Session A's violations don't block Session B. Violations with no session ID
 block everyone (project-scoped violations).
 
+#### 2.1 Project-scoped violation fixing
+
+Project-scoped violations can be fixed by anyone in any session. If there is a
+project-scoped violation, it means you (the agent) have violated a rule and refused to fix it in the past. Since you are
+an ephemeral agent, you will not have recollection of this, but it is a fact. To unblock yourself, you must fix the issue with no exceptions or excuses. If you truly can't fix it, you can ask the user to run `npm run paw:unblock` to clear all violations, or have them fix the issue for you. But remember, this is a last resort and should only be used if you're completely stuck.
+
 ### 3. Some tools are always allowed (exempt)
 
 Read-only tools are never blocked: `read_file`, `grep_search`, `file_search`,

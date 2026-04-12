@@ -1,0 +1,63 @@
+{
+  "id": "ikuisuus-damocles",
+  "title": "Library of Ikuisuus — Damocles Content",
+  "description": "Monsters, heirlooms, spells, and trinkets from the Damocles setting, exported from the Library of Ikuisuus.",
+  "version": "0.1.0",
+  "authors": [
+    {
+      "name": "Typeir"
+    }
+  ],
+  "compatibility": {
+    "minimum": "12",
+    "verified": "13"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "3.0.0"
+        }
+      }
+    ]
+  },
+  "packs": [
+    {
+      "name": "monsters",
+      "label": "Damocles Monsters",
+      "type": "Actor",
+      "system": "dnd5e",
+      "path": "./packs/monsters"
+    },
+    {
+      "name": "heirlooms",
+      "label": "Damocles Heirlooms",
+      "type": "Item",
+      "system": "dnd5e",
+      "path": "./packs/heirlooms"
+    },
+    {
+      "name": "spells",
+      "label": "Damocles Spells",
+      "type": "Item",
+      "system": "dnd5e",
+      "path": "./packs/spells"
+    },
+    {
+      "name": "trinkets",
+      "label": "Damocles Trinkets",
+      "type": "Item",
+      "system": "dnd5e",
+      "path": "./packs/trinkets"
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Damocles",
+      "sorting": "a",
+      "packs": ["monsters", "heirlooms", "spells", "trinkets"]
+    }
+  ]
+}
