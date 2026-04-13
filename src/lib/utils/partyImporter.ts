@@ -10,11 +10,11 @@
  * @since 1.0.0
  */
 
-import type { SavedParty } from '@/lib/types/party';
 import type {
   InProgressCombat,
   InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
+import type { SavedParty } from '@/lib/types/party';
 import { generateId } from '@/lib/utils/encounterStorage';
 
 /**
@@ -82,9 +82,7 @@ export const importPartyIntoCombat = (
   party: SavedParty,
   combat: InProgressCombat,
 ): InProgressCombat => {
-  const nonPartyCombatants = combat.combatants.filter(
-    (c) => !c.isPartyMember,
-  );
+  const nonPartyCombatants = combat.combatants.filter((c) => !c.isPartyMember);
   const nonPartyTurnOrder = combat.turnOrder.filter((id) =>
     nonPartyCombatants.some((c) => c.id === id),
   );
@@ -94,10 +92,7 @@ export const importPartyIntoCombat = (
   );
 
   const activeCombatantId = combat.turnOrder[combat.activeTurnIndex];
-  const newTurnOrder = [
-    ...newMembers.map((m) => m.id),
-    ...nonPartyTurnOrder,
-  ];
+  const newTurnOrder = [...newMembers.map((m) => m.id), ...nonPartyTurnOrder];
   const newActiveTurnIndex = Math.max(
     0,
     newTurnOrder.indexOf(activeCombatantId),

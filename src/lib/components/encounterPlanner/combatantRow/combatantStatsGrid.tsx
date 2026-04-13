@@ -19,7 +19,7 @@ import {
   parseIntSafe,
 } from '@/lib/utils/statEditing';
 import { useTranslations } from 'next-intl';
-import { type RefObject, useCallback, useState } from 'react';
+import { type MutableRefObject, useCallback, useState } from 'react';
 import styles from './combatantRow.module.scss';
 import { useCombatant } from './utils/context/combatantContext';
 
@@ -28,11 +28,11 @@ import { useCombatant } from './utils/context/combatantContext';
  *
  * @interface CombatantStatsGridProps
  * @property {boolean} isLocked - Whether stats are locked from editing
- * @property {RefObject<boolean>} cancelPendingRef - Shared ref for cancel state coordination
+ * @property {MutableRefObject<boolean>} cancelPendingRef - Shared ref for cancel state coordination
  */
 export interface CombatantStatsGridProps {
   isLocked: boolean;
-  cancelPendingRef: RefObject<boolean>;
+  cancelPendingRef: MutableRefObject<boolean>;
 }
 
 /**
@@ -43,7 +43,7 @@ export interface CombatantStatsGridProps {
  * @component
  * @param {CombatantStatsGridProps} props - Component props
  * @param {boolean} props.isLocked - Whether stats are locked from editing
- * @param {RefObject<boolean>} props.cancelPendingRef - Shared ref for cancel state
+ * @param {MutableRefObject<boolean>} props.cancelPendingRef - Shared ref for cancel state
  * @returns {JSX.Element} Rendered stats grid
  */
 export const CombatantStatsGrid: React.FC<CombatantStatsGridProps> = ({

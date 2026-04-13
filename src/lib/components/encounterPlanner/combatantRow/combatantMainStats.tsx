@@ -26,15 +26,12 @@
 'use client';
 
 import { rollInitiative } from '@/lib/utils/encounterStorage';
-import {
-    clampNonNegative,
-    parseIntSafe,
-} from '@/lib/utils/statEditing';
+import { clampNonNegative, parseIntSafe } from '@/lib/utils/statEditing';
 import { Dices } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useRef } from 'react';
-import { CombatantStatsGrid } from './combatantStatsGrid';
 import styles from './combatantRow.module.scss';
+import { CombatantStatsGrid } from './combatantStatsGrid';
 import { getPhaseMarker } from './utils';
 import { useCombatant } from './utils/context/combatantContext';
 import { useEditableField } from './utils/useEditableField';
@@ -76,8 +73,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
   showSlain = true,
   locked = [],
 }) => {
-  const { combatant, onUpdate, updateField, disableLocking } =
-    useCombatant();
+  const { combatant, onUpdate, updateField, disableLocking } = useCombatant();
   const {
     hpCurrent,
     hpMax,
@@ -111,26 +107,35 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
 
   const hpMaxField = useEditableField(
     cancelPendingRef,
-    useCallback((value: string) => {
-      const parsed = clampNonNegative(parseIntSafe(value, false)) ?? 1;
-      updateField(hpMaxOverride !== null ? 'hpMaxOverride' : 'hpMax', parsed);
-    }, [hpMaxOverride, updateField]),
+    useCallback(
+      (value: string) => {
+        const parsed = clampNonNegative(parseIntSafe(value, false)) ?? 1;
+        updateField(hpMaxOverride !== null ? 'hpMaxOverride' : 'hpMax', parsed);
+      },
+      [hpMaxOverride, updateField],
+    ),
   );
 
   const acField = useEditableField(
     cancelPendingRef,
-    useCallback((value: string) => {
-      const parsed = clampNonNegative(parseIntSafe(value, false)) ?? 0;
-      updateField('ac', parsed);
-    }, [updateField]),
+    useCallback(
+      (value: string) => {
+        const parsed = clampNonNegative(parseIntSafe(value, false)) ?? 0;
+        updateField('ac', parsed);
+      },
+      [updateField],
+    ),
   );
 
   const initField = useEditableField(
     cancelPendingRef,
-    useCallback((value: string) => {
-      const parsed = parseIntSafe(value, true);
-      updateField('initiativeValue', parsed);
-    }, [updateField]),
+    useCallback(
+      (value: string) => {
+        const parsed = parseIntSafe(value, true);
+        updateField('initiativeValue', parsed);
+      },
+      [updateField],
+    ),
   );
 
   const handleRollInitiative = useCallback(() => {
@@ -183,11 +188,15 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
           <input
             type='text'
             className={`${styles.numberInput} ${isStatsLocked ? styles.lockedInput : ''}`}
-            value={hpMaxField.editing !== null ? hpMaxField.editing : effectiveHpMax}
+            value={
+              hpMaxField.editing !== null ? hpMaxField.editing : effectiveHpMax
+            }
             onChange={(e) => hpMaxField.onChange(e.target.value)}
             onFocus={() => hpMaxField.setEditing(String(effectiveHpMax))}
             onBlur={hpMaxField.commit}
-            onKeyDown={(e) => handleKeyDown(e, hpMaxField.commit, hpMaxField.cancel)}
+            onKeyDown={(e) =>
+              handleKeyDown(e, hpMaxField.commit, hpMaxField.cancel)
+            }
             disabled={isStatsLocked}
             placeholder={t('max')}
             aria-label={t('hpMax')}
@@ -260,7 +269,9 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
               )
             }
             onBlur={initField.commit}
-            onKeyDown={(e) => handleKeyDown(e, initField.commit, initField.cancel)}
+            onKeyDown={(e) =>
+              handleKeyDown(e, initField.commit, initField.cancel)
+            }
             disabled={isStatsLocked}
             placeholder='—'
             aria-label={t('initiative')}
@@ -276,7 +287,10 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
         </button>
       </div>
 
-      <CombatantStatsGrid isLocked={isStatsLocked} cancelPendingRef={cancelPendingRef} />
+      <CombatantStatsGrid
+        isLocked={isStatsLocked}
+        cancelPendingRef={cancelPendingRef}
+      />
     </div>
   );
 };

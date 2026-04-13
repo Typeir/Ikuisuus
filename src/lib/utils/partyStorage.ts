@@ -44,10 +44,7 @@ export const saveParty = (party: SavedParty): void => {
   } else {
     parties.push(party);
   }
-  localStorage.setItem(
-    EncounterStorage.SavedParties,
-    JSON.stringify(parties),
-  );
+  localStorage.setItem(EncounterStorage.SavedParties, JSON.stringify(parties));
 };
 
 /**
@@ -58,10 +55,7 @@ export const saveParty = (party: SavedParty): void => {
  */
 export const deleteParty = (id: string): void => {
   const parties = getSavedParties().filter((p) => p.id !== id);
-  localStorage.setItem(
-    EncounterStorage.SavedParties,
-    JSON.stringify(parties),
-  );
+  localStorage.setItem(EncounterStorage.SavedParties, JSON.stringify(parties));
 };
 
 /**

@@ -2,7 +2,7 @@
  * @fileoverview In-Progress Combat Types
  * @description TypeScript interfaces for runtime combat snapshots during Play Mode.
  * Separate from the encounter planner to avoid mutating base encounter data.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -13,7 +13,7 @@ import type { AffixEntry, CreatureStats } from './encounterPlanner';
 
 /**
  * Condition entry for in-progress combatants
- * 
+ *
  * @interface ConditionEntry
  * @property {string} id - Unique identifier for the condition instance
  * @property {string} text - Display text describing the condition
@@ -26,7 +26,7 @@ export interface ConditionEntry {
 /**
  * Mechanics flags derived from monster metadata tags.
  * Used for DM quality-of-life features in Play Mode.
- * 
+ *
  * @interface CombatantMechanics
  * @property {boolean} lair - True if creature has mechanic:lair tag - triggers alert on round start
  * @property {boolean} stratagem - True if creature has mechanic:stratagem tag - shows tactical badge
@@ -45,7 +45,7 @@ export interface CombatantMechanics {
 /**
  * Heroic Awakening state for a single combatant.
  * Tracks the results of fate die rolls and applied tier bonuses.
- * 
+ *
  * @interface HeroicAwakeningState
  * @property {number} fateDieResult - D20 result from fate die roll (1-20)
  * @property {number} heroicDc - Target DC based on creature CR
@@ -75,7 +75,7 @@ export interface HeroicAwakeningState {
 /**
  * Runtime combatant in an in-progress combat snapshot.
  * Extends base creature data with combat state and session-only flag.
- * 
+ *
  * @interface InProgressCombatant
  * @property {string} id - Unique combatant identifier
  * @property {string} name - Display name
@@ -146,7 +146,7 @@ export interface InProgressCombatant {
 /**
  * In-progress combat snapshot.
  * Represents the runtime state during Play Mode, stored separately from base encounters.
- * 
+ *
  * @interface InProgressCombat
  * @property {string} id - Unique combat session identifier
  * @property {string} encounterId - Reference to the source encounter
