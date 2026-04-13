@@ -177,6 +177,13 @@ function findHeadingJSDoc(
     index += 1;
   }
 
+  if (index < lines.length && lines[index].trim().startsWith('#!')) {
+    index += 1;
+    while (index < lines.length && lines[index].trim() === '') {
+      index += 1;
+    }
+  }
+
   if (index >= lines.length || !lines[index].trim().startsWith('/**')) {
     return null;
   }

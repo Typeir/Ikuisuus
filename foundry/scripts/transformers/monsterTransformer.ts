@@ -13,14 +13,18 @@
  */
 
 import type { MonsterMetadata } from '../../../src/lib/db/content/schemas/monsterMetadata';
+import {
+  SIZE_MAP,
+  SKILL_ABILITY_MAP,
+  SKILL_MAP,
+  TOKEN_SIZE_MAP
+} from '../constants/dnd5eMaps';
 import { generateFoundryId } from '../utils/idGenerator';
 import { extractMonsterDescription } from '../utils/mdxToHtml';
 import {
-  SIZE_MAP, DAMAGE_TYPE_MAP, CONDITION_MAP,
-  SKILL_MAP, SKILL_ABILITY_MAP, LANGUAGE_MAP, TOKEN_SIZE_MAP,
-} from '../constants/dnd5eMaps';
-import {
-  parseDamageTraits, parseConditionTraits, parseLanguages,
+  parseConditionTraits,
+  parseDamageTraits,
+  parseLanguages,
 } from '../utils/traitParsers';
 
 /**
@@ -121,8 +125,10 @@ function buildSkills(m: MonsterMetadata): Record<string, unknown> {
     const parsed = parseSkill(str);
     if (!parsed) continue;
     const abl = SKILL_ABILITY_MAP[parsed.key];
-    const score = abl && m.abilities
-      ? (m.abilities[abl as keyof typeof m.abilities]?.score ?? 10) : 10;
+    const score =
+      abl && m.abilities
+        ? (m.abilities[abl as keyof typeof m.abilities]?.score ?? 10)
+        : 10;
     const mod = Math.floor((score - 10) / 2);
     out[parsed.key] = {
       value: computeSkillProf(parsed.bonus, mod, prof),
@@ -140,7 +146,10 @@ function buildSkills(m: MonsterMetadata): Record<string, unknown> {
  * @param {string} mdxContent - Raw MDX content for biography HTML
  * @returns {Promise<FoundryNpcActor>} Foundry VTT Actor document
  */
-export async function transformMonster(monster: MonsterMetadata, mdxContent: string): Promise<FoundryNpcActor> {
+export async function transformMonster(
+  monster: MonsterMetadata,
+  mdxContent: string,
+): Promise<FoundryNpcActor> {
   const idSlug = monster.subSlug ?? monster.slug;
   const cr = monster.cr ? parseCr(monster.cr) : 0;
   const size = SIZE_MAP[monster.size?.toLowerCase() ?? 'medium'] ?? 'med';
@@ -188,10 +197,18 @@ export async function transformMonster(monster: MonsterMetadata, mdxContent: str
         },
       },
       details: {
-        biography: { value: await extractMonsterDescription(mdxContent), public: '' },
+        biography: {
+          value: await extractMonsterDescription(mdxContent),
+          public: '',
+        },
         alignment: monster.alignment ?? '',
         cr,
-        type: { value: monster.creatureType ?? '', subtype: '', swarm: '', custom: '' },
+        type: {
+          value: monster.creatureType ?? '',
+          subtype: '',
+          swarm: '',
+          custom: '',
+        },
         source: { custom: 'Library of Ikuisuus — Damocles' },
       },
       traits: {
@@ -205,16 +222,22 @@ export async function transformMonster(monster: MonsterMetadata, mdxContent: str
       skills: buildSkills(monster),
     },
     prototypeToken: {
-      name: monster.title, displayName: 20,
-      width: tokenDim, height: tokenDim,
-      disposition: -1, actorLink: false,
+      name: monster.title,
+      displayName: 20,
+      width: tokenDim,
+      height: tokenDim,
+      disposition: -1,
+      actorLink: false,
       bar1: { attribute: 'attributes.hp' },
       sight: { enabled: true },
     },
     flags: {
       'ikuisuus-damocles': {
-        slug: monster.slug, subSlug: monster.subSlug,
-        source: monster.file, cr: monster.cr, tags: monster.tags,
+        slug: monster.slug,
+        subSlug: monster.subSlug,
+        source: monster.file,
+        cr: monster.cr,
+        tags: monster.tags,
       },
     },
   };

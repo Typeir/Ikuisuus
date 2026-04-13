@@ -1,29 +1,139 @@
 /**
- * TODO: Add comprehensive tests for editorPathSection.tsx
- * This file contains only smoke tests. Additional test coverage needed for:
- * - User interactions
- * - Edge cases
- * - Integration scenarios
+ * @fileoverview Unit Tests — EditorPathSection
+ * @description Validates path/slug input rendering in edit and new modes.
  *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
+ * @module tests/unit/lib/components/mdxEditor/editorPathSection
  */
 
-import { describe, expect, it } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-describe('editorPathSection', () => {
-  it('should load component module [DUMMY TEST]', async () => {
-    try {
-      const mod = await import('@/lib/components/mdxEditor/editorPathSection');
-      const exported = Object.keys(mod).length;
-      expect(exported).toBeGreaterThan(0);
-    } catch (error) {
-      console.warn(
-        '⚠️  DUMMY TEST WARNING: @/lib/components/mdxEditor/editorPathSection',
-        '\n   Failed to load component module:',
-        error instanceof Error ? error.message : String(error),
+vi.mock('@/lib/hooks/data/useDraftAndRouteData', () => ({
+  useCorrectionsTreeData: vi.fn(() => ({ tree: [], loading: false })),
+}));
+
+vi.mock('@/lib/components/mdxEditor/fileTreeSelect', () => ({
+  FileTreeSelect: ({
+    placeholder,
+    disabled,
+  }: {
+    placeholder?: string;
+    disabled?: boolean;
+  }) => <div data-testid='file-tree-select'>{placeholder}</div>,
+}));
+
+vi.mock('@/lib/components/mdxEditor/mdxEditor.module.scss', () => ({
+  default: {
+    fieldGroup: 'fieldGroup',
+    fieldLabel: 'fieldLabel',
+    fieldRow: 'fieldRow',
+    slugInput: 'slugInput',
+    loadButton: 'loadButton',
+    fileNameInput: 'fileNameInput',
+  },
+}));
+
+vi.mock('@/lib/components/mdxEditor/fileTreeSelect.module.scss', () => ({
+  default: {},
+}));
+
+import { EditorPathSection } from '@/lib/components/mdxEditor/editorPathSection';
+
+afterEach(() => cleanup());
+
+/** Default translation stub */
+const t = (key: string) => key;
+
+describe('EditorPathSection (edit mode)', () => {
+  it('renders without crashing in edit mode', () => {
+    expect(() => {
+      render(
+        <EditorPathSection
+          mode='edit'
+          slug='monsters/goblin'
+          setSlug={vi.fn()}
+          filePath=''
+          setFilePath={vi.fn()}
+          handleLoad={vi.fn()}
+          isLoading={false}
+          locale='en'
+          t={t}
+        />,
       );
-    }
-    // Dummy test always passes - real tests needed
+    }).not.toThrow();
+  });
+
+  it('renders the slug label in edit mode', () => {
+    render(
+      <EditorPathSection
+        mode='edit'
+        slug='monsters/goblin'
+        setSlug={vi.fn()}
+        filePath=''
+        setFilePath={vi.fn()}
+        handleLoad={vi.fn()}
+        isLoading={false}
+        locale='en'
+        t={t}
+      />,
+    );
+
+    expect(screen.getByText('slugLabel')).toBeDefined();
+  });
+});
+
+describe('EditorPathSection (new mode)', () => {
+  it('renders without crashing in new mode', () => {
+    expect(() => {
+      render(
+        <EditorPathSection
+          mode='new'
+          slug=''
+          setSlug={vi.fn()}
+          filePath=''
+          setFilePath={vi.fn()}
+          handleLoad={vi.fn()}
+          isLoading={false}
+          locale='en'
+          t={t}
+        />,
+      );
+    }).not.toThrow();
+  });
+
+  it('renders the path label in new mode', () => {
+    render(
+      <EditorPathSection
+        mode='new'
+        slug=''
+        setSlug={vi.fn()}
+        filePath=''
+        setFilePath={vi.fn()}
+        handleLoad={vi.fn()}
+        isLoading={false}
+        locale='en'
+        t={t}
+      />,
+    );
+
+    expect(screen.getByText('pathLabel')).toBeDefined();
+  });
+
+  it('renders the FileTreeSelect component', () => {
+    render(
+      <EditorPathSection
+        mode='new'
+        slug=''
+        setSlug={vi.fn()}
+        filePath=''
+        setFilePath={vi.fn()}
+        handleLoad={vi.fn()}
+        isLoading={false}
+        locale='en'
+        t={t}
+      />,
+    );
+
+    expect(screen.getByTestId('file-tree-select')).toBeDefined();
   });
 });

@@ -1,38 +1,72 @@
 /**
- * TODO: Add comprehensive tests for contentSourceAdapter.ts
- * This file contains only smoke tests. Additional test coverage needed for:
- * - Function behavior validation
- * - Edge cases
- * - Error handling
+ * @fileoverview Unit Tests — ContentSourceAdapter
+ * @description Validates the hexagonal port contract for content source adapters.
  *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
+ * @module tests/unit/lib/db/content/contentSourceAdapter
  */
 
-import { describe, expect, it } from 'vitest';
+import type {
+  ContentFetchResult,
+  ContentSourceAdapter,
+} from '@/lib/db/content/contentSourceAdapter';
+import { describe, expect, it, vi } from 'vitest';
 
-describe('contentSourceAdapter', () => {
-  it('should export module members [DUMMY TEST]', async () => {
-    try {
-      const Module = await import('@/lib/db/content/contentSourceAdapter');
-      if (!Module || typeof Module !== 'object') {
-        throw new Error('Module failed to import');
-      }
-      const exportCount = Object.keys(Module).length;
-      expect(exportCount).toBeGreaterThanOrEqual(0);
-      if (exportCount === 0) {
-        console.warn(
-          '⚠️  DUMMY TEST WARNING: @/lib/db/content/contentSourceAdapter',
-          '\n   Module has no exports'
-        );
-      }
-    } catch (error) {
-      console.warn(
-        '⚠️  DUMMY TEST WARNING: @/lib/db/content/contentSourceAdapter',
-        '\n   Failed to load module:',
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-    // Dummy test always passes - real tests needed
+describe('ContentSourceAdapter', () => {
+  it('a conforming adapter returns a result with content and resolvedPath', async () => {
+    const adapter: ContentSourceAdapter = {
+      fetch: vi.fn().mockResolvedValue({
+        content: '# Hello World',
+        resolvedPath: '/src/content/en/monsters/goblin.mdx',
+      }),
+    };
+
+    const result = await adapter.fetch('en', 'monsters/goblin');
+
+    expect(result).not.toBeNull();
+    expect(result!.content).toBe('# Hello World');
+    expect(result!.resolvedPath).toBe('/src/content/en/monsters/goblin.mdx');
+  });
+
+  it('a conforming adapter returns null when content is not found', async () => {
+    const adapter: ContentSourceAdapter = {
+      fetch: vi.fn().mockResolvedValue(null),
+    };
+
+    const result = await adapter.fetch('en', 'missing/page');
+
+    expect(result).toBeNull();
+  });
+
+  it('the fetch method is called with the provided locale and slug', async () => {
+    const mockFetch = vi.fn().mockResolvedValue(null);
+    const adapter: ContentSourceAdapter = { fetch: mockFetch };
+
+    await adapter.fetch('es', 'spells/fireball');
+
+    expect(mockFetch).toHaveBeenCalledWith('es', 'spells/fireball');
+  });
+
+  it('ContentFetchResult shape contains required fields', () => {
+    const result: ContentFetchResult = {
+      content: '# Fireball',
+      resolvedPath: '/src/content/en/spells/fireball.mdx',
+    };
+
+    expect(result.content).toBe('# Fireball');
+    expect(result.resolvedPath).toBe('/src/content/en/spells/fireball.mdx');
+  });
+
+  it('adapter can be called with different locales', async () => {
+    const adapter: ContentSourceAdapter = {
+      fetch: vi.fn((locale: string, slug: string) =>
+        Promise.resolve({ content: `locale=${locale}`, resolvedPath: slug }),
+      ),
+    };
+
+    const enResult = await adapter.fetch('en', 'monsters/goblin');
+    const esResult = await adapter.fetch('es', 'monsters/goblin');
+
+    expect(enResult!.content).toBe('locale=en');
+    expect(esResult!.content).toBe('locale=es');
   });
 });

@@ -172,3 +172,20 @@
     }
   }
 }
+
+/** Party Member Row — thin display for imported party members */
+
+.partyMemberRow {
+  padding: 0.5rem 1rem;
+}
+
+.partyMemberName {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -5,7 +5,8 @@
  * Consolidates i18n messages for next-intl consumption at runtime.
  *
  * @module mergeMessages
- * @version 1.0.0
+ * @version 1.0.1
+ * @author Typeir
  * @since 1.0.0
  *
  * @requires fs Node.js file system module
@@ -52,7 +53,20 @@ locales.forEach((locale) => {
   });
 
   const outputPath = path.join(MESSAGES_DIR, locale, 'index.json');
-  fs.writeFileSync(outputPath, JSON.stringify(merged, null, 2), 'utf-8');
+  const newContent = JSON.stringify(merged, null, 2);
+  const existing = fs.existsSync(outputPath)
+    ? fs.readFileSync(outputPath, 'utf-8')
+    : '';
+
+  if (newContent === existing) {
+    log.message('⏭️  index.json unchanged — skipped write', {
+      locale,
+      count: files.length,
+    });
+    return;
+  }
+
+  fs.writeFileSync(outputPath, newContent, 'utf-8');
 
   log.message('✅ Merged files into index.json (namespaced)', {
     locale,

@@ -23,6 +23,7 @@ export enum EncounterStorage {
   ActiveEncounterId = 'encounter-planner-active-id',
   InProgressCombats = 'in-progress-combats',
   ActiveCombatId = 'active-combat-id',
+  SavedParties = 'saved-parties',
 }
 
 /**

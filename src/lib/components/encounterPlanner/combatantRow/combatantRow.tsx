@@ -65,6 +65,7 @@ import { CombatantMainStats } from './combatantMainStats';
 import { CombatantMechanicsSection } from './combatantMechanicsSection';
 import { CombatantNameSection } from './combatantNameSection';
 import styles from './combatantRow.module.scss';
+import { PartyMemberRow } from './partyMemberRow';
 import {
     CombatantProvider,
     useCombatant,
@@ -253,7 +254,7 @@ export const CombatantRow: React.FC<CombatantRowProps> = ({
       onUpdate={onUpdate}
       onRemoveSessionOnly={onRemoveSessionOnly}
       disableLocking={disableLocking}>
-      <CombatantRowContent />
+      {combatant.isPartyMember ? <PartyMemberRow /> : <CombatantRowContent />}
     </CombatantProvider>
   );
 };

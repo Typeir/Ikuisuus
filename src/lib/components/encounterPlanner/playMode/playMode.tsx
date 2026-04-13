@@ -13,14 +13,15 @@
 
 import { useNotifications } from '@/lib/components/ui';
 import type {
-  InProgressCombat,
-  InProgressCombatant,
+    InProgressCombat,
+    InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
 import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CombatantRow } from '../combatantRow';
 import { MonsterImporter } from '../importer';
+import { PartyManager } from '../partyManager';
 import styles from './playMode.module.scss';
 import { PlayModeLifecycle } from './playModeLifecycle';
 import { usePlayModeLifecycleNotifications } from './playModeLifecycleNotifications';
@@ -58,6 +59,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({
   const t = useTranslations('encounterPlanner');
   const notifications = useNotifications();
   const [combat, setCombat] = useState<InProgressCombat>(initialCombat);
+  const [partyManagerOpen, setPartyManagerOpen] = useState(false);
   const lifecycle = useMemo(() => new PlayModeLifecycle(), []);
   const combatantRefs = useRef<Record<string, HTMLDivElement>>({});
 
@@ -81,6 +83,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({
     handleExport,
     handleImportCombat,
     handleCombatFileChange,
+    handleImportParty,
   } = usePlayModeHandlers({
     combat,
     setCombat,
@@ -190,7 +193,30 @@ export const PlayMode: React.FC<PlayModeProps> = ({
         <div className={styles.sessionOnlyRow}>
           <MonsterImporter locale={locale} onImport={handleImportCreatures} />
         </div>
+
+        <div className={styles.sessionOnlyRow}>
+          <button
+            onClick={() => setPartyManagerOpen(true)}
+            className={`${styles.button} ${styles.buttonSecondary}`}>
+            {t('manageParties')}
+          </button>
+        </div>
       </div>
+
+      <PartyManager
+        isOpen={partyManagerOpen}
+        onClose={() => setPartyManagerOpen(false)}
+        onImport={(party) => {
+          handleImportParty(party);
+          notifications.success(
+            t('partyImported', {
+              name: party.name,
+              count: party.members.length,
+            }),
+          );
+          setPartyManagerOpen(false);
+        }}
+      />
 
       <div className={styles.combatantList}>
         {combat.turnOrder.map((combatantId) => {

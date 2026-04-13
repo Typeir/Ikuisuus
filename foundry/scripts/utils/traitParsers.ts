@@ -13,7 +13,11 @@
  * @see {@link parseConditionTraits} for condition conversion
  */
 
-import { DAMAGE_TYPE_MAP, CONDITION_MAP, LANGUAGE_MAP } from '../constants/dnd5eMaps';
+import {
+  CONDITION_MAP,
+  DAMAGE_TYPE_MAP,
+  LANGUAGE_MAP,
+} from '../constants/dnd5eMaps';
 
 /**
  * Parsed trait result containing recognized dnd5e keys and custom text.

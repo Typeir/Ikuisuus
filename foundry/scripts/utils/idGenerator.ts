@@ -15,7 +15,8 @@
 import { createHash } from 'node:crypto';
 
 /** Characters allowed in Foundry document IDs. */
-const FOUNDRY_ID_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+const FOUNDRY_ID_CHARS =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 /** Required length for Foundry document IDs. */
 const FOUNDRY_ID_LENGTH = 16;

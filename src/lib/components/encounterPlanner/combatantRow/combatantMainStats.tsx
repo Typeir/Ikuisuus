@@ -25,16 +25,15 @@
 
 'use client';
 
-import type { CreatureStats } from '@/lib/types/encounterPlanner';
 import { rollInitiative } from '@/lib/utils/encounterStorage';
 import {
     clampNonNegative,
-    getModifierString,
     parseIntSafe,
 } from '@/lib/utils/statEditing';
 import { Dices } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
+import { CombatantStatsGrid } from './combatantStatsGrid';
 import styles from './combatantRow.module.scss';
 import { getPhaseMarker } from './utils';
 import { useCombatant } from './utils/context/combatantContext';
@@ -77,7 +76,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
   showSlain = true,
   locked = [],
 }) => {
-  const { combatant, onUpdate, updateField, updateStats, disableLocking } =
+  const { combatant, onUpdate, updateField, disableLocking } =
     useCombatant();
   const {
     hpCurrent,
@@ -85,7 +84,6 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
     hpMaxOverride = null,
     tempHp,
     ac,
-    stats,
     initiativeValue,
     initiativeBonus,
     slain = false,
@@ -99,10 +97,6 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
 
   const effectiveHpMax = hpMaxOverride !== null ? hpMaxOverride : hpMax;
   const phaseMarker = getPhaseMarker(hpCurrent, effectiveHpMax);
-
-  const [editingStats, setEditingStats] = useState<
-    Record<string, string | null>
-  >({});
 
   const cancelPendingRef = useRef(false);
 
@@ -144,31 +138,6 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
     updateField('initiativeValue', rolled);
     initField.setEditing('');
   }, [initiativeBonus, updateField, initField]);
-
-  const handleStatChange = useCallback((stat: string, value: string) => {
-    setEditingStats((prev) => ({ ...prev, [stat]: value }));
-  }, []);
-
-  const commitStat = useCallback(
-    (stat: keyof CreatureStats) => {
-      if (cancelPendingRef.current) {
-        cancelPendingRef.current = false;
-        return;
-      }
-      const editValue = editingStats[stat];
-      if (editValue === undefined || editValue === null) return;
-      const parsed = clampNonNegative(parseIntSafe(editValue, false)) ?? 1;
-      const newStats = { ...stats, [stat]: parsed };
-      updateStats(newStats);
-      setEditingStats((prev) => ({ ...prev, [stat]: null }));
-    },
-    [editingStats, stats, updateStats],
-  );
-
-  const cancelStat = useCallback((stat: string) => {
-    cancelPendingRef.current = true;
-    setEditingStats((prev) => ({ ...prev, [stat]: null }));
-  }, []);
 
   /**
    * Keyboard handler for editable fields.
@@ -307,39 +276,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
         </button>
       </div>
 
-      <div className={styles.statsSection}>
-        {(Object.entries(stats) as [keyof CreatureStats, number][]).map(
-          ([stat, value]) => {
-            const isEditing =
-              editingStats[stat] !== null && editingStats[stat] !== undefined;
-            const displayValue = isEditing ? editingStats[stat] : String(value);
-
-            return (
-              <div key={stat} className={styles.statDisplay}>
-                <div className={styles.statLabel}>{t(`stats.${stat}`)}</div>
-                <input
-                  type='text'
-                  className={`${styles.statInput} ${isStatsLocked ? styles.lockedInput : ''}`}
-                  value={displayValue ?? ''}
-                  onChange={(e) => handleStatChange(stat, e.target.value)}
-                  onFocus={() => handleStatChange(stat, String(value))}
-                  onBlur={() => commitStat(stat)}
-                  onKeyDown={(e) =>
-                    handleKeyDown(
-                      e,
-                      () => commitStat(stat),
-                      () => cancelStat(stat),
-                    )
-                  }
-                  disabled={isStatsLocked}
-                  aria-label={t(`stats.${stat}`)}
-                />
-                <div className={styles.statMod}>{getModifierString(value)}</div>
-              </div>
-            );
-          },
-        )}
-      </div>
+      <CombatantStatsGrid isLocked={isStatsLocked} cancelPendingRef={cancelPendingRef} />
     </div>
   );
 };

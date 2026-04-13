@@ -1,38 +1,74 @@
 /**
- * TODO: Add comprehensive tests for directorySourceAdapter.ts
- * This file contains only smoke tests. Additional test coverage needed for:
- * - Function behavior validation
- * - Edge cases
- * - Error handling
+ * @fileoverview Unit Tests — DirectorySourceAdapter
+ * @description Validates the hexagonal port contract for directory source adapters.
  *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
+ * @module tests/unit/lib/db/content/directorySourceAdapter
  */
 
-import { describe, expect, it } from 'vitest';
+import type {
+  DirectoryEntry,
+  DirectorySourceAdapter,
+} from '@/lib/db/content/directorySourceAdapter';
+import { describe, expect, it, vi } from 'vitest';
 
-describe('directorySourceAdapter', () => {
-  it('should export module members [DUMMY TEST]', async () => {
-    try {
-      const Module = await import('@/lib/db/content/directorySourceAdapter');
-      if (!Module || typeof Module !== 'object') {
-        throw new Error('Module failed to import');
-      }
-      const exportCount = Object.keys(Module).length;
-      expect(exportCount).toBeGreaterThanOrEqual(0);
-      if (exportCount === 0) {
-        console.warn(
-          '⚠️  DUMMY TEST WARNING: @/lib/db/content/directorySourceAdapter',
-          '\n   Module has no exports'
-        );
-      }
-    } catch (error) {
-      console.warn(
-        '⚠️  DUMMY TEST WARNING: @/lib/db/content/directorySourceAdapter',
-        '\n   Failed to load module:',
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-    // Dummy test always passes - real tests needed
+describe('DirectorySourceAdapter', () => {
+  it('a conforming adapter lists directory entries', async () => {
+    const adapter: DirectorySourceAdapter = {
+      listEntries: vi.fn().mockResolvedValue([
+        { name: 'monsters', isDirectory: true },
+        { name: 'goblin.sheet.mdx', isDirectory: false },
+      ]),
+    };
+
+    const entries = await adapter.listEntries('en', '');
+
+    expect(entries).toHaveLength(2);
+    expect(entries[0].name).toBe('monsters');
+    expect(entries[0].isDirectory).toBe(true);
+    expect(entries[1].name).toBe('goblin.sheet.mdx');
+    expect(entries[1].isDirectory).toBe(false);
+  });
+
+  it('a conforming adapter returns empty array when path does not exist', async () => {
+    const adapter: DirectorySourceAdapter = {
+      listEntries: vi.fn().mockResolvedValue([]),
+    };
+
+    const entries = await adapter.listEntries('en', 'nonexistent/path');
+
+    expect(entries).toEqual([]);
+  });
+
+  it('listEntries is called with the provided locale and path', async () => {
+    const mockListEntries = vi.fn().mockResolvedValue([]);
+    const adapter: DirectorySourceAdapter = { listEntries: mockListEntries };
+
+    await adapter.listEntries('es', 'items/heirlooms');
+
+    expect(mockListEntries).toHaveBeenCalledWith('es', 'items/heirlooms');
+  });
+
+  it('DirectoryEntry shape has name and isDirectory fields', () => {
+    const dirEntry: DirectoryEntry = { name: 'monsters', isDirectory: true };
+    const fileEntry: DirectoryEntry = {
+      name: 'goblin.sheet.mdx',
+      isDirectory: false,
+    };
+
+    expect(dirEntry.name).toBe('monsters');
+    expect(dirEntry.isDirectory).toBe(true);
+    expect(fileEntry.isDirectory).toBe(false);
+  });
+
+  it('adapter can be called with nested relative paths', async () => {
+    const mockListEntries = vi.fn().mockResolvedValue([]);
+    const adapter: DirectorySourceAdapter = { listEntries: mockListEntries };
+
+    await adapter.listEntries('en', 'items/heirlooms/legendary');
+
+    expect(mockListEntries).toHaveBeenCalledWith(
+      'en',
+      'items/heirlooms/legendary',
+    );
   });
 });

@@ -387,8 +387,7 @@ function findStatBlockTitle(
 }
 
 /** Regex matching a BlendedImage JSX tag with a src attribute (single line). */
-const BLENDED_IMAGE_SINGLE =
-  /<BlendedImage\s[^>]*?src\s*=\s*['"]([^'"]+)['"]/i;
+const BLENDED_IMAGE_SINGLE = /<BlendedImage\s[^>]*?src\s*=\s*['"]([^'"]+)['"]/i;
 
 /** Regex matching a src attribute on any line (for multi-line JSX). */
 const SRC_ATTR_PATTERN = /^\s*src\s*=\s*['"]([^'"]+)['"]/i;
@@ -421,7 +420,11 @@ function findMonsterImage(
       : (allPositions[statBlockIndex - 1]?.lineIndex ?? 0);
 
   let scanEnd = statBlockLineIdx;
-  for (let i = statBlockLineIdx + 1; i < Math.min(statBlockLineIdx + 15, allLines.length); i++) {
+  for (
+    let i = statBlockLineIdx + 1;
+    i < Math.min(statBlockLineIdx + 15, allLines.length);
+    i++
+  ) {
     if (/^\|/.test(allLines[i])) break;
     scanEnd = i + 1;
   }
@@ -458,11 +461,21 @@ function findMonsterImage(
     for (let i = 0; i < allPositions[0].lineIndex; i++) {
       const line = allLines[i];
       const singleMatch = line.match(BLENDED_IMAGE_SINGLE);
-      if (singleMatch) { fallbackImage = singleMatch[1]; inTag = false; continue; }
-      if (/<BlendedImage\b/i.test(line)) { inTag = true; continue; }
+      if (singleMatch) {
+        fallbackImage = singleMatch[1];
+        inTag = false;
+        continue;
+      }
+      if (/<BlendedImage\b/i.test(line)) {
+        inTag = true;
+        continue;
+      }
       if (inTag) {
         const srcMatch = line.match(SRC_ATTR_PATTERN);
-        if (srcMatch) { fallbackImage = srcMatch[1]; inTag = false; }
+        if (srcMatch) {
+          fallbackImage = srcMatch[1];
+          inTag = false;
+        }
         if (/\/>/.test(line)) inTag = false;
       }
     }
@@ -769,3 +782,4 @@ if (isDirectRun) {
 }
 
 export { main, parseMonsterFile };
+

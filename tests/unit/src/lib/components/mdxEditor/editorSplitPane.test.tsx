@@ -1,37 +1,133 @@
 /**
- * TODO: Add comprehensive tests for editorSplitPane.tsx
- * This file contains only smoke tests. Additional test coverage needed for:
- * - User interactions
- * - Edge cases
- * - Integration scenarios
+ * @fileoverview Unit Tests — EditorSplitPane
+ * @description Validates split-pane editor layout rendering and toggle behavior.
  *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
+ * @module tests/unit/lib/components/mdxEditor/editorSplitPane
  */
 
-import { describe, expect, it } from 'vitest';
+import { act, cleanup, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-describe('editorSplitPane', () => {
-  it('should load component module [DUMMY TEST]', async () => {
-    try {
-      const mod = await Promise.race([
-        import('@/lib/components/mdxEditor/editorSplitPane'),
-        new Promise<never>((_, reject) => {
-          setTimeout(
-            () => reject(new Error('Timed out while loading module')),
-            1500,
-          );
-        }),
-      ]);
-      const exported = Object.keys(mod).length;
-      expect(exported).toBeGreaterThan(0);
-    } catch (error) {
-      console.warn(
-        '⚠️  DUMMY TEST WARNING: @/lib/components/mdxEditor/editorSplitPane',
-        '\n   Failed to load component module:',
-        error instanceof Error ? error.message : String(error),
+vi.mock('@/lib/components/mdxEditor/mdxEditor.module.scss', () => ({
+  default: {
+    splitPane: 'splitPane',
+    editorPane: 'editorPane',
+    previewPane: 'previewPane',
+    divider: 'divider',
+    previewLoading: 'previewLoading',
+    toolbar: 'toolbar',
+    toolbarButton: 'toolbarButton',
+    toolbarSep: 'toolbarSep',
+    previewFadeIn: 'previewFadeIn',
+  },
+}));
+
+vi.mock('@/lib/components/mdxEditor/mdxPreview', () => ({
+  MdxPreview: ({ source }: { source: string }) => (
+    <div data-testid='mdx-preview'>{source}</div>
+  ),
+}));
+
+vi.mock('@/lib/components/mdxEditor/editorToolbar', () => ({
+  EditorToolbar: () => <div data-testid='editor-toolbar' />,
+  handleEditorKeyDown: vi.fn(),
+}));
+
+vi.mock('react-simple-code-editor', () => ({
+  default: ({
+    value,
+    onValueChange,
+  }: {
+    value: string;
+    onValueChange: (v: string) => void;
+  }) => (
+    <textarea
+      data-testid='code-editor'
+      value={value}
+      onChange={(e) => onValueChange(e.target.value)}
+    />
+  ),
+}));
+
+vi.mock('prismjs', () => ({
+  default: {
+    highlight: (code: string) => code,
+    languages: { markdown: {} },
+  },
+}));
+
+vi.mock('prismjs/components/prism-markdown', () => ({}));
+vi.mock('prismjs/components/prism-markup', () => ({}));
+
+import { EditorSplitPane } from '@/lib/components/mdxEditor/editorSplitPane';
+
+afterEach(() => cleanup());
+
+describe('EditorSplitPane', () => {
+  it('renders without crashing', async () => {
+    await act(async () => {
+      render(
+        <EditorSplitPane
+          textareaId='test-editor'
+          content='# Hello'
+          setContent={vi.fn()}
+          disabled={false}
+          mode='edit'
+          newPlaceholder='Enter content here'
+        />,
       );
-    }
-    // Dummy test always passes - real tests needed
+    });
+    expect(document.body.innerHTML).toBeTruthy();
+  });
+
+  it('renders the editor toolbar', async () => {
+    await act(async () => {
+      render(
+        <EditorSplitPane
+          textareaId='test-editor'
+          content='# Test'
+          setContent={vi.fn()}
+          disabled={false}
+          mode='edit'
+          newPlaceholder=''
+        />,
+      );
+    });
+
+    expect(screen.getByTestId('editor-toolbar')).toBeDefined();
+  });
+
+  it('renders the code editor', async () => {
+    await act(async () => {
+      render(
+        <EditorSplitPane
+          textareaId='test-editor'
+          content='# Content'
+          setContent={vi.fn()}
+          disabled={false}
+          mode='edit'
+          newPlaceholder=''
+        />,
+      );
+    });
+
+    expect(screen.getByTestId('code-editor')).toBeDefined();
+  });
+
+  it('renders the MDX preview when preview is visible', async () => {
+    await act(async () => {
+      render(
+        <EditorSplitPane
+          textareaId='test-editor'
+          content='# Preview content'
+          setContent={vi.fn()}
+          disabled={false}
+          mode='edit'
+          newPlaceholder=''
+        />,
+      );
+    });
+
+    expect(screen.getByTestId('mdx-preview')).toBeDefined();
   });
 });

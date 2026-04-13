@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Runs local dev with explicit metadata backend controls.
+ * @fileoverview Runs local dev with explicit metadata backend controls.
  *
  * Behavior:
  * - Default backend: fs
@@ -9,18 +9,27 @@
  * - `--no-preinit`: skip pre-init pipeline
  * - `--no-replace`: do not auto-stop an existing same-project Next dev process
  * - Any other args are passed through to `next dev`
+ *
+ * @module scripts/dev/runDev
+ * @version 1.1.1
+ * @author Typeir
+ * @since 2025-01-01
  */
+import { createLogger } from '@/lib/logging/logger';
 import { spawn } from 'child_process';
 import { readFile, stat } from 'fs/promises';
 import path from 'path';
+import { startLocaleWatcher } from './watchLocales';
+
+const log = createLogger({ script: 'runDev' });
 
 /**
  * Runs a command and resolves with its exit code.
  *
- * @param command Executable name.
- * @param args Argument list.
- * @param env Optional env overrides.
- * @returns Process exit code.
+ * @param {string} command - Executable name.
+ * @param {string[]} args - Argument list.
+ * @param {NodeJS.ProcessEnv} [env] - Optional env overrides.
+ * @returns {Promise<number>} Process exit code.
  */
 function runCommand(
   command: string,
@@ -50,8 +59,8 @@ function runCommand(
 /**
  * Returns whether the given file path exists.
  *
- * @param filePath File path to check.
- * @returns True if the file exists.
+ * @param {string} filePath - File path to check.
+ * @returns {Promise<boolean>} True if the file exists.
  */
 async function fileExists(filePath: string): Promise<boolean> {
   try {
@@ -65,8 +74,8 @@ async function fileExists(filePath: string): Promise<boolean> {
 /**
  * Pauses execution for the given duration.
  *
- * @param ms Delay in milliseconds.
- * @returns Promise resolved after the delay.
+ * @param {number} ms - Delay in milliseconds.
+ * @returns {Promise<void>} Promise resolved after the delay.
  */
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -77,8 +86,8 @@ function sleep(ms: number): Promise<void> {
 /**
  * Returns whether a process ID is currently alive.
  *
- * @param pid Process ID to probe.
- * @returns True when the process exists.
+ * @param {number} pid - Process ID to probe.
+ * @returns {boolean} True when the process exists.
  */
 function isPidAlive(pid: number): boolean {
   try {
@@ -92,8 +101,8 @@ function isPidAlive(pid: number): boolean {
 /**
  * Reads Next dev lock file and extracts a PID when available.
  *
- * @param projectRoot Project root directory.
- * @returns Existing Next dev PID or null.
+ * @param {string} projectRoot - Project root directory.
+ * @returns {Promise<number | null>} Existing Next dev PID or null.
  */
 async function readNextDevLockPid(projectRoot: string): Promise<number | null> {
   const lockPath = path.resolve(projectRoot, '.next', 'dev', 'lock');
@@ -129,9 +138,9 @@ async function readNextDevLockPid(projectRoot: string): Promise<number | null> {
 /**
  * Gracefully stops a process, then force-kills if it does not exit in time.
  *
- * @param pid Process ID to stop.
- * @param graceMs Grace period before force kill.
- * @returns True if a process was targeted and is no longer alive.
+ * @param {number} pid - Process ID to stop.
+ * @param {number} [graceMs=4000] - Grace period before force kill.
+ * @returns {Promise<boolean>} True if a process was targeted and is no longer alive.
  */
 async function stopProcessGracefully(
   pid: number,
@@ -193,7 +202,7 @@ async function main() {
   const skipPreInit = rawArgs.includes('--no-preinit');
   const disableReplace = rawArgs.includes('--no-replace');
   if (usePg && forceFs) {
-    console.error('Use either --pg or --fs, not both.');
+    log.error('Use either --pg or --fs, not both.');
     process.exit(1);
   }
 
@@ -201,14 +210,14 @@ async function main() {
   const contentFetchMode = forceFs ? 'build' : 'runtime';
 
   if (!skipPreInit) {
-    console.log('Running pre-init...');
+    log.message('Running pre-init...');
     const code = await runCommand('npm', ['run', 'pre-init']);
     if (code !== 0) {
-      console.error('pre-init failed with exit code', code);
+      log.error(`pre-init failed with exit code ${code}`);
       process.exit(code);
     }
   } else {
-    console.log('Skipping pre-init (passed --no-preinit)');
+    log.message('Skipping pre-init (passed --no-preinit)');
   }
 
   let nextExitCode: number;
@@ -216,19 +225,22 @@ async function main() {
   if (!disableReplace) {
     const existingPid = await readNextDevLockPid(process.cwd());
     if (existingPid && existingPid !== process.pid && isPidAlive(existingPid)) {
-      console.log(`Stopping existing Next dev process PID ${existingPid}...`);
+      log.message(`Stopping existing Next dev process PID ${existingPid}...`);
       const stopped = await stopProcessGracefully(existingPid);
       if (!stopped) {
-        console.warn(
+        log.warning(
           `Could not fully stop PID ${existingPid}; startup may still fail if lock remains.`,
         );
       }
     }
   }
 
-  console.log(
+  log.message(
     `Starting Next dev with METADATA_BACKEND=${metadataBackend}, CONTENT_FETCH_MODE=${contentFetchMode}`,
   );
+
+  const localeWatcher = startLocaleWatcher();
+
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     METADATA_BACKEND: metadataBackend,
@@ -237,10 +249,11 @@ async function main() {
 
   nextExitCode = await runCommand('npx', ['next', 'dev', ...nextArgs], env);
 
+  localeWatcher.close();
   process.exit(nextExitCode);
 }
 
 main().catch((err) => {
-  console.error('Error in dev runner:', err);
+  log.error('Error in dev runner:', err);
   process.exit(1);
 });

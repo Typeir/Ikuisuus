@@ -84,12 +84,16 @@ Read-only tools are never blocked: `read_file`, `grep_search`, `file_search`,
 Any file matching a `.pawignore` pattern or PAW's built-in exclusions
 (`.github/PAW/`, `.paw/`) can always be edited, even during enforcement.
 
-### 5. Indirect-fix findings unlock all tools
+### 5. Indirect-fix findings unlock all tools — but you MUST address them first
 
 Gates can mark individual findings with `indirectFix: true` to declare that
 the finding can't be fixed by editing the violated file (e.g. missing test
 requires creating a new file). When ALL remaining violations are indirect-fix,
 PAW allows all tools through so you can create the required fix files.
+
+**Important**: PAW will inject an `additionalContext` nudge on every tool call
+listing the pending indirect-fix violations. You are expected to resolve them
+**before** continuing with your assigned task — do not ignore these messages.
 
 To make a gate's findings indirect-fix, set `indirectFix: true` on the
 `GateFinding` (or `CheckFailure` if using the health-check adapter).

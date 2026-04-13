@@ -7,9 +7,6 @@
       "@content/*": ["../src/content/*"]
     }
   },
-  "include": [
-    "scripts/**/*.ts",
-    "../src/lib/db/content/schemas/**/*.ts"
-  ],
+  "include": ["scripts/**/*.ts", "../src/lib/db/content/schemas/**/*.ts"],
   "exclude": ["node_modules", "dist", "packs"]
 }

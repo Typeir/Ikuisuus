@@ -12,6 +12,7 @@ import type {
     InProgressCombat,
     InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
+import type { SavedParty } from '@/lib/types/party';
 import { generateId } from '@/lib/utils/encounterStorage';
 import {
     createInProgressCombatant,
@@ -24,6 +25,7 @@ import {
     setActiveInProgressCombatId,
 } from '@/lib/utils/inProgressCombatStorage';
 import type { MonsterData } from '@/lib/utils/monsterCache';
+import { importPartyIntoCombat } from '@/lib/utils/partyImporter';
 import {
     type ChangeEvent,
     type Dispatch,
@@ -78,6 +80,7 @@ export interface UsePlayModeHandlersParams {
  * @property {() => void} handleExport - Exports in-progress combat JSON
  * @property {() => void} handleImportCombat - Opens combat import file picker
  * @property {(e: ChangeEvent<HTMLInputElement>) => Promise<void>} handleCombatFileChange - Imports in-progress combat from selected JSON file
+ * @property {(party: SavedParty) => void} handleImportParty - Replaces party members in combat with the given saved party
  */
 export interface UsePlayModeHandlersResult {
   sessionOnlyName: string;
@@ -96,6 +99,7 @@ export interface UsePlayModeHandlersResult {
   handleExport: () => void;
   handleImportCombat: () => void;
   handleCombatFileChange: (e: ChangeEvent<HTMLInputElement>) => Promise<void>;
+  handleImportParty: (party: SavedParty) => void;
 }
 
 /**
@@ -281,25 +285,26 @@ export function usePlayModeHandlers({
   const handleCombatFileChange = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
-      if (!file) {
-        return;
-      }
-
+      if (!file) return;
       try {
         const text = await file.text();
         const data = JSON.parse(text) as InProgressCombat;
         setCombat(data);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
       } catch {
         notifications.error(t('importError'));
+      } finally {
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
       }
     },
     [notifications, setCombat, t],
+  );
+
+  const handleImportParty = useCallback(
+    (party: SavedParty) =>
+      updateCombat((prev) => importPartyIntoCombat(party, prev)),
+    [updateCombat],
   );
 
   return {
@@ -316,5 +321,6 @@ export function usePlayModeHandlers({
     handleExport,
     handleImportCombat,
     handleCombatFileChange,
+    handleImportParty,
   };
 }

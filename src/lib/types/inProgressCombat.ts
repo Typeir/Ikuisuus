@@ -102,6 +102,7 @@ export interface HeroicAwakeningState {
  * @property {CombatantMechanics} mechanics - Derived mechanic flags
  * @property {boolean[]} legendaryDeedsUsed - Deeds used this round
  * @property {number} resistRemaining - Legendary Resist uses remaining
+ * @property {boolean} [isPartyMember] - True if this combatant is an imported party member
  */
 export interface InProgressCombatant {
   id: string;
@@ -139,6 +140,7 @@ export interface InProgressCombatant {
     bloodied: boolean;
     doomed: boolean;
   };
+  isPartyMember?: boolean;
 }
 
 /**

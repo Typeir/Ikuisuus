@@ -5,9 +5,12 @@
  * means `git submodule update` is unavailable. This script instead performs
  * a direct shallow clone of the content repository when `src/content/en` is
  * missing or empty. It is a no-op in local development where the submodule is
- * already checked out.
+ * already checked out. On Vercel, always re-clones to avoid stale cached content.
  *
  * @module build/fetchContent
+ * @version 1.1.0
+ * @author Typeir
+ * @since 2026-01-01
  */
 
 import { createLogger } from '@/lib/logging/logger';
@@ -47,21 +50,37 @@ function isContentPopulated(): boolean {
 }
 
 /**
- * Entry point. Clones the content repository shallowly when content is absent.
+ * Returns `true` when running on Vercel where the build cache may contain
+ * stale content that should always be re-cloned.
+ */
+function isVercelEnvironment(): boolean {
+  return process.env['VERCEL'] === '1';
+}
+
+/**
+ * Entry point. Clones the content repository shallowly when content is absent
+ * or when running on Vercel (where cached content may be stale).
  * Exits with a non-zero code on clone failure so the build fails visibly.
  */
 function main(): void {
-  if (isContentPopulated()) {
+  if (isContentPopulated() && !isVercelEnvironment()) {
     log.message('✅ Content already present — skipping clone', {
       path: CONTENT_EN_DIR,
     });
     process.exit(0);
   }
 
-  log.message('📥 Content missing — cloning content repo...', {
-    repo: `${CONTENT_REPO_OWNER}/${CONTENT_REPO_NAME}`,
-    auth: GITHUB_PAT ? 'PAT' : 'public',
-  });
+  if (isVercelEnvironment() && isContentPopulated()) {
+    log.message(
+      '♻️  Vercel detected — removing cached content to fetch latest',
+      { path: CONTENT_DIR },
+    );
+  } else {
+    log.message('📥 Content missing — cloning content repo...', {
+      repo: `${CONTENT_REPO_OWNER}/${CONTENT_REPO_NAME}`,
+      auth: GITHUB_PAT ? 'PAT' : 'public',
+    });
+  }
 
   if (existsSync(CONTENT_DIR)) {
     log.message('🗑  Removing stale content directory before clone');

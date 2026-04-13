@@ -6,14 +6,15 @@
 
 These rules are **strictly enforced**. Violations will cause build failures, test failures, or code review rejections.
 
-| Rule                                          | Documentation                                                    | Acceptance Check                                                                                   |
-| --------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| JSDoc on all declarations, no inline comments | [JSDoc Standards](./docs/jsdoc.md)                               | `grep -rn "// " src/` finds no logic comments                                                      |
-| NO color literals outside `globals.scss`      | [SCSS Theme Rules](./docs/scss-theme-rules.md)                   | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` returns 0                                         |
-| Zero act() warnings in tests                  | [Testing Rules](./docs/testing-rules.md)                         | `npm test` shows no warnings                                                                       |
-| Use NotificationProvider, not `alert()`       | [Testing Rules](./docs/testing-rules.md)                         | `grep -rn "alert(" src/` returns 0                                                                 |
-| Explicit MikroORM decorator typing            | [MikroORM Instructions](./instructions/mikroorm.instructions.md) | `rg "@PrimaryKey\(\{(?![^}]*type:)(?![^}]*entity:)[^}]*\}\)" src/lib/db/orm/entities -n` returns 0 |
-| Run `npm run pre-init` before dev/build       | [Build Pipeline](./docs/build-pipeline.md)                       | Build succeeds                                                                                     |
+| Rule                                                                                              | Documentation                                                    | Acceptance Check                                                                                   |
+| ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| If you are an agent, load PAW skill before any implementation. Load at least the first 150 lines. | [PAW Skill](.github/skills/paw/SKILL.md)                         | PAW SKILL.md read before first edit                                                                |
+| JSDoc on all declarations, no inline comments                                                     | [JSDoc Standards](./docs/jsdoc.md)                               | `grep -rn "// " src/` finds no logic comments                                                      |
+| NO color literals outside `globals.scss`                                                          | [SCSS Theme Rules](./docs/scss-theme-rules.md)                   | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` returns 0                                         |
+| Zero act() warnings in tests                                                                      | [Testing Rules](./docs/testing-rules.md)                         | `npm test` shows no warnings                                                                       |
+| Use NotificationProvider, not `alert()`                                                           | [Testing Rules](./docs/testing-rules.md)                         | `grep -rn "alert(" src/` returns 0                                                                 |
+| Explicit MikroORM decorator typing                                                                | [MikroORM Instructions](./instructions/mikroorm.instructions.md) | `rg "@PrimaryKey\(\{(?![^}]*type:)(?![^}]*entity:)[^}]*\}\)" src/lib/db/orm/entities -n` returns 0 |
+| Run `npm run pre-init` before dev/build                                                           | [Build Pipeline](./docs/build-pipeline.md)                       | Build succeeds                                                                                     |
 
 ## ✅ Completion Gate (Mandatory)
 

@@ -1,38 +1,51 @@
 /**
- * TODO: Add comprehensive tests for contentCacheTags.ts
- * This file contains only smoke tests. Additional test coverage needed for:
- * - Function behavior validation
- * - Edge cases
- * - Error handling
+ * @fileoverview Unit Tests — contentCacheTags
+ * @description Validates the cache tag builder used by content source adapters
+ * and the revalidation API.
  *
- * NOTE: This is a dummy test that will never fail the suite.
- * It catches errors and emits warnings instead of failing.
+ * @module tests/unit/lib/db/content/contentCacheTags
  */
 
+import { contentCacheTag } from '@/lib/db/content/contentCacheTags';
 import { describe, expect, it } from 'vitest';
 
-describe('contentCacheTags', () => {
-  it('should export module members [DUMMY TEST]', async () => {
-    try {
-      const Module = await import('@/lib/db/content/contentCacheTags');
-      if (!Module || typeof Module !== 'object') {
-        throw new Error('Module failed to import');
-      }
-      const exportCount = Object.keys(Module).length;
-      expect(exportCount).toBeGreaterThanOrEqual(0);
-      if (exportCount === 0) {
-        console.warn(
-          '⚠️  DUMMY TEST WARNING: @/lib/db/content/contentCacheTags',
-          '\n   Module has no exports'
-        );
-      }
-    } catch (error) {
-      console.warn(
-        '⚠️  DUMMY TEST WARNING: @/lib/db/content/contentCacheTags',
-        '\n   Failed to load module:',
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-    // Dummy test always passes - real tests needed
+describe('contentCacheTag', () => {
+  it('builds a tag from locale and slug path', () => {
+    expect(contentCacheTag('en', 'monsters/albedo')).toBe(
+      'content-en-monsters/albedo',
+    );
+  });
+
+  it('handles a Spanish locale', () => {
+    expect(contentCacheTag('es', 'spells/fireball')).toBe(
+      'content-es-spells/fireball',
+    );
+  });
+
+  it('handles Finnish locale', () => {
+    expect(contentCacheTag('fi', 'items/heirlooms/sword')).toBe(
+      'content-fi-items/heirlooms/sword',
+    );
+  });
+
+  it('handles empty slug path', () => {
+    expect(contentCacheTag('en', '')).toBe('content-en-');
+  });
+
+  it('preserves nested slug separators', () => {
+    expect(contentCacheTag('en', 'items/heirlooms/blackbone-crusher')).toBe(
+      'content-en-items/heirlooms/blackbone-crusher',
+    );
+  });
+
+  it('prefixes with content-', () => {
+    const tag = contentCacheTag('en', 'test-slug');
+    expect(tag.startsWith('content-')).toBe(true);
+  });
+
+  it('includes the locale between content- prefix and slug', () => {
+    const tag = contentCacheTag('en', 'slug/path');
+    const parts = tag.split('-');
+    expect(parts[1]).toBe('en');
   });
 });

@@ -16,8 +16,15 @@
  * @see {@link exportMonsters} for the main orchestration entry
  */
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, copyFileSync } from 'node:fs';
-import { join, resolve, dirname, basename } from 'node:path';
+import {
+    copyFileSync,
+    existsSync,
+    mkdirSync,
+    readdirSync,
+    readFileSync,
+    writeFileSync,
+} from 'node:fs';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import type { MonsterMetadata } from '../../src/lib/db/content/schemas/monsterMetadata';
@@ -60,6 +67,12 @@ const TOKENS_DIR = join(ROOT, 'foundry/assets/tokens');
 /** Token size in pixels (matches frame dimensions). */
 const TOKEN_SIZE = 256;
 
+/** Background color for token circles (fills transparency and default tokens). */
+const TOKEN_BG_COLOR = '#28303b';
+
+/** Default token filename for monsters without portraits. */
+const DEFAULT_TOKEN_FILENAME = '_default.token.webp';
+
 /**
  * Discovers all metadata JSON files, preferring .meta/ (pg backend) over
  * source-adjacent files.
@@ -72,7 +85,9 @@ function discoverMetadataFiles(): string[] {
       .filter((f) => f.endsWith('.metadata.json'))
       .map((f) => join(META_DIR, f));
     if (metaFiles.length > 0) return metaFiles;
-  } catch { /* .meta/ may not exist — fall back to source-adjacent */ }
+  } catch {
+    /* .meta/ may not exist — fall back to source-adjacent */
+  }
   return readdirSync(MONSTERS_DIR)
     .filter((f) => f.endsWith('.metadata.json'))
     .map((f) => join(MONSTERS_DIR, f));
@@ -143,15 +158,17 @@ function bundleImages(imageFiles: Set<string>): void {
  * @param {Set<string>} imageFiles - Set of image filenames to generate tokens for
  * @returns {Promise<Map<string, string>>} Map of source filename → token filename
  */
-async function generateTokens(imageFiles: Set<string>): Promise<Map<string, string>> {
+async function generateTokens(
+  imageFiles: Set<string>,
+): Promise<Map<string, string>> {
   mkdirSync(TOKENS_DIR, { recursive: true });
 
   const frameBuffer = readFileSync(FRAME_PATH);
-  const maskRadius = Math.round(TOKEN_SIZE / 2 * 0.95);
+  const maskRadius = Math.round((TOKEN_SIZE / 2) * 0.95);
   const circleMask = Buffer.from(
     `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
-    `<circle cx="${TOKEN_SIZE / 2}" cy="${TOKEN_SIZE / 2}" r="${maskRadius}" fill="white"/>` +
-    `</svg>`,
+      `<circle cx="${TOKEN_SIZE / 2}" cy="${TOKEN_SIZE / 2}" r="${maskRadius}" fill="white"/>` +
+      `</svg>`,
   );
 
   const tokenMap = new Map<string, string>();
@@ -173,10 +190,29 @@ async function generateTokens(imageFiles: Set<string>): Promise<Map<string, stri
       const left = Math.round((w - cropSize) / 2);
       const top = Math.round((h - cropSize) * 0.15);
 
-      const cropped = await portrait
-        .extract({ left, top, width: cropSize, height: Math.min(cropSize, h - top) })
-        .resize(TOKEN_SIZE, TOKEN_SIZE, { fit: 'cover' })
-        .composite([{ input: circleMask, blend: 'dest-in' }])
+      const bgLayer = Buffer.from(
+        `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
+          `<rect width="${TOKEN_SIZE}" height="${TOKEN_SIZE}" fill="${TOKEN_BG_COLOR}"/>` +
+          `</svg>`,
+      );
+
+      const cropped = await sharp(bgLayer)
+        .composite([
+          {
+            input: await portrait
+              .extract({
+                left,
+                top,
+                width: cropSize,
+                height: Math.min(cropSize, h - top),
+              })
+              .resize(TOKEN_SIZE, TOKEN_SIZE, { fit: 'cover' })
+              .png()
+              .toBuffer(),
+            blend: 'over',
+          },
+          { input: circleMask, blend: 'dest-in' },
+        ])
         .png()
         .toBuffer();
 
@@ -189,12 +225,44 @@ async function generateTokens(imageFiles: Set<string>): Promise<Map<string, stri
       generated++;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      process.stderr.write(`  WARN: Token generation failed for ${filename}: ${msg}\n`);
+      process.stderr.write(
+        `  WARN: Token generation failed for ${filename}: ${msg}\n`,
+      );
     }
   }
 
-  process.stdout.write(`Tokens: ${generated} generated\n`);
+  await generateDefaultToken(frameBuffer, circleMask);
+  process.stdout.write(`Tokens: ${generated} generated (+ 1 default)\n`);
   return tokenMap;
+}
+
+/**
+ * Generates a default round token with a solid background color and frame.
+ * Used for monsters that have no portrait image.
+ *
+ * @param {Buffer} frameBuffer - Frame overlay PNG buffer
+ * @param {Buffer} circleMask - Circular mask SVG buffer
+ */
+async function generateDefaultToken(
+  frameBuffer: Buffer,
+  circleMask: Buffer,
+): Promise<void> {
+  const dest = join(TOKENS_DIR, DEFAULT_TOKEN_FILENAME);
+  const bgLayer = Buffer.from(
+    `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
+      `<rect width="${TOKEN_SIZE}" height="${TOKEN_SIZE}" fill="${TOKEN_BG_COLOR}"/>` +
+      `</svg>`,
+  );
+
+  const masked = await sharp(bgLayer)
+    .composite([{ input: circleMask, blend: 'dest-in' }])
+    .png()
+    .toBuffer();
+
+  await sharp(masked)
+    .composite([{ input: frameBuffer, blend: 'over' }])
+    .webp({ quality: 90 })
+    .toFile(dest);
 }
 
 /**
@@ -208,7 +276,9 @@ async function exportMonsters(): Promise<void> {
   let errors = 0;
   const referencedImages = new Set<string>();
 
-  process.stdout.write(`Found ${metadataFiles.length} metadata files in ${MONSTERS_DIR}\n`);
+  process.stdout.write(
+    `Found ${metadataFiles.length} metadata files in ${MONSTERS_DIR}\n`,
+  );
 
   for (const metaPath of metadataFiles) {
     const slug = basename(metaPath, '.metadata.json');
@@ -256,11 +326,6 @@ async function exportMonsters(): Promise<void> {
       const monsters = Array.isArray(records) ? records : [records];
 
       for (const monster of monsters) {
-        if (!monster.image) continue;
-        const imgFilename = basename(monster.image);
-        const tokenFilename = tokenMap.get(imgFilename);
-        if (!tokenFilename) continue;
-
         const idSlug = monster.subSlug ?? monster.slug;
         const { generateFoundryId } = await import('./utils/idGenerator');
         const actorId = generateFoundryId(idSlug, 'monster');
@@ -268,15 +333,26 @@ async function exportMonsters(): Promise<void> {
 
         if (!existsSync(actorPath)) continue;
         const actor = JSON.parse(readFileSync(actorPath, 'utf-8'));
+
+        let tokenFilename: string | undefined;
+        if (monster.image) {
+          const imgFilename = basename(monster.image);
+          tokenFilename = tokenMap.get(imgFilename);
+        }
+
         actor.prototypeToken.texture = {
-          src: `${MODULE_TOKEN_PREFIX}/${tokenFilename}`,
+          src: `${MODULE_TOKEN_PREFIX}/${tokenFilename ?? DEFAULT_TOKEN_FILENAME}`,
         };
         writeFileSync(actorPath, JSON.stringify(actor, null, 2), 'utf-8');
       }
-    } catch { /* skip — errors already logged in first pass */ }
+    } catch {
+      /* skip — errors already logged in first pass */
+    }
   }
 
-  process.stdout.write(`\nExport complete: ${totalActors} actors, ${errors} errors\n`);
+  process.stdout.write(
+    `\nExport complete: ${totalActors} actors, ${errors} errors\n`,
+  );
 
   if (errors > 0) {
     process.exit(1);

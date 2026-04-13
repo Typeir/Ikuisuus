@@ -10,8 +10,8 @@
  * @requires @/lib/enums/encounterPlanner - Encounter planner enums
  */
 
-import { describe, it, expect } from 'vitest';
 import { EncounterStorage, HeroicAffix } from '@/lib/enums/encounterPlanner';
+import { describe, expect, it } from 'vitest';
 
 describe('encounterPlanner', () => {
   describe('EncounterStorage enum', () => {
@@ -21,9 +21,9 @@ describe('encounterPlanner', () => {
         expect(typeof EncounterStorage).toBe('object');
       });
 
-      it('should have exactly 4 storage keys', () => {
+      it('should have exactly 5 storage keys', () => {
         const keys = Object.keys(EncounterStorage);
-        expect(keys).toHaveLength(4);
+        expect(keys).toHaveLength(5);
       });
     });
 
@@ -33,7 +33,9 @@ describe('encounterPlanner', () => {
       });
 
       it('should have ActiveEncounterId key with correct value', () => {
-        expect(EncounterStorage.ActiveEncounterId).toBe('encounter-planner-active-id');
+        expect(EncounterStorage.ActiveEncounterId).toBe(
+          'encounter-planner-active-id',
+        );
       });
 
       it('should have InProgressCombats key with correct value', () => {
@@ -42,6 +44,10 @@ describe('encounterPlanner', () => {
 
       it('should have ActiveCombatId key with correct value', () => {
         expect(EncounterStorage.ActiveCombatId).toBe('active-combat-id');
+      });
+
+      it('should have SavedParties key with correct value', () => {
+        expect(EncounterStorage.SavedParties).toBe('saved-parties');
       });
     });
 
