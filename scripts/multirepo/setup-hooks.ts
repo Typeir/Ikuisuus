@@ -124,7 +124,7 @@ async function main(): Promise<void> {
 
   writeHook(
     resolve(hooksDir, 'commit-msg'),
-    `#!/usr/bin/env bash\nset -euo pipefail\nCURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0\nif [ -f "$CURRENT_REPO/.git" ]; then\n  MAIN_REPO="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0\nelse\n  MAIN_REPO="$CURRENT_REPO"\nfi\nnpx tsx --tsconfig "$MAIN_REPO/tsconfig.scripts.json" "$MAIN_REPO/.github/PAW/git-hooks/commit-msg.ts" "$1"\n`,
+    `#!/usr/bin/env bash\nset -euo pipefail\nCURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0\nif [ -f "$CURRENT_REPO/.git" ]; then\n  MAIN_REPO="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0\nelse\n  MAIN_REPO="$CURRENT_REPO"\nfi\nnpx tsx --tsconfig "$MAIN_REPO/tsconfig.scripts.json" "$MAIN_REPO/.paw/git-hooks/commit-msg.ts" "$1"\n`,
     'commit-msg hook (content repo)',
   );
 

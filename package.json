@@ -75,7 +75,7 @@
     "test:api": "vitest run --project unit:api",
     "test:app": "vitest run --project unit:app",
     "test:other": "vitest run --project unit:other",
-    "test:hooks": "bash .github/PAW/git-hooks/test-hooks.sh",
+    "test:hooks": "bash .paw/git-hooks/test-hooks.sh",
     "paw": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts",
     "paw:status": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts status",
     "paw:violations": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts violations ls",

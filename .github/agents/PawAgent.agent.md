@@ -71,25 +71,6 @@ When files should be ignored by PAW:
 2. Add patterns using glob syntax (same as `.gitignore`)
 3. Confirm the pattern works: files matching `.pawignore` are skipped by hooks and gates
 
-### Suppress a Gate Finding Inline
-
-When a violation is a known false positive or intentional exception, suppress it
-with a `paw:gate:` directive in the source file (not in any PAW config file):
-
-```ts
-/* paw:gate:{gate-id}:{rule} ignore */ // suppress rule for whole file
-/* paw:gate:{gate-id} ignore-nextline */ // suppress next line only
-/* paw:gate:* ignore */ // suppress ALL gates (generated files only)
-```
-
-MDX also supports `{/* … */}` and `<!-- … -->` comment styles.
-
-Rules:
-
-- Never suppress `missing-test` — create the test instead.
-- Never use `paw:gate:* ignore` in hand-authored files.
-- The old `health:check-ignore` syntax is deprecated — migrate to `paw:gate:` if encountered.
-
 ## Rules
 
 - **Never suggest disabling PAW** as a solution. Fix the root cause.
@@ -97,5 +78,4 @@ Rules:
 - **Always read the violation message carefully** — it tells you which file and rule are broken.
 - When a violation says "missing-test", the fix is to create the test file, not to suppress the violation.
 - When a violation is about JSDoc, fix the JSDoc in the violated file.
-- Only suppress a finding with `/* paw:gate:{id}:{rule} ignore */` when the violation is a confirmed false positive or generated output — never as a shortcut around real fixes.
 - When you're blocked from editing a file that isn't the violated one, check if it's a derived fix (like creating a test file) — PAW allows those.

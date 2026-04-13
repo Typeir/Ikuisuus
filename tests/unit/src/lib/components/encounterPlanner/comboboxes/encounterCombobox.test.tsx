@@ -12,8 +12,8 @@
  * @requires @/lib/components/encounterPlanner/comboboxes/encounterCombobox
  */
 
-import { describe, expect, it } from 'vitest';
 import * as EncounterComboboxModule from '@/lib/components/encounterPlanner/comboboxes/encounterCombobox';
+import { describe, expect, it } from 'vitest';
 
 describe('encounterCombobox', () => {
   it('should export EncounterCombobox component', () => {

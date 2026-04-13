@@ -20,7 +20,8 @@
     "scripts/**/*.ts",
     "src/**/*.ts",
     ".github/scripts/**/*.ts",
-    ".github/PAW/**/*.ts"
+    ".github/PAW/**/*.ts",
+    ".paw/**/*.ts"
   ],
   "exclude": ["node_modules", ".next"]
 }

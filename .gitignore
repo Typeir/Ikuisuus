@@ -53,7 +53,7 @@ next-env.d.ts
 /temp/*.ts.json
 
 # pre-commit hook security patterns (never commit)
-.github/PAW/git-hooks/.patterns
+.paw/git-hooks/.patterns
 *.bak
 /src/**/*.metadata.json
 /.meta/

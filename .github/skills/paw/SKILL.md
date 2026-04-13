@@ -84,35 +84,17 @@ Read-only tools are never blocked: `read_file`, `grep_search`, `file_search`,
 Any file matching a `.pawignore` pattern or PAW's built-in exclusions
 (`.github/PAW/`, `.paw/`) can always be edited, even during enforcement.
 
-### 5. Indirect-fix findings unlock all tools — but you MUST address them first
+### 5. Indirect-fix findings unlock all tools
 
 Gates can mark individual findings with `indirectFix: true` to declare that
 the finding can't be fixed by editing the violated file (e.g. missing test
 requires creating a new file). When ALL remaining violations are indirect-fix,
 PAW allows all tools through so you can create the required fix files.
 
-**Important**: PAW will inject an `additionalContext` nudge on every tool call
-listing the pending indirect-fix violations. You are expected to resolve them
-**before** continuing with your assigned task — do not ignore these messages.
-
 To make a gate's findings indirect-fix, set `indirectFix: true` on the
 `GateFinding` (or `CheckFailure` if using the health-check adapter).
 
-### 6. Multi-model tool payloads are supported
-
-Different LLM backends send file paths in different payload shapes:
-
-- `filePath` / `file_path` / `path` (string) — Claude, GPT-4, etc.
-- `replacements[].filePath` (array) — `multi_replace_string_in_file`
-- `files` (string[] or object[]) — GPT5.3codex `editFiles` tool
-- `command` (string, regex-extracted) — `run_in_terminal`
-
-PAW extracts paths from all of these automatically. If a new model sends
-file paths under a different key, update `extractToolFilePaths()` in
-`.github/PAW/hooks/pre-tool-use.ts` and `resolveEditedFilePath()` in
-`.github/PAW/hook-runtime.ts`, then sync to `.paw/hooks/`.
-
-### 7. When truly stuck, the user can unblock
+### 6. When truly stuck, the user can unblock
 
 `npm run paw:unblock` clears all violations. This requires a password and
 should only be used as a last resort.
@@ -187,6 +169,15 @@ and can return additional messages.
 | `npm run paw:gates run`        | Run all gates manually                                    |
 | `npm run paw:unblock`          | Emergency: clear all violations (password-protected)      |
 
+## When Extending PAW
+
+- **New gate (TypeScript)**: Create `.paw/gates/my-gate.gate.ts` implementing `QualityGate`
+- **New gate (other language)**: Create `.paw/gates/my-gate.gate.{ext}`, add runner to `config.json`
+- **New hook**: Create `.paw/hooks/my-hook.ts`, run `paw sync` to register
+- **New plugin**: Create `.paw/plugins/{hook-name}/my-plugin.ts`
+- **Ignore a path**: Add pattern to `.pawignore`
+- **Suppress a finding inline**: Use `/* paw:gate:{id}:{rule} ignore */` in the source file
+
 ## Gate Ignore Directives
 
 To suppress a specific violation in a file, add a `paw:gate:` ignore comment.
@@ -227,11 +218,3 @@ Also valid in MDX JSX comments `{/* … */}` and HTML comments `<!-- … -->`.
 - **Prefer the narrowest scope**: `gate:rule` over `gate:*`, `ignore-nextline` over `ignore`.
 - **Never suppress `missing-test`** — create the test file instead.
 - `health:check-ignore` is **deprecated**. Do not use it in new files.
-
-## When Extending PAW
-
-- **New gate**: Create `.paw/gates/my-gate.gate.ts` implementing `QualityGate`
-- **New hook**: Create `.paw/hooks/my-hook.ts`, run `paw sync` to register
-- **New plugin**: Create `.paw/plugins/{hook-name}/my-plugin.ts`
-- **Ignore a path**: Add pattern to `.pawignore`
-- **Suppress a finding inline**: Use `/* paw:gate:{id}:{rule} ignore */` in the source file

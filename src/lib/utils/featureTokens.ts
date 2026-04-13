@@ -132,7 +132,7 @@ export function recognizeRange(text: string): RangeToken | null {
   const afterDist = text.slice(match.index! + match[0].length).toLowerCase();
   const beforeDist = text.slice(0, match.index!).toLowerCase();
   const combined = `${beforeDist} ${afterDist}`;
-  for (const shape of SHAPES) {
+  for (const shape of Array.from(SHAPES)) {
     if (combined.includes(shape)) {
       result.shape = shape;
       break;
