@@ -75,7 +75,7 @@
     "test:api": "vitest run --project unit:api",
     "test:app": "vitest run --project unit:app",
     "test:other": "vitest run --project unit:other",
-    "test:hooks": "bash scripts/hooks/test-hooks.sh",
+    "test:hooks": "bash .github/PAW/git-hooks/test-hooks.sh",
     "paw": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts",
     "paw:status": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts status",
     "paw:violations": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts violations ls",
@@ -91,8 +91,7 @@
     "seed-admin": "npx tsx --tsconfig tsconfig.scripts.json scripts/auth/seedAdmin.ts",
     "seed-admin-pg": "npx tsx --tsconfig tsconfig.scripts.json scripts/auth/seedAdminPg.ts",
     "test-pat": "npx tsx --tsconfig tsconfig.scripts.json scripts/test-pat.ts",
-    "lottery": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/mdxLottery.ts",
-    "prepare": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/pawHooks.ts install"
+    "lottery": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/mdxLottery.ts"
   },
   "dependencies": {
     "@clack/prompts": "^1.1.0",

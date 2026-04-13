@@ -6,13 +6,16 @@
  * directory. Each installed hook is a thin bash wrapper that delegates to the
  * TypeScript hook implementations via `tsx`, keeping all logic in `.ts` files.
  *
- * Main repo hooks are managed by husky (`.husky/` directory) and are not
+ * Main repo hooks are managed by PAW (`.github/PAW/` directory) and are not
  * touched here. Only needs to be run once per clone.
  *
  * Usage:
  *   tsx scripts/multirepo/setup-hooks.ts
  *
  * @module multirepo/setup-hooks
+ * @author Ikuisuus
+ * @version 1.2.0
+ * @since 2.0.0
  */
 
 import {
@@ -20,6 +23,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  statSync,
   writeFileSync,
 } from 'fs';
 import { resolve } from 'path';
@@ -34,23 +38,23 @@ const NC = '\x1b[0m';
 
 /**
  * Logs an informational message to stdout.
- * @param msg - The message to display.
+ * @param {string} msg - The message to display.
  */
 function logInfo(msg: string): void {
-  console.log(`${CYAN}ℹ️  ${msg}${NC}`);
+  process.stdout.write(`${CYAN}ℹ️  ${msg}${NC}\n`);
 }
 
 /**
  * Logs a success message to stdout.
- * @param msg - The message to display.
+ * @param {string} msg - The message to display.
  */
 function logSuccess(msg: string): void {
-  console.log(`${GREEN}✅ ${msg}${NC}`);
+  process.stdout.write(`${GREEN}✅ ${msg}${NC}\n`);
 }
 
 /**
  * Logs an error message to stderr and exits with code 1.
- * @param msg - The error message to display.
+ * @param {string} msg - The error message to display.
  */
 function logError(msg: string): never {
   console.error(`${RED}❌ ${msg}${NC}`);
@@ -59,9 +63,9 @@ function logError(msg: string): never {
 
 /**
  * Writes a file with the given content and marks it executable (`0o755`).
- * @param filePath - Absolute path to write.
- * @param content  - File content.
- * @param label    - Short label used in the success log line.
+ * @param {string} filePath - Absolute path to write.
+ * @param {string} content  - File content.
+ * @param {string} label    - Short label used in the success log line.
  */
 function writeHook(filePath: string, content: string, label: string): void {
   writeFileSync(filePath, content, { encoding: 'utf8' });
@@ -72,7 +76,7 @@ function writeHook(filePath: string, content: string, label: string): void {
 /**
  * Resolves the hooks directory for a repository, handling both regular `.git`
  * directories and `.git` files (gitdir pointer) used in submodules.
- * @param repo - Absolute path to the repository root.
+ * @param {string} repo - Absolute path to the repository root.
  * @returns Absolute path to the hooks directory.
  */
 function resolveHooksDir(repo: string): string {
@@ -87,7 +91,7 @@ function resolveHooksDir(repo: string): string {
       return resolve(repo, pointer, 'hooks');
     }
   } catch {
-    // Falls through to default
+    /* gitPath does not exist — fall through to default */
   }
 
   return resolve(gitPath, 'hooks');
@@ -120,13 +124,13 @@ async function main(): Promise<void> {
 
   writeHook(
     resolve(hooksDir, 'commit-msg'),
-    `#!/usr/bin/env bash\nset -euo pipefail\nCURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0\nif [ -f "$CURRENT_REPO/.git" ]; then\n  MAIN_REPO="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0\nelse\n  MAIN_REPO="$CURRENT_REPO"\nfi\nnode "$MAIN_REPO/scripts/hooks/commit-msg.js" "$1"\n`,
+    `#!/usr/bin/env bash\nset -euo pipefail\nCURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0\nif [ -f "$CURRENT_REPO/.git" ]; then\n  MAIN_REPO="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0\nelse\n  MAIN_REPO="$CURRENT_REPO"\nfi\nnpx tsx --tsconfig "$MAIN_REPO/tsconfig.scripts.json" "$MAIN_REPO/.github/PAW/git-hooks/commit-msg.ts" "$1"\n`,
     'commit-msg hook (content repo)',
   );
 
-  console.log('');
-  logInfo('Main repo hooks are managed by husky (.husky/ directory)');
-  logInfo("Run 'npm run test:hooks' to verify all hooks");
+  process.stdout.write('\n');
+  logInfo('Main repo hooks are managed by PAW (.github/PAW/)');
+  logInfo("Run 'npm run paw:hooks status' to verify all hooks");
 }
 
 main().catch((err: unknown) => {
