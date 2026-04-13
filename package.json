@@ -80,15 +80,19 @@
     "paw:status": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts status",
     "paw:violations": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts violations ls",
     "paw:unblock": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts violations prune",
+    "paw:enable": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts state enable",
+    "paw:disable": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts state disable",
     "paw:db:reset": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts db reset",
     "paw:db:stats": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts db stats",
     "paw:set-password": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/cli/paw.ts set-password",
+    "paw:hooks": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/pawHooks.ts",
+    "paw:hooks:install": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/pawHooks.ts install",
     "generate-token": "npx tsx --tsconfig tsconfig.scripts.json scripts/auth/generateToken.ts",
     "seed-admin": "npx tsx --tsconfig tsconfig.scripts.json scripts/auth/seedAdmin.ts",
     "seed-admin-pg": "npx tsx --tsconfig tsconfig.scripts.json scripts/auth/seedAdminPg.ts",
     "test-pat": "npx tsx --tsconfig tsconfig.scripts.json scripts/test-pat.ts",
     "lottery": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/mdxLottery.ts",
-    "prepare": "husky"
+    "prepare": "npx tsx --tsconfig .paw/tsconfig.json .github/PAW/pawHooks.ts install"
   },
   "dependencies": {
     "@clack/prompts": "^1.1.0",
@@ -149,7 +153,6 @@
     "eslint-config-next": "^15.4.0",
     "globby": "^14.1.0",
     "happy-dom": "^20.8.4",
-    "husky": "^9.1.7",
     "is-arguments": "^1.1.1",
     "jsdom": "^27.2.0",
     "node-fetch": "^3.3.2",

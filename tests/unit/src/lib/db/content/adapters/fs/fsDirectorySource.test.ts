@@ -6,16 +6,14 @@
  * @module tests/unit/lib/db/content/adapters/fs/fsDirectorySource
  */
 
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi
-} from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('fs');
+vi.mock('fs', () => ({
+  default: {
+    statSync: vi.fn(),
+    readdirSync: vi.fn(),
+  },
+}));
 
 import fs from 'fs';
 

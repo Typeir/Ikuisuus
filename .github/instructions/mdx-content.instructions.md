@@ -106,7 +106,7 @@ Auto-generated components from `mdxComponents.tsx` are also valid (spell compone
 1. Run `node .github/scripts/check-mdx-format.mjs` to identify violations
 2. Group violations by rule and content type
 3. Fix one content type at a time (monsters → spells → heirlooms → world)
-4. After fixing, run `npm run generate-all-metadata` to verify metadata parsers still work
+4. After fixing, run `npm run generate-metadata` to verify metadata parsers still work
 5. Re-run format check to confirm zero critical violations
 
 ## Critical Checks (Hard Rules)

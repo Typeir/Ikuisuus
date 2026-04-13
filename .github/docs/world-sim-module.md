@@ -155,44 +155,55 @@ No other new dependencies. The bridge, controls, and projection math will be imp
 src/lib/components/worldSim/
 ├── index.ts                              # Barrel exports
 ├── WorldSim.tsx                          # Root component (canvas + overlay container)
-├── worldSim.module.scss                  # Root styles
+├── WorldSim.module.scss                  # Root styles
+├── WorldSimMediator.ts                   # Mediator: central coordinator for all subsystems
+├── RaycastService.ts                     # Raycasting helper for mouse interaction
+├── constants.ts                          # Shared scene constants
 │
 ├── canvas/                               # Three.js scene ownership
 │   ├── SceneManager.ts                   # Creates scene, renderer, lights, animation loop
-│   ├── CameraController.ts              # Orbit controls + animated transitions
+│   ├── RenderLifecycle.ts               # Phase-based frame event system (PreUpdate → PostRender)
+│   └── PixelatePass.ts                  # Post-processing pass for pixel art aesthetic
+│
+├── camera/                               # Camera control system
+│   ├── CameraController.ts              # Composes orbit + follow + command subsystems
 │   ├── CameraCommand.ts                  # Command pattern for camera transitions
-│   └── useWorldSimCanvas.ts             # Hook: mount Three.js into a React ref
+│   ├── CameraFollowSystem.ts            # Body-tracking follow logic
+│   └── CameraOrbitControls.ts           # Mouse/touch orbit input handler
 │
 ├── celestials/                           # Celestial body system
-│   ├── interfaces.ts                     # ICelestialBody, IRenderable, IInteractable, IOrbitable, ILabelable
+│   ├── interfaces.ts                     # ICelestialRenderer, IRenderable, IInteractable, IOrbitable, ILabelable
 │   ├── CelestialRegistry.ts             # Data registry (loaded from JSON)
 │   ├── CelestialBodyFactory.ts          # Factory: registry entry → Three.js mesh
-│   ├── renderers/                        # Strategy pattern implementations
-│   │   ├── StarRenderer.ts              # Kultharja — emissive sphere + glow shader
-│   │   ├── PlanetRenderer.ts            # Damocles, Kalmora — textured sphere + atmosphere
-│   │   ├── GasGiantRenderer.ts          # Länsihenki, Itähenki — banded sphere + cloud layers
-│   │   ├── RingWorldRenderer.ts         # Mana — nested torus geometry
-│   │   ├── TowerWorldRenderer.ts        # Selkara — vertical cylindrical structure
-│   │   ├── AsteroidBeltRenderer.ts      # Opaline Belt — instanced particles
-│   │   └── EverdarkRenderer.ts          # Enclosing sphere with fire shader
-│   └── OrbitalMechanics.ts             # Keplerian ellipse computations
+│   ├── CelestialGlow.ts                 # Shared glow/halo effect utility
+│   ├── OrbitLineFactory.ts              # Orbit path line visuals
+│   ├── disposeUtils.ts                  # Safe Three.js geometry/material disposal
+│   ├── OrbitalMechanics.ts             # Keplerian ellipse computations
+│   ├── StarRenderer.ts                  # Kultharja — emissive sphere + glow shader
+│   ├── PlanetRenderer.ts                # Damocles, Kalmora — textured sphere + atmosphere
+│   ├── GasGiantRenderer.ts              # Länsihenki, Itähenki — banded sphere + cloud layers
+│   ├── RingWorldRenderer.ts             # Mana — nested torus geometry
+│   ├── TowerWorldRenderer.ts            # Selkara — vertical cylindrical structure
+│   ├── AsteroidBeltRenderer.ts          # Opaline Belt — instanced particles
+│   └── EverdarkRenderer.ts              # Enclosing sphere with fire shader
 │
 ├── bridge/                               # Three.js ↔ DOM bridge
 │   ├── ProjectionBridge.ts              # 3D world-space → 2D screen-space projection
-│   ├── SceneEventBus.ts                 # Observer: interaction events
-│   └── WorldSimMediator.ts             # Mediator: coordinates subsystems
+│   └── SceneEventBus.ts                 # Observer: interaction events
 │
 ├── overlay/                              # React DOM components (positioned over canvas)
+│   ├── overlay.module.scss              # Shared overlay styles
 │   ├── OverlayContainer.tsx             # Positions children via CSS transforms from bridge
-│   ├── OverlayContainer.module.scss
 │   ├── CelestialLabel.tsx               # Floating name label for a body
-│   ├── CelestialLabel.module.scss
 │   ├── InfoPanel.tsx                     # Expanded info card (description, links)
-│   ├── InfoPanel.module.scss
-│   ├── LandmassMarker.tsx               # Clickable dot on planet surface
-│   ├── LandmassMarker.module.scss
-│   ├── RegionPanel.tsx                  # Panel for a specific landmass (links to MDX)
-│   └── RegionPanel.module.scss
+│   ├── ContentPanel.tsx                 # Panel for MDX content deep-links
+│   └── ControlsBar.tsx                  # Zoom/reset UI controls
+│
+├── optimization/                         # Performance management
+│   ├── AdaptivePerformanceController.ts # Dynamic LOD/quality scaling based on FPS
+│   └── GeometryBudgets.ts               # Per-body polygon budgets
+│
+├── shaders/                              # GLSL shader sources (atmosphere, everdark, gas giant, etc.)
 │
 ├── context/                              # State management
 │   ├── WorldSimContext.tsx               # React context + reducer
@@ -200,14 +211,10 @@ src/lib/components/worldSim/
 │   └── worldSimTypes.ts                 # State & action type definitions
 │
 ├── data/                                 # Static data (celestial definitions)
-│   ├── blackCradleRegistry.json         # All celestial bodies, orbits, regions
-│   └── landmassRegions.json             # Per-planet landmass definitions with 3D coords
+│   └── blackCradleRegistry.json         # All celestial bodies, orbits, regions
 │
 └── hooks/                                # Composable hooks
-    ├── useCelestialHover.ts             # Hover detection via raycasting
-    ├── useCelestialClick.ts             # Click/tap detection via raycasting
-    ├── useProjectedPosition.ts          # Subscribe to projected 2D position of a 3D point
-    └── useZoomLevel.ts                  # Track zoom level for LOD and UI visibility
+    └── useWorldSimCanvas.ts             # Hook: mount Three.js into a React ref, bind bridge
 ```
 
 ### Route Integration

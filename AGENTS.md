@@ -1,20 +1,20 @@
 # Copilot Instructions for Library of Ikuisuus
 
-> 📚 **For comprehensive technical details**, see [Architecture Documentation](./docs/README.md) - Deep-dive guides for each system component with code examples, extension patterns, and troubleshooting.
+> 📚 **For comprehensive technical details**, see [Architecture Documentation](.github/docs/README.md) - Deep-dive guides for each system component with code examples, extension patterns, and troubleshooting.
 
 ## ⚠️ Hard Rules (Non-Negotiable)
 
 These rules are **strictly enforced**. Violations will cause build failures, test failures, or code review rejections.
 
-| Rule                                                                                              | Documentation                                                    | Acceptance Check                                                                                   |
-| ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| If you are an agent, load PAW skill before any implementation. Load at least the first 150 lines. | [PAW Skill](.github/skills/paw/SKILL.md)                         | PAW SKILL.md read before first edit                                                                |
-| JSDoc on all declarations, no inline comments                                                     | [JSDoc Standards](./docs/jsdoc.md)                               | `grep -rn "// " src/` finds no logic comments                                                      |
-| NO color literals outside `globals.scss`                                                          | [SCSS Theme Rules](./docs/scss-theme-rules.md)                   | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` returns 0                                         |
-| Zero act() warnings in tests                                                                      | [Testing Rules](./docs/testing-rules.md)                         | `npm test` shows no warnings                                                                       |
-| Use NotificationProvider, not `alert()`                                                           | [Testing Rules](./docs/testing-rules.md)                         | `grep -rn "alert(" src/` returns 0                                                                 |
-| Explicit MikroORM decorator typing                                                                | [MikroORM Instructions](./instructions/mikroorm.instructions.md) | `rg "@PrimaryKey\(\{(?![^}]*type:)(?![^}]*entity:)[^}]*\}\)" src/lib/db/orm/entities -n` returns 0 |
-| Run `npm run pre-init` before dev/build                                                           | [Build Pipeline](./docs/build-pipeline.md)                       | Build succeeds                                                                                     |
+| Rule                                                                               | Documentation                                                          | Acceptance Check                                                                                   |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| If you are an agent, load PAW skill before any implementation. Load the full file. | [PAW Skill](.github/skills/paw/SKILL.md)                               | PAW SKILL.md read before first edit                                                                |
+| JSDoc on all declarations, no inline comments                                      | [JSDoc Standards](.github/docs/jsdoc.md)                               | `grep -rn "// " src/` finds no logic comments                                                      |
+| NO color literals outside `globals.scss`                                           | [SCSS Theme Rules](.github/docs/scss-theme-rules.md)                   | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` returns 0                                         |
+| Zero act() warnings in tests                                                       | [Testing Rules](.github/docs/testing-rules.md)                         | `npm test` shows no warnings                                                                       |
+| Use NotificationProvider, not `alert()`                                            | [Testing Rules](.github/docs/testing-rules.md)                         | `grep -rn "alert(" src/` returns 0                                                                 |
+| Explicit MikroORM decorator typing                                                 | [MikroORM Instructions](.github/instructions/mikroorm.instructions.md) | `rg "@PrimaryKey\(\{(?![^}]*type:)(?![^}]*entity:)[^}]*\}\)" src/lib/db/orm/entities -n` returns 0 |
+| Run `npm run pre-init` before dev/build                                            | [Build Pipeline](.github/docs/build-pipeline.md)                       | Build succeeds                                                                                     |
 
 ## ✅ Completion Gate (Mandatory)
 
@@ -34,22 +34,23 @@ Major architectural changes to be aware of:
 
 ### 2026
 
-| Change                      | Impact                                                                                                                                    | Documentation                                                          |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| **Copilot Workflow System** | Enforced A→B→C task lifecycle: Analysis → Health Gate → Completion Reconciliation with agents, skills, hooks, and health-check scripts    | [Workflow System](./docs/copilot-workflow-system.md)                   |
-| **MDX Format Health Check** | `check-mdx-format.ts` validates content structure, naming, components; integrated into composite health gate and post-edit lint hook      | [MDX Content Instructions](./instructions/mdx-content.instructions.md) |
-| **World Sim Module**        | Three.js solar system with phase-based render lifecycle, DOM overlay bridge, and celestial body renderers                                 | [World Sim Module](./docs/world-sim-module.md)                         |
-| **RenderLifecycle System**  | Unity-style phase bus (PreUpdate → Update → PostUpdate → PreRender → render → PostRender) replaces ad-hoc callback arrays in SceneManager | [World Sim Module](./docs/world-sim-module.md)                         |
+| Change                      | Impact                                                                                                                                    | Documentation                                                                |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| **Copilot Workflow System** | Enforced A→B→C task lifecycle: Analysis → Health Gate → Completion Reconciliation with agents, skills, hooks, and health-check scripts    | [Workflow System](.github/docs/copilot-workflow-system.md)                   |
+| **MDX Format Health Check** | `check-mdx-format.ts` validates content structure, naming, components; integrated into composite health gate and post-edit lint hook      | [MDX Content Instructions](.github/instructions/mdx-content.instructions.md) |
+| **World Sim Module**        | Three.js solar system with phase-based render lifecycle, DOM overlay bridge, and celestial body renderers                                 | [World Sim Module](.github/docs/world-sim-module.md)                         |
+| **RenderLifecycle System**  | Unity-style phase bus (PreUpdate → Update → PostUpdate → PreRender → render → PostRender) replaces ad-hoc callback arrays in SceneManager | [World Sim Module](.github/docs/world-sim-module.md)                         |
+| **Foundry VTT Module**      | Export pipeline: MonsterMetadata → dnd5e NPC Actor JSON with image bundling, token generation, and LevelDB pack compilation               | [Foundry Module](.github/docs/foundry-module.md)                             |
 
 ### 2025
 
-| Change                         | Impact                                                                        | Documentation                                  |
-| ------------------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------- |
-| **Play Mode Turn Tracker**     | Encounter planner now has live combat tracking with round-start notifications | [Encounter Module](./docs/encounter-module.md) |
-| **Push Notification Refactor** | Context-based notifications replace alerts; timing constants exported         | [Testing Rules](./docs/testing-rules.md)       |
-| **Strict JSDoc Enforcement**   | No inline comments, `@property` tags required for interfaces                  | [JSDoc Standards](./docs/jsdoc.md)             |
-| **SCSS Theme Token Rules**     | All colors via CSS variables only, grep checks in CI                          | [SCSS Theme Rules](./docs/scss-theme-rules.md) |
-| **Act-Clean Testing**          | Fake timers required for notification tests, async userEvent patterns         | [Testing Rules](./docs/testing-rules.md)       |
+| Change                         | Impact                                                                        | Documentation                                        |
+| ------------------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Play Mode Turn Tracker**     | Encounter planner now has live combat tracking with round-start notifications | [Encounter Module](.github/docs/encounter-module.md) |
+| **Push Notification Refactor** | Context-based notifications replace alerts; timing constants exported         | [Testing Rules](.github/docs/testing-rules.md)       |
+| **Strict JSDoc Enforcement**   | No inline comments, `@property` tags required for interfaces                  | [JSDoc Standards](.github/docs/jsdoc.md)             |
+| **SCSS Theme Token Rules**     | All colors via CSS variables only, grep checks in CI                          | [SCSS Theme Rules](.github/docs/scss-theme-rules.md) |
+| **Act-Clean Testing**          | Fake timers required for notification tests, async userEvent patterns         | [Testing Rules](.github/docs/testing-rules.md)       |
 
 ## Project Overview
 
@@ -57,12 +58,12 @@ Next.js 15 internationalized D&D documentation site with filesystem-based MDX co
 
 ## Critical Build Pipeline
 
-> **📚 Deep Dive**: [Build Pipeline Architecture](./docs/build-pipeline.md) - Complete documentation of all pipeline stages, dependencies, and extension points
+> **📚 Deep Dive**: [Build Pipeline Architecture](.github/docs/build-pipeline.md) - Complete documentation of all pipeline stages, dependencies, and extension points
 
 **ALWAYS run `npm run pre-init` before dev/build** - this is non-negotiable:
 
 ```bash
-npm run pre-init  # compress-assets → kebabify-content → md-to-mdx → generate-all-metadata → merge-locales
+npm run pre-init  # compress-assets → kebabify-content → md-to-mdx → generate-metadata → merge-locales → find-reusable-mdx-outliers
 npm run dev       # Auto-runs pre-init, then starts dev server
 npm run build     # Clears .next/cache, runs pre-init, builds for production
 ```
@@ -71,61 +72,70 @@ npm run build     # Clears .next/cache, runs pre-init, builds for production
 
 - Images in `public/full-size/` need WebP conversion to `public/library/`
 - Content files must be kebab-case and have `.mdx` extensions
-- `.metadata.json` files must exist for API routes (`/api/monsters`, `/api/heirlooms`, `/api/spells`)
+- `.metadata.json` files must exist for API routes (`/api/monsters`, `/api/heirlooms`, `/api/spells`, `/api/bloodlines`, `/api/trinkets`, `/api/vocations`, `/api/specializations`)
 - Translation JSONs must be merged into `messages/{locale}/index.json`
 
 ## Metadata Generation System (Recently Refactored)
 
-> **📚 Deep Dive**: [Metadata Generation Architecture](./docs/metadata-generation.md) - Complete three-layer system documentation with schemas, parsing patterns, and extension guide
+> **📚 Deep Dive**: [Metadata Generation Architecture](.github/docs/metadata-generation.md) - Complete three-layer system documentation with schemas, parsing patterns, and extension guide
 
-### Architecture: Shared Utilities Pattern
+### Architecture: Shared Metadata Library
 
-All metadata generators (monsters, heirlooms, spells) now use **shared-utils.mjs** to eliminate ~226 lines of duplication:
+All metadata generators (monsters, heirlooms, spells, trinkets, bloodlines, vocations, specializations) are TypeScript files in `scripts/metadata/` and import utilities from the shared `src/lib/metadata/` module:
 
-**Key Classes**:
+**Key Exports from `src/lib/metadata/`**:
 
-- `MetadataGeneratorUtils` - Standardized orchestration via `runGenerator()` method
-- `GameData` / `ItemData` - Single source of truth from `scripts/shared-data.json`
-- `TextUtils` / `ParsingUtils` - Common parsing (title extraction, property parsing, numeric values)
-- `FileUtils` - Safe file I/O with error handling
-- `TaggingUtils` - Unified tag extraction (damage, conditions, mechanics, lore)
-- `PerformanceUtils` - Timing and memory profiling
+- `runGenerator()` - Standardized orchestration via `GeneratorConfig`
+- `GameData` / `ItemData` - Loaded from `scripts/core/shared-data.json`
+- `textUtils` / `parsingUtils` functions - Title extraction, property parsing, numeric values
+- `safeWriteFile()` / `safeReadFile()` - Safe file I/O with error handling
+- `extractAllTags()` / tagging functions - Damage, conditions, mechanics, lore tag extraction
+- `startTimer()` / `endTimer()` - Timing and memory profiling
 
 **Creating New Generators**:
 
-```javascript
-// scripts/generateNewContentMetadata.mjs
-import { MetadataGeneratorUtils } from './shared-utils.mjs';
+```typescript
+// scripts/metadata/generateNewContentMetadata.ts
+import {
+  runGenerator,
+  GameData,
+  parseTitle,
+  extractAllTags,
+} from '@/lib/metadata';
+import type { SharedData } from '@/lib/metadata';
+
+async function parseNewContentFile(filePath: string, sharedData: SharedData) {
+  // Parse logic here
+  return { slug, title /* ... */ };
+}
 
 async function main() {
-  await MetadataGeneratorUtils.runGenerator({
+  await runGenerator({
     name: 'New Content Metadata Generator',
-    contentType: 'new-content', // Add to MetadataGeneratorUtils.getContentDirectory()
+    contentType: 'new-content',
     filePattern: /\.mdx$/,
     parseFile: parseNewContentFile,
-    processResult: (result) => ({ metadata: result, count: 1 }), // Optional
   });
 }
 
-// Export main for orchestrator, run if executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch((error) => {
-    console.error('❌ Fatal error:', error);
-    process.exit(1);
-  });
-}
+main().catch((error) => {
+  console.error('❌ Fatal error:', error);
+  process.exit(1);
+});
+
 export { main, parseNewContentFile };
 ```
 
 ### Three-Layer Metadata Architecture
 
-**Layer 1 (Build)**: `generateMonsterMetadata.mjs`, `generateHeirloomMetadata.mjs`, `generateSpellMetadata.mjs`
+**Layer 1 (Build)**: `scripts/metadata/generateMonsterMetadata.ts`, `generateHeirloomMetadata.ts`, `generateSpellMetadata.ts`, `generateTrinketMetadata.ts`, `generateBloodlineMetadata.ts`, `generateVocationMetadata.ts`, `generateSpecializationMetadata.ts`
 
-- Parse `.sheet.mdx` / `.mdx` files using regex
+- Parse `.sheet.mdx` / `.mdx` files using TypeScript
 - Output `.metadata.json` alongside source files
 - Monster files can contain **arrays** (multiple stat blocks per file)
+- Run `npm run generate-metadata` to execute the orchestrator
 
-**Layer 2 (Runtime)**: `src/app/api/monsters/route.ts`, `/api/heirlooms/route.ts`, `/api/spells/route.ts`
+**Layer 2 (Runtime)**: `src/app/api/monsters/route.ts`, `/api/heirlooms/route.ts`, `/api/spells/route.ts`, `/api/bloodlines/route.ts`, `/api/trinkets/route.ts`, `/api/vocations/route.ts`, `/api/specializations/route.ts`
 
 - Read `.metadata.json` files via `fs.readdirSync`
 - Locale-aware: `?locale=en`
@@ -141,7 +151,7 @@ export { main, parseNewContentFile };
 
 ## Content System
 
-> **📚 Deep Dive**: [Content System & Internationalization](./docs/content-system.md) - Complete documentation of MDX architecture, filesystem routing, locale handling, and translation workflows
+> **📚 Deep Dive**: [Content System & Internationalization](.github/docs/content-system.md) - Complete documentation of MDX architecture, filesystem routing, locale handling, and translation workflows
 
 ### File Organization (Enforced by Scripts)
 
@@ -173,7 +183,7 @@ const components = {
 
 ## Theme System (CSS Architecture)
 
-> **📚 Deep Dive**: [Theme System Architecture](./docs/theme-system.md) - Complete documentation of CSS variables, FOUC prevention, cascade order, and common pitfalls
+> **📚 Deep Dive**: [Theme System Architecture](.github/docs/theme-system.md) - Complete documentation of CSS variables, FOUC prevention, cascade order, and common pitfalls
 
 **Critical CSS Cascade Order** (in `globals.scss`):
 
@@ -222,7 +232,7 @@ html[data-theme='dark'] {
 - **Supported**: `en`, `es`, `fi` (in `src/i18n/routing.ts`)
 - **Middleware**: `src/middleware.ts` handles routing via `next-intl`
 - **Translations**: `messages/{locale}/*.json` → merged to `messages/{locale}/index.json`
-- **Namespace**: `layout.json`, `search.json`, `common.json` etc. merged by `mergeMessages.js`
+  **Namespace**: `layout.json`, `search.json`, `common.json` etc. merged by `scripts/i18n/mergeMessages.ts`
 
 ### Translation Workflow
 
@@ -245,10 +255,10 @@ const t = useTranslations('my-feature');
 npm run linkify:world:dry
 
 # Apply with backup
-npm run linkify:world  # Uses scripts/links.json, creates .backup files
+npm run linkify:world  # Uses scripts/core/links.json, creates .backup files
 ```
 
-**How it works**: Parses `scripts/links.json` for term→path mappings, converts text references to `[term](/path)` links in `src/content/en/world/**/*.mdx`
+**How it works**: Parses `scripts/core/links.json` for term→path mappings, converts text references to `[term](/path)` links in `src/content/en/world/**/*.mdx`
 
 ### Scaffolding Missing Content
 
@@ -270,7 +280,7 @@ This keeps the project clean and prevents documentation clutter.
 
 ## World Sim Module (Three.js)
 
-> **📚 Deep Dive**: [World Sim Architecture](./docs/world-sim-module.md) - Full design document with data model, rendering pipeline, and interaction model
+> **📚 Deep Dive**: [World Sim Architecture](.github/docs/world-sim-module.md) - Full design document with data model, rendering pipeline, and interaction model
 
 A Three.js-powered interactive solar system renderer. Three.js owns the 3D canvas, React owns all DOM UI, and a **Bridge Layer** projects 3D positions to 2D screen coordinates each frame.
 
@@ -360,28 +370,26 @@ Each body type has a renderer in `celestials/`: `StarRenderer`, `PlanetRenderer`
 
 **When modifying generators**:
 
-1. Update parsing logic in `scripts/generate*Metadata.mjs`
-2. If adding shared logic, put in `scripts/shared-utils.mjs` classes
-3. Run `npm run generate-all-metadata` to test
+1. Update parsing logic in `scripts/metadata/generate*Metadata.ts`
+2. If adding shared logic, add to the appropriate module in `src/lib/metadata/`
+3. Run `npm run generate-metadata` to test
 4. Check `.metadata.json` files for correctness
 5. Update API route if schema changes
 
 ### Module Exports (Generators)
 
-**Pattern for generators callable by orchestrator**:
+**Pattern for TypeScript generators**:
 
-```javascript
+```typescript
+// Generators run unconditionally (tsx always executes top-level code)
 async function main() {
   /* ... */
 }
 
-// Only run if executed directly (not via import)
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch((error) => {
-    console.error('❌ Fatal error:', error);
-    process.exit(1);
-  });
-}
+main().catch((error) => {
+  console.error('❌ Fatal error:', error);
+  process.exit(1);
+});
 
 export { main, parseFile }; // Export for orchestrator
 ```
@@ -396,10 +404,10 @@ export { main, parseFile }; // Export for orchestrator
 
 ### Metadata Generators
 
-- Load `shared-data.json` once via `loadSharedData()` (cached)
+- Load `scripts/core/shared-data.json` once via `loadSharedData()` (cached) from `@/lib/metadata`
 - Use `Promise.allSettled()` for parallel file processing
-- Use `FileUtils.safeWriteFile()` for error handling
-- Monitor with `PerformanceUtils.startTimer()` / `endTimer()`
+- Use `safeWriteFile()` from `@/lib/metadata` for error handling
+- Monitor with `startTimer()` / `endTimer()` from `@/lib/metadata`
 
 ### Component Boundaries
 
@@ -411,19 +419,20 @@ export { main, parseFile }; // Export for orchestrator
 
 ### Hard Rules (Read First)
 
-- **JSDoc Standards**: `./docs/jsdoc.md` - Required formatting, inline comment ban, interface @property tags
-- **SCSS Theme Rules**: `./docs/scss-theme-rules.md` - NO color literals outside globals.scss, token categories, grep checks
-- **Testing Rules**: `./docs/testing-rules.md` - Act warning prevention, NotificationProvider wrapping, fake timers
+- **JSDoc Standards**: `.github/docs/jsdoc.md` - Required formatting, inline comment ban, interface @property tags
+- **SCSS Theme Rules**: `.github/docs/scss-theme-rules.md` - NO color literals outside globals.scss, token categories, grep checks
+- **Testing Rules**: `.github/docs/testing-rules.md` - Act warning prevention, NotificationProvider wrapping, fake timers
 
 ### Architecture Documentation
 
-- **Build Pipeline**: `./docs/build-pipeline.md` - Complete pipeline architecture with all stages, dependencies, performance metrics, and extension points
-- **Metadata System**: `./docs/metadata-generation.md` - Three-layer architecture (build → API → client) with schemas, parsing patterns, and extension guide
-- **Theme System**: `./docs/theme-system.md` - CSS variables, FOUC prevention, cascade order, specificity patterns, and common pitfalls
-- **Content System**: `./docs/content-system.md` - MDX architecture, filesystem routing, locale handling, translation workflows, and auto-linking
-- **Encounter Module**: `./docs/encounter-module.md` - Play Mode turn tracker, mechanics flags (lair, stratagem, legendaryDeed), round-start notifications
-- **World Sim Module**: `./docs/world-sim-module.md` - Three.js solar system, mediator pattern, render lifecycle, celestial renderers, DOM overlay bridge
-- **Copilot Workflow**: `./docs/copilot-workflow-system.md` - Enforced A→B→C task lifecycle, agents, skills, hooks, health checks, reconciliation
+- **Build Pipeline**: `.github/docs/build-pipeline.md` - Complete pipeline architecture with all stages, dependencies, performance metrics, and extension points
+- **Metadata System**: `.github/docs/metadata-generation.md` - Three-layer architecture (build → API → client) with schemas, parsing patterns, and extension guide
+- **Theme System**: `.github/docs/theme-system.md` - CSS variables, FOUC prevention, cascade order, specificity patterns, and common pitfalls
+- **Content System**: `.github/docs/content-system.md` - MDX architecture, filesystem routing, locale handling, translation workflows, and auto-linking
+- **Encounter Module**: `.github/docs/encounter-module.md` - Play Mode turn tracker, mechanics flags (lair, stratagem, legendaryDeed), round-start notifications
+- **World Sim Module**: `.github/docs/world-sim-module.md` - Three.js solar system, mediator pattern, render lifecycle, celestial renderers, DOM overlay bridge
+- **Foundry Module**: `.github/docs/foundry-module.md` - Export pipeline, monster transformer, deterministic IDs, MDX→HTML, dnd5e maps, token generation, LevelDB compilation
+- **Copilot Workflow**: `.github/docs/copilot-workflow-system.md` - Enforced A→B→C task lifecycle, agents, skills, hooks, health checks, reconciliation
 
 ### Copilot Workflow System
 
@@ -439,7 +448,7 @@ export { main, parseFile }; // Export for orchestrator
 ### Key Source Files
 
 - **Shared Data**: `scripts/core/shared-data.json` - Single source of truth for game data (damage types, conditions, abilities, item rarities, spell schools)
-- **Shared Utils**: `scripts/core/shared-utils.mjs` - All common generator utilities (MetadataGeneratorUtils, GameData, TextUtils, ParsingUtils, FileUtils, etc.)
+- **Metadata Library**: `src/lib/metadata/` - All common generator utilities (`runGenerator`, `GameData`, text/parsing/tagging/file utilities, `startTimer`/`endTimer`)
 - **Theme Tokens**: `src/app/[locale]/globals.scss` - All CSS color variables (the ONLY place for color literals)
 - **Notification Constants**: `src/lib/components/pushNotification/pushNotification.constants.ts` - Timing constants for tests
 - **World Sim Mediator**: `src/lib/components/worldSim/WorldSimMediator.ts` - Central coordinator for the Three.js module

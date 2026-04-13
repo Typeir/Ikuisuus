@@ -75,6 +75,7 @@
     font-weight: 600;
     white-space: nowrap;
     transition: all 0.2s ease;
+    @include button-hover-scale;
 
     &:hover {
       background: var(--color-secondary);
@@ -155,6 +156,7 @@
     cursor: pointer;
     font-size: 1rem;
     transition: all 0.2s ease;
+    @include button-hover-scale(1.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -163,7 +165,6 @@
 
     &:hover:not(:disabled) {
       background: var(--color-bg-secondary);
-      transform: scale(1.1);
     }
 
     &:disabled {

@@ -8,14 +8,14 @@ This document defines the JSDoc formatting standards used throughout the project
 
 > **REQUIRED on all touched code**: JSDoc must be present on every exported function, interface, type, class, and constant.
 
-| Rule | Enforcement |
-|------|-------------|
-| File-level `@fileoverview` | Required for all `.ts`/`.tsx`/`.mjs` files |
-| Interface `@property` tags | REQUIRED - no inline `/** */` on properties |
-| Function callbacks in props | Include full type signature: `{(arg: T) => R}` |
-| Inline comments inside logic | **PROHIBITED** - extract to helper functions with JSDoc |
-| `@component` tag for React components | Required with function prop signatures |
-| Component `@param` exhaustiveness | **REQUIRED** - every prop must have a `@param {Type} [props.x]` line |
+| Rule                                  | Enforcement                                                          |
+| ------------------------------------- | -------------------------------------------------------------------- |
+| File-level `@fileoverview`            | Required for all `.ts`/`.tsx`/`.mjs` files                           |
+| Interface `@property` tags            | REQUIRED - no inline `/** */` on properties                          |
+| Function callbacks in props           | Include full type signature: `{(arg: T) => R}`                       |
+| Inline comments inside logic          | **PROHIBITED** - extract to helper functions with JSDoc              |
+| `@component` tag for React components | Required with function prop signatures                               |
+| Component `@param` exhaustiveness     | **REQUIRED** - every prop must have a `@param {Type} [props.x]` line |
 
 ---
 
@@ -28,11 +28,11 @@ This document defines the JSDoc formatting standards used throughout the project
 ```typescript
 function processData(items: Item[]) {
   // Filter out inactive items  ❌
-  const active = items.filter(i => i.active);
-  
+  const active = items.filter((i) => i.active);
+
   // Sort by priority  ❌
   const sorted = active.sort((a, b) => a.priority - b.priority);
-  
+
   // Take top 10  ❌
   return sorted.slice(0, 10);
 }
@@ -43,7 +43,7 @@ function processData(items: Item[]) {
 ```typescript
 /**
  * Processes items by filtering, sorting, and limiting results
- * 
+ *
  * @param {Item[]} items - Raw items to process
  * @returns {Item[]} Top 10 active items sorted by priority
  */
@@ -59,7 +59,7 @@ function processData(items: Item[]) {
  * @returns {Item[]} Active items only
  */
 function filterActiveItems(items: Item[]): Item[] {
-  return items.filter(i => i.active);
+  return items.filter((i) => i.active);
 }
 ```
 
@@ -74,18 +74,18 @@ Every JavaScript/TypeScript file should begin with a comprehensive file-level JS
 ```javascript
 /**
  * Module Title
- * 
+ *
  * @fileoverview Brief description of what this file does (1-3 sentences).
  * Additional context about purpose, use cases, or architectural decisions.
- * 
+ *
  * @module moduleName
  * @version 1.0.0
  * @author AuthorName
  * @since 1.0.0
- * 
+ *
  * @requires dependency1 Description of what this dependency provides
  * @requires dependency2 Description of what this dependency provides
- * 
+ *
  * @description
  * Detailed multi-paragraph explanation of the module's purpose, architecture,
  * and key concepts. Include:
@@ -93,11 +93,11 @@ Every JavaScript/TypeScript file should begin with a comprehensive file-level JS
  * - How it fits into the larger system
  * - Key algorithms or patterns used
  * - Performance characteristics
- * 
+ *
  * @example
  * // How to use this module
  * const result = await myFunction('input');
- * 
+ *
  * @example
  * // Advanced usage
  * const advanced = await myFunction('input', { option: true });
@@ -111,7 +111,7 @@ Functions must document parameters, return values, errors, and include examples:
 ```javascript
 /**
  * Brief one-line description of what the function does
- * 
+ *
  * @async (if function is async)
  * @function functionName
  * @param {Type} paramName - Parameter description
@@ -119,20 +119,20 @@ Functions must document parameters, return values, errors, and include examples:
  * @param {Type} [optionalParam="default"] - Optional with default value
  * @returns {ReturnType} Description of what is returned
  * @throws {ErrorType} Description of when errors are thrown
- * 
+ *
  * @description
  * Detailed explanation of function behavior:
  * 1. Step one of the process
  * 2. Step two of the process
  * 3. Step three of the process
- * 
+ *
  * Additional notes about edge cases, performance, or limitations.
- * 
+ *
  * @example
  * // Basic usage
  * const result = parseStatBlock(lines);
  * // Returns: { ac: 20, hp: 780, cr: "23" }
- * 
+ *
  * @example
  * // With optional parameters
  * const result = parseStatBlock(lines, { strict: true });
@@ -169,7 +169,7 @@ interface InterfaceName {
 ```typescript
 /**
  * Props for FilterSelect component
- * 
+ *
  * @interface FilterSelectProps
  * @property {string} value - Currently selected value
  * @property {FilterSelectOption[]} options - Available options
@@ -256,15 +256,15 @@ A single `@param {MyProps} props` tells consumers nothing about the actual contr
 
 ### Formatting Rules
 
-| Scenario | Format |
-|----------|--------|
-| Required prop | `@param {Type} props.name - Description` |
-| Optional prop | `@param {Type} [props.name] - Description` |
-| Optional with default | `@param {Type} [props.name=default] - Description` |
-| Callback/function prop | `@param {Function} props.onChange - Description of when it fires` |
-| Union literal prop | `@param {'edit' \| 'new'} props.mode - Description` |
-| Complex object prop | `@param {{ username: string, role: string } \| null} props.user - Description` |
-| Promise prop (Next.js pages) | `@param {Promise<{ locale: string }>} props.params - Async route parameters` |
+| Scenario                     | Format                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------ |
+| Required prop                | `@param {Type} props.name - Description`                                       |
+| Optional prop                | `@param {Type} [props.name] - Description`                                     |
+| Optional with default        | `@param {Type} [props.name=default] - Description`                             |
+| Callback/function prop       | `@param {Function} props.onChange - Description of when it fires`              |
+| Union literal prop           | `@param {'edit' \| 'new'} props.mode - Description`                            |
+| Complex object prop          | `@param {{ username: string, role: string } \| null} props.user - Description` |
+| Promise prop (Next.js pages) | `@param {Promise<{ locale: string }>} props.params - Async route parameters`   |
 
 ### Provider / Context Components
 
@@ -305,13 +305,13 @@ Classes require documentation at the class level and for each method:
 ```javascript
 /**
  * Brief description of the class purpose
- * 
+ *
  * @class ClassName
  * @description Detailed explanation of the class:
  * - What it represents
  * - Key responsibilities
  * - Usage patterns
- * 
+ *
  * @example
  * const instance = new ClassName('param');
  * instance.method();
@@ -319,7 +319,7 @@ Classes require documentation at the class level and for each method:
 class ClassName {
   /**
    * Creates an instance of ClassName
-   * 
+   *
    * @constructor
    * @param {Type} param - Parameter description
    */
@@ -329,11 +329,11 @@ class ClassName {
 
   /**
    * Method description
-   * 
+   *
    * @method methodName
    * @param {Type} param - Parameter description
    * @returns {Type} Return value description
-   * 
+   *
    * @example
    * instance.methodName('value');
    */
@@ -353,21 +353,21 @@ For metadata generation scripts, include additional context:
 /**
  * @fileoverview Parser for D&D monster stat blocks.
  * Extracts structured metadata including combat stats, abilities, resistances.
- * 
+ *
  * @module generateMonsterMetadata
  * @version 3.0.0
  * @since 1.0.0
- * 
- * @requires ./shared-utils.mjs Performance monitoring and utility functions
- * @requires ./shared-data.json Centralized game data and validation patterns
- * 
+ *
+ * @requires @/lib/metadata Performance monitoring and utility functions
+ * @requires scripts/core/shared-data.json Centralized game data and validation patterns
+ *
  * @description
  * Advanced parser supporting:
  * - Multiple stat blocks per file
  * - Nested blockquote variants
  * - Comprehensive tag generation
  * - Performance profiling
- * 
+ *
  * Output Format:
  * - Writes .metadata.json files alongside source .sheet.mdx files
  * - Supports arrays for multi-variant monsters
@@ -383,23 +383,23 @@ For build pipeline scripts:
 /**
  * @fileoverview Compresses full-resolution images to WebP format.
  * Part of the pre-initialization build pipeline.
- * 
+ *
  * @module compressAssets
  * @version 2.0.0
- * 
+ *
  * @requires sharp Image processing library
  * @requires fs.promises File system operations
- * 
+ *
  * @description
  * Pipeline Stage: 1 (runs first in pre-init)
- * 
+ *
  * Process:
  * 1. Scans public/full-size/ for images
  * 2. Converts to WebP (max 1600px width)
  * 3. Outputs to public/library/
  * 4. Mirrors directory structure
  * 5. Skips existing files
- * 
+ *
  * Performance: ~5-30 seconds for 50 images
  * Memory: Peak ~200MB during processing
  */
@@ -408,6 +408,7 @@ For build pipeline scripts:
 ## Tag Reference
 
 ### Common Tags
+
 - `@fileoverview` - Brief file description
 - `@module` - Module name
 - `@version` - Current version
@@ -431,6 +432,7 @@ For build pipeline scripts:
 - `@method` - Class method
 
 ### Type Syntax
+
 ```javascript
 @param {string} name - Simple type
 @param {string|number} id - Union type
@@ -450,17 +452,17 @@ For build pipeline scripts:
 ```javascript
 /**
  * Spell Metadata Generator
- * 
+ *
  * @fileoverview Parser for D&D 5e spell descriptions in MDX format.
  * Extracts level, school, casting time, components, and game mechanics tags.
- * 
+ *
  * @module generateSpellMetadata
  * @version 2.0.0
  * @since 1.0.0
- * 
+ *
  * @requires fs.promises File system operations
- * @requires ./shared-utils.mjs Shared parsing and tagging utilities
- * 
+ * @requires @/lib/metadata Shared parsing and tagging utilities
+ *
  * @description
  * Parses spell MDX files to extract:
  * - Level (0-12, where 0 = cantrip)
@@ -469,25 +471,25 @@ For build pipeline scripts:
  * - Components (V, S, M with descriptions)
  * - Concentration requirement
  * - Damage types and conditions
- * 
+ *
  * Special Handling:
  * - Dual casting times (e.g., "1 action or reaction")
  * - Ritual casting detection
  * - Material component extraction with descriptions
- * 
+ *
  * @example
  * // Run generator
- * node generateSpellMetadata.mjs
+ * npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/generateSpellMetadata.ts
  * // Output: Creates .metadata.json files alongside spell .mdx files
  */
 
 /**
  * Parses spell casting time into array of action economy types
- * 
+ *
  * @function parseCastingTimeToArray
  * @param {string} castingTimeRaw - Raw casting time text from spell
  * @returns {string[]} Array of action types (e.g., ['action', 'reaction'])
- * 
+ *
  * @description
  * Priority order (first match wins):
  * 1. "bonus action" - Highest priority
@@ -495,18 +497,18 @@ For build pipeline scripts:
  * 3. "reaction" - Third priority
  * 4. Time durations - "minute", "hour", "day"
  * 5. "ritual" - Special flag
- * 
+ *
  * Handles dual casting times:
  * "1 action or reaction" → ['action', 'reaction']
- * 
+ *
  * @example
  * parseCastingTimeToArray('1 action');
  * // Returns: ['action']
- * 
+ *
  * @example
  * parseCastingTimeToArray('1 bonus action or reaction');
  * // Returns: ['bonus action', 'reaction']
- * 
+ *
  * @example
  * parseCastingTimeToArray('1 minute (ritual)');
  * // Returns: ['minute', 'ritual']
@@ -521,21 +523,21 @@ function parseCastingTimeToArray(castingTimeRaw) {
 ```javascript
 /**
  * Translation File Merger
- * 
+ *
  * @fileoverview Merges namespaced translation files into single index.json per locale.
- * 
+ *
  * @module mergeMessages
  * @version 1.0.0
- * 
+ *
  * @requires fs Node.js file system module
  * @requires glob File pattern matching
- * 
+ *
  * @description
  * Consolidates separate namespace files (layout.json, search.json) into
  * a unified index.json for next-intl. Maintains namespace structure.
- * 
+ *
  * @example
- * node mergeMessages.js
+ * npx tsx --tsconfig tsconfig.scripts.json scripts/i18n/mergeMessages.ts
  * // Output: ✅ en: merged 4 files into index.json (namespaced)
  */
 ```
@@ -556,11 +558,13 @@ function parseCastingTimeToArray(castingTimeRaw) {
 ## Tools and Validation
 
 ### VSCode Integration
+
 - Install "Document This" extension for JSDoc generation
 - Enable `checkJs` in jsconfig.json for type checking
 - Use TypeScript language server for inline docs
 
 ### Type Checking
+
 ```json
 // jsconfig.json
 {
@@ -572,6 +576,7 @@ function parseCastingTimeToArray(castingTimeRaw) {
 ```
 
 ### Documentation Generation
+
 ```bash
 # Generate HTML documentation (if jsdoc is configured)
 npm run generate-docs

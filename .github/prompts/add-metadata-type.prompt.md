@@ -19,20 +19,20 @@ From the user's request, determine:
 ## Step 2: Read Architecture Docs
 
 1. Read `.github/docs/metadata-generation.md` for the three-layer architecture.
-2. Read `scripts/core/shared-utils.mjs` for the shared utilities API (`MetadataGeneratorUtils`, `GameData`, `TextUtils`, `ParsingUtils`, `FileUtils`, `TaggingUtils`).
-3. Read an existing generator for reference (e.g., `scripts/metadata/generateHeirloomMetadata.mjs`).
+2. Skim `src/lib/metadata/index.ts` for the shared utilities API (`runGenerator`, `GameData`, `ItemData`, parsing/tagging functions).
+3. Read an existing generator for reference (e.g., `scripts/metadata/generateHeirloomMetadata.ts`).
 
 ## Step 3: Layer 1 — Build Script
 
-Create `scripts/metadata/generate{Type}Metadata.mjs`:
+Create `scripts/metadata/generate{Type}Metadata.ts`:
 
-1. Import from `scripts/core/shared-utils.mjs`
-2. Implement `parse{Type}File(filePath, content)` function
-3. Use `MetadataGeneratorUtils.runGenerator()` for orchestration
+1. Import from `@/lib/metadata`
+2. Implement `parse{Type}File(filePath: string, sharedData: SharedData)` function
+3. Use `runGenerator()` for orchestration
 4. Export `main` and the parse function
-5. Add the `if (import.meta.url === ...)` self-execution guard
+5. Call `main().catch(...)` unconditionally (tsx always executes top-level code)
 
-Register the new generator in the orchestrator (`scripts/metadata/generateMetadata.mjs`).
+Register the new generator in the orchestrator (`scripts/metadata/generateMetadata.ts`).
 
 ## Step 4: Layer 2 — API Route
 

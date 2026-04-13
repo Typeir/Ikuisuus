@@ -77,10 +77,10 @@ describe('githubDirectorySource', () => {
       json: () =>
         Promise.resolve({
           tree: [
-            { path: 'src/content/en/monsters', type: 'tree' },
-            { path: 'src/content/en/monsters/goblin.sheet.mdx', type: 'blob' },
-            { path: 'src/content/en/monsters/orc.sheet.mdx', type: 'blob' },
-            { path: 'src/content/en/spells', type: 'tree' },
+            { path: 'en/monsters', type: 'tree' },
+            { path: 'en/monsters/goblin.sheet.mdx', type: 'blob' },
+            { path: 'en/monsters/orc.sheet.mdx', type: 'blob' },
+            { path: 'en/spells', type: 'tree' },
           ],
         }),
     });
@@ -106,9 +106,9 @@ describe('githubDirectorySource', () => {
       json: () =>
         Promise.resolve({
           tree: [
-            { path: 'src/content/en/monsters', type: 'tree' },
-            { path: 'src/content/en/spells', type: 'tree' },
-            { path: 'src/content/es/monsters', type: 'tree' },
+            { path: 'en/monsters', type: 'tree' },
+            { path: 'en/spells', type: 'tree' },
+            { path: 'es/monsters', type: 'tree' },
           ],
         }),
     });

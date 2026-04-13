@@ -81,6 +81,7 @@
 .button {
   @include button-base(0.35rem 0.65rem, 0.8rem);
   @include button-hover-secondary;
+  @include button-hover-scale;
 }
 
 .buttonPrimary {
@@ -98,6 +99,24 @@
   &:focus {
     outline: none;
     border-color: var(--color-accent);
+  }
+}
+
+.encounterComboboxWrap {
+  width: 160px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: stretch;
+
+  /* Make the GenericCombobox root (direct div child) fill the wrapper height */
+  > div {
+    height: 100%;
+  }
+
+  /* Make the input inside the GenericCombobox fill that height */
+  > div > input {
+    height: 100%;
+    box-sizing: border-box;
   }
 }
 
@@ -119,6 +138,7 @@
   background: var(--color-surface);
   border-color: var(--color-accent);
   color: var(--color-text);
+  @include button-hover-scale;
 
   &:hover {
     background: var(--color-accent);

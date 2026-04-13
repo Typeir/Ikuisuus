@@ -6,7 +6,7 @@ Comprehensive guides for the Library of Ikuisuus codebase. Each document provide
 
 New to the codebase? Start here:
 
-1. **[Copilot Instructions](../copilot-instructions.md)** - High-level overview and critical patterns
+1. **[AGENT Instructions](../../AGENTS.md.md)** - High-level overview and critical patterns
 2. **[Build Pipeline](./build-pipeline.md)** - Understand the mandatory pre-init workflow
 3. **[Content System](./content-system.md)** - Learn how MDX content and routing work
 
@@ -179,6 +179,25 @@ Three.js-powered interactive solar system with mediator architecture.
 
 ---
 
+### 🎲 [Foundry VTT Module](./foundry-module.md)
+
+**When to read**: When working on Foundry VTT export, compendium packs, or the export pipeline
+
+Complete documentation of the `foundry/` module and its content pipeline.
+
+**Key Topics**:
+
+- Export pipeline (metadata discovery → transform → image bundling → token generation → pack compile)
+- Monster transformer (MonsterMetadata → dnd5e NPC Actor JSON)
+- Deterministic ID generation (SHA-256 slug hashing for stable compendium entries)
+- MDX → biography HTML pipeline (with component stubs)
+- dnd5e data mappings (sizes, damage types, conditions, skills, languages)
+- Adding new content type transformers
+
+**Essential for**: Foundry VTT module development
+
+---
+
 ### ⚙️ [Copilot Workflow System](./copilot-workflow-system.md)
 
 **When to read**: When configuring agents, skills, prompts, or the health gate
@@ -247,7 +266,7 @@ Three related docs for the content submodule sync system:
 
 ```
 Build Pipeline
-    ├─> Metadata Generation (Stage 4: generate-all-metadata)
+    ├─> Metadata Generation (Stage 4: generate-metadata)
     ├─> Content System (Stage 2-3: kebabify, md-to-mdx)
     └─> Internationalization (Stage 5: merge-locales)
 
@@ -266,6 +285,11 @@ World Sim Module
     ├─> RenderLifecycle (phase bus for frame events)
     ├─> ProjectionBridge (3D→2D, uses finalized camera matrix)
     └─> Content System (body/region deep-links to MDX content)
+
+Foundry VTT Module
+    ├─> Metadata Generation (consumes .metadata.json output)
+    ├─> Content System (reads .sheet.mdx for biography HTML)
+    └─> Build Pipeline (foundry:build is separate from pre-init)
 ```
 
 ## File Reference Map
@@ -274,23 +298,31 @@ Quick reference for where key files are located:
 
 **Build Scripts**:
 
-- `scripts/assets/compressAssets.js` - Stage 1: Image compression
-- `scripts/content/kebabifyContent.js` - Stage 2: Filename normalization
-- `scripts/content/mdToMdx.js` - Stage 3: Extension conversion
-- `scripts/metadata/generateMetadata.mjs` - Stage 4: Orchestrator
-- `scripts/i18n/mergeMessages.js` - Stage 5: Translation merging
-- `scripts/content/findReusableMdxOutliers.js` - Stage 6: Duplication analysis
+- `scripts/assets/compressAssets.ts` - Stage 1: Image compression
+- `scripts/content/kebabifyContent.ts` - Stage 2: Filename normalization
+- `scripts/content/mdToMdx.ts` - Stage 3: Extension conversion
+- `scripts/metadata/generateMetadata.ts` - Stage 4: Orchestrator
+- `scripts/i18n/mergeMessages.ts` - Stage 5: Translation merging
+- `scripts/content/findReusableMdxOutliers/index.ts` - Stage 6: Duplication analysis
 
 **Metadata System**:
 
-- `scripts/metadata/generateMonsterMetadata.mjs` - Monster stat block parser
-- `scripts/metadata/generateHeirloomMetadata.mjs` - Heirloom item parser
-- `scripts/metadata/generateSpellMetadata.mjs` - Spell parser (with casting time array)
-- `scripts/core/shared-utils.mjs` - All shared utilities
+- `scripts/metadata/generateMonsterMetadata.ts` - Monster stat block parser
+- `scripts/metadata/generateHeirloomMetadata.ts` - Heirloom item parser
+- `scripts/metadata/generateSpellMetadata.ts` - Spell parser (with casting time array)
+- `scripts/metadata/generateTrinketMetadata.ts` - Trinket item parser
+- `scripts/metadata/generateBloodlineMetadata.ts` - Bloodline parser
+- `scripts/metadata/generateVocationMetadata.ts` - Vocation parser
+- `scripts/metadata/generateSpecializationMetadata.ts` - Specialization parser
+- `src/lib/metadata/` - Shared generator utilities (`runGenerator`, `GameData`, parsing/tagging functions)
 - `scripts/core/shared-data.json` - Game data constants
 - `src/app/api/monsters/route.ts` - Monster API endpoint
 - `src/app/api/heirlooms/route.ts` - Heirloom API endpoint
 - `src/app/api/spells/route.ts` - Spell API endpoint
+- `src/app/api/bloodlines/route.ts` - Bloodline API endpoint
+- `src/app/api/trinkets/route.ts` - Trinket API endpoint
+- `src/app/api/vocations/route.ts` - Vocation API endpoint
+- `src/app/api/specializations/route.ts` - Specialization API endpoint
 - `src/lib/components/mdx/MetadataTable/` - Table components
 
 **Theme System**:
@@ -298,6 +330,18 @@ Quick reference for where key files are located:
 - `src/app/[locale]/globals.scss` - CSS variables and cascade (single source for color literals)
 - `src/lib/enums/themes.ts` - Theme enum and constants
 - `src/lib/utils/themeScript.ts` - FOUC prevention script
+
+**Foundry VTT Module**:
+
+- `foundry/module.json` - Module manifest (packs, compatibility, system requirement)
+- `foundry/scripts/export.ts` - Export orchestrator (metadata discovery, image bundling, token generation)
+- `foundry/scripts/transformers/monsterTransformer.ts` - MonsterMetadata → dnd5e NPC Actor
+- `foundry/scripts/utils/idGenerator.ts` - Deterministic SHA-256 based Foundry document IDs
+- `foundry/scripts/utils/mdxToHtml.ts` - MDX → biography HTML with component stubs
+- `foundry/scripts/utils/traitParsers.ts` - Trait string arrays → dnd5e ParsedTrait objects
+- `foundry/scripts/constants/dnd5eMaps.ts` - All dnd5e string mapping lookup tables
+- `foundry/packs/_source/monsters/` - Exported NPC Actor JSON (one file per actor)
+- `foundry/packs/monsters/` - Compiled LevelDB compendium pack
 - `src/app/[locale]/layout.tsx` - Root layout with inline script
 - `src/lib/components/themeSelector/` - Theme toggle component
 - `tailwind.config.ts` - Tailwind integration with CSS variables
@@ -347,8 +391,8 @@ Quick reference for where key files are located:
 - `src/i18n/routing.ts` - Locale configuration
 - `src/middleware.ts` - next-intl middleware
 - `messages/{locale}/` - Translation files
-- `scripts/linkifyMarkdown.mjs` - Auto-linking
-- `scripts/scaffoldFromLinks.mjs` - Placeholder generation
+- `scripts/content/linkifyRunner.ts` - Auto-linking runner
+- `scripts/content/scaffoldFromLinks.ts` - Placeholder generation
 
 ## Common Workflows
 
@@ -356,10 +400,10 @@ Quick reference for where key files are located:
 
 1. Read: [Metadata Generation § Extending the System](./metadata-generation.md#extending-the-system)
 2. Read: [Content System § Adding New Content](./content-system.md#adding-new-content)
-3. Update: `scripts/shared-utils.mjs` (add to `getContentDirectory()`)
-4. Create: `scripts/generateMyContentMetadata.mjs`
-5. Create: `src/app/api/my-content/route.ts`
-6. Create: `src/lib/components/mdx/MetadataTable/myContentTableWrapper.tsx`
+3. Add shared utilities to `src/lib/metadata/` if needed
+4. Create: `scripts/metadata/generate{Type}Metadata.ts` (import from `@/lib/metadata`)
+5. Create: `src/app/api/{type}/route.ts`
+6. Create: `src/lib/components/mdx/MetadataTable/{type}TableWrapper.tsx`
 7. Register: `src/lib/components/mdx/index.tsx`
 
 ### Debugging Build Failures
@@ -371,7 +415,7 @@ Quick reference for where key files are located:
    - Missing .mdx extension → Run `npm run md-to-mdx`
    - Non-kebab-case files → Run `npm run kebabify-content`
    - Missing images → Run `npm run compress-assets`
-   - Missing metadata → Run `npm run generate-all-metadata`
+   - Missing metadata → Run `npm run generate-metadata`
 
 ### Fixing Theme Issues
 

@@ -224,7 +224,7 @@ When performing a format refactor:
 1. **Run the check**: `node .github/scripts/check-mdx-format.mjs` to identify violations
 2. **Group by rule**: Violations of the same rule can often be fixed with a consistent pattern
 3. **Fix by content type**: Work through one content type at a time (monsters → spells → heirlooms → world)
-4. **Verify metadata**: After fixing monster/spell/heirloom files, run `npm run generate-all-metadata` to ensure parsers still work
+4. **Verify metadata**: After fixing monster/spell/heirloom files, run `npm run generate-metadata` to ensure parsers still work
 5. **Re-run check**: Confirm violations are resolved and no new ones introduced
 
 ## Component Registry

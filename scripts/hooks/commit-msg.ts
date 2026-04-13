@@ -12,7 +12,9 @@
  *   [dirty]: quick test commit
  *
  * @module scripts/hooks/commit-msg
+ * @author Ikuisuus
  * @version 1.0.0
+ * @since 2.0.0
  */
 
 import { createLogger } from '@/lib/logging/logger';
@@ -23,7 +25,7 @@ const log = createLogger({ script: 'commit-msg' });
 /**
  * Validates commit message format
  *
- * @param message - The commit message to validate
+ * @param {string} message - The commit message to validate
  * @returns True if message matches format, false otherwise
  */
 function isValidCommitMessage(message: string): boolean {

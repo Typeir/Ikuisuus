@@ -43,6 +43,7 @@
       font-weight: 600;
       white-space: nowrap;
       transition: all 0.2s ease;
+      @include button-hover-scale;
 
       &:hover {
         background: var(--color-accent);
@@ -95,6 +96,7 @@
   font-size: 0.75rem;
   font-weight: 600;
   transition: all 0.2s ease;
+  @include button-hover-scale;
   white-space: nowrap;
   height: fit-content;
 

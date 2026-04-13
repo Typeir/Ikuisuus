@@ -16,6 +16,7 @@
 
 export { AffixCombobox } from './affixCombobox';
 export { CreatureCombobox } from './creatureCombobox';
+export { EncounterCombobox } from './encounterCombobox';
 export { GenericCombobox } from './genericCombobox';
 export type { ComboboxItem } from './genericCombobox';
 export { SpellCombobox } from './spellCombobox';

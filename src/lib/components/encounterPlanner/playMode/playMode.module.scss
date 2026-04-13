@@ -45,6 +45,7 @@
   font-weight: 600;
   font-size: 0.875rem;
   transition: all 0.2s ease;
+  @include button-hover-scale;
 
   &:hover {
     background: var(--color-lair-border);
@@ -95,6 +96,7 @@
 
 .exitButton {
   @include button-base;
+  @include button-hover-scale;
   margin-left: auto;
   font-size: 1.25rem;
   line-height: 1;
@@ -126,6 +128,7 @@
     font-weight: 600;
     font-size: 0.85rem;
     transition: all 0.2s ease;
+    @include button-hover-scale;
 
     &:hover {
       background: var(--color-secondary);
@@ -211,6 +214,8 @@
     cursor: pointer;
     font-weight: 600;
     font-size: 0.85rem;
+    transition: all 0.2s ease;
+    @include button-hover-scale;
 
     &:hover {
       background: var(--color-secondary);

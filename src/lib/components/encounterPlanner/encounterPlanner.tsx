@@ -62,6 +62,7 @@ import type { MonsterData } from '@/lib/utils/monsterCache';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CombatantRow } from './combatantRow';
+import { EncounterCombobox } from './comboboxes';
 import styles from './encounterPlanner.module.scss';
 import { MonsterImporter } from './importer';
 import { PlayMode } from './playMode';
@@ -423,16 +424,13 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
             {t('newEncounter')}
           </button>
 
-          <select
-            className={styles.select}
-            value={encounter.id}
-            onChange={(e) => handleLoadEncounter(e.target.value)}>
-            {encounters.map((enc) => (
-              <option key={enc.id} value={enc.id}>
-                {enc.name}
-              </option>
-            ))}
-          </select>
+          <div className={styles.encounterComboboxWrap}>
+            <EncounterCombobox
+              encounters={encounters}
+              currentEncounterId={encounter.id}
+              onSelect={handleLoadEncounter}
+            />
+          </div>
 
           <button onClick={handleExport} className={styles.button}>
             {t('exportEncounter')}

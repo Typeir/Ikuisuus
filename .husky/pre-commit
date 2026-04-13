@@ -1,5 +1,0 @@
-# Security pattern scan (blocks commit if secrets detected)
-npx tsx --tsconfig tsconfig.scripts.json scripts/hooks/pre-commit.ts || exit $?
-
-# Multirepo sync warning (advisory, never blocks)
-npx tsx --tsconfig tsconfig.scripts.json scripts/multirepo/pre-commit-warn.ts

@@ -1,2 +1,0 @@
-# Commit message format validation: [action]: text
-npx tsx --tsconfig tsconfig.scripts.json scripts/hooks/commit-msg.ts "$1"

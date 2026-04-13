@@ -74,7 +74,7 @@ interface PostgresStorage {
 /**
  * Creates a Postgres-backed metadata storage instance.
  *
- * @param connectionString - PostgreSQL connection URL (e.g. `DATABASE_URL`)
+ * @param {string} connectionString - PostgreSQL connection URL (e.g. `DATABASE_URL`)
  * @returns Storage adapter with ensureTable, upsert, upsertBatch, and close methods
  */
 export function createPostgresStorage(

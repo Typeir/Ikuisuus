@@ -31,9 +31,13 @@ The metadata system extracts structured data from human-readable MDX content fil
 │  │ (spells)     │                    │ json         │       │
 │  └──────────────┘                    └──────────────┘       │
 │                                                              │
-│  Scripts: generateMonsterMetadata.mjs,                      │
-│           generateHeirloomMetadata.mjs,                     │
-│           generateSpellMetadata.mjs                         │
+│  Scripts: scripts/metadata/generateMonsterMetadata.ts,       │
+│           scripts/metadata/generateHeirloomMetadata.ts,       │
+│           scripts/metadata/generateSpellMetadata.ts,          │
+│           scripts/metadata/generateTrinketMetadata.ts,        │
+│           scripts/metadata/generateBloodlineMetadata.ts,      │
+│           scripts/metadata/generateVocationMetadata.ts,       │
+│           scripts/metadata/generateSpecializationMetadata.ts  │
 └─────────────────────────────────────────────────────────────┘
                            │
                            ▼
@@ -44,6 +48,10 @@ The metadata system extracts structured data from human-readable MDX content fil
 │  │ GET /api/monsters?locale=en                      │       │
 │  │ GET /api/heirlooms?locale=en                     │       │
 │  │ GET /api/spells?locale=en                        │       │
+│  │ GET /api/bloodlines?locale=en                    │       │
+│  │ GET /api/trinkets?locale=en                      │       │
+│  │ GET /api/vocations?locale=en                     │       │
+│  │ GET /api/specializations?locale=en               │       │
 │  └──────────────────────────────────────────────────┘       │
 │                        │                                     │
 │                        ▼                                     │
@@ -58,6 +66,10 @@ The metadata system extracts structured data from human-readable MDX content fil
 │  Files: src/app/api/monsters/route.ts                       │
 │         src/app/api/heirlooms/route.ts                      │
 │         src/app/api/spells/route.ts                         │
+│         src/app/api/bloodlines/route.ts                     │
+│         src/app/api/trinkets/route.ts                       │
+│         src/app/api/vocations/route.ts                      │
+│         src/app/api/specializations/route.ts                │
 └─────────────────────────────────────────────────────────────┘
                            │
                            ▼
@@ -91,144 +103,134 @@ The metadata system extracts structured data from human-readable MDX content fil
 ## Layer 1: Build-Time Generation
 
 ### Overview
+
 Metadata generators parse MDX content files during the build pipeline and output `.metadata.json` files alongside the source files. This happens before Next.js compilation.
 
-### Shared Architecture (scripts/shared-utils.mjs)
+### Shared Architecture (`src/lib/metadata/`)
 
-All generators use a common architecture to eliminate duplication:
+All generators import utilities from the shared `src/lib/metadata/` TypeScript module:
 
-**Core Classes**:
+**Key Functions**:
 
-1. **MetadataGeneratorUtils** - Standardized orchestration
-   ```javascript
-   static async runGenerator(config) {
-     // 1. Start performance timer
-     // 2. Load shared data (GameData/ItemData)
-     // 3. Scan content directory for files matching pattern
-     // 4. Process files in parallel with Promise.allSettled()
-     // 5. Collect results, handle errors
-     // 6. Write .metadata.json files
-     // 7. Report statistics and timing
-   }
-   
-   static getContentDirectory(contentType) {
-     // Maps content types to filesystem paths
-     // Returns absolute path to content folder
-   }
+1. **`runGenerator(config: GeneratorConfig)`** - Standardized orchestration
+
+   ```typescript
+   // 1. Start performance timer
+   // 2. Load shared data (via loadSharedData())
+   // 3. Scan content directory for files matching pattern
+   // 4. Process files in parallel with Promise.allSettled()
+   // 5. Collect results, handle errors
+   // 6. Write .metadata.json files (or persist to DB via --persist flag)
+   // 7. Report statistics and timing
    ```
 
-2. **GameData** - Single source of truth for D&D 5e data
-   ```javascript
-   static getDamageTypes()      // ['acid', 'bludgeoning', ..., 'true']
-   static getConditions()       // ['blinded', 'charmed', ..., 'stunned']
-   static getAbilities()        // ['str', 'dex', 'con', 'int', 'wis', 'cha']
-   static getSizes()           // ['tiny', 'small', ..., 'gargantuan']
-   static getCreatureTypes()   // ['aberration', ..., 'undead']
+2. **`GameData`** - Single source of truth for D&D 5e data
+
+   ```typescript
+   GameData.getDamageTypes(sharedData); // ['acid', 'bludgeoning', ..., 'true']
+   GameData.getConditions(sharedData); // ['blinded', 'charmed', ..., 'stunned']
+   GameData.getAbilities(sharedData); // ['str', 'dex', 'con', 'int', 'wis', 'cha']
+   GameData.getSizes(sharedData); // ['tiny', 'small', ..., 'gargantuan']
+   GameData.getCreatureTypes(sharedData); // ['aberration', ..., 'undead']
    ```
 
-3. **ItemData** - Equipment and item data
-   ```javascript
-   static getRarities()         // ['common', 'uncommon', ..., 'legendary']
-   static getWeaponProperties() // ['ammunition', 'finesse', 'heavy', ...]
-   static getMasteryProperties() // ['cleave', 'graze', 'nick', ...]
-   static getSpellSchools()     // ['Abjuration', ..., 'Transmutation']
+3. **`ItemData`** - Equipment and item data
+
+   ```typescript
+   ItemData.getRarities(sharedData); // ['common', 'uncommon', ..., 'legendary']
+   ItemData.getWeaponProperties(sharedData); // ['ammunition', 'finesse', 'heavy', ...]
+   ItemData.getMasteryProperties(sharedData); // ['cleave', 'graze', 'nick', ...]
+   ItemData.getSpellSchools(sharedData); // ['Abjuration', ..., 'Transmutation']
    ```
 
-4. **TextUtils** - String manipulation
-   ```javascript
-   static clean(text)          // Trim, normalize whitespace
-   static stripMarkdown(text)  // Remove MD syntax
-   static toKebabCase(text)    // 'Hello World' → 'hello-world'
-   static filePathToSlug(path) // Extract slug from file path
+4. **Text utilities** (`clean`, `filePathToSlug`, `toKebabCase`)
+
+   ```typescript
+   clean(text); // Trim, normalize whitespace
+   filePathToSlug(path); // Extract slug from file path
    ```
 
-5. **ParsingUtils** - Common extraction patterns
-   ```javascript
-   static parseTitle(mdxContent)            // Extract first # heading
-   static parseProperties(blockText)        // Key-value pair extraction
-   static parseNumericValue(text)           // '42', '3d6 + 10' → numbers
-   static parseCharges(text)               // 'X charges (Y per day)'
+5. **Parsing utilities** (`parseTitle`, `parseProperties`, `parseNumericValue`, etc.)
+
+   ```typescript
+   parseTitle(content); // Extract first # heading
+   parseKeyBullets(blockText); // Key-value pair extraction
+   parseNumericValue(text); // '42', '3d6 + 10' → numbers
+   parseCharges(text); // 'X charges (Y per day)'
    ```
 
-6. **TaggingUtils** - Unified tag generation
-   ```javascript
-   static generateDamageTags(text, gameData)      // ['damage:fire', 'damage:necrotic']
-   static generateConditionTags(text, gameData)   // ['condition:stunned', 'condition:prone']
-   static generateMechanicTags(abilityName, text) // ['mechanic:legendary-actions']
-   static generateLoreTags(text)                  // ['lore:underdark', 'lore:drow']
+6. **Tagging utilities** (`extractAllTags`, `extractDamageTags`, etc.)
+
+   ```typescript
+   extractAllTags(content, sharedData, options); // Combined tag extraction
+   extractDamageTags(content, sharedData); // ['damage:fire', 'damage:necrotic']
+   extractConditionTags(content, sharedData); // ['condition:stunned', ...]
+   extractMonsterMechanicTags(abilityName, text); // ['mechanic:legendary-actions']
    ```
 
-7. **FileUtils** - Safe I/O operations
-   ```javascript
-   static safeReadFile(filePath)          // Returns content or null (no throw)
-   static safeWriteFile(filePath, data)   // Creates dirs, handles errors
-   static getMatchingFiles(dir, pattern)  // Recursive file search
+7. **File utilities** (`safeReadFile`, `safeWriteFile`, `getMatchingFiles`)
+
+   ```typescript
+   safeReadFile(filePath); // Returns content or null (no throw)
+   safeWriteFile(filePath, data); // Creates dirs, handles errors
+   getMatchingFiles(dir, pattern); // Recursive file search
    ```
 
-8. **PerformanceUtils** - Profiling
-   ```javascript
-   static startTimer()                    // Begin measurement
-   static endTimer(startTime, label)     // Log duration and memory delta
+8. **Performance utilities** (`startTimer`, `endTimer`)
+   ```typescript
+   startTimer(); // Begin measurement
+   endTimer(startTime, label); // Log duration and memory delta
    ```
 
 ### Generator Implementation Pattern
 
-All generators follow this template:
+All generators follow this TypeScript template:
 
-```javascript
-// scripts/generateMyContentMetadata.mjs
-import { MetadataGeneratorUtils, GameData, TextUtils, ParsingUtils, FileUtils } from './shared-utils.mjs';
+```typescript
+// scripts/metadata/generateMyContentMetadata.ts
+import {
+  runGenerator,
+  GameData,
+  parseTitle,
+  extractAllTags,
+} from '@/lib/metadata';
+import type { SharedData } from '@/lib/metadata';
 
 /**
- * Parse a single content file and extract metadata
+ * Parse a single content file and extract metadata.
+ *
  * @param {string} filePath - Absolute path to .mdx file
- * @param {object} sharedData - GameData and ItemData instance
- * @returns {object|null} Metadata object or null on error
+ * @param {SharedData} sharedData - Loaded shared game data
+ * @returns {object | null} Metadata object or null on error
  */
-async function parseMyContentFile(filePath, sharedData) {
-  const content = FileUtils.safeReadFile(filePath);
-  if (!content) return null;
-
-  const slug = TextUtils.filePathToSlug(filePath);
-  const title = ParsingUtils.parseTitle(content);
-  
+async function parseMyContentFile(filePath: string, sharedData: SharedData) {
   // Content-specific parsing logic here
-  // Use shared utilities for common patterns
-  
   return {
     slug,
     title,
     file: filePath,
-    // ... other metadata fields
-    tags: [/* generated tags */]
+    tags: extractAllTags(content, sharedData, { contentType: 'my-content' }),
   };
 }
 
-/**
- * Main entry point for generator
- */
 async function main() {
-  await MetadataGeneratorUtils.runGenerator({
+  await runGenerator({
     name: 'My Content Metadata Generator',
     contentType: 'my-content',
     filePattern: /\.mdx$/,
     parseFile: parseMyContentFile,
-    processResult: (result) => ({ metadata: result, count: 1 })  // Optional
   });
 }
 
-// Export main for orchestrator, run if executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(error => {
-    console.error('❌ Fatal error:', error);
-    process.exit(1);
-  });
-}
+main().catch((error) => {
+  console.error('❌ Fatal error:', error);
+  process.exit(1);
+});
 
 export { main, parseMyContentFile };
 ```
 
-### Monster Generator (scripts/generateMonsterMetadata.mjs)
+### Monster Generator (`scripts/metadata/generateMonsterMetadata.ts`)
 
 **Input**: `src/content/en/monsters/*.sheet.mdx`  
 **Output**: `src/content/en/monsters/*.metadata.json`
@@ -236,6 +238,7 @@ export { main, parseMyContentFile };
 **Special Handling**: Monster files can contain **multiple stat blocks** (arrays)
 
 **Metadata Schema**:
+
 ```typescript
 {
   slug: string;                    // 'albedo'
@@ -285,16 +288,18 @@ export { main, parseMyContentFile };
 ```
 
 **Key Parsing Functions**:
+
 ```javascript
-parseStatBlock(content)           // Extract size/type from "Gargantuan aberration"
-parseArmorClass(line)            // "**Armor Class** 20 (natural armor)"
-parseHitPoints(line)             // "**Hit Points** 780 (60d10 + 420)"
-parseSpeed(line)                 // "**Speed** 40 ft., fly 80 ft."
-parseAbilities(tableRows)        // Parse ability score table
-parseChallengeRating(line)       // "**Challenge** 23 (50,000 XP)"
+parseStatBlock(content); // Extract size/type from "Gargantuan aberration"
+parseArmorClass(line); // "**Armor Class** 20 (natural armor)"
+parseHitPoints(line); // "**Hit Points** 780 (60d10 + 420)"
+parseSpeed(line); // "**Speed** 40 ft., fly 80 ft."
+parseAbilities(tableRows); // Parse ability score table
+parseChallengeRating(line); // "**Challenge** 23 (50,000 XP)"
 ```
 
 **Example** (from actual codebase):
+
 ```mdx
 # Albedo, the Bleak Bloom
 
@@ -322,6 +327,7 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
 ```
 
 **Generated Metadata** (partial):
+
 ```json
 {
   "slug": "albedo",
@@ -364,6 +370,7 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
 ```
 
 **Multi-Variant Handling**:
+
 ```javascript
 // File: ancient-dragons.sheet.mdx contains 3 dragon variants
 // Output: ancient-dragons.metadata.json is an ARRAY
@@ -374,7 +381,7 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
 ]
 ```
 
-### Heirloom Generator (scripts/generateHeirloomMetadata.mjs)
+### Heirloom Generator (`scripts/metadata/generateHeirloomMetadata.ts`)
 
 **Input**: `src/content/en/items/heirlooms/*.mdx`  
 **Output**: `src/content/en/items/heirlooms/*.metadata.json`
@@ -382,6 +389,7 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
 **Special Handling**: Single object per file (not arrays)
 
 **Metadata Schema**:
+
 ```typescript
 {
   slug: string;                    // 'blackbone-crusher'
@@ -412,14 +420,16 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
 ```
 
 **Key Parsing Functions**:
+
 ```javascript
-parseRarityAndAttunement(italicLine) // "*Weapon (longsword), rare (requires attunement)*"
-parseWeaponProperties(content)       // Extract damage, range, properties
-parseMasteryProperties(content)      // Extract weapon mastery
-parseCharges(content)                // "X charges (recharge Y)"
+parseRarityAndAttunement(italicLine); // "*Weapon (longsword), rare (requires attunement)*"
+parseWeaponProperties(content); // Extract damage, range, properties
+parseMasteryProperties(content); // Extract weapon mastery
+parseCharges(content); // "X charges (recharge Y)"
 ```
 
 **Example** (from actual codebase):
+
 ```mdx
 # Blackbone Crusher
 
@@ -432,10 +442,11 @@ _Greatsword +4 (Two-Handed, Large, Heavy, Magical, Mastery: Push, Enhanced Sunde
 - **Damage**: 4d8 bludgeoning + 4
 - **Range**: 25 ft. (extended whip-like reach)
 - **Weight**: 45 lbs
-...
+  ...
 ```
 
 **Generated Metadata** (partial):
+
 ```json
 {
   "slug": "blackbone-crusher",
@@ -459,7 +470,7 @@ _Greatsword +4 (Two-Handed, Large, Heavy, Magical, Mastery: Push, Enhanced Sunde
 }
 ```
 
-### Spell Generator (scripts/generateSpellMetadata.mjs)
+### Spell Generator (`scripts/metadata/generateSpellMetadata.ts`)
 
 **Input**: `src/content/en/spells/*.mdx`  
 **Output**: `src/content/en/spells/*.metadata.json`
@@ -467,6 +478,7 @@ _Greatsword +4 (Two-Handed, Large, Heavy, Magical, Mastery: Push, Enhanced Sunde
 **Special Handling**: Casting time parsed as array + raw text
 
 **Metadata Schema**:
+
 ```typescript
 {
   slug: string;                    // 'forbidden-sun'
@@ -489,14 +501,16 @@ _Greatsword +4 (Two-Handed, Large, Heavy, Magical, Mastery: Push, Enhanced Sunde
 ```
 
 **Key Parsing Functions**:
+
 ```javascript
-parseSpellHeader(content)          // Extract level, school, quality from italic line
-parseCastingTimeToArray(text)      // NEW: Extract action economy keywords
-parseComponents(line)              // "**Components:** V, S, M (bat guano)"
-parseDuration(line)                // Check for 'Concentration'
+parseSpellHeader(content); // Extract level, school, quality from italic line
+parseCastingTimeToArray(text); // NEW: Extract action economy keywords
+parseComponents(line); // "**Components:** V, S, M (bat guano)"
+parseDuration(line); // Check for 'Concentration'
 ```
 
 **Casting Time Priority** (parseCastingTimeToArray):
+
 1. **Bonus Action** - Highest priority
 2. **Action** - Second priority
 3. **Reaction** - Third priority
@@ -504,6 +518,7 @@ parseDuration(line)                // Check for 'Concentration'
 5. **Ritual** - If 'ritual' mentioned
 
 **Example** (from actual codebase):
+
 ```mdx
 # Forbidden Sun
 
@@ -520,6 +535,7 @@ This spell is not innate to any class...
 ```
 
 **Generated Metadata**:
+
 ```json
 {
   "slug": "forbidden-sun",
@@ -553,11 +569,13 @@ This spell is not innate to any class...
 ```
 
 **Dual Casting Time Example**:
+
 ```mdx
 **Casting Time:** 1 action or reaction (when you are hit by an attack)
 ```
 
 **Generated**:
+
 ```json
 {
   "castingTime": ["action", "reaction"],
@@ -565,66 +583,35 @@ This spell is not innate to any class...
 }
 ```
 
-### Shared Data Source (scripts/shared-data.json)
+### Shared Data Source (`scripts/core/shared-data.json`)
 
-All generators reference a single source of truth for game data:
+All generators reference a single source of truth for game data, loaded via `loadSharedData()` from `@/lib/metadata`:
 
-```json
-{
-  "gameData": {
-    "damageTypes": ["acid", "bludgeoning", "cold", "fire", "force", "lightning", "necrotic", "piercing", "poison", "psychic", "radiant", "slashing", "thunder", "true"],
-    "conditions": ["blinded", "charmed", "deafened", "frightened", "grappled", "incapacitated", "invisible", "paralyzed", "petrified", "poisoned", "prone", "restrained", "stunned", "unconscious", "exhausted"],
-    "abilities": ["str", "dex", "con", "int", "wis", "cha"],
-    "sizes": ["tiny", "small", "medium", "large", "huge", "gargantuan", "titanic", "colossal"],
-    "creatureTypes": ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"],
-    "senses": ["blindsight", "darkvision", "tremorsense", "truesight"],
-    "movementTypes": ["walk", "fly", "swim", "burrow", "climb"],
-    "mechanicTypes": ["legendary-actions", "multiattack", "spellcasting", "shapechanger", "regeneration", "magic-resistance", "area-of-effect", "teleportation", "summoning", "grappling", "condition-immunity", "damage-transfer", "death-burst"]
-  },
-  "itemData": {
-    "rarities": ["common", "uncommon", "rare", "very rare", "legendary", "artifact"],
-    "itemTypes": ["weapon", "armor", "shield", "potion", "scroll", "wondrous item", "ring", "rod", "staff", "wand", "tool", "instrument"],
-    "weaponProperties": ["ammunition", "finesse", "heavy", "light", "loading", "range", "reach", "thrown", "two-handed", "versatile"],
-    "masteryProperties": ["cleave", "graze", "nick", "push", "sap", "slow", "topple", "vex"],
-    "weaponTypes": ["simple melee", "simple ranged", "martial melee", "martial ranged"],
-    "armorTypes": ["light", "medium", "heavy", "shield"]
-  },
-  "spellData": {
-    "schools": ["Abjuration", "Conjuration", "Divination", "Enchantment", "Evocation", "Illusion", "Necromancy", "Transmutation"],
-    "qualities": ["Legendary", "Epic", "Mythic"]
-  }
-}
-```
+```typescript
+import { loadSharedData, GameData, ItemData } from '@/lib/metadata';
 
-**Access Pattern**:
-```javascript
-import { GameData, ItemData } from './shared-utils.mjs';
-
-const damageTypes = GameData.getDamageTypes();
-const rarities = ItemData.getRarities();
-const schools = ItemData.getSpellSchools();
+const sharedData = await loadSharedData();
+const damageTypes = GameData.getDamageTypes(sharedData);
+const rarities = ItemData.getRarities(sharedData);
+const schools = ItemData.getSpellSchools(sharedData);
 ```
 
 ### Execution
 
-**Orchestrator** (scripts/generateMetadata.mjs):
-```javascript
-import { main as generateMonsters } from './generateMonsterMetadata.mjs';
-import { main as generateHeirlooms } from './generateHeirloomMetadata.mjs';
-import { main as generateSpells } from './generateSpellMetadata.mjs';
+**Orchestrator** (`scripts/metadata/generateMetadata.ts`):
 
-async function main() {
-  await generateMonsters();
-  await generateHeirlooms();
-  await generateSpells();
-}
+```typescript
+// Dynamically imports each .ts generator and calls main()
+// Supports --type flag to run a single generator
+// Supports --persist flag to also write to PostgreSQL
 ```
 
 **Package.json Scripts**:
+
 ```json
 {
   "scripts": {
-    "generate-metadata": "node scripts/generateMetadata.mjs",
+    "generate-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/generateMetadata.ts"
   }
 }
 ```
@@ -632,6 +619,7 @@ async function main() {
 ## Layer 2: Runtime API Routes
 
 ### Overview
+
 Next.js API routes read `.metadata.json` files from the filesystem and serve them as JSON. This happens at runtime (server-side) during both dev and production.
 
 ### Monster API (src/app/api/monsters/route.ts)
@@ -646,35 +634,41 @@ export async function GET(request: NextRequest) {
   try {
     // Get locale from query params (default: 'en')
     const locale = request.nextUrl.searchParams.get('locale') || 'en';
-    
+
     // Get content folder for locale
     const contentFolder = getContentFolder(locale, 'monsters');
-    
+
     // Read all files in directory
     const files = fs.readdirSync(contentFolder);
-    
+
     // Filter for .metadata.json files
-    const metadataFiles = files.filter(file => file.endsWith('.metadata.json'));
-    
+    const metadataFiles = files.filter((file) =>
+      file.endsWith('.metadata.json'),
+    );
+
     // Read and parse each file
-    const metadata = metadataFiles.map(file => {
+    const metadata = metadataFiles.map((file) => {
       const filePath = path.join(contentFolder, file);
       const content = fs.readFileSync(filePath, 'utf-8');
       return JSON.parse(content);
     });
-    
+
     // CRITICAL: Flatten arrays (monster files can have multiple stat blocks)
     const flattenedMetadata = metadata.flat();
-    
+
     return NextResponse.json(flattenedMetadata);
   } catch (error) {
     console.error('Error loading monster metadata:', error);
-    return NextResponse.json({ error: 'Failed to load metadata' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to load metadata' },
+      { status: 500 },
+    );
   }
 }
 ```
 
 **Key Points**:
+
 - Uses `getContentFolder(locale, contentType)` helper for consistent path resolution
 - **Must use `.flat()`** because monster files can contain arrays
 - Locale-aware: `/api/monsters?locale=es` reads from `src/content/es/monsters/`
@@ -702,20 +696,24 @@ export async function GET(request: NextRequest) {
 ```typescript
 import path from 'path';
 
-export function getContentFolder(locale: string, contentType: 'monsters' | 'heirlooms' | 'spells'): string {
+export function getContentFolder(
+  locale: string,
+  contentType: 'monsters' | 'heirlooms' | 'spells',
+): string {
   const basePath = path.join(process.cwd(), 'src', 'content', locale);
-  
+
   const paths = {
     monsters: path.join(basePath, 'monsters'),
     heirlooms: path.join(basePath, 'items', 'heirlooms'),
-    spells: path.join(basePath, 'spells')
+    spells: path.join(basePath, 'spells'),
   };
-  
+
   return paths[contentType];
 }
 ```
 
-**Why Centralized**: 
+**Why Centralized**:
+
 - Prevents path inconsistencies between API routes
 - Makes locale switching trivial
 - Single place to update if folder structure changes
@@ -725,6 +723,7 @@ export function getContentFolder(locale: string, contentType: 'monsters' | 'heir
 **Request**: `GET /api/monsters?locale=en`
 
 **Response**:
+
 ```json
 [
   {
@@ -750,6 +749,7 @@ export function getContentFolder(locale: string, contentType: 'monsters' | 'heir
 **Request**: `GET /api/spells?locale=es`
 
 **Response** (from `src/content/es/spells/*.metadata.json`):
+
 ```json
 [
   {
@@ -766,6 +766,7 @@ export function getContentFolder(locale: string, contentType: 'monsters' | 'heir
 ## Layer 3: Client Components
 
 ### Overview
+
 React components fetch metadata from API routes and render filterable/sortable tables. Uses generic `MetadataTable` component with content-specific wrappers.
 
 ### Generic MetadataTable Component
@@ -773,6 +774,7 @@ React components fetch metadata from API routes and render filterable/sortable t
 **File**: `src/lib/components/mdx/MetadataTable/metadataTable.tsx`
 
 **Features**:
+
 - Client-side search across specified keys
 - Column sorting with custom comparators
 - Filter dropdowns for enumerated values
@@ -787,6 +789,7 @@ React components fetch metadata from API routes and render filterable/sortable t
 **File**: `src/lib/components/mdx/MetadataTable/monsterTableWrapper.tsx`
 
 **Usage in MDX**:
+
 ```mdx
 # Monster Compendium
 
@@ -796,7 +799,7 @@ Browse all monsters in the library:
 
 Or view Spanish monsters:
 
-<MonsterTable locale="es" />
+<MonsterTable locale='es' />
 ```
 
 #### Heirloom Table Wrapper
@@ -804,6 +807,7 @@ Or view Spanish monsters:
 **File**: `src/lib/components/mdx/MetadataTable/heirloomTableWrapper.tsx`
 
 **Key Differences**:
+
 - Fetches from `/api/heirlooms`
 - Columns: title, rarity, itemType, weaponType
 - Custom rarity sorting (common < uncommon < rare < very rare < legendary < artifact)
@@ -814,6 +818,7 @@ Or view Spanish monsters:
 **File**: `src/lib/components/mdx/MetadataTable/spellTableWrapper.tsx`
 
 **Key Differences**:
+
 - Fetches from `/api/spells`
 - Columns: title, level, school, castingTime, concentration
 - Level sorting: 0 (cantrip) → 9
@@ -842,7 +847,8 @@ export const mdxComponents = {
 **Why Centralized**: Components need to be passed to the mdx compiler for pre-rendering.
 
 ## Related Documentation
+
 - [Build Pipeline](./build-pipeline.md) - Pre-init stages and dependencies
-- [Shared Utilities](./shared-utilities.md) - MetadataGeneratorUtils, GameData, etc.
+- [Metadata Library](../../../src/lib/metadata/index.ts) - `runGenerator`, `GameData`, parsing/tagging/file utilities
 - [Content System](./content-system.md) - MDX structure and routing
 - [Metadata Table](./metadata-table.md) - Metadata-based table system

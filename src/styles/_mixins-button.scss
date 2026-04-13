@@ -1,6 +1,6 @@
 /**
  * @fileoverview Button Mixins
- * @description Button base styles and hover/variant modifiers.
+ * @description Button base styles, hover/variant modifiers, and scale animation.
  *
  * @module styles/mixins-button
  */
@@ -15,6 +15,13 @@
   color: var(--color-text);
   cursor: pointer;
   font-size: $font-size;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+@mixin button-hover-scale($factor: 1.08) {
+  &:hover:not(:disabled) {
+    transform: scale($factor);
+  }
 }
 
 @mixin button-hover-secondary {

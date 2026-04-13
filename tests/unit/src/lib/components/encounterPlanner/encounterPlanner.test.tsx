@@ -71,6 +71,26 @@ vi.mock('@/lib/components/encounterPlanner/comboboxes', () => ({
       Add Monster
     </button>
   ),
+  EncounterCombobox: ({
+    encounters,
+    currentEncounterId,
+    onSelect,
+  }: {
+    encounters: { id: string; name: string }[];
+    currentEncounterId: string;
+    onSelect: (id: string) => void;
+  }) => (
+    <select
+      role='combobox'
+      defaultValue={currentEncounterId}
+      onChange={(e) => onSelect(e.target.value)}>
+      {encounters.map((enc) => (
+        <option key={enc.id} value={enc.id}>
+          {enc.name}
+        </option>
+      ))}
+    </select>
+  ),
 }));
 
 // Mock PlayMode

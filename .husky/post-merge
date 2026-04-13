@@ -1,3 +1,0 @@
-# Git LFS post-merge
-command -v git-lfs >/dev/null 2>&1 || exit 0
-git lfs post-merge "$@"

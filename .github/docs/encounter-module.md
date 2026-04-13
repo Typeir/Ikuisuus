@@ -67,12 +67,12 @@ interface CombatantMechanics {
 
 ### Tag-to-Flag Mapping
 
-| Monster Metadata Tag | Mechanic Flag | Feature |
-|---------------------|---------------|---------|
-| `mechanic:lair` | `lair: true` | Round-start warning notification |
-| `mechanic:stratagem` | `stratagem: true` | Purple tactical badge in UI |
-| `mechanic:legendary-deed` | `legendaryDeed: true` | Deed usage tracker |
-| `mechanic:resist` | `resist: true` | Legendary Resist counter |
+| Monster Metadata Tag      | Mechanic Flag         | Feature                          |
+| ------------------------- | --------------------- | -------------------------------- |
+| `mechanic:lair`           | `lair: true`          | Round-start warning notification |
+| `mechanic:stratagem`      | `stratagem: true`     | Purple tactical badge in UI      |
+| `mechanic:legendary-deed` | `legendaryDeed: true` | Deed usage tracker               |
+| `mechanic:resist`         | `resist: true`        | Legendary Resist counter         |
 
 ### Flag Detection
 
@@ -112,18 +112,19 @@ When a new round begins:
 3. **Lair Legendary Deed reminder** triggers if any non-slain combatant has `lair: true`
 
 ```typescript
-const isNewRound = nextIndex <= prev.activeTurnIndex && prev.turnOrder.length > 0;
+const isNewRound =
+  nextIndex <= prev.activeTurnIndex && prev.turnOrder.length > 0;
 if (isNewRound) {
   roundNumber++;
-  
+
   // Reset legendary deeds
-  combatants = combatants.map(c => ({
+  combatants = combatants.map((c) => ({
     ...c,
-    legendaryDeedsUsed: c.legendaryDeedsUsed.map(() => false)
+    legendaryDeedsUsed: c.legendaryDeedsUsed.map(() => false),
   }));
-  
+
   // Check for lair creatures
-  if (combatants.some(c => !c.slain && c.mechanics?.lair)) {
+  if (combatants.some((c) => !c.slain && c.mechanics?.lair)) {
     notifications.warning(t('lairAlert'), {
       title: t('lairAlertTitle'),
       duration: 8000,
@@ -167,7 +168,7 @@ Tracks usage of legendary deeds per round.
 ```typescript
 interface InProgressCombatant {
   // ...
-  legendaryDeedsUsed: boolean[];  // Array of deed slots (e.g., [false, false, false])
+  legendaryDeedsUsed: boolean[]; // Array of deed slots (e.g., [false, false, false])
 }
 ```
 
@@ -182,7 +183,7 @@ Tracks remaining uses of Legendary Resistance.
 ```typescript
 interface InProgressCombatant {
   // ...
-  resistRemaining: number;  // Typically starts at 3
+  resistRemaining: number; // Typically starts at 3
 }
 ```
 
@@ -198,17 +199,17 @@ Tracks creature awakening state and tier bonuses.
 
 ```typescript
 interface HeroicAwakeningState {
-  fateDieResult: number;       // D20 roll result
-  heroicDc: number;            // Target DC
-  awakened: boolean;           // Whether triggered
+  fateDieResult: number; // D20 roll result
+  heroicDc: number; // Target DC
+  awakened: boolean; // Whether triggered
   tier: 'none' | 'awakened' | 'legendary' | 'mythic';
-  affixes: AffixEntry[];       // Applied heroic affixes
+  affixes: AffixEntry[]; // Applied heroic affixes
   bonuses: {
     proficiencyBonus: number;
     acBonus: number;
     savingThrowBonus: number;
   };
-  hpOverride: number | null;   // Scaled HP if awakened
+  hpOverride: number | null; // Scaled HP if awakened
 }
 ```
 
@@ -285,7 +286,8 @@ it('should display stratagem badge when flag is set', () => {
 
 ## Adding New Mechanics
 
-1. **Add to metadata generator** (`scripts/metadata/generateMonsterMetadata.mjs`):
+1. **Add to metadata generator** (`scripts/metadata/generateMonsterMetadata.ts`):
+
    ```javascript
    // Add tag detection
    if (tags.includes('mechanic:new-mechanic')) {
@@ -294,6 +296,7 @@ it('should display stratagem badge when flag is set', () => {
    ```
 
 2. **Update type definitions** (`src/lib/types/inProgressCombat.ts`):
+
    ```typescript
    interface CombatantMechanics {
      // ...existing

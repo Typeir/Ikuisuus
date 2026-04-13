@@ -35,6 +35,7 @@
 
 .iconButton {
   @include button-base(0.5rem, 0.75rem);
+  @include button-hover-scale;
   line-height: 1;
   min-width: 32px;
   height: 32px;
@@ -170,6 +171,7 @@
 
 .smallButton {
   @include button-base(0.3rem 0.55rem, 0.7rem);
+  @include button-hover-scale;
   font-weight: 600;
   @include button-hover-accent;
 }
@@ -180,6 +182,7 @@
 
 .button {
   @include button-base(0.3rem 0.55rem, 0.7rem);
+  @include button-hover-scale;
   font-weight: 600;
   @include button-hover-secondary;
 }
@@ -253,6 +256,7 @@
 .addConditionButton {
   @include button-base(0.3rem 0.55rem, 0.7rem);
   @include button-primary;
+  @include button-hover-scale;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -260,6 +264,7 @@
 /** Details Section - Layered container with animation */
 .detailsButton {
   @include button-base(0.3rem 0.55rem, 0.7rem);
+  @include button-hover-scale;
   font-weight: 600;
   display: flex;
   align-items: center;
