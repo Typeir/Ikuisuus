@@ -9,26 +9,26 @@
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
- * @module src/lib/utils/monsterTokens
+ * @module scripts/metadata/extraction/monsterTokens
  */
 
 import type {
-  AttackToken,
-  AutoFailToken,
-  ChargeRechargeToken,
-  DeclareResolveToken,
-  DeedCostToken,
-  HitToken,
-  MultiattackToken,
-  PhaseToken,
+    AttackToken,
+    AutoFailToken,
+    ChargeRechargeToken,
+    DeclareResolveToken,
+    DeedCostToken,
+    HitToken,
+    MultiattackToken,
+    PhaseToken,
 } from '@/lib/types/feature';
 import {
-  DAMAGE_TYPES,
-  DISTANCE,
-  MONSTER,
-  SAVES,
-  WORD_NUMBERS,
-} from '@/lib/utils/featurePatterns';
+    DAMAGE_TYPES,
+    DISTANCE,
+    MONSTER,
+    SAVES,
+    WORD_NUMBERS,
+} from './featurePatterns';
 
 /**
  * Recognizes a monster attack line like

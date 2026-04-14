@@ -8,36 +8,36 @@
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
- * @module src/lib/utils/featureTokens
+ * @module scripts/metadata/extraction/featureTokens
  */
 
 import type {
-  ActionToken,
-  DamageToken,
-  DCToken,
-  DiceToken,
-  DurationToken,
-  RangeToken,
-  RechargeToken,
-  ResourceToken,
-  SaveToken,
-  TemplateToken,
+    ActionToken,
+    DamageToken,
+    DCToken,
+    DiceToken,
+    DurationToken,
+    RangeToken,
+    RechargeToken,
+    ResourceToken,
+    SaveToken,
+    TemplateToken,
 } from '@/lib/types/feature';
 import {
-  ABILITY_MAP,
-  ABILITY_SHORTS,
-  ACTIONS,
-  DAMAGE_TYPES,
-  DICE,
-  DISTANCE,
-  DURATION,
-  RECHARGE_TIMINGS,
-  RESOURCE_ENTRIES,
-  RESOURCES,
-  SAVES,
-  SHAPES,
-  TEMPLATES,
-} from '@/lib/utils/featurePatterns';
+    ABILITY_MAP,
+    ABILITY_SHORTS,
+    ACTIONS,
+    DAMAGE_TYPES,
+    DICE,
+    DISTANCE,
+    DURATION,
+    RECHARGE_TIMINGS,
+    RESOURCE_ENTRIES,
+    RESOURCES,
+    SAVES,
+    SHAPES,
+    TEMPLATES,
+} from './featurePatterns';
 
 /**
  * Recognizes a dice expression like "2d6", "1d8+3", "3d10 + STR".

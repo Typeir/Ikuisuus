@@ -33,7 +33,24 @@
     "scripts/mdToMdx.js",
     "src/lib/mdx/loadCompileMdx.js",
     "src/lib/mdx/precompileMdx.js",
-    "dist/types/**/*.ts"
+    "dist/types/**/*.ts",
+    "scripts/metadata/validationUtils.ts",
+    "scripts/metadata/types.ts",
+    "scripts/metadata/textUtils.ts",
+    "scripts/metadata/taggingUtils.ts",
+    "scripts/metadata/taggingPatterns.ts",
+    "scripts/metadata/syncService.ts",
+    "scripts/metadata/syncBloodlines.ts",
+    "scripts/metadata/sharedData.ts",
+    "scripts/metadata/parsingPatterns.ts",
+    "scripts/metadata/generatorUtils.ts",
+    "scripts/metadata/index.ts",
+    "scripts/metadata/parsingUtils.ts",
+    "scripts/metadata/performanceUtils.ts",
+    "scripts/metadata/gameData.ts",
+    "scripts/metadata/fileUtils.ts",
+    "src/lib/metadata/contentHash.ts",
+    "scripts/metadata/cliRunner.ts"
   ],
   "exclude": ["node_modules", "scripts"]
 }

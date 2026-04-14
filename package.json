@@ -27,6 +27,7 @@
     "fetch-content": "npx tsx --tsconfig tsconfig.scripts.json scripts/build/fetchContent.ts",
     "build:vercel": "npm run fetch-content && rm -rf .next/cache && npm run pre-init && next build",
     "generate-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/generateMetadata.ts",
+    "generate-features": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/generateFeatureMetadata.ts",
     "util:precompile-mdx": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/precompileMdx.ts",
     "util:mdxify-heading-images": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/mdxifyHeadingImages.ts",
     "util:scrap-wikidot": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/scrapWikidot.ts",

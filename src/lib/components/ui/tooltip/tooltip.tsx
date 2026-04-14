@@ -12,16 +12,17 @@
 'use client';
 
 import {
-    Children,
-    ComponentType,
-    isValidElement,
-    memo,
-    ReactElement,
-    ReactNode,
-    useCallback,
-    useEffect,
-    useRef,
-    useState
+  Children,
+  ComponentType,
+  isValidElement,
+  memo,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './tooltip.module.scss';
@@ -81,8 +82,6 @@ function calculatePosition(
   offset = 8,
 ): { x: number; y: number; actualPlacement: TooltipPlacement } {
   const { innerWidth, innerHeight } = window;
-  const scrollX = window.scrollX;
-  const scrollY = window.scrollY;
 
   let x = 0;
   let y = 0;
@@ -90,60 +89,48 @@ function calculatePosition(
 
   switch (placement) {
     case 'top':
-      x =
-        triggerRect.left +
-        scrollX +
-        (triggerRect.width - tooltipRect.width) / 2;
-      y = triggerRect.top + scrollY - tooltipRect.height - offset;
+      x = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
+      y = triggerRect.top - tooltipRect.height - offset;
       break;
     case 'bottom':
-      x =
-        triggerRect.left +
-        scrollX +
-        (triggerRect.width - tooltipRect.width) / 2;
-      y = triggerRect.bottom + scrollY + offset;
+      x = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
+      y = triggerRect.bottom + offset;
       break;
     case 'left':
-      x = triggerRect.left + scrollX - tooltipRect.width - offset;
-      y =
-        triggerRect.top +
-        scrollY +
-        (triggerRect.height - tooltipRect.height) / 2;
+      x = triggerRect.left - tooltipRect.width - offset;
+      y = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
       break;
     case 'right':
-      x = triggerRect.right + scrollX + offset;
-      y =
-        triggerRect.top +
-        scrollY +
-        (triggerRect.height - tooltipRect.height) / 2;
+      x = triggerRect.right + offset;
+      y = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
       break;
   }
 
   const viewportMargin = 8;
 
-  if (placement === 'top' && y < scrollY + viewportMargin) {
-    y = triggerRect.bottom + scrollY + offset;
+  if (placement === 'top' && y < viewportMargin) {
+    y = triggerRect.bottom + offset;
     actualPlacement = 'bottom';
   } else if (
     placement === 'bottom' &&
-    y + tooltipRect.height > scrollY + innerHeight - viewportMargin
+    y + tooltipRect.height > innerHeight - viewportMargin
   ) {
-    y = triggerRect.top + scrollY - tooltipRect.height - offset;
+    y = triggerRect.top - tooltipRect.height - offset;
     actualPlacement = 'top';
-  } else if (placement === 'left' && x < scrollX + viewportMargin) {
-    x = triggerRect.right + scrollX + offset;
+  } else if (placement === 'left' && x < viewportMargin) {
+    x = triggerRect.right + offset;
     actualPlacement = 'right';
   } else if (
     placement === 'right' &&
-    x + tooltipRect.width > scrollX + innerWidth - viewportMargin
+    x + tooltipRect.width > innerWidth - viewportMargin
   ) {
-    x = triggerRect.left + scrollX - tooltipRect.width - offset;
+    x = triggerRect.left - tooltipRect.width - offset;
     actualPlacement = 'left';
   }
 
   x = Math.max(
-    scrollX + viewportMargin,
-    Math.min(x, scrollX + innerWidth - tooltipRect.width - viewportMargin),
+    viewportMargin,
+    Math.min(x, innerWidth - tooltipRect.width - viewportMargin),
   );
 
   return { x, y, actualPlacement };
@@ -222,10 +209,10 @@ export const Tooltip = memo(function Tooltip({
     }, hideDelay);
   }, [hideDelay]);
 
-  /** Update position when tooltip becomes visible */
-  useEffect(() => {
+  /** Position synchronously on first render to prevent flicker */
+  useLayoutEffect(() => {
     if (isVisible) {
-      requestAnimationFrame(updatePosition);
+      updatePosition();
     }
   }, [isVisible, updatePosition]);
 
@@ -275,7 +262,7 @@ export const Tooltip = memo(function Tooltip({
         onMouseLeave={() => hide()}
         onFocus={() => show()}
         onBlur={() => hide()}
-        style={{ display: 'contents' }}
+        style={{ display: 'inline-flex' }}
         aria-describedby={isVisible ? tooltipId : undefined}>
         {child}
       </span>

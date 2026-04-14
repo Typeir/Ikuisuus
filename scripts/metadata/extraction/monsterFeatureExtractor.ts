@@ -1,0 +1,285 @@
+/**
+ * @fileoverview Monster Feature Extractor — Actions & Traits
+ * @description Extracts MonsterFeature records from classified monster
+ * sections. Handles traits, actions, reactions, bonus actions, multiattack,
+ * recharge abilities, and spellcasting blocks. Used by the feature metadata
+ * generator for `.sheet.mdx` files.
+ *
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ * @module scripts/metadata/extraction/monsterFeatureExtractor
+ */
+
+import type { MonsterFeature } from '@/lib/types/feature';
+import {
+  DURATION,
+  ENRICHMENT,
+  MONSTER,
+  SECTIONS,
+  SPELLCASTING,
+} from './featurePatterns';
+import { recognizeRange, recognizeSave } from './featureTokens';
+import { extractMultiattack } from './monsterMultiattackExtractor';
+import type { MonsterSection } from './monsterSectionClassifier';
+import {
+  recognizeAttackLine,
+  recognizeAutoFail,
+  recognizeChargeRecharge,
+  recognizeHitLine,
+} from './monsterTokens';
+
+/**
+ * A named sub-section produced by splitBySubHeadings.
+ *
+ * @interface SubSection
+ * @property {string} name - Sub-section name (heading text or bold label)
+ * @property {string[]} lines - Content lines
+ * @property {'heading' | 'bold'} origin - Whether this came from an H4+ heading or a bold-label bullet
+ */
+export interface SubSection {
+  name: string;
+  lines: string[];
+  origin: 'heading' | 'bold';
+}
+
+/**
+ * Builds a base MonsterFeature shell with required fields.
+ *
+ * @param {string} name - Feature name
+ * @param {string} rawText - Raw markdown text
+ * @returns {MonsterFeature} Feature shell
+ */
+export function baseFeature(name: string, rawText: string): MonsterFeature {
+  return {
+    id: '',
+    name,
+    description: rawText.slice(0, 200),
+    rawText,
+    flags: [],
+  };
+}
+
+/**
+ * Parses recharge notation from a heading suffix.
+ *
+ * @param {string} heading - Raw heading text
+ * @returns {{ min: number; max: number; charges?: number } | undefined} Recharge data
+ */
+export function parseRechargeFromHeading(
+  heading: string,
+): { min: number; max: number; charges?: number } | undefined {
+  const cr = recognizeChargeRecharge(heading);
+  if (cr) return { min: cr.min, max: cr.max, charges: cr.charges };
+  const rm = heading.match(ENRICHMENT.rechargeSuffix);
+  if (rm) {
+    const min = parseInt(rm[1], 10);
+    return { min, max: rm[2] ? parseInt(rm[2], 10) : min };
+  }
+  return undefined;
+}
+
+/**
+ * Extracts features from a Traits section.
+ *
+ * @param {MonsterSection} section - Classified traits section
+ * @returns {MonsterFeature[]} Extracted trait features
+ */
+export function extractTraits(section: MonsterSection): MonsterFeature[] {
+  return extractSubHeadingFeatures(section, 'passive');
+}
+
+/**
+ * Extracts features from an Actions or Reactions section.
+ *
+ * @param {MonsterSection} section - Classified section
+ * @param {string} trigger - Default trigger type
+ * @returns {MonsterFeature[]} Extracted action features
+ */
+export function extractActions(
+  section: MonsterSection,
+  trigger = 'action',
+): MonsterFeature[] {
+  return extractSubHeadingFeatures(section, trigger);
+}
+
+/**
+ * Splits a section by sub-headings (H4+) or bold-label bullets, creating
+ * one feature per sub-heading. Delegates multiattack sections to the
+ * dedicated multiattack extractor module.
+ *
+ * @param {MonsterSection} section - Parent section
+ * @param {string} defaultTrigger - Default trigger type
+ * @returns {MonsterFeature[]} Extracted features
+ */
+function extractSubHeadingFeatures(
+  section: MonsterSection,
+  defaultTrigger: string,
+): MonsterFeature[] {
+  const features: MonsterFeature[] = [];
+  const subs = splitBySubHeadings(section.lines);
+
+  for (let i = 0; i < subs.length; i++) {
+    const sub = subs[i];
+
+    if (MONSTER.multiattack.test(sub.name)) {
+      const children: SubSection[] = [];
+      while (i + 1 < subs.length && subs[i + 1].origin === 'bold') {
+        children.push(subs[++i]);
+      }
+      const multiFeatures = extractMultiattack(sub, children, defaultTrigger);
+      features.push(...multiFeatures);
+      continue;
+    }
+
+    const raw = sub.lines.join('\n');
+    const feat = baseFeature(sub.name, raw);
+    feat.trigger = defaultTrigger;
+
+    feat.recharge = parseRechargeFromHeading(sub.name);
+    enrichFromBody(feat, raw);
+    features.push(feat);
+  }
+
+  return features;
+}
+
+/**
+ * Enriches a feature with tokens parsed from its body text.
+ * Sets flat damage fields (damage, damageType, damageFlat, damageFlatType)
+ * and flat saving throw (ability + dc number) on MonsterFeature.
+ *
+ * @param {MonsterFeature} feat - Feature to enrich
+ * @param {string} body - Body text
+ */
+export function enrichFromBody(feat: MonsterFeature, body: string): void {
+  const attack = recognizeAttackLine(body);
+  if (attack) feat.attack = attack;
+
+  const hit = recognizeHitLine(body);
+  if (hit) {
+    feat.damage = hit.dice;
+    if (hit.type) feat.damageType = hit.type;
+
+    const extra = body.match(ENRICHMENT.extraDamage);
+    if (extra) {
+      feat.damageFlat = extra[1].trim();
+      feat.damageFlatType = extra[2].toLowerCase();
+    }
+  }
+
+  const save = recognizeSave(body);
+  if (save) {
+    feat.saving_throw = {
+      ability: save.ability,
+      dc: save.dc.flat ?? 0,
+    };
+  }
+
+  const range = recognizeRange(body);
+  if (range) feat.target = { type: range.shape, range: range.distance };
+
+  const autoFail = recognizeAutoFail(body);
+  if (autoFail) {
+    feat.auto_fail_saves = autoFail.fails;
+    feat.flags.push('auto_fail');
+  }
+
+  if (ENRICHMENT.escalation.test(body)) {
+    feat.flags.push('escalation');
+  }
+
+  if (DURATION.concentration.test(body) && feat.trigger !== 'passive') {
+    feat.flags.push('weird_mechanic');
+  }
+
+  if (ENRICHMENT.reactionTrigger.test(body)) {
+    feat.trigger = 'reaction';
+  }
+
+  const crit = body.match(ENRICHMENT.critRange);
+  if (crit) {
+    feat.meta = { ...feat.meta, critRange: crit[1] };
+  }
+}
+
+/**
+ * Splits section lines by H4/H5/H6 sub-headings or bold-label bullets.
+ * Tracks whether each sub-section originated from a heading or bold bullet
+ * so the caller can detect inline multiattack children.
+ *
+ * @param {string[]} lines - Section content lines
+ * @returns {SubSection[]} Named sub-sections with origin tracking
+ */
+export function splitBySubHeadings(lines: string[]): SubSection[] {
+  const result: SubSection[] = [];
+  let current: SubSection | null = null;
+
+  for (const line of lines) {
+    const headingMatch = line.match(SECTIONS.subHeading);
+    const boldMatch = !headingMatch ? line.match(SECTIONS.boldLabel) : null;
+
+    if (headingMatch) {
+      if (current) result.push(current);
+      current = {
+        name: headingMatch[1].replace(/\*\*/g, '').trim(),
+        lines: [],
+        origin: 'heading',
+      };
+      continue;
+    }
+    if (boldMatch) {
+      if (current) result.push(current);
+      current = {
+        name: boldMatch[1].replace(/\./g, '').trim(),
+        lines: [line],
+        origin: 'bold',
+      };
+      continue;
+    }
+    if (current) {
+      current.lines.push(line);
+    }
+  }
+  if (current) result.push(current);
+  return result;
+}
+
+/**
+ * Extracts spellcasting data from a spellcasting section.
+ *
+ * @param {MonsterSection} section - Classified spellcasting section
+ * @param {string} file - Source file path
+ * @returns {MonsterFeature | null} Spellcasting feature or null
+ */
+export function extractSpellcasting(
+  section: MonsterSection,
+): MonsterFeature | null {
+  const raw = section.lines.join('\n');
+  const feat = baseFeature('Spellcasting', raw);
+  feat.trigger = 'passive';
+
+  const levelMatch = raw.match(SPELLCASTING.casterLevel);
+  const dcMatch = raw.match(SPELLCASTING.dc);
+  const atkMatch = raw.match(SPELLCASTING.attackBonus);
+  const abiMatch = raw.match(SPELLCASTING.ability);
+
+  if (!levelMatch && !dcMatch) return null;
+
+  const slots: Record<number, number> = {};
+  const slotRegex = new RegExp(SPELLCASTING.slotCell.source, 'gi');
+  let slotMatch;
+  while ((slotMatch = slotRegex.exec(raw)) !== null) {
+    slots[parseInt(slotMatch[1], 10)] = parseInt(slotMatch[2], 10);
+  }
+
+  feat.spellcasting = {
+    level: levelMatch ? parseInt(levelMatch[1], 10) : 0,
+    ability: abiMatch ? abiMatch[1].toLowerCase() : 'unknown',
+    dc: dcMatch ? parseInt(dcMatch[1], 10) : 0,
+    attack_bonus: atkMatch ? parseInt(atkMatch[1], 10) : 0,
+    slots,
+  };
+
+  return feat;
+}

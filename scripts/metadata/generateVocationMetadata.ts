@@ -15,33 +15,22 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import {
-    clean,
-    extractAllTags,
-    getMetaSubdir,
-    parseTitle,
-    runGenerator,
-    runWithCli,
-    type SharedData,
-    type StorageAdapter
-} from '@/lib/metadata';
 import { promises as fs } from 'fs';
 import path from 'path';
+import {
+  clean,
+  extractAllTags,
+  getMetaSubdir,
+  parseTitle,
+  runGenerator,
+  runWithCli,
+  type SharedData,
+  type StorageAdapter,
+} from '.';
+import { CASTING, FEATURE, TABLE } from './classPatterns';
+import { LIST, SLUG, TEXT } from './parsingPatterns';
 
 const log = createLogger({ component: 'VocationMetadataGenerator' });
-
-/** Pattern matching the vocation features table header row */
-const FEATURES_TABLE_HEADER = /^\|\s*Level\s*\|/i;
-
-/** Pattern matching spell slot column headers (1st, 2nd, ..., 9th) */
-const SPELL_SLOT_HEADER = /\d+(st|nd|rd|th)/;
-
-/** Pattern matching collapsible blocks with level-named features */
-const COLLAPSIBLE_FEATURE = /##\s+(\d+)\w*\s+Level\s+[–—-]\s+(.+)/;
-
-/** Pattern matching specialization table links */
-const SPECIALIZATION_LINK =
-  /\[.*?\]\(\/en\/library\/.*?\/([\w-]+)\.specialization\)/;
 
 /** Known spellcasting progression keywords */
 const FULL_CASTER_HEADERS = [
@@ -65,25 +54,22 @@ const HALF_CASTER_HEADERS = ['1st', '2nd', '3rd', '4th', '5th'];
  */
 function parseCoreTraits(raw: string): Record<string, string> {
   const traits: Record<string, string> = {};
-  const lines = raw.split(/\r?\n/);
+  const lines = raw.split(TEXT.lineSplit);
 
   let inTable = false;
   for (const line of lines) {
-    if (
-      /^\|\s*Core\s+\w+\s+Traits/i.test(line) ||
-      /^\|\s*Trait\s*\|/i.test(line)
-    ) {
+    if (TABLE.coreTraits.test(line) || TABLE.traitHeader.test(line)) {
       inTable = true;
       continue;
     }
-    if (inTable && /^\|[-\s|]+\|$/.test(line)) continue;
+    if (inTable && TABLE.separator.test(line)) continue;
     if (inTable && line.startsWith('|')) {
       const cells = line
         .split('|')
         .map((c) => c.trim())
         .filter(Boolean);
       if (cells.length >= 2) {
-        const key = cells[0].replace(/\*\*/g, '').trim();
+        const key = cells[0].replace(TEXT.boldStrip, '').trim();
         traits[key] = cells[1].trim();
       }
     } else if (inTable && !line.startsWith('|')) {
@@ -100,7 +86,7 @@ function parseCoreTraits(raw: string): Record<string, string> {
  * @returns {string} Normalized hit die (e.g. "d12")
  */
 function parseHitDie(value: string): string {
-  const match = value.match(/d(\d+)/i);
+  const match = value.match(FEATURE.hitDie);
   return match ? `d${match[1]}` : 'unknown';
 }
 
@@ -112,8 +98,8 @@ function parseHitDie(value: string): string {
  */
 function parseSavingThrows(value: string): string[] {
   return value
-    .replace(/\*\*/g, '')
-    .split(/\s+and\s+|,\s*/)
+    .replace(TEXT.boldStrip, '')
+    .split(LIST.andSplit)
     .map((s) => s.trim())
     .filter(Boolean);
 }
@@ -128,13 +114,13 @@ function parseSkillProficiencies(value: string): {
   count: number;
   choices: string[];
 } {
-  const countMatch = value.match(/Choose\s+(\d+)/i);
+  const countMatch = value.match(FEATURE.skillCount);
   const count = countMatch ? parseInt(countMatch[1], 10) : 2;
 
   const afterColon = value.includes(':') ? value.split(':')[1] : value;
   const choices = afterColon
-    .split(/,\s*|\s+or\s+/)
-    .map((s) => s.replace(/^or\s+/i, '').trim())
+    .split(LIST.orSplit)
+    .map((s) => s.replace(LIST.orPrefix, '').trim())
     .filter(Boolean);
 
   return { count, choices };
@@ -149,7 +135,7 @@ function parseSkillProficiencies(value: string): {
 function parseProficiencies(value: string): string[] {
   if (!value || value.toLowerCase() === 'none') return [];
   return value
-    .split(/,\s*|\s+and\s+/)
+    .split(LIST.andOrSplit)
     .map((s) => s.trim())
     .filter(Boolean);
 }
@@ -165,14 +151,14 @@ function parseFeatureTable(raw: string): {
   hasSpellSlots: boolean;
   headers: string[];
 } {
-  const lines = raw.split(/\r?\n/);
+  const lines = raw.split(TEXT.lineSplit);
   const features: Array<{ level: number; name: string }> = [];
   let headers: string[] = [];
   let inTable = false;
   let headerParsed = false;
 
   for (const line of lines) {
-    if (!inTable && FEATURES_TABLE_HEADER.test(line)) {
+    if (!inTable && TABLE.featuresHeader.test(line)) {
       inTable = true;
       headers = line
         .split('|')
@@ -180,7 +166,7 @@ function parseFeatureTable(raw: string): {
         .filter(Boolean);
       continue;
     }
-    if (inTable && /^\|[-\s|]+\|$/.test(line)) {
+    if (inTable && TABLE.separator.test(line)) {
       headerParsed = true;
       continue;
     }
@@ -194,11 +180,11 @@ function parseFeatureTable(raw: string): {
       if (isNaN(level) || !cells[2]) continue;
 
       const featureCell = cells[2]
-        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-        .replace(/\*\*/g, '');
+        .replace(TABLE.markdownLink, '$1')
+        .replace(TEXT.boldStrip, '');
 
       const featureNames = featureCell
-        .split(/,\s*/)
+        .split(LIST.commaSplit)
         .map((f) => f.trim())
         .filter((f) => f && f !== '-' && f !== '\\-' && f !== '–');
 
@@ -210,9 +196,9 @@ function parseFeatureTable(raw: string): {
     }
   }
 
-  const hasSpellSlots = headers.some((h) => SPELL_SLOT_HEADER.test(h));
+  const hasSpellSlots = headers.some((h) => TABLE.spellSlotColumn.test(h));
   const hasPactSlots = headers.some(
-    (h) => /Spell Slots/i.test(h) || /Slot Level/i.test(h),
+    (h) => CASTING.spellSlotsLabel.test(h) || CASTING.slotLevelLabel.test(h),
   );
 
   return { features, hasSpellSlots: hasSpellSlots || hasPactSlots, headers };
@@ -226,16 +212,14 @@ function parseFeatureTable(raw: string): {
  */
 function parseSpellcastingAbility(raw: string): string | null {
   const abilityPatterns = [
-    /\*\*Spellcasting Ability\*\*:\s*(\w+)/i,
-    /spellcasting ability is (\w+)/i,
-    /(\w+) is your spellcasting ability/i,
-    /your (\w+) modifier/i,
-    /spell save DC.*?(\w+) modifier/i,
+    CASTING.abilityBold,
+    CASTING.abilityIs,
+    CASTING.abilityReversed,
+    CASTING.modifierRef,
+    CASTING.dcModifier,
   ];
 
-  const spellcastingSection = raw.match(
-    /##\s+\d+\w*\s+Level\s+[–—-]\s+Spellcasting[\s\S]*?(?=<\/Collapsible>|##\s+\d)/i,
-  );
+  const spellcastingSection = raw.match(CASTING.section);
   const searchText = spellcastingSection ? spellcastingSection[0] : raw;
 
   for (const pattern of abilityPatterns) {
@@ -268,9 +252,9 @@ function parseSpellcastingAbility(raw: string): string | null {
  * @returns {string | null} Progression type: "Full" | "Half" | "Third" | "Pact" | null
  */
 function classifyProgression(headers: string[], raw: string): string | null {
-  if (/pact magic/i.test(raw)) return 'Pact';
+  if (CASTING.pactMagic.test(raw)) return 'Pact';
 
-  const slotHeaders = headers.filter((h) => SPELL_SLOT_HEADER.test(h));
+  const slotHeaders = headers.filter((h) => TABLE.spellSlotColumn.test(h));
   if (slotHeaders.length === 0) return null;
 
   const has9th = slotHeaders.some((h) => h.includes('9th'));
@@ -289,7 +273,7 @@ function classifyProgression(headers: string[], raw: string): string | null {
  */
 function parseSpecializations(raw: string): string[] {
   const slugs: string[] = [];
-  const matches = raw.matchAll(new RegExp(SPECIALIZATION_LINK, 'g'));
+  const matches = raw.matchAll(new RegExp(FEATURE.specializationLink, 'g'));
   for (const match of matches) {
     slugs.push(match[1]);
   }
@@ -376,7 +360,7 @@ async function parseVocationFile(
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const title = parseTitle(raw.split(/\r?\n/).map((l) => l.trim()));
+    const title = parseTitle(raw.split(TEXT.lineSplit).map((l) => l.trim()));
     const slug = parentDir;
 
     const traits = parseCoreTraits(raw);
@@ -418,7 +402,9 @@ async function parseVocationFile(
     );
 
     const link = `/en/library/character-creation/vocations/${slug}/main`;
-    const file = path.relative(process.cwd(), filePath).replace(/\\/g, '/');
+    const file = path
+      .relative(process.cwd(), filePath)
+      .replace(SLUG.pathBackslash, '/');
 
     const metadata: Record<string, unknown> = {
       slug,
@@ -516,17 +502,18 @@ async function main(
     parseFile: parseVocationFile,
     recursive: true,
     resolveOutputPath: resolveVocationOutputPath,
-    processResult: (result) => {
+    processResult: (result: any) => {
       if (result === null) return { metadata: null, count: 0 };
       return { metadata: result, count: 1 };
     },
     contentDir: options.contentDir,
     storage: options.storage,
+    metadataVersion: '1.0.0',
   });
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  runWithCli(main).catch((error) => {
+  runWithCli(main).catch((error: any) => {
     log.error('Fatal error during vocation metadata generation', {
       error: (error as Error).message,
       stack: (error as Error).stack,

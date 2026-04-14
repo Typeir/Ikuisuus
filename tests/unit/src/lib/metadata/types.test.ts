@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('types module', () => {
   it('should export type-only module without runtime errors', async () => {
-    const mod = await import('@/lib/metadata/types');
+    const mod = await import('@scripts/metadata/types');
     expect(mod).toBeDefined();
   });
 });

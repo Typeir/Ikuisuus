@@ -8,7 +8,6 @@
  * @since 7.0.0
  */
 
-import { contentHash } from '@/lib/metadata/contentHash';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/db/orm/entities', () => ({
@@ -127,9 +126,8 @@ describe('syncBloodlines', () => {
         creatureTypes: ['Humanoid'],
       },
       boons: [],
+      versionHash: 'abcd1234',
     };
-
-    const hash = contentHash(record);
 
     fsMock.existsSync.mockReturnValue(true);
     fsMock.readdirSync.mockReturnValue(['foulblood.metadata.json'] as never);
@@ -138,7 +136,7 @@ describe('syncBloodlines', () => {
     const em = {
       find: vi
         .fn()
-        .mockResolvedValue([{ slug: 'foulblood', versionHash: hash }]),
+        .mockResolvedValue([{ slug: 'foulblood', versionHash: 'abcd1234' }]),
       assign: vi.fn(),
       create: vi.fn(),
       remove: vi.fn(),

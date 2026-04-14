@@ -76,7 +76,7 @@
   },
   {
     "file": "src/lib/metadata/generatorUtils.ts",
-    "maxLines": 300,
+    "maxLines": 305,
     "justification": "Shared metadata generator utilities with parsing, file I/O, and tagging helpers"
   },
   {

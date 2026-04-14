@@ -34,9 +34,10 @@ import styles from './creatureRow.module.scss';
  * @description Props for CombatantDetailsColumns component
  * @interface CombatantDetailsColumnsProps
  * @property {ReactNode} [buffs] - Buff list editor component
- * @property {ReactNode} [items] - Item list editor component
+ * @property {ReactNode} [items] - Item list editor compone1nt
  * @property {ReactNode} [spells] - Spell list editor component
  * @property {ReactNode} [affixes] - Affix list editor component
+ * @property {ReactNode} [conditions] - Conditions manager component
  * @property {boolean} [showEmpty=false] - Whether to show columns with no content
  */
 interface CombatantDetailsColumnsProps {
@@ -44,6 +45,7 @@ interface CombatantDetailsColumnsProps {
   items?: ReactNode;
   spells?: ReactNode;
   affixes?: ReactNode;
+  conditions?: ReactNode;
   showEmpty?: boolean;
 }
 
@@ -58,6 +60,7 @@ interface CombatantDetailsColumnsProps {
  * @param {ReactNode} [props.items] - Item list editor component
  * @param {ReactNode} [props.spells] - Spell list editor component
  * @param {ReactNode} [props.affixes] - Affix list editor component
+ * @param {ReactNode} [props.conditions] - Conditions manager component
  * @param {boolean} [props.showEmpty=false] - Whether to show columns with no content
  * @returns {JSX.Element} Rendered details grid with visible columns
  *
@@ -66,16 +69,23 @@ interface CombatantDetailsColumnsProps {
  * <CombatantDetailsColumns
  *   buffs={<BuffListEditor buffs={buffs} onChange={setBuffs} />}
  *   spells={<SpellListEditor spells={spells} onChange={setSpells} locale="en" />}
+ *   conditions={<CombatantConditionsManager />}
  * />
  * ```
  */
 export const CombatantDetailsColumns: React.FC<
   CombatantDetailsColumnsProps
-> = ({ buffs, items, spells, affixes, showEmpty = false }) => {
+> = ({ buffs, items, spells, affixes, conditions, showEmpty = false }) => {
   const t = useTranslations('encounterPlanner');
 
   return (
     <div className={styles.detailsGrid}>
+      {(conditions || showEmpty) && (
+        <div className={styles.detailsColumn}>
+          <div className={styles.detailsColumnTitle}>{t('conditions')}</div>
+          {conditions}
+        </div>
+      )}
       {(buffs || showEmpty) && (
         <div className={styles.detailsColumn}>
           <div className={styles.detailsColumnTitle}>{t('buffs')}</div>

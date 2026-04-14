@@ -13,7 +13,9 @@
 /* paw:gate:file-length ignore */
 
 import { GameData } from './gameData';
+import { SLUG } from './parsingPatterns';
 import type { SharedData } from './sharedData';
+import { ITEM_MECHANICS, MONSTER_MECHANICS, MOVEMENT } from './taggingPatterns';
 
 /**
  * Options for tag extraction.
@@ -126,21 +128,12 @@ export function extractMovementTags(
 ): string[] {
   const tags: string[] = [];
   const movementTypes = GameData.getMovementTypes(sharedData);
-  const movementPatterns: Record<string, RegExp> = {
-    flight: /\b(fly|flying|flight)\b/i,
-    burrowing: /\bburrow/i,
-    swimming: /\bswim/i,
-    climbing: /\bclimb/i,
-    teleportation: /\bteleport/i,
-    enhanced: /\bmovement\s+speed/i,
-  };
-
   for (const movement of movementTypes) {
-    if (movementPatterns[movement] && movementPatterns[movement].test(text)) {
+    if (MOVEMENT[movement] && MOVEMENT[movement].test(text)) {
       if (
         movement === 'flight' &&
         requireMeasurement &&
-        !/\d+\s*ft/i.test(text)
+        !MOVEMENT.distanceFeet.test(text)
       )
         continue;
       tags.push(`movement:${movement}`);
@@ -159,42 +152,47 @@ export function extractMovementTags(
 export function extractMonsterMechanicTags(text: string): string[] {
   const tags: string[] = [];
 
-  if (/\b(Legendary Deed: act?|Legendary Deed: resist)\b/i.test(text))
+  if (MONSTER_MECHANICS.legendaryDeed.test(text))
     tags.push('mechanic:legendary-deed');
-  if (/\bLegendary Deed: resist?\b/i.test(text)) tags.push('mechanic:resist');
-  if (/\bLegendary Deed: lair?\b/i.test(text)) tags.push('mechanic:lair');
-  if (/\bLegendary Deed: Stratagem?\b/i.test(text))
+  if (MONSTER_MECHANICS.deedResist.test(text)) tags.push('mechanic:resist');
+  if (MONSTER_MECHANICS.deedLair.test(text)) tags.push('mechanic:lair');
+  if (MONSTER_MECHANICS.deedStratagem.test(text))
     tags.push('mechanic:stratagem');
-  if (/\bLegendary Deed: Phase?\b/i.test(text))
+  if (MONSTER_MECHANICS.deedPhase.test(text))
     tags.push('mechanic:phase-actions');
-  if (/\bmultiattack\b/i.test(text)) tags.push('mechanic:multiattack');
-  if (/\breactions?\b/i.test(text)) tags.push('mechanic:reactions');
-  if (/\bbonus actions?\b/i.test(text)) tags.push('mechanic:bonus-actions');
+  if (MONSTER_MECHANICS.multiattack.test(text))
+    tags.push('mechanic:multiattack');
+  if (MONSTER_MECHANICS.reactions.test(text)) tags.push('mechanic:reactions');
+  if (MONSTER_MECHANICS.bonusActions.test(text))
+    tags.push('mechanic:bonus-actions');
 
-  if (/\bregenerat(e|ion)\b/i.test(text)) tags.push('mechanic:regeneration');
-  if (/\b(regains?|recover)\s+\d+\s+(hit points?|hp)\b/i.test(text))
+  if (MONSTER_MECHANICS.regeneration.test(text))
     tags.push('mechanic:regeneration');
+  if (MONSTER_MECHANICS.healing.test(text)) tags.push('mechanic:regeneration');
 
-  if (/\b(spellcasting|cantrips?|spell slots?)\b/i.test(text))
+  if (MONSTER_MECHANICS.spellcasting.test(text))
     tags.push('mechanic:spellcasting');
-  if (/\b(innate spellcasting)\b/i.test(text))
+  if (MONSTER_MECHANICS.innateSpellcasting.test(text))
     tags.push('mechanic:innate-spellcasting');
 
-  if (/\b(magic resistance)\b/i.test(text))
+  if (MONSTER_MECHANICS.magicResistance.test(text))
     tags.push('mechanic:magic-resistance');
-  if (/\b(magic weapons?)\b/i.test(text)) tags.push('mechanic:magic-weapons');
-  if (/\b(pack tactics)\b/i.test(text)) tags.push('mechanic:pack-tactics');
-  if (/\b(sneak attack)\b/i.test(text)) tags.push('mechanic:sneak-attack');
-  if (/\b(aura)\b/i.test(text)) tags.push('mechanic:aura');
-  if (/\b(summon|summoning)\b/i.test(text)) tags.push('mechanic:summoning');
-  if (/\b(shapechange|polymorph)\b/i.test(text))
+  if (MONSTER_MECHANICS.magicWeapons.test(text))
+    tags.push('mechanic:magic-weapons');
+  if (MONSTER_MECHANICS.packTactics.test(text))
+    tags.push('mechanic:pack-tactics');
+  if (MONSTER_MECHANICS.sneakAttack.test(text))
+    tags.push('mechanic:sneak-attack');
+  if (MONSTER_MECHANICS.aura.test(text)) tags.push('mechanic:aura');
+  if (MONSTER_MECHANICS.summoning.test(text)) tags.push('mechanic:summoning');
+  if (MONSTER_MECHANICS.shapeshifting.test(text))
     tags.push('mechanic:shapeshifting');
 
-  if (/\b(resistant|resistance)\b/i.test(text))
+  if (MONSTER_MECHANICS.damageResistance.test(text))
     tags.push('mechanic:damage-resistance');
-  if (/\b(immune|immunity)\b/i.test(text))
+  if (MONSTER_MECHANICS.damageImmunity.test(text))
     tags.push('mechanic:damage-immunity');
-  if (/\b(vulnerable|vulnerability)\b/i.test(text))
+  if (MONSTER_MECHANICS.damageVulnerability.test(text))
     tags.push('mechanic:damage-vulnerability');
 
   return tags;
@@ -209,44 +207,47 @@ export function extractMonsterMechanicTags(text: string): string[] {
 export function extractItemMechanicTags(text: string): string[] {
   const tags: string[] = [];
 
-  if (/\+\d+\s+(?:to\s+)?(?:attack|hit)/i.test(text))
-    tags.push('mechanic:attack-bonus');
-  if (/\+\d+\s+(?:to\s+)?(?:damage|AC)/i.test(text))
-    tags.push('mechanic:damage-bonus');
-  if (/\+\d+\s+(?:to\s+|bonus\s+to\s+)?AC/i.test(text))
-    tags.push('mechanic:ac-bonus');
-  if (/\+\d+\s+(?:to\s+|bonus\s+to\s+)?saving throws?/i.test(text))
+  if (ITEM_MECHANICS.attackBonus.test(text)) tags.push('mechanic:attack-bonus');
+  if (ITEM_MECHANICS.damageBonus.test(text)) tags.push('mechanic:damage-bonus');
+  if (ITEM_MECHANICS.acBonus.test(text)) tags.push('mechanic:ac-bonus');
+  if (ITEM_MECHANICS.savingThrowBonus.test(text))
     tags.push('mechanic:saving-throw-bonus');
 
-  if (/\b(advantage|disadvantage)\b/i.test(text))
+  if (ITEM_MECHANICS.advantageDisadvantage.test(text))
     tags.push('mechanic:advantage-disadvantage');
-  if (/\bcritical(?:\s+hit)?/i.test(text)) tags.push('mechanic:critical-hits');
-  if (/\breaction\b/i.test(text)) tags.push('mechanic:reaction');
-  if (/\bbonus action\b/i.test(text)) tags.push('mechanic:bonus-action');
-  if (/\bopportunity attack/i.test(text))
+  if (ITEM_MECHANICS.criticalHit.test(text))
+    tags.push('mechanic:critical-hits');
+  if (ITEM_MECHANICS.reaction.test(text)) tags.push('mechanic:reaction');
+  if (ITEM_MECHANICS.bonusAction.test(text)) tags.push('mechanic:bonus-action');
+  if (ITEM_MECHANICS.opportunityAttack.test(text))
     tags.push('mechanic:opportunity-attacks');
-  if (/does\s+not\s+provoke\s+opportunity\s+attacks?/i.test(text))
+  if (ITEM_MECHANICS.noOpportunityAttack.test(text))
     tags.push('mechanic:no-opportunity-attacks');
 
-  if (/\bresistance\s+to/i.test(text)) tags.push('mechanic:damage-resistance');
-  if (/\bimmun(?:e|ity)\s+to/i.test(text))
+  if (ITEM_MECHANICS.damageResistanceTo.test(text))
+    tags.push('mechanic:damage-resistance');
+  if (ITEM_MECHANICS.damageImmunityTo.test(text))
     tags.push('mechanic:damage-immunity');
-  if (/\bvulnerab(?:le|ility)\s+to/i.test(text))
+  if (ITEM_MECHANICS.damageVulnerabilityTo.test(text))
     tags.push('mechanic:damage-vulnerability');
 
-  if (/\bcasts?\s+\[?_?[A-Z][a-z]+|spell/i.test(text))
+  if (ITEM_MECHANICS.spellcasting.test(text))
     tags.push('mechanic:spellcasting');
-  if (/\bcantrips?\b/i.test(text)) tags.push('mechanic:cantrips');
-  if (/\bcharges?\b/i.test(text)) tags.push('mechanic:charges');
-  if (/\b\d+\/(?:short|long)\s+rest/i.test(text))
-    tags.push('mechanic:limited-uses');
-  if (/\brecharge\s+\d+/i.test(text)) tags.push('mechanic:recharge');
-  if (/\breroll/i.test(text)) tags.push('mechanic:reroll');
+  if (ITEM_MECHANICS.cantrips.test(text)) tags.push('mechanic:cantrips');
+  if (ITEM_MECHANICS.charges.test(text)) tags.push('mechanic:charges');
+  if (ITEM_MECHANICS.limitedUses.test(text)) tags.push('mechanic:limited-uses');
+  if (ITEM_MECHANICS.recharge.test(text)) tags.push('mechanic:recharge');
+  if (ITEM_MECHANICS.reroll.test(text)) tags.push('mechanic:reroll');
 
-  if (/\bconsumable\b/i.test(text) || /burns? away|destroyed|inert/i.test(text))
+  if (
+    ITEM_MECHANICS.consumable.test(text) ||
+    ITEM_MECHANICS.consumableDestroyed.test(text)
+  )
     tags.push('property:consumable');
-  if (/\battunement\b/i.test(text)) tags.push('property:attunement-required');
-  if (/\bproficiency\b/i.test(text)) tags.push('property:proficiency-required');
+  if (ITEM_MECHANICS.attunement.test(text))
+    tags.push('property:attunement-required');
+  if (ITEM_MECHANICS.proficiency.test(text))
+    tags.push('property:proficiency-required');
 
   return tags;
 }
@@ -293,8 +294,10 @@ export function extractOrganizationalTags(
   projectRoot: string = process.cwd(),
 ): string[] {
   const tags: string[] = [];
-  const relativePath = filePath.replace(projectRoot, '').replace(/^[/\\]+/, '');
-  const pathParts = relativePath.split(/[/\\]/);
+  const relativePath = filePath
+    .replace(projectRoot, '')
+    .replace(SLUG.pathSeparatorLeading, '');
+  const pathParts = relativePath.split(SLUG.pathSeparator);
 
   if (pathParts.includes('monsters')) tags.push('category:monsters');
   if (pathParts.includes('items')) tags.push('category:items');

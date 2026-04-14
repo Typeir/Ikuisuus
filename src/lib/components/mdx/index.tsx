@@ -15,6 +15,7 @@ import FloatedContainer from './floatedContainer/floatedContainer';
 import { H1, H2, H3, H4, H5, H6 } from './heading/heading';
 import HorizontalSplit from './horizontalSplit/horizontalSplit';
 import mdxComponents from './mdxComponents';
+import Meta from './meta/meta';
 import HeirloomTableWrapper from './metadataTables/heirloomTableWrapper';
 import MonsterTableWrapper from './metadataTables/monsterTableWrapper';
 import TrinketTableWrapper from './metadataTables/trinketTableWrapper';
@@ -27,6 +28,7 @@ export const components = {
   BlendedImage,
   Collapsible,
   FlexRenderer,
+  Meta,
   MonsterTable: MonsterTableWrapper,
   HeirloomTable: HeirloomTableWrapper,
   FilteredSpellTable,

@@ -8,8 +8,8 @@
  * @since 3.0.0
  */
 
-import { GameData, ItemData } from '@/lib/metadata/gameData';
-import type { SharedData } from '@/lib/metadata/sharedData';
+import { GameData, ItemData } from '@scripts/metadata/gameData';
+import type { SharedData } from '@scripts/metadata/sharedData';
 import { describe, expect, it } from 'vitest';
 
 const MOCK_SHARED_DATA: SharedData = {

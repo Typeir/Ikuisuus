@@ -13,7 +13,6 @@ import { BloodlineBoonEntity, BloodlineEntity } from '@/lib/db/orm/entities';
 import type { EntityManager } from '@mikro-orm/postgresql';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { contentHash } from './contentHash';
 import type { SyncResult } from './types';
 
 /**
@@ -84,10 +83,10 @@ export async function syncBloodlines(
     const record = rawRecord as Record<string, unknown>;
     const slug = record.slug as string;
     incomingKeys.add(slug);
-    const hash = contentHash(record);
+    const hash = record.versionHash as string;
     const entity = existingMap.get(slug);
 
-    if (entity?.versionHash === hash) {
+    if (hash && entity?.versionHash === hash) {
       result.skipped++;
       continue;
     }

@@ -99,7 +99,7 @@ export const CombatantHeroicSection: React.FC<CombatantHeroicSectionProps> = () 
   }, [combatant, onUpdate]);
 
   return (
-    <>
+    <div className={styles.heroicRow}>
       {heroicAwakening.awakened && (
         <div className={styles.heroicInfo}>
           <div className={styles.heroicHeader}>
@@ -174,6 +174,6 @@ export const CombatantHeroicSection: React.FC<CombatantHeroicSectionProps> = () 
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };

@@ -22,12 +22,24 @@ vi.mock('react-dom', async (importOriginal) => {
 });
 
 describe('Tooltip', () => {
+  const originalGetBCR = Element.prototype.getBoundingClientRect;
+
   beforeEach(() => {
     vi.useFakeTimers();
+    Object.defineProperty(window, 'innerWidth', { value: 1024, writable: true });
+    Object.defineProperty(window, 'innerHeight', { value: 768, writable: true });
+    Element.prototype.getBoundingClientRect = function () {
+      return {
+        x: 400, y: 300, width: 100, height: 40,
+        top: 300, right: 500, bottom: 340, left: 400,
+        toJSON() { return this; },
+      } as DOMRect;
+    };
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    Element.prototype.getBoundingClientRect = originalGetBCR;
     vi.clearAllMocks();
   });
 

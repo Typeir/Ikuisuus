@@ -14,8 +14,9 @@
 import { createLogger } from '@/lib/logging/logger';
 import { readFileSync } from 'fs';
 import path from 'path';
-import { contentHash } from './contentHash';
+import { fnv1a32 } from '../../src/lib/metadata/contentHash';
 import { ensureDirectory, getMatchingFiles, safeWriteFile } from './fileUtils';
+import { UTILITY } from './parsingPatterns';
 import { endTimer, startTimer } from './performanceUtils';
 import { loadSharedData, type SharedData } from './sharedData';
 
@@ -55,7 +56,7 @@ export function getMetadataBackend(): string {
         _metadataBackend = t
           .slice(eq + 1)
           .trim()
-          .replace(/^["']|["']$/g, '');
+          .replace(UTILITY.quotesStrip, '');
         return _metadataBackend;
       }
     }
@@ -176,6 +177,8 @@ export interface StorageAdapter {
  * @property {string} [locale] - Locale for storage (defaults to 'en')
  * @property {boolean} [recursive] - Scan subdirectories recursively (defaults to false)
  * @property {Function} [resolveOutputPath] - Custom output path resolver
+ * @property {string} [metadataVersion] - Schema version appended to source hash so parser changes invalidate caches
+ * @property {string} [fileFilter] - Single filename to process (from --file CLI flag)
  */
 export interface GeneratorConfig {
   name: string;
@@ -193,35 +196,25 @@ export interface GeneratorConfig {
     backend: string,
     locale: string,
   ) => string;
+  metadataVersion?: string;
+  fileFilter?: string;
 }
 
 /**
- * Attaches deterministic version hashes to metadata records.
+ * Stamps a pre-computed version hash onto metadata records.
+ * For arrays, every record receives the same hash (same source file).
  *
  * @param {unknown} metadata - Parsed metadata object, array, or null
+ * @param {string} hash - Pre-computed version hash
  * @returns {unknown} Metadata with `versionHash` populated for object records
  */
-function attachVersionHashes(metadata: unknown): unknown {
-  if (metadata === null || metadata === undefined) {
-    return metadata;
-  }
-
+function stampVersionHash(metadata: unknown, hash: string): unknown {
+  if (metadata === null || metadata === undefined) return metadata;
   if (Array.isArray(metadata)) {
-    return metadata.map((item) => attachVersionHashes(item));
+    return metadata.map((item) => stampVersionHash(item, hash));
   }
-
-  if (typeof metadata !== 'object') {
-    return metadata;
-  }
-
-  const record = metadata as Record<string, unknown>;
-  const hashPayload = { ...record };
-  delete hashPayload.versionHash;
-
-  return {
-    ...record,
-    versionHash: contentHash(hashPayload),
-  };
+  if (typeof metadata !== 'object') return metadata;
+  return { ...(metadata as Record<string, unknown>), versionHash: hash };
 }
 
 /**
@@ -243,6 +236,7 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
     locale = 'en',
     recursive = false,
     resolveOutputPath = null,
+    fileFilter = null,
   } = config;
 
   const timerKey = `${contentType}-metadata-generation`;
@@ -258,11 +252,19 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
     log.message('Loaded shared data for optimized processing');
 
     const resolvedContentDir = contentDir || getContentDirectory(contentType);
-    const files = await getMatchingFiles(
+    let files = await getMatchingFiles(
       resolvedContentDir,
       filePattern,
       recursive,
     );
+
+    if (fileFilter) {
+      files = files.filter((f) => path.basename(f) === fileFilter);
+      log.message(
+        `Filtered to ${files.length} file(s) matching "${fileFilter}"`,
+      );
+    }
+
     log.message(`Found ${files.length} ${contentType} files`);
 
     if (files.length === 0) {
@@ -288,7 +290,14 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
             };
           }
 
-          const metadataWithHash = attachVersionHashes(processed.metadata);
+          const sourceContent = readFileSync(filePath, 'utf8');
+          const versionHash = fnv1a32(
+            sourceContent + (config.metadataVersion || ''),
+          );
+          const metadataWithHash = stampVersionHash(
+            processed.metadata,
+            versionHash,
+          );
 
           const backend = getMetadataBackend();
           const metadataFilePath = resolveOutputPath

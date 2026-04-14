@@ -14,7 +14,7 @@ import {
     getMetaSubdir,
     getMetadataOutputPath,
     runGenerator,
-} from '@/lib/metadata/generatorUtils';
+} from '@scripts/metadata/generatorUtils';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -37,13 +37,13 @@ describe('getMetadataBackend', () => {
 
   it('should return env var when set', async () => {
     process.env.METADATA_BACKEND = 'pg';
-    const mod = await import('@/lib/metadata/generatorUtils');
+    const mod = await import('@scripts/metadata/generatorUtils');
     expect(mod.getMetadataBackend()).toBe('pg');
   });
 
   it('should default to fs when no env var', async () => {
     delete process.env.METADATA_BACKEND;
-    const mod = await import('@/lib/metadata/generatorUtils');
+    const mod = await import('@scripts/metadata/generatorUtils');
     const result = mod.getMetadataBackend();
     expect(['fs', 'pg']).toContain(result);
   });
@@ -127,13 +127,20 @@ describe('getMetadataOutputPath', () => {
   });
 });
 
-vi.mock('@/lib/metadata/fileUtils', () => ({
+vi.mock('@scripts/metadata/fileUtils', () => ({
   getMatchingFiles: vi.fn(),
   ensureDirectory: vi.fn().mockResolvedValue(true),
   safeWriteFile: vi.fn().mockResolvedValue(true),
 }));
 
-vi.mock('@/lib/metadata/sharedData', () => ({
+vi.mock('fs', () => {
+  const mocks = {
+    readFileSync: vi.fn().mockReturnValue('# Mock MDX source content\n'),
+  };
+  return { ...mocks, default: mocks };
+});
+
+vi.mock('@scripts/metadata/sharedData', () => ({
   loadSharedData: vi.fn().mockResolvedValue({
     gameData: {},
     itemData: {},
@@ -144,7 +151,7 @@ vi.mock('@/lib/metadata/sharedData', () => ({
   }),
 }));
 
-vi.mock('@/lib/metadata/performanceUtils', () => ({
+vi.mock('@scripts/metadata/performanceUtils', () => ({
   startTimer: vi.fn(),
   endTimer: vi.fn().mockReturnValue(100),
 }));
@@ -160,7 +167,7 @@ describe('runGenerator', () => {
 
   it('should process files and write metadata', async () => {
     const { getMatchingFiles, safeWriteFile, ensureDirectory } =
-      await import('@/lib/metadata/fileUtils');
+      await import('@scripts/metadata/fileUtils');
     vi.mocked(getMatchingFiles).mockResolvedValue([
       '/tmp/test/goblin.sheet.mdx',
     ]);
@@ -184,7 +191,7 @@ describe('runGenerator', () => {
   });
 
   it('should return early when no files found', async () => {
-    const { getMatchingFiles } = await import('@/lib/metadata/fileUtils');
+    const { getMatchingFiles } = await import('@scripts/metadata/fileUtils');
     vi.mocked(getMatchingFiles).mockResolvedValue([]);
 
     const parseFile = vi.fn();
@@ -202,7 +209,7 @@ describe('runGenerator', () => {
 
   it('should use processResult transform when provided', async () => {
     const { getMatchingFiles, safeWriteFile, ensureDirectory } =
-      await import('@/lib/metadata/fileUtils');
+      await import('@scripts/metadata/fileUtils');
     vi.mocked(getMatchingFiles).mockResolvedValue(['/tmp/test/spell.mdx']);
     vi.mocked(safeWriteFile).mockResolvedValue(true);
     vi.mocked(ensureDirectory).mockResolvedValue(true);
@@ -228,7 +235,7 @@ describe('runGenerator', () => {
 
   it('should handle parse failures gracefully', async () => {
     const { getMatchingFiles, safeWriteFile, ensureDirectory } =
-      await import('@/lib/metadata/fileUtils');
+      await import('@scripts/metadata/fileUtils');
     vi.mocked(getMatchingFiles).mockResolvedValue([
       '/tmp/test/good.sheet.mdx',
       '/tmp/test/bad.sheet.mdx',
@@ -254,7 +261,7 @@ describe('runGenerator', () => {
 
   it('should handle safeWriteFile failure', async () => {
     const { getMatchingFiles, safeWriteFile, ensureDirectory } =
-      await import('@/lib/metadata/fileUtils');
+      await import('@scripts/metadata/fileUtils');
     vi.mocked(getMatchingFiles).mockResolvedValue(['/tmp/test/fail.sheet.mdx']);
     vi.mocked(safeWriteFile).mockResolvedValue(false);
     vi.mocked(ensureDirectory).mockResolvedValue(true);
@@ -276,7 +283,7 @@ describe('runGenerator', () => {
 
   it('should call storage.upsert when storage adapter provided', async () => {
     const { getMatchingFiles, safeWriteFile, ensureDirectory } =
-      await import('@/lib/metadata/fileUtils');
+      await import('@scripts/metadata/fileUtils');
     vi.mocked(getMatchingFiles).mockResolvedValue(['/tmp/test/item.mdx']);
     vi.mocked(safeWriteFile).mockResolvedValue(true);
     vi.mocked(ensureDirectory).mockResolvedValue(true);
@@ -312,7 +319,7 @@ describe('runGenerator', () => {
 
   it('should handle storage upsert failure gracefully', async () => {
     const { getMatchingFiles, safeWriteFile, ensureDirectory } =
-      await import('@/lib/metadata/fileUtils');
+      await import('@scripts/metadata/fileUtils');
     vi.mocked(getMatchingFiles).mockResolvedValue(['/tmp/test/item.mdx']);
     vi.mocked(safeWriteFile).mockResolvedValue(true);
     vi.mocked(ensureDirectory).mockResolvedValue(true);
@@ -339,7 +346,7 @@ describe('runGenerator', () => {
 
   it('should handle array metadata with storage adapter', async () => {
     const { getMatchingFiles, safeWriteFile, ensureDirectory } =
-      await import('@/lib/metadata/fileUtils');
+      await import('@scripts/metadata/fileUtils');
     vi.mocked(getMatchingFiles).mockResolvedValue([
       '/tmp/test/multi.sheet.mdx',
     ]);

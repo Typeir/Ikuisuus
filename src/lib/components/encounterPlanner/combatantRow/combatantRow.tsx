@@ -177,38 +177,39 @@ const CombatantRowContent: React.FC = () => {
 
         {detailsExpanded && (
           <div className={`${styles.detailsSection} ${rowClassName}`}>
-            <CombatantHeroicSection />
+            <div className={styles.detailsLayout}>
+              <CombatantHeroicSection />
 
-            <CombatantDetailsColumns
-              buffs={
-                <BuffListEditor
-                  buffs={combatant.details.buffs}
-                  onChange={handleBuffsChange}
-                />
-              }
-              items={
-                <ItemListEditor
-                  items={combatant.details.items}
-                  onChange={handleItemsChange}
-                />
-              }
-              spells={
-                <SpellListEditor
-                  spells={combatant.details.spells}
-                  onChange={handleSpellsChange}
-                  locale={locale}
-                />
-              }
-              affixes={
-                <AffixListEditor
-                  affixes={combatant.details.affixes}
-                  onChange={handleAffixesChange}
-                  locale={locale}
-                />
-              }
-            />
-
-            <CombatantConditionsManager />
+              <CombatantDetailsColumns
+                buffs={
+                  <BuffListEditor
+                    buffs={combatant.details.buffs}
+                    onChange={handleBuffsChange}
+                  />
+                }
+                items={
+                  <ItemListEditor
+                    items={combatant.details.items}
+                    onChange={handleItemsChange}
+                  />
+                }
+                spells={
+                  <SpellListEditor
+                    spells={combatant.details.spells}
+                    onChange={handleSpellsChange}
+                    locale={locale}
+                  />
+                }
+                affixes={
+                  <AffixListEditor
+                    affixes={combatant.details.affixes}
+                    onChange={handleAffixesChange}
+                    locale={locale}
+                  />
+                }
+                conditions={<CombatantConditionsManager />}
+              />
+            </div>
           </div>
         )}
       </div>

@@ -9,7 +9,7 @@
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * @module src/lib/utils/featurePatterns
+ * @module scripts/metadata/extraction/featurePatterns
  */
 
 /**
@@ -190,7 +190,8 @@ export const MONSTER = {
     /_?(Melee|Ranged)\s+(Weapon|Spell)\s+Attack:_?\s*\+(\d+)\s+to\s+hit/i,
   hitLine: /_?Hit:_?\s*(\d+)\s*\((.+?)\)\s*(\w+)?\s*damage/i,
   multiattack: /multiattack/i,
-  attackSegment: /(\w+)\s+(\w+)\s+attacks?/i,
+  attackSegment:
+    /(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+((?:\w+\s+)*\w+)\s+attacks?/i,
   condition: /(?:while|when|if)\s+(.+?)(?:\.|,|$)/i,
   deedCost: /\(Costs?\s+(\d+)\s+Deeds?\)/i,
   phaseThreshold: /(Wounded|Bloodied|Doomed)\s*\((\d+)%/i,
@@ -336,3 +337,103 @@ export const RECHARGE_TIMINGS: ReadonlyArray<{
   { pattern: 'midnight', timing: 'midnight' },
   { pattern: 'dusk', timing: 'dusk' },
 ];
+
+/**
+ * Pre-compiled patterns for section splitting and sub-heading detection.
+ *
+ * @property {RegExp} subHeading - H4–H6 heading
+ * @property {RegExp} boldLabel - Bullet with bold-label prefix
+ * @property {RegExp} deedBullet - Deed option bullet with optional cost
+ */
+export const SECTIONS = {
+  subHeading: /^#{4,6}\s+(.+?)\s*$/,
+  boldLabel: /^\s*[-*]\s*\*\*(.+?)[.*]\*\*\s*/,
+  deedBullet:
+    /^\s*[-*]\s*\*\*(.+?)[.*]\*\*\s*(?:\(Costs?\s*(\d+)\s*Deeds?\))?/i,
+} as const;
+
+/**
+ * Pre-compiled patterns for spellcasting block parsing.
+ *
+ * @property {RegExp} slotRow - Inline slot row "1st level (2 slots)"
+ * @property {RegExp} slotCell - Table cell with level + slot count
+ * @property {RegExp} slotTableCell - Bold/plain table cell variant
+ * @property {RegExp} casterLevel - "N-level spellcaster"
+ * @property {RegExp} dc - "spell save DC N"
+ * @property {RegExp} attackBonus - "+N to hit with spell"
+ * @property {RegExp} ability - "spellcasting ability is X"
+ */
+export const SPELLCASTING = {
+  slotRow: /(\d+)(?:st|nd|rd|th)\s*(?:level)?\s*\((\d+)\s*slots?\)/i,
+  slotCell: /(\d+)(?:st|nd|rd|th)\s+level\s+\((\d+)\s+slots?\)/i,
+  slotTableCell:
+    /\*?\*?(\d+)(?:st|nd|rd|th)\s+level\s*\((\d+)\s+slots?\)\*?\*?/i,
+  casterLevel: /(\d+)(?:st|nd|rd|th)?[- ]level\s+spellcaster/i,
+  dc: /spell\s+save\s+DC\s*(\d+)/i,
+  attackBonus: /\+(\d+)\s+to\s+hit\s+with\s+spell/i,
+  ability: /spellcasting\s+ability\s+is\s+(\w+)/i,
+} as const;
+
+/**
+ * Pre-compiled patterns for enrichFromBody inline detection.
+ *
+ * @property {RegExp} extraDamage - "plus N (XdY) type damage"
+ * @property {RegExp} rechargeSuffix - "(Recharge N–M)"
+ * @property {RegExp} dailyUse - "(N/Short Rest)" or "(N/Long Rest)"
+ * @property {RegExp} perDay - "(N/day)"
+ * @property {RegExp} escalation - "each subsequent/consecutive/additional"
+ * @property {RegExp} reactionTrigger - "uses her/his/its/their reaction"
+ * @property {RegExp} critRange - "critically hits on a roll of N–"
+ */
+export const ENRICHMENT = {
+  extraDamage: /plus\s+\d+\s*\((.+?)\)\s*(\w+)\s*damage/i,
+  rechargeSuffix: /\(Recharge\s+(\d+)(?:[–\-](\d+))?\)/i,
+  dailyUse: /\((\d+)\/(Short|Long)\s*Rest\)/i,
+  perDay: /\((\d+)\/day\)/i,
+  escalation: /each\s+(?:subsequent|consecutive|additional)/i,
+  reactionTrigger: /\buses?\s+(?:her|his|its|their)\s+reaction\b/i,
+  critRange:
+    /\bcritical(?:ly)?\s+(?:hit|strike)s?\s+on\s+(?:a\s+)?(?:roll\s+of\s+)?(\d+)[-–,]/i,
+} as const;
+
+/**
+ * Section classifier patterns for monster stat block headings.
+ *
+ * @property {RegExp} deedAct - Legendary Deed: Act heading
+ * @property {RegExp} deedStratagem - Legendary Deed: Stratagem heading
+ * @property {RegExp} deedLair - Legendary Deed: Lair heading
+ * @property {RegExp} deedPhase - Legendary Deed: Phase heading
+ * @property {RegExp} spellcasting - Spellcasting heading
+ * @property {RegExp} condition - Condition heading
+ * @property {RegExp} bloodrage - Bloodrage heading
+ * @property {RegExp} bonusActions - Bonus Actions heading
+ * @property {RegExp} reactions - Reactions heading
+ * @property {RegExp} actions - Actions heading
+ * @property {RegExp} traits - Traits heading
+ * @property {RegExp} heading - Any heading with level and text capture
+ */
+export const CLASSIFIER = {
+  deedAct: /^legendary\s+deed:\s*act/i,
+  deedStratagem: /^legendary\s+deed:\s*stratagem/i,
+  deedLair: /^legendary\s+deed:\s*lair/i,
+  deedPhase: /^legendary\s+deed:\s*phase/i,
+  spellcasting: /^spellcasting/i,
+  condition: /^condition:\s*/i,
+  bloodrage: /^bloodrage/i,
+  bonusActions: /^bonus\s*actions?/i,
+  reactions: /^reactions?$/i,
+  actions: /^actions?$/i,
+  traits: /^traits?$/i,
+  heading: /^(#{1,6})\s+(.+?)\s*$/,
+} as const;
+
+/**
+ * Meta tag parsing patterns for MDX {@literal <Meta>} JSX directives.
+ *
+ * @property {RegExp} tag - Self-closing Meta tag: {@literal <Meta ... />}
+ * @property {RegExp} attribute - JSX attribute: key="value"
+ */
+export const META_TAG = {
+  tag: /<Meta\s+([\s\S]*?)\/>/g,
+  attribute: /(\w+)=["']([^"']*)["']/g,
+} as const;

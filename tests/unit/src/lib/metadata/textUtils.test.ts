@@ -14,7 +14,7 @@ import {
     readLines,
     stripMarkdown,
     toKebabCase,
-} from '@/lib/metadata/textUtils';
+} from '@scripts/metadata/textUtils';
 import { describe, expect, it } from 'vitest';
 
 describe('clean', () => {

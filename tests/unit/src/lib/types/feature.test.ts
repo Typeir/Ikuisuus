@@ -25,7 +25,6 @@ import type {
     DurationToken,
     Feature,
     FeatureFlag,
-    FeatureSource,
     HitToken,
     MonsterFeature,
     MultiattackToken,
@@ -141,18 +140,6 @@ describe('feature types', () => {
     it('should accept slain threshold', () => {
       const token: PhaseToken = { name: 'slain', threshold: 'slain' };
       expect(token.threshold).toBe('slain');
-    });
-  });
-
-  describe('FeatureSource interface', () => {
-    it('should be assignable with all required properties', () => {
-      const source: FeatureSource = {
-        file: 'rimelord/avalanche-blade.mdx',
-        lines: [10, 25],
-        archetype: 'B',
-      };
-      expect(source.file).toBe('rimelord/avalanche-blade.mdx');
-      expect(source.lines).toEqual([10, 25]);
     });
   });
 

@@ -379,15 +379,15 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     expect(row.className).toContain('awakened');
   });
 
-  it('should apply affix-specific class based on first affix', () => {
+  it('should apply affix-specific class based on first affix for base tier', () => {
     const combatant = createMockCombatant({
       heroicAwakening: {
         fateDieResult: 18,
         heroicDc: 12,
         awakened: true,
-        tier: 'legendary',
-        affixes: [{ text: 'Stormbound' }, { text: 'Psionic' }],
-        bonuses: { proficiencyBonus: 2, acBonus: 2, savingThrowBonus: 2 },
+        tier: 'awakened',
+        affixes: [{ text: 'Stormbound' }],
+        bonuses: { proficiencyBonus: 1, acBonus: 1, savingThrowBonus: 1 },
         hpOverride: null,
       },
     });
@@ -440,7 +440,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
 
     const row = screen.getByTestId('combatant-row');
     expect(row.className).toContain('awakened');
-    expect(row.className).toContain('awakened--stormbound');
+    expect(row.className).not.toContain('awakened--stormbound');
     expect(row.className).toContain('awakened--legendary');
   });
 
@@ -469,7 +469,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
     expect(row.className).toContain('awakened--mythic');
   });
 
-  it('should apply base, primary affix, and mythic tier classes together', () => {
+  it('should apply base and mythic tier classes without affix class', () => {
     const combatant = createMockCombatant({
       heroicAwakening: {
         fateDieResult: 20,
@@ -492,7 +492,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
 
     const row = screen.getByTestId('combatant-row');
     expect(row.className).toContain('awakened');
-    expect(row.className).toContain('awakened--sulphurous');
+    expect(row.className).not.toContain('awakened--sulphurous');
     expect(row.className).toContain('awakened--mythic');
   });
 

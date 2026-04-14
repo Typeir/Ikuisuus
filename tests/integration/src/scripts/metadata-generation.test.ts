@@ -5,7 +5,7 @@
  * testing monster, heirloom, and spell metadata extraction.
  */
 
-import { GameData, ItemData } from '@/lib/metadata';
+import { GameData, ItemData } from ../../../../scripts/metadata;
 import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata';
 import { parseMonsterFile } from '@scripts/metadata/generateMonsterMetadata';
 import { parseSpellFile } from '@scripts/metadata/generateSpellMetadata';

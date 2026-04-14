@@ -21,7 +21,7 @@ import {
     recognizeHitLine,
     recognizeMultiattack,
     recognizePhaseThreshold,
-} from '@/lib/utils/monsterTokens';
+} from '@scripts/metadata/extraction/monsterTokens';
 import { describe, expect, it } from 'vitest';
 
 describe('monster token recognizers', () => {

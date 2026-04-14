@@ -10,6 +10,7 @@
  */
 
 import path from 'path';
+import { SLUG, TEXT } from './parsingPatterns';
 
 /**
  * Removes carriage returns and trims whitespace.
@@ -18,7 +19,7 @@ import path from 'path';
  * @returns {string} Cleaned string
  */
 export function clean(text: string): string {
-  return (text || '').replace(/\r/g, '').trim();
+  return (text || '').replace(TEXT.carriageReturn, '').trim();
 }
 
 /**
@@ -30,10 +31,10 @@ export function clean(text: string): string {
 export function stripMarkdown(text: string): string {
   if (!text) return text;
   return text
-    .replace(/\*\*(.+?)\*\*/g, '$1')
-    .replace(/\*(.+?)\*/g, '$1')
-    .replace(/_(.+?)_/g, '$1')
-    .replace(/`(.+?)`/g, '$1')
+    .replace(TEXT.bold, '$1')
+    .replace(TEXT.italic, '$1')
+    .replace(TEXT.underscoreItalic, '$1')
+    .replace(TEXT.inlineCode, '$1')
     .trim();
 }
 
@@ -46,8 +47,8 @@ export function stripMarkdown(text: string): string {
 export function toKebabCase(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(SLUG.nonAlpha, '-')
+    .replace(SLUG.edgeHyphens, '');
 }
 
 /**
@@ -59,11 +60,8 @@ export function toKebabCase(text: string): string {
 export function filePathToSlug(filePath: string): string {
   return path
     .basename(filePath)
-    .replace(/\.mdx$/i, '')
-    .replace(
-      /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/,
-      '',
-    );
+    .replace(SLUG.mdxExtension, '')
+    .replace(SLUG.contentTypeSuffix, '');
 }
 
 /**
@@ -73,5 +71,5 @@ export function filePathToSlug(filePath: string): string {
  * @returns {string[]} Array of lines
  */
 export function readLines(raw: string): string[] {
-  return raw.split(/\r?\n/);
+  return raw.split(TEXT.lineSplit);
 }

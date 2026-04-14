@@ -11,7 +11,7 @@
 import {
     clearSharedDataCache,
     loadSharedData,
-} from '@/lib/metadata/sharedData';
+} from '@scripts/metadata/sharedData';
 import { afterEach, describe, expect, it } from 'vitest';
 
 describe('loadSharedData', () => {

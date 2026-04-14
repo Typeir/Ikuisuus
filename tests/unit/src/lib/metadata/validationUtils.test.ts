@@ -8,12 +8,12 @@
  * @since 3.0.0
  */
 
-import type { SharedData } from '@/lib/metadata/sharedData';
+import type { SharedData } from '@scripts/metadata/sharedData';
 import {
-    getRarityFromCR,
-    validateMetadata,
-    validateTag,
-} from '@/lib/metadata/validationUtils';
+  getRarityFromCR,
+  validateMetadata,
+  validateTag,
+} from '@scripts/metadata/validationUtils';
 import { describe, expect, it } from 'vitest';
 
 const MOCK_DATA: SharedData = {

@@ -10,19 +10,27 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import {
-    GameData,
-    clean,
-    filePathToSlug,
-    getMetadataBackend,
-    parseTitle,
-    runGenerator,
-    runWithCli,
-    type SharedData,
-    type StorageAdapter,
-} from '@/lib/metadata';
 import { promises as fs } from 'fs';
 import path from 'path';
+import {
+  GameData,
+  clean,
+  filePathToSlug,
+  getMetadataBackend,
+  parseTitle,
+  runGenerator,
+  runWithCli,
+  type SharedData,
+  type StorageAdapter,
+} from '.';
+import {
+  CASTING_TIME,
+  COMPONENTS,
+  DURATION,
+  SPELL_LISTS,
+  SPELL_TAGS,
+  STAT_BLOCK,
+} from './spellPatterns';
 
 const log = createLogger({ component: 'SpellMetadataGenerator' });
 
@@ -51,16 +59,15 @@ function parseSpellHeader(lines: string[], sharedData: SharedData) {
     'Ancient',
   ];
 
-  const italicPattern = /^>\s*[*_](.+?)[*_]\s*$/;
   const italicLine = lines.find((l) => {
-    if (!italicPattern.test(l)) return false;
+    if (!STAT_BLOCK.italicHeader.test(l)) return false;
     if (l.includes('**') || l.includes('__')) return false;
     return true;
   });
 
   if (!italicLine) return {};
 
-  const match = italicLine.match(italicPattern);
+  const match = italicLine.match(STAT_BLOCK.italicHeader);
   if (!match) return {};
 
   const content = clean(match[1]);
@@ -77,7 +84,7 @@ function parseSpellHeader(lines: string[], sharedData: SharedData) {
     return result;
   }
 
-  const levelMatch = content.match(/^(\d+)(?:st|nd|rd|th)-Level/i);
+  const levelMatch = content.match(STAT_BLOCK.levelPrefix);
   if (!levelMatch) return {};
 
   const level = parseInt(levelMatch[1], 10);
@@ -113,12 +120,10 @@ function parseSpellHeader(lines: string[], sharedData: SharedData) {
  * @returns {{ verbal?: boolean, somatic?: boolean, material?: boolean, materialDescription?: string }}
  */
 function parseComponents(lines: string[]) {
-  const componentLine = lines.find((l) => /^>\s*\*\*Components\*\*:/i.test(l));
+  const componentLine = lines.find((l) => STAT_BLOCK.componentsLine.test(l));
   if (!componentLine) return {};
 
-  const content = componentLine
-    .replace(/^>\s*\*\*Components\*\*:\s*/i, '')
-    .trim();
+  const content = componentLine.replace(STAT_BLOCK.componentsStrip, '').trim();
 
   const result: {
     verbal: boolean;
@@ -126,12 +131,12 @@ function parseComponents(lines: string[]) {
     material: boolean;
     materialDescription?: string;
   } = {
-    verbal: /\bV\b/i.test(content),
-    somatic: /\bS\b/i.test(content),
-    material: /\bM\b/i.test(content),
+    verbal: COMPONENTS.verbal.test(content),
+    somatic: COMPONENTS.somatic.test(content),
+    material: COMPONENTS.material.test(content),
   };
 
-  const materialMatch = content.match(/\bM\s*\(([^)]+)\)/i);
+  const materialMatch = content.match(COMPONENTS.materialDesc);
   if (materialMatch) {
     result.materialDescription = clean(materialMatch[1]);
   }
@@ -151,27 +156,25 @@ function parseCastingTimeToArray(rawCastingTime: string): string[] {
   const castingTimes: string[] = [];
   const lowerText = rawCastingTime.toLowerCase();
 
-  if (/\bbonus\s+action\b/i.test(lowerText)) {
+  if (CASTING_TIME.bonusAction.test(lowerText)) {
     castingTimes.push('bonus action');
   }
   if (
-    /\b(?<!bonus\s)action\b/i.test(lowerText) &&
+    CASTING_TIME.action.test(lowerText) &&
     !castingTimes.includes('bonus action')
   ) {
     castingTimes.push('action');
   }
-  if (/\breaction\b/i.test(lowerText)) {
+  if (CASTING_TIME.reaction.test(lowerText)) {
     castingTimes.push('reaction');
   }
 
-  const timeMatch = rawCastingTime.match(
-    /(\d+\s*(?:minute|min|hour|hr|round|day)s?)/i,
-  );
+  const timeMatch = rawCastingTime.match(CASTING_TIME.timeDuration);
   if (timeMatch) {
     castingTimes.push(timeMatch[1].toLowerCase());
   }
 
-  if (/\britual\b/i.test(lowerText)) {
+  if (CASTING_TIME.ritual.test(lowerText)) {
     castingTimes.push('ritual');
   }
 
@@ -197,29 +200,29 @@ function parseSpellProperties(lines: string[]) {
     concentration?: boolean;
   } = {};
 
-  const castingTimeLine = lines.find((l) =>
-    /^>\s*\*\*Casting Time\*\*:/i.test(l),
-  );
+  const castingTimeLine = lines.find((l) => STAT_BLOCK.castingTimeLine.test(l));
   if (castingTimeLine) {
     const rawCastingTime = clean(
-      castingTimeLine.replace(/^>\s*\*\*Casting Time\*\*:\s*/i, ''),
+      castingTimeLine.replace(STAT_BLOCK.castingTimeStrip, ''),
     );
     result.castingTimeRaw = rawCastingTime;
     result.castingTime = parseCastingTimeToArray(rawCastingTime);
   }
 
-  const rangeLine = lines.find((l) => /^>\s*\*\*Range\*\*:/i.test(l));
+  const rangeLine = lines.find((l) => STAT_BLOCK.rangeLine.test(l));
   if (rangeLine) {
-    result.range = clean(rangeLine.replace(/^>\s*\*\*Range\*\*:\s*/i, ''));
+    result.range = clean(rangeLine.replace(STAT_BLOCK.rangeStrip, ''));
   }
 
-  const durationLine = lines.find((l) => /^>\s*\*\*Duration\*\*:/i.test(l));
+  const durationLine = lines.find((l) => STAT_BLOCK.durationLine.test(l));
   if (durationLine) {
     const durationText = clean(
-      durationLine.replace(/^>\s*\*\*Duration\*\*:\s*/i, ''),
+      durationLine.replace(STAT_BLOCK.durationStrip, ''),
     );
-    result.concentration = /\bconcentration\b/i.test(durationText);
-    result.duration = durationText.replace(/^concentration,\s*/i, '').trim();
+    result.concentration = DURATION.concentration.test(durationText);
+    result.duration = durationText
+      .replace(DURATION.concentrationPrefix, '')
+      .trim();
   }
 
   return result;
@@ -273,9 +276,8 @@ function generateSpellTags(
       tags.push(`mechanic:${mechanic.toLowerCase()}`);
   }
 
-  if (/\britual\b/i.test(fullText)) tags.push('mechanic:ritual');
-  if (/\b(sphere|cube|cone|line|cylinder|radius)\b/i.test(fullText))
-    tags.push('mechanic:area-of-effect');
+  if (SPELL_TAGS.ritual.test(fullText)) tags.push('mechanic:ritual');
+  if (SPELL_TAGS.aoeShape.test(fullText)) tags.push('mechanic:area-of-effect');
 
   const abilities = GameData.getAbilities(sharedData);
   for (const ability of abilities) {
@@ -298,19 +300,20 @@ function generateSpellTags(
 function parseSpellLists(content: string): { name: string; link: string }[] {
   const spellLists: { name: string; link: string }[] = [];
 
-  const spellListsMatch = content.match(
-    /####\s*Spell Lists\s*([\s\S]*?)(?=\n#|$)/i,
-  );
+  const spellListsMatch = content.match(SPELL_LISTS.section);
   if (!spellListsMatch) return spellLists;
 
   const spellListsSection = spellListsMatch[1];
-  const linkPattern = /\[_?([^_\]]+?)(?:\s+Spell List)?_?\]\(([^)]+)\)/gi;
+  const linkPattern = new RegExp(
+    SPELL_LISTS.link.source,
+    SPELL_LISTS.link.flags,
+  );
   let match;
 
   while ((match = linkPattern.exec(spellListsSection)) !== null) {
     const rawName = clean(match[1]);
     const link = clean(match[2]);
-    const name = rawName.replace(/\s+Spell List$/i, '').trim();
+    const name = rawName.replace(SPELL_LISTS.nameSuffix, '').trim();
     spellLists.push({ name, link });
   }
 
@@ -390,6 +393,7 @@ async function generateSpellMetadata(
     parseFile: parseSpellFile,
     contentDir: options.contentDir,
     storage: options.storage,
+    metadataVersion: '2.0.0',
   });
 
   const externalMetadataPath = path.join(
@@ -478,3 +482,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export { generateSpellMetadata, generateSpellMetadata as main, parseSpellFile };
+

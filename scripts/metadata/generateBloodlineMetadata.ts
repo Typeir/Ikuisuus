@@ -18,23 +18,31 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import {
-    clean,
-    extractAbilitySaveTags,
-    extractAllTags,
-    extractConditionTags,
-    extractDamageTags,
-    extractItemMechanicTags,
-    extractMovementTags,
-    filePathToSlug,
-    parseTitle,
-    runGenerator,
-    runWithCli,
-    type SharedData,
-    type StorageAdapter,
-} from '@/lib/metadata';
 import { promises as fs } from 'fs';
 import path from 'path';
+import {
+  clean,
+  extractAbilitySaveTags,
+  extractAllTags,
+  extractConditionTags,
+  extractDamageTags,
+  extractItemMechanicTags,
+  extractMovementTags,
+  filePathToSlug,
+  parseTitle,
+  runGenerator,
+  runWithCli,
+  type SharedData,
+  type StorageAdapter,
+} from '.';
+import {
+  BOON,
+  BOON_MECHANICS,
+  MARKUP,
+  PROFICIENCY,
+  SECTION,
+} from './bloodlinePatterns';
+import { SLUG, TEXT, UTILITY } from './parsingPatterns';
 
 const log = createLogger({ component: 'BloodlineMetadataGenerator' });
 
@@ -77,15 +85,15 @@ interface ParsedBoon {
  */
 function parseListItems(cellContent: string): string[] {
   const items: string[] = [];
-  const liRegex = /<li>([\s\S]*?)<\/li>/g;
+  const liRegex = new RegExp(MARKUP.listItem.source, MARKUP.listItem.flags);
   let match;
   while ((match = liRegex.exec(cellContent)) !== null) {
     let text = match[1];
-    const tooltipMatch = text.match(/<Tooltip><span>(.*?)<\/span>/);
+    const tooltipMatch = text.match(MARKUP.tooltipText);
     if (tooltipMatch) {
       text = tooltipMatch[1];
     }
-    text = text.replace(/<[^>]+>/g, '').trim();
+    text = text.replace(MARKUP.htmlTag, '').trim();
     if (text) items.push(text);
   }
   return items;
@@ -111,15 +119,12 @@ function parseTableRow(row: string): string[] {
  * @returns {string} Normalized text
  */
 function normalizeForTagging(text: string): string {
-  const tooltipCollapsed = text.replace(
-    /<Tooltip>\s*<span>(.*?)<\/span>\s*<span>[\s\S]*?<\/span>\s*<\/Tooltip>/gi,
-    '$1',
-  );
+  const tooltipCollapsed = text.replace(MARKUP.tooltipWrapper, '$1');
   return tooltipCollapsed
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
-    .replace(/[*_`~]/g, ' ')
-    .replace(/\s+/g, ' ')
+    .replace(MARKUP.htmlTag, ' ')
+    .replace(MARKUP.markdownLink, '$1')
+    .replace(TEXT.markdownFormatChars, ' ')
+    .replace(TEXT.whitespaceCollapse, ' ')
     .trim();
 }
 
@@ -131,14 +136,14 @@ function normalizeForTagging(text: string): string {
  */
 function getBoonsSectionLines(content: string): string[] {
   const lines = content.split('\n');
-  const start = lines.findIndex((line) => /^##\s+Boons\b/i.test(line.trim()));
+  const start = lines.findIndex((line) => SECTION.boons.test(line.trim()));
   if (start === -1) {
     return [];
   }
 
   let end = lines.length;
   for (let i = start + 1; i < lines.length; i++) {
-    if (/^##\s+/.test(lines[i].trim())) {
+    if (SECTION.h2Heading.test(lines[i].trim())) {
       end = i;
       break;
     }
@@ -155,13 +160,11 @@ function getBoonsSectionLines(content: string): string[] {
  */
 function parseBoonHeading(line: string): ParsedBoonHeading | null {
   const trimmed = line.trim();
-  if (!/^#{5,6}\s+/.test(trimmed)) {
+  if (!BOON.headingGuard.test(trimmed)) {
     return null;
   }
 
-  const spanHeading = trimmed.match(
-    /^#{5,6}\s+(.+?)\s*<span>(.*?)<\/span>\s*$/i,
-  );
+  const spanHeading = trimmed.match(BOON.spanHeading);
   if (spanHeading) {
     return {
       name: clean(normalizeForTagging(spanHeading[1])),
@@ -169,13 +172,13 @@ function parseBoonHeading(line: string): ParsedBoonHeading | null {
     };
   }
 
-  const inlineHeading = trimmed.match(/^#{5,6}\s+(.+)$/);
+  const inlineHeading = trimmed.match(BOON.plainHeading);
   if (!inlineHeading) {
     return null;
   }
 
   const normalized = clean(normalizeForTagging(inlineHeading[1]));
-  const inlineCost = normalized.match(/^(.*?)[\s\-–—]*\(([^)]+BP[^)]*)\)\s*$/i);
+  const inlineCost = normalized.match(BOON.inlineCost);
   if (inlineCost) {
     return {
       name: clean(inlineCost[1]),
@@ -196,7 +199,7 @@ function parseBoonHeading(line: string): ParsedBoonHeading | null {
  * @returns {number | undefined} Parsed numeric value when present
  */
 function parseBpValue(bpLabel: string): number | undefined {
-  const match = bpLabel.match(/(?:^|\b)(\d{1,3})\s*BP\b/i);
+  const match = bpLabel.match(BOON.bpValue);
   if (!match) {
     return undefined;
   }
@@ -213,7 +216,7 @@ function extractProficiencyTags(normalizedText: string): string[] {
   const tags = new Set<string>();
   const lower = normalizedText.toLowerCase();
 
-  if (/\bproficien(?:cy|t)\b/.test(lower)) {
+  if (PROFICIENCY.keyword.test(lower)) {
     tags.add('mechanic:proficiency');
   }
 
@@ -239,38 +242,31 @@ function extractProficiencyTags(normalizedText: string): string[] {
   ];
 
   for (const skill of skills) {
-    const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escaped = skill.replace(UTILITY.regexEscape, '\\$&');
     const skillPattern = new RegExp(
       `\\bproficien(?:cy|t)\\b[\\s\\S]{0,40}\\b${escaped}\\b|\\b${escaped}\\b[\\s\\S]{0,20}\\bproficien(?:cy|t)\\b`,
       'i',
     );
     if (skillPattern.test(lower)) {
       tags.add('mechanic:skill-proficiency');
-      tags.add(`mechanic:skill-proficiency:${skill.replace(/\s+/g, '-')}`);
+      tags.add(
+        `mechanic:skill-proficiency:${skill.replace(TEXT.whitespaceCollapse, '-')}`,
+      );
     }
   }
 
-  const toolPatterns: Array<{ pattern: RegExp; tag: string }> = [
-    { pattern: /mason'?s tools?/i, tag: 'mason-tools' },
-    { pattern: /navigator'?s tools?/i, tag: 'navigators-tools' },
-    { pattern: /tinkerer'?s tools?/i, tag: 'tinkerers-tools' },
-    { pattern: /artisan'?s tools?/i, tag: 'artisans-tools' },
-    { pattern: /thieves'? tools?/i, tag: 'thieves-tools' },
-    { pattern: /lockpick set/i, tag: 'lockpicks' },
-  ];
-
-  for (const entry of toolPatterns) {
+  for (const entry of PROFICIENCY.tools) {
     if (entry.pattern.test(lower)) {
       tags.add('mechanic:tool-proficiency');
       tags.add(`mechanic:tool-proficiency:${entry.tag}`);
     }
   }
 
-  if (/\binstrument\b|\bmusical\b/i.test(lower)) {
+  if (PROFICIENCY.instrument.test(lower)) {
     tags.add('mechanic:instrument-proficiency');
   }
 
-  if (/\bmartial weapon\b|\bweapon mastery\b|\bmastery\b/i.test(lower)) {
+  if (PROFICIENCY.weaponMastery.test(lower)) {
     tags.add('mechanic:weapon-proficiency');
   }
 
@@ -291,64 +287,60 @@ function extractBoonMechanicTags(
   const tags = new Set<string>();
   const lower = normalizedText.toLowerCase();
 
-  if (/\bvariable\b|\bchoose one\b|\bpick one\b|\bpick any\b/i.test(bpLabel)) {
+  if (BOON_MECHANICS.variableCost.test(bpLabel)) {
     tags.add('mechanic:variable-cost');
     tags.add('mechanic:choice');
   }
 
-  if (/\bshort rest\b/i.test(lower)) {
+  if (BOON_MECHANICS.shortRest.test(lower)) {
     tags.add('mechanic:short-rest');
     tags.add('mechanic:short-rest-recharge');
   }
-  if (/\blong rest\b/i.test(lower)) {
+  if (BOON_MECHANICS.longRest.test(lower)) {
     tags.add('mechanic:long-rest');
     tags.add('mechanic:long-rest-recharge');
   }
-  if (/\b(per|equal to your proficiency bonus)\b/i.test(lower)) {
+  if (BOON_MECHANICS.limitedUses.test(lower)) {
     tags.add('mechanic:limited-uses');
   }
 
-  if (/\bac\b|\barmor class\b|\bunarmored\b/i.test(lower)) {
+  if (BOON_MECHANICS.armorClass.test(lower)) {
     tags.add('mechanic:ac');
   }
-  if (/\bsaving throws?\b|\bspell save dc\b|\bsave dc\b/i.test(lower)) {
+  if (BOON_MECHANICS.savingThrow.test(lower)) {
     tags.add('mechanic:saving-throw');
   }
 
-  if (
-    /\bweapon\b|\bmelee\b|\bnatural weapon\b|\bopportunity attack\b/i.test(
-      lower,
-    )
-  ) {
+  if (BOON_MECHANICS.weapon.test(lower)) {
     tags.add('mechanic:weapon');
   }
-  if (/\breach\b/i.test(lower)) {
+  if (BOON_MECHANICS.reach.test(lower)) {
     tags.add('mechanic:weapon-reach');
   }
-  if (/\bextra\b[\s\S]{0,20}\bdamage\b|\bdeal extra\b/i.test(lower)) {
+  if (BOON_MECHANICS.extraDamage.test(lower)) {
     tags.add('mechanic:extra-damage');
   }
 
-  if (/\bbonus action\b/i.test(lower)) {
+  if (BOON_MECHANICS.bonusAction.test(lower)) {
     tags.add('mechanic:bonus-action');
   }
-  if (/\breaction\b/i.test(lower)) {
+  if (BOON_MECHANICS.reaction.test(lower)) {
     tags.add('mechanic:reaction');
   }
-  if (/\bconcentrat(?:e|ion)\b/i.test(lower)) {
+  if (BOON_MECHANICS.concentration.test(lower)) {
     tags.add('mechanic:concentration');
   }
 
-  if (/\bspellcasting\b|\bcast\b[\s\S]{0,12}\bspell\b/i.test(lower)) {
+  if (BOON_MECHANICS.spellcasting.test(lower)) {
     tags.add('mechanic:spellcasting');
   }
-  if (/\binnate spellcasting\b/i.test(lower)) {
+  if (BOON_MECHANICS.innateSpellcasting.test(lower)) {
     tags.add('mechanic:innate-spellcasting');
   }
-  if (/\bcantrip\b/i.test(lower)) {
+  if (BOON_MECHANICS.cantrip.test(lower)) {
     tags.add('mechanic:cantrips');
   }
-  if (/\bmaterial components?\b|\bspellcasting focus\b/i.test(lower)) {
+  if (BOON_MECHANICS.materialComponents.test(lower)) {
     tags.add('mechanic:material-components');
   }
 
@@ -423,9 +415,7 @@ function parseCoreFeatures(content: string): {
     age: undefined as string | undefined,
   };
 
-  const sectionMatch = content.match(
-    /## Core Features\s*\n([\s\S]*?)(?=\n---|\n## )/,
-  );
+  const sectionMatch = content.match(SECTION.coreFeatures);
   if (!sectionMatch) return result;
 
   const section = sectionMatch[1];
@@ -478,7 +468,7 @@ function parseDescription(content: string): string | undefined {
  * @returns {number | undefined} Budget number or undefined
  */
 function parseBoonBudget(content: string): number | undefined {
-  const match = content.match(/budget of \*\*(\d+)\s+Boon Points?\*\*/i);
+  const match = content.match(BOON.budgetPattern);
   return match ? parseInt(match[1], 10) : undefined;
 }
 
@@ -514,7 +504,7 @@ function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
     const boonContent = rawBlockLines
       .filter((line) => {
         const trimmed = line.trim();
-        return !/^<\/?Collapsible/i.test(trimmed);
+        return !TEXT.collapsibleTag.test(trimmed);
       })
       .join('\n')
       .trim();
@@ -570,7 +560,9 @@ async function parseBloodlineFile(
     const metadata: Record<string, unknown> = {
       slug,
       title,
-      file: path.relative(process.cwd(), filePath).replace(/\\/g, '/'),
+      file: path
+        .relative(process.cwd(), filePath)
+        .replace(SLUG.pathBackslash, '/'),
       link: `/library/character-creation/bloodlines/${slug}`,
       coreFeatures,
       boonBudget,
@@ -629,6 +621,7 @@ async function main(
     },
     contentDir: options.contentDir,
     storage: options.storage,
+    metadataVersion: '1.0.0',
   });
 }
 

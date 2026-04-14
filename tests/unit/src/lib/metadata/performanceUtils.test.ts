@@ -8,7 +8,7 @@
  * @since 3.0.0
  */
 
-import { endTimer, startTimer } from '@/lib/metadata/performanceUtils';
+import { endTimer, startTimer } from '@scripts/metadata/performanceUtils';
 import { describe, expect, it } from 'vitest';
 
 describe('startTimer / endTimer', () => {

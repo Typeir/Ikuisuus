@@ -10,6 +10,7 @@
  */
 
 import { GameData } from './gameData';
+import { CHARGES, HEADING, LIST, PROPERTIES } from './parsingPatterns';
 import type { SharedData } from './sharedData';
 import { clean, stripMarkdown } from './textUtils';
 
@@ -20,8 +21,8 @@ import { clean, stripMarkdown } from './textUtils';
  * @returns {string} Clean title without markdown formatting
  */
 export function parseTitle(lines: string[]): string {
-  const h1 = lines.find((l) => /^#\s+/.test(l));
-  return h1 ? clean(h1.replace(/^#\s+/, '')) : '';
+  const h1 = lines.find((l) => HEADING.h1.test(l));
+  return h1 ? clean(h1.replace(HEADING.h1, '')) : '';
 }
 
 /**
@@ -35,13 +36,14 @@ export function parseProperties(
 ): Record<string, string> | undefined {
   const properties: Record<string, string> = {};
 
-  const propertiesMatch = text.match(
-    /##\s+(Item\s+|Weapon\s+|Armor\s+)?Properties\s*\n([\s\S]*?)(?=\n##|\n---|\n$)/i,
-  );
+  const propertiesMatch = text.match(PROPERTIES.section);
   if (!propertiesMatch) return undefined;
 
   const propertiesSection = propertiesMatch[2];
-  const bulletPattern = /^[-*]\s+\*\*(.+?)(?::)?\*\*\s*:?\s*(.+?)\s*$/gm;
+  const bulletPattern = new RegExp(
+    PROPERTIES.bulletItem.source,
+    PROPERTIES.bulletItem.flags,
+  );
   let match;
   while ((match = bulletPattern.exec(propertiesSection)) !== null) {
     const key = stripMarkdown(match[1].trim());
@@ -64,7 +66,7 @@ export function parseWeight(
   if (!properties || !properties.Weight) return undefined;
 
   const weightText = properties.Weight;
-  const weightMatch = weightText.match(/([\d.]+)\s*lbs?\.?/i);
+  const weightMatch = weightText.match(PROPERTIES.weight);
   if (weightMatch) {
     return `${weightMatch[1]} lb${weightMatch[1] !== '1' ? 's' : ''}`;
   }
@@ -100,7 +102,7 @@ export function parseNumericValue(
   value: string | undefined,
 ): number | undefined {
   if (!value) return undefined;
-  const cleaned = String(value).replace(/,/g, '');
+  const cleaned = String(value).replace(LIST.commaStrip, '');
   const num = Number(cleaned);
   return isNaN(num) ? undefined : num;
 }
@@ -120,21 +122,17 @@ export function parseCharges(
     depletes?: boolean;
   } = {};
 
-  const initialMatch = text.match(
-    /holds?\s+(?:up to\s+)?(\d+d\d+|\d+)\s+charges/i,
-  );
+  const initialMatch = text.match(CHARGES.initial);
   if (initialMatch) {
     chargesInfo.initial = initialMatch[1];
   }
 
-  const rechargeMatch = text.match(
-    /(?:regain|recover)(?:ing|s)?\s+(\d+\s*\+\s*\d+d\d+|\d+d\d+|\d+)\s+charges?\s+(?:at|each)\s+(\w+)/i,
-  );
+  const rechargeMatch = text.match(CHARGES.recovery);
   if (rechargeMatch) {
     chargesInfo.recharge = `${rechargeMatch[1]} at ${rechargeMatch[2]}`;
   }
 
-  if (/becomes?\s+inert|cannot be recharged|burns? away/i.test(text)) {
+  if (CHARGES.depletion.test(text)) {
     chargesInfo.depletes = true;
   }
 
@@ -214,7 +212,10 @@ export function parseSavingThrowTypes(
  */
 export function parseKeyBullets(text: string): Record<string, string> {
   const map: Record<string, string> = {};
-  const re = /^-\s*\*\*([^*]+)\*\*\s*:\s*(.+?)\s*$/gim;
+  const re = new RegExp(
+    PROPERTIES.keyBullets.source,
+    PROPERTIES.keyBullets.flags,
+  );
   let m;
   while ((m = re.exec(text)) !== null) {
     map[m[1].trim()] = m[2].trim();
@@ -231,7 +232,7 @@ export function parseKeyBullets(text: string): Record<string, string> {
 export function splitList(raw: string): string[] {
   if (!raw || raw === '—' || raw.toLowerCase() === 'none') return [];
   return raw
-    .split(/[,;]/)
+    .split(LIST.commaOrSemicolon)
     .map((s) => stripMarkdown(s.trim()))
     .filter(Boolean);
 }
@@ -255,7 +256,7 @@ export function splitListWithGrouping(
     const grouped = stripMarkdown(match[0].trim());
     const remainder = raw.replace(groupPattern, '').trim();
     const others = remainder
-      .split(/[,;]/)
+      .split(LIST.commaOrSemicolon)
       .map((s) => stripMarkdown(s.trim()))
       .filter(Boolean)
       .filter((s) => s !== 'and');
@@ -264,7 +265,7 @@ export function splitListWithGrouping(
   }
 
   return raw
-    .split(/[,;]/)
+    .split(LIST.commaOrSemicolon)
     .map((s) => stripMarkdown(s.trim()))
     .filter(Boolean);
 }

@@ -201,6 +201,7 @@
 
 .button {
   @include button-base;
+  @include button-hover-scale;
   line-height: 1;
   min-width: 32px;
   height: 32px;

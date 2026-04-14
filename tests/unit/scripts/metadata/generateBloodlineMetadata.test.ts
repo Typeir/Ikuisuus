@@ -6,11 +6,11 @@
  * @module tests/unit/scripts/metadata/generateBloodlineMetadata
  */
 
-import { loadSharedData } from '@/lib/metadata';
 import { mkdtemp, rm, writeFile } from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { loadSharedData } from '../../../../scripts/metadata';
 import { parseBloodlineFile } from '../../../../scripts/metadata/generateBloodlineMetadata';
 
 const tempDirs: string[] = [];

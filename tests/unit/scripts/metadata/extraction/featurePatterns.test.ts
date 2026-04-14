@@ -28,7 +28,7 @@ import {
     STRUCTURE,
     TEMPLATES,
     WORD_NUMBERS,
-} from '@/lib/utils/featurePatterns';
+} from '@scripts/metadata/extraction/featurePatterns';
 import { describe, expect, it } from 'vitest';
 
 describe('featurePatterns', () => {

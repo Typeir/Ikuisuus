@@ -2,10 +2,11 @@
  * Combatant Conditions Manager Component
  *
  * @fileoverview Manages conditions list for combatants with add/remove functionality.
- * Provides input for new conditions and removal buttons for existing conditions.
+ * Renders condition chips with remove buttons and input field for adding new conditions.
+ * Uses the same chip-based layout pattern as BuffListEditor and ItemListEditor.
  *
  * @module combatantConditionsManager
- * @version 2.0.0
+ * @version 3.0.0
  * @author Typeir
  * @since 1.0.0
  *
@@ -16,17 +17,17 @@
  *
  * @description
  * Extracted from CombatantRow for atomic composition. Displays condition chips
- * with remove buttons and input field for adding new conditions. Uses CombatantContext for state.
+ * matching the details column chip style (buffs, items, spells). Uses CombatantContext for state.
  */
 
 'use client';
 
 import type { ConditionEntry } from '@/lib/types/inProgressCombat';
-import { useTranslations } from 'next-intl';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
+import detailStyles from '../creatureRow.module.scss';
 import { useCombatant } from './utils/context/combatantContext';
-import styles from './combatantRow.module.scss';
 
 /**
  * Props for CombatantConditionsManager component.
@@ -57,7 +58,9 @@ function generateConditionId(): string {
  * // Within CombatantProvider
  * <CombatantConditionsManager />
  */
-export const CombatantConditionsManager: React.FC<CombatantConditionsManagerProps> = () => {
+export const CombatantConditionsManager: React.FC<
+  CombatantConditionsManagerProps
+> = () => {
   const { combatant, updateField } = useCombatant();
   const { conditions } = combatant;
 
@@ -78,42 +81,42 @@ export const CombatantConditionsManager: React.FC<CombatantConditionsManagerProp
     (id: string) => {
       updateField(
         'conditions',
-        conditions.filter((c) => c.id !== id)
+        conditions.filter((c) => c.id !== id),
       );
     },
-    [conditions, updateField]
+    [conditions, updateField],
   );
 
   return (
-    <div className={styles.conditionsSection}>
-      <label className={styles.label}>{t('conditions')}</label>
-      <div className={styles.conditionsList}>
+    <>
+      <div className={detailStyles.chips}>
         {conditions.map((condition) => (
-          <div key={condition.id} className={styles.conditionItem}>
-            <span>{condition.text}</span>
+          <div key={condition.id} className={detailStyles.chip}>
+            {condition.text}
             <button
               onClick={() => handleRemoveCondition(condition.id)}
-              className={styles.removeCondition}
-              aria-label={t('removeCondition')}
-            >
+              className={detailStyles.removeChip}
+              aria-label={t('removeCondition')}>
               <X size={12} aria-hidden='true' />
             </button>
           </div>
         ))}
       </div>
-      <div className={styles.addConditionContainer}>
+      <div className={detailStyles.addConditionContainer}>
         <input
           type='text'
-          className={styles.addConditionInput}
+          className={detailStyles.addConditionInput}
           value={newCondition}
           onChange={(e) => setNewCondition(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAddCondition()}
           placeholder={t('addCondition')}
         />
-        <button onClick={handleAddCondition} className={styles.addConditionButton}>
+        <button
+          onClick={handleAddCondition}
+          className={detailStyles.addConditionButton}>
           +
         </button>
       </div>
-    </div>
+    </>
   );
 };

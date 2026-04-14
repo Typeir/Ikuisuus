@@ -24,50 +24,33 @@
   
   pointer-events: none;
   
-  // Animation
-  animation: tooltipFadeIn 0.15s ease-out;
+  // Animation — brief invisible hold lets useLayoutEffect position before paint
+  opacity: 0;
+  animation: tooltipFadeIn 0.2s ease-out forwards;
   
   @keyframes tooltipFadeIn {
-    from { --_: tt-tooltipFadeIn-from; --_: tt-tooltipFadeIn-from; opacity: 0; transform: translateY(4px); }
-    to { --_: tt-tooltipFadeIn-to; opacity: 1; transform: translateY(0); }
+    0%   { opacity: 0; }
+    25%  { opacity: 0; }
+    100% { opacity: 1; }
   }
   
   // Placement-specific entrance animations
   &.top {
-    animation-name: tooltipFadeInTop;
+    animation-name: tooltipFadeIn;
   }
   
   &.bottom {
-    animation-name: tooltipFadeInBottom;
+    animation-name: tooltipFadeIn;
   }
   
   &.left {
-    animation-name: tooltipFadeInLeft;
+    animation-name: tooltipFadeIn;
   }
   
   &.right {
-    animation-name: tooltipFadeInRight;
+    animation-name: tooltipFadeIn;
   }
   
-  @keyframes tooltipFadeInTop {
-    from { --_: tt-tooltipFadeInTop-from; --_: tt-tooltipFadeInTop-from; opacity: 0; transform: translate(var(--x), var(--y)) translateY(4px); }
-    to { --_: tt-tooltipFadeInTop-to; opacity: 1; transform: translate(var(--x), var(--y)) translateY(0); }
-  }
-  
-  @keyframes tooltipFadeInBottom {
-    from { --_: tt-tooltipFadeInBottom-from; --_: tt-tooltipFadeInBottom-from; opacity: 0; transform: translate(var(--x), var(--y)) translateY(-4px); }
-    to { --_: tt-tooltipFadeInBottom-to; opacity: 1; transform: translate(var(--x), var(--y)) translateY(0); }
-  }
-  
-  @keyframes tooltipFadeInLeft {
-    from { --_: tt-tooltipFadeInLeft-from; --_: tt-tooltipFadeInLeft-from; opacity: 0; transform: translate(var(--x), var(--y)) translateX(4px); }
-    to { --_: tt-tooltipFadeInLeft-to; opacity: 1; transform: translate(var(--x), var(--y)) translateX(0); }
-  }
-  
-  @keyframes tooltipFadeInRight {
-    from { --_: tt-tooltipFadeInRight-from; --_: tt-tooltipFadeInRight-from; opacity: 0; transform: translate(var(--x), var(--y)) translateX(-4px); }
-    to { --_: tt-tooltipFadeInRight-to; opacity: 1; transform: translate(var(--x), var(--y)) translateX(0); }
-  }
 }
 
 // Arrow styling

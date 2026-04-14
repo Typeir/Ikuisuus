@@ -19,7 +19,7 @@
  * npm run test:file tests/integration/src/scripts/heirloom-metadata.test.ts
  */
 
-import { loadSharedData } from '@/lib/metadata';
+import { loadSharedData } from ../../../../scripts/metadata;
 import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata';
 import path from 'path';
 import { beforeAll, describe, expect, it } from 'vitest';

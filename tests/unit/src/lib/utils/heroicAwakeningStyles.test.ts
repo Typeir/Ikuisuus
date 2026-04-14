@@ -125,7 +125,7 @@ describe('heroicAwakeningStyles', () => {
       expect(result.classNames).toEqual(['awakened', 'awakened--bloodthirsty']);
     });
 
-    it('should include legendary class for two affixes', () => {
+    it('should include legendary class for two affixes without affix class', () => {
       const state = createMockAwakeningState({
         awakened: true,
         tier: 'legendary',
@@ -138,12 +138,11 @@ describe('heroicAwakeningStyles', () => {
       expect(result.tier).toBe('legendary');
       expect(result.classNames).toEqual([
         'awakened',
-        'awakened--stormbound',
         'awakened--legendary',
       ]);
     });
 
-    it('should include mythic class for three affixes', () => {
+    it('should include mythic class for three affixes without affix class', () => {
       const state = createMockAwakeningState({
         awakened: true,
         tier: 'mythic',
@@ -160,12 +159,11 @@ describe('heroicAwakeningStyles', () => {
       expect(result.tier).toBe('mythic');
       expect(result.classNames).toEqual([
         'awakened',
-        'awakened--crusading',
         'awakened--mythic',
       ]);
     });
 
-    it('should use first affix for visual identity regardless of count', () => {
+    it('should use first affix for visual identity but omit class for mythic', () => {
       const state = createMockAwakeningState({
         awakened: true,
         tier: 'mythic',
@@ -178,9 +176,10 @@ describe('heroicAwakeningStyles', () => {
       const result = computeAwakeningClasses(state);
 
       expect(result.primaryAffix).toBe('rakish');
-      expect(result.classNames).toContain('awakened--rakish');
+      expect(result.classNames).not.toContain('awakened--rakish');
       expect(result.classNames).not.toContain('awakened--championed');
       expect(result.classNames).not.toContain('awakened--sulphurous');
+      expect(result.classNames).toContain('awakened--mythic');
     });
 
     it('should handle unknown affix gracefully', () => {

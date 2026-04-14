@@ -10,9 +10,9 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import type { StorageAdapter } from '@/lib/metadata';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
+import type { StorageAdapter } from '.';
 
 const log = createLogger({ component: 'MetadataOrchestrator' });
 

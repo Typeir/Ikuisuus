@@ -20,8 +20,8 @@ import {
     parseWeight,
     splitList,
     splitListWithGrouping,
-} from '@/lib/metadata/parsingUtils';
-import type { SharedData } from '@/lib/metadata/sharedData';
+} from '@scripts/metadata/parsingUtils';
+import type { SharedData } from '@scripts/metadata/sharedData';
 import { describe, expect, it } from 'vitest';
 
 const MOCK_DATA: SharedData = {

@@ -19,7 +19,7 @@
  * npm run test:file tests/integration/src/scripts/monster-metadata.test.ts
  */
 
-import { loadSharedData } from '@/lib/metadata';
+import { loadSharedData } from ../../../../scripts/metadata;
 import { parseMonsterFile } from '@scripts/metadata/generateMonsterMetadata';
 import path from 'path';
 import { beforeAll, describe, expect, it } from 'vitest';

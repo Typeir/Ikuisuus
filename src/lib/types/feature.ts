@@ -237,20 +237,6 @@ export interface ChargeRechargeToken {
 }
 
 /**
- * Source location metadata for a feature.
- *
- * @interface FeatureSource
- * @property {string} file - Relative MDX path
- * @property {[number, number]} lines - Line range [start, end] in source
- * @property {string} archetype - Archetype classification (A–N)
- */
-export interface FeatureSource {
-  file: string;
-  lines: [number, number];
-  archetype: string;
-}
-
-/**
  * All possible flag values for extracted features.
  *
  * @typedef {string} FeatureFlag
@@ -279,7 +265,6 @@ export type FeatureFlag =
  * @interface Feature
  * @property {string} id - Stable slug (e.g., "rimelord/avalanche-blade")
  * @property {string} name - Display name
- * @property {FeatureSource} source - Source location metadata
  * @property {string} [trigger] - Action economy type: action, bonus_action, reaction, free, passive
  * @property {{ type?: string; range?: number; area?: RangeToken; scope?: string }} [target] - Target descriptor
  * @property {DamageToken} [damage] - Damage descriptor
@@ -300,7 +285,6 @@ export type FeatureFlag =
 export interface Feature {
   id: string;
   name: string;
-  source: FeatureSource;
   trigger?: string;
   target?: { type?: string; range?: number; area?: RangeToken; scope?: string };
   damage?: DamageToken;
@@ -329,10 +313,19 @@ export interface Feature {
  * Adds attack, multiattack, legendary deed, phase, spellcasting,
  * condition, and relationship fields.
  *
+ * Flat damage/save fields override the nested base-Feature tokens for
+ * PostgreSQL compatibility (max 1 level nesting).
+ *
  * @interface MonsterFeature
  * @extends {Feature}
+ * @property {string} [damage] - Damage formula (e.g. "3d8+6")
+ * @property {string} [damageType] - Primary damage type
+ * @property {string} [damageFlat] - Flat bonus damage formula (e.g. "10")
+ * @property {string} [damageFlatType] - Flat bonus damage type
+ * @property {{ ability: string; dc: number }} [saving_throw] - Flat saving throw (1-level)
  * @property {AttackToken} [attack] - Parsed attack line data
  * @property {MultiattackToken} [multiattack] - Multiattack composition
+ * @property {{ id: string; count: number }[]} [multiattack_refs] - References to individual attack feature IDs
  * @property {{ category: 'act' | 'stratagem' | 'lair' | 'phase'; cost?: number; declare_resolve?: boolean }} [legendary_deed] - Legendary deed data
  * @property {{ hp_threshold: number | 'slain'; name: string; features_added: string[]; features_modified: string[] }} [phase] - Phase trigger data
  * @property {{ min: number; max: number; charges?: number; custom?: string }} [recharge] - Recharge notation data
@@ -341,10 +334,20 @@ export interface Feature {
  * @property {'shared_body' | 'shared_hp' | 'aspect' | 'tethered' | 'angelical_link' | 'summoned'} [relationship] - Relationship to other entities
  * @property {boolean} [auto_fail_saves] - Whether the creature auto-fails all saves
  * @property {{ type: string; trigger: string; per?: string }} [escalation_mechanic] - Escalating mechanic descriptor
+ * @property {Record<string, string>} [meta] - Metadata directives from `<Meta>` MDX tags
  */
-export interface MonsterFeature extends Feature {
+export interface MonsterFeature extends Omit<
+  Feature,
+  'damage' | 'saving_throw'
+> {
+  damage?: string;
+  damageType?: string;
+  damageFlat?: string;
+  damageFlatType?: string;
+  saving_throw?: { ability: string; dc: number };
   attack?: AttackToken;
   multiattack?: MultiattackToken;
+  multiattack_refs?: { id: string; count: number }[];
   legendary_deed?: {
     category: 'act' | 'stratagem' | 'lair' | 'phase';
     cost?: number;
@@ -388,4 +391,5 @@ export interface MonsterFeature extends Feature {
     trigger: string;
     per?: string;
   };
+  meta?: Record<string, string>;
 }

@@ -23,7 +23,7 @@ import {
     recognizeResource,
     recognizeSave,
     recognizeTemplate,
-} from '@/lib/utils/featureTokens';
+} from '@scripts/metadata/extraction/featureTokens';
 import { describe, expect, it } from 'vitest';
 
 describe('shared token recognizers', () => {

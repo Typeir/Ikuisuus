@@ -20,11 +20,11 @@ vi.mock('@/lib/logging/logger', () => ({
   }),
 }));
 
-let runWithCli: typeof import('@/lib/metadata/cliRunner').runWithCli;
+let runWithCli: typeof import('@scripts/metadata/cliRunner').runWithCli;
 
 beforeEach(async () => {
   vi.resetModules();
-  const mod = await import('@/lib/metadata/cliRunner');
+  const mod = await import('@scripts/metadata/cliRunner');
   runWithCli = mod.runWithCli;
 });
 

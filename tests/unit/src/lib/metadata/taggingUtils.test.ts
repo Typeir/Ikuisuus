@@ -8,7 +8,7 @@
  * @since 3.0.0
  */
 
-import type { SharedData } from '@/lib/metadata/sharedData';
+import type { SharedData } from '@scripts/metadata/sharedData';
 import {
     extractAbilitySaveTags,
     extractAllTags,
@@ -20,7 +20,7 @@ import {
     extractMonsterMechanicTags,
     extractMovementTags,
     extractOrganizationalTags,
-} from '@/lib/metadata/taggingUtils';
+} from '@scripts/metadata/taggingUtils';
 import { describe, expect, it } from 'vitest';
 
 const MOCK_DATA: SharedData = {

@@ -19,7 +19,7 @@
  * npm run test:file tests/integration/src/scripts/spell-metadata.test.ts
  */
 
-import { loadSharedData } from '@/lib/metadata';
+import { loadSharedData } from ../../../../scripts/metadata;
 import { parseSpellFile } from '@scripts/metadata/generateSpellMetadata';
 import path from 'path';
 import { beforeAll, describe, expect, it } from 'vitest';

@@ -136,12 +136,13 @@ export function computeAwakeningClasses(heroicAwakening: HeroicAwakeningState): 
   const classNames: string[] = ['awakened'];
   const primaryAffixText = heroicAwakening.affixes[0]?.text ?? '';
   const primaryAffix = normalizeAffixToKey(primaryAffixText);
-  
-  if (primaryAffix) {
+
+  const tier = getAwakeningTier(heroicAwakening.affixes.length);
+
+  if (primaryAffix && tier !== 'legendary' && tier !== 'mythic') {
     classNames.push(`awakened--${primaryAffix}`);
   }
 
-  const tier = getAwakeningTier(heroicAwakening.affixes.length);
   if (tier) {
     classNames.push(`awakened--${tier}`);
   }

@@ -10,27 +10,35 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import {
-    ItemData,
-    clean,
-    extractAllTags,
-    filePathToSlug,
-    parseCharges,
-    parseDamageTypesDealt,
-    parseProperties,
-    parseRange,
-    parseSavingThrowTypes,
-    parseTitle,
-    parseWeight,
-    readLines,
-    runGenerator,
-    runWithCli,
-    stripMarkdown,
-    type SharedData,
-    type StorageAdapter,
-} from '@/lib/metadata';
 import { promises as fs } from 'fs';
 import path from 'path';
+import {
+  ItemData,
+  clean,
+  extractAllTags,
+  filePathToSlug,
+  parseCharges,
+  parseDamageTypesDealt,
+  parseProperties,
+  parseRange,
+  parseSavingThrowTypes,
+  parseTitle,
+  parseWeight,
+  readLines,
+  runGenerator,
+  runWithCli,
+  stripMarkdown,
+  type SharedData,
+  type StorageAdapter,
+} from '.';
+import {
+  ATTUNEMENT,
+  DAMAGE,
+  ITALIC,
+  TYPE_PARSING,
+  WEAPON,
+} from './heirloomPatterns';
+import { LIST, SLUG, TEXT } from './parsingPatterns';
 
 const log = createLogger({ component: 'HeirloomMetadataGenerator' });
 
@@ -64,10 +72,10 @@ function parseWeaponTitleLine(
 ): WeaponTitleInfo | undefined {
   const info: WeaponTitleInfo = {};
 
-  const beforeParen = line.match(/^(.+?)\s*\(/i);
+  const beforeParen = line.match(WEAPON.nameBeforeParen);
   if (beforeParen) {
     const fullText = beforeParen[1].trim();
-    const modMatch = fullText.match(/^(.+?)\s+\+(\d+)$/);
+    const modMatch = fullText.match(WEAPON.enhancementMod);
     if (modMatch) {
       info.weaponType = modMatch[1].trim();
       info.hitModifier = Number(modMatch[2]);
@@ -104,7 +112,7 @@ function parseWeaponTitleLine(
     for (const part of parts) {
       const trimmed = part.trim();
 
-      const masteryMatch = trimmed.match(/^Mastery:\s*(.+)$/i);
+      const masteryMatch = trimmed.match(WEAPON.mastery);
       if (masteryMatch) {
         capturingMastery = true;
         const firstMastery = masteryMatch[1].trim();
@@ -113,7 +121,7 @@ function parseWeaponTitleLine(
       }
 
       if (capturingMastery) {
-        if (/^(Special|Range|Ranged?|Reach)\s*[:(/]/i.test(trimmed)) {
+        if (WEAPON.masteryEnd.test(trimmed)) {
           capturingMastery = false;
         } else {
           mastery.push(trimmed.toLowerCase());
@@ -121,22 +129,20 @@ function parseWeaponTitleLine(
         }
       }
 
-      const rangeMatch = trimmed.match(
-        /^(?:Ranged?|Range)\s+(\d+\/\d+|\(\d+\s+ft\))$/i,
-      );
+      const rangeMatch = trimmed.match(WEAPON.range);
       if (rangeMatch) {
-        info.range = rangeMatch[1].replace(/[()]/g, '').trim();
+        info.range = rangeMatch[1].replace(SLUG.parentheses, '').trim();
         continue;
       }
 
-      const reachMatch = trimmed.match(/^Reach\s+\((\d+\s+ft\.?)\)$/i);
+      const reachMatch = trimmed.match(WEAPON.reach);
       if (reachMatch) {
         info.range = reachMatch[1];
         properties.push('reach');
         continue;
       }
 
-      const specialMatch = trimmed.match(/^Special:\s*(.+)$/i);
+      const specialMatch = trimmed.match(WEAPON.special);
       if (specialMatch) {
         properties.push(`special: ${specialMatch[1].toLowerCase()}`);
         continue;
@@ -160,12 +166,18 @@ function parseWeaponTitleLine(
  * @returns {{ rarity?: string, requiresAttunement?: boolean, attunementRequirements?: string, weaponInfo?: WeaponTitleInfo }}
  */
 function parseRarityAndAttunement(lines: string[], sharedData: SharedData) {
-  const cutoffIndex = lines.findIndex((l) => /^\s*---\s*$/.test(l));
+  const cutoffIndex = lines.findIndex((l) => TEXT.horizontalRule.test(l));
   const headerLines = cutoffIndex === -1 ? lines : lines.slice(0, cutoffIndex);
 
   const italicLines = headerLines
-    .filter((l) => /^_.*_$/.test(l.trim()))
-    .map((l) => clean(l.replace(/^_/, '').replace(/_$/, '')));
+    .filter((l) => ITALIC.line.test(l.trim()))
+    .map((l) =>
+      clean(
+        l
+          .replace(TEXT.underscoreLeading, '')
+          .replace(TEXT.underscoreTrailing, ''),
+      ),
+    );
 
   let rarity: string | undefined;
   let requiresAttunement = false;
@@ -186,20 +198,18 @@ function parseRarityAndAttunement(lines: string[], sharedData: SharedData) {
 
     if (lowerLine.includes('attunement')) {
       requiresAttunement = true;
-      const attunementMatch = line.match(
-        /requires attunement(?:\s+by\s+(.+?))?(?:\)|$)/i,
-      );
+      const attunementMatch = line.match(ATTUNEMENT.requirement);
       if (attunementMatch?.[1]) {
         attunementRequirements = stripMarkdown(attunementMatch[1].trim());
       }
     }
 
-    const isSubtypeFormat = /^[^,]+,\s*[^,]+\s*\([^)]+\)\s*$/.test(line);
+    const isSubtypeFormat = ITALIC.subtypeFormat.test(line);
     if (
       line.includes('(') &&
       !lowerLine.includes('attunement') &&
       !rarityKeywords.some((r) => lowerLine.includes(r)) &&
-      !/property|applies/i.test(line) &&
+      !ITALIC.propertyOrApplies.test(line) &&
       !isSubtypeFormat
     ) {
       const parsed = parseWeaponTitleLine(line, sharedData);
@@ -224,9 +234,7 @@ function parseWeaponDamageFromProperties(properties: Record<string, string>) {
   const damageInfo: Record<string, string> = {};
   const damageText = properties.Damage;
 
-  const damageMatch = damageText.match(
-    /([\dd+]+)\s+(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)(?:\s*\(([\dd+]+)\s*(?:versatile)?\))?/i,
-  );
+  const damageMatch = damageText.match(DAMAGE.weaponDamage);
 
   if (damageMatch) {
     damageInfo.damage = damageMatch[1];
@@ -264,38 +272,38 @@ function parseTypeProperty(
     mastery: [] as string[],
   };
 
-  const typeMatch = typeText.match(/^([A-Za-z][A-Za-z\s-]+?)(?:\s*\(|$)/i);
+  const typeMatch = typeText.match(WEAPON.typeExtract);
   let baseType: string | null = null;
   if (typeMatch) baseType = typeMatch[1].trim();
 
-  const parenMatch = typeText.match(/\(([^)]+)\)/i);
+  const parenMatch = typeText.match(TYPE_PARSING.parenContent);
   if (parenMatch) {
     const content = parenMatch[1];
-    const parts = content.split(/,\s*/);
+    const parts = content.split(LIST.commaSplit);
 
     for (const part of parts) {
       const trimmed = part.trim();
       const lower = trimmed.toLowerCase();
 
-      const masteryMatch = trimmed.match(/^Mastery:\s*(.+)$/i);
+      const masteryMatch = trimmed.match(WEAPON.mastery);
       if (masteryMatch) {
         result.mastery.push(
           ...masteryMatch[1]
-            .split(/\s*,\s*/)
+            .split(LIST.commaWhitespace)
             .map((m) => m.trim().toLowerCase()),
         );
         continue;
       }
 
-      const specialMatch = trimmed.match(/^Special:\s*(.+)$/i);
+      const specialMatch = trimmed.match(WEAPON.special);
       if (specialMatch) {
         result.uniqueTags.push(
-          `unique:${specialMatch[1].toLowerCase().replace(/\s+/g, '-')}`,
+          `unique:${specialMatch[1].toLowerCase().replace(TEXT.whitespaceCollapse, '-')}`,
         );
         continue;
       }
 
-      if (/^reach\s*\(\d+\s*ft\.?\)$/i.test(trimmed)) {
+      if (WEAPON.reachInParens.test(trimmed)) {
         result.weaponProperties.push('reach');
         continue;
       }
@@ -304,7 +312,9 @@ function parseTypeProperty(
       if (weaponProperties.includes(lower)) {
         result.weaponProperties.push(lower);
       } else {
-        result.uniqueTags.push(`unique:${lower.replace(/\s+/g, '-')}`);
+        result.uniqueTags.push(
+          `unique:${lower.replace(TEXT.whitespaceCollapse, '-')}`,
+        );
       }
     }
   }
@@ -316,7 +326,7 @@ function parseTypeProperty(
   if (lowerBase && baseCategoryTypes.includes(lowerBase)) {
     if (parenMatch) {
       const firstItem = parenMatch[1].split(',')[0].trim();
-      if (firstItem && !/^(Mastery|Special):/i.test(firstItem)) {
+      if (firstItem && !TYPE_PARSING.masterySpecialGuard.test(firstItem)) {
         result.weaponType = firstItem;
       }
     }
@@ -360,7 +370,7 @@ async function parseHeirloomFile(
 
   if (!weaponType) {
     if (properties?.Type) {
-      const parenMatch = properties.Type.match(/\(([^)]+)\)/);
+      const parenMatch = properties.Type.match(TYPE_PARSING.parenContent);
       if (parenMatch) {
         weaponType = parenMatch[1].split(',')[0].trim();
       }
@@ -369,8 +379,13 @@ async function parseHeirloomFile(
     if (!weaponType) {
       const italicLines = lines
         .slice(0, 10)
-        .filter((l) => /^_.*_$/.test(l.trim()))
-        .map((l) => l.replace(/^_/, '').replace(/_$/, '').trim());
+        .filter((l) => ITALIC.line.test(l.trim()))
+        .map((l) =>
+          l
+            .replace(TEXT.underscoreLeading, '')
+            .replace(TEXT.underscoreTrailing, '')
+            .trim(),
+        );
 
       const itemTypes = ItemData.getItemTypes(sharedData);
       const clothingTypes = ItemData.getClothingTypes(sharedData);
@@ -383,19 +398,19 @@ async function parseHeirloomFile(
       for (const line of italicLines) {
         const lower = line.toLowerCase();
         if (rarityKeywords.some((r) => lower.includes(r))) continue;
-        if (/property|applies/i.test(line)) continue;
+        if (ITALIC.propertyOrApplies.test(line)) continue;
 
         if (allValidTypes.includes(lower)) {
           weaponType = line;
           break;
         }
 
-        const commaMatch = line.match(/^([^,]+),\s*([^,]+)$/);
+        const commaMatch = line.match(TYPE_PARSING.twoPartFormat);
         if (commaMatch) {
           const firstPart = commaMatch[1].trim().toLowerCase();
           const secondPart = commaMatch[2].trim();
           if (allValidTypes.includes(firstPart)) {
-            const pm = secondPart.match(/^([^(]+)/);
+            const pm = secondPart.match(TYPE_PARSING.beforeParen);
             weaponType = pm ? pm[1].trim() : secondPart;
             break;
           }
@@ -428,10 +443,17 @@ async function parseHeirloomFile(
   if (typeInfo.uniqueTags) tags.push(...typeInfo.uniqueTags);
 
   if (itemType)
-    tags.push(`item:${itemType.toLowerCase().replace(/\s+/g, '-')}`);
-  if (rarity) tags.push(`rarity:${rarity.toLowerCase().replace(/\s+/g, '-')}`);
+    tags.push(
+      `item:${itemType.toLowerCase().replace(TEXT.whitespaceCollapse, '-')}`,
+    );
+  if (rarity)
+    tags.push(
+      `rarity:${rarity.toLowerCase().replace(TEXT.whitespaceCollapse, '-')}`,
+    );
   if (weaponType)
-    tags.push(`weapon:${weaponType.toLowerCase().replace(/\s+/g, '-')}`);
+    tags.push(
+      `weapon:${weaponType.toLowerCase().replace(TEXT.whitespaceCollapse, '-')}`,
+    );
 
   tags.sort();
 
@@ -442,8 +464,12 @@ async function parseHeirloomFile(
     slug: baseSlug,
     title:
       title ||
-      baseSlug.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-    file: path.relative(process.cwd(), filePath).replace(/\\/g, '/'),
+      baseSlug
+        .replace(SLUG.hyphensUnderscores, ' ')
+        .replace(SLUG.titleCase, (c) => c.toUpperCase()),
+    file: path
+      .relative(process.cwd(), filePath)
+      .replace(SLUG.pathBackslash, '/'),
     link: `/library/items/heirlooms/${baseSlug}`,
     rarity,
     itemType: itemType?.toLowerCase(),
@@ -487,6 +513,7 @@ async function main(
     parseFile: parseHeirloomFile,
     contentDir: options.contentDir,
     storage: options.storage,
+    metadataVersion: '3.0.0',
   });
 }
 

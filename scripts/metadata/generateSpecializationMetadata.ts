@@ -11,51 +11,28 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import {
-    clean,
-    extractAllTags,
-    filePathToSlug,
-    parseTitle,
-    runGenerator,
-    runWithCli,
-    type SharedData,
-    type StorageAdapter,
-} from '@/lib/metadata';
 import { promises as fs } from 'fs';
 import path from 'path';
+import {
+  clean,
+  extractAllTags,
+  filePathToSlug,
+  parseTitle,
+  runGenerator,
+  runWithCli,
+  type SharedData,
+  type StorageAdapter,
+} from '.';
+import {
+  CASTING,
+  FEATURE,
+  FLAVOR,
+  SPECIALIZATION_TYPES,
+  TABLE,
+} from './classPatterns';
+import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 
 const log = createLogger({ component: 'SpecializationMetadataGenerator' });
-
-/** Pattern matching features inside Collapsible blocks */
-const FEATURE_HEADING = /##\s+(\d+)\w*\s+Level\s+[–—-]\s+(.+)/;
-
-/** Pattern matching spell slot column headers */
-const SPELL_SLOT_HEADER = /\d+(st|nd|rd|th)/;
-
-/**
- * Mapping of title patterns to specialization type labels.
- *
- * @type {Array<{ pattern: RegExp; type: string }>}
- */
-const SPECIALIZATION_TYPE_PATTERNS: Array<{
-  pattern: RegExp;
-  type: string;
-}> = [
-  { pattern: /^Path of/i, type: 'Path' },
-  { pattern: /Domain$/i, type: 'Domain' },
-  { pattern: /^College of/i, type: 'College' },
-  { pattern: /^Circle of/i, type: 'Circle' },
-  { pattern: /^Way of/i, type: 'Way' },
-  { pattern: /^Oath of/i, type: 'Oath' },
-  { pattern: /^Order of/i, type: 'Order' },
-  { pattern: /^School of/i, type: 'School' },
-  { pattern: /Patron$/i, type: 'Patron' },
-  { pattern: /^The\s/i, type: 'Patron' },
-  { pattern: /Knight$/i, type: 'Archetype' },
-  { pattern: /Trickster$/i, type: 'Archetype' },
-  { pattern: /Champion$/i, type: 'Archetype' },
-  { pattern: /Master$/i, type: 'Archetype' },
-];
 
 /**
  * Determines the specialization type from the title text.
@@ -64,7 +41,7 @@ const SPECIALIZATION_TYPE_PATTERNS: Array<{
  * @returns {string} Matched type or "Subclass"
  */
 function classifySpecializationType(title: string): string {
-  for (const { pattern, type } of SPECIALIZATION_TYPE_PATTERNS) {
+  for (const { pattern, type } of SPECIALIZATION_TYPES) {
     if (pattern.test(title)) return type;
   }
   return 'Subclass';
@@ -79,8 +56,11 @@ function classifySpecializationType(title: string): string {
 function parseFlavor(lines: string[]): string | undefined {
   for (let i = 0; i < Math.min(lines.length, 10); i++) {
     const trimmed = lines[i].trim();
-    if (/^_[^_]+_$/.test(trimmed) || /^\*[^*]+\*$/.test(trimmed)) {
-      return trimmed.replace(/^[_*]+|[_*]+$/g, '').trim();
+    if (
+      FLAVOR.underscoreItalic.test(trimmed) ||
+      FLAVOR.asteriskItalic.test(trimmed)
+    ) {
+      return trimmed.replace(TEXT.italicWrap, '').trim();
     }
   }
   return undefined;
@@ -94,7 +74,7 @@ function parseFlavor(lines: string[]): string | undefined {
  */
 function parseFeatures(raw: string): Array<{ level: number; name: string }> {
   const features: Array<{ level: number; name: string }> = [];
-  const matches = raw.matchAll(new RegExp(FEATURE_HEADING, 'g'));
+  const matches = raw.matchAll(new RegExp(FEATURE.levelHeading, 'g'));
 
   for (const match of matches) {
     const level = parseInt(match[1], 10);
@@ -116,12 +96,9 @@ function parseFeatures(raw: string): Array<{ level: number; name: string }> {
 function parseAlwaysPreparedSpells(
   raw: string,
 ): Array<{ level: number; spells: string[] }> | undefined {
-  const tablePattern =
-    /(?:domain spells|oath spells|circle spells|expanded spell list|always.?prepared)/i;
+  if (!CASTING.alwaysPrepared.test(raw)) return undefined;
 
-  if (!tablePattern.test(raw)) return undefined;
-
-  const lines = raw.split(/\r?\n/);
+  const lines = raw.split(TEXT.lineSplit);
   const entries: Array<{ level: number; spells: string[] }> = [];
   let inTable = false;
   let headerSeen = false;
@@ -129,17 +106,15 @@ function parseAlwaysPreparedSpells(
   for (const line of lines) {
     if (!inTable) {
       if (
-        /^\|\s*(Cleric|Paladin|Druid|Warlock|Ranger)?\s*Level\s*\|/i.test(
-          line,
-        ) ||
-        /^\|\s*Level\s*\|\s*Spells?\s*\|/i.test(line)
+        TABLE.classLevelHeader.test(line) ||
+        TABLE.levelSpellsHeader.test(line)
       ) {
         inTable = true;
         continue;
       }
     }
 
-    if (inTable && /^\|[-\s|]+\|$/.test(line)) {
+    if (inTable && TABLE.separator.test(line)) {
       headerSeen = true;
       continue;
     }
@@ -151,14 +126,14 @@ function parseAlwaysPreparedSpells(
         .filter(Boolean);
 
       if (cells.length >= 2) {
-        const levelMatch = cells[0].match(/(\d+)/);
+        const levelMatch = cells[0].match(UTILITY.numericExtract);
         if (!levelMatch) continue;
         const level = parseInt(levelMatch[1], 10);
 
         const spellCell = cells[1];
         const spells = spellCell
-          .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-          .split(/,\s*/)
+          .replace(TABLE.markdownLink, '$1')
+          .split(LIST.commaSplit)
           .map((s) => s.trim())
           .filter(Boolean);
 
@@ -183,19 +158,17 @@ function parseAlwaysPreparedSpells(
 function parseSpecializationSpellcasting(
   raw: string,
 ): { ability: string; progression: string } | undefined {
-  const spellcastingTablePattern =
-    /##\s+(?:Eldritch Knight|Arcane Trickster|(?:\w+\s+)*Spellcasting)\s*$/m;
-  if (!spellcastingTablePattern.test(raw)) return undefined;
+  if (!CASTING.specHeading.test(raw)) return undefined;
 
-  const lines = raw.split(/\r?\n/);
+  const lines = raw.split(TEXT.lineSplit);
   let hasSlotTable = false;
   let maxSlotLevel = 0;
 
   for (const line of lines) {
-    if (/^\|\s*(?:Fighter|Rogue|Ranger)?\s*Level\s*\|/i.test(line)) {
+    if (TABLE.classLevelHeader.test(line)) {
       const headers = line.split('|').map((c) => c.trim());
       for (const h of headers) {
-        const match = h.match(/(\d+)(st|nd|rd|th)/);
+        const match = h.match(TABLE.slotLevel);
         if (match) {
           hasSlotTable = true;
           const level = parseInt(match[1], 10);
@@ -208,9 +181,9 @@ function parseSpecializationSpellcasting(
   if (!hasSlotTable) return undefined;
 
   const abilityPatterns = [
-    /spellcasting ability is (\w+)/i,
-    /(\w+) is your spellcasting ability/i,
-    /your (\w+) modifier/i,
+    CASTING.abilityIs,
+    CASTING.abilityReversed,
+    CASTING.modifierRef,
   ];
 
   const abilities = [
@@ -256,7 +229,7 @@ async function parseSpecializationFile(
 ): Promise<Record<string, unknown> | null> {
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const lines = raw.split(/\r?\n/).map((l) => l.trim());
+    const lines = raw.split(TEXT.lineSplit).map((l) => l.trim());
     const title = parseTitle(lines);
     const slug = filePathToSlug(filePath);
 
@@ -269,7 +242,9 @@ async function parseSpecializationFile(
     const spellsAlwaysPrepared = parseAlwaysPreparedSpells(raw);
     const spellcasting = parseSpecializationSpellcasting(raw);
 
-    const file = path.relative(process.cwd(), filePath).replace(/\\/g, '/');
+    const file = path
+      .relative(process.cwd(), filePath)
+      .replace(SLUG.pathBackslash, '/');
     const link = `/en/library/character-creation/vocations/${vocation}/${slug}`;
 
     const tags = new Set<string>();
@@ -342,17 +317,18 @@ async function main(
     filePattern: options.filePattern || /\.specialization\.mdx$/,
     parseFile: parseSpecializationFile,
     recursive: true,
-    processResult: (result) => {
+    processResult: (result: any) => {
       if (result === null) return { metadata: null, count: 0 };
       return { metadata: result, count: 1 };
     },
     contentDir: options.contentDir,
     storage: options.storage,
+    metadataVersion: '1.0.0',
   });
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  runWithCli(main).catch((error) => {
+  runWithCli(main).catch((error: any) => {
     log.error('Fatal error during specialization metadata generation', {
       error: (error as Error).message,
       stack: (error as Error).stack,

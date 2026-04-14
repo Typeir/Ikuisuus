@@ -26,43 +26,43 @@
  */
 
 import {
-  defineConfig,
-  MikroORM,
-  type EntityManager,
+    defineConfig,
+    MikroORM,
+    type EntityManager,
 } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import {
-  BloodlineBoonEntity,
-  BloodlineEntity,
-  CorrectionsUserEntity,
-  HeirloomChargesEmbed,
-  HeirloomEntity,
-  MonsterACEmbed,
-  MonsterEntity,
-  MonsterHPEmbed,
-  MonsterSaveEmbed,
-  MonsterScoreEmbed,
-  MonsterSenseEmbed,
-  MonsterSpeedEmbed,
-  SchemaMigrationEntity,
-  SpecializationEntity,
-  SpecializationFeatureEntity,
-  SpecializationPreparedSpellEntity,
-  SpecializationSpellcastingEmbed,
-  SpellComponentEmbed,
-  SpellEntity,
-  SpellListEntity,
-  TrinketEntity,
-  TrinketSavingThrowEmbed,
-  VocationEntity,
-  VocationFeatureEntity,
-  VocationSkillProficienciesEmbed,
-  VocationSpellcastingEmbed,
+    BloodlineBoonEntity,
+    BloodlineEntity,
+    CorrectionsUserEntity,
+    HeirloomChargesEmbed,
+    HeirloomEntity,
+    MonsterACEmbed,
+    MonsterEntity,
+    MonsterHPEmbed,
+    MonsterSaveEmbed,
+    MonsterScoreEmbed,
+    MonsterSenseEmbed,
+    MonsterSpeedEmbed,
+    SchemaMigrationEntity,
+    SpecializationEntity,
+    SpecializationFeatureEntity,
+    SpecializationPreparedSpellEntity,
+    SpecializationSpellcastingEmbed,
+    SpellComponentEmbed,
+    SpellEntity,
+    SpellListEntity,
+    TrinketEntity,
+    TrinketSavingThrowEmbed,
+    VocationEntity,
+    VocationFeatureEntity,
+    VocationSkillProficienciesEmbed,
+    VocationSpellcastingEmbed,
 } from '../../../src/lib/db/orm/entities/index';
-import { contentHash } from '../../../src/lib/metadata/contentHash';
+import { contentHash } from '../../metadata/contentHash';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '../../../');

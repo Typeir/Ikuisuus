@@ -13,7 +13,7 @@ import {
     getMatchingFiles,
     safeReadFile,
     safeWriteFile,
-} from '@/lib/metadata/fileUtils';
+} from '@scripts/metadata/fileUtils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('fs/promises', () => ({

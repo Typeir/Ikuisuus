@@ -22,18 +22,17 @@
  */
 
 import {
-    HeirloomEntity,
-    MonsterEntity,
-    SpellEntity,
-    SpellListEntity,
-    TrinketEntity,
+  HeirloomEntity,
+  MonsterEntity,
+  SpellEntity,
+  SpellListEntity,
+  TrinketEntity,
 } from '@/lib/db/orm/entities';
 import { getEM } from '@/lib/db/orm/orm';
 import { createLogger } from '@/lib/logging/logger';
 import type { EntityManager } from '@mikro-orm/postgresql';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { contentHash } from './contentHash';
 import { syncBloodlines } from './syncBloodlines';
 import type { SyncResult } from './types';
 
@@ -112,10 +111,10 @@ async function syncMonsters(
   for (const m of records) {
     const key = monsterSlugKey(m);
     incomingKeys.add(key);
-    const hash = contentHash(m);
+    const hash = m.versionHash as string;
     const entity = existingMap.get(key);
 
-    if (entity?.versionHash === hash) {
+    if (hash && entity?.versionHash === hash) {
       result.skipped++;
       continue;
     }
@@ -242,10 +241,10 @@ async function syncHeirlooms(
   for (const h of records) {
     const slug = h.slug as string;
     incomingKeys.add(slug);
-    const hash = contentHash(h);
+    const hash = h.versionHash as string;
     const entity = existingMap.get(slug);
 
-    if (entity?.versionHash === hash) {
+    if (hash && entity?.versionHash === hash) {
       result.skipped++;
       continue;
     }
@@ -333,10 +332,10 @@ async function syncSpells(
   for (const s of records) {
     const slug = s.slug as string;
     incomingKeys.add(slug);
-    const hash = contentHash(s);
+    const hash = s.versionHash as string;
     const entity = existingMap.get(slug);
 
-    if (entity?.versionHash === hash) {
+    if (hash && entity?.versionHash === hash) {
       result.skipped++;
       continue;
     }
@@ -434,10 +433,10 @@ async function syncTrinkets(
   for (const t of records) {
     const slug = t.slug as string;
     incomingKeys.add(slug);
-    const hash = contentHash(t);
+    const hash = t.versionHash as string;
     const entity = existingMap.get(slug);
 
-    if (entity?.versionHash === hash) {
+    if (hash && entity?.versionHash === hash) {
       result.skipped++;
       continue;
     }

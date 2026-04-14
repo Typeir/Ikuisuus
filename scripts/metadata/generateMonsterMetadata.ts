@@ -12,23 +12,27 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import {
-    GameData,
-    clean,
-    extractAllTags,
-    filePathToSlug,
-    parseKeyBullets,
-    parseNumericValue,
-    readLines,
-    runGenerator,
-    runWithCli,
-    splitList,
-    splitListWithGrouping,
-    type SharedData,
-    type StorageAdapter,
-} from '@/lib/metadata';
 import { promises as fs } from 'fs';
 import path from 'path';
+import {
+  GameData,
+  clean,
+  extractAllTags,
+  filePathToSlug,
+  parseKeyBullets,
+  parseNumericValue,
+  readLines,
+  runGenerator,
+  runWithCli,
+  splitList,
+  splitListWithGrouping,
+  type SharedData,
+  type StorageAdapter,
+} from '.';
+import { MONSTER, STRUCTURE } from './extraction/featurePatterns';
+import { parseMonsterFeatures } from './generateFeatureMetadata';
+import { ITALIC_META, STAT_TABLE } from './monsterPatterns';
+import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 
 const log = createLogger({ component: 'MonsterMetadataGenerator' });
 
@@ -69,8 +73,12 @@ function parseItalicMeta(lines: string[], sharedData: SharedData): ItalicMeta {
   const line = lines.find((l) => statBlockPattern.test(l));
   if (!line) return {};
 
-  const inner = clean(line.replace(/^_/, '').replace(/_$/, ''));
-  const [left, rightAlign] = inner.split(/\s*,\s*/, 2);
+  const inner = clean(
+    line
+      .replace(TEXT.underscoreLeading, '')
+      .replace(TEXT.underscoreTrailing, ''),
+  );
+  const [left, rightAlign] = inner.split(LIST.commaWhitespace, 2);
 
   let size = '';
   let creatureType = '';
@@ -85,8 +93,8 @@ function parseItalicMeta(lines: string[], sharedData: SharedData): ItalicMeta {
   }
 
   creatureType = creatureType
-    .replace(/^\s*,?\s*/g, '')
-    .replace(/\(.*?\)/g, '')
+    .replace(ITALIC_META.cleanPrefix, '')
+    .replace(ITALIC_META.stripParen, '')
     .trim();
 
   return {
@@ -116,22 +124,23 @@ function parseTableRowCells(line: string): string[] {
  * @returns {{ ac?: object, hp?: object, speed?: SpeedData }} Parsed combat stats
  */
 function findArmorHpSpeed(lines: string[]) {
-  const idx = lines.findIndex((l) => /\|\s*\*\*Armor\s*Class\*\*/i.test(l));
+  const idx = lines.findIndex((l) => MONSTER.armorClassHeader.test(l));
   if (idx === -1) return {};
 
   let dataRow = lines[idx + 2];
-  if (!/^\s*\|/.test(dataRow)) {
-    dataRow = lines.slice(idx + 1).find((l) => /^\s*\|/.test(l)) || '';
+  if (!STAT_TABLE.dataRow.test(dataRow)) {
+    dataRow =
+      lines.slice(idx + 1).find((l) => STAT_TABLE.dataRow.test(l)) || '';
   }
 
   const cells = parseTableRowCells(dataRow || '');
   const [acRaw, hpRaw, speedRaw] = cells;
 
-  const acMatch = (acRaw || '').match(/([\d,]+)\s*(?:\((.*?)\))?/);
+  const acMatch = (acRaw || '').match(STRUCTURE.numericWithParen);
   const ac = acMatch ? parseNumericValue(acMatch[1]) : undefined;
   const acNotes = acMatch?.[2] || undefined;
 
-  const hpMatch = (hpRaw || '').match(/([\d,]+)\s*(?:\((.*?)\))?/);
+  const hpMatch = (hpRaw || '').match(STRUCTURE.numericWithParen);
   const hpAverage = hpMatch ? parseNumericValue(hpMatch[1]) : undefined;
   const hpFormula = hpMatch?.[2] || undefined;
 
@@ -155,19 +164,19 @@ function findArmorHpSpeed(lines: string[]) {
 function parseSpeed(raw: string): SpeedData | undefined {
   if (!raw) return undefined;
 
-  const parts = raw.split(/\s*,\s*/);
+  const parts = raw.split(LIST.commaWhitespace);
   const modes: Record<string, number | boolean> = {};
 
   for (const p of parts) {
-    const isHover = /\bhover\b/i.test(p);
+    const isHover = MONSTER.hover.test(p);
     if (isHover) modes.hover = true;
 
-    const m = p.match(/(?:(walk|climb|fly|swim|burrow)\s+)?(\d+)\s*ft\.?/i);
+    const m = p.match(MONSTER.speedMode);
     if (m) {
       const mode = (m[1] || 'walk').toLowerCase();
       modes[mode] = Number(m[2]);
     } else {
-      const mh = p.match(/hover\s+(\d+)\s*ft\.?/i);
+      const mh = p.match(SPEED_PATTERNS.hoverDistance);
       if (mh) {
         modes.fly = Number(mh[1]);
         modes.hover = true;
@@ -185,17 +194,13 @@ function parseSpeed(raw: string): SpeedData | undefined {
  * @returns {object | undefined} Ability scores
  */
 function parseAbilities(lines: string[]) {
-  const idx = lines.findIndex((l) =>
-    /^\s*\|\s*\*?\*?STR\*?\*?\s+\|\s*\*?\*?DEX\*?\*?\s+\|\s*\*?\*?CON\*?\*?\s+\|\s*\*?\*?INT\*?\*?\s+\|\s*\*?\*?WIS\*?\*?\s+\|\s*\*?\*?CHA\*?\*?\s*\|/i.test(
-      l,
-    ),
-  );
+  const idx = lines.findIndex((l) => STAT_TABLE.abilityHeader.test(l));
   if (idx === -1) return undefined;
 
   let valuesRow = '';
   for (let i = idx + 1; i < Math.min(idx + 5, lines.length); i++) {
     const line = lines[i].trim();
-    if (!/^\|[-\s|]+\|$/.test(line)) {
+    if (!STAT_TABLE.separatorRow.test(line)) {
       valuesRow = line;
       break;
     }
@@ -206,7 +211,7 @@ function parseAbilities(lines: string[]) {
   const cells = parseTableRowCells(valuesRow);
 
   const toPair = (cell: string) => {
-    const m = cell.match(/(\d+)/);
+    const m = cell.match(UTILITY.numericExtract);
     if (m) {
       const score = Number(m[1]);
       return { score, mod: Math.floor((score - 10) / 2) };
@@ -235,8 +240,8 @@ function parseAbilities(lines: string[]) {
 function parseSavingThrows(raw?: string): Record<string, number> | undefined {
   if (!raw) return undefined;
   const out: Record<string, number> = {};
-  for (const part of raw.split(/\s*,\s*/)) {
-    const m = part.match(/^(Str|Dex|Con|Int|Wis|Cha)\s*([+-]?\d+)/i);
+  for (const part of raw.split(LIST.commaWhitespace)) {
+    const m = part.match(MONSTER.savingThrowBonus);
     if (m) {
       out[m[1].toLowerCase()] = Number(m[2]);
     }
@@ -254,7 +259,7 @@ function parseSavingThrows(raw?: string): Record<string, number> | undefined {
 function parseSenses(raw: string | undefined, sharedData: SharedData) {
   if (!raw) return undefined;
   const senses: Record<string, unknown> = { raw };
-  const p = raw.match(/passive\s+Perception\s+(\d+)/i);
+  const p = raw.match(MONSTER.passivePerception);
   if (p) senses.passivePerception = Number(p[1]);
   const senseKeys = GameData.getSenses(sharedData);
   for (const key of senseKeys) {
@@ -273,7 +278,7 @@ function parseSenses(raw: string | undefined, sharedData: SharedData) {
  */
 function parseCR(rawChallenge?: string): string | undefined {
   if (!rawChallenge) return undefined;
-  const m = rawChallenge.match(/(\d+\/\d+|\d+)/);
+  const m = rawChallenge.match(MONSTER.challengeRating);
   return m ? m[1] : undefined;
 }
 
@@ -285,7 +290,7 @@ function parseCR(rawChallenge?: string): string | undefined {
  */
 function parseProficiencyBonus(rawPB?: string): number | undefined {
   if (!rawPB) return undefined;
-  const m = rawPB.match(/([+-]?\d+)/);
+  const m = rawPB.match(UTILITY.numericExtract);
   return m ? Number(m[1]) : undefined;
 }
 
@@ -350,7 +355,9 @@ function extractStatBlockSection(
       }
     }
     const section = lines.slice(lookbackStart, blockquoteEnd);
-    return section.map((line) => line.replace(/^>\s*/, ''));
+    return section.map((line) =>
+      line.replace(STAT_CONTENT.blockquotePrefix, ''),
+    );
   }
 
   return lines.slice(lookbackStart, endIdx);
@@ -376,10 +383,10 @@ function findStatBlockTitle(
   ) {
     const line = allLines[i];
     if (isBlockquote) {
-      const match = line.match(/^>\s*#{1,4}\s+\*?\*?(.+?)\*?\*?\s*$/);
+      const match = line.match(MONSTER_HEADING.blockquoteHeading);
       if (match) return match[1].trim();
     } else {
-      const match = line.match(/^#{1,3}\s+\*?\*?(.+?)\*?\*?\s*$/);
+      const match = line.match(MONSTER_HEADING.normalHeading);
       if (match) return match[1].trim();
     }
   }
@@ -387,10 +394,10 @@ function findStatBlockTitle(
 }
 
 /** Regex matching a BlendedImage JSX tag with a src attribute (single line). */
-const BLENDED_IMAGE_SINGLE = /<BlendedImage\s[^>]*?src\s*=\s*['"]([^'"]+)['"]/i;
+const BLENDED_IMAGE_SINGLE = STRUCTURE.blendedImageSrc;
 
 /** Regex matching a src attribute on any line (for multi-line JSX). */
-const SRC_ATTR_PATTERN = /^\s*src\s*=\s*['"]([^'"]+)['"]/i;
+const SRC_ATTR_PATTERN = IMAGE.srcAttr;
 
 /**
  * Finds the image path closest to a stat block by scanning backwards from the
@@ -425,7 +432,7 @@ function findMonsterImage(
     i < Math.min(statBlockLineIdx + 15, allLines.length);
     i++
   ) {
-    if (/^\|/.test(allLines[i])) break;
+    if (IMAGE.tableStart.test(allLines[i])) break;
     scanEnd = i + 1;
   }
 
@@ -439,7 +446,7 @@ function findMonsterImage(
       inBlendedImage = false;
       continue;
     }
-    if (/<BlendedImage\b/i.test(line)) {
+    if (IMAGE.blendedImageTag.test(line)) {
       inBlendedImage = true;
       continue;
     }
@@ -449,7 +456,7 @@ function findMonsterImage(
         lastImage = srcMatch[1];
         inBlendedImage = false;
       }
-      if (/\/>/.test(line)) inBlendedImage = false;
+      if (IMAGE.jsxSelfClose.test(line)) inBlendedImage = false;
     }
   }
 
@@ -466,7 +473,7 @@ function findMonsterImage(
         inTag = false;
         continue;
       }
-      if (/<BlendedImage\b/i.test(line)) {
+      if (IMAGE.blendedImageTag.test(line)) {
         inTag = true;
         continue;
       }
@@ -476,7 +483,7 @@ function findMonsterImage(
           fallbackImage = srcMatch[1];
           inTag = false;
         }
-        if (/\/>/.test(line)) inTag = false;
+        if (IMAGE.jsxSelfClose.test(line)) inTag = false;
       }
     }
     if (fallbackImage) return fallbackImage;
@@ -516,10 +523,10 @@ function parseStatBlockSection(
   const subSlug = title
     ? title
         .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
+        .replace(SLUG.nonAlphaKeepSpaces, '')
+        .replace(TEXT.whitespaceCollapse, '-')
+        .replace(SLUG.multiHyphens, '-')
+        .replace(SLUG.singleEdgeHyphens, '')
     : undefined;
 
   const italicMeta = parseItalicMeta(sectionLines, sharedData);
@@ -530,8 +537,7 @@ function parseStatBlockSection(
   const savingThrows = parseSavingThrows(bulletMap['Saving Throws']);
   const senses = parseSenses(bulletMap['Senses'], sharedData);
   const languages = splitList(bulletMap['Languages']);
-  const nonmagicalPattern =
-    /bludgeoning,?\s+piercing,?\s+and\s+slashing\s+from\s+nonmagical\s+[^;,]+/i;
+  const nonmagicalPattern = STAT_CONTENT.nonmagicalDamage;
   const resist = splitListWithGrouping(
     bulletMap['Damage Resistances'],
     nonmagicalPattern,
@@ -564,11 +570,7 @@ function parseStatBlockSection(
   if (contentStartIdx === 0) {
     for (let i = 0; i < linesToScan.length; i++) {
       const line = linesToScan[i].trim();
-      if (
-        /^[-*]\s+\*\*(Proficiency Bonus|Challenge|Languages|Senses|Condition Immunities|Damage|Skills|Saving Throws)\*\*/i.test(
-          line,
-        )
-      ) {
+      if (STAT_CONTENT.keyValueBullet.test(line)) {
         contentStartIdx = i + 1;
       }
     }
@@ -652,8 +654,12 @@ function parseStatBlockSection(
     subSlug,
     title:
       title ||
-      baseSlug.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-    file: path.relative(process.cwd(), filePath).replace(/\\/g, '/'),
+      baseSlug
+        .replace(SLUG.hyphensUnderscores, ' ')
+        .replace(SLUG.titleCase, (c) => c.toUpperCase()),
+    file: path
+      .relative(process.cwd(), filePath)
+      .replace(SLUG.pathBackslash, '/'),
     link:
       subSlug !== baseSlug
         ? `/library/monsters/${baseSlug}#${subSlug}`
@@ -734,6 +740,11 @@ async function parseMonsterFile(
     results.push(metadata);
   }
 
+  const features = await parseMonsterFeatures(filePath);
+  for (const record of results) {
+    (record as Record<string, unknown>).features = features;
+  }
+
   return results;
 }
 
@@ -744,6 +755,7 @@ async function parseMonsterFile(
  * @param {string} [options.contentDir] - Override content directory
  * @param {RegExp} [options.filePattern] - Override file pattern
  * @param {StorageAdapter} [options.storage] - Optional DB storage
+ * @param {string} [options.fileFilter] - Single filename to process (--file)
  * @returns {Promise<void>}
  */
 async function main(
@@ -751,12 +763,13 @@ async function main(
     contentDir?: string;
     filePattern?: RegExp;
     storage?: StorageAdapter;
+    fileFilter?: string;
   } = {},
 ): Promise<void> {
   await runGenerator({
     name: 'Monster Metadata Generator',
     contentType: 'monsters',
-    filePattern: options.filePattern || /\.sheet\.mdx$/i,
+    filePattern: options.filePattern || STAT_CONTENT.sheetFilePattern,
     parseFile: parseMonsterFile,
     processResult: (metadataArray) => ({
       metadata: metadataArray,
@@ -764,6 +777,8 @@ async function main(
     }),
     contentDir: options.contentDir,
     storage: options.storage,
+    fileFilter: options.fileFilter,
+    metadataVersion: '4.0.0',
   });
 }
 

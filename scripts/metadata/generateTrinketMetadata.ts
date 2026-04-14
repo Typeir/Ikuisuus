@@ -10,19 +10,20 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import {
-    GameData,
-    clean,
-    extractAllTags,
-    filePathToSlug,
-    parseTitle,
-    runGenerator,
-    runWithCli,
-    type SharedData,
-    type StorageAdapter,
-} from '@/lib/metadata';
 import { promises as fs } from 'fs';
 import path from 'path';
+import {
+  GameData,
+  clean,
+  extractAllTags,
+  filePathToSlug,
+  parseTitle,
+  runGenerator,
+  runWithCli,
+  type SharedData,
+  type StorageAdapter,
+} from '.';
+import { MECHANICS, PROPERTY } from './trinketPatterns';
 
 const log = createLogger({ component: 'TrinketMetadataGenerator' });
 
@@ -44,7 +45,7 @@ function parseTrinketProperties(
     const trimmed = line.trim();
 
     if (trimmed.startsWith('**Damage**:')) {
-      const damageMatch = trimmed.match(/\*\*Damage\*\*:\s*(.+)/);
+      const damageMatch = trimmed.match(PROPERTY.damage);
       if (damageMatch) {
         const damageText = clean(damageMatch[1]);
         if (damageText !== '—' && damageText !== '-') {
@@ -54,18 +55,18 @@ function parseTrinketProperties(
     }
 
     if (trimmed.startsWith('**Damage Type**:')) {
-      const typeMatch = trimmed.match(/\*\*Damage Type\*\*:\s*(.+)/);
+      const typeMatch = trimmed.match(PROPERTY.damageType);
       if (typeMatch) {
         result.damageType = clean(typeMatch[1]).toLowerCase();
       }
     }
 
     if (trimmed.startsWith('**Properties**:')) {
-      const propsMatch = trimmed.match(/\*\*Properties\*\*:\s*(.+)/);
+      const propsMatch = trimmed.match(PROPERTY.properties);
       if (propsMatch) {
         const propsText = clean(propsMatch[1]);
         const cleanedText = propsText.replace(
-          /special\s*\([^)]+\)/gi,
+          PROPERTY.specialNotation,
           'special',
         );
         result.properties = cleanedText
@@ -76,27 +77,27 @@ function parseTrinketProperties(
     }
 
     if (trimmed.startsWith('**Range**:')) {
-      const rangeMatch = trimmed.match(/\*\*Range\*\*:\s*(.+)/);
+      const rangeMatch = trimmed.match(PROPERTY.range);
       if (rangeMatch) {
         result.range = clean(rangeMatch[1]);
       }
     }
 
     if (trimmed.startsWith('**Weight**:')) {
-      const weightMatch = trimmed.match(/\*\*Weight\*\*:\s*(.+)/);
+      const weightMatch = trimmed.match(PROPERTY.weight);
       if (weightMatch) {
         result.weight = clean(weightMatch[1]);
       }
     }
   }
 
-  const savingThrowMatch = content.match(/DC\s+(\d+)\s+(\w+)\s+saving throw/i);
+  const savingThrowMatch = content.match(MECHANICS.dcSavingThrow);
   if (savingThrowMatch) {
     result.savingThrowDC = parseInt(savingThrowMatch[1], 10);
     result.savingThrowAbility = savingThrowMatch[2].toLowerCase();
   }
 
-  const specialEffectsMatch = content.match(/Special\s*\(([^)]+)\)/i);
+  const specialEffectsMatch = content.match(MECHANICS.specialEffects);
   if (specialEffectsMatch) {
     result.specialEffects = specialEffectsMatch[1]
       .split(',')
@@ -214,6 +215,7 @@ async function main(
     processResult: (result) => ({ metadata: result, count: 1 }),
     contentDir: options.contentDir,
     storage: options.storage,
+    metadataVersion: '2.0.0',
   });
 }
 
