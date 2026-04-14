@@ -744,12 +744,19 @@ async function parseMonsterFile(
       sharedData,
       statBlockPositions,
     );
+    (metadata as Record<string, unknown>).blockStart = lineIndex;
+    (metadata as Record<string, unknown>).blockEnd = endIdx;
     results.push(metadata);
   }
 
   const features = await parseMonsterFeatures(filePath);
-  for (const record of results) {
-    (record as Record<string, unknown>).features = features;
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i] as Record<string, unknown>;
+    const bStart = r.blockStart as number;
+    const bEnd = r.blockEnd as number;
+    r.features = features.filter(
+      (f) => f.source && f.source.start >= bStart && f.source.start < bEnd,
+    );
   }
 
   return results;

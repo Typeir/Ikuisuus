@@ -347,9 +347,9 @@ export const RECHARGE_TIMINGS: ReadonlyArray<{
  */
 export const SECTIONS = {
   subHeading: /^#{4,6}\s+(.+?)\s*$/,
-  boldLabel: /^\s*[-*]\s*\*\*(.+?)[.*]\*\*\s*/,
+  boldLabel: /^\s*[-*]\s*\*\*([^*]+?)\.?\*\*(?!\s*:)\s*/,
   deedBullet:
-    /^\s*[-*]\s*\*\*(.+?)[.*]\*\*\s*(?:\(Costs?\s*(\d+)\s*Deeds?\))?/i,
+    /^\s*[-*]\s*\*\*([^*]+?)\.?\*\*(?!\s*:)\s*(?:\(Costs?\s*(\d+)\s*Deeds?\))?/i,
 } as const;
 
 /**

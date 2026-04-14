@@ -277,7 +277,18 @@ async function main(
 
       if (Array.isArray(metadata)) {
         for (const record of metadata) {
-          record.features = features;
+          const bStart = record.blockStart as number | undefined;
+          const bEnd = record.blockEnd as number | undefined;
+          if (bStart !== undefined && bEnd !== undefined) {
+            record.features = features.filter(
+              (f) =>
+                f.source &&
+                f.source.start >= bStart &&
+                f.source.start < bEnd,
+            );
+          } else {
+            record.features = features;
+          }
         }
       } else {
         metadata.features = features;

@@ -63,6 +63,7 @@ function enrichDeedAct(
  */
 export function extractDeedActs(section: MonsterSection): MonsterFeature[] {
   const subs = splitBySubHeadings(section.lines);
+  const lineBase = section.startLine + 1;
 
   if (subs.length > 0) {
     const features: MonsterFeature[] = [];
@@ -73,6 +74,11 @@ export function extractDeedActs(section: MonsterSection): MonsterFeature[] {
       const cleanName = sub.name.replace(MONSTER.deedCost, '').trim();
       const feat = baseDeedFeature(cleanName);
       feat.legendary_deed = { category: 'act', cost };
+      feat.source = {
+        start: lineBase + sub.startOffset,
+        end: lineBase + sub.endOffset,
+        archetype: 'M',
+      };
       enrichDeedAct(feat, sub.name, raw);
       features.push(feat);
     }
@@ -80,15 +86,25 @@ export function extractDeedActs(section: MonsterSection): MonsterFeature[] {
   }
 
   const features: MonsterFeature[] = [];
-  for (const line of section.lines) {
-    const match = line.match(SECTIONS.deedBullet);
+  const bulletIndices: number[] = [];
+  for (let idx = 0; idx < section.lines.length; idx++) {
+    const match = section.lines[idx].match(SECTIONS.deedBullet);
     if (!match) continue;
+    bulletIndices.push(idx);
     const name = match[1].replace(/\./g, '').trim();
     const cost = match[2] ? parseInt(match[2], 10) : 1;
     const feat = baseDeedFeature(name);
     feat.legendary_deed = { category: 'act', cost };
-    enrichDeedAct(feat, line, line);
+    enrichDeedAct(feat, section.lines[idx], section.lines[idx]);
     features.push(feat);
+  }
+  for (let i = 0; i < features.length; i++) {
+    const start = lineBase + bulletIndices[i];
+    const end =
+      i + 1 < bulletIndices.length
+        ? lineBase + bulletIndices[i + 1]
+        : section.endLine;
+    features[i].source = { start, end, archetype: 'M' };
   }
   return features;
 }
@@ -104,6 +120,7 @@ export function extractDeedStratagems(
 ): MonsterFeature[] {
   const features: MonsterFeature[] = [];
   const subs = splitBySubHeadings(section.lines);
+  const lineBase = section.startLine + 1;
 
   for (const sub of subs) {
     const raw = sub.lines.join('\n');
@@ -112,6 +129,11 @@ export function extractDeedStratagems(
     feat.legendary_deed = {
       category: 'stratagem',
       declare_resolve: !!recognizeDeclareResolve(raw),
+    };
+    feat.source = {
+      start: lineBase + sub.startOffset,
+      end: lineBase + sub.endOffset,
+      archetype: 'M',
     };
     feat.recharge = parseRechargeFromHeading(sub.name);
 
@@ -132,12 +154,18 @@ export function extractDeedStratagems(
 export function extractDeedLair(section: MonsterSection): MonsterFeature[] {
   const features: MonsterFeature[] = [];
   const subs = splitBySubHeadings(section.lines);
+  const lineBase = section.startLine + 1;
 
   for (const sub of subs) {
     const raw = sub.lines.join('\n');
     const feat = baseDeedFeature(sub.name);
     feat.trigger = 'action';
     feat.legendary_deed = { category: 'lair' };
+    feat.source = {
+      start: lineBase + sub.startOffset,
+      end: lineBase + sub.endOffset,
+      archetype: 'M',
+    };
 
     enrichFromBody(feat, raw);
 
@@ -156,6 +184,7 @@ export function extractDeedLair(section: MonsterSection): MonsterFeature[] {
 export function extractDeedPhases(section: MonsterSection): MonsterFeature[] {
   const features: MonsterFeature[] = [];
   const subs = splitByPhaseHeadings(section.lines);
+  const lineBase = section.startLine + 1;
 
   for (const sub of subs) {
     const raw = sub.lines.join('\n');
@@ -163,6 +192,11 @@ export function extractDeedPhases(section: MonsterSection): MonsterFeature[] {
     const feat = baseDeedFeature(sub.name);
     feat.trigger = 'passive';
     feat.legendary_deed = { category: 'phase' };
+    feat.source = {
+      start: lineBase + sub.startOffset,
+      end: lineBase + sub.endOffset,
+      archetype: 'M',
+    };
 
     if (phase) {
       const added = extractAddedFeatureNames(sub.lines);
@@ -178,12 +212,25 @@ export function extractDeedPhases(section: MonsterSection): MonsterFeature[] {
     features.push(feat);
 
     const innerSubs = splitBySubHeadings(sub.lines);
+    if (innerSubs.length > 0) {
+      feat.source = {
+        start: lineBase + sub.startOffset,
+        end: lineBase + sub.startOffset + 1 + innerSubs[0].startOffset,
+        archetype: 'M',
+      };
+    }
+    const phaseLineBase = lineBase + sub.startOffset + 1;
     for (const inner of innerSubs) {
       const innerRaw = inner.lines.join('\n');
       const innerFeat = baseDeedFeature(inner.name);
       innerFeat.trigger = 'action';
       innerFeat.legendary_deed = { category: 'phase' };
       innerFeat.flags.push('phase_added');
+      innerFeat.source = {
+        start: phaseLineBase + inner.startOffset,
+        end: phaseLineBase + inner.endOffset,
+        archetype: 'M',
+      };
       enrichFromBody(innerFeat, innerRaw);
       features.push(innerFeat);
     }
@@ -216,61 +263,111 @@ function extractAddedFeatureNames(lines: string[]): string[] {
 }
 
 /**
+ * A named phase sub-section with offset tracking.
+ *
+ * @interface PhaseBlock
+ * @property {string} name - Phase heading text
+ * @property {string[]} lines - Content lines
+ * @property {number} startOffset - 0-based start index within parent lines
+ * @property {number} endOffset - Exclusive 0-based end index within parent lines
+ */
+interface PhaseBlock {
+  name: string;
+  lines: string[];
+  startOffset: number;
+  endOffset: number;
+}
+
+/**
  * Splits lines by phase-threshold headings (Bloodied, Doomed, Wounded, Slain).
  * Sub-headings within a phase are kept as body content, not split further.
  *
  * @param {string[]} lines - Section content lines
- * @returns {{ name: string; lines: string[] }[]} Phase blocks
+ * @returns {PhaseBlock[]} Phase blocks with offset tracking
  */
-function splitByPhaseHeadings(
-  lines: string[],
-): { name: string; lines: string[] }[] {
-  const result: { name: string; lines: string[] }[] = [];
-  let current: { name: string; lines: string[] } | null = null;
+function splitByPhaseHeadings(lines: string[]): PhaseBlock[] {
+  const result: PhaseBlock[] = [];
+  let current: PhaseBlock | null = null;
 
-  for (const line of lines) {
-    const match = line.match(SECTIONS.subHeading);
+  for (let idx = 0; idx < lines.length; idx++) {
+    const match = lines[idx].match(SECTIONS.subHeading);
     if (match) {
       const name = match[1].replace(/\*\*/g, '').trim();
       const isPhase =
         MONSTER.phaseThreshold.test(name) || MONSTER.phaseSlain.test(name);
       if (isPhase) {
-        if (current) result.push(current);
-        current = { name, lines: [] };
+        if (current) {
+          current.endOffset = idx;
+          result.push(current);
+        }
+        current = {
+          name,
+          lines: [],
+          startOffset: idx,
+          endOffset: lines.length,
+        };
         continue;
       }
     }
     if (current) {
-      current.lines.push(line);
+      current.lines.push(lines[idx]);
     }
   }
-  if (current) result.push(current);
+  if (current) {
+    current.endOffset = lines.length;
+    result.push(current);
+  }
   return result;
 }
 
 /**
- * Splits lines by H4/H5/H6 sub-headings.
+ * A named deed sub-section with offset tracking.
+ *
+ * @interface DeedSubSection
+ * @property {string} name - Sub-section heading text
+ * @property {string[]} lines - Content lines
+ * @property {number} startOffset - 0-based start index within parent lines
+ * @property {number} endOffset - Exclusive 0-based end index within parent lines
+ */
+interface DeedSubSection {
+  name: string;
+  lines: string[];
+  startOffset: number;
+  endOffset: number;
+}
+
+/**
+ * Splits lines by H4/H5/H6 sub-headings with offset tracking.
  *
  * @param {string[]} lines - Section content lines
- * @returns {{ name: string; lines: string[] }[]} Named sub-sections
+ * @returns {DeedSubSection[]} Named sub-sections with offsets
  */
-function splitBySubHeadings(
-  lines: string[],
-): { name: string; lines: string[] }[] {
-  const result: { name: string; lines: string[] }[] = [];
-  let current: { name: string; lines: string[] } | null = null;
+function splitBySubHeadings(lines: string[]): DeedSubSection[] {
+  const result: DeedSubSection[] = [];
+  let current: DeedSubSection | null = null;
 
-  for (const line of lines) {
-    const match = line.match(SECTIONS.subHeading);
+  for (let idx = 0; idx < lines.length; idx++) {
+    const match = lines[idx].match(SECTIONS.subHeading);
     if (match) {
-      if (current) result.push(current);
-      current = { name: match[1].replace(/\*\*/g, '').trim(), lines: [] };
+      if (current) {
+        current.endOffset = idx;
+        result.push(current);
+      }
+      current = {
+        name: match[1].replace(/\*\*/g, '').trim(),
+        lines: [],
+        startOffset: idx,
+        endOffset: lines.length,
+      };
       continue;
     }
     if (current) {
-      current.lines.push(line);
+      current.lines.push(lines[idx]);
     }
   }
-  if (current) result.push(current);
+  if (current) {
+    current.endOffset = lines.length;
+    result.push(current);
+  }
   return result;
 }

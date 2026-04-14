@@ -131,16 +131,22 @@ function extractSubHeadingFeatures(
         children.push(subs[++i]);
       }
       const multiFeatures = extractMultiattack(sub, children, defaultTrigger);
-      const rangeEnd =
-        children.length > 0
-          ? children[children.length - 1].endOffset
-          : sub.endOffset;
-      for (const mf of multiFeatures) {
-        mf.source = {
-          start: lineBase + sub.startOffset,
-          end: lineBase + rangeEnd,
-          archetype: 'H',
-        };
+
+      const parentEnd =
+        children.length > 0 ? children[0].startOffset : sub.endOffset;
+      multiFeatures[0].source = {
+        start: lineBase + sub.startOffset,
+        end: lineBase + parentEnd,
+        archetype: 'H',
+      };
+      for (let c = 0; c < children.length; c++) {
+        if (c + 1 < multiFeatures.length) {
+          multiFeatures[c + 1].source = {
+            start: lineBase + children[c].startOffset,
+            end: lineBase + children[c].endOffset,
+            archetype: 'H',
+          };
+        }
       }
       features.push(...multiFeatures);
       continue;
