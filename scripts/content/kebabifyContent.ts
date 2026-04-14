@@ -6,6 +6,7 @@
  * - Handles renaming safely (depth-first)
  *
  * @module kebabifyContent
+ * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
  *
@@ -62,7 +63,7 @@ function toSegmentedKebabBaseName(baseName: string): string {
 
 /**
  * Recursively renames folders and `.mdx` files to kebab-case.
- * @param dir - Directory to process
+ * @param {string} dir - Directory to process
  */
 function kebabifyDirectory(dir: string): void {
   const entries: fs.Dirent[] = fs.readdirSync(dir, { withFileTypes: true });

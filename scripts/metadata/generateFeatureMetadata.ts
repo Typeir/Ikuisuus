@@ -16,30 +16,32 @@ import type { MonsterFeature } from '@/lib/types/feature';
 import fs from 'fs/promises';
 import path from 'path';
 import {
-  endTimer,
-  filePathToSlug,
-  getMatchingFiles,
-  readLines,
-  runWithCli,
-  safeWriteFile,
-  startTimer,
+    endTimer,
+    filePathToSlug,
+    getMatchingFiles,
+    getMetadataBackend,
+    readLines,
+    runWithCli,
+    safeWriteFile,
+    startTimer,
 } from '.';
+import { applyMetaHandler } from './extraction/metaHandlers';
 import { findMetaForFeature, parseMetaTags } from './extraction/metaTagParser';
 import {
-  extractDeedActs,
-  extractDeedLair,
-  extractDeedPhases,
-  extractDeedStratagems,
+    extractDeedActs,
+    extractDeedLair,
+    extractDeedPhases,
+    extractDeedStratagems,
 } from './extraction/monsterDeedExtractor';
 import {
-  extractActions,
-  extractSpellcasting,
-  extractTraits,
+    extractActions,
+    extractSpellcasting,
+    extractTraits,
 } from './extraction/monsterFeatureExtractor';
 import { featureId } from './extraction/monsterMultiattackExtractor';
 import {
-  classifySections,
-  type MonsterSection,
+    classifySections,
+    type MonsterSection,
 } from './extraction/monsterSectionClassifier';
 
 const log = createLogger({ component: 'FeatureMetadataGenerator' });
@@ -130,11 +132,25 @@ export async function parseMonsterFeatures(
     const extracted = extractFeaturesFromSection(section);
     for (const feat of extracted) {
       feat.id = featureId(slug, feat.name);
+      feat.source = {
+        start: section.startLine,
+        end: section.endLine,
+        archetype: [
+          'deed_act',
+          'deed_stratagem',
+          'deed_lair',
+          'deed_phase',
+        ].includes(section.type)
+          ? 'M'
+          : 'H',
+      };
       features.push(feat);
     }
   }
 
   resolveMultiattackRefs(features, slug);
+
+  const bodyMap = buildFeatureBodyMap(sections, slug);
 
   const metaDirectives = parseMetaTags(raw);
   if (metaDirectives.length > 0) {
@@ -142,11 +158,44 @@ export async function parseMonsterFeatures(
       const meta = findMetaForFeature(metaDirectives, feat.id);
       if (meta) {
         feat.meta = meta.attrs;
+        const handlerName = meta.attrs.customHandler;
+        if (handlerName) {
+          applyMetaHandler(
+            feat,
+            bodyMap.get(feat.id) ?? '',
+            handlerName,
+            meta.attrs,
+          );
+        }
       }
     }
   }
 
   return features;
+}
+
+/**
+ * Builds a map from feature ID to body text for handler dispatch.
+ * Reconstructs body text from classified sections so handlers can
+ * parse patterns without storing rawText on features.
+ *
+ * @param {MonsterSection[]} sections - Classified sections
+ * @param {string} slug - Monster slug for ID generation
+ * @returns {Map<string, string>} Feature ID → body text
+ */
+function buildFeatureBodyMap(
+  sections: MonsterSection[],
+  slug: string,
+): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const section of sections) {
+    const extracted = extractFeaturesFromSection(section);
+    for (const feat of extracted) {
+      const id = featureId(slug, feat.name);
+      map.set(id, section.lines.join('\n'));
+    }
+  }
+  return map;
 }
 
 /**
@@ -165,9 +214,20 @@ async function main(
   const timerKey = 'feature-metadata-append';
   startTimer(timerKey);
 
+  const backend = getMetadataBackend();
   const contentDir =
     options.contentDir ||
-    path.resolve(__dirname, '..', '..', 'src', 'content', 'en', 'monsters');
+    (backend === 'pg'
+      ? path.resolve(__dirname, '..', '..', '.meta', 'en', 'monsters')
+      : path.resolve(
+          __dirname,
+          '..',
+          '..',
+          'src',
+          'content',
+          'en',
+          'monsters',
+        ));
 
   let metadataFiles = await getMatchingFiles(contentDir, /\.metadata\.json$/);
 
@@ -188,7 +248,15 @@ async function main(
 
   const results = await Promise.allSettled(
     metadataFiles.map(async (metaPath) => {
-      const sheetPath = metaPath.replace(/\.metadata\.json$/, '.sheet.mdx');
+      const metaRaw = await fs.readFile(metaPath, 'utf8');
+      const metadata = JSON.parse(metaRaw);
+      const metaFile: string = Array.isArray(metadata)
+        ? (metadata[0]?.file ?? '')
+        : (metadata.file ?? '');
+      const sheetPath =
+        backend === 'pg' && metaFile
+          ? path.resolve(__dirname, '..', '..', metaFile)
+          : metaPath.replace(/\.metadata\.json$/, '.sheet.mdx');
 
       try {
         await fs.access(sheetPath);
@@ -196,9 +264,6 @@ async function main(
         log.debug('No .sheet.mdx found for metadata file', { metaPath });
         return;
       }
-
-      const metaRaw = await fs.readFile(metaPath, 'utf8');
-      const metadata = JSON.parse(metaRaw);
       const features = await parseMonsterFeatures(sheetPath);
       totalFeatures += features.length;
 

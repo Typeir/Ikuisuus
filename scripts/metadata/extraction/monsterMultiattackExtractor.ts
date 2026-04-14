@@ -65,7 +65,7 @@ export function extractMultiattack(
   const features: MonsterFeature[] = [];
 
   const descRaw = multiSub.lines.join('\n');
-  const parent = baseFeature(multiSub.name, descRaw);
+  const parent = baseFeature(multiSub.name);
   parent.trigger = defaultTrigger;
 
   const multiText = `${multiSub.name}\n${descRaw}`;
@@ -77,7 +77,7 @@ export function extractMultiattack(
 
   for (const child of childSubs) {
     const raw = child.lines.join('\n');
-    const feat = baseFeature(child.name, raw);
+    const feat = baseFeature(child.name);
     feat.trigger = defaultTrigger;
     feat.recharge = parseRechargeFromHeading(child.name);
     enrichFromBody(feat, raw);

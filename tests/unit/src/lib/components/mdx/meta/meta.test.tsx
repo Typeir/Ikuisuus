@@ -9,14 +9,18 @@ import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 describe('Meta', () => {
-  it('should render nothing', () => {
+  it('should render a hidden span with data attributes', () => {
     const { container } = render(
       <Meta target='generator' type='feature' featureId='slug/feat' />,
     );
-    expect(container.innerHTML).toBe('');
+    const span = container.querySelector('span');
+    expect(span).not.toBeNull();
+    expect(span?.hidden).toBe(true);
+    expect(span?.getAttribute('aria-hidden')).toBe('true');
+    expect(span?.getAttribute('data-meta-feature-id')).toBe('slug/feat');
   });
 
-  it('should accept customHandler prop without errors', () => {
+  it('should include customHandler as data attribute', () => {
     const { container } = render(
       <Meta
         target='generator'
@@ -25,10 +29,11 @@ describe('Meta', () => {
         customHandler='instant_death'
       />,
     );
-    expect(container.innerHTML).toBe('');
+    const span = container.querySelector('span');
+    expect(span?.getAttribute('data-meta-handler')).toBe('instant_death');
   });
 
-  it('should accept arbitrary additional props', () => {
+  it('should pass arbitrary additional props as data attributes', () => {
     const { container } = render(
       <Meta
         target='generator'
@@ -37,6 +42,7 @@ describe('Meta', () => {
         notes='freeform text'
       />,
     );
-    expect(container.innerHTML).toBe('');
+    const span = container.querySelector('span');
+    expect(span?.getAttribute('data-meta-notes')).toBe('freeform text');
   });
 });

@@ -36,14 +36,36 @@ interface MetaProps {
 }
 
 /**
- * Noop component that renders nothing. Exists solely as a typed JSX tag
- * that the metadata generator's regex parser can extract from raw MDX.
+ * Renders an invisible `<span>` carrying metadata as `data-*` attributes.
+ * The generator's regex parser extracts `<Meta>` from raw MDX at build time;
+ * this component ensures the rendered HTML also retains the directive data
+ * for inspection and downstream tooling.
  *
- * @param {MetaProps} _props - Meta attributes (consumed by generator, not React)
- * @returns {null} Always returns null
+ * @component Meta
+ * @param {MetaProps} props - Meta attributes
+ * @param {'generator'} props.target - Processing target
+ * @param {'feature'} props.type - Directive type
+ * @param {string} props.featureId - Stable feature ID
+ * @param {string} [props.customHandler] - Handler name
+ * @returns {JSX.Element} Hidden span with data attributes
  */
-function Meta(_props: MetaProps): null {
-  return null;
+function Meta({
+  target: _target,
+  type: _type,
+  featureId,
+  customHandler,
+  ...rest
+}: MetaProps): JSX.Element {
+  const dataAttrs: Record<string, string | undefined> = {
+    'data-meta-feature-id': featureId,
+    'data-meta-handler': customHandler,
+  };
+  for (const [key, value] of Object.entries(rest)) {
+    if (value !== undefined) {
+      dataAttrs[`data-meta-${key}`] = value;
+    }
+  }
+  return <span hidden aria-hidden='true' {...dataAttrs} />;
 }
 
 export default Meta;

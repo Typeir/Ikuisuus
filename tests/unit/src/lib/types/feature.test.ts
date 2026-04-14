@@ -170,7 +170,7 @@ describe('feature types', () => {
       const feature: Feature = {
         id: 'rimelord/avalanche-blade',
         name: 'Avalanche Blade',
-        source: { file: 'rimelord.mdx', lines: [10, 25], archetype: 'C' },
+        source: { start: 10, end: 25, archetype: 'C' },
         description: 'Summons an ice blade.',
         rawText: '## Avalanche Blade\nSummons an ice blade.',
         flags: [],
@@ -183,7 +183,7 @@ describe('feature types', () => {
       const feature: Feature = {
         id: 'test/full',
         name: 'Full Feature',
-        source: { file: 'test.mdx', lines: [1, 50], archetype: 'A' },
+        source: { start: 1, end: 50, archetype: 'A' },
         trigger: 'action',
         target: { type: 'creature', range: 30, scope: 'single' },
         damage: { dice: { count: 2, sides: 6 }, type: 'fire' },
@@ -216,9 +216,6 @@ describe('feature types', () => {
       const feature: MonsterFeature = {
         id: 'mucklord/tentacle',
         name: 'Tentacle',
-        source: { file: 'mucklord.sheet.mdx', lines: [30, 40], archetype: 'H' },
-        description: 'A tentacle attack.',
-        rawText: '_Melee Weapon Attack:_ ...',
         flags: [],
         attack: { type: 'melee', bonus: 9, reach: 10, targets: 'one target' },
       };
@@ -229,9 +226,6 @@ describe('feature types', () => {
       const feature: MonsterFeature = {
         id: 'mucklord/multiattack',
         name: 'Multiattack',
-        source: { file: 'mucklord.sheet.mdx', lines: [25, 30], archetype: 'H' },
-        description: 'The Mucklord makes two tentacle attacks.',
-        rawText: '**Multiattack.** The Mucklord makes two tentacle attacks.',
         flags: [],
         multiattack: {
           attacks: [{ name: 'tentacle', count: 2 }],
@@ -245,9 +239,6 @@ describe('feature types', () => {
       const feature: MonsterFeature = {
         id: 'yskeia/void-lance',
         name: 'Void Lance',
-        source: { file: 'yskeia.sheet.mdx', lines: [80, 95], archetype: 'I' },
-        description: 'Launches a void lance.',
-        rawText: '**Void Lance (Costs 2 Deeds).**',
         flags: [],
         legendary_deed: { category: 'act', cost: 2 },
       };
@@ -258,9 +249,6 @@ describe('feature types', () => {
       const feature: MonsterFeature = {
         id: 'rubedo/bloodied',
         name: 'Bloodied Phase',
-        source: { file: 'rubedo.sheet.mdx', lines: [50, 70], archetype: 'K' },
-        description: 'Rubedo enters Bloodied phase.',
-        rawText: '### Bloodied (50%)',
         flags: ['escalation'],
         phase: {
           hp_threshold: 50,
@@ -276,9 +264,6 @@ describe('feature types', () => {
       const feature: MonsterFeature = {
         id: 'test/monster-full',
         name: 'Full Monster Feature',
-        source: { file: 'test.sheet.mdx', lines: [1, 100], archetype: 'I' },
-        description: 'Full monster.',
-        rawText: 'Raw text.',
         flags: ['weird_mechanic', 'auto_fail'],
         recharge: { min: 5, max: 6, charges: 3 },
         spellcasting: {

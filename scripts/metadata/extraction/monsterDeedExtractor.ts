@@ -14,28 +14,25 @@
 import type { MonsterFeature } from '@/lib/types/feature';
 import { MONSTER, SECTIONS } from './featurePatterns';
 import {
-    enrichFromBody,
-    parseRechargeFromHeading,
+  enrichFromBody,
+  parseRechargeFromHeading,
 } from './monsterFeatureExtractor';
 import type { MonsterSection } from './monsterSectionClassifier';
 import {
-    recognizeDeclareResolve,
-    recognizePhaseThreshold,
+  recognizeDeclareResolve,
+  recognizePhaseThreshold,
 } from './monsterTokens';
 
 /**
  * Builds a base MonsterFeature shell for deed features.
  *
  * @param {string} name - Feature name
- * @param {string} rawText - Raw markdown text
  * @returns {MonsterFeature} Feature shell
  */
-function baseDeedFeature(name: string, rawText: string): MonsterFeature {
+function baseDeedFeature(name: string): MonsterFeature {
   return {
     id: '',
     name,
-    description: rawText.slice(0, 200),
-    rawText,
     flags: [],
   };
 }
@@ -74,7 +71,7 @@ export function extractDeedActs(section: MonsterSection): MonsterFeature[] {
       const costMatch = sub.name.match(MONSTER.deedCost);
       const cost = costMatch ? parseInt(costMatch[1], 10) : 1;
       const cleanName = sub.name.replace(MONSTER.deedCost, '').trim();
-      const feat = baseDeedFeature(cleanName, raw);
+      const feat = baseDeedFeature(cleanName);
       feat.legendary_deed = { category: 'act', cost };
       enrichDeedAct(feat, sub.name, raw);
       features.push(feat);
@@ -88,7 +85,7 @@ export function extractDeedActs(section: MonsterSection): MonsterFeature[] {
     if (!match) continue;
     const name = match[1].replace(/\./g, '').trim();
     const cost = match[2] ? parseInt(match[2], 10) : 1;
-    const feat = baseDeedFeature(name, line);
+    const feat = baseDeedFeature(name);
     feat.legendary_deed = { category: 'act', cost };
     enrichDeedAct(feat, line, line);
     features.push(feat);
@@ -110,7 +107,7 @@ export function extractDeedStratagems(
 
   for (const sub of subs) {
     const raw = sub.lines.join('\n');
-    const feat = baseDeedFeature(sub.name, raw);
+    const feat = baseDeedFeature(sub.name);
     feat.trigger = 'action';
     feat.legendary_deed = {
       category: 'stratagem',
@@ -138,7 +135,7 @@ export function extractDeedLair(section: MonsterSection): MonsterFeature[] {
 
   for (const sub of subs) {
     const raw = sub.lines.join('\n');
-    const feat = baseDeedFeature(sub.name, raw);
+    const feat = baseDeedFeature(sub.name);
     feat.trigger = 'action';
     feat.legendary_deed = { category: 'lair' };
 
@@ -163,7 +160,7 @@ export function extractDeedPhases(section: MonsterSection): MonsterFeature[] {
   for (const sub of subs) {
     const raw = sub.lines.join('\n');
     const phase = recognizePhaseThreshold(sub.name);
-    const feat = baseDeedFeature(sub.name, raw);
+    const feat = baseDeedFeature(sub.name);
     feat.trigger = 'passive';
     feat.legendary_deed = { category: 'phase' };
 
@@ -183,7 +180,7 @@ export function extractDeedPhases(section: MonsterSection): MonsterFeature[] {
     const innerSubs = splitBySubHeadings(sub.lines);
     for (const inner of innerSubs) {
       const innerRaw = inner.lines.join('\n');
-      const innerFeat = baseDeedFeature(inner.name, innerRaw);
+      const innerFeat = baseDeedFeature(inner.name);
       innerFeat.trigger = 'action';
       innerFeat.legendary_deed = { category: 'phase' };
       innerFeat.flags.push('phase_added');

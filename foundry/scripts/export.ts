@@ -17,18 +17,33 @@
  */
 
 import {
-    copyFileSync,
-    existsSync,
-    mkdirSync,
-    readdirSync,
-    readFileSync,
-    writeFileSync,
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
 } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import type { MonsterMetadata } from '../../src/lib/db/content/schemas/monsterMetadata';
+import type { MonsterFeature } from '../../src/lib/types/feature';
+import { ParserRegistry } from './handlers/registry';
+import { YskeiaParser } from './parsers/yskeiaParser';
+import { transformFeature } from './transformers/featureTransformer';
 import { transformMonster } from './transformers/monsterTransformer';
+
+/**
+ * Monster metadata record with features appended by the feature generator.
+ * The base MonsterMetadata type does not include features, but the JSON
+ * files on disk do after `generateFeatureMetadata` runs.
+ *
+ * @property {MonsterFeature[]} [features] - Extracted features from the stat block
+ */
+interface MonsterMetadataWithFeatures extends MonsterMetadata {
+  features?: MonsterFeature[];
+}
 
 /** Module ID used in Foundry asset paths. */
 const MODULE_ID = 'ikuisuus-damocles';
@@ -271,8 +286,13 @@ async function generateDefaultToken(
 async function exportMonsters(): Promise<void> {
   mkdirSync(OUTPUT_DIR, { recursive: true });
 
+  const registry = new ParserRegistry([
+    YskeiaParser as unknown as new () => InstanceType<typeof YskeiaParser>,
+  ]);
+
   const metadataFiles = discoverMetadataFiles();
   let totalActors = 0;
+  let totalItems = 0;
   let errors = 0;
   const referencedImages = new Set<string>();
 
@@ -285,7 +305,7 @@ async function exportMonsters(): Promise<void> {
 
     try {
       const raw = readFileSync(metaPath, 'utf-8');
-      const records: MonsterMetadata[] = JSON.parse(raw);
+      const records: MonsterMetadataWithFeatures[] = JSON.parse(raw);
       const monsters = Array.isArray(records) ? records : [records];
 
       const mdxPath = resolveMdxPath(monsters[0]);
@@ -304,10 +324,22 @@ async function exportMonsters(): Promise<void> {
           bio.value = rewriteBiographyImages(bio.value);
         }
 
+        const features = monster.features ?? [];
+        const items = features.map((f) => transformFeature(f, registry));
+        for (const item of items) {
+          (item as Record<string, unknown>)._key =
+            `!actors.items!${actor._id}.${item._id}`;
+        }
+        (actor as Record<string, unknown>).items = items;
+        totalItems += items.length;
+
         const outPath = join(OUTPUT_DIR, `${actor._id}.json`);
         writeFileSync(outPath, JSON.stringify(actor, null, 2), 'utf-8');
         totalActors++;
-        process.stdout.write(`  ${monster.title} -> ${actor._id}.json\n`);
+        const handledCount = features.filter((f) => registry.has(f.id)).length;
+        process.stdout.write(
+          `  ${monster.title} -> ${actor._id}.json (${items.length} items, ${handledCount} with handlers)\n`,
+        );
       }
     } catch (err) {
       errors++;
@@ -351,7 +383,7 @@ async function exportMonsters(): Promise<void> {
   }
 
   process.stdout.write(
-    `\nExport complete: ${totalActors} actors, ${errors} errors\n`,
+    `\nExport complete: ${totalActors} actors, ${totalItems} items, ${errors} errors\n`,
   );
 
   if (errors > 0) {

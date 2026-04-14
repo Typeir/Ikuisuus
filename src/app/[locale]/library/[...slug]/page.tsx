@@ -90,7 +90,9 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug, locale } = await params;
 
-  const slugSegments = slug[0] === locale ? slug.slice(1) : slug;
+  const slugSegments = (slug[0] === locale ? slug.slice(1) : slug).map(
+    (segment) => decodeURIComponent(segment),
+  );
   const slugPath = slugSegments.join('/');
 
   const result = await fetchContent(locale, slugPath);
@@ -138,8 +140,10 @@ export async function generateMetadata({
 const Page = async ({ params }: PageProps) => {
   const { slug, locale } = await params;
 
-  /** Normalize slug: handle accidental locale duplication */
-  const slugSegments = slug[0] === locale ? slug.slice(1) : slug;
+  /** Normalize slug: handle accidental locale duplication, decode percent-encoded Unicode */
+  const slugSegments = (slug[0] === locale ? slug.slice(1) : slug).map(
+    (segment) => decodeURIComponent(segment),
+  );
   const slugPath = slugSegments.join('/');
 
   let result = await fetchContent(locale, slugPath);

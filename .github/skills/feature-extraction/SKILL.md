@@ -82,18 +82,20 @@ tag in the MDX source immediately after the feature heading.
 
 ### Handler Catalog
 
-| Handler                  | Mechanic                                 | Examples                |
-| ------------------------ | ---------------------------------------- | ----------------------- |
-| `destructible_component` | Destroyable sub-objects with AC/HP       | Primeval Plating        |
-| `auto_hit`               | Attack that cannot miss, flat damage     | Missile Batteries       |
-| `summon`                 | Deploys creatures                        | Warlings                |
-| `geometry_teleport`      | Repositioning without standard movement  | Reposition              |
-| `damage_reflection`      | Damage dealt reflected back              | MAD                     |
-| `instant_death`          | Conditional instant death on failed save | Faterender              |
-| `expanding_aoe`          | AOE that grows over time                 | Arms Race               |
-| `environmental_zone`     | Persistent zone with conditions          | Sky Aflame              |
-| `advancing_wall`         | Moving obstacle/wall                     | Tides of Ruin           |
-| `mark_target`            | Applies a mark condition                 | Marked for Decommission |
+| Handler                  | Mechanic                                | Tier |
+| ------------------------ | --------------------------------------- | ---- |
+| `mark_target`            | Applies a mark condition                | 1    |
+| `auto_hit`               | Attack that cannot miss, flat damage    | 1    |
+| `summon`                 | Deploys linked creatures                | 1    |
+| `destructible_component` | Destroyable sub-objects with AC/HP      | 2    |
+| `geometry_teleport`      | Repositioning without standard movement | 2    |
+| `environmental_zone`     | Persistent zone with conditions         | 2    |
+| `damage_reflection`      | Damage dealt reflected back             | 2    |
+| `text_pipe`              | Passthrough — Foundry handler resolves  | 3    |
+
+> **Complexity tiers**: See `.github/skills/feature-complexity-parser/SKILL.md`
+> for the 5-axis scoring framework that determines when JSONB metadata suffices
+> (Tier 1–2) vs when to defer to a Foundry-side handler (Tier 3).
 
 ### Decision Tree: Parser vs Meta
 

@@ -265,6 +265,7 @@ export type FeatureFlag =
  * @interface Feature
  * @property {string} id - Stable slug (e.g., "rimelord/avalanche-blade")
  * @property {string} name - Display name
+ * @property {{ start: number; end: number; archetype: string }} [source] - Source location in the MDX file — 0-based start/end line of the enclosing section, plus section archetype ('H' for standard sections, 'M' for deed sections)
  * @property {string} [trigger] - Action economy type: action, bonus_action, reaction, free, passive
  * @property {{ type?: string; range?: number; area?: RangeToken; scope?: string }} [target] - Target descriptor
  * @property {DamageToken} [damage] - Damage descriptor
@@ -277,14 +278,13 @@ export type FeatureFlag =
  * @property {{ level: number; value: string }[]} [scaling] - Level-based scaling data
  * @property {Feature[]} [children] - Nested sub-features (spells, forms, options)
  * @property {string} [pick_mode] - Selection mode: choose_one, pick_any, random
- * @property {string} description - Processed description text
- * @property {string} rawText - Unprocessed source markdown
  * @property {number} [confidence] - Quality score 0.0–1.0 (separate rollout phase)
  * @property {FeatureFlag[]} flags - Structural/quality flags
  */
 export interface Feature {
   id: string;
   name: string;
+  source?: { start: number; end: number; archetype: string };
   trigger?: string;
   target?: { type?: string; range?: number; area?: RangeToken; scope?: string };
   damage?: DamageToken;
@@ -302,8 +302,6 @@ export interface Feature {
   scaling?: { level: number; value: string }[];
   children?: Feature[];
   pick_mode?: string;
-  description: string;
-  rawText: string;
   confidence?: number;
   flags: FeatureFlag[];
 }
@@ -338,7 +336,7 @@ export interface Feature {
  */
 export interface MonsterFeature extends Omit<
   Feature,
-  'damage' | 'saving_throw'
+  'damage' | 'saving_throw' | 'description' | 'rawText'
 > {
   damage?: string;
   damageType?: string;

@@ -47,15 +47,12 @@ export interface SubSection {
  * Builds a base MonsterFeature shell with required fields.
  *
  * @param {string} name - Feature name
- * @param {string} rawText - Raw markdown text
  * @returns {MonsterFeature} Feature shell
  */
-export function baseFeature(name: string, rawText: string): MonsterFeature {
+export function baseFeature(name: string): MonsterFeature {
   return {
     id: '',
     name,
-    description: rawText.slice(0, 200),
-    rawText,
     flags: [],
   };
 }
@@ -133,7 +130,7 @@ function extractSubHeadingFeatures(
     }
 
     const raw = sub.lines.join('\n');
-    const feat = baseFeature(sub.name, raw);
+    const feat = baseFeature(sub.name);
     feat.trigger = defaultTrigger;
 
     feat.recharge = parseRechargeFromHeading(sub.name);
@@ -256,7 +253,7 @@ export function extractSpellcasting(
   section: MonsterSection,
 ): MonsterFeature | null {
   const raw = section.lines.join('\n');
-  const feat = baseFeature('Spellcasting', raw);
+  const feat = baseFeature('Spellcasting');
   feat.trigger = 'passive';
 
   const levelMatch = raw.match(SPELLCASTING.casterLevel);
