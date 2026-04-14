@@ -63,10 +63,19 @@ export function parseDamageFormula(
  * Builds a generic dnd5e item from a MonsterFeature using the Activity model.
  *
  * @param {MonsterFeature} feature - Source feature metadata
+ * @param {string} actorId - Parent actor ID for unique item ID generation
+ * @param {number} featureIndex - Array index of the feature within the actor's feature list
  * @returns {FoundryItem} Base Foundry item with Activity-model field mappings
  */
-function buildBaseItem(feature: MonsterFeature): FoundryItem {
-  const itemId = generateFoundryId(feature.id, 'feature');
+function buildBaseItem(
+  feature: MonsterFeature,
+  actorId: string,
+  featureIndex: number,
+): FoundryItem {
+  const itemId = generateFoundryId(
+    `${actorId}:${feature.id}:${featureIndex}`,
+    'feature',
+  );
   if (feature.attack) return buildWeaponItem(feature, itemId);
   if (feature.multiattack) return buildMultiattackItem(feature, itemId);
   if (feature.saving_throw) return buildSaveFeatItem(feature, itemId);
@@ -85,14 +94,22 @@ function applyOverrides(
   overrides: FoundryItemOverrides,
 ): FoundryItem {
   if (overrides.activities) {
-    const existing = (item.system.activities ?? {}) as Record<string, FoundryActivity>;
+    const existing = (item.system.activities ?? {}) as Record<
+      string,
+      FoundryActivity
+    >;
     item.system.activities = { ...existing, ...overrides.activities };
   }
   if (overrides.description !== undefined)
     item.system.description = { value: overrides.description };
   if (overrides.flags) {
     for (const [key, value] of Object.entries(overrides.flags)) {
-      if (typeof value === 'object' && value !== null && typeof item.flags[key] === 'object' && item.flags[key] !== null) {
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        typeof item.flags[key] === 'object' &&
+        item.flags[key] !== null
+      ) {
         item.flags[key] = { ...(item.flags[key] as object), ...value };
       } else {
         item.flags[key] = value;
@@ -107,13 +124,17 @@ function applyOverrides(
  *
  * @param {MonsterFeature} feature - Source feature from monster metadata
  * @param {ParserRegistry} registry - Parser registry to check for handlers
+ * @param {string} actorId - Parent actor ID for unique item ID generation
+ * @param {number} featureIndex - Array index of the feature within the actor's feature list
  * @returns {FoundryItem} Complete Foundry item ready for Actor embedding
  */
 export function transformFeature(
   feature: MonsterFeature,
   registry: ParserRegistry,
+  actorId: string,
+  featureIndex: number,
 ): FoundryItem {
-  const item = buildBaseItem(feature);
+  const item = buildBaseItem(feature, actorId, featureIndex);
   const overrides = registry.dispatch(feature.id, '');
   return overrides ? applyOverrides(item, overrides) : item;
 }

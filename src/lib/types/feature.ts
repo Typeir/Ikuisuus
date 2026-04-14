@@ -333,6 +333,7 @@ export interface Feature {
  * @property {boolean} [auto_fail_saves] - Whether the creature auto-fails all saves
  * @property {{ type: string; trigger: string; per?: string }} [escalation_mechanic] - Escalating mechanic descriptor
  * @property {Record<string, string>} [meta] - Metadata directives from `<Meta>` MDX tags
+ * @property {string} [description] - HTML description text populated at Foundry export time
  */
 export interface MonsterFeature extends Omit<
   Feature,
@@ -390,4 +391,5 @@ export interface MonsterFeature extends Omit<
     per?: string;
   };
   meta?: Record<string, string>;
+  description?: string;
 }

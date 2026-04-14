@@ -15,6 +15,7 @@ These rules are **strictly enforced**. Violations will cause build failures, tes
 | Use NotificationProvider, not `alert()`                                            | [Testing Rules](.github/docs/testing-rules.md)                         | `grep -rn "alert(" src/` returns 0                                                                 |
 | Explicit MikroORM decorator typing                                                 | [MikroORM Instructions](.github/instructions/mikroorm.instructions.md) | `rg "@PrimaryKey\(\{(?![^}]*type:)(?![^}]*entity:)[^}]*\}\)" src/lib/db/orm/entities -n` returns 0 |
 | Run `npm run pre-init` before dev/build                                            | [Build Pipeline](.github/docs/build-pipeline.md)                       | Build succeeds                                                                                     |
+| If you find "pre-existing errors" you must fix them anyway, no excuses             | [PAW Skill](.github/skills/paw/SKILL.md)                               | health:check 0 critical issues, npm run build:vercel clean                                         |
 
 ## ✅ Completion Gate (Mandatory)
 

@@ -132,18 +132,20 @@ export async function parseMonsterFeatures(
     const extracted = extractFeaturesFromSection(section);
     for (const feat of extracted) {
       feat.id = featureId(slug, feat.name);
-      feat.source = {
-        start: section.startLine,
-        end: section.endLine,
-        archetype: [
-          'deed_act',
-          'deed_stratagem',
-          'deed_lair',
-          'deed_phase',
-        ].includes(section.type)
-          ? 'M'
-          : 'H',
-      };
+      if (!feat.source) {
+        feat.source = {
+          start: section.startLine,
+          end: section.endLine,
+          archetype: [
+            'deed_act',
+            'deed_stratagem',
+            'deed_lair',
+            'deed_phase',
+          ].includes(section.type)
+            ? 'M'
+            : 'H',
+        };
+      }
       features.push(feat);
     }
   }
@@ -192,7 +194,13 @@ function buildFeatureBodyMap(
     const extracted = extractFeaturesFromSection(section);
     for (const feat of extracted) {
       const id = featureId(slug, feat.name);
-      map.set(id, section.lines.join('\n'));
+      if (feat.source) {
+        const sliceStart = feat.source.start - section.startLine - 1;
+        const sliceEnd = feat.source.end - section.startLine - 1;
+        map.set(id, section.lines.slice(sliceStart, sliceEnd).join('\n'));
+      } else {
+        map.set(id, section.lines.join('\n'));
+      }
     }
   }
   return map;

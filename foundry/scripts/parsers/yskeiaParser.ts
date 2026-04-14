@@ -13,6 +13,9 @@
  *   sequential targeting, disintegration, Mark synergy.
  * - **Arms Race** — Expanding maelstrom pair with collision resonance.
  * - **Tides of Ruin** — Advancing debris wall with restrain and shrapnel collapse.
+ * - **Missile Batteries** — Auto-hit force damage at extreme range.
+ * - **Warlings** — Summon construct deployment.
+ * - **Protected Air space** — Anti-flight reaction with flat force damage.
  *
  * @module foundry/scripts/handlers/yskeiaParser
  * @version 3.0.0
@@ -28,6 +31,7 @@ import {
   createCustomDamagePart,
   createDamagePart,
   createSaveActivity,
+  createUtilityActivity,
 } from '../constants/activityTemplates';
 import { handler, parser } from '../handlers/decorators';
 import type { FoundryItemOverrides } from '../handlers/types';
@@ -40,7 +44,7 @@ import type { FoundryItemOverrides } from '../handlers/types';
  *
  * @param {string} sheetSlug - Set by the registry from `@parser` metadata
  */
-@parser('war-godess-yskeia')
+@parser('war-goddess-yskeia')
 class YskeiaParser {
   /** @type {string} */
   sheetSlug = '';
@@ -72,13 +76,13 @@ class YskeiaParser {
               condition: 'Costs 1 Deed; Recharge 6',
               override: false,
             },
-            range: { value: '3000', units: 'ft', special: '', override: false },
+            range: { value: 3000, units: 'ft', special: '', override: false },
             target: {
               template: {
                 type: 'line',
-                value: '3000',
+                value: 3000,
                 units: 'ft',
-                width: '10',
+                width: 10,
               },
               affects: { type: '', count: '', special: '' },
               override: false,
@@ -132,9 +136,9 @@ class YskeiaParser {
               condition: 'Lair Deed',
               override: false,
             },
-            range: { value: '1', units: 'mi', special: '', override: false },
+            range: { value: 1, units: 'mi', special: '', override: false },
             target: {
-              template: { type: 'radius', value: '5', units: 'ft', width: '' },
+              template: { type: 'radius', value: 5, units: 'ft', width: '' },
               affects: { type: '', count: '', special: '' },
               override: false,
             },
@@ -188,7 +192,7 @@ class YskeiaParser {
               override: false,
             },
             target: {
-              template: { type: 'wall', value: '10', units: 'ft', width: '' },
+              template: { type: 'wall', value: 10, units: 'ft', width: '' },
               affects: { type: '', count: '', special: '' },
               override: false,
             },
@@ -211,6 +215,126 @@ class YskeiaParser {
           destroysTerrain: true,
           crushesObjects: true,
           advancesPerTurn: true,
+        },
+      },
+    };
+  }
+
+  /**
+   * Missile Batteries (4 charges, Recharge 4–6) — Action.
+   * Auto-hit 1-mile range, 23 force damage per charge.
+   * Ignores cover, resistance, and magical barriers.
+   * Only blocked by the shield spell.
+   *
+   * @returns {FoundryItemOverrides} Foundry item overrides with Utility Activity
+   */
+  @handler('missile-batteries-4-charges-recharge-4-6')
+  handleMissileBatteries(): FoundryItemOverrides {
+    return {
+      activities: {
+        dnd5eactivity000: createUtilityActivity({
+          base: {
+            activation: {
+              type: 'action',
+              value: 1,
+              condition: '4 charges; Recharge 4–6',
+              override: false,
+            },
+            range: {
+              value: 5280,
+              units: 'ft',
+              special: '1 mile',
+              override: false,
+            },
+          },
+        }),
+      },
+      flags: {
+        'ikuisuus-damocles': {
+          textPipe: true,
+          autoHit: true,
+          flatDamage: 23,
+          flatDamageType: 'force',
+          ignoresResistances: true,
+          ignoresCover: true,
+          penetratesBarriers: true,
+          blockedBy: ['shield'],
+        },
+      },
+    };
+  }
+
+  /**
+   * Warlings (Recharge 5–6) — Action.
+   * Deploys up to 4 Warling constructs within 30 ft.
+   * Medium constructs: AC 18, 50 HP, 40/fly 60 ft.
+   *
+   * @returns {FoundryItemOverrides} Foundry item overrides with Utility Activity
+   */
+  @handler('warlings-recharge-5-6')
+  handleWarlings(): FoundryItemOverrides {
+    return {
+      activities: {
+        dnd5eactivity000: createUtilityActivity({
+          base: {
+            activation: {
+              type: 'action',
+              value: 1,
+              condition: 'Recharge 5–6',
+              override: false,
+            },
+            range: { value: 30, units: 'ft', special: '', override: false },
+          },
+        }),
+      },
+      flags: {
+        'ikuisuus-damocles': {
+          textPipe: true,
+          summonCount: 4,
+          summonType: 'Warling',
+          summonAC: 18,
+          summonHP: 50,
+          summonSpeed: '40 ft., fly 60 ft.',
+        },
+      },
+    };
+  }
+
+  /**
+   * Protected Air space — Reaction.
+   * DC 35 Dex save vs flying creature within lair.
+   * 243 flat force damage on fail; stunned until start of next turn.
+   * Forced 10 ft toward ground on success; no damage.
+   *
+   * @returns {FoundryItemOverrides} Foundry item overrides with Save Activity
+   */
+  @handler('protected-air-space')
+  handleProtectedAirSpace(): FoundryItemOverrides {
+    return {
+      activities: {
+        dnd5eactivity000: createSaveActivity({
+          id: 'dnd5eactivity000',
+          ability: 'dex',
+          dcFormula: '35',
+          onSave: 'none',
+          damageParts: [createCustomDamagePart('243', 'force')],
+          base: {
+            activation: {
+              type: 'reaction',
+              value: 1,
+              condition: 'When a creature attempts flight within lair',
+              override: false,
+            },
+          },
+        }),
+      },
+      flags: {
+        'ikuisuus-damocles': {
+          textPipe: true,
+          stunOnFail: true,
+          pushOnSuccess: 10,
+          pushDirection: 'toward ground',
+          triggerCondition: 'flight',
         },
       },
     };

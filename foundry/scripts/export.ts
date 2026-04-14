@@ -17,7 +17,6 @@
  */
 
 import {
-  copyFileSync,
   existsSync,
   mkdirSync,
   readdirSync,
@@ -26,18 +25,21 @@ import {
 } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import sharp from 'sharp';
 import type { MonsterMetadata } from '../../src/lib/db/content/schemas/monsterMetadata';
 import type { MonsterFeature } from '../../src/lib/types/feature';
 import { ParserRegistry } from './handlers/registry';
 import { YskeiaParser } from './parsers/yskeiaParser';
 import { transformFeature } from './transformers/featureTransformer';
 import { transformMonster } from './transformers/monsterTransformer';
+import { populateFeatureDescriptions } from './utils/mdxToHtml';
+import {
+  bundleImages,
+  DEFAULT_TOKEN_FILENAME,
+  generateTokens,
+} from './utils/tokenGenerator';
 
 /**
  * Monster metadata record with features appended by the feature generator.
- * The base MonsterMetadata type does not include features, but the JSON
- * files on disk do after `generateFeatureMetadata` runs.
  *
  * @property {MonsterFeature[]} [features] - Extracted features from the stat block
  */
@@ -47,46 +49,19 @@ interface MonsterMetadataWithFeatures extends MonsterMetadata {
 
 /** Module ID used in Foundry asset paths. */
 const MODULE_ID = 'ikuisuus-damocles';
-
-/** Prefix for module-relative asset paths in Foundry. */
 const MODULE_IMG_PREFIX = `modules/${MODULE_ID}/assets/images`;
-
-/** Prefix for module-relative token paths in Foundry. */
 const MODULE_TOKEN_PREFIX = `modules/${MODULE_ID}/assets/tokens`;
 
 /** Workspace root directory. */
-const __filename = fileURLToPath(import.meta.url);
-const ROOT = resolve(dirname(__filename), '../..');
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
-/** Source directory for monster content (MDX files). */
 const MONSTERS_DIR = join(ROOT, 'src/content/en/monsters');
-
-/** Directory for generated metadata (pg backend writes here). */
 const META_DIR = join(ROOT, '.meta/en/monsters');
-
-/** Output directory for compendium source JSON. */
 const OUTPUT_DIR = join(ROOT, 'foundry/packs/_source/monsters');
-
-/** Output directory for bundled images. */
 const ASSETS_IMG_DIR = join(ROOT, 'foundry/assets/images');
-
-/** Source directory for WebP images (Next.js public). */
 const PUBLIC_IMG_DIR = join(ROOT, 'public/library/images');
-
-/** Frame overlay for token generation. */
 const FRAME_PATH = join(ROOT, 'foundry/assets/frames/frame.png');
-
-/** Output directory for generated token images. */
 const TOKENS_DIR = join(ROOT, 'foundry/assets/tokens');
-
-/** Token size in pixels (matches frame dimensions). */
-const TOKEN_SIZE = 256;
-
-/** Background color for token circles (fills transparency and default tokens). */
-const TOKEN_BG_COLOR = '#28303b';
-
-/** Default token filename for monsters without portraits. */
-const DEFAULT_TOKEN_FILENAME = '_default.token.webp';
 
 /**
  * Discovers all metadata JSON files, preferring .meta/ (pg backend) over
@@ -109,25 +84,13 @@ function discoverMetadataFiles(): string[] {
 }
 
 /**
- * Resolves the MDX file path for a given monster metadata record.
+ * Rewrites image paths to module-relative Foundry paths.
  *
- * @param {MonsterMetadata} monster - Monster metadata with file path
- * @returns {string} Absolute path to the MDX file
- */
-function resolveMdxPath(monster: MonsterMetadata): string {
-  return join(ROOT, monster.file);
-}
-
-/**
- * Rewrites `/library/images/X.webp` paths to module-relative Foundry paths
- * and collects referenced image filenames for bundling.
- *
- * @param {string} imgPath - Original image path from metadata (e.g. "/library/images/X.webp")
- * @returns {string} Module-relative path (e.g. "modules/ikuisuus-damocles/assets/images/X.webp")
+ * @param {string} imgPath - Original image path from metadata
+ * @returns {string} Module-relative path
  */
 function toModuleImgPath(imgPath: string): string {
-  const filename = basename(imgPath);
-  return `${MODULE_IMG_PREFIX}/${filename}`;
+  return `${MODULE_IMG_PREFIX}/${basename(imgPath)}`;
 }
 
 /**
@@ -138,146 +101,6 @@ function toModuleImgPath(imgPath: string): string {
  */
 function rewriteBiographyImages(html: string): string {
   return html.replace(/\/library\/images\//g, `${MODULE_IMG_PREFIX}/`);
-}
-
-/**
- * Copies referenced images from public/library/images/ to foundry/assets/images/.
- *
- * @param {Set<string>} imageFiles - Set of image filenames to copy
- */
-function bundleImages(imageFiles: Set<string>): void {
-  mkdirSync(ASSETS_IMG_DIR, { recursive: true });
-  let copied = 0;
-  let missing = 0;
-
-  for (const filename of imageFiles) {
-    const src = join(PUBLIC_IMG_DIR, filename);
-    const dest = join(ASSETS_IMG_DIR, filename);
-
-    if (existsSync(src)) {
-      copyFileSync(src, dest);
-      copied++;
-    } else {
-      process.stderr.write(`  WARN: Image not found: ${src}\n`);
-      missing++;
-    }
-  }
-
-  process.stdout.write(`Images: ${copied} copied, ${missing} missing\n`);
-}
-
-/**
- * Generates circular token images by cropping portraits to center-square,
- * clipping to a circle, and compositing the frame overlay on top.
- *
- * @param {Set<string>} imageFiles - Set of image filenames to generate tokens for
- * @returns {Promise<Map<string, string>>} Map of source filename → token filename
- */
-async function generateTokens(
-  imageFiles: Set<string>,
-): Promise<Map<string, string>> {
-  mkdirSync(TOKENS_DIR, { recursive: true });
-
-  const frameBuffer = readFileSync(FRAME_PATH);
-  const maskRadius = Math.round((TOKEN_SIZE / 2) * 0.95);
-  const circleMask = Buffer.from(
-    `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
-      `<circle cx="${TOKEN_SIZE / 2}" cy="${TOKEN_SIZE / 2}" r="${maskRadius}" fill="white"/>` +
-      `</svg>`,
-  );
-
-  const tokenMap = new Map<string, string>();
-  let generated = 0;
-
-  for (const filename of imageFiles) {
-    const src = join(ASSETS_IMG_DIR, filename);
-    if (!existsSync(src)) continue;
-
-    const tokenFilename = filename.replace(/\.\w+$/, '.token.webp');
-    const dest = join(TOKENS_DIR, tokenFilename);
-
-    try {
-      const portrait = sharp(src);
-      const meta = await portrait.metadata();
-      const w = meta.width ?? TOKEN_SIZE;
-      const h = meta.height ?? TOKEN_SIZE;
-      const cropSize = Math.min(w, h);
-      const left = Math.round((w - cropSize) / 2);
-      const top = Math.round((h - cropSize) * 0.15);
-
-      const bgLayer = Buffer.from(
-        `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
-          `<rect width="${TOKEN_SIZE}" height="${TOKEN_SIZE}" fill="${TOKEN_BG_COLOR}"/>` +
-          `</svg>`,
-      );
-
-      const cropped = await sharp(bgLayer)
-        .composite([
-          {
-            input: await portrait
-              .extract({
-                left,
-                top,
-                width: cropSize,
-                height: Math.min(cropSize, h - top),
-              })
-              .resize(TOKEN_SIZE, TOKEN_SIZE, { fit: 'cover' })
-              .png()
-              .toBuffer(),
-            blend: 'over',
-          },
-          { input: circleMask, blend: 'dest-in' },
-        ])
-        .png()
-        .toBuffer();
-
-      await sharp(cropped)
-        .composite([{ input: frameBuffer, blend: 'over' }])
-        .webp({ quality: 90 })
-        .toFile(dest);
-
-      tokenMap.set(filename, tokenFilename);
-      generated++;
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      process.stderr.write(
-        `  WARN: Token generation failed for ${filename}: ${msg}\n`,
-      );
-    }
-  }
-
-  await generateDefaultToken(frameBuffer, circleMask);
-  process.stdout.write(`Tokens: ${generated} generated (+ 1 default)\n`);
-  return tokenMap;
-}
-
-/**
- * Generates a default round token with a solid background color and frame.
- * Used for monsters that have no portrait image.
- *
- * @param {Buffer} frameBuffer - Frame overlay PNG buffer
- * @param {Buffer} circleMask - Circular mask SVG buffer
- */
-async function generateDefaultToken(
-  frameBuffer: Buffer,
-  circleMask: Buffer,
-): Promise<void> {
-  const dest = join(TOKENS_DIR, DEFAULT_TOKEN_FILENAME);
-  const bgLayer = Buffer.from(
-    `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
-      `<rect width="${TOKEN_SIZE}" height="${TOKEN_SIZE}" fill="${TOKEN_BG_COLOR}"/>` +
-      `</svg>`,
-  );
-
-  const masked = await sharp(bgLayer)
-    .composite([{ input: circleMask, blend: 'dest-in' }])
-    .png()
-    .toBuffer();
-
-  await sharp(masked)
-    .composite([{ input: frameBuffer, blend: 'over' }])
-    .webp({ quality: 90 })
-    .toFile(dest);
 }
 
 /**
@@ -308,7 +131,7 @@ async function exportMonsters(): Promise<void> {
       const records: MonsterMetadataWithFeatures[] = JSON.parse(raw);
       const monsters = Array.isArray(records) ? records : [records];
 
-      const mdxPath = resolveMdxPath(monsters[0]);
+      const mdxPath = join(ROOT, monsters[0].file);
       const mdxContent = readFileSync(mdxPath, 'utf-8');
 
       for (const monster of monsters) {
@@ -325,7 +148,10 @@ async function exportMonsters(): Promise<void> {
         }
 
         const features = monster.features ?? [];
-        const items = features.map((f) => transformFeature(f, registry));
+        await populateFeatureDescriptions(features, mdxContent);
+        const items = features.map((f, i) =>
+          transformFeature(f, registry, actor._id, i),
+        );
         for (const item of items) {
           (item as Record<string, unknown>)._key =
             `!actors.items!${actor._id}.${item._id}`;
@@ -348,8 +174,13 @@ async function exportMonsters(): Promise<void> {
     }
   }
 
-  bundleImages(referencedImages);
-  const tokenMap = await generateTokens(referencedImages);
+  bundleImages(referencedImages, PUBLIC_IMG_DIR, ASSETS_IMG_DIR);
+  const tokenMap = await generateTokens(
+    referencedImages,
+    ASSETS_IMG_DIR,
+    FRAME_PATH,
+    TOKENS_DIR,
+  );
 
   for (const metaPath of metadataFiles) {
     try {

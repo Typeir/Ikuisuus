@@ -15,23 +15,30 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-  GameData,
-  clean,
-  extractAllTags,
-  filePathToSlug,
-  parseKeyBullets,
-  parseNumericValue,
-  readLines,
-  runGenerator,
-  runWithCli,
-  splitList,
-  splitListWithGrouping,
-  type SharedData,
-  type StorageAdapter,
+    GameData,
+    clean,
+    extractAllTags,
+    filePathToSlug,
+    parseKeyBullets,
+    parseNumericValue,
+    readLines,
+    runGenerator,
+    runWithCli,
+    splitList,
+    splitListWithGrouping,
+    type SharedData,
+    type StorageAdapter,
 } from '.';
 import { MONSTER, STRUCTURE } from './extraction/featurePatterns';
 import { parseMonsterFeatures } from './generateFeatureMetadata';
-import { ITALIC_META, STAT_TABLE } from './monsterPatterns';
+import {
+    IMAGE,
+    ITALIC_META,
+    MONSTER_HEADING,
+    SPEED,
+    STAT_CONTENT,
+    STAT_TABLE,
+} from './monsterPatterns';
 import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 
 const log = createLogger({ component: 'MonsterMetadataGenerator' });
@@ -176,7 +183,7 @@ function parseSpeed(raw: string): SpeedData | undefined {
       const mode = (m[1] || 'walk').toLowerCase();
       modes[mode] = Number(m[2]);
     } else {
-      const mh = p.match(SPEED_PATTERNS.hoverDistance);
+      const mh = p.match(SPEED.hoverDistance);
       if (mh) {
         modes.fly = Number(mh[1]);
         modes.hover = true;

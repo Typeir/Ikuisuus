@@ -7,13 +7,18 @@ agent: 'agent'
 
 Diagnose and fix all health check failures.
 
-## Step 1: Run Health Gate
+## Step 1: Run Health Gate and PAW Violations
 
 ```bash
 npm run health:check
+npm run paw:violations
 ```
 
-Record the output. The composite gate runs these checks:
+Record the output of both commands.
+
+### Health Gate
+
+The composite gate runs these checks:
 
 | Check         | Script                    | What It Catches                            |
 | ------------- | ------------------------- | ------------------------------------------ |
@@ -24,12 +29,17 @@ Record the output. The composite gate runs these checks:
 | Test gaps     | `check-test-gaps.mjs`     | Source files without corresponding tests   |
 | MDX format    | `check-mdx-format.mjs`    | MDX structural violations                  |
 
+### PAW Violations
+
+`npm run paw:violations` lists any unresolved PAW enforcement violations (project-scoped or session-scoped). These must be fixed before proceeding — PAW will block tool use until they are resolved. See the PAW skill (`.github/skills/paw/SKILL.md`) for the violation lifecycle and fix strategies.
+
 ## Step 2: Classify Findings
 
 Separate results into:
 
 - **CRITICAL** (blocking): Must be fixed before the task can complete
 - **WARNING** (non-blocking): Should be noted but do not block
+- **PAW violations**: Always blocking — fix immediately per the PAW enforcement loop
 
 ## Step 3: Fix Critical Issues
 
@@ -57,13 +67,14 @@ For MDX: `{/* paw:gate:content-format:missing-h1 ignore */}`
 
 Never suppress `missing-test` — create the test file instead. See the PAW skill for full syntax.
 
-## Step 4: Re-run Health Gate
+## Step 4: Re-run Health Gate and PAW
 
 ```bash
 npm run health:check
+npm run paw:violations
 ```
 
-Repeat Steps 3-4 until all critical issues are resolved.
+Repeat Steps 3-4 until all critical issues and PAW violations are resolved.
 
 ## Step 5: Report
 

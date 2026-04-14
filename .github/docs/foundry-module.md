@@ -2,6 +2,16 @@
 
 **Purpose**: Complete documentation of the `foundry/` module pipeline — how Ikuisuus content is exported, transformed, token-generated, and compiled into Foundry VTT compendium packs.
 
+## ⚠️ Critical: Always Verify the Full Pipeline
+
+**After ANY change to foundry scripts, transformers, handlers, metadata generators, or export logic, you MUST run:**
+
+```bash
+npm run foundry:build
+```
+
+This runs `foundry:export && foundry:pack`. The pack step (`compilePack`) will fail if any two items in the same compendium share a `_key`. Multi-variant monsters (e.g., Sun Catchers: Cub/Juvenile/Elder from a single `.sheet.mdx`) are the primary collision risk — item IDs must be scoped to their parent actor to stay unique. **Do not claim a foundry-related task is complete until `foundry:build` exits cleanly.**
+
 ## Overview
 
 The `foundry/` directory contains the `ikuisuus-damocles` Foundry VTT module. It exports Damocles content (monsters, heirlooms, spells, trinkets) from the Library of Ikuisuus into dnd5e-compatible compendium packs that can be installed in Foundry VTT v12+.

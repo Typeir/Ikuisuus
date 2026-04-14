@@ -247,8 +247,12 @@ describe('splitBySubHeadings', () => {
     expect(subs).toHaveLength(2);
     expect(subs[0].name).toBe('Alpha');
     expect(subs[0].origin).toBe('heading');
+    expect(subs[0].startOffset).toBe(0);
+    expect(subs[0].endOffset).toBe(2);
     expect(subs[1].name).toBe('Beta');
     expect(subs[1].origin).toBe('heading');
+    expect(subs[1].startOffset).toBe(2);
+    expect(subs[1].endOffset).toBe(4);
   });
 
   it('splits by bold-label bullets', () => {
@@ -262,8 +266,12 @@ describe('splitBySubHeadings', () => {
     expect(subs).toHaveLength(2);
     expect(subs[0].name).toBe('First');
     expect(subs[0].origin).toBe('bold');
+    expect(subs[0].startOffset).toBe(0);
+    expect(subs[0].endOffset).toBe(2);
     expect(subs[1].name).toBe('Second');
     expect(subs[1].origin).toBe('bold');
+    expect(subs[1].startOffset).toBe(2);
+    expect(subs[1].endOffset).toBe(4);
   });
 
   it('splits mixed headings and bold labels', () => {
@@ -279,10 +287,16 @@ describe('splitBySubHeadings', () => {
     expect(subs).toHaveLength(3);
     expect(subs[0].name).toBe('Multiattack');
     expect(subs[0].origin).toBe('heading');
+    expect(subs[0].startOffset).toBe(0);
+    expect(subs[0].endOffset).toBe(2);
     expect(subs[1].name).toBe('Bite');
     expect(subs[1].origin).toBe('bold');
+    expect(subs[1].startOffset).toBe(2);
+    expect(subs[1].endOffset).toBe(4);
     expect(subs[2].name).toBe('Claw');
     expect(subs[2].origin).toBe('bold');
+    expect(subs[2].startOffset).toBe(4);
+    expect(subs[2].endOffset).toBe(6);
   });
 });
 

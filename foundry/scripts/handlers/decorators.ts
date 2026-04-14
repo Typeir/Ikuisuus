@@ -1,12 +1,16 @@
 /**
  * @fileoverview Decorator factories for the Foundry feature handler system.
  * @description Provides `@parser()` and `@handler()` decorators that register
- * monster sheet parsers and per-feature handler methods via metadata stored on
- * the class prototype. The {@link ParserRegistry} reads this metadata at
- * discovery time to build the dispatch table.
+ * monster sheet parsers and per-feature handler methods. Uses a module-level
+ * accumulator pattern for cross-runtime compatibility (esbuild TC39 Stage 3
+ * decorators and legacy TypeScript experimentalDecorators).
+ *
+ * Method decorators push entries to a pending queue; the class decorator
+ * sweeps them onto the class constructor. The {@link ParserRegistry} reads
+ * these stored entries at discovery time.
  *
  * @module foundry/scripts/handlers/decorators
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 2026-04-14
  *
@@ -21,13 +25,13 @@
 export const PARSER_SHEET_KEY = Symbol('parser:sheet');
 
 /**
- * Metadata key used to store the handler map on the class prototype.
+ * Metadata key used to store the handler map on the class constructor.
  * Each entry maps a feature ID suffix to the method name that handles it.
  */
 export const HANDLER_MAP_KEY = Symbol('handler:map');
 
 /**
- * Shape of a single handler registration entry stored on the prototype.
+ * Shape of a single handler registration entry.
  *
  * @property {string} featureId - The feature ID suffix (after the slug prefix)
  * @property {string} methodName - Name of the decorated method on the class
@@ -38,16 +42,21 @@ export interface HandlerEntry {
 }
 
 /**
+ * Module-level accumulator for handler entries. Method decorators push here;
+ * the class decorator sweeps entries onto the constructor and resets.
+ */
+let pendingHandlers: HandlerEntry[] = [];
+
+/**
  * Class decorator factory that binds a parser class to a specific monster sheet slug.
- * The slug is stored as static metadata and used by the registry to route features
- * from a given monster to the correct parser instance.
+ * Also sweeps any pending handler entries onto the class constructor.
  *
- * @param {string} sheetSlug - The monster sheet slug (e.g. "war-godess-yskeia")
- * @returns {ClassDecorator} Decorator that attaches the slug as metadata
+ * @param {string} sheetSlug - The monster sheet slug (e.g. "war-goddess-yskeia")
+ * @returns {ClassDecorator} Decorator that attaches the slug and handler map
  *
  * @example
  * ```typescript
- * @parser('war-godess-yskeia')
+ * @parser('war-goddess-yskeia')
  * class YskeiaParser { ... }
  * ```
  */
@@ -59,46 +68,44 @@ export function parser(sheetSlug: string): ClassDecorator {
       configurable: false,
       writable: false,
     });
+
+    Object.defineProperty(target, HANDLER_MAP_KEY, {
+      value: [...pendingHandlers],
+      enumerable: false,
+      configurable: false,
+      writable: false,
+    });
+    pendingHandlers = [];
   };
 }
 
 /**
  * Method decorator factory that registers a class method as the handler for a
- * specific feature ID. The feature ID is the suffix portion after the sheet
- * slug prefix (e.g. `"faterender-railgun-recharge-6"` for the full ID
- * `"war-godess-yskeia/faterender-railgun-recharge-6"`).
- *
- * Handler methods receive the raw MDX body text of the feature and return
- * a partial Foundry item system object to merge into the generated item.
+ * specific feature ID. Compatible with both TC39 Stage 3 decorators (esbuild)
+ * and legacy TypeScript experimentalDecorators.
  *
  * @param {string} featureId - Feature ID suffix (everything after `slug/`)
- * @returns {MethodDecorator} Decorator that registers the method in the handler map
+ * @returns {MethodDecorator} Decorator that queues the method in the handler accumulator
  *
  * @example
  * ```typescript
  * @handler('faterender-railgun-recharge-6')
  * handleFaterenderRailgun(body: string): FoundryItemOverrides {
- *   // Parse body text, return item overrides
+ *   // return item overrides
  * }
  * ```
  */
 export function handler(featureId: string): MethodDecorator {
   return (
     target: Object,
-    propertyKey: string | symbol,
+    contextOrKey: string | symbol,
     _descriptor: PropertyDescriptor,
   ) => {
-    const existing: HandlerEntry[] =
-      (target as Record<symbol, HandlerEntry[]>)[HANDLER_MAP_KEY] ?? [];
-    const entry: HandlerEntry = {
-      featureId,
-      methodName: String(propertyKey),
-    };
-    Object.defineProperty(target, HANDLER_MAP_KEY, {
-      value: [...existing, entry],
-      enumerable: false,
-      configurable: true,
-      writable: false,
-    });
+    const methodName =
+      typeof contextOrKey === 'object' && contextOrKey !== null
+        ? String((contextOrKey as unknown as { name: string }).name)
+        : String(contextOrKey);
+
+    pendingHandlers.push({ featureId, methodName });
   };
 }

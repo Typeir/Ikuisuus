@@ -12,11 +12,11 @@
  */
 
 import type {
-  ActivityActivation,
-  ActivityBase,
-  ActivityDuration,
-  ActivityRange,
-  ActivityTarget,
+    ActivityActivation,
+    ActivityBase,
+    ActivityDuration,
+    ActivityRange,
+    ActivityTarget,
 } from '../handlers/types';
 
 /**
@@ -76,7 +76,10 @@ export function buildBase(
     _id: id,
     type,
     activation: overrides?.activation ?? defaultActivation(),
-    consumption: overrides?.consumption ?? { targets: [], scaling: { allowed: false, max: '' } },
+    consumption: overrides?.consumption ?? {
+      targets: [],
+      scaling: { allowed: false, max: '' },
+    },
     description: overrides?.description ?? { chatFlavor: '' },
     duration: overrides?.duration ?? defaultDuration(),
     effects: overrides?.effects ?? [],

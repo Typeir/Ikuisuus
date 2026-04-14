@@ -13,6 +13,7 @@
 
 import type { MonsterFeature } from '@/lib/types/feature';
 import {
+  DAMAGE_TYPES,
   DURATION,
   ENRICHMENT,
   MONSTER,
@@ -36,11 +37,15 @@ import {
  * @property {string} name - Sub-section name (heading text or bold label)
  * @property {string[]} lines - Content lines
  * @property {'heading' | 'bold'} origin - Whether this came from an H4+ heading or a bold-label bullet
+ * @property {number} startOffset - 0-based index of this sub-section's first line within the parent lines array
+ * @property {number} endOffset - Exclusive 0-based end index within the parent lines array
  */
 export interface SubSection {
   name: string;
   lines: string[];
   origin: 'heading' | 'bold';
+  startOffset: number;
+  endOffset: number;
 }
 
 /**
@@ -115,6 +120,7 @@ function extractSubHeadingFeatures(
 ): MonsterFeature[] {
   const features: MonsterFeature[] = [];
   const subs = splitBySubHeadings(section.lines);
+  const lineBase = section.startLine + 1;
 
   for (let i = 0; i < subs.length; i++) {
     const sub = subs[i];
@@ -125,6 +131,17 @@ function extractSubHeadingFeatures(
         children.push(subs[++i]);
       }
       const multiFeatures = extractMultiattack(sub, children, defaultTrigger);
+      const rangeEnd =
+        children.length > 0
+          ? children[children.length - 1].endOffset
+          : sub.endOffset;
+      for (const mf of multiFeatures) {
+        mf.source = {
+          start: lineBase + sub.startOffset,
+          end: lineBase + rangeEnd,
+          archetype: 'H',
+        };
+      }
       features.push(...multiFeatures);
       continue;
     }
@@ -132,6 +149,11 @@ function extractSubHeadingFeatures(
     const raw = sub.lines.join('\n');
     const feat = baseFeature(sub.name);
     feat.trigger = defaultTrigger;
+    feat.source = {
+      start: lineBase + sub.startOffset,
+      end: lineBase + sub.endOffset,
+      archetype: 'H',
+    };
 
     feat.recharge = parseRechargeFromHeading(sub.name);
     enrichFromBody(feat, raw);
@@ -173,6 +195,17 @@ export function enrichFromBody(feat: MonsterFeature, body: string): void {
     };
   }
 
+  if (!feat.damage) {
+    const saveDmg = body.match(ENRICHMENT.saveDamage);
+    if (saveDmg) {
+      const typeLower = saveDmg[3].toLowerCase();
+      if (DAMAGE_TYPES.has(typeLower)) {
+        feat.damage = saveDmg[2]?.trim() ?? saveDmg[1];
+        feat.damageType = typeLower;
+      }
+    }
+  }
+
   const range = recognizeRange(body);
   if (range) feat.target = { type: range.shape, range: range.distance };
 
@@ -212,25 +245,36 @@ export function splitBySubHeadings(lines: string[]): SubSection[] {
   const result: SubSection[] = [];
   let current: SubSection | null = null;
 
-  for (const line of lines) {
+  for (let idx = 0; idx < lines.length; idx++) {
+    const line = lines[idx];
     const headingMatch = line.match(SECTIONS.subHeading);
     const boldMatch = !headingMatch ? line.match(SECTIONS.boldLabel) : null;
 
     if (headingMatch) {
-      if (current) result.push(current);
+      if (current) {
+        current.endOffset = idx;
+        result.push(current);
+      }
       current = {
         name: headingMatch[1].replace(/\*\*/g, '').trim(),
         lines: [],
         origin: 'heading',
+        startOffset: idx,
+        endOffset: lines.length,
       };
       continue;
     }
     if (boldMatch) {
-      if (current) result.push(current);
+      if (current) {
+        current.endOffset = idx;
+        result.push(current);
+      }
       current = {
         name: boldMatch[1].replace(/\./g, '').trim(),
         lines: [line],
         origin: 'bold',
+        startOffset: idx,
+        endOffset: lines.length,
       };
       continue;
     }
@@ -238,7 +282,10 @@ export function splitBySubHeadings(lines: string[]): SubSection[] {
       current.lines.push(line);
     }
   }
-  if (current) result.push(current);
+  if (current) {
+    current.endOffset = lines.length;
+    result.push(current);
+  }
   return result;
 }
 

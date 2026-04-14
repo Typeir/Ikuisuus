@@ -188,7 +188,7 @@ export const TEMPLATES = {
 export const MONSTER = {
   attackLine:
     /_?(Melee|Ranged)\s+(Weapon|Spell)\s+Attack:_?\s*\+(\d+)\s+to\s+hit/i,
-  hitLine: /_?Hit:_?\s*(\d+)\s*\((.+?)\)\s*(\w+)?\s*damage/i,
+  hitLine: /_?Hit:_?\s*\*{0,2}(\d+)\s*\((.+?)\)\*{0,2}\s*(\w+)?\s*damage/i,
   multiattack: /multiattack/i,
   attackSegment:
     /(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+((?:\w+\s+)*\w+)\s+attacks?/i,
@@ -377,7 +377,8 @@ export const SPELLCASTING = {
 /**
  * Pre-compiled patterns for enrichFromBody inline detection.
  *
- * @property {RegExp} extraDamage - "plus N (XdY) type damage"
+ * @property {RegExp} extraDamage - "plus N (XdY) type damage" (bold-tolerant)
+ * @property {RegExp} saveDamage - "takes/taking N (XdY) type damage" or "takes N type damage" (flat)
  * @property {RegExp} rechargeSuffix - "(Recharge N–M)"
  * @property {RegExp} dailyUse - "(N/Short Rest)" or "(N/Long Rest)"
  * @property {RegExp} perDay - "(N/day)"
@@ -386,7 +387,9 @@ export const SPELLCASTING = {
  * @property {RegExp} critRange - "critically hits on a roll of N–"
  */
 export const ENRICHMENT = {
-  extraDamage: /plus\s+\d+\s*\((.+?)\)\s*(\w+)\s*damage/i,
+  extraDamage: /plus\s+\*{0,2}\d+\s*\((.+?)\)\*{0,2}\s*(\w+)\s*damage/i,
+  saveDamage:
+    /tak(?:es?|ing)\s+\*{0,2}(\d+)\s*(?:\(([^)]+)\)\s*\*{0,2}\s*)?(\w+)\s+damage/i,
   rechargeSuffix: /\(Recharge\s+(\d+)(?:[–\-](\d+))?\)/i,
   dailyUse: /\((\d+)\/(Short|Long)\s*Rest\)/i,
   perDay: /\((\d+)\/day\)/i,

@@ -15,9 +15,9 @@
  */
 
 import {
-    HANDLER_MAP_KEY,
-    PARSER_SHEET_KEY,
-    type HandlerEntry,
+  HANDLER_MAP_KEY,
+  PARSER_SHEET_KEY,
+  type HandlerEntry,
 } from './decorators';
 import type { FoundryItemOverrides, IFeatureParser } from './types';
 
@@ -85,9 +85,8 @@ export class ParserRegistry {
     this.parsers.set(sheetSlug, instance);
 
     const entries: HandlerEntry[] =
-      (ParserClass.prototype as Record<symbol, HandlerEntry[]>)[
-        HANDLER_MAP_KEY
-      ] ?? [];
+      (ParserClass as any as Record<symbol, HandlerEntry[]>)[HANDLER_MAP_KEY] ??
+      [];
 
     for (const entry of entries) {
       const fullId = `${sheetSlug}/${entry.featureId}`;
@@ -101,7 +100,7 @@ export class ParserRegistry {
   /**
    * Dispatches a feature to its registered handler method.
    *
-   * @param {string} featureId - Full feature ID (e.g. "war-godess-yskeia/faterender-railgun-recharge-6")
+   * @param {string} featureId - Full feature ID (e.g. "war-goddess-yskeia/faterender-railgun-recharge-6")
    * @param {string} body - Raw MDX body text of the feature
    * @returns {FoundryItemOverrides | null} Item overrides from the handler, or null if no handler exists
    */
@@ -109,7 +108,9 @@ export class ParserRegistry {
     const entry = this.handlers.get(featureId);
     if (!entry) return null;
 
-    const method = (entry.parser as Record<string, Function>)[entry.methodName];
+    const method = (entry.parser as any as Record<string, Function>)[
+      entry.methodName
+    ];
     if (typeof method !== 'function') return null;
 
     return method.call(entry.parser, body) as FoundryItemOverrides;

@@ -16,6 +16,7 @@
 import React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import remarkGfm from 'remark-gfm';
+import type { MonsterFeature } from '../../../src/lib/types/feature';
 
 /**
  * No-op React component used to stub out JSX tags that are irrelevant
@@ -64,6 +65,7 @@ const ImgStub: React.FC<Record<string, unknown>> = (props) =>
 const FOUNDRY_COMPONENTS: Record<string, React.FC<any>> = {
   BlendedImage: ImgStub,
   Image: ImgStub,
+  Meta: Noop,
   MonsterTable: Noop,
   HeirloomTable: Noop,
   SpellTable: Noop,
@@ -137,4 +139,31 @@ export async function extractMonsterDescription(mdx: string): Promise<string> {
 
   const afterFirstHr = mdx.substring(firstHrIndex + 5);
   return mdxToHtml(afterFirstHr);
+}
+
+/**
+ * Extracts per-feature MDX text using source line ranges and converts each
+ * slice to HTML. Mutates features in place, setting `description`.
+ *
+ * @param {MonsterFeature[]} features - Features with source.start/end line ranges
+ * @param {string} mdxContent - Full MDX file content
+ */
+export async function populateFeatureDescriptions(
+  features: MonsterFeature[],
+  mdxContent: string,
+): Promise<void> {
+  const allLines = mdxContent.split('\n');
+  for (const f of features) {
+    if (!f.source || f.description) continue;
+    const slice = allLines.slice(f.source.start, f.source.end).join('\n');
+    if (!slice.trim()) continue;
+    try {
+      f.description = await mdxToHtml(slice);
+    } catch {
+      f.description = slice.replace(
+        /[<>&]/g,
+        (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' })[c] ?? c,
+      );
+    }
+  }
 }

@@ -12,12 +12,15 @@
 
 import { describe, expect, it } from 'vitest';
 import {
-  HANDLER_MAP_KEY,
-  PARSER_SHEET_KEY,
-  type HandlerEntry,
+    HANDLER_MAP_KEY,
+    PARSER_SHEET_KEY,
+    type HandlerEntry,
 } from '../../../../foundry/scripts/handlers/decorators';
 import { ParserRegistry } from '../../../../foundry/scripts/handlers/registry';
-import type { SaveActivity } from '../../../../foundry/scripts/handlers/types';
+import type {
+    SaveActivity,
+    UtilityActivity,
+} from '../../../../foundry/scripts/handlers/types';
 import { YskeiaParser } from '../../../../foundry/scripts/parsers/yskeiaParser';
 
 describe('Foundry Handler Decorators', () => {
@@ -25,20 +28,23 @@ describe('Foundry Handler Decorators', () => {
     const slug = (YskeiaParser as unknown as Record<symbol, string>)[
       PARSER_SHEET_KEY
     ];
-    expect(slug).toBe('war-godess-yskeia');
+    expect(slug).toBe('war-goddess-yskeia');
   });
 
   it('stores handler entries via @handler', () => {
     const entries: HandlerEntry[] = (
-      YskeiaParser.prototype as Record<symbol, HandlerEntry[]>
+      YskeiaParser as unknown as Record<symbol, HandlerEntry[]>
     )[HANDLER_MAP_KEY];
     expect(entries).toBeDefined();
-    expect(entries.length).toBe(3);
+    expect(entries.length).toBe(6);
 
     const featureIds = entries.map((e) => e.featureId);
     expect(featureIds).toContain('faterender-railgun-recharge-6');
     expect(featureIds).toContain('arms-race');
     expect(featureIds).toContain('tides-of-ruin');
+    expect(featureIds).toContain('missile-batteries-4-charges-recharge-4-6');
+    expect(featureIds).toContain('warlings-recharge-5-6');
+    expect(featureIds).toContain('protected-air-space');
   });
 });
 
@@ -47,8 +53,8 @@ describe('ParserRegistry', () => {
     const registry = new ParserRegistry([
       YskeiaParser as unknown as new () => any,
     ]);
-    expect(registry.registeredSheets).toContain('war-godess-yskeia');
-    expect(registry.registeredFeatures).toHaveLength(3);
+    expect(registry.registeredSheets).toContain('war-goddess-yskeia');
+    expect(registry.registeredFeatures).toHaveLength(6);
   });
 
   it('dispatches to the correct handler method', () => {
@@ -56,7 +62,7 @@ describe('ParserRegistry', () => {
       YskeiaParser as unknown as new () => any,
     ]);
     const result = registry.dispatch(
-      'war-godess-yskeia/faterender-railgun-recharge-6',
+      'war-goddess-yskeia/faterender-railgun-recharge-6',
       '',
     );
     expect(result).not.toBeNull();
@@ -74,8 +80,8 @@ describe('ParserRegistry', () => {
     const registry = new ParserRegistry([
       YskeiaParser as unknown as new () => any,
     ]);
-    expect(registry.has('war-godess-yskeia/arms-race')).toBe(true);
-    expect(registry.has('war-godess-yskeia/nonexistent')).toBe(false);
+    expect(registry.has('war-goddess-yskeia/arms-race')).toBe(true);
+    expect(registry.has('war-goddess-yskeia/nonexistent')).toBe(false);
   });
 
   it('throws if class is missing @parser decorator', () => {
@@ -93,7 +99,7 @@ describe('YskeiaParser — Faterender Railgun', () => {
     YskeiaParser as unknown as new () => any,
   ]);
   const result = registry.dispatch(
-    'war-godess-yskeia/faterender-railgun-recharge-6',
+    'war-goddess-yskeia/faterender-railgun-recharge-6',
     '',
   )!;
 
@@ -115,13 +121,13 @@ describe('YskeiaParser — Faterender Railgun', () => {
   it('has line target template on the Activity', () => {
     const save = result.activities!['dnd5eactivity000'] as SaveActivity;
     expect(save.target.template.type).toBe('line');
-    expect(save.target.template.value).toBe('3000');
-    expect(save.target.template.width).toBe('10');
+    expect(save.target.template.value).toBe(3000);
+    expect(save.target.template.width).toBe(10);
   });
 
   it('has 3000 ft range on the Activity', () => {
     const save = result.activities!['dnd5eactivity000'] as SaveActivity;
-    expect(save.range.value).toBe('3000');
+    expect(save.range.value).toBe(3000);
     expect(save.range.units).toBe('ft');
   });
 
@@ -159,7 +165,7 @@ describe('YskeiaParser — Arms Race', () => {
   const registry = new ParserRegistry([
     YskeiaParser as unknown as new () => any,
   ]);
-  const result = registry.dispatch('war-godess-yskeia/arms-race', '')!;
+  const result = registry.dispatch('war-goddess-yskeia/arms-race', '')!;
 
   it('returns a non-null result', () => {
     expect(result).not.toBeNull();
@@ -194,14 +200,14 @@ describe('YskeiaParser — Arms Race', () => {
 
   it('has 1-mile range on the Activity', () => {
     const save = result.activities!['dnd5eactivity000'] as SaveActivity;
-    expect(save.range.value).toBe('1');
+    expect(save.range.value).toBe(1);
     expect(save.range.units).toBe('mi');
   });
 
   it('has radius target template', () => {
     const save = result.activities!['dnd5eactivity000'] as SaveActivity;
     expect(save.target.template.type).toBe('radius');
-    expect(save.target.template.value).toBe('5');
+    expect(save.target.template.value).toBe(5);
   });
 
   it('has maelstrom flags', () => {
@@ -234,7 +240,7 @@ describe('YskeiaParser — Tides of Ruin', () => {
   const registry = new ParserRegistry([
     YskeiaParser as unknown as new () => any,
   ]);
-  const result = registry.dispatch('war-godess-yskeia/tides-of-ruin', '')!;
+  const result = registry.dispatch('war-goddess-yskeia/tides-of-ruin', '')!;
 
   it('returns a non-null result', () => {
     expect(result).not.toBeNull();
@@ -253,7 +259,7 @@ describe('YskeiaParser — Tides of Ruin', () => {
   it('has wall target template', () => {
     const save = result.activities!['dnd5eactivity000'] as SaveActivity;
     expect(save.target.template.type).toBe('wall');
-    expect(save.target.template.value).toBe('10');
+    expect(save.target.template.value).toBe(10);
   });
 
   it('has DC 30 Str save', () => {
@@ -317,5 +323,145 @@ describe('YskeiaParser — Tides of Ruin', () => {
     >;
     expect(flags.destroysTerrain).toBe(true);
     expect(flags.crushesObjects).toBe(true);
+  });
+});
+
+describe('YskeiaParser — Missile Batteries', () => {
+  const registry = new ParserRegistry([
+    YskeiaParser as unknown as new () => any,
+  ]);
+  const result = registry.dispatch(
+    'war-goddess-yskeia/missile-batteries-4-charges-recharge-4-6',
+    '',
+  )!;
+
+  it('returns a non-null result', () => {
+    expect(result).not.toBeNull();
+  });
+
+  it('has a Utility Activity keyed as dnd5eactivity000', () => {
+    const act = result.activities!['dnd5eactivity000'] as UtilityActivity;
+    expect(act.type).toBe('utility');
+  });
+
+  it('has action activation with charge condition', () => {
+    const act = result.activities!['dnd5eactivity000'] as UtilityActivity;
+    expect(act.activation.type).toBe('action');
+    expect(act.activation.condition).toBe('4 charges; Recharge 4–6');
+  });
+
+  it('has 1-mile range', () => {
+    const act = result.activities!['dnd5eactivity000'] as UtilityActivity;
+    expect(act.range.value).toBe(5280);
+    expect(act.range.units).toBe('ft');
+  });
+
+  it('has auto-hit and flat damage flags', () => {
+    const flags = result.flags?.['ikuisuus-damocles'] as Record<
+      string,
+      unknown
+    >;
+    expect(flags.textPipe).toBe(true);
+    expect(flags.autoHit).toBe(true);
+    expect(flags.flatDamage).toBe(23);
+    expect(flags.flatDamageType).toBe('force');
+    expect(flags.ignoresResistances).toBe(true);
+    expect(flags.ignoresCover).toBe(true);
+    expect(flags.penetratesBarriers).toBe(true);
+  });
+});
+
+describe('YskeiaParser — Warlings', () => {
+  const registry = new ParserRegistry([
+    YskeiaParser as unknown as new () => any,
+  ]);
+  const result = registry.dispatch(
+    'war-goddess-yskeia/warlings-recharge-5-6',
+    '',
+  )!;
+
+  it('returns a non-null result', () => {
+    expect(result).not.toBeNull();
+  });
+
+  it('has a Utility Activity keyed as dnd5eactivity000', () => {
+    const act = result.activities!['dnd5eactivity000'] as UtilityActivity;
+    expect(act.type).toBe('utility');
+  });
+
+  it('has action activation', () => {
+    const act = result.activities!['dnd5eactivity000'] as UtilityActivity;
+    expect(act.activation.type).toBe('action');
+  });
+
+  it('has 30 ft range', () => {
+    const act = result.activities!['dnd5eactivity000'] as UtilityActivity;
+    expect(act.range.value).toBe(30);
+    expect(act.range.units).toBe('ft');
+  });
+
+  it('has summon flags', () => {
+    const flags = result.flags?.['ikuisuus-damocles'] as Record<
+      string,
+      unknown
+    >;
+    expect(flags.textPipe).toBe(true);
+    expect(flags.summonCount).toBe(4);
+    expect(flags.summonType).toBe('Warling');
+    expect(flags.summonAC).toBe(18);
+    expect(flags.summonHP).toBe(50);
+  });
+});
+
+describe('YskeiaParser — Protected Air space', () => {
+  const registry = new ParserRegistry([
+    YskeiaParser as unknown as new () => any,
+  ]);
+  const result = registry.dispatch(
+    'war-goddess-yskeia/protected-air-space',
+    '',
+  )!;
+
+  it('returns a non-null result', () => {
+    expect(result).not.toBeNull();
+  });
+
+  it('has a Save Activity keyed as dnd5eactivity000', () => {
+    const save = result.activities!['dnd5eactivity000'] as SaveActivity;
+    expect(save.type).toBe('save');
+  });
+
+  it('has reaction activation', () => {
+    const save = result.activities!['dnd5eactivity000'] as SaveActivity;
+    expect(save.activation.type).toBe('reaction');
+  });
+
+  it('has DC 35 Dex save', () => {
+    const save = result.activities!['dnd5eactivity000'] as SaveActivity;
+    expect(save.save.ability).toBe('dex');
+    expect(save.save.dc.formula).toBe('35');
+  });
+
+  it('has no-damage on success', () => {
+    const save = result.activities!['dnd5eactivity000'] as SaveActivity;
+    expect(save.damage.onSave).toBe('none');
+  });
+
+  it('has 243 flat force damage', () => {
+    const save = result.activities!['dnd5eactivity000'] as SaveActivity;
+    expect(save.damage.parts).toHaveLength(1);
+    expect(save.damage.parts[0].custom.enabled).toBe(true);
+    expect(save.damage.parts[0].custom.formula).toBe('243');
+    expect(save.damage.parts[0].types).toEqual(['force']);
+  });
+
+  it('has flight trigger flags', () => {
+    const flags = result.flags?.['ikuisuus-damocles'] as Record<
+      string,
+      unknown
+    >;
+    expect(flags.textPipe).toBe(true);
+    expect(flags.stunOnFail).toBe(true);
+    expect(flags.triggerCondition).toBe('flight');
   });
 });
