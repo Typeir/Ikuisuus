@@ -282,9 +282,7 @@ async function main(
           if (bStart !== undefined && bEnd !== undefined) {
             record.features = features.filter(
               (f) =>
-                f.source &&
-                f.source.start >= bStart &&
-                f.source.start < bEnd,
+                f.source && f.source.start >= bStart && f.source.start < bEnd,
             );
           } else {
             record.features = features;

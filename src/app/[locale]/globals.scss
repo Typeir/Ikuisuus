@@ -741,6 +741,11 @@ body {
 ============================================ */
 
 @media print {
+  /* Single-column print mode opt-in via Meta component */
+  .prose:has([data-meta-print-mode='single']) article {
+    column-count: 1 !important;
+  }
+
   /* Hide all scrollbars in print mode */
   * {
     overflow: visible !important;
