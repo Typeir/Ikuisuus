@@ -17,7 +17,6 @@ import { CONTENT_SUFFIXES } from '@/lib/enums/constants';
 import { logger } from '@/lib/logging/logger';
 import path from 'path';
 
-import { contentCacheTag } from '../../contentCacheTags';
 import type {
     ContentFetchResult,
     ContentSourceAdapter,
@@ -67,20 +66,17 @@ const resolveUniqueSemanticFileName = (
  *
  * @param {string} locale - Content locale
  * @param {string} relativeFilePath - File path relative to locale root including extension
- * @param {string[]} tags - Cache tags to attach to the request
  * @returns {Promise<ContentFetchResult | null>} Resolved content result or null
  */
 const fetchConcreteFile = async (
   locale: string,
   relativeFilePath: string,
-  tags: string[],
 ): Promise<ContentFetchResult | null> => {
   const url = `${GITHUB_RAW_BASE}/${locale}/${relativeFilePath}`;
 
   try {
     const res = await fetch(url, {
-      cache: 'force-cache',
-      next: { tags },
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -102,8 +98,8 @@ const fetchConcreteFile = async (
 
 /**
  * GitHub raw-content-backed content source.
- * Fetches from `raw.githubusercontent.com` with `force-cache` and
- * per-slug cache tags for targeted invalidation.
+ * Fetches from `raw.githubusercontent.com` with no caching — ISR handles
+ * page-level caching; the raw MDX must always be fresh.
  */
 export const githubContentSource: ContentSourceAdapter = {
   async fetch(
@@ -112,9 +108,7 @@ export const githubContentSource: ContentSourceAdapter = {
   ): Promise<ContentFetchResult | null> {
     for (const ext of EXTENSIONS) {
       const directPath = `${slugPath}${ext}`;
-      const directResult = await fetchConcreteFile(locale, directPath, [
-        contentCacheTag(locale, slugPath),
-      ]);
+      const directResult = await fetchConcreteFile(locale, directPath);
       if (directResult) {
         return directResult;
       }
@@ -139,11 +133,8 @@ export const githubContentSource: ContentSourceAdapter = {
     const semanticPath = relativeDirectory
       ? `${relativeDirectory}/${semanticFileName}`
       : semanticFileName;
-    const semanticSlugPath = semanticPath.replace(/\.(md|mdx)$/, '');
 
-    return fetchConcreteFile(locale, semanticPath, [
-      contentCacheTag(locale, slugPath),
-    ]);
+    return fetchConcreteFile(locale, semanticPath);
 
     return null;
   },
