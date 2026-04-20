@@ -26,6 +26,9 @@ const nextConfig = {
     '@mikro-orm/knex',
   ],
   pageExtensions: ['ts', 'tsx', 'mdx'],
+  generateBuildId: async () => {
+    return process.env.VERCEL_GIT_COMMIT_SHA ?? `local-${Date.now()}`;
+  },
   async redirects() {
     return [
       {
