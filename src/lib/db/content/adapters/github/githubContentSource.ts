@@ -18,8 +18,8 @@ import { logger } from '@/lib/logging/logger';
 import path from 'path';
 
 import type {
-    ContentFetchResult,
-    ContentSourceAdapter,
+  ContentFetchResult,
+  ContentSourceAdapter,
 } from '../../contentSourceAdapter';
 import { githubDirectorySource } from './githubDirectorySource';
 
@@ -99,21 +99,14 @@ const fetchConcreteFile = async (
 /**
  * GitHub raw-content-backed content source.
  * Fetches from `raw.githubusercontent.com` with no caching — ISR handles
- * page-level caching; the raw MDX must always be fresh.
+ * List the directory first and resolve the correct semantic filename.
+ * Page-level caching; the raw MDX must always be fresh.
  */
 export const githubContentSource: ContentSourceAdapter = {
   async fetch(
     locale: string,
     slugPath: string,
   ): Promise<ContentFetchResult | null> {
-    for (const ext of EXTENSIONS) {
-      const directPath = `${slugPath}${ext}`;
-      const directResult = await fetchConcreteFile(locale, directPath);
-      if (directResult) {
-        return directResult;
-      }
-    }
-
     const slugDirectory = path.posix.dirname(slugPath);
     const relativeDirectory = slugDirectory === '.' ? '' : slugDirectory;
     const slugLeaf = path.posix.basename(slugPath);
@@ -135,7 +128,5 @@ export const githubContentSource: ContentSourceAdapter = {
       : semanticFileName;
 
     return fetchConcreteFile(locale, semanticPath);
-
-    return null;
   },
 };
