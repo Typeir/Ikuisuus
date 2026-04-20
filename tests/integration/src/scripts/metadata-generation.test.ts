@@ -5,11 +5,11 @@
  * testing monster, heirloom, and spell metadata extraction.
  */
 
-import { GameData, ItemData } from ../../../../scripts/metadata;
 import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata';
 import { parseMonsterFile } from '@scripts/metadata/generateMonsterMetadata';
 import { parseSpellFile } from '@scripts/metadata/generateSpellMetadata';
 import { describe, expect, it } from 'vitest';
+import { GameData, ItemData } from '../../../../scripts/metadata';
 
 describe('Metadata Generation Pipeline', () => {
   describe('Generator Module Exports', () => {

@@ -15,13 +15,18 @@
  * @requires @/lib/components/encounterPlanner/playMode/CombatantContext
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import * as CombatantConditionsManagerModule from '@/lib/components/encounterPlanner/combatantRow/combatantConditionsManager';
 import { CombatantConditionsManager } from '@/lib/components/encounterPlanner/combatantRow/combatantConditionsManager';
 import { CombatantProvider } from '@/lib/components/encounterPlanner/combatantRow/utils/context/combatantContext';
-import type { ConditionEntry, InProgressCombatant, CombatantMechanics, HeroicAwakeningState } from '@/lib/types/inProgressCombat';
+import type {
+  CombatantMechanics,
+  ConditionEntry,
+  HeroicAwakeningState,
+  InProgressCombatant,
+} from '@/lib/types/inProgressCombat';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
@@ -59,7 +64,9 @@ const createDefaultMechanics = (): CombatantMechanics => ({
 /**
  * Creates a mock combatant with optional overrides.
  */
-const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InProgressCombatant => ({
+const createMockCombatant = (
+  overrides: Partial<InProgressCombatant> = {},
+): InProgressCombatant => ({
   id: 'test-combatant-1',
   name: 'Test Monster',
   hpCurrent: 100,
@@ -97,14 +104,14 @@ const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InPr
  */
 const renderWithProvider = (
   combatantOverrides: Partial<InProgressCombatant> = {},
-  onUpdate = vi.fn()
+  onUpdate = vi.fn(),
 ) => {
   const combatant = createMockCombatant(combatantOverrides);
   return {
     ...render(
-      <CombatantProvider combatant={combatant} locale="en" onUpdate={onUpdate}>
+      <CombatantProvider combatant={combatant} locale='en' onUpdate={onUpdate}>
         <CombatantConditionsManager />
-      </CombatantProvider>
+      </CombatantProvider>,
     ),
     combatant,
     onUpdate,
@@ -113,8 +120,12 @@ const renderWithProvider = (
 
 describe('CombatantConditionsManager module', () => {
   it('should export CombatantConditionsManager component', () => {
-    expect(CombatantConditionsManagerModule.CombatantConditionsManager).toBeDefined();
-    expect(typeof CombatantConditionsManagerModule.CombatantConditionsManager).toBe('function');
+    expect(
+      CombatantConditionsManagerModule.CombatantConditionsManager,
+    ).toBeDefined();
+    expect(
+      typeof CombatantConditionsManagerModule.CombatantConditionsManager,
+    ).toBe('function');
   });
 
   it('should export exactly one member', () => {
@@ -131,10 +142,12 @@ describe('CombatantConditionsManager empty state', () => {
     expect(screen.getByPlaceholderText('addCondition')).toBeInTheDocument();
   });
 
-  it('should render conditions label', () => {
-    renderWithProvider({ conditions: [] });
+  it('should render empty chips container when no conditions', () => {
+    const { container } = renderWithProvider({ conditions: [] });
 
-    expect(screen.getByText('conditions')).toBeInTheDocument();
+    const chipsContainer = container.querySelector('[class*="chips"]');
+    expect(chipsContainer).toBeInTheDocument();
+    expect(chipsContainer?.children.length).toBe(0);
   });
 
   it('should not render condition items when empty', () => {
@@ -175,7 +188,9 @@ describe('CombatantConditionsManager condition display', () => {
       ],
     });
 
-    const removeButtons = screen.getAllByRole('button', { name: 'removeCondition' });
+    const removeButtons = screen.getAllByRole('button', {
+      name: 'removeCondition',
+    });
     expect(removeButtons).toHaveLength(2);
   });
 });
@@ -188,11 +203,13 @@ describe('CombatantConditionsManager add condition', () => {
     const input = screen.getByPlaceholderText('addCondition');
     await user.type(input, 'Blinded{Enter}');
 
-    expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      conditions: expect.arrayContaining([
-        expect.objectContaining({ text: 'Blinded' })
-      ])
-    }));
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        conditions: expect.arrayContaining([
+          expect.objectContaining({ text: 'Blinded' }),
+        ]),
+      }),
+    );
   });
 
   it('should clear input after adding condition', async () => {
@@ -234,11 +251,13 @@ describe('CombatantConditionsManager add condition', () => {
     const addButton = screen.getByRole('button', { name: '+' });
     await user.click(addButton);
 
-    expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      conditions: expect.arrayContaining([
-        expect.objectContaining({ text: 'Charmed' })
-      ])
-    }));
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        conditions: expect.arrayContaining([
+          expect.objectContaining({ text: 'Charmed' }),
+        ]),
+      }),
+    );
   });
 
   it('should append to existing conditions', async () => {
@@ -249,12 +268,14 @@ describe('CombatantConditionsManager add condition', () => {
     const input = screen.getByPlaceholderText('addCondition');
     await user.type(input, 'Prone{Enter}');
 
-    expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      conditions: expect.arrayContaining([
-        expect.objectContaining({ text: 'Stunned' }),
-        expect.objectContaining({ text: 'Prone' })
-      ])
-    }));
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        conditions: expect.arrayContaining([
+          expect.objectContaining({ text: 'Stunned' }),
+          expect.objectContaining({ text: 'Prone' }),
+        ]),
+      }),
+    );
   });
 });
 
@@ -264,12 +285,16 @@ describe('CombatantConditionsManager remove condition', () => {
     const conditions = [createConditionEntry('abc123', 'Stunned')];
     const { onUpdate } = renderWithProvider({ conditions });
 
-    const removeButton = screen.getByRole('button', { name: 'removeCondition' });
+    const removeButton = screen.getByRole('button', {
+      name: 'removeCondition',
+    });
     await user.click(removeButton);
 
-    expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      conditions: []
-    }));
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        conditions: [],
+      }),
+    );
   });
 
   it('should remove only the clicked condition', async () => {
@@ -281,15 +306,19 @@ describe('CombatantConditionsManager remove condition', () => {
     ];
     const { onUpdate } = renderWithProvider({ conditions });
 
-    const removeButtons = screen.getAllByRole('button', { name: 'removeCondition' });
+    const removeButtons = screen.getAllByRole('button', {
+      name: 'removeCondition',
+    });
     await user.click(removeButtons[1]);
 
-    expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      conditions: [
-        expect.objectContaining({ text: 'Stunned' }),
-        expect.objectContaining({ text: 'Frightened' }),
-      ]
-    }));
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        conditions: [
+          expect.objectContaining({ text: 'Stunned' }),
+          expect.objectContaining({ text: 'Frightened' }),
+        ],
+      }),
+    );
   });
 });
 
@@ -311,10 +340,12 @@ describe('CombatantConditionsManager input handling', () => {
     const input = screen.getByPlaceholderText('addCondition');
     await user.type(input, '  Restrained  {Enter}');
 
-    expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      conditions: expect.arrayContaining([
-        expect.objectContaining({ text: 'Restrained' })
-      ])
-    }));
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        conditions: expect.arrayContaining([
+          expect.objectContaining({ text: 'Restrained' }),
+        ]),
+      }),
+    );
   });
 });
