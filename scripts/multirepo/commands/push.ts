@@ -1,6 +1,9 @@
 /**
  * @fileoverview `ik push` — Push content-first, amend stale submodule ref.
  * @module multirepo/commands/push
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import { log, spinner } from '@clack/prompts';
@@ -19,7 +22,8 @@ export const meta: CommandMeta = {
 /**
  * Pushes content first (remote must have that SHA before main references it).
  * Detects a stale submodule ref and amends the last main commit before pushing.
- * @param args - Arguments forwarded verbatim to `git push`.
+ * @param {string[]} args - Arguments forwarded verbatim to `git push`.
+ * @returns {Promise<void>} Resolves when both pushes complete.
  */
 export async function run(args: string[]): Promise<void> {
   ensureContentOnBranch();

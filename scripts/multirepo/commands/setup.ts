@@ -1,0 +1,206 @@
+/**
+ * @fileoverview `ik setup` — One-shot bootstrap for a fresh clone.
+ *
+ * Cross-platform setup that:
+ *
+ *   1. Installs a PATH-resolvable `ik` shim so users can invoke `ik` from any
+ *      directory without typing `npx tsx ...`.
+ *   2. Configures the content submodule to merge (not detach) on update.
+ *   3. Installs content-repo git hooks via `setup-hooks.ts::main`.
+ *   4. Triggers `paw sync` to populate `.paw/hooks/` and `.github/hooks/`.
+ *
+ * Idempotent: re-running detects managed blocks (sentinel-delimited) in rc
+ * files and replaces them instead of appending duplicates.
+ *
+ * @module multirepo/commands/setup
+ * @author Typeir
+
+ * @version 1.0.0
+ * @since 3.0.0
+ */
+
+import { log, spinner } from '@clack/prompts';
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { homedir, platform } from 'node:os';
+import { resolve } from 'node:path';
+
+import type { CommandMeta } from '../../utils/cli-loader';
+import { MAIN_REPO } from '../constants';
+import { attachContentToBranch } from '../git';
+import { main as installContentHooks } from '../setup-hooks';
+
+/** Command metadata for the fs-based loader. */
+export const meta: CommandMeta = {
+  name: 'setup',
+  description: 'Bootstrap a fresh clone (PATH shim, hooks, submodule, PAW)',
+};
+
+/** Sentinel markers that delimit ik-managed blocks in rc files. */
+const BEGIN_MARK = '# >>> ik managed block >>>';
+const END_MARK = '# <<< ik managed block <<<';
+
+/**
+ * Builds the POSIX shell function block that exposes `ik` on the PATH.
+ * @param {string} repoRoot - Absolute path to the main repo root.
+ * @returns {string} Multi-line shell snippet with sentinels.
+ */
+function buildPosixBlock(repoRoot: string): string {
+  const body = `ik() {\n  npx tsx --tsconfig "${repoRoot}/tsconfig.scripts.json" "${repoRoot}/scripts/multirepo/ik.ts" "$@"\n}`;
+  return `${BEGIN_MARK}\n${body}\n${END_MARK}`;
+}
+
+/**
+ * Writes or replaces the ik-managed block in a single rc file.
+ * @param {string} rcPath - Absolute path to the rc file.
+ * @param {string} block - Pre-formatted block including sentinels.
+ * @returns {boolean} `true` when the file was modified.
+ */
+function upsertRcBlock(rcPath: string, block: string): boolean {
+  const existing = existsSync(rcPath) ? readFileSync(rcPath, 'utf8') : '';
+  const pattern = new RegExp(
+    `${BEGIN_MARK.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}[\\s\\S]*?${END_MARK.replace(
+      /[-/\\^$*+?.()|[\]{}]/g,
+      '\\$&',
+    )}`,
+    'g',
+  );
+  const next = pattern.test(existing)
+    ? existing.replace(pattern, block)
+    : `${existing.replace(/\n*$/, '\n\n')}${block}\n`;
+  if (next === existing) {
+    return false;
+  }
+  writeFileSync(rcPath, next, { encoding: 'utf8' });
+  return true;
+}
+
+/**
+ * Installs the `ik` shim on POSIX systems by inserting a shell function into
+ * `~/.bashrc` and `~/.zshrc` (when they exist).
+ * @param {string} repoRoot - Absolute path to the main repo root.
+ * @returns {void}
+ */
+function installPosixShim(repoRoot: string): void {
+  const home = homedir();
+  const block = buildPosixBlock(repoRoot);
+  const candidates = ['.bashrc', '.zshrc'];
+  for (const name of candidates) {
+    const path = resolve(home, name);
+    if (!existsSync(path)) {
+      continue;
+    }
+    const changed = upsertRcBlock(path, block);
+    log.info(
+      changed ? `Updated ${name}` : `${name} already up to date — skipped`,
+    );
+  }
+  log.message('Restart your shell or run `source ~/.bashrc` to pick up `ik`.');
+}
+
+/**
+ * Installs the `ik` shim on Windows by writing `%USERPROFILE%\.ik\ik.cmd` and
+ * prepending that folder to the user PATH via `setx`.
+ * @param {string} repoRoot - Absolute path to the main repo root.
+ * @returns {void}
+ */
+function installWindowsShim(repoRoot: string): void {
+  const ikDir = resolve(homedir(), '.ik');
+  mkdirSync(ikDir, { recursive: true });
+
+  const cmdPath = resolve(ikDir, 'ik.cmd');
+  const cmdBody = `@echo off\r\nnpx tsx --tsconfig "${repoRoot}\\tsconfig.scripts.json" "${repoRoot}\\scripts\\multirepo\\ik.ts" %*\r\n`;
+  writeFileSync(cmdPath, cmdBody, { encoding: 'utf8' });
+  log.info(`Wrote ${cmdPath}`);
+
+  const currentPath = process.env.PATH ?? '';
+  if (currentPath.toLowerCase().includes(ikDir.toLowerCase())) {
+    log.info('PATH already contains ~/.ik — skipped setx');
+    return;
+  }
+
+  const setxResult = spawnSync('setx', ['PATH', `${ikDir};%PATH%`], {
+    stdio: 'pipe',
+  });
+  if (setxResult.status === 0) {
+    log.info('Added ~/.ik to user PATH. Open a new shell for `ik` to resolve.');
+  } else {
+    const stderr = setxResult.stderr?.toString() ?? 'unknown error';
+    log.warn(
+      `setx failed (${stderr.trim()}). Add "${ikDir}" to PATH manually.`,
+    );
+  }
+}
+
+/**
+ * Configures the content submodule to merge upstream changes rather than
+ * detach HEAD on `git submodule update`.
+ * @param {string} repoRoot - Absolute path to the main repo root.
+ * @returns {void}
+ */
+function configureSubmodule(repoRoot: string): void {
+  spawnSync(
+    'git',
+    ['-C', repoRoot, 'config', 'submodule.src/content.update', 'merge'],
+    { stdio: 'pipe' },
+  );
+}
+
+/**
+ * Runs `node .github/PAW/dist/cli.mjs sync` to populate the hook bundles.
+ * @param {string} repoRoot - Absolute path to the main repo root.
+ * @returns {void}
+ */
+function runPawSync(repoRoot: string): void {
+  const cli = resolve(repoRoot, '.github', 'PAW', 'dist', 'cli.mjs');
+  if (!existsSync(cli)) {
+    log.warn(`PAW CLI missing at ${cli} — run \`node .github/PAW/build.mjs\``);
+    return;
+  }
+  const result = spawnSync('node', [cli, 'sync'], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+  });
+  if (result.status !== 0) {
+    log.warn('paw sync exited non-zero — see output above.');
+  }
+}
+
+/**
+ * Runs the full setup flow.
+ * @param {string[]} _args - Ignored; accepted for CliCommand signature.
+ * @returns {Promise<void>}
+ */
+export async function run(_args: string[]): Promise<void> {
+  const s = spinner();
+  const repoRoot = MAIN_REPO;
+
+  s.start('Installing ik PATH shim');
+  if (platform() === 'win32') {
+    installWindowsShim(repoRoot);
+  } else {
+    installPosixShim(repoRoot);
+  }
+  s.stop('PATH shim installed');
+
+  s.start('Configuring content submodule');
+  configureSubmodule(repoRoot);
+  s.stop('Submodule configured (merge on update)');
+
+  attachContentToBranch();
+
+  s.start('Installing content-repo git hooks');
+  try {
+    await installContentHooks();
+    s.stop('Content hooks installed');
+  } catch (error) {
+    s.stop('Content hooks skipped');
+    log.warn(`Hook install error: ${String(error)}`);
+  }
+
+  s.start('Syncing PAW hooks');
+  runPawSync(repoRoot);
+  s.stop('PAW synced');
+
+  log.success('ik setup complete — open a new shell and run `ik help`.');
+}

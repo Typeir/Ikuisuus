@@ -13,20 +13,21 @@
  *   tsx scripts/multirepo/setup-hooks.ts
  *
  * @module multirepo/setup-hooks
- * @author Ikuisuus
+ * @author Typeir
  * @version 1.2.0
  * @since 2.0.0
  */
 
 import {
-  chmodSync,
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  statSync,
-  writeFileSync,
+    chmodSync,
+    existsSync,
+    mkdirSync,
+    readFileSync,
+    statSync,
+    writeFileSync,
 } from 'fs';
 import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 import { CONTENT_REPO, MAIN_REPO } from './constants';
 
@@ -99,8 +100,9 @@ function resolveHooksDir(repo: string): string {
 
 /**
  * Entry point. Installs all content-submodule git hooks.
+ * @returns {Promise<void>}
  */
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   if (!existsSync(resolve(CONTENT_REPO, '.git'))) {
     logInfo('Content submodule not found — nothing to install');
     process.exit(0);
@@ -133,6 +135,16 @@ async function main(): Promise<void> {
   logInfo("Run 'npm run paw:hooks status' to verify all hooks");
 }
 
-main().catch((err: unknown) => {
-  logError(String(err));
-});
+/**
+ * When invoked directly via `tsx scripts/multirepo/setup-hooks.ts`, execute
+ * `main()`. When imported from another module (e.g. `commands/setup.ts`), do
+ * nothing so the caller controls lifecycle.
+ */
+const invokedDirectly =
+  fileURLToPath(import.meta.url) === resolve(process.argv[1] ?? '');
+
+if (invokedDirectly) {
+  main().catch((err: unknown) => {
+    logError(String(err));
+  });
+}

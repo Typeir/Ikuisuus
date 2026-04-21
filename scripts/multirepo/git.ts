@@ -6,6 +6,9 @@
  * All functions operate on absolute repo paths; none contain UI logic.
  *
  * @module multirepo/git
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import { log } from '@clack/prompts';
@@ -16,19 +19,20 @@ import { C, CHILD_ENV, CONTENT_REPO, MAIN_REPO } from './constants';
 
 /**
  * Emits a cyan repo-label prefix followed by a message to stdout.
- * @param label - Short repo name (e.g. `main` or `content`).
- * @param msg   - Descriptive message.
+ * @param {string} label - Short repo name (e.g. `main` or `content`).
+ * @param {string} msg - Descriptive message.
+ * @returns {void}
  */
 export function logRepo(label: string, msg: string): void {
-  console.log(`${C.cyan}[${label}]${C.reset} ${msg}`);
+  log.message(`${C.cyan}[${label}]${C.reset} ${msg}`);
 }
 
 /**
  * Runs a git command in a repository, inheriting all stdio handles so that
  * interactive output (colours, pager, progress bars) works correctly.
- * @param repo - Absolute path to the repository root.
- * @param args - Git arguments (subcommand + flags).
- * @returns Exit code of the git process (0 = success).
+ * @param {string} repo - Absolute path to the repository root.
+ * @param {string[]} args - Git arguments (subcommand + flags).
+ * @returns {number} Exit code of the git process (0 = success).
  */
 export function git(repo: string, args: string[]): number {
   const result = spawnSync('git', ['-C', repo, ...args], {
@@ -40,9 +44,9 @@ export function git(repo: string, args: string[]): number {
 
 /**
  * Runs a git command silently and captures stdout as a trimmed string.
- * @param repo - Absolute path to the repository root.
- * @param args - Git arguments (subcommand + flags).
- * @returns Trimmed stdout string, or empty string on failure.
+ * @param {string} repo - Absolute path to the repository root.
+ * @param {string[]} args - Git arguments (subcommand + flags).
+ * @returns {string} Trimmed stdout string, or empty string on failure.
  */
 export function gitCapture(repo: string, args: string[]): string {
   const result = spawnSync('git', ['-C', repo, ...args], {
@@ -54,8 +58,8 @@ export function gitCapture(repo: string, args: string[]): string {
 
 /**
  * Checks whether a repository has any uncommitted changes (staged or unstaged).
- * @param repo - Absolute path to the repository root.
- * @returns `true` when the working tree or index contains changes.
+ * @param {string} repo - Absolute path to the repository root.
+ * @returns {boolean} `true` when the working tree or index contains changes.
  */
 export function isDirty(repo: string): boolean {
   const unstaged = spawnSync('git', ['-C', repo, 'diff', '--quiet'], {
@@ -147,6 +151,54 @@ export function ensureContentOnBranch(): void {
 }
 
 /**
+ * Safely re-attaches the content submodule to its `main` branch when HEAD is
+ * detached AND the detached commit is an ancestor of `origin/main` (so no
+ * orphaning risk). A no-op when already on a branch, and a warn-and-return
+ * when the detached SHA has unique commits above `origin/main`.
+ *
+ * Intended to be called from `ik setup`, `ik pull`, and post-checkout /
+ * post-merge hooks so that routine workflows self-heal from the detached
+ * HEAD state that bare `git submodule update` produces.
+ *
+ * @returns {boolean} `true` when a reattachment occurred, `false` otherwise.
+ */
+export function attachContentToBranch(): boolean {
+  const headResult = spawnSync(
+    'git',
+    ['-C', CONTENT_REPO, 'symbolic-ref', '--short', 'HEAD'],
+    { stdio: 'pipe', env: CHILD_ENV },
+  );
+  if (headResult.status === 0) {
+    return false;
+  }
+
+  const ancestry = spawnSync(
+    'git',
+    ['-C', CONTENT_REPO, 'merge-base', '--is-ancestor', 'HEAD', 'origin/main'],
+    { stdio: 'pipe', env: CHILD_ENV },
+  );
+  if (ancestry.status !== 0) {
+    log.warn(
+      'Content HEAD has commits above origin/main — not reattaching automatically.',
+    );
+    log.warn('Inspect with: git -C src/content log main..HEAD --oneline');
+    return false;
+  }
+
+  const checkout = spawnSync('git', ['-C', CONTENT_REPO, 'checkout', 'main'], {
+    stdio: 'pipe',
+    env: CHILD_ENV,
+  });
+  if (checkout.status !== 0) {
+    const stderr = checkout.stderr?.toString() ?? 'unknown error';
+    log.warn(`Could not reattach content to main: ${stderr.trim()}`);
+    return false;
+  }
+  log.message('Reattached content submodule to main.');
+  return true;
+}
+
+/**
  * Returns a two-part status line for both repos using colour coding.
  */
 export function repoSummaryLine(): string {
@@ -182,16 +234,17 @@ export function listDirtyFiles(): string[] {
 /**
  * Runs an arbitrary git command in both repos sequentially, inheriting stdio
  * so interactive output (diff colours, log pager, progress) works as expected.
- * @param command - Git subcommand name.
- * @param args    - Additional flags and arguments forwarded verbatim.
+ * @param {string} command - Git subcommand name.
+ * @param {string[]} args - Additional flags and arguments forwarded verbatim.
+ * @returns {void}
  */
 export function cmdPassthrough(command: string, args: string[]): void {
-  console.log('');
+  log.message('');
   logRepo('main', `git ${command} ${args.join(' ')}`);
   git(MAIN_REPO, [command, ...args]);
 
-  console.log('');
+  log.message('');
   logRepo('content', `git ${command} ${args.join(' ')}`);
   git(CONTENT_REPO, [command, ...args]);
-  console.log('');
+  log.message('');
 }

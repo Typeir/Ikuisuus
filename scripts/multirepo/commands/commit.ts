@@ -1,6 +1,9 @@
 /**
  * @fileoverview `ik commit` — Commit content repo first, then main.
  * @module multirepo/commands/commit
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import { log, spinner } from '@clack/prompts';
@@ -19,7 +22,8 @@ export const meta: CommandMeta = {
 /**
  * Commits content repo first so its SHA exists before main records it.
  * Re-stages the submodule ref in main after a successful content commit.
- * @param args - Arguments forwarded verbatim to `git commit`.
+ * @param {string[]} args - Arguments forwarded verbatim to `git commit`.
+ * @returns {Promise<void>}
  */
 export async function run(args: string[]): Promise<void> {
   ensureContentOnBranch();

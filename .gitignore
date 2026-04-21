@@ -57,9 +57,16 @@ next-env.d.ts
 *.bak
 /src/**/*.metadata.json
 /.meta/
-.paw
-.github/PAW
-.pawignore
+
+# PAW runtime artifacts (framework core + project config are TRACKED)
+/.paw/paw.sqlite
+/.paw/paw.sqlite-shm
+/.paw/paw.sqlite-wal
+/.paw/paw.log
+/.paw/.pawsecret
+/.paw/node_modules
+/.paw/hooks
+/.github/PAW/node_modules
 
 # foundry vtt compiled packs and build output (source JSON is tracked)
 /foundry/packs/_source/

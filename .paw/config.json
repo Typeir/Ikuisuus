@@ -1,0 +1,50 @@
+{
+  "surface": "all",
+  "sourceDirectories": ["src/", "scripts/"],
+  "tasksDir": ".ignore/tasks",
+  "domains": [
+    "metadata",
+    "theme",
+    "content",
+    "i18n",
+    "build",
+    "testing",
+    "encounter",
+    "world-sim",
+    "orm"
+  ],
+  "gitHooks": [
+    {
+      "name": "pre-commit",
+      "flags": "--changed-only --staged",
+      "description": "Run quality gates on staged files before commit",
+      "appendCommands": [
+        "npx tsx --tsconfig tsconfig.scripts.json .paw/git-hooks/submodule-guard.ts"
+      ]
+    },
+    {
+      "name": "commit-msg",
+      "description": "Validate commit message format [action]: text",
+      "command": "npx tsx --tsconfig tsconfig.scripts.json .paw/git-hooks/commit-msg.ts \"$1\""
+    },
+    {
+      "name": "pre-push",
+      "flags": "--changed-only",
+      "description": "Run quality gates and type-check before push",
+      "appendCommands": [
+        "npx tsc --noEmit",
+        "command -v git-lfs >/dev/null 2>&1 && git lfs pre-push \"$@\" || true"
+      ]
+    },
+    {
+      "name": "post-checkout",
+      "description": "Git LFS post-checkout",
+      "command": "command -v git-lfs >/dev/null 2>&1 && git lfs post-checkout \"$@\" || true"
+    },
+    {
+      "name": "post-merge",
+      "description": "Git LFS post-merge",
+      "command": "command -v git-lfs >/dev/null 2>&1 && git lfs post-merge \"$@\" || true"
+    }
+  ]
+}

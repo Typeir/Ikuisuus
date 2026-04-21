@@ -8,7 +8,7 @@
  * Aggregates exit codes: fails if any project fails.
  *
  * @module runTests
- * @author Ikuisuus
+ * @author Typeir
  * @version 1.1.0
  * @since 1.0.0
  */

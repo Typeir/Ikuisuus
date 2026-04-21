@@ -11,6 +11,9 @@
  * dual-repo git passthrough.
  *
  * @module ik
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import { log } from '@clack/prompts';

@@ -1,0 +1,19 @@
+# PAW ignore patterns — one per line, glob syntax
+# Lines starting with # are comments
+
+node_modules
+.next
+.git
+coverage
+dist
+.turbo
+.vercel
+temp
+.ignore
+public/full-size
+.github/scripts
+.github
+tests
+tests/*
+scripts/metadata/*
+scripts/db/pg/*

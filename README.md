@@ -26,11 +26,14 @@ A Next.js 15 internationalized documentation site for D&D content, featuring MDX
 ### Setup
 
 ```bash
-# Install dependencies (includes git hook setup via husky)
+# Install dependencies — `postinstall` auto-runs `paw sync` so PAW hooks
+# are ready immediately on fresh clones.
 npm install
 
-# Install multirepo hooks (content submodule coordination)
-npm run multirepo:setup
+# One-shot bootstrap: installs the `ik` CLI on your PATH, configures the
+# content submodule to merge (not detach) on update, installs content-repo
+# git hooks, and verifies PAW. Open a new shell afterwards.
+npm run setup
 
 # Run development server (auto-runs pre-init build pipeline)
 npm run dev

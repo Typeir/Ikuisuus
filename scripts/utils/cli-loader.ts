@@ -6,6 +6,9 @@
  * object and a `run` function conforming to the {@link CliCommand} interface.
  *
  * @module cli-loader
+ * @author Typeir
+ * @version 1.0.1
+ * @since 3.0.0
  */
 
 import { readdirSync } from 'node:fs';
@@ -74,8 +77,8 @@ export interface CommandRegistry {
  * works regardless of whether the package lives in the project tree or in
  * node_modules.
  *
- * @param commandsDir - Absolute path to the commands/ directory
- * @returns Registry of loaded commands
+ * @param {string} commandsDir - Absolute path to the commands/ directory
+ * @returns {Promise<CommandRegistry>} Registry of loaded commands
  */
 export async function loadCommands(
   commandsDir: string,
@@ -113,9 +116,9 @@ export async function loadCommands(
  * Returns the matching subcommand key (canonical name) or the default
  * subcommand if one is marked `isDefault`, or null if no match.
  *
- * @param meta - Parent command meta
- * @param sub - Subcommand name from argv (may be undefined)
- * @returns Canonical subcommand key or null
+ * @param {CommandMeta} meta - Parent command meta
+ * @param {string | undefined} sub - Subcommand name from argv (may be undefined)
+ * @returns {string | null} Canonical subcommand key or null
  */
 export function resolveSubcommand(
   meta: CommandMeta,
@@ -142,8 +145,8 @@ export function resolveSubcommand(
 /**
  * Format help text from a command registry.
  *
- * @param registry - Loaded command registry
- * @returns Formatted help string
+ * @param {CommandRegistry} registry - Loaded command registry
+ * @returns {string} Formatted help string
  */
 export function formatCommandHelp(registry: CommandRegistry): string {
   const lines: string[] = [];
@@ -176,9 +179,9 @@ export function formatCommandHelp(registry: CommandRegistry): string {
  * Resolve the commands directory relative to the calling module.
  * Works whether the package is in the project tree or node_modules.
  *
- * @param importMetaUrl - The calling module's `import.meta.url`
- * @param relPath - Relative path from the calling module to commands/
- * @returns Absolute path to the commands directory
+ * @param {string} importMetaUrl - The calling module's `import.meta.url`
+ * @param {string} [relPath] - Relative path from the calling module to commands/
+ * @returns {string} Absolute path to the commands directory
  */
 export function resolveCommandsDir(
   importMetaUrl: string,

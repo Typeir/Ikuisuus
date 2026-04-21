@@ -1,6 +1,9 @@
 /**
  * @fileoverview `ik pull` — Pull content-first, update submodule ref.
  * @module multirepo/commands/pull
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import { log, spinner } from '@clack/prompts';
@@ -8,6 +11,7 @@ import { spawnSync } from 'child_process';
 
 import type { CommandMeta } from '../../utils/cli-loader';
 import { CHILD_ENV, CONTENT_REPO, MAIN_REPO } from '../constants';
+import { attachContentToBranch } from '../git';
 
 /** Command metadata for the fs-based loader. */
 export const meta: CommandMeta = {
@@ -18,7 +22,8 @@ export const meta: CommandMeta = {
 /**
  * Pulls content first, then main. Runs `submodule update` afterwards to
  * reconcile the pointer when main received a new submodule ref from upstream.
- * @param args - Arguments forwarded verbatim to `git pull`.
+ * @param {string[]} args - Arguments forwarded verbatim to `git pull`.
+ * @returns {Promise<void>}
  */
 export async function run(args: string[]): Promise<void> {
   const s = spinner();
@@ -49,8 +54,10 @@ export async function run(args: string[]): Promise<void> {
 
   s.start('Updating submodule ref');
   /**
-   * Use --rebase so the content submodule stays on its branch rather than
-   * landing in a detached-HEAD state, which is the default for submodule update.
+   * Use --remote --merge so the submodule tracks the branch declared in
+   * `.gitmodules` (main) and merges upstream changes into the local branch
+   * instead of detaching HEAD. This prevents the "detached HEAD" drift that
+   * happens with the default `submodule update` behavior.
    */
   spawnSync(
     'git',
@@ -61,11 +68,14 @@ export async function run(args: string[]): Promise<void> {
       'update',
       '--init',
       '--recursive',
-      '--rebase',
+      '--remote',
+      '--merge',
     ],
     { stdio: 'pipe', env: CHILD_ENV },
   );
   s.stop('Submodule updated');
+
+  attachContentToBranch();
 
   log.success('Both repos pulled');
 }
