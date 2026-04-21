@@ -13,7 +13,6 @@
  * @since 2.0.0
  */
 
-import { CONTENT_SUFFIXES } from '@/lib/enums/constants';
 import { logger } from '@/lib/logging/logger';
 import path from 'path';
 
@@ -31,35 +30,6 @@ const CONTENT_REPO_OWNER = process.env.CONTENT_REPO_OWNER;
 const CONTENT_REPO_NAME = process.env.CONTENT_REPO_NAME;
 /** @property {string} GITHUB_RAW_BASE - Base URL for raw content from the content repo */
 const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${CONTENT_REPO_OWNER}/${CONTENT_REPO_NAME}/main`;
-
-/** @property {string[]} EXTENSIONS - File extension variants to try, in priority order */
-const EXTENSIONS = ['.mdx', '.sheet.mdx', '.md'];
-
-/**
- * Resolves a single semantic-suffixed filename candidate for a base slug.
- *
- * @param {string[]} fileNames - File names from a single directory
- * @param {string} slugLeaf - Base slug segment without directory prefix
- * @returns {string | null} Unique semantic filename, or null when none/ambiguous
- */
-const resolveUniqueSemanticFileName = (
-  fileNames: string[],
-  slugLeaf: string,
-): string | null => {
-  const candidates = fileNames.filter((fileName) => {
-    const matchedExtension = EXTENSIONS.find((extension) =>
-      fileName.endsWith(extension),
-    );
-    if (!matchedExtension) {
-      return false;
-    }
-
-    const stem = fileName.slice(0, -matchedExtension.length);
-    return CONTENT_SUFFIXES.some((suffix) => stem === `${slugLeaf}${suffix}`);
-  });
-
-  return candidates.length === 1 ? candidates[0] : null;
-};
 
 /**
  * Fetches a concrete file path from GitHub raw content.
@@ -99,8 +69,7 @@ const fetchConcreteFile = async (
 /**
  * GitHub raw-content-backed content source.
  * Fetches from `raw.githubusercontent.com` with no caching — ISR handles
- * List the directory first and resolve the correct semantic filename.
- * Page-level caching; the raw MDX must always be fresh.
+ * page-level caching; the raw MDX must always be fresh.
  */
 export const githubContentSource: ContentSourceAdapter = {
   async fetch(
@@ -114,19 +83,18 @@ export const githubContentSource: ContentSourceAdapter = {
       locale,
       relativeDirectory,
     );
-    const fileNames = entries
-      .filter((entry) => !entry.isDirectory)
-      .map((entry) => entry.name);
-    const semanticFileName = resolveUniqueSemanticFileName(fileNames, slugLeaf);
+    const mdxFile = entries
+      .filter((entry) => !entry.isDirectory && entry.name.endsWith('.mdx'))
+      .find((entry) => entry.name.startsWith(slugLeaf));
 
-    if (!semanticFileName) {
+    if (!mdxFile) {
       return null;
     }
 
-    const semanticPath = relativeDirectory
-      ? `${relativeDirectory}/${semanticFileName}`
-      : semanticFileName;
+    const filePath = relativeDirectory
+      ? `${relativeDirectory}/${mdxFile.name}`
+      : mdxFile.name;
 
-    return fetchConcreteFile(locale, semanticPath);
+    return fetchConcreteFile(locale, filePath);
   },
 };

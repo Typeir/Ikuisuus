@@ -1,11 +1,11 @@
 /**
  * FS Content Source Adapter Unit Tests
  *
- * @fileoverview Verifies exact-path and semantic-suffix fallback resolution
- * behavior for the filesystem content source adapter.
+ * @fileoverview Verifies directory-listing-based resolution behavior for the
+ * filesystem content source adapter.
  * @module tests/unit/src/lib/db/content/adapters/fs/fsContentSource.test
  * @author Typeir
- * @version 3.1.0
+ * @version 4.0.0
  * @since 1.0.0
  */
 
@@ -14,17 +14,14 @@ import fs from 'fs/promises';
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const accessMock = vi.hoisted(() => vi.fn());
 const readFileMock = vi.hoisted(() => vi.fn());
 const readdirMock = vi.hoisted(() => vi.fn());
 
 vi.mock('fs/promises', () => ({
   default: {
-    access: accessMock,
     readFile: readFileMock,
     readdir: readdirMock,
   },
-  access: accessMock,
   readFile: readFileMock,
   readdir: readdirMock,
 }));
@@ -46,13 +43,11 @@ describe('fsContentSource', () => {
     vi.clearAllMocks();
   });
 
-  it('returns exact file when direct slug exists', async () => {
-    vi.mocked(fs.access).mockImplementation(async (targetPath: any) => {
-      if (String(targetPath).endsWith('battle-master.mdx')) {
-        return;
-      }
-      throw new Error('ENOENT');
-    });
+  it('resolves exact slug filename from directory listing', async () => {
+    vi.mocked(fs.readdir).mockResolvedValue([
+      buildDirent('battle-master.mdx'),
+      buildDirent('main.mdx'),
+    ] as any);
     vi.mocked(fs.readFile).mockResolvedValue('# exact file' as any);
 
     const result = await fsContentSource.fetch(
@@ -65,18 +60,17 @@ describe('fsContentSource', () => {
       'src',
       'content',
       'en',
-      'character-creation/vocations/fighter/battle-master.mdx',
+      'character-creation/vocations/fighter',
+      'battle-master.mdx',
     );
 
     expect(result).toEqual({
       content: '# exact file',
       resolvedPath: expectedPath,
     });
-    expect(fs.readdir).not.toHaveBeenCalled();
   });
 
-  it('resolves unique semantic file when direct slug does not exist', async () => {
-    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
+  it('resolves semantic suffix file from directory listing', async () => {
     vi.mocked(fs.readdir).mockResolvedValue([
       buildDirent('battle-master.specialization.mdx'),
       buildDirent('main.mdx'),
@@ -103,11 +97,37 @@ describe('fsContentSource', () => {
     });
   });
 
-  it('returns null when semantic fallback is ambiguous', async () => {
-    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
+  it('returns first matching file when multiple matches exist', async () => {
     vi.mocked(fs.readdir).mockResolvedValue([
       buildDirent('battle-master.specialization.mdx'),
       buildDirent('battle-master.reference.mdx'),
+    ] as any);
+    vi.mocked(fs.readFile).mockResolvedValue('# first match' as any);
+
+    const result = await fsContentSource.fetch(
+      'en',
+      'character-creation/vocations/fighter/battle-master',
+    );
+
+    const expectedPath = path.join(
+      process.cwd(),
+      'src',
+      'content',
+      'en',
+      'character-creation/vocations/fighter',
+      'battle-master.specialization.mdx',
+    );
+
+    expect(result).toEqual({
+      content: '# first match',
+      resolvedPath: expectedPath,
+    });
+  });
+
+  it('returns null when no matching file exists', async () => {
+    vi.mocked(fs.readdir).mockResolvedValue([
+      buildDirent('main.mdx'),
+      buildDirent('other-file.mdx'),
     ] as any);
 
     const result = await fsContentSource.fetch(
@@ -119,11 +139,8 @@ describe('fsContentSource', () => {
     expect(fs.readFile).not.toHaveBeenCalled();
   });
 
-  it('returns null when only non-semantic sibling files exist', async () => {
-    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
-    vi.mocked(fs.readdir).mockResolvedValue([
-      buildDirent('battle-master.notes.mdx'),
-    ] as any);
+  it('returns null when directory does not exist', async () => {
+    vi.mocked(fs.readdir).mockRejectedValue(new Error('ENOENT'));
 
     const result = await fsContentSource.fetch(
       'en',
@@ -133,8 +150,7 @@ describe('fsContentSource', () => {
     expect(result).toBeNull();
   });
 
-  it('resolves .heirloom.mdx semantic fallback', async () => {
-    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
+  it('resolves .heirloom.mdx file', async () => {
     vi.mocked(fs.readdir).mockResolvedValue([
       buildDirent('sundered-chain.heirloom.mdx'),
     ] as any);
@@ -160,8 +176,7 @@ describe('fsContentSource', () => {
     });
   });
 
-  it('resolves .trinket.mdx semantic fallback', async () => {
-    vi.mocked(fs.access).mockRejectedValue(new Error('ENOENT'));
+  it('resolves .trinket.mdx file', async () => {
     vi.mocked(fs.readdir).mockResolvedValue([
       buildDirent('bone-coin.trinket.mdx'),
     ] as any);
