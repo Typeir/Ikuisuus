@@ -66,6 +66,9 @@ next-env.d.ts
 /.paw/.pawsecret
 /.paw/node_modules
 /.paw/hooks
+/.paw/gateWrapper.ts
+/.paw/gateContext.ts
+/.paw/healthCheckTypes.ts
 /.github/PAW/node_modules
 
 # foundry vtt compiled packs and build output (source JSON is tracked)
