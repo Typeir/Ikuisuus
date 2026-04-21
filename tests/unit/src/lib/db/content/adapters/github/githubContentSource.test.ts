@@ -1,11 +1,11 @@
 /**
  * GitHub Content Source Adapter Unit Tests
  *
- * @fileoverview Verifies exact-path and semantic-suffix fallback resolution
- * behavior for the GitHub-backed content source adapter.
+ * @fileoverview Verifies directory-listing-based resolution behavior for the
+ * GitHub-backed content source adapter.
  * @module tests/unit/src/lib/db/content/adapters/github/githubContentSource.test
  * @author Typeir
- * @version 3.1.0
+ * @version 4.0.0
  * @since 1.0.0
  */
 
@@ -54,9 +54,19 @@ describe('githubContentSource', () => {
     process.env = { ...originalEnv };
   });
 
-  it('returns exact file when direct slug exists', async () => {
+  it('resolves exact slug filename from directory listing', async () => {
     const fetchMock = vi.fn().mockResolvedValue(response(true, '# exact file'));
     global.fetch = fetchMock as any;
+    listEntriesMock.mockResolvedValue([
+      {
+        name: 'battle-master.mdx',
+        isDirectory: false,
+      },
+      {
+        name: 'main.mdx',
+        isDirectory: false,
+      },
+    ]);
 
     const { githubContentSource } =
       await import('@/lib/db/content/adapters/github/githubContentSource');
@@ -70,16 +80,17 @@ describe('githubContentSource', () => {
       content: '# exact file',
       resolvedPath: 'en/character-creation/vocations/fighter/battle-master.mdx',
     });
-    expect(listEntriesMock).not.toHaveBeenCalled();
+    expect(listEntriesMock).toHaveBeenCalledWith(
+      'en',
+      'character-creation/vocations/fighter',
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it('resolves unique semantic file when direct slug does not exist', async () => {
+  it('resolves semantic suffix file from directory listing', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(true, '# semantic file'));
+      .mockResolvedValue(response(true, '# semantic file'));
     global.fetch = fetchMock as any;
     listEntriesMock.mockResolvedValue([
       {
@@ -104,8 +115,8 @@ describe('githubContentSource', () => {
       'en',
       'character-creation/vocations/fighter',
     );
-    expect(fetchMock).toHaveBeenCalledTimes(4);
-    expect(String(fetchMock.mock.calls[3][0])).toContain(
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(String(fetchMock.mock.calls[0][0])).toContain(
       'battle-master.specialization.mdx',
     );
     expect(result).toEqual({
@@ -115,12 +126,10 @@ describe('githubContentSource', () => {
     });
   });
 
-  it('returns null when semantic fallback is ambiguous', async () => {
+  it('returns first matching file when multiple matches exist', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false));
+      .mockResolvedValue(response(true, '# first match'));
     global.fetch = fetchMock as any;
     listEntriesMock.mockResolvedValue([
       {
@@ -141,20 +150,27 @@ describe('githubContentSource', () => {
       'character-creation/vocations/fighter/battle-master',
     );
 
-    expect(result).toBeNull();
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(result).toEqual({
+      content: '# first match',
+      resolvedPath:
+        'en/character-creation/vocations/fighter/battle-master.specialization.mdx',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(String(fetchMock.mock.calls[0][0])).toContain(
+      'battle-master.specialization.mdx',
+    );
   });
 
-  it('returns null when only non-semantic sibling files exist', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false));
+  it('returns null when no matching file exists', async () => {
+    const fetchMock = vi.fn();
     global.fetch = fetchMock as any;
     listEntriesMock.mockResolvedValue([
       {
-        name: 'battle-master.notes.mdx',
+        name: 'main.mdx',
+        isDirectory: false,
+      },
+      {
+        name: 'other-file.mdx',
         isDirectory: false,
       },
     ]);
@@ -168,16 +184,30 @@ describe('githubContentSource', () => {
     );
 
     expect(result).toBeNull();
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('resolves .heirloom.mdx semantic fallback', async () => {
+  it('returns null when directory listing fails to resolve', async () => {
+    const fetchMock = vi.fn();
+    global.fetch = fetchMock as any;
+    listEntriesMock.mockRejectedValue(new Error('boom'));
+
+    const { githubContentSource } =
+      await import('@/lib/db/content/adapters/github/githubContentSource');
+
+    await expect(
+      githubContentSource.fetch(
+        'en',
+        'character-creation/vocations/fighter/battle-master',
+      ),
+    ).rejects.toThrow('boom');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('resolves .heirloom.mdx file', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(true, '# heirloom file'));
+      .mockResolvedValue(response(true, '# heirloom file'));
     global.fetch = fetchMock as any;
     listEntriesMock.mockResolvedValue([
       { name: 'sundered-chain.heirloom.mdx', isDirectory: false },
@@ -195,18 +225,16 @@ describe('githubContentSource', () => {
       content: '# heirloom file',
       resolvedPath: 'en/items/heirlooms/sundered-chain.heirloom.mdx',
     });
-    expect(String(fetchMock.mock.calls[3][0])).toContain(
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(String(fetchMock.mock.calls[0][0])).toContain(
       'sundered-chain.heirloom.mdx',
     );
   });
 
-  it('resolves .trinket.mdx semantic fallback', async () => {
+  it('resolves .trinket.mdx file', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(false))
-      .mockResolvedValueOnce(response(true, '# trinket file'));
+      .mockResolvedValue(response(true, '# trinket file'));
     global.fetch = fetchMock as any;
     listEntriesMock.mockResolvedValue([
       { name: 'bone-coin.trinket.mdx', isDirectory: false },
@@ -224,7 +252,8 @@ describe('githubContentSource', () => {
       content: '# trinket file',
       resolvedPath: 'en/items/trinkets/bone-coin.trinket.mdx',
     });
-    expect(String(fetchMock.mock.calls[3][0])).toContain(
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(String(fetchMock.mock.calls[0][0])).toContain(
       'bone-coin.trinket.mdx',
     );
   });
