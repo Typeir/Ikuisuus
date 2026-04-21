@@ -2,6 +2,10 @@
   "surface": "all",
   "sourceDirectories": ["src/", "scripts/"],
   "tasksDir": ".ignore/tasks",
+  "runners": {
+    ".gate.ts": "node node_modules/tsx/dist/cli.mjs .paw/gateWrapper.ts",
+    ".gate.py": "python"
+  },
   "domains": [
     "metadata",
     "theme",

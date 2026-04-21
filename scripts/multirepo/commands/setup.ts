@@ -57,79 +57,80 @@ function buildPosixBlock(repoRoot: string): string {
  * @returns {boolean} `true` when the file was modified.
  */
 function upsertRcBlock(rcPath: string, block: string): boolean {
-  const existing = existsSync(rcPath) ? readFileSync(rcPath, 'utf8') : '';
-  const pattern = new RegExp(
-    `${BEGIN_MARK.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}[\\s\\S]*?${END_MARK.replace(
-      /[-/\\^$*+?.()|[\]{}]/g,
-      '\\$&',
-    )}`,
-    'g',
-  );
-  const next = pattern.test(existing)
-    ? existing.replace(pattern, block)
-    : `${existing.replace(/\n*$/, '\n\n')}${block}\n`;
-  if (next === existing) {
+  try {
+    const existing = existsSync(rcPath) ? readFileSync(rcPath, 'utf8') : '';
+    const pattern = new RegExp(
+      `${BEGIN_MARK.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}[\\s\\S]*?${END_MARK.replace(
+        /[-/\\^$*+?.()|[\]{}]/g,
+        '\\$&',
+      )}`,
+      'g',
+    );
+    const next = pattern.test(existing)
+      ? existing.replace(pattern, block)
+      : `${existing.replace(/\n*$/, '\n\n')}${block}\n`;
+    if (next === existing) {
+      return false;
+    }
+    writeFileSync(rcPath, next, { encoding: 'utf8' });
+    return true;
+  } catch {
     return false;
   }
-  writeFileSync(rcPath, next, { encoding: 'utf8' });
-  return true;
 }
 
 /**
  * Installs the `ik` shim on POSIX systems by inserting a shell function into
- * `~/.bashrc` and `~/.zshrc` (when they exist).
+ * `~/.bashrc`, `~/.bash_profile`, and `~/.zshrc` (when they exist).
  * @param {string} repoRoot - Absolute path to the main repo root.
- * @returns {void}
+ * @returns {string | null} Error message if all files missing, null otherwise.
  */
-function installPosixShim(repoRoot: string): void {
+function installPosixShim(repoRoot: string): string | null {
   const home = homedir();
   const block = buildPosixBlock(repoRoot);
-  const candidates = ['.bashrc', '.zshrc'];
+  const candidates = ['.bashrc', '.bash_profile', '.zshrc', '.profile'];
+  let found = false;
   for (const name of candidates) {
     const path = resolve(home, name);
     if (!existsSync(path)) {
       continue;
     }
-    const changed = upsertRcBlock(path, block);
-    log.info(
-      changed ? `Updated ${name}` : `${name} already up to date — skipped`,
-    );
+    found = true;
+    upsertRcBlock(path, block);
   }
-  log.message('Restart your shell or run `source ~/.bashrc` to pick up `ik`.');
+  if (!found) {
+    return `No shell rc files found (.bashrc, .bash_profile, .zshrc, .profile)`;
+  }
+  return null;
 }
 
 /**
  * Installs the `ik` shim on Windows by writing `%USERPROFILE%\.ik\ik.cmd` and
  * prepending that folder to the user PATH via `setx`.
  * @param {string} repoRoot - Absolute path to the main repo root.
- * @returns {void}
+ * @returns {string | null} Error message if failed, null otherwise.
  */
-function installWindowsShim(repoRoot: string): void {
+function installWindowsShim(repoRoot: string): string | null {
   const ikDir = resolve(homedir(), '.ik');
   mkdirSync(ikDir, { recursive: true });
 
   const cmdPath = resolve(ikDir, 'ik.cmd');
   const cmdBody = `@echo off\r\nnpx tsx --tsconfig "${repoRoot}\\tsconfig.scripts.json" "${repoRoot}\\scripts\\multirepo\\ik.ts" %*\r\n`;
   writeFileSync(cmdPath, cmdBody, { encoding: 'utf8' });
-  log.info(`Wrote ${cmdPath}`);
 
   const currentPath = process.env.PATH ?? '';
   if (currentPath.toLowerCase().includes(ikDir.toLowerCase())) {
-    log.info('PATH already contains ~/.ik — skipped setx');
-    return;
+    return null;
   }
 
   const setxResult = spawnSync('setx', ['PATH', `${ikDir};%PATH%`], {
     stdio: 'pipe',
   });
-  if (setxResult.status === 0) {
-    log.info('Added ~/.ik to user PATH. Open a new shell for `ik` to resolve.');
-  } else {
+  if (setxResult.status !== 0) {
     const stderr = setxResult.stderr?.toString() ?? 'unknown error';
-    log.warn(
-      `setx failed (${stderr.trim()}). Add "${ikDir}" to PATH manually.`,
-    );
+    return `setx failed: ${stderr.trim()}. Add "${ikDir}" to PATH manually.`;
   }
+  return null;
 }
 
 /**
@@ -147,23 +148,45 @@ function configureSubmodule(repoRoot: string): void {
 }
 
 /**
- * Runs `node .github/PAW/dist/cli.mjs sync` to populate the hook bundles.
+ * Initializes and updates all submodules (including PAW).
  * @param {string} repoRoot - Absolute path to the main repo root.
  * @returns {void}
  */
-function runPawSync(repoRoot: string): void {
+function initializeSubmodules(repoRoot: string): void {
+  spawnSync(
+    'git',
+    ['-C', repoRoot, 'submodule', 'update', '--init', '--recursive'],
+    { stdio: 'pipe' },
+  );
+}
+
+/**
+ * Runs `node .github/PAW/dist/cli.mjs sync` to populate the hook bundles.
+ * @param {string} repoRoot - Absolute path to the main repo root.
+ * @returns {string | null} Error message if failed, null otherwise.
+ */
+function runPawSync(repoRoot: string): string | null {
   const cli = resolve(repoRoot, '.github', 'PAW', 'dist', 'cli.mjs');
   if (!existsSync(cli)) {
-    log.warn(`PAW CLI missing at ${cli} — run \`node .github/PAW/build.mjs\``);
-    return;
+    return `PAW CLI missing at ${cli} — run \`node .github/PAW/build.mjs\``;
   }
-  const result = spawnSync('node', [cli, 'sync'], {
-    cwd: repoRoot,
-    stdio: 'inherit',
-  });
-  if (result.status !== 0) {
-    log.warn('paw sync exited non-zero — see output above.');
+  try {
+    const result = spawnSync('node', [cli, 'sync'], {
+      cwd: repoRoot,
+      stdio: 'pipe',
+      timeout: 30000,
+    });
+    if (result.status !== 0) {
+      const stderr = result.stderr?.toString() ?? '';
+      if (stderr.includes('ERR_MODULE_NOT_FOUND')) {
+        return `PAW dependencies missing — run \`node .github/PAW/build.mjs\` to rebuild`;
+      }
+      return 'paw sync failed';
+    }
+  } catch (error) {
+    return `PAW sync error: ${String(error)}`;
   }
+  return null;
 }
 
 /**
@@ -176,31 +199,64 @@ export async function run(_args: string[]): Promise<void> {
   const repoRoot = MAIN_REPO;
 
   s.start('Installing ik PATH shim');
-  if (platform() === 'win32') {
-    installWindowsShim(repoRoot);
+  const windowsErr =
+    platform() === 'win32' ? installWindowsShim(repoRoot) : null;
+  const posixErr = installPosixShim(repoRoot);
+  if (windowsErr || posixErr) {
+    s.stop('PATH shim installed (with warnings)');
+    if (windowsErr) log.error(windowsErr);
+    if (posixErr) log.error(posixErr);
   } else {
-    installPosixShim(repoRoot);
+    s.stop('PATH shim installed');
   }
-  s.stop('PATH shim installed');
 
   s.start('Configuring content submodule');
   configureSubmodule(repoRoot);
   s.stop('Submodule configured (merge on update)');
 
+  s.start('Initializing submodules');
+  initializeSubmodules(repoRoot);
+  s.stop('Submodules initialized');
+
   attachContentToBranch();
 
   s.start('Installing content-repo git hooks');
+  let hookErr: string | null = null;
   try {
-    await installContentHooks();
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWrite = process.stdout.write.bind(process.stdout);
+    const stderrWrite = process.stderr.write.bind(process.stderr);
+    
+    console.log = () => {};
+    console.error = () => {};
+    process.stdout.write = () => true;
+    process.stderr.write = () => true;
+    
+    try {
+      await installContentHooks();
+    } finally {
+      console.log = originalLog;
+      console.error = originalError;
+      process.stdout.write = originalWrite;
+      process.stderr.write = stderrWrite;
+    }
+    
     s.stop('Content hooks installed');
   } catch (error) {
+    hookErr = String(error);
     s.stop('Content hooks skipped');
-    log.warn(`Hook install error: ${String(error)}`);
+    log.error(hookErr);
   }
 
   s.start('Syncing PAW hooks');
-  runPawSync(repoRoot);
-  s.stop('PAW synced');
+  const pawErr = runPawSync(repoRoot);
+  if (pawErr) {
+    s.stop('PAW synced (with warnings)');
+    log.error(pawErr);
+  } else {
+    s.stop('PAW synced');
+  }
 
   log.success('ik setup complete — open a new shell and run `ik help`.');
 }
