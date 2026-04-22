@@ -161,15 +161,78 @@ function initializeSubmodules(repoRoot: string): void {
 }
 
 /**
- * Runs `node .github/PAW/dist/cli.mjs sync` to populate the hook bundles.
+ * Installs PAW's own npm dependencies inside `.github/PAW/`.
+ * @param {string} pawDir - Absolute path to the `.github/PAW` directory.
+ * @returns {string | null} Error message if installation failed, null otherwise.
+ */
+function installPawDependencies(pawDir: string): string | null {
+  const npmCmd = platform() === 'win32' ? 'npm.cmd' : 'npm';
+  const result = spawnSync(npmCmd, ['install'], {
+    cwd: pawDir,
+    stdio: 'pipe',
+  });
+  if (result.status !== 0) {
+    return `PAW npm install failed: ${result.stderr?.toString().trim() ?? 'unknown error'}`;
+  }
+  return null;
+}
+
+/**
+ * Compiles the PAW CLI from source by running `node build.mjs` inside `.github/PAW/`.
+ * @param {string} repoRoot - Absolute path to the repository root.
+ * @param {string} pawDir - Absolute path to the `.github/PAW` directory.
+ * @returns {string | null} Error message if the build failed, null otherwise.
+ */
+function buildPawCli(repoRoot: string, pawDir: string): string | null {
+  const buildMjs = resolve(pawDir, 'build.mjs');
+  const result = spawnSync('node', [buildMjs], {
+    cwd: repoRoot,
+    stdio: 'pipe',
+  });
+  if (result.status !== 0) {
+    return `PAW build failed: ${result.stderr?.toString().trim() ?? 'unknown error'}`;
+  }
+  return null;
+}
+
+/**
+ * Ensures the PAW CLI exists, installing dependencies and building from source
+ * when the compiled artifact is absent.
+ * @param {string} repoRoot - Absolute path to the repository root.
+ * @param {string} pawDir - Absolute path to the `.github/PAW` directory.
+ * @param {string} cli - Absolute path to the expected CLI entry point.
+ * @returns {string | null} Error message if preparation failed, null otherwise.
+ */
+function ensurePawCli(
+  repoRoot: string,
+  pawDir: string,
+  cli: string,
+): string | null {
+  if (existsSync(cli)) {
+    return null;
+  }
+  const installErr = installPawDependencies(pawDir);
+  if (installErr) {
+    return installErr;
+  }
+  return buildPawCli(repoRoot, pawDir);
+}
+
+/**
+ * Runs `node .github/PAW/dist/cli.mjs sync` to populate the hook bundles,
+ * building the CLI first if the compiled artifact is not yet present.
  * @param {string} repoRoot - Absolute path to the main repo root.
  * @returns {string | null} Error message if failed, null otherwise.
  */
 function runPawSync(repoRoot: string): string | null {
-  const cli = resolve(repoRoot, '.github', 'PAW', 'dist', 'cli.mjs');
-  if (!existsSync(cli)) {
-    return `PAW CLI missing at ${cli} — run \`node .github/PAW/build.mjs\``;
+  const pawDir = resolve(repoRoot, '.github', 'PAW');
+  const cli = resolve(pawDir, 'dist', 'cli.mjs');
+
+  const prepErr = ensurePawCli(repoRoot, pawDir, cli);
+  if (prepErr) {
+    return prepErr;
   }
+
   try {
     const result = spawnSync('node', [cli, 'sync'], {
       cwd: repoRoot,
@@ -179,7 +242,7 @@ function runPawSync(repoRoot: string): string | null {
     if (result.status !== 0) {
       const stderr = result.stderr?.toString() ?? '';
       if (stderr.includes('ERR_MODULE_NOT_FOUND')) {
-        return `PAW dependencies missing — run \`node .github/PAW/build.mjs\` to rebuild`;
+        return 'PAW sync failed: runtime dependency missing after build';
       }
       return 'paw sync failed';
     }
@@ -227,12 +290,12 @@ export async function run(_args: string[]): Promise<void> {
     const originalError = console.error;
     const originalWrite = process.stdout.write.bind(process.stdout);
     const stderrWrite = process.stderr.write.bind(process.stderr);
-    
+
     console.log = () => {};
     console.error = () => {};
     process.stdout.write = () => true;
     process.stderr.write = () => true;
-    
+
     try {
       await installContentHooks();
     } finally {
@@ -241,7 +304,7 @@ export async function run(_args: string[]): Promise<void> {
       process.stdout.write = originalWrite;
       process.stderr.write = stderrWrite;
     }
-    
+
     s.stop('Content hooks installed');
   } catch (error) {
     hookErr = String(error);

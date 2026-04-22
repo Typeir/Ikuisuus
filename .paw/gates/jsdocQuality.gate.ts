@@ -1,29 +1,25 @@
 /**
- * Duplicate CSS Gate
+ * JSDoc Quality Gate
  *
- * @fileoverview Thin wrapper that delegates to the canonical check-duplicate-css
+ * @fileoverview Thin wrapper that delegates to the canonical check-jsdoc-quality
  * script and adapts the result for the PAW gate system.
  *
- * @module .paw/gates/duplicate-css.gate
+ * @module .paw/gates/jsdoc-quality.gate
  * @author Typeir
  * @version 2.0.0
  * @since 3.0.0
  */
 
-import type {
-    GateContext,
-    GateResult,
-    QualityGate,
-} from '../../.github/PAW/health-check-types';
-import { runCheck } from '../../.github/scripts/check-duplicate-css.ts';
-import { adaptCheckResult } from './adapt-result.ts';
+import { runCheck } from '../../.github/scripts/checkJsdocQuality.ts';
+import type { GateContext, GateResult, QualityGate } from '../healthCheckTypes';
+import { adaptCheckResult } from './adaptResult.ts';
 
 export const gate: QualityGate = {
-  id: 'duplicate-css',
-  name: 'Duplicate CSS',
-  port: 'build-integrity',
+  id: 'jsdoc-quality',
+  name: 'JSDoc Quality',
+  port: 'code-quality',
   severity: 'critical',
-  appliesTo: ['.scss', '.css'],
+  appliesTo: ['.ts', '.tsx'],
 
   async check(context: GateContext): Promise<GateResult> {
     const files = await context.targetFiles(this.appliesTo);

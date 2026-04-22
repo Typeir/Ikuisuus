@@ -14,18 +14,18 @@
  */
 export const PAW_SDK_HOOKS: Record<string, string[]> = {
   "onPostToolUse": [
-    ".paw/hooks/post-tool-use.mjs"
+    ".paw/hooks/postToolUse.mjs"
   ],
   "onPreToolUse": [
-    ".paw/hooks/pre-tool-use.mjs"
+    ".paw/hooks/preToolUse.mjs"
   ],
   "onSessionEnd": [
-    ".paw/hooks/session-end-health.mjs",
-    ".paw/hooks/session-end-memory-save.mjs",
-    ".paw/hooks/session-end-missing-tests.mjs"
+    ".paw/hooks/sessionEndHealth.mjs",
+    ".paw/hooks/sessionEndMemorySave.mjs",
+    ".paw/hooks/sessionEndMissingTests.mjs"
   ],
   "onUserPromptSubmitted": [
-    ".paw/hooks/user-prompt-submitted.mjs"
+    ".paw/hooks/userPromptSubmitted.mjs"
   ]
 };
 

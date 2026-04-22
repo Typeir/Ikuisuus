@@ -4,10 +4,10 @@
     "PostToolUse": [
       {
         "type": "command",
-        "command": "node .paw/hooks/post-tool-use.mjs",
-        "windows": "node .paw/hooks/post-tool-use.mjs",
-        "linux": "node .paw/hooks/post-tool-use.mjs",
-        "osx": "node .paw/hooks/post-tool-use.mjs",
+        "command": "node .paw/hooks/postToolUse.mjs",
+        "windows": "node .paw/hooks/postToolUse.mjs",
+        "linux": "node .paw/hooks/postToolUse.mjs",
+        "osx": "node .paw/hooks/postToolUse.mjs",
         "cwd": ".",
         "timeout": 15
       }
@@ -15,10 +15,10 @@
     "PreToolUse": [
       {
         "type": "command",
-        "command": "node .paw/hooks/pre-tool-use.mjs",
-        "windows": "node .paw/hooks/pre-tool-use.mjs",
-        "linux": "node .paw/hooks/pre-tool-use.mjs",
-        "osx": "node .paw/hooks/pre-tool-use.mjs",
+        "command": "node .paw/hooks/preToolUse.mjs",
+        "windows": "node .paw/hooks/preToolUse.mjs",
+        "linux": "node .paw/hooks/preToolUse.mjs",
+        "osx": "node .paw/hooks/preToolUse.mjs",
         "cwd": ".",
         "timeout": 10
       }
@@ -26,28 +26,28 @@
     "Stop": [
       {
         "type": "command",
-        "command": "node .paw/hooks/session-end-health.mjs",
-        "windows": "node .paw/hooks/session-end-health.mjs",
-        "linux": "node .paw/hooks/session-end-health.mjs",
-        "osx": "node .paw/hooks/session-end-health.mjs",
+        "command": "node .paw/hooks/sessionEndHealth.mjs",
+        "windows": "node .paw/hooks/sessionEndHealth.mjs",
+        "linux": "node .paw/hooks/sessionEndHealth.mjs",
+        "osx": "node .paw/hooks/sessionEndHealth.mjs",
         "cwd": ".",
         "timeout": 120
       },
       {
         "type": "command",
-        "command": "node .paw/hooks/session-end-memory-save.mjs",
-        "windows": "node .paw/hooks/session-end-memory-save.mjs",
-        "linux": "node .paw/hooks/session-end-memory-save.mjs",
-        "osx": "node .paw/hooks/session-end-memory-save.mjs",
+        "command": "node .paw/hooks/sessionEndMemorySave.mjs",
+        "windows": "node .paw/hooks/sessionEndMemorySave.mjs",
+        "linux": "node .paw/hooks/sessionEndMemorySave.mjs",
+        "osx": "node .paw/hooks/sessionEndMemorySave.mjs",
         "cwd": ".",
         "timeout": 15
       },
       {
         "type": "command",
-        "command": "node .paw/hooks/session-end-missing-tests.mjs",
-        "windows": "node .paw/hooks/session-end-missing-tests.mjs",
-        "linux": "node .paw/hooks/session-end-missing-tests.mjs",
-        "osx": "node .paw/hooks/session-end-missing-tests.mjs",
+        "command": "node .paw/hooks/sessionEndMissingTests.mjs",
+        "windows": "node .paw/hooks/sessionEndMissingTests.mjs",
+        "linux": "node .paw/hooks/sessionEndMissingTests.mjs",
+        "osx": "node .paw/hooks/sessionEndMissingTests.mjs",
         "cwd": ".",
         "timeout": 30
       }
@@ -55,10 +55,10 @@
     "UserPromptSubmit": [
       {
         "type": "command",
-        "command": "node .paw/hooks/user-prompt-submitted.mjs",
-        "windows": "node .paw/hooks/user-prompt-submitted.mjs",
-        "linux": "node .paw/hooks/user-prompt-submitted.mjs",
-        "osx": "node .paw/hooks/user-prompt-submitted.mjs",
+        "command": "node .paw/hooks/userPromptSubmitted.mjs",
+        "windows": "node .paw/hooks/userPromptSubmitted.mjs",
+        "linux": "node .paw/hooks/userPromptSubmitted.mjs",
+        "osx": "node .paw/hooks/userPromptSubmitted.mjs",
         "cwd": ".",
         "timeout": 10
       }

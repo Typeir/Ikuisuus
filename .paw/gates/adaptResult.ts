@@ -11,12 +11,8 @@
  * @since 3.0.0
  */
 
-import type {
-  GateFinding,
-  GateResult,
-  GateStats,
-} from '../../.github/PAW/health-check-types';
 import type { CheckResult } from '../../.github/scripts/health-check-types';
+import type { GateFinding, GateResult, GateStats } from '../healthCheckTypes';
 
 /**
  * Adapt a CheckResult from a health check script into a GateResult.

@@ -10,13 +10,9 @@
  * @since 3.0.0
  */
 
-import type {
-    GateContext,
-    GateResult,
-    QualityGate,
-} from '../../.github/PAW/health-check-types';
-import { runCheck } from '../../.github/scripts/check-file-length.ts';
-import { adaptCheckResult } from './adapt-result.ts';
+import { runCheck } from '../../.github/scripts/checkFileLength.ts';
+import type { GateContext, GateResult, QualityGate } from '../healthCheckTypes';
+import { adaptCheckResult } from './adaptResult.ts';
 
 export const gate: QualityGate = {
   id: 'file-length',
