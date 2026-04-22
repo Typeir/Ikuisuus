@@ -10,10 +10,13 @@
  */
 
 import { BloodlineBoonEntity, BloodlineEntity } from '@/lib/db/orm/entities';
+import { createLogger } from '@/lib/logging/logger';
 import type { EntityManager } from '@mikro-orm/postgresql';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import type { SyncResult } from './types';
+
+const log = createLogger({ component: 'MetadataSync:Bloodlines' });
 
 /**
  * Resolves the root directory of the project.
@@ -34,19 +37,25 @@ function getProjectRoot(): string {
 function readMetadataFiles(
   locale: string,
   subdir: string,
-): Record<string, unknown>[] {
+): { records: Record<string, unknown>[]; sourceExists: boolean } {
   const root = getProjectRoot();
   const metaDirPath = join(root, '.meta', locale, subdir);
   const contentDirPath = join(root, 'src', 'content', locale, subdir);
-  const dir = existsSync(metaDirPath) ? metaDirPath : contentDirPath;
-  if (!existsSync(dir)) return [];
+  const metaExists = existsSync(metaDirPath);
+  const contentExists = existsSync(contentDirPath);
+  const dir = metaExists ? metaDirPath : contentDirPath;
+  const sourceExists = metaExists || contentExists;
 
-  return readdirSync(dir)
+  if (!sourceExists) return { records: [], sourceExists: false };
+
+  const records = readdirSync(dir)
     .filter((f) => f.endsWith('.metadata.json'))
     .flatMap((f) => {
       const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
       return Array.isArray(parsed) ? parsed : [parsed];
     });
+
+  return { records, sourceExists: true };
 }
 
 /**
@@ -60,16 +69,25 @@ export async function syncBloodlines(
   em: EntityManager,
   locale: string,
 ): Promise<SyncResult> {
-  const records = readMetadataFiles(
+  const { records: rawRecords, sourceExists } = readMetadataFiles(
     locale,
     join('character-creation', 'bloodlines'),
-  ).filter(Boolean);
+  );
+  const records = rawRecords.filter(Boolean);
   const result: SyncResult = {
     inserted: 0,
     updated: 0,
     skipped: 0,
     deleted: 0,
   };
+
+  if (!sourceExists) {
+    log.warning(
+      'Bloodline metadata source directory missing, skipping sync to prevent destructive deletion',
+      { locale },
+    );
+    return result;
+  }
 
   const existing = await em.find(
     BloodlineEntity,

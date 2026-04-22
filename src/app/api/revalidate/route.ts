@@ -240,6 +240,7 @@ export async function POST(req: NextRequest) {
       for (const v of variants) {
         try {
           revalidatePath(v, 'page');
+          revalidatePath(v, 'layout');
           log.message('Revalidated', { path: v });
         } catch (err) {
           log.warning('Failed to revalidate variant', {
