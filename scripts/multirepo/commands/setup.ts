@@ -153,6 +153,8 @@ function configureSubmodule(repoRoot: string): void {
  * @returns {void}
  */
 function initializeSubmodules(repoRoot: string): void {
+  // Run explicit init first, then update (with --init to be safe).
+  spawnSync('git', ['-C', repoRoot, 'submodule', 'init'], { stdio: 'pipe' });
   spawnSync(
     'git',
     ['-C', repoRoot, 'submodule', 'update', '--init', '--recursive'],

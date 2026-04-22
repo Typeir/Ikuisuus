@@ -19,9 +19,9 @@
 import { log } from '@clack/prompts';
 
 import {
-    loadCommands,
-    resolveCommandsDir,
-    type CommandRegistry,
+  loadCommands,
+  resolveCommandsDir,
+  type CommandRegistry,
 } from '../utils/cli-loader';
 import { checkSubmodule, cmdPassthrough } from './git';
 import { runInteractive } from './tui';
@@ -37,7 +37,9 @@ async function main(): Promise<void> {
   const command = argv[0];
   const rest = argv.slice(1);
 
-  checkSubmodule();
+  if (command !== 'setup') {
+    checkSubmodule();
+  }
 
   if (!command) {
     await runInteractive();
