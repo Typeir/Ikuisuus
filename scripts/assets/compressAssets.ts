@@ -9,6 +9,8 @@
  * @module compressAssets
  * @version 1.0.0
  * @since 1.0.0
+ * @author Typeir
+ * @updated 2026-04-23
  *
  * @requires fs/promises Node.js async filesystem
  * @requires fast-glob Glob pattern matching
@@ -35,7 +37,7 @@ const MAX_WIDTH = 1600;
 
 /**
  * Format bytes to human-readable size
- * @param bytes - Number of bytes
+ * @param {number} bytes - Number of bytes
  * @returns Formatted string
  */
 const formatBytes = (bytes: number): string => {

@@ -24,6 +24,7 @@ const nextConfig = {
     '@mikro-orm/core',
     '@mikro-orm/postgresql',
     '@mikro-orm/knex',
+    '@resvg/resvg-js',
   ],
   pageExtensions: ['ts', 'tsx', 'mdx'],
   generateBuildId: async () => {

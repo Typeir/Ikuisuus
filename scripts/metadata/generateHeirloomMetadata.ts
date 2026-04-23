@@ -338,6 +338,53 @@ function parseTypeProperty(
 }
 
 /**
+ * Extracts the prose description from a heirloom MDX file.
+ *
+ * Heirloom files have no `---` divider. The description is the first natural
+ * prose paragraph after the H1 title, skipping JSX component blocks, italic
+ * metadata lines (rarity, type), headings, table rows, blockquotes, and
+ * code fences.
+ *
+ * @param {string[]} lines - File lines (trimmed)
+ * @returns {string | undefined} First prose line with markdown stripped, or undefined
+ */
+function parseHeirloomDescription(lines: string[]): string | undefined {
+  const titleIndex = lines.findIndex((l) => l.startsWith('# '));
+  if (titleIndex === -1) return undefined;
+
+  let inJsxBlock = false;
+  for (let i = titleIndex + 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    if (line.includes('<')) {
+      inJsxBlock = !line.includes('/>') && !line.includes('</');
+      if (inJsxBlock || line.includes('/>') || line.includes('</')) continue;
+    }
+    if (inJsxBlock) continue;
+
+    if (!line) continue;
+
+    if (
+      line.startsWith('#') ||
+      line.startsWith('_') ||
+      line.startsWith('>') ||
+      line.startsWith('|') ||
+      line.startsWith('-') ||
+      line.startsWith('```')
+    ) {
+      continue;
+    }
+
+    if (line.includes('=') && (line.includes('{') || line.includes("'"))) {
+      continue;
+    }
+
+    return stripMarkdown(line);
+  }
+  return undefined;
+}
+
+/**
  * Parses a single heirloom file and extracts metadata.
  *
  * @param {string} filePath - Path to .mdx file
@@ -457,6 +504,8 @@ async function parseHeirloomFile(
 
   tags.sort();
 
+  const description = parseHeirloomDescription(lines);
+
   if (!rarity) log.warning(`No rarity found for ${title || baseSlug}`);
   if (!itemType) log.warning(`No item type found for ${title || baseSlug}`);
 
@@ -487,6 +536,7 @@ async function parseHeirloomFile(
     charges,
     tags: tags.length ? Array.from(new Set(tags)).sort() : undefined,
     indexVersion: 1,
+    ...(description && { description }),
   };
 }
 

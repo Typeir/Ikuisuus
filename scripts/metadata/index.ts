@@ -30,6 +30,7 @@ export type { GeneratorConfig, StorageAdapter } from './generatorUtils';
 export {
     parseCharges,
     parseDamageTypesDealt,
+    parseDescription,
     parseKeyBullets,
     parseNumericValue,
     parseProperties,

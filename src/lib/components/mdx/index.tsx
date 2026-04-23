@@ -1,5 +1,7 @@
 /**
  * @fileoverview Module for src/lib/components/mdx/index.tsx
+ * Provides a centralized export of MDX components and related utilities for use across the application.
+ * Uses React.ComponentProps to avoid auto-removal of necessary React import by linters/build tools.
  * @module src/lib/components/mdx/index
  * @author Typeir
  * @version 1.0.0
@@ -8,7 +10,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import type { ComponentProps, PropsWithChildren } from 'react';
+
+import type { PropsWithChildren } from 'react';
 import BlendedImage from './blendedImage';
 import ClearFloats from './clearFloats/clearFloats';
 import Collapsible from './collapsible/collapsible';
@@ -41,7 +44,7 @@ export const components = {
   ClearFloats,
   ParallaxBackdrop,
   Tooltip,
-  Image: (props: ComponentProps<typeof Image>) => (
+  Image: (props: React.ComponentProps<typeof Image>) => (
     <Image
       {...props}
       width={600}
@@ -50,7 +53,7 @@ export const components = {
       title={props.title ?? props.alt ?? undefined}
     />
   ),
-  a: ({ href, title, children, ...props }: ComponentProps<'a'>) => {
+  a: ({ href, title, children, ...props }: React.ComponentProps<'a'>) => {
     const childText = typeof children === 'string' ? children : undefined;
     return (
       <Link

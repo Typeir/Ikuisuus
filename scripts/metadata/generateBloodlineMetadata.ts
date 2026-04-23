@@ -29,6 +29,7 @@ import {
   extractItemMechanicTags,
   extractMovementTags,
   filePathToSlug,
+  parseDescription,
   parseTitle,
   runGenerator,
   runWithCli,
@@ -442,25 +443,6 @@ function parseCoreFeatures(content: string): {
 }
 
 /**
- * Extracts lore description text from between the title and first divider.
- *
- * @param {string} content - Full MDX content
- * @returns {string | undefined} Joined lore paragraphs or undefined
- */
-function parseDescription(content: string): string | undefined {
-  const lines = content.split('\n');
-  const firstDivider = lines.findIndex((l) => l.trim() === '---');
-  if (firstDivider < 2) return undefined;
-
-  const introLines = lines
-    .slice(1, firstDivider)
-    .map((l) => l.trim())
-    .filter((l) => l.length > 0);
-
-  if (introLines.length === 0) return undefined;
-  return introLines.join('\n');
-}
-
 /**
  * Extracts the Boon Point budget from the boons section.
  *

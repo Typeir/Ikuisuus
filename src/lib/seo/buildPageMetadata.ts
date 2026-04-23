@@ -16,12 +16,46 @@
  */
 
 import type { Metadata } from 'next';
+import { getSupportedOgTypes } from './og/data';
 import { resolvePageImage } from './resolvePageImage';
 import type { PageSeoInput } from './types';
 
 const SITE_NAME_SUFFIX = '| Library of Ikuisuus';
 const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;
+
+/**
+ * Maps a `slugPath` segment to an OG content type string.
+ *
+ * Handles both flat paths (`monsters/slug`) and nested paths
+ * (`items/heirlooms/slug`). Returns `null` when no type can be identified.
+ *
+ * @param {string} slugPath - Slash-separated content path
+ * @returns {{ type: string; slug: string } | null} Parsed type + slug or null
+ */
+function parseOgType(slugPath: string): { type: string; slug: string } | null {
+  const parts = slugPath.split('/');
+  if (parts.length < 2) return null;
+
+  const lastSegment = parts[parts.length - 1]!;
+
+  /** items/heirlooms/slug → type = 'heirlooms' */
+  if (parts.length >= 3 && parts[0] === 'items') {
+    const subtype = parts[1]!;
+    if (getSupportedOgTypes().includes(subtype)) {
+      return { type: subtype, slug: lastSegment };
+    }
+    return null;
+  }
+
+  /** monsters/slug, spells/slug, etc. */
+  const topType = parts[0]!;
+  if (getSupportedOgTypes().includes(topType)) {
+    return { type: topType, slug: lastSegment };
+  }
+
+  return null;
+}
 
 /**
  * Appends the site name suffix to a raw page title.
@@ -91,7 +125,12 @@ function buildTwitter(
  * @returns {Metadata} Complete Next.js Metadata object.
  */
 export function buildPageMetadata(input: PageSeoInput): Metadata {
-  const imageUrl = resolvePageImage(input.image, input.slugPath);
+  const ogTypeParsed = parseOgType(input.slugPath);
+  const dynamicOgUrl = ogTypeParsed
+    ? `/api/og/${ogTypeParsed.type}/${ogTypeParsed.slug}`
+    : null;
+  const imageUrl =
+    dynamicOgUrl ?? resolvePageImage(input.image, input.slugPath);
   return {
     title: formatTitle(input.title),
     description: input.description,

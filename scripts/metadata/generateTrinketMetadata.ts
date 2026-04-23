@@ -28,6 +28,40 @@ import { MECHANICS, PROPERTY } from './trinketPatterns';
 const log = createLogger({ component: 'TrinketMetadataGenerator' });
 
 /**
+ * Extracts the prose description from a trinket MDX file.
+ *
+ * Trinket files have no `---` divider. The description is the block of text
+ * after the H1 title and optional item-type line, ending at the first bold
+ * property line (`**Damage**:`, `**Properties**:`, etc.).
+ *
+ * @param {string} content - Full MDX file content
+ * @returns {string | undefined} Joined prose lines or undefined
+ */
+function parseTrinketDescription(content: string): string | undefined {
+  const lines = content.split('\n');
+  const descLines: string[] = [];
+  let foundContent = false;
+
+  for (let i = 2; i < lines.length; i++) {
+    const l = lines[i].trim();
+
+    if (/^\*\*\w/.test(l) && l.includes(':')) break;
+
+    if (!l) {
+      if (foundContent) break;
+      continue;
+    }
+
+    if (l.startsWith('#') || l.startsWith('<') || l.startsWith('>')) continue;
+
+    foundContent = true;
+    descLines.push(l);
+  }
+
+  return descLines.length > 0 ? descLines.join('\n') : undefined;
+}
+
+/**
  * Parses trinket-specific metadata from content.
  *
  * @param {string} content - Full MDX file content
@@ -169,9 +203,10 @@ async function parseTrinketFile(
     const slug = filePathToSlug(filePath);
     const title = parseTitle(lines);
     const itemType = parseItemType(raw);
+    const description = parseTrinketDescription(raw);
     const properties = parseTrinketProperties(raw, sharedData);
 
-    return {
+    const metadata: Record<string, unknown> = {
       slug,
       title,
       file: path.relative(process.cwd(), filePath).replace(/\\/g, '/'),
@@ -182,6 +217,12 @@ async function parseTrinketFile(
         contentType: 'generic',
       }),
     };
+
+    if (description) {
+      metadata.description = description;
+    }
+
+    return metadata;
   } catch (error) {
     log.warning('Error parsing trinket file', {
       file: filePath,

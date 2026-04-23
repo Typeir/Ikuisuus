@@ -21,6 +21,7 @@ import {
   clean,
   extractAllTags,
   getMetaSubdir,
+  parseDescription,
   parseTitle,
   runGenerator,
   runWithCli,
@@ -364,6 +365,7 @@ async function parseVocationFile(
     const slug = parentDir;
 
     const traits = parseCoreTraits(raw);
+    const description = parseDescription(raw);
     const hitDie = parseHitDie(
       traits['Hit Point Die'] || traits['Hit Die'] || '',
     );
@@ -427,6 +429,10 @@ async function parseVocationFile(
     };
 
     metadata.tags = buildVocationTags(metadata, raw, filePath, sharedData);
+
+    if (description) {
+      metadata.description = description;
+    }
 
     log.message(`✅ Parsed vocation: ${title} (${slug})`, {
       features: features.length,

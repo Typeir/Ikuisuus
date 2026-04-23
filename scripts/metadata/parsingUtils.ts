@@ -26,6 +26,48 @@ export function parseTitle(lines: string[]): string {
 }
 
 /**
+ * Extracts the lore description from the intro region of an MDX file.
+ *
+ * The intro region spans from the line after the H1 title to the first
+ * structural stop marker (`---`, an H2+ heading, or a `<Collapsible` JSX
+ * element). Lines that are empty, JSX elements, italic-only (flavor text),
+ * headings, or blockquotes are filtered out. The remaining prose is joined
+ * with newlines.
+ *
+ * Covers the common `---`-divider pattern used by bloodlines, vocations,
+ * spells, and specializations. Returns `undefined` when no prose is found.
+ *
+ * @param {string} content - Full MDX file content
+ * @returns {string | undefined} Joined prose paragraphs or undefined
+ */
+export function parseDescription(content: string): string | undefined {
+  const lines = content.split('\n');
+
+  let stopIdx = lines.length;
+  for (let i = 1; i < lines.length; i++) {
+    const t = lines[i].trim();
+    if (t === '---' || /^##\s/.test(t) || t.startsWith('<Collapsible')) {
+      stopIdx = i;
+      break;
+    }
+  }
+
+  const introLines = lines
+    .slice(1, stopIdx)
+    .map((l) => l.trim())
+    .filter(
+      (l) =>
+        l.length > 0 &&
+        !l.startsWith('#') &&
+        !l.startsWith('<') &&
+        !l.startsWith('>') &&
+        !/^[_*][^_*\n]+[_*]$/.test(l),
+    );
+
+  return introLines.length > 0 ? introLines.join('\n') : undefined;
+}
+
+/**
  * Parses properties from bullet list sections.
  *
  * @param {string} text - Full text content

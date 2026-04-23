@@ -17,6 +17,7 @@ import {
   clean,
   filePathToSlug,
   getMetadataBackend,
+  parseDescription,
   parseTitle,
   runGenerator,
   runWithCli,
@@ -341,6 +342,7 @@ async function parseSpellFile(
   const properties = parseSpellProperties(lines);
   const components = parseComponents(lines);
   const spellLists = parseSpellLists(content);
+  const description = parseDescription(content);
 
   const tags = generateSpellTags(
     content,
@@ -365,6 +367,10 @@ async function parseSpellFile(
 
   if (spellLists.length > 0) {
     metadata.spellLists = spellLists;
+  }
+
+  if (description) {
+    metadata.description = description;
   }
 
   return metadata;

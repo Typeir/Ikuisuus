@@ -26,6 +26,7 @@ import {
     runWithCli,
     splitList,
     splitListWithGrouping,
+    stripMarkdown,
     type SharedData,
     type StorageAdapter,
 } from '.';
@@ -513,6 +514,40 @@ function findMonsterImage(
  * @param {{ lineIndex: number }[]} allPositions - All stat block positions in file
  * @returns {object} Stat block metadata
  */
+/**
+ * Extracts the lore description from a stat block section.
+ *
+ * Some monster files include a prose paragraph between the BlendedImage JSX
+ * and the first stat table. This function finds that text by scanning the
+ * section lines (which include up to ten lines of context before the italic
+ * creature-type line), filtering out italics, JSX elements, headings,
+ * blockquotes, and empty lines, and collecting prose before the first table row.
+ *
+ * @param {string[]} sectionLines - Lines extracted for this stat block
+ * @returns {string | undefined} Prose description with markdown stripped, or undefined
+ */
+function parseMonsterDescription(sectionLines: string[]): string | undefined {
+  const tableIdx = sectionLines.findIndex((l) => l.trim().startsWith('|'));
+  if (tableIdx === -1) return undefined;
+
+  const descLines = sectionLines
+    .slice(1, tableIdx)
+    .map((l) => l.trim())
+    .filter(
+      (l) =>
+        l.length > 0 &&
+        !l.startsWith('#') &&
+        !l.startsWith('<') &&
+        !l.startsWith('>') &&
+        !l.startsWith('|') &&
+        !/^_[^_]+_$/.test(l),
+    );
+
+  return descLines.length > 0
+    ? descLines.map((l) => stripMarkdown(l)).join('\n')
+    : undefined;
+}
+
 function parseStatBlockSection(
   allLines: string[],
   sectionLines: string[],
@@ -656,7 +691,9 @@ function parseStatBlockSection(
     allPositions,
   );
 
-  return {
+  const description = parseMonsterDescription(sectionLines);
+
+  const metadata: Record<string, unknown> = {
     slug: baseSlug,
     subSlug,
     title:
@@ -692,6 +729,12 @@ function parseStatBlockSection(
     image,
     indexVersion: 2,
   };
+
+  if (description) {
+    metadata.description = description;
+  }
+
+  return metadata;
 }
 
 /**

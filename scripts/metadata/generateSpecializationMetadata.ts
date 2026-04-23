@@ -17,6 +17,7 @@ import {
   clean,
   extractAllTags,
   filePathToSlug,
+  parseDescription,
   parseTitle,
   runGenerator,
   runWithCli,
@@ -238,6 +239,7 @@ async function parseSpecializationFile(
 
     const specializationType = classifySpecializationType(title);
     const flavor = parseFlavor(lines);
+    const description = parseDescription(raw);
     const features = parseFeatures(raw);
     const spellsAlwaysPrepared = parseAlwaysPreparedSpells(raw);
     const spellcasting = parseSpecializationSpellcasting(raw);
@@ -279,6 +281,10 @@ async function parseSpecializationFile(
       tags: [...tags].sort(),
       indexVersion: 1,
     };
+
+    if (description) {
+      metadata.description = description;
+    }
 
     log.message(`✅ Parsed specialization: ${title} (${vocation}/${slug})`, {
       features: features.length,
