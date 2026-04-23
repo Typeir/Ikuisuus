@@ -254,6 +254,7 @@ const SidebarItem = ({
           <Link
             href={`/${locale}/library/${folderChildren.mainPath}`}
             onClick={() => open && onNavigate?.()}
+            title={item.name}
             className={cn(
               'text-accent hover:underline block',
               styles['link-item'],
@@ -283,6 +284,7 @@ const SidebarItem = ({
       <Link
         href={`/${locale}/library/${item.path}`}
         onClick={onNavigate}
+        title={item.name}
         className={cn(
           'text-accent hover:underline block',
           styles['link-item'],

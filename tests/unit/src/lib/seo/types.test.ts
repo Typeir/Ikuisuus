@@ -27,11 +27,13 @@ describe('PageSeoInput', () => {
       description: 'A blackened medallion.',
       image: '/library/images/heirlooms/dreaded-defender.webp',
       imageAlt: 'Dreaded Defender medallion',
+      keywords: ['heirlooms', 'magic items', 'D&D 5e'],
       locale: 'en',
       slugPath: 'items/heirlooms/dreaded-defender',
     };
     expect(input.description).toBe('A blackened medallion.');
     expect(input.image).toBe('/library/images/heirlooms/dreaded-defender.webp');
     expect(input.imageAlt).toBe('Dreaded Defender medallion');
+    expect(input.keywords).toEqual(['heirlooms', 'magic items', 'D&D 5e']);
   });
 });

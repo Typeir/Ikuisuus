@@ -103,4 +103,55 @@ describe('buildPageMetadata', () => {
     expect(og.images[0].width).toBe(1200);
     expect(og.images[0].height).toBe(630);
   });
+
+  it('sets canonical alternates to the locale-prefixed slug path', () => {
+    const result = buildPageMetadata({
+      title: 'Test',
+      locale: 'en',
+      slugPath: 'items/heirlooms/dreaded-defender',
+    });
+    expect(result.alternates?.canonical).toBe(
+      '/en/library/items/heirlooms/dreaded-defender',
+    );
+  });
+
+  it('sets robots to index and follow', () => {
+    const result = buildPageMetadata({
+      title: 'Test',
+      locale: 'en',
+      slugPath: 'items/heirlooms/test',
+    });
+    const robots = result.robots as { index: boolean; follow: boolean };
+    expect(robots.index).toBe(true);
+    expect(robots.follow).toBe(true);
+  });
+
+  it('sets author to Library of Ikuisuus', () => {
+    const result = buildPageMetadata({
+      title: 'Test',
+      locale: 'en',
+      slugPath: 'items/heirlooms/test',
+    });
+    const authors = result.authors as Array<{ name: string }>;
+    expect(authors[0].name).toBe('Library of Ikuisuus');
+  });
+
+  it('sets publisher to Library of Ikuisuus', () => {
+    const result = buildPageMetadata({
+      title: 'Test',
+      locale: 'en',
+      slugPath: 'items/heirlooms/test',
+    });
+    expect(result.publisher).toBe('Library of Ikuisuus');
+  });
+
+  it('passes keywords through when provided', () => {
+    const result = buildPageMetadata({
+      title: 'Test',
+      locale: 'en',
+      slugPath: 'items/heirlooms/test',
+      keywords: ['heirlooms', 'magic items'],
+    });
+    expect(result.keywords).toEqual(['heirlooms', 'magic items']);
+  });
 });

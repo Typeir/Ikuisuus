@@ -196,11 +196,11 @@ function BaseResponsiveLayoutShell({
                     width={40}
                     height={40}
                   />
-                  <h1 className={`text-base lg:text-lg ${styles.title}`}>
+                  <p className={`text-base lg:text-lg ${styles.title}`}>
                     <span className='text-xs'>{t('libraryTitleSmall')}</span>
                     <br />
                     {t('libraryTitleLarge')}
-                  </h1>
+                  </p>
                 </div>
               </Link>
               <button

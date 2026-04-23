@@ -18,6 +18,7 @@
  * @property {string} [description] - Short description for og:description and twitter:description.
  * @property {string} [image] - Explicit image path from MDX frontmatter.
  * @property {string} [imageAlt] - Alt text for the social preview image.
+ * @property {string[]} [keywords] - Keywords for the page; auto-derived from slug if absent.
  * @property {string} locale - Active locale code, e.g. "en".
  * @property {string} slugPath - Slash-separated content path, e.g. "items/heirlooms/dreaded-defender".
  */
@@ -26,6 +27,7 @@ export interface PageSeoInput {
   description?: string;
   image?: string;
   imageAlt?: string;
+  keywords?: string[];
   locale: string;
   slugPath: string;
 }

@@ -26,7 +26,6 @@ import {
   MonsterEntity,
   SpellEntity,
   SpellListEntity,
-  TrinketEntity,
 } from '@/lib/db/orm/entities';
 import { getEM } from '@/lib/db/orm/orm';
 import { createLogger } from '@/lib/logging/logger';
@@ -34,6 +33,7 @@ import type { EntityManager } from '@mikro-orm/postgresql';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { syncBloodlines } from './syncBloodlines';
+import { syncTrinkets } from './syncTrinkets';
 import type { SyncResult } from './types';
 
 const log = createLogger({ component: 'MetadataSync' });
@@ -432,92 +432,6 @@ async function syncSpells(
        * sync reads from. Deleting them here would nuke all 500+ SRD spells
        * every time a custom-spell correction is published. */
       if (entity.file === 'external') continue;
-      em.remove(entity);
-      result.deleted++;
-    }
-  }
-
-  return result;
-}
-
-/**
- * Syncs the `trinkets` table for a locale using hash-based diffing.
- *
- * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {string} locale - Locale code
- * @returns {Promise<SyncResult>} Sync statistics
- */
-async function syncTrinkets(
-  em: EntityManager,
-  locale: string,
-): Promise<SyncResult> {
-  const { records, sourceExists } = readMetadataFiles(
-    locale,
-    join('items', 'trinkets'),
-  );
-  const result: SyncResult = {
-    inserted: 0,
-    updated: 0,
-    skipped: 0,
-    deleted: 0,
-  };
-
-  if (!sourceExists) {
-    log.warning(
-      'Trinket metadata source directory missing, skipping sync to prevent destructive deletion',
-      { locale },
-    );
-    return result;
-  }
-
-  const existing = await em.find(TrinketEntity, { locale });
-  const existingMap = new Map(existing.map((e) => [e.slug, e]));
-  const incomingKeys = new Set<string>();
-
-  for (const t of records) {
-    const slug = t.slug as string;
-    incomingKeys.add(slug);
-    const hash = t.versionHash as string;
-    const entity = existingMap.get(slug);
-
-    if (hash && entity?.versionHash === hash) {
-      result.skipped++;
-      continue;
-    }
-
-    const data = {
-      locale,
-      slug,
-      title: t.title as string,
-      file: t.file as string,
-      link: t.link as string,
-      itemType: t.itemType as string,
-      damage: t.damage as string | undefined,
-      damageType: t.damageType as string | undefined,
-      range: t.range as string | undefined,
-      weight: t.weight as string | undefined,
-      savingThrow: {
-        dc: t.savingThrowDC as number | undefined,
-        ability: t.savingThrowAbility as string | undefined,
-      },
-      properties: (t.properties as string[]) ?? [],
-      specialEffects: (t.specialEffects as string[]) ?? [],
-      inflictsConditions: (t.inflictsConditions as string[]) ?? [],
-      tags: (t.tags as string[]) ?? [],
-      versionHash: hash,
-    };
-
-    if (entity) {
-      em.assign(entity, data);
-      result.updated++;
-    } else {
-      em.create(TrinketEntity, data);
-      result.inserted++;
-    }
-  }
-
-  for (const [key, entity] of Array.from(existingMap)) {
-    if (!incomingKeys.has(key)) {
       em.remove(entity);
       result.deleted++;
     }

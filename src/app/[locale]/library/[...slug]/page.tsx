@@ -129,6 +129,7 @@ export async function generateMetadata({
       description?: string;
       image?: string;
       imageAlt?: string;
+      keywords?: string | string[];
     };
 
     const resolvedTitle =
@@ -136,12 +137,23 @@ export async function generateMetadata({
       extractH1FromMdx(result.content) ??
       slugSegmentToTitle(slugSegments[slugSegments.length - 1]);
 
+    const resolvedKeywords: string[] = Array.isArray(fm.keywords)
+      ? fm.keywords
+      : typeof fm.keywords === 'string'
+        ? fm.keywords.split(',').map((k) => k.trim())
+        : [
+            ...slugSegments.map(slugSegmentToTitle),
+            'D&D 5e',
+            'Library of Ikuisuus',
+          ];
+
     return buildPageMetadata({
       title: resolvedTitle,
       description:
         fm.description ?? extractDescriptionFromMdx(bodyContent) ?? undefined,
       image: fm.image,
       imageAlt: fm.imageAlt,
+      keywords: resolvedKeywords,
       locale,
       slugPath,
     });

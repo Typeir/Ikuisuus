@@ -84,7 +84,8 @@ function buildTwitter(
  *
  * Resolves the OG image from frontmatter or slug convention and builds
  * `openGraph` and `twitter` sub-objects with consistent dimensions and
- * alt text.
+ * alt text. Also sets canonical URL, robots directives, author, publisher,
+ * and page keywords.
  *
  * @param {PageSeoInput} input - SEO input record for the page.
  * @returns {Metadata} Complete Next.js Metadata object.
@@ -94,6 +95,11 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
   return {
     title: formatTitle(input.title),
     description: input.description,
+    keywords: input.keywords,
+    authors: [{ name: 'Library of Ikuisuus', url: 'https://ikuisuus.vercel.app' }],
+    publisher: 'Library of Ikuisuus',
+    robots: { index: true, follow: true },
+    alternates: { canonical: `/${input.locale}/library/${input.slugPath}` },
     openGraph: buildOpenGraph(input, imageUrl),
     twitter: buildTwitter(input, imageUrl),
   };

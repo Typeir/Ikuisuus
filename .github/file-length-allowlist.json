@@ -82,7 +82,7 @@
   {
     "file": "src/lib/metadata/syncService.ts",
     "maxLines": 440,
-    "justification": "Metadata sync service managing file watching, incremental updates, and cache invalidation"
+    "justification": "Metadata sync service orchestrating hash-based diffing for monsters, heirlooms, and spells — per-type sync workers extracted to sibling modules"
   },
   {
     "file": "src/lib/metadata/taggingUtils.ts",

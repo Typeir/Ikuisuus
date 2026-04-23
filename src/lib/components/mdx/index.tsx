@@ -40,8 +40,27 @@ export const components = {
   ParallaxBackdrop,
   Tooltip,
   Image: (props: ComponentProps<typeof Image>) => (
-    <Image {...props} width={600} height={600} alt={props.alt || ''} />
+    <Image
+      {...props}
+      width={600}
+      height={600}
+      alt={props.alt || ''}
+      title={props.title ?? props.alt ?? undefined}
+    />
   ),
+  a: ({
+    href,
+    title,
+    children,
+    ...props
+  }: ComponentProps<'a'>) => {
+    const childText = typeof children === 'string' ? children : undefined;
+    return (
+      <a href={href} title={title ?? childText} {...props}>
+        {children}
+      </a>
+    );
+  },
   h1: H1,
   h2: H2,
   h3: H3,
