@@ -96,7 +96,9 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
     title: formatTitle(input.title),
     description: input.description,
     keywords: input.keywords,
-    authors: [{ name: 'Library of Ikuisuus', url: 'https://ikuisuus.vercel.app' }],
+    authors: [
+      { name: 'Library of Ikuisuus', url: 'https://ikuisuus.vercel.app' },
+    ],
     publisher: 'Library of Ikuisuus',
     robots: { index: true, follow: true },
     alternates: { canonical: `/${input.locale}/library/${input.slugPath}` },

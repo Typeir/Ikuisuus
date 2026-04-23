@@ -6,6 +6,8 @@
  * @since 2.0.0
  */
 import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
 import type { ComponentProps, PropsWithChildren } from 'react';
 import BlendedImage from './blendedImage';
 import ClearFloats from './clearFloats/clearFloats';
@@ -48,17 +50,15 @@ export const components = {
       title={props.title ?? props.alt ?? undefined}
     />
   ),
-  a: ({
-    href,
-    title,
-    children,
-    ...props
-  }: ComponentProps<'a'>) => {
+  a: ({ href, title, children, ...props }: ComponentProps<'a'>) => {
     const childText = typeof children === 'string' ? children : undefined;
     return (
-      <a href={href} title={title ?? childText} {...props}>
+      <Link
+        href={href ?? '#'}
+        title={title ?? childText}
+        {...(props as object)}>
         {children}
-      </a>
+      </Link>
     );
   },
   h1: H1,

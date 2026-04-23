@@ -22,10 +22,10 @@
  */
 
 import {
-  HeirloomEntity,
-  MonsterEntity,
-  SpellEntity,
-  SpellListEntity,
+    HeirloomEntity,
+    MonsterEntity,
+    SpellEntity,
+    SpellListEntity,
 } from '@/lib/db/orm/entities';
 import { getEM } from '@/lib/db/orm/orm';
 import { createLogger } from '@/lib/logging/logger';

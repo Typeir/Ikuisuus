@@ -3,18 +3,23 @@
  *
  * @module tests/unit/src/app/sitemap.test
  */
+import sitemap from '@/app/sitemap';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/seo', () => ({
-  resolveMetadataBase: vi.fn().mockReturnValue(new URL('https://ikuisuus.vercel.app')),
+  resolveMetadataBase: vi
+    .fn()
+    .mockReturnValue(new URL('https://ikuisuus.vercel.app')),
 }));
 
 vi.mock('@/lib/mdx/findAllMdxFiles', () => ({
-  default: vi.fn().mockResolvedValue([
-    '/content/en/items/heirlooms/dreaded-defender.heirloom.mdx',
-    '/content/en/items/heirlooms/main.mdx',
-    '/content/en/monsters/abyssal-hound.sheet.mdx',
-  ]),
+  default: vi
+    .fn()
+    .mockResolvedValue([
+      '/content/en/items/heirlooms/dreaded-defender.heirloom.mdx',
+      '/content/en/items/heirlooms/main.mdx',
+      '/content/en/monsters/abyssal-hound.sheet.mdx',
+    ]),
 }));
 
 vi.mock('path', async () => {
@@ -25,8 +30,6 @@ vi.mock('path', async () => {
     relative: (_base: string, full: string) => full.replace('/content/en/', ''),
   };
 });
-
-import sitemap from '@/app/sitemap';
 
 describe('sitemap', () => {
   it('excludes main.mdx index files', async () => {

@@ -22,10 +22,10 @@ import { Sidebar } from '@/lib/components/sidebar/sidebar';
 import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
-  useSidebarMenuActions,
-  useSidebarMenuState,
-  useThemeActions,
-  useThemeState,
+    useSidebarMenuActions,
+    useSidebarMenuState,
+    useThemeActions,
+    useThemeState,
 } from '@/lib/context/PersistentUiContext';
 import { Theme } from '@/lib/enums/themes';
 import { Moon, Sun, Wrench } from 'lucide-react';

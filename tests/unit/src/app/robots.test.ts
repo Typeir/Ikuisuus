@@ -3,13 +3,14 @@
  *
  * @module tests/unit/src/app/robots.test
  */
+import robots from '@/app/robots';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/seo', () => ({
-  resolveMetadataBase: vi.fn().mockReturnValue(new URL('https://ikuisuus.vercel.app')),
+  resolveMetadataBase: vi
+    .fn()
+    .mockReturnValue(new URL('https://ikuisuus.vercel.app')),
 }));
-
-import robots from '@/app/robots';
 
 describe('robots', () => {
   it('allows all user agents', () => {
