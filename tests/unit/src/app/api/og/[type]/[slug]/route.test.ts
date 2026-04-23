@@ -13,6 +13,7 @@ vi.mock('@/lib/seo/og/data', () => ({
   getSupportedOgTypes: vi.fn(() => ['monsters', 'heirlooms']),
   getOgCardData: vi.fn(),
   resolveOgImagePath: vi.fn(() => ''),
+  resolveOgBackgroundImagePath: vi.fn(() => undefined),
 }));
 
 vi.mock('@/lib/seo/og/renderer', () => ({

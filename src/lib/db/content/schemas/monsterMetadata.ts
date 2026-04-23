@@ -15,8 +15,6 @@
  * @since 3.0.0
  */
 
-/* ──────────────────────  Nested Value Objects  ────────────────────── */
-
 /**
  * Armor class parsed from stat block table.
  *
@@ -73,6 +71,14 @@ export interface AbilityScore {
 
 /**
  * Full set of D&D ability scores.
+ *
+ * @interface AbilityScores
+ * @property {AbilityScore} str - Strength ability score entry
+ * @property {AbilityScore} dex - Dexterity ability score entry
+ * @property {AbilityScore} con - Constitution ability score entry
+ * @property {AbilityScore} int - Intelligence ability score entry
+ * @property {AbilityScore} wis - Wisdom ability score entry
+ * @property {AbilityScore} cha - Charisma ability score entry
  */
 export interface AbilityScores {
   str: AbilityScore;
@@ -103,72 +109,79 @@ export interface MonsterSenses {
   [key: string]: string | number | undefined;
 }
 
-/* ────────────────────────  Root Entity  ────────────────────────────── */
-
 /**
  * Complete monster metadata record as emitted by the generator.
  *
  * Derived from `parseStatBlockSection()` output in
  * `scripts/metadata/generateMonsterMetadata.ts`.
+ *
+ * @interface MonsterMetadata
+ * @property {string} slug - URL-friendly filename base (e.g. "abominable-avian")
+ * @property {string} [subSlug] - Variant identifier for multi-stat-block files (e.g. "albedo", "petal")
+ * @property {string} title - Display name
+ * @property {string} file - Relative file path (e.g. "src/content/en/monsters/abominable-avian.sheet.mdx")
+ * @property {string} link - Wiki link path (e.g. "/library/monsters/abominable-avian")
+ * @property {string} [size] - Creature size (lowercase: "tiny" | "small" | "medium" | "large" | "huge" | "gargantuan")
+ * @property {string} [creatureType] - Creature type (lowercase: "aberration" | "beast" | "dragon" etc.)
+ * @property {string} [alignment] - Alignment (lowercase: "chaotic evil" | "neutral" etc.)
+ * @property {MonsterAC} [ac] - Armor Class
+ * @property {MonsterHP} [hp] - Hit Points
+ * @property {MonsterSpeed} [speed] - Movement Speed
+ * @property {AbilityScores} [abilities] - Ability Scores (STR, DEX, CON, INT, WIS, CHA)
+ * @property {Record<string, number>} [savingThrows] - Saving throw bonuses keyed by ability abbreviation
+ * @property {string[]} [skills] - Skill proficiencies (e.g. ["Perception +5", "Stealth +7"])
+ * @property {string[]} [damageResistances] - Damage resistances
+ * @property {string[]} [damageImmunities] - Damage immunities
+ * @property {string[]} [damageVulnerabilities] - Damage vulnerabilities
+ * @property {string[]} [conditionImmunities] - Condition immunities
+ * @property {MonsterSenses} [senses] - Senses
+ * @property {string[]} [languages] - Known languages
+ * @property {string} [cr] - Challenge rating (fractional or whole, e.g. "1/4", "10")
+ * @property {number} [proficiencyBonus] - Proficiency bonus
+ * @property {string[]} [tags] - Gameplay tags for filtering and search
+ * @property {string} [image] - Image path extracted from BlendedImage in MDX (e.g. "/library/images/Albedo.webp")
+ * @property {string} [description] - Short prose lore description extracted from the stat block MDX
+ * @property {number} [indexVersion] - Metadata format version
  */
 export interface MonsterMetadata {
-  /** URL-friendly filename base (e.g. "abominable-avian") */
   slug: string;
-  /** Variant identifier for multi-stat-block files (e.g. "albedo", "petal") */
   subSlug?: string;
-  /** Display name */
   title: string;
-  /** Relative file path (e.g. "src/content/en/monsters/abominable-avian.sheet.mdx") */
   file: string;
-  /** Wiki link path (e.g. "/library/monsters/abominable-avian") */
   link: string;
-  /** Creature size (lowercase: "tiny" | "small" | "medium" | "large" | "huge" | "gargantuan") */
   size?: string;
-  /** Creature type (lowercase: "aberration" | "beast" | "dragon" etc.) */
   creatureType?: string;
-  /** Alignment (lowercase: "chaotic evil" | "neutral" etc.) */
   alignment?: string;
-  /** Armor Class */
   ac?: MonsterAC;
-  /** Hit Points */
   hp?: MonsterHP;
-  /** Movement Speed */
   speed?: MonsterSpeed;
-  /** Ability Scores (STR, DEX, CON, INT, WIS, CHA) */
   abilities?: AbilityScores;
-  /** Saving throw bonuses keyed by ability abbreviation */
   savingThrows?: Record<string, number>;
-  /** Skill proficiencies (e.g. ["Perception +5", "Stealth +7"]) */
   skills?: string[];
-  /** Damage resistances */
   damageResistances?: string[];
-  /** Damage immunities */
   damageImmunities?: string[];
-  /** Damage vulnerabilities */
   damageVulnerabilities?: string[];
-  /** Condition immunities */
   conditionImmunities?: string[];
-  /** Senses */
   senses?: MonsterSenses;
-  /** Known languages */
   languages?: string[];
-  /** Challenge rating (fractional or whole, e.g. "1/4", "10") */
   cr?: string;
-  /** Proficiency bonus */
   proficiencyBonus?: number;
-  /** Gameplay tags for filtering and search */
   tags?: string[];
-  /** Image path extracted from BlendedImage in MDX (e.g. "/library/images/Albedo.webp") */
   image?: string;
-  /** Metadata format version */
+  description?: string;
   indexVersion?: number;
 }
-
-/* ──────────────────────  Index Projection  ─────────────────────────── */
 
 /**
  * Lightweight projection for combobox / dropdown search.
  * Corresponds to the fields returned by `/api/monsters/index`.
+ *
+ * @interface MonsterIndexEntry
+ * @property {string} slug - URL-friendly identifier
+ * @property {string} title - Display name
+ * @property {string} [cr] - Challenge rating
+ * @property {string} [size] - Creature size
+ * @property {string} [creatureType] - Creature type
  */
 export interface MonsterIndexEntry {
   slug: string;

@@ -137,6 +137,10 @@ export class HeirloomEntity {
   @Property({ type: 'string[]' })
   tags: string[] = [];
 
+  /** @property {string | null} description - Prose description extracted from the heirloom MDX */
+  @Property({ type: 'text', nullable: true })
+  description?: string | null;
+
   @Property({
     type: 'number',
     fieldName: 'index_version',

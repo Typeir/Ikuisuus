@@ -20,13 +20,13 @@ import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {
-  AbilityScores,
-  MonsterAC,
-  MonsterHP,
-  MonsterIndexEntry,
-  MonsterMetadata,
-  MonsterSenses,
-  MonsterSpeed,
+    AbilityScores,
+    MonsterAC,
+    MonsterHP,
+    MonsterIndexEntry,
+    MonsterMetadata,
+    MonsterSenses,
+    MonsterSpeed,
 } from '../../schemas/monsterMetadata';
 
 const log = logger.child({ module: 'PGMonsterRepo' });
@@ -159,6 +159,8 @@ const rowToMonster = (row: MonsterEntity): MonsterMetadata => ({
   conditionImmunities: nonEmpty(row.conditionImmunities),
   languages: nonEmpty(row.languages),
   tags: nonEmpty(row.tags),
+  image: orUndef(row.image),
+  description: orUndef(row.description),
   indexVersion: orUndef(row.indexVersion),
 });
 

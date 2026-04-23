@@ -1,29 +1,29 @@
 /**
  * @fileoverview OG image metadata resolver.
  *
- * Fetches a single metadata record from the filesystem for a given content
- * type and slug. Used by the OG image API route to gather the title, rarity,
- * type, and image path needed to render the card.
+ * Fetches a single metadata record via the active content repository for a
+ * given content type and slug. Delegates to the same adapter (fs or pg) used
+ * by all other content API routes — no direct filesystem access.
  *
- * Only the filesystem backend is supported here — OG images are always
- * resolved at request time against local `.metadata.json` sidecar files.
- *
- * Supported type strings and their subdirectory mappings:
- * - `monsters`         → `monsters/`
- * - `heirlooms`        → `items/heirlooms/`
- * - `spells`           → `spells/`
- * - `trinkets`         → `items/trinkets/`
- * - `bloodlines`       → `bloodlines/`
- * - `vocations`        → `vocations/`
- * - `specializations`  → `specializations/`
+ * Supported type strings:
+ * - `monsters`, `heirlooms`, `spells`, `trinkets`
+ * - `bloodlines`, `vocations`, `specializations`
  *
  * @module lib/seo/og/data
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 3.0.0
  */
 
-import { readMetadataFiles } from '@/lib/db/content/adapters/fs/readMetadataFiles';
+import {
+    bloodlineRepository,
+    heirloomRepository,
+    monsterRepository,
+    specializationRepository,
+    spellRepository,
+    trinketRepository,
+    vocationRepository,
+} from '@/lib/db/content/repositories';
 
 /**
  * Minimal metadata shape required for OG card rendering.
@@ -51,16 +51,16 @@ export interface OGCardData {
   description?: string;
 }
 
-/** Maps URL-facing type slugs to their content subdirectory paths. */
-const TYPE_SUBDIR_MAP: Record<string, string> = {
-  monsters: 'monsters',
-  heirlooms: 'items/heirlooms',
-  spells: 'spells',
-  trinkets: 'items/trinkets',
-  bloodlines: 'bloodlines',
-  vocations: 'vocations',
-  specializations: 'specializations',
-};
+/** Supported OG content type keys. */
+const SUPPORTED_OG_TYPES = [
+  'monsters',
+  'heirlooms',
+  'spells',
+  'trinkets',
+  'bloodlines',
+  'vocations',
+  'specializations',
+] as const;
 
 /**
  * Returns all supported OG content type keys.
@@ -68,7 +68,7 @@ const TYPE_SUBDIR_MAP: Record<string, string> = {
  * @returns {string[]} Array of supported type strings
  */
 export function getSupportedOgTypes(): string[] {
-  return Object.keys(TYPE_SUBDIR_MAP);
+  return [...SUPPORTED_OG_TYPES];
 }
 
 /**
@@ -120,57 +120,105 @@ export function resolveOgBackgroundImagePath(
 }
 
 /**
+ * Formats a spell level number into a display string.
+ *
+ * @param {number | undefined} level - Numeric spell level (0 = cantrip)
+ * @returns {string | undefined} Formatted level string or undefined
+ */
+function formatSpellLevel(level: number | undefined): string | undefined {
+  if (level === undefined) return undefined;
+  return level === 0 ? 'Cantrip' : `Level ${level}`;
+}
+
+/**
  * Fetches the OG card data for a single entity identified by type and slug.
  *
- * Returns `null` when:
- * - The type is not in the supported map
- * - No metadata file for the slug exists
+ * Delegates to the active repository adapter (fs or pg) — never reads
+ * the filesystem directly. Returns `null` when the type is unsupported
+ * or no record exists for the slug.
  *
  * @param {string} type - Content type key (e.g. `"monsters"`, `"heirlooms"`)
  * @param {string} slug - URL-safe entity identifier
- * @returns {OGCardData | null} Resolved card data or null when not found
+ * @returns {Promise<OGCardData | null>} Resolved card data or null when not found
  */
-export function getOgCardData(type: string, slug: string): OGCardData | null {
-  const subdir = TYPE_SUBDIR_MAP[type];
-  if (!subdir) return null;
-
-  const records = readMetadataFiles<Record<string, unknown>>('en', subdir);
-  const record = records.find(
-    (r) => r['slug'] === slug || r['subSlug'] === slug,
-  );
-  if (!record) return null;
-
-  const title = typeof record['title'] === 'string' ? record['title'] : slug;
-  const rarity =
-    typeof record['rarity'] === 'string' ? record['rarity'] : undefined;
-  const itemType =
-    typeof record['itemType'] === 'string' ? record['itemType'] : undefined;
-  const creatureType =
-    typeof record['creatureType'] === 'string'
-      ? record['creatureType']
-      : undefined;
-  const school =
-    typeof record['school'] === 'string' ? record['school'] : undefined;
-  const levelRaw = record['level'];
-  const level =
-    typeof levelRaw === 'number'
-      ? levelRaw === 0
-        ? 'Cantrip'
-        : `Level ${levelRaw}`
-      : undefined;
-  const description =
-    typeof record['description'] === 'string'
-      ? record['description']
-      : undefined;
-
-  return {
-    slug,
-    title,
-    rarity,
-    itemType,
-    creatureType,
-    school,
-    level,
-    description,
-  };
+export async function getOgCardData(
+  type: string,
+  slug: string,
+): Promise<OGCardData | null> {
+  switch (type) {
+    case 'monsters': {
+      const m = await monsterRepository.getBySlug('en', slug);
+      if (!m) return null;
+      return {
+        slug,
+        title: m.title,
+        creatureType: m.creatureType,
+        description: m.description,
+      };
+    }
+    case 'heirlooms': {
+      const h = await heirloomRepository.getBySlug('en', slug);
+      if (!h) return null;
+      return {
+        slug,
+        title: h.title,
+        rarity: h.rarity,
+        itemType: h.itemType,
+        description: h.description,
+      };
+    }
+    case 'spells': {
+      const s = await spellRepository.getBySlug('en', slug);
+      if (!s) return null;
+      return {
+        slug,
+        title: s.title,
+        school: s.school,
+        level: formatSpellLevel(s.level),
+        description: s.description,
+      };
+    }
+    case 'trinkets': {
+      const t = await trinketRepository.getBySlug('en', slug);
+      if (!t) return null;
+      return {
+        slug,
+        title: t.title,
+        itemType: t.itemType,
+        description: t.description,
+      };
+    }
+    case 'bloodlines': {
+      const b = await bloodlineRepository.getBySlug('en', slug);
+      if (!b) return null;
+      return {
+        slug,
+        title: b.title,
+        subLabel: b.coreFeatures?.creatureTypes?.[0],
+        description: b.description,
+      };
+    }
+    case 'vocations': {
+      const v = await vocationRepository.getBySlug('en', slug);
+      if (!v) return null;
+      return {
+        slug,
+        title: v.title,
+        subLabel: v.archetype,
+        description: v.description,
+      };
+    }
+    case 'specializations': {
+      const sp = await specializationRepository.getBySlug('en', slug);
+      if (!sp) return null;
+      return {
+        slug,
+        title: sp.title,
+        subLabel: sp.specializationType,
+        description: sp.description,
+      };
+    }
+    default:
+      return null;
+  }
 }

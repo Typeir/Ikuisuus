@@ -12,13 +12,13 @@
  */
 
 import {
-  Embeddable,
-  Embedded,
-  Entity,
-  Index,
-  PrimaryKey,
-  Property,
-  Unique,
+    Embeddable,
+    Embedded,
+    Entity,
+    Index,
+    PrimaryKey,
+    Property,
+    Unique,
 } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
@@ -258,6 +258,10 @@ export class MonsterEntity {
   /** @property {string | null} image - Image path extracted from BlendedImage in MDX */
   @Property({ type: 'string', nullable: true })
   image?: string | null;
+
+  /** @property {string | null} description - Lore description extracted from the stat block MDX */
+  @Property({ type: 'text', nullable: true })
+  description?: string | null;
 
   @Property({
     type: 'number',

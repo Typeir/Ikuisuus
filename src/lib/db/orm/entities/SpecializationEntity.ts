@@ -11,16 +11,16 @@
  */
 
 import {
-  Collection,
-  Embeddable,
-  Embedded,
-  Entity,
-  Index,
-  ManyToOne,
-  OneToMany,
-  PrimaryKey,
-  Property,
-  Unique,
+    Collection,
+    Embeddable,
+    Embedded,
+    Entity,
+    Index,
+    ManyToOne,
+    OneToMany,
+    PrimaryKey,
+    Property,
+    Unique,
 } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
@@ -127,6 +127,10 @@ export class SpecializationEntity {
 
   @Property({ type: 'text', nullable: true })
   flavor?: string | null;
+
+  /** @property {string | null} description - Prose description extracted from the specialization MDX */
+  @Property({ type: 'text', nullable: true })
+  description?: string | null;
 
   @Embedded(() => SpecializationSpellcastingEmbed, {
     prefix: 'spellcasting_',

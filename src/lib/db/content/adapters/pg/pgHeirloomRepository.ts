@@ -16,9 +16,9 @@ import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { HeirloomRepository } from '../../repositories/heirloomRepository';
 import type {
-  HeirloomCharges,
-  HeirloomMetadata,
-  HeirloomWeaponDamage,
+    HeirloomCharges,
+    HeirloomMetadata,
+    HeirloomWeaponDamage,
 } from '../../schemas/heirloomMetadata';
 
 const log = logger.child({ module: 'PGHeirloomRepo' });
@@ -87,6 +87,7 @@ const rowToHeirloom = (row: HeirloomEntity): HeirloomMetadata => ({
   damageTypesDealt: nonEmpty(row.damageTypesDealt),
   savingThrowTypes: nonEmpty(row.savingThrowTypes),
   tags: nonEmpty(row.tags),
+  description: orUndef(row.description),
   indexVersion: orUndef(row.indexVersion),
 });
 

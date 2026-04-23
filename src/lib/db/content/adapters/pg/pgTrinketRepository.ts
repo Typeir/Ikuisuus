@@ -42,6 +42,7 @@ const rowToTrinket = (row: TrinketEntity): TrinketMetadata => ({
   specialEffects: nonEmpty(row.specialEffects),
   inflictsConditions: nonEmpty(row.inflictsConditions),
   tags: nonEmpty(row.tags),
+  description: orUndef(row.description),
 });
 
 /* ──────────────────────────────  Repository  ─────────────────────────── */

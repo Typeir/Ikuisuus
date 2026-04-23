@@ -12,8 +12,6 @@
  * @since 3.0.0
  */
 
-/* ──────────────────────  Nested Value Objects  ────────────────────── */
-
 /**
  * A single feature gained at a specific level.
  *
@@ -47,11 +45,10 @@ export interface SpecializationSpellcasting {
   progression: string;
 }
 
-/* ────────────────────────  Root Entity  ────────────────────────────── */
-
 /**
  * Complete specialization metadata record as emitted by the generator.
  *
+ * @interface SpecializationMetadata
  * @property {string} slug - URL-friendly identifier (e.g. "path-of-the-berserker")
  * @property {string} title - Display name (e.g. "Path of the Berserker")
  * @property {string} file - Relative file path from content root
@@ -59,6 +56,7 @@ export interface SpecializationSpellcasting {
  * @property {string} vocation - Parent vocation slug (e.g. "barbarian")
  * @property {string} specializationType - Type classification (e.g. "Path", "Domain", "School")
  * @property {string} [flavor] - Introductory flavor text
+ * @property {string} [description] - Prose description extracted from the specialization MDX
  * @property {SpecializationSpellcasting} [spellcasting] - Own spellcasting if applicable
  * @property {AlwaysPreparedSpells[]} [spellsAlwaysPrepared] - Level-keyed lists of always-prepared spells
  * @property {SpecializationFeature[]} features - Level-feature list
@@ -73,6 +71,7 @@ export interface SpecializationMetadata {
   vocation: string;
   specializationType: string;
   flavor?: string;
+  description?: string;
   spellcasting?: SpecializationSpellcasting;
   spellsAlwaysPrepared?: AlwaysPreparedSpells[];
   features: SpecializationFeature[];
@@ -80,11 +79,10 @@ export interface SpecializationMetadata {
   indexVersion?: number;
 }
 
-/* ──────────────────────  Index Projection  ─────────────────────────── */
-
 /**
  * Lightweight projection for table and dropdown display.
  *
+ * @interface SpecializationIndexEntry
  * @property {string} slug - Specialization slug
  * @property {string} title - Specialization title
  * @property {string} vocation - Parent vocation slug

@@ -15,8 +15,6 @@
  * @since 3.0.0
  */
 
-/* ──────────────────────  Nested Value Objects  ────────────────────── */
-
 /**
  * Reference to a class/vocation spell list that includes this spell.
  *
@@ -28,61 +26,67 @@ export interface SpellListRef {
   link: string;
 }
 
-/* ────────────────────────  Root Entity  ────────────────────────────── */
-
 /**
  * Complete spell metadata record as emitted by the generator.
  *
  * Derived from `parseSpellFile()` output in
  * `scripts/metadata/generateSpellMetadata.ts` and external spell data
  * from `scripts/core/spells-external.metadata.json`.
+ *
+ * @interface SpellMetadata
+ * @property {string} slug - URL-friendly identifier
+ * @property {string} title - Display name
+ * @property {string} file - Relative file path ("external" for imported spells)
+ * @property {string} link - Wiki link path or external URL
+ * @property {number} [level] - Spell level (0 = cantrip, 1–10 = leveled)
+ * @property {string} [school] - School of magic (e.g. "Evocation", "Transmutation")
+ * @property {string} [quality] - Quality tier for high-level spells (e.g. "Legendary", "Epic")
+ * @property {string} [castingTimeRaw] - Raw casting time text (e.g. "1 action", "10 minutes (ritual)")
+ * @property {string[]} [castingTime] - Parsed casting time keywords (e.g. ["action"], ["bonus action", "reaction"])
+ * @property {string} [range] - Spell range (e.g. "60 feet", "Self", "Touch")
+ * @property {boolean} [concentration] - Whether the spell requires concentration
+ * @property {string} [duration] - Duration text (e.g. "Instantaneous", "up to 1 minute")
+ * @property {boolean} [verbal] - Requires verbal component
+ * @property {boolean} [somatic] - Requires somatic component
+ * @property {boolean} [material] - Requires material component
+ * @property {string} [materialDescription] - Material component description
+ * @property {boolean} [hasRitual] - Whether the spell can be cast as a ritual (external spells)
+ * @property {string} [description] - Short prose description extracted from the spell MDX
+ * @property {string[]} [tags] - Gameplay tags for filtering and search
+ * @property {SpellListRef[]} [spellLists] - Class/vocation spell lists that include this spell
  */
 export interface SpellMetadata {
-  /** URL-friendly identifier */
   slug: string;
-  /** Display name */
   title: string;
-  /** Relative file path ("external" for imported spells) */
   file: string;
-  /** Wiki link path or external URL */
   link: string;
-  /** Spell level (0 = cantrip, 1–10 = leveled) */
   level?: number;
-  /** School of magic (e.g. "Evocation", "Transmutation") */
   school?: string;
-  /** Quality tier for high-level spells (e.g. "Legendary", "Epic") */
   quality?: string;
-  /** Raw casting time text (e.g. "1 action", "10 minutes (ritual)") */
   castingTimeRaw?: string;
-  /** Parsed casting time keywords (e.g. ["action"], ["bonus action", "reaction"]) */
   castingTime?: string[];
-  /** Spell range (e.g. "60 feet", "Self", "Touch") */
   range?: string;
-  /** Whether the spell requires concentration */
   concentration?: boolean;
-  /** Duration text (e.g. "Instantaneous", "up to 1 minute") */
   duration?: string;
-  /** Requires verbal component */
   verbal?: boolean;
-  /** Requires somatic component */
   somatic?: boolean;
-  /** Requires material component */
   material?: boolean;
-  /** Material component description */
   materialDescription?: string;
-  /** Whether the spell can be cast as a ritual (external spells) */
   hasRitual?: boolean;
-  /** Gameplay tags for filtering and search */
+  description?: string;
   tags?: string[];
-  /** Class/vocation spell lists that include this spell */
   spellLists?: SpellListRef[];
 }
-
-/* ──────────────────────  Index Projection  ─────────────────────────── */
 
 /**
  * Lightweight projection for combobox / dropdown search.
  * Corresponds to the fields returned by `/api/spells/index`.
+ *
+ * @interface SpellIndexEntry
+ * @property {string} slug - URL-friendly identifier
+ * @property {string} title - Display name
+ * @property {number} [level] - Spell level
+ * @property {string} [school] - School of magic
  */
 export interface SpellIndexEntry {
   slug: string;

@@ -11,17 +11,17 @@
  */
 
 import {
-  SpellEntity,
-  SpellListEntity,
+    SpellEntity,
+    SpellListEntity,
 } from '@/lib/db/orm/entities/SpellEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
 import type {
-  SpellIndexEntry,
-  SpellListRef,
-  SpellMetadata,
+    SpellIndexEntry,
+    SpellListRef,
+    SpellMetadata,
 } from '../../schemas/spellMetadata';
 
 const log = logger.child({ module: 'PGSpellRepo' });
@@ -67,6 +67,7 @@ const rowToSpell = (row: SpellEntity): SpellMetadata => ({
   material: orUndef(row.components.material),
   materialDescription: orUndef(row.components.materialDescription),
   hasRitual: orUndef(row.hasRitual),
+  description: orUndef(row.description),
   tags: nonEmpty(row.tags),
   spellLists: buildSpellLists(row.spellLists.getItems()),
 });

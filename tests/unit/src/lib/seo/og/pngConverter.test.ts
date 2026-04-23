@@ -11,9 +11,12 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-const mockToBuffer = vi.fn().mockResolvedValue(Buffer.from([137, 80, 78, 71]));
-const mockPng = vi.fn(() => ({ toBuffer: mockToBuffer }));
-const mockSharp = vi.fn(() => ({ png: mockPng }));
+const { mockToBuffer, mockPng, mockSharp } = vi.hoisted(() => {
+  const mockToBuffer = vi.fn().mockResolvedValue(Buffer.from([137, 80, 78, 71]));
+  const mockPng = vi.fn(() => ({ toBuffer: mockToBuffer }));
+  const mockSharp = vi.fn(() => ({ png: mockPng }));
+  return { mockToBuffer, mockPng, mockSharp };
+});
 
 vi.mock('sharp', () => ({ default: mockSharp }));
 

@@ -13,8 +13,6 @@
  * @since 7.0.0
  */
 
-/* ──────────────────────  Nested Value Objects  ────────────────────── */
-
 /**
  * Core racial features parsed from the Core Features tables.
  *
@@ -51,11 +49,10 @@ export interface BloodlineBoon {
   tags: string[];
 }
 
-/* ────────────────────────  Root Entity  ────────────────────────────── */
-
 /**
  * Complete bloodline metadata record as emitted by the generator.
  *
+ * @interface BloodlineMetadata
  * @property {string} slug - URL-friendly identifier (e.g. "empyrean")
  * @property {string} title - Display name (e.g. "Empyrean")
  * @property {string} file - Relative file path
@@ -80,11 +77,10 @@ export interface BloodlineMetadata {
   indexVersion?: number;
 }
 
-/* ──────────────────────  Index Projection  ─────────────────────────── */
-
 /**
  * Lightweight projection for table and dropdown display.
  *
+ * @interface BloodlineIndexEntry
  * @property {string} slug - Bloodline slug
  * @property {string} title - Bloodline title
  * @property {string[]} [size] - Available sizes

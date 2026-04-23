@@ -15,13 +15,25 @@ import {
 } from '@/lib/seo/og/data';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/db/content/adapters/fs/readMetadataFiles', () => ({
-  readMetadataFiles: vi.fn(),
+vi.mock('@/lib/db/content/repositories', () => ({
+  monsterRepository: { getBySlug: vi.fn() },
+  heirloomRepository: { getBySlug: vi.fn() },
+  spellRepository: { getBySlug: vi.fn() },
+  trinketRepository: { getBySlug: vi.fn() },
+  bloodlineRepository: { getBySlug: vi.fn() },
+  vocationRepository: { getBySlug: vi.fn() },
+  specializationRepository: { getBySlug: vi.fn() },
 }));
 
-import { readMetadataFiles } from '@/lib/db/content/adapters/fs/readMetadataFiles';
+import {
+    heirloomRepository,
+    monsterRepository,
+    spellRepository,
+} from '@/lib/db/content/repositories';
 
-const mockRead = vi.mocked(readMetadataFiles);
+const mockMonster = vi.mocked(monsterRepository.getBySlug);
+const mockHeirloom = vi.mocked(heirloomRepository.getBySlug);
+const mockSpell = vi.mocked(spellRepository.getBySlug);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -74,63 +86,71 @@ describe('resolveOgBackgroundImagePath', () => {
 });
 
 describe('getOgCardData', () => {
-  it('returns null for unsupported type', () => {
-    mockRead.mockReturnValue([]);
-    expect(getOgCardData('unknown-type', 'foo')).toBeNull();
+  it('returns null for unsupported type', async () => {
+    expect(await getOgCardData('unknown-type', 'foo')).toBeNull();
   });
 
-  it('returns null when slug is not found in metadata', () => {
-    mockRead.mockReturnValue([{ slug: 'other-monster', title: 'Other' }]);
-    expect(getOgCardData('monsters', 'abominable-avian')).toBeNull();
+  it('returns null when slug is not found in metadata', async () => {
+    mockMonster.mockResolvedValue(null);
+    expect(await getOgCardData('monsters', 'abominable-avian')).toBeNull();
   });
 
-  it('returns card data with correct fields for a monster', () => {
-    mockRead.mockReturnValue([
-      {
-        slug: 'abominable-avian',
-        title: 'Abominable Avian',
-        creatureType: 'beast',
-        size: 'large',
-      },
-    ]);
+  it('returns card data with correct fields for a monster', async () => {
+    mockMonster.mockResolvedValue({
+      slug: 'abominable-avian',
+      title: 'Abominable Avian',
+      file: 'monsters/abominable-avian.sheet.mdx',
+      link: '/library/monsters/abominable-avian',
+      creatureType: 'beast',
+    });
 
-    const result = getOgCardData('monsters', 'abominable-avian');
+    const result = await getOgCardData('monsters', 'abominable-avian');
     expect(result).not.toBeNull();
     expect(result?.title).toBe('Abominable Avian');
     expect(result?.creatureType).toBe('beast');
     expect(result?.rarity).toBeUndefined();
   });
 
-  it('returns card data with rarity and itemType for heirlooms', () => {
-    mockRead.mockReturnValue([
-      {
-        slug: 'dreaded-defender',
-        title: 'Dreaded Defender',
-        rarity: 'rare',
-        itemType: 'weapon',
-      },
-    ]);
+  it('returns card data with rarity and itemType for heirlooms', async () => {
+    mockHeirloom.mockResolvedValue({
+      slug: 'dreaded-defender',
+      title: 'Dreaded Defender',
+      file: 'items/heirlooms/dreaded-defender.mdx',
+      link: '/library/items/heirlooms/dreaded-defender',
+      itemType: 'weapon',
+      rarity: 'rare',
+    });
 
-    const result = getOgCardData('heirlooms', 'dreaded-defender');
+    const result = await getOgCardData('heirlooms', 'dreaded-defender');
     expect(result?.rarity).toBe('rare');
     expect(result?.itemType).toBe('weapon');
   });
 
-  it('formats cantrip level as "Cantrip"', () => {
-    mockRead.mockReturnValue([
-      { slug: 'fire-bolt', title: 'Fire Bolt', level: 0, school: 'Evocation' },
-    ]);
+  it('formats cantrip level as "Cantrip"', async () => {
+    mockSpell.mockResolvedValue({
+      slug: 'fire-bolt',
+      title: 'Fire Bolt',
+      file: 'spells/fire-bolt.mdx',
+      link: '/library/spells/fire-bolt',
+      level: 0,
+      school: 'Evocation',
+    });
 
-    const result = getOgCardData('spells', 'fire-bolt');
+    const result = await getOgCardData('spells', 'fire-bolt');
     expect(result?.level).toBe('Cantrip');
   });
 
-  it('formats numbered level correctly', () => {
-    mockRead.mockReturnValue([
-      { slug: 'fireball', title: 'Fireball', level: 3, school: 'Evocation' },
-    ]);
+  it('formats numbered level correctly', async () => {
+    mockSpell.mockResolvedValue({
+      slug: 'fireball',
+      title: 'Fireball',
+      file: 'spells/fireball.mdx',
+      link: '/library/spells/fireball',
+      level: 3,
+      school: 'Evocation',
+    });
 
-    const result = getOgCardData('spells', 'fireball');
+    const result = await getOgCardData('spells', 'fireball');
     expect(result?.level).toBe('Level 3');
   });
 });

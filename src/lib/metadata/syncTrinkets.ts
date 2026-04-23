@@ -123,6 +123,7 @@ export async function syncTrinkets(
       specialEffects: (t.specialEffects as string[]) ?? [],
       inflictsConditions: (t.inflictsConditions as string[]) ?? [],
       tags: (t.tags as string[]) ?? [],
+      description: t.description as string | undefined,
       versionHash: hash,
     };
 

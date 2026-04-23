@@ -71,6 +71,7 @@ const rowToSpecialization = (
     vocation: row.vocation,
     specializationType: row.specializationType,
     flavor: orUndef(row.flavor),
+    description: orUndef(row.description),
     spellcasting,
     spellsAlwaysPrepared,
     features,

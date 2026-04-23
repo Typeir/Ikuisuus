@@ -30,10 +30,10 @@
  */
 
 import {
-  getOgCardData,
-  getSupportedOgTypes,
-  resolveOgBackgroundImagePath,
-  resolveOgImagePath,
+    getOgCardData,
+    getSupportedOgTypes,
+    resolveOgBackgroundImagePath,
+    resolveOgImagePath,
 } from '@/lib/seo/og/data';
 import { convertToPngDataUri } from '@/lib/seo/og/pngConverter';
 import { renderOgCard } from '@/lib/seo/og/renderer';
@@ -83,7 +83,7 @@ export async function GET(
     );
   }
 
-  const data = getOgCardData(type, slug);
+  const data = await getOgCardData(type, slug);
   if (!data) {
     return Response.json({ error: 'Not found' }, { status: 404 });
   }

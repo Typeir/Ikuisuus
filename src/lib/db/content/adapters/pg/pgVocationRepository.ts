@@ -68,6 +68,7 @@ const rowToVocation = (row: VocationEntity): VocationMetadata => {
     specializations: row.specializations,
     features,
     tags: nonEmpty(row.tags) ?? [],
+    description: orUndef(row.description),
     indexVersion: orUndef(row.indexVersion),
   };
 };

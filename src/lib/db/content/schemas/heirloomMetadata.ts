@@ -13,8 +13,6 @@
  * @since 3.0.0
  */
 
-/* ──────────────────────  Nested Value Objects  ────────────────────── */
-
 /**
  * Charge economy info parsed from the item description.
  *
@@ -41,61 +39,68 @@ export interface HeirloomWeaponDamage {
   versatileDamage?: string;
 }
 
-/* ────────────────────────  Root Entity  ────────────────────────────── */
-
 /**
  * Complete heirloom metadata record as emitted by the generator.
  *
  * Derived from `parseHeirloomFile()` output in
  * `scripts/metadata/generateHeirloomMetadata.ts`.
+ *
+ * @interface HeirloomMetadata
+ * @property {string} slug - URL-friendly identifier
+ * @property {string} title - Display name
+ * @property {string} file - Relative file path
+ * @property {string} link - Wiki link path (e.g. "/library/items/heirlooms/alfanjon-of-the-crescent-moon")
+ * @property {string} [rarity] - Rarity tier (e.g. "common", "uncommon", "rare", "very rare", "legendary")
+ * @property {string} [itemType] - High-level item category (e.g. "weapon", "armor", "wondrous item")
+ * @property {string} [weaponType] - Specific weapon/armor subtype (e.g. "curved longsword", "cloak")
+ * @property {boolean} [requiresAttunement] - Whether attunement is required
+ * @property {string} [attunementRequirements] - Specific attunement restrictions (e.g. "by a paladin")
+ * @property {string[]} [weaponProperties] - Weapon property keywords (e.g. ["finesse", "martial", "versatile"])
+ * @property {string[]} [mastery] - Weapon mastery keywords (e.g. ["slow", "cleave"])
+ * @property {HeirloomWeaponDamage} [weaponDamage] - Parsed weapon damage info
+ * @property {number} [hitModifier] - Magic weapon attack bonus (e.g. +1, +3)
+ * @property {string} [range] - Weapon or thrown range (e.g. "30/90")
+ * @property {string} [weight] - Item weight (e.g. "3 lbs")
+ * @property {string[]} [damageTypesDealt] - Damage types the item can deal
+ * @property {string[]} [savingThrowTypes] - Saving throw types the item requires
+ * @property {HeirloomCharges} [charges] - Charge economy info (initial count, recharge formula, depletion flag)
+ * @property {string[]} [tags] - Gameplay tags for filtering and search
+ * @property {string} [description] - Short prose description extracted from the heirloom MDX
+ * @property {number} [indexVersion] - Metadata format version
  */
 export interface HeirloomMetadata {
-  /** URL-friendly identifier */
   slug: string;
-  /** Display name */
   title: string;
-  /** Relative file path */
   file: string;
-  /** Wiki link path (e.g. "/library/items/heirlooms/alfanjon-of-the-crescent-moon") */
   link: string;
-  /** Rarity tier (e.g. "common", "uncommon", "rare", "very rare", "legendary") */
   rarity?: string;
-  /** High-level item category (e.g. "weapon", "armor", "wondrous item") */
   itemType?: string;
-  /** Specific weapon/armor subtype (e.g. "curved longsword", "cloak") */
   weaponType?: string;
-  /** Whether attunement is required */
   requiresAttunement?: boolean;
-  /** Specific attunement restrictions (e.g. "by a paladin") */
   attunementRequirements?: string;
-  /** Weapon property keywords (e.g. ["finesse", "martial", "versatile"]) */
   weaponProperties?: string[];
-  /** Weapon mastery keywords (e.g. ["slow", "cleave"]) */
   mastery?: string[];
-  /** Parsed weapon damage info */
   weaponDamage?: HeirloomWeaponDamage;
-  /** Magic weapon attack bonus (e.g. +1, +3) */
   hitModifier?: number;
-  /** Weapon or thrown range (e.g. "30/90") */
   range?: string;
-  /** Item weight (e.g. "3 lbs") */
   weight?: string;
-  /** Damage types the item can deal */
   damageTypesDealt?: string[];
-  /** Saving throw types the item requires */
   savingThrowTypes?: string[];
-  /** Charge economy info (initial count, recharge formula, depletion flag) */
   charges?: HeirloomCharges;
-  /** Gameplay tags for filtering and search */
   tags?: string[];
-  /** Metadata format version */
+  description?: string;
   indexVersion?: number;
 }
 
-/* ──────────────────────  Index Projection  ─────────────────────────── */
-
 /**
  * Lightweight projection for table and dropdown display.
+ *
+ * @interface HeirloomIndexEntry
+ * @property {string} slug - URL-friendly identifier
+ * @property {string} title - Display name
+ * @property {string} [rarity] - Rarity tier
+ * @property {string} [itemType] - Item category
+ * @property {boolean} [requiresAttunement] - Whether attunement is required
  */
 export interface HeirloomIndexEntry {
   slug: string;

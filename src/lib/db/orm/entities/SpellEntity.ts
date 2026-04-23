@@ -127,6 +127,10 @@ export class SpellEntity {
   @Property({ type: 'boolean', fieldName: 'has_ritual', nullable: true })
   hasRitual?: boolean | null;
 
+  /** @property {string | null} description - Prose description extracted from the spell MDX */
+  @Property({ type: 'text', nullable: true })
+  description?: string | null;
+
   @Property({ fieldName: 'casting_time', type: 'string[]' })
   castingTime: string[] = [];
 

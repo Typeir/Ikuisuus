@@ -13,8 +13,6 @@
  * @since 3.0.0
  */
 
-/* ──────────────────────  Nested Value Objects  ────────────────────── */
-
 /**
  * A single feature row from the vocation features table.
  *
@@ -48,11 +46,10 @@ export interface VocationSkillProficiencies {
   choices: string[];
 }
 
-/* ────────────────────────  Root Entity  ────────────────────────────── */
-
 /**
  * Complete vocation metadata record as emitted by the generator.
  *
+ * @interface VocationMetadata
  * @property {string} slug - URL-friendly identifier (e.g. "barbarian")
  * @property {string} title - Display name (e.g. "Barbarian")
  * @property {string} file - Relative file path from content root
@@ -69,6 +66,7 @@ export interface VocationSkillProficiencies {
  * @property {string[]} specializations - Slugs of available specializations
  * @property {VocationFeature[]} features - Level-feature progression
  * @property {string[]} tags - Derived gameplay tags for filtering
+ * @property {string} [description] - Prose description extracted from the vocation MDX
  * @property {number} [indexVersion] - Metadata schema version
  */
 export interface VocationMetadata {
@@ -88,14 +86,14 @@ export interface VocationMetadata {
   specializations: string[];
   features: VocationFeature[];
   tags: string[];
+  description?: string;
   indexVersion?: number;
 }
-
-/* ──────────────────────  Index Projection  ─────────────────────────── */
 
 /**
  * Lightweight projection for table and dropdown display.
  *
+ * @interface VocationIndexEntry
  * @property {string} slug - Vocation slug
  * @property {string} title - Vocation title
  * @property {string} hitDie - Hit die type

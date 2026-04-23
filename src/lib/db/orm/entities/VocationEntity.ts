@@ -145,6 +145,10 @@ export class VocationEntity {
   @Property({ type: 'string[]' })
   tags: string[] = [];
 
+  /** @property {string | null} description - Prose description extracted from the vocation MDX */
+  @Property({ type: 'text', nullable: true })
+  description?: string | null;
+
   @Property({
     type: 'number',
     fieldName: 'index_version',

@@ -206,6 +206,8 @@ async function syncMonsters(
       conditionImmunities: (m.conditionImmunities as string[]) ?? [],
       languages: (m.languages as string[]) ?? [],
       tags: (m.tags as string[]) ?? [],
+      image: m.image as string | undefined,
+      description: m.description as string | undefined,
       indexVersion: m.indexVersion as number | undefined,
       versionHash: hash,
     };
@@ -304,6 +306,7 @@ async function syncHeirlooms(
       damageTypesDealt: (h.damageTypesDealt as string[]) ?? [],
       savingThrowTypes: (h.savingThrowTypes as string[]) ?? [],
       tags: (h.tags as string[]) ?? [],
+      description: h.description as string | undefined,
       indexVersion: h.indexVersion as number | undefined,
       versionHash: hash,
     };
@@ -399,6 +402,7 @@ async function syncSpells(
         materialDescription: s.materialDescription as string | undefined,
       },
       hasRitual: s.hasRitual as boolean | undefined,
+      description: s.description as string | undefined,
       tags: (s.tags as string[]) ?? [],
       versionHash: hash,
     };

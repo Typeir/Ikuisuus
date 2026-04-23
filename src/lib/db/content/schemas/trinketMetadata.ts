@@ -14,51 +14,58 @@
  * @since 3.0.0
  */
 
-/* ────────────────────────  Root Entity  ────────────────────────────── */
-
 /**
  * Complete trinket metadata record as emitted by the generator.
  *
  * Derived from `parseTrinketFile()` output in
  * `scripts/metadata/generateTrinketMetadata.ts`.
+ *
+ * @interface TrinketMetadata
+ * @property {string} slug - URL-friendly identifier
+ * @property {string} title - Display name
+ * @property {string} file - Relative file path
+ * @property {string} link - Wiki link path (e.g. "/library/items/trinkets/bolas")
+ * @property {string} itemType - Item category (e.g. "Adventuring Gear")
+ * @property {string} [damage] - Damage dice expression (e.g. "1d6")
+ * @property {string} [damageType] - Damage type (e.g. "piercing", "bludgeoning")
+ * @property {string[]} [properties] - Item properties (e.g. ["thrown", "special"])
+ * @property {string} [range] - Weapon or thrown range (e.g. "30/60")
+ * @property {string} [weight] - Item weight (e.g. "1 lb.")
+ * @property {number} [savingThrowDC] - Saving throw DC
+ * @property {string} [savingThrowAbility] - Saving throw ability (e.g. "dexterity")
+ * @property {string[]} [specialEffects] - Special effect keywords (e.g. ["restrain", "trip"])
+ * @property {string[]} [inflictsConditions] - Conditions inflicted (e.g. ["prone"])
+ * @property {string[]} [tags] - Gameplay tags for filtering and search
+ * @property {string} [description] - Short prose description extracted from the trinket MDX
  */
 export interface TrinketMetadata {
-  /** URL-friendly identifier */
   slug: string;
-  /** Display name */
   title: string;
-  /** Relative file path */
   file: string;
-  /** Wiki link path (e.g. "/library/items/trinkets/bolas") */
   link: string;
-  /** Item category (e.g. "Adventuring Gear") */
   itemType: string;
-  /** Damage dice expression (e.g. "1d6") */
   damage?: string;
-  /** Damage type (e.g. "piercing", "bludgeoning") */
   damageType?: string;
-  /** Item properties (e.g. ["thrown", "special"]) */
   properties?: string[];
-  /** Weapon or thrown range (e.g. "30/60") */
   range?: string;
-  /** Item weight (e.g. "1 lb.") */
   weight?: string;
-  /** Saving throw DC */
   savingThrowDC?: number;
-  /** Saving throw ability (e.g. "dexterity") */
   savingThrowAbility?: string;
-  /** Special effect keywords (e.g. ["restrain", "trip"]) */
   specialEffects?: string[];
-  /** Conditions inflicted (e.g. ["prone"]) */
   inflictsConditions?: string[];
-  /** Gameplay tags for filtering and search */
   tags?: string[];
+  description?: string;
 }
-
-/* ──────────────────────  Index Projection  ─────────────────────────── */
 
 /**
  * Lightweight projection for table display.
+ *
+ * @interface TrinketIndexEntry
+ * @property {string} slug - URL-friendly identifier
+ * @property {string} title - Display name
+ * @property {string} itemType - Item category
+ * @property {string} [damage] - Damage dice expression
+ * @property {string} [damageType] - Damage type
  */
 export interface TrinketIndexEntry {
   slug: string;

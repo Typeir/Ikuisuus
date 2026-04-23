@@ -96,6 +96,10 @@ export class TrinketEntity {
   @Property({ type: 'string[]' })
   tags: string[] = [];
 
+  /** @property {string | null} description - Prose description extracted from the trinket MDX */
+  @Property({ type: 'text', nullable: true })
+  description?: string | null;
+
   /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
   @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
