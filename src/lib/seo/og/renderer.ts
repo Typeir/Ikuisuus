@@ -5,6 +5,9 @@
  * `@resvg/resvg-js` to rasterise it into a PNG buffer. The result is intended
  * for use as the response body of the `/api/og/[type]/[slug]` route.
  *
+ * PNG compression uses Sharp's aggressive settings (level 9, palette reduction)
+ * to ensure images are optimized for social media platforms with file size limits.
+ *
  * Font loading uses a module-level cache so that both Inter Bold and Crimson
  * Text Italic are fetched once per process. In development the cache may be
  * invalidated on each restart, which is acceptable.
@@ -18,6 +21,7 @@
 import { Resvg } from '@resvg/resvg-js';
 import React from 'react';
 import satori from 'satori';
+import sharp from 'sharp';
 import type { OGTemplateProps } from './OGTemplate';
 import { OGTemplate } from './OGTemplate';
 import { OG_HEIGHT, OG_WIDTH } from './tokens';
@@ -85,13 +89,21 @@ async function loadFonts(): Promise<import('satori').Font[]> {
 }
 
 /**
- * Renders an OG card to a PNG buffer.
+ * Renders an OG card to a compressed PNG buffer.
  *
  * Calls satori to produce an SVG string from the React element tree, then
- * passes the SVG through Resvg to produce a PNG `Uint8Array`.
+ * passes the SVG through Resvg to produce a PNG. The PNG is then aggressively
+ * compressed using Sharp (compression level 9, palette optimization) to ensure
+ * it meets social media file size limits (e.g., WhatsApp < 600 KB).
+ *
+ * Compression pipeline:
+ * 1. Resvg renders SVG to uncompressed PNG
+ * 2. Sharp applies maximum PNG compression (level 9)
+ * 3. Palette reduction to minimize color depth where possible
+ * 4. Effort level 10 for optimal compression trade-off
  *
  * @param {OGTemplateProps} props - Data and optional image URL for the card
- * @returns {Promise<Uint8Array>} PNG image data
+ * @returns {Promise<Uint8Array>} Compressed PNG image data (target: < 600 KB)
  */
 export async function renderOgCard(
   props: OGTemplateProps,
@@ -110,5 +122,15 @@ export async function renderOgCard(
     fitTo: { mode: 'width', value: OG_WIDTH },
   });
 
-  return resvg.render().asPng();
+  const png = resvg.render().asPng();
+
+  const compressed = await sharp(Buffer.from(png))
+    .png({
+      compressionLevel: 9,
+      palette: true,
+      effort: 10,
+    })
+    .toBuffer();
+
+  return new Uint8Array(compressed);
 }

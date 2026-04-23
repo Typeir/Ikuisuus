@@ -530,9 +530,18 @@ function parseMonsterDescription(sectionLines: string[]): string | undefined {
   const tableIdx = sectionLines.findIndex((l) => l.trim().startsWith('|'));
   if (tableIdx === -1) return undefined;
 
-  const descLines = sectionLines
-    .slice(1, tableIdx)
-    .map((l) => l.trim())
+  // Find the italic metadata line (_Size Type, alignment_)
+  const italicIdx = sectionLines.findIndex(
+    (l) => /^_[^_]+_$/.test(l.trim())
+  );
+  if (italicIdx === -1) return undefined;
+
+  // Start from line after the italic metadata line
+  const candidate = sectionLines
+    .slice(italicIdx + 1, tableIdx)
+    .map((l) => l.trim());
+
+  const descLines = candidate
     .filter(
       (l) =>
         l.length > 0 &&
@@ -540,7 +549,9 @@ function parseMonsterDescription(sectionLines: string[]): string | undefined {
         !l.startsWith('<') &&
         !l.startsWith('>') &&
         !l.startsWith('|') &&
-        !/^_[^_]+_$/.test(l),
+        !l.includes('/>') &&
+        !l.includes('=') && // Exclude JSX attribute lines
+        !/^-{3,}$/.test(l), // Exclude markdown dividers
     );
 
   return descLines.length > 0
