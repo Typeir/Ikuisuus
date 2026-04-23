@@ -11,10 +11,12 @@
  */
 
 import { routing } from '@/i18n/routing';
+import { resolveMetadataBase } from '@/lib/seo';
 import { getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
 import { getCombinedInitScript } from '@/lib/utils/persistentUiScript';
 import { walk } from '@/lib/utils/walk';
 
+import type { Metadata } from 'next';
 import { hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -59,3 +61,13 @@ export default async function RootLayout({
 }
 
 export const dynamic = 'force-static';
+
+/**
+ * Site-wide metadataBase so all relative `/library/images/...` paths in
+ * page-level Metadata objects are resolved to absolute URLs by Next.js.
+ *
+ * @type {Metadata}
+ */
+export const metadata: Metadata = {
+  metadataBase: resolveMetadataBase(),
+};

@@ -158,6 +158,7 @@ export default defineConfig({
             'tests/unit/src/lib/logging/**/*.test.{ts,tsx}',
             'tests/unit/src/i18n/**/*.test.{ts,tsx}',
             'tests/unit/src/styles/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/seo/**/*.test.{ts,tsx}',
             'tests/unit/src/middleware*.test.{ts,tsx}',
             'tests/unit/scripts/**/*.test.{ts,tsx}',
           ],

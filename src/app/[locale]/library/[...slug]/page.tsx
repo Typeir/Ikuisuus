@@ -11,6 +11,8 @@
 
 import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
 import { logger } from '@/lib/logging/logger';
+import { buildPageMetadata, extractDescriptionFromMdx } from '@/lib/seo';
+import matter from 'gray-matter';
 import { Metadata } from 'next';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import { notFound, redirect } from 'next/navigation';
@@ -79,11 +81,28 @@ function extractH1FromMdx(content: string): string | null {
 }
 
 /**
- * Generates metadata for the page, extracting title from MDX H1.
+ * Converts a kebab-case slug segment to title case for use as a fallback title.
+ *
+ * @param {string} segment - Kebab-case slug segment, e.g. `"dreaded-defender"`.
+ * @returns {string} Title-cased string, e.g. `"Dreaded Defender"`.
+ */
+function slugSegmentToTitle(segment: string): string {
+  return segment
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+/**
+ * Generates full SEO metadata for the page.
+ *
+ * Title resolution order: frontmatter `title` → first MDX H1 → slug-derived title.
+ * Description resolution order: frontmatter `description` → first prose paragraph.
+ * Image resolution order: frontmatter `image` → slug-derived public file → `.webp` candidate.
  *
  * @param {PageProps} props - Route params
  * @param {Promise<{ slug: string[], locale: string }>} props.params - Async route parameters
- * @returns {Promise<Metadata>} Page metadata
+ * @returns {Promise<Metadata>} Page metadata with openGraph and twitter sub-objects.
  */
 export async function generateMetadata({
   params,
@@ -104,29 +123,38 @@ export async function generateMetadata({
   }
 
   try {
-    const h1Title = extractH1FromMdx(result.content);
+    const { data: frontmatter, content: bodyContent } = matter(result.content);
+    const fm = frontmatter as {
+      title?: string;
+      description?: string;
+      image?: string;
+      imageAlt?: string;
+    };
 
-    if (h1Title) {
-      return {
-        title: `${h1Title} | Library of Ikuisuus`,
-      };
-    }
+    const resolvedTitle =
+      fm.title ??
+      extractH1FromMdx(result.content) ??
+      slugSegmentToTitle(slugSegments[slugSegments.length - 1]);
+
+    return buildPageMetadata({
+      title: resolvedTitle,
+      description:
+        fm.description ?? extractDescriptionFromMdx(bodyContent) ?? undefined,
+      image: fm.image,
+      imageAlt: fm.imageAlt,
+      locale,
+      slugPath,
+    });
   } catch (error) {
     log.error('Error generating metadata', {
       error: error instanceof Error ? error.message : String(error),
-      slugPath: slugSegments.join('/'),
+      slugPath,
       locale,
     });
   }
 
-  /** Fallback to slug-based title */
-  const fallbackTitle = slugSegments[slugSegments.length - 1]
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-
   return {
-    title: `${fallbackTitle} | Library of Ikuisuus`,
+    title: `${slugSegmentToTitle(slugSegments[slugSegments.length - 1])} | Library of Ikuisuus`,
   };
 }
 
