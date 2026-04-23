@@ -41,7 +41,10 @@ function fromVercelUrl(vercelUrl: string): URL {
  * @returns {URL} Absolute base URL for the current deployment.
  */
 export function resolveMetadataBase(): URL {
-  if (process.env.SITE_URL) return new URL(process.env.SITE_URL);
+  if (process.env.SITE_URL) {
+    const raw = process.env.SITE_URL;
+    return new URL(raw.startsWith('http') ? raw : `https://${raw}`);
+  }
   if (process.env.VERCEL_URL) return fromVercelUrl(process.env.VERCEL_URL);
   return new URL(LOCALHOST_FALLBACK);
 }

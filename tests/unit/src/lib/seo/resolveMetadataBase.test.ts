@@ -18,6 +18,14 @@ describe('resolveMetadataBase', () => {
     expect(resolveMetadataBase().href).toBe('https://library.example.com/');
   });
 
+  it('prepends https:// when SITE_URL has no protocol', async () => {
+    vi.stubEnv('SITE_URL', 'ikuisuus.vercel.app');
+    vi.stubEnv('VERCEL_URL', '');
+    const { resolveMetadataBase } =
+      await import('@/lib/seo/resolveMetadataBase');
+    expect(resolveMetadataBase().href).toBe('https://ikuisuus.vercel.app/');
+  });
+
   it('returns https VERCEL_URL when SITE_URL is absent', async () => {
     vi.stubEnv('SITE_URL', '');
     vi.stubEnv('VERCEL_URL', 'my-app.vercel.app');
