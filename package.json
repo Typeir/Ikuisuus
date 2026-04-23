@@ -65,7 +65,8 @@
     "paw:disable": "node .github/PAW/dist/cli.mjs state disable",
     "paw:db:reset": "node .github/PAW/dist/cli.mjs db reset",
     "paw:db:stats": "node .github/PAW/dist/cli.mjs db stats",
-    "paw:set-password": "node .github/PAW/dist/cli.mjs set-password"
+    "paw:set-password": "node .github/PAW/dist/cli.mjs set-password",
+    "lottery": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/mdxLottery.ts"
   },
   "dependencies": {
     "@clack/prompts": "^1.1.0",
