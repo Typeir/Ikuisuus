@@ -109,7 +109,9 @@ function wrapFirstLetterInHeading(children: ReactNode): ReactNode {
       if (typeof child === 'string' && child.trim()) {
         modified[i] = (
           <>
-            <span className='first-letter'>{child[0]}</span>
+            <span key={`first-letter-${i}`} className='first-letter'>
+              {child[0]}
+            </span>
             {child.slice(1)}
           </>
         );
