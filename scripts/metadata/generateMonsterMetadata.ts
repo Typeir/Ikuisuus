@@ -15,30 +15,30 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-    GameData,
-    clean,
-    extractAllTags,
-    filePathToSlug,
-    parseKeyBullets,
-    parseNumericValue,
-    readLines,
-    runGenerator,
-    runWithCli,
-    splitList,
-    splitListWithGrouping,
-    stripMarkdown,
-    type SharedData,
-    type StorageAdapter,
+  GameData,
+  clean,
+  extractAllTags,
+  filePathToSlug,
+  parseKeyBullets,
+  parseNumericValue,
+  readLines,
+  runGenerator,
+  runWithCli,
+  splitList,
+  splitListWithGrouping,
+  stripMarkdown,
+  type SharedData,
+  type StorageAdapter,
 } from '.';
 import { MONSTER, STRUCTURE } from './extraction/featurePatterns';
 import { parseMonsterFeatures } from './generateFeatureMetadata';
 import {
-    IMAGE,
-    ITALIC_META,
-    MONSTER_HEADING,
-    SPEED,
-    STAT_CONTENT,
-    STAT_TABLE,
+  IMAGE,
+  ITALIC_META,
+  MONSTER_HEADING,
+  SPEED,
+  STAT_CONTENT,
+  STAT_TABLE,
 } from './monsterPatterns';
 import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 
