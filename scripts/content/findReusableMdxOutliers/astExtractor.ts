@@ -5,6 +5,7 @@
  * component references using acorn with JSX support.
  *
  * @module findReusableMdxOutliers/astExtractor
+ * @author Typeir
  * @version 1.0.0
  * @since 3.0.0
  */
@@ -15,8 +16,9 @@ import jsx from 'acorn-jsx';
 /**
  * Recursively walks the AST and extracts PascalCase component references.
  *
- * @param node - AST node
- * @param tags - Set to collect component tag names
+ * @param {any} node - AST node
+ * @param {Set<string>} tags - Set to collect component tag names
+ * @returns {void}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const visitAst = (node: any, tags: Set<string>): void => {
@@ -55,8 +57,8 @@ const visitAst = (node: any, tags: Set<string>): void => {
 /**
  * Extracts PascalCase component tags from compiled MDX JavaScript.
  *
- * @param compiledJs - Compiled MDX JavaScript source
- * @returns Set of component tag names
+ * @param {string} compiledJs - Compiled MDX JavaScript source
+ * @returns {Set<string>} Set of component tag names
  */
 export const extractTags = (compiledJs: string): Set<string> => {
   const Parser = acorn.Parser.extend(jsx());

@@ -13,7 +13,9 @@
 import { compile } from '@mdx-js/mdx';
 import { Fragment } from 'react';
 import { jsx, jsxs } from 'react/jsx-runtime';
+import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 
 /**
  * Compiles raw MDX source into a runtime-safe React component.
@@ -29,7 +31,8 @@ export const compileMdxToComponent = async (source: string) => {
     providerImportSource: '',
     development: false,
     jsxImportSource: 'react',
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkMath],
+    rehypePlugins: [rehypeKatex],
     recmaPlugins: [
       () => (tree) => {
         tree.body = tree.body.filter(

@@ -20,6 +20,8 @@ import type { Metadata } from 'next';
 import { hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import cn from '../../lib/utils/classNameMerge';
+import { fonts } from '../fonts/';
 import ClientProviders from './ClientProviders';
 import './globals.scss';
 
@@ -42,7 +44,10 @@ export default async function RootLayout({
   const initialExpandedPaths = await getServerExpandedPaths();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={cn(fonts.map((font) => font.variable))}>
       {/* Theme init script - runs synchronously before React hydration */}
       <head>
         <script dangerouslySetInnerHTML={{ __html: getCombinedInitScript() }} />

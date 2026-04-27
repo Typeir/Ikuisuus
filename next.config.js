@@ -1,10 +1,13 @@
 const path = require('path');
 const remarkGfm = require('remark-gfm').default || require('remark-gfm');
+const remarkMath = require('remark-math').default || require('remark-math');
+const rehypeKatex = require('rehype-katex').default || require('rehype-katex');
 const createNextIntlPlugin = require('next-intl/plugin');
 const withMDX = require('@next/mdx')({
   extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkMath],
+    rehypePlugins: [rehypeKatex],
   },
 });
 const withNextIntl = createNextIntlPlugin({

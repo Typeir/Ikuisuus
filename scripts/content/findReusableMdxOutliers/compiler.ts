@@ -15,7 +15,9 @@
 import fs from 'fs/promises';
 import React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
+import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import { pathToFileURL } from 'url';
 
 /**
@@ -104,7 +106,8 @@ export const compileOutliers = async (
       options: {
         parseFrontmatter: true,
         mdxOptions: {
-          remarkPlugins: [remarkGfm],
+          remarkPlugins: [remarkGfm, remarkMath],
+          rehypePlugins: [rehypeKatex],
           baseUrl: pathToFileURL(filePath).toString(),
         },
       },

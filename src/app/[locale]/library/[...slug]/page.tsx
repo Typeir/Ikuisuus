@@ -24,7 +24,9 @@ import { isMdFile } from '@/lib/md/isMdFile';
 import findAllMdxFiles from '@/lib/mdx/findAllMdxFiles';
 import { fetchContent } from '@/lib/utils/fetchContent';
 import path from 'path';
+import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import { pathToFileURL } from 'url';
 import ClientRenderer from '../../utils/clientRenderer';
 import styles from './page.module.scss';
@@ -221,7 +223,8 @@ const Page = async ({ params }: PageProps) => {
       options: {
         parseFrontmatter: true,
         mdxOptions: {
-          remarkPlugins: [remarkGfm],
+          remarkPlugins: [remarkGfm, remarkMath],
+          rehypePlugins: [rehypeKatex],
           ...(baseUrl ? { baseUrl } : {}),
         },
       } as unknown as EvaluateOptions,

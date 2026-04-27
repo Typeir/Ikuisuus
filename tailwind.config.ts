@@ -1,3 +1,11 @@
+/**
+ * Root Tailwind configuration for the Library of Ikuisuus project.
+ * @fileoverview Tailwind CSS config with project content paths and theme extensions.
+ * @module tailwind.config
+ * @author Typeir
+ * @version 1
+ * @since 1
+ */
 import type { Config } from 'tailwindcss';
 import { proseTheme } from './src/styles/prose-theme';
 
@@ -10,6 +18,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['var(--font-empyrean)', 'ui-serif', 'Georgia'],
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

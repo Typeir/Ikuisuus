@@ -430,6 +430,7 @@ async function seedMonsters(
       languages: m.languages ?? [],
       tags: m.tags ?? [],
       image: m.image,
+      description: m.description,
       indexVersion: m.indexVersion,
       versionHash: resolveVersionHash(m as unknown as Record<string, unknown>),
     });
@@ -489,6 +490,7 @@ async function seedHeirlooms(
       damageTypesDealt: h.damageTypesDealt ?? [],
       savingThrowTypes: h.savingThrowTypes ?? [],
       tags: h.tags ?? [],
+      description: h.description,
       indexVersion: h.indexVersion,
       versionHash: resolveVersionHash(h as unknown as Record<string, unknown>),
     });
@@ -535,6 +537,7 @@ async function seedSpells(em: EntityManager, locale: string): Promise<number> {
       },
       hasRitual: s.hasRitual,
       tags: s.tags ?? [],
+      description: s.description,
       versionHash: resolveVersionHash(s as unknown as Record<string, unknown>),
     });
 
@@ -587,6 +590,7 @@ async function seedTrinkets(
       specialEffects: t.specialEffects ?? [],
       inflictsConditions: t.inflictsConditions ?? [],
       tags: t.tags ?? [],
+      description: t.description,
       versionHash: resolveVersionHash(t as unknown as Record<string, unknown>),
     });
   }
@@ -705,6 +709,7 @@ async function seedVocations(
         : undefined,
       specializations: v.specializations ?? [],
       tags: v.tags ?? [],
+      description: v.description,
       indexVersion: v.indexVersion,
       versionHash: resolveVersionHash(v as unknown as Record<string, unknown>),
     });
@@ -760,6 +765,7 @@ async function seedSpecializations(
         ? { ability: sc.ability, progression: sc.progression }
         : undefined,
       tags: s.tags ?? [],
+      description: s.description,
       indexVersion: s.indexVersion,
       versionHash: resolveVersionHash(s as unknown as Record<string, unknown>),
     });

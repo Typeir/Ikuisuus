@@ -1,8 +1,8 @@
 /* ============================================
    GLOBAL CSS & SCSS VARIABLES
 ============================================ */
-
 @use 'variables' as *;
+@import 'katex/dist/katex.min.css';
 
 :root {
   --springy-bezier: #{$transition-ease-springy};
@@ -643,6 +643,16 @@ html {
 }
 
 body {
+  font-family:
+    var(--font-sans),
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
   border-color: var(--color-secondary);
@@ -769,5 +779,96 @@ body {
     > .mobile-title-bar {
       display: none;
     }
+  }
+}
+
+@keyframes a {
+  to {
+    --a: 1turn;
+  }
+}
+
+h1 .first-letter {
+  height: 1ch;
+  font-family: var(--font-empyrean), serif !important;
+  font-weight: 500 !important;
+  font-size: 4.5em;
+  line-height: 0;
+  display: inline;
+  vertical-align: sub;
+  color: transparent !important;
+  letter-spacing: -0.65rem;
+  /* Use a mask or background-clip for that gradient look */
+  background: linear-gradient(
+    to bottom,
+    var(--color-accent),
+    var(--color-actionable),
+    var(--color-accent)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent !important;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0.018em;
+    right: -0.018em;
+    width: 0.8em;
+    height: 0.8em;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at center,
+      var(--color-primary) 0%,
+      var(--color-primary) 15%,
+      var(--color-actionable) 30%,
+      transparent 50%,
+      transparent 100%
+    );
+    overflow: visible;
+    animation: crt-pulse 2s ease-in-out infinite;
+    filter: blur(0.1em);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0.018em;
+    right: -0.018em;
+    width: 0.8em;
+    height: 0.8em;
+    z-index: -1;
+    background: radial-gradient(
+      circle at center,
+      var(--color-actionable) 0%,
+      transparent 70%
+    );
+    opacity: 0.9;
+    animation: crt-bloom 5s ease-in-out infinite;
+  }
+}
+
+@keyframes crt-pulse {
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes crt-bloom {
+  0%,
+  100% {
+    filter: blur(0.2em);
+  }
+  50% {
+    filter: blur(0.4em);
   }
 }

@@ -7,6 +7,7 @@
  * Requires the SCSS shim preload: --import ./scripts/utils/scssShim.ts
  *
  * @module findReusableMdxOutliers
+ * @author Typeir
  * @version 4.0.0
  * @since 1.0.0
  */
@@ -14,6 +15,10 @@
 import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs/promises';
 import path from 'path';
+
+import rehypeKatex from 'rehype-katex';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 
 import { extractTags } from './astExtractor';
 import { compileOutliers } from './compiler';
@@ -60,6 +65,8 @@ const log = createLogger({ script: 'findReusableMdxOutliers' });
       compiled = await compile(rawContent, {
         jsx: true,
         outputFormat: 'program',
+        remarkPlugins: [remarkGfm, remarkMath],
+        rehypePlugins: [rehypeKatex],
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);

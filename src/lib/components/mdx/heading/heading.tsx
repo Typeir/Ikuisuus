@@ -69,6 +69,80 @@ function getTextFromChildren(children: ReactNode): string {
 }
 
 /**
+ * Wraps the first letter of children in a span with className 'first-letter'.
+ *
+ * Recursively processes nested elements to find the first text node and wraps
+ * its first character in a `<span className="first-letter">`. Allows styling
+ * of the initial character independently and supports pseudo-elements (::before, ::after).
+ *
+ * @param {ReactNode} children - Content to process
+ * @returns {ReactNode} Children with first letter wrapped in <span>
+ *
+ * @example
+ * wrapFirstLetterInHeading('Hello world');
+ * // Returns: <><span className="first-letter">H</span>ello world</>
+ *
+ * @example
+ * wrapFirstLetterInHeading(<strong>Bold</strong>);
+ * // Returns: <strong><span className="first-letter">B</span>old</strong>
+ */
+function wrapFirstLetterInHeading(children: ReactNode): ReactNode {
+  const text = getTextFromChildren(children);
+  if (!text) return children;
+
+  const firstChar = text[0];
+  const rest = text.slice(1);
+
+  if (typeof children === 'string') {
+    return (
+      <>
+        <span className='first-letter'>{firstChar}</span>
+        {rest}
+      </>
+    );
+  }
+
+  if (Array.isArray(children)) {
+    const modified = [...children];
+    for (let i = 0; i < modified.length; i++) {
+      const child = modified[i];
+      if (typeof child === 'string' && child.trim()) {
+        modified[i] = (
+          <>
+            <span className='first-letter'>{child[0]}</span>
+            {child.slice(1)}
+          </>
+        );
+        return modified;
+      }
+      if (React.isValidElement(child)) {
+        modified[i] = React.cloneElement(
+          child,
+          {},
+          wrapFirstLetterInHeading(
+            (child.props as { children: ReactNode }).children,
+          ),
+        );
+        return modified;
+      }
+    }
+    return children;
+  }
+
+  if (React.isValidElement(children)) {
+    return React.cloneElement(
+      children,
+      {},
+      wrapFirstLetterInHeading(
+        (children.props as { children: ReactNode }).children,
+      ),
+    );
+  }
+
+  return children;
+}
+
+/**
  * Props for the Heading component.
  *
  * @property {1 | 2 | 3 | 4 | 5 | 6} level - HTML heading level (h1-h6)
@@ -124,161 +198,100 @@ export function Heading({
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
   const headingText = getTextFromChildren(children);
   const headingAnchor = anchor || textToSlug(headingText);
+  const wrappedChildren = wrapFirstLetterInHeading(children);
 
   const props = {
     'data-anchor': headingAnchor,
     className,
   };
 
-  return React.createElement(Tag, props, children);
+  return React.createElement(Tag, props, wrappedChildren);
+}
+
+/**
+ * Factory function to create heading components for a specific heading level.
+ *
+ * Generates memoized heading components (H1–H6) that auto-generate data-anchor
+ * attributes from heading text.
+ *
+ * @param {1 | 2 | 3 | 4 | 5 | 6} level - HTML heading level
+ * @returns {React.FC<Omit<HeadingProps, 'level'>>} A heading component for the specified level
+ *
+ * @remarks
+ * Uses React.memo to prevent unnecessary re-renders. Each component receives
+ * the same props interface (children, anchor, className) and passes the fixed
+ * level to the Heading component.
+ *
+ * @example
+ * const H1 = createHeadingComponent(1);
+ * <H1>Main Title</H1>
+ * // Renders: <h1 data-anchor="main-title">Main Title</h1>
+ */
+function createHeadingComponent(
+  level: 1 | 2 | 3 | 4 | 5 | 6,
+): React.FC<Omit<HeadingProps, 'level'>> {
+  const HeadingComponent = React.memo(
+    ({ children, anchor, className }: Omit<HeadingProps, 'level'>) => (
+      <Heading level={level} anchor={anchor} className={className}>
+        {children}
+      </Heading>
+    ),
+  );
+
+  HeadingComponent.displayName = `H${level}`;
+  return HeadingComponent;
 }
 
 /**
  * H1 heading component with auto-generated data-anchor.
  *
- * @param {Omit<HeadingProps, 'level'>} props - Component props (excluding level)
- * @param {ReactNode} props.children - Heading content
- * @param {string} [props.anchor] - Custom anchor slug
- * @param {string} [props.className] - Additional CSS classes
- * @returns {JSX.Element} h1 element with data-anchor
- *
  * @example
  * <H1>Main Title</H1>
  * // Renders: <h1 data-anchor="main-title">Main Title</h1>
  */
-export function H1({
-  children,
-  anchor,
-  className,
-}: Omit<HeadingProps, 'level'>): JSX.Element {
-  return (
-    <Heading level={1} anchor={anchor} className={className}>
-      {children}
-    </Heading>
-  );
-}
+export const H1 = createHeadingComponent(1);
 
 /**
  * H2 heading component with auto-generated data-anchor.
- *
- * @param {Omit<HeadingProps, 'level'>} props - Component props (excluding level)
- * @param {ReactNode} props.children - Heading content
- * @param {string} [props.anchor] - Custom anchor slug
- * @param {string} [props.className] - Additional CSS classes
- * @returns {JSX.Element} h2 element with data-anchor
  *
  * @example
  * <H2>Section Title</H2>
  * // Renders: <h2 data-anchor="section-title">Section Title</h2>
  */
-export function H2({
-  children,
-  anchor,
-  className,
-}: Omit<HeadingProps, 'level'>): JSX.Element {
-  return (
-    <Heading level={2} anchor={anchor} className={className}>
-      {children}
-    </Heading>
-  );
-}
+export const H2 = createHeadingComponent(2);
 
 /**
  * H3 heading component with auto-generated data-anchor.
- *
- * @param {Omit<HeadingProps, 'level'>} props - Component props (excluding level)
- * @param {ReactNode} props.children - Heading content
- * @param {string} [props.anchor] - Custom anchor slug
- * @param {string} [props.className] - Additional CSS classes
- * @returns {JSX.Element} h3 element with data-anchor
  *
  * @example
  * <H3>Subsection Title</H3>
  * // Renders: <h3 data-anchor="subsection-title">Subsection Title</h3>
  */
-export function H3({
-  children,
-  anchor,
-  className,
-}: Omit<HeadingProps, 'level'>): JSX.Element {
-  return (
-    <Heading level={3} anchor={anchor} className={className}>
-      {children}
-    </Heading>
-  );
-}
+export const H3 = createHeadingComponent(3);
 
 /**
  * H4 heading component with auto-generated data-anchor.
- *
- * @param {Omit<HeadingProps, 'level'>} props - Component props (excluding level)
- * @param {ReactNode} props.children - Heading content
- * @param {string} [props.anchor] - Custom anchor slug
- * @param {string} [props.className] - Additional CSS classes
- * @returns {JSX.Element} h4 element with data-anchor
  *
  * @example
  * <H4>Detail Section</H4>
  * // Renders: <h4 data-anchor="detail-section">Detail Section</h4>
  */
-export function H4({
-  children,
-  anchor,
-  className,
-}: Omit<HeadingProps, 'level'>): JSX.Element {
-  return (
-    <Heading level={4} anchor={anchor} className={className}>
-      {children}
-    </Heading>
-  );
-}
+export const H4 = createHeadingComponent(4);
 
 /**
  * H5 heading component with auto-generated data-anchor.
- *
- * @param {Omit<HeadingProps, 'level'>} props - Component props (excluding level)
- * @param {ReactNode} props.children - Heading content
- * @param {string} [props.anchor] - Custom anchor slug
- * @param {string} [props.className] - Additional CSS classes
- * @returns {JSX.Element} h5 element with data-anchor
  *
  * @example
  * <H5>Subdetail Heading</H5>
  * // Renders: <h5 data-anchor="subdetail-heading">Subdetail Heading</h5>
  */
-export function H5({
-  children,
-  anchor,
-  className,
-}: Omit<HeadingProps, 'level'>): JSX.Element {
-  return (
-    <Heading level={5} anchor={anchor} className={className}>
-      {children}
-    </Heading>
-  );
-}
+export const H5 = createHeadingComponent(5);
 
 /**
  * H6 heading component with auto-generated data-anchor.
- *
- * @param {Omit<HeadingProps, 'level'>} props - Component props (excluding level)
- * @param {ReactNode} props.children - Heading content
- * @param {string} [props.anchor] - Custom anchor slug
- * @param {string} [props.className] - Additional CSS classes
- * @returns {JSX.Element} h6 element with data-anchor
  *
  * @example
  * <H6>Minor Heading</H6>
  * // Renders: <h6 data-anchor="minor-heading">Minor Heading</h6>
  */
-export function H6({
-  children,
-  anchor,
-  className,
-}: Omit<HeadingProps, 'level'>): JSX.Element {
-  return (
-    <Heading level={6} anchor={anchor} className={className}>
-      {children}
-    </Heading>
-  );
-}
+export const H6 = createHeadingComponent(6);
