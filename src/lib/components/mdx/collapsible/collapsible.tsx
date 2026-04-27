@@ -56,6 +56,11 @@ function isHeadingNode(node: ReactNode): boolean {
     return /^H[1-6]$/i.test(fnName);
   }
 
+  if (typeof node.type === 'object' && node.type !== null) {
+    const obj = node.type as { displayName?: string };
+    return /^H[1-6]$/i.test(obj.displayName || '');
+  }
+
   return false;
 }
 
