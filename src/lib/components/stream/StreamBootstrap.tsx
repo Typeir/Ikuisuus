@@ -63,7 +63,8 @@ function measureStreamTextHeight(text: string): number {
  * @param {HTMLElement} sec - Section element with a `data-stream` attribute
  */
 function stampSection(sec: HTMLElement): void {
-  const streamText = sec.getAttribute('data-stream');
+  const style = sec.style.getPropertyValue('--stream-text');
+  const streamText = style ? style.replace(/^['"]|['"]$/g, '') : '';
   if (!streamText) return;
   let fullHeight = measureStreamTextHeight(streamText);
   if (!fullHeight) {
@@ -89,23 +90,41 @@ function stampSection(sec: HTMLElement): void {
  */
 export default function StreamBootstrap(): null {
   useEffect(() => {
-    const sections = Array.from(
-      document.querySelectorAll<HTMLElement>('section[data-stream]'),
+    const root = document.querySelector<HTMLElement>(
+      '.prose, .prose-invert, .mdx-root, [style*="--stream-text"]',
     );
-    sections.forEach(stampSection);
+    if (!root) return;
+    const style = getComputedStyle(root).getPropertyValue('--stream-text');
+    const streamText = style ? style.replace(/^['"]|['"]$/g, '') : '';
+    if (!streamText) return;
+
+    const sections = Array.from(root.querySelectorAll<HTMLElement>('section'));
+    const stamp = (sec: HTMLElement) => {
+      let fullHeight = measureStreamTextHeight(streamText);
+      if (!fullHeight) {
+        const fallbackFull = sec.clientHeight ? sec.clientHeight : 240;
+        fullHeight = fallbackFull;
+      }
+      const halfPx = Math.max(60, Math.round(fullHeight / 2));
+      const duration = Math.max(
+        MIN_DURATION,
+        Math.min(MAX_DURATION, halfPx / TARGET_PX_PER_SECOND),
+      );
+      sec.style.setProperty('--stream-px', `${halfPx}px`);
+      sec.style.setProperty('--stream-speed', `${duration.toFixed(1)}s`);
+    };
+    sections.forEach(stamp);
 
     const ro =
       typeof ResizeObserver !== 'undefined'
         ? new ResizeObserver((entries) => {
-            entries.forEach((entry) =>
-              stampSection(entry.target as HTMLElement),
-            );
+            entries.forEach((entry) => stamp(entry.target as HTMLElement));
           })
         : null;
 
     if (ro) sections.forEach((s) => ro.observe(s));
 
-    const handleResize = () => sections.forEach(stampSection);
+    const handleResize = () => sections.forEach(stamp);
     window.addEventListener('resize', handleResize);
 
     return () => {

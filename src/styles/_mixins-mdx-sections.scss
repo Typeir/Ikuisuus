@@ -225,12 +225,12 @@
  * in section-space regardless of the scroll position.
  */
 @mixin mdx-terminal-stream($side: left) {
-  content: attr(data-stream);
+  content: var(--stream-text);
   position: absolute;
   @if $side == left {
     left: 0;
   } @else if $side == right {
-    right: 0;
+    right: -3.4rem;
   } @else {
     @error "Invalid side '#{$side}' for mdx-terminal-stream mixin. Use 'left' or 'right'.";
   }

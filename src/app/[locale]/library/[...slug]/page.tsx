@@ -13,7 +13,6 @@ import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
 import { logger } from '@/lib/logging/logger';
 import { resolveStreamText } from '@/lib/machineText';
 import { compileSync } from '@/lib/mdx/compileSync';
-import rehypeStampStream from '@/lib/mdx/rehypeStampStream';
 import { buildPageMetadata, extractDescriptionFromMdx } from '@/lib/seo';
 import matter from 'gray-matter';
 import { Metadata } from 'next';
@@ -223,7 +222,6 @@ const Page = async ({ params }: PageProps) => {
       components,
       baseUrl,
       parseFrontmatter: true,
-      mdxOptions: { rehypePlugins: [[rehypeStampStream, { streamText }]] },
     });
   } catch (error) {
     log.warning(
@@ -254,7 +252,9 @@ const Page = async ({ params }: PageProps) => {
   const { content, frontmatter } = evalResult;
 
   return (
-    <div className='prose prose-invert mx-auto'>
+    <div
+      className='prose prose-invert mx-auto'
+      style={{ ['--stream-text' as any]: `'${streamText}'` }}>
       <DraftOverlay locale={locale} slug={slugPath}>
         <HashNavigationProvider />
         <article className={styles.markdown}>{content}</article>
