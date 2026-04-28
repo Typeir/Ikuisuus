@@ -5,9 +5,9 @@
  * @version 1.0.0
  * @since 2.0.0
  */
-import { renderMarkdownToHtml } from "@/lib/md/renderMarkdownToHtml";
-import matter from "gray-matter";
-import styles from "../page.module.scss";
+import { renderMarkdownToHtml } from '@/lib/md/renderMarkdownToHtml';
+import matter from 'gray-matter';
+import styles from '../page.module.scss';
 
 /**
  * Renders a raw Markdown page as static HTML.
@@ -28,8 +28,8 @@ export const MDRawPage = async ({
   const htmlContent = await renderMarkdownToHtml(content);
 
   return (
-    <div className="prose prose-invert mx-auto">
-      <h1 className="text-4xl font-mono font-black mb-6">
+    <div className='prose prose-invert mx-auto'>
+      <h1 className='text-4xl font-mono font-black mb-6'>
         {data.title ?? slugPath}
       </h1>
       <article

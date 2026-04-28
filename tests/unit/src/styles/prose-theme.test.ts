@@ -10,8 +10,8 @@
  * @requires @/styles/prose-theme - Prose theme configuration
  */
 
-import { describe, it, expect } from 'vitest';
 import { proseTheme } from '@/styles/prose-theme';
+import { describe, expect, it } from 'vitest';
 
 describe('prose-theme', () => {
   describe('exports', () => {
@@ -109,14 +109,14 @@ describe('prose-theme', () => {
       const css = proseTheme.DEFAULT.css;
 
       it('should set custom maxWidth', () => {
-        expect(css.maxWidth).toBe('125ch');
+        expect(css.maxWidth).toBe('150ch');
       });
 
       it('should have blockquote strong color override', () => {
         expect(css['blockquote strong']).toBeDefined();
         expect(css['blockquote strong']).toHaveProperty(
           'color',
-          'var(--color-emphasis)'
+          'var(--color-emphasis)',
         );
       });
 
@@ -124,7 +124,7 @@ describe('prose-theme', () => {
         expect(css['blockquote b']).toBeDefined();
         expect(css['blockquote b']).toHaveProperty(
           'color',
-          'var(--color-emphasis)'
+          'var(--color-emphasis)',
         );
       });
 
@@ -134,7 +134,7 @@ describe('prose-theme', () => {
         expect(css[headingSelector]).toBeDefined();
         expect(css[headingSelector]).toHaveProperty(
           'color',
-          'var(--color-accent)'
+          'var(--color-accent)',
         );
       });
     });
@@ -157,7 +157,9 @@ describe('prose-theme', () => {
       const invertCss = proseTheme.invert.css;
 
       expect(invertCss['--tw-prose-body']).toBe(defaultCss['--tw-prose-body']);
-      expect(invertCss['--tw-prose-links']).toBe(defaultCss['--tw-prose-links']);
+      expect(invertCss['--tw-prose-links']).toBe(
+        defaultCss['--tw-prose-links'],
+      );
       expect(invertCss['--tw-prose-bold']).toBe(defaultCss['--tw-prose-bold']);
     });
   });
@@ -166,7 +168,7 @@ describe('prose-theme', () => {
     it('should use var() syntax for all color references', () => {
       const css = proseTheme.DEFAULT.css;
       const colorVariables = Object.entries(css).filter(([key]) =>
-        key.startsWith('--tw-prose-')
+        key.startsWith('--tw-prose-'),
       );
 
       colorVariables.forEach(([, value]) => {
@@ -187,7 +189,7 @@ describe('prose-theme', () => {
 
       const css = proseTheme.DEFAULT.css;
       const colorVariables = Object.entries(css).filter(([key]) =>
-        key.startsWith('--tw-prose-')
+        key.startsWith('--tw-prose-'),
       );
 
       colorVariables.forEach(([, value]) => {

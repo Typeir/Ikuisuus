@@ -63,6 +63,8 @@ const nextConfig = {
     });
     config.resolve.alias['@content'] = path.resolve(__dirname, 'src/content');
     config.resolve.alias['@lib'] = path.resolve(__dirname, 'src/lib');
+    config.resolve.alias['@src'] = path.resolve(__dirname, 'src');
+    config.resolve.alias['@app'] = path.resolve(__dirname, 'src');
     config.resolve.alias['@i18n'] = path.resolve(__dirname, 'src/lib/i18n');
     return config;
   },

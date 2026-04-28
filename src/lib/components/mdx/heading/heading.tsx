@@ -108,19 +108,17 @@ function wrapFirstLetterInHeading(children: ReactNode): ReactNode {
       const child = modified[i];
       if (typeof child === 'string' && child.trim()) {
         modified[i] = (
-          <>
-            <span key={`first-letter-${i}`} className='first-letter'>
-              {child[0]}
-            </span>
+          <React.Fragment key={`first-letter-${i}`}>
+            <span className='first-letter'>{child[0]}</span>
             {child.slice(1)}
-          </>
+          </React.Fragment>
         );
         return modified;
       }
       if (React.isValidElement(child)) {
         modified[i] = React.cloneElement(
           child,
-          {},
+          { key: (child as any).key ?? `heading-child-${i}` },
           wrapFirstLetterInHeading(
             (child.props as { children: ReactNode }).children,
           ),

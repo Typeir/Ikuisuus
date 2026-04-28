@@ -1,10 +1,10 @@
 /**
  * Tailwind Typography Prose Theme Configuration
- * 
+ *
  * Maps Tailwind prose CSS variables to our dynamic theme color variables.
  * This allows prose content to automatically adapt to dark/light themes
  * without requiring !important declarations or SCSS overrides.
- * 
+ *
  * @see https://tailwindcss.com/docs/typography-plugin
  * @see src/app/[locale]/globals.scss for theme color definitions
  * @fileoverview Module for src/styles/prose-theme.ts
@@ -45,17 +45,18 @@ const proseColorVariables = {
  * Blockquote overrides prevent color cascade to children (strong, headings).
  */
 const proseCustomStyles: CSSRuleObject = {
-  maxWidth: '125ch',
-  
+  maxWidth: '150ch',
+
   'blockquote strong': {
     color: 'var(--color-emphasis)',
   },
   'blockquote b': {
     color: 'var(--color-emphasis)',
   },
-  'blockquote h1, blockquote h2, blockquote h3, blockquote h4, blockquote h5, blockquote h6': {
-    color: 'var(--color-accent)',
-  },
+  'blockquote h1, blockquote h2, blockquote h3, blockquote h4, blockquote h5, blockquote h6':
+    {
+      color: 'var(--color-accent)',
+    },
 };
 
 /**

@@ -2,6 +2,7 @@
    GLOBAL CSS & SCSS VARIABLES
 ============================================ */
 @use 'variables' as *;
+@use 'mixins' as *;
 @import 'katex/dist/katex.min.css';
 
 :root {
@@ -590,6 +591,16 @@ html[data-theme='dark'] {
     list-style-type: decimal;
   }
 
+  ul,
+  ol {
+    --depth: 0;
+  }
+
+  li > ul,
+  li > ol {
+    --depth: calc(var(--parent-depth, 0) + 1);
+  }
+
   /* Print-specific prose adjustments */
   @media print {
     .prose {
@@ -782,93 +793,16 @@ body {
   }
 }
 
-@keyframes a {
-  to {
-    --a: 1turn;
+/* Responsive prose margin-left: ml-60 on desktop, ml-auto below lg breakpoint */
+.prose {
+  @apply ml-60;
+
+  @media (max-width: 1023px) {
+    @apply ml-auto;
   }
 }
 
+/* near the mdx-first-letter include in mdxContent.module.scss */
 h1 .first-letter {
-  height: 1ch;
-  font-family: var(--font-empyrean), serif !important;
-  font-weight: 500 !important;
-  font-size: 4.5em;
-  line-height: 0;
-  display: inline;
-  vertical-align: sub;
-  color: transparent !important;
-  letter-spacing: -0.65rem;
-  /* Use a mask or background-clip for that gradient look */
-  background: linear-gradient(
-    to bottom,
-    var(--color-accent),
-    var(--color-actionable),
-    var(--color-accent)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent !important;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-
-  position: relative;
-  overflow: hidden;
-  &::before {
-    content: '';
-    position: absolute;
-    bottom: 0.018em;
-    right: -0.018em;
-    width: 0.8em;
-    height: 0.8em;
-    z-index: 1;
-    pointer-events: none;
-    background: radial-gradient(
-      circle at center,
-      var(--color-primary) 0%,
-      var(--color-primary) 15%,
-      var(--color-actionable) 30%,
-      transparent 50%,
-      transparent 100%
-    );
-    overflow: visible;
-    animation: crt-pulse 2s ease-in-out infinite;
-    filter: blur(0.1em);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0.018em;
-    right: -0.018em;
-    width: 0.8em;
-    height: 0.8em;
-    z-index: -1;
-    background: radial-gradient(
-      circle at center,
-      var(--color-actionable) 0%,
-      transparent 70%
-    );
-    opacity: 0.9;
-    animation: crt-bloom 5s ease-in-out infinite;
-  }
-}
-
-@keyframes crt-pulse {
-  0%,
-  100% {
-    opacity: 0.1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-
-@keyframes crt-bloom {
-  0%,
-  100% {
-    filter: blur(0.2em);
-  }
-  50% {
-    filter: blur(0.4em);
-  }
+  @include mdx-first-letter-decor();
 }

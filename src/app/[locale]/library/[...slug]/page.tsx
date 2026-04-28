@@ -11,22 +11,22 @@
 
 import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
 import { logger } from '@/lib/logging/logger';
+import { resolveStreamText } from '@/lib/machineText';
+import { compileSync } from '@/lib/mdx/compileSync';
+import rehypeStampStream from '@/lib/mdx/rehypeStampStream';
 import { buildPageMetadata, extractDescriptionFromMdx } from '@/lib/seo';
 import matter from 'gray-matter';
 import { Metadata } from 'next';
-import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import { notFound, redirect } from 'next/navigation';
 
 import DraftOverlay from '@/lib/components/draftOverlay/draftOverlay';
 import components, { HashNavigationProvider } from '@/lib/components/mdx';
 import EditPageButton from '@/lib/components/mdxEditor/editPageButton';
+import StreamBootstrap from '@/lib/components/stream/StreamBootstrap';
 import { isMdFile } from '@/lib/md/isMdFile';
 import findAllMdxFiles from '@/lib/mdx/findAllMdxFiles';
 import { fetchContent } from '@/lib/utils/fetchContent';
 import path from 'path';
-import rehypeKatex from 'rehype-katex';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 import { pathToFileURL } from 'url';
 import ClientRenderer from '../../utils/clientRenderer';
 import styles from './page.module.scss';
@@ -211,23 +211,19 @@ const Page = async ({ params }: PageProps) => {
   /** Try to precompile MDX via evaluate */
   let evalResult;
 
+  const streamText = await resolveStreamText(locale, slugSegments, rawContent);
+
   try {
     /** pathToFileURL requires an absolute path; use a placeholder for GitHub-sourced content */
     const baseUrl = path.isAbsolute(resolvedPath)
       ? pathToFileURL(resolvedPath).toString()
       : undefined;
-
-    evalResult = await evaluate({
+    evalResult = await compileSync({
       source: rawContent,
       components,
-      options: {
-        parseFrontmatter: true,
-        mdxOptions: {
-          remarkPlugins: [remarkGfm, remarkMath],
-          rehypePlugins: [rehypeKatex],
-          ...(baseUrl ? { baseUrl } : {}),
-        },
-      } as unknown as EvaluateOptions,
+      baseUrl,
+      parseFrontmatter: true,
+      mdxOptions: { rehypePlugins: [[rehypeStampStream, { streamText }]] },
     });
   } catch (error) {
     log.warning(
@@ -244,7 +240,7 @@ const Page = async ({ params }: PageProps) => {
         error: evalResult?.error ? String(evalResult.error) : 'Unknown error',
       });
       return (
-        <div className='prose prose-invert mx-auto'>
+        <div className='prose prose-invert mx-auto ml-'>
           <h1 className='text-4xl font-mono font-black mb-6'>{slugPath}</h1>
           <article className={styles.markdown}>
             <ClientRenderer locale={locale} slug={slugPath} />
@@ -262,6 +258,7 @@ const Page = async ({ params }: PageProps) => {
       <DraftOverlay locale={locale} slug={slugPath}>
         <HashNavigationProvider />
         <article className={styles.markdown}>{content}</article>
+        <StreamBootstrap />
         <EditPageButton slug={slugPath} locale={locale} />
       </DraftOverlay>
     </div>

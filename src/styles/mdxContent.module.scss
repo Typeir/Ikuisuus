@@ -199,3 +199,106 @@
     }
   }
 }
+
+/* MDX Section framing and first-letter decoration moved to mixins
+     The mixins are provided by `@use 'mixins' as *;` at the top of this file.
+  */
+.mdxContent {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  overflow-y: clip;
+  section[data-heading-level] {
+    position: relative;
+    --stream-x: calc(-2.5rem - (var(--heading-level, 1) - 1) * 1.5rem);
+
+    &::before {
+      @include mdx-nine-slice-base();
+    }
+
+    &::after {
+      @include mdx-terminal-stream($side: left);
+    }
+
+    & ul,
+    ol {
+      --stream-x: calc(-2.5rem - (var(--depth, 1) - 1) * 1.5rem);
+      &::after {
+        @include mdx-terminal-stream($side: right);
+      }
+    }
+
+    &[data-heading-level='1']::before {
+      @include mdx-nine-slice-base($top: -2rem);
+    }
+
+    & > section[data-heading-level]:not(:last-child)::before {
+      @include mdx-nine-slice-nested();
+    }
+
+    & > section:last-child::before {
+      @include mdx-hide-before();
+    }
+
+    /* Responsive adjustments for all section pseudo-decorators */
+    @media (max-width: 1023px) {
+      &::before {
+        left: -1.4rem !important;
+        opacity: 0.4;
+      }
+
+      &::after {
+        --stream-opacity: 0;
+      }
+
+      &[data-heading-level='1']::before {
+        left: -1.4rem !important;
+        opacity: 0.4;
+      }
+
+      & > section[data-heading-level]:not(:last-child)::before {
+        left: -1.4rem !important;
+        opacity: 0.4;
+      }
+    }
+
+    li {
+      @include hide-list-marker();
+      &:not(:last-child) {
+        position: relative;
+        &:nth-of-type(even)::before {
+          @include mdx-nine-slice-nested(
+            $image: '/render/terminalKnotworkGeometric9slice.png',
+            $top: -4rem,
+            $left: calc(-2rem + (var(--depth) * 2rem))
+          );
+        }
+      }
+
+      &:last-child::before {
+        @include mdx-nine-slice-nested(
+          $image: '/render/terminalKnotworkGeometric9slice.png',
+          $mask-position: bottom left,
+          $top: -4rem,
+          $left: calc(-2rem + (var(--depth) * -2rem))
+        );
+      }
+
+      /* Responsive adjustments: reduce horizontal distance and lower opacity */
+      @media (max-width: 1023px) {
+        &:not(:last-child) {
+          &:nth-of-type(even)::before {
+            left: calc(-3rem + (var(--depth) * 1rem)) !important;
+          }
+        }
+
+        &:last-child::before {
+          left: calc(-1rem + (var(--depth) * -1rem)) !important;
+        }
+      }
+    }
+  }
+
+  h1 .first-letter {
+    @include mdx-first-letter-decor();
+  }
+}

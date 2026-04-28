@@ -30,7 +30,7 @@ describe('Heading Components', () => {
     it('should render children text', () => {
       render(<H1>My Title</H1>);
 
-      const heading = screen.getByText('My Title');
+      const heading = screen.getByRole('heading', { level: 1, name: 'My Title' });
       expect(heading).toBeDefined();
     });
 

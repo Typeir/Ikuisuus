@@ -23,6 +23,14 @@ vi.mock('@resvg/resvg-js', () => {
   return { Resvg: MockResvg };
 });
 
+vi.mock('sharp', () => ({
+  default: vi.fn(() => ({
+    png: () => ({
+      toBuffer: async () => Buffer.from([0x89, 0x50, 0x4e, 0x47]),
+    }),
+  })),
+}));
+
 /** Stub font fetch so loadFontBuffer doesn't hit the network. */
 vi.stubGlobal('fetch', async (_url: string) => ({
   text: async () =>

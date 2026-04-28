@@ -22,7 +22,10 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@content/*": ["./src/content/*"]
+      "@content/*": ["./src/content/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@src/*": ["./src/*"],
+      "@i18n/*": ["./src/lib/i18n/*"]
     }
   },
   "include": [

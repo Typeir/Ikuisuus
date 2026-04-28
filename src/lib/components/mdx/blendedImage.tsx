@@ -12,6 +12,7 @@
 
 import Image from 'next/image';
 import type { ImgHTMLAttributes } from 'react';
+import React from 'react';
 import styles from './blendedImage.module.scss';
 /**
  * A custom image component that wraps images in a vignette container with blend mode styling.
@@ -26,17 +27,22 @@ const BlendedImage = (
 ) => {
   const { src, alt, width, height, className, ...rest } = props;
 
+  const hasSrc = Boolean(src && String(src).trim());
+  const style = hasSrc
+    ? ({ '--bg-image': `url(${src})` } as React.CSSProperties)
+    : undefined;
+
   return (
-    <div
-      className={`${styles['vignette-img']} ${styles[mode]}`}
-      style={{ '--bg-image': `url(${src})` } as React.CSSProperties}>
-      <Image
-        src={src || ''}
-        alt={alt || ''}
-        width={(width as number) || 800}
-        height={(height as number) || 600}
-        className={className}
-      />
+    <div className={`${styles['vignette-img']} ${styles[mode]}`} style={style}>
+      {hasSrc ? (
+        <Image
+          src={src as string}
+          alt={alt || ''}
+          width={(width as number) || 800}
+          height={(height as number) || 600}
+          className={className}
+        />
+      ) : null}
     </div>
   );
 };

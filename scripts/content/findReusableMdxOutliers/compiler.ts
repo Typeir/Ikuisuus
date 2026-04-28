@@ -12,9 +12,10 @@
  * @since 3.0.0
  */
 
+import { compileAsync } from '@/lib/mdx/compileAsync';
+import { renderToHtml } from '@/lib/mdx/serverRender';
 import fs from 'fs/promises';
 import React from 'react';
-import * as ReactDOMServer from 'react-dom/server';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -74,7 +75,9 @@ export const compileOutliers = async (
   deps: Map<string, Set<string>>,
   components: Record<string, React.FC<any>>,
 ): Promise<CompiledOutlier[]> => {
-  const { evaluate } = await import('next-mdx-remote-client/rsc');
+  /**
+   * Use centralized async compiler for script-based MDX compilation.
+   */
 
   const tableComponent: React.FC<{ children?: React.ReactNode }> = ({
     children,
@@ -100,20 +103,18 @@ export const compileOutliers = async (
       componentMap[compiledName] = htmlComponent(html);
     }
 
-    const result = await evaluate({
+    const result = await compileAsync({
       source: rawContent,
       components: componentMap,
-      options: {
-        parseFrontmatter: true,
-        mdxOptions: {
-          remarkPlugins: [remarkGfm, remarkMath],
-          rehypePlugins: [rehypeKatex],
-          baseUrl: pathToFileURL(filePath).toString(),
-        },
+      mdxOptions: {
+        remarkPlugins: [remarkGfm, remarkMath],
+        rehypePlugins: [rehypeKatex],
       },
+      baseUrl: pathToFileURL(filePath).toString(),
+      parseFrontmatter: true,
     });
 
-    const renderedHtml = ReactDOMServer.renderToStaticMarkup(result.content);
+    const renderedHtml = renderToHtml(result);
     const html = demoteCompiledH1Headings(renderedHtml);
     compiledHtml.set(tag, html);
 

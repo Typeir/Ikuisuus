@@ -123,7 +123,6 @@ export async function renderOgCard(
   });
 
   const png = resvg.render().asPng();
-
   const compressed = await sharp(Buffer.from(png))
     .png({
       compressionLevel: 9,

@@ -13,8 +13,9 @@
  * @see {@link extractMonsterDescription} for monster-specific extraction
  */
 
+import { compileAsync } from '@/lib/mdx/compileAsync';
+import { renderToHtml } from '@/lib/mdx/serverRender';
 import React from 'react';
-import * as ReactDOMServer from 'react-dom/server';
 import remarkGfm from 'remark-gfm';
 import type { MonsterFeature } from '../../../src/lib/types/feature';
 
@@ -81,26 +82,6 @@ const FOUNDRY_COMPONENTS: Record<string, React.FC<any>> = {
   table: TableWrapper,
 };
 
-/** Cached dynamic import of evaluate from next-mdx-remote-client/rsc. */
-let evaluateFn:
-  | (typeof import('next-mdx-remote-client/rsc'))['evaluate']
-  | null = null;
-
-/**
- * Lazily loads the evaluate function from next-mdx-remote-client/rsc.
- *
- * @returns {Promise<typeof import('next-mdx-remote-client/rsc')['evaluate']>} The evaluate function
- */
-async function getEvaluate(): Promise<
-  (typeof import('next-mdx-remote-client/rsc'))['evaluate']
-> {
-  if (!evaluateFn) {
-    const mod = await import('next-mdx-remote-client/rsc');
-    evaluateFn = mod.evaluate;
-  }
-  return evaluateFn;
-}
-
 /**
  * Converts full MDX content string to Foundry-compatible HTML.
  *
@@ -112,16 +93,14 @@ async function getEvaluate(): Promise<
  * @returns {Promise<string>} Clean HTML string for Foundry VTT description fields
  */
 export async function mdxToHtml(mdx: string): Promise<string> {
-  const evaluate = await getEvaluate();
-  const result = await evaluate({
+  const result = await compileAsync({
     source: mdx,
     components: FOUNDRY_COMPONENTS,
-    options: {
-      parseFrontmatter: true,
-      mdxOptions: { remarkPlugins: [remarkGfm] },
-    },
+    mdxOptions: { remarkPlugins: [remarkGfm] },
+    parseFrontmatter: true,
   });
-  return ReactDOMServer.renderToStaticMarkup(result.content);
+
+  return renderToHtml(result);
 }
 
 /**
