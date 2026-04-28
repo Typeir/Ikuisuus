@@ -1,5 +1,15 @@
 [
   {
+    "file": "src/lib/seo/og/OGTemplate.tsx",
+    "maxLines": 300,
+    "justification": "OG card template with complex layout and inline styling for dynamic content"
+  },
+  {
+    "file": "src/styles/_mixins-mdx-sections.scss",
+    "maxLines": 300,
+    "justification": "SCSS mixins for MDX section styling that are highly complex."
+  },
+  {
     "file": "src/app/[locale]/globals.scss",
     "maxLines": 9999999999,
     "justification": "Global styles for the entire application that must be in a single file to ensure consistent styling and avoid specificity issues"

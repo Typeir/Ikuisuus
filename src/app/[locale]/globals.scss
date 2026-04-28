@@ -766,6 +766,18 @@ body {
   .prose:has([data-meta-print-mode='single']) article {
     column-count: 1 !important;
   }
+  * {
+    *::before,
+    *::after {
+      content: none !important;
+      display: none !important;
+      visibility: hidden !important;
+    }
+  }
+  .mdxContent section[data-heading-level] {
+    color: red !important;
+    display: none !important;
+  }
 
   /* Hide all scrollbars in print mode */
   * {

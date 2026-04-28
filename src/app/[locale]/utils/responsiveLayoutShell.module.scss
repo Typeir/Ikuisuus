@@ -99,6 +99,10 @@ html[data-theme='light'] .ssrThemeIcon {
   filter: saturate(0.05) contrast(0.3) brightness(0);
 }
 
+.themeToggle {
+  border-radius: 9999px;
+}
+
 /* ── Embed Mode ──────────────────────────────────────────────── */
 
 .embedShell {

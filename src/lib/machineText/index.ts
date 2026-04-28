@@ -24,6 +24,21 @@ import { fnv1a32 } from '@/lib/metadata';
 const STREAM_SEPARATOR = ' // ';
 
 /**
+ * Title-cases a slug-like token, replacing hyphens/underscores with spaces.
+ * Example: "dreaded-defender" -> "Dreaded Defender"
+ */
+function titleCaseToken(token: string): string {
+  if (!token) return token;
+  return token
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(' ')
+    .map((w) => (w.length ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w))
+    .join(' ');
+}
+
+/**
  * Surrounds a stream body with the standard separator prefix and suffix.
  *
  * @param {string} body - Inner content of the stream string
@@ -55,12 +70,12 @@ function doubleStream(segment: string): string {
 function fromMonster(
   record: import('@/lib/db/content/schemas/monsterMetadata').MonsterMetadata,
 ): string {
-  const parts: string[] = [record.subSlug ?? record.slug];
+  const parts: string[] = [titleCaseToken(record.subSlug ?? record.slug)];
   if (record.cr) parts.push(`CR:${record.cr}`);
   if (record.size) parts.push(record.size.toUpperCase());
   if (record.creatureType) parts.push(record.creatureType.toUpperCase());
   if (record.hp?.average) parts.push(`HP:${record.hp.average}`);
-  return doubleStream(wrapSegment(parts.join(' · ')));
+  return wrapSegment(parts.join(' · '));
 }
 
 /**
@@ -72,11 +87,11 @@ function fromMonster(
 function fromSpell(
   record: import('@/lib/db/content/schemas/spellMetadata').SpellMetadata,
 ): string {
-  const parts: string[] = [record.slug];
+  const parts: string[] = [titleCaseToken(record.slug)];
   if (record.level !== undefined) parts.push(`LV:${record.level}`);
   if (record.school) parts.push(record.school.toUpperCase());
   if (record.castingTimeRaw) parts.push(record.castingTimeRaw);
-  return doubleStream(wrapSegment(parts.join(' · ')));
+  return wrapSegment(parts.join(' · '));
 }
 
 /**
@@ -88,11 +103,11 @@ function fromSpell(
 function fromHeirloom(
   record: import('@/lib/db/content/schemas/heirloomMetadata').HeirloomMetadata,
 ): string {
-  const parts: string[] = [record.slug];
+  const parts: string[] = [titleCaseToken(record.slug)];
   if (record.rarity) parts.push(record.rarity.toUpperCase());
   if (record.itemType) parts.push(record.itemType.toUpperCase());
   if (record.weaponType) parts.push(record.weaponType);
-  return doubleStream(wrapSegment(parts.join(' · ')));
+  return wrapSegment(parts.join(' · '));
 }
 
 /**
@@ -104,12 +119,12 @@ function fromHeirloom(
 function fromTrinket(
   record: import('@/lib/db/content/schemas/trinketMetadata').TrinketMetadata,
 ): string {
-  const parts: string[] = [record.slug];
+  const parts: string[] = [titleCaseToken(record.slug)];
   parts.push(record.itemType.toUpperCase());
   if (record.damage && record.damageType) {
     parts.push(`${record.damage} ${record.damageType}`);
   }
-  return doubleStream(wrapSegment(parts.join(' · ')));
+  return wrapSegment(parts.join(' · '));
 }
 
 /**
@@ -121,12 +136,12 @@ function fromTrinket(
 function fromBloodline(
   record: import('@/lib/db/content/schemas/bloodlineMetadata').BloodlineMetadata,
 ): string {
-  const parts: string[] = [record.slug];
+  const parts: string[] = [titleCaseToken(record.slug)];
   if (record.coreFeatures.creatureTypes.length > 0) {
     parts.push(record.coreFeatures.creatureTypes.join('/').toUpperCase());
   }
   if (record.boonBudget !== undefined) parts.push(`BP:${record.boonBudget}`);
-  return doubleStream(wrapSegment(parts.join(' · ')));
+  return wrapSegment(parts.join(' · '));
 }
 
 /**
@@ -138,9 +153,9 @@ function fromBloodline(
 function fromVocation(
   record: import('@/lib/db/content/schemas/vocationMetadata').VocationMetadata,
 ): string {
-  const parts: string[] = [record.slug, 'VOCATION'];
+  const parts: string[] = [titleCaseToken(record.slug), 'VOCATION'];
   if (record.hitDie) parts.push(`HD:${record.hitDie}`);
-  return doubleStream(wrapSegment(parts.join(' · ')));
+  return wrapSegment(parts.join(' · '));
 }
 
 /**
@@ -151,7 +166,68 @@ function fromVocation(
  */
 function fromFallback(rawContent: string): string {
   const hash = fnv1a32(rawContent);
-  return doubleStream(wrapSegment(`SIG:${hash}`));
+  return wrapSegment(`SIG:${hash}`);
+}
+
+/**
+ * Resolves a deterministic single stream segment (NOT doubled) for a given page.
+ * This is useful when consumers (e.g., OG card renderer) need the canonical
+ * single-pass segment and will handle duplication or tiling themselves.
+ *
+ * @param {string} locale - Content locale (e.g. "en", "es")
+ * @param {string[]} slugSegments - Decoded slug path segments
+ * @param {string} rawContent - Raw MDX source used as fallback seed
+ * @returns {Promise<string>} Single stream segment (wrapped) without doubling
+ */
+export async function resolveStreamSegment(
+  locale: string,
+  slugSegments: string[],
+  rawContent: string,
+): Promise<string> {
+  const leafSlug = slugSegments[slugSegments.length - 1];
+  const prefix = slugSegments[0];
+  const subPrefix = slugSegments[1];
+
+  try {
+    switch (prefix) {
+      case 'monsters': {
+        const record = await monsterRepository.getBySlug(locale, leafSlug);
+        if (record) return fromMonster(record);
+        break;
+      }
+      case 'spells': {
+        const record = await spellRepository.getBySlug(locale, leafSlug);
+        if (record) return fromSpell(record);
+        break;
+      }
+      case 'items': {
+        if (subPrefix === 'heirlooms') {
+          const record = await heirloomRepository.getBySlug(locale, leafSlug);
+          if (record) return fromHeirloom(record);
+        } else if (subPrefix === 'trinkets') {
+          const record = await trinketRepository.getBySlug(locale, leafSlug);
+          if (record) return fromTrinket(record);
+        }
+        break;
+      }
+      case 'bloodlines': {
+        const record = await bloodlineRepository.getBySlug(locale, leafSlug);
+        if (record) return fromBloodline(record);
+        break;
+      }
+      case 'vocations': {
+        const record = await vocationRepository.getBySlug(locale, leafSlug);
+        if (record) return fromVocation(record);
+        break;
+      }
+      default:
+        break;
+    }
+  } catch (_err) {
+    /* Repository errors are non-fatal — fall through to the hash fallback */
+  }
+
+  return fromFallback(rawContent);
 }
 
 /**
@@ -171,43 +247,6 @@ export async function resolveStreamText(
   slugSegments: string[],
   rawContent: string,
 ): Promise<string> {
-  const leafSlug = slugSegments[slugSegments.length - 1];
-  const prefix = slugSegments[0];
-  const subPrefix = slugSegments[1];
-
-  try {
-    if (prefix === 'monsters') {
-      const record = await monsterRepository.getBySlug(locale, leafSlug);
-      if (record) return fromMonster(record);
-    }
-
-    if (prefix === 'spells') {
-      const record = await spellRepository.getBySlug(locale, leafSlug);
-      if (record) return fromSpell(record);
-    }
-
-    if (prefix === 'items' && subPrefix === 'heirlooms') {
-      const record = await heirloomRepository.getBySlug(locale, leafSlug);
-      if (record) return fromHeirloom(record);
-    }
-
-    if (prefix === 'items' && subPrefix === 'trinkets') {
-      const record = await trinketRepository.getBySlug(locale, leafSlug);
-      if (record) return fromTrinket(record);
-    }
-
-    if (prefix === 'bloodlines') {
-      const record = await bloodlineRepository.getBySlug(locale, leafSlug);
-      if (record) return fromBloodline(record);
-    }
-
-    if (prefix === 'vocations') {
-      const record = await vocationRepository.getBySlug(locale, leafSlug);
-      if (record) return fromVocation(record);
-    }
-  } catch (_err) {
-    /* Repository errors are non-fatal — fall through to the hash fallback */
-  }
-
-  return fromFallback(rawContent);
+  const segment = await resolveStreamSegment(locale, slugSegments, rawContent);
+  return doubleStream(segment);
 }

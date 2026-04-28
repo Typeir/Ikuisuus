@@ -247,7 +247,7 @@
       }
 
       &::after {
-        --stream-opacity: 0;
+        --stream-opacity: 0.1;
       }
 
       &[data-heading-level='1']::before {
@@ -262,16 +262,23 @@
     }
 
     li {
-      @include hide-list-marker();
+      &::marker {
+        color: var(--color-accent) !important;
+        content: '▹ ';
+      }
       &:not(:last-child) {
         position: relative;
         &:nth-of-type(even)::before {
           @include mdx-nine-slice-nested(
             $image: '/render/terminalKnotworkGeometric9slice.png',
             $top: -4rem,
-            $left: calc(-2rem + (var(--depth) * 2rem))
+            $left: calc(2rem + (var(--depth) * 2.2rem))
           );
         }
+      }
+
+      &:last-child li:last-child::before {
+        @include mdx-hide-before();
       }
 
       &:last-child::before {

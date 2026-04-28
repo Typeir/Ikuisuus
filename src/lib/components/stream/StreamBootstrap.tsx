@@ -8,6 +8,9 @@
  * section height.
  *
  * @module lib/components/stream/StreamBootstrap
+ * @version 1.0.1
+ * @author Typeir
+ * @since 2026-04-28
  */
 
 'use client';

@@ -58,7 +58,7 @@ function headingLevel(node: Element): number {
 function isHr(node: RootContent): boolean {
   return (
     (node.type === 'element' && (node as Element).tagName === 'hr') ||
-    node.type === 'thematicBreak'
+    (node.type as any) === 'thematicBreak'
   );
 }
 
@@ -169,7 +169,7 @@ const rehypeSectionize: Plugin<[RehypeSectionizeOptions?], Root> = (
         if (opts?.streamText) {
           sectionProps['data-stream'] = opts.streamText;
         }
-        const section = h('section', sectionProps) as Element;
+        const section = (h as any)('section', sectionProps) as Element;
         section.children = [node];
 
         attachSection(result, stack, section);
@@ -189,7 +189,10 @@ const rehypeSectionize: Plugin<[RehypeSectionizeOptions?], Root> = (
           if (opts?.streamText) {
             anonSectionProps['data-stream'] = opts.streamText;
           }
-          const anonSection = h('section', anonSectionProps) as Element;
+          const anonSection = (h as any)(
+            'section',
+            anonSectionProps,
+          ) as Element;
           anonSection.children = [node as ElementContent];
 
           attachSection(result, stack, anonSection);

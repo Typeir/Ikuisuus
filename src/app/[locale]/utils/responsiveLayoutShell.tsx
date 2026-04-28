@@ -22,10 +22,10 @@ import { Sidebar } from '@/lib/components/sidebar/sidebar';
 import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
-    useSidebarMenuActions,
-    useSidebarMenuState,
-    useThemeActions,
-    useThemeState,
+  useSidebarMenuActions,
+  useSidebarMenuState,
+  useThemeActions,
+  useThemeState,
 } from '@/lib/context/PersistentUiContext';
 import { Theme } from '@/lib/enums/themes';
 import { Moon, Sun, Wrench } from 'lucide-react';
@@ -34,6 +34,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import cn from '../../../lib/utils/classNameMerge';
 import styles from './responsiveLayoutShell.module.scss';
 
 /**
@@ -205,7 +206,10 @@ function BaseResponsiveLayoutShell({
               </Link>
               <button
                 onClick={toggleTheme}
-                className={tertiaryStyles.tertiaryButton}
+                className={cn(
+                  tertiaryStyles.tertiaryButton,
+                  styles.themeToggle,
+                )}
                 aria-label='Toggle theme'>
                 {mounted ? (
                   currentTheme === Theme.Dark ? (

@@ -16,14 +16,15 @@
  */
 
 import {
-    bloodlineRepository,
-    heirloomRepository,
-    monsterRepository,
-    specializationRepository,
-    spellRepository,
-    trinketRepository,
-    vocationRepository,
+  bloodlineRepository,
+  heirloomRepository,
+  monsterRepository,
+  specializationRepository,
+  spellRepository,
+  trinketRepository,
+  vocationRepository,
 } from '@/lib/db/content/repositories';
+import { resolveStreamSegment } from '@/lib/machineText';
 
 /**
  * Minimal metadata shape required for OG card rendering.
@@ -38,6 +39,7 @@ import {
  * @property {string} [level] - Spell level as formatted string (spells)
  * @property {string} [subLabel] - Generic secondary label for other types
  * @property {string} [description] - Short flavour / lore text for the card watermark
+ * @property {string} [stream] - Canonical single stream segment (wrapped, not doubled)
  */
 export interface OGCardData {
   slug: string;
@@ -49,6 +51,7 @@ export interface OGCardData {
   level?: string;
   subLabel?: string;
   description?: string;
+  stream?: string;
 }
 
 /** Supported OG content type keys. */
@@ -154,6 +157,7 @@ export async function getOgCardData(
         title: m.title,
         creatureType: m.creatureType,
         description: m.description,
+        stream: await resolveStreamSegment('en', ['monsters', slug], ''),
       };
     }
     case 'heirlooms': {
@@ -165,6 +169,11 @@ export async function getOgCardData(
         rarity: h.rarity,
         itemType: h.itemType,
         description: h.description,
+        stream: await resolveStreamSegment(
+          'en',
+          ['items', 'heirlooms', slug],
+          '',
+        ),
       };
     }
     case 'spells': {
@@ -176,6 +185,7 @@ export async function getOgCardData(
         school: s.school,
         level: formatSpellLevel(s.level),
         description: s.description,
+        stream: await resolveStreamSegment('en', ['spells', slug], ''),
       };
     }
     case 'trinkets': {
@@ -186,6 +196,11 @@ export async function getOgCardData(
         title: t.title,
         itemType: t.itemType,
         description: t.description,
+        stream: await resolveStreamSegment(
+          'en',
+          ['items', 'trinkets', slug],
+          '',
+        ),
       };
     }
     case 'bloodlines': {
@@ -196,6 +211,7 @@ export async function getOgCardData(
         title: b.title,
         subLabel: b.coreFeatures?.creatureTypes?.[0],
         description: b.description,
+        stream: await resolveStreamSegment('en', ['bloodlines', slug], ''),
       };
     }
     case 'vocations': {
@@ -206,6 +222,7 @@ export async function getOgCardData(
         title: v.title,
         subLabel: v.archetype,
         description: v.description,
+        stream: await resolveStreamSegment('en', ['vocations', slug], ''),
       };
     }
     case 'specializations': {
