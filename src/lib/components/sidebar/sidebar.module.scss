@@ -6,6 +6,12 @@
 
 .accordion * {
   background-color: var(--color-transparent);
+  li {
+    &::marker {
+      color: var(--color-accent);
+      content: '▹ ';
+    }
+  }
 }
 
 .accordion.open {

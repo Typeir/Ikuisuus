@@ -132,5 +132,14 @@
       max-width: 100%;
       break-inside: avoid;
     }
+
+    section {
+      &::after {
+        display: none;
+      }
+      &::before {
+        display: none;
+      }
+    }
   }
 }
