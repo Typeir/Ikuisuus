@@ -10,35 +10,99 @@
 
 import { useEffect } from 'react';
 
+type Props = {
+  /** Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement */
+  targetRef?: React.RefObject<HTMLElement>;
+};
+
 /**
  * Write normalized mouse coordinates to root CSS variables as percentages.
  * @param {number} clientX
  * @param {number} clientY
  */
-function setMouseVars(clientX: number, clientY: number) {
+function setMouseVars(
+  clientX: number,
+  clientY: number,
+  target: HTMLElement | null,
+) {
   const xPct = (clientX / window.innerWidth) * 100;
   const yPct = (clientY / window.innerHeight) * 100;
-  document.documentElement.style.setProperty('--mouse-x', `${xPct}%`);
-  document.documentElement.style.setProperty('--mouse-y', `${yPct}%`);
+  const el = target;
+  if (!el) return;
+  el.style.setProperty('--mouse-x', `${xPct}%`);
+  el.style.setProperty('--mouse-y', `${yPct}%`);
 }
 
 /**
  * Client component that tracks pointer movement and updates CSS variables.
  * Stateless — does not cause React re-renders on movement.
+ * Respects user preferences for reduced motion and coarse pointers by disabling tracking.
+ * Uses RAF to throttle updates to ~30fps.
+ *
+ * @param {Props} props
+ * @param {React.RefObject<HTMLElement>} props.targetRef - Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement
+ *
  * @returns {null}
  */
-export default function MouseTracker(): null {
+export default function MouseTracker({ targetRef }: Props): null {
   useEffect(() => {
-    const onMove = (e: MouseEvent) => setMouseVars(e.clientX, e.clientY);
-    const onPointer = (e: PointerEvent) => setMouseVars(e.clientX, e.clientY);
-    window.addEventListener('mousemove', onMove, { passive: true });
-    window.addEventListener('pointermove', onPointer, { passive: true });
+    if (typeof window === 'undefined') return;
+
+    const mmReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    const mmCoarse = window.matchMedia?.('(hover: none), (pointer: coarse)');
+    if (mmReduced?.matches || mmCoarse?.matches) return;
+
+    const getTarget = () => targetRef && targetRef.current;
+
+    let rafId: number | null = null;
+    let pending = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    let lastFrameTime = 0;
+    const fpsLimit = 1000 / 30;
+
+    const flush = (currentTime: any) => {
+      rafId = null;
+
+      if (currentTime - lastFrameTime >= fpsLimit) {
+        lastFrameTime = currentTime;
+        const target = getTarget();
+        if (!target) return;
+        setMouseVars(lastX, lastY, target);
+      }
+
+      pending = false;
+    };
+
+    const schedule = () => {
+      if (rafId == null) {
+        rafId = requestAnimationFrame(flush);
+      }
+    };
+
+    const handler = (e: PointerEvent | MouseEvent) => {
+      lastX = (e as PointerEvent).clientX ?? (e as MouseEvent).clientX;
+      lastY = (e as PointerEvent).clientY ?? (e as MouseEvent).clientY;
+      if (!pending) {
+        pending = true;
+        schedule();
+      }
+    };
+
+    window.addEventListener('pointermove', handler as EventListener, {
+      passive: true,
+    });
+    window.addEventListener('mousemove', handler as EventListener, {
+      passive: true,
+    });
 
     return () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('pointermove', onPointer);
+      if (rafId != null) cancelAnimationFrame(rafId);
+      window.removeEventListener('pointermove', handler as EventListener);
+      window.removeEventListener('mousemove', handler as EventListener);
     };
-  }, []);
+  }, [targetRef]);
 
   return null;
 }

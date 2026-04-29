@@ -18,17 +18,13 @@ describe('FlashlightLayer', () => {
     // DotMatrixBackground should expose the radius via inline style
     expect(el?.style.getPropertyValue('--reveal-radius').trim()).toBe('220px');
 
-    // Simulate pointermove and assert root CSS vars updated by MouseTracker
+    // Simulate pointermove and assert the flashlight element has local CSS vars updated by MouseTracker
     const ev = new PointerEvent('pointermove', { clientX: 80, clientY: 200 });
     window.dispatchEvent(ev);
 
     await waitFor(() => {
-      const x = document.documentElement.style
-        .getPropertyValue('--mouse-x')
-        .trim();
-      const y = document.documentElement.style
-        .getPropertyValue('--mouse-y')
-        .trim();
+      const x = el?.style.getPropertyValue('--mouse-x').trim();
+      const y = el?.style.getPropertyValue('--mouse-y').trim();
       // clientX 80 / innerWidth 800 => 10%
       expect(x).toBe('10%');
       // clientY 200 / innerHeight 400 => 50%

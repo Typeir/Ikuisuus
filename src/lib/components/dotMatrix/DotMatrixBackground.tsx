@@ -13,18 +13,21 @@ type Props = {
   radius?: number; // pixels
 };
 
-export default function DotMatrixBackground({ radius = 200 }: Props) {
-  const style: React.CSSProperties = {} as React.CSSProperties;
-  if (radius != null) {
-    (style as any)['--reveal-radius'] = `${radius}px`;
-  }
+export default React.forwardRef<HTMLDivElement, Props>(
+  function DotMatrixBackground({ radius = 200 }, ref) {
+    const style: React.CSSProperties = {} as React.CSSProperties;
+    if (radius != null) {
+      (style as any)['--reveal-radius'] = `${radius}px`;
+    }
 
-  return (
-    <div
-      data-flashlight='true'
-      className={styles.reveal}
-      style={style}
-      aria-hidden='true'
-    />
-  );
-}
+    return (
+      <div
+        ref={ref}
+        data-flashlight='true'
+        className={styles.reveal}
+        style={style}
+        aria-hidden='true'
+      />
+    );
+  },
+);

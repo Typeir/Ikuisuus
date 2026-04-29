@@ -10,16 +10,19 @@
 
 import DotMatrixBackground from '@/lib/components/dotMatrix/DotMatrixBackground';
 import MouseTracker from '@/lib/components/mouseTracker/MouseTracker';
+import React from 'react';
 
 type Props = {
   radius?: number;
 };
 
 export default function FlashlightLayer({ radius = 220 }: Props) {
+  const bgRef = React.useRef<HTMLDivElement | null>(null);
+
   return (
     <>
-      <DotMatrixBackground radius={radius} />
-      <MouseTracker />
+      <DotMatrixBackground ref={bgRef} radius={radius} />
+      <MouseTracker targetRef={bgRef} />
     </>
   );
 }
