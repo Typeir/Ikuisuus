@@ -807,7 +807,7 @@ body {
 
 /* Responsive prose margin-left: ml-60 on desktop, ml-auto below lg breakpoint */
 .prose {
-  @apply ml-60;
+  margin-left: 8vw;
 
   @media (max-width: 1023px) {
     @apply ml-auto;
