@@ -1,0 +1,126 @@
+/* Minimal reveal background styles (dot-matrix) */
+.reveal {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-color: transparent;
+
+  /* dot-grid defaults */
+  --dot-size: 0.12rem;
+  --dot-spacing: 2rem;
+  opacity: 0.5;
+
+  /* repeating dot pattern — uses `--reveal-color` for dot color */
+  background-image: radial-gradient(
+    circle var(--dot-size) at center,
+    var(--reveal-color, var(--color-accent)) 60%,
+    transparent 80%
+  );
+  background-size: var(--dot-spacing) var(--dot-spacing);
+  background-repeat: repeat;
+
+  /* radial mask centered on CSS vars written by MouseTracker */
+  -webkit-mask-image: radial-gradient(
+    circle var(--reveal-radius, 200px) at var(--mouse-x, 50%)
+      var(--mouse-y, 50%),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--reveal-radius, 200px) at var(--mouse-x, 50%)
+      var(--mouse-y, 50%),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* subtle inner flashlight (50% smaller) — part of the reveal element */
+.reveal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  /* compute a smaller radius: half of the main reveal radius */
+  --flashlight-radius: calc(var(--reveal-radius, 200px) * 0.5);
+
+  /* soft radial highlight centered on cursor vars; use reveal color but very low opacity */
+  background: radial-gradient(
+    circle var(--flashlight-radius) at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    var(--reveal-color, var(--color-accent)) 0%,
+    transparent 60%
+  );
+  opacity: 0.12;
+
+  /* limit the highlight to a circular mask for crisp edges */
+  -webkit-mask-image: radial-gradient(
+    circle var(--flashlight-radius) at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--flashlight-radius) at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* vertical white scanlines: very small, repeating with no gap, vertically scrolling
+   revealed by the same radial mask but with a larger radius */
+.reveal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* very small tile height — no spacing between repeats */
+  --before-height: calc(var(--dot-spacing) / 4);
+
+  /* pure white -> transparent vertical gradient (top -> bottom) */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.4) 45%,
+    var(--color-accent) 50%,
+    rgba(255, 255, 255, 0.4) 55%,
+    rgba(255, 255, 255, 0) 70%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 100% var(--before-height);
+  background-repeat: repeat-y;
+  opacity: 0.2;
+  mix-blend-mode: normal;
+
+  /* vertical scrolling motion */
+  background-position: 0 0;
+  animation: scan-scroll-y 5s linear infinite;
+  will-change: background-position;
+
+  /* revealed with a smaller radius (three quarters of the main reveal) */
+  --before-reveal-radius: calc(var(--reveal-radius, 200px) * 0.75);
+  -webkit-mask-image: radial-gradient(
+    circle var(--before-reveal-radius) at var(--mouse-x, 50%)
+      var(--mouse-y, 50%),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--before-reveal-radius) at var(--mouse-x, 50%)
+      var(--mouse-y, 50%),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+@keyframes scan-scroll-y {
+  to {
+    background-position: 0 var(--before-height);
+  }
+}

@@ -19,6 +19,7 @@ import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
 import DraftOverlay from '@/lib/components/draftOverlay/draftOverlay';
+import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
 import components, { HashNavigationProvider } from '@/lib/components/mdx';
 import EditPageButton from '@/lib/components/mdxEditor/editPageButton';
 import StreamBootstrap from '@/lib/components/stream/StreamBootstrap';
@@ -71,7 +72,6 @@ type PageProps = {
  * @returns {string|null} H1 text or null if not found
  */
 function extractH1FromMdx(content: string): string | null {
-  /** Match first H1: # Title or <h1>Title</h1> */
   const mdH1Match = content.match(/^#\s+(.+)$/m);
   if (mdH1Match) return mdH1Match[1].trim();
 
@@ -173,7 +173,10 @@ export async function generateMetadata({
 
 /**
  * Dynamic content page with fallback to ClientRenderer if MDX precompilation fails.
- *
+ * Normalizes slugs: handles accidental locale duplication, decodes percent-encoded Unicode
+ * If the slug doesn't resolve, tries redirecting to slug/main
+ * Renders raw MD content with a simple component if the file isn't MDX
+ * Precompiles MDX content with frontmatter support; falls back to ClientRenderer on errors
  * @param {PageProps} props - Route params
  * @param {Promise<{ slug: string[], locale: string }>} props.params - Async route parameters
  * @returns {JSX.Element} Rendered page or fallback
@@ -181,7 +184,6 @@ export async function generateMetadata({
 const Page = async ({ params }: PageProps) => {
   const { slug, locale } = await params;
 
-  /** Normalize slug: handle accidental locale duplication, decode percent-encoded Unicode */
   const slugSegments = (slug[0] === locale ? slug.slice(1) : slug).map(
     (segment) => decodeURIComponent(segment),
   );
@@ -189,7 +191,6 @@ const Page = async ({ params }: PageProps) => {
 
   let result = await fetchContent(locale, slugPath);
 
-  /** If the slug doesn't resolve, try redirecting to slug/main */
   if (!result) {
     const mainResult = await fetchContent(locale, `${slugPath}/main`);
 
@@ -202,18 +203,20 @@ const Page = async ({ params }: PageProps) => {
 
   const { content: rawContent, resolvedPath } = result;
 
-  /** Render raw .md as-is */
   if (isMdFile(resolvedPath)) {
-    return <MDRawPage slugPath={slugPath} rawContent={rawContent} />;
+    return (
+      <>
+        <FlashlightLayer />
+        <MDRawPage slugPath={slugPath} rawContent={rawContent} />
+      </>
+    );
   }
 
-  /** Try to precompile MDX via evaluate */
   let evalResult;
 
   const streamText = await resolveStreamText(locale, slugSegments, rawContent);
 
   try {
-    /** pathToFileURL requires an absolute path; use a placeholder for GitHub-sourced content */
     const baseUrl = path.isAbsolute(resolvedPath)
       ? pathToFileURL(resolvedPath).toString()
       : undefined;
@@ -238,13 +241,16 @@ const Page = async ({ params }: PageProps) => {
         error: evalResult?.error ? String(evalResult.error) : 'Unknown error',
       });
       return (
-        <div className='prose prose-invert mx-auto ml-'>
-          <h1 className='text-4xl font-mono font-black mb-6'>{slugPath}</h1>
-          <article className={styles.markdown}>
-            <ClientRenderer locale={locale} slug={slugPath} />
-          </article>
-          <EditPageButton slug={slugPath} locale={locale} />
-        </div>
+        <>
+          <div className='prose prose-invert mx-auto ml-'>
+            <FlashlightLayer />
+            <h1 className='text-4xl font-mono font-black mb-6'>{slugPath}</h1>
+            <article className={styles.markdown}>
+              <ClientRenderer locale={locale} slug={slugPath} />
+            </article>
+            <EditPageButton slug={slugPath} locale={locale} />
+          </div>
+        </>
       );
     }
   }
@@ -255,6 +261,7 @@ const Page = async ({ params }: PageProps) => {
     <div
       className='prose prose-invert mx-auto'
       style={{ ['--stream-text' as any]: `'${streamText}'` }}>
+      <FlashlightLayer />
       <DraftOverlay locale={locale} slug={slugPath}>
         <HashNavigationProvider />
         <article className={styles.markdown}>{content}</article>
