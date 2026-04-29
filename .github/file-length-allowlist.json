@@ -10,6 +10,11 @@
     "justification": "SCSS mixins for MDX section styling that are highly complex."
   },
   {
+    "file": "src/styles/mdxContent.module.scss",
+    "maxLines": 600,
+    "justification": "Mdx content module is basically a second globals.scss with module-scoped styles."
+  },
+  {
     "file": "src/app/[locale]/globals.scss",
     "maxLines": 9999999999,
     "justification": "Global styles for the entire application that must be in a single file to ensure consistent styling and avoid specificity issues"

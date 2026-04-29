@@ -208,6 +208,19 @@
   padding-top: 5rem;
   padding-bottom: 5rem;
   overflow-y: clip;
+
+  details {
+    section[data-heading-level] {
+      &::before,
+      &::after,
+      *::before,
+      *::after {
+        content: none !important;
+        display: none !important;
+      }
+    }
+  }
+
   section[data-heading-level] {
     position: relative;
     --stream-x: calc(-2.5rem - (var(--heading-level, 1) - 1) * 1.5rem);
@@ -242,13 +255,24 @@
 
     /* Responsive adjustments for all section pseudo-decorators */
     @media (max-width: 1023px) {
+      /* Freeze decoration stream positions and nesting depth on mobile.
+         Prevent per-depth adjustments that rely on custom properties
+         like --stream-x, --depth, or --heading-level so decorations
+         remain consistent across breakpoints. */
+      --stream-x: -1.4rem;
+      --depth: 0;
+      --heading-level: 1;
+      --stream-opacity: 0.1;
+
       &::before {
         left: -1.4rem !important;
         opacity: 0.4;
       }
 
+      /* Keep the stream pseudo-element but use the frozen vars above;
+         do not reassign positional custom properties here. */
       &::after {
-        --stream-opacity: 0.1;
+        /* intentionally empty */
       }
 
       &[data-heading-level='1']::before {
@@ -259,6 +283,13 @@
       & > section[data-heading-level]:not(:last-child)::before {
         left: -1.4rem !important;
         opacity: 0.4;
+      }
+
+      /* Ensure nested lists use the same frozen stream offset and depth */
+      & ul,
+      & ol {
+        --stream-x: -1.4rem;
+        --depth: 1;
       }
     }
 
