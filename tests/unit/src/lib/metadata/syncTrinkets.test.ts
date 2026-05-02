@@ -134,9 +134,38 @@ describe('syncTrinkets', () => {
     expect(em.create).not.toHaveBeenCalled();
   });
 
-  it('should delete stale rows no longer present in metadata', async () => {
+  it('should not delete DB rows when directory exists but has no metadata files', async () => {
     fsMock.existsSync.mockReturnValue(true);
     fsMock.readdirSync.mockReturnValue([]);
+
+    const staleEntity = { slug: 'old-relic', versionHash: 'stale' };
+    const em = {
+      find: vi.fn().mockResolvedValue([staleEntity]),
+      assign: vi.fn(),
+      create: vi.fn(),
+      remove: vi.fn(),
+    };
+
+    const result = await syncTrinkets(em as never, 'en');
+
+    expect(result.deleted).toBe(0);
+    expect(em.remove).not.toHaveBeenCalled();
+  });
+
+  it('should delete stale rows when metadata files exist but omit the slug', async () => {
+    const activeRecord = {
+      slug: 'new-relic',
+      title: 'New Relic',
+      file: 'src/content/en/items/trinkets/new-relic.mdx',
+      link: '/library/items/trinkets/new-relic',
+      itemType: 'Trinket',
+      tags: [],
+      versionHash: 'abc123',
+    };
+
+    fsMock.existsSync.mockReturnValue(true);
+    fsMock.readdirSync.mockReturnValue(['new-relic.metadata.json'] as never);
+    fsMock.readFileSync.mockReturnValue(JSON.stringify(activeRecord));
 
     const staleEntity = { slug: 'old-relic', versionHash: 'stale' };
     const em = {

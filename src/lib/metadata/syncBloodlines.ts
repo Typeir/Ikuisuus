@@ -30,9 +30,14 @@ function getProjectRoot(): string {
 /**
  * Reads and flattens `.metadata.json` files from a locale subdirectory.
  *
+ * Returns `sourceExists: false` when neither directory exists **or** when the
+ * chosen directory contains no `.metadata.json` files, preventing destructive
+ * deletion in serverless deployments where content dirs exist but metadata
+ * sidecars were not bundled.
+ *
  * @param {string} locale - Locale code
  * @param {string} subdir - Content subdirectory
- * @returns {Record<string, unknown>[]} Flattened metadata records
+ * @returns {{ records: Record<string, unknown>[]; sourceExists: boolean }} Flattened records and source presence flag
  */
 function readMetadataFiles(
   locale: string,
@@ -48,12 +53,16 @@ function readMetadataFiles(
 
   if (!sourceExists) return { records: [], sourceExists: false };
 
-  const records = readdirSync(dir)
-    .filter((f) => f.endsWith('.metadata.json'))
-    .flatMap((f) => {
-      const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
-      return Array.isArray(parsed) ? parsed : [parsed];
-    });
+  const metaFiles = readdirSync(dir).filter((f) =>
+    f.endsWith('.metadata.json'),
+  );
+
+  if (metaFiles.length === 0) return { records: [], sourceExists: false };
+
+  const records = metaFiles.flatMap((f) => {
+    const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
+    return Array.isArray(parsed) ? parsed : [parsed];
+  });
 
   return { records, sourceExists: true };
 }
