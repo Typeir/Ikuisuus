@@ -76,9 +76,7 @@ function readMetadataFiles(
 
   if (!sourceExists) return { records: [], sourceExists: false };
 
-  const metaFiles = readdirSync(dir).filter((f) =>
-    f.endsWith('.metadata.json'),
-  );
+  const metaFiles = readdirSync(dir).filter((f) => f.endsWith('.metadata.json'));
 
   if (metaFiles.length === 0) return { records: [], sourceExists: false };
 
