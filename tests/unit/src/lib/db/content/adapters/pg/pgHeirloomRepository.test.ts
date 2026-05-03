@@ -110,7 +110,7 @@ describe('pgHeirloomRepository', () => {
       expect(mockEM.find).toHaveBeenCalledWith(
         expect.anything(),
         { locale: 'en' },
-        { orderBy: { slug: 'asc' } },
+        { orderBy: { slug: 'asc' }, populate: [] },
       );
     });
 
@@ -135,10 +135,14 @@ describe('pgHeirloomRepository', () => {
     it('should query by locale and slug', async () => {
       mockEM.findOne.mockResolvedValue(null);
       await pgHeirloomRepository.getBySlug('en', 'flame-tongue');
-      expect(mockEM.findOne).toHaveBeenCalledWith(expect.anything(), {
-        locale: 'en',
-        slug: 'flame-tongue',
-      });
+      expect(mockEM.findOne).toHaveBeenCalledWith(
+        expect.anything(),
+        {
+          locale: 'en',
+          slug: 'flame-tongue',
+        },
+        { populate: [] },
+      );
     });
 
     it('should return null when not found', async () => {

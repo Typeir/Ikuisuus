@@ -11,16 +11,13 @@
 
 import { VocationEntity } from '@/lib/db/orm/entities/VocationEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
-import { getEM } from '@/lib/db/orm/orm';
-import { logger } from '@/lib/logging/logger';
 import type { VocationRepository } from '../../repositories/vocationRepository';
 import type {
     VocationFeature,
     VocationMetadata,
     VocationSpellcasting,
 } from '../../schemas/vocationMetadata';
-
-const log = logger.child({ module: 'PGVocationRepo' });
+import { PgMetadataRepository } from './PgMetadataRepository';
 
 /* ──────────────────────────────  Row mapper  ─────────────────────────── */
 
@@ -77,45 +74,30 @@ const rowToVocation = (row: VocationEntity): VocationMetadata => {
 
 /**
  * MikroORM-backed vocation repository.
+ *
+ * @class PgVocationRepository
+ * @extends {PgMetadataRepository<VocationEntity, VocationMetadata>}
+ * @implements {VocationRepository}
  */
-export const pgVocationRepository: VocationRepository = {
-  list: async (locale: string): Promise<VocationMetadata[]> => {
-    try {
-      const em = await getEM();
-      const rows = await em.find(
-        VocationEntity,
-        { locale },
-        { populate: ['features'], orderBy: { title: 'asc' } },
-      );
-      return rows.map(rowToVocation);
-    } catch (error) {
-      log.error('Error reading vocation metadata from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class PgVocationRepository
+  extends PgMetadataRepository<VocationEntity, VocationMetadata>
+  implements VocationRepository
+{
+  protected readonly entityClass = VocationEntity;
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<VocationMetadata | null> => {
-    try {
-      const em = await getEM();
-      const row = await em.findOne(
-        VocationEntity,
-        { locale, slug },
-        { populate: ['features'] },
-      );
-      return row ? rowToVocation(row) : null;
-    } catch (error) {
-      log.error('Error reading single vocation from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
-};
+  protected override populate(): string[] {
+    return ['features'];
+  }
+
+  protected override orderBy(): Record<string, 'asc' | 'desc'> {
+    return { title: 'asc' };
+  }
+
+  protected override toMetadata(row: VocationEntity): VocationMetadata {
+    return rowToVocation(row);
+  }
+}
+
+/** @type {VocationRepository} */
+export const pgVocationRepository: VocationRepository =
+  new PgVocationRepository();

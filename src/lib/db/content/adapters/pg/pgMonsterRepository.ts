@@ -28,7 +28,7 @@ import type {
     MonsterSenses,
     MonsterSpeed,
 } from '../../schemas/monsterMetadata';
-
+import { PgMetadataRepository } from './PgMetadataRepository';
 const log = logger.child({ module: 'PGMonsterRepo' });
 
 /* ─────────────────────  Embed → Domain mappers  ─────────────────────── */
@@ -168,27 +168,32 @@ const rowToMonster = (row: MonsterEntity): MonsterMetadata => ({
 
 /**
  * MikroORM-backed monster repository.
+ *
+ * @class PgMonsterRepository
+ * @extends {PgMetadataRepository<MonsterEntity, MonsterMetadata>}
+ * @implements {MonsterRepository}
  */
-export const pgMonsterRepository: MonsterRepository = {
-  list: async (locale: string): Promise<MonsterMetadata[]> => {
-    try {
-      const em = await getEM();
-      const rows = await em.find(
-        MonsterEntity,
-        { locale },
-        { orderBy: { slug: 'asc' } },
-      );
-      return rows.map(rowToMonster);
-    } catch (error) {
-      log.error('Error reading monster metadata from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class PgMonsterRepository
+  extends PgMetadataRepository<MonsterEntity, MonsterMetadata>
+  implements MonsterRepository
+{
+  protected readonly entityClass = MonsterEntity;
 
-  listIndex: async (locale: string): Promise<MonsterIndexEntry[]> => {
+  protected override orderBy(): Record<string, 'asc' | 'desc'> {
+    return { slug: 'asc' };
+  }
+
+  protected override toMetadata(row: MonsterEntity): MonsterMetadata {
+    return rowToMonster(row);
+  }
+
+  /**
+   * Returns a lightweight index of all monsters for use in dropdowns and search.
+   *
+   * @param {string} locale - Locale code
+   * @returns {Promise<MonsterIndexEntry[]>} Index entries, or `[]` on error
+   */
+  async listIndex(locale: string): Promise<MonsterIndexEntry[]> {
     try {
       const em = await getEM();
       const rows = await em.find(
@@ -213,12 +218,19 @@ export const pgMonsterRepository: MonsterRepository = {
       });
       return [];
     }
-  },
+  }
 
-  getBySlug: async (
+  /**
+   * Overrides `getBySlug` to match on either `slug` or `subSlug`.
+   *
+   * @param {string} locale - Locale code
+   * @param {string} slug - Slug or subSlug to look up
+   * @returns {Promise<MonsterMetadata | null>} Matched monster or `null`
+   */
+  override async getBySlug(
     locale: string,
     slug: string,
-  ): Promise<MonsterMetadata | null> => {
+  ): Promise<MonsterMetadata | null> {
     try {
       const em = await getEM();
       const row = await em.findOne(MonsterEntity, {
@@ -234,5 +246,8 @@ export const pgMonsterRepository: MonsterRepository = {
       });
       return null;
     }
-  },
-};
+  }
+}
+
+/** @type {MonsterRepository} */
+export const pgMonsterRepository: MonsterRepository = new PgMonsterRepository();

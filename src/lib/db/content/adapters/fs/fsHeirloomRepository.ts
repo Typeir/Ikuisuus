@@ -29,7 +29,7 @@ class FsHeirloomRepository
   implements HeirloomRepository
 {
   constructor() {
-    super(path.join('items', 'heirlooms'), 'FSHeirloomRepo');
+    super(path.join('items', 'heirlooms'));
   }
 }
 

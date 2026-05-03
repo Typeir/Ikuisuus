@@ -11,6 +11,7 @@
 export { pgBloodlineRepository } from './pgBloodlineRepository';
 export { pgDraftRepository } from './pgDraftRepository';
 export { pgHeirloomRepository } from './pgHeirloomRepository';
+export { PgMetadataRepository } from './PgMetadataRepository';
 export { pgMonsterRepository } from './pgMonsterRepository';
 export { pgSpecializationRepository } from './pgSpecializationRepository';
 export { pgSpellRepository } from './pgSpellRepository';

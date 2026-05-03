@@ -42,7 +42,7 @@ class FsSpecializationRepository
   implements SpecializationRepository
 {
   constructor() {
-    super(SUBDIR, 'FSSpecializationRepo');
+    super(SUBDIR);
   }
 
   /**

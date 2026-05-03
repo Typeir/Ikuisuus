@@ -11,19 +11,19 @@
  */
 
 import {
-    SpellEntity,
-    SpellListEntity,
+  SpellEntity,
+  SpellListEntity,
 } from '@/lib/db/orm/entities/SpellEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
 import type {
-    SpellIndexEntry,
-    SpellListRef,
-    SpellMetadata,
+  SpellIndexEntry,
+  SpellListRef,
+  SpellMetadata,
 } from '../../schemas/spellMetadata';
-
+import { PgMetadataRepository } from './PgMetadataRepository';
 const log = logger.child({ module: 'PGSpellRepo' });
 
 /* ─────────────────────  Sub-object builders  ─────────────────────────── */
@@ -76,27 +76,36 @@ const rowToSpell = (row: SpellEntity): SpellMetadata => ({
 
 /**
  * MikroORM-backed spell repository.
+ *
+ * @class PgSpellRepository
+ * @extends {PgMetadataRepository<SpellEntity, SpellMetadata>}
+ * @implements {SpellRepository}
  */
-export const pgSpellRepository: SpellRepository = {
-  list: async (locale: string): Promise<SpellMetadata[]> => {
-    try {
-      const em = await getEM();
-      const rows = await em.find(
-        SpellEntity,
-        { locale },
-        { orderBy: { title: 'asc' }, populate: ['spellLists'] },
-      );
-      return rows.map(rowToSpell);
-    } catch (error) {
-      log.error('Error reading spell metadata from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class PgSpellRepository
+  extends PgMetadataRepository<SpellEntity, SpellMetadata>
+  implements SpellRepository
+{
+  protected readonly entityClass = SpellEntity;
 
-  listIndex: async (locale: string): Promise<SpellIndexEntry[]> => {
+  protected override populate(): string[] {
+    return ['spellLists'];
+  }
+
+  protected override orderBy(): Record<string, 'asc' | 'desc'> {
+    return { title: 'asc' };
+  }
+
+  protected override toMetadata(row: SpellEntity): SpellMetadata {
+    return rowToSpell(row);
+  }
+
+  /**
+   * Returns a lightweight sorted index of all spells.
+   *
+   * @param {string} locale - Locale code
+   * @returns {Promise<SpellIndexEntry[]>} Sorted index entries, or `[]` on error
+   */
+  async listIndex(locale: string): Promise<SpellIndexEntry[]> {
     try {
       const em = await getEM();
       const rows = await em.find(
@@ -120,14 +129,19 @@ export const pgSpellRepository: SpellRepository = {
       });
       return [];
     }
-  },
+  }
 
-  listBySlugs: async (
-    locale: string,
-    slugs: string[],
-  ): Promise<SpellMetadata[]> => {
+  /**
+   * Returns spells matching the provided slug set. Passing an empty array
+   * returns all spells.
+   *
+   * @param {string} locale - Locale code
+   * @param {string[]} slugs - Slug allowlist; empty means all
+   * @returns {Promise<SpellMetadata[]>} Matching spell records, or `[]` on error
+   */
+  async listBySlugs(locale: string, slugs: string[]): Promise<SpellMetadata[]> {
     if (slugs.length === 0) {
-      return pgSpellRepository.list(locale);
+      return this.list(locale);
     }
     try {
       const em = await getEM();
@@ -145,12 +159,16 @@ export const pgSpellRepository: SpellRepository = {
       });
       return [];
     }
-  },
+  }
 
-  listBySource: async (
-    locale: string,
-    source: string,
-  ): Promise<SpellMetadata[]> => {
+  /**
+   * Returns all spells associated with a given source/spell-list.
+   *
+   * @param {string} locale - Locale code
+   * @param {string} source - Spell list name to filter by
+   * @returns {Promise<SpellMetadata[]>} Matching spell records, or `[]` on error
+   */
+  async listBySource(locale: string, source: string): Promise<SpellMetadata[]> {
     try {
       const em = await getEM();
       const lists = await em.find(
@@ -170,27 +188,8 @@ export const pgSpellRepository: SpellRepository = {
       });
       return [];
     }
-  },
+  }
+}
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<SpellMetadata | null> => {
-    try {
-      const em = await getEM();
-      const row = await em.findOne(
-        SpellEntity,
-        { locale, slug },
-        { populate: ['spellLists'] },
-      );
-      return row ? rowToSpell(row) : null;
-    } catch (error) {
-      log.error('Error reading single spell from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
-};
+/** @type {SpellRepository} */
+export const pgSpellRepository: SpellRepository = new PgSpellRepository();

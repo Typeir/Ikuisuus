@@ -10,6 +10,7 @@
  * @module src/app/api/search/route
  */
 
+import type { Dirent } from 'fs';
 import fs from 'fs/promises';
 import { NextResponse } from 'next/server';
 import path from 'path';
@@ -74,11 +75,11 @@ export async function GET(req: Request) {
    * @param {string} base - Accumulated relative path for URL construction
    */
   async function walk(dir: string, base: string = ''): Promise<void> {
-    let entries: fs.Dirent[] = [] as unknown as fs.Dirent[];
+    let entries: Dirent[] = [];
     try {
-      entries = (await fs.readdir(dir, {
+      entries = await fs.readdir(dir, {
         withFileTypes: true,
-      })) as unknown as fs.Dirent[];
+      }) as unknown as Dirent[];
     } catch (err) {
       return;
     }

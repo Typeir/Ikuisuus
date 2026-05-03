@@ -31,7 +31,7 @@ class FsBloodlineRepository
   implements BloodlineRepository
 {
   constructor() {
-    super(path.join('character-creation', 'bloodlines'), 'FSBloodlineRepo');
+    super(path.join('character-creation', 'bloodlines'));
   }
 }
 

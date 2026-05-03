@@ -41,7 +41,7 @@ class FsMonsterRepository
   implements MonsterRepository
 {
   constructor() {
-    super(SUBDIR, 'FSMonsterRepo');
+    super(SUBDIR);
   }
 
   /**

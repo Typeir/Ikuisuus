@@ -35,7 +35,7 @@ class FsVocationRepository
   implements VocationRepository
 {
   constructor() {
-    super(path.join('character-creation', 'vocations'), 'FSVocationRepo');
+    super(path.join('character-creation', 'vocations'));
   }
 
   /**

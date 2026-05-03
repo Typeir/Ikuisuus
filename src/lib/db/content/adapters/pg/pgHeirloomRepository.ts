@@ -12,16 +12,13 @@
 
 import { HeirloomEntity } from '@/lib/db/orm/entities/HeirloomEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
-import { getEM } from '@/lib/db/orm/orm';
-import { logger } from '@/lib/logging/logger';
 import type { HeirloomRepository } from '../../repositories/heirloomRepository';
 import type {
     HeirloomCharges,
     HeirloomMetadata,
     HeirloomWeaponDamage,
 } from '../../schemas/heirloomMetadata';
-
-const log = logger.child({ module: 'PGHeirloomRepo' });
+import { PgMetadataRepository } from './PgMetadataRepository';
 
 /* ─────────────────────  Embed → Domain mappers  ─────────────────────── */
 
@@ -95,41 +92,26 @@ const rowToHeirloom = (row: HeirloomEntity): HeirloomMetadata => ({
 
 /**
  * MikroORM-backed heirloom repository.
+ *
+ * @class PgHeirloomRepository
+ * @extends {PgMetadataRepository<HeirloomEntity, HeirloomMetadata>}
+ * @implements {HeirloomRepository}
  */
-export const pgHeirloomRepository: HeirloomRepository = {
-  list: async (locale: string): Promise<HeirloomMetadata[]> => {
-    try {
-      const em = await getEM();
-      const rows = await em.find(
-        HeirloomEntity,
-        { locale },
-        { orderBy: { slug: 'asc' } },
-      );
-      return rows.map(rowToHeirloom);
-    } catch (error) {
-      log.error('Error reading heirloom metadata from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class PgHeirloomRepository
+  extends PgMetadataRepository<HeirloomEntity, HeirloomMetadata>
+  implements HeirloomRepository
+{
+  protected readonly entityClass = HeirloomEntity;
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<HeirloomMetadata | null> => {
-    try {
-      const em = await getEM();
-      const row = await em.findOne(HeirloomEntity, { locale, slug });
-      return row ? rowToHeirloom(row) : null;
-    } catch (error) {
-      log.error('Error reading single heirloom from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
-};
+  protected override orderBy(): Record<string, 'asc' | 'desc'> {
+    return { slug: 'asc' };
+  }
+
+  protected override toMetadata(row: HeirloomEntity): HeirloomMetadata {
+    return rowToHeirloom(row);
+  }
+}
+
+/** @type {HeirloomRepository} */
+export const pgHeirloomRepository: HeirloomRepository =
+  new PgHeirloomRepository();

@@ -87,7 +87,7 @@ describe('pgTrinketRepository', () => {
       expect(mockEM.find).toHaveBeenCalledWith(
         expect.anything(),
         { locale: 'en' },
-        { orderBy: { title: 'asc' } },
+        { orderBy: { title: 'asc' }, populate: [] },
       );
     });
 
@@ -112,10 +112,14 @@ describe('pgTrinketRepository', () => {
     it('should query by locale and slug', async () => {
       mockEM.findOne.mockResolvedValue(null);
       await pgTrinketRepository.getBySlug('en', 'lucky-coin');
-      expect(mockEM.findOne).toHaveBeenCalledWith(expect.anything(), {
-        locale: 'en',
-        slug: 'lucky-coin',
-      });
+      expect(mockEM.findOne).toHaveBeenCalledWith(
+        expect.anything(),
+        {
+          locale: 'en',
+          slug: 'lucky-coin',
+        },
+        { populate: [] },
+      );
     });
 
     it('should return null when not found', async () => {

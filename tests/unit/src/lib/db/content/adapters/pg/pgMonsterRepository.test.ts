@@ -138,7 +138,7 @@ describe('pgMonsterRepository', () => {
       expect(mockEM.find).toHaveBeenCalledWith(
         expect.anything(),
         { locale: 'en' },
-        { orderBy: { slug: 'asc' } },
+        { orderBy: { slug: 'asc' }, populate: [] },
       );
     });
 

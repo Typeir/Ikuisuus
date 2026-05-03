@@ -11,15 +11,12 @@
 
 import { BloodlineEntity } from '@/lib/db/orm/entities/BloodlineEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
-import { getEM } from '@/lib/db/orm/orm';
-import { logger } from '@/lib/logging/logger';
 import type { BloodlineRepository } from '../../repositories/bloodlineRepository';
 import type {
-  BloodlineBoon,
-  BloodlineMetadata,
+    BloodlineBoon,
+    BloodlineMetadata,
 } from '../../schemas/bloodlineMetadata';
-
-const log = logger.child({ module: 'PGBloodlineRepo' });
+import { PgMetadataRepository } from './PgMetadataRepository';
 
 /* ──────────────────────────────  Row mapper  ─────────────────────────── */
 
@@ -67,45 +64,30 @@ const rowToBloodline = (row: BloodlineEntity): BloodlineMetadata => {
 
 /**
  * MikroORM-backed bloodline repository.
+ *
+ * @class PgBloodlineRepository
+ * @extends {PgMetadataRepository<BloodlineEntity, BloodlineMetadata>}
+ * @implements {BloodlineRepository}
  */
-export const pgBloodlineRepository: BloodlineRepository = {
-  list: async (locale: string): Promise<BloodlineMetadata[]> => {
-    try {
-      const em = await getEM();
-      const rows = await em.find(
-        BloodlineEntity,
-        { locale },
-        { populate: ['boons'], orderBy: { title: 'asc' } },
-      );
-      return rows.map(rowToBloodline);
-    } catch (error) {
-      log.error('Error reading bloodline metadata from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class PgBloodlineRepository
+  extends PgMetadataRepository<BloodlineEntity, BloodlineMetadata>
+  implements BloodlineRepository
+{
+  protected readonly entityClass = BloodlineEntity;
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<BloodlineMetadata | null> => {
-    try {
-      const em = await getEM();
-      const row = await em.findOne(
-        BloodlineEntity,
-        { locale, slug },
-        { populate: ['boons'] },
-      );
-      return row ? rowToBloodline(row) : null;
-    } catch (error) {
-      log.error('Error reading single bloodline from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
-};
+  protected override populate(): string[] {
+    return ['boons'];
+  }
+
+  protected override orderBy(): Record<string, 'asc' | 'desc'> {
+    return { title: 'asc' };
+  }
+
+  protected override toMetadata(row: BloodlineEntity): BloodlineMetadata {
+    return rowToBloodline(row);
+  }
+}
+
+/** @type {BloodlineRepository} */
+export const pgBloodlineRepository: BloodlineRepository =
+  new PgBloodlineRepository();

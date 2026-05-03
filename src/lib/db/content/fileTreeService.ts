@@ -265,9 +265,12 @@ export const clearCache = (): void => {
   lru.clear();
 };
 
-export default {
+/** @type {{ listDirectory: typeof listDirectory; getFile: typeof getFile; statPath: typeof statPath; clearCache: typeof clearCache }} */
+const fileTreeService = {
   listDirectory,
   getFile,
   statPath,
   clearCache,
 };
+
+export default fileTreeService;

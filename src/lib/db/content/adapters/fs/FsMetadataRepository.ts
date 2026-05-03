@@ -34,11 +34,10 @@ export abstract class FsMetadataRepository<T extends { slug: string }> {
 
   /**
    * @param {string} subdir - Content subdirectory relative to `src/content/{locale}/`.
-   * @param {string} logModule - Module label passed to `logger.child()`.
    */
-  constructor(subdir: string, logModule: string) {
+  constructor(subdir: string) {
     this.subdir = subdir;
-    this.log = logger.child({ module: logModule });
+    this.log = logger.child({ module: this.constructor.name });
   }
 
   /**

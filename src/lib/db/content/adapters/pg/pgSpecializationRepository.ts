@@ -21,6 +21,7 @@ import type {
     SpecializationMetadata,
     SpecializationSpellcasting,
 } from '../../schemas/specializationMetadata';
+import { PgMetadataRepository } from './PgMetadataRepository';
 
 const log = logger.child({ module: 'PGSpecializationRepo' });
 
@@ -87,52 +88,42 @@ const populateFields = ['features', 'preparedSpells'] as const;
 
 /**
  * MikroORM-backed specialization repository.
+ *
+ * @class PgSpecializationRepository
+ * @extends {PgMetadataRepository<SpecializationEntity, SpecializationMetadata>}
+ * @implements {SpecializationRepository}
  */
-export const pgSpecializationRepository: SpecializationRepository = {
-  list: async (locale: string): Promise<SpecializationMetadata[]> => {
-    try {
-      const em = await getEM();
-      const rows = await em.find(
-        SpecializationEntity,
-        { locale },
-        { populate: [...populateFields], orderBy: { title: 'asc' } },
-      );
-      return rows.map(rowToSpecialization);
-    } catch (error) {
-      log.error('Error reading specialization metadata from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class PgSpecializationRepository
+  extends PgMetadataRepository<SpecializationEntity, SpecializationMetadata>
+  implements SpecializationRepository
+{
+  protected readonly entityClass = SpecializationEntity;
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<SpecializationMetadata | null> => {
-    try {
-      const em = await getEM();
-      const row = await em.findOne(
-        SpecializationEntity,
-        { locale, slug },
-        { populate: [...populateFields] },
-      );
-      return row ? rowToSpecialization(row) : null;
-    } catch (error) {
-      log.error('Error reading single specialization from PostgreSQL', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
+  protected override populate(): string[] {
+    return [...populateFields];
+  }
 
-  listByVocation: async (
+  protected override orderBy(): Record<string, 'asc' | 'desc'> {
+    return { title: 'asc' };
+  }
+
+  protected override toMetadata(
+    row: SpecializationEntity,
+  ): SpecializationMetadata {
+    return rowToSpecialization(row);
+  }
+
+  /**
+   * Returns all specializations belonging to a given vocation.
+   *
+   * @param {string} locale - Locale code
+   * @param {string} vocation - Vocation slug to filter by
+   * @returns {Promise<SpecializationMetadata[]>} Matching specializations, or `[]` on error
+   */
+  async listByVocation(
     locale: string,
     vocation: string,
-  ): Promise<SpecializationMetadata[]> => {
+  ): Promise<SpecializationMetadata[]> {
     try {
       const em = await getEM();
       const rows = await em.find(
@@ -149,5 +140,9 @@ export const pgSpecializationRepository: SpecializationRepository = {
       });
       return [];
     }
-  },
-};
+  }
+}
+
+/** @type {SpecializationRepository} */
+export const pgSpecializationRepository: SpecializationRepository =
+  new PgSpecializationRepository();

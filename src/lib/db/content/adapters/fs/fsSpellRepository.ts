@@ -41,7 +41,7 @@ class FsSpellRepository
   implements SpellRepository
 {
   constructor() {
-    super(SUBDIR, 'FSSpellRepo');
+    super(SUBDIR);
   }
 
   /**

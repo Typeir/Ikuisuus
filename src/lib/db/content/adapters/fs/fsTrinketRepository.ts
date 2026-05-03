@@ -29,7 +29,7 @@ class FsTrinketRepository
   implements TrinketRepository
 {
   constructor() {
-    super(path.join('items', 'trinkets'), 'FSTrinketRepo');
+    super(path.join('items', 'trinkets'));
   }
 }
 
