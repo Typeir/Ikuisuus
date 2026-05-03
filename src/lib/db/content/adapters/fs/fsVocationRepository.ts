@@ -13,66 +13,45 @@
  * @since 7.0.0
  */
 
-import { logger } from '@/lib/logging/logger';
 import path from 'path';
 import type { VocationRepository } from '../../repositories/vocationRepository';
 import type { VocationMetadata } from '../../schemas/vocationMetadata';
-import { readMetadataFiles } from './readMetadataFiles';
-
-const log = logger.child({ module: 'FSVocationRepo' });
-
-/** Content subdirectory for vocation pages. */
-const SUBDIR = path.join('character-creation', 'vocations');
-
-/**
- * Type guard for vocation metadata records.
- *
- * @param {unknown} record - Parsed metadata record
- * @returns {boolean} True if record has `archetype` field (vocation indicator)
- */
-function isVocationRecord(record: unknown): record is VocationMetadata {
-  return (
-    record !== null &&
-    typeof record === 'object' &&
-    'archetype' in record &&
-    'hitDie' in record
-  );
-}
+import { FsMetadataRepository } from './FsMetadataRepository';
 
 /**
  * Filesystem-backed vocation repository.
  *
- * Reads `.metadata.json` sidecar files and filters for vocation records
- * (distinguished from specialization records by the `archetype` field).
+ * @class FsVocationRepository
+ * @extends {FsMetadataRepository<VocationMetadata>}
+ * @implements {VocationRepository}
+ *
+ * @description
+ * Reads `.metadata.json` sidecar files from `character-creation/vocations/`.
+ * Overrides `filter` to exclude specialization records (distinguished from
+ * vocations by the absence of `archetype` and `hitDie` fields).
  */
-export const fsVocationRepository: VocationRepository = {
-  list: async (locale: string): Promise<VocationMetadata[]> => {
-    try {
-      const raw = readMetadataFiles<VocationMetadata>(locale, SUBDIR);
-      return raw.filter(isVocationRecord);
-    } catch (error) {
-      log.error('Error reading vocation metadata from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class FsVocationRepository
+  extends FsMetadataRepository<VocationMetadata>
+  implements VocationRepository
+{
+  constructor() {
+    super(path.join('character-creation', 'vocations'), 'FSVocationRepo');
+  }
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<VocationMetadata | null> => {
-    try {
-      const all = readMetadataFiles<VocationMetadata>(locale, SUBDIR);
-      return all.filter(isVocationRecord).find((v) => v.slug === slug) ?? null;
-    } catch (error) {
-      log.error('Error reading single vocation from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
-};
+  /**
+   * @param {unknown} record - Raw parsed JSON record
+   * @returns {record is VocationMetadata} True when both `archetype` and `hitDie` fields are present
+   */
+  protected override filter(record: unknown): record is VocationMetadata {
+    return (
+      record !== null &&
+      typeof record === 'object' &&
+      'archetype' in record &&
+      'hitDie' in record
+    );
+  }
+}
+
+/** @type {VocationRepository} */
+export const fsVocationRepository: VocationRepository =
+  new FsVocationRepository();

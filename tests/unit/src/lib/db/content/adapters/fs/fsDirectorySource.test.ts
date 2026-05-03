@@ -8,29 +8,23 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('fs', () => ({
-  default: {
-    statSync: vi.fn(),
-    readdirSync: vi.fn(),
-  },
-}));
+vi.mock('fs/promises', () => {
+  const stat = vi.fn();
+  const readdir = vi.fn();
+  return { default: { stat, readdir }, stat, readdir };
+});
 
-import fs from 'fs';
+import fs from 'fs/promises';
 
 import { fsDirectorySource } from '@/lib/db/content/adapters/fs/fsDirectorySource';
 
 describe('fsDirectorySource', () => {
   beforeEach(() => {
-    vi.mocked(fs.statSync).mockReturnValue({
-      isDirectory: () => true,
-    } as ReturnType<typeof fs.statSync>);
+    vi.mocked(fs.stat).mockResolvedValue({ isDirectory: () => true } as any);
 
-    vi.mocked(fs.readdirSync).mockReturnValue([
-      { name: 'monsters', isDirectory: () => true } as unknown as fs.Dirent,
-      {
-        name: 'goblin.sheet.mdx',
-        isDirectory: () => false,
-      } as unknown as fs.Dirent,
+    vi.mocked(fs.readdir).mockResolvedValue([
+      { name: 'monsters', isDirectory: () => true } as unknown as any,
+      { name: 'goblin.sheet.mdx', isDirectory: () => false } as unknown as any,
     ]);
   });
 
@@ -50,9 +44,9 @@ describe('fsDirectorySource', () => {
   });
 
   it('returns empty array when the directory does not exist', async () => {
-    vi.mocked(fs.statSync).mockImplementation(() => {
-      throw new Error('ENOENT: no such file or directory');
-    });
+    vi.mocked(fs.stat).mockRejectedValue(
+      new Error('ENOENT: no such file or directory'),
+    );
 
     const entries = await fsDirectorySource.listEntries('en', 'nonexistent');
 
@@ -60,9 +54,7 @@ describe('fsDirectorySource', () => {
   });
 
   it('returns empty array when the path is not a directory', async () => {
-    vi.mocked(fs.statSync).mockReturnValue({
-      isDirectory: () => false,
-    } as ReturnType<typeof fs.statSync>);
+    vi.mocked(fs.stat).mockResolvedValue({ isDirectory: () => false } as any);
 
     const entries = await fsDirectorySource.listEntries('en', 'some-file.mdx');
 
@@ -70,7 +62,7 @@ describe('fsDirectorySource', () => {
   });
 
   it('returns empty array for an empty directory', async () => {
-    vi.mocked(fs.readdirSync).mockReturnValue([]);
+    vi.mocked(fs.readdir).mockResolvedValue([]);
 
     const entries = await fsDirectorySource.listEntries('en', 'empty-dir');
 
@@ -78,12 +70,9 @@ describe('fsDirectorySource', () => {
   });
 
   it('maps each Dirent to the DirectoryEntry shape', async () => {
-    vi.mocked(fs.readdirSync).mockReturnValue([
-      { name: 'spells', isDirectory: () => true } as unknown as fs.Dirent,
-      {
-        name: 'fireball.mdx',
-        isDirectory: () => false,
-      } as unknown as fs.Dirent,
+    vi.mocked(fs.readdir).mockResolvedValue([
+      { name: 'spells', isDirectory: () => true } as unknown as any,
+      { name: 'fireball.mdx', isDirectory: () => false } as unknown as any,
     ]);
 
     const entries = await fsDirectorySource.listEntries('en', 'spells');

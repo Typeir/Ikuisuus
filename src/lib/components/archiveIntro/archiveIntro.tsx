@@ -22,10 +22,7 @@ export const ArchiveIntro = () => {
 
   return (
     <section
-      className={cn(
-        styles['left-aligned-prose'],
-        'prose ml-0 max-w-4xl mx-auto px-4 py-8',
-      )}>
+      className={cn(styles['left-aligned-prose'], 'prose ml-0 max-w-4xl py-8')}>
       <h1 className='text-3xl font-bold mb-4'>{t('title')}</h1>
 
       <p>

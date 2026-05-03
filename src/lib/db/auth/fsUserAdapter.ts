@@ -13,7 +13,7 @@
  */
 
 import { logger } from '@/lib/logging/logger';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import type { StoredUser } from './schemas';
 import type { UserAdapter } from './userAdapter';
@@ -26,11 +26,11 @@ const DATA_PATH = path.resolve(process.cwd(), '.meta/runtime/users.json');
 /**
  * Ensures the parent directory for the data file exists.
  */
-const ensureDir = (): void => {
+const ensureDir = async (): Promise<void> => {
   const dir = path.dirname(DATA_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
+  try {
+    await fs.mkdir(dir, { recursive: true });
+  } catch (err) {}
 };
 
 /**
@@ -38,13 +38,13 @@ const ensureDir = (): void => {
  *
  * @returns {StoredUser[]} Stored users or empty array
  */
-const readUsers = (): StoredUser[] => {
+const readUsers = async (): Promise<StoredUser[]> => {
   try {
-    if (!fs.existsSync(DATA_PATH)) return [];
-    const raw = fs.readFileSync(DATA_PATH, 'utf-8');
+    const raw = await fs.readFile(DATA_PATH, 'utf-8');
     const data: unknown = JSON.parse(raw);
     return Array.isArray(data) ? data : [];
   } catch (error) {
+    if (error && (error as any).code === 'ENOENT') return [];
     log.debug('FS user read failed — returning empty', {
       error: error instanceof Error ? error.message : String(error),
     });
@@ -57,9 +57,9 @@ const readUsers = (): StoredUser[] => {
  *
  * @param {StoredUser[]} users - Full user array to persist
  */
-const writeUsers = (users: StoredUser[]): void => {
-  ensureDir();
-  fs.writeFileSync(DATA_PATH, JSON.stringify(users, null, 2), 'utf-8');
+const writeUsers = async (users: StoredUser[]): Promise<void> => {
+  await ensureDir();
+  await fs.writeFile(DATA_PATH, JSON.stringify(users, null, 2), 'utf-8');
 };
 
 /**
@@ -69,18 +69,18 @@ const writeUsers = (users: StoredUser[]): void => {
  */
 export const fsUserAdapter: UserAdapter = {
   findByUsername: async (username: string): Promise<StoredUser | null> => {
-    const users = readUsers();
+    const users = await readUsers();
     const lower = username.toLowerCase();
     return users.find((u) => u.username.toLowerCase() === lower) ?? null;
   },
 
   findById: async (id: string): Promise<StoredUser | null> => {
-    const users = readUsers();
+    const users = await readUsers();
     return users.find((u) => u.id === id) ?? null;
   },
 
   create: async (user: StoredUser): Promise<void> => {
-    const users = readUsers();
+    const users = await readUsers();
     const existing = users.find(
       (u) => u.username.toLowerCase() === user.username.toLowerCase(),
     );
@@ -88,27 +88,27 @@ export const fsUserAdapter: UserAdapter = {
       throw new Error(`Username already exists: ${user.username}`);
     }
     users.push(user);
-    writeUsers(users);
+    await writeUsers(users);
   },
 
   update: async (id: string, fields: Partial<StoredUser>): Promise<void> => {
-    const users = readUsers();
+    const users = await readUsers();
     const idx = users.findIndex((u) => u.id === id);
     if (idx === -1) throw new Error(`User not found: ${id}`);
     users[idx] = { ...users[idx], ...fields };
-    writeUsers(users);
+    await writeUsers(users);
   },
 
   listAll: async (): Promise<StoredUser[]> => {
-    return readUsers();
+    return await readUsers();
   },
 
   delete: async (id: string): Promise<void> => {
-    const users = readUsers();
+    const users = await readUsers();
     const filtered = users.filter((u) => u.id !== id);
     if (filtered.length === users.length) {
       throw new Error(`User not found: ${id}`);
     }
-    writeUsers(filtered);
+    await writeUsers(filtered);
   },
 };

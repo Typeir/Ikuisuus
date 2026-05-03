@@ -123,5 +123,10 @@
     "file": "scripts/db/pg/backfill-version-hashes.ts",
     "maxLines": 400,
     "justification": "CLI backfill script with per-entity hash computation and update logic"
+  },
+  {
+    "file": "src/lib/components/sidebar/sidebar.tsx",
+    "maxLines": 300,
+    "justification": "Sidebar orchestrator with lazy-mount animation, virtualisation threshold, stub lazy-loading effect, and SidebarItem fold logic — splitting would break co-located type definitions"
   }
 ]

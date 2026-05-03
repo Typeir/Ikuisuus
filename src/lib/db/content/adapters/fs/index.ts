@@ -11,6 +11,7 @@
 export { fsBloodlineRepository } from './fsBloodlineRepository';
 export { fsDirectorySource } from './fsDirectorySource';
 export { fsHeirloomRepository } from './fsHeirloomRepository';
+export { FsMetadataRepository } from './FsMetadataRepository';
 export { fsMonsterRepository } from './fsMonsterRepository';
 export { fsSpecializationRepository } from './fsSpecializationRepository';
 export { fsSpellRepository } from './fsSpellRepository';

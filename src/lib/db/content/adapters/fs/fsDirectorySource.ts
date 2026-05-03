@@ -10,7 +10,7 @@
  * @since 2.0.0
  */
 
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
 import type {
@@ -36,14 +36,13 @@ export const fsDirectorySource: DirectorySourceAdapter = {
     );
 
     try {
-      const stats = fs.statSync(dir);
+      const stats = await fs.stat(dir);
       if (!stats.isDirectory()) return [];
     } catch {
       return [];
     }
 
-    return fs
-      .readdirSync(dir, { withFileTypes: true })
-      .map((e) => ({ name: e.name, isDirectory: e.isDirectory() }));
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    return entries.map((e) => ({ name: e.name, isDirectory: e.isDirectory() }));
   },
 };

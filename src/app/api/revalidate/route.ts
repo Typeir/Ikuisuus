@@ -9,7 +9,7 @@
  *
  * @module app/api/revalidate/route
  * @author Typeir
- * @version 1.0.0
+ * @version 1.1.0
  * @since 2.0.0
  */
 
@@ -270,6 +270,18 @@ export async function POST(req: NextRequest) {
     ok: results.filter((r) => r.status === 'ok').length,
     errors: results.filter((r) => r.status === 'error').length,
   });
+
+  try {
+    const mod = await import('@/lib/db/content');
+    if (mod && typeof mod.clearCache === 'function') {
+      mod.clearCache();
+      log.message('Cleared file-tree cache after revalidation');
+    }
+  } catch (err) {
+    log.warning('Failed to clear file-tree cache after revalidation', {
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 
   return NextResponse.json({ results }, { status: 200 });
 }

@@ -9,6 +9,15 @@
   --springy-bezier: #{$transition-ease-springy};
 }
 
+/* Media max-width tokens (px) — used for JS/CSS responsive helpers */
+:root {
+  --mw-tiny: 320px;
+  --mw-small: 480px;
+  --mw-normal: 768px;
+  --mw-big: 1024px;
+  --mw-xlarge: 1280px;
+}
+
 /* ============================================
    FOUC PREVENTION
    Hide body until theme is applied via data-theme attribute.

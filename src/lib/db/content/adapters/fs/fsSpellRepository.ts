@@ -13,9 +13,10 @@
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
 import type {
-  SpellIndexEntry,
-  SpellMetadata,
+    SpellIndexEntry,
+    SpellMetadata,
 } from '../../schemas/spellMetadata';
+import { FsMetadataRepository } from './FsMetadataRepository';
 import { readMetadataFiles } from './readMetadataFiles';
 
 const log = logger.child({ module: 'FSSpellRepo' });
@@ -26,26 +27,32 @@ const SUBDIR = 'spells';
 /**
  * Filesystem-backed spell repository.
  *
- * Reads `.metadata.json` sidecar files and serves typed `SpellMetadata` records.
- * External spells (from `spells-external.metadata.json`) are included automatically
- * via the shared `readMetadataFiles` helper since the file matches `*.metadata.json`.
+ * @class FsSpellRepository
+ * @extends {FsMetadataRepository<SpellMetadata>}
+ * @implements {SpellRepository}
+ *
+ * @description
+ * Reads `.metadata.json` sidecar files from `spells/`. External spells
+ * (from `spells-external.metadata.json`) are included automatically since
+ * the file matches `*.metadata.json`.
  */
-export const fsSpellRepository: SpellRepository = {
-  list: async (locale: string): Promise<SpellMetadata[]> => {
-    try {
-      return readMetadataFiles<SpellMetadata>(locale, SUBDIR);
-    } catch (error) {
-      log.error('Error reading spell metadata from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class FsSpellRepository
+  extends FsMetadataRepository<SpellMetadata>
+  implements SpellRepository
+{
+  constructor() {
+    super(SUBDIR, 'FSSpellRepo');
+  }
 
-  listIndex: async (locale: string): Promise<SpellIndexEntry[]> => {
+  /**
+   * Returns a lightweight sorted index of all spells.
+   *
+   * @param {string} locale - Locale code
+   * @returns {Promise<SpellIndexEntry[]>} Sorted index entries, or `[]` on error
+   */
+  async listIndex(locale: string): Promise<SpellIndexEntry[]> {
     try {
-      const all = readMetadataFiles<SpellMetadata>(locale, SUBDIR);
+      const all = await readMetadataFiles<SpellMetadata>(locale, SUBDIR);
       const index = all.map((s) => ({
         slug: s.slug,
         title: s.title,
@@ -61,17 +68,22 @@ export const fsSpellRepository: SpellRepository = {
       });
       return [];
     }
-  },
+  }
 
-  listBySlugs: async (
-    locale: string,
-    slugs: string[],
-  ): Promise<SpellMetadata[]> => {
+  /**
+   * Returns spells matching the provided slug set. Passing an empty array
+   * returns all spells.
+   *
+   * @param {string} locale - Locale code
+   * @param {string[]} slugs - Slug allowlist; empty means all
+   * @returns {Promise<SpellMetadata[]>} Matching spell records, or `[]` on error
+   */
+  async listBySlugs(locale: string, slugs: string[]): Promise<SpellMetadata[]> {
     try {
       if (slugs.length === 0) {
-        return readMetadataFiles<SpellMetadata>(locale, SUBDIR);
+        return await readMetadataFiles<SpellMetadata>(locale, SUBDIR);
       }
-      const all = readMetadataFiles<SpellMetadata>(locale, SUBDIR);
+      const all = await readMetadataFiles<SpellMetadata>(locale, SUBDIR);
       const slugSet = new Set(slugs);
       return all.filter((s) => slugSet.has(s.slug));
     } catch (error) {
@@ -82,29 +94,22 @@ export const fsSpellRepository: SpellRepository = {
       });
       return [];
     }
-  },
+  }
 
-  listBySource: async (
+  /**
+   * Returns all spells regardless of source (source filtering is a PG concern).
+   *
+   * @param {string} locale - Locale code
+   * @param {string} _source - Ignored in the FS adapter
+   * @returns {Promise<SpellMetadata[]>} All spell records
+   */
+  async listBySource(
     locale: string,
     _source: string,
-  ): Promise<SpellMetadata[]> => {
-    return fsSpellRepository.list(locale);
-  },
+  ): Promise<SpellMetadata[]> {
+    return this.list(locale);
+  }
+}
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<SpellMetadata | null> => {
-    try {
-      const all = readMetadataFiles<SpellMetadata>(locale, SUBDIR);
-      return all.find((s) => s.slug === slug) ?? null;
-    } catch (error) {
-      log.error('Error reading single spell from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
-};
+/** @type {SpellRepository} */
+export const fsSpellRepository: SpellRepository = new FsSpellRepository();

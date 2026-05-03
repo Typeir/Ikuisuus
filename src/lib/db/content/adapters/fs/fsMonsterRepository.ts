@@ -13,9 +13,10 @@
 import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {
-    MonsterIndexEntry,
-    MonsterMetadata,
+  MonsterIndexEntry,
+  MonsterMetadata,
 } from '../../schemas/monsterMetadata';
+import { FsMetadataRepository } from './FsMetadataRepository';
 import { readMetadataFiles } from './readMetadataFiles';
 
 const log = logger.child({ module: 'FSMonsterRepo' });
@@ -26,24 +27,41 @@ const SUBDIR = 'monsters';
 /**
  * Filesystem-backed monster repository.
  *
- * Reads `.metadata.json` sidecar files and serves typed `MonsterMetadata` records.
+ * @class FsMonsterRepository
+ * @extends {FsMetadataRepository<MonsterMetadata>}
+ * @implements {MonsterRepository}
+ *
+ * @description
+ * Reads `.metadata.json` sidecar files from `monsters/`. Multi-stat-block files
+ * are automatically flattened (one entry per stat block). Overrides `matchSlug`
+ * to resolve lookups against both `slug` and `subSlug`.
  */
-export const fsMonsterRepository: MonsterRepository = {
-  list: async (locale: string): Promise<MonsterMetadata[]> => {
-    try {
-      return readMetadataFiles<MonsterMetadata>(locale, SUBDIR);
-    } catch (error) {
-      log.error('Error reading monster metadata from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class FsMonsterRepository
+  extends FsMetadataRepository<MonsterMetadata>
+  implements MonsterRepository
+{
+  constructor() {
+    super(SUBDIR, 'FSMonsterRepo');
+  }
 
-  listIndex: async (locale: string): Promise<MonsterIndexEntry[]> => {
+  /**
+   * @param {MonsterMetadata} record - Monster metadata record
+   * @param {string} slug - Slug to match
+   * @returns {boolean} True when `slug` matches either `record.slug` or `record.subSlug`
+   */
+  protected override matchSlug(record: MonsterMetadata, slug: string): boolean {
+    return record.subSlug === slug || record.slug === slug;
+  }
+
+  /**
+   * Returns a lightweight index of all monsters for use in dropdowns and search.
+   *
+   * @param {string} locale - Locale code
+   * @returns {Promise<MonsterIndexEntry[]>} Index entries, or `[]` on error
+   */
+  async listIndex(locale: string): Promise<MonsterIndexEntry[]> {
     try {
-      const all = readMetadataFiles<MonsterMetadata>(locale, SUBDIR);
+      const all = await readMetadataFiles<MonsterMetadata>(locale, SUBDIR);
       return all.map((m) => ({
         slug: m.subSlug || m.slug,
         title: m.title,
@@ -58,22 +76,8 @@ export const fsMonsterRepository: MonsterRepository = {
       });
       return [];
     }
-  },
+  }
+}
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<MonsterMetadata | null> => {
-    try {
-      const all = readMetadataFiles<MonsterMetadata>(locale, SUBDIR);
-      return all.find((m) => m.subSlug === slug || m.slug === slug) ?? null;
-    } catch (error) {
-      log.error('Error reading single monster from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
-};
+/** @type {MonsterRepository} */
+export const fsMonsterRepository: MonsterRepository = new FsMonsterRepository();

@@ -90,16 +90,25 @@ function stampSection(sec: HTMLElement): void {
  */
 export default function StreamBootstrap(): null {
   useEffect(() => {
-    const root = document.querySelector<HTMLElement>(
-      '.prose, .prose-invert, .mdx-root, [style*="--stream-text"]',
-    );
-    if (!root) return;
-    const style = getComputedStyle(root).getPropertyValue('--stream-text');
-    const streamText = style ? style.replace(/^['"]|['"]$/g, '') : '';
-    if (!streamText) return;
+    const root =
+      document.querySelector<HTMLElement>(
+        '.prose, .prose-invert, .mdx-root, [style*="--stream-text"]',
+      ) || document.body;
 
     const sections = Array.from(root.querySelectorAll<HTMLElement>('section'));
+
     const stamp = (sec: HTMLElement) => {
+      const perSec =
+        sec.getAttribute('data-stream') ||
+        sec.style.getPropertyValue('--stream-text');
+      const rootStyle =
+        getComputedStyle(root).getPropertyValue('--stream-text');
+      const streamText = perSec
+        ? perSec.replace(/^['"]|['"]$/g, '')
+        : rootStyle
+          ? rootStyle.replace(/^['"]|['"]$/g, '')
+          : '';
+      if (!streamText) return;
       let fullHeight = measureStreamTextHeight(streamText);
       if (!fullHeight) {
         const fallbackFull = sec.clientHeight ? sec.clientHeight : 240;
@@ -113,6 +122,7 @@ export default function StreamBootstrap(): null {
       sec.style.setProperty('--stream-px', `${halfPx}px`);
       sec.style.setProperty('--stream-speed', `${duration.toFixed(1)}s`);
     };
+
     sections.forEach(stamp);
 
     const ro =

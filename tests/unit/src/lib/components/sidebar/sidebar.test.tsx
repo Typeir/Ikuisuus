@@ -14,10 +14,73 @@
  * @requires @/lib/components/sidebar/sidebar Component under test
  */
 
-import { Item, Sidebar } from '@/lib/components/sidebar/sidebar';
+import {
+    Item,
+    SIDEBAR_CLOSE_ANIMATION_MS,
+    Sidebar,
+} from '@/lib/components/sidebar/sidebar';
+import { VIRTUALIZE_THRESHOLD } from '@/lib/components/sidebar/VirtualizedSidebar';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
-import { render, screen } from '@testing-library/react';
+import {
+    act,
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+} from '@testing-library/react';
+import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('next/dynamic', () => ({
+  default: (
+    fn: () => Promise<{
+      default: React.ComponentType<Record<string, unknown>>;
+    }>,
+  ) => {
+    let Comp: React.ComponentType<Record<string, unknown>> | null = null;
+    fn().then((m) => {
+      Comp = m.default;
+    });
+    return function DynamicWrapper(props: Record<string, unknown>) {
+      if (!Comp) return <div data-testid='dynamic-loading' />;
+      const C = Comp as React.ElementType;
+      return <C {...props} />;
+    };
+  },
+}));
+
+vi.mock('react-window', () => ({
+  List: ({
+    rowCount,
+    rowComponent: RowComp,
+    rowProps,
+  }: {
+    rowCount: number;
+    rowHeight: number;
+    rowComponent: (props: {
+      index: number;
+      style: React.CSSProperties;
+      ariaAttributes: Record<string, unknown>;
+      [key: string]: unknown;
+    }) => React.ReactNode;
+    rowProps: Record<string, unknown>;
+    defaultHeight?: number;
+    style?: React.CSSProperties;
+  }) => (
+    <div data-testid='virtualized-list' data-row-count={String(rowCount)}>
+      {RowComp({
+        index: 0,
+        style: {},
+        ariaAttributes: {
+          'aria-posinset': 1,
+          'aria-setsize': rowCount,
+          role: 'listitem',
+        },
+        ...rowProps,
+      })}
+    </div>
+  ),
+}));
 
 vi.mock('next/navigation', () => ({
   useParams: () => ({ locale: 'en' }),
@@ -229,6 +292,79 @@ describe('Item type', () => {
   });
 });
 
+describe('lazy-mount behaviour', () => {
+  const nestedItems: Item[] = [
+    {
+      name: 'Bestiary',
+      path: 'bestiary',
+      children: [
+        { name: 'Dragon', path: 'bestiary/dragon' },
+        { name: 'Goblin', path: 'bestiary/goblin' },
+      ],
+    },
+  ];
+
+  it('does not render folder children before the folder is opened', () => {
+    renderWithProvider(<Sidebar items={nestedItems} />);
+    expect(screen.getByText('Bestiary')).toBeInTheDocument();
+    expect(screen.queryByText('Dragon')).not.toBeInTheDocument();
+    expect(screen.queryByText('Goblin')).not.toBeInTheDocument();
+  });
+
+  it('renders folder children after the label is clicked', () => {
+    renderWithProvider(<Sidebar items={nestedItems} />);
+    const label = screen.getByText('Bestiary').parentElement as HTMLElement;
+    fireEvent.click(label);
+    expect(screen.getByText('Dragon')).toBeInTheDocument();
+    expect(screen.getByText('Goblin')).toBeInTheDocument();
+  });
+
+  it('keeps children in the DOM immediately after closing (isClosing phase)', () => {
+    renderWithProvider(<Sidebar items={nestedItems} />);
+    const label = screen.getByText('Bestiary').parentElement as HTMLElement;
+    fireEvent.click(label);
+    expect(screen.getByText('Dragon')).toBeInTheDocument();
+    fireEvent.click(label);
+    expect(screen.getByText('Dragon')).toBeInTheDocument();
+  });
+
+  it('unmounts children after the closing animation duration has elapsed', async () => {
+    render(
+      <PersistentUiProvider initialExpandedPaths={['bestiary']}>
+        <Sidebar items={nestedItems} />
+      </PersistentUiProvider>,
+    );
+    await waitFor(() => expect(screen.getByText('Dragon')).toBeInTheDocument());
+    const label = screen.getByText('Bestiary').parentElement as HTMLElement;
+    fireEvent.click(label);
+    await waitFor(
+      () => expect(screen.queryByText('Dragon')).not.toBeInTheDocument(),
+      { timeout: SIDEBAR_CLOSE_ANIMATION_MS + 300 },
+    );
+    expect(screen.queryByText('Goblin')).not.toBeInTheDocument();
+  });
+
+  describe('with fake timers', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('does not unmount children before the animation duration has elapsed', () => {
+      renderWithProvider(<Sidebar items={nestedItems} />);
+      const label = screen.getByText('Bestiary').parentElement as HTMLElement;
+      fireEvent.click(label);
+      fireEvent.click(label);
+      act(() => {
+        vi.advanceTimersByTime(SIDEBAR_CLOSE_ANIMATION_MS - 50);
+      });
+      expect(screen.getByText('Dragon')).toBeInTheDocument();
+    });
+  });
+});
+
 describe('Sidebar path handling - integration with walk utility', () => {
   describe('.sheet file paths', () => {
     it('should correctly render item paths with .sheet suffix', () => {
@@ -271,6 +407,7 @@ describe('Sidebar path handling - integration with walk utility', () => {
       ];
 
       renderWithProvider(<Sidebar items={items} />);
+      fireEvent.click(screen.getByText('Monsters'));
 
       const links = screen.getAllByRole('link');
       expect(
@@ -375,5 +512,90 @@ describe('Sidebar path handling - integration with walk utility', () => {
         expect(href).toMatch(/^\/[a-z]{2}\/library\//);
       });
     });
+  });
+});
+
+describe('memoisation behaviour', () => {
+  it('renders updated items when the items prop changes', () => {
+    const initial: Item[] = [{ name: 'Alpha', path: 'alpha' }];
+    const updated: Item[] = [
+      { name: 'Alpha', path: 'alpha' },
+      { name: 'Beta', path: 'beta' },
+    ];
+    const { rerender } = render(
+      <PersistentUiProvider initialExpandedPaths={[]}>
+        <Sidebar items={initial} />
+      </PersistentUiProvider>,
+    );
+    expect(screen.getByText('Alpha')).toBeInTheDocument();
+    expect(screen.queryByText('Beta')).not.toBeInTheDocument();
+    rerender(
+      <PersistentUiProvider initialExpandedPaths={[]}>
+        <Sidebar items={updated} />
+      </PersistentUiProvider>,
+    );
+    expect(screen.getByText('Beta')).toBeInTheDocument();
+  });
+
+  it('keeps rendering correctly when the same items reference is passed', () => {
+    const items: Item[] = [
+      { name: 'Gamma', path: 'gamma' },
+      { name: 'Delta', path: 'delta' },
+    ];
+    const { rerender } = render(
+      <PersistentUiProvider initialExpandedPaths={[]}>
+        <Sidebar items={items} />
+      </PersistentUiProvider>,
+    );
+    expect(screen.getByText('Gamma')).toBeInTheDocument();
+    rerender(
+      <PersistentUiProvider initialExpandedPaths={[]}>
+        <Sidebar items={items} />
+      </PersistentUiProvider>,
+    );
+    expect(screen.getByText('Gamma')).toBeInTheDocument();
+    expect(screen.getByText('Delta')).toBeInTheDocument();
+  });
+});
+
+describe('virtualisation threshold integration', () => {
+  const makeManyChildren = (count: number): Item[] =>
+    Array.from({ length: count }, (_, i) => ({
+      name: `Child ${i + 1}`,
+      path: `folder/child-${i + 1}`,
+    }));
+
+  it('renders a virtualized list for folders that exceed VIRTUALIZE_THRESHOLD children', async () => {
+    const largeFolder: Item[] = [
+      {
+        name: 'Big Folder',
+        path: 'folder',
+        children: makeManyChildren(VIRTUALIZE_THRESHOLD + 1),
+      },
+    ];
+    renderWithProvider(<Sidebar items={largeFolder} />);
+    const label = screen.getByText('Big Folder').parentElement as HTMLElement;
+    fireEvent.click(label);
+    await waitFor(
+      () => expect(screen.getByTestId('virtualized-list')).toBeInTheDocument(),
+      { timeout: 2000 },
+    );
+  });
+
+  it('does not render a virtualized list for folders below VIRTUALIZE_THRESHOLD', async () => {
+    const smallFolder: Item[] = [
+      {
+        name: 'Small Folder',
+        path: 'small-folder',
+        children: makeManyChildren(3),
+      },
+    ];
+    renderWithProvider(<Sidebar items={smallFolder} />);
+    const label = screen.getByText('Small Folder').parentElement as HTMLElement;
+    fireEvent.click(label);
+    await waitFor(() =>
+      expect(screen.getByText('Child 1')).toBeInTheDocument(),
+    );
+    expect(screen.queryByTestId('virtualized-list')).not.toBeInTheDocument();
   });
 });

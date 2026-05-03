@@ -17,6 +17,7 @@ import { logger } from '@/lib/logging/logger';
 import path from 'path';
 import type { SpecializationRepository } from '../../repositories/specializationRepository';
 import type { SpecializationMetadata } from '../../schemas/specializationMetadata';
+import { FsMetadataRepository } from './FsMetadataRepository';
 import { readMetadataFiles } from './readMetadataFiles';
 
 const log = logger.child({ module: 'FSSpecializationRepo' });
@@ -25,69 +26,56 @@ const log = logger.child({ module: 'FSSpecializationRepo' });
 const SUBDIR = path.join('character-creation', 'vocations', 'specializations');
 
 /**
- * Type guard for specialization metadata records.
- *
- * @param {unknown} record - Parsed metadata record
- * @returns {boolean} True if record has `vocation` field (specialization indicator)
- */
-function isSpecializationRecord(
-  record: unknown,
-): record is SpecializationMetadata {
-  return (
-    record !== null &&
-    typeof record === 'object' &&
-    'vocation' in record &&
-    'specializationType' in record
-  );
-}
-
-/**
  * Filesystem-backed specialization repository.
  *
- * Reads `.metadata.json` sidecar files and filters for specialization records
- * (distinguished from vocation records by the `vocation` field).
+ * @class FsSpecializationRepository
+ * @extends {FsMetadataRepository<SpecializationMetadata>}
+ * @implements {SpecializationRepository}
+ *
+ * @description
+ * Reads `.metadata.json` sidecar files from `character-creation/vocations/specializations/`.
+ * Overrides `filter` to exclude vocation records (distinguished from specializations
+ * by the absence of `vocation` and `specializationType` fields).
  */
-export const fsSpecializationRepository: SpecializationRepository = {
-  list: async (locale: string): Promise<SpecializationMetadata[]> => {
-    try {
-      const raw = readMetadataFiles<SpecializationMetadata>(locale, SUBDIR);
-      return raw.filter(isSpecializationRecord);
-    } catch (error) {
-      log.error('Error reading specialization metadata from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class FsSpecializationRepository
+  extends FsMetadataRepository<SpecializationMetadata>
+  implements SpecializationRepository
+{
+  constructor() {
+    super(SUBDIR, 'FSSpecializationRepo');
+  }
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<SpecializationMetadata | null> => {
-    try {
-      const all = readMetadataFiles<SpecializationMetadata>(locale, SUBDIR);
-      return (
-        all.filter(isSpecializationRecord).find((s) => s.slug === slug) ?? null
-      );
-    } catch (error) {
-      log.error('Error reading single specialization from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
+  /**
+   * @param {unknown} record - Raw parsed JSON record
+   * @returns {record is SpecializationMetadata} True when both `vocation` and `specializationType` fields are present
+   */
+  protected override filter(record: unknown): record is SpecializationMetadata {
+    return (
+      record !== null &&
+      typeof record === 'object' &&
+      'vocation' in record &&
+      'specializationType' in record
+    );
+  }
 
-  listByVocation: async (
+  /**
+   * Returns all specializations belonging to a given vocation.
+   *
+   * @param {string} locale - Locale code
+   * @param {string} vocation - Vocation slug to filter by
+   * @returns {Promise<SpecializationMetadata[]>} Matching specializations, or `[]` on error
+   */
+  async listByVocation(
     locale: string,
     vocation: string,
-  ): Promise<SpecializationMetadata[]> => {
+  ): Promise<SpecializationMetadata[]> {
     try {
-      const all = readMetadataFiles<SpecializationMetadata>(locale, SUBDIR);
+      const all = await readMetadataFiles<SpecializationMetadata>(
+        locale,
+        SUBDIR,
+      );
       return all
-        .filter(isSpecializationRecord)
+        .filter((r): r is SpecializationMetadata => this.filter(r))
         .filter((s) => s.vocation === vocation);
     } catch (error) {
       log.error('Error reading specializations by vocation from filesystem', {
@@ -97,5 +85,9 @@ export const fsSpecializationRepository: SpecializationRepository = {
       });
       return [];
     }
-  },
-};
+  }
+}
+
+/** @type {SpecializationRepository} */
+export const fsSpecializationRepository: SpecializationRepository =
+  new FsSpecializationRepository();

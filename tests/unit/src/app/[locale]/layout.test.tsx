@@ -44,8 +44,8 @@ vi.mock('@/app/[locale]/ClientProviders', () => ({
 }));
 
 // Mock walk utility
-vi.mock('@/lib/utils/walk', () => ({
-  walk: vi.fn(() => []),
+vi.mock('@/lib/utils/repositoryWalk', () => ({
+  repositoryShallowWalk: vi.fn(async () => []),
 }));
 
 // Mock notFound

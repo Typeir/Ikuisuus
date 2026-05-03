@@ -19,8 +19,8 @@ import { LibrarySearch } from '@/lib/components/librarySearch/librarySearch';
  */
 const Home = () => {
   return (
-    <div className='p-6'>
-      <section className='max-w-4xl mr-auto px-4 py-8'>
+    <div className='p-4 w-full md:w-1/2'>
+      <section className='max-w-4xl py-8'>
         <ArchiveIntro />
       </section>
       <LibrarySearch />

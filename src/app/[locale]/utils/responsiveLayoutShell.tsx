@@ -18,7 +18,7 @@
 
 import tertiaryStyles from '@/lib/components/button/tertiaryButton.module.scss';
 import Icon from '@/lib/components/icon/icon';
-import { Sidebar } from '@/lib/components/sidebar/sidebar';
+import SidebarShell from '@/lib/components/sidebar/SidebarShell';
 import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
@@ -228,7 +228,7 @@ function BaseResponsiveLayoutShell({
           <div
             className='sidebar-body px-3 lg:px-6 py-3 lg:py-4'
             style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-            <Sidebar
+            <SidebarShell
               onNavigate={closeSidebar}
               items={tree}
               collapseSiblings={true}
@@ -253,7 +253,7 @@ function BaseResponsiveLayoutShell({
         </aside>
 
         {/* Main Content */}
-        <main className='flex-1 p-6 sm:p-10 mt-12 lg:mt-0'>{children}</main>
+        <main className='flex-1 p-4 sm:p-10 mt-12 lg:mt-0'>{children}</main>
       </div>
     </NotificationProvider>
   );

@@ -9,51 +9,32 @@
  * @since 7.0.0
  */
 
-import { logger } from '@/lib/logging/logger';
 import path from 'path';
 import type { BloodlineRepository } from '../../repositories/bloodlineRepository';
 import type { BloodlineMetadata } from '../../schemas/bloodlineMetadata';
-import { readMetadataFiles } from './readMetadataFiles';
-
-const log = logger.child({ module: 'FSBloodlineRepo' });
-
-/** Content subdirectory for bloodline pages. */
-const SUBDIR = path.join('character-creation', 'bloodlines');
+import { FsMetadataRepository } from './FsMetadataRepository';
 
 /**
  * Filesystem-backed bloodline repository.
  *
- * Reads `.metadata.json` sidecar files and serves typed `BloodlineMetadata` records.
- * Filters out null entries produced by excluded files (main.mdx, shared-boons).
+ * @class FsBloodlineRepository
+ * @extends {FsMetadataRepository<BloodlineMetadata>}
+ * @implements {BloodlineRepository}
+ *
+ * @description
+ * Reads `.metadata.json` sidecar files from `character-creation/bloodlines/`.
+ * Null entries produced by excluded files (main.mdx, shared-boons) are removed
+ * by the base-class default `filter` (non-null guard).
  */
-export const fsBloodlineRepository: BloodlineRepository = {
-  list: async (locale: string): Promise<BloodlineMetadata[]> => {
-    try {
-      const raw = readMetadataFiles<BloodlineMetadata>(locale, SUBDIR);
-      return raw.filter(Boolean);
-    } catch (error) {
-      log.error('Error reading bloodline metadata from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-      });
-      return [];
-    }
-  },
+class FsBloodlineRepository
+  extends FsMetadataRepository<BloodlineMetadata>
+  implements BloodlineRepository
+{
+  constructor() {
+    super(path.join('character-creation', 'bloodlines'), 'FSBloodlineRepo');
+  }
+}
 
-  getBySlug: async (
-    locale: string,
-    slug: string,
-  ): Promise<BloodlineMetadata | null> => {
-    try {
-      const all = readMetadataFiles<BloodlineMetadata>(locale, SUBDIR);
-      return all.filter(Boolean).find((b) => b.slug === slug) ?? null;
-    } catch (error) {
-      log.error('Error reading single bloodline from filesystem', {
-        error: error instanceof Error ? error.message : String(error),
-        locale,
-        slug,
-      });
-      return null;
-    }
-  },
-};
+/** @type {BloodlineRepository} */
+export const fsBloodlineRepository: BloodlineRepository =
+  new FsBloodlineRepository();

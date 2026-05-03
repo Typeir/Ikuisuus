@@ -5,7 +5,7 @@
  * Uses a mock DirectorySourceAdapter to test tree-building logic in isolation.
  *
  * @module tests/unit/lib/utils/walk
- * @version 2.0.0
+ * @version 2.1.0
  * @author Typeir
  * @since 1.0.0
  *
@@ -13,8 +13,13 @@
  * @requires @/lib/utils/walk Module under test
  */
 
-import type { DirectorySourceAdapter } from '@/lib/db/content/directorySourceAdapter';
-import { walk, walkTree } from '@/lib/utils/walk';
+import type { DirectoryEntry, DirectorySourceAdapter } from '@/lib/db/content/directorySourceAdapter';
+import {
+    SHALLOW_WALK_DEPTH,
+    shallowWalk,
+    walk,
+    walkTree,
+} from '@/lib/utils/walk';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/db/content/adapters/fs/fsDirectorySource', () => ({
@@ -372,6 +377,139 @@ describe('walk', () => {
       expect(names).not.toContain('Draft');
       expect(names).not.toContain('Wip');
       expect(names).toContain('Article');
+    });
+  });
+});
+
+/**
+ * Builds a mock ListDirectoryResult from a flat entries array.
+ *
+ * @param {DirectoryEntry[]} entries - Entries to return from listDirectory
+ * @returns {{ entries: DirectoryEntry[], total: number }} Result
+ */
+function makeListResult(entries: DirectoryEntry[]): {
+  entries: DirectoryEntry[];
+  total: number;
+} {
+  return { entries, total: entries.length };
+}
+
+/**
+ * Builds a mock adapter from a flat entry array for the root path.
+ *
+ * @param {DirectoryEntry[]} entries - Entries to return for root
+ * @returns {DirectorySourceAdapter} Adapter returning those entries
+ */
+function adapterFromEntries(entries: DirectoryEntry[]): DirectorySourceAdapter {
+  return createMockAdapter({ '': entries });
+}
+
+describe('shallowWalk', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  describe('exports', () => {
+    it('should export shallowWalk function', () => {
+      expect(shallowWalk).toBeDefined();
+      expect(typeof shallowWalk).toBe('function');
+    });
+
+    it('should export SHALLOW_WALK_DEPTH constant equal to 2', () => {
+      expect(SHALLOW_WALK_DEPTH).toBe(2);
+    });
+  });
+
+  describe('empty directory', () => {
+    it('should return empty array when root has no entries', async () => {
+      const adapter = adapterFromEntries([]);
+      const result = await shallowWalk(adapter, 'en');
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('file conversion', () => {
+    it('should convert a plain .mdx file to a leaf node', async () => {
+      const adapter = adapterFromEntries([
+        { name: 'magic-sword.mdx', isDirectory: false },
+      ]);
+      const result = await shallowWalk(adapter, 'en');
+      expect(result).toHaveLength(1);
+      expect(result[0].name).toBe('Magic Sword');
+      expect(result[0].path).toBe('magic-sword');
+      expect(result[0].children).toBeUndefined();
+    });
+
+    it('should strip content suffix (.sheet) from file path', async () => {
+      const adapter = adapterFromEntries([
+        { name: 'red-dragon.sheet.mdx', isDirectory: false },
+      ]);
+      const result = await shallowWalk(adapter, 'en');
+      expect(result).toHaveLength(1);
+      expect(result[0].path).toBe('red-dragon');
+      expect(result[0].name).toBe('Red Dragon');
+    });
+
+    it('should deduplicate files with the same base name', async () => {
+      const adapter = adapterFromEntries([
+        { name: 'dragon.sheet.mdx', isDirectory: false },
+        { name: 'dragon.mdx', isDirectory: false },
+      ]);
+      const result = await shallowWalk(adapter, 'en');
+      expect(result).toHaveLength(1);
+      expect(result[0].path).toBe('dragon');
+    });
+  });
+
+  describe('directory handling', () => {
+    it('should give a directory node an empty children array at max depth', async () => {
+      const adapter = adapterFromEntries([
+        { name: 'monsters', isDirectory: true },
+      ]);
+      const result = await shallowWalk(adapter, 'en', '', '', 1);
+      expect(result).toHaveLength(1);
+      expect(result[0].name).toBe('Monsters');
+      expect(result[0].path).toBe('monsters');
+      expect(Array.isArray(result[0].children)).toBe(true);
+      expect(result[0].children).toHaveLength(0);
+    });
+
+    it('should recurse into directories when depth allows', async () => {
+      const adapter = createMockAdapter({
+        '': [{ name: 'monsters', isDirectory: true }],
+        monsters: [{ name: 'orc.sheet.mdx', isDirectory: false }],
+      });
+      const result = await shallowWalk(adapter, 'en', '', '', 2);
+      expect(result).toHaveLength(1);
+      expect(result[0].name).toBe('Monsters');
+      expect(result[0].children).toHaveLength(1);
+      expect(result[0].children![0].name).toBe('Orc');
+      expect(result[0].children![0].path).toBe('monsters/orc');
+    });
+
+    it('should stop recursing at depth 2 (default) and return empty children for deeper dirs', async () => {
+      const adapter = createMockAdapter({
+        '': [{ name: 'category', isDirectory: true }],
+        category: [{ name: 'sub', isDirectory: true }],
+        'category/sub': [],
+      });
+      const result = await shallowWalk(adapter, 'en');
+      expect(result[0].children).toHaveLength(1);
+      expect(result[0].children![0].name).toBe('Sub');
+      expect(result[0].children![0].children).toEqual([]);
+    });
+
+    it('should construct nested path correctly for sub-directory files', async () => {
+      const adapter = createMockAdapter({
+        '': [{ name: 'items', isDirectory: true }],
+        items: [{ name: 'heirloom.mdx', isDirectory: false }],
+      });
+      const result = await shallowWalk(adapter, 'en');
+      expect(result[0].children![0].path).toBe('items/heirloom');
     });
   });
 });

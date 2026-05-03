@@ -510,5 +510,17 @@ export async function syncMetadata(
   }
 
   log.message('Metadata sync complete', { locale, results });
+  try {
+    const mod = await import('@/lib/db/content');
+    if (mod && typeof mod.clearCache === 'function') {
+      mod.clearCache();
+      log.message('Cleared file-tree cache after metadata sync');
+    }
+  } catch (err) {
+    log.warning('Failed to clear file-tree cache after metadata sync', {
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+
   return results;
 }

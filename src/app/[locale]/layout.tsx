@@ -14,7 +14,7 @@ import { routing } from '@/i18n/routing';
 import { resolveMetadataBase } from '@/lib/seo';
 import { getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
 import { getCombinedInitScript } from '@/lib/utils/persistentUiScript';
-import { walk } from '@/lib/utils/walk';
+import { repositoryShallowWalk } from '@/lib/utils/repositoryWalk';
 
 import type { Metadata } from 'next';
 import { hasLocale } from 'next-intl';
@@ -34,7 +34,7 @@ export default async function RootLayout({
 }) {
   const { locale } = await params;
 
-  const tree = await walk(locale);
+  const tree = await repositoryShallowWalk(locale);
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();

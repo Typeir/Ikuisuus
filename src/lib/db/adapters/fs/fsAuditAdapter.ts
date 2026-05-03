@@ -13,7 +13,7 @@
  */
 
 import { logger } from '@/lib/logging/logger';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import type { AuditAdapter, AuditRecord } from '../../auditAdapter';
 
@@ -28,11 +28,11 @@ const DATA_PATH = path.resolve(process.cwd(), '.meta/runtime/audit-log.json');
 /**
  * Ensures the parent directory for the data file exists.
  */
-const ensureDir = (): void => {
+const ensureDir = async (): Promise<void> => {
   const dir = path.dirname(DATA_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
+  try {
+    await fs.mkdir(dir, { recursive: true });
+  } catch (err) {}
 };
 
 /**
@@ -40,13 +40,13 @@ const ensureDir = (): void => {
  *
  * @returns {AuditRecord[]} Stored records or empty array
  */
-const readRecords = (): AuditRecord[] => {
+const readRecords = async (): Promise<AuditRecord[]> => {
   try {
-    if (!fs.existsSync(DATA_PATH)) return [];
-    const raw = fs.readFileSync(DATA_PATH, 'utf-8');
+    const raw = await fs.readFile(DATA_PATH, 'utf-8');
     const data: unknown = JSON.parse(raw);
     return Array.isArray(data) ? data : [];
   } catch (error) {
+    if (error && (error as any).code === 'ENOENT') return [];
     log.debug('FS audit read failed — returning empty', {
       error: error instanceof Error ? error.message : String(error),
     });
@@ -59,9 +59,9 @@ const readRecords = (): AuditRecord[] => {
  *
  * @param {AuditRecord[]} records - Full records array to persist
  */
-const writeRecords = (records: AuditRecord[]): void => {
-  ensureDir();
-  fs.writeFileSync(DATA_PATH, JSON.stringify(records, null, 2), 'utf-8');
+const writeRecords = async (records: AuditRecord[]): Promise<void> => {
+  await ensureDir();
+  await fs.writeFile(DATA_PATH, JSON.stringify(records, null, 2), 'utf-8');
 };
 
 /**
@@ -79,9 +79,9 @@ export const fsAuditAdapter: AuditAdapter = {
     };
 
     try {
-      const existing = readRecords();
+      const existing = await readRecords();
       const updated = [stamped, ...existing].slice(0, MAX_RECORDS);
-      writeRecords(updated);
+      await writeRecords(updated);
     } catch (error) {
       log.error('Failed to write audit record to filesystem', {
         error: error instanceof Error ? error.message : String(error),
@@ -91,7 +91,7 @@ export const fsAuditAdapter: AuditAdapter = {
   },
 
   read: async (limit = 50): Promise<AuditRecord[]> => {
-    const records = readRecords();
+    const records = await readRecords();
     return records.slice(0, limit);
   },
 };

@@ -9,20 +9,16 @@
 import type { Mock } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const existsSyncMock = vi.hoisted(() => vi.fn());
-const readdirSyncMock = vi.hoisted(() => vi.fn());
-const readFileSyncMock = vi.hoisted(() => vi.fn());
+const statMock = vi.hoisted(() => vi.fn());
+const readdirMock = vi.hoisted(() => vi.fn());
+const readFileMock = vi.hoisted(() => vi.fn());
 const getContentFolderMock = vi.hoisted(() => vi.fn());
 
-vi.mock('fs', () => ({
-  default: {
-    existsSync: existsSyncMock,
-    readdirSync: readdirSyncMock,
-    readFileSync: readFileSyncMock,
-  },
-  existsSync: existsSyncMock,
-  readdirSync: readdirSyncMock,
-  readFileSync: readFileSyncMock,
+vi.mock('fs/promises', () => ({
+  default: { stat: statMock, readdir: readdirMock, readFile: readFileMock },
+  stat: statMock,
+  readdir: readdirMock,
+  readFile: readFileMock,
 }));
 
 vi.mock('@/lib/utils/getContentFolder', () => ({
@@ -30,13 +26,13 @@ vi.mock('@/lib/utils/getContentFolder', () => ({
 }));
 
 let readMetadataFiles: typeof import('@/lib/db/content/adapters/fs/readMetadataFiles').readMetadataFiles;
-let fs: typeof import('fs');
+let fs: typeof import('fs/promises');
 let getContentFolder: Mock;
 
 beforeEach(async () => {
   vi.clearAllMocks();
   vi.resetModules();
-  fs = await import('fs');
+  fs = await import('fs/promises');
   const gcf = await import('@/lib/utils/getContentFolder');
   getContentFolder = gcf.getContentFolder as Mock;
   getContentFolder.mockReturnValue('/content/en');
@@ -50,108 +46,100 @@ afterEach(() => {
 });
 
 describe('readMetadataFiles', () => {
-  it('should return empty array when directory does not exist', () => {
-    vi.mocked(fs.existsSync).mockReturnValue(false);
+  it('should return empty array when directory does not exist', async () => {
+    vi.mocked(fs.stat).mockRejectedValue(new Error('ENOENT'));
 
-    const result = readMetadataFiles('en', 'monsters');
+    const result = await readMetadataFiles('en', 'monsters');
 
     expect(result).toEqual([]);
   });
 
-  it('should read and parse .metadata.json files', () => {
-    vi.mocked(fs.existsSync).mockReturnValue(true);
-    vi.mocked(fs.readdirSync).mockReturnValue([
+  it('should read and parse .metadata.json files', async () => {
+    vi.mocked(fs.stat).mockResolvedValue({} as any);
+    vi.mocked(fs.readdir).mockResolvedValue([
       'aboleth.metadata.json',
       'readme.txt',
-    ] as unknown as ReturnType<typeof fs.readdirSync>);
-    vi.mocked(fs.readFileSync).mockReturnValue(
+    ] as unknown as string[]);
+    vi.mocked(fs.readFile).mockResolvedValue(
       JSON.stringify({ slug: 'aboleth', title: 'Aboleth' }),
     );
 
-    const result = readMetadataFiles('en', 'monsters');
+    const result = await readMetadataFiles('en', 'monsters');
 
     expect(result).toEqual([{ slug: 'aboleth', title: 'Aboleth' }]);
   });
 
-  it('should flatten array entries in metadata files', () => {
-    vi.mocked(fs.existsSync).mockReturnValue(true);
-    vi.mocked(fs.readdirSync).mockReturnValue([
+  it('should flatten array entries in metadata files', async () => {
+    vi.mocked(fs.stat).mockResolvedValue({} as any);
+    vi.mocked(fs.readdir).mockResolvedValue([
       'multi.metadata.json',
-    ] as unknown as ReturnType<typeof fs.readdirSync>);
-    vi.mocked(fs.readFileSync).mockReturnValue(
+    ] as unknown as string[]);
+    vi.mocked(fs.readFile).mockResolvedValue(
       JSON.stringify([
         { slug: 'a', title: 'A' },
         { slug: 'b', title: 'B' },
       ]),
     );
 
-    const result = readMetadataFiles('en', 'monsters');
+    const result = await readMetadataFiles('en', 'monsters');
 
     expect(result).toHaveLength(2);
     expect(result[0]).toEqual({ slug: 'a', title: 'A' });
     expect(result[1]).toEqual({ slug: 'b', title: 'B' });
   });
 
-  it('should skip non-metadata files', () => {
-    vi.mocked(fs.existsSync).mockReturnValue(true);
-    vi.mocked(fs.readdirSync).mockReturnValue([
+  it('should skip non-metadata files', async () => {
+    vi.mocked(fs.stat).mockResolvedValue({} as any);
+    vi.mocked(fs.readdir).mockResolvedValue([
       'file.mdx',
       'notes.json',
       'data.metadata.json',
-    ] as unknown as ReturnType<typeof fs.readdirSync>);
-    vi.mocked(fs.readFileSync).mockReturnValue(
-      JSON.stringify({ slug: 'data' }),
-    );
+    ] as unknown as string[]);
+    vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify({ slug: 'data' }));
 
-    const result = readMetadataFiles('en', 'spells');
+    const result = await readMetadataFiles('en', 'spells');
 
     expect(result).toEqual([{ slug: 'data' }]);
-    expect(fs.readFileSync).toHaveBeenCalledTimes(1);
+    expect(fs.readFile).toHaveBeenCalledTimes(1);
   });
 
-  it('should construct path using getContentFolder', () => {
+  it('should construct path using getContentFolder', async () => {
     getContentFolder.mockReturnValue('/project/src/content/es');
-    vi.mocked(fs.existsSync).mockReturnValue(false);
+    vi.mocked(fs.stat).mockRejectedValue(new Error('ENOENT'));
 
-    readMetadataFiles('es', 'items/heirlooms');
+    await readMetadataFiles('es', 'items/heirlooms');
 
-    expect(fs.existsSync).toHaveBeenCalledWith(
-      expect.stringContaining('items'),
-    );
+    expect(fs.stat).toHaveBeenCalledWith(expect.stringContaining('items'));
   });
 
-  it('should skip .meta/ directory when METADATA_BACKEND is fs', () => {
+  it('should skip .meta/ directory when METADATA_BACKEND is fs', async () => {
     vi.stubEnv('METADATA_BACKEND', 'fs');
-    vi.mocked(fs.existsSync).mockReturnValue(true);
-    vi.mocked(fs.readdirSync).mockReturnValue([
+    vi.mocked(fs.stat).mockResolvedValue({} as any);
+    vi.mocked(fs.readdir).mockResolvedValue([
       'fireball.metadata.json',
-    ] as unknown as ReturnType<typeof fs.readdirSync>);
-    vi.mocked(fs.readFileSync).mockReturnValue(
+    ] as unknown as string[]);
+    vi.mocked(fs.readFile).mockResolvedValue(
       JSON.stringify({ slug: 'fireball' }),
     );
 
-    readMetadataFiles('en', 'spells');
+    await readMetadataFiles('en', 'spells');
 
-    expect(fs.existsSync).toHaveBeenCalledTimes(1);
-    expect(fs.existsSync).toHaveBeenCalledWith(
-      expect.stringContaining('content'),
-    );
+    expect(fs.stat).toHaveBeenCalledTimes(1);
+    expect(fs.stat).toHaveBeenCalledWith(expect.stringContaining('content'));
   });
 
-  it('should prefer .meta/ directory when METADATA_BACKEND is pg', () => {
+  it('should prefer .meta/ directory when METADATA_BACKEND is pg', async () => {
     vi.stubEnv('METADATA_BACKEND', 'pg');
-    vi.mocked(fs.existsSync).mockReturnValue(true);
-    vi.mocked(fs.readdirSync).mockReturnValue([
+    vi.mocked(fs.stat).mockResolvedValue({} as any);
+    vi.mocked(fs.readdir).mockResolvedValue([
       'fireball.metadata.json',
-    ] as unknown as ReturnType<typeof fs.readdirSync>);
-    vi.mocked(fs.readFileSync).mockReturnValue(
+    ] as unknown as string[]);
+    vi.mocked(fs.readFile).mockResolvedValue(
       JSON.stringify({ slug: 'fireball' }),
     );
 
-    readMetadataFiles('en', 'spells');
+    await readMetadataFiles('en', 'spells');
 
-    expect(fs.existsSync).toHaveBeenCalledWith(
-      expect.stringContaining('.meta'),
-    );
+    expect(fs.stat).toHaveBeenCalledWith(expect.stringContaining('.meta'));
   });
 });

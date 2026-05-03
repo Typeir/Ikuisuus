@@ -10,7 +10,7 @@
  * @module src/app/api/search/route
  */
 
-import fs from 'fs';
+import fs from 'fs/promises';
 import { NextResponse } from 'next/server';
 import path from 'path';
 import { REGEX_CONTENT_SUFFIX } from '../../../lib/enums/constants';
@@ -73,8 +73,17 @@ export async function GET(req: Request) {
    * @param {string} dir - Current directory path to scan
    * @param {string} base - Accumulated relative path for URL construction
    */
-  function walk(dir: string, base: string = ''): void {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+  async function walk(dir: string, base: string = ''): Promise<void> {
+    let entries: fs.Dirent[] = [] as unknown as fs.Dirent[];
+    try {
+      entries = (await fs.readdir(dir, {
+        withFileTypes: true,
+      })) as unknown as fs.Dirent[];
+    } catch (err) {
+      return;
+    }
+
+    for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
       const rawStem = entry.name.replace(/\.(md|mdx)$/, '');
       const cleanStem = rawStem.replace(REGEX_CONTENT_SUFFIX, '');
@@ -83,7 +92,7 @@ export async function GET(req: Request) {
         .replace(/\\/g, '/');
 
       if (entry.isDirectory()) {
-        walk(fullPath, kebabPath);
+        await walk(fullPath, kebabPath);
       } else if (
         (entry.name.endsWith('.md') || entry.name.endsWith('.mdx')) &&
         cleanStem.toLowerCase().includes(q)
@@ -96,7 +105,7 @@ export async function GET(req: Request) {
     }
   }
 
-  walk(contentDir);
+  await walk(contentDir);
 
   return NextResponse.json(matches);
 }

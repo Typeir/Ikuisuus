@@ -11,7 +11,7 @@
  */
 
 import { getContentFolder } from '@/lib/utils/getContentFolder';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
 /**
@@ -38,29 +38,41 @@ const getMetaFolder = (locale: string): string => {
  * @param {string} subdir - Relative subdirectory inside `src/content/{locale}/`
  * @returns {T[]} Flattened metadata records
  */
-export const readMetadataFiles = <T>(locale: string, subdir: string): T[] => {
+export const readMetadataFiles = async <T>(
+  locale: string,
+  subdir: string,
+): Promise<T[]> => {
   const contentPath = path.join(getContentFolder(locale), subdir);
   const backend = process.env.METADATA_BACKEND || 'fs';
   let dirPath: string;
 
   if (backend === 'pg') {
     const metaPath = path.join(getMetaFolder(locale), subdir);
-    dirPath = fs.existsSync(metaPath) ? metaPath : contentPath;
+    try {
+      await fs.stat(metaPath);
+      dirPath = metaPath;
+    } catch {
+      dirPath = contentPath;
+    }
   } else {
     dirPath = contentPath;
   }
 
-  if (!fs.existsSync(dirPath)) {
+  try {
+    await fs.stat(dirPath);
+  } catch {
     return [];
   }
 
-  const files = fs.readdirSync(dirPath);
+  const files = await fs.readdir(dirPath);
   const metadataFiles = files.filter((f) => f.endsWith('.metadata.json'));
 
-  const records = metadataFiles.map((file) => {
-    const content = fs.readFileSync(path.join(dirPath, file), 'utf-8');
-    return JSON.parse(content);
-  });
+  const records = await Promise.all(
+    metadataFiles.map(async (file) => {
+      const content = await fs.readFile(path.join(dirPath, file), 'utf-8');
+      return JSON.parse(content);
+    }),
+  );
 
   return records.flat() as T[];
 };

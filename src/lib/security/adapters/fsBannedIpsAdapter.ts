@@ -12,7 +12,7 @@
 import { logger } from '@/lib/logging/logger';
 import type { BannedIpEntry } from '@/lib/security/bannedIps';
 import type { BannedIpsAdapter } from '@/lib/security/bannedIpsAdapter';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
 const log = logger.child({ module: 'FSBannedIPs' });
@@ -23,11 +23,11 @@ const DATA_PATH = path.resolve(process.cwd(), '.meta/runtime/banned-ips.json');
 /**
  * Ensures the parent directory for the data file exists.
  */
-const ensureDir = (): void => {
+const ensureDir = async (): Promise<void> => {
   const dir = path.dirname(DATA_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
+  try {
+    await fs.mkdir(dir, { recursive: true });
+  } catch (err) {}
 };
 
 /**
@@ -38,11 +38,11 @@ const ensureDir = (): void => {
 export const fsBannedIpsAdapter: BannedIpsAdapter = {
   read: async (): Promise<BannedIpEntry[]> => {
     try {
-      if (!fs.existsSync(DATA_PATH)) return [];
-      const raw = fs.readFileSync(DATA_PATH, 'utf-8');
+      const raw = await fs.readFile(DATA_PATH, 'utf-8');
       const data: unknown = JSON.parse(raw);
       return Array.isArray(data) ? data : [];
     } catch (error) {
+      if (error && (error as any).code === 'ENOENT') return [];
       log.debug('FS banned IPs read failed — returning empty', {
         error: error instanceof Error ? error.message : String(error),
       });
@@ -51,22 +51,22 @@ export const fsBannedIpsAdapter: BannedIpsAdapter = {
   },
 
   write: async (entries: BannedIpEntry[]): Promise<void> => {
-    ensureDir();
-    fs.writeFileSync(DATA_PATH, JSON.stringify(entries, null, 2), 'utf-8');
+    await ensureDir();
+    await fs.writeFile(DATA_PATH, JSON.stringify(entries, null, 2), 'utf-8');
   },
 
   remove: async (range: string): Promise<boolean> => {
     try {
-      if (!fs.existsSync(DATA_PATH)) return false;
-      const raw = fs.readFileSync(DATA_PATH, 'utf-8');
+      const raw = await fs.readFile(DATA_PATH, 'utf-8');
       const data: unknown = JSON.parse(raw);
       const entries: BannedIpEntry[] = Array.isArray(data) ? data : [];
       const filtered = entries.filter((e) => e.range !== range);
       if (filtered.length === entries.length) return false;
-      ensureDir();
-      fs.writeFileSync(DATA_PATH, JSON.stringify(filtered, null, 2), 'utf-8');
+      await ensureDir();
+      await fs.writeFile(DATA_PATH, JSON.stringify(filtered, null, 2), 'utf-8');
       return true;
     } catch (error) {
+      if (error && (error as any).code === 'ENOENT') return false;
       log.error('FS banned IPs remove failed', {
         error: error instanceof Error ? error.message : String(error),
         range,

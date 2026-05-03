@@ -77,3 +77,8 @@ export type {
     ContentSourceAdapter
 } from './contentSourceAdapter';
 
+/** File-tree service (lazy sidebar) */
+export {
+    clearCache, getFile, listDirectory, statPath
+} from './fileTreeService';
+
