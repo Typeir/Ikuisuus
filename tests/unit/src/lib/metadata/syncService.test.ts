@@ -104,6 +104,44 @@ describe('syncMetadata', () => {
     expect(results.nonexistent).toBeUndefined();
   });
 
+  it('should not delete DB rows when content dir exists but has no metadata files', async () => {
+    fsMock.existsSync.mockReturnValue(true);
+    fsMock.readdirSync.mockReturnValue([
+      'albedo-the-bleak-bloom.sheet.mdx',
+      'goblin.sheet.mdx',
+    ]);
+
+    const mockRemove = vi.fn();
+
+    const mockTx = {
+      find: vi.fn().mockResolvedValue([
+        { subSlug: undefined, slug: 'albedo-the-bleak-bloom', versionHash: 'abc' },
+        { subSlug: undefined, slug: 'goblin', versionHash: 'def' },
+      ]),
+      assign: vi.fn(),
+      create: vi.fn(),
+      remove: mockRemove,
+      flush: vi.fn(),
+    };
+
+    const mockEm = {
+      transactional: vi.fn(async (fn: (tx: unknown) => Promise<void>) => {
+        await fn(mockTx);
+      }),
+      clear: vi.fn(),
+    };
+
+    getEM.mockResolvedValue(mockEm);
+
+    const results = await syncMetadata({
+      locale: 'en',
+      contentTypes: ['monsters'],
+    });
+
+    expect(mockRemove).not.toHaveBeenCalled();
+    expect(results.monsters.deleted).toBe(0);
+  });
+
   it('should default to locale en', async () => {
     fsMock.existsSync.mockReturnValue(false);
 
