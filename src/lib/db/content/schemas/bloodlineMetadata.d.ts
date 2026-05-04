@@ -14,25 +14,6 @@
  */
 
 /**
- * Core racial features parsed from the Core Features tables.
- *
- * @property {string[]} abilityScores - Ability score bonuses (e.g. ["DEX +2", "CHA +1"])
- * @property {string[]} movementSpeeds - Movement modes and distances (e.g. ["Walk: 30 ft."])
- * @property {string[]} senses - Sensory capabilities (e.g. ["Darkvision 30 ft."])
- * @property {string[]} size - Available sizes (e.g. ["Medium"])
- * @property {string[]} creatureTypes - Creature type classifications (e.g. ["Humanoid", "Aberration"])
- * @property {string} [age] - Lifespan description (e.g. "Centuries (Foulblood ~100 yr)")
- */
-export interface BloodlineCoreFeatures {
-  abilityScores: string[];
-  movementSpeeds: string[];
-  senses: string[];
-  size: string[];
-  creatureTypes: string[];
-  age?: string;
-}
-
-/**
  * Individual boon option parsed from a Collapsible block.
  *
  * @property {string} name - Boon display name (e.g. "Extended Reach")
@@ -50,6 +31,26 @@ export interface BloodlineBoon {
 }
 
 /**
+ * Core features shared by all members of a bloodline.
+ *
+ * @interface BloodlineCoreFeatures
+ * @property {string[]} abilityScores - Ability score bonuses (e.g. ["DEX +2", "CHA +1"])
+ * @property {string[]} movementSpeeds - Movement modes (e.g. ["Walk: 30 ft."])
+ * @property {string[]} senses - Sensory capabilities (e.g. ["Darkvision 30 ft."])
+ * @property {string[]} size - Available sizes (e.g. ["Medium"])
+ * @property {string[]} creatureTypes - Creature type classifications (e.g. ["Humanoid"])
+ * @property {string} [age] - Lifespan description
+ */
+export interface BloodlineCoreFeatures {
+  abilityScores: string[];
+  movementSpeeds: string[];
+  senses: string[];
+  size: string[];
+  creatureTypes: string[];
+  age?: string;
+}
+
+/**
  * Complete bloodline metadata record as emitted by the generator.
  *
  * @interface BloodlineMetadata
@@ -58,7 +59,7 @@ export interface BloodlineBoon {
  * @property {string} file - Relative file path
  * @property {string} link - Public route path
  * @property {string} [description] - Introductory lore text
- * @property {BloodlineCoreFeatures} coreFeatures - Structured core feature data
+ * @property {BloodlineCoreFeatures} coreFeatures - Shared ancestry features
  * @property {number} [boonBudget] - Total boon point budget
  * @property {BloodlineBoon[]} boons - Ordered list of boon metadata
  * @property {string[]} [tags] - Root-level bloodline tags

@@ -28,7 +28,9 @@
 import {
   defineConfig,
   MikroORM,
+  type EntityClass,
   type EntityManager,
+  type MetadataStorage,
 } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { existsSync, readdirSync, readFileSync } from 'fs';
@@ -62,6 +64,7 @@ import {
   VocationSkillProficienciesEmbed,
   VocationSpellcastingEmbed,
 } from '../../../src/lib/db/orm/entities/index';
+import { recordToEntityInit } from '../../../src/lib/db/orm/reflect';
 import { contentHash } from '../../../src/lib/metadata/contentHash';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -93,226 +96,6 @@ if (!process.env.DATABASE_URL) {
 }
 
 const SUPPORTED_LOCALES = ['en', 'es', 'fi'];
-
-/* ────────────────────  Metadata JSON Interfaces  ──────────────────── */
-
-/**
- * @description Monster metadata shape produced by generateMonsterMetadata.ts.
- */
-interface MonsterMeta {
-  slug: string;
-  subSlug?: string;
-  title: string;
-  file: string;
-  link: string;
-  size?: string;
-  creatureType?: string;
-  alignment?: string;
-  cr?: string;
-  proficiencyBonus?: number;
-  ac?: { value?: number; notes?: string; raw?: string };
-  hp?: { average?: number; formula?: string; raw?: string };
-  speed?: {
-    raw?: string;
-    modes?: {
-      walk?: number;
-      fly?: number;
-      climb?: number;
-      swim?: number;
-      burrow?: number;
-      hover?: boolean;
-    };
-  };
-  abilities?: Record<string, { score?: number }>;
-  savingThrows?: Record<string, number>;
-  senses?: {
-    raw?: string;
-    passivePerception?: number;
-    darkvision?: number;
-    blindsight?: number;
-    tremorsense?: number;
-    truesight?: number;
-  };
-  skills?: string[];
-  damageResistances?: string[];
-  damageImmunities?: string[];
-  damageVulnerabilities?: string[];
-  conditionImmunities?: string[];
-  languages?: string[];
-  tags?: string[];
-  image?: string;
-  indexVersion?: number;
-  versionHash?: string;
-}
-
-/**
- * @description Spell metadata shape produced by generateSpellMetadata.ts.
- */
-interface SpellMeta {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
-  level?: number;
-  school?: string;
-  quality?: string;
-  castingTimeRaw?: string;
-  castingTime?: string[];
-  range?: string;
-  concentration?: boolean;
-  duration?: string;
-  verbal?: boolean;
-  somatic?: boolean;
-  material?: boolean;
-  materialDescription?: string;
-  hasRitual?: boolean;
-  tags?: string[];
-  spellLists?: { name: string; link: string }[];
-  versionHash?: string;
-}
-
-/**
- * @description Heirloom metadata shape produced by generateHeirloomMetadata.ts.
- */
-interface HeirloomMeta {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
-  rarity?: string;
-  itemType?: string;
-  weaponType?: string;
-  requiresAttunement?: boolean;
-  attunementRequirements?: string;
-  weaponDamage?: {
-    damage?: string;
-    damageType?: string;
-    versatileDamage?: string;
-  };
-  hitModifier?: number;
-  range?: string;
-  weight?: string;
-  charges?: { initial?: string; recharge?: string; depletes?: boolean };
-  mastery?: string[];
-  weaponProperties?: string[];
-  damageTypesDealt?: string[];
-  savingThrowTypes?: string[];
-  tags?: string[];
-  indexVersion?: number;
-  versionHash?: string;
-}
-
-/**
- * @description Trinket metadata shape produced by generateTrinketMetadata.ts.
- */
-interface TrinketMeta {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
-  itemType: string;
-  damage?: string;
-  damageType?: string;
-  range?: string;
-  weight?: string;
-  savingThrowDC?: number;
-  savingThrowAbility?: string;
-  properties?: string[];
-  specialEffects?: string[];
-  inflictsConditions?: string[];
-  tags?: string[];
-  versionHash?: string;
-}
-
-/**
- * @description Bloodline metadata shape produced by generateBloodlineMetadata.ts.
- */
-interface BloodlineMeta {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
-  description?: string;
-  coreFeatures: {
-    abilityScores: string[];
-    movementSpeeds: string[];
-    senses: string[];
-    size: string[];
-    creatureTypes: string[];
-    age?: string;
-  };
-  boonBudget?: number;
-  boons: Array<{
-    name: string;
-    bpLabel: string;
-    bpValue?: number;
-    sortOrder: number;
-    tags: string[];
-  }>;
-  tags?: string[];
-  indexVersion?: number;
-  versionHash?: string;
-}
-
-/**
- * @description Vocation metadata shape produced by generateVocationMetadata.ts.
- */
-interface VocationMeta {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
-  archetype: string;
-  primaryAbility: string[];
-  hitDie: string;
-  savingThrows: string[];
-  armorProficiencies: string[];
-  weaponProficiencies: string[];
-  toolProficiencies: string[];
-  skillProficiencies: { count: number; choices: string[] };
-  spellcasting?: { ability: string; progression: string };
-  specializations: string[];
-  features: Array<{ level: number; name: string }>;
-  tags?: string[];
-  indexVersion?: number;
-  versionHash?: string;
-}
-
-/**
- * @description Specialization metadata shape produced by generateSpecializationMetadata.ts.
- */
-interface SpecializationMeta {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
-  vocation: string;
-  specializationType: string;
-  flavor?: string;
-  spellcasting?: { ability: string; progression: string };
-  spellsAlwaysPrepared?: Array<{ level: number; spells: string[] }>;
-  features: Array<{ level: number; name: string }>;
-  tags?: string[];
-  indexVersion?: number;
-  versionHash?: string;
-}
-
-/**
- * Resolves record hash from metadata payload or computes a deterministic fallback.
- *
- * @param {Record<string, unknown>} record - Metadata record
- * @returns {string} Version hash
- */
-function resolveVersionHash(record: Record<string, unknown>): string {
-  const existing = record.versionHash;
-  if (typeof existing === 'string' && existing.trim().length > 0) {
-    return existing;
-  }
-
-  const payload = { ...record };
-  delete payload.versionHash;
-  return contentHash(payload);
-}
 
 /* ─────────────────────  Filesystem helpers  ────────────────────────── */
 
@@ -354,86 +137,66 @@ const readMetadata = <T>(locale: string, subdir: string): T[] => {
     });
 };
 
-/* ─────────────────────────  Seeders  ───────────────────────────────── */
+/* ────────────────────  Generic Seeder  ────────────────────────────── */
 
 /**
- * Seeds the `monsters` table for one locale.
+ * Configuration for a single-table content seed pass.
+ *
+ * @interface ContentSeedConfig
+ * @property {EntityClass<object>} entityClass - MikroORM entity constructor
+ * @property {string} subdir - Content subdirectory path within the locale folder
+ * @property {Function} [seedChildren] - Creates child entities (relations) after the parent row
+ */
+interface ContentSeedConfig {
+  entityClass: EntityClass<object>;
+  subdir: string;
+  seedChildren?: (
+    em: EntityManager,
+    allMeta: MetadataStorage,
+    parent: object,
+    raw: Record<string, unknown>,
+  ) => void;
+}
+
+/**
+ * Generic seeder: reads all `.metadata.json` sidecar files for `config.subdir`,
+ * deletes existing rows for the locale, and inserts fresh rows using
+ * `recordToEntityInit` driven by ORM reflection metadata.
+ *
+ * Field selection is entirely reflection-driven — no property names are enumerated
+ * here. The optional `seedChildren` handles child tables after each parent row.
+ *
+ * Version hash is always recomputed from the raw payload to
+ * stay consistent with `backfillTable` in `backfill-version-hashes.ts`.
  *
  * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {string} locale - Locale code
- * @returns Number of rows inserted
+ * @param {MetadataStorage} allMeta - ORM metadata from `orm.getMetadata()`
+ * @param {string} locale - Locale being seeded
+ * @param {ContentSeedConfig} config - Entity class, subdirectory, and optional children seeder
+ * @returns {Promise<number>} Number of parent rows inserted
  */
-async function seedMonsters(
+async function seedContent(
   em: EntityManager,
+  allMeta: MetadataStorage,
   locale: string,
+  config: ContentSeedConfig,
 ): Promise<number> {
-  const records = readMetadata<MonsterMeta>(locale, 'monsters');
+  const records = readMetadata<Record<string, unknown>>(locale, config.subdir);
   if (records.length === 0) return 0;
 
-  await em.nativeDelete(MonsterEntity, { locale });
+  await em.nativeDelete(config.entityClass, { locale } as never);
 
-  for (const m of records) {
-    const modes = m.speed?.modes ?? {};
-
-    em.create(MonsterEntity, {
+  for (const raw of records.filter(Boolean)) {
+    const hashPayload: Record<string, unknown> = { ...raw };
+    delete hashPayload['versionHash'];
+    const versionHash = contentHash(hashPayload);
+    const init = recordToEntityInit(allMeta, config.entityClass.name, {
       locale,
-      slug: m.slug,
-      subSlug: m.subSlug,
-      title: m.title,
-      file: m.file,
-      link: m.link,
-      size: m.size,
-      creatureType: m.creatureType,
-      alignment: m.alignment,
-      cr: m.cr,
-      proficiencyBonus: m.proficiencyBonus,
-      ac: { value: m.ac?.value, notes: m.ac?.notes, raw: m.ac?.raw },
-      hp: { average: m.hp?.average, formula: m.hp?.formula, raw: m.hp?.raw },
-      speed: {
-        raw: m.speed?.raw,
-        walk: modes.walk,
-        fly: modes.fly,
-        climb: modes.climb,
-        swim: modes.swim,
-        burrow: modes.burrow,
-        hover: modes.hover,
-      },
-      scores: {
-        str: m.abilities?.str?.score,
-        dex: m.abilities?.dex?.score,
-        con: m.abilities?.con?.score,
-        int: m.abilities?.int?.score,
-        wis: m.abilities?.wis?.score,
-        cha: m.abilities?.cha?.score,
-      },
-      saves: {
-        str: m.savingThrows?.str,
-        dex: m.savingThrows?.dex,
-        con: m.savingThrows?.con,
-        int: m.savingThrows?.int,
-        wis: m.savingThrows?.wis,
-        cha: m.savingThrows?.cha,
-      },
-      senses: {
-        raw: m.senses?.raw,
-        passivePerception: m.senses?.passivePerception,
-        darkvision: m.senses?.darkvision,
-        blindsight: m.senses?.blindsight,
-        tremorsense: m.senses?.tremorsense,
-        truesight: m.senses?.truesight,
-      },
-      skills: m.skills ?? [],
-      damageResistances: m.damageResistances ?? [],
-      damageImmunities: m.damageImmunities ?? [],
-      damageVulnerabilities: m.damageVulnerabilities ?? [],
-      conditionImmunities: m.conditionImmunities ?? [],
-      languages: m.languages ?? [],
-      tags: m.tags ?? [],
-      image: m.image,
-      description: m.description,
-      indexVersion: m.indexVersion,
-      versionHash: resolveVersionHash(m as unknown as Record<string, unknown>),
+      ...raw,
+      versionHash,
     });
+    const parent = em.create(config.entityClass, init as never);
+    config.seedChildren?.(em, allMeta, parent, raw);
   }
 
   await em.flush();
@@ -441,359 +204,102 @@ async function seedMonsters(
 }
 
 /**
- * Seeds the `heirlooms` table for one locale.
- *
- * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {string} locale - Locale code
- * @returns Number of rows inserted
+ * Seed configurations for all content entity types, ordered to respect FK
+ * constraints (parent entities before child entities).
  */
-async function seedHeirlooms(
-  em: EntityManager,
-  locale: string,
-): Promise<number> {
-  const records = readMetadata<HeirloomMeta>(
-    locale,
-    join('items', 'heirlooms'),
-  );
-  if (records.length === 0) return 0;
-
-  await em.nativeDelete(HeirloomEntity, { locale });
-
-  for (const h of records) {
-    const wd = h.weaponDamage ?? {};
-    const ch = h.charges ?? {};
-
-    em.create(HeirloomEntity, {
-      locale,
-      slug: h.slug,
-      title: h.title,
-      file: h.file,
-      link: h.link,
-      rarity: h.rarity,
-      itemType: h.itemType,
-      weaponType: h.weaponType,
-      requiresAttunement: h.requiresAttunement,
-      attunementRequirements: h.attunementRequirements,
-      weaponDamage: wd.damage,
-      weaponDamageType: wd.damageType,
-      versatileDamage: wd.versatileDamage,
-      hitModifier: h.hitModifier,
-      range: h.range,
-      weight: h.weight,
-      charges: {
-        initial: ch.initial,
-        recharge: ch.recharge,
-        depletes: ch.depletes,
-      },
-      mastery: h.mastery ?? [],
-      weaponProperties: h.weaponProperties ?? [],
-      damageTypesDealt: h.damageTypesDealt ?? [],
-      savingThrowTypes: h.savingThrowTypes ?? [],
-      tags: h.tags ?? [],
-      description: h.description,
-      indexVersion: h.indexVersion,
-      versionHash: resolveVersionHash(h as unknown as Record<string, unknown>),
-    });
-  }
-
-  await em.flush();
-  return records.length;
-}
-
-/**
- * Seeds the `spells` + `spell_lists` tables for one locale.
- * MikroORM handles FK assignment and insert ordering automatically.
- *
- * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {string} locale - Locale code
- * @returns Number of spell rows inserted
- */
-async function seedSpells(em: EntityManager, locale: string): Promise<number> {
-  const records = readMetadata<SpellMeta>(locale, 'spells');
-  if (records.length === 0) return 0;
-
-  await em.nativeDelete(SpellEntity, { locale });
-
-  for (const s of records) {
-    const spell = em.create(SpellEntity, {
-      locale,
-      slug: s.slug,
-      title: s.title,
-      file: s.file,
-      link: s.link,
-      level: s.level,
-      school: s.school,
-      quality: s.quality,
-      castingTimeRaw: s.castingTimeRaw,
-      castingTime: s.castingTime ?? [],
-      range: s.range,
-      concentration: s.concentration,
-      duration: s.duration,
-      components: {
-        verbal: s.verbal,
-        somatic: s.somatic,
-        material: s.material,
-        materialDescription: s.materialDescription,
-      },
-      hasRitual: s.hasRitual,
-      tags: s.tags ?? [],
-      description: s.description,
-      versionHash: resolveVersionHash(s as unknown as Record<string, unknown>),
-    });
-
-    for (const ref of s.spellLists ?? []) {
-      em.create(SpellListEntity, {
-        spell,
-        name: ref.name,
-        link: ref.link,
-      });
-    }
-  }
-
-  await em.flush();
-  return records.length;
-}
-
-/**
- * Seeds the `trinkets` table for one locale.
- *
- * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {string} locale - Locale code
- * @returns Number of rows inserted
- */
-async function seedTrinkets(
-  em: EntityManager,
-  locale: string,
-): Promise<number> {
-  const records = readMetadata<TrinketMeta>(locale, join('items', 'trinkets'));
-  if (records.length === 0) return 0;
-
-  await em.nativeDelete(TrinketEntity, { locale });
-
-  for (const t of records) {
-    em.create(TrinketEntity, {
-      locale,
-      slug: t.slug,
-      title: t.title,
-      file: t.file,
-      link: t.link,
-      itemType: t.itemType,
-      damage: t.damage,
-      damageType: t.damageType,
-      range: t.range,
-      weight: t.weight,
-      savingThrow: {
-        dc: t.savingThrowDC,
-        ability: t.savingThrowAbility,
-      },
-      properties: t.properties ?? [],
-      specialEffects: t.specialEffects ?? [],
-      inflictsConditions: t.inflictsConditions ?? [],
-      tags: t.tags ?? [],
-      description: t.description,
-      versionHash: resolveVersionHash(t as unknown as Record<string, unknown>),
-    });
-  }
-
-  await em.flush();
-  return records.length;
-}
-
-/**
- * Seeds the `bloodlines` + `bloodline_boons` tables for one locale.
- * MikroORM handles FK assignment and insert ordering automatically.
- *
- * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {string} locale - Locale code
- * @returns Number of bloodline rows inserted
- */
-async function seedBloodlines(
-  em: EntityManager,
-  locale: string,
-): Promise<number> {
-  const records = readMetadata<BloodlineMeta>(
-    locale,
-    join('character-creation', 'bloodlines'),
-  ).filter(Boolean);
-  if (records.length === 0) return 0;
-
-  await em.nativeDelete(BloodlineEntity, { locale });
-
-  for (const b of records) {
-    const cf = b.coreFeatures ?? {
-      abilityScores: [],
-      movementSpeeds: [],
-      senses: [],
-      size: [],
-      creatureTypes: [],
-    };
-
-    const bloodline = em.create(BloodlineEntity, {
-      locale,
-      slug: b.slug,
-      title: b.title,
-      file: b.file,
-      link: b.link,
-      description: b.description,
-      abilityScores: cf.abilityScores ?? [],
-      movementSpeeds: cf.movementSpeeds ?? [],
-      senses: cf.senses ?? [],
-      size: cf.size ?? [],
-      creatureTypes: cf.creatureTypes ?? [],
-      age: cf.age,
-      boonBudget: b.boonBudget,
-      tags: b.tags ?? [],
-      indexVersion: b.indexVersion,
-      versionHash: resolveVersionHash(b as unknown as Record<string, unknown>),
-    });
-
-    for (const boon of b.boons ?? []) {
-      em.create(BloodlineBoonEntity, {
-        bloodline,
-        name: boon.name,
-        bpLabel: boon.bpLabel,
-        bpValue: boon.bpValue,
-        sortOrder: boon.sortOrder,
-        tags: boon.tags ?? [],
-      });
-    }
-  }
-
-  await em.flush();
-  return records.length;
-}
-
-/**
- * Seeds the `vocations` + `vocation_features` tables for one locale.
- * MikroORM handles FK assignment and insert ordering automatically.
- *
- * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {string} locale - Locale code
- * @returns Number of rows inserted
- */
-async function seedVocations(
-  em: EntityManager,
-  locale: string,
-): Promise<number> {
-  const records = readMetadata<VocationMeta>(
-    locale,
-    join('character-creation', 'vocations'),
-  ).filter(Boolean);
-  if (records.length === 0) return 0;
-
-  await em.nativeDelete(VocationEntity, { locale });
-
-  for (const v of records) {
-    const sp = v.skillProficiencies ?? { count: 0, choices: [] };
-    const sc = v.spellcasting;
-
-    const vocation = em.create(VocationEntity, {
-      locale,
-      slug: v.slug,
-      title: v.title,
-      file: v.file,
-      link: v.link,
-      archetype: v.archetype,
-      primaryAbility: v.primaryAbility ?? [],
-      hitDie: v.hitDie,
-      savingThrows: v.savingThrows ?? [],
-      armorProficiencies: v.armorProficiencies ?? [],
-      weaponProficiencies: v.weaponProficiencies ?? [],
-      toolProficiencies: v.toolProficiencies ?? [],
-      skillProficiencies: {
-        count: sp.count,
-        choices: sp.choices,
-      },
-      spellcasting: sc
-        ? { ability: sc.ability, progression: sc.progression }
-        : undefined,
-      specializations: v.specializations ?? [],
-      tags: v.tags ?? [],
-      description: v.description,
-      indexVersion: v.indexVersion,
-      versionHash: resolveVersionHash(v as unknown as Record<string, unknown>),
-    });
-
-    for (let i = 0; i < (v.features ?? []).length; i++) {
-      const f = v.features[i];
-      em.create(VocationFeatureEntity, {
-        vocation,
-        level: f.level,
-        name: f.name,
-        sortOrder: i,
-      });
-    }
-  }
-
-  await em.flush();
-  return records.length;
-}
-
-/**
- * Seeds the `specializations` + child tables for one locale.
- * MikroORM handles FK assignment and insert ordering automatically.
- *
- * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {string} locale - Locale code
- * @returns Number of rows inserted
- */
-async function seedSpecializations(
-  em: EntityManager,
-  locale: string,
-): Promise<number> {
-  const records = readMetadata<SpecializationMeta>(
-    locale,
-    join('character-creation', 'vocations', 'specializations'),
-  ).filter(Boolean);
-  if (records.length === 0) return 0;
-
-  await em.nativeDelete(SpecializationEntity, { locale });
-
-  for (const s of records) {
-    const sc = s.spellcasting;
-
-    const spec = em.create(SpecializationEntity, {
-      locale,
-      slug: s.slug,
-      title: s.title,
-      file: s.file,
-      link: s.link,
-      vocation: s.vocation,
-      specializationType: s.specializationType,
-      flavor: s.flavor,
-      spellcasting: sc
-        ? { ability: sc.ability, progression: sc.progression }
-        : undefined,
-      tags: s.tags ?? [],
-      description: s.description,
-      indexVersion: s.indexVersion,
-      versionHash: resolveVersionHash(s as unknown as Record<string, unknown>),
-    });
-
-    for (let i = 0; i < (s.features ?? []).length; i++) {
-      const f = s.features[i];
-      em.create(SpecializationFeatureEntity, {
-        specialization: spec,
-        level: f.level,
-        name: f.name,
-        sortOrder: i,
-      });
-    }
-
-    for (let i = 0; i < (s.spellsAlwaysPrepared ?? []).length; i++) {
-      const p = s.spellsAlwaysPrepared![i];
-      em.create(SpecializationPreparedSpellEntity, {
-        specialization: spec,
-        level: p.level,
-        spells: p.spells,
-        sortOrder: i,
-      });
-    }
-  }
-
-  await em.flush();
-  return records.length;
-}
+const SEED_CONFIGS: ContentSeedConfig[] = [
+  {
+    entityClass: MonsterEntity,
+    subdir: 'monsters',
+  },
+  {
+    entityClass: HeirloomEntity,
+    subdir: join('items', 'heirlooms'),
+  },
+  {
+    entityClass: SpellEntity,
+    subdir: 'spells',
+    seedChildren: (em, allMeta, parent, raw) => {
+      for (const ref of (raw.spellLists ?? []) as Array<
+        Record<string, unknown>
+      >) {
+        const init = recordToEntityInit(allMeta, SpellListEntity.name, ref);
+        em.create(SpellListEntity, { spell: parent, ...init } as never);
+      }
+    },
+  },
+  {
+    entityClass: TrinketEntity,
+    subdir: join('items', 'trinkets'),
+  },
+  {
+    entityClass: BloodlineEntity,
+    subdir: join('character-creation', 'bloodlines'),
+    seedChildren: (em, allMeta, parent, raw) => {
+      for (const boon of (raw.boons ?? []) as Array<Record<string, unknown>>) {
+        const init = recordToEntityInit(
+          allMeta,
+          BloodlineBoonEntity.name,
+          boon,
+        );
+        em.create(BloodlineBoonEntity, { bloodline: parent, ...init } as never);
+      }
+    },
+  },
+  {
+    entityClass: VocationEntity,
+    subdir: join('character-creation', 'vocations'),
+    seedChildren: (em, allMeta, parent, raw) => {
+      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
+      for (let i = 0; i < features.length; i++) {
+        const init = recordToEntityInit(
+          allMeta,
+          VocationFeatureEntity.name,
+          features[i],
+        );
+        em.create(VocationFeatureEntity, {
+          ...init,
+          vocation: parent,
+          sortOrder: i,
+        } as never);
+      }
+    },
+  },
+  {
+    entityClass: SpecializationEntity,
+    subdir: join('character-creation', 'vocations', 'specializations'),
+    seedChildren: (em, allMeta, parent, raw) => {
+      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
+      for (let i = 0; i < features.length; i++) {
+        const init = recordToEntityInit(
+          allMeta,
+          SpecializationFeatureEntity.name,
+          features[i],
+        );
+        em.create(SpecializationFeatureEntity, {
+          ...init,
+          specialization: parent,
+          sortOrder: i,
+        } as never);
+      }
+      const prepared = (raw.preparedSpells ?? []) as Array<
+        Record<string, unknown>
+      >;
+      for (let i = 0; i < prepared.length; i++) {
+        const init = recordToEntityInit(
+          allMeta,
+          SpecializationPreparedSpellEntity.name,
+          prepared[i],
+        );
+        em.create(SpecializationPreparedSpellEntity, {
+          ...init,
+          specialization: parent,
+          sortOrder: i,
+        } as never);
+      }
+    },
+  },
+];
 
 /* ────────────────────────  Orchestrator  ───────────────────────────── */
 
@@ -804,23 +310,22 @@ async function seedSpecializations(
  * @param {string} locale - Locale code
  */
 async function seedLocale(orm: MikroORM, locale: string): Promise<void> {
+  const allMeta = orm.getMetadata();
   const em = orm.em.fork();
 
   await em.transactional(async (tx) => {
-    const monsters = await seedMonsters(tx, locale);
-    const heirlooms = await seedHeirlooms(tx, locale);
-    const spells = await seedSpells(tx, locale);
-    const trinkets = await seedTrinkets(tx, locale);
-    const bloodlines = await seedBloodlines(tx, locale);
-    const vocations = await seedVocations(tx, locale);
-    const specializations = await seedSpecializations(tx, locale);
-
-    console.log(
-      `  ✅  ${locale}:  monsters=${monsters}  heirlooms=${heirlooms}  spells=${spells}  trinkets=${trinkets}  bloodlines=${bloodlines}  vocations=${vocations}  specializations=${specializations}`,
-    );
+    const counts: string[] = [];
+    for (const cfg of SEED_CONFIGS) {
+      const n = await seedContent(tx, allMeta, locale, cfg);
+      counts.push(`${allMeta.get(cfg.entityClass.name).collection}=${n}`);
+    }
+    console.log(`  ✅  ${locale}:  ${counts.join('  ')}`);
   });
 }
 
+/**
+ * Script entry point — initialises MikroORM and seeds each requested locale.
+ */
 async function main(): Promise<void> {
   const orm = await MikroORM.init(
     defineConfig({

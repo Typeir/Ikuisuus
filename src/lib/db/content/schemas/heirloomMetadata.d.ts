@@ -27,19 +27,7 @@ export interface HeirloomCharges {
 }
 
 /**
- * Weapon damage extracted from Properties section.
- *
- * @property {string} damage - Dice expression (e.g. "1d10", "2d6")
- * @property {string} damageType - Damage type (e.g. "slashing", "piercing")
- * @property {string} [versatileDamage] - Versatile damage dice (e.g. "1d12")
- */
-export interface HeirloomWeaponDamage {
-  damage: string;
-  damageType: string;
-  versatileDamage?: string;
-}
 
-/**
  * Complete heirloom metadata record as emitted by the generator.
  *
  * Derived from `parseHeirloomFile()` output in
@@ -57,7 +45,9 @@ export interface HeirloomWeaponDamage {
  * @property {string} [attunementRequirements] - Specific attunement restrictions (e.g. "by a paladin")
  * @property {string[]} [weaponProperties] - Weapon property keywords (e.g. ["finesse", "martial", "versatile"])
  * @property {string[]} [mastery] - Weapon mastery keywords (e.g. ["slow", "cleave"])
- * @property {HeirloomWeaponDamage} [weaponDamage] - Parsed weapon damage info
+ * @property {string} [weaponDamage] - Weapon damage dice expression (e.g. "1d10"). Matches `HeirloomEntity.weaponDamage`.
+ * @property {string} [weaponDamageType] - Weapon damage type (e.g. "slashing"). Matches `HeirloomEntity.weaponDamageType`.
+ * @property {string} [versatileDamage] - Versatile damage dice expression (e.g. "1d12"). Matches `HeirloomEntity.versatileDamage`.
  * @property {number} [hitModifier] - Magic weapon attack bonus (e.g. +1, +3)
  * @property {string} [range] - Weapon or thrown range (e.g. "30/90")
  * @property {string} [weight] - Item weight (e.g. "3 lbs")
@@ -80,7 +70,9 @@ export interface HeirloomMetadata {
   attunementRequirements?: string;
   weaponProperties?: string[];
   mastery?: string[];
-  weaponDamage?: HeirloomWeaponDamage;
+  weaponDamage?: string;
+  weaponDamageType?: string;
+  versatileDamage?: string;
   hitModifier?: number;
   range?: string;
   weight?: string;

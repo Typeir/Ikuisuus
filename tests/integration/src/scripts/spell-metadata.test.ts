@@ -147,7 +147,7 @@ describe('Spell Metadata Generator', () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
       const result = await parseSpellFile(filePath, sharedData);
 
-      expect(result.somatic).toBe(true);
+      expect(result.components?.somatic).toBe(true);
     });
   });
 
@@ -200,7 +200,7 @@ describe('Spell Metadata Generator', () => {
       const result = await parseSpellFile(filePath, sharedData);
 
       // Cantrip has V component
-      expect(result.verbal).toBe(true);
+      expect(result.components?.verbal).toBe(true);
     });
 
     /**
@@ -265,9 +265,9 @@ describe('Spell Metadata Generator', () => {
       const result = await parseSpellFile(filePath, sharedData);
 
       // This fixture has V, S only (no material component)
-      expect(result.verbal).toBe(true);
-      expect(result.somatic).toBe(true);
-      expect(result.material).toBe(false);
+      expect(result.components?.verbal).toBe(true);
+      expect(result.components?.somatic).toBe(true);
+      expect(result.components?.material).toBeFalsy();
     });
 
     /**

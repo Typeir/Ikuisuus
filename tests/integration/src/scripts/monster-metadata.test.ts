@@ -107,9 +107,9 @@ describe('Monster Metadata Generator', () => {
       const result = await parseMonsterFile(filePath, sharedData);
       const monster = result[0];
 
-      expect(monster.abilities).toBeDefined();
-      expect(monster.abilities.str).toEqual({ score: 16, mod: 3 });
-      expect(monster.abilities.cha).toEqual({ score: 22, mod: 6 });
+      expect(monster.scores).toBeDefined();
+      expect(monster.scores.str).toBe(16);
+      expect(monster.scores.cha).toBe(22);
     });
 
     /**
@@ -318,8 +318,8 @@ describe('Monster Metadata Generator', () => {
       const result = await parseMonsterFile(filePath, sharedData);
       const monster = result[0];
 
-      expect(monster.abilities.str).toEqual({ score: 30, mod: 10 });
-      expect(monster.abilities.wis).toEqual({ score: 40, mod: 15 });
+      expect(monster.scores.str).toBe(30);
+      expect(monster.scores.wis).toBe(40);
     });
 
     /**
@@ -334,10 +334,9 @@ describe('Monster Metadata Generator', () => {
       const monster = result[0];
 
       expect(monster.speed).toBeDefined();
-      expect(monster.speed.modes).toBeDefined();
-      expect(monster.speed.modes.walk).toBe(50);
-      expect(monster.speed.modes.fly).toBe(120);
-      expect(monster.speed.modes.climb).toBe(30);
+      expect(monster.speed.walk).toBe(50);
+      expect(monster.speed.fly).toBe(120);
+      expect(monster.speed.climb).toBe(30);
     });
 
     /**

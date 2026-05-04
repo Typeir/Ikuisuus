@@ -1,49 +1,71 @@
 /**
  * @fileoverview Backfill missing content version hashes in PostgreSQL
+ * @description Scans content tables, derives a deterministic hash payload from
+ * each entity row via MikroORM reflection metadata, and updates rows where
+ * `version_hash` is null or empty.
+ *
+ * All field selection is driven by `orm.getMetadata()` — no property names are
+ * hardcoded. Relation payloads (spell lists, bloodline boons) are appended via
+ * per-entity `appendRelations` hooks in the config array.
+ *
  * @module scripts/db/pg/backfill-version-hashes
+ * @version 2.0.0
  * @author Typeir
- * @version 1.0.0
  * @since 1.0.0
- * @description Scans content tables, computes deterministic hashes from the
- * canonical metadata payload shape, and updates rows where `version_hash` is
- * null or empty.
  *
- * Usage:
- *   npx tsx scripts/db/pg/backfill-version-hashes.ts
+ * @example
+ * npx tsx scripts/db/pg/backfill-version-hashes.ts
  *
- * Required env:
- *   DATABASE_URL — Neon / Postgres connection string
+ * @requires DATABASE_URL Neon / Postgres connection string
  */
 
 import {
   defineConfig,
   MikroORM,
+  type EntityClass,
   type EntityManager,
+  type MetadataStorage,
 } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import {
+  BloodlineBoonEntity,
   BloodlineEntity,
+  HeirloomChargesEmbed,
   HeirloomEntity,
+  MonsterACEmbed,
+  MonsterHPEmbed,
+  MonsterSaveEmbed,
+  MonsterScoreEmbed,
+  MonsterSenseEmbed,
+  MonsterSpeedEmbed,
   MonsterEntity,
+  SpellComponentEmbed,
   SpellEntity,
+  SpellListEntity,
   TrinketEntity,
+  TrinketSavingThrowEmbed,
 } from '../../../src/lib/db/orm/entities/index';
-import { nonEmpty, orUndef } from '../../../src/lib/db/orm/helpers';
 import { contentHash } from '../../../src/lib/metadata/contentHash';
+import {
+  entityToRecord,
+  HASH_SKIP,
+} from '../../../src/lib/db/orm/reflect';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '../../../');
+
+/* ────────────────────────────  Types  ──────────────────────────────── */
 
 /**
  * Summary for one table backfill pass.
  *
  * @interface BackfillSummary
- * @property {string} table - Physical table name
+ * @property {string} table - Physical table name (from entity metadata)
  * @property {number} total - Total rows scanned
- * @property {number} missing - Rows missing hash before backfill
+ * @property {number} missing - Rows without a hash before this run
  * @property {number} updated - Rows updated by this run
  */
 interface BackfillSummary {
@@ -86,348 +108,128 @@ function loadEnv(): void {
   }
 }
 
-/**
- * Produces the canonical monster hash payload from a DB row.
- *
- * @param {MonsterEntity} row - Monster row
- * @returns {Record<string, unknown>} Metadata-compatible payload
- */
-function monsterHashPayload(row: MonsterEntity): Record<string, unknown> {
-  const savingThrows: Record<string, number> = {};
-  let hasSavingThrows = false;
-  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha'] as const) {
-    const value = row.saves[key];
-    if (value != null) {
-      savingThrows[key] = value;
-      hasSavingThrows = true;
-    }
-  }
-
-  return {
-    slug: row.slug,
-    subSlug: orUndef(row.subSlug),
-    title: row.title,
-    file: row.file,
-    link: row.link,
-    size: orUndef(row.size),
-    creatureType: orUndef(row.creatureType),
-    alignment: orUndef(row.alignment),
-    cr: orUndef(row.cr),
-    proficiencyBonus: orUndef(row.proficiencyBonus),
-    ac: {
-      value: row.ac.value ?? 0,
-      notes: orUndef(row.ac.notes),
-      raw: orUndef(row.ac.raw),
-    },
-    hp: {
-      average: row.hp.average ?? 0,
-      formula: orUndef(row.hp.formula),
-      raw: orUndef(row.hp.raw),
-    },
-    speed: {
-      raw: row.speed.raw ?? '',
-      modes: {
-        walk: orUndef(row.speed.walk),
-        fly: orUndef(row.speed.fly),
-        climb: orUndef(row.speed.climb),
-        swim: orUndef(row.speed.swim),
-        burrow: orUndef(row.speed.burrow),
-        hover: orUndef(row.speed.hover),
-      },
-    },
-    abilities: {
-      str: { score: orUndef(row.scores.str) },
-      dex: { score: orUndef(row.scores.dex) },
-      con: { score: orUndef(row.scores.con) },
-      int: { score: orUndef(row.scores.int) },
-      wis: { score: orUndef(row.scores.wis) },
-      cha: { score: orUndef(row.scores.cha) },
-    },
-    savingThrows: hasSavingThrows ? savingThrows : undefined,
-    senses: {
-      raw: row.senses.raw ?? '',
-      passivePerception: orUndef(row.senses.passivePerception),
-      darkvision: orUndef(row.senses.darkvision),
-      blindsight: orUndef(row.senses.blindsight),
-      tremorsense: orUndef(row.senses.tremorsense),
-      truesight: orUndef(row.senses.truesight),
-    },
-    skills: nonEmpty(row.skills),
-    damageResistances: nonEmpty(row.damageResistances),
-    damageImmunities: nonEmpty(row.damageImmunities),
-    damageVulnerabilities: nonEmpty(row.damageVulnerabilities),
-    conditionImmunities: nonEmpty(row.conditionImmunities),
-    languages: nonEmpty(row.languages),
-    tags: nonEmpty(row.tags),
-    indexVersion: orUndef(row.indexVersion),
-  };
-}
+/* ─────────────────────  Relation Appenders  ────────────────────────── */
 
 /**
- * Produces the canonical heirloom hash payload from a DB row.
+ * Appends the sorted spell-list relation payload to a spell hash record.
  *
- * @param {HeirloomEntity} row - Heirloom row
- * @returns {Record<string, unknown>} Metadata-compatible payload
+ * @param {MetadataStorage} allMeta - ORM metadata for `SpellListEntity` reflection
+ * @param {object} entity - Spell entity instance with populated `spellLists`
+ * @param {Record<string, unknown>} base - Base hash record from `entityToRecord`
+ * @returns {Record<string, unknown>} Augmented record including `spellLists`
  */
-function heirloomHashPayload(row: HeirloomEntity): Record<string, unknown> {
-  const charges = row.charges;
-  const hasCharges =
-    charges.initial != null ||
-    charges.recharge != null ||
-    charges.depletes != null;
-
-  return {
-    slug: row.slug,
-    title: row.title,
-    file: row.file,
-    link: row.link,
-    rarity: orUndef(row.rarity),
-    itemType: orUndef(row.itemType),
-    weaponType: orUndef(row.weaponType),
-    requiresAttunement: row.requiresAttunement ?? false,
-    attunementRequirements: orUndef(row.attunementRequirements),
-    weaponDamage:
-      row.weaponDamage == null
-        ? undefined
-        : {
-            damage: row.weaponDamage,
-            damageType: row.weaponDamageType ?? '',
-            versatileDamage: orUndef(row.versatileDamage),
-          },
-    hitModifier: orUndef(row.hitModifier),
-    range: orUndef(row.range),
-    weight: orUndef(row.weight),
-    charges: hasCharges
-      ? {
-          initial: orUndef(charges.initial),
-          recharge: orUndef(charges.recharge),
-          depletes: charges.depletes ?? false,
-        }
-      : undefined,
-    mastery: nonEmpty(row.mastery),
-    weaponProperties: nonEmpty(row.weaponProperties),
-    damageTypesDealt: nonEmpty(row.damageTypesDealt),
-    savingThrowTypes: nonEmpty(row.savingThrowTypes),
-    tags: nonEmpty(row.tags),
-    indexVersion: orUndef(row.indexVersion),
-  };
-}
-
-/**
- * Produces the canonical spell hash payload from a DB row.
- *
- * @param {SpellEntity} row - Spell row with populated spell lists
- * @returns {Record<string, unknown>} Metadata-compatible payload
- */
-function spellHashPayload(row: SpellEntity): Record<string, unknown> {
-  const spellLists = row.spellLists
+function appendSpellLists(
+  allMeta: MetadataStorage,
+  entity: object,
+  base: Record<string, unknown>,
+): Record<string, unknown> {
+  const spell = entity as SpellEntity;
+  const spellLists = spell.spellLists
     .getItems()
-    .map((list) => ({ name: list.name, link: list.link }))
+    .map((sl) => entityToRecord(allMeta, sl, SpellListEntity.name))
     .sort((a, b) => {
-      const byName = a.name.localeCompare(b.name);
-      return byName !== 0 ? byName : a.link.localeCompare(b.link);
+      const byName = String(a.name).localeCompare(String(b.name));
+      return byName !== 0 ? byName : String(a.link).localeCompare(String(b.link));
     });
-
-  return {
-    slug: row.slug,
-    title: row.title,
-    file: row.file,
-    link: row.link,
-    level: orUndef(row.level),
-    school: orUndef(row.school),
-    quality: orUndef(row.quality),
-    castingTimeRaw: orUndef(row.castingTimeRaw),
-    castingTime: nonEmpty(row.castingTime),
-    range: orUndef(row.range),
-    concentration: orUndef(row.concentration),
-    duration: orUndef(row.duration),
-    verbal: orUndef(row.components.verbal),
-    somatic: orUndef(row.components.somatic),
-    material: orUndef(row.components.material),
-    materialDescription: orUndef(row.components.materialDescription),
-    hasRitual: orUndef(row.hasRitual),
-    tags: nonEmpty(row.tags),
-    spellLists: spellLists.length > 0 ? spellLists : undefined,
-  };
+  return { ...base, spellLists: spellLists.length > 0 ? spellLists : undefined };
 }
 
 /**
- * Produces the canonical trinket hash payload from a DB row.
+ * Appends the sorted boon relation payload to a bloodline hash record.
  *
- * @param {TrinketEntity} row - Trinket row
- * @returns {Record<string, unknown>} Metadata-compatible payload
+ * @param {MetadataStorage} allMeta - ORM metadata for `BloodlineBoonEntity` reflection
+ * @param {object} entity - Bloodline entity instance with populated `boons`
+ * @param {Record<string, unknown>} base - Base hash record from `entityToRecord`
+ * @returns {Record<string, unknown>} Augmented record including `boons`
  */
-function trinketHashPayload(row: TrinketEntity): Record<string, unknown> {
-  return {
-    slug: row.slug,
-    title: row.title,
-    file: row.file,
-    link: row.link,
-    itemType: row.itemType,
-    damage: orUndef(row.damage),
-    damageType: orUndef(row.damageType),
-    properties: nonEmpty(row.properties),
-    range: orUndef(row.range),
-    weight: orUndef(row.weight),
-    savingThrowDC: orUndef(row.savingThrow.dc),
-    savingThrowAbility: orUndef(row.savingThrow.ability),
-    specialEffects: nonEmpty(row.specialEffects),
-    inflictsConditions: nonEmpty(row.inflictsConditions),
-    tags: nonEmpty(row.tags),
-  };
-}
-
-/**
- * Produces the canonical bloodline hash payload from a DB row.
- *
- * @param {BloodlineEntity} row - Bloodline row with populated boons
- * @returns {Record<string, unknown>} Metadata-compatible payload
- */
-function bloodlineHashPayload(row: BloodlineEntity): Record<string, unknown> {
-  const boons = row.boons
+function appendBloodlineBoons(
+  allMeta: MetadataStorage,
+  entity: object,
+  base: Record<string, unknown>,
+): Record<string, unknown> {
+  const bloodline = entity as BloodlineEntity;
+  const boons = bloodline.boons
     .getItems()
     .sort((a, b) => a.sortOrder - b.sortOrder)
-    .map((boon) => ({
-      name: boon.name,
-      bpLabel: boon.bpLabel,
-      bpValue: orUndef(boon.bpValue),
-      sortOrder: boon.sortOrder,
-      tags: boon.tags,
-    }));
+    .map((boon) => entityToRecord(allMeta, boon, BloodlineBoonEntity.name));
+  return { ...base, boons };
+}
+
+/* ──────────────────────  Generic Backfiller  ───────────────────────── */
+
+/**
+ * Configuration for a single-table backfill pass.
+ *
+ * @interface BackfillConfig
+ * @property {EntityClass<object>} entityClass - MikroORM entity constructor
+ * @property {string[]} [populate] - Relation paths to load before hashing
+ * @property {Function} [appendRelations] - Merges relation payloads into the base record after reflection
+ */
+interface BackfillConfig {
+  entityClass: EntityClass<object>;
+  populate?: string[];
+  appendRelations?: (
+    entity: object,
+    base: Record<string, unknown>,
+  ) => Record<string, unknown>;
+}
+
+/**
+ * Scans all rows for `config.entityClass`, computes a deterministic hash for
+ * each row that is missing one, and persists updates via `em.flush()`.
+ *
+ * Field selection is driven entirely by `entityToRecord` and the ORM metadata —
+ * no property names are hardcoded here. The optional `appendRelations` callback
+ * in `config` handles relation payloads that `entityToRecord` skips.
+ *
+ * @param {EntityManager} em - Transaction-scoped entity manager
+ * @param {MetadataStorage} allMeta - ORM metadata from `orm.getMetadata()`
+ * @param {BackfillConfig} config - Entity class, populate hints, and optional relation appender
+ * @returns {Promise<BackfillSummary>} Row counts for reporting
+ */
+async function backfillTable(
+  em: EntityManager,
+  allMeta: MetadataStorage,
+  config: BackfillConfig,
+): Promise<BackfillSummary> {
+  const rows = await em.find(
+    config.entityClass,
+    {},
+    { populate: (config.populate ?? []) as never[] },
+  );
+
+  let missing = 0;
+  let updated = 0;
+
+  for (const row of rows) {
+    const versioned = row as object & { versionHash?: string | null };
+    if (!isMissingHash(versioned.versionHash)) continue;
+    missing++;
+
+    const base = entityToRecord(allMeta, row, config.entityClass.name, HASH_SKIP);
+    const payload = config.appendRelations
+      ? config.appendRelations(row, base)
+      : base;
+
+    versioned.versionHash = contentHash(payload);
+    updated++;
+  }
+
+  await em.flush();
 
   return {
-    slug: row.slug,
-    title: row.title,
-    file: row.file,
-    link: row.link,
-    description: orUndef(row.description),
-    coreFeatures: {
-      abilityScores: row.abilityScores,
-      movementSpeeds: row.movementSpeeds,
-      senses: row.senses,
-      size: row.size,
-      creatureTypes: row.creatureTypes,
-      age: orUndef(row.age),
-    },
-    boonBudget: orUndef(row.boonBudget),
-    boons,
-    tags: nonEmpty(row.tags),
-    indexVersion: orUndef(row.indexVersion),
+    table: allMeta.get(config.entityClass.name).collection,
+    total: rows.length,
+    missing,
+    updated,
   };
 }
 
-/**
- * Backfills missing monster hashes.
- *
- * @param {EntityManager} em - Entity manager
- * @returns {Promise<BackfillSummary>} Table summary
- */
-async function backfillMonsters(em: EntityManager): Promise<BackfillSummary> {
-  const rows = await em.find(MonsterEntity, {});
-  let missing = 0;
-  let updated = 0;
-
-  for (const row of rows) {
-    if (!isMissingHash(row.versionHash)) continue;
-    missing++;
-    row.versionHash = contentHash(monsterHashPayload(row));
-    updated++;
-  }
-
-  await em.flush();
-  return { table: 'monsters', total: rows.length, missing, updated };
-}
+/* ────────────────────────────  Main  ───────────────────────────────── */
 
 /**
- * Backfills missing heirloom hashes.
- *
- * @param {EntityManager} em - Entity manager
- * @returns {Promise<BackfillSummary>} Table summary
- */
-async function backfillHeirlooms(em: EntityManager): Promise<BackfillSummary> {
-  const rows = await em.find(HeirloomEntity, {});
-  let missing = 0;
-  let updated = 0;
-
-  for (const row of rows) {
-    if (!isMissingHash(row.versionHash)) continue;
-    missing++;
-    row.versionHash = contentHash(heirloomHashPayload(row));
-    updated++;
-  }
-
-  await em.flush();
-  return { table: 'heirlooms', total: rows.length, missing, updated };
-}
-
-/**
- * Backfills missing spell hashes.
- *
- * @param {EntityManager} em - Entity manager
- * @returns {Promise<BackfillSummary>} Table summary
- */
-async function backfillSpells(em: EntityManager): Promise<BackfillSummary> {
-  const rows = await em.find(SpellEntity, {}, { populate: ['spellLists'] });
-  let missing = 0;
-  let updated = 0;
-
-  for (const row of rows) {
-    if (!isMissingHash(row.versionHash)) continue;
-    missing++;
-    row.versionHash = contentHash(spellHashPayload(row));
-    updated++;
-  }
-
-  await em.flush();
-  return { table: 'spells', total: rows.length, missing, updated };
-}
-
-/**
- * Backfills missing trinket hashes.
- *
- * @param {EntityManager} em - Entity manager
- * @returns {Promise<BackfillSummary>} Table summary
- */
-async function backfillTrinkets(em: EntityManager): Promise<BackfillSummary> {
-  const rows = await em.find(TrinketEntity, {});
-  let missing = 0;
-  let updated = 0;
-
-  for (const row of rows) {
-    if (!isMissingHash(row.versionHash)) continue;
-    missing++;
-    row.versionHash = contentHash(trinketHashPayload(row));
-    updated++;
-  }
-
-  await em.flush();
-  return { table: 'trinkets', total: rows.length, missing, updated };
-}
-
-/**
- * Backfills missing bloodline hashes.
- *
- * @param {EntityManager} em - Entity manager
- * @returns {Promise<BackfillSummary>} Table summary
- */
-async function backfillBloodlines(em: EntityManager): Promise<BackfillSummary> {
-  const rows = await em.find(BloodlineEntity, {}, { populate: ['boons'] });
-  let missing = 0;
-  let updated = 0;
-
-  for (const row of rows) {
-    if (!isMissingHash(row.versionHash)) continue;
-    missing++;
-    row.versionHash = contentHash(bloodlineHashPayload(row));
-    updated++;
-  }
-
-  await em.flush();
-  return { table: 'bloodlines', total: rows.length, missing, updated };
-}
-
-/**
- * Script entry point.
+ * Connects to PostgreSQL, builds reflection-driven backfill configs, and runs
+ * each table's backfill pass inside a single transaction.
  */
 async function main(): Promise<void> {
   loadEnv();
@@ -440,10 +242,21 @@ async function main(): Promise<void> {
     defineConfig({
       entities: [
         MonsterEntity,
+        MonsterACEmbed,
+        MonsterHPEmbed,
+        MonsterSpeedEmbed,
+        MonsterScoreEmbed,
+        MonsterSaveEmbed,
+        MonsterSenseEmbed,
         HeirloomEntity,
+        HeirloomChargesEmbed,
         SpellEntity,
+        SpellComponentEmbed,
+        SpellListEntity,
         TrinketEntity,
+        TrinketSavingThrowEmbed,
         BloodlineEntity,
+        BloodlineBoonEntity,
       ],
       dbName: undefined,
       clientUrl: process.env.DATABASE_URL,
@@ -462,16 +275,30 @@ async function main(): Promise<void> {
   );
 
   try {
+    const allMeta = orm.getMetadata();
+
+    const configs: BackfillConfig[] = [
+      { entityClass: MonsterEntity },
+      { entityClass: HeirloomEntity },
+      {
+        entityClass: SpellEntity,
+        populate: ['spellLists'],
+        appendRelations: (entity, base) =>
+          appendSpellLists(allMeta, entity, base),
+      },
+      { entityClass: TrinketEntity },
+      {
+        entityClass: BloodlineEntity,
+        populate: ['boons'],
+        appendRelations: (entity, base) =>
+          appendBloodlineBoons(allMeta, entity, base),
+      },
+    ];
+
     const em = orm.em.fork();
-    const summaries = await em.transactional(async (tx) => {
-      return [
-        await backfillMonsters(tx),
-        await backfillHeirlooms(tx),
-        await backfillSpells(tx),
-        await backfillTrinkets(tx),
-        await backfillBloodlines(tx),
-      ];
-    });
+    const summaries = await em.transactional(async (tx) =>
+      Promise.all(configs.map((cfg) => backfillTable(tx, allMeta, cfg))),
+    );
 
     let totalUpdated = 0;
     console.log('\nVersion hash backfill summary:');

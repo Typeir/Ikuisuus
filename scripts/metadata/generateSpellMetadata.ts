@@ -13,24 +13,24 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-  GameData,
-  clean,
-  filePathToSlug,
-  getMetadataBackend,
-  parseDescription,
-  parseTitle,
-  runGenerator,
-  runWithCli,
-  type SharedData,
-  type StorageAdapter,
+    GameData,
+    clean,
+    filePathToSlug,
+    getMetadataBackend,
+    parseDescription,
+    parseTitle,
+    runGenerator,
+    runWithCli,
+    type SharedData,
+    type StorageAdapter,
 } from '.';
 import {
-  CASTING_TIME,
-  COMPONENTS,
-  DURATION,
-  SPELL_LISTS,
-  SPELL_TAGS,
-  STAT_BLOCK,
+    CASTING_TIME,
+    COMPONENTS,
+    DURATION,
+    SPELL_LISTS,
+    SPELL_TAGS,
+    STAT_BLOCK,
 } from './spellPatterns';
 
 const log = createLogger({ component: 'SpellMetadataGenerator' });
@@ -361,7 +361,7 @@ async function parseSpellFile(
     link: `/library/spells/${slug}`,
     ...headerData,
     ...properties,
-    ...components,
+    components: Object.keys(components).length ? components : undefined,
     tags,
   };
 

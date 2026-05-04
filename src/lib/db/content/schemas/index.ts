@@ -16,8 +16,6 @@ export type {
 } from './bloodlineMetadata';
 
 export type {
-    AbilityScore,
-    AbilityScores,
     MonsterAC,
     MonsterHP,
     MonsterIndexEntry,
@@ -26,11 +24,7 @@ export type {
     MonsterSpeed
 } from './monsterMetadata';
 
-export type {
-    HeirloomIndexEntry,
-    HeirloomMetadata,
-    HeirloomWeaponDamage
-} from './heirloomMetadata';
+export type { HeirloomIndexEntry, HeirloomMetadata } from './heirloomMetadata';
 
 export type {
     SpellIndexEntry,

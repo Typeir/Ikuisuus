@@ -12,8 +12,8 @@
  * @requires @/lib/components/sidebar/SidebarClient Component under test
  */
 
-import type { Item } from '@/lib/components/sidebar/SidebarClient';
 import SidebarClient from '@/lib/components/sidebar/SidebarClient';
+import type { Item } from '@/lib/components/sidebar/types';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';

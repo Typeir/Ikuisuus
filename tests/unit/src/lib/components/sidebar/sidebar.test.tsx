@@ -14,11 +14,9 @@
  * @requires @/lib/components/sidebar/sidebar Component under test
  */
 
-import {
-    Item,
-    SIDEBAR_CLOSE_ANIMATION_MS,
-    Sidebar,
-} from '@/lib/components/sidebar/sidebar';
+import { SIDEBAR_CLOSE_ANIMATION_MS } from '@/lib/components/sidebar/constants';
+import { Sidebar } from '@/lib/components/sidebar/sidebar';
+import type { Item } from '@/lib/components/sidebar/types';
 import { VIRTUALIZE_THRESHOLD } from '@/lib/components/sidebar/VirtualizedSidebar';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
 import {
@@ -37,11 +35,15 @@ vi.mock('next/dynamic', () => ({
       default: React.ComponentType<Record<string, unknown>>;
     }>,
   ) => {
-    let Comp: React.ComponentType<Record<string, unknown>> | null = null;
-    fn().then((m) => {
-      Comp = m.default;
-    });
     return function DynamicWrapper(props: Record<string, unknown>) {
+      const [Comp, setComp] = React.useState<React.ComponentType<
+        Record<string, unknown>
+      > | null>(null);
+      React.useEffect(() => {
+        fn().then((m) => {
+          setComp(() => m.default ?? null);
+        });
+      }, []);
       if (!Comp) return <div data-testid='dynamic-loading' />;
       const C = Comp as React.ElementType;
       return <C {...props} />;
@@ -311,19 +313,19 @@ describe('lazy-mount behaviour', () => {
     expect(screen.queryByText('Goblin')).not.toBeInTheDocument();
   });
 
-  it('renders folder children after the label is clicked', () => {
+  it('renders folder children after the label is clicked', async () => {
     renderWithProvider(<Sidebar items={nestedItems} />);
     const label = screen.getByText('Bestiary').parentElement as HTMLElement;
     fireEvent.click(label);
-    expect(screen.getByText('Dragon')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Dragon')).toBeInTheDocument());
     expect(screen.getByText('Goblin')).toBeInTheDocument();
   });
 
-  it('keeps children in the DOM immediately after closing (isClosing phase)', () => {
+  it('keeps children in the DOM immediately after closing (isClosing phase)', async () => {
     renderWithProvider(<Sidebar items={nestedItems} />);
     const label = screen.getByText('Bestiary').parentElement as HTMLElement;
     fireEvent.click(label);
-    expect(screen.getByText('Dragon')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Dragon')).toBeInTheDocument());
     fireEvent.click(label);
     expect(screen.getByText('Dragon')).toBeInTheDocument();
   });
@@ -352,10 +354,14 @@ describe('lazy-mount behaviour', () => {
       vi.useRealTimers();
     });
 
-    it('does not unmount children before the animation duration has elapsed', () => {
+    it('does not unmount children before the animation duration has elapsed', async () => {
       renderWithProvider(<Sidebar items={nestedItems} />);
       const label = screen.getByText('Bestiary').parentElement as HTMLElement;
-      fireEvent.click(label);
+      await act(async () => {
+        fireEvent.click(label);
+      });
+      await act(async () => {}); // flush DynamicWrapper setComp state update
+      expect(screen.getByText('Dragon')).toBeInTheDocument();
       fireEvent.click(label);
       act(() => {
         vi.advanceTimersByTime(SIDEBAR_CLOSE_ANIMATION_MS - 50);
@@ -394,7 +400,7 @@ describe('Sidebar path handling - integration with walk utility', () => {
       );
     });
 
-    it('should handle mixed .sheet and regular paths in nested structure', () => {
+    it('should handle mixed .sheet and regular paths in nested structure', async () => {
       const items: Item[] = [
         {
           name: 'Monsters',
@@ -409,17 +415,19 @@ describe('Sidebar path handling - integration with walk utility', () => {
       renderWithProvider(<Sidebar items={items} />);
       fireEvent.click(screen.getByText('Monsters'));
 
-      const links = screen.getAllByRole('link');
-      expect(
-        links.some((link) =>
-          link.getAttribute('href')?.includes('boss-monster.sheet'),
-        ),
-      ).toBe(true);
-      expect(
-        links.some(
-          (link) => link.getAttribute('href') === '/en/library/monsters/info',
-        ),
-      ).toBe(true);
+      await waitFor(() => {
+        const links = screen.getAllByRole('link');
+        expect(
+          links.some((link) =>
+            link.getAttribute('href')?.includes('boss-monster.sheet'),
+          ),
+        ).toBe(true);
+        expect(
+          links.some(
+            (link) => link.getAttribute('href') === '/en/library/monsters/info',
+          ),
+        ).toBe(true);
+      });
     });
 
     it('should not contain malformed paths like "machinesheet"', () => {

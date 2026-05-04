@@ -11,7 +11,7 @@
 
 'use client';
 
-import type { Item as SidebarItem } from '@/lib/components/sidebar/sidebar';
+import type { Item as SidebarItem } from '@/lib/components/sidebar/types';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
 import { NextIntlClientProvider, type AbstractIntlMessages } from 'next-intl';
 import ResponsiveLayoutShell from './utils/responsiveLayoutShell';

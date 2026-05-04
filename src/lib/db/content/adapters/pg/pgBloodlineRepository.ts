@@ -13,8 +13,8 @@ import { BloodlineEntity } from '@/lib/db/orm/entities/BloodlineEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { BloodlineRepository } from '../../repositories/bloodlineRepository';
 import type {
-    BloodlineBoon,
-    BloodlineMetadata,
+  BloodlineBoon,
+  BloodlineMetadata,
 } from '../../schemas/bloodlineMetadata';
 import { PgMetadataRepository } from './PgMetadataRepository';
 
@@ -45,14 +45,12 @@ const rowToBloodline = (row: BloodlineEntity): BloodlineMetadata => {
     file: row.file,
     link: row.link,
     description: orUndef(row.description),
-    coreFeatures: {
-      abilityScores: row.abilityScores,
-      movementSpeeds: row.movementSpeeds,
-      senses: row.senses,
-      size: row.size,
-      creatureTypes: row.creatureTypes,
-      age: orUndef(row.age),
-    },
+    abilityScores: row.abilityScores,
+    movementSpeeds: row.movementSpeeds,
+    senses: row.senses,
+    size: row.size,
+    creatureTypes: row.creatureTypes,
+    age: orUndef(row.age),
     boonBudget: orUndef(row.boonBudget),
     boons,
     tags: nonEmpty(row.tags),

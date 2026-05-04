@@ -6,7 +6,7 @@
  * @module tests/unit/lib/db/content/adapters/fs/FsMetadataRepository
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/db/content/adapters/fs/readMetadataFiles');
 vi.mock('@/lib/logging/logger', () => ({
@@ -20,49 +20,58 @@ type TestRecord = { slug: string; name: string };
 let FsMetadataRepository: typeof import('@/lib/db/content/adapters/fs/FsMetadataRepository').FsMetadataRepository;
 let readMetadataFiles: ReturnType<typeof vi.fn>;
 
+// Subclass constructors — lazily derived after FsMetadataRepository is loaded
+let TestRepo: new () => InstanceType<typeof FsMetadataRepository<TestRecord>>;
+let FilteredRepo: new () => InstanceType<
+  typeof FsMetadataRepository<TestRecord>
+>;
+let AliasRepo: new () => InstanceType<
+  typeof FsMetadataRepository<TestRecord & { alias?: string }>
+>;
+
 beforeEach(async () => {
   vi.resetModules();
   const rmf = await import('@/lib/db/content/adapters/fs/readMetadataFiles');
   readMetadataFiles = rmf.readMetadataFiles as ReturnType<typeof vi.fn>;
   const mod = await import('@/lib/db/content/adapters/fs/FsMetadataRepository');
   FsMetadataRepository = mod.FsMetadataRepository;
+
+  /** Minimal concrete subclass — no overrides. */
+  TestRepo = class extends FsMetadataRepository<TestRecord> {
+    constructor() {
+      super('things', 'TestRepo');
+    }
+  };
+
+  /** Subclass with custom filter (only slug starting with 'a'). */
+  FilteredRepo = class extends FsMetadataRepository<TestRecord> {
+    constructor() {
+      super('things', 'FilteredRepo');
+    }
+    protected override filter(r: unknown): r is TestRecord {
+      return (
+        r != null &&
+        typeof r === 'object' &&
+        (r as TestRecord).slug.startsWith('a')
+      );
+    }
+  };
+
+  /** Subclass with custom matchSlug (also checks a secondary field). */
+  AliasRepo = class extends FsMetadataRepository<
+    TestRecord & { alias?: string }
+  > {
+    constructor() {
+      super('things', 'AliasRepo');
+    }
+    protected override matchSlug(
+      r: TestRecord & { alias?: string },
+      slug: string,
+    ): boolean {
+      return r.alias === slug || r.slug === slug;
+    }
+  };
 });
-
-afterEach(() => vi.restoreAllMocks());
-
-/** Minimal concrete subclass — no overrides. */
-class TestRepo extends FsMetadataRepository<TestRecord> {
-  constructor() {
-    super('things', 'TestRepo');
-  }
-}
-
-/** Subclass with custom filter (only slug starting with 'a'). */
-class FilteredRepo extends FsMetadataRepository<TestRecord> {
-  constructor() {
-    super('things', 'FilteredRepo');
-  }
-  protected override filter(r: unknown): r is TestRecord {
-    return (
-      r != null &&
-      typeof r === 'object' &&
-      (r as TestRecord).slug.startsWith('a')
-    );
-  }
-}
-
-/** Subclass with custom matchSlug (also checks a secondary field). */
-class AliasRepo extends FsMetadataRepository<TestRecord & { alias?: string }> {
-  constructor() {
-    super('things', 'AliasRepo');
-  }
-  protected override matchSlug(
-    r: TestRecord & { alias?: string },
-    slug: string,
-  ): boolean {
-    return r.alias === slug || r.slug === slug;
-  }
-}
 
 const RECORDS: TestRecord[] = [
   { slug: 'alpha', name: 'Alpha' },

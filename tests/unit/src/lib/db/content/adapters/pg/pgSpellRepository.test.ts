@@ -93,10 +93,12 @@ describe('pgSpellRepository', () => {
         range: '150 feet',
         concentration: false,
         duration: 'Instantaneous',
-        verbal: true,
-        somatic: true,
-        material: true,
-        materialDescription: 'a tiny ball of bat guano and sulfur',
+        components: {
+          verbal: true,
+          somatic: true,
+          material: true,
+          materialDescription: 'a tiny ball of bat guano and sulfur',
+        },
         hasRitual: false,
         tags: ['damage', 'fire', 'area'],
         spellLists: [

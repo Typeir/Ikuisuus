@@ -41,7 +41,7 @@ export interface MonsterIndexEntry {
  * @property {string} creatureType - Monster type
  * @property {Object} [hp] - Hit points with average and formula
  * @property {Object} [ac] - Armor class with value and notes
- * @property {Object} [abilities] - Ability scores (modifiers derived via floor((score - 10) / 2))
+ * @property {Object} [scores] - Flat ability scores matching MonsterScoreEmbed (modifiers derived via floor((score - 10) / 2))
  * @property {number} [proficiencyBonus] - Proficiency bonus
  * @property {Object} [speed] - Speed information
  * @property {string} [link] - Wiki link path
@@ -62,13 +62,13 @@ export interface MonsterData {
     value: number;
     notes?: string;
   };
-  abilities?: {
-    str?: { score: number };
-    dex?: { score: number };
-    con?: { score: number };
-    int?: { score: number };
-    wis?: { score: number };
-    cha?: { score: number };
+  scores?: {
+    str?: number;
+    dex?: number;
+    con?: number;
+    int?: number;
+    wis?: number;
+    cha?: number;
   };
   proficiencyBonus?: number;
   speed?: {

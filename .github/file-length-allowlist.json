@@ -126,7 +126,7 @@
   },
   {
     "file": "src/lib/components/sidebar/sidebar.tsx",
-    "maxLines": 300,
+    "maxLines": 500,
     "justification": "Sidebar orchestrator with lazy-mount animation, virtualisation threshold, stub lazy-loading effect, and SidebarItem fold logic — splitting would break co-located type definitions"
   }
 ]

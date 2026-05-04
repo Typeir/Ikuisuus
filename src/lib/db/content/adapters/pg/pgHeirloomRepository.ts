@@ -16,28 +16,10 @@ import type { HeirloomRepository } from '../../repositories/heirloomRepository';
 import type {
     HeirloomCharges,
     HeirloomMetadata,
-    HeirloomWeaponDamage,
 } from '../../schemas/heirloomMetadata';
 import { PgMetadataRepository } from './PgMetadataRepository';
 
 /* ─────────────────────  Embed → Domain mappers  ─────────────────────── */
-
-/**
- * Builds weapon damage info from flat row columns.
- *
- * @param {HeirloomEntity} row - Heirloom entity row
- * @returns {HeirloomWeaponDamage | undefined} Weapon damage or undefined
- */
-const mapWeaponDamage = (
-  row: HeirloomEntity,
-): HeirloomWeaponDamage | undefined => {
-  if (row.weaponDamage == null) return undefined;
-  return {
-    damage: row.weaponDamage,
-    damageType: row.weaponDamageType ?? '',
-    versatileDamage: orUndef(row.versatileDamage),
-  };
-};
 
 /**
  * Maps the Charges embed to a domain `HeirloomCharges`.
@@ -74,7 +56,9 @@ const rowToHeirloom = (row: HeirloomEntity): HeirloomMetadata => ({
   weaponType: orUndef(row.weaponType),
   requiresAttunement: row.requiresAttunement ?? false,
   attunementRequirements: orUndef(row.attunementRequirements),
-  weaponDamage: mapWeaponDamage(row),
+  weaponDamage: orUndef(row.weaponDamage),
+  weaponDamageType: orUndef(row.weaponDamageType),
+  versatileDamage: orUndef(row.versatileDamage),
   hitModifier: orUndef(row.hitModifier),
   range: orUndef(row.range),
   weight: orUndef(row.weight),

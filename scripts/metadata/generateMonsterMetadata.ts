@@ -15,44 +15,49 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-  GameData,
-  clean,
-  extractAllTags,
-  filePathToSlug,
-  parseKeyBullets,
-  parseNumericValue,
-  readLines,
-  runGenerator,
-  runWithCli,
-  splitList,
-  splitListWithGrouping,
-  stripMarkdown,
-  type SharedData,
-  type StorageAdapter,
+    GameData,
+    clean,
+    extractAllTags,
+    filePathToSlug,
+    parseKeyBullets,
+    parseNumericValue,
+    readLines,
+    runGenerator,
+    runWithCli,
+    splitList,
+    splitListWithGrouping,
+    stripMarkdown,
+    type SharedData,
+    type StorageAdapter,
 } from '.';
 import { MONSTER, STRUCTURE } from './extraction/featurePatterns';
 import { parseMonsterFeatures } from './generateFeatureMetadata';
 import {
-  IMAGE,
-  ITALIC_META,
-  MONSTER_HEADING,
-  SPEED,
-  STAT_CONTENT,
-  STAT_TABLE,
+    IMAGE,
+    ITALIC_META,
+    MONSTER_HEADING,
+    SPEED,
+    STAT_CONTENT,
+    STAT_TABLE,
 } from './monsterPatterns';
 import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 
 const log = createLogger({ component: 'MonsterMetadataGenerator' });
 
 /**
- * Speed data with raw text and parsed movement modes.
+ * Speed data with raw text and parsed flat movement modes.
  *
  * @property {string} raw - Original speed text
- * @property {Record<string, number | boolean>} modes - Parsed movement modes
+ * @property {number | boolean} [walk] - Walk speed in feet
+ * @property {number | boolean} [fly] - Fly speed in feet
+ * @property {number | boolean} [climb] - Climb speed in feet
+ * @property {number | boolean} [swim] - Swim speed in feet
+ * @property {number | boolean} [burrow] - Burrow speed in feet
+ * @property {boolean} [hover] - Whether the creature hovers while flying
  */
 interface SpeedData {
   raw: string;
-  modes: Record<string, number | boolean>;
+  [key: string]: number | boolean | string | undefined;
 }
 
 /**
@@ -173,33 +178,33 @@ function parseSpeed(raw: string): SpeedData | undefined {
   if (!raw) return undefined;
 
   const parts = raw.split(LIST.commaWhitespace);
-  const modes: Record<string, number | boolean> = {};
+  const result: SpeedData = { raw };
 
   for (const p of parts) {
     const isHover = MONSTER.hover.test(p);
-    if (isHover) modes.hover = true;
+    if (isHover) result.hover = true;
 
     const m = p.match(MONSTER.speedMode);
     if (m) {
       const mode = (m[1] || 'walk').toLowerCase();
-      modes[mode] = Number(m[2]);
+      result[mode] = Number(m[2]);
     } else {
       const mh = p.match(SPEED.hoverDistance);
       if (mh) {
-        modes.fly = Number(mh[1]);
-        modes.hover = true;
+        result.fly = Number(mh[1]);
+        result.hover = true;
       }
     }
   }
 
-  return { raw, modes };
+  return result;
 }
 
 /**
  * Parses the six core ability scores from the stat block table.
  *
  * @param {string[]} lines - Array of document lines
- * @returns {object | undefined} Ability scores
+ * @returns {{ str?: number, dex?: number, con?: number, int?: number, wis?: number, cha?: number } | undefined} Flat ability scores
  */
 function parseAbilities(lines: string[]) {
   const idx = lines.findIndex((l) => STAT_TABLE.abilityHeader.test(l));
@@ -218,32 +223,33 @@ function parseAbilities(lines: string[]) {
 
   const cells = parseTableRowCells(valuesRow);
 
-  const toPair = (cell: string) => {
+  const toScore = (cell: string): number | undefined => {
     const m = cell.match(UTILITY.numericExtract);
-    if (m) {
-      const score = Number(m[1]);
-      return { score, mod: Math.floor((score - 10) / 2) };
-    }
-    return { score: undefined };
+    return m ? Number(m[1]) : undefined;
   };
 
   if (cells.length < 6) return undefined;
 
-  return {
-    str: toPair(cells[0]),
-    dex: toPair(cells[1]),
-    con: toPair(cells[2]),
-    int: toPair(cells[3]),
-    wis: toPair(cells[4]),
-    cha: toPair(cells[5]),
+  const scores: Record<string, number | undefined> = {
+    str: toScore(cells[0]),
+    dex: toScore(cells[1]),
+    con: toScore(cells[2]),
+    int: toScore(cells[3]),
+    wis: toScore(cells[4]),
+    cha: toScore(cells[5]),
   };
+
+  const defined = Object.fromEntries(
+    Object.entries(scores).filter(([, v]) => v !== undefined),
+  );
+  return Object.keys(defined).length ? defined : undefined;
 }
 
 /**
  * Parses saving throw bonuses.
  *
  * @param {string} [raw] - Raw saving throws string
- * @returns {Record<string, number> | undefined} Map of ability → bonus
+ * @returns {{ str?: number, dex?: number, con?: number, int?: number, wis?: number, cha?: number } | undefined} Flat map of ability → bonus
  */
 function parseSavingThrows(raw?: string): Record<string, number> | undefined {
   if (!raw) return undefined;
@@ -722,8 +728,8 @@ function parseStatBlockSection(
     ac: headerStats.ac,
     hp: headerStats.hp,
     speed: headerStats.speed,
-    abilities,
-    savingThrows,
+    scores: abilities,
+    saves: savingThrows,
     skills: skills.length ? skills : undefined,
     damageResistances: resist.length ? resist : undefined,
     damageImmunities: immune.length ? immune : undefined,

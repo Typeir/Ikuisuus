@@ -17,9 +17,9 @@ import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import Icon from '../icon/icon';
-import type { Item } from './sidebar';
 import styles from './sidebar.module.scss';
 import SidebarClient from './SidebarClient';
+import type { Item } from './types';
 
 /**
  * Sidebar item annotated with computed expanded height.

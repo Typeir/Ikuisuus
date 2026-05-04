@@ -143,10 +143,8 @@ describe('Heirloom Metadata Generator', () => {
       const result = await parseHeirloomFile(filePath, sharedData);
 
       expect(result.weaponDamage).toBeDefined();
-      expect(result.weaponDamage?.damage).toContain('4d8');
-      expect(result.weaponDamage?.damageType?.toLowerCase()).toContain(
-        'bludgeoning',
-      );
+      expect(result.weaponDamage).toContain('4d8');
+      expect(result.weaponDamageType?.toLowerCase()).toContain('bludgeoning');
     });
   });
 

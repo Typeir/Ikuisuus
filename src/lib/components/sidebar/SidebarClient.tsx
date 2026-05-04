@@ -1,5 +1,5 @@
 /**
- * @fileoverview Interactive sidebar client entry. Re-exports the Sidebar component
+ * @fileoverview Interactive sidebar client entry. Exports the Sidebar component
  * as the default export so it can be lazily loaded via next/dynamic from SidebarShell.
  *
  * @module lib/components/sidebar/SidebarClient
@@ -10,6 +10,9 @@
 
 'use client';
 
-export { Sidebar as default } from './sidebar';
-export type { Item } from './sidebar';
+import { Sidebar } from './sidebar';
+import type { Item, LayoutItem, SidebarProps } from './types';
+
+export default Sidebar;
+export type { Item, LayoutItem, SidebarProps };
 

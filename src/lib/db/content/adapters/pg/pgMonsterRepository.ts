@@ -20,11 +20,12 @@ import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {
-    AbilityScores,
     MonsterAC,
     MonsterHP,
     MonsterIndexEntry,
     MonsterMetadata,
+    MonsterSaves,
+    MonsterScores,
     MonsterSenses,
     MonsterSpeed,
 } from '../../schemas/monsterMetadata';
@@ -65,51 +66,47 @@ const mapHP = (row: MonsterEntity): MonsterHP => ({
  */
 const mapSpeed = (row: MonsterEntity): MonsterSpeed => ({
   raw: row.speed.raw ?? '',
-  modes: {
-    walk: orUndef(row.speed.walk),
-    fly: orUndef(row.speed.fly),
-    climb: orUndef(row.speed.climb),
-    swim: orUndef(row.speed.swim),
-    burrow: orUndef(row.speed.burrow),
-    hover: orUndef(row.speed.hover),
-  },
+  walk: orUndef(row.speed.walk),
+  fly: orUndef(row.speed.fly),
+  climb: orUndef(row.speed.climb),
+  swim: orUndef(row.speed.swim),
+  burrow: orUndef(row.speed.burrow),
+  hover: orUndef(row.speed.hover),
 });
 
 /**
- * Maps the Score embed to domain `AbilityScores`.
+ * Maps the Score embed to domain `MonsterScores`.
  *
  * @param {MonsterEntity} row - Monster entity row
- * @returns {AbilityScores} Six ability scores
+ * @returns {MonsterScores} Six flat ability scores
  */
-const mapAbilities = (row: MonsterEntity): AbilityScores => ({
-  str: { score: orUndef(row.scores.str) },
-  dex: { score: orUndef(row.scores.dex) },
-  con: { score: orUndef(row.scores.con) },
-  int: { score: orUndef(row.scores.int) },
-  wis: { score: orUndef(row.scores.wis) },
-  cha: { score: orUndef(row.scores.cha) },
+const mapScores = (row: MonsterEntity): MonsterScores => ({
+  str: orUndef(row.scores.str),
+  dex: orUndef(row.scores.dex),
+  con: orUndef(row.scores.con),
+  int: orUndef(row.scores.int),
+  wis: orUndef(row.scores.wis),
+  cha: orUndef(row.scores.cha),
 });
 
 /**
- * Maps the Save embed to a saving-throws record.
+ * Maps the Save embed to domain `MonsterSaves`.
  *
  * @param {MonsterEntity} row - Monster entity row
- * @returns {Record<string, number> | undefined} Saving throws or undefined
+ * @returns {MonsterSaves | undefined} Saving throw bonuses or undefined
  */
-const mapSavingThrows = (
-  row: MonsterEntity,
-): Record<string, number> | undefined => {
+const mapSaves = (row: MonsterEntity): MonsterSaves | undefined => {
   const s = row.saves;
-  const throws: Record<string, number> = {};
+  const saves: MonsterSaves = {};
   let hasAny = false;
   for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha'] as const) {
     const val = s[key];
     if (val != null) {
-      throws[key] = val;
+      saves[key] = val;
       hasAny = true;
     }
   }
-  return hasAny ? throws : undefined;
+  return hasAny ? saves : undefined;
 };
 
 /**
@@ -149,8 +146,8 @@ const rowToMonster = (row: MonsterEntity): MonsterMetadata => ({
   ac: mapAC(row),
   hp: mapHP(row),
   speed: mapSpeed(row),
-  abilities: mapAbilities(row),
-  savingThrows: mapSavingThrows(row),
+  scores: mapScores(row),
+  saves: mapSaves(row),
   senses: mapSenses(row),
   skills: nonEmpty(row.skills),
   damageResistances: nonEmpty(row.damageResistances),

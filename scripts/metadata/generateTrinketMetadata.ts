@@ -13,15 +13,15 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-  GameData,
-  clean,
-  extractAllTags,
-  filePathToSlug,
-  parseTitle,
-  runGenerator,
-  runWithCli,
-  type SharedData,
-  type StorageAdapter,
+    GameData,
+    clean,
+    extractAllTags,
+    filePathToSlug,
+    parseTitle,
+    runGenerator,
+    runWithCli,
+    type SharedData,
+    type StorageAdapter,
 } from '.';
 import { MECHANICS, PROPERTY } from './trinketPatterns';
 
@@ -127,8 +127,10 @@ function parseTrinketProperties(
 
   const savingThrowMatch = content.match(MECHANICS.dcSavingThrow);
   if (savingThrowMatch) {
-    result.savingThrowDC = parseInt(savingThrowMatch[1], 10);
-    result.savingThrowAbility = savingThrowMatch[2].toLowerCase();
+    result.savingThrow = {
+      dc: parseInt(savingThrowMatch[1], 10),
+      ability: savingThrowMatch[2].toLowerCase(),
+    };
   }
 
   const specialEffectsMatch = content.match(MECHANICS.specialEffects);

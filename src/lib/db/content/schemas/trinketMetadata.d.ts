@@ -31,8 +31,9 @@
  * @property {string[]} [properties] - Item properties (e.g. ["thrown", "special"])
  * @property {string} [range] - Weapon or thrown range (e.g. "30/60")
  * @property {string} [weight] - Item weight (e.g. "1 lb.")
- * @property {number} [savingThrowDC] - Saving throw DC
- * @property {string} [savingThrowAbility] - Saving throw ability (e.g. "dexterity")
+ * @property {Object} [savingThrow] - Saving throw info matching `TrinketSavingThrowEmbed`
+ * @property {number} [savingThrow.dc] - Saving throw DC
+ * @property {string} [savingThrow.ability] - Saving throw ability (e.g. "dexterity")
  * @property {string[]} [specialEffects] - Special effect keywords (e.g. ["restrain", "trip"])
  * @property {string[]} [inflictsConditions] - Conditions inflicted (e.g. ["prone"])
  * @property {string[]} [tags] - Gameplay tags for filtering and search
@@ -49,8 +50,10 @@ export interface TrinketMetadata {
   properties?: string[];
   range?: string;
   weight?: string;
-  savingThrowDC?: number;
-  savingThrowAbility?: string;
+  savingThrow?: {
+    dc?: number;
+    ability?: string;
+  };
   specialEffects?: string[];
   inflictsConditions?: string[];
   tags?: string[];

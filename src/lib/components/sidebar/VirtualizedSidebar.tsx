@@ -12,8 +12,8 @@
 
 import type { CSSProperties } from 'react';
 import { List } from 'react-window';
-import type { LayoutItem } from './sidebar';
 import { Sidebar } from './sidebar';
+import type { LayoutItem } from './types';
 
 /**
  * Number of items in a folder that triggers virtualization.

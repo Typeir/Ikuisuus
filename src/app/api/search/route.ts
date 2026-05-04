@@ -77,9 +77,9 @@ export async function GET(req: Request) {
   async function walk(dir: string, base: string = ''): Promise<void> {
     let entries: Dirent[] = [];
     try {
-      entries = await fs.readdir(dir, {
+      entries = (await fs.readdir(dir, {
         withFileTypes: true,
-      }) as unknown as Dirent[];
+      })) as unknown as Dirent[];
     } catch (err) {
       return;
     }

@@ -14,22 +14,22 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-  clean,
-  extractAllTags,
-  filePathToSlug,
-  parseDescription,
-  parseTitle,
-  runGenerator,
-  runWithCli,
-  type SharedData,
-  type StorageAdapter,
+    clean,
+    extractAllTags,
+    filePathToSlug,
+    parseDescription,
+    parseTitle,
+    runGenerator,
+    runWithCli,
+    type SharedData,
+    type StorageAdapter,
 } from '.';
 import {
-  CASTING,
-  FEATURE,
-  FLAVOR,
-  SPECIALIZATION_TYPES,
-  TABLE,
+    CASTING,
+    FEATURE,
+    FLAVOR,
+    SPECIALIZATION_TYPES,
+    TABLE,
 } from './classPatterns';
 import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 
@@ -241,7 +241,7 @@ async function parseSpecializationFile(
     const flavor = parseFlavor(lines);
     const description = parseDescription(raw);
     const features = parseFeatures(raw);
-    const spellsAlwaysPrepared = parseAlwaysPreparedSpells(raw);
+    const preparedSpells = parseAlwaysPreparedSpells(raw);
     const spellcasting = parseSpecializationSpellcasting(raw);
 
     const file = path
@@ -258,7 +258,7 @@ async function parseSpecializationFile(
       tags.add(`spellcasting-ability:${spellcasting.ability.toLowerCase()}`);
     }
 
-    if (spellsAlwaysPrepared) {
+    if (preparedSpells) {
       tags.add('has-always-prepared-spells');
     }
 
@@ -276,7 +276,7 @@ async function parseSpecializationFile(
       specializationType,
       flavor,
       spellcasting,
-      spellsAlwaysPrepared,
+      preparedSpells,
       features,
       tags: [...tags].sort(),
       indexVersion: 1,

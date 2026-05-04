@@ -58,7 +58,7 @@ export interface SpecializationSpellcasting {
  * @property {string} [flavor] - Introductory flavor text
  * @property {string} [description] - Prose description extracted from the specialization MDX
  * @property {SpecializationSpellcasting} [spellcasting] - Own spellcasting if applicable
- * @property {AlwaysPreparedSpells[]} [spellsAlwaysPrepared] - Level-keyed lists of always-prepared spells
+ * @property {AlwaysPreparedSpells[]} [preparedSpells] - Level-keyed lists of always-prepared spells. Matches `SpecializationEntity.preparedSpells` relation.
  * @property {SpecializationFeature[]} features - Level-feature list
  * @property {string[]} tags - Derived gameplay tags for filtering
  * @property {number} [indexVersion] - Metadata schema version
@@ -73,7 +73,7 @@ export interface SpecializationMetadata {
   flavor?: string;
   description?: string;
   spellcasting?: SpecializationSpellcasting;
-  spellsAlwaysPrepared?: AlwaysPreparedSpells[];
+  preparedSpells?: AlwaysPreparedSpells[];
   features: SpecializationFeature[];
   tags: string[];
   indexVersion?: number;

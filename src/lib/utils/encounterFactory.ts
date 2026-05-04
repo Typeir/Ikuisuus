@@ -23,13 +23,13 @@ import { calculateInitiativeMod, generateId } from './encounterStorage';
 type MonsterLibraryData = {
   hp?: { average?: number; formula?: string } | null;
   ac?: { value?: number } | null;
-  abilities?: {
-    str?: { score?: number };
-    dex?: { score?: number };
-    con?: { score?: number };
-    int?: { score?: number };
-    wis?: { score?: number };
-    cha?: { score?: number };
+  scores?: {
+    str?: number;
+    dex?: number;
+    con?: number;
+    int?: number;
+    wis?: number;
+    cha?: number;
   } | null;
   link?: string;
   title?: string;
@@ -128,12 +128,12 @@ export const createCreatureFromMonster = (
   const ac = monsterData.ac?.value || 10;
 
   const stats: CreatureStats = {
-    str: monsterData.abilities?.str?.score || 10,
-    dex: monsterData.abilities?.dex?.score || 10,
-    con: monsterData.abilities?.con?.score || 10,
-    int: monsterData.abilities?.int?.score || 10,
-    wis: monsterData.abilities?.wis?.score || 10,
-    cha: monsterData.abilities?.cha?.score || 10,
+    str: monsterData.scores?.str || 10,
+    dex: monsterData.scores?.dex || 10,
+    con: monsterData.scores?.con || 10,
+    int: monsterData.scores?.int || 10,
+    wis: monsterData.scores?.wis || 10,
+    cha: monsterData.scores?.cha || 10,
   };
 
   const initiativeBonus = calculateInitiativeMod(stats.dex);

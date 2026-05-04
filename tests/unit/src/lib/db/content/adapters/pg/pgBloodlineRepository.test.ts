@@ -102,12 +102,10 @@ describe('pgBloodlineRepository', () => {
         slug: 'empyrean',
         title: 'Empyrean',
         description: 'Lore text',
-        coreFeatures: {
-          abilityScores: ['DEX +2', 'CHA +1'],
-          size: ['Medium'],
-          creatureTypes: ['Humanoid'],
-          age: 'Centuries (Foulblood ~100 yr)',
-        },
+        abilityScores: ['DEX +2', 'CHA +1'],
+        size: ['Medium'],
+        creatureTypes: ['Humanoid'],
+        age: 'Centuries (Foulblood ~100 yr)',
         boonBudget: 10,
         tags: ['humanoid'],
       });

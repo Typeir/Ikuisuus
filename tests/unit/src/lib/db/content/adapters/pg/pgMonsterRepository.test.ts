@@ -118,9 +118,9 @@ describe('pgMonsterRepository', () => {
         cr: '10',
         ac: { value: 17, notes: 'natural armor' },
         hp: { average: 135, formula: '18d10+36' },
-        speed: { raw: '10 ft., swim 40 ft.', modes: { walk: 10, swim: 40 } },
-        abilities: { str: { score: 21 }, int: { score: 18 } },
-        savingThrows: { int: 8, wis: 6, cha: 8 },
+        speed: { raw: '10 ft., swim 40 ft.', walk: 10, swim: 40 },
+        scores: { str: 21, int: 18 },
+        saves: { int: 8, wis: 6, cha: 8 },
         senses: {
           raw: 'darkvision 120 ft., passive Perception 20',
           passivePerception: 20,

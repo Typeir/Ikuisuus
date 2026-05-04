@@ -31,13 +31,10 @@ export {
 /** Entity-specific domain schemas */
 export type {
     HeirloomIndexEntry,
-    HeirloomMetadata,
-    HeirloomWeaponDamage
+    HeirloomMetadata
 } from './schemas/heirloomMetadata';
 
 export type {
-    AbilityScore,
-    AbilityScores,
     MonsterAC,
     MonsterHP,
     MonsterIndexEntry,
@@ -79,6 +76,9 @@ export type {
 
 /** File-tree service (lazy sidebar) */
 export {
-    clearCache, getFile, listDirectory, statPath
+    clearCache,
+    getFile,
+    listDirectory,
+    statPath
 } from './fileTreeService';
 

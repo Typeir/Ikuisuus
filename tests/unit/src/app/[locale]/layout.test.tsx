@@ -16,6 +16,15 @@ import RootLayout from '@/app/[locale]/layout';
 import { cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+// Mock next/font/local so localFont() doesn't fail in jsdom
+vi.mock('next/font/local', () => ({
+  default: () => ({
+    className: 'mock-font',
+    variable: '--mock-font',
+    style: { fontFamily: 'mock' },
+  }),
+}));
+
 // Mock cookies() from next/headers
 vi.mock('next/headers', () => ({
   cookies: vi.fn(async () => ({

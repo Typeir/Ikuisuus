@@ -21,27 +21,27 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-  clean,
-  extractAbilitySaveTags,
-  extractAllTags,
-  extractConditionTags,
-  extractDamageTags,
-  extractItemMechanicTags,
-  extractMovementTags,
-  filePathToSlug,
-  parseDescription,
-  parseTitle,
-  runGenerator,
-  runWithCli,
-  type SharedData,
-  type StorageAdapter,
+    clean,
+    extractAbilitySaveTags,
+    extractAllTags,
+    extractConditionTags,
+    extractDamageTags,
+    extractItemMechanicTags,
+    extractMovementTags,
+    filePathToSlug,
+    parseDescription,
+    parseTitle,
+    runGenerator,
+    runWithCli,
+    type SharedData,
+    type StorageAdapter,
 } from '.';
 import {
-  BOON,
-  BOON_MECHANICS,
-  MARKUP,
-  PROFICIENCY,
-  SECTION,
+    BOON,
+    BOON_MECHANICS,
+    MARKUP,
+    PROFICIENCY,
+    SECTION,
 } from './bloodlinePatterns';
 import { SLUG, TEXT, UTILITY } from './parsingPatterns';
 
@@ -546,7 +546,12 @@ async function parseBloodlineFile(
         .relative(process.cwd(), filePath)
         .replace(SLUG.pathBackslash, '/'),
       link: `/library/character-creation/bloodlines/${slug}`,
-      coreFeatures,
+      abilityScores: coreFeatures.abilityScores,
+      movementSpeeds: coreFeatures.movementSpeeds,
+      senses: coreFeatures.senses,
+      size: coreFeatures.size,
+      creatureTypes: coreFeatures.creatureTypes,
+      age: coreFeatures.age,
       boonBudget,
       boons,
       tags: Array.from(

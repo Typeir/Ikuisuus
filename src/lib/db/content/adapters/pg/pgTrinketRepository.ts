@@ -34,8 +34,10 @@ const rowToTrinket = (row: TrinketEntity): TrinketMetadata => ({
   properties: nonEmpty(row.properties),
   range: orUndef(row.range),
   weight: orUndef(row.weight),
-  savingThrowDC: orUndef(row.savingThrow.dc),
-  savingThrowAbility: orUndef(row.savingThrow.ability),
+  savingThrow: {
+    dc: orUndef(row.savingThrow.dc),
+    ability: orUndef(row.savingThrow.ability),
+  },
   specialEffects: nonEmpty(row.specialEffects),
   inflictsConditions: nonEmpty(row.inflictsConditions),
   tags: nonEmpty(row.tags),

@@ -14,17 +14,17 @@
 
 import type { MonsterMetadata } from '../../../src/lib/db/content/schemas/monsterMetadata';
 import {
-  SIZE_MAP,
-  SKILL_ABILITY_MAP,
-  SKILL_MAP,
-  TOKEN_SIZE_MAP
+    SIZE_MAP,
+    SKILL_ABILITY_MAP,
+    SKILL_MAP,
+    TOKEN_SIZE_MAP,
 } from '../constants/dnd5eMaps';
 import { generateFoundryId } from '../utils/idGenerator';
 import { extractMonsterDescription } from '../utils/mdxToHtml';
 import {
-  parseConditionTraits,
-  parseDamageTraits,
-  parseLanguages,
+    parseConditionTraits,
+    parseDamageTraits,
+    parseLanguages,
 } from '../utils/traitParsers';
 
 /**
@@ -102,8 +102,8 @@ function buildAbilities(m: MonsterMetadata): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha'] as const) {
     out[key] = {
-      value: m.abilities?.[key]?.score ?? 10,
-      proficient: m.savingThrows?.[key] !== undefined ? 1 : 0,
+      value: m.scores?.[key] ?? 10,
+      proficient: m.saves?.[key] !== undefined ? 1 : 0,
       bonuses: { check: '', save: '' },
     };
   }
@@ -126,9 +126,7 @@ function buildSkills(m: MonsterMetadata): Record<string, unknown> {
     if (!parsed) continue;
     const abl = SKILL_ABILITY_MAP[parsed.key];
     const score =
-      abl && m.abilities
-        ? (m.abilities[abl as keyof typeof m.abilities]?.score ?? 10)
-        : 10;
+      abl && m.scores ? (m.scores[abl as keyof typeof m.scores] ?? 10) : 10;
     const mod = Math.floor((score - 10) / 2);
     out[parsed.key] = {
       value: computeSkillProf(parsed.bonus, mod, prof),
@@ -179,12 +177,12 @@ export async function transformMonster(
           formula: monster.hp?.formula ?? '',
         },
         movement: {
-          walk: monster.speed?.modes?.walk ?? 0,
-          fly: monster.speed?.modes?.fly ?? 0,
-          swim: monster.speed?.modes?.swim ?? 0,
-          climb: monster.speed?.modes?.climb ?? 0,
-          burrow: monster.speed?.modes?.burrow ?? 0,
-          hover: monster.speed?.modes?.hover ?? false,
+          walk: monster.speed?.walk ?? 0,
+          fly: monster.speed?.fly ?? 0,
+          swim: monster.speed?.swim ?? 0,
+          climb: monster.speed?.climb ?? 0,
+          burrow: monster.speed?.burrow ?? 0,
+          hover: monster.speed?.hover ?? false,
           units: 'ft',
         },
         senses: {

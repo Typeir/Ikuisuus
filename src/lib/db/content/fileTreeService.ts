@@ -12,16 +12,16 @@
 import { cache } from 'react';
 
 import {
-    FILE_EXT_MDX,
-    IGNORED_FOLDERS,
-    stripContentSuffix,
+  FILE_EXT_MDX,
+  IGNORED_FOLDERS,
+  stripContentSuffix,
 } from '@/lib/enums/constants';
 
 import { fetchContent } from '@/lib/utils/fetchContent';
 import type { ContentFetchResult } from './contentSourceAdapter';
 import type {
-    DirectoryEntry,
-    DirectorySourceAdapter,
+  DirectoryEntry,
+  DirectorySourceAdapter,
 } from './directorySourceAdapter';
 import { resolveDirectorySource } from './directorySourceResolver';
 

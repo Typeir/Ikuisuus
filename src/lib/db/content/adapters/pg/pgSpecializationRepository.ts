@@ -56,7 +56,7 @@ const rowToSpecialization = (
   const preparedItems = row.preparedSpells
     .getItems()
     .sort((a, b) => a.sortOrder - b.sortOrder);
-  const spellsAlwaysPrepared: AlwaysPreparedSpells[] | undefined =
+  const preparedSpells: AlwaysPreparedSpells[] | undefined =
     preparedItems.length > 0
       ? preparedItems.map((p) => ({
           level: p.level,
@@ -74,7 +74,7 @@ const rowToSpecialization = (
     flavor: orUndef(row.flavor),
     description: orUndef(row.description),
     spellcasting,
-    spellsAlwaysPrepared,
+    preparedSpells,
     features,
     tags: nonEmpty(row.tags) ?? [],
     indexVersion: orUndef(row.indexVersion),

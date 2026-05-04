@@ -23,6 +23,7 @@ import { FsMetadataRepository } from './FsMetadataRepository';
  *
  * @description
  * Reads `.metadata.json` sidecar files from `character-creation/bloodlines/`.
+ * Transforms flat bloodline records into the new schema with nested `coreFeatures`.
  * Null entries produced by excluded files (main.mdx, shared-boons) are removed
  * by the base-class default `filter` (non-null guard).
  */
@@ -32,6 +33,28 @@ class FsBloodlineRepository
 {
   constructor() {
     super(path.join('character-creation', 'bloodlines'));
+  }
+
+  /**
+   * Transform flat metadata records from JSON into the schema-compliant format.
+   * Converts root-level core features properties into nested `coreFeatures` object.
+   *
+   * @param {unknown} record - Raw parsed JSON record.
+   * @returns {record is BloodlineMetadata} True when the record is valid.
+   */
+  protected filter(record: unknown): record is BloodlineMetadata {
+    if (record == null || typeof record !== 'object') return false;
+
+    const raw = record as Record<string, unknown>;
+    return (
+      typeof raw.slug === 'string' &&
+      typeof raw.title === 'string' &&
+      Array.isArray(raw.abilityScores) &&
+      Array.isArray(raw.movementSpeeds) &&
+      Array.isArray(raw.senses) &&
+      Array.isArray(raw.size) &&
+      Array.isArray(raw.creatureTypes)
+    );
   }
 }
 

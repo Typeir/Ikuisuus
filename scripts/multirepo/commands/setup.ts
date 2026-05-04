@@ -25,6 +25,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir, platform } from 'node:os';
 import { resolve } from 'node:path';
 
+import { ensurePawCli, PAW_CLI_PATH } from '../../../.github/PAW/pawBootstrap';
 import type { CommandMeta } from '../../utils/cli-loader';
 import { MAIN_REPO } from '../constants';
 import { attachContentToBranch } from '../git';
@@ -153,7 +154,6 @@ function configureSubmodule(repoRoot: string): void {
  * @returns {void}
  */
 function initializeSubmodules(repoRoot: string): void {
-  // Run explicit init first, then update (with --init to be safe).
   spawnSync('git', ['-C', repoRoot, 'submodule', 'init'], { stdio: 'pipe' });
   spawnSync(
     'git',
@@ -163,80 +163,19 @@ function initializeSubmodules(repoRoot: string): void {
 }
 
 /**
- * Installs PAW's own npm dependencies inside `.github/PAW/`.
- * @param {string} pawDir - Absolute path to the `.github/PAW` directory.
- * @returns {string | null} Error message if installation failed, null otherwise.
- */
-function installPawDependencies(pawDir: string): string | null {
-  const npmCmd = platform() === 'win32' ? 'npm.cmd' : 'npm';
-  const result = spawnSync(npmCmd, ['install'], {
-    cwd: pawDir,
-    stdio: 'pipe',
-  });
-  if (result.status !== 0) {
-    return `PAW npm install failed: ${result.stderr?.toString().trim() ?? 'unknown error'}`;
-  }
-  return null;
-}
-
-/**
- * Compiles the PAW CLI from source by running `node build.mjs` inside `.github/PAW/`.
- * @param {string} repoRoot - Absolute path to the repository root.
- * @param {string} pawDir - Absolute path to the `.github/PAW` directory.
- * @returns {string | null} Error message if the build failed, null otherwise.
- */
-function buildPawCli(repoRoot: string, pawDir: string): string | null {
-  const buildMjs = resolve(pawDir, 'build.mjs');
-  const result = spawnSync('node', [buildMjs], {
-    cwd: repoRoot,
-    stdio: 'pipe',
-  });
-  if (result.status !== 0) {
-    return `PAW build failed: ${result.stderr?.toString().trim() ?? 'unknown error'}`;
-  }
-  return null;
-}
-
-/**
- * Ensures the PAW CLI exists, installing dependencies and building from source
- * when the compiled artifact is absent.
- * @param {string} repoRoot - Absolute path to the repository root.
- * @param {string} pawDir - Absolute path to the `.github/PAW` directory.
- * @param {string} cli - Absolute path to the expected CLI entry point.
- * @returns {string | null} Error message if preparation failed, null otherwise.
- */
-function ensurePawCli(
-  repoRoot: string,
-  pawDir: string,
-  cli: string,
-): string | null {
-  if (existsSync(cli)) {
-    return null;
-  }
-  const installErr = installPawDependencies(pawDir);
-  if (installErr) {
-    return installErr;
-  }
-  return buildPawCli(repoRoot, pawDir);
-}
-
-/**
- * Runs `node .github/PAW/dist/cli.mjs sync` to populate the hook bundles,
- * building the CLI first if the compiled artifact is not yet present.
+ * Runs `paw sync` to populate the hook bundles, building the CLI first if
+ * the compiled artifact is not yet present.
  * @param {string} repoRoot - Absolute path to the main repo root.
  * @returns {string | null} Error message if failed, null otherwise.
  */
 function runPawSync(repoRoot: string): string | null {
-  const pawDir = resolve(repoRoot, '.github', 'PAW');
-  const cli = resolve(pawDir, 'dist', 'cli.mjs');
-
-  const prepErr = ensurePawCli(repoRoot, pawDir, cli);
+  const prepErr = ensurePawCli();
   if (prepErr) {
     return prepErr;
   }
 
   try {
-    const result = spawnSync('node', [cli, 'sync'], {
+    const result = spawnSync('node', [PAW_CLI_PATH, 'sync'], {
       cwd: repoRoot,
       stdio: 'pipe',
       timeout: 30000,

@@ -16,46 +16,37 @@
  */
 
 import type { DirectoryEntry } from '@/lib/db/content/directorySourceAdapter';
-import type { ListDirectoryResult } from '@/lib/db/content/fileTreeService';
 import {
     repositoryShallowWalk,
     repositoryWalk,
 } from '@/lib/utils/repositoryWalk';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mockListEntries =
-  vi.fn<(locale: string, relativePath: string) => Promise<DirectoryEntry[]>>();
+const { mockListEntries, mockListDirectory } = vi.hoisted(() => ({
+  mockListEntries: vi.fn(),
+  mockListDirectory: vi.fn(),
+}));
 
 vi.mock('@/lib/db/content/adapters/fs/fsDirectorySource', () => ({
-  fsDirectorySource: { listEntries: vi.fn().mockResolvedValue([]) },
+  fsDirectorySource: { listEntries: mockListEntries },
 }));
 vi.mock('@/lib/db/content/adapters/github/githubDirectorySource', () => ({
-  githubDirectorySource: { listEntries: vi.fn().mockResolvedValue([]) },
+  githubDirectorySource: { listEntries: mockListEntries },
 }));
 vi.mock('@/lib/db/content/directorySourceResolver', () => ({
   resolveDirectorySource: vi.fn(() => ({ listEntries: mockListEntries })),
 }));
-
-const mockListDirectory =
-  vi.fn<
-    (
-      locale: string,
-      relativePath?: string,
-      opts?: object,
-    ) => Promise<ListDirectoryResult>
-  >();
 vi.mock('@/lib/db/content/fileTreeService', () => ({
-  listDirectory: (...args: Parameters<typeof mockListDirectory>) =>
-    mockListDirectory(...args),
+  listDirectory: mockListDirectory,
 }));
 
 /**
- * Builds a mock ListDirectoryResult from an entries array.
+ * Builds a mock list-directory result from an entries array.
  *
  * @param {DirectoryEntry[]} entries - Entries to wrap
- * @returns {ListDirectoryResult} Mock result
+ * @returns {{ entries: DirectoryEntry[]; total: number }} Mock result
  */
-function makeListResult(entries: DirectoryEntry[]): ListDirectoryResult {
+function makeListResult(entries: DirectoryEntry[]) {
   return { entries, total: entries.length };
 }
 
@@ -131,9 +122,12 @@ describe('repositoryWalk', () => {
     });
 
     it('should stub directories beyond maxDepth', async () => {
-      mockListDirectory.mockResolvedValue(
-        makeListResult([{ name: 'spells', isDirectory: true }]),
-      );
+      mockListDirectory.mockImplementation(async (_locale, relativePath) => {
+        if (!relativePath) {
+          return makeListResult([{ name: 'spells', isDirectory: true }]);
+        }
+        return makeListResult([]);
+      });
       const result = await repositoryShallowWalk('en', '', 1);
       expect(result).toHaveLength(1);
       expect(result[0].isStub).toBe(true);

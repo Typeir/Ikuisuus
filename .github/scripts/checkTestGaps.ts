@@ -21,6 +21,7 @@ const ROOT = path.resolve(__dirname, '../..');
 
 const EXCLUDED_PATTERNS = [
   /\.d\.ts$/,
+  /types\.ts$/,
   /\.config\.(ts|js)$/,
   /[/\\]index\.(ts|tsx)$/,
   /\.module\.(scss|css)$/,

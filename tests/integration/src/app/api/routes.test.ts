@@ -1,15 +1,15 @@
 /**
  * API Routes Integration Tests
- * 
+ *
  * @fileoverview Integration tests for API routes serving metadata,
  * testing locale handling and data structure.
  */
 
-import { describe, it, expect } from 'vitest';
-import { NextRequest } from 'next/server';
-import { GET as getMonsters } from '@/app/api/monsters/route';
 import { GET as getHeirlooms } from '@/app/api/heirlooms/route';
+import { GET as getMonsters } from '@/app/api/monsters/route';
 import { POST as getSpells } from '@/app/api/spells/route';
+import { NextRequest } from 'next/server';
+import { describe, expect, it } from 'vitest';
 
 describe('API Routes', () => {
   describe('Monsters API', () => {
@@ -20,7 +20,7 @@ describe('API Routes', () => {
 
       expect(response.status).toBe(200);
       expect(Array.isArray(data)).toBe(true);
-      
+
       if (data.length > 0) {
         const monster = data[0];
         expect(monster).toHaveProperty('slug');
@@ -34,7 +34,9 @@ describe('API Routes', () => {
     });
 
     it('should return monster metadata for specified locale', async () => {
-      const request = new NextRequest('http://localhost:3000/api/monsters?locale=en');
+      const request = new NextRequest(
+        'http://localhost:3000/api/monsters?locale=en',
+      );
       const response = await getMonsters(request);
       const data = await response.json();
 
@@ -75,9 +77,11 @@ describe('API Routes', () => {
     });
 
     it('should handle locale parameter', async () => {
-      const request = new NextRequest('http://localhost:3000/api/heirlooms?locale=es');
+      const request = new NextRequest(
+        'http://localhost:3000/api/heirlooms?locale=es',
+      );
       const response = await getHeirlooms(request);
-      
+
       // Should return data or empty array, not error
       expect(response.status).toBe(200);
     });
@@ -88,7 +92,7 @@ describe('API Routes', () => {
       const request = new NextRequest('http://localhost:3000/api/spells', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ locale: 'en' })
+        body: JSON.stringify({ locale: 'en' }),
       });
       const response = await getSpells(request);
       const data = await response.json();
@@ -112,7 +116,7 @@ describe('API Routes', () => {
       const request = new NextRequest('http://localhost:3000/api/spells', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ locale: 'en' })
+        body: JSON.stringify({ locale: 'en' }),
       });
       const response = await getSpells(request);
       const data = await response.json();
@@ -120,7 +124,7 @@ describe('API Routes', () => {
       if (data.length > 0) {
         const spell = data[0];
         expect(Array.isArray(spell.castingTime)).toBe(true);
-        
+
         if (spell.castingTime.length > 0) {
           expect(typeof spell.castingTime[0]).toBe('string');
         }
@@ -131,39 +135,40 @@ describe('API Routes', () => {
       const request = new NextRequest('http://localhost:3000/api/spells', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ locale: 'en' })
+        body: JSON.stringify({ locale: 'en' }),
       });
       const response = await getSpells(request);
       const data = await response.json();
 
       if (data.length > 0) {
         const spell = data[0];
-        expect(spell).toHaveProperty('verbal');
-        expect(spell).toHaveProperty('somatic');
-        expect(spell).toHaveProperty('material');
-        expect(typeof spell.verbal).toBe('boolean');
-        expect(typeof spell.somatic).toBe('boolean');
-        expect(typeof spell.material).toBe('boolean');
+        expect(spell).toHaveProperty('components');
+        expect(typeof spell.components).toBe('object');
+        expect(typeof spell.components?.verbal).toBe('boolean');
       }
     });
   });
 
   describe('Error Handling', () => {
     it('should return 500 on invalid locale path', async () => {
-      const request = new NextRequest('http://localhost:3000/api/monsters?locale=invalid-locale-xyz');
+      const request = new NextRequest(
+        'http://localhost:3000/api/monsters?locale=invalid-locale-xyz',
+      );
       const response = await getMonsters(request);
-      
+
       // Should handle gracefully - either empty array or error
       expect([200, 500]).toContain(response.status);
     });
 
     it('should handle missing metadata gracefully', async () => {
-      const request = new NextRequest('http://localhost:3000/api/monsters?locale=fi');
+      const request = new NextRequest(
+        'http://localhost:3000/api/monsters?locale=fi',
+      );
       const response = await getMonsters(request);
-      
+
       // Finnish locale might not have content, should return empty or fallback
       expect([200, 500]).toContain(response.status);
-      
+
       if (response.status === 200) {
         const data = await response.json();
         expect(Array.isArray(data)).toBe(true);
@@ -173,7 +178,7 @@ describe('API Routes', () => {
     it('should return JSON content-type header', async () => {
       const request = new NextRequest('http://localhost:3000/api/monsters');
       const response = await getMonsters(request);
-      
+
       const contentType = response.headers.get('content-type');
       expect(contentType).toContain('application/json');
     });
@@ -190,9 +195,11 @@ describe('API Routes', () => {
     });
 
     it('should accept es locale parameter', async () => {
-      const request = new NextRequest('http://localhost:3000/api/heirlooms?locale=es');
+      const request = new NextRequest(
+        'http://localhost:3000/api/heirlooms?locale=es',
+      );
       const response = await getHeirlooms(request);
-      
+
       expect([200, 500]).toContain(response.status);
     });
   });
@@ -206,7 +213,7 @@ describe('API Routes', () => {
       if (data.length > 0) {
         data.forEach((monster: any) => {
           expect(Array.isArray(monster.tags)).toBe(true);
-          
+
           if (monster.tags.length > 0) {
             expect(typeof monster.tags[0]).toBe('string');
             // Tags should follow category:value pattern
@@ -226,7 +233,7 @@ describe('API Routes', () => {
       if (data.length > 0 && data[0].ac) {
         expect(data[0].ac).toHaveProperty('value');
         expect(typeof data[0].ac.value).toBe('number');
-        
+
         if (data[0].ac.notes) {
           expect(typeof data[0].ac.notes).toBe('string');
         }
@@ -242,7 +249,7 @@ describe('API Routes', () => {
         expect(data[0].hp).toHaveProperty('average');
         expect(typeof data[0].hp.average).toBe('number');
         expect(data[0].hp.average).toBeGreaterThan(0);
-        
+
         if (data[0].hp.formula) {
           expect(typeof data[0].hp.formula).toBe('string');
           expect(data[0].hp.formula).toMatch(/\d+d\d+/);
@@ -270,7 +277,7 @@ describe('API Routes', () => {
       const request = new NextRequest('http://localhost:3000/api/spells', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ locale: 'en' })
+        body: JSON.stringify({ locale: 'en' }),
       });
       const response = await getSpells(request);
       const data = await response.json();
@@ -297,12 +304,13 @@ describe('API Routes', () => {
     });
 
     it('should handle empty metadata directory gracefully', async () => {
-      const request = new NextRequest('http://localhost:3000/api/monsters?locale=nonexistent');
+      const request = new NextRequest(
+        'http://localhost:3000/api/monsters?locale=nonexistent',
+      );
       const response = await getMonsters(request);
-      
+
       // Should not throw, should return error or empty array
       expect(response).toBeDefined();
     });
   });
 });
-

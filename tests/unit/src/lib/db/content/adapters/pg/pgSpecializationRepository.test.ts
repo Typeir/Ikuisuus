@@ -125,8 +125,8 @@ describe('pgSpecializationRepository', () => {
         ability: 'Intelligence',
         progression: 'Third',
       });
-      expect(result[0].spellsAlwaysPrepared).toHaveLength(2);
-      expect(result[0].spellsAlwaysPrepared?.[0].spells).toContain('Shield');
+      expect(result[0].preparedSpells).toHaveLength(2);
+      expect(result[0].preparedSpells?.[0].spells).toContain('Shield');
     });
 
     it('should query with locale filter and populate relations', async () => {

@@ -42,51 +42,66 @@ export interface MonsterHP {
 }
 
 /**
- * Movement speed modes.
+ * Movement speed parsed from the stat block speed row.
+ * All distances are in feet. Matches `MonsterSpeedEmbed` property names.
  *
  * @property {string} raw - Original speed text
- * @property {Object} modes - Parsed movement modes with distances in feet
+ * @property {number} [walk] - Walk speed in feet
+ * @property {number} [fly] - Fly speed in feet
+ * @property {number} [climb] - Climb speed in feet
+ * @property {number} [swim] - Swim speed in feet
+ * @property {number} [burrow] - Burrow speed in feet
+ * @property {boolean} [hover] - Whether the creature hovers while flying
  */
 export interface MonsterSpeed {
   raw: string;
-  modes: {
-    walk?: number;
-    fly?: number;
-    climb?: number;
-    swim?: number;
-    burrow?: number;
-    hover?: boolean;
-  };
+  walk?: number;
+  fly?: number;
+  climb?: number;
+  swim?: number;
+  burrow?: number;
+  hover?: boolean;
 }
 
 /**
- * Single ability score entry.
- * The modifier is not stored — it is always computed: `floor((score - 10) / 2)`.
+ * Flat ability score set matching `MonsterScoreEmbed` property names.
+ * Modifiers are not stored — always derived as `floor((score - 10) / 2)`.
  *
- * @property {number} [score] - Ability score (3–30)
+ * @interface MonsterScores
+ * @property {number} [str] - Strength score (3–30)
+ * @property {number} [dex] - Dexterity score (3–30)
+ * @property {number} [con] - Constitution score (3–30)
+ * @property {number} [int] - Intelligence score (3–30)
+ * @property {number} [wis] - Wisdom score (3–30)
+ * @property {number} [cha] - Charisma score (3–30)
  */
-export interface AbilityScore {
-  score?: number;
+export interface MonsterScores {
+  str?: number;
+  dex?: number;
+  con?: number;
+  int?: number;
+  wis?: number;
+  cha?: number;
 }
 
 /**
- * Full set of D&D ability scores.
+ * Flat saving throw bonus set matching `MonsterSaveEmbed` property names.
  *
- * @interface AbilityScores
- * @property {AbilityScore} str - Strength ability score entry
- * @property {AbilityScore} dex - Dexterity ability score entry
- * @property {AbilityScore} con - Constitution ability score entry
- * @property {AbilityScore} int - Intelligence ability score entry
- * @property {AbilityScore} wis - Wisdom ability score entry
- * @property {AbilityScore} cha - Charisma ability score entry
+ * @interface MonsterSaves
+ * @property {number} [str] - Strength saving throw bonus
+ * @property {number} [dex] - Dexterity saving throw bonus
+ * @property {number} [con] - Constitution saving throw bonus
+ * @property {number} [int] - Intelligence saving throw bonus
+ * @property {number} [wis] - Wisdom saving throw bonus
+ * @property {number} [cha] - Charisma saving throw bonus
  */
-export interface AbilityScores {
-  str: AbilityScore;
-  dex: AbilityScore;
-  con: AbilityScore;
-  int: AbilityScore;
-  wis: AbilityScore;
-  cha: AbilityScore;
+export interface MonsterSaves {
+  str?: number;
+  dex?: number;
+  con?: number;
+  int?: number;
+  wis?: number;
+  cha?: number;
 }
 
 /**
@@ -127,8 +142,8 @@ export interface MonsterSenses {
  * @property {MonsterAC} [ac] - Armor Class
  * @property {MonsterHP} [hp] - Hit Points
  * @property {MonsterSpeed} [speed] - Movement Speed
- * @property {AbilityScores} [abilities] - Ability Scores (STR, DEX, CON, INT, WIS, CHA)
- * @property {Record<string, number>} [savingThrows] - Saving throw bonuses keyed by ability abbreviation
+ * @property {MonsterScores} [scores] - Flat ability scores matching MonsterScoreEmbed
+ * @property {MonsterSaves} [saves] - Flat saving throw bonuses matching MonsterSaveEmbed
  * @property {string[]} [skills] - Skill proficiencies (e.g. ["Perception +5", "Stealth +7"])
  * @property {string[]} [damageResistances] - Damage resistances
  * @property {string[]} [damageImmunities] - Damage immunities
@@ -155,8 +170,8 @@ export interface MonsterMetadata {
   ac?: MonsterAC;
   hp?: MonsterHP;
   speed?: MonsterSpeed;
-  abilities?: AbilityScores;
-  savingThrows?: Record<string, number>;
+  scores?: MonsterScores;
+  saves?: MonsterSaves;
   skills?: string[];
   damageResistances?: string[];
   damageImmunities?: string[];

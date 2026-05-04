@@ -13,13 +13,14 @@
  * @requires @/lib/components/sidebar/SidebarShell Component under test
  */
 
-import type { Item } from '@/lib/components/sidebar/SidebarShell';
 import SidebarShell from '@/lib/components/sidebar/SidebarShell';
+import type { Item } from '@/lib/components/sidebar/types';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('next/navigation', () => ({
   useParams: () => ({ locale: 'en' }),
+  usePathname: () => '/',
 }));
 
 vi.mock('next/link', () => ({

@@ -46,10 +46,11 @@ export interface SpellListRef {
  * @property {string} [range] - Spell range (e.g. "60 feet", "Self", "Touch")
  * @property {boolean} [concentration] - Whether the spell requires concentration
  * @property {string} [duration] - Duration text (e.g. "Instantaneous", "up to 1 minute")
- * @property {boolean} [verbal] - Requires verbal component
- * @property {boolean} [somatic] - Requires somatic component
- * @property {boolean} [material] - Requires material component
- * @property {string} [materialDescription] - Material component description
+ * @property {Object} [components] - Spell components matching `SpellComponentEmbed`
+ * @property {boolean} [components.verbal] - Requires verbal component
+ * @property {boolean} [components.somatic] - Requires somatic component
+ * @property {boolean} [components.material] - Requires material component
+ * @property {string} [components.materialDescription] - Material component description
  * @property {boolean} [hasRitual] - Whether the spell can be cast as a ritual (external spells)
  * @property {string} [description] - Short prose description extracted from the spell MDX
  * @property {string[]} [tags] - Gameplay tags for filtering and search
@@ -68,10 +69,12 @@ export interface SpellMetadata {
   range?: string;
   concentration?: boolean;
   duration?: string;
-  verbal?: boolean;
-  somatic?: boolean;
-  material?: boolean;
-  materialDescription?: string;
+  components?: {
+    verbal?: boolean;
+    somatic?: boolean;
+    material?: boolean;
+    materialDescription?: string;
+  };
   hasRitual?: boolean;
   description?: string;
   tags?: string[];

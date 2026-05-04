@@ -104,15 +104,64 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: 'unit:utils',
-          include: ['tests/unit/src/lib/utils/**/*.test.{ts,tsx}'],
+          name: 'unit:utils:a',
+          include: ['tests/unit/src/lib/utils/[a-m]*.test.{ts,tsx}'],
         },
       },
       {
         extends: true,
         test: {
-          name: 'unit:db',
-          include: ['tests/unit/src/lib/db/**/*.test.{ts,tsx}'],
+          name: 'unit:utils:b',
+          include: ['tests/unit/src/lib/utils/[n-z]*.test.{ts,tsx}'],
+          exclude: ['tests/unit/src/lib/utils/repositoryWalk.test.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:utils:node',
+          include: ['tests/unit/src/lib/utils/repositoryWalk.test.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:db:auth',
+          include: [
+            'tests/unit/src/lib/db/auth/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/db/adapters/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/db/*.test.{ts,tsx}',
+            'tests/unit/src/lib/db/postgres/**/*.test.{ts,tsx}',
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:db:orm',
+          include: ['tests/unit/src/lib/db/orm/**/*.test.{ts,tsx}'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:db:content:fs',
+          include: [
+            'tests/unit/src/lib/db/content/adapters/fs/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/db/content/adapters/github/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/db/content/*.test.{ts,tsx}',
+            'tests/unit/src/lib/db/content/schemas/**/*.test.{ts,tsx}',
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:db:content:pg',
+          include: [
+            'tests/unit/src/lib/db/content/adapters/pg/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/db/content/repositories/**/*.test.{ts,tsx}',
+          ],
         },
       },
       {
@@ -139,8 +188,22 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: 'unit:app',
-          include: ['tests/unit/src/app/[locale]/**/*.test.{ts,tsx}'],
+          name: 'unit:app:pages',
+          include: [
+            'tests/unit/src/app/[locale]/ClientProviders.test.{ts,tsx}',
+            'tests/unit/src/app/[locale]/layout.test.{ts,tsx}',
+            'tests/unit/src/app/[locale]/page.test.{ts,tsx}',
+            'tests/unit/src/app/[locale]/not-found.test.{ts,tsx}',
+            'tests/unit/src/app/[locale]/library/**/*.test.{ts,tsx}',
+            'tests/unit/src/app/[locale]/[...rest]/**/*.test.{ts,tsx}',
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:app:utils',
+          include: ['tests/unit/src/app/[locale]/utils/**/*.test.{ts,tsx}'],
         },
       },
       {
