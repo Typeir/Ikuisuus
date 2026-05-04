@@ -18,6 +18,7 @@
 
 import tertiaryStyles from '@/lib/components/button/tertiaryButton.module.scss';
 import Icon from '@/lib/components/icon/icon';
+import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
 import SidebarShell from '@/lib/components/sidebar/SidebarShell';
 import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
@@ -153,6 +154,7 @@ function BaseResponsiveLayoutShell({
 
   return (
     <NotificationProvider position='top-right'>
+      <FlashlightLayer />
       <div className='sidebar-container flex flex-col lg:flex-row min-h-screen relative max-w-full'>
         {/* Sticky Hamburger Button */}
         <button

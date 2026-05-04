@@ -13,6 +13,8 @@ import { useEffect } from 'react';
 type Props = {
   /** Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement */
   targetRef?: React.RefObject<HTMLElement>;
+  /** Optional callback fired on first mouse movement */
+  onFirstMove?: () => void;
 };
 
 /**
@@ -41,10 +43,11 @@ function setMouseVars(
  *
  * @param {Props} props
  * @param {React.RefObject<HTMLElement>} props.targetRef - Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement
+ * @param {() => void} props.onFirstMove - Optional callback fired once on first mouse movement
  *
  * @returns {null}
  */
-export default function MouseTracker({ targetRef }: Props): null {
+export default function MouseTracker({ targetRef, onFirstMove }: Props): null {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -58,6 +61,7 @@ export default function MouseTracker({ targetRef }: Props): null {
     let pending = false;
     let lastX = 0;
     let lastY = 0;
+    let hasMovedRef = { moved: false };
 
     let lastFrameTime = 0;
     const fpsLimit = 1000 / 30;
@@ -82,6 +86,10 @@ export default function MouseTracker({ targetRef }: Props): null {
     };
 
     const handler = (e: PointerEvent | MouseEvent) => {
+      if (!hasMovedRef.moved && onFirstMove) {
+        hasMovedRef.moved = true;
+        onFirstMove();
+      }
       lastX = (e as PointerEvent).clientX ?? (e as MouseEvent).clientX;
       lastY = (e as PointerEvent).clientY ?? (e as MouseEvent).clientY;
       if (!pending) {
@@ -102,7 +110,7 @@ export default function MouseTracker({ targetRef }: Props): null {
       window.removeEventListener('pointermove', handler as EventListener);
       window.removeEventListener('mousemove', handler as EventListener);
     };
-  }, [targetRef]);
+  }, [targetRef, onFirstMove]);
 
   return null;
 }

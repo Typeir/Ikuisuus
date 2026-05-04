@@ -10,12 +10,16 @@ import React from 'react';
 import styles from './dotMatrix.module.scss';
 
 type Props = {
-  radius?: number; // pixels
+  radius?: number;
+  hidden?: boolean;
 };
 
 export default React.forwardRef<HTMLDivElement, Props>(
-  function DotMatrixBackground({ radius = 200 }, ref) {
-    const style: React.CSSProperties = {} as React.CSSProperties;
+  function DotMatrixBackground({ radius = 200, hidden = false }, ref) {
+    const style: React.CSSProperties = {
+      opacity: hidden ? 0 : 0.5,
+      pointerEvents: hidden ? 'none' : 'auto',
+    } as React.CSSProperties;
     if (radius != null) {
       (style as any)['--reveal-radius'] = `${radius}px`;
     }

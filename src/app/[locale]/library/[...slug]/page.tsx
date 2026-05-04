@@ -19,7 +19,6 @@ import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
 import DraftOverlay from '@/lib/components/draftOverlay/draftOverlay';
-import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
 import components, { HashNavigationProvider } from '@/lib/components/mdx';
 import EditPageButton from '@/lib/components/mdxEditor/editPageButton';
 import StreamBootstrap from '@/lib/components/stream/StreamBootstrap';
@@ -206,7 +205,6 @@ const Page = async ({ params }: PageProps) => {
   if (isMdFile(resolvedPath)) {
     return (
       <>
-        <FlashlightLayer />
         <MDRawPage slugPath={slugPath} rawContent={rawContent} />
       </>
     );
@@ -243,7 +241,6 @@ const Page = async ({ params }: PageProps) => {
       return (
         <>
           <div className='prose prose-invert mx-auto ml-'>
-            <FlashlightLayer />
             <h1 className='text-4xl font-mono font-black mb-6'>{slugPath}</h1>
             <article className={styles.markdown}>
               <ClientRenderer locale={locale} slug={slugPath} />
@@ -261,7 +258,6 @@ const Page = async ({ params }: PageProps) => {
     <div
       className='prose prose-invert mx-auto'
       style={{ ['--stream-text' as any]: `'${streamText}'` }}>
-      <FlashlightLayer />
       <DraftOverlay locale={locale} slug={slugPath}>
         <HashNavigationProvider />
         <article className={styles.markdown}>{content}</article>

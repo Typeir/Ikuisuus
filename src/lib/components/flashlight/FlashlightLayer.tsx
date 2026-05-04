@@ -18,11 +18,20 @@ type Props = {
 
 export default function FlashlightLayer({ radius = 220 }: Props) {
   const bgRef = React.useRef<HTMLDivElement | null>(null);
+  const [hasMouseMoved, setHasMouseMoved] = React.useState(false);
+
+  const handleFirstMouseMove = React.useCallback(() => {
+    setHasMouseMoved(true);
+  }, []);
 
   return (
     <>
-      <DotMatrixBackground ref={bgRef} radius={radius} />
-      <MouseTracker targetRef={bgRef} />
+      <DotMatrixBackground 
+        ref={bgRef} 
+        radius={radius} 
+        hidden={!hasMouseMoved}
+      />
+      <MouseTracker targetRef={bgRef} onFirstMove={handleFirstMouseMove} />
     </>
   );
 }
