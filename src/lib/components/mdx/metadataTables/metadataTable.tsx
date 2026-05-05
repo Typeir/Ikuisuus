@@ -58,6 +58,7 @@ type FilterState = Record<string, any>;
  * @property {Function} [getFilterOptions] - Function to generate filter dropdown options
  * @property {Function} [getValue] - Extracts value from row for filtering/sorting (handles nested data)
  * @property {Function} [compareValues] - Custom comparison logic for sorting
+ * @property {Record<string, number>} [filterSortOrder] - Sort order map for dropdown options (e.g., RARITY_SORT_ORDER)
  */
 export type ColumnConfig = {
   key: string;
@@ -69,6 +70,7 @@ export type ColumnConfig = {
   getFilterOptions?: (rows: MetadataRow[]) => string[];
   getValue?: (row: MetadataRow) => unknown;
   compareValues?: (a: unknown, b: unknown) => number;
+  filterSortOrder?: Record<string, number>;
 };
 
 /**
@@ -420,7 +422,7 @@ export default function MetadataTable({
    * - Extracts values using getCellValue
    * - Flattens array values
    * - Removes duplicates
-   * - Sorts alphabetically
+   * - Sorts using column.filterSortOrder if provided (e.g., RARITY_SORT_ORDER), otherwise alphabetically
    */
   const getFilterOptions = useCallback(
     (column: ColumnConfig): string[] => {
@@ -437,7 +439,14 @@ export default function MetadataTable({
           uniqueValues.add(String(value));
         }
       });
-      return Array.from(uniqueValues).sort();
+      const options = Array.from(uniqueValues);
+      
+      if (column.filterSortOrder) {
+        return options.sort(
+          (a, b) => (column.filterSortOrder![a] ?? 999) - (column.filterSortOrder![b] ?? 999)
+        );
+      }
+      return options.sort();
     },
     [data, getCellValue],
   );

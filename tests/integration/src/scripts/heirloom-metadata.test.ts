@@ -168,12 +168,14 @@ describe('Heirloom Metadata Generator', () => {
      * @description Validates parsing of standard rarity levels
      * Note: This fixture has "Rare" in description but "Nonmagical" as item type
      */
-    it('should extract rarity (nonmagical)', async () => {
+    it('should extract rarity (rare) and property:nonmagical tag', async () => {
       const filePath = path.join(FIXTURES_DIR, 'armor-item.mdx');
       const result = await parseHeirloomFile(filePath, sharedData);
 
-      // The parser extracts 'nonmagical' from the "Heavy Armor (Any, Nonmagical)" line
-      expect(result.rarity).toBe('nonmagical');
+      // Rarity should be extracted from italic header line, not overwritten by item type
+      expect(result.rarity).toBe('rare');
+      // Item should be tagged with property:nonmagical since it explicitly mentions nonmagical
+      expect(result.tags).toContain('property:nonmagical');
     });
 
     /**

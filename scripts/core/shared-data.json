@@ -60,7 +60,7 @@
   "itemData": {
     "rarities": [
       "mythic artifact", "very rare", "common", "uncommon", "rare", "legendary", 
-      "artifact", "mythic", "unique", "nonmagical"
+      "artifact", "mythic", "unique"
     ],
     "baseCategoryTypes": [
       "weapon", "armor", "clothing", "scroll", "consumable", "monstrous graft", "focus"

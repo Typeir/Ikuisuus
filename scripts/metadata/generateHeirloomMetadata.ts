@@ -189,10 +189,16 @@ function parseRarityAndAttunement(lines: string[], sharedData: SharedData) {
   for (const line of italicLines) {
     const lowerLine = line.toLowerCase();
 
-    for (const rarityKeyword of rarityKeywords) {
-      if (lowerLine.includes(rarityKeyword)) {
-        rarity = rarityKeyword;
-        break;
+    // Only set rarity once (prefer the first found) using whole-word matching
+    if (!rarity) {
+      for (const rarityKeyword of rarityKeywords) {
+        const kw = String(rarityKeyword).toLowerCase();
+        const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const re = new RegExp(`\\b${escaped}\\b`);
+        if (re.test(lowerLine)) {
+          rarity = rarityKeyword;
+          break;
+        }
       }
     }
 
@@ -208,7 +214,12 @@ function parseRarityAndAttunement(lines: string[], sharedData: SharedData) {
     if (
       line.includes('(') &&
       !lowerLine.includes('attunement') &&
-      !rarityKeywords.some((r) => lowerLine.includes(r)) &&
+      // Skip weapon title parsing if line contains any rarity keyword (whole-word match)
+      !rarityKeywords.some((r) => {
+        const kw = String(r).toLowerCase();
+        const esc = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return new RegExp(`\\b${esc}\\b`).test(lowerLine);
+      }) &&
       !ITALIC.propertyOrApplies.test(line) &&
       !isSubtypeFormat
     ) {
@@ -501,6 +512,11 @@ async function parseHeirloomFile(
     tags.push(
       `weapon:${weaponType.toLowerCase().replace(TEXT.whitespaceCollapse, '-')}`,
     );
+
+  // Add property:nonmagical tag if item is explicitly nonmagical
+  if (raw.toLowerCase().includes('nonmagical')) {
+    tags.push('property:nonmagical');
+  }
 
   tags.sort();
 

@@ -315,4 +315,66 @@ describe('MetadataTable', () => {
     const rows = screen.getAllByRole('row');
     expect(rows[1]).toHaveTextContent('Bravo');
   });
+
+  it('sorts filter options using filterSortOrder when provided', async () => {
+    const rarityOrder = {
+      common: 0,
+      uncommon: 1,
+      rare: 2,
+      legendary: 3,
+    };
+    const data = [
+      { slug: 'a', title: 'Item A', rarity: 'legendary' },
+      { slug: 'b', title: 'Item B', rarity: 'common' },
+      { slug: 'c', title: 'Item C', rarity: 'rare' },
+      { slug: 'd', title: 'Item D', rarity: 'uncommon' },
+    ];
+    const cols: ColumnConfig[] = [
+      { key: 'title', label: 'Name' },
+      {
+        key: 'rarity',
+        label: 'Rarity',
+        filterable: true,
+        filterType: 'select',
+        filterSortOrder: rarityOrder,
+      },
+    ];
+    render(<MetadataTable data={data} columns={cols} />);
+    const raritySelect = screen.getByTestId('filter-rarity');
+    const options = raritySelect.querySelectorAll('option');
+    expect(options[0]).toHaveTextContent('All');
+    expect(options[1]).toHaveTextContent('common');
+    expect(options[2]).toHaveTextContent('uncommon');
+    expect(options[3]).toHaveTextContent('rare');
+    expect(options[4]).toHaveTextContent('legendary');
+  });
+
+  it('handles filterSortOrder with missing keys by pushing them to end', async () => {
+    const rarityOrder = {
+      common: 0,
+      uncommon: 1,
+    };
+    const data = [
+      { slug: 'a', title: 'Item A', rarity: 'exotic' },
+      { slug: 'b', title: 'Item B', rarity: 'common' },
+      { slug: 'c', title: 'Item C', rarity: 'uncommon' },
+    ];
+    const cols: ColumnConfig[] = [
+      { key: 'title', label: 'Name' },
+      {
+        key: 'rarity',
+        label: 'Rarity',
+        filterable: true,
+        filterType: 'select',
+        filterSortOrder: rarityOrder,
+      },
+    ];
+    render(<MetadataTable data={data} columns={cols} />);
+    const raritySelect = screen.getByTestId('filter-rarity');
+    const options = raritySelect.querySelectorAll('option');
+    expect(options[0]).toHaveTextContent('All');
+    expect(options[1]).toHaveTextContent('common');
+    expect(options[2]).toHaveTextContent('uncommon');
+    expect(options[3]).toHaveTextContent('exotic');
+  });
 });

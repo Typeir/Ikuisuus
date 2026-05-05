@@ -144,6 +144,7 @@ export default function HeirloomTableWrapper({
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
       },
       compareValues: (a, b) => compareByOrder(a, b, RARITY_SORT_ORDER),
+      filterSortOrder: RARITY_SORT_ORDER,
       sortable: true,
       filterable: true,
       filterType: 'select',
