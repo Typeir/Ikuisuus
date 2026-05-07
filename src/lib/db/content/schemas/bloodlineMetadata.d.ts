@@ -20,6 +20,8 @@
  * @property {string} bpLabel - Raw BP cost text (e.g. "6 BP", "Variable BP - Choose One")
  * @property {number} [bpValue] - Parsed numeric BP cost when deterministic; absent for variable-cost boons
  * @property {number} sortOrder - Zero-based position within the boon list
+ * @property {number} [startLine] - 1-indexed start line of the boon heading block in the source MDX
+ * @property {number} [endLine] - 1-indexed last line of the boon content block in the source MDX
  * @property {string[]} tags - Derived gameplay tags for filtering/searching boon behavior
  */
 export interface BloodlineBoon {
@@ -27,6 +29,8 @@ export interface BloodlineBoon {
   bpLabel: string;
   bpValue?: number;
   sortOrder: number;
+  startLine?: number;
+  endLine?: number;
   tags: string[];
 }
 

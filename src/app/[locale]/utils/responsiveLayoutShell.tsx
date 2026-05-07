@@ -136,6 +136,11 @@ function BaseResponsiveLayoutShell({
       href: `/${locale}/utils/world-sim`,
     },
     {
+      id: 'character-builder',
+      label: t('tools.characterBuilder'),
+      href: `/${locale}/utils/characters`,
+    },
+    {
       id: 'mdx-editor',
       label: t('tools.mdxEditor'),
       href: `/${locale}/utils/mdx-editor`,

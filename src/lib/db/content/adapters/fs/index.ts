@@ -10,6 +10,7 @@
 
 export { fsBloodlineRepository } from './fsBloodlineRepository';
 export { fsDirectorySource } from './fsDirectorySource';
+export { fsFeatRepository } from './fsFeatRepository';
 export { fsHeirloomRepository } from './fsHeirloomRepository';
 export { FsMetadataRepository } from './FsMetadataRepository';
 export { fsMonsterRepository } from './fsMonsterRepository';

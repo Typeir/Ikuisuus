@@ -36,7 +36,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "blade-ward",
@@ -83,7 +84,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "booming-blade",
@@ -126,7 +128,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "chill-touch",
@@ -165,7 +168,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "control-flames",
@@ -203,7 +207,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "create-bonfire",
@@ -251,7 +256,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dancing-lights",
@@ -300,7 +306,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "druidcraft",
@@ -331,7 +338,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "eldritch-blast",
@@ -362,7 +370,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "encode-thoughts",
@@ -386,7 +395,8 @@
       "level:cantrip",
       "school:enchantment",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fire-bolt",
@@ -425,7 +435,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "friends",
@@ -473,7 +484,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "frostbite",
@@ -520,7 +532,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "green-flame-blade",
@@ -563,7 +576,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "guidance",
@@ -603,7 +617,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gust",
@@ -642,7 +657,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hand-of-radiance",
@@ -667,7 +683,8 @@
       "school:evocation",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "infestation",
@@ -711,7 +728,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "light",
@@ -762,7 +780,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "lightning-lure",
@@ -804,7 +823,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mage-hand",
@@ -855,7 +875,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "magic-stone",
@@ -894,7 +915,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mending",
@@ -950,7 +972,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "message",
@@ -998,7 +1021,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mind-sliver",
@@ -1040,7 +1064,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "minor-illusion",
@@ -1087,7 +1112,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mold-earth",
@@ -1125,7 +1151,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "on-off",
@@ -1150,7 +1177,8 @@
       "school:transmutation t",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "poison-spray",
@@ -1197,7 +1225,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "prestidigitation",
@@ -1248,7 +1277,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "primal-savagery",
@@ -1278,7 +1308,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "produce-flame",
@@ -1309,7 +1340,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ray-of-frost",
@@ -1348,7 +1380,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "resistance",
@@ -1389,7 +1422,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sacred-flame",
@@ -1420,7 +1454,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sapping-sting",
@@ -1451,7 +1486,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shape-water",
@@ -1489,7 +1525,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shillelagh",
@@ -1521,7 +1558,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shocking-grasp",
@@ -1560,7 +1598,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spare-the-dying",
@@ -1595,7 +1634,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sword-burst",
@@ -1637,7 +1677,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "thaumaturgy",
@@ -1667,7 +1708,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "thorn-whip",
@@ -1703,7 +1745,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "thunderclap",
@@ -1753,7 +1796,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "toll-the-dead",
@@ -1792,7 +1836,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "true-strike",
@@ -1839,7 +1884,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "vicious-mockery",
@@ -1869,7 +1915,8 @@
         "name": "Bard",
         "link": "/en/library/character-creation/vocations/bard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "virtue",
@@ -1894,7 +1941,8 @@
       "school:abjuration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "word-of-radiance",
@@ -1925,7 +1973,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "absorb-elements",
@@ -1972,7 +2021,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "acid-stream",
@@ -1999,7 +2049,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "alarm",
@@ -2040,7 +2091,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "animal-friendship",
@@ -2084,7 +2136,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "arcane-weapon",
@@ -2110,7 +2163,8 @@
       "mechanic:concentration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "armor-of-agathys",
@@ -2142,7 +2196,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "arms-of-hadar",
@@ -2173,7 +2228,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "bane",
@@ -2210,7 +2266,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "beast-bond",
@@ -2247,7 +2304,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "bless",
@@ -2284,7 +2342,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "burning-hands",
@@ -2319,7 +2378,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "catapult",
@@ -2357,7 +2417,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "cause-fear",
@@ -2397,7 +2458,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ceremony",
@@ -2434,7 +2496,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "chaos-bolt",
@@ -2465,7 +2528,8 @@
         "name": "Sorcerer",
         "link": "/en/library/character-creation/vocations/sorcerer/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "charm-person",
@@ -2520,7 +2584,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "chromatic-orb",
@@ -2556,7 +2621,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "color-spray",
@@ -2600,7 +2666,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "command",
@@ -2646,7 +2713,8 @@
         "name": "Revenant",
         "link": "/en/library/character-creation/vocations/revenant/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "compelled-duel",
@@ -2677,7 +2745,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "comprehend-languages",
@@ -2726,7 +2795,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "create-or-destroy-water",
@@ -2762,7 +2832,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "cure-wounds",
@@ -2813,7 +2884,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "detect-evil-and-good",
@@ -2849,7 +2921,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "detect-magic",
@@ -2918,7 +2991,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "detect-poison-and-disease",
@@ -2964,7 +3038,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "disguise-self",
@@ -3011,7 +3086,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dissonant-whispers",
@@ -3045,7 +3121,8 @@
         "name": "Esper",
         "link": "/en/library/character-creation/vocations/esper/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "distort-value",
@@ -3087,7 +3164,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "divine-favor",
@@ -3119,7 +3197,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "earth-tremor",
@@ -3162,7 +3241,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ensnaring-strike",
@@ -3193,7 +3273,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "entangle",
@@ -3229,7 +3310,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "expeditious-retreat",
@@ -3273,7 +3355,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "faerie-fire",
@@ -3312,7 +3395,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "false-life",
@@ -3356,7 +3440,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "feather-fall",
@@ -3404,7 +3489,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "find-familiar",
@@ -3437,7 +3523,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fog-cloud",
@@ -3485,7 +3572,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "frost-fingers",
@@ -3516,7 +3604,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gift-of-alacrity",
@@ -3547,7 +3636,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "goodberry",
@@ -3583,7 +3673,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "grease",
@@ -3623,7 +3714,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "guiding-bolt",
@@ -3654,7 +3746,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "guiding-hand-ua",
@@ -3699,7 +3792,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hail-of-thorns",
@@ -3730,7 +3824,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "healing-elixir-ua",
@@ -3766,7 +3861,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "healing-word",
@@ -3804,7 +3900,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hellish-rebuke",
@@ -3836,7 +3933,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "heroism",
@@ -3872,7 +3970,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hex",
@@ -3905,7 +4004,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ice-knife",
@@ -3948,7 +4048,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "id-insinuation",
@@ -3974,7 +4075,8 @@
       "mechanic:concentration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "identify",
@@ -4019,7 +4121,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "illusory-script",
@@ -4059,7 +4162,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "infallible-relay",
@@ -4086,7 +4190,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "inflict-wounds",
@@ -4117,7 +4222,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "jims-magic-missile",
@@ -4149,7 +4255,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "jump",
@@ -4205,7 +4312,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "longstrider",
@@ -4261,7 +4369,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mage-armor",
@@ -4301,7 +4410,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "magic-missile",
@@ -4336,7 +4446,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "magnify-gravity",
@@ -4367,7 +4478,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "protection-from-evil-and-good",
@@ -4416,7 +4528,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "puppet",
@@ -4440,7 +4553,8 @@
       "level:1",
       "school:enchantment",
       "component:verbal"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "purify-food-and-drink",
@@ -4484,7 +4598,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ray-of-sickness",
@@ -4523,7 +4638,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "remote-access",
@@ -4548,7 +4664,8 @@
       "school:transmutation t",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sanctuary",
@@ -4588,7 +4705,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "searing-smite",
@@ -4623,7 +4741,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sense-emotion",
@@ -4649,7 +4768,8 @@
       "mechanic:concentration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shield",
@@ -4685,7 +4805,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shield-of-faith",
@@ -4722,7 +4843,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "silent-image",
@@ -4771,7 +4893,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "silvery-barbs",
@@ -4802,7 +4925,8 @@
         "name": "Bard",
         "link": "/en/library/character-creation/vocations/bard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sleep",
@@ -4846,7 +4970,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "snare",
@@ -4889,7 +5014,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "speak-with-animals",
@@ -4933,7 +5059,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sudden-awakening",
@@ -4957,7 +5084,8 @@
       "level:1",
       "school:enchantment",
       "component:verbal"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tashas-caustic-brew",
@@ -5002,7 +5130,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tashas-hideous-laughter",
@@ -5043,7 +5172,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tensers-floating-disk",
@@ -5080,7 +5210,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "thunderous-smite",
@@ -5111,7 +5242,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "thunderwave",
@@ -5162,7 +5294,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "unearthly-chorus",
@@ -5187,7 +5320,8 @@
       "school:illusion",
       "mechanic:concentration",
       "component:verbal"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "unseen-servant",
@@ -5228,7 +5362,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wild-cunning",
@@ -5254,7 +5389,8 @@
       "mechanic:ritual",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "witch-bolt",
@@ -5295,7 +5431,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wrathful-smite",
@@ -5326,7 +5463,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "zephyr-strike",
@@ -5357,7 +5495,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "aganazzars-scorcher",
@@ -5393,7 +5532,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "aid",
@@ -5441,7 +5581,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "air-bubble",
@@ -5487,7 +5628,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "alter-self",
@@ -5527,7 +5669,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "animal-messenger",
@@ -5572,7 +5715,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "arcane-hacking",
@@ -5599,7 +5743,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "arcane-lock",
@@ -5635,7 +5780,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "augury",
@@ -5680,7 +5826,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "barkskin",
@@ -5717,7 +5864,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "beast-sense",
@@ -5753,7 +5901,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "blindness-deafness",
@@ -5803,7 +5952,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "blur",
@@ -5842,7 +5992,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "borrowed-knowledge",
@@ -5886,7 +6037,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "branding-smite",
@@ -5917,7 +6069,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "calm-emotions",
@@ -5957,7 +6110,8 @@
         "name": "Esper",
         "link": "/en/library/character-creation/vocations/esper/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "cloud-of-daggers",
@@ -6006,7 +6160,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "continual-flame",
@@ -6050,7 +6205,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "cordon-of-arrows",
@@ -6082,7 +6238,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "crown-of-madness",
@@ -6130,7 +6287,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "darkness",
@@ -6170,7 +6328,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "darkvision",
@@ -6222,7 +6381,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "detect-thoughts",
@@ -6271,7 +6431,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "digital-phantom",
@@ -6298,7 +6459,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dragons-breath",
@@ -6335,7 +6497,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dust-devil",
@@ -6376,7 +6539,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "earthbind",
@@ -6419,7 +6583,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "enhance-ability",
@@ -6480,7 +6645,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "enlarge-reduce",
@@ -6533,7 +6699,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "enthrall",
@@ -6572,7 +6739,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "find-steed",
@@ -6603,7 +6771,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "find-traps",
@@ -6642,7 +6811,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "find-vehicle",
@@ -6667,7 +6837,8 @@
       "school:conjuration t",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "flame-blade",
@@ -6704,7 +6875,8 @@
         "name": "Sorcerer",
         "link": "/en/library/character-creation/vocations/sorcerer/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "flaming-sphere",
@@ -6745,7 +6917,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "flock-of-familiars",
@@ -6781,7 +6954,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fortunes-favor",
@@ -6813,7 +6987,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gentle-repose",
@@ -6858,7 +7033,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gift-of-gab",
@@ -6895,7 +7071,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gust-of-wind",
@@ -6940,7 +7117,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "healing-spirit",
@@ -6976,7 +7154,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "heat-metal",
@@ -7021,7 +7200,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hold-person",
@@ -7082,7 +7262,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "icingdeath-s-frost",
@@ -7107,7 +7288,8 @@
       "school:evocation",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "immovable-object",
@@ -7139,7 +7321,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "invisibility",
@@ -7192,7 +7375,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "jims-glowing-coin",
@@ -7223,7 +7407,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "kinetic-jaunt",
@@ -7266,7 +7451,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "knock",
@@ -7308,7 +7494,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "lesser-restoration",
@@ -7359,7 +7546,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "levitate",
@@ -7404,7 +7592,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "locate-animals-or-plants",
@@ -7449,7 +7638,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "locate-object",
@@ -7506,7 +7696,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "magic-mouth",
@@ -7551,7 +7742,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "magic-weapon",
@@ -7599,7 +7791,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "maximillians-earthen-grasp",
@@ -7636,7 +7829,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "melfs-acid-arrow",
@@ -7668,7 +7862,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mental-barrier",
@@ -7693,7 +7888,8 @@
       "level:2",
       "school:abjuration",
       "component:verbal"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mind-spike",
@@ -7740,7 +7936,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mind-thrust",
@@ -7765,7 +7962,8 @@
       "school:enchantment",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mirror-image",
@@ -7812,7 +8010,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "misty-step",
@@ -7850,7 +8049,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "moonbeam",
@@ -7883,7 +8083,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "nathairs-mischief",
@@ -7923,7 +8124,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "nathairs-mischief-ua",
@@ -7963,7 +8165,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "nystuls-magic-aura",
@@ -7995,7 +8198,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "pass-without-trace",
@@ -8032,7 +8236,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "phantasmal-force",
@@ -8077,7 +8282,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "prayer-of-healing",
@@ -8111,7 +8317,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "protection-from-poison",
@@ -8162,7 +8369,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "pyrotechnics",
@@ -8205,7 +8413,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ray-of-enfeeblement",
@@ -8245,7 +8454,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "rimes-binding-ice",
@@ -8284,7 +8494,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "rope-trick",
@@ -8320,7 +8531,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "scorching-ray",
@@ -8355,7 +8567,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "see-invisibility",
@@ -8407,7 +8620,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shadow-blade",
@@ -8447,7 +8661,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shatter",
@@ -8495,7 +8710,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "silence",
@@ -8540,7 +8756,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "skywrite",
@@ -8585,7 +8802,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "snillocs-snowball-swarm",
@@ -8621,7 +8839,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spider-climb",
@@ -8666,7 +8885,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spike-growth",
@@ -8703,7 +8923,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spiritual-weapon",
@@ -8734,7 +8955,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spray-of-cards",
@@ -8778,7 +9000,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spray-of-cards-ua",
@@ -8822,7 +9045,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "suggestion",
@@ -8870,7 +9094,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-beast",
@@ -8907,7 +9132,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tashas-mind-whip",
@@ -8945,7 +9171,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "thought-shield",
@@ -8970,7 +9197,8 @@
       "school:abjuration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "vortex-warp",
@@ -9009,7 +9237,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "warding-bond",
@@ -9045,7 +9274,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "warding-wind",
@@ -9088,7 +9318,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "warp-sense",
@@ -9129,7 +9360,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "web",
@@ -9170,7 +9402,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wither-and-bloom",
@@ -9214,7 +9447,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wristpocket",
@@ -9246,7 +9480,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "zone-of-truth",
@@ -9289,7 +9524,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "animate-dead",
@@ -9329,7 +9565,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "antagonize",
@@ -9373,7 +9610,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "antagonize-ua",
@@ -9417,7 +9655,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ashardalons-stride",
@@ -9461,7 +9700,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "aura-of-vitality",
@@ -9500,7 +9740,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "beacon-of-hope",
@@ -9532,7 +9773,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "bestow-curse",
@@ -9580,7 +9822,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "blinding-smite",
@@ -9611,7 +9854,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "blink",
@@ -9650,7 +9894,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "call-lightning",
@@ -9682,7 +9927,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "catnap",
@@ -9725,7 +9971,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "clairvoyance",
@@ -9774,7 +10021,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-animals",
@@ -9810,7 +10058,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-barrage",
@@ -9842,7 +10091,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-lesser-demon",
@@ -9869,7 +10119,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "counterspell",
@@ -9908,7 +10159,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "create-food-and-water",
@@ -9947,7 +10199,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "crusaders-mantle",
@@ -9978,7 +10231,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "daylight",
@@ -10025,7 +10279,8 @@
         "name": "Sorcerer",
         "link": "/en/library/character-creation/vocations/sorcerer/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dispel-magic",
@@ -10092,7 +10347,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "elemental-weapon",
@@ -10136,7 +10392,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "enemies-abound",
@@ -10184,7 +10441,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "erupting-earth",
@@ -10224,7 +10482,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fast-friends",
@@ -10263,7 +10522,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fear",
@@ -10316,7 +10576,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "feign-death",
@@ -10365,7 +10626,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fireball",
@@ -10401,7 +10663,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "flame-arrows",
@@ -10449,7 +10712,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "flame-stride",
@@ -10475,7 +10739,8 @@
       "mechanic:concentration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fly",
@@ -10524,7 +10789,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "galders-tower",
@@ -10556,7 +10822,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gaseous-form",
@@ -10597,7 +10864,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "glyph-of-warding",
@@ -10641,7 +10909,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "haste",
@@ -10682,7 +10951,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "haywire",
@@ -10708,7 +10978,8 @@
       "mechanic:concentration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "house-of-cards-ua",
@@ -10752,7 +11023,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hunger-of-hadar",
@@ -10785,7 +11057,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hypnotic-pattern",
@@ -10833,7 +11106,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "incite-greed",
@@ -10878,7 +11152,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "intellect-fortress",
@@ -10929,7 +11204,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "invisibility-to-cameras",
@@ -10956,7 +11232,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "leomunds-tiny-hut",
@@ -10993,7 +11270,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "life-transference",
@@ -11032,7 +11310,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "lightning-arrow",
@@ -11064,7 +11343,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "lightning-bolt",
@@ -11100,7 +11380,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "magic-circle",
@@ -11144,7 +11425,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "major-image",
@@ -11193,7 +11475,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mass-healing-word",
@@ -11227,7 +11510,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "meld-into-stone",
@@ -11271,7 +11555,8 @@
         "name": "Revenant",
         "link": "/en/library/character-creation/vocations/revenant/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "melfs-minute-meteors",
@@ -11308,7 +11593,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "motivational-speech",
@@ -11342,7 +11628,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "nondetection",
@@ -11386,7 +11673,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "phantom-steed",
@@ -11418,7 +11706,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "plant-growth",
@@ -11458,7 +11747,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "protection-from-ballistics",
@@ -11485,7 +11775,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "protection-from-energy",
@@ -11537,7 +11828,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "psionic-blast",
@@ -11567,7 +11859,8 @@
         "name": "Esper",
         "link": "/en/library/character-creation/vocations/esper/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "pulse-wave",
@@ -11598,7 +11891,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "remove-curse",
@@ -11645,7 +11939,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "revivify",
@@ -11693,7 +11988,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sending",
@@ -11737,7 +12033,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sleet-storm",
@@ -11782,7 +12079,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "slow",
@@ -11823,7 +12121,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "speak-with-dead",
@@ -11863,7 +12162,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "speak-with-plants",
@@ -11902,7 +12202,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spirit-guardians",
@@ -11935,7 +12236,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spirit-shroud",
@@ -11979,7 +12281,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "stinking-cloud",
@@ -12020,7 +12323,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-fey",
@@ -12065,7 +12369,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-lesser-demons",
@@ -12102,7 +12407,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-shadowspawn",
@@ -12139,7 +12445,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-undead",
@@ -12176,7 +12483,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-warrior-spirit",
@@ -12203,7 +12511,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "thunder-step",
@@ -12241,7 +12550,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tidal-wave",
@@ -12281,7 +12591,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tiny-servant",
@@ -12316,7 +12627,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tongues",
@@ -12367,7 +12679,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "vampiric-touch",
@@ -12411,7 +12724,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wall-of-sand",
@@ -12444,7 +12758,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wall-of-water",
@@ -12485,7 +12800,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "water-breathing",
@@ -12534,7 +12850,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "water-walk",
@@ -12583,7 +12900,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wind-wall",
@@ -12620,7 +12938,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "arcane-eye",
@@ -12661,7 +12980,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "aura-of-life",
@@ -12696,7 +13016,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "aura-of-purity",
@@ -12731,7 +13052,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "banishment",
@@ -12784,7 +13106,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "blight",
@@ -12831,7 +13154,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "charm-monster",
@@ -12882,7 +13206,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "compulsion",
@@ -12918,7 +13243,8 @@
         "name": "Esper",
         "link": "/en/library/character-creation/vocations/esper/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "confusion",
@@ -12967,7 +13293,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-barlgura",
@@ -12992,7 +13319,8 @@
       "school:conjuration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-knowbot",
@@ -13017,7 +13345,8 @@
       "school:conjuration t",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-minor-elementals",
@@ -13053,7 +13382,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-shadow-demon",
@@ -13080,7 +13410,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-woodland-beings",
@@ -13117,7 +13448,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "control-water",
@@ -13158,7 +13490,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "death-ward",
@@ -13193,7 +13526,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dimension-door",
@@ -13239,7 +13573,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "divination",
@@ -13280,7 +13615,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dominate-beast",
@@ -13320,7 +13656,8 @@
         "name": "Sorcerer",
         "link": "/en/library/character-creation/vocations/sorcerer/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ego-whip",
@@ -13351,7 +13688,8 @@
         "name": "Esper",
         "link": "/en/library/character-creation/vocations/esper/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "elemental-bane",
@@ -13395,7 +13733,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "evards-black-tentacles",
@@ -13428,7 +13767,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fabricate",
@@ -13463,7 +13803,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "find-greater-steed",
@@ -13494,7 +13835,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fire-shield",
@@ -13534,7 +13876,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "freedom-of-movement",
@@ -13586,7 +13929,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "galders-speedy-courier",
@@ -13622,7 +13966,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gate-seal",
@@ -13662,7 +14007,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "giant-insect",
@@ -13694,7 +14040,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "grasping-vine",
@@ -13730,7 +14077,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gravity-sinkhole",
@@ -13762,7 +14110,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "greater-invisibility",
@@ -13806,7 +14155,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "guardian-of-faith",
@@ -13836,7 +14186,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "guardian-of-nature",
@@ -13871,7 +14222,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hallucinatory-terrain",
@@ -13919,7 +14271,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ice-storm",
@@ -13963,7 +14316,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "leomunds-secret-chest",
@@ -13999,7 +14353,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "locate-creature",
@@ -14056,7 +14411,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mordenkainens-faithful-hound",
@@ -14092,7 +14448,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mordenkainens-private-sanctum",
@@ -14128,7 +14485,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "otilukes-resilient-sphere",
@@ -14165,7 +14523,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "phantasmal-killer",
@@ -14209,7 +14568,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "polymorph",
@@ -14258,7 +14618,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "raulothims-psychic-lance",
@@ -14304,7 +14665,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "raulothims-psychic-lance-ua",
@@ -14346,7 +14708,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shadow-of-moil",
@@ -14383,7 +14746,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sickening-radiance",
@@ -14423,7 +14787,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spirit-of-death",
@@ -14464,7 +14829,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "spirit-of-death-ua",
@@ -14505,7 +14871,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "staggering-smite",
@@ -14536,7 +14903,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "stone-shape",
@@ -14580,7 +14948,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "stoneskin",
@@ -14629,7 +14998,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "storm-sphere",
@@ -14665,7 +15035,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-aberration",
@@ -14706,7 +15077,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-construct",
@@ -14743,7 +15115,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-elemental",
@@ -14784,7 +15157,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-greater-demon",
@@ -14821,7 +15195,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "synchronicity",
@@ -14847,7 +15222,8 @@
       "mechanic:concentration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "system-backdoor",
@@ -14874,7 +15250,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "vitriolic-sphere",
@@ -14914,7 +15291,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wall-of-fire",
@@ -14955,7 +15333,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "watery-sphere",
@@ -14996,7 +15375,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "animate-objects",
@@ -15044,7 +15424,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "antilife-shell",
@@ -15076,7 +15457,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "awaken",
@@ -15116,7 +15498,8 @@
         "name": "Esper",
         "link": "/en/library/character-creation/vocations/esper/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "banishing-smite",
@@ -15147,7 +15530,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "bigbys-hand",
@@ -15188,7 +15572,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "circle-of-power",
@@ -15219,7 +15604,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "cloudkill",
@@ -15255,7 +15641,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "commune",
@@ -15288,7 +15675,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "commune-with-city",
@@ -15314,7 +15702,8 @@
       "mechanic:ritual",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "commune-with-nature",
@@ -15350,7 +15739,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "cone-of-cold",
@@ -15394,7 +15784,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-elemental",
@@ -15431,7 +15822,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-volley",
@@ -15463,7 +15855,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-vrock",
@@ -15490,7 +15883,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "contact-other-plane",
@@ -15529,7 +15923,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "contagion",
@@ -15568,7 +15963,8 @@
         "name": "Revenant",
         "link": "/en/library/character-creation/vocations/revenant/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "control-winds",
@@ -15608,7 +16004,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "create-spelljamming-helm",
@@ -15644,7 +16041,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "creation",
@@ -15684,7 +16082,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "danse-macabre",
@@ -15724,7 +16123,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dawn",
@@ -15761,7 +16161,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "destructive-wave",
@@ -15791,7 +16192,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dispel-evil-and-good",
@@ -15828,7 +16230,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dominate-person",
@@ -15872,7 +16275,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dream",
@@ -15916,7 +16320,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "enervation",
@@ -15956,7 +16361,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "far-step",
@@ -15999,7 +16405,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "flame-strike",
@@ -16031,7 +16438,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "geas",
@@ -16081,7 +16489,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "greater-restoration",
@@ -16129,7 +16538,8 @@
         "name": "Tinker",
         "link": "/en/library/character-creation/vocations/tinker/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hallow",
@@ -16161,7 +16571,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "hold-monster",
@@ -16210,7 +16621,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "holy-weapon",
@@ -16246,7 +16658,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "immolation",
@@ -16281,7 +16694,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "infernal-calling",
@@ -16318,7 +16732,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "insect-plague",
@@ -16359,7 +16774,8 @@
         "name": "Sorcerer",
         "link": "/en/library/character-creation/vocations/sorcerer/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "legend-lore",
@@ -16403,7 +16819,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "maelstrom",
@@ -16436,7 +16853,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mass-cure-wounds",
@@ -16475,7 +16893,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mislead",
@@ -16518,7 +16937,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "modify-memory",
@@ -16558,7 +16978,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "negative-energy-flood",
@@ -16597,7 +17018,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "passwall",
@@ -16629,7 +17051,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "planar-binding",
@@ -16677,7 +17100,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "raise-dead",
@@ -16717,7 +17141,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "rarys-telepathic-bond",
@@ -16758,7 +17183,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "reincarnate",
@@ -16790,7 +17216,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "scrying",
@@ -16843,7 +17270,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "seeming",
@@ -16886,7 +17314,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shutdown",
@@ -16912,7 +17341,8 @@
       "mechanic:concentration",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "skill-empowerment",
@@ -16956,7 +17386,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "steel-wind-strike",
@@ -16991,7 +17422,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-celestial",
@@ -17028,7 +17460,8 @@
         "name": "Paladin",
         "link": "/en/library/character-creation/vocations/paladin/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-draconic-spirit",
@@ -17069,7 +17502,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-draconic-spirit-ua",
@@ -17110,7 +17544,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "swift-quiver",
@@ -17143,7 +17578,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "synaptic-static",
@@ -17190,7 +17626,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "telekinesis",
@@ -17230,7 +17667,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "teleportation-circle",
@@ -17277,7 +17715,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "temporal-shunt",
@@ -17309,7 +17748,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "transmute-rock",
@@ -17349,7 +17789,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tree-stride",
@@ -17385,7 +17826,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wall-of-force",
@@ -17418,7 +17860,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wall-of-light",
@@ -17459,7 +17902,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wall-of-stone",
@@ -17504,7 +17948,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wrath-of-nature",
@@ -17540,7 +17985,8 @@
         "name": "Ranger",
         "link": "/en/library/character-creation/vocations/ranger/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "arcane-gate",
@@ -17580,7 +18026,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "blade-barrier",
@@ -17616,7 +18063,8 @@
         "name": "Esper",
         "link": "/en/library/character-creation/vocations/esper/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "bones-of-the-earth",
@@ -17647,7 +18095,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "chain-lightning",
@@ -17683,7 +18132,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "circle-of-death",
@@ -17723,7 +18173,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-fey",
@@ -17759,7 +18210,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "contingency",
@@ -17791,7 +18243,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "create-homunculus",
@@ -17823,7 +18276,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "create-undead",
@@ -17863,7 +18317,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "disintegrate",
@@ -17903,7 +18358,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "drawmijs-instant-summons",
@@ -17936,7 +18392,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "druid-grove",
@@ -17968,7 +18425,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "eyebite",
@@ -18016,7 +18474,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "find-the-path",
@@ -18061,7 +18520,8 @@
         "name": "Esper",
         "link": "/en/library/character-creation/vocations/esper/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fizbans-platinum-shield",
@@ -18098,7 +18558,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fizban-s-platinum-shield-ua",
@@ -18125,7 +18586,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "flesh-to-stone",
@@ -18170,7 +18632,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "forbiddance",
@@ -18203,7 +18666,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "globe-of-invulnerability",
@@ -18240,7 +18704,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gravity-fissure",
@@ -18272,7 +18737,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "guards-and-wards",
@@ -18308,7 +18774,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "harm",
@@ -18339,7 +18806,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "heal",
@@ -18374,7 +18842,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "heroes-feast",
@@ -18414,7 +18883,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "investiture-of-flame",
@@ -18458,7 +18928,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "investiture-of-ice",
@@ -18502,7 +18973,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "investiture-of-stone",
@@ -18546,7 +19018,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "investiture-of-wind",
@@ -18590,7 +19063,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "magic-jar",
@@ -18622,7 +19096,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mass-suggestion",
@@ -18669,7 +19144,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mental-prison",
@@ -18712,7 +19188,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "move-earth",
@@ -18757,7 +19234,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "otherworldly-form",
@@ -18784,7 +19262,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "otilukes-freezing-sphere",
@@ -18820,7 +19299,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ottos-irresistible-dance",
@@ -18859,7 +19339,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "planar-ally",
@@ -18890,7 +19371,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "primordial-ward",
@@ -18922,7 +19404,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "programmed-illusion",
@@ -18962,7 +19445,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "psychic-crush",
@@ -18987,7 +19471,8 @@
       "school:enchantment",
       "component:verbal",
       "component:somatic"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "scatter",
@@ -19025,7 +19510,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "soul-cage",
@@ -19061,7 +19547,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "summon-fiend",
@@ -19098,7 +19585,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sunbeam",
@@ -19143,7 +19631,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tashas-otherworldly-guise",
@@ -19184,7 +19673,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tensers-transformation",
@@ -19217,7 +19707,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "transport-via-plants",
@@ -19248,7 +19739,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "true-seeing",
@@ -19300,7 +19792,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wall-of-ice",
@@ -19333,7 +19826,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wall-of-thorns",
@@ -19366,7 +19860,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wind-walk",
@@ -19398,7 +19893,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "word-of-recall",
@@ -19428,7 +19924,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-celestial",
@@ -19460,7 +19957,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "conjure-hezrou",
@@ -19487,7 +19985,8 @@
       "component:verbal",
       "component:somatic",
       "component:material"
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "create-magen",
@@ -19519,7 +20018,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "crown-of-stars",
@@ -19558,7 +20058,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "delayed-blast-fireball",
@@ -19595,7 +20096,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "divine-word",
@@ -19625,7 +20127,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "draconic-transformation",
@@ -19666,7 +20169,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "draconic-transformation-ua",
@@ -19707,7 +20211,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dream-of-the-blue-veil",
@@ -19751,7 +20256,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "etherealness",
@@ -19802,7 +20308,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "finger-of-death",
@@ -19841,7 +20348,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "fire-storm",
@@ -19880,7 +20388,8 @@
         "name": "Sorcerer",
         "link": "/en/library/character-creation/vocations/sorcerer/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "forcecage",
@@ -19924,7 +20433,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mirage-arcane",
@@ -19967,7 +20477,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mordenkainens-magnificent-mansion",
@@ -20003,7 +20514,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mordenkainens-sword",
@@ -20040,7 +20552,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "plane-shift",
@@ -20092,7 +20605,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "power-word-pain",
@@ -20130,7 +20644,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "prismatic-spray",
@@ -20169,7 +20684,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "project-image",
@@ -20210,7 +20726,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "regenerate",
@@ -20250,7 +20767,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "resurrection",
@@ -20286,7 +20804,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "reverse-gravity",
@@ -20331,7 +20850,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sequester",
@@ -20363,7 +20883,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "simulacrum",
@@ -20395,7 +20916,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "symbol",
@@ -20439,7 +20961,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "teleport",
@@ -20481,7 +21004,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "temple-of-the-gods",
@@ -20513,7 +21037,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tether-essence",
@@ -20546,7 +21071,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "whirlwind",
@@ -20582,7 +21108,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "abi-dalzims-horrid-wilting",
@@ -20622,7 +21149,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "animal-shapes",
@@ -20654,7 +21182,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "antimagic-field",
@@ -20695,7 +21224,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "antipathy-sympathy",
@@ -20739,7 +21269,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "clone",
@@ -20771,7 +21302,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "control-weather",
@@ -20812,7 +21344,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dark-star",
@@ -20845,7 +21378,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "demiplane",
@@ -20883,7 +21417,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "dominate-monster",
@@ -20931,7 +21466,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "earthquake",
@@ -20972,7 +21508,8 @@
         "name": "Sorcerer",
         "link": "/en/library/character-creation/vocations/sorcerer/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "feeblemind",
@@ -21016,7 +21553,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "glibness",
@@ -21054,7 +21592,8 @@
         "name": "Warlock",
         "link": "/en/library/character-creation/vocations/warlock/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "holy-aura",
@@ -21087,7 +21626,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "illusory-dragon",
@@ -21118,7 +21658,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "incendiary-cloud",
@@ -21158,7 +21699,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "maddening-darkness",
@@ -21194,7 +21736,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "maze",
@@ -21230,7 +21773,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mighty-fortress",
@@ -21262,7 +21806,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mind-blank",
@@ -21301,7 +21846,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "power-word-stun",
@@ -21348,7 +21894,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "reality-break",
@@ -21381,7 +21928,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "sunburst",
@@ -21425,7 +21973,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "telepathy",
@@ -21461,7 +22010,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "tsunami",
@@ -21493,7 +22043,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "astral-projection",
@@ -21537,7 +22088,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "blade-of-disaster",
@@ -21577,7 +22129,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "foresight",
@@ -21625,7 +22178,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "gate",
@@ -21670,7 +22224,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "imprisonment",
@@ -21706,7 +22261,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "invulnerability",
@@ -21739,7 +22295,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mass-heal",
@@ -21770,7 +22327,8 @@
         "name": "Cleric",
         "link": "/en/library/character-creation/vocations/cleric/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "mass-polymorph",
@@ -21811,7 +22369,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "meteor-swarm",
@@ -21846,7 +22405,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "power-word-heal",
@@ -21885,7 +22445,8 @@
         "name": "Esper",
         "link": "/en/library/character-creation/vocations/esper/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "power-word-kill",
@@ -21931,7 +22492,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "prismatic-wall",
@@ -21966,7 +22528,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "psychic-scream",
@@ -22012,7 +22575,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "ravenous-void",
@@ -22045,7 +22609,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "shapechange",
@@ -22086,7 +22651,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "storm-of-vengeance",
@@ -22118,7 +22684,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "time-ravage",
@@ -22150,7 +22717,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "time-stop",
@@ -22188,7 +22756,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "true-polymorph",
@@ -22229,7 +22798,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "true-resurrection",
@@ -22265,7 +22835,8 @@
         "name": "Druid",
         "link": "/en/library/character-creation/vocations/druid/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "weird",
@@ -22305,7 +22876,8 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   },
   {
     "slug": "wish",
@@ -22339,6 +22911,7 @@
         "name": "Wizard",
         "link": "/en/library/character-creation/vocations/wizard/spells"
       }
-    ]
+    ],
+    "source": "basic"
   }
 ]

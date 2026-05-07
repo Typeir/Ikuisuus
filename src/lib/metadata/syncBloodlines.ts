@@ -53,7 +53,9 @@ function readMetadataFiles(
 
   if (!sourceExists) return { records: [], sourceExists: false };
 
-  const metaFiles = readdirSync(dir).filter((f) => f.endsWith('.metadata.json'));
+  const metaFiles = readdirSync(dir).filter((f) =>
+    f.endsWith('.metadata.json'),
+  );
 
   if (metaFiles.length === 0) return { records: [], sourceExists: false };
 
@@ -151,6 +153,8 @@ export async function syncBloodlines(
           bpLabel: boon.bpLabel as string,
           bpValue: boon.bpValue as number | undefined,
           sortOrder: boon.sortOrder as number,
+          startLine: boon.startLine as number | undefined,
+          endLine: boon.endLine as number | undefined,
           tags: (boon.tags as string[]) ?? [],
         });
       }
@@ -165,6 +169,8 @@ export async function syncBloodlines(
           bpLabel: boon.bpLabel as string,
           bpValue: boon.bpValue as number | undefined,
           sortOrder: boon.sortOrder as number,
+          startLine: boon.startLine as number | undefined,
+          endLine: boon.endLine as number | undefined,
           tags: (boon.tags as string[]) ?? [],
         });
       }

@@ -1,0 +1,111 @@
+/**
+ * @fileoverview CharacterSheet Unit Tests
+ * @description Tests for the CharacterSheet and ActiveCharacterSheet components.
+ *
+ * @module tests/unit/lib/components/characterSheet/characterSheet
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ */
+
+import { CharacterSheet } from '@/lib/components/characterSheet/characterSheet';
+import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
+import { createEmptyCharacter } from '@/lib/utils/characterStorage';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('@/lib/context/CharacterSheetContext', () => ({
+  useActiveCharacter: vi.fn(() => null),
+  useCharacterSheetDispatch: vi.fn(() => vi.fn()),
+}));
+
+vi.stubGlobal(
+  'fetch',
+  vi.fn(() =>
+    Promise.resolve(new Response(JSON.stringify([]), { status: 200 })),
+  ),
+);
+
+function makeCharacter(
+  overrides: Partial<CharacterSheetType> = {},
+): CharacterSheetType {
+  return {
+    ...createEmptyCharacter(),
+    name: 'Aria Dawnweaver',
+    level: 3,
+    ...overrides,
+  };
+}
+
+describe('CharacterSheet', () => {
+  it('renders the character name', () => {
+    render(<CharacterSheet character={makeCharacter()} />);
+    expect(
+      screen.getByRole('heading', { name: /Aria Dawnweaver/i }),
+    ).toBeTruthy();
+  });
+
+  it('renders level and bloodline info', () => {
+    render(
+      <CharacterSheet
+        character={makeCharacter({
+          bloodlineTitle: 'Empyrean',
+          vocationTitle: 'Wizard',
+        })}
+      />,
+    );
+    expect(screen.getByText('levelFull')).toBeTruthy();
+    expect(screen.getAllByText('Empyrean')[0]).toBeTruthy();
+    expect(screen.getAllByText('Wizard')[0]).toBeTruthy();
+  });
+
+  it('shows Edit button in view mode', () => {
+    render(<CharacterSheet character={makeCharacter()} />);
+    expect(
+      screen.getByRole('button', { name: 'ariaEditCharacter' }),
+    ).toBeTruthy();
+  });
+
+  it('switches to edit mode when Edit is clicked', async () => {
+    render(<CharacterSheet character={makeCharacter()} />);
+    await userEvent.click(
+      screen.getByRole('button', { name: 'ariaEditCharacter' }),
+    );
+    expect(screen.getByRole('button', { name: /save/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeTruthy();
+  });
+
+  it('reverts changes when Cancel is clicked', async () => {
+    render(<CharacterSheet character={makeCharacter()} />);
+    await userEvent.click(
+      screen.getByRole('button', { name: 'ariaEditCharacter' }),
+    );
+    const nameInput = screen.getByRole('textbox', {
+      name: 'ariaCharacterName',
+    });
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'Changed Name');
+    await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    expect(
+      screen.getByRole('heading', { name: /Aria Dawnweaver/i }),
+    ).toBeTruthy();
+  });
+
+  it('dispatches UPSERT_CHARACTER when Save is clicked', async () => {
+    const { useCharacterSheetDispatch } =
+      await import('@/lib/context/CharacterSheetContext');
+    const dispatch = vi.fn();
+    vi.mocked(useCharacterSheetDispatch).mockReturnValue(dispatch);
+
+    render(<CharacterSheet character={makeCharacter()} />);
+    await userEvent.click(
+      screen.getByRole('button', { name: 'ariaEditCharacter' }),
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'save' }));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'CHARACTER_SHEET/UPSERT_CHARACTER' }),
+    );
+  });
+});

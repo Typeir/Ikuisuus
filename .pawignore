@@ -17,3 +17,5 @@ tests
 tests/*
 scripts/metadata/*
 scripts/db/pg/*
+memories
+memories/**

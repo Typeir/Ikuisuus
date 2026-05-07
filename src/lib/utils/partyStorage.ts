@@ -1,16 +1,24 @@
 /**
  * @fileoverview Party Storage Utilities
- * @description CRUD operations for saved parties using localStorage.
+ * @description CRUD operations for saved parties using the multi-layer persistent
+ * storage abstraction (cookie pointer ref strategy for large-payload arrays).
  * Follows the same pattern as encounterStorage.ts for consistency.
  *
  * @module partyStorage
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
+ *
+ * @requires @/lib/enums/encounterPlanner EncounterStorage keys
+ * @requires @/lib/utils/storePersistentData Multi-layer persistence helpers
  */
 
 import { EncounterStorage } from '@/lib/enums/encounterPlanner';
 import type { SavedParty } from '@/lib/types/party';
+import {
+    fetchPersistentDataRef,
+    storePersistentDataRef,
+} from '@/lib/utils/storePersistentData';
 
 /**
  * Retrieve all saved parties from localStorage.
@@ -20,7 +28,7 @@ import type { SavedParty } from '@/lib/types/party';
  */
 export const getSavedParties = (): SavedParty[] => {
   if (typeof window === 'undefined') return [];
-  const raw = localStorage.getItem(EncounterStorage.SavedParties);
+  const raw = fetchPersistentDataRef(EncounterStorage.SavedParties);
   if (!raw) return [];
   try {
     return JSON.parse(raw) as SavedParty[];
@@ -44,7 +52,10 @@ export const saveParty = (party: SavedParty): void => {
   } else {
     parties.push(party);
   }
-  localStorage.setItem(EncounterStorage.SavedParties, JSON.stringify(parties));
+  storePersistentDataRef(
+    EncounterStorage.SavedParties,
+    JSON.stringify(parties),
+  );
 };
 
 /**
@@ -55,7 +66,10 @@ export const saveParty = (party: SavedParty): void => {
  */
 export const deleteParty = (id: string): void => {
   const parties = getSavedParties().filter((p) => p.id !== id);
-  localStorage.setItem(EncounterStorage.SavedParties, JSON.stringify(parties));
+  storePersistentDataRef(
+    EncounterStorage.SavedParties,
+    JSON.stringify(parties),
+  );
 };
 
 /**

@@ -21,11 +21,39 @@
  * - `storePersistentData()` - Cookie-first canonical writes
  * - `storePersistentDataCookieFirst()` - Explicit cookie-first writes
  * - `storePersistentDataFallbackOnly()` - Regeneration without cookie override
+ * - `storePersistentDataRef()` - Large-payload writes via cookie integrity pointer
  * - `readPersistentDataCookieFirst()` - Cookie-prioritized reads
+ * - `fetchPersistentDataRef()` - Large-payload reads with hash verification
+ * - `removePersistentData()` - Removes key from all storage layers
  * - `readCookie()` / `writeCookie()` - Low-level cookie operations
  *
  * All functions are SSR-safe (no-ops or null returns when `window` unavailable).
  */
+
+/**
+ * Prefix used in cookie values to identify a large-volume data reference.
+ * The cookie stores `ref:<hash>` rather than the raw payload.
+ *
+ * @constant LARGE_VOLUME_REF_PREFIX
+ */
+const LARGE_VOLUME_REF_PREFIX = 'ref:' as const;
+
+/**
+ * Produces a compact 8-character hex content hash using the djb2 algorithm.
+ * Not cryptographically secure — used only for integrity checking.
+ *
+ * @function djb2Hash
+ * @param {string} value - The string to hash
+ * @returns {string} 8-character lowercase hex string
+ */
+function djb2Hash(value: string): string {
+  let hash = 5381;
+  for (let i = 0; i < value.length; i++) {
+    hash = ((hash << 5) + hash) ^ value.charCodeAt(i);
+    hash = hash >>> 0;
+  }
+  return hash.toString(16).padStart(8, '0');
+}
 
 /**
  * @typedef {Object} CookieWriteOptions
@@ -85,7 +113,7 @@ export const readCookie = (key: string): string | null => {
 export const writeCookie = (
   key: string,
   value: string,
-  options?: CookieWriteOptions
+  options?: CookieWriteOptions,
 ): void => {
   if (typeof document === 'undefined') return;
 
@@ -123,7 +151,7 @@ export const writeCookie = (
  */
 export const storePersistentDataCookieFirst = (
   key: string,
-  value: string
+  value: string,
 ): void => {
   if (typeof window === 'undefined') return;
 
@@ -146,7 +174,7 @@ export const storePersistentDataCookieFirst = (
  */
 export const storePersistentDataFallbackOnly = (
   key: string,
-  value: string
+  value: string,
 ): void => {
   if (typeof window === 'undefined') return;
 
@@ -192,4 +220,100 @@ export const readPersistentDataCookieFirst = (key: string): string | null => {
  */
 export const storePersistentData = (key: string, value: string): void => {
   storePersistentDataCookieFirst(key, value);
+};
+
+/**
+ * Stores large-volume data using a pointer-in-cookie strategy.
+ *
+ * @function storePersistentDataRef
+ * @param {string} key - Storage key
+ * @param {string} value - Large string value to persist (e.g. serialised character list)
+ * @returns {void}
+ *
+ * @description
+ * Large payloads cannot reliably fit inside a cookie (4 KB limit). This function
+ * keeps the cookie as source-of-truth for **integrity** by storing only a short
+ * reference pointer `ref:<hash>` in the cookie, while the full payload lives in
+ * sessionStorage and localStorage.
+ *
+ * Read pattern: `fetchPersistentDataRef` reads the cookie pointer, retrieves the
+ * payload from fallback storage, recomputes the hash, and returns the value only
+ * when the hashes match — guaranteeing referential integrity without stuffing raw
+ * data into a cookie.
+ *
+ * @example
+ * storePersistentDataRef('ikuisuus-characters', JSON.stringify(characters));
+ * const raw = fetchPersistentDataRef('ikuisuus-characters');
+ * const restored = raw ? JSON.parse(raw) : [];
+ */
+export const storePersistentDataRef = (key: string, value: string): void => {
+  if (typeof window === 'undefined') return;
+
+  const hash = djb2Hash(value);
+  const pointer = `${LARGE_VOLUME_REF_PREFIX}${hash}`;
+
+  writeCookie(key, pointer);
+  window.sessionStorage?.setItem(key, value);
+  window.localStorage?.setItem(key, value);
+};
+
+/**
+ * Retrieves large-volume data stored via `storePersistentDataRef`.
+ *
+ * @function fetchPersistentDataRef
+ * @param {string} key - Storage key
+ * @returns {string | null} The original value, or null if the pointer is missing
+ * or the hash verification fails
+ *
+ * @description
+ * Read priority:
+ * 1. Cookie must contain a valid `ref:<hash>` pointer — returns null otherwise
+ * 2. sessionStorage checked first, then localStorage for the payload
+ * 3. Hash of retrieved payload is compared against the cookie pointer
+ * 4. Returns the payload only when hashes match; null on any mismatch or absence
+ *
+ * A hash mismatch indicates the storage payload was cleared or tampered with.
+ * Callers should treat null as "no valid persisted data" and reinitialise.
+ */
+export const fetchPersistentDataRef = (key: string): string | null => {
+  if (typeof window === 'undefined') return null;
+
+  const cookieValue = readCookie(key);
+  if (!cookieValue || !cookieValue.startsWith(LARGE_VOLUME_REF_PREFIX)) {
+    return null;
+  }
+
+  const expectedHash = cookieValue.slice(LARGE_VOLUME_REF_PREFIX.length);
+
+  const payload =
+    window.sessionStorage?.getItem(key) ??
+    window.localStorage?.getItem(key) ??
+    null;
+
+  if (payload === null) return null;
+
+  const actualHash = djb2Hash(payload);
+  return actualHash === expectedHash ? payload : null;
+};
+
+/**
+ * Removes persistent data from all storage layers.
+ *
+ * @function removePersistentData
+ * @param {string} key - Storage key to remove
+ * @returns {void}
+ *
+ * @description
+ * Removes the entry from cookies (by expiring with Max-Age=0),
+ * sessionStorage, and localStorage. Safe to call when key is absent.
+ * SSR-safe: no-ops when `document`/`window` is unavailable.
+ *
+ * @example
+ * removePersistentData('ikuisuus-active-encounter');
+ */
+export const removePersistentData = (key: string): void => {
+  writeCookie(key, '', { maxAgeSeconds: 0 });
+  if (typeof window === 'undefined') return;
+  window.sessionStorage?.removeItem(key);
+  window.localStorage?.removeItem(key);
 };

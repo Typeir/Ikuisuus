@@ -7,6 +7,9 @@
  * No JSONB payload columns — every field has a dedicated column and type.
  *
  * @module scripts/db/migrations/007_create_bloodlines_tables
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import type { PoolClient } from 'pg';

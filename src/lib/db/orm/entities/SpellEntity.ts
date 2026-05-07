@@ -143,4 +143,8 @@ export class SpellEntity {
   /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
   @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
+
+  /** @property {string | null} source - Content provenance: null = native Damocles, "basic" = SRD 5.1 (OGL), other = campaign-specific */
+  @Property({ type: 'string', nullable: true })
+  source?: string | null;
 }

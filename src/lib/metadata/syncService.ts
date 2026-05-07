@@ -76,7 +76,9 @@ function readMetadataFiles(
 
   if (!sourceExists) return { records: [], sourceExists: false };
 
-  const metaFiles = readdirSync(dir).filter((f) => f.endsWith('.metadata.json'));
+  const metaFiles = readdirSync(dir).filter((f) =>
+    f.endsWith('.metadata.json'),
+  );
 
   if (metaFiles.length === 0) return { records: [], sourceExists: false };
 
@@ -412,6 +414,7 @@ async function syncSpells(
       hasRitual: s.hasRitual as boolean | undefined,
       description: s.description as string | undefined,
       tags: (s.tags as string[]) ?? [],
+      source: s.source as string | undefined,
       versionHash: hash,
     };
 
@@ -439,11 +442,11 @@ async function syncSpells(
 
   for (const [key, entity] of Array.from(existingMap)) {
     if (!incomingKeys.has(key)) {
-      /** Never delete external spells — they are seeded once via db:seed and
-       * are not present in the local .meta directory that the revalidation
-       * sync reads from. Deleting them here would nuke all 500+ SRD spells
-       * every time a custom-spell correction is published. */
-      if (entity.file === 'external') continue;
+      /** Never delete basic-source spells — they are seeded once via db:seed
+       * and are not present in the local .meta directory that revalidation
+       * sync reads from. Deleting them would nuke all 500+ SRD spells every
+       * time a custom-spell correction is published. */
+      if (entity.source === 'basic') continue;
       em.remove(entity);
       result.deleted++;
     }

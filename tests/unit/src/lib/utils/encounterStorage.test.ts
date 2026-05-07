@@ -14,21 +14,22 @@
 import { EncounterStorage } from '@/lib/enums/encounterPlanner';
 import type { Encounter } from '@/lib/types/encounterPlanner';
 import {
-  calculateInitiativeMod,
-  createEmptyCreature,
-  createEmptyEncounter,
-  deleteEncounter,
-  exportEncounter,
-  generateId,
-  getActiveEncounter,
-  getActiveEncounterId,
-  getEncounters,
-  importEncounter,
-  rollInitiative,
-  saveEncounter,
-  saveEncounters,
-  setActiveEncounterId,
+    calculateInitiativeMod,
+    createEmptyCreature,
+    createEmptyEncounter,
+    deleteEncounter,
+    exportEncounter,
+    generateId,
+    getActiveEncounter,
+    getActiveEncounterId,
+    getEncounters,
+    importEncounter,
+    rollInitiative,
+    saveEncounter,
+    saveEncounters,
+    setActiveEncounterId,
 } from '@/lib/utils/encounterStorage';
+import { storePersistentDataRef } from '@/lib/utils/storePersistentData';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('encounterStorage', () => {
@@ -292,10 +293,13 @@ describe('encounterStorage', () => {
 
   describe('localStorage operations', () => {
     let mockStorage: { [key: string]: string };
+    const cookieStore: Record<string, string> = {};
 
     beforeEach(() => {
       mockStorage = {};
-      vi.stubGlobal('localStorage', {
+      sessionStorage.clear();
+
+      const storageMock = {
         getItem: vi.fn((key: string) => mockStorage[key] || null),
         setItem: vi.fn((key: string, value: string) => {
           mockStorage[key] = value;
@@ -306,11 +310,41 @@ describe('encounterStorage', () => {
         clear: vi.fn(() => {
           mockStorage = {};
         }),
+      };
+      vi.stubGlobal('localStorage', storageMock);
+      vi.stubGlobal('sessionStorage', storageMock);
+
+      Object.defineProperty(document, 'cookie', {
+        configurable: true,
+        get: () =>
+          Object.entries(cookieStore)
+            .map(([k, v]) => `${k}=${v}`)
+            .join('; '),
+        set: (cookieStr: string) => {
+          const parts = cookieStr.split('; ');
+          const [nameVal] = parts;
+          const eqIdx = nameVal.indexOf('=');
+          if (eqIdx === -1) return;
+          const name = nameVal.slice(0, eqIdx);
+          const value = nameVal.slice(eqIdx + 1);
+          const maxAgePart = parts.find((p) =>
+            p.toLowerCase().startsWith('max-age='),
+          );
+          if (maxAgePart) {
+            const age = parseInt(maxAgePart.split('=')[1], 10);
+            if (age <= 0) {
+              delete cookieStore[name];
+              return;
+            }
+          }
+          cookieStore[name] = value;
+        },
       });
     });
 
     afterEach(() => {
       vi.unstubAllGlobals();
+      Object.keys(cookieStore).forEach((k) => delete cookieStore[k]);
     });
 
     describe('getEncounters', () => {
@@ -321,7 +355,10 @@ describe('encounterStorage', () => {
 
       it('should return stored encounters', () => {
         const encounter = createEmptyEncounter();
-        mockStorage[EncounterStorage.Encounters] = JSON.stringify([encounter]);
+        storePersistentDataRef(
+          EncounterStorage.Encounters,
+          JSON.stringify([encounter]),
+        );
         const encounters = getEncounters();
         expect(encounters).toHaveLength(1);
         expect(encounters[0].name).toBe(encounter.name);
@@ -330,7 +367,7 @@ describe('encounterStorage', () => {
       it('should handle invalid JSON gracefully', () => {
         const originalError = console.error;
         console.error = vi.fn();
-        mockStorage[EncounterStorage.Encounters] = 'invalid json';
+        storePersistentDataRef(EncounterStorage.Encounters, 'invalid json');
         const encounters = getEncounters();
         expect(encounters).toEqual([]);
         console.error = originalError;
@@ -371,7 +408,7 @@ describe('encounterStorage', () => {
 
       it('should return null when active ID not found in encounters', () => {
         mockStorage[EncounterStorage.ActiveEncounterId] = 'missing-id';
-        mockStorage[EncounterStorage.Encounters] = JSON.stringify([]);
+        storePersistentDataRef(EncounterStorage.Encounters, JSON.stringify([]));
         const encounter = getActiveEncounter();
         expect(encounter).toBeNull();
       });
@@ -379,7 +416,10 @@ describe('encounterStorage', () => {
       it('should return active encounter when found', () => {
         const enc = createEmptyEncounter();
         enc.name = 'Active Test';
-        mockStorage[EncounterStorage.Encounters] = JSON.stringify([enc]);
+        storePersistentDataRef(
+          EncounterStorage.Encounters,
+          JSON.stringify([enc]),
+        );
         mockStorage[EncounterStorage.ActiveEncounterId] = enc.id;
         const encounter = getActiveEncounter();
         expect(encounter?.name).toBe('Active Test');
@@ -406,7 +446,10 @@ describe('encounterStorage', () => {
 
       it('should update existing encounter', () => {
         const encounter = createEmptyEncounter();
-        mockStorage[EncounterStorage.Encounters] = JSON.stringify([encounter]);
+        storePersistentDataRef(
+          EncounterStorage.Encounters,
+          JSON.stringify([encounter]),
+        );
 
         encounter.name = 'Updated Name';
         saveEncounter(encounter);
@@ -438,7 +481,10 @@ describe('encounterStorage', () => {
       it('should remove encounter by ID', () => {
         const enc1 = createEmptyEncounter();
         const enc2 = createEmptyEncounter();
-        mockStorage[EncounterStorage.Encounters] = JSON.stringify([enc1, enc2]);
+        storePersistentDataRef(
+          EncounterStorage.Encounters,
+          JSON.stringify([enc1, enc2]),
+        );
 
         deleteEncounter(enc1.id);
 
@@ -449,7 +495,10 @@ describe('encounterStorage', () => {
 
       it('should clear active ID if deleted encounter was active', () => {
         const encounter = createEmptyEncounter();
-        mockStorage[EncounterStorage.Encounters] = JSON.stringify([encounter]);
+        storePersistentDataRef(
+          EncounterStorage.Encounters,
+          JSON.stringify([encounter]),
+        );
         mockStorage[EncounterStorage.ActiveEncounterId] = encounter.id;
 
         deleteEncounter(encounter.id);
@@ -460,7 +509,10 @@ describe('encounterStorage', () => {
       it('should not clear active ID if different encounter deleted', () => {
         const enc1 = createEmptyEncounter();
         const enc2 = createEmptyEncounter();
-        mockStorage[EncounterStorage.Encounters] = JSON.stringify([enc1, enc2]);
+        storePersistentDataRef(
+          EncounterStorage.Encounters,
+          JSON.stringify([enc1, enc2]),
+        );
         mockStorage[EncounterStorage.ActiveEncounterId] = enc2.id;
 
         deleteEncounter(enc1.id);

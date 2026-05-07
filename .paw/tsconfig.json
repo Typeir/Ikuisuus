@@ -3,7 +3,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "noEmit": true,
+    "outDir": "./dist",
     "isolatedModules": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -11,6 +11,6 @@
     "skipLibCheck": true,
     "jsx": "react-jsx"
   },
-  "include": ["./**/*.ts", "../.github/PAW/**/*.ts"],
-  "exclude": ["node_modules", "../.github/PAW/hooks"]
+  "include": ["./**/*.ts", "./types/**/*.d.ts"],
+  "exclude": ["dist", "node_modules"]
 }

@@ -11,25 +11,47 @@
  * @requires @/lib/utils/inProgressCombatStorage - Combat storage utilities
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
-  createInProgressCombatant,
-  sortCombatantsByInitiative,
-  resortCombatants,
-  getInProgressCombats,
-  getInProgressCombat,
-  saveInProgressCombat,
-  deleteInProgressCombat,
-  getActiveInProgressCombatId,
-  setActiveInProgressCombatId,
-  exportInProgressCombat,
-  getNextActiveCombatantIndex,
-  forceHeroicAwakening,
-} from '@/lib/utils/inProgressCombatStorage';
-import { createEmptyCreature } from '@/lib/utils/encounterStorage';
 import { EncounterStorage } from '@/lib/enums/encounterPlanner';
-import type { InProgressCombat, InProgressCombatant } from '@/lib/types/inProgressCombat';
 import type { CreatureEntry } from '@/lib/types/encounterPlanner';
+import type {
+    InProgressCombat,
+    InProgressCombatant,
+} from '@/lib/types/inProgressCombat';
+import { createEmptyCreature } from '@/lib/utils/encounterStorage';
+import {
+    createInProgressCombatant,
+    deleteInProgressCombat,
+    exportInProgressCombat,
+    forceHeroicAwakening,
+    getActiveInProgressCombatId,
+    getInProgressCombat,
+    getInProgressCombats,
+    getNextActiveCombatantIndex,
+    resortCombatants,
+    saveInProgressCombat,
+    setActiveInProgressCombatId,
+    sortCombatantsByInitiative,
+} from '@/lib/utils/inProgressCombatStorage';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('@/lib/utils/storePersistentData', () => ({
+  storePersistentDataRef: vi.fn((key: string, value: string) => {
+    window.localStorage.setItem(key, value);
+  }),
+  storePersistentData: vi.fn((key: string, value: string) => {
+    window.localStorage.setItem(key, value);
+  }),
+  fetchPersistentDataRef: vi.fn((key: string) =>
+    window.localStorage.getItem(key),
+  ),
+  removePersistentData: vi.fn((key: string) => {
+    window.localStorage.removeItem(key);
+  }),
+}));
+
+vi.mock('@/lib/utils/fetchPersistentData', () => ({
+  fetchPersistentData: vi.fn((key: string) => window.localStorage.getItem(key)),
+}));
 
 describe('inProgressCombatStorage', () => {
   describe('createInProgressCombatant', () => {
@@ -132,7 +154,7 @@ describe('inProgressCombatStorage', () => {
       id: string,
       name: string,
       initiative: number | null,
-      dex: number = 10
+      dex: number = 10,
     ): InProgressCombatant => {
       const creature = createEmptyCreature();
       creature.id = id;
@@ -208,7 +230,7 @@ describe('inProgressCombatStorage', () => {
     const createCombatant = (
       id: string,
       name: string,
-      initiative: number
+      initiative: number,
     ): InProgressCombatant => {
       const creature = createEmptyCreature();
       creature.id = id;
@@ -283,7 +305,7 @@ describe('inProgressCombatStorage', () => {
   describe('getNextActiveCombatantIndex', () => {
     const createCombatant = (
       id: string,
-      slain: boolean
+      slain: boolean,
     ): InProgressCombatant => {
       const creature = createEmptyCreature();
       creature.id = id;
@@ -472,7 +494,7 @@ describe('inProgressCombatStorage', () => {
         saveInProgressCombat(combat);
 
         const stored = JSON.parse(
-          mockStorage[EncounterStorage.InProgressCombats]
+          mockStorage[EncounterStorage.InProgressCombats],
         );
         expect(stored).toHaveLength(1);
         expect(stored[0].id).toBe('combat-1');
@@ -488,7 +510,7 @@ describe('inProgressCombatStorage', () => {
         saveInProgressCombat(updated);
 
         const stored = JSON.parse(
-          mockStorage[EncounterStorage.InProgressCombats]
+          mockStorage[EncounterStorage.InProgressCombats],
         );
         expect(stored).toHaveLength(1);
         expect(stored[0].roundNumber).toBe(5);
@@ -507,7 +529,7 @@ describe('inProgressCombatStorage', () => {
         deleteInProgressCombat('c1');
 
         const stored = JSON.parse(
-          mockStorage[EncounterStorage.InProgressCombats]
+          mockStorage[EncounterStorage.InProgressCombats],
         );
         expect(stored).toHaveLength(1);
         expect(stored[0].id).toBe('c2');
@@ -522,7 +544,9 @@ describe('inProgressCombatStorage', () => {
 
         deleteInProgressCombat('active-combat');
 
-        expect(mockStorage[EncounterStorage.ActiveCombatId]).toBe('active-combat');
+        expect(mockStorage[EncounterStorage.ActiveCombatId]).toBe(
+          'active-combat',
+        );
       });
     });
 
@@ -592,7 +616,9 @@ describe('inProgressCombatStorage', () => {
 
         expect(combatant.mechanics.legendaryDeed).toBe(true);
         expect(combatant.legendaryDeedsUsed).toHaveLength(3);
-        expect(combatant.legendaryDeedsUsed.every((d) => d === false)).toBe(true);
+        expect(combatant.legendaryDeedsUsed.every((d) => d === false)).toBe(
+          true,
+        );
       });
 
       it('should parse resist mechanic from tags', () => {
@@ -620,7 +646,12 @@ describe('inProgressCombatStorage', () => {
 
       it('should handle multiple mechanics from tags', () => {
         const creature = createEmptyCreature() as CreatureEntry;
-        creature.tags = ['mechanic:lair', 'mechanic:stratagem', 'mechanic:legendary-deed', 'mechanic:resist'];
+        creature.tags = [
+          'mechanic:lair',
+          'mechanic:stratagem',
+          'mechanic:legendary-deed',
+          'mechanic:resist',
+        ];
         const combatant = createInProgressCombatant(creature);
 
         expect(combatant.mechanics.lair).toBe(true);
@@ -714,7 +745,11 @@ describe('inProgressCombatStorage', () => {
                 awakened: false,
                 tier: 'none',
                 affixes: [],
-                bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+                bonuses: {
+                  proficiencyBonus: 0,
+                  acBonus: 0,
+                  savingThrowBonus: 0,
+                },
                 hpOverride: null,
               },
               // Note: Missing mechanics, legendaryDeedsUsed, resistRemaining
@@ -725,11 +760,13 @@ describe('inProgressCombatStorage', () => {
           turnOrder: ['c-1'],
         };
 
-        mockStorage[EncounterStorage.InProgressCombats] = JSON.stringify([oldCombat]);
+        mockStorage[EncounterStorage.InProgressCombats] = JSON.stringify([
+          oldCombat,
+        ]);
 
         const combats = getInProgressCombats();
         expect(combats).toHaveLength(1);
-        
+
         const migratedCombatant = combats[0].combatants[0];
         expect(migratedCombatant.mechanics).toEqual({
           lair: false,
@@ -780,7 +817,11 @@ describe('inProgressCombatStorage', () => {
                 awakened: false,
                 tier: 'none',
                 affixes: [],
-                bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+                bonuses: {
+                  proficiencyBonus: 0,
+                  acBonus: 0,
+                  savingThrowBonus: 0,
+                },
                 hpOverride: null,
               },
               mechanics: {
@@ -798,14 +839,20 @@ describe('inProgressCombatStorage', () => {
           turnOrder: ['c-1'],
         };
 
-        mockStorage[EncounterStorage.InProgressCombats] = JSON.stringify([existingCombat]);
+        mockStorage[EncounterStorage.InProgressCombats] = JSON.stringify([
+          existingCombat,
+        ]);
 
         const combats = getInProgressCombats();
         const migratedCombatant = combats[0].combatants[0];
-        
+
         expect(migratedCombatant.mechanics.lair).toBe(true);
         expect(migratedCombatant.mechanics.stratagem).toBe(true);
-        expect(migratedCombatant.legendaryDeedsUsed).toEqual([true, false, true]);
+        expect(migratedCombatant.legendaryDeedsUsed).toEqual([
+          true,
+          false,
+          true,
+        ]);
         expect(migratedCombatant.resistRemaining).toBe(2);
       });
     });
@@ -813,9 +860,7 @@ describe('inProgressCombatStorage', () => {
 
   describe('forceHeroicAwakening', () => {
     it('should apply awakened tier bonuses correctly', () => {
-      const combatant = createInProgressCombatant(
-        createEmptyCreature()
-      );
+      const combatant = createInProgressCombatant(createEmptyCreature());
       combatant.crText = 'CR 5';
       combatant.ac = 15;
       combatant.hpMax = 100;
@@ -833,9 +878,7 @@ describe('inProgressCombatStorage', () => {
     });
 
     it('should prevent infinite stacking when clicking awakened multiple times', () => {
-      const combatant = createInProgressCombatant(
-        createEmptyCreature()
-      );
+      const combatant = createInProgressCombatant(createEmptyCreature());
       combatant.crText = 'CR 5';
       combatant.ac = 15;
       combatant.hpMax = 100;
@@ -859,9 +902,7 @@ describe('inProgressCombatStorage', () => {
     });
 
     it('should properly transition from awakened to legendary', () => {
-      const combatant = createInProgressCombatant(
-        createEmptyCreature()
-      );
+      const combatant = createInProgressCombatant(createEmptyCreature());
       combatant.crText = 'CR 5';
       combatant.ac = 15;
       combatant.hpMax = 100;
@@ -883,9 +924,7 @@ describe('inProgressCombatStorage', () => {
     });
 
     it('should apply mythic tier with 3 affixes', () => {
-      const combatant = createInProgressCombatant(
-        createEmptyCreature()
-      );
+      const combatant = createInProgressCombatant(createEmptyCreature());
       combatant.crText = 'CR 5';
       combatant.ac = 15;
       combatant.hpMax = 100;

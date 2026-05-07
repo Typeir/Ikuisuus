@@ -26,12 +26,12 @@ export const VIRTUALIZE_THRESHOLD = 100;
 
 /**
  * Pixel height of a single row in the virtualized list.
- * Must match `BASE_HEIGHT` in `sidebar.tsx` (52 px).
+ * Must match `BASE_HEIGHT` in `sidebar.tsx` (20 px).
  *
  * @constant
  * @type {number}
  */
-const ITEM_ROW_HEIGHT = 52;
+const ITEM_ROW_HEIGHT = 20;
 
 /**
  * Maximum pixel height of the virtualized window before scrolling.

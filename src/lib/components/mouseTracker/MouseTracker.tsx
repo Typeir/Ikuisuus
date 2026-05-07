@@ -58,7 +58,6 @@ export default function MouseTracker({ targetRef, onFirstMove }: Props): null {
     const getTarget = () => targetRef && targetRef.current;
 
     let rafId: number | null = null;
-    let pending = false;
     let lastX = 0;
     let lastY = 0;
     let hasMovedRef = { moved: false };
@@ -75,8 +74,6 @@ export default function MouseTracker({ targetRef, onFirstMove }: Props): null {
         if (!target) return;
         setMouseVars(lastX, lastY, target);
       }
-
-      pending = false;
     };
 
     const schedule = () => {
@@ -92,10 +89,7 @@ export default function MouseTracker({ targetRef, onFirstMove }: Props): null {
       }
       lastX = (e as PointerEvent).clientX ?? (e as MouseEvent).clientX;
       lastY = (e as PointerEvent).clientY ?? (e as MouseEvent).clientY;
-      if (!pending) {
-        pending = true;
-        schedule();
-      }
+      schedule();
     };
 
     window.addEventListener('pointermove', handler as EventListener, {

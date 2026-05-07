@@ -1,0 +1,56 @@
+/**
+ * @fileoverview Feat Metadata Domain Schema
+ * @description Canonical TypeScript types for feat metadata generated from
+ * `scripts/metadata/generateFeatMetadata.ts`.
+ *
+ * Each record describes a single feat plain `.mdx` file under
+ * `src/content/{locale}/character-creation/feats/`. Mechanics text remains in
+ * MDX content and is not duplicated in metadata.
+ *
+ * @module lib/db/content/schemas/featMetadata
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ */
+
+/**
+ * Optional ability score increase granted by a feat.
+ *
+ * @interface FeatAbilityIncrease
+ * @property {string[]} abilities - Ability score keys (`str`, `dex`, ...) the player may apply the increase to
+ * @property {number} amount - Amount applied (typically `1`)
+ * @property {number} [maximum] - Cap on the resulting score (typically `20`)
+ */
+export interface FeatAbilityIncrease {
+  abilities: string[];
+  amount: number;
+  maximum?: number;
+}
+
+/**
+ * Complete feat metadata record as emitted by the generator.
+ *
+ * @interface FeatMetadata
+ * @property {string} slug - Filename-derived slug
+ * @property {string} title - H1 title
+ * @property {string} file - Workspace-relative path to the source MDX
+ * @property {string} link - Library route to the rendered page
+ * @property {string} [description] - Short prose description used in tooltips
+ * @property {string} [prerequisite] - Raw prerequisite text (italics line)
+ * @property {boolean} hasPrerequisite - True when a non-trivial prerequisite is parsed
+ * @property {FeatAbilityIncrease} [abilityIncrease] - Parsed ability score increase
+ * @property {string[]} tags - Derived gameplay tags
+ * @property {number} [indexVersion] - Schema version
+ */
+export interface FeatMetadata {
+  slug: string;
+  title: string;
+  file: string;
+  link: string;
+  description?: string;
+  prerequisite?: string;
+  hasPrerequisite: boolean;
+  abilityIncrease?: FeatAbilityIncrease;
+  tags: string[];
+  indexVersion?: number;
+}

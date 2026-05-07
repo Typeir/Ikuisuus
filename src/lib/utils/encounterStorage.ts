@@ -1,17 +1,21 @@
 /**
  * @fileoverview Encounter Planner Storage Utilities
- * @description Utilities for persisting and retrieving encounter data using localStorage.
+ * @description Utilities for persisting and retrieving encounter data using the
+ * multi-layer persistent storage abstraction (cookie-first, sessionStorage, localStorage).
  * Provides CRUD operations for encounters with automatic timestamp management and
  * debounced autosave support. All storage operations use the EncounterStorage enum
- * for consistent key naming.
+ * for consistent key naming. Large payloads (encounters array) use the ref strategy
+ * via storePersistentDataRef/fetchPersistentDataRef; scalar IDs use storePersistentData.
  *
  * @module encounterStorage
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  *
- * @requires @/lib/enums/encounterPlanner EncounterStorage keys for localStorage
+ * @requires @/lib/enums/encounterPlanner EncounterStorage keys
  * @requires @/lib/types/encounterPlanner Type definitions for encounters and creatures
+ * @requires @/lib/utils/storePersistentData Multi-layer persistence helpers
+ * @requires @/lib/utils/fetchPersistentData Cookie-first read helper
  *
  * @example
  * ```typescript
@@ -28,16 +32,23 @@
 import { EncounterStorage } from '@/lib/enums/encounterPlanner';
 import { logger } from '@/lib/logging/logger';
 import type {
-  AffixEntry,
-  CreatureEntry,
-  Encounter,
+    AffixEntry,
+    CreatureEntry,
+    Encounter,
 } from '@/lib/types/encounterPlanner';
+import { fetchPersistentData } from '@/lib/utils/fetchPersistentData';
+import {
+    fetchPersistentDataRef,
+    removePersistentData,
+    storePersistentData,
+    storePersistentDataRef,
+} from '@/lib/utils/storePersistentData';
 
 export {
-  createCreatureFromMonster,
-  createEmptyCreature,
-  createEmptyEncounter,
-  createMultipleCreaturesFromMonster
+    createCreatureFromMonster,
+    createEmptyCreature,
+    createEmptyEncounter,
+    createMultipleCreaturesFromMonster
 } from './encounterFactory';
 
 /**
@@ -133,7 +144,7 @@ export const getEncounters = (): Encounter[] => {
   if (typeof window === 'undefined') return [];
 
   try {
-    const data = localStorage.getItem(EncounterStorage.Encounters);
+    const data = fetchPersistentDataRef(EncounterStorage.Encounters);
     if (!data) return [];
 
     const parsed = JSON.parse(data);
@@ -141,7 +152,7 @@ export const getEncounters = (): Encounter[] => {
 
     return encounters as Encounter[];
   } catch (error) {
-    logger.warning('Error loading encounters from localStorage', {
+    logger.warning('Error loading encounters from storage', {
       error: error instanceof Error ? error.message : String(error),
     });
     return [];
@@ -163,7 +174,7 @@ export const getEncounters = (): Encounter[] => {
  */
 export const getActiveEncounterId = (): string | null => {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem(EncounterStorage.ActiveEncounterId);
+  return fetchPersistentData(EncounterStorage.ActiveEncounterId);
 };
 
 /**
@@ -182,9 +193,9 @@ export const setActiveEncounterId = (id: string | null): void => {
   if (typeof window === 'undefined') return;
 
   if (id === null) {
-    localStorage.removeItem(EncounterStorage.ActiveEncounterId);
+    removePersistentData(EncounterStorage.ActiveEncounterId);
   } else {
-    localStorage.setItem(EncounterStorage.ActiveEncounterId, id);
+    storePersistentData(EncounterStorage.ActiveEncounterId, id);
   }
 };
 
@@ -227,12 +238,12 @@ export const saveEncounters = (encounters: Encounter[]): void => {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.setItem(
+    storePersistentDataRef(
       EncounterStorage.Encounters,
       JSON.stringify(encounters),
     );
   } catch (error) {
-    logger.error('Error saving encounters to localStorage', {
+    logger.error('Error saving encounters to storage', {
       error: error instanceof Error ? error.message : String(error),
       encounterCount: encounters.length,
     });

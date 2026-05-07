@@ -132,5 +132,10 @@
   "importCharacter": "Import Character",
   "importCharacterTodo": "Character import coming soon",
   "addNewCharacter": "Add New Character",
-  "confirmDeleteAction": "Confirm Deletion"
+  "confirmDeleteAction": "Confirm Deletion",
+  "linkCharacter": "Link character",
+  "unlinkCharacter": "Unlink",
+  "linkedCharacter": "Linked character",
+  "viewCharacterSheet": "View sheet",
+  "noCharacterLinked": "No character linked"
 }

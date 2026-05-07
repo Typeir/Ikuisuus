@@ -28,12 +28,16 @@
  * @type {Readonly<Record<string, number>>}
  */
 export const RARITY_SORT_ORDER: Readonly<Record<string, number>> = {
-  common: 0,
-  uncommon: 1,
-  rare: 2,
-  'very rare': 3,
-  legendary: 4,
-  'mythic artifact': 5,
+  nonmagical: 0,
+  common: 1,
+  uncommon: 2,
+  rare: 3,
+  'very rare': 4,
+  legendary: 5,
+  artifact: 6,
+  'mythic artifact': 7,
+  mythic: 8,
+  unique: 9,
 } as const;
 
 /**

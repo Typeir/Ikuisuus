@@ -17,10 +17,14 @@
  *
  * @property {number} level - Character level at which the feature is gained
  * @property {string} name - Feature display name
+ * @property {number} [startLine] - 1-indexed start line of the feature heading block in the source MDX
+ * @property {number} [endLine] - 1-indexed last line of the feature heading block in the source MDX
  */
 export interface SpecializationFeature {
   level: number;
   name: string;
+  startLine?: number;
+  endLine?: number;
 }
 
 /**

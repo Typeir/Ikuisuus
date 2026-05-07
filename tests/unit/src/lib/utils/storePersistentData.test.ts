@@ -14,11 +14,14 @@
  */
 
 import {
+    fetchPersistentDataRef,
     readCookie,
     readPersistentDataCookieFirst,
+    removePersistentData,
     storePersistentData,
     storePersistentDataCookieFirst,
     storePersistentDataFallbackOnly,
+    storePersistentDataRef,
     writeCookie,
 } from '@/lib/utils/storePersistentData';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -386,5 +389,168 @@ describe('readPersistentDataCookieFirst', () => {
     vi.stubGlobal('window', undefined);
 
     expect(readPersistentDataCookieFirst('theme')).toBeNull();
+  });
+});
+
+describe('storePersistentDataRef / fetchPersistentDataRef', () => {
+  const mockSessionStorage: Record<string, string> = {};
+  const mockLocalStorage: Record<string, string> = {};
+
+  beforeEach(() => {
+    vi.stubGlobal('window', {
+      sessionStorage: {
+        setItem: vi.fn((k: string, v: string) => {
+          mockSessionStorage[k] = v;
+        }),
+        getItem: vi.fn((k: string) => mockSessionStorage[k] ?? null),
+      },
+      localStorage: {
+        setItem: vi.fn((k: string, v: string) => {
+          mockLocalStorage[k] = v;
+        }),
+        getItem: vi.fn((k: string) => mockLocalStorage[k] ?? null),
+      },
+      location: { protocol: 'http:' },
+    });
+    Object.defineProperty(document, 'cookie', { writable: true, value: '' });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.clearAllMocks();
+    Object.keys(mockSessionStorage).forEach(
+      (k) => delete mockSessionStorage[k],
+    );
+    Object.keys(mockLocalStorage).forEach((k) => delete mockLocalStorage[k]);
+  });
+
+  it('should write data to sessionStorage and localStorage', () => {
+    storePersistentDataRef('chars', '{"a":1}');
+
+    expect((window as any).sessionStorage.setItem).toHaveBeenCalledWith(
+      'chars',
+      '{"a":1}',
+    );
+    expect((window as any).localStorage.setItem).toHaveBeenCalledWith(
+      'chars',
+      '{"a":1}',
+    );
+  });
+
+  it('should write a ref: pointer to the cookie, not the raw data', () => {
+    storePersistentDataRef('chars', '{"a":1}');
+
+    const cookie = document.cookie;
+    expect(cookie).toContain('chars=ref%3A');
+    expect(cookie).not.toContain('%7B%22a%22%3A1%7D');
+  });
+
+  it('should round-trip: fetchPersistentDataRef returns original value after storePersistentDataRef', () => {
+    const value = JSON.stringify({
+      characters: [{ id: 'abc', name: 'Elara' }],
+    });
+    storePersistentDataRef('chars', value);
+    expect(fetchPersistentDataRef('chars')).toBe(value);
+  });
+
+  it('should return null when the cookie pointer is missing', () => {
+    mockLocalStorage['chars'] = '{"a":1}';
+    expect(fetchPersistentDataRef('chars')).toBeNull();
+  });
+
+  it('should return null when storage data is missing despite valid cookie pointer', () => {
+    storePersistentDataRef('chars', '{"a":1}');
+    delete mockSessionStorage['chars'];
+    delete mockLocalStorage['chars'];
+    expect(fetchPersistentDataRef('chars')).toBeNull();
+  });
+
+  it('should return null when stored data hash does not match cookie pointer', () => {
+    storePersistentDataRef('chars', '{"a":1}');
+    mockLocalStorage['chars'] = '{"tampered":true}';
+    mockSessionStorage['chars'] = '{"tampered":true}';
+    expect(fetchPersistentDataRef('chars')).toBeNull();
+  });
+
+  it('should fall back to localStorage when sessionStorage is empty', () => {
+    const value = '{"x":42}';
+    storePersistentDataRef('chars', value);
+    delete mockSessionStorage['chars'];
+    expect(fetchPersistentDataRef('chars')).toBe(value);
+  });
+
+  it('should be SSR-safe: storePersistentDataRef does not throw when window is undefined', () => {
+    vi.stubGlobal('window', undefined);
+    expect(() => storePersistentDataRef('chars', 'data')).not.toThrow();
+  });
+
+  it('should be SSR-safe: fetchPersistentDataRef returns null when window is undefined', () => {
+    vi.stubGlobal('window', undefined);
+    expect(fetchPersistentDataRef('chars')).toBeNull();
+  });
+});
+
+describe('removePersistentData', () => {
+  const mockSessionStorage: Record<string, string> = {};
+  const mockLocalStorage: Record<string, string> = {};
+
+  beforeEach(() => {
+    vi.stubGlobal('window', {
+      sessionStorage: {
+        setItem: vi.fn((key: string, value: string) => {
+          mockSessionStorage[key] = value;
+        }),
+        getItem: vi.fn((key: string) => mockSessionStorage[key] || null),
+        removeItem: vi.fn((key: string) => {
+          delete mockSessionStorage[key];
+        }),
+      },
+      localStorage: {
+        setItem: vi.fn((key: string, value: string) => {
+          mockLocalStorage[key] = value;
+        }),
+        getItem: vi.fn((key: string) => mockLocalStorage[key] || null),
+        removeItem: vi.fn((key: string) => {
+          delete mockLocalStorage[key];
+        }),
+      },
+      location: { protocol: 'http:' },
+    });
+
+    Object.defineProperty(document, 'cookie', {
+      writable: true,
+      value: '',
+    });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.clearAllMocks();
+    Object.keys(mockSessionStorage).forEach(
+      (k) => delete mockSessionStorage[k],
+    );
+    Object.keys(mockLocalStorage).forEach((k) => delete mockLocalStorage[k]);
+  });
+
+  it('should remove value from localStorage', () => {
+    mockLocalStorage['myKey'] = 'myValue';
+    removePersistentData('myKey');
+    expect(mockLocalStorage['myKey']).toBeUndefined();
+  });
+
+  it('should remove value from sessionStorage', () => {
+    mockSessionStorage['myKey'] = 'myValue';
+    removePersistentData('myKey');
+    expect(mockSessionStorage['myKey']).toBeUndefined();
+  });
+
+  it('should expire the cookie for the key', () => {
+    removePersistentData('myKey');
+    expect(document.cookie).toContain('Max-Age=0');
+  });
+
+  it('should be SSR-safe: does not throw when window is undefined', () => {
+    vi.stubGlobal('window', undefined);
+    expect(() => removePersistentData('myKey')).not.toThrow();
   });
 });

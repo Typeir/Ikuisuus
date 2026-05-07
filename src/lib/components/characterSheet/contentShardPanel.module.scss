@@ -1,0 +1,50 @@
+/**
+ * @fileoverview Content Shard Panel Styles
+ * @description Layout and typography for the ContentShardPanel: a full-height,
+ * scrollable prose container that matches the visual footprint of the removed
+ * iframe.
+ *
+ * @module lib/components/characterSheet/contentShardPanel.module
+ */
+
+.panel {
+  width: 100%;
+  min-height: 60vh;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg);
+  padding: 1.25rem;
+}
+
+.body {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--color-text);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-secondary);
+  font-style: italic;
+  border: 1px dashed var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-error, var(--color-secondary));
+  font-style: italic;
+  border: 1px dashed var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  padding: 1rem;
+}

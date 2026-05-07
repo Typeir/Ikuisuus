@@ -1,0 +1,103 @@
+/**
+ * @fileoverview Chip Styles
+ * @description Pill-style label styles with variant tinting via CSS variables.
+ *
+ * @module lib/components/ui/chip/chip.module
+ */
+
+@use '@/styles/mixins-button' as *;
+@use '@/styles/mixins-focus' as *;
+
+.chipWrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin: 0.15rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-family: inherit;
+}
+
+.interactive {
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.15s ease;
+
+  @include focus-visible-outline();
+
+  &:hover {
+    transform: scale(1.04);
+    border-color: var(--color-accent);
+  }
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-secondary);
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.removeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  @include focus-visible-outline();
+
+  &:hover {
+    background: var(--color-danger-subtle);
+    color: var(--color-danger);
+  }
+}
+
+.boon {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-bg-secondary));
+}
+
+.vocation-feature {
+  border-color: var(--color-emphasis);
+  background: color-mix(in srgb, var(--color-emphasis) 12%, var(--color-bg-secondary));
+}
+
+.specialization-feature {
+  border-color: var(--color-actionable);
+  background: color-mix(in srgb, var(--color-actionable) 12%, var(--color-bg-secondary));
+}
+
+.feat {
+  border-color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, var(--color-bg-secondary));
+}
+
+.neutral {
+  border-color: var(--color-border);
+}

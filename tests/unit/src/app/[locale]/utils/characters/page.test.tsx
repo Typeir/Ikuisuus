@@ -1,0 +1,48 @@
+/**
+ * @fileoverview Tests for CharactersPage
+ * @description Unit tests for the /[locale]/utils/characters page component.
+ *
+ * @module tests/unit/src/app/locale/utils/characters/page.test
+ */
+
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('@/lib/context/CharacterSheetContext', () => ({
+  CharacterSheetProvider: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid='character-provider'>{children}</div>
+  ),
+}));
+
+vi.mock('@/lib/components/characterSheet', () => ({
+  CharacterRoster: ({ locale }: { locale: string }) => (
+    <div data-testid='character-roster' data-locale={locale} />
+  ),
+}));
+
+describe('CharactersPage', () => {
+  const renderPage = async (locale = 'en') => {
+    const { default: CharactersPage } =
+      await import('@/app/[locale]/utils/characters/page');
+    const jsx = await CharactersPage({ params: Promise.resolve({ locale }) });
+    render(jsx as React.ReactElement);
+  };
+
+  it('renders the character provider', async () => {
+    await renderPage();
+    expect(screen.getByTestId('character-provider')).toBeInTheDocument();
+  });
+
+  it('renders the character roster', async () => {
+    await renderPage();
+    expect(screen.getByTestId('character-roster')).toBeInTheDocument();
+  });
+
+  it('passes locale to CharacterRoster', async () => {
+    await renderPage('es');
+    expect(screen.getByTestId('character-roster')).toHaveAttribute(
+      'data-locale',
+      'es',
+    );
+  });
+});

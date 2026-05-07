@@ -86,6 +86,13 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
     contentType: 'character-creation',
     subType: 'specialization',
   },
+  feats: {
+    dir: 'src/content/en/character-creation/feats',
+    pattern: /\.mdx$/,
+    generator: 'generateFeatMetadata.ts',
+    contentType: 'character-creation',
+    subType: 'feat',
+  },
   world: {
     dir: 'src/content/en/world',
     pattern: /\.mdx$/,
@@ -133,6 +140,7 @@ class MetadataOrchestrator {
         types.push('vocations');
       if (arg === '--specializations' || arg === '--specialization')
         types.push('specializations');
+      if (arg === '--feats' || arg === '--feat') types.push('feats');
     }
 
     return types.length > 0 ? types : null;

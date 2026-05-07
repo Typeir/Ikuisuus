@@ -16,6 +16,7 @@ import {
     forwardRef,
     KeyboardEvent,
     memo,
+    type ReactNode,
     useCallback,
     useEffect,
     useImperativeHandle,
@@ -71,6 +72,7 @@ export interface FilterSelectOption {
  * @property {string} [className] - CSS class for the container
  * @property {boolean} [searchable=false] - Whether to show search input in dropdown
  * @property {'sm' | 'md' | 'lg'} [size='md'] - Size variant
+ * @property {(option: FilterSelectOption) => ReactNode} [renderOptionTrailing] - Optional renderer for trailing content inside each option row (e.g. a preview icon). Click handlers in the trailing slot must call `e.stopPropagation()` to keep the dropdown open.
  */
 export interface FilterSelectProps {
   id?: string;
@@ -85,6 +87,7 @@ export interface FilterSelectProps {
   className?: string;
   searchable?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  renderOptionTrailing?: (option: FilterSelectOption) => ReactNode;
 }
 
 /**
@@ -104,6 +107,7 @@ const VirtualizedOption = memo(function VirtualizedOption({
   onClick,
   onMouseEnter,
   style,
+  trailing,
 }: {
   option: FilterSelectOption;
   isSelected: boolean;
@@ -111,6 +115,7 @@ const VirtualizedOption = memo(function VirtualizedOption({
   onClick: () => void;
   onMouseEnter: () => void;
   style: React.CSSProperties;
+  trailing?: ReactNode;
 }) {
   return (
     <div
@@ -120,7 +125,10 @@ const VirtualizedOption = memo(function VirtualizedOption({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       style={style}>
-      {option.label}
+      <span className={styles.optionLabel}>{option.label}</span>
+      {trailing && (
+        <span className={styles.optionTrailing}>{trailing}</span>
+      )}
     </div>
   );
 });
@@ -244,6 +252,7 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
       className = '',
       searchable = false,
       size = 'md',
+      renderOptionTrailing,
     },
     forwardedRef,
   ) {
@@ -507,6 +516,11 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
                   onClick={() => handleSelect(option.value)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                   style={{}}
+                  trailing={
+                    option.value && renderOptionTrailing
+                      ? renderOptionTrailing(option)
+                      : undefined
+                  }
                 />
               ))}
               {filteredOptions.length === 0 && searchQuery && (

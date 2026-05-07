@@ -1,0 +1,130 @@
+/**
+ * Carrying Capacity Calculator SCSS Module
+ *
+ * @fileoverview Layout + load bar styling for the carrying capacity panel.
+ *
+ * @module lib/components/characterSheet/carryingCapacityCalculator.module
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ */
+
+@use '@/styles/mixins-focus' as *;
+
+.calculator {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.controlField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.controlLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.select,
+.numberInput {
+  padding: 0.35rem 0.5rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  color: var(--color-text);
+  font-size: 0.9rem;
+
+  @include focus-visible-outline();
+}
+
+.numberInput {
+  width: 80px;
+}
+
+.thresholds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bar {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  transition: width 200ms ease-out;
+
+  &[data-tier='none'] {
+    background: var(--color-border);
+  }
+
+  &[data-tier='light'] {
+    background: var(--color-success);
+  }
+
+  &[data-tier='medium'] {
+    background: var(--color-warning);
+  }
+
+  &[data-tier='heavy'] {
+    background: var(--color-danger);
+  }
+
+  &[data-tier='over'] {
+    background: var(--color-danger);
+    animation: pulse 1s infinite alternate;
+  }
+}
+
+.tierLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  &[data-tier='none'] {
+    color: var(--color-text-muted);
+  }
+
+  &[data-tier='light'] {
+    color: var(--color-success);
+  }
+
+  &[data-tier='medium'] {
+    color: var(--color-warning);
+  }
+
+  &[data-tier='heavy'],
+  &[data-tier='over'] {
+    color: var(--color-danger);
+  }
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -65,6 +65,8 @@ interface ParsedBoonHeading {
  * @property {string} bpLabel - Raw BP cost label
  * @property {number} [bpValue] - Numeric BP value when deterministic
  * @property {number} sortOrder - Stable zero-based order in section
+ * @property {number} startLine - 1-indexed start line of the boon heading block in the source MDX
+ * @property {number} endLine - 1-indexed last line of the boon content block in the source MDX
  * @property {string[]} tags - Derived boon gameplay tags
  */
 interface ParsedBoon {
@@ -72,6 +74,8 @@ interface ParsedBoon {
   bpLabel: string;
   bpValue?: number;
   sortOrder: number;
+  startLine: number;
+  endLine: number;
   tags: string[];
 }
 
@@ -455,14 +459,20 @@ function parseBoonBudget(content: string): number | undefined {
 }
 
 /**
- * Parses all boon entries from the Boons section.
+ * Parses all boon entries from the Boons section, including 1-indexed absolute
+ * start and end line numbers anchored to the full MDX file.
  * Handles nested Collapsible blocks and variable-cost boons.
  *
  * @param {string} content - Full MDX content
  * @param {SharedData} sharedData - Shared game data used for tag extraction
- * @returns {ParsedBoon[]} Parsed boon records
+ * @returns {ParsedBoon[]} Parsed boon records with line anchors
  */
 function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
+  const allLines = content.split('\n');
+  const sectionStart = allLines.findIndex((line) =>
+    SECTION.boons.test(line.trim()),
+  );
+
   const sectionLines = getBoonsSectionLines(content);
   if (sectionLines.length === 0) {
     return [];
@@ -481,6 +491,18 @@ function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
       idx < headings.length - 1
         ? headings[idx + 1].lineIdx
         : sectionLines.length;
+
+    let endSectionIdx = nextLineIdx - 1;
+    while (
+      endSectionIdx > entry.lineIdx &&
+      (!sectionLines[endSectionIdx]?.trim() ||
+        TEXT.collapsibleTag.test(sectionLines[endSectionIdx].trim()))
+    ) {
+      endSectionIdx--;
+    }
+
+    const absStart = sectionStart + 1 + entry.lineIdx + 1;
+    const absEnd = sectionStart + 1 + endSectionIdx + 1;
 
     const rawBlockLines = sectionLines.slice(entry.lineIdx + 1, nextLineIdx);
     const boonContent = rawBlockLines
@@ -504,6 +526,8 @@ function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
       bpLabel: entry.heading.bpLabel,
       bpValue,
       sortOrder: idx,
+      startLine: absStart,
+      endLine: absEnd,
       tags,
     };
   });

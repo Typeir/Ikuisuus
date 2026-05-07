@@ -1,0 +1,22 @@
+/**
+ * @fileoverview Page Preview Host Styles
+ * @module lib/components/characterSheet/pagePreviewHost.module
+ */
+
+.host {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: var(--color-bg);
+}

@@ -9,6 +9,7 @@
  */
 
 export { pgBloodlineRepository } from './pgBloodlineRepository';
+export { pgFeatRepository } from './pgFeatRepository';
 export { pgDraftRepository } from './pgDraftRepository';
 export { pgHeirloomRepository } from './pgHeirloomRepository';
 export { PgMetadataRepository } from './PgMetadataRepository';

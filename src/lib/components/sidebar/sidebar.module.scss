@@ -20,6 +20,12 @@
   margin-bottom: 1rem;
 }
 
+.accordion.open.virtualized {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
 .label {
   cursor: pointer;
   display: flex;

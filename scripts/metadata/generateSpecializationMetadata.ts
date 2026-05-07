@@ -68,21 +68,44 @@ function parseFlavor(lines: string[]): string | undefined {
 }
 
 /**
- * Parses features from Collapsible blocks with level headings.
+ * Parses features from level-heading lines, capturing their 1-indexed start and
+ * end line numbers within the MDX file.
  *
  * @param {string} raw - Full MDX file content
- * @returns {Array<{ level: number; name: string }>} Feature entries
+ * @returns {Array<{ level: number; name: string; startLine: number; endLine: number }>} Feature entries with line ranges
  */
-function parseFeatures(raw: string): Array<{ level: number; name: string }> {
-  const features: Array<{ level: number; name: string }> = [];
-  const matches = raw.matchAll(new RegExp(FEATURE.levelHeading, 'g'));
+function parseFeatures(
+  raw: string,
+): Array<{ level: number; name: string; startLine: number; endLine: number }> {
+  const features: Array<{
+    level: number;
+    name: string;
+    startLine: number;
+    endLine: number;
+  }> = [];
+  const lines = raw.split('\n');
+  const pattern = new RegExp(FEATURE.levelHeading.source);
 
-  for (const match of matches) {
+  for (let i = 0; i < lines.length; i++) {
+    const match = pattern.exec(lines[i]);
+    if (!match) continue;
+
     const level = parseInt(match[1], 10);
     const name = clean(match[2].trim());
-    if (!isNaN(level) && name) {
-      features.push({ level, name });
+    if (isNaN(level) || !name) continue;
+
+    const headingLevel = (/^(#+)/.exec(lines[i]) ?? ['', '##'])[1].length;
+    let endIdx = lines.length - 1;
+    for (let j = i + 1; j < lines.length; j++) {
+      const hm = /^(#{1,6})\s+/.exec(lines[j]);
+      if (hm && hm[1].length <= headingLevel) {
+        endIdx = j - 1;
+        break;
+      }
     }
+    while (endIdx > i && !lines[endIdx]?.trim()) endIdx--;
+
+    features.push({ level, name, startLine: i + 1, endLine: endIdx + 1 });
   }
 
   return features;

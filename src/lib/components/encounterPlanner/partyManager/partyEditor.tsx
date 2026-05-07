@@ -1,17 +1,17 @@
 /**
  * @fileoverview Party Editor Component
  * @description Table-based editor for party name and member list.
- * Each member renders as a table row with name and delete button.
- * TODO: Rows will gain character links and additional fields in a future iteration.
+ * Each member renders as a table row with name, optional character link, and delete button.
  *
  * @module partyEditor
- * @version 2.0.0
+ * @version 2.1.0
  * @author Typeir
  * @since 1.0.0
  */
 
 'use client';
 
+import { useCharacters } from '@/lib/context/CharacterSheetContext';
 import type { SavedParty } from '@/lib/types/party';
 import { generateId } from '@/lib/utils/encounterStorage';
 import { Trash2 } from 'lucide-react';
@@ -35,8 +35,7 @@ export interface PartyEditorProps {
 
 /**
  * Party editor with name input and table-based member list.
- * Each member is a table row with an editable name and a delete button.
- * TODO: Rows will gain character sheet links in a future iteration.
+ * Each member is a table row with an editable name, a character link dropdown, and a delete button.
  *
  * @component
  * @param {PartyEditorProps} props - Component props
@@ -52,6 +51,7 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
 }) => {
   const t = useTranslations('encounterPlanner');
   const [party, setParty] = useState<SavedParty>(initialParty);
+  const characters = useCharacters();
 
   const handleNameChange = useCallback((name: string) => {
     setParty((prev) => ({ ...prev, name }));
@@ -83,6 +83,20 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
     }));
   }, []);
 
+  const handleLinkCharacter = useCallback(
+    (memberId: string, characterId: string) => {
+      setParty((prev) => ({
+        ...prev,
+        members: prev.members.map((m) =>
+          m.id === memberId
+            ? { ...m, characterId: characterId || undefined }
+            : m,
+        ),
+      }));
+    },
+    [],
+  );
+
   const handleSave = useCallback(() => {
     if (!party.name.trim()) return;
     onSave(party);
@@ -106,6 +120,7 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
         <thead>
           <tr>
             <th className={styles.memberTableHeader}>{t('memberName')}</th>
+            <th className={styles.memberTableHeader}>{t('linkedCharacter')}</th>
             <th className={styles.memberTableHeaderAction} />
           </tr>
         </thead>
@@ -122,6 +137,22 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
                   }
                   aria-label={t('memberName')}
                 />
+              </td>
+              <td className={styles.memberTableCell}>
+                <select
+                  className={styles.memberNameInput}
+                  value={member.characterId ?? ''}
+                  onChange={(e) =>
+                    handleLinkCharacter(member.id, e.target.value)
+                  }
+                  aria-label={t('linkCharacter')}>
+                  <option value=''>{t('noCharacterLinked')}</option>
+                  {characters.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
               </td>
               <td className={styles.memberTableCellAction}>
                 <button

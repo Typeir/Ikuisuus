@@ -73,6 +73,24 @@ export class VocationFeatureEntity {
 
   @Property({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
   sortOrder!: number;
+
+  /** @property {number | null} startLine - 1-indexed start line of this feature's heading block in the source MDX */
+  @Property({
+    type: 'number',
+    fieldName: 'start_line',
+    columnType: 'smallint',
+    nullable: true,
+  })
+  startLine?: number | null;
+
+  /** @property {number | null} endLine - 1-indexed last line of this feature's heading block in the source MDX */
+  @Property({
+    type: 'number',
+    fieldName: 'end_line',
+    columnType: 'smallint',
+    nullable: true,
+  })
+  endLine?: number | null;
 }
 
 /* ────────────────────────────  Entity  ─────────────────────────────── */

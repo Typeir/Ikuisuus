@@ -35,6 +35,8 @@ const rowToVocation = (row: VocationEntity): VocationMetadata => {
     .map((f) => ({
       level: f.level,
       name: f.name,
+      startLine: f.startLine ?? undefined,
+      endLine: f.endLine ?? undefined,
     }));
 
   const spellcasting: VocationSpellcasting | undefined =

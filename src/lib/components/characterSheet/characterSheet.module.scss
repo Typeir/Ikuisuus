@@ -1,0 +1,310 @@
+/**
+ * Character Sheet core layout styles — stat ticker, roster, sheet header,
+ * ability scores, combat stats, column grid.
+ * Widget styles live in characterSheetWidgets.module.scss.
+ * All colors via CSS variables — no color literals.
+ */
+
+/** =====================================================================
+ * Roster Layout
+ * ===================================================================== */
+
+.characterRoster {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  height: 100%;
+  min-height: 0;
+  background: transparent;
+}
+
+.rosterSidebar {
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.rosterSidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rosterTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.createCharBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+
+  &:hover {
+    color: var(--color-emphasis);
+  }
+}
+
+.rosterEmpty {
+  color: var(--color-secondary);
+  font-style: italic;
+  padding: 1rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.rosterList {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+}
+
+.rosterItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.25rem;
+}
+
+.rosterItemActive {
+  background: var(--color-bg-tertiary);
+  border-left: 3px solid var(--color-accent);
+}
+
+.rosterItemBtn {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.5rem 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--color-text);
+}
+
+.rosterItemName {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.rosterItemMeta {
+  font-size: 0.7rem;
+  color: var(--color-secondary);
+}
+
+.rosterDeleteBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-secondary);
+  padding: 0.25rem;
+
+  &:hover {
+    color: var(--color-danger, var(--color-emphasis));
+  }
+}
+
+.rosterMain {
+  overflow-y: auto;
+}
+
+.rosterPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-secondary);
+  font-style: italic;
+}
+
+/** =====================================================================
+ * Character Sheet Layout
+ * ===================================================================== */
+
+.characterSheet {
+  padding: 1.25rem 1.5rem;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.charName {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--color-accent);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.nameFirstLetter {
+  font-size: 4.5em;
+  font-family: var(--font-empyrean, inherit);
+  font-weight: 500;
+  line-height: 0;
+  display: inline;
+  vertical-align: sub;
+  letter-spacing: -0.65rem;
+  background: linear-gradient(
+    to bottom,
+    var(--color-accent),
+    var(--color-actionable),
+    var(--color-accent)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/** =====================================================================
+ * Ability Scores
+ * ===================================================================== */
+
+.abilityRow {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.abilityBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface);
+  backdrop-filter: blur(4px);
+  min-width: 56px;
+  gap: 0;
+}
+
+.abilityLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+
+.abilityMod {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--color-accent);
+  line-height: 1.2;
+}
+
+.abilityScore {
+  font-size: 0.7rem;
+  color: var(--color-secondary);
+}
+
+/** =====================================================================
+ * Combat Stats Row
+ * ===================================================================== */
+
+.combatStatsRow {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+}
+
+.statChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface);
+  backdrop-filter: blur(4px);
+  gap: 0.15rem;
+}
+
+.statChipLabel {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-secondary);
+}
+
+.statChipValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.tempHp {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+}
+
+.sheetColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.sheetLeft,
+.sheetRight {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.skillsToolsRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+  min-width: 0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  margin: 0 0 0.75rem;
+  font-weight: bold;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+  }
+}
+
+.booonsSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.boonCards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

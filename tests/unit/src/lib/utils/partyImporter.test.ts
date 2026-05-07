@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for Party Importer Utilities
  * @description Tests party member combatant creation and combat import behavior.
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  *
@@ -10,6 +10,7 @@
  * @requires @/lib/utils/partyImporter - Party import utilities
  */
 
+import type { CharacterSheet } from '@/lib/types/character';
 import type { InProgressCombat } from '@/lib/types/inProgressCombat';
 import type { SavedParty } from '@/lib/types/party';
 import {
@@ -81,6 +82,56 @@ describe('partyImporter', () => {
       const a = createPartyMemberCombatant('Alaric');
       const b = createPartyMemberCombatant('Brenna');
       expect(a.id).not.toBe(b.id);
+    });
+
+    it('should use default zeroed stats when no character provided', () => {
+      const combatant = createPartyMemberCombatant('Alaric');
+      expect(combatant.hpCurrent).toBe(0);
+      expect(combatant.hpMax).toBe(0);
+      expect(combatant.ac).toBe(0);
+      expect(combatant.initiativeBonus).toBe(0);
+      expect(combatant.proficiencyBonus).toBeNull();
+      expect(combatant.stats).toEqual({
+        str: 10,
+        dex: 10,
+        con: 10,
+        int: 10,
+        wis: 10,
+        cha: 10,
+      });
+    });
+
+    it('should seed HP, AC, stats, and bonuses from provided character sheet', () => {
+      const character: Partial<CharacterSheet> = {
+        id: 'char-1',
+        name: 'Seraphina',
+        hpCurrent: 28,
+        hpMax: 35,
+        tempHp: 5,
+        ac: 16,
+        initiativeBonus: 3,
+        proficiencyBonus: 4,
+        abilityScores: { str: 14, dex: 16, con: 13, int: 10, wis: 12, cha: 15 },
+      } as CharacterSheet;
+
+      const combatant = createPartyMemberCombatant(
+        'Seraphina',
+        character as CharacterSheet,
+      );
+      expect(combatant.hpCurrent).toBe(28);
+      expect(combatant.hpMax).toBe(35);
+      expect(combatant.tempHp).toBe(5);
+      expect(combatant.ac).toBe(16);
+      expect(combatant.initiativeBonus).toBe(3);
+      expect(combatant.proficiencyBonus).toBe(4);
+      expect(combatant.stats).toEqual({
+        str: 14,
+        dex: 16,
+        con: 13,
+        int: 10,
+        wis: 12,
+        cha: 15,
+      });
     });
   });
 

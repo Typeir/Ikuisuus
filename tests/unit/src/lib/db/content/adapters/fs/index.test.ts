@@ -16,6 +16,7 @@ describe('adapters/fs/index barrel', () => {
     expect(barrel.fsHeirloomRepository).toBeDefined();
     expect(barrel.fsSpellRepository).toBeDefined();
     expect(barrel.fsTrinketRepository).toBeDefined();
+    expect(barrel.fsFeatRepository).toBeDefined();
     expect(barrel.readMetadataFiles).toBeDefined();
   });
 
@@ -40,5 +41,8 @@ describe('adapters/fs/index barrel', () => {
 
     expect(typeof barrel.fsTrinketRepository.list).toBe('function');
     expect(typeof barrel.fsTrinketRepository.getBySlug).toBe('function');
+
+    expect(typeof barrel.fsFeatRepository.list).toBe('function');
+    expect(typeof barrel.fsFeatRepository.getBySlug).toBe('function');
   });
 });

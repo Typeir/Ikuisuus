@@ -51,3 +51,5 @@ export type {
     VocationSpellcasting
 } from './vocationMetadata';
 
+export type { FeatAbilityIncrease, FeatMetadata } from './featMetadata';
+

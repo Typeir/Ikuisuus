@@ -7,6 +7,9 @@
  * legacy prose columns before those columns are dropped.
  *
  * @module scripts/db/migrations/008_refactor_bloodline_boons_to_tag_model
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import type { PoolClient } from 'pg';

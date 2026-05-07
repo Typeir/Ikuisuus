@@ -18,6 +18,7 @@ import {
     getSavedParties,
     saveParty,
 } from '@/lib/utils/partyStorage';
+import { storePersistentDataRef } from '@/lib/utils/storePersistentData';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockParty: SavedParty = {
@@ -37,6 +38,7 @@ const mockParty2: SavedParty = {
 
 describe('partyStorage', () => {
   let storage: Record<string, string>;
+  const cookieStore: Record<string, string> = {};
 
   beforeEach(() => {
     storage = {};
@@ -48,10 +50,43 @@ describe('partyStorage', () => {
         storage[key] = value;
       },
     );
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(
+      (key: string) => {
+        delete storage[key];
+      },
+    );
+
+    Object.defineProperty(document, 'cookie', {
+      configurable: true,
+      get: () =>
+        Object.entries(cookieStore)
+          .map(([k, v]) => `${k}=${v}`)
+          .join('; '),
+      set: (cookieStr: string) => {
+        const parts = cookieStr.split('; ');
+        const [nameVal] = parts;
+        const eqIdx = nameVal.indexOf('=');
+        if (eqIdx === -1) return;
+        const name = nameVal.slice(0, eqIdx);
+        const value = nameVal.slice(eqIdx + 1);
+        const maxAgePart = parts.find((p) =>
+          p.toLowerCase().startsWith('max-age='),
+        );
+        if (maxAgePart) {
+          const age = parseInt(maxAgePart.split('=')[1], 10);
+          if (age <= 0) {
+            delete cookieStore[name];
+            return;
+          }
+        }
+        cookieStore[name] = value;
+      },
+    });
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    Object.keys(cookieStore).forEach((k) => delete cookieStore[k]);
   });
 
   describe('getSavedParties', () => {
@@ -60,12 +95,15 @@ describe('partyStorage', () => {
     });
 
     it('should return empty array when stored value is invalid JSON', () => {
-      storage[EncounterStorage.SavedParties] = 'not-json';
+      storePersistentDataRef(EncounterStorage.SavedParties, 'not-json');
       expect(getSavedParties()).toEqual([]);
     });
 
-    it('should return saved parties from localStorage', () => {
-      storage[EncounterStorage.SavedParties] = JSON.stringify([mockParty]);
+    it('should return saved parties from storage', () => {
+      storePersistentDataRef(
+        EncounterStorage.SavedParties,
+        JSON.stringify([mockParty]),
+      );
       expect(getSavedParties()).toEqual([mockParty]);
     });
   });
@@ -78,7 +116,10 @@ describe('partyStorage', () => {
     });
 
     it('should append a party to existing list', () => {
-      storage[EncounterStorage.SavedParties] = JSON.stringify([mockParty]);
+      storePersistentDataRef(
+        EncounterStorage.SavedParties,
+        JSON.stringify([mockParty]),
+      );
       saveParty(mockParty2);
       const stored = JSON.parse(storage[EncounterStorage.SavedParties]);
       expect(stored).toHaveLength(2);
@@ -86,7 +127,10 @@ describe('partyStorage', () => {
     });
 
     it('should replace existing party with same ID', () => {
-      storage[EncounterStorage.SavedParties] = JSON.stringify([mockParty]);
+      storePersistentDataRef(
+        EncounterStorage.SavedParties,
+        JSON.stringify([mockParty]),
+      );
       const updated = { ...mockParty, name: 'Updated Adventurers' };
       saveParty(updated);
       const stored = JSON.parse(storage[EncounterStorage.SavedParties]);
@@ -97,10 +141,10 @@ describe('partyStorage', () => {
 
   describe('deleteParty', () => {
     it('should remove a party by ID', () => {
-      storage[EncounterStorage.SavedParties] = JSON.stringify([
-        mockParty,
-        mockParty2,
-      ]);
+      storePersistentDataRef(
+        EncounterStorage.SavedParties,
+        JSON.stringify([mockParty, mockParty2]),
+      );
       deleteParty('party-1');
       const stored = JSON.parse(storage[EncounterStorage.SavedParties]);
       expect(stored).toHaveLength(1);
@@ -108,7 +152,10 @@ describe('partyStorage', () => {
     });
 
     it('should handle deleting non-existent ID gracefully', () => {
-      storage[EncounterStorage.SavedParties] = JSON.stringify([mockParty]);
+      storePersistentDataRef(
+        EncounterStorage.SavedParties,
+        JSON.stringify([mockParty]),
+      );
       deleteParty('nonexistent');
       const stored = JSON.parse(storage[EncounterStorage.SavedParties]);
       expect(stored).toHaveLength(1);
@@ -117,15 +164,18 @@ describe('partyStorage', () => {
 
   describe('getPartyById', () => {
     it('should return matching party', () => {
-      storage[EncounterStorage.SavedParties] = JSON.stringify([
-        mockParty,
-        mockParty2,
-      ]);
+      storePersistentDataRef(
+        EncounterStorage.SavedParties,
+        JSON.stringify([mockParty, mockParty2]),
+      );
       expect(getPartyById('party-2')).toEqual(mockParty2);
     });
 
     it('should return null when party not found', () => {
-      storage[EncounterStorage.SavedParties] = JSON.stringify([mockParty]);
+      storePersistentDataRef(
+        EncounterStorage.SavedParties,
+        JSON.stringify([mockParty]),
+      );
       expect(getPartyById('nonexistent')).toBeNull();
     });
 

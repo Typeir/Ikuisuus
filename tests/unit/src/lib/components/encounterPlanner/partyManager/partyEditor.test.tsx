@@ -1,8 +1,8 @@
 /**
  * @fileoverview Unit tests for Party Editor Component
- * @description Tests name editing, table-based member add/remove, and save/back actions.
+ * @description Tests name editing, table-based member add/remove, character linking, and save/back actions.
  *
- * @version 2.0.0
+ * @version 2.1.0
  * @author Typeir
  * @since 1.0.0
  *
@@ -12,13 +12,19 @@
  */
 
 import { PartyEditor } from '@/lib/components/encounterPlanner/partyManager/partyEditor';
+import { useCharacters } from '@/lib/context/CharacterSheetContext';
 import type { SavedParty } from '@/lib/types/party';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { Mock } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/utils/encounterStorage', () => ({
   generateId: vi.fn(() => 'new-member-id'),
+}));
+
+vi.mock('@/lib/context/CharacterSheetContext', () => ({
+  useCharacters: vi.fn(() => []),
 }));
 
 describe('PartyEditor', () => {
@@ -133,5 +139,79 @@ describe('PartyEditor', () => {
 
     await user.click(screen.getByText('saveParty'));
     expect(mockOnSave).not.toHaveBeenCalled();
+  });
+
+  it('should render character link dropdown with no character linked option', () => {
+    render(
+      <PartyEditor party={baseParty} onSave={mockOnSave} onBack={mockOnBack} />,
+    );
+    expect(screen.getByLabelText('linkCharacter')).toBeInTheDocument();
+    expect(screen.getByText('noCharacterLinked')).toBeInTheDocument();
+  });
+
+  it('should populate character link dropdown with available characters', () => {
+    (useCharacters as Mock).mockReturnValue([
+      {
+        id: 'char-1',
+        name: 'Seraphina',
+        abilityScores: { str: 10, dex: 14, con: 12, int: 10, wis: 13, cha: 15 },
+        hpCurrent: 30,
+        hpMax: 30,
+        tempHp: null,
+        ac: 14,
+        initiativeBonus: 2,
+        proficiencyBonus: 3,
+        skills: [],
+        attacks: [],
+        boons: [],
+        features: [],
+        notes: '',
+      },
+    ]);
+
+    render(
+      <PartyEditor party={baseParty} onSave={mockOnSave} onBack={mockOnBack} />,
+    );
+
+    expect(
+      screen.getByRole('option', { name: 'Seraphina' }),
+    ).toBeInTheDocument();
+  });
+
+  it('should link a character to a member when selected', async () => {
+    (useCharacters as Mock).mockReturnValue([
+      {
+        id: 'char-1',
+        name: 'Seraphina',
+        abilityScores: { str: 10, dex: 14, con: 12, int: 10, wis: 13, cha: 15 },
+        hpCurrent: 30,
+        hpMax: 30,
+        tempHp: null,
+        ac: 14,
+        initiativeBonus: 2,
+        proficiencyBonus: 3,
+        skills: [],
+        attacks: [],
+        boons: [],
+        features: [],
+        notes: '',
+      },
+    ]);
+
+    const user = userEvent.setup();
+    render(
+      <PartyEditor party={baseParty} onSave={mockOnSave} onBack={mockOnBack} />,
+    );
+
+    await user.selectOptions(screen.getByLabelText('linkCharacter'), 'char-1');
+    await user.click(screen.getByText('saveParty'));
+
+    expect(mockOnSave).toHaveBeenCalledWith(
+      expect.objectContaining({
+        members: expect.arrayContaining([
+          expect.objectContaining({ id: 'm1', characterId: 'char-1' }),
+        ]),
+      }),
+    );
   });
 });

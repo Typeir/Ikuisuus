@@ -18,15 +18,15 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-  clean,
-  extractAllTags,
-  getMetaSubdir,
-  parseDescription,
-  parseTitle,
-  runGenerator,
-  runWithCli,
-  type SharedData,
-  type StorageAdapter,
+    clean,
+    extractAllTags,
+    getMetaSubdir,
+    parseDescription,
+    parseTitle,
+    runGenerator,
+    runWithCli,
+    type SharedData,
+    type StorageAdapter,
 } from '.';
 import { CASTING, FEATURE, TABLE } from './classPatterns';
 import { LIST, SLUG, TEXT } from './parsingPatterns';
@@ -297,6 +297,50 @@ function classifyArchetype(hitDie: string, progression: string | null): string {
 }
 
 /**
+ * Scans MDX lines for a heading matching `featureName` and returns the 1-indexed
+ * start and end lines of its heading block (up to the next equal-or-higher heading).
+ *
+ * @param {string[]} lines - MDX file split by newline
+ * @param {string} featureName - Feature display name to search for
+ * @returns {{ startLine: number; endLine: number } | null} Line range or null if not found
+ */
+function findFeatureLineRange(
+  lines: string[],
+  featureName: string,
+): { startLine: number; endLine: number } | null {
+  const target = featureName.replace(/\*\*/g, '').trim().toLowerCase();
+  let startIdx = -1;
+  let headingLevel = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const m = /^(#{1,6})\s+(.+)$/.exec(lines[i]);
+    if (!m) continue;
+    if (m[2].replace(/\*\*/g, '').trim().toLowerCase() === target) {
+      startIdx = i;
+      headingLevel = m[1].length;
+      break;
+    }
+  }
+
+  if (startIdx < 0) return null;
+
+  let endIdx = lines.length - 1;
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    const m = /^(#{1,6})\s+/.exec(lines[i]);
+    if (m && m[1].length <= headingLevel) {
+      endIdx = i - 1;
+      break;
+    }
+  }
+
+  while (endIdx > startIdx && lines[endIdx].trim() === '') {
+    endIdx--;
+  }
+
+  return { startLine: startIdx + 1, endLine: endIdx + 1 };
+}
+
+/**
  * Generates tags for a vocation based on its properties.
  *
  * @param {Record<string, unknown>} metadata - Parsed vocation metadata
@@ -387,6 +431,11 @@ async function parseVocationFile(
     const primaryAbility = parseProficiencies(traits['Primary Ability'] || '');
 
     const { features, hasSpellSlots, headers } = parseFeatureTable(raw);
+    const rawLines = raw.split('\n');
+    const featuresWithLines = features.map((f) => {
+      const range = findFeatureLineRange(rawLines, f.name);
+      return range ? { ...f, ...range } : f;
+    });
 
     let spellcasting: { ability: string; progression: string } | undefined;
     if (hasSpellSlots) {
@@ -423,7 +472,7 @@ async function parseVocationFile(
       skillProficiencies,
       spellcasting,
       specializations,
-      features,
+      features: featuresWithLines,
       tags: [],
       indexVersion: 1,
     };

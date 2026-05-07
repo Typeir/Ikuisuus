@@ -16,10 +16,12 @@
  * @interface PartyMember
  * @property {string} id - Unique identifier for this member
  * @property {string} name - Character name displayed in the combat runner
+ * @property {string} [characterId] - Optional link to a CharacterSheet id
  */
 export interface PartyMember {
   id: string;
   name: string;
+  characterId?: string;
 }
 
 /**

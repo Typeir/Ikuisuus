@@ -128,5 +128,25 @@
     "file": "src/lib/components/sidebar/sidebar.tsx",
     "maxLines": 500,
     "justification": "Sidebar orchestrator with lazy-mount animation, virtualisation threshold, stub lazy-loading effect, and SidebarItem fold logic — splitting would break co-located type definitions"
+  },
+  {
+    "file": "src/lib/components/characterSheet/characterSheet.module.scss",
+    "maxLines": 260,
+    "justification": "Character sheet layout SCSS covering all panel sections, edit-mode states, and responsive grid — splitting would break module-scoped class references"
+  },
+  {
+    "file": "src/lib/components/characterSheet/characterSheetWidgets.module.scss",
+    "maxLines": 400,
+    "justification": "Comprehensive widget styles for ability score blocks, combat stats, skills, tools, attacks, features, boons, notes, and shard markdown rendering — all tightly coupled to the character sheet layout"
+  },
+  {
+    "file": "src/lib/components/characterSheet/characterSheet.tsx",
+    "maxLines": 270,
+    "justification": "Top-level character sheet orchestrator with panel layout, edit-mode state, and all sub-section rendering — splitting would break tightly coupled section refs"
+  },
+  {
+    "file": "src/lib/components/characterSheet/vocationSelector.tsx",
+    "maxLines": 275,
+    "justification": "Vocation selector with combobox, feature list, boon allocation, and proficiency display — all tightly coupled to vocation/specialization state management"
   }
 ]

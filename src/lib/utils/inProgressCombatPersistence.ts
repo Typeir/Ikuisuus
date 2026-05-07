@@ -1,12 +1,18 @@
 /**
  * @fileoverview In-Progress Combat Persistence
- * @description localStorage CRUD operations, migration, and query helpers
- * for in-progress combat snapshots.
+ * @description Multi-layer persistent storage CRUD, migration, and query helpers
+ * for in-progress combat snapshots. Large-payload arrays (combats) use the ref
+ * strategy via storePersistentDataRef/fetchPersistentDataRef; scalar IDs use
+ * storePersistentData/fetchPersistentData/removePersistentData.
  *
  * @module inProgressCombatPersistence
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
+ *
+ * @requires @/lib/enums/encounterPlanner EncounterStorage keys
+ * @requires @/lib/utils/storePersistentData Multi-layer persistence helpers
+ * @requires @/lib/utils/fetchPersistentData Cookie-first read helper
  */
 
 import { EncounterStorage } from '@/lib/enums/encounterPlanner';
@@ -15,6 +21,13 @@ import type {
     InProgressCombat,
     InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
+import { fetchPersistentData } from '@/lib/utils/fetchPersistentData';
+import {
+    fetchPersistentDataRef,
+    removePersistentData,
+    storePersistentData,
+    storePersistentDataRef,
+} from '@/lib/utils/storePersistentData';
 
 /**
  * Migrate a combatant to include new mechanics fields if missing.
@@ -103,12 +116,12 @@ export const getInProgressCombats = (): InProgressCombat[] => {
   if (typeof window === 'undefined') return [];
 
   try {
-    const data = localStorage.getItem(EncounterStorage.InProgressCombats);
+    const data = fetchPersistentDataRef(EncounterStorage.InProgressCombats);
     if (!data) return [];
     const parsed = JSON.parse(data);
     return parsed.map(migrateInProgressCombat);
   } catch (error) {
-    logger.warning('Error loading in-progress combats from localStorage', {
+    logger.warning('Error loading in-progress combats from storage', {
       error: error instanceof Error ? error.message : String(error),
     });
     return [];
@@ -148,12 +161,12 @@ export const saveInProgressCombat = (combat: InProgressCombat): void => {
       combats.push(combat);
     }
 
-    localStorage.setItem(
+    storePersistentDataRef(
       EncounterStorage.InProgressCombats,
       JSON.stringify(combats),
     );
   } catch (error) {
-    logger.error('Error saving in-progress combat to localStorage', {
+    logger.error('Error saving in-progress combat to storage', {
       error: error instanceof Error ? error.message : String(error),
       combatId: combat.id,
     });
@@ -173,12 +186,12 @@ export const deleteInProgressCombat = (id: string): void => {
   try {
     const combats = getInProgressCombats();
     const filtered = combats.filter((c) => c.id !== id);
-    localStorage.setItem(
+    storePersistentDataRef(
       EncounterStorage.InProgressCombats,
       JSON.stringify(filtered),
     );
   } catch (error) {
-    logger.error('Error deleting in-progress combat from localStorage', {
+    logger.error('Error deleting in-progress combat from storage', {
       error: error instanceof Error ? error.message : String(error),
       combatId: id,
     });
@@ -193,7 +206,7 @@ export const deleteInProgressCombat = (id: string): void => {
  */
 export const getActiveInProgressCombatId = (): string | null => {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem(EncounterStorage.ActiveCombatId);
+  return fetchPersistentData(EncounterStorage.ActiveCombatId);
 };
 
 /**
@@ -206,9 +219,9 @@ export const getActiveInProgressCombatId = (): string | null => {
 export const setActiveInProgressCombatId = (id: string | null): void => {
   if (typeof window === 'undefined') return;
   if (id === null) {
-    localStorage.removeItem(EncounterStorage.ActiveCombatId);
+    removePersistentData(EncounterStorage.ActiveCombatId);
   } else {
-    localStorage.setItem(EncounterStorage.ActiveCombatId, id);
+    storePersistentData(EncounterStorage.ActiveCombatId, id);
   }
 };
 

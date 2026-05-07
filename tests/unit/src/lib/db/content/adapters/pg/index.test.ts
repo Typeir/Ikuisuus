@@ -28,6 +28,7 @@ describe('adapters/pg/index barrel', () => {
     expect(barrel.pgHeirloomRepository).toBeDefined();
     expect(barrel.pgSpellRepository).toBeDefined();
     expect(barrel.pgTrinketRepository).toBeDefined();
+    expect(barrel.pgFeatRepository).toBeDefined();
   });
 
   it('should export repositories with expected methods', async () => {

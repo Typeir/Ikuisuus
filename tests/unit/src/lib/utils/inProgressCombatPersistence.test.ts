@@ -9,6 +9,7 @@ import type {
     InProgressCombat,
     InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
+import { storePersistentDataRef } from '@/lib/utils/storePersistentData';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
@@ -87,10 +88,12 @@ function makeCombat(
 
 describe('inProgressCombatPersistence', () => {
   let storage: Record<string, string>;
+  const cookieStore: Record<string, string> = {};
 
   beforeEach(() => {
     storage = {};
-    vi.stubGlobal('localStorage', {
+
+    const storageMock = {
       getItem: vi.fn((key: string) => storage[key] ?? null),
       setItem: vi.fn((key: string, value: string) => {
         storage[key] = value;
@@ -98,11 +101,42 @@ describe('inProgressCombatPersistence', () => {
       removeItem: vi.fn((key: string) => {
         delete storage[key];
       }),
+    };
+
+    vi.stubGlobal('localStorage', storageMock);
+    vi.stubGlobal('sessionStorage', storageMock);
+
+    Object.defineProperty(document, 'cookie', {
+      configurable: true,
+      get: () =>
+        Object.entries(cookieStore)
+          .map(([k, v]) => `${k}=${v}`)
+          .join('; '),
+      set: (cookieStr: string) => {
+        const parts = cookieStr.split('; ');
+        const [nameVal] = parts;
+        const eqIdx = nameVal.indexOf('=');
+        if (eqIdx === -1) return;
+        const name = nameVal.slice(0, eqIdx);
+        const value = nameVal.slice(eqIdx + 1);
+        const maxAgePart = parts.find((p) =>
+          p.toLowerCase().startsWith('max-age='),
+        );
+        if (maxAgePart) {
+          const age = parseInt(maxAgePart.split('=')[1], 10);
+          if (age <= 0) {
+            delete cookieStore[name];
+            return;
+          }
+        }
+        cookieStore[name] = value;
+      },
     });
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    Object.keys(cookieStore).forEach((k) => delete cookieStore[k]);
   });
 
   describe('getInProgressCombats', () => {
@@ -112,9 +146,12 @@ describe('inProgressCombatPersistence', () => {
       expect(getInProgressCombats()).toEqual([]);
     });
 
-    it('should return parsed combats from localStorage', async () => {
+    it('should return parsed combats from storage', async () => {
       const combat = makeCombat();
-      storage[EncounterStorage.InProgressCombats] = JSON.stringify([combat]);
+      storePersistentDataRef(
+        EncounterStorage.InProgressCombats,
+        JSON.stringify([combat]),
+      );
 
       const { getInProgressCombats } =
         await import('@/lib/utils/inProgressCombatPersistence');
@@ -154,12 +191,15 @@ describe('inProgressCombatPersistence', () => {
         },
       };
 
-      storage[EncounterStorage.InProgressCombats] = JSON.stringify([
-        {
-          ...makeCombat(),
-          combatants: [legacyCombatant],
-        },
-      ]);
+      storePersistentDataRef(
+        EncounterStorage.InProgressCombats,
+        JSON.stringify([
+          {
+            ...makeCombat(),
+            combatants: [legacyCombatant],
+          },
+        ]),
+      );
 
       const { getInProgressCombats } =
         await import('@/lib/utils/inProgressCombatPersistence');
@@ -185,9 +225,10 @@ describe('inProgressCombatPersistence', () => {
 
   describe('getInProgressCombat', () => {
     it('should return combat by ID', async () => {
-      storage[EncounterStorage.InProgressCombats] = JSON.stringify([
-        makeCombat(),
-      ]);
+      storePersistentDataRef(
+        EncounterStorage.InProgressCombats,
+        JSON.stringify([makeCombat()]),
+      );
 
       const { getInProgressCombat } =
         await import('@/lib/utils/inProgressCombatPersistence');
@@ -197,9 +238,10 @@ describe('inProgressCombatPersistence', () => {
     });
 
     it('should return null for non-existent ID', async () => {
-      storage[EncounterStorage.InProgressCombats] = JSON.stringify([
-        makeCombat(),
-      ]);
+      storePersistentDataRef(
+        EncounterStorage.InProgressCombats,
+        JSON.stringify([makeCombat()]),
+      );
 
       const { getInProgressCombat } =
         await import('@/lib/utils/inProgressCombatPersistence');
@@ -220,7 +262,10 @@ describe('inProgressCombatPersistence', () => {
 
     it('should update an existing combat by ID', async () => {
       const original = makeCombat();
-      storage[EncounterStorage.InProgressCombats] = JSON.stringify([original]);
+      storePersistentDataRef(
+        EncounterStorage.InProgressCombats,
+        JSON.stringify([original]),
+      );
 
       const { saveInProgressCombat } =
         await import('@/lib/utils/inProgressCombatPersistence');
@@ -234,10 +279,13 @@ describe('inProgressCombatPersistence', () => {
 
   describe('deleteInProgressCombat', () => {
     it('should remove combat by ID', async () => {
-      storage[EncounterStorage.InProgressCombats] = JSON.stringify([
-        makeCombat({ id: 'keep' }),
-        makeCombat({ id: 'remove' }),
-      ]);
+      storePersistentDataRef(
+        EncounterStorage.InProgressCombats,
+        JSON.stringify([
+          makeCombat({ id: 'keep' }),
+          makeCombat({ id: 'remove' }),
+        ]),
+      );
 
       const { deleteInProgressCombat } =
         await import('@/lib/utils/inProgressCombatPersistence');

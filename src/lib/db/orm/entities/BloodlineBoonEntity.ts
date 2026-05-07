@@ -50,4 +50,22 @@ export class BloodlineBoonEntity {
 
   @Property({ type: 'string[]' })
   tags: string[] = [];
+
+  /** @property {number | null} startLine - 1-indexed start line of this boon's heading block in the source MDX */
+  @Property({
+    type: 'number',
+    fieldName: 'start_line',
+    columnType: 'smallint',
+    nullable: true,
+  })
+  startLine?: number | null;
+
+  /** @property {number | null} endLine - 1-indexed last line of this boon's content block in the source MDX */
+  @Property({
+    type: 'number',
+    fieldName: 'end_line',
+    columnType: 'smallint',
+    nullable: true,
+  })
+  endLine?: number | null;
 }

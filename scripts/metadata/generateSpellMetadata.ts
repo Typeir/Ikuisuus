@@ -11,6 +11,7 @@
 
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
+import matter from 'gray-matter';
 import path from 'path';
 import {
     GameData,
@@ -332,8 +333,11 @@ async function parseSpellFile(
   filePath: string,
   sharedData: SharedData,
 ): Promise<object> {
-  const content = await fs.readFile(filePath, 'utf8');
+  const raw = await fs.readFile(filePath, 'utf8');
+  const { data: frontmatter, content } = matter(raw);
   const lines = content.split('\n');
+  const source =
+    typeof frontmatter.source === 'string' ? frontmatter.source : undefined;
 
   const slug = filePathToSlug(filePath);
   const title = parseTitle(lines);
@@ -363,6 +367,7 @@ async function parseSpellFile(
     ...properties,
     components: Object.keys(components).length ? components : undefined,
     tags,
+    ...(source && { source }),
   };
 
   if (spellLists.length > 0) {

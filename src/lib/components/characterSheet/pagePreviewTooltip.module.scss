@@ -1,0 +1,44 @@
+/**
+ * @fileoverview Page Preview Tooltip Styles
+ * @description Icon button with hover-glow, active state, and grow-on-hover.
+ *
+ * @module lib/components/characterSheet/pagePreviewTooltip.module
+ */
+
+@use '@/styles/mixins-button' as *;
+@use '@/styles/mixins-focus' as *;
+
+.previewBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    filter 0.18s ease,
+    transform 0.15s ease;
+
+  @include button-hover-scale(1.15);
+
+  &:hover {
+    color: var(--color-primary);
+    filter: drop-shadow(0 0 6px var(--color-primary));
+  }
+
+  &:focus-visible {
+    @include focus-glow(3px);
+    outline: none;
+  }
+}
+
+.active {
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 4px var(--color-primary));
+}

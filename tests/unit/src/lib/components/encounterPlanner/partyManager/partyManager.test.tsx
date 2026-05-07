@@ -49,6 +49,10 @@ vi.mock('@/lib/utils/encounterStorage', () => ({
   generateId: vi.fn(() => 'generated-id'),
 }));
 
+vi.mock('@/lib/context/CharacterSheetContext', () => ({
+  useCharacters: vi.fn(() => []),
+}));
+
 describe('PartyManager', () => {
   let mockOnClose: ReturnType<typeof vi.fn>;
   let mockOnImport: ReturnType<typeof vi.fn>;
