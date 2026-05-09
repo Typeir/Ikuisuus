@@ -61,11 +61,7 @@ describe('fsFeatRepository', () => {
     });
 
     it('filters records that are missing required fields', async () => {
-      readMetadataFiles.mockReturnValue([
-        { slug: 'tough' },
-        FEATS[0],
-        null,
-      ]);
+      readMetadataFiles.mockReturnValue([{ slug: 'tough' }, FEATS[0], null]);
       const result = await fsFeatRepository.list('en');
       expect(result).toHaveLength(1);
       expect(result[0].slug).toBe('tough');

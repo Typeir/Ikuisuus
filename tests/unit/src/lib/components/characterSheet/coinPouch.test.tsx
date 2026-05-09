@@ -14,15 +14,15 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('CoinPouch', () => {
-  it('migrates legacy currency into a 5e Standard holdings card', () => {
+  it('migrates legacy currency into a Gold Standard holdings card', () => {
     const data = {
       ...createEmptyCharacter(),
       currency: { pp: 1, gp: 5, ep: 0, sp: 10, cp: 50 },
       coinHoldings: [],
     };
     render(<CoinPouch data={data} editing={false} onChange={vi.fn()} />);
-    expect(screen.getByText('5e Standard')).toBeTruthy();
-    expect(screen.getByText(/Gold/)).toBeTruthy();
+    expect(screen.getByText('Gold Standard')).toBeTruthy();
+    expect(screen.getAllByText(/Gold/).length).toBeGreaterThan(0);
   });
 
   it('renders existing coinHoldings without falling back to legacy currency', () => {
@@ -30,13 +30,13 @@ describe('CoinPouch', () => {
       ...createEmptyCharacter(),
       coinHoldings: [
         {
-          systemName: '5e Standard',
+          systemName: 'Gold Standard',
           counts: { Gold: 7 },
         },
       ],
     };
     render(<CoinPouch data={data} editing={false} onChange={vi.fn()} />);
-    expect(screen.getByText('5e Standard')).toBeTruthy();
+    expect(screen.getByText('Gold Standard')).toBeTruthy();
     const goldInput = screen
       .getAllByRole('spinbutton')
       .find((el) => (el as HTMLInputElement).value === '7');
@@ -48,7 +48,7 @@ describe('CoinPouch', () => {
       ...createEmptyCharacter(),
       coinHoldings: [
         {
-          systemName: '5e Standard',
+          systemName: 'Gold Standard',
           counts: { Gold: 5 },
         },
       ],

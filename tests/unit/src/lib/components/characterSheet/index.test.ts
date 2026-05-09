@@ -66,9 +66,8 @@ describe('characterSheet barrel index', () => {
   });
 
   it('should export ContentShardPanel', async () => {
-    const { ContentShardPanel } = await import(
-      '@/lib/components/characterSheet'
-    );
+    const { ContentShardPanel } =
+      await import('@/lib/components/characterSheet');
     expect(ContentShardPanel).toBeDefined();
   });
 

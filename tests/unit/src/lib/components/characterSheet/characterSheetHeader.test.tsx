@@ -49,7 +49,9 @@ describe('CharacterSheetHeader', () => {
         onChange={() => {}}
       />,
     );
-    expect(screen.getByRole('button', { name: 'ariaEditCharacter' })).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: 'ariaEditCharacter' }),
+    ).toBeTruthy();
 
     rerender(
       <CharacterSheetHeader

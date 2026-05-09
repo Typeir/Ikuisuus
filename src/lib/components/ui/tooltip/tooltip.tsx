@@ -11,6 +11,7 @@
 
 'use client';
 
+import { CircleHelp } from 'lucide-react';
 import {
   Children,
   ComponentType,
@@ -49,6 +50,9 @@ export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
  * @property {string} [className] - Custom class for tooltip content
  * @property {boolean} [showArrow=true] - Whether to show arrow pointing to trigger
  * @property {string} [id] - ID for ARIA relationship
+ * @property {boolean} [clickable=false] - When true, adds help icon and enables click handler
+ * @property {() => void} [onItemClick] - Callback when trigger is clicked in clickable mode
+ * @property {boolean} [showClickIcon=true] - When clickable, whether to show CircleHelp icon (default true)
  */
 export interface TooltipProps {
   content: ReactNode;
@@ -61,6 +65,9 @@ export interface TooltipProps {
   className?: string;
   showArrow?: boolean;
   id?: string;
+  clickable?: boolean;
+  onItemClick?: () => void;
+  showClickIcon?: boolean;
 }
 
 /**
@@ -161,6 +168,9 @@ export const Tooltip = memo(function Tooltip({
   className = '',
   showArrow = true,
   id,
+  clickable = false,
+  onItemClick,
+  showClickIcon = true,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -254,6 +264,19 @@ export const Tooltip = memo(function Tooltip({
     return children;
   }
 
+  const handleClick = () => {
+    if (clickable && onItemClick) {
+      onItemClick();
+    }
+  };
+
+  let triggerClassName = '';
+  if (clickable) {
+    triggerClassName = styles.triggerClickable;
+  } else if (showClickIcon) {
+    triggerClassName = styles.triggerWithIcon;
+  }
+
   return (
     <>
       <span
@@ -262,9 +285,18 @@ export const Tooltip = memo(function Tooltip({
         onMouseLeave={() => hide()}
         onFocus={() => show()}
         onBlur={() => hide()}
+        onClick={handleClick}
         style={{ display: 'inline-flex' }}
+        className={triggerClassName}
         aria-describedby={isVisible ? tooltipId : undefined}>
         {child}
+        {showClickIcon && (
+          <CircleHelp
+            size={14}
+            className={styles.clickIcon}
+            aria-hidden='true'
+          />
+        )}
       </span>
       {isVisible &&
         createPortal(

@@ -52,9 +52,7 @@ describe('ContentShardPanel', () => {
     );
     render(<ContentShardPanel contentType='feats' slug='alert' locale='en' />);
 
-    await waitFor(() =>
-      expect(screen.queryByText('Loading…')).toBeNull(),
-    );
+    await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 
     expect(screen.getByText('You are always alert.')).toBeTruthy();
   });
@@ -63,9 +61,7 @@ describe('ContentShardPanel', () => {
     mockFetch.mockResolvedValue(jsonResponse({ error: 'not found' }, 404));
     render(<ContentShardPanel contentType='bloodlines' slug='missing' />);
 
-    await waitFor(() =>
-      expect(screen.queryByText('Loading…')).toBeNull(),
-    );
+    await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 
     expect(screen.getByRole('alert')).toBeTruthy();
   });
@@ -74,9 +70,7 @@ describe('ContentShardPanel', () => {
     mockFetch.mockRejectedValue(new Error('network error'));
     render(<ContentShardPanel contentType='vocations' slug='barbarian' />);
 
-    await waitFor(() =>
-      expect(screen.queryByText('Loading…')).toBeNull(),
-    );
+    await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 
     expect(screen.getByRole('alert')).toBeTruthy();
     expect(screen.getByText(/network error/i)).toBeTruthy();
@@ -92,9 +86,7 @@ describe('ContentShardPanel', () => {
       />,
     );
 
-    await waitFor(() =>
-      expect(screen.queryByText('Loading…')).toBeNull(),
-    );
+    await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 
     expect(mockFetch).toHaveBeenCalledWith(
       '/api/content-shards/specializations/berserker?keys[]=main&locale=es',
@@ -112,9 +104,7 @@ describe('ContentShardPanel', () => {
 
     rerender(<ContentShardPanel contentType='feats' slug='resilient' />);
 
-    await waitFor(() =>
-      expect(mockFetch).toHaveBeenCalledTimes(2),
-    );
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2));
     expect(mockFetch).toHaveBeenLastCalledWith(
       '/api/content-shards/feats/resilient?keys[]=main&locale=en',
     );

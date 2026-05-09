@@ -15,14 +15,14 @@
 'use client';
 
 import {
-  createContext,
-  useCallback,
-  useContext,
-  useId,
-  useMemo,
-  useRef,
-  type KeyboardEvent,
-  type ReactNode,
+    createContext,
+    useCallback,
+    useContext,
+    useId,
+    useMemo,
+    useRef,
+    type KeyboardEvent,
+    type ReactNode,
 } from 'react';
 import styles from './tabs.module.scss';
 
@@ -143,8 +143,7 @@ export const TabList: React.FC<TabListProps> = ({ children, ariaLabel }) => {
     if (e.key === 'ArrowRight') {
       nextIndex = (currentIndex + 1) % tabs.length;
     } else if (e.key === 'ArrowLeft') {
-      nextIndex =
-        currentIndex <= 0 ? tabs.length - 1 : currentIndex - 1;
+      nextIndex = currentIndex <= 0 ? tabs.length - 1 : currentIndex - 1;
     } else if (e.key === 'Home') {
       nextIndex = 0;
     } else if (e.key === 'End') {

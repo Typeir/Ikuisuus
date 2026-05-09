@@ -11,10 +11,10 @@
 
 'use client';
 
-import { Chip } from '@/lib/components/ui/chip';
+import { ShardChip } from '@/lib/components/characterSheet/shardChip';
 import type {
-  CharacterSheet as CharacterSheetType,
   CharacterShard,
+  CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { AttacksTable } from '../attacksTable';
@@ -31,11 +31,13 @@ import styles from './tabs.module.scss';
  * @property {CharacterSheetType} data - Active character data
  * @property {boolean} editing - Whether edit mode is active
  * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch the draft
+ * @property {string} [locale] - Content locale (default `en`)
  */
 export interface OverviewTabProps {
   data: CharacterSheetType;
   editing: boolean;
   onChange: (patch: Partial<CharacterSheetType>) => void;
+  locale?: string;
 }
 
 /**
@@ -49,6 +51,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   data,
   editing,
   onChange,
+  locale = 'en',
 }) => {
   const t = useTranslations('characterSheet');
   const allShards: CharacterShard[] = [
@@ -69,19 +72,21 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           speedOverride={data.speedOverride}
           proficiencyBonus={data.proficiencyBonus}
         />
-        <SkillsTable
-          skills={data.skills}
-          abilityScores={data.abilityScores}
-          proficiencyBonus={data.proficiencyBonus}
-          onChange={(skills) => onChange({ skills })}
-          readOnly={!editing}
-        />
-        <ToolsTable
-          tools={data.tools}
-          proficiencyBonus={data.proficiencyBonus}
-          onChange={(tools) => onChange({ tools })}
-          readOnly={!editing}
-        />
+        <div className={styles.skillsToolsRow}>
+          <SkillsTable
+            skills={data.skills}
+            abilityScores={data.abilityScores}
+            proficiencyBonus={data.proficiencyBonus}
+            onChange={(skills) => onChange({ skills })}
+            readOnly={!editing}
+          />
+          <ToolsTable
+            tools={data.tools}
+            proficiencyBonus={data.proficiencyBonus}
+            onChange={(tools) => onChange({ tools })}
+            readOnly={!editing}
+          />
+        </div>
       </div>
 
       <div className={styles.column}>
@@ -96,18 +101,18 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             <h3 className={styles.sectionTitle}>{t('boons')}</h3>
             <div className={styles.chipCloud}>
               {allShards.map((shard) => {
-                const variant =
+                const chipColor =
                   shard.category === 'boon'
-                    ? 'boon'
+                    ? 'primary'
                     : shard.category === 'vocation-feature'
-                      ? 'vocation-feature'
-                      : 'specialization-feature';
+                      ? 'secondary'
+                      : 'tertiary';
                 return (
-                  <Chip
+                  <ShardChip
                     key={shard.id}
-                    label={shard.heading}
-                    variant={variant}
-                    title={shard.cachedText?.slice(0, 200)}
+                    shard={shard}
+                    color={chipColor}
+                    locale={locale}
                   />
                 );
               })}

@@ -88,9 +88,7 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
         <tr>
           <th scope='col'>{t('colSkill')}</th>
           <th scope='col'>{t('colAbility')}</th>
-          <th scope='col'>{t('colFamiliarity')}</th>
-          <th scope='col'>{t('colProficiency')}</th>
-          <th scope='col'>{t('colExpertise')}</th>
+          <th scope='col'>{t('colLevel')}</th>
           <th scope='col'>{t('colBonus')}</th>
         </tr>
       </thead>
@@ -98,6 +96,7 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
         {skills.map((skill, i) => {
           const bonus = computeBonus(skill);
           const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
+          const levelIndex = PROFICIENCY_CYCLE.indexOf(skill.proficiency);
           return (
             <tr
               key={skill.name}
@@ -108,35 +107,30 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
               <td className={styles.abilityTag}>
                 {skill.ability.toUpperCase()}
               </td>
-              <td aria-label={t('ariaFamiliarityLevel')}>
-                <span
-                  className={
-                    styles[
-                      `profDot-${skill.proficiency === 'familiarity' ? 'filled' : 'empty'}`
-                    ]
-                  }
-                  aria-hidden='true'
-                />
-              </td>
-              <td aria-label={t('ariaProficiencyLevel')}>
-                <span
-                  className={
-                    styles[
-                      `profDot-${skill.proficiency === 'proficient' ? 'filled' : 'empty'}`
-                    ]
-                  }
-                  aria-hidden='true'
-                />
-              </td>
-              <td aria-label={t('ariaExpertiseLevel')}>
-                <span
-                  className={
-                    styles[
-                      `profDot-${skill.proficiency === 'expertise' ? 'filled' : 'empty'}`
-                    ]
-                  }
-                  aria-hidden='true'
-                />
+              <td aria-label={t('ariaProfTrack')}>
+                <span className={styles.profTrack} aria-hidden='true'>
+                  <span
+                    className={
+                      styles[
+                        levelIndex >= 1 ? 'trackDot-filled' : 'trackDot-empty'
+                      ]
+                    }
+                  />
+                  <span
+                    className={
+                      styles[
+                        levelIndex >= 2 ? 'trackDot-filled' : 'trackDot-empty'
+                      ]
+                    }
+                  />
+                  <span
+                    className={
+                      styles[
+                        levelIndex >= 3 ? 'trackDot-filled' : 'trackDot-empty'
+                      ]
+                    }
+                  />
+                </span>
               </td>
               <td>{bonusStr}</td>
             </tr>

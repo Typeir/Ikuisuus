@@ -53,12 +53,15 @@ describe('BloodlineTab', () => {
       bloodlineTitle: 'Sun-Touched',
     };
     render(
-      <BloodlineTab data={data} editing={false} onChange={() => {}} locale='en' />,
+      <BloodlineTab
+        data={data}
+        editing={false}
+        onChange={() => {}}
+        locale='en'
+      />,
     );
 
-    await waitFor(() =>
-      expect(screen.queryByText('Loading…')).toBeNull(),
-    );
+    await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 
     expect(mockFetch).toHaveBeenCalledWith(
       '/api/content-shards/bloodlines/sun-touched?keys[]=main&locale=en',

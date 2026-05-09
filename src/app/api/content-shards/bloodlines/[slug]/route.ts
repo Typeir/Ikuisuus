@@ -56,7 +56,10 @@ export async function GET(
 
     const fileResult = await getFile(locale, meta.file);
     if (!fileResult) {
-      log.error('Content file not found for bloodline', { slug, file: meta.file });
+      log.error('Content file not found for bloodline', {
+        slug,
+        file: meta.file,
+      });
       return NextResponse.json(
         { error: `Content file not found for bloodline: ${slug}` },
         { status: 404 },

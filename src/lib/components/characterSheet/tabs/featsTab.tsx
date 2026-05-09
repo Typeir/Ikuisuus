@@ -13,10 +13,10 @@
 'use client';
 
 import { ContentShardPanel } from '@/lib/components/characterSheet/contentShardPanel';
-import { Chip } from '@/lib/components/ui/chip';
+import { ShardChip } from '@/lib/components/characterSheet/shardChip';
 import type {
-  CharacterSheet as CharacterSheetType,
-  CharacterShard,
+    CharacterShard,
+    CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
 import { FeatPicker } from '../featPicker';
 import styles from './tabs.module.scss';
@@ -76,11 +76,12 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({
         {selectedFeats.length > 0 && (
           <div className={styles.chipCloud}>
             {selectedFeats.map((feat) => (
-              <Chip
+              <ShardChip
                 key={feat.id}
-                label={feat.heading}
-                variant='feat'
+                shard={feat}
+                color='primary'
                 onRemove={editing ? () => handleRemove(feat.id) : undefined}
+                locale={locale}
               />
             ))}
           </div>

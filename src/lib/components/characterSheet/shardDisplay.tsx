@@ -56,10 +56,11 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
       return;
     }
     let cancelled = false;
-    void import('@/lib/md/renderMarkdownToHtml').then(({ renderMarkdownToHtml }) =>
-      renderMarkdownToHtml(bodyText).then((html) => {
-        if (!cancelled) setRenderedHtml(html);
-      }),
+    void import('@/lib/md/renderMarkdownToHtml').then(
+      ({ renderMarkdownToHtml }) =>
+        renderMarkdownToHtml(bodyText).then((html) => {
+          if (!cancelled) setRenderedHtml(html);
+        }),
     );
     return () => {
       cancelled = true;

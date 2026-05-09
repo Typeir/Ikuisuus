@@ -34,24 +34,20 @@ describe('featRepository factory', () => {
   it('defaults to the fs adapter', async () => {
     delete process.env.METADATA_BACKEND;
     vi.resetModules();
-    const { featRepository } = await import(
-      '@/lib/db/content/repositories/featRepository'
-    );
-    const { fsFeatRepository } = await import(
-      '@/lib/db/content/adapters/fs/fsFeatRepository'
-    );
+    const { featRepository } =
+      await import('@/lib/db/content/repositories/featRepository');
+    const { fsFeatRepository } =
+      await import('@/lib/db/content/adapters/fs/fsFeatRepository');
     expect(featRepository).toBe(fsFeatRepository);
   });
 
   it('returns the pg adapter when METADATA_BACKEND=pg', async () => {
     process.env.METADATA_BACKEND = 'pg';
     vi.resetModules();
-    const { featRepository } = await import(
-      '@/lib/db/content/repositories/featRepository'
-    );
-    const { pgFeatRepository } = await import(
-      '@/lib/db/content/adapters/pg/pgFeatRepository'
-    );
+    const { featRepository } =
+      await import('@/lib/db/content/repositories/featRepository');
+    const { pgFeatRepository } =
+      await import('@/lib/db/content/adapters/pg/pgFeatRepository');
     expect(featRepository).toBe(pgFeatRepository);
   });
 

@@ -125,10 +125,7 @@ function extractByLineRange(
  * @param {string} heading - Heading text to search for
  * @returns {string | null} Extracted heading block text or null when not found
  */
-function extractByHeadingText(
-  lines: string[],
-  heading: string,
-): string | null {
+function extractByHeadingText(lines: string[], heading: string): string | null {
   const target = heading.trim().toLowerCase();
   let startIdx = -1;
   let headingLevel = 0;

@@ -4,12 +4,7 @@
  */
 
 import { Tooltip, withTooltip } from '@/lib/components/ui/tooltip';
-import {
-    act,
-    fireEvent,
-    render,
-    screen
-} from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock createPortal for tooltip rendering
@@ -26,13 +21,27 @@ describe('Tooltip', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    Object.defineProperty(window, 'innerWidth', { value: 1024, writable: true });
-    Object.defineProperty(window, 'innerHeight', { value: 768, writable: true });
+    Object.defineProperty(window, 'innerWidth', {
+      value: 1024,
+      writable: true,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      value: 768,
+      writable: true,
+    });
     Element.prototype.getBoundingClientRect = function () {
       return {
-        x: 400, y: 300, width: 100, height: 40,
-        top: 300, right: 500, bottom: 340, left: 400,
-        toJSON() { return this; },
+        x: 400,
+        y: 300,
+        width: 100,
+        height: 40,
+        top: 300,
+        right: 500,
+        bottom: 340,
+        left: 400,
+        toJSON() {
+          return this;
+        },
       } as DOMRect;
     };
   });
@@ -355,6 +364,114 @@ describe('Tooltip', () => {
 
       const tooltip = screen.getByRole('tooltip');
       expect(tooltip).toHaveAttribute('id', 'test-tooltip');
+    });
+  });
+
+  describe('Clickable Mode', () => {
+    it('shows CircleHelp icon when clickable=true', () => {
+      const { container } = render(
+        <Tooltip content='Tooltip text' clickable showDelay={0}>
+          <button>Help me</button>
+        </Tooltip>,
+      );
+
+      const icon = container.querySelector('svg');
+      expect(icon).toBeInTheDocument();
+    });
+
+    it('does NOT show icon when showClickIcon=false', () => {
+      const { container } = render(
+        <Tooltip content='Tooltip text' showDelay={0} showClickIcon={false}>
+          <button>Hover me</button>
+        </Tooltip>,
+      );
+
+      const icon = container.querySelector('svg');
+      expect(icon).not.toBeInTheDocument();
+    });
+
+    it('applies triggerClickable class when clickable=true', () => {
+      const { container } = render(
+        <Tooltip content='Tooltip text' clickable showDelay={0}>
+          <button>Help me</button>
+        </Tooltip>,
+      );
+
+      const span = container.querySelector('span[style*="inline-flex"]');
+      expect(span?.className).toContain('triggerClickable');
+    });
+
+    it('does NOT apply triggerClickable class when clickable=false', () => {
+      const { container } = render(
+        <Tooltip content='Tooltip text' showDelay={0}>
+          <button>Hover me</button>
+        </Tooltip>,
+      );
+
+      const span = container.querySelector('span[style*="inline-flex"]');
+      expect(span?.className).not.toContain('triggerClickable');
+    });
+
+    it('calls onItemClick when trigger is clicked and clickable=true', () => {
+      const handleClick = vi.fn();
+      render(
+        <Tooltip
+          content='Tooltip text'
+          clickable
+          onItemClick={handleClick}
+          showDelay={0}>
+          <button>Click me</button>
+        </Tooltip>,
+      );
+
+      const button = screen.getByRole('button');
+      fireEvent.click(button);
+
+      expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('does NOT call onItemClick when clickable=false', () => {
+      const handleClick = vi.fn();
+      render(
+        <Tooltip
+          content='Tooltip text'
+          clickable={false}
+          onItemClick={handleClick}
+          showDelay={0}>
+          <button>Click me</button>
+        </Tooltip>,
+      );
+
+      const button = screen.getByRole('button');
+      fireEvent.click(button);
+
+      expect(handleClick).not.toHaveBeenCalled();
+    });
+
+    it('hides icon when showClickIcon=false', () => {
+      const { container } = render(
+        <Tooltip
+          content='Tooltip text'
+          clickable
+          showClickIcon={false}
+          showDelay={0}>
+          <button>Help me</button>
+        </Tooltip>,
+      );
+
+      const icon = container.querySelector('svg');
+      expect(icon).not.toBeInTheDocument();
+    });
+
+    it('shows icon by default when clickable=true', () => {
+      const { container } = render(
+        <Tooltip content='Tooltip text' clickable showDelay={0}>
+          <button>Help me</button>
+        </Tooltip>,
+      );
+
+      const icon = container.querySelector('svg');
+      expect(icon).toBeInTheDocument();
     });
   });
 });

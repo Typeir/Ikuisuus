@@ -33,8 +33,8 @@ vi.mock('@/lib/components/worldSim/overlay/OverlayContainer', () => ({
   OverlayContainer: () => <div data-testid='overlay-container' />,
 }));
 
-vi.mock('@/lib/components/worldSim/overlay/ContentPanel', () => ({
-  ContentPanel: () => <div data-testid='content-panel' />,
+vi.mock('@/lib/components/worldSim/overlay/WorldSimContentPanel', () => ({
+  WorldSimContentPanel: () => <div data-testid='content-panel' />,
 }));
 
 import { WorldSim } from '@/lib/components/worldSim/WorldSim';

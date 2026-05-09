@@ -8,49 +8,79 @@
   top: 0;
   left: 0;
   z-index: 10000;
-  
+
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
-  
+
   background-color: var(--color-bg-tertiary);
   color: var(--color-text);
   border: 1px solid var(--color-border);
   box-shadow: 0 4px 12px rgb(var(--color-shadow));
-  
+
   font-size: 0.8125rem;
   line-height: 1.4;
   text-align: left;
   word-wrap: break-word;
-  
+
   pointer-events: none;
-  
+
   // Animation — brief invisible hold lets useLayoutEffect position before paint
   opacity: 0;
   animation: tooltipFadeIn 0.2s ease-out forwards;
-  
+
   @keyframes tooltipFadeIn {
-    0%   { opacity: 0; }
-    25%  { opacity: 0; }
-    100% { opacity: 1; }
+    0% {
+      opacity: 0;
+    }
+    25% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
-  
+
   // Placement-specific entrance animations
   &.top {
     animation-name: tooltipFadeIn;
   }
-  
+
   &.bottom {
     animation-name: tooltipFadeIn;
   }
-  
+
   &.left {
     animation-name: tooltipFadeIn;
   }
-  
+
   &.right {
     animation-name: tooltipFadeIn;
   }
-  
+}
+
+// Trigger styles when clickable
+.triggerClickable {
+  cursor: pointer;
+  align-items: center;
+  gap: 0.35rem;
+
+  &:hover .clickIcon {
+    color: var(--color-accent);
+  }
+}
+
+// Trigger styles when showing icon but not clickable (no hover effect)
+.triggerWithIcon {
+  cursor: help;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+// CircleHelp icon styling for clickable mode
+.clickIcon {
+  color: var(--color-secondary);
+  flex-shrink: 0;
+  transition: color 0.15s ease;
 }
 
 // Arrow styling
@@ -58,12 +88,12 @@
   position: absolute;
   width: 8px;
   height: 8px;
-  
+
   background-color: var(--color-bg-tertiary);
   border: 1px solid var(--color-border);
-  
+
   transform: rotate(45deg);
-  
+
   // Hide partial borders for each placement
   .top & {
     bottom: -5px;
@@ -72,7 +102,7 @@
     border-top: none;
     border-left: none;
   }
-  
+
   .bottom & {
     top: -5px;
     left: 50%;
@@ -80,7 +110,7 @@
     border-bottom: none;
     border-right: none;
   }
-  
+
   .left & {
     right: -5px;
     top: 50%;
@@ -88,7 +118,7 @@
     border-bottom: none;
     border-left: none;
   }
-  
+
   .right & {
     left: -5px;
     top: 50%;
@@ -99,14 +129,14 @@
 }
 
 // Light theme support
-:global(html[data-theme="light"]) {
+:global(html[data-theme='light']) {
   .tooltip {
     background-color: var(--color-bg);
     color: var(--color-text);
     border-color: var(--color-border);
     box-shadow: 0 4px 12px rgb(var(--color-shadow));
   }
-  
+
   .arrow {
     background-color: var(--color-bg);
     border-color: var(--color-border);

@@ -88,9 +88,7 @@ export function ToolsTable({
       <thead>
         <tr>
           <th scope='col'>{t('colTool')}</th>
-          <th scope='col'>{t('colFamiliarity')}</th>
-          <th scope='col'>{t('colProficiency')}</th>
-          <th scope='col'>{t('colExpertise')}</th>
+          <th scope='col'>{t('colLevel')}</th>
           <th scope='col'>{t('colBonus')}</th>
         </tr>
       </thead>
@@ -98,6 +96,7 @@ export function ToolsTable({
         {tools.map((tool, i) => {
           const bonus = computeBonus(tool);
           const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
+          const levelIndex = PROFICIENCY_CYCLE.indexOf(tool.proficiency);
           return (
             <tr
               key={tool.name}
@@ -105,35 +104,30 @@ export function ToolsTable({
               onClick={() => handleToggle(i)}
               style={{ cursor: readOnly ? 'default' : 'pointer' }}>
               <td>{tool.name}</td>
-              <td aria-label={t('ariaFamiliarityLevel')}>
-                <span
-                  className={
-                    styles[
-                      `profDot-${tool.proficiency === 'familiarity' ? 'filled' : 'empty'}`
-                    ]
-                  }
-                  aria-hidden='true'
-                />
-              </td>
-              <td aria-label={t('ariaProficiencyLevel')}>
-                <span
-                  className={
-                    styles[
-                      `profDot-${tool.proficiency === 'proficient' ? 'filled' : 'empty'}`
-                    ]
-                  }
-                  aria-hidden='true'
-                />
-              </td>
-              <td aria-label={t('ariaExpertiseLevel')}>
-                <span
-                  className={
-                    styles[
-                      `profDot-${tool.proficiency === 'expertise' ? 'filled' : 'empty'}`
-                    ]
-                  }
-                  aria-hidden='true'
-                />
+              <td aria-label={t('ariaProfTrack')}>
+                <span className={styles.profTrack} aria-hidden='true'>
+                  <span
+                    className={
+                      styles[
+                        levelIndex >= 1 ? 'trackDot-filled' : 'trackDot-empty'
+                      ]
+                    }
+                  />
+                  <span
+                    className={
+                      styles[
+                        levelIndex >= 2 ? 'trackDot-filled' : 'trackDot-empty'
+                      ]
+                    }
+                  />
+                  <span
+                    className={
+                      styles[
+                        levelIndex >= 3 ? 'trackDot-filled' : 'trackDot-empty'
+                      ]
+                    }
+                  />
+                </span>
               </td>
               <td>{bonusStr}</td>
             </tr>

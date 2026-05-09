@@ -10,8 +10,8 @@
  */
 
 import {
-  FeatAbilityIncreaseEmbed,
-  FeatEntity,
+    FeatAbilityIncreaseEmbed,
+    FeatEntity,
 } from '@/lib/db/orm/entities/FeatEntity';
 import { describe, expect, it } from 'vitest';
 

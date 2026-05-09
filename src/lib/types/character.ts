@@ -136,7 +136,7 @@ export interface CharacterCurrency {
 
 /**
  * A single denomination within a currency system (e.g. "gold piece" inside the
- * `5e Standard` system).
+ * `Gold Standard` system).
  *
  * @interface CoinDenomination
  * @property {string} name - Display name (e.g. `"Gold"` or `"Sovereigns"`)
@@ -155,7 +155,7 @@ export interface CoinDenomination {
  * custom systems are user-defined.
  *
  * @interface CurrencySystem
- * @property {string} name - Unique system name (e.g. `"5e Standard"`)
+ * @property {string} name - Unique system name (e.g. `"Gold Standard"`)
  * @property {number} exchangeRate - Conversion factor to a notional shared unit (`1.0` for the canonical system)
  * @property {CoinDenomination[]} coins - Ordered list of denominations
  * @property {boolean} [builtIn] - True for shipped systems that cannot be edited or removed

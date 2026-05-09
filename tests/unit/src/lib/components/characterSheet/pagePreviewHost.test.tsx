@@ -7,8 +7,8 @@
 
 import { PagePreviewHost } from '@/lib/components/characterSheet/pagePreviewHost';
 import {
-  PagePreviewProvider,
-  usePagePreview,
+    PagePreviewProvider,
+    usePagePreview,
 } from '@/lib/components/characterSheet/pagePreviewProvider';
 import { act, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
@@ -29,7 +29,7 @@ function Opener(): null {
 }
 
 describe('PagePreviewHost', () => {
-  it('renders an iframe for each open preview entry', async () => {
+  it('renders an iframe for each open preview entry with embed parameter', async () => {
     await act(async () => {
       render(
         <PagePreviewProvider>
@@ -42,7 +42,7 @@ describe('PagePreviewHost', () => {
     expect(frames.length).toBeGreaterThanOrEqual(1);
     expect(frames[0]).toHaveAttribute(
       'src',
-      '/en/library/character-creation/feats/tough',
+      '/en/library/character-creation/feats/tough?embed=true',
     );
   });
 });

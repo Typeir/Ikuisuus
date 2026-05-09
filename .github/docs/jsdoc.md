@@ -453,7 +453,7 @@ For build pipeline scripts:
 /**
  * Spell Metadata Generator
  *
- * @fileoverview Parser for D&D 5e spell descriptions in MDX format.
+ * @fileoverview Parser for d20 spell descriptions in MDX format.
  * Extracts level, school, casting time, components, and game mechanics tags.
  *
  * @module generateSpellMetadata

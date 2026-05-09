@@ -12,7 +12,7 @@
 
 'use client';
 
-import { X } from 'lucide-react';
+import { HelpCircle, X } from 'lucide-react';
 import type { MouseEvent, ReactNode } from 'react';
 import styles from './chip.module.scss';
 
@@ -20,14 +20,17 @@ import styles from './chip.module.scss';
  * Visual variant. Each variant maps to a CSS class that picks a tinted
  * background + accent border via existing CSS variables.
  *
- * @typedef {'boon'|'vocation-feature'|'specialization-feature'|'feat'|'neutral'} ChipVariant
+ * @typedef {'boon'|'vocation-feature'|'specialization-feature'|'feat'|'neutral'|'success'|'warning'|'danger'} ChipVariant
  */
 export type ChipVariant =
   | 'boon'
   | 'vocation-feature'
   | 'specialization-feature'
   | 'feat'
-  | 'neutral';
+  | 'neutral'
+  | 'success'
+  | 'warning'
+  | 'danger';
 
 /**
  * Props for `<Chip>`.
@@ -36,8 +39,10 @@ export type ChipVariant =
  * @property {string} label - Visible text label
  * @property {ChipVariant} [variant] - Visual variant (default `neutral`)
  * @property {ReactNode} [icon] - Optional leading icon
- * @property {() => void} [onRemove] - Optional remove handler; renders an `×` button when set
+ * @property {() => void} [onInfo] - Optional info handler; renders a `?` button inside the chip when set
+ * @property {() => void} [onRemove] - Optional remove handler; renders an `×` button inside the chip when set
  * @property {() => void} [onClick] - Optional click handler for the chip body
+ * @property {string} [infoLabel] - Accessible label for the info button
  * @property {string} [removeLabel] - Accessible label for the remove button
  * @property {string} [title] - HTML title tooltip
  */
@@ -45,8 +50,10 @@ export interface ChipProps {
   label: string;
   variant?: ChipVariant;
   icon?: ReactNode;
+  onInfo?: () => void;
   onRemove?: () => void;
   onClick?: () => void;
+  infoLabel?: string;
   removeLabel?: string;
   title?: string;
 }
@@ -62,11 +69,18 @@ export const Chip: React.FC<ChipProps> = ({
   label,
   variant = 'neutral',
   icon,
+  onInfo,
   onRemove,
   onClick,
+  infoLabel,
   removeLabel,
   title,
 }) => {
+  const handleInfo = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onInfo?.();
+  };
+
   const handleRemove = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     onRemove?.();
@@ -77,6 +91,31 @@ export const Chip: React.FC<ChipProps> = ({
     interactive ? styles.interactive : ''
   }`;
 
+  const innerContent = (
+    <>
+      {icon && <span className={styles.icon}>{icon}</span>}
+      <span className={styles.label}>{label}</span>
+      {onInfo && (
+        <button
+          type='button'
+          className={styles.infoBtn}
+          onClick={handleInfo}
+          aria-label={infoLabel ?? `Info for ${label}`}>
+          <HelpCircle size={11} aria-hidden='true' />
+        </button>
+      )}
+      {onRemove && (
+        <button
+          type='button'
+          className={styles.removeBtn}
+          onClick={handleRemove}
+          aria-label={removeLabel ?? `Remove ${label}`}>
+          <X size={11} aria-hidden='true' />
+        </button>
+      )}
+    </>
+  );
+
   return (
     <span className={styles.chipWrapper}>
       {interactive ? (
@@ -85,23 +124,12 @@ export const Chip: React.FC<ChipProps> = ({
           className={className}
           onClick={onClick}
           title={title}>
-          {icon && <span className={styles.icon}>{icon}</span>}
-          <span className={styles.label}>{label}</span>
+          {innerContent}
         </button>
       ) : (
         <span className={className} title={title}>
-          {icon && <span className={styles.icon}>{icon}</span>}
-          <span className={styles.label}>{label}</span>
+          {innerContent}
         </span>
-      )}
-      {onRemove && (
-        <button
-          type='button'
-          className={styles.removeBtn}
-          onClick={handleRemove}
-          aria-label={removeLabel ?? `Remove ${label}`}>
-          <X size={12} aria-hidden='true' />
-        </button>
       )}
     </span>
   );

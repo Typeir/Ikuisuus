@@ -13,8 +13,8 @@
 
 import { ContentShardPanel } from '@/lib/components/characterSheet/contentShardPanel';
 import type {
-  CharacterSheet as CharacterSheetType,
-  CharacterShard,
+    CharacterShard,
+    CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { BoonPicker } from '../boonPicker';
@@ -52,11 +52,7 @@ export const BloodlineTab: React.FC<BloodlineTabProps> = ({
   const t = useTranslations('characterSheet');
 
   if (!data.bloodlineSlug) {
-    return (
-      <div className={styles.empty}>
-        {t('selectBloodline')}
-      </div>
-    );
+    return <div className={styles.empty}>{t('selectBloodline')}</div>;
   }
 
   return (

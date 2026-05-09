@@ -37,9 +37,8 @@ let BloodlineShardsRoute: typeof import('@/app/api/content-shards/bloodlines/[sl
 let bloodlineRepository: BloodlineRepository;
 
 beforeEach(async () => {
-  BloodlineShardsRoute = await import(
-    '@/app/api/content-shards/bloodlines/[slug]/route'
-  );
+  BloodlineShardsRoute =
+    await import('@/app/api/content-shards/bloodlines/[slug]/route');
   const repo =
     await import('@/lib/db/content/repositories/bloodlineRepository');
   bloodlineRepository = repo.bloodlineRepository;
@@ -79,8 +78,20 @@ const MOCK_META = {
   },
   boonBudget: 10,
   boons: [
-    { name: 'Extended Reach', bpLabel: '3 BP', bpValue: 3, sortOrder: 0, tags: [] },
-    { name: 'Featherfall', bpLabel: '2 BP', bpValue: 2, sortOrder: 1, tags: [] },
+    {
+      name: 'Extended Reach',
+      bpLabel: '3 BP',
+      bpValue: 3,
+      sortOrder: 0,
+      tags: [],
+    },
+    {
+      name: 'Featherfall',
+      bpLabel: '2 BP',
+      bpValue: 2,
+      sortOrder: 1,
+      tags: [],
+    },
   ],
   tags: [],
 };
@@ -104,10 +115,7 @@ function makeArgs(
       url.searchParams.set(k, v);
     }
   }
-  return [
-    new Request(url.toString()),
-    { params: Promise.resolve({ slug }) },
-  ];
+  return [new Request(url.toString()), { params: Promise.resolve({ slug }) }];
 }
 
 describe('GET /api/content-shards/bloodlines/[slug]', () => {
@@ -134,7 +142,10 @@ describe('GET /api/content-shards/bloodlines/[slug]', () => {
     vi.mocked(bloodlineRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'empyrean.bloodline.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'empyrean.bloodline.mdx',
+    });
 
     const res = await BloodlineShardsRoute.GET(...makeArgs('empyrean'));
     expect(res.status).toBe(200);
@@ -150,7 +161,10 @@ describe('GET /api/content-shards/bloodlines/[slug]', () => {
     vi.mocked(bloodlineRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'empyrean.bloodline.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'empyrean.bloodline.mdx',
+    });
 
     const res = await BloodlineShardsRoute.GET(
       ...makeArgs('empyrean', { 'keys[]': 'Extended Reach' }),
@@ -167,20 +181,32 @@ describe('GET /api/content-shards/bloodlines/[slug]', () => {
     vi.mocked(bloodlineRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'empyrean.bloodline.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'empyrean.bloodline.mdx',
+    });
 
     await BloodlineShardsRoute.GET(...makeArgs('empyrean'));
-    expect(bloodlineRepository.getBySlug).toHaveBeenCalledWith('en', 'empyrean');
+    expect(bloodlineRepository.getBySlug).toHaveBeenCalledWith(
+      'en',
+      'empyrean',
+    );
   });
 
   it('passes locale param to the repository', async () => {
     vi.mocked(bloodlineRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'empyrean.bloodline.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'empyrean.bloodline.mdx',
+    });
 
     await BloodlineShardsRoute.GET(...makeArgs('empyrean', { locale: 'es' }));
-    expect(bloodlineRepository.getBySlug).toHaveBeenCalledWith('es', 'empyrean');
+    expect(bloodlineRepository.getBySlug).toHaveBeenCalledWith(
+      'es',
+      'empyrean',
+    );
   });
 
   it('returns 500 when the repository throws', async () => {

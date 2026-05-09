@@ -4,11 +4,6 @@
  * `scripts/metadata/generateSpellMetadata.ts`. Every field corresponds to a
  * parsed property emitted by `parseSpellFile()`.
  *
- * Spells include both local project spells (parsed from `.mdx` files) and external
- * spells (imported from `spells-external.metadata.json`). External spells may have
- * slightly different fields (e.g. `hasRitual`, external wiki `link`), but share the
- * same core shape.
- *
  * @module lib/db/content/schemas/spellMetadata
  * @version 1.0.0
  * @author Typeir
@@ -30,8 +25,7 @@ export interface SpellListRef {
  * Complete spell metadata record as emitted by the generator.
  *
  * Derived from `parseSpellFile()` output in
- * `scripts/metadata/generateSpellMetadata.ts` and external spell data
- * from `scripts/core/spells-external.metadata.json`.
+ * `scripts/metadata/generateSpellMetadata.ts`.
  *
  * @interface SpellMetadata
  * @property {string} slug - URL-friendly identifier

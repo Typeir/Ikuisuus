@@ -69,11 +69,7 @@ export async function fetchShard(
   }
   const data = (await res.json()) as ShardApiResponse;
 
-  const firstParagraph = data.text
-    .split('\n')
-    .slice(1)
-    .join('\n')
-    .trim();
+  const firstParagraph = data.text.split('\n').slice(1).join('\n').trim();
 
   return {
     id: `${options.sourceFile}::${options.heading}`,

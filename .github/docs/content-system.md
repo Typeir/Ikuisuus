@@ -744,7 +744,7 @@ TODO: Add content here
 
 **File**: `src/content/en/monsters/albedo.sheet.mdx`
 
-**Format**: D&D 5e stat block
+**Format**: d20 stat block
 
 ```mdx
 # Albedo, the Bleak Bloom

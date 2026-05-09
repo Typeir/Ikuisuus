@@ -1,13 +1,13 @@
 /**
  * @fileoverview Coin Pouch Component
  * @description Renders the character's coin holdings across one or more
- * currency systems. Built-in systems (e.g. `5e Standard`) are read-only at the
+ * currency systems. Built-in systems (e.g. `Gold Standard`) are read-only at the
  * structural level — counts can be edited, but denominations cannot be added
  * or removed. Custom systems can be created at runtime; their denominations
  * are user-editable.
  *
  * Holdings are stored on `CharacterSheet.coinHoldings` keyed by `systemName`.
- * The component falls back to a single `5e Standard` holdings row when no
+ * The component falls back to a single `Gold Standard` holdings row when no
  * holdings are present, derived from the legacy `currency` field if needed.
  *
  * @module lib/components/characterSheet/coinPouch
@@ -20,15 +20,15 @@
 
 import { Chip } from '@/lib/components/ui/chip';
 import {
-  BUILT_IN_CURRENCY_SYSTEMS,
-  FIVE_E_STANDARD,
-  computeHoldingsValue,
-  migrateLegacyCurrency,
+    BUILT_IN_CURRENCY_SYSTEMS,
+    GOLD_STANDARD,
+    computeHoldingsValue,
+    migrateLegacyCurrency,
 } from '@/lib/data/currencySystems';
 import type {
-  CharacterCoinHoldings,
-  CharacterSheet as CharacterSheetType,
-  CurrencySystem,
+    CharacterCoinHoldings,
+    CharacterSheet as CharacterSheetType,
+    CurrencySystem,
 } from '@/lib/types/character';
 import { Plus, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -55,9 +55,7 @@ export interface CoinPouchProps {
  * @param {CharacterSheetType} data - Character data
  * @returns {CharacterCoinHoldings[]} Effective holdings list
  */
-const resolveHoldings = (
-  data: CharacterSheetType,
-): CharacterCoinHoldings[] => {
+const resolveHoldings = (data: CharacterSheetType): CharacterCoinHoldings[] => {
   if (Array.isArray(data.coinHoldings) && data.coinHoldings.length > 0) {
     return data.coinHoldings;
   }
@@ -89,17 +87,13 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
   );
 
   const findSystem = (name: string): CurrencySystem =>
-    allSystems.find((s) => s.name === name) ?? FIVE_E_STANDARD;
+    allSystems.find((s) => s.name === name) ?? GOLD_STANDARD;
 
   const updateHoldings = (next: CharacterCoinHoldings[]) => {
     onChange({ coinHoldings: next });
   };
 
-  const updateCount = (
-    systemName: string,
-    coinName: string,
-    raw: string,
-  ) => {
+  const updateCount = (systemName: string, coinName: string, raw: string) => {
     const value = Math.max(0, Number.parseInt(raw, 10) || 0);
     const next = holdings.map((h) =>
       h.systemName === systemName

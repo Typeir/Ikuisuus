@@ -72,7 +72,9 @@ describe('fetchShard', () => {
       category: 'boon',
     });
 
-    expect(shard.cachedText).toBe('First paragraph text.\n\nSecond paragraph text.');
+    expect(shard.cachedText).toBe(
+      'First paragraph text.\n\nSecond paragraph text.',
+    );
   });
 
   it('throws when the API returns an error status', async () => {

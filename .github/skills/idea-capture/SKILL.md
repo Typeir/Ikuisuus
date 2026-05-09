@@ -74,7 +74,7 @@ Why this idea matters. Link to pain points in current system or opportunities.
 ## Motivation
 
 - **Authorial intent** — spaCy reads what was written, not what regex could match
-- **Consistency** — one description → multiple rule formats (D&D 5e, Foundry, internal)
+- **Consistency** — one description → multiple rule formats (d20 Systems, Foundry, internal)
 ```
 
 #### 3. **Architecture** (1–3 subsections)
@@ -100,7 +100,7 @@ What's hard about this? What remains unproven? What trade-offs exist?
 
 ### Rule Library Authorship
 
-Need a **comprehensive D&D 5e + Damocles mechanics lexicon**:
+Need a **comprehensive d20 + Damocles mechanics lexicon**:
 
 - ~50 targeting shapes + combinations
 ```
@@ -161,7 +161,7 @@ Anything unusual about this idea relative to project conventions or architecture
 ## Notes
 
 This is a **generalist platform** for TTRPG homebrew compilation. If it works,
-it has applications far beyond D&D 5e.
+it has applications far beyond d20 systems.
 ```
 
 ## Phase Naming Convention

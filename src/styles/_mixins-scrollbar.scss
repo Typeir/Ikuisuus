@@ -7,14 +7,16 @@
 
 @mixin scrollbar-thin(
   $thumb: var(--color-secondary),
-  $track: var(--color-transparent)
+  $track: var(--color-transparent),
+  $height: 6px,
+  $thumb-radius: 3px
 ) {
   scrollbar-width: thin;
   scrollbar-color: #{$thumb} #{$track};
 
   &::-webkit-scrollbar {
     width: 6px;
-    height: 6px;
+    height: #{$height};
   }
 
   &::-webkit-scrollbar-track {
@@ -23,6 +25,6 @@
 
   &::-webkit-scrollbar-thumb {
     background-color: #{$thumb};
-    border-radius: 3px;
+    border-radius: #{$thumb-radius};
   }
 }

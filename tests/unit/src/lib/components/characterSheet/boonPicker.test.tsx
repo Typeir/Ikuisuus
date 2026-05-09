@@ -106,7 +106,9 @@ describe('BoonPicker', () => {
       new Response(
         JSON.stringify({
           shardType: 'bloodline',
-          shards: { 'Extended Reach': 'Your unarmed strikes gain +5 ft. reach.' },
+          shards: {
+            'Extended Reach': 'Your unarmed strikes gain +5 ft. reach.',
+          },
         }),
         { status: 200 },
       ),
@@ -128,7 +130,9 @@ describe('BoonPicker', () => {
     const newBoons = onToggle.mock.calls[0][0] as CharacterShard[];
     expect(newBoons[0].heading).toBe('Extended Reach');
     expect(newBoons[0].bpCost).toBe(3);
-    expect(newBoons[0].cachedText).toBe('Your unarmed strikes gain +5 ft. reach.');
+    expect(newBoons[0].cachedText).toBe(
+      'Your unarmed strikes gain +5 ft. reach.',
+    );
   });
 
   it('calls onToggle removing shard when a selected boon is clicked', async () => {

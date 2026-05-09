@@ -3,7 +3,7 @@
  * @description Tests for the ShardDisplay component.
  *
  * @module tests/unit/lib/components/characterSheet/shardDisplay
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */

@@ -1,8 +1,8 @@
 /**
  * @fileoverview Unit tests for Tooltip MDX component
  * @module tests/unit/src/lib/components/mdx/tooltip/tooltip.test
- * @description Validates Tooltip rendering, hover/focus interaction, portal
- * rendering, position calculation, and accessibility attributes.
+ * @description Validates Tooltip MDX wrapper rendering, trigger interaction,
+ * and correct defaults for showArrow and showClickIcon.
  *
  * @version 2.0.0
  * @author Typeir
@@ -12,20 +12,12 @@
  * @requires @/lib/components/mdx/tooltip/tooltip
  */
 
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-
-vi.mock('react-dom', async () => {
-  const actual = await vi.importActual<typeof import('react-dom')>('react-dom');
-  return {
-    ...actual,
-    createPortal: (node: React.ReactNode) => node,
-  };
-});
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 import Tooltip from '@/lib/components/mdx/tooltip/tooltip';
 
-describe('Tooltip', () => {
+describe('Tooltip MDX Component', () => {
   it('renders trigger content', () => {
     render(
       <Tooltip>
@@ -36,110 +28,114 @@ describe('Tooltip', () => {
     expect(screen.getByText('Trigger')).toBeInTheDocument();
   });
 
-  it('renders tooltip bubble with role=tooltip', () => {
+  it('renders tooltip content on hover', async () => {
     render(
+      <Tooltip>
+        <span>Trigger</span>
+        <span>Tooltip body</span>
+      </Tooltip>,
+    );
+    const trigger = screen.getByText('Trigger').closest('span');
+    fireEvent.mouseEnter(trigger!);
+
+    await waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+  });
+
+  it('hides tooltip content on mouse leave', async () => {
+    render(
+      <Tooltip>
+        <span>Trigger</span>
+        <span>Tooltip body</span>
+      </Tooltip>,
+    );
+    const trigger = screen.getByText('Trigger').closest('span');
+    fireEvent.mouseEnter(trigger!);
+
+    await waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+
+    fireEvent.mouseLeave(trigger!);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+  });
+
+  it('shows tooltip on focus', async () => {
+    render(
+      <Tooltip>
+        <span>Trigger</span>
+        <span>Tooltip body</span>
+      </Tooltip>,
+    );
+    const trigger = screen.getByText('Trigger').closest('span');
+    fireEvent.focus(trigger!);
+
+    await waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+  });
+
+  it('hides tooltip on blur', async () => {
+    render(
+      <Tooltip>
+        <span>Trigger</span>
+        <span>Tooltip body</span>
+      </Tooltip>,
+    );
+    const trigger = screen.getByText('Trigger').closest('span');
+    fireEvent.focus(trigger!);
+
+    await waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+
+    fireEvent.blur(trigger!);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+  });
+
+  it('renders CircleHelp icon by default', () => {
+    const { container } = render(
       <Tooltip>
         <span>Trigger</span>
         <span>Content</span>
       </Tooltip>,
     );
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    // Check that the CircleHelp icon is rendered (lucide-react renders SVG)
+    const svg = container.querySelector('svg');
+    expect(svg).toBeInTheDocument();
   });
 
-  it('sets data-open=false when not hovered', () => {
+  it('handles missing children gracefully', () => {
+    const { container } = render(
+      <Tooltip>
+        <span>Only trigger</span>
+      </Tooltip>,
+    );
+    expect(container.querySelector('span')).toBeInTheDocument();
+  });
+
+  it('filters empty string children', async () => {
     render(
       <Tooltip>
         <span>Trigger</span>
-        <span>Content</span>
-      </Tooltip>,
-    );
-    expect(screen.getByRole('tooltip')).toHaveAttribute('data-open', 'false');
-  });
-
-  it('sets data-open=true on mouseEnter', () => {
-    render(
-      <Tooltip>
-        <span>Trigger</span>
-        <span>Content</span>
-      </Tooltip>,
-    );
-    const trigger = screen.getByText('Trigger').closest('[tabindex]')!;
-    fireEvent.mouseEnter(trigger);
-    expect(screen.getByRole('tooltip')).toHaveAttribute('data-open', 'true');
-  });
-
-  it('sets data-open=false on mouseLeave', () => {
-    render(
-      <Tooltip>
-        <span>Trigger</span>
-        <span>Content</span>
-      </Tooltip>,
-    );
-    const trigger = screen.getByText('Trigger').closest('[tabindex]')!;
-    fireEvent.mouseEnter(trigger);
-    fireEvent.mouseLeave(trigger);
-    expect(screen.getByRole('tooltip')).toHaveAttribute('data-open', 'false');
-  });
-
-  it('sets data-open=true on focus', () => {
-    render(
-      <Tooltip>
-        <span>Trigger</span>
-        <span>Content</span>
-      </Tooltip>,
-    );
-    const trigger = screen.getByText('Trigger').closest('[tabindex]')!;
-    fireEvent.focus(trigger);
-    expect(screen.getByRole('tooltip')).toHaveAttribute('data-open', 'true');
-  });
-
-  it('sets data-open=false on blur', () => {
-    render(
-      <Tooltip>
-        <span>Trigger</span>
-        <span>Content</span>
-      </Tooltip>,
-    );
-    const trigger = screen.getByText('Trigger').closest('[tabindex]')!;
-    fireEvent.focus(trigger);
-    fireEvent.blur(trigger);
-    expect(screen.getByRole('tooltip')).toHaveAttribute('data-open', 'false');
-  });
-
-  it('has aria-describedby linking trigger to tooltip', () => {
-    render(
-      <Tooltip>
-        <span>Label</span>
-        <span>Description</span>
-      </Tooltip>,
-    );
-    const trigger = screen.getByText('Label').closest('[aria-describedby]')!;
-    const tooltipId = trigger.getAttribute('aria-describedby');
-    expect(tooltipId).toBeTruthy();
-    expect(screen.getByRole('tooltip').id).toBe(tooltipId);
-  });
-
-  it('renders fallback wrapper if only one child', () => {
-    render(
-      <Tooltip>
-        <span>Only one</span>
-      </Tooltip>,
-    );
-    expect(screen.getByText('Only one')).toBeInTheDocument();
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
-  });
-
-  it('filters out whitespace-only string children', () => {
-    render(
-      <Tooltip>
-        {'  '}
-        <span>Trigger</span>
-        {'  '}
-        <span>Body</span>
-        {'  '}
+        {''}
+        <span>Tooltip body</span>
       </Tooltip>,
     );
     expect(screen.getByText('Trigger')).toBeInTheDocument();
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+    const trigger = screen.getByText('Trigger').closest('span');
+    fireEvent.mouseEnter(trigger!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Tooltip body')).toBeInTheDocument();
+    });
   });
 });

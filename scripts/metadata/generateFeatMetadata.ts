@@ -18,14 +18,14 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-  extractAllTags,
-  filePathToSlug,
-  parseDescription,
-  parseTitle,
-  runGenerator,
-  runWithCli,
-  type SharedData,
-  type StorageAdapter,
+    extractAllTags,
+    filePathToSlug,
+    parseDescription,
+    parseTitle,
+    runGenerator,
+    runWithCli,
+    type SharedData,
+    type StorageAdapter,
 } from '.';
 import { SLUG } from './parsingPatterns';
 
@@ -90,9 +90,7 @@ function parsePrerequisite(raw: string): {
  */
 function parseAbilityIncrease(
   raw: string,
-):
-  | { abilities: string[]; amount: number; maximum?: number }
-  | undefined {
+): { abilities: string[]; amount: number; maximum?: number } | undefined {
   const match = raw.match(ABILITY_INCREASE_REGEX);
   if (!match) return undefined;
 
@@ -224,3 +222,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export { main, parseFeatFile };
+

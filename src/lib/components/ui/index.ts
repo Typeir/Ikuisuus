@@ -24,8 +24,10 @@ export type { TooltipPlacement, TooltipProps } from './tooltip';
 /** PushNotification — Toast-style notification system */
 export { NotificationProvider, useNotifications } from './pushNotification';
 export type {
-    NotificationConfig, NotificationPosition,
-    NotificationProviderProps, NotificationType
+    NotificationConfig,
+    NotificationPosition,
+    NotificationProviderProps,
+    NotificationType
 } from './pushNotification';
 
 /** MobileModal — Generic mobile-optimized modal with focus management */
@@ -34,3 +36,16 @@ export type { MobileModalProps, ModalProps } from './modal';
 
 /** Draggable — Generic moveable container with drag handle */
 export { Draggable } from './draggable/Draggable';
+
+/** GenericEmbedPanel — Generic draggable iframe wrapper container */
+export { GenericEmbedPanel } from './embedPanel/GenericEmbedPanel';
+export type { GenericEmbedPanelProps } from './embedPanel/GenericEmbedPanel';
+
+/** GradientTabs — Spell-list-style tabbed container (gradient nav + surface panel) */
+export { GradientTabs } from './gradientTabs';
+export type { GradientTabItem, GradientTabsProps } from './gradientTabs';
+
+/** AsyncTooltip — Lazy-fetching tooltip with single-flight content loading */
+export { AsyncTooltip } from './asyncTooltip';
+export type { AsyncTooltipProps } from './asyncTooltip';
+

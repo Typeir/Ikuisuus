@@ -1,20 +1,19 @@
 /**
  * @fileoverview `ik nuke` — Hard-delete command for data management.
- * @description Removes entries from external metadata JSON files and the
- * PostgreSQL database atomically.
+ * @description Removes spell entries from the PostgreSQL database atomically.
  *
  * Supported shape:
- *   ik nuke external spell:<slug>
- *     - Removes from `scripts/core/spells-external.metadata.json`
- *     - Removes from `.meta/en/spells/spells-external.metadata.json` (if present)
- *     - Removes from `src/content/en/spells/spells-external.metadata.json` (if present)
+ *   ik nuke spell:<slug>
  *     - Deletes the row from the `spells` table — FK cascade removes `spell_lists`
  *
  * @module multirepo/commands/nuke
+ * @version 2.0.0
+ * @author Typeir
+ * @since 3.0.0
  */
 
 import { log, spinner } from '@clack/prompts';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import pg from 'pg';
 import { fileURLToPath } from 'url';
@@ -29,12 +28,14 @@ const ROOT = join(__dirname, '../../../');
 /** Command metadata for the fs-based loader. */
 export const meta: CommandMeta = {
   name: 'nuke',
-  description: 'Hard-delete external data (e.g. spell:<slug>)',
+  description: 'Hard-delete spell data from the database (e.g. spell:<slug>)',
 };
 
 /**
  * Loads environment variables from `.env.local` if present.
  * No-ops silently when the file is absent (CI relies on system env).
+ *
+ * @returns {void}
  */
 function loadEnv(): void {
   try {
@@ -57,32 +58,12 @@ function loadEnv(): void {
 }
 
 /**
- * Removes all entries with the given slug from a metadata JSON array on disk.
- * Writes the filtered array back in-place using 2-space indentation.
- *
- * @param filePath - Absolute path to the `.metadata.json` file
- * @param slug - Slug value to filter out
- * @returns `true` if at least one entry was removed; `false` if the file was
- *          absent or no matching entry existed
- */
-function removeFromJson(filePath: string, slug: string): boolean {
-  if (!existsSync(filePath)) return false;
-  const raw = readFileSync(filePath, 'utf8');
-  const entries: Array<{ slug: string }> = JSON.parse(raw);
-  const before = entries.length;
-  const filtered = entries.filter((e) => e.slug !== slug);
-  if (filtered.length === before) return false;
-  writeFileSync(filePath, JSON.stringify(filtered, null, 2) + '\n', 'utf8');
-  return true;
-}
-
-/**
  * Deletes a spell row (and its cascaded `spell_lists`) from Postgres.
  * The `spell_lists.spell_id` FK is defined with `ON DELETE CASCADE`, so no
  * explicit join-table delete is needed.
  *
- * @param slug - Spell slug to delete (matched across all locales)
- * @returns Total number of `spells` rows deleted
+ * @param {string} slug - Spell slug to delete (matched across all locales)
+ * @returns {Promise<number>} Total number of `spells` rows deleted
  * @throws If `DATABASE_URL` is unset or the connection fails
  */
 async function deleteFromPostgres(slug: string): Promise<number> {
@@ -109,58 +90,23 @@ async function deleteFromPostgres(slug: string): Promise<number> {
 }
 
 /**
- * Hard-deletes an external spell from all JSON copies and Postgres.
+ * Hard-deletes a spell from Postgres.
  *
- * @param slug - Spell slug (e.g. `"hunters-mark"`)
+ * @param {string} slug - Spell slug (e.g. `"hunters-mark"`)
+ * @returns {Promise<void>}
  */
-async function nukeExternalSpell(slug: string): Promise<void> {
+async function nukeSpell(slug: string): Promise<void> {
   const s = spinner();
-  s.start(`Nuking external spell "${slug}"…`);
-
-  const primaryJson = join(
-    ROOT,
-    'scripts',
-    'core',
-    'spells-external.metadata.json',
-  );
-  const metaCopy = join(
-    ROOT,
-    '.meta',
-    'en',
-    'spells',
-    'spells-external.metadata.json',
-  );
-  const fsCopy = join(
-    ROOT,
-    'src',
-    'content',
-    'en',
-    'spells',
-    'spells-external.metadata.json',
-  );
-
-  const removedPrimary = removeFromJson(primaryJson, slug);
-
-  if (!removedPrimary) {
-    s.stop('Not found');
-    log.error(
-      `"${slug}" not found in spells-external.metadata.json. Check the slug and try again.`,
-    );
-    process.exit(1);
-  }
-
-  removeFromJson(metaCopy, slug);
-  removeFromJson(fsCopy, slug);
-
-  s.stop('JSON updated');
+  s.start(`Nuking spell "${slug}"…`);
 
   let pgRows = 0;
   try {
     loadEnv();
     pgRows = await deleteFromPostgres(slug);
   } catch (err) {
-    log.warn(
-      `JSON files cleaned, but Postgres delete failed: ${(err as Error).message}`,
+    s.stop('Failed');
+    log.error(
+      `Postgres delete failed: ${(err as Error).message}`,
     );
     log.warn(
       'Run `npm run db:seed` to re-sync when DATABASE_URL is available.',
@@ -168,33 +114,29 @@ async function nukeExternalSpell(slug: string): Promise<void> {
     return;
   }
 
+  s.stop('Done');
   log.success(
-    `Nuked "${slug}"\n  ✓ JSON files updated\n  ✓ Postgres: ${pgRows} spell row(s) deleted (spell_lists cascade-removed)`,
+    `Nuked "${slug}"\n  ✓ Postgres: ${pgRows} spell row(s) deleted (spell_lists cascade-removed)`,
   );
 }
 
 /**
  * Entry point for `ik nuke`.
  *
- * @param args - Remaining args after `nuke`, e.g. `["external", "spell:hunters-mark"]`
+ * @param {string[]} args - Remaining args after `nuke`, e.g. `["spell:hunters-mark"]`
+ * @returns {Promise<void>}
  */
 export async function run(args: string[]): Promise<void> {
-  const scope = args[0];
-  const typeArg = args[1] ?? '';
+  const typeArg = args[0] ?? '';
 
-  if (!scope || !typeArg) {
-    log.error('Usage: ik nuke external spell:<slug>');
-    process.exit(1);
-  }
-
-  if (scope !== 'external') {
-    log.error(`Unknown scope "${scope}". Currently supported scopes: external`);
+  if (!typeArg) {
+    log.error('Usage: ik nuke spell:<slug>');
     process.exit(1);
   }
 
   if (!typeArg.startsWith('spell:')) {
     log.error(
-      `Unknown target type "${typeArg}". Usage: ik nuke external spell:<slug>`,
+      `Unknown target type "${typeArg}". Usage: ik nuke spell:<slug>`,
     );
     process.exit(1);
   }
@@ -203,10 +145,10 @@ export async function run(args: string[]): Promise<void> {
 
   if (!slug) {
     log.error(
-      'Spell slug cannot be empty. Usage: ik nuke external spell:<slug>',
+      'Spell slug cannot be empty. Usage: ik nuke spell:<slug>',
     );
     process.exit(1);
   }
 
-  await nukeExternalSpell(slug);
+  await nukeSpell(slug);
 }

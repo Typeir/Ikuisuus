@@ -19,8 +19,8 @@ export type { BoonPickerProps } from './boonPicker';
 
 export { ContentShardPanel } from './contentShardPanel';
 export type {
-  ContentShardPanelProps,
-  ContentShardType,
+    ContentShardPanelProps,
+    ContentShardType
 } from './contentShardPanel';
 
 export { CharacterRoster } from './characterRoster';

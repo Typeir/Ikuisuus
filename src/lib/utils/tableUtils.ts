@@ -2,7 +2,7 @@
  * @fileoverview Table Utilities - Generic comparison functions for sortable table columns
  * @description Provides reusable comparison utilities for sorting metadata in tables.
  * Includes generic order-based comparison, Challenge Rating parsing with fraction support,
- * and specialized comparators for D&D 5e game data like rarity and creature size.
+ * and specialized comparators for d20 game data like rarity and creature size.
  * 
  * @version 2.0.0
  * @author Typeir

@@ -7,6 +7,7 @@
  */
 'use client';
 
+import { GradientTabs } from '@/lib/components/ui/gradientTabs';
 import { DEFAULT_SPELL_LEVEL_LABELS } from '@/lib/enums/tableConstants';
 import { useSpellSources } from '@/lib/hooks/data/useSpellSources';
 import { useTranslations } from 'next-intl';
@@ -84,27 +85,13 @@ const SpellTable: React.FC<SpellTablesProps> = ({
 
   return (
     <div className={styles.spellTables}>
-      <div className={styles.gradientContainer}>
-        <div className={styles.tabNavWrapper}>
-          <div className={styles.tabNav}>
-            <div className={styles.tabList}>
-              {displayLevels.map((level) => (
-                <div
-                  key={level}
-                  className={`${styles.tab} ${
-                    activeTab === level ? styles.active : ''
-                  }`}>
-                  <button type='button' onClick={() => setActiveTab(level)}>
-                    {allLevelLabels[level] || `Level ${level}`}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.tabContent}>
+      <GradientTabs
+        tabs={displayLevels.map((level) => ({
+          value: String(level),
+          label: allLevelLabels[level] || `Level ${level}`,
+        }))}
+        activeTab={String(activeTab)}
+        onChange={(val) => setActiveTab(val === 'all' ? 'all' : Number(val))}>
         {visibleSpells.length > 0 ? (
           <MetadataTable
             data={visibleSpells}
@@ -123,7 +110,7 @@ const SpellTable: React.FC<SpellTablesProps> = ({
         ) : (
           <p className={styles.noSpells}>{t('noSpells')}</p>
         )}
-      </div>
+      </GradientTabs>
     </div>
   );
 };

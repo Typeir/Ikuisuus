@@ -143,7 +143,7 @@ export async function generateMetadata({
         ? fm.keywords.split(',').map((k) => k.trim())
         : [
             ...slugSegments.map(slugSegmentToTitle),
-            'D&D 5e',
+            'd20',
             'Library of Ikuisuus',
           ];
 

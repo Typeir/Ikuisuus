@@ -37,12 +37,10 @@ let SpecializationShardsRoute: typeof import('@/app/api/content-shards/specializ
 let specializationRepository: SpecializationRepository;
 
 beforeEach(async () => {
-  SpecializationShardsRoute = await import(
-    '@/app/api/content-shards/specializations/[slug]/route'
-  );
-  const repo = await import(
-    '@/lib/db/content/repositories/specializationRepository'
-  );
+  SpecializationShardsRoute =
+    await import('@/app/api/content-shards/specializations/[slug]/route');
+  const repo =
+    await import('@/lib/db/content/repositories/specializationRepository');
   specializationRepository = repo.specializationRepository;
   mockGetFile.mockReset();
 });
@@ -130,7 +128,10 @@ describe('GET /api/content-shards/specializations/[slug]', () => {
     vi.mocked(specializationRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'path-of-the-berserker.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'path-of-the-berserker.mdx',
+    });
 
     const res = await SpecializationShardsRoute.GET(
       ...makeArgs('path-of-the-berserker'),
@@ -150,7 +151,10 @@ describe('GET /api/content-shards/specializations/[slug]', () => {
     vi.mocked(specializationRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'path-of-the-berserker.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'path-of-the-berserker.mdx',
+    });
 
     const res = await SpecializationShardsRoute.GET(
       ...makeArgs('path-of-the-berserker', { 'keys[]': 'Frenzy' }),
@@ -165,7 +169,10 @@ describe('GET /api/content-shards/specializations/[slug]', () => {
     vi.mocked(specializationRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'path-of-the-berserker.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'path-of-the-berserker.mdx',
+    });
 
     await SpecializationShardsRoute.GET(...makeArgs('path-of-the-berserker'));
     expect(specializationRepository.getBySlug).toHaveBeenCalledWith(
@@ -178,7 +185,10 @@ describe('GET /api/content-shards/specializations/[slug]', () => {
     vi.mocked(specializationRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'path-of-the-berserker.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'path-of-the-berserker.mdx',
+    });
 
     await SpecializationShardsRoute.GET(
       ...makeArgs('path-of-the-berserker', { locale: 'es' }),

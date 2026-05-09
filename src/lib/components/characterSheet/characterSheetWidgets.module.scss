@@ -36,8 +36,12 @@
   color: var(--color-secondary);
   text-transform: uppercase;
 }
-.prof-familiarity {
+.prof-none {
   color: var(--color-secondary);
+  opacity: 0.65;
+}
+.prof-familiarity {
+  color: var(--color-text);
 }
 .prof-proficient {
   color: var(--color-accent);
@@ -46,48 +50,27 @@
   color: var(--color-emphasis);
 }
 
-.profDot-none {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 1px solid var(--color-border);
+.profTrack {
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
 }
-.profDot-familiarity {
+
+.trackDot-filled {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--color-secondary);
-  opacity: 0.5;
+  background: currentColor;
 }
-.profDot-proficient {
+
+.trackDot-empty {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--color-accent);
-}
-.profDot-expertise {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-emphasis);
-}
-.profDot-filled {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-accent);
-}
-.profDot-empty {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 1px solid var(--color-border);
+  border: 1px solid currentColor;
+  opacity: 0.3;
 }
 
 .attacksSection {
@@ -243,10 +226,13 @@
 
   p {
     margin: 0 0 0.5rem;
-    &:last-child { margin-bottom: 0; }
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
-  ul, ol {
+  ul,
+  ol {
     margin: 0.25rem 0 0.5rem 1.25rem;
     padding: 0;
   }
@@ -255,12 +241,14 @@
     margin-bottom: 0.2rem;
   }
 
-  strong, b {
+  strong,
+  b {
     font-weight: 700;
     color: var(--color-emphasis);
   }
 
-  em, i {
+  em,
+  i {
     font-style: italic;
   }
 

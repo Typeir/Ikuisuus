@@ -14,8 +14,8 @@ import { FeatEntity } from '@/lib/db/orm/entities/FeatEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { FeatRepository } from '../../repositories/featRepository';
 import type {
-  FeatAbilityIncrease,
-  FeatMetadata,
+    FeatAbilityIncrease,
+    FeatMetadata,
 } from '../../schemas/featMetadata';
 import { PgMetadataRepository } from './PgMetadataRepository';
 

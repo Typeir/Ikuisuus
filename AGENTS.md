@@ -41,7 +41,7 @@ Major architectural changes to be aware of:
 | **MDX Format Health Check** | `check-mdx-format.ts` validates content structure, naming, components; integrated into composite health gate and post-edit lint hook      | [MDX Content Instructions](.github/instructions/mdx-content.instructions.md) |
 | **World Sim Module**        | Three.js solar system with phase-based render lifecycle, DOM overlay bridge, and celestial body renderers                                 | [World Sim Module](.github/docs/world-sim-module.md)                         |
 | **RenderLifecycle System**  | Unity-style phase bus (PreUpdate → Update → PostUpdate → PreRender → render → PostRender) replaces ad-hoc callback arrays in SceneManager | [World Sim Module](.github/docs/world-sim-module.md)                         |
-| **Foundry VTT Module**      | Export pipeline: MonsterMetadata → dnd5e NPC Actor JSON with image bundling, token generation, and LevelDB pack compilation               | [Foundry Module](.github/docs/foundry-module.md)                             |
+| **Foundry VTT Module**      | Export pipeline: MonsterMetadata → d20 NPC Actor JSON with image bundling, token generation, and LevelDB pack compilation               | [Foundry Module](.github/docs/foundry-module.md)                             |
 
 ### 2025
 
@@ -432,7 +432,7 @@ export { main, parseFile }; // Export for orchestrator
 - **Content System**: `.github/docs/content-system.md` - MDX architecture, filesystem routing, locale handling, translation workflows, and auto-linking
 - **Encounter Module**: `.github/docs/encounter-module.md` - Play Mode turn tracker, mechanics flags (lair, stratagem, legendaryDeed), round-start notifications
 - **World Sim Module**: `.github/docs/world-sim-module.md` - Three.js solar system, mediator pattern, render lifecycle, celestial renderers, DOM overlay bridge
-- **Foundry Module**: `.github/docs/foundry-module.md` - Export pipeline, monster transformer, deterministic IDs, MDX→HTML, dnd5e maps, token generation, LevelDB compilation
+- **Foundry Module**: `.github/docs/foundry-module.md` - Export pipeline, monster transformer, deterministic IDs, MDX→HTML, d20 maps, token generation, LevelDB compilation
 - **Copilot Workflow**: `.github/docs/copilot-workflow-system.md` - Enforced A→B→C task lifecycle, agents, skills, hooks, health checks, reconciliation
 
 ### Copilot Workflow System

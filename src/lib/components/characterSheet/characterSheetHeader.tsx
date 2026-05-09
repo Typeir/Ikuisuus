@@ -14,8 +14,8 @@
 'use client';
 
 import type {
-  CharacterSheet as CharacterSheetType,
-  CharacterShard,
+    CharacterShard,
+    CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
 import { computeBpSpent } from '@/lib/utils/shardExtractor';
 import { useTranslations } from 'next-intl';
@@ -138,10 +138,7 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
                 onClick={onSave}>
                 {t('save')}
               </button>
-              <button
-                type='button'
-                className={styles.btn}
-                onClick={onCancel}>
+              <button type='button' className={styles.btn} onClick={onCancel}>
                 {t('cancel')}
               </button>
             </>

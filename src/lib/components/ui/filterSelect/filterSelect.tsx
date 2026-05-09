@@ -126,9 +126,7 @@ const VirtualizedOption = memo(function VirtualizedOption({
       onMouseEnter={onMouseEnter}
       style={style}>
       <span className={styles.optionLabel}>{option.label}</span>
-      {trailing && (
-        <span className={styles.optionTrailing}>{trailing}</span>
-      )}
+      {trailing && <span className={styles.optionTrailing}>{trailing}</span>}
     </div>
   );
 });

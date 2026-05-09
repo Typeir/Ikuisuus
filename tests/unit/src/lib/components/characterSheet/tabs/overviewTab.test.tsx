@@ -16,7 +16,11 @@ import { describe, expect, it } from 'vitest';
 describe('OverviewTab', () => {
   it('renders without crashing for an empty character', () => {
     const { container } = render(
-      <OverviewTab data={createEmptyCharacter()} editing={false} onChange={() => {}} />,
+      <OverviewTab
+        data={createEmptyCharacter()}
+        editing={false}
+        onChange={() => {}}
+      />,
     );
     expect(container.firstChild).toBeTruthy();
   });

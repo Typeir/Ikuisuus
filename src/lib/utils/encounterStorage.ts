@@ -66,7 +66,7 @@ export const generateId = (): string => {
 };
 
 /**
- * Calculate D&D 5e initiative modifier from dexterity ability score.
+ * Calculate d20 initiative modifier from dexterity ability score.
  * Uses standard formula: (ability - 10) / 2, rounded down.
  *
  * @function calculateInitiativeMod
@@ -362,7 +362,7 @@ export const importEncounter = (jsonString: string): Encounter => {
 
 /**
  * Roll 1d20 and add initiative modifier for creature initiative.
- * Uses standard D&D 5e initiative rules.
+ * Uses standard d20 initiative rules.
  *
  * @function rollInitiative
  * @param {number} initiativeMod - Initiative modifier to add to roll

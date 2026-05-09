@@ -65,13 +65,14 @@ describe('resolveShards', () => {
   describe('line-range resolution', () => {
     it('extracts a boon by startLine/endLine and strips the heading line', () => {
       const lines = HEADING_MDX.split('\n');
-      const rageStart =
-        lines.findIndex((l) => l.startsWith('## Rage')) + 1;
+      const rageStart = lines.findIndex((l) => l.startsWith('## Rage')) + 1;
       const rageEnd = lines.findIndex((l) =>
         l.startsWith('## Unarmored Defense'),
       );
 
-      const entries = [{ name: 'Rage', startLine: rageStart, endLine: rageEnd }];
+      const entries = [
+        { name: 'Rage', startLine: rageStart, endLine: rageEnd },
+      ];
       const result = resolveShards(HEADING_MDX, entries, ['Rage']);
 
       expect(result['Rage']).not.toContain('## Rage');

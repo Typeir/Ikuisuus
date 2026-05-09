@@ -462,7 +462,7 @@ npm run foundry:build
 
 **What it does**:
 
-1. `foundry:export` — Reads `.metadata.json` + `.sheet.mdx` files, transforms to dnd5e NPC Actor JSON, bundles portrait images, generates circular token images
+1. `foundry:export` — Reads `.metadata.json` + `.sheet.mdx` files, transforms to d20 NPC Actor JSON, bundles portrait images, generates circular token images
 2. `foundry:pack` — Compiles JSON source files in `foundry/packs/_source/` to LevelDB packs via `@foundryvtt/foundryvtt-cli`
 
 **Output directories**:

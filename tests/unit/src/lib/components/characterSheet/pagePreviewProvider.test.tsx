@@ -7,8 +7,8 @@
  */
 
 import {
-  PagePreviewProvider,
-  usePagePreview,
+    PagePreviewProvider,
+    usePagePreview,
 } from '@/lib/components/characterSheet/pagePreviewProvider';
 import { act, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';

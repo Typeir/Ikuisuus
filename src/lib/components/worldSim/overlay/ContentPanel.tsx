@@ -1,16 +1,13 @@
 /**
- * @fileoverview Content Panel — Embedded Content Iframe Overlay
- * @description Renders a side panel containing an iframe that loads the actual
- * site page for the selected celestial body or region. Uses the `?embed=true`
- * query parameter so the loaded page strips its sidebar/navigation, showing
- * only the content. Slides in when a body or region with a valid contentPath
- * is selected. Positioned on the left side of the screen under the world sim
- * title and can be dragged, resized, and closed.
+ * @fileoverview DEPRECATED: Content Panel — Use WorldSimContentPanel Instead
+ * @description This component has been refactored into WorldSimContentPanel (WorldSim-specific)
+ * and GenericEmbedPanel (generic reusable wrapper). Use WorldSimContentPanel instead.
  *
  * @module worldSim/overlay/ContentPanel
- * @version 2.0.0
+ * @deprecated Use WorldSimContentPanel from './WorldSimContentPanel' instead
+ * @version 1.0.0 (deprecated)
  * @author Typeir
- * @since 2.0.0
+ * @since 1.0.0
  */
 
 'use client';

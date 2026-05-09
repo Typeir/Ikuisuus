@@ -14,6 +14,7 @@ import { useSpellSources } from '@/lib/hooks/data/useSpellSources';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import MetadataTable from '../metadataTables/metadataTable';
+import gradientTabStyles from '@/lib/components/ui/gradientTabs/gradientTabs.module.scss';
 import styles from './spellTable.module.scss';
 import type { SpellTablesProps } from './spellTable.types';
 import { SpellTableSkeleton } from './spellTableSkeleton';
@@ -189,15 +190,15 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
         </div>
       </div>
 
-      <div className={styles.gradientContainer}>
-        <div className={styles.tabNavWrapper}>
-          <div className={styles.tabNav}>
-            <div className={styles.tabList}>
+      <div className={gradientTabStyles.gradientContainer}>
+        <div className={gradientTabStyles.tabNavWrapper}>
+          <div className={gradientTabStyles.tabNav}>
+            <div className={gradientTabStyles.tabList}>
               {displayLevels.map((level) => (
                 <div
                   key={level}
-                  className={`${styles.tab} ${
-                    activeTab === level ? styles.active : ''
+                  className={`${gradientTabStyles.tab} ${
+                    activeTab === level ? gradientTabStyles.active : ''
                   }`}>
                   <button type='button' onClick={() => setActiveTab(level)}>
                     {allLevelLabels[level] || `Level ${level}`}
@@ -209,7 +210,7 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
         </div>
       </div>
 
-      <div className={styles.tabContent}>
+      <div className={gradientTabStyles.tabContent}>
         {visibleSpells.length > 0 ? (
           <MetadataTable
             data={visibleSpells}

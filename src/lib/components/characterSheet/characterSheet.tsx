@@ -20,7 +20,7 @@ import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character
 import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
-import { Tab, TabList, TabPanel, Tabs } from '../ui/tabs';
+import { GradientTabs } from '../ui/gradientTabs';
 import { AbilityScoreBlock } from './abilityScoreBlock';
 import styles from './characterSheet.module.scss';
 import { CharacterSheetHeader } from './characterSheetHeader';
@@ -96,12 +96,9 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
     setEditing(true);
   }, [character]);
 
-  const handleChange = useCallback(
-    (patch: Partial<CharacterSheetType>) => {
-      setDraft((prev) => ({ ...prev, ...patch }));
-    },
-    [],
-  );
+  const handleChange = useCallback((patch: Partial<CharacterSheetType>) => {
+    setDraft((prev) => ({ ...prev, ...patch }));
+  }, []);
 
   const data = editing ? draft : character;
 
@@ -132,39 +129,51 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
           ))}
         </section>
 
-        <Tabs
-          value={activeTab}
-          onChange={(v) => setActiveTab(v as TabId)}
-          ariaLabel={t('ariaTabs')}>
-          <TabList>
-            <Tab value='overview'>{t('tabOverview')}</Tab>
-            <Tab value='bloodline'>{t('tabBloodline')}</Tab>
-            <Tab value='vocation'>{t('tabVocation')}</Tab>
-            <Tab value='equipment'>{t('tabEquipment')}</Tab>
-            <Tab value='feats'>{t('tabFeats')}</Tab>
-          </TabList>
-
-          <TabPanel value='overview'>
-            <OverviewTab data={data} editing={editing} onChange={handleChange} />
-          </TabPanel>
-          <TabPanel value='bloodline'>
-            <BloodlineTab
-              data={data}
-              editing={editing}
-              onChange={handleChange}
-              locale={locale}
-            />
-          </TabPanel>
-          <TabPanel value='vocation'>
-            <VocationTab data={data} locale={locale} />
-          </TabPanel>
-          <TabPanel value='equipment'>
-            <EquipmentTab data={data} editing={editing} onChange={handleChange} />
-          </TabPanel>
-          <TabPanel value='feats'>
-            <FeatsTab data={data} editing={editing} onChange={handleChange} />
-          </TabPanel>
-        </Tabs>
+        <div className={styles.tabsSection}>
+          <GradientTabs
+            tabs={[
+              { value: 'overview', label: t('tabOverview') },
+              { value: 'bloodline', label: t('tabBloodline') },
+              { value: 'vocation', label: t('tabVocation') },
+              { value: 'equipment', label: t('tabEquipment') },
+              { value: 'feats', label: t('tabFeats') },
+            ]}
+            activeTab={activeTab}
+            onChange={(v) => setActiveTab(v as TabId)}
+            panels={{
+              overview: (
+                <OverviewTab
+                  data={data}
+                  editing={editing}
+                  onChange={handleChange}
+                />
+              ),
+              bloodline: (
+                <BloodlineTab
+                  data={data}
+                  editing={editing}
+                  onChange={handleChange}
+                  locale={locale}
+                />
+              ),
+              vocation: <VocationTab data={data} locale={locale} />,
+              equipment: (
+                <EquipmentTab
+                  data={data}
+                  editing={editing}
+                  onChange={handleChange}
+                />
+              ),
+              feats: (
+                <FeatsTab
+                  data={data}
+                  editing={editing}
+                  onChange={handleChange}
+                />
+              ),
+            }}
+          />
+        </div>
       </article>
       <PagePreviewHost locale={locale} />
     </PagePreviewProvider>

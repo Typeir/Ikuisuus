@@ -1,7 +1,7 @@
 /**
  * @fileoverview Monster Table Wrapper - Client-side data fetching for creature stat blocks
  * @description Fetches monster metadata from API and configures MetadataTable with
- * D&D 5e creature statistics (size, type, CR, AC, HP, alignment). Uses shared
+ * d20 creature statistics (size, type, CR, AC, HP, alignment). Uses shared
  * compareChallengeRating utility for fractional values (e.g., "1/2", "1/4") and
  * SIZE_SORT_ORDER for consistent size-based sorting.
  *

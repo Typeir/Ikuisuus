@@ -28,8 +28,9 @@
   @include button-hover-scale(1.15);
 
   &:hover {
-    color: var(--color-primary);
-    filter: drop-shadow(0 0 6px var(--color-primary));
+    background: var(--color-accent);
+    color: var(--color-bg);
+    filter: drop-shadow(0 0 6px var(--color-accent));
   }
 
   &:focus-visible {

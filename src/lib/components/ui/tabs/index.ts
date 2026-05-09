@@ -6,10 +6,6 @@
  * @since 1.0.0
  */
 
-export { Tabs, TabList, Tab, TabPanel } from './tabs';
-export type {
-  TabsProps,
-  TabListProps,
-  TabProps,
-  TabPanelProps,
-} from './tabs';
+export { Tab, TabList, TabPanel, Tabs } from './tabs';
+export type { TabListProps, TabPanelProps, TabProps, TabsProps } from './tabs';
+

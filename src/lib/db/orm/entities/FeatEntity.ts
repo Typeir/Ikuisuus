@@ -19,13 +19,13 @@
  */
 
 import {
-  Embeddable,
-  Embedded,
-  Entity,
-  Index,
-  PrimaryKey,
-  Property,
-  Unique,
+    Embeddable,
+    Embedded,
+    Entity,
+    Index,
+    PrimaryKey,
+    Property,
+    Unique,
 } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VO  ─────────────────────────── */

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Content Tags System - Type definitions and tag utilities for MDX metadata
- * @description Defines TypeScript enums and type definitions for categorizing D&D 5e content.
+ * @description Defines TypeScript enums and type definitions for categorizing d20 content.
  * Includes spells, monsters, bloodlines, vocations, items, locations, and rules. Provides
  * union types for action economies, creature sizes, hit dice, and spellcasting progression.
  * Used by metadata generators and content filtering systems.

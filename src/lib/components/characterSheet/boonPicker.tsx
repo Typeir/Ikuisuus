@@ -61,7 +61,7 @@ export interface BoonPickerProps {
 
 /**
  * Boon picker panel. Fetches available boons for the bloodline, renders them as
- * toggle cards, and shows an advisory budget meter.
+ * toggle cards with tag-based tooltips, and shows an advisory budget meter.
  *
  * @component
  * @param {BoonPickerProps} props - Component props

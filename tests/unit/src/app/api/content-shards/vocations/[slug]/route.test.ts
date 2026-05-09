@@ -37,9 +37,8 @@ let VocationShardsRoute: typeof import('@/app/api/content-shards/vocations/[slug
 let vocationRepository: VocationRepository;
 
 beforeEach(async () => {
-  VocationShardsRoute = await import(
-    '@/app/api/content-shards/vocations/[slug]/route'
-  );
+  VocationShardsRoute =
+    await import('@/app/api/content-shards/vocations/[slug]/route');
   const repo = await import('@/lib/db/content/repositories/vocationRepository');
   vocationRepository = repo.vocationRepository;
   mockGetFile.mockReset();
@@ -131,7 +130,10 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
     vi.mocked(vocationRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'barbarian.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'barbarian.mdx',
+    });
 
     const res = await VocationShardsRoute.GET(...makeArgs('barbarian'));
     expect(res.status).toBe(200);
@@ -149,7 +151,10 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
     vi.mocked(vocationRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'barbarian.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'barbarian.mdx',
+    });
 
     const res = await VocationShardsRoute.GET(
       ...makeArgs('barbarian', { 'keys[]': 'Rage' }),
@@ -164,20 +169,32 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
     vi.mocked(vocationRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'barbarian.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'barbarian.mdx',
+    });
 
     await VocationShardsRoute.GET(...makeArgs('barbarian'));
-    expect(vocationRepository.getBySlug).toHaveBeenCalledWith('en', 'barbarian');
+    expect(vocationRepository.getBySlug).toHaveBeenCalledWith(
+      'en',
+      'barbarian',
+    );
   });
 
   it('passes locale param to the repository', async () => {
     vi.mocked(vocationRepository.getBySlug).mockResolvedValue(
       MOCK_META as never,
     );
-    mockGetFile.mockResolvedValue({ content: SAMPLE_MDX, resolvedPath: 'barbarian.mdx' });
+    mockGetFile.mockResolvedValue({
+      content: SAMPLE_MDX,
+      resolvedPath: 'barbarian.mdx',
+    });
 
     await VocationShardsRoute.GET(...makeArgs('barbarian', { locale: 'es' }));
-    expect(vocationRepository.getBySlug).toHaveBeenCalledWith('es', 'barbarian');
+    expect(vocationRepository.getBySlug).toHaveBeenCalledWith(
+      'es',
+      'barbarian',
+    );
   });
 
   it('returns 500 when the repository throws', async () => {

@@ -43,3 +43,57 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 **IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
 
 Remember: You are capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+
+## Existing UI Atoms in the Codebase
+
+**IMPORTANT**: Before inventing new components, use the existing atoms already available in the Library of Ikuisuus codebase. These components are battle-tested, styled, and accessible. Compose them creatively rather than building from scratch.
+
+### Verified Atoms
+
+- **[Tooltip](src/lib/components/ui/tooltip/tooltip.tsx)** — Accessible hover/focus tooltips with placement options, delays, and auto-flip. Supports custom content and styling.
+- **[Draggable](src/lib/components/ui/draggable/Draggable.tsx)** — Resizable, repositionable panels with handles and optional close buttons. Powers WorldSim content panels and character sheet previews.
+- **[Dropdown](src/lib/components/ui/dropdown/)** — Menu patterns with open/close states, keyboard navigation, and positioning logic.
+- **[Tables](src/lib/components/mdx/MetadataTable/)** — Generic table component for rendering metadata (monsters, heirlooms, spells). Supports custom columns, sorting, and searching.
+- **[Lucide Icons](https://lucide.dev)** — Comprehensive icon library (lucide-react). 1000+ consistent, accessible icons. Use instead of custom SVGs or icon fonts.
+
+### Import Examples
+
+```typescript
+// Use existing components
+import { Tooltip } from '@/lib/components/ui/tooltip';
+import { Draggable } from '@/lib/components/ui/draggable/Draggable';
+import { MetadataTable } from '@/lib/components/mdx/MetadataTable';
+import { ChevronDown, Heart, Settings, AlertCircle } from 'lucide-react';
+
+// NOT inventing:
+// - Custom button variants (use semantic HTML + CSS)
+// - Bespoke card containers (use Draggable or semantic divs)
+// - Homebrew modals (use Draggable + Tooltip patterns)
+// - One-off popup systems (use Tooltip with custom content)
+// - Custom icons (use lucide-react instead)
+```
+
+### When to Compose vs. Create
+
+**Compose existing atoms when:**
+
+- Building modal/dialog-like interfaces → Use `Draggable`
+- Needing hover information → Use `Tooltip`
+- Displaying tabular data → Use `MetadataTable`
+- Building dropdown menus → Use `Dropdown`
+
+**Only create NEW components when:**
+
+- The requirement is fundamentally different from existing atoms (after confirming no existing component fits)
+- The new component will be reused across multiple pages
+- No combination of existing atoms can solve the problem efficiently
+
+### Design Within Constraints
+
+The existing atoms come with built-in styling via SCSS modules and CSS variables. Respect their design while:
+
+- Applying custom `className` props to adjust wrapping divs
+- Using theme variables (`--color-bg`, `--color-text`, etc.) for consistency
+- Theming via existing slots (dark/light mode support built-in)
+
+This approach ensures cohesion across the application and prevents component proliferation.

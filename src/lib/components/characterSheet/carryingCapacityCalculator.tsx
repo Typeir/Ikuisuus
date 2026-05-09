@@ -14,8 +14,8 @@
 
 import { Chip } from '@/lib/components/ui/chip';
 import {
-  type CreatureSize,
-  computeCapacity,
+    type CreatureSize,
+    computeCapacity,
 } from '@/lib/data/carryingCapacity';
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { useState } from 'react';
@@ -84,9 +84,10 @@ export const CarryingCapacityCalculator: React.FC<
   const thresholds = computeCapacity(strength, size, isQuadruped);
   const tier = classifyLoad(carried, thresholds);
 
-  const fillPct = thresholds.heavy > 0
-    ? Math.min(100, (carried / thresholds.heavy) * 100)
-    : 0;
+  const fillPct =
+    thresholds.heavy > 0
+      ? Math.min(100, (carried / thresholds.heavy) * 100)
+      : 0;
 
   return (
     <div className={styles.calculator}>

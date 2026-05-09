@@ -9,17 +9,17 @@
  */
 
 import {
-  BUILT_IN_CURRENCY_SYSTEMS,
-  FIVE_E_STANDARD,
-  computeHoldingsValue,
-  migrateLegacyCurrency,
+    BUILT_IN_CURRENCY_SYSTEMS,
+    GOLD_STANDARD,
+    computeHoldingsValue,
+    migrateLegacyCurrency,
 } from '@/lib/data/currencySystems';
 import { describe, expect, it } from 'vitest';
 
 describe('currencySystems', () => {
-  describe('FIVE_E_STANDARD', () => {
+  describe('GOLD_STANDARD', () => {
     it('contains the five canonical denominations', () => {
-      const names = FIVE_E_STANDARD.coins.map((c) => c.name);
+      const names = GOLD_STANDARD.coins.map((c) => c.name);
       expect(names).toEqual([
         'Copper',
         'Silver',
@@ -30,23 +30,23 @@ describe('currencySystems', () => {
     });
 
     it('uses gold as the base unit (multiplier 1)', () => {
-      const gold = FIVE_E_STANDARD.coins.find((c) => c.name === 'Gold');
+      const gold = GOLD_STANDARD.coins.find((c) => c.name === 'Gold');
       expect(gold?.multiplier).toBe(1);
     });
 
     it('is marked as built-in', () => {
-      expect(FIVE_E_STANDARD.builtIn).toBe(true);
+      expect(GOLD_STANDARD.builtIn).toBe(true);
     });
   });
 
   describe('BUILT_IN_CURRENCY_SYSTEMS', () => {
-    it('includes the 5e Standard system', () => {
-      expect(BUILT_IN_CURRENCY_SYSTEMS).toContain(FIVE_E_STANDARD);
+    it('includes the Gold Standard system', () => {
+      expect(BUILT_IN_CURRENCY_SYSTEMS).toContain(GOLD_STANDARD);
     });
   });
 
   describe('migrateLegacyCurrency', () => {
-    it('maps every legacy denomination to its 5e Standard counterpart', () => {
+    it('maps every legacy denomination to its Gold Standard counterpart', () => {
       const result = migrateLegacyCurrency({
         pp: 1,
         gp: 2,
@@ -55,7 +55,7 @@ describe('currencySystems', () => {
         cp: 5,
       });
       expect(result).toEqual({
-        systemName: '5e Standard',
+        systemName: 'Gold Standard',
         counts: {
           Copper: 5,
           Silver: 4,
@@ -82,18 +82,18 @@ describe('currencySystems', () => {
     it('sums denominations against the system multipliers', () => {
       const value = computeHoldingsValue(
         {
-          systemName: '5e Standard',
+          systemName: 'Gold Standard',
           counts: { Gold: 5, Silver: 30, Copper: 100 },
         },
-        FIVE_E_STANDARD,
+        GOLD_STANDARD,
       );
       expect(value).toBeCloseTo(5 + 3 + 1, 5);
     });
 
     it('returns zero for empty holdings', () => {
       const value = computeHoldingsValue(
-        { systemName: '5e Standard', counts: {} },
-        FIVE_E_STANDARD,
+        { systemName: 'Gold Standard', counts: {} },
+        GOLD_STANDARD,
       );
       expect(value).toBe(0);
     });

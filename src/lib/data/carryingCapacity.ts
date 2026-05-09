@@ -1,7 +1,7 @@
 /**
- * @fileoverview Carrying Capacity Tables (3.5e)
+ * @fileoverview Carrying Capacity Tables
  * @description Data tables and `computeCapacity` helper for carrying capacity
- * calculations modeled on the 3.5e SRD encumbrance rules. Returns light /
+ * calculations modeled on d20 SRD encumbrance rules. Returns light /
  * medium / heavy load thresholds in pounds for a given Strength score, size,
  * and bipedal/quadruped form.
  *
@@ -46,7 +46,7 @@ export interface CapacityThresholds {
 }
 
 /**
- * 3.5e SRD carrying capacity table for STR 1-29.
+ * d20 SRD carrying capacity table for STR 1-29.
  *
  * @constant STR_TABLE
  */

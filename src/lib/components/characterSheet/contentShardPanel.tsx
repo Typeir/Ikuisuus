@@ -75,9 +75,8 @@ export const ContentShardPanel: React.FC<ContentShardPanelProps> = ({
       )
       .then(async (data) => {
         const markdown = data.shards.main ?? '';
-        const { renderMarkdownToHtml } = await import(
-          '@/lib/md/renderMarkdownToHtml'
-        );
+        const { renderMarkdownToHtml } =
+          await import('@/lib/md/renderMarkdownToHtml');
         const html = await renderMarkdownToHtml(markdown);
         if (!cancelled) setRenderedHtml(html);
       })
@@ -94,11 +93,19 @@ export const ContentShardPanel: React.FC<ContentShardPanelProps> = ({
   }, [contentType, slug, locale]);
 
   if (loading) {
-    return <div className={styles.loading} aria-busy='true'>Loading…</div>;
+    return (
+      <div className={styles.loading} aria-busy='true'>
+        Loading…
+      </div>
+    );
   }
 
   if (error) {
-    return <div className={styles.error} role='alert'>{error}</div>;
+    return (
+      <div className={styles.error} role='alert'>
+        {error}
+      </div>
+    );
   }
 
   return (

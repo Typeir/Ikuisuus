@@ -16,10 +16,7 @@
 import { Tooltip } from '@/lib/components/ui/tooltip';
 import { CircleHelp } from 'lucide-react';
 import type { MouseEvent } from 'react';
-import {
-  usePagePreview,
-  type PreviewKind,
-} from './pagePreviewProvider';
+import { usePagePreview, type PreviewKind } from './pagePreviewProvider';
 import styles from './pagePreviewTooltip.module.scss';
 
 /**
@@ -72,7 +69,11 @@ export const PagePreviewTooltip: React.FC<PagePreviewTooltipProps> = ({
   };
 
   return (
-    <Tooltip content={tooltipLabel ?? title} placement='top' showDelay={250}>
+    <Tooltip
+      content={tooltipLabel ?? `${title} source page`}
+      placement='top'
+      showDelay={250}
+      showClickIcon={false}>
       <button
         type='button'
         className={`${styles.previewBtn} ${open ? styles.active : ''}`}

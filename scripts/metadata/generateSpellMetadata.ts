@@ -17,7 +17,6 @@ import {
     GameData,
     clean,
     filePathToSlug,
-    getMetadataBackend,
     parseDescription,
     parseTitle,
     runGenerator,
@@ -406,80 +405,6 @@ async function generateSpellMetadata(
     storage: options.storage,
     metadataVersion: '2.0.0',
   });
-
-  const externalMetadataPath = path.join(
-    process.cwd(),
-    'scripts',
-    'core',
-    'spells-external.metadata.json',
-  );
-
-  try {
-    const stats = await fs.stat(externalMetadataPath);
-    if (stats.isFile()) {
-      log.message('Found external spell metadata', {
-        path: externalMetadataPath,
-      });
-
-      const externalContent = await fs.readFile(externalMetadataPath, 'utf8');
-      const externalSpells = JSON.parse(externalContent);
-
-      const backend = getMetadataBackend();
-      let destinationFolder: string;
-      if (backend === 'pg') {
-        destinationFolder = path.join(process.cwd(), '.meta', 'en', 'spells');
-      } else {
-        destinationFolder = path.join(
-          process.cwd(),
-          'src',
-          'content',
-          'en',
-          'spells',
-        );
-      }
-      await fs.mkdir(destinationFolder, { recursive: true });
-
-      const destinationPath = path.join(
-        destinationFolder,
-        'spells-external.metadata.json',
-      );
-      await fs.writeFile(
-        destinationPath,
-        JSON.stringify(externalSpells, null, 2),
-        'utf8',
-      );
-
-      log.message('Copied external spell metadata', {
-        spellCount: externalSpells.length,
-        destination: destinationPath,
-      });
-
-      if (options.storage && Array.isArray(externalSpells)) {
-        let persisted = 0;
-        for (const spell of externalSpells) {
-          if (spell?.slug) {
-            try {
-              await options.storage.upsert('spells', 'en', spell.slug, spell);
-              persisted++;
-            } catch (storageErr) {
-              log.warning(`DB upsert failed for external spell ${spell.slug}`, {
-                error: (storageErr as Error).message,
-              });
-            }
-          }
-        }
-        log.message('Persisted external spells to database', {
-          count: persisted,
-        });
-      }
-    }
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-      log.warning('Error checking for external spell metadata', {
-        error: (err as Error).message,
-      });
-    }
-  }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

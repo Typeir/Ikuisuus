@@ -1,0 +1,174 @@
+/**
+ * @fileoverview Generic Embed Panel — Reusable Draggable Iframe Container
+ * @description A generic, context-agnostic wrapper around Draggable for embedding
+ * iframe content in moveable, resizable windows. Handles drag, resize, close,
+ * and loading state without any domain-specific state or positioning.
+ *
+ * @module ui/embedPanel/GenericEmbedPanel
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ */
+
+'use client';
+
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { Draggable } from '../draggable/Draggable';
+
+/**
+ * Build the embed URL for a given content path and locale.
+ *
+ * @param {string} contentPath - Relative library path (e.g. "world/the-lands-of-damocles/ordovica")
+ * @param {string} locale - Current locale code (e.g. "en")
+ * @returns {string} Full embed URL with query parameter
+ */
+export function buildEmbedUrl(contentPath: string, locale: string): string {
+  return `/${locale}/library/${contentPath}?embed=true`;
+}
+
+/**
+ * @interface GenericEmbedPanelProps
+ * Configuration for GenericEmbedPanel component.
+ * @property {string | null} url - Content URL path to embed (e.g. "world/the-lands-of-damocles/ordovica")
+ * @property {string} locale - Locale code for the embed URL (e.g. "en")
+ * @property {(bounds: {width: number; height: number}) => {x: number; y: number}} initialPosition - Function to compute initial position
+ * @property {string | number} [defaultWidth='100%'] - Default width (CSS value or number in px)
+ * @property {string | number} [defaultHeight='100%'] - Default height (CSS value or number in px)
+ * @property {string} handleLabel - Label displayed on the drag handle
+ * @property {boolean} [resizable=true] - Whether the panel is resizable
+ * @property {string} [testId] - Test identifier for the draggable element
+ * @property {string} [draggableClassName] - CSS class for the Draggable wrapper
+ * @property {string} [contentClassName] - CSS class for the content wrapper div
+ * @property {string} [loadingClassName] - CSS class for the loading container
+ * @property {string} [spinnerClassName] - CSS class for the loading spinner
+ * @property {string} [iframeClassName] - CSS class for the iframe element
+ * @property {string} [contentRole='complementary'] - ARIA role for the content wrapper
+ * @property {string} [contentAriaLabel] - ARIA label for the content wrapper
+ * @property {string} [iframeTitle='Embed'] - Title attribute for the iframe
+ * @property {() => void} [onLoadingStart] - Callback when loading starts
+ * @property {() => void} [onLoadingEnd] - Callback when loading ends
+ * @property {(url: string | null) => void} [onUrlChange] - Callback when content URL changes
+ * @property {() => void} [onClosed] - Callback when panel is closed
+ */
+export interface GenericEmbedPanelProps {
+  url: string | null;
+  locale: string;
+  initialPosition: (bounds: { width: number; height: number }) => {
+    x: number;
+    y: number;
+  };
+  defaultWidth?: string | number;
+  defaultHeight?: string | number;
+  handleLabel: string;
+  resizable?: boolean;
+  testId?: string;
+  draggableClassName?: string;
+  contentClassName?: string;
+  loadingClassName?: string;
+  spinnerClassName?: string;
+  iframeClassName?: string;
+  contentRole?: string;
+  contentAriaLabel?: string;
+  iframeTitle?: string;
+  onLoadingStart?: () => void;
+  onLoadingEnd?: () => void;
+  onUrlChange?: (url: string | null) => void;
+  onClosed?: () => void;
+}
+
+/**
+ * Generic, context-agnostic draggable iframe container.
+ * Wraps Draggable and provides a standardized interface for embedded iframe panels.
+ * Manages loading state, close state, and renders both loading spinner and iframe.
+ * Handles embedding logic internally using buildEmbedUrl.
+ * Exposes lifecycle events for extensibility.
+ *
+ * @component
+ * @param {GenericEmbedPanelProps} props - Configuration
+ * @returns {JSX.Element | null} Rendered draggable embed panel, or null when closed
+ */
+export function GenericEmbedPanel({
+  url,
+  locale,
+  initialPosition,
+  defaultWidth = '100%',
+  defaultHeight = '100%',
+  handleLabel,
+  resizable = true,
+  testId,
+  draggableClassName,
+  contentClassName,
+  loadingClassName,
+  spinnerClassName,
+  iframeClassName,
+  contentRole = 'complementary',
+  contentAriaLabel,
+  iframeTitle = 'Embed',
+  onLoadingStart,
+  onLoadingEnd,
+  onUrlChange,
+  onClosed,
+}: GenericEmbedPanelProps): JSX.Element | null {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isClosed, setIsClosed] = useState(false);
+
+  const embedUrl = useMemo(() => {
+    if (!url) return null;
+    return buildEmbedUrl(url, locale);
+  }, [url, locale]);
+
+  const handleLoad = useCallback(() => {
+    setIsLoading(false);
+    onLoadingEnd?.();
+  }, [onLoadingEnd]);
+
+  const handleClose = useCallback(() => {
+    setIsClosed(true);
+    onClosed?.();
+  }, [onClosed]);
+
+  /** Trigger events when URL changes */
+  const previousUrl = useRef<string | null>(null);
+  if (url !== previousUrl.current) {
+    previousUrl.current = url;
+    setIsLoading(true);
+    onUrlChange?.(url);
+    onLoadingStart?.();
+  }
+
+  if (isClosed) return null;
+
+  return (
+    <Draggable
+      handleLabel={handleLabel}
+      initialPosition={initialPosition}
+      className={draggableClassName}
+      defaultWidth={defaultWidth}
+      defaultHeight={defaultHeight}
+      testId={testId}
+      resizable={resizable}
+      onClose={handleClose}>
+      <div
+        className={contentClassName}
+        role={contentRole}
+        aria-label={contentAriaLabel}>
+        {isLoading && (
+          <div className={loadingClassName}>
+            <span className={spinnerClassName} />
+          </div>
+        )}
+        <iframe
+          ref={iframeRef}
+          src={embedUrl ?? undefined}
+          className={iframeClassName}
+          onLoad={handleLoad}
+          title={iframeTitle}
+          sandbox='allow-same-origin allow-scripts allow-popups'
+        />
+      </div>
+    </Draggable>
+  );
+}
+
+export default GenericEmbedPanel;

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Filesystem Spell Repository
  * @description Implements `SpellRepository` by reading `.metadata.json` sidecar
- * files from `src/content/{locale}/spells/`. Also merges external spells from
- * `spells-external.metadata.json` if present.
+ * files from `src/content/{locale}/spells/`.
  *
  * @module lib/db/content/adapters/fs/fsSpellRepository
  * @version 1.0.0
@@ -32,9 +31,7 @@ const SUBDIR = 'spells';
  * @implements {SpellRepository}
  *
  * @description
- * Reads `.metadata.json` sidecar files from `spells/`. External spells
- * (from `spells-external.metadata.json`) are included automatically since
- * the file matches `*.metadata.json`.
+ * Reads `.metadata.json` sidecar files from `spells/`.
  */
 class FsSpellRepository
   extends FsMetadataRepository<SpellMetadata>

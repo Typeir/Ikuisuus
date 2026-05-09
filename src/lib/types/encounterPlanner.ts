@@ -36,7 +36,7 @@ export interface SpellRef {
 
 /**
  * Ability scores for a creature.
- * Standard D&D 5e ability score block.
+ * Standard d20 ability score block.
  * 
  * @interface CreatureStats
  * @property {number} str - Strength score (1-30)

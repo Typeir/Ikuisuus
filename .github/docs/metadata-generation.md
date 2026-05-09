@@ -124,7 +124,7 @@ All generators import utilities from the shared `src/lib/metadata/` TypeScript m
    // 7. Report statistics and timing
    ```
 
-2. **`GameData`** - Single source of truth for D&D 5e data
+2. **`GameData`** - Single source of truth for d20 data
 
    ```typescript
    GameData.getDamageTypes(sharedData); // ['acid', 'bludgeoning', ..., 'true']
