@@ -30,7 +30,7 @@ import {
  * @property {boolean} hasActiveVocations - True when at least one vocation entry has a non-empty slug
  * @property {number} experience - Effective experience (raised to `totalLevel`'s XP floor when needed)
  * @property {number} xpFloor - XP threshold for `totalLevel`
- * @property {number} xpCeiling - XP threshold for `totalLevel + 1` (or `XP_THRESHOLDS[MAX_XP_LEVEL]` at cap)
+ * @property {number} xpCeiling - XP threshold for `totalLevel + 1` (or `XP_THRESHOLDS[MAX_XP_LEVEL]` at level 30)
  * @property {number} xpProgressPercent - Percent (0–100) toward the next level
  * @property {number} xpOverallPercent - Percent (0–100) of progress across the full 1→`MAX_XP_LEVEL` range
  */

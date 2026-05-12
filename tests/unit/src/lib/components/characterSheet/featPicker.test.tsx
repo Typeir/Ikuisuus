@@ -63,6 +63,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  mockFetch.mockReset();
 });
 
 describe('FeatPicker', () => {
@@ -94,15 +95,9 @@ describe('FeatPicker', () => {
   });
 
   it('calls onToggle with new feat when clicked', async () => {
-    mockFetch
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify(MOCK_FEATS), { status: 200 }),
-      )
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ shards: { main: 'Body' } }), {
-          status: 200,
-        }),
-      );
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_FEATS), { status: 200 }),
+    );
 
     const handle = vi.fn();
     render(<FeatPicker selectedFeats={[]} onToggle={handle} />);
@@ -116,7 +111,7 @@ describe('FeatPicker', () => {
     const next = handle.mock.calls[0][0] as CharacterShard[];
     expect(next).toHaveLength(1);
     expect(next[0]).toMatchObject({
-      sourceFile: 'tough',
+      sourceFile: 'character-creation/feats/tough.mdx',
       heading: 'Tough',
       category: 'feat',
     });
@@ -129,8 +124,8 @@ describe('FeatPicker', () => {
 
     const selected: CharacterShard[] = [
       {
-        id: 'feat::tough',
-        sourceFile: 'tough',
+        id: 'feat::character-creation/feats/tough.mdx',
+        sourceFile: 'character-creation/feats/tough.mdx',
         heading: 'Tough',
         category: 'feat',
       },

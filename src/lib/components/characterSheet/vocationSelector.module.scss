@@ -130,6 +130,11 @@
   border: 1px solid var(--color-border);
   border-radius: 3px;
   background: var(--color-surface);
+
+  .selectorLabel {
+    width: 7rem;
+    min-width: 7rem;
+  }
 }
 
 .vocationEntryBlockLoading {

@@ -58,5 +58,5 @@
   justify-content: center;
   @include button-secondary(0.15rem 0.25rem, inherit);
   border-radius: 2px;
-  @include button-hover-scale;
+  @include button-hover-scale(1.2);
 }

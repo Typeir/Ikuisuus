@@ -4,14 +4,32 @@
  * `scripts/metadata/generateFeatMetadata.ts`.
  *
  * Each record describes a single feat plain `.mdx` file under
- * `src/content/{locale}/character-creation/feats/`. Mechanics text remains in
- * MDX content and is not duplicated in metadata.
+ * `src/content/{locale}/character-creation/feats/`. The `features` array
+ * captures named mechanics (bold bullet items) with 1-indexed line anchors
+ * into the source MDX, enabling O(1) shard extraction.
  *
  * @module lib/db/content/schemas/featMetadata
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  */
+
+/**
+ * A named mechanic within a feat, parsed from a bold bullet item
+ * (`- **Name.** description`).
+ *
+ * @interface FeatFeature
+ * @property {string} name - Mechanic display name (text between `**` and `.**`)
+ * @property {number} [startLine] - 1-indexed start line of the bullet block in the source MDX
+ * @property {number} [endLine] - 1-indexed last line of the bullet block in the source MDX
+ * @property {string[]} tags - Derived gameplay tags for this mechanic
+ */
+export interface FeatFeature {
+  name: string;
+  startLine?: number;
+  endLine?: number;
+  tags: string[];
+}
 
 /**
  * Optional ability score increase granted by a feat.
@@ -39,6 +57,7 @@ export interface FeatAbilityIncrease {
  * @property {string} [prerequisite] - Raw prerequisite text (italics line)
  * @property {boolean} hasPrerequisite - True when a non-trivial prerequisite is parsed
  * @property {FeatAbilityIncrease} [abilityIncrease] - Parsed ability score increase
+ * @property {FeatFeature[]} [features] - Named mechanics parsed from bold bullet items
  * @property {string[]} tags - Derived gameplay tags
  * @property {number} [indexVersion] - Schema version
  */
@@ -51,6 +70,7 @@ export interface FeatMetadata {
   prerequisite?: string;
   hasPrerequisite: boolean;
   abilityIncrease?: FeatAbilityIncrease;
+  features?: FeatFeature[];
   tags: string[];
   indexVersion?: number;
 }

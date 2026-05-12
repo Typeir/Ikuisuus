@@ -1,16 +1,22 @@
 /**
  * @fileoverview Combat Stats Row Component
  * @description Displays the core combat statistics in a single horizontal row:
- * HP (current/max/temp), AC, initiative, speed, and proficiency bonus.
+ * HP (current/max/temp) with a rollable hit dice panel, AC, initiative, speed
+ * with a bloodline speed panel, and proficiency bonus.
  *
  * @module lib/components/characterSheet/combatStatsRow
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
 'use client';
 
+import { HitDiceCounter } from '@/lib/components/characterSheet/atoms/hitDiceCounter';
+import { HpRollerPanel } from '@/lib/components/characterSheet/atoms/hpRollerPanel';
+import { SpeedPanel } from '@/lib/components/characterSheet/atoms/speedPanel';
+import type { HitDieRollEntry } from '@/lib/types/hitDice';
+import type { VocationEntry } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import styles from './characterSheet.module.scss';
@@ -25,7 +31,12 @@ import styles from './characterSheet.module.scss';
  * @property {number} ac - Armor class
  * @property {number} initiativeBonus - Initiative modifier
  * @property {number | null} speedOverride - Movement speed override in feet; null means use default
+ * @property {string[]} bloodlineSpeeds - All speed modes from the active bloodline
  * @property {number} proficiencyBonus - Proficiency bonus
+ * @property {VocationEntry[]} vocations - Active vocation entries (used for hit dice counter)
+ * @property {HitDieRollEntry[]} hitDiceLog - Hit die roll log for the HP roller panel
+ * @property {number} conMod - CON modifier for HP roller calculations
+ * @property {(updatedLog: HitDieRollEntry[], hpDelta: number) => void} onHitDiceCommit - Called when a roll is confirmed
  */
 export interface CombatStatsRowProps {
   hpCurrent: number;
@@ -34,12 +45,18 @@ export interface CombatStatsRowProps {
   ac: number;
   initiativeBonus: number;
   speedOverride: number | null;
+  bloodlineSpeeds: string[];
   proficiencyBonus: number;
+  vocations: VocationEntry[];
+  hitDiceLog: HitDieRollEntry[];
+  conMod: number;
+  onHitDiceCommit: (updatedLog: HitDieRollEntry[], hpDelta: number) => void;
 }
 
 /**
  * Horizontal bar of combat statistics.
- * Renders HP, AC, initiative, speed, and proficiency as labeled stat chips.
+ * Renders HP (with hit dice counter + roller), AC, initiative, speed (with
+ * bloodline speed panel), and proficiency as labeled stat chips.
  *
  * @component
  * @param {CombatStatsRowProps} props - Component props
@@ -52,7 +69,12 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
   ac,
   initiativeBonus,
   speedOverride,
+  bloodlineSpeeds,
   proficiencyBonus,
+  vocations,
+  hitDiceLog,
+  conMod,
+  onHitDiceCommit,
 }) => {
   const t = useTranslations('characterSheet');
   const initStr =
@@ -67,7 +89,15 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
       role='group'
       aria-label={t('ariaCombatStats')}>
       <div className={styles.statChip}>
-        <span className={styles.statChipLabel}>{t('hp')}</span>
+        <HitDiceCounter vocations={vocations} />
+        <div className={styles.statChipLabelRow}>
+          <span className={styles.statChipLabel}>{t('hp')}</span>
+          <HpRollerPanel
+            hitDiceLog={hitDiceLog}
+            conMod={conMod}
+            onCommit={onHitDiceCommit}
+          />
+        </div>
         <span
           className={styles.statChipValue}
           aria-label={t('ariaHp', {
@@ -91,7 +121,10 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
       </div>
 
       <div className={styles.statChip}>
-        <span className={styles.statChipLabel}>{t('speed')}</span>
+        <div className={styles.statChipLabelRow}>
+          <span className={styles.statChipLabel}>{t('speed')}</span>
+          <SpeedPanel bloodlineSpeeds={bloodlineSpeeds} />
+        </div>
         <span className={styles.statChipValue}>{speedDisplay}</span>
       </div>
 

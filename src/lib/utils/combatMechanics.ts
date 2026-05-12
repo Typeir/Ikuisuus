@@ -15,6 +15,7 @@ import type {
   CombatantMechanics,
   InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
+import { rollDie } from '@/lib/utils/diceUtils';
 
 const heroic_dcs = { '0': 15, '5': 15, '10': 16, '15': 17, '20': 18 };
 
@@ -98,7 +99,7 @@ export const getAffixLink = (
  * @returns {number} Result 1–10
  */
 export const rollAffix = (): number => {
-  return Math.floor(Math.random() * 10) + 1;
+  return rollDie(10);
 };
 
 /**

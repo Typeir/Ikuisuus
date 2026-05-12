@@ -61,12 +61,12 @@ describe('shardToPreview', () => {
 
   describe('Feat Pattern', () => {
     it('extracts feat slug from standard pattern', () => {
-      const result = shardToPreview('feats/fireball.feat.mdx');
+      const result = shardToPreview('character-creation/feats/fireball.mdx');
       expect(result).toEqual({ kind: 'feats', slug: 'fireball' });
     });
 
     it('handles feats with hyphens in slug', () => {
-      const result = shardToPreview('feats/extra-attack.feat.mdx');
+      const result = shardToPreview('character-creation/feats/extra-attack.mdx');
       expect(result).toEqual({ kind: 'feats', slug: 'extra-attack' });
     });
   });

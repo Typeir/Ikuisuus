@@ -57,6 +57,7 @@ const baseRow = {
   tags: ['initiative', 'passive'],
   indexVersion: null,
   versionHash: null,
+  features: { isInitialized: () => true, getItems: () => [] },
 };
 
 /** Entity row with a full ability increase embed. */
@@ -144,7 +145,7 @@ describe('pgFeatRepository', () => {
       expect(mockEM.find).toHaveBeenCalledWith(
         expect.anything(),
         { locale: 'en' },
-        { orderBy: { title: 'asc' }, populate: [] },
+        { orderBy: { title: 'asc' }, populate: ['features'] },
       );
     });
 

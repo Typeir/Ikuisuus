@@ -2,11 +2,10 @@
  * @fileoverview XP Progression Utilities
  * @description Lookup tables and helper functions for the experience point
  * progression system. Thresholds are taken directly from the canonical
- * `character-progression.mdx` rules page (levels 1–20). Levels 21–30 have
- * no defined XP gate and must be set manually.
+ * `character-progression.mdx` rules page (levels 1–30).
  *
  * @module lib/utils/xpProgression
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 4.0.0
  */
@@ -14,22 +13,24 @@
 /**
  * XP required to reach each level index (1-based).
  * Index 0 is unused; `XP_THRESHOLDS[n]` is the XP needed to be level `n`.
- * Only levels 1–20 are defined; levels 21–30 have no XP gate.
+ * Levels 1–20 follow the standard Damocles progression; levels 21–30 are epic
+ * tier thresholds sourced from the same `character-progression.mdx` rules page.
  *
  * @constant {number[]} XP_THRESHOLDS
  */
 export const XP_THRESHOLDS: number[] = [
   0, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000,
   120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000,
+  500000, 650000, 800000, 1000000, 1250000, 1500000, 1800000, 2100000, 2500000, 3000000,
 ];
 
 /**
  * The maximum level for which XP-to-level auto-sync is supported.
- * Beyond this level, players set their level manually.
+ * Encompasses both standard play (1–20) and epic tier (21–30).
  *
  * @constant {number} MAX_XP_LEVEL
  */
-export const MAX_XP_LEVEL = 20;
+export const MAX_XP_LEVEL = 30;
 
 /**
  * Returns the character level corresponding to the given XP total.
@@ -53,7 +54,7 @@ export function getLevelFromXP(xp: number): number {
 
 /**
  * Returns the minimum XP required to be at the given level.
- * Returns 0 for any level above {@link MAX_XP_LEVEL} or below 1.
+ * Returns 0 for any level outside the range 1–{@link MAX_XP_LEVEL}.
  *
  * @function getXPForLevel
  * @param {number} level - Target character level

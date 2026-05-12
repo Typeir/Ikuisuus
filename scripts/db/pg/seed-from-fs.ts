@@ -40,6 +40,9 @@ import {
   BloodlineBoonEntity,
   BloodlineEntity,
   CorrectionsUserEntity,
+  FeatAbilityIncreaseEmbed,
+  FeatEntity,
+  FeatFeatureEntity,
   HeirloomChargesEmbed,
   HeirloomEntity,
   MonsterACEmbed,
@@ -299,6 +302,25 @@ const SEED_CONFIGS: ContentSeedConfig[] = [
       }
     },
   },
+  {
+    entityClass: FeatEntity,
+    subdir: join('character-creation', 'feats'),
+    seedChildren: (em, allMeta, parent, raw) => {
+      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
+      for (let i = 0; i < features.length; i++) {
+        const init = recordToEntityInit(
+          allMeta,
+          FeatFeatureEntity.name,
+          features[i],
+        );
+        em.create(FeatFeatureEntity, {
+          ...init,
+          feat: parent,
+          sortOrder: i,
+        } as never);
+      }
+    },
+  },
 ];
 
 /* ────────────────────────  Orchestrator  ───────────────────────────── */
@@ -364,6 +386,9 @@ async function main(): Promise<void> {
         SpecializationFeatureEntity,
         SpecializationPreparedSpellEntity,
         SpecializationSpellcastingEmbed,
+        FeatEntity,
+        FeatAbilityIncreaseEmbed,
+        FeatFeatureEntity,
         CorrectionsUserEntity,
         SchemaMigrationEntity,
       ],

@@ -37,12 +37,16 @@ export interface FeatureEntry {
  * @property {string} title - Display name
  * @property {string} file - Source file path
  * @property {number} [boonBudget] - Total boon point budget
+ * @property {{ movementSpeeds?: string[] }} [coreFeatures] - Core racial features; `movementSpeeds` is an array of strings like `"Walk: 30 ft."`
  */
 export interface BloodlineOption {
   slug: string;
   title: string;
   file: string;
   boonBudget?: number;
+  coreFeatures?: {
+    movementSpeeds?: string[];
+  };
 }
 
 /**
@@ -53,11 +57,13 @@ export interface BloodlineOption {
  * @property {string} title - Display name
  * @property {string} file - Source file path (e.g. `src/content/en/character-creation/vocations/warlock/main.mdx`)
  * @property {FeatureEntry[]} features - Level–feature progression
+ * @property {string} [hitDie] - Hit die notation without the `d` prefix (e.g. `"10"` for d10); present when returned by the metadata API
  */
 export interface VocationOption {
   slug: string;
   title: string;
   file: string;
+  hitDie?: string;
   features: FeatureEntry[];
 }
 

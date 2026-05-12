@@ -57,7 +57,7 @@ export function shardToPreview(sourceFile: string): ShardPreviewData | null {
   }
 
   if (isFeatPattern(parts, lastSegment)) {
-    const slug = lastSegment.replace(/\.feat\.mdx$/, '');
+    const slug = lastSegment.replace(/\.mdx$/, '');
     return { kind: 'feats', slug };
   }
 
@@ -122,7 +122,7 @@ function isSpecializationPattern(
 
 /**
  * Check if sourceFile matches feat pattern.
- * Pattern: feats/slug.feat.mdx
+ * Pattern: character-creation/feats/slug.mdx
  *
  * @function isFeatPattern
  * @param {string[]} parts - Split path parts
@@ -131,8 +131,9 @@ function isSpecializationPattern(
  */
 function isFeatPattern(parts: string[], lastSegment: string): boolean {
   return (
-    parts[0] === 'feats' &&
-    lastSegment.endsWith('.feat.mdx') &&
-    parts.length === 2
+    parts[0] === 'character-creation' &&
+    parts[1] === 'feats' &&
+    lastSegment.endsWith('.mdx') &&
+    parts.length === 3
   );
 }

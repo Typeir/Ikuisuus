@@ -56,7 +56,7 @@ export async function GET(
       );
     }
 
-    const shards = resolveShards(fileResult.content, [], keys);
+    const shards = resolveShards(fileResult.content, meta.features ?? [], keys);
     return NextResponse.json({ shardType: 'feat', shards });
   } catch (error) {
     log.error('Error resolving feat shards', {

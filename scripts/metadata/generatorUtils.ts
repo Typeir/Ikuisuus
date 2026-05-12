@@ -78,6 +78,7 @@ const CONTENT_PATHS: Record<string, string[]> = {
   bloodlines: ['src', 'content', 'en', 'character-creation', 'bloodlines'],
   vocations: ['src', 'content', 'en', 'character-creation', 'vocations'],
   specializations: ['src', 'content', 'en', 'character-creation', 'vocations'],
+  feats: ['src', 'content', 'en', 'character-creation', 'feats'],
 };
 
 /**

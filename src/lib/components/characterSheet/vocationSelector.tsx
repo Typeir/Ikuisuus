@@ -101,11 +101,20 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
   const handleBloodlineChange = useCallback(
     (slug: string) => {
       const bl = bloodlines.find((b) => b.slug === slug);
+      const rawSpeeds = bl?.coreFeatures?.movementSpeeds ?? [];
+      const walkEntry = rawSpeeds.find((s) =>
+        s.toLowerCase().startsWith('walk:'),
+      );
+      const parsedWalk = walkEntry
+        ? parseInt(walkEntry.replace(/[^0-9]/g, ''), 10) || null
+        : null;
       onChange({
         bloodlineSlug: slug || null,
         bloodlineTitle: bl?.title ?? '',
         boonBudget: bl?.boonBudget ?? 0,
         selectedBoons: [],
+        bloodlineSpeeds: rawSpeeds,
+        speedOverride: parsedWalk,
       });
     },
     [bloodlines, onChange],
@@ -137,6 +146,7 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
       patchVocationEntry(index, {
         slug: slug || '',
         title: voc?.title ?? '',
+        hitDie: voc?.hitDie ?? '',
         vocationFeatures,
         specializationSlug: null,
         specializationTitle: '',

@@ -6,10 +6,11 @@
  *
  * Extracted fields: title, slug, description, prerequisite line, ability score
  * increase ("Increase your **X score by N**" / "Increase your X or Y score by
- * N"), and derived gameplay tags via the shared `extractAllTags` utility.
+ * N"), named mechanics features (bold bullet items), and derived gameplay tags
+ * via the shared `extractAllTags` utility.
  *
  * @module scripts/metadata/generateFeatMetadata
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -121,6 +122,72 @@ function parseAbilityIncrease(
 }
 
 /**
+ * Regex matching bold-bullet feature lines such as
+ * `- **Obliterating Strike.** Your attacks deal...`
+ */
+const FEATURE_BULLET_REGEX = /^[-*+]\s+\*\*([^*]+)\.\*\*/;
+
+/**
+ * Walk forward from `startIdx` to find the last line belonging to this
+ * feature's bullet block. The block ends when a new top-level bullet, a
+ * Markdown heading, or a thematic break is encountered. Trailing blank lines
+ * are excluded.
+ *
+ * @param {string[]} lines - All lines in the file (0-indexed)
+ * @param {number} startIdx - 0-based index of the feature's opening bullet line
+ * @returns {number} 0-based index of the last content line of this block
+ */
+function findFeatureEndIdx(lines: string[], startIdx: number): number {
+  let endIdx = startIdx;
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    const l = lines[i];
+    if (/^[-*+]\s/.test(l) || /^#{1,6}\s/.test(l) || /^---/.test(l)) break;
+    endIdx = i;
+  }
+  while (endIdx > startIdx && lines[endIdx].trim() === '') endIdx--;
+  return endIdx;
+}
+
+/**
+ * Parse all named-mechanic features from the raw MDX source.
+ * Each feature maps to a bold-bullet item `- **Name.** description`.
+ *
+ * @param {string} raw - Full MDX file content
+ * @param {string} filePath - Absolute path (used for tag extraction context)
+ * @param {SharedData} sharedData - Shared game data for tag extraction
+ * @returns {Array<{ name: string; startLine: number; endLine: number; tags: string[] }>}
+ */
+function parseFeatures(
+  raw: string,
+  filePath: string,
+  sharedData: SharedData,
+): Array<{ name: string; startLine: number; endLine: number; tags: string[] }> {
+  const lines = raw.split('\n');
+  const features: Array<{
+    name: string;
+    startLine: number;
+    endLine: number;
+    tags: string[];
+  }> = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const match = FEATURE_BULLET_REGEX.exec(lines[i]);
+    if (!match) continue;
+    const name = match[1].trim();
+    const endIdx = findFeatureEndIdx(lines, i);
+    const blockText = lines.slice(i, endIdx + 1).join('\n');
+    const tags = Array.from(
+      new Set(
+        extractAllTags(blockText, filePath, sharedData, { contentType: 'generic' }),
+      ),
+    ).sort();
+    features.push({ name, startLine: i + 1, endLine: endIdx + 1, tags });
+  }
+
+  return features;
+}
+
+/**
  * Parses a single feat MDX file into a metadata record. Returns `null` for
  * excluded files (`main.mdx`, files under `fighting-styles/`).
  *
@@ -146,6 +213,7 @@ async function parseFeatFile(
 
     const { prerequisite, hasPrerequisite } = parsePrerequisite(raw);
     const abilityIncrease = parseAbilityIncrease(raw);
+    const features = parseFeatures(raw, filePath, sharedData);
     const tags = Array.from(
       new Set(
         extractAllTags(raw, filePath, sharedData, {
@@ -169,6 +237,7 @@ async function parseFeatFile(
     if (description) metadata.description = description;
     if (prerequisite) metadata.prerequisite = prerequisite;
     if (abilityIncrease) metadata.abilityIncrease = abilityIncrease;
+    if (features.length > 0) metadata.features = features;
 
     return metadata;
   } catch (error) {
@@ -207,11 +276,14 @@ async function main(
     },
     contentDir: options.contentDir,
     storage: options.storage,
-    metadataVersion: '1.0.0',
+    metadataVersion: '1.1.0',
   });
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === new URL(`file://${process.argv[1]}`).href
+) {
   runWithCli(main).catch((error) => {
     log.error('Fatal error during feat metadata generation', {
       error: (error as Error).message,

@@ -1,25 +1,40 @@
 /**
  * @fileoverview PostgreSQL Feat Repository (MikroORM)
  * @description Implements `FeatRepository` via MikroORM against the `feats`
- * table. The optional ability-score increase is stored as flat prefixed columns
- * via `FeatAbilityIncreaseEmbed`; no JSONB is used.
+ * and `feat_features` tables. The optional ability-score increase is stored as
+ * flat prefixed columns via `FeatAbilityIncreaseEmbed`. Named mechanics are
+ * loaded via the `features` OneToMany relation.
  *
  * @module lib/db/content/adapters/pg/pgFeatRepository
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  */
 
-import { FeatEntity } from '@/lib/db/orm/entities/FeatEntity';
+import { FeatEntity, FeatFeatureEntity } from '@/lib/db/orm/entities/FeatEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { FeatRepository } from '../../repositories/featRepository';
 import type {
     FeatAbilityIncrease,
+    FeatFeature,
     FeatMetadata,
 } from '../../schemas/featMetadata';
 import { PgMetadataRepository } from './PgMetadataRepository';
 
 /* ──────────────────────────────  Row mapper  ─────────────────────────── */
+
+/**
+ * Maps a `FeatFeatureEntity` row to the `FeatFeature` domain type.
+ *
+ * @param {FeatFeatureEntity} f - Loaded feat feature entity
+ * @returns {FeatFeature} Domain model
+ */
+const toFeatFeature = (f: FeatFeatureEntity): FeatFeature => ({
+  name: f.name,
+  startLine: f.startLine ?? undefined,
+  endLine: f.endLine ?? undefined,
+  tags: nonEmpty(f.tags) ?? [],
+});
 
 /**
  * Converts the nullable `FeatAbilityIncreaseEmbed` value object to its domain
@@ -57,11 +72,20 @@ const rowToFeat = (row: FeatEntity): FeatMetadata => ({
   prerequisite: orUndef(row.prerequisite),
   hasPrerequisite: row.hasPrerequisite,
   abilityIncrease: buildAbilityIncrease(row.abilityIncrease),
+  features: row.features.isInitialized()
+    ? row.features
+        .getItems()
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+        .map(toFeatFeature)
+    : undefined,
   tags: nonEmpty(row.tags) ?? [],
   indexVersion: orUndef(row.indexVersion),
 });
 
 /* ──────────────────────────────  Repository  ─────────────────────────── */
+
+/** @property {string[]} populateFields - Relations to populate on every feat query. */
+const populateFields = ['features'] as const;
 
 /**
  * MikroORM-backed feat repository.
@@ -75,6 +99,10 @@ class PgFeatRepository
   implements FeatRepository
 {
   protected readonly entityClass = FeatEntity;
+
+  protected override populate(): string[] {
+    return [...populateFields];
+  }
 
   protected override orderBy(): Record<string, 'asc' | 'desc'> {
     return { title: 'asc' };

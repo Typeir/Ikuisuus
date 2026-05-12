@@ -1,0 +1,58 @@
+@use '@/styles/mixins' as *;
+
+/**
+ * `+` badge shown when multiple speed modes exist.
+ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-size: 0.5rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/**
+ * ▾ trigger button adjacent to the speed value.
+ */
+.trigger {
+  @include button-ghost(0.1rem 0.15rem);
+  font-size: 0.6rem;
+  color: var(--color-text-secondary);
+  line-height: 1;
+
+  &:hover:not(:disabled) {
+    color: var(--color-accent);
+  }
+
+  @include press-effect;
+}
+
+/**
+ * Floating panel listing all bloodline movement modes.
+ */
+.panel {
+  @include dropdown-panel;
+  min-width: 180px;
+  padding: 0.35rem 0;
+}
+
+/**
+ * Single speed row inside the panel.
+ */
+.speedRow {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-text);
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--color-bg-secondary);
+  }
+}

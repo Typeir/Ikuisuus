@@ -108,14 +108,16 @@ const DEFAULT_SAVES: Record<AbilityKey, 'none'> = {
 };
 
 /**
- * Compute proficiency bonus from level using the standard formula.
+ * Compute proficiency bonus from level using the Damocles progression table.
+ * Levels 1–29 follow the standard formula `⌈1 + level / 4⌉`; level 30 is a
+ * special epic-tier case that returns +10.
  *
  * @function computeProficiencyBonus
- * @param {number} level - Character level (1–20)
+ * @param {number} level - Character level (1–30)
  * @returns {number} Proficiency bonus
  */
 export const computeProficiencyBonus = (level: number): number =>
-  Math.ceil(1 + level / 4);
+  level >= 30 ? 10 : Math.ceil(1 + level / 4);
 
 /**
  * Compute ability modifier from an ability score.
@@ -152,6 +154,7 @@ export const createEmptyVocationEntry = (): VocationEntry => ({
   slug: '',
   title: '',
   level: 1,
+  hitDie: '',
   specializationSlug: null,
   specializationTitle: '',
   vocationFeatures: [],
@@ -229,7 +232,9 @@ export const createEmptyCharacter = (): CharacterSheet => {
     ac: 10,
     initiativeBonus: 0,
     speedOverride: null,
+    bloodlineSpeeds: [],
     proficiencyBonus: 2,
+    hitDiceLog: [],
     conditions: [],
     attacks: [],
     spellSlots: SPELL_SLOT_DEFAULTS.map((s) => ({ ...s })),

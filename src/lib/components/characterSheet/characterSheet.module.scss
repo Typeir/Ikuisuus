@@ -230,6 +230,15 @@
   color: var(--color-secondary);
 }
 
+/**
+ * Label row variant — flex row that groups the label text with an inline trigger button.
+ */
+.statChipLabelRow {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
 .statChipValue {
   font-size: 1rem;
   font-weight: 600;

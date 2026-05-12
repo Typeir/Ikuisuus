@@ -10,7 +10,7 @@
 
 import { CombatStatsRow } from '@/lib/components/characterSheet/combatStatsRow';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const DEFAULT_PROPS = {
   hpCurrent: 25,
@@ -20,6 +20,10 @@ const DEFAULT_PROPS = {
   initiativeBonus: 2,
   speedOverride: 30,
   proficiencyBonus: 3,
+  vocations: [],
+  hitDiceLog: [],
+  onHitDiceCommit: vi.fn(),
+  bloodlineSpeeds: [],
 };
 
 describe('CombatStatsRow', () => {
@@ -66,7 +70,7 @@ describe('CombatStatsRow', () => {
 
   it('renders — when speedOverride is null', () => {
     render(<CombatStatsRow {...DEFAULT_PROPS} speedOverride={null} />);
-    expect(screen.getByText('—')).toBeTruthy();
+    expect(screen.getAllByText('—').length).toBeGreaterThan(0);
   });
 
   it('renders proficiency bonus with + prefix', () => {

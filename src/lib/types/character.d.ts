@@ -11,6 +11,8 @@
  * @module src/lib/types/character
  */
 
+import type { HitDieRollEntry } from './hitDice';
+
 /**
  * Proficiency level for saves and skills.
  *
@@ -217,6 +219,7 @@ export interface CompactCharacterRef {
  * @property {string} slug - Vocation identifier, e.g. `wizard`
  * @property {string} title - Display name, e.g. `Wizard`
  * @property {number} level - Levels invested in this vocation specifically
+ * @property {string} [hitDie] - Hit die notation without the `d` prefix (e.g. `"10"`), copied from vocation metadata on selection
  * @property {string|null} specializationSlug - Specialization identifier, e.g. `evoker`
  * @property {string} specializationTitle - Specialization display name, e.g. `Evoker`
  * @property {CharacterShard[]} vocationFeatures - Unlocked vocation feature shards for this entry
@@ -226,6 +229,7 @@ export interface VocationEntry {
   slug: string;
   title: string;
   level: number;
+  hitDie?: string;
   specializationSlug: string | null;
   specializationTitle: string;
   vocationFeatures: CharacterShard[];
@@ -243,7 +247,7 @@ export interface VocationEntry {
  * @property {string} updatedAt - ISO timestamp of last save
  * @property {string} name - Character name
  * @property {string} playerName - Player's name
- * @property {number} level - Character level (1–20)
+ * @property {number} level - Character level (1–30)
  * @property {number} experience - Experience points
  * @property {string|null} bloodlineSlug - Bloodline identifier, e.g. `empyrean`
  * @property {string} bloodlineTitle - Display name, e.g. `Empyrean`
@@ -256,8 +260,10 @@ export interface VocationEntry {
  * @property {number} tempHp - Temporary hit points
  * @property {number} ac - Armor class
  * @property {number} initiativeBonus - Initiative modifier (typically DEX mod)
- * @property {number|null} speedOverride - Override for movement speed; null = use bloodline default
+ * @property {number|null} speedOverride - Override for movement speed (walk); null = no override
+ * @property {string[]} bloodlineSpeeds - Raw speed strings from the selected bloodline (e.g. `["Walk: 30 ft.", "Fly: 60 ft."]`); populated on bloodline selection
  * @property {number} proficiencyBonus - Proficiency bonus, derived from level
+ * @property {HitDieRollEntry[]} hitDiceLog - Per-level hit die roll history; appended on level-up, confirmed entries add to `hpMax`
  * @property {string[]} conditions - Active condition labels
  * @property {CharacterAttack[]} attacks - Attack entries
  * @property {CharacterSpellSlot[]} spellSlots - Spell slot tracking (1–9)
@@ -300,7 +306,9 @@ export interface CharacterSheet {
   ac: number;
   initiativeBonus: number;
   speedOverride: number | null;
+  bloodlineSpeeds: string[];
   proficiencyBonus: number;
+  hitDiceLog: HitDieRollEntry[];
   conditions: string[];
   attacks: CharacterAttack[];
   spellSlots: CharacterSpellSlot[];

@@ -1,0 +1,72 @@
+@use '@/styles/mixins' as *;
+
+/**
+ * Inline die counter label rendered above the HP chip.
+ */
+.counter {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  line-height: 1;
+  margin-bottom: 0.1rem;
+  cursor: default;
+  user-select: none;
+}
+
+/**
+ * Mixed hit dice variant — underlined to hint at interactive tooltip.
+ */
+.mixed {
+  border-bottom: 1px dashed var(--color-secondary);
+  cursor: help;
+}
+
+/**
+ * Tooltip inner layout for the multi-vocation breakdown.
+ */
+.tooltipContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/**
+ * Single vocation row inside the breakdown tooltip.
+ */
+.tooltipRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+/**
+ * Vocation name inside a breakdown row.
+ */
+.tooltipVoc {
+  font-size: 0.75rem;
+  color: var(--color-text);
+}
+
+/**
+ * Die expression inside a breakdown row.
+ */
+.tooltipDice {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-emphasis);
+}
+
+/**
+ * Small advisory note at the bottom of the breakdown tooltip.
+ */
+.tooltipNote {
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.3rem;
+}

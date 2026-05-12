@@ -103,7 +103,7 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
 
   const handleLevelChange = useCallback(
     (value: number | undefined) => {
-      const level = Math.max(1, Math.min(30, value ?? 1));
+      const level = Math.max(1, Math.min(MAX_XP_LEVEL, value ?? 1));
       const experience = getXPForLevel(level);
       onChange({
         level,

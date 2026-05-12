@@ -167,13 +167,19 @@ function extractByHeadingText(lines: string[], heading: string): string | null {
 }
 
 /**
- * Strip the first line from a block (the heading line itself) and return the
- * trimmed prose body.
+ * Strip the first line from a block only when it is a Markdown heading line.
+ * Bullet-based blocks (feat features) start with `- **Name.**` and must not
+ * have their first line removed.
  *
  * @function stripHeadingLine
- * @param {string} block - Full heading block including the heading line
- * @returns {string} Prose body without the heading line
+ * @param {string} block - Full block text
+ * @returns {string} Body without the heading line, or the trimmed block when
+ *   the first line is not a heading
  */
 function stripHeadingLine(block: string): string {
-  return block.split('\n').slice(1).join('\n').trim();
+  const lines = block.split('\n');
+  if (lines.length > 0 && /^#{1,6}\s/.test(lines[0])) {
+    return lines.slice(1).join('\n').trim();
+  }
+  return block.trim();
 }

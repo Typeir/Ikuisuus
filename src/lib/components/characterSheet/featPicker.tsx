@@ -13,12 +13,8 @@
 'use client';
 
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
-import { fetcher } from '@/lib/fetch/fetcher';
-import { urlForContentShard } from '@/lib/fetch/swrKeys';
 import { useFeats } from '@/lib/hooks/data/useFeats';
 import type { CharacterShard } from '@/lib/types/character';
-import type { ContentShardResponse } from '@/lib/types/api.d';
-import { useSWRConfig } from 'swr';
 import styles from './characterSheetWidgets.module.scss';
 
 /**
@@ -49,41 +45,25 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
 }) => {
   const { feats, isLoading: loading, error: fetchError } = useFeats({ locale });
   const error = fetchError?.message ?? null;
-  const { cache, mutate } = useSWRConfig();
+
+  /** @param {string} slug - Feat slug to check */
+  const toSourceFile = (slug: string) => `character-creation/feats/${slug}.mdx`;
 
   const isSelected = (slug: string) =>
-    selectedFeats.some((s) => s.sourceFile === slug);
+    selectedFeats.some((s) => s.sourceFile === toSourceFile(slug));
 
-  const handleToggle = async (feat: FeatMetadata) => {
+  const handleToggle = (feat: FeatMetadata) => {
+    const sf = toSourceFile(feat.slug);
     if (isSelected(feat.slug)) {
-      onToggle(selectedFeats.filter((s) => s.sourceFile !== feat.slug));
+      onToggle(selectedFeats.filter((s) => s.sourceFile !== sf));
       return;
     }
-
-    let cachedText: string | undefined;
-    const url = urlForContentShard('feats', feat.slug, locale);
-    const cached = cache.get(url)?.data as ContentShardResponse | undefined;
-    if (cached) {
-      cachedText = cached.shards.main;
-    } else {
-      try {
-        const data = await mutate<ContentShardResponse>(
-          url,
-          fetcher<ContentShardResponse>(url),
-          { revalidate: false, populateCache: true },
-        );
-        cachedText = data?.shards.main;
-      } catch {
-        /** cachedText stays undefined; consumer can lazy-fetch on expand */
-      }
-    }
-
     const shard: CharacterShard = {
       id: `feat::${feat.slug}`,
-      sourceFile: feat.slug,
+      sourceFile: sf,
       heading: feat.title,
       category: 'feat',
-      cachedText,
+      cachedText: feat.description ?? undefined,
     };
     onToggle([...selectedFeats, shard]);
   };

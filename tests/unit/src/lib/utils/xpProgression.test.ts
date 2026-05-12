@@ -1,6 +1,7 @@
 /**
  * @fileoverview Tests for xpProgression utilities
  * @description Unit tests for getLevelFromXP, getXPForLevel, and getXPProgressPercent.
+ * Covers the full level 1–30 range including epic levels 21–30.
  *
  * @module tests/unit/src/lib/utils/xpProgression.test
  */
@@ -34,8 +35,17 @@ describe('getLevelFromXP', () => {
     expect(getLevelFromXP(355000)).toBe(20);
   });
 
-  it('caps at MAX_XP_LEVEL for very large XP values', () => {
+  it('returns level 21 at exactly 500 000 XP (epic level gate)', () => {
+    expect(getLevelFromXP(500000)).toBe(21);
+  });
+
+  it('returns level 30 at exactly 3 000 000 XP', () => {
+    expect(getLevelFromXP(3000000)).toBe(30);
+  });
+
+  it('caps at MAX_XP_LEVEL (30) for very large XP values', () => {
     expect(getLevelFromXP(9999999)).toBe(MAX_XP_LEVEL);
+    expect(MAX_XP_LEVEL).toBe(30);
   });
 });
 
@@ -52,8 +62,16 @@ describe('getXPForLevel', () => {
     expect(getXPForLevel(20)).toBe(355000);
   });
 
-  it('returns 0 for level 21 (no XP threshold defined)', () => {
-    expect(getXPForLevel(21)).toBe(0);
+  it('returns 500 000 for level 21 (epic levels exist)', () => {
+    expect(getXPForLevel(21)).toBe(500000);
+  });
+
+  it('returns 3 000 000 for level 30', () => {
+    expect(getXPForLevel(30)).toBe(3000000);
+  });
+
+  it('returns 0 for level 31 (beyond max)', () => {
+    expect(getXPForLevel(31)).toBe(0);
   });
 
   it('returns 0 for level below 1', () => {
@@ -66,17 +84,28 @@ describe('getXPProgressPercent', () => {
     expect(getXPProgressPercent(0)).toBe(0);
   });
 
-  it('returns 100 at MAX_XP_LEVEL', () => {
-    expect(getXPProgressPercent(355000)).toBe(100);
+  it('returns 100 at MAX_XP_LEVEL (3 000 000 XP for level 30)', () => {
+    expect(getXPProgressPercent(3000000)).toBe(100);
   });
 
-  it('returns 100 for XP above MAX_XP_LEVEL threshold', () => {
+  it('returns 100 for XP above the level-30 threshold', () => {
     expect(getXPProgressPercent(9999999)).toBe(100);
   });
 
-  it('returns a mid-range value for XP halfway through a level', () => {
+  it('returns a mid-range value for XP halfway through level 1', () => {
     const halfway = Math.round((0 + 300) / 2);
     const percent = getXPProgressPercent(halfway);
+    expect(percent).toBeGreaterThan(0);
+    expect(percent).toBeLessThan(100);
+  });
+
+  it('returns 0 at the exact XP floor of level 20 (no longer the cap)', () => {
+    expect(getXPProgressPercent(355000)).toBe(0);
+  });
+
+  it('returns a mid-range value between level 20 and 21 (epic range)', () => {
+    const midway = Math.round((355000 + 500000) / 2);
+    const percent = getXPProgressPercent(midway);
     expect(percent).toBeGreaterThan(0);
     expect(percent).toBeLessThan(100);
   });
