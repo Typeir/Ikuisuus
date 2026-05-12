@@ -19,14 +19,14 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-    extractAllTags,
-    filePathToSlug,
-    parseDescription,
-    parseTitle,
-    runGenerator,
-    runWithCli,
-    type SharedData,
-    type StorageAdapter,
+  extractAllTags,
+  filePathToSlug,
+  parseDescription,
+  parseTitle,
+  runGenerator,
+  runWithCli,
+  type SharedData,
+  type StorageAdapter,
 } from '.';
 import { SLUG } from './parsingPatterns';
 
@@ -178,7 +178,9 @@ function parseFeatures(
     const blockText = lines.slice(i, endIdx + 1).join('\n');
     const tags = Array.from(
       new Set(
-        extractAllTags(blockText, filePath, sharedData, { contentType: 'generic' }),
+        extractAllTags(blockText, filePath, sharedData, {
+          contentType: 'generic',
+        }),
       ),
     ).sort();
     features.push({ name, startLine: i + 1, endLine: endIdx + 1, tags });

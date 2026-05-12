@@ -11,7 +11,10 @@
  * @since 1.0.0
  */
 
-import { FeatEntity, FeatFeatureEntity } from '@/lib/db/orm/entities/FeatEntity';
+import {
+    FeatEntity,
+    FeatFeatureEntity,
+} from '@/lib/db/orm/entities/FeatEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { FeatRepository } from '../../repositories/featRepository';
 import type {

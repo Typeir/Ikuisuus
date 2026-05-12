@@ -15,7 +15,11 @@ export { BloodlineEntity } from './BloodlineEntity';
 export { CorrectionsUserEntity } from './CorrectionsUserEntity';
 export { DraftEntity } from './DraftEntity';
 export type { DraftStatus } from './DraftEntity';
-export { FeatAbilityIncreaseEmbed, FeatEntity, FeatFeatureEntity } from './FeatEntity';
+export {
+    FeatAbilityIncreaseEmbed,
+    FeatEntity,
+    FeatFeatureEntity
+} from './FeatEntity';
 export { HeirloomChargesEmbed, HeirloomEntity } from './HeirloomEntity';
 export {
     MonsterACEmbed,

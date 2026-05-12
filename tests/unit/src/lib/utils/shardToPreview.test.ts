@@ -66,7 +66,9 @@ describe('shardToPreview', () => {
     });
 
     it('handles feats with hyphens in slug', () => {
-      const result = shardToPreview('character-creation/feats/extra-attack.mdx');
+      const result = shardToPreview(
+        'character-creation/feats/extra-attack.mdx',
+      );
       expect(result).toEqual({ kind: 'feats', slug: 'extra-attack' });
     });
   });
