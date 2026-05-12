@@ -1,0 +1,26 @@
+/** Text Input Component Styles */
+
+@use 'src/styles/mixins-input' as *;
+
+.textInput {
+  @include input-field(0.8125rem);
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  border-radius: 4px;
+  font-family: inherit;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-accent);
+  }
+}
+
+.sm {
+  padding: 0.25rem 0.375rem;
+  font-size: 0.75rem;
+}
+
+.lg {
+  padding: 0.5rem 0.625rem;
+  font-size: 0.875rem;
+}

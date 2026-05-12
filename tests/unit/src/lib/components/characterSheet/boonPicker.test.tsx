@@ -10,9 +10,30 @@
 
 import { BoonPicker } from '@/lib/components/characterSheet/boonPicker';
 import type { CharacterShard } from '@/lib/types/character';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render as baseRender, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { SWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+let swrCache: Map<unknown, unknown>;
+const wrapper = ({ children }: { children: React.ReactNode }) =>
+  React.createElement(
+    SWRConfig,
+    {
+      value: {
+        provider: () => swrCache,
+        dedupingInterval: 0,
+        shouldRetryOnError: false,
+      },
+    },
+    children,
+  );
+
+const render = (
+  ui: React.ReactElement,
+  options?: Parameters<typeof baseRender>[1],
+) => baseRender(ui, { ...options, wrapper });
 
 const MOCK_BLOODLINES = [
   {
@@ -42,6 +63,7 @@ const MOCK_BLOODLINES = [
 const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>();
 
 beforeEach(() => {
+  swrCache = new Map();
   vi.stubGlobal('fetch', mockFetch);
 });
 
@@ -60,7 +82,9 @@ describe('BoonPicker', () => {
         onToggle={vi.fn()}
       />,
     );
-    expect(screen.getByText('loadingBoons')).toBeTruthy();
+    expect(
+      document.querySelectorAll('[class*="skeleton"]').length,
+    ).toBeGreaterThan(0);
   });
 
   it('renders boon cards after fetch', async () => {

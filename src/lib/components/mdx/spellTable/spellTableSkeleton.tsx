@@ -10,6 +10,7 @@
  */
 
 import skeletonStyles from '@/lib/components/skeleton/skeleton.module.scss';
+import gradientTabStyles from '@/lib/components/ui/gradientTabs/gradientTabs.module.scss';
 import { MetadataTableSkeleton } from '../metadataTables/metadataTableSkeleton';
 import styles from './spellTable.module.scss';
 
@@ -159,14 +160,14 @@ export function SpellTableSkeleton({
         </div>
       ) : null}
 
-      <div className={styles.gradientContainer}>
-        <div className={styles.tabNavWrapper}>
-          <div className={styles.tabNav}>
-            <div className={styles.tabList}>
+      <div className={gradientTabStyles.gradientContainer}>
+        <div className={gradientTabStyles.tabNavWrapper}>
+          <div className={gradientTabStyles.tabNav}>
+            <div className={gradientTabStyles.tabList}>
               {Array.from({ length: tabCount }).map((_, index) => (
                 <div
                   key={index}
-                  className={`${styles.tab} ${index === 0 ? styles.active : ''}`}>
+                  className={`${gradientTabStyles.tab} ${index === 0 ? gradientTabStyles.active : ''}`}>
                   <button
                     type='button'
                     disabled
@@ -197,7 +198,7 @@ export function SpellTableSkeleton({
             </div>
           </div>
         </div>
-        <div className={styles.tabContent}>
+        <div className={gradientTabStyles.tabContent}>
           <MetadataTableSkeleton rows={rows} columns={6} filters={[]} />
         </div>
       </div>

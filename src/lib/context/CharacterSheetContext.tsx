@@ -36,6 +36,7 @@ import {
     fetchPersistentDataRef,
     storePersistentDataRef,
 } from '../utils/storePersistentData';
+import { migrateCharacter } from '../utils/characterStorage';
 
 /**
  * Serialized form stored in the persistence layer.
@@ -62,7 +63,9 @@ function readPersistedCharacters(): SerializedCharacterSheetState {
   try {
     const parsed = JSON.parse(raw) as Partial<SerializedCharacterSheetState>;
     return {
-      characters: Array.isArray(parsed.characters) ? parsed.characters : [],
+      characters: Array.isArray(parsed.characters)
+        ? parsed.characters.map((c) => migrateCharacter(c as Record<string, unknown>))
+        : [],
       activeId: typeof parsed.activeId === 'string' ? parsed.activeId : null,
     };
   } catch {
@@ -158,9 +161,11 @@ export function CharacterSheetProvider({
   }, []);
 
   useEffect(() => {
-    if (state.isHydrated) {
+    if (!state.isHydrated) return;
+    const handle = setTimeout(() => {
       writePersistedCharacters(state);
-    }
+    }, 250);
+    return () => clearTimeout(handle);
   }, [state]);
 
   const stateValue = useMemo<CharacterSheetStateContextValue>(
@@ -219,13 +224,18 @@ export function useCharacterSheetDispatch(): (
 
 /**
  * Convenience hook that returns the active CharacterSheet, or null if none is selected.
+ * The result is memoized per provider render so multiple consumers share the same
+ * reference instead of each re-running `.find` independently.
  *
  * @function useActiveCharacter
  * @returns {CharacterSheet | null} The active character or null
  */
 export function useActiveCharacter(): CharacterSheet | null {
   const { characters, activeId } = useCharacterSheetState();
-  return characters.find((c) => c.id === activeId) ?? null;
+  return useMemo(
+    () => characters.find((c) => c.id === activeId) ?? null,
+    [characters, activeId],
+  );
 }
 
 /**

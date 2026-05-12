@@ -18,8 +18,10 @@
 import { useCharacterSheetDispatch } from '@/lib/context/CharacterSheetContext';
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
+import { computeProficiencyBonus } from '@/lib/utils/characterStorage';
+import { getXPForLevel, MAX_XP_LEVEL } from '@/lib/utils/xpProgression';
 import { useTranslations } from 'next-intl';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { GradientTabs } from '../ui/gradientTabs';
 import { AbilityScoreBlock } from './abilityScoreBlock';
 import styles from './characterSheet.module.scss';
@@ -97,10 +99,87 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
   }, [character]);
 
   const handleChange = useCallback((patch: Partial<CharacterSheetType>) => {
-    setDraft((prev) => ({ ...prev, ...patch }));
+    setDraft((prev) => {
+      const next = { ...prev, ...patch };
+      if (patch.vocations !== undefined) {
+        const activeVocs = next.vocations.filter((v) => Boolean(v.slug));
+        if (activeVocs.length > 0) {
+          const totalLevel = activeVocs.reduce(
+            (sum, v) => sum + (v.level ?? 1),
+            0,
+          );
+          next.level = totalLevel;
+          const floor = getXPForLevel(Math.min(totalLevel, MAX_XP_LEVEL));
+          if ((next.experience ?? 0) < floor) {
+            next.experience = floor;
+          }
+          next.proficiencyBonus = computeProficiencyBonus(totalLevel);
+        }
+      }
+      return next;
+    });
   }, []);
 
   const data = editing ? draft : character;
+
+  const handleAbilityChange = useCallback(
+    (key: keyof CharacterSheetType['abilityScores'], score: number) => {
+      handleChange({
+        abilityScores: { ...data.abilityScores, [key]: score },
+      });
+    },
+    [handleChange, data.abilityScores],
+  );
+
+  const tabs = useMemo(
+    () => [
+      { value: 'overview', label: t('tabOverview') },
+      { value: 'bloodline', label: t('tabBloodline') },
+      { value: 'vocation', label: t('tabVocation') },
+      { value: 'equipment', label: t('tabEquipment') },
+      { value: 'feats', label: t('tabFeats') },
+    ],
+    [t],
+  );
+
+  const handleTabChange = useCallback((v: string) => {
+    setActiveTab(v as TabId);
+  }, []);
+
+  const activePanel = useMemo(() => {
+    switch (activeTab) {
+      case 'overview':
+        return (
+          <OverviewTab data={data} editing={editing} onChange={handleChange} />
+        );
+      case 'bloodline':
+        return (
+          <BloodlineTab
+            data={data}
+            editing={editing}
+            onChange={handleChange}
+            locale={locale}
+          />
+        );
+      case 'vocation':
+        return <VocationTab data={data} locale={locale} />;
+      case 'equipment':
+        return (
+          <EquipmentTab data={data} editing={editing} onChange={handleChange} />
+        );
+      case 'feats':
+        return (
+          <FeatsTab
+            data={data}
+            editing={editing}
+            onChange={handleChange}
+            locale={locale}
+          />
+        );
+      default:
+        return null;
+    }
+  }, [activeTab, data, editing, handleChange, locale]);
 
   return (
     <PagePreviewProvider>
@@ -125,54 +204,19 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
               key={key}
               label={label}
               score={data.abilityScores[key]}
+              editing={editing}
+              onChange={(score) => handleAbilityChange(key, score)}
             />
           ))}
         </section>
 
         <div className={styles.tabsSection}>
           <GradientTabs
-            tabs={[
-              { value: 'overview', label: t('tabOverview') },
-              { value: 'bloodline', label: t('tabBloodline') },
-              { value: 'vocation', label: t('tabVocation') },
-              { value: 'equipment', label: t('tabEquipment') },
-              { value: 'feats', label: t('tabFeats') },
-            ]}
+            tabs={tabs}
             activeTab={activeTab}
-            onChange={(v) => setActiveTab(v as TabId)}
-            panels={{
-              overview: (
-                <OverviewTab
-                  data={data}
-                  editing={editing}
-                  onChange={handleChange}
-                />
-              ),
-              bloodline: (
-                <BloodlineTab
-                  data={data}
-                  editing={editing}
-                  onChange={handleChange}
-                  locale={locale}
-                />
-              ),
-              vocation: <VocationTab data={data} locale={locale} />,
-              equipment: (
-                <EquipmentTab
-                  data={data}
-                  editing={editing}
-                  onChange={handleChange}
-                />
-              ),
-              feats: (
-                <FeatsTab
-                  data={data}
-                  editing={editing}
-                  onChange={handleChange}
-                />
-              ),
-            }}
-          />
+            onChange={handleTabChange}>
+            {activePanel}
+          </GradientTabs>
         </div>
       </article>
       <PagePreviewHost locale={locale} />

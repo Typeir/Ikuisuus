@@ -100,4 +100,40 @@ describe('spellSourceService', () => {
       body: JSON.stringify({ locale: 'en', listSource: 'wizard' }),
     });
   });
+
+  it('should forward filters in the POST body when provided', async () => {
+    mockFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve([]) });
+
+    const filters = [
+      { field: 'source', operator: 'neq', value: 'basic' } as const,
+    ];
+
+    await fetchSpellSources({
+      locale: 'en',
+      sources: ['/api/spells/list'],
+      filters,
+    });
+
+    expect(mockFetch).toHaveBeenCalledWith('/api/spells/list', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', filters }),
+    });
+  });
+
+  it('should omit filters from the POST body when array is empty', async () => {
+    mockFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve([]) });
+
+    await fetchSpellSources({
+      locale: 'en',
+      sources: ['/api/spells/list'],
+      filters: [],
+    });
+
+    expect(mockFetch).toHaveBeenCalledWith('/api/spells/list', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locale: 'en' }),
+    });
+  });
 });

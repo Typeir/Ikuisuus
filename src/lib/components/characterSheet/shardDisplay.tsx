@@ -13,6 +13,8 @@
 
 'use client';
 
+import { FetchError } from '@/lib/fetch/fetcher';
+import { useShard } from '@/lib/hooks/data/useContentShard';
 import type { CharacterShard } from '@/lib/types/character';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -43,12 +45,30 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
   defaultExpanded = false,
 }) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
-  const [bodyText, setBodyText] = useState<string>(shard.cachedText ?? '');
   const [textReady, setTextReady] = useState(shard.cachedText !== undefined);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [bodyText, setBodyText] = useState<string>(shard.cachedText ?? '');
   const [renderedHtml, setRenderedHtml] = useState<string>('');
   const t = useTranslations('characterSheet');
+
+  const {
+    data: shardData,
+    isLoading: loading,
+    error: shardError,
+  } = useShard({
+    sourceFile: shard.sourceFile,
+    heading: shard.heading,
+    enabled: expanded && !textReady,
+  });
+
+  const is404 = shardError instanceof FetchError && shardError.status === 404;
+  const error = shardError?.message ?? null;
+
+  useEffect(() => {
+    if (shardData && !textReady) {
+      setBodyText(shardData.text.split('\n').slice(1).join('\n').trim());
+      setTextReady(true);
+    }
+  }, [shardData, textReady]);
 
   useEffect(() => {
     if (!bodyText) {
@@ -67,31 +87,9 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
     };
   }, [bodyText]);
 
-  const handleToggle = useCallback(async () => {
-    const nextExpanded = !expanded;
-    setExpanded(nextExpanded);
-
-    if (nextExpanded && !textReady) {
-      setLoading(true);
-      setError(null);
-      try {
-        const params = new URLSearchParams({
-          file: shard.sourceFile,
-          heading: shard.heading,
-        });
-        const res = await fetch(`/api/shards?${params.toString()}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = (await res.json()) as { text: string };
-        const lines = data.text.split('\n').slice(1);
-        setBodyText(lines.join('\n').trim());
-        setTextReady(true);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load');
-      } finally {
-        setLoading(false);
-      }
-    }
-  }, [expanded, textReady, shard.sourceFile, shard.heading]);
+  const handleToggle = useCallback(() => {
+    setExpanded((prev) => !prev);
+  }, []);
 
   const categoryLabel =
     shard.category === 'boon'
@@ -130,7 +128,11 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
           {loading && (
             <p className={styles.shardLoading}>{t('shardLoading')}</p>
           )}
-          {error && <p className={styles.shardError}>{error}</p>}
+          {error && (
+            <p className={styles.shardError}>
+              {is404 ? t('shardNotFound') : error}
+            </p>
+          )}
           {!loading && !error && (
             <div
               className={styles.shardMarkdown}

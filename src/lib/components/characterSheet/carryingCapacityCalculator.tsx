@@ -13,9 +13,10 @@
 'use client';
 
 import { Chip } from '@/lib/components/ui/chip';
+import { NumericInput } from '@/lib/components/ui/numericInput';
 import {
-    type CreatureSize,
-    computeCapacity,
+  type CreatureSize,
+  computeCapacity,
 } from '@/lib/data/carryingCapacity';
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { useState } from 'react';
@@ -115,14 +116,13 @@ export const CarryingCapacityCalculator: React.FC<
         </label>
         <label className={styles.controlField}>
           <span className={styles.controlLabel}>Carried (lb)</span>
-          <input
-            type='number'
-            min={0}
-            className={styles.numberInput}
+          <NumericInput
             value={carried}
-            onChange={(e) =>
-              setCarried(Math.max(0, Number.parseInt(e.target.value, 10) || 0))
-            }
+            min={0}
+            size='sm'
+            className={styles.numberInput}
+            ariaLabel='Carried weight in pounds'
+            onChange={(v) => setCarried(Math.max(0, v ?? 0))}
           />
         </label>
       </div>

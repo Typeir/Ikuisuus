@@ -14,8 +14,10 @@
 
 import type { CharacterAttack } from '@/lib/types/character';
 import { generateId } from '@/lib/utils/encounterStorage';
+import { TextInput } from '@/lib/components/ui/textInput';
 import { Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { memo } from 'react';
 import styles from './characterSheetWidgets.module.scss';
 
 /**
@@ -40,7 +42,7 @@ export interface AttacksTableProps {
  * @param {AttacksTableProps} props - Component props
  * @returns {JSX.Element} Rendered attacks table
  */
-export const AttacksTable: React.FC<AttacksTableProps> = ({
+export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
   attacks,
   onChange,
   readOnly = false,
@@ -88,13 +90,11 @@ export const AttacksTable: React.FC<AttacksTableProps> = ({
                 {readOnly ? (
                   attack.name
                 ) : (
-                  <input
+                  <TextInput
                     className={styles.attackInput}
                     value={attack.name}
-                    onChange={(e) =>
-                      handleField(attack.id, 'name', e.target.value)
-                    }
-                    aria-label={t('ariaAttackName')}
+                    onChange={(v) => handleField(attack.id, 'name', v)}
+                    ariaLabel={t('ariaAttackName')}
                   />
                 )}
               </td>
@@ -102,13 +102,11 @@ export const AttacksTable: React.FC<AttacksTableProps> = ({
                 {readOnly ? (
                   attack.toHit
                 ) : (
-                  <input
+                  <TextInput
                     className={styles.attackInput}
                     value={attack.toHit}
-                    onChange={(e) =>
-                      handleField(attack.id, 'toHit', e.target.value)
-                    }
-                    aria-label={t('ariaToHit')}
+                    onChange={(v) => handleField(attack.id, 'toHit', v)}
+                    ariaLabel={t('ariaToHit')}
                   />
                 )}
               </td>
@@ -116,13 +114,11 @@ export const AttacksTable: React.FC<AttacksTableProps> = ({
                 {readOnly ? (
                   attack.damage
                 ) : (
-                  <input
+                  <TextInput
                     className={styles.attackInput}
                     value={attack.damage}
-                    onChange={(e) =>
-                      handleField(attack.id, 'damage', e.target.value)
-                    }
-                    aria-label={t('ariaDamage')}
+                    onChange={(v) => handleField(attack.id, 'damage', v)}
+                    ariaLabel={t('ariaDamage')}
                   />
                 )}
               </td>
@@ -130,13 +126,11 @@ export const AttacksTable: React.FC<AttacksTableProps> = ({
                 {readOnly ? (
                   attack.notes
                 ) : (
-                  <input
+                  <TextInput
                     className={styles.attackInput}
                     value={attack.notes}
-                    onChange={(e) =>
-                      handleField(attack.id, 'notes', e.target.value)
-                    }
-                    aria-label={t('ariaNotes')}
+                    onChange={(v) => handleField(attack.id, 'notes', v)}
+                    ariaLabel={t('ariaNotes')}
                   />
                 )}
               </td>
@@ -169,3 +163,9 @@ export const AttacksTable: React.FC<AttacksTableProps> = ({
     </div>
   );
 };
+
+/**
+ * Memoized `AttacksTable` export. Re-renders only when `attacks`, `onChange`,
+ * or `readOnly` changes by reference.
+ */
+export const AttacksTable = memo(AttacksTableImpl);

@@ -24,8 +24,10 @@ import fs from 'fs';
 import { NextResponse } from 'next/server';
 import path from 'path';
 
+import { getContentFolder } from '@/lib/utils/getContentFolder';
+
 /** Root directory for en-locale content files. */
-const CONTENT_ROOT = path.resolve(process.cwd(), 'src', 'content', 'en');
+const CONTENT_ROOT = getContentFolder('en');
 
 /**
  * Extract the text block that begins at the given heading and ends before
@@ -50,7 +52,7 @@ function extractHeadingBlock(
     const match = /^(#{1,6})\s+(.+)$/.exec(lines[i]);
     if (!match) continue;
     const text = match[2].trim().toLowerCase();
-    if (text === target) {
+    if (text === target || text.endsWith(target)) {
       startIdx = i;
       headingLevel = match[1].length;
       break;

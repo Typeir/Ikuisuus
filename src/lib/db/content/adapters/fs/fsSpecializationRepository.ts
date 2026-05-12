@@ -22,8 +22,8 @@ import { readMetadataFiles } from './readMetadataFiles';
 
 const log = logger.child({ module: 'FSSpecializationRepo' });
 
-/** Content subdirectory for specialization pages. */
-const SUBDIR = path.join('character-creation', 'vocations', 'specializations');
+/** Content subdirectory for specialization pages (shared with vocations; filter distinguishes record types). */
+const SUBDIR = path.join('character-creation', 'vocations');
 
 /**
  * Filesystem-backed specialization repository.
@@ -33,7 +33,7 @@ const SUBDIR = path.join('character-creation', 'vocations', 'specializations');
  * @implements {SpecializationRepository}
  *
  * @description
- * Reads `.metadata.json` sidecar files from `character-creation/vocations/specializations/`.
+ * Reads `.metadata.json` sidecar files from `character-creation/vocations/` recursively.
  * Overrides `filter` to exclude vocation records (distinguished from specializations
  * by the absence of `vocation` and `specializationType` fields).
  */

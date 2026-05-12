@@ -11,6 +11,7 @@
 
 @use '@/styles/mixins-focus' as *;
 @use '@/styles/mixins-disabled' as *;
+@use '@/styles/mixins-button' as *;
 
 .pouch {
   display: flex;
@@ -104,9 +105,19 @@
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: 0.25rem;
-  color: var(--color-text);
+  color: var(--color-secondary);
   font-size: 0.8rem;
   cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+  @include button-hover-scale;
+
+  &:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
 
   @include focus-visible-outline();
   @include disabled-state(0.4);

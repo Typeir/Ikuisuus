@@ -12,6 +12,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { memo } from 'react';
 import styles from './characterSheet.module.scss';
 
 /**
@@ -44,7 +45,7 @@ export interface CombatStatsRowProps {
  * @param {CombatStatsRowProps} props - Component props
  * @returns {JSX.Element} Rendered combat stats row
  */
-export const CombatStatsRow: React.FC<CombatStatsRowProps> = ({
+export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
   hpCurrent,
   hpMax,
   tempHp,
@@ -101,3 +102,10 @@ export const CombatStatsRow: React.FC<CombatStatsRowProps> = ({
     </div>
   );
 };
+
+/**
+ * Memoized `CombatStatsRow` export. Re-renders only when one of its scalar
+ * stat props changes — typing in the name field at the sheet root no longer
+ * re-renders the combat stat chips.
+ */
+export const CombatStatsRow = memo(CombatStatsRowImpl);

@@ -11,35 +11,22 @@
  * the MDX file structure.
  *
  * @module lib/components/characterSheet/boonPicker
- * @version 1.1.0
+ * @version 1.2.0
  * @author Typeir
  * @since 1.0.0
  */
 
 'use client';
 
+import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
+import { fetcher } from '@/lib/fetch/fetcher';
+import { useBloodlines } from '@/lib/hooks/data/useBloodlines';
 import type { BloodlineBoon } from '@/lib/db/content/schemas/bloodlineMetadata.d';
 import type { CharacterShard } from '@/lib/types/character';
 import { computeBpSpent } from '@/lib/utils/shardExtractor';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useSWRConfig } from 'swr';
 import styles from './characterSheetWidgets.module.scss';
-
-/**
- * Shape of `/api/bloodlines` response item.
- *
- * @interface BloodlineListItem
- * @property {string} slug - Bloodline identifier
- * @property {string} title - Display name
- * @property {number} [boonBudget] - Total boon point budget
- * @property {BloodlineBoon[]} boons - Available boons
- */
-interface BloodlineListItem {
-  slug: string;
-  title: string;
-  boonBudget?: number;
-  boons: BloodlineBoon[];
-}
 
 /**
  * Props for the BoonPicker component.
@@ -74,40 +61,16 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
   onToggle,
   locale = 'en',
 }) => {
-  const [boons, setBoons] = useState<BloodlineBoon[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    bloodlines,
+    isLoading: loading,
+    error: fetchError,
+  } = useBloodlines({ locale });
+  const error = fetchError?.message ?? null;
+  const boons: BloodlineBoon[] =
+    bloodlines.find((b) => b.slug === bloodlineSlug)?.boons ?? [];
   const t = useTranslations('characterSheet');
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-
-    fetch(`/api/bloodlines?locale=${locale}`)
-      .then((r) =>
-        r.ok ? (r.json() as Promise<BloodlineListItem[]>) : Promise.resolve([]),
-      )
-      .then((data) => {
-        if (cancelled) return;
-        const bl = Array.isArray(data)
-          ? data.find((b) => b.slug === bloodlineSlug)
-          : undefined;
-        if (bl) {
-          setBoons(bl.boons);
-        }
-      })
-      .catch((err: Error) => {
-        if (!cancelled) setError(err.message);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [bloodlineSlug, locale]);
+  const { cache, mutate } = useSWRConfig();
 
   const bpSpent = computeBpSpent(selectedBoons);
   const bpRemaining = boonBudget - bpSpent;
@@ -121,19 +84,31 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
       return;
     }
 
+    const cacheKey = [
+      'content-shard',
+      'bloodlines',
+      bloodlineSlug,
+      locale,
+      boon.name,
+    ] as const;
+    const url = `/api/content-shards/bloodlines/${bloodlineSlug}?keys[]=${encodeURIComponent(boon.name)}&locale=${locale}`;
+
+    type BoonShardResponse = { shards: Record<string, string> };
     let cachedText: string | undefined;
-    try {
-      const res = await fetch(
-        `/api/content-shards/bloodlines/${bloodlineSlug}?keys[]=${encodeURIComponent(boon.name)}&locale=${locale}`,
-      );
-      if (res.ok) {
-        const data = (await res.json()) as {
-          shards: Record<string, string>;
-        };
-        cachedText = data.shards[boon.name];
+    const cached = cache.get(cacheKey)?.data as BoonShardResponse | undefined;
+    if (cached) {
+      cachedText = cached.shards[boon.name];
+    } else {
+      try {
+        const data = await mutate<BoonShardResponse>(
+          cacheKey,
+          fetcher<BoonShardResponse>(url),
+          { revalidate: false, populateCache: true },
+        );
+        cachedText = data?.shards[boon.name];
+      } catch {
+        /** cachedText stays undefined; ShardDisplay will lazy-fetch on expand */
       }
-    } catch {
-      /** cachedText stays undefined; ShardDisplay will lazy-fetch on expand */
     }
 
     const shard: CharacterShard = {
@@ -168,7 +143,14 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
         )}
       </div>
 
-      {loading && <p className={styles.boonLoading}>{t('loadingBoons')}</p>}
+      {loading && (
+        <SkeletonGroup>
+          <Skeleton variant='button' width='100%' />
+          <Skeleton variant='button' width='100%' />
+          <Skeleton variant='button' width='100%' />
+          <Skeleton variant='button' width='100%' />
+        </SkeletonGroup>
+      )}
       {error && <p className={styles.boonError}>{error}</p>}
 
       {!loading && !error && (

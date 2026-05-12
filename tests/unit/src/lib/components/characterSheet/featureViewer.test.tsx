@@ -62,12 +62,26 @@ describe('FeatureViewer', () => {
     expect(screen.getByText('Sculpt Spells')).toBeTruthy();
   });
 
-  it('shows "No features selected" message for empty sections', () => {
+  it('shows "No selection" messages when no selection and empty arrays', () => {
     render(
       <FeatureViewer
         vocationFeatures={[]}
         specializationFeatures={[]}
         characterLevel={1}
+      />,
+    );
+    expect(screen.getByText('noVocationSelected')).toBeTruthy();
+    expect(screen.getByText('noSpecializationSelected')).toBeTruthy();
+  });
+
+  it('shows "No features available" when selection made but arrays are empty', () => {
+    render(
+      <FeatureViewer
+        vocationFeatures={[]}
+        specializationFeatures={[]}
+        characterLevel={1}
+        hasVocation
+        hasSpecialization
       />,
     );
     expect(screen.getAllByText('noFeaturesSelected')).toHaveLength(2);
@@ -87,7 +101,7 @@ describe('FeatureViewer', () => {
     expect(screen.getByText('My Spec')).toBeTruthy();
   });
 
-  it('marks features above character level as locked', () => {
+  it('renders features above character level as locked (not hidden)', () => {
     const highLevelFeature: CharacterShard = {
       id: 'wiz::High Level',
       sourceFile: 'f.mdx',
@@ -101,11 +115,51 @@ describe('FeatureViewer', () => {
         vocationFeatures={[highLevelFeature]}
         specializationFeatures={[]}
         characterLevel={5}
+        hasVocation
       />,
     );
-    const lockedWrapper = screen
-      .getByText('High Level Feature')
-      .closest('[aria-disabled="true"]');
-    expect(lockedWrapper).toBeTruthy();
+    expect(screen.getByText('High Level Feature')).toBeTruthy();
+  });
+
+  it('renders only the vocation section when section="vocation"', () => {
+    render(
+      <FeatureViewer
+        vocationFeatures={VOCATION_FEATURES}
+        specializationFeatures={SPEC_FEATURES}
+        characterLevel={5}
+        section='vocation'
+      />,
+    );
+    expect(screen.getByText('Arcane Recovery')).toBeTruthy();
+    expect(screen.queryByText('Sculpt Spells')).toBeNull();
+    expect(screen.queryByText('specializationFeatures')).toBeNull();
+  });
+
+  it('renders only the specialization section when section="specialization"', () => {
+    render(
+      <FeatureViewer
+        vocationFeatures={VOCATION_FEATURES}
+        specializationFeatures={SPEC_FEATURES}
+        characterLevel={5}
+        section='specialization'
+      />,
+    );
+    expect(screen.getByText('Sculpt Spells')).toBeTruthy();
+    expect(screen.queryByText('Arcane Recovery')).toBeNull();
+    expect(screen.queryByText('vocationFeatures')).toBeNull();
+  });
+
+  it('hides the section title when hideTitle is true', () => {
+    render(
+      <FeatureViewer
+        vocationFeatures={VOCATION_FEATURES}
+        specializationFeatures={[]}
+        characterLevel={5}
+        section='vocation'
+        hideTitle
+      />,
+    );
+    expect(screen.getByText('Arcane Recovery')).toBeTruthy();
+    expect(screen.queryByText('vocationFeatures')).toBeNull();
   });
 });

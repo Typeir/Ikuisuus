@@ -9,9 +9,10 @@
  */
 
 import DraftOverlay from '@/lib/components/draftOverlay/draftOverlay';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render as baseRender, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { SWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockEvaluate = vi.fn();
@@ -32,7 +33,17 @@ const mockDraft = {
   updatedAt: '2026-03-12T01:00:00.000Z',
 };
 
+let swrCache: Map<unknown, unknown>;
+const SWRWrapper = ({ children }: { children: React.ReactNode }) => (
+  <SWRConfig value={{ provider: () => swrCache, dedupingInterval: 0 }}>
+    {children}
+  </SWRConfig>
+);
+const render = (ui: React.ReactElement) =>
+  baseRender(ui, { wrapper: SWRWrapper });
+
 beforeEach(() => {
+  swrCache = new Map();
   vi.stubGlobal('fetch', vi.fn());
   mockEvaluate.mockResolvedValue({
     default: () => React.createElement('div', null, 'Compiled MDX Content'),

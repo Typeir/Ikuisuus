@@ -11,11 +11,12 @@
  */
 
 import type {
-    AbilityKey,
-    CharacterSheet,
-    CharacterSkill,
-    CharacterSpellSlot,
-    CharacterTool,
+  AbilityKey,
+  CharacterSheet,
+  CharacterSkill,
+  CharacterSpellSlot,
+  CharacterTool,
+  VocationEntry,
 } from '@/lib/types/character';
 import { generateId } from '@/lib/utils/encounterStorage';
 
@@ -127,6 +128,80 @@ export const computeAbilityModifier = (score: number): number =>
   Math.floor((score - 10) / 2);
 
 /**
+ * Roll a single ability score using the standard 4d6-drop-lowest method.
+ *
+ * @function rollAbilityScore
+ * @returns {number} Rolled ability score in the range 3–18
+ */
+export const rollAbilityScore = (): number => {
+  const rolls = Array.from(
+    { length: 4 },
+    () => Math.floor(Math.random() * 6) + 1,
+  );
+  rolls.sort((a, b) => a - b);
+  return rolls[1] + rolls[2] + rolls[3];
+};
+
+/**
+ * Create a blank vocation entry for use in the vocation selector.
+ *
+ * @function createEmptyVocationEntry
+ * @returns {VocationEntry} New vocation entry with level 1 and empty features
+ */
+export const createEmptyVocationEntry = (): VocationEntry => ({
+  slug: '',
+  title: '',
+  level: 1,
+  specializationSlug: null,
+  specializationTitle: '',
+  vocationFeatures: [],
+  specializationFeatures: [],
+});
+
+/**
+ * Migrate a legacy character (pre-vocations array) to the current schema.
+ * If the character already has a `vocations` array it is returned unchanged.
+ *
+ * @function migrateCharacter
+ * @param {Record<string, unknown>} raw - Raw character object loaded from storage
+ * @returns {CharacterSheet} Migrated character sheet
+ */
+export const migrateCharacter = (
+  raw: Record<string, unknown>,
+): CharacterSheet => {
+  if (Array.isArray((raw as CharacterSheet).vocations)) {
+    return raw as CharacterSheet;
+  }
+
+  const migrated: CharacterSheet = {
+    ...(raw as CharacterSheet),
+    vocations: [],
+  };
+
+  const legacySlug = raw['vocationSlug'] as string | null | undefined;
+  if (legacySlug) {
+    migrated.vocations = [
+      {
+        slug: legacySlug,
+        title: (raw['vocationTitle'] as string) || '',
+        level: (raw['level'] as number) || 1,
+        specializationSlug:
+          (raw['specializationSlug'] as string | null) ?? null,
+        specializationTitle: (raw['specializationTitle'] as string) || '',
+        vocationFeatures:
+          (raw['vocationFeatures'] as VocationEntry['vocationFeatures']) || [],
+        specializationFeatures:
+          (raw[
+            'specializationFeatures'
+          ] as VocationEntry['specializationFeatures']) || [],
+      },
+    ];
+  }
+
+  return migrated;
+};
+
+/**
  * Create a fresh empty character sheet with defaults.
  *
  * @function createEmptyCharacter
@@ -146,12 +221,7 @@ export const createEmptyCharacter = (): CharacterSheet => {
     bloodlineTitle: '',
     boonBudget: 0,
     selectedBoons: [],
-    vocationSlug: null,
-    vocationTitle: '',
-    specializationSlug: null,
-    specializationTitle: '',
-    vocationFeatures: [],
-    specializationFeatures: [],
+    vocations: [],
     abilityScores: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
     hpMax: 0,
     hpCurrent: 0,

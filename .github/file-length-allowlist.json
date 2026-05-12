@@ -143,10 +143,5 @@
     "file": "src/lib/components/characterSheet/characterSheet.tsx",
     "maxLines": 270,
     "justification": "Top-level character sheet orchestrator with panel layout, edit-mode state, and all sub-section rendering — splitting would break tightly coupled section refs"
-  },
-  {
-    "file": "src/lib/components/characterSheet/vocationSelector.tsx",
-    "maxLines": 275,
-    "justification": "Vocation selector with combobox, feature list, boon allocation, and proficiency display — all tightly coupled to vocation/specialization state management"
   }
 ]

@@ -10,8 +10,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  createUseTranslationsMock,
-  loadMessageFile,
+    createUseTranslationsMock,
+    loadMessageFile,
 } from '../../../testUtils/translationMockUtils';
 
 const mockHook = vi.fn();
@@ -32,7 +32,9 @@ vi.mock('@/lib/components/mdx/spellTable/useSpellColumns', () => ({
 
 vi.mock('@/lib/components/mdx/metadataTables/metadataTable', () => ({
   default: ({ data }: { data: Array<{ title: string }> }) => (
-    <div data-testid='metadata-table'>{data.map((row) => row.title).join(', ')}</div>
+    <div data-testid='metadata-table'>
+      {data.map((row) => row.title).join(', ')}
+    </div>
   ),
 }));
 
@@ -86,7 +88,12 @@ describe('FilteredSpellTable', () => {
   });
 
   it('shows skeleton while loading', () => {
-    mockHook.mockReturnValue({ spellData: [], loading: true, error: null });
+    mockHook.mockReturnValue({
+      spellData: [],
+      loading: true,
+      refetching: false,
+      error: null,
+    });
 
     render(<FilteredSpellTable sources={['/api/spells']} />);
 
@@ -97,6 +104,7 @@ describe('FilteredSpellTable', () => {
     mockHook.mockReturnValue({
       spellData: [],
       loading: false,
+      refetching: false,
       error: 'Network error',
     });
 
@@ -105,26 +113,57 @@ describe('FilteredSpellTable', () => {
     expect(screen.getByText(/Network error/i)).toBeInTheDocument();
   });
 
-  it('filters out external spells when Damocles Only is enabled', async () => {
+  it('forwards Damocles-only toggle as a source neq basic filter expression', async () => {
     const user = userEvent.setup();
 
     mockHook.mockReturnValue({
-      spellData: [
-        makeSpell({ title: 'Fireball', level: 1, file: 'local' }),
-        makeSpell({ title: 'SRD Spell', slug: 'srd-spell', level: 1, file: 'external' }),
-      ],
+      spellData: [makeSpell({ title: 'Fireball', level: 1, source: null })],
       loading: false,
+      refetching: false,
       error: null,
     });
 
     render(<FilteredSpellTable sources={['/api/spells']} levels={[1]} />);
 
-    expect(screen.getByTestId('metadata-table')).toHaveTextContent('Fireball');
-    expect(screen.getByTestId('metadata-table')).toHaveTextContent('SRD Spell');
+    expect(mockHook).toHaveBeenLastCalledWith(
+      ['/api/spells'],
+      'en',
+      undefined,
+      undefined,
+      [],
+    );
 
     await user.click(screen.getByLabelText(/damocles only/i));
 
-    expect(screen.getByTestId('metadata-table')).toHaveTextContent('Fireball');
-    expect(screen.getByTestId('metadata-table')).not.toHaveTextContent('SRD Spell');
+    expect(mockHook).toHaveBeenLastCalledWith(
+      ['/api/spells'],
+      'en',
+      undefined,
+      undefined,
+      [{ field: 'source', operator: 'neq', value: 'basic' }],
+    );
+  });
+
+  it('forwards school selection as a school eq filter expression', async () => {
+    const user = userEvent.setup();
+
+    mockHook.mockReturnValue({
+      spellData: [makeSpell({ title: 'Fireball', level: 1 })],
+      loading: false,
+      refetching: false,
+      error: null,
+    });
+
+    render(<FilteredSpellTable sources={['/api/spells']} levels={[1]} />);
+
+    await user.selectOptions(screen.getByLabelText(/school/i), 'Evocation');
+
+    expect(mockHook).toHaveBeenLastCalledWith(
+      ['/api/spells'],
+      'en',
+      undefined,
+      undefined,
+      [{ field: 'school', operator: 'eq', value: 'Evocation' }],
+    );
   });
 });

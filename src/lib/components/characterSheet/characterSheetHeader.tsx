@@ -13,13 +13,24 @@
 
 'use client';
 
+import { NumericInput } from '@/lib/components/ui/numericInput';
+import { TextInput } from '@/lib/components/ui/textInput';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
+import { computeProficiencyBonus } from '@/lib/utils/characterStorage';
+import { getCharacterDerived } from '@/lib/utils/characterDerivation';
 import { computeBpSpent } from '@/lib/utils/shardExtractor';
+import {
+    getLevelFromXP,
+    getXPForLevel,
+    MAX_XP_LEVEL,
+    XP_THRESHOLDS,
+} from '@/lib/utils/xpProgression';
 import { useTranslations } from 'next-intl';
-import { Fragment } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './characterSheetHeader.module.scss';
 import { PagePreviewTooltip } from './pagePreviewTooltip';
 import { VocationSelector } from './vocationSelector';
@@ -63,18 +74,55 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
   locale = 'en',
 }) => {
   const t = useTranslations('characterSheet');
-  const bpSpent = computeBpSpent(data.selectedBoons as CharacterShard[]);
+  const bpSpent = useMemo(
+    () => computeBpSpent(data.selectedBoons as CharacterShard[]),
+    [data.selectedBoons],
+  );
   const fullName = data.name || t('unnamedCharacter');
+  const derived = useMemo(() => getCharacterDerived(data), [data]);
+  const { hasActiveVocations, totalLevel, experience, xpOverallPercent } =
+    derived;
+  const [xpInput, setXpInput] = useState<number>(data.experience ?? 0);
+  const debouncedXp = useDebounce(xpInput, 300);
+  const xpChangedRef = useRef(false);
+
+  useEffect(() => {
+    setXpInput(data.experience ?? 0);
+  }, [data.experience]);
+
+  useEffect(() => {
+    if (!xpChangedRef.current) return;
+    xpChangedRef.current = false;
+    const newLevel = Math.min(getLevelFromXP(debouncedXp), MAX_XP_LEVEL);
+    onChange({
+      experience: debouncedXp,
+      level: newLevel,
+      proficiencyBonus: computeProficiencyBonus(newLevel),
+    });
+  }, [debouncedXp, onChange]);
+
+  const handleLevelChange = useCallback(
+    (value: number | undefined) => {
+      const level = Math.max(1, Math.min(30, value ?? 1));
+      const experience = getXPForLevel(level);
+      onChange({
+        level,
+        proficiencyBonus: computeProficiencyBonus(level),
+        experience,
+      });
+    },
+    [onChange],
+  );
 
   return (
     <header className={styles.header}>
       <div className={styles.topRow}>
         {editing ? (
-          <input
+          <TextInput
             className={styles.nameInput}
             value={data.name}
-            onChange={(e) => onChange({ name: e.target.value })}
-            aria-label={t('ariaCharacterName')}
+            onChange={(v) => onChange({ name: v })}
+            ariaLabel={t('ariaCharacterName')}
           />
         ) : (
           <h2 className={styles.charName}>
@@ -89,7 +137,50 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
         )}
 
         <div className={styles.meta}>
-          <span>{t('levelFull', { level: data.level })}</span>
+          {editing ? (
+            <>
+              <label className={styles.metaEditLabel}>
+                {t('levelLabel')}
+                {hasActiveVocations ? (
+                  <span className={styles.metaDerivedValue}>{totalLevel}</span>
+                ) : (
+                  <NumericInput
+                    className={styles.metaEditInput}
+                    value={data.level}
+                    min={1}
+                    max={30}
+                    size='sm'
+                    ariaLabel={t('ariaLevelInput')}
+                    onChange={handleLevelChange}
+                  />
+                )}
+              </label>
+              <label className={styles.metaEditLabel}>
+                {t('xpLabel')}
+                {hasActiveVocations ? (
+                  <span className={styles.metaDerivedValue}>
+                    {experience.toLocaleString()}
+                  </span>
+                ) : (
+                  <NumericInput
+                    className={styles.metaEditInput}
+                    value={xpInput}
+                    min={0}
+                    size='sm'
+                    ariaLabel={t('ariaExperienceInput')}
+                    onChange={(v) => {
+                      xpChangedRef.current = true;
+                      setXpInput(v ?? 0);
+                    }}
+                  />
+                )}
+              </label>
+            </>
+          ) : (
+            <>
+              <span>{t('levelFull', { level: totalLevel })}</span>
+            </>
+          )}
           {data.bloodlineTitle && data.bloodlineSlug && (
             <span className={styles.metaPill}>
               {data.bloodlineTitle}
@@ -101,27 +192,20 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
               />
             </span>
           )}
-          {data.vocationTitle && data.vocationSlug && (
-            <span className={styles.metaPill}>
-              {data.vocationTitle}
-              <PagePreviewTooltip
-                kind='vocations'
-                slug={data.vocationSlug}
-                title={data.vocationTitle}
-                locale={locale}
-              />
-            </span>
-          )}
-          {data.specializationTitle && data.specializationSlug && (
-            <span className={styles.metaPill}>
-              {data.specializationTitle}
-              <PagePreviewTooltip
-                kind='specializations'
-                slug={data.specializationSlug}
-                title={data.specializationTitle}
-                locale={locale}
-              />
-            </span>
+          {data.vocations.map((v) =>
+            v.slug ? (
+              <span key={v.slug} className={styles.metaPill}>
+                {v.title}
+                {v.specializationTitle ? ` / ${v.specializationTitle}` : ''}
+                {` Lv.${v.level}`}
+                <PagePreviewTooltip
+                  kind='vocations'
+                  slug={v.slug}
+                  title={v.title}
+                  locale={locale}
+                />
+              </span>
+            ) : null,
           )}
         </div>
 
@@ -134,18 +218,21 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
             <>
               <button
                 type='button'
-                className={`${styles.btn} ${styles.btnPrimary}`}
+                className={`${styles.buttonBase} ${styles.buttonPrimary}`}
                 onClick={onSave}>
                 {t('save')}
               </button>
-              <button type='button' className={styles.btn} onClick={onCancel}>
+              <button
+                type='button'
+                className={styles.buttonBase}
+                onClick={onCancel}>
                 {t('cancel')}
               </button>
             </>
           ) : (
             <button
               type='button'
-              className={styles.btn}
+              className={styles.buttonBase}
               onClick={onEdit}
               aria-label={t('ariaEditCharacter')}>
               {t('edit')}
@@ -157,10 +244,7 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
       <VocationSelector
         bloodlineSlug={data.bloodlineSlug}
         bloodlineTitle={data.bloodlineTitle || ''}
-        vocationSlug={data.vocationSlug}
-        vocationTitle={data.vocationTitle || ''}
-        specializationSlug={data.specializationSlug}
-        specializationTitle={data.specializationTitle || ''}
+        vocations={data.vocations}
         selectedBoons={data.selectedBoons}
         boonBudget={data.boonBudget}
         editing={editing}
@@ -168,6 +252,34 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
         showBoonPicker={false}
         onChange={onChange}
       />
+
+      <div
+        className={styles.xpTrack}
+        role='progressbar'
+        aria-valuenow={experience}
+        aria-valuemin={0}
+        aria-valuemax={XP_THRESHOLDS[MAX_XP_LEVEL]}
+        aria-label={t('xpLabel')}
+        title={`${experience} XP`}>
+        <div
+          className={styles.xpTrackFill}
+          style={{ width: `${xpOverallPercent}%` }}
+        />
+        {Array.from({ length: MAX_XP_LEVEL - 2 }, (_, i) => i + 2).map(
+          (level) => (
+            <div
+              key={level}
+              className={styles.xpMarker}
+              style={{
+                left: `${
+                  (XP_THRESHOLDS[level] / XP_THRESHOLDS[MAX_XP_LEVEL]) * 100
+                }%`,
+              }}
+              aria-hidden='true'
+            />
+          ),
+        )}
+      </div>
     </header>
   );
 };

@@ -5,7 +5,11 @@
  * spell objects with level, school, casting time, components, and concentration
  * requirements. Used by SpellTableWrapper for client-side data fetching.
  *
- * @version 2.0.0
+ * Accepts an optional `filters` array of `FilterExpression` objects. Filter
+ * fields are checked against a per-route allow-list as a security boundary
+ * against arbitrary entity-field probing from untrusted POST bodies.
+ *
+ * @version 3.0.0
  * @author Typeir
  * @since 1.0.0
  *
@@ -14,16 +18,23 @@
  *
  * @example
  * ```typescript
- * // Fetch English spells
- * const response = await fetch('/api/spells', {
+ * // Damocles-only filter
+ * await fetch('/api/spells', {
  *   method: 'POST',
  *   headers: { 'Content-Type': 'application/json' },
- *   body: JSON.stringify({ locale: 'en' })
+ *   body: JSON.stringify({
+ *     locale: 'en',
+ *     filters: [{ field: 'source', operator: 'neq', value: 'basic' }],
+ *   }),
  * });
- * const spells = await response.json();
  * ```
  * @module src/app/api/spells/route
  */
+import {
+  applyFiltersInMemory,
+  isFilterExpressionArray,
+  type FilterExpression,
+} from '@/lib/db/content/filters';
 import { spellRepository } from '@/lib/db/content/repositories/spellRepository';
 import { logger } from '@/lib/logging/logger';
 import { NextResponse } from 'next/server';
@@ -31,20 +42,47 @@ import { NextResponse } from 'next/server';
 const log = logger.child({ module: 'API:Spells:List' });
 
 /**
+ * Allow-list of filter fields exposed by this route. Any incoming filter
+ * targeting a field outside this set is rejected with 400 to prevent
+ * arbitrary entity-field probing.
+ *
+ * @type {ReadonlySet<string>}
+ */
+const ALLOWED_FILTER_FIELDS: ReadonlySet<string> = new Set([
+  'source',
+  'school',
+  'concentration',
+  'level',
+]);
+
+/**
+ * Validates that every filter expression targets an allow-listed field.
+ *
+ * @param {FilterExpression[]} filters - Parsed filter expressions.
+ * @returns {string | null} Disallowed field name on rejection, otherwise `null`.
+ */
+const findDisallowedField = (filters: FilterExpression[]): string | null => {
+  for (const expr of filters) {
+    if (!ALLOWED_FILTER_FIELDS.has(expr.field)) {
+      return expr.field;
+    }
+  }
+  return null;
+};
+
+/**
  * POST /api/spells
  *
  * Returns array of spell metadata from the active content repository.
- * Accepts optional locale and spells array in request body.
+ * Accepts optional locale, spells slug array, listSource, and filters.
+ *
+ * Branching precedence:
+ *   1. `listSource` → `listBySource(locale, listSource)` then in-memory filter pass.
+ *   2. `spells` slugs → `listBySlugs(locale, spells)` then in-memory filter pass.
+ *   3. Otherwise → `list(locale, filters)` (filters pushed to repository).
  *
  * @param {Request} req - Next.js request object
- * @returns {NextResponse} JSON array of spell objects
- *
- * @example
- * fetch('/api/spells', {
- *   method: 'POST',
- *   headers: { 'Content-Type': 'application/json' },
- *   body: JSON.stringify({ locale: 'en', spells: ['fireball', 'cone-of-cold'] })
- * })
+ * @returns {Promise<NextResponse>} JSON array of spell objects
  */
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
@@ -52,14 +90,34 @@ export async function POST(req: Request) {
   const spellSlugs: string[] | undefined = body.spells;
   const listSource: string | undefined = body.listSource;
 
+  let filters: FilterExpression[] | undefined;
+  if (body.filters !== undefined) {
+    if (!isFilterExpressionArray(body.filters)) {
+      return NextResponse.json(
+        { error: 'Invalid filters payload' },
+        { status: 400 },
+      );
+    }
+    const disallowed = findDisallowedField(body.filters);
+    if (disallowed !== null) {
+      return NextResponse.json(
+        { error: `Filter field not allowed: ${disallowed}` },
+        { status: 400 },
+      );
+    }
+    filters = body.filters;
+  }
+
   try {
     let spells;
     if (listSource) {
-      spells = await spellRepository.listBySource(locale, listSource);
+      const listSpells = await spellRepository.listBySource(locale, listSource);
+      spells = filters ? applyFiltersInMemory(listSpells, filters) : listSpells;
     } else if (spellSlugs && spellSlugs.length > 0) {
-      spells = await spellRepository.listBySlugs(locale, spellSlugs);
+      const slugSpells = await spellRepository.listBySlugs(locale, spellSlugs);
+      spells = filters ? applyFiltersInMemory(slugSpells, filters) : slugSpells;
     } else {
-      spells = await spellRepository.list(locale);
+      spells = await spellRepository.list(locale, filters);
     }
     return NextResponse.json(spells);
   } catch (error) {
@@ -67,6 +125,7 @@ export async function POST(req: Request) {
       error: error instanceof Error ? error.message : String(error),
       locale,
       spellCount: spellSlugs?.length,
+      filterCount: filters?.length ?? 0,
     });
     return NextResponse.json(
       { error: 'Failed to load spells' },

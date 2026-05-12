@@ -12,6 +12,8 @@
 'use client';
 
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
+import { TextArea } from '@/lib/components/ui/textArea';
+import { TextInput } from '@/lib/components/ui/textInput';
 import { Plus, X } from 'lucide-react';
 import { CarryingCapacityCalculator } from '../carryingCapacityCalculator';
 import { CoinPouch } from '../coinPouch';
@@ -63,7 +65,6 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
 
   const updateNotes = (value: string) => {
     onChange({
-      ...(data as object),
       equipmentNotes: value,
     } as unknown as Partial<CharacterSheetType>);
   };
@@ -75,10 +76,10 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
         <div className={styles.equipmentList}>
           {equipment.map((item, idx) => (
             <div key={idx} className={styles.equipmentRow}>
-              <input
+              <TextInput
                 className={styles.equipmentInput}
                 value={item}
-                onChange={(e) => updateRow(idx, e.target.value)}
+                onChange={(v) => updateRow(idx, v)}
                 disabled={!editing}
               />
               {editing && (
@@ -104,11 +105,11 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
         </div>
 
         <h3 className={styles.sectionTitle}>Notes</h3>
-        <textarea
+        <TextArea
           className={styles.notesArea}
           value={equipmentNotes}
           readOnly={!editing}
-          onChange={(e) => updateNotes(e.target.value)}
+          onChange={(v) => updateNotes(v)}
         />
       </div>
 

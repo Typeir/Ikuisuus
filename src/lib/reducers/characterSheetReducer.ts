@@ -18,6 +18,8 @@ import {
     type CharacterSheetAction,
     type CharacterSheetState,
 } from '../types/characterSheet';
+import { getTotalCharacterLevel } from '../utils/characterDerivation';
+import { getXPForLevel, MAX_XP_LEVEL } from '../utils/xpProgression';
 
 /**
  * Pure reducer for character sheet state.
@@ -41,7 +43,20 @@ export function characterSheetReducer(
   switch (action.type) {
     case CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER: {
       const { character } = action.payload;
-      const updated = { ...character, updatedAt: new Date().toISOString() };
+      const normalizedLevel = getTotalCharacterLevel(character);
+      const hasActiveVocations = character.vocations.some((v) =>
+        Boolean(v.slug),
+      );
+      const floor = getXPForLevel(Math.min(normalizedLevel, MAX_XP_LEVEL));
+      const normalizedExperience = hasActiveVocations
+        ? Math.max(character.experience ?? 0, floor)
+        : character.experience ?? 0;
+      const updated = {
+        ...character,
+        level: normalizedLevel,
+        experience: normalizedExperience,
+        updatedAt: new Date().toISOString(),
+      };
       const index = state.characters.findIndex((c) => c.id === character.id);
       const characters =
         index >= 0

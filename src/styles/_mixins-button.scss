@@ -1,6 +1,13 @@
 /**
  * @fileoverview Button Mixins
  * @description Button base styles, hover/variant modifiers, and scale animation.
+ * Canonical compositions:
+ *   - `.buttonBase`      → button-base + button-hover-secondary + button-hover-scale
+ *   - `.buttonPrimary`   → button-base + button-primary + button-hover-scale
+ *   - `.buttonSecondary` → button-secondary + button-hover-scale
+ *   - `.buttonDanger`    → button-base + button-danger + button-hover-scale
+ *   - `.buttonGhost`     → button-ghost + button-hover-scale
+ *   - `.buttonIcon`      → button-icon + button-hover-scale
  *
  * @module styles/mixins-button
  */
@@ -15,7 +22,11 @@
   color: var(--color-text);
   cursor: pointer;
   font-size: $font-size;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
 }
 
 @mixin button-hover-scale($factor: 1.08) {
@@ -39,6 +50,7 @@
   }
 }
 
+/** @deprecated Use button-hover-secondary directly. */
 @mixin button-secondary-bg {
   @include button-hover-secondary;
 }
@@ -62,3 +74,64 @@
     filter: brightness(0.9);
   }
 }
+
+/**
+ * Secondary button — transparent background with accent border at rest,
+ * fills with accent color on hover. For outline-style action CTAs.
+ */
+@mixin button-secondary($padding: 0.3rem 0.65rem, $font-size: 0.8rem) {
+  padding: $padding;
+  border: 1px solid var(--color-accent);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-accent);
+  cursor: pointer;
+  font-size: $font-size;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    border-color: var(--color-accent);
+  }
+}
+
+/**
+ * Ghost button — no background or border at rest. Text and icon only.
+ * Icon color animation is handled by the consumer via svg selectors.
+ */
+@mixin button-ghost($font-size: 0.8rem) {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: $font-size;
+  transition: transform 0.15s ease;
+}
+
+/**
+ * Icon-only button — no background, no border, no text. Purely visual icon target.
+ * Color animation is handled by the consumer via svg/color selectors.
+ */
+@mixin button-icon {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
+}
+
+/**
+ * Press effect — slight downward translate on active state.
+ * Defined in _mixins-layout.scss. Referenced here for documentation only.
+ * Use via the mixins barrel: `@use 'mixins' as *`.
+ */

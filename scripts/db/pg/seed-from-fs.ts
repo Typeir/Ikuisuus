@@ -267,7 +267,7 @@ const SEED_CONFIGS: ContentSeedConfig[] = [
   },
   {
     entityClass: SpecializationEntity,
-    subdir: join('character-creation', 'vocations', 'specializations'),
+    subdir: join('character-creation', 'vocations'),
     seedChildren: (em, allMeta, parent, raw) => {
       const features = (raw.features ?? []) as Array<Record<string, unknown>>;
       for (let i = 0; i < features.length; i++) {

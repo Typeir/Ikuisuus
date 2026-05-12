@@ -17,6 +17,14 @@ export type { FilterSelectOption, FilterSelectProps } from './filterSelect';
 export { NumericInput } from './numericInput';
 export type { NumericInputProps } from './numericInput';
 
+/** TextInput — Accessible styled text input */
+export { TextInput } from './textInput';
+export type { TextInputProps } from './textInput';
+
+/** TextArea — Accessible styled textarea */
+export { TextArea } from './textArea';
+export type { TextAreaProps } from './textArea';
+
 /** Tooltip — Accessible tooltip with hover/focus activation */
 export { Tooltip, WithTooltip, withTooltip } from './tooltip';
 export type { TooltipPlacement, TooltipProps } from './tooltip';
@@ -24,10 +32,10 @@ export type { TooltipPlacement, TooltipProps } from './tooltip';
 /** PushNotification — Toast-style notification system */
 export { NotificationProvider, useNotifications } from './pushNotification';
 export type {
-    NotificationConfig,
-    NotificationPosition,
-    NotificationProviderProps,
-    NotificationType
+  NotificationConfig,
+  NotificationPosition,
+  NotificationProviderProps,
+  NotificationType,
 } from './pushNotification';
 
 /** MobileModal — Generic mobile-optimized modal with focus management */
@@ -48,4 +56,3 @@ export type { GradientTabItem, GradientTabsProps } from './gradientTabs';
 /** AsyncTooltip — Lazy-fetching tooltip with single-flight content loading */
 export { AsyncTooltip } from './asyncTooltip';
 export type { AsyncTooltipProps } from './asyncTooltip';
-

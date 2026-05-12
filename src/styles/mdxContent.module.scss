@@ -3,13 +3,16 @@
 /**
  * @fileoverview Shared MDX Content Typography Styles
  * @description Canonical typography rules for rendered MDX content.
- * Imported by the library page, editor preview, and draft overlay
- * so all three contexts render identically.
+ * `.mdxBase` holds the reusable base typography (font sizes, headings,
+ * paragraphs, lists, tables, code, blockquote) and can be composed into
+ * any container that needs prose-quality rendering without page-level padding
+ * or decorative pseudo-elements. `.mdxContent` extends `.mdxBase` with the
+ * full library-page treatment (section decorators, padding, first-letter).
  *
  * @module styles/mdxContent.module
  */
 
-.mdxContent {
+.mdxBase {
   font-size: 1rem;
   line-height: 1.75;
   color: var(--color-text);
@@ -205,6 +208,7 @@
      The mixins are provided by `@use 'mixins' as *;` at the top of this file.
   */
 .mdxContent {
+  composes: mdxBase;
   padding-top: 5rem;
   padding-bottom: 5rem;
   overflow-y: clip;

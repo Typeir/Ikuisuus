@@ -11,6 +11,10 @@
 
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
+import {
+  applyFiltersInMemory,
+  type FilterExpression,
+} from '../../filters';
 import type {
     SpellIndexEntry,
     SpellMetadata,
@@ -39,6 +43,25 @@ class FsSpellRepository
 {
   constructor() {
     super(SUBDIR);
+  }
+
+  /**
+   * Returns all spell metadata for the locale, optionally filtered in memory.
+   *
+   * Maintains parity with the pg adapter when `METADATA_BACKEND=fs` so that
+   * the same `FilterExpression[]` payload behaves identically across backends.
+   *
+   * @param {string} locale - Locale code
+   * @param {FilterExpression[]} [filters] - Optional JSON-serializable filter list
+   * @returns {Promise<SpellMetadata[]>} Filtered metadata array, or `[]` on error
+   */
+  override async list(
+    locale: string,
+    filters?: FilterExpression[],
+  ): Promise<SpellMetadata[]> {
+    const all = await super.list(locale);
+    if (!filters || filters.length === 0) return all;
+    return applyFiltersInMemory(all, filters);
   }
 
   /**

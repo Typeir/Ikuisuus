@@ -209,6 +209,30 @@ export interface CompactCharacterRef {
 }
 
 /**
+ * A single vocation entry in a character's vocation list.
+ * Supports mixing (multiclassing) by allowing multiple entries, each with its
+ * own level, specialization, and feature shards.
+ *
+ * @interface VocationEntry
+ * @property {string} slug - Vocation identifier, e.g. `wizard`
+ * @property {string} title - Display name, e.g. `Wizard`
+ * @property {number} level - Levels invested in this vocation specifically
+ * @property {string|null} specializationSlug - Specialization identifier, e.g. `evoker`
+ * @property {string} specializationTitle - Specialization display name, e.g. `Evoker`
+ * @property {CharacterShard[]} vocationFeatures - Unlocked vocation feature shards for this entry
+ * @property {CharacterShard[]} specializationFeatures - Unlocked specialization feature shards for this entry
+ */
+export interface VocationEntry {
+  slug: string;
+  title: string;
+  level: number;
+  specializationSlug: string | null;
+  specializationTitle: string;
+  vocationFeatures: CharacterShard[];
+  specializationFeatures: CharacterShard[];
+}
+
+/**
  * Full Damocles character sheet stored in localStorage.
  * This is the canonical data model — all other representations (combatants,
  * compact refs, print output) are derived from this.
@@ -225,12 +249,7 @@ export interface CompactCharacterRef {
  * @property {string} bloodlineTitle - Display name, e.g. `Empyrean`
  * @property {number} boonBudget - Total Boon Points available from bloodline
  * @property {CharacterShard[]} selectedBoons - Chosen boon shards
- * @property {string|null} vocationSlug - Vocation identifier, e.g. `wizard`
- * @property {string} vocationTitle - Display name, e.g. `Wizard`
- * @property {string|null} specializationSlug - Specialization identifier, e.g. `evoker`
- * @property {string} specializationTitle - Display name, e.g. `Evoker`
- * @property {CharacterShard[]} vocationFeatures - Unlocked vocation feature shards
- * @property {CharacterShard[]} specializationFeatures - Unlocked specialization feature shards
+ * @property {VocationEntry[]} vocations - Vocation entries, each tracking its own level (mixing support)
  * @property {{ str: number; dex: number; con: number; int: number; wis: number; cha: number }} abilityScores - Six core ability scores
  * @property {number} hpMax - Maximum hit points
  * @property {number} hpCurrent - Current hit points
@@ -266,12 +285,7 @@ export interface CharacterSheet {
   bloodlineTitle: string;
   boonBudget: number;
   selectedBoons: CharacterShard[];
-  vocationSlug: string | null;
-  vocationTitle: string;
-  specializationSlug: string | null;
-  specializationTitle: string;
-  vocationFeatures: CharacterShard[];
-  specializationFeatures: CharacterShard[];
+  vocations: VocationEntry[];
   abilityScores: {
     str: number;
     dex: number;

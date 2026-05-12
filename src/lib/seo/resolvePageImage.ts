@@ -18,8 +18,9 @@
 import fs from 'fs';
 import path from 'path';
 
+import { getPublicFolder } from '../utils/getPublicFolder';
+
 const IMAGE_EXTENSIONS = ['.webp', '.png', '.jpg', '.jpeg'] as const;
-const PUBLIC_DIR = 'public';
 
 /**
  * Checks whether a root-relative path exists under the `public/` directory.
@@ -33,8 +34,7 @@ const PUBLIC_DIR = 'public';
 function publicFileExists(relativePath: string): boolean {
   try {
     const absolute = path.join(
-      process.cwd(),
-      PUBLIC_DIR,
+      getPublicFolder(),
       relativePath.replace(/^\//, ''),
     );
     return fs.existsSync(absolute);

@@ -19,16 +19,17 @@
 'use client';
 
 import { Chip } from '@/lib/components/ui/chip';
+import { NumericInput } from '@/lib/components/ui/numericInput';
 import {
-    BUILT_IN_CURRENCY_SYSTEMS,
-    GOLD_STANDARD,
-    computeHoldingsValue,
-    migrateLegacyCurrency,
+  BUILT_IN_CURRENCY_SYSTEMS,
+  GOLD_STANDARD,
+  computeHoldingsValue,
+  migrateLegacyCurrency,
 } from '@/lib/data/currencySystems';
 import type {
-    CharacterCoinHoldings,
-    CharacterSheet as CharacterSheetType,
-    CurrencySystem,
+  CharacterCoinHoldings,
+  CharacterSheet as CharacterSheetType,
+  CurrencySystem,
 } from '@/lib/types/character';
 import { Plus, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -93,11 +94,15 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
     onChange({ coinHoldings: next });
   };
 
-  const updateCount = (systemName: string, coinName: string, raw: string) => {
-    const value = Math.max(0, Number.parseInt(raw, 10) || 0);
+  const updateCount = (
+    systemName: string,
+    coinName: string,
+    value: number | undefined,
+  ) => {
+    const count = Math.max(0, value ?? 0);
     const next = holdings.map((h) =>
       h.systemName === systemName
-        ? { ...h, counts: { ...h.counts, [coinName]: value } }
+        ? { ...h, counts: { ...h.counts, [coinName]: count } }
         : h,
     );
     updateHoldings(next);
@@ -180,15 +185,14 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
                       {coin.name}
                       {coin.abbreviation ? ` (${coin.abbreviation})` : ''}
                     </span>
-                    <input
-                      type='number'
-                      className={styles.countInput}
+                    <NumericInput
                       value={h.counts[coin.name] ?? 0}
                       min={0}
-                      readOnly={!editing}
-                      onChange={(e) =>
-                        updateCount(h.systemName, coin.name, e.target.value)
-                      }
+                      size='sm'
+                      disabled={!editing}
+                      className={styles.countInput}
+                      ariaLabel={`${coin.name} in ${h.systemName}`}
+                      onChange={(v) => updateCount(h.systemName, coin.name, v)}
                     />
                   </li>
                 ))}

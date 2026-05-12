@@ -1,26 +1,49 @@
 /**
  * @fileoverview ContentShardPanel Unit Tests
- * @description Verifies fetch, render, loading, and error states for the
- * ContentShardPanel. All network and markdown rendering is mocked so tests
- * remain synchronous with respect to rendering.
+ * @description Verifies fetch, render, loading, error, and MDX compilation
+ * fallback states for the ContentShardPanel. Network, MDX compilation, and
+ * markdown rendering are mocked so tests remain fast and environment-agnostic.
  *
  * @module tests/unit/lib/components/characterSheet/contentShardPanel
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
 import { ContentShardPanel } from '@/lib/components/characterSheet/contentShardPanel';
-import { render, screen, waitFor } from '@testing-library/react';
+import { compileRuntimeSync } from '@/lib/mdx/compileRuntime';
+import { render as baseRender, screen, waitFor } from '@testing-library/react';
+import React from 'react';
+import { SWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/md/renderMarkdownToHtml', () => ({
   renderMarkdownToHtml: (md: string) => Promise.resolve(`<p>${md}</p>`),
 }));
 
+vi.mock('@/lib/mdx/compileRuntime', () => ({
+  compileRuntimeSync: vi.fn(({ source }: { source: string }) => ({
+    content: source,
+  })),
+}));
+
+vi.mock('@/lib/components/mdx', () => ({
+  default: {},
+}));
+
 const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>();
 
+let swrCache: Map<unknown, unknown>;
+const SWRWrapper = ({ children }: { children: React.ReactNode }) => (
+  <SWRConfig value={{ provider: () => swrCache, dedupingInterval: 0 }}>
+    {children}
+  </SWRConfig>
+);
+const render = (ui: React.ReactElement) =>
+  baseRender(ui, { wrapper: SWRWrapper });
+
 beforeEach(() => {
+  swrCache = new Map();
   vi.stubGlobal('fetch', mockFetch);
 });
 
@@ -55,6 +78,22 @@ describe('ContentShardPanel', () => {
     await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 
     expect(screen.getByText('You are always alert.')).toBeTruthy();
+  });
+
+  it('falls back to plain HTML when MDX compilation fails', async () => {
+    vi.mocked(compileRuntimeSync).mockImplementationOnce(() => {
+      throw new Error('MDX compile error');
+    });
+    mockFetch.mockResolvedValue(
+      jsonResponse({ shards: { main: 'Fallback content.' } }),
+    );
+    render(<ContentShardPanel contentType='feats' slug='alert' locale='en' />);
+
+    await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
+
+    await waitFor(() =>
+      expect(screen.getByText('Fallback content.')).toBeTruthy(),
+    );
   });
 
   it('renders an error state when the API returns a non-ok status', async () => {

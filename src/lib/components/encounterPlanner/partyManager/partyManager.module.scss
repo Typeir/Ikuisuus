@@ -1,5 +1,8 @@
 /** Party Manager Styling */
 
+@use '@/styles/mixins-button' as *;
+@use '@/styles/mixins-focus' as *;
+
 .partyList {
   display: flex;
   flex-direction: column;
@@ -76,28 +79,26 @@
 }
 
 .deleteButton {
-  color: var(--color-danger);
-  border-color: var(--color-danger);
+  background: transparent !important;
 
   &:hover {
-    background: var(--color-danger);
-    color: var(--color-bg);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+    @include focus-glow(3px, var(--color-danger));
   }
 }
 
-.createButton {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--color-accent);
-  border-radius: 4px;
+.buttonPrimary {
+  @include button-base(0.5rem 1rem, 0.875rem);
+  border-color: var(--color-accent);
   background: var(--color-accent);
   color: var(--color-bg);
-  cursor: pointer;
   font-weight: 600;
-  font-size: 0.875rem;
-  transition: opacity 0.15s ease;
+  @include button-hover-scale;
 
   &:hover {
-    opacity: 0.9;
+    filter: brightness(0.9);
+    background: var(--color-accent);
   }
 }
 
@@ -205,16 +206,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  background: none;
+  @include button-icon;
+  background: transparent !important;
   color: var(--color-secondary);
-  cursor: pointer;
-  padding: 0.25rem;
   border-radius: 3px;
-  transition: color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease,
+    filter 0.15s ease;
+  @include button-hover-scale;
 
   &:hover {
     color: var(--color-danger);
+    @include focus-glow(3px, var(--color-danger));
   }
 }
 

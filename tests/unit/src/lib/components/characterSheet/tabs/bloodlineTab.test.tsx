@@ -11,7 +11,9 @@
 
 import { BloodlineTab } from '@/lib/components/characterSheet/tabs/bloodlineTab';
 import { createEmptyCharacter } from '@/lib/utils/characterStorage';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render as baseRender, screen, waitFor } from '@testing-library/react';
+import React from 'react';
+import { SWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/md/renderMarkdownToHtml', () => ({
@@ -20,7 +22,17 @@ vi.mock('@/lib/md/renderMarkdownToHtml', () => ({
 
 const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>();
 
+let swrCache: Map<unknown, unknown>;
+const SWRWrapper = ({ children }: { children: React.ReactNode }) => (
+  <SWRConfig value={{ provider: () => swrCache, dedupingInterval: 0 }}>
+    {children}
+  </SWRConfig>
+);
+const render = (ui: React.ReactElement) =>
+  baseRender(ui, { wrapper: SWRWrapper });
+
 beforeEach(() => {
+  swrCache = new Map();
   vi.stubGlobal('fetch', mockFetch);
   mockFetch.mockResolvedValue(
     new Response(JSON.stringify({ shards: { main: 'Bloodline lore text.' } }), {

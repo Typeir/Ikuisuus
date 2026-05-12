@@ -12,7 +12,9 @@
 
 'use client';
 
+import { TextArea } from '@/lib/components/ui/textArea';
 import { useTranslations } from 'next-intl';
+import { memo } from 'react';
 import styles from './characterSheetWidgets.module.scss';
 
 /**
@@ -66,7 +68,7 @@ const NOTE_FIELD_KEYS: (keyof NoteFields)[] = [
  * @param {NotesSectionProps} props - Component props
  * @returns {JSX.Element} Rendered notes section
  */
-export const NotesSection: React.FC<NotesSectionProps> = ({
+export const NotesSectionImpl: React.FC<NotesSectionProps> = ({
   values,
   onChange,
   readOnly = false,
@@ -90,11 +92,11 @@ export const NotesSection: React.FC<NotesSectionProps> = ({
               {values[key] || '—'}
             </p>
           ) : (
-            <textarea
+            <TextArea
               id={`note-${key}`}
               className={styles.noteTextarea}
               value={values[key]}
-              onChange={(e) => handleChange(key, e.target.value)}
+              onChange={(v) => handleChange(key, v)}
               rows={3}
             />
           )}

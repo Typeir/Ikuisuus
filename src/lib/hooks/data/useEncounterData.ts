@@ -1,15 +1,17 @@
 /**
  * @fileoverview Encounter Data Hooks
  * @description Client hooks for encounter planner combobox indexes and
- * spell link hydration.
+ * spell link hydration. Index hooks use SWR; spell link accumulation
+ * retains useEffect due to its per-slug accumulation pattern.
  *
  * @module lib/hooks/data/useEncounterData
  * @author Typeir
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2.0.0
  */
 
 import type { ComboboxItem } from '@/lib/components/encounterPlanner/comboboxes/genericCombobox';
+import { monstersIndexKey, spellsIndexKey, affixesIndexKey } from '@/lib/fetch/swrKeys';
 import { logger } from '@/lib/logging/logger';
 import {
   fetchAffixIndex,
@@ -21,6 +23,7 @@ import {
   type SpellIndexEntry,
 } from '@/lib/services/api/encounterDataService';
 import { useEffect, useMemo, useState } from 'react';
+import useSWR from 'swr';
 
 const log = logger.child({ module: 'useEncounterData' });
 
@@ -67,45 +70,26 @@ export interface AffixComboboxItem extends AffixIndexEntry, ComboboxItem {}
 export function useCreatureIndex(
   locale: string,
 ): EncounterDataState<CreatureComboboxItem> {
-  const [items, setItems] = useState<CreatureComboboxItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const load = async () => {
-      setIsLoading(true);
-      try {
-        const result = await fetchMonsterIndex(locale);
-        if (cancelled) {
-          return;
-        }
-        setItems(
-          result.map((monster) => ({
-            ...monster,
-            id: monster.slug,
-            searchableText: `${monster.title} ${monster.creatureType} ${monster.size} ${monster.cr} ${monster.slug}`,
-          })),
-        );
-      } catch (error) {
+  const { data, isLoading } = useSWR<CreatureComboboxItem[]>(
+    monstersIndexKey(locale),
+    async () => {
+      const result = await fetchMonsterIndex(locale);
+      return result.map((monster) => ({
+        ...monster,
+        id: monster.slug,
+        searchableText: `${monster.title} ${monster.creatureType} ${monster.size} ${monster.cr} ${monster.slug}`,
+      }));
+    },
+    {
+      onError: (error) => {
         log.error('Failed to load monster index', {
           error: error instanceof Error ? error.message : String(error),
         });
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
+      },
+    },
+  );
 
-    load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [locale]);
-
-  return { items, isLoading };
+  return { items: data ?? [], isLoading };
 }
 
 /**
@@ -117,49 +101,31 @@ export function useCreatureIndex(
 export function useSpellIndex(
   locale: string,
 ): EncounterDataState<SpellComboboxItem> {
-  const [items, setItems] = useState<SpellComboboxItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const load = async () => {
-      setIsLoading(true);
-      try {
-        const result = await fetchSpellIndex(locale);
-        if (cancelled) {
-          return;
-        }
-        setItems(
-          result.map((spell) => ({
-            ...spell,
-            id: spell.slug,
-            searchableText: `${spell.title} ${spell.school} ${spell.slug}`,
-          })),
-        );
-      } catch (error) {
+  const { data, isLoading } = useSWR<SpellComboboxItem[]>(
+    spellsIndexKey(locale),
+    async () => {
+      const result = await fetchSpellIndex(locale);
+      return result.map((spell) => ({
+        ...spell,
+        id: spell.slug,
+        searchableText: `${spell.title} ${spell.school} ${spell.slug}`,
+      }));
+    },
+    {
+      onError: (error) => {
         log.error('Failed to load spell index', {
           error: error instanceof Error ? error.message : String(error),
         });
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
+      },
+    },
+  );
 
-    load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [locale]);
-
-  return { items, isLoading };
+  return { items: data ?? [], isLoading };
 }
 
 /**
  * Loads affix index entries and maps them for GenericCombobox.
+ * Filters out affixes whose title is already in `existingAffixes`.
  *
  * @param {string} locale - Current locale
  * @param {string[]} existingAffixes - Existing affix titles to filter out
@@ -169,46 +135,27 @@ export function useAffixIndex(
   locale: string,
   existingAffixes: string[],
 ): EncounterDataState<AffixComboboxItem> {
-  const [allItems, setAllItems] = useState<AffixComboboxItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const load = async () => {
-      setIsLoading(true);
-      try {
-        const result = await fetchAffixIndex(locale);
-        if (cancelled) {
-          return;
-        }
-        setAllItems(
-          result.map((affix) => ({
-            ...affix,
-            id: affix.slug,
-            searchableText: affix.title,
-          })),
-        );
-      } catch (error) {
+  const { data: allItems, isLoading } = useSWR<AffixComboboxItem[]>(
+    affixesIndexKey(locale),
+    async () => {
+      const result = await fetchAffixIndex(locale);
+      return result.map((affix) => ({
+        ...affix,
+        id: affix.slug,
+        searchableText: affix.title,
+      }));
+    },
+    {
+      onError: (error) => {
         log.error('Failed to load affix index', {
           error: error instanceof Error ? error.message : String(error),
         });
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [locale]);
+      },
+    },
+  );
 
   const items = useMemo(
-    () => allItems.filter((affix) => !existingAffixes.includes(affix.title)),
+    () => (allItems ?? []).filter((affix) => !existingAffixes.includes(affix.title)),
     [allItems, existingAffixes],
   );
 

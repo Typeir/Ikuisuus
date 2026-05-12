@@ -394,7 +394,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
           </span>
           <button
             onClick={handleResumeCombat}
-            className={`${styles.button} ${styles.buttonPrimary}`}>
+            className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
             {t('resumeCombat')}
           </button>
         </div>
@@ -416,11 +416,11 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
         <div className={styles.controls}>
           <button
             onClick={handleStartCombat}
-            className={`${styles.button} ${styles.buttonPrimary}`}>
+            className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
             {t('startCombat')}
           </button>
 
-          <button onClick={handleNewEncounter} className={styles.button}>
+          <button onClick={handleNewEncounter} className={styles.buttonBase}>
             {t('newEncounter')}
           </button>
 
@@ -432,17 +432,17 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
             />
           </div>
 
-          <button onClick={handleExport} className={styles.button}>
+          <button onClick={handleExport} className={styles.buttonBase}>
             {t('exportEncounter')}
           </button>
 
-          <button onClick={handleImport} className={styles.button}>
+          <button onClick={handleImport} className={styles.buttonBase}>
             {t('importEncounter')}
           </button>
 
           <button
             onClick={handleDeleteEncounter}
-            className={`${styles.button} ${styles.buttonDanger}`}>
+            className={`${styles.buttonBase} ${styles.buttonDanger}`}>
             {t('deleteEncounter')}
           </button>
 
@@ -458,13 +458,13 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
       <div className={styles.addCreatureControls}>
         <button
           onClick={handleAddCreature}
-          className={`${styles.button} ${styles.buttonPrimary}`}>
+          className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
           {t('addCreature')}
         </button>
 
         <button
           onClick={() => setShowCreatureImport(!showCreatureImport)}
-          className={`${styles.button} ${styles.buttonSecondary}`}>
+          className={`${styles.buttonBase} ${styles.buttonSecondary}`}>
           {t('importCreature')}
         </button>
 

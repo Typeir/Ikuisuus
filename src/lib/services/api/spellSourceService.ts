@@ -9,6 +9,7 @@
  * @since 2.0.0
  */
 
+import type { FilterExpression } from '@/lib/db/content/filters';
 import { postJson } from './jsonClient';
 
 /**
@@ -56,12 +57,14 @@ export interface SpellData {
  * @property {string} locale - Current locale
  * @property {string[]} [spells] - Optional spell slug filter
  * @property {string} [listSource] - Optional listSource filter
+ * @property {FilterExpression[]} [filters] - Optional repository-side filter list
  */
 export interface SpellSourceRequest {
   sources: (string | SpellData[])[];
   locale: string;
   spells?: string[];
   listSource?: string;
+  filters?: FilterExpression[];
 }
 
 /**
@@ -73,7 +76,7 @@ export interface SpellSourceRequest {
 export async function fetchSpellSources(
   request: SpellSourceRequest,
 ): Promise<SpellData[]> {
-  const { sources, locale, spells, listSource } = request;
+  const { sources, locale, spells, listSource, filters } = request;
   const allSpells: SpellData[] = [];
 
   for (const source of sources) {
@@ -83,12 +86,14 @@ export async function fetchSpellSources(
           locale: string;
           listSource?: string;
           spells?: string[];
+          filters?: FilterExpression[];
         },
         SpellData[]
       >(source, {
         locale,
         ...(listSource ? { listSource } : {}),
         ...(!listSource && spells && spells.length > 0 ? { spells } : {}),
+        ...(filters && filters.length > 0 ? { filters } : {}),
       });
       allSpells.push(...payload);
     } else {

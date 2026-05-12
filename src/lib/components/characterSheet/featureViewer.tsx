@@ -1,11 +1,16 @@
 /**
  * @fileoverview Feature Viewer Component
- * @description Displays the unlocked vocation and specialization features for a
- * character at their current level. Each feature is rendered as a `ShardDisplay`
- * card. Features above the character's level are grayed out and inaccessible.
+ * @description Displays vocation and specialization features for a character at
+ * their current level. Features above the character's level are rendered as
+ * locked/dimmed `ShardDisplay` cards (not hidden). When no selection has been
+ * made the section shows a "nothing selected" prompt instead.
+ *
+ * Supports a `section` prop to render only one of the two feature lists.
+ * Useful when callers (such as the Vocation tab) want to display the lists
+ * inside their own tab structure rather than stacked.
  *
  * @module lib/components/characterSheet/featureViewer
- * @version 1.0.0
+ * @version 3.0.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -18,14 +23,25 @@ import styles from './characterSheetWidgets.module.scss';
 import { ShardDisplay } from './shardDisplay';
 
 /**
+ * Which section(s) the FeatureViewer should render.
+ *
+ * @typedef {'both' | 'vocation' | 'specialization'} FeatureViewerSection
+ */
+export type FeatureViewerSection = 'both' | 'vocation' | 'specialization';
+
+/**
  * Props for the FeatureViewer component.
  *
  * @interface FeatureViewerProps
- * @property {CharacterShard[]} vocationFeatures - Unlocked vocation feature shards
- * @property {CharacterShard[]} specializationFeatures - Unlocked specialization feature shards
- * @property {number} characterLevel - Current character level used to gate display
+ * @property {CharacterShard[]} vocationFeatures - Vocation feature shards (all levels)
+ * @property {CharacterShard[]} specializationFeatures - Specialization feature shards (all levels)
+ * @property {number} characterLevel - Current character level; features above this are locked/dimmed
  * @property {string} [vocationTitle] - Display name for the vocation section header
  * @property {string} [specializationTitle] - Display name for the specialization section header
+ * @property {boolean} [hasVocation] - Whether a vocation has been selected; controls empty-state text
+ * @property {boolean} [hasSpecialization] - Whether a specialization has been selected; controls empty-state text
+ * @property {FeatureViewerSection} [section] - Which section to render: `'both'` (default), `'vocation'`, or `'specialization'`
+ * @property {boolean} [hideTitle] - When true, suppresses the section heading (useful inside tab panels that already label the section)
  */
 export interface FeatureViewerProps {
   vocationFeatures: CharacterShard[];
@@ -33,11 +49,18 @@ export interface FeatureViewerProps {
   characterLevel: number;
   vocationTitle?: string;
   specializationTitle?: string;
+  hasVocation?: boolean;
+  hasSpecialization?: boolean;
+  section?: FeatureViewerSection;
+  hideTitle?: boolean;
 }
 
 /**
  * Renders vocation and specialization features grouped by section.
- * Features with `level > characterLevel` are shown as locked/dimmed.
+ * Features with `level > characterLevel` are shown as locked/dimmed cards.
+ * When no selection has been made an appropriate "nothing selected" message
+ * is shown; when a selection exists but has no features, "No features
+ * available." is shown instead.
  *
  * @component
  * @param {FeatureViewerProps} props - Component props
@@ -49,23 +72,38 @@ export const FeatureViewer: React.FC<FeatureViewerProps> = ({
   characterLevel,
   vocationTitle,
   specializationTitle,
+  hasVocation = false,
+  hasSpecialization = false,
+  section = 'both',
+  hideTitle = false,
 }) => {
   const t = useTranslations('characterSheet');
   const resolvedVocationTitle = vocationTitle || t('vocationFeatures');
   const resolvedSpecTitle = specializationTitle || t('specializationFeatures');
-  const renderFeatures = (features: CharacterShard[], label: string) => {
+
+  const renderFeatures = (
+    features: CharacterShard[],
+    label: string,
+    hasSelection: boolean,
+    emptyKey: 'noVocationSelected' | 'noSpecializationSelected',
+  ) => {
     if (features.length === 0) {
+      const emptyText = hasSelection ? t('noFeaturesSelected') : t(emptyKey);
       return (
         <section className={styles.featureSection} aria-label={label}>
-          <h3 className={styles.featureSectionTitle}>{label}</h3>
-          <p className={styles.featureEmpty}>{t('noFeaturesSelected')}</p>
+          {!hideTitle && (
+            <h3 className={styles.featureSectionTitle}>{label}</h3>
+          )}
+          <p className={styles.featureEmpty}>{emptyText}</p>
         </section>
       );
     }
 
     return (
       <section className={styles.featureSection} aria-label={label}>
-        <h3 className={styles.featureSectionTitle}>{label}</h3>
+        {!hideTitle && (
+          <h3 className={styles.featureSectionTitle}>{label}</h3>
+        )}
         <div className={styles.featureList}>
           {features.map((shard) => {
             const locked =
@@ -73,8 +111,7 @@ export const FeatureViewer: React.FC<FeatureViewerProps> = ({
             return (
               <div
                 key={shard.id}
-                className={locked ? styles.featureLocked : undefined}
-                aria-disabled={locked ? true : undefined}>
+                className={locked ? styles.featureLocked : undefined}>
                 <ShardDisplay shard={shard} />
               </div>
             );
@@ -84,10 +121,25 @@ export const FeatureViewer: React.FC<FeatureViewerProps> = ({
     );
   };
 
+  const showVocation = section === 'both' || section === 'vocation';
+  const showSpec = section === 'both' || section === 'specialization';
+
   return (
     <div className={styles.featureViewer}>
-      {renderFeatures(vocationFeatures, resolvedVocationTitle)}
-      {renderFeatures(specializationFeatures, resolvedSpecTitle)}
+      {showVocation &&
+        renderFeatures(
+          vocationFeatures,
+          resolvedVocationTitle,
+          hasVocation,
+          'noVocationSelected',
+        )}
+      {showSpec &&
+        renderFeatures(
+          specializationFeatures,
+          resolvedSpecTitle,
+          hasSpecialization,
+          'noSpecializationSelected',
+        )}
     </div>
   );
 };

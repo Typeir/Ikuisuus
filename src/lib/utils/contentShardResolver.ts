@@ -120,9 +120,12 @@ function extractByLineRange(
  * Find a heading by case-insensitive text match and extract its block.
  * The block ends immediately before the next heading of the same or higher level.
  *
+ * Accepts both exact matches and suffix matches so that a feature stored as
+ * `"Memorize Spell"` resolves against a heading like `"5th Level – Memorize Spell"`.
+ *
  * @function extractByHeadingText
  * @param {string[]} lines - File lines array
- * @param {string} heading - Heading text to search for
+ * @param {string} heading - Heading text to search for (exact or suffix match)
  * @returns {string | null} Extracted heading block text or null when not found
  */
 function extractByHeadingText(lines: string[], heading: string): string | null {
@@ -138,7 +141,7 @@ function extractByHeadingText(lines: string[], heading: string): string | null {
       .replace(/<[^>]+>/g, '')
       .trim()
       .toLowerCase();
-    if (text === target) {
+    if (text === target || text.endsWith(target)) {
       startIdx = i;
       headingLevel = match[1].length;
       break;

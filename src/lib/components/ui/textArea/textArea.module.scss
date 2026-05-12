@@ -1,0 +1,23 @@
+/** Text Area Component Styles */
+
+@use 'src/styles/mixins-input' as *;
+@use 'src/styles/mixins-disabled' as *;
+
+.textArea {
+  @include input-field(0.8125rem);
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+
+  &:hover:not(:disabled):not([readonly]) {
+    border-color: var(--color-accent);
+  }
+
+  &[readonly] {
+    @include disabled(0.5);
+    resize: none;
+  }
+}

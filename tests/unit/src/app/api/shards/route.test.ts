@@ -152,4 +152,28 @@ describe('GET /api/shards', () => {
     );
     expect(res.status).toBe(200);
   });
+
+  it('matches a feature name that appears as a suffix after a level prefix', async () => {
+    const levelPrefixMdx = `# Wizard
+
+## 5th Level \u2013 Memorize Spell
+
+You can memorize any spell.
+
+## 9th Level \u2013 Arcane Mastery
+
+You master the arcane arts.
+`;
+    mockReadFileSync.mockReturnValue(levelPrefixMdx);
+    const res = await ShardsRoute.GET(
+      makeRequest({
+        file: 'character-creation/vocations/wizard/main.mdx',
+        heading: 'Memorize Spell',
+      }),
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { text: string };
+    expect(body.text).toContain('memorize any spell');
+    expect(body.text).not.toContain('Arcane Mastery');
+  });
 });

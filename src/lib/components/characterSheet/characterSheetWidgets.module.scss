@@ -4,6 +4,10 @@
  * All colors via CSS variables — no color literals.
  */
 
+@use '@/styles/mixins-disabled' as *;
+@use '@/styles/mixins-button' as *;
+@use '@/styles/mixins-focus' as *;
+
 .skillsTable,
 .attacksTable {
   width: 100%;
@@ -95,15 +99,24 @@
 
 .removeBtn,
 .addRowBtn {
-  background: none;
+  background: transparent !important;
   border: none;
   cursor: pointer;
   color: var(--color-secondary);
   font-size: 0.8rem;
   padding: 0.2rem;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease,
+    filter 0.15s ease;
+  @include button-hover-scale;
 
   &:hover {
-    color: var(--color-emphasis);
+    color: var(--color-danger);
+  }
+
+  &:hover.removeBtn {
+    @include focus-glow(3px, var(--color-danger));
   }
 }
 
@@ -176,6 +189,10 @@
   border: none;
   cursor: pointer;
   color: var(--color-text);
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+  @include button-hover-scale(1.02);
 
   &:hover {
     background: var(--color-bg-tertiary, var(--color-bg-secondary));
@@ -353,6 +370,14 @@
   cursor: pointer;
   color: var(--color-text);
   text-align: left;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+  @include button-hover-scale(1.01);
+
+  &:hover {
+    color: var(--color-accent);
+  }
 }
 
 .boonName {
@@ -403,8 +428,7 @@
   gap: 0.5rem;
 }
 .featureLocked {
-  opacity: 0.4;
-  pointer-events: none;
+  @include loading-dimmed(0.4, false);
 }
 .featureEmpty {
   font-size: 0.8rem;

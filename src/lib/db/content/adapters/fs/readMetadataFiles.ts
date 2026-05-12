@@ -64,8 +64,10 @@ export const readMetadataFiles = async <T>(
     return [];
   }
 
-  const files = await fs.readdir(dirPath);
-  const metadataFiles = files.filter((f) => f.endsWith('.metadata.json'));
+  const files = await fs.readdir(dirPath, { recursive: true });
+  const metadataFiles = (files as string[]).filter((f) =>
+    f.endsWith('.metadata.json'),
+  );
 
   const records = await Promise.all(
     metadataFiles.map(async (file) => {

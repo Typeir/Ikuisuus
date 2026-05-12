@@ -78,7 +78,7 @@
   flex-wrap: wrap;
 }
 
-.button {
+.buttonBase {
   @include button-base(0.35rem 0.65rem, 0.8rem);
   @include button-hover-secondary;
   @include button-hover-scale;

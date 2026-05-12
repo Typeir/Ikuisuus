@@ -3,16 +3,16 @@
  * @description Modal dialog for selecting quantity when importing creatures.
  * Features keyboard navigation (Enter confirms, Escape cancels), autofocus on confirm button,
  * and accessible labeling. Renders as centered modal overlay.
- * 
+ *
  * @module quantityPopup
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires react
  * @requires @/lib/components/ui/numericInput
  * @requires @/lib/components/ui/modal
- * 
+ *
  * @example
  * ```tsx
  * <QuantityPopup
@@ -27,14 +27,14 @@
 'use client';
 
 import { Modal, NumericInput } from '@/lib/components/ui';
-import { X, Check } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './quantityPopup.module.scss';
 
 /**
  * Maximum allowed quantity for creature import.
  * Prevents performance issues from adding too many creatures at once.
- * 
+ *
  * @constant
  * @type {number}
  */
@@ -42,7 +42,7 @@ const MAX_QUANTITY = 20;
 
 /**
  * Default quantity value when popup opens.
- * 
+ *
  * @constant
  * @type {number}
  */
@@ -50,7 +50,7 @@ const DEFAULT_QUANTITY = 1;
 
 /**
  * Props for QuantityPopup component
- * 
+ *
  * @interface QuantityPopupProps
  * @property {boolean} isOpen - Whether the popup is visible
  * @property {string} creatureName - Name of creature being added (for display)
@@ -74,7 +74,7 @@ export interface QuantityPopupProps {
  * Modal dialog for selecting creature import quantity.
  * Autofocuses confirm button on open for quick single-click addition.
  * Supports keyboard navigation: Enter confirms, Escape cancels.
- * 
+ *
  * @component
  * @param {QuantityPopupProps} props - Component props
  * @param {boolean} props.isOpen - Whether the modal is visible
@@ -85,12 +85,12 @@ export interface QuantityPopupProps {
  * @param {string} [props.cancelLabel='Cancel'] - Label for the cancel button
  * @param {string} [props.quantityLabel='Quantity'] - Label for the quantity input
  * @returns {JSX.Element | null} Rendered modal or null when closed
- * 
+ *
  * @example
  * ```tsx
  * const [isOpen, setIsOpen] = useState(false);
  * const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
- * 
+ *
  * <QuantityPopup
  *   isOpen={isOpen}
  *   creatureName="Goblin"
@@ -111,7 +111,9 @@ export const QuantityPopup: React.FC<QuantityPopupProps> = ({
   cancelLabel = 'Cancel',
   quantityLabel = 'Quantity',
 }) => {
-  const [quantity, setQuantity] = useState<number | undefined>(DEFAULT_QUANTITY);
+  const [quantity, setQuantity] = useState<number | undefined>(
+    DEFAULT_QUANTITY,
+  );
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -135,7 +137,7 @@ export const QuantityPopup: React.FC<QuantityPopupProps> = ({
         handleConfirm();
       }
     },
-    [handleConfirm]
+    [handleConfirm],
   );
 
   return (
@@ -145,41 +147,42 @@ export const QuantityPopup: React.FC<QuantityPopupProps> = ({
       title={creatureName}
       showCloseButton={false}
       ariaLabel={`Add ${creatureName}`}
-      className={styles.quantityModal}
-    >
+      className={styles.quantityModal}>
       <div className={styles.content} onKeyDown={handleKeyDown}>
-        <label className={styles.label} htmlFor="quantity-input">
+        <label className={styles.label} htmlFor='quantity-input'>
           {quantityLabel}
         </label>
         <NumericInput
-          id="quantity-input"
+          id='quantity-input'
           value={quantity}
           onChange={setQuantity}
           min={1}
           max={MAX_QUANTITY}
           ariaLabel={`${quantityLabel} of ${creatureName} to add`}
-          size="md"
+          size='md'
         />
-        
+
         <div className={styles.actions}>
           <button
-            type="button"
-            className={styles.cancelButton}
+            type='button'
+            className={styles.buttonBase}
             onClick={onCancel}
-            aria-label={cancelLabel}
-          >
-            <span className={styles.buttonIcon} aria-hidden="true"><X size={14} /></span>
+            aria-label={cancelLabel}>
+            <span className={styles.buttonIcon} aria-hidden='true'>
+              <X size={14} />
+            </span>
             <span className={styles.buttonText}>{cancelLabel}</span>
           </button>
-          
+
           <button
             ref={confirmButtonRef}
-            type="button"
-            className={styles.confirmButton}
+            type='button'
+            className={styles.buttonPrimary}
             onClick={handleConfirm}
-            aria-label={`${confirmLabel} ${getValidQuantity(quantity)} ${creatureName}`}
-          >
-            <span className={styles.buttonIcon} aria-hidden="true"><Check size={14} /></span>
+            aria-label={`${confirmLabel} ${getValidQuantity(quantity)} ${creatureName}`}>
+            <span className={styles.buttonIcon} aria-hidden='true'>
+              <Check size={14} />
+            </span>
             <span className={styles.buttonText}>{confirmLabel}</span>
           </button>
         </div>
@@ -191,7 +194,7 @@ export const QuantityPopup: React.FC<QuantityPopupProps> = ({
 /**
  * Validates and normalizes quantity value to ensure it's within bounds.
  * Returns DEFAULT_QUANTITY for invalid values (undefined, NaN, out of range).
- * 
+ *
  * @function getValidQuantity
  * @param {number | undefined} value - Raw quantity value
  * @returns {number} Valid quantity between 1 and MAX_QUANTITY

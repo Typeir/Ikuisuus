@@ -26,11 +26,11 @@
 
 import Icon from '@/lib/components/icon/icon';
 import { Tooltip } from '@/lib/components/ui';
-import { X } from 'lucide-react';
 import {
-  AwakeningClassResult,
-  computeAwakeningClasses,
+    AwakeningClassResult,
+    computeAwakeningClasses,
 } from '@/lib/utils/heroicAwakeningStyles';
+import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useRef } from 'react';
 import styles from './combatantRow.module.scss';
@@ -73,7 +73,8 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
   locked = [],
   onToggleLock,
 }) => {
-  const { combatant, onRemoveSessionOnly, disableLocking, updateField } = useCombatant();
+  const { combatant, onRemoveSessionOnly, disableLocking, updateField } =
+    useCombatant();
   const { name, heroicAwakening, mechanics, sourceHref, crText } = combatant;
 
   const t = useTranslations('encounterPlanner');
@@ -84,12 +85,15 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
 
   const nameField = useEditableField(
     cancelPendingRef,
-    useCallback((value: string) => {
-      const trimmed = value.trim();
-      if (trimmed.length > 0) {
-        updateField('name', trimmed);
-      }
-    }, [updateField]),
+    useCallback(
+      (value: string) => {
+        const trimmed = value.trim();
+        if (trimmed.length > 0) {
+          updateField('name', trimmed);
+        }
+      },
+      [updateField],
+    ),
   );
 
   const handleNameKeyDown = useCallback(
@@ -190,7 +194,7 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
       {onRemoveSessionOnly && (
         <button
           onClick={onRemoveSessionOnly}
-          className={`${styles.button} ${styles.buttonDanger}`}
+          className={`${styles.buttonBase} ${styles.buttonDanger}`}
           title={t('removeCombatant')}>
           <X size={14} aria-hidden='true' />
         </button>

@@ -29,6 +29,8 @@ const EXCLUDED_PATTERNS = [
   /\/index\.(ts|tsx)$/,
   /\.module\.(scss|css)$/,
   /\.stories\.(ts|tsx)$/,
+  /\/types\.(ts|tsx)$/,
+  /\/index\.ts$/,
 ];
 
 /**
@@ -51,8 +53,9 @@ async function findSourceFiles(
       await findSourceFiles(fullPath, fileList);
     } else if (entry.isFile() && /\.(ts|tsx)$/.test(entry.name)) {
       const relativePath = path.relative(ROOT, fullPath);
+      const normalizedPath = relativePath.replace(/\\/g, '/');
 
-      if (!EXCLUDED_PATTERNS.some((pattern) => pattern.test(relativePath))) {
+      if (!EXCLUDED_PATTERNS.some((pattern) => pattern.test(normalizedPath))) {
         fileList.push(relativePath);
       }
     }

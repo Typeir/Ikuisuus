@@ -199,7 +199,7 @@
   color: var(--color-secondary);
 }
 
-.button {
+.buttonBase {
   @include button-base;
   @include button-hover-scale;
   line-height: 1;
@@ -216,7 +216,7 @@
   }
 
   &.buttonSecondary {
-    @include button-secondary-bg;
+    @include button-hover-secondary;
   }
 
   &.buttonDanger {

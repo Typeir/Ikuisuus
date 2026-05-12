@@ -15,6 +15,7 @@
 
 import { fsSpellRepository } from '../adapters/fs/fsSpellRepository';
 import { pgSpellRepository } from '../adapters/pg/pgSpellRepository';
+import type { FilterExpression } from '../filters';
 import type { SpellIndexEntry, SpellMetadata } from '../schemas/spellMetadata';
 
 /**
@@ -27,10 +28,15 @@ export interface SpellRepository {
   /**
    * Returns all spell metadata records for a locale.
    *
+   * Optional filters are pushed down to the backing store. The pg adapter
+   * translates them into a MikroORM query; the fs adapter applies them in
+   * memory after reading the metadata files.
+   *
    * @param {string} locale - Locale code (e.g. 'en', 'es')
+   * @param {FilterExpression[]} [filters] - Optional JSON-serializable filter list
    * @returns {Promise<SpellMetadata[]>} Full metadata array
    */
-  list(locale: string): Promise<SpellMetadata[]>;
+  list(locale: string, filters?: FilterExpression[]): Promise<SpellMetadata[]>;
 
   /**
    * Returns a lightweight index of all spells for a locale.

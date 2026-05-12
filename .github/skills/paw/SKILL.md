@@ -142,9 +142,9 @@ become non-blocking even from critical gates when they're the only violations re
 
 Hooks live in `.paw/hooks/` and map to Copilot lifecycle events:
 
-- `preToolUse.mjs` — Runs before each tool call (enforcement)
-- `postToolUse.mjs` — Runs after each tool call (violation detection)
-- `sessionEnd*.mjs` — Runs when the session closes
+- `pre-tool-use.ts` — Runs before each tool call (enforcement)
+- `post-tool-use.ts` — Runs after each tool call (violation detection)
+- `session-end-*.ts` — Runs when the session closes
 
 `paw sync` copies defaults from `.github/PAW/hooks/` and regenerates
 `.github/hooks/hooks.json` for VS Code.
@@ -157,14 +157,17 @@ and can return additional messages.
 
 ## Common Commands
 
-| Command                        | Purpose                                                           |
-| ------------------------------ | ----------------------------------------------------------------- |
-| `npm run paw:install`          | First-time setup — installs deps, compiles CLI, syncs hooks, inits DB |
-| `npm run paw:status`           | Show PAW status and active violations                             |
-| `npm run paw:violations`       | List current violations                                           |
-| `npm run paw:violations prune` | Remove stale/orphaned violations                                  |
-| `npm run paw:gates`            | List available gates                                              |
-| `npm run paw:unblock`          | Emergency: clear all violations (password-protected)              |
+| Command                        | Purpose                                                   |
+| ------------------------------ | --------------------------------------------------------- |
+| `npm run paw:init`             | First-time setup — creates `.paw/`, database, syncs hooks |
+| `npm run paw:sync`             | Re-sync hooks + regenerate hook configs                   |
+| `npm run paw:sync -- --force`  | Overwrite existing hooks                                  |
+| `npm run paw:status`           | Show PAW status and active violations                     |
+| `npm run paw:violations`       | List current violations                                   |
+| `npm run paw:violations prune` | Remove stale/orphaned violations                          |
+| `npm run paw:gates ls`         | List available gates                                      |
+| `npm run paw:gates run`        | Run all gates manually                                    |
+| `npm run paw:unblock`          | Emergency: clear all violations (password-protected)      |
 
 ## When Extending PAW
 

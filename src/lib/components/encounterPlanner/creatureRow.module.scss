@@ -180,7 +180,7 @@
   @include encounter-actions;
 }
 
-.button {
+.buttonBase {
   @include button-base(0.3rem 0.55rem, 0.7rem);
   @include button-hover-scale;
   font-weight: 600;
@@ -242,7 +242,7 @@
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 0.75rem;
-  
+
   &:focus {
     outline: none;
     border-color: var(--color-accent);
@@ -260,7 +260,10 @@
   font-weight: 600;
   cursor: pointer;
   line-height: 1;
-  transition: color 0.2s ease, transform 0.15s ease, filter 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.15s ease,
+    filter 0.2s ease;
 
   &:hover {
     color: var(--color-accent);
@@ -303,8 +306,16 @@
 }
 
 @keyframes slideDown {
-  from { --_: cr-slideDown-from; opacity: 0; transform: translateY(-8px); }
-  to { --_: cr-slideDown-to; opacity: 1; transform: translateY(0); }
+  from {
+    --_: cr-slideDown-from;
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    --_: cr-slideDown-to;
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .detailsGrid {

@@ -1,8 +1,9 @@
 /**
  * @fileoverview Content Shard Panel Styles
  * @description Layout and typography for the ContentShardPanel: a full-height,
- * scrollable prose container that matches the visual footprint of the removed
- * iframe.
+ * scrollable prose container. Typography is composed from the shared
+ * `mdxBase` class in `mdxContent.module.scss` so rendering stays in sync
+ * with library pages without duplicating rules.
  *
  * @module lib/components/characterSheet/contentShardPanel.module
  */
@@ -19,9 +20,12 @@
 }
 
 .body {
-  font-size: 0.9rem;
-  line-height: 1.65;
-  color: var(--color-text);
+  composes: mdxBase from '@/styles/mdxContent.module.scss';
+
+  li::marker {
+    color: var(--color-accent);
+    content: '▹ ';
+  }
 }
 
 .loading {

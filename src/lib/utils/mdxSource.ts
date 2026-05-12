@@ -12,22 +12,7 @@
  */
 
 import type { CharacterShard } from '@/lib/types/character';
-
-/**
- * A single level–name feature pair from metadata.
- *
- * @interface FeatureEntry
- * @property {number} level - Character level at which the feature is gained
- * @property {string} name - Feature display name
- * @property {number} [startLine] - 1-indexed start line of this feature's heading block in the source MDX
- * @property {number} [endLine] - 1-indexed last line of this feature's heading block in the source MDX
- */
-export interface FeatureEntry {
-  level: number;
-  name: string;
-  startLine?: number;
-  endLine?: number;
-}
+export type { FeatureEntry } from '@/lib/types/vocations';
 
 /**
  * Extract the text block that starts at `heading` and ends before the next

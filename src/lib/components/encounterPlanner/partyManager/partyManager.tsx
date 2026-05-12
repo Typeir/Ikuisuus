@@ -149,7 +149,7 @@ export const PartyManager: React.FC<PartyManagerProps> = ({
               </div>
             </div>
           ))}
-          <button className={styles.createButton} onClick={handleCreateNew}>
+          <button className={styles.buttonPrimary} onClick={handleCreateNew}>
             {t('createParty')}
           </button>
         </div>

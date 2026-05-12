@@ -14,6 +14,7 @@
 import type { Item as SidebarItem } from '@/lib/components/sidebar/types';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
 import { NextIntlClientProvider, type AbstractIntlMessages } from 'next-intl';
+import SwrProvider from './SwrProvider';
 import ResponsiveLayoutShell from './utils/responsiveLayoutShell';
 
 /**
@@ -49,8 +50,9 @@ interface ClientProvidersProps {
  * @description
  * Provider hierarchy (outermost to innermost):
  * 1. NextIntlClientProvider - Internationalization context
- * 2. PersistentUiProvider - Persistent UI state (theme, sidebar expansion)
- * 3. ResponsiveLayoutShell - Layout with sidebar and notifications
+ * 2. SwrProvider - Global SWRConfig (fetcher defaults, deduping, retry)
+ * 3. PersistentUiProvider - Persistent UI state (theme, sidebar expansion)
+ * 4. ResponsiveLayoutShell - Layout with sidebar and notifications
  *
  * PersistentUiProvider uses deterministic client-side initialization:
  * - Server provides initialExpandedPaths from cookies for SSR/client match
@@ -65,10 +67,12 @@ export default function ClientProviders({
 }: ClientProvidersProps) {
   return (
     <NextIntlClientProvider locale={locale} messages={messages} timeZone='UTC'>
-      <PersistentUiProvider initialExpandedPaths={initialExpandedPaths}>
-        {/* @ts-ignore */}
-        <ResponsiveLayoutShell tree={tree}>{children}</ResponsiveLayoutShell>
-      </PersistentUiProvider>
+      <SwrProvider>
+        <PersistentUiProvider initialExpandedPaths={initialExpandedPaths}>
+          {/* @ts-ignore */}
+          <ResponsiveLayoutShell tree={tree}>{children}</ResponsiveLayoutShell>
+        </PersistentUiProvider>
+      </SwrProvider>
     </NextIntlClientProvider>
   );
 }

@@ -17,11 +17,18 @@
 import { AsyncTooltip } from '@/lib/components/ui/asyncTooltip';
 import { Chip } from '@/lib/components/ui/chip';
 import type { ChipVariant } from '@/lib/components/ui/chip';
+import { fetcher } from '@/lib/fetch/fetcher';
+import {
+  contentShardKey,
+  urlForContentShard,
+} from '@/lib/fetch/swrKeys';
 import { compileRuntimeSync } from '@/lib/mdx/compileRuntime';
 import type { CharacterShard } from '@/lib/types/character';
+import type { ContentShardResponse } from '@/lib/types/api.d';
 import { shardToPreview } from '@/lib/utils/shardToPreview';
 import type { ReactNode } from 'react';
-import { useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
+import { useSWRConfig } from 'swr';
 import { usePagePreview } from './pagePreviewProvider';
 
 /**
@@ -72,14 +79,18 @@ export interface ShardChipProps {
  * @param {ShardChipProps} props - Component props
  * @returns {JSX.Element} Rendered shard chip
  */
-export const ShardChip: React.FC<ShardChipProps> = ({
+const ShardChipImpl: React.FC<ShardChipProps> = ({
   shard,
   color,
   onRemove,
   locale = 'en',
 }) => {
   const preview = usePagePreview();
-  const previewData = shardToPreview(shard.sourceFile);
+  const { cache, mutate } = useSWRConfig();
+  const previewData = useMemo(
+    () => shardToPreview(shard.sourceFile),
+    [shard.sourceFile],
+  );
   const variant = color
     ? COLOR_TO_VARIANT[color]
     : CATEGORY_TO_VARIANT[shard.category];
@@ -90,19 +101,31 @@ export const ShardChip: React.FC<ShardChipProps> = ({
     if (shard.cachedText) {
       source = shard.cachedText.slice(0, 150);
     } else if (previewData) {
-      try {
-        const res = await fetch(
-          `/api/content-shards/${previewData.kind}/${previewData.slug}?keys[]=main&locale=${locale}`,
-        );
-        if (res.ok) {
-          const data = (await res.json()) as { shards: Record<string, string> };
-          source = (data.shards.main ?? '').slice(0, 150);
-        } else {
+      const key = contentShardKey(
+        previewData.kind,
+        previewData.slug,
+        locale,
+        true,
+      );
+      const cached = key
+        ? (cache.get(key)?.data as ContentShardResponse | undefined)
+        : undefined;
+      let data: ContentShardResponse | undefined = cached;
+      if (!data && key) {
+        try {
+          data = await mutate<ContentShardResponse>(
+            key,
+            fetcher<ContentShardResponse>(
+              urlForContentShard(previewData.kind, previewData.slug, locale),
+            ),
+            { revalidate: false, populateCache: true },
+          );
+        } catch {
           return shard.heading;
         }
-      } catch {
-        return shard.heading;
       }
+      source = (data?.shards.main ?? '').slice(0, 150);
+      if (!source) return shard.heading;
     } else {
       return shard.heading;
     }
@@ -112,7 +135,7 @@ export const ShardChip: React.FC<ShardChipProps> = ({
     } catch {
       return source;
     }
-  }, [shard, previewData, locale]);
+  }, [shard, previewData, locale, cache, mutate]);
 
   const handleInfo = previewData
     ? () =>
@@ -138,3 +161,6 @@ export const ShardChip: React.FC<ShardChipProps> = ({
     </AsyncTooltip>
   );
 };
+
+export const ShardChip = memo(ShardChipImpl);
+ShardChip.displayName = 'ShardChip';

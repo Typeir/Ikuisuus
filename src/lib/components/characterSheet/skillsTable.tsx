@@ -14,6 +14,7 @@
 import type { CharacterSkill, ProficiencyLevel } from '@/lib/types/character';
 import { computeAbilityModifier } from '@/lib/utils/characterStorage';
 import { useTranslations } from 'next-intl';
+import { memo } from 'react';
 import styles from './characterSheetWidgets.module.scss';
 
 /** Cycle order for proficiency levels. */
@@ -50,7 +51,7 @@ export interface SkillsTableProps {
  * @param {SkillsTableProps} props - Component props
  * @returns {JSX.Element} Rendered skills table
  */
-export const SkillsTable: React.FC<SkillsTableProps> = ({
+export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
   skills,
   abilityScores,
   proficiencyBonus,
@@ -140,3 +141,10 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
     </table>
   );
 };
+
+/**
+ * Memoized `SkillsTable` export. Re-renders only when one of its props
+ * changes by reference (skills array, abilityScores map, proficiencyBonus,
+ * onChange callback, readOnly flag).
+ */
+export const SkillsTable = memo(SkillsTableImpl);

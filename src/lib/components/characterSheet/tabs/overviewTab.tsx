@@ -17,6 +17,7 @@ import type {
   CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
+import { useCallback } from 'react';
 import { AttacksTable } from '../attacksTable';
 import { CombatStatsRow } from '../combatStatsRow';
 import { NotesSection } from '../notesSection';
@@ -54,11 +55,24 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   locale = 'en',
 }) => {
   const t = useTranslations('characterSheet');
-  const allShards: CharacterShard[] = [
-    ...data.selectedBoons,
-    ...data.vocationFeatures,
-    ...data.specializationFeatures,
-  ];
+  const boonShards: CharacterShard[] = data.selectedBoons;
+
+  const handleSkillsChange = useCallback(
+    (skills: CharacterSheetType['skills']) => onChange({ skills }),
+    [onChange],
+  );
+  const handleToolsChange = useCallback(
+    (tools: CharacterSheetType['tools']) => onChange({ tools }),
+    [onChange],
+  );
+  const handleAttacksChange = useCallback(
+    (attacks: CharacterSheetType['attacks']) => onChange({ attacks }),
+    [onChange],
+  );
+  const handleNotesChange = useCallback(
+    (fields: Partial<CharacterSheetType>) => onChange(fields),
+    [onChange],
+  );
 
   return (
     <div className={styles.twoColumns}>
@@ -77,13 +91,13 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             skills={data.skills}
             abilityScores={data.abilityScores}
             proficiencyBonus={data.proficiencyBonus}
-            onChange={(skills) => onChange({ skills })}
+            onChange={handleSkillsChange}
             readOnly={!editing}
           />
           <ToolsTable
             tools={data.tools}
             proficiencyBonus={data.proficiencyBonus}
-            onChange={(tools) => onChange({ tools })}
+            onChange={handleToolsChange}
             readOnly={!editing}
           />
         </div>
@@ -92,30 +106,22 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       <div className={styles.column}>
         <AttacksTable
           attacks={data.attacks}
-          onChange={(attacks) => onChange({ attacks })}
+          onChange={handleAttacksChange}
           readOnly={!editing}
         />
 
-        {allShards.length > 0 && (
+        {boonShards.length > 0 && (
           <section aria-label={t('ariaSelectedBoons')}>
             <h3 className={styles.sectionTitle}>{t('boons')}</h3>
             <div className={styles.chipCloud}>
-              {allShards.map((shard) => {
-                const chipColor =
-                  shard.category === 'boon'
-                    ? 'primary'
-                    : shard.category === 'vocation-feature'
-                      ? 'secondary'
-                      : 'tertiary';
-                return (
-                  <ShardChip
-                    key={shard.id}
-                    shard={shard}
-                    color={chipColor}
-                    locale={locale}
-                  />
-                );
-              })}
+              {boonShards.map((shard) => (
+                <ShardChip
+                  key={shard.id}
+                  shard={shard}
+                  color='primary'
+                  locale={locale}
+                />
+              ))}
             </div>
           </section>
         )}
@@ -129,7 +135,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             flaws: data.flaws,
             notes: data.notes,
           }}
-          onChange={(fields) => onChange(fields)}
+          onChange={handleNotesChange}
           readOnly={!editing}
         />
       </div>

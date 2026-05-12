@@ -10,9 +10,30 @@
 
 import { FeatPicker } from '@/lib/components/characterSheet/featPicker';
 import type { CharacterShard } from '@/lib/types/character';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render as baseRender, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { SWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+let swrCache: Map<unknown, unknown>;
+const wrapper = ({ children }: { children: React.ReactNode }) =>
+  React.createElement(
+    SWRConfig,
+    {
+      value: {
+        provider: () => swrCache,
+        dedupingInterval: 0,
+        shouldRetryOnError: false,
+      },
+    },
+    children,
+  );
+
+const render = (
+  ui: React.ReactElement,
+  options?: Parameters<typeof baseRender>[1],
+) => baseRender(ui, { ...options, wrapper });
 
 const MOCK_FEATS = [
   {
@@ -36,6 +57,7 @@ const MOCK_FEATS = [
 const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>();
 
 beforeEach(() => {
+  swrCache = new Map();
   vi.stubGlobal('fetch', mockFetch);
 });
 

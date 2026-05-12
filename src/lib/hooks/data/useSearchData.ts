@@ -1,13 +1,16 @@
 /**
  * @fileoverview Search Data Hooks
- * @description Client hooks for local and external search with race control.
+ * @description Client hooks for local and external search.
+ * Library search uses SWR for deduplication and caching.
+ * External search keeps a 300 ms debounce gate before the SWR key is set.
  *
  * @module lib/hooks/data/useSearchData
  * @author Typeir
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2.0.0
  */
 
+import { librarySearchKey, externalSearchKey } from '@/lib/fetch/swrKeys';
 import { logger } from '@/lib/logging/logger';
 import {
   fetchExternalSearchResults,
@@ -15,7 +18,8 @@ import {
   type GoogleSearchResult,
   type SearchResult,
 } from '@/lib/services/api/searchService';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 const log = logger.child({ module: 'useSearchData' });
 
@@ -32,53 +36,27 @@ export interface LibrarySearchState {
 }
 
 /**
- * Runs local search with request ordering protection.
+ * Runs local library search using SWR.
+ * Returns empty results and loading=false when `query` is shorter than 2 chars.
  *
  * @param {string} query - Debounced query value
  * @returns {LibrarySearchState} Local search state
  */
 export function useLibrarySearchData(query: string): LibrarySearchState {
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const requestIdRef = useRef(0);
+  const { data, isLoading } = useSWR<SearchResult[]>(
+    librarySearchKey(query),
+    () => fetchLibrarySearchResults(query),
+    {
+      keepPreviousData: true,
+      onError: (error) => {
+        log.error('Search error', {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      },
+    },
+  );
 
-  useEffect(() => {
-    const currentRequestId = ++requestIdRef.current;
-
-    if (query.length < 2) {
-      setResults([]);
-      setLoading(false);
-      return;
-    }
-
-    const run = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchLibrarySearchResults(query);
-        if (
-          requestIdRef.current === currentRequestId &&
-          Array.isArray(data) &&
-          data.length > 0
-        ) {
-          setResults(data);
-        }
-      } catch (error) {
-        if (requestIdRef.current === currentRequestId) {
-          log.error('Search error', {
-            error: error instanceof Error ? error.message : String(error),
-          });
-        }
-      } finally {
-        if (requestIdRef.current === currentRequestId) {
-          setLoading(false);
-        }
-      }
-    };
-
-    run();
-  }, [query]);
-
-  return { results, loading };
+  return { results: data ?? [], loading: isLoading };
 }
 
 /**
@@ -94,45 +72,37 @@ export interface ExternalSearchState {
 }
 
 /**
- * Runs external search with debounce and race condition control.
+ * Runs external search with a 300 ms debounce gate.
+ * The internal `useEffect` delays committing the debounced query value;
+ * SWR is only invoked after the delay elapses, preserving the timing
+ * contract tested by the existing fake-timer suite.
  *
- * @param {string} query - Raw query value
+ * @param {string} query - Raw query value (un-debounced)
  * @returns {ExternalSearchState} External search state
  */
 export function useExternalSearchData(query: string): ExternalSearchState {
-  const [results, setResults] = useState<GoogleSearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const requestIdRef = useRef(0);
+  const [debouncedQuery, setDebouncedQuery] = useState('');
 
   useEffect(() => {
-    const currentRequestId = ++requestIdRef.current;
-
     if (query.length < 2) {
+      setDebouncedQuery('');
       return;
     }
-
-    const timeout = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const data = await fetchExternalSearchResults(query);
-        if (requestIdRef.current === currentRequestId && data.length > 0) {
-          setResults(data);
-        }
-      } catch (error) {
-        if (requestIdRef.current === currentRequestId) {
-          log.error('External search failed', {
-            error: error instanceof Error ? error.message : String(error),
-          });
-        }
-      } finally {
-        if (requestIdRef.current === currentRequestId) {
-          setLoading(false);
-        }
-      }
-    }, 300);
-
+    const timeout = setTimeout(() => setDebouncedQuery(query), 300);
     return () => clearTimeout(timeout);
   }, [query]);
 
-  return { results, loading };
+  const { data, isLoading } = useSWR<GoogleSearchResult[]>(
+    externalSearchKey(debouncedQuery),
+    () => fetchExternalSearchResults(debouncedQuery),
+    {
+      onError: (error) => {
+        log.error('External search failed', {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      },
+    },
+  );
+
+  return { results: data ?? [], loading: isLoading };
 }

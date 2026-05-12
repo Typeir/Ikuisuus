@@ -51,13 +51,23 @@ describe('CharacterSheet', () => {
       <CharacterSheet
         character={makeCharacter({
           bloodlineTitle: 'Empyrean',
-          vocationTitle: 'Wizard',
+          vocations: [
+            {
+              slug: 'wizard',
+              title: 'Wizard',
+              level: 3,
+              specializationSlug: null,
+              specializationTitle: '',
+              vocationFeatures: [],
+              specializationFeatures: [],
+            },
+          ],
         })}
       />,
     );
     expect(screen.getByText('levelFull')).toBeTruthy();
     expect(screen.getAllByText('Empyrean')[0]).toBeTruthy();
-    expect(screen.getAllByText('Wizard')[0]).toBeTruthy();
+    expect(screen.getAllByText(/Wizard/)[0]).toBeTruthy();
   });
 
   it('shows Edit button in view mode', () => {

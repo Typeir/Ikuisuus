@@ -13,8 +13,12 @@
 'use client';
 
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
+import { fetcher } from '@/lib/fetch/fetcher';
+import { contentShardKey, urlForContentShard } from '@/lib/fetch/swrKeys';
+import { useFeats } from '@/lib/hooks/data/useFeats';
 import type { CharacterShard } from '@/lib/types/character';
-import { useEffect, useState } from 'react';
+import type { ContentShardResponse } from '@/lib/types/api.d';
+import { useSWRConfig } from 'swr';
 import styles from './characterSheetWidgets.module.scss';
 
 /**
@@ -43,33 +47,9 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
   onToggle,
   locale = 'en',
 }) => {
-  const [feats, setFeats] = useState<FeatMetadata[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-
-    fetch(`/api/feats?locale=${locale}`)
-      .then((r) =>
-        r.ok ? (r.json() as Promise<FeatMetadata[]>) : Promise.resolve([]),
-      )
-      .then((data) => {
-        if (!cancelled && Array.isArray(data)) setFeats(data);
-      })
-      .catch((err: Error) => {
-        if (!cancelled) setError(err.message);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [locale]);
+  const { feats, isLoading: loading, error: fetchError } = useFeats({ locale });
+  const error = fetchError?.message ?? null;
+  const { cache, mutate } = useSWRConfig();
 
   const isSelected = (slug: string) =>
     selectedFeats.some((s) => s.sourceFile === slug);
@@ -81,16 +61,25 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
     }
 
     let cachedText: string | undefined;
-    try {
-      const res = await fetch(
-        `/api/content-shards/feats/${feat.slug}?keys[]=main&locale=${locale}`,
-      );
-      if (res.ok) {
-        const data = (await res.json()) as { shards: Record<string, string> };
-        cachedText = data.shards.main;
+    const key = contentShardKey('feats', feat.slug, locale, true);
+    const cached = key
+      ? (cache.get(key)?.data as ContentShardResponse | undefined)
+      : undefined;
+    if (cached) {
+      cachedText = cached.shards.main;
+    } else if (key) {
+      try {
+        const data = await mutate<ContentShardResponse>(
+          key,
+          fetcher<ContentShardResponse>(
+            urlForContentShard('feats', feat.slug, locale),
+          ),
+          { revalidate: false, populateCache: true },
+        );
+        cachedText = data?.shards.main;
+      } catch {
+        /** cachedText stays undefined; consumer can lazy-fetch on expand */
       }
-    } catch {
-      /** cachedText stays undefined; consumer can lazy-fetch on expand */
     }
 
     const shard: CharacterShard = {

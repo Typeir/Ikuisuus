@@ -3,18 +3,22 @@
  * Intended for use on the main spell library page.
  * @module src/lib/components/mdx/spellTable/filteredSpellTable
  * @author Typeir
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2.0.0
  */
 'use client';
 
 import { FilterSelect, type FilterSelectOption } from '@/lib/components/ui';
+import gradientTabStyles from '@/lib/components/ui/gradientTabs/gradientTabs.module.scss';
 import { DEFAULT_SPELL_LEVEL_LABELS } from '@/lib/enums/tableConstants';
 import { useSpellSources } from '@/lib/hooks/data/useSpellSources';
+import {
+    useSpellTableFilters,
+    type ConcentrationFilter,
+} from '@/lib/hooks/data/useSpellTableFilters';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import MetadataTable from '../metadataTables/metadataTable';
-import gradientTabStyles from '@/lib/components/ui/gradientTabs/gradientTabs.module.scss';
 import styles from './spellTable.module.scss';
 import type { SpellTablesProps } from './spellTable.types';
 import { SpellTableSkeleton } from './spellTableSkeleton';
@@ -62,15 +66,15 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
   const [activeTab, setActiveTab] = useState<number | 'all'>(
     showAllTab ? 'all' : levels[0],
   );
-  const [damoclesOnly, setDamoclesOnly] = useState(false);
-  const [schoolFilter, setSchoolFilter] = useState('');
-  const [concentrationFilter, setConcentrationFilter] = useState('');
 
-  const { spellData, loading, error } = useSpellSources(
+  const { state, setters, expressions } = useSpellTableFilters();
+
+  const { spellData, loading, refetching, error } = useSpellSources(
     sources,
     locale,
     spells,
     listSource,
+    expressions,
   );
   const columns = useSpellColumns();
 
@@ -97,21 +101,10 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
     [tFilters],
   );
 
-  const preFiltered = useMemo(() => {
-    let result = spellData;
-    if (damoclesOnly) result = result.filter((s) => s.file !== 'external');
-    if (schoolFilter) result = result.filter((s) => s.school === schoolFilter);
-    if (concentrationFilter === 'yes')
-      result = result.filter((s) => s.concentration);
-    if (concentrationFilter === 'no')
-      result = result.filter((s) => !s.concentration);
-    return result;
-  }, [spellData, damoclesOnly, schoolFilter, concentrationFilter]);
-
   const visibleSpells =
     activeTab === 'all'
-      ? preFiltered
-      : preFiltered.filter((s) => s.level === activeTab);
+      ? spellData
+      : spellData.filter((s) => s.level === activeTab);
 
   if (loading) {
     return (
@@ -148,8 +141,8 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
                 id='spell-damocles-filter'
                 className={styles.filterCheckbox}
                 type='checkbox'
-                checked={damoclesOnly}
-                onChange={(e) => setDamoclesOnly(e.target.checked)}
+                checked={state.damoclesOnly}
+                onChange={(e) => setters.setDamoclesOnly(e.target.checked)}
               />
             </div>
           </div>
@@ -160,9 +153,9 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
             </label>
             <FilterSelect
               id='spell-school-filter'
-              value={schoolFilter}
+              value={state.schoolFilter}
               options={schoolOptions}
-              onChange={setSchoolFilter}
+              onChange={setters.setSchoolFilter}
               allLabel={tFilters('allSchools')}
               placeholder={tFilters('allSchools')}
               ariaLabel={tFilters('school')}
@@ -178,9 +171,11 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
             </label>
             <FilterSelect
               id='spell-concentration-filter'
-              value={concentrationFilter}
+              value={state.concentrationFilter}
               options={concentrationOptions}
-              onChange={setConcentrationFilter}
+              onChange={(value) =>
+                setters.setConcentrationFilter(value as ConcentrationFilter)
+              }
               allLabel={tFilters('all')}
               placeholder={tFilters('all')}
               ariaLabel={tFilters('concentration')}
@@ -210,7 +205,10 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
         </div>
       </div>
 
-      <div className={gradientTabStyles.tabContent}>
+      <div
+        className={`${gradientTabStyles.tabContent}${
+          refetching ? ` ${styles.refetchingOverlay}` : ''
+        }`}>
         {visibleSpells.length > 0 ? (
           <MetadataTable
             data={visibleSpells}

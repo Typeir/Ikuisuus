@@ -1,16 +1,18 @@
 /**
  * @fileoverview Draft and Route Data Hooks
  * @description Hooks for draft retrieval, corrections tree loading, and
- * nearest route lookups.
+ * nearest route lookups. All three hooks use SWR for automatic caching
+ * and deduplication.
  *
  * @module lib/hooks/data/useDraftAndRouteData
  * @author Typeir
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2.0.0
  */
 
 import type { TreeNode } from '@/lib/components/mdxEditor/fileTreeSelect';
 import type { DraftMetadata } from '@/lib/db/content/schemas/draftMetadata';
+import { correctionsTreeKey, draftKey, nearestRouteKey } from '@/lib/fetch/swrKeys';
 import { logger } from '@/lib/logging/logger';
 import {
   fetchActiveDraft,
@@ -20,7 +22,7 @@ import {
   fetchNearestRoute,
   type RouteMatch,
 } from '@/lib/services/api/searchService';
-import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 const log = logger.child({ module: 'useDraftAndRouteData' });
 
@@ -44,29 +46,12 @@ export interface DraftState {
  * @returns {DraftState} Draft loading state
  */
 export function useActiveDraft(locale: string, slug: string): DraftState {
-  const [draft, setDraft] = useState<DraftMetadata | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useSWR<DraftMetadata | null>(
+    draftKey(locale, slug),
+    () => fetchActiveDraft(locale, slug),
+  );
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const load = async () => {
-      setLoading(true);
-      const result = await fetchActiveDraft(locale, slug);
-      if (!cancelled) {
-        setDraft(result);
-        setLoading(false);
-      }
-    };
-
-    load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [locale, slug]);
-
-  return { draft, loading };
+  return { draft: data ?? null, loading: isLoading };
 }
 
 /**
@@ -88,29 +73,15 @@ export interface CorrectionsTreeState {
  * @returns {CorrectionsTreeState} Tree loading state
  */
 export function useCorrectionsTreeData(locale: string): CorrectionsTreeState {
-  const [tree, setTree] = useState<TreeNode[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const load = async () => {
-      setLoading(true);
+  const { data, isLoading } = useSWR<TreeNode[]>(
+    correctionsTreeKey(locale),
+    async () => {
       const result = await fetchCorrectionsTree(locale);
-      if (!cancelled) {
-        setTree(result as TreeNode[]);
-        setLoading(false);
-      }
-    };
+      return result as TreeNode[];
+    },
+  );
 
-    load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [locale]);
-
-  return { tree, loading };
+  return { tree: data ?? [], loading: isLoading };
 }
 
 /**
@@ -132,43 +103,18 @@ export interface NearestRouteState {
  * @returns {NearestRouteState} Route suggestion state
  */
 export function useNearestRoute(pathname: string | null): NearestRouteState {
-  const [nearestRoute, setNearestRoute] = useState<RouteMatch | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useSWR<RouteMatch | null>(
+    nearestRouteKey(pathname),
+    () => fetchNearestRoute(pathname!),
+    {
+      onError: (error) => {
+        log.error('Failed to find nearest route', {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      },
+    },
+  );
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const load = async () => {
-      if (!pathname) {
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const match = await fetchNearestRoute(pathname);
-        if (!cancelled) {
-          setNearestRoute(match);
-        }
-      } catch (error) {
-        if (!cancelled) {
-          log.error('Failed to find nearest route', {
-            error: error instanceof Error ? error.message : String(error),
-          });
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [pathname]);
-
-  return { nearestRoute, loading };
+  return { nearestRoute: data ?? null, loading: isLoading };
 }
+

@@ -18,6 +18,7 @@ import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
+import { useCallback } from 'react';
 import { FeatPicker } from '../featPicker';
 import styles from './tabs.module.scss';
 
@@ -52,14 +53,20 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({
 }) => {
   const selectedFeats = (data.selectedFeats ?? []) as CharacterShard[];
 
-  const handleToggle = (next: CharacterShard[]) => {
-    onChange({ selectedFeats: next });
-  };
+  const handleToggle = useCallback(
+    (next: CharacterShard[]) => onChange({ selectedFeats: next }),
+    [onChange],
+  );
 
-  const handleRemove = (id: string) => {
-    if (!editing) return;
-    handleToggle(selectedFeats.filter((f) => f.id !== id));
-  };
+  const handleRemove = useCallback(
+    (id: string) => {
+      if (!editing) return;
+      onChange({
+        selectedFeats: selectedFeats.filter((f) => f.id !== id),
+      });
+    },
+    [editing, onChange, selectedFeats],
+  );
 
   const latest = selectedFeats[selectedFeats.length - 1];
 

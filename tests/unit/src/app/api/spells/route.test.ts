@@ -30,6 +30,7 @@ vi.mock('@/lib/db/content/repositories/spellRepository', () => ({
     list: vi.fn(),
     listIndex: vi.fn(),
     listBySlugs: vi.fn(),
+    listBySource: vi.fn(),
     getBySlug: vi.fn(),
   },
 }));
@@ -43,6 +44,9 @@ beforeEach(async () => {
   SpellsRoute = await import('@/app/api/spells/route');
   const repo = await import('@/lib/db/content/repositories/spellRepository');
   spellRepository = repo.spellRepository;
+  vi.mocked(spellRepository.list).mockReset();
+  vi.mocked(spellRepository.listBySlugs).mockReset();
+  vi.mocked(spellRepository.listBySource).mockReset();
 });
 
 /**
@@ -93,7 +97,7 @@ describe('/api/spells route', () => {
       const body = await response.json();
 
       expect(body).toEqual(MOCK_SPELLS);
-      expect(spellRepository.list).toHaveBeenCalledWith('en');
+      expect(spellRepository.list).toHaveBeenCalledWith('en', undefined);
     });
 
     it('should filter spells by slug when spells array is provided', async () => {
@@ -119,7 +123,7 @@ describe('/api/spells route', () => {
 
       await SpellsRoute.POST(makeRequest({}));
 
-      expect(spellRepository.list).toHaveBeenCalledWith('en');
+      expect(spellRepository.list).toHaveBeenCalledWith('en', undefined);
     });
 
     it('should pass the requested locale to the repository', async () => {
@@ -127,7 +131,7 @@ describe('/api/spells route', () => {
 
       await SpellsRoute.POST(makeRequest({ locale: 'fi' }));
 
-      expect(spellRepository.list).toHaveBeenCalledWith('fi');
+      expect(spellRepository.list).toHaveBeenCalledWith('fi', undefined);
     });
 
     it('should return an empty array when repository returns no data', async () => {
@@ -147,6 +151,77 @@ describe('/api/spells route', () => {
       expect(response.status).toBe(500);
       const body = await response.json();
       expect(body.error).toBe('Failed to load spells');
+    });
+  });
+
+  describe('filters', () => {
+    it('should forward an allow-listed filter to repository.list', async () => {
+      vi.mocked(spellRepository.list).mockResolvedValue([]);
+
+      const filters = [
+        { field: 'source', operator: 'neq', value: 'basic' },
+      ];
+
+      await SpellsRoute.POST(makeRequest({ locale: 'en', filters }));
+
+      expect(spellRepository.list).toHaveBeenCalledWith('en', filters);
+    });
+
+    it('should apply filters in memory when slugs are provided', async () => {
+      vi.mocked(spellRepository.listBySlugs).mockResolvedValue([
+        { slug: 'fireball', source: null, school: 'Evocation' },
+        { slug: 'magic-missile', source: 'basic', school: 'Evocation' },
+      ] as never);
+
+      const response = await SpellsRoute.POST(
+        makeRequest({
+          locale: 'en',
+          spells: ['fireball', 'magic-missile'],
+          filters: [{ field: 'source', operator: 'neq', value: 'basic' }],
+        }),
+      );
+      const body = await response.json();
+
+      expect(body).toEqual([
+        { slug: 'fireball', source: null, school: 'Evocation' },
+      ]);
+    });
+
+    it('should reject malformed filter payload with 400', async () => {
+      const response = await SpellsRoute.POST(
+        makeRequest({ locale: 'en', filters: 'not-an-array' }),
+      );
+
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body.error).toBe('Invalid filters payload');
+      expect(spellRepository.list).not.toHaveBeenCalled();
+    });
+
+    it('should reject filter on a disallowed field with 400', async () => {
+      const response = await SpellsRoute.POST(
+        makeRequest({
+          locale: 'en',
+          filters: [{ field: 'description', operator: 'eq', value: 'x' }],
+        }),
+      );
+
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body.error).toMatch(/description/);
+      expect(spellRepository.list).not.toHaveBeenCalled();
+    });
+
+    it('should reject in-operator with non-array value with 400', async () => {
+      const response = await SpellsRoute.POST(
+        makeRequest({
+          locale: 'en',
+          filters: [{ field: 'source', operator: 'in', value: 'basic' }],
+        }),
+      );
+
+      expect(response.status).toBe(400);
+      expect(spellRepository.list).not.toHaveBeenCalled();
     });
   });
 });

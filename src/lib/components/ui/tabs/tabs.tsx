@@ -65,6 +65,7 @@ function useTabsContext(): TabsContextValue {
  * @property {ReactNode} children - `<TabList>` and `<TabPanel>`s
  * @property {string} [className] - Optional outer class
  * @property {string} [ariaLabel] - Accessible label for the tab group
+ * @property {'default' | 'nested'} [variant] - Visual variant; `nested` applies a recessed colour scheme suitable for tabs rendered inside a surface-level container
  */
 export interface TabsProps {
   value: string;
@@ -72,6 +73,7 @@ export interface TabsProps {
   children: ReactNode;
   className?: string;
   ariaLabel?: string;
+  variant?: 'default' | 'nested';
 }
 
 /**
@@ -87,6 +89,7 @@ export const Tabs: React.FC<TabsProps> = ({
   children,
   className,
   ariaLabel,
+  variant = 'default',
 }) => {
   const idPrefix = useId();
   const ctxValue = useMemo<TabsContextValue>(
@@ -94,10 +97,12 @@ export const Tabs: React.FC<TabsProps> = ({
     [value, onChange, idPrefix],
   );
 
+  const variantClass = variant === 'nested' ? styles.tabsNested : '';
+
   return (
     <TabsContext.Provider value={ctxValue}>
       <div
-        className={`${styles.tabs} ${className ?? ''}`}
+        className={`${styles.tabs} ${variantClass} ${className ?? ''}`}
         aria-label={ariaLabel}>
         {children}
       </div>

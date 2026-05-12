@@ -108,6 +108,14 @@ describe('resolveShards', () => {
       const result = resolveShards(HEADING_MDX, entries, ['Nonexistent Boon']);
       expect(result['Nonexistent Boon']).toBeUndefined();
     });
+
+    it('matches a feature name used as a suffix after a level prefix', () => {
+      const levelPrefixMdx = `# Wizard\n\n## 5th Level \u2013 Memorize Spell\n\nYou can memorize any spell.\n\n## 9th Level \u2013 Arcane Mastery\n\nYou master the arcane arts.\n`;
+      const entries = [{ name: 'Memorize Spell' }];
+      const result = resolveShards(levelPrefixMdx, entries, ['Memorize Spell']);
+      expect(result['Memorize Spell']).toContain('memorize any spell');
+      expect(result['Memorize Spell']).not.toContain('Arcane Mastery');
+    });
   });
 
   describe('key filtering', () => {

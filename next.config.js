@@ -1,4 +1,7 @@
 const path = require('path');
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
 const remarkGfm = require('remark-gfm').default || require('remark-gfm');
 const remarkMath = require('remark-math').default || require('remark-math');
 const rehypeKatex = require('rehype-katex').default || require('rehype-katex');
@@ -78,10 +81,10 @@ module.exports = (phase, { defaultConfig }) => {
     // This value is assigned here (during config evaluation) and will be
     // available to Node code that runs at build time (e.g. `next build`).
     process.env.CONTENT_FETCH_MODE = 'build';
-    return withNextIntl(withMDX(nextConfig));
+    return withBundleAnalyzer(withNextIntl(withMDX(nextConfig)));
   }
 
   // Default config for other phases (production server, test, export, etc.)
   process.env.CONTENT_FETCH_MODE = 'runtime';
-  return withNextIntl(withMDX(nextConfig));
+  return withBundleAnalyzer(withNextIntl(withMDX(nextConfig)));
 };

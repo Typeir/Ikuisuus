@@ -1,0 +1,1407 @@
+
+> ikuisuus@0.1.0 health:check
+> npx tsx --tsconfig tsconfig.scripts.json .github/scripts/health-check.ts
+
+🩺 Running Composite Health Check (full codebase)...
+
+  ⏳ file-length... ✅ PASS
+  ⏳ duplicate-css... ❌ FAIL (2 issue(s))
+  ⏳ jsdoc-quality... ✅ PASS
+  ⏳ antipatterns... ⚠️  WARN (32 issue(s))
+  ⏳ test-gaps... ✅ PASS
+  ⏳ mdx-format... ⚠️  WARN (71 issue(s))
+  ⏳ orphaned-mdx-links... ⚠️  WARN (63 issue(s))
+  ⏳ smoke-tests... ✅ PASS
+
+────────────────────────────────────────────────────────────
+
+📊 Overall: FAIL
+   Checks: 4/8 passed
+   Violations: 168
+
+🚫 CRITICAL issues found — completion is BLOCKED.
+
+  ❌ duplicate-css:
+     src/lib/components/ui/textInput/textInput.module.scss — Duplicate rule "&:focus" also found in src/lib/components/ui/textArea/textArea.module.scss
+     src/lib/components/ui/textInput/textInput.module.scss — Duplicate rule "&:disabled" also found in src/lib/components/encounterPlanner/combatantRow/combatantRow.module.scss
+
+---JSON_REPORT_START---
+{
+  "timestamp": "2026-05-10T14:32:22.220Z",
+  "mode": "full",
+  "changed_files": null,
+  "overall": "FAIL",
+  "summary": {
+    "total_checks": 8,
+    "passed": 4,
+    "failed": 4,
+    "total_violations": 168,
+    "has_critical": true
+  },
+  "checks": [
+    {
+      "check": "file-length",
+      "severity": "info",
+      "passed": true,
+      "failures": [],
+      "stats": {
+        "total_files_checked": 538,
+        "violations_found": 0
+      }
+    },
+    {
+      "check": "duplicate-css",
+      "severity": "critical",
+      "passed": false,
+      "failures": [
+        {
+          "file": "src/lib/components/ui/textInput/textInput.module.scss",
+          "rule": "duplicate-css",
+          "message": "Duplicate rule \"&:focus\" also found in src/lib/components/ui/textArea/textArea.module.scss",
+          "suggestion": "Extract shared styles to a common mixin or shared class",
+          "severity": "critical"
+        },
+        {
+          "file": "src/lib/components/ui/textInput/textInput.module.scss",
+          "rule": "duplicate-css",
+          "message": "Duplicate rule \"&:disabled\" also found in src/lib/components/encounterPlanner/combatantRow/combatantRow.module.scss",
+          "suggestion": "Extract shared styles to a common mixin or shared class",
+          "severity": "critical"
+        }
+      ],
+      "stats": {
+        "total_selectors_checked": 724,
+        "violations_found": 2,
+        "total_before_ignore": 2
+      }
+    },
+    {
+      "check": "jsdoc-quality",
+      "severity": "info",
+      "passed": true,
+      "failures": [],
+      "stats": {
+        "total_files_checked": 461,
+        "violations_found": 0
+      }
+    },
+    {
+      "check": "antipatterns",
+      "severity": "warning",
+      "passed": false,
+      "failures": [
+        {
+          "file": "src/app/api/og/[type]/[slug]/route.ts",
+          "line": 115,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/app/[locale]/library/[...slug]/page.tsx",
+          "line": 260,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/components/dotMatrix/DotMatrixBackground.tsx",
+          "line": 24,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/components/mdx/heading/heading.tsx",
+          "line": 121,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/components/mdx/mdxComponents.tsx",
+          "line": 29,
+          "rule": "any-type",
+          "message": "Explicit `any` type — prefer specific types",
+          "suggestion": "Replace with a specific type, generic",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/components/mdx/mdxComponents.tsx",
+          "line": 38,
+          "rule": "any-type",
+          "message": "Explicit `any` type — prefer specific types",
+          "suggestion": "Replace with a specific type, generic",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/components/mdx/mdxComponents.tsx",
+          "line": 47,
+          "rule": "any-type",
+          "message": "Explicit `any` type — prefer specific types",
+          "suggestion": "Replace with a specific type, generic",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/components/mouseTracker/MouseTracker.tsx",
+          "line": 68,
+          "rule": "any-type",
+          "message": "Explicit `any` type — prefer specific types",
+          "suggestion": "Replace with a specific type, generic",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/db/adapters/fs/fsAuditAdapter.ts",
+          "line": 49,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/db/auth/fsUserAdapter.ts",
+          "line": 47,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileAsync.ts",
+          "line": 39,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileRuntime.ts",
+          "line": 156,
+          "rule": "any-type",
+          "message": "Explicit `any` type — prefer specific types",
+          "suggestion": "Replace with a specific type, generic",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileRuntime.ts",
+          "line": 181,
+          "rule": "any-type",
+          "message": "Explicit `any` type — prefer specific types",
+          "suggestion": "Replace with a specific type, generic",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileRuntime.ts",
+          "line": 83,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileRuntime.ts",
+          "line": 87,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileRuntime.ts",
+          "line": 93,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileRuntime.ts",
+          "line": 124,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileRuntime.ts",
+          "line": 128,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileRuntime.ts",
+          "line": 134,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileSync.ts",
+          "line": 35,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileUtils.ts",
+          "line": 92,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileUtils.ts",
+          "line": 93,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileUtils.ts",
+          "line": 94,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/compileUtils.ts",
+          "line": 96,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/rehypeSectionize.ts",
+          "line": 61,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/rehypeSectionize.ts",
+          "line": 172,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/rehypeSectionize.ts",
+          "line": 192,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/mdx/serverRender.ts",
+          "line": 22,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/security/adapters/fsBannedIpsAdapter.ts",
+          "line": 45,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/security/adapters/fsBannedIpsAdapter.ts",
+          "line": 69,
+          "rule": "force-cast",
+          "message": "Force cast to `any` — unsafe type assertion",
+          "suggestion": "Use proper type narrowing or type guards instead",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/utils/encounterStorage.ts",
+          "line": 103,
+          "rule": "any-type",
+          "message": "Explicit `any` type — prefer specific types",
+          "suggestion": "Replace with a specific type, generic",
+          "severity": "warning"
+        },
+        {
+          "file": "src/lib/utils/encounterStorage.ts",
+          "line": 104,
+          "rule": "any-type",
+          "message": "Explicit `any` type — prefer specific types",
+          "suggestion": "Replace with a specific type, generic",
+          "severity": "warning"
+        }
+      ],
+      "stats": {
+        "total_files_checked": 461,
+        "violations_found": 32,
+        "critical": 0,
+        "warnings": 32,
+        "total_before_ignore": 32
+      }
+    },
+    {
+      "check": "test-gaps",
+      "severity": "info",
+      "passed": true,
+      "failures": [],
+      "stats": {
+        "total_files_checked": 36,
+        "violations_found": 0
+      }
+    },
+    {
+      "check": "mdx-format",
+      "severity": "warning",
+      "passed": false,
+      "failures": [
+        {
+          "file": "src/content/en/character-creation/bloodlines/shared-boons/selenic-boons.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/bard/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/cleric/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/druid/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/esper/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/paladin/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/ranger/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/revenant/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/sorcerer/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/tinker/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/warlock/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/wizard/spells.list.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/items/heirlooms/spear-of-paimar.heirloom.mdx",
+          "rule": "multiple-h1",
+          "message": "Multiple # headings — only one H1 per file",
+          "suggestion": "Use ## or lower for subsequent sections",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/arcana-and-the-fold/copying-spells-into-a-spellbook.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/spells/main.mdx",
+          "rule": "spell-missing-blockquote-stat-block",
+          "message": "Spell file missing blockquote stat block (> **Spell Name**)",
+          "suggestion": "Spell files should contain a blockquote (>) section with the spell stat block",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/ages/age-of-creation.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/ages/age-of-fates.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/artifacts/sampo.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/artifacts/tombsteel.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/characters-and-actors/anaximander.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/characters-and-actors/factions/the-four.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/characters-and-actors/factions/the-godslayers.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/characters-and-actors/felicia.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/characters-and-actors/gorgias.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/characters-and-actors/ludwig.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/characters-and-actors/lycophron.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/characters-and-actors/plato.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/events/the-first-pilgrimage.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/events/the-interlocking.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/events/the-last-fleet.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/events/the-second-pilgrimage.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/events/war-of-shapes.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/baku.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/canvas.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/demiurge.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/dragon.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/dreamcatcher.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/earthmovers.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/golden-one.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/kuutar.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/ukkonhemmo.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/void-giants.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/white-homunculus.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/gods-and-demigods/yskeia.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/structures/plato-tower.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/structures/scala-ad-caelum.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-creatures-of-damocles/empyreans.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-creatures-of-damocles/nulls.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-creatures-of-damocles/pieni.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-creatures-of-damocles/the-shifted.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/binturia.lore.mdx",
+          "rule": "multiple-h1",
+          "message": "Multiple # headings — only one H1 per file",
+          "suggestion": "Use ## or lower for subsequent sections",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/blade-of-damocles.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/brine-pools.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/brume-empire.lore.mdx",
+          "rule": "multiple-h1",
+          "message": "Multiple # headings — only one H1 per file",
+          "suggestion": "Use ## or lower for subsequent sections",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/clone-worlds.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/damocles.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/elu.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/itahenki.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/kalmora.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/kultharja.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/lansihenki.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/library-of-ikuisuus.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/mana.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/opaline-belt.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/ordovica.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/pyknos.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/selkara.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/taiva.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/thealas.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/thule.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/world/the-lands-of-damocles/world-seed.lore.mdx",
+          "rule": "missing-h1",
+          "message": "Missing top-level heading (# Title)",
+          "suggestion": "Add a # heading as the first line of the file",
+          "severity": "warning"
+        }
+      ],
+      "stats": {
+        "total_files_checked": 1059,
+        "violations_found": 71,
+        "critical_violations": 0,
+        "warning_violations": 71,
+        "total_before_ignore": 71
+      }
+    },
+    {
+      "check": "orphaned-mdx-links",
+      "severity": "warning",
+      "passed": false,
+      "failures": [
+        {
+          "file": "src/content/en/character-creation/bloodlines/edonian-giant.bloodline.mdx",
+          "line": 137,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/steel-and-strife/movement#difficult-terrain",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/bloodlines/väärät.bloodline.mdx",
+          "line": 166,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/tasha's-hideous-laughter",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/feats/fighting-styles/main.mdx",
+          "line": 20,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/character-creation/feats/volley",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/feats/swift-and-steady.mdx",
+          "line": 13,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/steel-and-strife/movement#steady",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/cleric/light-domain.specialization.mdx",
+          "line": 25,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/cleric/war-domain.specialization.mdx",
+          "line": 33,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/crusader-s-mantle",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/druid/circle-of-the-land.specialization.mdx",
+          "line": 19,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/druid/circle-of-the-moon.specialization.mdx",
+          "line": 26,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/starry-wisp",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/druid/circle-of-the-moon.specialization.mdx",
+          "line": 28,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fount-of-moonlight",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/esper/soulblade.specialization.mdx",
+          "line": 7,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/blade-burst",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/esper/telekineticist.specialization.mdx",
+          "line": 11,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/maximilians-earthen-grasp",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/esper/telekineticist.specialization.mdx",
+          "line": 14,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/bigby-s-hand",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/monk/warrior-of-the-elements.specialization.mdx",
+          "line": 13,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/elementalism",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/monk/warrior-of-the-elements.specialization.mdx",
+          "line": 72,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/create-or-destroy-water",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/monk/warrior-of-the-elements.specialization.mdx",
+          "line": 86,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/pyrotechnics",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/monk/warrior-of-the-elements.specialization.mdx",
+          "line": 88,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/maximilians-earthen-grasp",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/monk/warrior-of-the-elements.specialization.mdx",
+          "line": 120,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/paladin/oath-of-devotion.specialization.mdx",
+          "line": 53,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/divine-smite",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/paladin/oath-of-glory.specialization.mdx",
+          "line": 15,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/divine-smite",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/paladin/oath-of-glory.specialization.mdx",
+          "line": 31,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/yolande-s-regal-presence",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/sorcerer/aberrant-sorcery.specialization.mdx",
+          "line": 27,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/evard-s-black-tentacles",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/sorcerer/aberrant-sorcery.specialization.mdx",
+          "line": 28,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/rary-s-telepathic-bond",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/sorcerer/clockwork-sorcery.specialization.mdx",
+          "line": 23,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/alarm",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/sorcerer/draconic-sorcery.specialization.mdx",
+          "line": 24,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/dragon-s-breath",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/sorcerer/draconic-sorcery.specialization.mdx",
+          "line": 27,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/summon-dragon",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/sorcerer/draconic-sorcery.specialization.mdx",
+          "line": 53,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/summon-dragon",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/sorcerer/wild-magic-sorcery.specialization.mdx",
+          "line": 61,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/warlock/fiend-patron.specialization.mdx",
+          "line": 20,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/character-creation/vocations/warlock/great-old-one-patron.specialization.mdx",
+          "line": 21,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/tasha-s-hideous-laughter",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/items/heirlooms/blackbone-crusher.heirloom.mdx",
+          "line": 118,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/spirit-shroud",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/items/heirlooms/blackbone-crusher.heirloom.mdx",
+          "line": 119,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/spirit-shroud",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/items/heirlooms/wand-of-sunlight.heirloom.mdx",
+          "line": 22,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/abandoned-old-war-machine.sheet.mdx",
+          "line": 78,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/apatheria-thief-of-wind.sheet.mdx",
+          "line": 164,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/divine-smite",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/cerithol.sheet.mdx",
+          "line": 64,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/hecatonchiere-gigas.sheet.mdx",
+          "line": 64,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/hecatonchiere-gigas.sheet.mdx",
+          "line": 67,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/globe-of-invulnerability",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/ludwig.sheet.mdx",
+          "line": 70,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/spirit-shroud",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/lunar-chimera.sheet.mdx",
+          "line": 217,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/spirit-shroud",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/lunar-chimera.sheet.mdx",
+          "line": 222,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/black-tentacles",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/marduk-son-of-stars.sheet.mdx",
+          "line": 241,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/spirit-shroud",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/otokrates-mieskarion.sheet.mdx",
+          "line": 51,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/rubedo.sheet.mdx",
+          "line": 57,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/silent-magic-hoarder.sheet.mdx",
+          "line": 79,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/tasha-s-hideous-laughter",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/silent-magic-hoarder.sheet.mdx",
+          "line": 86,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/soul-of-the-brume.sheet.mdx",
+          "line": 124,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/tombsteel-wizard-construct.sheet.mdx",
+          "line": 65,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/war-counselor-of-yskeia.sheet.mdx",
+          "line": 97,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/monsters/xanthous.sheet.mdx",
+          "line": 64,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/acid-arrow",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/arcana-and-the-fold/spellcasting-and-schools-of-magic.mdx",
+          "line": 9,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/steel-and-strife/movement-maps-and-shapes",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/arcana-and-the-fold/spellcasting-and-schools-of-magic.mdx",
+          "line": 52,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/steel-and-strife/movement-maps-and-shapes",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/creatures-critters-and-characters/heroic-awakening/flametongued.mdx",
+          "line": 12,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/fireball",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/creatures-critters-and-characters/heroic-awakening/flametongued.mdx",
+          "line": 13,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/elemental-bane",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/creatures-critters-and-characters/heroic-awakening/frostveined.mdx",
+          "line": 17,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/elemental-bane",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/creatures-critters-and-characters/heroic-awakening/frostveined.mdx",
+          "line": 19,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/freezing-sphere",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/creatures-critters-and-characters/heroic-awakening/frostveined.mdx",
+          "line": 19,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/spells/globe-of-invulnerability",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/creatures-critters-and-characters/monster-stat-blocks.mdx",
+          "line": 40,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/steel-and-strife/movement-maps-and-shapes",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/hearth-and-station/crafting-and-creation.mdx",
+          "line": 45,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/hearth-and-station/downtime-activities",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/hearth-and-station/main.mdx",
+          "line": 11,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/hearth-and-station/backgrounds-and-inspiration",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/hearth-and-station/reading-writing-and-speaking.mdx",
+          "line": 28,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/hearth-and-station/learning-and-training",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/steel-and-strife/contextual-conflict.mdx",
+          "line": 31,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/steel-and-strife/movement#steady",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/steel-and-strife/main.mdx",
+          "line": 17,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/steel-and-strife/movement",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        },
+        {
+          "file": "src/content/en/rules/steel-and-strife/maps-grids-and-shapes.mdx",
+          "line": 13,
+          "rule": "missing-library-link-target",
+          "message": "Library link target does not resolve: /en/library/rules/steel-and-strife/movement",
+          "suggestion": "Point to an existing content slug or create the target content file",
+          "severity": "warning"
+        }
+      ],
+      "stats": {
+        "total_files_checked": 1105,
+        "violations_found": 63,
+        "total_before_ignore": 63
+      }
+    },
+    {
+      "check": "smoke-tests",
+      "severity": "warning",
+      "passed": true,
+      "failures": [],
+      "stats": {
+        "total_files_checked": 520,
+        "violations_found": 0
+      }
+    }
+  ]
+}
+---JSON_REPORT_END---

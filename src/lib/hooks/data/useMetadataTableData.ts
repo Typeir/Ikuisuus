@@ -1,15 +1,16 @@
 /**
  * @fileoverview Metadata Table Data Hook
  * @description Generic hook for locale-aware metadata table API loading.
+ * Uses SWR for automatic caching, deduplication, and error handling.
  *
  * @module lib/hooks/data/useMetadataTableData
  * @author Typeir
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2.0.0
  */
 
 import { logger } from '@/lib/logging/logger';
-import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 /**
  * Metadata table hook state.
@@ -30,6 +31,8 @@ const log = logger.child({ module: 'useMetadataTableData' });
 
 /**
  * Loads locale-specific metadata rows using a supplied service fetcher.
+ * Results are cached and deduplicated by SWR across all consumers sharing
+ * the same `fetcher` + `locale` combination.
  *
  * @template T
  * @param {(locale: string) => Promise<T[]>} fetcher - Metadata service fetcher
@@ -42,47 +45,26 @@ export function useMetadataTableData<T>(
   locale: string,
   entityName: string,
 ): MetadataTableDataState<T> {
-  const [data, setData] = useState<T[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await fetcher(locale);
-        if (cancelled) {
-          return;
-        }
-        log.debug(`Loaded ${entityName}`, {
-          count: result.length,
+  const { data, isLoading, error: swrError } = useSWR<T[], Error>(
+    [entityName, locale],
+    () => fetcher(locale),
+    {
+      onSuccess: (result) => {
+        log.debug(`Loaded ${entityName}`, { count: result.length, locale });
+      },
+      onError: (err) => {
+        log.error(`Failed to load ${entityName}`, {
+          error: err instanceof Error ? err.message : String(err),
           locale,
         });
-        setData(result);
-      } catch (loadError) {
-        if (cancelled) {
-          return;
-        }
-        const message =
-          loadError instanceof Error ? loadError.message : String(loadError);
-        log.error(`Failed to load ${entityName}`, { error: message, locale });
-        setError(message);
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
+      },
+    },
+  );
 
-    load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [entityName, fetcher, locale]);
-
-  return { data, loading, error };
+  return {
+    data: data ?? [],
+    loading: isLoading,
+    error: swrError ? swrError.message : null,
+  };
 }
+

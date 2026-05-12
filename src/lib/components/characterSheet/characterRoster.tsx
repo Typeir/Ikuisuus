@@ -46,7 +46,7 @@ export interface CharacterRosterProps {
  * @returns {JSX.Element} Rendered character roster
  */
 export const CharacterRoster: React.FC<CharacterRosterProps> = ({
-  locale: _locale = 'en',
+  locale = 'en',
 }) => {
   const t = useTranslations('characterSheet');
   const characters = useCharacters();
@@ -146,7 +146,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = ({
         className={styles.rosterMain}
         aria-label={t('ariaCharacterSheetPanel')}>
         {activeCharacter ? (
-          <CharacterSheet character={activeCharacter} />
+          <CharacterSheet character={activeCharacter} locale={locale} />
         ) : (
           <div className={styles.rosterPlaceholder}>
             <p>{t('selectOrCreate')}</p>

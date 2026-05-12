@@ -22,6 +22,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
+import { getContentFolder } from './getContentFolder';
 
 /**
  * Route match result with similarity score
@@ -129,7 +130,7 @@ function calculateSimilarity(str1: string, str2: string): number {
  */
 async function getAllRoutes(): Promise<string[]> {
   const routes: string[] = [];
-  const contentDir = path.join(process.cwd(), 'src', 'content', 'en');
+  const contentDir = getContentFolder('en');
 
   /**
    * Recursively scan directory for MDX files and convert to routes

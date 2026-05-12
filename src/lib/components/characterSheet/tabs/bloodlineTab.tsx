@@ -17,6 +17,7 @@ import type {
     CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
+import { useCallback } from 'react';
 import { BoonPicker } from '../boonPicker';
 import styles from './tabs.module.scss';
 
@@ -51,6 +52,11 @@ export const BloodlineTab: React.FC<BloodlineTabProps> = ({
 }) => {
   const t = useTranslations('characterSheet');
 
+  const handleBoonsToggle = useCallback(
+    (boons: CharacterShard[]) => onChange({ selectedBoons: boons }),
+    [onChange],
+  );
+
   if (!data.bloodlineSlug) {
     return <div className={styles.empty}>{t('selectBloodline')}</div>;
   }
@@ -63,9 +69,7 @@ export const BloodlineTab: React.FC<BloodlineTabProps> = ({
             bloodlineSlug={data.bloodlineSlug}
             selectedBoons={data.selectedBoons}
             boonBudget={data.boonBudget}
-            onToggle={(boons: CharacterShard[]) =>
-              onChange({ selectedBoons: boons })
-            }
+            onToggle={handleBoonsToggle}
             locale={locale}
           />
         ) : (
