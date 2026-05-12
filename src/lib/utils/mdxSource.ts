@@ -12,6 +12,7 @@
  */
 
 import type { CharacterShard } from '@/lib/types/character';
+import type { FeatureEntry } from '@/lib/types/vocations';
 export type { FeatureEntry } from '@/lib/types/vocations';
 
 /**

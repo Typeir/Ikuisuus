@@ -14,7 +14,7 @@
 
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
 import { fetcher } from '@/lib/fetch/fetcher';
-import { contentShardKey, urlForContentShard } from '@/lib/fetch/swrKeys';
+import { urlForContentShard } from '@/lib/fetch/swrKeys';
 import { useFeats } from '@/lib/hooks/data/useFeats';
 import type { CharacterShard } from '@/lib/types/character';
 import type { ContentShardResponse } from '@/lib/types/api.d';
@@ -61,19 +61,15 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
     }
 
     let cachedText: string | undefined;
-    const key = contentShardKey('feats', feat.slug, locale, true);
-    const cached = key
-      ? (cache.get(key)?.data as ContentShardResponse | undefined)
-      : undefined;
+    const url = urlForContentShard('feats', feat.slug, locale);
+    const cached = cache.get(url)?.data as ContentShardResponse | undefined;
     if (cached) {
       cachedText = cached.shards.main;
-    } else if (key) {
+    } else {
       try {
         const data = await mutate<ContentShardResponse>(
-          key,
-          fetcher<ContentShardResponse>(
-            urlForContentShard('feats', feat.slug, locale),
-          ),
+          url,
+          fetcher<ContentShardResponse>(url),
           { revalidate: false, populateCache: true },
         );
         cachedText = data?.shards.main;

@@ -169,12 +169,12 @@ export const createEmptyVocationEntry = (): VocationEntry => ({
 export const migrateCharacter = (
   raw: Record<string, unknown>,
 ): CharacterSheet => {
-  if (Array.isArray((raw as CharacterSheet).vocations)) {
-    return raw as CharacterSheet;
+  if (Array.isArray((raw as unknown as CharacterSheet).vocations)) {
+    return raw as unknown as CharacterSheet;
   }
 
   const migrated: CharacterSheet = {
-    ...(raw as CharacterSheet),
+    ...(raw as unknown as CharacterSheet),
     vocations: [],
   };
 

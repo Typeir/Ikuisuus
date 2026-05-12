@@ -19,7 +19,6 @@ import { Chip } from '@/lib/components/ui/chip';
 import type { ChipVariant } from '@/lib/components/ui/chip';
 import { fetcher } from '@/lib/fetch/fetcher';
 import {
-  contentShardKey,
   urlForContentShard,
 } from '@/lib/fetch/swrKeys';
 import { compileRuntimeSync } from '@/lib/mdx/compileRuntime';
@@ -101,23 +100,18 @@ const ShardChipImpl: React.FC<ShardChipProps> = ({
     if (shard.cachedText) {
       source = shard.cachedText.slice(0, 150);
     } else if (previewData) {
-      const key = contentShardKey(
+      const url = urlForContentShard(
         previewData.kind,
         previewData.slug,
         locale,
-        true,
       );
-      const cached = key
-        ? (cache.get(key)?.data as ContentShardResponse | undefined)
-        : undefined;
+      const cached = cache.get(url)?.data as ContentShardResponse | undefined;
       let data: ContentShardResponse | undefined = cached;
-      if (!data && key) {
+      if (!data) {
         try {
           data = await mutate<ContentShardResponse>(
-            key,
-            fetcher<ContentShardResponse>(
-              urlForContentShard(previewData.kind, previewData.slug, locale),
-            ),
+            url,
+            fetcher<ContentShardResponse>(url),
             { revalidate: false, populateCache: true },
           );
         } catch {

@@ -19,9 +19,9 @@
 'use client';
 
 import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
+import type { BloodlineBoon } from '@/lib/db/content/schemas/bloodlineMetadata.d';
 import { fetcher } from '@/lib/fetch/fetcher';
 import { useBloodlines } from '@/lib/hooks/data/useBloodlines';
-import type { BloodlineBoon } from '@/lib/db/content/schemas/bloodlineMetadata.d';
 import type { CharacterShard } from '@/lib/types/character';
 import { computeBpSpent } from '@/lib/utils/shardExtractor';
 import { useTranslations } from 'next-intl';
@@ -84,24 +84,17 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
       return;
     }
 
-    const cacheKey = [
-      'content-shard',
-      'bloodlines',
-      bloodlineSlug,
-      locale,
-      boon.name,
-    ] as const;
     const url = `/api/content-shards/bloodlines/${bloodlineSlug}?keys[]=${encodeURIComponent(boon.name)}&locale=${locale}`;
 
     type BoonShardResponse = { shards: Record<string, string> };
     let cachedText: string | undefined;
-    const cached = cache.get(cacheKey)?.data as BoonShardResponse | undefined;
+    const cached = cache.get(url)?.data as BoonShardResponse | undefined;
     if (cached) {
       cachedText = cached.shards[boon.name];
     } else {
       try {
         const data = await mutate<BoonShardResponse>(
-          cacheKey,
+          url,
           fetcher<BoonShardResponse>(url),
           { revalidate: false, populateCache: true },
         );

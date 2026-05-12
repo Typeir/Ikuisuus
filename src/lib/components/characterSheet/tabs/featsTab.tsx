@@ -18,7 +18,7 @@ import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FeatPicker } from '../featPicker';
 import styles from './tabs.module.scss';
 
@@ -51,7 +51,10 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({
   onChange,
   locale = 'en',
 }) => {
-  const selectedFeats = (data.selectedFeats ?? []) as CharacterShard[];
+  const selectedFeats = useMemo(
+    () => (data.selectedFeats ?? []) as CharacterShard[],
+    [data.selectedFeats],
+  );
 
   const handleToggle = useCallback(
     (next: CharacterShard[]) => onChange({ selectedFeats: next }),

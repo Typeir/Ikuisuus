@@ -64,7 +64,7 @@ function readPersistedCharacters(): SerializedCharacterSheetState {
     const parsed = JSON.parse(raw) as Partial<SerializedCharacterSheetState>;
     return {
       characters: Array.isArray(parsed.characters)
-        ? parsed.characters.map((c) => migrateCharacter(c as Record<string, unknown>))
+        ? parsed.characters.map((c) => migrateCharacter(c as unknown as Record<string, unknown>))
         : [],
       activeId: typeof parsed.activeId === 'string' ? parsed.activeId : null,
     };
