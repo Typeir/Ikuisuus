@@ -105,3 +105,9 @@ export const NotesSectionImpl: React.FC<NotesSectionProps> = ({
     </section>
   );
 };
+
+/**
+ * Memoized `NotesSection` export. Re-renders only when `values`, `onChange`,
+ * or `readOnly` change by reference.
+ */
+export const NotesSection = memo(NotesSectionImpl);
