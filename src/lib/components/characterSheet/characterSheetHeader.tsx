@@ -13,8 +13,8 @@
 
 'use client';
 
-import { NumericInput } from '@/lib/components/ui/numericInput';
 import { TextInput } from '@/lib/components/ui/textInput';
+import { CharacterSheetHeaderMeta } from './characterSheetHeaderMeta';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import type {
     CharacterShard,
@@ -32,7 +32,6 @@ import {
 import { useTranslations } from 'next-intl';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './characterSheetHeader.module.scss';
-import { PagePreviewTooltip } from './pagePreviewTooltip';
 import { VocationSelector } from './vocationSelector';
 
 /**
@@ -80,8 +79,16 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
   );
   const fullName = data.name || t('unnamedCharacter');
   const derived = useMemo(() => getCharacterDerived(data), [data]);
-  const { hasActiveVocations, totalLevel, experience, xpOverallPercent } =
-    derived;
+  const { hasActiveVocations, experience, xpOverallPercent } = derived;
+  const vocationLevelSum = useMemo(
+    () =>
+      data.vocations
+        .filter((v) => Boolean(v.slug))
+        .reduce((sum, v) => sum + (v.level ?? 0), 0),
+    [data.vocations],
+  );
+  const globalLevel = data.level ?? 1;
+  const levelMismatch = hasActiveVocations && vocationLevelSum !== globalLevel;
   const [xpInput, setXpInput] = useState<number>(data.experience ?? 0);
   const debouncedXp = useDebounce(xpInput, 300);
   const xpChangedRef = useRef(false);
@@ -136,78 +143,22 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
           </h2>
         )}
 
-        <div className={styles.meta}>
-          {editing ? (
-            <>
-              <label className={styles.metaEditLabel}>
-                {t('levelLabel')}
-                {hasActiveVocations ? (
-                  <span className={styles.metaDerivedValue}>{totalLevel}</span>
-                ) : (
-                  <NumericInput
-                    className={styles.metaEditInput}
-                    value={data.level}
-                    min={1}
-                    max={30}
-                    size='sm'
-                    ariaLabel={t('ariaLevelInput')}
-                    onChange={handleLevelChange}
-                  />
-                )}
-              </label>
-              <label className={styles.metaEditLabel}>
-                {t('xpLabel')}
-                {hasActiveVocations ? (
-                  <span className={styles.metaDerivedValue}>
-                    {experience.toLocaleString()}
-                  </span>
-                ) : (
-                  <NumericInput
-                    className={styles.metaEditInput}
-                    value={xpInput}
-                    min={0}
-                    size='sm'
-                    ariaLabel={t('ariaExperienceInput')}
-                    onChange={(v) => {
-                      xpChangedRef.current = true;
-                      setXpInput(v ?? 0);
-                    }}
-                  />
-                )}
-              </label>
-            </>
-          ) : (
-            <>
-              <span>{t('levelFull', { level: totalLevel })}</span>
-            </>
-          )}
-          {data.bloodlineTitle && data.bloodlineSlug && (
-            <span className={styles.metaPill}>
-              {data.bloodlineTitle}
-              <PagePreviewTooltip
-                kind='bloodlines'
-                slug={data.bloodlineSlug}
-                title={data.bloodlineTitle}
-                locale={locale}
-              />
-            </span>
-          )}
-          {data.vocations.map((v) =>
-            v.slug ? (
-              <span key={v.slug} className={styles.metaPill}>
-                {v.title}
-                {v.specializationTitle ? ` / ${v.specializationTitle}` : ''}
-                {` Lv.${v.level}`}
-                <PagePreviewTooltip
-                  kind='vocations'
-                  slug={v.slug}
-                  title={v.title}
-                  locale={locale}
-                />
-              </span>
-            ) : null,
-          )}
-        </div>
+        <CharacterSheetHeaderMeta
+          data={data}
+          editing={editing}
+          locale={locale}
+          experience={experience}
+          xpInput={xpInput}
+          hasActiveVocations={hasActiveVocations}
+          levelMismatch={levelMismatch}
+          vocationLevelSum={vocationLevelSum}
+          globalLevel={globalLevel}
+          onLevelChange={handleLevelChange}
+          onXpChange={(v) => {
+            xpChangedRef.current = true;
+            setXpInput(v);
+          }}
+        />
 
         <div className={styles.bpCounter} aria-label={t('ariaBoonBudget')}>
           {t('bpFormat', { spent: bpSpent, total: data.boonBudget })}

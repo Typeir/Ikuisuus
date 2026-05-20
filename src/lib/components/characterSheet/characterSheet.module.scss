@@ -250,6 +250,23 @@
   color: var(--color-accent);
 }
 
+.hpEditRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.hpEditInput {
+  width: 3.25rem;
+}
+
+.hpEditTempLabel {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
 .sheetColumns {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

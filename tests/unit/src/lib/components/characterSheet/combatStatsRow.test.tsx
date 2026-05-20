@@ -9,7 +9,7 @@
  */
 
 import { CombatStatsRow } from '@/lib/components/characterSheet/combatStatsRow';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 const DEFAULT_PROPS = {
@@ -22,7 +22,12 @@ const DEFAULT_PROPS = {
   proficiencyBonus: 3,
   vocations: [],
   hitDiceLog: [],
+  conMod: 0,
+  editing: false,
   onHitDiceCommit: vi.fn(),
+  onHpCurrentChange: vi.fn(),
+  onHpMaxChange: vi.fn(),
+  onTempHpChange: vi.fn(),
   bloodlineSpeeds: [],
 };
 
@@ -76,5 +81,48 @@ describe('CombatStatsRow', () => {
   it('renders proficiency bonus with + prefix', () => {
     render(<CombatStatsRow {...DEFAULT_PROPS} proficiencyBonus={3} />);
     expect(screen.getByText('+3')).toBeTruthy();
+  });
+
+  it('renders editable HP inputs (current/max/temp) when editing', () => {
+    render(
+      <CombatStatsRow
+        {...DEFAULT_PROPS}
+        editing
+        hpCurrent={10}
+        hpMax={20}
+        tempHp={3}
+      />,
+    );
+    expect(screen.getByLabelText(/ariaHpCurrentInput/i)).toBeTruthy();
+    expect(screen.getByLabelText(/ariaHpMaxInput/i)).toBeTruthy();
+    expect(screen.getByLabelText(/ariaTempHpInput/i)).toBeTruthy();
+  });
+
+  it('emits onHpCurrentChange when the current HP input is edited', () => {
+    const onHpCurrentChange = vi.fn();
+    render(
+      <CombatStatsRow
+        {...DEFAULT_PROPS}
+        editing
+        onHpCurrentChange={onHpCurrentChange}
+      />,
+    );
+    const input = screen.getByLabelText(/ariaHpCurrentInput/i);
+    fireEvent.change(input, { target: { value: '17' } });
+    expect(onHpCurrentChange).toHaveBeenCalledWith(17);
+  });
+
+  it('emits onTempHpChange when the temp HP input is edited', () => {
+    const onTempHpChange = vi.fn();
+    render(
+      <CombatStatsRow
+        {...DEFAULT_PROPS}
+        editing
+        onTempHpChange={onTempHpChange}
+      />,
+    );
+    const input = screen.getByLabelText(/ariaTempHpInput/i);
+    fireEvent.change(input, { target: { value: '8' } });
+    expect(onTempHpChange).toHaveBeenCalledWith(8);
   });
 });

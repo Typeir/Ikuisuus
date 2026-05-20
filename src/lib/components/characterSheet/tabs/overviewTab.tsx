@@ -23,6 +23,7 @@ import type {
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { computeAbilityModifier, computeProficiencyBonus } from '@/lib/utils/characterStorage';
 import { getTotalCharacterLevel } from '@/lib/utils/characterDerivation';
+import { rebaseHitDiceLogForCon } from '@/lib/utils/characterHpDerivation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef } from 'react';
 import { AttacksTable } from '../attacksTable';
@@ -104,15 +105,36 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       }
     }
 
-    if (!pbChanged && newEntries.length === 0) return;
+    const existingLog = data.hitDiceLog ?? [];
+    const { delta: conDeltaTotal, rebasedLog } = rebaseHitDiceLogForCon(
+      existingLog,
+      conMod,
+    );
+
+    if (!pbChanged && newEntries.length === 0 && conDeltaTotal === 0) return;
 
     const patch: Partial<CharacterSheetType> = {};
     if (pbChanged) patch.proficiencyBonus = derivedPb;
-    if (newEntries.length > 0) {
-      patch.hitDiceLog = [...(data.hitDiceLog ?? []), ...newEntries];
+    if (newEntries.length > 0 || conDeltaTotal !== 0) {
+      patch.hitDiceLog = [...rebasedLog, ...newEntries];
+    }
+    if (conDeltaTotal !== 0) {
+      const newMax = Math.max(0, (data.hpMax ?? 0) + conDeltaTotal);
+      patch.hpMax = newMax;
+      if ((data.hpCurrent ?? 0) > newMax) {
+        patch.hpCurrent = newMax;
+      }
     }
     onChange(patch);
-  }, [data.vocations, data.proficiencyBonus, data.hitDiceLog, data.abilityScores.con, onChange]);
+  }, [
+    data.vocations,
+    data.proficiencyBonus,
+    data.hitDiceLog,
+    data.abilityScores.con,
+    data.hpMax,
+    data.hpCurrent,
+    onChange,
+  ]);
 
   const handleSkillsChange = useCallback(
     (skills: CharacterSheetType['skills']) => onChange({ skills }),
@@ -132,12 +154,35 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   );
   const handleHitDiceCommit = useCallback(
     (updatedLog: HitDieRollEntry[], hpDelta: number) => {
+      const newMax = (data.hpMax ?? 0) + hpDelta;
+      const shouldBumpCurrent =
+        (data.hpCurrent ?? 0) >= (data.hpMax ?? 0) || (data.hpCurrent ?? 0) === 0;
       onChange({
         hitDiceLog: updatedLog,
-        hpMax: (data.hpMax ?? 0) + hpDelta,
+        hpMax: newMax,
+        hpCurrent: shouldBumpCurrent
+          ? newMax
+          : Math.min(data.hpCurrent ?? 0, newMax),
       });
     },
-    [onChange, data.hpMax],
+    [onChange, data.hpMax, data.hpCurrent],
+  );
+  const handleHpCurrentChange = useCallback(
+    (value: number) => onChange({ hpCurrent: Math.max(0, value) }),
+    [onChange],
+  );
+  const handleHpMaxChange = useCallback(
+    (value: number) => {
+      const newMax = Math.max(0, value);
+      const patch: Partial<CharacterSheetType> = { hpMax: newMax };
+      if ((data.hpCurrent ?? 0) > newMax) patch.hpCurrent = newMax;
+      onChange(patch);
+    },
+    [onChange, data.hpCurrent],
+  );
+  const handleTempHpChange = useCallback(
+    (value: number) => onChange({ tempHp: Math.max(0, value) }),
+    [onChange],
   );
 
   const conMod = computeAbilityModifier(data.abilityScores.con);
@@ -157,6 +202,10 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           vocations={data.vocations}
           hitDiceLog={data.hitDiceLog ?? []}
           conMod={conMod}
+          editing={editing}
+          onHpCurrentChange={handleHpCurrentChange}
+          onHpMaxChange={handleHpMaxChange}
+          onTempHpChange={handleTempHpChange}
           onHitDiceCommit={handleHitDiceCommit}
         />
         <div className={styles.skillsToolsRow}>

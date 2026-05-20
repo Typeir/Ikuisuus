@@ -100,7 +100,7 @@ describe('getCharacterDerived', () => {
     expect(d.xpFloor).toBe(getXPForLevel(3));
   });
 
-  it('preserves mid-level experience when above the floor', () => {
+  it('locks experience to the floor when vocations drive level (XP follows level changes)', () => {
     const floor = getXPForLevel(3);
     const ceiling = getXPForLevel(4);
     const midway = floor + Math.floor((ceiling - floor) / 2);
@@ -110,9 +110,19 @@ describe('getCharacterDerived', () => {
         experience: midway,
       }),
     );
-    expect(d.experience).toBe(midway);
-    expect(d.xpProgressPercent).toBeGreaterThanOrEqual(45);
-    expect(d.xpProgressPercent).toBeLessThanOrEqual(55);
+    expect(d.experience).toBe(floor);
+    expect(d.xpProgressPercent).toBe(0);
+  });
+
+  it('clamps experience down when level decreases below the stored XP band', () => {
+    const d = getCharacterDerived(
+      sheet({
+        vocations: [voc({ slug: 'wizard', level: 5 })],
+        experience: getXPForLevel(8),
+      }),
+    );
+    expect(d.totalLevel).toBe(5);
+    expect(d.experience).toBe(getXPForLevel(5));
   });
 
   it('caps progress at 100% when at MAX_XP_LEVEL', () => {

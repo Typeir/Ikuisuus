@@ -31,7 +31,13 @@ import { getXPForLevel, MAX_XP_LEVEL } from '../utils/xpProgression';
  *
  * @description
  * Handles the following action types:
- * - UPSERT_CHARACTER: Add or replace a character by ID; refreshes updatedAt
+ * - UPSERT_CHARACTER: Add or replace a character by ID; refreshes updatedAt.
+ *   The stored `character.level` is preserved verbatim (defaulted to the
+ *   derived total when missing) so that a deliberate mismatch between the
+ *   sum of vocation levels and the user-tracked global character level can
+ *   be surfaced as a warning chip in the header. When vocations drive the
+ *   level, `experience` is locked to that level's XP floor so lowering a
+ *   vocation level also lowers XP.
  * - DELETE_CHARACTER: Remove a character by ID; clears activeId if it matched
  * - SET_ACTIVE_ID: Set which character is currently viewed or edited
  * - RESET: Return to DEFAULT_CHARACTER_SHEET_STATE
@@ -43,17 +49,19 @@ export function characterSheetReducer(
   switch (action.type) {
     case CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER: {
       const { character } = action.payload;
-      const normalizedLevel = getTotalCharacterLevel(character);
+      const totalLevel = getTotalCharacterLevel(character);
       const hasActiveVocations = character.vocations.some((v) =>
         Boolean(v.slug),
       );
-      const floor = getXPForLevel(Math.min(normalizedLevel, MAX_XP_LEVEL));
+      const cappedLevel = Math.min(totalLevel, MAX_XP_LEVEL);
+      const floor = getXPForLevel(cappedLevel);
       const normalizedExperience = hasActiveVocations
-        ? Math.max(character.experience ?? 0, floor)
+        ? floor
         : character.experience ?? 0;
+      const storedLevel = character.level ?? totalLevel;
       const updated = {
         ...character,
-        level: normalizedLevel,
+        level: Math.max(1, storedLevel),
         experience: normalizedExperience,
         updatedAt: new Date().toISOString(),
       };

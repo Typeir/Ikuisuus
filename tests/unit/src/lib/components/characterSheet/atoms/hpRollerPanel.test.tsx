@@ -96,4 +96,58 @@ describe('HpRollerPanel', () => {
     expect(screen.queryByText('Add to HP')).toBeNull();
     expect(screen.queryByText(/roll d12/i)).toBeNull();
   });
+
+  it('Roll All commits every uncommitted entry in one click', () => {
+    const onCommit = vi.fn();
+    const log = [
+      makeEntry('1', 'barbarian', 'Barbarian', '12', 1),
+      makeEntry('2', 'barbarian', 'Barbarian', '12', 2),
+      makeEntry('3', 'barbarian', 'Barbarian', '12', 3),
+    ];
+    render(<HpRollerPanel hitDiceLog={log} conMod={2} onCommit={onCommit} />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /open hit dice roller/i }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: /roll all unrolled/i }));
+    expect(onCommit).toHaveBeenCalledOnce();
+    const [updatedLog, hpDelta] = onCommit.mock.calls[0];
+    expect(updatedLog.every((e: { addedToHp: boolean }) => e.addedToHp)).toBe(
+      true,
+    );
+    // Each roll is 1..12 plus +2 CON, so delta is between 3*3=9 and 3*14=42.
+    expect(hpDelta).toBeGreaterThanOrEqual(9);
+    expect(hpDelta).toBeLessThanOrEqual(42);
+  });
+
+  it('Average All uses the standard d20 average (floor(faces/2)+1) for each die', () => {
+    const onCommit = vi.fn();
+    const log = [
+      makeEntry('1', 'barbarian', 'Barbarian', '12', 1),
+      makeEntry('2', 'barbarian', 'Barbarian', '12', 2),
+    ];
+    render(<HpRollerPanel hitDiceLog={log} conMod={2} onCommit={onCommit} />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /open hit dice roller/i }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: /use the average/i }));
+    expect(onCommit).toHaveBeenCalledOnce();
+    const [updatedLog, hpDelta] = onCommit.mock.calls[0];
+    // d12 average = floor(12/2)+1 = 7. Two dice + (7+2) each = 18.
+    expect(hpDelta).toBe(18);
+    expect(updatedLog.every((e: { result: number | null }) => e.result === 7)).toBe(
+      true,
+    );
+  });
+
+  it('hides bulk action buttons when all entries are confirmed', () => {
+    const log = [makeEntry('1', 'barbarian', 'Barbarian', '12', 1, 8, true)];
+    render(<HpRollerPanel hitDiceLog={log} conMod={2} onCommit={vi.fn()} />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /open hit dice roller/i }),
+    );
+    expect(screen.queryByRole('button', { name: /roll all unrolled/i })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: /use the average/i }),
+    ).toBeNull();
+  });
 });

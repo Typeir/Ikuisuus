@@ -15,6 +15,7 @@
 import { HitDiceCounter } from '@/lib/components/characterSheet/atoms/hitDiceCounter';
 import { HpRollerPanel } from '@/lib/components/characterSheet/atoms/hpRollerPanel';
 import { SpeedPanel } from '@/lib/components/characterSheet/atoms/speedPanel';
+import { NumericInput } from '@/lib/components/ui/numericInput';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import type { VocationEntry } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
@@ -36,6 +37,10 @@ import styles from './characterSheet.module.scss';
  * @property {VocationEntry[]} vocations - Active vocation entries (used for hit dice counter)
  * @property {HitDieRollEntry[]} hitDiceLog - Hit die roll log for the HP roller panel
  * @property {number} conMod - CON modifier for HP roller calculations
+ * @property {boolean} editing - Whether edit mode is active (toggles HP inputs)
+ * @property {(value: number) => void} onHpCurrentChange - Called when current HP is edited
+ * @property {(value: number) => void} onHpMaxChange - Called when maximum HP is edited
+ * @property {(value: number) => void} onTempHpChange - Called when temporary HP is edited
  * @property {(updatedLog: HitDieRollEntry[], hpDelta: number) => void} onHitDiceCommit - Called when a roll is confirmed
  */
 export interface CombatStatsRowProps {
@@ -50,13 +55,18 @@ export interface CombatStatsRowProps {
   vocations: VocationEntry[];
   hitDiceLog: HitDieRollEntry[];
   conMod: number;
+  editing: boolean;
+  onHpCurrentChange: (value: number) => void;
+  onHpMaxChange: (value: number) => void;
+  onTempHpChange: (value: number) => void;
   onHitDiceCommit: (updatedLog: HitDieRollEntry[], hpDelta: number) => void;
 }
 
 /**
  * Horizontal bar of combat statistics.
- * Renders HP (with hit dice counter + roller), AC, initiative, speed (with
- * bloodline speed panel), and proficiency as labeled stat chips.
+ * Renders HP (with hit dice counter + roller and editable current/max/temp
+ * inputs in edit mode), AC, initiative, speed (with bloodline speed panel),
+ * and proficiency as labeled stat chips.
  *
  * @component
  * @param {CombatStatsRowProps} props - Component props
@@ -74,6 +84,10 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
   vocations,
   hitDiceLog,
   conMod,
+  editing,
+  onHpCurrentChange,
+  onHpMaxChange,
+  onTempHpChange,
   onHitDiceCommit,
 }) => {
   const t = useTranslations('characterSheet');
@@ -98,16 +112,49 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
             onCommit={onHitDiceCommit}
           />
         </div>
-        <span
-          className={styles.statChipValue}
-          aria-label={t('ariaHp', {
-            current: hpCurrent,
-            max: hpMax,
-            temp: tempHp,
-          })}>
-          {hpCurrent}/{hpMax}
-          {tempHp > 0 && <span className={styles.tempHp}> +{tempHp}</span>}
-        </span>
+        {editing ? (
+          <span className={styles.hpEditRow}>
+            <NumericInput
+              value={hpCurrent}
+              min={0}
+              size='sm'
+              className={styles.hpEditInput}
+              ariaLabel={t('ariaHpCurrentInput')}
+              onChange={(v) => onHpCurrentChange(v ?? 0)}
+            />
+            <span aria-hidden='true'>/</span>
+            <NumericInput
+              value={hpMax}
+              min={0}
+              size='sm'
+              className={styles.hpEditInput}
+              ariaLabel={t('ariaHpMaxInput')}
+              onChange={(v) => onHpMaxChange(v ?? 0)}
+            />
+            <span className={styles.hpEditTempLabel} aria-hidden='true'>
+              +
+            </span>
+            <NumericInput
+              value={tempHp}
+              min={0}
+              size='sm'
+              className={styles.hpEditInput}
+              ariaLabel={t('ariaTempHpInput')}
+              onChange={(v) => onTempHpChange(v ?? 0)}
+            />
+          </span>
+        ) : (
+          <span
+            className={styles.statChipValue}
+            aria-label={t('ariaHp', {
+              current: hpCurrent,
+              max: hpMax,
+              temp: tempHp,
+            })}>
+            {hpCurrent}/{hpMax}
+            {tempHp > 0 && <span className={styles.tempHp}> +{tempHp}</span>}
+          </span>
+        )}
       </div>
 
       <div className={styles.statChip}>

@@ -101,5 +101,17 @@
   "xpLabel": "XP",
   "levelLabel": "Level",
   "ariaExperienceInput": "Experience points",
-  "ariaLevelInput": "Character level"
+  "ariaLevelInput": "Character level",
+  "levelMismatchChip": "⚠ Vocations: {sum} ≠ Level {level}",
+  "levelMismatchTitle": "Vocation levels sum to {sum} but the global character level is {level}.",
+  "vocationExceedsGlobalChip": "⚠ Lv. {vocation} > Global {level}",
+  "vocationExceedsGlobalTitle": "This vocation has level {vocation}, which exceeds the global character level ({level}).",
+  "ariaHpCurrentInput": "Current hit points",
+  "ariaHpMaxInput": "Maximum hit points",
+  "ariaTempHpInput": "Temporary hit points",
+  "tempHpLabel": "Temp HP",
+  "rollAll": "Roll All",
+  "averageAll": "Average All",
+  "ariaRollAllHitDice": "Roll all unrolled hit dice",
+  "ariaAverageAllHitDice": "Use the average for all unrolled hit dice"
 }

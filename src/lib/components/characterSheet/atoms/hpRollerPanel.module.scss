@@ -72,6 +72,26 @@
 }
 
 /**
+ * Bulk action row (Roll All / Average All) shown above the per-level rows
+ * when at least one unconfirmed entry exists.
+ */
+.bulkActions {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem 0.4rem;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 0.25rem;
+}
+
+/**
+ * Single bulk action button.
+ */
+.bulkBtn {
+  @include button-secondary(0.2rem 0.5rem, 0.7rem);
+  flex: 1;
+}
+
+/**
  * One vocation group.
  */
 .group {

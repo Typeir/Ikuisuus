@@ -62,10 +62,11 @@ export function getTotalCharacterLevel(character: CharacterSheet): number {
 }
 
 /**
- * Derives the full XP / level display block for a character. The character's
- * stored `experience` is preserved when it already meets or exceeds the floor
- * for the derived total level; otherwise it is raised to that floor so the
- * XP bar never lags behind a manually entered level.
+ * Derives the full XP / level display block for a character. When vocations
+ * drive the total level, `experience` is locked to that level's XP floor (so
+ * decreasing a vocation level decreases XP and the XP bar in lock-step). When
+ * no vocations are active, the stored `experience` is preserved but raised to
+ * the floor of the manually-entered level if needed.
  *
  * @function getCharacterDerived
  * @param {CharacterSheet} character - Character sheet to inspect
@@ -85,7 +86,7 @@ export function getCharacterDerived(
       : getXPForLevel(ceilingLevel);
 
   const storedXp = character.experience ?? 0;
-  const experience = Math.max(storedXp, floor);
+  const experience = hasActiveVocations ? floor : Math.max(storedXp, floor);
 
   const xpProgressPercent =
     cappedLevel >= MAX_XP_LEVEL

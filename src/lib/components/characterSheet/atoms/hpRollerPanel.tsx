@@ -99,6 +99,53 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
     );
   }, []);
 
+  /**
+   * Roll every unrolled, unconfirmed entry AND commit each new result to HP
+   * in a single click. Already-rolled (but unconfirmed) entries also get
+   * committed using their existing result. Designed for the
+   * "create a character and fill HP" workflow.
+   */
+  const handleRollAll = useCallback(() => {
+    let totalDelta = 0;
+    const updated = localLog.map((e) => {
+      if (e.addedToHp) return e;
+      let result = e.result;
+      if (result === null) {
+        const faces = parseInt(e.dieType, 10);
+        result = Number.isFinite(faces) && faces > 0 ? rollDie(faces) : 1;
+      }
+      totalDelta += result + conMod;
+      return { ...e, result, addedToHp: true };
+    });
+    if (totalDelta === 0 && updated.every((e, i) => e === localLog[i])) return;
+    setLocalLog(updated);
+    onCommit(updated, totalDelta);
+  }, [localLog, conMod, onCommit]);
+
+  /**
+   * Fill every unrolled, unconfirmed entry with the die's average value
+   * (D&D-style `floor(faces / 2) + 1`) AND commit each result to HP in a
+   * single click. Already-rolled (but unconfirmed) entries are committed
+   * using their existing result.
+   */
+  const handleAverageAll = useCallback(() => {
+    let totalDelta = 0;
+    const updated = localLog.map((e) => {
+      if (e.addedToHp) return e;
+      let result = e.result;
+      if (result === null) {
+        const faces = parseInt(e.dieType, 10);
+        result =
+          Number.isFinite(faces) && faces > 0 ? Math.floor(faces / 2) + 1 : 1;
+      }
+      totalDelta += result + conMod;
+      return { ...e, result, addedToHp: true };
+    });
+    if (totalDelta === 0 && updated.every((e, i) => e === localLog[i])) return;
+    setLocalLog(updated);
+    onCommit(updated, totalDelta);
+  }, [localLog, conMod, onCommit]);
+
   const handleConfirm = useCallback(
     (entryId: string) => {
       const entry = localLog.find((e) => e.id === entryId);
@@ -130,6 +177,25 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
       panelRole='dialog'
       panelLabel='Hit dice roller'>
       <div className={styles.panelHeader}>Hit Dice</div>
+
+      {unrolledCount > 0 && (
+        <div className={styles.bulkActions}>
+          <button
+            type='button'
+            className={styles.bulkBtn}
+            onClick={handleRollAll}
+            aria-label='Roll all unrolled hit dice'>
+            Roll All
+          </button>
+          <button
+            type='button'
+            className={styles.bulkBtn}
+            onClick={handleAverageAll}
+            aria-label='Use the average for all unrolled hit dice'>
+            Average All
+          </button>
+        </div>
+      )}
 
       {groups.length === 0 && (
         <p className={styles.empty}>No hit dice tracked yet.</p>
