@@ -5,6 +5,7 @@
   "libraryTitleLarge": "Library of Ikuisuus",
   "tools": {
     "title": "Tools",
+    "label": "Tools",
     "encounterCreator": "Encounter Creator",
     "worldSim": "World Sim",
     "mdxEditor": "MDX Editor",

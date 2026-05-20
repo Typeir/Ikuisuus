@@ -96,6 +96,41 @@
   gap: 0.4rem;
 }
 
+.equipmentTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+
+  th {
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+    padding: 0.2rem 0.3rem 0.4rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  td {
+    padding: 0.2rem 0.3rem;
+    vertical-align: middle;
+  }
+}
+
+.equipmentColName {
+  width: 100%;
+}
+
+.equipmentColNum {
+  width: 5.5rem;
+  white-space: nowrap;
+}
+
+.equipmentColAction {
+  width: 1.8rem;
+}
+
 .equipmentRow {
   display: flex;
   align-items: center;
@@ -104,12 +139,24 @@
 
 .equipmentInput {
   flex: 1 1 auto;
-  padding: 0.35rem 0.6rem;
+  width: 100%;
+  padding: 0.3rem 0.5rem;
   border: 1px solid var(--color-border);
   border-radius: 4px;
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 0.85rem;
+}
+
+.equipmentNumInput {
+  width: 4.5rem;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  text-align: right;
 }
 
 .iconBtn {

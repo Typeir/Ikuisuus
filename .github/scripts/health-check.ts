@@ -28,6 +28,7 @@ import { runCheck as checkMdxFormat } from './checkMdxFormat';
 import { runCheck as checkOrphanedMdxLinks } from './checkOrphanedMdxLinks';
 import { runCheck as checkSmokeTests } from './checkSmokeTests';
 import { runCheck as checkTestGaps } from './checkTestGaps';
+import { runCheck as checkTsCompilation } from './checkTsCompilation';
 import type { CheckResult, HealthReport } from './health-check-types';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -68,6 +69,7 @@ const CHECKS: CheckEntry[] = [
   { name: 'mdx-format', run: checkMdxFormat },
   { name: 'orphaned-mdx-links', run: checkOrphanedMdxLinks },
   { name: 'smoke-tests', run: checkSmokeTests },
+  { name: 'type-script-check', run: checkTsCompilation },
 ];
 
 /**

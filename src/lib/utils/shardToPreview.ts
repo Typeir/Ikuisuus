@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-import type { PreviewKind } from '@/lib/components/characterSheet/pagePreviewProvider';
+import type { PreviewKind } from '@/lib/components/characterSheet/pagePreview/pagePreviewProvider';
 
 /**
  * Preview entry data extracted from a shard.

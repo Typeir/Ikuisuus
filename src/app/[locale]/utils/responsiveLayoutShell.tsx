@@ -17,16 +17,16 @@
 'use client';
 
 import tertiaryStyles from '@/lib/components/button/tertiaryButton.module.scss';
-import Icon from '@/lib/components/icon/icon';
 import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
+import Icon from '@/lib/components/icon/icon';
 import SidebarShell from '@/lib/components/sidebar/SidebarShell';
 import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
-  useSidebarMenuActions,
-  useSidebarMenuState,
-  useThemeActions,
-  useThemeState,
+    useSidebarMenuActions,
+    useSidebarMenuState,
+    useThemeActions,
+    useThemeState,
 } from '@/lib/context/PersistentUiContext';
 import { Theme } from '@/lib/enums/themes';
 import { Moon, Sun, Wrench } from 'lucide-react';
@@ -252,7 +252,9 @@ function BaseResponsiveLayoutShell({
               trigger={
                 <>
                   <Wrench size={18} aria-hidden='true' />
-                  <span className='hidden lg:inline text-sm'>Tools</span>
+                  <span className='hidden lg:inline text-sm'>
+                    {t('tools.label')}
+                  </span>
                 </>
               }
             />

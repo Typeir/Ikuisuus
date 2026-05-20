@@ -10,8 +10,11 @@
  * @since 1.0.0
  */
 
-import { VocationSelector } from '@/lib/components/characterSheet/vocationSelector';
-import type { CharacterSheet as CharacterSheetType, VocationEntry } from '@/lib/types/character';
+import { VocationSelector } from '@/lib/components/characterSheet/builder/vocationSelector';
+import type {
+    CharacterSheet as CharacterSheetType,
+    VocationEntry,
+} from '@/lib/types/character';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -147,9 +150,13 @@ describe('VocationSelector — edit mode', () => {
       />,
     );
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /colBloodline/i })).toBeTruthy();
+      expect(
+        screen.getByRole('button', { name: /colBloodline/i }),
+      ).toBeTruthy();
       expect(screen.getByRole('button', { name: /colVocation/i })).toBeTruthy();
-      expect(screen.getByRole('button', { name: /colSpecialization/i })).toBeTruthy();
+      expect(
+        screen.getByRole('button', { name: /colSpecialization/i }),
+      ).toBeTruthy();
     });
   });
 
@@ -165,7 +172,9 @@ describe('VocationSelector — edit mode', () => {
     );
     await waitFor(() => screen.getByRole('button', { name: /colBloodline/i }));
 
-    await userEvent.click(screen.getByRole('button', { name: /colBloodline/i }));
+    await userEvent.click(
+      screen.getByRole('button', { name: /colBloodline/i }),
+    );
     await userEvent.click(screen.getByRole('option', { name: 'Empyrean' }));
 
     expect(onChange).toHaveBeenCalledWith(
@@ -219,9 +228,7 @@ describe('VocationSelector — edit mode', () => {
         vocations={[emptyVocation]}
       />,
     );
-    await waitFor(() =>
-      screen.getByRole('button', { name: /addVocation/i }),
-    );
+    await waitFor(() => screen.getByRole('button', { name: /addVocation/i }));
     expect(screen.getByRole('button', { name: /addVocation/i })).toBeTruthy();
   });
 

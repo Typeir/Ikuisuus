@@ -41,6 +41,7 @@ vi.mock('next-intl', () => ({
       }
       return key;
     },
+  useLocale: () => 'en',
 }));
 
 // Mock useNotifications to prevent NotificationProvider requirement in tests
@@ -312,7 +313,7 @@ describe('PlayMode Component', () => {
 
     it('should render combat info correctly', () => {
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       // Verify combat info structure exists (text appears in multiple elements)
       const roundElements = screen.getAllByText(/round/i);
@@ -326,7 +327,7 @@ describe('PlayMode Component', () => {
 
     it('should render all combatants in turn order', () => {
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const combatantRows = screen.getAllByTestId('combatant-row');
       expect(combatantRows.length).toBe(3);
@@ -340,7 +341,7 @@ describe('PlayMode Component', () => {
     it('should advance to next combatant on end turn', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat({ activeTurnIndex: 0 });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -359,7 +360,7 @@ describe('PlayMode Component', () => {
       const user = userEvent.setup();
       mockGetNextActiveCombatantIndex.mockReturnValue(0);
       const combat = createMockCombat({ activeTurnIndex: 2 });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -374,7 +375,7 @@ describe('PlayMode Component', () => {
       const user = userEvent.setup();
       mockGetNextActiveCombatantIndex.mockReturnValue(1);
       const combat = createMockCombat({ activeTurnIndex: 0 });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -403,7 +404,7 @@ describe('PlayMode Component', () => {
       });
 
       mockGetNextActiveCombatantIndex.mockReturnValue(0);
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -436,7 +437,7 @@ describe('PlayMode Component', () => {
       });
 
       mockGetNextActiveCombatantIndex.mockReturnValue(1);
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -491,7 +492,7 @@ describe('PlayMode Component', () => {
       });
 
       mockGetNextActiveCombatantIndex.mockReturnValue(0);
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const endTurnButton = screen.getByText('endTurn');
 
@@ -557,7 +558,7 @@ describe('PlayMode Component', () => {
       });
 
       mockGetNextActiveCombatantIndex.mockReturnValue(1);
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -602,7 +603,7 @@ describe('PlayMode Component', () => {
       });
 
       mockGetNextActiveCombatantIndex.mockReturnValue(1);
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const endTurnButton = screen.getByText('endTurn');
       await user.click(endTurnButton);
@@ -620,7 +621,7 @@ describe('PlayMode Component', () => {
     it('should resort combatants by initiative', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const sortButton = screen.getByText('sortByInitiative');
       await user.click(sortButton);
@@ -636,7 +637,7 @@ describe('PlayMode Component', () => {
     it('should add session-only combatant with manual input', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const input = screen.getByPlaceholderText('addSessionOnlyCombatant');
       const addButton = screen.getByText('addCombatant');
@@ -655,7 +656,7 @@ describe('PlayMode Component', () => {
     it('should not add session-only combatant with empty name', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const addButton = screen.getByText('addCombatant');
       await user.click(addButton);
@@ -672,7 +673,7 @@ describe('PlayMode Component', () => {
         ],
         turnOrder: ['session-1', 'combatant-2'],
       });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       // Find remove buttons by title attribute
       const removeButtons = screen.getAllByTitle(/remove/i);
@@ -705,7 +706,7 @@ describe('PlayMode Component', () => {
 
     it('should render MonsterImporter component', () => {
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       // MonsterImporter is rendered in PlayMode
       // The actual import functionality is tested comprehensively in MonsterImporter.test.tsx
@@ -719,7 +720,7 @@ describe('PlayMode Component', () => {
       // The actual error handling is tested in MonsterImporter.test.tsx
       const combat = createMockCombat();
       expect(() => {
-        render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+        render(<PlayMode combat={combat} onExit={mockOnExit} />);
       }).not.toThrow();
     });
   });
@@ -728,7 +729,7 @@ describe('PlayMode Component', () => {
     it('should end combat and exit', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const endCombatButton = screen.getByText('endCombat');
       await user.click(endCombatButton);
@@ -741,7 +742,7 @@ describe('PlayMode Component', () => {
     it('should export combat as JSON', async () => {
       const user = userEvent.setup();
       const combat = createMockCombat();
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       const exportButton = screen.getByText('exportInProgress');
       await user.click(exportButton);
@@ -760,7 +761,7 @@ describe('PlayMode Component', () => {
   describe('Edge Cases', () => {
     it('should handle empty turn order', () => {
       const combat = createMockCombat({ combatants: [], turnOrder: [] });
-      render(<PlayMode combat={combat} onExit={mockOnExit} locale='en' />);
+      render(<PlayMode combat={combat} onExit={mockOnExit} />);
 
       // Text is split across elements, use regex\n      expect(screen.getByText(/turn/i)).toBeInTheDocument();
     });
@@ -770,7 +771,7 @@ describe('PlayMode Component', () => {
         turnOrder: ['combatant-1', 'invalid-id', 'combatant-3'],
       });
       const { container } = render(
-        <PlayMode combat={combat} onExit={mockOnExit} locale='en' />,
+        <PlayMode combat={combat} onExit={mockOnExit} />,
       );
 
       const combatantRows = container.querySelectorAll(

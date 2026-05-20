@@ -9,7 +9,7 @@
  * @since 1.0.0
  */
 
-import { ShardChip } from '@/lib/components/characterSheet/shardChip';
+import { ShardChip } from '@/lib/components/characterSheet/shards/shardChip';
 import type { CharacterShard } from '@/lib/types/character';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -38,13 +38,11 @@ vi.mock('@/lib/components/ui/asyncTooltip', () => ({
 }));
 
 vi.mock('@/lib/components/ui/chip', () => ({
-  Chip: ({
-    label,
-    variant,
-  }: {
-    label: string;
-    variant: string;
-  }) => <span data-testid='chip' data-variant={variant}>{label}</span>,
+  Chip: ({ label, variant }: { label: string; variant: string }) => (
+    <span data-testid='chip' data-variant={variant}>
+      {label}
+    </span>
+  ),
 }));
 
 vi.mock('@/lib/mdx/compileRuntime', () => ({
@@ -70,22 +68,32 @@ describe('ShardChip', () => {
 
   it('shows heading as tooltip fallback', () => {
     render(<ShardChip shard={baseShard} />);
-    expect(screen.getByTestId('tooltip-fallback')).toHaveTextContent('Test Feat');
+    expect(screen.getByTestId('tooltip-fallback')).toHaveTextContent(
+      'Test Feat',
+    );
   });
 
   it('maps color=primary to boon variant', () => {
-    render(<ShardChip shard={{ ...baseShard, category: 'boon' }} color='primary' />);
+    render(
+      <ShardChip shard={{ ...baseShard, category: 'boon' }} color='primary' />,
+    );
     expect(screen.getByTestId('chip')).toHaveAttribute('data-variant', 'boon');
   });
 
   it('maps color=secondary to vocation-feature variant', () => {
     render(<ShardChip shard={baseShard} color='secondary' />);
-    expect(screen.getByTestId('chip')).toHaveAttribute('data-variant', 'vocation-feature');
+    expect(screen.getByTestId('chip')).toHaveAttribute(
+      'data-variant',
+      'vocation-feature',
+    );
   });
 
   it('maps color=tertiary to specialization-feature variant', () => {
     render(<ShardChip shard={baseShard} color='tertiary' />);
-    expect(screen.getByTestId('chip')).toHaveAttribute('data-variant', 'specialization-feature');
+    expect(screen.getByTestId('chip')).toHaveAttribute(
+      'data-variant',
+      'specialization-feature',
+    );
   });
 
   it('infers variant from shard.category when no color given', () => {
@@ -94,7 +102,12 @@ describe('ShardChip', () => {
   });
 
   it('infers vocation-feature variant from category', () => {
-    render(<ShardChip shard={{ ...baseShard, category: 'vocation-feature' }} />);
-    expect(screen.getByTestId('chip')).toHaveAttribute('data-variant', 'vocation-feature');
+    render(
+      <ShardChip shard={{ ...baseShard, category: 'vocation-feature' }} />,
+    );
+    expect(screen.getByTestId('chip')).toHaveAttribute(
+      'data-variant',
+      'vocation-feature',
+    );
   });
 });

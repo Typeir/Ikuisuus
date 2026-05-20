@@ -12,14 +12,16 @@
 
 'use client';
 
-import { ContentShardPanel } from '@/lib/components/characterSheet/contentShardPanel';
-import { ShardChip } from '@/lib/components/characterSheet/shardChip';
+import { ContentShardPanel } from '@/lib/components/characterSheet/shards/contentShardPanel';
+import { ShardChip } from '@/lib/components/characterSheet/shards/shardChip';
+import { useSheetEditing } from '@/lib/components/characterSheet/context/activeSheetContext';
 import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
+import { shardToPreview } from '@/lib/utils/shardToPreview';
 import { useCallback, useMemo } from 'react';
-import { FeatPicker } from '../featPicker';
+import { FeatPicker } from '../builder/featPicker';
 import styles from './tabs.module.scss';
 
 /**
@@ -27,15 +29,11 @@ import styles from './tabs.module.scss';
  *
  * @interface FeatsTabProps
  * @property {CharacterSheetType} data - Active character data
- * @property {boolean} editing - Whether edit mode is active
  * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch the draft
- * @property {string} [locale] - Content locale (default `en`)
  */
 export interface FeatsTabProps {
   data: CharacterSheetType;
-  editing: boolean;
   onChange: (patch: Partial<CharacterSheetType>) => void;
-  locale?: string;
 }
 
 /**
@@ -47,10 +45,9 @@ export interface FeatsTabProps {
  */
 export const FeatsTab: React.FC<FeatsTabProps> = ({
   data,
-  editing,
   onChange,
-  locale = 'en',
 }) => {
+  const editing = useSheetEditing();
   const selectedFeats = useMemo(
     () => (data.selectedFeats ?? []) as CharacterShard[],
     [data.selectedFeats],
@@ -72,17 +69,14 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({
   );
 
   const latest = selectedFeats[selectedFeats.length - 1];
+  const latestFeatSlug = latest
+    ? (shardToPreview(latest.sourceFile)?.slug ??
+      latest.id.replace(/^feat::/, ''))
+    : null;
 
   return (
     <div className={styles.twoColumns}>
       <div className={styles.column}>
-        {editing && (
-          <FeatPicker
-            selectedFeats={selectedFeats}
-            onToggle={handleToggle}
-            locale={locale}
-          />
-        )}
         {selectedFeats.length > 0 && (
           <div className={styles.chipCloud}>
             {selectedFeats.map((feat) => (
@@ -91,22 +85,19 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({
                 shard={feat}
                 color='primary'
                 onRemove={editing ? () => handleRemove(feat.id) : undefined}
-                locale={locale}
               />
             ))}
           </div>
         )}
-        {!editing && selectedFeats.length === 0 && (
-          <div className={styles.empty}>No feats selected.</div>
-        )}
+        <FeatPicker
+          selectedFeats={selectedFeats}
+          onToggle={handleToggle}
+          readOnly={!editing}
+        />
       </div>
       <div className={styles.column}>
-        {latest ? (
-          <ContentShardPanel
-            contentType='feats'
-            slug={latest.sourceFile}
-            locale={locale}
-          />
+        {latestFeatSlug ? (
+          <ContentShardPanel contentType='feats' slug={latestFeatSlug} />
         ) : (
           <div className={styles.empty}>Select a feat to preview.</div>
         )}

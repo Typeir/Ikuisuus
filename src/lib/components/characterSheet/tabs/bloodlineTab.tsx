@@ -11,14 +11,16 @@
 
 'use client';
 
-import { ContentShardPanel } from '@/lib/components/characterSheet/contentShardPanel';
+import { useSheetEditing } from '@/lib/components/characterSheet/context/activeSheetContext';
+import { ContentShardPanel } from '@/lib/components/characterSheet/shards/contentShardPanel';
+import { ShardChip } from '@/lib/components/characterSheet/shards/shardChip';
 import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
-import { BoonPicker } from '../boonPicker';
+import { BoonPicker } from '../builder/boonPicker';
 import styles from './tabs.module.scss';
 
 /**
@@ -26,15 +28,11 @@ import styles from './tabs.module.scss';
  *
  * @interface BloodlineTabProps
  * @property {CharacterSheetType} data - Active character data
- * @property {boolean} editing - Whether edit mode is active
  * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch the draft
- * @property {string} [locale] - Content locale (default `en`)
  */
 export interface BloodlineTabProps {
   data: CharacterSheetType;
-  editing: boolean;
   onChange: (patch: Partial<CharacterSheetType>) => void;
-  locale?: string;
 }
 
 /**
@@ -46,15 +44,23 @@ export interface BloodlineTabProps {
  */
 export const BloodlineTab: React.FC<BloodlineTabProps> = ({
   data,
-  editing,
   onChange,
-  locale = 'en',
 }) => {
   const t = useTranslations('characterSheet');
+  const editing = useSheetEditing();
 
   const handleBoonsToggle = useCallback(
     (boons: CharacterShard[]) => onChange({ selectedBoons: boons }),
     [onChange],
+  );
+
+  const handleRemoveBoon = useCallback(
+    (id: string) => {
+      onChange({
+        selectedBoons: data.selectedBoons.filter((b) => b.id !== id),
+      });
+    },
+    [data.selectedBoons, onChange],
   );
 
   if (!data.bloodlineSlug) {
@@ -64,24 +70,28 @@ export const BloodlineTab: React.FC<BloodlineTabProps> = ({
   return (
     <div className={styles.twoColumns}>
       <div className={styles.column}>
-        {editing ? (
-          <BoonPicker
-            bloodlineSlug={data.bloodlineSlug}
-            selectedBoons={data.selectedBoons}
-            boonBudget={data.boonBudget}
-            onToggle={handleBoonsToggle}
-            locale={locale}
-          />
-        ) : (
-          <div className={styles.placeholderCard}>{t('edit')}</div>
+        {data.selectedBoons.length > 0 && (
+          <div className={styles.chipCloud}>
+            {data.selectedBoons.map((boon) => (
+              <ShardChip
+                key={boon.id}
+                shard={boon}
+                color='primary'
+                onRemove={editing ? () => handleRemoveBoon(boon.id) : undefined}
+              />
+            ))}
+          </div>
         )}
+        <BoonPicker
+          bloodlineSlug={data.bloodlineSlug}
+          selectedBoons={data.selectedBoons}
+          boonBudget={data.boonBudget}
+          onToggle={handleBoonsToggle}
+          readOnly={!editing}
+        />
       </div>
       <div className={styles.column}>
-        <ContentShardPanel
-          contentType='bloodlines'
-          slug={data.bloodlineSlug}
-          locale={locale}
-        />
+        <ContentShardPanel contentType='bloodlines' slug={data.bloodlineSlug} />
       </div>
     </div>
   );

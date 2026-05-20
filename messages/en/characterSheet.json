@@ -20,6 +20,9 @@
   "ariaEditCharacter": "Edit character",
   "ariaAbilityScores": "Ability scores",
   "ariaSelectedBoons": "Selected boons",
+  "ariaSelectedFeats": "Selected feats",
+  "ariaSelectedFeatures": "Selected features",
+  "features": "Features",
   "ariaTabs": "Character sheet sections",
   "ariaBoonBudget": "Boon budget",
   "tabOverview": "Overview",
@@ -99,7 +102,24 @@
   "ariaRemoveVocation": "Remove vocation",
   "addVocation": "+ Add Vocation",
   "xpLabel": "XP",
+  "xpToNextLevelLabel": "XP to next level",
+  "unassignedVocationsWarning": "{count, plural, =1 {# unassigned level} other {# unassigned levels}}",
   "levelLabel": "Level",
   "ariaExperienceInput": "Experience points",
-  "ariaLevelInput": "Character level"
+  "ariaLevelInput": "Character level",
+  "deleteConfirmTitle": "Delete Character?",
+  "deleteConfirmBody": "Are you sure you want to delete \"{name}\"? This cannot be undone.",
+  "deleteConfirmCancel": "Cancel",
+  "deleteConfirmConfirm": "Delete",
+  "coinPouch": {
+    "addDenomination": "Add denomination",
+    "addSystem": "Add system"
+  },
+  "feats": {
+    "loading": "Loading feats…",
+    "prereq": "Prereq",
+    "noAvailable": "No feats available.",
+    "searchPlaceholder": "Search…"
+  },
+  "searchPlaceholder": "Search…"
 }

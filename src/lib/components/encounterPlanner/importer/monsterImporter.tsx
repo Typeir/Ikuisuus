@@ -32,7 +32,7 @@
 
 import { logger } from '@/lib/logging/logger';
 import { getMonsterBySlug, MonsterData } from '@/lib/utils/monsterCache';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import styles from './monsterImporter.module.scss';
 import { QuantityPopup } from './quantityPopup';
@@ -44,12 +44,10 @@ const log = logger.child({ module: 'MonsterImporter' });
  * Props for MonsterImporter component
  *
  * @interface MonsterImporterProps
- * @property {string} locale - Current locale for API requests and translations
  * @property {(monsterData: MonsterData, quantity: number) => void} onImport - Callback when creatures are confirmed
  * @property {boolean} [disabled] - Whether the importer is disabled
  */
 export interface MonsterImporterProps {
-  locale: string;
   onImport: (monsterData: MonsterData, quantity: number) => void;
   disabled?: boolean;
 }
@@ -78,7 +76,6 @@ interface PendingImport {
  *
  * @component
  * @param {MonsterImporterProps} props - Component props
- * @param {string} props.locale - Locale for API requests
  * @param {(monsterData: MonsterData, quantity: number) => void} props.onImport - Callback with monster data and quantity
  * @param {boolean} [props.disabled] - Whether the importer is disabled
  * @returns {JSX.Element} Rendered monster importer
@@ -97,11 +94,11 @@ interface PendingImport {
  * ```
  */
 export const MonsterImporter: React.FC<MonsterImporterProps> = ({
-  locale,
   onImport,
   disabled = false,
 }) => {
   const t = useTranslations('encounterPlanner');
+  const locale = useLocale();
   const { index, isLoading: indexLoading, loadIndex } = useMonsterIndex(locale);
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(
     null,

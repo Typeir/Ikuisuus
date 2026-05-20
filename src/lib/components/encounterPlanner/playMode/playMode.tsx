@@ -33,12 +33,10 @@ import { usePlayModeHandlers } from './usePlayModeHandlers';
  * @interface PlayModeProps
  * @property {InProgressCombat} combat - Initial combat state
  * @property {() => void} onExit - Callback when exiting play mode
- * @property {string} locale - Current locale for API requests
  */
 interface PlayModeProps {
   combat: InProgressCombat;
   onExit: () => void;
-  locale: string;
 }
 
 /**
@@ -48,13 +46,11 @@ interface PlayModeProps {
  * @param {PlayModeProps} props - Component props
  * @param {InProgressCombat} props.combat - Initial combat state
  * @param {() => void} props.onExit - Callback when exiting play mode
- * @param {string} props.locale - Current locale for API requests
  * @returns {JSX.Element} Rendered play mode interface
  */
 export const PlayMode: React.FC<PlayModeProps> = ({
   combat: initialCombat,
   onExit,
-  locale,
 }) => {
   const t = useTranslations('encounterPlanner');
   const notifications = useNotifications();
@@ -87,7 +83,6 @@ export const PlayMode: React.FC<PlayModeProps> = ({
   } = usePlayModeHandlers({
     combat,
     setCombat,
-    locale,
     onExit,
     lifecycle,
     notifications,
@@ -191,7 +186,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({
         </div>
 
         <div className={styles.sessionOnlyRow}>
-          <MonsterImporter locale={locale} onImport={handleImportCreatures} />
+          <MonsterImporter onImport={handleImportCreatures} />
         </div>
 
         <div className={styles.sessionOnlyRow}>
@@ -235,7 +230,6 @@ export const PlayMode: React.FC<PlayModeProps> = ({
               className={`${styles.combatantWrapper} ${isActive ? styles.active : ''} ${combatant.slain ? styles.slain : ''}`}>
               <CombatantRow
                 combatant={combatant}
-                locale={locale}
                 onUpdate={(updated: InProgressCombatant) =>
                   handleUpdateCombatant(index, () => updated)
                 }

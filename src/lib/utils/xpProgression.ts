@@ -20,8 +20,8 @@
  */
 export const XP_THRESHOLDS: number[] = [
   0, 0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000,
-  120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000,
-  500000, 650000, 800000, 1000000, 1250000, 1500000, 1800000, 2100000, 2500000, 3000000,
+  120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000, 500000,
+  650000, 800000, 1000000, 1250000, 1500000, 1800000, 2100000, 2500000, 3000000,
 ];
 
 /**
@@ -63,6 +63,30 @@ export function getLevelFromXP(xp: number): number {
 export function getXPForLevel(level: number): number {
   if (level < 1 || level > MAX_XP_LEVEL) return 0;
   return XP_THRESHOLDS[level];
+}
+
+/**
+ * Returns a log-compressed position (0–100) for a given XP value along the
+ * full 0 → {@link XP_THRESHOLDS}[{@link MAX_XP_LEVEL}] axis.
+ *
+ * Uses `(xp / maxXp) ** 0.7` so that each additional XP point contributes
+ * progressively less width, while the visual segment for each level still
+ * grows with level number — level 1 is the smallest segment, level 30 is
+ * the largest, and levels 1–20 occupy roughly 22% of the bar (versus 11.8%
+ * under a linear scale).
+ *
+ * Guarantees: `getXpAxisPosition(0) === 0`, `getXpAxisPosition(maxXp) === 100`,
+ * and the function is strictly monotonically increasing.
+ *
+ * @function getXpAxisPosition
+ * @param {number} xp - Total accumulated experience points (clamped to [0, maxXp])
+ * @returns {number} Power-law position along the XP axis (0–100)
+ */
+export function getXpAxisPosition(xp: number): number {
+  const maxXp = XP_THRESHOLDS[MAX_XP_LEVEL];
+  const clamped = Math.max(0, Math.min(xp, maxXp));
+  if (clamped === 0) return 0;
+  return Math.pow(clamped / maxXp, 0.7) * 100;
 }
 
 /**

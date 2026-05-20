@@ -242,6 +242,7 @@ export default defineConfig({
       '@/lib': path.resolve(__dirname, './src/lib'),
       '@/app': path.resolve(__dirname, './src/app'),
       '@scripts': path.resolve(__dirname, './scripts'),
+      '@tests': path.resolve(__dirname, './tests'),
     },
   },
 });

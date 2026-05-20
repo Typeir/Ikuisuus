@@ -8,44 +8,44 @@
  * @since 1.0.0
  */
 
-export { AbilityScoreBlock } from './abilityScoreBlock';
-export type { AbilityScoreBlockProps } from './abilityScoreBlock';
+export { AbilityScoreBlock } from './stats/abilityScoreBlock';
+export type { AbilityScoreBlockProps } from './stats/abilityScoreBlock';
 
-export { AttacksTable } from './attacksTable';
-export type { AttacksTableProps } from './attacksTable';
+export { AttacksTable } from './stats/attacksTable';
+export type { AttacksTableProps } from './stats/attacksTable';
 
-export { BoonPicker } from './boonPicker';
-export type { BoonPickerProps } from './boonPicker';
+export { BoonPicker } from './builder/boonPicker';
+export type { BoonPickerProps } from './builder/boonPicker';
 
-export { ContentShardPanel } from './contentShardPanel';
+export { ContentShardPanel } from './shards/contentShardPanel';
 export type {
     ContentShardPanelProps,
     ContentShardType
-} from './contentShardPanel';
+} from './shards/contentShardPanel';
 
-export { CharacterRoster } from './characterRoster';
-export type { CharacterRosterProps } from './characterRoster';
+export { CharacterRoster } from './roster/characterRoster';
+export type { CharacterRosterProps } from './roster/characterRoster';
 
 export { ActiveCharacterSheet } from './activeCharacterSheet';
 
 export { CharacterSheet } from './characterSheet';
 export type { CharacterSheetProps } from './characterSheet';
 
-export { CombatStatsRow } from './combatStatsRow';
-export type { CombatStatsRowProps } from './combatStatsRow';
+export { CombatStatsRow } from './stats/combatStatsRow';
+export type { CombatStatsRowProps } from './stats/combatStatsRow';
 
-export { FeatureViewer } from './featureViewer';
-export type { FeatureViewerProps } from './featureViewer';
+export { FeatureViewer } from './builder/featureViewer';
+export type { FeatureViewerProps } from './builder/featureViewer';
 
-export { NotesSection } from './notesSection';
-export type { NoteFields, NotesSectionProps } from './notesSection';
+export { NotesSection } from './notes/notesSection';
+export type { NoteFields, NotesSectionProps } from './notes/notesSection';
 
-export { ShardDisplay } from './shardDisplay';
-export type { ShardDisplayProps } from './shardDisplay';
+export { ShardDisplay } from './shards/shardDisplay';
+export type { ShardDisplayProps } from './shards/shardDisplay';
 
-export { SkillsTable } from './skillsTable';
-export type { SkillsTableProps } from './skillsTable';
+export { SkillsTable } from './stats/skillsTable';
+export type { SkillsTableProps } from './stats/skillsTable';
 
-export { VocationSelector } from './vocationSelector';
-export type { VocationSelectorProps } from './vocationSelector';
+export { VocationSelector } from './builder/vocationSelector';
+export type { VocationSelectorProps } from './builder/vocationSelector';
 

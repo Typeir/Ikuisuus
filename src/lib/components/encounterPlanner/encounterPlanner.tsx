@@ -21,8 +21,8 @@
  * ```tsx
  * import { EncounterPlanner } from '@/lib/components/encounterPlanner';
  *
- * export default function Page({ params }) {
- *   return <EncounterPlanner locale={params.locale} />;
+ * export default function Page() {
+ *   return <EncounterPlanner />;
  * }
  * ```
  */
@@ -35,31 +35,31 @@ import { useDebounce } from '@/lib/hooks/useDebounce';
 import { logger } from '@/lib/logging/logger';
 import type { Encounter } from '@/lib/types/encounterPlanner';
 import type {
-  InProgressCombat,
-  InProgressCombatant,
+    InProgressCombat,
+    InProgressCombatant,
 } from '@/lib/types/inProgressCombat';
 import {
-  createEmptyCreature,
-  createEmptyEncounter,
-  createMultipleCreaturesFromMonster,
-  deleteEncounter as deleteEncounterUtil,
-  exportEncounter,
-  getActiveEncounter,
-  getEncounters,
-  importEncounter,
-  saveEncounter,
-  setActiveEncounterId,
+    createEmptyCreature,
+    createEmptyEncounter,
+    createMultipleCreaturesFromMonster,
+    deleteEncounter as deleteEncounterUtil,
+    exportEncounter,
+    getActiveEncounter,
+    getEncounters,
+    importEncounter,
+    saveEncounter,
+    setActiveEncounterId,
 } from '@/lib/utils/encounterStorage';
 import {
-  createInProgressCombat,
-  createInProgressCombatant,
-  getActiveInProgressCombatId,
-  getInProgressCombat,
-  saveInProgressCombat,
-  setActiveInProgressCombatId,
+    createInProgressCombat,
+    createInProgressCombatant,
+    getActiveInProgressCombatId,
+    getInProgressCombat,
+    saveInProgressCombat,
+    setActiveInProgressCombatId,
 } from '@/lib/utils/inProgressCombatStorage';
 import type { MonsterData } from '@/lib/utils/monsterCache';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CombatantRow } from './combatantRow';
 import { EncounterCombobox } from './comboboxes';
@@ -70,11 +70,8 @@ import { PlayMode } from './playMode';
 /**
  * Props for EncounterPlanner component
  * @interface EncounterPlannerProps
- * @property {string} [locale="en"] - Locale for translations and API requests
  */
-interface EncounterPlannerProps {
-  locale?: string;
-}
+interface EncounterPlannerProps {}
 
 /**
  * Main encounter planner component with creature management and persistence.
@@ -82,17 +79,14 @@ interface EncounterPlannerProps {
  * Implements debounced autosave (500ms) to localStorage.
  *
  * @component
- * @param {EncounterPlannerProps} props - Component props
- * @param {string} [props.locale='en'] - Locale for translations and API requests
  * @returns {JSX.Element} Rendered encounter planner interface
  *
  * @example
- * <EncounterPlanner locale="en" />
+ * <EncounterPlanner />
  */
-export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
-  locale = 'en',
-}) => {
+export const EncounterPlanner: React.FC<EncounterPlannerProps> = () => {
   const t = useTranslations('encounterPlanner');
+  const locale = useLocale();
   const notifications = useNotifications();
   const [encounter, setEncounter] = useState<Encounter | null>(null);
   const [encounters, setEncounters] = useState<Encounter[]>([]);
@@ -376,13 +370,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
       : false;
 
   if (inProgressCombat) {
-    return (
-      <PlayMode
-        combat={inProgressCombat}
-        onExit={handleExitPlayMode}
-        locale={locale}
-      />
-    );
+    return <PlayMode combat={inProgressCombat} onExit={handleExitPlayMode} />;
   }
 
   return (
@@ -470,7 +458,7 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
 
         {showCreatureImport && (
           <div className={styles.importContainer}>
-            <MonsterImporter locale={locale} onImport={handleImportCreatures} />
+            <MonsterImporter onImport={handleImportCreatures} />
           </div>
         )}
       </div>
@@ -481,7 +469,6 @@ export const EncounterPlanner: React.FC<EncounterPlannerProps> = ({
             <CombatantRow
               key={creature.id}
               combatant={combatant}
-              locale={locale}
               onUpdate={(updated) => handleUpdateCreature(index, updated)}
               onRemoveSessionOnly={() => handleRemoveCreature(index)}
               disableLocking={true}

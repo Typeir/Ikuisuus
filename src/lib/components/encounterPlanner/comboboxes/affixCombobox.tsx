@@ -28,7 +28,7 @@
 
 import { useAffixIndex } from '@/lib/hooks/data/useEncounterData';
 import type { AffixEntry } from '@/lib/types/encounterPlanner';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import styles from './combobox.module.scss';
 import { ComboboxItem, GenericCombobox } from './genericCombobox';
@@ -46,12 +46,10 @@ interface AffixIndexEntry extends ComboboxItem {
 /**
  * Props for AffixCombobox component
  * @interface AffixComboboxProps
- * @property {string} locale - Current locale for API requests
  * @property {string[]} existingAffixes - Affixes already selected (filtered out)
  * @property {Function} onSelect - Callback when affix is selected
  */
 interface AffixComboboxProps {
-  locale: string;
   existingAffixes: string[];
   onSelect: (affix: AffixEntry) => void;
 }
@@ -62,7 +60,6 @@ interface AffixComboboxProps {
  *
  * @component
  * @param {AffixComboboxProps} props - Component props
- * @param {string} props.locale - Current locale for API requests
  * @param {string[]} props.existingAffixes - Affix names already selected (filtered out of dropdown)
  * @param {(affix: AffixEntry) => void} props.onSelect - Callback when an affix is selected
  * @returns {JSX.Element} Rendered affix combobox
@@ -77,11 +74,11 @@ interface AffixComboboxProps {
  * ```
  */
 export const AffixCombobox: React.FC<AffixComboboxProps> = ({
-  locale,
   existingAffixes,
   onSelect,
 }) => {
   const t = useTranslations('encounterPlanner');
+  const locale = useLocale();
   const { items: filteredAffixes, isLoading } = useAffixIndex(
     locale,
     existingAffixes,

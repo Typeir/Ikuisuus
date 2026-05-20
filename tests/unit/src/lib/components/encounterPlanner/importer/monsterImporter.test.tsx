@@ -16,14 +16,15 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  createUseTranslationsMock,
-  loadMessageFile,
+    createUseTranslationsMock,
+    loadMessageFile,
 } from '../../../testUtils/translationMockUtils';
 
 vi.mock('next-intl', () => ({
   useTranslations: createUseTranslationsMock({
     encounterPlanner: loadMessageFile('messages/en/encounterPlanner.json'),
   }),
+  useLocale: () => 'en',
 }));
 
 vi.mock('@/lib/utils/monsterCache', () => {
@@ -191,7 +192,7 @@ describe('MonsterImporter Component', () => {
     });
 
     it('should render search input', () => {
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       expect(
         screen.getByPlaceholderText('Search creatures...'),
@@ -199,7 +200,7 @@ describe('MonsterImporter Component', () => {
     });
 
     it('should not show quantity popup initially', () => {
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
@@ -208,7 +209,7 @@ describe('MonsterImporter Component', () => {
   describe('Selection Flow', () => {
     it('should show quantity popup when creature is selected', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
 
@@ -219,7 +220,7 @@ describe('MonsterImporter Component', () => {
 
     it('should display creature name in quantity popup', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
 
@@ -231,7 +232,7 @@ describe('MonsterImporter Component', () => {
 
     it('should focus confirm button when popup opens', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
 
@@ -246,7 +247,7 @@ describe('MonsterImporter Component', () => {
   describe('Confirm Import', () => {
     it('should call onImport with monster data and quantity on confirm', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
       await waitFor(() =>
@@ -262,7 +263,7 @@ describe('MonsterImporter Component', () => {
 
     it('should call onImport with correct quantity when changed', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
       await waitFor(() =>
@@ -281,7 +282,7 @@ describe('MonsterImporter Component', () => {
 
     it('should close popup after confirm', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
       await waitFor(() =>
@@ -298,7 +299,7 @@ describe('MonsterImporter Component', () => {
   describe('Cancel Import', () => {
     it('should close popup on cancel without calling onImport', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
       await waitFor(() =>
@@ -317,7 +318,7 @@ describe('MonsterImporter Component', () => {
   describe('API Integration', () => {
     it('should fetch monster data by slug on confirm', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
       await waitFor(() =>
@@ -332,7 +333,7 @@ describe('MonsterImporter Component', () => {
 
     it('should call onImport when creature is successfully imported', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
       await waitFor(() =>
@@ -355,7 +356,7 @@ describe('MonsterImporter Component', () => {
       vi.mocked(getMonsterBySlug).mockResolvedValueOnce(null);
 
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
       await waitFor(() =>
@@ -373,9 +374,7 @@ describe('MonsterImporter Component', () => {
 
   describe('Disabled State', () => {
     it('should disable input when disabled prop is true', () => {
-      render(
-        <MonsterImporter locale='en' onImport={mockOnImport} disabled={true} />,
-      );
+      render(<MonsterImporter onImport={mockOnImport} disabled={true} />);
 
       const input = screen.getByPlaceholderText('Search creatures...');
       expect(input).toBeDisabled();
@@ -385,7 +384,7 @@ describe('MonsterImporter Component', () => {
   describe('Multiple Imports', () => {
     it('should allow importing different creatures sequentially', async () => {
       const user = userEvent.setup();
-      render(<MonsterImporter locale='en' onImport={mockOnImport} />);
+      render(<MonsterImporter onImport={mockOnImport} />);
 
       await selectCreature(user, 'Goblin');
       await waitFor(() =>

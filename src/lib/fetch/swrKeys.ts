@@ -329,7 +329,7 @@ export function urlForContentShard(
   slug: string,
   locale: string,
 ): string {
-  return `/api/content-shards/${contentType}/${slug}?keys[]=main&locale=${locale}`;
+  return `/api/content-shards/${contentType}/${slug}?locale=${locale}`;
 }
 
 /**

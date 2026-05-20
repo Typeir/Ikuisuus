@@ -1,22 +1,29 @@
 /**
  * @fileoverview Equipment Tab
- * @description Equipment list editor + freeform notes + placeholders for the
- * coin pouch (Phase 5) and carrying capacity calculator (Phase 6).
+ * @description Equipment table editor with per-item quantity and weight columns.
+ * Exposes a lightweight {@link EquipmentProvider} context so the
+ * `CarryingCapacityCalculator` can consume `totalWeight` without prop-drilling.
  *
  * @module lib/components/characterSheet/tabs/equipmentTab
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
 'use client';
 
-import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
+import { EquipmentProvider } from '@/lib/components/characterSheet/context/equipmentContext';
+import { NumericInput } from '@/lib/components/ui/numericInput';
 import { TextArea } from '@/lib/components/ui/textArea';
 import { TextInput } from '@/lib/components/ui/textInput';
+import type {
+    CharacterSheet as CharacterSheetType,
+    EquipmentItem,
+} from '@/lib/types/character';
 import { Plus, X } from 'lucide-react';
-import { CarryingCapacityCalculator } from '../carryingCapacityCalculator';
-import { CoinPouch } from '../coinPouch';
+import { useCallback, useMemo } from 'react';
+import { CarryingCapacityCalculator } from '../inventory/carryingCapacityCalculator';
+import { CoinPouch } from '../inventory/coinPouch';
 import styles from './tabs.module.scss';
 
 /**
@@ -34,7 +41,8 @@ export interface EquipmentTabProps {
 }
 
 /**
- * Equipment tab content.
+ * Equipment tab content. Renders a table with Name / Units / Weight (lb) columns
+ * and exposes derived totals via {@link EquipmentProvider}.
  *
  * @component
  * @param {EquipmentTabProps} props - Component props
@@ -45,81 +53,133 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
   editing,
   onChange,
 }) => {
-  const equipment = data.equipment ?? [];
-  const equipmentNotes =
-    (data as unknown as { equipmentNotes?: string }).equipmentNotes ?? '';
+  const items = (data.equipment ?? []) as EquipmentItem[];
+  const equipmentNotes = data.equipmentNotes ?? '';
 
-  const updateRow = (idx: number, value: string) => {
-    const next = [...equipment];
-    next[idx] = value;
-    onChange({ equipment: next });
-  };
+  const totalWeight = useMemo(
+    () => items.reduce((sum, it) => sum + it.quantity * it.weightLb, 0),
+    [items],
+  );
 
-  const addRow = () => {
-    onChange({ equipment: [...equipment, ''] });
-  };
+  const updateItem = useCallback(
+    (idx: number, patch: Partial<EquipmentItem>) => {
+      const next = items.map((it, i) => (i === idx ? { ...it, ...patch } : it));
+      onChange({ equipment: next });
+    },
+    [items, onChange],
+  );
 
-  const removeRow = (idx: number) => {
-    onChange({ equipment: equipment.filter((_, i) => i !== idx) });
-  };
-
-  const updateNotes = (value: string) => {
+  const addRow = useCallback(() => {
+    const id = `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     onChange({
-      equipmentNotes: value,
-    } as unknown as Partial<CharacterSheetType>);
-  };
+      equipment: [...items, { id, name: '', quantity: 1, weightLb: 0 }],
+    });
+  }, [items, onChange]);
+
+  const removeRow = useCallback(
+    (idx: number) => {
+      onChange({ equipment: items.filter((_, i) => i !== idx) });
+    },
+    [items, onChange],
+  );
+
+  const updateNotes = useCallback(
+    (value: string) => {
+      onChange({ equipmentNotes: value } as Partial<CharacterSheetType>);
+    },
+    [onChange],
+  );
 
   return (
-    <div className={styles.twoColumns}>
-      <div className={styles.column}>
-        <h3 className={styles.sectionTitle}>Equipment</h3>
-        <div className={styles.equipmentList}>
-          {equipment.map((item, idx) => (
-            <div key={idx} className={styles.equipmentRow}>
-              <TextInput
-                className={styles.equipmentInput}
-                value={item}
-                onChange={(v) => updateRow(idx, v)}
-                disabled={!editing}
-              />
-              {editing && (
-                <button
-                  type='button'
-                  className={styles.iconBtn}
-                  onClick={() => removeRow(idx)}
-                  aria-label={`Remove ${item || 'item'}`}>
-                  <X size={12} aria-hidden='true' />
-                </button>
-              )}
-            </div>
-          ))}
+    <EquipmentProvider value={{ totalWeight, totalCount: items.length }}>
+      <div className={styles.twoColumns}>
+        <div className={styles.column}>
+          <h3 className={styles.sectionTitle}>Equipment</h3>
+          <table className={styles.equipmentTable}>
+            <thead>
+              <tr>
+                <th className={styles.equipmentColName}>Name</th>
+                <th className={styles.equipmentColNum}>Units</th>
+                <th className={styles.equipmentColNum}>Weight (lb)</th>
+                {editing && <th className={styles.equipmentColAction} />}
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, idx) => (
+                <tr key={item.id}>
+                  <td>
+                    <TextInput
+                      className={styles.equipmentInput}
+                      value={item.name}
+                      onChange={(v) => updateItem(idx, { name: v })}
+                      disabled={!editing}
+                    />
+                  </td>
+                  <td>
+                    <NumericInput
+                      className={styles.equipmentNumInput}
+                      value={item.quantity}
+                      min={0}
+                      step={1}
+                      allowDecimals={false}
+                      disabled={!editing}
+                      onChange={(v) => updateItem(idx, { quantity: v ?? 0 })}
+                    />
+                  </td>
+                  <td>
+                    <NumericInput
+                      className={styles.equipmentNumInput}
+                      value={item.weightLb}
+                      min={0}
+                      step={0.1}
+                      allowDecimals
+                      disabled={!editing}
+                      onChange={(v) => updateItem(idx, { weightLb: v ?? 0 })}
+                    />
+                  </td>
+                  {editing && (
+                    <td>
+                      <button
+                        type='button'
+                        className={styles.iconBtn}
+                        onClick={() => removeRow(idx)}
+                        aria-label={`Remove ${item.name || 'item'}`}>
+                        <X size={12} aria-hidden='true' />
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
           {editing && (
             <button
               type='button'
               className={styles.iconBtn}
               onClick={addRow}
-              aria-label='Add equipment row'>
+              aria-label='Add equipment row'
+              style={{ marginTop: '0.4rem' }}>
               <Plus size={14} aria-hidden='true' />
             </button>
           )}
+
+          <h3 className={styles.sectionTitle}>Notes</h3>
+          <TextArea
+            className={styles.notesArea}
+            value={equipmentNotes}
+            readOnly={!editing}
+            onChange={updateNotes}
+          />
         </div>
 
-        <h3 className={styles.sectionTitle}>Notes</h3>
-        <TextArea
-          className={styles.notesArea}
-          value={equipmentNotes}
-          readOnly={!editing}
-          onChange={(v) => updateNotes(v)}
-        />
-      </div>
+        <div className={styles.column}>
+          <h3 className={styles.sectionTitle}>Coin Pouch</h3>
+          <CoinPouch data={data} editing={editing} onChange={onChange} />
 
-      <div className={styles.column}>
-        <h3 className={styles.sectionTitle}>Coin Pouch</h3>
-        <CoinPouch data={data} editing={editing} onChange={onChange} />
-
-        <h3 className={styles.sectionTitle}>Carrying Capacity</h3>
-        <CarryingCapacityCalculator data={data} />
+          <h3 className={styles.sectionTitle}>Carrying Capacity</h3>
+          <CarryingCapacityCalculator data={data} />
+        </div>
       </div>
-    </div>
+    </EquipmentProvider>
   );
 };

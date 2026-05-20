@@ -10,31 +10,31 @@
  */
 
 import {
-  affixesIndexKey,
-  bloodlinesKey,
-  contentShardKey,
-  correctionsTreeKey,
-  draftKey,
-  externalSearchKey,
-  featsKey,
-  heirloomsKey,
-  librarySearchKey,
-  monstersIndexKey,
-  monstersKey,
-  nearestRouteKey,
-  shardKey,
-  specializationsKey,
-  spellKey,
-  spellSourcesKey,
-  spellsIndexKey,
-  trinketsKey,
-  urlForBloodlines,
-  urlForContentShard,
-  urlForFeats,
-  urlForShard,
-  urlForSpecializations,
-  urlForVocations,
-  vocationsKey,
+    affixesIndexKey,
+    bloodlinesKey,
+    contentShardKey,
+    correctionsTreeKey,
+    draftKey,
+    externalSearchKey,
+    featsKey,
+    heirloomsKey,
+    librarySearchKey,
+    monstersIndexKey,
+    monstersKey,
+    nearestRouteKey,
+    shardKey,
+    specializationsKey,
+    spellKey,
+    spellSourcesKey,
+    spellsIndexKey,
+    trinketsKey,
+    urlForBloodlines,
+    urlForContentShard,
+    urlForFeats,
+    urlForShard,
+    urlForSpecializations,
+    urlForVocations,
+    vocationsKey,
 } from '@/lib/fetch/swrKeys';
 import { describe, expect, it } from 'vitest';
 
@@ -223,7 +223,7 @@ describe('swrKeys', () => {
     });
     it('urlForContentShard builds correct URL', () => {
       expect(urlForContentShard('feats', 'tough', 'en')).toBe(
-        '/api/content-shards/feats/tough?keys[]=main&locale=en',
+        '/api/content-shards/feats/tough?locale=en',
       );
     });
     it('urlForShard builds correct URL with encoded params', () => {

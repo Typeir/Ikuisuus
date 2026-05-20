@@ -35,6 +35,7 @@ import {
     useRef,
     useState,
 } from 'react';
+import { useLocale } from 'next-intl';
 import type { PlayModeLifecycle } from './playModeLifecycle';
 import type { EncounterTranslator } from './playModeLifecycleNotifications';
 import { buildEndTurnTransition } from './playModeTurnFlow';
@@ -45,7 +46,6 @@ import { buildEndTurnTransition } from './playModeTurnFlow';
  * @interface UsePlayModeHandlersParams
  * @property {InProgressCombat} combat - Current combat state
  * @property {Dispatch<SetStateAction<InProgressCombat>>} setCombat - Combat state setter
- * @property {string} locale - Active locale for monster import
  * @property {() => void} onExit - Callback when ending combat
  * @property {PlayModeLifecycle} lifecycle - Lifecycle dispatcher for turn/round events
  * @property {{error: (message: string) => string}} notifications - Notification methods used by import flow
@@ -54,7 +54,6 @@ import { buildEndTurnTransition } from './playModeTurnFlow';
 export interface UsePlayModeHandlersParams {
   combat: InProgressCombat;
   setCombat: Dispatch<SetStateAction<InProgressCombat>>;
-  locale: string;
   onExit: () => void;
   lifecycle: PlayModeLifecycle;
   notifications: {
@@ -108,7 +107,6 @@ export interface UsePlayModeHandlersResult {
  * @param {UsePlayModeHandlersParams} params - Hook parameters
  * @param {InProgressCombat} params.combat - Current combat state
  * @param {Dispatch<SetStateAction<InProgressCombat>>} params.setCombat - Combat state setter
- * @param {string} params.locale - Active locale for monster import
  * @param {() => void} params.onExit - Callback when ending combat
  * @param {PlayModeLifecycle} params.lifecycle - Lifecycle dispatcher for turn/round events
  * @param {{error: (message: string) => string}} params.notifications - Notification methods used by import flow
@@ -118,7 +116,6 @@ export interface UsePlayModeHandlersResult {
 export function usePlayModeHandlers({
   combat,
   setCombat,
-  locale,
   onExit,
   lifecycle,
   notifications,
@@ -126,6 +123,7 @@ export function usePlayModeHandlers({
 }: UsePlayModeHandlersParams): UsePlayModeHandlersResult {
   const [sessionOnlyName, setSessionOnlyName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const locale = useLocale();
 
   const updateCombat = useCallback(
     (updater: (currentCombat: InProgressCombat) => InProgressCombat) => {

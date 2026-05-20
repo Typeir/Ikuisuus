@@ -19,7 +19,6 @@
  * <SpellListEditor
  *   spells={creature.spells}
  *   onChange={(spells) => updateCreature({ spells })}
- *   locale="en"
  * />
  * ```
  */
@@ -29,6 +28,7 @@
 import { useSpellLinks } from '@/lib/hooks/data/useEncounterData';
 import type { SpellRef } from '@/lib/types/encounterPlanner';
 import { X } from 'lucide-react';
+import { useLocale } from 'next-intl';
 import { useCallback } from 'react';
 import { SpellCombobox } from '../comboboxes';
 import styles from '../creatureRow.module.scss';
@@ -38,14 +38,12 @@ import styles from '../creatureRow.module.scss';
  * Configuration for SpellListEditor component
  * @property {SpellRef[]} spells - Current spell list
  * @property {(spells: SpellRef[]) => void} onChange - Callback when spell list changes
- * @property {string} locale - Current locale for API requests
  * @property {boolean} [readOnly=false] - Whether editing is disabled
  * @property {string} [removeChipAriaLabel] - Accessibility label for remove button
  */
 interface SpellListEditorProps {
   spells: SpellRef[];
   onChange: (spells: SpellRef[]) => void;
-  locale: string;
   readOnly?: boolean;
   removeChipAriaLabel?: string;
 }
@@ -58,7 +56,6 @@ interface SpellListEditorProps {
  * @param {SpellListEditorProps} props - Component props
  * @param {SpellRef[]} props.spells - Current spell references
  * @param {(spells: SpellRef[]) => void} props.onChange - Callback when spell list changes
- * @param {string} props.locale - Current locale for API requests
  * @param {boolean} [props.readOnly] - Whether the editor is read-only
  * @param {string} [props.removeChipAriaLabel] - Aria label for remove chip buttons
  * @returns {JSX.Element} Rendered spell list with add/remove controls
@@ -68,7 +65,6 @@ interface SpellListEditorProps {
  * <SpellListEditor
  *   spells={[{ slug: 'fireball' }]}
  *   onChange={setSpells}
- *   locale="en"
  *   readOnly={false}
  * />
  * ```
@@ -76,10 +72,10 @@ interface SpellListEditorProps {
 export const SpellListEditor: React.FC<SpellListEditorProps> = ({
   spells,
   onChange,
-  locale,
   readOnly = false,
   removeChipAriaLabel = 'Remove spell',
 }) => {
+  const locale = useLocale();
   const spellLinks = useSpellLinks(
     spells.map((spell) => spell.slug),
     locale,
@@ -133,7 +129,7 @@ export const SpellListEditor: React.FC<SpellListEditorProps> = ({
       </div>
       {!readOnly && (
         <div className={styles.spellComboboxWrapper}>
-          <SpellCombobox locale={locale} onSelect={handleAddSpell} />
+          <SpellCombobox onSelect={handleAddSpell} />
         </div>
       )}
     </>

@@ -76,14 +76,12 @@ import {
  *
  * @interface CombatantRowProps
  * @property {InProgressCombatant} combatant - The combatant data to display and edit
- * @property {string} locale - Current locale for translations (e.g., "en", "es", "fi")
  * @property {(combatant: InProgressCombatant) => void} onUpdate - Callback fired when combatant is updated
  * @property {() => void} [onRemoveSessionOnly] - Optional callback to remove session-only combatants
  * @property {boolean} [disableLocking=false] - If true, hides lock button and prevents stat locking
  */
 export interface CombatantRowProps {
   combatant: InProgressCombatant;
-  locale: string;
   onUpdate: (combatant: InProgressCombatant) => void;
   onRemoveSessionOnly?: () => void;
   disableLocking?: boolean;
@@ -100,7 +98,7 @@ export interface CombatantRowProps {
  * @returns {React.ReactElement} Rendered row content with all sections
  */
 const CombatantRowContent: React.FC = () => {
-  const { combatant, locale, updateField, onUpdate } = useCombatant();
+  const { combatant, updateField, onUpdate } = useCombatant();
   const t = useTranslations('encounterPlanner');
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -197,14 +195,12 @@ const CombatantRowContent: React.FC = () => {
                   <SpellListEditor
                     spells={combatant.details.spells}
                     onChange={handleSpellsChange}
-                    locale={locale}
                   />
                 }
                 affixes={
                   <AffixListEditor
                     affixes={combatant.details.affixes}
                     onChange={handleAffixesChange}
-                    locale={locale}
                   />
                 }
                 conditions={<CombatantConditionsManager />}
@@ -223,7 +219,6 @@ const CombatantRowContent: React.FC = () => {
  * @component
  * @param {CombatantRowProps} props - Component props
  * @param {InProgressCombatant} props.combatant - The combatant data to display
- * @param {string} props.locale - Current locale for API requests and wiki links
  * @param {(combatant: InProgressCombatant) => void} props.onUpdate - Callback when combatant data changes
  * @param {() => void} [props.onRemoveSessionOnly] - Callback to remove session-only combatants
  * @param {boolean} [props.disableLocking] - Whether to disable field locking controls
@@ -237,13 +232,11 @@ const CombatantRowContent: React.FC = () => {
  *
  * <CombatantRow
  *   combatant={combatant}
- *   locale="en"
  *   onUpdate={handleUpdate}
  * />
  */
 export const CombatantRow: React.FC<CombatantRowProps> = ({
   combatant,
-  locale,
   onUpdate,
   onRemoveSessionOnly,
   disableLocking = false,
@@ -251,7 +244,6 @@ export const CombatantRow: React.FC<CombatantRowProps> = ({
   return (
     <CombatantProvider
       combatant={combatant}
-      locale={locale}
       onUpdate={onUpdate}
       onRemoveSessionOnly={onRemoveSessionOnly}
       disableLocking={disableLocking}>

@@ -49,7 +49,7 @@ export default async function CharactersPage({ params }: PageProps) {
 
   return (
     <CharacterSheetProvider>
-      <CharacterRoster locale={locale} />
+      <CharacterRoster />
     </CharacterSheetProvider>
   );
 }

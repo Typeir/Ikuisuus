@@ -17,21 +17,18 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/components/characterSheet/contentShardPanel', () => ({
+vi.mock('@/lib/components/characterSheet/shards/contentShardPanel', () => ({
   ContentShardPanel: ({
     contentType,
     slug,
-    locale,
   }: {
     contentType: string;
     slug: string;
-    locale?: string;
   }) => (
     <div
       data-testid='content-shard-panel'
       data-content-type={contentType}
       data-slug={slug}
-      data-locale={locale ?? 'en'}
     />
   ),
 }));
@@ -63,7 +60,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    render(<VocationTab data={data} locale='en' />);
+    render(<VocationTab data={data} />);
     const panel = screen.getByTestId('content-shard-panel');
     expect(panel).toHaveAttribute('data-content-type', 'vocations');
     expect(panel).toHaveAttribute('data-slug', 'oathbreaker');
@@ -82,7 +79,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    render(<VocationTab data={data} locale='en' />);
+    render(<VocationTab data={data} />);
 
     const specTab = screen.getByRole('tab', { name: 'Abjurer' });
     await userEvent.click(specTab);
@@ -103,7 +100,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    render(<VocationTab data={data} locale='en' />);
+    render(<VocationTab data={data} />);
     const specTab = screen.getByRole('tab', { name: 'specializationFeatures' });
     expect(specTab).toBeDisabled();
   });
@@ -126,7 +123,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    render(<VocationTab data={data} locale='en' />);
+    render(<VocationTab data={data} />);
     expect(screen.getByRole('tab', { name: 'Wizard / Abjurer' })).toBeTruthy();
     expect(screen.getByRole('tab', { name: 'Rogue' })).toBeTruthy();
   });

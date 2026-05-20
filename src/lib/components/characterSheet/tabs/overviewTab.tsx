@@ -14,22 +14,25 @@
 
 'use client';
 
-import { ShardChip } from '@/lib/components/characterSheet/shardChip';
+import { ShardChip } from '@/lib/components/characterSheet/shards/shardChip';
 import type {
-  CharacterShard,
-  CharacterSheet as CharacterSheetType,
-  VocationEntry,
+    CharacterShard,
+    CharacterSheet as CharacterSheetType,
+    VocationEntry,
 } from '@/lib/types/character';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
-import { computeAbilityModifier, computeProficiencyBonus } from '@/lib/utils/characterStorage';
 import { getTotalCharacterLevel } from '@/lib/utils/characterDerivation';
+import {
+    computeAbilityModifier,
+    computeProficiencyBonus,
+} from '@/lib/utils/characterStorage';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef } from 'react';
-import { AttacksTable } from '../attacksTable';
-import { CombatStatsRow } from '../combatStatsRow';
-import { NotesSection } from '../notesSection';
-import { SkillsTable } from '../skillsTable';
-import { ToolsTable } from '../toolsTable';
+import { NotesSection } from '../notes/notesSection';
+import { AttacksTable } from '../stats/attacksTable';
+import { CombatStatsRow } from '../stats/combatStatsRow';
+import { SkillsTable } from '../stats/skillsTable';
+import { ToolsTable } from '../stats/toolsTable';
 import styles from './tabs.module.scss';
 
 /**
@@ -63,6 +66,11 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 }) => {
   const t = useTranslations('characterSheet');
   const boonShards: CharacterShard[] = data.selectedBoons;
+  const featShards: CharacterShard[] = data.selectedFeats ?? [];
+  const totalLevel = getTotalCharacterLevel(data);
+  const featureShards: CharacterShard[] = data.vocations
+    .flatMap((v) => [...v.vocationFeatures, ...v.specializationFeatures])
+    .filter((s) => s.level === undefined || s.level <= totalLevel);
   const prevVocationsRef = useRef<VocationEntry[]>(data.vocations);
 
   useEffect(() => {
@@ -112,7 +120,13 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       patch.hitDiceLog = [...(data.hitDiceLog ?? []), ...newEntries];
     }
     onChange(patch);
-  }, [data.vocations, data.proficiencyBonus, data.hitDiceLog, data.abilityScores.con, onChange]);
+  }, [
+    data.vocations,
+    data.proficiencyBonus,
+    data.hitDiceLog,
+    data.abilityScores.con,
+    onChange,
+  ]);
 
   const handleSkillsChange = useCallback(
     (skills: CharacterSheetType['skills']) => onChange({ skills }),
@@ -188,12 +202,29 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             <h3 className={styles.sectionTitle}>{t('boons')}</h3>
             <div className={styles.chipCloud}>
               {boonShards.map((shard) => (
-                <ShardChip
-                  key={shard.id}
-                  shard={shard}
-                  color='primary'
-                  locale={locale}
-                />
+                <ShardChip key={shard.id} shard={shard} color='primary' />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {featShards.length > 0 && (
+          <section aria-label={t('ariaSelectedFeats')}>
+            <h3 className={styles.sectionTitle}>{t('tabFeats')}</h3>
+            <div className={styles.chipCloud}>
+              {featShards.map((shard) => (
+                <ShardChip key={shard.id} shard={shard} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {featureShards.length > 0 && (
+          <section aria-label={t('ariaSelectedFeatures')}>
+            <h3 className={styles.sectionTitle}>{t('features')}</h3>
+            <div className={styles.chipCloud}>
+              {featureShards.map((shard) => (
+                <ShardChip key={shard.id} shard={shard} />
               ))}
             </div>
           </section>

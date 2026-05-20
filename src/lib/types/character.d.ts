@@ -211,6 +211,22 @@ export interface CompactCharacterRef {
 }
 
 /**
+ * A single inventory entry on the equipment tab.
+ *
+ * @interface EquipmentItem
+ * @property {string} id - Stable unique identifier
+ * @property {string} name - Item name
+ * @property {number} quantity - Number of units carried
+ * @property {number} weightLb - Weight per unit in pounds
+ */
+export interface EquipmentItem {
+  id: string;
+  name: string;
+  quantity: number;
+  weightLb: number;
+}
+
+/**
  * A single vocation entry in a character's vocation list.
  * Supports mixing (multiclassing) by allowing multiple entries, each with its
  * own level, specialization, and feature shards.
@@ -270,7 +286,7 @@ export interface VocationEntry {
  * @property {Record<AbilityKey, ProficiencyLevel>} savingThrows - Save proficiency per ability
  * @property {CharacterSkill[]} skills - Full skill list with proficiency
  * @property {CharacterTool[]} tools - Tool proficiency list
- * @property {string[]} equipment - Equipment list as free-text entries
+ * @property {EquipmentItem[]} equipment - Equipment items with name, quantity, and weight
  * @property {CharacterCurrency} currency - Carried currency
  * @property {string} background - Background narrative
  * @property {string} personality - Personality traits
@@ -315,7 +331,7 @@ export interface CharacterSheet {
   savingThrows: Record<AbilityKey, ProficiencyLevel>;
   skills: CharacterSkill[];
   tools: CharacterTool[];
-  equipment: string[];
+  equipment: EquipmentItem[];
   equipmentNotes: string;
   selectedFeats: CharacterShard[];
   currency: CharacterCurrency;

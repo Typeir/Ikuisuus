@@ -13,14 +13,19 @@
 
 import type { CreatureStats } from '@/lib/types/encounterPlanner';
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useMemo,
+    type ReactNode,
+} from 'react';
 
 /**
  * Context value for combatant data and update functions.
  *
  * @interface CombatantContextValue
  * @property {InProgressCombatant} combatant - The combatant data
- * @property {string} locale - Current locale for translations
  * @property {(combatant: InProgressCombatant) => void} onUpdate - Full combatant update
  * @property {<K extends keyof InProgressCombatant>(field: K, value: InProgressCombatant[K]) => void} updateField - Single field update
  * @property {(stats: CreatureStats) => void} updateStats - Stats object update
@@ -29,9 +34,11 @@ import { createContext, useCallback, useContext, useMemo, type ReactNode } from 
  */
 interface CombatantContextValue {
   combatant: InProgressCombatant;
-  locale: string;
   onUpdate: (combatant: InProgressCombatant) => void;
-  updateField: <K extends keyof InProgressCombatant>(field: K, value: InProgressCombatant[K]) => void;
+  updateField: <K extends keyof InProgressCombatant>(
+    field: K,
+    value: InProgressCombatant[K],
+  ) => void;
   updateStats: (stats: CreatureStats) => void;
   onRemoveSessionOnly?: () => void;
   disableLocking: boolean;
@@ -47,7 +54,6 @@ export { CombatantContext };
  *
  * @interface CombatantProviderProps
  * @property {InProgressCombatant} combatant - The combatant data
- * @property {string} locale - Current locale
  * @property {(combatant: InProgressCombatant) => void} onUpdate - Update callback
  * @property {() => void} [onRemoveSessionOnly] - Remove session-only callback
  * @property {ReactNode} children - Child components
@@ -55,7 +61,6 @@ export { CombatantContext };
  */
 interface CombatantProviderProps {
   combatant: InProgressCombatant;
-  locale: string;
   onUpdate: (combatant: InProgressCombatant) => void;
   onRemoveSessionOnly?: () => void;
   children: ReactNode;
@@ -68,7 +73,6 @@ interface CombatantProviderProps {
  * @component CombatantProvider
  * @param {CombatantProviderProps} props - Provider props
  * @param {InProgressCombatant} props.combatant - The combatant data object
- * @param {string} props.locale - Current locale
  * @param {Function} props.onUpdate - Callback when combatant data changes
  * @param {Function} [props.onRemoveSessionOnly] - Optional callback to remove combatant from session
  * @param {ReactNode} props.children - Child components to wrap
@@ -76,47 +80,59 @@ interface CombatantProviderProps {
  * @returns {React.ReactElement} Provider with children
  *
  * @example
- * <CombatantProvider combatant={c} locale="en" onUpdate={handleUpdate}>
+ * <CombatantProvider combatant={c} onUpdate={handleUpdate}>
  *   <CombatantMainStats />
  *   <CombatantNameSection />
  * </CombatantProvider>
  */
 export const CombatantProvider: React.FC<CombatantProviderProps> = ({
   combatant,
-  locale,
   onUpdate,
   onRemoveSessionOnly,
   children,
   disableLocking = false,
 }) => {
   const updateField = useCallback(
-    <K extends keyof InProgressCombatant>(field: K, value: InProgressCombatant[K]) => {
+    <K extends keyof InProgressCombatant>(
+      field: K,
+      value: InProgressCombatant[K],
+    ) => {
       onUpdate({ ...combatant, [field]: value });
     },
-    [combatant, onUpdate]
+    [combatant, onUpdate],
   );
 
   const updateStats = useCallback(
     (newStats: CreatureStats) => {
       onUpdate({ ...combatant, stats: newStats });
     },
-    [combatant, onUpdate]
+    [combatant, onUpdate],
   );
 
   const value = useMemo<CombatantContextValue>(
     () => ({
       combatant,
-      locale,
       onUpdate,
       updateField,
       updateStats,
       onRemoveSessionOnly,
       disableLocking,
     }),
-    [combatant, locale, onUpdate, updateField, updateStats, onRemoveSessionOnly, disableLocking]
+    [
+      combatant,
+      onUpdate,
+      updateField,
+      updateStats,
+      onRemoveSessionOnly,
+      disableLocking,
+    ],
   );
 
-  return <CombatantContext.Provider value={value}>{children}</CombatantContext.Provider>;
+  return (
+    <CombatantContext.Provider value={value}>
+      {children}
+    </CombatantContext.Provider>
+  );
 };
 
 /**

@@ -16,6 +16,7 @@ import type {
   CharacterSkill,
   CharacterSpellSlot,
   CharacterTool,
+  EquipmentItem,
   VocationEntry,
 } from '@/lib/types/character';
 import { generateId } from '@/lib/utils/encounterStorage';
@@ -169,16 +170,38 @@ export const createEmptyVocationEntry = (): VocationEntry => ({
  * @param {Record<string, unknown>} raw - Raw character object loaded from storage
  * @returns {CharacterSheet} Migrated character sheet
  */
+/**
+ * Normalise a raw equipment array: converts legacy `string[]` entries to
+ * `EquipmentItem` objects so old saves work after the schema upgrade.
+ *
+ * @function migrateEquipment
+ * @param {unknown[]} items - Raw equipment array from storage
+ * @returns {EquipmentItem[]} Normalised equipment items
+ */
+const migrateEquipment = (items: unknown[]): EquipmentItem[] =>
+  items.map((item, idx) => {
+    if (typeof item === 'string') {
+      return { id: `item-${idx}`, name: item, quantity: 1, weightLb: 0 };
+    }
+    return item as EquipmentItem;
+  });
+
 export const migrateCharacter = (
   raw: Record<string, unknown>,
 ): CharacterSheet => {
+  const rawEquipment = Array.isArray(raw['equipment']) ? raw['equipment'] : [];
+
   if (Array.isArray((raw as unknown as CharacterSheet).vocations)) {
-    return raw as unknown as CharacterSheet;
+    const sheet = raw as unknown as CharacterSheet;
+    const needsEquipMigration = rawEquipment.some((e) => typeof e === 'string');
+    if (!needsEquipMigration) return sheet;
+    return { ...sheet, equipment: migrateEquipment(rawEquipment) };
   }
 
   const migrated: CharacterSheet = {
     ...(raw as unknown as CharacterSheet),
     vocations: [],
+    equipment: migrateEquipment(rawEquipment),
   };
 
   const legacySlug = raw['vocationSlug'] as string | null | undefined;

@@ -2,7 +2,7 @@
  * @fileoverview Vocation Tab
  * @description Two-level tabbed viewer for vocation data.
  *
- * - When the character has multiple vocation entries (multiclass), an outer
+ * - When the character has multiple vocation entries (mixing/multiclass), an outer
  *   tab strip switches between entries.
  * - Within each entry, an inner tab strip switches between the vocation view
  *   and the specialization view. Each view shows that section's feature list
@@ -19,15 +19,15 @@
 
 'use client';
 
-import { ContentShardPanel } from '@/lib/components/characterSheet/contentShardPanel';
+import { ContentShardPanel } from '@/lib/components/characterSheet/shards/contentShardPanel';
 import { Tab, TabList, TabPanel, Tabs } from '@/lib/components/ui/tabs';
 import type {
-  CharacterSheet as CharacterSheetType,
-  VocationEntry,
+    CharacterSheet as CharacterSheetType,
+    VocationEntry,
 } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { FeatureViewer } from '../featureViewer';
+import { FeatureViewer } from '../builder/featureViewer';
 import styles from './tabs.module.scss';
 import vocationStyles from './vocationTab.module.scss';
 
@@ -36,11 +36,9 @@ import vocationStyles from './vocationTab.module.scss';
  *
  * @interface VocationTabProps
  * @property {CharacterSheetType} data - Active character data
- * @property {string} [locale] - Content locale (default `en`)
  */
 export interface VocationTabProps {
   data: CharacterSheetType;
-  locale?: string;
 }
 
 /** Inner-tab section value. */
@@ -62,10 +60,9 @@ type SectionTab = 'vocation' | 'specialization';
  */
 const VocationEntryTabs: React.FC<{
   entry: VocationEntry;
-  locale: string;
   fallbackVocationLabel: string;
   fallbackSpecLabel: string;
-}> = ({ entry, locale, fallbackVocationLabel, fallbackSpecLabel }) => {
+}> = ({ entry, fallbackVocationLabel, fallbackSpecLabel }) => {
   const t = useTranslations('characterSheet');
   const hasSpec = !!entry.specializationSlug;
   const [active, setActive] = useState<SectionTab>('vocation');
@@ -98,11 +95,7 @@ const VocationEntryTabs: React.FC<{
             hideTitle
           />
           {entry.slug && (
-            <ContentShardPanel
-              contentType='vocations'
-              slug={entry.slug}
-              locale={locale}
-            />
+            <ContentShardPanel contentType='vocations' slug={entry.slug} />
           )}
         </div>
       </TabPanel>
@@ -122,7 +115,6 @@ const VocationEntryTabs: React.FC<{
             <ContentShardPanel
               contentType='specializations'
               slug={entry.specializationSlug}
-              locale={locale}
             />
           )}
         </div>
@@ -140,10 +132,7 @@ const VocationEntryTabs: React.FC<{
  * @param {VocationTabProps} props - Component props
  * @returns {JSX.Element} Rendered tab body
  */
-export const VocationTab: React.FC<VocationTabProps> = ({
-  data,
-  locale = 'en',
-}) => {
+export const VocationTab: React.FC<VocationTabProps> = ({ data }) => {
   const t = useTranslations('characterSheet');
   const [activeEntry, setActiveEntry] = useState<string>('0');
 
@@ -159,7 +148,6 @@ export const VocationTab: React.FC<VocationTabProps> = ({
       <div className={vocationStyles.entryContainer}>
         <VocationEntryTabs
           entry={data.vocations[0]}
-          locale={locale}
           fallbackVocationLabel={fallbackVocLabel}
           fallbackSpecLabel={fallbackSpecLabel}
         />
@@ -191,7 +179,6 @@ export const VocationTab: React.FC<VocationTabProps> = ({
           <div className={vocationStyles.entryContainer}>
             <VocationEntryTabs
               entry={entry}
-              locale={locale}
               fallbackVocationLabel={fallbackVocLabel}
               fallbackSpecLabel={fallbackSpecLabel}
             />

@@ -39,90 +39,122 @@ const sheet = (over: Partial<CharacterSheet> = {}): CharacterSheet => ({
 });
 
 describe('getTotalCharacterLevel', () => {
-  it('falls back to character.level when no vocations have a slug', () => {
-    expect(getTotalCharacterLevel(sheet({ level: 5 }))).toBe(5);
+  it('falls back to character.level when experience is 0', () => {
+    expect(getTotalCharacterLevel(sheet({ level: 5, experience: 0 }))).toBe(5);
   });
 
   it('returns at least 1 when fallback level is missing', () => {
     expect(
-      getTotalCharacterLevel(sheet({ level: 0 as unknown as number })),
+      getTotalCharacterLevel(
+        sheet({ level: 0 as unknown as number, experience: 0 }),
+      ),
     ).toBe(1);
   });
 
-  it('returns the active vocation level for a single-class character', () => {
+  it('derives level from experience when experience > 0', () => {
     expect(
-      getTotalCharacterLevel(sheet({ vocations: [voc({ level: 6 })] })),
-    ).toBe(6);
+      getTotalCharacterLevel(sheet({ level: 1, experience: XP_THRESHOLDS[5] })),
+    ).toBe(5);
   });
 
-  it('sums vocation levels for multiclass characters', () => {
+  it('ignores vocation entries entirely when computing total level', () => {
     expect(
       getTotalCharacterLevel(
         sheet({
-          vocations: [
-            voc({ slug: 'wizard', level: 4 }),
-            voc({ slug: 'rogue', level: 3 }),
-          ],
+          level: 1,
+          experience: XP_THRESHOLDS[3],
+          vocations: [voc({ slug: 'wizard', level: 99 })],
         }),
       ),
-    ).toBe(7);
+    ).toBe(3);
   });
 
-  it('ignores vocation entries with an empty slug', () => {
+  it('caps total level at MAX_XP_LEVEL', () => {
     expect(
       getTotalCharacterLevel(
-        sheet({
-          vocations: [voc({ slug: 'wizard', level: 4 }), voc({ slug: '', level: 9 })],
-        }),
+        sheet({ level: 1, experience: XP_THRESHOLDS[MAX_XP_LEVEL] + 1_000_000 }),
       ),
-    ).toBe(4);
+    ).toBe(MAX_XP_LEVEL);
   });
 });
 
 describe('getCharacterDerived', () => {
-  it('reports hasActiveVocations=false and uses stored experience when no slugs set', () => {
-    const xp = 1500;
-    const d = getCharacterDerived(sheet({ level: 1, experience: xp }));
-    expect(d.hasActiveVocations).toBe(false);
-    expect(d.experience).toBe(xp);
-    expect(d.totalLevel).toBe(1);
-  });
-
-  it('raises experience to floor when stored value is below derived level floor', () => {
+  it('returns experience verbatim without floor-clamping', () => {
     const d = getCharacterDerived(
       sheet({
-        vocations: [voc({ slug: 'wizard', level: 3 })],
-        experience: 0,
+        level: 1,
+        experience: 1234,
+        vocations: [voc({ slug: 'wizard', level: 5 })],
       }),
     );
-    expect(d.totalLevel).toBe(3);
-    expect(d.experience).toBe(getXPForLevel(3));
-    expect(d.xpFloor).toBe(getXPForLevel(3));
+    expect(d.experience).toBe(1234);
   });
 
-  it('preserves mid-level experience when above the floor', () => {
-    const floor = getXPForLevel(3);
-    const ceiling = getXPForLevel(4);
-    const midway = floor + Math.floor((ceiling - floor) / 2);
+  it('derives totalLevel from XP not from vocation sum', () => {
     const d = getCharacterDerived(
       sheet({
-        vocations: [voc({ slug: 'wizard', level: 3 })],
-        experience: midway,
+        level: 1,
+        experience: XP_THRESHOLDS[7],
+        vocations: [voc({ slug: 'wizard', level: 2 })],
       }),
     );
-    expect(d.experience).toBe(midway);
-    expect(d.xpProgressPercent).toBeGreaterThanOrEqual(45);
-    expect(d.xpProgressPercent).toBeLessThanOrEqual(55);
+    expect(d.totalLevel).toBe(7);
+    expect(d.vocationLevel).toBe(2);
+  });
+
+  it('reports unassignedLevels as totalLevel - vocationLevel', () => {
+    const d = getCharacterDerived(
+      sheet({
+        level: 1,
+        experience: XP_THRESHOLDS[5],
+        vocations: [voc({ slug: 'wizard', level: 2 })],
+      }),
+    );
+    expect(d.unassignedLevels).toBe(3);
+    expect(d.hasUnassignedLevels).toBe(true);
+  });
+
+  it('reports unassignedLevels=0 when vocations sum >= totalLevel', () => {
+    const d = getCharacterDerived(
+      sheet({
+        level: 1,
+        experience: XP_THRESHOLDS[3],
+        vocations: [voc({ slug: 'wizard', level: 3 })],
+      }),
+    );
+    expect(d.unassignedLevels).toBe(0);
+    expect(d.hasUnassignedLevels).toBe(false);
+  });
+
+  it('treats empty-slug vocations as 0 contribution', () => {
+    const d = getCharacterDerived(
+      sheet({
+        level: 1,
+        experience: XP_THRESHOLDS[2],
+        vocations: [voc({ slug: '', level: 5 })],
+      }),
+    );
+    expect(d.vocationLevel).toBe(0);
+    expect(d.unassignedLevels).toBe(2);
   });
 
   it('caps progress at 100% when at MAX_XP_LEVEL', () => {
     const d = getCharacterDerived(
       sheet({
-        vocations: [voc({ slug: 'wizard', level: MAX_XP_LEVEL })],
+        level: MAX_XP_LEVEL,
         experience: XP_THRESHOLDS[MAX_XP_LEVEL],
       }),
     );
     expect(d.totalLevel).toBe(MAX_XP_LEVEL);
     expect(d.xpProgressPercent).toBe(100);
+  });
+
+  it('computes mid-level xpProgressPercent correctly', () => {
+    const floor = getXPForLevel(3);
+    const ceiling = getXPForLevel(4);
+    const midway = floor + Math.floor((ceiling - floor) / 2);
+    const d = getCharacterDerived(sheet({ level: 1, experience: midway }));
+    expect(d.xpProgressPercent).toBeGreaterThanOrEqual(45);
+    expect(d.xpProgressPercent).toBeLessThanOrEqual(55);
   });
 });

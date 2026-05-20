@@ -19,7 +19,6 @@
  * <AffixListEditor
  *   affixes={creature.affixes}
  *   onChange={(affixes) => updateCreature({ affixes })}
- *   locale="en"
  * />
  * ```
  */
@@ -37,14 +36,12 @@ import styles from '../creatureRow.module.scss';
  * @interface AffixListEditorProps
  * @property {AffixEntry[]} affixes - Current affix list
  * @property {Function} onChange - Callback when affix list changes
- * @property {string} locale - Current locale for API requests
  * @property {boolean} [readOnly=false] - Whether editing is disabled
  * @property {string} [removeChipAriaLabel] - Accessibility label for remove button
  */
 interface AffixListEditorProps {
   affixes: AffixEntry[];
   onChange: (affixes: AffixEntry[]) => void;
-  locale: string;
   readOnly?: boolean;
   removeChipAriaLabel?: string;
 }
@@ -58,7 +55,6 @@ interface AffixListEditorProps {
  * @param {AffixListEditorProps} props - Component props
  * @param {AffixEntry[]} props.affixes - Current affix entries
  * @param {(affixes: AffixEntry[]) => void} props.onChange - Callback when affix list changes
- * @param {string} props.locale - Current locale for API requests
  * @param {boolean} [props.readOnly] - Whether the editor is read-only
  * @param {string} [props.removeChipAriaLabel] - Aria label for remove chip buttons
  * @returns {JSX.Element} Rendered affix list with add/remove controls
@@ -68,7 +64,6 @@ interface AffixListEditorProps {
  * <AffixListEditor
  *   affixes={[{ text: 'Affix 1', source: { href: '/link' } }]}
  *   onChange={setAffixes}
- *   locale="en"
  *   readOnly={false}
  * />
  * ```
@@ -76,7 +71,6 @@ interface AffixListEditorProps {
 export const AffixListEditor: React.FC<AffixListEditorProps> = ({
   affixes,
   onChange,
-  locale,
   readOnly = false,
   removeChipAriaLabel = 'Remove affix',
 }) => {
@@ -141,7 +135,6 @@ export const AffixListEditor: React.FC<AffixListEditorProps> = ({
       </div>
       {!readOnly && (
         <AffixCombobox
-          locale={locale}
           existingAffixes={affixes.map((a) => a.text)}
           onSelect={handleAddAffix}
         />

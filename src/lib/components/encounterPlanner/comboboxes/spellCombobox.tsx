@@ -27,7 +27,7 @@
 
 import { useSpellIndex } from '@/lib/hooks/data/useEncounterData';
 import type { SpellRef } from '@/lib/types/encounterPlanner';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import styles from './combobox.module.scss';
 import { ComboboxItem, GenericCombobox } from './genericCombobox';
@@ -46,11 +46,9 @@ interface SpellIndexEntry extends ComboboxItem {
 /**
  * Props for SpellCombobox component
  * @interface SpellComboboxProps
- * @property {string} locale - Current locale for API requests
  * @property {Function} onSelect - Callback when spell is selected
  */
 interface SpellComboboxProps {
-  locale: string;
   onSelect: (spell: SpellRef) => void;
 }
 
@@ -60,7 +58,6 @@ interface SpellComboboxProps {
  *
  * @component
  * @param {SpellComboboxProps} props - Component props
- * @param {string} props.locale - Current locale for API requests
  * @param {(spell: SpellRef) => void} props.onSelect - Callback with selected spell reference
  * @returns {JSX.Element} Rendered spell combobox
  *
@@ -73,10 +70,10 @@ interface SpellComboboxProps {
  * ```
  */
 export const SpellCombobox: React.FC<SpellComboboxProps> = ({
-  locale,
   onSelect,
 }) => {
   const t = useTranslations('encounterPlanner');
+  const locale = useLocale();
   const { items: spellIndex, isLoading } = useSpellIndex(locale);
   const [searchQuery, setSearchQuery] = useState('');
 

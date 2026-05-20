@@ -24,6 +24,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Mock next-intl
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
+  useLocale: () => 'en',
 }));
 
 // Mock useNotifications to prevent NotificationProvider requirement in tests
@@ -316,7 +317,7 @@ describe('EncounterPlanner Component', () => {
     });
 
     it('should load active encounter on mount', () => {
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
       expect(mockGetEncounters).toHaveBeenCalled();
       expect(mockGetActiveEncounter).toHaveBeenCalled();
     });
@@ -325,7 +326,7 @@ describe('EncounterPlanner Component', () => {
       mockGetEncounters.mockReturnValue([]);
       mockGetActiveEncounter.mockReturnValue(null);
 
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       expect(mockCreateEmptyEncounter).toHaveBeenCalled();
       expect(mockSaveEncounter).toHaveBeenCalled();
@@ -333,14 +334,14 @@ describe('EncounterPlanner Component', () => {
     });
 
     it('should not create encounter if active one exists', () => {
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
       expect(mockCreateEmptyEncounter).not.toHaveBeenCalled();
     });
   });
 
   describe('Encounter Management', () => {
     it('should display encounter name', () => {
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
       // Use placeholder to specifically target the input (not select)
       const encounterName = screen.getByPlaceholderText('encounterName');
       expect(encounterName).toBeInTheDocument();
@@ -349,7 +350,7 @@ describe('EncounterPlanner Component', () => {
 
     it('should update encounter name', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       // Use placeholder to specifically target the input
       const nameInput = screen.getByPlaceholderText('encounterName');
@@ -368,7 +369,7 @@ describe('EncounterPlanner Component', () => {
 
     it('should create new encounter', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       const newButton = screen.getByText(/newEncounter/);
       await user.click(newButton);
@@ -385,7 +386,7 @@ describe('EncounterPlanner Component', () => {
         createMockEncounter({ id: '2' }),
       ]);
 
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       const deleteButton = screen.getByText(/deleteEncounter/);
       await user.click(deleteButton);
@@ -400,7 +401,7 @@ describe('EncounterPlanner Component', () => {
         .mockReturnValueOnce([createMockEncounter()])
         .mockReturnValue([]);
 
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       const deleteButton = screen.getByText(/deleteEncounter/);
       await user.click(deleteButton);
@@ -416,7 +417,7 @@ describe('EncounterPlanner Component', () => {
         createMockEncounter({ id: '2', name: 'Encounter 2' }),
       ]);
 
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       const select = screen.getByRole('combobox');
       await user.selectOptions(select, '2');
@@ -428,7 +429,7 @@ describe('EncounterPlanner Component', () => {
   describe('Creature Management', () => {
     it('should add creature from API', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       // Use the visible "Add Creature" button
       const addButton = screen.getByText(/addCreature/);
@@ -447,9 +448,7 @@ describe('EncounterPlanner Component', () => {
       });
 
       // Component should throw on initialization error
-      expect(() => render(<EncounterPlanner locale='en' />)).toThrow(
-        'Storage Error',
-      );
+      expect(() => render(<EncounterPlanner />)).toThrow('Storage Error');
     });
 
     it('should remove creature', async () => {
@@ -462,7 +461,7 @@ describe('EncounterPlanner Component', () => {
       });
       mockGetActiveEncounter.mockReturnValue(encounterWithCreatures);
 
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       const removeButtons = screen.getAllByTitle('removeCombatant');
       await user.click(removeButtons[0]);
@@ -480,7 +479,7 @@ describe('EncounterPlanner Component', () => {
   describe('Import/Export', () => {
     it('should export encounter as JSON', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       const exportButton = screen.getByText(/exportEncounter/);
       await user.click(exportButton);
@@ -502,7 +501,7 @@ describe('EncounterPlanner Component', () => {
   describe('PlayMode Transition', () => {
     it('should enter play mode', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       const playButton = screen.getByText(/startCombat/);
       await user.click(playButton);
@@ -515,7 +514,7 @@ describe('EncounterPlanner Component', () => {
 
     it('should exit play mode', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       const playButton = screen.getByText(/startCombat/);
       await user.click(playButton);
@@ -546,7 +545,7 @@ describe('EncounterPlanner Component', () => {
       mockGetActiveInProgressCombatId.mockReturnValue('combat-1');
       mockGetInProgressCombat.mockReturnValue(mockCombat);
 
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       // Component shows resume banner
       expect(screen.getByText(/resumeCombatAvailable/)).toBeInTheDocument();
@@ -566,7 +565,7 @@ describe('EncounterPlanner Component', () => {
   describe('Debounced Autosave', () => {
     it('should save encounter after updates', async () => {
       const user = userEvent.setup();
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       mockSaveEncounter.mockClear();
 
@@ -585,7 +584,7 @@ describe('EncounterPlanner Component', () => {
       mockGetActiveEncounter.mockReturnValue(null);
       mockGetEncounters.mockReturnValue([]);
 
-      render(<EncounterPlanner locale='en' />);
+      render(<EncounterPlanner />);
 
       expect(mockCreateEmptyEncounter).toHaveBeenCalled();
     });

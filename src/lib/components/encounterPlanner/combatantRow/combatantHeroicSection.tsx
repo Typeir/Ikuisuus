@@ -23,14 +23,16 @@
 
 'use client';
 
-import type { HeroicAwakeningState, InProgressCombatant } from '@/lib/types/inProgressCombat';
-import { forceHeroicAwakening } from '@/lib/utils/inProgressCombatStorage';
 import { Tooltip } from '@/lib/components/ui';
+import type {
+    HeroicAwakeningState
+} from '@/lib/types/inProgressCombat';
+import { forceHeroicAwakening } from '@/lib/utils/inProgressCombatStorage';
 import { X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback } from 'react';
-import { useCombatant } from './utils/context/combatantContext';
 import styles from './combatantRow.module.scss';
+import { useCombatant } from './utils/context/combatantContext';
 
 /**
  * Heroic awakening tier options for force awakening controls.
@@ -77,8 +79,11 @@ const DEFAULT_HEROIC_STATE: HeroicAwakeningState = {
  * // Within CombatantProvider
  * <CombatantHeroicSection />
  */
-export const CombatantHeroicSection: React.FC<CombatantHeroicSectionProps> = () => {
-  const { combatant, locale, onUpdate } = useCombatant();
+export const CombatantHeroicSection: React.FC<
+  CombatantHeroicSectionProps
+> = () => {
+  const { combatant, onUpdate } = useCombatant();
+  const locale = useLocale();
   const { heroicAwakening, crText } = combatant;
 
   const t = useTranslations('encounterPlanner');
@@ -89,7 +94,7 @@ export const CombatantHeroicSection: React.FC<CombatantHeroicSectionProps> = () 
       forceHeroicAwakening(updated, tier, locale);
       onUpdate(updated);
     },
-    [combatant, locale, onUpdate]
+    [combatant, locale, onUpdate],
   );
 
   const handleUnawaken = useCallback(() => {
@@ -119,8 +124,7 @@ export const CombatantHeroicSection: React.FC<CombatantHeroicSectionProps> = () 
                   href={affix.source?.href}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className={styles.heroicAffix}
-                >
+                  className={styles.heroicAffix}>
                   {affix.text}
                 </a>
               ))}
@@ -141,24 +145,21 @@ export const CombatantHeroicSection: React.FC<CombatantHeroicSectionProps> = () 
             <Tooltip content={t('forceAwakeningTooltip')} placement='top'>
               <button
                 onClick={() => handleForceAwakening('awakened')}
-                className={styles.awakeningButtonSecondary}
-              >
+                className={styles.awakeningButtonSecondary}>
                 {t('heroic.awakened')}
               </button>
             </Tooltip>
             <Tooltip content={t('forceAwakeningTooltip')} placement='top'>
               <button
                 onClick={() => handleForceAwakening('legendary')}
-                className={styles.awakeningButtonSecondary}
-              >
+                className={styles.awakeningButtonSecondary}>
                 {t('heroic.legendary')}
               </button>
             </Tooltip>
             <Tooltip content={t('forceAwakeningTooltip')} placement='top'>
               <button
                 onClick={() => handleForceAwakening('mythic')}
-                className={styles.awakeningButtonSecondary}
-              >
+                className={styles.awakeningButtonSecondary}>
                 {t('heroic.mythic')}
               </button>
             </Tooltip>
@@ -166,8 +167,7 @@ export const CombatantHeroicSection: React.FC<CombatantHeroicSectionProps> = () 
               <button
                 onClick={handleUnawaken}
                 className={styles.awakeningButtonDanger}
-                aria-label={t('removeAwakening')}
-              >
+                aria-label={t('removeAwakening')}>
                 <X size={14} aria-hidden='true' />
               </button>
             </Tooltip>

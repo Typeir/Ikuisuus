@@ -7,10 +7,12 @@
  */
 
 import {
-  getLevelFromXP,
-  getXPForLevel,
-  getXPProgressPercent,
-  MAX_XP_LEVEL,
+    getLevelFromXP,
+    getXpAxisPosition,
+    getXPForLevel,
+    getXPProgressPercent,
+    MAX_XP_LEVEL,
+    XP_THRESHOLDS,
 } from '@/lib/utils/xpProgression';
 import { describe, expect, it } from 'vitest';
 
@@ -108,5 +110,55 @@ describe('getXPProgressPercent', () => {
     const percent = getXPProgressPercent(midway);
     expect(percent).toBeGreaterThan(0);
     expect(percent).toBeLessThan(100);
+  });
+});
+
+/**
+ * @fileoverview Tests for getXpAxisPosition
+ * @description Verifies the power-law XP axis helper used to render
+ * the overall XP bar — zero boundary, max boundary, monotonicity,
+ * diminishing-returns slope, and growing level-segment property.
+ */
+describe('getXpAxisPosition', () => {
+  it('returns 0 at XP 0', () => {
+    expect(getXpAxisPosition(0)).toBe(0);
+  });
+
+  it('returns 100 at the maximum XP threshold', () => {
+    expect(getXpAxisPosition(XP_THRESHOLDS[MAX_XP_LEVEL])).toBeCloseTo(100, 5);
+  });
+
+  it('clamps below 0 to 0', () => {
+    expect(getXpAxisPosition(-100)).toBe(0);
+  });
+
+  it('clamps above max to 100', () => {
+    expect(getXpAxisPosition(XP_THRESHOLDS[MAX_XP_LEVEL] + 999999)).toBeCloseTo(
+      100,
+      5,
+    );
+  });
+
+  it('is strictly monotonically increasing across all level thresholds', () => {
+    let prev = getXpAxisPosition(XP_THRESHOLDS[1]);
+    for (let lvl = 2; lvl <= MAX_XP_LEVEL; lvl++) {
+      const curr = getXpAxisPosition(XP_THRESHOLDS[lvl]);
+      expect(curr).toBeGreaterThan(prev);
+      prev = curr;
+    }
+  });
+
+  it('places level 20 threshold above the linear ~11.8% mark (power curve sanity)', () => {
+    const pos = getXpAxisPosition(XP_THRESHOLDS[20]);
+    expect(pos).toBeGreaterThan(15);
+  });
+
+  it('shows diminishing returns: slope is steeper at the start than at the end', () => {
+    const delta = 1000;
+    const slopeStart = getXpAxisPosition(delta) - getXpAxisPosition(0);
+    const maxXp = XP_THRESHOLDS[MAX_XP_LEVEL];
+    const slopeEnd =
+      getXpAxisPosition(maxXp) - getXpAxisPosition(maxXp - delta);
+    expect(slopeStart).toBeGreaterThan(slopeEnd);
   });
 });

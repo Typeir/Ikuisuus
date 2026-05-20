@@ -25,7 +25,7 @@
 'use client';
 
 import { useCreatureIndex } from '@/lib/hooks/data/useEncounterData';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import styles from './combobox.module.scss';
 import { ComboboxItem, GenericCombobox } from './genericCombobox';
@@ -45,11 +45,9 @@ interface MonsterIndexEntry extends ComboboxItem {
 /**
  * Props for CreatureCombobox component
  * @interface CreatureComboboxProps
- * @property {string} locale - Current locale for API requests
  * @property {Function} onSelect - Callback with selected monster slug
  */
 interface CreatureComboboxProps {
-  locale: string;
   onSelect: (slug: string) => void;
 }
 
@@ -59,7 +57,6 @@ interface CreatureComboboxProps {
  *
  * @component
  * @param {CreatureComboboxProps} props - Component props
- * @param {string} props.locale - Current locale for API requests
  * @param {(slug: string) => void} props.onSelect - Callback with selected monster slug
  * @returns {JSX.Element} Rendered creature combobox
  *
@@ -72,10 +69,10 @@ interface CreatureComboboxProps {
  * ```
  */
 export const CreatureCombobox: React.FC<CreatureComboboxProps> = ({
-  locale,
   onSelect,
 }) => {
   const t = useTranslations('encounterPlanner');
+  const locale = useLocale();
   const { items: monsterIndex, isLoading } = useCreatureIndex(locale);
   const [searchQuery, setSearchQuery] = useState('');
 

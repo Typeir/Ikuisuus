@@ -15,9 +15,7 @@ vi.mock('@/lib/context/CharacterSheetContext', () => ({
 }));
 
 vi.mock('@/lib/components/characterSheet', () => ({
-  CharacterRoster: ({ locale }: { locale: string }) => (
-    <div data-testid='character-roster' data-locale={locale} />
-  ),
+  CharacterRoster: () => <div data-testid='character-roster' />,
 }));
 
 describe('CharactersPage', () => {
@@ -36,13 +34,5 @@ describe('CharactersPage', () => {
   it('renders the character roster', async () => {
     await renderPage();
     expect(screen.getByTestId('character-roster')).toBeInTheDocument();
-  });
-
-  it('passes locale to CharacterRoster', async () => {
-    await renderPage('es');
-    expect(screen.getByTestId('character-roster')).toHaveAttribute(
-      'data-locale',
-      'es',
-    );
   });
 });

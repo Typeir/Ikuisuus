@@ -26,13 +26,43 @@
 
   // Animation — brief invisible hold lets useLayoutEffect position before paint
   opacity: 0;
-  animation: tooltipFadeIn 0.2s ease-out forwards;
+  animation: tooltipSlideUp 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+  @keyframes tooltipSlideUp {
+    0% {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    20% {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes tooltipSlideDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    20% {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   @keyframes tooltipFadeIn {
     0% {
       opacity: 0;
     }
-    25% {
+    20% {
       opacity: 0;
     }
     100% {
@@ -42,11 +72,11 @@
 
   // Placement-specific entrance animations
   &.top {
-    animation-name: tooltipFadeIn;
+    animation-name: tooltipSlideUp;
   }
 
   &.bottom {
-    animation-name: tooltipFadeIn;
+    animation-name: tooltipSlideDown;
   }
 
   &.left {

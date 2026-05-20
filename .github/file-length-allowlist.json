@@ -131,7 +131,7 @@
   },
   {
     "file": "src/lib/components/characterSheet/characterSheet.module.scss",
-    "maxLines": 260,
+    "maxLines": 280,
     "justification": "Character sheet layout SCSS covering all panel sections, edit-mode states, and responsive grid — splitting would break module-scoped class references"
   },
   {

@@ -50,12 +50,13 @@ vi.mock('next-intl/middleware', () => ({
   default: vi.fn(() => (req: unknown) => null),
 }));
 
-/** Mock next-intl useTranslations hook while keeping the real provider */
+/** Mock next-intl useTranslations and useLocale hooks while keeping the real provider */
 vi.mock('next-intl', async (importOriginal) => {
   const actual = await importOriginal<typeof import('next-intl')>();
   return {
     ...actual,
     useTranslations: () => (key: string) => key,
+    useLocale: () => 'en',
   };
 });
 

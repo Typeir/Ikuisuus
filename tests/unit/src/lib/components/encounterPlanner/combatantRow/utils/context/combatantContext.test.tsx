@@ -1,12 +1,12 @@
 /**
  * @fileoverview Unit tests for CombatantContext
  * @description Tests for the CombatantProvider and useCombatant hook.
- * 
+ *
  * @module CombatantContext.test
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0
- * 
+ *
  * @requires vitest
  * @requires @testing-library/react
  * @requires @testing-library/react-hooks
@@ -14,16 +14,21 @@
  * @requires @/lib/types/inProgressCombat
  */
 
-import { renderHook, act } from '@testing-library/react';
-import type { ReactNode } from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { CombatantProvider, useCombatant } from '@/lib/components/encounterPlanner/combatantRow/utils/context/combatantContext';
+import {
+    CombatantProvider,
+    useCombatant,
+} from '@/lib/components/encounterPlanner/combatantRow/utils/context/combatantContext';
 import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
+import { act, renderHook } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 
 /**
  * Creates a mock combatant for testing.
  */
-function createMockCombatant(overrides: Partial<InProgressCombatant> = {}): InProgressCombatant {
+function createMockCombatant(
+  overrides: Partial<InProgressCombatant> = {},
+): InProgressCombatant {
   return {
     id: 'test-combatant-1',
     name: 'Test Monster',
@@ -92,11 +97,7 @@ describe('CombatantContext', () => {
       const mockOnUpdate = vi.fn();
 
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <CombatantProvider
-          combatant={mockCombatant}
-          locale="en"
-          onUpdate={mockOnUpdate}
-        >
+        <CombatantProvider combatant={mockCombatant} onUpdate={mockOnUpdate}>
           {children}
         </CombatantProvider>
       );
@@ -104,7 +105,6 @@ describe('CombatantContext', () => {
       const { result } = renderHook(() => useCombatant(), { wrapper });
 
       expect(result.current.combatant).toEqual(mockCombatant);
-      expect(result.current.locale).toBe('en');
     });
 
     it('should provide updateField function that calls onUpdate', () => {
@@ -112,11 +112,7 @@ describe('CombatantContext', () => {
       const mockOnUpdate = vi.fn();
 
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <CombatantProvider
-          combatant={mockCombatant}
-          locale="en"
-          onUpdate={mockOnUpdate}
-        >
+        <CombatantProvider combatant={mockCombatant} onUpdate={mockOnUpdate}>
           {children}
         </CombatantProvider>
       );
@@ -138,11 +134,7 @@ describe('CombatantContext', () => {
       const mockOnUpdate = vi.fn();
 
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <CombatantProvider
-          combatant={mockCombatant}
-          locale="en"
-          onUpdate={mockOnUpdate}
-        >
+        <CombatantProvider combatant={mockCombatant} onUpdate={mockOnUpdate}>
           {children}
         </CombatantProvider>
       );
@@ -168,10 +160,8 @@ describe('CombatantContext', () => {
       const wrapper = ({ children }: { children: ReactNode }) => (
         <CombatantProvider
           combatant={mockCombatant}
-          locale="en"
           onUpdate={mockOnUpdate}
-          onRemoveSessionOnly={mockOnRemoveSessionOnly}
-        >
+          onRemoveSessionOnly={mockOnRemoveSessionOnly}>
           {children}
         </CombatantProvider>
       );
@@ -186,11 +176,7 @@ describe('CombatantContext', () => {
       const mockOnUpdate = vi.fn();
 
       const wrapper = ({ children }: { children: ReactNode }) => (
-        <CombatantProvider
-          combatant={mockCombatant}
-          locale="en"
-          onUpdate={mockOnUpdate}
-        >
+        <CombatantProvider combatant={mockCombatant} onUpdate={mockOnUpdate}>
           {children}
         </CombatantProvider>
       );
@@ -215,16 +201,12 @@ describe('CombatantContext', () => {
 
       const TestChild = () => {
         const { combatant } = useCombatant();
-        return <div data-testid="child">{combatant.name}</div>;
+        return <div data-testid='child'>{combatant.name}</div>;
       };
 
       const { container } = renderHook(() => null, {
         wrapper: ({ children }) => (
-          <CombatantProvider
-            combatant={mockCombatant}
-            locale="en"
-            onUpdate={mockOnUpdate}
-          >
+          <CombatantProvider combatant={mockCombatant} onUpdate={mockOnUpdate}>
             <TestChild />
           </CombatantProvider>
         ),

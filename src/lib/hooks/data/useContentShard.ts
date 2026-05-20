@@ -12,15 +12,15 @@
 
 'use client';
 
-import type { ContentShardType } from '@/lib/components/characterSheet/contentShardPanel';
-import type { ContentShardResponse, ShardResponse } from '@/lib/types/api.d';
-import {
-  contentShardKey,
-  shardKey,
-  urlForContentShard,
-  urlForShard,
-} from '@/lib/fetch/swrKeys';
+import type { ContentShardType } from '@/lib/components/characterSheet/shards/contentShardPanel';
 import { fetcher } from '@/lib/fetch/fetcher';
+import {
+    contentShardKey,
+    shardKey,
+    urlForContentShard,
+    urlForShard,
+} from '@/lib/fetch/swrKeys';
+import type { ContentShardResponse, ShardResponse } from '@/lib/types/api.d';
 import useSWR, { type KeyedMutator } from 'swr';
 
 /**

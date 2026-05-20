@@ -15,16 +15,22 @@
  * @requires @/lib/components/encounterPlanner/playMode/CombatantContext
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import * as CombatantHeroicSectionModule from '@/lib/components/encounterPlanner/combatantRow/combatantHeroicSection';
 import { CombatantHeroicSection } from '@/lib/components/encounterPlanner/combatantRow/combatantHeroicSection';
 import { CombatantProvider } from '@/lib/components/encounterPlanner/combatantRow/utils/context/combatantContext';
-import type { HeroicAwakeningState, AffixEntry, InProgressCombatant, CombatantMechanics } from '@/lib/types/inProgressCombat';
+import type {
+    AffixEntry,
+    CombatantMechanics,
+    HeroicAwakeningState,
+    InProgressCombatant,
+} from '@/lib/types/inProgressCombat';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
+  useLocale: () => 'en',
 }));
 
 vi.mock('@/lib/utils/inProgressCombatStorage', () => ({
@@ -42,7 +48,9 @@ vi.mock('@/lib/components/ui', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-const createDefaultHeroicAwakening = (overrides: Partial<HeroicAwakeningState> = {}): HeroicAwakeningState => ({
+const createDefaultHeroicAwakening = (
+  overrides: Partial<HeroicAwakeningState> = {},
+): HeroicAwakeningState => ({
   fateDieResult: 0,
   heroicDc: 0,
   awakened: false,
@@ -61,7 +69,9 @@ const createDefaultMechanics = (): CombatantMechanics => ({
   phase: false,
 });
 
-const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InProgressCombatant => ({
+const createMockCombatant = (
+  overrides: Partial<InProgressCombatant> = {},
+): InProgressCombatant => ({
   id: 'test-combatant-1',
   name: 'Test Monster',
   hpCurrent: 100,
@@ -103,14 +113,14 @@ const createAffixEntry = (text: string): AffixEntry => ({
  */
 const renderWithProvider = (
   combatantOverrides: Partial<InProgressCombatant> = {},
-  onUpdate = vi.fn()
+  onUpdate = vi.fn(),
 ) => {
   const combatant = createMockCombatant(combatantOverrides);
   return {
     ...render(
-      <CombatantProvider combatant={combatant} locale="en" onUpdate={onUpdate}>
+      <CombatantProvider combatant={combatant} locale='en' onUpdate={onUpdate}>
         <CombatantHeroicSection />
-      </CombatantProvider>
+      </CombatantProvider>,
     ),
     combatant,
     onUpdate,
@@ -120,7 +130,9 @@ const renderWithProvider = (
 describe('CombatantHeroicSection module', () => {
   it('should export CombatantHeroicSection component', () => {
     expect(CombatantHeroicSectionModule.CombatantHeroicSection).toBeDefined();
-    expect(typeof CombatantHeroicSectionModule.CombatantHeroicSection).toBe('function');
+    expect(typeof CombatantHeroicSectionModule.CombatantHeroicSection).toBe(
+      'function',
+    );
   });
 
   it('should export exactly one member', () => {
@@ -269,7 +281,9 @@ describe('CombatantHeroicSection force awakening', () => {
   it('should render unawaken button when crText is present', () => {
     renderWithProvider({ crText: 'CR 5' });
 
-    expect(screen.getByRole('button', { name: 'removeAwakening' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'removeAwakening' }),
+    ).toBeInTheDocument();
   });
 
   it('should call onUpdate with reset state when unawaken is clicked', async () => {

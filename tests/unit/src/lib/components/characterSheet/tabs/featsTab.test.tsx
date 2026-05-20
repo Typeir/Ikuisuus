@@ -10,7 +10,8 @@
 
 import { FeatsTab } from '@/lib/components/characterSheet/tabs/featsTab';
 import { createEmptyCharacter } from '@/lib/utils/characterStorage';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>();
@@ -28,24 +29,17 @@ afterEach(() => {
 
 describe('FeatsTab', () => {
   it('renders the empty state when no feats are selected and not editing', () => {
-    render(
-      <FeatsTab
-        data={createEmptyCharacter()}
-        editing={false}
-        onChange={() => {}}
-      />,
+    renderWithActiveSheet(
+      <FeatsTab data={createEmptyCharacter()} onChange={() => {}} />,
     );
-    expect(screen.getByText(/no feats selected/i)).toBeTruthy();
+    expect(screen.getByText(/select a feat to preview/i)).toBeTruthy();
   });
 
   it('renders the picker when in edit mode', () => {
-    render(
-      <FeatsTab
-        data={createEmptyCharacter()}
-        editing={true}
-        onChange={() => {}}
-      />,
+    renderWithActiveSheet(
+      <FeatsTab data={createEmptyCharacter()} onChange={() => {}} />,
+      { editing: true },
     );
-    expect(screen.getByText(/loading feats/i)).toBeTruthy();
+    expect(screen.getByRole('list', { name: /available feats/i })).toBeTruthy();
   });
 });
