@@ -1,51 +1,43 @@
 /**
  * @fileoverview Character Sheet Header — Meta Row
  * @description Renders the row beneath the character name: level field /
- * label, XP field / value, bloodline pill, and per-vocation pills. Extracted
- * from {@link CharacterSheetHeader} so the main file stays within the project
- * file-length budget.
+ * label, XP field / value, bloodline pill, and per-vocation pills. Consumes
+ * the active draft, editing flag, and locale from
+ * {@link useCharacterSheetEdit} so the header doesn't have to drill props
+ * through.
  *
  * @module lib/components/characterSheet/characterSheetHeaderMeta
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 6.0.0
  */
 
 'use client';
 
-import type { CharacterSheet } from '@/lib/types/character';
 import { Chip } from '@/lib/components/ui/chip/chip';
 import { NumericInput } from '@/lib/components/ui/numericInput';
-import { PagePreviewTooltip } from './pagePreviewTooltip';
+import { useCharacterSheetEdit } from '@/lib/context/CharacterSheetEditContext';
+import { getCharacterDerived } from '@/lib/utils/characterDerivation';
 import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
+import { PagePreviewTooltip } from './pagePreviewTooltip';
 import styles from './characterSheet.module.scss';
 
 /**
  * Props for {@link CharacterSheetHeaderMeta}.
  *
+ * The component reads `data`, `editing`, and `locale` from
+ * {@link useCharacterSheetEdit}; only the XP-input value and its handler are
+ * passed in (they live on the header because they are coupled to a debounce
+ * ref).
+ *
  * @interface CharacterSheetHeaderMetaProps
- * @property {CharacterSheet} data - The character sheet being rendered
- * @property {boolean} editing - True when the header is in edit mode
- * @property {string} locale - Active locale used by page-preview tooltips
- * @property {number} experience - Effective (clamped) XP for display
  * @property {number} xpInput - Local XP input value (only used in edit mode)
- * @property {boolean} hasActiveVocations - True when at least one vocation has a slug
- * @property {boolean} levelMismatch - True when sum(vocation levels) ≠ data.level
- * @property {number} vocationLevelSum - Sum of all active vocation levels
- * @property {number} globalLevel - The user-tracked global character level (data.level)
  * @property {(value: number | undefined) => void} onLevelChange - Called when the global level input changes
  * @property {(value: number) => void} onXpChange - Called when the XP input changes
  */
 export interface CharacterSheetHeaderMetaProps {
-  data: CharacterSheet;
-  editing: boolean;
-  locale: string;
-  experience: number;
   xpInput: number;
-  hasActiveVocations: boolean;
-  levelMismatch: boolean;
-  vocationLevelSum: number;
-  globalLevel: number;
   onLevelChange: (value: number | undefined) => void;
   onXpChange: (value: number) => void;
 }
@@ -60,20 +52,21 @@ export interface CharacterSheetHeaderMetaProps {
  */
 export const CharacterSheetHeaderMeta: React.FC<
   CharacterSheetHeaderMetaProps
-> = ({
-  data,
-  editing,
-  locale,
-  experience,
-  xpInput,
-  hasActiveVocations,
-  levelMismatch,
-  vocationLevelSum,
-  globalLevel,
-  onLevelChange,
-  onXpChange,
-}) => {
+> = ({ xpInput, onLevelChange, onXpChange }) => {
   const t = useTranslations('characterSheet');
+  const { data, editing, locale } = useCharacterSheetEdit();
+
+  const derived = useMemo(() => getCharacterDerived(data), [data]);
+  const { hasActiveVocations, experience } = derived;
+  const vocationLevelSum = useMemo(
+    () =>
+      data.vocations
+        .filter((v) => Boolean(v.slug))
+        .reduce((sum, v) => sum + (v.level ?? 0), 0),
+    [data.vocations],
+  );
+  const globalLevel = data.level ?? 1;
+  const levelMismatch = hasActiveVocations && vocationLevelSum !== globalLevel;
 
   const mismatchChip = levelMismatch ? (
     <Chip

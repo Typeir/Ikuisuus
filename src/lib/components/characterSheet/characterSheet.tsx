@@ -16,6 +16,7 @@
 'use client';
 
 import { useCharacterSheetDispatch } from '@/lib/context/CharacterSheetContext';
+import { CharacterSheetEditProvider } from '@/lib/context/CharacterSheetEditContext';
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
 import { computeProficiencyBonus } from '@/lib/utils/characterStorage';
@@ -183,42 +184,48 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
   return (
     <PagePreviewProvider>
-      <article
-        className={styles.characterSheet}
-        aria-label={t('ariaCharacterSheet', { name: data.name })}>
-        <CharacterSheetHeader
-          data={data}
-          editing={editing}
-          onEdit={handleEdit}
-          onSave={handleSave}
-          onCancel={handleCancel}
-          onChange={handleChange}
-          locale={locale}
-        />
+      <CharacterSheetEditProvider
+        data={data}
+        editing={editing}
+        onChange={handleChange}
+        locale={locale}>
+        <article
+          className={styles.characterSheet}
+          aria-label={t('ariaCharacterSheet', { name: data.name })}>
+          <CharacterSheetHeader
+            data={data}
+            editing={editing}
+            onEdit={handleEdit}
+            onSave={handleSave}
+            onCancel={handleCancel}
+            onChange={handleChange}
+            locale={locale}
+          />
 
-        <section
-          className={styles.abilityRow}
-          aria-label={t('ariaAbilityScores')}>
-          {ABILITY_KEYS.map(({ key, label }) => (
-            <AbilityScoreBlock
-              key={key}
-              label={label}
-              score={data.abilityScores[key]}
-              editing={editing}
-              onChange={(score) => handleAbilityChange(key, score)}
-            />
-          ))}
-        </section>
+          <section
+            className={styles.abilityRow}
+            aria-label={t('ariaAbilityScores')}>
+            {ABILITY_KEYS.map(({ key, label }) => (
+              <AbilityScoreBlock
+                key={key}
+                label={label}
+                score={data.abilityScores[key]}
+                editing={editing}
+                onChange={(score) => handleAbilityChange(key, score)}
+              />
+            ))}
+          </section>
 
-        <div className={styles.tabsSection}>
-          <GradientTabs
-            tabs={tabs}
-            activeTab={activeTab}
-            onChange={handleTabChange}>
-            {activePanel}
-          </GradientTabs>
-        </div>
-      </article>
+          <div className={styles.tabsSection}>
+            <GradientTabs
+              tabs={tabs}
+              activeTab={activeTab}
+              onChange={handleTabChange}>
+              {activePanel}
+            </GradientTabs>
+          </div>
+        </article>
+      </CharacterSheetEditProvider>
       <PagePreviewHost locale={locale} />
     </PagePreviewProvider>
   );

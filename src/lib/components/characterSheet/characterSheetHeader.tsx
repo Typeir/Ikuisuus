@@ -79,16 +79,7 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
   );
   const fullName = data.name || t('unnamedCharacter');
   const derived = useMemo(() => getCharacterDerived(data), [data]);
-  const { hasActiveVocations, experience, xpOverallPercent } = derived;
-  const vocationLevelSum = useMemo(
-    () =>
-      data.vocations
-        .filter((v) => Boolean(v.slug))
-        .reduce((sum, v) => sum + (v.level ?? 0), 0),
-    [data.vocations],
-  );
-  const globalLevel = data.level ?? 1;
-  const levelMismatch = hasActiveVocations && vocationLevelSum !== globalLevel;
+  const { experience, xpOverallPercent } = derived;
   const [xpInput, setXpInput] = useState<number>(data.experience ?? 0);
   const debouncedXp = useDebounce(xpInput, 300);
   const xpChangedRef = useRef(false);
@@ -144,15 +135,7 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
         )}
 
         <CharacterSheetHeaderMeta
-          data={data}
-          editing={editing}
-          locale={locale}
-          experience={experience}
           xpInput={xpInput}
-          hasActiveVocations={hasActiveVocations}
-          levelMismatch={levelMismatch}
-          vocationLevelSum={vocationLevelSum}
-          globalLevel={globalLevel}
           onLevelChange={handleLevelChange}
           onXpChange={(v) => {
             xpChangedRef.current = true;
