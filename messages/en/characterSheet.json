@@ -113,5 +113,12 @@
   "rollAll": "Roll All",
   "averageAll": "Average All",
   "ariaRollAllHitDice": "Roll all unrolled hit dice",
-  "ariaAverageAllHitDice": "Use the average for all unrolled hit dice"
+  "ariaAverageAllHitDice": "Use the average for all unrolled hit dice",
+  "openHitDiceRoller": "Open hit dice roller",
+  "hitDiceRoller": "Hit dice roller",
+  "hitDice": "Hit Dice",
+  "noHitDiceTracked": "No hit dice tracked yet.",
+  "addToHp": "Add to HP",
+  "rollDie": "Roll d{die}",
+  "vocationLevelShort": "Lv. {level}"
 }

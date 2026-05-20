@@ -20,6 +20,7 @@
 import { DropdownPanel } from '@/lib/components/characterSheet/atoms/dropdownPanel';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { rollDie } from '@/lib/utils/diceUtils';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './hpRollerPanel.module.scss';
 
@@ -82,6 +83,7 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
   conMod,
   onCommit,
 }) => {
+  const t = useTranslations('characterSheet');
   const [localLog, setLocalLog] = useState<HitDieRollEntry[]>(hitDiceLog);
 
   useEffect(() => {
@@ -170,13 +172,13 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
 
   return (
     <DropdownPanel
-      triggerLabel='Open hit dice roller'
+      triggerLabel={t('openHitDiceRoller')}
       badge={badge}
       triggerClassName={styles.trigger}
       panelClassName={styles.panel}
       panelRole='dialog'
-      panelLabel='Hit dice roller'>
-      <div className={styles.panelHeader}>Hit Dice</div>
+      panelLabel={t('hitDiceRoller')}>
+      <div className={styles.panelHeader}>{t('hitDice')}</div>
 
       {unrolledCount > 0 && (
         <div className={styles.bulkActions}>
@@ -184,21 +186,21 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
             type='button'
             className={styles.bulkBtn}
             onClick={handleRollAll}
-            aria-label='Roll all unrolled hit dice'>
-            Roll All
+            aria-label={t('ariaRollAllHitDice')}>
+            {t('rollAll')}
           </button>
           <button
             type='button'
             className={styles.bulkBtn}
             onClick={handleAverageAll}
-            aria-label='Use the average for all unrolled hit dice'>
-            Average All
+            aria-label={t('ariaAverageAllHitDice')}>
+            {t('averageAll')}
           </button>
         </div>
       )}
 
       {groups.length === 0 && (
-        <p className={styles.empty}>No hit dice tracked yet.</p>
+        <p className={styles.empty}>{t('noHitDiceTracked')}</p>
       )}
 
       {groups.map((group) => (
@@ -212,7 +214,9 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
             <div
               key={entry.id}
               className={`${styles.entryRow}${entry.addedToHp ? ` ${styles.committed}` : ''}`}>
-              <span className={styles.entryLabel}>Lv. {entry.levelIndex}</span>
+              <span className={styles.entryLabel}>
+                {t('vocationLevelShort', { level: entry.levelIndex })}
+              </span>
 
               {entry.addedToHp ? (
                 <span className={styles.entryDone}>
@@ -227,7 +231,7 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
                     type='button'
                     className={styles.confirmBtn}
                     onClick={() => handleConfirm(entry.id)}>
-                    Add to HP
+                    {t('addToHp')}
                   </button>
                 </>
               ) : (
@@ -235,7 +239,7 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
                   type='button'
                   className={styles.rollBtn}
                   onClick={() => handleRoll(entry.id)}>
-                  Roll d{entry.dieType}
+                  {t('rollDie', { die: entry.dieType })}
                 </button>
               )}
             </div>
