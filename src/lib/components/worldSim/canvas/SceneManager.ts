@@ -12,24 +12,25 @@
  */
 
 import {
-  AmbientLight,
-  BufferGeometry,
-  Color,
-  Float32BufferAttribute,
-  PerspectiveCamera,
-  PointLight,
-  Points,
-  PointsMaterial,
-  Scene,
-  WebGLRenderer,
+    AmbientLight,
+    BufferGeometry,
+    Color,
+    Float32BufferAttribute,
+    PerspectiveCamera,
+    PointLight,
+    Points,
+    PointsMaterial,
+    Scene,
+    WebGLRenderer,
 } from 'three';
+import { registerIkModule, unregisterIkModule } from '../../../debug/ik';
 import { DEFAULT_CAMERA_LOOK_AT, DEFAULT_CAMERA_POSITION } from '../constants';
 import { PixelatePass } from './PixelatePass';
 import {
-  RenderLifecycle,
-  RenderPhase,
-  type FrameContext,
-  type LifecycleCallback,
+    RenderLifecycle,
+    RenderPhase,
+    type FrameContext,
+    type LifecycleCallback,
 } from './RenderLifecycle';
 
 /** @constant {number} STARFIELD_COUNT - Number of background starfield particles */
@@ -117,6 +118,31 @@ export class SceneManager {
   /** @property {boolean} isRunning - Whether the animation loop is active */
   private isRunning: boolean = false;
 
+  /**
+   * Maximum `deltaTime` clamped per frame in seconds.
+   * Prevents physics and rotation jumps when the tab resumes from being
+   * backgrounded. Writable via `window.ik.ws.deltaTimeCap`.
+   * Clamped to the range [1/120, 1] on write.
+   */
+  private deltaTimeCap: number = 1 / 15;
+
+  /** @property {number} lastFps - FPS computed from the previous raw delta (before clamping) */
+  private lastFps: number = 0;
+
+  /**
+   * Accumulated simulation time in seconds since the loop started.
+   * Advances at `clampedDelta * simSpeed` each frame.
+   * Passed as `FrameContext.time` to all subscribers.
+   */
+  private simTime: number = 0;
+
+  /**
+   * Simulation speed multiplier applied to `deltaTime` to produce
+   * `FrameContext.simDeltaTime` and to advance `simTime`.
+   * Writable via `window.ik.ws.simulationSpeed`. Clamped to [0, 1000].
+   */
+  private simSpeed: number = 1;
+
   /** @property {ResizeObserver} resizeObserver - Watches container size changes */
   private resizeObserver: ResizeObserver;
 
@@ -191,7 +217,34 @@ export class SceneManager {
   start(): void {
     if (this.isRunning) return;
     this.isRunning = true;
+    this.simTime = 0;
     this.lastTime = performance.now() / 1000;
+
+    const self = this;
+    registerIkModule('ws', {
+      get deltaTimeCap(): number {
+        return self.deltaTimeCap;
+      },
+      set deltaTimeCap(v: number) {
+        self.deltaTimeCap = Math.min(1, Math.max(1 / 120, v));
+      },
+      get fps(): number {
+        return self.lastFps;
+      },
+      get time(): number {
+        return self.simTime;
+      },
+      get running(): boolean {
+        return self.isRunning;
+      },
+      get simulationSpeed(): number {
+        return self.simSpeed;
+      },
+      set simulationSpeed(v: number) {
+        self.simSpeed = Math.min(1000, Math.max(0, v));
+      },
+    });
+
     this.tick();
   }
 
@@ -239,6 +292,7 @@ export class SceneManager {
    */
   dispose(): void {
     this.stop();
+    unregisterIkModule('ws');
     this.resizeObserver.disconnect();
     this.lifecycle.clear();
 
@@ -279,7 +333,11 @@ export class SceneManager {
     this.animationFrameId = requestAnimationFrame(() => this.tick());
 
     const now = performance.now() / 1000;
-    const deltaTime = now - this.lastTime;
+    const rawDelta = now - this.lastTime;
+    this.lastFps = rawDelta > 0 ? 1 / rawDelta : 0;
+    const deltaTime = Math.min(rawDelta, this.deltaTimeCap);
+    const simDeltaTime = deltaTime * this.simSpeed;
+    this.simTime += simDeltaTime;
     this.lastTime = now;
     this.frameCount++;
 
@@ -288,8 +346,9 @@ export class SceneManager {
       scene: this.scene,
       camera: this.camera,
       canvas: this.renderer.domElement,
-      time: now,
+      time: this.simTime,
       deltaTime,
+      simDeltaTime,
       frame: this.frameCount,
     };
 

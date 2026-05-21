@@ -174,6 +174,13 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: 'unit:debug',
+          include: ['tests/unit/src/lib/debug/**/*.test.{ts,tsx}'],
+        },
+      },
+      {
+        extends: true,
+        test: {
           name: 'unit:metadata',
           include: ['tests/unit/src/lib/metadata/**/*.test.{ts,tsx}'],
         },

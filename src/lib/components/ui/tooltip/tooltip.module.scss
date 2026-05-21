@@ -24,6 +24,20 @@
 
   pointer-events: none;
 
+  // List markers (::marker) misalign inside the floating tooltip frame and
+  // break vertical rhythm when MDX content renders <ul>/<ol>. Strip them
+  // globally for any descendant list, regardless of nesting depth.
+  ul,
+  ol {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  li::marker {
+    content: '';
+    display: none;
+  }
+
   // Animation — brief invisible hold lets useLayoutEffect position before paint
   opacity: 0;
   animation: tooltipSlideUp 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;

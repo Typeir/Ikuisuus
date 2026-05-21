@@ -182,6 +182,7 @@ function runSimulationFrames(
       canvas: mockCanvas,
       time: i * deltaTime,
       deltaTime,
+      simDeltaTime: deltaTime,
       frame: frameStart + i,
     });
   }

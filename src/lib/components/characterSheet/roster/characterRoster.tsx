@@ -22,11 +22,13 @@ import {
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
 import { createEmptyCharacter } from '@/lib/utils/characterStorage';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, PlusCircle, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CharacterSheet } from '../characterSheet';
-import styles from '../characterSheet.module.scss';
+import styles from './roster.module.scss';
+
+const ROSTER_COLLAPSED_KEY = 'ikuisuus.characterRoster.collapsed';
 
 /**
  * Props for the CharacterRoster component.
@@ -49,6 +51,28 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
   const { activeId, isHydrated } = useCharacterSheetState();
   const dispatch = useCharacterSheetDispatch();
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(ROSTER_COLLAPSED_KEY);
+      if (stored === 'true') setCollapsed(true);
+    } catch {
+      /** storage unavailable — non-fatal */
+    }
+  }, []);
+
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(ROSTER_COLLAPSED_KEY, String(next));
+      } catch {
+        /** storage unavailable — non-fatal */
+      }
+      return next;
+    });
+  }, []);
 
   const activeCharacter: CharacterSheetType | undefined =
     characters.find((c) => c.id === activeId) ?? characters[0];
@@ -94,69 +118,103 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
 
   if (!isHydrated) return null;
 
+  const collapseLabel = collapsed
+    ? t('ariaRosterExpand')
+    : t('ariaRosterCollapse');
+
   return (
-    <div className={styles.characterRoster}>
-      <aside
-        className={styles.rosterSidebar}
-        aria-label={t('ariaCharacterList')}>
-        <div className={styles.rosterSidebarHeader}>
-          <h2 className={styles.rosterTitle}>{t('rosterTitle')}</h2>
-          <button
-            type='button'
-            className={styles.createCharBtn}
-            onClick={handleCreate}
-            aria-label={t('ariaCreateCharacter')}>
-            <PlusCircle size={16} aria-hidden='true' />
-            {t('newCharacter')}
-          </button>
-        </div>
-
-        {characters.length === 0 ? (
-          <p className={styles.rosterEmpty}>{t('noCharactersYet')}</p>
-        ) : (
-          <ul className={styles.rosterList}>
-            {characters.map((char) => (
-              <li
-                key={char.id}
-                className={`${styles.rosterItem} ${char.id === activeCharacter?.id ? styles.rosterItemActive : ''}`}>
-                <button
-                  type='button'
-                  className={styles.rosterItemBtn}
-                  onClick={() => handleSelect(char.id)}
-                  aria-pressed={char.id === activeCharacter?.id}>
-                  <span className={styles.rosterItemName}>
-                    {char.name || t('unnamed')}
-                  </span>
-                  <span className={styles.rosterItemMeta}>
-                    {t('levelShort', { level: char.level })}
-                  </span>
-                </button>
-                <button
-                  type='button'
-                  className={styles.rosterDeleteBtn}
-                  onClick={() => handleDelete(char.id)}
-                  aria-label={t('ariaDeleteCharacter', {
-                    name: char.name || t('unnamed'),
-                  })}>
-                  <Trash2 size={12} aria-hidden='true' />
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </aside>
-
-      <main
-        className={styles.rosterMain}
-        aria-label={t('ariaCharacterSheetPanel')}>
-        {activeCharacter ? (
-          <CharacterSheet character={activeCharacter} />
-        ) : (
-          <div className={styles.rosterPlaceholder}>
-            <p>{t('selectOrCreate')}</p>
+    <div className={styles.rosterShell}>
+      <header className={styles.rosterTopBar}>
+        <h2 className={styles.rosterTitle}>{t('rosterTitle')}</h2>
+        <button
+          type='button'
+          className={styles.createCharBtn}
+          onClick={handleCreate}
+          aria-label={t('ariaCreateCharacter')}>
+          <PlusCircle size={16} aria-hidden='true' />
+          {t('newCharacter')}
+        </button>
+      </header>
+      <div
+        className={styles.characterRoster}
+        data-collapsed={collapsed ? 'true' : 'false'}>
+        <aside
+          className={styles.rosterSidebar}
+          aria-label={t('ariaCharacterList')}>
+          <div className={styles.rosterCollapseBar}>
+            <button
+              type='button'
+              className={styles.rosterCollapseBtn}
+              onClick={toggleCollapsed}
+              aria-label={collapseLabel}
+              aria-expanded={!collapsed}>
+              {collapsed ? (
+                <ChevronRight size={14} aria-hidden='true' />
+              ) : (
+                <ChevronLeft size={14} aria-hidden='true' />
+              )}
+            </button>
           </div>
-        )}
-      </main>
+
+          {characters.length === 0 ? (
+            <p className={styles.rosterEmpty}>
+              {collapsed ? '' : t('noCharactersYet')}
+            </p>
+          ) : (
+            <ul className={styles.rosterList}>
+              {characters.map((char) => {
+                const displayName = char.name || t('unnamed');
+                const initial = displayName.charAt(0).toUpperCase();
+                return (
+                  <li
+                    key={char.id}
+                    className={`${styles.rosterItem} ${char.id === activeCharacter?.id ? styles.rosterItemActive : ''}`}>
+                    <button
+                      type='button'
+                      className={styles.rosterItemBtn}
+                      onClick={() => handleSelect(char.id)}
+                      aria-pressed={char.id === activeCharacter?.id}
+                      title={collapsed ? displayName : undefined}>
+                      <span
+                        className={styles.rosterItemAvatar}
+                        aria-hidden='true'>
+                        {initial}
+                      </span>
+                      <span className={styles.rosterItemName}>
+                        {displayName}
+                      </span>
+                      <span className={styles.rosterItemMeta}>
+                        {t('levelShort', { level: char.level })}
+                      </span>
+                    </button>
+                    <button
+                      type='button'
+                      className={styles.rosterDeleteBtn}
+                      onClick={() => handleDelete(char.id)}
+                      aria-label={t('ariaDeleteCharacter', {
+                        name: displayName,
+                      })}>
+                      <Trash2 size={12} aria-hidden='true' />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </aside>
+
+        <main
+          className={styles.rosterMain}
+          aria-label={t('ariaCharacterSheetPanel')}>
+          {activeCharacter ? (
+            <CharacterSheet character={activeCharacter} />
+          ) : (
+            <div className={styles.rosterPlaceholder}>
+              <p>{t('selectOrCreate')}</p>
+            </div>
+          )}
+        </main>
+      </div>
 
       {confirmDeleteId &&
         (() => {

@@ -14,7 +14,7 @@
  */
 
 import { copyFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import sharp from 'sharp';
 
 /** Token size in pixels (matches frame dimensions). */
@@ -42,9 +42,9 @@ export function bundleImages(
   let copied = 0;
   let missing = 0;
 
-  for (const filename of imageFiles) {
-    const src = join(publicImgDir, filename);
-    const dest = join(assetsImgDir, filename);
+  for (const relPath of imageFiles) {
+    const src = join(publicImgDir, relPath);
+    const dest = join(assetsImgDir, basename(relPath));
 
     if (existsSync(src)) {
       copyFileSync(src, dest);
@@ -118,7 +118,8 @@ export async function generateTokens(
   const tokenMap = new Map<string, string>();
   let generated = 0;
 
-  for (const filename of imageFiles) {
+  for (const relPath of imageFiles) {
+    const filename = basename(relPath);
     const src = join(assetsImgDir, filename);
     if (!existsSync(src)) continue;
 

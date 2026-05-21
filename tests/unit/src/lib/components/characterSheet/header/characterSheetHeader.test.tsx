@@ -11,7 +11,8 @@
 
 import { CharacterSheetHeader } from '@/lib/components/characterSheet/header/characterSheetHeader';
 import { createEmptyCharacter } from '@/lib/utils/characterStorage';
-import { render, screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
+import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.stubGlobal(
@@ -23,7 +24,7 @@ vi.stubGlobal(
 
 describe('CharacterSheetHeader', () => {
   it('renders the character name in view mode', () => {
-    render(
+    renderWithActiveSheet(
       <CharacterSheetHeader
         data={{ ...createEmptyCharacter(), name: 'Aria Dawnweaver' }}
         editing={false}
@@ -32,6 +33,7 @@ describe('CharacterSheetHeader', () => {
         onCancel={() => {}}
         onChange={() => {}}
       />,
+      { character: { name: 'Aria Dawnweaver' } },
     );
     expect(
       screen.getByRole('heading', { name: /Aria Dawnweaver/i }),
@@ -39,7 +41,7 @@ describe('CharacterSheetHeader', () => {
   });
 
   it('renders edit/save/cancel actions appropriately', () => {
-    const { rerender } = render(
+    renderWithActiveSheet(
       <CharacterSheetHeader
         data={createEmptyCharacter()}
         editing={false}
@@ -53,7 +55,9 @@ describe('CharacterSheetHeader', () => {
       screen.getByRole('button', { name: 'ariaEditCharacter' }),
     ).toBeTruthy();
 
-    rerender(
+    cleanup();
+
+    renderWithActiveSheet(
       <CharacterSheetHeader
         data={createEmptyCharacter()}
         editing
@@ -62,6 +66,7 @@ describe('CharacterSheetHeader', () => {
         onCancel={() => {}}
         onChange={() => {}}
       />,
+      { editing: true },
     );
     expect(screen.getByRole('button', { name: 'save' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'cancel' })).toBeTruthy();

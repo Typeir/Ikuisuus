@@ -37,13 +37,7 @@ const TRIGGER_MAP: Record<string, string> = {
 };
 
 /** @type {DamageField} Empty DamageField with all required dnd5e 5.3 properties. */
-const EMPTY_DAMAGE_FIELD: DamageField = {
-  number: null,
-  denomination: null,
-  bonus: '',
-  types: [],
-  custom: { enabled: false, formula: '' },
-};
+const EMPTY_DAMAGE_FIELD: DamageField = { number: null, denomination: null, bonus: '', types: [], custom: { enabled: false, formula: '' } };
 
 /**
  * Resolves the dnd5e activation type from a MonsterFeature.

@@ -20,6 +20,7 @@
 'use client';
 
 import { ContentShardPanel } from '@/lib/components/characterSheet/shards/contentShardPanel';
+import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import { Tab, TabList, TabPanel, Tabs } from '@/lib/components/ui/tabs';
 import type {
     CharacterSheet as CharacterSheetType,
@@ -84,40 +85,80 @@ const VocationEntryTabs: React.FC<{
       </TabList>
 
       <TabPanel value='vocation'>
-        <div className={vocationStyles.sectionStack}>
-          <FeatureViewer
-            section='vocation'
-            vocationFeatures={entry.vocationFeatures}
-            specializationFeatures={entry.specializationFeatures}
-            characterLevel={entry.level}
-            vocationTitle={vocationLabel}
-            hasVocation={!!entry.slug}
-            hideTitle
+        {entry.slug ? (
+          <ResizablePane
+            id='builder.vocation.vocation'
+            ariaLabel={vocationLabel}
+            left={
+              <div className={styles.column}>
+                <FeatureViewer
+                  section='vocation'
+                  vocationFeatures={entry.vocationFeatures}
+                  specializationFeatures={entry.specializationFeatures}
+                  characterLevel={entry.level}
+                  vocationTitle={vocationLabel}
+                  hasVocation={!!entry.slug}
+                  hideTitle
+                />
+              </div>
+            }
+            right={
+              <ContentShardPanel contentType='vocations' slug={entry.slug} />
+            }
           />
-          {entry.slug && (
-            <ContentShardPanel contentType='vocations' slug={entry.slug} />
-          )}
-        </div>
+        ) : (
+          <div className={styles.column}>
+            <FeatureViewer
+              section='vocation'
+              vocationFeatures={entry.vocationFeatures}
+              specializationFeatures={entry.specializationFeatures}
+              characterLevel={entry.level}
+              vocationTitle={vocationLabel}
+              hasVocation={!!entry.slug}
+              hideTitle
+            />
+          </div>
+        )}
       </TabPanel>
 
       <TabPanel value='specialization'>
-        <div className={vocationStyles.sectionStack}>
-          <FeatureViewer
-            section='specialization'
-            vocationFeatures={entry.vocationFeatures}
-            specializationFeatures={entry.specializationFeatures}
-            characterLevel={entry.level}
-            specializationTitle={specLabel}
-            hasSpecialization={hasSpec}
-            hideTitle
+        {entry.specializationSlug ? (
+          <ResizablePane
+            id='builder.vocation.specialization'
+            ariaLabel={specLabel}
+            left={
+              <div className={styles.column}>
+                <FeatureViewer
+                  section='specialization'
+                  vocationFeatures={entry.vocationFeatures}
+                  specializationFeatures={entry.specializationFeatures}
+                  characterLevel={entry.level}
+                  specializationTitle={specLabel}
+                  hasSpecialization={hasSpec}
+                  hideTitle
+                />
+              </div>
+            }
+            right={
+              <ContentShardPanel
+                contentType='specializations'
+                slug={entry.specializationSlug}
+              />
+            }
           />
-          {entry.specializationSlug && (
-            <ContentShardPanel
-              contentType='specializations'
-              slug={entry.specializationSlug}
+        ) : (
+          <div className={styles.column}>
+            <FeatureViewer
+              section='specialization'
+              vocationFeatures={entry.vocationFeatures}
+              specializationFeatures={entry.specializationFeatures}
+              characterLevel={entry.level}
+              specializationTitle={specLabel}
+              hasSpecialization={hasSpec}
+              hideTitle
             />
-          )}
-        </div>
+          </div>
+        )}
       </TabPanel>
     </Tabs>
   );

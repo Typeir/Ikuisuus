@@ -12,9 +12,10 @@
 
 'use client';
 
+import { useSheetEditing } from '@/lib/components/characterSheet/context/activeSheetContext';
 import { ContentShardPanel } from '@/lib/components/characterSheet/shards/contentShardPanel';
 import { ShardChip } from '@/lib/components/characterSheet/shards/shardChip';
-import { useSheetEditing } from '@/lib/components/characterSheet/context/activeSheetContext';
+import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
@@ -43,10 +44,7 @@ export interface FeatsTabProps {
  * @param {FeatsTabProps} props - Component props
  * @returns {JSX.Element} Rendered tab body
  */
-export const FeatsTab: React.FC<FeatsTabProps> = ({
-  data,
-  onChange,
-}) => {
+export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
   const editing = useSheetEditing();
   const selectedFeats = useMemo(
     () => (data.selectedFeats ?? []) as CharacterShard[],
@@ -75,33 +73,39 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({
     : null;
 
   return (
-    <div className={styles.twoColumns}>
-      <div className={styles.column}>
-        {selectedFeats.length > 0 && (
-          <div className={styles.chipCloud}>
-            {selectedFeats.map((feat) => (
-              <ShardChip
-                key={feat.id}
-                shard={feat}
-                color='primary'
-                onRemove={editing ? () => handleRemove(feat.id) : undefined}
-              />
-            ))}
-          </div>
-        )}
-        <FeatPicker
-          selectedFeats={selectedFeats}
-          onToggle={handleToggle}
-          readOnly={!editing}
-        />
-      </div>
-      <div className={styles.column}>
-        {latestFeatSlug ? (
-          <ContentShardPanel contentType='feats' slug={latestFeatSlug} />
-        ) : (
-          <div className={styles.empty}>Select a feat to preview.</div>
-        )}
-      </div>
-    </div>
+    <ResizablePane
+      id='builder.feats'
+      ariaLabel='Feats'
+      left={
+        <div className={styles.column}>
+          {selectedFeats.length > 0 && (
+            <div className={styles.chipCloud}>
+              {selectedFeats.map((feat) => (
+                <ShardChip
+                  key={feat.id}
+                  shard={feat}
+                  color='primary'
+                  onRemove={editing ? () => handleRemove(feat.id) : undefined}
+                />
+              ))}
+            </div>
+          )}
+          <FeatPicker
+            selectedFeats={selectedFeats}
+            onToggle={handleToggle}
+            readOnly={!editing}
+          />
+        </div>
+      }
+      right={
+        <div className={styles.column}>
+          {latestFeatSlug ? (
+            <ContentShardPanel contentType='feats' slug={latestFeatSlug} />
+          ) : (
+            <div className={styles.empty}>Select a feat to preview.</div>
+          )}
+        </div>
+      }
+    />
   );
 };

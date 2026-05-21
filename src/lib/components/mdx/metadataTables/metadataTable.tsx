@@ -30,7 +30,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
 import { FilterSelect, NumericInput } from '../../ui';
 import styles from './metadataTable.module.scss';
@@ -171,7 +171,6 @@ export default function MetadataTable({
 }: MetadataTableProps) {
   const t = useTranslations('tables.common');
   const tFilters = useTranslations('tables.filters');
-  const router = useRouter();
   const [sortKey, setSortKey] = useState<string | null>(
     defaultSort?.key || null,
   );
@@ -361,54 +360,55 @@ export default function MetadataTable({
   };
 
   /**
-   * Handles row click to navigate to detail page.
+   * Resolves the navigation target for a row as a URL string.
    * Uses the 'link' field if available, otherwise constructs URL from slug.
-   * External links (starting with http:// or https://) open in new tab.
    *
-   * @function handleRowClick
-   * @param {MetadataRow} row - Data row that was clicked
+   * @function getRowHref
+   * @param {MetadataRow} row - Data row to resolve
+   * @returns {{ href: string; external: boolean }} Resolved href and whether it is external
    *
    * @description Priority:
-   * 1. If row.link exists and is external (http/https), open in new tab
-   * 2. If row.link exists and is internal, navigate to /{locale}{link}
+   * 1. If row.link exists and is external (http/https), return it as external
+   * 2. If row.link exists and is internal, return /{locale}{link}
    * 3. Otherwise, construct URL: /{locale}/library{basePath}/{slug}
    *
    * @example
    * // Internal link: { link: "/library/spells/fireball" } → /en/library/spells/fireball
-   * // External link: { link: "http://dnd5e.wikidot.com/spell:fireball" } → new tab
+   * // External link: { link: "http://dnd5e.wikidot.com/spell:fireball" } → external
    * // Legacy slug: { slug: "fireball" } → /en/library/spells/fireball
    */
-  const handleRowClick = (row: MetadataRow) => {
-    if (row.link) {
-      const isExternalLink =
-        row.link.startsWith('http://') || row.link.startsWith('https://');
+  const getRowHref = useCallback(
+    (row: MetadataRow): { href: string; external: boolean } => {
+      if (row.link) {
+        const isExternalLink =
+          row.link.startsWith('http://') || row.link.startsWith('https://');
 
-      if (isExternalLink) {
-        window.open(row.link, '_blank', 'noopener,noreferrer');
-        return;
+        if (isExternalLink) {
+          return { href: row.link, external: true };
+        }
+
+        const targetPath = row.link.startsWith('/library')
+          ? `/${locale}${row.link}`
+          : `/${locale}/library${row.link}`;
+
+        return { href: targetPath, external: false };
       }
 
-      const targetPath = row.link.startsWith('/library')
-        ? `/${locale}${row.link}`
-        : `/${locale}/library${row.link}`;
+      const slug = getRowSlug(row);
+      const [slugPath, hash] = slug.includes('#')
+        ? slug.split('#')
+        : [slug, null];
 
-      router.push(targetPath);
-      return;
-    }
+      const targetPath = slugPath.startsWith('/')
+        ? `/${locale}/library${slugPath}`
+        : `/${locale}/library${basePath}/${slugPath}`;
 
-    const slug = getRowSlug(row);
-    const [slugPath, hash] = slug.includes('#')
-      ? slug.split('#')
-      : [slug, null];
+      const finalPath = hash ? `${targetPath}#${hash}` : targetPath;
 
-    const targetPath = slugPath.startsWith('/')
-      ? `/${locale}/library${slugPath}`
-      : `/${locale}/library${basePath}/${slugPath}`;
-
-    const finalPath = hash ? `${targetPath}#${hash}` : targetPath;
-
-    router.push(finalPath);
-  };
+      return { href: finalPath, external: false };
+    },
+    [basePath, getRowSlug, locale],
+  );
 
   /**
    * Generates filter dropdown options for a column.
@@ -584,23 +584,37 @@ export default function MetadataTable({
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((row) => (
-              <tr
-                key={getRowSlug(row)}
-                onClick={() => handleRowClick(row)}
-                className={styles.clickableRow}>
-                {columns.map((column) => {
-                  const value = getCellValue(row, column);
-                  return (
-                    <td key={`${getRowSlug(row)}-${column.key}`}>
-                      {column.render
-                        ? column.render(value, row)
-                        : String(value ?? '-')}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+            {paginatedData.map((row) => {
+              const { href, external } = getRowHref(row);
+              const rowKey = getRowSlug(row);
+              return (
+                <tr key={rowKey} className={styles.clickableRow}>
+                  {columns.map((column) => {
+                    const value = getCellValue(row, column);
+                    const content = column.render
+                      ? column.render(value, row)
+                      : String(value ?? '-');
+                    return (
+                      <td key={`${rowKey}-${column.key}`}>
+                        {external ? (
+                          <a
+                            href={href}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className={styles.rowLink}>
+                            {content}
+                          </a>
+                        ) : (
+                          <Link href={href} className={styles.rowLink}>
+                            {content}
+                          </Link>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

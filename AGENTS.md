@@ -41,7 +41,7 @@ Major architectural changes to be aware of:
 | **MDX Format Health Check** | `check-mdx-format.ts` validates content structure, naming, components; integrated into composite health gate and post-edit lint hook      | [MDX Content Instructions](.github/instructions/mdx-content.instructions.md) |
 | **World Sim Module**        | Three.js solar system with phase-based render lifecycle, DOM overlay bridge, and celestial body renderers                                 | [World Sim Module](.github/docs/world-sim-module.md)                         |
 | **RenderLifecycle System**  | Unity-style phase bus (PreUpdate → Update → PostUpdate → PreRender → render → PostRender) replaces ad-hoc callback arrays in SceneManager | [World Sim Module](.github/docs/world-sim-module.md)                         |
-| **Foundry VTT Module**      | Export pipeline: MonsterMetadata → d20 NPC Actor JSON with image bundling, token generation, and LevelDB pack compilation               | [Foundry Module](.github/docs/foundry-module.md)                             |
+| **Foundry VTT Module**      | Export pipeline: MonsterMetadata → d20 NPC Actor JSON with image bundling, token generation, and LevelDB pack compilation                 | [Foundry Module](.github/docs/foundry-module.md)                             |
 
 ### 2025
 
@@ -400,6 +400,29 @@ export { main, parseFile }; // Export for orchestrator
 - **Never commit** `public/full-size/` images (git-ignored)
 - Sharp converts to WebP max 1600px width in `public/library/`
 - Use `<BlendedImage src="/library/images/map.webp" />` in MDX, not `/full-size/`
+
+## Runtime Debug Namespace — `window.ik`
+
+The project exposes a structured debug namespace at `window.ik` for live inspection and tuning in DevTools.
+Each subsystem registers a module under a short key. All properties use getters/setters so DevTools shows live values.
+
+| Key            | Registered by          | Purpose                                     |
+| -------------- | ---------------------- | ------------------------------------------- |
+| `window.ik.ws` | `SceneManager.start()` | World Sim controls — removed in `dispose()` |
+
+### World Sim module (`window.ik.ws`)
+
+| Property       | R/W     | Description                                                                                                                             |
+| -------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `deltaTimeCap` | **R/W** | Max frame delta in seconds before clamping (default `1/15`). Set higher to stress-test, lower to slow physics. Clamped to `[1/120, 1]`. |
+| `fps`          | R       | Instantaneous FPS of the last frame (before clamping).                                                                                  |
+| `time`         | R       | Accumulated simulation time in seconds since loop start (advances at `deltaTime × simulationSpeed`).                                    |
+| `running`      | R       | Whether the animation loop is active.                                                                                                   |
+| `simulationSpeed` | **R/W** | Simulation speed multiplier. Default `1` (real-time). `0` = freeze, `100` = fast-forward. Clamped to [0, 1000]. Scales orbital positions, shader time, and mesh rotations. |
+
+**Adding a new module**: define your debug interface in `src/lib/debug/ik.ts` under `IkModules`, then call `registerIkModule('key', obj)` when the subsystem mounts and `unregisterIkModule('key')` when it unmounts.
+
+**Source**: `src/lib/debug/ik.ts`
 
 ## Performance Patterns
 

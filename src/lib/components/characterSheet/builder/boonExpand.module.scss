@@ -1,0 +1,40 @@
+/**
+ * Boon Expand styles — row layout and inline expand body for BoonPicker.
+ * All colors via CSS variables — no color literals.
+ */
+
+.boonRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: stretch;
+}
+
+.boonExpandBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.55rem;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--color-border);
+  cursor: pointer;
+  color: var(--color-secondary);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-accent);
+    background: var(--color-bg-secondary);
+    outline: none;
+  }
+}
+
+.boonExpandBody {
+  padding: 0.5rem 0.75rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  font-size: 0.85rem;
+  color: var(--color-text);
+}

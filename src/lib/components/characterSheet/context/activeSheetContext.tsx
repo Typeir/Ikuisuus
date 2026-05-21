@@ -19,12 +19,6 @@
 import { useCharacterSheetDispatch } from '@/lib/context/CharacterSheetContext';
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
-import { computeProficiencyBonus } from '@/lib/utils/characterStorage';
-import {
-  getLevelFromXP,
-  getXPForLevel,
-  MAX_XP_LEVEL,
-} from '@/lib/utils/xpProgression';
 import {
     createContext,
     useCallback,
@@ -33,114 +27,9 @@ import {
     useReducer,
     type ReactNode,
 } from 'react';
+import { sheetReducer, type SheetTabId } from './sheetReducer';
 
-/** Available tab identifiers inside the character sheet. */
-export type SheetTabId =
-  | 'overview'
-  | 'bloodline'
-  | 'vocation'
-  | 'equipment'
-  | 'feats';
-
-/**
- * Internal reducer state.
- *
- * @interface SheetReducerState
- * @property {CharacterSheetType} character - Last saved character snapshot
- * @property {CharacterSheetType} draft - Working copy used while editing
- * @property {boolean} editing - Whether the sheet is in edit mode
- * @property {SheetTabId} activeTab - Currently displayed tab
- */
-interface SheetReducerState {
-  character: CharacterSheetType;
-  draft: CharacterSheetType;
-  editing: boolean;
-  activeTab: SheetTabId;
-}
-
-type SheetAction =
-  | { type: 'PATCH'; payload: Partial<CharacterSheetType> }
-  | {
-      type: 'PATCH_ABILITY';
-      payload: {
-        key: keyof CharacterSheetType['abilityScores'];
-        score: number;
-      };
-    }
-  | {
-      type: 'PATCH_VOCATIONS';
-      payload: { vocations: CharacterSheetType['vocations'] };
-    }
-  | { type: 'BEGIN_EDIT' }
-  | { type: 'CANCEL_EDIT' }
-  | { type: 'COMMIT_SAVE' }
-  | { type: 'SYNC_CHARACTER'; payload: { character: CharacterSheetType } }
-  | { type: 'SET_TAB'; payload: { tab: SheetTabId } };
-
-/**
- * Reducer for the active-sheet state machine.
- *
- * @function sheetReducer
- * @param {SheetReducerState} state - Previous state
- * @param {SheetAction} action - Dispatched action
- * @returns {SheetReducerState} Next state
- */
-const sheetReducer = (
-  state: SheetReducerState,
-  action: SheetAction,
-): SheetReducerState => {
-  switch (action.type) {
-    case 'PATCH': {
-      return { ...state, draft: { ...state.draft, ...action.payload } };
-    }
-    case 'PATCH_ABILITY': {
-      const { key, score } = action.payload;
-      return {
-        ...state,
-        draft: {
-          ...state.draft,
-          abilityScores: { ...state.draft.abilityScores, [key]: score },
-        },
-      };
-    }
-    case 'PATCH_VOCATIONS': {
-      const vocations = action.payload.vocations;
-      const vocationSum = vocations
-        .filter((v) => Boolean(v.slug))
-        .reduce((sum, v) => sum + (v.level ?? 0), 0);
-      const xpLevel = getLevelFromXP(state.draft.experience ?? 0);
-      if (vocationSum > xpLevel) {
-        const newLevel = Math.min(vocationSum, MAX_XP_LEVEL);
-        return {
-          ...state,
-          draft: {
-            ...state.draft,
-            vocations,
-            level: newLevel,
-            experience: getXPForLevel(newLevel),
-            proficiencyBonus: computeProficiencyBonus(newLevel),
-          },
-        };
-      }
-      return { ...state, draft: { ...state.draft, vocations } };
-    }
-    case 'BEGIN_EDIT':
-      return { ...state, editing: true, draft: state.character };
-    case 'CANCEL_EDIT':
-      return { ...state, editing: false, draft: state.character };
-    case 'COMMIT_SAVE':
-      return { ...state, editing: false, character: state.draft };
-    case 'SYNC_CHARACTER': {
-      if (state.editing) return state;
-      const c = action.payload.character;
-      return { ...state, character: c, draft: c };
-    }
-    case 'SET_TAB':
-      return { ...state, activeTab: action.payload.tab };
-    default:
-      return state;
-  }
-};
+export type { SheetTabId };
 
 /**
  * Mutator API exposed to consumers via `useSheetMutators`.
@@ -149,6 +38,7 @@ const sheetReducer = (
  * @property {(partial: Partial<CharacterSheetType>) => void} patch - Merge a partial patch into the draft
  * @property {(key: keyof CharacterSheetType['abilityScores'], score: number) => void} patchAbility - Update a single ability score
  * @property {(next: CharacterSheetType['vocations']) => void} patchVocations - Replace the vocations array (auto-recomputes level/XP/PB)
+ * @property {(xp: number) => void} patchExperience - Set XP (clamped to the vocation-sum floor); recomputes level/PB
  * @property {() => void} beginEdit - Enter edit mode, snapshot draft from character
  * @property {() => void} saveEdit - Persist draft to the roster context and exit edit mode
  * @property {() => void} cancelEdit - Discard draft and exit edit mode
@@ -161,6 +51,7 @@ export interface SheetMutators {
     score: number,
   ) => void;
   patchVocations: (next: CharacterSheetType['vocations']) => void;
+  patchExperience: (xp: number) => void;
   beginEdit: () => void;
   saveEdit: () => void;
   cancelEdit: () => void;
@@ -242,6 +133,10 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
     [],
   );
 
+  const patchExperience = useCallback((xp: number) => {
+    dispatch({ type: 'PATCH_EXPERIENCE', payload: { experience: xp } });
+  }, []);
+
   const beginEdit = useCallback(() => {
     dispatch({ type: 'BEGIN_EDIT' });
   }, []);
@@ -267,6 +162,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
       patch,
       patchAbility,
       patchVocations,
+      patchExperience,
       beginEdit,
       saveEdit,
       cancelEdit,
@@ -276,6 +172,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
       patch,
       patchAbility,
       patchVocations,
+      patchExperience,
       beginEdit,
       saveEdit,
       cancelEdit,

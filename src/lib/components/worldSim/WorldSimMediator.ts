@@ -21,20 +21,21 @@ import { RenderPhase } from './canvas/RenderLifecycle';
 import type { SceneManager } from './canvas/SceneManager';
 import { CelestialBodyFactory } from './celestials/CelestialBodyFactory';
 import { CelestialRegistry } from './celestials/CelestialRegistry';
+import { CollisionCloudEffect } from './celestials/CollisionCloudEffect';
 import type {
-  CelestialBodyData,
-  CelestialRendererType,
-  ICelestialRenderer,
-  SceneContext,
+    CelestialBodyData,
+    CelestialRendererType,
+    ICelestialRenderer,
+    SceneContext,
 } from './celestials/interfaces';
 import {
-  computeOrbitalPosition,
-  surfacePositionToWorld,
+    computeOrbitalPosition,
+    surfacePositionToWorld,
 } from './celestials/OrbitalMechanics';
 import { createAllOrbitLines } from './celestials/OrbitLineFactory';
 import {
-  WorldSimActionType,
-  type WorldSimAction,
+    WorldSimActionType,
+    type WorldSimAction,
 } from './context/worldSimTypes';
 import { AdaptivePerformanceController } from './optimization/AdaptivePerformanceController';
 import { DPR_CAP } from './optimization/GeometryBudgets';
@@ -110,6 +111,9 @@ export class WorldSimMediator {
   /** @property {ICelestialRenderer | null} everdarkRenderer - The Everdark renderer */
   private everdarkRenderer: ICelestialRenderer | null = null;
 
+  /** @property {CollisionCloudEffect | null} collisionCloud - Proximity cloud at the Länsihenki × Itähenki crossing point */
+  private collisionCloud: CollisionCloudEffect | null = null;
+
   /** @property {RaycastService} raycastService - Handles mouse picking and occlusion raycasting */
   private raycastService: RaycastService;
 
@@ -177,6 +181,7 @@ export class WorldSimMediator {
     this.createAllBodies();
     this.createOrbitLines();
     this.createEverdark();
+    this.createCollisionCloud();
     this.registerProjections();
     this.buildMeshCaches();
     this.applyQualityToRenderers();
@@ -222,7 +227,7 @@ export class WorldSimMediator {
    * @param {FrameContext} frameCtx - Shared frame context from the lifecycle
    */
   private updateSimulation(frameCtx: FrameContext): void {
-    const { time, deltaTime } = frameCtx;
+    const { time, deltaTime, simDeltaTime } = frameCtx;
     const qualityChanged = this.performanceController.sample(deltaTime);
     if (qualityChanged) {
       this.applyQualityToRenderers();
@@ -232,7 +237,7 @@ export class WorldSimMediator {
       camera: this.sceneManager.camera,
       scene: this.sceneManager.scene,
       time,
-      deltaTime,
+      deltaTime: simDeltaTime,
     };
 
     this.celestials.forEach((entry) => {
@@ -258,11 +263,24 @@ export class WorldSimMediator {
         }
       }
 
-      entry.renderer.update(entry.mesh, time, deltaTime, ctx);
+      entry.renderer.update(entry.mesh, time, simDeltaTime, ctx);
     });
 
     if (this.everdarkRenderer && this.everdarkMesh) {
-      this.everdarkRenderer.update(this.everdarkMesh, time, deltaTime, ctx);
+      this.everdarkRenderer.update(this.everdarkMesh, time, simDeltaTime, ctx);
+    }
+
+    if (this.collisionCloud) {
+      const lans = this.celestials.get('lansihenki');
+      const ita = this.celestials.get('itahenki');
+      if (lans && ita) {
+        this.collisionCloud.update(
+          lans.mesh.position,
+          ita.mesh.position,
+          time,
+          simDeltaTime,
+        );
+      }
     }
   }
 
@@ -417,6 +435,12 @@ export class WorldSimMediator {
       this.sceneManager.scene.remove(this.everdarkMesh);
     }
 
+    if (this.collisionCloud) {
+      this.collisionCloud.removeFromScene(this.sceneManager.scene);
+      this.collisionCloud.dispose();
+      this.collisionCloud = null;
+    }
+
     this.orbitLines.forEach((ring) => {
       ring.geometry.dispose();
       (ring.material as Material).dispose();
@@ -479,6 +503,20 @@ export class WorldSimMediator {
         this.sceneManager.scene.add(line);
       }
     });
+  }
+
+  /**
+   * Create the Länsihenki × Itähenki collision cloud effect if both bodies
+   * are present in the registry. Safe to call when either body is absent.
+   *
+   * @private
+   */
+  private createCollisionCloud(): void {
+    const lans = this.celestials.get('lansihenki');
+    const ita = this.celestials.get('itahenki');
+    if (!lans || !ita) return;
+    this.collisionCloud = new CollisionCloudEffect();
+    this.collisionCloud.addToScene(this.sceneManager.scene);
   }
 
   /**

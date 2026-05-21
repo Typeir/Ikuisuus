@@ -175,8 +175,8 @@ describe('MetadataTable', () => {
     render(
       <MetadataTable data={data} columns={baseColumns} basePath='/items' />,
     );
-    fireEvent.click(screen.getByText('Alpha'));
-    expect(mockPush).toHaveBeenCalledWith('/en/library/items/alpha');
+    const link = screen.getByText('Alpha').closest('a');
+    expect(link).toHaveAttribute('href', '/en/library/items/alpha');
   });
 
   it('navigates using custom getRowSlug with hash', () => {
@@ -190,10 +190,8 @@ describe('MetadataTable', () => {
         getRowSlug={() => '/monsters/dragon#ancient'}
       />,
     );
-    fireEvent.click(screen.getByText('Test'));
-    expect(mockPush).toHaveBeenCalledWith(
-      '/en/library/monsters/dragon#ancient',
-    );
+    const link = screen.getByText('Test').closest('a');
+    expect(link).toHaveAttribute('href', '/en/library/monsters/dragon#ancient');
   });
 
   it('opens external links in new tab', () => {
@@ -207,12 +205,10 @@ describe('MetadataTable', () => {
       },
     ];
     render(<MetadataTable data={data} columns={baseColumns} />);
-    fireEvent.click(screen.getByText('External'));
-    expect(mockOpen).toHaveBeenCalledWith(
-      'https://example.com',
-      '_blank',
-      'noopener,noreferrer',
-    );
+    const link = screen.getByText('External').closest('a');
+    expect(link).toHaveAttribute('href', 'https://example.com');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   it('navigates for internal link field', () => {
@@ -226,8 +222,8 @@ describe('MetadataTable', () => {
       },
     ];
     render(<MetadataTable data={data} columns={baseColumns} />);
-    fireEvent.click(screen.getByText('Internal'));
-    expect(mockPush).toHaveBeenCalledWith('/en/library/spells/fireball');
+    const link = screen.getByText('Internal').closest('a');
+    expect(link).toHaveAttribute('href', '/en/library/spells/fireball');
   });
 
   it('filters by select column', async () => {

@@ -24,10 +24,13 @@ import { fetcher } from '@/lib/fetch/fetcher';
 import { useBloodlines } from '@/lib/hooks/data/useBloodlines';
 import type { CharacterShard } from '@/lib/types/character';
 import { computeBpSpent } from '@/lib/utils/shardExtractor';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSWRConfig } from 'swr';
 import styles from '../characterSheetWidgets.module.scss';
+import expandStyles from './boonExpand.module.scss';
+import { BoonExpandBody } from './boonExpandBody';
 import pickerStyles from './pickerControls.module.scss';
 
 /**
@@ -77,6 +80,18 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
   const t = useTranslations('characterSheet');
   const { cache, mutate } = useSWRConfig();
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedBoons, setExpandedBoons] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  const toggleExpanded = useCallback((name: string) => {
+    setExpandedBoons((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  }, []);
 
   const filteredBoons = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -174,28 +189,51 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
               aria-label={t('ariaAvailableBoons')}>
               {filteredBoons.map((boon) => {
                 const selected = isBoonSelected(boon.name);
+                const isExpanded = expandedBoons.has(boon.name);
+                const bodyId = `boon-body-${bloodlineSlug}-${boon.name.replace(/\s+/g, '-')}`;
+                const cachedShard = selectedBoons.find(
+                  (s) => s.heading === boon.name,
+                );
+                const badgeText =
+                  boon.bpValue !== undefined
+                    ? `${boon.bpValue} ${t('bpUnit')}`
+                    : boon.bpLabel;
+                const Chevron = isExpanded ? ChevronDown : ChevronRight;
+                const expandLabel = isExpanded
+                  ? t('shardCollapseAria', { name: boon.name })
+                  : t('shardExpandAria', { name: boon.name });
                 return (
                   <li
                     key={boon.name}
                     className={`${styles.boonCard} ${selected ? styles.boonSelected : ''}`}>
-                    <button
-                      type='button'
-                      className={styles.boonToggleBtn}
-                      onClick={() => handleToggle(boon)}
-                      disabled={readOnly}
-                      aria-pressed={selected}>
-                      <span className={styles.boonName}>{boon.name}</span>
-                      {boon.bpValue !== undefined && (
-                        <span className={styles.boonBpBadge}>
-                          {boon.bpValue} {t('bpUnit')}
-                        </span>
-                      )}
-                      {boon.bpValue === undefined && (
-                        <span className={styles.boonBpBadge}>
-                          {boon.bpLabel}
-                        </span>
-                      )}
-                    </button>
+                    <div className={expandStyles.boonRow}>
+                      <button
+                        type='button'
+                        className={styles.boonToggleBtn}
+                        onClick={() => handleToggle(boon)}
+                        disabled={readOnly}
+                        aria-pressed={selected}>
+                        <span className={styles.boonName}>{boon.name}</span>
+                        <span className={styles.boonBpBadge}>{badgeText}</span>
+                      </button>
+                      <button
+                        type='button'
+                        className={expandStyles.boonExpandBtn}
+                        onClick={() => toggleExpanded(boon.name)}
+                        aria-expanded={isExpanded}
+                        aria-controls={bodyId}
+                        aria-label={expandLabel}>
+                        <Chevron size={14} aria-hidden='true' />
+                      </button>
+                    </div>
+                    {isExpanded && (
+                      <BoonExpandBody
+                        bloodlineSlug={bloodlineSlug}
+                        boonName={boon.name}
+                        cachedText={cachedShard?.cachedText}
+                        id={bodyId}
+                      />
+                    )}
                   </li>
                 );
               })}

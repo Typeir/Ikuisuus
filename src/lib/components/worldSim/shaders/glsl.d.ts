@@ -5,6 +5,9 @@
  * the actual bundling.
  *
  * @module worldSim/shaders/glsl
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
  */
 
 declare module '*.glsl' {

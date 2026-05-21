@@ -278,9 +278,55 @@ export interface EverdarkRenderConfig {
 }
 
 /**
+ * Blood ocean world renderer configuration for Urmela.
+ * Drives a two-shell architecture: an opaque dark core sphere beneath a
+ * semi-transparent, vertex-displaced blood ocean shell with a corona rim.
+ *
+ * @interface BloodOceanRenderConfig
+ * @property {'bloodOcean'} renderer - Discriminant
+ * @property {string} [coreColor] - Opaque inner core colour hex
+ * @property {string} [oceanColor] - Primary blood ocean colour hex
+ * @property {string} [oceanHighlightColor] - Bright arterial crest highlight colour hex
+ * @property {string} [coronaColor] - Corona rim and glow colour hex
+ * @property {number} [rotationSpeed] - Ocean shell rotation speed in rad/s
+ * @property {number} [displacementScale] - Vertex displacement amplitude for ocean surface heave
+ * @property {number} [noiseScale] - Noise frequency for the ocean surface (higher = finer churn)
+ * @property {number} [timeScale] - Animation speed multiplier for the boiling motion
+ * @property {number} [noiseSeed] - Body-unique seed offset to de-correlate from other bodies
+ * @property {number} [coreRadiusRatio] - Core sphere radius as a fraction of body radius (0–1)
+ * @property {number} [oceanAlpha] - Transparency of the blood shell (0 = invisible, 1 = opaque)
+ */
+export interface BloodOceanRenderConfig {
+  /** @property {'bloodOcean'} renderer - Renderer discriminant */
+  renderer: 'bloodOcean';
+  /** @property {string} [coreColor] - Opaque inner core colour hex */
+  coreColor?: string;
+  /** @property {string} [oceanColor] - Primary blood ocean colour hex */
+  oceanColor?: string;
+  /** @property {string} [oceanHighlightColor] - Bright arterial crest highlight colour hex */
+  oceanHighlightColor?: string;
+  /** @property {string} [coronaColor] - Corona rim and glow colour hex */
+  coronaColor?: string;
+  /** @property {number} [rotationSpeed] - Ocean shell rotation speed in rad/s */
+  rotationSpeed?: number;
+  /** @property {number} [displacementScale] - Vertex displacement amplitude */
+  displacementScale?: number;
+  /** @property {number} [noiseScale] - Noise frequency for the ocean surface */
+  noiseScale?: number;
+  /** @property {number} [timeScale] - Animation speed multiplier */
+  timeScale?: number;
+  /** @property {number} [noiseSeed] - Body-unique seed offset */
+  noiseSeed?: number;
+  /** @property {number} [coreRadiusRatio] - Core sphere radius as fraction of body radius */
+  coreRadiusRatio?: number;
+  /** @property {number} [oceanAlpha] - Transparency of the blood shell (0–1) */
+  oceanAlpha?: number;
+}
+
+/**
  * Discriminated union of all renderer configurations.
  * The `renderer` field serves as the discriminant.
- * @typedef {StarRenderConfig | PlanetRenderConfig | GasGiantRenderConfig | RingWorldRenderConfig | TowerWorldRenderConfig | AsteroidBeltRenderConfig | EverdarkRenderConfig} RenderConfig
+ * @typedef {StarRenderConfig | PlanetRenderConfig | GasGiantRenderConfig | RingWorldRenderConfig | TowerWorldRenderConfig | AsteroidBeltRenderConfig | EverdarkRenderConfig | BloodOceanRenderConfig} RenderConfig
  */
 export type RenderConfig =
   | StarRenderConfig
@@ -289,7 +335,8 @@ export type RenderConfig =
   | RingWorldRenderConfig
   | TowerWorldRenderConfig
   | AsteroidBeltRenderConfig
-  | EverdarkRenderConfig;
+  | EverdarkRenderConfig
+  | BloodOceanRenderConfig;
 
 /**
  * Allowed renderer strategy types.
@@ -302,7 +349,8 @@ export type CelestialRendererType =
   | 'ringWorld'
   | 'towerWorld'
   | 'asteroidBelt'
-  | 'everdark';
+  | 'everdark'
+  | 'bloodOcean';
 
 /**
  * Allowed celestial body types.

@@ -13,18 +13,25 @@
 
 'use client';
 
+import { Chip } from '@/lib/components/ui/chip';
 import { NumericInput } from '@/lib/components/ui/numericInput';
 import { TextInput } from '@/lib/components/ui/textInput';
-import { Chip } from '@/lib/components/ui/chip';
 import { useDebounce } from '@/lib/hooks/useDebounce';
-import type { CharacterShard, CharacterSheet as CharacterSheetType } from '@/lib/types/character';
+import type {
+    CharacterShard,
+    CharacterSheet as CharacterSheetType,
+} from '@/lib/types/character';
 import { getCharacterDerived } from '@/lib/utils/characterDerivation';
-import { computeProficiencyBonus } from '@/lib/utils/characterStorage';
 import { computeBpSpent } from '@/lib/utils/shardExtractor';
-import { getLevelFromXP, getXpAxisPosition, getXPForLevel, MAX_XP_LEVEL, XP_THRESHOLDS } from '@/lib/utils/xpProgression';
+import {
+    getXpAxisPosition,
+    MAX_XP_LEVEL,
+    XP_THRESHOLDS,
+} from '@/lib/utils/xpProgression';
 import { useTranslations } from 'next-intl';
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { VocationSelector } from '../builder/vocationSelector';
+import { useSheetMutators } from '../context/activeSheetContext';
 import { usePagePreview } from '../pagePreview/pagePreviewProvider';
 import styles from './characterSheetHeader.module.scss';
 
@@ -64,10 +71,23 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
 }) => {
   const t = useTranslations('characterSheet');
   const preview = usePagePreview();
-  const bpSpent = useMemo(() => computeBpSpent(data.selectedBoons as CharacterShard[]), [data.selectedBoons]);
+  const { patchExperience } = useSheetMutators();
+  const bpSpent = useMemo(
+    () => computeBpSpent(data.selectedBoons as CharacterShard[]),
+    [data.selectedBoons],
+  );
   const fullName = data.name || t('unnamedCharacter');
   const derived = useMemo(() => getCharacterDerived(data), [data]);
-  const { totalLevel, experience, xpOverallPercent, xpProgressPercent, xpFloor, xpCeiling, unassignedLevels, hasUnassignedLevels } = derived;
+  const {
+    totalLevel,
+    experience,
+    xpOverallPercent,
+    xpProgressPercent,
+    xpFloor,
+    xpCeiling,
+    unassignedLevels,
+    hasUnassignedLevels,
+  } = derived;
   const [xpInput, setXpInput] = useState<number>(data.experience ?? 0);
   const debouncedXp = useDebounce(xpInput, 300);
   const xpChangedRef = useRef(false);
@@ -79,18 +99,8 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
   useEffect(() => {
     if (!xpChangedRef.current) return;
     xpChangedRef.current = false;
-    const newLevel = Math.min(getLevelFromXP(debouncedXp), MAX_XP_LEVEL);
-    onChange({
-      experience: debouncedXp,
-      level: newLevel,
-      proficiencyBonus: computeProficiencyBonus(newLevel),
-    });
-  }, [debouncedXp, onChange]);
-
-  const handleLevelChange = useCallback((value: number | undefined) => {
-    const level = Math.max(1, Math.min(MAX_XP_LEVEL, value ?? 1));
-    onChange({ level, proficiencyBonus: computeProficiencyBonus(level), experience: getXPForLevel(level) });
-  }, [onChange]);
+    patchExperience(debouncedXp);
+  }, [debouncedXp, patchExperience]);
 
   return (
     <header className={styles.header}>
@@ -104,49 +114,61 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
           />
         ) : (
           <h2 className={styles.charName}>
-            {fullName.split(' ').map((word, i) => <Fragment key={i}>{i > 0 && ' '}<span className={styles.nameFirstLetter}>{word[0]}</span>{word.slice(1)}</Fragment>)}
+            {fullName.split(' ').map((word, i) => (
+              <Fragment key={i}>
+                {i > 0 && ' '}
+                <span className={styles.nameFirstLetter}>{word[0]}</span>
+                {word.slice(1)}
+              </Fragment>
+            ))}
           </h2>
         )}
 
         <div className={styles.meta}>
-          {editing ? (
-            <>
-              <label className={styles.metaEditLabel}>
-                {t('levelLabel')}
-                <NumericInput
-                  className={styles.metaEditInput}
-                  value={totalLevel}
-                  min={1}
-                  max={30}
-                  size='sm'
-                  ariaLabel={t('ariaLevelInput')}
-                  onChange={handleLevelChange}
-                />
-              </label>
-              <label className={styles.metaEditLabel}>
-                {t('xpLabel')}
-                <NumericInput
-                  className={styles.metaEditInput}
-                  value={xpInput}
-                  min={0}
-                  size='sm'
-                  ariaLabel={t('ariaExperienceInput')}
-                  onChange={(v) => {
-                    xpChangedRef.current = true;
-                    setXpInput(v ?? 0);
-                  }}
-                />
-              </label>
-            </>
-          ) : (
-            <span>{t('levelFull', { level: totalLevel })}</span>
+          <span>{t('levelFull', { level: totalLevel })}</span>
+          {editing && (
+            <label className={styles.metaEditLabel}>
+              {t('xpLabel')}
+              <NumericInput
+                className={styles.metaEditInput}
+                value={xpInput}
+                min={0}
+                size='sm'
+                ariaLabel={t('ariaExperienceInput')}
+                onChange={(v) => {
+                  xpChangedRef.current = true;
+                  setXpInput(v ?? 0);
+                }}
+              />
+            </label>
           )}
           {data.bloodlineTitle && data.bloodlineSlug && (
-            <Chip variant='neutral' label={data.bloodlineTitle} onInfo={() => preview.open({ kind: 'bloodlines', slug: data.bloodlineSlug!, title: data.bloodlineTitle })} />
+            <Chip
+              variant='neutral'
+              label={data.bloodlineTitle}
+              onInfo={() =>
+                preview.open({
+                  kind: 'bloodlines',
+                  slug: data.bloodlineSlug!,
+                  title: data.bloodlineTitle,
+                })
+              }
+            />
           )}
           {data.vocations.map((v) =>
             v.slug ? (
-              <Chip key={v.slug} variant='neutral' label={`${v.title}${v.specializationTitle ? ` / ${v.specializationTitle}` : ''} Lv.${v.level}`} onInfo={() => preview.open({ kind: 'vocations', slug: v.slug!, title: v.title })} />
+              <Chip
+                key={v.slug}
+                variant='neutral'
+                label={`${v.title}${v.specializationTitle ? ` / ${v.specializationTitle}` : ''} Lv.${v.level}`}
+                onInfo={() =>
+                  preview.open({
+                    kind: 'vocations',
+                    slug: v.slug!,
+                    title: v.title,
+                  })
+                }
+              />
             ) : null,
           )}
         </div>
@@ -181,11 +203,6 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
             </button>
           )}
         </div>
-        {hasUnassignedLevels && (
-          <span className={styles.warningBadge} role='alert'>
-            {t('unassignedVocationsWarning', { count: unassignedLevels })}
-          </span>
-        )}
       </div>
 
       <VocationSelector
@@ -200,6 +217,11 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
       />
 
       <div className={styles.xpTrackGroup}>
+        {hasUnassignedLevels && (
+          <span className={styles.warningBadge} role='alert'>
+            {t('unassignedVocationsWarning', { count: unassignedLevels })}
+          </span>
+        )}
         <div
           className={styles.xpTrackNext}
           role='progressbar'
@@ -235,6 +257,9 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
               />
             ),
           )}
+        </div>
+        <div className={styles.xpCaption} aria-hidden='true'>
+          {experience.toLocaleString()} / {xpCeiling.toLocaleString()} XP
         </div>
       </div>
     </header>

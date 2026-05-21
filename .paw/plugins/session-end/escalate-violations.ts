@@ -15,18 +15,14 @@
  * @since 4.0.0
  */
 
-import { extractSessionId } from '../../../.github/PAW/hook-runtime';
-import type { PawDatabase } from '../../../.github/PAW/paw-db';
+import { extractSessionId } from '../../../.github/PAW/hookRuntime';
+import type { PawDatabase } from '../../../.github/PAW/pawDb';
 import {
-  escalateSessionViolations,
-  gcOldViolations,
-  getUnresolvedViolations,
-  resolveAllViolations,
-} from '../../../.github/PAW/paw-db';
-import type {
-  PawPlugin,
-  PluginResult,
-} from '../../../.github/PAW/plugin-types';
+    escalateSessionViolations,
+    gcOldViolations,
+    getUnresolvedViolations,
+} from '../../../.github/PAW/pawDb';
+import type { PawPlugin, PluginResult } from '../../../.github/PAW/pluginTypes';
 
 /**
  * Escalation plugin instance.
@@ -57,9 +53,8 @@ export const plugin: PawPlugin = {
           `\u26A0\uFE0F ${escalated} unresolved violation(s) escalated to project scope\n`,
         );
       }
-    } else {
-      resolveAllViolations(db);
     }
+    // When sessionId is absent we cannot safely escalate — skip and only GC.
 
     gcOldViolations(db, 30);
 

@@ -14,6 +14,7 @@
 import { useSheetEditing } from '@/lib/components/characterSheet/context/activeSheetContext';
 import { ContentShardPanel } from '@/lib/components/characterSheet/shards/contentShardPanel';
 import { ShardChip } from '@/lib/components/characterSheet/shards/shardChip';
+import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
@@ -68,31 +69,42 @@ export const BloodlineTab: React.FC<BloodlineTabProps> = ({
   }
 
   return (
-    <div className={styles.twoColumns}>
-      <div className={styles.column}>
-        {data.selectedBoons.length > 0 && (
-          <div className={styles.chipCloud}>
-            {data.selectedBoons.map((boon) => (
-              <ShardChip
-                key={boon.id}
-                shard={boon}
-                color='primary'
-                onRemove={editing ? () => handleRemoveBoon(boon.id) : undefined}
-              />
-            ))}
-          </div>
-        )}
-        <BoonPicker
-          bloodlineSlug={data.bloodlineSlug}
-          selectedBoons={data.selectedBoons}
-          boonBudget={data.boonBudget}
-          onToggle={handleBoonsToggle}
-          readOnly={!editing}
-        />
-      </div>
-      <div className={styles.column}>
-        <ContentShardPanel contentType='bloodlines' slug={data.bloodlineSlug} />
-      </div>
-    </div>
+    <ResizablePane
+      id='builder.bloodline'
+      ariaLabel={t('selectBloodline')}
+      left={
+        <div className={styles.column}>
+          {data.selectedBoons.length > 0 && (
+            <div className={styles.chipCloud}>
+              {data.selectedBoons.map((boon) => (
+                <ShardChip
+                  key={boon.id}
+                  shard={boon}
+                  color='primary'
+                  onRemove={
+                    editing ? () => handleRemoveBoon(boon.id) : undefined
+                  }
+                />
+              ))}
+            </div>
+          )}
+          <BoonPicker
+            bloodlineSlug={data.bloodlineSlug}
+            selectedBoons={data.selectedBoons}
+            boonBudget={data.boonBudget}
+            onToggle={handleBoonsToggle}
+            readOnly={!editing}
+          />
+        </div>
+      }
+      right={
+        <div className={styles.column}>
+          <ContentShardPanel
+            contentType='bloodlines'
+            slug={data.bloodlineSlug}
+          />
+        </div>
+      }
+    />
   );
 };

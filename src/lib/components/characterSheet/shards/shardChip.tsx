@@ -22,6 +22,7 @@ import { urlForContentShard } from '@/lib/fetch/swrKeys';
 import { compileRuntimeSync } from '@/lib/mdx/compileRuntime';
 import type { ContentShardResponse } from '@/lib/types/api.d';
 import type { CharacterShard } from '@/lib/types/character';
+import { cleanTruncatedMdx } from '@/lib/utils/cleanTruncatedMdx';
 import { shardToPreview } from '@/lib/utils/shardToPreview';
 import { useLocale } from 'next-intl';
 import type { ReactNode } from 'react';
@@ -96,7 +97,10 @@ const ShardChipImpl: React.FC<ShardChipProps> = ({
 
     if (shard.cachedText) {
       const raw = shard.cachedText;
-      source = raw.length > 150 ? raw.slice(0, 150) + '\u2026' : raw;
+      source =
+        raw.length > 150
+          ? cleanTruncatedMdx(raw.slice(0, 150)) + '\u2026'
+          : cleanTruncatedMdx(raw);
     } else if (previewData) {
       const url = urlForContentShard(
         previewData.kind,
@@ -117,7 +121,10 @@ const ShardChipImpl: React.FC<ShardChipProps> = ({
         }
       }
       const raw = data?.shards.main ?? '';
-      source = raw.length > 150 ? raw.slice(0, 150) + '\u2026' : raw;
+      source =
+        raw.length > 150
+          ? cleanTruncatedMdx(raw.slice(0, 150)) + '\u2026'
+          : cleanTruncatedMdx(raw);
       if (!source) return shard.heading;
     } else {
       return shard.heading;

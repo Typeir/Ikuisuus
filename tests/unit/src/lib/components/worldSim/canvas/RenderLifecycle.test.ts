@@ -22,6 +22,7 @@ function mockContext(overrides: Partial<FrameContext> = {}): FrameContext {
     canvas: {} as FrameContext['canvas'],
     time: 1.0,
     deltaTime: 0.016,
+    simDeltaTime: 0.016,
     frame: 1,
     ...overrides,
   };

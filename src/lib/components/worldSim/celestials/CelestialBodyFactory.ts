@@ -11,6 +11,7 @@
  */
 
 import { AsteroidBeltRenderer } from './AsteroidBeltRenderer';
+import { BloodOceanRenderer } from './BloodOceanRenderer';
 import { EverdarkRenderer } from './EverdarkRenderer';
 import { GasGiantRenderer } from './GasGiantRenderer';
 import type { CelestialRendererType, ICelestialRenderer } from './interfaces';
@@ -31,6 +32,7 @@ const RENDERER_MAP: Record<CelestialRendererType, () => ICelestialRenderer> = {
   towerWorld: () => new TowerWorldRenderer(),
   asteroidBelt: () => new AsteroidBeltRenderer(),
   everdark: () => new EverdarkRenderer(),
+  bloodOcean: () => new BloodOceanRenderer(),
 };
 
 /**

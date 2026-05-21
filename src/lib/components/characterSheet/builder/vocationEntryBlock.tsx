@@ -125,9 +125,16 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
     }
   };
 
+  const blockClassName = [
+    styles.vocationEntryBlock,
+    isOnlyEntry ? styles.vocationEntryBlockSingle : '',
+    isAsyncLoading ? styles.vocationEntryBlockLoading : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div
-      className={`${styles.vocationEntryBlock}${isAsyncLoading ? ` ${styles.vocationEntryBlockLoading}` : ''}`}>
+    <div className={blockClassName}>
       <div className={styles.selectorRow}>
         <span className={styles.selectorLabel}>
           {t('colVocation')}
@@ -149,6 +156,7 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
             />
           )}
         </div>
+        <span className={styles.levelDivider} aria-hidden='true' />
         <span className={styles.levelLabel}>{t('levelAbbrev')}</span>
         {showSkeleton ? (
           <Skeleton variant='button' height='26px' width='3.5rem' />

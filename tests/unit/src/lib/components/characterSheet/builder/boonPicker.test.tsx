@@ -228,4 +228,57 @@ describe('BoonPicker', () => {
       expect(screen.getByText('Network error')).toBeTruthy();
     });
   });
+
+  it('expanding a boon via chevron does not call onToggle (select and expand are independent)', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_BLOODLINES), { status: 200 }),
+    );
+    const onToggle = vi.fn();
+    render(
+      <BoonPicker
+        bloodlineSlug='empyrean'
+        selectedBoons={[]}
+        boonBudget={10}
+        onToggle={onToggle}
+      />,
+    );
+    await waitFor(() => screen.getByText('Extended Reach'));
+    const expandBtn = screen.getAllByRole('button', {
+      name: /shardExpandAria/i,
+    })[0];
+    await userEvent.click(expandBtn);
+    expect(onToggle).not.toHaveBeenCalled();
+    expect(expandBtn).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('selecting a boon does not expand the row', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_BLOODLINES), { status: 200 }),
+    );
+    mockFetch.mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          shardType: 'bloodline',
+          shards: { 'Extended Reach': 'body' },
+        }),
+        { status: 200 },
+      ),
+    );
+    render(
+      <BoonPicker
+        bloodlineSlug='empyrean'
+        selectedBoons={[]}
+        boonBudget={10}
+        onToggle={vi.fn()}
+      />,
+    );
+    await waitFor(() => screen.getByText('Extended Reach'));
+    await userEvent.click(
+      screen.getByRole('button', { name: /Extended Reach/i }),
+    );
+    const expandBtns = screen.getAllByRole('button', {
+      name: /shardExpandAria/i,
+    });
+    expect(expandBtns[0]).toHaveAttribute('aria-expanded', 'false');
+  });
 });

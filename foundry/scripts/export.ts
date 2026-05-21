@@ -85,8 +85,9 @@ function discoverMetadataFiles(): string[] {
 
 /**
  * Rewrites image paths to module-relative Foundry paths.
+ * Images are bundled flat into assets/images/, so only the filename is used.
  *
- * @param {string} imgPath - Original image path from metadata
+ * @param {string} imgPath - Original image path from metadata (e.g. /library/images/monsters/foo.webp)
  * @returns {string} Module-relative path
  */
 function toModuleImgPath(imgPath: string): string {
@@ -94,13 +95,14 @@ function toModuleImgPath(imgPath: string): string {
 }
 
 /**
- * Rewrites all `/library/images/` references in HTML to module-relative paths.
+ * Rewrites all `/library/images/...` references in HTML to module-relative flat paths.
+ * Strips any subdirectory since images are bundled flat into assets/images/.
  *
  * @param {string} html - Biography HTML string
  * @returns {string} HTML with rewritten image paths
  */
 function rewriteBiographyImages(html: string): string {
-  return html.replace(/\/library\/images\//g, `${MODULE_IMG_PREFIX}/`);
+  return html.replace(/\/library\/images\/(?:[^/"']*\/)?([^/"']+)/g, `${MODULE_IMG_PREFIX}/$1`);
 }
 
 /**
@@ -139,7 +141,7 @@ async function exportMonsters(): Promise<void> {
 
         if (monster.image && monster.image.startsWith('/library/images/')) {
           actor.img = toModuleImgPath(monster.image);
-          referencedImages.add(basename(monster.image));
+          referencedImages.add(monster.image.replace(/^\/library\/images\//, ''));
         }
 
         const bio = (actor.system as any)?.details?.biography;

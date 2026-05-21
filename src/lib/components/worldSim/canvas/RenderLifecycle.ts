@@ -50,8 +50,9 @@ export enum RenderPhase {
  * @property {Scene} scene - The Three.js scene graph
  * @property {PerspectiveCamera} camera - The active camera
  * @property {HTMLCanvasElement} canvas - The renderer's DOM canvas element
- * @property {number} time - Elapsed time in seconds since loop start
- * @property {number} deltaTime - Seconds since previous frame
+ * @property {number} time - Accumulated simulation time in seconds (scaled by simulationSpeed)
+ * @property {number} deltaTime - Wall-clock seconds since previous frame (clamped, unscaled)
+ * @property {number} simDeltaTime - Simulation-scaled frame delta: `deltaTime * simulationSpeed`
  * @property {number} frame - Monotonic frame counter
  */
 export interface FrameContext {
@@ -63,10 +64,12 @@ export interface FrameContext {
   camera: PerspectiveCamera;
   /** @property {HTMLCanvasElement} canvas - The renderer's canvas element */
   canvas: HTMLCanvasElement;
-  /** @property {number} time - Elapsed time in seconds */
+  /** @property {number} time - Accumulated simulation time in seconds (scaled by simulationSpeed) */
   time: number;
-  /** @property {number} deltaTime - Frame delta in seconds */
+  /** @property {number} deltaTime - Wall-clock frame delta in seconds (clamped, unscaled — for camera and FPS) */
   deltaTime: number;
+  /** @property {number} simDeltaTime - Simulation-scaled frame delta: deltaTime * simulationSpeed */
+  simDeltaTime: number;
   /** @property {number} frame - Monotonic frame counter */
   frame: number;
 }

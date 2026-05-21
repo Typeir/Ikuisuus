@@ -1,0 +1,77 @@
+/**
+ * Resizable Pane styles — two-pane horizontal split with a draggable handle.
+ * Stacks vertically below 900px to match existing tab breakpoints.
+ * All colors via CSS variables — no color literals.
+ */
+
+.resizablePane {
+  display: grid;
+  grid-template-columns: var(--resizable-left-pct, 30%) 6px 1fr;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  gap: 0;
+}
+
+.leftPane {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rightPane {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.handle {
+  width: 6px;
+  cursor: col-resize;
+  background: var(--color-border);
+  position: relative;
+  touch-action: none;
+  transition: background 0.15s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 24px;
+    transform: translate(-50%, -50%);
+    background: var(--color-secondary);
+    border-radius: 1px;
+    opacity: 0.4;
+    transition: opacity 0.15s ease;
+  }
+
+  &:hover,
+  &:focus-visible,
+  &:active {
+    background: var(--color-accent);
+    outline: none;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+}
+
+@media (max-width: 900px) {
+  .resizablePane {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+
+  .handle {
+    display: none;
+  }
+}
