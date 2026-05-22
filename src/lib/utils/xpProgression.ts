@@ -69,10 +69,10 @@ export function getXPForLevel(level: number): number {
  * Returns a log-compressed position (0–100) for a given XP value along the
  * full 0 → {@link XP_THRESHOLDS}[{@link MAX_XP_LEVEL}] axis.
  *
- * Uses `(xp / maxXp) ** 0.7` so that each additional XP point contributes
+ * Uses `(xp / maxXp) ** 0.325` so that each additional XP point contributes
  * progressively less width, while the visual segment for each level still
  * grows with level number — level 1 is the smallest segment, level 30 is
- * the largest, and levels 1–20 occupy roughly 22% of the bar (versus 11.8%
+ * the largest, and levels 1–20 occupy roughly 50% of the bar (versus 11.8%
  * under a linear scale).
  *
  * Guarantees: `getXpAxisPosition(0) === 0`, `getXpAxisPosition(maxXp) === 100`,
@@ -86,7 +86,7 @@ export function getXpAxisPosition(xp: number): number {
   const maxXp = XP_THRESHOLDS[MAX_XP_LEVEL];
   const clamped = Math.max(0, Math.min(xp, maxXp));
   if (clamped === 0) return 0;
-  return Math.pow(clamped / maxXp, 0.7) * 100;
+  return Math.pow(clamped / maxXp, 0.325) * 100;
 }
 
 /**

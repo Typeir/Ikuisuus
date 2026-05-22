@@ -148,9 +148,10 @@ describe('getXpAxisPosition', () => {
     }
   });
 
-  it('places level 20 threshold above the linear ~11.8% mark (power curve sanity)', () => {
+  it('places level 20 threshold near 50% of the bar (power curve sanity)', () => {
     const pos = getXpAxisPosition(XP_THRESHOLDS[20]);
-    expect(pos).toBeGreaterThan(15);
+    expect(pos).toBeGreaterThan(45);
+    expect(pos).toBeLessThan(55);
   });
 
   it('shows diminishing returns: slope is steeper at the start than at the end', () => {
