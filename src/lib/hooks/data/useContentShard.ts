@@ -16,8 +16,10 @@ import type { ContentShardType } from '@/lib/components/characterSheet/shards/co
 import { fetcher } from '@/lib/fetch/fetcher';
 import {
     contentShardKey,
+    contentShardSingleKey,
     shardKey,
     urlForContentShard,
+    urlForContentShardSingle,
     urlForShard,
 } from '@/lib/fetch/swrKeys';
 import type { ContentShardResponse, ShardResponse } from '@/lib/types/api.d';
@@ -121,6 +123,62 @@ export function useContentShard({
     fetcher<ContentShardResponse>(
       urlForContentShard(contentType, slug, locale),
     ),
+  );
+
+  return {
+    data,
+    isLoading,
+    error,
+    mutate,
+    revalidate: () => {
+      void mutate();
+    },
+  };
+}
+
+/**
+ * Options for fetching a single named shard via the DB-backed
+ * `/api/content-shards/[type]/[slug]?keys[]=` endpoint.
+ *
+ * @interface UseContentShardSingleOptions
+ * @property {string} contentType - API path segment (e.g. `'bloodlines'`, `'feats'`)
+ * @property {string} slug - Content item slug
+ * @property {string} key - Heading / shard name to fetch
+ * @property {string} locale - Content locale
+ * @property {boolean} [enabled] - Set to `false` to skip fetching (default `true`)
+ */
+export interface UseContentShardSingleOptions {
+  contentType: string;
+  slug: string;
+  key: string;
+  locale: string;
+  enabled?: boolean;
+}
+
+/**
+ * Fetches a single named shard from the DB-backed
+ * `/api/content-shards/[type]/[slug]?keys[]=` endpoint. This replaces
+ * `useShard` and works on Vercel where filesystem reads are unavailable.
+ *
+ * @param {UseContentShardSingleOptions} options - Hook configuration
+ * @returns {UseContentShardResult<ContentShardResponse>} Shard loading state
+ */
+export function useContentShardSingle({
+  contentType,
+  slug,
+  key,
+  locale,
+  enabled = true,
+}: UseContentShardSingleOptions): UseContentShardResult<ContentShardResponse> {
+  const { data, isLoading, error, mutate } = useSWR<
+    ContentShardResponse,
+    Error
+  >(
+    contentShardSingleKey(contentType, slug, key, locale, enabled),
+    () =>
+      fetcher<ContentShardResponse>(
+        urlForContentShardSingle(contentType, slug, key, locale),
+      ),
   );
 
   return {

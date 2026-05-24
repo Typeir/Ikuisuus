@@ -15,6 +15,7 @@
 import { useSheetEditing } from '@/lib/components/characterSheet/context/activeSheetContext';
 import { ContentShardPanel } from '@/lib/components/characterSheet/shards/contentShardPanel';
 import { ShardChip } from '@/lib/components/characterSheet/shards/shardChip';
+import { ShardDisplay } from '@/lib/components/characterSheet/shards/shardDisplay';
 import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import type {
     CharacterShard,
@@ -78,23 +79,35 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
       ariaLabel='Feats'
       left={
         <div className={styles.column}>
-          {selectedFeats.length > 0 && (
+          {editing ? (
+            <>
+              {selectedFeats.length > 0 && (
+                <div className={styles.chipCloud}>
+                  {selectedFeats.map((feat) => (
+                    <ShardChip
+                      key={feat.id}
+                      shard={feat}
+                      color='primary'
+                      onRemove={() => handleRemove(feat.id)}
+                    />
+                  ))}
+                </div>
+              )}
+              <FeatPicker
+                selectedFeats={selectedFeats}
+                onToggle={handleToggle}
+                readOnly={false}
+              />
+            </>
+          ) : selectedFeats.length > 0 ? (
             <div className={styles.chipCloud}>
               {selectedFeats.map((feat) => (
-                <ShardChip
-                  key={feat.id}
-                  shard={feat}
-                  color='primary'
-                  onRemove={editing ? () => handleRemove(feat.id) : undefined}
-                />
+                <ShardDisplay key={feat.id} shard={feat} />
               ))}
             </div>
+          ) : (
+            <div className={styles.empty}>No feats selected.</div>
           )}
-          <FeatPicker
-            selectedFeats={selectedFeats}
-            onToggle={handleToggle}
-            readOnly={!editing}
-          />
         </div>
       }
       right={

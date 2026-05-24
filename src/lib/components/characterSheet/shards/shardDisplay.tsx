@@ -1,7 +1,8 @@
 /**
  * @fileoverview Shard Display Component
  * @description Renders a `CharacterShard` as an expand/collapse card. On first
- * expand the full heading block is fetched from `/api/shards` and cached in state.
+ * expand the full heading block is fetched from the DB-backed
+ * `/api/content-shards/[type]/[slug]` endpoint and cached in state.
  * Renders the shard heading, category badge, BP cost (if boon), level (if feature),
  * and collapsible body text.
  *
@@ -14,10 +15,12 @@
 'use client';
 
 import { FetchError } from '@/lib/fetch/fetcher';
-import { useShard } from '@/lib/hooks/data/useContentShard';
+import { useContentShardSingle } from '@/lib/hooks/data/useContentShard';
+import type { ContentShardType } from '@/lib/components/characterSheet/shards/contentShardPanel';
 import type { CharacterShard } from '@/lib/types/character';
+import { shardToPreview } from '@/lib/utils/shardToPreview';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import styles from '../characterSheetWidgets.module.scss';
 
@@ -49,15 +52,19 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
   const [bodyText, setBodyText] = useState<string>(shard.cachedText ?? '');
   const [renderedHtml, setRenderedHtml] = useState<string>('');
   const t = useTranslations('characterSheet');
+  const locale = useLocale();
+  const preview = shardToPreview(shard.sourceFile);
 
   const {
     data: shardData,
     isLoading: loading,
     error: shardError,
-  } = useShard({
-    sourceFile: shard.sourceFile,
-    heading: shard.heading,
-    enabled: expanded && !textReady,
+  } = useContentShardSingle({
+    contentType: (preview?.kind ?? 'feats') as ContentShardType,
+    slug: preview?.slug ?? '',
+    key: shard.heading,
+    locale,
+    enabled: expanded && !textReady && preview !== null,
   });
 
   const is404 = shardError instanceof FetchError && shardError.status === 404;
@@ -65,10 +72,10 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
 
   useEffect(() => {
     if (shardData && !textReady) {
-      setBodyText(shardData.text.split('\n').slice(1).join('\n').trim());
+      setBodyText(shardData.shards[shard.heading] ?? '');
       setTextReady(true);
     }
-  }, [shardData, textReady]);
+  }, [shardData, textReady, shard.heading]);
 
   useEffect(() => {
     if (!bodyText) {

@@ -35,11 +35,13 @@ describe('FeatsTab', () => {
     expect(screen.getByText(/select a feat to preview/i)).toBeTruthy();
   });
 
-  it('renders the picker when in edit mode', () => {
+  it('renders the picker when in edit mode', async () => {
     renderWithActiveSheet(
       <FeatsTab data={createEmptyCharacter()} onChange={() => {}} />,
       { editing: true },
     );
-    expect(screen.getByRole('list', { name: /available feats/i })).toBeTruthy();
+    expect(
+      await screen.findByRole('list', { name: /available feats/i }),
+    ).toBeTruthy();
   });
 });

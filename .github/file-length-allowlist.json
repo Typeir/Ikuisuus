@@ -55,6 +55,11 @@
     "justification": "Generic metadata table with sorting, filtering, pagination, and responsive column rendering"
   },
   {
+    "file": "src/lib/components/mdx/metadataTables/metadataTable.module.scss",
+    "maxLines": 280,
+    "justification": "Module-scoped SCSS for the generic metadata table covering column layouts, sort indicators, pagination, filter controls, and responsive breakpoints — splitting would break module-scoped class references"
+  },
+  {
     "file": "src/lib/components/mdx/metadataTables/metadataTableSkeleton.tsx",
     "maxLines": 310,
     "justification": "Skeleton loading state for metadata table with shimmer animations matching table layout"

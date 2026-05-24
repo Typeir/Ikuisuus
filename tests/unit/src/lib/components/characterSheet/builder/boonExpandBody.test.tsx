@@ -11,7 +11,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/hooks/data/useContentShard', () => ({
-  useShard: () => ({
+  useContentShardSingle: () => ({
     data: undefined,
     isLoading: false,
     error: undefined,

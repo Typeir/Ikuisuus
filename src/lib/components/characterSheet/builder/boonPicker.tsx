@@ -99,6 +99,16 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
     return boons.filter((b) => b.name.toLowerCase().includes(q));
   }, [boons, searchQuery]);
 
+  const displayedBoons = useMemo(
+    () =>
+      readOnly
+        ? filteredBoons.filter((b) =>
+            selectedBoons.some((s) => s.heading === b.name),
+          )
+        : filteredBoons,
+    [readOnly, filteredBoons, selectedBoons],
+  );
+
   const bpSpent = computeBpSpent(selectedBoons);
   const bpRemaining = boonBudget - bpSpent;
 
@@ -144,24 +154,26 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
 
   return (
     <div className={styles.boonPicker}>
-      <div className={styles.boonBudgetMeter} aria-label={t('ariaBoonBudget')}>
-        <span className={styles.boonBudgetLabel}>
-          {t('bpFormat', { spent: bpSpent, total: boonBudget })}
-        </span>
-        <div className={styles.boonBudgetBar}>
-          <div
-            className={`${styles.boonBudgetFill} ${bpRemaining < 0 ? styles.boonBudgetOver : ''}`}
-            style={{
-              width: `${Math.min(100, (bpSpent / Math.max(boonBudget, 1)) * 100)}%`,
-            }}
-          />
-        </div>
-        {bpRemaining < 0 && (
-          <span className={styles.boonBudgetWarning}>
-            {t('bpOverBudget', { amount: Math.abs(bpRemaining) })}
+      {!readOnly && (
+        <div className={styles.boonBudgetMeter} aria-label={t('ariaBoonBudget')}>
+          <span className={styles.boonBudgetLabel}>
+            {t('bpFormat', { spent: bpSpent, total: boonBudget })}
           </span>
-        )}
-      </div>
+          <div className={styles.boonBudgetBar}>
+            <div
+              className={`${styles.boonBudgetFill} ${bpRemaining < 0 ? styles.boonBudgetOver : ''}`}
+              style={{
+                width: `${Math.min(100, (bpSpent / Math.max(boonBudget, 1)) * 100)}%`,
+              }}
+            />
+          </div>
+          {bpRemaining < 0 && (
+            <span className={styles.boonBudgetWarning}>
+              {t('bpOverBudget', { amount: Math.abs(bpRemaining) })}
+            </span>
+          )}
+        </div>
+      )}
 
       {loading && (
         <SkeletonGroup>
@@ -175,19 +187,21 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
 
       {!loading && !error && (
         <>
-          <input
-            type='search'
-            className={pickerStyles.pickerSearch}
-            placeholder={t('searchPlaceholder')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            aria-label={t('searchPlaceholder')}
-          />
+          {!readOnly && (
+            <input
+              type='search'
+              className={pickerStyles.pickerSearch}
+              placeholder={t('searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label={t('searchPlaceholder')}
+            />
+          )}
           <div className={pickerStyles.pickerScroll}>
             <ul
               className={styles.boonList}
               aria-label={t('ariaAvailableBoons')}>
-              {filteredBoons.map((boon) => {
+              {displayedBoons.map((boon) => {
                 const selected = isBoonSelected(boon.name);
                 const isExpanded = expandedBoons.has(boon.name);
                 const bodyId = `boon-body-${bloodlineSlug}-${boon.name.replace(/\s+/g, '-')}`;
@@ -237,7 +251,7 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
                   </li>
                 );
               })}
-              {filteredBoons.length === 0 && (
+              {displayedBoons.length === 0 && (
                 <li className={styles.boonEmpty}>{t('noBoonsAvailable')}</li>
               )}
             </ul>

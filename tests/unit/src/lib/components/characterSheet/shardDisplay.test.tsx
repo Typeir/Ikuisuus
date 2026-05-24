@@ -85,9 +85,7 @@ describe('ShardDisplay', () => {
     mockFetch.mockResolvedValueOnce(
       new Response(
         JSON.stringify({
-          startLine: 3,
-          endLine: 6,
-          text: '## Extended Reach\n\nFull body text here.',
+          shards: { 'Extended Reach': 'Full body text here.' },
         }),
         { status: 200 },
       ),

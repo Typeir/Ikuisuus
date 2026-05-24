@@ -343,3 +343,47 @@ export function urlForShard(sourceFile: string, heading: string): string {
   const params = new URLSearchParams({ file: sourceFile, heading });
   return `/api/shards?${params.toString()}`;
 }
+
+/**
+ * Builds the SWR cache key for fetching a single named shard from the
+ * DB-backed content-shards endpoint.
+ *
+ * @param {string} contentType - API path segment (e.g. `'bloodlines'`, `'feats'`)
+ * @param {string} slug - Content item slug
+ * @param {string} key - Heading / shard name to fetch
+ * @param {string} locale - Content locale
+ * @param {boolean} [enabled] - When falsy, returns null to skip fetch
+ * @returns {readonly ['content-shard-single', string, string, string, string] | null} Cache key or null
+ */
+export function contentShardSingleKey(
+  contentType: string,
+  slug: string,
+  key: string,
+  locale: string,
+  enabled?: boolean,
+): readonly ['content-shard-single', string, string, string, string] | null {
+  return enabled
+    ? (['content-shard-single', contentType, slug, key, locale] as const)
+    : null;
+}
+
+/**
+ * Builds the API URL for a single named shard via the DB-backed
+ * content-shards endpoint.
+ *
+ * @param {string} contentType - API path segment (e.g. `'bloodlines'`, `'feats'`)
+ * @param {string} slug - Content item slug
+ * @param {string} key - Heading / shard name to fetch
+ * @param {string} locale - Content locale
+ * @returns {string} API URL
+ */
+export function urlForContentShardSingle(
+  contentType: string,
+  slug: string,
+  key: string,
+  locale: string,
+): string {
+  const params = new URLSearchParams({ locale });
+  params.append('keys[]', key);
+  return `/api/content-shards/${contentType}/${slug}?${params.toString()}`;
+}

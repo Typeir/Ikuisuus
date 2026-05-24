@@ -1,8 +1,9 @@
 /**
  * @fileoverview Boon Expanded Body
  * @description Renders the prose body of a single bloodline boon inline below
- * its row in `BoonPicker`. Fetches the heading block from `/api/shards`
- * lazily on mount and renders it as HTML via the markdown renderer.
+ * its row in `BoonPicker`. Fetches the heading block via the DB-backed
+ * `/api/content-shards/bloodlines/[slug]` endpoint lazily on mount and renders
+ * it as HTML via the markdown renderer.
  *
  * This component intentionally has no header — the parent `BoonPicker` row
  * supplies the boon name, BP badge, and expand chevron. Expanding a boon is
@@ -17,8 +18,8 @@
 'use client';
 
 import { FetchError } from '@/lib/fetch/fetcher';
-import { useShard } from '@/lib/hooks/data/useContentShard';
-import { useTranslations } from 'next-intl';
+import { useContentShardSingle } from '@/lib/hooks/data/useContentShard';
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import styles from '../characterSheetWidgets.module.scss';
 import expandStyles from './boonExpand.module.scss';
@@ -53,18 +54,20 @@ export const BoonExpandBody: React.FC<BoonExpandBodyProps> = ({
   id,
 }) => {
   const t = useTranslations('characterSheet');
+  const locale = useLocale();
   const [bodyText, setBodyText] = useState<string>(cachedText ?? '');
   const [renderedHtml, setRenderedHtml] = useState<string>('');
   const haveText = bodyText.length > 0;
 
-  const sourceFile = `character-creation/bloodlines/${bloodlineSlug}.bloodline.mdx`;
   const {
     data: shardData,
     isLoading: loading,
     error: shardError,
-  } = useShard({
-    sourceFile,
-    heading: boonName,
+  } = useContentShardSingle({
+    contentType: 'bloodlines',
+    slug: bloodlineSlug,
+    key: boonName,
+    locale,
     enabled: !haveText,
   });
   const is404 = shardError instanceof FetchError && shardError.status === 404;
@@ -72,9 +75,9 @@ export const BoonExpandBody: React.FC<BoonExpandBodyProps> = ({
 
   useEffect(() => {
     if (shardData && !haveText) {
-      setBodyText(shardData.text.split('\n').slice(1).join('\n').trim());
+      setBodyText(shardData.shards[boonName] ?? '');
     }
-  }, [shardData, haveText]);
+  }, [shardData, haveText, boonName]);
 
   useEffect(() => {
     if (!bodyText) {
