@@ -39,6 +39,9 @@ const changedOnlyMode = process.argv.includes('--changed-only');
 const IGNORE_DIRECTIVE_PATTERN =
   /health:check-ignore-(file|nextline)\s+([a-z0-9*_,\s-]+)/gi;
 const WILDCARD_RULE = '*';
+const COMMENT_PATTERN =
+  /<!--([\s\S]*?)-->|\{\/\*([\s\S]*?)\*\/\}|\/\*([\s\S]*?)\*\/|\/\/([^\n]*)/g;
+const FUZZY_IGNORE_PATTERN = /([a-z][a-z0-9-]*)\s+ignore\b/gi;
 
 /**
  * Parsed ignore directives for a single source file.
@@ -123,6 +126,28 @@ function parseIgnoreDirectives(content: string): IgnoreDirectives {
     fileRules: new Set<string>(),
     nextLineRules: new Map<number, Set<string>>(),
   };
+
+  COMMENT_PATTERN.lastIndex = 0;
+  for (const commentMatch of content.matchAll(COMMENT_PATTERN)) {
+    const body =
+      commentMatch[1] ?? commentMatch[2] ?? commentMatch[3] ?? commentMatch[4];
+    if (!body) {
+      continue;
+    }
+    FUZZY_IGNORE_PATTERN.lastIndex = 0;
+    for (const fuzzyMatch of body.matchAll(FUZZY_IGNORE_PATTERN)) {
+      const rawRule = fuzzyMatch[1];
+      if (!rawRule) {
+        continue;
+      }
+      const normalized = normalizeRuleToken(rawRule);
+      if (!normalized || normalized === 'ignore') {
+        continue;
+      }
+      directives.fileRules.add(normalized);
+    }
+  }
+
   const lines = content.split('\n');
 
   for (let index = 0; index < lines.length; index += 1) {

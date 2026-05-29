@@ -110,6 +110,9 @@ jobs:
           CI: 1
         run: npm install
 
+      - name: Run pre-initialization scripts (CI-safe)
+        run: npm run pre-init:ci
+
       - name: Run composite health check
         run: npm run health:check
 
