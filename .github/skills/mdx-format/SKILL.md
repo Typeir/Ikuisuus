@@ -1,10 +1,13 @@
 ---
 name: mdx-format
 description: >
-  Analyzes and refactors MDX content files for the Library of Ikuisuus project.
-  Understands the structural rules for each content type (monster sheets, spells,
-  heirlooms, trinkets, world lore, rules). Can run the MDX format health check,
-  interpret violations, and apply targeted fixes while preserving content integrity.
+  Router skill for MDX content format in the Library of Ikuisuus project. Covers
+  universal format rules, the MDX component registry, running the format health
+  check, and the refactoring workflow. For per-content-type structural rules,
+  canonical examples, and metadata field tables, load the matching sub-skill
+  (mdx-format-monsters, mdx-format-heirlooms, mdx-format-trinkets,
+  mdx-format-bloodlines, mdx-format-feats, mdx-format-spells,
+  mdx-format-vocations, mdx-format-specializations, mdx-format-world).
 ---
 
 # MDX Format Skill
@@ -22,162 +25,22 @@ or structural validation of `.mdx` files.
 - **New content creation**: Scaffolding MDX files that conform to format rules
 - **Content type migration**: Converting between content formats (e.g., adding metadata structure)
 
-## Content Types and Their Format Rules
+## Per-Content-Type Skills
 
-### Monster Sheets (`.sheet.mdx`)
+For detailed structural requirements, canonical examples, metadata field tables,
+and type-specific pitfalls, load the matching sub-skill before editing content:
 
-**Location**: `src/content/en/monsters/`
-**Extension**: `.sheet.mdx` (required for metadata generation)
-
-**Required Structure**:
-
-```mdx
-# Monster Name
-
-_Size Type, Alignment_
-
-| **Armor Class** | **Hit Points** | **Speed** |
-| --------------- | -------------- | --------- |
-| AC (notes)      | HP (formula)   | speeds    |
-
-| **STR**      | **DEX**      | **CON**      | **INT**      | **WIS**      | **CHA**      |
-| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
-| Score (+mod) | Score (+mod) | Score (+mod) | Score (+mod) | Score (+mod) | Score (+mod) |
-
-- **Saving Throws**: ...
-- **Damage Resistances**: ...
-- **Damage Immunities**: ...
-- **Condition Immunities**: ...
-- **Senses**: ...
-- **Languages**: ...
-- **Challenge**: CR (XP)
-- **Proficiency Bonus**: +N
-
----
-
-## Traits
-
-#### Trait Name
-
-Trait description...
-
----
-
-## Actions
-
-#### Action Name
-
-Action description...
-
----
-
-## Legendary Deeds (if applicable)
-
-#### Deed Name (X Deeds)
-
-Deed description...
-```
-
-**Critical Rules**:
-
-- Must contain ability score table with STR/DEX/CON/INT/WIS/CHA
-- Must contain Challenge Rating line
-- Stat block properties use bold markdown (`**Property**:`)
-- Horizontal rules (`---`) separate major sections
-- Multi-variant files contain multiple stat blocks (arrays in metadata)
-
-### Spells (`.mdx`)
-
-**Location**: `src/content/en/spells/`
-
-**Required Structure**:
-
-```mdx
-# Spell Name
-
-Flavor text / lore description...
-
----
-
-> **Spell Name**
-> _Level School_
-> **Casting Time**: ...
-> **Range**: ...
-> **Components**: V, S, M (materials)
-> **Duration**: ...
->
-> Spell effect description...
->
-> **At Higher Levels.** When cast using a spell slot of Nth level or higher...
-
-#### Spell Lists
-
-This spell appears on the following spell lists:
-
-- List name
-```
-
-**Critical Rules**:
-
-- Spell stat block MUST be in a blockquote (`>`)
-- Must contain bold property labels for Casting Time, Range, Components, Duration
-- Flavor text and horizontal rule precede the stat block
-
-### Heirlooms (`.mdx`)
-
-**Location**: `src/content/en/items/heirlooms/`
-
-**Required Structure**:
-
-```mdx
-# Item Name
-
-<ParallaxBackdrop ... />
-
-<FloatedContainer side='right' width='35%'>
-  <Image src='/library/images/heirlooms/item-name.webp' alt='Item Name' />
-</FloatedContainer>
-
-_Rarity (requires attunement)_
-_Weapon/Armor type description_
-
-Flavor text...
-
----
-
-## Weapon Properties / Armor Properties
-
-- **Type**: ...
-- **Damage**: ...
-
-## Special Features
-
-- **Feature Name**: Description...
-
-## Effects
-
-- **Effect Name**: Description...
-```
-
-**Critical Rules**:
-
-- Images use `/library/` paths, never `/full-size/`
-- Use `<Image>`, `<BlendedImage>`, or `<ParallaxBackdrop>` components, never `<img>`
-- Rarity line follows the pattern: `_rarity (requires attunement)_`
-
-### World Content (`.mdx`)
-
-**Location**: `src/content/en/world/` (with subdirectories)
-
-**Structure**: Free-form lore content with a single `# Title` heading.
-Cross-references use internal links: `[term](/en/library/world/path)`
-
-### Rules Content (`.mdx`)
-
-**Location**: `src/content/en/rules/`
-
-**Structure**: Technical game mechanics documentation.
-May reference spells, items, and monsters via internal links.
+| Content Type    | Skill                        | File Extension        | Location                                             |
+| --------------- | ---------------------------- | --------------------- | ---------------------------------------------------- |
+| Monsters        | `mdx-format-monsters`        | `.sheet.mdx`          | `src/content/en/monsters/`                           |
+| Heirlooms       | `mdx-format-heirlooms`       | `.heirloom.mdx`       | `src/content/en/items/heirlooms/`                    |
+| Trinkets        | `mdx-format-trinkets`        | `.trinket.mdx`        | `src/content/en/items/trinkets/`                     |
+| Bloodlines      | `mdx-format-bloodlines`      | `.bloodline.mdx`      | `src/content/en/character-creation/bloodlines/`      |
+| Feats           | `mdx-format-feats`           | `.mdx`                | `src/content/en/character-creation/feats/`           |
+| Spells          | `mdx-format-spells`          | `.mdx`                | `src/content/en/spells/`                             |
+| Vocations       | `mdx-format-vocations`       | `main.mdx`            | `src/content/en/character-creation/vocations/{voc}/` |
+| Specializations | `mdx-format-specializations` | `.specialization.mdx` | `src/content/en/character-creation/vocations/{voc}/` |
+| World / Lore    | `mdx-format-world`           | `.lore.mdx`           | `src/content/en/world/`                              |
 
 ## Universal Format Rules
 
@@ -221,28 +84,35 @@ The script outputs JSON matching the health check schema:
 
 When performing a format refactor:
 
-1. **Run the check**: `node .github/scripts/check-mdx-format.mjs` to identify violations
-2. **Group by rule**: Violations of the same rule can often be fixed with a consistent pattern
-3. **Fix by content type**: Work through one content type at a time (monsters → spells → heirlooms → world)
-4. **Verify metadata**: After fixing monster/spell/heirloom files, run `npm run generate-metadata` to ensure parsers still work
-5. **Re-run check**: Confirm violations are resolved and no new ones introduced
+1. **Load the per-type skill first**: Identify the content type and load its sub-skill
+   (e.g., `mdx-format-monsters`) before making any edits.
+2. **Run the check**: `node .github/scripts/check-mdx-format.ts` to identify violations.
+3. **Group by rule**: Violations of the same rule can often be fixed with a consistent pattern.
+4. **Fix by content type**: Work through one content type at a time using the sub-skill as reference.
+5. **Verify metadata**: After fixing monster/spell/heirloom/etc. files, run `npm run generate-metadata`
+   to ensure parsers still work.
+6. **Re-run check**: Confirm violations are resolved and no new ones introduced.
 
 ## Component Registry
 
 Components available in MDX files (registered in `src/lib/components/mdx/index.tsx`):
 
-| Component            | Purpose                                   |
-| -------------------- | ----------------------------------------- |
-| `<BlendedImage>`     | Image with blend/overlay effects          |
-| `<Image>`            | Next.js optimized image (600×600 default) |
-| `<FloatedContainer>` | Float content left/right with width       |
-| `<ClearFloats>`      | Clear floating elements                   |
-| `<ParallaxBackdrop>` | Full-width parallax background image      |
-| `<HorizontalSplit>`  | Side-by-side content layout               |
-| `<FlexRenderer>`     | Flexible content rendering                |
-| `<MonsterTable>`     | Monster metadata filterable table         |
-| `<HeirloomTable>`    | Heirloom metadata filterable table        |
-| `<SpellTable>`       | Spell metadata filterable table           |
-| `<TrinketTable>`     | Trinket metadata filterable table         |
+| Component              | Purpose                                   |
+| ---------------------- | ----------------------------------------- |
+| `<BlendedImage>`       | Image with blend/overlay effects          |
+| `<Image>`              | Next.js optimized image (600×600 default) |
+| `<FloatedContainer>`   | Float content left/right with width       |
+| `<ClearFloats>`        | Clear floating elements                   |
+| `<ParallaxBackdrop>`   | Full-width parallax background image      |
+| `<HorizontalSplit>`    | Side-by-side content layout               |
+| `<FlexRenderer>`       | Flexible content rendering                |
+| `<MonsterTable>`       | Monster metadata filterable table         |
+| `<HeirloomTable>`      | Heirloom metadata filterable table        |
+| `<SpellTable>`         | Spell metadata filterable table           |
+| `<TrinketTable>`       | Trinket metadata filterable table         |
+| `<FilteredSpellTable>` | Spell table with vocation filter          |
+| `<Collapsible>`        | Expandable/collapsible content block      |
+| `<Tooltip>`            | Inline tooltip for rules terms            |
+| `<Meta>`               | Monster metadata directive (sheet files)  |
 
 Auto-generated spell components from `mdxComponents.tsx` are also available (e.g., `<LesserMooncleave>`, `<FoldDeduplication>`).

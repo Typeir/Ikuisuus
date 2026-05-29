@@ -19,12 +19,16 @@ import type { CameraController } from './camera/CameraController';
 import type { FrameContext } from './canvas/RenderLifecycle';
 import { RenderPhase } from './canvas/RenderLifecycle';
 import type { SceneManager } from './canvas/SceneManager';
-import { CelestialBodyFactory } from './celestials/CelestialBodyFactory';
 import { CelestialRegistry } from './celestials/CelestialRegistry';
 import { CollisionCloudEffect } from './celestials/CollisionCloudEffect';
+import {
+    buildCelestialBodies,
+    buildCollisionCloud,
+    buildEverdark,
+    buildOrbitLines,
+    type CelestialEntry,
+} from './celestials/CelestialSceneBuilder';
 import type {
-    CelestialBodyData,
-    CelestialRendererType,
     ICelestialRenderer,
     SceneContext,
 } from './celestials/interfaces';
@@ -32,31 +36,14 @@ import {
     computeOrbitalPosition,
     surfacePositionToWorld,
 } from './celestials/OrbitalMechanics';
-import { createAllOrbitLines } from './celestials/OrbitLineFactory';
 import {
     WorldSimActionType,
     type WorldSimAction,
 } from './context/worldSimTypes';
+import { CanvasInputHandler } from './input/CanvasInputHandler';
 import { AdaptivePerformanceController } from './optimization/AdaptivePerformanceController';
 import { DPR_CAP } from './optimization/GeometryBudgets';
 import { RaycastService } from './RaycastService';
-
-/**
- * Runtime entry for a celestial body in the scene.
- *
- * @interface CelestialEntry
- * @property {CelestialBodyData} data - The body's data definition
- * @property {ICelestialRenderer} renderer - The renderer strategy instance
- * @property {Object3D} mesh - The Three.js scene object
- */
-interface CelestialEntry {
-  /** @property {CelestialBodyData} data - Body configuration data */
-  data: CelestialBodyData;
-  /** @property {ICelestialRenderer} renderer - Renderer strategy instance */
-  renderer: ICelestialRenderer;
-  /** @property {Object3D} mesh - Scene object created by the renderer */
-  mesh: Object3D;
-}
 
 /** @constant {number} VIEW_DISTANCE_MULTIPLIER - Multiplier for zoom-to-body view distance */
 const VIEW_DISTANCE_MULTIPLIER = 3;
@@ -120,6 +107,9 @@ export class WorldSimMediator {
   /** @property {string | null} hoveredBodyId - Currently hovered body ID */
   private hoveredBodyId: string | null = null;
 
+  /** @property {CanvasInputHandler | null} inputHandler - Pointer event handler for the canvas */
+  private inputHandler: CanvasInputHandler | null = null;
+
   /** @property {string | null} followedBodyId - Currently followed body ID for camera tracking */
   private followedBodyId: string | null = null;
 
@@ -138,12 +128,6 @@ export class WorldSimMediator {
   /** @property {AdaptivePerformanceController} performanceController - Adaptive quality selector from frame timing */
   private performanceController: AdaptivePerformanceController =
     new AdaptivePerformanceController();
-
-  /** @property {Function} boundOnCanvasClick - Bound click handler */
-  private boundOnCanvasClick: (e: MouseEvent) => void;
-
-  /** @property {Function} boundOnCanvasMove - Bound mousemove handler */
-  private boundOnCanvasMove: (e: MouseEvent) => void;
 
   /**
    * Create a new WorldSimMediator.
@@ -168,9 +152,6 @@ export class WorldSimMediator {
     this.dispatch = dispatch;
     this.registry = CelestialRegistry.shared();
     this.raycastService = new RaycastService();
-
-    this.boundOnCanvasClick = this.onCanvasClick.bind(this);
-    this.boundOnCanvasMove = this.onCanvasMove.bind(this);
   }
 
   /**
@@ -178,10 +159,13 @@ export class WorldSimMediator {
    * and register the animation callback.
    */
   initialize(): void {
-    this.createAllBodies();
-    this.createOrbitLines();
-    this.createEverdark();
-    this.createCollisionCloud();
+    const scene = this.sceneManager.scene;
+    this.celestials = buildCelestialBodies(this.registry, scene);
+    this.orbitLines = buildOrbitLines(this.registry, this.celestials, scene);
+    const everdark = buildEverdark(this.registry, scene);
+    this.everdarkMesh = everdark.mesh;
+    this.everdarkRenderer = everdark.renderer;
+    this.collisionCloud = buildCollisionCloud(this.celestials, scene);
     this.registerProjections();
     this.buildMeshCaches();
     this.applyQualityToRenderers();
@@ -455,86 +439,6 @@ export class WorldSimMediator {
   }
 
   /**
-   * Create mesh entries for all celestial bodies in the registry.
-   *
-   * @private
-   */
-  private createAllBodies(): void {
-    const bodies = this.registry.getAllBodies();
-
-    for (const body of bodies) {
-      const renderer = CelestialBodyFactory.createRenderer(
-        body.renderConfig.renderer as CelestialRendererType,
-      );
-      const mesh = renderer.createMesh(body);
-
-      if (body.orbit) {
-        const initialPosition = computeOrbitalPosition(body.orbit, 0);
-        mesh.position.copy(initialPosition);
-      }
-
-      mesh.userData = { bodyId: body.id };
-      this.applyDefaultCulling(mesh);
-
-      this.sceneManager.scene.add(mesh);
-      this.celestials.set(body.id, { data: body, renderer, mesh });
-    }
-  }
-
-  /**
-   * Create orbit path lines for all bodies with orbital parameters.
-   * Lines for child bodies (with parentBodyId) are parented to the parent mesh
-   * so they move with the parent. Top-level orbit lines are added to the scene root.
-   *
-   * @private
-   */
-  private createOrbitLines(): void {
-    const bodies = this.registry.getAllBodies();
-    const meshMap = new Map<string, Object3D>();
-    this.celestials.forEach((entry, id) => {
-      meshMap.set(id, entry.mesh);
-    });
-
-    this.orbitLines = createAllOrbitLines(bodies, meshMap);
-
-    this.orbitLines.forEach((line, bodyId) => {
-      const bodyData = this.registry.getBodyById(bodyId);
-      if (!bodyData?.parentBodyId) {
-        this.sceneManager.scene.add(line);
-      }
-    });
-  }
-
-  /**
-   * Create the Länsihenki × Itähenki collision cloud effect if both bodies
-   * are present in the registry. Safe to call when either body is absent.
-   *
-   * @private
-   */
-  private createCollisionCloud(): void {
-    const lans = this.celestials.get('lansihenki');
-    const ita = this.celestials.get('itahenki');
-    if (!lans || !ita) return;
-    this.collisionCloud = new CollisionCloudEffect();
-    this.collisionCloud.addToScene(this.sceneManager.scene);
-  }
-
-  /**
-   * Create the Everdark boundary shell.
-   *
-   * @private
-   */
-  private createEverdark(): void {
-    const boundary = this.registry.getBoundary();
-    this.everdarkRenderer = CelestialBodyFactory.createRenderer(
-      boundary.renderConfig.renderer as CelestialRendererType,
-    );
-    this.everdarkMesh = this.everdarkRenderer.createMesh(boundary);
-    this.applyDefaultCulling(this.everdarkMesh);
-    this.sceneManager.scene.add(this.everdarkMesh);
-  }
-
-  /**
    * Register all celestial bodies with the ProjectionBridge for 2D overlay tracking.
    * Passes live mesh.position references so the bridge always reads current positions
    * without needing per-frame updatePosition() calls.
@@ -548,75 +452,46 @@ export class WorldSimMediator {
   }
 
   /**
-   * Attach mouse click and move listeners to the canvas for raycasting.
+   * Attach the canvas input handler with mediator-bound click and hover callbacks.
    *
    * @private
    */
   private attachInputListeners(): void {
-    const canvas = this.sceneManager.renderer.domElement;
-    canvas.addEventListener('click', this.boundOnCanvasClick);
-    canvas.addEventListener('mousemove', this.boundOnCanvasMove);
+    this.inputHandler = new CanvasInputHandler({
+      canvas: this.sceneManager.renderer.domElement,
+      camera: this.sceneManager.camera,
+      getCanvasRect: () => this.sceneManager.getCanvasRect(),
+      raycastService: this.raycastService,
+      isTransitioning: () => this.cameraController.isTransitioning(),
+      onBodyClick: (bodyId) => {
+        if (bodyId !== this.followedBodyId) {
+          this.eventBus.emit('body:click', { bodyId });
+          this.zoomToBody(bodyId);
+        }
+      },
+      onHoverChange: (bodyId) => {
+        if (this.hoveredBodyId) {
+          this.eventBus.emit('body:unhover', { bodyId: this.hoveredBodyId });
+          this.dispatch({ type: WorldSimActionType.HoverBody, bodyId: null });
+        }
+        this.hoveredBodyId = bodyId;
+        if (bodyId) {
+          this.eventBus.emit('body:hover', { bodyId });
+          this.dispatch({ type: WorldSimActionType.HoverBody, bodyId });
+        }
+      },
+    });
+    this.inputHandler.attach();
   }
 
   /**
-   * Remove input listeners from the canvas.
+   * Detach and dispose the canvas input handler.
    *
    * @private
    */
   private detachInputListeners(): void {
-    const canvas = this.sceneManager.renderer.domElement;
-    canvas.removeEventListener('click', this.boundOnCanvasClick);
-    canvas.removeEventListener('mousemove', this.boundOnCanvasMove);
-  }
-
-  /**
-   * Handle canvas click events — raycast to find clicked body.
-   *
-   * @private
-   * @param {MouseEvent} event - The click event
-   */
-  private onCanvasClick(event: MouseEvent): void {
-    if (this.cameraController.isTransitioning()) return;
-
-    const bodyId = this.raycastService.raycastBody(
-      event,
-      this.sceneManager.camera,
-      this.sceneManager.getCanvasRect(),
-    );
-    if (bodyId && bodyId !== this.followedBodyId) {
-      this.eventBus.emit('body:click', { bodyId });
-      this.zoomToBody(bodyId);
-    }
-  }
-
-  /**
-   * Handle canvas mousemove events — raycast for hover state.
-   *
-   * @private
-   * @param {MouseEvent} event - The mousemove event
-   */
-  private onCanvasMove(event: MouseEvent): void {
-    if (this.cameraController.isTransitioning()) return;
-
-    const bodyId = this.raycastService.raycastBody(
-      event,
-      this.sceneManager.camera,
-      this.sceneManager.getCanvasRect(),
-    );
-
-    if (bodyId !== this.hoveredBodyId) {
-      if (this.hoveredBodyId) {
-        this.eventBus.emit('body:unhover', { bodyId: this.hoveredBodyId });
-        this.dispatch({ type: WorldSimActionType.HoverBody, bodyId: null });
-      }
-
-      this.hoveredBodyId = bodyId;
-
-      if (bodyId) {
-        this.eventBus.emit('body:hover', { bodyId });
-        this.dispatch({ type: WorldSimActionType.HoverBody, bodyId });
-      }
-    }
+    this.inputHandler?.detach();
+    this.inputHandler = null;
   }
 
   /**
@@ -631,20 +506,6 @@ export class WorldSimMediator {
       rootMeshes.push(entry.mesh);
     });
     this.raycastService.buildMeshCaches(rootMeshes);
-  }
-
-  /**
-   * Apply default frustum-culling flags to all renderable descendants.
-   *
-   * @private
-   * @param {Object3D} root - Root object to traverse
-   */
-  private applyDefaultCulling(root: Object3D): void {
-    root.traverse((node) => {
-      if ('frustumCulled' in node) {
-        node.frustumCulled = true;
-      }
-    });
   }
 
   /**

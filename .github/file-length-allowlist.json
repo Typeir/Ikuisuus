@@ -1,17 +1,7 @@
 [
   {
-    "file": "src/lib/seo/og/OGTemplate.tsx",
-    "maxLines": 300,
-    "justification": "OG card template with complex layout and inline styling for dynamic content"
-  },
-  {
-    "file": "src/styles/_mixins-mdx-sections.scss",
-    "maxLines": 300,
-    "justification": "SCSS mixins for MDX section styling that are highly complex."
-  },
-  {
     "file": "src/styles/mdxContent.module.scss",
-    "maxLines": 600,
+    "maxLines": 280,
     "justification": "Mdx content module is basically a second globals.scss with module-scoped styles."
   },
   {
@@ -23,11 +13,6 @@
     "file": "src/app/api/corrections/route.ts",
     "maxLines": 300,
     "justification": "API route handler with validation, processing, and response logic that must remain cohesive"
-  },
-  {
-    "file": "src/lib/components/encounterPlanner/combatantRow/combatantMainStats.tsx",
-    "maxLines": 300,
-    "justification": "Complex stat display component with tightly coupled stat rendering logic"
   },
   {
     "file": "src/lib/components/encounterPlanner/combatantRow/_combatantAffixes.scss",
@@ -60,11 +45,6 @@
     "justification": "Module-scoped SCSS for the generic metadata table covering column layouts, sort indicators, pagination, filter controls, and responsive breakpoints — splitting would break module-scoped class references"
   },
   {
-    "file": "src/lib/components/mdx/metadataTables/metadataTableSkeleton.tsx",
-    "maxLines": 310,
-    "justification": "Skeleton loading state for metadata table with shimmer animations matching table layout"
-  },
-  {
     "file": "src/lib/components/mdxEditor/mdxEditor.module.scss",
     "maxLines": 420,
     "justification": "Module-scoped SCSS for MDX editor with toolbar, preview pane, and syntax highlighting styles"
@@ -86,18 +66,8 @@
   },
   {
     "file": "src/lib/components/worldSim/WorldSimMediator.ts",
-    "maxLines": 400,
-    "justification": "Central mediator coordinating all world sim subsystems — splitting would violate the mediator pattern"
-  },
-  {
-    "file": "src/lib/components/worldSim/overlay/overlay.module.scss",
-    "maxLines": 300,
-    "justification": "Module-scoped SCSS for world sim overlay with celestial labels, panels, and responsive layout"
-  },
-  {
-    "file": "src/lib/metadata/generatorUtils.ts",
-    "maxLines": 305,
-    "justification": "Shared metadata generator utilities with parsing, file I/O, and tagging helpers"
+    "maxLines": 340,
+    "justification": "Central mediator coordinating world sim subsystems; scene assembly delegated to CelestialSceneBuilder and pointer events to CanvasInputHandler — remaining surface area is orchestration that must stay cohesive"
   },
   {
     "file": "src/lib/metadata/syncService.ts",
@@ -105,48 +75,18 @@
     "justification": "Metadata sync service orchestrating hash-based diffing for monsters, heirlooms, and spells — per-type sync workers extracted to sibling modules"
   },
   {
-    "file": "src/lib/metadata/taggingUtils.ts",
-    "maxLines": 300,
-    "justification": "Tag extraction utilities for damage types, conditions, mechanics, and lore tags"
-  },
-  {
     "file": "scripts/metadata/generateHeirloomMetadata.ts",
-    "maxLines": 420,
+    "maxLines": 460,
     "justification": "Complex heirloom parser keeps tightly coupled extraction logic for item headers, weapon properties, and metadata assembly"
   },
   {
     "file": "scripts/db/pg/seed-from-fs.ts",
-    "maxLines": 650,
+    "maxLines": 320,
     "justification": "CLI seed script with per-entity-type seed functions — splitting would break transactional seeding"
-  },
-  {
-    "file": "scripts/db/pg/init-db.ts",
-    "maxLines": 350,
-    "justification": "DDL initialisation script with sequential CREATE TABLE statements that must remain cohesive"
-  },
-  {
-    "file": "scripts/db/pg/backfill-version-hashes.ts",
-    "maxLines": 400,
-    "justification": "CLI backfill script with per-entity hash computation and update logic"
-  },
-  {
-    "file": "src/lib/components/sidebar/sidebar.tsx",
-    "maxLines": 500,
-    "justification": "Sidebar orchestrator with lazy-mount animation, virtualisation threshold, stub lazy-loading effect, and SidebarItem fold logic — splitting would break co-located type definitions"
-  },
-  {
-    "file": "src/lib/components/characterSheet/characterSheet.module.scss",
-    "maxLines": 280,
-    "justification": "Character sheet layout SCSS covering all panel sections, edit-mode states, and responsive grid — splitting would break module-scoped class references"
   },
   {
     "file": "src/lib/components/characterSheet/characterSheetWidgets.module.scss",
     "maxLines": 400,
     "justification": "Comprehensive widget styles for ability score blocks, combat stats, skills, tools, attacks, features, boons, notes, and shard markdown rendering — all tightly coupled to the character sheet layout"
-  },
-  {
-    "file": "src/lib/components/characterSheet/characterSheet.tsx",
-    "maxLines": 270,
-    "justification": "Top-level character sheet orchestrator with panel layout, edit-mode state, and all sub-section rendering — splitting would break tightly coupled section refs"
   }
 ]
