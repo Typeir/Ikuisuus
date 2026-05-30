@@ -14,6 +14,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useWorldSimState, WorldSimProvider } from './context/WorldSimContext';
+import { WorldSimControlsProvider } from './context/WorldSimControlsContext';
 import { useWorldSimCanvas } from './hooks/useWorldSimCanvas';
 import { ControlsBar } from './overlay/ControlsBar';
 import { InfoPanel } from './overlay/InfoPanel';
@@ -34,32 +35,34 @@ function WorldSimInner(): React.ReactElement {
     useWorldSimCanvas();
 
   return (
-    <div className={styles.worldSimWrapper}>
-      <div ref={containerRef} className={styles.canvasContainer} />
+    <WorldSimControlsProvider mediatorRef={mediatorRef}>
+      <div className={styles.worldSimWrapper}>
+        <div ref={containerRef} className={styles.canvasContainer} />
 
-      {!state.isInitialized && (
-        <div className={styles.loadingOverlay}>
-          <span className={styles.loadingText}>{t('loading')}</span>
+        {!state.isInitialized && (
+          <div className={styles.loadingOverlay}>
+            <span className={styles.loadingText}>{t('loading')}</span>
+          </div>
+        )}
+
+        <div className={styles.header}>
+          <h1 className={styles.headerTitle}>{t('title')}</h1>
+          <p className={styles.headerSubtitle}>{t('subtitle')}</p>
         </div>
-      )}
 
-      <div className={styles.header}>
-        <h1 className={styles.headerTitle}>{t('title')}</h1>
-        <p className={styles.headerSubtitle}>{t('subtitle')}</p>
+        <OverlayContainer
+          bindElement={bindElement}
+          unbindElement={unbindElement}
+          mediatorRef={mediatorRef}
+        />
+
+        <InfoPanel mediatorRef={mediatorRef} />
+
+        <WorldSimContentPanel />
+
+        <ControlsBar mediatorRef={mediatorRef} />
       </div>
-
-      <OverlayContainer
-        bindElement={bindElement}
-        unbindElement={unbindElement}
-        mediatorRef={mediatorRef}
-      />
-
-      <InfoPanel mediatorRef={mediatorRef} />
-
-      <WorldSimContentPanel />
-
-      <ControlsBar mediatorRef={mediatorRef} />
-    </div>
+    </WorldSimControlsProvider>
   );
 }
 

@@ -13,10 +13,11 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { GenericEmbedPanel } from '../../ui/embedPanel/GenericEmbedPanel';
 import { CelestialRegistry } from '../celestials/CelestialRegistry';
 import { useWorldSimState } from '../context/WorldSimContext';
+import { useWorldSimControls } from '../context/WorldSimControlsContext';
 import { ZoomLevel } from '../context/worldSimTypes';
 import styles from './overlay.module.scss';
 
@@ -54,9 +55,19 @@ function computeInitialPosition(parentBounds: {
  */
 export function WorldSimContentPanel(): React.ReactElement | null {
   const state = useWorldSimState();
+  const controls = useWorldSimControls();
   const params = useParams();
   const locale = (params?.locale as string) ?? 'en';
   const registry = useMemo(() => CelestialRegistry.shared(), []);
+
+  /**
+   * Reset the camera and clear selection when the panel is closed so the
+   * scene returns to system overview and re-clicking the same body produces
+   * a fresh selection transition (which re-opens the panel).
+   */
+  const handleClosed = useCallback(() => {
+    controls.resetView();
+  }, [controls]);
 
   /**
    * Resolve the content path based on current selection.
@@ -102,6 +113,7 @@ export function WorldSimContentPanel(): React.ReactElement | null {
       contentRole='complementary'
       contentAriaLabel='Content preview'
       iframeTitle='Content preview'
+      onClosed={handleClosed}
     />
   );
 }

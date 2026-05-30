@@ -133,6 +133,7 @@ export function GenericEmbedPanel({
   if (url !== previousUrl.current) {
     previousUrl.current = url;
     setIsLoading(true);
+    setIsClosed(false);
     onUrlChange?.(url);
     onLoadingStart?.();
   }

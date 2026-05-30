@@ -130,5 +130,37 @@ describe('GenericEmbedPanel', () => {
     const content = screen.getByRole('complementary', { name: 'Custom Area' });
     expect(content).toBeInTheDocument();
   });
-});
 
+  it('re-opens after being closed when the url prop changes', async () => {
+    const user = userEvent.setup();
+
+    const { rerender } = render(
+      <GenericEmbedPanel
+        url='world/first-body'
+        locale='en'
+        initialPosition={() => ({ x: 0, y: 0 })}
+        handleLabel='Test Panel'
+        testId='reopen-panel'
+      />,
+    );
+
+    expect(screen.getByTestId('reopen-panel')).toBeInTheDocument();
+
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    await user.click(closeButton);
+
+    expect(screen.queryByTestId('reopen-panel')).not.toBeInTheDocument();
+
+    rerender(
+      <GenericEmbedPanel
+        url='world/second-body'
+        locale='en'
+        initialPosition={() => ({ x: 0, y: 0 })}
+        handleLabel='Test Panel'
+        testId='reopen-panel'
+      />,
+    );
+
+    expect(screen.getByTestId('reopen-panel')).toBeInTheDocument();
+  });
+});

@@ -8,14 +8,50 @@
  */
 
 import {
-    WorldSimProvider,
+    WorldSimProvider as BaseWorldSimProvider,
     useWorldSimDispatch,
 } from '@/lib/components/worldSim/context/WorldSimContext';
+import { WorldSimControlsProvider } from '@/lib/components/worldSim/context/WorldSimControlsContext';
 import { WorldSimActionType } from '@/lib/components/worldSim/context/worldSimTypes';
 import { WorldSimContentPanel } from '@/lib/components/worldSim/overlay/WorldSimContentPanel';
+import type { WorldSimMediator } from '@/lib/components/worldSim/WorldSimMediator';
 import { act, render, screen } from '@testing-library/react';
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
+/**
+ * Test-local wrapper that supplies both the state and controls providers so
+ * existing assertions remain unchanged. The mediator stub dispatches
+ * `Deselect` on `resetView` to mirror the real mediator's behavior, allowing
+ * the close→reselect flow to be exercised without a real Three.js scene.
+ */
+const mediatorRef: { current: WorldSimMediator | null } = { current: null };
+
+function MediatorStubBinder() {
+  const dispatch = useWorldSimDispatch();
+  React.useEffect(() => {
+    mediatorRef.current = {
+      resetView: () => {
+        dispatch({ type: WorldSimActionType.Deselect });
+      },
+    } as unknown as WorldSimMediator;
+    return () => {
+      mediatorRef.current = null;
+    };
+  }, [dispatch]);
+  return null;
+}
+
+function WorldSimProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <BaseWorldSimProvider>
+      <MediatorStubBinder />
+      <WorldSimControlsProvider mediatorRef={mediatorRef}>
+        {children}
+      </WorldSimControlsProvider>
+    </BaseWorldSimProvider>
+  );
+}
 
 /** Mock next/navigation useParams */
 vi.mock('next/navigation', () => ({
@@ -314,5 +350,51 @@ describe('WorldSimContentPanel', () => {
 
     const draggable = screen.getByTestId('content-panel-draggable');
     expect(draggable).toBeInTheDocument();
+  });
+
+  it('reopens panel when the same body is re-selected after close', async () => {
+    function Controller() {
+      const dispatch = useWorldSimDispatch();
+      React.useEffect(() => {
+        dispatch({ type: WorldSimActionType.Initialize });
+        dispatch({ type: WorldSimActionType.SelectBody, bodyId: 'test-body' });
+      }, [dispatch]);
+      return (
+        <button
+          type='button'
+          data-testid='reselect'
+          onClick={() =>
+            dispatch({
+              type: WorldSimActionType.SelectBody,
+              bodyId: 'test-body',
+            })
+          }>
+          reselect
+        </button>
+      );
+    }
+
+    const { container } = render(
+      <WorldSimProvider>
+        <Controller />
+        <WorldSimContentPanel />
+      </WorldSimProvider>,
+    );
+
+    expect(container.querySelector('iframe')).toBeInTheDocument();
+
+    const closeButton = screen.getByRole('button', { name: 'Close panel' });
+    await act(async () => {
+      closeButton.click();
+    });
+
+    expect(container.querySelector('iframe')).toBeNull();
+
+    const reselect = screen.getByTestId('reselect');
+    await act(async () => {
+      reselect.click();
+    });
+
+    expect(container.querySelector('iframe')).toBeInTheDocument();
   });
 });
