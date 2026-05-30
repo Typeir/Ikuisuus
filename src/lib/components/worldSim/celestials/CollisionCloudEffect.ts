@@ -1,80 +1,97 @@
 /**
  * @fileoverview Collision Cloud Effect — Länsihenki × Itähenki Impact Visual
- * @description A proximity-driven three-layer scene decoration that appears
- * when Länsihenki and Itähenki approach their crossing point. As the two gas
- * giants converge, a spherical debris cloud grows at their midpoint, swells
- * to opaquely cover the collision, then shrinks and fades as they separate.
- *
- * Layer order (back to front):
- * 1. Debris field — slowly tumbling Points sphere of hot white-yellow particles
- * 2. Cloud shell  — vertex-displaced ShaderMaterial sphere with patchy opacity
- * 3. Corona glow  — BackSide AdditiveBlending atmosphere shell for outer flare
- *
- * This object is not a CelestialBody and has no registry entry. It is owned
- * and updated entirely by WorldSimMediator.
+ * @description Multi-layer collision visual built around a phase-time state
+ *   machine: the moment surface contact triggers, a phase clock starts and
+ *   drives an unbounded logarithmic growth curve, a smoothstep opacity
+ *   envelope (ramp up to apex, ramp down through fade), and a high-frequency
+ *   capped jitter coupled to live opacity so motion never freezes. Outer
+ *   layers keep expanding past apex and only fade through alpha; the core's
+ *   vertex displacement collapses with opacity so it stabilizes into a smooth
+ *   sphere as the explosion dissipates. Owned entirely by WorldSimMediator.
  *
  * @module worldSim/celestials/CollisionCloudEffect
- * @version 1.0.0
+ * @version 3.0.0
  * @author Typeir
  * @since 2026-05-21
  */
 
 import {
-    AdditiveBlending,
-    BackSide,
-    BufferGeometry,
-    Color,
-    Float32BufferAttribute,
-    Group,
-    Mesh,
-    Points,
-    PointsMaterial,
-    Scene,
-    ShaderMaterial,
-    SphereGeometry,
-    Vector3
+  BufferGeometry,
+  Group,
+  Mesh,
+  Points,
+  PointsMaterial,
+  Scene,
+  ShaderMaterial,
+  SphereGeometry,
+  Vector3,
 } from 'three';
-import atmosphereFrag from '../shaders/atmosphere.frag.glsl';
-import atmosphereVert from '../shaders/atmosphere.vert.glsl';
-import collisionCloudFrag from '../shaders/collisionCloud.frag.glsl';
-import collisionCloudVert from '../shaders/collisionCloud.vert.glsl';
-import noise3d from '../shaders/noise3d.glsl';
-
-/** @constant {number} MAX_INFLUENCE_DISTANCE - Distance (units) at which the cloud begins to appear */
-const MAX_INFLUENCE_DISTANCE = 900;
-
-/** @constant {number} MAX_CLOUD_RADIUS - Maximum cloud group scale multiplier at full influence */
-const MAX_CLOUD_RADIUS = 320;
-
-/** @constant {number} CORONA_SCALE - Corona shell radius relative to the cloud shell (>1 = larger) */
-const CORONA_SCALE = 1.35;
-
-/** @constant {number} DEBRIS_COUNT - Number of debris particles in the field */
-const DEBRIS_COUNT = 380;
-
-/** @constant {number} DEBRIS_ROTATION_SPEED - Tumble speed of the debris field (rad/s) */
-const DEBRIS_ROTATION_SPEED = 0.0006;
-
-/** @constant {number} CLOUD_SEGMENTS_HIGH - Sphere subdivisions at high quality */
-const CLOUD_SEGMENTS_HIGH = 48;
-
-/** @constant {number} CLOUD_SEGMENTS_LOW - Sphere subdivisions at low quality */
-const CLOUD_SEGMENTS_LOW = 24;
-
-/** @constant {number} CORONA_SEGMENTS - Sphere subdivisions for the lightweight corona shell */
-const CORONA_SEGMENTS = 32;
+import {
+  APEX_TIME,
+  COLLISION_ROTATION_AXIS_DAMPING,
+  CORE_BASE_DISPLACEMENT,
+  CORE_RADIUS_SCALE,
+  CORONA_FADE_DURATION,
+  CORONA_RADIUS_SCALE,
+  DEBRIS_RADIUS_SCALE,
+  DEBRIS_ROTATION_AXIS_DAMPING,
+  DEBRIS_ROTATION_SPEED,
+  FADE_DURATION,
+  GROWTH_RATE,
+  NOISE_TIME_SCALE,
+  OUTER_SHELL_CONFIGS,
+  ROTATION_BASE_SPIN,
+  TRIGGER_GAP_SCALE,
+  createCoreLayer,
+  createCoronaLayer,
+  createDebrisLayer,
+  createOuterShells,
+} from './collisionCloudLayers';
+import { computePhaseEnvelope } from './collisionCloudPhase';
 
 /**
- * Proximity-driven, three-layer collision cloud centered between Länsihenki
- * and Itähenki. Scales from invisible to fully opaque as the bodies converge,
- * then dissolves again as they separate.
+ * Per-frame update parameters for `CollisionCloudEffect.update`. Replaces a
+ * 6-positional-argument call signature with a single named-field object so
+ * the meaning of each value is obvious at the call site and adding new
+ * inputs (e.g. shader detail level) is non-breaking.
+ *
+ * @interface CollisionCloudUpdateParams
+ * @property {Vector3} bodyAPosition - Current world position of body A
+ * @property {Vector3} bodyBPosition - Current world position of body B
+ * @property {number} bodyARadius - Surface radius of body A (world units)
+ * @property {number} bodyBRadius - Surface radius of body B (world units)
+ * @property {number} time - Elapsed simulation time in seconds (drives shader noise + jitter)
+ * @property {number} deltaTime - Frame delta in seconds (drives phase clock + tumble)
+ */
+export interface CollisionCloudUpdateParams {
+  bodyAPosition: Vector3;
+  bodyBPosition: Vector3;
+  bodyARadius: number;
+  bodyBRadius: number;
+  time: number;
+  deltaTime: number;
+}
+
+/**
+ * Proximity-driven multi-layer collision cloud centered between two
+ * orbiting bodies (currently Länsihenki and Itähenki, but the effect itself
+ * is body-agnostic — pair identity is injected via `pairId`). Driven by
+ * surface-gap (not center distance) so the effect tightly tracks actual
+ * overlap of the two bodies.
  *
  * Usage:
  * ```typescript
- * const effect = new CollisionCloudEffect();
+ * const effect = new CollisionCloudEffect('lansihenki-itahenki');
  * effect.addToScene(scene);
  * // each frame:
- * effect.update(lansiPos, itaPos, time, deltaTime);
+ * effect.update({
+ *   bodyAPosition: lansPos,
+ *   bodyBPosition: itaPos,
+ *   bodyARadius: lansRadius,
+ *   bodyBRadius: itaRadius,
+ *   time,
+ *   deltaTime,
+ * });
  * // on dispose:
  * effect.removeFromScene(scene);
  * effect.dispose();
@@ -83,149 +100,101 @@ const CORONA_SEGMENTS = 32;
  * @class CollisionCloudEffect
  */
 export class CollisionCloudEffect {
-  /** @property {Group} group - Root Three.js Group added to the scene */
+  /** @property {Group} group - Root group */
   private group: Group;
-
-  /** @property {Points} debrisMesh - Spherically distributed hot particle debris */
+  /** @property {Points} debrisMesh - Debris particles */
   private debrisMesh: Points;
-
-  /** @property {PointsMaterial} debrisMaterial - Material for debris opacity control */
+  /** @property {PointsMaterial} debrisMaterial - Debris material */
   private debrisMaterial: PointsMaterial;
-
-  /** @property {Mesh} cloudMesh - Vertex-displaced, patchy cloud shell */
-  private cloudMesh: Mesh;
-
-  /** @property {ShaderMaterial} cloudMaterial - Cloud shell shader with influence-driven alpha */
-  private cloudMaterial: ShaderMaterial;
-
-  /** @property {Mesh} coronaMesh - Outer additive corona glow shell */
-  private coronaMesh: Mesh;
-
-  /** @property {ShaderMaterial} coronaMaterial - Corona shader for intensity control */
-  private coronaMaterial: ShaderMaterial;
-
-  /** @property {BufferGeometry} debrisGeometry - Geometry for the debris Points */
+  /** @property {Mesh} coreMesh - Opaque core (depth-writing anchor) */
+  private coreMesh: Mesh;
+  /** @property {ShaderMaterial} coreMaterial - Core shader */
+  private coreMaterial: ShaderMaterial;
+  /** @property {Mesh[]} shellMeshes - Russian-doll shells */
+  private shellMeshes: Mesh[] = [];
+  /** @property {ShaderMaterial[]} shellMaterials - Shell shaders */
+  private shellMaterials: ShaderMaterial[] = [];
+  /** @property {Mesh} coronaNearMesh - Front-facing corona pass (rim glow) */
+  private coronaNearMesh: Mesh;
+  /** @property {ShaderMaterial} coronaNearMaterial - Front-facing corona shader */
+  private coronaNearMaterial: ShaderMaterial;
+  /** @property {Mesh} coronaFarMesh - Back-facing corona pass (depthTest:false halo) */
+  private coronaFarMesh: Mesh;
+  /** @property {ShaderMaterial} coronaFarMaterial - Back-facing corona shader */
+  private coronaFarMaterial: ShaderMaterial;
+  /** @property {BufferGeometry} debrisGeometry - Debris geometry */
   private debrisGeometry: BufferGeometry;
-
-  /** @property {SphereGeometry} cloudGeometry - High-detail sphere for the cloud shell */
-  private cloudGeometry: SphereGeometry;
-
-  /** @property {SphereGeometry} cloudGeometryLow - Low-detail sphere for the cloud shell */
-  private cloudGeometryLow: SphereGeometry;
-
-  /** @property {SphereGeometry} coronaGeometry - Sphere for the corona shell */
+  /** @property {SphereGeometry} coreGeometry - Core geometry */
+  private coreGeometry: SphereGeometry;
+  /** @property {SphereGeometry[]} shellGeometries - Shell geometries */
+  private shellGeometries: SphereGeometry[] = [];
+  /** @property {SphereGeometry} coronaGeometry - Corona geometry */
   private coronaGeometry: SphereGeometry;
+  /** @property {number} phaseTime - Seconds since the current explosion phase was triggered. */
+  private phaseTime = 0;
+  /** @property {boolean} phaseActive - Whether an explosion phase is currently animating. */
+  private phaseActive = false;
+  /** @property {boolean} wasOutOfProximity - True once the planets have separated since the last trigger; prevents re-triggering while they remain in contact. */
+  private wasOutOfProximity = true;
+  /** @property {number[]} shellBaseDisplacements - Cached per-shell apex displacement values. */
+  private shellBaseDisplacements: number[] = [];
 
   /**
-   * Build all three layers. The group starts at scale 0 (invisible) and is
-   * driven to its full size by the first `update()` call.
+   * Build the four-layer scene graph: debris points, opaque grey core,
+   * russian-doll additive shells, and the corona shell. All layer geometry
+   * and material construction is delegated to `collisionCloudLayers`.
+   *
+   * @param {string} pairId - Stable identifier for the collision pair this
+   *   effect represents. Used as the scene-graph group name (so DevTools and
+   *   raycast filters can locate it) and is the same id the registry exposes
+   *   via `CelestialRegistry.getCollisionPair(id)`.
    */
-  constructor() {
+  constructor(pairId: string) {
     this.group = new Group();
-    this.group.name = 'collisionCloud:lansihenki-itahenki';
-    this.group.scale.setScalar(0);
+    this.group.name = `collisionCloud:${pairId}`;
+    this.group.visible = false;
 
-    /* ------------------------------------------------------------------ */
-    /* Layer 1: Debris field                                                */
-    /* ------------------------------------------------------------------ */
-    this.debrisGeometry = new BufferGeometry();
-    const positions = new Float32Array(DEBRIS_COUNT * 3);
-
-    for (let i = 0; i < DEBRIS_COUNT; i++) {
-      /* Uniform random distribution inside a unit sphere */
-      let x: number, y: number, z: number;
-      do {
-        x = Math.random() * 2 - 1;
-        y = Math.random() * 2 - 1;
-        z = Math.random() * 2 - 1;
-      } while (x * x + y * y + z * z > 1);
-
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
-    }
-
-    this.debrisGeometry.setAttribute(
-      'position',
-      new Float32BufferAttribute(positions, 3),
-    );
-
-    this.debrisMaterial = new PointsMaterial({
-      color: new Color('#fff8c0'),
-      size: 3.2,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity: 0,
-      depthWrite: false,
-    });
-
-    this.debrisMesh = new Points(this.debrisGeometry, this.debrisMaterial);
-    this.debrisMesh.name = 'collisionCloud-debris';
-    this.debrisMesh.frustumCulled = false;
+    const debris = createDebrisLayer();
+    this.debrisGeometry = debris.geometry;
+    this.debrisMaterial = debris.material;
+    this.debrisMesh = debris.mesh;
     this.group.add(this.debrisMesh);
 
-    /* ------------------------------------------------------------------ */
-    /* Layer 2: Cloud shell (unit sphere — scale driven at group level)    */
-    /* ------------------------------------------------------------------ */
-    this.cloudGeometry = new SphereGeometry(
-      1,
-      CLOUD_SEGMENTS_HIGH,
-      CLOUD_SEGMENTS_HIGH,
-    );
-    this.cloudGeometryLow = new SphereGeometry(
-      1,
-      CLOUD_SEGMENTS_LOW,
-      CLOUD_SEGMENTS_LOW,
-    );
+    const core = createCoreLayer();
+    this.coreGeometry = core.geometry;
+    this.coreMaterial = core.material;
+    this.coreMesh = core.mesh;
+    this.group.add(this.coreMesh);
 
-    this.cloudMaterial = new ShaderMaterial({
-      vertexShader: noise3d + '\n' + collisionCloudVert,
-      fragmentShader: collisionCloudFrag,
-      uniforms: {
-        uTime: { value: 0 },
-        uNoiseScale: { value: 0.8 },
-        uDisplacementScale: { value: 0.12 },
-        uInnerColor: { value: new Color('#fff4d6') },
-        uOuterColor: { value: new Color('#5e1000') },
-        uAlpha: { value: 0 },
-        uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
-        uAmbient: { value: 0.3 },
-      },
-      transparent: true,
-      depthWrite: false,
-    });
+    const shells = createOuterShells();
+    for (const shell of shells) {
+      this.shellGeometries.push(shell.geometry);
+      this.shellMaterials.push(shell.material);
+      this.shellMeshes.push(shell.mesh);
+      this.shellBaseDisplacements.push(
+        shell.material.uniforms.uDisplacementScale.value as number,
+      );
+      this.group.add(shell.mesh);
+    }
 
-    this.cloudMesh = new Mesh(this.cloudGeometry, this.cloudMaterial);
-    this.cloudMesh.name = 'collisionCloud-shell';
-    this.cloudMesh.frustumCulled = false;
-    this.group.add(this.cloudMesh);
+    const corona = createCoronaLayer(OUTER_SHELL_CONFIGS.length + 1);
+    this.coronaGeometry = corona.geometry;
+    this.coronaNearMaterial = corona.nearMaterial;
+    this.coronaNearMesh = corona.nearMesh;
+    this.coronaFarMaterial = corona.farMaterial;
+    this.coronaFarMesh = corona.farMesh;
+    this.group.add(this.coronaFarMesh);
+    this.group.add(this.coronaNearMesh);
 
-    /* ------------------------------------------------------------------ */
-    /* Layer 3: Corona (slightly larger unit sphere, BackSide additive)    */
-    /* ------------------------------------------------------------------ */
-    this.coronaGeometry = new SphereGeometry(
-      CORONA_SCALE,
-      CORONA_SEGMENTS,
-      CORONA_SEGMENTS,
-    );
-
-    this.coronaMaterial = new ShaderMaterial({
-      vertexShader: atmosphereVert,
-      fragmentShader: atmosphereFrag,
-      uniforms: {
-        uColor: { value: new Color('#ff6622') },
-        uIntensity: { value: 0 },
-      },
-      transparent: true,
-      blending: AdditiveBlending,
-      side: BackSide,
-      depthWrite: false,
-    });
-
-    this.coronaMesh = new Mesh(this.coronaGeometry, this.coronaMaterial);
-    this.coronaMesh.name = 'collisionCloud-corona';
-    this.coronaMesh.frustumCulled = false;
-    this.group.add(this.coronaMesh);
+    /* Pre-zero all child mesh scales so even an accidental visible frame
+       before the first valid update renders nothing. */
+    this.debrisMesh.scale.setScalar(0);
+    this.coreMesh.scale.setScalar(0);
+    this.coronaNearMesh.scale.setScalar(0);
+    this.coronaFarMesh.scale.setScalar(0);
+    for (const m of this.shellMeshes) {
+      m.scale.setScalar(0);
+    }
   }
 
   /**
@@ -247,43 +216,156 @@ export class CollisionCloudEffect {
   }
 
   /**
-   * Update the cloud each frame. Computes the proximity influence from the
-   * distance between the two gas giant positions, repositions the group at
-   * their midpoint, and drives all layer opacities and scales.
+   * Update the cloud each frame. A phase clock starts the first frame the
+   * planets' surfaces come within `TRIGGER_GAP_SCALE * avgRadius`, then
+   * advances by `deltaTime` until the fade completes — even if the planets
+   * drift apart mid-explosion the animation finishes naturally.
    *
-   * Influence curve: `raw = clamp(1 − dist / MAX_INFLUENCE_DISTANCE, 0, 1)`,
-   * then squared for a dramatic near-collision peak.
+   * Size grows logarithmically without bound (outer layers keep expanding and
+   * dispersing while their alpha fades). Opacity follows a smoothstep ramp
+   * up to apex and a smoothstep ramp down through fade. Jitter is a
+   * high-frequency capped sinusoid scaled by live opacity so motion stays
+   * alive through the entire explosion. Vertex displacement scales with
+   * opacity so the core stabilizes into a smooth sphere as it fades.
    *
-   * @param {Vector3} lansPos - Current world position of Länsihenki
-   * @param {Vector3} itaPos  - Current world position of Itähenki
-   * @param {number}  time      - Elapsed time in seconds (for shader animation)
-   * @param {number}  deltaTime - Frame delta in seconds (for debris tumble)
+   * @param {CollisionCloudUpdateParams} params - Per-frame inputs (body
+   *   positions, body radii, simulation time, and frame delta). See the
+   *   `CollisionCloudUpdateParams` interface for field semantics.
    */
-  update(
-    lansPos: Vector3,
-    itaPos: Vector3,
-    time: number,
-    deltaTime: number,
-  ): void {
+  update(params: CollisionCloudUpdateParams): void {
+    const {
+      bodyAPosition: lansPos,
+      bodyBPosition: itaPos,
+      bodyARadius: lansRadius,
+      bodyBRadius: itaRadius,
+      time,
+      deltaTime,
+    } = params;
     const dist = lansPos.distanceTo(itaPos);
-    const raw = Math.max(0, 1 - dist / MAX_INFLUENCE_DISTANCE);
-    const influence = raw * raw;
+    const avgRadius = (lansRadius + itaRadius) * 0.5;
+    const surfaceGap = Math.max(0, dist - lansRadius - itaRadius);
+    /* Require real positional separation (dist > 0). Both meshes reading
+       (0,0,0) would otherwise spawn the cloud at world origin — right on
+       top of Kultharja — producing a phantom "glow behind the sun". */
+    const validPositions = dist > 1e-3;
+    const inProximity =
+      validPositions && surfaceGap < avgRadius * TRIGGER_GAP_SCALE;
 
-    /* Reposition group at midpoint between the two bodies */
+    /* Require the planets to actually separate between explosions, otherwise
+       a single sustained overlap would respawn the effect the moment the
+       previous one finishes fading. */
+    if (!inProximity) {
+      this.wasOutOfProximity = true;
+    }
+    if (inProximity && this.wasOutOfProximity && !this.phaseActive) {
+      this.phaseActive = true;
+      this.phaseTime = 0;
+      this.wasOutOfProximity = false;
+    }
+    if (this.phaseActive) {
+      this.phaseTime += deltaTime;
+    }
+
+    const totalDuration = APEX_TIME + FADE_DURATION;
+    if (!this.phaseActive || this.phaseTime >= totalDuration) {
+      this.phaseActive = false;
+      this.phaseTime = 0;
+      this.group.visible = false;
+      return;
+    }
+
+    const { opacity, sizeNorm } = computePhaseEnvelope(
+      this.phaseTime,
+      APEX_TIME,
+      FADE_DURATION,
+      GROWTH_RATE,
+    );
+
+    this.group.visible = true;
     this.group.position.lerpVectors(lansPos, itaPos, 0.5);
 
-    /* Scale the whole group — cloud "grows out" from a point */
-    this.group.scale.setScalar(influence * MAX_CLOUD_RADIUS);
+    /* Smooth rotation: each axis advances at a constant rate (a fraction of
+       ROTATION_BASE_SPIN) so the explosion tumbles steadily without the
+       jittery speed-up/slow-down that the |sin|-driven term used to add.
+       Accumulate via deltaTime so framerate doesn't change the visual rate. */
+    this.group.rotation.x +=
+      ROTATION_BASE_SPIN * COLLISION_ROTATION_AXIS_DAMPING.x * deltaTime;
+    this.group.rotation.y +=
+      ROTATION_BASE_SPIN * COLLISION_ROTATION_AXIS_DAMPING.y * deltaTime;
+    this.group.rotation.z +=
+      ROTATION_BASE_SPIN * COLLISION_ROTATION_AXIS_DAMPING.z * deltaTime;
 
-    /* Drive individual layer opacities */
-    this.cloudMaterial.uniforms.uAlpha.value = influence * 0.82;
-    this.cloudMaterial.uniforms.uTime.value = time;
-    this.debrisMaterial.opacity = influence * 0.85;
-    this.coronaMaterial.uniforms.uIntensity.value = influence * 2.4;
+    /* Displacement is full at the start (jagged debris) and collapses to a
+       smooth sphere over the fade. Pre-apex: 100%. Post-apex: linear ramp
+       to 0. The core fades through alpha (uOpacity), not displacement. */
+    const postApexT =
+      this.phaseTime <= APEX_TIME
+        ? 0
+        : Math.min(1, (this.phaseTime - APEX_TIME) / FADE_DURATION);
+    const displacementEnvelope = 1 - postApexT;
+    /* Boost shader-time so all noise-driven vertex displacement scrolls
+       faster than wall-clock without affecting the phase clock. */
+    const shaderTime = time * NOISE_TIME_SCALE;
+    this.coreMesh.scale.setScalar(sizeNorm * avgRadius * CORE_RADIUS_SCALE);
+    this.coreMaterial.uniforms.uTime.value = shaderTime;
+    this.coreMaterial.uniforms.uDisplacementScale.value =
+      CORE_BASE_DISPLACEMENT * displacementEnvelope;
+    this.coreMaterial.uniforms.uOpacity.value = opacity;
+    /* While the core is mostly opaque it anchors depth so additive shells
+       don't z-fight each other. Once it's faded below ~0.5, stop writing
+       depth so the shells behind it aren't clipped by a near-invisible plane. */
+    this.coreMaterial.depthWrite = opacity > 0.5;
 
-    /* Slowly tumble the debris cloud for an organic feel */
-    this.debrisMesh.rotation.y += DEBRIS_ROTATION_SPEED * deltaTime;
-    this.debrisMesh.rotation.x += DEBRIS_ROTATION_SPEED * 0.4 * deltaTime;
+    this.debrisMesh.scale.setScalar(sizeNorm * avgRadius * DEBRIS_RADIUS_SCALE);
+    this.debrisMaterial.opacity = opacity * 0.85;
+    this.debrisMesh.rotation.y +=
+      DEBRIS_ROTATION_SPEED * DEBRIS_ROTATION_AXIS_DAMPING.y * deltaTime;
+    this.debrisMesh.rotation.x +=
+      DEBRIS_ROTATION_SPEED * DEBRIS_ROTATION_AXIS_DAMPING.x * deltaTime;
+
+    this.coronaNearMesh.scale.setScalar(
+      sizeNorm * avgRadius * CORONA_RADIUS_SCALE,
+    );
+    this.coronaFarMesh.scale.setScalar(
+      sizeNorm * avgRadius * CORONA_RADIUS_SCALE,
+    );
+    /* Corona uses a shorter fade window than the rest of the explosion so it
+       fully dissipates ~CORONA_FADE_LEAD seconds earlier. Recomputing the
+       phase envelope with the smaller window gives an independent opacity
+       curve without disturbing the master timing used by core/shells. */
+    const coronaPhase = computePhaseEnvelope(
+      this.phaseTime,
+      APEX_TIME,
+      CORONA_FADE_DURATION,
+      GROWTH_RATE,
+    );
+    const coronaFadeT =
+      this.phaseTime <= APEX_TIME
+        ? 0
+        : Math.min(1, (this.phaseTime - APEX_TIME) / CORONA_FADE_DURATION);
+    /* Intensity multiplier bumped 2.4 → 3.2 so the corona reads as slightly
+       more opaque. The inward fade (uFadeT) erases the outermost rim first,
+       and noise-driven colour/alpha jitter keeps it from looking uniform. */
+    this.coronaNearMaterial.uniforms.uIntensity.value =
+      coronaPhase.opacity * 3.2;
+    this.coronaFarMaterial.uniforms.uIntensity.value =
+      coronaPhase.opacity * 3.2;
+    this.coronaNearMaterial.uniforms.uFadeT.value = coronaFadeT;
+    this.coronaFarMaterial.uniforms.uFadeT.value = coronaFadeT;
+    this.coronaNearMaterial.uniforms.uTime.value = shaderTime;
+    this.coronaFarMaterial.uniforms.uTime.value = shaderTime;
+
+    for (let i = 0; i < this.shellMeshes.length; i++) {
+      const cfg = OUTER_SHELL_CONFIGS[i];
+      this.shellMeshes[i].scale.setScalar(
+        sizeNorm * avgRadius * cfg.radiusScale,
+      );
+      const mat = this.shellMaterials[i];
+      mat.uniforms.uAlpha.value = opacity * cfg.opacity;
+      mat.uniforms.uTime.value = shaderTime;
+      mat.uniforms.uDisplacementScale.value =
+        this.shellBaseDisplacements[i] * opacity;
+    }
   }
 
   /**
@@ -291,11 +373,17 @@ export class CollisionCloudEffect {
    */
   dispose(): void {
     this.debrisGeometry.dispose();
-    this.cloudGeometry.dispose();
-    this.cloudGeometryLow.dispose();
+    this.coreGeometry.dispose();
     this.coronaGeometry.dispose();
+    for (const g of this.shellGeometries) {
+      g.dispose();
+    }
     this.debrisMaterial.dispose();
-    this.cloudMaterial.dispose();
-    this.coronaMaterial.dispose();
+    this.coreMaterial.dispose();
+    this.coronaNearMaterial.dispose();
+    this.coronaFarMaterial.dispose();
+    for (const m of this.shellMaterials) {
+      m.dispose();
+    }
   }
 }

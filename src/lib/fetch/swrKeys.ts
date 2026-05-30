@@ -175,20 +175,6 @@ export function librarySearchKey(
 }
 
 /**
- * Builds the SWR cache key for an external web search query.
- *
- * @param {string} debouncedQuery - Debounced query (empty means skip)
- * @returns {readonly ['external-search', string] | null} Cache key or null
- */
-export function externalSearchKey(
-  debouncedQuery: string,
-): readonly ['external-search', string] | null {
-  return debouncedQuery.length >= 2
-    ? (['external-search', debouncedQuery] as const)
-    : null;
-}
-
-/**
  * Builds the SWR cache key for an active draft.
  *
  * @param {string} locale - Content locale

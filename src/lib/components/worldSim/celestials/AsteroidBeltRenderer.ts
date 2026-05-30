@@ -12,7 +12,6 @@
 
 import {
     BufferGeometry,
-    Color,
     Float32BufferAttribute,
     Object3D,
     Points,
@@ -27,6 +26,7 @@ import type {
     ICelestialRenderer,
     SceneContext,
 } from './interfaces';
+import { extractColor } from './renderConfigHelpers';
 
 /** @constant {number} DEFAULT_PARTICLE_COUNT - Default number of asteroid particles */
 const DEFAULT_PARTICLE_COUNT = 600;
@@ -62,7 +62,11 @@ export class AsteroidBeltRenderer implements ICelestialRenderer {
       (config.particleCount as number) ?? DEFAULT_PARTICLE_COUNT;
     const innerRadius = (config.innerRadius as number) ?? data.radius * 0.8;
     const outerRadius = (config.outerRadius as number) ?? data.radius * 1.2;
-    const color = new Color((config.baseColor as string) ?? '#aabbcc');
+    const color = extractColor(
+      config as unknown as Record<string, unknown>,
+      'baseColor',
+      '#aabbcc',
+    );
     this.rotationSpeed =
       (config.rotationSpeed as number) ?? DEFAULT_ROTATION_SPEED;
 

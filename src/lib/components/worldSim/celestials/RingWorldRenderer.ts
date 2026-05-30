@@ -33,7 +33,6 @@ import {
 } from '../optimization/GeometryBudgets';
 import icyCoreFrag from '../shaders/icyCore.frag.glsl';
 import icyCoreVert from '../shaders/icyCore.vert.glsl';
-import noise3d from '../shaders/noise3d.glsl';
 import ringWorldFrag from '../shaders/ringWorld.frag.glsl';
 import ringWorldVert from '../shaders/ringWorld.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
@@ -45,6 +44,8 @@ import type {
     RingWorldRenderConfig,
     SceneContext,
 } from './interfaces';
+import { extractColor } from './renderConfigHelpers';
+import { createDisplacedShaderMaterial } from './shaderMaterialFactory';
 
 /** @constant {number} DEFAULT_RING_COUNT - Default number of orbiting rings */
 const DEFAULT_RING_COUNT = 7;
@@ -141,8 +142,16 @@ export class RingWorldRenderer implements ICelestialRenderer {
     group.name = `ringWorld-${data.id}`;
 
     const config = data.renderConfig as RingWorldRenderConfig;
-    const coreColor = new Color((config.coreColor as string) ?? '#c8dde8');
-    const ringColor = new Color((config.ringColor as string) ?? '#9ab8d0');
+    const coreColor = extractColor(
+      config as unknown as Record<string, unknown>,
+      'coreColor',
+      '#c8dde8',
+    );
+    const ringColor = extractColor(
+      config as unknown as Record<string, unknown>,
+      'ringColor',
+      '#9ab8d0',
+    );
     this.ringCount = (config.ringCount as number) ?? DEFAULT_RING_COUNT;
     this.baseRotationSpeed =
       (config.rotationSpeed as number) ?? DEFAULT_BASE_ROTATION_SPEED;
@@ -170,8 +179,8 @@ export class RingWorldRenderer implements ICelestialRenderer {
     let coreMesh: Mesh;
 
     if (config.icyCore) {
-      this.coreMaterial = new ShaderMaterial({
-        vertexShader: noise3d + '\n' + icyCoreVert,
+      this.coreMaterial = createDisplacedShaderMaterial({
+        vertexShader: icyCoreVert,
         fragmentShader: icyCoreFrag,
         uniforms: {
           uTime: { value: 0 },
@@ -212,8 +221,8 @@ export class RingWorldRenderer implements ICelestialRenderer {
         TORUS_TUBULAR_SEGMENTS,
       );
 
-      const ringMat = new ShaderMaterial({
-        vertexShader: noise3d + '\n' + ringWorldVert,
+      const ringMat = createDisplacedShaderMaterial({
+        vertexShader: ringWorldVert,
         fragmentShader: ringWorldFrag,
         uniforms: {
           uTime: { value: 0 },
@@ -228,7 +237,7 @@ export class RingWorldRenderer implements ICelestialRenderer {
           uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
           uAmbient: { value: 0.3 },
         },
-        side: DoubleSide,
+        materialParams: { side: DoubleSide },
       });
 
       this.ringMaterials.push(ringMat);

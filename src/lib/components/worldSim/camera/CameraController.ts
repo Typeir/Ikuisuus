@@ -18,6 +18,7 @@ import type {
     ICameraCommand,
     ICameraController,
 } from '../celestials/interfaces';
+import { BOUND_RADIUS } from '../config/cameraTuning';
 import { ResetViewCommand } from './CameraCommand';
 import { CameraFollowSystem } from './CameraFollowSystem';
 import { CameraOrbitControls } from './CameraOrbitControls';
@@ -198,6 +199,8 @@ export class CameraController implements ICameraController {
         this.camera.position.add(followDelta);
       }
       this.updateCommand(deltaTime);
+      this.clampToBound(this.target);
+      this.clampToBound(this.camera.position);
       return;
     }
 
@@ -277,8 +280,26 @@ export class CameraController implements ICameraController {
    */
   private applyCameraPosition(): void {
     const offset = this.orbitControls.getOffset();
+    this.clampToBound(this.target);
     this.camera.position.copy(this.target).add(offset);
+    this.clampToBound(this.camera.position);
     this.camera.lookAt(this.target);
+  }
+
+  /**
+   * Project a world-space vector back inside the Everdark sphere centered at
+   * the origin. Non-sticky: a clamped position is overwritten next frame from
+   * `target + offset`, so any input that pulls inward (zoom in, drag the other
+   * way, pan back toward origin) takes effect on the very next frame without
+   * any accumulated lag.
+   *
+   * @private
+   * @param {Vector3} vec - Vector to clamp in place
+   */
+  private clampToBound(vec: Vector3): void {
+    const r2 = vec.lengthSq();
+    if (r2 <= BOUND_RADIUS * BOUND_RADIUS) return;
+    vec.multiplyScalar(BOUND_RADIUS / Math.sqrt(r2));
   }
 
   /**

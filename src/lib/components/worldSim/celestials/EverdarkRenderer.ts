@@ -28,7 +28,6 @@ import {
 } from '../optimization/GeometryBudgets';
 import everdarkFrag from '../shaders/everdark.frag.glsl';
 import everdarkVert from '../shaders/everdark.vert.glsl';
-import noise3d from '../shaders/noise3d.glsl';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
     BoundaryData,
@@ -36,6 +35,7 @@ import type {
     ICelestialRenderer,
     SceneContext,
 } from './interfaces';
+import { createDisplacedShaderMaterial } from './shaderMaterialFactory';
 
 /**
  * Self-contained configuration for a single Everdark shell layer.
@@ -124,12 +124,6 @@ const LAYER_CONFIGS: EverdarkLayerConfig[] = [
   },
 ];
 
-/** @constant {string} vertWithNoise - Vertex shader with noise functions prepended */
-const vertWithNoise = noise3d + '\n' + everdarkVert;
-
-/** @constant {string} fragWithNoise - Fragment shader with noise functions prepended */
-const fragWithNoise = noise3d + '\n' + everdarkFrag;
-
 /**
  * Create a ShaderMaterial for one Everdark shell layer.
  *
@@ -138,9 +132,10 @@ const fragWithNoise = noise3d + '\n' + everdarkFrag;
  * @returns {ShaderMaterial} Configured fire-wall material
  */
 function createLayerMaterial(layer: EverdarkLayerConfig): ShaderMaterial {
-  return new ShaderMaterial({
-    vertexShader: vertWithNoise,
-    fragmentShader: fragWithNoise,
+  return createDisplacedShaderMaterial({
+    vertexShader: everdarkVert,
+    fragmentShader: everdarkFrag,
+    prependNoiseToFragment: true,
     uniforms: {
       uTime: { value: 0 },
       uFlameSpeed: { value: layer.flameSpeed },
@@ -150,13 +145,15 @@ function createLayerMaterial(layer: EverdarkLayerConfig): ShaderMaterial {
       uJaggedScale: { value: layer.jaggedScale },
       uJaggedStrength: { value: layer.jaggedStrength },
     },
-    transparent: true,
-    blending: layer.opaqueBlack ? NormalBlending : AdditiveBlending,
-    side: BackSide,
-    depthWrite: layer.opaqueBlack,
-    ...(layer.opaqueBlack
-      ? { polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }
-      : {}),
+    materialParams: {
+      transparent: true,
+      blending: layer.opaqueBlack ? NormalBlending : AdditiveBlending,
+      side: BackSide,
+      depthWrite: layer.opaqueBlack,
+      ...(layer.opaqueBlack
+        ? { polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }
+        : {}),
+    },
   });
 }
 

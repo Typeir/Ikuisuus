@@ -196,4 +196,23 @@ describe('CelestialRegistry', () => {
 
     expect(a).toBe(b);
   });
+
+  it('returns an empty array when no collisionPairs are defined', () => {
+    const registry = createRegistry();
+    expect(registry.getCollisionPairs()).toEqual([]);
+    expect(registry.getCollisionPair('anything')).toBeUndefined();
+  });
+
+  it('exposes collisionPairs defined in custom data', () => {
+    const dataWithPair = {
+      ...FIXTURE_DATA,
+      collisionPairs: [
+        { id: 'p1-p2', bodyAId: 'planet-1', bodyBId: 'planet-2' },
+      ],
+    } as CelestialRegistryData;
+    const registry = new CelestialRegistry(dataWithPair);
+    expect(registry.getCollisionPairs()).toHaveLength(1);
+    expect(registry.getCollisionPair('p1-p2')?.bodyAId).toBe('planet-1');
+    expect(registry.getCollisionPair('missing')).toBeUndefined();
+  });
 });

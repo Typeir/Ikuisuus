@@ -11,6 +11,13 @@
  * @since 1.0.0
  */
 
+import {
+    DOWNSHIFT_CONFIRMATION_FRAMES,
+    FRAME_TIME_ALPHA,
+    QUALITY_THRESHOLDS,
+    UPSHIFT_CONFIRMATION_FRAMES,
+} from '../config/performanceTuning';
+
 /**
  * Runtime quality levels used by adaptive renderers.
  *
@@ -58,39 +65,8 @@ export interface PerformanceMetrics {
   averageFps: number;
 }
 
-/** @constant {number} FRAME_TIME_ALPHA - EWMA smoothing factor for frame time */
-const FRAME_TIME_ALPHA = 0.08;
-
 /** @constant {number} DEFAULT_FRAME_TIME_MS - Default frame time estimate used before sampling */
 const DEFAULT_FRAME_TIME_MS = 16.67;
-
-/** @constant {number} DOWNSHIFT_CONFIRMATION_FRAMES - Consecutive frames required to lower quality */
-const DOWNSHIFT_CONFIRMATION_FRAMES = 20;
-
-/** @constant {number} UPSHIFT_CONFIRMATION_FRAMES - Consecutive frames required to raise quality */
-const UPSHIFT_CONFIRMATION_FRAMES = 90;
-
-/**
- * Hysteretic FPS thresholds for quality level transitions.
- * Using asymmetric thresholds prevents toggle oscillation:
- * - Downgrading requires lower FPS (easier to drop quality)
- * - Upgrading requires higher FPS (harder to gain quality, must run very well)
- *
- * Note: Browser rendering is capped at ~60 FPS, so upgrade thresholds must be
- * achievable within that constraint (e.g., 55-57 range for headroom).
- *
- * @constant {Object} QUALITY_THRESHOLDS
- * @property {number} downgradeToMedium - From high to medium when FPS drops below this
- * @property {number} upgradeToHigh - From medium to high when FPS rises above this (achievable within 60 FPS cap)
- * @property {number} downgradeToLow - From medium to low when FPS drops below this
- * @property {number} upgradeToMedium - From low to medium when FPS rises above this (achievable within 60 FPS cap)
- */
-const QUALITY_THRESHOLDS = {
-  downgradeToMedium: 48,
-  upgradeToHigh: 58,
-  downgradeToLow: 36,
-  upgradeToMedium: 56,
-} as const;
 
 /**
  * Quality profile lookup table.

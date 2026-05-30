@@ -423,10 +423,28 @@ export interface BoundaryData {
  * @interface CelestialRegistryData
  * @property {CelestialBodyData[]} bodies - All orbital celestial bodies
  * @property {BoundaryData} boundary - The Everdark boundary sphere
+ * @property {CollisionPairData[]} [collisionPairs] - Pairs of bodies that produce a collision-cloud effect when their orbits cross
  */
 export interface CelestialRegistryData {
   bodies: CelestialBodyData[];
   boundary: BoundaryData;
+  collisionPairs?: CollisionPairData[];
+}
+
+/**
+ * Identifies two celestial bodies whose proximity triggers a collision-cloud
+ * effect. The pair is keyed by a stable id used as the scene-graph name and
+ * as the lookup key for the mediator's effect map.
+ *
+ * @interface CollisionPairData
+ * @property {string} id - Stable identifier for the pair (e.g. "lansihenki-itahenki")
+ * @property {string} bodyAId - Registry id of the first body
+ * @property {string} bodyBId - Registry id of the second body
+ */
+export interface CollisionPairData {
+  id: string;
+  bodyAId: string;
+  bodyBId: string;
 }
 
 /**

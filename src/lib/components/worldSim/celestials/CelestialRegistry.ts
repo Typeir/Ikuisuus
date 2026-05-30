@@ -11,11 +11,12 @@
 
 import registryData from '../data/blackCradleRegistry.json';
 import type {
-  BoundaryData,
-  CelestialBodyData,
-  CelestialBodyType,
-  CelestialRegion,
-  CelestialRegistryData,
+    BoundaryData,
+    CelestialBodyData,
+    CelestialBodyType,
+    CelestialRegion,
+    CelestialRegistryData,
+    CollisionPairData,
 } from './interfaces';
 
 /**
@@ -128,5 +129,25 @@ export class CelestialRegistry {
   getRegion(bodyId: string, regionId: string): CelestialRegion | undefined {
     const regions = this.getRegions(bodyId);
     return regions.find((r) => r.id === regionId);
+  }
+
+  /**
+   * Get all collision-pair definitions declared in the registry. Each pair
+   * describes two bodies whose proximity drives a collision-cloud effect.
+   *
+   * @returns {CollisionPairData[]} Array of collision pairs (empty if none defined)
+   */
+  getCollisionPairs(): CollisionPairData[] {
+    return this.data.collisionPairs ?? [];
+  }
+
+  /**
+   * Look up a single collision pair by its stable id.
+   *
+   * @param {string} id - The pair identifier
+   * @returns {CollisionPairData | undefined} The pair, or undefined if not found
+   */
+  getCollisionPair(id: string): CollisionPairData | undefined {
+    return this.getCollisionPairs().find((p) => p.id === id);
   }
 }

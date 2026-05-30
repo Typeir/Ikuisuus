@@ -20,22 +20,25 @@ import type { FrameContext } from './canvas/RenderLifecycle';
 import { RenderPhase } from './canvas/RenderLifecycle';
 import type { SceneManager } from './canvas/SceneManager';
 import { CelestialRegistry } from './celestials/CelestialRegistry';
-import { CollisionCloudEffect } from './celestials/CollisionCloudEffect';
 import {
     buildCelestialBodies,
-    buildCollisionCloud,
+    buildCollisionClouds,
     buildEverdark,
     buildOrbitLines,
     type CelestialEntry,
+    type CollisionCloudEntry,
 } from './celestials/CelestialSceneBuilder';
-import type {
-    ICelestialRenderer,
-    SceneContext,
-} from './celestials/interfaces';
+import type { ICelestialRenderer, SceneContext } from './celestials/interfaces';
 import {
     computeOrbitalPosition,
     surfacePositionToWorld,
 } from './celestials/OrbitalMechanics';
+import {
+    LOCAL_COORD_VIEW_DISTANCE,
+    OCCLUSION_FRAME_STRIDE,
+    REGION_VIEW_DISTANCE,
+    VIEW_DISTANCE_MULTIPLIER,
+} from './config/sceneTuning';
 import {
     WorldSimActionType,
     type WorldSimAction,
@@ -44,15 +47,6 @@ import { CanvasInputHandler } from './input/CanvasInputHandler';
 import { AdaptivePerformanceController } from './optimization/AdaptivePerformanceController';
 import { DPR_CAP } from './optimization/GeometryBudgets';
 import { RaycastService } from './RaycastService';
-
-/** @constant {number} VIEW_DISTANCE_MULTIPLIER - Multiplier for zoom-to-body view distance */
-const VIEW_DISTANCE_MULTIPLIER = 3;
-
-/** @constant {number} REGION_VIEW_DISTANCE - View distance when zooming to a region */
-const REGION_VIEW_DISTANCE = 40;
-
-/** @constant {number} LOCAL_COORD_VIEW_DISTANCE - Default view distance for local coordinate focus */
-const LOCAL_COORD_VIEW_DISTANCE = 30;
 
 /**
  * Central mediator coordinating all World Sim subsystems.
@@ -98,8 +92,8 @@ export class WorldSimMediator {
   /** @property {ICelestialRenderer | null} everdarkRenderer - The Everdark renderer */
   private everdarkRenderer: ICelestialRenderer | null = null;
 
-  /** @property {CollisionCloudEffect | null} collisionCloud - Proximity cloud at the Länsihenki × Itähenki crossing point */
-  private collisionCloud: CollisionCloudEffect | null = null;
+  /** @property {Map<string, CollisionCloudEntry>} collisionClouds - Active collision-cloud effects keyed by registry pair id */
+  private collisionClouds: Map<string, CollisionCloudEntry> = new Map();
 
   /** @property {RaycastService} raycastService - Handles mouse picking and occlusion raycasting */
   private raycastService: RaycastService;
@@ -165,7 +159,11 @@ export class WorldSimMediator {
     const everdark = buildEverdark(this.registry, scene);
     this.everdarkMesh = everdark.mesh;
     this.everdarkRenderer = everdark.renderer;
-    this.collisionCloud = buildCollisionCloud(this.celestials, scene);
+    this.collisionClouds = buildCollisionClouds(
+      this.registry.getCollisionPairs(),
+      this.celestials,
+      scene,
+    );
     this.registerProjections();
     this.buildMeshCaches();
     this.applyQualityToRenderers();
@@ -254,17 +252,20 @@ export class WorldSimMediator {
       this.everdarkRenderer.update(this.everdarkMesh, time, simDeltaTime, ctx);
     }
 
-    if (this.collisionCloud) {
-      const lans = this.celestials.get('lansihenki');
-      const ita = this.celestials.get('itahenki');
-      if (lans && ita) {
-        this.collisionCloud.update(
-          lans.mesh.position,
-          ita.mesh.position,
+    if (this.collisionClouds.size > 0) {
+      this.collisionClouds.forEach(({ pair, effect }) => {
+        const a = this.celestials.get(pair.bodyAId);
+        const b = this.celestials.get(pair.bodyBId);
+        if (!a || !b) return;
+        effect.update({
+          bodyAPosition: a.mesh.position,
+          bodyBPosition: b.mesh.position,
+          bodyARadius: a.data.radius,
+          bodyBRadius: b.data.radius,
           time,
-          simDeltaTime,
-        );
-      }
+          deltaTime: simDeltaTime,
+        });
+      });
     }
   }
 
@@ -277,7 +278,7 @@ export class WorldSimMediator {
    */
   private updateProjections(): void {
     this.occlusionFrame++;
-    if (this.occlusionFrame % 3 === 0) {
+    if (this.occlusionFrame % OCCLUSION_FRAME_STRIDE === 0) {
       this.cachedOcclusion = this.raycastService.computeOcclusion(
         this.sceneManager.camera,
         this.celestials,
@@ -419,10 +420,12 @@ export class WorldSimMediator {
       this.sceneManager.scene.remove(this.everdarkMesh);
     }
 
-    if (this.collisionCloud) {
-      this.collisionCloud.removeFromScene(this.sceneManager.scene);
-      this.collisionCloud.dispose();
-      this.collisionCloud = null;
+    if (this.collisionClouds.size > 0) {
+      this.collisionClouds.forEach(({ effect }) => {
+        effect.removeFromScene(this.sceneManager.scene);
+        effect.dispose();
+      });
+      this.collisionClouds.clear();
     }
 
     this.orbitLines.forEach((ring) => {

@@ -15,7 +15,6 @@ import {
     contentShardKey,
     correctionsTreeKey,
     draftKey,
-    externalSearchKey,
     featsKey,
     heirloomsKey,
     librarySearchKey,
@@ -126,18 +125,6 @@ describe('swrKeys', () => {
     });
     it('returns null for empty query', () => {
       expect(librarySearchKey('')).toBeNull();
-    });
-  });
-
-  describe('externalSearchKey', () => {
-    it('returns tuple for valid query', () => {
-      expect(externalSearchKey('dragon')).toEqual([
-        'external-search',
-        'dragon',
-      ]);
-    });
-    it('returns null for short query', () => {
-      expect(externalSearchKey('d')).toBeNull();
     });
   });
 

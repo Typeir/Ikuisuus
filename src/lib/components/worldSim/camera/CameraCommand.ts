@@ -15,16 +15,13 @@
 
 import { PerspectiveCamera, Vector3 } from 'three';
 import type { ICameraCommand } from '../celestials/interfaces';
+import {
+    COMPLETION_THRESHOLD,
+    EASE_FACTOR,
+    REGION_TRANSITION_DURATION,
+    SLERP_EPSILON,
+} from '../config/cameraTuning';
 import { DEFAULT_CAMERA_LOOK_AT, DEFAULT_CAMERA_POSITION } from '../constants';
-
-/** @constant {number} EASE_FACTOR - Smoothing factor for lerp transitions (0-1) */
-const EASE_FACTOR = 0.08;
-
-/** @constant {number} COMPLETION_THRESHOLD - Distance threshold to consider transition complete */
-const COMPLETION_THRESHOLD = 0.5;
-
-/** @constant {number} REGION_TRANSITION_DURATION - Duration of region camera transitions in seconds */
-const REGION_TRANSITION_DURATION = 1.6;
 
 /**
  * Camera transition state shared by all commands during execution.
@@ -165,7 +162,7 @@ export class ZoomToBodyCommand implements ICameraCommand {
 function slerpDirections(a: Vector3, b: Vector3, t: number): Vector3 {
   const dot = Math.max(-1, Math.min(1, a.dot(b)));
   const omega = Math.acos(dot);
-  if (omega < 1e-4) return a.clone().lerp(b, t).normalize();
+  if (omega < SLERP_EPSILON) return a.clone().lerp(b, t).normalize();
   const sinOmega = Math.sin(omega);
   const s0 = Math.sin((1 - t) * omega) / sinOmega;
   const s1 = Math.sin(t * omega) / sinOmega;

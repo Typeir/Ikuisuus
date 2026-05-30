@@ -40,7 +40,6 @@ import atmosphereFrag from '../shaders/atmosphere.frag.glsl';
 import atmosphereVert from '../shaders/atmosphere.vert.glsl';
 import bloodOceanFrag from '../shaders/bloodOcean.frag.glsl';
 import bloodOceanVert from '../shaders/bloodOcean.vert.glsl';
-import noise3d from '../shaders/noise3d.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
@@ -50,6 +49,7 @@ import type {
     ICelestialRenderer,
     SceneContext,
 } from './interfaces';
+import { createDisplacedShaderMaterial } from './shaderMaterialFactory';
 
 /** @constant {number} DEFAULT_ROTATION_SPEED - Default axial rotation speed (rad/s) */
 const DEFAULT_ROTATION_SPEED = 0.0007;
@@ -168,8 +168,8 @@ export class BloodOceanRenderer implements ICelestialRenderer {
 
     /* --- Layer 2: Semi-transparent blood ocean shell --- */
     this.oceanLOD = createSphereLODSet(data.radius);
-    this.oceanMaterial = new ShaderMaterial({
-      vertexShader: noise3d + '\n' + bloodOceanVert,
+    this.oceanMaterial = createDisplacedShaderMaterial({
+      vertexShader: bloodOceanVert,
       fragmentShader: bloodOceanFrag,
       uniforms: {
         uTime: { value: 0 },
@@ -189,8 +189,10 @@ export class BloodOceanRenderer implements ICelestialRenderer {
         uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
         uAmbient: { value: 0.25 },
       },
-      transparent: true,
-      depthWrite: false,
+      materialParams: {
+        transparent: true,
+        depthWrite: false,
+      },
     });
     this.oceanMesh = new Mesh(
       this.oceanLOD[this.qualityLevel],

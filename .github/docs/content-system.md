@@ -384,7 +384,6 @@ messages/
 │   ├── layout.json
 │   ├── search.json
 │   ├── archive.json
-│   ├── externalSearch.json
 │   └── index.json         # Merged file (auto-generated)
 ├── es/
 │   ├── common.json        # Minimal translations only
@@ -476,9 +475,6 @@ main();
     /* ... */
   },
   "archive": {
-    /* ... */
-  },
-  "externalSearch": {
     /* ... */
   }
 }

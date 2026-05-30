@@ -22,6 +22,7 @@ import {
     Vector2,
     Vector3,
 } from 'three';
+import { OCCLUSION_OPACITY_THRESHOLD } from './config/sceneTuning';
 
 /**
  * Service responsible for all raycasting operations in the World Sim.
@@ -73,7 +74,11 @@ export class RaycastService {
 
         const mat = (child as Mesh).material;
         const primary: Material = Array.isArray(mat) ? mat[0] : mat;
-        if (primary && (!primary.transparent || primary.opacity >= 0.9)) {
+        if (
+          primary &&
+          (!primary.transparent ||
+            primary.opacity >= OCCLUSION_OPACITY_THRESHOLD)
+        ) {
           this.occlusionMeshes.push(child);
         }
       });

@@ -164,9 +164,8 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
       file: v.file.replace(/\\/g, '/'),
       line: v.lines,
       rule: 'max-file-length',
-      message: `File has ${v.lines} comment-pruned lines (max ${v.threshold})`,
-      suggestion:
-        'Split into smaller modules or add to .github/file-length-allowlist.json with justification',
+      message: `File too long: ${v.lines} code lines (max ${v.threshold}, comments excluded). Extract code into new sibling module. Deleting comments WON'T help.`,
+      suggestion: 'Move helpers/factories/math to new file. Import them back.',
     })),
     stats: {
       total_files_checked: totalFilesChecked,

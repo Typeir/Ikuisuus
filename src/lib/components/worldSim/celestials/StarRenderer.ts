@@ -12,7 +12,6 @@
 
 import {
     AdditiveBlending,
-    Color,
     DoubleSide,
     Mesh,
     MeshBasicMaterial,
@@ -30,7 +29,6 @@ import {
     STAR_RING_SEGMENTS,
     type SphereLODSet,
 } from '../optimization/GeometryBudgets';
-import noise3d from '../shaders/noise3d.glsl';
 import starFrag from '../shaders/star.frag.glsl';
 import starVert from '../shaders/star.vert.glsl';
 import { createRadialGradientTexture } from './CelestialGlow';
@@ -42,6 +40,8 @@ import type {
     SceneContext,
     StarRenderConfig,
 } from './interfaces';
+import { extractColor } from './renderConfigHelpers';
+import { createDisplacedShaderMaterial } from './shaderMaterialFactory';
 
 /** @constant {number} CORONA_SCALE - Scale multiplier for the corona sprite relative to body radius */
 const CORONA_SCALE = 6.0;
@@ -120,17 +120,23 @@ export class StarRenderer implements ICelestialRenderer {
     group.name = `star-${data.id}`;
 
     const config = data.renderConfig as StarRenderConfig;
-    const emissiveColor = new Color(
-      (config.emissiveColor as string) ?? '#ffcc44',
+    const emissiveColor = extractColor(
+      config as unknown as Record<string, unknown>,
+      'emissiveColor',
+      '#ffcc44',
     );
-    const coronaColor = new Color((config.coronaColor as string) ?? '#ff8800');
+    const coronaColor = extractColor(
+      config as unknown as Record<string, unknown>,
+      'coronaColor',
+      '#ff8800',
+    );
     const displacementScale =
       (config.displacementScale as number) ?? DEFAULT_DISPLACEMENT_SCALE;
 
     this.coreLOD = createSphereLODSet(data.radius);
     const coreGeometry = this.coreLOD[this.qualityLevel];
-    this.surfaceMaterial = new ShaderMaterial({
-      vertexShader: noise3d + '\n' + starVert,
+    this.surfaceMaterial = createDisplacedShaderMaterial({
+      vertexShader: starVert,
       fragmentShader: starFrag,
       uniforms: {
         uTime: { value: 0 },

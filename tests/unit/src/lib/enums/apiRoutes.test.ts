@@ -12,8 +12,8 @@
  * @requires @/lib/enums/apiRoutes Enum under test
  */
 
-import { describe, it, expect } from 'vitest';
 import { ApiRoutes } from '@/lib/enums/apiRoutes';
+import { describe, expect, it } from 'vitest';
 
 describe('ApiRoutes', () => {
   describe('exports', () => {
@@ -23,7 +23,7 @@ describe('ApiRoutes', () => {
 
     it('should have correct number of routes', () => {
       const routeCount = Object.keys(ApiRoutes).length;
-      expect(routeCount).toBe(7);
+      expect(routeCount).toBe(6);
     });
   });
 
@@ -50,10 +50,6 @@ describe('ApiRoutes', () => {
 
     it('should define Search route', () => {
       expect(ApiRoutes.Search).toBe('/api/search');
-    });
-
-    it('should define WebSearch route', () => {
-      expect(ApiRoutes.WebSearch).toBe('/api/web-search');
     });
   });
 

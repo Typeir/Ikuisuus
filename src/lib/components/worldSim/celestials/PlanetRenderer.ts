@@ -12,36 +12,36 @@
  */
 
 import {
-  AdditiveBlending,
-  BackSide,
-  Color,
-  Mesh,
-  Object3D,
-  ShaderMaterial,
-  Vector3,
+    AdditiveBlending,
+    BackSide,
+    Color,
+    Mesh,
+    Object3D,
+    ShaderMaterial,
+    Vector3,
 } from 'three';
 import type { RenderQualityLevel } from '../optimization/AdaptivePerformanceController';
 import {
-  ATMOSPHERE_LOD,
-  createSphereLODSet,
-  disposeSphereLODSet,
-  type SphereLODSet,
+    ATMOSPHERE_LOD,
+    createSphereLODSet,
+    disposeSphereLODSet,
+    type SphereLODSet,
 } from '../optimization/GeometryBudgets';
 import atmosphereFrag from '../shaders/atmosphere.frag.glsl';
 import atmosphereVert from '../shaders/atmosphere.vert.glsl';
-import noise3d from '../shaders/noise3d.glsl';
 import planetFrag from '../shaders/planet.frag.glsl';
 import planetVert from '../shaders/planet.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
 import { disposeSceneGraph } from './disposeUtils';
 import type {
-  BoundaryData,
-  CelestialBodyData,
-  ICelestialRenderer,
-  PlanetRenderConfig,
-  SceneContext,
-  TerrainColorStop,
+    BoundaryData,
+    CelestialBodyData,
+    ICelestialRenderer,
+    PlanetRenderConfig,
+    SceneContext,
+    TerrainColorStop,
 } from './interfaces';
+import { createDisplacedShaderMaterial } from './shaderMaterialFactory';
 
 /** @constant {number} DEFAULT_ROTATION_SPEED - Default planet axial rotation (radians/sec) */
 const DEFAULT_ROTATION_SPEED = 0.05;
@@ -149,8 +149,8 @@ export class PlanetRenderer implements ICelestialRenderer {
     const geometry = this.surfaceLOD[this.qualityLevel];
     const polarIce = config.polarIce ?? false;
 
-    this.surfaceMaterial = new ShaderMaterial({
-      vertexShader: noise3d + '\n' + planetVert,
+    this.surfaceMaterial = createDisplacedShaderMaterial({
+      vertexShader: planetVert,
       fragmentShader: planetFrag,
       uniforms: {
         uTime: { value: 0 },

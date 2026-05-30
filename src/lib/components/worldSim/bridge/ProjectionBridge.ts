@@ -14,18 +14,12 @@
 import { PerspectiveCamera, Vector3 } from 'three';
 
 import type { ProjectedPosition } from '../celestials/interfaces';
-
-/** @constant {number} MAX_LABEL_DISTANCE - Beyond this distance, scale is clamped to minimum */
-const MAX_LABEL_DISTANCE = 5000;
-
-/** @constant {number} MIN_LABEL_DISTANCE - Closer than this, scale is clamped to maximum */
-const MIN_LABEL_DISTANCE = 50;
-
-/** @constant {number} MAX_SCALE - Maximum DOM element scale factor */
-const MAX_SCALE = 1.5;
-
-/** @constant {number} MIN_SCALE - Minimum DOM element scale factor */
-const MIN_SCALE = 0.55;
+import {
+    MAX_LABEL_DISTANCE,
+    MAX_LABEL_SCALE,
+    MIN_LABEL_DISTANCE,
+    MIN_LABEL_SCALE,
+} from '../config/sceneTuning';
 
 /**
  * Callback type for all-positions update subscribers.
@@ -228,7 +222,7 @@ export class ProjectionBridge {
 
   /**
    * Convert camera distance to a DOM scale factor.
-   * Uses inverse-linear interpolation clamped between MIN_SCALE and MAX_SCALE.
+   * Uses inverse-linear interpolation clamped between MIN_LABEL_SCALE and MAX_LABEL_SCALE.
    *
    * @private
    * @param {number} distance - Distance from camera to world point
@@ -243,7 +237,7 @@ export class ProjectionBridge {
           (MAX_LABEL_DISTANCE - MIN_LABEL_DISTANCE),
       ),
     );
-    return MAX_SCALE - t * (MAX_SCALE - MIN_SCALE);
+    return MAX_LABEL_SCALE - t * (MAX_LABEL_SCALE - MIN_LABEL_SCALE);
   }
 
   /**

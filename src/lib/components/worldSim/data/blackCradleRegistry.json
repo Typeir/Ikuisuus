@@ -8,7 +8,7 @@
       "type": "star",
       "contentPath": "world/the-lands-of-damocles/kultharja",
       "orbit": null,
-      "radius": 300,
+      "radius": 375,
       "renderConfig": {
         "renderer": "star",
         "emissiveColor": "#ffcc44",
@@ -25,7 +25,7 @@
       "type": "planet",
       "contentPath": "world/the-lands-of-damocles/urmela",
       "orbit": {
-        "semiMajorAxis": 650,
+        "semiMajorAxis": 813,
         "eccentricity": 0.06,
         "inclination": -5,
         "period": 180,
@@ -56,7 +56,7 @@
       "type": "planet",
       "contentPath": "world/the-lands-of-damocles/damocles",
       "orbit": {
-        "semiMajorAxis": 2000,
+        "semiMajorAxis": 2500,
         "eccentricity": 0.02,
         "inclination": 0,
         "period": 365,
@@ -163,7 +163,7 @@
       "type": "gasGiant",
       "contentPath": "world/the-lands-of-damocles/lansihenki",
       "orbit": {
-        "semiMajorAxis": 3200,
+        "semiMajorAxis": 4000,
         "eccentricity": 0.05,
         "inclination": 3,
         "period": 1200,
@@ -190,7 +190,7 @@
       "type": "gasGiant",
       "contentPath": "world/the-lands-of-damocles/itahenki",
       "orbit": {
-        "semiMajorAxis": 3200,
+        "semiMajorAxis": 4000,
         "eccentricity": 0.05,
         "inclination": -3,
         "period": -1200,
@@ -217,7 +217,7 @@
       "type": "planet",
       "contentPath": "world/the-lands-of-damocles/kalmora",
       "orbit": {
-        "semiMajorAxis": 1500,
+        "semiMajorAxis": 1875,
         "eccentricity": 0.08,
         "inclination": 7,
         "period": 250,
@@ -253,7 +253,7 @@
       "type": "towerWorld",
       "contentPath": "world/the-lands-of-damocles/selkara",
       "orbit": {
-        "semiMajorAxis": 1100,
+        "semiMajorAxis": 1375,
         "eccentricity": 0.01,
         "inclination": 12,
         "period": 180,
@@ -277,7 +277,7 @@
       "type": "ringWorld",
       "contentPath": "world/the-lands-of-damocles/mana",
       "orbit": {
-        "semiMajorAxis": 3600,
+        "semiMajorAxis": 4500,
         "eccentricity": 0.44,
         "inclination": 5,
         "period": 2000,
@@ -305,9 +305,16 @@
     "loreOrigin": "The Dragon's breath",
     "type": "boundary",
     "contentPath": "world/gods-and-demigods/everdark",
-    "radius": 5600,
+    "radius": 7000,
     "renderConfig": {
       "renderer": "everdark"
     }
-  }
+  },
+  "collisionPairs": [
+    {
+      "id": "lansihenki-itahenki",
+      "bodyAId": "lansihenki",
+      "bodyBId": "itahenki"
+    }
+  ]
 }

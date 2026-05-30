@@ -12,7 +12,6 @@
  */
 
 import {
-    Color,
     CylinderGeometry,
     Mesh,
     Object3D,
@@ -27,7 +26,6 @@ import {
     TOWER_CYLINDER_HEIGHT,
     TOWER_CYLINDER_RADIAL,
 } from '../optimization/GeometryBudgets';
-import noise3d from '../shaders/noise3d.glsl';
 import towerFrag from '../shaders/tower.frag.glsl';
 import towerVert from '../shaders/tower.vert.glsl';
 import { createCelestialGlow } from './CelestialGlow';
@@ -39,6 +37,8 @@ import type {
     SceneContext,
     TowerWorldRenderConfig,
 } from './interfaces';
+import { extractColor } from './renderConfigHelpers';
+import { createDisplacedShaderMaterial } from './shaderMaterialFactory';
 
 /** @constant {number} TOWER_SEGMENTS - Number of cylinder segments composing the main tower */
 const TOWER_SEGMENTS = 5;
@@ -57,9 +57,6 @@ const DEFAULT_TOWER_NOISE_SCALE = 0.6;
 
 /** @constant {number} DEFAULT_TOWER_DISPLACEMENT - Vertex displacement amplitude for carved stone */
 const DEFAULT_TOWER_DISPLACEMENT = 0.2;
-
-/** @constant {string} vertWithNoise - Vertex shader with noise functions prepended */
-const vertWithNoise = noise3d + '\n' + towerVert;
 
 /** @constant {string} DEFAULT_RIDGE_COLOR - Default ridge accent colour for tower */
 const DEFAULT_RIDGE_COLOR = '#d4c8a0';
@@ -124,9 +121,15 @@ export class TowerWorldRenderer implements ICelestialRenderer {
     group.name = `towerWorld-${data.id}`;
 
     const config = data.renderConfig as TowerWorldRenderConfig;
-    const towerColor = new Color((config.towerColor as string) ?? '#aaaaaa');
-    const ridgeColor = new Color(
-      (config.towerRidgeColor as string) ?? DEFAULT_RIDGE_COLOR,
+    const towerColor = extractColor(
+      config as unknown as Record<string, unknown>,
+      'towerColor',
+      '#aaaaaa',
+    );
+    const ridgeColor = extractColor(
+      config as unknown as Record<string, unknown>,
+      'towerRidgeColor',
+      DEFAULT_RIDGE_COLOR,
     );
     this.rotationSpeed =
       (config.rotationSpeed as number) ?? DEFAULT_ROTATION_SPEED;
@@ -148,8 +151,8 @@ export class TowerWorldRenderer implements ICelestialRenderer {
       );
 
       const shade = 0.85 + (i / TOWER_SEGMENTS) * 0.15;
-      const segmentMaterial = new ShaderMaterial({
-        vertexShader: vertWithNoise,
+      const segmentMaterial = createDisplacedShaderMaterial({
+        vertexShader: towerVert,
         fragmentShader: towerFrag,
         uniforms: {
           uTime: { value: 0 },
@@ -190,8 +193,8 @@ export class TowerWorldRenderer implements ICelestialRenderer {
         ORBITER_CYLINDER_HEIGHT,
       );
       const shade = 0.7 + r1 * 0.3;
-      const pillarMaterial = new ShaderMaterial({
-        vertexShader: vertWithNoise,
+      const pillarMaterial = createDisplacedShaderMaterial({
+        vertexShader: towerVert,
         fragmentShader: towerFrag,
         uniforms: {
           uTime: { value: 0 },

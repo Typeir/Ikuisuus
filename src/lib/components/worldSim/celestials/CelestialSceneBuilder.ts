@@ -16,9 +16,10 @@ import { CelestialBodyFactory } from './CelestialBodyFactory';
 import type { CelestialRegistry } from './CelestialRegistry';
 import { CollisionCloudEffect } from './CollisionCloudEffect';
 import type {
-  CelestialBodyData,
-  CelestialRendererType,
-  ICelestialRenderer,
+    CelestialBodyData,
+    CelestialRendererType,
+    CollisionPairData,
+    ICelestialRenderer,
 } from './interfaces';
 import { computeOrbitalPosition } from './OrbitalMechanics';
 import { createAllOrbitLines } from './OrbitLineFactory';
@@ -157,21 +158,41 @@ export function buildEverdark(
 }
 
 /**
- * Construct the Länsihenki × Itähenki collision cloud effect if both bodies
- * are present. Returns null when either body is absent.
+ * Result of constructing a single collision-cloud effect for a registered
+ * `CollisionPairData`.
  *
- * @param {Map<string, CelestialEntry>} celestials - Existing celestials map
- * @param {Scene} scene - The scene to add the effect to when both bodies exist
- * @returns {CollisionCloudEffect | null} The constructed effect or null
+ * @interface CollisionCloudEntry
+ * @property {CollisionPairData} pair - The registry pair definition this effect represents
+ * @property {CollisionCloudEffect} effect - The runtime effect instance owned by the scene
  */
-export function buildCollisionCloud(
+export interface CollisionCloudEntry {
+  pair: CollisionPairData;
+  effect: CollisionCloudEffect;
+}
+
+/**
+ * Construct one `CollisionCloudEffect` for every collision pair declared in
+ * the registry where both referenced bodies are present in the celestials
+ * map. Pairs referencing missing bodies are silently skipped.
+ *
+ * @param {CollisionPairData[]} pairs - Pair definitions from the registry
+ * @param {Map<string, CelestialEntry>} celestials - Existing celestials map
+ * @param {Scene} scene - The scene to add each effect's group to
+ * @returns {Map<string, CollisionCloudEntry>} Effects keyed by pair id
+ */
+export function buildCollisionClouds(
+  pairs: CollisionPairData[],
   celestials: Map<string, CelestialEntry>,
   scene: Scene,
-): CollisionCloudEffect | null {
-  const lans = celestials.get('lansihenki');
-  const ita = celestials.get('itahenki');
-  if (!lans || !ita) return null;
-  const cloud = new CollisionCloudEffect();
-  cloud.addToScene(scene);
-  return cloud;
+): Map<string, CollisionCloudEntry> {
+  const clouds = new Map<string, CollisionCloudEntry>();
+  for (const pair of pairs) {
+    const a = celestials.get(pair.bodyAId);
+    const b = celestials.get(pair.bodyBId);
+    if (!a || !b) continue;
+    const effect = new CollisionCloudEffect(pair.id);
+    effect.addToScene(scene);
+    clouds.set(pair.id, { pair, effect });
+  }
+  return clouds;
 }

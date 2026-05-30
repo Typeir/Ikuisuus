@@ -1,11 +1,11 @@
 /**
  * @fileoverview Search Service
- * @description API service helpers for local library search, external search,
- * and nearest-route suggestion lookups.
+ * @description API service helpers for local library search and nearest-route
+ * suggestion lookups.
  *
  * @module lib/services/api/searchService
  * @author Typeir
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2.0.0
  */
 
@@ -22,18 +22,6 @@ import { getJson, postJson } from './jsonClient';
 export interface SearchResult {
   name: string;
   path: string;
-}
-
-/**
- * External web search result entry.
- *
- * @interface GoogleSearchResult
- * @property {string} title - External result title
- * @property {string} link - External result URL
- */
-export interface GoogleSearchResult {
-  title: string;
-  link: string;
 }
 
 /**
@@ -60,26 +48,6 @@ export function fetchLibrarySearchResults(
   query: string,
 ): Promise<SearchResult[]> {
   return getJson<SearchResult[]>(`/api/search?q=${encodeURIComponent(query)}`);
-}
-
-/**
- * Fetches external web search results for a query.
- *
- * @param {string} query - Search query string
- * @returns {Promise<GoogleSearchResult[]>} External search results
- */
-export async function fetchExternalSearchResults(
-  query: string,
-): Promise<GoogleSearchResult[]> {
-  const payload = await getJson<
-    GoogleSearchResult[] | { items?: GoogleSearchResult[] }
-  >(`/api/web-search?q=${encodeURIComponent(query)}`);
-
-  if (Array.isArray(payload)) {
-    return payload;
-  }
-
-  return payload.items ?? [];
 }
 
 /**

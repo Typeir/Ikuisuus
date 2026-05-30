@@ -1,11 +1,10 @@
 /**
- * @fileoverview Library Search Component - Dual local/external search with debouncing
- * @description Client-side search component that queries both internal content API (/api/search)
- * and optional Google Custom Search Engine for Wikidot results. Features debounced input,
- * race condition protection, locale-aware routing, and lore-themed empty state messaging.
- * Keyboard navigation and click-outside-to-close behavior included.
+ * @fileoverview Library Search Component - Debounced local search
+ * @description Client-side search component that queries the internal content API
+ * (/api/search). Features debounced input, race condition protection, locale-aware
+ * routing, and lore-themed empty state messaging.
  *
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  *
@@ -14,7 +13,6 @@
  * @requires next/link
  * @requires next/navigation
  * @requires @/lib/hooks/useDebounce
- * @requires @/lib/components/externalSearchResults/externalSearchResults
  * @requires ./librarySearch.module.scss
  *
  * @example
@@ -33,7 +31,6 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../../hooks/useDebounce';
-import { ExternalSearchResults } from '../externalSearchResults/externalSearchResults';
 import styles from './librarySearch.module.scss';
 
 const SEARCH_LOADING_DELAY_MS = 150;
@@ -41,11 +38,9 @@ const SEARCH_LOADING_DELAY_MS = 150;
 /**
  * Search component for the Ikuisuus project.
  *
- * This component provides both local and external search capabilities:
- * - Local results come from the internal `/api/search` endpoint.
- * - External results (optional) are sourced via Google CSE (Wikidot).
- *
- * Includes debounce input handling, race condition safety, and lore-style fallback messaging.
+ * Queries the internal `/api/search` endpoint for local library results.
+ * Includes debounce input handling, race condition safety, and lore-style
+ * fallback messaging.
  *
  * @returns {JSX.Element} The full search UI
  */
@@ -55,7 +50,6 @@ export const LibrarySearch = (): JSX.Element => {
   const debouncedQuery = useDebounce(query, 400);
   const { results, loading } = useLibrarySearchData(debouncedQuery);
   const [showLoadingText, setShowLoadingText] = useState(false);
-  const [searchBeyond, setSearchBeyond] = useState(false);
   const params = useParams();
 
   const locale = params.locale as string;
@@ -92,15 +86,6 @@ export const LibrarySearch = (): JSX.Element => {
         </div>
       </div>
 
-      <label className='inline-flex items-center space-x-2 text-sm'>
-        <input
-          type='checkbox'
-          checked={searchBeyond}
-          onChange={(e) => setSearchBeyond(e.target.checked)}
-        />
-        <span>{t('checkbox')}</span>
-      </label>
-
       <div className='max-h-96 overflow-y-auto border border-zinc-700 rounded p-4'>
         {results.length > 0 && (
           <>
@@ -124,19 +109,11 @@ export const LibrarySearch = (): JSX.Element => {
         )}
 
         {debouncedQuery.length >= 2 && results.length === 0 && !loading && (
-          <p className='italic text-sm secondary'>
-            {t('noResults')} {!searchBeyond && t('cloneWorldsHint')}
-          </p>
+          <p className='italic text-sm secondary'>{t('noResults')}</p>
         )}
 
         {debouncedQuery.length < 2 && (
           <p className='italic text-sm secondary'>{t('waiting')}</p>
-        )}
-
-        {searchBeyond ? (
-          <ExternalSearchResults query={query} />
-        ) : (
-          <p className='italic text-sm secondary mt-2'>{t('externalToggle')}</p>
         )}
       </div>
     </div>

@@ -20,15 +20,13 @@ import {
     Sprite,
     SpriteMaterial,
 } from 'three';
+import {
+    DEFAULT_GLOW_OPACITY,
+    DEFAULT_GLOW_SCALE,
+} from '../config/sceneTuning';
 
 /** @constant {number} GLOW_TEXTURE_SIZE - Resolution of the procedural glow texture */
 const GLOW_TEXTURE_SIZE = 128;
-
-/** @constant {number} DEFAULT_GLOW_SCALE - Default glow sprite scale relative to body radius */
-const DEFAULT_GLOW_SCALE = 3.0;
-
-/** @constant {number} DEFAULT_GLOW_OPACITY - Default glow opacity (subtler than star corona) */
-const DEFAULT_GLOW_OPACITY = 0.18;
 
 /** @type {CanvasTexture | null} Cached glow texture shared by all instances */
 let cachedGlowTexture: CanvasTexture | null = null;

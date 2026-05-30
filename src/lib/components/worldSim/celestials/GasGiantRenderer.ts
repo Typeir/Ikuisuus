@@ -15,7 +15,6 @@
 
 import {
     AdditiveBlending,
-    Color,
     Mesh,
     Object3D,
     ShaderMaterial,
@@ -31,7 +30,6 @@ import {
 } from '../optimization/GeometryBudgets';
 import gasGiantFrag from '../shaders/gasGiant.frag.glsl';
 import gasGiantVert from '../shaders/gasGiant.vert.glsl';
-import noise3d from '../shaders/noise3d.glsl';
 import {
     createCelestialGlow,
     createRadialGradientTexture,
@@ -44,6 +42,8 @@ import type {
     ICelestialRenderer,
     SceneContext,
 } from './interfaces';
+import { extractColor } from './renderConfigHelpers';
+import { createDisplacedShaderMaterial } from './shaderMaterialFactory';
 
 /** @constant {number} DEFAULT_ROTATION_SPEED - Default axial rotation speed */
 const DEFAULT_ROTATION_SPEED = 0.02;
@@ -204,9 +204,21 @@ export class GasGiantRenderer implements ICelestialRenderer {
     group.name = `gasGiant-${data.id}`;
 
     const config = data.renderConfig as GasGiantRenderConfig;
-    const bandColor1 = new Color((config.baseColor as string) ?? '#cc8844');
-    const bandColor2 = new Color((config.bandColor as string) ?? '#aa6633');
-    const stormColor = new Color((config.stormColor as string) ?? '#ffffff');
+    const bandColor1 = extractColor(
+      config as unknown as Record<string, unknown>,
+      'baseColor',
+      '#cc8844',
+    );
+    const bandColor2 = extractColor(
+      config as unknown as Record<string, unknown>,
+      'bandColor',
+      '#aa6633',
+    );
+    const stormColor = extractColor(
+      config as unknown as Record<string, unknown>,
+      'stormColor',
+      '#ffffff',
+    );
     this.rotationSpeed =
       (config.rotationSpeed as number) ?? DEFAULT_ROTATION_SPEED;
 
@@ -238,9 +250,10 @@ export class GasGiantRenderer implements ICelestialRenderer {
       this.layerLOD.push(lodSet);
       const geometry = lodSet[this.qualityLevel];
 
-      const material = new ShaderMaterial({
-        vertexShader: noise3d + '\n' + gasGiantVert,
-        fragmentShader: noise3d + '\n' + gasGiantFrag,
+      const material = createDisplacedShaderMaterial({
+        vertexShader: gasGiantVert,
+        fragmentShader: gasGiantFrag,
+        prependNoiseToFragment: true,
         uniforms: {
           uTime: { value: 0 },
           uBandFrequency: {
@@ -255,15 +268,17 @@ export class GasGiantRenderer implements ICelestialRenderer {
           uLightDir: { value: new Vector3(1, 0.5, 0.5).normalize() },
           uAmbient: { value: 0.3 },
         },
-        transparent: !layer.opaque,
-        depthWrite: layer.opaque,
-        ...(layer.opaque
-          ? {
-              polygonOffset: true,
-              polygonOffsetFactor: 1,
-              polygonOffsetUnits: 1,
-            }
-          : { blending: AdditiveBlending }),
+        materialParams: {
+          transparent: !layer.opaque,
+          depthWrite: layer.opaque,
+          ...(layer.opaque
+            ? {
+                polygonOffset: true,
+                polygonOffsetFactor: 1,
+                polygonOffsetUnits: 1,
+              }
+            : { blending: AdditiveBlending }),
+        },
       });
 
       const shell = new Mesh(geometry, material);
@@ -279,8 +294,10 @@ export class GasGiantRenderer implements ICelestialRenderer {
       }
     }
 
-    const hazeColor = new Color(
-      (config.atmosphereColor as string) ?? '#ffddaa',
+    const hazeColor = extractColor(
+      config as unknown as Record<string, unknown>,
+      'atmosphereColor',
+      '#ffddaa',
     );
     const hazeMaterial = new SpriteMaterial({
       map: createRadialGradientTexture(HAZE_TEXTURE_SIZE, HAZE_GLOW_STOPS),

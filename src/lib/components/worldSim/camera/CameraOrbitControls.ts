@@ -12,33 +12,17 @@
  */
 
 import { Spherical, Vector3 } from 'three';
-
-/** @constant {number} ORBIT_SENSITIVITY - Mouse drag rotation sensitivity */
-const ORBIT_SENSITIVITY = 0.005;
-
-/** @constant {number} PAN_SENSITIVITY - Middle-click pan sensitivity */
-const PAN_SENSITIVITY = 1.0;
-
-/** @constant {number} ZOOM_SENSITIVITY - Scroll wheel zoom sensitivity */
-const ZOOM_SENSITIVITY = 0.1;
-
-/** @constant {number} MIN_DISTANCE - Minimum orbit distance */
-const MIN_DISTANCE = 5;
-
-/** @constant {number} MAX_DISTANCE - Maximum orbit distance (inside Everdark boundary) */
-const MAX_DISTANCE = 4800;
-
-/** @constant {number} MIN_POLAR_ANGLE - Minimum polar angle to prevent gimbal lock */
-const MIN_POLAR_ANGLE = 0.1;
-
-/** @constant {number} MAX_POLAR_ANGLE - Maximum polar angle to prevent gimbal lock */
-const MAX_POLAR_ANGLE = Math.PI - 0.1;
-
-/** @constant {number} DAMPING_FACTOR - Orbit damping for smooth deceleration */
-const DAMPING_FACTOR = 0.92;
-
-/** @constant {number} VELOCITY_THRESHOLD - Minimum angular velocity before zeroing */
-const VELOCITY_THRESHOLD = 0.0001;
+import {
+    DAMPING_FACTOR,
+    MAX_DISTANCE,
+    MAX_POLAR_ANGLE,
+    MIN_DISTANCE,
+    MIN_POLAR_ANGLE,
+    ORBIT_SENSITIVITY,
+    PAN_SCALE_FACTOR,
+    VELOCITY_THRESHOLD,
+    ZOOM_SENSITIVITY,
+} from '../config/cameraTuning';
 
 /**
  * Manages user input for orbiting a camera around a center point.
@@ -277,7 +261,7 @@ export class CameraOrbitControls {
     const deltaY = e.clientY - this.lastMouse.y;
 
     if (this.isPanning) {
-      const panScale = this.spherical.radius * PAN_SENSITIVITY * 0.002;
+      const panScale = this.spherical.radius * PAN_SCALE_FACTOR;
       this.panDelta.set(-deltaX * panScale, deltaY * panScale, 0);
       this.isDirty = true;
       this.lastMouse = { x: e.clientX, y: e.clientY };

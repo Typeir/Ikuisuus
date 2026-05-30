@@ -24,6 +24,14 @@ import {
     WebGLRenderer,
 } from 'three';
 import { registerIkModule, unregisterIkModule } from '../../../debug/ik';
+import {
+    CAMERA_FAR,
+    CAMERA_FOV,
+    CAMERA_NEAR,
+    SCENE_BACKGROUND_COLOR,
+    STARFIELD_COUNT,
+    STARFIELD_SPREAD,
+} from '../config/sceneTuning';
 import { DEFAULT_CAMERA_LOOK_AT, DEFAULT_CAMERA_POSITION } from '../constants';
 import { PixelatePass } from './PixelatePass';
 import {
@@ -32,12 +40,6 @@ import {
     type FrameContext,
     type LifecycleCallback,
 } from './RenderLifecycle';
-
-/** @constant {number} STARFIELD_COUNT - Number of background starfield particles */
-const STARFIELD_COUNT = 1200;
-
-/** @constant {number} STARFIELD_SPREAD - Spread radius for starfield particles */
-const STARFIELD_SPREAD = 12000;
 
 /**
  * Detect whether the current device is likely a mobile/touch device.
@@ -163,12 +165,17 @@ export class SceneManager {
     this.renderer.setPixelRatio(
       Math.min(window.devicePixelRatio, getInitialMaxDPR()),
     );
-    this.renderer.setClearColor(new Color('#050508'), 1);
+    this.renderer.setClearColor(new Color(SCENE_BACKGROUND_COLOR), 1);
 
     this.scene = new Scene();
 
     const { width, height } = this.getContainerSize();
-    this.camera = new PerspectiveCamera(60, width / height, 0.1, 15000);
+    this.camera = new PerspectiveCamera(
+      CAMERA_FOV,
+      width / height,
+      CAMERA_NEAR,
+      CAMERA_FAR,
+    );
     this.camera.position.copy(DEFAULT_CAMERA_POSITION);
     this.camera.lookAt(DEFAULT_CAMERA_LOOK_AT);
 

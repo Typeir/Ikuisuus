@@ -7,14 +7,14 @@
  * @module tests/unit/worldSim/celestials/CelestialSceneBuilder
  */
 
-import {
-  applyDefaultCulling,
-  buildCelestialBodies,
-  buildCollisionCloud,
-  buildEverdark,
-  buildOrbitLines,
-} from '@/lib/components/worldSim/celestials/CelestialSceneBuilder';
 import { CelestialRegistry } from '@/lib/components/worldSim/celestials/CelestialRegistry';
+import {
+    applyDefaultCulling,
+    buildCelestialBodies,
+    buildCollisionClouds,
+    buildEverdark,
+    buildOrbitLines,
+} from '@/lib/components/worldSim/celestials/CelestialSceneBuilder';
 import { Mesh, Object3D, Scene } from 'three';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -83,18 +83,28 @@ describe('buildEverdark', () => {
   });
 });
 
-describe('buildCollisionCloud', () => {
-  it('returns null when required bodies are absent', () => {
+describe('buildCollisionClouds', () => {
+  it('returns an empty map when no pairs reference present bodies', () => {
     const scene = new Scene();
-    const result = buildCollisionCloud(new Map(), scene);
-    expect(result).toBeNull();
+    const result = buildCollisionClouds(
+      [{ id: 'missing-pair', bodyAId: 'nope-a', bodyBId: 'nope-b' }],
+      new Map(),
+      scene,
+    );
+    expect(result.size).toBe(0);
   });
 
-  it('returns a CollisionCloudEffect when both Henki bodies are present', () => {
+  it('returns one effect per registered pair when both referenced bodies exist', () => {
     const registry = CelestialRegistry.shared();
     const scene = new Scene();
     const celestials = buildCelestialBodies(registry, scene);
-    const result = buildCollisionCloud(celestials, scene);
-    expect(result).not.toBeNull();
+    const pairs = registry.getCollisionPairs();
+    const result = buildCollisionClouds(pairs, celestials, scene);
+    expect(result.size).toBe(pairs.length);
+    for (const pair of pairs) {
+      const entry = result.get(pair.id);
+      expect(entry).toBeDefined();
+      expect(entry!.pair.id).toBe(pair.id);
+    }
   });
 });
