@@ -121,10 +121,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
     }
     onChange(patch);
   }, [
-    data.vocations,
-    data.proficiencyBonus,
-    data.hitDiceLog,
-    data.abilityScores.con,
+    data,
     onChange,
   ]);
 

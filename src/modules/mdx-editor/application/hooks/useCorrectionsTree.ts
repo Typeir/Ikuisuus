@@ -12,8 +12,8 @@
 
 import { correctionsTreeKey } from '@/lib/fetch/swrKeys';
 import type {
-    CorrectionsTreeState,
-    TreeNode,
+  CorrectionsTreeState,
+  TreeNode,
 } from '@/modules/mdx-editor/domain/types';
 import { fetchCorrectionsTree } from '@/modules/mdx-editor/infrastructure/api-clients/draftEditorClient';
 import useSWR from 'swr';

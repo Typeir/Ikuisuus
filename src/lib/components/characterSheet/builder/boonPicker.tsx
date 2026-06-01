@@ -75,13 +75,16 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
     error: fetchError,
   } = useBloodlines({ locale });
   const error = fetchError?.message ?? null;
-  const boons: BloodlineBoon[] =
-    bloodlines.find((b) => b.slug === bloodlineSlug)?.boons ?? [];
   const t = useTranslations('characterSheet');
   const { cache, mutate } = useSWRConfig();
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedBoons, setExpandedBoons] = useState<Set<string>>(
     () => new Set(),
+  );
+
+  const boons: BloodlineBoon[] = useMemo(
+    () => bloodlines.find((b) => b.slug === bloodlineSlug)?.boons ?? [],
+    [bloodlines, bloodlineSlug],
   );
 
   const toggleExpanded = useCallback((name: string) => {

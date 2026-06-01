@@ -30,17 +30,21 @@ describe('useEditorState — initial mode', () => {
     expect(result.current.mode).toBe('new');
   });
 
-  it('starts in "edit" mode when initialSlug is provided', () => {
-    const { result } = renderHook(() =>
-      useEditorState({
-        initialSlug: 'monsters/goblin',
-        initialLocale: 'en',
-        token: null,
-        t,
-      }),
-    );
+  it('starts in "edit" mode when initialSlug is provided', async () => {
+    let result: { current: any };
+    await act(async () => {
+      const hook = renderHook(() =>
+        useEditorState({
+          initialSlug: 'monsters/goblin',
+          initialLocale: 'en',
+          token: null,
+          t,
+        }),
+      );
+      result = hook.result;
+    });
 
-    expect(result.current.mode).toBe('edit');
+    expect(result!.current.mode).toBe('edit');
   });
 });
 
@@ -61,17 +65,21 @@ describe('useEditorState — initial state values', () => {
     expect(result.current.filePath).toBe('');
   });
 
-  it('initialises slug from initialSlug param', () => {
-    const { result } = renderHook(() =>
-      useEditorState({
-        initialSlug: 'spells/fireball',
-        initialLocale: 'en',
-        token: 'tkn',
-        t,
-      }),
-    );
+  it('initialises slug from initialSlug param', async () => {
+    let result: { current: any };
+    await act(async () => {
+      const hook = renderHook(() =>
+        useEditorState({
+          initialSlug: 'spells/fireball',
+          initialLocale: 'en',
+          token: 'tkn',
+          t,
+        }),
+      );
+      result = hook.result;
+    });
 
-    expect(result.current.slug).toBe('spells/fireball');
+    expect(result!.current.slug).toBe('spells/fireball');
   });
 });
 

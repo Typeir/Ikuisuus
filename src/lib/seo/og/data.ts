@@ -16,15 +16,15 @@
  */
 
 import {
-  bloodlineRepository,
-  heirloomRepository,
-  monsterRepository,
-  specializationRepository,
-  spellRepository,
-  trinketRepository,
-  vocationRepository,
+    bloodlineRepository,
+    heirloomRepository,
+    monsterRepository,
+    specializationRepository,
+    spellRepository,
+    trinketRepository,
+    vocationRepository,
 } from '@/lib/db/content/repositories';
-import { resolveStreamSegment } from '@/lib/machineText';
+import { resolveStreamSegment } from '@/modules/library/presentation/components/utils';
 
 /**
  * Minimal metadata shape required for OG card rendering.

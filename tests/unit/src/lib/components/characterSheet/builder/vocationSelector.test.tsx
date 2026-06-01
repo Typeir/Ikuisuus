@@ -12,7 +12,7 @@
 
 import { VocationSelector } from '@/lib/components/characterSheet/builder/vocationSelector';
 import type { CharacterSheet as CharacterSheetType, VocationEntry } from '@/lib/types/character';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -165,8 +165,12 @@ describe('VocationSelector — edit mode', () => {
     );
     await waitFor(() => screen.getByRole('button', { name: /colBloodline/i }));
 
-    await userEvent.click(screen.getByRole('button', { name: /colBloodline/i }));
-    await userEvent.click(screen.getByRole('option', { name: 'Empyrean' }));
+    await act(async () => {
+      await userEvent.click(screen.getByRole('button', { name: /colBloodline/i }));
+    });
+    await act(async () => {
+      await userEvent.click(screen.getByRole('option', { name: 'Empyrean' }));
+    });
 
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({

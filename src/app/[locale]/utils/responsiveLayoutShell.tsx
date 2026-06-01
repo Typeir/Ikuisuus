@@ -19,7 +19,6 @@
 import tertiaryStyles from '@/lib/components/button/tertiaryButton.module.scss';
 import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
 import Icon from '@/lib/components/icon/icon';
-import SidebarShell from '@/lib/components/sidebar/SidebarShell';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
     useSidebarMenuActions,
@@ -27,6 +26,7 @@ import {
     useThemeActions,
     useThemeState,
 } from '@/lib/context/PersistentUiContext';
+import { SidebarShell } from '@/modules/navigation-sidebar';
 import { Theme } from '@/lib/enums/themes';
 import {
     ToolsMenu,

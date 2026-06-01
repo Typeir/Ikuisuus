@@ -7,6 +7,7 @@
  * a bundler.
  *
  * @module scssShim
+ * @author Typeir
  * @version 1.2.0
  * @since 2.0.0
  *

@@ -14,7 +14,7 @@ import { BloodlineTab } from '@/lib/components/characterSheet/tabs/bloodlineTab'
 import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
 import type { CharacterSheet } from '@/lib/types/character';
 import { createEmptyCharacter } from '@/lib/utils/characterStorage';
-import { render as baseRender, screen, waitFor } from '@testing-library/react';
+import { act, render as baseRender, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { SWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -71,7 +71,9 @@ describe('BloodlineTab', () => {
       bloodlineSlug: 'sun-touched',
       bloodlineTitle: 'Sun-Touched',
     };
-    render(<BloodlineTab data={data} onChange={() => {}} />, data);
+    await act(async () => {
+      render(<BloodlineTab data={data} onChange={() => {}} />, data);
+    });
 
     await waitFor(() =>
       expect(screen.getByText('Bloodline lore text.')).toBeTruthy(),

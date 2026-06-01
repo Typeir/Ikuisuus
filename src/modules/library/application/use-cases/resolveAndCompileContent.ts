@@ -6,11 +6,11 @@
  * @since 6.0.0
  */
 
-import { resolveStreamText } from '@/lib/machineText';
 import { isMdFile } from '@/lib/md/isMdFile';
 import { compileSync } from '@/modules/library/infrastructure/compile/compileSync';
 import { fetchContent } from '@/modules/library/infrastructure/content/fetchContent';
 import components from '@/modules/library/presentation/components';
+import { resolveStreamText } from '@/modules/library/presentation/components/utils';
 import type { EvaluateResult } from 'next-mdx-remote-client/rsc';
 import path from 'path';
 import { pathToFileURL } from 'url';

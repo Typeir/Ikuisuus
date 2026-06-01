@@ -53,8 +53,12 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
   editing,
   onChange,
 }) => {
-  const items = (data.equipment ?? []) as EquipmentItem[];
   const equipmentNotes = data.equipmentNotes ?? '';
+
+  const items = useMemo(
+    () => (data.equipment ?? []) as EquipmentItem[],
+    [data.equipment],
+  );
 
   const totalWeight = useMemo(
     () => items.reduce((sum, it) => sum + it.quantity * it.weightLb, 0),

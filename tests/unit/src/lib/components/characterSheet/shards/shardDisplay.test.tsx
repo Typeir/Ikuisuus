@@ -10,7 +10,7 @@
 
 import { ShardDisplay } from '@/lib/components/characterSheet/shards/shardDisplay';
 import type { CharacterShard } from '@/lib/types/character';
-import { render as baseRender, screen, waitFor } from '@testing-library/react';
+import { act, render as baseRender, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { SWRConfig } from 'swr';
@@ -92,9 +92,11 @@ describe('ShardDisplay', () => {
     );
 
     render(<ShardDisplay shard={shardNoCached} />);
-    await userEvent.click(
-      screen.getByRole('button', { name: /Extended Reach/i }),
-    );
+    await act(async () => {
+      await userEvent.click(
+        screen.getByRole('button', { name: /Extended Reach/i }),
+      );
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Full body text here.')).toBeTruthy();
@@ -108,9 +110,11 @@ describe('ShardDisplay', () => {
     );
 
     render(<ShardDisplay shard={shardNoCached} />);
-    await userEvent.click(
-      screen.getByRole('button', { name: /Extended Reach/i }),
-    );
+    await act(async () => {
+      await userEvent.click(
+        screen.getByRole('button', { name: /Extended Reach/i }),
+      );
+    });
 
     await waitFor(() => {
       expect(screen.getByText('shardNotFound')).toBeTruthy();
@@ -124,9 +128,11 @@ describe('ShardDisplay', () => {
         screen.getByText('Your unarmed reach increases by 5 ft.'),
       ).toBeTruthy();
     });
-    await userEvent.click(
-      screen.getByRole('button', { name: /Extended Reach/i }),
-    );
+    await act(async () => {
+      await userEvent.click(
+        screen.getByRole('button', { name: /Extended Reach/i }),
+      );
+    });
     expect(screen.queryByText('Your unarmed reach')).toBeNull();
   });
 });

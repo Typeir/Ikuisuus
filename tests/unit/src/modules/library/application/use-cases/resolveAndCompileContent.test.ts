@@ -6,14 +6,14 @@
  * @since 6.0.0
  */
 
-import { resolveStreamText } from '@/lib/machineText';
-import { isMdFile } from '@/lib/md/isMdFile';
 import { resolveAndCompileContent } from '@/modules/library/application/use-cases/resolveAndCompileContent';
 import { compileSync } from '@/modules/library/infrastructure/compile/compileSync';
 import { fetchContent } from '@/modules/library/infrastructure/content/fetchContent';
+import { resolveStreamText } from '@/modules/library/presentation/components/utils';
+import { isMdFile } from '@/lib/md/isMdFile';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/machineText', () => ({
+vi.mock('@/modules/library/presentation/components/utils', () => ({
   resolveStreamText: vi.fn(),
 }));
 
