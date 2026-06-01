@@ -1,4 +1,4 @@
-import { useMetadataTableData } from '@/lib/hooks/data/useMetadataTableData';
+import { useMetadataTableData } from '@/modules/metadata-tables/application/hooks/useMetadataTableData';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { SWRConfig } from 'swr';

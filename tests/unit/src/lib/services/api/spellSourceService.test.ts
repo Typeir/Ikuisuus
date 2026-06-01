@@ -1,4 +1,4 @@
-import { fetchSpellSources } from '@/lib/services/api/spellSourceService';
+import { fetchSpellSources } from '@/modules/metadata-tables/infrastructure/api-clients/spellSourceClient';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('spellSourceService', () => {

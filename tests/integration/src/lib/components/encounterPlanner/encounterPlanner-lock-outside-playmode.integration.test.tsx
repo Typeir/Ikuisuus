@@ -12,8 +12,8 @@
  *
  * @requires vitest Test framework
  * @requires @testing-library/react Component testing utilities
- * @requires @/lib/components/encounterPlanner EncounterPlanner component
- * @requires @/lib/utils/inProgressCombatStorage Combat storage utilities
+ * @requires @/modules/encounter-planner EncounterPlanner component
+ * @requires @/modules/encounter-planner/application/factories/combatSnapshot.factory Combat storage utilities
  *
  * @description
  * Tests verify that:
@@ -29,9 +29,9 @@
  * expect(combatant.locked).toEqual([]);
  */
 
-import { CombatantRow } from '@/lib/components/encounterPlanner/combatantRow';
-import { createEmptyCreature } from '@/lib/utils/encounterStorage';
-import { createInProgressCombatant } from '@/lib/utils/inProgressCombatStorage';
+import { createInProgressCombatant } from '@/modules/encounter-planner/application/factories/combatSnapshot.factory';
+import { createEmptyCreature } from '@/modules/encounter-planner/application/factories/encounter.factory';
+import { CombatantRow } from '@/modules/encounter-planner/presentation/combatantRow';
 import { render, screen } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -49,7 +49,7 @@ const renderWithIntl = (component: React.ReactElement) => {
   return render(
     <NextIntlClientProvider locale='en' messages={{}} timeZone='UTC'>
       {component}
-    </NextIntlClientProvider>
+    </NextIntlClientProvider>,
   );
 };
 
@@ -116,7 +116,7 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Lock button should be present (in the name section)
@@ -135,7 +135,7 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
           locale='en'
           onUpdate={onUpdate}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Find and click lock button (it should be in the creature name section)
@@ -143,7 +143,7 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
       const lockButton = buttons.find(
         (btn) =>
           btn.getAttribute('aria-label')?.includes('lock') ||
-          btn.querySelector('[aria-label*="lock"]')
+          btn.querySelector('[aria-label*="lock"]'),
       );
 
       // If we can't find by aria-label, the button exists but we verify locked is present
@@ -162,7 +162,7 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Verify combatant has locked array properly initialized

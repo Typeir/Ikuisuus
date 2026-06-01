@@ -10,7 +10,7 @@
  * @author Typeir
  * @since 2.0.0
  *
- * @requires @/lib/components/mdxEditor Main MdxEditor component
+ * @requires @/modules/mdx-editor Main MdxEditor component
  *
  * @example
  * ```
@@ -19,7 +19,7 @@
  * ```
  */
 
-import { MdxEditor } from '@/lib/components/mdxEditor/mdxEditor';
+import { MdxEditor } from '@/modules/mdx-editor';
 import { Metadata } from 'next';
 import styles from './page.module.scss';
 

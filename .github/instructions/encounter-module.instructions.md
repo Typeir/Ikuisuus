@@ -1,5 +1,5 @@
 ---
-applyTo: 'src/lib/components/encounterPlanner/**'
+applyTo: 'src/modules/encounter-planner/**'
 ---
 
 # Encounter Module Architecture Analysis

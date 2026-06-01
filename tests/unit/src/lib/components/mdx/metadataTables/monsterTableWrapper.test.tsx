@@ -9,7 +9,7 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/lib/components/mdx/metadataTables/monsterTableWrapper
+ * @requires @/modules/metadata-tables/presentation/MonsterTable/MonsterTable
  */
 
 import { render, screen } from '@testing-library/react';
@@ -32,7 +32,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock('@/lib/hooks/data/useMetadataTableData', () => ({
+vi.mock('@/modules/metadata-tables/application/hooks/useMetadataTableData', () => ({
   useMetadataTableData: (...args: unknown[]) => mockHook(...args),
 }));
 
@@ -55,7 +55,7 @@ vi.mock('@/lib/components/mdx/metadataTables/metadataTableSkeleton', () => ({
   MetadataTableSkeleton: () => <div data-testid='skeleton'>Loading...</div>,
 }));
 
-import MonsterTableWrapper from '@/lib/components/mdx/metadataTables/monsterTableWrapper';
+import MonsterTableWrapper from '@/modules/metadata-tables/presentation/MonsterTable/MonsterTable';
 
 describe('MonsterTableWrapper', () => {
   beforeEach(() => {

@@ -5,5 +5,5 @@
  * @version 1.0.0
  * @since 2.0.0
  */
-export { default as SpellTable } from './spellTable';
+export { SpellTable } from '@/modules/metadata-tables/presentation';
 

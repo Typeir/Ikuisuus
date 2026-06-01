@@ -216,6 +216,13 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: 'unit:modules',
+          include: ['tests/unit/src/modules/**/*.test.{ts,tsx}'],
+        },
+      },
+      {
+        extends: true,
+        test: {
           name: 'unit:other',
           include: [
             'tests/unit/src/lib/types/**/*.test.{ts,tsx}',

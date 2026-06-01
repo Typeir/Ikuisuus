@@ -10,69 +10,74 @@
  * @requires @/lib/components/characterSheet - Barrel index
  */
 
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
+
+type CharacterSheetBarrel = typeof import('@/lib/components/characterSheet');
+
+let barrel: CharacterSheetBarrel;
 
 describe('characterSheet barrel index', () => {
+  beforeAll(async () => {
+    barrel = await import('@/lib/components/characterSheet');
+  });
+
   it('should export AbilityScoreBlock', async () => {
-    const { AbilityScoreBlock } =
-      await import('@/lib/components/characterSheet');
+    const { AbilityScoreBlock } = barrel;
     expect(AbilityScoreBlock).toBeDefined();
   });
 
   it('should export AttacksTable', async () => {
-    const { AttacksTable } = await import('@/lib/components/characterSheet');
+    const { AttacksTable } = barrel;
     expect(AttacksTable).toBeDefined();
   });
 
   it('should export BoonPicker', async () => {
-    const { BoonPicker } = await import('@/lib/components/characterSheet');
+    const { BoonPicker } = barrel;
     expect(BoonPicker).toBeDefined();
   });
 
   it('should export CharacterRoster', async () => {
-    const { CharacterRoster } = await import('@/lib/components/characterSheet');
+    const { CharacterRoster } = barrel;
     expect(CharacterRoster).toBeDefined();
   });
 
   it('should export CharacterSheet', async () => {
-    const { CharacterSheet } = await import('@/lib/components/characterSheet');
+    const { CharacterSheet } = barrel;
     expect(CharacterSheet).toBeDefined();
   });
 
   it('should export ActiveCharacterSheet', async () => {
-    const { ActiveCharacterSheet } =
-      await import('@/lib/components/characterSheet');
+    const { ActiveCharacterSheet } = barrel;
     expect(ActiveCharacterSheet).toBeDefined();
   });
 
   it('should export CombatStatsRow', async () => {
-    const { CombatStatsRow } = await import('@/lib/components/characterSheet');
+    const { CombatStatsRow } = barrel;
     expect(CombatStatsRow).toBeDefined();
   });
 
   it('should export FeatureViewer', async () => {
-    const { FeatureViewer } = await import('@/lib/components/characterSheet');
+    const { FeatureViewer } = barrel;
     expect(FeatureViewer).toBeDefined();
   });
 
   it('should export NotesSection', async () => {
-    const { NotesSection } = await import('@/lib/components/characterSheet');
+    const { NotesSection } = barrel;
     expect(NotesSection).toBeDefined();
   });
 
   it('should export ShardDisplay', async () => {
-    const { ShardDisplay } = await import('@/lib/components/characterSheet');
+    const { ShardDisplay } = barrel;
     expect(ShardDisplay).toBeDefined();
   });
 
   it('should export ContentShardPanel', async () => {
-    const { ContentShardPanel } =
-      await import('@/lib/components/characterSheet');
+    const { ContentShardPanel } = barrel;
     expect(ContentShardPanel).toBeDefined();
   });
 
   it('should export SkillsTable', async () => {
-    const { SkillsTable } = await import('@/lib/components/characterSheet');
+    const { SkillsTable } = barrel;
     expect(SkillsTable).toBeDefined();
   });
 });

@@ -14,7 +14,7 @@
 
 import { TextInput } from '@/lib/components/ui/textInput';
 import type { CharacterAttack } from '@/lib/types/character';
-import { generateId } from '@/lib/utils/encounterStorage';
+import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 import { Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';

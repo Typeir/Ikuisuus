@@ -1,22 +1,9 @@
 /**
- * @fileoverview Corrections Read API - Fetches raw MDX from the content repo via GitHub API
- * @description Server-side proxy that reads file content and SHA from the content repository
- * on GitHub. Used by the Corrections editor to load the current version of an MDX page
- * without relying on the local filesystem (serverless-safe).
- *
+ * @fileoverview Corrections read API route.
  * @module app/api/corrections/read/route
- * @version 1.0.0
  * @author Typeir
+ * @version 1.0.0
  * @since 2.0.0
- *
- * @requires next/server
- *
- * @example
- * ```typescript
- * // Client usage
- * const res = await fetch('/api/corrections/read?path=en/monsters/aboleth.sheet.mdx');
- * const { content, sha, path } = await res.json();
- * ```
  */
 
 import { draftRepository } from '@/lib/db/content/repositories/draftRepository';
@@ -25,7 +12,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Corrections:Read' });
 
-/** File path variants to try when resolving a slug to a content file. */
 const PATH_VARIANTS = [
   '.mdx',
   '.sheet.mdx',
@@ -35,14 +21,14 @@ const PATH_VARIANTS = [
 ] as const;
 
 /**
- * Fetches a single file from the content repo via the GitHub Contents API.
+ * Loads one repository file payload from GitHub contents API.
  *
- * @param {string} filePath - Path relative to the content repo root (e.g. `en/monsters/aboleth.sheet.mdx`)
- * @returns {Promise<{ content: string; sha: string; path: string } | null>} File data or null if not found
+ * @param {string} filePath - Relative file path in repository.
+ * @returns {Promise<{ content: string; sha: string; path: string } | null>} Decoded file payload.
  */
-const fetchFileFromGitHub = async (
+async function fetchFileFromGitHub(
   filePath: string,
-): Promise<{ content: string; sha: string; path: string } | null> => {
+): Promise<{ content: string; sha: string; path: string } | null> {
   const owner = process.env.CONTENT_REPO_OWNER;
   const repo = process.env.CONTENT_REPO_NAME;
   const token = process.env.GITHUB_PAT;
@@ -67,12 +53,10 @@ const fetchFileFromGitHub = async (
   }
 
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`GitHub API error ${res.status}: ${body}`);
+    throw new Error(`GitHub API error ${res.status}: ${await res.text()}`);
   }
 
   const data = await res.json();
-
   if (data.type !== 'file' || !data.content) {
     return null;
   }
@@ -82,22 +66,15 @@ const fetchFileFromGitHub = async (
     sha: data.sha,
     path: data.path,
   };
-};
+}
 
 /**
- * GET /api/corrections/read
+ * Reads content file by slug/locale and returns content with draft cursor.
  *
- * Resolves a content slug to a file in the content repo and returns its raw
- * MDX content plus the current blob SHA (needed for concurrency checks on submit).
- *
- * Query params:
- *   - `slug` (required): Content slug, e.g. `monsters/aboleth`
- *   - `locale` (optional, default `en`): Content locale prefix
- *
- * @param {NextRequest} req - Incoming request
- * @returns {NextResponse} JSON `{ content, sha, path }` or error
+ * @param {NextRequest} req - Incoming request.
+ * @returns {Promise<NextResponse>} File payload or error.
  */
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
   const slug = searchParams.get('slug');
   const locale = searchParams.get('locale') || 'en';
@@ -127,7 +104,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    /** Also try slug/main.mdx for category index pages */
     const mainResult = await fetchFileFromGitHub(`${basePath}/main.mdx`);
     if (mainResult) {
       const activeDraft = await draftRepository.findActive(locale, slug);

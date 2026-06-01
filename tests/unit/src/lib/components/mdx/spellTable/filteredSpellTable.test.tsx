@@ -22,11 +22,11 @@ vi.mock('next-intl', () => ({
   }),
 }));
 
-vi.mock('@/lib/hooks/data/useSpellSources', () => ({
+vi.mock('@/modules/metadata-tables/application/hooks/useSpellSources', () => ({
   useSpellSources: (...args: unknown[]) => mockHook(...args),
 }));
 
-vi.mock('@/lib/components/mdx/spellTable/useSpellColumns', () => ({
+vi.mock('@/modules/metadata-tables/presentation/useSpellColumns', () => ({
   useSpellColumns: () => [],
 }));
 
@@ -38,7 +38,7 @@ vi.mock('@/lib/components/mdx/metadataTables/metadataTable', () => ({
   ),
 }));
 
-vi.mock('@/lib/components/mdx/spellTable/spellTableSkeleton', () => ({
+vi.mock('@/modules/metadata-tables/presentation/SpellTableSkeleton', () => ({
   SpellTableSkeleton: () => <div data-testid='skeleton'>Loading...</div>,
 }));
 
@@ -59,7 +59,7 @@ vi.mock('@/lib/components/ui', () => ({
   ),
 }));
 
-import FilteredSpellTable from '@/lib/components/mdx/spellTable/filteredSpellTable';
+import FilteredSpellTable from '@/modules/metadata-tables/presentation/FilteredSpellTable/FilteredSpellTable';
 
 /**
  * Creates a mock spell row for table tests.

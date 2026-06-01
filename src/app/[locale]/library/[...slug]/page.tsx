@@ -18,13 +18,12 @@ import matter from 'gray-matter';
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
-import DraftOverlay from '@/lib/components/draftOverlay/draftOverlay';
 import components, { HashNavigationProvider } from '@/lib/components/mdx';
-import EditPageButton from '@/lib/components/mdxEditor/editPageButton';
 import StreamBootstrap from '@/lib/components/stream/StreamBootstrap';
 import { isMdFile } from '@/lib/md/isMdFile';
 import findAllMdxFiles from '@/lib/mdx/findAllMdxFiles';
 import { fetchContent } from '@/lib/utils/fetchContent';
+import { DraftOverlay, EditPageButton } from '@/modules/mdx-editor';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import ClientRenderer from '../../utils/clientRenderer';

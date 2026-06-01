@@ -9,7 +9,11 @@
  * @author Typeir
  * @since 1.0.0
  *
- * @requires @/lib/components/encounterPlanner Main encounter planner component
+ * @requires @/modules/encounter-planner/presentation/EncounterPlanner/useEncounterPlannerState Encounter planner state hook
+ * @requires @/modules/encounter-planner/presentation/combatantRow Encounter planner combatant row component
+ * @requires @/modules/encounter-planner/presentation/comboboxes Encounter planner combobox component
+ * @requires @/modules/encounter-planner/presentation/importer Encounter planner importer component
+ * @requires @/modules/encounter-planner/presentation/playMode Encounter planner play mode component
  *
  * @example
  * ```
@@ -18,51 +22,154 @@
  * ```
  */
 
-import { EncounterPlanner } from '@/lib/components/encounterPlanner';
+'use client';
 
-/**
- * Page props interface
- * @interface PageProps
- * @property {Promise<Object>} params - Route parameters (async in Next.js 15)
- * @property {string} params.locale - Current locale from route segment
- */
-interface PageProps {
-  params: Promise<{
-    locale: string;
-  }>;
-}
+import { CombatantRow } from '@/modules/encounter-planner/presentation/combatantRow';
+import { EncounterCombobox } from '@/modules/encounter-planner/presentation/comboboxes';
+import styles from '@/modules/encounter-planner/presentation/EncounterPlanner/encounterPlanner.module.scss';
+import { useEncounterPlannerState } from '@/modules/encounter-planner/presentation/EncounterPlanner/useEncounterPlannerState';
+import { MonsterImporter } from '@/modules/encounter-planner/presentation/importer';
+import { PlayMode } from '@/modules/encounter-planner/presentation/playMode';
+import { useTranslations } from 'next-intl';
+import React from 'react';
 
 /**
  * Encounter Planner page component.
- * Renders the EncounterPlanner with locale from route parameters.
+ * Implements the route UI directly from encounter planner module parts.
  *
- * @async
  * @function EncounterPlannerPage
- * @param {PageProps} props - Page props with locale parameter
- * @param {Promise<{ locale: string }>} props.params - Async route parameters
- * @returns {Promise<JSX.Element>} Rendered page with encounter planner
+ * @returns {JSX.Element} Rendered page with encounter planner
  */
-export default async function EncounterPlannerPage({ params }: PageProps) {
-  const { locale } = await params;
+export default function EncounterPlannerPage(): JSX.Element {
+  const t = useTranslations('encounterPlanner');
+  const {
+    encounter,
+    encounters,
+    isSaving,
+    showCreatureImport,
+    inProgressCombat,
+    fileInputRef,
+    handleNameChange,
+    handleNewEncounter,
+    handleLoadEncounter,
+    handleDeleteEncounter,
+    handleStartCombat,
+    handleExitPlayMode,
+    handleResumeCombat,
+    handleExport,
+    handleImport,
+    handleFileChange,
+    handleAddCreature,
+    handleImportCreatures,
+    handleUpdateCreature,
+    handleRemoveCreature,
+    setShowCreatureImport,
+    resumeCombatAvailable,
+    createInProgressCombatant,
+  } = useEncounterPlannerState();
+
+  if (!encounter) {
+    return <div className={styles.loading}>{t('loading')}</div>;
+  }
+
+  if (inProgressCombat) {
+    return <PlayMode combat={inProgressCombat} onExit={handleExitPlayMode} />;
+  }
 
   return (
-    <div>
-      <EncounterPlanner />
+    <div className={styles.encounterPlanner}>
+      {resumeCombatAvailable && (
+        <div className={styles.resumeBanner}>
+          <span className={styles.resumeText}>
+            {t('resumeCombatAvailable')}
+          </span>
+          <button
+            onClick={handleResumeCombat}
+            className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
+            {t('resumeCombat')}
+          </button>
+        </div>
+      )}
+      <div className={styles.header}>
+        <div className={styles.titleRow}>
+          <input
+            type='text'
+            className={styles.encounterNameInput}
+            value={encounter.name}
+            onChange={(event) => handleNameChange(event.target.value)}
+            placeholder={t('encounterName')}
+          />
+          <div className={styles.saveIndicator}>
+            {isSaving ? t('saveIndicator') : t('savedIndicator')}
+          </div>
+        </div>
+        <div className={styles.controls}>
+          <button
+            onClick={handleStartCombat}
+            className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
+            {t('startCombat')}
+          </button>
+          <button onClick={handleNewEncounter} className={styles.buttonBase}>
+            {t('newEncounter')}
+          </button>
+          <div className={styles.encounterComboboxWrap}>
+            <EncounterCombobox
+              encounters={encounters}
+              currentEncounterId={encounter.id}
+              onSelect={handleLoadEncounter}
+            />
+          </div>
+          <button onClick={handleExport} className={styles.buttonBase}>
+            {t('exportEncounter')}
+          </button>
+          <button onClick={handleImport} className={styles.buttonBase}>
+            {t('importEncounter')}
+          </button>
+          <button
+            onClick={handleDeleteEncounter}
+            className={`${styles.buttonBase} ${styles.buttonDanger}`}>
+            {t('deleteEncounter')}
+          </button>
+          <input
+            ref={fileInputRef as React.RefObject<HTMLInputElement>}
+            type='file'
+            accept='.json'
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+          />
+        </div>
+      </div>
+      <div className={styles.addCreatureControls}>
+        <button
+          onClick={handleAddCreature}
+          className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
+          {t('addCreature')}
+        </button>
+        <button
+          onClick={() => setShowCreatureImport(!showCreatureImport)}
+          className={`${styles.buttonBase} ${styles.buttonSecondary}`}>
+          {t('importCreature')}
+        </button>
+        {showCreatureImport && (
+          <div className={styles.importContainer}>
+            <MonsterImporter onImport={handleImportCreatures} />
+          </div>
+        )}
+      </div>
+      <div className={styles.creatureList}>
+        {encounter.creatures.map((creature, index) => {
+          const combatant = createInProgressCombatant(creature);
+          return (
+            <CombatantRow
+              key={creature.id}
+              combatant={combatant}
+              onUpdate={(updated) => handleUpdateCreature(index, updated)}
+              onRemoveSessionOnly={() => handleRemoveCreature(index)}
+              disableLocking={true}
+            />
+          );
+        })}
+      </div>
     </div>
   );
-}
-
-/**
- * Generate metadata for the encounter planner page.
- * Sets page title and description for SEO and browser tabs.
- *
- * @function generateMetadata
- * @returns {Object} Metadata object with title and description
- */
-export function generateMetadata() {
-  return {
-    title: 'Encounter Planner | Library of Ikuisuus',
-    description:
-      'Plan and manage combat encounters with initiative tracking, conditions, and creature details.',
-  };
 }

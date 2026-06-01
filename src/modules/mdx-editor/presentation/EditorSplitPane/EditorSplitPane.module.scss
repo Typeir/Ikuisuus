@@ -1,0 +1,158 @@
+@use 'mixins' as *;
+
+.splitPane {
+  display: grid;
+  grid-template-columns: 1fr;
+  position: relative;
+  flex: 1;
+  min-height: 450px;
+  border-radius: 4px;
+  overflow: hidden;
+
+  &[style] {
+    grid-template-columns: var(--split-percent) 6px 1fr;
+  }
+}
+
+.editorPane {
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-bg);
+}
+
+.codeEditor {
+  min-height: 100%;
+  tab-size: 2;
+  color: var(--color-text);
+  font-family: monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+
+  &:focus-within {
+    outline: none;
+  }
+
+  :global {
+    .token.comment,
+    .token.prolog,
+    .token.cdata {
+      color: var(--prism-comment);
+      font-style: italic;
+    }
+
+    .token.keyword,
+    .token.tag,
+    .token.operator {
+      color: var(--prism-keyword);
+    }
+
+    .token.string,
+    .token.attr-value {
+      color: var(--prism-string);
+    }
+
+    .token.title,
+    .token.important {
+      color: var(--prism-title);
+      font-weight: 600;
+    }
+
+    .token.punctuation {
+      color: var(--prism-punctuation);
+    }
+
+    .token.url {
+      color: var(--prism-url);
+    }
+
+    .token.bold {
+      color: var(--prism-bold);
+      font-weight: 700;
+    }
+
+    .token.italic {
+      color: var(--prism-italic);
+      font-style: italic;
+    }
+  }
+}
+
+.codeEditorTextarea {
+  outline: none !important;
+
+  &::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.6;
+  }
+
+  @include disabled-state(0.6);
+}
+
+.divider {
+  width: 6px;
+  cursor: col-resize;
+  background-color: var(--color-border);
+  transition: background-color 0.15s ease;
+  touch-action: none;
+  animation: fadeSlideIn 0.2s ease-out;
+
+  &:hover,
+  &:active {
+    background-color: var(--color-accent);
+  }
+}
+
+.previewPane {
+  position: relative;
+  overflow: auto;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-bg);
+  animation: fadeSlideIn 0.2s ease-out;
+}
+
+.previewBadge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.15s ease;
+  z-index: 2;
+
+  &:hover {
+    opacity: 1;
+    background-color: var(--color-bg);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+}
+
+.showPreviewBadge {
+  composes: previewBadge;
+  opacity: 0.5;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    --_: mde-fadeSlideIn-from;
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    --_: mde-fadeSlideIn-to;
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

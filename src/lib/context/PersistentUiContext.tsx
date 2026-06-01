@@ -269,9 +269,9 @@ export type { ThemeActions, ThemeState } from '../hooks/useThemeState';
 export {
   useCorrectionsTokenActions,
   useCorrectionsTokenState
-} from '../hooks/useCorrectionsToken';
+} from '../../modules/mdx-editor/application/hooks/useCorrectionsToken';
 export type {
   CorrectionsTokenActions,
   CorrectionsTokenState
-} from '../hooks/useCorrectionsToken';
+} from '../../modules/mdx-editor/application/hooks/useCorrectionsToken';
 

@@ -45,7 +45,7 @@
     "justification": "Module-scoped SCSS for the generic metadata table covering column layouts, sort indicators, pagination, filter controls, and responsive breakpoints — splitting would break module-scoped class references"
   },
   {
-    "file": "src/lib/components/mdxEditor/mdxEditor.module.scss",
+    "file": "src/modules/mdx-editor/presentation/MdxEditor/MdxEditor.module.scss",
     "maxLines": 420,
     "justification": "Module-scoped SCSS for MDX editor with toolbar, preview pane, and syntax highlighting styles"
   },
@@ -68,6 +68,16 @@
     "file": "src/lib/components/worldSim/WorldSimMediator.ts",
     "maxLines": 340,
     "justification": "Central mediator coordinating world sim subsystems; scene assembly delegated to CelestialSceneBuilder and pointer events to CanvasInputHandler — remaining surface area is orchestration that must stay cohesive"
+  },
+  {
+    "file": "src/modules/encounter-planner/presentation/comboboxes/genericCombobox.tsx",
+    "maxLines": 600,
+    "justification": "Moved module path for generic combobox with keyboard navigation, filtering, and accessibility behavior that remains intentionally cohesive."
+  },
+  {
+    "file": "src/modules/world-sim/application/mediator/WorldSimMediator.ts",
+    "maxLines": 600,
+    "justification": "Moved module path for world-sim mediator orchestration that coordinates multiple subsystems and remains cohesive by design."
   },
   {
     "file": "src/lib/metadata/syncService.ts",

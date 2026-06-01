@@ -8,7 +8,13 @@
  * @author Typeir
  * @since 1.0.0
  *
- * @requires @/lib/components/worldSim Main World Sim component
+ * @requires @/modules/world-sim/application/state/WorldSimContext World sim provider and state hooks
+ * @requires @/modules/world-sim/application/state/WorldSimControlsContext World sim controls provider
+ * @requires @/modules/world-sim/application/hooks/useWorldSimCanvas World sim canvas integration hook
+ * @requires @/modules/world-sim/presentation/overlay/ControlsBar/ControlsBar World sim controls UI
+ * @requires @/modules/world-sim/presentation/overlay/InfoPanel/InfoPanel World sim info panel UI
+ * @requires @/modules/world-sim/presentation/overlay/OverlayContainer/OverlayContainer World sim overlay labels
+ * @requires @/modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel World sim content panel UI
  *
  * @example
  * ```
@@ -17,51 +23,75 @@
  * ```
  */
 
-import { WorldSim } from '@/lib/components/worldSim';
+'use client';
+
+import { useWorldSimCanvas } from '@/modules/world-sim/application/hooks/useWorldSimCanvas';
+import {
+    useWorldSimState,
+    WorldSimProvider,
+} from '@/modules/world-sim/application/state/WorldSimContext';
+import { WorldSimControlsProvider } from '@/modules/world-sim/application/state/WorldSimControlsContext';
+import { ControlsBar } from '@/modules/world-sim/presentation/overlay/ControlsBar/ControlsBar';
+import { InfoPanel } from '@/modules/world-sim/presentation/overlay/InfoPanel/InfoPanel';
+import { OverlayContainer } from '@/modules/world-sim/presentation/overlay/OverlayContainer/OverlayContainer';
+import { WorldSimContentPanel } from '@/modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel';
+import styles from '@/modules/world-sim/presentation/WorldSim/WorldSim.module.scss';
+import { useTranslations } from 'next-intl';
 
 /**
- * Page props interface
- * @interface PageProps
- * @property {Promise<Object>} params - Route parameters (async in Next.js 15)
- * @property {string} params.locale - Current locale from route segment
- */
-interface PageProps {
-  params: Promise<{
-    locale: string;
-  }>;
-}
-
-/**
- * World Sim page component.
- * Renders the WorldSim interactive solar system.
+ * Inner world sim renderer that consumes world sim context state.
  *
- * @async
- * @function WorldSimPage
- * @param {PageProps} props - Page props with locale parameter
- * @param {Promise<{ locale: string }>} props.params - Route parameters (async in Next.js 15)
- * @returns {Promise<JSX.Element>} Rendered page with World Sim
+ * @returns {React.ReactElement} World sim visual composition.
  */
-export default async function WorldSimPage({ params }: PageProps) {
-  const { locale: _locale } = await params;
+function WorldSimPageInner(): React.ReactElement {
+  const t = useTranslations('worldSim');
+  const state = useWorldSimState();
+  const { containerRef, mediatorRef, bindElement, unbindElement } =
+    useWorldSimCanvas();
 
   return (
-    <div>
-      <WorldSim />
-    </div>
+    <WorldSimControlsProvider mediatorRef={mediatorRef}>
+      <div className={styles.worldSimWrapper}>
+        <div ref={containerRef} className={styles.canvasContainer} />
+
+        {!state.isInitialized && (
+          <div className={styles.loadingOverlay}>
+            <span className={styles.loadingText}>{t('loading')}</span>
+          </div>
+        )}
+
+        <div className={styles.header}>
+          <h1 className={styles.headerTitle}>{t('title')}</h1>
+          <p className={styles.headerSubtitle}>{t('subtitle')}</p>
+        </div>
+
+        <OverlayContainer
+          bindElement={bindElement}
+          unbindElement={unbindElement}
+          mediatorRef={mediatorRef}
+        />
+
+        <InfoPanel mediatorRef={mediatorRef} />
+
+        <WorldSimContentPanel />
+
+        <ControlsBar mediatorRef={mediatorRef} />
+      </div>
+    </WorldSimControlsProvider>
   );
 }
 
 /**
- * Generate metadata for the World Sim page.
- * Sets page title and description for SEO and browser tabs.
+ * World Sim page component.
+ * Renders the route-owned World Sim composition.
  *
- * @function generateMetadata
- * @returns {Object} Metadata object with title and description
+ * @function WorldSimPage
+ * @returns {React.ReactElement} Rendered page with world sim.
  */
-export function generateMetadata() {
-  return {
-    title: 'World Sim — The Black Cradle | Library of Ikuisuus',
-    description:
-      'Interactive 3D visualization of the Black Cradle solar system. Explore celestial bodies, regions, and the lore of Damocles.',
-  };
+export default function WorldSimPage(): React.ReactElement {
+  return (
+    <WorldSimProvider>
+      <WorldSimPageInner />
+    </WorldSimProvider>
+  );
 }

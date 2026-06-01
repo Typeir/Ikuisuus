@@ -19,7 +19,7 @@ vi.mock('next-intl', () => ({
   }),
 }));
 
-import { useSpellColumns } from '@/lib/components/mdx/spellTable/useSpellColumns';
+import { useSpellColumns } from '@/modules/metadata-tables/presentation/useSpellColumns/useSpellColumns';
 
 describe('useSpellColumns', () => {
   it('returns the six standard spell columns', () => {

@@ -1,0 +1,137 @@
+@use 'mixins' as *;
+
+/** Shared detail/chip/condition styles used across encounter-planner presentation components. */
+
+.addConditionContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.addConditionInput {
+  width: 100%;
+  padding: 0.35rem 1.75rem 0.35rem 0.4rem;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.75rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+}
+
+.addConditionButton {
+  position: absolute;
+  right: 0.25rem;
+  background: transparent !important;
+  border: none;
+  padding: 0.15rem 0.35rem;
+  color: var(--color-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1;
+  transition:
+    color 0.2s ease,
+    transform 0.15s ease,
+    filter 0.2s ease;
+
+  &:hover {
+    color: var(--color-accent);
+    transform: scale(1.25);
+    filter: drop-shadow(0px 0px 3px var(--color-accent));
+    background: transparent !important;
+  }
+
+  &:focus,
+  &:active {
+    outline: none;
+    background: transparent !important;
+    box-shadow: none;
+  }
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  align-items: end;
+  gap: 0.75rem;
+}
+
+.detailsColumn {
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  height: 100%;
+  gap: 0.75rem;
+
+  > :last-child {
+    margin-top: auto;
+  }
+}
+
+.detailsColumnTitle {
+  @include label-uppercase;
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-secondary);
+}
+
+.chips {
+  background: transparent !important;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-height: 32px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: var(--color-text);
+
+  &.chipNotFound {
+    opacity: 0.7;
+    border-color: var(--color-secondary);
+    border-style: dashed;
+  }
+}
+
+.removeChip {
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-weight: 600;
+
+  &:hover {
+    background-color: var(--color-transparent);
+    color: var(--color-emphasis);
+  }
+}
+
+.affixLink {
+  color: var(--color-accent);
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+  }
+}
+
+.spellComboboxWrapper {
+  margin-top: 0.5rem;
+}

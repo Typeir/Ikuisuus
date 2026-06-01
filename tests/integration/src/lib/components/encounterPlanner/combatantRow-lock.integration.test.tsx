@@ -6,8 +6,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { CombatantRow } from '@/lib/components/encounterPlanner/combatantRow';
-import type { InProgressCombatant } from '@/lib/types/inProgressCombat';
+import { CombatantRow } from '@/modules/encounter-planner/presentation/combatantRow';
+import type { InProgressCombatant } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 
 vi.mock('react-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-dom')>();

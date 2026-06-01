@@ -11,6 +11,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
+import {
+    FilteredSpellTable,
+    HeirloomTable,
+    MonsterTable,
+    SpellTable,
+    TrinketTable,
+} from '@/modules/metadata-tables/presentation';
 import type { PropsWithChildren } from 'react';
 import BlendedImage from './blendedImage';
 import ClearFloats from './clearFloats/clearFloats';
@@ -21,12 +28,7 @@ import { H1, H2, H3, H4, H5, H6 } from './heading/heading';
 import HorizontalSplit from './horizontalSplit/horizontalSplit';
 import mdxComponents from './mdxComponents';
 import Meta from './meta/meta';
-import HeirloomTableWrapper from './metadataTables/heirloomTableWrapper';
-import MonsterTableWrapper from './metadataTables/monsterTableWrapper';
-import TrinketTableWrapper from './metadataTables/trinketTableWrapper';
 import ParallaxBackdrop from './parallaxBackdrop/parallaxBackdrop';
-import { SpellTable } from './spellTable';
-import FilteredSpellTable from './spellTable/filteredSpellTable';
 import Tooltip from './tooltip/tooltip';
 
 export const components = {
@@ -34,11 +36,11 @@ export const components = {
   Collapsible,
   FlexRenderer,
   Meta,
-  MonsterTable: MonsterTableWrapper,
-  HeirloomTable: HeirloomTableWrapper,
+  MonsterTable,
+  HeirloomTable,
   FilteredSpellTable,
   SpellTable,
-  TrinketTable: TrinketTableWrapper,
+  TrinketTable,
   HorizontalSplit,
   FloatedContainer,
   ClearFloats,

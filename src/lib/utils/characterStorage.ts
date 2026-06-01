@@ -19,7 +19,7 @@ import type {
   EquipmentItem,
   VocationEntry,
 } from '@/lib/types/character';
-import { generateId } from '@/lib/utils/encounterStorage';
+import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 
 /**
  * All 28 standard D&D skills with their linked ability.

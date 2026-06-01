@@ -10,7 +10,7 @@
  * @since 2.0.0
  */
 
-import type { ComboboxItem } from '@/lib/components/encounterPlanner/comboboxes/genericCombobox';
+import type { ComboboxItem } from '@/modules/encounter-planner/presentation/comboboxes/genericCombobox';
 import { monstersIndexKey, spellsIndexKey, affixesIndexKey } from '@/lib/fetch/swrKeys';
 import { logger } from '@/lib/logging/logger';
 import {
@@ -21,7 +21,7 @@ import {
   type AffixIndexEntry,
   type MonsterIndexEntry,
   type SpellIndexEntry,
-} from '@/lib/services/api/encounterDataService';
+} from '@/modules/encounter-planner/infrastructure/services/encounterDataService';
 import { useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 

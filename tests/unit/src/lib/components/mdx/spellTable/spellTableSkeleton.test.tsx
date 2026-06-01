@@ -8,11 +8,11 @@
  * @author Typeir
  * 
  * @requires vitest
- * @requires @/lib/components/mdx/spellTable/spellTableSkeleton
+ * @requires @/modules/metadata-tables/presentation/SpellTableSkeleton
  */
 
 import { describe, it, expect } from 'vitest';
-import * as SpellTableSkeletonModule from '@/lib/components/mdx/spellTable/spellTableSkeleton';
+import * as SpellTableSkeletonModule from '@/modules/metadata-tables/presentation/SpellTableSkeleton';
 
 describe('spellTableSkeleton', () => {
   it('should export SpellTableSkeleton component', () => {

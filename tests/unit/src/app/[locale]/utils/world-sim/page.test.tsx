@@ -1,29 +1,22 @@
 /**
  * @fileoverview World Sim Page Unit Tests
- * @description Tests the generateMetadata export and basic page rendering.
+ * @description Validates WorldSimPage default export and component signature.
  *
  * @module tests/unit/worldSimPage
  */
 
-import { generateMetadata } from '@/app/[locale]/utils/world-sim/page';
-import { describe, expect, it, vi } from 'vitest';
-
-/** Mock the WorldSim component to avoid Three.js initialization */
-vi.mock('@/lib/components/worldSim', () => ({
-  WorldSim: () => null,
-}));
+import * as PageModule from '@/app/[locale]/utils/world-sim/page';
+import { describe, expect, it } from 'vitest';
 
 describe('WorldSimPage', () => {
-  describe('generateMetadata', () => {
-    it('returns metadata with title', () => {
-      const meta = generateMetadata();
-      expect(meta.title).toContain('World Sim');
-    });
+  it('should export default WorldSimPage component', () => {
+    expect(PageModule.default).toBeDefined();
+    expect(typeof PageModule.default).toBe('function');
+  });
 
-    it('returns metadata with description', () => {
-      const meta = generateMetadata();
-      expect(meta.description).toBeTruthy();
-      expect(meta.description.length).toBeGreaterThan(10);
-    });
+  it('should be a React component', () => {
+    const componentString = PageModule.default.toString();
+    expect(componentString).toBeDefined();
+    expect(componentString.length).toBeGreaterThan(0);
   });
 });

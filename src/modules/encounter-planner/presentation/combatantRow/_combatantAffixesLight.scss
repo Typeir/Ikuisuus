@@ -1,0 +1,162 @@
+/* health:check-ignore-file no-color-literals, * */
+
+/* ============================================
+   LIGHT THEME OVERRIDES FOR AWAKENED STATES
+   Adjusts text and accent colors for lighter backgrounds
+============================================ */
+:global(html[data-theme='light']) {
+  .awakened--bloodthirsty {
+    --ha-ctx-text: #3d2632;
+    --ha-ctx-text-secondary: #785060;
+    --ha-ctx-accent: #9c4050;
+    --ha-ctx-accent-hover: #8c3040;
+    --ha-ctx-input-bg: #f5e0e5;
+    --ha-ctx-input-border: #c0909a;
+    --ha-ctx-button-bg: #f8eaef;
+    --ha-ctx-divider: #d0a0a8;
+    --ha-ctx-glow: rgba(156, 64, 80, 0.15);
+    --ha-ctx-text-emphasis: #9c4050;
+  }
+
+  .awakened--championed {
+    --ha-ctx-text: #2d3038;
+    --ha-ctx-text-secondary: #585e70;
+    --ha-ctx-accent: #606880;
+    --ha-ctx-accent-hover: #505868;
+    --ha-ctx-input-bg: #e0e4ec;
+    --ha-ctx-input-border: #a0a8b8;
+    --ha-ctx-button-bg: #e8ecf2;
+    --ha-ctx-divider: #b0b8c8;
+    --ha-ctx-glow: rgba(96, 104, 128, 0.15);
+    --ha-ctx-text-emphasis: #606880;
+  }
+
+  .awakened--crusading {
+    --ha-ctx-text: #3d3826;
+    --ha-ctx-text-secondary: #706840;
+    --ha-ctx-accent: #9c8830;
+    --ha-ctx-accent-hover: #8c7820;
+    --ha-ctx-input-bg: #f0e8d0;
+    --ha-ctx-input-border: #c0b080;
+    --ha-ctx-button-bg: #f5f0e0;
+    --ha-ctx-divider: #d0c090;
+    --ha-ctx-glow: rgba(156, 136, 48, 0.15);
+    --ha-ctx-text-emphasis: #9c8830;
+  }
+
+  .awakened--flametongued {
+    --ha-ctx-text: #3d2e26;
+    --ha-ctx-text-secondary: #785848;
+    --ha-ctx-accent: #b07040;
+    --ha-ctx-accent-hover: #a06030;
+    --ha-ctx-input-bg: #f0e4d8;
+    --ha-ctx-input-border: #c8a088;
+    --ha-ctx-button-bg: #f5ece2;
+    --ha-ctx-button-text: #b07040;
+    --ha-ctx-button-border: #c8a088;
+    --ha-ctx-divider: #d8b098;
+    --ha-ctx-glow: rgba(176, 112, 64, 0.15);
+    --ha-ctx-text-emphasis: #b07040;
+  }
+
+  .awakened--frostveined {
+    --ha-ctx-text: #262d3d;
+    --ha-ctx-text-secondary: #486078;
+    --ha-ctx-accent: #4088b0;
+    --ha-ctx-accent-hover: #3078a0;
+    --ha-ctx-input-bg: #d8e4f0;
+    --ha-ctx-input-border: #88a8c0;
+    --ha-ctx-button-bg: #e2ecf5;
+    --ha-ctx-button-text: #4088b0;
+    --ha-ctx-button-border: #88a8c0;
+    --ha-ctx-divider: #98b8d0;
+    --ha-ctx-glow: rgba(64, 136, 176, 0.15);
+    --ha-ctx-text-emphasis: #4088b0;
+  }
+
+  .awakened--psionic {
+    --ha-ctx-text: #38263d;
+    --ha-ctx-text-secondary: #684878;
+    --ha-ctx-accent: #9050a8;
+    --ha-ctx-accent-hover: #804098;
+    --ha-ctx-input-bg: #ecd8f0;
+    --ha-ctx-input-border: #b090c0;
+    --ha-ctx-button-bg: #f2e2f5;
+    --ha-ctx-button-text: #9050a8;
+    --ha-ctx-button-border: #b090c0;
+    --ha-ctx-divider: #c0a0d0;
+    --ha-ctx-glow: rgba(144, 80, 168, 0.15);
+    --ha-ctx-text-emphasis: #9050a8;
+  }
+
+  .awakened--rakish {
+    --ha-ctx-text: #333540;
+    --ha-ctx-text-secondary: #606878;
+    --ha-ctx-accent: #7080a0;
+    --ha-ctx-accent-hover: #607090;
+    --ha-ctx-input-bg: #e4e8f0;
+    --ha-ctx-input-border: #a8b0c0;
+    --ha-ctx-button-bg: #ecf0f5;
+    --ha-ctx-button-text: #7080a0;
+    --ha-ctx-button-border: #a8b0c0;
+    --ha-ctx-divider: #b8c0d0;
+    --ha-ctx-glow: rgba(112, 128, 160, 0.15);
+    --ha-ctx-text-emphasis: #7080a0;
+  }
+
+  .awakened--stormbound {
+    --ha-ctx-text: #30263d;
+    --ha-ctx-text-secondary: #584870;
+    --ha-ctx-accent: #7858a0;
+    --ha-ctx-accent-hover: #684890;
+    --ha-ctx-input-bg: #e0d8f0;
+    --ha-ctx-input-border: #a090c0;
+    --ha-ctx-button-bg: #eae2f5;
+    --ha-ctx-button-text: #7858a0;
+    --ha-ctx-button-border: #a890c0;
+    --ha-ctx-divider: #b0a0d0;
+    --ha-ctx-glow: rgba(120, 88, 160, 0.15);
+    --ha-ctx-text-emphasis: #7858a0;
+  }
+
+  .awakened--sulphurous {
+    --ha-ctx-text: #2d3826;
+    --ha-ctx-text-secondary: #506848;
+    --ha-ctx-accent: #608838;
+    --ha-ctx-accent-hover: #507828;
+    --ha-ctx-input-bg: #e0ecd8;
+    --ha-ctx-input-border: #90b080;
+    --ha-ctx-button-bg: #eaf2e2;
+    --ha-ctx-button-text: #608838;
+    --ha-ctx-button-border: #90b080;
+    --ha-ctx-divider: #a0c090;
+    --ha-ctx-glow: rgba(96, 136, 56, 0.15);
+    --ha-ctx-text-emphasis: #608838;
+  }
+
+  .awakened--legendary {
+    --ha-ctx-text: #3d3520;
+    --ha-ctx-text-secondary: #806830;
+    --ha-ctx-accent: #b89820;
+    --ha-ctx-accent-hover: #a88810;
+    --ha-ctx-input-bg: #f0e8c8;
+    --ha-ctx-input-border: #c8b060;
+    --ha-ctx-button-bg: #f5f0d8;
+    --ha-ctx-divider: #d8c070;
+    --ha-ctx-glow: rgba(184, 152, 32, 0.2);
+    --ha-ctx-text-emphasis: #b89820;
+  }
+
+  .awakened--mythic {
+    --ha-ctx-text: #302838;
+    --ha-ctx-text-secondary: #685080;
+    --ha-ctx-accent: #8868a8;
+    --ha-ctx-accent-hover: #785898;
+    --ha-ctx-input-bg: #e8e0f0;
+    --ha-ctx-input-border: #b098c8;
+    --ha-ctx-button-bg: #ece4f2;
+    --ha-ctx-divider: #c0a8d8;
+    --ha-ctx-glow: rgba(136, 104, 168, 0.2);
+    --ha-ctx-text-emphasis: #8868a8;
+  }
+}
