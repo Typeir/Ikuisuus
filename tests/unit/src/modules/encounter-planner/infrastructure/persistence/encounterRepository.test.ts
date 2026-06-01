@@ -11,25 +11,31 @@
  * @requires @/modules/encounter-planner - Encounter storage utilities
  */
 
-import { EncounterStorage } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';
+import { storePersistentDataRef } from '@/lib/utils/storePersistentData';
+import {
+    createEmptyCreature,
+    createEmptyEncounter,
+} from '@/modules/encounter-planner/application/factories/encounter.factory';
 import type { Encounter } from '@/modules/encounter-planner/domain/encounters/encounter.types';
 import {
     calculateInitiativeMod,
-    createEmptyCreature,
-    createEmptyEncounter,
-    deleteEncounter,
-    exportEncounter,
     generateId,
+    rollInitiative,
+} from '@/modules/encounter-planner/domain/shared/utils';
+import { EncounterStorage } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';
+import {
+    exportEncounter,
+    importEncounter,
+} from '@/modules/encounter-planner/infrastructure/persistence/encounterImportExport';
+import {
+    deleteEncounter,
     getActiveEncounter,
     getActiveEncounterId,
     getEncounters,
-    importEncounter,
-    rollInitiative,
     saveEncounter,
     saveEncounters,
     setActiveEncounterId,
-} from '@/modules/encounter-planner/domain/shared/utils';
-import { storePersistentDataRef } from '@/lib/utils/storePersistentData';
+} from '@/modules/encounter-planner/infrastructure/persistence/encounterRepository';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('encounterStorage', () => {

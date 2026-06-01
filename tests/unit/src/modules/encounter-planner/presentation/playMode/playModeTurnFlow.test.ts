@@ -7,7 +7,7 @@
  * @author Typeir
  */
 
-import { buildEndTurnTransition } from '@/modules/encounter-planner/playMode/playModeTurnFlow';
+import { buildEndTurnTransition } from '@/modules/encounter-planner/application/lifecycle/playModeTurnFlow';
 import type {
     InProgressCombat,
     InProgressCombatant,

@@ -6,7 +6,7 @@
  * @since 1.0.0
  *
  * @requires vitest
- * @requires @/lib/components/mdx/metadataTables
+ * @requires @/modules/library/presentation/components/metadataTables
  */
 
 import { describe, it, expect } from 'vitest';

@@ -4,7 +4,7 @@
  * the cancel-pending ref coordination that prevents blur-after-Escape commits.
  */
 
-import { useEditableField } from '@/modules/encounter-planner/combatantRow/utils/useEditableField';
+import { useEditableField } from '@/modules/encounter-planner/presentation/combatantRow/utils/useEditableField';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 

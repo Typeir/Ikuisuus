@@ -9,7 +9,7 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/importer
+ * @requires @/modules/encounter-planner/presentation/importer
  */
 
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
@@ -18,7 +18,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
     createUseTranslationsMock,
     loadMessageFile,
-} from '../../../testUtils/translationMockUtils';
+} from '../../../../lib/testUtils/translationMockUtils';
 
 vi.mock('next-intl', () => ({
   useTranslations: createUseTranslationsMock({
@@ -76,7 +76,7 @@ vi.mock('@/lib/utils/monsterCache', () => {
   };
 });
 
-import { MonsterImporter } from '@/modules/encounter-planner/importer';
+import { MonsterImporter } from '@/modules/encounter-planner/presentation/importer';
 
 /**
  * Helper to select a creature from the combobox dropdown

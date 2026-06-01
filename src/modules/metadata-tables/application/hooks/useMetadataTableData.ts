@@ -45,21 +45,21 @@ export function useMetadataTableData<T>(
   locale: string,
   entityName: string,
 ): MetadataTableDataState<T> {
-  const { data, isLoading, error: swrError } = useSWR<T[], Error>(
-    [entityName, locale],
-    () => fetcher(locale),
-    {
-      onSuccess: (result) => {
-        log.debug(`Loaded ${entityName}`, { count: result.length, locale });
-      },
-      onError: (err) => {
-        log.error(`Failed to load ${entityName}`, {
-          error: err instanceof Error ? err.message : String(err),
-          locale,
-        });
-      },
+  const {
+    data,
+    isLoading,
+    error: swrError,
+  } = useSWR<T[], Error>([entityName, locale], () => fetcher(locale), {
+    onSuccess: (result) => {
+      log.debug(`Loaded ${entityName}`, { count: result.length, locale });
     },
-  );
+    onError: (err) => {
+      log.error(`Failed to load ${entityName}`, {
+        error: err instanceof Error ? err.message : String(err),
+        locale,
+      });
+    },
+  });
 
   return {
     data: data ?? [],
@@ -67,4 +67,3 @@ export function useMetadataTableData<T>(
     error: swrError ? swrError.message : null,
   };
 }
-

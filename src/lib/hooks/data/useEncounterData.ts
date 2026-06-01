@@ -10,18 +10,22 @@
  * @since 2.0.0
  */
 
-import type { ComboboxItem } from '@/modules/encounter-planner/presentation/comboboxes/genericCombobox';
-import { monstersIndexKey, spellsIndexKey, affixesIndexKey } from '@/lib/fetch/swrKeys';
+import {
+    affixesIndexKey,
+    monstersIndexKey,
+    spellsIndexKey,
+} from '@/lib/fetch/swrKeys';
 import { logger } from '@/lib/logging/logger';
 import {
-  fetchAffixIndex,
-  fetchMonsterIndex,
-  fetchSpellBySlug,
-  fetchSpellIndex,
-  type AffixIndexEntry,
-  type MonsterIndexEntry,
-  type SpellIndexEntry,
+    fetchAffixIndex,
+    fetchMonsterIndex,
+    fetchSpellBySlug,
+    fetchSpellIndex,
+    type AffixIndexEntry,
+    type MonsterIndexEntry,
+    type SpellIndexEntry,
 } from '@/modules/encounter-planner/infrastructure/services/encounterDataService';
+import type { ComboboxItem } from '@/modules/encounter-planner/presentation/comboboxes/genericCombobox';
 import { useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
@@ -155,7 +159,10 @@ export function useAffixIndex(
   );
 
   const items = useMemo(
-    () => (allItems ?? []).filter((affix) => !existingAffixes.includes(affix.title)),
+    () =>
+      (allItems ?? []).filter(
+        (affix) => !existingAffixes.includes(affix.title),
+      ),
     [allItems, existingAffixes],
   );
 

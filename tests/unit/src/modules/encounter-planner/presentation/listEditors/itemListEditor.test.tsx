@@ -8,11 +8,11 @@
  * @author Typeir
  * 
  * @requires vitest
- * @requires @/modules/encounter-planner/listEditors/itemListEditor
+ * @requires @/modules/encounter-planner/presentation/listEditors/itemListEditor
  */
 
 import { describe, it, expect } from 'vitest';
-import * as ItemListEditorModule from '@/modules/encounter-planner/listEditors/itemListEditor';
+import * as ItemListEditorModule from '@/modules/encounter-planner/presentation/listEditors/itemListEditor';
 
 describe('itemListEditor', () => {
   it('should export ItemListEditor component', () => {

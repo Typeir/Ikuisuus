@@ -9,15 +9,15 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/combatantRowMechanicsSection
- * @requires @/modules/encounter-planner/playMode/CombatantContext
+ * @requires @/modules/encounter-planner/presentation/combatantRowMechanicsSection
+ * @requires @/modules/encounter-planner/presentation/playMode/CombatantContext
  */
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as CombatantMechanicsSectionModule from '@/modules/encounter-planner/combatantRow/combatantMechanicsSection';
-import { CombatantMechanicsSection } from '@/modules/encounter-planner/combatantRow/combatantMechanicsSection';
+import * as CombatantMechanicsSectionModule from '@/modules/encounter-planner/presentation/combatantRow/combatantMechanicsSection';
+import { CombatantMechanicsSection } from '@/modules/encounter-planner/presentation/combatantRow/combatantMechanicsSection';
 import { CombatantProvider } from '@/modules/encounter-planner/presentation/combatantRow/utils/context/combatantContext';
 import type { CombatantMechanics, InProgressCombatant } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 

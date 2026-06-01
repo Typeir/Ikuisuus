@@ -7,10 +7,10 @@
  * @since 1.0.0
  *
  * @requires vitest - Test framework
- * @requires @/modules/encounter-planner/partyManager
+ * @requires @/modules/encounter-planner/presentation/partyManager
  */
 
-import * as PartyManagerModule from '@/modules/encounter-planner/partyManager';
+import * as PartyManagerModule from '@/modules/encounter-planner/presentation/partyManager';
 import { describe, expect, it } from 'vitest';
 
 describe('partyManager barrel export', () => {

@@ -11,25 +11,34 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
+import { useHashNavigation } from '@/modules/library/application/hooks/useHashNavigation';
+import mdxComponents from '@/modules/library/infrastructure/compile/mdxComponents';
+import BlendedImage from '@/modules/library/presentation/components/BlendedImage/index';
+import ClearFloats from '@/modules/library/presentation/components/ClearFloats/index';
+import Collapsible from '@/modules/library/presentation/components/Collapsible/index';
+import FlexRenderer from '@/modules/library/presentation/components/FlexRenderer/index';
+import FloatedContainer from '@/modules/library/presentation/components/FloatedContainer/index';
+import { HashNavigationProvider } from '@/modules/library/presentation/components/HashNavigationProvider/index';
 import {
-    FilteredSpellTable,
-    HeirloomTable,
-    MonsterTable,
-    SpellTable,
-    TrinketTable,
+  H1,
+  H2,
+  H3,
+  H4,
+  H5,
+  H6,
+} from '@/modules/library/presentation/components/Heading/index';
+import HorizontalSplit from '@/modules/library/presentation/components/HorizontalSplit/index';
+import Meta from '@/modules/library/presentation/components/Meta/index';
+import ParallaxBackdrop from '@/modules/library/presentation/components/ParallaxBackdrop/index';
+import Tooltip from '@/modules/library/presentation/components/Tooltip/index';
+import {
+  FilteredSpellTable,
+  HeirloomTable,
+  MonsterTable,
+  SpellTable,
+  TrinketTable,
 } from '@/modules/metadata-tables/presentation';
 import type { PropsWithChildren } from 'react';
-import BlendedImage from './blendedImage';
-import ClearFloats from './clearFloats/clearFloats';
-import Collapsible from './collapsible/collapsible';
-import FlexRenderer from './flexRenderer';
-import FloatedContainer from './floatedContainer/floatedContainer';
-import { H1, H2, H3, H4, H5, H6 } from './heading/heading';
-import HorizontalSplit from './horizontalSplit/horizontalSplit';
-import mdxComponents from './mdxComponents';
-import Meta from './meta/meta';
-import ParallaxBackdrop from './parallaxBackdrop/parallaxBackdrop';
-import Tooltip from './tooltip/tooltip';
 
 export const components = {
   BlendedImage,
@@ -85,6 +94,5 @@ const enrichedComponents = {
 };
 
 export default enrichedComponents;
-export { useHashNavigation } from '@/lib/hooks/useHashNavigation';
-export { HashNavigationProvider } from './hashNavigationProvider/hashNavigationProvider';
+export { HashNavigationProvider, useHashNavigation };
 

@@ -173,12 +173,10 @@ export function useContentShardSingle({
   const { data, isLoading, error, mutate } = useSWR<
     ContentShardResponse,
     Error
-  >(
-    contentShardSingleKey(contentType, slug, key, locale, enabled),
-    () =>
-      fetcher<ContentShardResponse>(
-        urlForContentShardSingle(contentType, slug, key, locale),
-      ),
+  >(contentShardSingleKey(contentType, slug, key, locale, enabled), () =>
+    fetcher<ContentShardResponse>(
+      urlForContentShardSingle(contentType, slug, key, locale),
+    ),
   );
 
   return {

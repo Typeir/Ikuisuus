@@ -8,11 +8,11 @@
  * @author Typeir
  * 
  * @requires vitest
- * @requires @/modules/encounter-planner/listEditors/spellListEditor
+ * @requires @/modules/encounter-planner/presentation/listEditors/spellListEditor
  */
 
 import { describe, it, expect } from 'vitest';
-import * as SpellListEditorModule from '@/modules/encounter-planner/listEditors/spellListEditor';
+import * as SpellListEditorModule from '@/modules/encounter-planner/presentation/listEditors/spellListEditor';
 
 describe('spellListEditor', () => {
   it('should export SpellListEditor component', () => {

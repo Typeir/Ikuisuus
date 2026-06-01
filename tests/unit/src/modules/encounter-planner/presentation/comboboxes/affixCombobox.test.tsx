@@ -9,11 +9,11 @@
  * @since 1.0.0
  * 
  * @requires vitest
- * @requires @/modules/encounter-planner/comboboxes/affixCombobox
+ * @requires @/modules/encounter-planner/presentation/comboboxes/affixCombobox
  */
 
 import { describe, it, expect } from 'vitest';
-import * as AffixComboboxModule from '@/modules/encounter-planner/comboboxes/affixCombobox';
+import * as AffixComboboxModule from '@/modules/encounter-planner/presentation/comboboxes/affixCombobox';
 
 describe('affixCombobox', () => {
   it('should export AffixCombobox component', () => {

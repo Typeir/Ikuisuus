@@ -12,8 +12,8 @@
  * @since 3.0.0
  */
 
-import { compileAsync } from '@/lib/mdx/compileAsync';
-import { renderToHtml } from '@/lib/mdx/serverRender';
+import { compileAsync } from '@/modules/library/infrastructure/compile/compileAsync';
+import { renderToHtml } from '@/modules/library/infrastructure/compile/serverRender';
 import fs from 'fs/promises';
 import React from 'react';
 import rehypeKatex from 'rehype-katex';

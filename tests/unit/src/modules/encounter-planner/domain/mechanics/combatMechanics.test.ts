@@ -11,7 +11,9 @@
  * @requires @/modules/encounter-planner/domain/mechanics/combatMechanics - Combat mechanics utilities
  */
 
+import { forceHeroicAwakening } from '@/modules/encounter-planner/application/services/heroicAwakeningForce.service';
 import type { InProgressCombatant } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
+import { applyHeroicAwakening } from '@/modules/encounter-planner/domain/heroic/heroicAwakeningApply';
 import {
     generateUniqueAffixes,
     getDefaultDeedCount,
@@ -19,8 +21,6 @@ import {
     getHeroicDc,
     parseMechanicsFromTags,
 } from '@/modules/encounter-planner/domain/mechanics/combatMechanics';
-import { applyHeroicAwakening } from '@/modules/encounter-planner/domain/heroic/heroicAwakeningApply';
-import { forceHeroicAwakening } from '@/lib/utils/heroicAwakeningForce';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**

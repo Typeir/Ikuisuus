@@ -10,7 +10,7 @@
  * @requires vitest
  * @requires @testing-library/react
  * @requires @testing-library/react-hooks
- * @requires @/modules/encounter-planner/combatantRow/utils/context/combatantContext
+ * @requires @/modules/encounter-planner/presentation/combatantRow/utils/context/combatantContext
  * @requires @/modules/encounter-planner/domain/combat/inProgressCombat.types
  */
 

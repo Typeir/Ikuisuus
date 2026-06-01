@@ -7,7 +7,7 @@
  * @author Typeir
  *
  * @requires vitest
- * @requires @/lib/utils/heroicAwakeningStyles
+ * @requires @/modules/encounter-planner/presentation/utils/heroicAwakeningStyles
  */
 
 import type { HeroicAwakeningState } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
@@ -17,7 +17,7 @@ import {
     getAwakeningTier,
     normalizeAffixToKey,
     type AffixKey
-} from '@/lib/utils/heroicAwakeningStyles';
+} from '@/modules/encounter-planner/presentation/utils/heroicAwakeningStyles';
 import { describe, expect, it } from 'vitest';
 
 /**

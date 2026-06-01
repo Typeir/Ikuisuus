@@ -11,7 +11,7 @@
  */
 
 import { ContentShardPanel } from '@/lib/components/characterSheet/shards/contentShardPanel';
-import { compileRuntimeSync } from '@/lib/mdx/compileRuntime';
+import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { render as baseRender, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { SWRConfig } from 'swr';
@@ -21,13 +21,13 @@ vi.mock('@/lib/md/renderMarkdownToHtml', () => ({
   renderMarkdownToHtml: (md: string) => Promise.resolve(`<p>${md}</p>`),
 }));
 
-vi.mock('@/lib/mdx/compileRuntime', () => ({
+vi.mock('@/modules/library/infrastructure/compile/compileRuntime', () => ({
   compileRuntimeSync: vi.fn(({ source }: { source: string }) => ({
     content: source,
   })),
 }));
 
-vi.mock('@/lib/components/mdx', () => ({
+vi.mock('@/modules/library/presentation/components', () => ({
   default: {},
 }));
 

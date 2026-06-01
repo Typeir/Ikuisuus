@@ -7,8 +7,8 @@
  * @author Typeir
  */
 
-import { PlayModeLifecycle } from '@/modules/encounter-planner/playMode/playModeLifecycle';
-import { usePlayModeHandlers } from '@/modules/encounter-planner/playMode/usePlayModeHandlers';
+import { PlayModeLifecycle } from '@/modules/encounter-planner/application/lifecycle/PlayModeLifecycle';
+import { usePlayModeHandlers } from '@/modules/encounter-planner/presentation/playMode/usePlayModeHandlers';
 import type {
   InProgressCombat,
   InProgressCombatant,

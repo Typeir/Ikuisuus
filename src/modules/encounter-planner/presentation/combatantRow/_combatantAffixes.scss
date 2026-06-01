@@ -1,4 +1,5 @@
 @use 'mixins' as *;
+@use 'combatantAffixesLight';
 
 /* health:check-ignore-file no-color-literals, * */
 
@@ -231,5 +232,3 @@
   --ha-ctx-glow: rgba(144, 192, 104, 0.2);
   --ha-ctx-text-emphasis: #90c068;
 }
-
-@use 'combatantAffixesLight';

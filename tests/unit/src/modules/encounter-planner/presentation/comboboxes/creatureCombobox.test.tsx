@@ -9,11 +9,11 @@
  * @since 1.0.0
  * 
  * @requires vitest
- * @requires @/modules/encounter-planner/comboboxes/creatureCombobox
+ * @requires @/modules/encounter-planner/presentation/comboboxes/creatureCombobox
  */
 
 import { describe, it, expect } from 'vitest';
-import * as CreatureComboboxModule from '@/modules/encounter-planner/comboboxes/creatureCombobox';
+import * as CreatureComboboxModule from '@/modules/encounter-planner/presentation/comboboxes/creatureCombobox';
 
 describe('creatureCombobox', () => {
   it('should export CreatureCombobox component', () => {

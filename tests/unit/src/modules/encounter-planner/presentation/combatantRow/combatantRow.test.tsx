@@ -10,7 +10,7 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/playMode/playModeCombatantRow
+ * @requires @/modules/encounter-planner/presentation/playMode/playModeCombatantRow
  */
 
 import * as CombatantRowModule from '@/modules/encounter-planner/presentation/combatantRow';

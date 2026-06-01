@@ -8,11 +8,11 @@
  * @since 1.0.0
  *
  * @requires vitest
- * @requires @/modules/encounter-planner/comboboxes
+ * @requires @/modules/encounter-planner/presentation/comboboxes
  */
 
 import { describe, it, expect } from 'vitest';
-import * as ComboboxExports from '@/modules/encounter-planner/comboboxes/index';
+import * as ComboboxExports from '@/modules/encounter-planner/presentation/comboboxes/index';
 
 describe('encounterPlanner/comboboxes barrel exports', () => {
   describe('Component exports', () => {

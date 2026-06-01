@@ -14,8 +14,8 @@
 
 'use client';
 
-import mdxComponents from '@/lib/components/mdx';
 import type { DraftMetadata } from '@/lib/db/content/schemas/draftMetadata';
+import { mdxComponents } from '@/modules/library/presentation';
 import { useActiveDraft } from '@/modules/mdx-editor/application/hooks/useActiveDraft';
 import { DraftBanner } from '@/modules/mdx-editor/presentation/DraftBanner/DraftBanner';
 import contentStyles from '@/styles/mdxContent.module.scss';

@@ -14,9 +14,9 @@
 
 'use client';
 
-import enrichedComponents from '@/lib/components/mdx';
 import { useContentShard } from '@/lib/hooks/data/useContentShard';
-import { compileRuntimeSync } from '@/lib/mdx/compileRuntime';
+import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
+import { mdxComponents } from '@/modules/library/presentation';
 import { useLocale } from 'next-intl';
 import { type ReactNode, useEffect, useState } from 'react';
 import styles from './contentShardPanel.module.scss';
@@ -53,7 +53,7 @@ export interface ContentShardPanelProps {
  * @returns {ReactNode} Compiled React element tree
  */
 function tryCompileMdxSync(source: string): ReactNode {
-  return compileRuntimeSync({ source, components: enrichedComponents }).content;
+  return compileRuntimeSync({ source, components: mdxComponents }).content;
 }
 
 /**

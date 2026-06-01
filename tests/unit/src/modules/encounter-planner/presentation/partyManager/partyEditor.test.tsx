@@ -8,10 +8,10 @@
  *
  * @requires vitest - Test framework
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/partyManager/partyEditor
+ * @requires @/modules/encounter-planner/presentation/partyManager/partyEditor
  */
 
-import { PartyEditor } from '@/modules/encounter-planner/partyManager/partyEditor';
+import { PartyEditor } from '@/modules/encounter-planner/presentation/partyManager/partyEditor';
 import { useCharacters } from '@/lib/context/CharacterSheetContext';
 import type { SavedParty } from '@/modules/encounter-planner/domain/parties/party.types';
 import { render, screen } from '@testing-library/react';

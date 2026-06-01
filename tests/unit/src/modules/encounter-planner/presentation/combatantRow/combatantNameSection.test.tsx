@@ -10,15 +10,15 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/combatantRowNameSection
- * @requires @/modules/encounter-planner/playMode/CombatantContext
+ * @requires @/modules/encounter-planner/presentation/combatantRowNameSection
+ * @requires @/modules/encounter-planner/presentation/playMode/CombatantContext
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as CombatantNameSectionModule from '@/modules/encounter-planner/combatantRow/combatantNameSection';
-import { CombatantNameSection } from '@/modules/encounter-planner/combatantRow/combatantNameSection';
+import * as CombatantNameSectionModule from '@/modules/encounter-planner/presentation/combatantRow/combatantNameSection';
+import { CombatantNameSection } from '@/modules/encounter-planner/presentation/combatantRow/combatantNameSection';
 import { CombatantProvider } from '@/modules/encounter-planner/presentation/combatantRow/utils/context/combatantContext';
 import type { HeroicAwakeningState, CombatantMechanics, InProgressCombatant } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 

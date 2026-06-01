@@ -6,6 +6,8 @@
  * @since 2.0.0
  */
 
+'use client';
+
 import type { DraftMetadata } from '@/lib/db/content/schemas/draftMetadata';
 import { draftKey } from '@/lib/fetch/swrKeys';
 import type { DraftState } from '@/modules/mdx-editor/domain/types';

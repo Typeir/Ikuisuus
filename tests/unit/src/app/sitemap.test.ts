@@ -12,7 +12,7 @@ vi.mock('@/lib/seo', () => ({
     .mockReturnValue(new URL('https://ikuisuus.vercel.app')),
 }));
 
-vi.mock('@/lib/mdx/findAllMdxFiles', () => ({
+vi.mock('@/modules/library/infrastructure/content/findAllMdxFiles', () => ({
   default: vi
     .fn()
     .mockResolvedValue([

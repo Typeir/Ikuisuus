@@ -9,6 +9,8 @@
  * @since 2.0.0
  */
 
+'use client';
+
 import { loadContentForEditing } from '@/modules/mdx-editor/application/use-cases/loadContentForEditing';
 import { submitEditFromClient } from '@/modules/mdx-editor/application/use-cases/submitEditFromClient';
 import type {

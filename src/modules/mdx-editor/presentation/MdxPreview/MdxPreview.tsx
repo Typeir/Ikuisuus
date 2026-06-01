@@ -11,8 +11,8 @@
 
 'use client';
 
-import mdxComponents from '@/lib/components/mdx';
-import { compileMdxToComponent } from '@/lib/components/mdx/compileMdxToComponent';
+import { compileMdxToComponent } from '@/modules/library/infrastructure/compile/compileMdxToComponent';
+import { mdxComponents } from '@/modules/library/presentation';
 import contentStyles from '@/styles/mdxContent.module.scss';
 import { Suspense, useEffect, useRef, useState, useTransition } from 'react';
 import styles from './MdxPreview.module.scss';

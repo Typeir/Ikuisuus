@@ -13,12 +13,12 @@
  *
  * @requires vitest Testing framework
  * @requires fs Node.js filesystem module
- * @requires @/lib/utils/walk Module under test
+ * @requires @/modules/library/infrastructure/navigation/walk Module under test
  * @requires @/lib/db/content/directorySourceAdapter Adapter interface
  */
 
 import type { DirectorySourceAdapter } from '@/lib/db/content/directorySourceAdapter';
-import { walkTree } from '@/lib/utils/walk';
+import { walkTree } from '@/modules/library/infrastructure/navigation/walk';
 import fs from 'fs';
 import { tmpdir } from 'os';
 import path from 'path';

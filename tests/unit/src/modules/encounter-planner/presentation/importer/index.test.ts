@@ -1,13 +1,13 @@
 /**
  * @fileoverview Tests for importer barrel exports
- * @module tests/unit/src/lib/components/encounterPlanner/importer/index.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/importer/index.test
  * @description Verifies all expected exports from the importer module.
  *
  * @version 1.0.0
  * @author Typeir
  *
  * @requires vitest
- * @requires @/modules/encounter-planner/importer
+ * @requires @/modules/encounter-planner/presentation/importer
  */
 
 import fs from 'node:fs';
@@ -16,7 +16,7 @@ import { describe, expect, it } from 'vitest';
 
 const BARREL_PATH = path.resolve(
   process.cwd(),
-  'src/lib/components/encounterPlanner/importer/index.ts',
+  'src/modules/encounter-planner/presentation/importer/index.ts',
 );
 
 function readBarrelFile(): string {

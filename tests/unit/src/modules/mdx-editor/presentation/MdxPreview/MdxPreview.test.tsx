@@ -10,11 +10,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const mockCompile = vi.hoisted(() => vi.fn());
 
-vi.mock('@/lib/components/mdx/compileMdxToComponent', () => ({
+vi.mock('@/modules/library/infrastructure/compile/compileMdxToComponent', () => ({
   compileMdxToComponent: mockCompile,
 }));
 
-vi.mock('@/lib/components/mdx', () => ({
+vi.mock('@/modules/library/presentation/components', () => ({
   default: {},
 }));
 

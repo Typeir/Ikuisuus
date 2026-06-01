@@ -7,10 +7,10 @@
  * @since 1.0.0
  *
  * @requires vitest - Test framework
- * @requires @/modules/encounter-planner/combatantRow/combatantStatsGrid
+ * @requires @/modules/encounter-planner/presentation/combatantRow/combatantStatsGrid
  */
 
-import { CombatantStatsGrid } from '@/modules/encounter-planner/combatantRow/combatantStatsGrid';
+import { CombatantStatsGrid } from '@/modules/encounter-planner/presentation/combatantRow/combatantStatsGrid';
 import { describe, expect, it } from 'vitest';
 
 describe('CombatantStatsGrid', () => {

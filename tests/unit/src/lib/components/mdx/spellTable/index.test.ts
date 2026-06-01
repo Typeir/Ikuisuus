@@ -6,11 +6,11 @@
  * @since 1.0.0
  *
  * @requires vitest
- * @requires @/lib/components/mdx/spellTable
+ * @requires @/modules/metadata-tables/presentation/SpellTable
  */
 
-import { describe, it, expect } from 'vitest';
-import * as SpellTableExports from '@/lib/components/mdx/spellTable/index';
+import * as SpellTableExports from '@/modules/metadata-tables/presentation/SpellTable';
+import { describe, expect, it } from 'vitest';
 
 describe('mdx/spellTable barrel exports', () => {
   describe('Component exports', () => {

@@ -9,10 +9,10 @@
  * @since 1.0.0
  *
  * @requires vitest
- * @requires @/modules/encounter-planner/comboboxes/encounterCombobox
+ * @requires @/modules/encounter-planner/presentation/comboboxes/encounterCombobox
  */
 
-import * as EncounterComboboxModule from '@/modules/encounter-planner/comboboxes/encounterCombobox';
+import * as EncounterComboboxModule from '@/modules/encounter-planner/presentation/comboboxes/encounterCombobox';
 import { describe, expect, it } from 'vitest';
 
 describe('encounterCombobox', () => {

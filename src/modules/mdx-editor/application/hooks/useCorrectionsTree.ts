@@ -8,6 +8,8 @@
  * @since 2.0.0
  */
 
+'use client';
+
 import { correctionsTreeKey } from '@/lib/fetch/swrKeys';
 import type {
     CorrectionsTreeState,

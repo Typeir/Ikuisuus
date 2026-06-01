@@ -8,7 +8,7 @@
  * @author Typeir
  *
  * @requires vitest
- * @requires @/modules/encounter-planner/playMode/utils/phaseMarker
+ * @requires @/modules/encounter-planner/presentation/playMode/utils/phaseMarker
  */
 
 import { describe, it, expect } from 'vitest';

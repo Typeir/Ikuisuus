@@ -9,10 +9,10 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/playMode/playMode
+ * @requires @/modules/encounter-planner/presentation/playMode/playMode
  */
 
-import { PlayMode } from '@/modules/encounter-planner/playMode/playMode';
+import { PlayMode } from '@/modules/encounter-planner/presentation/playMode/playMode';
 import type {
     InProgressCombat,
     InProgressCombatant,
@@ -75,7 +75,7 @@ vi.mock('@/modules/encounter-planner', () => ({
 }));
 
 // Mock ComboBox component
-vi.mock('@/modules/encounter-planner/comboboxes', () => ({
+vi.mock('@/modules/encounter-planner/presentation/comboboxes', () => ({
   CreatureCombobox: ({ onSelect }: { onSelect: (slug: string) => void }) => (
     <button
       data-testid='creature-combobox'
@@ -87,7 +87,7 @@ vi.mock('@/modules/encounter-planner/comboboxes', () => ({
 
 // Mock PlayModeCombatantRow
 vi.mock(
-  '@/modules/encounter-planner/playMode/playModeCombatantRow',
+  '@/modules/encounter-planner/presentation/playMode/playModeCombatantRow',
   () => ({
     PlayModeCombatantRow: ({
       combatant,

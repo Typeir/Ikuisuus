@@ -10,20 +10,17 @@
  * @since 2.0.0
  */
 
-import { nearestRouteKey } from '@/lib/fetch/swrKeys';
 import { logger } from '@/lib/logging/logger';
 import {
-    fetchNearestRoute,
-    type RouteMatch,
-} from '@/lib/services/api/searchService';
+    useNearestRoute as useNearestRouteFromModule,
+    type NearestRouteState,
+} from '@/modules/library/application/hooks/useNearestRoute';
 import { useActiveDraft as useActiveDraftFromModule } from '@/modules/mdx-editor/application/hooks/useActiveDraft';
 import { useCorrectionsTree as useCorrectionsTreeFromModule } from '@/modules/mdx-editor/application/hooks/useCorrectionsTree';
 import type {
     CorrectionsTreeState,
     DraftState,
 } from '@/modules/mdx-editor/domain/types';
-import useSWR from 'swr';
-
 const log = logger.child({ module: 'useDraftAndRouteData' });
 
 /**
@@ -62,35 +59,12 @@ export function useCorrectionsTreeData(locale: string): CorrectionsTreeState {
 }
 
 /**
- * Nearest route hook state.
- *
- * @interface NearestRouteState
- * @property {RouteMatch | null} nearestRoute - Route match result
- * @property {boolean} loading - Loading flag
- */
-export interface NearestRouteState {
-  nearestRoute: RouteMatch | null;
-  loading: boolean;
-}
-
-/**
  * Finds nearest route for current path.
  *
  * @param {string | null} pathname - Current pathname
  * @returns {NearestRouteState} Route suggestion state
  */
 export function useNearestRoute(pathname: string | null): NearestRouteState {
-  const { data, isLoading } = useSWR<RouteMatch | null>(
-    nearestRouteKey(pathname),
-    () => fetchNearestRoute(pathname!),
-    {
-      onError: (error) => {
-        log.error('Failed to find nearest route', {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      },
-    },
-  );
-
-  return { nearestRoute: data ?? null, loading: isLoading };
+  log.debug('useNearestRoute legacy shim invoked');
+  return useNearestRouteFromModule(pathname);
 }

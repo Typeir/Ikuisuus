@@ -47,7 +47,7 @@ vi.mock('@/lib/components/ui/chip', () => ({
   }) => <span data-testid='chip' data-variant={variant}>{label}</span>,
 }));
 
-vi.mock('@/lib/mdx/compileRuntime', () => ({
+vi.mock('@/modules/library/infrastructure/compile/compileRuntime', () => ({
   compileRuntimeSync: (opts: { source: string }) => ({ content: opts.source }),
 }));
 

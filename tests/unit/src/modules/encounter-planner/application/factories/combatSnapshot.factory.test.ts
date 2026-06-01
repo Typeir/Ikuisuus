@@ -11,13 +11,6 @@
  * @requires @/modules/encounter-planner/application/factories/combatSnapshot.factory - Combat storage utilities
  */
 
-import { EncounterStorage } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';
-import type { CreatureEntry } from '@/modules/encounter-planner/domain/encounters/encounter.types';
-import type {
-    InProgressCombat,
-    InProgressCombatant,
-} from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
-import { createEmptyCreature } from '@/modules/encounter-planner/domain/shared/utils';
 import {
     createInProgressCombatant,
     deleteInProgressCombat,
@@ -32,6 +25,13 @@ import {
     setActiveInProgressCombatId,
     sortCombatantsByInitiative,
 } from '@/modules/encounter-planner/application/factories/combatSnapshot.factory';
+import { createEmptyCreature } from '@/modules/encounter-planner/application/factories/encounter.factory';
+import type {
+    InProgressCombat,
+    InProgressCombatant,
+} from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
+import type { CreatureEntry } from '@/modules/encounter-planner/domain/encounters/encounter.types';
+import { EncounterStorage } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/utils/storePersistentData', () => ({

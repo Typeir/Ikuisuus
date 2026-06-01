@@ -11,8 +11,8 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/combatantRowConditionsManager
- * @requires @/modules/encounter-planner/playMode/CombatantContext
+ * @requires @/modules/encounter-planner/presentation/combatantRowConditionsManager
+ * @requires @/modules/encounter-planner/presentation/playMode/CombatantContext
  */
 
 import * as CombatantConditionsManagerModule from '@/modules/encounter-planner/presentation/combatantRow/combatantConditionsManager';

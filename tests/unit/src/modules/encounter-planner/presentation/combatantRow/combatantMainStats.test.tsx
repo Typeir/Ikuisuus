@@ -11,15 +11,15 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/combatantRowMainStats
- * @requires @/modules/encounter-planner/playMode/CombatantContext
+ * @requires @/modules/encounter-planner/presentation/combatantRowMainStats
+ * @requires @/modules/encounter-planner/presentation/playMode/CombatantContext
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as CombatantMainStatsModule from '@/modules/encounter-planner/combatantRow/combatantMainStats';
-import { CombatantMainStats } from '@/modules/encounter-planner/combatantRow/combatantMainStats';
+import * as CombatantMainStatsModule from '@/modules/encounter-planner/presentation/combatantRow/combatantMainStats';
+import { CombatantMainStats } from '@/modules/encounter-planner/presentation/combatantRow/combatantMainStats';
 import { CombatantProvider } from '@/modules/encounter-planner/presentation/combatantRow/utils/context/combatantContext';
 import type { InProgressCombatant } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 

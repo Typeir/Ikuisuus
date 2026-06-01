@@ -8,7 +8,7 @@ import {
   clampNonNegative,
   getModifierString,
   parseIntSafe,
-} from '@/lib/utils/statEditing';
+} from '@/modules/encounter-planner/presentation/utils/statEditing';
 import { describe, expect, it } from 'vitest';
 
 describe('parseIntSafe', () => {

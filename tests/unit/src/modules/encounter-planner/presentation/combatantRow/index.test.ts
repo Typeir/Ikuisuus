@@ -8,7 +8,7 @@
  * @since 1.0.0
  *
  * @requires vitest
- * @requires @/modules/encounter-planner/combatantRow
+ * @requires @/modules/encounter-planner/presentation/combatantRow
  */
 
 import { describe, it, expect } from 'vitest';

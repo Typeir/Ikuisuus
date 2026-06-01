@@ -8,11 +8,11 @@
  * @author Typeir
  * 
  * @requires vitest
- * @requires @/modules/encounter-planner/listEditors/affixListEditor
+ * @requires @/modules/encounter-planner/presentation/listEditors/affixListEditor
  */
 
 import { describe, it, expect } from 'vitest';
-import * as AffixListEditorModule from '@/modules/encounter-planner/listEditors/affixListEditor';
+import * as AffixListEditorModule from '@/modules/encounter-planner/presentation/listEditors/affixListEditor';
 
 describe('affixListEditor', () => {
   it('should export AffixListEditor component', () => {

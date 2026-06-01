@@ -6,11 +6,11 @@
  * @since 1.0.0
  *
  * @requires vitest
- * @requires @/modules/encounter-planner/playMode
+ * @requires @/modules/encounter-planner/presentation/playMode
  */
 
 import { describe, it, expect } from 'vitest';
-import * as PlayModeExports from '@/modules/encounter-planner/playMode/index';
+import * as PlayModeExports from '@/modules/encounter-planner/presentation/playMode/index';
 
 describe('encounterPlanner/playMode barrel exports', () => {
   describe('Component exports', () => {

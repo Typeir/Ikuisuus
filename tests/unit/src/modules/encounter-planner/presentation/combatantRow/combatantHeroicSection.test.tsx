@@ -11,12 +11,12 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/combatantRowHeroicSection
- * @requires @/modules/encounter-planner/playMode/CombatantContext
+ * @requires @/modules/encounter-planner/presentation/combatantRowHeroicSection
+ * @requires @/modules/encounter-planner/presentation/playMode/CombatantContext
  */
 
-import * as CombatantHeroicSectionModule from '@/modules/encounter-planner/combatantRow/combatantHeroicSection';
-import { CombatantHeroicSection } from '@/modules/encounter-planner/combatantRow/combatantHeroicSection';
+import * as CombatantHeroicSectionModule from '@/modules/encounter-planner/presentation/combatantRow/combatantHeroicSection';
+import { CombatantHeroicSection } from '@/modules/encounter-planner/presentation/combatantRow/combatantHeroicSection';
 import { CombatantProvider } from '@/modules/encounter-planner/presentation/combatantRow/utils/context/combatantContext';
 import type {
     AffixEntry,

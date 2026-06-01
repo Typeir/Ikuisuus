@@ -9,10 +9,10 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/importer/quantityPopup
+ * @requires @/modules/encounter-planner/presentation/importer/quantityPopup
  */
 
-import { QuantityPopup } from '@/modules/encounter-planner/importer/quantityPopup';
+import { QuantityPopup } from '@/modules/encounter-planner/presentation/importer/quantityPopup';
 import {
     act,
     cleanup,

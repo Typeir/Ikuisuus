@@ -4,12 +4,12 @@
  * functions that mutate combatants with tier-based stat bonuses.
  */
 
-import type { AffixEntry } from '@/modules/encounter-planner/domain/encounters/encounter.types';
-import type { InProgressCombatant } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 import {
-  forceHeroicAwakening,
-  forceHeroicAwakeningWithAffixes,
-} from '@/lib/utils/heroicAwakeningForce';
+    forceHeroicAwakening,
+    forceHeroicAwakeningWithAffixes,
+} from '@/modules/encounter-planner/application/services/heroicAwakeningForce.service';
+import type { InProgressCombatant } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
+import type { AffixEntry } from '@/modules/encounter-planner/domain/encounters/encounter.types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**

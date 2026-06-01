@@ -45,7 +45,7 @@ vi.mock('@/lib/components/ui/chip', () => ({
   ),
 }));
 
-vi.mock('@/lib/mdx/compileRuntime', () => ({
+vi.mock('@/modules/library/infrastructure/compile/compileRuntime', () => ({
   compileRuntimeSync: (opts: { source: string }) => ({ content: opts.source }),
 }));
 

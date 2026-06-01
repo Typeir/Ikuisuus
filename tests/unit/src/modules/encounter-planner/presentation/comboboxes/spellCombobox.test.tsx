@@ -9,11 +9,11 @@
  * @since 1.0.0
  * 
  * @requires vitest
- * @requires @/modules/encounter-planner/comboboxes/spellCombobox
+ * @requires @/modules/encounter-planner/presentation/comboboxes/spellCombobox
  */
 
 import { describe, it, expect } from 'vitest';
-import * as SpellComboboxModule from '@/modules/encounter-planner/comboboxes/spellCombobox';
+import * as SpellComboboxModule from '@/modules/encounter-planner/presentation/comboboxes/spellCombobox';
 
 describe('spellCombobox', () => {
   it('should export SpellCombobox component', () => {

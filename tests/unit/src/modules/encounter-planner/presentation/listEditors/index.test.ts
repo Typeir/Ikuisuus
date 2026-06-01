@@ -6,11 +6,11 @@
  * @since 1.0.0
  *
  * @requires vitest
- * @requires @/modules/encounter-planner/listEditors
+ * @requires @/modules/encounter-planner/presentation/listEditors
  */
 
 import { describe, it, expect } from 'vitest';
-import * as ListEditorExports from '@/modules/encounter-planner/listEditors/index';
+import * as ListEditorExports from '@/modules/encounter-planner/presentation/listEditors/index';
 
 describe('encounterPlanner/listEditors barrel exports', () => {
   describe('Component exports', () => {

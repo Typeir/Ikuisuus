@@ -12,6 +12,8 @@
 
 'use client';
 
+import { deriveExpandedPathsFromUrl } from '@/modules/library/application/selectors/deriveExpandedPathsFromUrl';
+import { isStaticContentRoute } from '@/modules/library/application/selectors/isStaticContentRoute';
 import {
   createContext,
   ReactNode,
@@ -30,9 +32,7 @@ import {
   SerializedPersistentUiState,
   ThemeValue,
 } from '../types/persistentUiState';
-import { deriveExpandedPathsFromUrl } from '../utils/deriveExpandedPathsFromUrl';
 import { fetchPersistentData } from '../utils/fetchPersistentData';
-import { isStaticContentRoute } from '../utils/isStaticContentRoute';
 import { storePersistentData } from '../utils/storePersistentData';
 
 /**

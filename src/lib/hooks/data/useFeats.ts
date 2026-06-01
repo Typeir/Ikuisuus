@@ -11,8 +11,8 @@
 'use client';
 
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
-import { featsKey, urlForFeats } from '@/lib/fetch/swrKeys';
 import { fetcher } from '@/lib/fetch/fetcher';
+import { featsKey, urlForFeats } from '@/lib/fetch/swrKeys';
 import useSWR, { type KeyedMutator } from 'swr';
 
 /**

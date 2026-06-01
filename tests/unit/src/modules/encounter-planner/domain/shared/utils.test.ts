@@ -8,8 +8,12 @@
  * @since 1.0.0
  */
 
+import {
+    calculateInitiativeMod,
+    generateId,
+    rollInitiative,
+} from '@/modules/encounter-planner/domain/shared/utils';
 import { describe, expect, it } from 'vitest';
-import { calculateInitiativeMod, generateId, rollInitiative } from './utils';
 
 describe('generateId', () => {
   it('returns a non-empty string', () => {
@@ -27,7 +31,8 @@ describe('calculateInitiativeMod', () => {
   it('returns 0 for dex 10', () => expect(calculateInitiativeMod(10)).toBe(0));
   it('returns +3 for dex 16', () => expect(calculateInitiativeMod(16)).toBe(3));
   it('returns -1 for dex 8', () => expect(calculateInitiativeMod(8)).toBe(-1));
-  it('floors non-integer results', () => expect(calculateInitiativeMod(11)).toBe(0));
+  it('floors non-integer results', () =>
+    expect(calculateInitiativeMod(11)).toBe(0));
 });
 
 describe('rollInitiative', () => {

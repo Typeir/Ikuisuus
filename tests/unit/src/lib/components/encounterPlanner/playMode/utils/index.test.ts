@@ -7,7 +7,7 @@
  * @author Typeir
  *
  * @requires vitest
- * @requires @/modules/encounter-planner/playMode/utils
+ * @requires @/modules/encounter-planner/presentation/playMode/utils
  */
 
 import { describe, it, expect } from 'vitest';

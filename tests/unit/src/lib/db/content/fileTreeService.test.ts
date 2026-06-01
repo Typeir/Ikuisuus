@@ -11,7 +11,7 @@ vi.mock('@/lib/db/content/directorySourceResolver', () => ({
 }));
 
 const fetchContentMock = vi.fn();
-vi.mock('@/lib/utils/fetchContent', () => ({
+vi.mock('@/modules/library/infrastructure/content/fetchContent', () => ({
   fetchContent: (...args: any[]) => fetchContentMock(...args),
 }));
 

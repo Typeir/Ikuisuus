@@ -9,13 +9,13 @@
  *
  * @requires vitest - Test framework
  * @requires @testing-library/react
- * @requires @/modules/encounter-planner/partyManager
+ * @requires @/modules/encounter-planner/presentation/partyManager
  */
 
 import {
     PartyManager,
     type PartyManagerProps,
-} from '@/modules/encounter-planner/partyManager';
+} from '@/modules/encounter-planner/presentation/partyManager';
 import type { SavedParty } from '@/modules/encounter-planner/domain/parties/party.types';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

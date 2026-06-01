@@ -14,7 +14,7 @@ import { routing } from '@/i18n/routing';
 import { resolveMetadataBase } from '@/lib/seo';
 import { getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
 import { getCombinedInitScript } from '@/lib/utils/persistentUiScript';
-import { repositoryShallowWalk } from '@/lib/utils/repositoryWalk';
+import { repositoryShallowWalk } from '@/modules/library/infrastructure/navigation/repositoryWalk';
 
 import type { Metadata } from 'next';
 import { hasLocale } from 'next-intl';

@@ -7,10 +7,10 @@
  * @since 1.0.0
  *
  * @requires vitest - Test framework
- * @requires @/modules/encounter-planner/combatantRow/partyMemberRow
+ * @requires @/modules/encounter-planner/presentation/combatantRow/partyMemberRow
  */
 
-import { PartyMemberRow } from '@/modules/encounter-planner/combatantRow/partyMemberRow';
+import { PartyMemberRow } from '@/modules/encounter-planner/presentation/combatantRow/partyMemberRow';
 import { describe, expect, it } from 'vitest';
 
 describe('PartyMemberRow', () => {

@@ -19,7 +19,7 @@
  */
 
 import { logger } from '@/lib/logging/logger';
-import { repositoryShallowWalk } from '@/lib/utils/repositoryWalk';
+import { repositoryShallowWalk } from '@/modules/library/infrastructure/navigation/repositoryWalk';
 import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:Content:Walk' });

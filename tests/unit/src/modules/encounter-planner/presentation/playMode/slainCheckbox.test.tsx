@@ -6,7 +6,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { PlayModeCombatantRow } from '@/modules/encounter-planner/playMode';
+import { PlayModeCombatantRow } from '@/modules/encounter-planner/presentation/playMode';
 import type { InProgressCombatant } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 
 // Mock react-dom for portal rendering

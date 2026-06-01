@@ -2,7 +2,7 @@
  * @fileoverview Test that slain checkbox is rendered and clickable
  */
 
-import { PlayModeCombatantRow } from '@/modules/encounter-planner/playMode';
+import { PlayModeCombatantRow } from '@/modules/encounter-planner/presentation/playMode';
 import type { InProgressCombatant } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

@@ -4,7 +4,7 @@
  * and error handling for the monster index API hook.
  */
 
-import { useMonsterIndex } from '@/modules/encounter-planner/importer/useMonsterIndex';
+import { useMonsterIndex } from '@/modules/encounter-planner/presentation/importer/useMonsterIndex';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

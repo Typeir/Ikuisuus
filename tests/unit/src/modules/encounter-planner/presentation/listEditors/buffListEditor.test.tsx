@@ -8,11 +8,11 @@
  * @author Typeir
  * 
  * @requires vitest
- * @requires @/modules/encounter-planner/listEditors/buffListEditor
+ * @requires @/modules/encounter-planner/presentation/listEditors/buffListEditor
  */
 
 import { describe, it, expect } from 'vitest';
-import * as BuffListEditorModule from '@/modules/encounter-planner/listEditors/buffListEditor';
+import * as BuffListEditorModule from '@/modules/encounter-planner/presentation/listEditors/buffListEditor';
 
 describe('buffListEditor', () => {
   it('should export BuffListEditor component', () => {
