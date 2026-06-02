@@ -12,7 +12,7 @@ tools:
   - run_in_terminal
   - get_terminal_output
   - replace_string_in_file
-  - memory
+  - vscode/memory
   - manage_todo_list
 ---
 

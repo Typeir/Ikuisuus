@@ -12,7 +12,7 @@ tools:
   - list_dir
   - create_file
   - run_in_terminal
-  - memory
+  - vscode/memory
   - manage_todo_list
 ---
 
@@ -47,8 +47,8 @@ When the user describes a task, you:
    | `scripts/metadata/**`, `src/app/api/**`           | `.github/instructions/metadata-generators.instructions.md` |
    | `scripts/build/**`, `scripts/assets/**`           | `.github/instructions/build-pipeline.instructions.md`      |
    | `messages/**`, `src/i18n/**`, `src/middleware.ts` | `.github/instructions/i18n.instructions.md`                |
-   | `src/lib/components/encounterPlanner/**`          | `.github/instructions/encounter-module.instructions.md`    |
-   | `src/lib/components/worldSim/**`                  | `.github/instructions/world-sim.instructions.md`           |
+   | `src/**/encounter-planner/**`                     | `.github/instructions/encounter-module.instructions.md`    |
+   | `src/**/world-sim/**`                             | `.github/instructions/world-sim.instructions.md`           |
 
 2. **Identify architecture domains** by matching the task description to relevant deep-dive docs:
    - MDX content → read `.github/docs/content-system.md`

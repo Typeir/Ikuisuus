@@ -14,26 +14,29 @@
 import { useNotifications } from '@/lib/components/ui';
 import { ENCOUNTER_SAVE_INDICATOR_MS } from '@/lib/constants/delays';
 import { useDebounce } from '@/lib/hooks/useDebounce';
-import type { MonsterData } from '@/lib/utils/monsterCache';
+import type { MonsterData } from '@/modules/encounter-planner/lib/utils/monsterCache';
 import { useLocale, useTranslations } from 'next-intl';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  createInProgressCombat,
-  createInProgressCombatant,
-  getActiveInProgressCombatId,
-  getInProgressCombat,
-  saveInProgressCombat,
-  setActiveInProgressCombatId,
+    createInProgressCombat,
+    createInProgressCombatant,
+    getActiveInProgressCombatId,
+    getInProgressCombat,
+    saveInProgressCombat,
+    setActiveInProgressCombatId,
 } from '../../application/factories/combatSnapshot.factory';
 import { createEmptyEncounter } from '../../application/factories/encounter.factory';
-import type { InProgressCombat, InProgressCombatant } from '../../domain/combat/inProgressCombat.types';
+import type {
+    InProgressCombat,
+    InProgressCombatant,
+} from '../../domain/combat/inProgressCombat.types';
 import type { Encounter } from '../../domain/encounters/encounter.types';
 import {
-  deleteEncounter as deleteEncounterUtil,
-  getActiveEncounter,
-  getEncounters,
-  saveEncounter,
-  setActiveEncounterId,
+    deleteEncounter as deleteEncounterUtil,
+    getActiveEncounter,
+    getEncounters,
+    saveEncounter,
+    setActiveEncounterId,
 } from '../../infrastructure/persistence/encounterRepository';
 import { useCreatureHandlers } from './useCreatureHandlers';
 import { useEncounterIO } from './useEncounterIO';
@@ -89,7 +92,9 @@ export interface UseEncounterPlannerStateResult {
   handleRemoveCreature: (index: number) => void;
   setShowCreatureImport: React.Dispatch<React.SetStateAction<boolean>>;
   resumeCombatAvailable: boolean;
-  setInProgressCombat: React.Dispatch<React.SetStateAction<InProgressCombat | null>>;
+  setInProgressCombat: React.Dispatch<
+    React.SetStateAction<InProgressCombat | null>
+  >;
   createInProgressCombatant: typeof createInProgressCombatant;
 }
 
@@ -107,7 +112,8 @@ export const useEncounterPlannerState = (): UseEncounterPlannerStateResult => {
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [showCreatureImport, setShowCreatureImport] = useState(false);
-  const [inProgressCombat, setInProgressCombat] = useState<InProgressCombat | null>(null);
+  const [inProgressCombat, setInProgressCombat] =
+    useState<InProgressCombat | null>(null);
   const hasShownResumeNotificationRef = useRef(false);
   const debouncedEncounter = useDebounce(encounter, 500);
 
@@ -139,7 +145,10 @@ export const useEncounterPlannerState = (): UseEncounterPlannerStateResult => {
         notifications.info(t('resumeCombatAvailable'), {
           title: t('playMode'),
           duration: 0,
-          action: { label: t('resumeCombat'), onClick: () => setInProgressCombat(combat) },
+          action: {
+            label: t('resumeCombat'),
+            onClick: () => setInProgressCombat(combat),
+          },
         });
       }
     }
@@ -169,8 +178,12 @@ export const useEncounterPlannerState = (): UseEncounterPlannerStateResult => {
   const { fileInputRef, handleExport, handleImport, handleFileChange } =
     useEncounterIO(encounter, handleImported);
 
-  const { handleAddCreature, handleImportCreatures, handleUpdateCreature, handleRemoveCreature } =
-    useCreatureHandlers(updateEncounter, locale, setShowCreatureImport);
+  const {
+    handleAddCreature,
+    handleImportCreatures,
+    handleUpdateCreature,
+    handleRemoveCreature,
+  } = useCreatureHandlers(updateEncounter, locale, setShowCreatureImport);
 
   const handleNewEncounter = useCallback(() => {
     const newEncounter = createEmptyEncounter();
@@ -182,7 +195,10 @@ export const useEncounterPlannerState = (): UseEncounterPlannerStateResult => {
 
   const handleLoadEncounter = useCallback((id: string) => {
     const toLoad = getEncounters().find((e) => e.id === id);
-    if (toLoad) { setEncounter(toLoad); setActiveEncounterId(id); }
+    if (toLoad) {
+      setEncounter(toLoad);
+      setActiveEncounterId(id);
+    }
   }, []);
 
   const handleDeleteEncounter = useCallback(() => {
@@ -235,16 +251,35 @@ export const useEncounterPlannerState = (): UseEncounterPlannerStateResult => {
   );
 
   const activeCombatId = getActiveInProgressCombatId();
-  const resumeCombatAvailable = activeCombatId && !inProgressCombat
-    ? !!getInProgressCombat(activeCombatId)
-    : false;
+  const resumeCombatAvailable =
+    activeCombatId && !inProgressCombat
+      ? !!getInProgressCombat(activeCombatId)
+      : false;
 
   return {
-    encounter, encounters, isSaving, showCreatureImport, inProgressCombat, fileInputRef,
-    handleNameChange, handleNewEncounter, handleLoadEncounter, handleDeleteEncounter,
-    handleStartCombat, handleExitPlayMode, handleResumeCombat,
-    handleExport, handleImport, handleFileChange,
-    handleAddCreature, handleImportCreatures, handleUpdateCreature, handleRemoveCreature,
-    setShowCreatureImport, resumeCombatAvailable, setInProgressCombat, createInProgressCombatant,
+    encounter,
+    encounters,
+    isSaving,
+    showCreatureImport,
+    inProgressCombat,
+    fileInputRef,
+    handleNameChange,
+    handleNewEncounter,
+    handleLoadEncounter,
+    handleDeleteEncounter,
+    handleStartCombat,
+    handleExitPlayMode,
+    handleResumeCombat,
+    handleExport,
+    handleImport,
+    handleFileChange,
+    handleAddCreature,
+    handleImportCreatures,
+    handleUpdateCreature,
+    handleRemoveCreature,
+    setShowCreatureImport,
+    resumeCombatAvailable,
+    setInProgressCombat,
+    createInProgressCombatant,
   };
 };

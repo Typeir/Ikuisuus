@@ -12,7 +12,6 @@
 
 'use client';
 
-import type { ContentShardType } from '@/lib/components/characterSheet/shards/contentShardPanel';
 import { fetcher } from '@/lib/fetch/fetcher';
 import {
     contentShardKey,
@@ -23,6 +22,7 @@ import {
     urlForShard,
 } from '@/lib/fetch/swrKeys';
 import type { ContentShardResponse, ShardResponse } from '@/lib/types/api.d';
+import type { ContentShardType } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import useSWR, { type KeyedMutator } from 'swr';
 
 /**

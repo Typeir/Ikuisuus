@@ -31,7 +31,10 @@
 'use client';
 
 import { logger } from '@/lib/logging/logger';
-import { getMonsterBySlug, MonsterData } from '@/lib/utils/monsterCache';
+import {
+    getMonsterBySlug,
+    MonsterData,
+} from '@/modules/encounter-planner/lib/utils/monsterCache';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import styles from './monsterImporter.module.scss';

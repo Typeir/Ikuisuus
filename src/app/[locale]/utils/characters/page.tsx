@@ -18,8 +18,8 @@
  * ```
  */
 
-import { CharacterRoster } from '@/lib/components/characterSheet';
 import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
+import { CharacterRoster } from '@/modules/character-builder';
 
 /**
  * Page props interface.

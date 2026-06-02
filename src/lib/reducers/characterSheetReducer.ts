@@ -12,14 +12,17 @@
  * @requires @/lib/types/characterSheet
  */
 
+import { getTotalCharacterLevel } from '@/modules/character-builder/lib/utils/characterDerivation';
+import {
+    getXPForLevel,
+    MAX_XP_LEVEL,
+} from '@/modules/character-builder/lib/utils/xpProgression';
 import {
     CHARACTER_SHEET_ACTION_TYPES,
     DEFAULT_CHARACTER_SHEET_STATE,
     type CharacterSheetAction,
     type CharacterSheetState,
 } from '../types/characterSheet';
-import { getTotalCharacterLevel } from '../utils/characterDerivation';
-import { getXPForLevel, MAX_XP_LEVEL } from '../utils/xpProgression';
 
 /**
  * Pure reducer for character sheet state.
@@ -50,7 +53,7 @@ export function characterSheetReducer(
       const floor = getXPForLevel(Math.min(normalizedLevel, MAX_XP_LEVEL));
       const normalizedExperience = hasActiveVocations
         ? Math.max(character.experience ?? 0, floor)
-        : character.experience ?? 0;
+        : (character.experience ?? 0);
       const updated = {
         ...character,
         level: normalizedLevel,

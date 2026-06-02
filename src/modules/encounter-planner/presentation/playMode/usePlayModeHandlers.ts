@@ -8,12 +8,6 @@
  * @since 1.0.0
  */
 
-import type {
-    InProgressCombat,
-    InProgressCombatant,
-} from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
-import type { SavedParty } from '@/modules/encounter-planner/domain/parties/party.types';
-import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 import {
     createInProgressCombatant,
     createMultipleCombatantsFromMonster,
@@ -24,8 +18,15 @@ import {
     saveInProgressCombat,
     setActiveInProgressCombatId,
 } from '@/modules/encounter-planner/application/factories/combatSnapshot.factory';
-import type { MonsterData } from '@/lib/utils/monsterCache';
 import { importPartyIntoCombat } from '@/modules/encounter-planner/application/services/partyImporter.service';
+import type {
+    InProgressCombat,
+    InProgressCombatant,
+} from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
+import type { SavedParty } from '@/modules/encounter-planner/domain/parties/party.types';
+import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
+import type { MonsterData } from '@/modules/encounter-planner/lib/utils/monsterCache';
+import { useLocale } from 'next-intl';
 import {
     type ChangeEvent,
     type Dispatch,
@@ -35,7 +36,6 @@ import {
     useRef,
     useState,
 } from 'react';
-import { useLocale } from 'next-intl';
 import type { PlayModeLifecycle } from '../../application/lifecycle/PlayModeLifecycle';
 import type { EncounterTranslator } from '../../application/lifecycle/playModeLifecycleNotifications';
 import { buildEndTurnTransition } from '../../application/lifecycle/playModeTurnFlow';

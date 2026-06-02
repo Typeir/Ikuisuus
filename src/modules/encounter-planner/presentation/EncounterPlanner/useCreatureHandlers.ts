@@ -11,11 +11,11 @@
 
 'use client';
 
-import type { MonsterData } from '@/lib/utils/monsterCache';
+import type { MonsterData } from '@/modules/encounter-planner/lib/utils/monsterCache';
 import { useCallback } from 'react';
 import {
-  createEmptyCreature,
-  createMultipleCreaturesFromMonster,
+    createEmptyCreature,
+    createMultipleCreaturesFromMonster,
 } from '../../application/factories/encounter.factory';
 import type { InProgressCombatant } from '../../domain/combat/inProgressCombat.types';
 import type { Encounter } from '../../domain/encounters/encounter.types';

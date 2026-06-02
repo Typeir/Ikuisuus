@@ -27,7 +27,7 @@ vi.mock('next-intl', () => ({
   useLocale: () => 'en',
 }));
 
-vi.mock('@/lib/utils/monsterCache', () => {
+vi.mock('@/modules/encounter-planner/lib/utils/monsterCache', () => {
   const mockMonsterData = {
     slug: 'goblin',
     title: 'Goblin',
@@ -352,7 +352,7 @@ describe('MonsterImporter Component', () => {
     });
 
     it('should not call onImport if monster not found', async () => {
-      const { getMonsterBySlug } = await import('@/lib/utils/monsterCache');
+      const { getMonsterBySlug } = await import('@/modules/encounter-planner/lib/utils/monsterCache');
       vi.mocked(getMonsterBySlug).mockResolvedValueOnce(null);
 
       const user = userEvent.setup();
