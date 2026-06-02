@@ -13,17 +13,17 @@
 
 import { CircleHelp } from 'lucide-react';
 import {
-    Children,
-    ComponentType,
-    isValidElement,
-    memo,
-    ReactElement,
-    ReactNode,
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useRef,
-    useState,
+  Children,
+  ComponentType,
+  isValidElement,
+  memo,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './tooltip.module.scss';

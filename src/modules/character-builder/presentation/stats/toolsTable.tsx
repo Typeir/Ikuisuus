@@ -12,6 +12,7 @@
 'use client';
 
 import type { CharacterTool, ProficiencyLevel } from '@/lib/types/character';
+import { Tooltip } from '@/lib/components/ui';
 import {
     PROFICIENCY_CYCLE,
     PROFICIENCY_LABELS,
@@ -120,19 +121,19 @@ export function ToolsTable({
                     const isActive = idx < levelIndex;
                     const label = PROFICIENCY_LABELS[level];
                     return (
-                      <button
-                        key={`${tool.name}-pip-${idx}`}
-                        type='button'
-                        disabled={readOnly}
-                        className={
-                          profTrackStyles[
-                            isActive ? 'trackDot-filled' : 'trackDot-empty'
-                          ]
-                        }
-                        onClick={() => handlePipClick(i, level)}
-                        title={label.tooltip}
-                        aria-label={`${label.label} (${label.tooltip})`}
-                      />
+                      <Tooltip key={`${tool.name}-pip-${idx}`} content={label.tooltip} placement='top' showClickIcon={false}>
+                        <button
+                          type='button'
+                          disabled={readOnly}
+                          className={
+                            profTrackStyles[
+                              isActive ? 'trackDot-filled' : 'trackDot-empty'
+                            ]
+                          }
+                          onClick={() => handlePipClick(i, level)}
+                          aria-label={`${label.label} (${label.tooltip})`}
+                        />
+                      </Tooltip>
                     );
                   })}
                 </span>
