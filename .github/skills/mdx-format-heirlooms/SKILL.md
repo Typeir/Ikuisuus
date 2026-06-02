@@ -1,29 +1,24 @@
 ---
 name: mdx-format-heirlooms
 description: >
-  Detailed format conventions for heirloom item files (.heirloom.mdx).
-  Use when authoring, refactoring, or auditing heirloom content in
-  src/content/en/items/heirlooms/. Covers the rarity and type italic lines,
-  image components, property sections, effects sections, attunement requirements,
-  weapon mastery blocks, metadata fields extracted by generateHeirloomMetadata.ts,
-  and all health-check rules specific to heirloom files.
+  Heirloom format (.heirloom.mdx). Rarity + type lines, images, properties,
+  effects, attunement, weapon mastery, metadata (generateHeirloomMetadata.ts),
+  health-check rules.
 ---
 
 # MDX Format: Heirlooms
 
 ## Purpose
 
-This skill governs the format of heirloom item files. Heirlooms are unique or
-legendary magic items with rich lore and complex mechanical properties. Use this
-skill when creating new heirlooms, fixing image path violations, or debugging
-metadata parse failures.
+Formats heirloom item files. Unique/legendary magic items with lore + complex
+mechanics.
 
 ## When to Use
 
-- Authoring a new `.heirloom.mdx` file
-- Fixing `fullsize-image-path` or `raw-img-tag` violations in item files
-- Adding or restructuring `## Effects` / `## Weapon Properties` sections
-- Running `npm run generate-metadata` and debugging heirloom parse failures
+- Author new `.heirloom.mdx`
+- Fix `fullsize-image-path` or `raw-img-tag` violations
+- Add/restructure `## Effects` / `## Weapon Properties`
+- Debug heirloom parse with `npm run generate-metadata`
 
 ## File Information
 

@@ -15,15 +15,15 @@
 'use client';
 
 import type {
-    CharacterShard,
-    CharacterSheet as CharacterSheetType,
-    VocationEntry,
+  CharacterShard,
+  CharacterSheet as CharacterSheetType,
+  VocationEntry,
 } from '@/lib/types/character';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { getTotalCharacterLevel } from '@/modules/character-builder/lib/utils/characterDerivation';
 import {
-    computeAbilityModifier,
-    computeProficiencyBonus,
+  computeAbilityModifier,
+  computeProficiencyBonus,
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
@@ -84,18 +84,18 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 
     const newEntries: HitDieRollEntry[] = [];
     const conMod = computeAbilityModifier(data.abilityScores.con);
+    let updatedLog = [...(data.hitDiceLog ?? [])];
 
     for (const currEntry of curr) {
       if (!currEntry.slug) continue;
       const prevEntry = prev.find((p) => p.slug === currEntry.slug);
       const prevLevel = prevEntry?.level ?? 0;
       const currLevel = currEntry.level ?? 1;
+
       if (currLevel > prevLevel) {
         for (let li = prevLevel + 1; li <= currLevel; li++) {
           const id = `${currEntry.slug}-${li}`;
-          const alreadyLogged = (data.hitDiceLog ?? []).some(
-            (e) => e.id === id,
-          );
+          const alreadyLogged = updatedLog.some((e) => e.id === id);
           if (!alreadyLogged) {
             newEntries.push({
               id,
@@ -110,14 +110,27 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           }
         }
       }
+
+      if (currLevel < prevLevel) {
+        updatedLog = updatedLog.filter((e) => {
+          if (e.vocSlug !== currEntry.slug) return true;
+          return e.levelIndex <= currLevel;
+        });
+      }
     }
 
-    if (!pbChanged && newEntries.length === 0) return;
+    const activeSlugs = new Set(curr.filter((v) => v.slug).map((v) => v.slug));
+    updatedLog = updatedLog.filter((e) => activeSlugs.has(e.vocSlug));
+
+    const logChanged = updatedLog.length !== (data.hitDiceLog ?? []).length;
+
+    if (!pbChanged && newEntries.length === 0 && !logChanged) return;
 
     const patch: Partial<CharacterSheetType> = {};
     if (pbChanged) patch.proficiencyBonus = derivedPb;
-    if (newEntries.length > 0) {
-      patch.hitDiceLog = [...(data.hitDiceLog ?? []), ...newEntries];
+    if (newEntries.length > 0 || logChanged) {
+      patch.hitDiceLog =
+        newEntries.length > 0 ? [...updatedLog, ...newEntries] : updatedLog;
     }
     onChange(patch);
   }, [data, onChange]);

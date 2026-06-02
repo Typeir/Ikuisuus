@@ -1,166 +1,157 @@
-# Copilot Instructions for Library of Ikuisuus
+# Copilot: Library of Ikuisuus
 
-> 📚 **For comprehensive technical details**, see [Architecture Documentation](.github/docs/README.md) - Deep-dive guides for each system component with code examples, extension patterns, and troubleshooting.
+> [Architecture Documentation](.github/docs/README.md) — component deep-dives, examples, troubleshooting.
 
-## ⚠️ Hard Rules (Non-Negotiable)
+## Hard Rules — Enforced
 
-These rules are **strictly enforced**. Violations will cause build failures, test failures, or code review rejections.
+Violations → build failure, test failure, review rejection.
 
-| Rule                                                                                                                                                                    | Documentation                                                          | Acceptance Check                                                                                                               |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Caveman Speak - you must use concise language, every time you output a token, it costs us a cent. so do not speak unless strictly needed. remain technical and focused. | No Documentation, be caveman.                                          | First response "I am caveman, I will do - {Caveman version of request}" and first chain of thought with the same caveman style |
-| If you are an agent, load PAW skill before any implementation. Load the full file.                                                                                      | [PAW Skill](.github/skills/paw/SKILL.md)                               | PAW SKILL.md read before first edit                                                                                            |
-| JSDoc on all declarations, no inline comments                                                                                                                           | [JSDoc Standards](.github/docs/jsdoc.md)                               | `grep -rn "// " src/` finds no logic comments                                                                                  |
-| NO color literals outside `globals.scss`                                                                                                                                | [SCSS Theme Rules](.github/docs/scss-theme-rules.md)                   | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` returns 0                                                                     |
-| Zero act() warnings in tests                                                                                                                                            | [Testing Rules](.github/docs/testing-rules.md)                         | `npm test` shows no warnings                                                                                                   |
-| Use NotificationProvider, not `alert()`                                                                                                                                 | [Testing Rules](.github/docs/testing-rules.md)                         | `grep -rn "alert(" src/` returns 0                                                                                             |
-| Explicit MikroORM decorator typing                                                                                                                                      | [MikroORM Instructions](.github/instructions/mikroorm.instructions.md) | `rg "@PrimaryKey\(\{(?![^}]*type:)(?![^}]*entity:)[^}]*\}\)" src/lib/db/orm/entities -n` returns 0                             |
-| Run `npm run pre-init` before dev/build                                                                                                                                 | [Build Pipeline](.github/docs/build-pipeline.md)                       | Build succeeds                                                                                                                 |
-| If you find "pre-existing errors" you must fix them anyway, no excuses                                                                                                  | [PAW Skill](.github/skills/paw/SKILL.md)                               | health:check 0 critical issues, npm run build:vercel clean                                                                     |
+| Rule                                                        | Documentation                                             | Acceptance Check                                     |
+| ----------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------- |
+| Caveman Speak — concise only, tokens cost. Technical focus. | [Caveman](.github/skills/caveman/SKILL.md.md)             | "I am caveman, will do — {caveman request}"          |
+| Agent: load PAW skill fully before any edit.                | [PAW](.github/skills/paw/SKILL.md)                        | PAW SKILL.md read first.                             |
+| JSDoc on exports only, no inline comments                   | [JSDoc](.github/docs/jsdoc.md)                            | `grep -rn "// " src/` → 0                            |
+| No color literals outside `globals.scss`                    | [SCSS](.github/docs/scss-theme-rules.md)                  | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` → 0 |
+| Zero act() warnings in tests                                | [Testing](.github/docs/testing-rules.md)                  | `npm test` → no warnings                             |
+| Use NotificationProvider, not `alert()`                     | [Testing](.github/docs/testing-rules.md)                  | `grep -rn "alert(" src/` → 0                         |
+| MikroORM decorators explicit typed                          | [MikroORM](.github/instructions/mikroorm.instructions.md) | `@PrimaryKey()` has `type:` + `entity:`              |
+| Run `npm run pre-init` before dev/build                     | [Build](.github/docs/build-pipeline.md)                   | Build succeeds                                       |
+| Pre-existing errors? Fix anyway.                            | [PAW](.github/skills/paw/SKILL.md)                        | health:check 0 critical                              |
 
-## ✅ Completion Gate (Mandatory)
+## Completion Gate
 
-Before an agent says a task is "done" or "all done", it MUST run:
+Before marking done, run:
 
 ```bash
 npm run health:check
 npm test
 ```
 
-- `npm test` automatically runs `npm run test:enforce` via `pretest`.
-- If either command fails, the agent must report blockers and must NOT mark completion.
+`npm test` runs `test:enforce` via `pretest`. Failure → no completion.
 
 ## Recent Changes
 
-Major architectural changes to be aware of:
-
 ### 2026
 
-| Change                      | Impact                                                                                                                                      | Documentation                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| **Copilot Workflow System** | Enforced A→B→C task lifecycle: Analysis → Health Gate → Completion Reconciliation with agents, skills, hooks, and health-check scripts      | [Workflow System](.github/docs/copilot-workflow-system.md)                   |
-| **MDX Format Health Check** | `check-mdx-format.ts` validates content structure, naming, components; integrated into composite health gate and post-edit lint hook        | [MDX Content Instructions](.github/instructions/mdx-content.instructions.md) |
-| **World Sim Module**        | Three.js solar system with phase-based render lifecycle, DOM overlay bridge, and celestial body renderers                                   | [World Sim Module](.github/docs/world-sim-module.md)                         |
-| **RenderLifecycle System**  | Unity-style phase bus (PreUpdate → Update → PostUpdate → PreRender → render → PostRender) replaces ad-hoc callback arrays in SceneManager   | [World Sim Module](.github/docs/world-sim-module.md)                         |
-| **Foundry VTT Module**      | Export pipeline: MonsterMetadata → d20 NPC Actor JSON with image bundling, token generation, and LevelDB pack compilation                   | [Foundry Module](.github/docs/foundry-module.md)                             |
-| **tools-menu DDD Module**   | `src/lib/components/toolsMenu/` → `src/modules/tools-menu/` with domain types, registry config, `useToolRegistry()` hook, and test coverage | [tools-menu README](src/modules/tools-menu/README.md)                        |
+| Change           | Details                                                                                          | Doc                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| Copilot Workflow | A→B→C: Analyze → Gate → Reconcile. Agents, skills, hooks, checks.                                | [Workflow](.github/docs/copilot-workflow-system.md)     |
+| MDX Format Check | Validates structure, naming, components. Composite gate + lint hook.                             | [MDX](.github/instructions/mdx-content.instructions.md) |
+| World Sim        | Three.js system, phase render, DOM overlay, celestial renderers.                                 | [World Sim](.github/docs/world-sim-module.md)           |
+| RenderLifecycle  | Phase bus replaces callbacks. PreUpdate → Update → PostUpdate → PreRender → render → PostRender. | [World Sim](.github/docs/world-sim-module.md)           |
+| Foundry Export   | MonsterMetadata → d20 NPC JSON, images, tokens, LevelDB packs.                                   | [Foundry](.github/docs/foundry-module.md)               |
+| tools-menu DDD   | Moved to `src/modules/tools-menu/`. Domain types, registry, hook, tests.                         | [tools-menu](src/modules/tools-menu/README.md)          |
 
 ### 2025
 
-| Change                         | Impact                                                                        | Documentation                                        |
-| ------------------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------------- |
-| **Play Mode Turn Tracker**     | Encounter planner now has live combat tracking with round-start notifications | [Encounter Module](.github/docs/encounter-module.md) |
-| **Push Notification Refactor** | Context-based notifications replace alerts; timing constants exported         | [Testing Rules](.github/docs/testing-rules.md)       |
-| **Strict JSDoc Enforcement**   | No inline comments, `@property` tags required for interfaces                  | [JSDoc Standards](.github/docs/jsdoc.md)             |
-| **SCSS Theme Token Rules**     | All colors via CSS variables only, grep checks in CI                          | [SCSS Theme Rules](.github/docs/scss-theme-rules.md) |
-| **Act-Clean Testing**          | Fake timers required for notification tests, async userEvent patterns         | [Testing Rules](.github/docs/testing-rules.md)       |
+| Change        | Details                                                 | Doc                                           |
+| ------------- | ------------------------------------------------------- | --------------------------------------------- |
+| Turn Tracker  | Live combat, round-start notices.                       | [Encounter](.github/docs/encounter-module.md) |
+| Notifications | Context-based, replaces alerts. Timing consts exported. | [Testing](.github/docs/testing-rules.md)      |
+| JSDoc Strict  | No inline, `@property` on interfaces.                   | [JSDoc](.github/docs/jsdoc.md)                |
+| SCSS Tokens   | Colors → CSS vars only. Grep checks in CI.              | [SCSS](.github/docs/scss-theme-rules.md)      |
+| Act-Clean     | Fake timers, async userEvent patterns.                  | [Testing](.github/docs/testing-rules.md)      |
 
-## Project Overview
+## Project: Next.js 15 D&D Site
 
-Next.js 15 internationalized D&D documentation site with filesystem-based MDX content, three-layer metadata extraction system, and build-time static generation. Features responsive navigation, custom theme system, and automated content processing pipeline.
+Filesystem MDX, i18n, three-layer metadata, build-time static gen. Responsive nav, theme system, content pipeline.
 
 ---
 
 ## Delegated Subsystems
 
-> **⚠️ ATTENTION AGENTS**: Do NOT guess implementations for the following subsystems. You MUST read the associated canonical documentation link before modifying related code.
+MUST read docs before touching. No guessing.
 
-### 1. Critical Build Pipeline
+### 1. Build Pipeline
 
-> **📚 Deep Dive**: [Build Pipeline Architecture](.github/docs/build-pipeline.md)
+[Deep Dive](.github/docs/build-pipeline.md)
 
-**ALWAYS run `npm run pre-init` before dev/build** - this is non-negotiable. Consult the deep dive to understand the required build stages (asset compression, kebab-casing, MDX conversion, metadata generation, and locale merging).
+Run `npm run pre-init` before dev/build. Stages: asset compression, kebab-casing, MDX → metadata gen, locale merge.
 
-### 2. Metadata Generation System
+### 2. Metadata System
 
-> **📚 Deep Dive**: [Metadata Generation Architecture](.github/docs/metadata-generation.md)
+[Deep Dive](.github/docs/metadata-generation.md)
 
-Consult the documentation for the Three-Layer Metadata Architecture (Build → Runtime → Client), shared utilities (`src/lib/metadata/`), schema structures, and performance patterns. All new generators must follow the established standards documented there.
+Three-layer: Build → Runtime → Client. Shared utils in `src/lib/metadata/`. Schema, perf patterns. Generators must follow standards.
 
-### 3. Content System & Internationalization
+### 3. Content & i18n
 
-> **📚 Deep Dive**: [Content System & Internationalization](.github/docs/content-system.md)
+[Deep Dive](.github/docs/content-system.md)
 
-Refer to the documentation for MDX file organization rules, strict kebab-casing, Next.js dynamic routing catch-alls, `next-intl` translation workflows, MDX component registration, and CLI content workflows (`linkify:world`, `scaffold:world`).
+MDX org, kebab-casing strict, Next.js catch-alls, `next-intl` flows, component reg, CLI (`linkify:world`, `scaffold:world`).
 
-### 4. Theme System (CSS Architecture)
+### 4. Theme System
 
-> **📚 Deep Dive**: [Theme System Architecture](.github/docs/theme-system.md)
+[Deep Dive](.github/docs/theme-system.md)
 
-Strict cascade orders and FOUC prevention mechanisms are in place. Consult the documentation for CSS specificity rules, theme token variables, and common pitfalls before altering `globals.scss` or component styles.
+Cascade order strict, FOUC prevention active. CSS specificity, token vars, pitfalls in docs.
 
-### 5. World Sim Module (Three.js)
+### 5. World Sim (Three.js)
 
-> **📚 Deep Dive**: [World Sim Architecture](.github/docs/world-sim-module.md)
+[Deep Dive](.github/docs/world-sim-module.md)
 
-Consult the documentation for the Mediator Pattern (`WorldSimMediator`), Render Lifecycle phase bus, Strategy Pattern for celestial renderers, and the DOM Overlay Bridge. Three.js owns the canvas, React owns the UI; do not cross these boundaries without referring to the documentation.
+Mediator Pattern, phase bus, Strategy (renderers), DOM bridge. Three.js owns canvas, React owns UI. Boundary strict.
 
 ---
 
-## Documentation and Examples
+## Documentation Rules
 
-**IMPORTANT**: Do NOT create markdown files in the project root or inside `src/`.
+No markdown in root or `src/`. Docs → `.github/docs/` only. Test docs → `.ignore/tests/` only. Examples → JSDoc.
 
-- Documentation: Place in `.github/docs/` only.
-- Test documentation: Place in `.ignore/tests/` if new markdown is needed.
-- Code examples: Embed in JSDoc comments within source files.
+## Debug Namespace: `window.ik`
 
-## Runtime Debug Namespace — `window.ik`
+Live inspection in DevTools. Each subsystem registers short key.
 
-The project exposes a structured debug namespace at `window.ik` for live inspection and tuning in DevTools. Each subsystem registers a module under a short key.
-
-| Key            | Registered by          | Purpose                                     |
+| Key            | Registered             | Purpose                                     |
 | -------------- | ---------------------- | ------------------------------------------- |
-| `window.ik.ws` | `SceneManager.start()` | World Sim controls — removed in `dispose()` |
+| `window.ik.ws` | `SceneManager.start()` | World Sim controls (removed in `dispose()`) |
 
-### World Sim module (`window.ik.ws`)
+### `window.ik.ws` Properties
 
-| Property          | R/W     | Description                                                                                                                             |
-| ----------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `deltaTimeCap`    | **R/W** | Max frame delta in seconds before clamping (default `1/15`). Set higher to stress-test, lower to slow physics. Clamped to `[1/120, 1]`. |
-| `fps`             | R       | Instantaneous FPS of the last frame (before clamping).                                                                                  |
-| `time`            | R       | Accumulated simulation time in seconds since loop start (advances at `deltaTime × simulationSpeed`).                                    |
-| `running`         | R       | Whether the animation loop is active.                                                                                                   |
-| `simulationSpeed` | **R/W** | Simulation speed multiplier. Default `1` (real-time). `0` = freeze, `100` = fast-forward. Scales orbital positions and mesh rotations.  |
+| Prop              | R/W |                                                             |
+| ----------------- | --- | ----------------------------------------------------------- |
+| `deltaTimeCap`    | RW  | Max Δt (def 1/15). Stress test ↑, slow ↓. Clamp [1/120, 1]. |
+| `fps`             | R   | Instantaneous FPS.                                          |
+| `time`            | R   | Sim time (seconds). Δt × speed.                             |
+| `running`         | R   | Loop active?                                                |
+| `simulationSpeed` | RW  | Multiplier. 0=freeze, 100=fast. Default 1.                  |
 
-**Adding a new module**: Define your debug interface in `src/lib/debug/ik.ts` under `IkModules`, call `registerIkModule('key', obj)` on mount, and `unregisterIkModule('key')` on unmount.
+Add module: Define in `src/lib/debug/ik.ts`. `registerIkModule('key', obj)` on mount, `unregisterIkModule('key')` on unmount.
 
 ---
 
-## Reference Files Index
+## Reference Index
 
-_Use these paths to access specific operational knowledge:_
+### Standards
 
-### Hard Rules & Standards
+- [JSDoc](.github/docs/jsdoc.md)
+- [SCSS](.github/docs/scss-theme-rules.md)
+- [Testing](.github/docs/testing-rules.md)
+- [MDX](.github/instructions/mdx-content.instructions.md)
 
-- **JSDoc Standards**: [.github/docs/jsdoc.md](.github/docs/jsdoc.md)
-- **SCSS Theme Rules**: [.github/docs/scss-theme-rules.md](.github/docs/scss-theme-rules.md)
-- **Testing Rules**: [.github/docs/testing-rules.md](.github/docs/testing-rules.md)
-- **MDX Content Rules**: [.github/instructions/mdx-content.instructions.md](.github/instructions/mdx-content.instructions.md)
+### Architecture
 
-### Architecture & Subsystems
+- [Build](.github/docs/build-pipeline.md)
+- [Metadata](.github/docs/metadata-generation.md)
+- [Theme](.github/docs/theme-system.md)
+- [Content](.github/docs/content-system.md)
+- [Encounter](.github/docs/encounter-module.md)
+- [World Sim](.github/docs/world-sim-module.md)
+- [Foundry](.github/docs/foundry-module.md)
+- [Copilot Workflow](.github/docs/copilot-workflow-system.md)
 
-- **Build Pipeline**: [.github/docs/build-pipeline.md](.github/docs/build-pipeline.md)
-- **Metadata System**: [.github/docs/metadata-generation.md](.github/docs/metadata-generation.md)
-- **Theme System**: [.github/docs/theme-system.md](.github/docs/theme-system.md)
-- **Content System**: [.github/docs/content-system.md](.github/docs/content-system.md)
-- **Encounter Module**: [.github/docs/encounter-module.md](.github/docs/encounter-module.md)
-- **World Sim Module**: [.github/docs/world-sim-module.md](.github/docs/world-sim-module.md)
-- **Foundry Module**: [.github/docs/foundry-module.md](.github/docs/foundry-module.md)
-- **Copilot Workflow**: [.github/docs/copilot-workflow-system.md](.github/docs/copilot-workflow-system.md)
+### Workflow System
 
-### Copilot Workflow System
+- [Agents](.github/agents/)
+- [Skills](.github/skills/)
+- [Instructions](.github/instructions/)
+- [Prompts](.github/prompts/)
+- [Hooks](.github/hooks/hooks.json)
+- [Health](.github/scripts/health-check.ts)
+- [Tasks](.ignore/tasks/)
+- [Reports](.ignore/reports/)
 
-- **Agents**: [.github/agents/](.github/agents/)
-- **Skills**: [.github/skills/](.github/skills/)
-- **Instructions**: [.github/instructions/](.github/instructions/)
-- **Prompts**: [.github/prompts/](.github/prompts/)
-- **Hooks**: [.github/hooks/hooks.json](.github/hooks/hooks.json)
-- **Health Scripts**: [.github/scripts/health-check.ts](.github/scripts/health-check.ts)
-- **Task Artifacts**: [.ignore/tasks/](.ignore/tasks/)
-- **Reports**: [.ignore/reports/](.ignore/reports/)
+### Data
 
-### Key Data Sources
-
-- **Shared Game Data**: [scripts/core/shared-data.json](scripts/core/shared-data.json)
-- **Celestial Registry**: [src/lib/components/worldSim/data/blackCradleRegistry.json](src/lib/components/worldSim/data/blackCradleRegistry.json)
+- [Game Data](scripts/core/shared-data.json)
+- [Celestial Registry](src/lib/components/worldSim/data/blackCradleRegistry.json)

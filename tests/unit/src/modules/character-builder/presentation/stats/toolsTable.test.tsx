@@ -8,10 +8,11 @@
  * @since 1.0.0
  */
 
-import { ToolsTable } from '@/modules/character-builder/presentation/stats/toolsTable';
 import type { CharacterTool } from '@/lib/types/character';
+import { ToolsTable } from '@/modules/character-builder/presentation/stats/toolsTable';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 
 const TOOLS: CharacterTool[] = [
@@ -19,10 +20,26 @@ const TOOLS: CharacterTool[] = [
   { name: 'Smith Tools', proficiency: 'none' },
 ];
 
+const testMessages = {
+  characterSheet: {
+    colTool: 'Tool',
+    colLevel: 'Level',
+    colBonus: 'Bonus',
+    ariaToolsTable: 'Tools',
+    ariaProfTrack: 'Proficiency Track',
+    tools: {
+      "Thieves' Tools": "Thieves' Tools",
+      'Smith Tools': 'Smith Tools',
+    },
+  },
+};
+
 describe('ToolsTable', () => {
   it('renders all tool rows', () => {
     render(
-      <ToolsTable tools={TOOLS} proficiencyBonus={3} onChange={vi.fn()} />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable tools={TOOLS} proficiencyBonus={3} onChange={vi.fn()} />
+      </NextIntlClientProvider>,
     );
     expect(screen.getByText("Thieves' Tools")).toBeTruthy();
     expect(screen.getByText('Smith Tools')).toBeTruthy();
@@ -30,7 +47,9 @@ describe('ToolsTable', () => {
 
   it('shows correct bonus for non-proficient tool', () => {
     render(
-      <ToolsTable tools={TOOLS} proficiencyBonus={3} onChange={vi.fn()} />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable tools={TOOLS} proficiencyBonus={3} onChange={vi.fn()} />
+      </NextIntlClientProvider>,
     );
     const rows = screen.getAllByRole('row');
     const cells = rows[1].querySelectorAll('td');
@@ -42,11 +61,13 @@ describe('ToolsTable', () => {
       { name: 'Smith Tools', proficiency: 'proficient' },
     ];
     render(
-      <ToolsTable
-        tools={toolsWithProf}
-        proficiencyBonus={3}
-        onChange={vi.fn()}
-      />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={toolsWithProf}
+          proficiencyBonus={3}
+          onChange={vi.fn()}
+        />
+      </NextIntlClientProvider>,
     );
     expect(screen.getByText('+3')).toBeTruthy();
   });
@@ -56,11 +77,13 @@ describe('ToolsTable', () => {
       { name: "Thieves' Tools", proficiency: 'familiarity' },
     ];
     render(
-      <ToolsTable
-        tools={toolsWithFamiliarity}
-        proficiencyBonus={3}
-        onChange={vi.fn()}
-      />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={toolsWithFamiliarity}
+          proficiencyBonus={3}
+          onChange={vi.fn()}
+        />
+      </NextIntlClientProvider>,
     );
     expect(screen.getByText('+1')).toBeTruthy(); // half proficiency
   });
@@ -70,88 +93,118 @@ describe('ToolsTable', () => {
       { name: "Thieves' Tools", proficiency: 'expertise' },
     ];
     render(
-      <ToolsTable
-        tools={toolsWithExpertise}
-        proficiencyBonus={3}
-        onChange={vi.fn()}
-      />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={toolsWithExpertise}
+          proficiencyBonus={3}
+          onChange={vi.fn()}
+        />
+      </NextIntlClientProvider>,
     );
     expect(screen.getByText('+6')).toBeTruthy(); // double proficiency
   });
 
-  it('calls onChange when a tool row is clicked', async () => {
+  it('calls onChange when a pip is clicked', async () => {
     const onChange = vi.fn();
     render(
-      <ToolsTable
-        tools={[{ name: "Thieves' Tools", proficiency: 'none' }]}
-        proficiencyBonus={3}
-        onChange={onChange}
-      />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={[{ name: "Thieves' Tools", proficiency: 'none' }]}
+          proficiencyBonus={3}
+          onChange={onChange}
+        />
+      </NextIntlClientProvider>,
     );
-    await userEvent.click(screen.getByText("Thieves' Tools"));
+    const toolRow = screen.getByText("Thieves' Tools").closest('tr');
+    const firstPip = toolRow?.querySelector('button');
+    await userEvent.click(firstPip!);
     expect(onChange).toHaveBeenCalledOnce();
     const updatedProficiency = onChange.mock.calls[0][0][0].proficiency;
     expect(updatedProficiency).toBe('familiarity');
   });
 
-  it('cycles through proficiency levels correctly', async () => {
+  it('cycles through proficiency levels with pip clicks', async () => {
     const onChange = vi.fn();
     const { rerender } = render(
-      <ToolsTable tools={TOOLS} proficiencyBonus={3} onChange={onChange} />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={[{ name: "Thieves' Tools", proficiency: 'none' }]}
+          proficiencyBonus={3}
+          onChange={onChange}
+        />
+      </NextIntlClientProvider>,
     );
 
-    // Click 1: none -> familiarity
-    await userEvent.click(screen.getByText("Thieves' Tools"));
+    // Click pip[0]: none -> familiarity
+    let toolRow = screen.getByText("Thieves' Tools").closest('tr');
+    let pips = toolRow?.querySelectorAll('button');
+    await userEvent.click(pips![0]);
     expect(onChange.mock.calls[0][0][0].proficiency).toBe('familiarity');
 
-    // Click 2: familiarity -> proficient
+    // Click pip[1]: familiarity -> proficient
     onChange.mockClear();
     rerender(
-      <ToolsTable
-        tools={[{ name: "Thieves' Tools", proficiency: 'familiarity' }]}
-        proficiencyBonus={3}
-        onChange={onChange}
-      />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={[{ name: "Thieves' Tools", proficiency: 'familiarity' }]}
+          proficiencyBonus={3}
+          onChange={onChange}
+        />
+      </NextIntlClientProvider>,
     );
-    await userEvent.click(screen.getByText("Thieves' Tools"));
+    toolRow = screen.getByText("Thieves' Tools").closest('tr');
+    pips = toolRow?.querySelectorAll('button');
+    await userEvent.click(pips![1]);
     expect(onChange.mock.calls[0][0][0].proficiency).toBe('proficient');
 
-    // Click 3: proficient -> expertise
+    // Click pip[2]: proficient -> expertise
     onChange.mockClear();
     rerender(
-      <ToolsTable
-        tools={[{ name: "Thieves' Tools", proficiency: 'proficient' }]}
-        proficiencyBonus={3}
-        onChange={onChange}
-      />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={[{ name: "Thieves' Tools", proficiency: 'proficient' }]}
+          proficiencyBonus={3}
+          onChange={onChange}
+        />
+      </NextIntlClientProvider>,
     );
-    await userEvent.click(screen.getByText("Thieves' Tools"));
+    toolRow = screen.getByText("Thieves' Tools").closest('tr');
+    pips = toolRow?.querySelectorAll('button');
+    await userEvent.click(pips![2]);
     expect(onChange.mock.calls[0][0][0].proficiency).toBe('expertise');
 
-    // Click 4: expertise -> none
+    // Click pip[3]: expertise -> savanthood
     onChange.mockClear();
     rerender(
-      <ToolsTable
-        tools={[{ name: "Thieves' Tools", proficiency: 'expertise' }]}
-        proficiencyBonus={3}
-        onChange={onChange}
-      />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={[{ name: "Thieves' Tools", proficiency: 'expertise' }]}
+          proficiencyBonus={3}
+          onChange={onChange}
+        />
+      </NextIntlClientProvider>,
     );
-    await userEvent.click(screen.getByText("Thieves' Tools"));
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('none');
+    toolRow = screen.getByText("Thieves' Tools").closest('tr');
+    pips = toolRow?.querySelectorAll('button');
+    await userEvent.click(pips![3]);
+    expect(onChange.mock.calls[0][0][0].proficiency).toBe('savanthood');
   });
 
   it('does not call onChange in readOnly mode', async () => {
     const onChange = vi.fn();
     render(
-      <ToolsTable
-        tools={TOOLS}
-        proficiencyBonus={3}
-        onChange={onChange}
-        readOnly
-      />,
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={TOOLS}
+          proficiencyBonus={3}
+          onChange={onChange}
+          readOnly
+        />
+      </NextIntlClientProvider>,
     );
-    await userEvent.click(screen.getByText("Thieves' Tools"));
+    const toolRow = screen.getByText("Thieves' Tools").closest('tr');
+    const firstPip = toolRow?.querySelector('button');
+    await userEvent.click(firstPip!);
     expect(onChange).not.toHaveBeenCalled();
   });
 });

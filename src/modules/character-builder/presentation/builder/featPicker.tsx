@@ -15,9 +15,12 @@
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
 import { useFeats } from '@/lib/hooks/data/useFeats';
 import type { CharacterShard } from '@/lib/types/character';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
+import expandStyles from './boonExpand.module.scss';
+import { FeatExpandBody } from './featExpandBody';
 import pickerStyles from './pickerControls.module.scss';
 
 /**
@@ -51,6 +54,18 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
   const { feats, isLoading: loading, error: fetchError } = useFeats({ locale });
   const error = fetchError?.message ?? null;
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedFeats, setExpandedFeats] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  const toggleExpanded = useCallback((slug: string) => {
+    setExpandedFeats((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return next;
+    });
+  }, []);
 
   /** @param {string} slug - Feat slug to check */
   const toSourceFile = (slug: string) => `character-creation/feats/${slug}.mdx`;
@@ -99,23 +114,48 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
             <ul className={styles.boonList} aria-label='Available feats'>
               {filteredFeats.map((feat) => {
                 const selected = isSelected(feat.slug);
+                const isExpanded = expandedFeats.has(feat.slug);
+                const bodyId = `feat-body-${feat.slug.replace(/\s+/g, '-')}`;
+                const Chevron = isExpanded ? ChevronDown : ChevronRight;
+                const expandLabel = isExpanded
+                  ? t('shardCollapseAria', { name: feat.title })
+                  : t('shardExpandAria', { name: feat.title });
                 return (
                   <li
                     key={feat.slug}
                     className={`${styles.boonCard} ${selected ? styles.boonSelected : ''}`}>
-                    <button
-                      type='button'
-                      className={styles.boonToggleBtn}
-                      onClick={() => handleToggle(feat)}
-                      disabled={readOnly}
-                      aria-pressed={selected}>
-                      <span className={styles.boonName}>{feat.title}</span>
-                      {feat.hasPrerequisite && (
-                        <span className={styles.boonBpBadge}>
-                          {t('prereq')}
-                        </span>
-                      )}
-                    </button>
+                    <div className={expandStyles.boonRow}>
+                      <button
+                        type='button'
+                        className={styles.boonToggleBtn}
+                        onClick={() => handleToggle(feat)}
+                        disabled={readOnly}
+                        aria-pressed={selected}>
+                        <span className={styles.boonName}>{feat.title}</span>
+                        {feat.hasPrerequisite && (
+                          <span className={styles.boonBpBadge}>
+                            {t('prereq')}
+                          </span>
+                        )}
+                      </button>
+                      <button
+                        type='button'
+                        className={expandStyles.boonExpandBtn}
+                        onClick={() => toggleExpanded(feat.slug)}
+                        aria-expanded={isExpanded}
+                        aria-controls={bodyId}
+                        aria-label={expandLabel}>
+                        <Chevron size={14} aria-hidden='true' />
+                      </button>
+                    </div>
+                    {isExpanded && (
+                      <FeatExpandBody
+                        featSlug={feat.slug}
+                        featName={feat.title}
+                        cachedText={feat.description}
+                        id={bodyId}
+                      />
+                    )}
                   </li>
                 );
               })}

@@ -1,32 +1,25 @@
 ---
 name: mdx-format-specializations
 description: >
-  Detailed format conventions for specialization files (.specialization.mdx).
-  Use when authoring, refactoring, or auditing specialization content in
-  src/content/en/character-creation/vocations/{vocation}/. Covers the H1 name,
-  optional italic subtitle, flavor intro, Collapsible feature blocks with
-  level-prefixed H2 headings, the two structural variants (with and without
-  explicit Specialization Features header), optional spellcasting and
-  always-prepared spell lists, metadata fields extracted by
-  generateSpecializationMetadata.ts, and all format rules.
+  Specialization format (.specialization.mdx). H1 name, optional italic
+  subtitle, flavor intro, Collapsible blocks with level-prefixed H2 headings,
+  two structural variants (explicit/direct), optional spellcasting + prepared
+  lists, metadata (generateSpecializationMetadata.ts), format rules.
 ---
 
 # MDX Format: Specializations
 
 ## Purpose
 
-This skill governs the format of vocation specialization (subclass) files.
-Each specialization lives in the same directory as its parent vocation's
-`main.mdx` and uses the `.specialization.mdx` extension. The generator
-reads these files separately from `main.mdx`.
+Formats vocation specialization (subclass) files. Same dir as parent vocation's
+`main.mdx`. Separate generator pass.
 
 ## When to Use
 
-- Authoring a new `.specialization.mdx` file
-- Adding a new feature level to an existing specialization
-- Restructuring from the "explicit header" variant to the "direct Collapsible"
-  variant (or vice versa)
-- Running `npm run generate-metadata` and debugging specialization parse failures
+- Author new `.specialization.mdx`
+- Add feature level to existing specialization
+- Restructure between "explicit header" / "direct Collapsible" variants
+- Debug specialization parse with `npm run generate-metadata`
 
 ## File Information
 

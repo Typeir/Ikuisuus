@@ -16,13 +16,14 @@ import type { HitDieRollEntry } from './hitDice';
 /**
  * Proficiency level for saves and skills.
  *
- * @typedef {'none'|'familiarity'|'proficient'|'expertise'} ProficiencyLevel
+ * @typedef {'none'|'familiarity'|'proficient'|'expertise'|'savanthood'} ProficiencyLevel
  */
 export type ProficiencyLevel =
   | 'none'
   | 'familiarity'
   | 'proficient'
-  | 'expertise';
+  | 'expertise'
+  | 'savanthood';
 
 /**
  * Ability score keys — the six core stats.

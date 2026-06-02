@@ -8,8 +8,8 @@
  * @since 1.0.0
  */
 
-import { SkillsTable } from '@/modules/character-builder/presentation/stats/skillsTable';
 import type { CharacterSkill } from '@/lib/types/character';
+import { SkillsTable } from '@/modules/character-builder/presentation/stats/skillsTable';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -89,7 +89,7 @@ describe('SkillsTable', () => {
     expect(screen.getByText('+7')).toBeTruthy(); // dex mod +1, double proficiency +6
   });
 
-  it('calls onChange when a skill row is clicked', async () => {
+  it('calls onChange when a pip is clicked', async () => {
     const onChange = vi.fn();
     render(
       <SkillsTable
@@ -99,12 +99,14 @@ describe('SkillsTable', () => {
         onChange={onChange}
       />,
     );
-    await userEvent.click(screen.getByText('Acrobatics'));
+    const acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
+    const firstPip = acrobaticsRow?.querySelector('button');
+    await userEvent.click(firstPip!);
     expect(onChange).toHaveBeenCalledOnce();
     expect(onChange.mock.calls[0][0][0].proficiency).toBe('familiarity');
   });
 
-  it('cycles through proficiency levels correctly', async () => {
+  it('cycles through proficiency levels with pip clicks', async () => {
     const onChange = vi.fn();
     const { rerender } = render(
       <SkillsTable
@@ -115,11 +117,13 @@ describe('SkillsTable', () => {
       />,
     );
 
-    // Click 1: none -> familiarity
-    await userEvent.click(screen.getByText('Acrobatics'));
+    // Click 1: none -> familiarity (first pip)
+    let acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
+    let pips = acrobaticsRow?.querySelectorAll('button');
+    await userEvent.click(pips![0]);
     expect(onChange.mock.calls[0][0][0].proficiency).toBe('familiarity');
 
-    // Click 2: familiarity -> proficient
+    // Click 2: familiarity -> proficient (second pip)
     onChange.mockClear();
     rerender(
       <SkillsTable
@@ -131,10 +135,12 @@ describe('SkillsTable', () => {
         onChange={onChange}
       />,
     );
-    await userEvent.click(screen.getByText('Acrobatics'));
+    acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
+    pips = acrobaticsRow?.querySelectorAll('button');
+    await userEvent.click(pips![1]);
     expect(onChange.mock.calls[0][0][0].proficiency).toBe('proficient');
 
-    // Click 3: proficient -> expertise
+    // Click 3: proficient -> expertise (third pip)
     onChange.mockClear();
     rerender(
       <SkillsTable
@@ -146,10 +152,12 @@ describe('SkillsTable', () => {
         onChange={onChange}
       />,
     );
-    await userEvent.click(screen.getByText('Acrobatics'));
+    acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
+    pips = acrobaticsRow?.querySelectorAll('button');
+    await userEvent.click(pips![2]);
     expect(onChange.mock.calls[0][0][0].proficiency).toBe('expertise');
 
-    // Click 4: expertise -> none
+    // Click 4: expertise -> savanthood (fourth pip)
     onChange.mockClear();
     rerender(
       <SkillsTable
@@ -161,8 +169,10 @@ describe('SkillsTable', () => {
         onChange={onChange}
       />,
     );
-    await userEvent.click(screen.getByText('Acrobatics'));
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('none');
+    acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
+    pips = acrobaticsRow?.querySelectorAll('button');
+    await userEvent.click(pips![3]);
+    expect(onChange.mock.calls[0][0][0].proficiency).toBe('savanthood');
   });
 
   it('does not call onChange in readOnly mode', async () => {

@@ -1,5 +1,10 @@
 [
   {
+    "file": "src/modules/character-builder/presentation/CharacterSheet/characterSheetWidgets.module.scss",
+    "maxLines": 9999,
+    "justification": "Comprehensive widget styles for ability score blocks, combat stats, skills"
+  },
+  {
     "file": "src/styles/mdxContent.module.scss",
     "maxLines": 280,
     "justification": "Mdx content module is basically a second globals.scss with module-scoped styles."

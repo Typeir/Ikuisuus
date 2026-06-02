@@ -1,83 +1,37 @@
 ---
 name: idea-capture
 description: >
-  Framework for documenting long-term architectural ideas, visions, and future
-  roadmaps for the Library of Ikuisuus project. Captures exploration POCs,
-  multi-phase visions, and architectural patterns in structured `.ignore/ideas/`
-  files with standardized roadmap sections, success criteria, and phase tracking.
+  Architectural idea capture framework. Long-term visions, POCs, multi-phase
+  roadmaps stored in `.ignore/ideas/` with standardized sections, success
+  criteria, phase tracking.
 ---
 
-# Idea Capture Skill
-
-Framework for documenting long-term architectural ideas, visions, and future roadmaps for the Library of Ikuisuus project.
+# Idea Capture
 
 ## Purpose
 
-Large architectural initiatives often emerge from exploratory work or feature discussions. This skill provides a standardized format for capturing these ideas so they:
+Capture long-term architectural ideas. Persist across sessions, remain
+discoverable, include POC evidence + blockers, clarify priority/scope.
 
-- Persist across conversation sessions
-- Remain discoverable for future work planning
-- Include proof-of-concept evidence and blockers
-- Clarify priority and scope relative to current architecture
+## When to Use
 
-## When to Use This Skill
+✅ POC proves pattern. Multi-phase vision beyond sprint. System limitation
+needs design. Cross-cutting pattern emerges. Preserve exploratory lessons.
 
-✅ **Use this skill when:**
+❌ Minor bugs. Routine features. Speculative talk (no evidence).
 
-- A POC or exploration proves a new architectural pattern
-- A user articulates a multi-phase vision that spans beyond current sprint scope
-- You've identified a limitation in the current system that requires design thinking
-- A cross-cutting pattern emerges that could reshape metadata extraction, rendering, or content workflows
-- You want to preserve lessons learned from exploratory work
+## File Format
 
-❌ **Don't use this skill for:**
+`.ignore/ideas/YYYY-MM-DD-kebab-title.md`
 
-- Minor bug fixes or incremental improvements (those belong in issue trackers)
-- Task tracking (use the task-lifecycle skill instead)
-- Routine feature implementation (use Analyzer + Implementer agents)
-- Speculative "what if" discussions without supporting evidence
+### Sections (REQUIRED)
 
-## Document Structure
-
-Store ideas in `.ignore/ideas/` with this naming convention:
-
-```
-YYYY-MM-DD-kebab-case-title.md
-```
-
-Examples:
-
-- `2026-04-17-prose-to-mechanics-compiler.md`
-- `2026-04-10-foundry-voice-lines-system.md`
-- `2026-03-15-visual-world-map-tiling-optimization.md`
-
-### Required Sections
-
-Every idea document MUST include these sections:
-
-#### 1. **Overview** (1 paragraph)
-
-One-sentence problem statement + high-level solution approach.
-
-```markdown
-## Overview
-
-Transform natural language homebrew descriptions into deterministic,
-schema-validated mechanical definitions using spaCy sequencing + rule matching.
-```
-
-#### 2. **Motivation** (3–5 bullet points)
-
-Why this idea matters. Link to pain points in current system or opportunities.
-
-```markdown
-## Motivation
-
-- **Authorial intent** — spaCy reads what was written, not what regex could match
-- **Consistency** — one description → multiple rule formats (d20 Systems, Foundry, internal)
-```
-
-#### 3. **Architecture** (1–3 subsections)
+1. **Overview** — 1 para: problem + solution
+2. **Motivation** — 3-5 bullets: why it matters
+3. **Architecture** — 1-3 subsections: how
+4. **Success Criteria** — definition of done
+5. **Blockers** — known/unknown issues
+6. **Roadmap** — phases + milestones
 
 High-level design. Can include diagrams, pseudocode, or layered explanations. Reference any POCs or prototypes.
 

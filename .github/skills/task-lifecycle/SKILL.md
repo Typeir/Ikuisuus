@@ -1,35 +1,33 @@
 ---
 name: task-lifecycle
 description: >
-  Manages the agile task lifecycle for Copilot workflows. Creates timestamped task
-  summary files in .ignore/tasks/ with agile methodology sections (Description,
-  Definition of Done, Acceptance Criteria, Milestones, Checklist). Also validates
-  task completion by reading the latest task file and checking all items.
+  Agile task lifecycle. Creates task summaries in .ignore/tasks/ with
+  Description, DoD, Acceptance Criteria, Milestones, Checklist. Validates
+  completion by verifying all items checked.
 ---
 
 # Task Lifecycle Skill
 
 ## Purpose
 
-This skill enforces structured task planning and completion tracking for every
-implementation session. It produces machine-readable markdown artifacts that the
-completion reconciliation loop can verify.
+Structured task planning + completion tracking. Machine-readable markdown artifacts
+for completion reconciliation loop.
 
 ## When to Use
 
-- **At implementation start**: Generate a new task summary in `.ignore/tasks/`
-- **At completion**: Read the latest task file and verify all checklist items
-- **During remediation**: Update the task file with remediation notes
+- At start: Generate new task summary in `.ignore/tasks/`
+- At completion: Read latest task file, verify all checklist items
+- During remediation: Update task file with remediation notes
 
 ## Task File Convention
 
-**Filename format**: `YYYY-MM-DD-HHMMSS-{kebab-task-title}.md`
+Filename: `YYYY-MM-DD-HHMMSS-{kebab-task-title}.md`
 
 Example: `2026-03-14-153045-add-spell-metadata-filter.md`
 
 ## Required Sections
 
-Every task file MUST contain these sections, formatted exactly as shown:
+Every task file MUST have ALL sections, exactly formatted:
 
 ```markdown
 # Task: {Title}
@@ -37,55 +35,55 @@ Every task file MUST contain these sections, formatted exactly as shown:
 **Created**: {ISO timestamp}
 **Status**: {NOT_STARTED | IN_PROGRESS | BLOCKED | COMPLETED | FAILED}
 **Owner**: {agent name or "user"}
-**Related Files**: {comma-separated list of affected files}
+**Related Files**: {comma-separated list}
 
 ---
 
 ## Description
 
-{1-3 paragraph description of what this task accomplishes and why}
+{1-3 paragraphs: what, why}
 
 ## Scope
 
-- **In Scope**: {bullet list of what IS included}
-- **Out of Scope**: {bullet list of what is explicitly excluded}
+- **In Scope**: {bullet list}
+- **Out of Scope**: {bullet list}
 
 ## Architecture Analysis
 
-{Summary of which architecture domains are relevant — reference the specific
-.github/instructions/_.instructions.md files and .github/docs/_.md docs consulted}
+{Summary of domains. Reference specific .github/instructions/_.instructions.md
+and .github/docs/_.md consulted}
 
 ## Definition of Done (DoD)
 
-{Bullet list of conditions that must ALL be true for this task to be complete}
+{Conditions ALL must be true for completion}
 
-- [ ] All code changes compile without errors
-- [ ] All modified files have JSDoc on exported declarations
-- [ ] No inline comments in modified function bodies
-- [ ] No color literals outside globals.scss in modified files
-- [ ] Tests exist for all modified source files
-- [ ] `npm test` passes with zero act() warnings
-- [ ] Files stay under 250 lines (or have documented exception)
+- [ ] Compile without errors
+- [ ] JSDoc on exports
+- [ ] No inline comments
+- [ ] No color literals outside globals.scss
+- [ ] Tests exist for modified source
+- [ ] `npm test` passes, zero act() warnings
+- [ ] Files stay <250 lines (or documented exception)
 - [ ] {task-specific DoD items}
 
 ## Acceptance Criteria
 
-{Numbered list of user-facing behaviors that verify the task is correct}
+{Numbered list: user-facing behaviors verify correctness}
 
-1. {Given X, when Y, then Z}
-2. {Given A, when B, then C}
+1. Given X, when Y, then Z
+2. Given A, when B, then C
 
 ## Milestones
 
-{Ordered list of major implementation checkpoints}
+{Ordered checkpoints}
 
-- [ ] M1: {milestone description}
-- [ ] M2: {milestone description}
-- [ ] M3: {milestone description}
+- [ ] M1: {description}
+- [ ] M2: {description}
+- [ ] M3: {description}
 
 ## Checklist
 
-{Granular implementation steps — each should be checkable}
+{Granular steps, each checkable}
 
 - [ ] {Step 1}
 - [ ] {Step 2}
@@ -93,30 +91,28 @@ Every task file MUST contain these sections, formatted exactly as shown:
 
 ## Health Check Results
 
-{Populated after health checks run — leave empty at creation}
+{Empty at creation, populated after checks run}
 
 ## Notes
 
-{Any additional context, decisions, or blockers encountered}
+{Context, decisions, blockers}
 ```
 
 ## Completion Validation
 
-When validating a task file, check:
+To validate task:
 
-1. **Status** is `COMPLETED`
-2. **All DoD items** are checked (`[x]`)
-3. **All Milestones** are checked (`[x]`)
-4. **All Checklist items** are checked (`[x]`)
-5. **Health Check Results** section is populated with pass/fail outcomes
-6. If any are unchecked, return the list of incomplete items for remediation
+1. Status = `COMPLETED`
+2. ALL DoD items checked (`[x]`)
+3. ALL Milestones checked (`[x]`)
+4. ALL Checklist items checked (`[x]`)
+5. Health Check Results populated with pass/fail
+6. If any unchecked → return list for remediation
 
 ## Machine-Readable Markers
 
-The skill uses these markers for automated parsing:
-
 - `**Status**:` line — parsed for lifecycle state
-- `- [ ]` — unchecked item (incomplete)
-- `- [x]` — checked item (complete)
-- `## Health Check Results` — section boundary for health data injection
-- `**Related Files**:` — parsed for file impact analysis
+- `- [ ]` — unchecked (incomplete)
+- `- [x]` — checked (complete)
+- `## Health Check Results` — section boundary
+- `**Related Files**:` — parsed for file impact

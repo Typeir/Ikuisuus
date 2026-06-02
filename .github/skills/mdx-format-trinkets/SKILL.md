@@ -1,29 +1,24 @@
 ---
 name: mdx-format-trinkets
 description: >
-  Detailed format conventions for trinket item files (.trinket.mdx).
-  Use when authoring, refactoring, or auditing trinket content in
-  src/content/en/items/trinkets/. Covers the plain-text type line, description
-  prose, bold property lines (Damage, Damage Type, Properties, Range, Weight),
-  the absence of section dividers, metadata fields extracted by
-  generateTrinketMetadata.ts, and all health-check rules specific to trinket files.
+  Trinket format (.trinket.mdx). Plain-text type line, description prose,
+  bold property lines (Damage, Damage Type, Properties, Range, Weight), no
+  section dividers, metadata (generateTrinketMetadata.ts), health-check rules.
 ---
 
 # MDX Format: Trinkets
 
 ## Purpose
 
-This skill governs the format of trinket item files. Trinkets are simple
-adventuring gear, weapons, and consumable items that follow a flat, minimal
-structure without sections or dividers. Use this skill when adding new gear
-items or fixing property line formatting.
+Formats trinket item files. Simple adventuring gear, weapons, consumables.
+Flat minimal structure, no sections.
 
 ## When to Use
 
-- Authoring a new `.trinket.mdx` file
-- Fixing property line format so the metadata generator can parse them
-- Adding a new item type (weapon, gear, consumable)
-- Running `npm run generate-metadata` and debugging trinket parse failures
+- Author new `.trinket.mdx`
+- Fix property line format for parser
+- Add new item type (weapon, gear, consumable)
+- Debug trinket parse with `npm run generate-metadata`
 
 ## File Information
 

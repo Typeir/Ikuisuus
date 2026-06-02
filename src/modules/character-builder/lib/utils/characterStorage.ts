@@ -11,15 +11,59 @@
  */
 
 import type {
-    AbilityKey,
-    CharacterSheet,
-    CharacterSkill,
-    CharacterSpellSlot,
-    CharacterTool,
-    EquipmentItem,
-    VocationEntry,
+  AbilityKey,
+  CharacterSheet,
+  CharacterSkill,
+  CharacterSpellSlot,
+  CharacterTool,
+  EquipmentItem,
+  VocationEntry,
 } from '@/lib/types/character';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
+
+/**
+ * Proficiency levels from unproficient to savant.
+ *
+ * @constant PROFICIENCY_CYCLE
+ * @type {ProficiencyLevel[]}
+ */
+export const PROFICIENCY_CYCLE: (
+  | 'none'
+  | 'familiarity'
+  | 'proficient'
+  | 'expertise'
+  | 'savanthood'
+)[] = ['none', 'familiarity', 'proficient', 'expertise', 'savanthood'];
+
+/**
+ * Proficiency pip levels (excludes 'none'). Use for rendering 4 pips.
+ *
+ * @constant PROFICIENCY_LEVELS
+ * @type {Exclude<ProficiencyLevel, 'none'>[]}
+ */
+export const PROFICIENCY_LEVELS: (
+  | 'familiarity'
+  | 'proficient'
+  | 'expertise'
+  | 'savanthood'
+)[] = ['familiarity', 'proficient', 'expertise', 'savanthood'];
+
+/**
+ * Proficiency level display labels and tooltips.
+ *
+ * @constant PROFICIENCY_LABELS
+ * @type {Record<ProficiencyLevel, { label: string; tooltip: string }>}
+ */
+export const PROFICIENCY_LABELS: Record<
+  'none' | 'familiarity' | 'proficient' | 'expertise' | 'savanthood',
+  { label: string; tooltip: string }
+> = {
+  none: { label: 'Unproficient', tooltip: 'No proficiency bonus' },
+  familiarity: { label: 'Familiarity', tooltip: '½ proficiency bonus' },
+  proficient: { label: 'Proficient', tooltip: 'Full proficiency bonus' },
+  expertise: { label: 'Expertise', tooltip: 'Double proficiency bonus' },
+  savanthood: { label: 'Savanthood', tooltip: 'Triple proficiency bonus' },
+};
 
 /**
  * All 28 standard D&D skills with their linked ability.
@@ -28,34 +72,25 @@ import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
  * @type {CharacterSkill[]}
  */
 export const SKILL_DEFAULTS: CharacterSkill[] = [
-  { name: 'Acrobatics', ability: 'dex', proficiency: 'none' },
-  { name: 'Animal Handling', ability: 'wis', proficiency: 'none' },
-  { name: 'Arcana', ability: 'int', proficiency: 'none' },
-  { name: 'Athletics', ability: 'str', proficiency: 'none' },
-  { name: 'Deception', ability: 'cha', proficiency: 'none' },
-  { name: 'History', ability: 'int', proficiency: 'none' },
-  { name: 'Insight', ability: 'wis', proficiency: 'none' },
-  { name: 'Intimidation', ability: 'cha', proficiency: 'none' },
-  { name: 'Investigation', ability: 'int', proficiency: 'none' },
-  { name: 'Medicine', ability: 'wis', proficiency: 'none' },
-  { name: 'Nature', ability: 'int', proficiency: 'none' },
-  { name: 'Perception', ability: 'wis', proficiency: 'none' },
-  { name: 'Performance', ability: 'cha', proficiency: 'none' },
-  { name: 'Persuasion', ability: 'cha', proficiency: 'none' },
-  { name: 'Religion', ability: 'int', proficiency: 'none' },
-  { name: 'Sleight of Hand', ability: 'dex', proficiency: 'none' },
-  { name: 'Stealth', ability: 'dex', proficiency: 'none' },
-  { name: 'Survival', ability: 'wis', proficiency: 'none' },
-  { name: 'Tinkering', ability: 'int', proficiency: 'none' },
-  { name: 'Lore: Damocles', ability: 'int', proficiency: 'none' },
-  { name: 'Lore: World', ability: 'int', proficiency: 'none' },
-  { name: 'Lore: Creatures', ability: 'int', proficiency: 'none' },
-  { name: 'Lore: Magic', ability: 'int', proficiency: 'none' },
-  { name: 'Lore: Religion', ability: 'int', proficiency: 'none' },
-  { name: 'Lore: Planes', ability: 'int', proficiency: 'none' },
-  { name: 'Social: Etiquette', ability: 'cha', proficiency: 'none' },
-  { name: 'Social: Streetwise', ability: 'cha', proficiency: 'none' },
-  { name: 'Social: Influence', ability: 'cha', proficiency: 'none' },
+  { name: 'skills.acrobatics', ability: 'dex', proficiency: 'none' },
+  { name: 'skills.animalHandling', ability: 'wis', proficiency: 'none' },
+  { name: 'skills.arcana', ability: 'int', proficiency: 'none' },
+  { name: 'skills.athletics', ability: 'str', proficiency: 'none' },
+  { name: 'skills.deception', ability: 'cha', proficiency: 'none' },
+  { name: 'skills.history', ability: 'int', proficiency: 'none' },
+  { name: 'skills.insight', ability: 'wis', proficiency: 'none' },
+  { name: 'skills.intimidation', ability: 'cha', proficiency: 'none' },
+  { name: 'skills.investigation', ability: 'int', proficiency: 'none' },
+  { name: 'skills.medicine', ability: 'wis', proficiency: 'none' },
+  { name: 'skills.nature', ability: 'int', proficiency: 'none' },
+  { name: 'skills.perception', ability: 'wis', proficiency: 'none' },
+  { name: 'skills.performance', ability: 'cha', proficiency: 'none' },
+  { name: 'skills.persuasion', ability: 'cha', proficiency: 'none' },
+  { name: 'skills.religion', ability: 'int', proficiency: 'none' },
+  { name: 'skills.sleightOfHand', ability: 'dex', proficiency: 'none' },
+  { name: 'skills.stealth', ability: 'dex', proficiency: 'none' },
+  { name: 'skills.survival', ability: 'wis', proficiency: 'none' },
+  { name: 'skills.tinkering', ability: 'int', proficiency: 'none' },
 ];
 
 /**
@@ -65,28 +100,29 @@ export const SKILL_DEFAULTS: CharacterSkill[] = [
  * @type {CharacterTool[]}
  */
 export const TOOL_DEFAULTS: CharacterTool[] = [
-  { name: "Artisan's Tools", proficiency: 'none' },
-  { name: "Thieves' Tools", proficiency: 'none' },
-  { name: 'Calligrapher Tools', proficiency: 'none' },
-  { name: 'Cartographer Tools', proficiency: 'none' },
-  { name: 'Cobbler Tools', proficiency: 'none' },
-  { name: 'Cook Utensils', proficiency: 'none' },
-  { name: 'Glassblower Tools', proficiency: 'none' },
-  { name: 'Jeweler Tools', proficiency: 'none' },
-  { name: 'Leatherworker Tools', proficiency: 'none' },
-  { name: 'Mason Tools', proficiency: 'none' },
-  { name: 'Painter Supplies', proficiency: 'none' },
-  { name: 'Potter Tools', proficiency: 'none' },
-  { name: 'Smith Tools', proficiency: 'none' },
-  { name: 'Tinker Tools', proficiency: 'none' },
-  { name: 'Weaver Tools', proficiency: 'none' },
-  { name: 'Woodcarver Tools', proficiency: 'none' },
-  { name: 'Abacus', proficiency: 'none' },
-  { name: 'Alchemist Supplies', proficiency: 'none' },
-  { name: 'Brewing Supplies', proficiency: 'none' },
-  { name: 'Herbalism Kit', proficiency: 'none' },
-  { name: 'Navigator Tools', proficiency: 'none' },
-  { name: 'Poisoner Kit', proficiency: 'none' },
+  { name: 'tools.alchemy', proficiency: 'none' },
+  { name: 'tools.brewing', proficiency: 'none' },
+  { name: 'tools.calligraphy', proficiency: 'none' },
+  { name: 'tools.carpentry', proficiency: 'none' },
+  { name: 'tools.cartography', proficiency: 'none' },
+  { name: 'tools.cookery', proficiency: 'none' },
+  { name: 'tools.deceit', proficiency: 'none' },
+  { name: 'tools.electrics', proficiency: 'none' },
+  { name: 'tools.gaming', proficiency: 'none' },
+  { name: 'tools.glassblowing', proficiency: 'none' },
+  { name: 'tools.herbalism', proficiency: 'none' },
+  { name: 'tools.jewellery', proficiency: 'none' },
+  { name: 'tools.leatherworking', proficiency: 'none' },
+  { name: 'tools.masonry', proficiency: 'none' },
+  { name: 'tools.music', proficiency: 'none' },
+  { name: 'tools.painting', proficiency: 'none' },
+  { name: 'tools.poisoncraft', proficiency: 'none' },
+  { name: 'tools.pottery', proficiency: 'none' },
+  { name: 'tools.smithing', proficiency: 'none' },
+  { name: 'tools.thievery', proficiency: 'none' },
+  { name: 'tools.tinkering', proficiency: 'none' },
+  { name: 'tools.vehicles', proficiency: 'none' },
+  { name: 'tools.weaving', proficiency: 'none' },
 ];
 export const SPELL_SLOT_DEFAULTS: CharacterSpellSlot[] = Array.from(
   { length: 9 },

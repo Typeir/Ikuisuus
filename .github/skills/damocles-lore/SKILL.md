@@ -1,65 +1,78 @@
 ---
 name: damocles-lore
 description: >
-  Shared context module for the Damocles setting. Defines cosmology, entities,
-  naming conventions, tone directives, anti-generic filters, and the no-hallucination
-  protocol. All Damocles-related agents and prompts MUST load this skill first.
+  Canonical lore for Damocles setting. Cosmology, entities, naming, tone,
+  anti-generic filters, no-hallucination protocol. Load FIRST for all
+  Damocles authoring. Always alongside damocles-page-types for drafting.
 ---
 
 # Damocles Lore Context
 
 ## Purpose
 
-This skill provides the canonical lore foundation for all Damocles authoring and refactoring work. Load it before drafting, editing, or auditing any content file that touches the Damocles setting.
+Canonical lore foundation for all Damocles authoring + refactoring. Load before
+any .mdx page touching Damocles setting.
 
 ## When to Use
 
-- Before drafting any new MDX page set in Damocles
-- Before refactoring existing lore, character, creature, region, or item pages
-- Before running lore consistency checks
-- Whenever editing content in `src/content/`
+- Before drafting new MDX page in Damocles
+- Before refactoring lore, character, creature, region, item pages
+- Before lore consistency checks
+- Editing anything in `src/content/`
 
 ---
 
 ## Setting Identity
 
-Damocles is a **heavily authored weird-fantasy setting**, not kitchen-sink heroic fantasy. Its world is ancient, post-collapse, and scarred by repeated civilizational and metaphysical disasters.
+Damocles: heavily authored weird-fantasy. NOT kitchen-sink heroic fantasy.
+Ancient, post-collapse, scarred by repeated civilizational + metaphysical disasters.
 
-**Tech strata**: The deeper you go into its past, the more technologically advanced things become. Ruined eras include dieselpunk, proto-industrial, and far more advanced ages. The present is degraded medievalism with rare remnants of lost machinery, relic weapons, dead infrastructure, and occult science.
+**Tech strata**: Deeper into past = more advanced. Ruined eras: dieselpunk, proto-industrial,
+far more advanced ages. Present: degraded medievalism + rare lost machinery, relic weapons,
+dead infrastructure, occult science.
 
-**Tone**: A deliberate blend of grimness and wonder. Not pure misery fantasy. Some regions are horrific, oppressive, and grotesque, but the setting also aims for melancholy adventure, strange beauty, warmth between companions, and the feeling of a long mythic journey. Tragedy, horror, awe, and road-trip wonder coexist.
+**Tone**: Grim + wonder. Not pure misery. Regions: horrific/oppressive/grotesque,
+AND melancholy adventure, strange beauty, companion warmth, long mythic journey feeling.
+Tragedy, horror, awe, road-trip wonder coexist.
 
-**Aesthetic anchors**: Berserk, Dragon's Dogma, FromSoftware, Evangelion, Castlevania, Lovecraft, Wizardry, Vermis/Plastiboo, Frank Frazetta, Zdzisław Beksiński, moods adjacent to Yoshitaka Amano and Wayne Barlowe. The result is brutal sacred imagery, ruined empires, malformed beasts, cosmic machinery, dead gods, biological horror, and relic technology.
+**Aesthetic anchors**: Berserk, Dragon's Dogma, FromSoftware, Evangelion, Castlevania,
+Lovecraft, Wizardry, Vermis/Plastiboo, Frazetta, Beksiński, Amano, Barlowe vibes.
+Result: brutal sacred imagery, ruined empires, malformed beasts, cosmic machinery,
+dead gods, biological horror, relic tech.
 
 ---
 
 ## Cosmological Core
 
-### The Canvas (Primeval Engine)
+### Canvas (Primeval Engine)
 
-The Canvas is the foundational mechanism of reality — a blank, breathing engine without inherent purpose. It is not a god but the substrate from which gods, worlds, and laws emerge. It issues Edicts that codify the rules of existence. When strained (e.g., by the Clone World fold), it weakens.
+Canvas = foundational mechanism of reality. Blank, breathing engine. NO inherent
+purpose. NOT god, substrate from which gods/worlds/laws emerge. Issues Edicts that
+codify existence rules. Strained (Clone World fold) = weakens.
 
 ### Ages Sequence
 
-| Age | Name            | Core Event                                                                                                                                                                                                                                                                                               |
-| --- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0   | Age of Nulls    | Canvas exists without purpose; Nulls are absences/faults; Will emerges from the first disparity                                                                                                                                                                                                          |
-| 1   | Age of Wills    | Wills prove existence through motion; Golden One emerges as First Direction; Celestial Chariot willed into being; time begins                                                                                                                                                                            |
-| 2   | Age of Motion   | Twin horses (light/dark) emerge from the Chariot; choice enters the world; matter forms from imperfection                                                                                                                                                                                                |
-| 3   | Age of Chaos    | Golden One names the white horse "The Dragon" (god of creation); dark horse becomes God of Ambition/Destruction (the Dreamcatcher); Everdark created as barrier; Golden One commits suicide to seal the path to godhood                                                                                  |
-| 4   | Age of Creation | Dragon wages War of the Shapes against Null-worshippers; Demiurge shapes Arkhé into Ideas; Väkis (spirits) arise from shaping imperfections; Empyreans arrive through the Everdark; Plato creates homunculi; White Homunculus (Wax) defeats the Dragon; Clone Worlds created                             |
-| 5   | Age of Fates    | Empyrean civilization collapses; Demiurge reshapes Beasts of Black Blood into animals; Empyreans settle Damocles and split into Purebloods and Humans; the Four Demons (Nigredo, Albedo, Xanthous, Rubedo) serve the Dreamcatcher; Interlocking merges Hidden Kingdom with Damocles; celestial gods fall |
+| Age | Name            | Event                                                                                                                                                                                                                       |
+| --- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0   | Age of Nulls    | Canvas without purpose; Nulls = absences/faults; Will emerges from first disparity                                                                                                                                          |
+| 1   | Age of Wills    | Wills prove via motion; Golden One = First Direction; Celestial Chariot willed; time begins                                                                                                                                 |
+| 2   | Age of Motion   | Twin horses (light/dark) from Chariot; choice enters world; matter from imperfection                                                                                                                                        |
+| 3   | Age of Chaos    | Dragon (white horse, god of creation); Dreamcatcher (dark horse, god of Ambition/Destruction); Everdark barrier; Golden One suicide seals godhood path                                                                      |
+| 4   | Age of Creation | Dragon wars Null-worshippers; Demiurge shapes Arkhé into Ideas; Väkis arise; Empyreans arrive through Everdark; Plato creates homunculi; Wax defeats Dragon; Clone Worlds made                                              |
+| 5   | Age of Fates    | Empyrean civ collapses; Demiurge reshapes Beasts of Black Blood into animals; Empyreans settle, split Purebloods/Humans; Four Demons serve Dreamcatcher; Interlocking merges Hidden Kingdom + Damocles; celestial gods fall |
 
 ### World Seed / Clone Worlds / Divine Selection
 
-- The **World Seed** is the true world where the White Homunculus sleeps beneath the Red Tree of Fate
-- **Clone Worlds** are mirror-reflections created by the Canvas to contain the consequences of the Homunculus's defiance — they emulate the true world but lack the Engine and the gods
-- Each Clone World contains the **Sampo** and the **Blade of Damocles** as decoy safeguards
-- **Godhood** is catastrophic — ascension is traumatic, regrettable, or ruinous; the Golden One's suicide sealed the path deliberately
+- **World Seed**: true world, White Homunculus sleeps beneath Red Tree of Fate
+- **Clone Worlds**: mirror-reflections, contain consequences of Homunculus defiance, emulate true world, NO Engine/gods
+- Each Clone World: Sampo + Blade of Damocles = decoy safeguards
+- **Godhood**: catastrophic, regrettable, ruinous; Golden One suicide sealed deliberately
 
-### The Everdark
+### Everdark
 
-An eternally burning barrier of blackened death created by the Dragon's breath to shield the world from the Earthmovers (Null-beasts that would grind creation to dust). The Dragon's fire scorched the firmament to block the void beyond.
+Eternally burning barrier of blackened death. Dragon's breath. Shields world from
+Earthmovers (Null-beasts grinding creation to dust). Dragon's fire scorched firmament
+to block void beyond.
 
 ---
 
@@ -67,36 +80,36 @@ An eternally burning barrier of blackened death created by the Dragon's breath t
 
 ### Cosmic / Divine Tier
 
-- **Canvas** — The primeval engine; substrate of reality; issues Edicts; not a god but the mechanism from which gods emerge
-- **Golden One** — First Will to bear form; First Direction; rode the Celestial Chariot; committed divine suicide to seal godhood; body became the worlds of the Black Cradle (sun, Damocles, Opaline Belt, etc.)
-- **The Dragon** ("Truth" / "Creation") — White horse of the Chariot, named by the Golden One; god of creation; created the Everdark; shaped reality with the Demiurge; defeated by Wax; its gouged eyes became Päivätär and Kuutar
-- **Dreamcatcher** (God of Ambition / Destruction) — Dark horse of the Chariot; severed from its twin by the Golden One; sealed in the Everdark; endlessly conspires to end the world; lodged in the Plato Tower; wields True Severance
-- **White Homunculus (Wax)** — Plato's creation with a Will equal to the Golden One's; completed the First Pilgrimage; defeated the Dragon; sleeps beneath the Red Tree of Fate in the World Seed
-- **Demiurge (The Blacksmith)** — Primordial defector who shaped Arkhé into Ideas; later reshaped the Beasts of Black Blood into animals; a craftsman-god, not a ruler
+- **Canvas** — Engine; substrate; issues Edicts; not god, mechanism
+- **Golden One** — First Will; First Direction; Chariot rider; committed divine suicide sealing godhood; body → Black Cradle worlds
+- **Dragon** ("Truth"/"Creation") — White horse, named by Golden One; god of creation; made Everdark; shaped reality with Demiurge; defeated by Wax; eyes → Päivätär + Kuutar
+- **Dreamcatcher** (Ambition/Destruction god) — Dark horse; severed by Golden One; sealed Everdark; conspires to end world; lodged Plato Tower; wields True Severance
+- **Wax** (White Homunculus) — Plato creation, Will = Golden One's; completed First Pilgrimage; defeated Dragon; sleeps Red Tree World Seed
+- **Demiurge** (Blacksmith) — Primordial defector, shaped Arkhé → Ideas; reshaped Beasts of Black Blood → animals; craftsman-god, NOT ruler
 
 ### Celestial Tier
 
-- **Päivätär / Päimär** — Bastard child of the Dragon; intensely evil; shed cursed light that created the Sunborn; killed during Empyrean expansion; its corpse devastated western Thule
-- **Kuutar / Red Queen / Mother Moon** — Sibling to Päivätär; birthed the Pieni; orchestrated the Interlocking to escape the Hidden Kingdom; still alive as a mangled corpse roaming the skies; now contacts mortals as "Mother Moon"
-- **Ukkonhemmo** — God of storms; first celestial god to fall to tombsteel weapons
+- **Päivätär / Päimär** — Bastard Dragon child; intensely evil; shed cursed light → Sunborn; killed Empyrean expansion; corpse devastated Thule
+- **Kuutar / Red Queen / Mother Moon** — Päivätär sibling; birthed Pieni; orchestrated Interlocking escape Hidden Kingdom; alive mangled corpse skies; contacts mortals "Mother Moon"
+- **Ukkonhemmo** — Storm god; first celestial to fall to tombsteel
 
-### The Four Demons (Hiisi)
+### Four Demons (Hiisi)
 
-- **Nigredo** — Lord of Flies and Rot; in whom all endings begin; contacted Anaximander
-- **Albedo** — The Bleak Bloom; false purity of life renewed; Hiisi of False Life and Eternal Growth; gargantuan aberration
-- **Xanthous** — Lord of Sulphur; where every obsession festers; allied with Gorgias
-- **Rubedo** — The Red Rebis; whose Sickening Radiance brings all things to an end; movements vanish into silence
+- **Nigredo** — Flies + Rot lord; all endings begin; contacted Anaximander
+- **Albedo** — Bleak Bloom; false purity; False Life + Eternal Growth Hiisi; gargantuan aberration
+- **Xanthous** — Sulphur lord; obsession festers; allied Gorgias
+- **Rubedo** — Red Rebis; Sickening Radiance ends all; movements → silence
 
 ### Creature Categories
 
-- **Hiisi** — God-tier aberrations born of Päivätär's envious attempts at creation; each bears a primal obsession; amorphous, pained beings existing out of anatomical luck
-- **Väkis** — Elemental spirits arising from imperfections in the Demiurge's shaping of Ideas
-- **Pieni** — Kuutar's offspring; civilization ruined by the Interlocking; some cursed into The Shifted
-- **Nulls** — Pre-time absences/faults; the first non-beings; some became Primordial Void Giants
-- **Empyreans** — Ancient star-faring civilization; arrived through the Everdark; diverged into Purebloods and Humans
-- **Sunborn** — Beastlike descendants born from Päimär's death-light; define Binturian culture
-- **Bloodletters / Lunar Kystepods** — Moon-touched beings supplied by Kuutar/Mother Moon
-- **Beasts of Black Blood** — Fourth-Star beings reshaped by the Demiurge into animals; originally sentient warriors/poets/artisans
+- **Hiisi** — God-tier aberrations, Päivätär jealous creation attempts; primal obsession each; amorphous, pained, anatomical luck
+- **Väkis** — Elemental spirits, Demiurge shaping Ideas imperfections
+- **Pieni** — Kuutar offspring; civ ruined Interlocking; some cursed → The Shifted
+- **Nulls** — Pre-time absences/faults; first non-beings; some → Primordial Void Giants
+- **Empyreans** — Ancient star-faring civ; arrived Everdark; diverged Purebloods/Humans
+- **Sunborn** — Beastlike, Päimär death-light descendants; define Binturian culture
+- **Bloodletters / Lunar Kystepods** — Moon-touched, Kuutar/Mother Moon supplied
+- **Beasts of Black Blood** — Fourth-Star, Demiurge reshaped → animals; originally sentient warriors/poets/artisans
 
 ### Key Named Figures
 

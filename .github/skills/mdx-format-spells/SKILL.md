@@ -1,31 +1,24 @@
 ---
 name: mdx-format-spells
 description: >
-  Detailed format conventions for spell files (.mdx) in the spells directory.
-  Use when authoring, refactoring, or auditing spell content in
-  src/content/en/spells/. Covers the optional YAML frontmatter (source: basic),
-  flavor text, the required blockquote stat block structure, bold property labels,
-  At Higher Levels phrasing, Spell Lists section with vocation links, metadata
-  fields extracted by generateSpellMetadata.ts, and the
-  spell-missing-blockquote-stat-block health-check rule.
+  Spell format (.mdx). Optional YAML frontmatter, flavor text, required blockquote
+  stat block, bold properties, At Higher Levels, Spell Lists with links, metadata
+  (generateSpellMetadata.ts), health-check rule.
 ---
 
 # MDX Format: Spells
 
 ## Purpose
 
-This skill governs the format of spell files. Every spell has a flavor text
-section and a blockquote stat block. The blockquote is the most critical
-structural element — the metadata generator and health check both require it.
-Use this skill when authoring new spells, migrating spells from other formats,
-or fixing `spell-missing-blockquote-stat-block` violations.
+Formats spell files. Flavor + blockquote stat block. Blockquote critical
+(generator + health check require it).
 
 ## When to Use
 
-- Authoring a new spell `.mdx` file
-- Fixing `spell-missing-blockquote-stat-block` health-check warnings
-- Adding or reformatting the `#### Spell Lists` section
-- Running `npm run generate-metadata` and debugging spell parse failures
+- Author new spell `.mdx`
+- Fix `spell-missing-blockquote-stat-block`
+- Add/reformat `#### Spell Lists`
+- Debug spell parse failures with `npm run generate-metadata`
 
 ## File Information
 

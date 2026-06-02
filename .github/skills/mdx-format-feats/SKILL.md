@@ -1,31 +1,26 @@
 ---
 name: mdx-format-feats
 description: >
-  Detailed format conventions for feat files (.mdx) in the feats directory.
-  Use when authoring, refactoring, or auditing feat content in
-  src/content/en/character-creation/feats/. Covers the prerequisite italic line,
-  flavor text, horizontal rule separator, ability increase sentence phrasing,
-  bold-bullet feature format, the fighting-styles/ exclusion, metadata fields
-  extracted by generateFeatMetadata.ts, and all format rules specific to feat files.
+  Feat format (.mdx). Prerequisite line, flavor, horizontal rule, ability
+  increase phrasing, bold-bullet features, fighting-styles/ exclusion, metadata
+  (generateFeatMetadata.ts), format rules.
 ---
 
 # MDX Format: Feats
 
 ## Purpose
 
-This skill governs the format of feat files. Feats use a minimal two-part
-structure: a flavor intro before a `---` divider, then mechanical benefits
-(optional ability increase + bold-labeled feature bullets). The format is
-designed so `generateFeatMetadata.ts` can reliably parse prerequisites,
-ability increases, and individual feature names and descriptions.
+Formats feat files. Two-part: flavor before `---`, then mechanics (ability
+increase + bold-labeled feature bullets). Parser extracts prerequisites,
+abilities, feature names + descriptions.
 
 ## When to Use
 
-- Authoring a new feat `.mdx` file
-- Fixing prerequisite line format so the generator parses it correctly
-- Adding or reformatting feature bullets
-- Running `npm run generate-metadata` and debugging feat parse failures
-- Auditing `fighting-styles/` subdirectory (excluded from metadata)
+- Author new feat `.mdx`
+- Fix prerequisite line format
+- Add/reformat feature bullets
+- Debug feat parse with `npm run generate-metadata`
+- Audit `fighting-styles/` exclusion
 
 ## File Information
 

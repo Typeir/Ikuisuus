@@ -12,18 +12,17 @@
 'use client';
 
 import type { CharacterSkill, ProficiencyLevel } from '@/lib/types/character';
-import { computeAbilityModifier } from '@/modules/character-builder/lib/utils/characterStorage';
+import {
+  computeAbilityModifier,
+  PROFICIENCY_CYCLE,
+  PROFICIENCY_LABELS,
+  PROFICIENCY_LEVELS,
+} from '@/modules/character-builder/lib/utils/characterStorage';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
-
-/** Cycle order for proficiency levels. */
-const PROFICIENCY_CYCLE: ProficiencyLevel[] = [
-  'none',
-  'familiarity',
-  'proficient',
-  'expertise',
-];
+import profRowStyles from '../CharacterSheet/proficiencyRow.module.scss';
+import profTrackStyles from '../CharacterSheet/proficiencyTrack.module.scss';
 
 /**
  * Props for the SkillsTable component.
@@ -59,13 +58,11 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
   readOnly = false,
 }) => {
   const t = useTranslations('characterSheet');
-  const handleToggle = (index: number) => {
+
+  const handlePipClick = (skillIndex: number, profLevel: ProficiencyLevel) => {
     if (readOnly) return;
-    const current = skills[index].proficiency;
-    const currentIdx = PROFICIENCY_CYCLE.indexOf(current);
-    const next = PROFICIENCY_CYCLE[(currentIdx + 1) % PROFICIENCY_CYCLE.length];
     const updated = skills.map((s, i) =>
-      i === index ? { ...s, proficiency: next } : s,
+      i === skillIndex ? { ...s, proficiency: profLevel } : s,
     );
     onChange(updated);
   };
@@ -74,6 +71,8 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
     const abilityMod = computeAbilityModifier(
       abilityScores[skill.ability] ?? 10,
     );
+    if (skill.proficiency === 'savanthood')
+      return abilityMod + proficiencyBonus * 3;
     if (skill.proficiency === 'expertise')
       return abilityMod + proficiencyBonus * 2;
     if (skill.proficiency === 'proficient')
@@ -100,37 +99,33 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
           const levelIndex = PROFICIENCY_CYCLE.indexOf(skill.proficiency);
           return (
             <tr
-              key={skill.name}
-              className={styles[`prof-${skill.proficiency}`]}
-              onClick={() => handleToggle(i)}
-              style={{ cursor: readOnly ? 'default' : 'pointer' }}>
-              <td>{skill.name}</td>
+              key={`skill-${i}`}
+              className={profRowStyles[`prof-${skill.proficiency}`]}>
+              <td>{t(skill.name)}</td>
               <td className={styles.abilityTag}>
                 {skill.ability.toUpperCase()}
               </td>
               <td aria-label={t('ariaProfTrack')}>
-                <span className={styles.profTrack} aria-hidden='true'>
-                  <span
-                    className={
-                      styles[
-                        levelIndex >= 1 ? 'trackDot-filled' : 'trackDot-empty'
-                      ]
-                    }
-                  />
-                  <span
-                    className={
-                      styles[
-                        levelIndex >= 2 ? 'trackDot-filled' : 'trackDot-empty'
-                      ]
-                    }
-                  />
-                  <span
-                    className={
-                      styles[
-                        levelIndex >= 3 ? 'trackDot-filled' : 'trackDot-empty'
-                      ]
-                    }
-                  />
+                <span className={profTrackStyles.profTrack} aria-hidden='true'>
+                  {PROFICIENCY_LEVELS.map((level, idx) => {
+                    const isActive = idx < levelIndex;
+                    const label = PROFICIENCY_LABELS[level];
+                    return (
+                      <button
+                        key={`${skill.name}-pip-${idx}`}
+                        type='button'
+                        disabled={readOnly}
+                        className={
+                          profTrackStyles[
+                            isActive ? 'trackDot-filled' : 'trackDot-empty'
+                          ]
+                        }
+                        onClick={() => handlePipClick(i, level)}
+                        title={label.tooltip}
+                        aria-label={`${label.label} (${label.tooltip})`}
+                      />
+                    );
+                  })}
                 </span>
               </td>
               <td>{bonusStr}</td>

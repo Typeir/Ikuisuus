@@ -147,4 +147,58 @@ describe('FeatPicker', () => {
       expect(screen.getByText('noAvailable')).toBeTruthy();
     });
   });
+
+  it('renders expand buttons for each feat', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_FEATS), { status: 200 }),
+    );
+    render(<FeatPicker selectedFeats={[]} onToggle={vi.fn()} />);
+    await waitFor(() => {
+      const expandBtns = screen.getAllByRole('button', {
+        name: /shardExpandAria/i,
+      });
+      expect(expandBtns.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('expanding a feat via chevron does not call onToggle (select and expand are independent)', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_FEATS), { status: 200 }),
+    );
+    const onToggle = vi.fn();
+    render(<FeatPicker selectedFeats={[]} onToggle={onToggle} />);
+    await waitFor(() => screen.getByText('Tough'));
+    const expandBtn = screen.getAllByRole('button', {
+      name: /shardExpandAria/i,
+    })[0];
+    await userEvent.click(expandBtn);
+    expect(onToggle).not.toHaveBeenCalled();
+  });
+
+  it('expand button toggles aria-expanded state', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_FEATS), { status: 200 }),
+    );
+    render(<FeatPicker selectedFeats={[]} onToggle={vi.fn()} />);
+    await waitFor(() => screen.getByText('Tough'));
+    const expandBtn = screen.getAllByRole('button', {
+      name: /shardExpandAria/i,
+    })[0];
+    expect(expandBtn).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(expandBtn);
+    expect(expandBtn).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('selecting a feat does not expand the row', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_FEATS), { status: 200 }),
+    );
+    render(<FeatPicker selectedFeats={[]} onToggle={vi.fn()} />);
+    await waitFor(() => screen.getByText('Tough'));
+    await userEvent.click(screen.getByRole('button', { name: /Tough/i })[0]);
+    const expandBtns = screen.getAllByRole('button', {
+      name: /shardExpandAria/i,
+    });
+    expect(expandBtns[0]).toHaveAttribute('aria-expanded', 'false');
+  });
 });

@@ -1,74 +1,69 @@
 ---
 name: mdx-format
 description: >
-  Router skill for MDX content format in the Library of Ikuisuus project. Covers
-  universal format rules, the MDX component registry, running the format health
-  check, and the refactoring workflow. For per-content-type structural rules,
-  canonical examples, and metadata field tables, load the matching sub-skill
-  (mdx-format-monsters, mdx-format-heirlooms, mdx-format-trinkets,
-  mdx-format-bloodlines, mdx-format-feats, mdx-format-spells,
-  mdx-format-vocations, mdx-format-specializations, mdx-format-world).
+  Router skill for MDX format. Universal rules, component registry, health check,
+  refactoring workflow. For type-specific rules + examples + metadata, load
+  matching sub-skill (mdx-format-monsters, mdx-format-world, etc).
 ---
 
 # MDX Format Skill
 
 ## Purpose
 
-This skill provides deep knowledge of the MDX content format conventions used
-across the project. Use it when performing format refactoring, content migration,
-or structural validation of `.mdx` files.
+Deep knowledge of MDX content format conventions. Use for format refactoring,
+content auditing, structural validation, new content creation, content migration.
 
 ## When to Use
 
-- **Format refactoring**: Bulk or targeted restructuring of MDX content files
-- **Content auditing**: Running `check-mdx-format.mjs` and interpreting results
-- **New content creation**: Scaffolding MDX files that conform to format rules
-- **Content type migration**: Converting between content formats (e.g., adding metadata structure)
+- Format refactoring: Bulk or targeted restructuring
+- Content auditing: Run `check-mdx-format.mjs` + interpret
+- New content: Scaffold files conforming to rules
+- Content migration: Convert between formats
 
-## Per-Content-Type Skills
+## Per-Type Skills
 
-For detailed structural requirements, canonical examples, metadata field tables,
-and type-specific pitfalls, load the matching sub-skill before editing content:
+For detailed structure, canonical examples, metadata tables, type-specific pitfalls:
+load matching sub-skill before editing.
 
-| Content Type    | Skill                        | File Extension        | Location                                             |
-| --------------- | ---------------------------- | --------------------- | ---------------------------------------------------- |
-| Monsters        | `mdx-format-monsters`        | `.sheet.mdx`          | `src/content/en/monsters/`                           |
-| Heirlooms       | `mdx-format-heirlooms`       | `.heirloom.mdx`       | `src/content/en/items/heirlooms/`                    |
-| Trinkets        | `mdx-format-trinkets`        | `.trinket.mdx`        | `src/content/en/items/trinkets/`                     |
-| Bloodlines      | `mdx-format-bloodlines`      | `.bloodline.mdx`      | `src/content/en/character-creation/bloodlines/`      |
-| Feats           | `mdx-format-feats`           | `.mdx`                | `src/content/en/character-creation/feats/`           |
-| Spells          | `mdx-format-spells`          | `.mdx`                | `src/content/en/spells/`                             |
-| Vocations       | `mdx-format-vocations`       | `main.mdx`            | `src/content/en/character-creation/vocations/{voc}/` |
-| Specializations | `mdx-format-specializations` | `.specialization.mdx` | `src/content/en/character-creation/vocations/{voc}/` |
-| World / Lore    | `mdx-format-world`           | `.lore.mdx`           | `src/content/en/world/`                              |
+| Type            | Skill                      | Ext                 | Location                                           |
+| --------------- | -------------------------- | ------------------- | -------------------------------------------------- |
+| Monsters        | mdx-format-monsters        | .sheet.mdx          | src/content/en/monsters/                           |
+| Heirlooms       | mdx-format-heirlooms       | .heirloom.mdx       | src/content/en/items/heirlooms/                    |
+| Trinkets        | mdx-format-trinkets        | .trinket.mdx        | src/content/en/items/trinkets/                     |
+| Bloodlines      | mdx-format-bloodlines      | .bloodline.mdx      | src/content/en/character-creation/bloodlines/      |
+| Feats           | mdx-format-feats           | .mdx                | src/content/en/character-creation/feats/           |
+| Spells          | mdx-format-spells          | .mdx                | src/content/en/spells/                             |
+| Vocations       | mdx-format-vocations       | main.mdx            | src/content/en/character-creation/vocations/{voc}/ |
+| Specializations | mdx-format-specializations | .specialization.mdx | src/content/en/character-creation/vocations/{voc}/ |
+| World / Lore    | mdx-format-world           | .lore.mdx           | src/content/en/world/                              |
 
-## Universal Format Rules
+## Universal Rules
 
-| Rule                                  | Severity | Description                                            |
-| ------------------------------------- | -------- | ------------------------------------------------------ |
-| `non-kebab-filename`                  | critical | All filenames must be kebab-case                       |
-| `fullsize-image-path`                 | critical | Use `/library/` not `/full-size/`                      |
-| `raw-img-tag`                         | critical | Use `<Image>` or `<BlendedImage>`, not `<img>`         |
-| `unregistered-component`              | critical | Only use components registered in `mdx/index.tsx`      |
-| `missing-h1`                          | warning  | Every content file (except `main.mdx`) needs `# Title` |
-| `multiple-h1`                         | warning  | Only one `#` heading per file (use `##` for sections)  |
-| `color-literal-in-mdx`                | warning  | No inline color styles                                 |
-| `missing-alt-text`                    | warning  | All `<Image>` components need alt text                 |
-| `monster-sheet-missing-stat-table`    | critical | `.sheet.mdx` must have ability score table             |
-| `monster-sheet-missing-cr`            | warning  | `.sheet.mdx` should have Challenge Rating              |
-| `spell-missing-blockquote-stat-block` | warning  | Spell files should have `>` stat block                 |
+| Rule                                | Severity | Description                                    |
+| ----------------------------------- | -------- | ---------------------------------------------- |
+| non-kebab-filename                  | critical | Filenames must be kebab-case                   |
+| fullsize-image-path                 | critical | Use `/library/` not `/full-size/`              |
+| raw-img-tag                         | critical | Use `<Image>` or `<BlendedImage>`, not `<img>` |
+| unregistered-component              | critical | Only use components in `mdx/index.tsx`         |
+| missing-h1                          | warning  | Every file (except main.mdx) needs `# Title`   |
+| multiple-h1                         | warning  | One `#` per file (use `##` for sections)       |
+| color-literal-in-mdx                | warning  | No inline color styles                         |
+| missing-alt-text                    | warning  | All `<Image>` components need alt              |
+| monster-sheet-missing-stat-table    | critical | .sheet.mdx needs ability score table           |
+| monster-sheet-missing-cr            | warning  | .sheet.mdx should have Challenge Rating        |
+| spell-missing-blockquote-stat-block | warning  | Spell files should have `>` stat block         |
 
-## Running the Format Check
+## Running Health Check
 
 ```bash
-# Run MDX format check standalone
+# MDX format standalone
 node .github/scripts/check-mdx-format.ts
 
-# Run as part of full health check
+# Full health check
 node .github/scripts/health-check.ts
 ```
 
-The script outputs JSON matching the health check schema:
+Output: JSON matching health check schema.
 
 ```json
 {
@@ -78,6 +73,8 @@ The script outputs JSON matching the health check schema:
   "failures": [{ "file": "...", "rule": "...", "message": "...", "suggestion": "..." }],
   "stats": { "total_files_checked": N, "violations_found": N }
 }
+```
+
 ```
 
 ## Refactoring Workflow
@@ -116,3 +113,4 @@ Components available in MDX files (registered in `src/lib/components/mdx/index.t
 | `<Meta>`               | Monster metadata directive (sheet files)  |
 
 Auto-generated spell components from `mdxComponents.tsx` are also available (e.g., `<LesserMooncleave>`, `<FoldDeduplication>`).
+```

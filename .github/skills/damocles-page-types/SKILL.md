@@ -1,22 +1,23 @@
 ---
 name: damocles-page-types
 description: >
-  Canonical MDX page templates for each Damocles content type. Defines structural
-  requirements, knowledge-tier formatting, and type-specific editorial rules.
-  Load alongside damocles-lore for drafting and refactoring work.
+  Canonical MDX page templates for Damocles content types. Structural requirements,
+  knowledge-tier formatting, type-specific editorial rules. Load alongside
+  damocles-lore for drafting + refactoring.
 ---
 
 # Damocles Page Type Templates
 
 ## Purpose
 
-This skill defines the canonical structure for each MDX content type in the Damocles project. Use it when drafting new pages or refactoring existing ones to ensure structural consistency.
+Canonical structure for each MDX type in Damocles. Use when drafting new pages
+or refactoring to match structure.
 
 ## When to Use
 
-- Drafting a new MDX page (any content type)
-- Refactoring an existing page to match canonical structure
-- Auditing page structure during lore consistency checks
+- Draft new MDX page (any type)
+- Refactor existing page to canonical structure
+- Audit page structure during lore consistency checks
 
 ---
 
@@ -24,38 +25,38 @@ This skill defines the canonical structure for each MDX content type in the Damo
 
 **Location**: `src/content/en/world/**/*.mdx`
 
-### Mandatory Structure: Knowledge Tiers
+### Structure: Knowledge Tiers (MANDATORY)
 
-All world/lore pages MUST use the four-tier knowledge structure:
+All world/lore pages MUST use four-tier structure:
 
 ```mdx
 # Page Title
 
 ## _Common_
 
-Public knowledge. What any NPC, traveler, or commoner would know.
-Write as accessible facts without revealing deeper truths.
+Public knowledge. NPC/traveler/commoner level.
+Accessible facts, no deep truths revealed.
 
 ---
 
 ## _Advanced_
 
-Scholar-level knowledge. What a well-read historian, spy, or specialist would know.
+Scholar-level. Well-read historian, spy, specialist.
 May contain ambiguity or partial truths.
 
 ---
 
 ## _Deep_
 
-Hidden knowledge. What only insiders, cult members, or those with direct experience know.
-May contradict Common-tier understanding.
+Hidden knowledge. Insiders, cultists, direct experience.
+May contradict Common tier.
 
 ---
 
 ## _Truth_
 
-Actual cosmic causality. The real mechanics behind events and entities.
-May completely overturn all previous tiers. Written with full cosmological precision.
+Actual cosmic causality. Real mechanics, events, entities.
+May overturn all previous tiers. Full cosmological precision.
 ```
 
 ### Optional Patterns
@@ -117,11 +118,11 @@ Detail section...
 
 ### World Page Rules
 
-- Cross-reference via absolute links: `[term](/en/library/world/path/to/page)`
-- Each tier should be self-consistent — a reader at the Common level should not encounter contradictions within that tier
-- Truth tier may contradict all others; this is intentional and correct
-- Do not pad tiers with filler — if a tier has nothing meaningful, keep it brief
-- Ground all claims in Damocles cosmology, not generic fantasy
+- Cross-refs: absolute links `[term](/en/library/world/path)`
+- Tiers self-consistent internally
+- Truth may contradict others (intentional)
+- No filler; if tier empty, keep brief
+- Ground in Damocles cosmology, not generic fantasy
 
 ---
 
@@ -161,11 +162,11 @@ Cosmological role, fate-thread connections, actual nature.
 
 ### Character Page Rules
 
-- Tiered structure matches the character's secrecy level
-- Biography should be grounded: motivations are cosmological, political, or personal — never vague
-- Flag contradictions between tiers explicitly (they may be intentional)
-- Do NOT invent relationships, motivations, or history not present in source material
-- Named characters must use established naming conventions (Finnic, Gaelic, Hellenic, etc.)
+- Tiered structure matches secrecy level
+- Bio grounded: motivations = cosmological/political/personal, never vague
+- Flag tier contradictions explicitly (may be intentional)
+- NO invented relationships/motivations/history
+- Use established naming (Finnic, Gaelic, Hellenic, Romance)
 
 ---
 
@@ -205,10 +206,10 @@ Cosmological origin: which Age, which god or event created them, their actual me
 
 ### Creature Lore Page Rules
 
-- Do NOT include stat blocks, AC, HP, or mechanical values — those live in `.sheet.mdx` files
-- Do NOT invent abilities, behaviors, or ecological details not in source material
-- Ground creature origins in the Ages sequence and specific cosmological events
-- Distinguish between what a creature IS vs. what people BELIEVE it is
+- NO stat blocks, AC, HP, mechanics (→ .sheet.mdx files)
+- NO invented abilities/behaviors/ecology
+- Ground origins in Ages sequence + specific events
+- Distinguish: what IS vs what people BELIEVE
 
 ---
 
@@ -268,10 +269,10 @@ Present-day conditions, ongoing conflicts, recent changes.
 
 ### Region Page Rules
 
-- Geography should feel specific and authored, not "rolling hills and ancient forests"
-- Reference specific Damocles features: Everdark proximity, Clone World effects, tombsteel deposits, Empyrean ruins
-- Population descriptions should name specific cultures, factions, and naming traditions
-- History must reference the Ages sequence where relevant
+- Geography ≠ "rolling hills"; be specific, authored
+- Reference Damocles: Everdark proximity, Clone World effects, tombsteel, Empyrean ruins
+- Population: name cultures, factions, naming traditions
+- History: reference Ages sequence
 
 ---
 
@@ -312,11 +313,11 @@ List of classes that can use this spell.
 
 ### Spell Page Rules
 
-- Flavor text must be Damocles-grounded: which cosmological force, what manifestation, what cost
-- Magic is NEVER casual or "just a thing wizards do" — it draws from specific power sources (Arkhé, Väkis, Fold energy, tombsteel resonance, etc.)
-- Mechanical effect text is dry and precise — no lore in the stat block
-- Do not use generic fantasy magic language ("arcane energy flows", "mystical runes glow")
-- Name spell effects after Damocles phenomena where possible
+- Flavor: Damocles-grounded (force, manifestation, cost)
+- Magic NEVER casual; draws from specific source (Arkhé, Väkis, Fold, tombsteel)
+- Mechanical = dry + precise, no lore in stat block
+- NO generic fantasy magic ("arcane energy flows")
+- Name effects after Damocles phenomena
 
 ---
 
@@ -353,11 +354,11 @@ Named features with specific effects.
 
 ### Item Page Rules
 
-- Origin must be specific: who made it, from what, when, and why
-- Cosmological relationship: what power source, what Age, what entity
-- No generic "blessed by the gods" or "imbued with ancient magic" — name the specific force
-- Mechanical text is dry; flavor text is controlled and evocative
-- Named features should follow Damocles naming conventions
+- Origin specific: who, what, when, why
+- Cosmology: power source, Age, entity
+- NO generic "blessed by gods" or "ancient magic" — name force
+- Mechanical = dry; flavor = controlled, evocative
+- Features follow Damocles naming
 
 ---
 
@@ -385,11 +386,11 @@ How this rule interacts with other systems.
 
 ### Rules Page Rules
 
-- **Dry format ONLY** — no lore prose in mechanical definitions
-- Precision over style — every word must be mechanically meaningful
+- **Dry format ONLY** — no lore in mechanical definitions
+- Precision > style; every word meaningful
 - Use tables for structured data
-- Do NOT add flavor text unless it clarifies a mechanical interaction
-- If a rule has lore implications, those belong on a separate world/lore page
+- NO flavor text unless clarifies mechanical interaction
+- Lore implications → separate world/lore page
 
 ---
 
@@ -403,26 +404,24 @@ Handled by the existing `mdx-format` skill (`.github/skills/mdx-format/SKILL.md`
 
 ### Damocles-Specific Stat Block Rules
 
-- Abilities and traits must reflect cosmological or ecological grounding — no "it just does magic"
-- Named abilities follow Damocles naming conventions (linguistically rooted, not generic)
-- Trait descriptions should hint at the creature's origin without becoming lore dumps
-- Hiisi abilities should reflect their primal obsession
-- Tombsteel weapons and Everdark-adjacent effects should be mechanically distinct
-- Use existing MDX components (`<BlendedImage>`, `<FloatedContainer>`) for artwork
+- Abilities/traits grounded in cosmology/ecology — no "it just does magic"
+- Named abilities = linguistically rooted (not generic)
+- Trait description hints at origin (no lore dumps)
+- Hiisi abilities reflect primal obsession
+- Tombsteel + Everdark effects = mechanically distinct
+- Use existing components (`<BlendedImage>`, `<FloatedContainer>`)
 
 ---
 
-## Structural Validation Checklist
+## Validation Checklist
 
-When auditing any page, verify:
-
-- [ ] Single H1 title at the top
-- [ ] Knowledge tiers present and correctly formatted (world/character/creature/region pages)
-- [ ] Tiers use `## _Common_` / `## _Advanced_` / `## _Deep_` / `## _Truth_` exactly
-- [ ] Horizontal rules (`---`) separate major sections
-- [ ] Cross-references use absolute links
-- [ ] No banned phrases from the anti-generic filter
-- [ ] All proper nouns match established naming conventions
-- [ ] Lore claims are sourced or flagged with `[UNCERTAIN]` / `[NEEDS SOURCE]`
-- [ ] Mechanical text is separated from lore text
-- [ ] File is kebab-case with `.mdx` extension
+- [ ] Single H1 title top
+- [ ] Knowledge tiers present + correctly formatted (world/character/creature/region)
+- [ ] Tiers: `## _Common_` / `## _Advanced_` / `## _Deep_` / `## _Truth_` exact
+- [ ] `---` separates major sections
+- [ ] Cross-refs = absolute links
+- [ ] No banned phrases (anti-generic filter)
+- [ ] Proper nouns match naming conventions
+- [ ] Lore claims sourced or flagged `[UNCERTAIN]` / `[NEEDS SOURCE]`
+- [ ] Mechanical ≠ lore text (separated)
+- [ ] File kebab-case `.mdx`

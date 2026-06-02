@@ -12,8 +12,15 @@
 'use client';
 
 import type { CharacterTool, ProficiencyLevel } from '@/lib/types/character';
+import {
+    PROFICIENCY_CYCLE,
+    PROFICIENCY_LABELS,
+    PROFICIENCY_LEVELS,
+} from '@/modules/character-builder/lib/utils/characterStorage';
 import { useTranslations } from 'next-intl';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
+import profRowStyles from '../CharacterSheet/proficiencyRow.module.scss';
+import profTrackStyles from '../CharacterSheet/proficiencyTrack.module.scss';
 
 /**
  * Props for ToolsTable component.
@@ -31,14 +38,6 @@ interface ToolsTableProps {
   readOnly?: boolean;
 }
 
-/** Cycle order for proficiency levels. */
-const PROFICIENCY_CYCLE: ProficiencyLevel[] = [
-  'none',
-  'familiarity',
-  'proficient',
-  'expertise',
-];
-
 /**
  * ToolsTable component.
  *
@@ -53,6 +52,17 @@ export function ToolsTable({
   readOnly = false,
 }: ToolsTableProps): JSX.Element {
   const t = useTranslations('characterSheet');
+  const tTools = useTranslations('characterSheet.tools');
+
+  const getToolName = (i18nKey: string): string => {
+    const key = i18nKey.replace('tools.', '');
+    try {
+      return tTools(key);
+    } catch {
+      return i18nKey;
+    }
+  };
+
   /**
    * Computes the bonus for a given tool.
    *
@@ -60,6 +70,7 @@ export function ToolsTable({
    * @returns {number} - Total bonus (0 + proficiency bonus if proficient)
    */
   const computeBonus = (tool: CharacterTool): number => {
+    if (tool.proficiency === 'savanthood') return proficiencyBonus * 3;
     if (tool.proficiency === 'expertise') return proficiencyBonus * 2;
     if (tool.proficiency === 'proficient') return proficiencyBonus;
     if (tool.proficiency === 'familiarity')
@@ -73,13 +84,14 @@ export function ToolsTable({
    * @param {number} index - Index of tool to toggle
    * @returns {void}
    */
-  const handleToggle = (index: number): void => {
+  const handlePipClick = (
+    toolIndex: number,
+    profLevel: ProficiencyLevel,
+  ): void => {
     if (readOnly) return;
-    const updatedTools = [...tools];
-    const currentProf = updatedTools[index].proficiency;
-    const nextIndex =
-      (PROFICIENCY_CYCLE.indexOf(currentProf) + 1) % PROFICIENCY_CYCLE.length;
-    updatedTools[index].proficiency = PROFICIENCY_CYCLE[nextIndex];
+    const updatedTools = tools.map((t, i) =>
+      i === toolIndex ? { ...t, proficiency: profLevel } : t,
+    );
     onChange(updatedTools);
   };
 
@@ -99,34 +111,30 @@ export function ToolsTable({
           const levelIndex = PROFICIENCY_CYCLE.indexOf(tool.proficiency);
           return (
             <tr
-              key={tool.name}
-              className={styles[`prof-${tool.proficiency}`]}
-              onClick={() => handleToggle(i)}
-              style={{ cursor: readOnly ? 'default' : 'pointer' }}>
-              <td>{tool.name}</td>
+              key={`tool-${i}`}
+              className={profRowStyles[`prof-${tool.proficiency}`]}>
+              <td>{tTools(tool.name.replace('tools.', ''))}</td>
               <td aria-label={t('ariaProfTrack')}>
-                <span className={styles.profTrack} aria-hidden='true'>
-                  <span
-                    className={
-                      styles[
-                        levelIndex >= 1 ? 'trackDot-filled' : 'trackDot-empty'
-                      ]
-                    }
-                  />
-                  <span
-                    className={
-                      styles[
-                        levelIndex >= 2 ? 'trackDot-filled' : 'trackDot-empty'
-                      ]
-                    }
-                  />
-                  <span
-                    className={
-                      styles[
-                        levelIndex >= 3 ? 'trackDot-filled' : 'trackDot-empty'
-                      ]
-                    }
-                  />
+                <span className={profTrackStyles.profTrack} aria-hidden='true'>
+                  {PROFICIENCY_LEVELS.map((level, idx) => {
+                    const isActive = idx < levelIndex;
+                    const label = PROFICIENCY_LABELS[level];
+                    return (
+                      <button
+                        key={`${tool.name}-pip-${idx}`}
+                        type='button'
+                        disabled={readOnly}
+                        className={
+                          profTrackStyles[
+                            isActive ? 'trackDot-filled' : 'trackDot-empty'
+                          ]
+                        }
+                        onClick={() => handlePipClick(i, level)}
+                        title={label.tooltip}
+                        aria-label={`${label.label} (${label.tooltip})`}
+                      />
+                    );
+                  })}
                 </span>
               </td>
               <td>{bonusStr}</td>
