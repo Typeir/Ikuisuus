@@ -12,6 +12,7 @@
 'use client';
 
 import type { CharacterSkill, ProficiencyLevel } from '@/lib/types/character';
+import { Tooltip } from '@/lib/components/ui';
 import {
   computeAbilityModifier,
   PROFICIENCY_CYCLE,
@@ -111,19 +112,19 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
                     const isActive = idx < levelIndex;
                     const label = PROFICIENCY_LABELS[level];
                     return (
-                      <button
-                        key={`${skill.name}-pip-${idx}`}
-                        type='button'
-                        disabled={readOnly}
-                        className={
-                          profTrackStyles[
-                            isActive ? 'trackDot-filled' : 'trackDot-empty'
-                          ]
-                        }
-                        onClick={() => handlePipClick(i, level)}
-                        title={label.tooltip}
-                        aria-label={`${label.label} (${label.tooltip})`}
-                      />
+                      <Tooltip key={`${skill.name}-pip-${idx}`} content={label.tooltip} placement='top' showClickIcon={false}>
+                        <button
+                          type='button'
+                          disabled={readOnly}
+                          className={
+                            profTrackStyles[
+                              isActive ? 'trackDot-filled' : 'trackDot-empty'
+                            ]
+                          }
+                          onClick={() => handlePipClick(i, level)}
+                          aria-label={`${label.label} (${label.tooltip})`}
+                        />
+                      </Tooltip>
                     );
                   })}
                 </span>
