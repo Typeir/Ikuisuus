@@ -8,11 +8,14 @@
  */
 'use client';
 
+import type {
+    Item,
+    SidebarProps,
+} from '@/modules/navigation-sidebar/domain/types';
+import SidebarActivePathStore from '@/modules/navigation-sidebar/infrastructure/store/sidebarActivePath';
+import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights';
 import { useMemo, useState } from 'react';
 import { SidebarItem } from './SidebarItem';
-import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights';
-import SidebarActivePathStore from '@/modules/navigation-sidebar/infrastructure/store/sidebarActivePath';
-import type { Item, SidebarProps } from '@/modules/navigation-sidebar/domain/types';
 
 /**
  * Renders a recursive sidebar menu with optional sibling-collapsing behavior.

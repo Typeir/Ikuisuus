@@ -7,19 +7,22 @@
  */
 'use client';
 
+import Icon from '@/lib/components/icon/icon';
 import { useSidebarExpansionActions } from '@/lib/context/PersistentUiContext';
 import { cn } from '@/lib/utils/classNameMerge';
+import { useFetchStubChildren } from '@/modules/navigation-sidebar/application/hooks/useFetchStubChildren';
+import { SIDEBAR_CLOSE_ANIMATION_MS } from '@/modules/navigation-sidebar/domain/constants';
+import type {
+  LayoutItem,
+  SidebarItemProps,
+} from '@/modules/navigation-sidebar/domain/types';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Icon from '@/lib/components/icon/icon';
+import styles from './sidebar.module.scss';
 import { SkeletonSidebarItems } from './SkeletonSidebarItems';
 import { VIRTUALIZE_THRESHOLD } from './VirtualizedSidebar';
-import { SIDEBAR_CLOSE_ANIMATION_MS } from '@/modules/navigation-sidebar/domain/constants';
-import styles from './sidebar.module.scss';
-import type { LayoutItem, SidebarItemProps } from '@/modules/navigation-sidebar/domain/types';
-import { useFetchStubChildren } from '@/modules/navigation-sidebar/application/hooks/useFetchStubChildren';
 
 const VirtualizedSidebar = dynamic(() => import('./VirtualizedSidebar'), {
   ssr: false,

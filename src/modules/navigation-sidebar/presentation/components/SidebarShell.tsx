@@ -9,14 +9,17 @@
 
 'use client';
 
+import Icon from '@/lib/components/icon/icon';
 import { cn } from '@/lib/utils/classNameMerge';
+import type {
+    Item,
+    LayoutItem,
+} from '@/modules/navigation-sidebar/domain/types';
+import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import dynamic from 'next/dynamic';
-import Icon from '@/lib/components/icon/icon';
-import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights';
-import type { Item, LayoutItem } from '@/modules/navigation-sidebar/domain/types';
 import styles from './sidebar.module.scss';
 
 const SidebarClient = dynamic(

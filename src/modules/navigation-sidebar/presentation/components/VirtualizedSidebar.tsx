@@ -10,10 +10,10 @@
  */
 'use client';
 
+import type { LayoutItem } from '@/modules/navigation-sidebar/domain/types';
 import type { CSSProperties } from 'react';
 import { List } from 'react-window';
 import { Sidebar } from './sidebar';
-import type { LayoutItem } from '@/modules/navigation-sidebar/domain/types';
 
 /**
  * Number of items in a folder that triggers virtualization.

@@ -12,18 +12,12 @@
 'use client';
 
 import type { CharacterSkill, ProficiencyLevel } from '@/lib/types/character';
-import { Tooltip } from '@/lib/components/ui';
-import {
-  computeAbilityModifier,
-  PROFICIENCY_CYCLE,
-  PROFICIENCY_LABELS,
-  PROFICIENCY_LEVELS,
-} from '@/modules/character-builder/lib/utils/characterStorage';
+import { computeSkillBonus, updateItemProficiency } from '@/modules/character-builder/lib/utils/proficiencyUtils';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import profRowStyles from '../CharacterSheet/proficiencyRow.module.scss';
-import profTrackStyles from '../CharacterSheet/proficiencyTrack.module.scss';
+import { ProficiencyTrack } from '../components/ProficiencyTrack';
 
 /**
  * Props for the SkillsTable component.
@@ -60,27 +54,12 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
 }) => {
   const t = useTranslations('characterSheet');
 
-  const handlePipClick = (skillIndex: number, profLevel: ProficiencyLevel) => {
+  const handleSkillProficiencyChange = (
+    skillIndex: number,
+    newProficiency: ProficiencyLevel,
+  ) => {
     if (readOnly) return;
-    const updated = skills.map((s, i) =>
-      i === skillIndex ? { ...s, proficiency: profLevel } : s,
-    );
-    onChange(updated);
-  };
-
-  const computeBonus = (skill: CharacterSkill): number => {
-    const abilityMod = computeAbilityModifier(
-      abilityScores[skill.ability] ?? 10,
-    );
-    if (skill.proficiency === 'savanthood')
-      return abilityMod + proficiencyBonus * 3;
-    if (skill.proficiency === 'expertise')
-      return abilityMod + proficiencyBonus * 2;
-    if (skill.proficiency === 'proficient')
-      return abilityMod + proficiencyBonus;
-    if (skill.proficiency === 'familiarity')
-      return abilityMod + Math.floor(proficiencyBonus / 2);
-    return abilityMod;
+    onChange(updateItemProficiency(skills, skillIndex, newProficiency));
   };
 
   return (
@@ -95,9 +74,8 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
       </thead>
       <tbody>
         {skills.map((skill, i) => {
-          const bonus = computeBonus(skill);
+          const bonus = computeSkillBonus(skill, abilityScores, proficiencyBonus);
           const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
-          const levelIndex = PROFICIENCY_CYCLE.indexOf(skill.proficiency);
           return (
             <tr
               key={`skill-${i}`}
@@ -107,27 +85,12 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
                 {skill.ability.toUpperCase()}
               </td>
               <td aria-label={t('ariaProfTrack')}>
-                <span className={profTrackStyles.profTrack} aria-hidden='true'>
-                  {PROFICIENCY_LEVELS.map((level, idx) => {
-                    const isActive = idx < levelIndex;
-                    const label = PROFICIENCY_LABELS[level];
-                    return (
-                      <Tooltip key={`${skill.name}-pip-${idx}`} content={label.tooltip} placement='top' showClickIcon={false}>
-                        <button
-                          type='button'
-                          disabled={readOnly}
-                          className={
-                            profTrackStyles[
-                              isActive ? 'trackDot-filled' : 'trackDot-empty'
-                            ]
-                          }
-                          onClick={() => handlePipClick(i, level)}
-                          aria-label={`${label.label} (${label.tooltip})`}
-                        />
-                      </Tooltip>
-                    );
-                  })}
-                </span>
+                <ProficiencyTrack
+                  currentProficiency={skill.proficiency}
+                  onChange={(level) => handleSkillProficiencyChange(i, level)}
+                  readOnly={readOnly}
+                  itemName={skill.name}
+                />
               </td>
               <td>{bonusStr}</td>
             </tr>

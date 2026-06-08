@@ -3,8 +3,8 @@
  * @module tests/unit/modules/navigation-sidebar/infrastructure/store/sidebarActivePath.test.ts
  */
 
-import { describe, it, expect, vi } from 'vitest';
 import SidebarActivePathStore from '@/modules/navigation-sidebar/infrastructure/store/sidebarActivePath';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('SidebarActivePathStore', () => {
   it('should create instance', () => {

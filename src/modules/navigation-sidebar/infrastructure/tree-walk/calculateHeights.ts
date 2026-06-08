@@ -7,7 +7,10 @@
  */
 
 import { BASE_HEIGHT } from '@/modules/navigation-sidebar/domain/constants';
-import type { Item, LayoutItem } from '@/modules/navigation-sidebar/domain/types';
+import type {
+    Item,
+    LayoutItem,
+} from '@/modules/navigation-sidebar/domain/types';
 
 /**
  * Recursively calculates collapsed and expanded heights for each sidebar item.

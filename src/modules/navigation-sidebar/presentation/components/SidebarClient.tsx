@@ -10,8 +10,13 @@
 
 'use client';
 
+import type {
+    Item,
+    LayoutItem,
+    SidebarProps,
+} from '@/modules/navigation-sidebar/domain/types';
 import { Sidebar } from './sidebar';
-import type { Item, LayoutItem, SidebarProps } from '@/modules/navigation-sidebar/domain/types';
 
 export default Sidebar;
 export type { Item, LayoutItem, SidebarProps };
+
