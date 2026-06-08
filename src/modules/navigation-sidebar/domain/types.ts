@@ -1,23 +1,23 @@
 /**
- * @fileoverview Type definitions for navigation-sidebar module.
- * @module modules/navigation-sidebar/domain/types
+ * @fileoverview Type definitions for sidebar navigation
+ * @module lib/components/sidebar/types
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0
  */
 
-import type SidebarActivePathStore from '@/lib/components/sidebar/store/sidebarActivePath';
+import type SidebarActivePathStore from '@/modules/navigation-sidebar/infrastructure/store/sidebarActivePath';
 
 /**
- * Navigation tree node (from walk, same structure as WalkNode from library).
+ * Sidebar navigation item
  *
  * @interface Item
- * @property {string} name - Display name
- * @property {string} path - URL-friendly kebab-case path segment
- * @property {Item[]} [children] - Child nodes
- * @property {boolean} [isStub] - True when directory children not yet loaded
- * @property {number} [childCount] - Total descendant count (stub nodes only)
- * @property {string} [mainPath] - Kebab path to main.mdx if present
+ * @property {string} name - Display name of the item
+ * @property {string} path - Routing path for the item
+ * @property {Item[]} [children] - Optional nested child items
+ * @property {boolean} [isStub] - True when children exist but have not yet been loaded
+ * @property {number} [childCount] - Total descendant count for height pre-calculation
+ * @property {string} [mainPath] - Kebab path to main.mdx if the directory contains one
  */
 export type Item = {
   name: string;
@@ -29,13 +29,12 @@ export type Item = {
 };
 
 /**
- * Layout-annotated item with computed expanded height.
- * Extension of Item with height metadata for rendering calculations.
+ * Layout-computed sidebar item with height metadata
  *
  * @interface LayoutItem
  * @extends Item
- * @property {number} expandedHeight - Pixel height when fully expanded
- * @property {(LayoutItem[] | Item[])} [children] - Nested items
+ * @property {number} expandedHeight - Calculated height when expanded (px)
+ * @property {(LayoutItem[] | Item[])} [children] - Nested items with heights
  */
 export type LayoutItem = Item & {
   expandedHeight: number;
@@ -43,12 +42,12 @@ export type LayoutItem = Item & {
 };
 
 /**
- * Props for Sidebar presentation component.
+ * Props for the Sidebar component
  *
  * @interface SidebarProps
- * @property {Item[]} items - Root navigation items
- * @property {() => void} [onNavigate] - Navigation link click callback
- * @property {boolean} [collapseSiblings=false] - Collapse sibling folders on open
+ * @property {Item[]} items - The root navigation items
+ * @property {() => void} [onNavigate] - Callback when a link is clicked
+ * @property {boolean} [collapseSiblings=false] - If true, opening one item collapses siblings
  */
 export interface SidebarProps {
   items: Item[];
@@ -57,38 +56,17 @@ export interface SidebarProps {
 }
 
 /**
- * Props for SidebarItem recursive component.
+ * Props for SidebarItem component
  *
  * @interface SidebarItemProps
- * @property {LayoutItem} item - Item to render
+ * @property {LayoutItem} item - The item to render
  * @property {() => void} [onNavigate] - Navigation callback
- * @property {boolean} collapseSiblings - Sibling collapse flag
- * @property {InstanceType<typeof SidebarActivePathStore>} pathStore - Active path store
+ * @property {boolean} collapseSiblings - Whether to collapse other items when opening
+ * @property {InstanceType<typeof SidebarActivePathStore>} pathStore - Active path store instance
  */
 export interface SidebarItemProps {
   item: LayoutItem;
   onNavigate?: () => void;
   collapseSiblings: boolean;
   pathStore: InstanceType<typeof SidebarActivePathStore>;
-}
-
-/**
- * Tree walk node (server-returned structure for shallow pagination).
- * Semantically equivalent to Item but returned directly from API.
- *
- * @interface WalkNode
- * @property {string} name - Human-readable display name
- * @property {string} path - URL-friendly path segment
- * @property {WalkNode[]} [children] - Child nodes
- * @property {boolean} [isStub] - Lazy-loadable placeholder flag
- * @property {number} [childCount] - Descendant count (stub nodes only)
- * @property {string} [mainPath] - Path to main.mdx (stub nodes only)
- */
-export interface WalkNode {
-  name: string;
-  path: string;
-  children?: WalkNode[];
-  isStub?: boolean;
-  childCount?: number;
-  mainPath?: string;
 }

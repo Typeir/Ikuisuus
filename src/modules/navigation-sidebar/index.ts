@@ -19,6 +19,6 @@ export {
 export { SidebarShell } from './presentation/components/SidebarShell';
 
 export type {
-    Item, LayoutItem, SidebarProps, SidebarItemProps, WalkNode
+    Item, LayoutItem, SidebarProps, SidebarItemProps
 } from './domain/types';
 

@@ -12,6 +12,7 @@
 
 import type { CSSProperties } from 'react';
 import { List } from 'react-window';
+import { Sidebar } from './sidebar';
 import type { LayoutItem } from '@/modules/navigation-sidebar/domain/types';
 
 /**
@@ -60,23 +61,30 @@ export interface VirtualizedSidebarProps {
  *
  * @interface VirtualRowProps
  * @property {LayoutItem[]} items - Full item list; the row renders `items[index]`.
+ * @property {() => void} [onNavigate] - Navigation callback.
+ * @property {boolean} collapseSiblings - Whether sibling folders collapse.
  */
 interface VirtualRowProps {
   items: LayoutItem[];
+  onNavigate?: () => void;
+  collapseSiblings: boolean;
 }
 
 /**
  * Row renderer passed to `List` via `rowComponent`.
- * Renders a single `LayoutItem` as a list item (non-recursive for virtualization).
+ * Renders a single `LayoutItem` via the recursive `Sidebar` component so that
+ * nested folders remain fully expandable within the virtualized window.
  *
- * @param {object} props - react-window row props combined with `VirtualRowProps`.
- * @returns {JSX.Element} A single item row wrapped in a positioned container.
+ * @param {object} props - react-window v2 row props combined with `VirtualRowProps`.
+ * @returns {JSX.Element} A single sidebar row wrapped in a positioned container.
  */
 const VirtualRow = ({
   index,
   style,
   ariaAttributes,
   items,
+  onNavigate,
+  collapseSiblings,
 }: {
   ariaAttributes: {
     'aria-posinset': number;
@@ -87,7 +95,11 @@ const VirtualRow = ({
   style: CSSProperties;
 } & VirtualRowProps): JSX.Element => (
   <div style={style} {...ariaAttributes}>
-    <li>{items[index]?.name}</li>
+    <Sidebar
+      items={[items[index]]}
+      onNavigate={onNavigate}
+      collapseSiblings={collapseSiblings}
+    />
   </div>
 );
 
@@ -104,6 +116,8 @@ const VirtualRow = ({
  */
 const VirtualizedSidebar = ({
   items,
+  onNavigate,
+  collapseSiblings = false,
 }: VirtualizedSidebarProps): JSX.Element => {
   const windowHeight = Math.min(
     items.length * ITEM_ROW_HEIGHT,
@@ -115,7 +129,7 @@ const VirtualizedSidebar = ({
       rowCount={items.length}
       rowHeight={ITEM_ROW_HEIGHT}
       rowComponent={VirtualRow}
-      rowProps={{ items }}
+      rowProps={{ items, onNavigate, collapseSiblings }}
       style={{ height: windowHeight }}
       defaultHeight={MAX_WINDOW_HEIGHT}
     />

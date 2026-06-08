@@ -8,7 +8,7 @@
 'use client';
 
 import { cn } from '@/lib/utils/classNameMerge';
-import sk from '../skeleton/skeleton.module.scss';
+import sk from '@/lib/components/skeleton/skeleton.module.scss';
 
 /**
  * Props for SkeletonSidebarItems component

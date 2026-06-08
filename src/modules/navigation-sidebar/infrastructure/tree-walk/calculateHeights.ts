@@ -1,32 +1,41 @@
 /**
- * @fileoverview Calculate expanded heights for sidebar items.
- * Sorts items (folders last, alphabetically) and computes heights recursively.
- * Handles stub nodes (lazy-loaded) with pre-calculated childCount.
- * @module modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights
+ * @fileoverview Height calculation utility for sidebar items
+ * @module infrastructure/tree-walk/calculateHeights
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0
  */
 
 import { BASE_HEIGHT } from '@/modules/navigation-sidebar/domain/constants';
-import { sortItems } from '@/modules/navigation-sidebar/domain/sortItems';
-import type {
-    Item,
-    LayoutItem,
-} from '@/modules/navigation-sidebar/domain/types';
+import type { Item, LayoutItem } from '@/modules/navigation-sidebar/domain/types';
 
 /**
- * Sorts items and annotates with computed expanded heights.
- * Recursively calculates height as: BASE_HEIGHT + sum of children's heights.
- * Stub nodes use pre-calculated childCount for height estimation before fetch.
+ * Recursively calculates collapsed and expanded heights for each sidebar item.
+ * Sorts items by folder status (folders first), then alphabetically.
  *
- * @param {Item[]} items - Navigation items to annotate
- * @returns {LayoutItem[]} Items sorted (folders last) with heights
+ * @param {Item[]} items - The sidebar items to process
+ * @returns {LayoutItem[]} Sidebar items with calculated height metadata
  */
-export function calculateHeights(items: Item[]): LayoutItem[] {
-  const sorted = sortItems(items);
+export const calculateHeights = (items: Item[]): LayoutItem[] => {
+  const collator = new Intl.Collator(undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  });
 
-  return sorted.map((item): LayoutItem => {
+  const label = (it: Item) => it.name || it.path;
+
+  const sorted = [...items].sort((a, b) => {
+    const aIsFolder = Boolean(a.children && a.children.length > 0);
+    const bIsFolder = Boolean(b.children && b.children.length > 0);
+
+    if (aIsFolder !== bIsFolder) return aIsFolder ? -1 : 1;
+    const byLabel = collator.compare(label(a), label(b));
+    if (byLabel !== 0) return byLabel;
+
+    return collator.compare(a.path, b.path);
+  });
+
+  return sorted.map((item) => {
     if (item.isStub) {
       return {
         ...item,
@@ -35,7 +44,10 @@ export function calculateHeights(items: Item[]): LayoutItem[] {
     }
 
     if (!item.children || item.children.length === 0) {
-      return { ...item, expandedHeight: BASE_HEIGHT } as LayoutItem;
+      return {
+        ...item,
+        expandedHeight: BASE_HEIGHT,
+      };
     }
 
     const children = calculateHeights(item.children);
@@ -50,4 +62,4 @@ export function calculateHeights(items: Item[]): LayoutItem[] {
       expandedHeight: BASE_HEIGHT + totalChildrenHeight,
     };
   });
-}
+};

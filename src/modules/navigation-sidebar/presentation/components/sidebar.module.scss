@@ -1,4 +1,4 @@
-@use '../../../styles/mixins' as *;
+@use '../../../../styles/mixins' as *;
 
 .accordion {
   overflow: hidden;
@@ -35,17 +35,20 @@
   transition:
     border-bottom 0.4s var(--springy-bezier),
     margin-bottom 0.4s var(--springy-bezier) !important;
+
   & > p {
     transition:
       border-bottom 0.3s 0.1s var(--springy-bezier),
       margin-bottom 0.3s 0.1s var(--springy-bezier),
       filter linear 0.5s !important;
   }
+
   &:hover,
   &.open {
     & > p {
       filter: drop-shadow(0px 0px 2px var(--color-text));
     }
+
     & > .arrow {
       filter: drop-shadow(0px 0px 2px var(--color-text));
       opacity: 1;
@@ -62,21 +65,22 @@
   svg path {
     fill: green !important;
   }
+
   svg text {
     fill: green !important;
   }
+
   display: inline-block;
-  width: 3.15rem; // ~32px
+  width: 3.15rem;
   height: 3.15rem;
   margin-left: 0.5rem;
   transition: transform 0.2s ease;
   vertical-align: middle;
-  object-fit: contain; // ensures it doesn't stretch
+  object-fit: contain;
   transition:
     opacity 0.3s var(--springy-bezier),
     transform 0.4s var(--springy-bezier),
     filter linear 0.5s !important;
-  margin-left: 0.5rem;
   background-color: var(--color-transparent) !important;
   opacity: 0;
   filter: drop-shadow(0px 0px 0px var(--color-text));
