@@ -19,8 +19,6 @@
 import tertiaryStyles from '@/lib/components/button/tertiaryButton.module.scss';
 import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
 import Icon from '@/lib/components/icon/icon';
-import SidebarShell from '@/lib/components/sidebar/SidebarShell';
-import { ToolMenuItem, ToolsMenu } from '@/lib/components/toolsMenu/toolsMenu';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
     useSidebarMenuActions,
@@ -28,7 +26,13 @@ import {
     useThemeActions,
     useThemeState,
 } from '@/lib/context/PersistentUiContext';
+import { SidebarShell } from '@/modules/navigation-sidebar';
 import { Theme } from '@/lib/enums/themes';
+import {
+    ToolsMenu,
+    useToolRegistry,
+    type ToolMenuItem,
+} from '@/modules/tools-menu';
 import { Moon, Sun, Wrench } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
@@ -80,6 +84,7 @@ function BaseResponsiveLayoutShell({
   const params = useParams();
   const router = useRouter();
   const locale = params?.locale as string;
+  const toolItems = useToolRegistry();
 
   const searchParams = useSearchParams();
   const isEmbed = searchParams.get('embed') === 'true';
@@ -123,29 +128,6 @@ function BaseResponsiveLayoutShell({
       </div>
     );
   }
-
-  const toolItems: ToolMenuItem[] = [
-    {
-      id: 'encounter-creator',
-      label: t('tools.encounterCreator'),
-      href: `/${locale}/utils/encounter-planner`,
-    },
-    {
-      id: 'world-sim',
-      label: t('tools.worldSim'),
-      href: `/${locale}/utils/world-sim`,
-    },
-    {
-      id: 'character-builder',
-      label: t('tools.characterBuilder'),
-      href: `/${locale}/utils/characters`,
-    },
-    {
-      id: 'mdx-editor',
-      label: t('tools.mdxEditor'),
-      href: `/${locale}/utils/mdx-editor`,
-    },
-  ];
 
   const toggleTheme = () => {
     const newTheme = currentTheme === Theme.Dark ? Theme.Light : Theme.Dark;

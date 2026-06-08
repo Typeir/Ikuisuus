@@ -10,7 +10,7 @@
  */
 
 import { GET } from '@/app/api/content/walk/route';
-import type { WalkNode } from '@/lib/utils/walk';
+import type { WalkNode } from '@/modules/library/infrastructure/navigation/walk';
 import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -23,7 +23,7 @@ const mockRepositoryShallowWalk =
     ) => Promise<WalkNode[]>
   >();
 
-vi.mock('@/lib/utils/repositoryWalk', () => ({
+vi.mock('@/modules/library/infrastructure/navigation/repositoryWalk', () => ({
   repositoryShallowWalk: (
     ...args: Parameters<typeof mockRepositoryShallowWalk>
   ) => mockRepositoryShallowWalk(...args),

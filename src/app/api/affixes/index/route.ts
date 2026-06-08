@@ -22,7 +22,7 @@
  * ]
  */
 
-import { HeroicAffix } from '@/lib/enums/encounterPlanner';
+import { HeroicAffix } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';
 import { logger } from '@/lib/logging/logger';
 import { NextRequest, NextResponse } from 'next/server';
 

@@ -9,27 +9,23 @@
  * @since 2.0.0
  */
 
-import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
 import { logger } from '@/lib/logging/logger';
-import { resolveStreamText } from '@/lib/machineText';
-import { compileSync } from '@/lib/mdx/compileSync';
-import { buildPageMetadata, extractDescriptionFromMdx } from '@/lib/seo';
-import matter from 'gray-matter';
+import {
+  buildLibraryMetadata,
+  generateLibraryStaticParams,
+  resolveAndCompileContent,
+} from '@/modules/library/application/use-cases';
+import {
+  HashNavigationProvider,
+  LibraryArticle,
+  MdRawPage,
+} from '@/modules/library/presentation';
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
-import DraftOverlay from '@/lib/components/draftOverlay/draftOverlay';
-import components, { HashNavigationProvider } from '@/lib/components/mdx';
-import EditPageButton from '@/lib/components/mdxEditor/editPageButton';
 import StreamBootstrap from '@/lib/components/stream/StreamBootstrap';
-import { isMdFile } from '@/lib/md/isMdFile';
-import findAllMdxFiles from '@/lib/mdx/findAllMdxFiles';
-import { fetchContent } from '@/lib/utils/fetchContent';
-import path from 'path';
-import { pathToFileURL } from 'url';
+import { DraftOverlay, EditPageButton } from '@/modules/mdx-editor';
 import ClientRenderer from '../../utils/clientRenderer';
-import styles from './page.module.scss';
-import { MDRawPage } from './utils/mdRawPage';
 
 const log = logger.child({ module: 'LibraryPage' });
 
@@ -43,16 +39,7 @@ const log = logger.child({ module: 'LibraryPage' });
 export async function generateStaticParams(): Promise<
   Array<{ slug: string[] }>
 > {
-  const CONTENT_ROOT = path.join(process.cwd(), 'src', 'content', 'en');
-  const mdxFiles = await findAllMdxFiles(CONTENT_ROOT);
-  return mdxFiles.map((filePath) => {
-    const relativePath = path.relative(CONTENT_ROOT, filePath);
-    const slug = relativePath
-      .replace(REGEX_CONTENT_SUFFIX, '')
-      .replace(/\.mdx$/, '')
-      .split(path.sep);
-    return { slug };
-  });
+  return generateLibraryStaticParams();
 }
 /**
  * Props for the dynamic content route.
@@ -63,35 +50,6 @@ type PageProps = {
     locale: string;
   }>;
 };
-
-/**
- * Extracts the first H1 heading from MDX content.
- *
- * @param {string} content - Raw MDX content
- * @returns {string|null} H1 text or null if not found
- */
-function extractH1FromMdx(content: string): string | null {
-  const mdH1Match = content.match(/^#\s+(.+)$/m);
-  if (mdH1Match) return mdH1Match[1].trim();
-
-  const htmlH1Match = content.match(/<h1[^>]*>(.+?)<\/h1>/i);
-  if (htmlH1Match) return htmlH1Match[1].replace(/<[^>]*>/g, '').trim();
-
-  return null;
-}
-
-/**
- * Converts a kebab-case slug segment to title case for use as a fallback title.
- *
- * @param {string} segment - Kebab-case slug segment, e.g. `"dreaded-defender"`.
- * @returns {string} Title-cased string, e.g. `"Dreaded Defender"`.
- */
-function slugSegmentToTitle(segment: string): string {
-  return segment
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
 
 /**
  * Generates full SEO metadata for the page.
@@ -109,65 +67,19 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug, locale } = await params;
 
-  const slugSegments = (slug[0] === locale ? slug.slice(1) : slug).map(
-    (segment) => decodeURIComponent(segment),
-  );
-  const slugPath = slugSegments.join('/');
-
-  const result = await fetchContent(locale, slugPath);
-
-  if (!result) {
-    return {
-      title: 'Not Found | Library of Ikuisuus',
-    };
-  }
-
   try {
-    const { data: frontmatter, content: bodyContent } = matter(result.content);
-    const fm = frontmatter as {
-      title?: string;
-      description?: string;
-      image?: string;
-      imageAlt?: string;
-      keywords?: string | string[];
-    };
-
-    const resolvedTitle =
-      fm.title ??
-      extractH1FromMdx(result.content) ??
-      slugSegmentToTitle(slugSegments[slugSegments.length - 1]);
-
-    const resolvedKeywords: string[] = Array.isArray(fm.keywords)
-      ? fm.keywords
-      : typeof fm.keywords === 'string'
-        ? fm.keywords.split(',').map((k) => k.trim())
-        : [
-            ...slugSegments.map(slugSegmentToTitle),
-            'd20',
-            'Library of Ikuisuus',
-          ];
-
-    return buildPageMetadata({
-      title: resolvedTitle,
-      description:
-        fm.description ?? extractDescriptionFromMdx(bodyContent) ?? undefined,
-      image: fm.image,
-      imageAlt: fm.imageAlt,
-      keywords: resolvedKeywords,
-      locale,
-      slugPath,
-    });
+    return await buildLibraryMetadata({ slug, locale });
   } catch (error) {
     log.error('Error generating metadata', {
       error: error instanceof Error ? error.message : String(error),
-      slugPath,
+      slug,
       locale,
     });
-  }
 
-  return {
-    title: `${slugSegmentToTitle(slugSegments[slugSegments.length - 1])} | Library of Ikuisuus`,
-  };
+    return {
+      title: 'Library of Ikuisuus',
+    };
+  }
 }
 
 /**
@@ -183,88 +95,57 @@ export async function generateMetadata({
 const Page = async ({ params }: PageProps) => {
   const { slug, locale } = await params;
 
-  const slugSegments = (slug[0] === locale ? slug.slice(1) : slug).map(
-    (segment) => decodeURIComponent(segment),
-  );
-  const slugPath = slugSegments.join('/');
+  const resolved = await resolveAndCompileContent({ slug, locale });
 
-  let result = await fetchContent(locale, slugPath);
+  if (resolved.kind === 'redirect') {
+    redirect(resolved.href);
+  }
 
-  if (!result) {
-    const mainResult = await fetchContent(locale, `${slugPath}/main`);
-
-    if (mainResult) {
-      redirect(`/${locale}/library/${slugPath}/main`);
-    }
-
+  if (resolved.kind === 'not-found') {
     notFound();
   }
 
-  const { content: rawContent, resolvedPath } = result;
-
-  if (isMdFile(resolvedPath)) {
+  if (resolved.kind === 'md') {
     return (
-      <>
-        <MDRawPage slugPath={slugPath} rawContent={rawContent} />
-      </>
+      <MdRawPage
+        slugPath={resolved.slugPath}
+        rawContent={resolved.rawContent}
+      />
     );
   }
 
-  let evalResult;
-
-  const streamText = await resolveStreamText(locale, slugSegments, rawContent);
-
-  try {
-    const baseUrl = path.isAbsolute(resolvedPath)
-      ? pathToFileURL(resolvedPath).toString()
-      : undefined;
-    evalResult = await compileSync({
-      source: rawContent,
-      components,
-      baseUrl,
-      parseFrontmatter: true,
+  if (!resolved.evalResult || resolved.evalResult.error) {
+    log.warning('MDX precompilation failed, falling back to ClientRenderer', {
+      slugPath: resolved.slugPath,
+      error: resolved.evalResult?.error
+        ? String(resolved.evalResult.error)
+        : resolved.compileError
+          ? String(resolved.compileError)
+          : 'Unknown error',
     });
-  } catch (error) {
-    log.warning(
-      'Catastrophic error when parsing MDX, falling back to client renderer',
-      {
-        error: error instanceof Error ? error.message : String(error),
-        slugPath,
-      },
-    );
-  } finally {
-    if (!evalResult || evalResult.error) {
-      log.warning('MDX precompilation failed, falling back to ClientRenderer', {
-        slugPath,
-        error: evalResult?.error ? String(evalResult.error) : 'Unknown error',
-      });
-      return (
-        <>
-          <div className='prose prose-invert mx-auto ml-'>
-            <h1 className='text-4xl font-mono font-black mb-6'>{slugPath}</h1>
-            <article className={styles.markdown}>
-              <ClientRenderer locale={locale} slug={slugPath} />
-            </article>
-            <EditPageButton slug={slugPath} locale={locale} />
-          </div>
-        </>
-      );
-    }
-  }
 
-  const { content, frontmatter } = evalResult;
+    return (
+      <div className='prose prose-invert mx-auto'>
+        <h1 className='text-4xl font-mono font-black mb-6'>
+          {resolved.slugPath}
+        </h1>
+        <LibraryArticle containerClassName='mx-auto'>
+          <ClientRenderer locale={locale} slug={resolved.slugPath} />
+        </LibraryArticle>
+        <EditPageButton slug={resolved.slugPath} locale={locale} />
+      </div>
+    );
+  }
 
   return (
-    <div
-      className='prose prose-invert mx-auto'
-      style={{ ['--stream-text' as any]: `'${streamText}'` }}>
-      <DraftOverlay locale={locale} slug={slugPath}>
-        <HashNavigationProvider />
-        <article className={styles.markdown}>{content}</article>
-        <StreamBootstrap />
-        <EditPageButton slug={slugPath} locale={locale} />
-      </DraftOverlay>
-    </div>
+    <DraftOverlay locale={locale} slug={resolved.slugPath}>
+      <HashNavigationProvider />
+      <LibraryArticle streamText={resolved.streamText}>
+        {resolved.evalResult.content}
+      </LibraryArticle>
+      <StreamBootstrap />
+      <EditPageButton slug={resolved.slugPath} locale={locale} />
+    </DraftOverlay>
   );
 };
 

@@ -11,7 +11,7 @@
  *
  * @requires vitest Test framework
  * @requires @testing-library/react React component testing
- * @requires @/lib/components/encounterPlanner EncounterPlanner component
+ * @requires @/modules/encounter-planner EncounterPlanner component
  *
  * @description
  * Tests the EncounterPlanner lock functionality, focusing on verifying that:
@@ -20,9 +20,9 @@
  * - Lock state persists through component updates
  */
 
-import { CombatantRow } from '@/lib/components/encounterPlanner/combatantRow';
-import { createEmptyCreature } from '@/lib/utils/encounterStorage';
-import { createInProgressCombatant } from '@/lib/utils/inProgressCombatStorage';
+import { createInProgressCombatant } from '@/modules/encounter-planner/application/factories/combatSnapshot.factory';
+import { createEmptyCreature } from '@/modules/encounter-planner/application/factories/encounter.factory';
+import { CombatantRow } from '@/modules/encounter-planner/presentation/combatantRow';
 import { render } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -66,7 +66,7 @@ const renderWithIntl = (component: React.ReactElement) => {
   return render(
     <NextIntlClientProvider locale='en' messages={testMessages} timeZone='UTC'>
       {component}
-    </NextIntlClientProvider>
+    </NextIntlClientProvider>,
   );
 };
 
@@ -98,7 +98,7 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Get all text inputs for stats (AC, HP, ability scores, initiative)
@@ -107,7 +107,7 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
 
       // All should be enabled initially
       const disabledInputs = Array.from(textInputs).filter((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
       expect(disabledInputs).toHaveLength(0);
     });
@@ -126,7 +126,7 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Get all text inputs
@@ -135,7 +135,7 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
 
       // All should now be disabled
       const disabledInputs = Array.from(textInputs).filter((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
       expect(disabledInputs.length).toBeGreaterThan(0);
     });
@@ -154,15 +154,15 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Find AC input field and other stat inputs
       const textInputs = Array.from(
-        container.querySelectorAll('input[type="text"]')
+        container.querySelectorAll('input[type="text"]'),
       );
       const disabledInputs = textInputs.filter((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
 
       // Should have disabled inputs when locked
@@ -190,15 +190,15 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Get all text inputs (AC, stats, initiative, HP)
       const textInputs = Array.from(
-        container.querySelectorAll('input[type="text"]')
+        container.querySelectorAll('input[type="text"]'),
       );
       const disabledInputs = textInputs.filter((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
 
       // When locked, should have disabled inputs (for AC and all ability scores)
@@ -218,15 +218,15 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Verify inputs are disabled
       let textInputs = Array.from(
-        container.querySelectorAll('input[type="text"]')
+        container.querySelectorAll('input[type="text"]'),
       );
       let disabledInputs = textInputs.filter((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
       expect(disabledInputs.length).toBeGreaterThan(0);
 
@@ -243,13 +243,13 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
             onUpdate={vi.fn()}
             onRemoveSessionOnly={vi.fn()}
           />
-        </NextIntlClientProvider>
+        </NextIntlClientProvider>,
       );
 
       // Verify inputs are now enabled
       textInputs = Array.from(container.querySelectorAll('input[type="text"]'));
       disabledInputs = textInputs.filter((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
       expect(disabledInputs).toHaveLength(0);
     });
@@ -268,15 +268,15 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // When locked, inputs should be disabled
       const textInputs = Array.from(
-        container.querySelectorAll('input[type="text"]')
+        container.querySelectorAll('input[type="text"]'),
       );
       const disabledInputs = textInputs.filter((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
 
       // Verify that inputs ARE disabled when locked (this is the critical test)
@@ -301,15 +301,15 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // First creature should have disabled inputs
       let textInputs1 = Array.from(
-        container1.querySelectorAll('input[type="text"]')
+        container1.querySelectorAll('input[type="text"]'),
       );
       let disabledInputs1 = textInputs1.filter((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
       expect(disabledInputs1.length).toBeGreaterThan(0);
 
@@ -320,15 +320,15 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
           locale='en'
           onUpdate={vi.fn()}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Second creature should have enabled inputs
       let textInputs2 = Array.from(
-        container2.querySelectorAll('input[type="text"]')
+        container2.querySelectorAll('input[type="text"]'),
       );
       let disabledInputs2 = textInputs2.filter((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
       expect(disabledInputs2).toHaveLength(0);
     });
@@ -348,15 +348,15 @@ describe('EncounterPlanner Lock Integration - CombatantRow Direct Tests', () => 
           locale='en'
           onUpdate={onUpdate}
           onRemoveSessionOnly={vi.fn()}
-        />
+        />,
       );
 
       // Try to interact with AC input
       const textInputs = Array.from(
-        container.querySelectorAll('input[type="text"]')
+        container.querySelectorAll('input[type="text"]'),
       ) as HTMLInputElement[];
       const firstDisabledInput = textInputs.find((input) =>
-        input.hasAttribute('disabled')
+        input.hasAttribute('disabled'),
       );
 
       if (firstDisabledInput) {

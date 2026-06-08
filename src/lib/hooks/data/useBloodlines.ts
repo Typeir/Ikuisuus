@@ -10,9 +10,9 @@
 
 'use client';
 
-import type { BloodlineApiItem } from '@/lib/types/api.d';
-import { bloodlinesKey, urlForBloodlines } from '@/lib/fetch/swrKeys';
 import { fetcher } from '@/lib/fetch/fetcher';
+import { bloodlinesKey, urlForBloodlines } from '@/lib/fetch/swrKeys';
+import type { BloodlineApiItem } from '@/lib/types/api.d';
 import useSWR, { type KeyedMutator } from 'swr';
 
 /**

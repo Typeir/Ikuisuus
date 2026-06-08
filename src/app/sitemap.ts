@@ -12,8 +12,8 @@
  */
 
 import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
-import findAllMdxFiles from '@/lib/mdx/findAllMdxFiles';
 import { resolveMetadataBase } from '@/lib/seo';
+import findAllMdxFiles from '@/modules/library/infrastructure/content/findAllMdxFiles';
 import type { MetadataRoute } from 'next';
 import path from 'path';
 

@@ -1,0 +1,215 @@
+/**
+ * @fileoverview Depth-limited navigation walkers for lazy sidebar expansion.
+ * @module modules/library/infrastructure/navigation/walkShallow
+ * @author Typeir
+ * @version 1.0.0
+ * @since 6.0.0
+ */
+
+import type { DirectorySourceAdapter } from '@/lib/db/content/directorySourceAdapter';
+import {
+    FILE_EXT_MD,
+    FILE_EXT_MDX,
+    IGNORED_FOLDERS,
+    REGEX_CONTENT_SUFFIX,
+    REGEX_EXTENSION,
+} from '@/lib/enums/constants';
+import { deduplicateFiles } from '@/lib/utils/deduplicateFiles';
+import { toKebabCase } from '@/lib/utils/toKebabCase';
+import { toTitleCase } from '@/lib/utils/toTitleCase';
+import type { WalkNode } from './types';
+
+/** Default recursion depth for shallow walk operations. */
+export const SHALLOW_WALK_DEPTH = 2;
+
+/**
+ * Builds a depth-limited navigation tree with stub nodes at depth cap.
+ *
+ * @param {DirectorySourceAdapter} adapter - Directory source adapter.
+ * @param {string} locale - Locale code.
+ * @param {string} [relativePath=''] - Relative path from content root.
+ * @param {string} [basePath=''] - URL path prefix.
+ * @param {number} [maxDepth=SHALLOW_WALK_DEPTH] - Maximum depth.
+ * @returns {Promise<WalkNode[]>} Shallow navigation nodes.
+ */
+export async function shallowWalk(
+  adapter: DirectorySourceAdapter,
+  locale: string,
+  relativePath = '',
+  basePath = '',
+  maxDepth = SHALLOW_WALK_DEPTH,
+): Promise<WalkNode[]> {
+  return shallowWalkLevel(adapter, locale, relativePath, basePath, maxDepth, 0);
+}
+
+/**
+ * Counts all visible descendants for a directory path.
+ *
+ * @param {DirectorySourceAdapter} adapter - Directory source adapter.
+ * @param {string} locale - Locale code.
+ * @param {string} relativePath - Relative path from content root.
+ * @returns {Promise<number>} Descendant count.
+ */
+async function countDescendants(
+  adapter: DirectorySourceAdapter,
+  locale: string,
+  relativePath: string,
+): Promise<number> {
+  const entries = (await adapter.listEntries(locale, relativePath)).filter(
+    (entry) =>
+      !IGNORED_FOLDERS.some((pattern) => pattern.test(entry.name)) &&
+      !entry.name.includes('.hidden.'),
+  );
+
+  const counts = await Promise.all(
+    entries.map(async (entry) => {
+      if (entry.isDirectory) {
+        const childRelativePath = relativePath
+          ? `${relativePath}/${entry.name}`
+          : entry.name;
+
+        return 1 + (await countDescendants(adapter, locale, childRelativePath));
+      }
+
+      if (
+        entry.name.endsWith(FILE_EXT_MD) ||
+        entry.name.endsWith(FILE_EXT_MDX)
+      ) {
+        return 1;
+      }
+
+      return 0;
+    }),
+  );
+
+  return counts.reduce((total, count) => total + count, 0);
+}
+
+/**
+ * Detects whether a directory includes main content file and returns its route.
+ *
+ * @param {DirectorySourceAdapter} adapter - Directory source adapter.
+ * @param {string} locale - Locale code.
+ * @param {string} relativePath - Relative path from content root.
+ * @param {string} basePath - Kebab-case route path.
+ * @returns {Promise<string | undefined>} Main route path when present.
+ */
+async function detectMainPath(
+  adapter: DirectorySourceAdapter,
+  locale: string,
+  relativePath: string,
+  basePath: string,
+): Promise<string | undefined> {
+  const entries = await adapter.listEntries(locale, relativePath);
+  const hasMain = entries.some(
+    (entry) =>
+      !entry.isDirectory &&
+      (entry.name === 'main.mdx' || entry.name === 'main.md'),
+  );
+
+  if (!hasMain) {
+    return undefined;
+  }
+
+  return basePath ? `${basePath}/main` : 'main';
+}
+
+/**
+ * Recursive implementation for depth-limited navigation walk.
+ *
+ * @param {DirectorySourceAdapter} adapter - Directory source adapter.
+ * @param {string} locale - Locale code.
+ * @param {string} relativePath - Relative path from content root.
+ * @param {string} basePath - URL path prefix.
+ * @param {number} maxDepth - Maximum recursion depth.
+ * @param {number} currentDepth - Current recursion depth.
+ * @returns {Promise<WalkNode[]>} Navigation nodes at current depth.
+ */
+async function shallowWalkLevel(
+  adapter: DirectorySourceAdapter,
+  locale: string,
+  relativePath: string,
+  basePath: string,
+  maxDepth: number,
+  currentDepth: number,
+): Promise<WalkNode[]> {
+  const entries = (await adapter.listEntries(locale, relativePath))
+    .filter(
+      (entry) =>
+        !IGNORED_FOLDERS.some((pattern) => pattern.test(entry.name)) &&
+        !entry.name.includes('.hidden.'),
+    )
+    .sort((left, right) => left.name.localeCompare(right.name));
+
+  const files = entries
+    .filter(
+      (entry) =>
+        !entry.isDirectory &&
+        (entry.name.endsWith(FILE_EXT_MD) || entry.name.endsWith(FILE_EXT_MDX)),
+    )
+    .map((entry) => entry.name);
+
+  const deduplicatedFiles = deduplicateFiles(files);
+  const nodes = await Promise.all(
+    entries.map(async (entry) => {
+      const fileName = entry.name.replace(REGEX_EXTENSION, '');
+      const suffixMatch = fileName.match(REGEX_CONTENT_SUFFIX);
+      const suffix = suffixMatch ? suffixMatch[0] : '';
+      const baseFileName = suffix
+        ? fileName.slice(0, -suffix.length)
+        : fileName;
+      const kebabBase = toKebabCase(baseFileName);
+      const kebabPath = basePath ? `${basePath}/${kebabBase}` : kebabBase;
+
+      if (entry.isDirectory) {
+        const childRelativePath = relativePath
+          ? `${relativePath}/${entry.name}`
+          : entry.name;
+
+        if (currentDepth >= maxDepth - 1) {
+          const [childCount, mainPath] = await Promise.all([
+            countDescendants(adapter, locale, childRelativePath),
+            detectMainPath(adapter, locale, childRelativePath, kebabPath),
+          ]);
+
+          return {
+            name: toTitleCase(baseFileName),
+            path: kebabPath,
+            children: [],
+            isStub: true,
+            childCount,
+            mainPath,
+          } satisfies WalkNode;
+        }
+
+        return {
+          name: toTitleCase(baseFileName),
+          path: kebabPath,
+          children: await shallowWalkLevel(
+            adapter,
+            locale,
+            childRelativePath,
+            kebabPath,
+            maxDepth,
+            currentDepth + 1,
+          ),
+        } satisfies WalkNode;
+      }
+
+      if (
+        (entry.name.endsWith(FILE_EXT_MD) ||
+          entry.name.endsWith(FILE_EXT_MDX)) &&
+        deduplicatedFiles.includes(entry.name)
+      ) {
+        return {
+          name: toTitleCase(baseFileName),
+          path: kebabPath,
+        } satisfies WalkNode;
+      }
+
+      return null;
+    }),
+  );
+
+  return nodes.filter(Boolean) as WalkNode[];
+}

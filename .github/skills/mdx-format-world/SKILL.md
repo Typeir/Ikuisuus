@@ -1,45 +1,34 @@
 ---
 name: mdx-format-world
 description: >
-  Detailed format conventions for world lore files (.lore.mdx). Use when
-  authoring, refactoring, or auditing world content in src/content/en/world/.
-  Covers the four knowledge tiers (Common, Advanced, Deep, Truth), the two
-  structural variants (flat tier headers and blockquote-summary variant),
-  narrative expansion sections, cross-reference link format, the no-hallucination
-  protocol, tone and padding rules from damocles-lore, and all format rules
-  specific to world lore files. Load the damocles-lore skill alongside this
-  one for setting-consistency checks.
+  World lore format (.lore.mdx). Knowledge tiers (Common/Advanced/Deep/Truth),
+  flat + blockquote variants, cross-links, no-hallucination, tone, padding rules.
+  Load damocles-lore alongside for setting consistency.
 ---
 
 # MDX Format: World Lore
 
 ## Purpose
 
-This skill governs the format of world lore files. Lore pages describe
-locations, characters, creatures, events, ages, and structures in the
-Damocles setting. They use a knowledge-tier system to layer information
-by accessibility — from public common knowledge down to secret cosmological
-truth.
-
-For **setting consistency**, **entity naming**, and **tone directives**,
-also load the `damocles-lore` skill.
+Formats world lore files. Tiers layer info by accessibility. Setting consistency?
+Load `damocles-lore` skill.
 
 ## When to Use
 
-- Authoring a new `.lore.mdx` file
-- Fixing missing `# Title` or tier structure violations
-- Adding new knowledge tiers to an existing page
-- Auditing cross-reference links for correctness and locale path issues
-- Running `npm run health:check` and addressing world content violations
+- Author new `.lore.mdx`
+- Fix missing title or tier violations
+- Add tiers to existing page
+- Audit cross-reference links
+- Run `npm run health:check` + fix world violations
 
-## File Information
+## File Info
 
-| Field      | Value                                                                                                                                                   |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Location   | `src/content/en/world/` (nested by category subdirectory)                                                                                               |
-| Extension  | `.lore.mdx`                                                                                                                                             |
-| Generator  | None — lore files are not processed into `.metadata.json`                                                                                               |
-| Categories | `the-lands-of-damocles/`, `characters-and-actors/`, `gods-and-demigods/`, `the-creatures-of-damocles/`, `events/`, `ages/`, `structures/`, `artifacts/` |
+| Field | Value |
+| --- | --- |
+| Location | src/content/en/world/ (nested categories) |
+| Ext | .lore.mdx |
+| Generator | None (not processed to metadata) |
+| Categories | the-lands/, characters/, gods/, creatures/, events/, ages/, structures/, artifacts/ |
 
 ## Knowledge Tier System
 

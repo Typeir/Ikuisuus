@@ -1,0 +1,42 @@
+.previewError {
+  padding: 1rem;
+  color: var(--color-error);
+  font-size: 0.8125rem;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.previewEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  opacity: 0.5;
+}
+
+.previewLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  opacity: 0.6;
+}
+
+.previewFadeIn {
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    --_: mde-fadeIn-from;
+    opacity: 0;
+  }
+  to {
+    --_: mde-fadeIn-to;
+    opacity: 1;
+  }
+}

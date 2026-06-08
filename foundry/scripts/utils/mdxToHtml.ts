@@ -13,8 +13,8 @@
  * @see {@link extractMonsterDescription} for monster-specific extraction
  */
 
-import { compileAsync } from '@/lib/mdx/compileAsync';
-import { renderToHtml } from '@/lib/mdx/serverRender';
+import { compileAsync } from '@/modules/library/infrastructure/compile/compileAsync';
+import { renderToHtml } from '@/modules/library/infrastructure/compile/serverRender';
 import React from 'react';
 import remarkGfm from 'remark-gfm';
 import type { MonsterFeature } from '../../../src/lib/types/feature';

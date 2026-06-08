@@ -12,6 +12,8 @@
 
 'use client';
 
+import { deriveExpandedPathsFromUrl } from '@/modules/library/application/selectors/deriveExpandedPathsFromUrl';
+import { isStaticContentRoute } from '@/modules/library/application/selectors/isStaticContentRoute';
 import {
   createContext,
   ReactNode,
@@ -30,9 +32,7 @@ import {
   SerializedPersistentUiState,
   ThemeValue,
 } from '../types/persistentUiState';
-import { deriveExpandedPathsFromUrl } from '../utils/deriveExpandedPathsFromUrl';
 import { fetchPersistentData } from '../utils/fetchPersistentData';
-import { isStaticContentRoute } from '../utils/isStaticContentRoute';
 import { storePersistentData } from '../utils/storePersistentData';
 
 /**
@@ -254,14 +254,16 @@ export function usePersistentUiDispatch(): (
 }
 
 export {
-  useSidebarExpansionActions,
-  useSidebarMenuActions,
-  useSidebarMenuState
-} from '../hooks/useSidebarState';
+  useSidebarExpansion as useSidebarExpansionActions
+} from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
+export { useSidebarMenuActions } from '@/modules/navigation-sidebar/application/hooks/useSidebarMenuActions';
+export { useSidebarMenu as useSidebarMenuState } from '@/modules/navigation-sidebar/application/hooks/useSidebarMenu';
 export type {
-  SidebarExpansionActions,
+  SidebarExpansionActions
+} from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
+export type {
   SidebarMenuActions
-} from '../hooks/useSidebarState';
+} from '@/modules/navigation-sidebar/application/hooks/useSidebarMenuActions';
 
 export { useThemeActions, useThemeState } from '../hooks/useThemeState';
 export type { ThemeActions, ThemeState } from '../hooks/useThemeState';
@@ -269,9 +271,9 @@ export type { ThemeActions, ThemeState } from '../hooks/useThemeState';
 export {
   useCorrectionsTokenActions,
   useCorrectionsTokenState
-} from '../hooks/useCorrectionsToken';
+} from '../../modules/mdx-editor/application/hooks/useCorrectionsToken';
 export type {
   CorrectionsTokenActions,
   CorrectionsTokenState
-} from '../hooks/useCorrectionsToken';
+} from '../../modules/mdx-editor/application/hooks/useCorrectionsToken';
 

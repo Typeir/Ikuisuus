@@ -19,7 +19,7 @@
  * { slug: "bloodthirsty", title: "Bloodthirsty", link: "/library/rules/heroic-awakening/bloodthirsty" }
  */
 
-import { HeroicAffix } from '@/lib/enums/encounterPlanner';
+import { HeroicAffix } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';
 import { logger } from '@/lib/logging/logger';
 import { NextResponse } from 'next/server';
 

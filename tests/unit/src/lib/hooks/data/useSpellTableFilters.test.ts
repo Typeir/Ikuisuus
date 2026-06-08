@@ -6,7 +6,7 @@
  * @since 7.2.0
  */
 
-import { useSpellTableFilters } from '@/lib/hooks/data/useSpellTableFilters';
+import { useSpellTableFilters } from '@/modules/metadata-tables/application/hooks/useSpellTableFilters';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 

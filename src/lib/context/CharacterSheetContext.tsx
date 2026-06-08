@@ -15,6 +15,7 @@
 
 'use client';
 
+import { migrateCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import {
     createContext,
     ReactNode,
@@ -36,7 +37,6 @@ import {
     fetchPersistentDataRef,
     storePersistentDataRef,
 } from '../utils/storePersistentData';
-import { migrateCharacter } from '../utils/characterStorage';
 
 /**
  * Serialized form stored in the persistence layer.
@@ -64,7 +64,9 @@ function readPersistedCharacters(): SerializedCharacterSheetState {
     const parsed = JSON.parse(raw) as Partial<SerializedCharacterSheetState>;
     return {
       characters: Array.isArray(parsed.characters)
-        ? parsed.characters.map((c) => migrateCharacter(c as unknown as Record<string, unknown>))
+        ? parsed.characters.map((c) =>
+            migrateCharacter(c as unknown as Record<string, unknown>),
+          )
         : [],
       activeId: typeof parsed.activeId === 'string' ? parsed.activeId : null,
     };

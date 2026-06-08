@@ -1,0 +1,42 @@
+/**
+ * @fileoverview MDX Editor shell styles.
+ * @description Route-shell styles for the MdxEditor page container only.
+ * Subsections have been split into dedicated component-level style modules.
+ *
+ * @module modules/mdx-editor/presentation/MdxEditor/MdxEditor.module
+ */
+
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.loading {
+  padding: 1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  text-align: center;
+}

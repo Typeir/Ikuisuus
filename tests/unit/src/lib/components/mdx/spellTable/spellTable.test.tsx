@@ -9,7 +9,7 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/lib/components/mdx/spellTable/spellTable
+ * @requires @/modules/metadata-tables/presentation/SpellTable/SpellTable
  */
 
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -31,11 +31,11 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock('@/lib/hooks/data/useSpellSources', () => ({
+vi.mock('@/modules/metadata-tables/application/hooks/useSpellSources', () => ({
   useSpellSources: (...args: unknown[]) => mockHook(...args),
 }));
 
-vi.mock('@/lib/components/mdx/spellTable/spellTableSkeleton', () => ({
+vi.mock('@/modules/metadata-tables/presentation/SpellTableSkeleton', () => ({
   SpellTableSkeleton: () => <div data-testid='skeleton'>Loading...</div>,
 }));
 
@@ -54,7 +54,7 @@ vi.mock('@/lib/components/ui', () => ({
   ),
 }));
 
-import SpellTable from '@/lib/components/mdx/spellTable/spellTable';
+import SpellTable from '@/modules/metadata-tables/presentation/SpellTable/SpellTable';
 
 /**
  * Creates a mock spell for testing.

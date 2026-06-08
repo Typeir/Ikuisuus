@@ -1,40 +1,36 @@
 ---
 name: mdx-format-monsters
 description: >
-  Detailed format conventions for monster stat block files (.sheet.mdx).
-  Use when authoring, refactoring, or auditing monster sheets in
-  src/content/en/monsters/. Covers the required stat block structure,
-  ability score table, Challenge Rating, section dividers, feature headings,
-  Legendary Deeds, Spellcasting blocks, the Meta MDX directive, metadata
-  fields extracted by generateMonsterMetadata.ts, and all health-check rules
-  specific to .sheet.mdx files.
+  Monster stat block format (.sheet.mdx). Required structure, stat table,
+  Challenge Rating, section dividers, feature headings, Legendary Deeds,
+  Spellcasting, Meta directive, metadata fields (generateMonsterMetadata.ts),
+  health-check rules.
 ---
 
 # MDX Format: Monster Sheets
 
 ## Purpose
 
-This skill governs the format of monster stat block files. Use it when
-creating new monsters, refactoring existing sheets, or diagnosing
-`monster-sheet-*` health-check violations.
+Formats monster stat block files. Use when creating, refactoring, auditing sheets.
+Diagnose `monster-sheet-*` health-check violations.
 
 ## When to Use
 
-- Authoring a new `.sheet.mdx` file
-- Fixing `monster-sheet-missing-stat-table` or `monster-sheet-missing-cr` violations
-- Adding Legendary Deeds, Lair actions, or Spellcasting blocks
-- Running `npm run generate-metadata` and debugging parse failures
-- Reviewing feature extraction output (see also: `feature-extraction` skill)
+- Author new `.sheet.mdx`
+- Fix `monster-sheet-missing-stat-table` or `monster-sheet-missing-cr`
+- Add Legendary Deeds, Lair actions, Spellcasting
+- Run `npm run generate-metadata`, debug parse failures
+- Review feature extraction (see: `feature-extraction` skill)
 
-## File Information
+## File Info
 
-| Field      | Value                                                         |
-| ---------- | ------------------------------------------------------------- |
-| Location   | `src/content/en/monsters/`                                    |
-| Extension  | `.sheet.mdx` (required — generator ignores other extensions)  |
-| Generator  | `scripts/metadata/generateMonsterMetadata.ts`                 |
-| API Route  | `src/app/api/monsters/route.ts`                               |
-| Multi-stat | A single file may contain multiple stat blocks (array output) |
+| Field      | Value                                                |
+| ---------- | ---------------------------------------------------- |
+| Location   | src/content/en/monsters/                             |
+| Ext        | .sheet.mdx (required; generator ignores others)      |
+| Generator  | scripts/metadata/generateMonsterMetadata.ts          |
+| API        | src/app/api/monsters/route.ts                        |
+| Multi-stat | Single file may contain multiple stat blocks (array) |
 
 ## Required Structure
 
@@ -137,31 +133,30 @@ Description of the lair effect.
 
 ### Section Rules
 
-| Section                   | Required? | Separator              | Heading level |
-| ------------------------- | --------- | ---------------------- | ------------- |
-| `## Traits`               | Yes       | `---` before and after | `##`          |
-| `## Actions`              | Yes       | `---` before and after | `##`          |
-| `## Bonus Actions`        | Optional  | `---` before and after | `##`          |
-| `## Reactions`            | Optional  | `---` before and after | `##`          |
-| `## Legendary Deeds`      | Optional  | `---` before and after | `##`          |
-| `## Legendary Deed: Act`  | Optional  | `---` before           | `##`          |
-| `## Legendary Deed: Lair` | Optional  | `---` before           | `##`          |
+| Section                   | Req? | Separator          | Level |
+| ------------------------- | ---- | ------------------ | ----- |
+| `## Traits`               | Yes  | `---` before/after | `##`  |
+| `## Actions`              | Yes  | `---` before/after | `##`  |
+| `## Bonus Actions`        | Opt  | `---` before/after | `##`  |
+| `## Reactions`            | Opt  | `---` before/after | `##`  |
+| `## Legendary Deeds`      | Opt  | `---` before/after | `##`  |
+| `## Legendary Deed: Act`  | Opt  | `---` before       | `##`  |
+| `## Legendary Deed: Lair` | Opt  | `---` before       | `##`  |
 
-Individual features always use `####` (H4) headings.
+Individual features use `####` (H4).
 
 ### Stat Block Property List
 
-All property lines use `- **PropertyName**: value` format. Omit lines that
-have no value (e.g., if there are no damage resistances, omit that line).
+Format: `- **Name**: value`. Omit empty lines. Mandatory: Challenge, Proficiency Bonus.
 
 ```
-- **Saving Throws**: ...       (only saves with proficiency)
-- **Skills**: ...              (only proficient skills)
+- **Saving Throws**: (proficiency only)
+- **Skills**: (proficiency only)
 - **Damage Vulnerabilities**: ...
 - **Damage Resistances**: ...
 - **Damage Immunities**: ...
 - **Condition Immunities**: ...
-- **Senses**: ...              (always include passive Perception)
+- **Senses**: ... (include passive Perception)
 - **Languages**: ...
 - **Challenge**: CR (XP)       ← REQUIRED
 - **Proficiency Bonus**: +N    ← REQUIRED
@@ -172,100 +167,83 @@ have no value (e.g., if there are no damage resistances, omit that line).
 ```mdx
 #### Spellcasting
 
-The creature is a Nth-level spellcaster. Its spellcasting ability is Ability
-(spell save DC N, +N to hit with spell attacks). It has the following spells prepared:
+Level N spellcaster. Ability (DC N, +N spell hit). Prepared:
 
-- **Cantrips (at will)**: _Spell Name, Spell Name_
-- **1st level (4 slots)**: _Spell Name, Spell Name_
-- **2nd level (3 slots)**: _Spell Name_
+- **Cantrips**: _Name, Name_
+- **1st level (N slots)**: _Name, Name_
+- **2nd level (N slots)**: _Name_
 ```
 
-Place in `## Actions` if it uses an action to cast, or in `## Traits` if passive.
+Place in `## Actions` (action cast) or `## Traits` (passive).
 
 ### Meta Directive
 
-Use `<Meta>` to attach machine-readable enrichment data to a feature that
-the parser cannot infer from prose alone. Place immediately after the
-feature's `####` heading:
+Attach enrichment data parser can't infer. Place after `####` heading:
 
 ```mdx
 #### Vorpal Strike
 
 <Meta critRange={19} saveDC={17} saveAbility='con' />
 
-_Melee Weapon Attack:_ +9 to hit, reach 5 ft., one target...
+_Melee Weapon Attack:_ +9 to hit...
 ```
 
-See the `feature-extraction` skill for full `<Meta>` field reference.
+See `feature-extraction` skill for full `<Meta>` reference.
 
 ### Multi-Stat-Block Files
 
-A single `.sheet.mdx` file may contain multiple stat blocks separated by `---`
-and a new `# Heading`. The generator outputs an array. Use this pattern for
-variants (e.g., Young / Adult / Ancient dragon) that share a page.
+Single file = multiple blocks separated by `---` + new `# Heading`. Generator outputs array.
+Use for variants (Young/Adult/Ancient dragon).
 
 ## Metadata Fields
 
-Fields extracted by `generateMonsterMetadata.ts` into `.metadata.json`:
+`generateMonsterMetadata.ts` → `.metadata.json`:
 
-| Field                 | Source in MDX                                    |
-| --------------------- | ------------------------------------------------ |
-| `slug`                | Filename (kebab-case, no extension)              |
-| `title`               | `# Heading`                                      |
-| `size`                | First word of `_Size Type, Alignment_` italic    |
-| `type`                | Middle words of italic line (e.g., "Aberration") |
-| `alignment`           | Last part of italic line                         |
-| `ac`                  | First column of AC/HP/Speed table                |
-| `hp`                  | Second column (formula in parentheses)           |
-| `speeds`              | Third column (parsed into object)                |
-| `abilityScores`       | STR–CHA table (score and modifier)               |
-| `savingThrows`        | `**Saving Throws**` bullet                       |
-| `damageResistances`   | `**Damage Resistances**` bullet                  |
-| `damageImmunities`    | `**Damage Immunities**` bullet                   |
-| `conditionImmunities` | `**Condition Immunities**` bullet                |
-| `senses`              | `**Senses**` bullet                              |
-| `languages`           | `**Languages**` bullet                           |
-| `cr`                  | `**Challenge**` bullet (CR number)               |
-| `xp`                  | `**Challenge**` bullet (XP in parentheses)       |
-| `proficiencyBonus`    | `**Proficiency Bonus**` bullet                   |
-| `tags`                | Extracted from damage types, conditions, traits  |
-| `features`            | Array from feature-extraction pipeline           |
+| Field            | Source                   |
+| ---------------- | ------------------------ |
+| slug             | Filename (kebab)         |
+| title            | `# Heading`              |
+| size             | 1st word italic          |
+| type             | middle words             |
+| alignment        | last part                |
+| ac/hp/speeds     | AC/HP/Speed table        |
+| abilityScores    | STR-CHA table            |
+| savingThrows     | `**Saving Throws**`      |
+| damage\*         | `**Damage**` bullets     |
+| senses           | `**Senses**`             |
+| languages        | `**Languages**`          |
+| cr/xp            | `**Challenge**`          |
+| proficiencyBonus | `**Proficiency**`        |
+| tags             | damage types, conditions |
+| features         | feature-extraction array |
 
 ## Format Rules
 
-| Rule                               | Severity | Description                                                    |
-| ---------------------------------- | -------- | -------------------------------------------------------------- |
-| `non-kebab-filename`               | critical | Filename must be kebab-case (e.g., `giant-fire-ant.sheet.mdx`) |
-| `monster-sheet-missing-stat-table` | critical | Must contain STR/DEX/CON/INT/WIS/CHA ability score table       |
-| `monster-sheet-missing-cr`         | warning  | Must contain `**Challenge**: N (XP)` line                      |
-| `fullsize-image-path`              | critical | Use `/library/images/` not `/full-size/`                       |
-| `raw-img-tag`                      | critical | Use `<BlendedImage>` not `<img>`                               |
-| `missing-alt-text`                 | warning  | `<BlendedImage>` requires a descriptive `alt` prop             |
-| `unregistered-component`           | critical | Only use components registered in `src/lib/components/mdx/`    |
+| Rule                             | Severity | Fix                               |
+| -------------------------------- | -------- | --------------------------------- |
+| non-kebab-filename               | critical | Rename to kebab-case              |
+| monster-sheet-missing-stat-table | critical | Add STR/DEX/CON/INT/WIS/CHA table |
+| monster-sheet-missing-cr         | warning  | Add `**Challenge**: N (XP)`       |
+| fullsize-image-path              | critical | Use `/library/images/`            |
+| raw-img-tag                      | critical | Use `<BlendedImage>`              |
+| missing-alt-text                 | warning  | Add `alt` prop                    |
+| unregistered-component           | critical | Use registered components only    |
 
-See the `mdx-format` skill for the full universal rules table.
+See `mdx-format` skill for universal rules.
 
 ## Available MDX Components
 
-| Component        | Usage in Monster Sheets                          |
-| ---------------- | ------------------------------------------------ |
-| `<BlendedImage>` | Monster artwork image (optional but recommended) |
-| `<Meta>`         | Feature enrichment directive for parser          |
-| `<MonsterTable>` | Used on index pages only, not in stat blocks     |
+| Component        | Usage                             |
+| ---------------- | --------------------------------- |
+| `<BlendedImage>` | Artwork (optional, recommended)   |
+| `<Meta>`         | Feature enrichment directive      |
+| `<MonsterTable>` | Index pages only, NOT stat blocks |
 
-## Common Pitfalls
+## Pitfalls
 
-- **Missing stat table**: The generator and health check both require the
-  `| **STR** | **DEX** | ...` table. If the monster has no meaningful ability
-  scores, fill them in as `— (—)` rather than omitting the table.
-- **CR line format**: Must be `- **Challenge**: 11 (7,200 XP)` — CR first,
-  XP in parentheses. The parser splits on the space and parenthesis.
-- **Feature heading level**: Individual traits/actions MUST use `####` (H4).
-  Using `###` breaks the feature extraction parser.
-- **Section H2 before `---`**: Each major section (`## Traits`, `## Actions`,
-  etc.) must be preceded by a `---` separator line, not just a blank line.
-- **Multi-variant separator**: When a file has two stat blocks, place `---`
-  then start the second with a fresh `# Name` H1. Do not use `##` for the
-  second stat block's name.
-- **`<img>` tags**: Never use raw `<img>`. The health check flags it as
-  critical. Use `<BlendedImage src='...' alt='...' />` instead.
+- **Missing stat table** → Generator needs it. Fill empty as `— (—)` if no scores.
+- **CR format** → `- **Challenge**: 11 (7,200 XP)`. CR first, XP in parens.
+- **Feature H4** → Use `####`. `###` breaks parser.
+- **Section separators** → Precede each major section with `---`, not just blank.
+- **Multi-variant** → Separate blocks with `---`, then fresh `# Name` H1.
+- **No `<img>` tags** → Use `<BlendedImage src='...' alt='...' />` only.

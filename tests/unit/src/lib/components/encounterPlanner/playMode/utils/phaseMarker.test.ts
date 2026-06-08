@@ -8,11 +8,11 @@
  * @author Typeir
  *
  * @requires vitest
- * @requires @/lib/components/encounterPlanner/playMode/utils/phaseMarker
+ * @requires @/modules/encounter-planner/presentation/playMode/utils/phaseMarker
  */
 
 import { describe, it, expect } from 'vitest';
-import { getPhaseMarker, PHASE_THRESHOLDS } from '@/lib/components/encounterPlanner/combatantRow/utils/phaseMarker';
+import { getPhaseMarker, PHASE_THRESHOLDS } from '@/modules/encounter-planner/presentation/combatantRow/utils/phaseMarker';
 
 describe('PHASE_THRESHOLDS', () => {
   it('should export PHASE_THRESHOLDS constant', () => {

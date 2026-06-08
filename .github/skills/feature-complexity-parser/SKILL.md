@@ -1,103 +1,48 @@
 ---
 name: feature-complexity-parser
 description: >
-  Classifies monster feature mechanics by complexity tier to decide whether
-  JSONB metadata is sufficient or a dedicated Foundry-side handler is needed.
-  Load alongside feature-extraction when deciding how to implement new handlers.
+  Classifies monster feature complexity: JSONB metadata sufficient, or needs
+  dedicated Foundry handler? Load alongside feature-extraction when implementing
+  handlers.
 ---
 
-# Feature Complexity Parser Skill
+# Feature Complexity Parser
 
-## The Core Question
+## Core Question
 
-When a monster feature can't be extracted by `enrichFromBody()` and needs a
-`<Meta customHandler>`, you must decide:
+Can Foundry automate from JSONB metadata alone, or needs dedicated handler?
 
-> **Can Foundry automate this mechanic from flat key-value metadata alone,
-> or does it need a dedicated handler that parses the raw text itself?**
+## Classification: 5 Axes
 
-This skill gives you the framework to answer that for ANY mechanic.
+Score 1 point per YES:
 
-## Classification Axes
+1. **Multiple resolution steps?** (roll → check → apply)
+2. **Round-persistent state?** (grows, advances, escalates)
+3. **Per-target resolution?** (different per target, pierces through)
+4. **Conditional branching?** (2+ outcome paths, not just save-for-half)
+5. **Cross-reference?** (other actor sheet, other feature, composition)
 
-Score a mechanic on these five axes. Each YES adds 1 point.
+## Tier Interpretation
 
-| #   | Axis                        | Question                                                                                                    |
-| --- | --------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 1   | **Resolution steps**        | Does the mechanic require more than one sequential resolution? (e.g. roll damage → check threshold → apply) |
-| 2   | **Round-persistent state**  | Does the mechanic change or accumulate state across rounds? (growth, advancement, escalation)               |
-| 3   | **Multi-target resolution** | Does the mechanic resolve differently per target or pierce through multiple? (not just "all in area")       |
-| 4   | **Conditional branching**   | Does the outcome fork into 2+ distinct paths based on a mid-resolution check? (not just save-for-half)      |
-| 5   | **Cross-reference**         | Does the mechanic reference another actor's sheet, another feature, or compose with a sub-handler?          |
-
-### Interpreting the Score
-
-| Score | Tier       | Where the logic lives                                             |
-| ----- | ---------- | ----------------------------------------------------------------- |
-| 0–1   | **Tier 1** | Full extraction in metaHandlers.ts → JSONB → Foundry generic item |
-| 2     | **Tier 2** | Full extraction in metaHandlers.ts → JSONB → Foundry item macro   |
-| 3+    | **Tier 3** | Anchor-only in metaHandlers.ts → Foundry-side dedicated handler   |
-
-## Tier Definitions
+| Score | Tier | Implementation |
+| --- | --- | --- |
+| 0–1 | **Tier 1** | metaHandlers → JSONB → Foundry generic |
+| 2 | **Tier 2** | metaHandlers → JSONB → item macro |
+| 3+ | **Tier 3** | metaHandlers anchor → Foundry-side handler |
 
 ### Tier 1 — JSONB Sufficient
 
-The mechanic maps directly to a Foundry automation primitive. Metadata is
-the complete source of truth. No custom Foundry code needed beyond generic
-item configuration.
+Single step, no state, one path. Example: "Stunned until EOT" → {condition, duration}.
 
-**Structural signature**: Single resolution step, no persistent state, one
-outcome path.
+### Tier 2 — JSONB + Small Macro
 
-**Foundry primitives that cover Tier 1**:
+One branch OR cross-ref, fields independent. Example: 40-ft darkness zone, 3 rounds,
+Blinded + Deafened.
 
-- Apply/remove a condition (ActiveEffect)
-- Roll damage without an attack roll (DamageRoll)
-- Spawn linked actor tokens (TokenDocument.create)
-- Set a flag on a target (Actor.setFlag)
+### Tier 3 — Handler Required
 
-**Example mechanic**: "Target is **Stunned** until end of next turn."
-→ 0 axes triggered. Tier 1. Extract `{condition, duration}`, done.
-
-### Tier 2 — JSONB Sufficient, Needs Item Macro
-
-The mechanic is self-contained in metadata but requires conditional logic
-to automate — a small item macro or module hook, not just Foundry config.
-
-**Structural signature**: One branching point OR one cross-reference, but
-fields don't depend on each other for interpretation.
-
-**Foundry patterns that cover Tier 2**:
-
-- Spawn sub-actor with stats from metadata (destructible object)
-- Place measured template + apply conditions from a list
-- Hook into damage pipeline to redirect/reflect
-
-**Example mechanic**: "Creates a 40-foot-radius zone of darkness for 3 rounds.
-Creatures inside are [Blinded] and [Deafened]."
-→ Axis 2 (persists across rounds). Score = 1… but zone needs placement +
-condition list application ≈ small macro. Tier 2.
-
-### Tier 3 — Foundry-Side Handler Required
-
-The metadata cannot fully represent the mechanic without reproducing the
-resolution logic. Foundry needs to read raw text and implement a dedicated
-handler.
-
-**Structural signature**: Multiple resolution steps that depend on each
-other's outcomes, OR round-persistent state with per-round mutations, OR
-composition with other handlers.
-
-**Red flags that always mean Tier 3**:
-
-- "If X, then Y; otherwise Z" where Y and Z are themselves multi-field effects
-- Per-round state changes (radius grows, wall advances, damage escalates)
-- Handler calls another handler (composition)
-- Mechanic pierces through targets with per-target resolution
-- Mechanic requires animation sequencing or ordered target iteration
-
-Use `customHandler='text_pipe'` for all Tier 3 mechanics. The handler sets a
-`textPipe: 'true'` flag and passes through any freeform attributes. No
+Multi-step + state-dependent, OR per-round mutations, OR composition, OR per-target
+resolution. Use `customHandler='text_pipe'`.
 extraction logic — Foundry's `@handler(featureId)` decorated methods parse
 raw text directly.
 

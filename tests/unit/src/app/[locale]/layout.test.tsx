@@ -53,7 +53,7 @@ vi.mock('@/app/[locale]/ClientProviders', () => ({
 }));
 
 // Mock walk utility
-vi.mock('@/lib/utils/repositoryWalk', () => ({
+vi.mock('@/modules/library/infrastructure/navigation/repositoryWalk', () => ({
   repositoryShallowWalk: vi.fn(async () => []),
 }));
 

@@ -7,11 +7,11 @@
  * @author Typeir
  *
  * @requires vitest
- * @requires @/lib/components/encounterPlanner/playMode/utils
+ * @requires @/modules/encounter-planner/presentation/playMode/utils
  */
 
 import { describe, it, expect } from 'vitest';
-import * as UtilsModule from '@/lib/components/encounterPlanner/combatantRow/utils';
+import * as UtilsModule from '@/modules/encounter-planner/presentation/combatantRow/utils';
 
 describe('playMode/utils index exports', () => {
   it('should export getPhaseMarker function', () => {

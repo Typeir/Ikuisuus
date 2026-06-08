@@ -8,7 +8,7 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/components/mdxEditor/mdxEditor', () => ({
+vi.mock('@/modules/mdx-editor/presentation/MdxEditor/MdxEditor', () => ({
   MdxEditor: ({ locale }: { locale: string }) => (
     <div data-testid='mdx-editor' data-locale={locale} />
   ),

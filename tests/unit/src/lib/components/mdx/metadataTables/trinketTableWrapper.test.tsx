@@ -9,7 +9,7 @@
  *
  * @requires vitest
  * @requires @testing-library/react
- * @requires @/lib/components/mdx/metadataTables/trinketTableWrapper
+ * @requires @/modules/metadata-tables/presentation/TrinketTable/TrinketTable
  */
 
 import { render, screen } from '@testing-library/react';
@@ -32,7 +32,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock('@/lib/hooks/data/useMetadataTableData', () => ({
+vi.mock('@/modules/metadata-tables/application/hooks/useMetadataTableData', () => ({
   useMetadataTableData: (...args: unknown[]) => mockHook(...args),
 }));
 
@@ -55,7 +55,7 @@ vi.mock('@/lib/components/mdx/metadataTables/metadataTableSkeleton', () => ({
   MetadataTableSkeleton: () => <div data-testid='skeleton'>Loading...</div>,
 }));
 
-import TrinketTableWrapper from '@/lib/components/mdx/metadataTables/trinketTableWrapper';
+import TrinketTableWrapper from '@/modules/metadata-tables/presentation/TrinketTable/TrinketTable';
 
 describe('TrinketTableWrapper', () => {
   beforeEach(() => {

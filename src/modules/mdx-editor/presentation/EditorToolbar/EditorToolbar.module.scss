@@ -1,0 +1,42 @@
+@use 'mixins' as *;
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0.375rem 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  flex-wrap: wrap;
+}
+
+.toolbarButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.12s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.toolbarSep {
+  width: 1px;
+  height: 18px;
+  margin: 0 0.25rem;
+  background-color: var(--color-border);
+}

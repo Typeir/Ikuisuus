@@ -7,7 +7,7 @@
  */
 'use client';
 
-import mdxComponents from '@/lib/components/mdx';
+import { mdxComponents } from '@/modules/library/presentation';
 import { MDXProvider } from '@mdx-js/react';
 import { useEffect, useState } from 'react';
 

@@ -21,7 +21,7 @@
  * ```
  */
 
-import { fetchContent } from '@/lib/utils/fetchContent';
+import { fetchContent } from '@/modules/library/infrastructure/content/fetchContent';
 import { NextResponse } from 'next/server';
 
 /**

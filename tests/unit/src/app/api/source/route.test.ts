@@ -16,7 +16,7 @@ const { mockFetchContent } = vi.hoisted(() => ({
   mockFetchContent: vi.fn(),
 }));
 
-vi.mock('@/lib/utils/fetchContent', () => ({
+vi.mock('@/modules/library/infrastructure/content/fetchContent', () => ({
   fetchContent: mockFetchContent,
 }));
 

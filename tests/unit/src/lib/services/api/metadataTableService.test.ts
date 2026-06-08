@@ -2,7 +2,7 @@ import {
   fetchHeirloomMetadata,
   fetchMonsterMetadata,
   fetchTrinketMetadata,
-} from '@/lib/services/api/metadataTableService';
+} from '@/modules/metadata-tables/infrastructure/api-clients/metadataTableClient';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('metadataTableService', () => {

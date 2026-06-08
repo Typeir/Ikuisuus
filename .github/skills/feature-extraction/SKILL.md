@@ -1,19 +1,17 @@
 ---
 name: feature-extraction
 description: >
-  Workflow for extracting and enriching monster features from `.sheet.mdx`
-  files. Covers the `--file` CLI singleton filter, `<Meta>` MDX directives
-  for complex mechanics, the enrichment pipeline, and iterative verification.
+  Workflow for extracting monster features from `.sheet.mdx` files. CLI singleton
+  `--file`, `<Meta>` MDX directives for complex mechanics, enrichment pipeline,
+  iterative verification.
 ---
 
-# Feature Extraction Skill
+# Feature Extraction
 
 ## Overview
 
-Monster feature extraction converts `.sheet.mdx` stat blocks into structured
-`MonsterFeature[]` data for the Foundry VTT export pipeline and API consumption.
-The system uses a three-stage approach: automatic parsing, body enrichment,
-and `<Meta>` tag overrides for mechanics that resist automated extraction.
+.sheet.mdx stat blocks → MonsterFeature[] for Foundry + API. Three-stage:
+automatic parse → body enrichment → `<Meta>` overrides for complex mechanics.
 
 ## Quick Start — Single Monster Iteration
 

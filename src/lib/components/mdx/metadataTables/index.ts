@@ -11,10 +11,10 @@
  * @example
  * ```tsx
  * // Import generic table
- * import { MetadataTable } from '@/lib/components/mdx/MetadataTable';
+ * import { MetadataTable } from '@/modules/library/presentation/components/MetadataTable';
  * 
  * // Import types
- * import type { MetadataRow, ColumnConfig } from '@/lib/components/mdx/MetadataTable';
+ * import type { MetadataRow, ColumnConfig } from '@/modules/library/presentation/components/MetadataTable';
  * ```
  */
 

@@ -1,32 +1,26 @@
 ---
 name: mdx-format-bloodlines
 description: >
-  Detailed format conventions for bloodline character-creation files
-  (.bloodline.mdx). Use when authoring, refactoring, or auditing bloodline
-  content in src/content/en/character-creation/bloodlines/. Covers the lore
-  intro, Core Features tables (ability scores, speeds, senses, size, creature
-  types, age), passive features, the Boons section with Collapsible components
-  and BP-cost headings, Tooltip usage, metadata fields extracted by
-  generateBloodlineMetadata.ts, and all format rules specific to bloodline files.
+  Bloodline format (.bloodline.mdx). Lore intro, Core Features tables (ability
+  scores, speeds, senses, size, creature types, age), passive features, Boons
+  section with Collapsible + BP-cost headings, Tooltip usage, metadata
+  (generateBloodlineMetadata.ts), format rules.
 ---
 
 # MDX Format: Bloodlines
 
 ## Purpose
 
-This skill governs the format of bloodline files. Bloodlines (playable
-ancestries/races) follow a two-part structure: mechanical **Core Features**
-and a purchasable **Boons** system with a Boon Point budget. Use this skill
-when adding new bloodlines, restructuring boon headings, or debugging
-metadata parse failures.
+Formats bloodline files. Ancestries/races. Two-part: mechanical Core Features +
+purchasable Boons with BP budget.
 
 ## When to Use
 
-- Authoring a new `.bloodline.mdx` file
-- Adding or restructuring `<Collapsible>` boon blocks
-- Fixing BP-cost heading format (`###### Name <span>N BP</span>`)
-- Running `npm run generate-metadata` and debugging bloodline parse failures
-- Ensuring Core Features tables render correctly with `<Tooltip>`
+- Author new `.bloodline.mdx`
+- Add/restructure `<Collapsible>` boon blocks
+- Fix BP-cost heading format (`###### Name <span>N BP</span>`)
+- Debug bloodline parse with `npm run generate-metadata`
+- Check Core Features tables render with `<Tooltip>`
 
 ## File Information
 

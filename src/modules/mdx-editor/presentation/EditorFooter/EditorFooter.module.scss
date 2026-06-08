@@ -1,0 +1,52 @@
+@use 'mixins' as *;
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.statusText {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  flex: 1;
+  min-width: 0;
+}
+
+.footerStatusError {
+  color: var(--color-error);
+}
+
+.statusSuccess {
+  color: var(--color-success);
+
+  a {
+    color: var(--color-accent);
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--color-accent-hover);
+    }
+  }
+}
+
+.submitButton {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-accent-hover);
+  }
+
+  @include disabled-state;
+}

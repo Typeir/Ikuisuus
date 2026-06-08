@@ -1,31 +1,25 @@
 ---
 name: mdx-format-vocations
 description: >
-  Detailed format conventions for vocation main files (main.mdx). Use when
-  authoring, refactoring, or auditing vocation content in
-  src/content/en/character-creation/vocations/{vocation}/main.mdx. Covers the
-  intro, Core Traits two-column table, Becoming a Vocation section, feature
-  progression table with anchor links, Collapsible feature blocks, optional
-  spellcasting tables, metadata fields extracted by generateVocationMetadata.ts,
-  and the main.mdx-only parsing rule.
+  Vocation main.mdx format. Intro, Core Traits table, Becoming section, feature
+  progression table with anchors, Collapsible blocks, optional spellcasting,
+  metadata (generateVocationMetadata.ts), main.mdx-only parsing rule.
 ---
 
 # MDX Format: Vocations
 
 ## Purpose
 
-This skill governs the format of vocation class files. Each vocation lives in
-a dedicated subdirectory and its main description and feature table lives in
-`main.mdx`. Only `main.mdx` is parsed for metadata — specialization files
-within the same directory use a separate format (see `mdx-format-specializations`).
+Formats vocation main files. Each vocation = dedicated dir. Main description +
+feature table live in `main.mdx` (only file parsed for metadata).
 
 ## When to Use
 
-- Authoring a new `main.mdx` for a new vocation
-- Adding or reformatting the Core Traits table
-- Updating the feature progression table
-- Adding a new Collapsible feature block
-- Running `npm run generate-metadata` and debugging vocation parse failures
+- Author new `main.mdx` for vocation
+- Add/reformat Core Traits table
+- Update feature progression table
+- Add Collapsible feature block
+- Debug vocation parse with `npm run generate-metadata`
 
 ## File Information
 

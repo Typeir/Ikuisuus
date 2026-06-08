@@ -90,7 +90,66 @@ async function findAllSourceFiles(
 }
 
 /**
+ * Build a lazy index mapping lowercase source-file basenames to the absolute
+ * paths of every test file that imports them. Used as a fallback when the
+ * mirror-path candidate does not exist (e.g. an application/ source covered by
+ * a presentation/ test that imports the same module).
+ *
+ * @param {string} rootDir Project root directory
+ * @returns Map from lowercase basename (no extension) to matching test paths
+ */
+async function buildImportIndex(
+  rootDir: string,
+): Promise<Map<string, string[]>> {
+  const testRoots = [
+    path.join(rootDir, 'tests', 'unit'),
+    path.join(rootDir, 'tests', 'integration'),
+  ];
+  const index = new Map<string, string[]>();
+
+  async function walk(dir: string): Promise<void> {
+    let entries: import('node:fs').Dirent[];
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await walk(full);
+      } else if (/\.test\.(ts|tsx)$/.test(entry.name)) {
+        const content = await fs.readFile(full, 'utf-8').catch(() => '');
+        const importedNames = [...content.matchAll(/from\s+['"][^'"]+['"]/g)]
+          .map((m) => m[0].replace(/from\s+['"]/, '').replace(/['"]$/, ''))
+          .map((p) =>
+            path
+              .basename(p)
+              .replace(/\.(ts|tsx)$/, '')
+              .toLowerCase(),
+          );
+        for (const name of importedNames) {
+          const list = index.get(name) ?? [];
+          list.push(full);
+          index.set(name, list);
+        }
+      }
+    }
+  }
+
+  for (const root of testRoots) {
+    await walk(root);
+  }
+  return index;
+}
+
+/** Cached import index, populated on first use. */
+let importIndexCache: Map<string, string[]> | null = null;
+
+/**
  * Check whether a corresponding test file exists for a source file.
+ * First tries mirror-path candidates; falls back to an import-content scan
+ * so tests living under a different directory still satisfy the gate.
  *
  * @param {string} sourcePath Relative source file path
  * @param {string} rootDir Project root directory
@@ -114,7 +173,17 @@ async function hasTestFile(
       continue;
     }
   }
-  return false;
+
+  // Fallback: check if any test file imports a module whose basename matches
+  // the source file's basename (case-insensitive).
+  if (!importIndexCache) {
+    importIndexCache = await buildImportIndex(rootDir);
+  }
+  const sourceBasename = path
+    .basename(sourcePath)
+    .replace(/\.(ts|tsx)$/, '')
+    .toLowerCase();
+  return (importIndexCache.get(sourceBasename) ?? []).length > 0;
 }
 
 /**
@@ -126,6 +195,7 @@ async function hasTestFile(
  */
 export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
   const rootDir = options?.rootDir ?? ROOT;
+  importIndexCache = null;
 
   let filesToCheck: string[];
   if (options?.files) {

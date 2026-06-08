@@ -1,0 +1,234 @@
+@use 'mixins' as *;
+@use 'combatantAffixesLight';
+
+/* health:check-ignore-file no-color-literals, * */
+
+/* ============================================
+   AFFIX-SPECIFIC SCOPED VARIABLES
+   Each affix sets --ha-ctx-* to its color family
+============================================ */
+
+.awakened--bloodthirsty {
+  background: linear-gradient(
+    135deg,
+    var(--ha-bloodthirsty-bg-1),
+    var(--ha-bloodthirsty-bg-2)
+  ) !important;
+  border-color: var(--ha-bloodthirsty-border) !important;
+
+  --ha-ctx-bg: var(--ha-bloodthirsty-bg-1);
+  --ha-ctx-bg-secondary: var(--ha-bloodthirsty-bg-2);
+  --ha-ctx-border: var(--ha-bloodthirsty-border);
+  --ha-ctx-text: #f0e0e4;
+  --ha-ctx-text-secondary: #c09098;
+  --ha-ctx-accent: #e8a0a8;
+  --ha-ctx-accent-hover: #f0b8c0;
+  --ha-ctx-input-bg: var(--ha-bloodthirsty-bg-2);
+  --ha-ctx-input-border: #785060;
+  --ha-ctx-button-bg: var(--ha-bloodthirsty-bg-1);
+  --ha-ctx-button-border: #785060;
+  --ha-ctx-button-text: #f0e0e4;
+  --ha-ctx-divider: #684858;
+  --ha-ctx-glow: rgba(232, 160, 168, 0.2);
+  --ha-ctx-text-emphasis: #e8a0a8;
+}
+
+.awakened--championed {
+  background: linear-gradient(
+    135deg,
+    var(--ha-championed-bg-1),
+    var(--ha-championed-bg-2)
+  ) !important;
+  border-color: var(--ha-championed-border) !important;
+
+  --ha-ctx-bg: var(--ha-championed-bg-1);
+  --ha-ctx-bg-secondary: var(--ha-championed-bg-2);
+  --ha-ctx-border: var(--ha-championed-border);
+  --ha-ctx-text: #e0e4eb;
+  --ha-ctx-text-secondary: #9098a8;
+  --ha-ctx-accent: #a8b0c0;
+  --ha-ctx-accent-hover: #b8c0d0;
+  --ha-ctx-input-bg: var(--ha-championed-bg-2);
+  --ha-ctx-input-border: #585e70;
+  --ha-ctx-button-bg: var(--ha-championed-bg-1);
+  --ha-ctx-button-border: #585e70;
+  --ha-ctx-button-text: #e0e4eb;
+  --ha-ctx-divider: #484e60;
+  --ha-ctx-glow: rgba(168, 176, 192, 0.2);
+  --ha-ctx-text-emphasis: #b0b8c8;
+}
+
+.awakened--crusading {
+  background: linear-gradient(
+    135deg,
+    var(--ha-crusading-bg-1),
+    var(--ha-crusading-bg-2)
+  ) !important;
+  border-color: var(--ha-crusading-border) !important;
+
+  --ha-ctx-bg: var(--ha-crusading-bg-1);
+  --ha-ctx-bg-secondary: var(--ha-crusading-bg-2);
+  --ha-ctx-border: var(--ha-crusading-border);
+  --ha-ctx-text: #f0ebe0;
+  --ha-ctx-text-secondary: #b8a878;
+  --ha-ctx-accent: #d0b860;
+  --ha-ctx-accent-hover: #e0c870;
+  --ha-ctx-input-bg: var(--ha-crusading-bg-2);
+  --ha-ctx-input-border: #706848;
+  --ha-ctx-button-bg: var(--ha-crusading-bg-1);
+  --ha-ctx-button-border: #706848;
+  --ha-ctx-button-text: #f0ebe0;
+  --ha-ctx-divider: #605838;
+  --ha-ctx-glow: rgba(208, 184, 96, 0.2);
+  --ha-ctx-text-emphasis: #d0b860;
+}
+
+.awakened--flametongued {
+  background: linear-gradient(
+    135deg,
+    var(--ha-flametongued-bg-1),
+    var(--ha-flametongued-bg-2)
+  ) !important;
+  border-color: var(--ha-flametongued-border) !important;
+
+  --ha-ctx-bg: var(--ha-flametongued-bg-1);
+  --ha-ctx-bg-secondary: var(--ha-flametongued-bg-2);
+  --ha-ctx-border: var(--ha-flametongued-border);
+  --ha-ctx-text: #f0e8e0;
+  --ha-ctx-text-secondary: #c0a088;
+  --ha-ctx-accent: #e0a070;
+  --ha-ctx-accent-hover: #f0b080;
+  --ha-ctx-input-bg: var(--ha-flametongued-bg-2);
+  --ha-ctx-input-border: #785848;
+  --ha-ctx-button-bg: var(--ha-flametongued-bg-1);
+  --ha-ctx-button-border: #785848;
+  --ha-ctx-button-text: #f0e8e0;
+  --ha-ctx-divider: #684838;
+  --ha-ctx-glow: rgba(224, 160, 112, 0.2);
+  --ha-ctx-text-emphasis: #e0a070;
+}
+
+.awakened--frostveined {
+  background: linear-gradient(
+    135deg,
+    var(--ha-frostveined-bg-1),
+    var(--ha-frostveined-bg-2)
+  ) !important;
+  border-color: var(--ha-frostveined-border) !important;
+
+  --ha-ctx-bg: var(--ha-frostveined-bg-1);
+  --ha-ctx-bg-secondary: var(--ha-frostveined-bg-2);
+  --ha-ctx-border: var(--ha-frostveined-border);
+  --ha-ctx-text: #e0e8f0;
+  --ha-ctx-text-secondary: #88a0b8;
+  --ha-ctx-accent: #70b0d0;
+  --ha-ctx-accent-hover: #80c0e0;
+  --ha-ctx-input-bg: var(--ha-frostveined-bg-2);
+  --ha-ctx-input-border: #486078;
+  --ha-ctx-button-bg: var(--ha-frostveined-bg-1);
+  --ha-ctx-button-border: #486078;
+  --ha-ctx-button-text: #e0e8f0;
+  --ha-ctx-divider: #385068;
+  --ha-ctx-glow: rgba(112, 176, 208, 0.2);
+  --ha-ctx-text-emphasis: #70b0d0;
+}
+
+.awakened--psionic {
+  background: linear-gradient(
+    135deg,
+    var(--ha-psionic-bg-1),
+    var(--ha-psionic-bg-2)
+  ) !important;
+  border-color: var(--ha-psionic-border) !important;
+
+  --ha-ctx-bg: var(--ha-psionic-bg-1);
+  --ha-ctx-bg-secondary: var(--ha-psionic-bg-2);
+  --ha-ctx-border: var(--ha-psionic-border);
+  --ha-ctx-text: #f0e0f0;
+  --ha-ctx-text-secondary: #b088b8;
+  --ha-ctx-accent: #c080d0;
+  --ha-ctx-accent-hover: #d090e0;
+  --ha-ctx-input-bg: var(--ha-psionic-bg-2);
+  --ha-ctx-input-border: #684878;
+  --ha-ctx-button-bg: var(--ha-psionic-bg-1);
+  --ha-ctx-button-border: #684878;
+  --ha-ctx-button-text: #f0e0f0;
+  --ha-ctx-divider: #583868;
+  --ha-ctx-glow: rgba(192, 128, 208, 0.2);
+  --ha-ctx-text-emphasis: #c080d0;
+}
+
+.awakened--rakish {
+  background: linear-gradient(
+    135deg,
+    var(--ha-rakish-bg-1),
+    var(--ha-rakish-bg-2)
+  ) !important;
+  border-color: var(--ha-rakish-border) !important;
+
+  --ha-ctx-bg: var(--ha-rakish-bg-1);
+  --ha-ctx-bg-secondary: var(--ha-rakish-bg-2);
+  --ha-ctx-border: var(--ha-rakish-border);
+  --ha-ctx-text: #f0f0f5;
+  --ha-ctx-text-secondary: #a0a8b8;
+  --ha-ctx-accent: #c0c8d8;
+  --ha-ctx-accent-hover: #d0d8e8;
+  --ha-ctx-input-bg: var(--ha-rakish-bg-2);
+  --ha-ctx-input-border: #606878;
+  --ha-ctx-button-bg: var(--ha-rakish-bg-1);
+  --ha-ctx-button-border: #606878;
+  --ha-ctx-button-text: #f0f0f5;
+  --ha-ctx-divider: #505868;
+  --ha-ctx-glow: rgba(192, 200, 216, 0.2);
+  --ha-ctx-text-emphasis: #c0c8d8;
+}
+
+.awakened--stormbound {
+  background: linear-gradient(
+    135deg,
+    var(--ha-stormbound-bg-1),
+    var(--ha-stormbound-bg-2)
+  ) !important;
+  border-color: var(--ha-stormbound-border) !important;
+
+  --ha-ctx-bg: var(--ha-stormbound-bg-1);
+  --ha-ctx-bg-secondary: var(--ha-stormbound-bg-2);
+  --ha-ctx-border: var(--ha-stormbound-border);
+  --ha-ctx-text: #e8e0f0;
+  --ha-ctx-text-secondary: #9888b0;
+  --ha-ctx-accent: #a880c8;
+  --ha-ctx-accent-hover: #b890d8;
+  --ha-ctx-input-bg: var(--ha-stormbound-bg-2);
+  --ha-ctx-input-border: #584870;
+  --ha-ctx-button-bg: var(--ha-stormbound-bg-1);
+  --ha-ctx-button-border: #584870;
+  --ha-ctx-button-text: #e8e0f0;
+  --ha-ctx-divider: #483860;
+  --ha-ctx-glow: rgba(168, 128, 200, 0.2);
+  --ha-ctx-text-emphasis: #a880c8;
+}
+
+.awakened--sulphurous {
+  background: linear-gradient(
+    135deg,
+    var(--ha-sulphurous-bg-1),
+    var(--ha-sulphurous-bg-2)
+  ) !important;
+  border-color: var(--ha-sulphurous-border) !important;
+
+  --ha-ctx-bg: var(--ha-sulphurous-bg-1);
+  --ha-ctx-bg-secondary: var(--ha-sulphurous-bg-2);
+  --ha-ctx-border: var(--ha-sulphurous-border);
+  --ha-ctx-text: #e8f0e0;
+  --ha-ctx-text-secondary: #90b080;
+  --ha-ctx-accent: #90c068;
+  --ha-ctx-accent-hover: #a0d078;
+  --ha-ctx-input-bg: var(--ha-sulphurous-bg-2);
+  --ha-ctx-input-border: #506848;
+  --ha-ctx-button-bg: var(--ha-sulphurous-bg-1);
+  --ha-ctx-button-border: #506848;
+  --ha-ctx-button-text: #e8f0e0;
+  --ha-ctx-divider: #405838;
+  --ha-ctx-glow: rgba(144, 192, 104, 0.2);
+  --ha-ctx-text-emphasis: #90c068;
+}

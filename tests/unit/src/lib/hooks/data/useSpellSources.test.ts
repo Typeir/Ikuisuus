@@ -1,4 +1,4 @@
-import { useSpellSources } from '@/lib/hooks/data/useSpellSources';
+import { useSpellSources } from '@/modules/metadata-tables/application/hooks/useSpellSources';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { SWRConfig } from 'swr';

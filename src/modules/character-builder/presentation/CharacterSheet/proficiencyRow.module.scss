@@ -1,0 +1,57 @@
+/**
+ * Proficiency row text styles for skills and tools tables.
+ * Applies color per proficiency level with mythic shimmer for savanthood.
+ *
+ * @module presentation/CharacterSheet/proficiencyRow.module.scss
+ */
+
+.prof-none {
+  color: var(--color-secondary);
+  opacity: 0.65;
+  --pip-color: var(--color-secondary);
+}
+
+.prof-familiarity {
+  color: var(--color-text);
+  --pip-color: var(--color-text);
+}
+
+.prof-proficient {
+  color: var(--color-primary);
+  --pip-color: var(--color-primary);
+}
+
+.prof-expertise {
+  color: var(--color-emphasis);
+  --pip-color: var(--color-emphasis);
+}
+
+.prof-savanthood {
+  background-size: 400% 400% !important;
+  background-image: linear-gradient(
+    135deg,
+    var(--ha-mythic-shimmer-1) 0%,
+    var(--ha-mythic-shimmer-2) 20%,
+    var(--ha-mythic-shimmer-3) 40%,
+    var(--ha-mythic-shimmer-4) 60%,
+    var(--ha-mythic-shimmer-5) 80%,
+    var(--ha-mythic-shimmer-6) 100%
+  ) !important;
+  color: var(--ha-mythic-border);
+  animation: mythicShimmer 8s ease infinite 0s !important;
+  --pip-color: var(--ha-mythic-border);
+}
+
+/* Mythic shimmer keyframe - matches encounter planner */
+@keyframes mythicShimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  33% {
+    background-position: 100% 50%;
+  }
+  66% {
+    background-position: 50% 100%;
+  }
+}

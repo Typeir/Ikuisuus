@@ -33,6 +33,7 @@ const PROJECTS = [
   'unit:api',
   'unit:app:pages',
   'unit:app:utils',
+  'unit:modules',
   'unit:other',
   'integration',
 ];
@@ -50,6 +51,7 @@ const PROJECT_WEIGHTS: Record<string, number> = {
   'unit:api': 20,
   'unit:app:pages': 14,
   'unit:app:utils': 6,
+  'unit:modules': 46,
   'unit:metadata': 16,
   'unit:hooks': 8,
   integration: 7,

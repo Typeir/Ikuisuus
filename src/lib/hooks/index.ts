@@ -9,31 +9,17 @@
  */
 
 export {
-    useSidebarExpansionActions,
-    useSidebarMenuActions,
-    useSidebarMenuState
-} from './useSidebarState';
+    useSidebarExpansion as useSidebarExpansionActions
+} from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
+export { useSidebarMenuActions } from '@/modules/navigation-sidebar/application/hooks/useSidebarMenuActions';
+export { useSidebarMenu as useSidebarMenuState } from '@/modules/navigation-sidebar/application/hooks/useSidebarMenu';
 export type {
-    SidebarExpansionActions,
+    SidebarExpansionActions
+} from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
+export type {
     SidebarMenuActions
-} from './useSidebarState';
+} from '@/modules/navigation-sidebar/application/hooks/useSidebarMenuActions';
 
 export { useThemeActions, useThemeState } from './useThemeState';
 export type { ThemeActions, ThemeState } from './useThemeState';
-
-export {
-    useCorrectionsTokenActions,
-    useCorrectionsTokenState
-} from './useCorrectionsToken';
-export type {
-    CorrectionsTokenActions,
-    CorrectionsTokenState
-} from './useCorrectionsToken';
-
-export { useCorrectionsAuth } from './useCorrectionsAuth';
-export type {
-    AuthUser,
-    CorrectionsAuthActions,
-    CorrectionsAuthState
-} from './useCorrectionsAuth';
 

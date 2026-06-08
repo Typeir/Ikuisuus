@@ -13,17 +13,17 @@
 'use client';
 
 import {
-  bloodlinesKey,
-  specializationsKey,
-  urlForBloodlines,
-  urlForSpecializations,
-  urlForVocations,
-  vocationsKey,
+    bloodlinesKey,
+    specializationsKey,
+    urlForBloodlines,
+    urlForSpecializations,
+    urlForVocations,
+    vocationsKey,
 } from '@/lib/fetch/swrKeys';
 import type {
-  BloodlineOption,
-  SpecOption,
-  VocationOption,
+    BloodlineOption,
+    SpecOption,
+    VocationOption,
 } from '@/lib/types/vocations';
 import useSWR from 'swr';
 

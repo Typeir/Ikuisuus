@@ -20,7 +20,7 @@ import type { CompiledOutlier } from './compiler';
 /** @constant Path to generated components module */
 export const OUTPUT_FILE = path.join(
   process.cwd(),
-  'src/lib/components/mdx/mdxComponents.tsx',
+  'src/modules/library/infrastructure/compile/mdxComponents.tsx',
 );
 
 /**
@@ -28,7 +28,7 @@ export const OUTPUT_FILE = path.join(
  */
 const GENERATED_FILE_HEADER = `/**
  * @fileoverview Auto-generated MDX component registry used by the MDX runtime.
- * @module src/lib/components/mdx/mdxComponents
+ * @module src/modules/library/infrastructure/compile/mdxComponents
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0
@@ -44,7 +44,7 @@ export const createCiPlaceholderModule = (): string => `/**
  * @fileoverview Auto-generated MDX component registry used by the MDX runtime.
  * @description Minimal placeholder generated during CI builds.
  * In development, run: npm run find-reusable-mdx-outliers.
- * @module src/lib/components/mdx/mdxComponents
+ * @module src/modules/library/infrastructure/compile/mdxComponents
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0
