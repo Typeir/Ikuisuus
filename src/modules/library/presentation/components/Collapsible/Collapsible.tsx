@@ -29,10 +29,12 @@ export interface CollapsibleProps {
  *
  * @property {ReactNode[]} titleNodes - Summary title content nodes
  * @property {string | null} cost - Optional summary cost extracted from a span child
+ * @property {string | null} anchor - Optional anchor id from heading element for hash navigation
  */
 interface ParsedHeading {
   titleNodes: ReactNode[];
   cost: string | null;
+  anchor: string | null;
 }
 
 /**
@@ -65,12 +67,23 @@ function isHeadingNode(node: ReactNode): boolean {
 }
 
 /**
- * Splits heading children into title nodes and optional cost text.
+ * Splits heading children into title nodes, optional cost text, and anchor id.
  *
- * @param {ReactNode} headingChildren - Heading children content
- * @returns {ParsedHeading} Parsed heading output
+ * @param {ReactNode} headingNode - Heading element node
+ * @returns {ParsedHeading} Parsed heading output with titleNodes, cost, and anchor
  */
-function parseHeading(headingChildren: ReactNode): ParsedHeading {
+function parseHeading(headingNode: ReactNode): ParsedHeading {
+  if (!React.isValidElement(headingNode)) {
+    return {
+      titleNodes: [],
+      cost: null,
+      anchor: null,
+    };
+  }
+
+  const headingChildren = (headingNode.props as { children?: ReactNode }).children;
+  const headingId = (headingNode.props as { id?: string }).id || null;
+
   const nodes = React.Children.toArray(headingChildren).filter((node) => {
     if (typeof node === 'string') {
       return node.trim().length > 0;
@@ -89,6 +102,7 @@ function parseHeading(headingChildren: ReactNode): ParsedHeading {
     return {
       titleNodes: nodes,
       cost: null,
+      anchor: headingId,
     };
   }
 
@@ -99,6 +113,7 @@ function parseHeading(headingChildren: ReactNode): ParsedHeading {
   return {
     titleNodes: nodes.slice(0, -1),
     cost: costText.length > 0 ? costText : null,
+    anchor: headingId,
   };
 }
 
@@ -128,10 +143,11 @@ const Collapsible: React.FC<CollapsibleProps> = ({
 
   const parsedHeading =
     headingNode && React.isValidElement(headingNode)
-      ? parseHeading((headingNode.props as { children?: ReactNode }).children)
+      ? parseHeading(headingNode)
       : {
           titleNodes: ['Details'],
           cost: null,
+          anchor: null,
         };
 
   const bodyNodes =
@@ -141,7 +157,10 @@ const Collapsible: React.FC<CollapsibleProps> = ({
 
   return (
     <details className={styles.collapsible} open={open || undefined}>
-      <summary className={styles.summary}>
+      <summary
+        className={styles.summary}
+        {...(parsedHeading.anchor && { 'data-anchor': parsedHeading.anchor })}
+      >
         <span>
           {parsedHeading.titleNodes}
           {parsedHeading.cost && (
