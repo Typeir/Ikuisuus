@@ -11,13 +11,13 @@
  */
 
 import type {
-  AbilityKey,
-  CharacterSheet,
-  CharacterSkill,
-  CharacterSpellSlot,
-  CharacterTool,
-  EquipmentItem,
-  VocationEntry,
+    AbilityKey,
+    CharacterSheet,
+    CharacterSkill,
+    CharacterSpellSlot,
+    CharacterTool,
+    EquipmentItem,
+    VocationEntry,
 } from '@/lib/types/character';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 
@@ -105,7 +105,7 @@ export const TOOL_DEFAULTS: CharacterTool[] = [
   { name: 'tools.calligraphy', proficiency: 'none' },
   { name: 'tools.carpentry', proficiency: 'none' },
   { name: 'tools.cartography', proficiency: 'none' },
-  { name: 'tools.cookery', proficiency: 'none' },
+  { name: 'tools.cooking', proficiency: 'none' },
   { name: 'tools.deceit', proficiency: 'none' },
   { name: 'tools.electrics', proficiency: 'none' },
   { name: 'tools.gaming', proficiency: 'none' },

@@ -15,7 +15,7 @@ import {
   renameDenomination,
   updateCoinCount,
   updateDenominationMultiplier,
-} from '@/modules/character-builder/presentation/CarryingCapacity/coinPoush.helpers';
+} from '@/modules/character-builder/infrastructure/coinPouch/coinPouch.helpers';
 import { describe, expect, it } from 'vitest';
 
 describe('coinPouch.helpers', () => {

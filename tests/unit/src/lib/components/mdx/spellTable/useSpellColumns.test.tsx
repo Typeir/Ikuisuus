@@ -55,11 +55,11 @@ describe('useSpellColumns', () => {
     ).toBe('Concentration, 1 minute');
 
     expect(
-      components?.getValue?.({ verbal: true, somatic: true, material: true } as never),
+      components?.getValue?.({ components: { verbal: true, somatic: true, material: true } } as never),
     ).toBe('V, S, M');
 
     expect(
-      components?.getValue?.({ verbal: false, somatic: false, material: false } as never),
+      components?.getValue?.({ components: { verbal: false, somatic: false, material: false } } as never),
     ).toBe('—');
   });
 });

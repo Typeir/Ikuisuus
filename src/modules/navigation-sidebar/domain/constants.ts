@@ -23,3 +23,21 @@ export const BASE_HEIGHT = 52;
  * @type {number}
  */
 export const SIDEBAR_CLOSE_ANIMATION_MS = 500;
+
+/**
+ * Threshold for virtualization in sidebar rendering.
+ * When the number of items exceeds this, virtualization is applied.
+ *
+ * @constant
+ * @type {number}
+ */
+export const VIRTUALIZATION_THRESHOLD = 100;
+
+/**
+ * Maximum depth for shallow walk traversal of sidebar tree structure.
+ * Imported from library navigation module for sidebar consistency.
+ *
+ * @constant
+ * @type {number}
+ */
+export const SHALLOW_WALK_DEPTH = 2;

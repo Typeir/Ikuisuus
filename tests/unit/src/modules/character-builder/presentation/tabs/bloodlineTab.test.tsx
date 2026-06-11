@@ -9,7 +9,7 @@
  * @since 1.0.0
  */
 
-import { ActiveSheetProvider } from '@/modules/character-builder/presentation/context/activeSheetContext';
+import { ActiveSheetProvider } from '@/modules/character-builder/application/context/activeSheetContext';
 import { BloodlineTab } from '@/modules/character-builder/presentation/tabs/bloodlineTab';
 import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
 import type { CharacterSheet } from '@/lib/types/character';

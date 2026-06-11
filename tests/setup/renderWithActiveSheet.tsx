@@ -14,10 +14,10 @@
 import {
     ActiveSheetProvider,
     useActiveSheet,
-} from '@/lib/components/characterSheet/context/activeSheetContext';
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
 import type { CharacterSheet } from '@/lib/types/character';
-import { createEmptyCharacter } from '@/lib/utils/characterStorage';
+import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import { render, type RenderResult } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { useEffect } from 'react';

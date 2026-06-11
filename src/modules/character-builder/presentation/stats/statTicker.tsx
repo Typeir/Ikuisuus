@@ -17,7 +17,7 @@
 
 import type { CharacterSheet } from '@/lib/types/character';
 import { computeAbilityModifier } from '@/modules/character-builder/lib/utils/characterStorage';
-import styles from '../characterSheet.module.scss';
+import styles from '../CharacterSheet/characterSheet.module.scss';
 
 /**
  * Props for the StatTicker component.

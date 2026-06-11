@@ -14,7 +14,7 @@ import type {
 
 /**
  * Recursively calculates collapsed and expanded heights for each sidebar item.
- * Sorts items by folder status (folders first), then alphabetically.
+ * Sorts items by folder status (folders last), then alphabetically.
  *
  * @param {Item[]} items - The sidebar items to process
  * @returns {LayoutItem[]} Sidebar items with calculated height metadata
@@ -31,7 +31,7 @@ export const calculateHeights = (items: Item[]): LayoutItem[] => {
     const aIsFolder = Boolean(a.children && a.children.length > 0);
     const bIsFolder = Boolean(b.children && b.children.length > 0);
 
-    if (aIsFolder !== bIsFolder) return aIsFolder ? -1 : 1;
+    if (aIsFolder !== bIsFolder) return aIsFolder ? 1 : -1;
     const byLabel = collator.compare(label(a), label(b));
     if (byLabel !== 0) return byLabel;
 

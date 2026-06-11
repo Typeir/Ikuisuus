@@ -12,9 +12,12 @@ vi.mock('@/lib/context/CharacterSheetContext', () => ({
   CharacterSheetProvider: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='character-provider'>{children}</div>
   ),
+  useCharacters: () => [],
+  useCharacterSheetState: () => ({ activeId: '1', isHydrated: true }),
+  useCharacterSheetDispatch: () => vi.fn(),
 }));
 
-vi.mock('@/lib/components/characterSheet', () => ({
+vi.mock('@/modules/character-builder/presentation/Roster/characterRoster', () => ({
   CharacterRoster: () => <div data-testid='character-roster' />,
 }));
 

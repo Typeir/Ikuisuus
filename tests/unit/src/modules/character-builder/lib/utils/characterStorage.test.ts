@@ -90,20 +90,20 @@ describe('createEmptyCharacter', () => {
     expect(a.id).not.toBe(b.id);
   });
 
-  it('should produce a character with all 28 skills at none proficiency', () => {
+  it('should produce a character with all 19 skills at none proficiency', () => {
     const ch = createEmptyCharacter();
-    expect(ch.skills).toHaveLength(28);
+    expect(ch.skills).toHaveLength(19);
     ch.skills.forEach((s) => expect(s.proficiency).toBe('none'));
   });
 });
 
 describe('SKILL_DEFAULTS', () => {
-  it('should contain 28 skills', () => {
-    expect(SKILL_DEFAULTS).toHaveLength(28);
+  it('should contain 19 skills', () => {
+    expect(SKILL_DEFAULTS).toHaveLength(19);
   });
 
   it('should have Perception linked to wis', () => {
-    const perception = SKILL_DEFAULTS.find((s) => s.name === 'Perception');
+    const perception = SKILL_DEFAULTS.find((s) => s.name === 'skills.perception');
     expect(perception?.ability).toBe('wis');
   });
 });

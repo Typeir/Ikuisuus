@@ -32,7 +32,12 @@ export function deduplicateFilenames(items: Item[]): Item[] {
   const result: Item[] = [];
   for (const group of basenames.values()) {
     if (group.length === 1) {
-      result.push(group[0]);
+      const item = group[0];
+      const dedupedItem: Item = { ...item };
+      if (item.children) {
+        dedupedItem.children = deduplicateFilenames(item.children);
+      }
+      result.push(dedupedItem);
       continue;
     }
 
@@ -40,9 +45,20 @@ export function deduplicateFilenames(items: Item[]): Item[] {
     const hasPlain = group.some((it) => it.path.endsWith('.mdx') && !it.path.endsWith('.sheet.mdx'));
 
     if (hasSheet && hasPlain) {
-      result.push(group.find((it) => it.path.endsWith('.sheet.mdx'))!);
+      const selected = group.find((it) => it.path.endsWith('.sheet.mdx'))!;
+      const dedupedItem: Item = { ...selected };
+      if (selected.children) {
+        dedupedItem.children = deduplicateFilenames(selected.children);
+      }
+      result.push(dedupedItem);
     } else {
-      result.push(...group);
+      result.push(...group.map(it => {
+        const dedupedItem: Item = { ...it };
+        if (it.children) {
+          dedupedItem.children = deduplicateFilenames(it.children);
+        }
+        return dedupedItem;
+      }));
     }
   }
 
@@ -57,5 +73,5 @@ export function deduplicateFilenames(items: Item[]): Item[] {
  * @returns {string} Basename without extension
  */
 function extractBasename(path: string): string {
-  return path.replace(/\.(sheet)?\.mdx$/, '');
+  return path.replace(/(?:\.sheet)?\.mdx$/, '');
 }
