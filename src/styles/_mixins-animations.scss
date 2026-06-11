@@ -1,0 +1,31 @@
+/**
+ * @fileoverview SCSS Animation Mixins
+ * @description Reusable keyframe animations and animation utilities.
+ *
+ * Exported mixins:
+ *   - mythic-shimmer-keyframes  — Mythic shimmer animation for savanthood
+ *
+ * @module styles/mixins-animations
+ */
+
+/**
+ * Mythic shimmer keyframe animation
+ * Used for savanthood proficiency level and special effects
+ * Matches encounter planner and character sheet styling
+ *
+ * @mixin mythic-shimmer-keyframes
+ */
+@mixin mythic-shimmer-keyframes {
+  @keyframes mythicShimmer {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    33% {
+      background-position: 100% 50%;
+    }
+    66% {
+      background-position: 50% 100%;
+    }
+  }
+}

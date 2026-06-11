@@ -5,6 +5,8 @@
  * @module presentation/CharacterSheet/proficiencyTrack.module.scss
  */
 
+@use '@/styles/mixins' as *;
+
 .profTrack {
   display: inline-flex;
   gap: 0.5rem;
@@ -76,19 +78,8 @@
   }
 }
 
-/* Mythic shimmer keyframe - matches encounter planner */
-@keyframes mythicShimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  33% {
-    background-position: 100% 50%;
-  }
-  66% {
-    background-position: 50% 100%;
-  }
-}
+/* Include shared mythic shimmer keyframes */
+@include mythic-shimmer-keyframes;
 
 /* Reduced motion - disable shimmer animations */
 @media (prefers-reduced-motion: reduce) {

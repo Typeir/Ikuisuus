@@ -5,6 +5,8 @@
  * @module presentation/CharacterSheet/proficiencyRow.module.scss
  */
 
+@use '@/styles/mixins' as *;
+
 .prof-none {
   color: var(--color-secondary);
   opacity: 0.65;
@@ -42,16 +44,5 @@
   --pip-color: var(--ha-mythic-border);
 }
 
-/* Mythic shimmer keyframe - matches encounter planner */
-@keyframes mythicShimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  33% {
-    background-position: 100% 50%;
-  }
-  66% {
-    background-position: 50% 100%;
-  }
-}
+/* Include shared mythic shimmer keyframes */
+@include mythic-shimmer-keyframes;
