@@ -6,7 +6,6 @@
  * 2) Unsupported locale-like prefixes (e.g. `/fr/...`) are replaced: `/{defaultLocale}/...`
  * 3) Missing locale prefixes (e.g. `/library/...`) are prepended: `/{defaultLocale}/library/...`
  *
- * This middleware intentionally uses redirects (not rewrites) to keep the visible URL canonical.
  *
  * @version 1.0.0
  * @author Typeir
@@ -14,15 +13,15 @@
  * @module src/middleware
  */
 
-import createMiddleware from "next-intl/middleware";
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import { routing } from "./i18n/routing";
+import createMiddleware from 'next-intl/middleware';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
 export const config = {
-  matcher: "/((?!api|trpc|_next|_vercel|.*\\..*).*)",
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
 };
 
 /**
@@ -41,7 +40,7 @@ export const config = {
  */
 const replaceFirstSegment = (parts: string[], replacement: string): string => {
   if (parts.length === 0) return `/${replacement}`;
-  const rest = parts.slice(1).join("/");
+  const rest = parts.slice(1).join('/');
   return rest ? `/${replacement}/${rest}` : `/${replacement}`;
 };
 
@@ -53,9 +52,9 @@ const replaceFirstSegment = (parts: string[], replacement: string): string => {
  */
 export default function middleware(req: NextRequest): Response {
   const { pathname } = req.nextUrl;
-  const parts = pathname.split("/").filter(Boolean);
+  const parts = pathname.split('/').filter(Boolean);
 
-  const first = parts[0] ?? "";
+  const first = parts[0] ?? '';
   const defaultLocale = routing.defaultLocale;
 
   /**
@@ -81,10 +80,3 @@ export default function middleware(req: NextRequest): Response {
   /** Whitelisted locale or reserved segment: delegate to next-intl */
   return intlMiddleware(req);
 }
-
-
-
-
-
-
-
