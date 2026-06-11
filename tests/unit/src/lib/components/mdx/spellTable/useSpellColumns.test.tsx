@@ -9,8 +9,8 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import {
-  createUseTranslationsMock,
-  loadMessageFile,
+    createUseTranslationsMock,
+    loadMessageFile,
 } from '../../../testUtils/translationMockUtils';
 
 vi.mock('next-intl', () => ({
@@ -38,28 +38,41 @@ describe('useSpellColumns', () => {
 
   it('formats casting time and ritual marker', () => {
     const { result } = renderHook(() => useSpellColumns());
-    const castingTime = result.current.find((column) => column.key === 'castingTime');
+    const castingTime = result.current.find(
+      (column) => column.key === 'castingTime',
+    );
 
     expect(castingTime).toBeDefined();
-    expect(castingTime?.render?.(['bonus-action', 'ritual'] as never)).toBe('Bonus Action (R)');
+    expect(castingTime?.render?.(['bonus-action', 'ritual'] as never)).toBe(
+      'Bonus Action (R)',
+    );
   });
 
   it('builds duration and component values from row fields', () => {
     const { result } = renderHook(() => useSpellColumns());
 
     const duration = result.current.find((column) => column.key === 'duration');
-    const components = result.current.find((column) => column.key === 'components');
+    const components = result.current.find(
+      (column) => column.key === 'components',
+    );
 
     expect(
-      duration?.getValue?.({ duration: '1 minute', concentration: true } as never),
+      duration?.getValue?.({
+        duration: '1 minute',
+        concentration: true,
+      } as never),
     ).toBe('Concentration, 1 minute');
 
     expect(
-      components?.getValue?.({ components: { verbal: true, somatic: true, material: true } } as never),
+      components?.getValue?.({
+        components: { verbal: true, somatic: true, material: true },
+      } as never),
     ).toBe('V, S, M');
 
     expect(
-      components?.getValue?.({ components: { verbal: false, somatic: false, material: false } } as never),
+      components?.getValue?.({
+        components: { verbal: false, somatic: false, material: false },
+      } as never),
     ).toBe('—');
   });
 });

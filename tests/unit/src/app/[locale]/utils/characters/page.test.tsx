@@ -17,9 +17,12 @@ vi.mock('@/lib/context/CharacterSheetContext', () => ({
   useCharacterSheetDispatch: () => vi.fn(),
 }));
 
-vi.mock('@/modules/character-builder/presentation/Roster/characterRoster', () => ({
-  CharacterRoster: () => <div data-testid='character-roster' />,
-}));
+vi.mock(
+  '@/modules/character-builder/presentation/Roster/characterRoster',
+  () => ({
+    CharacterRoster: () => <div data-testid='character-roster' />,
+  }),
+);
 
 describe('CharactersPage', () => {
   const renderPage = async (locale = 'en') => {

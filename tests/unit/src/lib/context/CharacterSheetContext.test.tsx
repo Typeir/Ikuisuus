@@ -12,7 +12,7 @@ describe('CharacterSheetContext', () => {
     render(
       <CharacterSheetProvider>
         <div>Test content</div>
-      </CharacterSheetProvider>
+      </CharacterSheetProvider>,
     );
   });
 });

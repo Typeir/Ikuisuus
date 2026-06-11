@@ -14,8 +14,8 @@
 import { loadContentForEditing } from '@/modules/mdx-editor/application/use-cases/loadContentForEditing';
 import { submitEditFromClient } from '@/modules/mdx-editor/application/use-cases/submitEditFromClient';
 import type {
-    EditorState,
-    EditorStatus,
+  EditorState,
+  EditorStatus,
 } from '@/modules/mdx-editor/domain/types';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -46,6 +46,8 @@ export function useEditorState({
   const [content, setContent] = useState('');
   const [filePath, setFilePath] = useState('');
   const [slug, setSlug] = useState(initialSlug);
+  const [renameEnabled, setRenameEnabled] = useState(false);
+  const [renameToPath, setRenameToPath] = useState('');
   const lastShaRef = useRef('');
   const lastDraftCursorRef = useRef<{
     updatedAt: string | null;
@@ -126,6 +128,8 @@ export function useEditorState({
         isNew: mode === 'new',
         expectedDraftUpdatedAt: lastDraftCursorRef.current.updatedAt,
         expectedDraftVersionHash: lastDraftCursorRef.current.versionHash,
+        renameEnabled,
+        renameToPath: renameEnabled ? renameToPath.trim() : undefined,
       });
 
       if (!result.ok) {
@@ -143,7 +147,7 @@ export function useEditorState({
         message: err instanceof Error ? err.message : 'Submission failed',
       });
     }
-  }, [status, content, filePath, token, mode, t]);
+  }, [status, content, filePath, token, mode, t, renameEnabled, renameToPath]);
 
   const canSubmit =
     status.phase === 'ready' ||
@@ -162,6 +166,10 @@ export function useEditorState({
     setFilePath,
     slug,
     setSlug,
+    renameEnabled,
+    renameToPath,
+    setRenameEnabled,
+    setRenameToPath,
     handleLoad,
     handleSubmit,
     canSubmit,

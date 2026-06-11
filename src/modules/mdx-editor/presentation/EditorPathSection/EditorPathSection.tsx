@@ -26,6 +26,10 @@ import styles from './EditorPathSection.module.scss';
  * @property {() => void} handleLoad - Trigger content load
  * @property {boolean} isLoading - Whether content is loading
  * @property {string} locale - Current locale
+ * @property {boolean} renameEnabled - Whether rename is enabled
+ * @property {string} renameToPath - Target rename path
+ * @property {(v: boolean) => void} onRenameToggle - Rename toggle handler
+ * @property {(v: string) => void} onRenamePathChange - Rename path change handler
  * @property {(key: string) => string} t - Translation function
  */
 interface EditorPathSectionProps {
@@ -45,6 +49,14 @@ interface EditorPathSectionProps {
   isLoading: boolean;
   /** Current locale */
   locale: string;
+  /** Whether rename is enabled */
+  renameEnabled: boolean;
+  /** Target rename path */
+  renameToPath: string;
+  /** Rename toggle handler */
+  onRenameToggle: (v: boolean) => void;
+  /** Rename path change handler */
+  onRenamePathChange: (v: string) => void;
   /** Translation function */
   t: (key: string) => string;
 }
@@ -76,6 +88,10 @@ export function EditorPathSection({
   handleLoad,
   isLoading,
   locale,
+  renameEnabled,
+  renameToPath,
+  onRenameToggle,
+  onRenamePathChange,
   t,
 }: EditorPathSectionProps): JSX.Element {
   const { tree, loading: treeLoading } = useCorrectionsTree(locale);
@@ -156,6 +172,29 @@ export function EditorPathSection({
           />
         )}
       </div>
+
+      {mode === 'edit' && (
+        <div className={styles.renameToggleRow}>
+          <label className={styles.renameLabel}>
+            <input
+              type='checkbox'
+              checked={renameEnabled}
+              onChange={(e) => onRenameToggle(e.target.checked)}
+              className={styles.renameCheckbox}
+            />
+            <span>{t('renameFile')}</span>
+          </label>
+          {renameEnabled && (
+            <input
+              type='text'
+              value={renameToPath}
+              onChange={(e) => onRenamePathChange(e.target.value)}
+              placeholder={t('newPath')}
+              className={styles.renamePathInput}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -11,12 +11,12 @@
  * @since 1.0.0
  */
 
-import {
-    ActiveSheetProvider,
-    useActiveSheet,
-} from '@/modules/character-builder/application/context/activeSheetContext';
 import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
 import type { CharacterSheet } from '@/lib/types/character';
+import {
+  ActiveSheetProvider,
+  useActiveSheet,
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import { render, type RenderResult } from '@testing-library/react';
 import type { ReactElement } from 'react';

@@ -19,6 +19,7 @@ import styles from './EditorFooter.module.scss';
  * @property {boolean} canSubmit - Whether submit is allowed
  * @property {() => void} handleSubmit - Submit handler
  * @property {(key: string) => string} t - Translation function
+ * @property {boolean} [editorDisabled] - Whether editor is disabled
  */
 interface EditorFooterProps {
   /** Current editor state */
@@ -31,6 +32,8 @@ interface EditorFooterProps {
   handleSubmit: () => void;
   /** Translation function */
   t: (key: string) => string;
+  /** Whether editor is disabled */
+  editorDisabled?: boolean;
 }
 
 /**
@@ -53,6 +56,7 @@ export function EditorFooter({
   canSubmit,
   handleSubmit,
   t,
+  editorDisabled = false,
 }: EditorFooterProps): JSX.Element {
   return (
     <div className={styles.footer}>
@@ -82,6 +86,7 @@ export function EditorFooter({
         )}
         {status.phase === 'new' && t('newFileMode')}
       </div>
+
       <button
         type='button'
         className={styles.submitButton}

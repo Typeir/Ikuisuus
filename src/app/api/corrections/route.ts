@@ -29,6 +29,8 @@ const MAX_BODY_BYTES = 256 * 1024;
  * @property {string} [message] - Optional commit message.
  * @property {string | null} [expectedDraftUpdatedAt] - Draft cursor timestamp.
  * @property {string | null} [expectedDraftVersionHash] - Draft cursor hash.
+ * @property {boolean} [renameEnabled] - Whether file rename is enabled.
+ * @property {string} [renameToPath] - Target path for renamed file.
  */
 interface CorrectionPayload {
   path: string;
@@ -38,6 +40,8 @@ interface CorrectionPayload {
   message?: string;
   expectedDraftUpdatedAt?: string | null;
   expectedDraftVersionHash?: string | null;
+  renameEnabled?: boolean;
+  renameToPath?: string;
 }
 
 /**
@@ -136,6 +140,19 @@ async function validatePayload(req: NextRequest) {
     };
   }
 
+  if (
+    body.renameEnabled &&
+    (!body.renameToPath || typeof body.renameToPath !== 'string')
+  ) {
+    return {
+      ok: false as const,
+      response: NextResponse.json(
+        { error: 'Missing or invalid: renameToPath' },
+        { status: 400 },
+      ),
+    };
+  }
+
   return { ok: true as const, payload: body };
 }
 
@@ -190,13 +207,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       clientIp,
       expectedDraftUpdatedAt: validated.payload.expectedDraftUpdatedAt,
       expectedDraftVersionHash: validated.payload.expectedDraftVersionHash,
+      renameEnabled: validated.payload.renameEnabled,
+      renameToPath: validated.payload.renameToPath,
     });
 
     try {
       revalidatePath(`/library/${result.slugFromPath}`);
+      if (result.oldSlugFromPath) {
+        revalidatePath(`/library/${result.oldSlugFromPath}`);
+      }
     } catch {
       log.debug('ISR revalidation failed (non-blocking)', {
         slug: result.slugFromPath,
+        oldSlug: result.oldSlugFromPath,
       });
     }
 

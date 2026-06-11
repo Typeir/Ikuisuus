@@ -15,8 +15,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  createUseTranslationsMock,
-  loadMessageFile,
+    createUseTranslationsMock,
+    loadMessageFile,
 } from '../../../testUtils/translationMockUtils';
 
 const mockHook = vi.fn();

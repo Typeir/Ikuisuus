@@ -42,7 +42,9 @@ export function deduplicateFilenames(items: Item[]): Item[] {
     }
 
     const hasSheet = group.some((it) => it.path.endsWith('.sheet.mdx'));
-    const hasPlain = group.some((it) => it.path.endsWith('.mdx') && !it.path.endsWith('.sheet.mdx'));
+    const hasPlain = group.some(
+      (it) => it.path.endsWith('.mdx') && !it.path.endsWith('.sheet.mdx'),
+    );
 
     if (hasSheet && hasPlain) {
       const selected = group.find((it) => it.path.endsWith('.sheet.mdx'))!;
@@ -52,13 +54,15 @@ export function deduplicateFilenames(items: Item[]): Item[] {
       }
       result.push(dedupedItem);
     } else {
-      result.push(...group.map(it => {
-        const dedupedItem: Item = { ...it };
-        if (it.children) {
-          dedupedItem.children = deduplicateFilenames(it.children);
-        }
-        return dedupedItem;
-      }));
+      result.push(
+        ...group.map((it) => {
+          const dedupedItem: Item = { ...it };
+          if (it.children) {
+            dedupedItem.children = deduplicateFilenames(it.children);
+          }
+          return dedupedItem;
+        }),
+      );
     }
   }
 

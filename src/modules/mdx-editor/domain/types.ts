@@ -83,6 +83,10 @@ export interface EditorState {
   setFilePath: (v: string) => void;
   slug: string;
   setSlug: (v: string) => void;
+  renameEnabled: boolean;
+  renameToPath: string;
+  setRenameEnabled: (v: boolean) => void;
+  setRenameToPath: (v: string) => void;
   handleLoad: () => void;
   handleSubmit: () => Promise<void>;
   canSubmit: boolean;

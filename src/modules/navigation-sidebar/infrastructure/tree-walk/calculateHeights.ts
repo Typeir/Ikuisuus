@@ -8,8 +8,8 @@
 
 import { BASE_HEIGHT } from '@/modules/navigation-sidebar/domain/constants';
 import type {
-    Item,
-    LayoutItem,
+  Item,
+  LayoutItem,
 } from '@/modules/navigation-sidebar/domain/types';
 
 /**

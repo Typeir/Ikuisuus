@@ -9,12 +9,17 @@
  * @since 1.0.0
  */
 
-import { ActiveSheetProvider } from '@/modules/character-builder/application/context/activeSheetContext';
-import { BloodlineTab } from '@/modules/character-builder/presentation/tabs/bloodlineTab';
 import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
 import type { CharacterSheet } from '@/lib/types/character';
+import { ActiveSheetProvider } from '@/modules/character-builder/application/context/activeSheetContext';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
-import { act, render as baseRender, screen, waitFor } from '@testing-library/react';
+import { BloodlineTab } from '@/modules/character-builder/presentation/tabs/bloodlineTab';
+import {
+  act,
+  render as baseRender,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import React from 'react';
 import { SWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

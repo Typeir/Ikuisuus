@@ -60,6 +60,106 @@ const PROJECT_WEIGHTS: Record<string, number> = {
 type ProjectResult = { project: string; exitCode: number };
 
 /**
+ * Map test file paths to their containing projects.
+ *
+ * @param {string} testPath - File path to test
+ * @returns {string | undefined} Project name, or undefined if unrecognized
+ */
+function mapPathToProject(testPath: string): string | undefined {
+  const normalized = testPath.replace(/\\/g, '/');
+
+  if (normalized.includes('tests/unit/src/lib/components')) {
+    return 'unit:components';
+  }
+  if (normalized.includes('tests/unit/src/modules')) {
+    return 'unit:modules';
+  }
+  if (normalized.includes('tests/unit/src/lib/utils/a')) {
+    return 'unit:utils:a';
+  }
+  if (normalized.includes('tests/unit/src/lib/utils/b')) {
+    return 'unit:utils:b';
+  }
+  if (normalized.includes('tests/unit/src/lib/utils/node')) {
+    return 'unit:utils:node';
+  }
+  if (normalized.includes('tests/unit/src/lib/db/auth')) {
+    return 'unit:db:auth';
+  }
+  if (
+    normalized.includes('tests/unit/src/lib/db') &&
+    !normalized.includes('tests/unit/src/lib/db/content')
+  ) {
+    return 'unit:db:orm';
+  }
+  if (
+    normalized.includes('tests/unit/src/lib/db/content') &&
+    normalized.includes('fs')
+  ) {
+    return 'unit:db:content:fs';
+  }
+  if (
+    normalized.includes('tests/unit/src/lib/db/content') &&
+    normalized.includes('pg')
+  ) {
+    return 'unit:db:content:pg';
+  }
+  if (normalized.includes('tests/unit/src/lib/hooks')) {
+    return 'unit:hooks';
+  }
+  if (normalized.includes('tests/unit/src/lib/metadata')) {
+    return 'unit:metadata';
+  }
+  if (normalized.includes('tests/unit/src/app/api')) {
+    return 'unit:api';
+  }
+  if (
+    normalized.includes('tests/unit/src/app') &&
+    !normalized.includes('tests/unit/src/app/api')
+  ) {
+    return 'unit:app:pages';
+  }
+  if (normalized.includes('tests/unit/src/utils')) {
+    return 'unit:app:utils';
+  }
+  if (normalized.includes('tests/integration')) {
+    return 'integration';
+  }
+  if (
+    normalized.includes('tests/unit') &&
+    !normalized.includes('tests/unit/src')
+  ) {
+    return 'unit:other';
+  }
+
+  return undefined;
+}
+
+/**
+ * Extract projects from command line arguments.
+ *
+ * @param {string[]} args - Command line arguments
+ * @returns {Set<string> | undefined} Unique projects, or undefined if no tests specified
+ */
+function extractProjectsFromArgs(args: string[]): Set<string> | undefined {
+  const testPaths = args.filter((arg) => !arg.startsWith('--'));
+
+  if (testPaths.length === 0) {
+    return undefined;
+  }
+
+  const projects = new Set<string>();
+  for (const testPath of testPaths) {
+    const project = mapPathToProject(testPath);
+    if (project) {
+      projects.add(project);
+    }
+  }
+
+  return projects.size > 0 ? projects : undefined;
+}
+
+/**
  * Parse positive integer input.
  *
  * @param {string | undefined} value - Raw input value
@@ -105,6 +205,11 @@ function resolveConcurrency(args: string[]): number {
 
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
+
+    // Skip non-flag arguments (test paths)
+    if (!arg.startsWith('--')) {
+      continue;
+    }
 
     if (arg === '--sequential') {
       useSequential = true;
@@ -231,11 +336,18 @@ async function runProjects(
  * @returns {Promise<void>} Process completion signal
  */
 async function main(): Promise<void> {
-  const concurrency = resolveConcurrency(process.argv.slice(2));
-  const projects = sortProjectsByWeight(PROJECTS);
+  const cliArgs = process.argv.slice(2);
+  const concurrency = resolveConcurrency(cliArgs);
 
+  // Extract specific projects from test paths if provided
+  const specifiedProjects = extractProjectsFromArgs(cliArgs);
+  const projects = specifiedProjects
+    ? sortProjectsByWeight(Array.from(specifiedProjects))
+    : sortProjectsByWeight(PROJECTS);
+
+  const source = specifiedProjects ? 'specified' : 'all';
   console.log(
-    `🧪 Running ${projects.length} test projects with concurrency ${concurrency}...\n`,
+    `🧪 Running ${projects.length} test projects (${source}) with concurrency ${concurrency}...\n`,
   );
 
   const results = await runProjects(projects, concurrency);

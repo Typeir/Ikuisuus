@@ -103,7 +103,9 @@ describe('SKILL_DEFAULTS', () => {
   });
 
   it('should have Perception linked to wis', () => {
-    const perception = SKILL_DEFAULTS.find((s) => s.name === 'skills.perception');
+    const perception = SKILL_DEFAULTS.find(
+      (s) => s.name === 'skills.perception',
+    );
     expect(perception?.ability).toBe('wis');
   });
 });

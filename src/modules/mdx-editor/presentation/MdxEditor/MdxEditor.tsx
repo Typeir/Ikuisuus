@@ -110,6 +110,10 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
         handleLoad={editor.handleLoad}
         isLoading={editor.status.phase === 'loading'}
         locale={initialLocale}
+        renameEnabled={editor.renameEnabled}
+        renameToPath={editor.renameToPath}
+        onRenameToggle={editor.setRenameEnabled}
+        onRenamePathChange={editor.setRenameToPath}
         t={t}
       />
 
@@ -134,6 +138,7 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
         canSubmit={editor.canSubmit}
         handleSubmit={editor.handleSubmit}
         t={t}
+        editorDisabled={editor.editorDisabled}
       />
     </div>
   );

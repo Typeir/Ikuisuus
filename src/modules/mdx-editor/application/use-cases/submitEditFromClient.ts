@@ -28,6 +28,8 @@ export interface SubmitEditPayload {
   isNew: boolean;
   expectedDraftUpdatedAt: string | null;
   expectedDraftVersionHash: string | null;
+  renameEnabled?: boolean;
+  renameToPath?: string;
 }
 
 /**
@@ -68,6 +70,8 @@ export async function submitEditFromClient(
       isNew: payload.isNew,
       expectedDraftUpdatedAt: payload.expectedDraftUpdatedAt,
       expectedDraftVersionHash: payload.expectedDraftVersionHash,
+      renameEnabled: payload.renameEnabled,
+      renameToPath: payload.renameToPath,
     }),
   });
 

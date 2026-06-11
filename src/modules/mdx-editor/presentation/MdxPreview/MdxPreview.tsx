@@ -15,6 +15,7 @@ import { compileMdxToComponent } from '@/modules/library/infrastructure/compile/
 import { mdxComponents } from '@/modules/library/presentation';
 import contentStyles from '@/styles/mdxContent.module.scss';
 import { Suspense, useEffect, useRef, useState, useTransition } from 'react';
+import cn from '../../../../lib/utils/classNameMerge';
 import styles from './MdxPreview.module.scss';
 
 /**
@@ -53,7 +54,13 @@ function PreviewContent({
   return (
     <div
       key={renderKey}
-      className={`prose prose-invert ${contentStyles.mdxContent} ${styles.previewFadeIn}`}>
+      className={cn(
+        'prose',
+        'prose-invert',
+        contentStyles.mdxContent,
+        styles.previewContainer,
+        styles.previewFadeIn,
+      )}>
       <Component components={mdxComponents} />
     </div>
   );

@@ -34,22 +34,52 @@ describe('coinPouch.helpers', () => {
 
   it('renames a denomination and migrates holdings keys', () => {
     const holdings = [{ systemName: 'Custom', counts: { CoinA: 3 } }];
-    const systems = [{ name: 'Custom', exchangeRate: 1, coins: [{ name: 'CoinA', multiplier: 1 }], builtIn: false }];
-    const result = renameDenomination(holdings, systems, 'Custom', 'CoinA', 'Coin B');
+    const systems = [
+      {
+        name: 'Custom',
+        exchangeRate: 1,
+        coins: [{ name: 'CoinA', multiplier: 1 }],
+        builtIn: false,
+      },
+    ];
+    const result = renameDenomination(
+      holdings,
+      systems,
+      'Custom',
+      'CoinA',
+      'Coin B',
+    );
     expect(result.holdings[0].counts['Coin B']).toBe(3);
     expect(result.systems[0].coins[0].name).toBe('Coin B');
   });
 
   it('removes a denomination from both metadata and holdings', () => {
     const holdings = [{ systemName: 'Custom', counts: { CoinA: 3, CoinB: 4 } }];
-    const systems = [{ name: 'Custom', exchangeRate: 1, coins: [{ name: 'CoinA', multiplier: 1 }, { name: 'CoinB', multiplier: 2 }], builtIn: false }];
+    const systems = [
+      {
+        name: 'Custom',
+        exchangeRate: 1,
+        coins: [
+          { name: 'CoinA', multiplier: 1 },
+          { name: 'CoinB', multiplier: 2 },
+        ],
+        builtIn: false,
+      },
+    ];
     const result = removeDenomination(holdings, systems, 'Custom', 'CoinA');
     expect(result.holdings[0].counts.CoinA).toBeUndefined();
     expect(result.systems[0].coins).toHaveLength(1);
   });
 
   it('adds and updates custom denominations', () => {
-    const systems = [{ name: 'Custom', exchangeRate: 1, coins: [{ name: 'CoinA', multiplier: 1 }], builtIn: false }];
+    const systems = [
+      {
+        name: 'Custom',
+        exchangeRate: 1,
+        coins: [{ name: 'CoinA', multiplier: 1 }],
+        builtIn: false,
+      },
+    ];
     const added = addDenomination(systems, 'Custom');
     expect(added[0].coins).toHaveLength(2);
     const updated = updateDenominationMultiplier(added, 'Custom', 'CoinA', 2.5);

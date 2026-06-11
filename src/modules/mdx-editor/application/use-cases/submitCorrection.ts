@@ -15,6 +15,7 @@ import {
 } from '@/modules/mdx-editor/infrastructure/github/buildPrContent';
 import { commitFile } from '@/modules/mdx-editor/infrastructure/github/commitFile';
 import { createBranch } from '@/modules/mdx-editor/infrastructure/github/createBranch';
+import { deleteFile } from '@/modules/mdx-editor/infrastructure/github/deleteFile';
 import { openPullRequest } from '@/modules/mdx-editor/infrastructure/github/openPullRequest';
 
 /**
@@ -33,6 +34,8 @@ import { openPullRequest } from '@/modules/mdx-editor/infrastructure/github/open
  * @property {string} clientIp - Client ip for PR metadata.
  * @property {string | null | undefined} expectedDraftUpdatedAt - Draft timestamp cursor.
  * @property {string | null | undefined} expectedDraftVersionHash - Draft hash cursor.
+ * @property {boolean} [renameEnabled] - Whether file rename is enabled.
+ * @property {string} [renameToPath] - Target path for renamed file.
  */
 export interface SubmitCorrectionPayload {
   owner: string;
@@ -47,6 +50,8 @@ export interface SubmitCorrectionPayload {
   clientIp: string;
   expectedDraftUpdatedAt?: string | null;
   expectedDraftVersionHash?: string | null;
+  renameEnabled?: boolean;
+  renameToPath?: string;
 }
 
 /**
@@ -55,10 +60,12 @@ export interface SubmitCorrectionPayload {
  * @interface SubmitCorrectionResult
  * @property {string} prUrl - Created pull request URL.
  * @property {string} slugFromPath - Slug derived from file path.
+ * @property {string} [oldSlugFromPath] - Slug derived from old file path if renamed.
  */
 export interface SubmitCorrectionResult {
   prUrl: string;
   slugFromPath: string;
+  oldSlugFromPath?: string;
 }
 
 /**
@@ -88,6 +95,12 @@ export async function submitCorrection(
   const slugFromPath = payload.filePath
     .replace(/^[a-z]{2}\//, '')
     .replace(/\.(sheet\.)?mdx$/, '');
+
+  let oldSlugFromPath: string | undefined;
+  if (payload.renameEnabled && payload.renameToPath) {
+    oldSlugFromPath = slugFromPath;
+  }
+
   const draftStatus = payload.role === 'admin' ? 'active' : 'pending';
 
   await draftRepository.upsertIfUnchanged(
@@ -110,12 +123,29 @@ export async function submitCorrection(
   );
 
   await createBranch(payload.owner, payload.repo, branchName);
+
+  if (payload.renameEnabled && payload.renameToPath) {
+    await deleteFile(
+      payload.owner,
+      payload.repo,
+      payload.filePath,
+      payload.baseSha,
+      branchName,
+      `Delete ${payload.filePath} (rename)`,
+    );
+  }
+
+  const targetPath =
+    payload.renameEnabled && payload.renameToPath
+      ? payload.renameToPath
+      : payload.filePath;
+
   await commitFile(
     payload.owner,
     payload.repo,
-    payload.filePath,
+    targetPath,
     payload.content,
-    payload.isNew ? '' : payload.baseSha,
+    payload.renameEnabled && payload.renameToPath ? '' : payload.baseSha,
     branchName,
     commitMsg,
   );
@@ -136,5 +166,5 @@ export async function submitCorrection(
     token_id: payload.auditId,
   });
 
-  return { prUrl, slugFromPath };
+  return { prUrl, slugFromPath, oldSlugFromPath };
 }
