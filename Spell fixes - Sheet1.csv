@@ -1,10 +1,11 @@
 spell name,new spell name,description,errata
 Mordekainen's flaming butthole,Xanthous's flaming butthole,"You channel the lord of sulfur's everburning colon through your fingertips, incinerating all you touch","4d6 -> 5d6, missing blinded"
-"Wall of thorns, wall of stone, wall of ice",,,"alargar 10 minutes(c) -> 30 minutes(c). if the spell reaches the end of the concentration duration, the wall remains as a nonmagical object"
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------,,,
+"Wall of thorns, wall of stone, wall of ice",,,"alargar 10 minutes(c) -> 30 minutes(c). if the spell reaches the end of the concentration duration, and you are still within its casting range when it does, the wall remains as a nonmagical object"
 fast friends,,,clear up if the target notices when the spell fails or not
 tsunami,,,"the tsunami gains 1d10 damage, 60 height and length per level upcast"
 unearthly chorus,,,borrar
-encode thoughts,Chain of thought(el pensamiento tendría forma de una cadenita metálica),,add to esper spell list
+encode thoughts,Chain of thought,,add to esper spell list
 infallible relay(UA),,,borrar. la mejor y mas sosa versión del efecto
 Protection from poison,,,borrar
 shapechange,,,borrar
@@ -13,32 +14,36 @@ Wristpocket,Thieve's third hand,,alargar 1h>4h. no creo que necesite concentraci
 Dream,,,"enlace roto, lleva a dream of the blue veil"
 Protection from Ballistics (UA),,,borrar
 Telekinesis,,,make grabbing a creature optional after pushing it
-"Investiture of Flame, Ice, stone, wind",Animistic Comunion <- porque los vakis son espiritus animistas,,join the 4 versions into a single spell and make the caster choose which version they want when they learn it. it should help compress spell lists
+"Investiture of Flame, Ice, stone, wind",Animistic Comunion,,join the 4 versions into a single spell and make the caster choose which version they want when they learn it. it should help compress spell lists
 Synchronicity (UA),Double Tempo,,"Añadir a lista esper. quitar el texto de que acaba antes si lo vuelves a tirar, es de concentracion"
 Detect Poison and Disease,Perceive Pestilence,,rework del guasap
-Contagion,Kiss of kalmora <- pero si queremos chutarle enfermedades de otros sitios? es buen nombre. ponerle nombre indirecto a nigredo para que sea mas generico de enfermedad? black caress,,usar formato tabla para las opciones. ver si puede ser de duracion indefinida
+Contagion,Kiss of kalmora,,usar formato tabla para las opciones. ver si puede ser de duracion indefinida
 Aura of Life,,,pasar de la version 2014 a 2024
-mind spike,"Psychic Harpoon<- este nombre me cuadra mas con raulothims psychic lance o como se llame, mind spike es como un pinchazo, igual psychic needle?",,alargar 1h > 4h (o 8h!) quitar concentracion?
-Tether Essence,wound reflection,,"When upcasting choose an additional target per level, then order them. each saves against the spell in order. if they fail, they get connected to the next creature(if last fails it gets connected to the first). when a creature takes damage all creatures theyre connected to directly or indirectly take damage too. if one of the creatures dies or falls unconscious their direct connections break."
-Produce flame,,,maybe inflicting burn is too much? anyways i think cantrips need some work. comparing them side by side and pruning overall.
-Stoneskin,Relacionar con bilupinos?,,"fuera? depende mucho de ""no magico"" para el equilibrio, pero tampoco es que aporte mucho."
-Etherealness,Fold phase <- no hay plano etereo pero si folds,"You briefly step into the unreality between the folds and your world, every movement thereafter, uncannily ethereal and swift.","dice la palabra plano, se puede arreglar, cambiar a ""The folds of the world"" o similar"
-Fortune's Favor,Tide of Fortune <- asociar a luna y pieni en lore,,"creo que puede tener un nicho. si se quita la condicion de concentracion y se hace un bufo para 3 criaturas en lugar de una sola, pasa a ser un uso de recursos comparable a golden weavev/siilvery barbs. por otro lado no necesitas la reaccion sino preaparlo de antes. pulgar arriba. a lo mejor otra tematica en lugar de suerte?"
+mind spike,Psychic nail,,alargar 1h > 4h (o 8h!) quitar concentracion?
+Tether Essence,Wound reflection,,"When upcasting choose an additional target per level, then order them. each saves against the spell in order. if they fail, they get connected to the next creature(if last fails it gets connected to the first). when a creature takes damage all creatures theyre connected to directly or indirectly take damage too. if one of the creatures dies or falls unconscious their direct connections break."
+Produce flame,Pyromancy,"You harness the swirling embers into a speck of pure flame, the thought of incineration.",
+Stoneskin,,,
+Etherealness,Fold phase,"You briefly step into the unreality between the folds and your world, every movement thereafter, uncannily ethereal and swift.","dice la palabra plano, se puede arreglar, cambiar a ""The folds of the world"" o similar"
+Fortune's Favor,Tide of Fortune,"The Pieni believed the voyage of queen kuutar through the stars would eventually culminate into a great tide of fortune rising from the utmost depths of their realm, bathing their lives in great fortune, basked in moonlight.","creo que puede tener un nicho. si se quita la condicion de concentracion y se hace un bufo para 3 criaturas en lugar de una sola, pasa a ser un uso de recursos comparable a golden weavev/siilvery barbs. por otro lado no necesitas la reaccion sino preaparlo de antes. pulgar arriba. a lo mejor otra tematica en lugar de suerte?"
 Sickening Radiance,Semblance of Paivamies,"The sickening spite of the usurping sun is briefly channeled through you, effusing with death and devastation upon your target.","ahora mismo la exhaustion se va toda cuando acaba el hechizo. me haría gracia que se quedara aunque sea un solo stack, porque es una vibra mas damocles"
 Project Image,,,"la verdad que como hechizo tiene algunos problemas. no se si tiene sentido que esto sea un hechizo del 7 en damocles. el rango y la utilidad son geniales, pero se muere de un golpe.borrar?"
 Elemental Weapon,Imbue Weapon,,"Rework: cambiar todo el daño al daño del elemento. no sumar to hit. sumar nd4 de daño del elemento concreto. tras castear, cantrip especifico de elemento con la bonus.
-fuego? produce flame <- firebolt es demasiado bueno para darlo gratis
+fuego? flame snake <- GFB!
 hielo? ray of frost
 rayo? shocking grasp"
 skill empowerment,,,borrar. el efecto es interesante pero la manera en la que esta escrito es confuso. probablemente este mejor en un hechizo que hace alguna otra cosa tambien
 enhance ability,,,"pasar a formato tabla. alargar duración. no se si realmente es interesante o un truño.
 8h y ventaja en TS tambien y es buen hechizo, a la par con enlarge/reduce etc"
 true strike,,,"borrar. A la mierda, la version aburrida de booming blade, gfb etc"
-Contingency,,,"con el cambio de economía de slots se queda un poco raro. además de que deja de ser una herramienta para mantener slots tras el descanso largo, porque dura lo mismo que un descanso"
+Contingency,,,"con el cambio de economía de slots se queda un poco raro. además de que deja de ser una herramienta para mantener slots tras el descanso largo, porque dura lo mismo que un descanso. borrar?"
 Blade Barrier,,,cuando lanzas el hechizo te deja invocar una espada como las del muro para atacar!!
 System Backdoor (UA),,,borrar
 Arcane Hacking (UA),,,borrar
-Antilife Shell,Heartless Hull,una barrera que para a criaturas vivas en base a su corazón?,creo que se podría añadir a renevant
+Antilife Shell,Heartless Hull,"The beat of your heart slows to a crawl, and so does that of those surrounding you, life fleeing from all in terror.","Rework completo. nombre chulisimo para una mamarrachada de hechizo. todos los casos de uso chulos son inmediatamente destruidos por el hecho de que si te mueves te lo quitan.
+
+Debería meter terror, hacer que los bichos que mueren dentro sean irrevibibles, y ralentizar a cualquier bicho que no sea constructo o planta (el tipo de enemigo planta lo hay que cambiar de nombre) a 5ft.
+
+"
 Digital Phantom (UA),,,borrar. error de parseo
 Gate Seal,,,borrar.
 House of Cards (UA),,,sin ficha. me parece muy interesante rescatarlo porque hace una cosa bastante unica
@@ -65,15 +70,17 @@ Crown of Stars,Orrery,"You call upon the disembodied astrals of the ancient Gold
 Burial Rites,,,alargar 1h > 24 h/amanceccer. a lo mejor poner 1h de limite en el tiempo que pasas disfrazado. así no tienes tanta tanta prisa en hacer la suplantación. 
 Borrowed Knowledge,Flash Familiarity,,Añadir al esper. alargar 1h >4h. realmente solo te interesan los primeros 5 min pero la duración extra siempre es graciosa
 Fire Shield,Thermal Barrier,"The elements form a buffer between you and the world, both preventing and causing harm as you see fit.","alargar 10 min >1h, asi se puede usar fuera de combate contra el clima si tienes mucha neccesidad"
-Antimagic Field,,,"alargar 1h > 2h. no se si esto se afecta a precursor, vaki o a todo. adaptar a damocles en general"
-Alter Self,,,alargar 1h >4h. diría que si lo upcasteas tienes 2 opciones a la vez al 3 y todas al 4
+Antimagic Field,Entropic Field,"The area becomes blanketed by a shadow of tombsteel, the arcane ceases to be, eternally still.","alargar 1h > 2h. no se si esto se afecta a precursor, vaki o a todo. adaptar a damocles en general"
+Alter Self,Paivatar's Boon,,"Rework completo. no tiene sentido que sea disguise self con mas mierda random añadida.
+
+Que te deje pillar 5bp de la tabla del silente, 2 mas por cada nivel de upcasteo."
 Disguise Self,,,alargar 1h >4h
 Intellect Fortress,Archivists' barrier,,"alargar 1h >4h. le añadiría de regalo los efectos de thought shield, que son temáticos."
-Speak with Animals,,,alargar 10 min >30 min
-Speak with Dead,,,alargar 10 min >30 min
-Speak with Plants,,,alargar 10 min >30 min
+Speak with Animals,Beastly Communion,"The twitching an chaotic nature of beasts becomes clear to you, you understand their every motion.","alargar 10 min >30 min. Reworks menores. los animales no hablan. te pasan ideas, pero no les vuelves magicamente inteligentes. siguen siendo subnormales"
+Speak with Dead,Entropic Communion,You pry knowledge from a dying psyche; Tissues brought to utter disrepair by the intrussion.,
+Speak with Plants,Floral Communion,"The signals that guide simpler beings sing in harmony to you. You sense the earth, air and light they beckon; you are one.",alargar 10 min >30 min. Reworks menores. las plantas ni tienen sistema nervioso. entiendes los impulsos quimicos de su red. si le tiras sepak with plants a un bosque de largo crecimiento clónico tipo pando pues basicamente sabes todo en varios KM a la redonda.
 Melf's Minute Meteors,Opaline Swarm,Airborne glimmer coalesces into minute asteroids resembling Taiva's ever shining belt.,alargar 10 min >30 min. es consumible asi que no me parece loco ajustar de manera normal la duración
-See Invisibility,,,alargar 1h > 2h. no es muy loco pero bueno
+See Invisibility,Silmä,"An ornate, glassy eye manifests on you. That which was hidden is now bare.",alargar 1h > 2h. no es muy loco pero bueno
 Flame Arrows,Burning Bolts,,"alargar 1h >4h. se le podría quitar concentración, pero creo que es un bufo mucho más interesante ""all the weapon damage is dealt as fire damage. when you hit a creature it starts burning"". quiza ajustar el nº de flechas(burning es bastante mas rentable que daño de fuego basico por el tema de que jode la economia de accion)"
 Circle of Power,,,alargar 10 min >30 min
 Clairvoyance,,,alargar 10 min >30 min
@@ -86,12 +93,12 @@ Daylight,,,alargar 1h >4h. añadir que al upcastear sirve para contrarrestar osc
 Passwall,Tunnel,,alargar 1h > until dawn. es un hechizo del 5 vamos a hacer que sea gracioso. a lo mejor añadir que el agujero necesita una tirada de percepcion para que lo detecte gente que no sabe que esta porque tiene una ilusion encima de regalo?
 Warding Bond,,,alargar 1h >4h. podría durar más todavía
 Barkskin,,,lo han bufado durisimo. ver version 2024
-Foresight,algo que tenga que ver con el arbol rojo del destino?,,alargar 8h>until next dawn
+Foresight,,,"alargar 8h>until next dawn. cambiar un poco. foresight está en mil sistemas, se puede quedar  con el mismo nombre"
 Find the Path,,,alargar 1h >2h. darselo al pobre ranger que no lo tiene.
 thought shield(UA),,,borrar
 Move Earth,,,borrar. es un efecto muy interesante que solo sirve para molestar al dm. es narrativamente chulo pero no tiene mucho uso ni en combate ni fuera.
 Water Breathing,,,sufre muchisimo las reglas gritty. dejar recastearlo cuando acaba duración consumiendo slots del 1? ritual?
-Feign Death,Veil of mana,"weave an impossibly thin gauze of ice, it covers a creature in stillness and quickly sublimates afterwards.","se puede alargar de 1h>8h, porque lo que es hacer no hace nada, solo mantiene las cosas estables"
+Feign Death,Veil of mana,"Weave an impossibly thin gauze of ice, it covers a creature in stillness and quickly sublimates afterwards.","se puede alargar de 1h>8h, porque lo que es hacer no hace nada, solo mantiene las cosas estables"
 Regenerate,,,ha tenido rework muy intenso en 2024
 Spider climb,,,añadir de 2024 el upcasteo de 1 objetivo por nivel
 Gaseous Form,,,añadir de 2024 el upcasteo de 1 objetivo por nivel. aumentar duracion 1h > 4h
@@ -102,47 +109,57 @@ Detect Evil and Good,Detect Interlopers,"Your senses multiply into the hundreds,
 Protect from evil and good,,,
 meld into stone,,,pone que no puedes respirar dentro de la piedra(no esta en 2014 ni 2024). siendo un hechizo tan restrictivo creo que se puede añadir alguna utilidad aun
 Immovable Object,Affix,,"si falla la tirada de fuerza para mover el objeto, [tiene que salvar CON o] gana 1 exhaustion"
-Armor of agathys,"Baleful Bulwark. añadir ""tormenting tombsteel"" que es una version de hielo exponencialmente mas cara, de nivel mas alto, algo distinta. asi si quieres la build del asco infame te la tienes que ganar","Grim darkness envelops you, violently lashing out at any attacker with the crushing finality of oblivion itself.","ver bufo 2024. muy interesante. cambiar daño a ""dark"" para evitar cheeseos de mierda con el daño de hielo que tiene mil sinergias. cold caster + rimelord + elemental adept + sorcerer de fresqui + silente hielo es un horror. cada proc de armor of agathys te hace 700 trillones de daño y te deja en el sitio"
+Armor of agathys,Baleful Bulwark.,"Grim darkness envelops you, violently lashing out at any attacker with the crushing finality of oblivion itself.","ver bufo 2024. muy interesante. cambiar daño a ""dark"" para evitar cheeseos de mierda con el daño de hielo que tiene mil sinergias. cold caster + rimelord + elemental adept + sorcerer de fresqui + silente hielo es un horror. cada proc de armor of agathys te hace 700 trillones de daño y te deja en el sitio"
 Freedom of Movement,,,alargar 1h >4h. 
 Guiding Hand (UA),,,borrar. la mejor y mas sosa versión del efecto
-wall of wind,,,"definir si para proyectiles físicos medianos y/o grandes. hacer que sea terreno dificil para todas las criaturas voladoras, no solo impasable para peques"
+wall of wind,,,"definir  umbral de peso para los proyectiles, excluir fire arms. hacer que sea terreno dificil para todas las criaturas voladoras, no solo impasable para peques
+
+"
 wall of water,,,"if the spell is cast on the entirely over the water's surface instead of the ground's surface, it becomes 5 feet thick. it is half cover, Creatures must swim to cross it(it is still difficult terrain) reduces fire damage to a quarter, and when frozen it has 30 HP per section"
 wall of sand,,,"you may as a bonus action, drop concentration. if you do, for any part of the wall that was conjured over sand, the wall remains for the spells full duration."
 wall of light,,,wall of light no puede ser circular. si pegas con el laser de los turnos de despues que fuerce salvacion con para evitar ceguera? propuesta de mejora de upcasteo: 20 pies más de largo
-magic stone,Kivi,With a grasping motion you summon a small pebble. The source of al great inventions.,añadir escalado por nivel por lo menos. luego ya se vera si se puede hacer que esto sea razonable. hacer que la pedrada pegue una buena hostia.
-Create Bonfire,,,"alargar 1min >10 min?. creo que se podría hacer que ""create bonfire"" te dejara crear una hoguera de verdad y no solo ""algo magico que es como una hoguera"". a lo mejor hacer que sea terreno dificil?"
+magic stone,Kivi,With a grasping motion you summon a small pebble. The source of all great inventions.,añadir escalado por nivel por lo menos. luego ya se vera si se puede hacer que esto sea razonable. hacer que la pedrada pegue una buena hostia.
+Create Bonfire,Bonfire,,borrar
 Mordenkainen's Faithful Hound,Wrought Watchdog,"You mold nothingness into a stony, watchful guarding that will stand their ground fiercely, fighting tooth and nail for their given purpose.",alargar 8h > 24h. 
 Rope Trick,,,"borrar. A la mierda se va, no pocket dimensions allowed"
 revisar los reworks 2024(sobre todo para curación) y hechizos nuevos.,,,revisar en general. han cambiado muchisimas cosas
-Find Vehicle (UA),conjure vehicle,,"aumentar duracion 8h > 24 h. un dia/12h? extra de duracion por upcasteo? diría que es interesante hacer una tabla de upcasteos tipo. 2 - boat, cart, simple parachute. 3 - coach carriage, outrigger sail boat, warkite 4- horse-drawn caravan, air baloon. 5 - motor vehicle, man'o'war, rudimentary flying machine 6 - steam boat, empyrean hovercraft, zeppelin airship"
+Find Vehicle (UA),conjure vehicle,,"aumentar duracion 8h > 24 h. un dia/12h? extra de duracion por upcasteo? diría que es interesante hacer una tabla de upcasteos tipo. 2 - boat, cart, simple parachute. 3 - coach carriage, outrigger sail boat, warkite 4- horse-drawn caravan, air baloon. 5 - motor vehicle, man'o'war, rudimentary flying machine 6 - steam boat, empyrean hovercraft, zeppelin airship
+
+"
 Divine favor,,,borrar. no estoy muy seguro de que este hechizo sea unico ni interesante
-Fog Cloud,Brumebreath,somatic component(exhale a deep breath). the air you exhale condenses and forms into a fog cloud,you may channel any number of brumebreaths at once
+Fog Cloud,Fog,somatic component(exhale a deep breath). the air you exhale condenses and forms into a fog cloud,you may channel any number of fogs at once
 Raulothim's Psychic Lance (UA),,,borrar
-Raulothim's Psychic Lance,Mind bear,bear in mind. el hechizo esta personificado porque me hace más gracia asi. probablemente haya algun otro animal o coso que se pueda poner,
+Raulothim's Psychic Lance,swipe of the Hunt,,
+Phantasmal killer,shadow of the Hunt,,
 Time Ravage,Anaximander's gift,"When anaximander opened the door to the hidden realm, nigredo made him a gift. a spell of ruin and rot. may his name remain forever in infamy",
 Power word kill,Thought of Oblivion,"When the Canvas first dreamt, some of these Nulls phased into the thought of disparity, the idea that if a thing is, it can be unmade. This is not so much a spell, but a fundamental truth of the universe given form.",verbal component(that which exists can be unmade)
-Dark Star,Bane of the Mountains,,
+Dark Star,,,borrar. redundante con ravenous void 
 Demiplane,Unravel,open a door to the folds(?),
-Mighty Fortress,el hechizo se llama como un castillo especifico. porque siempre invoca exactaamente ese castillo. el castillo cayo hace tiempo pero en la copia siguen ondeando las banderas originales y esta enn perfecto estado,,
+Mighty Fortress,,,borrar
 Reality Break,Tear the canvas,,cambiar el flavor de los efectos. 1 - visions of the clone worlds(el efecto debería decir stagger). 7-everdark flame
-Maddening Darkness,Pandemonium,"Beckon a dark orb, and hiisi within",
-Draconic Transformation (UA),,,borrar. no hay dragones no?
-Sunburst,,,
+Maddening Darkness,Despairing Darkness,Pull a patch of the darkness beneath the etternal stairs. of the tunnels and dread below brume. the orb is deathly quiet. no sound comes out. the terror of the tunnels strikes everyone within.,añadir que no sale ni entra ruido en la esfera en lugar de ruidos caoticos. the chase no es ese tipo de espectaculo
+Draconic Transformation (UA),,,"borrar. no hay dragones no? Si hay dragones, y son como, una de las facciones mas importantes del lore"
 Ravenous Void,Null sphere,,
 Fizban's Platinum Shield (UA),,,borrar
 Fizban's Platinum Shield,,,borrar
 Catapult,Fling,,
 Create Spelljamming Helm,,,borrar. el efecto mola pero 0 damocles
-Infestation,black swarm,,
+Infestation,black swarm,,borrar.
 Create Food and Water,Provisions,,se puede alargar la duracion considerablemente
-Erupting Earth,,,no se. no me parece un hechizo que haga nada especialmente interesante. creo que se puede borrar
-Frost Fingers,embrace of winter,,
+Erupting Earth,,,borrar. no se. no me parece un hechizo que haga nada especialmente interesante. creo que se puede borrar
+Frost Fingers,Winter's Caress,,
 Distort value,,,borrar
-Booming Blade,Echoing strike,"A thunderous strike. if the target is not ready, the explosive trajectory of the blade repeats itself and strikes from an unforseen angle","At the end of the targets turn, if theyre not steady, they take 1d8 thunder damage, and the spell ends."
-Fire Bolt,fiery flechette,,desventaja si pegas a +30 pies y no estás steady? no se si se merece un nerfeo. de todos modos si nerfeamos lo suficiente podríamos juntarlo con la miniutilidad de control flame
+Booming Blade,Echoing strike,A thunderous strike. Unobservant targets will be struck by a booming echo of the original trajectory.,"At the end of the targets turn, if theyre not steady, they take 1d8 thunder damage, and the spell ends."
+Fire Bolt,,,borrar
 "Hand of Radiance (UA), Word of Radiance, Thunderclap, Sword Burst",,,"hand of radiance se va seguro, pero no creo que sea productivo ni interesante tener el mismo hechizo 3 veces con tipos de daño distinto. son *ligeramente* distintos pero no creo que la diferencia sea relevante para cantrips"
 On/Off (UA),,,borrar
 Virtue (UA),,,"borrar. probablemente se pueda equilibrar pero es que no quiero. que pereza decir ""y le pongo virtue a todos!"". quiza si lo que hace es que ganas proficiencyu temp hp(solo self)?"
-"control flames, gust, mold earth, shape water, druidcraft, thaumaturgy",,,"borrar? este ciclo en general es un poco regulero. hay mucho bloat de cantrips de utilidad que apenas tienen utilidad porque son ""tematicos"". se les podria hacer rework intesno pero que se pongan a la cola"
-"Resistance, guidance",,,"creo que se pueden juntar esos dos hechizos en un solo hechizo, eliges modo cuando lo aprendes. quizás se pueda añadir algun modo más(ver mind paths?) (+1d4 de AC contra el primer ataque que te acierte? )"
-Absorb Elements,Elemental flux,"redirect an incoming elemental attack into a swirling ring, then throw it back in an outburst",
+control flames,,,borrar
+mold earth ,,,borrar
+shape water ,,,borrar
+druidcraft ,,,borrar
+thaumaturgy,,,borrar
+ gust,,,borrar
+,,,
+Absorb Elements,Elemental flux,"redirect an incoming elemental attack into a swirling ring, then throw it back in a gush",
+Insect Plague,Black Swarm,"You call upon the lord of Rot's kin, and they listen. A crawling myriad of all-consuming rotlings devours all but time.",
