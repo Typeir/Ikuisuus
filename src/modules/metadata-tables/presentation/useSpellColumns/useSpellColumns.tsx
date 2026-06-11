@@ -7,8 +7,8 @@
  */
 
 import {
-    type ColumnConfig,
-    type MetadataRow,
+  type ColumnConfig,
+  type MetadataRow,
 } from '@/lib/components/mdx/metadataTables/metadataTable';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
@@ -78,9 +78,9 @@ export function useSpellColumns(): ColumnConfig[] {
         label: tColumns('components'),
         getValue: (row: MetadataRow) => {
           const parts: string[] = [];
-          if (row.verbal) parts.push('V');
-          if (row.somatic) parts.push('S');
-          if (row.material) parts.push('M');
+          if (row.components.verbal) parts.push('V');
+          if (row.components.somatic) parts.push('S');
+          if (row.components.material) parts.push('M');
           return parts.join(', ') || '—';
         },
         sortable: false,
