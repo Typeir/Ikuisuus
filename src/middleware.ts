@@ -63,20 +63,17 @@ export default function middleware(req: NextRequest): Response {
    */
   const topLevelWhitelist = new Set<string>([...routing.locales]);
 
-  /** Root path "/" redirects to default locale */
   if (!first) {
     const url = req.nextUrl.clone();
     url.pathname = `/${defaultLocale}`;
     return NextResponse.redirect(url, 308);
   }
 
-  /** If first segment not whitelisted, replace it with default locale (keep rest intact) */
   if (!topLevelWhitelist.has(first)) {
     const url = req.nextUrl.clone();
     url.pathname = replaceFirstSegment(parts, defaultLocale);
     return NextResponse.redirect(url, 308);
   }
 
-  /** Whitelisted locale or reserved segment: delegate to next-intl */
   return intlMiddleware(req);
 }
