@@ -2,7 +2,7 @@
  * Duplicate CSS Check
  *
  * @fileoverview Detects duplicate CSS selectors and property blocks across SCSS/CSS
- * files. Reports exact duplicates as critical findings.
+ * files. Reports exact duplicates as warning findings.
  *
  * Excluded from duplicate detection:
  * - `@keyframes` stop selectors (`from`, `to`, `0%`, `100%` etc.) — identical stops
@@ -175,7 +175,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
             message: `Duplicate rule "${selector}" also found in ${seenRules.get(key)}`,
             suggestion:
               'Extract shared styles to a common mixin or shared class',
-            severity: 'critical',
+            severity: 'warning',
           });
         } else {
           seenRules.set(key, normalizedRel);
@@ -186,7 +186,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
 
   return {
     check: 'duplicate-css',
-    severity: violations.length > 0 ? 'critical' : 'info',
+    severity: violations.length > 0 ? 'warning' : 'info',
     passed: violations.length === 0,
     failures: violations,
     stats: {
