@@ -297,16 +297,20 @@ async function loadKnownComponents(
 /**
  * Derive content type from a relative file path.
  *
- * @param relPath Relative path from content root
+ * Uses path-segment matching (e.g. `/spells/`) to avoid false positives
+ * from files whose names contain a content-type keyword (e.g. `spells.list.mdx`
+ * in a `vocations/` directory is NOT a spell file).
+ *
+ * @param relPath Relative path from project root
  * @returns Content type identifier string
  */
 function getContentType(relPath: string): string {
-  if (relPath.includes('monsters')) return 'monsters';
-  if (relPath.includes('spells')) return 'spells';
-  if (relPath.includes('items')) return 'items';
-  if (relPath.includes('world')) return 'world';
-  if (relPath.includes('rules')) return 'rules';
-  if (relPath.includes('character-creation')) return 'character-creation';
+  if (relPath.includes('/monsters/')) return 'monsters';
+  if (relPath.includes('/spells/')) return 'spells';
+  if (relPath.includes('/items/')) return 'items';
+  if (relPath.includes('/world/')) return 'world';
+  if (relPath.includes('/rules/')) return 'rules';
+  if (relPath.includes('/character-creation/')) return 'character-creation';
   return 'other';
 }
 

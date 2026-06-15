@@ -17,5 +17,6 @@ tests
 tests/*
 scripts/metadata/*
 scripts/db/pg/*
+scripts/dev/*
 memories
 memories/**
