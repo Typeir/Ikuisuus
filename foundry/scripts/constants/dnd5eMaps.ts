@@ -22,21 +22,20 @@ export const SIZE_MAP: Record<string, string> = {
   gargantuan: 'grg',
 };
 
-/** Maps common damage type strings to dnd5e damage type keys. */
+/** Maps Ikuisuus damage type strings to dnd5e damage type keys. */
 export const DAMAGE_TYPE_MAP: Record<string, string> = {
-  acid: 'acid',
+  chemical: 'acid',
   bludgeoning: 'bludgeoning',
   cold: 'cold',
   fire: 'fire',
   force: 'force',
   lightning: 'lightning',
-  necrotic: 'necrotic',
+  dark: 'necrotic',
   piercing: 'piercing',
   poison: 'poison',
   psychic: 'psychic',
-  radiant: 'radiant',
+  holy: 'radiant',
   slashing: 'slashing',
-  thunder: 'thunder',
 };
 
 /**

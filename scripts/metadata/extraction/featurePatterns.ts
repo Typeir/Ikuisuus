@@ -33,7 +33,7 @@ export const DICE = {
     /(?:regain|recover)(?:ing|s)?\s+(\d+\s*\+\s*\d+d\d+|\d+d\d+|\d+)\s+charges?\s+(?:at|each)\s+(\w+)/i,
   chargesDepletes: /becomes?\s+inert|cannot be recharged|burns? away/i,
   heirloomDamage:
-    /([\dd+]+)\s+(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)(?:\s*\(([\dd+]+)\s*(?:versatile)?\))?/i,
+    /([\dd+]+)\s+(chemical|bludgeoning|cold|fire|force|lightning|dark|piercing|poison|psychic|holy|slashing)(?:\s*\(([\dd+]+)\s*(?:versatile)?\))?/i,
 } as const;
 
 /**
@@ -230,19 +230,18 @@ export const STRUCTURE = {
  * Canonical set of damage type keywords.
  */
 export const DAMAGE_TYPES: ReadonlySet<string> = new Set([
-  'acid',
+  'chemical',
   'bludgeoning',
   'cold',
   'fire',
   'force',
   'lightning',
-  'necrotic',
+  'dark',
   'piercing',
   'poison',
   'psychic',
-  'radiant',
+  'holy',
   'slashing',
-  'thunder',
   'true',
 ]);
 
