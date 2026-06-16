@@ -68,9 +68,9 @@ describe('shared token recognizers', () => {
       expect(result).toEqual({ dice: { count: 3, sides: 8 } });
     });
 
-    it('should detect necrotic damage', () => {
-      const result = recognizeDamage('takes 4d10 necrotic damage');
-      expect(result?.type).toBe('necrotic');
+    it('should detect dark damage', () => {
+      const result = recognizeDamage('takes 4d10 dark damage');
+      expect(result?.type).toBe('dark');
     });
 
     it('should detect true damage', () => {

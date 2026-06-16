@@ -328,8 +328,8 @@ describe('featurePatterns', () => {
   });
 
   describe('lookup tables', () => {
-    it('DAMAGE_TYPES should contain 14 types', () => {
-      expect(DAMAGE_TYPES.size).toBe(14);
+    it('DAMAGE_TYPES should contain 13 types', () => {
+      expect(DAMAGE_TYPES.size).toBe(13);
       expect(DAMAGE_TYPES.has('fire')).toBe(true);
       expect(DAMAGE_TYPES.has('true')).toBe(true);
     });
