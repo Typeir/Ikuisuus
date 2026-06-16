@@ -317,6 +317,11 @@ function getContentType(relPath: string): string {
 /**
  * Parse health-check ignore directives from the first 20 lines of a file.
  *
+ * Recognizes three directive formats:
+ *   <!-- health:check-ignore <rule> -->
+ *   {/* health:check-ignore <rule> *\/}
+ *   {/* paw:gate:content-format:<rule-key> ignore *\/}
+ *
  * @param content MDX file content
  * @returns Set of rule names that should be ignored
  */
@@ -326,8 +331,11 @@ function getIgnoredRules(content: string): Set<string> {
   const htmlPattern =
     /<!---?\s*health:check-ignore\s+([a-z0-9-]+?)(?:\s*)--+>/gi;
   const mdxPattern = /\{\/\*\s*health:check-ignore\s+([a-z0-9-]+)\s*\*\/\}/gi;
+  // paw:gate:content-format:<rule> ignore  (e.g. "paw:gate:content-format:missing-h1 ignore")
+  const pawGatePattern = /\{\/\*\s*paw:gate:content-format:([a-z0-9-]+)\s+ignore\s*\*\/\}/gi;
   for (const match of head.matchAll(htmlPattern)) ignored.add(match[1]);
   for (const match of head.matchAll(mdxPattern)) ignored.add(match[1]);
+  for (const match of head.matchAll(pawGatePattern)) ignored.add(match[1]);
   return ignored;
 }
 
