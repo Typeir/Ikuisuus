@@ -1,5 +1,6 @@
 {
   "editor.formatOnSave": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "workbench.browser.enableChatTools": true
+  "workbench.browser.enableChatTools": true,
+  "cSpell.words": ["Celestials"]
 }
