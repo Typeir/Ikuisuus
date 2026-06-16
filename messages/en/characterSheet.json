@@ -123,7 +123,9 @@
     "loading": "Loading feats…",
     "prereq": "Prereq",
     "noAvailable": "No feats available.",
-    "searchPlaceholder": "Search…"
+    "searchPlaceholder": "Search…",
+    "shardExpandAria": "Expand {name} rules",
+    "shardCollapseAria": "Collapse {name} rules"
   },
   "skills": {
     "acrobatics": "Acrobatics",

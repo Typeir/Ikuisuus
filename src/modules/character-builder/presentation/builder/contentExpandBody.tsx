@@ -1,15 +1,14 @@
 /**
- * @fileoverview Boon Expanded Body
- * @description Renders the prose body of a single bloodline boon inline below
- * its row in `BoonPicker`. Fetches the heading block via the DB-backed
- * `/api/content-shards/bloodlines/[slug]` endpoint lazily on mount and renders
+ * @fileoverview Content Expand Body
+ * @description Renders the prose body of a content item (feat, boon, etc.)
+ * inline below its picker row. Fetches the heading block via the DB-backed
+ * `/api/content-shards/[type]/[slug]` endpoint lazily on mount and renders
  * it as HTML via the markdown renderer.
  *
- * This component intentionally has no header — the parent `BoonPicker` row
- * supplies the boon name, BP badge, and expand chevron. Expanding a boon is
- * decoupled from selecting it.
+ * This component intentionally has no header — the parent row supplies the
+ * item name, badge, and expand chevron. Expanding is decoupled from selecting.
  *
- * @module lib/components/characterSheet/builder/boonExpandBody
+ * @module lib/components/characterSheet/builder/contentExpandBody
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -19,37 +18,41 @@
 
 import { FetchError } from '@/lib/fetch/fetcher';
 import { useContentShardSingle } from '@/lib/hooks/data/useContentShard';
+import type { ContentShardType } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import expandStyles from './boonExpand.module.scss';
 
 /**
- * Props for the BoonExpandBody component.
+ * Props for the ContentExpandBody component.
  *
- * @interface BoonExpandBodyProps
- * @property {string} bloodlineSlug - Slug of the parent bloodline
- * @property {string} boonName - The boon heading to fetch
+ * @interface ContentExpandBodyProps
+ * @property {ContentShardType} contentType - API path segment (e.g. `'feats'`, `'bloodlines'`)
+ * @property {string} contentSlug - Slug of the parent content item
+ * @property {string} contentKey - Heading key to fetch within the content item
  * @property {string} [cachedText] - Optional pre-fetched body text (skips fetch)
  * @property {string} id - DOM id used by the row's aria-controls
  */
-export interface BoonExpandBodyProps {
-  bloodlineSlug: string;
-  boonName: string;
+export interface ContentExpandBodyProps {
+  contentType: ContentShardType;
+  contentSlug: string;
+  contentKey: string;
   cachedText?: string;
   id: string;
 }
 
 /**
- * Inline expanded body for a boon row.
+ * Inline expanded body for a content row.
  *
  * @component
- * @param {BoonExpandBodyProps} props - Component props
+ * @param {ContentExpandBodyProps} props - Component props
  * @returns {JSX.Element} Rendered prose body
  */
-export const BoonExpandBody: React.FC<BoonExpandBodyProps> = ({
-  bloodlineSlug,
-  boonName,
+export const ContentExpandBody: React.FC<ContentExpandBodyProps> = ({
+  contentType,
+  contentSlug,
+  contentKey,
   cachedText,
   id,
 }) => {
@@ -64,9 +67,9 @@ export const BoonExpandBody: React.FC<BoonExpandBodyProps> = ({
     isLoading: loading,
     error: shardError,
   } = useContentShardSingle({
-    contentType: 'bloodlines',
-    slug: bloodlineSlug,
-    key: boonName,
+    contentType,
+    slug: contentSlug,
+    key: contentKey,
     locale,
     enabled: !haveText,
   });
@@ -75,9 +78,9 @@ export const BoonExpandBody: React.FC<BoonExpandBodyProps> = ({
 
   useEffect(() => {
     if (shardData && !haveText) {
-      setBodyText(shardData.shards[boonName] ?? '');
+      setBodyText(shardData.shards[contentKey] ?? '');
     }
-  }, [shardData, haveText, boonName]);
+  }, [shardData, haveText, contentKey]);
 
   useEffect(() => {
     if (!bodyText) {

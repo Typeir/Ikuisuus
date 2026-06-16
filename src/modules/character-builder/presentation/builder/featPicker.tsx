@@ -20,7 +20,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import expandStyles from './boonExpand.module.scss';
-import { FeatExpandBody } from './featExpandBody';
+import { ContentExpandBody } from './contentExpandBody';
 import pickerStyles from './pickerControls.module.scss';
 
 /**
@@ -149,9 +149,10 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
                       </button>
                     </div>
                     {isExpanded && (
-                      <FeatExpandBody
-                        featSlug={feat.slug}
-                        featName={feat.title}
+                      <ContentExpandBody
+                        contentType='feats'
+                        contentSlug={feat.slug}
+                        contentKey={feat.title}
                         cachedText={feat.description}
                         id={bodyId}
                       />

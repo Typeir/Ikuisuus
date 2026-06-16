@@ -30,7 +30,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useSWRConfig } from 'swr';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import expandStyles from './boonExpand.module.scss';
-import { BoonExpandBody } from './boonExpandBody';
+import { ContentExpandBody } from './contentExpandBody';
 import pickerStyles from './pickerControls.module.scss';
 
 /**
@@ -246,9 +246,10 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
                       </button>
                     </div>
                     {isExpanded && (
-                      <BoonExpandBody
-                        bloodlineSlug={bloodlineSlug}
-                        boonName={boon.name}
+                      <ContentExpandBody
+                        contentType='bloodlines'
+                        contentSlug={bloodlineSlug}
+                        contentKey={boon.name}
                         cachedText={cachedShard?.cachedText}
                         id={bodyId}
                       />
