@@ -4,10 +4,10 @@
     "PostToolUse": [
       {
         "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/postToolUse.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/postToolUse.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/postToolUse.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/postToolUse.mjs",
+        "command": "node .paw/hooks/postToolUse.mjs",
+        "windows": "node .paw/hooks/postToolUse.mjs",
+        "linux": "node .paw/hooks/postToolUse.mjs",
+        "osx": "node .paw/hooks/postToolUse.mjs",
         "cwd": ".",
         "timeout": 15
       }
@@ -15,10 +15,10 @@
     "PreToolUse": [
       {
         "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/preToolUse.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/preToolUse.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/preToolUse.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/preToolUse.mjs",
+        "command": "node .paw/hooks/preToolUse.mjs",
+        "windows": "node .paw/hooks/preToolUse.mjs",
+        "linux": "node .paw/hooks/preToolUse.mjs",
+        "osx": "node .paw/hooks/preToolUse.mjs",
         "cwd": ".",
         "timeout": 10
       }
@@ -26,28 +26,28 @@
     "Stop": [
       {
         "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/sessionEndHealth.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/sessionEndHealth.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/sessionEndHealth.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/sessionEndHealth.mjs",
+        "command": "node .paw/hooks/sessionEndHealth.mjs",
+        "windows": "node .paw/hooks/sessionEndHealth.mjs",
+        "linux": "node .paw/hooks/sessionEndHealth.mjs",
+        "osx": "node .paw/hooks/sessionEndHealth.mjs",
         "cwd": ".",
         "timeout": 120
       },
       {
         "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/sessionEndMemorySave.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/sessionEndMemorySave.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/sessionEndMemorySave.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/sessionEndMemorySave.mjs",
+        "command": "node .paw/hooks/sessionEndMemorySave.mjs",
+        "windows": "node .paw/hooks/sessionEndMemorySave.mjs",
+        "linux": "node .paw/hooks/sessionEndMemorySave.mjs",
+        "osx": "node .paw/hooks/sessionEndMemorySave.mjs",
         "cwd": ".",
         "timeout": 15
       },
       {
         "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/sessionEndMissingTests.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/sessionEndMissingTests.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/sessionEndMissingTests.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/sessionEndMissingTests.mjs",
+        "command": "node .paw/hooks/sessionEndMissingTests.mjs",
+        "windows": "node .paw/hooks/sessionEndMissingTests.mjs",
+        "linux": "node .paw/hooks/sessionEndMissingTests.mjs",
+        "osx": "node .paw/hooks/sessionEndMissingTests.mjs",
         "cwd": ".",
         "timeout": 30
       }
@@ -55,10 +55,10 @@
     "UserPromptSubmit": [
       {
         "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/userPromptSubmitted.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/userPromptSubmitted.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/userPromptSubmitted.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/userPromptSubmitted.mjs",
+        "command": "node .paw/hooks/userPromptSubmitted.mjs",
+        "windows": "node .paw/hooks/userPromptSubmitted.mjs",
+        "linux": "node .paw/hooks/userPromptSubmitted.mjs",
+        "osx": "node .paw/hooks/userPromptSubmitted.mjs",
         "cwd": ".",
         "timeout": 10
       }

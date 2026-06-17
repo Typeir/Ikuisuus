@@ -84,6 +84,10 @@ function scanSpells(): Record<string, SpellEntry[]> {
 
     for (const list of spellLists) {
       const name = list.name;
+      // Skip specialization-gated entries — spells tied to a
+      // specialization (link contains '.specialization') belong to
+      // that spec's spell list, not the main vocation spell list.
+      if (list.link.includes('.specialization')) continue;
       if (!byList[name]) byList[name] = [];
       byList[name].push({ slug, level });
     }
