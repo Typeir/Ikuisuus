@@ -14,7 +14,7 @@
  * @version 1.0.0
  */
 
-import { readFile, writeFile, readdir } from 'node:fs/promises';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,12 +27,17 @@ const MONSTERS_DIR = join(ROOT, 'src', 'content', 'en', 'monsters');
 function parseCR(s) {
   if (!s) return 0;
   const t = s.trim();
-  if (t.includes('/')) { const [n, d] = t.split('/').map(Number); return n / d; }
+  if (t.includes('/')) {
+    const [n, d] = t.split('/').map(Number);
+    return n / d;
+  }
   return Number(t) || 0;
 }
 
 /** New formula: ceil(CR / 3). */
-function newTB(cr) { return Math.ceil(cr / 3); }
+function newTB(cr) {
+  return Math.ceil(cr / 3);
+}
 
 /** Extract current tier bonus from "**Tier Bonus**: +7". */
 function parseTB(line) {
@@ -74,16 +79,20 @@ function isImmune(line) {
 
 /** Check if line has adjustable bonus numbers. */
 function hasAdjustableBonus(line) {
-  return /\+\d+\s+to\s+hit/.test(line) ||
+  return (
+    /\+\d+\s+to\s+hit/.test(line) ||
     /\bDC\s+\d+\b/.test(line) ||
     /\*\*Save DC\*\*/.test(line) ||
-    /\*\*Spell attack modifier\*\*/.test(line);
+    /\*\*Spell attack modifier\*\*/.test(line)
+  );
 }
 
 /** Check if line is a save/skill bullet: "- **Saving Throws**: Str +14, ..." */
 function isSaveSkillBullet(line) {
-  return /^-\s+\*\*Saving Throws?\*\*:/.test(line) ||
-    /^-\s+\*\*Skills\*\*:/.test(line);
+  return (
+    /^-\s+\*\*Saving Throws?\*\*:/.test(line) ||
+    /^-\s+\*\*Skills\*\*:/.test(line)
+  );
 }
 
 // ─── Adjusters ───────────────────────────────────────────────────────────────
@@ -97,7 +106,11 @@ function adjustNumbers(str, delta) {
     // Parse sign
     let sign = 1;
     let numStr = match;
-    if (match.startsWith('+') || match.startsWith('−') || match.startsWith('-')) {
+    if (
+      match.startsWith('+') ||
+      match.startsWith('−') ||
+      match.startsWith('-')
+    ) {
       sign = match[0] === '−' || match[0] === '-' ? -1 : 1;
       numStr = match.slice(1);
     }
@@ -105,9 +118,12 @@ function adjustNumbers(str, delta) {
     if (isNaN(val)) return match;
     const newVal = val + delta * sign;
     // Preserve sign style
-    if (match.startsWith('−')) return newVal >= 0 ? '+' + newVal : '−' + Math.abs(newVal);
-    if (match.startsWith('-')) return newVal >= 0 ? '+' + newVal : String(newVal);
-    if (match.startsWith('+')) return newVal >= 0 ? '+' + newVal : String(newVal);
+    if (match.startsWith('−'))
+      return newVal >= 0 ? '+' + newVal : '−' + Math.abs(newVal);
+    if (match.startsWith('-'))
+      return newVal >= 0 ? '+' + newVal : String(newVal);
+    if (match.startsWith('+'))
+      return newVal >= 0 ? '+' + newVal : String(newVal);
     return newVal >= 0 ? '+' + newVal : String(newVal);
   });
 }
@@ -119,21 +135,48 @@ async function processFile(filePath, dryRun) {
   const lines = content.split('\n');
 
   // Find CR and current TB (only in stat block header, before first "---")
-  let cr = null, currentTB = null, tbLineIdx = -1;
+  let cr = null,
+    currentTB = null,
+    tbLineIdx = -1;
   for (let i = 0; i < lines.length; i++) {
     if (/^---$/.test(lines[i].trim())) break;
-    if (cr === null) { const p = parseChallenge(lines[i]); if (p !== null) cr = p; }
-    if (currentTB === null) { const p = parseTB(lines[i]); if (p !== null) { currentTB = p; tbLineIdx = i; } }
+    if (cr === null) {
+      const p = parseChallenge(lines[i]);
+      if (p !== null) cr = p;
+    }
+    if (currentTB === null) {
+      const p = parseTB(lines[i]);
+      if (p !== null) {
+        currentTB = p;
+        tbLineIdx = i;
+      }
+    }
   }
 
   if (cr === null || currentTB === null) {
-    return { file: filePath, changed: false, cr: cr ?? 0, oldTB: currentTB ?? 0, newTB: 0, delta: 0, adj: 0 };
+    return {
+      file: filePath,
+      changed: false,
+      cr: cr ?? 0,
+      oldTB: currentTB ?? 0,
+      newTB: 0,
+      delta: 0,
+      adj: 0,
+    };
   }
 
   const ntb = newTB(cr);
   const delta = ntb - currentTB;
   if (delta === 0) {
-    return { file: filePath, changed: false, cr, oldTB: currentTB, newTB: ntb, delta: 0, adj: 0 };
+    return {
+      file: filePath,
+      changed: false,
+      cr,
+      oldTB: currentTB,
+      newTB: ntb,
+      delta: 0,
+      adj: 0,
+    };
   }
 
   // Update the TB line
@@ -153,7 +196,10 @@ async function processFile(filePath, dryRun) {
     // Save/skill bullets in the stat header
     if (isSaveSkillBullet(line)) {
       const a = adjustNumbers(line, delta);
-      if (a !== line) { lines[i] = a; adj++; }
+      if (a !== line) {
+        lines[i] = a;
+        adj++;
+      }
       continue;
     }
 
@@ -178,11 +224,17 @@ async function processFile(filePath, dryRun) {
       });
 
       // "**Spell attack modifier**: +N"
-      adjusted = adjusted.replace(/\*\*Spell attack modifier\*\*:\s*\+(\d+)/g, (_m, num) => {
-        return `**Spell attack modifier**: +${parseInt(num, 10) + delta}`;
-      });
+      adjusted = adjusted.replace(
+        /\*\*Spell attack modifier\*\*:\s*\+(\d+)/g,
+        (_m, num) => {
+          return `**Spell attack modifier**: +${parseInt(num, 10) + delta}`;
+        },
+      );
 
-      if (adjusted !== line) { lines[i] = adjusted; adj++; }
+      if (adjusted !== line) {
+        lines[i] = adjusted;
+        adj++;
+      }
     }
   }
 
@@ -190,7 +242,15 @@ async function processFile(filePath, dryRun) {
     await writeFile(filePath, lines.join('\n'), 'utf-8');
   }
 
-  return { file: filePath, changed: true, cr, oldTB: currentTB, newTB: ntb, delta, adj };
+  return {
+    file: filePath,
+    changed: true,
+    cr,
+    oldTB: currentTB,
+    newTB: ntb,
+    delta,
+    adj,
+  };
 }
 
 // ─── Main ────────────────────────────────────────────────────────────────────
@@ -202,24 +262,34 @@ async function main() {
   console.log(`Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}\n`);
 
   const files = (await readdir(MONSTERS_DIR))
-    .filter(f => f.endsWith('.sheet.mdx'))
+    .filter((f) => f.endsWith('.sheet.mdx'))
     .sort();
 
-  let changed = 0, skipped = 0, totalAdj = 0;
+  let changed = 0,
+    skipped = 0,
+    totalAdj = 0;
 
   for (const f of files) {
     const r = await processFile(join(MONSTERS_DIR, f), dryRun);
     if (r.changed) {
       const s = r.delta > 0 ? '+' : '';
-      console.log(`  ${f}: CR ${r.cr}, TB +${r.oldTB}→+${r.newTB} (${s}${r.delta}), ${r.adj} adj`);
-      changed++; totalAdj += r.adj;
+      console.log(
+        `  ${f}: CR ${r.cr}, TB +${r.oldTB}→+${r.newTB} (${s}${r.delta}), ${r.adj} adj`,
+      );
+      changed++;
+      totalAdj += r.adj;
     } else if (r.cr > 0) {
       skipped++;
     }
   }
 
-  console.log(`\nChanged: ${changed} (${totalAdj} adjustments), Unchanged: ${skipped}`);
+  console.log(
+    `\nChanged: ${changed} (${totalAdj} adjustments), Unchanged: ${skipped}`,
+  );
   if (dryRun) console.log('(Dry run)');
 }
 
-main().catch(e => { console.error('Fatal:', e); process.exit(1); });
+main().catch((e) => {
+  console.error('Fatal:', e);
+  process.exit(1);
+});

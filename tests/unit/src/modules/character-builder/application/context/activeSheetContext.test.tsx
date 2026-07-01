@@ -8,6 +8,8 @@
  * @since 1.0.0
  */
 
+import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
+import type { CharacterSheet } from '@/lib/types/character';
 import {
     ActiveSheetProvider,
     useSheetData,
@@ -15,8 +17,6 @@ import {
     useSheetMutators,
     useSheetTab,
 } from '@/modules/character-builder/application/context/activeSheetContext';
-import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
-import type { CharacterSheet } from '@/lib/types/character';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

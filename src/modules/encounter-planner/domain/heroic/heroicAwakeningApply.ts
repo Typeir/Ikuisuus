@@ -9,17 +9,17 @@
  * @since 1.0.0
  */
 
-import type { AffixEntry } from '@/modules/encounter-planner/domain/encounters/encounter.types';
 import type {
-  HeroicAwakeningState,
-  InProgressCombatant,
+    HeroicAwakeningState,
+    InProgressCombatant,
 } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
+import type { AffixEntry } from '@/modules/encounter-planner/domain/encounters/encounter.types';
 import {
-  getAffixFromRoll,
-  getAffixLink,
-  getHeroicDc,
-  maximizeHitDice,
-  rollAffix,
+    getAffixFromRoll,
+    getAffixLink,
+    getHeroicDc,
+    maximizeHitDice,
+    rollAffix,
 } from '../mechanics/combatMechanics';
 
 /**
@@ -91,8 +91,7 @@ const rollAffixesAndDetermineTier = (
       savingThrowBonus: bonuses.savingThrow,
     },
     hpOverride: null,
-    fateDieResult:
-      10 + (tier === 'legendary' ? 5 : tier === 'mythic' ? 10 : 0),
+    fateDieResult: 10 + (tier === 'legendary' ? 5 : tier === 'mythic' ? 10 : 0),
     heroicDc: 15,
     awakened: true,
   };
@@ -141,8 +140,7 @@ export const applyHeroicAwakening = (
   combatant.heroicAwakening.affixes = result.affixes.slice(0, 3);
   combatant.heroicAwakening.tier = result.tier;
 
-  combatant.heroicAwakening.bonuses.tierBonus =
-    result.bonuses.tierBonus;
+  combatant.heroicAwakening.bonuses.tierBonus = result.bonuses.tierBonus;
   combatant.heroicAwakening.bonuses.acBonus = result.bonuses.acBonus;
   combatant.heroicAwakening.bonuses.savingThrowBonus =
     result.bonuses.savingThrowBonus;

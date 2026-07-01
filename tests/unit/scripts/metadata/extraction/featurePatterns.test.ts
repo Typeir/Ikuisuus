@@ -235,9 +235,7 @@ describe('featurePatterns', () => {
     });
 
     it('tierBonus should match', () => {
-      expect(TEMPLATES.tierBonus.test('your tier bonus')).toBe(
-        true,
-      );
+      expect(TEMPLATES.tierBonus.test('your tier bonus')).toBe(true);
     });
 
     it('classLevel should capture class name', () => {

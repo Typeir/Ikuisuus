@@ -62,11 +62,7 @@ describe('ToolsTable', () => {
     ];
     render(
       <NextIntlClientProvider locale='en' messages={testMessages}>
-        <ToolsTable
-          tools={toolsWithProf}
-          tierBonus={3}
-          onChange={vi.fn()}
-        />
+        <ToolsTable tools={toolsWithProf} tierBonus={3} onChange={vi.fn()} />
       </NextIntlClientProvider>,
     );
     expect(screen.getByText('+3')).toBeTruthy();
@@ -194,12 +190,7 @@ describe('ToolsTable', () => {
     const onChange = vi.fn();
     render(
       <NextIntlClientProvider locale='en' messages={testMessages}>
-        <ToolsTable
-          tools={TOOLS}
-          tierBonus={3}
-          onChange={onChange}
-          readOnly
-        />
+        <ToolsTable tools={TOOLS} tierBonus={3} onChange={onChange} readOnly />
       </NextIntlClientProvider>,
     );
     const toolRow = screen.getByText("Thieves' Tools").closest('tr');

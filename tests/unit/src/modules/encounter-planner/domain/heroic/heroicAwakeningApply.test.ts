@@ -66,9 +66,7 @@ function makeCombatant(
  * rollAffix() would always return 10 which maps to "Reroll".
  */
 function mockHighRolls(): void {
-  vi.spyOn(Math, 'random')
-    .mockReturnValueOnce(0.99)
-    .mockReturnValue(0.5);
+  vi.spyOn(Math, 'random').mockReturnValueOnce(0.99).mockReturnValue(0.5);
 }
 
 /**
@@ -170,13 +168,8 @@ describe('applyHeroicAwakening', () => {
 
     applyHeroicAwakening(combatant, 'CR 5');
 
-    if (
-      combatant.heroicAwakening.awakened &&
-      combatant.tierBonus !== null
-    ) {
-      expect(combatant.tierBonusOverride).toBeGreaterThan(
-        combatant.tierBonus,
-      );
+    if (combatant.heroicAwakening.awakened && combatant.tierBonus !== null) {
+      expect(combatant.tierBonusOverride).toBeGreaterThan(combatant.tierBonus);
     }
   });
 });
