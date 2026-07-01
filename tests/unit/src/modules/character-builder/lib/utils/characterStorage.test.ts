@@ -15,23 +15,23 @@ import {
 import { describe, expect, it } from 'vitest';
 
 describe('computeTierBonus', () => {
-  it('should return 2 for levels 1-4', () => {
-    expect(computeTierBonus(1)).toBe(2);
+  it('should return 1 for levels 1-3', () => {
+    expect(computeTierBonus(1)).toBe(1);
+    expect(computeTierBonus(3)).toBe(1);
+  });
+
+  it('should return 2 for levels 4-6', () => {
     expect(computeTierBonus(4)).toBe(2);
+    expect(computeTierBonus(6)).toBe(2);
   });
 
-  it('should return 3 for levels 5-8', () => {
-    expect(computeTierBonus(5)).toBe(3);
-    expect(computeTierBonus(8)).toBe(3);
+  it('should return 3 for levels 7-9', () => {
+    expect(computeTierBonus(7)).toBe(3);
+    expect(computeTierBonus(9)).toBe(3);
   });
 
-  it('should return 4 for levels 9-12', () => {
-    expect(computeTierBonus(9)).toBe(4);
-    expect(computeTierBonus(12)).toBe(4);
-  });
-
-  it('should return 6 for level 20', () => {
-    expect(computeTierBonus(20)).toBe(6);
+  it('should return 7 for level 20', () => {
+    expect(computeTierBonus(20)).toBe(7);
   });
 });
 

@@ -289,7 +289,7 @@ describe('shared token recognizers', () => {
 
     it('should parse tier bonus reference', () => {
       const result = recognizeTemplate('add your tier bonus');
-      expect(result).toEqual({ expr: 'prof' });
+      expect(result).toEqual({ expr: 'tier' });
     });
 
     it('should parse class level reference', () => {

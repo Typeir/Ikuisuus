@@ -143,7 +143,7 @@ describe('ActiveSheetContext', () => {
     await user.click(screen.getByText('set-wizard'));
     expect(screen.getByTestId('level').textContent).toBe('5');
     expect(Number(screen.getByTestId('pb').textContent)).toBeGreaterThanOrEqual(
-      3,
+      2,
     );
   });
 

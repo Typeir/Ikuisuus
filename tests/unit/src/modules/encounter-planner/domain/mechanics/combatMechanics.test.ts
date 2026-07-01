@@ -259,9 +259,9 @@ describe('combatMechanics', () => {
 
     it('should apply tier bonus override when awakened', () => {
       vi.mocked(Math.random).mockReturnValueOnce(0.99).mockReturnValue(0.01);
-      const combatant = createTestCombatant({ tierBonus: 3 });
+      const combatant = createTestCombatant({ tierBonus: 2 });
       applyHeroicAwakening(combatant, 'CR 5');
-      expect(combatant.tierBonusOverride).toBeGreaterThan(3);
+      expect(combatant.tierBonusOverride).toBeGreaterThan(2);
     });
 
     it('should not set proficiency override if tierBonus is null', () => {

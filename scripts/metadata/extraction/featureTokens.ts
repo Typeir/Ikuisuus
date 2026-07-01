@@ -265,7 +265,7 @@ export function recognizeTemplate(text: string): TemplateToken | null {
     return { expr: `ability:${short?.toUpperCase() ?? modMatch[1]}` };
   }
   if (TEMPLATES.tierBonus.test(text)) {
-    return { expr: 'prof' };
+    return { expr: 'tier' };
   }
   const levelMatch = text.match(TEMPLATES.classLevel);
   if (levelMatch) {
@@ -273,7 +273,7 @@ export function recognizeTemplate(text: string): TemplateToken | null {
   }
   const formulaMatch = text.match(TEMPLATES.compositeFormula);
   if (formulaMatch) {
-    return { expr: `${formulaMatch[1]}+Prof+${formulaMatch[2].toUpperCase()}` };
+    return { expr: `${formulaMatch[1]}+Tier+${formulaMatch[2].toUpperCase()}` };
   }
   return null;
 }

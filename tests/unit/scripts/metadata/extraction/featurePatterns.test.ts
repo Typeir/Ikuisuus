@@ -246,7 +246,7 @@ describe('featurePatterns', () => {
     });
 
     it('compositeFormula should capture components', () => {
-      const m = '8 + Prof + CHA modifier'.match(TEMPLATES.compositeFormula);
+      const m = '8 + Tier + CHA modifier'.match(TEMPLATES.compositeFormula);
       expect(m![1]).toBe('8');
       expect(m![2]).toBe('CHA');
     });

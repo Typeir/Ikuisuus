@@ -166,7 +166,7 @@ describe('applyHeroicAwakening', () => {
   it('should set tierBonusOverride when awakened', () => {
     mockHighRolls();
 
-    const combatant = makeCombatant({ tierBonus: 3 });
+    const combatant = makeCombatant({ tierBonus: 2 });
 
     applyHeroicAwakening(combatant, 'CR 5');
 

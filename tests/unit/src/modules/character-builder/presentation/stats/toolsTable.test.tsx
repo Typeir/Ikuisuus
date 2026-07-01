@@ -208,6 +208,3 @@ describe('ToolsTable', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 });
-t.toHaveBeenCalled();
-  });
-});

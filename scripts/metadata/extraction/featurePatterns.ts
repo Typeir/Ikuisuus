@@ -158,10 +158,10 @@ export const RESOURCES = {
 export const TEMPLATES = {
   abilityModifier:
     /your\s+(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+modifier/i,
-  tierBonus: /your\s+proficiency\s+bonus/i,
+  tierBonus: /your\s+tier\s+bonus/i,
   classLevel: /your\s+(\w+)\s+level/i,
   compositeFormula:
-    /(\d+)\s*\+\s*(?:your\s+)?(?:proficiency\s+bonus|Prof(?:iciency)?)\s*\+\s*(?:your\s+)?(STR|DEX|CON|INT|WIS|CHA)\s+mod(?:ifier)?/i,
+    /(\d+)\s*\+\s*(?:your\s+)?(?:tier\s+bonus|Tier)\s*\+\s*(?:your\s+)?(STR|DEX|CON|INT|WIS|CHA)\s+mod(?:ifier)?/i,
 } as const;
 
 /**

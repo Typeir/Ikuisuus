@@ -86,7 +86,7 @@ const rollAffixesAndDetermineTier = (
     tier,
     affixes,
     bonuses: {
-      tierBonus: bonuses.proficiency,
+      tierBonus: bonuses.tier,
       acBonus: bonuses.ac,
       savingThrowBonus: bonuses.savingThrow,
     },
