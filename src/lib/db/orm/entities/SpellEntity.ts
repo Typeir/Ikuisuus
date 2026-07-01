@@ -41,7 +41,7 @@ export class SpellComponentEmbed {
   material?: boolean | null;
 
   @Property({
-    type: 'string',
+    type: 'text',
     fieldName: 'material_description',
     nullable: true,
   })
@@ -128,7 +128,7 @@ export class SpellEntity {
   hasRitual?: boolean | null;
 
   /** @property {string | null} description - Prose description extracted from the spell MDX */
-  @Property({ type: 'text', nullable: true })
+  @Property({ type: 'text', columnType: 'text', nullable: true })
   description?: string | null;
 
   @Property({ fieldName: 'casting_time', type: 'string[]' })
