@@ -91,7 +91,7 @@ export const PROFICIENCY = {
  * @property {RegExp} variableCost - Variable/choice BP cost in label
  * @property {RegExp} shortRest - Short rest recovery
  * @property {RegExp} longRest - Long rest recovery
- * @property {RegExp} limitedUses - Limited uses per proficiency bonus
+ * @property {RegExp} limitedUses - Limited uses per tier bonus
  * @property {RegExp} armorClass - AC or armor class mechanic
  * @property {RegExp} savingThrow - Saving throw or spell save DC
  * @property {RegExp} weapon - Weapon, melee, or natural weapon mechanic
@@ -109,7 +109,7 @@ export const BOON_MECHANICS = {
   variableCost: /\bvariable\b|\bchoose one\b|\bpick one\b|\bpick any\b/i,
   shortRest: /\bshort rest\b/i,
   longRest: /\blong rest\b/i,
-  limitedUses: /\b(per|equal to your proficiency bonus)\b/i,
+  limitedUses: /\b(per|equal to your tier bonus)\b/i,
   armorClass: /\bac\b|\barmor class\b|\bunarmored\b/i,
   savingThrow: /\bsaving throws?\b|\bspell save dc\b|\bsave dc\b/i,
   weapon: /\bweapon\b|\bmelee\b|\bnatural weapon\b|\bopportunity attack\b/i,

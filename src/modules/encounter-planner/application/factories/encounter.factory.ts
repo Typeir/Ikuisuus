@@ -34,7 +34,7 @@ type MonsterLibraryData = {
   link?: string;
   title?: string;
   cr?: string | number;
-  proficiencyBonus?: number | null;
+  tierBonus?: number | null;
   speed?: { raw?: string } | string | null;
   tags?: string[];
 };
@@ -73,7 +73,7 @@ export const createEmptyCreature = (): CreatureEntry => {
     conditions: [],
     initiativeValue: null,
     initiativeBonus,
-    proficiencyBonus: null,
+    tierBonus: null,
     speed: null,
     hpFormula: null,
     details: {
@@ -141,7 +141,7 @@ export const createCreatureFromMonster = (
     ? `/${locale}${monsterData.link}`
     : undefined;
   const crText = monsterData.cr ? `CR ${monsterData.cr}` : undefined;
-  const proficiencyBonus = monsterData.proficiencyBonus || null;
+  const tierBonus = monsterData.tierBonus || null;
   const speed =
     typeof monsterData.speed === 'string'
       ? monsterData.speed
@@ -160,7 +160,7 @@ export const createCreatureFromMonster = (
     conditions: [],
     initiativeValue: null,
     initiativeBonus,
-    proficiencyBonus,
+    tierBonus,
     speed,
     hpFormula,
     details: {

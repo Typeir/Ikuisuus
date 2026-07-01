@@ -19,7 +19,7 @@ const DEFAULT_PROPS = {
   ac: 15,
   initiativeBonus: 2,
   speedOverride: 30,
-  proficiencyBonus: 3,
+  tierBonus: 3,
   vocations: [],
   hitDiceLog: [],
   onHitDiceCommit: vi.fn(),
@@ -52,7 +52,7 @@ describe('CombatStatsRow', () => {
       <CombatStatsRow
         {...DEFAULT_PROPS}
         initiativeBonus={3}
-        proficiencyBonus={2}
+        tierBonus={2}
       />,
     );
     expect(screen.getByText('+3')).toBeTruthy();
@@ -73,8 +73,8 @@ describe('CombatStatsRow', () => {
     expect(screen.getAllByText('—').length).toBeGreaterThan(0);
   });
 
-  it('renders proficiency bonus with + prefix', () => {
-    render(<CombatStatsRow {...DEFAULT_PROPS} proficiencyBonus={3} />);
+  it('renders tier bonus with + prefix', () => {
+    render(<CombatStatsRow {...DEFAULT_PROPS} tierBonus={3} />);
     expect(screen.getByText('+3')).toBeTruthy();
   });
 });

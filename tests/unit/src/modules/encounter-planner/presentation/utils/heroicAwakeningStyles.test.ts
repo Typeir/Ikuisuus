@@ -31,7 +31,7 @@ const createMockAwakeningState = (
   awakened: false,
   tier: 'none',
   affixes: [],
-  bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+  bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
   hpOverride: null,
   ...overrides,
 });

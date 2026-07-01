@@ -142,7 +142,7 @@ const rowToMonster = (row: MonsterEntity): MonsterMetadata => ({
   creatureType: orUndef(row.creatureType),
   alignment: orUndef(row.alignment),
   cr: orUndef(row.cr),
-  proficiencyBonus: orUndef(row.proficiencyBonus),
+  tierBonus: orUndef(row.tierBonus),
   ac: mapAC(row),
   hp: mapHP(row),
   speed: mapSpeed(row),

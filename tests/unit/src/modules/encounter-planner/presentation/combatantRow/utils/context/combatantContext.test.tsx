@@ -41,8 +41,8 @@ function createMockCombatant(
     conditions: [],
     initiativeValue: 15,
     initiativeBonus: 2,
-    proficiencyBonus: 3,
-    proficiencyBonusOverride: null,
+    tierBonus: 3,
+    tierBonusOverride: null,
     speed: '30 ft.',
     hpFormula: '10d10 + 50',
     details: {
@@ -60,7 +60,7 @@ function createMockCombatant(
       tier: 'none',
       affixes: [],
       bonuses: {
-        proficiencyBonus: 0,
+        tierBonus: 0,
         acBonus: 0,
         savingThrowBonus: 0,
       },

@@ -22,7 +22,7 @@ import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
  * Create a minimal InProgressCombatant from a party member name.
  * Party members have no HP, AC, stats, or mechanics — only name, initiative, and slain toggle.
  * When an optional CharacterSheet is provided, its HP, AC, ability scores,
- * initiative bonus, and proficiency bonus are seeded into the combatant.
+ * initiative bonus, and tier bonus are seeded into the combatant.
  *
  * @function createPartyMemberCombatant
  * @param {string} name - Character name
@@ -51,8 +51,8 @@ export const createPartyMemberCombatant = (
   conditions: [],
   initiativeValue: null,
   initiativeBonus: character?.initiativeBonus ?? 0,
-  proficiencyBonus: character?.proficiencyBonus ?? null,
-  proficiencyBonusOverride: null,
+  tierBonus: character?.tierBonus ?? null,
+  tierBonusOverride: null,
   speed: null,
   hpFormula: null,
   details: { buffs: [], items: [], spells: [], affixes: [] },
@@ -65,7 +65,7 @@ export const createPartyMemberCombatant = (
     awakened: false,
     tier: 'none',
     affixes: [],
-    bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+    bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
   mechanics: {

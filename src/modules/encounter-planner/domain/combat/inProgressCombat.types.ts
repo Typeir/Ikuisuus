@@ -53,7 +53,7 @@ export interface CombatantMechanics {
  * @property {'none'|'awakened'|'legendary'|'mythic'} tier - Current awakening tier
  * @property {AffixEntry[]} affixes - Applied heroic affixes
  * @property {Object} bonuses - Stat bonuses from awakening tier
- * @property {number} bonuses.proficiencyBonus - Additional proficiency bonus
+ * @property {number} bonuses.tierBonus - Additional tier bonus
  * @property {number} bonuses.acBonus - Additional AC bonus
  * @property {number} bonuses.savingThrowBonus - Additional save bonus
  * @property {number|null} hpOverride - Overridden hpMax if maximized and scaled
@@ -65,7 +65,7 @@ export interface HeroicAwakeningState {
   tier: 'none' | 'awakened' | 'legendary' | 'mythic';
   affixes: AffixEntry[];
   bonuses: {
-    proficiencyBonus: number;
+    tierBonus: number;
     acBonus: number;
     savingThrowBonus: number;
   };
@@ -88,8 +88,8 @@ export interface HeroicAwakeningState {
  * @property {Array<{id: string, text: string}>} conditions - Active conditions
  * @property {number|null} initiativeValue - Rolled initiative
  * @property {number} initiativeBonus - Initiative modifier
- * @property {number|null} proficiencyBonus - Proficiency bonus
- * @property {number|null} proficiencyBonusOverride - Overridden proficiency for Heroic Awakening
+ * @property {number|null} tierBonus - tier bonus
+ * @property {number|null} tierBonusOverride - Overridden proficiency for Heroic Awakening
  * @property {string|null} speed - Movement speed string
  * @property {string|null} hpFormula - Hit dice formula
  * @property {Object} details - Extended creature details
@@ -116,8 +116,8 @@ export interface InProgressCombatant {
   conditions: Array<{ id: string; text: string }>;
   initiativeValue: number | null;
   initiativeBonus: number;
-  proficiencyBonus: number | null;
-  proficiencyBonusOverride: number | null;
+  tierBonus: number | null;
+  tierBonusOverride: number | null;
   speed: string | null;
   hpFormula: string | null;
   details: {

@@ -29,8 +29,8 @@ function makeCombatant(
     conditions: [],
     initiativeValue: 12,
     initiativeBonus: 2,
-    proficiencyBonus: 3,
-    proficiencyBonusOverride: null,
+    tierBonus: 3,
+    tierBonusOverride: null,
     speed: '30 ft.',
     hpFormula: '6d10+12',
     details: { buffs: [], items: [], spells: [], affixes: [] },
@@ -42,7 +42,7 @@ function makeCombatant(
       awakened: false,
       tier: 'none',
       affixes: [],
-      bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+      bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
       hpOverride: null,
     },
     mechanics: {
@@ -163,19 +163,19 @@ describe('applyHeroicAwakening', () => {
     }
   });
 
-  it('should set proficiencyBonusOverride when awakened', () => {
+  it('should set tierBonusOverride when awakened', () => {
     mockHighRolls();
 
-    const combatant = makeCombatant({ proficiencyBonus: 3 });
+    const combatant = makeCombatant({ tierBonus: 3 });
 
     applyHeroicAwakening(combatant, 'CR 5');
 
     if (
       combatant.heroicAwakening.awakened &&
-      combatant.proficiencyBonus !== null
+      combatant.tierBonus !== null
     ) {
-      expect(combatant.proficiencyBonusOverride).toBeGreaterThan(
-        combatant.proficiencyBonus,
+      expect(combatant.tierBonusOverride).toBeGreaterThan(
+        combatant.tierBonus,
       );
     }
   });

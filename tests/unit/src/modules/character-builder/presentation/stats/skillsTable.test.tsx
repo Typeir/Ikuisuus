@@ -15,8 +15,8 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 const SKILLS: CharacterSkill[] = [
-  { name: 'Acrobatics', ability: 'dex', proficiency: 'none' },
-  { name: 'Athletics', ability: 'str', proficiency: 'proficient' },
+  { name: 'Acrobatics', ability: 'dex', tier: 'none' },
+  { name: 'Athletics', ability: 'str', tier: 'proficient' },
 ];
 
 const ABILITY_SCORES = { str: 14, dex: 12, con: 10, int: 10, wis: 10, cha: 10 };
@@ -27,7 +27,7 @@ describe('SkillsTable', () => {
       <SkillsTable
         skills={SKILLS}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={vi.fn()}
       />,
     );
@@ -40,7 +40,7 @@ describe('SkillsTable', () => {
       <SkillsTable
         skills={SKILLS}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={vi.fn()}
       />,
     );
@@ -52,7 +52,7 @@ describe('SkillsTable', () => {
       <SkillsTable
         skills={SKILLS}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={vi.fn()}
       />,
     );
@@ -61,13 +61,13 @@ describe('SkillsTable', () => {
 
   it('shows correct bonus for familiarity skill', () => {
     const skillsWithFamiliarity: CharacterSkill[] = [
-      { name: 'Acrobatics', ability: 'dex', proficiency: 'familiarity' },
+      { name: 'Acrobatics', ability: 'dex', tier: 'familiarity' },
     ];
     render(
       <SkillsTable
         skills={skillsWithFamiliarity}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={vi.fn()}
       />,
     );
@@ -76,13 +76,13 @@ describe('SkillsTable', () => {
 
   it('shows correct bonus for expertise skill', () => {
     const skillsWithExpertise: CharacterSkill[] = [
-      { name: 'Acrobatics', ability: 'dex', proficiency: 'expertise' },
+      { name: 'Acrobatics', ability: 'dex', tier: 'expertise' },
     ];
     render(
       <SkillsTable
         skills={skillsWithExpertise}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={vi.fn()}
       />,
     );
@@ -95,7 +95,7 @@ describe('SkillsTable', () => {
       <SkillsTable
         skills={SKILLS}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={onChange}
       />,
     );
@@ -103,7 +103,7 @@ describe('SkillsTable', () => {
     const firstPip = acrobaticsRow?.querySelector('button');
     await userEvent.click(firstPip!);
     expect(onChange).toHaveBeenCalledOnce();
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('familiarity');
+    expect(onChange.mock.calls[0][0][0].tier).toBe('familiarity');
   });
 
   it('cycles through proficiency levels with pip clicks', async () => {
@@ -112,7 +112,7 @@ describe('SkillsTable', () => {
       <SkillsTable
         skills={SKILLS}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={onChange}
       />,
     );
@@ -121,58 +121,58 @@ describe('SkillsTable', () => {
     let acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
     let pips = acrobaticsRow?.querySelectorAll('button');
     await userEvent.click(pips![0]);
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('familiarity');
+    expect(onChange.mock.calls[0][0][0].tier).toBe('familiarity');
 
     // Click 2: familiarity -> proficient (second pip)
     onChange.mockClear();
     rerender(
       <SkillsTable
         skills={[
-          { name: 'Acrobatics', ability: 'dex', proficiency: 'familiarity' },
+          { name: 'Acrobatics', ability: 'dex', tier: 'familiarity' },
         ]}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={onChange}
       />,
     );
     acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
     pips = acrobaticsRow?.querySelectorAll('button');
     await userEvent.click(pips![1]);
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('proficient');
+    expect(onChange.mock.calls[0][0][0].tier).toBe('proficient');
 
     // Click 3: proficient -> expertise (third pip)
     onChange.mockClear();
     rerender(
       <SkillsTable
         skills={[
-          { name: 'Acrobatics', ability: 'dex', proficiency: 'proficient' },
+          { name: 'Acrobatics', ability: 'dex', tier: 'proficient' },
         ]}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={onChange}
       />,
     );
     acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
     pips = acrobaticsRow?.querySelectorAll('button');
     await userEvent.click(pips![2]);
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('expertise');
+    expect(onChange.mock.calls[0][0][0].tier).toBe('expertise');
 
     // Click 4: expertise -> savanthood (fourth pip)
     onChange.mockClear();
     rerender(
       <SkillsTable
         skills={[
-          { name: 'Acrobatics', ability: 'dex', proficiency: 'expertise' },
+          { name: 'Acrobatics', ability: 'dex', tier: 'expertise' },
         ]}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={onChange}
       />,
     );
     acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
     pips = acrobaticsRow?.querySelectorAll('button');
     await userEvent.click(pips![3]);
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('savanthood');
+    expect(onChange.mock.calls[0][0][0].tier).toBe('savanthood');
   });
 
   it('does not call onChange in readOnly mode', async () => {
@@ -181,7 +181,7 @@ describe('SkillsTable', () => {
       <SkillsTable
         skills={SKILLS}
         abilityScores={ABILITY_SCORES}
-        proficiencyBonus={3}
+        tierBonus={3}
         onChange={onChange}
         readOnly
       />,

@@ -297,12 +297,12 @@ function parseCR(rawChallenge?: string): string | undefined {
 }
 
 /**
- * Parses proficiency bonus.
+ * Parses tier bonus.
  *
- * @param {string} [rawPB] - Raw proficiency bonus string
- * @returns {number | undefined} Proficiency bonus value
+ * @param {string} [rawPB] - Raw tier bonus string
+ * @returns {number | undefined} tier bonus value
  */
-function parseProficiencyBonus(rawPB?: string): number | undefined {
+function parseTierBonus(rawPB?: string): number | undefined {
   if (!rawPB) return undefined;
   const m = rawPB.match(UTILITY.numericExtract);
   return m ? Number(m[1]) : undefined;
@@ -609,9 +609,7 @@ function parseStatBlockSection(
   const condImm = splitList(bulletMap['Condition Immunities']);
   const skills = bulletMap['Skills'] ? splitList(bulletMap['Skills']) : [];
   const cr = parseCR(bulletMap['Challenge']);
-  const proficiencyBonus = parseProficiencyBonus(
-    bulletMap['Proficiency Bonus'],
-  );
+  const tierBonus = parseTierBonus(bulletMap['Tier Bonus']);
 
   const linesToScan =
     statBlockIndex === 0 && !isBlockquote ? allLines : sectionLines;
@@ -738,7 +736,7 @@ function parseStatBlockSection(
     senses,
     languages: languages.length ? languages : undefined,
     cr,
-    proficiencyBonus,
+    tierBonus,
     tags: tags.length ? tags : undefined,
     image,
     indexVersion: 2,

@@ -190,7 +190,7 @@ export function usePlayModeHandlers({
       conditions: [],
       initiativeValue: null,
       initiativeBonus: 0,
-      proficiencyBonus: null,
+      tierBonus: null,
       speed: null,
       hpFormula: null,
       details: {

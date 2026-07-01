@@ -12,13 +12,13 @@
  */
 
 import {
-    Embeddable,
-    Embedded,
-    Entity,
-    Index,
-    PrimaryKey,
-    Property,
-    Unique,
+  Embeddable,
+  Embedded,
+  Entity,
+  Index,
+  PrimaryKey,
+  Property,
+  Unique,
 } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
@@ -210,11 +210,11 @@ export class MonsterEntity {
 
   @Property({
     type: 'number',
-    fieldName: 'proficiency_bonus',
+    fieldName: 'tier_bonus',
     columnType: 'smallint',
     nullable: true,
   })
-  proficiencyBonus?: number | null;
+  tierBonus?: number | null;
 
   @Embedded(() => MonsterACEmbed, { prefix: 'ac_', object: false })
   ac = new MonsterACEmbed();

@@ -1,0 +1,41 @@
+import React from 'react';
+import { useTranslations } from 'next-intl';
+
+interface CombatStatsRowProps {
+  ac: number;
+  hpMax: number;
+  hpCurrent: number;
+  tempHp: number;
+  initiativeBonus: number;
+  tierBonus: number;
+  speedOverride: number | null;
+}
+
+export function CombatStatsRow({
+  ac,
+  hpMax,
+  hpCurrent,
+  tempHp,
+  initiativeBonus,
+  tierBonus,
+  speedOverride,
+}: CombatStatsRowProps) {
+  const t = useTranslations('characterSheet');
+
+  const pbStr = tierBonus >= 0
+    ? `+${tierBonus}`
+    : `${tierBonus}`;
+
+  return (
+    <div className="combat-stats-row" aria-label={t('ariaCombatStats')}>
+      <div className="stat-chip">
+        <span className="stat-label">{t('tierShort')}</span>
+        <span className="stat-value">{pbStr}</span>
+      </div>
+      <div className="stat-chip">
+        <span className="stat-label">HP</span>
+        <span className="stat-value">{hpCurrent}/{hpMax}</span>
+      </div>
+    </div>
+  );
+}

@@ -2,36 +2,36 @@
  * Character Storage Utilities Unit Tests
  *
  * @fileoverview Tests for pure helper functions in characterStorage.
- * Covers proficiency bonus math, ability modifier math, and the createEmptyCharacter factory.
+ * Covers tier bonus math, ability modifier math, and the createEmptyCharacter factory.
  */
 
 import {
     SKILL_DEFAULTS,
     SPELL_SLOT_DEFAULTS,
     computeAbilityModifier,
-    computeProficiencyBonus,
+    computeTierBonus,
     createEmptyCharacter,
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { describe, expect, it } from 'vitest';
 
-describe('computeProficiencyBonus', () => {
+describe('computeTierBonus', () => {
   it('should return 2 for levels 1-4', () => {
-    expect(computeProficiencyBonus(1)).toBe(2);
-    expect(computeProficiencyBonus(4)).toBe(2);
+    expect(computeTierBonus(1)).toBe(2);
+    expect(computeTierBonus(4)).toBe(2);
   });
 
   it('should return 3 for levels 5-8', () => {
-    expect(computeProficiencyBonus(5)).toBe(3);
-    expect(computeProficiencyBonus(8)).toBe(3);
+    expect(computeTierBonus(5)).toBe(3);
+    expect(computeTierBonus(8)).toBe(3);
   });
 
   it('should return 4 for levels 9-12', () => {
-    expect(computeProficiencyBonus(9)).toBe(4);
-    expect(computeProficiencyBonus(12)).toBe(4);
+    expect(computeTierBonus(9)).toBe(4);
+    expect(computeTierBonus(12)).toBe(4);
   });
 
   it('should return 6 for level 20', () => {
-    expect(computeProficiencyBonus(20)).toBe(6);
+    expect(computeTierBonus(20)).toBe(6);
   });
 });
 
@@ -93,7 +93,7 @@ describe('createEmptyCharacter', () => {
   it('should produce a character with all 19 skills at none proficiency', () => {
     const ch = createEmptyCharacter();
     expect(ch.skills).toHaveLength(19);
-    ch.skills.forEach((s) => expect(s.proficiency).toBe('none'));
+    ch.skills.forEach((s) => expect(s.tier).toBe('none'));
   });
 });
 

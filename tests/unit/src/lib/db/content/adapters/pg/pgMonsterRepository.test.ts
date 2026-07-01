@@ -56,7 +56,7 @@ const entityRow = {
   creatureType: 'aberration',
   alignment: 'lawful evil',
   cr: '10',
-  proficiencyBonus: 4,
+  tierBonus: 4,
   ac: { value: 17, notes: 'natural armor', raw: null },
   hp: { average: 135, formula: '18d10+36', raw: null },
   speed: {

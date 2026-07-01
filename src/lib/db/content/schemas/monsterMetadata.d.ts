@@ -152,7 +152,7 @@ export interface MonsterSenses {
  * @property {MonsterSenses} [senses] - Senses
  * @property {string[]} [languages] - Known languages
  * @property {string} [cr] - Challenge rating (fractional or whole, e.g. "1/4", "10")
- * @property {number} [proficiencyBonus] - Proficiency bonus
+ * @property {number} [tierBonus] - Tier bonus
  * @property {string[]} [tags] - Gameplay tags for filtering and search
  * @property {string} [image] - Image path extracted from BlendedImage in MDX (e.g. "/library/images/Albedo.webp")
  * @property {string} [description] - Short prose lore description extracted from the stat block MDX
@@ -180,7 +180,7 @@ export interface MonsterMetadata {
   senses?: MonsterSenses;
   languages?: string[];
   cr?: string;
-  proficiencyBonus?: number;
+  tierBonus?: number;
   tags?: string[];
   image?: string;
   description?: string;

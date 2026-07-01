@@ -40,7 +40,7 @@
   "temp": "Thp",
   "ac": "AC",
   "initiativeBonus": "Init Bonus",
-  "proficiencyBonus": "Prof Bonus",
+  "tierBonus": "Tier Bonus",
   "speed": "Speed",
   "initiative": "Initiative",
   "rollInitiative": "Roll Initiative",

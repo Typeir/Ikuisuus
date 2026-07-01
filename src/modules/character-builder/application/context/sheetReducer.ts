@@ -1,13 +1,13 @@
 /**
  * @fileoverview Active Sheet Reducer
  * @description Pure reducer for the active character sheet. Owns the
- * "experience is source of truth" invariant: `level` and `proficiencyBonus`
+ * "experience is source of truth" invariant: `level` and `tierBonus`
  * are derived cache fields, always recomputed from
  * `max(getLevelFromXP(experience), sumVocationLevels(vocations))`. Increasing
  * vocation-level sum past the XP-derived level bumps `experience` up to the
  * corresponding XP threshold (the "vocation-sum floor"). Lowering XP is
  * clamped to that same floor. Generic `PATCH` strips direct writes to
- * `level` / `proficiencyBonus` so consumers cannot desync the cache.
+ * `level` / `tierBonus` so consumers cannot desync the cache.
  *
  * @module lib/components/characterSheet/context/sheetReducer
  * @version 1.0.0
@@ -16,7 +16,7 @@
  */
 
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
-import { computeProficiencyBonus } from '@/modules/character-builder/lib/utils/characterStorage';
+import { computeTierBonus } from '@/modules/character-builder/lib/utils/characterStorage';
 import {
     getLevelFromXP,
     getXPForLevel,
@@ -98,12 +98,12 @@ const vocationXpFloor = (
 };
 
 /**
- * Recomputes the cache fields `level` and `proficiencyBonus` from the draft's
+ * Recomputes the cache fields `level` and `tierBonus` from the draft's
  * authoritative `experience` and `vocations` fields.
  *
  * @function withRecomputedLevelCache
  * @param {CharacterSheetType} draft - Draft to normalize
- * @returns {CharacterSheetType} Draft with `level` and `proficiencyBonus` synced
+ * @returns {CharacterSheetType} Draft with `level` and `tierBonus` synced
  */
 const withRecomputedLevelCache = (
   draft: CharacterSheetType,
@@ -117,7 +117,7 @@ const withRecomputedLevelCache = (
   return {
     ...draft,
     level: effectiveLevel,
-    proficiencyBonus: computeProficiencyBonus(effectiveLevel),
+    tierBonus: computeTierBonus(effectiveLevel),
   };
 };
 
@@ -137,7 +137,7 @@ export const sheetReducer = (
     case 'PATCH': {
       const {
         level: _l,
-        proficiencyBonus: _pb,
+        tierBonus: _pb,
         experience,
         vocations,
         ...rest

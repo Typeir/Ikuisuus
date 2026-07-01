@@ -255,7 +255,7 @@ function extractProficiencyTags(normalizedText: string): string[] {
     if (skillPattern.test(lower)) {
       tags.add('mechanic:skill-proficiency');
       tags.add(
-        `mechanic:skill-proficiency:${skill.replace(TEXT.whitespaceCollapse, '-')}`,
+        `mechanic:skill-tier:${skill.replace(TEXT.whitespaceCollapse, '-')}`,
       );
     }
   }
@@ -263,7 +263,7 @@ function extractProficiencyTags(normalizedText: string): string[] {
   for (const entry of PROFICIENCY.tools) {
     if (entry.pattern.test(lower)) {
       tags.add('mechanic:tool-proficiency');
-      tags.add(`mechanic:tool-proficiency:${entry.tag}`);
+      tags.add(`mechanic:tool-tier:${entry.tag}`);
     }
   }
 

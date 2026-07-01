@@ -45,7 +45,7 @@ const rollAffixesAndDetermineTier = (
 ): HeroicAwakeningState => {
   let tier: 'awakened' | 'legendary' | 'mythic' = 'awakened';
   let affixCount = 1;
-  let bonuses = { proficiency: 1, ac: 1, savingThrow: 1, hpPerCr: 0 };
+  let bonuses = { tier: 1, ac: 1, savingThrow: 1, hpPerCr: 0 };
 
   const affixes: AffixEntry[] = [];
   const usedAffixNames = new Set<string>();
@@ -58,11 +58,11 @@ const rollAffixesAndDetermineTier = (
       if (tier === 'awakened') {
         tier = 'legendary';
         affixCount = 2;
-        bonuses = { proficiency: 2, ac: 2, savingThrow: 2, hpPerCr: 2 };
+        bonuses = { tier: 2, ac: 2, savingThrow: 2, hpPerCr: 2 };
       } else if (tier === 'legendary') {
         tier = 'mythic';
         affixCount = 3;
-        bonuses = { proficiency: 3, ac: 3, savingThrow: 3, hpPerCr: 3 };
+        bonuses = { tier: 3, ac: 3, savingThrow: 3, hpPerCr: 3 };
       }
       affixRoll = rollAffix();
       affixName = getAffixFromRoll(affixRoll);
@@ -86,7 +86,7 @@ const rollAffixesAndDetermineTier = (
     tier,
     affixes,
     bonuses: {
-      proficiencyBonus: bonuses.proficiency,
+      tierBonus: bonuses.proficiency,
       acBonus: bonuses.ac,
       savingThrowBonus: bonuses.savingThrow,
     },
@@ -141,21 +141,21 @@ export const applyHeroicAwakening = (
   combatant.heroicAwakening.affixes = result.affixes.slice(0, 3);
   combatant.heroicAwakening.tier = result.tier;
 
-  combatant.heroicAwakening.bonuses.proficiencyBonus =
-    result.bonuses.proficiencyBonus;
+  combatant.heroicAwakening.bonuses.tierBonus =
+    result.bonuses.tierBonus;
   combatant.heroicAwakening.bonuses.acBonus = result.bonuses.acBonus;
   combatant.heroicAwakening.bonuses.savingThrowBonus =
     result.bonuses.savingThrowBonus;
 
-  if (combatant.proficiencyBonus !== null) {
-    combatant.proficiencyBonusOverride =
-      combatant.proficiencyBonus + result.bonuses.proficiencyBonus;
+  if (combatant.tierBonus !== null) {
+    combatant.tierBonusOverride =
+      combatant.tierBonus + result.bonuses.tierBonus;
   }
 
   combatant.ac += result.bonuses.acBonus;
 
-  if (result.bonuses.proficiencyBonus > 0 && combatant.hpMaxOverride !== null) {
-    const hpBonus = result.bonuses.proficiencyBonus * cr;
+  if (result.bonuses.tierBonus > 0 && combatant.hpMaxOverride !== null) {
+    const hpBonus = result.bonuses.tierBonus * cr;
     combatant.hpMaxOverride = Math.max(
       combatant.hpMaxOverride + hpBonus,
       combatant.hpMax,

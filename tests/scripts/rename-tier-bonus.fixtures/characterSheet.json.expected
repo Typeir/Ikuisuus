@@ -1,0 +1,10 @@
+{
+  "pageTitle": "Characters",
+  "tierShort": "Tier",
+  "ariaTierTrack": "Proficiency level",
+  "hp": "HP",
+  "ac": "AC",
+  "tierBonus": "Tier Bonus",
+  "initiative": "Initiative",
+  "speed": "Speed"
+}

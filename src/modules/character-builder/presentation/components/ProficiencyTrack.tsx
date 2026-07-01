@@ -10,11 +10,11 @@
  */
 
 import { Tooltip } from '@/lib/components/ui';
-import type { ProficiencyLevel } from '@/lib/types/character';
+import type { TierLevel } from '@/lib/types/character';
 import {
-    PROFICIENCY_CYCLE,
-    PROFICIENCY_LABELS,
-    PROFICIENCY_LEVELS,
+    TIER_CYCLE,
+    TIER_LABELS,
+    TIER_LEVELS,
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import profTrackStyles from '../CharacterSheet/proficiencyTrack.module.scss';
 
@@ -22,14 +22,14 @@ import profTrackStyles from '../CharacterSheet/proficiencyTrack.module.scss';
  * Props for ProficiencyTrack component.
  *
  * @interface ProficiencyTrackProps
- * @property {ProficiencyLevel} currentProficiency - Current proficiency level
- * @property {(level: ProficiencyLevel) => void} onChange - Fired when pip clicked
+ * @property {TierLevel} currentProficiency - Current proficiency level
+ * @property {(level: TierLevel) => void} onChange - Fired when pip clicked
  * @property {boolean} [readOnly=false] - If true, disables pip clicks
  * @property {string} [itemName='item'] - Name for tooltip key (e.g., skill name)
  */
 interface ProficiencyTrackProps {
-  currentProficiency: ProficiencyLevel;
-  onChange: (level: ProficiencyLevel) => void;
+  currentProficiency: TierLevel;
+  onChange: (level: TierLevel) => void;
   readOnly?: boolean;
   itemName?: string;
 }
@@ -47,9 +47,9 @@ export function ProficiencyTrack({
   readOnly = false,
   itemName = 'item',
 }: ProficiencyTrackProps): JSX.Element {
-  const levelIndex = PROFICIENCY_CYCLE.indexOf(currentProficiency);
+  const levelIndex = TIER_CYCLE.indexOf(currentProficiency);
 
-  const handlePipClick = (level: ProficiencyLevel): void => {
+  const handlePipClick = (level: TierLevel): void => {
     if (readOnly) return;
     const newLevel = getToggledLevel(level, currentProficiency);
     onChange(newLevel);
@@ -59,20 +59,20 @@ export function ProficiencyTrack({
    * Toggles proficiency level. If clicked level matches current, returns 'none'.
    * Otherwise returns the clicked level.
    *
-   * @param {ProficiencyLevel} clickedLevel - Level pip that was clicked
-   * @param {ProficiencyLevel} current - Current proficiency level
-   * @returns {ProficiencyLevel} - New proficiency level
+   * @param {TierLevel} clickedLevel - Level pip that was clicked
+   * @param {TierLevel} current - Current proficiency level
+   * @returns {TierLevel} - New proficiency level
    */
   const getToggledLevel = (
-    clickedLevel: ProficiencyLevel,
-    current: ProficiencyLevel,
-  ): ProficiencyLevel => (clickedLevel === current ? 'none' : clickedLevel);
+    clickedLevel: TierLevel,
+    current: TierLevel,
+  ): TierLevel => (clickedLevel === current ? 'none' : clickedLevel);
 
   return (
     <span className={profTrackStyles.profTrack} aria-hidden='true'>
-      {PROFICIENCY_LEVELS.map((level, idx) => {
+      {TIER_LEVELS.map((level, idx) => {
         const isActive = idx < levelIndex;
-        const label = PROFICIENCY_LABELS[level];
+        const label = TIER_LABELS[level];
         return (
           <Tooltip
             key={`${itemName}-pip-${idx}`}

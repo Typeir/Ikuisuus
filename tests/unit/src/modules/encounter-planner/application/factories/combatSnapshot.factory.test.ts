@@ -732,8 +732,8 @@ describe('inProgressCombatStorage', () => {
               conditions: [],
               initiativeValue: 15,
               initiativeBonus: 0,
-              proficiencyBonus: null,
-              proficiencyBonusOverride: null,
+              tierBonus: null,
+              tierBonusOverride: null,
               speed: null,
               hpFormula: null,
               details: { buffs: [], items: [], spells: [], affixes: [] },
@@ -746,7 +746,7 @@ describe('inProgressCombatStorage', () => {
                 tier: 'none',
                 affixes: [],
                 bonuses: {
-                  proficiencyBonus: 0,
+                  tierBonus: 0,
                   acBonus: 0,
                   savingThrowBonus: 0,
                 },
@@ -804,8 +804,8 @@ describe('inProgressCombatStorage', () => {
               conditions: [],
               initiativeValue: 15,
               initiativeBonus: 0,
-              proficiencyBonus: null,
-              proficiencyBonusOverride: null,
+              tierBonus: null,
+              tierBonusOverride: null,
               speed: null,
               hpFormula: null,
               details: { buffs: [], items: [], spells: [], affixes: [] },
@@ -818,7 +818,7 @@ describe('inProgressCombatStorage', () => {
                 tier: 'none',
                 affixes: [],
                 bonuses: {
-                  proficiencyBonus: 0,
+                  tierBonus: 0,
                   acBonus: 0,
                   savingThrowBonus: 0,
                 },
@@ -865,7 +865,7 @@ describe('inProgressCombatStorage', () => {
       combatant.ac = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
-      combatant.proficiencyBonus = 3;
+      combatant.tierBonus = 3;
 
       forceHeroicAwakening(combatant, 'awakened', 'en');
 
@@ -883,7 +883,7 @@ describe('inProgressCombatStorage', () => {
       combatant.ac = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
-      combatant.proficiencyBonus = 3;
+      combatant.tierBonus = 3;
 
       // First click
       forceHeroicAwakening(combatant, 'awakened', 'en');
@@ -907,7 +907,7 @@ describe('inProgressCombatStorage', () => {
       combatant.ac = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
-      combatant.proficiencyBonus = 3;
+      combatant.tierBonus = 3;
 
       // First: awakened
       forceHeroicAwakening(combatant, 'awakened', 'en');
@@ -929,7 +929,7 @@ describe('inProgressCombatStorage', () => {
       combatant.ac = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
-      combatant.proficiencyBonus = 3;
+      combatant.tierBonus = 3;
 
       forceHeroicAwakening(combatant, 'mythic', 'en');
 

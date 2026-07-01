@@ -89,9 +89,9 @@ export const useCreatureHandlers = (
             conditions: updatedCombatant.conditions,
             initiativeValue: updatedCombatant.initiativeValue,
             initiativeBonus: updatedCombatant.initiativeBonus,
-            proficiencyBonus:
-              updatedCombatant.proficiencyBonusOverride ??
-              updatedCombatant.proficiencyBonus,
+            tierBonus:
+              updatedCombatant.tierBonusOverride ??
+              updatedCombatant.tierBonus,
             speed: updatedCombatant.speed,
             hpFormula: updatedCombatant.hpFormula,
             details: updatedCombatant.details,

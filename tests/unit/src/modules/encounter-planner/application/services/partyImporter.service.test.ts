@@ -90,7 +90,7 @@ describe('partyImporter', () => {
       expect(combatant.hpMax).toBe(0);
       expect(combatant.ac).toBe(0);
       expect(combatant.initiativeBonus).toBe(0);
-      expect(combatant.proficiencyBonus).toBeNull();
+      expect(combatant.tierBonus).toBeNull();
       expect(combatant.stats).toEqual({
         str: 10,
         dex: 10,
@@ -110,7 +110,7 @@ describe('partyImporter', () => {
         tempHp: 5,
         ac: 16,
         initiativeBonus: 3,
-        proficiencyBonus: 4,
+        tierBonus: 4,
         abilityScores: { str: 14, dex: 16, con: 13, int: 10, wis: 12, cha: 15 },
       } as CharacterSheet;
 
@@ -123,7 +123,7 @@ describe('partyImporter', () => {
       expect(combatant.tempHp).toBe(5);
       expect(combatant.ac).toBe(16);
       expect(combatant.initiativeBonus).toBe(3);
-      expect(combatant.proficiencyBonus).toBe(4);
+      expect(combatant.tierBonus).toBe(4);
       expect(combatant.stats).toEqual({
         str: 14,
         dex: 16,

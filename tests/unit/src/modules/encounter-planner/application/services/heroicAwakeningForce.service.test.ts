@@ -30,8 +30,8 @@ function createTestCombatant(
     conditions: [],
     initiativeValue: 10,
     initiativeBonus: 1,
-    proficiencyBonus: 3,
-    proficiencyBonusOverride: null,
+    tierBonus: 3,
+    tierBonusOverride: null,
     speed: '30 ft.',
     hpFormula: null,
     details: { buffs: [], items: [], spells: [], affixes: [] },
@@ -45,7 +45,7 @@ function createTestCombatant(
       awakened: false,
       tier: 'none',
       affixes: [],
-      bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+      bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
       hpOverride: null,
     },
     mechanics: {
@@ -87,7 +87,7 @@ describe('forceHeroicAwakening', () => {
     expect(combatant.ac).toBe(16);
     expect(combatant.hpMax).toBe(55);
     expect(combatant.heroicAwakening.bonuses.acBonus).toBe(1);
-    expect(combatant.heroicAwakening.bonuses.proficiencyBonus).toBe(1);
+    expect(combatant.heroicAwakening.bonuses.tierBonus).toBe(1);
     expect(combatant.heroicAwakening.bonuses.savingThrowBonus).toBe(1);
     expect(combatant.heroicAwakening.fateDieResult).toBe(10);
     expect(combatant.heroicAwakening.affixes).toHaveLength(1);
@@ -131,12 +131,12 @@ describe('forceHeroicAwakening', () => {
     expect(combatant.hpMax).toBe(50 + 15);
   });
 
-  it('should set proficiencyBonusOverride when proficiencyBonus exists', () => {
-    const combatant = createTestCombatant({ proficiencyBonus: 3 });
+  it('should set tierBonusOverride when tierBonus exists', () => {
+    const combatant = createTestCombatant({ tierBonus: 3 });
 
     forceHeroicAwakening(combatant, 'awakened');
 
-    expect(combatant.proficiencyBonusOverride).toBe(4);
+    expect(combatant.tierBonusOverride).toBe(4);
   });
 
   it('should do nothing when crText is empty', () => {

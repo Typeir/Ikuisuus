@@ -42,7 +42,7 @@ export interface MonsterIndexEntry {
  * @property {Object} [hp] - Hit points with average and formula
  * @property {Object} [ac] - Armor class with value and notes
  * @property {Object} [scores] - Flat ability scores matching MonsterScoreEmbed (modifiers derived via floor((score - 10) / 2))
- * @property {number} [proficiencyBonus] - Proficiency bonus
+ * @property {number} [tierBonus] - tier bonus
  * @property {Object} [speed] - Speed information
  * @property {string} [link] - Wiki link path
  * @property {string[]} [tags] - Mechanic tags for flags
@@ -70,7 +70,7 @@ export interface MonsterData {
     wis?: number;
     cha?: number;
   };
-  proficiencyBonus?: number;
+  tierBonus?: number;
   speed?: {
     raw: string;
   };

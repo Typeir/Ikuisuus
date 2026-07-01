@@ -16,8 +16,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 
 const TOOLS: CharacterTool[] = [
-  { name: "Thieves' Tools", proficiency: 'none' },
-  { name: 'Smith Tools', proficiency: 'none' },
+  { name: "Thieves' Tools", tier: 'none' },
+  { name: 'Smith Tools', tier: 'none' },
 ];
 
 const testMessages = {
@@ -26,7 +26,7 @@ const testMessages = {
     colLevel: 'Level',
     colBonus: 'Bonus',
     ariaToolsTable: 'Tools',
-    ariaProfTrack: 'Proficiency Track',
+    ariaTierTrack: 'Proficiency Track',
     tools: {
       "Thieves' Tools": "Thieves' Tools",
       'Smith Tools': 'Smith Tools',
@@ -38,7 +38,7 @@ describe('ToolsTable', () => {
   it('renders all tool rows', () => {
     render(
       <NextIntlClientProvider locale='en' messages={testMessages}>
-        <ToolsTable tools={TOOLS} proficiencyBonus={3} onChange={vi.fn()} />
+        <ToolsTable tools={TOOLS} tierBonus={3} onChange={vi.fn()} />
       </NextIntlClientProvider>,
     );
     expect(screen.getByText("Thieves' Tools")).toBeTruthy();
@@ -48,7 +48,7 @@ describe('ToolsTable', () => {
   it('shows correct bonus for non-proficient tool', () => {
     render(
       <NextIntlClientProvider locale='en' messages={testMessages}>
-        <ToolsTable tools={TOOLS} proficiencyBonus={3} onChange={vi.fn()} />
+        <ToolsTable tools={TOOLS} tierBonus={3} onChange={vi.fn()} />
       </NextIntlClientProvider>,
     );
     const rows = screen.getAllByRole('row');
@@ -58,13 +58,13 @@ describe('ToolsTable', () => {
 
   it('shows correct bonus for proficient tool', () => {
     const toolsWithProf: CharacterTool[] = [
-      { name: 'Smith Tools', proficiency: 'proficient' },
+      { name: 'Smith Tools', tier: 'proficient' },
     ];
     render(
       <NextIntlClientProvider locale='en' messages={testMessages}>
         <ToolsTable
           tools={toolsWithProf}
-          proficiencyBonus={3}
+          tierBonus={3}
           onChange={vi.fn()}
         />
       </NextIntlClientProvider>,
@@ -74,13 +74,13 @@ describe('ToolsTable', () => {
 
   it('shows correct bonus for familiarity tool', () => {
     const toolsWithFamiliarity: CharacterTool[] = [
-      { name: "Thieves' Tools", proficiency: 'familiarity' },
+      { name: "Thieves' Tools", tier: 'familiarity' },
     ];
     render(
       <NextIntlClientProvider locale='en' messages={testMessages}>
         <ToolsTable
           tools={toolsWithFamiliarity}
-          proficiencyBonus={3}
+          tierBonus={3}
           onChange={vi.fn()}
         />
       </NextIntlClientProvider>,
@@ -90,13 +90,13 @@ describe('ToolsTable', () => {
 
   it('shows correct bonus for expertise tool', () => {
     const toolsWithExpertise: CharacterTool[] = [
-      { name: "Thieves' Tools", proficiency: 'expertise' },
+      { name: "Thieves' Tools", tier: 'expertise' },
     ];
     render(
       <NextIntlClientProvider locale='en' messages={testMessages}>
         <ToolsTable
           tools={toolsWithExpertise}
-          proficiencyBonus={3}
+          tierBonus={3}
           onChange={vi.fn()}
         />
       </NextIntlClientProvider>,
@@ -109,8 +109,8 @@ describe('ToolsTable', () => {
     render(
       <NextIntlClientProvider locale='en' messages={testMessages}>
         <ToolsTable
-          tools={[{ name: "Thieves' Tools", proficiency: 'none' }]}
-          proficiencyBonus={3}
+          tools={[{ name: "Thieves' Tools", tier: 'none' }]}
+          tierBonus={3}
           onChange={onChange}
         />
       </NextIntlClientProvider>,
@@ -119,7 +119,7 @@ describe('ToolsTable', () => {
     const firstPip = toolRow?.querySelector('button');
     await userEvent.click(firstPip!);
     expect(onChange).toHaveBeenCalledOnce();
-    const updatedProficiency = onChange.mock.calls[0][0][0].proficiency;
+    const updatedProficiency = onChange.mock.calls[0][0][0].tier;
     expect(updatedProficiency).toBe('familiarity');
   });
 
@@ -128,8 +128,8 @@ describe('ToolsTable', () => {
     const { rerender } = render(
       <NextIntlClientProvider locale='en' messages={testMessages}>
         <ToolsTable
-          tools={[{ name: "Thieves' Tools", proficiency: 'none' }]}
-          proficiencyBonus={3}
+          tools={[{ name: "Thieves' Tools", tier: 'none' }]}
+          tierBonus={3}
           onChange={onChange}
         />
       </NextIntlClientProvider>,
@@ -139,15 +139,15 @@ describe('ToolsTable', () => {
     let toolRow = screen.getByText("Thieves' Tools").closest('tr');
     let pips = toolRow?.querySelectorAll('button');
     await userEvent.click(pips![0]);
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('familiarity');
+    expect(onChange.mock.calls[0][0][0].tier).toBe('familiarity');
 
     // Click pip[1]: familiarity -> proficient
     onChange.mockClear();
     rerender(
       <NextIntlClientProvider locale='en' messages={testMessages}>
         <ToolsTable
-          tools={[{ name: "Thieves' Tools", proficiency: 'familiarity' }]}
-          proficiencyBonus={3}
+          tools={[{ name: "Thieves' Tools", tier: 'familiarity' }]}
+          tierBonus={3}
           onChange={onChange}
         />
       </NextIntlClientProvider>,
@@ -155,15 +155,15 @@ describe('ToolsTable', () => {
     toolRow = screen.getByText("Thieves' Tools").closest('tr');
     pips = toolRow?.querySelectorAll('button');
     await userEvent.click(pips![1]);
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('proficient');
+    expect(onChange.mock.calls[0][0][0].tier).toBe('proficient');
 
     // Click pip[2]: proficient -> expertise
     onChange.mockClear();
     rerender(
       <NextIntlClientProvider locale='en' messages={testMessages}>
         <ToolsTable
-          tools={[{ name: "Thieves' Tools", proficiency: 'proficient' }]}
-          proficiencyBonus={3}
+          tools={[{ name: "Thieves' Tools", tier: 'proficient' }]}
+          tierBonus={3}
           onChange={onChange}
         />
       </NextIntlClientProvider>,
@@ -171,15 +171,15 @@ describe('ToolsTable', () => {
     toolRow = screen.getByText("Thieves' Tools").closest('tr');
     pips = toolRow?.querySelectorAll('button');
     await userEvent.click(pips![2]);
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('expertise');
+    expect(onChange.mock.calls[0][0][0].tier).toBe('expertise');
 
     // Click pip[3]: expertise -> savanthood
     onChange.mockClear();
     rerender(
       <NextIntlClientProvider locale='en' messages={testMessages}>
         <ToolsTable
-          tools={[{ name: "Thieves' Tools", proficiency: 'expertise' }]}
-          proficiencyBonus={3}
+          tools={[{ name: "Thieves' Tools", tier: 'expertise' }]}
+          tierBonus={3}
           onChange={onChange}
         />
       </NextIntlClientProvider>,
@@ -187,7 +187,7 @@ describe('ToolsTable', () => {
     toolRow = screen.getByText("Thieves' Tools").closest('tr');
     pips = toolRow?.querySelectorAll('button');
     await userEvent.click(pips![3]);
-    expect(onChange.mock.calls[0][0][0].proficiency).toBe('savanthood');
+    expect(onChange.mock.calls[0][0][0].tier).toBe('savanthood');
   });
 
   it('does not call onChange in readOnly mode', async () => {
@@ -196,7 +196,7 @@ describe('ToolsTable', () => {
       <NextIntlClientProvider locale='en' messages={testMessages}>
         <ToolsTable
           tools={TOOLS}
-          proficiencyBonus={3}
+          tierBonus={3}
           onChange={onChange}
           readOnly
         />
@@ -206,5 +206,8 @@ describe('ToolsTable', () => {
     const firstPip = toolRow?.querySelector('button');
     await userEvent.click(firstPip!);
     expect(onChange).not.toHaveBeenCalled();
+  });
+});
+t.toHaveBeenCalled();
   });
 });

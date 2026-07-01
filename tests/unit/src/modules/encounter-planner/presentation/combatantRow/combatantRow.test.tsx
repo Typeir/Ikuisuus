@@ -49,8 +49,8 @@ const createMockCombatant = (
   conditions: [],
   initiativeValue: 15,
   initiativeBonus: 2,
-  proficiencyBonus: 2,
-  proficiencyBonusOverride: null,
+  tierBonus: 2,
+  tierBonusOverride: null,
   speed: '30 ft.',
   hpFormula: '5d8 + 10',
   details: { buffs: [], items: [], spells: [], affixes: [] },
@@ -74,7 +74,7 @@ const createMockCombatant = (
     awakened: false,
     tier: 'none',
     affixes: [],
-    bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+    bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
   ...overrides,
@@ -274,7 +274,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
         awakened: false,
         tier: 'none',
         affixes: [],
-        bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+        bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
         hpOverride: null,
       },
     });
@@ -296,7 +296,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
         awakened: true,
         tier: 'awakened',
         affixes: [{ text: 'Bloodthirsty' }],
-        bonuses: { proficiencyBonus: 1, acBonus: 1, savingThrowBonus: 1 },
+        bonuses: { tierBonus: 1, acBonus: 1, savingThrowBonus: 1 },
         hpOverride: null,
       },
     });
@@ -318,7 +318,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
         awakened: true,
         tier: 'legendary',
         affixes: [{ text: 'Stormbound' }, { text: 'Psionic' }],
-        bonuses: { proficiencyBonus: 2, acBonus: 2, savingThrowBonus: 2 },
+        bonuses: { tierBonus: 2, acBonus: 2, savingThrowBonus: 2 },
         hpOverride: null,
       },
     });
@@ -344,7 +344,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
           { text: 'Flametongued' },
           { text: 'Frostveined' },
         ],
-        bonuses: { proficiencyBonus: 3, acBonus: 3, savingThrowBonus: 3 },
+        bonuses: { tierBonus: 3, acBonus: 3, savingThrowBonus: 3 },
         hpOverride: null,
       },
     });
@@ -366,7 +366,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
         awakened: true,
         tier: 'awakened',
         affixes: [{ text: 'Bloodthirsty' }],
-        bonuses: { proficiencyBonus: 1, acBonus: 1, savingThrowBonus: 1 },
+        bonuses: { tierBonus: 1, acBonus: 1, savingThrowBonus: 1 },
         hpOverride: null,
       },
     });
@@ -387,7 +387,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
         awakened: true,
         tier: 'awakened',
         affixes: [{ text: 'Stormbound' }],
-        bonuses: { proficiencyBonus: 1, acBonus: 1, savingThrowBonus: 1 },
+        bonuses: { tierBonus: 1, acBonus: 1, savingThrowBonus: 1 },
         hpOverride: null,
       },
     });
@@ -408,7 +408,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
         awakened: true,
         tier: 'legendary',
         affixes: [{ text: 'Championed' }, { text: 'Rakish' }],
-        bonuses: { proficiencyBonus: 2, acBonus: 2, savingThrowBonus: 2 },
+        bonuses: { tierBonus: 2, acBonus: 2, savingThrowBonus: 2 },
         hpOverride: null,
       },
     });
@@ -429,7 +429,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
         awakened: true,
         tier: 'legendary',
         affixes: [{ text: 'Stormbound' }, { text: 'Psionic' }],
-        bonuses: { proficiencyBonus: 2, acBonus: 2, savingThrowBonus: 2 },
+        bonuses: { tierBonus: 2, acBonus: 2, savingThrowBonus: 2 },
         hpOverride: null,
       },
     });
@@ -456,7 +456,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
           { text: 'Crusading' },
           { text: 'Flametongued' },
         ],
-        bonuses: { proficiencyBonus: 3, acBonus: 3, savingThrowBonus: 3 },
+        bonuses: { tierBonus: 3, acBonus: 3, savingThrowBonus: 3 },
         hpOverride: null,
       },
     });
@@ -481,7 +481,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
           { text: 'Crusading' },
           { text: 'Flametongued' },
         ],
-        bonuses: { proficiencyBonus: 3, acBonus: 3, savingThrowBonus: 3 },
+        bonuses: { tierBonus: 3, acBonus: 3, savingThrowBonus: 3 },
         hpOverride: null,
       },
     });
@@ -504,7 +504,7 @@ describe('CombatantRow Heroic Awakening Styling', () => {
         awakened: false,
         tier: 'none',
         affixes: [],
-        bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+        bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
         hpOverride: null,
       },
     });

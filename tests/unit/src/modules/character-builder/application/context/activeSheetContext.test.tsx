@@ -50,7 +50,7 @@ function Consumer() {
     <div>
       <span data-testid='name'>{data.name}</span>
       <span data-testid='level'>{data.level}</span>
-      <span data-testid='pb'>{data.proficiencyBonus}</span>
+      <span data-testid='pb'>{data.tierBonus}</span>
       <span data-testid='editing'>{String(editing)}</span>
       <span data-testid='tab'>{tab}</span>
       <button onClick={beginEdit}>begin</button>
@@ -136,7 +136,7 @@ describe('ActiveSheetContext', () => {
     expect(screen.getByTestId('name').textContent).toBe('Renamed');
   });
 
-  it('patchVocations recomputes level and proficiency bonus', async () => {
+  it('patchVocations recomputes level and tier bonus', async () => {
     const user = userEvent.setup();
     renderRig(makeCharacter({ name: 'Mira', level: 1 }));
     await user.click(screen.getByText('begin'));

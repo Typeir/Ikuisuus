@@ -45,8 +45,8 @@ const createMockCombatant = (overrides?: Partial<InProgressCombatant>): InProgre
   conditions: [],
   initiativeValue: null,
   initiativeBonus: 2,
-  proficiencyBonus: 3,
-  proficiencyBonusOverride: null,
+  tierBonus: 3,
+  tierBonusOverride: null,
   speed: '30 ft.',
   hpFormula: '8d10 + 24',
   details: {
@@ -66,7 +66,7 @@ const createMockCombatant = (overrides?: Partial<InProgressCombatant>): InProgre
     tier: 'none',
     affixes: [],
     bonuses: {
-      proficiencyBonus: 0,
+      tierBonus: 0,
       acBonus: 0,
       savingThrowBonus: 0,
     },
@@ -502,7 +502,7 @@ describe('PlayModeCombatantRow - Slain Checkbox', () => {
           tier: 'legendary',
           affixes: [],
           bonuses: {
-            proficiencyBonus: 2,
+            tierBonus: 2,
             acBonus: 2,
             savingThrowBonus: 2,
           },

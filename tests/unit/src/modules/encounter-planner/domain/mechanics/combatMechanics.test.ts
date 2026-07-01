@@ -43,8 +43,8 @@ const createTestCombatant = (
   conditions: [],
   initiativeValue: null,
   initiativeBonus: 2,
-  proficiencyBonus: 3,
-  proficiencyBonusOverride: null,
+  tierBonus: 3,
+  tierBonusOverride: null,
   speed: '30 ft.',
   hpFormula: '10d10+30',
   details: { buffs: [], items: [], spells: [], affixes: [] },
@@ -57,7 +57,7 @@ const createTestCombatant = (
     awakened: false,
     tier: 'none',
     affixes: [],
-    bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+    bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
   mechanics: {
@@ -257,18 +257,18 @@ describe('combatMechanics', () => {
       expect(combatant.ac).toBeGreaterThan(originalAc);
     });
 
-    it('should apply proficiency bonus override when awakened', () => {
+    it('should apply tier bonus override when awakened', () => {
       vi.mocked(Math.random).mockReturnValueOnce(0.99).mockReturnValue(0.01);
-      const combatant = createTestCombatant({ proficiencyBonus: 3 });
+      const combatant = createTestCombatant({ tierBonus: 3 });
       applyHeroicAwakening(combatant, 'CR 5');
-      expect(combatant.proficiencyBonusOverride).toBeGreaterThan(3);
+      expect(combatant.tierBonusOverride).toBeGreaterThan(3);
     });
 
-    it('should not set proficiency override if proficiencyBonus is null', () => {
+    it('should not set proficiency override if tierBonus is null', () => {
       vi.mocked(Math.random).mockReturnValueOnce(0.99).mockReturnValue(0.01);
-      const combatant = createTestCombatant({ proficiencyBonus: null });
+      const combatant = createTestCombatant({ tierBonus: null });
       applyHeroicAwakening(combatant, 'CR 5');
-      expect(combatant.proficiencyBonusOverride).toBeNull();
+      expect(combatant.tierBonusOverride).toBeNull();
     });
 
     it('should generate affixes when awakened', () => {
@@ -298,7 +298,7 @@ describe('combatMechanics', () => {
       vi.mocked(Math.random).mockReturnValueOnce(0.99).mockReturnValue(0.01);
       const combatant = createTestCombatant({
         hpFormula: '10d10+30',
-        proficiencyBonus: 3,
+        tierBonus: 3,
       });
       applyHeroicAwakening(combatant, 'CR 5');
       expect(combatant.hpCurrent).toBe(combatant.hpMaxOverride);
@@ -351,10 +351,10 @@ describe('combatMechanics', () => {
       expect(combatant.ac).toBe(18);
     });
 
-    it('should set proficiency override when proficiencyBonus exists', () => {
-      const combatant = createTestCombatant({ proficiencyBonus: 3 });
+    it('should set proficiency override when tierBonus exists', () => {
+      const combatant = createTestCombatant({ tierBonus: 3 });
       forceHeroicAwakening(combatant, 'legendary');
-      expect(combatant.proficiencyBonusOverride).toBe(5);
+      expect(combatant.tierBonusOverride).toBe(5);
     });
 
     it('should generate correct number of affixes per tier', () => {
@@ -400,12 +400,12 @@ describe('combatMechanics', () => {
     });
 
     it('should undo proficiency override from previous tier', () => {
-      const combatant = createTestCombatant({ proficiencyBonus: 3 });
+      const combatant = createTestCombatant({ tierBonus: 3 });
       forceHeroicAwakening(combatant, 'awakened');
-      expect(combatant.proficiencyBonusOverride).toBe(4);
+      expect(combatant.tierBonusOverride).toBe(4);
 
       forceHeroicAwakening(combatant, 'mythic');
-      expect(combatant.proficiencyBonusOverride).toBe(6);
+      expect(combatant.tierBonusOverride).toBe(6);
     });
   });
 });

@@ -83,7 +83,7 @@ export const STAT_CONTENT = {
   nonmagicalDamage:
     /bludgeoning,?\s+piercing,?\s+and\s+slashing\s+from\s+nonmagical\s+[^;,]+/i,
   keyValueBullet:
-    /^[-*]\s+\*\*(Proficiency Bonus|Challenge|Languages|Senses|Condition Immunities|Damage|Skills|Saving Throws)\*\*/i,
+    /^[-*]\s+\*\*(Tier Bonus|Challenge|Languages|Senses|Condition Immunities|Damage|Skills|Saving Throws)\*\*/i,
   blockquotePrefix: /^>\s*/,
   sheetFilePattern: /\.sheet\.mdx$/i,
 } as const;

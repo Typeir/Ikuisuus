@@ -169,7 +169,7 @@ describe('encounterStorage', () => {
 
     it('should have null optional fields', () => {
       const creature = createEmptyCreature();
-      expect(creature.proficiencyBonus).toBeNull();
+      expect(creature.tierBonus).toBeNull();
       expect(creature.speed).toBeNull();
       expect(creature.hpFormula).toBeNull();
     });

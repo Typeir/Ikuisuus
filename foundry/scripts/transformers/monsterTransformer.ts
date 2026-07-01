@@ -81,7 +81,7 @@ function parseSkill(skillStr: string): { key: string; bonus: number } | null {
  *
  * @param {number} bonus - Total skill bonus
  * @param {number} mod - Ability modifier
- * @param {number} prof - Proficiency bonus
+ * @param {number} prof - tier bonus
  * @returns {number} Multiplier: 0, 0.5, 1, or 2
  */
 function computeSkillProf(bonus: number, mod: number, prof: number): number {
@@ -119,7 +119,7 @@ function buildAbilities(m: MonsterMetadata): Record<string, unknown> {
 function buildSkills(m: MonsterMetadata): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   if (!m.skills) return out;
-  const prof = m.proficiencyBonus ?? 2;
+  const prof = m.tierBonus ?? 2;
 
   for (const str of m.skills) {
     const parsed = parseSkill(str);

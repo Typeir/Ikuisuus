@@ -132,5 +132,5 @@ export const ITEM_MECHANICS = {
   consumable: /\bconsumable\b/i,
   consumableDestroyed: /burns? away|destroyed|inert/i,
   attunement: /\battunement\b/i,
-  proficiency: /\bproficiency\b/i,
+  tier: /\bproficiency\b/i,
 } as const;

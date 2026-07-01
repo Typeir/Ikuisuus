@@ -11,8 +11,8 @@
 
 'use client';
 
-import type { CharacterSkill, ProficiencyLevel } from '@/lib/types/character';
-import { computeSkillBonus, updateItemProficiency } from '@/modules/character-builder/lib/utils/proficiencyUtils';
+import type { CharacterSkill, TierLevel } from '@/lib/types/character';
+import { computeSkillBonus, updateItemTier } from '@/modules/character-builder/lib/utils/proficiencyUtils';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
@@ -25,14 +25,14 @@ import { ProficiencyTrack } from '../components/ProficiencyTrack';
  * @interface SkillsTableProps
  * @property {CharacterSkill[]} skills - Full list of character skills
  * @property {Record<string, number>} abilityScores - Map of ability key → raw score
- * @property {number} proficiencyBonus - Current proficiency bonus
+ * @property {number} tierBonus - Current tier bonus
  * @property {(skills: CharacterSkill[]) => void} onChange - Callback when proficiency changes
  * @property {boolean} [readOnly] - When true, proficiency toggles are disabled
  */
 export interface SkillsTableProps {
   skills: CharacterSkill[];
   abilityScores: Record<string, number>;
-  proficiencyBonus: number;
+  tierBonus: number;
   onChange: (skills: CharacterSkill[]) => void;
   readOnly?: boolean;
 }
@@ -48,7 +48,7 @@ export interface SkillsTableProps {
 export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
   skills,
   abilityScores,
-  proficiencyBonus,
+  tierBonus,
   onChange,
   readOnly = false,
 }) => {
@@ -56,10 +56,10 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
 
   const handleSkillProficiencyChange = (
     skillIndex: number,
-    newProficiency: ProficiencyLevel,
+    newTier: TierLevel,
   ) => {
     if (readOnly) return;
-    onChange(updateItemProficiency(skills, skillIndex, newProficiency));
+    onChange(updateItemTier(skills, skillIndex, newTier));
   };
 
   return (
@@ -74,19 +74,19 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
       </thead>
       <tbody>
         {skills.map((skill, i) => {
-          const bonus = computeSkillBonus(skill, abilityScores, proficiencyBonus);
+          const bonus = computeSkillBonus(skill, abilityScores, tierBonus);
           const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
           return (
             <tr
               key={`skill-${i}`}
-              className={profRowStyles[`prof-${skill.proficiency}`]}>
+              className={profRowStyles[`prof-${skill.tier}`]}>
               <td>{t(skill.name)}</td>
               <td className={styles.abilityTag}>
                 {skill.ability.toUpperCase()}
               </td>
-              <td aria-label={t('ariaProfTrack')}>
+              <td aria-label={t('ariaTierTrack')}>
                 <ProficiencyTrack
-                  currentProficiency={skill.proficiency}
+                  currentProficiency={skill.tier}
                   onChange={(level) => handleSkillProficiencyChange(i, level)}
                   readOnly={readOnly}
                   itemName={skill.name}
@@ -103,7 +103,7 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
 
 /**
  * Memoized `SkillsTable` export. Re-renders only when one of its props
- * changes by reference (skills array, abilityScores map, proficiencyBonus,
+ * changes by reference (skills array, abilityScores map, tierBonus,
  * onChange callback, readOnly flag).
  */
 export const SkillsTable = memo(SkillsTableImpl);

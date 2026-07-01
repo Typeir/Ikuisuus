@@ -95,7 +95,7 @@ describe('encounterFactory', () => {
         cha: 23,
       },
       cr: '24',
-      proficiencyBonus: 7,
+      tierBonus: 7,
       speed: { raw: '40 ft., climb 40 ft., fly 80 ft.' },
       link: '/library/monsters/ancient-red-dragon',
       tags: ['dragon', 'fire'],
@@ -127,9 +127,9 @@ describe('encounterFactory', () => {
       expect(creature.crText).toBe('CR 24');
     });
 
-    it('should set proficiency bonus', () => {
+    it('should set tier bonus', () => {
       const creature = createCreatureFromMonster(fullMonsterData, 'en');
-      expect(creature.proficiencyBonus).toBe(7);
+      expect(creature.tierBonus).toBe(7);
     });
 
     it('should set speed', () => {
@@ -199,9 +199,9 @@ describe('encounterFactory', () => {
       expect(creature.crText).toBeUndefined();
     });
 
-    it('should set proficiencyBonus to null when missing', () => {
+    it('should set tierBonus to null when missing', () => {
       const creature = createCreatureFromMonster({}, 'en');
-      expect(creature.proficiencyBonus).toBeNull();
+      expect(creature.tierBonus).toBeNull();
     });
 
     it('should default tags to empty array for non-array', () => {

@@ -234,8 +234,8 @@ describe('featurePatterns', () => {
       expect(m![1]).toBe('Wisdom');
     });
 
-    it('proficiencyBonus should match', () => {
-      expect(TEMPLATES.proficiencyBonus.test('your proficiency bonus')).toBe(
+    it('tierBonus should match', () => {
+      expect(TEMPLATES.tierBonus.test('your tier bonus')).toBe(
         true,
       );
     });

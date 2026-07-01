@@ -56,7 +56,7 @@ const createDefaultHeroicAwakening = (
   awakened: false,
   tier: 'none',
   affixes: [],
-  bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+  bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
   hpOverride: null,
   ...overrides,
 });
@@ -83,8 +83,8 @@ const createMockCombatant = (
   conditions: [],
   initiativeValue: 15,
   initiativeBonus: 2,
-  proficiencyBonus: 2,
-  proficiencyBonusOverride: null,
+  tierBonus: 2,
+  tierBonusOverride: null,
   speed: '30 ft.',
   hpFormula: null,
   details: { buffs: [], items: [], spells: [], affixes: [] },
@@ -231,7 +231,7 @@ describe('CombatantHeroicSection awakened display', () => {
       heroicAwakening: createDefaultHeroicAwakening({
         awakened: true,
         affixes: [createAffixEntry('Test')],
-        bonuses: { proficiencyBonus: 2, acBonus: 1, savingThrowBonus: 1 },
+        bonuses: { tierBonus: 2, acBonus: 1, savingThrowBonus: 1 },
       }),
     });
 
@@ -350,7 +350,7 @@ describe('CombatantHeroicSection bonuses display', () => {
       heroicAwakening: createDefaultHeroicAwakening({
         awakened: true,
         affixes: [createAffixEntry('Test')],
-        bonuses: { proficiencyBonus: 3, acBonus: 2, savingThrowBonus: 1 },
+        bonuses: { tierBonus: 3, acBonus: 2, savingThrowBonus: 1 },
       }),
     });
 
@@ -364,7 +364,7 @@ describe('CombatantHeroicSection bonuses display', () => {
       heroicAwakening: createDefaultHeroicAwakening({
         awakened: true,
         affixes: [createAffixEntry('Test')],
-        bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+        bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
       }),
     });
 

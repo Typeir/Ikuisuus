@@ -2,7 +2,7 @@
  * @fileoverview Combat Stats Row Component
  * @description Displays the core combat statistics in a single horizontal row:
  * HP (current/max/temp) with a rollable hit dice panel, AC, initiative, speed
- * with a bloodline speed panel, and proficiency bonus.
+ * with a bloodline speed panel, and tier bonus.
  *
  * @module lib/components/characterSheet/combatStatsRow
  * @version 2.0.0
@@ -32,7 +32,7 @@ import styles from '../CharacterSheet/characterSheet.module.scss';
  * @property {number} initiativeBonus - Initiative modifier
  * @property {number | null} speedOverride - Movement speed override in feet; null means use default
  * @property {string[]} bloodlineSpeeds - All speed modes from the active bloodline
- * @property {number} proficiencyBonus - Proficiency bonus
+ * @property {number} tierBonus - tier bonus
  * @property {VocationEntry[]} vocations - Active vocation entries (used for hit dice counter)
  * @property {HitDieRollEntry[]} hitDiceLog - Hit die roll log for the HP roller panel
  * @property {number} conMod - CON modifier for HP roller calculations
@@ -46,7 +46,7 @@ export interface CombatStatsRowProps {
   initiativeBonus: number;
   speedOverride: number | null;
   bloodlineSpeeds: string[];
-  proficiencyBonus: number;
+  tierBonus: number;
   vocations: VocationEntry[];
   hitDiceLog: HitDieRollEntry[];
   conMod: number;
@@ -70,7 +70,7 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
   initiativeBonus,
   speedOverride,
   bloodlineSpeeds,
-  proficiencyBonus,
+  tierBonus,
   vocations,
   hitDiceLog,
   conMod,
@@ -80,7 +80,7 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
   const initStr =
     initiativeBonus >= 0 ? `+${initiativeBonus}` : `${initiativeBonus}`;
   const pbStr =
-    proficiencyBonus >= 0 ? `+${proficiencyBonus}` : `${proficiencyBonus}`;
+    tierBonus >= 0 ? `+${tierBonus}` : `${tierBonus}`;
   const speedDisplay = speedOverride !== null ? `${speedOverride} ft.` : '—';
 
   return (
@@ -129,7 +129,7 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
       </div>
 
       <div className={styles.statChip}>
-        <span className={styles.statChipLabel}>{t('proficiencyShort')}</span>
+        <span className={styles.statChipLabel}>{t('tierShort')}</span>
         <span className={styles.statChipValue}>{pbStr}</span>
       </div>
     </div>

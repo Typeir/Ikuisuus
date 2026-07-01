@@ -165,7 +165,7 @@ async function syncMonsters(
       creatureType: m.creatureType as string | undefined,
       alignment: m.alignment as string | undefined,
       cr: m.cr as string | undefined,
-      proficiencyBonus: m.proficiencyBonus as number | undefined,
+      tierBonus: m.tierBonus as number | undefined,
       ac: {
         value: ac.value as number | undefined,
         notes: ac.notes as string | undefined,

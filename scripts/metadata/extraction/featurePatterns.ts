@@ -151,14 +151,14 @@ export const RESOURCES = {
  * Pre-compiled patterns for formula template expressions.
  *
  * @property {RegExp} abilityModifier - "your Wisdom modifier"
- * @property {RegExp} proficiencyBonus - "your proficiency bonus"
+ * @property {RegExp} tierBonus - "your tier bonus"
  * @property {RegExp} classLevel - "your Fighter level"
  * @property {RegExp} compositeFormula - "8 + Prof + CHA modifier"
  */
 export const TEMPLATES = {
   abilityModifier:
     /your\s+(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+modifier/i,
-  proficiencyBonus: /your\s+proficiency\s+bonus/i,
+  tierBonus: /your\s+proficiency\s+bonus/i,
   classLevel: /your\s+(\w+)\s+level/i,
   compositeFormula:
     /(\d+)\s*\+\s*(?:your\s+)?(?:proficiency\s+bonus|Prof(?:iciency)?)\s*\+\s*(?:your\s+)?(STR|DEX|CON|INT|WIS|CHA)\s+mod(?:ifier)?/i,

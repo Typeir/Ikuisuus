@@ -46,7 +46,7 @@ const createDefaultHeroicAwakening = (): HeroicAwakeningState => ({
   awakened: false,
   tier: 'none',
   affixes: [],
-  bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+  bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
   hpOverride: null,
 });
 
@@ -78,8 +78,8 @@ const createMockCombatant = (
   conditions: [],
   initiativeValue: 15,
   initiativeBonus: 2,
-  proficiencyBonus: 2,
-  proficiencyBonusOverride: null,
+  tierBonus: 2,
+  tierBonusOverride: null,
   speed: '30 ft.',
   hpFormula: null,
   details: { buffs: [], items: [], spells: [], affixes: [] },

@@ -38,10 +38,10 @@ const undoPreviousAwakeningBonuses = (
   combatant.hpMax -= previousMultiplier * cr;
 
   if (
-    combatant.proficiencyBonus !== null &&
-    combatant.proficiencyBonusOverride !== null
+    combatant.tierBonus !== null &&
+    combatant.tierBonusOverride !== null
   ) {
-    combatant.proficiencyBonusOverride -= previousMultiplier;
+    combatant.tierBonusOverride -= previousMultiplier;
   }
 };
 
@@ -58,9 +58,9 @@ const applyAwakeningBonuses = (
   tierMultiplier: number,
   cr: number,
 ): void => {
-  if (combatant.proficiencyBonus !== null) {
-    combatant.proficiencyBonusOverride =
-      combatant.proficiencyBonus + tierMultiplier;
+  if (combatant.tierBonus !== null) {
+    combatant.tierBonusOverride =
+      combatant.tierBonus + tierMultiplier;
   }
 
   combatant.ac += tierMultiplier;
@@ -115,7 +115,7 @@ export const forceHeroicAwakening = (
     fateDieResult: tier === 'mythic' ? 20 : tier === 'legendary' ? 15 : 10,
     heroicDc: getHeroicDc(cr),
     bonuses: {
-      proficiencyBonus: tierMultiplier,
+      tierBonus: tierMultiplier,
       acBonus: tierMultiplier,
       savingThrowBonus: tierMultiplier,
     },
@@ -170,7 +170,7 @@ export const forceHeroicAwakeningWithAffixes = (
       awakened: false,
       tier: 'none',
       affixes: [],
-      bonuses: { proficiencyBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+      bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
       hpOverride: combatant.heroicAwakening.hpOverride,
     };
     return;
@@ -184,7 +184,7 @@ export const forceHeroicAwakeningWithAffixes = (
     fateDieResult: tier === 'mythic' ? 20 : tier === 'legendary' ? 15 : 10,
     heroicDc: getHeroicDc(cr),
     bonuses: {
-      proficiencyBonus: tierMultiplier,
+      tierBonus: tierMultiplier,
       acBonus: tierMultiplier,
       savingThrowBonus: tierMultiplier,
     },

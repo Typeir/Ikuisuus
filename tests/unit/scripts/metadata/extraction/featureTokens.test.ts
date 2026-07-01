@@ -287,8 +287,8 @@ describe('shared token recognizers', () => {
       expect(result).toEqual({ expr: 'ability:WIS' });
     });
 
-    it('should parse proficiency bonus reference', () => {
-      const result = recognizeTemplate('add your proficiency bonus');
+    it('should parse tier bonus reference', () => {
+      const result = recognizeTemplate('add your tier bonus');
       expect(result).toEqual({ expr: 'prof' });
     });
 

@@ -64,7 +64,7 @@ You have a budget of **10 Boon Points**.
 ###### Arcane Focus <span>4 BP</span>
 
 You can cast one cantrip and gain proficiency in Arcana.
-You can use this a number of times equal to your proficiency bonus, regaining all uses after a **long rest**.
+You can use this a number of times equal to your tier bonus, regaining all uses after a **long rest**.
 
 </Collapsible>
 `);
@@ -85,7 +85,7 @@ You can use this a number of times equal to your proficiency bonus, regaining al
       expect.arrayContaining([
         'mechanic:cantrips',
         'mechanic:long-rest-recharge',
-        'mechanic:skill-proficiency:arcana',
+        'mechanic:skill-tier:arcana',
       ]),
     );
     expect(parsed.boons[0]).not.toHaveProperty('body');

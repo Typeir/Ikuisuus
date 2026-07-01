@@ -246,7 +246,7 @@ export function extractItemMechanicTags(text: string): string[] {
     tags.push('property:consumable');
   if (ITEM_MECHANICS.attunement.test(text))
     tags.push('property:attunement-required');
-  if (ITEM_MECHANICS.proficiency.test(text))
+  if (ITEM_MECHANICS.tier.test(text))
     tags.push('property:proficiency-required');
 
   return tags;

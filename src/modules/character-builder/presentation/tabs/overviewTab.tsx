@@ -3,7 +3,7 @@
  * @description Two-column overview: combat stats / skills / tools on the left;
  * attacks, selected feature chips, and notes on the right.
  *
- * Responsible for deriving proficiency bonus from total vocation level and
+ * Responsible for deriving tier bonus from total vocation level and
  * appending new hit die roll entries when a level-up is detected.
  *
  * @module lib/components/characterSheet/tabs/overviewTab
@@ -23,7 +23,7 @@ import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { getTotalCharacterLevel } from '@/modules/character-builder/lib/utils/characterDerivation';
 import {
   computeAbilityModifier,
-  computeProficiencyBonus,
+  computeTierBonus,
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
@@ -79,8 +79,8 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
     prevVocationsRef.current = curr;
 
     const totalLevel = getTotalCharacterLevel(data);
-    const derivedPb = computeProficiencyBonus(totalLevel);
-    const pbChanged = derivedPb !== data.proficiencyBonus;
+    const derivedPb = computeTierBonus(totalLevel);
+    const pbChanged = derivedPb !== data.tierBonus;
 
     const newEntries: HitDieRollEntry[] = [];
     const conMod = computeAbilityModifier(data.abilityScores.con);
@@ -127,7 +127,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
     if (!pbChanged && newEntries.length === 0 && !logChanged) return;
 
     const patch: Partial<CharacterSheetType> = {};
-    if (pbChanged) patch.proficiencyBonus = derivedPb;
+    if (pbChanged) patch.tierBonus = derivedPb;
     if (newEntries.length > 0 || logChanged) {
       patch.hitDiceLog =
         newEntries.length > 0 ? [...updatedLog, ...newEntries] : updatedLog;
@@ -174,7 +174,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           initiativeBonus={data.initiativeBonus}
           speedOverride={data.speedOverride}
           bloodlineSpeeds={data.bloodlineSpeeds ?? []}
-          proficiencyBonus={data.proficiencyBonus}
+          tierBonus={data.tierBonus}
           vocations={data.vocations}
           hitDiceLog={data.hitDiceLog ?? []}
           conMod={conMod}
@@ -184,13 +184,13 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           <SkillsTable
             skills={data.skills}
             abilityScores={data.abilityScores}
-            proficiencyBonus={data.proficiencyBonus}
+            tierBonus={data.tierBonus}
             onChange={handleSkillsChange}
             readOnly={!editing}
           />
           <ToolsTable
             tools={data.tools}
-            proficiencyBonus={data.proficiencyBonus}
+            tierBonus={data.tierBonus}
             onChange={handleToolsChange}
             readOnly={!editing}
           />

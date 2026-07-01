@@ -103,7 +103,7 @@ export interface CreatureDetails {
  * @property {ConditionEntry[]} conditions - Active conditions
  * @property {number|null} initiativeValue - Rolled initiative (null if not yet rolled)
  * @property {number} initiativeBonus - Initiative modifier (includes DEX and features)
- * @property {number|null} proficiencyBonus - Proficiency bonus (null for manual entries)
+ * @property {number|null} tierBonus - tier bonus (null for manual entries)
  * @property {string|null} speed - Movement speed string (e.g., "30 ft., fly 60 ft.")
  * @property {string|null} hpFormula - Hit dice formula (e.g., "10d10+50")
  * @property {CreatureDetails} details - Extended details (buffs, items, spells, affixes)
@@ -123,7 +123,7 @@ export interface CreatureEntry {
   conditions: ConditionEntry[];
   initiativeValue: number | null;
   initiativeBonus: number;
-  proficiencyBonus: number | null;
+  tierBonus: number | null;
   speed: string | null;
   hpFormula: string | null;
   details: CreatureDetails;

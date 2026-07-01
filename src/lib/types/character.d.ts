@@ -16,9 +16,9 @@ import type { HitDieRollEntry } from './hitDice';
 /**
  * Proficiency level for saves and skills.
  *
- * @typedef {'none'|'familiarity'|'proficient'|'expertise'|'savanthood'} ProficiencyLevel
+ * @typedef {'none'|'familiarity'|'proficient'|'expertise'|'savanthood'} TierLevel
  */
-export type ProficiencyLevel =
+export type TierLevel =
   | 'none'
   | 'familiarity'
   | 'proficient'
@@ -99,12 +99,12 @@ export interface CharacterSpellSlot {
  * @interface CharacterSkill
  * @property {string} name - Skill name, e.g. `Acrobatics`
  * @property {AbilityKey} ability - Linked ability, e.g. `dex`
- * @property {ProficiencyLevel} proficiency - Current proficiency level
+ * @property {TierLevel} proficiency - Current proficiency level
  */
 export interface CharacterSkill {
   name: string;
   ability: AbilityKey;
-  proficiency: ProficiencyLevel;
+  tier: TierLevel;
 }
 
 /**
@@ -112,11 +112,11 @@ export interface CharacterSkill {
  *
  * @interface CharacterTool
  * @property {string} name - Tool name, e.g. `Thieves' Tools`
- * @property {ProficiencyLevel} proficiency - Current proficiency level
+ * @property {TierLevel} proficiency - Current proficiency level
  */
 export interface CharacterTool {
   name: string;
-  proficiency: ProficiencyLevel;
+  tier: TierLevel;
 }
 
 /**
@@ -279,12 +279,12 @@ export interface VocationEntry {
  * @property {number} initiativeBonus - Initiative modifier (typically DEX mod)
  * @property {number|null} speedOverride - Override for movement speed (walk); null = no override
  * @property {string[]} bloodlineSpeeds - Raw speed strings from the selected bloodline (e.g. `["Walk: 30 ft.", "Fly: 60 ft."]`); populated on bloodline selection
- * @property {number} proficiencyBonus - Proficiency bonus, derived from level
+ * @property {number} tierBonus - tier bonus, derived from level
  * @property {HitDieRollEntry[]} hitDiceLog - Per-level hit die roll history; appended on level-up, confirmed entries add to `hpMax`
  * @property {string[]} conditions - Active condition labels
  * @property {CharacterAttack[]} attacks - Attack entries
  * @property {CharacterSpellSlot[]} spellSlots - Spell slot tracking (1–9)
- * @property {Record<AbilityKey, ProficiencyLevel>} savingThrows - Save proficiency per ability
+ * @property {Record<AbilityKey, TierLevel>} savingThrows - Save proficiency per ability
  * @property {CharacterSkill[]} skills - Full skill list with proficiency
  * @property {CharacterTool[]} tools - Tool proficiency list
  * @property {EquipmentItem[]} equipment - Equipment items with name, quantity, and weight
@@ -324,12 +324,12 @@ export interface CharacterSheet {
   initiativeBonus: number;
   speedOverride: number | null;
   bloodlineSpeeds: string[];
-  proficiencyBonus: number;
+  tierBonus: number;
   hitDiceLog: HitDieRollEntry[];
   conditions: string[];
   attacks: CharacterAttack[];
   spellSlots: CharacterSpellSlot[];
-  savingThrows: Record<AbilityKey, ProficiencyLevel>;
+  savingThrows: Record<AbilityKey, TierLevel>;
   skills: CharacterSkill[];
   tools: CharacterTool[];
   equipment: EquipmentItem[];

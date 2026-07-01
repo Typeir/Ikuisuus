@@ -11,8 +11,8 @@
 
 'use client';
 
-import type { CharacterTool, ProficiencyLevel } from '@/lib/types/character';
-import { computeToolBonus, updateItemProficiency } from '@/modules/character-builder/lib/utils/proficiencyUtils';
+import type { CharacterTool, TierLevel } from '@/lib/types/character';
+import { computeToolBonus, updateItemTier } from '@/modules/character-builder/lib/utils/proficiencyUtils';
 import { useTranslations } from 'next-intl';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import profRowStyles from '../CharacterSheet/proficiencyRow.module.scss';
@@ -23,13 +23,13 @@ import { ProficiencyTrack } from '../components/ProficiencyTrack';
  *
  * @interface ToolsTableProps
  * @property {CharacterTool[]} tools - Tool list
- * @property {number} proficiencyBonus - Proficiency bonus from character level
+ * @property {number} tierBonus - tier bonus from character level
  * @property {(tools: CharacterTool[]) => void} onChange - Fired when a tool's proficiency is clicked
  * @property {boolean} [readOnly=false] - If true, disables proficiency cycling
  */
 interface ToolsTableProps {
   tools: CharacterTool[];
-  proficiencyBonus: number;
+  tierBonus: number;
   onChange: (tools: CharacterTool[]) => void;
   readOnly?: boolean;
 }
@@ -43,16 +43,16 @@ interface ToolsTableProps {
  */
 export function ToolsTable({
   tools,
-  proficiencyBonus,
+  tierBonus,
   onChange,
   readOnly = false,
 }: ToolsTableProps): JSX.Element {
   const t = useTranslations('characterSheet');
   const tTools = useTranslations('characterSheet.tools');
 
-  const handleToolProficiencyChange = (toolIndex: number, newProficiency: ProficiencyLevel): void => {
+  const handleToolProficiencyChange = (toolIndex: number, newTier: TierLevel): void => {
     if (readOnly) return;
-    onChange(updateItemProficiency(tools, toolIndex, newProficiency));
+    onChange(updateItemTier(tools, toolIndex, newTier));
   };
 
   return (
@@ -66,16 +66,16 @@ export function ToolsTable({
       </thead>
       <tbody>
         {tools.map((tool, i) => {
-          const bonus = computeToolBonus(tool.proficiency, proficiencyBonus);
+          const bonus = computeToolBonus(tool.tier, tierBonus);
           const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
           return (
             <tr
               key={`tool-${i}`}
-              className={profRowStyles[`prof-${tool.proficiency}`]}>
+              className={profRowStyles[`prof-${tool.tier}`]}>
               <td>{tTools(tool.name.replace('tools.', ''))}</td>
-              <td aria-label={t('ariaProfTrack')}>
+              <td aria-label={t('ariaTierTrack')}>
                 <ProficiencyTrack
-                  currentProficiency={tool.proficiency}
+                  currentProficiency={tool.tier}
                   onChange={(level) => handleToolProficiencyChange(i, level)}
                   readOnly={readOnly}
                   itemName={tool.name}
