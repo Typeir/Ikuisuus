@@ -11,13 +11,13 @@
  */
 
 import type {
-  AbilityKey,
-  CharacterSheet,
-  CharacterSkill,
-  CharacterSpellSlot,
-  CharacterTool,
-  EquipmentItem,
-  VocationEntry,
+    AbilityKey,
+    CharacterSheet,
+    CharacterSkill,
+    CharacterSpellSlot,
+    CharacterTool,
+    EquipmentItem,
+    VocationEntry,
 } from '@/lib/types/character';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 
@@ -153,8 +153,7 @@ const DEFAULT_SAVES: Record<AbilityKey, 'none'> = {
  * @param {number} level - Character level (1–30)
  * @returns {number} Tier bonus
  */
-export const computeTierBonus = (level: number): number =>
-  Math.ceil(level / 3);
+export const computeTierBonus = (level: number): number => Math.ceil(level / 3);
 
 /**
  * Compute ability modifier from an ability score.
@@ -303,6 +302,8 @@ export const createEmptyCharacter = (): CharacterSheet => {
     equipment: [],
     equipmentNotes: '',
     selectedFeats: [],
+    focusedShardType: null,
+    focusedShardSlug: null,
     currency: { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 },
     coinHoldings: [],
     background: '',

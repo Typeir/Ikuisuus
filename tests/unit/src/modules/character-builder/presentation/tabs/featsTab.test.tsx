@@ -8,8 +8,8 @@
  * @since 1.0.0
  */
 
-import { FeatsTab } from '@/modules/character-builder/presentation/tabs/featsTab';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
+import { FeatsTab } from '@/modules/character-builder/presentation/tabs/featsTab';
 import { screen } from '@testing-library/react';
 import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -32,7 +32,7 @@ describe('FeatsTab', () => {
     renderWithActiveSheet(
       <FeatsTab data={createEmptyCharacter()} onChange={() => {}} />,
     );
-    expect(screen.getByText(/select a feat to preview/i)).toBeTruthy();
+    expect(screen.getByText('shardPreviewFallback')).toBeTruthy();
   });
 
   it('renders the picker when in edit mode', async () => {

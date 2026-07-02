@@ -14,14 +14,20 @@
 
 import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import type {
-    CharacterShard,
-    CharacterSheet as CharacterSheetType,
+  CharacterShard,
+  CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
-import { useSheetEditing } from '@/modules/character-builder/application/context/activeSheetContext';
-import { shardToPreview } from '@/modules/character-builder/lib/utils/shardToPreview';
-import { ContentShardPanel } from '@/modules/character-builder/presentation/shards/contentShardPanel';
+import {
+  useFocusedShard,
+  useSheetEditing,
+  useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
+import {
+  ContentShardPanel,
+  type ContentShardType,
+} from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
-import { ShardDisplay } from '@/modules/character-builder/presentation/shards/shardDisplay';
+import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { FeatPicker } from '../builder/featPicker';
 import styles from './tabs.module.scss';
@@ -46,7 +52,10 @@ export interface FeatsTabProps {
  * @returns {JSX.Element} Rendered tab body
  */
 export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
+  const t = useTranslations('characterSheet');
   const editing = useSheetEditing();
+  const focusedShard = useFocusedShard();
+  const mutators = useSheetMutators();
   const selectedFeats = useMemo(
     () => (data.selectedFeats ?? []) as CharacterShard[],
     [data.selectedFeats],
@@ -67,55 +76,41 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
     [editing, onChange, selectedFeats],
   );
 
-  const latest = selectedFeats[selectedFeats.length - 1];
-  const latestFeatSlug = latest
-    ? (shardToPreview(latest.sourceFile)?.slug ??
-      latest.id.replace(/^feat::/, ''))
-    : null;
-
   return (
     <ResizablePane
       id='builder.feats'
       ariaLabel='Feats'
       left={
         <div className={styles.column}>
-          {editing ? (
-            <>
-              {selectedFeats.length > 0 && (
-                <div className={styles.chipCloud}>
-                  {selectedFeats.map((feat) => (
-                    <ShardChip
-                      key={feat.id}
-                      shard={feat}
-                      color='primary'
-                      onRemove={() => handleRemove(feat.id)}
-                    />
-                  ))}
-                </div>
-              )}
-              <FeatPicker
-                selectedFeats={selectedFeats}
-                onToggle={handleToggle}
-                readOnly={false}
-              />
-            </>
-          ) : selectedFeats.length > 0 ? (
+          {editing && selectedFeats.length > 0 && (
             <div className={styles.chipCloud}>
               {selectedFeats.map((feat) => (
-                <ShardDisplay key={feat.id} shard={feat} />
+                <ShardChip
+                  key={feat.id}
+                  shard={feat}
+                  color='primary'
+                  onRemove={editing ? () => handleRemove(feat.id) : undefined}
+                />
               ))}
             </div>
-          ) : (
-            <div className={styles.empty}>No feats selected.</div>
           )}
+          <FeatPicker
+            selectedFeats={selectedFeats}
+            onToggle={handleToggle}
+            readOnly={!editing}
+            onFocusShard={mutators.setFocusedShard}
+          />
         </div>
       }
       right={
         <div className={styles.column}>
-          {latestFeatSlug ? (
-            <ContentShardPanel contentType='feats' slug={latestFeatSlug} />
+          {focusedShard ? (
+            <ContentShardPanel
+              contentType={focusedShard.contentType as ContentShardType}
+              slug={focusedShard.slug}
+            />
           ) : (
-            <div className={styles.empty}>Select a feat to preview.</div>
+            <div className={styles.empty}>{t('shardPreviewFallback')}</div>
           )}
         </div>
       }

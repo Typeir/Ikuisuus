@@ -22,13 +22,13 @@
 import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import { Tab, TabList, TabPanel, Tabs } from '@/lib/components/ui/tabs';
 import type {
-  CharacterSheet as CharacterSheetType,
-  VocationEntry,
+    CharacterSheet as CharacterSheetType,
+    VocationEntry,
 } from '@/lib/types/character';
 import { ContentShardPanel } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { FeatureViewer } from '../builder/featureViewer';
+import { VocationFeatureCard } from '../builder/vocationFeatureCard';
 import styles from './tabs.module.scss';
 import vocationStyles from './vocationTab.module.scss';
 
@@ -91,7 +91,7 @@ const VocationEntryTabs: React.FC<{
             ariaLabel={vocationLabel}
             left={
               <div className={styles.column}>
-                <FeatureViewer
+                <VocationFeatureCard
                   section='vocation'
                   vocationFeatures={entry.vocationFeatures}
                   specializationFeatures={entry.specializationFeatures}
@@ -108,7 +108,7 @@ const VocationEntryTabs: React.FC<{
           />
         ) : (
           <div className={styles.column}>
-            <FeatureViewer
+            <VocationFeatureCard
               section='vocation'
               vocationFeatures={entry.vocationFeatures}
               specializationFeatures={entry.specializationFeatures}
@@ -128,7 +128,7 @@ const VocationEntryTabs: React.FC<{
             ariaLabel={specLabel}
             left={
               <div className={styles.column}>
-                <FeatureViewer
+                <VocationFeatureCard
                   section='specialization'
                   vocationFeatures={entry.vocationFeatures}
                   specializationFeatures={entry.specializationFeatures}
@@ -148,7 +148,7 @@ const VocationEntryTabs: React.FC<{
           />
         ) : (
           <div className={styles.column}>
-            <FeatureViewer
+            <VocationFeatureCard
               section='specialization'
               vocationFeatures={entry.vocationFeatures}
               specializationFeatures={entry.specializationFeatures}

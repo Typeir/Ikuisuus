@@ -66,7 +66,11 @@ export type SheetAction =
   | { type: 'CANCEL_EDIT' }
   | { type: 'COMMIT_SAVE' }
   | { type: 'SYNC_CHARACTER'; payload: { character: CharacterSheetType } }
-  | { type: 'SET_TAB'; payload: { tab: SheetTabId } };
+  | { type: 'SET_TAB'; payload: { tab: SheetTabId } }
+  | {
+      type: 'SET_FOCUSED_SHARD';
+      payload: { contentType: string; slug: string } | null;
+    };
 
 /**
  * Sums the `level` field of every vocation entry with a non-empty slug.
@@ -210,6 +214,18 @@ export const sheetReducer = (
     }
     case 'SET_TAB':
       return { ...state, activeTab: action.payload.tab };
+    case 'SET_FOCUSED_SHARD': {
+      const p = action.payload;
+      const update = {
+        focusedShardType: p?.contentType ?? null,
+        focusedShardSlug: p?.slug ?? null,
+      };
+      return {
+        ...state,
+        character: { ...state.character, ...update },
+        draft: { ...state.draft, ...update },
+      };
+    }
     default:
       return state;
   }

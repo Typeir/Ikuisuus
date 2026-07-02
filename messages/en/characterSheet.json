@@ -88,6 +88,8 @@
   "shardCategoryBoon": "Boon",
   "shardCategoryVocation": "Vocation",
   "shardCategorySpecialization": "Specialization",
+  "shardCategoryFeat": "Feat",
+  "shardPreviewFallback": "Select a feat to preview.",
   "shardLevelBadge": "Lv {level}",
   "shardExpandAria": "Expand {name} rules",
   "shardCollapseAria": "Collapse {name} rules",

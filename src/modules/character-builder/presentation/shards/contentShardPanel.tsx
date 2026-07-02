@@ -72,6 +72,25 @@ async function renderMarkdownFallback(source: string): Promise<ReactNode> {
 }
 
 /**
+ * Strips YAML frontmatter delimited by `---` from the start of content.
+ * Only removes the block if line 1 is `---` and a closing `---` appears
+ * before the first `#` heading (or end of content).
+ *
+ * @param {string} source - Raw markdown source
+ * @returns {string} Source with frontmatter block removed
+ */
+function stripYamlFrontmatter(source: string): string {
+  if (!source.startsWith('---')) return source;
+  const rest = source.slice(3);
+  const closeIdx = rest.indexOf('\n---');
+  if (closeIdx === -1) return source;
+  const afterClose = rest.slice(closeIdx + 4);
+  const headingIdx = afterClose.search(/^# /m);
+  if (headingIdx !== -1) return afterClose;
+  return source;
+}
+
+/**
  * Fetches and renders the `main` prose shard for the given content item.
  * Attempts full MDX compilation (tooltips, tables, all registered components)
  * and falls back to plain HTML on malformed or token-truncated input.
@@ -105,7 +124,7 @@ export const ContentShardPanel: React.FC<ContentShardPanelProps> = ({
 
   useEffect(() => {
     if (!data) return;
-    const markdown = data.shards.main ?? '';
+    const markdown = stripYamlFrontmatter(data.shards.main ?? '');
     let cancelled = false;
     try {
       const node = tryCompileMdxSync(markdown);

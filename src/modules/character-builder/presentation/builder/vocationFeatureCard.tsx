@@ -1,5 +1,5 @@
 /**
- * @fileoverview Feature Viewer Component
+ * @fileoverview Vocation Feature Card Component
  * @description Displays vocation and specialization features for a character at
  * their current level. Features above the character's level are rendered as
  * locked/dimmed `ShardDisplay` cards (not hidden). When no selection has been
@@ -9,8 +9,8 @@
  * Useful when callers (such as the Vocation tab) want to display the lists
  * inside their own tab structure rather than stacked.
  *
- * @module lib/components/characterSheet/featureViewer
- * @version 3.0.0
+ * @module lib/components/characterSheet/vocationFeatureCard
+ * @version 4.0.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -18,6 +18,7 @@
 'use client';
 
 import type { CharacterShard } from '@/lib/types/character';
+import { shardToPreview } from '@/modules/character-builder/lib/utils/shardToPreview';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
@@ -25,16 +26,16 @@ import { ShardDisplay } from '../shards/shardDisplay';
 import pickerStyles from './pickerControls.module.scss';
 
 /**
- * Which section(s) the FeatureViewer should render.
+ * Which section(s) the VocationFeatureCard should render.
  *
- * @typedef {'both' | 'vocation' | 'specialization'} FeatureViewerSection
+ * @typedef {'both' | 'vocation' | 'specialization'} VocationFeatureCardSection
  */
-export type FeatureViewerSection = 'both' | 'vocation' | 'specialization';
+export type VocationFeatureCardSection = 'both' | 'vocation' | 'specialization';
 
 /**
- * Props for the FeatureViewer component.
+ * Props for the VocationFeatureCard component.
  *
- * @interface FeatureViewerProps
+ * @interface VocationFeatureCardProps
  * @property {CharacterShard[]} vocationFeatures - Vocation feature shards (all levels)
  * @property {CharacterShard[]} specializationFeatures - Specialization feature shards (all levels)
  * @property {number} characterLevel - Current character level; features above this are locked/dimmed
@@ -42,10 +43,11 @@ export type FeatureViewerSection = 'both' | 'vocation' | 'specialization';
  * @property {string} [specializationTitle] - Display name for the specialization section header
  * @property {boolean} [hasVocation] - Whether a vocation has been selected; controls empty-state text
  * @property {boolean} [hasSpecialization] - Whether a specialization has been selected; controls empty-state text
- * @property {FeatureViewerSection} [section] - Which section to render: `'both'` (default), `'vocation'`, or `'specialization'`
+ * @property {VocationFeatureCardSection} [section] - Which section to render: `'both'` (default), `'vocation'`, or `'specialization'`
  * @property {boolean} [hideTitle] - When true, suppresses the section heading (useful inside tab panels that already label the section)
+ * @property {(shard: { contentType: string; slug: string }) => void} [onFocusShard] - Called when a feature shard is expanded, with the derived content type and slug for the right panel
  */
-export interface FeatureViewerProps {
+export interface VocationFeatureCardProps {
   vocationFeatures: CharacterShard[];
   specializationFeatures: CharacterShard[];
   characterLevel: number;
@@ -53,8 +55,9 @@ export interface FeatureViewerProps {
   specializationTitle?: string;
   hasVocation?: boolean;
   hasSpecialization?: boolean;
-  section?: FeatureViewerSection;
+  section?: VocationFeatureCardSection;
   hideTitle?: boolean;
+  onFocusShard?: (shard: { contentType: string; slug: string }) => void;
 }
 
 /**
@@ -65,10 +68,10 @@ export interface FeatureViewerProps {
  * available." is shown instead.
  *
  * @component
- * @param {FeatureViewerProps} props - Component props
+ * @param {VocationFeatureCardProps} props - Component props
  * @returns {JSX.Element} Rendered feature viewer
  */
-export const FeatureViewer: React.FC<FeatureViewerProps> = ({
+export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({
   vocationFeatures,
   specializationFeatures,
   characterLevel,
@@ -78,6 +81,7 @@ export const FeatureViewer: React.FC<FeatureViewerProps> = ({
   hasSpecialization = false,
   section = 'both',
   hideTitle = false,
+  onFocusShard,
 }) => {
   const t = useTranslations('characterSheet');
   const resolvedVocationTitle = vocationTitle || t('vocationFeatures');
@@ -108,6 +112,7 @@ export const FeatureViewer: React.FC<FeatureViewerProps> = ({
     emptyKey: 'noVocationSelected' | 'noSpecializationSelected',
     query: string,
     setQuery: (q: string) => void,
+    contentType: string,
   ) => {
     if (rawFeatures.length === 0) {
       const emptyText = hasSelection ? t('noFeaturesSelected') : t(emptyKey);
@@ -137,11 +142,19 @@ export const FeatureViewer: React.FC<FeatureViewerProps> = ({
             {features.map((shard) => {
               const locked =
                 shard.level !== undefined && shard.level > characterLevel;
+              const preview = shardToPreview(shard.sourceFile);
+              const handleExpand = preview
+                ? () =>
+                    onFocusShard?.({
+                      contentType,
+                      slug: preview.slug,
+                    })
+                : undefined;
               return (
                 <div
                   key={shard.id}
                   className={locked ? styles.featureLocked : undefined}>
-                  <ShardDisplay shard={shard} />
+                  <ShardDisplay shard={shard} onExpand={handleExpand} />
                 </div>
               );
             })}
@@ -168,6 +181,7 @@ export const FeatureViewer: React.FC<FeatureViewerProps> = ({
           'noVocationSelected',
           vocationQuery,
           setVocationQuery,
+          'vocations',
         )}
       {showSpec &&
         renderFeatures(
@@ -178,6 +192,7 @@ export const FeatureViewer: React.FC<FeatureViewerProps> = ({
           'noSpecializationSelected',
           specQuery,
           setSpecQuery,
+          'specializations',
         )}
     </div>
   );

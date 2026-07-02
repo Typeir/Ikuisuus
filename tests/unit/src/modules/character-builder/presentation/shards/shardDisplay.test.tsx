@@ -10,15 +10,9 @@
 
 import { ShardDisplay } from '@/modules/character-builder/presentation/shards/shardDisplay';
 import type { CharacterShard } from '@/lib/types/character';
-import { render as baseRender, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import { SWRConfig } from 'swr';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-vi.mock('@/lib/md/renderMarkdownToHtml', () => ({
-  renderMarkdownToHtml: (md: string) => Promise.resolve(md),
-}));
+import { describe, expect, it, vi } from 'vitest';
 
 const SHARD: CharacterShard = {
   id: 'empyrean::Extended Reach',
@@ -28,26 +22,6 @@ const SHARD: CharacterShard = {
   bpCost: 3,
   cachedText: 'Your unarmed reach increases by 5 ft.',
 };
-
-const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>();
-
-let swrCache: Map<unknown, unknown>;
-const SWRWrapper = ({ children }: { children: React.ReactNode }) => (
-  <SWRConfig value={{ provider: () => swrCache, dedupingInterval: 0 }}>
-    {children}
-  </SWRConfig>
-);
-const render = (ui: React.ReactElement) =>
-  baseRender(ui, { wrapper: SWRWrapper });
-
-beforeEach(() => {
-  swrCache = new Map();
-  vi.stubGlobal('fetch', mockFetch);
-});
-
-afterEach(() => {
-  vi.restoreAllMocks();
-});
 
 describe('ShardDisplay', () => {
   it('renders the heading', () => {
@@ -70,63 +44,18 @@ describe('ShardDisplay', () => {
     expect(screen.queryByText('Your unarmed reach')).toBeNull();
   });
 
-  it('shows cached text without fetching when expanded', async () => {
-    render(<ShardDisplay shard={SHARD} defaultExpanded />);
-    await waitFor(() => {
-      expect(
-        screen.getByText('Your unarmed reach increases by 5 ft.'),
-      ).toBeTruthy();
-    });
-    expect(mockFetch).not.toHaveBeenCalled();
-  });
-
-  it('fetches body text on expand when no cached text', async () => {
-    const shardNoCached: CharacterShard = { ...SHARD, cachedText: undefined };
-    mockFetch.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          shards: { 'Extended Reach': 'Full body text here.' },
-        }),
-        { status: 200 },
-      ),
-    );
-
-    render(<ShardDisplay shard={shardNoCached} />);
-    await userEvent.click(
-      screen.getByRole('button', { name: /Extended Reach/i }),
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Full body text here.')).toBeTruthy();
-    });
-  });
-
-  it('shows error message on fetch failure', async () => {
-    const shardNoCached: CharacterShard = { ...SHARD, cachedText: undefined };
-    mockFetch.mockResolvedValueOnce(
-      new Response(JSON.stringify({ error: 'Not found' }), { status: 404 }),
-    );
-
-    render(<ShardDisplay shard={shardNoCached} />);
-    await userEvent.click(
-      screen.getByRole('button', { name: /Extended Reach/i }),
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('shardNotFound')).toBeTruthy();
-    });
+  it('calls onExpand when expanding from collapsed', async () => {
+    const onExpand = vi.fn();
+    render(<ShardDisplay shard={SHARD} onExpand={onExpand} />);
+    await userEvent.click(screen.getByRole('button'));
+    expect(onExpand).toHaveBeenCalledOnce();
   });
 
   it('toggles closed on second click', async () => {
     render(<ShardDisplay shard={SHARD} defaultExpanded />);
-    await waitFor(() => {
-      expect(
-        screen.getByText('Your unarmed reach increases by 5 ft.'),
-      ).toBeTruthy();
-    });
-    await userEvent.click(
-      screen.getByRole('button', { name: /Extended Reach/i }),
-    );
-    expect(screen.queryByText('Your unarmed reach')).toBeNull();
+    const btn = screen.getByRole('button');
+    expect(btn).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.click(btn);
+    expect(btn).toHaveAttribute('aria-expanded', 'false');
   });
 });

@@ -235,7 +235,7 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
         <span className={styles.selectorLabel}>{t('colBloodline')}</span>
         <div className={styles.selectorInput}>
           {isLoading ? (
-            <Skeleton variant='button' height='26px' width='100%' />
+            <Skeleton variant='button' height='26px' />
           ) : (
             <FilterSelect
               id='bloodline-select'

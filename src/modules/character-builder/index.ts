@@ -34,8 +34,8 @@ export type { CharacterSheetProps } from './presentation/CharacterSheet/characte
 export { CombatStatsRow } from './presentation/stats/combatStatsRow';
 export type { CombatStatsRowProps } from './presentation/stats/combatStatsRow';
 
-export { FeatureViewer } from './presentation/builder/featureViewer';
-export type { FeatureViewerProps } from './presentation/builder/featureViewer';
+export { VocationFeatureCard } from './presentation/builder/vocationFeatureCard';
+export type { VocationFeatureCardProps } from './presentation/builder/vocationFeatureCard';
 
 export { NotesSection } from './presentation/notes/notesSection';
 export type {

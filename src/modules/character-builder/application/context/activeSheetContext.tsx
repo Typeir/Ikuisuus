@@ -23,6 +23,7 @@ import {
     createContext,
     useCallback,
     useContext,
+    useEffect,
     useMemo,
     useReducer,
     type ReactNode,
@@ -43,6 +44,7 @@ export type { SheetTabId };
  * @property {() => void} saveEdit - Persist draft to the roster context and exit edit mode
  * @property {() => void} cancelEdit - Discard draft and exit edit mode
  * @property {(tab: SheetTabId) => void} setActiveTab - Change the active tab
+ * @property {(shard: { contentType: string; slug: string } | null) => void} setFocusedShard - Set the currently focused content shard for the right panel
  */
 export interface SheetMutators {
   patch: (partial: Partial<CharacterSheetType>) => void;
@@ -56,6 +58,9 @@ export interface SheetMutators {
   saveEdit: () => void;
   cancelEdit: () => void;
   setActiveTab: (tab: SheetTabId) => void;
+  setFocusedShard: (
+    shard: { contentType: string; slug: string } | null,
+  ) => void;
 }
 
 /**
@@ -115,6 +120,11 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
     activeTab: initialTab,
   });
 
+  /** Sync state when outer character prop changes (roster selection). */
+  useEffect(() => {
+    dispatch({ type: 'SYNC_CHARACTER', payload: { character } });
+  }, [character]);
+
   const patch = useCallback((partial: Partial<CharacterSheetType>) => {
     dispatch({ type: 'PATCH', payload: partial });
   }, []);
@@ -149,6 +159,13 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
     dispatch({ type: 'SET_TAB', payload: { tab } });
   }, []);
 
+  const setFocusedShard = useCallback(
+    (shard: { contentType: string; slug: string } | null) => {
+      dispatch({ type: 'SET_FOCUSED_SHARD', payload: shard });
+    },
+    [],
+  );
+
   const saveEdit = useCallback(() => {
     dispatchRoster({
       type: CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER,
@@ -167,6 +184,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
       saveEdit,
       cancelEdit,
       setActiveTab,
+      setFocusedShard,
     }),
     [
       patch,
@@ -177,6 +195,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
       saveEdit,
       cancelEdit,
       setActiveTab,
+      setFocusedShard,
     ],
   );
 
@@ -250,6 +269,27 @@ export const useSheetTab = (): [SheetTabId, (tab: SheetTabId) => void] => {
  * @returns {SheetMutators} The write API
  */
 export const useSheetMutators = (): SheetMutators => useActiveSheet().mutators;
+
+/**
+ * Read the currently focused shard for the right detail panel.
+ * Returns `null` when no shard has been focused yet.
+ *
+ * @function useFocusedShard
+ * @returns {{ contentType: string; slug: string } | null} Focused shard or null
+ */
+export const useFocusedShard = (): {
+  contentType: string;
+  slug: string;
+} | null => {
+  const data = useSheetData();
+  if (data.focusedShardType && data.focusedShardSlug) {
+    return {
+      contentType: data.focusedShardType,
+      slug: data.focusedShardSlug,
+    };
+  }
+  return null;
+};
 
 /**
  * Read a single top-level field from the active character data.

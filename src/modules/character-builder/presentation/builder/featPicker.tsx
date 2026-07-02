@@ -15,12 +15,10 @@
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
 import { useFeats } from '@/lib/hooks/data/useFeats';
 import type { CharacterShard } from '@/lib/types/character';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
-import expandStyles from './boonExpand.module.scss';
-import { ContentExpandBody } from './contentExpandBody';
+import { FeatureCard } from './featureCard';
 import pickerStyles from './pickerControls.module.scss';
 
 /**
@@ -35,6 +33,7 @@ export interface FeatPickerProps {
   selectedFeats: CharacterShard[];
   onToggle: (feats: CharacterShard[]) => void;
   readOnly?: boolean;
+  onFocusShard?: (shard: { contentType: string; slug: string }) => void;
 }
 
 /**
@@ -48,6 +47,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
   selectedFeats,
   onToggle,
   readOnly = false,
+  onFocusShard,
 }) => {
   const t = useTranslations('characterSheet.feats');
   const locale = useLocale();
@@ -79,6 +79,16 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
     return feats.filter((f) => f.title.toLowerCase().includes(q));
   }, [feats, searchQuery]);
 
+  const displayedFeats = useMemo(
+    () =>
+      readOnly
+        ? filteredFeats.filter((f) =>
+            selectedFeats.some((s) => s.sourceFile === toSourceFile(f.slug)),
+          )
+        : filteredFeats,
+    [readOnly, filteredFeats, selectedFeats],
+  );
+
   const handleToggle = (feat: FeatMetadata) => {
     const sf = toSourceFile(feat.slug);
     if (isSelected(feat.slug)) {
@@ -102,65 +112,48 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
 
       {!loading && !error && (
         <>
-          <input
-            type='search'
-            className={pickerStyles.pickerSearch}
-            placeholder={t('searchPlaceholder')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            aria-label={t('searchPlaceholder')}
-          />
+          {!readOnly && (
+            <input
+              type='search'
+              className={pickerStyles.pickerSearch}
+              placeholder={t('searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label={t('searchPlaceholder')}
+            />
+          )}
           <div className={pickerStyles.pickerScroll}>
             <ul className={styles.boonList} aria-label='Available feats'>
-              {filteredFeats.map((feat) => {
+              {displayedFeats.map((feat) => {
                 const selected = isSelected(feat.slug);
                 const isExpanded = expandedFeats.has(feat.slug);
                 const bodyId = `feat-body-${feat.slug.replace(/\s+/g, '-')}`;
-                const Chevron = isExpanded ? ChevronDown : ChevronRight;
                 const expandLabel = isExpanded
                   ? t('shardCollapseAria', { name: feat.title })
                   : t('shardExpandAria', { name: feat.title });
                 return (
-                  <li
+                  <FeatureCard
                     key={feat.slug}
-                    className={`${styles.boonCard} ${selected ? styles.boonSelected : ''}`}>
-                    <div className={expandStyles.boonRow}>
-                      <button
-                        type='button'
-                        className={styles.boonToggleBtn}
-                        onClick={() => handleToggle(feat)}
-                        disabled={readOnly}
-                        aria-pressed={selected}>
-                        <span className={styles.boonName}>{feat.title}</span>
-                        {feat.hasPrerequisite && (
-                          <span className={styles.boonBpBadge}>
-                            {t('prereq')}
-                          </span>
-                        )}
-                      </button>
-                      <button
-                        type='button'
-                        className={expandStyles.boonExpandBtn}
-                        onClick={() => toggleExpanded(feat.slug)}
-                        aria-expanded={isExpanded}
-                        aria-controls={bodyId}
-                        aria-label={expandLabel}>
-                        <Chevron size={14} aria-hidden='true' />
-                      </button>
-                    </div>
-                    {isExpanded && (
-                      <ContentExpandBody
-                        contentType='feats'
-                        contentSlug={feat.slug}
-                        contentKey={feat.title}
-                        cachedText={feat.description}
-                        id={bodyId}
-                      />
-                    )}
-                  </li>
+                    label={feat.title}
+                    badge={feat.hasPrerequisite ? t('prereq') : undefined}
+                    selected={selected}
+                    expanded={isExpanded}
+                    readOnly={readOnly}
+                    onToggle={() => handleToggle(feat)}
+                    onExpand={() => toggleExpanded(feat.slug)}
+                    onFocus={() =>
+                      onFocusShard?.({ contentType: 'feats', slug: feat.slug })
+                    }
+                    contentType='feats'
+                    contentSlug={feat.slug}
+                    contentKey={feat.title}
+                    cachedText={feat.description}
+                    bodyId={bodyId}
+                    expandLabel={expandLabel}
+                  />
                 );
               })}
-              {filteredFeats.length === 0 && (
+              {displayedFeats.length === 0 && (
                 <li className={styles.boonEmpty}>{t('noAvailable')}</li>
               )}
             </ul>

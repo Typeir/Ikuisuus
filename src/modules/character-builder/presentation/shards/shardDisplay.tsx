@@ -14,14 +14,13 @@
 
 'use client';
 
-import { FetchError } from '@/lib/fetch/fetcher';
-import { useContentShardSingle } from '@/lib/hooks/data/useContentShard';
 import type { CharacterShard } from '@/lib/types/character';
 import { shardToPreview } from '@/modules/character-builder/lib/utils/shardToPreview';
+import { ContentExpandBody } from '@/modules/character-builder/presentation/builder/contentExpandBody';
 import type { ContentShardType } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 
 /**
@@ -34,6 +33,7 @@ import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 export interface ShardDisplayProps {
   shard: CharacterShard;
   defaultExpanded?: boolean;
+  onExpand?: () => void;
 }
 
 /**
@@ -46,64 +46,33 @@ export interface ShardDisplayProps {
 export const ShardDisplay: React.FC<ShardDisplayProps> = ({
   shard,
   defaultExpanded = false,
+  onExpand,
 }) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
-  const [textReady, setTextReady] = useState(shard.cachedText !== undefined);
-  const [bodyText, setBodyText] = useState<string>(shard.cachedText ?? '');
-  const [renderedHtml, setRenderedHtml] = useState<string>('');
   const t = useTranslations('characterSheet');
-  const locale = useLocale();
   const preview = shardToPreview(shard.sourceFile);
 
-  const {
-    data: shardData,
-    isLoading: loading,
-    error: shardError,
-  } = useContentShardSingle({
-    contentType: (preview?.kind ?? 'feats') as ContentShardType,
-    slug: preview?.slug ?? '',
-    key: shard.heading,
-    locale,
-    enabled: expanded && !textReady && preview !== null,
-  });
-
-  const is404 = shardError instanceof FetchError && shardError.status === 404;
-  const error = shardError?.message ?? null;
-
-  useEffect(() => {
-    if (shardData && !textReady) {
-      setBodyText(shardData.shards[shard.heading] ?? '');
-      setTextReady(true);
-    }
-  }, [shardData, textReady, shard.heading]);
-
-  useEffect(() => {
-    if (!bodyText) {
-      setRenderedHtml('');
-      return;
-    }
-    let cancelled = false;
-    void import('@/lib/md/renderMarkdownToHtml').then(
-      ({ renderMarkdownToHtml }) =>
-        renderMarkdownToHtml(bodyText).then((html) => {
-          if (!cancelled) setRenderedHtml(html);
-        }),
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, [bodyText]);
-
   const handleToggle = useCallback(() => {
+    if (!expanded) {
+      onExpand?.();
+    }
     setExpanded((prev) => !prev);
-  }, []);
+  }, [expanded, onExpand]);
 
   const categoryLabel =
     shard.category === 'boon'
       ? t('shardCategoryBoon')
       : shard.category === 'vocation-feature'
         ? t('shardCategoryVocation')
-        : t('shardCategorySpecialization');
+        : shard.category === 'feat'
+          ? t('shardCategoryFeat')
+          : t('shardCategorySpecialization');
+
+  const bodyId = `shard-body-${shard.id.replace(/\s+/g, '-')}`;
+  const expandLabel = expanded
+    ? t('shardCollapseAria', { name: shard.heading })
+    : t('shardExpandAria', { name: shard.heading });
+  const Chevron = expanded ? ChevronDown : ChevronRight;
 
   return (
     <div
@@ -112,9 +81,11 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
         type='button'
         className={styles.shardHeader}
         onClick={handleToggle}
-        aria-expanded={expanded}>
+        aria-expanded={expanded}
+        aria-controls={bodyId}
+        aria-label={expandLabel}>
         <span className={styles.shardChevron} aria-hidden='true'>
-          {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+          <Chevron size={14} />
         </span>
         <span className={styles.shardHeading}>{shard.heading}</span>
         <span className={styles.shardCategory}>{categoryLabel}</span>
@@ -132,22 +103,13 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
 
       {expanded && (
         <div className={styles.shardBody}>
-          {loading && (
-            <p className={styles.shardLoading}>{t('shardLoading')}</p>
-          )}
-          {error && (
-            <p className={styles.shardError}>
-              {is404 ? t('shardNotFound') : error}
-            </p>
-          )}
-          {!loading && !error && (
-            <div
-              className={styles.shardMarkdown}
-              dangerouslySetInnerHTML={{
-                __html: renderedHtml || (bodyText ? '' : '—'),
-              }}
-            />
-          )}
+          <ContentExpandBody
+            contentType={(preview?.kind ?? 'feats') as ContentShardType}
+            contentSlug={preview?.slug ?? shard.id}
+            contentKey={shard.heading}
+            cachedText={shard.cachedText}
+            id={bodyId}
+          />
         </div>
       )}
     </div>

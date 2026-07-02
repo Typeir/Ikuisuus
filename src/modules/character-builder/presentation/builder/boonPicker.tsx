@@ -24,13 +24,11 @@ import { fetcher } from '@/lib/fetch/fetcher';
 import { useBloodlines } from '@/lib/hooks/data/useBloodlines';
 import type { CharacterShard } from '@/lib/types/character';
 import { computeBpSpent } from '@/modules/character-builder/lib/utils/shardExtractor';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import { useSWRConfig } from 'swr';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
-import expandStyles from './boonExpand.module.scss';
-import { ContentExpandBody } from './contentExpandBody';
+import { FeatureCard } from './featureCard';
 import pickerStyles from './pickerControls.module.scss';
 
 /**
@@ -51,6 +49,7 @@ export interface BoonPickerProps {
   onToggle: (boons: CharacterShard[]) => void;
   readOnly?: boolean;
   locale?: string;
+  onFocusShard?: (shard: { contentType: string; slug: string }) => void;
 }
 
 /**
@@ -67,6 +66,7 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
   boonBudget,
   onToggle,
   readOnly = false,
+  onFocusShard,
 }) => {
   const locale = useLocale();
   const {
@@ -217,44 +217,32 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
                   boon.bpValue !== undefined
                     ? `${boon.bpValue} ${t('bpUnit')}`
                     : boon.bpLabel;
-                const Chevron = isExpanded ? ChevronDown : ChevronRight;
                 const expandLabel = isExpanded
                   ? t('shardCollapseAria', { name: boon.name })
                   : t('shardExpandAria', { name: boon.name });
                 return (
-                  <li
+                  <FeatureCard
                     key={boon.name}
-                    className={`${styles.boonCard} ${selected ? styles.boonSelected : ''}`}>
-                    <div className={expandStyles.boonRow}>
-                      <button
-                        type='button'
-                        className={styles.boonToggleBtn}
-                        onClick={() => handleToggle(boon)}
-                        disabled={readOnly}
-                        aria-pressed={selected}>
-                        <span className={styles.boonName}>{boon.name}</span>
-                        <span className={styles.boonBpBadge}>{badgeText}</span>
-                      </button>
-                      <button
-                        type='button'
-                        className={expandStyles.boonExpandBtn}
-                        onClick={() => toggleExpanded(boon.name)}
-                        aria-expanded={isExpanded}
-                        aria-controls={bodyId}
-                        aria-label={expandLabel}>
-                        <Chevron size={14} aria-hidden='true' />
-                      </button>
-                    </div>
-                    {isExpanded && (
-                      <ContentExpandBody
-                        contentType='bloodlines'
-                        contentSlug={bloodlineSlug}
-                        contentKey={boon.name}
-                        cachedText={cachedShard?.cachedText}
-                        id={bodyId}
-                      />
-                    )}
-                  </li>
+                    label={boon.name}
+                    badge={badgeText}
+                    selected={selected}
+                    expanded={isExpanded}
+                    readOnly={readOnly}
+                    onToggle={() => handleToggle(boon)}
+                    onExpand={() => toggleExpanded(boon.name)}
+                    onFocus={() =>
+                      onFocusShard?.({
+                        contentType: 'bloodlines',
+                        slug: bloodlineSlug,
+                      })
+                    }
+                    contentType='bloodlines'
+                    contentSlug={bloodlineSlug}
+                    contentKey={boon.name}
+                    cachedText={cachedShard?.cachedText}
+                    bodyId={bodyId}
+                    expandLabel={expandLabel}
+                  />
                 );
               })}
               {displayedBoons.length === 0 && (

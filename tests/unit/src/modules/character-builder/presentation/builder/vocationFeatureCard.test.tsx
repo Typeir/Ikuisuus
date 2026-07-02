@@ -1,14 +1,14 @@
 /**
- * @fileoverview FeatureViewer Unit Tests
- * @description Tests for the FeatureViewer component.
+ * @fileoverview VocationFeatureCard Unit Tests
+ * @description Tests for the VocationFeatureCard component.
  *
- * @module tests/unit/lib/components/characterSheet/featureViewer
+ * @module tests/unit/lib/components/characterSheet/vocationFeatureCard
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
-import { FeatureViewer } from '@/modules/character-builder/presentation/builder/featureViewer';
+import { VocationFeatureCard } from '@/modules/character-builder/presentation/builder/vocationFeatureCard';
 import type { CharacterShard } from '@/lib/types/character';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -37,10 +37,10 @@ const SPEC_FEATURES: CharacterShard[] = [
   },
 ];
 
-describe('FeatureViewer', () => {
+describe('VocationFeatureCard', () => {
   it('renders both section headings', () => {
     render(
-      <FeatureViewer
+      <VocationFeatureCard
         vocationFeatures={VOCATION_FEATURES}
         specializationFeatures={SPEC_FEATURES}
         characterLevel={5}
@@ -52,7 +52,7 @@ describe('FeatureViewer', () => {
 
   it('renders feature headings', () => {
     render(
-      <FeatureViewer
+      <VocationFeatureCard
         vocationFeatures={VOCATION_FEATURES}
         specializationFeatures={SPEC_FEATURES}
         characterLevel={5}
@@ -64,7 +64,7 @@ describe('FeatureViewer', () => {
 
   it('shows "No selection" messages when no selection and empty arrays', () => {
     render(
-      <FeatureViewer
+      <VocationFeatureCard
         vocationFeatures={[]}
         specializationFeatures={[]}
         characterLevel={1}
@@ -76,7 +76,7 @@ describe('FeatureViewer', () => {
 
   it('shows "No features available" when selection made but arrays are empty', () => {
     render(
-      <FeatureViewer
+      <VocationFeatureCard
         vocationFeatures={[]}
         specializationFeatures={[]}
         characterLevel={1}
@@ -89,7 +89,7 @@ describe('FeatureViewer', () => {
 
   it('accepts custom section titles', () => {
     render(
-      <FeatureViewer
+      <VocationFeatureCard
         vocationFeatures={[]}
         specializationFeatures={[]}
         characterLevel={1}
@@ -111,55 +111,14 @@ describe('FeatureViewer', () => {
       cachedText: 'Only at level 10.',
     };
     render(
-      <FeatureViewer
+      <VocationFeatureCard
         vocationFeatures={[highLevelFeature]}
         specializationFeatures={[]}
         characterLevel={5}
         hasVocation
       />,
     );
+    // Locked features still render their heading
     expect(screen.getByText('High Level Feature')).toBeTruthy();
-  });
-
-  it('renders only the vocation section when section="vocation"', () => {
-    render(
-      <FeatureViewer
-        vocationFeatures={VOCATION_FEATURES}
-        specializationFeatures={SPEC_FEATURES}
-        characterLevel={5}
-        section='vocation'
-      />,
-    );
-    expect(screen.getByText('Arcane Recovery')).toBeTruthy();
-    expect(screen.queryByText('Sculpt Spells')).toBeNull();
-    expect(screen.queryByText('specializationFeatures')).toBeNull();
-  });
-
-  it('renders only the specialization section when section="specialization"', () => {
-    render(
-      <FeatureViewer
-        vocationFeatures={VOCATION_FEATURES}
-        specializationFeatures={SPEC_FEATURES}
-        characterLevel={5}
-        section='specialization'
-      />,
-    );
-    expect(screen.getByText('Sculpt Spells')).toBeTruthy();
-    expect(screen.queryByText('Arcane Recovery')).toBeNull();
-    expect(screen.queryByText('vocationFeatures')).toBeNull();
-  });
-
-  it('hides the section title when hideTitle is true', () => {
-    render(
-      <FeatureViewer
-        vocationFeatures={VOCATION_FEATURES}
-        specializationFeatures={[]}
-        characterLevel={5}
-        section='vocation'
-        hideTitle
-      />,
-    );
-    expect(screen.getByText('Arcane Recovery')).toBeTruthy();
-    expect(screen.queryByText('vocationFeatures')).toBeNull();
   });
 });

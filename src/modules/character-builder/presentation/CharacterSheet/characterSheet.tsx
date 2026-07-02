@@ -17,9 +17,9 @@
 
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import {
-    ActiveSheetProvider,
-    useActiveSheet,
-    type SheetTabId,
+  ActiveSheetProvider,
+  useActiveSheet,
+  type SheetTabId,
 } from '@/modules/character-builder/application/context/activeSheetContext';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
@@ -99,8 +99,8 @@ const CharacterSheetBody: React.FC = () => {
       { value: 'overview', label: t('tabOverview') },
       { value: 'bloodline', label: t('tabBloodline') },
       { value: 'vocation', label: t('tabVocation') },
-      { value: 'equipment', label: t('tabEquipment') },
       { value: 'feats', label: t('tabFeats') },
+      { value: 'equipment', label: t('tabEquipment') },
     ],
     [t],
   );
@@ -113,10 +113,10 @@ const CharacterSheetBody: React.FC = () => {
         return <BloodlineTab data={data} onChange={patch} />;
       case 'vocation':
         return <VocationTab data={data} />;
-      case 'equipment':
-        return <EquipmentTab data={data} editing={editing} onChange={patch} />;
       case 'feats':
         return <FeatsTab data={data} onChange={patch} />;
+      case 'equipment':
+        return <EquipmentTab data={data} editing={editing} onChange={patch} />;
       default:
         return null;
     }

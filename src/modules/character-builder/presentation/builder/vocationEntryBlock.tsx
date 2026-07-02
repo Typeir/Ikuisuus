@@ -142,7 +142,7 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
         </span>
         <div className={styles.selectorInput}>
           {showSkeleton ? (
-            <Skeleton variant='button' height='26px' width='100%' />
+            <Skeleton variant='button' height='26px' />
           ) : (
             <FilterSelect
               id={`vocation-select-${index}`}

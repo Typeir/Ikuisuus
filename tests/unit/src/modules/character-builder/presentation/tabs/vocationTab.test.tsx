@@ -10,28 +10,32 @@
  * @since 1.0.0
  */
 
-import { VocationTab } from '@/modules/character-builder/presentation/tabs/vocationTab';
 import type { VocationEntry } from '@/lib/types/character';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
-import { render, screen } from '@testing-library/react';
+import { VocationTab } from '@/modules/character-builder/presentation/tabs/vocationTab';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/modules/character-builder/presentation/shards/contentShardPanel', () => ({
-  ContentShardPanel: ({
-    contentType,
-    slug,
-  }: {
-    contentType: string;
-    slug: string;
-  }) => (
-    <div
-      data-testid='content-shard-panel'
-      data-content-type={contentType}
-      data-slug={slug}
-    />
-  ),
-}));
+vi.mock(
+  '@/modules/character-builder/presentation/shards/contentShardPanel',
+  () => ({
+    ContentShardPanel: ({
+      contentType,
+      slug,
+    }: {
+      contentType: string;
+      slug: string;
+    }) => (
+      <div
+        data-testid='content-shard-panel'
+        data-content-type={contentType}
+        data-slug={slug}
+      />
+    ),
+  }),
+);
 
 const VOC_EMPTY: VocationEntry = {
   slug: '',
@@ -45,7 +49,7 @@ const VOC_EMPTY: VocationEntry = {
 
 describe('VocationTab', () => {
   it('renders empty state when no vocations are configured', () => {
-    render(<VocationTab data={createEmptyCharacter()} />);
+    renderWithActiveSheet(<VocationTab data={createEmptyCharacter()} />);
     expect(screen.getByText('addVocationPrompt')).toBeTruthy();
   });
 
@@ -60,7 +64,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    render(<VocationTab data={data} />);
+    renderWithActiveSheet(<VocationTab data={data} />);
     const panel = screen.getByTestId('content-shard-panel');
     expect(panel).toHaveAttribute('data-content-type', 'vocations');
     expect(panel).toHaveAttribute('data-slug', 'oathbreaker');
@@ -79,7 +83,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    render(<VocationTab data={data} />);
+    renderWithActiveSheet(<VocationTab data={data} />);
 
     const specTab = screen.getByRole('tab', { name: 'Abjurer' });
     await userEvent.click(specTab);
@@ -100,7 +104,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    render(<VocationTab data={data} />);
+    renderWithActiveSheet(<VocationTab data={data} />);
     const specTab = screen.getByRole('tab', { name: 'specializationFeatures' });
     expect(specTab).toBeDisabled();
   });
@@ -123,7 +127,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    render(<VocationTab data={data} />);
+    renderWithActiveSheet(<VocationTab data={data} />);
     expect(screen.getByRole('tab', { name: 'Wizard / Abjurer' })).toBeTruthy();
     expect(screen.getByRole('tab', { name: 'Rogue' })).toBeTruthy();
   });

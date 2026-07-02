@@ -335,6 +335,8 @@ export interface CharacterSheet {
   equipment: EquipmentItem[];
   equipmentNotes: string;
   selectedFeats: CharacterShard[];
+  focusedShardType: string | null;
+  focusedShardSlug: string | null;
   currency: CharacterCurrency;
   coinHoldings: CharacterCoinHoldings[];
   background: string;
