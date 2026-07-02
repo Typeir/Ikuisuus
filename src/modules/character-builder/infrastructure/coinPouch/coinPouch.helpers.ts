@@ -73,7 +73,8 @@ export const buildAllSystems = (
 export const findSystem = (
   systems: CurrencySystem[],
   name: string,
-): CurrencySystem => systems.find((system) => system.name === name) ?? GOLD_STANDARD;
+): CurrencySystem =>
+  systems.find((system) => system.name === name) ?? GOLD_STANDARD;
 
 /**
  * Update the quantity of a single coin denomination.
@@ -116,7 +117,10 @@ export const addCurrencySystem = (
   );
   if (remainingBuiltIn) {
     return {
-      holdings: [...holdings, { systemName: remainingBuiltIn.name, counts: {} }],
+      holdings: [
+        ...holdings,
+        { systemName: remainingBuiltIn.name, counts: {} },
+      ],
       systems: customSystems,
     };
   }
@@ -263,6 +267,46 @@ export const renameDenomination = (
             ),
           }
         : entry,
+    ),
+  };
+};
+
+/**
+ * Update the multiplier of a custom denomination.
+ *
+ * @function updateDenominationMultiplier
+ * @param {CurrencySystem[]} customSystems - Current custom systems
+ * @param {string} systemName - Currency system name
+ * @param {string} coinName - Denomination name
+ * @param {number} value - New multiplier value
+ * @returns {CurrencySystem[]} Updated custom systems
+ */
+/**
+ * Rename a custom currency system and migrate holdings keys.
+ *
+ * @function renameCurrencySystem
+ * @param {CharacterCoinHoldings[]} holdings - Current holdings
+ * @param {CurrencySystem[]} customSystems - Current custom systems
+ * @param {string} oldName - Existing system name
+ * @param {string} newName - Replacement system name
+ * @returns {CoinPouchMutationResult} Updated state payload
+ */
+export const renameCurrencySystem = (
+  holdings: CharacterCoinHoldings[],
+  customSystems: CurrencySystem[],
+  oldName: string,
+  newName: string,
+): CoinPouchMutationResult => {
+  const trimmed = newName.trim();
+  if (!trimmed || trimmed === oldName) {
+    return { holdings, systems: customSystems };
+  }
+  return {
+    holdings: holdings.map((h) =>
+      h.systemName === oldName ? { ...h, systemName: trimmed } : h,
+    ),
+    systems: customSystems.map((s) =>
+      s.name === oldName ? { ...s, name: trimmed } : s,
     ),
   };
 };

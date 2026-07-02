@@ -70,9 +70,10 @@ describe('FeatureCard', () => {
 
   it('marks toggle button as aria-disabled when readOnly', () => {
     render(<FeatureCard {...baseProps} readOnly />);
-    expect(
-      screen.getByText('Test Feature').closest('button'),
-    ).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByText('Test Feature').closest('button')).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 
   it('renders badge when provided', () => {

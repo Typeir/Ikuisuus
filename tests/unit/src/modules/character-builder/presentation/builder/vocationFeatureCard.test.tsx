@@ -8,8 +8,8 @@
  * @since 1.0.0
  */
 
-import { VocationFeatureCard } from '@/modules/character-builder/presentation/builder/vocationFeatureCard';
 import type { CharacterShard } from '@/lib/types/character';
+import { VocationFeatureCard } from '@/modules/character-builder/presentation/builder/vocationFeatureCard';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 

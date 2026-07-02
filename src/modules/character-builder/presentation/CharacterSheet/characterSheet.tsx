@@ -28,6 +28,7 @@ import { CharacterSheetHeader } from '../Header/characterSheetHeader';
 import { PagePreviewHost } from '../PagePreview/pagePreviewHost';
 import { PagePreviewProvider } from '../PagePreview/pagePreviewProvider';
 import { AbilityScoreBlock } from '../stats/abilityScoreBlock';
+import { BibliographyTab } from '../tabs/bibliographyTab';
 import { BloodlineTab } from '../tabs/bloodlineTab';
 import { EquipmentTab } from '../tabs/equipmentTab';
 import { FeatsTab } from '../tabs/featsTab';
@@ -101,6 +102,7 @@ const CharacterSheetBody: React.FC = () => {
       { value: 'vocation', label: t('tabVocation') },
       { value: 'feats', label: t('tabFeats') },
       { value: 'equipment', label: t('tabEquipment') },
+      { value: 'bibliography', label: t('tabBibliography') },
     ],
     [t],
   );
@@ -117,6 +119,10 @@ const CharacterSheetBody: React.FC = () => {
         return <FeatsTab data={data} onChange={patch} />;
       case 'equipment':
         return <EquipmentTab data={data} editing={editing} onChange={patch} />;
+      case 'bibliography':
+        return (
+          <BibliographyTab data={data} editing={editing} onChange={patch} />
+        );
       default:
         return null;
     }

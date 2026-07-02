@@ -29,7 +29,8 @@ export type SheetTabId =
   | 'bloodline'
   | 'vocation'
   | 'equipment'
-  | 'feats';
+  | 'feats'
+  | 'bibliography';
 
 /**
  * Internal reducer state.

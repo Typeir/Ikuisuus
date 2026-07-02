@@ -8,8 +8,8 @@
  * @since 1.0.0
  */
 
-import { ShardDisplay } from '@/modules/character-builder/presentation/shards/shardDisplay';
 import type { CharacterShard } from '@/lib/types/character';
+import { ShardDisplay } from '@/modules/character-builder/presentation/shards/shardDisplay';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

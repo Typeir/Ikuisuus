@@ -36,6 +36,7 @@ import {
     findSystem,
     removeCurrencySystem as removeCurrencySystemState,
     removeDenomination as removeDenominationState,
+    renameCurrencySystem as renameCurrencySystemState,
     renameDenomination as renameDenominationState,
     resolveHoldings,
     updateCoinCount,
@@ -134,6 +135,17 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
     updateHoldings(result.holdings);
   };
 
+  const renameSystem = (oldName: string, newName: string) => {
+    const result = renameCurrencySystemState(
+      holdings,
+      customSystems,
+      oldName,
+      newName,
+    );
+    setCustomSystems(result.systems);
+    updateHoldings(result.holdings);
+  };
+
   const updateMultiplier = (
     systemName: string,
     coinName: string,
@@ -153,7 +165,16 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
           return (
             <div key={h.systemName} className={styles.systemCard}>
               <div className={styles.systemHeader}>
-                <h4 className={styles.systemName}>{h.systemName}</h4>
+                {editing && !system.builtIn ? (
+                  <input
+                    className={styles.systemNameInput}
+                    defaultValue={h.systemName}
+                    onBlur={(e) => renameSystem(h.systemName, e.target.value)}
+                    aria-label='Currency system name'
+                  />
+                ) : (
+                  <h4 className={styles.systemName}>{h.systemName}</h4>
+                )}
                 <Chip
                   label={`${total.toFixed(2)} ${system.coins.find((c) => c.multiplier === 1)?.abbreviation ?? 'units'}`}
                   variant='neutral'

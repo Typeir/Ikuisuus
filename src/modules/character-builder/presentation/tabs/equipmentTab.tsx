@@ -16,14 +16,15 @@ import { NumericInput } from '@/lib/components/ui/numericInput';
 import { TextArea } from '@/lib/components/ui/textArea';
 import { TextInput } from '@/lib/components/ui/textInput';
 import type {
-  CharacterSheet as CharacterSheetType,
-  EquipmentItem,
+    CharacterSheet as CharacterSheetType,
+    EquipmentItem,
 } from '@/lib/types/character';
 import { EquipmentProvider } from '@/modules/character-builder/application/context/equipmentContext';
 import { Plus, X } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { CarryingCapacityCalculator } from '../CarryingCapacity/carryingCapacityCalculator';
 import { CoinPouch } from '../CarryingCapacity/coinPouch';
+import { AttacksTable } from '../stats/attacksTable';
 import styles from './tabs.module.scss';
 
 /**
@@ -91,6 +92,11 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
     (value: string) => {
       onChange({ equipmentNotes: value } as Partial<CharacterSheetType>);
     },
+    [onChange],
+  );
+
+  const handleAttacksChange = useCallback(
+    (attacks: CharacterSheetType['attacks']) => onChange({ attacks }),
     [onChange],
   );
 
@@ -177,6 +183,13 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
         </div>
 
         <div className={styles.column}>
+          <h3 className={styles.sectionTitle}>Weapons / Attacks</h3>
+          <AttacksTable
+            attacks={data.attacks}
+            onChange={handleAttacksChange}
+            readOnly={!editing}
+          />
+
           <h3 className={styles.sectionTitle}>Coin Pouch</h3>
           <CoinPouch data={data} editing={editing} onChange={onChange} />
 
