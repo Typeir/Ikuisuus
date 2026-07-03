@@ -1,9 +1,0 @@
----
-contentType: tool
----
-
-import { Tooltip } from '@/lib/components/mdx'
-
-# Smithing Tools
-
-Proficiency with smithing tools lets you add your tier bonus to ability checks made to work metal. This tier bonus applies to any check that involves shaping, repairing, or identifying metalwork.

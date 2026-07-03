@@ -223,8 +223,8 @@ describe('featurePatterns', () => {
     });
 
     it('rechargeAfter should capture condition', () => {
-      const m = 'recharges after a long rest.'.match(RESOURCES.rechargeAfter);
-      expect(m![1]).toBe('long rest');
+      const m = 'recharges after a Recovery.'.match(RESOURCES.rechargeAfter);
+      expect(m![1]).toBe('Recovery');
     });
   });
 
@@ -365,7 +365,7 @@ describe('featurePatterns', () => {
 
     it('RECHARGE_TIMINGS should have 6 entries', () => {
       expect(RECHARGE_TIMINGS).toHaveLength(6);
-      expect(RECHARGE_TIMINGS[0].timing).toBe('short_rest');
+      expect(RECHARGE_TIMINGS[0].timing).toBe('repose');
       expect(RECHARGE_TIMINGS[5].timing).toBe('dusk');
     });
   });

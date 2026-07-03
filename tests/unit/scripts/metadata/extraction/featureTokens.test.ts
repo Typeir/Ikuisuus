@@ -185,14 +185,14 @@ describe('shared token recognizers', () => {
   });
 
   describe('recognizeRecharge', () => {
-    it('should parse short rest', () => {
-      const result = recognizeRecharge('recharges on a short rest');
-      expect(result?.timing).toBe('short_rest');
+    it('should parse Repose', () => {
+      const result = recognizeRecharge('recharges on a Repose');
+      expect(result?.timing).toBe('repose');
     });
 
-    it('should parse long rest', () => {
-      const result = recognizeRecharge('recovers after a long rest');
-      expect(result?.timing).toBe('long_rest');
+    it('should parse Recovery', () => {
+      const result = recognizeRecharge('recovers after a Recovery');
+      expect(result?.timing).toBe('recovery');
     });
 
     it('should parse dawn', () => {

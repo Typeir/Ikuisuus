@@ -94,7 +94,7 @@ export interface ResourceToken {
  * Token representing a parsed recharge condition.
  *
  * @interface RechargeToken
- * @property {string} timing - When the ability recharges (short_rest, long_rest, dawn, sundown, etc.)
+ * @property {string} timing - When the ability recharges (repose, recovery, dawn, sundown, etc.)
  * @property {number} [amount] - Number of uses regained
  */
 export interface RechargeToken {

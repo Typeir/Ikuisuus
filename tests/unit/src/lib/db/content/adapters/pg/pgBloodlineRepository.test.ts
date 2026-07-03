@@ -82,7 +82,7 @@ const entityRow = {
         sortOrder: 1,
         tags: [
           'mechanic:bonus-action',
-          'mechanic:long-rest-recharge',
+          'mechanic:recovery-recharge',
           'movement:enhanced',
         ],
       },

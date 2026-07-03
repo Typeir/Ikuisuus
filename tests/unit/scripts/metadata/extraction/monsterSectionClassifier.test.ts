@@ -29,7 +29,7 @@ describe('classifyHeading', () => {
     ['Legendary Deed: Phase', 'deed_phase'],
     ['Spellcasting', 'spellcasting'],
     ['Condition: Incubating Inferno', 'condition'],
-    ['Bloodrage (1/Short Rest)', 'bloodrage'],
+    ['Bloodrage (1/Repose)', 'bloodrage'],
     ['**Traits**', 'traits'],
     ['_Actions_', 'actions'],
     ['Random Heading', 'unknown'],

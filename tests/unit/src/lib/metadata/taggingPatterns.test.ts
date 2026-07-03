@@ -50,7 +50,7 @@ describe('ITEM_MECHANICS patterns', () => {
 
   it('detects resource patterns', () => {
     expect(ITEM_MECHANICS.charges.test('3 charges')).toBe(true);
-    expect(ITEM_MECHANICS.limitedUses.test('1/long rest')).toBe(true);
+    expect(ITEM_MECHANICS.limitedUses.test('1/Recovery')).toBe(true);
     expect(ITEM_MECHANICS.recharge.test('recharge 5')).toBe(true);
   });
 

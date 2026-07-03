@@ -64,7 +64,7 @@ You have a budget of **10 Boon Points**.
 ###### Arcane Focus <span>4 BP</span>
 
 You can cast one cantrip and gain proficiency in Arcana.
-You can use this a number of times equal to your tier bonus, regaining all uses after a **long rest**.
+You can use this a number of times equal to your tier bonus, regaining all uses after a **Recovery**.
 
 </Collapsible>
 `);
@@ -84,7 +84,7 @@ You can use this a number of times equal to your tier bonus, regaining all uses 
     expect(parsed.boons[0].tags).toEqual(
       expect.arrayContaining([
         'mechanic:cantrips',
-        'mechanic:long-rest-recharge',
+        'mechanic:recovery-recharge',
         'mechanic:skill-tier:arcana',
       ]),
     );
@@ -126,7 +126,7 @@ Pick any of the following:
 | Iron Skin | Your AC is 13 + DEX while unarmored. | 1 |
 
 - You gain advantage on Constitution saving throws.
-- Uses refresh on a **short rest**.
+- Uses refresh on a **Repose**.
 
 <Collapsible>
 
@@ -151,7 +151,7 @@ You can use your reaction when hit by a melee weapon attack to reduce extra dama
         'mechanic:variable-cost',
         'mechanic:ac',
         'mechanic:saving-throw',
-        'mechanic:short-rest-recharge',
+        'mechanic:repose-recharge',
       ]),
     );
     expect(parsed.boons[1].tags).toEqual(

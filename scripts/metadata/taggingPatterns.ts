@@ -101,7 +101,7 @@ export const MONSTER_MECHANICS = {
  * @property {RegExp} spellcasting - Casts spell or spell keyword
  * @property {RegExp} cantrips - Cantrip keyword
  * @property {RegExp} charges - Charge(s) keyword
- * @property {RegExp} limitedUses - "N/short rest" or "N/long rest"
+ * @property {RegExp} limitedUses - "N/Repose" or "N/Recovery"
  * @property {RegExp} recharge - "recharge N"
  * @property {RegExp} reroll - Reroll keyword
  * @property {RegExp} consumable - Consumable keyword
@@ -126,7 +126,7 @@ export const ITEM_MECHANICS = {
   spellcasting: /\bcasts?\s+\[?_?[A-Z][a-z]+|spell/i,
   cantrips: /\bcantrips?\b/i,
   charges: /\bcharges?\b/i,
-  limitedUses: /\b\d+\/(?:short|long)\s+rest/i,
+  limitedUses: /\b\d+\/(?:Repose|Recovery)/i,
   recharge: /\brecharge\s+\d+/i,
   reroll: /\breroll/i,
   consumable: /\bconsumable\b/i,

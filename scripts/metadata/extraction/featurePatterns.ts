@@ -131,7 +131,7 @@ export const DURATION = {
  * @property {RegExp} deeds - "2 deeds"
  * @property {RegExp} rechargeAmount - "regains 3"
  * @property {RegExp} oncePer - "once per day"
- * @property {RegExp} rechargeAfter - "recharges after a long rest"
+ * @property {RegExp} rechargeAfter - "recharges after a Recovery"
  */
 export const RESOURCES = {
   charges: /(\d+)\s*charges?/i,
@@ -329,8 +329,8 @@ export const RECHARGE_TIMINGS: ReadonlyArray<{
   pattern: string;
   timing: string;
 }> = [
-  { pattern: 'short rest', timing: 'short_rest' },
-  { pattern: 'long rest', timing: 'long_rest' },
+  { pattern: 'repose', timing: 'repose' },
+  { pattern: 'recovery', timing: 'recovery' },
   { pattern: 'dawn', timing: 'dawn' },
   { pattern: 'sundown', timing: 'sundown' },
   { pattern: 'midnight', timing: 'midnight' },
@@ -379,7 +379,7 @@ export const SPELLCASTING = {
  * @property {RegExp} extraDamage - "plus N (XdY) type damage" (bold-tolerant)
  * @property {RegExp} saveDamage - "takes/taking N (XdY) type damage" or "takes N type damage" (flat)
  * @property {RegExp} rechargeSuffix - "(Recharge N–M)"
- * @property {RegExp} dailyUse - "(N/Short Rest)" or "(N/Long Rest)"
+ * @property {RegExp} dailyUse - "(N/Repose)" or "(N/Recovery)"
  * @property {RegExp} perDay - "(N/day)"
  * @property {RegExp} escalation - "each subsequent/consecutive/additional"
  * @property {RegExp} reactionTrigger - "uses her/his/its/their reaction"
@@ -390,7 +390,7 @@ export const ENRICHMENT = {
   saveDamage:
     /tak(?:es?|ing)\s+\*{0,2}(\d+)\s*(?:\(([^)]+)\)\s*\*{0,2}\s*)?(\w+)\s+damage/i,
   rechargeSuffix: /\(Recharge\s+(\d+)(?:[–\-](\d+))?\)/i,
-  dailyUse: /\((\d+)\/(Short|Long)\s*Rest\)/i,
+  dailyUse: /\((\d+)\/(Repose|Recovery)\)/i,
   perDay: /\((\d+)\/day\)/i,
   escalation: /each\s+(?:subsequent|consecutive|additional)/i,
   reactionTrigger: /\buses?\s+(?:her|his|its|their)\s+reaction\b/i,

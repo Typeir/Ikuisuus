@@ -297,13 +297,13 @@ function extractBoonMechanicTags(
     tags.add('mechanic:choice');
   }
 
-  if (BOON_MECHANICS.shortRest.test(lower)) {
-    tags.add('mechanic:short-rest');
-    tags.add('mechanic:short-rest-recharge');
+  if (BOON_MECHANICS.repose.test(lower)) {
+    tags.add('mechanic:repose');
+    tags.add('mechanic:repose-recharge');
   }
-  if (BOON_MECHANICS.longRest.test(lower)) {
-    tags.add('mechanic:long-rest');
-    tags.add('mechanic:long-rest-recharge');
+  if (BOON_MECHANICS.recovery.test(lower)) {
+    tags.add('mechanic:recovery');
+    tags.add('mechanic:recovery-recharge');
   }
   if (BOON_MECHANICS.limitedUses.test(lower)) {
     tags.add('mechanic:limited-uses');

@@ -67,8 +67,8 @@ export const BOON = {
  * @property {ReadonlyArray<{ pattern: RegExp; tag: string }>} tools - Tool proficiency matchers
  * @property {RegExp} instrument - Musical instrument keyword
  * @property {RegExp} weaponMastery - Weapon mastery keyword
- * @property {RegExp} shortRest - Short rest recovery
- * @property {RegExp} longRest - Long rest recovery
+ * @property {RegExp} repose - Repose-recharge detection
+ * @property {RegExp} recovery - Recovery-recharge detection
  * @property {RegExp} variableCost - Variable/choice cost indicators
  */
 export const PROFICIENCY = {
@@ -89,8 +89,8 @@ export const PROFICIENCY = {
  * Boon mechanic detection patterns.
  *
  * @property {RegExp} variableCost - Variable/choice BP cost in label
- * @property {RegExp} shortRest - Short rest recovery
- * @property {RegExp} longRest - Long rest recovery
+ * @property {RegExp} repose - Repose-recharge detection
+ * @property {RegExp} recovery - Recovery-recharge detection
  * @property {RegExp} limitedUses - Limited uses per tier bonus
  * @property {RegExp} armorClass - AC or armor class mechanic
  * @property {RegExp} savingThrow - Saving throw or spell save DC
@@ -107,8 +107,8 @@ export const PROFICIENCY = {
  */
 export const BOON_MECHANICS = {
   variableCost: /\bvariable\b|\bchoose one\b|\bpick one\b|\bpick any\b/i,
-  shortRest: /\bshort rest\b/i,
-  longRest: /\blong rest\b/i,
+  repose: /\brepose\b/,
+  recovery: /\brecovery\b/,
   limitedUses: /\b(per|equal to your tier bonus)\b/i,
   armorClass: /\bac\b|\barmor class\b|\bunarmored\b/i,
   savingThrow: /\bsaving throws?\b|\bspell save dc\b|\bsave dc\b/i,

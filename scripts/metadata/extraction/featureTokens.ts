@@ -166,7 +166,7 @@ export function recognizeResource(text: string): ResourceToken | null {
 }
 
 /**
- * Recognizes a recharge condition like "short rest", "Recharges at dawn".
+ * Recognizes a recharge condition like "Repose", "Recharges at dawn".
  *
  * @param {string} text - Input text
  * @returns {RechargeToken | null} Parsed recharge token or null
