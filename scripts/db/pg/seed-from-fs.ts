@@ -122,6 +122,7 @@ const metaDir = (locale: string): string => join(ROOT, '.meta', locale);
 /**
  * Reads and flattens all `.metadata.json` sidecar files from a subdirectory.
  * Checks `.meta/{locale}/{subdir}` first, falls back to `src/content/{locale}/{subdir}`.
+ * Recursively walks subdirectories.
  *
  * @param {string} locale - Locale code
  * @param {string} subdir - Subdirectory (e.g. 'monsters', 'items/heirlooms')
@@ -132,12 +133,21 @@ const readMetadata = <T>(locale: string, subdir: string): T[] => {
   const contentDirPath = join(contentDir(locale), subdir);
   const dir = existsSync(metaDirPath) ? metaDirPath : contentDirPath;
   if (!existsSync(dir)) return [];
-  return readdirSync(dir)
-    .filter((f) => f.endsWith('.metadata.json'))
-    .flatMap((f) => {
-      const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
-      return Array.isArray(parsed) ? parsed : [parsed];
-    });
+
+  const results: T[] = [];
+  const walk = (current: string) => {
+    for (const entry of readdirSync(current, { withFileTypes: true })) {
+      const full = join(current, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+      } else if (entry.isFile() && entry.name.endsWith('.metadata.json')) {
+        const parsed = JSON.parse(readFileSync(full, 'utf8'));
+        results.push(...(Array.isArray(parsed) ? parsed : [parsed]));
+      }
+    }
+  };
+  walk(dir);
+  return results;
 };
 
 /* ────────────────────  Generic Seeder  ────────────────────────────── */
@@ -153,6 +163,8 @@ const readMetadata = <T>(locale: string, subdir: string): T[] => {
 interface ContentSeedConfig {
   entityClass: EntityClass<object>;
   subdir: string;
+  /** Optional filter to separate entity types sharing a subdir (e.g. vocations vs specializations) */
+  filter?: (raw: Record<string, unknown>) => boolean;
   seedChildren?: (
     em: EntityManager,
     allMeta: MetadataStorage,
@@ -185,11 +197,12 @@ async function seedContent(
   config: ContentSeedConfig,
 ): Promise<number> {
   const records = readMetadata<Record<string, unknown>>(locale, config.subdir);
-  if (records.length === 0) return 0;
+  const filtered = config.filter ? records.filter(config.filter) : records;
+  if (filtered.length === 0) return 0;
 
   await em.nativeDelete(config.entityClass, { locale } as never);
 
-  for (const raw of records.filter(Boolean)) {
+  for (const raw of filtered.filter(Boolean)) {
     const hashPayload: Record<string, unknown> = { ...raw };
     delete hashPayload['versionHash'];
     const versionHash = contentHash(hashPayload);
@@ -203,7 +216,7 @@ async function seedContent(
   }
 
   await em.flush();
-  return records.length;
+  return filtered.length;
 }
 
 /**
@@ -250,6 +263,7 @@ const SEED_CONFIGS: ContentSeedConfig[] = [
     },
   },
   {
+    filter: (raw) => !!raw.archetype,
     entityClass: VocationEntity,
     subdir: join('character-creation', 'vocations'),
     seedChildren: (em, allMeta, parent, raw) => {
@@ -269,6 +283,7 @@ const SEED_CONFIGS: ContentSeedConfig[] = [
     },
   },
   {
+    filter: (raw) => !raw.archetype,
     entityClass: SpecializationEntity,
     subdir: join('character-creation', 'vocations'),
     seedChildren: (em, allMeta, parent, raw) => {

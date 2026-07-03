@@ -34,11 +34,11 @@ const LIST_MAP: Record<string, { source: string; folder: string }> = {
   Druid:    { source: 'Druid',    folder: 'druid' },
   Esper:    { source: 'Esper',    folder: 'esper' },
   Paladin:  { source: 'Paladin',  folder: 'paladin' },
-  Ranger:   { source: 'Ranger',   folder: 'ranger' },
+  Strider:  { source: 'Strider',  folder: 'strider' },
   Revenant: { source: 'Revenant', folder: 'revenant' },
-  Sorcerer: { source: 'Sorcerer', folder: 'sorcerer' },
+  Scion:    { source: 'Scion',    folder: 'scion' },
   Tinker:   { source: 'Tinker',   folder: 'tinker' },
-  Warlock:  { source: 'Warlock',  folder: 'warlock' },
+  Villein:  { source: 'Villein',  folder: 'villein' },
   Wizard:   { source: 'Wizard',   folder: 'wizard' },
 };
 

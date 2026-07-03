@@ -67,15 +67,17 @@ interface Vocation {
 
 const VOCATIONS: Vocation[] = [
   { name: 'Bard', slug: 'bard' },
-  { name: 'Pilgrim', slug: 'Pilgrim' },
+  { name: 'Berserker', slug: 'berserker' },
   { name: 'Druid', slug: 'druid' },
   { name: 'Esper', slug: 'esper' },
   { name: 'Paladin', slug: 'paladin' },
-  { name: 'Ranger', slug: 'ranger' },
+  { name: 'Pilgrim', slug: 'pilgrim' },
   { name: 'Revenant', slug: 'revenant' },
-  { name: 'Sorcerer', slug: 'sorcerer' },
+  { name: 'Scion', slug: 'scion' },
+  { name: 'Strider', slug: 'strider' },
   { name: 'Tinker', slug: 'tinker' },
-  { name: 'Warlock', slug: 'warlock' },
+  { name: 'Villein', slug: 'villein' },
+  { name: 'Warrior', slug: 'warrior' },
   { name: 'Wizard', slug: 'wizard' },
 ];
 
