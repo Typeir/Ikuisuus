@@ -42,8 +42,8 @@ afterEach(() => {
 
 const MOCK_VOCATIONS = [
   {
-    slug: 'barbarian',
-    title: 'Barbarian',
+    slug: 'Berserker',
+    title: 'Berserker',
     archetype: 'Martial',
     hitDie: 'd12',
     features: [{ level: 1, name: 'Rage' }],

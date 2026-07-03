@@ -73,16 +73,16 @@ describe('githubContentSource', () => {
 
     const result = await githubContentSource.fetch(
       'en',
-      'character-creation/vocations/fighter/battle-master',
+      'character-creation/vocations/Warrior/battle-master',
     );
 
     expect(result).toEqual({
       content: '# exact file',
-      resolvedPath: 'en/character-creation/vocations/fighter/battle-master.mdx',
+      resolvedPath: 'en/character-creation/vocations/Warrior/battle-master.mdx',
     });
     expect(listEntriesMock).toHaveBeenCalledWith(
       'en',
-      'character-creation/vocations/fighter',
+      'character-creation/vocations/Warrior',
     );
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
@@ -108,12 +108,12 @@ describe('githubContentSource', () => {
 
     const result = await githubContentSource.fetch(
       'en',
-      'character-creation/vocations/fighter/battle-master',
+      'character-creation/vocations/Warrior/battle-master',
     );
 
     expect(listEntriesMock).toHaveBeenCalledWith(
       'en',
-      'character-creation/vocations/fighter',
+      'character-creation/vocations/Warrior',
     );
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(String(fetchMock.mock.calls[0][0])).toContain(
@@ -122,7 +122,7 @@ describe('githubContentSource', () => {
     expect(result).toEqual({
       content: '# semantic file',
       resolvedPath:
-        'en/character-creation/vocations/fighter/battle-master.specialization.mdx',
+        'en/character-creation/vocations/Warrior/battle-master.specialization.mdx',
     });
   });
 
@@ -147,13 +147,13 @@ describe('githubContentSource', () => {
 
     const result = await githubContentSource.fetch(
       'en',
-      'character-creation/vocations/fighter/battle-master',
+      'character-creation/vocations/Warrior/battle-master',
     );
 
     expect(result).toEqual({
       content: '# first match',
       resolvedPath:
-        'en/character-creation/vocations/fighter/battle-master.specialization.mdx',
+        'en/character-creation/vocations/Warrior/battle-master.specialization.mdx',
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(String(fetchMock.mock.calls[0][0])).toContain(
@@ -180,7 +180,7 @@ describe('githubContentSource', () => {
 
     const result = await githubContentSource.fetch(
       'en',
-      'character-creation/vocations/fighter/battle-master',
+      'character-creation/vocations/Warrior/battle-master',
     );
 
     expect(result).toBeNull();
@@ -198,7 +198,7 @@ describe('githubContentSource', () => {
     await expect(
       githubContentSource.fetch(
         'en',
-        'character-creation/vocations/fighter/battle-master',
+        'character-creation/vocations/Warrior/battle-master',
       ),
     ).rejects.toThrow('boom');
     expect(fetchMock).not.toHaveBeenCalled();

@@ -36,8 +36,8 @@ afterEach(() => vi.restoreAllMocks());
 const SPECIALIZATIONS = [
   {
     slug: 'path-of-the-berserker',
-    title: 'Path of the Berserker',
-    vocation: 'barbarian',
+    title: 'Path of Frenzy',
+    vocation: 'Berserker',
     specializationType: 'Path',
     features: [{ level: 3, name: 'Frenzy' }],
     tags: [],
@@ -45,7 +45,7 @@ const SPECIALIZATIONS = [
   {
     slug: 'path-of-the-totem',
     title: 'Path of the Totem Warrior',
-    vocation: 'barbarian',
+    vocation: 'Berserker',
     specializationType: 'Path',
     features: [{ level: 3, name: 'Totem Spirit' }],
     tags: [],
@@ -53,7 +53,7 @@ const SPECIALIZATIONS = [
   {
     slug: 'life-domain',
     title: 'Life Domain',
-    vocation: 'cleric',
+    vocation: 'Pilgrim',
     specializationType: 'Domain',
     features: [{ level: 1, name: 'Bonus Proficiency' }],
     tags: [],
@@ -72,8 +72,8 @@ describe('fsSpecializationRepository', () => {
       const mixed = [
         ...SPECIALIZATIONS,
         {
-          slug: 'barbarian',
-          title: 'Barbarian',
+          slug: 'Berserker',
+          title: 'Berserker',
           archetype: 'Martial',
           hitDie: 'd12',
         },
@@ -99,7 +99,7 @@ describe('fsSpecializationRepository', () => {
         'en',
         'path-of-the-berserker',
       );
-      expect(result?.title).toBe('Path of the Berserker');
+      expect(result?.title).toBe('Path of Frenzy');
     });
 
     it('should return null when not found', async () => {
@@ -128,10 +128,10 @@ describe('fsSpecializationRepository', () => {
       readMetadataFiles.mockReturnValue(SPECIALIZATIONS);
       const result = await fsSpecializationRepository.listByVocation(
         'en',
-        'barbarian',
+        'Berserker',
       );
       expect(result).toHaveLength(2);
-      expect(result[0].vocation).toBe('barbarian');
+      expect(result[0].vocation).toBe('Berserker');
     });
 
     it('should return empty array when no matches', async () => {
@@ -149,7 +149,7 @@ describe('fsSpecializationRepository', () => {
       });
       const result = await fsSpecializationRepository.listByVocation(
         'en',
-        'barbarian',
+        'Berserker',
       );
       expect(result).toEqual([]);
     });

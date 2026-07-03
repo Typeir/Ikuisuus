@@ -45,8 +45,8 @@ afterEach(() => {
 const MOCK_SPECIALIZATIONS = [
   {
     slug: 'path-of-the-berserker',
-    title: 'Path of the Berserker',
-    vocation: 'barbarian',
+    title: 'Path of Frenzy',
+    vocation: 'Berserker',
     specializationType: 'Path',
     features: [{ level: 3, name: 'Frenzy' }],
     tags: [],
@@ -116,13 +116,13 @@ describe('/api/specializations route', () => {
       );
 
       const response = await SpecializationsRoute.GET(
-        makeRequest({ vocation: 'barbarian' }),
+        makeRequest({ vocation: 'Berserker' }),
       );
       const data = await response.json();
 
       expect(specializationRepository.listByVocation).toHaveBeenCalledWith(
         'en',
-        'barbarian',
+        'Berserker',
       );
       expect(data).toEqual(MOCK_SPECIALIZATIONS);
     });

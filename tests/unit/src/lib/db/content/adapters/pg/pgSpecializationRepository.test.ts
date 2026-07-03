@@ -51,10 +51,10 @@ const entityRow = {
   id: 1,
   locale: 'en',
   slug: 'path-of-the-berserker',
-  title: 'Path of the Berserker',
-  file: 'src/content/en/character-creation/vocations/barbarian/path-of-the-berserker.mdx',
-  link: '/library/character-creation/vocations/barbarian/path-of-the-berserker',
-  vocation: 'barbarian',
+  title: 'Path of Frenzy',
+  file: 'src/content/en/character-creation/vocations/Berserker/path-of-the-berserker.mdx',
+  link: '/library/character-creation/vocations/Berserker/path-of-the-berserker',
+  vocation: 'Berserker',
   specializationType: 'Path',
   flavor: 'A warrior driven by fury.',
   spellcasting: null,
@@ -76,7 +76,7 @@ const casterEntityRow = {
   ...entityRow,
   slug: 'eldritch-knight',
   title: 'Eldritch Knight',
-  vocation: 'fighter',
+  vocation: 'Warrior',
   specializationType: 'Archetype',
   flavor: null,
   spellcasting: { ability: 'Intelligence', progression: 'Third' },
@@ -101,8 +101,8 @@ describe('pgSpecializationRepository', () => {
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
         slug: 'path-of-the-berserker',
-        title: 'Path of the Berserker',
-        vocation: 'barbarian',
+        title: 'Path of Frenzy',
+        vocation: 'Berserker',
         specializationType: 'Path',
         tags: ['mechanic:melee'],
       });
@@ -196,18 +196,18 @@ describe('pgSpecializationRepository', () => {
 
       const result = await pgSpecializationRepository.listByVocation(
         'en',
-        'barbarian',
+        'Berserker',
       );
       expect(result).toHaveLength(1);
-      expect(result[0].vocation).toBe('barbarian');
+      expect(result[0].vocation).toBe('Berserker');
     });
 
     it('should query with locale and vocation filter', async () => {
       mockEM.find.mockResolvedValue([]);
-      await pgSpecializationRepository.listByVocation('en', 'barbarian');
+      await pgSpecializationRepository.listByVocation('en', 'Berserker');
       expect(mockEM.find).toHaveBeenCalledWith(
         expect.anything(),
-        { locale: 'en', vocation: 'barbarian' },
+        { locale: 'en', vocation: 'Berserker' },
         {
           populate: ['features', 'preparedSpells'],
           orderBy: { title: 'asc' },
@@ -219,7 +219,7 @@ describe('pgSpecializationRepository', () => {
       mockEM.find.mockRejectedValue(new Error('fail'));
       const result = await pgSpecializationRepository.listByVocation(
         'en',
-        'barbarian',
+        'Berserker',
       );
       expect(result).toEqual([]);
     });

@@ -43,14 +43,14 @@ describe('VocationEntity', () => {
   it('should accept scalar field assignments', () => {
     const entity = new VocationEntity();
     entity.locale = 'en';
-    entity.slug = 'barbarian';
-    entity.title = 'Barbarian';
-    entity.file = 'barbarian.mdx';
-    entity.link = '/library/vocations/barbarian';
+    entity.slug = 'Berserker';
+    entity.title = 'Berserker';
+    entity.file = 'Berserker.mdx';
+    entity.link = '/library/vocations/Berserker';
     entity.archetype = 'Martial';
     entity.hitDie = 'd12';
 
-    expect(entity.slug).toBe('barbarian');
+    expect(entity.slug).toBe('Berserker');
     expect(entity.hitDie).toBe('d12');
   });
 

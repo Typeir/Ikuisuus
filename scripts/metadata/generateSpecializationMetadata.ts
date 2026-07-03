@@ -24,14 +24,14 @@ import {
     type SharedData,
     type StorageAdapter,
 } from '.';
+import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 import {
     CASTING,
     FEATURE,
     FLAVOR,
     SPECIALIZATION_TYPES,
     TABLE,
-} from './classPatterns';
-import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
+} from './vocationPatterns';
 
 const log = createLogger({ component: 'SpecializationMetadataGenerator' });
 

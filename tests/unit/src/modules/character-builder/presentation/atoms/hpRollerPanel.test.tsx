@@ -41,7 +41,7 @@ describe('HpRollerPanel', () => {
   });
 
   it('shows unrolled count badge when entries exist', () => {
-    const log = [makeEntry('1', 'barbarian', 'Barbarian', '12', 1)];
+    const log = [makeEntry('1', 'Berserker', 'Berserker', '12', 1)];
     render(<HpRollerPanel hitDiceLog={log} conMod={2} onCommit={vi.fn()} />);
     expect(screen.getByText('1')).toBeTruthy();
   });
@@ -63,14 +63,14 @@ describe('HpRollerPanel', () => {
   });
 
   it('shows Roll button for unrolled entries', () => {
-    const log = [makeEntry('1', 'barbarian', 'Barbarian', '12', 1)];
+    const log = [makeEntry('1', 'Berserker', 'Berserker', '12', 1)];
     render(<HpRollerPanel hitDiceLog={log} conMod={2} onCommit={vi.fn()} />);
     fireEvent.click(screen.getByRole('button', { name: /open hit dice roller/i }));
     expect(screen.getByText('Roll d12')).toBeTruthy();
   });
 
   it('shows Add to HP button after rolling', () => {
-    const log = [makeEntry('1', 'barbarian', 'Barbarian', '12', 1)];
+    const log = [makeEntry('1', 'Berserker', 'Berserker', '12', 1)];
     render(<HpRollerPanel hitDiceLog={log} conMod={2} onCommit={vi.fn()} />);
     fireEvent.click(screen.getByRole('button', { name: /open hit dice roller/i }));
     fireEvent.click(screen.getByText('Roll d12'));
@@ -79,7 +79,7 @@ describe('HpRollerPanel', () => {
 
   it('calls onCommit when Add to HP is clicked', () => {
     const onCommit = vi.fn();
-    const log = [makeEntry('1', 'barbarian', 'Barbarian', '12', 1, 8)];
+    const log = [makeEntry('1', 'Berserker', 'Berserker', '12', 1, 8)];
     render(<HpRollerPanel hitDiceLog={log} conMod={2} onCommit={onCommit} />);
     fireEvent.click(screen.getByRole('button', { name: /open hit dice roller/i }));
     fireEvent.click(screen.getByText('Add to HP'));
@@ -90,7 +90,7 @@ describe('HpRollerPanel', () => {
   });
 
   it('committed entries are shown as read-only', () => {
-    const log = [makeEntry('1', 'barbarian', 'Barbarian', '12', 1, 8, true)];
+    const log = [makeEntry('1', 'Berserker', 'Berserker', '12', 1, 8, true)];
     render(<HpRollerPanel hitDiceLog={log} conMod={2} onCommit={vi.fn()} />);
     fireEvent.click(screen.getByRole('button', { name: /open hit dice roller/i }));
     expect(screen.queryByText('Add to HP')).toBeNull();

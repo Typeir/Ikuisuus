@@ -54,10 +54,10 @@ export interface SpecializationSpellcasting {
  *
  * @interface SpecializationMetadata
  * @property {string} slug - URL-friendly identifier (e.g. "path-of-the-berserker")
- * @property {string} title - Display name (e.g. "Path of the Berserker")
+ * @property {string} title - Display name (e.g. "Path of Frenzy")
  * @property {string} file - Relative file path from content root
  * @property {string} link - Public route path
- * @property {string} vocation - Parent vocation slug (e.g. "barbarian")
+ * @property {string} vocation - Parent vocation slug (e.g. "Berserker")
  * @property {string} specializationType - Type classification (e.g. "Path", "Domain", "School")
  * @property {string} [flavor] - Introductory flavor text
  * @property {string} [description] - Prose description extracted from the specialization MDX

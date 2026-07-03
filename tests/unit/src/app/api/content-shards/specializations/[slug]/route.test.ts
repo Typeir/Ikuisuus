@@ -50,7 +50,7 @@ afterEach(() => {
 });
 
 /** Sample MDX for a specialization. */
-const SAMPLE_MDX = `# Path of the Berserker
+const SAMPLE_MDX = `# Path of Frenzy
 
 The most primal of all berserker paths.
 
@@ -66,10 +66,10 @@ You cannot be charmed or frightened while raging.
 /** Minimal mock specialization metadata. */
 const MOCK_META = {
   slug: 'path-of-the-berserker',
-  title: 'Path of the Berserker',
-  file: 'character-creation/vocations/barbarian/path-of-the-berserker.mdx',
-  link: '/library/character-creation/vocations/barbarian/path-of-the-berserker',
-  vocation: 'barbarian',
+  title: 'Path of Frenzy',
+  file: 'character-creation/vocations/Berserker/path-of-the-berserker.mdx',
+  link: '/library/character-creation/vocations/Berserker/path-of-the-berserker',
+  vocation: 'Berserker',
   specializationType: 'Path',
   features: [
     { level: 3, name: 'Frenzy' },

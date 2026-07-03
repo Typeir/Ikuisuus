@@ -5,7 +5,7 @@
  * spellcasting summary, and specialization links.
  *
  * Only targets `main.mdx` inside vocation subdirectories (e.g.
- * `vocations/barbarian/main.mdx`). The root `vocations/main.mdx` overview
+ * `vocations/Berserker/main.mdx`). The root `vocations/main.mdx` overview
  * page is excluded.
  *
  * @module scripts/metadata/generateVocationMetadata
@@ -28,8 +28,8 @@ import {
     type SharedData,
     type StorageAdapter,
 } from '.';
-import { CASTING, FEATURE, TABLE } from './classPatterns';
 import { LIST, SLUG, TEXT } from './parsingPatterns';
+import { CASTING, FEATURE, TABLE } from './vocationPatterns';
 
 const log = createLogger({ component: 'VocationMetadataGenerator' });
 
@@ -83,7 +83,7 @@ function parseCoreTraits(raw: string): Record<string, string> {
 /**
  * Extracts the hit die token from a traits value.
  *
- * @param {string} value - Raw hit die text (e.g. "d12 per Barbarian level")
+ * @param {string} value - Raw hit die text (e.g. "d12 per Berserker level")
  * @returns {string} Normalized hit die (e.g. "d12")
  */
 function parseHitDie(value: string): string {

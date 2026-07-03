@@ -30,7 +30,7 @@ const LISTS_DIR = path.join(ROOT, 'src', 'content', 'en', 'character-creation', 
  */
 const LIST_MAP: Record<string, { source: string; folder: string }> = {
   Bard:     { source: 'Bard',     folder: 'bard' },
-  Cleric:   { source: 'Cleric',   folder: 'cleric' },
+  Pilgrim:   { source: 'Pilgrim',   folder: 'Pilgrim' },
   Druid:    { source: 'Druid',    folder: 'druid' },
   Esper:    { source: 'Esper',    folder: 'esper' },
   Paladin:  { source: 'Paladin',  folder: 'paladin' },
@@ -56,7 +56,7 @@ interface SpellEntry {
 /**
  * Metadata list reference from a spell's spellLists array.
  *
- * @property {string} name - Vocation name (e.g. "Cleric")
+ * @property {string} name - Vocation name (e.g. "Pilgrim")
  * @property {string} link - URL to the spell list page
  */
 interface ListRef {

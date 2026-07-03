@@ -107,7 +107,7 @@ describe('ContentShardPanel', () => {
 
   it('renders an error state when fetch rejects', async () => {
     mockFetch.mockRejectedValue(new Error('network error'));
-    render(<ContentShardPanel contentType='vocations' slug='barbarian' />);
+    render(<ContentShardPanel contentType='vocations' slug='Berserker' />);
 
     await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 

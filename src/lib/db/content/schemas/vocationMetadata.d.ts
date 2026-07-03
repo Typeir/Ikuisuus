@@ -54,8 +54,8 @@ export interface VocationSkillProficiencies {
  * Complete vocation metadata record as emitted by the generator.
  *
  * @interface VocationMetadata
- * @property {string} slug - URL-friendly identifier (e.g. "barbarian")
- * @property {string} title - Display name (e.g. "Barbarian")
+ * @property {string} slug - URL-friendly identifier (e.g. "Berserker")
+ * @property {string} title - Display name (e.g. "Berserker")
  * @property {string} file - Relative file path from content root
  * @property {string} link - Public route path
  * @property {string} archetype - Vocation archetype (e.g. "Martial", "Full Caster")

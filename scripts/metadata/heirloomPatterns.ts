@@ -38,7 +38,7 @@ export const WEAPON = {
 /**
  * Attunement detection patterns.
  *
- * @property {RegExp} requirement - "requires attunement (by a cleric)"
+ * @property {RegExp} requirement - "requires attunement (by a Pilgrim)"
  */
 export const ATTUNEMENT = {
   requirement: /requires attunement(?:\s+by\s+(.+?))?(?:\)|$)/i,

@@ -34,16 +34,16 @@ afterEach(() => vi.restoreAllMocks());
 
 const VOCATIONS = [
   {
-    slug: 'barbarian',
-    title: 'Barbarian',
+    slug: 'Berserker',
+    title: 'Berserker',
     archetype: 'Martial',
     hitDie: 'd12',
     features: [{ level: 1, name: 'Rage' }],
     tags: [],
   },
   {
-    slug: 'cleric',
-    title: 'Cleric',
+    slug: 'Pilgrim',
+    title: 'Pilgrim',
     archetype: 'Full Caster',
     hitDie: 'd8',
     features: [{ level: 1, name: 'Spellcasting' }],
@@ -65,7 +65,7 @@ describe('fsVocationRepository', () => {
         {
           slug: 'berserker',
           title: 'Berserker',
-          vocation: 'barbarian',
+          vocation: 'Berserker',
           specializationType: 'Path',
         },
       ];
@@ -86,8 +86,8 @@ describe('fsVocationRepository', () => {
   describe('getBySlug', () => {
     it('should find vocation by slug', async () => {
       readMetadataFiles.mockReturnValue(VOCATIONS);
-      const result = await fsVocationRepository.getBySlug('en', 'barbarian');
-      expect(result?.title).toBe('Barbarian');
+      const result = await fsVocationRepository.getBySlug('en', 'Berserker');
+      expect(result?.title).toBe('Berserker');
     });
 
     it('should return null when not found', async () => {
@@ -100,7 +100,7 @@ describe('fsVocationRepository', () => {
       readMetadataFiles.mockImplementation(() => {
         throw new Error('fail');
       });
-      const result = await fsVocationRepository.getBySlug('en', 'barbarian');
+      const result = await fsVocationRepository.getBySlug('en', 'Berserker');
       expect(result).toBeNull();
     });
   });

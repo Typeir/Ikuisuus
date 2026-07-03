@@ -2,8 +2,8 @@
  * Updates internal MDX links after content files are renamed with double-extension suffixes.
  *
  * @fileoverview Scans all `.mdx` files and rewrites markdown links whose targets
- * have been renamed (e.g., `/vocations/barbarian/path-of-the-berserker` becomes
- * `/vocations/barbarian/path-of-the-berserker.specialization`).
+ * have been renamed (e.g., `/vocations/Berserker/path-of-the-berserker` becomes
+ * `/vocations/Berserker/path-of-the-berserker.specialization`).
  *
  * Builds a mapping of old URL slugs → new URL slugs from the filesystem,
  * then applies replacements across all content files.

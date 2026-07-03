@@ -32,7 +32,7 @@ You fall safely from any height.
 `;
 
 /** Sample MDX that uses markdown headings instead of Collapsible. */
-const HEADING_MDX = `# Barbarian
+const HEADING_MDX = `# Berserker
 
 A fierce warrior of the wilderness.
 

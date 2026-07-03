@@ -48,8 +48,8 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-/** Sample MDX for the barbarian vocation. */
-const SAMPLE_MDX = `# Barbarian
+/** Sample MDX for the Berserker vocation. */
+const SAMPLE_MDX = `# Berserker
 
 A fierce warrior of the wilderness.
 
@@ -64,10 +64,10 @@ When not wearing armor your AC equals 10 + DEX + CON.
 
 /** Minimal mock vocation metadata. */
 const MOCK_META = {
-  slug: 'barbarian',
-  title: 'Barbarian',
-  file: 'character-creation/vocations/barbarian.mdx',
-  link: '/library/character-creation/vocations/barbarian',
+  slug: 'Berserker',
+  title: 'Berserker',
+  file: 'character-creation/vocations/Berserker.mdx',
+  link: '/library/character-creation/vocations/Berserker',
   archetype: 'Martial',
   primaryAbility: ['Strength'],
   hitDie: 'd12',
@@ -122,7 +122,7 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
     );
     mockGetFile.mockResolvedValue(null);
 
-    const res = await VocationShardsRoute.GET(...makeArgs('barbarian'));
+    const res = await VocationShardsRoute.GET(...makeArgs('Berserker'));
     expect(res.status).toBe(404);
   });
 
@@ -132,10 +132,10 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
     );
     mockGetFile.mockResolvedValue({
       content: SAMPLE_MDX,
-      resolvedPath: 'barbarian.mdx',
+      resolvedPath: 'Berserker.mdx',
     });
 
-    const res = await VocationShardsRoute.GET(...makeArgs('barbarian'));
+    const res = await VocationShardsRoute.GET(...makeArgs('Berserker'));
     expect(res.status).toBe(200);
     const body = (await res.json()) as {
       shardType: string;
@@ -153,11 +153,11 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
     );
     mockGetFile.mockResolvedValue({
       content: SAMPLE_MDX,
-      resolvedPath: 'barbarian.mdx',
+      resolvedPath: 'Berserker.mdx',
     });
 
     const res = await VocationShardsRoute.GET(
-      ...makeArgs('barbarian', { 'keys[]': 'Rage' }),
+      ...makeArgs('Berserker', { 'keys[]': 'Rage' }),
     );
     expect(res.status).toBe(200);
     const body = (await res.json()) as { shards: Record<string, string> };
@@ -171,13 +171,13 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
     );
     mockGetFile.mockResolvedValue({
       content: SAMPLE_MDX,
-      resolvedPath: 'barbarian.mdx',
+      resolvedPath: 'Berserker.mdx',
     });
 
-    await VocationShardsRoute.GET(...makeArgs('barbarian'));
+    await VocationShardsRoute.GET(...makeArgs('Berserker'));
     expect(vocationRepository.getBySlug).toHaveBeenCalledWith(
       'en',
-      'barbarian',
+      'Berserker',
     );
   });
 
@@ -187,13 +187,13 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
     );
     mockGetFile.mockResolvedValue({
       content: SAMPLE_MDX,
-      resolvedPath: 'barbarian.mdx',
+      resolvedPath: 'Berserker.mdx',
     });
 
-    await VocationShardsRoute.GET(...makeArgs('barbarian', { locale: 'es' }));
+    await VocationShardsRoute.GET(...makeArgs('Berserker', { locale: 'es' }));
     expect(vocationRepository.getBySlug).toHaveBeenCalledWith(
       'es',
-      'barbarian',
+      'Berserker',
     );
   });
 
@@ -202,7 +202,7 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
       new Error('DB error'),
     );
 
-    const res = await VocationShardsRoute.GET(...makeArgs('barbarian'));
+    const res = await VocationShardsRoute.GET(...makeArgs('Berserker'));
     expect(res.status).toBe(500);
   });
 });

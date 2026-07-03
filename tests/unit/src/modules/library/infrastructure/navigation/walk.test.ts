@@ -176,7 +176,7 @@ describe('walk', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].path).toBe('path-of-the-berserker');
-      expect(result[0].name).toBe('Path Of The Berserker');
+      expect(result[0].name).toBe('Path of Frenzy');
     });
 
     it('should strip .list from path', async () => {
@@ -271,11 +271,11 @@ describe('walk', () => {
         adapter,
         'en',
         '',
-        'library/vocations/cleric',
+        'library/vocations/Pilgrim',
       );
 
       expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('library/vocations/cleric/life-domain');
+      expect(result[0].path).toBe('library/vocations/Pilgrim/life-domain');
     });
   });
 

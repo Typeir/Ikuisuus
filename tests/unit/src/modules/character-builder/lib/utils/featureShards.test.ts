@@ -66,7 +66,7 @@ describe('fetchFeatureShards', () => {
 
     const result = await fetchFeatureShards(
       'champion',
-      'src/content/en/character-creation/vocations/fighter/champion.specialization.mdx',
+      'src/content/en/character-creation/vocations/Warrior/champion.specialization.mdx',
       [{ level: 3, name: 'Improved Critical' }],
       'specialization-feature',
       'specializations',
@@ -76,7 +76,7 @@ describe('fetchFeatureShards', () => {
     expect(result[0].category).toBe('specialization-feature');
     expect(result[0].id).toBe('champion::3::Improved Critical');
     expect(result[0].sourceFile).toBe(
-      'character-creation/vocations/fighter/champion.specialization.mdx',
+      'character-creation/vocations/Warrior/champion.specialization.mdx',
     );
     expect(mockFetch).toHaveBeenCalledWith(
       '/api/content-shards/specializations/champion?locale=en',

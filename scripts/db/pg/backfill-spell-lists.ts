@@ -67,7 +67,7 @@ interface Vocation {
 
 const VOCATIONS: Vocation[] = [
   { name: 'Bard', slug: 'bard' },
-  { name: 'Cleric', slug: 'cleric' },
+  { name: 'Pilgrim', slug: 'Pilgrim' },
   { name: 'Druid', slug: 'druid' },
   { name: 'Esper', slug: 'esper' },
   { name: 'Paladin', slug: 'paladin' },

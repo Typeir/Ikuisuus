@@ -154,7 +154,7 @@ describe('repositoryWalk', () => {
     it('should build child paths relative to relativePath when given a starting path', async () => {
       mockListDirectory.mockImplementation(async (_locale, relativePath) => {
         if (relativePath === 'character-creation/vocations') {
-          return makeListResult([{ name: 'barbarian', isDirectory: true }]);
+          return makeListResult([{ name: 'Berserker', isDirectory: true }]);
         }
         return makeListResult([]);
       });
@@ -164,7 +164,7 @@ describe('repositoryWalk', () => {
         'character-creation/vocations',
         1,
       );
-      expect(result[0].path).toBe('character-creation/vocations/barbarian');
+      expect(result[0].path).toBe('character-creation/vocations/Berserker');
       expect(result[0].isStub).toBe(true);
     });
   });

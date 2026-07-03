@@ -52,7 +52,7 @@ describe('fsContentSource', () => {
 
     const result = await fsContentSource.fetch(
       'en',
-      'character-creation/vocations/fighter/battle-master',
+      'character-creation/vocations/Warrior/battle-master',
     );
 
     const expectedPath = path.join(
@@ -60,7 +60,7 @@ describe('fsContentSource', () => {
       'src',
       'content',
       'en',
-      'character-creation/vocations/fighter',
+      'character-creation/vocations/Warrior',
       'battle-master.mdx',
     );
 
@@ -79,7 +79,7 @@ describe('fsContentSource', () => {
 
     const result = await fsContentSource.fetch(
       'en',
-      'character-creation/vocations/fighter/battle-master',
+      'character-creation/vocations/Warrior/battle-master',
     );
 
     const expectedPath = path.join(
@@ -87,7 +87,7 @@ describe('fsContentSource', () => {
       'src',
       'content',
       'en',
-      'character-creation/vocations/fighter',
+      'character-creation/vocations/Warrior',
       'battle-master.specialization.mdx',
     );
 
@@ -106,7 +106,7 @@ describe('fsContentSource', () => {
 
     const result = await fsContentSource.fetch(
       'en',
-      'character-creation/vocations/fighter/battle-master',
+      'character-creation/vocations/Warrior/battle-master',
     );
 
     const expectedPath = path.join(
@@ -114,7 +114,7 @@ describe('fsContentSource', () => {
       'src',
       'content',
       'en',
-      'character-creation/vocations/fighter',
+      'character-creation/vocations/Warrior',
       'battle-master.specialization.mdx',
     );
 
@@ -132,7 +132,7 @@ describe('fsContentSource', () => {
 
     const result = await fsContentSource.fetch(
       'en',
-      'character-creation/vocations/fighter/battle-master',
+      'character-creation/vocations/Warrior/battle-master',
     );
 
     expect(result).toBeNull();
@@ -144,7 +144,7 @@ describe('fsContentSource', () => {
 
     const result = await fsContentSource.fetch(
       'en',
-      'character-creation/vocations/fighter/battle-master',
+      'character-creation/vocations/Warrior/battle-master',
     );
 
     expect(result).toBeNull();

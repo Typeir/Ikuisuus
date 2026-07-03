@@ -11,8 +11,8 @@
  *
  * @example
  * ```
- * GET /api/content-shards/vocations/barbarian?locale=en
- * GET /api/content-shards/vocations/barbarian?locale=en&keys[]=Rage&keys[]=Unarmored+Defense
+ * GET /api/content-shards/vocations/Berserker?locale=en
+ * GET /api/content-shards/vocations/Berserker?locale=en&keys[]=Rage&keys[]=Unarmored+Defense
  * → { shardType: 'vocation', shards: { Rage: '...', 'Unarmored Defense': '...' } }
  * ```
  */

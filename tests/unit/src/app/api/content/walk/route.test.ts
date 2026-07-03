@@ -57,8 +57,8 @@ describe('GET /api/content/walk', () => {
   it('returns WalkNode[] from repositoryShallowWalk with maxDepth 2', async () => {
     const nodes: WalkNode[] = [
       {
-        name: 'Barbarian',
-        path: 'character-creation/vocations/barbarian',
+        name: 'Berserker',
+        path: 'character-creation/vocations/Berserker',
         children: [],
         isStub: true,
       },

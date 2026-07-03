@@ -124,7 +124,7 @@ describe('content-tags', () => {
     const createVocationTag = (): VocationTag => ({
       id: 'vocation-1',
       kind: ContentKind.Vocation,
-      title: 'Fighter',
+      title: 'Warrior',
       hitDie: 'd10',
       primaryAbilities: ['STR'],
       saves: ['STR', 'CON'],
@@ -487,9 +487,9 @@ describe('content-tags', () => {
     describe('VocationTag', () => {
       it('should be assignable with all required properties', () => {
         const vocation: VocationTag = {
-          id: 'fighter',
+          id: 'Warrior',
           kind: ContentKind.Vocation,
-          title: 'Fighter',
+          title: 'Warrior',
           hitDie: 'd10',
           primaryAbilities: ['STR', 'DEX'],
           saves: ['STR', 'CON'],

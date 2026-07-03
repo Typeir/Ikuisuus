@@ -49,10 +49,10 @@ afterEach(() => {
 const entityRow = {
   id: 1,
   locale: 'en',
-  slug: 'barbarian',
-  title: 'Barbarian',
-  file: 'src/content/en/character-creation/vocations/barbarian/main.mdx',
-  link: '/library/character-creation/vocations/barbarian',
+  slug: 'Berserker',
+  title: 'Berserker',
+  file: 'src/content/en/character-creation/vocations/Berserker/main.mdx',
+  link: '/library/character-creation/vocations/Berserker',
   archetype: 'Martial',
   primaryAbility: ['Strength'],
   hitDie: 'd12',
@@ -79,8 +79,8 @@ const entityRow = {
 
 const casterEntityRow = {
   ...entityRow,
-  slug: 'cleric',
-  title: 'Cleric',
+  slug: 'Pilgrim',
+  title: 'Pilgrim',
   archetype: 'Full Caster',
   hitDie: 'd8',
   spellcasting: { ability: 'Wisdom', progression: 'Full' },
@@ -98,8 +98,8 @@ describe('pgVocationRepository', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
-        slug: 'barbarian',
-        title: 'Barbarian',
+        slug: 'Berserker',
+        title: 'Berserker',
         archetype: 'Martial',
         hitDie: 'd12',
         tags: ['archetype:martial'],
@@ -156,17 +156,17 @@ describe('pgVocationRepository', () => {
     it('should return mapped VocationMetadata when found', async () => {
       mockEM.findOne.mockResolvedValue(entityRow);
 
-      const result = await pgVocationRepository.getBySlug('en', 'barbarian');
+      const result = await pgVocationRepository.getBySlug('en', 'Berserker');
       expect(result).not.toBeNull();
-      expect(result?.slug).toBe('barbarian');
+      expect(result?.slug).toBe('Berserker');
     });
 
     it('should query by locale and slug with features populated', async () => {
       mockEM.findOne.mockResolvedValue(null);
-      await pgVocationRepository.getBySlug('en', 'barbarian');
+      await pgVocationRepository.getBySlug('en', 'Berserker');
       expect(mockEM.findOne).toHaveBeenCalledWith(
         expect.anything(),
-        { locale: 'en', slug: 'barbarian' },
+        { locale: 'en', slug: 'Berserker' },
         { populate: ['features'] },
       );
     });
@@ -179,7 +179,7 @@ describe('pgVocationRepository', () => {
 
     it('should return null on error', async () => {
       mockEM.findOne.mockRejectedValue(new Error('fail'));
-      const result = await pgVocationRepository.getBySlug('en', 'barbarian');
+      const result = await pgVocationRepository.getBySlug('en', 'Berserker');
       expect(result).toBeNull();
     });
   });

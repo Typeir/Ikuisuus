@@ -19,7 +19,7 @@
  * @interface HitDieRollEntry
  * @property {string} id - Unique entry identifier (e.g. `"warrior-3"`)
  * @property {string} vocSlug - Vocation slug this entry belongs to
- * @property {string} vocTitle - Vocation display name (e.g. `"Barbarian"`)
+ * @property {string} vocTitle - Vocation display name (e.g. `"Berserker"`)
  * @property {string} dieType - Hit die notation without the `d` prefix: `"12"`, `"10"`, `"8"`, etc.
  * @property {number} levelIndex - 1-indexed level within this vocation for this roll
  * @property {number | null} result - The raw die result (1–N), or `null` if not yet rolled

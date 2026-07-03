@@ -152,7 +152,7 @@ export const RESOURCES = {
  *
  * @property {RegExp} abilityModifier - "your Wisdom modifier"
  * @property {RegExp} tierBonus - "your tier bonus"
- * @property {RegExp} classLevel - "your Fighter level"
+ * @property {RegExp} classLevel - "your Warrior level"
  * @property {RegExp} compositeFormula - "8 + Prof + CHA modifier"
  */
 export const TEMPLATES = {

@@ -30,7 +30,7 @@ export const TABLE = {
   separator: /^\|[-\s|]+\|$/,
   spellSlotColumn: /\d+(st|nd|rd|th)/,
   classLevelHeader:
-    /^\|\s*(?:Cleric|Paladin|Druid|Warlock|Ranger|Fighter|Rogue)?\s*Level\s*\|/i,
+    /^\|\s*(?:Pilgrim|Paladin|Druid|Warlock|Ranger|Warrior|Rogue)?\s*Level\s*\|/i,
   levelSpellsHeader: /^\|\s*Level\s*\|\s*Spells?\s*\|/i,
   slotLevel: /(\d+)(st|nd|rd|th)/,
   markdownLink: /\[([^\]]+)\]\([^)]*\)/g,

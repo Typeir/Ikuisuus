@@ -30,14 +30,14 @@ describe('SpecializationEntity', () => {
     const entity = new SpecializationEntity();
     entity.locale = 'en';
     entity.slug = 'path-of-the-berserker';
-    entity.title = 'Path of the Berserker';
+    entity.title = 'Path of Frenzy';
     entity.file = 'berserker.mdx';
-    entity.link = '/library/vocations/barbarian/path-of-the-berserker';
-    entity.vocation = 'barbarian';
+    entity.link = '/library/vocations/Berserker/path-of-the-berserker';
+    entity.vocation = 'Berserker';
     entity.specializationType = 'Path';
 
     expect(entity.slug).toBe('path-of-the-berserker');
-    expect(entity.vocation).toBe('barbarian');
+    expect(entity.vocation).toBe('Berserker');
     expect(entity.specializationType).toBe('Path');
   });
 

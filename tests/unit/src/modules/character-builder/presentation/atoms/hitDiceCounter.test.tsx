@@ -35,7 +35,7 @@ describe('HitDiceCounter', () => {
   });
 
   it('shows single die type for one vocation', () => {
-    const vocations = [makeVocation('barbarian', 'Barbarian', 5, 'd12')];
+    const vocations = [makeVocation('Berserker', 'Berserker', 5, 'd12')];
     render(<HitDiceCounter vocations={vocations} />);
     expect(screen.getByText('5d12')).toBeTruthy();
   });
@@ -48,7 +48,7 @@ describe('HitDiceCounter', () => {
 
   it('shows mixed Nd? for multi-vocation with different dice', () => {
     const vocations = [
-      makeVocation('barbarian', 'Barbarian', 3, 'd12'),
+      makeVocation('Berserker', 'Berserker', 3, 'd12'),
       makeVocation('wizard', 'Wizard', 2, 'd6'),
     ];
     render(<HitDiceCounter vocations={vocations} />);
@@ -57,7 +57,7 @@ describe('HitDiceCounter', () => {
 
   it('ignores vocations with empty slug', () => {
     const vocations = [
-      makeVocation('barbarian', 'Barbarian', 5, 'd12'),
+      makeVocation('Berserker', 'Berserker', 5, 'd12'),
       makeVocation('', '', 1, ''),
     ];
     render(<HitDiceCounter vocations={vocations} />);
@@ -66,7 +66,7 @@ describe('HitDiceCounter', () => {
 
   it('shows total level for multiple same-die vocations', () => {
     const vocations = [
-      makeVocation('fighter', 'Fighter', 4, 'd10'),
+      makeVocation('Warrior', 'Warrior', 4, 'd10'),
       makeVocation('paladin', 'Paladin', 2, 'd10'),
     ];
     render(<HitDiceCounter vocations={vocations} />);

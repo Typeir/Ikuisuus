@@ -173,7 +173,7 @@ const createMockCombat = (
   combatants: [
     createMockCombatant({
       id: 'combatant-1',
-      name: 'Fighter',
+      name: 'Warrior',
       initiativeValue: 18,
     }),
     createMockCombatant({

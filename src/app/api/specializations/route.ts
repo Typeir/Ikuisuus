@@ -14,7 +14,7 @@
  *
  * @example
  * ```typescript
- * const response = await fetch('/api/specializations?locale=en&vocation=barbarian');
+ * const response = await fetch('/api/specializations?locale=en&vocation=Berserker');
  * const specializations = await response.json();
  * ```
  * @module src/app/api/specializations/route
@@ -37,7 +37,7 @@ const log = logger.child({ module: 'API:Specializations' });
  *
  * @example
  * fetch('/api/specializations?locale=en')
- * fetch('/api/specializations?locale=en&vocation=barbarian')
+ * fetch('/api/specializations?locale=en&vocation=Berserker')
  */
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

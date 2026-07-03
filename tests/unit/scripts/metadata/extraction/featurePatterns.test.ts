@@ -239,8 +239,8 @@ describe('featurePatterns', () => {
     });
 
     it('classLevel should capture class name', () => {
-      const m = 'your Fighter level'.match(TEMPLATES.classLevel);
-      expect(m![1]).toBe('Fighter');
+      const m = 'your Warrior level'.match(TEMPLATES.classLevel);
+      expect(m![1]).toBe('Warrior');
     });
 
     it('compositeFormula should capture components', () => {
