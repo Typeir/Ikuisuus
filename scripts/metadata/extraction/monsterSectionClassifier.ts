@@ -17,12 +17,12 @@ import { CLASSIFIER } from './featurePatterns';
 /**
  * Semantic category for a monster stat block section.
  *
- * @typedef {'traits' | 'actions' | 'bonus_actions' | 'reactions' | 'deed_act' | 'deed_stratagem' | 'deed_lair' | 'deed_phase' | 'spellcasting' | 'condition' | 'bloodrage' | 'unknown'} SectionType
+ * @typedef {'traits' | 'actions' | 'minor_actions' | 'reactions' | 'deed_act' | 'deed_stratagem' | 'deed_lair' | 'deed_phase' | 'spellcasting' | 'condition' | 'bloodrage' | 'unknown'} SectionType
  */
 export type SectionType =
   | 'traits'
   | 'actions'
-  | 'bonus_actions'
+  | 'minor_actions'
   | 'reactions'
   | 'deed_act'
   | 'deed_stratagem'
@@ -63,7 +63,7 @@ const SECTION_RULES: { pattern: RegExp; type: SectionType }[] = [
   { pattern: CLASSIFIER.spellcasting, type: 'spellcasting' },
   { pattern: CLASSIFIER.condition, type: 'condition' },
   { pattern: CLASSIFIER.bloodrage, type: 'bloodrage' },
-  { pattern: CLASSIFIER.bonusActions, type: 'bonus_actions' },
+  { pattern: CLASSIFIER.minorActions, type: 'minor_actions' },
   { pattern: CLASSIFIER.reactions, type: 'reactions' },
   { pattern: CLASSIFIER.actions, type: 'actions' },
   { pattern: CLASSIFIER.traits, type: 'traits' },

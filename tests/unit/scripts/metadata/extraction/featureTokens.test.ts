@@ -212,12 +212,12 @@ describe('shared token recognizers', () => {
 
   describe('recognizeAction', () => {
     it('should parse action', () => {
-      expect(recognizeAction('as an action')).toEqual({ type: 'action' });
+      expect(recognizeAction('as a Major Action')).toEqual({ type: 'action' });
     });
 
-    it('should parse bonus action', () => {
-      expect(recognizeAction('as a bonus action')).toEqual({
-        type: 'bonus_action',
+    it('should parse Minor Action', () => {
+      expect(recognizeAction('as a Minor Action')).toEqual({
+        type: 'minor_action',
       });
     });
 
@@ -240,8 +240,8 @@ describe('shared token recognizers', () => {
     });
 
     it('should not match bonus when parsing action', () => {
-      const result = recognizeAction('as a bonus action on your turn');
-      expect(result?.type).toBe('bonus_action');
+      const result = recognizeAction('as a Minor Action on your turn');
+      expect(result?.type).toBe('minor_action');
     });
   });
 

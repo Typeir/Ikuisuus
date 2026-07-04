@@ -109,7 +109,7 @@ Can enrichFromBody() extract the key data?
 
 For a monster to be "Foundry-plausible", verify each feature has:
 
-- [ ] `trigger` set (action/reaction/passive/bonus_action)
+- [ ] `trigger` set (action/reaction/passive/minor_action)
 - [ ] `attack` populated for weapon attacks
 - [ ] `damage` + `damageType` for attacks
 - [ ] `saving_throw` for save-based features

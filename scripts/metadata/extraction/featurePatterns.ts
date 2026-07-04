@@ -78,7 +78,7 @@ export const DISTANCE = {
 /**
  * Pre-compiled patterns for action types and timing.
  *
- * @property {RegExp} bonusAction - "bonus action"
+ * @property {RegExp} minorAction - "Minor Action"
  * @property {RegExp} reaction - "reaction"
  * @property {RegExp} freeAction - "free action"
  * @property {RegExp} passive - "passive"
@@ -88,7 +88,7 @@ export const DISTANCE = {
  * @property {RegExp} ritual - "ritual"
  */
 export const ACTIONS = {
-  bonusAction: /\bbonus\s+action\b/i,
+  minorAction: /\bminor\s+action\b/i,
   reaction: /\breaction\b/i,
   freeAction: /\bfree\s+action\b/i,
   passive: /\bpassive\b/i,
@@ -408,7 +408,7 @@ export const ENRICHMENT = {
  * @property {RegExp} spellcasting - Spellcasting heading
  * @property {RegExp} condition - Condition heading
  * @property {RegExp} bloodrage - Bloodrage heading
- * @property {RegExp} bonusActions - Bonus Actions heading
+ * @property {RegExp} minorActions - Minor Actions heading
  * @property {RegExp} reactions - Reactions heading
  * @property {RegExp} actions - Actions heading
  * @property {RegExp} traits - Traits heading
@@ -422,7 +422,7 @@ export const CLASSIFIER = {
   spellcasting: /^spellcasting/i,
   condition: /^condition:\s*/i,
   bloodrage: /^bloodrage/i,
-  bonusActions: /^bonus\s*actions?/i,
+  minorActions: /^bonus\s*actions?/i,
   reactions: /^reactions?$/i,
   actions: /^actions?$/i,
   traits: /^traits?$/i,

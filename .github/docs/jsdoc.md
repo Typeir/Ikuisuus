@@ -467,7 +467,7 @@ For build pipeline scripts:
  * Parses spell MDX files to extract:
  * - Level (0-12, where 0 = cantrip)
  * - School (Evocation, Abjuration, etc.)
- * - Casting time (parsed as array: action, bonus action, reaction)
+ * - Casting time (parsed as array: action, Minor Action, reaction)
  * - Components (V, S, M with descriptions)
  * - Concentration requirement
  * - Damage types and conditions
@@ -492,7 +492,7 @@ For build pipeline scripts:
  *
  * @description
  * Priority order (first match wins):
- * 1. "bonus action" - Highest priority
+ * 1. "Minor Action" - Highest priority
  * 2. "action" - Second priority
  * 3. "reaction" - Third priority
  * 4. Time durations - "minute", "hour", "day"
@@ -506,8 +506,8 @@ For build pipeline scripts:
  * // Returns: ['action']
  *
  * @example
- * parseCastingTimeToArray('1 bonus action or reaction');
- * // Returns: ['bonus action', 'reaction']
+ * parseCastingTimeToArray('1 Minor Action or reaction');
+ * // Returns: ['Minor Action', 'reaction']
  *
  * @example
  * parseCastingTimeToArray('1 minute (ritual)');

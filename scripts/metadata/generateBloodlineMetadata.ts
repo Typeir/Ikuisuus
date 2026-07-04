@@ -326,7 +326,7 @@ function extractBoonMechanicTags(
     tags.add('mechanic:extra-damage');
   }
 
-  if (BOON_MECHANICS.bonusAction.test(lower)) {
+  if (BOON_MECHANICS.minorAction.test(lower)) {
     tags.add('mechanic:bonus-action');
   }
   if (BOON_MECHANICS.reaction.test(lower)) {

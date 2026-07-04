@@ -84,7 +84,7 @@ acquainted with death, both meting it out and defying it.
 <Collapsible>
 ## 1st Level – Second Wind
 
-As a **Bonus Action**, you regain hit points equal to **1d10 + your Fighter level**.
+As a **Minor Action**, you regain hit points equal to **1d10 + your Fighter level**.
 
 You may use this feature **twice**.
 

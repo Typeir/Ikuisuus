@@ -14,12 +14,12 @@ export const RULES_A = [
     desc: '## Actions → ## Major Actions',
   },
   {
-    re: /^(\*\*Casting Time\*\*: 1) Action$/,
+    re: /(\*\*Casting Time\*\*: 1) Action\b/,
     to: '$1 Major Action',
     desc: 'Casting: 1 Action → 1 Major Action',
   },
   {
-    re: /^(\*\*Casting Time\*\*: 1) action$/,
+    re: /(\*\*Casting Time\*\*: 1) action\b/,
     to: '$1 Major Action',
     desc: 'Casting: 1 action → 1 Major Action',
   },
@@ -32,7 +32,11 @@ export const RULES_A = [
   },
 
   // ── "without using an action" — pool economy, not type ──
-  { re: /\bwithout using an action\b/gi, to: 'without spending an Action', desc: 'without using an action' },
+  {
+    re: /\bwithout using an action\b/gi,
+    to: 'without spending an Action',
+    desc: 'without using an action',
+  },
 
   // ── Verb + determiner + "action" (grammar: "an"→"a" where needed) ──
   {
@@ -51,7 +55,7 @@ export const RULES_A = [
     desc: 'use(s)/using its action',
   },
   {
-    re: /\b(spend(?:s?|ing)\s+)an\s+action\b/gi,
+    re: /\b(?<!without )(spend(?:s?|ing)\s+)an\s+action\b/gi,
     to: '$1a Major Action',
     desc: 'spend(s)/spending an action',
   },
@@ -82,7 +86,11 @@ export const RULES_A = [
   },
 
   // Catch-all: any remaining "its action" (old slot language) → "a Major Action"
-  { re: /\bits action\b/gi, to: 'a Major Action', desc: 'its action (catch-all)' },
+  {
+    re: /\bits action\b/gi,
+    to: 'a Major Action',
+    desc: 'its action (catch-all)',
+  },
 
   // ── Prose references ──
   { re: /\b(of 1) action\b/gi, to: '$1 Major Action', desc: 'of 1 action' },

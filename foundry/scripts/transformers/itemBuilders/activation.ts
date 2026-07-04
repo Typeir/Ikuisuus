@@ -14,7 +14,7 @@ import type { MonsterFeature } from '../../../src/lib/types/feature';
 /** @type {Record<string, string>} Maps MonsterFeature triggers to dnd5e activation types. */
 const TRIGGER_MAP: Record<string, string> = {
   action: 'action',
-  bonus_action: 'bonus',
+  minor_action: 'bonus',
   reaction: 'reaction',
   passive: 'none',
   free: 'none',

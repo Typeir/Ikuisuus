@@ -55,15 +55,15 @@ export const COMPONENTS = {
 /**
  * Casting time classification patterns.
  *
- * @property {RegExp} bonusAction - "bonus action"
+ * @property {RegExp} minorAction - "Minor Action"
  * @property {RegExp} action - "action" (with negative lookbehind for "bonus")
  * @property {RegExp} reaction - "reaction"
  * @property {RegExp} timeDuration - "10 minutes", "1 hour", etc.
  * @property {RegExp} ritual - "ritual"
  */
 export const CASTING_TIME = {
-  bonusAction: /\bbonus\s+action\b/i,
-  action: /\b(?<!bonus\s)action\b/i,
+  minorAction: /\bminor\s+action\b/i,
+  action: /\b(?<!minor\s)action\b/i,
   reaction: /\breaction\b/i,
   timeDuration: /(\d+\s*(?:minute|min|hour|hr|round|day)s?)/i,
   ritual: /\britual\b/i,

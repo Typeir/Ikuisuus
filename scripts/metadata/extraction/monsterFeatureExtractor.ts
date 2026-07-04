@@ -1,7 +1,7 @@
 /**
  * @fileoverview Monster Feature Extractor — Actions & Traits
  * @description Extracts MonsterFeature records from classified monster
- * sections. Handles traits, actions, reactions, bonus actions, multiattack,
+ * sections. Handles traits, actions, reactions, Minor Actions, multiattack,
  * recharge abilities, and spellcasting blocks. Used by the feature metadata
  * generator for `.sheet.mdx` files.
  *

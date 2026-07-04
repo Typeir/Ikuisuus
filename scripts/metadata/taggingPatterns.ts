@@ -41,7 +41,7 @@ export const MOVEMENT: Record<string, RegExp> = {
  * @property {RegExp} deedPhase - Legendary Deed: Phase
  * @property {RegExp} multiattack - Multiattack keyword
  * @property {RegExp} reactions - Reaction(s) keyword
- * @property {RegExp} bonusActions - Bonus action(s) keyword
+ * @property {RegExp} minorActions - Minor Action(s) keyword
  * @property {RegExp} regeneration - Regeneration keyword
  * @property {RegExp} healing - Regains/recovers hit points
  * @property {RegExp} spellcasting - Spellcasting, cantrips, spell slots
@@ -65,7 +65,7 @@ export const MONSTER_MECHANICS = {
   deedPhase: /\bLegendary Deed: Phase?\b/i,
   multiattack: /\bmultiattack\b/i,
   reactions: /\breactions?\b/i,
-  bonusActions: /\bbonus actions?\b/i,
+  minorActions: /\bminor actions?\b/i,
   regeneration: /\bregenerat(e|ion)\b/i,
   healing: /\b(regains?|recover)\s+\d+\s+(hit points?|hp)\b/i,
   spellcasting: /\b(spellcasting|cantrips?|spell slots?)\b/i,
@@ -92,7 +92,7 @@ export const MONSTER_MECHANICS = {
  * @property {RegExp} advantageDisadvantage - Advantage or disadvantage
  * @property {RegExp} criticalHit - Critical hit
  * @property {RegExp} reaction - Reaction keyword
- * @property {RegExp} bonusAction - Bonus action
+ * @property {RegExp} minorAction - Minor Action
  * @property {RegExp} opportunityAttack - Opportunity attack
  * @property {RegExp} noOpportunityAttack - "does not provoke opportunity attacks"
  * @property {RegExp} damageResistanceTo - "resistance to"
@@ -117,7 +117,7 @@ export const ITEM_MECHANICS = {
   advantageDisadvantage: /\b(advantage|disadvantage)\b/i,
   criticalHit: /\bcritical(?:\s+hit)?/i,
   reaction: /\breaction\b/i,
-  bonusAction: /\bbonus action\b/i,
+  minorAction: /\bminor action\b/i,
   opportunityAttack: /\bopportunity attack/i,
   noOpportunityAttack: /does\s+not\s+provoke\s+opportunity\s+attacks?/i,
   damageResistanceTo: /\bresistance\s+to/i,

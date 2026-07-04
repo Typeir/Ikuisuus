@@ -36,7 +36,7 @@ export interface SpellListRef {
  * @property {string} [school] - School of magic (e.g. "Evocation", "Transmutation")
  * @property {string} [quality] - Quality tier for high-level spells (e.g. "Legendary", "Epic")
  * @property {string} [castingTimeRaw] - Raw casting time text (e.g. "1 action", "10 minutes (ritual)")
- * @property {string[]} [castingTime] - Parsed casting time keywords (e.g. ["action"], ["bonus action", "reaction"])
+ * @property {string[]} [castingTime] - Parsed casting time keywords (e.g. ["action"], ["Minor Action", "reaction"])
  * @property {string} [range] - Spell range (e.g. "60 feet", "Self", "Touch")
  * @property {boolean} [concentration] - Whether the spell requires concentration
  * @property {string} [duration] - Duration text (e.g. "Instantaneous", "up to 1 minute")

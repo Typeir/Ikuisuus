@@ -163,8 +163,8 @@ export function extractMonsterMechanicTags(text: string): string[] {
   if (MONSTER_MECHANICS.multiattack.test(text))
     tags.push('mechanic:multiattack');
   if (MONSTER_MECHANICS.reactions.test(text)) tags.push('mechanic:reactions');
-  if (MONSTER_MECHANICS.bonusActions.test(text))
-    tags.push('mechanic:bonus-actions');
+  if (MONSTER_MECHANICS.minorActions.test(text))
+    tags.push('mechanic:minor-actions');
 
   if (MONSTER_MECHANICS.regeneration.test(text))
     tags.push('mechanic:regeneration');
@@ -218,7 +218,7 @@ export function extractItemMechanicTags(text: string): string[] {
   if (ITEM_MECHANICS.criticalHit.test(text))
     tags.push('mechanic:critical-hits');
   if (ITEM_MECHANICS.reaction.test(text)) tags.push('mechanic:reaction');
-  if (ITEM_MECHANICS.bonusAction.test(text)) tags.push('mechanic:bonus-action');
+  if (ITEM_MECHANICS.minorAction.test(text)) tags.push('mechanic:bonus-action');
   if (ITEM_MECHANICS.opportunityAttack.test(text))
     tags.push('mechanic:opportunity-attacks');
   if (ITEM_MECHANICS.noOpportunityAttack.test(text))

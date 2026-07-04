@@ -97,7 +97,7 @@ export const PROFICIENCY = {
  * @property {RegExp} weapon - Weapon, melee, or natural weapon mechanic
  * @property {RegExp} reach - Weapon reach
  * @property {RegExp} extraDamage - Extra damage dealing
- * @property {RegExp} bonusAction - Bonus action
+ * @property {RegExp} minorAction - Minor Action
  * @property {RegExp} reaction - Reaction
  * @property {RegExp} concentration - Concentration
  * @property {RegExp} spellcasting - Spellcasting or casting spells
@@ -115,7 +115,7 @@ export const BOON_MECHANICS = {
   weapon: /\bweapon\b|\bmelee\b|\bnatural weapon\b|\bopportunity attack\b/i,
   reach: /\breach\b/i,
   extraDamage: /\bextra\b[\s\S]{0,20}\bdamage\b|\bdeal extra\b/i,
-  bonusAction: /\bbonus action\b/i,
+  minorAction: /\bminor action\b/i,
   reaction: /\breaction\b/i,
   concentration: /\bconcentrat(?:e|ion)\b/i,
   spellcasting: /\bspellcasting\b|\bcast\b[\s\S]{0,12}\bspell\b/i,

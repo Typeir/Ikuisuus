@@ -255,7 +255,7 @@ describe('content-tags', () => {
       it('should accept valid action types', () => {
         const validTypes: SpellActionType[] = [
           'action',
-          'bonus_action',
+          'minor_action',
           'reaction',
           'special',
         ];

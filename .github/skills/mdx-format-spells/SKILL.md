@@ -108,7 +108,7 @@ The level line format: `_Nth-level School_` (e.g., `_3rd-level Evocation_`,
 > **Duration**: Concentration, up to 1 minute
 ```
 
-- **Casting Time**: Action / Bonus Action / Reaction / 1 Minute / 1 Hour
+- **Casting Time**: Action / Minor Action / Reaction / 1 Minute / 1 Hour
 - **Range**: Touch / Self / N feet / N miles / Unlimited
 - **Components**: V (verbal), S (somatic), M (material — list materials in parentheses)
 - **Duration**: Instantaneous / Until Dispelled / Concentration, up to N / N days

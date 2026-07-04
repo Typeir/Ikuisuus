@@ -139,8 +139,8 @@ describe('featurePatterns', () => {
   });
 
   describe('ACTIONS', () => {
-    it('bonusAction should match "bonus action"', () => {
-      expect(ACTIONS.bonusAction.test('as a bonus action')).toBe(true);
+    it('minorAction should match "Minor Action"', () => {
+      expect(ACTIONS.minorAction.test('as a Minor Action')).toBe(true);
     });
 
     it('reaction should match "reaction"', () => {

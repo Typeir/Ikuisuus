@@ -37,7 +37,7 @@ Flat minimal structure, no sections.
 Adventuring Gear
 
 A hooked blade on a cord. The cord is 30 ft. long unless stated otherwise.
-As an action, you can use it as a melee or thrown weapon. On a hit, the target
+As a Major Action, you can use it as a melee or thrown weapon. On a hit, the target
 takes slashing damage and must succeed on a DC 15 Strength saving throw or
 become grappled.
 

@@ -157,12 +157,12 @@ function parseCastingTimeToArray(rawCastingTime: string): string[] {
   const castingTimes: string[] = [];
   const lowerText = rawCastingTime.toLowerCase();
 
-  if (CASTING_TIME.bonusAction.test(lowerText)) {
-    castingTimes.push('bonus action');
+  if (CASTING_TIME.minorAction.test(lowerText)) {
+    castingTimes.push('Minor Action');
   }
   if (
     CASTING_TIME.action.test(lowerText) &&
-    !castingTimes.includes('bonus action')
+    !castingTimes.includes('Minor Action')
   ) {
     castingTimes.push('action');
   }

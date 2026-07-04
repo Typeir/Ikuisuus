@@ -44,7 +44,7 @@ describe('useSpellColumns', () => {
 
     expect(castingTime).toBeDefined();
     expect(castingTime?.render?.(['bonus-action', 'ritual'] as never)).toBe(
-      'Bonus Action (R)',
+      'Minor Action (R)',
     );
   });
 

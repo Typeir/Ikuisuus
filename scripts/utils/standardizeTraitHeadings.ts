@@ -45,7 +45,7 @@ async function standardizeFile(filePath: string): Promise<string> {
 
     if (
       trimmed.match(
-        /^##\s+(Traits|Actions|Reactions|Legendary Actions|Lair Actions|Battlefield Actions|Legendary Deed: Phase|Bonus Actions)/,
+        /^##\s+(Traits|Actions|Reactions|Legendary Actions|Lair Actions|Battlefield Actions|Legendary Deed: Phase|Minor Actions)/,
       )
     ) {
       inTraitsOrActionsSection = true;

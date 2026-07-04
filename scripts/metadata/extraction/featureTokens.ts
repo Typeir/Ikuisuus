@@ -194,14 +194,14 @@ export function recognizeRecharge(text: string): RechargeToken | null {
 }
 
 /**
- * Recognizes an action type like "action", "bonus action", "reaction".
+ * Recognizes an action type like "action", "Minor Action", "reaction".
  *
  * @param {string} text - Input text
  * @returns {ActionToken | null} Parsed action token or null
  */
 export function recognizeAction(text: string): ActionToken | null {
   const lower = text.toLowerCase();
-  if (ACTIONS.bonusAction.test(lower)) return { type: 'bonus_action' };
+  if (ACTIONS.minorAction.test(lower)) return { type: 'minor_action' };
   if (ACTIONS.reaction.test(lower)) return { type: 'reaction' };
   if (ACTIONS.freeAction.test(lower)) return { type: 'free' };
   if (ACTIONS.passive.test(lower)) return { type: 'passive' };

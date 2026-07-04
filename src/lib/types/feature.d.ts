@@ -106,7 +106,7 @@ export interface RechargeToken {
  * Token representing a parsed action type.
  *
  * @interface ActionToken
- * @property {string} type - Action type: action, bonus_action, reaction, free, passive
+ * @property {string} type - Action type: action, minor_action, reaction, free, passive
  */
 export interface ActionToken {
   type: string;
@@ -266,7 +266,7 @@ export type FeatureFlag =
  * @property {string} id - Stable slug (e.g., "rimelord/avalanche-blade")
  * @property {string} name - Display name
  * @property {{ start: number; end: number; archetype: string }} [source] - Source location in the MDX file — 0-based start/end line of the enclosing section, plus section archetype ('H' for standard sections, 'M' for deed sections)
- * @property {string} [trigger] - Action economy type: action, bonus_action, reaction, free, passive
+ * @property {string} [trigger] - Action economy type: action, minor_action, reaction, free, passive
  * @property {{ type?: string; range?: number; area?: RangeToken; scope?: string }} [target] - Target descriptor
  * @property {DamageToken} [damage] - Damage descriptor
  * @property {{ dice: DiceToken; modifier?: string }} [healing] - Healing descriptor

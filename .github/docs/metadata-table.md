@@ -77,7 +77,7 @@ All wrappers are **client components** that fetch data from API routes.
 - Name (sortable)
 - Level (sortable, filterable by select) - Shows "Cantrip" for level 0
 - School (sortable, filterable by select)
-- Casting Time (sortable, filterable by select) - Displays as "Action", "Bonus Action", etc.
+- Casting Time (sortable, filterable by select) - Displays as "Action", "Minor Action", etc.
 - Concentration (sortable, filterable by Yes/No select)
 
 ## Usage in MDX

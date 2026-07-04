@@ -86,7 +86,7 @@ _Melee Weapon Attack:_ +7 to hit, reach 5 ft., one target. _Hit:_ 10 (2d6 + 3) p
 
 ---
 
-## Bonus Actions
+## Minor Actions
 
 #### Reposition
 
@@ -137,7 +137,7 @@ Description of the lair effect.
 | ------------------------- | ---- | ------------------ | ----- |
 | `## Traits`               | Yes  | `---` before/after | `##`  |
 | `## Actions`              | Yes  | `---` before/after | `##`  |
-| `## Bonus Actions`        | Opt  | `---` before/after | `##`  |
+| `## Minor Actions`        | Opt  | `---` before/after | `##`  |
 | `## Reactions`            | Opt  | `---` before/after | `##`  |
 | `## Legendary Deeds`      | Opt  | `---` before/after | `##`  |
 | `## Legendary Deed: Act`  | Opt  | `---` before       | `##`  |

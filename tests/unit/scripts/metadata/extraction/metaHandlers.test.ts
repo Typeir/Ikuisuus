@@ -149,7 +149,7 @@ describe('auto_hit handler', () => {
 });
 
 describe('summon handler', () => {
-  const body = `As an action, Yskeia deploys up to four **Warlings** into empty spaces within 30 ft. of her.
+  const body = `As a Major Action, Yskeia deploys up to four **Warlings** into empty spaces within 30 ft. of her.
 
 > #### Warling
 >

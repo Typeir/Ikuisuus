@@ -511,8 +511,8 @@ parseDuration(line); // Check for 'Concentration'
 
 **Casting Time Priority** (parseCastingTimeToArray):
 
-1. **Bonus Action** - Highest priority
-2. **Action** - Second priority
+1. **Minor Action** - Highest priority
+2. **Major Action** - Second priority
 3. **Reaction** - Third priority
 4. **Time Durations** - 'minute', 'hour', 'day' etc.
 5. **Ritual** - If 'ritual' mentioned

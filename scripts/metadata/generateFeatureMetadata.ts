@@ -58,8 +58,8 @@ function extractFeaturesFromSection(section: MonsterSection): MonsterFeature[] {
       return extractTraits(section);
     case 'actions':
       return extractActions(section, 'action');
-    case 'bonus_actions':
-      return extractActions(section, 'bonus_action');
+    case 'minor_actions':
+      return extractActions(section, 'minor_action');
     case 'reactions':
       return extractActions(section, 'reaction');
     case 'deed_act':
@@ -75,7 +75,7 @@ function extractFeaturesFromSection(section: MonsterSection): MonsterFeature[] {
       return spell ? [spell] : [];
     }
     case 'bloodrage':
-      return extractActions(section, 'bonus_action');
+      return extractActions(section, 'minor_action');
     default:
       return [];
   }
