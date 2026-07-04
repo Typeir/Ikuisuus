@@ -20,7 +20,14 @@ const log = createLogger({ script: 'generateSpellLists' });
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 const SPELLS_DIR = path.join(ROOT, 'src', 'content', 'en', 'spells');
-const LISTS_DIR = path.join(ROOT, 'src', 'content', 'en', 'character-creation', 'vocations');
+const LISTS_DIR = path.join(
+  ROOT,
+  'src',
+  'content',
+  'en',
+  'character-creation',
+  'vocations',
+);
 
 /**
  * Maps spell list names from metadata to their listSource value and the
@@ -29,17 +36,17 @@ const LISTS_DIR = path.join(ROOT, 'src', 'content', 'en', 'character-creation', 
  * @typedef {{ source: string, folder: string }} ListInfo
  */
 const LIST_MAP: Record<string, { source: string; folder: string }> = {
-  Bard:     { source: 'Bard',     folder: 'bard' },
-  Pilgrim:   { source: 'Pilgrim',   folder: 'Pilgrim' },
-  Druid:    { source: 'Druid',    folder: 'druid' },
-  Esper:    { source: 'Esper',    folder: 'esper' },
-  Paladin:  { source: 'Paladin',  folder: 'paladin' },
-  Strider:  { source: 'Strider',  folder: 'strider' },
+  Bard: { source: 'Bard', folder: 'bard' },
+  Pilgrim: { source: 'Pilgrim', folder: 'Pilgrim' },
+  Druid: { source: 'Druid', folder: 'druid' },
+  Esper: { source: 'Esper', folder: 'esper' },
+  Paladin: { source: 'Paladin', folder: 'paladin' },
+  Strider: { source: 'Strider', folder: 'strider' },
   Revenant: { source: 'Revenant', folder: 'revenant' },
-  Scion:    { source: 'Scion',    folder: 'scion' },
-  Tinker:   { source: 'Tinker',   folder: 'tinker' },
-  Villein:  { source: 'Villein',  folder: 'villein' },
-  Wizard:   { source: 'Wizard',   folder: 'wizard' },
+  Scion: { source: 'Scion', folder: 'scion' },
+  Tinker: { source: 'Tinker', folder: 'tinker' },
+  Villein: { source: 'Villein', folder: 'villein' },
+  Wizard: { source: 'Wizard', folder: 'wizard' },
 };
 
 /**
@@ -94,7 +101,9 @@ function scanSpells(): Record<string, SpellEntry[]> {
     count++;
   }
 
-  log.message(`Scanned ${count} spells across ${Object.keys(byList).length} lists`);
+  log.message(
+    `Scanned ${count} spells across ${Object.keys(byList).length} lists`,
+  );
   return byList;
 }
 
@@ -176,10 +185,14 @@ function main(): void {
     const changed = updateListFile(info.folder, sorted);
 
     if (changed) {
-      log.message(`Updated ${info.folder}/spells.list.mdx (${sorted.length} spells)`);
+      log.message(
+        `Updated ${info.folder}/spells.list.mdx (${sorted.length} spells)`,
+      );
       updated++;
     } else {
-      log.message(`${info.folder}/spells.list.mdx already up to date (${sorted.length} spells)`);
+      log.message(
+        `${info.folder}/spells.list.mdx already up to date (${sorted.length} spells)`,
+      );
     }
   }
 
