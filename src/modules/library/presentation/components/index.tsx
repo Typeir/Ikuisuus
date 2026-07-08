@@ -31,6 +31,7 @@ import { H1, H2, H3, H4, H5, H6 } from './Heading';
 import HorizontalSplit from './HorizontalSplit';
 import Meta from './Meta';
 import ParallaxBackdrop from './ParallaxBackdrop';
+import { SectionTrack } from './SectionTrack';
 import Tooltip from './Tooltip';
 
 export const components = {
@@ -47,6 +48,7 @@ export const components = {
   FloatedContainer,
   ClearFloats,
   ParallaxBackdrop,
+  SectionTrack,
   Tooltip,
   Image: (props: React.ComponentProps<typeof Image>) => (
     <Image
@@ -88,4 +90,5 @@ const enrichedComponents = {
 
 export default enrichedComponents;
 export { HashNavigationProvider, useHashNavigation };
+export { SectionTrack };
 

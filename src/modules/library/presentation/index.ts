@@ -7,7 +7,7 @@
  */
 
 export {
-    components, HashNavigationProvider, default as mdxComponents, useHashNavigation
+    components, HashNavigationProvider, default as mdxComponents, SectionTrack, useHashNavigation
 } from './components';
 export { LibraryArticle } from './LibraryArticle';
 export type { LibraryArticleProps } from './LibraryArticle';

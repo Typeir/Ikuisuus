@@ -19,6 +19,7 @@ import {
   HashNavigationProvider,
   LibraryArticle,
   MdRawPage,
+  SectionTrack,
 } from '@/modules/library/presentation';
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
@@ -140,6 +141,7 @@ const Page = async ({ params }: PageProps) => {
   return (
     <DraftOverlay locale={locale} slug={resolved.slugPath}>
       <HashNavigationProvider />
+      <SectionTrack />
       <LibraryArticle streamText={resolved.streamText}>
         {resolved.evalResult.content}
       </LibraryArticle>

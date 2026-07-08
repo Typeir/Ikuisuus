@@ -1,0 +1,81 @@
+/* ============================================
+   SECTION TRACK — SectionTrack.module.scss
+   Fixed-position navigation widget for
+   library content pages.
+============================================ */
+
+.track {
+  position: fixed;
+  left: calc(20rem + 1rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  height: 80vh;
+
+  transition: opacity 0.3s ease;
+
+  &[data-visible='false'] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (max-width: 1023px) {
+    left: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
+    left: 0.5rem;
+    height: 70vh;
+  }
+}
+
+.inner {
+  position: relative;
+  width: 5.5rem;
+  height: 100%;
+
+  /* Fade mask: transparent at edges, opaque in center */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--color-bg) 12%,
+    var(--color-bg) 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--color-bg) 12%,
+    var(--color-bg) 88%,
+    transparent 100%
+  );
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  border: none;
+  border-radius: 2px;
+  background-color: var(--color-text);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+  padding: 0;
+  transform-origin: left center;
+
+  &:hover {
+    background-color: var(--color-accent);
+    opacity: 1 !important;
+  }
+
+  &[data-active='true'] {
+    background-color: var(--color-accent);
+    opacity: 1 !important;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}

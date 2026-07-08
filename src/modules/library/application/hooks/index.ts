@@ -8,4 +8,6 @@
 
 export { useHashNavigation } from './useHashNavigation';
 export { useNearestRoute } from './useNearestRoute';
+export { useScrollProgress } from './useScrollProgress';
+export { useSectionTrack } from './useSectionTrack';
 

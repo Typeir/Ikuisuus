@@ -8,5 +8,6 @@
 
 export * from './compileOptions';
 export * from './contentTags';
+export * from './sectionTrack';
 export * from './types';
 
