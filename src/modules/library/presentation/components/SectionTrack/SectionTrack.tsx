@@ -212,7 +212,6 @@ function SectionTrackBar({
         style={{
           position: 'absolute',
           top: `${topPercent}%`,
-          left: 0,
           width: `${width}rem`,
           height: `${thickness}px`,
           transform: `scaleY(${scale})`,
