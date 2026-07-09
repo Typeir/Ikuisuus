@@ -10,7 +10,14 @@
 'use client';
 
 import type { SectionTrackItem } from '@/modules/library/domain';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { useScrollProgress } from './useScrollProgress';
 
 /** Mobile auto-hide idle duration (ms). */
@@ -55,12 +62,33 @@ function scanHeadings(): SectionTrackItem[] {
 }
 
 /**
+ * Returns true when two SectionTrackItem arrays describe the same headings
+ * at the same positions — prevents unnecessary re-renders.
+ *
+ * @param {SectionTrackItem[]} a - Previous items.
+ * @param {SectionTrackItem[]} b - Next items.
+ * @returns {boolean} True when arrays are equivalent.
+ */
+function itemsEqual(a: SectionTrackItem[], b: SectionTrackItem[]): boolean {
+  if (a.length !== b.length) return false;
+
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].anchor !== b[i].anchor || a[i].top !== b[i].top) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
  * Return type for `useSectionTrack`.
  *
  * @property {SectionTrackItem[]} items - All heading items.
  * @property {string | null} activeAnchor - Anchor of the currently active section.
  * @property {boolean} visible - Whether the track is visible (mobile auto-hide).
  * @property {number} docH - Total document height for proportional positioning.
+ * @property {number} viewportH - Current viewport height (px).
  * @property {(item: SectionTrackItem) => number} centerProximity - 0–1 score for center distance.
  */
 interface SectionTrackState {
@@ -68,6 +96,7 @@ interface SectionTrackState {
   activeAnchor: string | null;
   visible: boolean;
   docH: number;
+  viewportH: number;
   centerProximity: (item: SectionTrackItem) => number;
 }
 
@@ -90,22 +119,35 @@ export function useSectionTrack(): SectionTrackState {
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef<number | null>(null);
 
-  /** Scan headings synchronously on mount, throttled on resize. */
+  /** Scan headings synchronously on mount, throttled on resize and details toggle. */
   useLayoutEffect(() => {
     setItems(scanHeadings());
 
-    const onResize = () => {
+    const rescan = () => {
       if (rafRef.current !== null) return;
       rafRef.current = window.requestAnimationFrame(() => {
-        setItems(scanHeadings());
+        setItems((prev) => {
+          const next = scanHeadings();
+          return itemsEqual(prev, next) ? prev : next;
+        });
         rafRef.current = null;
       });
     };
 
-    window.addEventListener('resize', onResize, { passive: true });
+    const onDetailsToggle = (e: Event) => {
+      if ((e.target as HTMLElement).tagName === 'DETAILS') {
+        rescan();
+      }
+    };
+
+    window.addEventListener('resize', rescan, { passive: true });
+    window.addEventListener('ik:details-opened', rescan);
+    document.addEventListener('toggle', onDetailsToggle, true);
 
     return () => {
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', rescan);
+      window.removeEventListener('ik:details-opened', rescan);
+      document.removeEventListener('toggle', onDetailsToggle, true);
 
       if (rafRef.current !== null) {
         window.cancelAnimationFrame(rafRef.current);
@@ -209,10 +251,11 @@ export function useSectionTrack(): SectionTrackState {
       items,
       activeAnchor,
       visible,
+      viewportH,
       docH,
       centerProximity,
     }),
-    [items, activeAnchor, visible, docH, centerProximity],
+    [items, activeAnchor, visible, viewportH, docH, centerProximity],
   );
 
   return trackState;

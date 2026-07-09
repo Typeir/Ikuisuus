@@ -14,6 +14,7 @@
 import { CircleHelp } from 'lucide-react';
 import {
   Children,
+  cloneElement,
   ComponentType,
   isValidElement,
   memo,
@@ -26,6 +27,7 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { calculatePosition } from './calculatePosition';
 import styles from './tooltip.module.scss';
 
 /**
@@ -53,6 +55,8 @@ export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
  * @property {boolean} [clickable=false] - When true, adds help icon and enables click handler
  * @property {() => void} [onItemClick] - Callback when trigger is clicked in clickable mode
  * @property {boolean} [showClickIcon=true] - When clickable, whether to show CircleHelp icon (default true)
+ * @property {boolean} [inline=false] - When true, attaches handlers directly to child via cloneElement
+ *   instead of wrapping in a span. Use for absolutely-positioned triggers.
  */
 export interface TooltipProps {
   content: ReactNode;
@@ -68,79 +72,7 @@ export interface TooltipProps {
   clickable?: boolean;
   onItemClick?: () => void;
   showClickIcon?: boolean;
-}
-
-/**
- * Calculates absolute tooltip position relative to a trigger element.
- * Adjusts for scroll offsets and flips placement when the tooltip would
- * overflow the viewport.
- *
- * @function calculatePosition
- * @param {DOMRect} triggerRect - Bounding rect of the trigger element
- * @param {DOMRect} tooltipRect - Bounding rect of the tooltip element
- * @param {TooltipPlacement} placement - Desired placement direction
- * @param {number} [offset=8] - Pixel gap between trigger and tooltip
- * @returns {{ x: number; y: number; actualPlacement: TooltipPlacement }} Computed position and resolved placement
- */
-function calculatePosition(
-  triggerRect: DOMRect,
-  tooltipRect: DOMRect,
-  placement: TooltipPlacement,
-  offset = 8,
-): { x: number; y: number; actualPlacement: TooltipPlacement } {
-  const { innerWidth, innerHeight } = window;
-
-  let x = 0;
-  let y = 0;
-  let actualPlacement = placement;
-
-  switch (placement) {
-    case 'top':
-      x = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
-      y = triggerRect.top - tooltipRect.height - offset;
-      break;
-    case 'bottom':
-      x = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
-      y = triggerRect.bottom + offset;
-      break;
-    case 'left':
-      x = triggerRect.left - tooltipRect.width - offset;
-      y = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
-      break;
-    case 'right':
-      x = triggerRect.right + offset;
-      y = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
-      break;
-  }
-
-  const viewportMargin = 8;
-
-  if (placement === 'top' && y < viewportMargin) {
-    y = triggerRect.bottom + offset;
-    actualPlacement = 'bottom';
-  } else if (
-    placement === 'bottom' &&
-    y + tooltipRect.height > innerHeight - viewportMargin
-  ) {
-    y = triggerRect.top - tooltipRect.height - offset;
-    actualPlacement = 'top';
-  } else if (placement === 'left' && x < viewportMargin) {
-    x = triggerRect.right + offset;
-    actualPlacement = 'right';
-  } else if (
-    placement === 'right' &&
-    x + tooltipRect.width > innerWidth - viewportMargin
-  ) {
-    x = triggerRect.left - tooltipRect.width - offset;
-    actualPlacement = 'left';
-  }
-
-  x = Math.max(
-    viewportMargin,
-    Math.min(x, innerWidth - tooltipRect.width - viewportMargin),
-  );
-
-  return { x, y, actualPlacement };
+  inline?: boolean;
 }
 
 /**
@@ -171,6 +103,7 @@ export const Tooltip = memo(function Tooltip({
   clickable = false,
   onItemClick,
   showClickIcon = true,
+  inline = false,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -269,6 +202,40 @@ export const Tooltip = memo(function Tooltip({
       onItemClick();
     }
   };
+
+  if (inline) {
+    const cloned = cloneElement(child as ReactElement<any>, {
+      ref: triggerRef,
+      onMouseEnter: show,
+      onMouseLeave: hide,
+      onFocus: show,
+      onBlur: hide,
+      'aria-describedby': isVisible ? tooltipId : undefined,
+    });
+
+    return (
+      <>
+        {cloned}
+        {isVisible &&
+          createPortal(
+            <div
+              ref={tooltipRef}
+              id={tooltipId}
+              role='tooltip'
+              className={`${styles.tooltip} ${styles[actualPlacement]} ${className}`}
+              style={{
+                left: position.x,
+                top: position.y,
+                maxWidth,
+              }}>
+              {content}
+              {showArrow && <div className={styles.arrow} />}
+            </div>,
+            document.body,
+          )}
+      </>
+    );
+  }
 
   let triggerClassName = '';
   if (clickable) {

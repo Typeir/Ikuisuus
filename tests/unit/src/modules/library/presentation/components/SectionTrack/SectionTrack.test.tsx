@@ -8,7 +8,16 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
 import { SectionTrack } from '@/modules/library/presentation/components/SectionTrack';
+
+/**
+ * Wraps children in the required context provider so that
+ * {@link SectionTrack} can read the sidebar menu state.
+ */
+function wrapper({ children }: { children: React.ReactNode }) {
+  return <PersistentUiProvider>{children}</PersistentUiProvider>;
+}
 
 describe('SectionTrack', () => {
   let rafSpy: ReturnType<typeof vi.spyOn>;
@@ -37,7 +46,7 @@ describe('SectionTrack', () => {
 
   describe('rendering', () => {
     it('should return null when no headings exist', () => {
-      const { container } = render(<SectionTrack />);
+      const { container } = render(<SectionTrack />, { wrapper });
       expect(container.innerHTML).toBe('');
     });
 
@@ -47,7 +56,7 @@ describe('SectionTrack', () => {
         <h2 data-anchor="details">Details</h2>
       `;
 
-      render(<SectionTrack />);
+      render(<SectionTrack />, { wrapper });
 
       await waitFor(() => {
         const nav = screen.getByRole('navigation', { name: 'Page sections' });
@@ -62,7 +71,7 @@ describe('SectionTrack', () => {
         <h3 data-anchor="c">C</h3>
       `;
 
-      render(<SectionTrack />);
+      render(<SectionTrack />, { wrapper });
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
@@ -75,7 +84,7 @@ describe('SectionTrack', () => {
         <h1 data-anchor="intro">Introduction</h1>
       `;
 
-      render(<SectionTrack />);
+      render(<SectionTrack />, { wrapper });
 
       await waitFor(() => {
         const button = screen.getByRole('button', { name: 'Jump to Introduction' });
@@ -90,7 +99,7 @@ describe('SectionTrack', () => {
         <h1 data-anchor="target-section">Target</h1>
       `;
 
-      render(<SectionTrack />);
+      render(<SectionTrack />, { wrapper });
 
       await waitFor(() => {
         const button = screen.getByRole('button', { name: 'Jump to Target' });
@@ -105,7 +114,7 @@ describe('SectionTrack', () => {
     it('should have visible attribute by default on desktop', async () => {
       document.body.innerHTML = `<h1 data-anchor="a">A</h1>`;
 
-      render(<SectionTrack />);
+      render(<SectionTrack />, { wrapper });
 
       await waitFor(() => {
         const nav = screen.getByRole('navigation', { name: 'Page sections' });

@@ -405,6 +405,11 @@ These rules are **non-negotiable**. Violating any of them is a CRITICAL failure.
   section. The user's intent is the raw material for constitutional rules.
 - **NEVER** use vague language in GDD rules. Every rule must be concrete enough
   that a content creator can answer "did I follow this rule?" with yes or no.
+- **NEVER** use the "not X, it is Y" / "not X — it is Y" rhetorical device. This
+  pattern ("This is not a metaphor. It is physics." / "It is not optional flavor —
+  it is the hardware." / "Will is not external. It is not accessed. It is the
+  self...") is LLM-tropey and bad writing. State what something IS, directly. Omit
+  the negation preamble.
 - **NEVER** use any phrase from the anti-generic filter (GDD 1.4) in GDD text
   itself. The GDD is the constitution — it must exemplify its own standards.
 - **NEVER** rule on a conflict without loading both `GDD.md` AND `damocles-lore`

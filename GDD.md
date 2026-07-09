@@ -545,6 +545,53 @@ The Fold is a pocket of infinite energy, conceptually further in the fourth dime
 
 **Traceability**: Myth (the Fold is fire stolen from the gaps between worlds — Promethean, not devotional), Tactile Design (channeling the Fold should feel like holding a live current — the power is borrowed, and the lender can call the debt).
 
+##### Alchemical Precursor
+
+In areas where Fold-seams are common — where the barriers between reality and the Fold are thin, jagged, or repeatedly breached — a crystalline substance precipitates from the Fold's interaction with physical matter. Scholars call it **alchemical precursor**: a bismuth-like, pristine, cerulean-gold crystal with a stair-step microstructure. In its raw state it is inert. In its refined state, it reacts violently with water — flash-boiling on contact, releasing a plume of Fold-saturated steam that can detonate enclosed spaces.
+
+Precursor is the primary material accelerant for Fold magic. It concentrates Fold energy, stabilizes channels, and makes the shaping of complex formulae possible. It is, crudely, "magnesium powder for bouldering but for magic" — you can climb without it, but the climb is slower, harder, and far more dangerous. Most serious casters carry refined precursor in waterproof pouches or sealed within purpose-built foci. A caster who lets their precursor get wet in the field is a caster about to have a very bad day.
+
+**Historical abundance**: Before the Fifth Star and the First Pilgrimage, precursor was obscenely common — a stable, abundant resource used freely in casting and even crafted into jewelry. The Fifth Star changed everything, when the tapestry was created, and the Hidden Kingdom structured into the prison of the erring celestials, the world was severed from the flow of the fold. Precursor became myth-rare, a remnant of ages past. The survivors had to re-discover it, amd when Then the Interlocking shunted the Hidden Kingdom into reality, displacing massive pockets of Fold energy — and with them, new precursor deposits, the alchemical revolution started again. In modern Damocles, precursor is once again accessible, but its distribution is wildly uneven. The northern lands of Thule mined their reserves into oblivion millenia ago, before the Scarring. They now pillage the Anthulean Wastes to feed their casting traditions. Precursor is a major contentious resource — wars have been fought over its mines, and trade routes are guarded by those who know what a waterproof satchel of refined crystal is worth.
+
+**Precursor mines**: A precursor mine is a strange place. The tunnels are manually carved in serpentine paths — deliberate curves that avoid sharp corners. The miners are superstitious about the Hounds of Tindalos; true Hound attacks are rare. But lesser Fold-creatures — the equivalent of "scrapers" or "crawlers" that drift through the Fold's shallow layers — are common in precursor-rich areas. Fold Spiders nest in crystalline veins. They are drawn to geometry, and a sharp corner near a precursor deposit is an invitation. The serpentine tunnels are practical, not ritual: curves dissuade the lesser things, even if they do little to stop the Hounds. Most folk people that do not routinely interact with the mines do not understand how to properly preserve precursor, they store it in crude wooden containers, piled on inside perfectly square rooms, inviting disaster and death.
+
+**Physical properties**: Precursor is extraordinarily fragile — a refined crystal can be crushed between thumb and forefinger with a passing exertion of strength. It has an obscenely high melting point; fire will not ignite it, only water triggers the reaction. Before its reactive nature was understood, precursor jewelry was fashionable among the wealthy. The fashion ended abruptly after a series of swimming accidents destroyed several noble bloodlines. Old precursor jewelry still circulates as curiosities — and as assassination tools.
+
+**Constitutional Rules:**
+
+| Rule                                                                                                                                                                                                                                                                    | Rationale                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Precursor is the Fold made tactile.** It is the single physical substance through which casters interact with the Fold. Without it, Fold magic is slower, harder, and more dangerous — possible, but only for the extraordinarily skilled or the suicidally reckless. | Precursor is the hardware of Fold magic — its material anchor.                                                     |
+| **Precursor is inert until refined.** Raw crystal can be handled safely. Refinement — crushing, sieving, and calcining — activates its water reactivity. The refinement process is mundane; it is done in mills, not temples.                                           | The mundanity is the point. Precursor is a mineral, processed like any other. The magic is in what you do with it. |
+| **Precursor is politically volatile.** Its uneven distribution shapes economies, fuels conflicts, and determines which nations can sustain casting traditions. A region without precursor is a region without Fold magic — unless it has gods willing to grant keys.    | Precursor is a geopolitical resource on the scale of oil or rare earth metals.                                     |
+
+##### Casting Practice & Fold Geometry
+
+The Fold interacts with physical space at sharp angles. Corners, edges, and vertices form minor bridges to the Fold — topological stress points where reality is slightly thinner. Every casting tradition observes, measures, and exploits this.
+
+**Concentration**: High densities of jagged edges and corners help a caster attune to the Fold. A wizard's tower is angular for a reason. A casting chamber lined with faceted crystal, a circle of standing stones with chipped edges, a ritual dagger with a serrated blade — these are antennae. The more acute the angle, the stronger the bridge.
+
+**Containment**: Curves, circles, and topological continuity expel or contain Fold energy. Wards are round. Binding circles are round. A caster who needs to dampen Fold activity works inside a dome or a ring. The contrast is deliberate: jagged to draw power in, smooth to keep it out.
+
+**Seams**: True Fold-seams — literal sharp edges in reality, places where the barrier between the physical world and the Fold has torn — are rare and catastrophic. Being near one is a survival situation. Fold-borne entities enter and exit through seams. A seam does not need to be large to be lethal — a hairline fracture in reality can emit enough raw Fold energy to vaporize a room.
+
+**The casting setup**: A prepared caster does not simply wave their hands and speak words. They arrange their environment:
+
+- Precursor is measured and placed — a pinch for a cantrip, a thimbleful for a working, a fistful for something that will be remembered.
+- Angles are checked. The caster positions themselves at the vertex of the room's sharpest corner, or draws a geometric figure in precursor dust.
+- The channel is opened — through key, study, pact, or imprint — and Fold energy enters the prepared space.
+- The caster shapes it: incantation provides structure, gesture provides direction, precursor provides amplification. The spell resolves — or it doesn't, and the caster deals with the consequences.
+- As such most grimoires are unending collections of topoligal and textural patterns, algebraic formulae with more variable fields than breaths there are in life; utterly undecipherable by the uninitiated.
+- Most casters reference existing cosmological entities to shape their work, the Hatred of Mana for a bitterly cold spell, The Hearth of Taiva for a cleansing one — Whether these symbologies predate the entities they reference or were modelled after them, it is anyone's guess.
+- Materials are often used as tpological or conceptual reference for the fold energy to take hold - amber is round but it's interior contains many microchambers and edges, perfect for containing a cascading reaction, a flaming explosion. Branches have complex structures, perfect for indicating long lasting, logically spreading processes.
+
+**Constitutional Rules:**
+
+| Rule                                                                                                                                                                                                         | Rationale                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| **Geometry is mandatory.** A caster can channel without precursor, but never without geometry. A cupped hand forms a corner, a pointed finger forms an edge — the angles need no elaboration, only presence. | Geometry is the bridge. No bridge, no Fold access. Period.                |
+| **Curves contain, corners conduct.** This is the fundamental design constraint for any space where Fold magic is practiced. A casting chamber is angular. A prison for a caster is round.                    | This gives environmental design mechanical teeth. Where you cast matters. |
+
 ### 2.3.3 The Väkis
 
 Väkis are **Platonic fragments of Ideas** — shards of the true shape of the world. When the Demiurge shaped the primordial substance Arkhé into Ideas, the shaping was imperfect. Väkis are the splinters: the Idea of Flame, the Idea of Blood, the Idea of Stairs, the Idea of Sorrow. Each is a living fragment of a concept, conscious in a way that is not human, personal in a way that is not divine.
@@ -553,17 +600,17 @@ Väkis are **Platonic fragments of Ideas** — shards of the true shape of the w
 
 **Väkis are independent of gods.** They are not created by gods, sustained by gods, or subordinate to gods. When Ukkonhemmo commanded storms at supernatural scale, Storm-Väkis gathered around him — not because he owned them, but because he was where the storm was. Cause and effect. When Ukkonhemmo died, the Storm-Väkis did not weaken, diminish, or disperse. They were never his. They remain where storms are, as they always have.
 
-**Väkis choose who perceives them.** To 99.99999% of people, Väkis simply are not there. They are not invisible — they are perceptually absent. A blacksmith works at a forge for forty years and never once sees the Flame-Väkis dancing in the coals. The Väkis see the blacksmith. They simply do not care to be seen.
+**Väkis choose who perceives them.** To 99.99999% of people, Väkis simply are not there. They are perceptually absent. A blacksmith works at a forge for forty years and never once sees the Flame-Väkis dancing in the coals. The Väkis see the blacksmith. They simply do not care to be seen. A trick Väki often pull is to disguise themselves as house felines, when they want to be perceived but not recognised. This behaviour is still unexplained even to the most dedicated scholars and speakers.
 
 **How Väkis are accessed:**
 
 A practitioner does not command Väkis. They do not study Väkis. They **parlay** with them. The practitioner must first be someone the Väkis choose to reveal themselves to — and then must convince them to act.
 
-| Step           | Description                                                                                                                                                                                                           |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Perception** | The Väki decides to be seen. This is not a skill. It is not a spell. It is a choice made by the Väki. Some are born with the capacity to perceive them; some earn it; some are chosen for reasons no one understands. |
-| **Bargain**    | The practitioner negotiates. The Väki of Flame does not owe you fire. You charm it. You bargain with it. You make it an offer it finds interesting. The relationship IS the magic.                                    |
-| **Channel**    | The Väki acts through the practitioner — or alongside them, or around them. The form this takes depends on the Väki, the practitioner, and the agreement between them.                                                |
+| Step           | Description                                                                                                                                                                                                                              |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Perception** | The Väki decides to be seen. The Väki chooses. No skill compels it. No spell compels it. Some are born with the capacity to perceive them; some earn it; some are chosen for reasons no one understands.                                 |
+| **Bargain**    | The practitioner negotiates. The Väki of Flame does not owe you fire. You charm it. You bargain with it. You make it an offer it finds interesting. You perform a play, dance, or song it resonates with. The relationship IS the magic. |
+| **Channel**    | The Väki acts through the practitioner — or alongside them, or around them. The form this takes depends on the Väki, the practitioner, and the agreement between them.                                                                   |
 
 Some traditions use physical anchors to facilitate the relationship — the Shaman's carved effigy, the Druid's sacred grove — but these are tradition-specific tools, not universal requirements. A Väki does not need a totem. It needs a reason to care.
 
@@ -572,17 +619,65 @@ Some traditions use physical anchors to facilitate the relationship — the Sham
 | Rule                                                                                                                                                                                                                                                                                                              | Rationale                                                                                                          |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **Väkis are independent of all other entities.** They are not created, sustained, owned, or controlled by gods, mortals, or anything else. They are fragments of Ideas. The Ideas predate the entities that manifest them.                                                                                        | Ukkonhemmo did not create Wind-Väkis. Wind-Väkis gathered where Ukkonhemmo commanded wind. Cause and effect.       |
-| **Väki magic is relational, not transactional.** You do not spend a Väki. You maintain a relationship with it. Betray the relationship, and the Väki withdraws — not out of anger, but because you have become uninteresting.                                                                                     | This is not a spell slot. This is a network of personal connections with fragments of cosmic truth.                |
+| **Väki magic is relational, not transactional.** You do not spend a Väki. You maintain a relationship with it. Betray the relationship, and the Väki withdraws — not out of anger, but because you have become uninteresting.                                                                                     | A network of personal connections with fragments of cosmic truth — not a spendable resource.                       |
 | **Väki magic is narrow and deep.** Where a Fold-caster commands a vast repertoire, the Väki-practitioner carries only the relationships they have cultivated. Specialize deeply into one Idea, and you reach further than any Fold-caster ever could. Scatter across many, and each relationship remains shallow. | The practitioner who has danced with Flame for thirty years does things with fire that a wizard cannot comprehend. |
 | **Väkis are NOT gods.** They do not grant Fold keys. They do not write Edicts. They do not want worshippers. They want interesting company.                                                                                                                                                                       | Confusing a Väki with a god is a category error — and a Väki will find it deeply boring.                           |
-| **Väki magic cannot be taught in a classroom.** Every Väki relationship is unique. Two practitioners who both channel Flame-Väkis know different Flames, have different bargains, produce different effects.                                                                                                      | You cannot standardize a relationship.                                                                             |
+| **Väki magic cannot be taught in a classroom.** Every Väki relationship is unique. Two practitioners who both channel Flame speak to the same Idea, but through different relationships — different bargains, different effects.                                                                                                      | You cannot standardize a relationship.                                                                             |
 | **Väkis choose who perceives them.** No amount of study, piety, or power compels a Väki to reveal itself. Some are born with the sight. Some earn it. Some are chosen — and the reason is often opaque even to the chosen.                                                                                        | This is the fundamental asymmetry of Väki magic: the power initiates contact, not the practitioner.                |
 
 **Traceability**: Myth (the Ideas are the world's true shape; Väkis are its broken pieces, drifting unseen — they were here before the gods and will be here after), Dichotomy (the Flame that warms your hearth and the Flame that burns your enemy are fragments of the same Idea — and neither cares which you are), Cosmic Horror (you have been surrounded by living fragments of reality your entire life, and you have never known).
 
+##### Effigies & Lodgments
+
+Väkis do not need a physical anchor to act. They are everywhere their concept is — Flame-Väkis in every fire, Blood-Väkis near every wound. But to parlay with an Idea deliberately, a Speaker needs a **lodgment**: a prepared physical focus that invites the Väki to manifest in a specific place, at a specific time, for a specific conversation.
+
+Most traditions call these lodgments **effigies**. An effigy can be anything: a fire-shaped rock, a figurine of packed clay, a bundle of whittled bones wrapped in sinew, a cage of twisted copper wire. The material matters less than the Speaker's relationship to it — and to the Idea it is meant to attract. A simple river stone, held by a Speaker who has spoken to Water for forty years, is a more powerful lodgment than an elaborate golden reliquary in the hands of a novice.
+
+There are no universal material rules. Väkis are capricious — mercuriality is the topic. One Flame-Väki may be drawn to a charred twig from the Speaker's childhood hearth. Another may demand a shard of basaltic rock recovered from the Tarrasque's Tongue mountain deep in the Argentine Peaks, imbued with the everlasting flame of the Dragon found in the furthest recesses of the Black Cradle. Both are valid. Neither is predictable. The Speaker learns what their Idea responds to through trial, error, and patience — and what worked yesterday may not work tomorrow.
+
+**The lodgment's function**: The effigy is an invitation, not a cage. The Väki is unbound, untrapped. The lodgment is a meeting place — a "here, now, please" that the Väki may accept or ignore. When the Väki accepts, the lodgment becomes a conduit: for the duration of the parlay, the Idea acts through the effigy, around it, or alongside it. When the Väki leaves — or when the lodgment is broken, disturbed, or moved beyond its prepared boundary — the conduit breaks. The spell ends. The Speaker must begin again.
+
+**Broken lodgments**: An effigy that is smashed mid-parlay does not harm the Väki. It severs the invitation. The Väki returns to its ambient state — everywhere its concept is, nowhere in particular. The Speaker, however, may have just interrupted a negotiation with a fragment of reality's consciousness. Not recommended.
+
+**Cultural variance**:
+
+- **Shamanic traditions** (northern and rural) favor carved effigies of wood, bone, or clay — personal, handmade, destroyed and remade with each significant rite.
+- **Druidic traditions** use living lodgments: a specific tree, a stone circle, a spring. The lodgment is a place, not an object, and the relationship is maintained by tending the place.
+- **Urban Speakers** — rare but not unknown — favor wire frames, geometric constructs, or written invocations on parchment. The lodgment is intellectualized, almost academic, though the Idea cares no more for intellect than it does for piety.
+
+**Constitutional Rules:**
+
+| Rule                                                                                                                                                                                                                             | Rationale                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **The lodgment is an invitation, not a binding.** A Väki cannot be trapped, contained, or compelled by an effigy. The effigy says "here, now, please." The Väki decides.                                                         | Confusing a lodgment with a cage is a category error — and a fast way to ensure the Väki never accepts another invitation. |
+| **Effigy materials are personal, not prescriptive.** There is no universal correspondence table. What draws a Väki for one Speaker may repel it for another. The relationship determines the material, not the other way around. | This preserves the fundamental unknowability of Väkis. You cannot optimize a relationship with a lookup table.             |
+
+##### Speaker Customs & Rites
+
+Speaking to an Idea is not like casting a spell. There is no standard procedure. There is no formula. But there are customs — patterns that have emerged across cultures, generations, and Ideas, not because they are required, but because they have worked more often than they have failed.
+
+**The Approach**: A Speaker does not summon a Väki. They attract it. The typical approach is indirect: the Speaker creates conditions where the Idea is naturally present, then makes their presence known. A Flame-Speaker builds a fire — not as an offering, but as a venue. The Flame-Väkis are already there; the fire simply makes them easier to perceive. The Speaker then speaks — not to the fire, but to the Idea within it.
+
+**The Parlay**: The conversation is unpredictable. The Idea may respond immediately. It may ignore the Speaker entirely and talk about something else. It may answer a question the Speaker did not ask. It may laugh, or rage, or fall silent for hours while the Speaker waits. There is no standard duration. There is no standard outcome. The Speaker who approaches a Väki with a script is the Speaker who leaves disappointed.
+
+**Taboos**:
+
+- **Never command.** A Speaker who issues orders to an Idea — "burn him," "heal her," "show me" — is no longer Speaking. They are demanding. Ideas do not respond to demands. At best, they ignore you. At worst, they remember.
+- **Never repeat.** Asking the same thing the same way twice signals that you were not listening the first time. Ideas find this boring. Bored Ideas leave.
+- **Never lie.** An Idea cannot be deceived about its own nature. Flame knows you are afraid of it. Blood knows you are squeamish. Pretending otherwise is an insult to the concept itself.
+
+**The Parting**: When the parlay ends — whether by the Speaker's choice, the Väki's departure, or the breaking of the lodgment — the Speaker observes a closing. The Väki needs no goodbye. But Speakers who simply walk away from a conversation with an Idea tend to find that Idea less receptive next time. A simple acknowledgment — a word of thanks, a bow, the extinguishing of the fire that served as venue — is customary.
+
+**Constitutional Rules:**
+
+| Rule                                                                                                                                                                                                   | Rationale                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| **There is no standard Väki rite.** Every Speaker, every Idea, every parlay is unique. Customs exist as guidance, not as protocol. A Speaker who follows a script is a Speaker who is not listening.   | Väkis are capricious. Standardization is anathema to caprice.                               |
+| **The taboos are universal.** Regardless of culture, tradition, or Idea, commanding, repeating, or lying to a Väki will damage the relationship. These are ontological properties, not cultural norms. | Ideas do not take orders, do not tolerate boredom, and cannot be deceived about themselves. |
+
 ### 2.3.4 The Will
 
-Will is the oldest power. Before the Canvas issued Edicts, before the Fold separated worlds, before the Demiurge shaped Arkhé — there was Will. The Wills were the first beings to prove existence through motion. The Golden One was the First Direction. Will is not magic in the conventional sense. It is the **raw assertion of self upon reality**.
+Will is the oldest power. Before the Canvas issued Edicts, before the Fold separated worlds, before the Demiurge shaped Arkhé — there was Will. The Wills were the first beings to prove existence through motion. The Golden One was the First Direction. Will is the **raw assertion of self upon reality** — the oldest power, predating all other forms.
 
 **How Will manifests:**
 
@@ -590,7 +685,7 @@ Will is the oldest power. Before the Canvas issued Edicts, before the Fold separ
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Psionics**    | The mind imposes its structure on the world directly. No Fold. No Väki. No key. No bargain. The practitioner reaches out with thought alone and reality concedes — not because it must, but because the practitioner's conviction leaves no room for refusal. |
 | **Divine Will** | The Golden One's Will was equal to Wax's — sheer, unbreakable assertion that carved law into the Canvas itself. This tier of Will is not available to player characters. It is the stuff of gods.                                                             |
-| **Mortal Will** | Every mortal exerts some degree of Will — the choice to act despite a dead universe, to hope despite the certainty of loss. This is not magic. But it is the same substance, diluted to the scale of a single life.                                           |
+| **Mortal Will** | Every mortal exerts some degree of Will — the choice to act despite a dying universe, to hope despite the certainty of loss. The same substance, diluted to mortal scale.                                                                     |
 
 **Constitutional Rules:**
 
@@ -600,7 +695,65 @@ Will is the oldest power. Before the Canvas issued Edicts, before the Fold separ
 | **Will is the most personally demanding source.** To impose your mind on reality requires absolute conviction. Doubt is failure. Hesitation is nullification. | A wizard who doubts the Fold still casts. A shaman whose Väki is angry can find another. A Will-caster who doubts themselves has nothing. |
 | **Will does not scale with study or devotion.** It scales with self-certainty — which is not wisdom, intelligence, or piety.                                  | The most powerful Will-caster is the one who has never once questioned who they are. This is a kind of madness.                           |
 
-**Traceability**: Schopenhauer (Will as the primal force that predates intellect — the world is Will before it is Idea), Tragedy (the Will-caster's power is self-consuming — absolute conviction is indistinguishable from madness), Dichotomy (Will is the only power that is both wholly internal and wholly real — the self becomes the world, and the world concedes).
+**Traceability**: Schopenhauer (Will as the primal force that predates intellect — the world is Will before it is Idea), Aristotelian Virtue Ethics (the Golden Mean: virtue lies between extremes, and the Vessel is healthiest in dynamic equilibrium — neither empty nor full, always becoming), Xiaoman / Small Fullness (the wisdom that absolute fullness equals decline; having room to grow is better than reaching the top), Tragedy (the Will-caster's power is self-consuming — absolute conviction is indistinguishable from madness), Dichotomy (Will is the only power that is both wholly internal and wholly real — the self becomes the world, and the world concedes).
+
+##### The Ánfora Tradition
+
+Will is **contained**, not generated nor learned. The Empyreans called the practitioner an **ánfora** — a vessel. A container shaped to hold a liquid. The liquid is Will. The liquid is Arkhé — the primordial substance the Demiurge shaped into Ideas. The Vessel does not create what it holds. It receives, contains, and — when the moment demands — pours.
+
+Empyrean physics holds that every being is born with a certain capacity for Will — a volume they can hold. Some are born with greater capacity (the Golden One's was near-infinite; Wax's matched it). Most are born with a thimbleful. But capacity is not the same as content. A Vessel may be large and empty, or small and full to bursting. What fills the Vessel is life: choices made, certainties earned, refusals uttered. Every time a person says "no" to a world that expects "yes," the Vessel fills a little more. Every time they act despite the certainty of failure, the Vessel fills. Will is not talent. Will is accumulated continuance.
+
+**Discovering the Vessel**: Most people never discover they have one. Will does not announce itself. It sits dormant — a potential container, empty or near-empty, waiting. Discovery usually happens in extremis: the moment when everything else is gone, when the Fold-key has been revoked, when the Väkis have stopped answering, when there is nothing left but the self. And the self, it turns out, was never nothing. The Vessel was always there. It was just waiting to be needed.
+
+This is why Espers are made, not trained. You cannot teach someone to discover their Vessel. You can only create conditions where discovery becomes possible — and those conditions are rarely gentle.
+
+**The Pouring**: To exert Will is to pour from the Vessel. The act is somatic in the deepest sense — a full-body assertion through flesh, bone, and breath. No thought. No words. The Vessel tips. The Will flows. Reality receives it — and reality gives way.
+
+After the pour, the Vessel is emptier. What was given does not return. The Vessel refills slowly — through rest, through recovery, through the slow accumulation of new certainties. A Vessel that is poured too often, too fast, too completely becomes a void. And voids attract attention.
+
+**The Warning of Fullness**: A Vessel that is never poured at all faces the opposite doom. Will that is hoarded, accumulated without release, never exerted — stagnation, not strength. The Vessel fills, and fills, and fills, and when it can hold no more, it does not overflow. It cracks. A Vessel at absolute fullness has no room to grow. No capacity to receive. The self that has never poured is the self that has never been tested — and a self untested is a self that shatters at the first blow.
+
+The Empyrean masters taught that the ideal state is neither empty nor full. It is a dynamic equilibrium: always pouring, always refilling, never reaching the brim. They called this state _continuous becoming_ — the Vessel in motion, the self in the act of proving itself against the world, over and over, without ever arriving at a final form. To arrive is to stop. To stop is to die.
+
+This is the deepest paradox of Will: the Vessel is healthiest when it is never completely full and never completely empty. Exertion keeps the walls strong. Refilling keeps the contents fresh. The practitioner who seeks absolute fullness — the maximum capacity, the ultimate certainty, the self so complete it needs nothing else — is seeking their own obsolescence. The practitioner who pours constantly, refills constantly, and never mistakes either state for a destination — that practitioner endures.
+
+**The Broken Dam**: Some Vessels are not shaped by discipline. They are shaped by trauma — lived experiences so catastrophic that the walls of the self crack open, and the Vessel loses the ability to regulate its own flow. The Empyreans called this state _the broken dam_: a Vessel that cannot stop pouring because the mechanism that controls the pour has been destroyed. The Will does not wait to be called. It leaks. It surges. It floods.
+
+The broken Vessel is exponentially dangerous — to themselves and to everyone near them. They do not choose to exert Will. They simply DO, constantly, uncontrollably, as the cracked walls of the self hemorrhage Arkhé into the world. The pour cannot be moderated. It cannot be aimed. It happens in sleep, in rage, in silence, in grief. Every emotion triggers a flood. Every memory opens the wound wider.
+
+This is not power. The broken Vessel is not stronger than the disciplined one — they are simply incapable of stopping. They burn through themselves at catastrophic speed, and everything within their radius burns with them. Other Will-practitioners recognize the broken dam immediately: a pressure in the air that never relents, a constant gravitational pull toward a person who is always, quietly, uncontrollably pouring.
+
+Some cultures weaponize the broken. Esper training traditions in the Brume deliberately induce trauma to crack the Vessel wall — a faster path to power, and a guaranteed path to a short, spectacular, and catastrophic career. Those who survive are not soldiers. They are detonations waiting for a trigger.
+
+**Constitutional Rules:**
+
+| Rule                                                                                                                                                                                                                                           | Rationale                                                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **The ánfora is the canonical model for Will.** Content creators describing Will magic should use the language of containment, capacity, and pouring — not generation, learning, or channeling.                                                | The Vessel model distinguishes Will from Fold (external current) and Väkis (external beings). Will is internal. It is held. It is spent. |
+| **Discovery cannot be taught.** A character discovers their Vessel through narrative, not training. The moment of discovery should be earned — a crisis, a refusal, a point where nothing else remains.                                        | This preserves Will's thematic weight. You do not sign up for Will. Will finds you when you need it.                                     |
+| **Fullness is decline.** A Vessel at absolute capacity has no room to grow. Will that is hoarded without exertion stagnates, then shatters. The ideal state is dynamic equilibrium: always pouring, always refilling, never reaching the brim. | The Vessel is healthiest in motion. To arrive is to stop. To stop is to die. Continuous becoming is the only sustainable state.          |
+| **The broken dam is catastrophic.** A Vessel whose walls are cracked by trauma cannot regulate its flow. Will leaks, surges, floods — uncontrollable, unaimable, unending. The broken Vessel burns through themselves and everyone near them.  | This is the tragic inversion of continuous becoming: pouring without choice, burning without purpose, destroying without intent.         |
+
+##### Manifestation & Cost in Practice
+
+Will is not inherently visible. It does not glow. It does not spark. It does not announce itself with sound or light. What bystanders perceive depends on what the Will is doing:
+
+- **When Will alters the self** — resisting a spell, refusing death, overriding fate — there may be no visible sign at all. The Vessel simply does not fall when they should have fallen. Onlookers feel a pressure shift, a weight in the air, a sense that something fundamental just refused to happen. They may not know what. They will know something did.
+- **When Will alters the world** — a telekinetic shove, a pyrokinetic ignition, a psionic command — the effect looks like its result. A Will-cast fireball looks like flames, because it IS flames: the Vessel asserted fire into existence, and reality provided the fire. The ignition point is the Vessel. The fire is real.
+- **At extreme exertion**: Physics frays. Light bends slightly around the Vessel. Colors oscillate — red shifting toward violet and back. Gravity feels uncertain within a few feet. These effects are minor, localized, and fleeting. They are not the Will. They are the world struggling to reconcile what just happened.
+
+**The feel of bystanders**: People near an active Will-casting report a characteristic sensation — gravitas, pressure, a change in the air like the moment before a thunderstorm. Not pain. Not fear. The instinctive recognition that something in the room is more real than everything else, and it is asserting that reality against the world.
+
+**The cost spiral**: Every pour depletes the Vessel. The emptier the Vessel, the more reality notices the void where a person used to be. The more reality pushes back, the harder the Vessel must assert — pouring more, burning faster, holding their place against a universe that now sees them as an anomaly. This spiral has one endpoint: the Vessel empties completely, and the person who was is gone. Not dead — gone. A void in the shape of a human being, through which the Fold leaks and Väkis refuse to pass.
+
+**Recovery**: Will returns slowly. Rest restores the body, but the Vessel refills through living — through small choices, small certainties, small refusals accumulated over days and weeks. A depleted Vessel cannot be "recharged" by magic. There is no spell that restores Will. There is only time, and the slow process of becoming oneself again.
+
+**Constitutional Rules:**
+
+| Rule                                                                                                                                                                                                                                                  | Rationale                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Will is not inherently visible, but it is inherently felt.** Bystanders may not see the Will, but they experience its pressure. An ontological property of Will — the self asserting against reality — not optional flavor.                         | Will should never feel like "just another spell." It is ontologically different, and the world responds to that difference. |
+| **Will recovery is narrative, not mechanical.** There is no "Will slot" that recharges on a rest. A Vessel refills through living — through choices and continuance. Mechanical depletion (hit dice, max HP) is the manifestation, not the mechanism. | Will is not a resource to manage. It is a self to recover. The difference matters.                                          |
 
 ### 2.3.5 How Vocations Relate to Sources
 
@@ -608,21 +761,21 @@ Will is the oldest power. Before the Canvas issued Edicts, before the Fold separ
 
 **Source is a narrative choice, a mechanical consequence, or a circumstance — not a fixed classification.**
 
-| Vocation     | Common Sources                  | Notes                                                                                                                                                          |
-| ------------ | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Wizard**   | Fold (arcane study)             | The most source-stable vocation. Wizardry IS Fold-study.                                                                                                       |
-| **Shaman**   | Väkis                           | The most source-stable vocation. Shamanism IS Väki-relationship. Effigies are the Shaman's method, not the Väki's requirement.                                 |
-| **Esper**    | Will                            | The most source-stable vocation. Esperhood IS Will-manifestation.                                                                                              |
-| **Druid**    | Väkis (typically)               | Nature-Väkis — growth, decay, beast, storm. May also access the Fold through a nature deity's key.                                                             |
-| **Pilgrim**  | Fold-key (living or deprecated) | Living god → active Fold key. Dead god → deprecated key (corpse-signal). See §2.3.6. Some Pilgrims serve Constructed Faiths with real Fold access behind them. |
-| **Paladin**  | Fold-key or Will                | Oath-bound Fold access is common. Some Paladins power their oath through sheer Will — no god, no Fold, just conviction.                                        |
-| **Scion**    | Fold, Väkis, or Will            | Innate magic's origin varies wildly: dragon's blessing (Fold-imprint), bloodline-attached Väki, spontaneous Will-expression. The Scion may never know which.   |
-| **Villein**  | Fold-key (typically)            | Patron grants Fold access. Some patrons may instead broker Väki relationships or cultivate the Villein's Will.                                                 |
-| **Bard**     | Fold, Väkis, or Will            | [PENDING: Bard flavor text is scaffolded 5e placeholder. Source mapping will be defined when the Bard's Damocles identity is authored.]                        |
-| **Revenant** | Fold, Will, or Väkis            | Death-patron Fold-key, self-sustaining Will, or a Väki of Entropy/Death that found them interesting. Varies by individual.                                     |
-| **Tinker**   | N/A                             | No spellcasting — gadgets, alchemy, technology.                                                                                                                |
+| Vocation     | Common Sources                         | Notes                                                                                                                                                                                                                                                                                      |
+| ------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Wizard**   | Fold (through arcane study)(typically) | The most source-stable vocation. Wizardry IS Fold-study. Though a Wizard will never anchor themselves to the Folds if they happen to establish contact with other sources of power.                                                                                                        |
+| **Shaman**   | Väkis                                  | The most source-stable vocation. Shamanism IS Väki-relationship. Effigies are the Shaman's method, not the Väki's requirement.                                                                                                                                                             |
+| **Esper**    | Will                                   | The most source-stable vocation. Esperhood IS Will-manifestation.                                                                                                                                                                                                                          |
+| **Druid**    | Väkis (typically)                      | Nature-Väkis — growth, decay, beast, storm. May also access the Fold through a nature deity's key.                                                                                                                                                                                         |
+| **Pilgrim**  | Fold-key (living or deprecated)        | Living god → active Fold key. Dead god → deprecated key (corpse-signal). See §2.3.6. Some Pilgrims serve Constructed Faiths with real Fold access behind them.                                                                                                                             |
+| **Paladin**  | Fold-key or Will                       | Oath-bound Fold access is common. Some Paladins power their oath through sheer Will — no god, no Fold, just conviction.                                                                                                                                                                    |
+| **Scion**    | Fold, Väkis, or Will                   | Innate magic's origin varies wildly: dragon's blessing (Fold-imprint), bloodline-attached Väki, spontaneous Will-expression. The Scion may never know which.                                                                                                                               |
+| **Villein**  | Fold-key (typically)                   | Patron grants Fold access. Some patrons may instead broker Väki relationships or cultivate the Villein's Will.                                                                                                                                                                             |
+| **Bard**     | Fold, Väkis, or Will                   | Will and Väkis are the primary sources for Bardic magic. To sing to the tune of the world and its mighty deeds. Bards rarely study the Fold, much less master it or be granted access to it by a deity.                                                                                    |
+| **Revenant** | Fold, Will, or Väkis                   | Death-patron Fold-key, study and cultivation, self-sustaining Will, or a Väki of Entropy/Death/Blood that found them interesting. Varies by individual. The most common combination is Fold through arcane study, and their liminal state between life and dead handled by a Death-Patron. |
+| **Tinker**   | Fold                                   | They are technicians of the folds, in the same way a wizard is a theorist of it. They employ technology. Some may even use Väkis or Will through unconventional means.                                                                                                                     |
 
-**The Mixing Spellcasting Consequence**: Because most Fold-based casters draw from the same underlying current, multiclassing between Fold-using vocations is straightforward — the Mixing Spellcasting rules govern slot progression across multiple Fold-access methods. Mixing across source types (Fold + Väki, Väki + Will, etc.) is rarer and more complex — the character maintains parallel relationships with fundamentally different kinds of power.
+**The Mixing Spellcasting Consequence**: Because most Fold-based casters draw from the same underlying current, mixing between Fold-using vocations is straightforward — the Mixing Spellcasting rules govern slot progression across multiple Fold-access methods. Mixing across source types (Fold + Väki, Väki + Will, etc.) is rarer and more complex — the character maintains parallel relationships with fundamentally different kinds of power.
 
 **Traceability**: Myth (power is authored, not generic — the source IS the story), Tragedy (a Pilgrim whose god dies does not lose their magic — they lose their clean connection, and must learn to read a corpse, or find the Väkis, or discover they had Will all along).
 
@@ -647,29 +800,29 @@ Some clerics manage it. They learn to read the twitches of a dead sun. They tran
 
 #### Lingering Will
 
-Some gods — particularly those of the Chariot line, or those whose Wills approached the Golden One's in sheer intensity — leave an imprint. Their self-assertion was so absolute that reality does not fully "rebound" when they die. The Fold still parts where they once parted it. The storm still rages where they once raged. This is not consciousness. It is not agency. It is the universe still flinching.
+Some gods — particularly those of the Chariot line, or those whose Wills approached the Golden One's in sheer intensity — leave an imprint. Their self-assertion was so absolute that reality does not fully "rebound" when they die. The Fold still parts where they once parted it. The storm still rages where they once raged. The universe, still flinching. No consciousness remains. No agency.
 
-A cleric of a dead god with lingering Will may still cast — not through a key (the key is deprecated, different thing), not through Väkis (Väkis are separate), but through the residual shape the god's Will left in the Fold. This is unreliable, localized, and diminishing. It is not a path. It is an echo.
+A cleric of a dead god with lingering Will may still cast — not through a key (the key is deprecated, different thing), not through Väkis (Väkis are separate), but through the residual shape the god's Will left in the Fold. This is unreliable, localized, and diminishing. An echo, not a path.
 
 #### Conceptual Fusion
 
 A god who lives long enough, manifests their domain intensely enough, and is worshipped widely enough may **fuse** with their domain. Ukkonhemmo and the storm become one word. To speak the god's name is to invoke the storm. To invoke the storm is to speak the god's name. The distinction collapses.
 
-This is not the god "becoming" Väkis — Väkis remain separate Idea-fragments. It is the god becoming indistinguishable from their domain at a linguistic, conceptual, and metaphysical level. A cleric who prays to Ukkonhemmo after his death is not beseeching a dead entity. They are addressing the storm — and the storm answers, because the storm and the god are now the same thing.
+The god becomes indistinguishable from their domain — Väkis remain separate Idea-fragments, uninvolved at a linguistic, conceptual, and metaphysical level. A cleric who prays to Ukkonhemmo after his death is not beseeching a dead entity. They are addressing the storm — and the storm answers, because the storm and the god are now the same thing.
 
 Not all gods achieve this. It requires time, worship, and a domain simple enough to fuse with. Ukkonhemmo (storm) could fuse. Päivätär (sun, hunting, harvest, fishing, growth, cycles, proliferation) was too complex — too many domains — to collapse into any one of them.
 
 **Constitutional Rules:**
 
-| Rule                                                                                                                                                                                                                                                             | Rationale                                                                                                                                                                                                    |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **A dead god's Fold-key becomes a deprecated interface.** It functions. It is not supported. No one is maintaining it. The entity on the other end is a corpse — still cosmologically active, still Fold-connected, but not conscious in any recognizable sense. | Dead does not mean inert. Päivätär's corpse spawns abominations. Kuutar's mangled corpse traverses the sky and contacts mortals. Their Fold-keys are similarly active — and similarly grotesque.             |
-| **Channeling through a dead god's key is possible but perilous.** The cleric must parse corpse-signal — the twitches, emissions, and incoherent radiations of a dead divine body. Those who succeed keep their magic. Those who fail get something else.         | This is not a clean transition. It is a living cleric interpreting the death-rattle of a god. The spells may work. They may work differently. They may bring something back with them.                       |
-| **The key degrades over cosmological time, not mortal timescales.** A Fold-key from a god dead for ten thousand years may be marginally less coherent than one dead for ten. The decay is real but glacial.                                                      | A cleric of a recently dead god and a cleric of an ancient dead god face different degrees of signal degradation. Neither faces a clean cutoff.                                                              |
-| **Not all dead gods are equally "loud."** A god whose corpse is cosmologically active (Päivätär, still spawning; Kuutar, still traversing) has a stronger, more legible Fold-signature than a god whose corpse is inert or fully dismantled.                     | The more the corpse does, the more signal there is to parse. A dead god who does nothing is a dead key.                                                                                                      |
-| **Lingering Will is an echo, not a path.** It cannot be relied upon. It does not scale. It diminishes over cosmological time. A cleric who depends on it will eventually find themselves praying to silence.                                                     | This prevents "the god is dead but functionally nothing changed." The key is deprecated. The echo fades.                                                                                                     |
-| **Conceptual fusion requires simplicity.** A god of a single, elemental domain (storm, fire, death) can fuse. A god of many domains (sun AND hunting AND harvest AND fishing AND growth AND cycles AND proliferation) cannot.                                    | The more domains, the less any one of them IS the god. Fusion requires identity collapse.                                                                                                                    |
-| **Väkis are unaffected by any of this.** They were never the god's. They remain where their concept is. The god's death is irrelevant to them — and they will be the first to tell you so, if they bother to speak to you at all.                                | Väkis are not a god-death mechanism. They are an independent category. If a dead god's cleric turns to Väkis, they are doing shamanism — starting from zero, with entities that never belonged to their god. |
+| Rule                                                                                                                                                                                                                                                     | Rationale                                                                                                                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **A dead god's Fold-key becomes a deprecated interface.** It functions. Unsupported. Unmaintained. The entity on the other end is a corpse — still cosmologically active, still Fold-connected, but not conscious in any recognizable sense.             | Dead does not mean inert. Päivätär's corpse spawns abominations. Kuutar's mangled corpse traverses the sky and contacts mortals. Their Fold-keys are similarly active — and similarly grotesque.             |
+| **Channeling through a dead god's key is possible but perilous.** The cleric must parse corpse-signal — the twitches, emissions, and incoherent radiations of a dead divine body. Those who succeed keep their magic. Those who fail get something else. | A living cleric interpreting the death-rattle of a god — not a clean transition. The spells may work. They may work differently. They may bring something back with them.                                    |
+| **The key degrades over cosmological time, not mortal timescales.** A Fold-key from a god dead for ten thousand years may be marginally less coherent than one dead for ten. The decay is real but glacial.                                              | A cleric of a recently dead god and a cleric of an ancient dead god face different degrees of signal degradation. Neither faces a clean cutoff.                                                              |
+| **Not all dead gods are equally "loud."** A god whose corpse is cosmologically active (Päivätär, still spawning; Kuutar, still traversing) has a stronger, more legible Fold-signature than a god whose corpse is inert or fully dismantled.             | The more the corpse does, the more signal there is to parse. A dead god who does nothing is a dead key.                                                                                                      |
+| **Lingering Will is an echo, not a path.** It cannot be relied upon. It does not scale. It diminishes over cosmological time. A cleric who depends on it will eventually find themselves praying to silence.                                             | This prevents "the god is dead but functionally nothing changed." The key is deprecated. The echo fades.                                                                                                     |
+| **Conceptual fusion requires simplicity.** A god of a single, elemental domain (storm, fire, death) can fuse. A god of many domains (sun AND hunting AND harvest AND fishing AND growth AND cycles AND proliferation) cannot.                            | The more domains, the less any one of them IS the god. Fusion requires identity collapse.                                                                                                                    |
+| **Väkis are unaffected by any of this.** They were never the god's. They remain where their concept is. The god's death is irrelevant to them — and they will be the first to tell you so, if they bother to speak to you at all.                        | Väkis are not a god-death mechanism. They are an independent category. If a dead god's cleric turns to Väkis, they are doing shamanism — starting from zero, with entities that never belonged to their god. |
 
 **What This Means for Clerics of Dead Gods:**
 
@@ -681,7 +834,119 @@ Not all gods achieve this. It requires time, worship, and a domain simple enough
 | Conceptual fusion                               | Address the domain directly. The storm answers to the god's name because the two are now one. Functionally similar to before — but anyone can call now. |
 | Väkis (always present, never the god's)         | Bargain with Idea-fragments directly. This is shamanism, not clerical magic. Starting from zero. The god's death is irrelevant to the Väkis.            |
 
-**Traceability**: Tragedy (even the god's death is not clean — the key still turns, the corpse still broadcasts, the storm still answers to a dead name), Myth (to speak the name IS to invoke the thing — language and reality are not separate), Post-Mortem (nothing in Damocles ends cleanly; the key to heaven rots instead of breaking, and the shape of the god remains, for a while, in the Fold, in the name, in the storm), Cosmic Horror (parsing the emissions of a dead god's body — this is not theology, it is signal analysis on a cosmological carcass).
+**Traceability**: Tragedy (even the god's death is not clean — the key still turns, the corpse still broadcasts, the storm still answers to a dead name), Myth (to speak the name IS to invoke the thing — language and reality are not separate), Post-Mortem (nothing in Damocles ends cleanly; the key to heaven rots instead of breaking, and the shape of the god remains, for a while, in the Fold, in the name, in the storm), Cosmic Horror (parsing the emissions of a dead god's body — signal analysis on a cosmological carcass).
+
+### 2.3.7 The Interaction Model: How the Currents Are Wielded
+
+> **Each current has a fundamental interaction grammar. Using the wrong verb with the wrong current is a category error — the equivalent of saying "I drink this rock" or "I negotiate with gravity." Content creators MUST respect the verb table below. A character who "flings väkis" or "communes with the Fold" is making a cosmological category error.**
+
+#### The Verb Table
+
+| Action                | Fold                                    | Väkis                                 | Will                          |
+| --------------------- | --------------------------------------- | ------------------------------------- | ----------------------------- |
+| **Primary verbs**     | Access, Channel, Shape, Cast            | Speak, Parlay, Bargain, Lure          | Exert, Impose, Assert, Endure |
+| **NEVER verbs**       | Commune, Bargain, Befriend              | Command, Fling, Consume, Spend        | Access, Study, Request, Learn |
+| **Practitioner is**   | Caster                                  | Speaker                               | Vessel                        |
+| **Source is**         | Impersonal current / transit medium     | Collective consciousness of a concept | The self                      |
+| **Signature failure** | Hound-attraction, miscast, burn-through | Rejection, obsession, over-gathering  | Self-loss, reality pushback   |
+
+#### 2.3.7.1 The Fold: Impersonal Current
+
+The Fold has no opinion, no awareness, no self. To speak of "communing with the Fold" or "the Fold's will" is a category error — you might as well commune with electricity or ask a river for its opinion.
+
+The Fold is **both an energy source and a transit medium** Any place with energy is inherently a place of transit. The same current powers a fireball and carries the Canvas's agents — Hounds, Gapers, Foldlurkers — as they decompress into pure energy and reform at exit seams. The Fold does not distinguish spell from enforcer. Same substance. Different cargo.
+
+For the granular practice of Fold magic — alchemical precursor handling, Fold geometry, casting setups — see §2.3.2 (Alchemical Precursor + Casting Practice & Fold Geometry).
+
+**What the Fold feels like**: Holding a live current. The power is external — it comes from somewhere else, flows through the practitioner, and manifests outside them. A caster is a lightning rod: the energy is not theirs; they are merely the path it takes. When precursor is involved, the air tastes of ozone and metal. The skin prickles. Geometries in the room seem sharper than they should be.
+
+**What the Fold costs**:
+
+- **Arcane study**: Time. Decades. The Fold yields nothing to the impatient. Formulae are complex; the margin for error is narrow. A miscast Fold spell does not fizzle — it detonates, or twists, or draws attention.
+- **Divine key**: Subordination. The key is borrowed. The god can revoke it. If the god dies, the key becomes deprecated (see §2.3.6).
+- **Attention**: The Fold's enforcers notice Fold activity. The Hounds of Tindalos, the Gapers, the Ventralian Foldlurkers — these are the Canvas's agents, the "anti-virus of reality." Enough Fold-casting in one place, or a sufficiently unstable casting, and they come. The primary failure mode of reckless Fold magic: you draw the attention of the interdimensional enforcers, and they do not issue warnings.
+
+**What the Fold CANNOT do**:
+
+- The Fold cannot create genuine novelty. It is energy — powerful, vast, but inert. It does not invent. What comes out of a Fold-casting is what the practitioner put in, shaped by technique. The caster's fireball is the caster's fireball — the Fold contributed fuel, not design.
+- The Fold cannot act on its own. Spells do not "go wrong" because the Fold is angry. They go wrong because the practitioner's shaping was faulty, the precursor was contaminated, the geometry was wrong, or something else noticed the open channel.
+
+#### 2.3.7.2 The Väkis: Collective Consciousness
+
+Väkis are living fragments of Ideas — the collective consciousness of reality manifesting. All Flame-Väkis are Flame. All Blood-Väkis are Blood. No separate personalities. No individual agendas. No personal loyalties. When a concept is forgotten by mortal consciousness, its Väkis disappear. When a new concept emerges, new Väkis emerge. When two concepts merge in the collective imagination, so do the Väkis. They are the ebb and flow of mythology itself.
+
+This has a critical consequence: **you do not piss off a Väki. You piss off the Idea.** If one Flame-Väki turns against you, all Flame has turned against you. The splinter IS the whole. There is no "finding another Flame-Väki" — there is only Flame, and Flame is now your enemy.
+
+Their behavior is fundamentally capricious and unknowable. They might burn your hair off and then be happy to oblige any request. They might ignore you for a decade and then answer a question you never asked. There is no fixed rule. There is no predictable pattern. Capriciousness is ontology, not flaw. Väkis are the raw chaotic consciousness of concepts. Concepts do not owe you consistency.
+
+**What you DO with Väkis — the Speaker's path**:
+
+- **Be perceived.** Väkis choose who sees them. No spell compels this. No study guarantees it. A practitioner may spend a lifetime trying to earn a single Idea's attention and fail.
+- **Speak.** Once seen, you talk. Not command — talk. The Idea of Flame does not owe you fire. You make it an offer. You tell it a story. You show it something it has never seen. The conversation IS the magic.
+- **Lure to a lodgment.** Most traditions use a physical anchor — clay effigy, whittled bone, twisted wire — as a meeting place. The Väki is invited, not trapped. It stays as long as the invitation holds.
+- **Maintain the relationship.** Väkis grow bored. They drift. A Speaker who neglects the relationship — who treats the Idea as a tool, who repeats the same request, who fails to bring novelty — finds the Idea simply stops answering. Not out of anger. Out of disinterest. And if one manifestation of the Idea stops answering, they all do.
+
+**What Väkis feel like**: A conversation with fire — and fire is one being with many faces. The Flame knows your name. It remembers the last time you spoke. It has opinions. It may help. It may laugh. It may ignore you and talk about something else. The Speaker is never alone in their magic — there is always another presence, the weight of a concept that has existed since before language. The spell is co-authored with reality's own consciousness.
+
+Two Speakers who both channel Flame produce different effects and have different relationships — but they are speaking to the same Idea. The Flame relates to each Speaker differently because each Speaker is different. But the Flame is still the Flame. It carries the memory of every conversation it has ever had.
+
+**What Väkis cost**:
+
+- **Novelty.** Väkis demand newness. Each parlay must be fresh, worth the Idea's time. The Speaker who has danced with Flame for thirty years has also had to invent thirty years of new ways to say hello.
+- **Narrowness.** Väki magic is deep, not broad. A caster learns a hundred spells. A Speaker cultivates a handful of relationships with Ideas — each a lifetime's work. Scatter wide and each relationship is shallow; specialize deep and reach further into a single concept than any caster ever could.
+- **Unknowability.** You cannot master a Väki. You cannot predict it. You cannot systematize it. The Speaker who thinks they have "figured out" Flame is the Speaker about to get burned.
+
+**Väki failure modes**:
+
+- **Rejection**: The Idea stops answering. You did something — or nothing — and now the concept has turned away. All manifestations of that Idea are closed to you. This may be permanent, or it may not. Väkis are capricious. There is no way to know.
+- **Obsessive Attachment**: The Idea becomes too interested. It won't leave. It follows. It answers before you call. The relationship becomes a haunting — not one Väki, but the entire concept, manifesting wherever you go.
+- **Over-Gathering**: You attract more of the Idea than you can handle. You speak to one Flame-Väki, and every Flame-Väki in the region — which is to say, Flame itself, undiluted — decides to listen. Next time you light a candle, your home detonates, because all of Flame decided to burn it at the same time.
+
+**What Väkis CANNOT do**:
+
+- Väkis cannot be standardized. Every relationship with an Idea is unique. Two Speakers who both channel Flame produce different effects, different rituals, different prices. You cannot teach "how to cast fireball with Väkis." There is only "how I convinced Flame to burn my enemy that one time."
+- Väkis cannot be used impersonally. Treat an Idea as a battery, a component, a resource — and it notices. And it leaves. Or it stays, and makes you regret it. And "it" is the entire concept — there is no appeal, no second opinion, no other Flame to ask.
+
+#### 2.3.7.3 The Will: Self-Assertion
+
+Will is the self, exerted upon reality with such force that reality concedes. The practitioner is a **Vessel** — the Empyrean concept of the _ánfora_, a container that holds a liquid. The liquid is Will. The liquid is Arkhé. Will fills the self. The Vessel's only choice: pour, or don't.
+
+**What you DO with Will**:
+
+- **Assert.** The Vessel reaches inward, finds the core of their own existence, and pushes outward. Reality gives way — not because the Vessel is stronger, but because their conviction leaves no room for refusal.
+- **Endure.** Will costs the self. Every assertion draws from the Vessel's own substance — body, mind, identity. The power is self-consuming.
+- **Know.** Doubt is failure. Hesitation is nullification. A caster who doubts the Fold still casts. A Speaker whose Idea is distant can wait for its return. A Vessel who doubts themselves has nothing — no external source, no being to reconcile with. The power IS certainty. Without certainty, there is no power.
+
+**What Will feels like**: A furnace inside the chest. The world resists, and you push, and the world gives. Will magic burns. It leaves you hollow. The moment after a Will-casting is a moment of terrible clarity: _that was me, that was all me, and now there is less of me than there was before._
+
+**What Will costs**:
+
+- **The self.** Will magic consumes the practitioner — literally. Refusal of Fate costs hit dice, maximum health, true damage (§4.x). Other manifestations may cost memories, emotions, the ability to feel certain things. The Vessel is their own fuel — and fuel, once burned, is gone.
+- **Certainty.** You cannot doubt and wield Will. The most powerful Vessel is the one who has never questioned who they are. This is a kind of madness. Some never come back from it.
+
+**Will failure modes — both compound**:
+
+- **Self-Consumption**: You push too hard. You lose pieces of yourself — memories, emotions, identity. You do not come back the same. Each use of Will leaves the Vessel slightly emptier, and what refills it is not always what was poured out.
+- **Reality Pushback**: The world notices the violation. Reality begins treating the Vessel as something that does not belong — an anomaly, a thing that should not be. Disambiguation pressure builds: the world tries to resolve the contradiction, and the Vessel is the contradiction. Physics. The Canvas does not tolerate things that rewrite the rules without permission.
+
+Both failures compound: the emptier the Vessel becomes, the more reality notices the void where a person used to be. The more reality pushes back, the harder the Vessel must assert — burning more of themselves to hold their place. This spiral has only one endpoint.
+
+**What Will CANNOT do**:
+
+- Will cannot be taught. You cannot learn Will from a book or a master. You discover you have it — usually when nothing else is left. Espers are made, not trained.
+- Will cannot draw from external sources. A Vessel cannot accept a Fold-key, cannot bargain with a Väki, cannot borrow a patron's power. To reach outward is to admit the self is not enough. And if the self is not enough, Will fails.
+- Will cannot be subtle. Will is assertion — inherently oppositional, the self versus the world. It announces itself. A Vessel who tries to be subtle is holding back — and holding back is doubt, and doubt is nullification.
+
+#### 2.3.7.4 Cross-Current Rules
+
+| Rule                                                                                                                                                                                                                                                                                                                                                                                                                                        | Rationale                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **The currents do not cancel each other.** Fold energy does not dispel Väki manifestations. Väki relationships do not block Fold access. Will does not override divine keys. Each current operates by its own ontological logic.                                                                                                                                                                                                            | The currents are separate categories. They interact with reality through fundamentally different mechanisms. They do not "counter" each other in a rock-paper-scissors sense.                                                                                                                          |
+| **Simultaneous blending is impossible. Sequential synergy is not.** You cannot fuel a single spell with two currents at once — Flame will not consent to being wielded like inert Fold energy, and the Fold cannot be negotiated with like a being. But you CAN use one current to enable another in sequence: deplete your Will until the Väki of Hope notices, convince it to tear open a Fold-seam, and cast through the resulting rift. | Each current demands a distinct relationship. In sequence, those relationships can chain — the Vessel's sacrifice earns the Speaker's audience, the Speaker's boon opens the Caster's door. But at each step, the practitioner must switch modes: furnace, then conversationalist, then lightning rod. |
+| **Sequential cross-current casting is extraordinary, not routine.** It requires mastery of multiple currents, circumstances that justify the cost, and — in the case of Väkis — the attention of an Idea willing to act. This is the stuff of capstone features, epic moments, and irreversible narrative consequences. Not a build choice.                                                                                                 | Cross-current synergy is a power fantasy, not a character sheet checkbox. It should feel earned, costly, and mythic.                                                                                                                                                                                   |
+| **A practitioner can carry multiple currents.** A Fold-trained wizard who is also Väki-perceived and has a core of unbreakable Will is rare but real. They wield three parallel practices — not one blended art. Each must be maintained separately.                                                                                                                                                                                        | This is a character who has earned three different kinds of trust: discipline to study, novelty to interest, certainty to assert. Each decays by its own rules. Discipline fades without practice. An Idea grows bored without novelty. Certainty cracks without conviction.                           |
+
+**Traceability**: Tactile Design (each current has a distinct physical and psychological feel — the lightning rod with precursor burning, the conversation with a concept that has existed since before language, the ánfora emptying into the world), Myth (the verbs ARE the story — accessing the Fold is Promethean geometry-theft, Speaking to Ideas is negotiating with reality's own consciousness, pouring Will is the primal assertion that predates both), Tragedy (each cost is narratively specific: the Hounds come for reckless casters, the Ideas abandon the boring Speaker — and all of the Idea, not just one splinter — the Vessel pours themselves out until nothing remains, and reality notices the void), Dichotomy (the capriciousness of Väkis — they may burn you and bless you in the same breath; the Fold is inert but its enforcers are anything but; Will is the self, and the self is the most unreliable thing there is).
 
 ---
 

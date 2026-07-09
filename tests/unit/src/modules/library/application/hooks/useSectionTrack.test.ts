@@ -6,9 +6,9 @@
  * @since 7.0.0
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
 import { useSectionTrack } from '@/modules/library/application/hooks/useSectionTrack';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('useSectionTrack', () => {
   let rafSpy: ReturnType<typeof vi.spyOn>;
@@ -17,16 +17,36 @@ describe('useSectionTrack', () => {
 
   beforeEach(() => {
     mockRaf = 0;
-    rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-      cb(0);
-      return ++mockRaf;
-    });
-    cancelRafSpy = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => { });
+    rafSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((cb) => {
+        cb(0);
+        return ++mockRaf;
+      });
+    cancelRafSpy = vi
+      .spyOn(window, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
 
-    Object.defineProperty(window, 'scrollY', { value: 0, writable: true, configurable: true });
-    Object.defineProperty(window, 'innerHeight', { value: 800, writable: true, configurable: true });
-    Object.defineProperty(window, 'innerWidth', { value: 1200, writable: true, configurable: true });
-    Object.defineProperty(document.documentElement, 'scrollHeight', { value: 3000, writable: true, configurable: true });
+    Object.defineProperty(window, 'scrollY', {
+      value: 0,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      value: 800,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(window, 'innerWidth', {
+      value: 1200,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 3000,
+      writable: true,
+      configurable: true,
+    });
   });
 
   afterEach(() => {
@@ -79,7 +99,40 @@ describe('useSectionTrack', () => {
         expect(result.current.items).toHaveLength(3);
       });
 
-      expect(result.current.items.map((i) => i.anchor)).toEqual(['third', 'first', 'second']);
+      expect(result.current.items.map((i) => i.anchor)).toEqual([
+        'third',
+        'first',
+        'second',
+      ]);
+    });
+
+    it('should rescan headings on ik:details-opened event', async () => {
+      document.body.innerHTML = `
+        <h1 data-anchor="intro">Intro</h1>
+        <h2 data-anchor="feature">Feature</h2>
+      `;
+
+      const { result } = renderHook(() => useSectionTrack());
+
+      await waitFor(() => {
+        expect(result.current.items).toHaveLength(2);
+      });
+
+      document.body.innerHTML = `
+        <h1 data-anchor="intro">Intro</h1>
+        <h2 data-anchor="feature">Feature</h2>
+        <h2 data-anchor="new-feature">New Feature</h2>
+      `;
+
+      act(() => {
+        window.dispatchEvent(new CustomEvent('ik:details-opened'));
+      });
+
+      await waitFor(() => {
+        expect(result.current.items).toHaveLength(3);
+      });
+
+      expect(result.current.items[2].anchor).toBe('new-feature');
     });
   });
 
@@ -92,7 +145,11 @@ describe('useSectionTrack', () => {
         <h2 data-anchor="second">Second</h2>
       `;
 
-      Object.defineProperty(window, 'scrollY', { value: 0, writable: true, configurable: true });
+      Object.defineProperty(window, 'scrollY', {
+        value: 0,
+        writable: true,
+        configurable: true,
+      });
 
       const { result } = renderHook(() => useSectionTrack());
 
@@ -104,7 +161,11 @@ describe('useSectionTrack', () => {
       expect(result.current.activeAnchor).toBe('second');
 
       // Now scroll down beyond both headings
-      Object.defineProperty(window, 'scrollY', { value: 600, writable: true, configurable: true });
+      Object.defineProperty(window, 'scrollY', {
+        value: 600,
+        writable: true,
+        configurable: true,
+      });
 
       act(() => {
         window.dispatchEvent(new Event('scroll'));
@@ -127,7 +188,11 @@ describe('useSectionTrack', () => {
     it('should stay visible on desktop after timeout', () => {
       vi.useFakeTimers();
 
-      Object.defineProperty(window, 'innerWidth', { value: 1200, writable: true, configurable: true });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 1200,
+        writable: true,
+        configurable: true,
+      });
 
       const { result } = renderHook(() => useSectionTrack());
 
@@ -139,6 +204,22 @@ describe('useSectionTrack', () => {
       expect(result.current.visible).toBe(true);
 
       vi.useRealTimers();
+    });
+  });
+
+  describe('viewportH', () => {
+    it('should expose current viewport height', async () => {
+      Object.defineProperty(window, 'innerHeight', {
+        value: 900,
+        writable: true,
+        configurable: true,
+      });
+
+      const { result } = renderHook(() => useSectionTrack());
+
+      await waitFor(() => {
+        expect(result.current.viewportH).toBe(900);
+      });
     });
   });
 
@@ -165,8 +246,16 @@ describe('useSectionTrack', () => {
 
     it('should return value closer to 1 for items near center', async () => {
       // Set scroll to center an item
-      Object.defineProperty(window, 'scrollY', { value: 500, writable: true, configurable: true });
-      Object.defineProperty(window, 'innerHeight', { value: 1000, writable: true, configurable: true });
+      Object.defineProperty(window, 'scrollY', {
+        value: 500,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        value: 1000,
+        writable: true,
+        configurable: true,
+      });
 
       const { result } = renderHook(() => useSectionTrack());
 

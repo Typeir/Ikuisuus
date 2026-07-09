@@ -103,6 +103,22 @@ vi.mock('@/lib/components/icon/icons/unlock.svg', () => ({
 }));
 
 /**
+ * jsdom does not ship ResizeObserver.  Stub it globally so that hooks /
+ * components depending on it don't crash in the test environment.
+ */
+class MockResizeObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+
+Object.defineProperty(window, 'ResizeObserver', {
+  writable: true,
+  configurable: true,
+  value: MockResizeObserver,
+});
+
+/**
  * Determine if a stderr chunk is a known deprecation warning to suppress.
  *
  * @param chunk - stderr output string

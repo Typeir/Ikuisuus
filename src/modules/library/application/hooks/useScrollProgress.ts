@@ -57,9 +57,14 @@ export function useScrollProgress(): ScrollProgress {
   const [state, setState] = useState<ScrollProgress>(readScrollState);
   const prevRef = useRef<ScrollProgress>(state);
   const rafRef = useRef<number | null>(null);
+  const lockedRef = useRef(false);
 
   useEffect(() => {
     const update = () => {
+      rafRef.current = null;
+
+      if (lockedRef.current) return;
+
       const next = readScrollState();
 
       const p = prevRef.current;
@@ -70,10 +75,9 @@ export function useScrollProgress(): ScrollProgress {
         next.scrollPercent !== p.scrollPercent
       ) {
         prevRef.current = next;
+        lockedRef.current = true;
         setState(next);
       }
-
-      rafRef.current = null;
     };
 
     const onScroll = () => {
@@ -90,16 +94,22 @@ export function useScrollProgress(): ScrollProgress {
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize, { passive: true });
+    window.addEventListener('ik:details-opened', update);
 
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('ik:details-opened', update);
 
       if (rafRef.current !== null) {
         window.cancelAnimationFrame(rafRef.current);
       }
     };
   }, []);
+
+  useEffect(() => {
+    lockedRef.current = false;
+  });
 
   return state;
 }
