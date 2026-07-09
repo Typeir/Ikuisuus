@@ -3,18 +3,7 @@ name: CompletionAuditor
 description: >
   Final gate. Reads task file, verifies DoD/checklists/milestones checked, health passed.
   Generates completion report. Triggers remediation if incomplete.
-tools:
-  - read_file
-  - grep_search
-  - file_search
-  - list_dir
-  - create_file
-  - replace_string_in_file
-  - run_in_terminal
-  - get_terminal_output
-  - vscode/memory
-  - manage_todo_list
-  - agent
+tools: [read, search, edit, execute, vscode, agent, todo]
 ---
 
 # Completion Auditor Agent

@@ -3,16 +3,7 @@ name: DamoclesDrafter
 description: >
   New MDX pages for Damocles. Loads lore + page types, surveys adjacent content,
   drafts canonical structure. Flags uncertain/unsourced claims. Task tracking.
-tools:
-  - read_file
-  - create_file
-  - grep_search
-  - file_search
-  - semantic_search
-  - list_dir
-  - run_in_terminal
-  - vscode/memory
-  - manage_todo_list
+tools: [read, search, edit, execute, vscode, todo]
 ---
 
 # Damocles Drafter Agent

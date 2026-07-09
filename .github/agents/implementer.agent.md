@@ -3,21 +3,7 @@ name: Implementer
 description: >
   Code execution. Reads task summary, checks for active task, loads instruction files,
   implements changes. Hands off to Health Reviewer after completion.
-tools:
-  - read_file
-  - replace_string_in_file
-  - multi_replace_string_in_file
-  - create_file
-  - grep_search
-  - file_search
-  - semantic_search
-  - list_dir
-  - run_in_terminal
-  - get_terminal_output
-  - get_errors
-  - vscode/memory
-  - manage_todo_list
-  - agent
+tools: [read, search, edit, execute, vscode, agent, todo]
 ---
 
 # Implementer Agent

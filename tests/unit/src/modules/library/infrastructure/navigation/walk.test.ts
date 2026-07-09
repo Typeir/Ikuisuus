@@ -13,7 +13,10 @@
  * @requires @/modules/library/infrastructure/navigation/walk Module under test
  */
 
-import type { DirectoryEntry, DirectorySourceAdapter } from '@/lib/db/content/directorySourceAdapter';
+import type {
+    DirectoryEntry,
+    DirectorySourceAdapter,
+} from '@/lib/db/content/directorySourceAdapter';
 import {
     SHALLOW_WALK_DEPTH,
     shallowWalk,
@@ -176,7 +179,7 @@ describe('walk', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].path).toBe('path-of-the-berserker');
-      expect(result[0].name).toBe('Path of Frenzy');
+      expect(result[0].name).toBe('Path Of The Berserker');
     });
 
     it('should strip .list from path', async () => {

@@ -4,18 +4,7 @@ description: >
   Safe refactor for Damocles MDX. Normalizes structure, fixes tone, enforces tiers,
   removes redundancy, flags lore concerns. NEVER adds/renames/changes lore facts.
   Task tracking.
-tools:
-  - read_file
-  - replace_string_in_file
-  - multi_replace_string_in_file
-  - create_file
-  - grep_search
-  - file_search
-  - semantic_search
-  - list_dir
-  - run_in_terminal
-  - vscode/memory
-  - manage_todo_list
+tools: [read, search, edit, execute, vscode, todo]
 ---
 
 # Damocles Refactor Agent

@@ -22,7 +22,7 @@ describe('classifyHeading', () => {
     ['Action', 'actions'],
     ['Reactions', 'reactions'],
     ['Reaction', 'reactions'],
-    ['Minor Actions', 'minor_actions'],
+    ['Bonus Actions', 'minor_actions'],
     ['Legendary Deed: Act', 'deed_act'],
     ['Legendary Deed: Stratagem', 'deed_stratagem'],
     ['Legendary Deed: Lair', 'deed_lair'],

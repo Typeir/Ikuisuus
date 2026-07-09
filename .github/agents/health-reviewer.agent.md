@@ -3,16 +3,7 @@ name: HealthReviewer
 description: >
   Mandatory quality gate. Runs health check + tests. Classifies critical vs warning.
   Blocks if critical found. Always executes.
-tools:
-  - read_file
-  - grep_search
-  - file_search
-  - list_dir
-  - run_in_terminal
-  - get_terminal_output
-  - replace_string_in_file
-  - vscode/memory
-  - manage_todo_list
+tools: [read, search, execute, edit, vscode, todo]
 ---
 
 # Health Reviewer Agent

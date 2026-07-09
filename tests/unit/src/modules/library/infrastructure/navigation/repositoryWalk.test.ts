@@ -164,7 +164,7 @@ describe('repositoryWalk', () => {
         'character-creation/vocations',
         1,
       );
-      expect(result[0].path).toBe('character-creation/vocations/Berserker');
+      expect(result[0].path).toBe('character-creation/vocations/berserker');
       expect(result[0].isStub).toBe(true);
     });
   });

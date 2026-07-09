@@ -3,16 +3,7 @@ name: Analyzer
 description: >
   Planning-only. Read docs, identify domains, generate task summary in .ignore/tasks/.
   NO code edits.
-tools:
-  - read_file
-  - grep_search
-  - file_search
-  - semantic_search
-  - list_dir
-  - create_file
-  - run_in_terminal
-  - vscode/memory
-  - manage_todo_list
+tools: [read, search, edit, execute, vscode, todo]
 ---
 
 # Analyzer Agent
