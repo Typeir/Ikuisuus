@@ -65,7 +65,7 @@ This spell appears on the following spell lists:
 
 ### YAML Frontmatter
 
-The frontmatter is optional but used to tag canonical D&D content:
+The frontmatter is optional but used to tag SRD-derived content:
 
 ```yaml
 ---
@@ -74,7 +74,7 @@ source: basic
 ```
 
 Omit the frontmatter for setting-specific or homebrew spells that are not
-part of the D&D Basic ruleset.
+part of the SRD-derived ruleset.
 
 ### Flavor Text
 

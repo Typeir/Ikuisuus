@@ -208,7 +208,7 @@ const RULES: FormatRule[] = [
     name: 'monster-sheet-missing-cr',
     check: (content: string, rel: string) =>
       rel.endsWith('.sheet.mdx') && !content.match(/\*\*Challenge\*\*.*\d/),
-    message: 'Monster sheet missing Challenge Rating line',
+    message: 'Monster sheet missing Challenge line',
     suggestion: 'Add **Challenge**: X (Y XP) line',
     severity: 'warning',
     appliesTo: ['monsters'],

@@ -52,7 +52,7 @@ npm test
 | SCSS Tokens   | Colors → CSS vars only. Grep checks in CI.              | [SCSS](.github/docs/scss-theme-rules.md)      |
 | Act-Clean     | Fake timers, async userEvent patterns.                  | [Testing](.github/docs/testing-rules.md)      |
 
-## Project: Next.js 15 D&D Site
+## Project: Next.js 15 Damocles OSR Site
 
 Filesystem MDX, i18n, three-layer metadata, build-time static gen. Responsive nav, theme system, content pipeline.
 

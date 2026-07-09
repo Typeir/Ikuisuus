@@ -1,6 +1,6 @@
 # Metadata Generation System Architecture
 
-**Purpose**: Complete documentation of the three-layer metadata extraction, serving, and consumption system for D&D game content.
+**Purpose**: Complete documentation of the three-layer metadata extraction, serving, and consumption system for Damocles game content.
 
 ## System Overview
 

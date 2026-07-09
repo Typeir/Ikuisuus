@@ -81,7 +81,7 @@ Required elements:
 | `monster-sheet-missing-stat-table`    | critical | `.sheet.mdx` must have ability score table       |
 | `missing-h1`                          | warning  | Content files need `# Title` (except `main.mdx`) |
 | `multiple-h1`                         | warning  | Only one `#` per file for spells/world/items     |
-| `monster-sheet-missing-cr`            | warning  | `.sheet.mdx` should have Challenge Rating        |
+| `monster-sheet-missing-cr`            | warning  | `.sheet.mdx` should have Challenge line        |
 | `spell-missing-blockquote-stat-block` | warning  | Spells need `>` stat block                       |
 | `missing-alt-text`                    | warning  | `<Image>` needs alt text                         |
 | `color-literal-in-mdx`                | warning  | No inline color styles                           |

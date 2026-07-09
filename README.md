@@ -3,7 +3,7 @@
 [![CI Pipeline](https://github.com/Typeir/Ikuisuus/actions/workflows/ci.yml/badge.svg)](https://github.com/Typeir/Ikuisuus/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/Typeir/Ikuisuus/graph/badge.svg?token=7Y5PMU9AK8)](https://codecov.io/gh/Typeir/Ikuisuus)
 
-A Next.js 15 internationalized documentation site for D&D content, featuring MDX-based content management.
+A Next.js 15 internationalized documentation site for Damocles OSR content, featuring MDX-based content management.
 
 ---
 

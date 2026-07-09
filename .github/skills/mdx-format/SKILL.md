@@ -50,7 +50,7 @@ load matching sub-skill before editing.
 | color-literal-in-mdx                | warning  | No inline color styles                         |
 | missing-alt-text                    | warning  | All `<Image>` components need alt              |
 | monster-sheet-missing-stat-table    | critical | .sheet.mdx needs ability score table           |
-| monster-sheet-missing-cr            | warning  | .sheet.mdx should have Challenge Rating        |
+| monster-sheet-missing-cr            | warning  | .sheet.mdx should have Challenge line        |
 | spell-missing-blockquote-stat-block | warning  | Spell files should have `>` stat block         |
 
 ## Running Health Check

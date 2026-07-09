@@ -351,7 +351,7 @@ For metadata generation scripts, include additional context:
 
 ```javascript
 /**
- * @fileoverview Parser for D&D monster stat blocks.
+ * @fileoverview Parser for Damocles monster stat blocks.
  * Extracts structured metadata including combat stats, abilities, resistances.
  *
  * @module generateMonsterMetadata

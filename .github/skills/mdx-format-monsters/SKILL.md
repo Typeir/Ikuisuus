@@ -18,7 +18,7 @@ Diagnose `monster-sheet-*` health-check violations.
 
 - Author new `.sheet.mdx`
 - Fix `monster-sheet-missing-stat-table` or `monster-sheet-missing-cr`
-- Add Legendary Deeds, Lair actions, Spellcasting
+- Add Legendary Deeds, lair deeds, Spellcasting
 - Run `npm run generate-metadata`, debug parse failures
 - Review feature extraction (see: `feature-extraction` skill)
 

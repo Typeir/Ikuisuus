@@ -136,10 +136,10 @@ URL:    /library/monsters/albedo-the-bleak-bloom
 **Process**:
 
 1. **Monster Generator**:
-   - Parses D&D stat block format (italic lines, tables, blockquotes)
+   - Parses Damocles stat block format (italic lines, tables, blockquotes)
    - Extracts: AC, HP, CR, abilities, resistances, damage types
    - Handles multi-variant files (arrays of stat blocks)
-   - Tags: creature type, size, legendary actions, spellcasting
+   - Tags: creature type, size, legendary deeds, spellcasting
 
 2. **Heirloom Generator**:
    - Parses item properties (rarity, attunement, weapon stats)
@@ -182,7 +182,7 @@ URL:    /library/monsters/albedo-the-bleak-bloom
     "creature:aberration",
     "size:gargantuan",
     "damage:necrotic",
-    "mechanic:legendary-actions",
+    "mechanic:legendary-deeds",
     "mechanic:multiattack"
   ]
 }
