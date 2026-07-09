@@ -8,16 +8,16 @@
 'use client';
 
 import Icon from '@/lib/components/icon/icon';
+import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { useSidebarExpansionActions } from '@/lib/context/PersistentUiContext';
 import { cn } from '@/lib/utils/classNameMerge';
 import { useFetchStubChildren } from '@/modules/navigation-sidebar/application/hooks/useFetchStubChildren';
 import { SIDEBAR_CLOSE_ANIMATION_MS } from '@/modules/navigation-sidebar/domain/constants';
 import type {
-  LayoutItem,
-  SidebarItemProps,
+    LayoutItem,
+    SidebarItemProps,
 } from '@/modules/navigation-sidebar/domain/types';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './sidebar.module.scss';
@@ -186,7 +186,7 @@ export const SidebarItem = ({
     return (
       <li className={cn('ml-2', styles.accordion, open && styles.open)}>
         {hasIndex ? (
-          <Link
+          <LazyPrefetchLink
             href={`/${locale}/library/${folderChildren.mainPath}`}
             onClick={() => open && onNavigate?.()}
             title={item.name}
@@ -195,7 +195,7 @@ export const SidebarItem = ({
               styles['link-item'],
             )}>
             {labelEl}
-          </Link>
+          </LazyPrefetchLink>
         ) : (
           labelEl
         )}
@@ -228,7 +228,7 @@ export const SidebarItem = ({
 
   return (
     <li className='ml-4'>
-      <Link
+      <LazyPrefetchLink
         href={`/${locale}/library/${item.path}`}
         onClick={onNavigate}
         title={item.name}
@@ -237,7 +237,7 @@ export const SidebarItem = ({
           styles['link-item'],
         )}>
         {item.name}
-      </Link>
+      </LazyPrefetchLink>
     </li>
   );
 };

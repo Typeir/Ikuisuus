@@ -29,8 +29,8 @@
 
 'use client';
 
+import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
 import { FilterSelect, NumericInput } from '../../ui';
 import styles from './metadataTable.module.scss';
@@ -440,10 +440,12 @@ export default function MetadataTable({
         }
       });
       const options = Array.from(uniqueValues);
-      
+
       if (column.filterSortOrder) {
         return options.sort(
-          (a, b) => (column.filterSortOrder![a] ?? 999) - (column.filterSortOrder![b] ?? 999)
+          (a, b) =>
+            (column.filterSortOrder![a] ?? 999) -
+            (column.filterSortOrder![b] ?? 999),
         );
       }
       return options.sort();
@@ -605,9 +607,11 @@ export default function MetadataTable({
                             {content}
                           </a>
                         ) : (
-                          <Link href={href} className={styles.rowLink}>
+                          <LazyPrefetchLink
+                            href={href}
+                            className={styles.rowLink}>
                             {content}
-                          </Link>
+                          </LazyPrefetchLink>
                         )}
                       </td>
                     );

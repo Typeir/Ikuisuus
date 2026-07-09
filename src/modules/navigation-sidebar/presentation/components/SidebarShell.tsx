@@ -10,6 +10,7 @@
 'use client';
 
 import Icon from '@/lib/components/icon/icon';
+import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { cn } from '@/lib/utils/classNameMerge';
 import type {
     Item,
@@ -17,7 +18,6 @@ import type {
 } from '@/modules/navigation-sidebar/domain/types';
 import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import styles from './sidebar.module.scss';
@@ -126,7 +126,7 @@ function StaticItem({
     return (
       <li className={cn('ml-2', styles.accordion, open && styles.open)}>
         {hasIndex ? (
-          <Link
+          <LazyPrefetchLink
             href={`/${locale}/library/${folderChildren.mainPath}`}
             onClick={() => onNavigate?.()}
             title={item.name}
@@ -135,7 +135,7 @@ function StaticItem({
               styles['link-item'],
             )}>
             {labelEl}
-          </Link>
+          </LazyPrefetchLink>
         ) : (
           labelEl
         )}
@@ -158,7 +158,7 @@ function StaticItem({
 
   return (
     <li className='ml-4'>
-      <Link
+      <LazyPrefetchLink
         href={`/${locale}/library/${item.path}`}
         onClick={onNavigate}
         title={item.name}
@@ -167,7 +167,7 @@ function StaticItem({
           styles['link-item'],
         )}>
         {item.name}
-      </Link>
+      </LazyPrefetchLink>
     </li>
   );
 }
