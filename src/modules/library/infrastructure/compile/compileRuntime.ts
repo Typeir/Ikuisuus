@@ -13,6 +13,7 @@
 
 'use client';
 
+import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import { compile, compileSync, run, runSync } from '@mdx-js/mdx';
 import { createElement, type ReactElement } from 'react';
 import * as runtime from 'react/jsx-runtime';
@@ -56,7 +57,7 @@ function hashSource(source: string): string {
 
 /** @internal Shared plugin options for all compile calls */
 const PLUGIN_OPTIONS = {
-  remarkPlugins: [remarkGfm, remarkMath],
+  remarkPlugins: [remarkGfm, remarkMath, remarkDiceRoll],
   rehypePlugins: [rehypeKatex],
   outputFormat: 'function-body' as const,
 };

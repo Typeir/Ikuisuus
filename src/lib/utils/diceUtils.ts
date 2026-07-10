@@ -25,3 +25,26 @@ export function rollDie(faces: number): number {
   if (!Number.isFinite(faces) || faces < 1) return 1;
   return Math.floor(Math.random() * faces) + 1;
 }
+
+/**
+ * Determines if a die result is the maximum possible (critical).
+ *
+ * @function isMaxRoll
+ * @param {number} value - The die result
+ * @param {number} faces - The die's face count
+ * @returns {boolean} True if the die rolled its maximum value
+ */
+export function isMaxRoll(value: number, faces: number): boolean {
+  return value === faces;
+}
+
+/**
+ * Determines if a die result is the minimum possible (natural 1).
+ *
+ * @function isMinRoll
+ * @param {number} value - The die result
+ * @returns {boolean} True if the die rolled a 1
+ */
+export function isMinRoll(value: number): boolean {
+  return value === 1;
+}

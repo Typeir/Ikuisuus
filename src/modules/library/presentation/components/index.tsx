@@ -24,6 +24,7 @@ import type { PropsWithChildren } from 'react';
 import BlendedImage from './BlendedImage';
 import ClearFloats from './ClearFloats';
 import Collapsible from './Collapsible';
+import DiceRoll from './DiceRoll';
 import FlexRenderer from './FlexRenderer';
 import FloatedContainer from './FloatedContainer';
 import { HashNavigationProvider } from './HashNavigationProvider';
@@ -37,6 +38,7 @@ import Tooltip from './Tooltip';
 export const components = {
   BlendedImage,
   Collapsible,
+  DiceRoll,
   FlexRenderer,
   Meta,
   MonsterTable,
@@ -89,6 +91,5 @@ const enrichedComponents = {
 };
 
 export default enrichedComponents;
-export { HashNavigationProvider, useHashNavigation };
-export { SectionTrack };
+export { HashNavigationProvider, SectionTrack, useHashNavigation };
 

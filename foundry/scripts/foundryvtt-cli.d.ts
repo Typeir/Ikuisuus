@@ -4,7 +4,7 @@
  * the untyped @foundryvtt/foundryvtt-cli package.
  *
  * @module foundry/scripts/foundryvtt-cli.d.ts
- * @author David
+ * @author Typeir
  * @version 1.0.0
  * @since 2026-04-17
  */

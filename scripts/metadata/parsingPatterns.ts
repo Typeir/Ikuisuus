@@ -146,6 +146,17 @@ export const LIST = {
 } as const;
 
 /**
+ * Dice expression patterns for `[% ... %]` wrapped roll syntax.
+ *
+ * @property {RegExp} wrapped - Match `[% ... %]` delimited dice expressions
+ * @property {RegExp} innerDice - Extract dice notation from within a wrapped expression
+ */
+export const DICE = {
+  wrapped: /\[%\s*(.*?)\s*%\]/g,
+  innerDice: /(\d+d\d+)/,
+} as const;
+
+/**
  * General-purpose utility patterns.
  *
  * @property {RegExp} numericExtract - Extract first numeric value

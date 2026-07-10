@@ -24,12 +24,12 @@ mechanical philosophy, and tonal identity.
 Every design decision — mechanical, narrative, or aesthetic — MUST be traceable
 to at least one of these pillars:
 
-| Pillar          | Definition                                                          | Manifestation                                                                                           |
-| --------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Tragedy**     | The world is already dead. The player characters are the last gasp. | Loss is permanent. Victory is temporary. Hope is a choice, not a guarantee.                             |
-| **Myth**        | The setting operates on mythic logic, not simulationist logic.      | Names carry weight. Actions have cosmic consequence. The world is authored, not generated.              |
-| **Dichotomy**   | "The vile and beautiful lands of Damocles."                         | Beauty and horror coexist. Grace and rot are inseparable. The sublime is found in the grotesque.        |
-| **Post-Mortem** | The universe has already ended. This is the aftermath.              | Ruin is the default state. Recovery is possible but costly. The past is more advanced than the present. |
+| Pillar          | Definition                                                           | Manifestation                                                                                                                                     |
+| --------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tragedy**     | The world is already dead. The player characters are the last gasp.  | Loss is permanent. Victory is temporary. Hope is a choice, not a guarantee.                                                                       |
+| **Myth**        | The setting operates on mythic logic, not simulationist logic.       | Names carry weight. Actions have cosmic consequence. The world is authored, not generated.                                                        |
+| **Dichotomy**   | "The vile and beautiful lands of Damocles."                          | Beauty and horror coexist. Grace and rot are inseparable. The sublime is found in the grotesque.                                                  |
+| **Post-Mortem** | The universe has already ended. Play is archaeological storytelling. | Ruin is the default state. The story is a long chain of loss and degradation, and how mortals endured, grew and loved in spite of the inevitable. |
 
 ### 1.3 Tonal Anchors
 
@@ -82,6 +82,8 @@ Realms sourcebook, it fails.
 
 Every piece of content MUST be grounded in Damocles cosmology. Canonical
 reference: `the-great-tale-of-everything.lore.mdx`.
+
+#### 2.1.1 Cosmological Cheat-sheet
 
 | Concept              | Definition                                                                                                                                                                                                |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -622,7 +624,7 @@ Some traditions use physical anchors to facilitate the relationship — the Sham
 | **Väki magic is relational, not transactional.** You do not spend a Väki. You maintain a relationship with it. Betray the relationship, and the Väki withdraws — not out of anger, but because you have become uninteresting.                                                                                     | A network of personal connections with fragments of cosmic truth — not a spendable resource.                       |
 | **Väki magic is narrow and deep.** Where a Fold-caster commands a vast repertoire, the Väki-practitioner carries only the relationships they have cultivated. Specialize deeply into one Idea, and you reach further than any Fold-caster ever could. Scatter across many, and each relationship remains shallow. | The practitioner who has danced with Flame for thirty years does things with fire that a wizard cannot comprehend. |
 | **Väkis are NOT gods.** They do not grant Fold keys. They do not write Edicts. They do not want worshippers. They want interesting company.                                                                                                                                                                       | Confusing a Väki with a god is a category error — and a Väki will find it deeply boring.                           |
-| **Väki magic cannot be taught in a classroom.** Every Väki relationship is unique. Two practitioners who both channel Flame speak to the same Idea, but through different relationships — different bargains, different effects.                                                                                                      | You cannot standardize a relationship.                                                                             |
+| **Väki magic cannot be taught in a classroom.** Every Väki relationship is unique. Two practitioners who both channel Flame speak to the same Idea, but through different relationships — different bargains, different effects.                                                                                  | You cannot standardize a relationship.                                                                             |
 | **Väkis choose who perceives them.** No amount of study, piety, or power compels a Väki to reveal itself. Some are born with the sight. Some earn it. Some are chosen — and the reason is often opaque even to the chosen.                                                                                        | This is the fundamental asymmetry of Väki magic: the power initiates contact, not the practitioner.                |
 
 **Traceability**: Myth (the Ideas are the world's true shape; Väkis are its broken pieces, drifting unseen — they were here before the gods and will be here after), Dichotomy (the Flame that warms your hearth and the Flame that burns your enemy are fragments of the same Idea — and neither cares which you are), Cosmic Horror (you have been surrounded by living fragments of reality your entire life, and you have never known).
@@ -685,7 +687,7 @@ Will is the oldest power. Before the Canvas issued Edicts, before the Fold separ
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Psionics**    | The mind imposes its structure on the world directly. No Fold. No Väki. No key. No bargain. The practitioner reaches out with thought alone and reality concedes — not because it must, but because the practitioner's conviction leaves no room for refusal. |
 | **Divine Will** | The Golden One's Will was equal to Wax's — sheer, unbreakable assertion that carved law into the Canvas itself. This tier of Will is not available to player characters. It is the stuff of gods.                                                             |
-| **Mortal Will** | Every mortal exerts some degree of Will — the choice to act despite a dying universe, to hope despite the certainty of loss. The same substance, diluted to mortal scale.                                                                     |
+| **Mortal Will** | Every mortal exerts some degree of Will — the choice to act despite a dying universe, to hope despite the certainty of loss. The same substance, diluted to mortal scale.                                                                                     |
 
 **Constitutional Rules:**
 

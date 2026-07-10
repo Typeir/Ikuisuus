@@ -28,8 +28,14 @@ export async function compileAsync(opts: CompileOptions) {
     parseFrontmatter = true,
   } = opts;
 
-  const { evaluate, remarkGfm, remarkMath, rehypeKatex, rehypeSectionize } =
-    await importAllAsync();
+  const {
+    evaluate,
+    remarkDiceRoll,
+    remarkGfm,
+    remarkMath,
+    rehypeKatex,
+    rehypeSectionize,
+  } = await importAllAsync();
 
   const result = await evaluate({
     source,
@@ -39,7 +45,7 @@ export async function compileAsync(opts: CompileOptions) {
       mdxOptions: buildMdxOptions(
         mdxOptions,
         {
-          remarkPlugins: [remarkGfm, remarkMath],
+          remarkPlugins: [remarkGfm, remarkMath, remarkDiceRoll],
           rehypePlugins: [rehypeKatex, rehypeSectionize],
         },
         baseUrl,

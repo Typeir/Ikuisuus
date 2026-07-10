@@ -9,6 +9,7 @@
  * @since 3.0.0
  */
 
+import { stripDiceWrappers } from './diceExpressionUtils';
 import { GameData } from './gameData';
 import { CHARGES, HEADING, LIST, PROPERTIES } from './parsingPatterns';
 import type { SharedData } from './sharedData';
@@ -158,23 +159,24 @@ export function parseNumericValue(
 export function parseCharges(
   text: string,
 ): { initial?: string; recharge?: string; depletes?: boolean } | undefined {
+  const unwrapped = stripDiceWrappers(text);
   const chargesInfo: {
     initial?: string;
     recharge?: string;
     depletes?: boolean;
   } = {};
 
-  const initialMatch = text.match(CHARGES.initial);
+  const initialMatch = unwrapped.match(CHARGES.initial);
   if (initialMatch) {
     chargesInfo.initial = initialMatch[1];
   }
 
-  const rechargeMatch = text.match(CHARGES.recovery);
+  const rechargeMatch = unwrapped.match(CHARGES.recovery);
   if (rechargeMatch) {
     chargesInfo.recharge = `${rechargeMatch[1]} at ${rechargeMatch[2]}`;
   }
 
-  if (CHARGES.depletion.test(text)) {
+  if (CHARGES.depletion.test(unwrapped)) {
     chargesInfo.depletes = true;
   }
 
