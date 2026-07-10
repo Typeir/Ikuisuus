@@ -21,23 +21,23 @@ import FlexRenderer from '@/modules/library/presentation/components/FlexRenderer
 import FloatedContainer from '@/modules/library/presentation/components/FloatedContainer/index';
 import { HashNavigationProvider } from '@/modules/library/presentation/components/HashNavigationProvider/index';
 import {
-  H1,
-  H2,
-  H3,
-  H4,
-  H5,
-  H6,
+    H1,
+    H2,
+    H3,
+    H4,
+    H5,
+    H6,
 } from '@/modules/library/presentation/components/Heading/index';
 import HorizontalSplit from '@/modules/library/presentation/components/HorizontalSplit/index';
 import Meta from '@/modules/library/presentation/components/Meta/index';
 import ParallaxBackdrop from '@/modules/library/presentation/components/ParallaxBackdrop/index';
 import Tooltip from '@/modules/library/presentation/components/Tooltip/index';
 import {
-  FilteredSpellTable,
-  HeirloomTable,
-  MonsterTable,
-  SpellTable,
-  TrinketTable,
+    FilteredSpellTable,
+    HeirloomTable,
+    MonsterTable,
+    SpellTable,
+    TrinketTable,
 } from '@/modules/metadata-tables/presentation';
 import type { PropsWithChildren } from 'react';
 
