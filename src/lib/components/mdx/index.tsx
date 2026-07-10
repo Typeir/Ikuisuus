@@ -16,6 +16,7 @@ import mdxComponents from '@/modules/library/infrastructure/compile/mdxComponent
 import BlendedImage from '@/modules/library/presentation/components/BlendedImage/index';
 import ClearFloats from '@/modules/library/presentation/components/ClearFloats/index';
 import Collapsible from '@/modules/library/presentation/components/Collapsible/index';
+import DiceRoll from '@/modules/library/presentation/components/DiceRoll/index';
 import FlexRenderer from '@/modules/library/presentation/components/FlexRenderer/index';
 import FloatedContainer from '@/modules/library/presentation/components/FloatedContainer/index';
 import { HashNavigationProvider } from '@/modules/library/presentation/components/HashNavigationProvider/index';
@@ -43,6 +44,7 @@ import type { PropsWithChildren } from 'react';
 export const components = {
   BlendedImage,
   Collapsible,
+  DiceRoll,
   FlexRenderer,
   Meta,
   MonsterTable,

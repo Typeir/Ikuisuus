@@ -5,6 +5,7 @@
  * This is used in CI environments where the full analysis step is skipped.
  *
  * @module findReusableMdxOutliers/ci
+ * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
  */
