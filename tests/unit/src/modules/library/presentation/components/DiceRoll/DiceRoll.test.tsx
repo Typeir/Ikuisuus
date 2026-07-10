@@ -94,8 +94,8 @@ describe('DiceRoll', () => {
       render(<DiceRoll dice='2d6' />);
       const button = screen.getByRole('button');
       await user.click(button);
-      const result = screen.getByText(/\(.*\)/);
-      expect(result).toBeDefined();
+      const allEights = screen.getAllByText('4');
+      expect(allEights.length).toBeGreaterThan(0);
     });
 
     it('should include modifier in total', async () => {
