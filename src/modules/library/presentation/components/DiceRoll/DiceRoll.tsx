@@ -205,7 +205,7 @@ export default function DiceRoll({
   specials,
   modifier,
   damageType,
-}: DiceRollProps): React.Component<DiceRollProps> {
+}: DiceRollProps): React.JSX.Element {
   const [result, setResult] = useState<RollResult | null>(null);
   const [faded, setFaded] = useState(false);
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
