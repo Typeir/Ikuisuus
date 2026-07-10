@@ -12,8 +12,9 @@
 
 'use client';
 
+import { Tooltip } from '@/lib/components/ui/tooltip';
 import { isMaxRoll, isMinRoll, rollDie } from '@/lib/utils/diceUtils';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useId, useState } from 'react';
 import styles from './DiceRoll.module.scss';
 
 /**
@@ -182,10 +183,21 @@ function buildLabel(props: DiceRollProps): string {
   return parts.join('');
 }
 
+/** Max dice displayed per row before wrapping to the next line. */
+const DICE_PER_ROW = 10;
+
 /**
- * Milliseconds before the tooltip begins to fade after a roll.
+ * Splits an array into sub-arrays of at most `size` elements.
+ *
+ * @param {T[]} arr - The array to chunk
+ * @param {number} size - Max elements per chunk
+ * @returns {T[][]} Array of chunks
  */
-const FADE_DELAY_MS = 1750;
+function chunk<T>(arr: T[], size: number): T[][] {
+  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+    arr.slice(i * size, (i + 1) * size),
+  );
+}
 
 /**
  * Interactive dice roll component for MDX content.
@@ -207,43 +219,9 @@ export default function DiceRoll({
   damageType,
 }: DiceRollProps): React.JSX.Element {
   const [result, setResult] = useState<RollResult | null>(null);
-  const [faded, setFaded] = useState(false);
-  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tooltipId = useId();
 
-  /**
-   * Clears any pending fade-out timer.
-   */
-  const clearFadeTimer = useCallback(() => {
-    if (fadeTimerRef.current !== null) {
-      clearTimeout(fadeTimerRef.current);
-      fadeTimerRef.current = null;
-    }
-  }, []);
-
-  /**
-   * Starts the fade-out timer. After FADE_DELAY_MS the tooltip fades.
-   */
-  const startFadeTimer = useCallback(() => {
-    clearFadeTimer();
-    fadeTimerRef.current = setTimeout(() => {
-      setFaded(true);
-    }, FADE_DELAY_MS);
-  }, [clearFadeTimer]);
-
-  /** Clean up timer on unmount. */
-  useEffect(() => {
-    return () => clearFadeTimer();
-  }, [clearFadeTimer]);
-
-  /**
-   * Reveals the tooltip at full opacity and resets the fade timer.
-   */
-  const showTooltip = useCallback(() => {
-    setFaded(false);
-    startFadeTimer();
-  }, [startFadeTimer]);
-
-  const roll = () => {
+  const roll = useCallback(() => {
     const parsed = parseDiceNotation(dice);
     if (!parsed) return;
 
@@ -278,41 +256,24 @@ export default function DiceRoll({
       specialsApplied,
       modifierValue,
     });
-    showTooltip();
-  };
+  }, [dice, specials, modifier]);
 
   const label = buildLabel({ dice, specials, modifier, damageType });
 
-  const tooltipClassName = [
-    styles.diceTooltip,
-    faded ? styles.diceTooltipFaded : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const rows = result ? chunk(result.dice, DICE_PER_ROW) : [];
+  const hasModifier =
+    result !== null &&
+    result.modifierValue !== null &&
+    result.modifierValue !== 0;
+  const lastRowIndex = rows.length - 1;
 
-  return (
-    <span
-      className={styles.diceRoll}
-      onMouseEnter={showTooltip}
-      onMouseLeave={startFadeTimer}
-      onFocus={showTooltip}
-      onBlur={startFadeTimer}>
-      <button
-        type='button'
-        className={styles.diceButton}
-        onClick={roll}
-        aria-label={`Roll ${label}`}>
-        {label}
-      </button>
-      {result && (
-        <span
-          className={tooltipClassName}
-          role='status'
-          aria-live='polite'
-          aria-atomic='true'>
-          <span className={styles.diceTooltipTotal}>{result.total}</span>
-          <span className={styles.diceTooltipBreakdown}>
-            {result.dice.map((die, i) => {
+  const tooltipContent = result ? (
+    <>
+      <span className={styles.diceTooltipTotal}>{result.total}</span>
+      <span className={styles.diceTooltipBreakdown}>
+        {rows.map((row, ri) => (
+          <span key={ri} className={styles.diceRow}>
+            {row.map((die, i) => {
               const parsed = parseDiceNotation(dice);
               const faces = parsed?.faces ?? 0;
               const maxClass = isMaxRoll(die, faces) ? ` ${styles.dieMax}` : '';
@@ -329,15 +290,34 @@ export default function DiceRoll({
                 </span>
               );
             })}
-            {result.modifierValue !== null && result.modifierValue !== 0 && (
-              <span>
-                {result.modifierValue > 0 ? ' + ' : ' − '}
-                {Math.abs(result.modifierValue)}
+            {ri === lastRowIndex && hasModifier && (
+              <span className={styles.dieModifier}>
+                {result.modifierValue! > 0 ? ' + ' : ' − '}
+                {Math.abs(result.modifierValue!)}
               </span>
             )}
           </span>
-        </span>
-      )}
-    </span>
+        ))}
+      </span>
+    </>
+  ) : null;
+
+  return (
+    <Tooltip
+      id={`dice-${tooltipId}`}
+      content={tooltipContent}
+      showDelay={0}
+      showArrow={false}
+      className={styles.diceTooltip}
+      forceVisible={result !== null}
+      inline>
+      <button
+        type='button'
+        className={styles.diceButton}
+        onClick={roll}
+        aria-label={`Roll ${label}`}>
+        {label}
+      </button>
+    </Tooltip>
   );
 }

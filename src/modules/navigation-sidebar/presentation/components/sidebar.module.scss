@@ -38,8 +38,8 @@
 
   & > p {
     transition:
-      border-bottom 0.3s 0.1s var(--springy-bezier),
-      margin-bottom 0.3s 0.1s var(--springy-bezier),
+      border-bottom 0.3s var(--springy-bezier),
+      margin-bottom 0.3s var(--springy-bezier),
       filter linear 0.5s !important;
   }
 
@@ -95,6 +95,24 @@
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.5s var(--springy-bezier);
+}
+
+.expanded {
+  max-height: var(--expanded-height);
+}
+
+.link-item {
+  display: inline-block;
+}
+
+/* Only leaf links shift on hover — folder links stay put */
+li:not(:has(.label)) > .link-item {
+  transition: transform 0.3s var(--springy-bezier);
+  transform: translateX(0);
+
+  &:hover {
+    transform: translateX(0.3rem);
+  }
 }
 
 .expanded {

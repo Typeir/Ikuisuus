@@ -102,6 +102,22 @@
   }
 }
 
+.tooltip.tooltipExiting {
+  animation: tooltipFadeOut 0.15s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes tooltipFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
 // Trigger styles when clickable
 .triggerClickable {
   cursor: pointer;

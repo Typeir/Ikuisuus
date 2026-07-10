@@ -1,7 +1,6 @@
 /**
  * @fileoverview Tooltip Component
  * @description Accessible tooltip with hover/focus activation, delay, and placement options.
- * Provides both a wrapper component and a curry-style HOC for easy integration.
  *
  * @module tooltip
  * @version 1.0.0
@@ -15,13 +14,13 @@ import { CircleHelp } from 'lucide-react';
 import {
   Children,
   cloneElement,
-  ComponentType,
   isValidElement,
   memo,
   ReactElement,
   ReactNode,
   useCallback,
   useEffect,
+  useId,
   useLayoutEffect,
   useRef,
   useState,
@@ -73,6 +72,8 @@ export interface TooltipProps {
   onItemClick?: () => void;
   showClickIcon?: boolean;
   inline?: boolean;
+  /** When true, tooltip is shown regardless of hover state. */
+  forceVisible?: boolean;
 }
 
 /**
@@ -104,8 +105,10 @@ export const Tooltip = memo(function Tooltip({
   onItemClick,
   showClickIcon = true,
   inline = false,
+  forceVisible = false,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [exiting, setExiting] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [actualPlacement, setActualPlacement] = useState(placement);
   const [isMounted, setIsMounted] = useState(false);
@@ -114,8 +117,15 @@ export const Tooltip = memo(function Tooltip({
   const tooltipRef = useRef<HTMLDivElement>(null);
   const showTimeoutRef = useRef<NodeJS.Timeout>();
   const hideTimeoutRef = useRef<NodeJS.Timeout>();
+  const exitingRef = useRef(false);
+  const exitTimerRef = useRef<NodeJS.Timeout>();
+  const positionedRef = useRef(false);
 
-  const tooltipId = id || `tooltip-${Math.random().toString(36).substr(2, 9)}`;
+  /** Duration of the CSS exit animation — must match SCSS. */
+  const EXIT_DURATION = 150;
+
+  const reactId = useId();
+  const tooltipId = id || `tooltip-${reactId}`;
 
   /** Recalculate tooltip position based on trigger element */
   const updatePosition = useCallback(() => {
@@ -132,36 +142,57 @@ export const Tooltip = memo(function Tooltip({
 
     setPosition({ x, y });
     setActualPlacement(newPlacement);
+    positionedRef.current = true;
   }, [placement]);
 
-  /** Show tooltip after delay */
+  /** Show tooltip after delay. Cancels any in-progress exit. */
   const show = useCallback(() => {
     if (disabled) return;
 
     clearTimeout(hideTimeoutRef.current);
+    if (exitingRef.current) {
+      clearTimeout(exitTimerRef.current);
+      setExiting(false);
+      exitingRef.current = false;
+      return;
+    }
     showTimeoutRef.current = setTimeout(() => {
       setIsVisible(true);
     }, showDelay);
   }, [disabled, showDelay]);
 
-  /** Hide tooltip after delay */
+  /** Hide tooltip after delay, with exit animation before unmount. */
   const hide = useCallback(() => {
     clearTimeout(showTimeoutRef.current);
     hideTimeoutRef.current = setTimeout(() => {
-      setIsVisible(false);
+      setExiting(true);
+      exitingRef.current = true;
     }, hideDelay);
   }, [hideDelay]);
 
+  /** When exit animation completes, actually unmount the tooltip. */
+  useEffect(() => {
+    if (exiting) {
+      exitTimerRef.current = setTimeout(() => {
+        setIsVisible(false);
+        setExiting(false);
+        exitingRef.current = false;
+        positionedRef.current = false;
+      }, EXIT_DURATION);
+      return () => clearTimeout(exitTimerRef.current);
+    }
+  }, [exiting]);
+
   /** Position synchronously on first render to prevent flicker */
   useLayoutEffect(() => {
-    if (isVisible) {
+    if (isVisible || forceVisible) {
       updatePosition();
     }
-  }, [isVisible, updatePosition]);
+  }, [isVisible, forceVisible, updatePosition]);
 
   /** Reposition on scroll and resize */
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible && !forceVisible && !exiting) return;
 
     const handleScroll = () => updatePosition();
     const handleResize = () => updatePosition();
@@ -180,6 +211,7 @@ export const Tooltip = memo(function Tooltip({
     return () => {
       clearTimeout(showTimeoutRef.current);
       clearTimeout(hideTimeoutRef.current);
+      clearTimeout(exitTimerRef.current);
     };
   }, []);
 
@@ -187,6 +219,22 @@ export const Tooltip = memo(function Tooltip({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  /** When forceVisible flips true, show instantly. When false, trigger exit. */
+  useEffect(() => {
+    if (forceVisible) {
+      clearTimeout(hideTimeoutRef.current);
+      if (exitingRef.current) {
+        clearTimeout(exitTimerRef.current);
+        setExiting(false);
+        exitingRef.current = false;
+      }
+      setIsVisible(true);
+      positionedRef.current = false;
+    }
+  }, [forceVisible]);
+
+  const showPortal = isVisible || exiting;
 
   if (!isMounted || !content) {
     return children;
@@ -204,29 +252,31 @@ export const Tooltip = memo(function Tooltip({
   };
 
   if (inline) {
-    const cloned = cloneElement(child as ReactElement<any>, {
+    const cloned = cloneElement(Children.only(children) as ReactElement<any>, {
       ref: triggerRef,
       onMouseEnter: show,
       onMouseLeave: hide,
       onFocus: show,
       onBlur: hide,
-      'aria-describedby': isVisible ? tooltipId : undefined,
+      'aria-describedby': showPortal ? tooltipId : undefined,
     });
 
     return (
       <>
         {cloned}
-        {isVisible &&
+        {showPortal &&
           createPortal(
             <div
               ref={tooltipRef}
               id={tooltipId}
               role='tooltip'
-              className={`${styles.tooltip} ${styles[actualPlacement]} ${className}`}
+              className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
               style={{
                 left: position.x,
                 top: position.y,
                 maxWidth,
+                visibility: positionedRef.current ? 'visible' : 'hidden',
+                opacity: position ? undefined : 0,
               }}>
               {content}
               {showArrow && <div className={styles.arrow} />}
@@ -255,8 +305,8 @@ export const Tooltip = memo(function Tooltip({
         onClick={handleClick}
         style={{ display: 'inline-flex' }}
         className={triggerClassName}
-        aria-describedby={isVisible ? tooltipId : undefined}>
-        {child}
+        aria-describedby={showPortal ? tooltipId : undefined}>
+        {Children.only(children)}
         {showClickIcon && (
           <CircleHelp
             size={14}
@@ -265,17 +315,19 @@ export const Tooltip = memo(function Tooltip({
           />
         )}
       </span>
-      {isVisible &&
+      {showPortal &&
         createPortal(
           <div
             ref={tooltipRef}
             id={tooltipId}
             role='tooltip'
-            className={`${styles.tooltip} ${styles[actualPlacement]} ${className}`}
+            className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
             style={{
               left: position.x,
               top: position.y,
               maxWidth,
+              visibility: positionedRef.current ? 'visible' : 'hidden',
+              opacity: position ? undefined : 0,
             }}>
             {content}
             {showArrow && <div className={styles.arrow} />}
@@ -286,42 +338,7 @@ export const Tooltip = memo(function Tooltip({
   );
 });
 
-/**
- * HOC-style wrapper for adding tooltips to existing components
- *
- * @example
- * ```tsx
- * const ButtonWithTooltip = withTooltip(Button);
- * <ButtonWithTooltip tooltip="Click to submit" placement="top" onClick={handleClick}>
- *   Submit
- * </ButtonWithTooltip>
- * ```
- */
-export function withTooltip<P extends object>(
-  WrappedComponent: ComponentType<P>,
-): ComponentType<
-  P & { tooltip?: ReactNode; tooltipPlacement?: TooltipPlacement }
-> {
-  const WithTooltipComponent = ({
-    tooltip,
-    tooltipPlacement = 'top',
-    ...props
-  }: P & { tooltip?: ReactNode; tooltipPlacement?: TooltipPlacement }) => {
-    if (!tooltip) {
-      return <WrappedComponent {...(props as P)} />;
-    }
-
-    return (
-      <Tooltip content={tooltip} placement={tooltipPlacement}>
-        <WrappedComponent {...(props as P)} />
-      </Tooltip>
-    );
-  };
-
-  WithTooltipComponent.displayName = `WithTooltip(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
-
-  return WithTooltipComponent;
-}
+export { withTooltip } from './withTooltip';
 
 /**
  * Simple wrapper that just applies tooltip to children without modifying props

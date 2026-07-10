@@ -24,12 +24,12 @@ mechanical philosophy, and tonal identity.
 Every design decision — mechanical, narrative, or aesthetic — MUST be traceable
 to at least one of these pillars:
 
-| Pillar          | Definition                                                           | Manifestation                                                                                                                                     |
-| --------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tragedy**     | The world is already dead. The player characters are the last gasp.  | Loss is permanent. Victory is temporary. Hope is a choice, not a guarantee.                                                                       |
-| **Myth**        | The setting operates on mythic logic, not simulationist logic.       | Names carry weight. Actions have cosmic consequence. The world is authored, not generated.                                                        |
-| **Dichotomy**   | "The vile and beautiful lands of Damocles."                          | Beauty and horror coexist. Grace and rot are inseparable. The sublime is found in the grotesque.                                                  |
-| **Post-Mortem** | The universe has already ended. Play is archaeological storytelling. | Ruin is the default state. The story is a long chain of loss and degradation, and how mortals endured, grew and loved in spite of the inevitable. |
+| Pillar          | Definition                                                          | Manifestation                                                                                           |
+| --------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Tragedy**     | The world is already dead. The player characters are the last gasp. | Loss is permanent. Victory is temporary. Hope is a choice, not a guarantee.                             |
+| **Myth**        | The setting operates on mythic logic, not simulationist logic.      | Names carry weight. Actions have cosmic consequence. The world is authored, not generated.              |
+| **Dichotomy**   | "The vile and beautiful lands of Damocles."                         | Beauty and horror coexist. Grace and rot are inseparable. The sublime is found in the grotesque.        |
+| **Post-Mortem** | The universe has already ended. This is the aftermath.              | Ruin is the default state. Recovery is possible but costly. The past is more advanced than the present. |
 
 ### 1.3 Tonal Anchors
 
@@ -82,8 +82,6 @@ Realms sourcebook, it fails.
 
 Every piece of content MUST be grounded in Damocles cosmology. Canonical
 reference: `the-great-tale-of-everything.lore.mdx`.
-
-#### 2.1.1 Cosmological Cheat-sheet
 
 | Concept              | Definition                                                                                                                                                                                                |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
