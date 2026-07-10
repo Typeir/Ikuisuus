@@ -13,7 +13,7 @@
 'use client';
 
 import { isMaxRoll, isMinRoll, rollDie } from '@/lib/utils/diceUtils';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './DiceRoll.module.scss';
 
 /**
@@ -205,7 +205,7 @@ export default function DiceRoll({
   specials,
   modifier,
   damageType,
-}: DiceRollProps) {
+}: DiceRollProps): React.Component<DiceRollProps> {
   const [result, setResult] = useState<RollResult | null>(null);
   const [faded, setFaded] = useState(false);
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
