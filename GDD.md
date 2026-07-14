@@ -26,10 +26,10 @@ to at least one of these pillars:
 
 | Pillar          | Definition                                                          | Manifestation                                                                                           |
 | --------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Tragedy**     | The world is already dead. The player characters are the last gasp. | Loss is permanent. Victory is temporary. Hope is a choice, not a guarantee.                             |
+| **Tragedy**     | The world is already dead. The player characters are ghosts of ancient myth that struggled against fate. | Loss is permanent. Victory is temporary. Hope is a choice, not a guarantee.                             |
 | **Myth**        | The setting operates on mythic logic, not simulationist logic.      | Names carry weight. Actions have cosmic consequence. The world is authored, not generated.              |
 | **Dichotomy**   | "The vile and beautiful lands of Damocles."                         | Beauty and horror coexist. Grace and rot are inseparable. The sublime is found in the grotesque.        |
-| **Post-Mortem** | The universe has already ended. This is the aftermath.              | Ruin is the default state. Recovery is possible but costly. The past is more advanced than the present. |
+| **Post-Mortem** | The universe has already ended. This is a tale of its demise.              | The world ended. This is archaeology. Ruin is the default state. Recovery is possible but costly. The further back you go into the past, the more advanced everything is. |
 
 ### 1.3 Tonal Anchors
 
