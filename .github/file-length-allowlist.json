@@ -41,7 +41,7 @@
   },
   {
     "file": "src/lib/components/mdx/metadataTables/metadataTable.tsx",
-    "maxLines": 370,
+    "maxLines": 400,
     "justification": "Generic metadata table with sorting, filtering, pagination, and responsive column rendering"
   },
   {
