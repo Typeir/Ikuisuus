@@ -1,3 +1,5 @@
+@use '@/styles/mixins' as *;
+
 .hamburger {
   @apply transition-all duration-300 ease-in-out;
   filter: drop-shadow(1px 2px 2px var(--color-text));
@@ -115,21 +117,8 @@ html[data-theme='light'] .ssrThemeIcon {
   padding: 1rem 1.5rem;
   overflow-y: auto;
   max-height: 100vh;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-secondary) var(--color-transparent);
 
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--color-transparent);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--color-secondary);
-    border-radius: 3px;
-  }
+  @include scrollbar-thin;
 
   h1 {
     font-size: 1.1rem;

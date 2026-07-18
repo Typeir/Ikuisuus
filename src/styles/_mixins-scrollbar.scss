@@ -1,21 +1,36 @@
 /**
  * @fileoverview Scrollbar Mixins
- * @description Themed thin scrollbar styles for webkit and Firefox.
+ * @description Themed scrollbar styles for Webkit and Firefox.
+ * Use `scrollbar-custom` for full control; `scrollbar-thin` for the common 6px variant.
  *
  * @module styles/mixins-scrollbar
  */
 
-@mixin scrollbar-thin(
-  $thumb: var(--color-secondary),
-  $track: var(--color-transparent),
-  $height: 6px,
-  $thumb-radius: 3px
+/**
+ * Full-control custom scrollbar mixin.
+ *
+ * @param {String}  $width         - Scrollbar width (default: 6px)
+ * @param {String}  $height        - Scrollbar height for horizontal bars (default: $width)
+ * @param {String}  $thumb         - Thumb colour (default: var(--color-secondary))
+ * @param {String}  $track         - Track colour (default: transparent)
+ * @param {String}  $thumb-radius  - Thumb border-radius (default: 3px)
+ * @param {String}  $thumb-border  - Optional thumb border shorthand, e.g. "1px solid var(--color-surface)" (default: null)
+ * @param {String}  $firefox-width - Firefox scrollbar-width keyword: "thin" | "auto" | "none" (default: "thin")
+ */
+@mixin scrollbar-custom(
+  $width: 6px,
+  $height: $width,
+  $thumb: var(--color-surface),
+  $track: transparent,
+  $thumb-radius: 3px,
+  $thumb-border: null,
+  $firefox-width: thin
 ) {
-  scrollbar-width: thin;
+  scrollbar-width: #{$firefox-width};
   scrollbar-color: #{$thumb} #{$track};
 
   &::-webkit-scrollbar {
-    width: 6px;
+    width: #{$width};
     height: #{$height};
   }
 
@@ -26,5 +41,28 @@
   &::-webkit-scrollbar-thumb {
     background-color: #{$thumb};
     border-radius: #{$thumb-radius};
+    @if $thumb-border != null {
+      border: #{$thumb-border};
+    }
   }
+}
+
+/**
+ * Convenience mixin — thin 6px scrollbar with secondary-colour thumb.
+ * Equivalent to `scrollbar-custom()` with defaults.
+ */
+@mixin scrollbar-thin(
+  $thumb: var(--color-surface),
+  $track: transparent,
+  $height: 6px,
+  $thumb-radius: 3px
+) {
+  @include scrollbar-custom(
+    $width: 6px,
+    $height: $height,
+    $thumb: $thumb,
+    $track: $track,
+    $thumb-radius: $thumb-radius,
+    $firefox-width: thin
+  );
 }

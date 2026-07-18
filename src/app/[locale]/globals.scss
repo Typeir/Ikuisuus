@@ -660,6 +660,16 @@ html[data-theme='dark'] {
 html {
   overflow-x: hidden;
   scrollbar-gutter: stable;
+
+  @include scrollbar-custom(
+    $width: 8px,
+    $height: 8px,
+    $thumb: var(--color-surface),
+    $track: var(--color-transparent),
+    $thumb-radius: 4px,
+    $thumb-border: 1px solid var(--color-surface),
+    $firefox-width: auto
+  );
 }
 
 body {
@@ -676,8 +686,6 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   border-color: var(--color-secondary);
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-secondary) var(--color-transparent);
 
   /* Ensure smooth transitions for theme changes */
   transition:
@@ -691,22 +699,6 @@ body {
   /* Core content styling */
   * {
     border-color: var(--color-secondary);
-  }
-
-  /* Webkit scrollbar styling */
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--color-transparent);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--color-accent);
-    border-radius: 4px;
-    border: 1px solid var(--color-surface);
   }
 
   /* Preserve semantic meaning */

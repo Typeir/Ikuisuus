@@ -15,11 +15,11 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 const DEFAULT_VALUES: NoteFields = {
-  background: 'A wandering scholar',
-  personality: 'Curious and cautious',
-  ideals: 'Knowledge is freedom',
-  bonds: 'My mentor guides me',
+  wants: 'To find belonging',
+  fears: 'Rejection by kin',
+  virtues: 'Unwavering loyalty',
   flaws: 'Overconfident',
+  bonds: 'My mentor guides me',
   notes: 'Owes a debt to the guild',
 };
 
@@ -27,11 +27,11 @@ describe('NotesSection', () => {
   it('renders all six note labels', () => {
     render(<NotesSection values={DEFAULT_VALUES} onChange={vi.fn()} />);
     for (const label of [
-      'background',
-      'personality',
-      'ideals',
-      'bonds',
+      'wants',
+      'fears',
+      'virtues',
       'flaws',
+      'bonds',
       'notes',
     ]) {
       expect(screen.getByText(label)).toBeTruthy();
@@ -40,13 +40,13 @@ describe('NotesSection', () => {
 
   it('renders textareas in edit mode', () => {
     render(<NotesSection values={DEFAULT_VALUES} onChange={vi.fn()} />);
-    expect(screen.getByDisplayValue('A wandering scholar')).toBeTruthy();
+    expect(screen.getByDisplayValue('To find belonging')).toBeTruthy();
   });
 
   it('calls onChange when a textarea is edited', async () => {
     const onChange = vi.fn();
     render(<NotesSection values={DEFAULT_VALUES} onChange={onChange} />);
-    const textarea = screen.getByDisplayValue('A wandering scholar');
+    const textarea = screen.getByDisplayValue('To find belonging');
     await userEvent.clear(textarea);
     await userEvent.type(textarea, 'Pirate turned sage');
     expect(onChange).toHaveBeenCalled();
@@ -56,17 +56,17 @@ describe('NotesSection', () => {
     render(
       <NotesSection values={DEFAULT_VALUES} onChange={vi.fn()} readOnly />,
     );
-    expect(screen.getByText('A wandering scholar')).toBeTruthy();
+    expect(screen.getByText('To find belonging')).toBeTruthy();
     expect(screen.queryByRole('textbox')).toBeNull();
   });
 
   it('shows — for empty fields in readOnly mode', () => {
     const empty: NoteFields = {
-      background: '',
-      personality: '',
-      ideals: '',
-      bonds: '',
+      wants: '',
+      fears: '',
+      virtues: '',
       flaws: '',
+      bonds: '',
       notes: '',
     };
     render(<NotesSection values={empty} onChange={vi.fn()} readOnly />);

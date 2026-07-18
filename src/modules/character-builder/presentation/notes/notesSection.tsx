@@ -1,7 +1,7 @@
 /**
  * @fileoverview Notes Section Component
- * @description Renders the character background narrative fields:
- * background, personality, ideals, bonds, flaws, and miscellaneous notes.
+ * @description Renders the character narrative fields:
+ * wants, fears, flaws, virtues, bonds, and miscellaneous notes.
  * Each field is a textarea; changes are batched through a single onChange callback.
  *
  * @module lib/components/characterSheet/notesSection
@@ -21,19 +21,19 @@ import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
  * Shape of the notes data managed by this component.
  *
  * @interface NoteFields
- * @property {string} background - Character background narrative
- * @property {string} personality - Personality traits
- * @property {string} ideals - Ideals
+ * @property {string} wants - What the character wants
+ * @property {string} fears - What the character fears
+ * @property {string} virtues - Character virtues
+ * @property {string} flaws - Character flaws
  * @property {string} bonds - Bonds
- * @property {string} flaws - Flaws
  * @property {string} notes - Miscellaneous notes
  */
 export interface NoteFields {
-  background: string;
-  personality: string;
-  ideals: string;
-  bonds: string;
+  wants: string;
+  fears: string;
+  virtues: string;
   flaws: string;
+  bonds: string;
   notes: string;
 }
 
@@ -53,11 +53,11 @@ export interface NotesSectionProps {
 
 /** Ordered list of note field keys for rendering. */
 const NOTE_FIELD_KEYS: (keyof NoteFields)[] = [
-  'background',
-  'personality',
-  'ideals',
-  'bonds',
+  'wants',
+  'fears',
+  'virtues',
   'flaws',
+  'bonds',
   'notes',
 ];
 

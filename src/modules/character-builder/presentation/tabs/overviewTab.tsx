@@ -15,22 +15,21 @@
 'use client';
 
 import type {
-  CharacterShard,
-  CharacterSheet as CharacterSheetType,
-  VocationEntry,
+    CharacterShard,
+    CharacterSheet as CharacterSheetType,
+    VocationEntry,
 } from '@/lib/types/character';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { getTotalCharacterLevel } from '@/modules/character-builder/lib/utils/characterDerivation';
 import {
-  computeAbilityModifier,
-  computeTierBonus,
+    computeAbilityModifier,
+    computeTierBonus,
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef } from 'react';
 import { NotesSection } from '../notes/notesSection';
 import { AttacksTable } from '../stats/attacksTable';
-import { CombatStatsRow } from '../stats/combatStatsRow';
 import { SkillsTable } from '../stats/skillsTable';
 import { ToolsTable } from '../stats/toolsTable';
 import styles from './tabs.module.scss';
@@ -151,35 +150,12 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
     (fields: Partial<CharacterSheetType>) => onChange(fields),
     [onChange],
   );
-  const handleHitDiceCommit = useCallback(
-    (updatedLog: HitDieRollEntry[], hpDelta: number) => {
-      onChange({
-        hitDiceLog: updatedLog,
-        hpMax: (data.hpMax ?? 0) + hpDelta,
-      });
-    },
-    [onChange, data.hpMax],
-  );
 
   const conMod = computeAbilityModifier(data.abilityScores.con);
 
   return (
     <div className={styles.twoColumns}>
       <div className={styles.column}>
-        <CombatStatsRow
-          hpCurrent={data.hpCurrent}
-          hpMax={data.hpMax}
-          tempHp={data.tempHp}
-          ac={data.ac}
-          initiativeBonus={data.initiativeBonus}
-          speedOverride={data.speedOverride}
-          bloodlineSpeeds={data.bloodlineSpeeds ?? []}
-          tierBonus={data.tierBonus}
-          vocations={data.vocations}
-          hitDiceLog={data.hitDiceLog ?? []}
-          conMod={conMod}
-          onHitDiceCommit={handleHitDiceCommit}
-        />
         <div className={styles.skillsToolsRow}>
           <SkillsTable
             skills={data.skills}
@@ -239,11 +215,11 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 
         <NotesSection
           values={{
-            background: data.background,
-            personality: data.personality,
-            ideals: data.ideals,
-            bonds: data.bonds,
+            wants: data.wants,
+            fears: data.fears,
+            virtues: data.virtues,
             flaws: data.flaws,
+            bonds: data.bonds,
             notes: data.notes,
           }}
           onChange={handleNotesChange}

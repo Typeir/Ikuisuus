@@ -3,6 +3,8 @@
  * @module lib/components/characterSheet/pagePreviewHost.module
  */
 
+@use '@/styles/mixins' as *;
+
 .host {
   position: fixed;
   inset: 0;
@@ -30,21 +32,7 @@
   overflow: hidden;
   height: 100%;
 
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-text-secondary) transparent;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--color-text-secondary);
-    border-radius: 3px;
-  }
+  @include scrollbar-custom($thumb: var(--color-surface));
 }
 
 .loading {

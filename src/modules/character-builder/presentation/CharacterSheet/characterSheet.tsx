@@ -17,9 +17,9 @@
 
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import {
-  ActiveSheetProvider,
-  useActiveSheet,
-  type SheetTabId,
+    ActiveSheetProvider,
+    useActiveSheet,
+    type SheetTabId,
 } from '@/modules/character-builder/application/context/activeSheetContext';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
@@ -28,6 +28,7 @@ import { CharacterSheetHeader } from '../Header/characterSheetHeader';
 import { PagePreviewHost } from '../PagePreview/pagePreviewHost';
 import { PagePreviewProvider } from '../PagePreview/pagePreviewProvider';
 import { AbilityScoreBlock } from '../stats/abilityScoreBlock';
+import { CombatStatChips } from '../stats/combatStatChips';
 import { BibliographyTab } from '../tabs/bibliographyTab';
 import { BloodlineTab } from '../tabs/bloodlineTab';
 import { EquipmentTab } from '../tabs/equipmentTab';
@@ -141,18 +142,21 @@ const CharacterSheetBody: React.FC = () => {
         onChange={patch}
       />
 
-      <section
-        className={styles.abilityRow}
-        aria-label={t('ariaAbilityScores')}>
-        {ABILITY_KEYS.map(({ key, label }) => (
-          <AbilityScoreBlock
-            key={key}
-            label={label}
-            score={data.abilityScores[key]}
-            editing={editing}
-            onChange={(score) => patchAbility(key, score)}
-          />
-        ))}
+      <section className={styles.statsRow} aria-label={t('ariaAbilityScores')}>
+        {/* Left: Ability scores */}
+        <div className={styles.abilityRow}>
+          {ABILITY_KEYS.map(({ key, label }) => (
+            <AbilityScoreBlock
+              key={key}
+              label={label}
+              score={data.abilityScores[key]}
+              editing={editing}
+              onChange={(score) => patchAbility(key, score)}
+            />
+          ))}
+        </div>
+
+        <CombatStatChips data={data} patch={patch} />
       </section>
 
       <div className={styles.tabsSection}>

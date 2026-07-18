@@ -280,6 +280,8 @@ export interface VocationEntry {
  * @property {number|null} speedOverride - Override for movement speed (walk); null = no override
  * @property {string[]} bloodlineSpeeds - Raw speed strings from the selected bloodline (e.g. `["Walk: 30 ft.", "Fly: 60 ft."]`); populated on bloodline selection
  * @property {number} tierBonus - tier bonus, derived from level
+ * @property {number} gritCurrent - Current grit points; spent to enhance rolls
+ * @property {number} gritMax - Maximum grit points; manually set by player
  * @property {HitDieRollEntry[]} hitDiceLog - Per-level hit die roll history; appended on level-up, confirmed entries add to `hpMax`
  * @property {string[]} conditions - Active condition labels
  * @property {CharacterAttack[]} attacks - Attack entries
@@ -289,11 +291,11 @@ export interface VocationEntry {
  * @property {CharacterTool[]} tools - Tool proficiency list
  * @property {EquipmentItem[]} equipment - Equipment items with name, quantity, and weight
  * @property {CharacterCurrency} currency - Carried currency
- * @property {string} background - Background narrative
- * @property {string} personality - Personality traits
- * @property {string} ideals - Ideals
+ * @property {string} wants - What the character wants
+ * @property {string} fears - What the character fears
+ * @property {string} virtues - Character virtues
+ * @property {string} flaws - Character flaws
  * @property {string} bonds - Bonds
- * @property {string} flaws - Flaws
  * @property {string} notes - Miscellaneous notes
  */
 export interface CharacterSheet {
@@ -325,6 +327,9 @@ export interface CharacterSheet {
   speedOverride: number | null;
   bloodlineSpeeds: string[];
   tierBonus: number;
+  gritCurrent: number;
+  gritMax: number;
+  manualStatOverrides: string[];
   hitDiceLog: HitDieRollEntry[];
   conditions: string[];
   attacks: CharacterAttack[];
@@ -339,10 +344,10 @@ export interface CharacterSheet {
   focusedShardSlug: string | null;
   currency: CharacterCurrency;
   coinHoldings: CharacterCoinHoldings[];
-  background: string;
-  personality: string;
-  ideals: string;
-  bonds: string;
+  wants: string;
+  fears: string;
+  virtues: string;
   flaws: string;
+  bonds: string;
   notes: string;
 }

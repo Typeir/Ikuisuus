@@ -117,4 +117,5 @@ li:not(:has(.label)) > .link-item {
 
 .expanded {
   max-height: var(--expanded-height);
+  overflow-x: hidden !important;
 }

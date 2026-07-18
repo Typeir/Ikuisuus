@@ -98,7 +98,7 @@
     margin-right: 0.5rem;
 
     &:hover {
-      background: var(--color-transparent);
+      background: var(--color-transparent) !important;
       opacity: 0.7;
     }
   }
