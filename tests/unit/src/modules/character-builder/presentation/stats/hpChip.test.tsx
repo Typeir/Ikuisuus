@@ -1,18 +1,17 @@
 /**
- * @fileoverview CombatStatChips Unit Tests
- * @description Smoke tests for the combat stat chips component.
+ * @fileoverview HpChip Unit Tests
+ * @description Smoke tests for the HP combat stat chip.
  *
- * @module tests/unit/character-builder/presentation/stats/combatStatChips
+ * @module tests/unit/character-builder/presentation/stats/hpChip
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
-import { CombatStatChips } from '@/modules/character-builder/presentation/stats/combatStatChips';
+import { HpChipMemo } from '@/modules/character-builder/presentation/stats/hpChip';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-/** Minimal character data for smoke testing. */
 const mockData = {
   id: 'test-1',
   name: 'Test',
@@ -67,28 +66,52 @@ const mockData = {
   updatedAt: '2026-01-01',
 } as const;
 
-describe('CombatStatChips', () => {
-  it('renders all six stat chips', () => {
+describe('HpChip', () => {
+  it('renders HP value and label', () => {
     const patch = vi.fn();
-    render(<CombatStatChips data={mockData as any} patch={patch} />);
+    render(
+      <HpChipMemo
+        data={mockData as any}
+        conMod={0}
+        isUnlocked={() => false}
+        toggle={vi.fn()}
+        patch={patch}
+        onHitDiceCommit={vi.fn()}
+      />,
+    );
     expect(screen.getByText('hp')).toBeInTheDocument();
-    expect(screen.getByText('ac')).toBeInTheDocument();
-    expect(screen.getByText('initiative')).toBeInTheDocument();
-    expect(screen.getByText('speed')).toBeInTheDocument();
-    expect(screen.getByText('tierShort')).toBeInTheDocument();
-    expect(screen.getByText('grit')).toBeInTheDocument();
+    expect(screen.getByText('10/10')).toBeInTheDocument();
   });
 
-  it('shows grit value', () => {
+  it('shows temp HP when present', () => {
     const patch = vi.fn();
-    render(<CombatStatChips data={mockData as any} patch={patch} />);
-    expect(screen.getByText('3/5')).toBeInTheDocument();
+    const data = { ...mockData, tempHp: 5 };
+    render(
+      <HpChipMemo
+        data={data as any}
+        conMod={0}
+        isUnlocked={() => false}
+        toggle={vi.fn()}
+        patch={patch}
+        onHitDiceCommit={vi.fn()}
+      />,
+    );
+    expect(screen.getByText(/\+5/)).toBeInTheDocument();
   });
 
-  it('shows lock buttons', () => {
+  it('shows inputs when unlocked', () => {
     const patch = vi.fn();
-    render(<CombatStatChips data={mockData as any} patch={patch} />);
-    const lockButtons = screen.getAllByRole('button', { name: /lock/i });
-    expect(lockButtons.length).toBe(6);
+    render(
+      <HpChipMemo
+        data={mockData as any}
+        conMod={0}
+        isUnlocked={() => true}
+        toggle={vi.fn()}
+        patch={patch}
+        onHitDiceCommit={vi.fn()}
+      />,
+    );
+    expect(screen.getByLabelText('hpCurrent')).toBeInTheDocument();
+    expect(screen.getByLabelText('hpMax')).toBeInTheDocument();
   });
 });

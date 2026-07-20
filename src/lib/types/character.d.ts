@@ -397,5 +397,6 @@ export interface CharacterSheet {
   flaws: string;
   bonds: string;
   notes: string;
+  bibliographyNotes: string;
   abilities: CharacterAbility[];
 }

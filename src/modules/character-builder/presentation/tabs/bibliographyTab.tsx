@@ -49,7 +49,7 @@ export const BibliographyTab: React.FC<BibliographyTabProps> = ({
 
   const handleNotesChange = useCallback(
     (value: string) => {
-      onChange({ notes: value } as Partial<CharacterSheetType>);
+      onChange({ bibliographyNotes: value } as Partial<CharacterSheetType>);
     },
     [onChange],
   );
@@ -59,7 +59,7 @@ export const BibliographyTab: React.FC<BibliographyTabProps> = ({
       <div className={styles.column} style={{ gridColumn: '1 / -1' }}>
         <TextArea
           className={styles.notesArea}
-          value={data.notes ?? ''}
+          value={data.bibliographyNotes ?? ''}
           readOnly={!editing}
           onChange={handleNotesChange}
           placeholder={t('tabBibliography')}

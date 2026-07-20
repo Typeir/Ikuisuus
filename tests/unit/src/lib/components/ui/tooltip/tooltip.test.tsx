@@ -79,8 +79,13 @@ describe('Tooltip', () => {
       expect(screen.getByRole('tooltip')).toBeInTheDocument();
 
       fireEvent.blur(screen.getByRole('button'));
+      // Fire hideDelay (0ms) timeout → sets exiting=true → triggers useEffect
       act(() => {
-        vi.advanceTimersByTime(50);
+        vi.advanceTimersByTime(0);
+      });
+      // Fire EXIT_DURATION (150ms) timeout → sets isVisible=false
+      act(() => {
+        vi.advanceTimersByTime(200);
       });
 
       expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
@@ -165,8 +170,13 @@ describe('Tooltip', () => {
       expect(screen.getByRole('tooltip')).toBeInTheDocument();
 
       fireEvent.mouseLeave(screen.getByRole('button'));
+      // Fire hideDelay (0ms) timeout → sets exiting=true → triggers useEffect
       act(() => {
-        vi.advanceTimersByTime(50);
+        vi.advanceTimersByTime(0);
+      });
+      // Fire EXIT_DURATION (150ms) timeout → sets isVisible=false
+      act(() => {
+        vi.advanceTimersByTime(200);
       });
 
       expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
@@ -202,8 +212,13 @@ describe('Tooltip', () => {
       expect(screen.getByRole('tooltip')).toBeInTheDocument();
 
       fireEvent.blur(screen.getByRole('button'));
+      // Fire hideDelay (0ms) timeout → sets exiting=true → triggers useEffect
       act(() => {
-        vi.advanceTimersByTime(50);
+        vi.advanceTimersByTime(0);
+      });
+      // Fire EXIT_DURATION (150ms) timeout → sets isVisible=false
+      act(() => {
+        vi.advanceTimersByTime(200);
       });
 
       expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();

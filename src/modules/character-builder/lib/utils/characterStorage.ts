@@ -315,6 +315,7 @@ export const createEmptyCharacter = (): CharacterSheet => {
     flaws: '',
     bonds: '',
     notes: '',
+    bibliographyNotes: '',
     abilities: [],
   };
 };
