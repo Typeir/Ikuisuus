@@ -62,6 +62,52 @@ export interface CharacterShard {
 }
 
 /**
+ * Ability type discriminant for character abilities.
+ *
+ * @typedef {'Spell' | 'Feature' | 'Feat' | 'Heirloom' | 'Trinket' | 'Other'} AbilityType
+ */
+export type AbilityType =
+  | 'Spell'
+  | 'Feature'
+  | 'Feat'
+  | 'Heirloom'
+  | 'Trinket'
+  | 'Other';
+
+/**
+ * Provenance marker for imported abilities.
+ *
+ * @typedef {'spells' | 'heirlooms' | 'trinkets' | 'feats'} AbilityImportSource
+ */
+export type AbilityImportSource = 'spells' | 'heirlooms' | 'trinkets' | 'feats';
+
+/**
+ * A single ability card on the character's Abilities tab.
+ * Stores raw MDX for mechanics and description, rendered client-side
+ * via `compileRuntimeSync` + `enrichedComponents`.
+ *
+ * @interface CharacterAbility
+ * @property {string} id - Unique identifier
+ * @property {string} name - Display name
+ * @property {AbilityType} type - Category discriminant
+ * @property {string} mechanics - Raw MDX mechanics block (e.g. spell blockquote stats, custom text)
+ * @property {string} description - Raw MDX description prose
+ * @property {string} [rawSource] - Full raw MDX source fetched at import time; rendered on expand
+ * @property {string} [source] - Slug of the source content item if imported
+ * @property {AbilityImportSource | null} [importedFrom] - Metadata source if imported, null for manual entries
+ */
+export interface CharacterAbility {
+  id: string;
+  name: string;
+  type: AbilityType;
+  mechanics: string;
+  description: string;
+  rawSource?: string;
+  source?: string;
+  importedFrom?: AbilityImportSource | null;
+}
+
+/**
  * A single attack entry on a character sheet.
  *
  * @interface CharacterAttack
@@ -297,6 +343,7 @@ export interface VocationEntry {
  * @property {string} flaws - Character flaws
  * @property {string} bonds - Bonds
  * @property {string} notes - Miscellaneous notes
+ * @property {CharacterAbility[]} abilities - Character abilities (spells, features, feats, etc.)
  */
 export interface CharacterSheet {
   id: string;
@@ -350,4 +397,5 @@ export interface CharacterSheet {
   flaws: string;
   bonds: string;
   notes: string;
+  abilities: CharacterAbility[];
 }

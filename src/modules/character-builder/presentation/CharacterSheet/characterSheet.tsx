@@ -17,9 +17,9 @@
 
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import {
-    ActiveSheetProvider,
-    useActiveSheet,
-    type SheetTabId,
+  ActiveSheetProvider,
+  useActiveSheet,
+  type SheetTabId,
 } from '@/modules/character-builder/application/context/activeSheetContext';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
@@ -29,6 +29,7 @@ import { PagePreviewHost } from '../PagePreview/pagePreviewHost';
 import { PagePreviewProvider } from '../PagePreview/pagePreviewProvider';
 import { AbilityScoreBlock } from '../stats/abilityScoreBlock';
 import { CombatStatChips } from '../stats/combatStatChips';
+import { AbilitiesTab } from '../tabs/abilities/AbilitiesTab';
 import { BibliographyTab } from '../tabs/bibliographyTab';
 import { BloodlineTab } from '../tabs/bloodlineTab';
 import { EquipmentTab } from '../tabs/equipmentTab';
@@ -103,6 +104,7 @@ const CharacterSheetBody: React.FC = () => {
       { value: 'vocation', label: t('tabVocation') },
       { value: 'feats', label: t('tabFeats') },
       { value: 'equipment', label: t('tabEquipment') },
+      { value: 'abilities', label: t('tabAbilities') },
       { value: 'bibliography', label: t('tabBibliography') },
     ],
     [t],
@@ -120,6 +122,8 @@ const CharacterSheetBody: React.FC = () => {
         return <FeatsTab data={data} onChange={patch} />;
       case 'equipment':
         return <EquipmentTab data={data} editing={editing} onChange={patch} />;
+      case 'abilities':
+        return <AbilitiesTab />;
       case 'bibliography':
         return (
           <BibliographyTab data={data} editing={editing} onChange={patch} />
@@ -143,7 +147,6 @@ const CharacterSheetBody: React.FC = () => {
       />
 
       <section className={styles.statsRow} aria-label={t('ariaAbilityScores')}>
-        {/* Left: Ability scores */}
         <div className={styles.abilityRow}>
           {ABILITY_KEYS.map(({ key, label }) => (
             <AbilityScoreBlock

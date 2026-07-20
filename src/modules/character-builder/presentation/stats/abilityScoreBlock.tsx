@@ -19,6 +19,7 @@ import {
     rollAbilityScore,
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { Dices } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import styles from './abilityScoreBlock.module.scss';
 
@@ -57,6 +58,7 @@ export const AbilityScoreBlock: React.FC<AbilityScoreBlockProps> = ({
   editing = false,
   onChange,
 }) => {
+  const t = useTranslations('characterSheet');
   const mod = computeAbilityModifier(score);
   const modStr = mod >= 0 ? `+${mod}` : `${mod}`;
 
@@ -84,8 +86,8 @@ export const AbilityScoreBlock: React.FC<AbilityScoreBlockProps> = ({
           <button
             type='button'
             className={styles.abilityRollBtn}
-            title='Roll 4d6 drop lowest'
-            aria-label={`Roll ${label}`}
+            title={t('abilityRollTitle')}
+            aria-label={t('abilityRollAria', { label })}
             onClick={handleRoll}>
             <Dices size={14} aria-hidden='true' />
           </button>

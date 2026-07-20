@@ -18,6 +18,7 @@ import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character
 import { useEquipmentContext } from '@/modules/character-builder/application/context/equipmentContext';
 import type { CreatureSize } from '@/modules/character-builder/domain/carrying-capacity';
 import { computeCapacity } from '@/modules/character-builder/infrastructure/carrying-capacity';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import styles from './carryingCapacityCalculator.module.scss';
 
@@ -81,6 +82,7 @@ export const CarryingCapacityCalculator: React.FC<
   const [size, setSize] = useState<CreatureSize>('medium');
   const [isQuadruped, setIsQuadruped] = useState(false);
   const [carried, setCarried] = useState(0);
+  const t = useTranslations('characterSheet');
 
   const effectiveCarried = totalWeight > 0 ? totalWeight + carried : carried;
 
@@ -96,7 +98,9 @@ export const CarryingCapacityCalculator: React.FC<
     <div className={styles.calculator}>
       <div className={styles.controls}>
         <label className={styles.controlField}>
-          <span className={styles.controlLabel}>Size</span>
+          <span className={styles.controlLabel}>
+            {t('carryingCapacitySize')}
+          </span>
           <select
             className={styles.select}
             value={size}
@@ -109,7 +113,9 @@ export const CarryingCapacityCalculator: React.FC<
           </select>
         </label>
         <label className={styles.controlField}>
-          <span className={styles.controlLabel}>Quadruped</span>
+          <span className={styles.controlLabel}>
+            {t('carryingCapacityQuadruped')}
+          </span>
           <input
             type='checkbox'
             checked={isQuadruped}
@@ -117,22 +123,33 @@ export const CarryingCapacityCalculator: React.FC<
           />
         </label>
         <label className={styles.controlField}>
-          <span className={styles.controlLabel}>Carried (lb)</span>
+          <span className={styles.controlLabel}>
+            {t('carryingCapacityCarried')}
+          </span>
           <NumericInput
             value={carried}
             min={0}
             size='sm'
             className={styles.numberInput}
-            ariaLabel='Carried weight in pounds'
+            ariaLabel={t('carryingCapacityCarriedAria')}
             onChange={(v) => setCarried(Math.max(0, v ?? 0))}
           />
         </label>
       </div>
 
       <div className={styles.thresholds}>
-        <Chip label={`Light ≤ ${thresholds.light} lb`} variant='success' />
-        <Chip label={`Medium ≤ ${thresholds.medium} lb`} variant='warning' />
-        <Chip label={`Heavy ≤ ${thresholds.heavy} lb`} variant='danger' />
+        <Chip
+          label={t('carryingCapacityLight', { weight: thresholds.light })}
+          variant='success'
+        />
+        <Chip
+          label={t('carryingCapacityMedium', { weight: thresholds.medium })}
+          variant='warning'
+        />
+        <Chip
+          label={t('carryingCapacityHeavy', { weight: thresholds.heavy })}
+          variant='danger'
+        />
       </div>
 
       <div className={styles.bar}>

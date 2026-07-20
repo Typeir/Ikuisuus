@@ -14,6 +14,7 @@
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { rollDie } from '@/lib/utils/diceUtils';
 import { DropdownPanel } from '@/modules/character-builder/presentation/atoms/dropdownPanel';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { HpRollerGroup } from './hpRollerGroup';
 import styles from './hpRollerPanel.module.scss';
@@ -53,6 +54,7 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
   conMod,
   onCommit,
 }) => {
+  const t = useTranslations('characterSheet');
   const [localLog, setLocalLog] = useState<HitDieRollEntry[]>(hitDiceLog);
   const [setAllMode, setSetAllMode] = useState<Set<string>>(new Set());
   const [manualValues, setManualValues] = useState<Map<string, number>>(
@@ -78,36 +80,66 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
     );
   }, []);
 
-  const handleRollAll = useCallback((vocSlug: string) => {
-    setLocalLog((p) =>
-      p.map((e) =>
-        e.vocSlug === vocSlug && !e.addedToHp
-          ? { ...e, result: rollDie(parseInt(e.dieType, 10) || 1) }
-          : e,
-      ),
-    );
-  }, []);
+  const handleRollAll = useCallback(
+    (vocSlug: string) => {
+      setLocalLog((p) => {
+        let hpDelta = 0;
+        const updated = p.map((e) => {
+          if (e.vocSlug !== vocSlug) return e;
+          if (e.addedToHp) hpDelta -= (e.result ?? 0) + conMod;
+          return {
+            ...e,
+            result: rollDie(parseInt(e.dieType, 10) || 1),
+            addedToHp: false,
+          };
+        });
+        if (hpDelta !== 0) onCommit(updated, hpDelta);
+        return updated;
+      });
+    },
+    [conMod, onCommit],
+  );
 
   const handleAverageAll = useCallback(
     (vocSlug: string) => {
-      setLocalLog((p) =>
-        p.map((e) =>
-          e.vocSlug === vocSlug && !e.addedToHp
-            ? { ...e, result: getAverage(e.dieType) }
-            : e,
-        ),
-      );
+      setLocalLog((p) => {
+        let hpDelta = 0;
+        const updated = p.map((e) => {
+          if (e.vocSlug !== vocSlug) return e;
+          if (e.addedToHp) hpDelta -= (e.result ?? 0) + conMod;
+          return { ...e, result: getAverage(e.dieType), addedToHp: false };
+        });
+        if (hpDelta !== 0) onCommit(updated, hpDelta);
+        return updated;
+      });
     },
-    [getAverage],
+    [conMod, getAverage, onCommit],
   );
 
-  const handleSetAll = useCallback((vocSlug: string) => {
-    setSetAllMode((p) => {
-      const n = new Set(p);
-      n.has(vocSlug) ? n.delete(vocSlug) : n.add(vocSlug);
-      return n;
-    });
-  }, []);
+  const handleSetAll = useCallback(
+    (vocSlug: string) => {
+      setSetAllMode((p) => {
+        const n = new Set(p);
+        if (n.has(vocSlug)) {
+          n.delete(vocSlug);
+        } else {
+          n.add(vocSlug);
+          setLocalLog((prev) => {
+            let hpDelta = 0;
+            const updated = prev.map((e) => {
+              if (e.vocSlug !== vocSlug || !e.addedToHp) return e;
+              hpDelta -= (e.result ?? 0) + conMod;
+              return { ...e, addedToHp: false };
+            });
+            if (hpDelta !== 0) onCommit(updated, hpDelta);
+            return updated;
+          });
+        }
+        return n;
+      });
+    },
+    [conMod, onCommit],
+  );
 
   const handleManualChange = useCallback(
     (entryId: string, value: number | undefined) => {
@@ -186,7 +218,7 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
 
   return (
     <DropdownPanel
-      triggerLabel='Open hit dice roller'
+      triggerLabel={t('hpRollerTriggerLabel')}
       badge={
         unrolled > 0 ? (
           <span className={styles.badge}>{unrolled}</span>
@@ -195,10 +227,10 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
       triggerClassName={styles.trigger}
       panelClassName={styles.panel}
       panelRole='dialog'
-      panelLabel='Hit dice roller'>
-      <div className={styles.panelHeader}>Hit Dice</div>
+      panelLabel={t('hpRollerPanelLabel')}>
+      <div className={styles.panelHeader}>{t('hpRollerPanelHeader')}</div>
       {groups.length === 0 && (
-        <p className={styles.empty}>No hit dice tracked yet.</p>
+        <p className={styles.empty}>{t('hpRollerEmpty')}</p>
       )}
       {groups.map((g) => (
         <HpRollerGroup

@@ -79,7 +79,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
   return (
     <ResizablePane
       id='builder.feats'
-      ariaLabel='Feats'
+      ariaLabel={t('tabFeats')}
       left={
         <div className={styles.column}>
           {editing && selectedFeats.length > 0 && (

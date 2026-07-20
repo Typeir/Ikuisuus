@@ -1,19 +1,21 @@
 /**
  * @fileoverview Virtualized list renderer for sidebar folders with many children.
- * Renders a `List` from `react-window` instead of the full recursive
+ * Uses the shared `VirtualList` atom instead of the full recursive
  * `Sidebar` tree when the child count exceeds `VIRTUALIZE_THRESHOLD`.
  *
  * @module lib/components/sidebar/VirtualizedSidebar
  * @author Typeir
- * @version 2.0.0
+ * @version 3.0.0
  * @since 2.1.0
  */
 'use client';
 
+import { VirtualList } from '@/lib/components/ui/virtualList/virtualList';
 import type { LayoutItem } from '@/modules/navigation-sidebar/domain/types';
-import type { CSSProperties } from 'react';
-import { List } from 'react-window';
-import { Sidebar } from './sidebar';
+import SidebarActivePathStore from '@/modules/navigation-sidebar/infrastructure/store/sidebarActivePath';
+import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights';
+import { useMemo, useState } from 'react';
+import { SidebarItem } from './SidebarItem';
 
 /**
  * Number of items in a folder that triggers virtualization.
@@ -48,7 +50,7 @@ const MAX_WINDOW_HEIGHT = 600;
  * @interface VirtualizedSidebarProps
  * @property {LayoutItem[]} items - Folder children to virtualize.
  * @property {() => void} [onNavigate] - Navigation callback forwarded to each row.
- * @property {boolean} [collapseSiblings=false] - Forwarded to each row's `Sidebar`.
+ * @property {boolean} [collapseSiblings=false] - Whether sibling folders collapse.
  */
 export interface VirtualizedSidebarProps {
   items: LayoutItem[];
@@ -57,61 +59,11 @@ export interface VirtualizedSidebarProps {
 }
 
 /**
- * Extra props forwarded to each row component via `rowProps`.
- *
- * @interface VirtualRowProps
- * @property {LayoutItem[]} items - Full item list; the row renders `items[index]`.
- * @property {() => void} [onNavigate] - Navigation callback.
- * @property {boolean} collapseSiblings - Whether sibling folders collapse.
- */
-interface VirtualRowProps {
-  items: LayoutItem[];
-  onNavigate?: () => void;
-  collapseSiblings: boolean;
-}
-
-/**
- * Row renderer passed to `List` via `rowComponent`.
- * Renders a single `LayoutItem` via the recursive `Sidebar` component so that
- * nested folders remain fully expandable within the virtualized window.
- *
- * @param {object} props - react-window v2 row props combined with `VirtualRowProps`.
- * @returns {JSX.Element} A single sidebar row wrapped in a positioned container.
- */
-const VirtualRow = ({
-  index,
-  style,
-  ariaAttributes,
-  items,
-  onNavigate,
-  collapseSiblings,
-}: {
-  ariaAttributes: {
-    'aria-posinset': number;
-    'aria-setsize': number;
-    role: 'listitem';
-  };
-  index: number;
-  style: CSSProperties;
-} & VirtualRowProps): JSX.Element => (
-  <div style={style} {...ariaAttributes}>
-    <Sidebar
-      items={[items[index]]}
-      onNavigate={onNavigate}
-      collapseSiblings={collapseSiblings}
-    />
-  </div>
-);
-
-/**
  * Renders a folder's children as a virtualized list when the item count is high.
- * Uses a fixed-size row of `ITEM_ROW_HEIGHT` px and caps the visible window at
- * `MAX_WINDOW_HEIGHT` px, showing a scrollable list beyond that.
+ * Each row renders a `SidebarItem` directly — one shared `<ul>` via `VirtualList`,
+ * no per-row `<ul>` wrapper.
  *
  * @param {VirtualizedSidebarProps} props - Component props.
- * @param {LayoutItem[]} props.items - Folder children to render virtually.
- * @param {() => void=} props.onNavigate - Optional navigation callback.
- * @param {boolean} [props.collapseSiblings=false] - Whether sibling folders collapse.
  * @returns {JSX.Element} A virtualized sidebar list.
  */
 const VirtualizedSidebar = ({
@@ -119,19 +71,27 @@ const VirtualizedSidebar = ({
   onNavigate,
   collapseSiblings = false,
 }: VirtualizedSidebarProps): JSX.Element => {
+  const [pathStore] = useState(() => new SidebarActivePathStore());
+  const layoutItems = useMemo(() => calculateHeights(items), [items]);
   const windowHeight = Math.min(
     items.length * ITEM_ROW_HEIGHT,
     MAX_WINDOW_HEIGHT,
   );
 
   return (
-    <List
-      rowCount={items.length}
+    <VirtualList
+      items={layoutItems}
       rowHeight={ITEM_ROW_HEIGHT}
-      rowComponent={VirtualRow}
-      rowProps={{ items, onNavigate, collapseSiblings }}
-      style={{ height: windowHeight }}
-      defaultHeight={MAX_WINDOW_HEIGHT}
+      maxHeight={windowHeight}
+      rowElement='div'
+      renderRow={(item) => (
+        <SidebarItem
+          item={item}
+          onNavigate={onNavigate}
+          collapseSiblings={collapseSiblings}
+          pathStore={pathStore}
+        />
+      )}
     />
   );
 };

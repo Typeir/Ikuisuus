@@ -170,7 +170,7 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
                     className={styles.systemNameInput}
                     defaultValue={h.systemName}
                     onBlur={(e) => renameSystem(h.systemName, e.target.value)}
-                    aria-label='Currency system name'
+                    aria-label={t('systemNameAria')}
                   />
                 ) : (
                   <h4 className={styles.systemName}>{h.systemName}</h4>
@@ -184,7 +184,9 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
                     type='button'
                     className={styles.iconBtn}
                     onClick={() => removeSystem(h.systemName)}
-                    aria-label={`Remove ${h.systemName}`}>
+                    aria-label={t('removeAria', {
+                      name: h.systemName,
+                    })}>
                     <X size={12} aria-hidden='true' />
                   </button>
                 )}
@@ -204,7 +206,7 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
                               e.target.value,
                             )
                           }
-                          aria-label='Denomination name'
+                          aria-label={t('denominationNameAria')}
                         />
                         <NumericInput
                           className={styles.multiplierInput}
@@ -213,7 +215,7 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
                           step={0.01}
                           allowDecimals
                           size='sm'
-                          ariaLabel='Multiplier'
+                          ariaLabel={t('multiplierAria')}
                           onChange={(v) =>
                             updateMultiplier(h.systemName, coin.name, v ?? 1)
                           }
@@ -224,7 +226,9 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
                           onClick={() =>
                             removeDenomination(h.systemName, coin.name)
                           }
-                          aria-label={`Remove ${coin.name}`}>
+                          aria-label={t('removeAria', {
+                            name: coin.name,
+                          })}>
                           <X size={10} aria-hidden='true' />
                         </button>
                       </>
@@ -266,7 +270,7 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
           type='button'
           className={styles.iconBtn}
           onClick={addSystem}
-          aria-label='Add currency system'>
+          aria-label={t('addSystemAria')}>
           <Plus size={14} aria-hidden='true' />
           <span>{t('addSystem')}</span>
         </button>

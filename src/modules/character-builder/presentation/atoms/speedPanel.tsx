@@ -16,6 +16,7 @@
 'use client';
 
 import { DropdownPanel } from '@/modules/character-builder/presentation/atoms/dropdownPanel';
+import { useTranslations } from 'next-intl';
 import styles from './speedPanel.module.scss';
 
 /**
@@ -38,6 +39,7 @@ export interface SpeedPanelProps {
  * @returns {JSX.Element | null} Rendered wrapper, or null when no speeds are available
  */
 export const SpeedPanel: React.FC<SpeedPanelProps> = ({ bloodlineSpeeds }) => {
+  const t = useTranslations('characterSheet');
   if (bloodlineSpeeds.length === 0) return null;
 
   const hasMultiple = bloodlineSpeeds.length > 1;
@@ -50,12 +52,12 @@ export const SpeedPanel: React.FC<SpeedPanelProps> = ({ bloodlineSpeeds }) => {
 
   return (
     <DropdownPanel
-      triggerLabel='Show all movement speeds'
+      triggerLabel={t('speedPanelTrigger')}
       badge={badge}
       triggerClassName={styles.trigger}
       panelClassName={styles.panel}
       panelRole='list'
-      panelLabel='Movement speeds'>
+      panelLabel={t('speedPanelLabel')}>
       {bloodlineSpeeds.map((speed, i) => (
         <div key={i} className={styles.speedRow} role='listitem'>
           {speed}

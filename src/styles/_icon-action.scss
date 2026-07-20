@@ -1,0 +1,23 @@
+/**
+ * @fileoverview Global Icon Action Utilities
+ * @description Canonical icon-as-button classes. Imported once in root layout.
+ *
+ * @module styles/icon-action
+ */
+
+@use 'mixins' as *;
+
+/** Transparent icon button — default. */
+.iconAction {
+  @include icon-transparent;
+}
+
+/** Rounded pill icon button — solid background on hover. */
+.iconActionRounded {
+  @include icon-rounded;
+}
+
+/** Segmented tab — text underline + glow on hover. */
+.tabUnderline {
+  @include tab-underline;
+}

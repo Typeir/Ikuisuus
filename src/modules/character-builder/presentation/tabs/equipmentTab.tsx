@@ -16,11 +16,12 @@ import { NumericInput } from '@/lib/components/ui/numericInput';
 import { TextArea } from '@/lib/components/ui/textArea';
 import { TextInput } from '@/lib/components/ui/textInput';
 import type {
-    CharacterSheet as CharacterSheetType,
-    EquipmentItem,
+  CharacterSheet as CharacterSheetType,
+  EquipmentItem,
 } from '@/lib/types/character';
 import { EquipmentProvider } from '@/modules/character-builder/application/context/equipmentContext';
 import { Plus, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { CarryingCapacityCalculator } from '../CarryingCapacity/carryingCapacityCalculator';
 import { CoinPouch } from '../CarryingCapacity/coinPouch';
@@ -54,6 +55,7 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
   editing,
   onChange,
 }) => {
+  const t = useTranslations('characterSheet');
   const equipmentNotes = data.equipmentNotes ?? '';
 
   const items = useMemo(
@@ -104,13 +106,19 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
     <EquipmentProvider value={{ totalWeight, totalCount: items.length }}>
       <div className={styles.twoColumns}>
         <div className={styles.column}>
-          <h3 className={styles.sectionTitle}>Equipment</h3>
+          <h3 className={styles.sectionTitle}>{t('equipmentTitle')}</h3>
           <table className={styles.equipmentTable}>
             <thead>
               <tr>
-                <th className={styles.equipmentColName}>Name</th>
-                <th className={styles.equipmentColNum}>Units</th>
-                <th className={styles.equipmentColNum}>Weight (lb)</th>
+                <th className={styles.equipmentColName}>
+                  {t('equipmentColName')}
+                </th>
+                <th className={styles.equipmentColNum}>
+                  {t('equipmentColUnits')}
+                </th>
+                <th className={styles.equipmentColNum}>
+                  {t('equipmentColWeight')}
+                </th>
                 {editing && <th className={styles.equipmentColAction} />}
               </tr>
             </thead>
@@ -153,7 +161,9 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
                         type='button'
                         className={styles.iconBtn}
                         onClick={() => removeRow(idx)}
-                        aria-label={`Remove ${item.name || 'item'}`}>
+                        aria-label={t('equipmentRemoveItemAria', {
+                          name: item.name || 'item',
+                        })}>
                         <X size={12} aria-hidden='true' />
                       </button>
                     </td>
@@ -167,13 +177,13 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
               type='button'
               className={styles.iconBtn}
               onClick={addRow}
-              aria-label='Add equipment row'
+              aria-label={t('equipmentAddRowAria')}
               style={{ marginTop: '0.4rem' }}>
               <Plus size={14} aria-hidden='true' />
             </button>
           )}
 
-          <h3 className={styles.sectionTitle}>Notes</h3>
+          <h3 className={styles.sectionTitle}>{t('equipmentNotesTitle')}</h3>
           <TextArea
             className={styles.notesArea}
             value={equipmentNotes}
@@ -183,17 +193,21 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
         </div>
 
         <div className={styles.column}>
-          <h3 className={styles.sectionTitle}>Weapons / Attacks</h3>
+          <h3 className={styles.sectionTitle}>{t('equipmentWeaponsTitle')}</h3>
           <AttacksTable
             attacks={data.attacks}
             onChange={handleAttacksChange}
             readOnly={!editing}
           />
 
-          <h3 className={styles.sectionTitle}>Coin Pouch</h3>
+          <h3 className={styles.sectionTitle}>
+            {t('equipmentCoinPouchTitle')}
+          </h3>
           <CoinPouch data={data} editing={editing} onChange={onChange} />
 
-          <h3 className={styles.sectionTitle}>Carrying Capacity</h3>
+          <h3 className={styles.sectionTitle}>
+            {t('equipmentCarryingCapacityTitle')}
+          </h3>
           <CarryingCapacityCalculator data={data} />
         </div>
       </div>

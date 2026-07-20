@@ -30,7 +30,8 @@ export type SheetTabId =
   | 'vocation'
   | 'equipment'
   | 'feats'
-  | 'bibliography';
+  | 'bibliography'
+  | 'abilities';
 
 /**
  * Internal reducer state.

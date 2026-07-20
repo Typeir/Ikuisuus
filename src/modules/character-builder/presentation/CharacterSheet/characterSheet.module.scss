@@ -7,6 +7,7 @@
 
 @use '@/styles/mixins-button' as *;
 @use '@/styles/mixins-focus' as *;
+@use '@/styles/mixins-icon' as *;
 
 /** =====================================================================
  * Character Sheet Layout
@@ -126,21 +127,11 @@
   position: absolute;
   top: 2px;
   right: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include icon-transparent;
   width: 1.15rem;
   height: 1.15rem;
-  border: none;
   border-radius: 2px;
-  background: transparent;
-  color: var(--color-secondary);
-  cursor: pointer;
-  padding: 0;
   opacity: 0.5;
-  transition:
-    opacity 0.15s ease,
-    color 0.15s ease;
 
   &:hover {
     opacity: 1;

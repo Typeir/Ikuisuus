@@ -17,7 +17,7 @@ import type {
     CharacterSpellSlot,
     CharacterTool,
     EquipmentItem,
-    VocationEntry,
+    VocationEntry
 } from '@/lib/types/character';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 
@@ -315,5 +315,6 @@ export const createEmptyCharacter = (): CharacterSheet => {
     flaws: '',
     bonds: '',
     notes: '',
+    abilities: [],
   };
 };

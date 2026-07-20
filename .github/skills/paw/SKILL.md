@@ -20,7 +20,7 @@ every edit. Blocks until violations fixed. Real-time linter at agent level.
   hooks/              ← Defaults (→ .paw/ on sync)
   templates/          ← Synced (skills, agents, prompts, tsconfig)
   adapters/           ← Surface adapters
-  cli/                ← Commands (status, violations, gates, state, db, severity-override, set-password, sync, install)
+  cli/                ← Commands (status, violations, gates, unblock)
   docs/               ← Documentation
 
 .paw/                 ← Project install (gitignored)
@@ -56,8 +56,7 @@ every edit. Blocks until violations fixed. Real-time linter at agent level.
 
 **5. Indirect-fix unblocks all.** If violation marked `indirectFix: true` (fix needs new file, not current), gates allow tools through to create fix file.
 
-**6. Last resort: unblock.** User runs `npm run paw -- violations prune` (password). Clears all violations.
-**7. Severity override.** `npm run paw -- severity-override set warning` downgrades all gates to non-blocking. `set info` suppresses entirely. Password-protected. Use sparingly.
+**6. Last resort: unblock.** User runs `npm run paw:unblock` (password). Clears all violations.
 
 ## .pawignore
 
@@ -92,26 +91,12 @@ Built-in (no .pawignore needed): `.github/PAW/`, `.paw/`
 
 | Cmd | Purpose |
 | --- | --- |
-| paw install | Setup (deps, compile, sync, init DB) |
-| paw status | Surface config + hook registration |
-| paw violations ls | List unresolved violations |
-| paw violations prune | Clear all violations (password) |
-| paw violations resolve <f> | Resolve violations for file |
-| paw gates ls | List discovered gates |
-| paw gates run | Run all gates |
-| paw state | Show enforcement state |
-| paw state enable | Enable enforcement |
-| paw state disable | Disable enforcement (password) |
-| paw severity-override | Show severity override |
-| paw severity-override set <l> | Override all gate severities (password) |
-| paw severity-override clear | Remove override (password) |
-| paw db stats | Table row counts |
-| paw db reset | Drop/recreate DB (password) |
-| paw set-password | Set admin password |
-| paw sync | Regenerate hooks.json |
-| paw help | This help text |
-
-All commands route through the single `paw` passthrough: `npm run paw -- <cmd>`.
+| paw:install | Setup (deps, compile, sync, init DB) |
+| paw:status | Status + violations |
+| paw:violations | List violations |
+| paw:gates | List gates |
+| paw:gates run | Run all |
+| paw:unblock | Clear all (password) |
 
 ## Extend PAW
 

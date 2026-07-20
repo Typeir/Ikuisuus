@@ -15,15 +15,15 @@
 'use client';
 
 import type {
-    CharacterShard,
-    CharacterSheet as CharacterSheetType,
-    VocationEntry,
+  CharacterShard,
+  CharacterSheet as CharacterSheetType,
+  VocationEntry,
 } from '@/lib/types/character';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { getTotalCharacterLevel } from '@/modules/character-builder/lib/utils/characterDerivation';
 import {
-    computeAbilityModifier,
-    computeTierBonus,
+  computeAbilityModifier,
+  computeTierBonus,
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
@@ -67,9 +67,14 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   const boonShards: CharacterShard[] = data.selectedBoons;
   const featShards: CharacterShard[] = data.selectedFeats ?? [];
   const totalLevel = getTotalCharacterLevel(data);
-  const featureShards: CharacterShard[] = data.vocations
-    .flatMap((v) => [...v.vocationFeatures, ...v.specializationFeatures])
-    .filter((s) => s.level === undefined || s.level <= totalLevel);
+  const featureShards: CharacterShard[] = data.vocations.flatMap((v) => [
+    ...v.vocationFeatures.filter(
+      (s) => s.level === undefined || s.level <= v.level,
+    ),
+    ...v.specializationFeatures.filter(
+      (s) => s.level === undefined || s.level <= v.level,
+    ),
+  ]);
   const prevVocationsRef = useRef<VocationEntry[]>(data.vocations);
 
   useEffect(() => {

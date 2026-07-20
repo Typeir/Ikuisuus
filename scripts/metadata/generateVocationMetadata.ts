@@ -144,10 +144,14 @@ function parseProficiencies(value: string): string[] {
 /**
  * Parses the vocation feature table and extracts feature entries.
  *
+ * Resolves the "Features" column by header name (handles "Features",
+ * "Vocation Features", "Class Features") rather than assuming a fixed
+ * column index. Falls back to column 2 when no header matches.
+ *
  * @param {string} raw - Full MDX file content
  * @returns {{ features: Array<{ level: number; name: string }>; hasSpellSlots: boolean; headers: string[] }}
  */
-function parseFeatureTable(raw: string): {
+export function parseFeatureTable(raw: string): {
   features: Array<{ level: number; name: string }>;
   hasSpellSlots: boolean;
   headers: string[];
@@ -157,6 +161,8 @@ function parseFeatureTable(raw: string): {
   let headers: string[] = [];
   let inTable = false;
   let headerParsed = false;
+  /** Column index of the "Features" / "Vocation Features" header */
+  let featureColIdx = -1;
 
   for (const line of lines) {
     if (!inTable && TABLE.featuresHeader.test(line)) {
@@ -165,6 +171,10 @@ function parseFeatureTable(raw: string): {
         .split('|')
         .map((c) => c.trim())
         .filter(Boolean);
+      featureColIdx = headers.findIndex((h) => TABLE.featuresColumn.test(h));
+      if (featureColIdx < 0) {
+        featureColIdx = 2;
+      }
       continue;
     }
     if (inTable && TABLE.separator.test(line)) {
@@ -178,9 +188,9 @@ function parseFeatureTable(raw: string): {
         .filter(Boolean);
 
       const level = parseInt(cells[0], 10);
-      if (isNaN(level) || !cells[2]) continue;
+      if (isNaN(level) || !cells[featureColIdx]) continue;
 
-      const featureCell = cells[2]
+      const featureCell = cells[featureColIdx]
         .replace(TABLE.markdownLink, '$1')
         .replace(TEXT.boldStrip, '');
 

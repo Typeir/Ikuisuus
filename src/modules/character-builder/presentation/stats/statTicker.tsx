@@ -17,6 +17,7 @@
 
 import type { CharacterSheet } from '@/lib/types/character';
 import { computeAbilityModifier } from '@/modules/character-builder/lib/utils/characterStorage';
+import { useTranslations } from 'next-intl';
 import styles from '../CharacterSheet/characterSheet.module.scss';
 
 /**
@@ -62,12 +63,13 @@ function buildTickerText(character: CharacterSheet): string {
  * @returns {JSX.Element} Rendered stat ticker
  */
 export const StatTicker: React.FC<StatTickerProps> = ({ character }) => {
+  const t = useTranslations('characterSheet');
   const text = buildTickerText(character);
 
   return (
     <div
       className={styles.statTicker}
-      aria-label='Character stat ticker'
+      aria-label={t('statTickerAria')}
       aria-live='off'>
       <div className={styles.statTickerTrack}>
         <span aria-hidden='true'>{text}</span>

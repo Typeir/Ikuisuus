@@ -14,9 +14,25 @@
 
 import { GenericEmbedPanel } from '@/lib/components/ui/embedPanel/GenericEmbedPanel';
 import { useLocale } from 'next-intl';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './pagePreviewHost.module.scss';
 import { usePagePreview } from './pagePreviewProvider';
+
+const pathCache = new Map<string, string>();
+
+async function fetchPath(kind: string, slug: string): Promise<string> {
+  const key = `${kind}::${slug}`;
+  if (pathCache.has(key)) return pathCache.get(key)!;
+  const res = await fetch('/api/resolve-preview-path', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ kind, slug }),
+  });
+  if (!res.ok) return `${kind}/${slug}`;
+  const data = await res.json();
+  pathCache.set(key, data.path);
+  return data.path;
+}
 
 /**
  * Props for `<PagePreviewHost>`.
@@ -59,11 +75,27 @@ export const PagePreviewHost: React.FC<PagePreviewHostProps> = () => {
     return functions;
   }, [previews]);
 
+  const [resolvedPaths, setResolvedPaths] = useState<Record<string, string>>(
+    {},
+  );
+
+  useEffect(() => {
+    previews.forEach((entry) => {
+      const key = `${entry.kind}::${entry.slug}`;
+      if (!resolvedPaths[key]) {
+        fetchPath(entry.kind, entry.slug).then((path) => {
+          setResolvedPaths((prev) => ({ ...prev, [key]: path }));
+        });
+      }
+    });
+  }, [previews]);
+
   return (
     <div className={styles.host} aria-hidden={previews.length === 0}>
       {previews.map((entry) => {
         const key = `${entry.kind}::${entry.slug}`;
-        const contentPath = `character-creation/${entry.kind}/${entry.slug}`;
+        const contentPath = resolvedPaths[key];
+        if (!contentPath) return null;
 
         return (
           <GenericEmbedPanel

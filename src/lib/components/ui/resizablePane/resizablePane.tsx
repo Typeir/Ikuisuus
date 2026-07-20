@@ -17,15 +17,16 @@
 
 'use client';
 
+import { DragBar } from '@/lib/components/ui/dragBar/dragBar';
 import {
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-    type CSSProperties,
-    type KeyboardEvent,
-    type PointerEvent,
-    type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
 } from 'react';
 import styles from './resizablePane.module.scss';
 
@@ -246,19 +247,13 @@ export const ResizablePane: React.FC<ResizablePaneProps> = ({
       aria-label={ariaLabel}
       data-pane-id={id}>
       <div className={styles.leftPane}>{left}</div>
-      <div
-        className={styles.handle}
-        role='separator'
-        tabIndex={0}
-        aria-orientation='vertical'
-        aria-valuenow={valueNow}
-        aria-valuemin={Math.round(minLeftPercent)}
-        aria-valuemax={Math.round(maxLeftPercent)}
-        aria-label='Resize panes'
+      <DragBar
+        valueNow={valueNow}
+        valueMin={Math.round(minLeftPercent)}
+        valueMax={Math.round(maxLeftPercent)}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
         onKeyDown={handleKeyDown}
       />
       <div className={styles.rightPane}>{right}</div>

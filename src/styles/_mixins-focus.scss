@@ -22,6 +22,11 @@
   filter: drop-shadow(0px 0px #{$size} $color);
 }
 
+/** Text-only glow — no background, no filter. */
+@mixin text-glow($size: 6px, $color: var(--color-accent)) {
+  text-shadow: 0 0 #{$size} $color;
+}
+
 @mixin focus-accent-outline($offset: 2px) {
   &:focus {
     outline: 2px solid var(--color-accent);

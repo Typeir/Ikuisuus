@@ -1,8 +1,10 @@
 /**
  * File Length Check
  *
- * @fileoverview Scans source files for those exceeding 250 lines and reports them
- * as critical findings. Outputs JSON-structured results to stdout.
+ * @fileoverview Scans source files for those exceeding configured line-count
+ * thresholds and reports them as critical findings. Thresholds are resolved
+ * via a priority chain: per-file allowlist → per-extension default → hard
+ * default (250). Outputs JSON-structured results to stdout.
  *
  * @module .github/scripts/check-file-length
  */
@@ -29,6 +31,11 @@ const EXCLUDED_PATTERNS = [
 ];
 
 const ALLOWLIST_PATH = path.join(ROOT, '.github', 'file-length-allowlist.json');
+const FILE_SIZE_DEFAULTS_PATH = path.join(
+  ROOT,
+  '.github',
+  'file-size-defaults.json',
+);
 
 /**
  * A single allowlist entry that grants an individual file a custom line-count cap.
@@ -40,6 +47,21 @@ const ALLOWLIST_PATH = path.join(ROOT, '.github', 'file-length-allowlist.json');
  */
 interface AllowlistEntry {
   file: string;
+  maxLines: number;
+  justification: string;
+}
+
+/**
+ * A single per-extension default entry that sets a custom line-count cap for
+ * all files matching a given extension.
+ *
+ * @interface ExtensionDefault
+ * @property {string} extension - File extension including leading dot (e.g. ".scss")
+ * @property {number} maxLines - Custom maximum comment-pruned line count for this extension
+ * @property {string} justification - Human-readable reason for the extension-specific cap
+ */
+interface ExtensionDefault {
+  extension: string;
   maxLines: number;
   justification: string;
 }
@@ -60,6 +82,52 @@ async function loadAllowlist(
   } catch {
     return new Map();
   }
+}
+
+/**
+ * Load per-extension default line-count caps from the file-size-defaults
+ * config. Falls back to an empty map if the file is missing or malformed.
+ *
+ * @param {string} [defaultsPath] - Path to the file-size-defaults JSON file
+ * @returns Map of extension (with leading dot) → custom max lines
+ */
+async function loadExtensionDefaults(
+  defaultsPath?: string,
+): Promise<Map<string, number>> {
+  try {
+    const raw = await fs.readFile(
+      defaultsPath ?? FILE_SIZE_DEFAULTS_PATH,
+      'utf-8',
+    );
+    const entries = JSON.parse(raw) as ExtensionDefault[];
+    return new Map(entries.map((e) => [e.extension, e.maxLines]));
+  } catch {
+    return new Map();
+  }
+}
+
+/**
+ * Resolve the line-count threshold for a single file using the priority
+ * chain: per-file allowlist → per-extension default → hard default.
+ *
+ * @param {string} filePath - Normalized relative file path
+ * @param {Map<string, number>} allowlist - Per-file overrides
+ * @param {Map<string, number>} extensionDefaults - Per-extension overrides
+ * @returns Effective max line count for this file
+ */
+function resolveThreshold(
+  filePath: string,
+  allowlist: Map<string, number>,
+  extensionDefaults: Map<string, number>,
+): number {
+  const allowlisted = allowlist.get(filePath);
+  if (allowlisted !== undefined) return allowlisted;
+  const ext = path.extname(filePath);
+  if (ext) {
+    const extDefault = extensionDefaults.get(ext);
+    if (extDefault !== undefined) return extDefault;
+  }
+  return MAX_LINES;
 }
 
 /**
@@ -129,6 +197,9 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
     options?.readFile ??
     ((rel: string) => fs.readFile(path.join(rootDir, rel), 'utf-8'));
   const allowlist = await loadAllowlist(allowlistPath);
+  const extensionDefaults = await loadExtensionDefaults(
+    path.join(rootDir, '.github', 'file-size-defaults.json'),
+  );
   const violations: Array<{ file: string; lines: number; threshold: number }> =
     [];
   let totalFilesChecked = 0;
@@ -147,7 +218,11 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
     const normalized = rel.replace(/\\/g, '/');
     if (!options?.files && EXCLUDED_PATTERNS.some((p) => p.test(normalized)))
       continue;
-    const threshold = allowlist.get(normalized) ?? MAX_LINES;
+    const threshold = resolveThreshold(
+      normalized,
+      allowlist,
+      extensionDefaults,
+    );
     totalFilesChecked += 1;
     const content = await readFile(normalized);
     const lines = countLinesFromContent(content);

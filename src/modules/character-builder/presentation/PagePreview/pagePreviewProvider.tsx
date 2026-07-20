@@ -14,12 +14,12 @@
 'use client';
 
 import {
-    createContext,
-    useCallback,
-    useContext,
-    useMemo,
-    useState,
-    type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
 } from 'react';
 
 /**
@@ -32,7 +32,10 @@ export type PreviewKind =
   | 'bloodlines'
   | 'vocations'
   | 'specializations'
-  | 'feats';
+  | 'feats'
+  | 'spells'
+  | 'heirlooms'
+  | 'trinkets';
 
 /**
  * A single open preview entry.

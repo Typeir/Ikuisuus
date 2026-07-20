@@ -12,6 +12,7 @@
 
 import { NumericInput } from '@/lib/components/ui/numericInput';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
+import { useTranslations } from 'next-intl';
 import styles from './hpRollerPanel.module.scss';
 
 export interface HpRollerGroupProps {
@@ -51,6 +52,7 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
   onManualChange,
   getAverage,
 }) => {
+  const t = useTranslations('characterSheet');
   const inSetMode = setAllMode.has(vocSlug);
 
   return (
@@ -65,29 +67,29 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
           type='button'
           className={styles.groupActionBtn}
           onClick={() => onAverageAll(vocSlug)}
-          title='Avg'>
-          Avg All
+          title={t('hpRollerAvgTitle')}>
+          {t('hpRollerAvgAll')}
         </button>
         <button
           type='button'
           className={styles.groupActionBtn}
           onClick={() => onRollAll(vocSlug)}
-          title='Roll'>
-          Roll All
+          title={t('hpRollerRollTitle')}>
+          {t('hpRollerRollAll')}
         </button>
         <button
           type='button'
           className={`${styles.groupActionBtn}${inSetMode ? ` ${styles.active}` : ''}`}
           onClick={() => onSetAll(vocSlug)}
-          title='Edit'>
-          Set All
+          title={t('hpRollerSetTitle')}>
+          {t('hpRollerSetAll')}
         </button>
         <button
           type='button'
           className={styles.groupActionBtn}
           onClick={() => onAddAll(vocSlug)}
-          title='Add'>
-          Add All
+          title={t('hpRollerAddTitle')}>
+          {t('hpRollerAddAll')}
         </button>
       </div>
 
@@ -100,7 +102,9 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
           <div
             key={entry.id}
             className={`${styles.entryRow}${entry.addedToHp ? ` ${styles.committed}` : ''}`}>
-            <span className={styles.entryLabel}>Lv. {entry.levelIndex}</span>
+            <span className={styles.entryLabel}>
+              {t('levelAbbrev')} {entry.levelIndex}
+            </span>
 
             {entry.addedToHp ? (
               <>
@@ -114,8 +118,8 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
                   type='button'
                   className={styles.removeBtn}
                   onClick={() => onRemove(entry.id)}
-                  title='Remove from HP'
-                  aria-label='Remove HP entry'>
+                  title={t('hpRollerRemoveTitle')}
+                  aria-label={t('hpRollerRemoveAria')}>
                   ✕
                 </button>
               </>
@@ -128,11 +132,15 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
                 <NumericInput
                   value={manual ?? display ?? undefined}
                   onChange={(val) => onManualChange(entry.id, val)}
-                  placeholder={display ? String(display) : 'Enter'}
+                  placeholder={
+                    display ? String(display) : t('hpRollerEnterPlaceholder')
+                  }
                   min={1}
                   max={999}
                   disabled={entry.addedToHp}
-                  ariaLabel={`Level ${entry.levelIndex} HP value`}
+                  ariaLabel={t('hpRollerLevelHpAria', {
+                    level: entry.levelIndex,
+                  })}
                   size='sm'
                 />
                 {!inSetMode && display !== null && (
@@ -140,7 +148,7 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
                     type='button'
                     className={styles.confirmBtn}
                     onClick={() => onConfirm(entry.id)}>
-                    Add to HP
+                    {t('hpRollerConfirmBtn')}
                   </button>
                 )}
               </>
@@ -150,17 +158,19 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
                   type='button'
                   className={styles.rollBtn}
                   onClick={() => onRoll(entry.id)}>
-                  Roll d{entry.dieType}
+                  {t('hpRollerRollDie', { die: entry.dieType })}
                 </button>
                 <span className={styles.entryAvg}>{avg}</span>
                 <NumericInput
                   value={manual}
                   onChange={(val) => onManualChange(entry.id, val)}
-                  placeholder='Manual'
+                  placeholder={t('hpRollerManualPlaceholder')}
                   min={1}
                   max={999}
                   disabled={entry.addedToHp}
-                  ariaLabel={`Level ${entry.levelIndex} manual HP entry`}
+                  ariaLabel={t('hpRollerLevelManualAria', {
+                    level: entry.levelIndex,
+                  })}
                   size='sm'
                 />
               </>

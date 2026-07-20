@@ -3,7 +3,19 @@ name: PawAgent
 description: >
   PAW specialist. Status checks, violation diagnosis, gate runs, framework
   extensions. Handles deadlock debugging, gate creation, .pawignore config.
-tools: [read, search, edit, execute, vscode, web, todo]
+tools:
+  - read_file
+  - grep_search
+  - file_search
+  - semantic_search
+  - list_dir
+  - create_file
+  - replace_string_in_file
+  - multi_replace_string_in_file
+  - run_in_terminal
+  - get_errors
+  - memory
+  - manage_todo_list
 ---
 
 # PAW Agent
@@ -20,34 +32,24 @@ Full mental model before proceeding.
 
 User blocked/stuck?
 
-1. `npm run paw -- status` → active violations
-2. `npm run paw -- violations ls` → detailed list
+1. `npm run paw:status` → active violations
+2. `npm run paw:violations` → detailed list
 3. Identify violated file(s) + rule(s)
 4. Fix directly OR advise user
-5. Deadlock (fix needs different file)? Explain, suggest `npm run paw -- violations prune` last resort
+5. Deadlock (fix needs different file)? Explain, suggest `npm run paw:unblock` last resort
 
 ## Run Gates
 
 User wants quality check:
 
-1. `npm run paw -- gates ls` → list gates
-2. `npm run paw -- gates run` → execute all
+1. `npm run paw:gates ls` → list gates
+2. `npm run paw:gates run` → execute all (or specific health scripts)
 3. Report critical vs warning
-
-## Manage Enforcement
-
-- `npm run paw -- state` → current enforcement state
-- `npm run paw -- state enable` → re-enable PAW
-- `npm run paw -- state disable` → disable PAW (password required)
-- `npm run paw -- severity-override` → check/set/clear severity override
-- `npm run paw -- db stats` → database statistics
-- `npm run paw -- db reset` → reset violation DB (password required)
-- `npm run paw -- set-password` → set admin password
 
 ## Extend PAW
 
-**New gate:** .paw/gates/{name}.gate.ts → export `QualityGate` object (id, name, port, severity, appliesTo, check())
-**New hook:** .paw/hooks/{name}.ts → compile via `paw build`, then `paw sync`
+**New gate:** .paw/gates/{name}.gate.ts → QualityGate class (id, name, severity, appliesTo, check())
+**New hook:** .paw/hooks/{name}.ts (pre-tool-use-_, post-tool-use-_, session-end-\*), `paw sync`
 **New plugin:** .paw/plugins/{hook-name}/{name}.ts
 
 ## Configure Exclusions
@@ -61,7 +63,7 @@ Files skip PAW:
 ## Rules
 
 - Never suggest disabling PAW. Fix root cause.
-- Never run `paw violations prune` without user consent (destructive).
+- Never run `paw:unblock` without user consent (destructive).
 - Read violation message: file + rule.
 - missing-test = create test file, NOT suppress.
 - Documentation violation = fix Documentation in violated file.

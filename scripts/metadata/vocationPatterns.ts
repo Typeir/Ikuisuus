@@ -25,6 +25,8 @@
  */
 export const TABLE = {
   featuresHeader: /^\|\s*Level\s*\|/i,
+  /** Matches "Features" or "Vocation Features" column header for index detection */
+  featuresColumn: /^(?:(?:Vocation|Class)\s+)?Features$/i,
   coreTraits: /^\|\s*Core\s+\w+\s+Traits/i,
   traitHeader: /^\|\s*Trait\s*\|/i,
   separator: /^\|[-\s|]+\|$/,

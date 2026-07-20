@@ -7,6 +7,7 @@
 
 @use '@/styles/mixins-button' as *;
 @use '@/styles/mixins-focus' as *;
+@use '@/styles/mixins-icon' as *;
 
 .chipWrapper {
   display: inline-flex;
@@ -83,28 +84,7 @@
 }
 
 .infoBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--color-secondary);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition:
-    background 0.15s ease,
-    color 0.15s ease;
-
-  @include focus-visible-outline();
-
-  &:hover {
-    background: var(--color-accent);
-    color: var(--color-bg);
-  }
+  @include icon-rounded;
 }
 
 .boon {

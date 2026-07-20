@@ -6,7 +6,7 @@
 
 .accordion * {
   background-color: var(--color-transparent);
-  li {
+  * {
     &::marker {
       color: var(--color-accent);
       content: '▹ ';
@@ -118,4 +118,7 @@ li:not(:has(.label)) > .link-item {
 .expanded {
   max-height: var(--expanded-height);
   overflow-x: hidden !important;
+  *:not(li) {
+    overflow-x: hidden;
+  }
 }

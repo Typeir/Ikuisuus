@@ -123,7 +123,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
             />
           )}
           <div className={pickerStyles.pickerScroll}>
-            <ul className={styles.boonList} aria-label='Available feats'>
+            <ul className={styles.boonList} aria-label={t('featAvailableAria')}>
               {displayedFeats.map((feat) => {
                 const selected = isSelected(feat.slug);
                 const isExpanded = expandedFeats.has(feat.slug);
