@@ -124,7 +124,7 @@ const Home = () => {
           }>
           <ArchiveIntro />
 
-          <section className='py-6'>
+          <section className='py-6 not-prose'>
             <SearchBar onNavigate={() => {}} variant='hero' />
           </section>
 

@@ -82,11 +82,13 @@ export const PagePreviewHost: React.FC<PagePreviewHostProps> = () => {
   useEffect(() => {
     previews.forEach((entry) => {
       const key = `${entry.kind}::${entry.slug}`;
-      if (!resolvedPaths[key]) {
+      setResolvedPaths((prev) => {
+        if (prev[key]) return prev;
         fetchPath(entry.kind, entry.slug).then((path) => {
-          setResolvedPaths((prev) => ({ ...prev, [key]: path }));
+          setResolvedPaths((p) => ({ ...p, [key]: path }));
         });
-      }
+        return prev;
+      });
     });
   }, [previews]);
 

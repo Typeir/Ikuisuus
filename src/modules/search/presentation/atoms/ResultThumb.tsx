@@ -11,6 +11,7 @@
  */
 
 import { cn } from '@/lib/utils/classNameMerge';
+import Image from 'next/image';
 import type { SearchContentType } from '../../domain';
 import { TypeSigil } from './TypeSigil';
 import styles from './atoms.module.scss';
@@ -46,11 +47,12 @@ export function ResultThumb({
   if (image) {
     return (
       <span className={cn(styles.thumb, className)}>
-        <img
+        <Image
           src={image}
           alt={alt ?? `${type} thumbnail`}
           className={styles.thumbImage}
-          loading='lazy'
+          fill
+          sizes='48px'
         />
       </span>
     );

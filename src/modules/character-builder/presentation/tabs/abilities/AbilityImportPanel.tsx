@@ -97,14 +97,13 @@ export const AbilityImportPanel: React.FC<AbilityImportPanelProps> = ({
   const currentLoading = loadingMap[activeTab];
   const currentError = errorMap[activeTab];
 
-  const itemsMap: Record<ImportTab, Array<{ title: string; slug: string }>> = {
-    spells,
-    heirlooms,
-    trinkets,
-    feats: featItems,
-  };
-
   const filteredItems = useMemo(() => {
+    const itemsMap: Record<ImportTab, Array<{ title: string; slug: string }>> = {
+      spells,
+      heirlooms,
+      trinkets,
+      feats: featItems,
+    };
     const q = search.trim().toLowerCase();
     const items = itemsMap[activeTab];
     if (!q) return items;

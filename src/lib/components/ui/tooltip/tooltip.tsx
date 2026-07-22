@@ -204,7 +204,7 @@ export const Tooltip = memo(function Tooltip({
       window.removeEventListener('scroll', handleScroll, true);
       window.removeEventListener('resize', handleResize);
     };
-  }, [isVisible, updatePosition]);
+  }, [isVisible, forceVisible, exiting, updatePosition]);
 
   /** Cleanup timeouts on unmount */
   useEffect(() => {
