@@ -1,41 +1,78 @@
 /**
- * @fileoverview Migration 016 — Rename tier_bonus → tier_bonus
- * @description Renames the `tier_bonus` column in the `monsters` table
+ * @fileoverview Migration 016 — Rename proficiency_bonus → tier_bonus
+ * @description Renames the `proficiency_bonus` column in the `monsters` table
  * to `tier_bonus`, aligning the database schema with the tier bonus terminology
  * change. The companion entity (`MonsterEntity`) and all application-layer
  * references are updated separately.
+ *
+ * Guarded/idempotent: databases whose `monsters` table was created after the
+ * terminology change already have `tier_bonus` and no `proficiency_bonus` —
+ * the rename is skipped there. (The original version of this file had both
+ * column names clobbered to `tier_bonus` by a global rename, making the
+ * statement a self-rename that always failed.)
  *
  * After applying, run `npm run db:seed` to refresh content from regenerated
  * `.metadata.json` sidecars.
  *
  * @module scripts/db/migrations/016_rename_proficiency_bonus_to_tier_bonus
  * @author Typeir
- * @version 1.0.0
+ * @version 1.1.0
  * @since 10.0.0
  */
 
 import type { PoolClient } from 'pg';
 
 /**
- * Applies migration 016: renames `monsters.tier_bonus` to `tier_bonus`.
+ * Whether a column exists on a table in the public schema.
+ *
+ * @param {PoolClient} client - Transactional pg client
+ * @param {string} table - Table name
+ * @param {string} column - Column name
+ * @returns {Promise<boolean>} True when the column exists
+ */
+async function columnExists(
+  client: PoolClient,
+  table: string,
+  column: string,
+): Promise<boolean> {
+  const result = await client.query(
+    `SELECT 1 FROM information_schema.columns
+     WHERE table_name = $1 AND column_name = $2`,
+    [table, column],
+  );
+  return (result.rowCount ?? 0) > 0;
+}
+
+/**
+ * Applies migration 016: renames `monsters.proficiency_bonus` to
+ * `tier_bonus` when the old column is still present.
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}
  */
 export async function up(client: PoolClient): Promise<void> {
-  await client.query(
-    `ALTER TABLE monsters RENAME COLUMN tier_bonus TO tier_bonus`,
-  );
+  const hasOld = await columnExists(client, 'monsters', 'proficiency_bonus');
+  const hasNew = await columnExists(client, 'monsters', 'tier_bonus');
+  if (hasOld && !hasNew) {
+    await client.query(
+      `ALTER TABLE monsters RENAME COLUMN proficiency_bonus TO tier_bonus`,
+    );
+  }
 }
 
 /**
- * Reverts migration 016: renames `monsters.tier_bonus` back to `tier_bonus`.
+ * Reverts migration 016: renames `monsters.tier_bonus` back to
+ * `proficiency_bonus` when present.
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}
  */
 export async function down(client: PoolClient): Promise<void> {
-  await client.query(
-    `ALTER TABLE monsters RENAME COLUMN tier_bonus TO tier_bonus`,
-  );
+  const hasNew = await columnExists(client, 'monsters', 'tier_bonus');
+  const hasOld = await columnExists(client, 'monsters', 'proficiency_bonus');
+  if (hasNew && !hasOld) {
+    await client.query(
+      `ALTER TABLE monsters RENAME COLUMN tier_bonus TO proficiency_bonus`,
+    );
+  }
 }

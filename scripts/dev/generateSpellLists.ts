@@ -11,7 +11,12 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+} from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -19,7 +24,14 @@ const log = createLogger({ script: 'generateSpellLists' });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
-const SPELLS_DIR = path.join(ROOT, 'src', 'content', 'en', 'spells');
+
+/**
+ * Spell sidecar directory. In pg backend mode the generators write to
+ * `.meta/en/spells`; fall back to the source-adjacent location otherwise.
+ */
+const SPELLS_DIR = existsSync(path.join(ROOT, '.meta', 'en', 'spells'))
+  ? path.join(ROOT, '.meta', 'en', 'spells')
+  : path.join(ROOT, 'src', 'content', 'en', 'spells');
 const LISTS_DIR = path.join(
   ROOT,
   'src',
@@ -151,7 +163,7 @@ function updateListFile(folder: string, spells: SpellEntry[]): boolean {
   try {
     content = readFileSync(filePath, 'utf-8');
   } catch {
-    log.warn(`File not found: ${filePath}`);
+    log.warning(`File not found: ${filePath}`);
     return false;
   }
 
@@ -176,7 +188,7 @@ function main(): void {
   for (const [listName, info] of Object.entries(LIST_MAP)) {
     const spells = byList[listName] || [];
     if (spells.length === 0) {
-      log.warn(`No spells found for ${listName} — skipping`);
+      log.warning(`No spells found for ${listName} — skipping`);
       skipped++;
       continue;
     }

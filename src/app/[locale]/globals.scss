@@ -450,7 +450,8 @@ html[data-theme='light'] {
   --skeleton-surface: #8b93a3; /* darkened slate — near-white bg-secondary
      was invisible on the light page; light mode needs dark-on-light */
   --skeleton-glint-1: #c9a840; /* = --ha-legendary-border (visible gold) */
-  --skeleton-glint-2: #4a6fa8; /* deep blue crest (darker than page) */
+  --skeleton-glint-2: #4f83dc; /* saturated blue crest — must stay
+     unmistakably blue: muted navies read as black in small dither cells */
 
   /* Flashlight reveal — dark-on-light scanlines. Values sit well above
      dark mode's because the effective alpha is multiplied down by the
@@ -458,7 +459,7 @@ html[data-theme='light'] {
      a naive luminance match: dark marks on light ground carry more
      perceptual weight than the reverse. */
   --flashlight-scanline: rgba(31, 41, 55, 0.75);
-  --flashlight-scanline-opacity: 0.55;
+  --flashlight-scanline-opacity: 0.4;
 
   /* Sidebar folder glow — --color-text would be a pitch-dark halo on a
      light page; glow with the primary hue instead */

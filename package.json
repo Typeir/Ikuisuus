@@ -17,7 +17,7 @@
     "pre-init": "npm run compress-assets && npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers && npm run search:index",
     "pre-init:ci": "npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers:ci",
     "find-reusable-mdx-outliers:ci": "npx tsx --tsconfig tsconfig.scripts.json scripts/content/findReusableMdxOutliers/ci.ts",
-    "clean-metadata": "find src/content -name '*.metadata.json' -delete && find scripts/core -name '*.metadata.json' -delete && rm -rf .meta/en .meta/runtime",
+    "clean-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/cleanMetadata.ts",
     "clean": "npm run clean-fullsize && npm run clean-translations && rm -rf ./stl",
     "build": "rm -rf .next/cache && npm run pre-init && npm run test && next build",
     "build:ci": "rm -rf .next/cache && npm run pre-init:ci && npm run test && next build",

@@ -118,6 +118,7 @@ export function getMetaSubdir(contentType: string): string {
       'vocations',
       'specializations',
     ),
+    feats: path.join('character-creation', 'feats'),
   };
   return subdirs[contentType] || contentType;
 }
