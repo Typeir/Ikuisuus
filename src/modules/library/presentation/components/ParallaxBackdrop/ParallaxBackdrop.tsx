@@ -31,7 +31,8 @@ import styles from './ParallaxBackdrop.module.scss';
  * @property {number} [maxShiftPx=48] - Maximum vertical shift in pixels.
  * @property {number} [opacity=1] - Opacity of the backdrop image (0 to 1).
  * @property {number} [blurPx=0] - CSS blur radius in pixels.
- * @property {number} [zIndex=-1] - CSS z-index for stacking order.
+ * @property {number} [zIndex] - Explicit CSS z-index override. When omitted, stacking
+ * is controlled by the stylesheet via `var(--embed-z-index, -1)`.
  * @property {boolean} [ariaHidden=true] - Whether to hide the image from assistive tech.
  * @property {string} [className] - Additional CSS classes for the container div.
  */
@@ -66,7 +67,8 @@ export interface ParallaxBackdropProps {
  * @param {number} [props.maxShiftPx=48] - Maximum vertical shift in pixels.
  * @param {number} [props.opacity=1] - Opacity of the backdrop image (0 to 1).
  * @param {number} [props.blurPx=0] - CSS blur radius in pixels.
- * @param {number} [props.zIndex=-1] - CSS z-index for stacking order.
+ * @param {number} [props.zIndex] - Explicit CSS z-index override. Defaults to the
+ * stylesheet's `var(--embed-z-index, -1)` when omitted.
  * @param {boolean} [props.ariaHidden=true] - Whether to hide the image from assistive tech.
  * @param {string} [props.className] - Additional CSS classes for the container div.
  *
@@ -86,7 +88,7 @@ export const ParallaxBackdrop: React.FC<ParallaxBackdropProps> = ({
   maxShiftPx = Infinity,
   opacity = 1,
   blurPx = 0,
-  zIndex = -1,
+  zIndex,
   ariaHidden = true,
   className,
 }) => {
@@ -132,6 +134,7 @@ export const ParallaxBackdrop: React.FC<ParallaxBackdropProps> = ({
       className={`${styles.backdrop} ${className ?? ''}`}
       style={{
         opacity,
+        zIndex,
       }}>
       <Image
         className={styles.image}

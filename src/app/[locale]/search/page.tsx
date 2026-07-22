@@ -13,6 +13,7 @@
 'use client';
 
 import { useSearch } from '@/modules/search/application/useSearch';
+import { SearchBar } from '@/modules/search/presentation/SearchBar/SearchBar';
 import { SearchResultRow } from '@/modules/search/presentation/SearchResultRow/SearchResultRow';
 import { useTranslations } from 'next-intl';
 import { useParams, useSearchParams } from 'next/navigation';
@@ -53,6 +54,13 @@ function SearchPageInner(): JSX.Element {
         )}
       </h1>
 
+      {/* The page owns a search bar too — prefilled from ?q= and re-synced
+          when the param changes, so refining a query doesn't require the
+          sidebar. */}
+      <section className='not-prose mb-6'>
+        <SearchBar variant='hero' defaultQuery={q} />
+      </section>
+
       {loading && (
         <p className={`italic text-sm py-4 ${styles.resultTextSecondary}`}>
           {t('searching')}
@@ -79,7 +87,7 @@ function SearchPageInner(): JSX.Element {
       )}
 
       {results.length > 0 && (
-        <div className='flex flex-col gap-1'>
+        <div className='flex flex-col gap-1 not-prose'>
           {results.map((result) => (
             <SearchResultRow key={result.record.id} result={result} />
           ))}

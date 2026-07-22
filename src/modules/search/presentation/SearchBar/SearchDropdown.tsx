@@ -13,12 +13,14 @@
 
 import { cn } from '@/lib/utils/classNameMerge';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { Skeleton } from '../../../../lib/components/skeleton';
 import type { SearchResult } from '../../domain';
 import { SearchResultRow } from '../SearchResultRow/SearchResultRow';
 import styles from './searchBar.module.scss';
 
-/** Maximum quick results to show in the dropdown. */
-export const MAX_DROPDOWN_RESULTS = 8;
+/** Maximum quick results to show; the final row links to the search page. */
+export const MAX_DROPDOWN_RESULTS = 7;
 
 /**
  * Props for the SearchDropdown component.
@@ -28,12 +30,14 @@ export const MAX_DROPDOWN_RESULTS = 8;
  * @property {boolean} loading - Whether a search is in flight
  * @property {number} activeIndex - Index of the currently highlighted result
  * @property {() => void} onNavigate - Callback when a result link is clicked
+ * @property {string} searchHref - Full-results page URL for the current query
  */
 interface SearchDropdownProps {
   results: SearchResult[];
   loading: boolean;
   activeIndex: number;
   onNavigate: () => void;
+  searchHref: string;
 }
 
 /**
@@ -58,6 +62,7 @@ export function SearchDropdown({
   loading,
   activeIndex,
   onNavigate,
+  searchHref,
 }: SearchDropdownProps): JSX.Element {
   const t = useTranslations('search');
 
@@ -90,6 +95,14 @@ export function SearchDropdown({
           <SearchResultRow result={result} />
         </div>
       ))}
+
+      {/* Final row: escape hatch to the full search page. Clicks bubble to
+          the container's onNavigate, closing the dropdown. */}
+      <Link href={searchHref} className={styles.digDeeper}>
+        <Skeleton></Skeleton>
+        <div style={{ paddingBottom: '0.5rem' }}>{t('digDeeper')}</div>
+        <Skeleton></Skeleton>
+      </Link>
     </div>
   );
 }

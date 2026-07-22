@@ -1,3 +1,11 @@
+/**
+ * @fileoverview Search presentation layer barrel
+ * @module modules/search/presentation
+ * @author Typeir
+ * @version 1.0.0
+ * @since 8.0.0
+ */
+
 export { ArchivistPanel } from './ArchivistPanel/ArchivistPanel';
 export { FeaturedGrid } from './FeaturedGrid/FeaturedGrid';
 export { typeIconMap } from './atoms/iconMap';

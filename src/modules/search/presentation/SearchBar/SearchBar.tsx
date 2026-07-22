@@ -30,11 +30,15 @@ import styles from './searchBar.module.scss';
  * @interface SearchBarProps
  * @property {string} [className] - Optional additional class names
  * @property {() => void} [onNavigate] - Callback when a result link is clicked
+ * @property {'sidebar' | 'hero'} [variant='sidebar'] - Visual variant
+ * @property {string} [defaultQuery] - Initial query text; re-synced when it
+ * changes (e.g. the search page passing the current `?q=` param)
  */
 interface SearchBarProps {
   className?: string;
   onNavigate?: () => void;
   variant?: 'sidebar' | 'hero';
+  defaultQuery?: string;
 }
 
 /**
@@ -47,13 +51,19 @@ export function SearchBar({
   className,
   onNavigate,
   variant = 'sidebar',
+  defaultQuery,
 }: SearchBarProps): JSX.Element {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
   const router = useRouter();
   const t = useTranslations('search');
 
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(defaultQuery ?? '');
+
+  /** Follow external query changes (URL param updates on the search page). */
+  useEffect(() => {
+    if (defaultQuery !== undefined) setQuery(defaultQuery);
+  }, [defaultQuery]);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [isMac, setIsMac] = useState(false);
@@ -185,6 +195,28 @@ export function SearchBar({
 
   const showDropdown = open && query.length >= 2 && !debouncing;
 
+  /**
+   * Cap the dropdown to the space below the input. The dropdown is
+   * absolutely positioned, but absolute boxes still extend the page's
+   * scrollable overflow — without this cap a tall result list grows the
+   * document instead of scrolling internally. Measured once per open
+   * (plus resizes), never per frame.
+   */
+  const [dropdownMax, setDropdownMax] = useState<number | null>(null);
+  const measureDropdownRoom = useCallback(() => {
+    const wrap = dropdownRef.current;
+    if (!wrap) return;
+    const rect = wrap.getBoundingClientRect();
+    setDropdownMax(Math.max(160, window.innerHeight - rect.bottom - 16));
+  }, []);
+
+  useEffect(() => {
+    if (!showDropdown) return;
+    measureDropdownRoom();
+    window.addEventListener('resize', measureDropdownRoom);
+    return () => window.removeEventListener('resize', measureDropdownRoom);
+  }, [showDropdown, measureDropdownRoom]);
+
   return (
     <div
       className={cn(
@@ -192,6 +224,11 @@ export function SearchBar({
         variant === 'hero' && styles.hero,
         className,
       )}
+      style={
+        dropdownMax !== null
+          ? ({ '--search-dropdown-max': `${dropdownMax}px` } as React.CSSProperties)
+          : undefined
+      }
       ref={dropdownRef}>
       <form onSubmit={handleSubmit} role='search'>
         <div className={styles.inputWrapper}>
@@ -226,6 +263,7 @@ export function SearchBar({
           loading={loading}
           activeIndex={activeIndex}
           onNavigate={handleResultNavigate}
+          searchHref={`/${locale}/search?q=${encodeURIComponent(query.trim())}`}
         />
       )}
     </div>

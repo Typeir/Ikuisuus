@@ -11,6 +11,7 @@
 
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
+import matter from 'gray-matter';
 import path from 'path';
 import {
     ItemData,
@@ -175,6 +176,9 @@ function parseRarityAndAttunement(lines: string[], sharedData: SharedData) {
     .map((l) =>
       clean(
         l
+          /* Trim first: hard-break trailing spaces ("_Rare_  ") otherwise
+             defeat the trailing-underscore strip. */
+          .trim()
           .replace(TEXT.underscoreLeading, '')
           .replace(TEXT.underscoreTrailing, ''),
       ),
@@ -407,7 +411,10 @@ async function parseHeirloomFile(
   filePath: string,
   sharedData: SharedData,
 ): Promise<object> {
-  const raw = await fs.readFile(filePath, 'utf8');
+  const rawFile = await fs.readFile(filePath, 'utf8');
+  /* Strip YAML frontmatter so its `---` delimiters are not mistaken for the
+     horizontal-rule cutoff used by parseRarityAndAttunement. */
+  const { content: raw } = matter(rawFile);
   const lines = readLines(raw);
   const baseSlug = filePathToSlug(filePath);
 
@@ -441,9 +448,9 @@ async function parseHeirloomFile(
         .filter((l) => ITALIC.line.test(l.trim()))
         .map((l) =>
           l
+            .trim()
             .replace(TEXT.underscoreLeading, '')
-            .replace(TEXT.underscoreTrailing, '')
-            .trim(),
+            .replace(TEXT.underscoreTrailing, ''),
         );
 
       const itemTypes = ItemData.getItemTypes(sharedData);

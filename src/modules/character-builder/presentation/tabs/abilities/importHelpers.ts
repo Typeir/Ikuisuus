@@ -2,6 +2,11 @@
  * @fileoverview Ability Import Helpers
  * @description Pure functions to build CharacterAbility from metadata
  * and fetch raw MDX source for imported content.
+ *
+ * @module modules/character-builder/presentation/tabs/abilities/importHelpers
+ * @author Typeir
+ * @version 1.0.0
+ * @since 1.0.0
  */
 
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';

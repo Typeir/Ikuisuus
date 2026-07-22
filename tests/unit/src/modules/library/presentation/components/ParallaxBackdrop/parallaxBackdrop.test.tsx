@@ -159,10 +159,10 @@ describe('ParallaxBackdrop', () => {
   });
 
   describe('zIndex prop', () => {
-    it('should default to z-index -1', () => {
+    it('should not set inline z-index by default (stylesheet var(--embed-z-index, -1) applies)', () => {
       const { container } = render(<ParallaxBackdrop src="/test.jpg" />);
       const div = container.firstChild as HTMLElement;
-      expect(div).toHaveStyle({ zIndex: -1 });
+      expect(div.style.zIndex).toBe('');
     });
 
     it('should apply custom z-index', () => {

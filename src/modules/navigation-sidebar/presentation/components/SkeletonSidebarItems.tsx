@@ -33,10 +33,12 @@ export function SkeletonSidebarItems({
 }: SkeletonSidebarItemsProps): JSX.Element {
   const count = Math.min(childCount, 20);
 
-  // Sidebar skeletons dither in the color of the links they stand in for.
-  // The matter carries its own 45% alpha, so the skeleton's default
-  // resting dilution is disabled — otherwise the tint compounds to ~16%
-  // and the primary hue disappears.
+  /**
+   * Sidebar skeletons dither in the color of the links they stand in for.
+   * The matter carries its own 45% alpha, so the skeleton's default
+   * resting dilution is disabled — otherwise the tint compounds to ~16%
+   * and the primary hue disappears.
+   */
   const matterStyle = {
     '--skeleton-matter':
       'color-mix(in srgb, var(--color-primary) 45%, transparent)',
