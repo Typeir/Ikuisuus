@@ -14,29 +14,26 @@
 
 'use client';
 
-import { Tab, TabList, TabPanel, Tabs } from '@/lib/components/ui/tabs';
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import type {
-  CharacterShard,
-  CharacterSheet as CharacterSheetType,
+    CharacterShard,
+    CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { getTotalCharacterLevel } from '@/modules/character-builder/lib/utils/characterDerivation';
 import {
-  computeAbilityModifier,
-  computeTierBonus,
+    computeAbilityModifier,
+    computeTierBonus,
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { NotesSection } from '../notes/notesSection';
 import { AttacksTable } from '../stats/attacksTable';
 import { SkillsTable } from '../stats/skillsTable';
 import { ToolsTable } from '../stats/toolsTable';
+import { MobileOverviewTab } from './mobileOverviewTab';
 import styles from './tabs.module.scss';
-
-/** Overview section tab value on phone layouts. */
-type OverviewSection = 'skills' | 'trades' | 'attacks' | 'notes';
 
 /**
  * Props for `<OverviewTab>`.
@@ -158,96 +155,21 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 
   const conMod = computeAbilityModifier(data.abilityScores.con);
   const isMobile = useIsMobileViewport();
-  const [section, setSection] = useState<OverviewSection>('skills');
 
   if (isMobile === true) {
     return (
-      <div className={styles.column}>
-        <Tabs
-          value={section}
-          onChange={(v) => setSection(v as OverviewSection)}
-          variant='nested'
-          ariaLabel={t('ariaOverviewSections')}>
-          <TabList ariaLabel={t('ariaOverviewSections')}>
-            <Tab value='skills'>{t('overviewSkills')}</Tab>
-            <Tab value='trades'>{t('overviewTrades')}</Tab>
-            <Tab value='attacks'>{t('overviewAttacks')}</Tab>
-            <Tab value='notes'>{t('overviewNotes')}</Tab>
-          </TabList>
-
-          <TabPanel value='skills'>
-            <SkillsTable
-              skills={data.skills}
-              abilityScores={data.abilityScores}
-              tierBonus={data.tierBonus}
-              onChange={handleSkillsChange}
-              readOnly={!editing}
-            />
-          </TabPanel>
-          <TabPanel value='trades'>
-            <ToolsTable
-              tools={data.tools}
-              tierBonus={data.tierBonus}
-              onChange={handleToolsChange}
-              readOnly={!editing}
-            />
-          </TabPanel>
-          <TabPanel value='attacks'>
-            <AttacksTable
-              attacks={data.attacks}
-              onChange={handleAttacksChange}
-              readOnly={!editing}
-            />
-          </TabPanel>
-          <TabPanel value='notes'>
-            <NotesSection
-              values={{
-                wants: data.wants,
-                fears: data.fears,
-                virtues: data.virtues,
-                flaws: data.flaws,
-                bonds: data.bonds,
-                notes: data.notes,
-              }}
-              onChange={handleNotesChange}
-              readOnly={!editing}
-            />
-          </TabPanel>
-        </Tabs>
-
-        {boonShards.length > 0 && (
-          <section aria-label={t('ariaSelectedBoons')}>
-            <h3 className={styles.sectionTitle}>{t('boons')}</h3>
-            <div className={styles.chipCloud}>
-              {boonShards.map((shard) => (
-                <ShardChip key={shard.id} shard={shard} color='primary' />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {featShards.length > 0 && (
-          <section aria-label={t('ariaSelectedFeats')}>
-            <h3 className={styles.sectionTitle}>{t('tabFeats')}</h3>
-            <div className={styles.chipCloud}>
-              {featShards.map((shard) => (
-                <ShardChip key={shard.id} shard={shard} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {featureShards.length > 0 && (
-          <section aria-label={t('ariaSelectedFeatures')}>
-            <h3 className={styles.sectionTitle}>{t('features')}</h3>
-            <div className={styles.chipCloud}>
-              {featureShards.map((shard) => (
-                <ShardChip key={shard.id} shard={shard} />
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+      <MobileOverviewTab
+        data={data}
+        editing={editing}
+        onChange={onChange}
+        onSkillsChange={handleSkillsChange}
+        onToolsChange={handleToolsChange}
+        onAttacksChange={handleAttacksChange}
+        onNotesChange={handleNotesChange}
+        boonShards={boonShards}
+        featShards={featShards}
+        featureShards={featureShards}
+      />
     );
   }
 
