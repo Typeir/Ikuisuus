@@ -17,6 +17,7 @@ import {
     clean,
     extractAllTags,
     filePathToSlug,
+    findContentImage,
     parseTitle,
     runGenerator,
     runWithCli,
@@ -222,6 +223,11 @@ async function parseTrinketFile(
 
     if (description) {
       metadata.description = description;
+    }
+
+    const image = findContentImage(lines);
+    if (image) {
+      metadata.image = image;
     }
 
     return metadata;

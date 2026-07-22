@@ -97,8 +97,10 @@
 
   &:hover {
     background: none;
+    @include text-glow;
     svg {
       color: var(--color-accent);
+      filter: drop-shadow(0 0 6px var(--color-accent));
     }
   }
 }
@@ -139,6 +141,17 @@
   cursor: pointer;
   text-align: left;
   color: var(--color-text);
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+
+  /* Explicit transparent hover bg displaces the global primary-green fill;
+     feedback is the glyph recolor + scale (consistent with other buttons). */
+  &:hover:not(:disabled) {
+    background: transparent;
+    color: var(--color-primary);
+    transform: scale(1.03);
+  }
 }
 
 .rosterItemAvatar {

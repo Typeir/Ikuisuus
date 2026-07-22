@@ -28,9 +28,12 @@ export {
 } from './generatorUtils';
 export type { GeneratorConfig, StorageAdapter } from './generatorUtils';
 export {
+    calculateReadingTime,
+    findContentImage,
     parseCharges,
     parseDamageTypesDealt,
     parseDescription,
+    parseFirstProseParagraph,
     parseKeyBullets,
     parseNumericValue,
     parseProperties,

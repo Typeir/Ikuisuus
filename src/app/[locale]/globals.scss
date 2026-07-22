@@ -132,6 +132,13 @@ html:not([data-theme]) body {
   --search-type-specialization: #c9a85c;
   --search-type-feat: #8fb8a0;
   --search-type-world: #8fd3a1;
+  --search-type-rule: #d8c8a0;
+
+  /* Search bar visibility — dimming alphas and input weight are
+     theme-owned: dark tolerates heavy dimming, light does not */
+  --search-muted-alpha: 0.6; /* placeholder + search icon */
+  --search-hint-alpha: 0.4; /* keyboard shortcut hint */
+  --search-input-weight: 400;
 
   /* ============================================
      HEROIC AWAKENING TOKENS - Pastel-adjacent
@@ -200,6 +207,18 @@ html:not([data-theme]) body {
   --ha-mythic-shimmer-6: #38303d; /* Back to purple */
   --ha-mythic-border: #b890d0; /* Purple border */
 
+  /* Skeleton: static ink, moving light */
+  --skeleton-surface: var(--color-bg-secondary); /* default matter color */
+  --skeleton-glint-1: #3f5a4a; /* --color-accent desaturated toward surface (green) */
+  --skeleton-glint-2: #4d7580; /* --color-emphasis darkened (cyan crest) */
+
+  /* Flashlight reveal — scanlines are light-on-dark in dark mode */
+  --flashlight-scanline: rgba(255, 255, 255, 0.4);
+  --flashlight-scanline-opacity: 0.2;
+
+  /* Sidebar folder glow — a luminous halo, so light-on-dark here */
+  --sidebar-glow: var(--color-text);
+
   /* Awakened badge token */
   --ha-badge-bg: #2d303a;
   --ha-badge-text: #b8c0d0;
@@ -237,7 +256,7 @@ html:not([data-theme]) body {
   --worldsim-bg: #050508;
   --worldsim-panel-bg: var(--color-surface);
   --worldsim-panel-border: var(--color-border);
-  --worldsim-label-text: var(--color-text);
+  --worldsim-label-text: #ffffff;
   --worldsim-label-accent: var(--color-accent);
   --worldsim-label-bg: 0 0 0 / 0.65;
   --worldsim-star-emissive: #ffcc44;
@@ -248,7 +267,8 @@ html:not([data-theme]) body {
   --worldsim-everdark-glow: #cc4400;
   --worldsim-marker-bg: var(--color-accent);
   --worldsim-marker-pulse: var(--color-accent-a20);
-  --worldsim-region-hover: var(--color-emphasis);
+  --worldsim-region-hover: rgba(255, 255, 255, 0.08);
+  --worldsim-panel-text: var(--color-text);
   --worldsim-gas-band-1: #c4a882;
   --worldsim-gas-band-2: #8c7060;
   --worldsim-rot-surface: #3a2a1a;
@@ -306,6 +326,23 @@ html[data-theme='light'] {
   --color-info: #60a5fa;
   --color-danger: #f87171;
   --color-stratagem: #c084fc;
+
+  /* Per-type search accents — same hues as dark, darkened for contrast on white */
+  --search-type-monster: #b04a43;
+  --search-type-spell: #1f7e88;
+  --search-type-heirloom: #8f6f1f;
+  --search-type-trinket: #8a4fa8;
+  --search-type-bloodline: #c04545;
+  --search-type-vocation: #55677a;
+  --search-type-specialization: #8f6f1f;
+  --search-type-feat: #2f7a54;
+  --search-type-world: #217a4b;
+  --search-type-rule: #756437;
+
+  /* Search bar visibility — much less dimming on a light page */
+  --search-muted-alpha: 0.9;
+  --search-hint-alpha: 0.65;
+  --search-input-weight: 600;
 
   /* Phase marker colors - creature lifecycle tracking at HP thresholds */
   --color-phase-wounded: #f59e0b; /* Wounded: 75%-51% (amber) */
@@ -409,6 +446,24 @@ html[data-theme='light'] {
   --ha-mythic-shimmer-6: #d8d0e8; /* Back to purple */
   --ha-mythic-border: #9070b8; /* Purple border */
 
+  /* Skeleton: static ink, moving light */
+  --skeleton-surface: #8b93a3; /* darkened slate — near-white bg-secondary
+     was invisible on the light page; light mode needs dark-on-light */
+  --skeleton-glint-1: #c9a840; /* = --ha-legendary-border (visible gold) */
+  --skeleton-glint-2: #4a6fa8; /* deep blue crest (darker than page) */
+
+  /* Flashlight reveal — dark-on-light scanlines. Values sit well above
+     dark mode's because the effective alpha is multiplied down by the
+     reveal root's 0.5 opacity and the radial mask falloff — but below
+     a naive luminance match: dark marks on light ground carry more
+     perceptual weight than the reverse. */
+  --flashlight-scanline: rgba(31, 41, 55, 0.75);
+  --flashlight-scanline-opacity: 0.55;
+
+  /* Sidebar folder glow — --color-text would be a pitch-dark halo on a
+     light page; glow with the primary hue instead */
+  --sidebar-glow: var(--color-primary);
+
   /* Awakened badge token */
   --ha-badge-bg: #e8eaf0;
   --ha-badge-text: #404858;
@@ -423,8 +478,15 @@ html[data-theme='light'] {
   --worldsim-panel-bg: var(--color-surface);
   --worldsim-panel-border: var(--color-border);
   --worldsim-label-text: #ffffff;
-  --worldsim-label-accent: #88ddaa;
+  --worldsim-label-accent: var(--color-accent);
   --worldsim-label-bg: 0 0 0 / 0.75;
+  --worldsim-region-hover: rgba(0, 0, 0, 0.06);
+  --worldsim-panel-text: #1f2937;
+  --worldsim-controls-bg: rgba(255, 255, 255, 0.95);
+  --worldsim-controls-shadow: rgba(0, 0, 0, 0.08);
+  --worldsim-controls-btn-bg: rgba(0, 0, 0, 0.04);
+  --worldsim-controls-btn-hover: rgba(0, 0, 0, 0.08);
+  --worldsim-controls-btn-active: rgba(0, 0, 0, 0.1);
 
   /* Selection + autofill */
   --color-selection-bg: rgba(0, 112, 243, 0.2);
@@ -468,6 +530,23 @@ html[data-theme='dark'] {
   --color-info: #93c5fd;
   --color-danger: #f87171;
   --color-stratagem: #d8b4fe;
+
+  /* Per-type search accents — mirror the :root (dark fallback) values */
+  --search-type-monster: #d4736d;
+  --search-type-spell: #8acfd4;
+  --search-type-heirloom: #c9a85c;
+  --search-type-trinket: #c9a0dc;
+  --search-type-bloodline: #e48b8b;
+  --search-type-vocation: #a8b4c0;
+  --search-type-specialization: #c9a85c;
+  --search-type-feat: #8fb8a0;
+  --search-type-world: #8fd3a1;
+  --search-type-rule: #d8c8a0;
+
+  /* Search bar visibility — dark tolerates heavy dimming */
+  --search-muted-alpha: 0.6;
+  --search-hint-alpha: 0.4;
+  --search-input-weight: 400;
 
   /* Lair/special event colors */
   --color-lair-bg-start: #8b5a2b;
@@ -557,6 +636,18 @@ html[data-theme='dark'] {
   --ha-mythic-shimmer-6: #38303d; /* Back to purple */
   --ha-mythic-border: #b890d0; /* Purple border */
 
+  /* Skeleton: static ink, moving light */
+  --skeleton-surface: var(--color-bg-secondary); /* default matter color */
+  --skeleton-glint-1: #3f5a4a; /* --color-accent desaturated toward surface (green) */
+  --skeleton-glint-2: #4d7580; /* --color-emphasis darkened (cyan crest) */
+
+  /* Flashlight reveal — scanlines are light-on-dark in dark mode */
+  --flashlight-scanline: rgba(255, 255, 255, 0.4);
+  --flashlight-scanline-opacity: 0.2;
+
+  /* Sidebar folder glow — a luminous halo, so light-on-dark here */
+  --sidebar-glow: var(--color-text);
+
   /* Awakened badge token */
   --ha-badge-bg: #2d303a;
   --ha-badge-text: #b8c0d0;
@@ -564,9 +655,16 @@ html[data-theme='dark'] {
 
   /* World Sim tokens - dark theme */
   --worldsim-bg: #050508;
-  --worldsim-label-text: var(--color-text);
+  --worldsim-label-text: #ffffff;
   --worldsim-label-accent: var(--color-accent);
   --worldsim-label-bg: 0 0 0 / 0.65;
+  --worldsim-region-hover: rgba(255, 255, 255, 0.08);
+  --worldsim-panel-text: var(--color-text);
+  --worldsim-controls-bg: rgba(8, 8, 14, 0.85);
+  --worldsim-controls-shadow: rgba(0, 0, 0, 0.5);
+  --worldsim-controls-btn-bg: rgba(255, 255, 255, 0.06);
+  --worldsim-controls-btn-hover: rgba(255, 255, 255, 0.12);
+  --worldsim-controls-btn-active: rgba(255, 255, 255, 0.14);
 
   /* Selection + autofill */
   --color-selection-bg: rgba(143, 211, 161, 0.25);
@@ -665,16 +763,43 @@ html[data-theme='dark'] {
     caret-color: var(--color-autofill-text);
   }
 
+  /**
+   * A bare <button> IS the primary button. Color + hover are intentional and
+   * unchanged. Layout (padding/radius/font) is provided here so a classless
+   * <button> renders as a complete primary CTA — variant classes in
+   * styles/buttons.module.scss override this layer via specificity.
+   */
   button,
   .actionable {
     color: var(--color-bg);
     background-color: var(--color-actionable);
     border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s var(--springy-bezier);
+    transition:
+      background-color 0.2s var(--springy-bezier),
+      transform 0.15s ease;
 
+    /* Background flips + a punchy scale on hover. Keep this at LOW specificity
+       (`button:hover` = 0,1,1): a plain element+pseudo selector so any variant
+       class's own `&:hover` (0,2,0) reliably wins and displaces the green.
+       Do NOT add `:not(:disabled)` here — it bumps this to (0,2,1) and starts
+       beating single-class component hovers, reintroducing the green bug.
+       Text color must NOT be forced here either (would blacken variant text). */
     &:hover {
       background-color: var(--color-primary);
+      transform: scale(1.05);
+    }
+
+    /* Disabled bare buttons: dim + block the pointer. `pointer-events: none`
+       also prevents the :hover green from firing, so no specificity bump needed. */
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
     }
   }
 }
@@ -685,7 +810,6 @@ html[data-theme='dark'] {
 /* globals.scss or layout global style */
 html {
   overflow-x: hidden;
-  scrollbar-gutter: stable;
 
   @include scrollbar-custom(
     $width: 8px,

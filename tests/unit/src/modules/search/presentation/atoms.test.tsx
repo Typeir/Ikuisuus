@@ -76,7 +76,11 @@ describe('ResultThumb', () => {
     );
     const img = screen.getByAltText('Test monster');
     expect(img).toBeTruthy();
-    expect(img.getAttribute('src')).toBe('/library/images/test.webp');
+    /* next/image rewrites src through the optimizer; the original path
+       survives URL-encoded in the `url` query param. */
+    expect(img.getAttribute('src')).toContain(
+      encodeURIComponent('/library/images/test.webp'),
+    );
   });
 
   it('should fall back to TypeSigil when image is missing', () => {

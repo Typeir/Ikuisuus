@@ -18,6 +18,7 @@ import { Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import styles from './partyManager.module.scss';
+import btn from '@/styles/buttons.module.scss';
 
 /**
  * Props for PartyEditor component.
@@ -156,7 +157,7 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
               </td>
               <td className={styles.memberTableCellAction}>
                 <button
-                  className={styles.memberDeleteButton}
+                  className={btn.iconDanger}
                   onClick={() => handleRemoveMember(member.id)}
                   aria-label={`${t('removeMember')} ${member.name}`}>
                   <Trash2 size={14} aria-hidden='true' />
@@ -169,14 +170,12 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
           <tr>
             <td colSpan={2} className={styles.memberTableFooter}>
               <button
-                className={styles.importCharacterButton}
+                className={`${btn.neutral} ${styles.pendingImport}`}
                 disabled
                 title={t('importCharacterTodo')}>
                 {t('importCharacter')}
               </button>
-              <button
-                className={styles.addCharacterButton}
-                onClick={handleAddMember}>
+              <button className={btn.secondary} onClick={handleAddMember}>
                 {t('addNewCharacter')}
               </button>
             </td>
@@ -185,13 +184,10 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
       </table>
 
       <div className={styles.editorActions}>
-        <button className={styles.actionButton} onClick={onBack}>
+        <button className={btn.neutral} onClick={onBack}>
           {t('backToList')}
         </button>
-        <button
-          className={styles.createButton}
-          onClick={handleSave}
-          disabled={!party.name.trim()}>
+        <button onClick={handleSave} disabled={!party.name.trim()}>
           {t('saveParty')}
         </button>
       </div>

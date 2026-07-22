@@ -52,7 +52,13 @@ import {
     type FrameContext,
 } from '@/modules/world-sim/infrastructure/three-js/RenderLifecycle';
 import type { SceneManager } from '@/modules/world-sim/infrastructure/three-js/SceneManager';
-import { Material, Mesh, Object3D } from 'three';
+import { Material, Mesh, MeshBasicMaterial, Object3D } from 'three';
+
+/** @constant {number} ORBIT_COLOR_DARK - Orbit ring color for dark theme (accent green) */
+const ORBIT_COLOR_DARK = 0x8fd3a1;
+
+/** @constant {number} ORBIT_COLOR_LIGHT - Orbit ring color for light theme (muted green) */
+const ORBIT_COLOR_LIGHT = 0x5a8a6a;
 
 /**
  * Central mediator coordinating all World Sim subsystems.
@@ -129,6 +135,9 @@ export class WorldSimMediator {
   private performanceController: AdaptivePerformanceController =
     new AdaptivePerformanceController();
 
+  /** @property {Function} boundThemeChangeHandler - Bound handler for ik:theme-changed event (for cleanup) */
+  private boundThemeChangeHandler: (e: Event) => void;
+
   /**
    * Create a new WorldSimMediator.
    *
@@ -152,6 +161,8 @@ export class WorldSimMediator {
     this.dispatch = dispatch;
     this.registry = CelestialRegistry.shared();
     this.raycastService = new RaycastService();
+
+    this.boundThemeChangeHandler = this.handleThemeChange.bind(this);
   }
 
   /**
@@ -174,6 +185,8 @@ export class WorldSimMediator {
     this.buildMeshCaches();
     this.applyQualityToRenderers();
     this.attachInputListeners();
+
+    window.addEventListener('ik:theme-changed', this.boundThemeChangeHandler);
 
     this.cameraController.onPanUnlock = () => {
       this.followedBodyId = null;
@@ -352,6 +365,8 @@ export class WorldSimMediator {
    * Dispose of all resources and clean up.
    */
   dispose(): void {
+    window.removeEventListener('ik:theme-changed', this.boundThemeChangeHandler);
+
     this.detachInputListeners();
 
     this.celestials.forEach((entry) => {
@@ -384,6 +399,22 @@ export class WorldSimMediator {
 
     this.projectionBridge.clear();
     this.eventBus.clear();
+  }
+
+  /**
+   * Handle theme change from the site-wide ik:theme-changed event.
+   * Updates orbit ring mesh colors to match the current theme.
+   *
+   * @param {Event} e - CustomEvent with detail.theme ('dark' | 'light')
+   */
+  private handleThemeChange(e: Event): void {
+    const theme = (e as CustomEvent<{ theme: string }>).detail?.theme;
+    const color = theme === 'light' ? ORBIT_COLOR_LIGHT : ORBIT_COLOR_DARK;
+
+    this.orbitLines.forEach((line) => {
+      const mat = line.material as MeshBasicMaterial;
+      mat.color.set(color);
+    });
   }
 
   /**

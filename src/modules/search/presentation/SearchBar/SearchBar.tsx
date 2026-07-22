@@ -142,12 +142,25 @@ export function SearchBar({
     onNavigate?.();
   }, [onNavigate]);
 
-  /** Global Cmd/Ctrl-K shortcut. */
+  /**
+   * Global Cmd/Ctrl-K shortcut.
+   *
+   * The shell mounts one SearchBar per breakpoint (mobile header,
+   * desktop sidebar) and hides the inactive one with CSS, so each
+   * instance only claims the shortcut while its input is actually
+   * visible. checkVisibility is feature-detected: absent in jsdom,
+   * where the guard is skipped so tests exercise the focus path.
+   */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        const input = inputRef.current;
+        if (!input) return;
+        if (typeof input.checkVisibility === 'function' && !input.checkVisibility()) {
+          return;
+        }
         e.preventDefault();
-        inputRef.current?.focus();
+        input.focus();
       }
     };
     document.addEventListener('keydown', handler);

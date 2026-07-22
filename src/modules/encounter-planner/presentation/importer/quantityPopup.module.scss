@@ -33,42 +33,16 @@
   justify-content: flex-end;
 }
 
-.buttonBase,
-.buttonPrimary {
+/* Layout-only helper for the two modal action buttons (Cancel = btn.neutral,
+   Confirm = bare primary). Colors/hover come from the shared button classes. */
+.action {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  @include button-base(0.5rem 0.875rem, 0.8125rem);
   font-weight: 500;
   min-height: 36px;
   min-width: 80px;
   justify-content: center;
-  @include button-hover-scale;
-
-  &:hover {
-    background: var(--color-secondary);
-  }
-
-  @include press-effect;
-
-  &:focus {
-    @include focus-outline;
-  }
-
-  &:focus-visible {
-    @include focus-outline;
-  }
-}
-
-.buttonPrimary {
-  background: var(--color-accent);
-  color: var(--color-bg);
-  border-color: var(--color-accent);
-
-  &:hover {
-    filter: brightness(0.9);
-    background: var(--color-accent);
-  }
 }
 
 .buttonIcon {
@@ -91,8 +65,7 @@
     flex-direction: row;
   }
 
-  .buttonBase,
-  .buttonPrimary {
+  .action {
     flex: 1;
     min-height: 44px;
     font-size: 0.875rem;

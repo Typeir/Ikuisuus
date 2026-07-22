@@ -131,6 +131,7 @@ export async function syncTrinkets(
       inflictsConditions: (t.inflictsConditions as string[]) ?? [],
       tags: (t.tags as string[]) ?? [],
       description: t.description as string | undefined,
+      image: t.image as string | undefined,
       versionHash: hash,
     };
 

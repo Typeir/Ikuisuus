@@ -56,6 +56,19 @@
   width: 80px;
 }
 
+.checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-accent);
+  margin: 0;
+  padding: 0;
+
+  &:focus {
+    @include focus-glow;
+  }
+}
+
 .thresholds {
   display: flex;
   flex-wrap: wrap;

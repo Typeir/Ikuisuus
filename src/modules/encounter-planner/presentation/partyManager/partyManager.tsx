@@ -24,6 +24,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import { PartyEditor } from './partyEditor';
 import styles from './partyManager.module.scss';
+import btn from '@/styles/buttons.module.scss';
 
 /**
  * Props for PartyManager component.
@@ -131,27 +132,25 @@ export const PartyManager: React.FC<PartyManagerProps> = ({
               <div className={styles.partyActions}>
                 {onImport && (
                   <button
-                    className={styles.actionButton}
+                    className={btn.neutral}
                     onClick={() => handleImport(party)}>
                     {t('importParty')}
                   </button>
                 )}
                 <button
-                  className={styles.actionButton}
+                  className={btn.neutral}
                   onClick={() => handleEdit(party)}>
                   {t('editParty')}
                 </button>
                 <button
-                  className={`${styles.actionButton} ${styles.deleteButton}`}
+                  className={btn.dangerOutline}
                   onClick={() => handleDelete(party.id)}>
                   {t('deleteParty')}
                 </button>
               </div>
             </div>
           ))}
-          <button className={styles.buttonPrimary} onClick={handleCreateNew}>
-            {t('createParty')}
-          </button>
+          <button onClick={handleCreateNew}>{t('createParty')}</button>
         </div>
       )}
     </Modal>

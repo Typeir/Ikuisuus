@@ -13,11 +13,11 @@
  */
 
 /**
- * Union of all searchable content types (9 groups).
+ * Union of all searchable content types (10 groups).
  *
  * @typedef {(
  *   | 'monsters' | 'heirlooms' | 'spells' | 'trinkets' | 'bloodlines'
- *   | 'vocations' | 'specializations' | 'feats' | 'world'
+ *   | 'vocations' | 'specializations' | 'feats' | 'world' | 'rules'
  * )} SearchContentType
  */
 export type SearchContentType =
@@ -29,7 +29,8 @@ export type SearchContentType =
   | 'vocations'
   | 'specializations'
   | 'feats'
-  | 'world';
+  | 'world'
+  | 'rules';
 
 /**
  * Display metadata for a content type.
@@ -110,6 +111,12 @@ export const CONTENT_TYPE_META: Record<SearchContentType, ContentTypeMeta> = {
     colorTokenKey: '--search-type-world',
     urlSegment: 'world',
   },
+  rules: {
+    label: 'Rules',
+    icon: 'BookOpen',
+    colorTokenKey: '--search-type-rule',
+    urlSegment: 'rules',
+  },
 };
 
 /**
@@ -121,6 +128,23 @@ export const CONTENT_SUBDIR: Record<SearchContentType, string> =
   Object.fromEntries(
     Object.entries(CONTENT_TYPE_META).map(([k, v]) => [k, v.urlSegment]),
   ) as Record<SearchContentType, string>;
+
+/**
+ * CSS `var()` expression for a content type's accent color, resolved through
+ * the canonical `colorTokenKey` registry entry.
+ *
+ * This is the ONLY sanctioned route from a content type to its color —
+ * presentation code must never build `--search-type-*` names by string
+ * interpolation (type keys are plural, token names singular; interpolated
+ * names silently resolve to nothing and fall through to `--color-accent`).
+ *
+ * @param {SearchContentType} type - Content type from the taxonomy
+ * @returns {string} CSS var() expression with theme-aware accent fallback
+ */
+export function typeColorVar(type: SearchContentType): string {
+  const meta = CONTENT_TYPE_META[type];
+  return meta ? `var(${meta.colorTokenKey})` : 'var(--color-accent)';
+}
 
 /**
  * All content types as an array, useful for iteration and facet construction.

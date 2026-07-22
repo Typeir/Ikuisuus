@@ -1,0 +1,163 @@
+/**
+ * @fileoverview Semantic button classes — the single distribution surface.
+ *
+ * A bare `<button>` is already the PRIMARY button (styled by the global rule in
+ * globals.scss). Do NOT add a class for primary — just render `<button>`.
+ *
+ * For every other intent, import this module and apply the matching class:
+ *
+ * ```tsx
+ * import btn from '@/styles/buttons.module.scss';
+ *
+ * <button>Save</button>                              // primary (bare)
+ * <button className={btn.secondary}>Add</button>
+ * <button className={btn.dangerOutline}>Remove</button>
+ * <button className={btn.icon}><X /></button>
+ * <button className={`${btn.tab} ${active ? btn.tabActive : ''}`}>Tab</button>
+ * ```
+ *
+ * Every class fully owns its hover background, so applying one cleanly displaces
+ * the global primary hover — the "light-text-on-green" bug is structurally
+ * impossible here. When a call site needs a one-off tweak (extra padding, a
+ * layout override) apply an adjacent module class; do not fork the variant.
+ *
+ * @module styles/buttons.module
+ */
+
+@use 'mixins' as *;
+
+/* ── Filled / solid ─────────────────────────────────────── */
+
+/** Neutral filled button (surface bg, grey fill on hover). Secondary action. */
+.neutral {
+  @include button-base;
+  @include button-hover-scale;
+  border-radius: 4px;
+}
+
+/** Solid danger (filled). For confirmed destructive actions. */
+.danger {
+  @include button-base;
+  @include button-danger;
+  @include button-hover-scale;
+  border-radius: 4px;
+}
+
+/* ── Outline ────────────────────────────────────────────── */
+
+/** Accent outline that fills on hover. The default "add / CTA" outline. */
+.secondary {
+  @include button-secondary;
+}
+
+/** Danger outline — transparent, fills danger on hover. Remove / logout. */
+.dangerOutline {
+  @include button-danger-outline;
+}
+
+/* ── Minimal chrome ─────────────────────────────────────── */
+
+/** Text-only ghost (no bg/border). */
+.ghost {
+  @include button-ghost;
+  @include button-hover-scale;
+}
+
+/** Full-width transparent row — list rows, expandable headers, menu items. */
+.row {
+  @include button-row;
+  /* opt out of the global hover scale — full-width elements shouldn't grow */
+  &:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+/** Invisible-by-default tertiary (grey bg on hover/focus). Icon actions. */
+.tertiary {
+  background: var(--color-transparent);
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: var(--color-text);
+  border-radius: 4px;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.15s ease;
+  @include button-hover-scale;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: var(--color-secondary);
+  }
+  &:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  @include disabled-state(0.4);
+}
+
+/* ── Icon-only ──────────────────────────────────────────── */
+
+/** Transparent icon button — recolors to accent on hover. */
+.icon {
+  @include icon-transparent;
+}
+
+/** Transparent icon button — recolors to danger on hover. */
+.iconDanger {
+  @include icon-transparent(var(--color-danger, var(--color-emphasis)));
+}
+
+/** Rounded pill icon — fills accent on hover. */
+.iconRound {
+  @include icon-rounded;
+}
+
+/** Bordered icon — resting border+fill, accent border/text on hover. */
+.iconBordered {
+  @include button-icon-bordered;
+}
+
+/* ── Segmented tabs ─────────────────────────────────────── */
+
+/** Segmented tab. Combine with `.tabActive` for the selected state. */
+.tab {
+  @include button-tab;
+}
+
+/** Selected tab state — apply alongside `.tab`. */
+.tabActive {
+  @include button-tab-active;
+}
+
+/* ── Field trigger ──────────────────────────────────────── */
+
+/** Full-width bordered control that opens a menu/popover. */
+.fieldTrigger {
+  @include button-field-trigger;
+  /* opt out of the global hover scale — full-width control shouldn't grow */
+  &:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* ── Add affordance ─────────────────────────────────────── */
+
+/**
+ * "Add X" button — dashed accent outline, icon + label, fills on hover.
+ * The single consistent affordance for every create/add action (equipment,
+ * attacks, currency, etc.). Always pair with a lucide `<Plus />` and a label.
+ */
+.add {
+  @include button-secondary(0.4rem 0.85rem, 0.8rem);
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start; /* never stretch to fill a flex-column container */
+  width: fit-content;
+  gap: 0.35rem;
+  border-style: dashed;
+  border-radius: 6px;
+  font-weight: 600;
+}

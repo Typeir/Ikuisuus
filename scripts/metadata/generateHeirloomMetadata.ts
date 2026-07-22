@@ -17,6 +17,7 @@ import {
     clean,
     extractAllTags,
     filePathToSlug,
+    findContentImage,
     parseCharges,
     parseDamageTypesDealt,
     parseProperties,
@@ -521,6 +522,7 @@ async function parseHeirloomFile(
   tags.sort();
 
   const description = parseHeirloomDescription(lines);
+  const image = findContentImage(lines);
 
   if (!rarity) log.warning(`No rarity found for ${title || baseSlug}`);
   if (!itemType) log.warning(`No item type found for ${title || baseSlug}`);
@@ -555,6 +557,7 @@ async function parseHeirloomFile(
     tags: tags.length ? Array.from(new Set(tags)).sort() : undefined,
     indexVersion: 1,
     ...(description && { description }),
+    ...(image && { image }),
   };
 }
 

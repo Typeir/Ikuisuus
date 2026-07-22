@@ -131,6 +131,10 @@ export class SpellEntity {
   @Property({ type: 'text', columnType: 'text', nullable: true })
   description?: string | null;
 
+  /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
+  @Property({ type: 'string', nullable: true })
+  image?: string | null;
+
   @Property({ fieldName: 'casting_time', type: 'string[]' })
   castingTime: string[] = [];
 

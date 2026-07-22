@@ -13,4 +13,17 @@ describe('DotMatrixBackground', () => {
     // inline style should contain the reveal radius we passed
     expect(el?.style.getPropertyValue('--reveal-radius').trim()).toBe('150px');
   });
+
+  it('renders the counter-translate pair: an aperture wrapping the pattern field', () => {
+    const { container } = render(<DotMatrixBackground />);
+
+    const aperture = container.querySelector(
+      '[data-flashlight-aperture="true"]',
+    );
+    const field = container.querySelector('[data-flashlight-field="true"]');
+    expect(aperture).toBeTruthy();
+    expect(field).toBeTruthy();
+    // the field must live inside the aperture so the aperture clips it
+    expect(aperture?.contains(field)).toBe(true);
+  });
 });

@@ -317,6 +317,7 @@ async function syncHeirlooms(
       savingThrowTypes: (h.savingThrowTypes as string[]) ?? [],
       tags: (h.tags as string[]) ?? [],
       description: h.description as string | undefined,
+      image: h.image as string | undefined,
       indexVersion: h.indexVersion as number | undefined,
       versionHash: hash,
     };
@@ -413,6 +414,7 @@ async function syncSpells(
       },
       hasRitual: s.hasRitual as boolean | undefined,
       description: s.description as string | undefined,
+      image: s.image as string | undefined,
       tags: (s.tags as string[]) ?? [],
       source: s.source as string | undefined,
       versionHash: hash,

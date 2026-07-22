@@ -16,7 +16,7 @@
 
 'use client';
 
-import tertiaryStyles from '@/lib/components/button/tertiaryButton.module.scss';
+import btn from '@/styles/buttons.module.scss';
 import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
 import Icon from '@/lib/components/icon/icon';
 import { NotificationProvider } from '@/lib/components/ui';
@@ -96,6 +96,19 @@ function BaseResponsiveLayoutShell({
   }, []);
 
   /**
+   * Dispatch theme-change event on window so non-React subsystems
+   * (e.g. Three.js World Sim) can react to theme toggles.
+   */
+  useEffect(() => {
+    if (!mounted) return;
+    window.dispatchEvent(
+      new CustomEvent('ik:theme-changed', {
+        detail: { theme: currentTheme },
+      }),
+    );
+  }, [currentTheme, mounted]);
+
+  /**
    * Intercept link clicks in embed mode to preserve ?embed=true across
    * in-iframe navigations. Without this, clicking a link inside the embedded
    * page loses the query param and the full layout (with sidebar) renders.
@@ -125,7 +138,7 @@ function BaseResponsiveLayoutShell({
   /** In embed mode, render only the bare page content — no sidebar, no header */
   if (isEmbed) {
     return (
-      <div className={styles.embedShell}>
+      <div className={styles.embedShell} data-embed>
         <main className={styles.embedContent}>{children}</main>
       </div>
     );
@@ -141,29 +154,63 @@ function BaseResponsiveLayoutShell({
     router.push(tool.href);
   };
 
+  /** Theme toggle — rendered in the mobile bar and the desktop sidebar. */
+  const themeToggle = (extraClassName?: string) => (
+    <button
+      onClick={toggleTheme}
+      className={cn(btn.tertiary, styles.themeToggle, extraClassName)}
+      aria-label='Toggle theme'>
+      {mounted ? (
+        currentTheme === Theme.Dark ? (
+          <Moon size={20} aria-hidden='true' />
+        ) : (
+          <Sun size={20} aria-hidden='true' />
+        )
+      ) : (
+        <span className={styles.ssrThemeIcon} aria-hidden='true' />
+      )}
+    </button>
+  );
+
   return (
     <NotificationProvider position='top-right'>
       <FlashlightLayer />
       <div className='sidebar-container flex flex-col lg:flex-row min-h-screen relative max-w-full'>
-        {/* Sticky Hamburger Button */}
-        <button
-          onClick={toggleSidebar}
-          className='hamburger lg:hidden fixed top-4 right-4 z-50 bg-background border p-2 rounded shadow-md'
-          aria-label={t('toggleSidebar')}>
-          <Icon
-            type='hamburger'
-            className={`${styles.hamburger} ${open ? styles.isOpen : ''} w-6 h-6`}
-            aria-hidden='true'
-          />
-        </button>
-
-        {/* Sticky Mobile Title Bar */}
-        <div className='mobile-title-bar solid lg:hidden fixed top-0 left-0 w-full h-[72px] z-40 flex items-center px-4 border-b bg-background shadow-sm max-w-full'>
+        {/* Sticky Mobile Title Bar: four equal icon slots flanking a
+            centered search bar — logo, theme, search, character, hamburger.
+            The search bar lives here on mobile; the sidebar's copy is
+            desktop-only. */}
+        <div
+          className={`mobile-title-bar solid lg:hidden fixed top-0 left-0 w-full z-40 flex items-center gap-1 px-2 border-b bg-background shadow-sm max-w-full ${styles.mobileTitleBar}`}>
           <Link
             href='/'
-            className='py-8 px-6 text-base font-semibold leading-tight'>
-            {t('libraryTitle')}
+            className={styles.headerIconSlot}
+            aria-label={t('libraryTitle')}>
+            <Image
+              src='/logo.png'
+              alt={t('libraryTitle')}
+              className='w-8 h-8'
+              width={32}
+              height={32}
+            />
           </Link>
+          {themeToggle(styles.headerIconSlot)}
+          <div className='flex-1 min-w-0 px-1'>
+            <SearchBar onNavigate={closeSidebar} />
+          </div>
+          <div className={styles.headerIconSlot}>
+            <SelectedCharacterBadge dropDirection='down' />
+          </div>
+          <button
+            onClick={toggleSidebar}
+            className={cn(btn.tertiary, styles.headerIconSlot)}
+            aria-label={t('toggleSidebar')}>
+            <Icon
+              type='hamburger'
+              className={`${styles.hamburger} ${open ? styles.isOpen : ''} w-5 h-5`}
+              aria-hidden='true'
+            />
+          </button>
         </div>
 
         {/* Sidebar: 3-Region Layout */}
@@ -172,9 +219,10 @@ function BaseResponsiveLayoutShell({
             open ? styles.isOpen : ''
           } lg:translate-x-0 lg:block w-full lg:w-80 border-r fixed lg:sticky top-0 h-screen solid bg-background z-30`}
           style={{ display: 'flex', flexDirection: 'column' }}>
-          {/* Header Region: Non-scrolling */}
+          {/* Header Region: desktop only — the mobile bar carries the
+              logo and theme toggle below lg */}
           <div
-            className='sidebar-header border-b px-3 lg:px-6 py-2 lg:py-3'
+            className='sidebar-header hidden lg:block border-b px-3 lg:px-6 py-2 lg:py-3'
             style={{ flexShrink: 0 }}>
             <div className='flex items-center justify-between gap-2'>
               <Link
@@ -195,29 +243,13 @@ function BaseResponsiveLayoutShell({
                   </p>
                 </div>
               </Link>
-              <button
-                onClick={toggleTheme}
-                className={cn(
-                  tertiaryStyles.tertiaryButton,
-                  styles.themeToggle,
-                )}
-                aria-label='Toggle theme'>
-                {mounted ? (
-                  currentTheme === Theme.Dark ? (
-                    <Moon size={20} aria-hidden='true' />
-                  ) : (
-                    <Sun size={20} aria-hidden='true' />
-                  )
-                ) : (
-                  <span className={styles.ssrThemeIcon} aria-hidden='true' />
-                )}
-              </button>
+              {themeToggle()}
             </div>
           </div>
 
-          {/* Search Bar — always visible under heading */}
+          {/* Search Bar — desktop only; the mobile title bar owns it below lg */}
           <div
-            className='sidebar-search px-3 lg:px-6 pb-2'
+            className='sidebar-search hidden lg:block px-3 lg:px-6 pb-2'
             style={{ flexShrink: 0 }}>
             <SearchBar onNavigate={closeSidebar} />
           </div>
@@ -225,7 +257,7 @@ function BaseResponsiveLayoutShell({
           {/* Body Region: Scrollable Library Navigation */}
           <div
             className='sidebar-body px-3 lg:px-6 py-3 lg:py-4'
-            style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+            style={{ flex: 1, minHeight: 0, overflowY: 'auto', scrollbarGutter: 'stable' }}>
             <SidebarShell
               onNavigate={closeSidebar}
               items={tree}
@@ -252,13 +284,18 @@ function BaseResponsiveLayoutShell({
                   }
                 />
               </div>
-              <SelectedCharacterBadge />
+              {/* Desktop only — the mobile bar carries the badge below lg */}
+              <div className='hidden lg:block'>
+                <SelectedCharacterBadge />
+              </div>
             </div>
           </div>
         </aside>
 
         {/* Main Content */}
-        <main className='flex-1 p-4 sm:p-10 mt-12 lg:mt-0'>{children}</main>
+        <main className={`flex-1 p-4 sm:p-10 ${styles.mainContent}`}>
+          {children}
+        </main>
       </div>
     </NotificationProvider>
   );

@@ -23,6 +23,7 @@ import { CombatantRow } from '../combatantRow';
 import { MonsterImporter } from '../importer';
 import { PartyManager } from '../partyManager';
 import styles from './playMode.module.scss';
+import btn from '@/styles/buttons.module.scss';
 import { PlayModeLifecycle } from '../../application/lifecycle/PlayModeLifecycle';
 import { usePlayModeLifecycleNotifications } from '../../application/lifecycle/playModeLifecycleNotifications';
 import { usePlayModeHandlers } from './usePlayModeHandlers';
@@ -120,40 +121,30 @@ export const PlayMode: React.FC<PlayModeProps> = ({
         </div>
         <button
           onClick={onExit}
-          className={`${styles.buttonBase} ${styles.exitButton}`}
+          className={`${btn.icon} ${styles.exitButton}`}
           aria-label={t('exitPlayMode')}>
           <X size={18} aria-hidden='true' />
         </button>
       </div>
 
       <div className={styles.playModeControls}>
-        <button
-          onClick={handleEndTurn}
-          className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
-          {t('endTurn')}
-        </button>
+        <button onClick={handleEndTurn}>{t('endTurn')}</button>
 
-        <button
-          onClick={handleSortByInitiative}
-          className={`${styles.buttonBase} ${styles.buttonSecondary}`}>
+        <button onClick={handleSortByInitiative} className={btn.secondary}>
           {t('sortByInitiative')}
         </button>
 
-        <button
-          onClick={handleImportCombat}
-          className={`${styles.buttonBase} ${styles.buttonSecondary}`}>
+        <button onClick={handleImportCombat} className={btn.secondary}>
           {t('importCombat')}
         </button>
 
-        <button
-          onClick={handleExport}
-          className={`${styles.buttonBase} ${styles.buttonSecondary}`}>
+        <button onClick={handleExport} className={btn.secondary}>
           {t('exportInProgress')}
         </button>
 
         <button
           onClick={handleEndCombat}
-          className={`${styles.buttonBase} ${styles.buttonDanger} ${styles.endCombatButton}`}>
+          className={`${btn.dangerOutline} ${styles.endCombatButton}`}>
           {t('endCombat')}
         </button>
 
@@ -180,7 +171,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({
           />
           <button
             onClick={handleAddSessionOnlyCombatant}
-            className={`${styles.buttonBase} ${styles.buttonSecondary}`}>
+            className={btn.secondary}>
             {t('addCombatant')}
           </button>
         </div>
@@ -192,7 +183,7 @@ export const PlayMode: React.FC<PlayModeProps> = ({
         <div className={styles.sessionOnlyRow}>
           <button
             onClick={() => setPartyManagerOpen(true)}
-            className={`${styles.buttonBase} ${styles.buttonSecondary}`}>
+            className={btn.secondary}>
             {t('manageParties')}
           </button>
         </div>

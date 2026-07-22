@@ -15,6 +15,7 @@ import type { CharacterSkill, TierLevel } from '@/lib/types/character';
 import { computeSkillBonus, updateItemTier } from '@/modules/character-builder/lib/utils/proficiencyUtils';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
+import tbl from '@/styles/tables.module.scss';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import profRowStyles from '../CharacterSheet/proficiencyRow.module.scss';
 import { ProficiencyTrack } from '../components/ProficiencyTrack';
@@ -63,7 +64,9 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
   };
 
   return (
-    <table className={styles.skillsTable} aria-label={t('ariaSkillsTable')}>
+    <table
+      className={`${tbl.dataTable} ${tbl.fixed}`}
+      aria-label={t('ariaSkillsTable')}>
       <thead>
         <tr>
           <th scope='col'>{t('colSkill')}</th>

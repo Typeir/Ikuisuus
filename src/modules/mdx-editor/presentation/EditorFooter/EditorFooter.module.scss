@@ -32,21 +32,11 @@
   }
 }
 
+// Bare <button> = primary CTA (color + hover from the global rule). Local class
+// carries only essential layout + the disabled state (global has no :disabled).
 .submitButton {
   padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  background-color: var(--color-accent);
-  color: var(--color-bg);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.15s ease;
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-accent-hover);
-  }
 
   @include disabled-state;
 }

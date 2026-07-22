@@ -16,7 +16,11 @@
   height: var(--search-sigil-size, 24px);
   border-radius: 4px;
   color: var(--sigil-color, var(--color-accent));
-  background: var(--sigil-color, var(--color-accent)) / 0.12;
+  background: color-mix(
+    in srgb,
+    var(--sigil-color, var(--color-accent)) 12%,
+    transparent
+  );
   flex-shrink: 0;
   position: relative;
 
@@ -119,7 +123,7 @@ a:hover .resultTitle {
     background: radial-gradient(
       ellipse at center,
       transparent 40%,
-      var(--color-bg) / 0.5 100%
+      color-mix(in srgb, var(--color-bg) 50%, transparent) 100%
     );
     pointer-events: none;
   }
@@ -210,6 +214,20 @@ a:hover .resultTitle {
   letter-spacing: 0.1em;
   color: var(--sigil-color, var(--color-accent));
   opacity: 0.8;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.readingTime {
+  color: var(--color-text-secondary);
+  text-transform: none;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+
+  &::before {
+    content: '· ';
+  }
 }
 
 .cardDescription {

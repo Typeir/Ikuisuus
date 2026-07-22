@@ -34,6 +34,7 @@ import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useRef } from 'react';
 import styles from './combatantRow.module.scss';
+import btn from '@/styles/buttons.module.scss';
 import { useCombatant } from './utils/context/combatantContext';
 import { useEditableField } from './utils/useEditableField';
 
@@ -144,10 +145,11 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
       {onToggleLock && !disableLocking && (
         <Tooltip
           content={isStatsLocked ? t('unlockStats') : t('lockStats')}
-          placement='top'>
+          placement='top'
+          showClickIcon={false}>
           <button
             onClick={() => onToggleLock('stats')}
-            className={styles.lockToggle}
+            className={`${btn.icon} ${styles.lockToggle}`}
             aria-label={isStatsLocked ? t('unlockStats') : t('lockStats')}
             data-testid='lock-toggle'>
             <Icon
@@ -172,7 +174,7 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
         {renderAwakeningBadge()}
         {mechanics?.stratagem && (
           <div className={styles.stratagemBadgeWrapper}>
-            <Tooltip content={t('stratagemTooltip')} placement='top'>
+            <Tooltip content={t('stratagemTooltip')} placement='top' showClickIcon={false}>
               <span
                 className={styles.stratagemBadge}
                 data-testid='stratagem-badge'>
@@ -194,7 +196,7 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
       {onRemoveSessionOnly && (
         <button
           onClick={onRemoveSessionOnly}
-          className={`${styles.buttonBase} ${styles.buttonDanger}`}
+          className={btn.iconDanger}
           title={t('removeCombatant')}>
           <X size={14} aria-hidden='true' />
         </button>

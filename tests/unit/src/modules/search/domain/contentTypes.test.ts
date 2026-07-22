@@ -33,6 +33,7 @@ const EXPECTED_TYPES: SearchContentType[] = [
   'specializations',
   'feats',
   'world',
+  'rules',
 ];
 
 describe('CONTENT_TYPE_META', () => {

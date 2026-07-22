@@ -100,6 +100,10 @@ export class TrinketEntity {
   @Property({ type: 'text', nullable: true })
   description?: string | null;
 
+  /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
+  @Property({ type: 'string', nullable: true })
+  image?: string | null;
+
   /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
   @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;

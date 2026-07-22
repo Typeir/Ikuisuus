@@ -15,9 +15,11 @@
 import { TextInput } from '@/lib/components/ui/textInput';
 import type { CharacterAttack } from '@/lib/types/character';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
-import { Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
+import btn from '@/styles/buttons.module.scss';
+import tbl from '@/styles/tables.module.scss';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 
 /**
@@ -69,7 +71,9 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
 
   return (
     <div className={styles.attacksSection}>
-      <table className={styles.attacksTable} aria-label={t('ariaAttacksTable')}>
+      <table
+        className={`${tbl.dataTable} ${tbl.fixed}`}
+        aria-label={t('ariaAttacksTable')}>
         <thead>
           <tr>
             <th scope='col'>{t('colName')}</th>
@@ -154,9 +158,10 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
       {!readOnly && (
         <button
           type='button'
-          className={styles.addRowBtn}
+          className={btn.add}
           onClick={handleAdd}
           aria-label={t('ariaAddAttack')}>
+          <Plus size={14} aria-hidden='true' />
           {t('addAttack')}
         </button>
       )}

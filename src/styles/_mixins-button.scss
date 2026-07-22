@@ -2,8 +2,9 @@
  * @fileoverview Button Mixins
  * @description Button base styles, hover/variant modifiers, and scale animation.
  * Canonical compositions:
+ * Primary is a BARE `<button>` (global rule) — there is no primary mixin/class.
+ * Distribute variants via `src/styles/buttons.module.scss`. Compositions:
  *   - `.buttonBase`      → button-base + button-hover-secondary + button-hover-scale
- *   - `.buttonPrimary`   → button-base + button-primary + button-hover-scale
  *   - `.buttonSecondary` → button-secondary + button-hover-scale
  *   - `.buttonDanger`    → button-base + button-danger + button-hover-scale
  *   - `.buttonGhost`     → button-ghost + button-hover-scale
@@ -27,6 +28,18 @@
     color 0.2s ease,
     border-color 0.2s ease,
     transform 0.15s ease;
+
+  /**
+   * Self-contained hover guard. Without an explicit hover background, a
+   * button-base button (light text) falls through to the global
+   * `button:hover { background: var(--color-primary) }` and renders
+   * unreadable light-on-green. Consumers that want a different hover simply
+   * declare their own `&:hover` (later cascade wins).
+   */
+  &:hover:not(:disabled) {
+    background: var(--color-secondary);
+    border-color: var(--color-secondary);
+  }
 }
 
 @mixin button-hover-scale($factor: 1.08) {
@@ -55,15 +68,10 @@
   @include button-hover-secondary;
 }
 
-@mixin button-primary {
-  background: var(--color-accent);
-  color: var(--color-bg);
-  border-color: var(--color-accent);
-
-  &:hover {
-    filter: brightness(0.9);
-  }
-}
+/**
+ * @deprecated Retired. A bare `<button>` IS the primary button (styled by the
+ * global rule in globals.scss). Do not add a primary class; render `<button>`.
+ */
 
 @mixin button-danger {
   background: var(--color-emphasis);
@@ -111,6 +119,15 @@
   cursor: pointer;
   font-size: $font-size;
   transition: transform 0.15s ease;
+
+  /**
+   * Transparent hover guard. Ghost buttons only recolor text/icon on hover, so
+   * without this they inherit the global green background. Consumers that want a
+   * hover fill declare their own `&:hover` background (later cascade wins).
+   */
+  &:hover {
+    background: transparent;
+  }
 }
 
 /**
@@ -135,3 +152,146 @@
  * Defined in _mixins-layout.scss. Referenced here for documentation only.
  * Use via the mixins barrel: `@use 'mixins' as *`.
  */
+
+/* ============================================================
+   GAP ARCHETYPES
+   Variants that recur across the app but fit none of the six
+   canonical mixins above. Each fully owns its hover background so
+   it cleanly displaces the global `button:hover` primary fill.
+============================================================ */
+
+/**
+ * Outline danger — transparent with danger border+text, fills danger on hover.
+ * For destructive actions that shouldn't shout at rest (remove/delete/logout).
+ */
+@mixin button-danger-outline($padding: 0.3rem 0.65rem, $font-size: 0.8rem) {
+  padding: $padding;
+  border: 1px solid var(--color-danger, var(--color-emphasis));
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-danger, var(--color-emphasis));
+  cursor: pointer;
+  font-size: $font-size;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-danger, var(--color-emphasis));
+    color: var(--color-bg);
+    border-color: var(--color-danger, var(--color-emphasis));
+  }
+}
+
+/**
+ * Bordered icon button — resting border + surface fill, accent border/text on
+ * hover (no fill swap). For dense +/- / edit / remove controls in tables/rows.
+ */
+@mixin button-icon-bordered($size: 1.6rem) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $size;
+  height: $size;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg-secondary);
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-bg-secondary); /* explicit → beats global green */
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+}
+
+/**
+ * Segmented tab — transparent at rest, subtle fill on hover. Pair with
+ * `button-tab-active` for the selected state.
+ */
+@mixin button-tab($padding: 0.4rem 0.8rem, $font-size: 0.8rem) {
+  padding: $padding;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-secondary);
+  cursor: pointer;
+  font-size: $font-size;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+  }
+}
+
+/** Selected state for `button-tab`. Apply alongside the tab class. */
+@mixin button-tab-active {
+  background: var(--color-surface);
+  color: var(--color-accent);
+  border-color: var(--color-border);
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface);
+    color: var(--color-accent);
+  }
+}
+
+/**
+ * Full-width row button — transparent, left-aligned, grey fill on hover.
+ * For list rows / expandable headers / menu items rendered as `<button>`.
+ */
+@mixin button-row($padding: 0.5rem) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: $padding;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-bg-secondary);
+  }
+}
+
+/**
+ * Field trigger — full-width bordered control that opens a menu/popover.
+ * Accent border on hover; background is held explicitly so it never flips green.
+ */
+@mixin button-field-trigger($padding: 0.4rem 0.6rem, $font-size: 0.85rem) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: $padding;
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: $font-size;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-bg); /* explicit → beats global green */
+    border-color: var(--color-accent);
+  }
+}

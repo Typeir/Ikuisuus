@@ -54,6 +54,9 @@ export class BloodlineEntity {
   @Property({ type: 'text', nullable: true })
   description?: string | null;
 
+  @Property({ type: 'string', nullable: true })
+  image?: string | null;
+
   @Property({ fieldName: 'ability_scores', type: 'string[]' })
   abilityScores: string[] = [];
 

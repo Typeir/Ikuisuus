@@ -33,6 +33,7 @@ import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useSheetMutators } from '../../application/context/activeSheetContext';
 import { VocationSelector } from '../builder/vocationSelector';
 import { usePagePreview } from '../PagePreview/pagePreviewProvider';
+import btn from '@/styles/buttons.module.scss';
 import styles from './characterSheetHeader.module.scss';
 
 /**
@@ -180,15 +181,12 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
         <div className={styles.headerActions}>
           {editing ? (
             <>
-              <button
-                type='button'
-                className={`${styles.buttonBase} ${styles.buttonPrimary}`}
-                onClick={onSave}>
+              <button type='button' onClick={onSave}>
                 {t('save')}
               </button>
               <button
                 type='button'
-                className={styles.buttonBase}
+                className={btn.neutral}
                 onClick={onCancel}>
                 {t('cancel')}
               </button>
@@ -196,7 +194,7 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
           ) : (
             <button
               type='button'
-              className={styles.buttonBase}
+              className={btn.neutral}
               onClick={onEdit}
               aria-label={t('ariaEditCharacter')}>
               {t('edit')}

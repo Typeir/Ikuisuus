@@ -30,13 +30,27 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './selectedCharacterBadge.module.scss';
 
 /**
- * Sidebar-footer badge for the globally selected character.
- * Renders nothing until the roster context has hydrated from storage.
+ * Props for the SelectedCharacterBadge component.
+ *
+ * @interface SelectedCharacterBadgeProps
+ * @property {'up' | 'down'} [dropDirection='up'] - Which way the picker
+ * expands. 'up' suits the sidebar footer; 'down' suits top bars.
+ */
+interface SelectedCharacterBadgeProps {
+  dropDirection?: 'up' | 'down';
+}
+
+/**
+ * Badge for the globally selected character (sidebar footer or mobile
+ * header). Renders nothing until the roster context has hydrated.
  *
  * @component
+ * @param {SelectedCharacterBadgeProps} props - Component props
  * @returns {JSX.Element | null} Rendered badge or null pre-hydration
  */
-export const SelectedCharacterBadge: React.FC = () => {
+export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
+  dropDirection = 'up',
+}) => {
   const t = useTranslations('layout');
   const characters = useCharacters();
   const { isHydrated } = useCharacterSheetState();
@@ -150,7 +164,11 @@ export const SelectedCharacterBadge: React.FC = () => {
       </div>
 
       {isOpen && (
-        <div className={styles.dropdown} role='menu'>
+        <div
+          className={`${styles.dropdown} ${
+            dropDirection === 'down' ? styles.dropdownDown : ''
+          }`}
+          role='menu'>
           <ul className={styles.list}>
             {characters.length === 0 && (
               <li className={styles.empty}>{t('characterBadge.empty')}</li>

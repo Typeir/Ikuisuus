@@ -26,6 +26,7 @@
 import { useCallback, useState } from 'react';
 import { X } from 'lucide-react';
 import styles from '../creatureRow.module.scss';
+import btn from '@/styles/buttons.module.scss';
 
 /**
  * Props for ItemListEditor component
@@ -97,7 +98,7 @@ export const ItemListEditor: React.FC<ItemListEditorProps> = ({
             {!readOnly && (
               <button
                 onClick={() => handleRemoveItem(idx)}
-                className={styles.removeChip}
+                className={btn.iconDanger}
                 aria-label={removeChipAriaLabel}>
                 <X size={12} aria-hidden='true' />
               </button>

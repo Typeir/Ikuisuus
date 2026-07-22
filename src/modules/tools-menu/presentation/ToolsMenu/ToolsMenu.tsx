@@ -28,6 +28,7 @@
 
 'use client';
 
+import { ChevronUp } from 'lucide-react';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import type { ToolMenuItem } from '../../domain/toolMenuItem.types';
 import styles from './ToolsMenu.module.scss';
@@ -155,6 +156,7 @@ export function ToolsMenu({
         aria-expanded={isOpen}
         aria-haspopup='menu'>
         {trigger}
+        <ChevronUp size={16} className={styles.caret} aria-hidden='true' />
       </button>
 
       {isOpen && (

@@ -45,27 +45,26 @@
     @include focus-outline(3px);
   }
 
-  &::after {
-    content: '';
-    width: 0;
-    height: 0;
-    border-left: 4px solid var(--color-transparent);
-    border-right: 4px solid var(--color-transparent);
-    border-bottom: 4px solid var(--color-text);
+  /* Lucide chevron caret (dropup). Highlights on hover/open, flips when open. */
+  .caret {
     margin-left: auto;
+    flex-shrink: 0;
     opacity: 0.35;
-    transition: opacity 0.2s ease, transform 0.2s ease,
-      border-bottom-color 0.2s ease;
+    color: var(--color-text);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      color 0.2s ease;
   }
 
-  &:hover::after,
-  &:focus::after,
-  &.open::after {
+  &:hover .caret,
+  &:focus .caret,
+  &.open .caret {
     opacity: 1;
-    border-bottom-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
-  &.open::after {
+  &.open .caret {
     transform: rotate(180deg);
   }
 }

@@ -1,21 +1,106 @@
 /**
- * Skeleton Loader Styles
- * 
- * @description Base skeleton animation and variant styles following
- * the design system patterns from MetadataTable and prose elements
+ * Skeleton Loader Styles — "static ink, moving light"
+ *
+ * @description Compositor-only skeleton shimmer, dithered-glyph edition.
+ *   1. host      — matter color (contextual via --skeleton-matter),
+ *                  visible ONLY inside the dither cells of a static
+ *                  gradient mask; the gaps are true transparency showing
+ *                  the page behind, like a ░▒ console glyph
+ *   2. ::before  — dual-tone light strip, moved with transform only,
+ *                  likewise confined to the dither cells by the mask
+ * The mask is static (painted into the layer once); the only per-frame
+ * work is compositing the translating strip.
  */
 
+@use 'mixins' as *;
+
+@include skeleton-sweep-keyframes;
+
+/* ---- Compile-time knobs (Sass-only, emitted nowhere) ------------------- */
+
+/* Contextual matter color: containers override --skeleton-matter.
+   Containers whose matter already carries its own alpha (e.g. the
+   sidebar's primary tint) can also set --skeleton-rest-alpha: 100% so
+   the resting dilution below doesn't stack on top of it. */
+$matter: var(--skeleton-matter, var(--skeleton-surface));
+$matter-rest-alpha: 35%; /* default resting strength between band passes */
+$rest-alpha: var(--skeleton-rest-alpha, #{$matter-rest-alpha});
+
+/* Dither lattice — everything derives from the pitch. Single pitch is
+   load-bearing: overlaying two different pitches beats at their common
+   period and reads as periodic "orbs". */
+$dither-pitch: 8px; /* character-cell size, straight row/column grid */
+$dither-cell-solid: 60%; /* solid square side — resting pixel size */
+$dither-cell-apron: 85%; /* growth ceiling — crest pixel size */
+/* Growth apron: a flat low-alpha shoulder on each band. Mask alpha only
+   attenuates (no gain in CSS), so growth works by luminance contrast
+   instead: resting matter is near-background (apron ≈ invisible), the
+   crest is bright gold (apron lights up). Flat alpha + a hard outer
+   terminus makes cells SNAP to the apron size under the crest, like a
+   raised threshold in a noise shader, rather than blooming softly.
+   The two bands intersect (mask-composite), so apron corners multiply
+   to ~0.09 alpha — grown cells read as rounded CRT-pixel bloom. */
+$dither-apron-alpha: 0.3;
+$dither-band-x: linear-gradient(
+  90deg,
+  #000 0,
+  #000 $dither-cell-solid,
+  rgba(#000, $dither-apron-alpha) $dither-cell-solid,
+  rgba(#000, $dither-apron-alpha) $dither-cell-apron,
+  transparent $dither-cell-apron
+);
+$dither-band-y: linear-gradient(
+  0deg,
+  #000 0,
+  #000 $dither-cell-solid,
+  rgba(#000, $dither-apron-alpha) $dither-cell-solid,
+  rgba(#000, $dither-apron-alpha) $dither-cell-apron,
+  transparent $dither-cell-apron
+);
+
+/* Traveling density band — symmetric envelope around the crest. */
+$band-crest: 50%;
+$band-glint-half-width: 2%; /* gold shoulders at crest ± this */
+$band-matter-half-width: 6%; /* dense-matter region */
+$band-half-width: 15%; /* full envelope extent */
+$band-matter: color-mix(in srgb, $matter 85%, transparent);
+$band-shoulder: color-mix(in srgb, var(--skeleton-glint-1) 90%, transparent);
+$band-crest-color: color-mix(in srgb, var(--skeleton-glint-2) 95%, transparent);
+$sweep-duration: 2.4s;
+
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--color-bg-secondary) 0%,
-    var(--color-secondary) 50%,
-    var(--color-bg-secondary) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: 0.25rem;
+  position: relative; /* anchor for the light strip */
+  overflow: hidden; /* clips the moving strip — the only clip */
+  isolation: isolate; /* pseudo z-indexes stay inside the host */
+  /* Faint resting matter: the bar's extent stays legible while the
+     traveling density band (::before) does the expressive work. */
+  background: color-mix(in srgb, $matter $rest-alpha, transparent);
+  // border-radius: 0.25rem;
   display: inline-block;
+
+  /* Character-cell mask: square "pixels" on a straight grid, carved by
+     intersecting an x-band layer with a y-band layer (mask-composite).
+     Single pitch everywhere is deliberate: mixing two different pitches
+     beats at their common period and reads as periodic "orbs". The
+     density taper is NOT here (masks can't animate cheaply); it rides
+     the ::before band, whose luminance reveals each cell's apron
+     shoulder — cells snap larger near the crest. */
+  -webkit-mask-image: $dither-band-x, $dither-band-y;
+  -webkit-mask-size:
+    $dither-pitch $dither-pitch,
+    $dither-pitch $dither-pitch;
+  -webkit-mask-position:
+    0 0,
+    0 0;
+  -webkit-mask-composite: source-in, source-over;
+  mask-image: $dither-band-x, $dither-band-y;
+  mask-size:
+    $dither-pitch $dither-pitch,
+    $dither-pitch $dither-pitch;
+  mask-position:
+    0 0,
+    0 0;
+  mask-composite: intersect, add;
 
   &.text {
     height: 1rem;
@@ -54,6 +139,48 @@
     width: 100%;
     border-radius: 0.375rem;
   }
+}
+
+/* Stratum 2: the traveling density band. Strip is 2x host width;
+   translateX percentages resolve against the strip itself, so
+   -100% -> 50% is one full left-to-right pass (see
+   skeleton-sweep-keyframes). The envelope is symmetric — sparse matter
+   swelling to a glint crest (theme-toned via --skeleton-glint-*) and
+   tapering back — so the dither reads sparse -> dense -> sparse as it
+   moves. No will-change:
+   the layer is promoted only while the animation runs. */
+.skeleton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent ($band-crest - $band-half-width),
+    $band-matter ($band-crest - $band-matter-half-width),
+    $band-shoulder ($band-crest - $band-glint-half-width),
+    $band-crest-color $band-crest,
+    $band-shoulder ($band-crest + $band-glint-half-width),
+    $band-matter ($band-crest + $band-matter-half-width),
+    transparent ($band-crest + $band-half-width)
+  );
+  transform: translateX(-100%);
+  animation: skeletonSweep $sweep-duration ease-in-out infinite;
+}
+
+/* Per-cell desync: deterministic cadence variation so neighboring cells
+   don't sweep in lockstep. Negative delays start mid-cycle. */
+.skeleton:nth-child(2n)::before {
+  animation-delay: -0.9s;
+}
+
+.skeleton:nth-child(3n)::before {
+  animation-delay: -1.6s;
+  animation-duration: $sweep-duration + 0.5s;
 }
 
 .skeletonGroup {
@@ -101,11 +228,27 @@
   display: inline-block;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    /* with the band parked, restore full matter so the glyph stays legible */
+    background: $matter;
   }
-  100% {
-    background-position: -200% 0;
+
+  .skeleton::before {
+    animation: none; /* band parks off-left: static dithered glyph only */
+  }
+}
+
+@media (forced-colors: active) {
+  .skeleton {
+    background: Canvas;
+    border: 1px solid CanvasText; /* gradients are stripped; keep a shape */
+    -webkit-mask-image: none; /* an active mask would dice the border */
+    mask-image: none;
+  }
+
+  .skeleton::before {
+    background: none;
+    animation: none;
   }
 }

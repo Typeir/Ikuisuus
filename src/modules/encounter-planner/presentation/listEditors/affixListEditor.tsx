@@ -30,6 +30,7 @@ import { X } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { AffixCombobox } from '../comboboxes';
 import styles from '../creatureRow.module.scss';
+import btn from '@/styles/buttons.module.scss';
 
 /**
  * Props for AffixListEditor component
@@ -124,7 +125,7 @@ export const AffixListEditor: React.FC<AffixListEditorProps> = ({
               {!readOnly && (
                 <button
                   onClick={() => handleRemoveAffix(idx)}
-                  className={styles.removeChip}
+                  className={btn.iconDanger}
                   aria-label={removeChipAriaLabel}>
                   <X size={12} aria-hidden='true' />
                 </button>

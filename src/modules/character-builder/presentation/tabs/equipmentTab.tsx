@@ -26,6 +26,8 @@ import { useCallback, useMemo } from 'react';
 import { CarryingCapacityCalculator } from '../CarryingCapacity/carryingCapacityCalculator';
 import { CoinPouch } from '../CarryingCapacity/coinPouch';
 import { AttacksTable } from '../stats/attacksTable';
+import btn from '@/styles/buttons.module.scss';
+import tbl from '@/styles/tables.module.scss';
 import styles from './tabs.module.scss';
 
 /**
@@ -107,7 +109,7 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
       <div className={styles.twoColumns}>
         <div className={styles.column}>
           <h3 className={styles.sectionTitle}>{t('equipmentTitle')}</h3>
-          <table className={styles.equipmentTable}>
+          <table className={`${tbl.dataTable} ${tbl.fixed}`}>
             <thead>
               <tr>
                 <th className={styles.equipmentColName}>
@@ -159,7 +161,7 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
                     <td>
                       <button
                         type='button'
-                        className={styles.iconBtn}
+                        className={btn.iconBordered}
                         onClick={() => removeRow(idx)}
                         aria-label={t('equipmentRemoveItemAria', {
                           name: item.name || 'item',
@@ -175,11 +177,11 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
           {editing && (
             <button
               type='button'
-              className={styles.iconBtn}
+              className={btn.add}
               onClick={addRow}
-              aria-label={t('equipmentAddRowAria')}
-              style={{ marginTop: '0.4rem' }}>
+              aria-label={t('equipmentAddRowAria')}>
               <Plus size={14} aria-hidden='true' />
+              {t('equipmentAddItem')}
             </button>
           )}
 

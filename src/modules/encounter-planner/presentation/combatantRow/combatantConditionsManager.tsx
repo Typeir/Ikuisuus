@@ -27,6 +27,7 @@ import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import detailStyles from '../creatureRow.module.scss';
+import btn from '@/styles/buttons.module.scss';
 import { useCombatant } from './utils/context/combatantContext';
 
 /**
@@ -95,7 +96,7 @@ export const CombatantConditionsManager: React.FC<
             {condition.text}
             <button
               onClick={() => handleRemoveCondition(condition.id)}
-              className={detailStyles.removeChip}
+              className={btn.iconDanger}
               aria-label={t('removeCondition')}>
               <X size={12} aria-hidden='true' />
             </button>

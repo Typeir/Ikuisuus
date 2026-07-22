@@ -1,0 +1,52 @@
+/**
+ * @fileoverview Shared data-table styling — one source of truth for the
+ * character builder's tables so their headers/cells stop drifting apart.
+ *
+ * ```tsx
+ * import tbl from '@/styles/tables.module.scss';
+ * <table className={tbl.dataTable}> … </table>              // auto layout
+ * <table className={`${tbl.dataTable} ${tbl.fixed}`}> … </table>  // equal columns
+ * ```
+ *
+ * The atom owns ONLY the VISUAL layer (font sizes, header/cell treatment,
+ * borders, row hover) and deliberately stays out of layout. Column widths and
+ * `table-layout` are per-table concerns: opt into equal columns with `.fixed`,
+ * or keep `auto` and set column widths via local `<th>`/`<col>` classes.
+ *
+ * @module styles/tables.module
+ */
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+
+  th,
+  td {
+    padding: 0.2rem 0.4rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  td {
+    vertical-align: middle;
+  }
+
+  th {
+    color: var(--color-secondary);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: 1px solid var(--color-accent);
+  }
+
+  tbody tr:hover {
+    background: var(--color-bg-secondary);
+  }
+}
+
+/** Opt-in equal-column layout. Pair with `.dataTable` on tables that want it. */
+.fixed {
+  table-layout: fixed;
+}

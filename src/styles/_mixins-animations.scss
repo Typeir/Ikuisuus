@@ -4,6 +4,8 @@
  *
  * Exported mixins:
  *   - mythic-shimmer-keyframes  — Mythic shimmer animation for savanthood
+ *   - skeleton-sweep-keyframes  — Compositor-only moving-light sweep for
+ *                                 skeletons and awakened-card shimmer
  *
  * @module styles/mixins-animations
  */
@@ -26,6 +28,27 @@
     }
     66% {
       background-position: 50% 100%;
+    }
+  }
+}
+
+/**
+ * Skeleton sweep keyframe animation — compositor-only translateX of a
+ * light strip pseudo-element sized at 200% of its host. Percentages
+ * resolve against the PSEUDO's own width: -100% parks the strip fully
+ * left of the host, 50% exits it fully right, so from → to is one
+ * complete left-to-right pass. The `from` position doubles as the
+ * parked reduced-motion state.
+ *
+ * @mixin skeleton-sweep-keyframes
+ */
+@mixin skeleton-sweep-keyframes {
+  @keyframes skeletonSweep {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(50%);
     }
   }
 }

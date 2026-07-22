@@ -13,11 +13,13 @@
 
 'use client';
 
+import { Skeleton } from '@/lib/components/skeleton';
 import { cn } from '@/lib/utils/classNameMerge';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import {
   localizeLink,
+  SEARCH_CONTENT_TYPES,
   type SearchContentType,
   type SearchResult,
 } from '../../domain';
@@ -31,6 +33,7 @@ interface DiscoveryEntry {
   link: string;
   description?: string;
   image?: string;
+  readingTime?: string;
   type: string;
 }
 
@@ -89,9 +92,29 @@ export function FeaturedGrid({ locale }: FeaturedGridProps): JSX.Element {
       <h2 className='text-lg font-semibold mb-4'>{t('featuredHeading')}</h2>
 
       {loading && (
-        <p className={cn('italic text-sm', styles.featuredLoading)}>
-          {t('featuredLoading')}
-        </p>
+        <>
+          <p className='sr-only' role='status'>
+            {t('featuredLoading')}
+          </p>
+          {/* One skeleton card per content type — same grid as the data.
+              Mirrors the card anatomy: 24px sigil beside a content column
+              of type label, title, and description lines. */}
+          <div
+            className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 not-prose'
+            aria-hidden='true'>
+            {SEARCH_CONTENT_TYPES.map((type) => (
+              <div key={type} className={styles.skeletonCard}>
+                <Skeleton variant='card' width='24px' height='24px' />
+                <div className={styles.skeletonCardContent}>
+                  <Skeleton variant='text' width='35%' height='0.625rem' />
+                  <Skeleton variant='text' width='70%' height='0.9375rem' />
+                  <Skeleton variant='text' width='100%' height='0.75rem' />
+                  <Skeleton variant='text' width='55%' height='0.75rem' />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {!loading && types.length === 0 && (
@@ -114,6 +137,9 @@ export function FeaturedGrid({ locale }: FeaturedGridProps): JSX.Element {
               link: localizeLink(entry.link, locale),
               description: entry.description,
               image: entry.image,
+              meta: entry.readingTime
+                ? { readingTime: entry.readingTime }
+                : undefined,
             },
             score: 0,
             snippet: entry.description || '',

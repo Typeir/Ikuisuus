@@ -129,6 +129,7 @@ export async function syncBloodlines(
       file: record.file as string,
       link: record.link as string,
       description: record.description as string | undefined,
+      image: record.image as string | undefined,
       abilityScores: (coreFeatures.abilityScores as string[]) ?? [],
       movementSpeeds: (coreFeatures.movementSpeeds as string[]) ?? [],
       senses: (coreFeatures.senses as string[]) ?? [],

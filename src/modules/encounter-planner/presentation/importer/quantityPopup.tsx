@@ -30,6 +30,7 @@ import { Modal, NumericInput } from '@/lib/components/ui';
 import { Check, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './quantityPopup.module.scss';
+import btn from '@/styles/buttons.module.scss';
 
 /**
  * Maximum allowed quantity for creature import.
@@ -165,7 +166,7 @@ export const QuantityPopup: React.FC<QuantityPopupProps> = ({
         <div className={styles.actions}>
           <button
             type='button'
-            className={styles.buttonBase}
+            className={`${btn.neutral} ${styles.action}`}
             onClick={onCancel}
             aria-label={cancelLabel}>
             <span className={styles.buttonIcon} aria-hidden='true'>
@@ -177,7 +178,7 @@ export const QuantityPopup: React.FC<QuantityPopupProps> = ({
           <button
             ref={confirmButtonRef}
             type='button'
-            className={styles.buttonPrimary}
+            className={styles.action}
             onClick={handleConfirm}
             aria-label={`${confirmLabel} ${getValidQuantity(quantity)} ${creatureName}`}>
             <span className={styles.buttonIcon} aria-hidden='true'>

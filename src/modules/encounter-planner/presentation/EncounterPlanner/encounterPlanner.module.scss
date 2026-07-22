@@ -78,30 +78,6 @@
   flex-wrap: wrap;
 }
 
-.buttonBase {
-  @include button-base(0.35rem 0.65rem, 0.8rem);
-  @include button-hover-secondary;
-  @include button-hover-scale;
-}
-
-.buttonPrimary {
-  @include button-primary;
-}
-
-.buttonDanger {
-  @include button-base;
-  @include button-danger;
-}
-
-.select {
-  @include button-base(0.3rem 0.4rem, 0.75rem);
-
-  &:focus {
-    outline: none;
-    border-color: var(--color-accent);
-  }
-}
-
 .encounterComboboxWrap {
   width: 160px;
   flex-shrink: 0;
@@ -132,18 +108,6 @@
   gap: 1rem;
   align-items: flex-start;
   flex-wrap: wrap;
-}
-
-.buttonSecondary {
-  background: var(--color-surface);
-  border-color: var(--color-accent);
-  color: var(--color-text);
-  @include button-hover-scale;
-
-  &:hover {
-    background: var(--color-accent);
-    color: var(--color-bg);
-  }
 }
 
 .importContainer {

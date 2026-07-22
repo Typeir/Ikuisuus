@@ -11,6 +11,7 @@
  */
 
 import {
+    BookOpen,
     Droplet,
     FlaskConical,
     Gem,
@@ -35,4 +36,5 @@ export const typeIconMap: Record<SearchContentType, LucideIcon> = {
   specializations: Star,
   feats: Medal,
   world: ScrollText,
+  rules: BookOpen,
 };

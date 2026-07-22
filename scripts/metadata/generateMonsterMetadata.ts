@@ -19,6 +19,8 @@ import {
     clean,
     extractAllTags,
     filePathToSlug,
+    findContentImage,
+    parseFirstProseParagraph,
     parseKeyBullets,
     parseNumericValue,
     readLines,
@@ -407,20 +409,14 @@ function findStatBlockTitle(
   return '';
 }
 
-/** Regex matching a BlendedImage JSX tag with a src attribute (single line). */
-const BLENDED_IMAGE_SINGLE = STRUCTURE.blendedImageSrc;
-
-/** Regex matching a src attribute on any line (for multi-line JSX). */
-const SRC_ATTR_PATTERN = IMAGE.srcAttr;
-
 /**
  * Finds the image path closest to a stat block by scanning backwards from the
  * italic creature-type line towards the variant heading. For the first stat
  * block (index 0) also scans from the file start.
  *
  * For multi-variant files with per-variant images (e.g. xanthous.sheet.mdx),
- * each variant gets the BlendedImage between its heading and the italic line.
- * When no per-variant image is found, falls back to the first BlendedImage in
+ * each variant gets the image between its heading and the italic line.
+ * When no per-variant image is found, falls back to the first image in
  * the entire file (shared header pattern, e.g. cornucopios.sheet.mdx).
  *
  * @param {string[]} allLines - All file lines
@@ -450,57 +446,13 @@ function findMonsterImage(
     scanEnd = i + 1;
   }
 
-  let lastImage: string | undefined;
-  let inBlendedImage = false;
-  for (let i = scanStart; i < scanEnd; i++) {
-    const line = allLines[i];
-    const singleMatch = line.match(BLENDED_IMAGE_SINGLE);
-    if (singleMatch) {
-      lastImage = singleMatch[1];
-      inBlendedImage = false;
-      continue;
-    }
-    if (IMAGE.blendedImageTag.test(line)) {
-      inBlendedImage = true;
-      continue;
-    }
-    if (inBlendedImage) {
-      const srcMatch = line.match(SRC_ATTR_PATTERN);
-      if (srcMatch) {
-        lastImage = srcMatch[1];
-        inBlendedImage = false;
-      }
-      if (IMAGE.jsxSelfClose.test(line)) inBlendedImage = false;
-    }
-  }
+  const windowImage = findContentImage(allLines, scanStart, scanEnd);
+  if (windowImage) return windowImage;
 
-  if (lastImage) return lastImage;
-
+  /* Variant blocks with no image of their own inherit the file's shared
+     header image (everything before the first stat block). */
   if (statBlockIndex > 0) {
-    let fallbackImage: string | undefined;
-    let inTag = false;
-    for (let i = 0; i < allPositions[0].lineIndex; i++) {
-      const line = allLines[i];
-      const singleMatch = line.match(BLENDED_IMAGE_SINGLE);
-      if (singleMatch) {
-        fallbackImage = singleMatch[1];
-        inTag = false;
-        continue;
-      }
-      if (IMAGE.blendedImageTag.test(line)) {
-        inTag = true;
-        continue;
-      }
-      if (inTag) {
-        const srcMatch = line.match(SRC_ATTR_PATTERN);
-        if (srcMatch) {
-          fallbackImage = srcMatch[1];
-          inTag = false;
-        }
-        if (IMAGE.jsxSelfClose.test(line)) inTag = false;
-      }
-    }
-    if (fallbackImage) return fallbackImage;
+    return findContentImage(allLines, 0, allPositions[0].lineIndex);
   }
 
   return undefined;
@@ -703,7 +655,12 @@ function parseStatBlockSection(
     allPositions,
   );
 
-  const description = parseMonsterDescription(sectionLines);
+  /* Section-local prose is rare (most sheets put lore before the stat
+     block); fall back to the file's first prose paragraph for the main
+     stat block so featured cards are not text-free. */
+  const description =
+    parseMonsterDescription(sectionLines) ??
+    (statBlockIndex === 0 ? parseFirstProseParagraph(allLines) : undefined);
 
   const metadata: Record<string, unknown> = {
     slug: baseSlug,

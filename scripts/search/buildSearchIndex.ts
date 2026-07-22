@@ -75,6 +75,9 @@ async function main(): Promise<void> {
     }
 
     const outputPath = path.join(OUTPUT_ROOT, locale);
+    /* Remove the previous bundle first — writeFiles does not clean, so stale
+       fragments from earlier builds would otherwise accumulate. */
+    await fs.rm(outputPath, { recursive: true, force: true });
     console.log(`[search:index] Writing index to: ${outputPath}`);
     await index.writeFiles({ outputPath });
 

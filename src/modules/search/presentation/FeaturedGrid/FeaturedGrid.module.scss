@@ -2,3 +2,30 @@
 .featuredEmpty {
   color: var(--color-text-secondary);
 }
+
+/* Skeleton cards mirror the .rowCard frame and .row layout from
+   atoms.module.scss (sigil + content column) so the loading grid
+   occupies the same geometry as the data grid (no CLS). */
+.skeletonCard {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--search-result-gap, 0.75rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.625rem 0.75rem;
+}
+
+.skeletonCardContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem; /* = .rowContentCard gap */
+
+  /* The column gap governs spacing; neutralize the text variant's own
+     margin-bottom so rows don't spread wider than the real card's. */
+  > * {
+    margin-bottom: 0 !important;
+  }
+}

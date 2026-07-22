@@ -17,15 +17,16 @@ import path from 'path';
 import { fnv1a32 } from '../../src/lib/metadata/contentHash';
 import { ensureDirectory, getMatchingFiles, safeWriteFile } from './fileUtils';
 import { UTILITY } from './parsingPatterns';
+import { calculateReadingTime } from './parsingUtils';
 import { endTimer, startTimer } from './performanceUtils';
 import { loadSharedData, type SharedData } from './sharedData';
 
 const log = createLogger({ component: 'metadata-generator' });
 
 /**
- * Resolved project root (two levels up from src/lib/metadata/).
+ * Resolved project root (two levels up from scripts/metadata/).
  */
-const PROJECT_ROOT = path.resolve(__dirname, '..', '..', '..');
+const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
 
 /**
  * Cached metadata backend value.
@@ -202,20 +203,31 @@ export interface GeneratorConfig {
 }
 
 /**
- * Stamps a pre-computed version hash onto metadata records.
- * For arrays, every record receives the same hash (same source file).
+ * Stamps page-level shared fields (version hash, reading time) onto metadata
+ * records. For arrays, every record receives the same values (same source
+ * file, same page). Generator-set values are never overwritten except
+ * `versionHash`, which is always authoritative here.
  *
  * @param {unknown} metadata - Parsed metadata object, array, or null
  * @param {string} hash - Pre-computed version hash
- * @returns {unknown} Metadata with `versionHash` populated for object records
+ * @param {string} readingTime - Pre-computed reading time (e.g. "4 min read")
+ * @returns {unknown} Metadata with shared fields populated for object records
  */
-function stampVersionHash(metadata: unknown, hash: string): unknown {
+function stampSharedFields(
+  metadata: unknown,
+  hash: string,
+  readingTime: string,
+): unknown {
   if (metadata === null || metadata === undefined) return metadata;
   if (Array.isArray(metadata)) {
-    return metadata.map((item) => stampVersionHash(item, hash));
+    return metadata.map((item) => stampSharedFields(item, hash, readingTime));
   }
   if (typeof metadata !== 'object') return metadata;
-  return { ...(metadata as Record<string, unknown>), versionHash: hash };
+  return {
+    readingTime,
+    ...(metadata as Record<string, unknown>),
+    versionHash: hash,
+  };
 }
 
 /**
@@ -295,9 +307,10 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
           const versionHash = fnv1a32(
             sourceContent + (config.metadataVersion || ''),
           );
-          const metadataWithHash = stampVersionHash(
+          const metadataWithHash = stampSharedFields(
             processed.metadata,
             versionHash,
+            calculateReadingTime(sourceContent),
           );
 
           const backend = getMetadataBackend();

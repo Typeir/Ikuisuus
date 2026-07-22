@@ -145,6 +145,8 @@
   @include button-hover-scale;
 
   &:hover {
+    /* Explicit transparent hover bg → displaces the global primary-green fill. */
+    background: transparent;
     color: var(--color-accent);
     border-color: var(--color-accent);
   }

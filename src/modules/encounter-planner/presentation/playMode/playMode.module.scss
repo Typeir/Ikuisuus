@@ -12,62 +12,6 @@
   border-radius: 8px;
 }
 
-.lairAlert {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  background: linear-gradient(
-    135deg,
-    var(--color-lair-bg-start) 0%,
-    var(--color-lair-bg-end) 100%
-  );
-  border: 2px solid var(--color-lair-border);
-  border-radius: 8px;
-  color: var(--color-lair-text);
-  font-weight: 600;
-  font-size: 1rem;
-  animation: pulse-border 2s ease-in-out infinite;
-  box-shadow: 0 4px 12px rgb(var(--color-lair-shadow));
-
-  span {
-    flex: 1;
-  }
-}
-
-.lairAlertDismiss {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--color-lair-border);
-  border-radius: 4px;
-  background: rgb(var(--color-lair-button-bg));
-  color: var(--color-lair-border);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-  @include button-hover-scale;
-
-  &:hover {
-    background: var(--color-lair-border);
-    color: var(--color-lair-bg-end);
-  }
-}
-
-@keyframes pulse-border {
-  0%,
-  100% {
-    box-shadow:
-      0 4px 12px rgb(var(--color-lair-shadow)),
-      0 0 0 0 rgb(var(--color-lair-glow));
-  }
-  50% {
-    box-shadow:
-      0 4px 12px rgb(var(--color-lair-shadow)),
-      0 0 0 4px rgb(var(--color-lair-glow-dim));
-  }
-}
-
 .playModeHeader {
   display: flex;
   align-items: center;
@@ -95,80 +39,15 @@
   }
 }
 
+/* Layout-only: pushes the close (X) icon button to the right. Chrome from btn.icon. */
 .exitButton {
-  @include button-base;
-  @include button-hover-scale;
   margin-left: auto;
-  font-size: 1.25rem;
-  line-height: 1;
-  min-width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background: var(--color-accent);
-    color: var(--color-surface);
-    border-color: var(--color-accent);
-  }
 }
 
 .playModeControls {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-
-  .buttonBase {
-    padding: 0.4rem 0.7rem;
-    border: 1px solid var(--color-secondary);
-    border-radius: 4px;
-    background: var(--color-bg);
-    color: var(--color-text);
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.85rem;
-    transition: all 0.2s ease;
-    @include button-hover-scale;
-
-    &:hover {
-      background: var(--color-secondary);
-      color: var(--color-surface);
-      border-color: var(--color-secondary);
-    }
-
-    &.buttonPrimary {
-      background: var(--color-accent);
-      color: var(--color-surface);
-      border-color: var(--color-accent);
-
-      &:hover {
-        opacity: 0.9;
-      }
-    }
-
-    &.buttonSecondary {
-      background: var(--color-bg);
-      color: var(--color-text);
-
-      &:hover {
-        background: var(--color-secondary);
-      }
-    }
-
-    &.buttonDanger {
-      background: transparent !important;
-      border-color: var(--color-emphasis);
-      color: var(--color-emphasis);
-
-      &:hover {
-        background: transparent;
-        color: var(--color-danger);
-        border-color: var(--color-danger);
-        @include focus-glow(3px, var(--color-danger));
-      }
-    }
-  }
 }
 
 .sessionOnlyControls {
@@ -186,7 +65,8 @@
       min-width: 0;
     }
 
-    .buttonBase {
+    /* Buttons in a session row keep their natural width instead of stretching. */
+    button {
       flex: 0 0 auto;
     }
   }
@@ -206,32 +86,6 @@
     }
 
     @include placeholder-secondary;
-  }
-
-  .buttonBase {
-    padding: 0.4rem 0.7rem;
-    border: 1px solid var(--color-secondary);
-    border-radius: 4px;
-    background: var(--color-bg);
-    color: var(--color-text);
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.85rem;
-    transition: all 0.2s ease;
-    @include button-hover-scale;
-
-    &:hover {
-      background: var(--color-secondary);
-      color: var(--color-surface);
-    }
-
-    &.buttonSecondary {
-      background: var(--color-bg);
-
-      &:hover {
-        background: var(--color-secondary);
-      }
-    }
   }
 }
 

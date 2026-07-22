@@ -212,28 +212,10 @@
 .headerActions {
   display: flex;
   gap: 0.5rem;
-}
 
-.buttonBase {
-  @include button-base(0.25rem 0.75rem, 0.8rem);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-secondary);
-  color: var(--color-text);
-  @include button-hover-scale;
-
-  &:hover {
-    border-color: var(--color-accent);
-  }
-}
-
-.buttonPrimary {
-  border-color: var(--color-accent);
-  background: var(--color-accent);
-  color: var(--color-bg);
-  @include button-hover-scale;
-
-  &:hover {
-    background: var(--color-accent-hover);
-    border-color: var(--color-accent-hover);
+  /* Preserve the compact header sizing on the shared primary/neutral buttons. */
+  button {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
   }
 }

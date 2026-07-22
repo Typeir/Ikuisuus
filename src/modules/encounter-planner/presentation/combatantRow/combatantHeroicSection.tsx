@@ -32,6 +32,7 @@ import { X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import styles from './combatantRow.module.scss';
+import btn from '@/styles/buttons.module.scss';
 import { useCombatant } from './utils/context/combatantContext';
 
 /**
@@ -142,31 +143,31 @@ export const CombatantHeroicSection: React.FC<
         <div className={styles.forceAwakeningButtonsSection}>
           <label className={styles.label}>{t('forceAwakening')}</label>
           <div className={styles.awakeningButtonGroupOuter}>
-            <Tooltip content={t('forceAwakeningTooltip')} placement='top'>
+            <Tooltip content={t('forceAwakeningTooltip')} placement='top' showClickIcon={false}>
               <button
                 onClick={() => handleForceAwakening('awakened')}
-                className={styles.awakeningButtonSecondary}>
+                className={btn.secondary}>
                 {t('heroic.awakened')}
               </button>
             </Tooltip>
-            <Tooltip content={t('forceAwakeningTooltip')} placement='top'>
+            <Tooltip content={t('forceAwakeningTooltip')} placement='top' showClickIcon={false}>
               <button
                 onClick={() => handleForceAwakening('legendary')}
-                className={styles.awakeningButtonSecondary}>
+                className={btn.secondary}>
                 {t('heroic.legendary')}
               </button>
             </Tooltip>
-            <Tooltip content={t('forceAwakeningTooltip')} placement='top'>
+            <Tooltip content={t('forceAwakeningTooltip')} placement='top' showClickIcon={false}>
               <button
                 onClick={() => handleForceAwakening('mythic')}
-                className={styles.awakeningButtonSecondary}>
+                className={btn.secondary}>
                 {t('heroic.mythic')}
               </button>
             </Tooltip>
-            <Tooltip content='Remove Heroic Awakening' placement='top'>
+            <Tooltip content='Remove Heroic Awakening' placement='top' showClickIcon={false}>
               <button
                 onClick={handleUnawaken}
-                className={styles.awakeningButtonDanger}
+                className={btn.dangerOutline}
                 aria-label={t('removeAwakening')}>
                 <X size={14} aria-hidden='true' />
               </button>

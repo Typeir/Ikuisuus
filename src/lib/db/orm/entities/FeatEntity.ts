@@ -143,6 +143,9 @@ export class FeatEntity {
   description?: string | null;
 
   @Property({ type: 'string', nullable: true })
+  image?: string | null;
+
+  @Property({ type: 'string', nullable: true })
   prerequisite?: string | null;
 
   @Property({ type: 'boolean', fieldName: 'has_prerequisite' })

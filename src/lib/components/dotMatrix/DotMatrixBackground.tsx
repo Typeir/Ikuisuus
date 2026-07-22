@@ -1,8 +1,11 @@
 /**
- * @fileoverview Minimal flat-color background with flashlight reveal mask
+ * @fileoverview Flashlight reveal background using the counter-translate
+ * architecture: a static pattern field under a transform-driven aperture,
+ * so pointer movement costs two composite-only transform updates and zero
+ * paint. See dotMatrix.module.scss for the layer breakdown.
  * @module lib/components/dotMatrix/DotMatrixBackground
  * @author Typeir
- * @version 0.1.0
+ * @version 0.2.0
  * @since 1
  */
 
@@ -30,8 +33,11 @@ export default React.forwardRef<HTMLDivElement, Props>(
         data-flashlight='true'
         className={styles.reveal}
         style={style}
-        aria-hidden='true'
-      />
+        aria-hidden='true'>
+        <div className={styles.aperture} data-flashlight-aperture='true'>
+          <div className={styles.field} data-flashlight-field='true' />
+        </div>
+      </div>
     );
   },
 );

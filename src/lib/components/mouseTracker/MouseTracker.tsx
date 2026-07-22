@@ -2,7 +2,7 @@
  * @fileoverview Minimal client mouse tracker — writes cursor position to CSS variables
  * @module lib/components/mouseTracker/MouseTracker
  * @author Typeir
- * @version 0.1.0
+ * @version 0.2.0
  * @since 29-4-2026
  */
 
@@ -18,7 +18,11 @@ type Props = {
 };
 
 /**
- * Write normalized mouse coordinates to root CSS variables as percentages.
+ * Write mouse coordinates to CSS variables on the target element.
+ * Emits both percentage vars (--mouse-x/--mouse-y, for gradient positions)
+ * and pixel vars (--mouse-px/--mouse-py, for transform-driven consumers —
+ * percentages inside translate() resolve against the element's own box, so
+ * transforms need absolute pixels).
  * @param {number} clientX
  * @param {number} clientY
  */
@@ -33,13 +37,16 @@ function setMouseVars(
   if (!el) return;
   el.style.setProperty('--mouse-x', `${xPct}%`);
   el.style.setProperty('--mouse-y', `${yPct}%`);
+  el.style.setProperty('--mouse-px', `${clientX}px`);
+  el.style.setProperty('--mouse-py', `${clientY}px`);
 }
 
 /**
  * Client component that tracks pointer movement and updates CSS variables.
  * Stateless — does not cause React re-renders on movement.
  * Respects user preferences for reduced motion and coarse pointers by disabling tracking.
- * Uses RAF to throttle updates to ~30fps.
+ * Coalesces updates to one write per animation frame; consumers are expected
+ * to use the vars in transform-only ways, so a full-rate rAF is composite-cheap.
  *
  * @param {Props} props
  * @param {React.RefObject<HTMLElement>} props.targetRef - Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement
@@ -62,18 +69,11 @@ export default function MouseTracker({ targetRef, onFirstMove }: Props): null {
     let lastY = 0;
     let hasMovedRef = { moved: false };
 
-    let lastFrameTime = 0;
-    const fpsLimit = 1000 / 30;
-
-    const flush = (currentTime: any) => {
+    const flush = () => {
       rafId = null;
-
-      if (currentTime - lastFrameTime >= fpsLimit) {
-        lastFrameTime = currentTime;
-        const target = getTarget();
-        if (!target) return;
-        setMouseVars(lastX, lastY, target);
-      }
+      const target = getTarget();
+      if (!target) return;
+      setMouseVars(lastX, lastY, target);
     };
 
     const schedule = () => {

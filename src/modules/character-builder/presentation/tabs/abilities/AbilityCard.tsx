@@ -20,6 +20,7 @@ import { mdxComponents } from '@/modules/library/presentation';
 import { HelpCircle, Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useCallback, useMemo } from 'react';
+import btn from '@/styles/buttons.module.scss';
 import styles from './abilities.module.scss';
 
 const KIND_MAP: Record<string, PreviewKind> = {
@@ -118,7 +119,7 @@ export const AbilityCard: React.FC<AbilityCardProps> = ({
             showClickIcon={false}>
             <button
               type='button'
-              className={`${styles.sourceBtn} ${isOpen ? styles.sourceBtnActive : ''}`}
+              className={`${btn.icon} ${styles.sourceBtn} ${isOpen ? styles.sourceBtnActive : ''}`}
               onClick={(e) => {
                 e.stopPropagation();
                 handleSourceLookup();
@@ -134,7 +135,7 @@ export const AbilityCard: React.FC<AbilityCardProps> = ({
           {onEdit && (
             <button
               type='button'
-              className={styles.actionBtn}
+              className={btn.icon}
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit();
@@ -146,7 +147,7 @@ export const AbilityCard: React.FC<AbilityCardProps> = ({
           {onDelete && (
             <button
               type='button'
-              className={styles.actionBtnDanger}
+              className={btn.iconDanger}
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete();

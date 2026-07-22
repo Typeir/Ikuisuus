@@ -15,7 +15,7 @@
 
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { cn } from '@/lib/utils/classNameMerge';
-import type { SearchResult } from '../../domain';
+import { typeColorVar, type SearchResult } from '../../domain';
 import { MatchSnippet } from '../atoms/MatchSnippet';
 import { MetaTrail } from '../atoms/MetaTrail';
 import { ResultThumb } from '../atoms/ResultThumb';
@@ -56,12 +56,13 @@ export function SearchResultRow({
 
   const mergedStyle = {
     '--stream-text': `'${streamText}'`,
-    '--search-row-stream-color': `var(--search-type-${record.type})`,
-    '--sigil-color': `var(--search-type-${record.type})`,
+    '--search-row-stream-color': typeColorVar(record.type),
+    '--sigil-color': typeColorVar(record.type),
     ...style,
   } as React.CSSProperties;
 
   const description = record.description || snippet;
+  const readingTime = record.meta?.readingTime;
 
   return (
     <LazyPrefetchLink
@@ -80,7 +81,12 @@ export function SearchResultRow({
           styles.rowContent,
           variant === 'card' && styles.rowContentCard,
         )}>
-        <span className={cn(styles.cardTypeLabel)}>{typeLabel}</span>
+        <span className={cn(styles.cardTypeLabel)}>
+          {typeLabel}
+          {readingTime && (
+            <span className={styles.readingTime}>{readingTime}</span>
+          )}
+        </span>
         <ResultTitle title={record.title} />
         {variant === 'row' && snippet && <MatchSnippet snippet={snippet} />}
         {variant === 'card' && description && (

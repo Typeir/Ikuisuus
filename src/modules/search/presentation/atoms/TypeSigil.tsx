@@ -11,7 +11,7 @@
  */
 
 import { cn } from '@/lib/utils/classNameMerge';
-import type { SearchContentType } from '../../domain';
+import { typeColorVar, type SearchContentType } from '../../domain';
 import styles from './atoms.module.scss';
 import { typeIconMap } from './iconMap';
 
@@ -40,9 +40,7 @@ export function TypeSigil({ type, className }: TypeSigilProps): JSX.Element {
   return (
     <span
       className={cn(styles.sigil, className)}
-      style={
-        { '--sigil-color': `var(--search-type-${type})` } as React.CSSProperties
-      }
+      style={{ '--sigil-color': typeColorVar(type) } as React.CSSProperties}
       title={`${type} content`}
       aria-hidden='true'>
       <Icon size={18} strokeWidth={1.5} />

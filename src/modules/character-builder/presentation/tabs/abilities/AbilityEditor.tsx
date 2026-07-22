@@ -27,6 +27,7 @@ import {
     useMemo,
     useState,
 } from 'react';
+import btn from '@/styles/buttons.module.scss';
 import styles from './abilities.module.scss';
 
 /**
@@ -260,7 +261,7 @@ export const AbilityEditor: React.FC<AbilityEditorProps> = ({
             disabled={!form.name.trim()}>
             {isEditing ? t('save') : t('abilityAdd')}
           </button>
-          <button type='button' className={styles.cancelBtn} onClick={onCancel}>
+          <button type='button' className={btn.neutral} onClick={onCancel}>
             {t('cancel')}
           </button>
         </div>

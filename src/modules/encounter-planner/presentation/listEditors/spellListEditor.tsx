@@ -32,6 +32,7 @@ import { useLocale } from 'next-intl';
 import { useCallback } from 'react';
 import { SpellCombobox } from '../comboboxes';
 import styles from '../creatureRow.module.scss';
+import btn from '@/styles/buttons.module.scss';
 
 /**
  * @interface SpellListEditorProps
@@ -118,7 +119,7 @@ export const SpellListEditor: React.FC<SpellListEditorProps> = ({
               {!readOnly && (
                 <button
                   onClick={() => handleRemoveSpell(spell.slug)}
-                  className={styles.removeChip}
+                  className={btn.iconDanger}
                   aria-label={removeChipAriaLabel}>
                   <X size={12} aria-hidden='true' />
                 </button>

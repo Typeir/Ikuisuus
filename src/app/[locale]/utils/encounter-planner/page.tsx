@@ -27,6 +27,7 @@
 import { CombatantRow } from '@/modules/encounter-planner/presentation/combatantRow';
 import { EncounterCombobox } from '@/modules/encounter-planner/presentation/comboboxes';
 import styles from '@/modules/encounter-planner/presentation/EncounterPlanner/encounterPlanner.module.scss';
+import btn from '@/styles/buttons.module.scss';
 import { useEncounterPlannerState } from '@/modules/encounter-planner/presentation/EncounterPlanner/useEncounterPlannerState';
 import { MonsterImporter } from '@/modules/encounter-planner/presentation/importer';
 import { PlayMode } from '@/modules/encounter-planner/presentation/playMode';
@@ -83,9 +84,7 @@ export default function EncounterPlannerPage(): JSX.Element {
           <span className={styles.resumeText}>
             {t('resumeCombatAvailable')}
           </span>
-          <button
-            onClick={handleResumeCombat}
-            className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
+          <button onClick={handleResumeCombat}>
             {t('resumeCombat')}
           </button>
         </div>
@@ -104,12 +103,10 @@ export default function EncounterPlannerPage(): JSX.Element {
           </div>
         </div>
         <div className={styles.controls}>
-          <button
-            onClick={handleStartCombat}
-            className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
+          <button onClick={handleStartCombat}>
             {t('startCombat')}
           </button>
-          <button onClick={handleNewEncounter} className={styles.buttonBase}>
+          <button onClick={handleNewEncounter} className={btn.neutral}>
             {t('newEncounter')}
           </button>
           <div className={styles.encounterComboboxWrap}>
@@ -119,15 +116,15 @@ export default function EncounterPlannerPage(): JSX.Element {
               onSelect={handleLoadEncounter}
             />
           </div>
-          <button onClick={handleExport} className={styles.buttonBase}>
+          <button onClick={handleExport} className={btn.neutral}>
             {t('exportEncounter')}
           </button>
-          <button onClick={handleImport} className={styles.buttonBase}>
+          <button onClick={handleImport} className={btn.neutral}>
             {t('importEncounter')}
           </button>
           <button
             onClick={handleDeleteEncounter}
-            className={`${styles.buttonBase} ${styles.buttonDanger}`}>
+            className={btn.danger}>
             {t('deleteEncounter')}
           </button>
           <input
@@ -140,14 +137,12 @@ export default function EncounterPlannerPage(): JSX.Element {
         </div>
       </div>
       <div className={styles.addCreatureControls}>
-        <button
-          onClick={handleAddCreature}
-          className={`${styles.buttonBase} ${styles.buttonPrimary}`}>
+        <button onClick={handleAddCreature}>
           {t('addCreature')}
         </button>
         <button
           onClick={() => setShowCreatureImport(!showCreatureImport)}
-          className={`${styles.buttonBase} ${styles.buttonSecondary}`}>
+          className={btn.secondary}>
           {t('importCreature')}
         </button>
         {showCreatureImport && (

@@ -18,6 +18,7 @@
 
 'use client';
 
+import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -149,7 +150,14 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         aria-expanded={open}
         aria-haspopup='true'
         onClick={() => setOpen((v) => !v)}>
-        ▾
+        <ChevronDown
+          size={14}
+          aria-hidden='true'
+          style={{
+            transition: 'transform 0.2s ease',
+            transform: open ? 'rotate(180deg)' : undefined,
+          }}
+        />
       </button>
       {panel}
     </>

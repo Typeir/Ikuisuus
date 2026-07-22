@@ -1,5 +1,37 @@
 @use '@/styles/mixins' as *;
 
+/* Single source of truth for the fixed mobile title bar height. The bar,
+   the sidebar's mobile offset, and the main-content offset all derive
+   from it — change it here and every layer stays aligned. */
+$mobile-header-height: 72px;
+
+/* Fixed mobile title bar (hidden on lg+ via utility classes in the TSX). */
+.mobileTitleBar {
+  height: $mobile-header-height;
+}
+
+/* Uniform slot for the mobile bar's four icon controls (logo, theme,
+   character, hamburger) — equal boxes so the search bar centers between
+   symmetric flanks. */
+.headerIconSlot {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+/* Main content clears the fixed title bar on mobile. */
+.mainContent {
+  margin-top: $mobile-header-height;
+
+  @media (min-width: 1024px) {
+    margin-top: 0;
+  }
+}
+
 .hamburger {
   @apply transition-all duration-300 ease-in-out;
   filter: drop-shadow(1px 2px 2px var(--color-text));
@@ -56,6 +88,9 @@
     width: 120vw;
     z-index: 20;
     padding-left: 24vw;
+    /* The title bar is fixed above the sidebar (z-40 vs z-30); start the
+       sidebar's content below it instead of underneath it. */
+    padding-top: $mobile-header-height;
 
     &.isOpen {
       transform: translateX(-20vw);
@@ -101,8 +136,15 @@ html[data-theme='light'] .ssrThemeIcon {
   filter: saturate(0.05) contrast(0.3) brightness(0);
 }
 
-.themeToggle {
+/* `button.` qualifier (0,1,1) reliably beats btn.tertiary (0,1,0) at the
+   border-radius/border tie — a bare `.themeToggle` would lose on source order. */
+button.themeToggle {
   border-radius: 9999px;
+  border: 1px solid var(--color-border);
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-accent);
+  }
 }
 
 /* ── Embed Mode ──────────────────────────────────────────────── */

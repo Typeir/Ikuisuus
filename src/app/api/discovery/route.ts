@@ -110,6 +110,7 @@ export async function GET(req: Request): Promise<NextResponse> {
         link: string;
         description?: string;
         image?: string;
+        readingTime?: string;
       }>(locale, subdir);
 
       if (records.length === 0) {
@@ -128,6 +129,7 @@ export async function GET(req: Request): Promise<NextResponse> {
               link: localizeLink(records[featuredIdx].link, locale),
               description: records[featuredIdx].description,
               image: records[featuredIdx].image,
+              readingTime: records[featuredIdx].readingTime,
               type,
             }
           : null,
@@ -138,6 +140,7 @@ export async function GET(req: Request): Promise<NextResponse> {
               link: localizeLink(records[randomIdx].link, locale),
               description: records[randomIdx].description,
               image: records[randomIdx].image,
+              readingTime: records[randomIdx].readingTime,
               type,
             }
           : null,

@@ -14,7 +14,7 @@
 import type { CharacterTool, TierLevel } from '@/lib/types/character';
 import { computeToolBonus, updateItemTier } from '@/modules/character-builder/lib/utils/proficiencyUtils';
 import { useTranslations } from 'next-intl';
-import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
+import tbl from '@/styles/tables.module.scss';
 import profRowStyles from '../CharacterSheet/proficiencyRow.module.scss';
 import { ProficiencyTrack } from '../components/ProficiencyTrack';
 
@@ -56,7 +56,9 @@ export function ToolsTable({
   };
 
   return (
-    <table className={styles.skillsTable} aria-label={t('ariaToolsTable')}>
+    <table
+      className={`${tbl.dataTable} ${tbl.fixed}`}
+      aria-label={t('ariaToolsTable')}>
       <thead>
         <tr>
           <th scope='col'>{t('colTool')}</th>

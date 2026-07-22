@@ -39,6 +39,9 @@
 
   &:hover,
   &.hovered {
+    /* Hold the resting background on hover. Without this, the <button> falls
+       through to the global `button:hover` primary fill (light-text-on-green). */
+    background: var(--worldsim-label-bg);
     border-color: var(--worldsim-label-accent);
     box-shadow: 0 0 8px var(--worldsim-label-accent);
   }
@@ -102,7 +105,7 @@
   border: 1px solid var(--worldsim-panel-border);
   border-radius: 4px;
   background: transparent;
-  color: var(--worldsim-label-text);
+  color: var(--worldsim-panel-text);
   font-size: 0.75rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -117,7 +120,7 @@
 }
 
 .infoPanelTitle {
-  color: var(--worldsim-label-text);
+  color: var(--worldsim-panel-text);
   font-size: 1.1rem;
   font-weight: 700;
   margin: 0 0 4px;
@@ -133,7 +136,7 @@
 }
 
 .infoPanelLore {
-  color: var(--worldsim-label-text);
+  color: var(--worldsim-panel-text);
   font-size: 0.75rem;
   line-height: 1.5;
   opacity: 0.85;
@@ -157,7 +160,7 @@
 }
 
 .regionListTitle {
-  color: var(--worldsim-label-text);
+  color: var(--worldsim-panel-text);
   font-size: 0.8rem;
   font-weight: 600;
   margin: 0 0 8px;
@@ -169,7 +172,7 @@
   border: 1px solid transparent;
   border-radius: 4px;
   background: transparent;
-  color: var(--worldsim-label-text);
+  color: var(--worldsim-panel-text);
   font-size: 0.75rem;
   text-align: left;
   cursor: pointer;
@@ -274,10 +277,10 @@
 
 .controlButton {
   padding: 6px 14px;
-  border: 1px solid var(--worldsim-panel-border);
+  border: 1px solid var(--worldsim-label-accent);
   border-radius: 6px;
   background: var(--worldsim-controls-btn-bg);
-  color: var(--worldsim-label-text);
+  color: var(--worldsim-panel-text);
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;

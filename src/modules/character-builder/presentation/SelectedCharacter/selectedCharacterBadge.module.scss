@@ -40,6 +40,8 @@
   &:hover,
   &:focus,
   &.open {
+    /* Explicit transparent hover bg → displaces the global primary-green fill. */
+    background: transparent;
     border-color: var(--color-accent);
     outline: none;
   }
@@ -105,6 +107,13 @@
   z-index: 1000;
   max-height: 40vh;
   overflow-y: auto;
+}
+
+/* Downward variant for top-bar placement (mobile header). */
+.dropdownDown {
+  bottom: auto;
+  top: calc(100% + 0.25rem);
+  box-shadow: 0 4px 12px rgb(var(--color-shadow-medium));
 }
 
 .list {

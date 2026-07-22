@@ -31,6 +31,7 @@ import { Dices } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useRef } from 'react';
 import styles from './combatantRow.module.scss';
+import btn from '@/styles/buttons.module.scss';
 import { CombatantStatsGrid } from './combatantStatsGrid';
 import { getPhaseMarker } from './utils';
 import { useCombatant } from './utils/context/combatantContext';
@@ -280,7 +281,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
         <button
           onClick={handleRollInitiative}
           disabled={isStatsLocked}
-          className={styles.rollInitiativeButton}
+          className={btn.icon}
           title={t('rollInitiative')}
           aria-label={t('rollInitiative')}>
           <Dices size={18} aria-hidden='true' />

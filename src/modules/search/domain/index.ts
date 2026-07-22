@@ -11,7 +11,8 @@
 export {
     CONTENT_SUBDIR,
     CONTENT_TYPE_META,
-    SEARCH_CONTENT_TYPES
+    SEARCH_CONTENT_TYPES,
+    typeColorVar
 } from './contentTypes';
 export { localizeLink, SUPPORTED_LOCALES } from './localizeLink';
 export type { ContentTypeMeta, SearchContentType } from './contentTypes';

@@ -118,8 +118,10 @@ export const CarryingCapacityCalculator: React.FC<
           </span>
           <input
             type='checkbox'
+            className={styles.checkbox}
             checked={isQuadruped}
             onChange={(e) => setIsQuadruped(e.target.checked)}
+            aria-label={t('carryingCapacityQuadruped')}
           />
         </label>
         <label className={styles.controlField}>

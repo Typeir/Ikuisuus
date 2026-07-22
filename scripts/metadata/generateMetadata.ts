@@ -100,6 +100,13 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
     contentType: 'world',
     subType: 'lore',
   },
+  rules: {
+    dir: 'src/content/en/rules',
+    pattern: /\.mdx$/,
+    generator: 'generateRulesMetadata.ts',
+    contentType: 'rules',
+    subType: 'rule',
+  },
 };
 
 /**
@@ -142,6 +149,7 @@ class MetadataOrchestrator {
         types.push('specializations');
       if (arg === '--feats' || arg === '--feat') types.push('feats');
       if (arg === '--world' || arg === '--lore') types.push('world');
+      if (arg === '--rules' || arg === '--rule') types.push('rules');
     }
 
     return types.length > 0 ? types : null;

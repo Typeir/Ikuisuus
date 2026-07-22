@@ -40,6 +40,10 @@
   @include focus-visible-outline();
 
   &:hover {
+    // Explicit hover bg guard: the interactive chip is a <button>, so without a
+    // hover background it inherits the global green `button:hover` fill. Hold it
+    // at the resting `.chip` background so only the border/scale animate.
+    background: var(--color-bg-secondary);
     transform: scale(1.04);
     border-color: var(--color-accent);
   }

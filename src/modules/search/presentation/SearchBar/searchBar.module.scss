@@ -71,11 +71,12 @@
   outline: none;
   font-family: var(--font-mono), monospace;
   font-size: 0.75rem;
+  font-weight: var(--search-input-weight, 400);
   color: var(--color-text);
 
   &::placeholder {
     color: var(--color-primary);
-    opacity: 0.6;
+    opacity: var(--search-muted-alpha, 0.6);
   }
 
   &::-webkit-search-cancel-button {
@@ -87,7 +88,7 @@
   font-family: var(--font-mono), monospace;
   font-size: 0.625rem;
   color: var(--color-text-secondary);
-  opacity: 0.4;
+  opacity: var(--search-hint-alpha, 0.4);
   flex-shrink: 0;
   user-select: none;
   pointer-events: none;
@@ -99,7 +100,7 @@
 
 .searchIcon {
   color: var(--color-primary);
-  opacity: 0.6;
+  opacity: var(--search-muted-alpha, 0.6);
   flex-shrink: 0;
   pointer-events: none;
 }

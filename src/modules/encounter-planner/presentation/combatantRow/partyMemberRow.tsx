@@ -17,6 +17,7 @@ import { Dices } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useRef } from 'react';
 import styles from './combatantRow.module.scss';
+import btn from '@/styles/buttons.module.scss';
 import { useCombatant } from './utils/context/combatantContext';
 import { useEditableField } from './utils/useEditableField';
 
@@ -119,7 +120,7 @@ export const PartyMemberRow: React.FC = () => {
           </div>
           <button
             onClick={handleRollInitiative}
-            className={styles.rollInitiativeButton}
+            className={btn.icon}
             title={t('rollInitiative')}
             aria-label={t('rollInitiative')}>
             <Dices size={16} aria-hidden='true' />

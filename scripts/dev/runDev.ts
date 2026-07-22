@@ -209,9 +209,18 @@ async function main() {
   const metadataBackend = usePg ? 'pg' : 'fs';
   const contentFetchMode = forceFs ? 'build' : 'runtime';
 
+  /* Pre-init must run under the SAME backend as the dev server it precedes.
+     Without the override, generators fall back to .env.local (pg) and write
+     sidecars to .meta/ while an fs-mode server reads the stale
+     source-adjacent ones — the two silently diverge. */
+  const backendEnv: NodeJS.ProcessEnv = {
+    METADATA_BACKEND: metadataBackend,
+    CONTENT_FETCH_MODE: contentFetchMode,
+  };
+
   if (!skipPreInit) {
     log.message('Running pre-init...');
-    const code = await runCommand('npm', ['run', 'pre-init']);
+    const code = await runCommand('npm', ['run', 'pre-init'], backendEnv);
     if (code !== 0) {
       log.error(`pre-init failed with exit code ${code}`);
       process.exit(code);
@@ -241,13 +250,7 @@ async function main() {
 
   const localeWatcher = startLocaleWatcher();
 
-  const env: NodeJS.ProcessEnv = {
-    ...process.env,
-    METADATA_BACKEND: metadataBackend,
-    CONTENT_FETCH_MODE: contentFetchMode,
-  };
-
-  nextExitCode = await runCommand('npx', ['next', 'dev', ...nextArgs], env);
+  nextExitCode = await runCommand('npx', ['next', 'dev', ...nextArgs], backendEnv);
 
   localeWatcher.close();
   process.exit(nextExitCode);

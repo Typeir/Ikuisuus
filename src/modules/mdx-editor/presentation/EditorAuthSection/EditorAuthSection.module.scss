@@ -45,21 +45,11 @@
   }
 }
 
+// Bare <button> = primary CTA (color + hover from the global rule). Local class
+// carries only essential layout + the disabled state (global has no :disabled).
 .submitButton {
   padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  background-color: var(--color-accent);
-  color: var(--color-bg);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.15s ease;
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-accent-hover);
-  }
 
   @include disabled-state;
 }
@@ -75,36 +65,9 @@
   color: var(--color-text-secondary);
 }
 
-.logoutButton {
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  border: 1px solid var(--color-border);
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    border-color: var(--color-error);
-    color: var(--color-error);
-  }
-}
+// .logoutButton → btn.dangerOutline, .dismissButton → btn.iconDanger
+// (migrated to src/styles/buttons.module.scss)
 
 .statusError {
   color: var(--color-error);
-}
-
-.dismissButton {
-  background: none;
-  border: none;
-  color: var(--color-error);
-  cursor: pointer;
-  font-size: 0.75rem;
-  padding: 0 0.25rem;
-  opacity: 0.7;
-
-  &:hover {
-    opacity: 1;
-  }
 }

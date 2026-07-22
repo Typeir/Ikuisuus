@@ -1,19 +1,86 @@
-/* Minimal reveal background styles (dot-matrix) */
+/* Flashlight reveal background (dot-matrix), counter-translate architecture.
+
+   Principle: nothing painted ever moves, nothing moving is ever repainted.
+   - `.field` holds every pattern (dots, scanlines) as static gradients,
+     painted once and never invalidated.
+   - `.aperture` is a small window that follows the cursor via transform;
+     `.field` counter-translates by the exact inverse, so the patterns stay
+     fixed in screen space while the window glides over them.
+   - Per mouse move the only work is two transform updates (composite-only).
+     The soft-edge mask is static in the aperture's local space, so the sole
+     recurring cost is one aperture-sized render surface. */
 .reveal {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-color: transparent;
-
-  /* Hint the browser this element will change mask and opacity; helps with compositing */
-  will-change: -webkit-mask-image, mask-image, background-image, opacity;
-  contain: paint;
+  contain: layout paint;
+  opacity: 0.5;
 
   /* dot-grid defaults */
   --dot-size: 0.12rem;
   --dot-spacing: 2rem;
-  opacity: 0.5;
+}
+
+/* Moving window: a 2r square centered on the cursor. The mask never changes —
+   it is centered in this element's own box and rides along with it. */
+.aperture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--reveal-radius, 200px) * 2);
+  height: calc(var(--reveal-radius, 200px) * 2);
+  overflow: hidden;
+  transform: translate3d(
+    calc(var(--mouse-px, -9999px) - var(--reveal-radius, 200px)),
+    calc(var(--mouse-py, -9999px) - var(--reveal-radius, 200px)),
+    0
+  );
+  will-change: transform;
+
+  -webkit-mask-image: radial-gradient(
+    circle closest-side at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: radial-gradient(
+    circle closest-side at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Soft inner flashlight glow — centered in the aperture, so it follows the
+   cursor for free and its gradient never needs to change. */
+.aperture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle calc(var(--reveal-radius, 200px) * 0.5) at center,
+    var(--reveal-color, var(--color-accent)) 0%,
+    transparent 60%
+  );
+  opacity: 0.12;
+}
+
+/* Static viewport-sized pattern field. Counter-translated by the inverse of
+   the aperture's offset, so dots stay pinned to the screen (no parallax). */
+.field {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  transform: translate3d(
+    calc(var(--reveal-radius, 200px) - var(--mouse-px, -9999px)),
+    calc(var(--reveal-radius, 200px) - var(--mouse-py, -9999px)),
+    0
+  );
+  will-change: transform;
 
   /* repeating dot pattern — uses `--reveal-color` for dot color */
   background-image: radial-gradient(
@@ -23,137 +90,57 @@
   );
   background-size: var(--dot-spacing) var(--dot-spacing);
   background-repeat: repeat;
-
-  /* radial mask centered on CSS vars written by MouseTracker */
-  -webkit-mask-image: radial-gradient(
-    circle var(--reveal-radius, 200px) at var(--mouse-x, 50%)
-      var(--mouse-y, 50%),
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  mask-image: radial-gradient(
-    circle var(--reveal-radius, 200px) at var(--mouse-x, 50%)
-      var(--mouse-y, 50%),
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
 }
 
-/* subtle inner flashlight (50% smaller) — part of the reveal element */
-.reveal::after {
+/* Vertical scanlines: static repeating gradient, one tile taller than the
+   field, scrolled by a transform keyframe. The pattern is periodic in
+   --before-height, so translating by exactly one tile loops seamlessly. */
+.field::before {
   content: '';
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-
-  /* compute a smaller radius: half of the main reveal radius */
-  --flashlight-radius: calc(var(--reveal-radius, 200px) * 0.5);
-
-  /* soft radial highlight centered on cursor vars; use reveal color but very low opacity */
-  background: radial-gradient(
-    circle var(--flashlight-radius) at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    var(--reveal-color, var(--color-accent)) 0%,
-    transparent 60%
-  );
-  opacity: 0.12;
-
-  /* Avoid frequent expensive paint changes where possible */
-  will-change: -webkit-mask-image, mask-image, opacity, background;
-
-  /* limit the highlight to a circular mask for crisp edges */
-  -webkit-mask-image: radial-gradient(
-    circle var(--flashlight-radius) at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  mask-image: radial-gradient(
-    circle var(--flashlight-radius) at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
-
-/* vertical white scanlines: very small, repeating with no gap, vertically scrolling
-   revealed by the same radial mask but with a larger radius */
-.reveal::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  /* very small tile height — no spacing between repeats */
+  left: 0;
+  right: 0;
   --before-height: calc(var(--dot-spacing) / 4);
+  top: calc(-1 * var(--before-height));
+  bottom: 0;
+  pointer-events: none;
 
-  /* pure white -> transparent vertical gradient (top -> bottom) */
   background-image: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0) 30%,
-    rgba(255, 255, 255, 0.4) 45%,
+    transparent 0%,
+    transparent 30%,
+    var(--flashlight-scanline, rgba(255, 255, 255, 0.4)) 45%,
     var(--color-accent) 50%,
-    rgba(255, 255, 255, 0.4) 55%,
-    rgba(255, 255, 255, 0) 70%,
-    rgba(255, 255, 255, 0) 100%
+    var(--flashlight-scanline, rgba(255, 255, 255, 0.4)) 55%,
+    transparent 70%,
+    transparent 100%
   );
   background-size: 100% var(--before-height);
-  background-repeat: repeat-y;
-  opacity: 0.2;
-  mix-blend-mode: normal;
+  background-repeat: repeat;
+  opacity: var(--flashlight-scanline-opacity, 0.2);
 
-  /* vertical scrolling motion
-      prefer transform-based animation where possible */
-  will-change:
-    background-position,
-    -webkit-mask-image,
-    mask-image,
-    opacity,
-    transform;
-
-  /* vertical scrolling motion */
-  background-position: 0 0;
   animation: scan-scroll-y 5s linear infinite;
-  will-change: background-position;
-
-  /* revealed with a smaller radius (three quarters of the main reveal) */
-  --before-reveal-radius: calc(var(--reveal-radius, 200px) * 0.75);
-  -webkit-mask-image: radial-gradient(
-    circle var(--before-reveal-radius) at var(--mouse-x, 50%)
-      var(--mouse-y, 50%),
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  mask-image: radial-gradient(
-    circle var(--before-reveal-radius) at var(--mouse-x, 50%)
-      var(--mouse-y, 50%),
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
 }
 
 @keyframes scan-scroll-y {
   to {
-    background-position: 0 var(--before-height);
+    transform: translateY(var(--before-height));
   }
 }
 
 /* Respect reduced-motion preference: stop scanline animation and tone down opacity */
 @media (prefers-reduced-motion: reduce) {
-  .reveal::before {
+  .field::before {
     animation: none;
     opacity: 0.06;
   }
 
-  .reveal::after {
+  .aperture::after {
     opacity: 0.06;
   }
 }
 
-/* Disable reveal on touch/coarse pointer devices to avoid costly repaints */
+/* Disable reveal on touch/coarse pointer devices */
 @media (hover: none) and (pointer: coarse) {
   .reveal {
     display: none;

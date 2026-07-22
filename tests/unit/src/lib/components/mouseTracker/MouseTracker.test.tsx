@@ -31,4 +31,23 @@ describe('MouseTracker', () => {
       expect(y).toBe('50%');
     });
   });
+
+  it('writes pixel vars --mouse-px and --mouse-py for transform-driven consumers', async () => {
+    const target = document.createElement('div');
+    document.body.appendChild(target);
+    const targetRef = { current: target } as React.RefObject<HTMLElement>;
+
+    render(<MouseTracker targetRef={targetRef} />);
+
+    const ev = new PointerEvent('pointermove', {
+      clientX: 123,
+      clientY: 456,
+    });
+    window.dispatchEvent(ev);
+
+    await waitFor(() => {
+      expect(target.style.getPropertyValue('--mouse-px').trim()).toBe('123px');
+      expect(target.style.getPropertyValue('--mouse-py').trim()).toBe('456px');
+    });
+  });
 });

@@ -1,10 +1,9 @@
 /**
  * @fileoverview World / Lore Metadata Generator
  * @description Parses `.lore.mdx` files in `src/content/{locale}/world/` and
- * emits `.metadata.json` sidecars. EXTRACTS FROM YAML FRONTMATTER ONLY — the
- * generator does NOT regex-scan prose body content (NLP/spacy is a future
- * effort). When no frontmatter is present, a minimal record is emitted with
- * `slug`, `title` (from the first H1), `file`, and `link`.
+ * emits `.metadata.json` sidecars. Frontmatter fields take precedence; when
+ * absent, `description` falls back to the first prose paragraph of the body
+ * and `tags`/`category` fall back to the `world/` subfolder path.
  *
  * Frontmatter vs. tier-HR disambiguation: many lore files use `---` as
  * knowledge-tier horizontal rules (Common / Advanced / Deep / Truth). The
@@ -25,6 +24,7 @@ import path from 'path';
 import {
   filePathToSlug,
   parseDescription,
+  parseFirstProseParagraph,
   parseTitle,
   runGenerator,
   runWithCli,
@@ -83,6 +83,24 @@ function deriveWorldLink(filePath: string, slug: string): string {
 }
 
 /**
+ * Derives display tags from the file's subfolder path under `world/`.
+ * `world/gods-and-demigods/dreamcatcher.lore.mdx` → `['gods and demigods']`;
+ * files at the world root get `['lore']` so they still surface one tag.
+ *
+ * @param {string} filePath - Absolute path to the lore file
+ * @returns {string[]} Humanised folder tags
+ */
+function deriveWorldFolderTags(filePath: string): string[] {
+  const segments = filePath.replace(/\\/g, '/').split('/').filter(Boolean);
+  const worldIdx = segments.lastIndexOf('world');
+  if (worldIdx === -1) return [];
+
+  const folders = segments.slice(worldIdx + 1, -1);
+  if (folders.length === 0) return ['lore'];
+  return folders.map((s) => s.replace(/[-_]+/g, ' ').toLowerCase());
+}
+
+/**
  * Parses a single world/lore MDX file into a metadata record.
  *
  * Uses `gray-matter` to attempt frontmatter extraction at file head. When no
@@ -117,7 +135,8 @@ async function parseWorldFile(
       indexVersion: 1,
     };
 
-    const description = parseDescription(content);
+    const description =
+      parseDescription(content) ?? parseFirstProseParagraph(lines);
     if (description) {
       metadata.description = description;
     }
@@ -132,6 +151,19 @@ async function parseWorldFile(
           metadata[mappedKey] = value;
         }
       }
+    }
+
+    /* Most lore files carry no frontmatter tags; derive them from the
+       world/ subfolder path so MetaTrail and tag facets are never empty. */
+    const folderTags = deriveWorldFolderTags(filePath);
+    if (
+      folderTags.length > 0 &&
+      (!Array.isArray(metadata.tags) || metadata.tags.length === 0)
+    ) {
+      metadata.tags = folderTags;
+    }
+    if (metadata.category === undefined && folderTags.length > 0) {
+      metadata.category = folderTags[0];
     }
 
     return metadata;

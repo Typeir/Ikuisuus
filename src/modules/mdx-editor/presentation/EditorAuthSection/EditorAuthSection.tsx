@@ -11,6 +11,7 @@
 'use client';
 
 import { useState } from 'react';
+import btn from '@/styles/buttons.module.scss';
 import styles from './EditorAuthSection.module.scss';
 
 /**
@@ -80,7 +81,7 @@ export function EditorAuthSection({
           </span>
           <button
             type='button'
-            className={styles.logoutButton}
+            className={btn.dangerOutline}
             onClick={logout}>
             {t('logout')}
           </button>
@@ -128,7 +129,7 @@ export function EditorAuthSection({
             {authError}{' '}
             <button
               type='button'
-              className={styles.dismissButton}
+              className={btn.iconDanger}
               onClick={clearAuthError}>
               ✕
             </button>

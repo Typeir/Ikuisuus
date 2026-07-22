@@ -42,6 +42,7 @@ import {
     updateCoinCount,
     updateDenominationMultiplier,
 } from '../../infrastructure/coinPouch/coinPouch.helpers';
+import btn from '@/styles/buttons.module.scss';
 import styles from './coinPouch.module.scss';
 
 /**
@@ -254,7 +255,7 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
               {editing && !system.builtIn && (
                 <button
                   type='button'
-                  className={styles.iconBtn}
+                  className={btn.add}
                   onClick={() => addDenomination(h.systemName)}
                   aria-label={`Add denomination to ${h.systemName}`}>
                   <Plus size={12} aria-hidden='true' />
@@ -268,7 +269,7 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
       {editing && (
         <button
           type='button'
-          className={styles.iconBtn}
+          className={btn.add}
           onClick={addSystem}
           aria-label={t('addSystemAria')}>
           <Plus size={14} aria-hidden='true' />

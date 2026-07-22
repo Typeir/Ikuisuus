@@ -167,6 +167,10 @@ export class VocationEntity {
   @Property({ type: 'text', nullable: true })
   description?: string | null;
 
+  /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
+  @Property({ type: 'string', nullable: true })
+  image?: string | null;
+
   @Property({
     type: 'number',
     fieldName: 'index_version',

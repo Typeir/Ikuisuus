@@ -4,8 +4,10 @@
  * extracts prose from MDX files, and joins metadata from `.metadata.json`
  * sidecars to produce `SearchRecord`-shaped entries for the Pagefind index.
  *
- * Locale-parameterized: accepts a `locale` argument; sidecars are read from
- * `src/content/{locale}/...` or `.meta/{locale}/...` based on METADATA_BACKEND.
+ * Locale-parameterized: accepts a `locale` argument. Sidecar lookup honors
+ * METADATA_BACKEND: in `pg` mode `.meta/{locale}/{subdir}/` is tried first,
+ * falling back to source-adjacent `src/content/{locale}/...` files (same
+ * semantics as `src/lib/db/content/adapters/fs/readMetadataFiles.ts`).
  *
  * @module scripts/search/collectRecords
  * @version 1.0.0
@@ -15,8 +17,12 @@
 
 import { CONTENT_SUBDIR } from '@/modules/search/domain/contentTypes';
 import { localizeLink } from '@/modules/search/domain/localizeLink';
-import { promises as fs } from 'fs';
+import { promises as fs, type Dirent } from 'fs';
 import path from 'path';
+import {
+  getMetadataBackend,
+  getMetaSubdir,
+} from '../metadata/generatorUtils';
 import { extractProse } from './extractProse';
 
 /** File patterns per content type for identifying source MDX files. */
@@ -30,6 +36,7 @@ const TYPE_PATTERNS: Record<string, RegExp> = {
   specializations: /\.specialization\.mdx$/,
   feats: /\.mdx$/,
   world: /\.lore\.mdx$/,
+  rules: /\.mdx$/,
 };
 
 /** Exclusion patterns applied after the suffix match (per-type special cases). */
@@ -43,6 +50,7 @@ const TYPE_EXCLUSIONS: Record<string, RegExp[]> = {
   bloodlines: [],
   vocations: [],
   specializations: [],
+  rules: [],
 };
 
 /**
@@ -169,7 +177,7 @@ async function scanDir(
   const results: string[] = [];
 
   async function walk(currentDir: string): Promise<void> {
-    let entries: fs.Dirent[] = [];
+    let entries: Dirent[] = [];
     try {
       entries = await fs.readdir(currentDir, {
         withFileTypes: true,
@@ -196,29 +204,102 @@ async function scanDir(
 }
 
 /**
- * Reads the metadata sidecar for a source file, if it exists.
+ * Candidate sidecar paths for a source file, in lookup-priority order.
  *
- * Looks for a `.metadata.json` file alongside the source. The naming
- * convention replaces the source file's suffix pattern with `.metadata.json`.
+ * Mirrors the metadata generators' output naming (`generateMetadata.ts`
+ * CONTENT_TYPES patterns; `resolveVocationOutputPath` in
+ * `generateVocationMetadata.ts`):
+ * - vocations: `{dir}/main.mdx` → `{dir}/{dirName}.metadata.json`
+ * - world: type suffix kept — `x.lore.mdx` → `x.lore.metadata.json`
+ *   (plus the suffix-stripped form the standalone generator default emits)
+ * - all others: type suffix replaced — e.g. `x.sheet.mdx` → `x.metadata.json`
+ *
+ * With METADATA_BACKEND=pg the generators write to
+ * `.meta/{locale}/{metaSubdir}/{basename}` instead, so those paths are tried
+ * first and the source-adjacent locations act as the fallback.
  *
  * @param {string} filePath - Absolute path to the source MDX file
  * @param {string} contentType - Content type key
- * @returns {Promise<Record<string, unknown> | null>} Parsed metadata or null
+ * @param {string} locale - Locale code
+ * @returns {string[]} Absolute candidate paths, highest priority first
+ */
+function sidecarCandidates(
+  filePath: string,
+  contentType: string,
+  locale: string,
+): string[] {
+  const sourceAdjacent: string[] = [];
+
+  if (contentType === 'vocations') {
+    const dir = path.dirname(filePath);
+    sourceAdjacent.push(
+      path.join(dir, `${path.basename(dir)}.metadata.json`),
+    );
+  } else if (
+    contentType === 'rules' &&
+    path.basename(filePath).toLowerCase() === 'main.mdx'
+  ) {
+    /* Rules section hubs are sidecar-named after their parent folder
+       (13 main.mdx files would otherwise collide in .meta/) —
+       see resolveRulesOutputPath in generateRulesMetadata.ts. */
+    const dir = path.dirname(filePath);
+    sourceAdjacent.push(
+      path.join(dir, `${path.basename(dir)}.metadata.json`),
+    );
+  } else if (contentType === 'world') {
+    sourceAdjacent.push(filePath.replace(/\.mdx$/, '.metadata.json'));
+    sourceAdjacent.push(filePath.replace(/\.lore\.mdx$/, '.metadata.json'));
+  } else {
+    const pattern = TYPE_PATTERNS[contentType];
+    if (pattern) {
+      sourceAdjacent.push(filePath.replace(pattern, '.metadata.json'));
+    }
+  }
+
+  const candidates: string[] = [];
+  if (getMetadataBackend() === 'pg') {
+    for (const sidecarPath of sourceAdjacent) {
+      candidates.push(
+        path.join(
+          process.cwd(),
+          '.meta',
+          locale,
+          getMetaSubdir(contentType),
+          path.basename(sidecarPath),
+        ),
+      );
+    }
+  }
+  candidates.push(...sourceAdjacent);
+  return candidates;
+}
+
+/**
+ * Reads the metadata sidecar for a source file, if it exists.
+ *
+ * Tries each candidate path from {@link sidecarCandidates} and returns the
+ * first that parses. Monster sidecars are JSON arrays (one entry per stat
+ * variant); all other types are single objects — callers must handle both.
+ *
+ * @param {string} filePath - Absolute path to the source MDX file
+ * @param {string} contentType - Content type key
+ * @param {string} locale - Locale code
+ * @returns {Promise<Record<string, unknown> | Record<string, unknown>[] | null>} Parsed metadata or null
  */
 async function readSidecar(
   filePath: string,
   contentType: string,
-): Promise<Record<string, unknown> | null> {
-  const pattern = TYPE_PATTERNS[contentType];
-  if (!pattern) return null;
-
-  const sidecarPath = filePath.replace(pattern, '.metadata.json');
-  try {
-    const raw = await fs.readFile(sidecarPath, 'utf-8');
-    return JSON.parse(raw);
-  } catch {
-    return null;
+  locale: string,
+): Promise<Record<string, unknown> | Record<string, unknown>[] | null> {
+  for (const candidate of sidecarCandidates(filePath, contentType, locale)) {
+    try {
+      const raw = await fs.readFile(candidate, 'utf-8');
+      return JSON.parse(raw);
+    } catch {
+      /* try next candidate */
+    }
   }
+  return null;
 }
 
 /**
@@ -309,7 +390,23 @@ export async function collectRecords(locale: string): Promise<IndexRecord[]> {
       if (!raw.trim()) continue;
 
       const prose = extractProse(raw);
-      const sidecar = await readSidecar(filePath, contentType);
+      const parsed = await readSidecar(filePath, contentType, locale);
+
+      /* Monster sidecars are arrays (one entry per stat variant). Use the
+         entry matching the file slug (else the first) as the record's
+         primary metadata; variant-only tags are unioned into filters below
+         so they stay searchable. */
+      const variants = Array.isArray(parsed)
+        ? parsed.filter(
+            (v): v is Record<string, unknown> =>
+              typeof v === 'object' && v !== null,
+          )
+        : null;
+      const fileSlug = deriveSlug(path.basename(filePath), contentType);
+      const sidecar = variants
+        ? (variants.find((v) => v.slug === fileSlug) ?? variants[0] ?? null)
+        : (parsed as Record<string, unknown> | null);
+
       const url = sidecar?.link
         ? localizeLink(sidecar.link as string, locale)
         : deriveUrl(filePath, contentType, locale);
@@ -319,11 +416,19 @@ export async function collectRecords(locale: string): Promise<IndexRecord[]> {
       const filters: Record<string, string[]> = { type: [contentType] };
 
       if (sidecar) {
-        Object.assign(meta, metadataToMeta(sidecar as Record<string, unknown>));
-        Object.assign(
-          filters,
-          metadataToFilters(sidecar as Record<string, unknown>, contentType),
-        );
+        Object.assign(meta, metadataToMeta(sidecar));
+        Object.assign(filters, metadataToFilters(sidecar, contentType));
+      }
+
+      if (variants && variants.length > 1) {
+        const allTags = new Set(filters.tags ?? []);
+        for (const variant of variants) {
+          if (!Array.isArray(variant.tags)) continue;
+          for (const tag of variant.tags) {
+            if (typeof tag === 'string') allTags.add(tag.toLowerCase());
+          }
+        }
+        if (allTags.size > 0) filters.tags = [...allTags];
       }
 
       allRecords.push({

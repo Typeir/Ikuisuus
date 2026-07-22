@@ -55,6 +55,9 @@
   white-space: nowrap;
 
   &:hover:not(:disabled) {
+    // Explicit hover bg guard: without it a bare <button> falls through to the
+    // global `button:hover { background: var(--color-primary) }` green fill.
+    background: var(--color-bg);
     color: var(--color-text);
     filter: brightness(1.05);
   }
@@ -68,6 +71,8 @@
   color: var(--color-accent);
 
   &:hover:not(:disabled) {
+    // Explicit hover bg guard (see .tab) — keeps the active surface fill.
+    background: var(--color-surface);
     color: var(--color-accent);
     filter: brightness(1.05);
   }

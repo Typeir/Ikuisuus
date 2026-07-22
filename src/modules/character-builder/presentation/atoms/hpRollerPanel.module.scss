@@ -217,8 +217,8 @@
 /**
  * Confirm button to add the roll to HP.
  */
+/* Bare-primary + compact layout companion (color/hover come from the global button rule). */
 .confirmBtn {
-  @include button-primary;
   font-size: 0.65rem;
   padding: 0.2rem 0.45rem;
   flex-shrink: 0;
