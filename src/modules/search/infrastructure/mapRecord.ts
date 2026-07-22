@@ -40,9 +40,11 @@ export function mapPagefindResult(
 
   const slug = fragment.meta?.slug || fragment.url.split('/').pop() || '';
 
-  const link = fragment.url.startsWith('/')
-    ? fragment.url
-    : `/${locale}/${fragment.url.replace(/^\/+/, '')}`;
+  let normalized = fragment.url.replace(/^\/+/, '');
+  while (/^[a-z]{2}\//.test(normalized)) {
+    normalized = normalized.slice(3);
+  }
+  const link = `/${locale}/${normalized}`;
 
   return {
     record: {

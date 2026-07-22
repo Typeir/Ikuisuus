@@ -130,38 +130,25 @@ function deriveTitle(
  */
 function deriveUrl(
   filePath: string,
-  contentType: string,
+  _contentType: string,
   locale: string,
 ): string {
   const normalized = filePath.replace(/\\/g, '/');
   const contentIdx = normalized.indexOf(`/content/${locale}/`);
 
   if (contentIdx !== -1) {
-    const relative = normalized.slice(
+    let relative = normalized.slice(
       contentIdx + `/content/${locale}/`.length,
     );
-    const withoutExt = relative.replace(/\.(md|mdx)$/, '');
-    const segments = withoutExt.split('/');
-    const slug = segments[segments.length - 1];
 
-    if (contentType === 'world') {
-      return `/${locale}/library/world/${segments
-        .map((s) =>
-          s
-            .replace(/\.lore$/, '')
-            .replace(/\.sheet$/, '')
-            .replace(/\.heirloom$/, '')
-            .replace(/\.trinket$/, '')
-            .replace(/\.bloodline$/, '')
-            .replace(/\.specialization$/, ''),
-        )
-        .join('/')}`;
-    }
+    relative = relative
+      .replace(/\.(?:sheet|lore|heirloom|trinket|bloodline|specialization)\.(?:md|mdx)$/, '')
+      .replace(/\.(?:md|mdx)$/, '');
 
-    return `/${locale}/library/${CONTENT_SUBDIR[contentType]}/${slug}`;
+    return `/${locale}/library/${relative}`;
   }
 
-  return `/${locale}/library/${deriveSlug(path.basename(filePath), contentType)}`;
+  return `/${locale}/library/${deriveSlug(path.basename(filePath), _contentType)}`;
 }
 
 /**

@@ -70,4 +70,15 @@ describe('mapPagefindResult', () => {
     const result = mapPagefindResult(fragment, 'en');
     expect(result.record.link).toBe('/en/library/monsters/aboleth');
   });
+
+  it('should fix double-locale urls', () => {
+    const fragment = {
+      ...baseFragment,
+      url: 'en/library/character-creation/vocations/strider/main',
+    };
+    const result = mapPagefindResult(fragment, 'en');
+    expect(result.record.link).toBe(
+      '/en/library/character-creation/vocations/strider/main',
+    );
+  });
 });
