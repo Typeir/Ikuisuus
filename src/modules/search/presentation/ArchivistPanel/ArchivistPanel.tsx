@@ -81,6 +81,10 @@ export function ArchivistPanel({
     <div
       ref={containerRef}
       className={cn(styles.panel, sideLayout ? styles.side : styles.below)}>
+      <div className={styles.header}>
+        <span className={styles.label}>{t('archivistReading')}</span>
+        <span className={styles.pageTitle}>{page.title}</span>
+      </div>
       <iframe
         src={url}
         className={styles.iframe}
