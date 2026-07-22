@@ -1,4 +1,5 @@
 export { ArchivistPanel } from './ArchivistPanel/ArchivistPanel';
+export { FeaturedGrid } from './FeaturedGrid/FeaturedGrid';
 export { typeIconMap } from './atoms/iconMap';
 export { MatchSnippet } from './atoms/MatchSnippet';
 export { MetaTrail } from './atoms/MetaTrail';

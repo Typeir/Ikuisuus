@@ -12,12 +12,14 @@
 
 import {
   CONTENT_SUBDIR,
+  localizeLink,
+  SUPPORTED_LOCALES,
   type SearchContentType,
 } from '@/modules/search/domain';
 import { NextResponse } from 'next/server';
 
 /** Allowlisted locale codes. */
-const VALID_LOCALES = new Set(['en', 'fi', 'es']);
+const VALID_LOCALES = new Set<string>(SUPPORTED_LOCALES);
 
 /** All valid content type keys. */
 const VALID_TYPES = Object.keys(CONTENT_SUBDIR);
@@ -123,7 +125,7 @@ export async function GET(req: Request): Promise<NextResponse> {
           ? {
               slug: records[featuredIdx].slug,
               title: records[featuredIdx].title,
-              link: records[featuredIdx].link,
+              link: localizeLink(records[featuredIdx].link, locale),
               description: records[featuredIdx].description,
               image: records[featuredIdx].image,
               type,
@@ -133,7 +135,7 @@ export async function GET(req: Request): Promise<NextResponse> {
           ? {
               slug: records[randomIdx].slug,
               title: records[randomIdx].title,
-              link: records[randomIdx].link,
+              link: localizeLink(records[randomIdx].link, locale),
               description: records[randomIdx].description,
               image: records[randomIdx].image,
               type,

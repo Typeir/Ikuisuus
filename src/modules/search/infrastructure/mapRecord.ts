@@ -12,6 +12,7 @@
  */
 
 import {
+    localizeLink,
     SEARCH_CONTENT_TYPES,
     type SearchContentType,
     type SearchResult,
@@ -40,11 +41,7 @@ export function mapPagefindResult(
 
   const slug = fragment.meta?.slug || fragment.url.split('/').pop() || '';
 
-  let normalized = fragment.url.replace(/^\/+/, '');
-  while (/^[a-z]{2}\//.test(normalized)) {
-    normalized = normalized.slice(3);
-  }
-  const link = `/${locale}/${normalized}`;
+  const link = localizeLink(fragment.url.replace(/^\/+/, '/'), locale);
 
   return {
     record: {

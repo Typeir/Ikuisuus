@@ -13,8 +13,8 @@
  * @since 8.0.0
  */
 
+import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { cn } from '@/lib/utils/classNameMerge';
-import Link from 'next/link';
 import type { SearchResult } from '../../domain';
 import { MatchSnippet } from '../atoms/MatchSnippet';
 import { MetaTrail } from '../atoms/MetaTrail';
@@ -64,7 +64,7 @@ export function SearchResultRow({
   const description = record.description || snippet;
 
   return (
-    <Link
+    <LazyPrefetchLink
       href={record.link}
       className={cn(
         styles.row,
@@ -94,6 +94,6 @@ export function SearchResultRow({
           <ResultThumb image={record.image} type={record.type} />
         </span>
       )}
-    </Link>
+    </LazyPrefetchLink>
   );
 }

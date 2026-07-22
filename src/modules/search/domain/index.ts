@@ -13,6 +13,7 @@ export {
     CONTENT_TYPE_META,
     SEARCH_CONTENT_TYPES
 } from './contentTypes';
+export { localizeLink, SUPPORTED_LOCALES } from './localizeLink';
 export type { ContentTypeMeta, SearchContentType } from './contentTypes';
 export type {
     SearchFacet,

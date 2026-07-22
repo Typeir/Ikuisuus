@@ -270,7 +270,7 @@ async function parseSpecializationFile(
     const file = path
       .relative(process.cwd(), filePath)
       .replace(SLUG.pathBackslash, '/');
-    const link = `/en/library/character-creation/vocations/${vocation}/${slug}`;
+    const link = `/library/character-creation/vocations/${vocation}/${slug}`;
 
     const tags = new Set<string>();
     tags.add(`vocation:${vocation}`);

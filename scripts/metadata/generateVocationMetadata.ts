@@ -462,7 +462,7 @@ async function parseVocationFile(
       spellcasting?.progression ?? null,
     );
 
-    const link = `/en/library/character-creation/vocations/${slug}/main`;
+    const link = `/library/character-creation/vocations/${slug}/main`;
     const file = path
       .relative(process.cwd(), filePath)
       .replace(SLUG.pathBackslash, '/');

@@ -14,6 +14,7 @@
  */
 
 import { CONTENT_SUBDIR } from '@/modules/search/domain/contentTypes';
+import { localizeLink } from '@/modules/search/domain/localizeLink';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { extractProse } from './extractProse';
@@ -310,7 +311,7 @@ export async function collectRecords(locale: string): Promise<IndexRecord[]> {
       const prose = extractProse(raw);
       const sidecar = await readSidecar(filePath, contentType);
       const url = sidecar?.link
-        ? `/${locale}${(sidecar.link as string).startsWith('/') ? sidecar.link : `/${sidecar.link}`}`
+        ? localizeLink(sidecar.link as string, locale)
         : deriveUrl(filePath, contentType, locale);
       const title = deriveTitle(filePath, contentType, sidecar);
 

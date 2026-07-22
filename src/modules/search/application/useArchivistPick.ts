@@ -11,15 +11,25 @@
 
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { pickFeaturedPage, type FeaturedPage } from '../domain/featuredPages';
 
 /**
  * Returns the currently displayed featured page.
  * Pick changes every hour based on unix hour seed.
  *
- * @returns {FeaturedPage} The selected page
+ * The pick is computed only after mount: the hourly seed differs between
+ * prerender time (Vercel build) and view time, so evaluating it during
+ * render causes a hydration mismatch. Returns `null` until mounted.
+ *
+ * @returns {FeaturedPage | null} The selected page, or null before mount
  */
-export function useArchivistPick(): FeaturedPage {
-  return useMemo(() => pickFeaturedPage(), []);
+export function useArchivistPick(): FeaturedPage | null {
+  const [pick, setPick] = useState<FeaturedPage | null>(null);
+
+  useEffect(() => {
+    setPick(pickFeaturedPage());
+  }, []);
+
+  return pick;
 }
