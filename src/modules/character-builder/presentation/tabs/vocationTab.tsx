@@ -19,7 +19,6 @@
 
 'use client';
 
-import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import { Tab, TabList, TabPanel, Tabs } from '@/lib/components/ui/tabs';
 import type {
     CharacterSheet as CharacterSheetType,
@@ -28,6 +27,7 @@ import type {
 import { ContentShardPanel } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { BuilderSplitPane } from '../builder/builderSplitPane';
 import { VocationFeatureCard } from '../builder/vocationFeatureCard';
 import styles from './tabs.module.scss';
 import vocationStyles from './vocationTab.module.scss';
@@ -54,16 +54,17 @@ type SectionTab = 'vocation' | 'specialization';
  * @component
  * @param {object} props - Component props
  * @param {VocationEntry} props.entry - Vocation entry to render
- * @param {string} props.locale - Content locale
  * @param {string} props.fallbackVocationLabel - i18n label when entry has no vocation title
  * @param {string} props.fallbackSpecLabel - i18n label when entry has no specialization title
+ * @param {'nested' | 'inset'} [props.variant='nested'] - Tab colour depth; `inset` when rendered inside the multiclass entry tabs
  * @returns {JSX.Element} Inner tabs
  */
 const VocationEntryTabs: React.FC<{
   entry: VocationEntry;
   fallbackVocationLabel: string;
   fallbackSpecLabel: string;
-}> = ({ entry, fallbackVocationLabel, fallbackSpecLabel }) => {
+  variant?: 'nested' | 'inset';
+}> = ({ entry, fallbackVocationLabel, fallbackSpecLabel, variant = 'nested' }) => {
   const t = useTranslations('characterSheet');
   const hasSpec = !!entry.specializationSlug;
   const [active, setActive] = useState<SectionTab>('vocation');
@@ -75,7 +76,7 @@ const VocationEntryTabs: React.FC<{
     <Tabs
       value={active}
       onChange={(v) => setActive(v as SectionTab)}
-      variant='nested'
+      variant={variant}
       ariaLabel={t('ariaVocationSectionTabs')}>
       <TabList ariaLabel={t('ariaVocationSectionTabs')}>
         <Tab value='vocation'>{vocationLabel}</Tab>
@@ -86,9 +87,11 @@ const VocationEntryTabs: React.FC<{
 
       <TabPanel value='vocation'>
         {entry.slug ? (
-          <ResizablePane
+          <BuilderSplitPane
             id='builder.vocation.vocation'
             ariaLabel={vocationLabel}
+            sheetTitle={t('shardPreviewTitle', { name: vocationLabel })}
+            mobileTriggerLabel={t('viewShardDetails')}
             left={
               <div className={styles.column}>
                 <VocationFeatureCard
@@ -123,9 +126,11 @@ const VocationEntryTabs: React.FC<{
 
       <TabPanel value='specialization'>
         {entry.specializationSlug ? (
-          <ResizablePane
+          <BuilderSplitPane
             id='builder.vocation.specialization'
             ariaLabel={specLabel}
+            sheetTitle={t('shardPreviewTitle', { name: specLabel })}
+            mobileTriggerLabel={t('viewShardDetails')}
             left={
               <div className={styles.column}>
                 <VocationFeatureCard
@@ -200,6 +205,7 @@ export const VocationTab: React.FC<VocationTabProps> = ({ data }) => {
     <Tabs
       value={activeEntry}
       onChange={setActiveEntry}
+      variant='nested'
       ariaLabel={t('ariaVocationEntryTabs')}>
       <TabList ariaLabel={t('ariaVocationEntryTabs')}>
         {data.vocations.map((entry, i) => {
@@ -222,6 +228,7 @@ export const VocationTab: React.FC<VocationTabProps> = ({ data }) => {
               entry={entry}
               fallbackVocationLabel={fallbackVocLabel}
               fallbackSpecLabel={fallbackSpecLabel}
+              variant='inset'
             />
           </div>
         </TabPanel>

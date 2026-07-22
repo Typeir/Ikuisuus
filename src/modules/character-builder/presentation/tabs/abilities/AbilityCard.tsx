@@ -17,6 +17,11 @@ import type { PreviewKind } from '@/modules/character-builder/presentation/PageP
 import { usePagePreview } from '@/modules/character-builder/presentation/PagePreview/pagePreviewProvider';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { mdxComponents } from '@/modules/library/presentation';
+import {
+  typeColorVar,
+  type SearchContentType,
+} from '@/modules/search/domain';
+import { TypeSigil } from '@/modules/search/presentation/atoms/TypeSigil';
 import { HelpCircle, Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useCallback, useMemo } from 'react';
@@ -38,6 +43,20 @@ const ABILITY_TYPE_I18N: Record<string, string> = {
   Heirloom: 'abilityTypeHeirloom',
   Trinket: 'abilityTypeTrinket',
   Other: 'abilityTypeOther',
+};
+
+/**
+ * Ability type → search content type, for the shared TypeSigil / type-color
+ * visual language. `Feature` and `Other` have no search taxonomy entry, so
+ * they borrow the closest sigil (specialization star / world scroll).
+ */
+const ABILITY_SIGIL_TYPE: Record<string, SearchContentType> = {
+  Spell: 'spells',
+  Feature: 'specializations',
+  Feat: 'feats',
+  Heirloom: 'heirlooms',
+  Trinket: 'trinkets',
+  Other: 'world',
 };
 
 export interface AbilityCardProps {
@@ -94,18 +113,22 @@ export const AbilityCard: React.FC<AbilityCardProps> = ({
   }, [ability.mechanics, ability.description]);
 
   const typeLabel = t(ABILITY_TYPE_I18N[ability.type] ?? 'abilityTypeOther');
+  const sigilType = ABILITY_SIGIL_TYPE[ability.type] ?? 'world';
   const bodyId = `ability-body-${ability.id}`;
 
   return (
     <div
       className={styles.abilityCard}
       role='article'
-      aria-label={ability.name}>
+      aria-label={ability.name}
+      style={
+        { '--sigil-color': typeColorVar(sigilType) } as React.CSSProperties
+      }>
       <div className={styles.cardHeader}>
-        <span className={styles.cardName}>{ability.name}</span>
-        <span
-          className={`${styles.typeBadge} ${styles[`type${ability.type}`] ?? ''}`}>
-          {typeLabel}
+        <TypeSigil type={sigilType} className={styles.cardSigil} />
+        <span className={styles.cardHeading}>
+          <span className={styles.cardTypeLabel}>{typeLabel}</span>
+          <span className={styles.cardName}>{ability.name}</span>
         </span>
         {hasSource && (
           <Tooltip

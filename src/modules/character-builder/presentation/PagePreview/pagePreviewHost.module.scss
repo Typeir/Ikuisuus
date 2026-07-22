@@ -4,6 +4,7 @@
  */
 
 @use '@/styles/mixins' as *;
+@use 'variables' as *;
 
 .host {
   position: fixed;
@@ -67,4 +68,84 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/** =====================================================================
+ * Phone mode — one full-screen console frame at a time with a compact
+ * pager instead of stacked draggables. Sits below the shell's fixed
+ * title bar so site navigation stays reachable.
+ * ===================================================================== */
+
+.mobileHost {
+  position: fixed;
+  inset: 0;
+  top: $mobile-header-height;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  border-top: 0.2rem solid var(--color-surface);
+}
+
+.mobileBar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--color-surface);
+  background: var(--color-bg-secondary);
+}
+
+.mobileTitle {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+}
+
+.mobilePager {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--color-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.mobilePagerBtn,
+.mobileCloseBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.mobileFrame {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: var(--color-bg);
 }

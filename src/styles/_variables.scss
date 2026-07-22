@@ -9,3 +9,7 @@ $transition-ease-springy: cubic-bezier(0.68, -0.6, 0.32, 1.6);
 $bp-mobile: 480px;
 $bp-tablet: 768px;
 $bp-desktop: 1024px;
+
+/* Height of the fixed mobile title bar rendered by ResponsiveLayoutShell.
+   Sticky elements on mobile must offset by this to clear the bar. */
+$mobile-header-height: 72px;

@@ -50,6 +50,7 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
 }) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const preview = shardToPreview(shard.sourceFile);
 
   const handleToggle = useCallback(() => {
@@ -96,7 +97,7 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
         )}
         {shard.level !== undefined && (
           <span className={styles.shardLevelBadge}>
-            {t('shardLevelBadge', { level: shard.level })}
+            {tCommon('levelShort', { level: shard.level })}
           </span>
         )}
       </button>

@@ -142,7 +142,7 @@ describe('InfoPanel', () => {
       </WorldSimProvider>,
     );
 
-    const backBtn = screen.getByLabelText('controls.back');
+    const backBtn = screen.getByLabelText('back');
     await user.click(backBtn);
 
     expect(ref.current.resetView).toHaveBeenCalledOnce();

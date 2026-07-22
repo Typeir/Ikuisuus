@@ -23,3 +23,7 @@ export type {
 export { useThemeActions, useThemeState } from './useThemeState';
 export type { ThemeActions, ThemeState } from './useThemeState';
 
+export {
+    MOBILE_VIEWPORT_QUERY, useIsMobileViewport, useMediaQuery
+} from './useMediaQuery';
+

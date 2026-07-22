@@ -9,6 +9,7 @@
 'use client';
 
 import { FilterSelect, type FilterSelectOption } from '@/lib/components/ui';
+import { useTranslations } from 'next-intl';
 import type {
     ConcentrationFilter,
     SpellTableFilterSetters,
@@ -48,6 +49,7 @@ export function FilteredSpellTableControls({
   concentrationOptions,
   tFilters,
 }: FilteredSpellTableControlsProps): JSX.Element {
+  const tCommon = useTranslations('common');
   return (
     <div className={styles.filterControls}>
       <div className={styles.filters}>
@@ -67,9 +69,7 @@ export function FilteredSpellTableControls({
         </div>
 
         <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor='spell-school-filter'>
-            {tFilters('school')}
-          </label>
+          <span className={styles.filterLabel}>{tFilters('school')}</span>
           <FilterSelect
             id='spell-school-filter'
             value={state.schoolFilter}
@@ -83,11 +83,9 @@ export function FilteredSpellTableControls({
         </div>
 
         <div className={styles.filterGroup}>
-          <label
-            className={styles.filterLabel}
-            htmlFor='spell-concentration-filter'>
+          <span className={styles.filterLabel}>
             {tFilters('concentration')}
-          </label>
+          </span>
           <FilterSelect
             id='spell-concentration-filter'
             value={state.concentrationFilter}
@@ -95,8 +93,8 @@ export function FilteredSpellTableControls({
             onChange={(value) =>
               setters.setConcentrationFilter(value as ConcentrationFilter)
             }
-            allLabel={tFilters('all')}
-            placeholder={tFilters('all')}
+            allLabel={tCommon('all')}
+            placeholder={tCommon('all')}
             ariaLabel={tFilters('concentration')}
             size='sm'
           />

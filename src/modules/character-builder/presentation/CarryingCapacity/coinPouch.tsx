@@ -160,11 +160,13 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
   return (
     <div className={styles.pouch}>
       <div className={styles.systemRow}>
-        {holdings.map((h) => {
+        {holdings.map((h, systemIndex) => {
           const system = findSystem(allSystems, h.systemName);
           const total = computeHoldingsValue(h, system);
           return (
-            <div key={h.systemName} className={styles.systemCard}>
+            <div
+              key={`${systemIndex}::${h.systemName}`}
+              className={styles.systemCard}>
               <div className={styles.systemHeader}>
                 {editing && !system.builtIn ? (
                   <input
@@ -193,8 +195,10 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
                 )}
               </div>
               <ul className={styles.denominationList}>
-                {system.coins.map((coin) => (
-                  <li key={coin.name} className={styles.denominationRow}>
+                {system.coins.map((coin, coinIndex) => (
+                  <li
+                    key={`${coinIndex}::${coin.name}`}
+                    className={styles.denominationRow}>
                     {editing && !system.builtIn ? (
                       <>
                         <input
@@ -216,6 +220,7 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
                           step={0.01}
                           allowDecimals
                           size='sm'
+                          showChevrons
                           ariaLabel={t('multiplierAria')}
                           onChange={(v) =>
                             updateMultiplier(h.systemName, coin.name, v ?? 1)
@@ -239,16 +244,23 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
                         {coin.abbreviation ? ` (${coin.abbreviation})` : ''}
                       </span>
                     )}
-                    <input
-                      type='number'
-                      className={styles.countInput}
-                      value={h.counts[coin.name] ?? 0}
-                      min={0}
-                      readOnly={!editing}
-                      onChange={(e) =>
-                        updateCount(h.systemName, coin.name, e.target.value)
-                      }
-                    />
+                    {editing ? (
+                      <NumericInput
+                        className={styles.countInput}
+                        value={h.counts[coin.name] ?? 0}
+                        min={0}
+                        size='sm'
+                        showChevrons
+                        ariaLabel={t('countAria', { name: coin.name })}
+                        onChange={(v) =>
+                          updateCount(h.systemName, coin.name, String(v ?? 0))
+                        }
+                      />
+                    ) : (
+                      <span className={styles.countValue}>
+                        {h.counts[coin.name] ?? 0}
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>

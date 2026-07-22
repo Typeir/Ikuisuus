@@ -7,6 +7,7 @@
 @use '@/styles/mixins-disabled' as *;
 @use '@/styles/mixins-button' as *;
 @use '@/styles/mixins-focus' as *;
+@use '@/styles/mixins-responsive' as *;
 @use './proficiencyTrack.module' as profTrack;
 @use './shardDisplay.module' as shardDisplay;
 
@@ -16,6 +17,41 @@
   color: var(--color-secondary);
   text-transform: uppercase;
 }
+
+/* Dedicated ability column collapses on phones; the ability key folds into
+   the skill cell as inline secondary text instead. */
+.abilityCol {
+  @include mobile {
+    display: none;
+  }
+}
+
+.abilityTagInline {
+  display: none;
+
+  @include mobile {
+    display: inline;
+    margin-left: 0.35rem;
+    font-size: 0.6rem;
+    color: var(--color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+}
+/* Horizontal safety rail: on phones the four-input attack rows keep a usable
+   width and scroll sideways instead of crushing into slivers. */
+.attacksScrollGuard {
+  position: relative;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.attacksTable {
+  @include mobile {
+    min-width: 28rem;
+  }
+}
+
 .attacksSection {
   display: flex;
   flex-direction: column;
@@ -143,7 +179,7 @@
   gap: 0.4rem;
 }
 .boonCard {
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-secondary);
   border-radius: 6px;
   overflow: hidden;
   transition: transform 0.15s ease;

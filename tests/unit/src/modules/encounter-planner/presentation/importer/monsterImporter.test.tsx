@@ -22,6 +22,7 @@ import {
 
 vi.mock('next-intl', () => ({
   useTranslations: createUseTranslationsMock({
+    common: loadMessageFile('messages/en/common.json'),
     encounterPlanner: loadMessageFile('messages/en/encounterPlanner.json'),
   }),
   useLocale: () => 'en',

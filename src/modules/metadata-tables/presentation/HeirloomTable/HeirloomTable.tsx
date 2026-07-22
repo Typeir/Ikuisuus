@@ -82,7 +82,7 @@ export default function HeirloomTableWrapper({
 }: HeirloomTableWrapperProps = {}) {
   const t = useTranslations('tables.heirlooms');
   const tColumns = useTranslations('tables.heirlooms.columns');
-  const tAttunement = useTranslations('tables.heirlooms.attunementValues');
+  const tCommon = useTranslations('common');
   const params = useParams();
   const locale = localeProp || (params?.locale as string) || 'en';
   const { data, loading, error } = useMetadataTableData<HeirloomMetadata>(
@@ -108,7 +108,7 @@ export default function HeirloomTableWrapper({
   if (error) {
     return (
       <div className='text-center py-8 text-red-500'>
-        {t('error')}: {error}
+        {tCommon('error')}: {error}
       </div>
     );
   }
@@ -122,7 +122,7 @@ export default function HeirloomTableWrapper({
     );
   }
 
-  const columns = buildHeirloomColumns(tColumns, tAttunement);
+  const columns = buildHeirloomColumns(tColumns, tCommon);
 
   return (
     <MetadataTable

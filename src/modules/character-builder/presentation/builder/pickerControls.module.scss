@@ -5,11 +5,12 @@
  */
 
 @use '@/styles/mixins-text' as *;
+@use '@/styles/mixins-responsive' as *;
 
 .pickerSearch {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-secondary);
   border-radius: 6px;
   background: var(--color-bg-secondary);
   color: var(--color-text);
@@ -27,8 +28,17 @@
   max-height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
-  border: 1px solid var(--color-border);
+  /* Container follows the self-coloured nest-frame ladder; the
+     shard/feature cards inside carry --color-border-secondary. */
+  border: 1px solid var(--color-bg-secondary);
   border-radius: 6px;
   padding: 0.5rem;
   min-height: 0;
+
+  /* Phones scroll the document itself — an inner cap here would nest two
+     scroll surfaces. */
+  @include desktop {
+    max-height: none;
+    overflow-y: visible;
+  }
 }

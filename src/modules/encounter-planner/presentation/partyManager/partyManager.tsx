@@ -57,6 +57,7 @@ export const PartyManager: React.FC<PartyManagerProps> = ({
   onImport,
 }) => {
   const t = useTranslations('encounterPlanner');
+  const tCommon = useTranslations('common');
   const [parties, setParties] = useState<SavedParty[]>(() => getSavedParties());
   const [editingParty, setEditingParty] = useState<SavedParty | null>(null);
 
@@ -145,7 +146,7 @@ export const PartyManager: React.FC<PartyManagerProps> = ({
                 <button
                   className={btn.dangerOutline}
                   onClick={() => handleDelete(party.id)}>
-                  {t('deleteParty')}
+                  {tCommon('delete')}
                 </button>
               </div>
             </div>

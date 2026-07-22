@@ -56,6 +56,7 @@ export const AbilityImportPanel: React.FC<AbilityImportPanelProps> = ({
   onToggleCollapse,
 }) => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const { importAbility } = useAbilities().mutators;
   const [activeTab, setActiveTab] = useState<ImportTab>('spells');
@@ -152,10 +153,10 @@ export const AbilityImportPanel: React.FC<AbilityImportPanelProps> = ({
         <input
           type='search'
           className={styles.importSearch}
-          placeholder={t('searchPlaceholder')}
+          placeholder={tCommon('searchPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          aria-label={t('searchPlaceholder')}
+          aria-label={tCommon('searchPlaceholder')}
         />
         <Tooltip
           content={t('abilityImportSourceTooltip', { tab: activeTab })}
@@ -173,7 +174,7 @@ export const AbilityImportPanel: React.FC<AbilityImportPanelProps> = ({
 
       {/* Item list */}
       {currentLoading && (
-        <p className={styles.importStatus}>{t('shardLoading')}</p>
+        <p className={styles.importStatus}>{tCommon('loading')}</p>
       )}
       {currentError && <p className={styles.importStatus}>{currentError}</p>}
       {!currentLoading && !currentError && filteredItems.length > 0 && (

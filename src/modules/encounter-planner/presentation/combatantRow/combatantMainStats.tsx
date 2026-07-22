@@ -87,6 +87,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
   } = combatant;
 
   const t = useTranslations('encounterPlanner');
+  const tCommon = useTranslations('common');
 
   const isStatsLocked = disableLocking
     ? false
@@ -171,7 +172,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
   return (
     <div className={styles.mainRow}>
       <div className={styles.hpSection}>
-        <label className={styles.label}>{t('hp')}</label>
+        <label className={styles.label}>{tCommon('hp')}</label>
         <div className={styles.hpInputs}>
           <input
             type='text'
@@ -183,7 +184,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
               updateField('hpCurrent', parsed);
             }}
             placeholder={t('current')}
-            aria-label={t('hpCurrent')}
+            aria-label={tCommon('hpCurrent')}
           />
           <span>/</span>
           <input
@@ -199,8 +200,8 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
               handleKeyDown(e, hpMaxField.commit, hpMaxField.cancel)
             }
             disabled={isStatsLocked}
-            placeholder={t('max')}
-            aria-label={t('hpMax')}
+            placeholder={tCommon('max')}
+            aria-label={tCommon('hpMax')}
           />
           <span>+</span>
           <input
@@ -236,7 +237,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
       )}
 
       <div className={styles.acSection}>
-        <label className={styles.label}>{t('ac')}</label>
+        <label className={styles.label}>{tCommon('ac')}</label>
         <input
           type='text'
           className={`${styles.numberInput} ${styles.acInput} ${isStatsLocked ? styles.lockedInput : ''}`}
@@ -246,13 +247,13 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
           onBlur={acField.commit}
           onKeyDown={(e) => handleKeyDown(e, acField.commit, acField.cancel)}
           disabled={isStatsLocked}
-          aria-label={t('ac')}
+          aria-label={tCommon('ac')}
         />
       </div>
 
       <div className={styles.initiativeSection}>
         <div className={styles.initiativeField}>
-          <label className={styles.label}>{t('initiative')}</label>
+          <label className={styles.label}>{tCommon('initiative')}</label>
           <input
             type='text'
             className={`${styles.numberInput} ${isStatsLocked ? styles.lockedInput : ''}`}
@@ -275,7 +276,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
             }
             disabled={isStatsLocked}
             placeholder='—'
-            aria-label={t('initiative')}
+            aria-label={tCommon('initiative')}
           />
         </div>
         <button

@@ -103,6 +103,65 @@ vi.mock('@/lib/components/icon/icons/unlock.svg', () => ({
 }));
 
 /**
+ * Evaluate simple width-based media queries against window.innerWidth.
+ * Supports the `(max-width: Npx)` / `(min-width: Npx)` forms used by the
+ * app's viewport hooks; anything else reports no match.
+ *
+ * @param query - CSS media query string
+ * @returns True if the query matches the current mocked viewport width
+ */
+function evaluateMediaQuery(query: string): boolean {
+  const max = query.match(/\(max-width:\s*(\d+(?:\.\d+)?)px\)/);
+  const min = query.match(/\(min-width:\s*(\d+(?:\.\d+)?)px\)/);
+  if (!max && !min) return false;
+  let matches = true;
+  if (max) matches = matches && window.innerWidth <= parseFloat(max[1]);
+  if (min) matches = matches && window.innerWidth >= parseFloat(min[1]);
+  return matches;
+}
+
+/**
+ * jsdom does not ship matchMedia. Provide a width-aware stub that
+ * re-evaluates on window resize events so tests that mock innerWidth and
+ * fire `resize` exercise viewport hooks realistically.
+ */
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  configurable: true,
+  value: (query: string) => {
+    const listeners = new Set<(e: { matches: boolean }) => void>();
+    let lastMatches = evaluateMediaQuery(query);
+
+    const handleResize = () => {
+      const next = evaluateMediaQuery(query);
+      if (next !== lastMatches) {
+        lastMatches = next;
+        listeners.forEach((cb) => cb({ matches: next }));
+      }
+    };
+
+    return {
+      get matches() {
+        return evaluateMediaQuery(query);
+      },
+      media: query,
+      onchange: null,
+      addEventListener: (_type: string, cb: (e: { matches: boolean }) => void) => {
+        if (listeners.size === 0) window.addEventListener('resize', handleResize);
+        listeners.add(cb);
+      },
+      removeEventListener: (_type: string, cb: (e: { matches: boolean }) => void) => {
+        listeners.delete(cb);
+        if (listeners.size === 0) window.removeEventListener('resize', handleResize);
+      },
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    };
+  },
+});
+
+/**
  * jsdom does not ship ResizeObserver.  Stub it globally so that hooks /
  * components depending on it don't crash in the test environment.
  */

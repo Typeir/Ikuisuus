@@ -1,0 +1,47 @@
+/**
+ * Builder Split Pane — phone-mode layout for the two-pane builder tabs.
+ * The summon button matches the module's terminal label conventions.
+ * All colors via CSS variables.
+ */
+
+.mobilePane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.summonBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  min-height: 44px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  color: var(--color-accent);
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  svg {
+    color: var(--color-secondary);
+    transition: color 0.15s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--color-accent);
+
+    svg {
+      color: var(--color-accent);
+    }
+  }
+}

@@ -1,9 +1,5 @@
 @use '@/styles/mixins' as *;
-
-/* Single source of truth for the fixed mobile title bar height. The bar,
-   the sidebar's mobile offset, and the main-content offset all derive
-   from it — change it here and every layer stays aligned. */
-$mobile-header-height: 72px;
+@use 'variables' as *;
 
 /* Fixed mobile title bar (hidden on lg+ via utility classes in the TSX). */
 .mobileTitleBar {

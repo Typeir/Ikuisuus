@@ -50,6 +50,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
   onFocusShard,
 }) => {
   const t = useTranslations('characterSheet.feats');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const { feats, isLoading: loading, error: fetchError } = useFeats({ locale });
   const error = fetchError?.message ?? null;
@@ -116,10 +117,10 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
             <input
               type='search'
               className={pickerStyles.pickerSearch}
-              placeholder={t('searchPlaceholder')}
+              placeholder={tCommon('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label={t('searchPlaceholder')}
+              aria-label={tCommon('searchPlaceholder')}
             />
           )}
           <div className={pickerStyles.pickerScroll}>

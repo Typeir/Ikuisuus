@@ -70,7 +70,9 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
       <thead>
         <tr>
           <th scope='col'>{t('colSkill')}</th>
-          <th scope='col'>{t('colAbility')}</th>
+          <th scope='col' className={styles.abilityCol}>
+            {t('colAbility')}
+          </th>
           <th scope='col'>{t('colLevel')}</th>
           <th scope='col'>{t('colBonus')}</th>
         </tr>
@@ -83,8 +85,13 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
             <tr
               key={`skill-${i}`}
               className={profRowStyles[`prof-${skill.tier}`]}>
-              <td>{t(skill.name)}</td>
-              <td className={styles.abilityTag}>
+              <td>
+                {t(skill.name)}
+                <span className={styles.abilityTagInline}>
+                  {skill.ability.toUpperCase()}
+                </span>
+              </td>
+              <td className={`${styles.abilityTag} ${styles.abilityCol}`}>
                 {skill.ability.toUpperCase()}
               </td>
               <td aria-label={t('ariaTierTrack')}>

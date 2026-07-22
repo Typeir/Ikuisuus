@@ -2,8 +2,6 @@
   "title": "MDX Editor",
   "subtitle": "Create or edit MDX content files. Edits are submitted as pull requests to the content repository.",
   "editButton": "Suggest edit",
-  "modeEdit": "Edit",
-  "modeNew": "New File",
   "loginLabel": "Sign In",
   "usernamePlaceholder": "Username",
   "passwordPlaceholder": "Password",

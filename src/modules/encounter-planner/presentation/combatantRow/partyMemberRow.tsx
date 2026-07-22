@@ -31,6 +31,7 @@ import { useEditableField } from './utils/useEditableField';
 export const PartyMemberRow: React.FC = () => {
   const { combatant, updateField, onUpdate } = useCombatant();
   const t = useTranslations('encounterPlanner');
+  const tCommon = useTranslations('common');
   const cancelPendingRef = useRef(false);
 
   const { name, initiativeValue, initiativeBonus, slain = false } = combatant;
@@ -95,7 +96,7 @@ export const PartyMemberRow: React.FC = () => {
 
         <div className={styles.initiativeSection}>
           <div className={styles.initiativeField}>
-            <label className={styles.label}>{t('initiative')}</label>
+            <label className={styles.label}>{tCommon('initiative')}</label>
             <input
               type='text'
               className={styles.numberInput}
@@ -115,7 +116,7 @@ export const PartyMemberRow: React.FC = () => {
               onBlur={initField.commit}
               onKeyDown={handleKeyDown}
               placeholder='—'
-              aria-label={t('initiative')}
+              aria-label={tCommon('initiative')}
             />
           </div>
           <button

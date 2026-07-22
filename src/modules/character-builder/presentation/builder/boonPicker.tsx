@@ -76,6 +76,7 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
   } = useBloodlines({ locale });
   const error = fetchError?.message ?? null;
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const { cache, mutate } = useSWRConfig();
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedBoons, setExpandedBoons] = useState<Set<string>>(
@@ -196,10 +197,10 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
             <input
               type='search'
               className={pickerStyles.pickerSearch}
-              placeholder={t('searchPlaceholder')}
+              placeholder={tCommon('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label={t('searchPlaceholder')}
+              aria-label={tCommon('searchPlaceholder')}
             />
           )}
           <div className={pickerStyles.pickerScroll}>

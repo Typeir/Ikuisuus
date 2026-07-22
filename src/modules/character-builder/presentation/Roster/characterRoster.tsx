@@ -47,6 +47,7 @@ export interface CharacterRosterProps {}
  */
 export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const characters = useCharacters();
   const { activeId, isHydrated } = useCharacterSheetState();
   const dispatch = useCharacterSheetDispatch();
@@ -163,7 +164,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
           ) : (
             <ul className={styles.rosterList}>
               {characters.map((char) => {
-                const displayName = char.name || t('unnamed');
+                const displayName = char.name || tCommon('unnamed');
                 const initial = displayName.charAt(0).toUpperCase();
                 return (
                   <li
@@ -184,7 +185,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
                         {displayName}
                       </span>
                       <span className={styles.rosterItemMeta}>
-                        {t('levelShort', { level: char.level })}
+                        {tCommon('levelShort', { level: char.level })}
                       </span>
                     </button>
                     <button
@@ -219,7 +220,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
       {confirmDeleteId &&
         (() => {
           const target = characters.find((c) => c.id === confirmDeleteId);
-          const targetName = target?.name || t('unnamed');
+          const targetName = target?.name || tCommon('unnamed');
           return (
             <Modal
               isOpen
@@ -232,13 +233,13 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
                   type='button'
                   className={styles.rosterConfirmCancel}
                   onClick={handleCancelDelete}>
-                  {t('deleteConfirmCancel')}
+                  {tCommon('cancel')}
                 </button>
                 <button
                   type='button'
                   className={styles.rosterConfirmDelete}
                   onClick={handleConfirmDelete}>
-                  {t('deleteConfirmConfirm')}
+                  {tCommon('delete')}
                 </button>
               </div>
             </Modal>

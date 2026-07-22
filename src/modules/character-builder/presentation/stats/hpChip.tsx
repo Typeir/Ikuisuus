@@ -39,13 +39,17 @@ const HpChip = ({
   onHitDiceCommit,
 }: HpChipProps) => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const u = isUnlocked('hp');
   return (
     <div className={styles.statChip}>
       <LockBtn isUnlocked={isUnlocked} toggle={toggle} k='hp' />
-      <HitDiceCounter vocations={data.vocations} />
+      <HitDiceCounter
+        vocations={data.vocations}
+        hitDiceLog={data.hitDiceLog ?? []}
+      />
       <div className={styles.statChipLabelRow}>
-        <span className={styles.statChipLabel}>{t('hp')}</span>
+        <span className={styles.statChipLabel}>{tCommon('hp')}</span>
         <HpRollerPanel
           hitDiceLog={data.hitDiceLog ?? []}
           conMod={conMod}
@@ -59,7 +63,7 @@ const HpChip = ({
             min={0}
             max={data.hpMax}
             size='sm'
-            ariaLabel={t('hpCurrent')}
+            ariaLabel={tCommon('hpCurrent')}
             onChange={(v) => patch({ hpCurrent: v ?? 0 })}
           />
           <span className={styles.statChipLabel}>/</span>
@@ -68,7 +72,7 @@ const HpChip = ({
             min={1}
             max={999}
             size='sm'
-            ariaLabel={t('hpMax')}
+            ariaLabel={tCommon('hpMax')}
             onChange={(v) => patch({ hpMax: v ?? 1 })}
           />
         </div>

@@ -14,10 +14,11 @@
 
 'use client';
 
+import { Tab, TabList, TabPanel, Tabs } from '@/lib/components/ui/tabs';
+import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import type {
   CharacterShard,
   CharacterSheet as CharacterSheetType,
-  VocationEntry,
 } from '@/lib/types/character';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { getTotalCharacterLevel } from '@/modules/character-builder/lib/utils/characterDerivation';
@@ -27,12 +28,15 @@ import {
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { NotesSection } from '../notes/notesSection';
 import { AttacksTable } from '../stats/attacksTable';
 import { SkillsTable } from '../stats/skillsTable';
 import { ToolsTable } from '../stats/toolsTable';
 import styles from './tabs.module.scss';
+
+/** Overview section tab value on phone layouts. */
+type OverviewSection = 'skills' | 'trades' | 'attacks' | 'notes';
 
 /**
  * Props for `<OverviewTab>`.
@@ -75,12 +79,8 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       (s) => s.level === undefined || s.level <= v.level,
     ),
   ]);
-  const prevVocationsRef = useRef<VocationEntry[]>(data.vocations);
-
   useEffect(() => {
-    const prev = prevVocationsRef.current;
     const curr = data.vocations;
-    prevVocationsRef.current = curr;
 
     const totalLevel = getTotalCharacterLevel(data);
     const derivedPb = computeTierBonus(totalLevel);
@@ -92,35 +92,35 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 
     for (const currEntry of curr) {
       if (!currEntry.slug) continue;
-      const prevEntry = prev.find((p) => p.slug === currEntry.slug);
-      const prevLevel = prevEntry?.level ?? 0;
       const currLevel = currEntry.level ?? 1;
 
-      if (currLevel > prevLevel) {
-        for (let li = prevLevel + 1; li <= currLevel; li++) {
-          const id = `${currEntry.slug}-${li}`;
-          const alreadyLogged = updatedLog.some((e) => e.id === id);
-          if (!alreadyLogged) {
-            newEntries.push({
-              id,
-              vocSlug: currEntry.slug,
-              vocTitle: currEntry.title,
-              dieType: (currEntry.hitDie ?? '').replace(/^d/i, '') || '?',
-              levelIndex: li,
-              result: null,
-              conMod,
-              addedToHp: false,
-            });
-          }
+      /* Backfill every level from 1 rather than diffing against the previous
+         render — levels assigned while this tab was unmounted would otherwise
+         never enter the log (the ref initialises to the current state on
+         mount, so the diff sees no change). `alreadyLogged` dedupes. */
+      for (let li = 1; li <= currLevel; li++) {
+        const id = `${currEntry.slug}-${li}`;
+        const alreadyLogged = updatedLog.some((e) => e.id === id);
+        if (!alreadyLogged) {
+          newEntries.push({
+            id,
+            vocSlug: currEntry.slug,
+            vocTitle: currEntry.title,
+            dieType: (currEntry.hitDie ?? '').replace(/^d/i, '') || '?',
+            levelIndex: li,
+            result: null,
+            conMod,
+            addedToHp: false,
+          });
         }
       }
 
-      if (currLevel < prevLevel) {
-        updatedLog = updatedLog.filter((e) => {
-          if (e.vocSlug !== currEntry.slug) return true;
-          return e.levelIndex <= currLevel;
-        });
-      }
+      /* Idempotent prune of entries beyond the current level — same
+         unmounted-diff blindness applies to level decreases. */
+      updatedLog = updatedLog.filter((e) => {
+        if (e.vocSlug !== currEntry.slug) return true;
+        return e.levelIndex <= currLevel;
+      });
     }
 
     const activeSlugs = new Set(curr.filter((v) => v.slug).map((v) => v.slug));
@@ -157,6 +157,99 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   );
 
   const conMod = computeAbilityModifier(data.abilityScores.con);
+  const isMobile = useIsMobileViewport();
+  const [section, setSection] = useState<OverviewSection>('skills');
+
+  if (isMobile === true) {
+    return (
+      <div className={styles.column}>
+        <Tabs
+          value={section}
+          onChange={(v) => setSection(v as OverviewSection)}
+          variant='nested'
+          ariaLabel={t('ariaOverviewSections')}>
+          <TabList ariaLabel={t('ariaOverviewSections')}>
+            <Tab value='skills'>{t('overviewSkills')}</Tab>
+            <Tab value='trades'>{t('overviewTrades')}</Tab>
+            <Tab value='attacks'>{t('overviewAttacks')}</Tab>
+            <Tab value='notes'>{t('overviewNotes')}</Tab>
+          </TabList>
+
+          <TabPanel value='skills'>
+            <SkillsTable
+              skills={data.skills}
+              abilityScores={data.abilityScores}
+              tierBonus={data.tierBonus}
+              onChange={handleSkillsChange}
+              readOnly={!editing}
+            />
+          </TabPanel>
+          <TabPanel value='trades'>
+            <ToolsTable
+              tools={data.tools}
+              tierBonus={data.tierBonus}
+              onChange={handleToolsChange}
+              readOnly={!editing}
+            />
+          </TabPanel>
+          <TabPanel value='attacks'>
+            <AttacksTable
+              attacks={data.attacks}
+              onChange={handleAttacksChange}
+              readOnly={!editing}
+            />
+          </TabPanel>
+          <TabPanel value='notes'>
+            <NotesSection
+              values={{
+                wants: data.wants,
+                fears: data.fears,
+                virtues: data.virtues,
+                flaws: data.flaws,
+                bonds: data.bonds,
+                notes: data.notes,
+              }}
+              onChange={handleNotesChange}
+              readOnly={!editing}
+            />
+          </TabPanel>
+        </Tabs>
+
+        {boonShards.length > 0 && (
+          <section aria-label={t('ariaSelectedBoons')}>
+            <h3 className={styles.sectionTitle}>{t('boons')}</h3>
+            <div className={styles.chipCloud}>
+              {boonShards.map((shard) => (
+                <ShardChip key={shard.id} shard={shard} color='primary' />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {featShards.length > 0 && (
+          <section aria-label={t('ariaSelectedFeats')}>
+            <h3 className={styles.sectionTitle}>{t('tabFeats')}</h3>
+            <div className={styles.chipCloud}>
+              {featShards.map((shard) => (
+                <ShardChip key={shard.id} shard={shard} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {featureShards.length > 0 && (
+          <section aria-label={t('ariaSelectedFeatures')}>
+            <h3 className={styles.sectionTitle}>{t('features')}</h3>
+            <div className={styles.chipCloud}>
+              {featureShards.map((shard) => (
+                <ShardChip key={shard.id} shard={shard} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className={styles.twoColumns}>

@@ -262,7 +262,7 @@ describe('FilterSelect', () => {
       });
     });
 
-    it('shows dropdown on mobile when options are below threshold', async () => {
+    it('shows modal on mobile even when options are below threshold', async () => {
       const user = userEvent.setup();
       const fewOptions = [
         { value: 'option1', label: 'Option 1' },
@@ -279,9 +279,11 @@ describe('FilterSelect', () => {
 
       await user.click(screen.getByRole('button'));
 
-      // Should show dropdown, not modal
-      expect(screen.getByRole('listbox')).toBeInTheDocument();
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      // Anchored dropdowns clip on phone viewports regardless of list
+      // length, so short lists get the bottom sheet too.
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
     });
 
     it('closes mobile modal on option selection', async () => {

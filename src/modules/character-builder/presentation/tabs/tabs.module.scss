@@ -6,6 +6,16 @@
  * @module lib/components/characterSheet/tabs/tabs.module
  */
 
+@use '@/styles/mixins-responsive' as *;
+
+/* Safety rail for data tables on narrow viewports — lets a too-wide table
+   scroll inside its own box instead of forcing document overflow. */
+.tableScrollGuard {
+  position: relative;
+  min-width: 0;
+  overflow-x: auto;
+}
+
 .twoColumns {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -13,7 +23,7 @@
   align-items: stretch;
 
   @media (max-width: 900px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -105,10 +115,36 @@
 .equipmentColNum {
   width: 5.5rem;
   white-space: nowrap;
+
+  @include mobile {
+    width: 4rem;
+  }
 }
 
+/* Wide enough for the borderless trash button so its hover glow never
+   clips against the cell edge under table-layout: fixed. */
 .equipmentColAction {
-  width: 1.8rem;
+  width: 2.4rem;
+}
+
+/* Matches the attacks-table remove treatment: borderless trash glyph
+   that recolors to danger on hover — nothing to clip. */
+.equipmentRemoveBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent !important;
+  border: none;
+  cursor: pointer;
+  color: var(--color-secondary);
+  padding: 0.2rem;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    color: var(--color-danger);
+  }
 }
 
 .equipmentRow {

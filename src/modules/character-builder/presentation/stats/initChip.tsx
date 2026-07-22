@@ -32,19 +32,19 @@ const InitChip = ({
   toggle,
   patch,
 }: InitChipProps) => {
-  const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const u = isUnlocked('initiative');
   return (
     <div className={styles.statChip}>
       <LockBtn isUnlocked={isUnlocked} toggle={toggle} k='initiative' />
-      <span className={styles.statChipLabel}>{t('initiative')}</span>
+      <span className={styles.statChipLabel}>{tCommon('initiative')}</span>
       {u ? (
         <NumericInput
           value={initBonus}
           min={-20}
           max={20}
           size='sm'
-          ariaLabel={t('initiative')}
+          ariaLabel={tCommon('initiative')}
           onChange={(v) => patch({ initiativeBonus: v ?? 0 })}
         />
       ) : (

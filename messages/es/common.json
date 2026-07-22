@@ -1,6 +1,23 @@
 {
-  "searchPlaceholder": "Search the Library...",
-  "searching": "Searching...",
-  "waiting": "Waiting for input",
-  "redacted": "This subject has been redacted. Only the Archivist holds this knowledge."
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "edit": "Editar",
+  "back": "Atrás",
+  "loading": "Cargando…",
+  "error": "Error",
+  "name": "Nombre",
+  "all": "Todos",
+  "yes": "Sí",
+  "no": "No",
+  "max": "Máx",
+  "unnamed": "Sin nombre",
+  "levelShort": "Nv {level}",
+  "searchPlaceholder": "Buscar…",
+  "hp": "PG",
+  "ac": "CA",
+  "initiative": "Iniciativa",
+  "speed": "Velocidad",
+  "hpCurrent": "PG actuales",
+  "hpMax": "PG máximos"
 }

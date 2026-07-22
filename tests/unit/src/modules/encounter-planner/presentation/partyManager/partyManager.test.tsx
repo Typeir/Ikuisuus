@@ -125,7 +125,7 @@ describe('PartyManager', () => {
     renderManager();
     await user.click(screen.getByText('createParty'));
     expect(screen.getByText('saveParty')).toBeInTheDocument();
-    expect(screen.getByText('backToList')).toBeInTheDocument();
+    expect(screen.getByText('back')).toBeInTheDocument();
   });
 
   it('should switch to editor view when clicking edit', async () => {

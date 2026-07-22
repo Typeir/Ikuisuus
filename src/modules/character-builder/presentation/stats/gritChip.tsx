@@ -38,6 +38,7 @@ const GritChip = ({
   restoreGrit,
 }: GritChipProps) => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const u = isUnlocked('grit');
   return (
     <div className={styles.statChip} aria-label={t('ariaGrit')}>
@@ -59,7 +60,7 @@ const GritChip = ({
             min={0}
             max={99}
             size='sm'
-            ariaLabel={t('gritMax')}
+            ariaLabel={tCommon('max')}
             onChange={(v) =>
               patch({
                 gritMax: v ?? 0,

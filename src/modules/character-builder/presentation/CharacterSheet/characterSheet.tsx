@@ -21,6 +21,7 @@ import {
   useActiveSheet,
   type SheetTabId,
 } from '@/modules/character-builder/application/context/activeSheetContext';
+import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { GradientTabs } from '../../../../lib/components/ui/gradientTabs';
@@ -96,6 +97,7 @@ const CharacterSheetBody: React.FC = () => {
   const { data, editing, activeTab, mutators } = useActiveSheet();
   const { patch, patchAbility, beginEdit, saveEdit, cancelEdit, setActiveTab } =
     mutators;
+  const isMobile = useIsMobileViewport();
 
   const tabs = useMemo(
     () => [
@@ -153,8 +155,24 @@ const CharacterSheetBody: React.FC = () => {
               key={key}
               label={label}
               score={data.abilityScores[key]}
+              saveTier={data.savingThrows?.[key] ?? 'none'}
+              tierBonus={data.tierBonus}
               editing={editing}
               onChange={(score) => patchAbility(key, score)}
+              onSaveTierChange={(tier) =>
+                patch({
+                  savingThrows: {
+                    str: 'none',
+                    dex: 'none',
+                    con: 'none',
+                    int: 'none',
+                    wis: 'none',
+                    cha: 'none',
+                    ...(data.savingThrows ?? {}),
+                    [key]: tier,
+                  },
+                })
+              }
             />
           ))}
         </div>
@@ -162,11 +180,12 @@ const CharacterSheetBody: React.FC = () => {
         <CombatStatChips data={data} patch={patch} />
       </section>
 
-      <div className={styles.tabsSection}>
+      <div>
         <GradientTabs
           tabs={tabs}
           activeTab={activeTab}
-          onChange={(v) => setActiveTab(v as TabId)}>
+          onChange={(v) => setActiveTab(v as TabId)}
+          variant={isMobile === true ? 'compact' : 'default'}>
           {activePanel}
         </GradientTabs>
       </div>

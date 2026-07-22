@@ -102,6 +102,7 @@ export const AbilityEditor: React.FC<AbilityEditorProps> = ({
   onCancel,
 }) => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const isEditing = Boolean(existing);
 
   const [form, setForm] = useState<AbilityFormState>(() => ({
@@ -167,7 +168,7 @@ export const AbilityEditor: React.FC<AbilityEditorProps> = ({
 
         {/* Name */}
         <label className={styles.fieldLabel} htmlFor='ability-editor-name'>
-          {t('abilityName')}
+          {tCommon('name')}
         </label>
         <input
           id='ability-editor-name'
@@ -181,9 +182,7 @@ export const AbilityEditor: React.FC<AbilityEditorProps> = ({
         />
 
         {/* Type */}
-        <label className={styles.fieldLabel} htmlFor='ability-editor-type'>
-          {t('abilityType')}
-        </label>
+        <span className={styles.fieldLabel}>{t('abilityType')}</span>
         <FilterSelect
           id='ability-editor-type'
           value={form.type}
@@ -259,10 +258,10 @@ export const AbilityEditor: React.FC<AbilityEditorProps> = ({
             className={styles.saveBtn}
             onClick={handleSave}
             disabled={!form.name.trim()}>
-            {isEditing ? t('save') : t('abilityAdd')}
+            {isEditing ? tCommon('save') : t('abilityAdd')}
           </button>
           <button type='button' className={btn.neutral} onClick={onCancel}>
-            {t('cancel')}
+            {tCommon('cancel')}
           </button>
         </div>
       </div>

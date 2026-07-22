@@ -25,19 +25,19 @@ export interface AcChipProps {
 
 /** AC chip with lockable edit mode. */
 const AcChip = ({ ac, isUnlocked, toggle, patch }: AcChipProps) => {
-  const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const u = isUnlocked('ac');
   return (
     <div className={styles.statChip}>
       <LockBtn isUnlocked={isUnlocked} toggle={toggle} k='ac' />
-      <span className={styles.statChipLabel}>{t('ac')}</span>
+      <span className={styles.statChipLabel}>{tCommon('ac')}</span>
       {u ? (
         <NumericInput
           value={ac}
           min={0}
           max={99}
           size='sm'
-          ariaLabel={t('ac')}
+          ariaLabel={tCommon('ac')}
           onChange={(v) => patch({ ac: v ?? 10 })}
         />
       ) : (

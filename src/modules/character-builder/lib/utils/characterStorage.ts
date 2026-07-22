@@ -229,14 +229,25 @@ export const migrateCharacter = (
   if (Array.isArray((raw as unknown as CharacterSheet).vocations)) {
     const sheet = raw as unknown as CharacterSheet;
     const needsEquipMigration = rawEquipment.some((e) => typeof e === 'string');
-    if (!needsEquipMigration) return sheet;
-    return { ...sheet, equipment: migrateEquipment(rawEquipment) };
+    const needsSavesMigration = !sheet.savingThrows;
+    if (!needsEquipMigration && !needsSavesMigration) return sheet;
+    return {
+      ...sheet,
+      equipment: needsEquipMigration
+        ? migrateEquipment(rawEquipment)
+        : sheet.equipment,
+      savingThrows: sheet.savingThrows ?? { ...DEFAULT_SAVES },
+    };
   }
 
   const migrated: CharacterSheet = {
     ...(raw as unknown as CharacterSheet),
     vocations: [],
     equipment: migrateEquipment(rawEquipment),
+    savingThrows:
+      (raw['savingThrows'] as CharacterSheet['savingThrows']) ?? {
+        ...DEFAULT_SAVES,
+      },
   };
 
   const legacySlug = raw['vocationSlug'] as string | null | undefined;

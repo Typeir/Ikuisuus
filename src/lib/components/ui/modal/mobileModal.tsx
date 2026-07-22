@@ -1,19 +1,21 @@
 /**
  * @fileoverview Generic Mobile Modal Component
- * @description Reusable mobile-optimized modal with focus trap, keyboard navigation,
- * and optional search input. Renders to portal for proper z-index stacking.
+ * @description Reusable mobile-optimized bottom-sheet modal with focus trap,
+ * keyboard navigation, and an optional `console` skin matching the site's
+ * terminal aesthetic. Renders to portal for proper z-index stacking.
  *
  * @module ui/modal/mobileModal
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
 'use client';
 
-import { useEffect, useRef, ReactNode, memo } from 'react';
-import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
+import { memo, ReactNode, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import styles from './mobileModal.module.scss';
 
 /**
  * @interface MobileModalProps
@@ -24,6 +26,7 @@ import { X } from 'lucide-react';
  * @property {string} [title] - Optional modal title/header text
  * @property {ReactNode} [header] - Optional custom header element (takes precedence over title)
  * @property {boolean} [showCloseButton=true] - Whether to show X button
+ * @property {'default' | 'console'} [variant='default'] - Visual skin; `console` renders square shoulders, surface border, and a small-caps terminal label
  * @property {string} [ariaLabel] - Accessible label for screen readers
  * @property {string} [className] - Additional CSS classes for modal content
  * @property {string} [overlayClassName] - Additional CSS classes for overlay
@@ -35,18 +38,19 @@ export interface MobileModalProps {
   title?: string;
   header?: ReactNode;
   showCloseButton?: boolean;
+  variant?: 'default' | 'console';
   ariaLabel?: string;
   className?: string;
   overlayClassName?: string;
 }
 
 /**
- * Generic mobile modal component with focus management and keyboard navigation.
- * Renders to document.body via portal for proper modal stacking.
+ * Generic mobile bottom-sheet modal with focus management and keyboard
+ * navigation. Renders to document.body via portal for proper modal stacking.
  *
  * @component
  * @param {MobileModalProps} props - Modal configuration
- * @property {() => void} props.onClose - Callback when modal should close
+ * @returns {JSX.Element | null} Rendered modal or null when closed
  * @example
  * ```tsx
  * const [isOpen, setIsOpen] = useState(false);
@@ -55,6 +59,7 @@ export interface MobileModalProps {
  *   isOpen={isOpen}
  *   onClose={() => setIsOpen(false)}
  *   title="Select an option"
+ *   variant="console"
  * >
  *   <div>Modal content here</div>
  * </MobileModal>
@@ -67,6 +72,7 @@ export const MobileModal = memo(function MobileModal({
   title,
   header,
   showCloseButton = true,
+  variant = 'default',
   ariaLabel,
   className = '',
   overlayClassName = '',
@@ -88,7 +94,7 @@ export const MobileModal = memo(function MobileModal({
 
       if (e.key === 'Tab' && modalRef.current) {
         const focusable = modalRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         );
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
@@ -114,78 +120,38 @@ export const MobileModal = memo(function MobileModal({
 
   if (!isOpen) return null;
 
+  const variantClass = variant === 'console' ? styles.console : '';
+
   return createPortal(
     <div
-      className={`mobileModalOverlay ${overlayClassName}`}
+      className={`${styles.mobileModalOverlay} ${variantClass} ${overlayClassName}`}
       onClick={(e) => e.target === e.currentTarget && onClose()}
-      role="dialog"
-      aria-modal="true"
-      aria-label={ariaLabel}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgb(var(--color-overlay))',
-        display: 'flex',
-        alignItems: 'flex-end',
-        zIndex: 1000,
-      }}
-    >
+      role='dialog'
+      aria-modal='true'
+      aria-label={ariaLabel}>
       <div
         ref={modalRef}
-        className={`mobileModalContent ${className}`}
-        style={{
-          width: '100%',
-          maxHeight: '90vh',
-          backgroundColor: 'var(--color-bg)',
-          borderRadius: '12px 12px 0 0',
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '0 -2px 10px rgb(var(--color-shadow))',
-        }}
-      >
+        className={`${styles.mobileModalContent} ${className}`}>
         {(header || title || showCloseButton) && (
-          <div
-            style={{
-              padding: '16px',
-              borderBottom: '1px solid var(--color-border)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            {header || (title && <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--color-text)' }}>{title}</h2>)}
+          <div className={styles.mobileModalHeader}>
+            {header ||
+              (title && <h2 className={styles.mobileModalTitle}>{title}</h2>)}
             {showCloseButton && (
               <button
                 onClick={onClose}
-                aria-label="Close modal"
-                type="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  padding: '4px 8px',
-                  color: 'var(--color-text-secondary)',
-                }}
-              >
+                aria-label='Close modal'
+                type='button'
+                className={styles.mobileModalClose}>
                 <X size={24} aria-hidden='true' />
               </button>
             )}
           </div>
         )}
 
-        <div
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '16px',
-          }}
-        >
-          {children}
-        </div>
+        <div className={styles.mobileModalBody}>{children}</div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 });
 

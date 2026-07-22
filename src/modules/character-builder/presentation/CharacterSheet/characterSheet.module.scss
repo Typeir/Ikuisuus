@@ -8,6 +8,7 @@
 @use '@/styles/mixins-button' as *;
 @use '@/styles/mixins-focus' as *;
 @use '@/styles/mixins-icon' as *;
+@use '@/styles/mixins-responsive' as *;
 
 /** =====================================================================
  * Character Sheet Layout
@@ -19,6 +20,11 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  @include mobile {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
 }
 
 .charName {
@@ -59,12 +65,27 @@
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 1rem;
+
+  @include desktop {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .abilityRow {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+
+  @include desktop {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  @include mobile {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 /** =====================================================================
@@ -75,6 +96,12 @@
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+
+  @include desktop {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
 }
 
 .statChip {
@@ -138,6 +165,15 @@
     color: var(--color-accent);
     background: transparent !important;
   }
+
+  /* Invisible tap-area expansion — the glyph stays small, the target grows. */
+  @media (pointer: coarse) {
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -12px;
+    }
+  }
 }
 
 .lockUnlocked {
@@ -152,6 +188,10 @@
   display: flex;
   gap: 0.25rem;
   margin-top: 0.1rem;
+
+  @media (pointer: coarse) {
+    gap: 0.75rem;
+  }
 }
 
 .statChipBtn {
@@ -182,6 +222,21 @@
     opacity: 0.3;
     cursor: not-allowed;
   }
+
+  /* 32px visual + 6px halo per side ≈ 44px effective target; the widened
+     row gap above keeps neighbouring halos from overlapping. */
+  @media (pointer: coarse) {
+    position: relative;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.9rem;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+    }
+  }
 }
 
 .sheetColumns {
@@ -189,6 +244,10 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .sheetLeft,
@@ -205,6 +264,10 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1rem;
   min-width: 0;
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .sectionTitle {

@@ -1,6 +1,23 @@
 {
-  "searchPlaceholder": "Search the Library...",
-  "searching": "Searching...",
-  "waiting": "Waiting for input",
-  "redacted": "This subject has been redacted. Only the Archivist holds this knowledge."
+  "save": "Tallenna",
+  "cancel": "Peruuta",
+  "delete": "Poista",
+  "edit": "Muokkaa",
+  "back": "Takaisin",
+  "loading": "Ladataan…",
+  "error": "Virhe",
+  "name": "Nimi",
+  "all": "Kaikki",
+  "yes": "Kyllä",
+  "no": "Ei",
+  "max": "Maks",
+  "unnamed": "Nimetön",
+  "levelShort": "Taso {level}",
+  "searchPlaceholder": "Hae…",
+  "hp": "HP",
+  "ac": "AC",
+  "initiative": "Aloite",
+  "speed": "Nopeus",
+  "hpCurrent": "Nykyiset HP",
+  "hpMax": "Maksimi-HP"
 }

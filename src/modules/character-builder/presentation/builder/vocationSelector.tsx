@@ -19,6 +19,7 @@
 'use client';
 
 import { Skeleton } from '@/lib/components/skeleton/skeleton';
+import { Chip } from '@/lib/components/ui/chip';
 import { FilterSelect } from '@/lib/components/ui/filterSelect';
 import { useVocationMetadata } from '@/lib/hooks/data/useVocationMetadata';
 import type {
@@ -27,8 +28,10 @@ import type {
 } from '@/lib/types/character';
 import { createEmptyVocationEntry } from '@/modules/character-builder/lib/utils/characterStorage';
 import { fetchFeatureShards } from '@/modules/character-builder/lib/utils/featureShards';
+import { usePagePreview } from '@/modules/character-builder/presentation/PagePreview/pagePreviewProvider';
+import { ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BoonPicker } from './boonPicker';
 import { VocationEntryBlock } from './vocationEntryBlock';
 import styles from './vocationSelector.module.scss';
@@ -91,9 +94,45 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
 }) => {
   const t = useTranslations('characterSheet');
   const locale = useLocale();
+  const preview = usePagePreview();
   const { bloodlines, vocOptions, specs, isLoading } = useVocationMetadata(
     editing,
     locale,
+  );
+  const [collapsed, setCollapsed] = useState(true);
+
+  useEffect(() => {
+    setCollapsed(!editing);
+  }, [editing]);
+
+  const vocationSummary =
+    vocations.length > 0
+      ? vocations
+          .map(
+            (v) =>
+              `${v.title || '—'}${v.specializationTitle ? ` / ${v.specializationTitle}` : ''} Lv.${v.level}`,
+          )
+          .join(' · ')
+      : '—';
+
+  const summaryBar = (
+    <button
+      type='button'
+      className={styles.identitySummary}
+      onClick={() => setCollapsed((c) => !c)}
+      aria-expanded={!collapsed}
+      aria-label={t('ariaIdentitySummary')}>
+      <ChevronRight
+        size={14}
+        aria-hidden='true'
+        className={`${styles.summaryChevron} ${collapsed ? '' : styles.summaryChevronOpen}`}
+      />
+      <span className={styles.summaryLabel}>{t('colBloodline')}</span>
+      <span className={styles.summaryValue}>{bloodlineTitle || '—'}</span>
+      <span className={styles.summaryDivider} aria-hidden='true' />
+      <span className={styles.summaryLabel}>{t('colVocation')}</span>
+      <span className={styles.summaryValue}>{vocationSummary}</span>
+    </button>
   );
 
   const handleBloodlineChange = useCallback(
@@ -194,35 +233,78 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
     [vocations, onChange],
   );
 
+  const identityRows = (
+    <>
+      <div className={styles.identityRow}>
+        <span className={styles.identityLabel}>{t('colBloodline')}</span>
+        {bloodlineTitle ? (
+          <Chip
+            variant='neutral'
+            label={bloodlineTitle}
+            onInfo={
+              bloodlineSlug
+                ? () =>
+                    preview.open({
+                      kind: 'bloodlines',
+                      slug: bloodlineSlug,
+                      title: bloodlineTitle,
+                    })
+                : undefined
+            }
+          />
+        ) : (
+          <span className={styles.identityEmpty}>—</span>
+        )}
+      </div>
+      <div className={styles.identityRow}>
+        <span className={styles.identityLabel}>{t('colVocation')}</span>
+        {vocations.length > 0 ? (
+          <div className={styles.pillGroup}>
+            {vocations.map((v, i) =>
+              v.slug ? (
+                <Chip
+                  key={`${i}::${v.slug}`}
+                  variant='neutral'
+                  label={`${v.title}${v.specializationTitle ? ` / ${v.specializationTitle}` : ''} Lv.${v.level}`}
+                  onInfo={() =>
+                    preview.open({
+                      kind: 'vocations',
+                      slug: v.slug,
+                      title: v.title,
+                    })
+                  }
+                />
+              ) : (
+                <span key={`${i}::empty`} className={styles.identityPill}>
+                  — Lv.{v.level}
+                </span>
+              ),
+            )}
+          </div>
+        ) : (
+          <span className={styles.identityEmpty}>—</span>
+        )}
+      </div>
+    </>
+  );
+
   if (!editing) {
     return (
       <div
         className={styles.vocationSelector}
         aria-label={t('ariaVocationSelectorView')}>
-        <div className={styles.identityRow}>
-          <span className={styles.identityLabel}>{t('colBloodline')}</span>
-          {bloodlineTitle ? (
-            <span className={styles.identityPill}>{bloodlineTitle}</span>
-          ) : (
-            <span className={styles.identityEmpty}>—</span>
-          )}
-        </div>
-        <div className={styles.identityRow}>
-          <span className={styles.identityLabel}>{t('colVocation')}</span>
-          {vocations.length > 0 ? (
-            <div className={styles.pillGroup}>
-              {vocations.map((v, i) => (
-                <span key={i} className={styles.identityPill}>
-                  {v.title || '—'}
-                  {v.specializationTitle ? ` / ${v.specializationTitle}` : ''}
-                  {` Lv.${v.level}`}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <span className={styles.identityEmpty}>—</span>
-          )}
-        </div>
+        {identityRows}
+      </div>
+    );
+  }
+
+  if (collapsed) {
+    return (
+      <div
+        className={styles.vocationSelector}
+        aria-label={t('ariaVocationSelector')}>
+        {identityRows}
+        {summaryBar}
       </div>
     );
   }
@@ -231,6 +313,8 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
     <div
       className={styles.vocationSelector}
       aria-label={t('ariaVocationSelector')}>
+      {identityRows}
+      {summaryBar}
       <div className={styles.selectorRow}>
         <span className={styles.selectorLabel}>{t('colBloodline')}</span>
         <div className={styles.selectorInput}>

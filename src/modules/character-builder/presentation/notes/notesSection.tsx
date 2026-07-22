@@ -84,21 +84,24 @@ export const NotesSectionImpl: React.FC<NotesSectionProps> = ({
       aria-label={t('ariaCharacterNotes')}>
       {NOTE_FIELD_KEYS.map((key) => (
         <div key={key} className={styles.noteField}>
-          <label className={styles.noteLabel} htmlFor={`note-${key}`}>
-            {t(key)}
-          </label>
           {readOnly ? (
-            <p className={styles.noteText} id={`note-${key}`}>
-              {values[key] || '—'}
-            </p>
+            <>
+              <span className={styles.noteLabel}>{t(key)}</span>
+              <p className={styles.noteText}>{values[key] || '—'}</p>
+            </>
           ) : (
-            <TextArea
-              id={`note-${key}`}
-              className={styles.noteTextarea}
-              value={values[key]}
-              onChange={(v) => handleChange(key, v)}
-              rows={3}
-            />
+            <>
+              <label className={styles.noteLabel} htmlFor={`note-${key}`}>
+                {t(key)}
+              </label>
+              <TextArea
+                id={`note-${key}`}
+                className={styles.noteTextarea}
+                value={values[key]}
+                onChange={(v) => handleChange(key, v)}
+                rows={3}
+              />
+            </>
           )}
         </div>
       ))}

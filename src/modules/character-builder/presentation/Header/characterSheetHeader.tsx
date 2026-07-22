@@ -13,27 +13,26 @@
 
 'use client';
 
-import { Chip } from '@/lib/components/ui/chip';
 import { NumericInput } from '@/lib/components/ui/numericInput';
 import { TextInput } from '@/lib/components/ui/textInput';
 import { useDebounce } from '@/lib/hooks/useDebounce';
+import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import type {
-    CharacterShard,
-    CharacterSheet as CharacterSheetType,
+  CharacterShard,
+  CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
 import { getCharacterDerived } from '@/modules/character-builder/lib/utils/characterDerivation';
 import { computeBpSpent } from '@/modules/character-builder/lib/utils/shardExtractor';
 import {
-    getXpAxisPosition,
-    MAX_XP_LEVEL,
-    XP_THRESHOLDS,
+  getXpAxisPosition,
+  MAX_XP_LEVEL,
+  XP_THRESHOLDS,
 } from '@/modules/character-builder/lib/utils/xpProgression';
+import btn from '@/styles/buttons.module.scss';
 import { useTranslations } from 'next-intl';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useSheetMutators } from '../../application/context/activeSheetContext';
 import { VocationSelector } from '../builder/vocationSelector';
-import { usePagePreview } from '../PagePreview/pagePreviewProvider';
-import btn from '@/styles/buttons.module.scss';
 import styles from './characterSheetHeader.module.scss';
 
 /**
@@ -71,7 +70,8 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
   onChange,
 }) => {
   const t = useTranslations('characterSheet');
-  const preview = usePagePreview();
+  const tCommon = useTranslations('common');
+  const isMobile = useIsMobileViewport();
   const { patchExperience } = useSheetMutators();
   const bpSpent = useMemo(
     () => computeBpSpent(data.selectedBoons as CharacterShard[]),
@@ -104,162 +104,171 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
   }, [debouncedXp, patchExperience]);
 
   return (
-    <header className={styles.header}>
-      <div className={styles.topRow}>
-        {editing ? (
-          <TextInput
-            className={styles.nameInput}
-            value={data.name}
-            onChange={(v) => onChange({ name: v })}
-            ariaLabel={t('ariaCharacterName')}
-          />
-        ) : (
-          <h2 className={styles.charName}>
-            {fullName.split(' ').map((word, i) => (
-              <Fragment key={i}>
-                {i > 0 && ' '}
-                <span className={styles.nameFirstLetter}>{word[0]}</span>
-                {word.slice(1)}
-              </Fragment>
-            ))}
-          </h2>
-        )}
-
-        <div className={styles.meta}>
-          <span>{t('levelFull', { level: totalLevel })}</span>
-          {editing && (
-            <label className={styles.metaEditLabel}>
-              {t('xpLabel')}
-              <NumericInput
-                className={styles.metaEditInput}
-                value={xpInput}
-                min={0}
-                size='sm'
-                ariaLabel={t('ariaExperienceInput')}
-                onChange={(v) => {
-                  xpChangedRef.current = true;
-                  setXpInput(v ?? 0);
-                }}
-              />
-            </label>
-          )}
-          {data.bloodlineTitle && data.bloodlineSlug && (
-            <Chip
-              variant='neutral'
-              label={data.bloodlineTitle}
-              onInfo={() =>
-                preview.open({
-                  kind: 'bloodlines',
-                  slug: data.bloodlineSlug!,
-                  title: data.bloodlineTitle,
-                })
-              }
-            />
-          )}
-          {data.vocations.map((v) =>
-            v.slug ? (
-              <Chip
-                key={v.slug}
-                variant='neutral'
-                label={`${v.title}${v.specializationTitle ? ` / ${v.specializationTitle}` : ''} Lv.${v.level}`}
-                onInfo={() =>
-                  preview.open({
-                    kind: 'vocations',
-                    slug: v.slug!,
-                    title: v.title,
-                  })
-                }
-              />
-            ) : null,
-          )}
-        </div>
-
-        <div className={styles.bpCounter} aria-label={t('ariaBoonBudget')}>
-          {t('bpFormat', { spent: bpSpent, total: data.boonBudget })}
-        </div>
-
-        <div className={styles.headerActions}>
+    <>
+      <header className={styles.header}>
+        <div className={styles.topRow}>
           {editing ? (
-            <>
-              <button type='button' onClick={onSave}>
-                {t('save')}
-              </button>
+            <TextInput
+              className={styles.nameInput}
+              value={data.name}
+              onChange={(v) => onChange({ name: v })}
+              placeholder={t('namePlaceholder')}
+              ariaLabel={t('ariaCharacterName')}
+            />
+          ) : (
+            <h2 className={styles.charName}>
+              {fullName.split(' ').map((word, i) => (
+                <Fragment key={i}>
+                  {i > 0 && ' '}
+                  <span className={styles.nameFirstLetter}>{word[0]}</span>
+                  {word.slice(1)}
+                </Fragment>
+              ))}
+            </h2>
+          )}
+
+          <div className={styles.meta}>
+            <span>{t('levelFull', { level: totalLevel })}</span>
+            {editing && (
+              <label className={styles.metaEditLabel}>
+                {t('xpLabel')}
+                <NumericInput
+                  className={styles.metaEditInput}
+                  value={xpInput}
+                  min={0}
+                  size='sm'
+                  ariaLabel={t('ariaExperienceInput')}
+                  onChange={(v) => {
+                    xpChangedRef.current = true;
+                    setXpInput(v ?? 0);
+                  }}
+                />
+              </label>
+            )}
+          </div>
+
+          <div className={styles.bpCounter} aria-label={t('ariaBoonBudget')}>
+            {t('bpFormat', { spent: bpSpent, total: data.boonBudget })}
+          </div>
+
+          <div className={styles.headerActions}>
+            {editing ? (
+              <>
+                <button type='button' onClick={onSave}>
+                  {tCommon('save')}
+                </button>
+                <button
+                  type='button'
+                  className={btn.neutral}
+                  onClick={onCancel}>
+                  {tCommon('cancel')}
+                </button>
+              </>
+            ) : (
               <button
                 type='button'
                 className={btn.neutral}
-                onClick={onCancel}>
-                {t('cancel')}
+                onClick={onEdit}
+                aria-label={t('ariaEditCharacter')}>
+                {tCommon('edit')}
               </button>
-            </>
-          ) : (
-            <button
-              type='button'
-              className={btn.neutral}
-              onClick={onEdit}
-              aria-label={t('ariaEditCharacter')}>
-              {t('edit')}
-            </button>
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-      <VocationSelector
-        bloodlineSlug={data.bloodlineSlug}
-        bloodlineTitle={data.bloodlineTitle || ''}
-        vocations={data.vocations}
-        selectedBoons={data.selectedBoons}
-        boonBudget={data.boonBudget}
-        editing={editing}
-        showBoonPicker={false}
-        onChange={onChange}
-      />
+        <VocationSelector
+          bloodlineSlug={data.bloodlineSlug}
+          bloodlineTitle={data.bloodlineTitle || ''}
+          vocations={data.vocations}
+          selectedBoons={data.selectedBoons}
+          boonBudget={data.boonBudget}
+          editing={editing}
+          showBoonPicker={false}
+          onChange={onChange}
+        />
 
-      <div className={styles.xpTrackGroup}>
-        {hasUnassignedLevels && (
-          <span className={styles.warningBadge} role='alert'>
-            {t('unassignedVocationsWarning', { count: unassignedLevels })}
+        <div className={styles.xpTrackGroup}>
+          {hasUnassignedLevels && (
+            <span className={styles.warningBadge} role='alert'>
+              {t('unassignedVocationsWarning', { count: unassignedLevels })}
+            </span>
+          )}
+          <div
+            className={styles.xpTrackNext}
+            role='progressbar'
+            aria-valuenow={experience}
+            aria-valuemin={xpFloor}
+            aria-valuemax={xpCeiling}
+            aria-label={t('xpToNextLevelLabel')}
+            title={`${xpProgressPercent}% to next level`}>
+            <div
+              className={`${styles.xpTrackNextFill}${hasUnassignedLevels ? ` ${styles.xpTrackFillWarning}` : ''}`}
+              style={{ width: `${xpProgressPercent}%` }}
+            />
+          </div>
+          <div
+            className={styles.xpTrack}
+            role='progressbar'
+            aria-valuenow={experience}
+            aria-valuemin={0}
+            aria-valuemax={XP_THRESHOLDS[MAX_XP_LEVEL]}
+            aria-label={t('xpLabel')}
+            title={`${experience} XP`}>
+            <div
+              className={`${styles.xpTrackFill}${hasUnassignedLevels ? ` ${styles.xpTrackFillWarning}` : ''}`}
+              style={{ width: `${xpOverallPercent}%` }}
+            />
+            {Array.from({ length: MAX_XP_LEVEL - 2 }, (_, i) => i + 2).map(
+              (level) => (
+                <div
+                  key={level}
+                  className={styles.xpMarker}
+                  style={{
+                    left: `${getXpAxisPosition(XP_THRESHOLDS[level])}%`,
+                  }}
+                  aria-hidden='true'
+                />
+              ),
+            )}
+          </div>
+          <div className={styles.xpCaption} aria-hidden='true'>
+            {experience.toLocaleString()} / {xpCeiling.toLocaleString()} XP
+          </div>
+        </div>
+      </header>
+
+      {isMobile === true && (
+        <div className={styles.commandStrip}>
+          <span className={styles.commandStripMeta}>
+            <span className={styles.commandStripBp}>
+              {t('bpFormat', { spent: bpSpent, total: data.boonBudget })}
+            </span>
           </span>
-        )}
-        <div
-          className={styles.xpTrackNext}
-          role='progressbar'
-          aria-valuenow={experience}
-          aria-valuemin={xpFloor}
-          aria-valuemax={xpCeiling}
-          aria-label={t('xpToNextLevelLabel')}
-          title={`${xpProgressPercent}% to next level`}>
-          <div
-            className={`${styles.xpTrackNextFill}${hasUnassignedLevels ? ` ${styles.xpTrackFillWarning}` : ''}`}
-            style={{ width: `${xpProgressPercent}%` }}
-          />
+          <div className={styles.commandStripActions}>
+            {editing ? (
+              <>
+                <button type='button' onClick={onSave}>
+                  {tCommon('save')}
+                </button>
+                <button
+                  type='button'
+                  className={btn.neutral}
+                  onClick={onCancel}>
+                  {tCommon('cancel')}
+                </button>
+              </>
+            ) : (
+              <button
+                type='button'
+                className={btn.neutral}
+                onClick={onEdit}
+                aria-label={t('ariaEditCharacter')}>
+                {tCommon('edit')}
+              </button>
+            )}
+          </div>
         </div>
-        <div
-          className={styles.xpTrack}
-          role='progressbar'
-          aria-valuenow={experience}
-          aria-valuemin={0}
-          aria-valuemax={XP_THRESHOLDS[MAX_XP_LEVEL]}
-          aria-label={t('xpLabel')}
-          title={`${experience} XP`}>
-          <div
-            className={`${styles.xpTrackFill}${hasUnassignedLevels ? ` ${styles.xpTrackFillWarning}` : ''}`}
-            style={{ width: `${xpOverallPercent}%` }}
-          />
-          {Array.from({ length: MAX_XP_LEVEL - 2 }, (_, i) => i + 2).map(
-            (level) => (
-              <div
-                key={level}
-                className={styles.xpMarker}
-                style={{ left: `${getXpAxisPosition(XP_THRESHOLDS[level])}%` }}
-                aria-hidden='true'
-              />
-            ),
-          )}
-        </div>
-        <div className={styles.xpCaption} aria-hidden='true'>
-          {experience.toLocaleString()} / {xpCeiling.toLocaleString()} XP
-        </div>
-      </div>
-    </header>
+      )}
+    </>
   );
 };

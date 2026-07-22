@@ -1,0 +1,23 @@
+{
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "back": "Back",
+  "loading": "Loading…",
+  "error": "Error",
+  "name": "Name",
+  "all": "All",
+  "yes": "Yes",
+  "no": "No",
+  "max": "Max",
+  "unnamed": "Unnamed",
+  "levelShort": "Lv {level}",
+  "searchPlaceholder": "Search…",
+  "hp": "HP",
+  "ac": "AC",
+  "initiative": "Initiative",
+  "speed": "Speed",
+  "hpCurrent": "Current HP",
+  "hpMax": "Max HP"
+}

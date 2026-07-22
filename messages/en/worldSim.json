@@ -16,7 +16,6 @@
   "noRegions": "No known regions",
   "controls": {
     "title": "Scene Controls",
-    "back": "Back",
     "orbit": "Drag to orbit",
     "zoom": "Scroll to zoom",
     "select": "Click to select",

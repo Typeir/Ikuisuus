@@ -19,8 +19,11 @@
   }
 }
 
+/* Strictly below $bp-desktop so it never overlaps Tailwind's `lg:`
+   (min-width: 1024px) — at exactly 1024px the desktop layout wins,
+   keeping module CSS and the shell sidebar in lockstep. */
 @mixin desktop {
-  @media (max-width: $bp-desktop) {
+  @media (max-width: #{$bp-desktop - 0.02px}) {
     @content;
   }
 }

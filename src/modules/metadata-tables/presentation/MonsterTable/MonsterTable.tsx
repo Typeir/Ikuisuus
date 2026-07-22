@@ -61,6 +61,7 @@ export default function MonsterTableWrapper({
 }: MonsterTableWrapperProps = {}) {
   const t = useTranslations('tables.monsters');
   const tColumns = useTranslations('tables.monsters.columns');
+  const tCommon = useTranslations('common');
   const params = useParams();
   const locale = localeProp || (params?.locale as string) || 'en';
   const { data, loading, error } = useMetadataTableData<MonsterMetadata>(
@@ -88,7 +89,7 @@ export default function MonsterTableWrapper({
   if (error) {
     return (
       <div className='text-center py-8 text-red-500'>
-        {t('error')}: {error}
+        {tCommon('error')}: {error}
       </div>
     );
   }

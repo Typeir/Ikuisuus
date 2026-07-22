@@ -21,7 +21,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: 0.75rem;
 }
 .emptyState {
@@ -37,27 +37,39 @@
   font-size: 0.9375rem;
 }
 
-/* Card */
+/* Card — shares the FeaturedGrid catalog-card language (`.rowCard` in
+   search/presentation/atoms): surface frame, 4px radius, accent border on
+   hover, type-colored sigil + mono type label above the title. */
 .abilityCard {
   border: 1px solid var(--color-border);
-  border-radius: 0.625rem;
+  border-radius: 4px;
   background: var(--color-surface);
-  transition:
-    box-shadow 0.15s,
-    border-color 0.15s;
+  transition: border-color var(--search-anim-duration, 200ms)
+    var(--springy-bezier);
   overflow: hidden;
+  /* Stacking context so the sigil's negative-z glow paints above the
+     card surface (the search `.row` gets this from will-change). */
+  position: relative;
+  isolation: isolate;
 }
 .abilityCard:hover {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px var(--color-accent-muted);
+
+  /* Reveal the sigil's CRT glow (pseudo-elements from mdx-crt-glow). */
+  .cardSigil::before {
+    opacity: 0.3;
+  }
+  .cardSigil::after {
+    opacity: 0.15;
+  }
 }
 .expanded {
   border-color: var(--color-accent);
 }
 .cardHeader {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: flex-start;
+  gap: var(--search-result-gap, 0.75rem);
   padding: 0.625rem 0.75rem;
   color: var(--color-text);
 }
@@ -66,51 +78,39 @@
   display: flex;
   color: var(--color-text-muted);
 }
+.cardSigil {
+  flex-shrink: 0;
+}
 /* Layout-only companion to `btn.icon`. */
 .sourceBtn {
-  margin-left: 1.25rem;
+  flex-shrink: 0;
 }
 .sourceBtnActive {
   color: var(--color-accent);
 }
-.cardName {
+.cardHeading {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.cardTypeLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sigil-color, var(--color-accent));
+  opacity: 0.8;
+}
+.cardName {
   font-weight: 600;
   font-size: 0.9375rem;
+  line-height: 1.35;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.typeBadge {
-  flex-shrink: 0;
-  padding: 0.125rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  background: var(--color-emphasis);
-  color: var(--color-bg);
-}
-.typeSpell {
-  background: var(--color-accent);
-}
-.typeFeature {
-  background: var(--color-info, #6366f1);
-}
-.typeFeat {
-  background: var(--color-success, #22c55e);
-}
-.typeHeirloom {
-  background: var(--color-warning, #f59e0b);
-}
-.typeTrinket {
-  background: var(--color-danger, #ef4444);
-}
-.typeOther {
-  background: var(--color-text-muted);
 }
 .cardActions {
   display: flex;

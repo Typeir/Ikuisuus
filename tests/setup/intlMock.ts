@@ -24,10 +24,11 @@
  */
 
 import characterSheet from '../../messages/en/characterSheet.json';
+import common from '../../messages/en/common.json';
 import layout from '../../messages/en/layout.json';
 
 /** English catalogue keyed by top-level i18n namespace. */
-const MESSAGES: Record<string, unknown> = { characterSheet, layout };
+const MESSAGES: Record<string, unknown> = { characterSheet, common, layout };
 
 /**
  * Walks a dot-separated path through the message tree.

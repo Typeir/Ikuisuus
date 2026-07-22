@@ -99,7 +99,8 @@
   position: absolute;
   bottom: calc(100% + 0.25rem);
   right: 0;
-  min-width: 220px;
+  min-width: min(220px, calc(100vw - 2rem));
+  max-width: calc(100vw - 2rem);
   background: var(--color-bg);
   border: 1px solid var(--color-secondary);
   border-radius: 4px;

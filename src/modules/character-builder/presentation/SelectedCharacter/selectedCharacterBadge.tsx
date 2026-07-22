@@ -52,6 +52,7 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
   dropDirection = 'up',
 }) => {
   const t = useTranslations('layout');
+  const tCommon = useTranslations('common');
   const characters = useCharacters();
   const { isHydrated } = useCharacterSheetState();
   const active = useActiveCharacter();
@@ -116,7 +117,7 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
 
   if (!isHydrated) return null;
 
-  const activeName = active?.name || t('characterBadge.unnamed');
+  const activeName = active?.name || tCommon('unnamed');
   const initial = activeName.charAt(0).toUpperCase();
 
   return (
@@ -174,7 +175,7 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
               <li className={styles.empty}>{t('characterBadge.empty')}</li>
             )}
             {characters.map((char) => {
-              const name = char.name || t('characterBadge.unnamed');
+              const name = char.name || tCommon('unnamed');
               return (
                 <li key={char.id}>
                   <button
@@ -189,7 +190,7 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
                     </span>
                     <span className={styles.itemName}>{name}</span>
                     <span className={styles.itemMeta}>
-                      {t('characterBadge.levelShort', { level: char.level })}
+                      {tCommon('levelShort', { level: char.level })}
                     </span>
                   </button>
                 </li>

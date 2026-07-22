@@ -51,6 +51,7 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
   onBack,
 }) => {
   const t = useTranslations('encounterPlanner');
+  const tCommon = useTranslations('common');
   const [party, setParty] = useState<SavedParty>(initialParty);
   const characters = useCharacters();
 
@@ -185,7 +186,7 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
 
       <div className={styles.editorActions}>
         <button className={btn.neutral} onClick={onBack}>
-          {t('backToList')}
+          {tCommon('back')}
         </button>
         <button onClick={handleSave} disabled={!party.name.trim()}>
           {t('saveParty')}

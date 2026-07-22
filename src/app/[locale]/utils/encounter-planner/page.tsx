@@ -43,6 +43,7 @@ import React from 'react';
  */
 export default function EncounterPlannerPage(): JSX.Element {
   const t = useTranslations('encounterPlanner');
+  const tCommon = useTranslations('common');
   const {
     encounter,
     encounters,
@@ -70,7 +71,7 @@ export default function EncounterPlannerPage(): JSX.Element {
   } = useEncounterPlannerState();
 
   if (!encounter) {
-    return <div className={styles.loading}>{t('loading')}</div>;
+    return <div className={styles.loading}>{tCommon('loading')}</div>;
   }
 
   if (inProgressCombat) {

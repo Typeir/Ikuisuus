@@ -101,6 +101,7 @@ export const MonsterImporter: React.FC<MonsterImporterProps> = ({
   disabled = false,
 }) => {
   const t = useTranslations('encounterPlanner');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const { index, isLoading: indexLoading, loadIndex } = useMonsterIndex(locale);
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(
@@ -170,7 +171,7 @@ export const MonsterImporter: React.FC<MonsterImporterProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={loadIndex}
-            placeholder={indexLoading ? 'Loading...' : t('searchCreatures')}
+            placeholder={indexLoading ? tCommon('loading') : t('searchCreatures')}
             disabled={isDisabled || indexLoading}
             aria-label={t('searchCreatures')}
           />
@@ -205,7 +206,7 @@ export const MonsterImporter: React.FC<MonsterImporterProps> = ({
             onConfirm={handleConfirm}
             onCancel={handleCancel}
             confirmLabel={t('addCreature')}
-            cancelLabel={t('cancel')}
+            cancelLabel={tCommon('cancel')}
             quantityLabel={t('quantity')}
           />
         </div>

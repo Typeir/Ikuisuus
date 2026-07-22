@@ -51,6 +51,7 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
 }) => {
   const t = useTranslations('tables.spells');
   const tFilters = useTranslations('tables.spells.filters');
+  const tCommon = useTranslations('common');
 
   const displayLevels: (number | 'all')[] = showAllTab
     ? ['all', ...levels]
@@ -93,10 +94,10 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
 
   const concentrationOptions = useMemo<FilterSelectOption[]>(
     () => [
-      { value: 'yes', label: tFilters('yes') },
-      { value: 'no', label: tFilters('no') },
+      { value: 'yes', label: tCommon('yes') },
+      { value: 'no', label: tCommon('no') },
     ],
-    [tFilters],
+    [tCommon],
   );
 
   const visibleSpells =
@@ -118,7 +119,7 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
     return (
       <div className={styles.error}>
         <p>
-          {t('error')}: {error}
+          {tCommon('error')}: {error}
         </p>
       </div>
     );

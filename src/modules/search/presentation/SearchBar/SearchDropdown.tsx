@@ -96,8 +96,6 @@ export function SearchDropdown({
         </div>
       ))}
 
-      {/* Final row: escape hatch to the full search page. Clicks bubble to
-          the container's onNavigate, closing the dropdown. */}
       <Link href={searchHref} className={styles.digDeeper}>
         <Skeleton></Skeleton>
         <div style={{ paddingBottom: '0.5rem' }}>{t('digDeeper')}</div>

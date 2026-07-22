@@ -48,6 +48,20 @@ export const computeSkillBonus = (
 };
 
 /**
+ * Compute bonus for a saving throw (ability modifier + tier scaling).
+ *
+ * @param {TierLevel} tier - Current save proficiency level
+ * @param {number} abilityScore - Raw ability score backing the save
+ * @param {number} tierBonus - Tier bonus from character level
+ * @returns {number} - Total save bonus
+ */
+export const computeSaveBonus = (
+  tier: TierLevel,
+  abilityScore: number,
+  tierBonus: number,
+): number => computeAbilityModifier(abilityScore) + computeToolBonus(tier, tierBonus);
+
+/**
  * Update item proficiency in an array by index.
  *
  * @template T - Item type (CharacterSkill or CharacterTool)

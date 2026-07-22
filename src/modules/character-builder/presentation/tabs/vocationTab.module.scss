@@ -8,6 +8,8 @@
  * @module lib/components/characterSheet/tabs/vocationTab.module
  */
 
+@use '@/styles/mixins-responsive' as *;
+
 .entryContainer {
   display: flex;
   flex-direction: column;
@@ -30,5 +32,15 @@
   > :last-child:not(:first-child) {
     flex: 1 1 0;
     min-width: 0;
+  }
+
+  @include desktop {
+    flex-direction: column;
+    align-items: stretch;
+
+    > :first-child {
+      flex: 1 1 auto;
+      width: 100%;
+    }
   }
 }

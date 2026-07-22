@@ -89,6 +89,7 @@ export default function TrinketTableWrapper({
 }: TrinketTableWrapperProps = {}) {
   const t = useTranslations('tables.trinkets');
   const tColumns = useTranslations('tables.trinkets.columns');
+  const tCommon = useTranslations('common');
   const params = useParams();
   const locale = localeProp || (params?.locale as string) || 'en';
   const { data, loading, error } = useMetadataTableData<TrinketMetadata>(
@@ -110,7 +111,7 @@ export default function TrinketTableWrapper({
   if (error) {
     return (
       <div className='text-center py-8 text-red-500'>
-        {t('error')}: {error}
+        {tCommon('error')}: {error}
       </div>
     );
   }

@@ -171,6 +171,7 @@ export default function MetadataTable({
 }: MetadataTableProps) {
   const t = useTranslations('tables.common');
   const tFilters = useTranslations('tables.filters');
+  const tCommon = useTranslations('common');
   const [sortKey, setSortKey] = useState<string | null>(
     defaultSort?.key || null,
   );
@@ -486,7 +487,15 @@ export default function MetadataTable({
             .filter((col) => col.filterable)
             .map((column) => (
               <div key={column.key} className={styles.filterGroup}>
-                <label htmlFor={`filter-${column.key}`}>{column.label}</label>
+                {column.filterType === 'text' ? (
+                  <label htmlFor={`filter-${column.key}`}>{column.label}</label>
+                ) : (
+                  <span
+                    id={`filter-label-${column.key}`}
+                    className={styles.filterLabel}>
+                    {column.label}
+                  </span>
+                )}
                 {column.filterType === 'select' && (
                   <FilterSelect
                     id={`filter-${column.key}`}
@@ -495,7 +504,8 @@ export default function MetadataTable({
                       handleFilterChange(column.key, value || undefined)
                     }
                     options={getSelectOptions(column)}
-                    placeholder={tFilters('allOption')}
+                    placeholder={tCommon('all')}
+                    ariaLabel={column.label}
                     size='sm'
                   />
                 )}
@@ -514,7 +524,10 @@ export default function MetadataTable({
                   />
                 )}
                 {column.filterType === 'range' && (
-                  <div className={styles.rangeFilter}>
+                  <div
+                    className={styles.rangeFilter}
+                    role='group'
+                    aria-labelledby={`filter-label-${column.key}`}>
                     <NumericInput
                       value={filters[column.key]?.min ?? null}
                       onChange={(val) =>

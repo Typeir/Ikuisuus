@@ -79,6 +79,7 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
   const { name, heroicAwakening, mechanics, sourceHref, crText } = combatant;
 
   const t = useTranslations('encounterPlanner');
+  const tCommon = useTranslations('common');
 
   const isStatsLocked = (locked ?? []).includes('stats');
 
@@ -167,7 +168,7 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
         onFocus={() => nameField.setEditing(name)}
         onBlur={nameField.commit}
         onKeyDown={handleNameKeyDown}
-        aria-label={t('name')}
+        aria-label={tCommon('name')}
       />
       <span className={styles.nameBadgesWrapper}>
         {crText && <span className={styles.crBadge}>{crText}</span>}

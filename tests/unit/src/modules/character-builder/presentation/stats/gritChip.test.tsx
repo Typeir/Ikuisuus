@@ -78,6 +78,6 @@ describe('GritChip', () => {
       />,
     );
     expect(screen.getByLabelText('gritCurrent')).toBeInTheDocument();
-    expect(screen.getByLabelText('gritMax')).toBeInTheDocument();
+    expect(screen.getByLabelText('max')).toBeInTheDocument();
   });
 });

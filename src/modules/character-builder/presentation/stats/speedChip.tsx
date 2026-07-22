@@ -36,13 +36,13 @@ const SpeedChip = ({
   toggle,
   patch,
 }: SpeedChipProps) => {
-  const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const u = isUnlocked('speed');
   return (
     <div className={styles.statChip}>
       <LockBtn isUnlocked={isUnlocked} toggle={toggle} k='speed' />
       <div className={styles.statChipLabelRow}>
-        <span className={styles.statChipLabel}>{t('speed')}</span>
+        <span className={styles.statChipLabel}>{tCommon('speed')}</span>
         <SpeedPanel bloodlineSpeeds={bloodlineSpeeds ?? []} />
       </div>
       {u ? (
@@ -51,7 +51,7 @@ const SpeedChip = ({
           min={0}
           max={999}
           size='sm'
-          ariaLabel={t('speed')}
+          ariaLabel={tCommon('speed')}
           onChange={(v) => patch({ speedOverride: v })}
         />
       ) : (

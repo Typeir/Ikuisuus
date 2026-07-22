@@ -8,6 +8,8 @@
  * @module lib/components/characterSheet/contentShardPanel.module
  */
 
+@use '@/styles/mixins-responsive' as *;
+
 .panel {
   width: 100%;
   min-height: 60vh;
@@ -17,6 +19,15 @@
   border-radius: 6px;
   background: var(--color-bg);
   padding: 1.25rem;
+
+  /* On phones the panel renders inside the bottom sheet, which already
+     bounds and scrolls its body — inner caps would nest scroll surfaces. */
+  @include desktop {
+    min-height: 0;
+    max-height: none;
+    overflow-y: visible;
+    padding: 0.75rem;
+  }
 }
 
 .body {
@@ -38,6 +49,10 @@
   border: 1px dashed var(--color-border);
   border-radius: 6px;
   background: var(--color-bg-secondary);
+
+  @include desktop {
+    min-height: 8rem;
+  }
 }
 
 .error {
@@ -51,4 +66,8 @@
   border-radius: 6px;
   background: var(--color-bg-secondary);
   padding: 1rem;
+
+  @include desktop {
+    min-height: 8rem;
+  }
 }

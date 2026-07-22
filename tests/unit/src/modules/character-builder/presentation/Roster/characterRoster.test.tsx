@@ -107,7 +107,7 @@ describe('CharacterRoster', () => {
     );
     await screen.findByRole('dialog', { name: 'deleteConfirmTitle' });
     await userEvent.click(
-      screen.getByRole('button', { name: 'deleteConfirmConfirm' }),
+      screen.getByRole('button', { name: 'delete' }),
     );
     expect(mockDispatch).toHaveBeenCalledWith(
       expect.objectContaining({

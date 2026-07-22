@@ -45,10 +45,7 @@ describe('CoinPouch', () => {
     };
     render(<CoinPouch data={data} editing={false} onChange={vi.fn()} />);
     expect(screen.getByText('Gold Standard')).toBeTruthy();
-    const goldInput = screen
-      .getAllByRole('spinbutton')
-      .find((el) => (el as HTMLInputElement).value === '7');
-    expect(goldInput).toBeTruthy();
+    expect(screen.getByText('7')).toBeTruthy();
   });
 
   it('emits a coinHoldings patch when a count changes in edit mode', () => {

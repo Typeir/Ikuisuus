@@ -7,6 +7,7 @@
 @use '@/styles/mixins-button' as *;
 @use '@/styles/mixins-focus' as *;
 @use '@/styles/mixins-icon' as *;
+@use '@/styles/mixins-responsive' as *;
 
 .rosterShell {
   display: grid;
@@ -250,4 +251,129 @@
   height: 100%;
   color: var(--color-secondary);
   font-style: italic;
+}
+
+/** =====================================================================
+ * Phone layout (≤768px) — the sidebar becomes a horizontal save-slot
+ * rail under the top bar, and inner scroll containers dissolve so the
+ * document is the single scroll surface. Selectors are doubled with the
+ * [data-collapsed='true'] variant where needed so the rail wins over the
+ * desktop collapsed-state overrides regardless of the persisted toggle.
+ * ===================================================================== */
+
+@include desktop {
+  .rosterShell {
+    height: auto;
+    min-height: 0;
+  }
+
+  .characterRoster,
+  .characterRoster[data-collapsed='true'] {
+    /* minmax(0, …) strips the track's auto min-content floor so wide inner
+       content (e.g. the tab strip's max-content list) scrolls inside its
+       own container instead of stretching the document. */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    height: auto;
+  }
+
+  .rosterSidebar {
+    flex-direction: row;
+    align-items: stretch;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .rosterCollapseBar {
+    display: none;
+  }
+
+  .rosterEmpty {
+    white-space: nowrap;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .rosterList {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    padding: 0;
+  }
+
+  .characterRoster .rosterItem,
+  .characterRoster[data-collapsed='true'] .rosterItem {
+    flex-shrink: 0;
+    justify-content: flex-start;
+    gap: 0.25rem;
+    padding: 0 0.4rem;
+    border-bottom: 3px solid var(--color-transparent);
+  }
+
+  .characterRoster .rosterItemActive,
+  .characterRoster[data-collapsed='true'] .rosterItemActive {
+    background: var(--color-bg-tertiary);
+    border-left: none;
+    border-bottom: 3px solid var(--color-accent);
+  }
+
+  .characterRoster .rosterItemBtn,
+  .characterRoster[data-collapsed='true'] .rosterItemBtn {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.25rem;
+    white-space: nowrap;
+    min-height: 44px;
+  }
+
+  .characterRoster .rosterItemAvatar,
+  .characterRoster[data-collapsed='true'] .rosterItemAvatar {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    font-size: 0.65rem;
+  }
+
+  .characterRoster .rosterItemName,
+  .characterRoster[data-collapsed='true'] .rosterItemName {
+    display: inline;
+  }
+
+  .characterRoster .rosterItemMeta,
+  .characterRoster[data-collapsed='true'] .rosterItemMeta {
+    display: inline;
+  }
+
+  /* Delete lives inside the active slot only — a 44px target next to the
+     name, feeding the existing confirmation modal. */
+  .characterRoster .rosterDeleteBtn,
+  .characterRoster[data-collapsed='true'] .rosterDeleteBtn {
+    display: none;
+  }
+
+  .characterRoster .rosterItemActive .rosterDeleteBtn,
+  .characterRoster[data-collapsed='true'] .rosterItemActive .rosterDeleteBtn {
+    display: inline-flex;
+    position: relative;
+
+    @media (pointer: coarse) {
+      &::after {
+        content: '';
+        position: absolute;
+        inset: -12px;
+      }
+    }
+  }
+
+  .rosterMain {
+    overflow-y: visible;
+  }
+
+  .rosterPlaceholder {
+    min-height: 40vh;
+    height: auto;
+  }
 }

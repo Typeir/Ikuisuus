@@ -16,8 +16,6 @@
     "ariaToggle": "Select active character",
     "deselect": "De-select character",
     "empty": "No characters yet",
-    "manage": "Manage characters",
-    "levelShort": "Lv {level}",
-    "unnamed": "Unnamed"
+    "manage": "Manage characters"
   }
 }

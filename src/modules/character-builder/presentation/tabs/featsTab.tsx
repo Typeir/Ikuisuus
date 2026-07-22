@@ -12,7 +12,6 @@
 
 'use client';
 
-import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import type {
   CharacterShard,
   CharacterSheet as CharacterSheetType,
@@ -29,6 +28,7 @@ import {
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
+import { BuilderSplitPane } from '../builder/builderSplitPane';
 import { FeatPicker } from '../builder/featPicker';
 import styles from './tabs.module.scss';
 
@@ -77,9 +77,12 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
   );
 
   return (
-    <ResizablePane
+    <BuilderSplitPane
       id='builder.feats'
       ariaLabel={t('tabFeats')}
+      sheetTitle={t('shardPreviewTitle', { name: t('tabFeats') })}
+      sheetOpen={!!focusedShard}
+      onSheetClose={() => mutators.setFocusedShard(null)}
       left={
         <div className={styles.column}>
           {editing && selectedFeats.length > 0 && (

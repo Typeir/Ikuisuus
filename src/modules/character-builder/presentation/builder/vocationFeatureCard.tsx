@@ -84,6 +84,7 @@ export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({
   onFocusShard,
 }) => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const resolvedVocationTitle = vocationTitle || t('vocationFeatures');
   const resolvedSpecTitle = specializationTitle || t('specializationFeatures');
   const [vocationQuery, setVocationQuery] = useState('');
@@ -132,10 +133,10 @@ export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({
         <input
           type='search'
           className={pickerStyles.pickerSearch}
-          placeholder={t('searchPlaceholder')}
+          placeholder={tCommon('searchPlaceholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          aria-label={t('searchPlaceholder')}
+          aria-label={tCommon('searchPlaceholder')}
         />
         <div className={pickerStyles.pickerScroll}>
           <div className={styles.featureList}>

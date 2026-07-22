@@ -44,6 +44,7 @@ export function InfoPanel({
 }: InfoPanelProps): React.ReactElement | null {
   const state = useWorldSimState();
   const t = useTranslations('worldSim');
+  const tCommon = useTranslations('common');
   const registry = useMemo(() => CelestialRegistry.shared(), []);
 
   const selectedBody = useMemo(() => {
@@ -81,8 +82,8 @@ export function InfoPanel({
         className={styles.backButton}
         onClick={handleBack}
         type='button'
-        aria-label={t('controls.back')}>
-        ← {t('controls.back')}
+        aria-label={tCommon('back')}>
+        ← {tCommon('back')}
       </button>
 
       <h2 className={styles.infoPanelTitle}>

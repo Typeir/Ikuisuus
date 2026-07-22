@@ -11,6 +11,7 @@
 
 'use client';
 
+import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 import { ChevronDown } from 'lucide-react';
 import {
     forwardRef,
@@ -26,6 +27,11 @@ import {
 } from 'react';
 import { MobileModal } from '../modal';
 import styles from './filterSelect.module.scss';
+
+/**
+ * Viewport width below which the dropdown renders as a bottom sheet.
+ */
+const SHEET_VIEWPORT_QUERY = '(max-width: 640px)';
 
 /**
  * Filters options array by a search query string
@@ -68,7 +74,7 @@ export interface FilterSelectOption {
  * @property {string} [allLabel='All'] - Label text for "All" option
  * @property {boolean} [disabled=false] - Whether the select is disabled
  * @property {string} [ariaLabel] - Accessible label for screen readers
- * @property {number} [modalThreshold=15] - Threshold for switching to modal on mobile (option count)
+ * @property {number} [modalThreshold=15] - Legacy no-op; phones always use the bottom sheet regardless of option count
  * @property {string} [className] - CSS class for the container
  * @property {boolean} [searchable=false] - Whether to show search input in dropdown
  * @property {'sm' | 'md' | 'lg'} [size='md'] - Size variant
@@ -166,7 +172,8 @@ const FilterMobileModal = memo(function FilterMobileModal({
       isOpen={isOpen}
       onClose={onClose}
       ariaLabel={ariaLabel || 'Select option'}
-      title='Select an option'
+      title={ariaLabel || 'Select an option'}
+      variant='console'
       showCloseButton>
       <div>
         <div className={styles.modalSearchContainer}>
@@ -246,7 +253,6 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
       allLabel = 'All',
       disabled = false,
       ariaLabel,
-      modalThreshold = 15,
       className = '',
       searchable = false,
       size = 'md',
@@ -257,7 +263,10 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const [searchQuery, setSearchQuery] = useState('');
-    const [useMobileModal, setUseMobileModal] = useState(false);
+
+    /* Sheet width gate; the anchored dropdown clips on phone viewports for
+       lists of any length, so the option-count threshold no longer applies. */
+    const useMobileModal = useMediaQuery(SHEET_VIEWPORT_QUERY) === true;
 
     const containerRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -265,19 +274,6 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
 
     /** Expose button ref for external focus management */
     useImperativeHandle(forwardedRef, () => buttonRef.current!);
-
-    /** Determine if mobile modal should be used */
-    useEffect(() => {
-      const checkMobile = () => {
-        const isMobileWidth = window.innerWidth < 640;
-        const hasLargeList = options.length > modalThreshold;
-        setUseMobileModal(isMobileWidth && hasLargeList);
-      };
-
-      checkMobile();
-      window.addEventListener('resize', checkMobile);
-      return () => window.removeEventListener('resize', checkMobile);
-    }, [options.length, modalThreshold]);
 
     /** Filter options by search query, always include 'All' option */
     const filteredOptions = useMemo(() => {

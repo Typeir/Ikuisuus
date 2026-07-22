@@ -84,7 +84,12 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
   const updateCoords = useCallback(() => {
     if (!triggerRef.current) return;
     const rect = triggerRef.current.getBoundingClientRect();
-    setCoords({ top: rect.bottom + 4, left: rect.left });
+    const panelWidth = panelRef.current?.offsetWidth ?? 0;
+    const maxLeft = Math.max(8, window.innerWidth - panelWidth - 8);
+    setCoords({
+      top: rect.bottom + 4,
+      left: Math.min(Math.max(8, rect.left), maxLeft),
+    });
   }, []);
 
   useLayoutEffect(() => {

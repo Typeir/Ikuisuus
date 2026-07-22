@@ -9,6 +9,7 @@
   border-radius: 4px;
   background: var(--color-bg);
   transition: all 0.15s ease;
+  overflow: hidden;
 
   &:hover:not(.disabled) {
     border-color: var(--color-accent);
@@ -133,6 +134,59 @@
   }
 
   @include disabled-state(0.4);
+
+  /* Touch devices get full-size tap targets; mouse layouts keep the
+     compact 28px steppers. */
+  @media (pointer: coarse) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Stacked chevron spinner column — styled stand-in for the browser's
+   native number arrows. Sits flush against the input's right edge. */
+.chevronColumn {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  border-left: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.chevronButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 50%;
+  min-width: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition:
+    color 0.1s ease,
+    background 0.1s ease;
+
+  &:first-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  &:hover:not(:disabled) {
+    color: var(--color-accent);
+    background: var(--color-bg-secondary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  @include disabled-state(0.35);
+
+  @media (pointer: coarse) {
+    min-width: 32px;
+  }
 }
 
 .clearButton {

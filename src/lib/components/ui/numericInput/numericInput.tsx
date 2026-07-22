@@ -57,7 +57,7 @@ import {
   ChangeEvent,
   KeyboardEvent,
 } from 'react';
-import { X } from 'lucide-react';
+import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import styles from './numericInput.module.scss';
 
 /**
@@ -89,7 +89,8 @@ function isValidDisplayNumber(value: number | null | undefined): value is number
  * @property {string} [ariaLabel] - Accessible label for screen readers
  * @property {string} [className] - CSS class for the container
  * @property {boolean} [showClear=false] - Whether to show clear button
- * @property {boolean} [showButtons=false] - Whether to show increment/decrement buttons
+ * @property {boolean} [showButtons=false] - Whether to show flanking increment/decrement buttons
+ * @property {boolean} [showChevrons=false] - Whether to show a stacked chevron spinner column (styled replacement for browser-native number arrows)
  * @property {'sm' | 'md' | 'lg'} [size='md'] - Input width preset
  * @property {boolean} [allowDecimals=false] - Whether to allow decimal values
  */
@@ -106,6 +107,7 @@ export interface NumericInputProps {
   className?: string;
   showClear?: boolean;
   showButtons?: boolean;
+  showChevrons?: boolean;
   size?: 'sm' | 'md' | 'lg';
   allowDecimals?: boolean;
 }
@@ -143,6 +145,7 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(func
     className = '',
     showClear = false,
     showButtons = false,
+    showChevrons = false,
     size = 'md',
     allowDecimals = false,
   },
@@ -283,6 +286,31 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(func
         >
           +
         </button>
+      )}
+
+      {showChevrons && (
+        <span className={styles.chevronColumn} aria-hidden={disabled}>
+          <button
+            type="button"
+            className={styles.chevronButton}
+            onClick={() => handleStep(1)}
+            disabled={disabled || (max !== undefined && value !== undefined && value >= max)}
+            aria-label="Increase value"
+            tabIndex={-1}
+          >
+            <ChevronUp size={12} aria-hidden='true' />
+          </button>
+          <button
+            type="button"
+            className={styles.chevronButton}
+            onClick={() => handleStep(-1)}
+            disabled={disabled || (min !== undefined && value !== undefined && value <= min)}
+            aria-label="Decrease value"
+            tabIndex={-1}
+          >
+            <ChevronDown size={12} aria-hidden='true' />
+          </button>
+        </span>
       )}
     </div>
   );

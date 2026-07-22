@@ -77,6 +77,7 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
   onHitDiceCommit,
 }) => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const initStr =
     initiativeBonus >= 0 ? `+${initiativeBonus}` : `${initiativeBonus}`;
   const pbStr =
@@ -89,9 +90,9 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
       role='group'
       aria-label={t('ariaCombatStats')}>
       <div className={styles.statChip}>
-        <HitDiceCounter vocations={vocations} />
+        <HitDiceCounter vocations={vocations} hitDiceLog={hitDiceLog} />
         <div className={styles.statChipLabelRow}>
-          <span className={styles.statChipLabel}>{t('hp')}</span>
+          <span className={styles.statChipLabel}>{tCommon('hp')}</span>
           <HpRollerPanel
             hitDiceLog={hitDiceLog}
             conMod={conMod}
@@ -111,18 +112,18 @@ export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({
       </div>
 
       <div className={styles.statChip}>
-        <span className={styles.statChipLabel}>{t('ac')}</span>
+        <span className={styles.statChipLabel}>{tCommon('ac')}</span>
         <span className={styles.statChipValue}>{ac}</span>
       </div>
 
       <div className={styles.statChip}>
-        <span className={styles.statChipLabel}>{t('initiative')}</span>
+        <span className={styles.statChipLabel}>{tCommon('initiative')}</span>
         <span className={styles.statChipValue}>{initStr}</span>
       </div>
 
       <div className={styles.statChip}>
         <div className={styles.statChipLabelRow}>
-          <span className={styles.statChipLabel}>{t('speed')}</span>
+          <span className={styles.statChipLabel}>{tCommon('speed')}</span>
           <SpeedPanel bloodlineSpeeds={bloodlineSpeeds} />
         </div>
         <span className={styles.statChipValue}>{speedDisplay}</span>

@@ -18,7 +18,12 @@
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  @include scrollbar-thin($track: var(--color-surface), $height: 8px, $thumb-radius: 4px);
+  @include scrollbar-thin(
+    $thumb: var(--color-secondary),
+    $track: var(--color-surface),
+    $height: 8px,
+    $thumb-radius: 4px
+  );
   background: linear-gradient(
     0deg,
     var(--color-surface) 20%,
@@ -116,4 +121,103 @@
   border-radius: 0 0 6px 6px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgb(var(--color-shadow-light));
+}
+
+/* ── Compact variant (opt-in via the `variant` prop) ─────────────
+   Tighter paddings and touch-sized tab buttons for narrow layouts.
+   The default variant is byte-identical to the original rules. */
+
+.compact {
+  padding-top: 1.25rem;
+
+  /* Right-edge fade signalling more tabs off-screen. Lives on the
+     non-scrolling container so it stays pinned while the strip scrolls. */
+  &::after {
+    content: '';
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2rem;
+    border-radius: 0 10px 0 0;
+    background: linear-gradient(
+      90deg,
+      var(--color-transparent),
+      var(--color-surface)
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .tabList {
+    padding: 0 0.75rem;
+  }
+
+  .tab button {
+    min-height: 44px;
+    padding: 0.4rem 0.75rem 0.9rem;
+  }
+}
+
+.compactContent {
+  padding: 0.75rem;
+}
+
+/* ── Strip scroll chevrons ───────────────────────────────────────
+   Transparent, borderless glowing icon buttons flanking the strip —
+   same treatment as the roster collapse/delete icons. Rendered only
+   while the tab list actually overflows. */
+
+.navChevron {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    filter 0.15s ease,
+    opacity 0.15s ease;
+
+  svg {
+    stroke-width: 2.75;
+  }
+
+  /* Unconditional transparent guards — the global `button:hover` /
+     disabled styles paint a primary fill otherwise (specificity trap). */
+  &:hover,
+  &:disabled,
+  &:disabled:hover {
+    background: transparent;
+  }
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: transparent;
+    color: var(--color-accent);
+    filter: drop-shadow(0 0 6px var(--color-accent));
+  }
+
+  &:disabled {
+    opacity: 0.25;
+    cursor: default;
+    background: transparent;
+  }
+}
+
+.navChevronLeft {
+  left: 0;
+}
+
+.navChevronRight {
+  right: 0;
 }

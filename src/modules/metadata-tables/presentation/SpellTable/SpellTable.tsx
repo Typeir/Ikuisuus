@@ -46,6 +46,7 @@ const SpellTable: React.FC<SpellTablesProps> = ({
   listSource,
 }) => {
   const t = useTranslations('tables.spells');
+  const tCommon = useTranslations('common');
   const displayLevels: (number | 'all')[] = showAllTab
     ? ['all', ...levels]
     : levels;
@@ -77,7 +78,7 @@ const SpellTable: React.FC<SpellTablesProps> = ({
     return (
       <div className={styles.error}>
         <p>
-          {t('error')}: {error}
+          {tCommon('error')}: {error}
         </p>
       </div>
     );

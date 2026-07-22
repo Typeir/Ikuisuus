@@ -11,11 +11,11 @@
 
 'use client';
 
-import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import type { CharacterAbility } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import btn from '@/styles/buttons.module.scss';
+import { BuilderSplitPane } from '../../builder/builderSplitPane';
 import styles from './abilities.module.scss';
 import { AbilitiesProvider, useAbilities } from './abilitiesContext';
 import { AbilityEditor } from './AbilityEditor';
@@ -63,11 +63,14 @@ const AbilitiesBody: React.FC = () => {
   }, []);
 
   return (
-    <ResizablePane
+    <BuilderSplitPane
       id='builder.abilities'
       ariaLabel={t('tabAbilities')}
       defaultLeftPercent={30}
       minLeftPercent={22}
+      sheetTitle={t('abilityImport')}
+      mobileTriggerLabel={t('abilityImport')}
+      mobilePrimary='right'
       left={<AbilityImportPanel />}
       right={
         <div className={styles.mainArea}>

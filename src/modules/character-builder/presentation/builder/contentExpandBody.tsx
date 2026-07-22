@@ -57,6 +57,7 @@ export const ContentExpandBody: React.FC<ContentExpandBodyProps> = ({
   id,
 }) => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const [bodyText, setBodyText] = useState<string>(cachedText ?? '');
   const [renderedHtml, setRenderedHtml] = useState<string>('');
@@ -101,7 +102,7 @@ export const ContentExpandBody: React.FC<ContentExpandBodyProps> = ({
 
   return (
     <div id={id} className={expandStyles.boonExpandBody}>
-      {loading && <p className={styles.shardLoading}>{t('shardLoading')}</p>}
+      {loading && <p className={styles.shardLoading}>{tCommon('loading')}</p>}
       {error && (
         <p className={styles.shardError}>
           {is404 ? t('shardNotFound') : error}

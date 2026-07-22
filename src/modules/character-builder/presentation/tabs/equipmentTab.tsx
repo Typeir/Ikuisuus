@@ -20,7 +20,7 @@ import type {
   EquipmentItem,
 } from '@/lib/types/character';
 import { EquipmentProvider } from '@/modules/character-builder/application/context/equipmentContext';
-import { Plus, X } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { CarryingCapacityCalculator } from '../CarryingCapacity/carryingCapacityCalculator';
@@ -58,6 +58,7 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
   onChange,
 }) => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const equipmentNotes = data.equipmentNotes ?? '';
 
   const items = useMemo(
@@ -109,11 +110,12 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
       <div className={styles.twoColumns}>
         <div className={styles.column}>
           <h3 className={styles.sectionTitle}>{t('equipmentTitle')}</h3>
-          <table className={`${tbl.dataTable} ${tbl.fixed}`}>
+          <div className={styles.tableScrollGuard}>
+            <table className={`${tbl.dataTable} ${tbl.fixed}`}>
             <thead>
               <tr>
                 <th className={styles.equipmentColName}>
-                  {t('equipmentColName')}
+                  {tCommon('name')}
                 </th>
                 <th className={styles.equipmentColNum}>
                   {t('equipmentColUnits')}
@@ -161,19 +163,20 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
                     <td>
                       <button
                         type='button'
-                        className={btn.iconBordered}
+                        className={styles.equipmentRemoveBtn}
                         onClick={() => removeRow(idx)}
                         aria-label={t('equipmentRemoveItemAria', {
                           name: item.name || 'item',
                         })}>
-                        <X size={12} aria-hidden='true' />
+                        <Trash2 size={14} aria-hidden='true' />
                       </button>
                     </td>
                   )}
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
           {editing && (
             <button
               type='button'

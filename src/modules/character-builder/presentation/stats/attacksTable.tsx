@@ -50,6 +50,7 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
   readOnly = false,
 }) => {
   const t = useTranslations('characterSheet');
+  const tCommon = useTranslations('common');
   const handleAdd = () => {
     onChange([
       ...attacks,
@@ -71,12 +72,13 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
 
   return (
     <div className={styles.attacksSection}>
-      <table
-        className={`${tbl.dataTable} ${tbl.fixed}`}
-        aria-label={t('ariaAttacksTable')}>
+      <div className={styles.attacksScrollGuard}>
+        <table
+          className={`${tbl.dataTable} ${tbl.fixed} ${styles.attacksTable}`}
+          aria-label={t('ariaAttacksTable')}>
         <thead>
           <tr>
-            <th scope='col'>{t('colName')}</th>
+            <th scope='col'>{tCommon('name')}</th>
             <th scope='col'>{t('colToHit')}</th>
             <th scope='col'>{t('colDamage')}</th>
             <th scope='col'>{t('colNotes')}</th>
@@ -145,7 +147,7 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
                     className={styles.removeBtn}
                     onClick={() => handleRemove(attack.id)}
                     aria-label={t('ariaRemoveAttack', {
-                      name: attack.name || t('unnamed'),
+                      name: attack.name || tCommon('unnamed'),
                     })}>
                     <Trash2 size={14} aria-hidden='true' />
                   </button>
@@ -154,7 +156,8 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
       {!readOnly && (
         <button
           type='button'

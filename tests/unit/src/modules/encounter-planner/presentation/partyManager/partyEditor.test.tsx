@@ -122,7 +122,7 @@ describe('PartyEditor', () => {
       <PartyEditor party={baseParty} onSave={mockOnSave} onBack={mockOnBack} />,
     );
 
-    await user.click(screen.getByText('backToList'));
+    await user.click(screen.getByText('back'));
     expect(mockOnBack).toHaveBeenCalled();
   });
 

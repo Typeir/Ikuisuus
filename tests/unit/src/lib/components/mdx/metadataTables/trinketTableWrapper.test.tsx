@@ -23,6 +23,7 @@ const mockHook = vi.fn();
 
 vi.mock('next-intl', () => ({
   useTranslations: createUseTranslationsMock({
+    common: loadMessageFile('messages/en/common.json'),
     tables: loadMessageFile('messages/en/tables.json'),
   }),
 }));

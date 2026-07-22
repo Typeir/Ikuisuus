@@ -5,6 +5,7 @@
  */
 
 @use '@/styles/mixins-button' as *;
+@use '@/styles/mixins-responsive' as *;
 
 .abilityBlock {
   display: flex;
@@ -61,4 +62,39 @@
   @include button-secondary(0.15rem 0.25rem, inherit);
   border-radius: 2px;
   @include button-hover-scale(1.2);
+}
+
+/**
+ * Saving throw row — small-caps label, proficiency pip track, computed
+ * bonus. Divided from the score area by a hairline rule.
+ */
+.saveRow {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.2rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--color-border);
+  width: 100%;
+  justify-content: center;
+
+  @include desktop {
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+}
+
+.saveLabel {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+
+.saveBonus {
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
 }

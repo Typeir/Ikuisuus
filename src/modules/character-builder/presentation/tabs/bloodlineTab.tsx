@@ -11,7 +11,6 @@
 
 'use client';
 
-import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
@@ -29,6 +28,7 @@ import { ShardChip } from '@/modules/character-builder/presentation/shards/shard
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import { BoonPicker } from '../builder/boonPicker';
+import { BuilderSplitPane } from '../builder/builderSplitPane';
 import styles from './tabs.module.scss';
 
 /**
@@ -78,9 +78,13 @@ export const BloodlineTab: React.FC<BloodlineTabProps> = ({
   }
 
   return (
-    <ResizablePane
+    <BuilderSplitPane
       id='builder.bloodline'
       ariaLabel={t('selectBloodline')}
+      sheetTitle={t('shardPreviewTitle', { name: data.bloodlineTitle || '' })}
+      sheetOpen={!!focusedShard}
+      onSheetClose={() => mutators.setFocusedShard(null)}
+      mobileTriggerLabel={t('viewShardDetails')}
       left={
         <div className={styles.column}>
           {editing && data.selectedBoons.length > 0 && (

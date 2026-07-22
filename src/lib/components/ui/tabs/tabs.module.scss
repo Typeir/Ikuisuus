@@ -26,7 +26,10 @@
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  @include scrollbar-thin($track: var(--color-surface));
+  @include scrollbar-thin(
+    $thumb: var(--color-secondary),
+    $track: var(--color-surface)
+  );
   margin-bottom: -1px;
   padding: 0 0.25rem;
   min-width: 0;
@@ -117,15 +120,19 @@
  * the panel uses --color-bg so it reads as a deeper layer.
  */
 .tabsNested {
+  /* Iconic rounded-top frame (mirrors GradientTabs' gradientContainer)
+     in this layer's colour — tabs emerge from the bottom of the frame. */
   .tabList {
     background: linear-gradient(0deg, var(--color-bg) 20%, transparent 30%);
-    border-bottom: 1px solid var(--color-border);
-    padding: 0 0.125rem;
+    border: 0.2rem solid var(--color-bg);
+    border-bottom-width: 1px;
+    border-radius: 10px 10px 0 0;
+    padding: 1.25rem 0.125rem 0;
   }
 
   .tab {
     background: transparent;
-    border-color: transparent;
+    border-color: var(--color-bg);
     color: var(--color-secondary);
     font-size: 0.8rem;
     padding: 0.4rem 0.75rem 0.85rem;
@@ -134,14 +141,14 @@
       color: var(--color-text);
       filter: none;
       background: color-mix(in srgb, var(--color-bg) 60%, transparent);
-      border-color: var(--color-border);
+      border-color: var(--color-bg);
     }
   }
 
   .active {
     background: var(--color-bg);
     color: var(--color-accent);
-    border-color: var(--color-border);
+    border-color: var(--color-bg);
 
     &:hover:not(:disabled) {
       color: var(--color-accent);
@@ -155,7 +162,66 @@
 
   .tabPanel {
     background: var(--color-bg);
-    border-color: var(--color-border);
+    border-color: var(--color-bg);
+    border-radius: 0 4px 4px 4px;
+    padding: 1rem;
+  }
+}
+
+/**
+ * Inset variant — one layer deeper than `nested`. For tabs rendered inside
+ * a nested panel (e.g. per-vocation section tabs inside the multiclass entry
+ * tabs). Active tab and panel recess into --color-bg-secondary with a solid
+ * border so the inner group never blends into its parent panel.
+ */
+.tabsInset {
+  /* Iconic rounded-top frame (mirrors GradientTabs' gradientContainer)
+     in this layer's colour — tabs emerge from the bottom of the frame. */
+  .tabList {
+    background: linear-gradient(
+      0deg,
+      var(--color-surface) 20%,
+      transparent 30%
+    );
+    border: 0.2rem solid var(--color-surface);
+    border-bottom-width: 1px;
+    border-radius: 10px 10px 0 0;
+    padding: 1.25rem 0.125rem 0;
+  }
+
+  .tab {
+    background: transparent;
+    border-color: var(--color-surface);
+    color: var(--color-secondary);
+    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem 0.85rem;
+
+    &:hover:not(:disabled) {
+      color: var(--color-text);
+      filter: none;
+      background: color-mix(in srgb, var(--color-surface) 60%, transparent);
+      border-color: var(--color-surface);
+    }
+  }
+
+  .active {
+    background: var(--color-surface);
+    color: var(--color-accent);
+    border-color: var(--color-surface);
+
+    &:hover:not(:disabled) {
+      color: var(--color-accent);
+      filter: brightness(1.05);
+    }
+
+    &::after {
+      background: var(--color-surface);
+    }
+  }
+
+  .tabPanel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-surface);
     border-radius: 0 4px 4px 4px;
     padding: 1rem;
   }

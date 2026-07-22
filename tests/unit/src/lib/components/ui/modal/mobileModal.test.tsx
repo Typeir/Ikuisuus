@@ -236,7 +236,7 @@ describe('MobileModal', () => {
       expect(dialog).toBeInTheDocument();
     });
 
-    it('should have fixed positioning and proper z-index', () => {
+    it('should apply the overlay class for fixed positioning and stacking', () => {
       render(
         <MobileModal isOpen={true} onClose={mockOnClose}>
           <div>Content</div>
@@ -245,10 +245,18 @@ describe('MobileModal', () => {
 
       const overlay = screen.getByRole('dialog');
       expect(overlay).toBeInTheDocument();
-      
-      // Check inline styles are applied
-      expect(overlay.style.position).toBe('fixed');
-      expect(overlay.style.zIndex).toBe('1000');
+      expect(overlay.className).toContain('mobileModalOverlay');
+    });
+
+    it('should apply the console variant class when requested', () => {
+      render(
+        <MobileModal isOpen={true} onClose={mockOnClose} variant='console'>
+          <div>Content</div>
+        </MobileModal>
+      );
+
+      const overlay = screen.getByRole('dialog');
+      expect(overlay.className).toContain('console');
     });
   });
 
