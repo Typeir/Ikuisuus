@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils/classNameMerge';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { type FeaturedPage } from '../../domain/featuredPages';
-import styles from './archivistPanel.module.scss';
+import styles from './ArchivistPanel.module.scss';
 
 /** Minimum viewport width remaining for side-panel layout. */
 const MIN_SIDE_PANEL_WIDTH = 360;
