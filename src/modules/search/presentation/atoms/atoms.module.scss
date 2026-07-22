@@ -1,0 +1,244 @@
+/* ============================================
+   SEARCH RESULT ATOMS — "The Archivist's Index"
+   Occult grimoire / card-catalog aesthetic.
+   All colors via CSS custom properties (no literals).
+============================================ */
+
+@use 'mixins-mdx-sections' as mdx;
+@use 'mixins-button' as btn;
+
+/* ---- TypeSigil ---- */
+.sigil {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--search-sigil-size, 24px);
+  height: var(--search-sigil-size, 24px);
+  border-radius: 4px;
+  color: var(--sigil-color, var(--color-accent));
+  background: var(--sigil-color, var(--color-accent)) / 0.12;
+  flex-shrink: 0;
+  position: relative;
+
+  @include mdx.mdx-crt-glow(
+    $color: var(--sigil-color, var(--color-primary)),
+    $outer-color: var(--sigil-color, var(--color-actionable))
+  );
+}
+
+.resultRow:hover .sigil,
+a:hover .sigil {
+  &::before {
+    opacity: 0.3;
+  }
+
+  &::after {
+    opacity: 0.15;
+  }
+}
+
+/* ---- ResultTitle ---- */
+.resultTitle {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  color: var(--color-text);
+  transition: color var(--search-anim-duration, 200ms) var(--springy-bezier);
+}
+
+.resultTitle:hover,
+a:hover .resultTitle {
+  color: var(--color-accent);
+}
+
+/* ---- MatchSnippet ---- */
+.matchSnippet {
+  display: -webkit-box;
+  -webkit-line-clamp: var(--search-snippet-max-lines, 2);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+
+  :global(mark) {
+    color: var(--color-accent);
+    background: var(--color-accent-a10);
+    border-radius: 2px;
+    padding: 0 1px;
+    box-shadow: 0 0 6px 1px var(--color-accent-a20);
+  }
+}
+
+/* ---- MetaTrail ---- */
+.metaTrail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.metaPrefix {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  opacity: 0.5;
+  user-select: none;
+}
+
+.metaTag {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  opacity: 0.7;
+  padding-bottom: 1px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: default;
+  @include btn.button-hover-scale(1.06);
+}
+
+/* ---- ResultThumb ---- */
+.thumb {
+  display: block;
+  width: var(--search-thumb-size, 48px);
+  height: var(--search-thumb-size, 48px);
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+
+  /* Grain/vignette overlay */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 40%,
+      var(--color-bg) / 0.5 100%
+    );
+    pointer-events: none;
+  }
+}
+
+.thumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- SearchResultRow ---- */
+.row {
+  display: flex;
+  gap: var(--search-result-gap, 0.75rem);
+  align-items: flex-start;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--search-result-radius, 6px);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  --row-scale: 1.05;
+  --row-translate: 2px;
+  transition:
+    background var(--search-anim-duration, 200ms) var(--springy-bezier),
+    transform var(--search-anim-duration, 200ms) var(--springy-bezier);
+  will-change: transform;
+
+  &::after {
+    @include mdx.mdx-terminal-stream(right);
+    color: var(--search-row-stream-color, var(--color-accent));
+    opacity: 0;
+    transition: opacity 150ms ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-accent-a10);
+    transform: scale(var(--row-scale)) translateX(var(--row-translate));
+    outline: none;
+
+    .matchSnippet {
+      -webkit-line-clamp: unset;
+    }
+
+    &::after {
+      opacity: 0.4;
+    }
+  }
+}
+
+.rowCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  --row-scale: 1.02;
+  --row-translate: 0.25rem;
+  &::after {
+    display: none;
+  }
+  &:hover,
+  &:focus-visible {
+    background: var(--color-surface);
+    border-color: var(--color-accent);
+  }
+}
+
+.rowContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.rowContentCard {
+  gap: 0.35rem;
+}
+
+.cardTypeLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sigil-color, var(--color-accent));
+  opacity: 0.8;
+}
+
+.cardDescription {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.rowMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+/* Reduced motion — disable hover lift and transitions */
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+    will-change: auto;
+
+    &:hover,
+    &:focus-visible {
+      transform: none;
+    }
+  }
+}

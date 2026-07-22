@@ -13,6 +13,14 @@ import { CoinPouch } from '@/modules/character-builder/presentation/CarryingCapa
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+/** Assert against real English copy rather than raw message keys. */
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<Record<string, unknown>>(),
+  );
+});
+
 describe('CoinPouch', () => {
   it('migrates legacy currency into a Gold Standard holdings card', () => {
     const data = {

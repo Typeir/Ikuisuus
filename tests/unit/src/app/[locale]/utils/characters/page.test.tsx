@@ -32,9 +32,9 @@ describe('CharactersPage', () => {
     render(jsx as React.ReactElement);
   };
 
-  it('renders the character provider', async () => {
+  it('does not mount a page-local provider (roster context is global)', async () => {
     await renderPage();
-    expect(screen.getByTestId('character-provider')).toBeInTheDocument();
+    expect(screen.queryByTestId('character-provider')).not.toBeInTheDocument();
   });
 
   it('renders the character roster', async () => {

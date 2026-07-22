@@ -12,7 +12,29 @@ import {
 } from '@/modules/character-builder/presentation/PagePreview/pagePreviewProvider';
 import { act, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+/**
+ * The host resolves each preview's content path through
+ * `POST /api/resolve-preview-path`. jsdom cannot fetch a relative URL, so the
+ * endpoint is stubbed with the path the component would receive in the app.
+ */
+const mockFetch = vi.fn();
+
+beforeEach(() => {
+  vi.stubGlobal('fetch', mockFetch);
+  mockFetch.mockResolvedValue(
+    new Response(JSON.stringify({ path: 'character-creation/feats/tough' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    }),
+  );
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.clearAllMocks();
+});
 
 /**
  * Helper that opens a preview during render so the host has something to draw.

@@ -97,6 +97,60 @@
   display: none;
 }
 
+/**
+ * Mixin: mdx-crt-glow
+ *
+ * Applies a two-layer radial-gradient CRT glow via `::before` (inner, smaller)
+ * and `::after` (outer, larger). Intended to be included on an element with
+ * `position: relative`. The pseudo-elements are hidden at rest and revealed by
+ * the parent's hover/active state setting `opacity`.
+ *
+ * @param {string} $color (default `var(--color-primary)`) — inner glow colour
+ * @param {string} $outer-color (default `var(--color-actionable)`) — outer glow colour
+ * @param {number} $inner-inset (default `-12px`) — `::before` inset
+ * @param {number} $outer-inset (default `-20px`) — `::after` inset
+ * @param {number} $inner-radius (default `10px`) — `::before` border-radius
+ * @param {number} $outer-radius (default `14px`) — `::after` border-radius
+ * @param {number} $inner-opacity (default `0.3`) — target `::before` opacity on reveal
+ * @param {number} $outer-opacity (default `0.15`) — target `::after` opacity on reveal
+ */
+@mixin mdx-crt-glow(
+  $color: var(--color-primary),
+  $outer-color: var(--color-actionable),
+  $inner-inset: -12px,
+  $outer-inset: -20px,
+  $inner-radius: 10px,
+  $outer-radius: 14px,
+  $inner-opacity: 0.3,
+  $outer-opacity: 0.15
+) {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: $inner-inset;
+    border-radius: $inner-radius;
+    z-index: -1;
+    background: radial-gradient(circle at center, $color 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: $outer-inset;
+    border-radius: $outer-radius;
+    z-index: -2;
+    background: radial-gradient(
+      circle at center,
+      $outer-color 0%,
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+}
+
 /* Decorative first-letter mixin (used by h1 .first-letter) */
 @mixin mdx-first-letter-decor(
   $size: 4.5em,

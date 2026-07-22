@@ -12,6 +12,7 @@
 'use client';
 
 import type { Item as SidebarItem } from '@/modules/navigation-sidebar/domain/types';
+import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
 import { NextIntlClientProvider, type AbstractIntlMessages } from 'next-intl';
 import SwrProvider from './SwrProvider';
@@ -52,7 +53,8 @@ interface ClientProvidersProps {
  * 1. NextIntlClientProvider - Internationalization context
  * 2. SwrProvider - Global SWRConfig (fetcher defaults, deduping, retry)
  * 3. PersistentUiProvider - Persistent UI state (theme, sidebar expansion)
- * 4. ResponsiveLayoutShell - Layout with sidebar and notifications
+ * 4. CharacterSheetProvider - Global character roster + selected character
+ * 5. ResponsiveLayoutShell - Layout with sidebar and notifications
  *
  * PersistentUiProvider uses deterministic client-side initialization:
  * - Server provides initialExpandedPaths from cookies for SSR/client match
@@ -69,8 +71,10 @@ export default function ClientProviders({
     <NextIntlClientProvider locale={locale} messages={messages} timeZone='UTC'>
       <SwrProvider>
         <PersistentUiProvider initialExpandedPaths={initialExpandedPaths}>
-          {/* @ts-ignore */}
-          <ResponsiveLayoutShell tree={tree}>{children}</ResponsiveLayoutShell>
+          <CharacterSheetProvider>
+            {/* @ts-ignore */}
+            <ResponsiveLayoutShell tree={tree}>{children}</ResponsiveLayoutShell>
+          </CharacterSheetProvider>
         </PersistentUiProvider>
       </SwrProvider>
     </NextIntlClientProvider>

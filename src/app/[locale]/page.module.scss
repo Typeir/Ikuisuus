@@ -1,3 +1,34 @@
+@use 'mixins-mdx-sections' as mdx;
+@use 'mixins-button' as btn;
+
 .left-aligned-prose {
   margin-left: 0 !important;
+}
+
+.pageTitle {
+  color: var(--color-accent);
+}
+
+.nameFirstLetter {
+  @include mdx.mdx-first-letter-decor;
+}
+
+.streamSection {
+  position: relative;
+  width: 100%;
+
+  &::after {
+    @include mdx.mdx-terminal-stream(left);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .streamSection::after {
+    animation: none;
+  }
+}
+
+.featuredLoading,
+.featuredEmpty {
+  color: var(--color-text-secondary);
 }

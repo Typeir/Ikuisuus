@@ -109,6 +109,31 @@ html:not([data-theme]) body {
   --color-transparent: transparent;
 
   /* ============================================
+     SEARCH SYSTEM TOKENS — "The Archivist's Index"
+     Per-content-type + shared search atoms
+  ============================================ */
+
+  /* Shared search tokens */
+  --search-result-gap: 0.75rem;
+  --search-result-radius: 6px;
+  --search-sigil-size: 24px;
+  --search-snippet-max-lines: 2;
+  --search-thumb-size: 48px;
+  --search-anim-stagger-ms: 60ms;
+  --search-anim-duration: 200ms;
+
+  /* Per-type accent tokens — distinct hue per content type */
+  --search-type-monster: #d4736d;
+  --search-type-spell: #8acfd4;
+  --search-type-heirloom: #c9a85c;
+  --search-type-trinket: #c9a0dc;
+  --search-type-bloodline: #e48b8b;
+  --search-type-vocation: #a8b4c0;
+  --search-type-specialization: #c9a85c;
+  --search-type-feat: #8fb8a0;
+  --search-type-world: #8fd3a1;
+
+  /* ============================================
      HEROIC AWAKENING TOKENS - Pastel-adjacent
      Each affix: -bg-1 (primary), -bg-2 (secondary), -border
   ============================================ */

@@ -1,0 +1,184 @@
+/**
+ * Selected Character Badge Styles
+ *
+ * @fileoverview Round profile-picture style badge for the sidebar footer,
+ * with an upward-expanding character picker dropdown. Avatar styling mirrors
+ * the collapsed character roster avatars.
+ *
+ * @module selectedCharacterBadge.module
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
+ */
+
+@use 'mixins' as *;
+@use 'mixins-icon' as *;
+@use 'mixins-focus' as *;
+
+.badge {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.triggerWrap {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--color-transparent);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:hover,
+  &:focus,
+  &.open {
+    border-color: var(--color-accent);
+    outline: none;
+  }
+
+  &:focus-visible {
+    @include focus-outline;
+  }
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.avatarEmpty {
+  background: transparent;
+  border: 1px dashed var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+.deselectWrap {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  z-index: 1;
+}
+
+.deselect {
+  @include icon-transparent(var(--color-danger, var(--color-emphasis)));
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover,
+  &:focus-visible {
+    @include focus-glow(3px, var(--color-danger, var(--color-emphasis)));
+  }
+}
+
+.dropdown {
+  position: absolute;
+  bottom: calc(100% + 0.25rem);
+  right: 0;
+  min-width: 220px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  box-shadow: 0 -4px 12px rgb(var(--color-shadow-medium));
+  z-index: 1000;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.list {
+  list-style: none !important;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.listItem {
+  list-style: none !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.875rem;
+  transition: background-color 0.15s;
+  border-bottom: 1px solid var(--color-secondary);
+
+  &:hover,
+  &:focus {
+    background-color: var(--color-secondary);
+    outline: none;
+  }
+
+  &.active .itemAvatar {
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+}
+
+.itemAvatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.itemName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemMeta {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.manageRow {
+  border-bottom: none;
+  justify-content: center;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.empty {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  border-bottom: 1px solid var(--color-secondary);
+}

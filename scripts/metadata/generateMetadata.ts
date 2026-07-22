@@ -96,7 +96,7 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
   world: {
     dir: 'src/content/en/world',
     pattern: /\.mdx$/,
-    generator: null,
+    generator: 'generateWorldMetadata.ts',
     contentType: 'world',
     subType: 'lore',
   },
@@ -141,6 +141,7 @@ class MetadataOrchestrator {
       if (arg === '--specializations' || arg === '--specialization')
         types.push('specializations');
       if (arg === '--feats' || arg === '--feat') types.push('feats');
+      if (arg === '--world' || arg === '--lore') types.push('world');
     }
 
     return types.length > 0 ? types : null;

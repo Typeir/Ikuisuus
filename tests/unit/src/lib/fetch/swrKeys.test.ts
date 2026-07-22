@@ -17,7 +17,6 @@ import {
     draftKey,
     featsKey,
     heirloomsKey,
-    librarySearchKey,
     monstersIndexKey,
     monstersKey,
     nearestRouteKey,
@@ -113,18 +112,6 @@ describe('swrKeys', () => {
   describe('spellKey', () => {
     it('returns tuple with slug and locale', () => {
       expect(spellKey('fireball', 'en')).toEqual(['spell', 'fireball', 'en']);
-    });
-  });
-
-  describe('librarySearchKey', () => {
-    it('returns tuple for query >= 2 chars', () => {
-      expect(librarySearchKey('go')).toEqual(['library-search', 'go']);
-    });
-    it('returns null for single char query', () => {
-      expect(librarySearchKey('g')).toBeNull();
-    });
-    it('returns null for empty query', () => {
-      expect(librarySearchKey('')).toBeNull();
     });
   });
 

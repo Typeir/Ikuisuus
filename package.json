@@ -14,7 +14,7 @@
     "clean-fullsize": "npx tsx --tsconfig tsconfig.scripts.json scripts/build/cleanFullSize.ts",
     "merge-locales": "npx tsx --tsconfig tsconfig.scripts.json scripts/i18n/mergeMessages.ts",
     "clean-translations": "npx tsx --tsconfig tsconfig.scripts.json scripts/i18n/cleanTranslations.ts",
-    "pre-init": "npm run compress-assets && npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers",
+    "pre-init": "npm run compress-assets && npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers && npm run search:index",
     "pre-init:ci": "npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers:ci",
     "find-reusable-mdx-outliers:ci": "npx tsx --tsconfig tsconfig.scripts.json scripts/content/findReusableMdxOutliers/ci.ts",
     "clean-metadata": "find src/content -name '*.metadata.json' -delete && find scripts/core -name '*.metadata.json' -delete && rm -rf .meta/en .meta/runtime",
@@ -62,6 +62,7 @@
     "test:hooks": "bash .paw/git-hooks/test-hooks.sh",
     "paw": "node .github/PAW/dist/cli.mjs",
     "generate-arch-tree": "npx tsx --tsconfig tsconfig.scripts.json foundry/scripts/utils/generateArchTree.ts",
+    "search:index": "npx tsx --tsconfig tsconfig.scripts.json scripts/search/buildSearchIndex.ts",
     "lottery": "npx tsx --tsconfig tsconfig.scripts.json scripts/utils/mdxLottery.ts"
   },
   "dependencies": {

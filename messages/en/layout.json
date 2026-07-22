@@ -11,5 +11,13 @@
     "mdxEditor": "MDX Editor",
     "characterBuilder": "Character Builder",
     "toggleTools": "Toggle Tools"
+  },
+  "characterBadge": {
+    "ariaToggle": "Select active character",
+    "deselect": "De-select character",
+    "empty": "No characters yet",
+    "manage": "Manage characters",
+    "levelShort": "Lv {level}",
+    "unnamed": "Unnamed"
   }
 }

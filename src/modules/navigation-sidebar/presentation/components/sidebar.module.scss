@@ -99,6 +99,9 @@
 
 .expanded {
   max-height: var(--expanded-height);
+  a {
+    overflow: hidden;
+  }
 }
 
 .link-item {
@@ -119,6 +122,6 @@ li:not(:has(.label)) > .link-item {
   max-height: var(--expanded-height);
   overflow-x: hidden !important;
   *:not(li) {
-    overflow-x: hidden;
+    overflow: hidden;
   }
 }

@@ -48,8 +48,8 @@ describe('ApiRoutes', () => {
       expect(ApiRoutes.FindNearestRoute).toBe('/api/find-nearest-route');
     });
 
-    it('should define Search route', () => {
-      expect(ApiRoutes.Search).toBe('/api/search');
+    it('should define Discovery route', () => {
+      expect(ApiRoutes.Discovery).toBe('/api/discovery');
     });
   });
 

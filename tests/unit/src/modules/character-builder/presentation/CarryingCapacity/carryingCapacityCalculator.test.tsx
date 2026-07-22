@@ -10,7 +10,15 @@
 import { CarryingCapacityCalculator } from '@/modules/character-builder/presentation/CarryingCapacity/carryingCapacityCalculator';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+/** Assert against real English copy — thresholds are interpolated into it. */
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<Record<string, unknown>>(),
+  );
+});
 
 describe('CarryingCapacityCalculator', () => {
   const baseSheet = () => {

@@ -10,7 +10,15 @@
 
 import { SpeedPanel } from '@/modules/character-builder/presentation/atoms/speedPanel';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+/** Assert against real English copy rather than raw message keys. */
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<Record<string, unknown>>(),
+  );
+});
 
 describe('SpeedPanel', () => {
   it('renders nothing when bloodlineSpeeds is empty', () => {

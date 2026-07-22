@@ -1,9 +1,13 @@
 {
-  "placeholder": "Search the Library...",
-  "ariaLabel": "Search the Library",
-  "searching": "Searching...",
-  "localResults": "Local Results",
-  "searchingArchives": "Searching the archives",
-  "noResults": "This subject has been redacted. Only the Archivist holds this knowledge.",
-  "waiting": "Waiting for input"
+  "placeholder": "//>: SEARCH",
+  "ariaLabel": "Search the Archive",
+  "searching": "Consulting the Index…",
+  "noResults": "░▒▓█ THE SUBJECT OF THIS QUERY HAS BEEN DISAMBIGUATED █▓▒░",
+  "noQuery": "Enter a search term above to query the Archive.",
+  "unavailable": "Search is currently unavailable. Try again shortly.",
+  "resultsFor": "Results for",
+  "found": "found",
+  "loadingFallback": "Loading…",
+  "archivistReading": "The Archivist is reading…",
+  "closePanel": "Close reading panel"
 }

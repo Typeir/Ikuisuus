@@ -163,18 +163,6 @@ export function spellKey(
 }
 
 /**
- * Builds the SWR cache key for a library search query.
- *
- * @param {string} query - Search query string
- * @returns {readonly ['library-search', string] | null} Cache key or null for short queries
- */
-export function librarySearchKey(
-  query: string,
-): readonly ['library-search', string] | null {
-  return query.length >= 2 ? (['library-search', query] as const) : null;
-}
-
-/**
  * Builds the SWR cache key for an active draft.
  *
  * @param {string} locale - Content locale

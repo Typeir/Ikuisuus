@@ -82,3 +82,6 @@ next-env.d.ts
 /foundry/assets/images/
 /foundry/assets/tokens/
 /foundry/dist/
+
+# Pagefind search index (built at build time)
+public/pagefind/

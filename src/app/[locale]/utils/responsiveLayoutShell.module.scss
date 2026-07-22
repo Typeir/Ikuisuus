@@ -114,6 +114,8 @@ html[data-theme='light'] .ssrThemeIcon {
 }
 
 .embedContent {
+  // --embed-position: absolute;
+  --embed-z-index: 0;
   padding: 1rem 1.5rem;
   overflow-y: auto;
   max-height: 100vh;
@@ -141,4 +143,16 @@ html[data-theme='light'] .ssrThemeIcon {
     font-size: 0.78rem;
     line-height: 1.5;
   }
+}
+
+.footerRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footerTools {
+  flex: 1;
+  min-width: 0;
 }

@@ -1,7 +1,8 @@
 /**
  * @fileoverview Characters Page
  * @description Dedicated page for the character creator and manager at /[locale]/utils/characters.
- * Provides the full character sheet roster wrapped in the CharacterSheetProvider context.
+ * Renders the roster; character state comes from the global CharacterSheetProvider
+ * mounted in ClientProviders.
  *
  * @module charactersPage
  * @version 1.0.0
@@ -9,7 +10,6 @@
  * @since 1.0.0
  *
  * @requires @/lib/components/characterSheet CharacterRoster component
- * @requires @/lib/context/CharacterSheetContext Provider
  *
  * @example
  * ```
@@ -18,7 +18,6 @@
  * ```
  */
 
-import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
 import { CharacterRoster } from '@/modules/character-builder';
 
 /**
@@ -36,8 +35,7 @@ interface PageProps {
 
 /**
  * Characters page component.
- * Wraps CharacterRoster in CharacterSheetProvider so all character state
- * is available through context.
+ * Character state is available through the global CharacterSheetProvider.
  *
  * @async
  * @function CharactersPage
@@ -47,11 +45,7 @@ interface PageProps {
 export default async function CharactersPage({ params }: PageProps) {
   const { locale } = await params;
 
-  return (
-    <CharacterSheetProvider>
-      <CharacterRoster />
-    </CharacterSheetProvider>
-  );
+  return <CharacterRoster />;
 }
 
 /**

@@ -131,7 +131,6 @@ export const ParallaxBackdrop: React.FC<ParallaxBackdropProps> = ({
       aria-hidden={ariaHidden}
       className={`${styles.backdrop} ${className ?? ''}`}
       style={{
-        zIndex,
         opacity,
       }}>
       <Image

@@ -13,6 +13,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 
+/** Assert against real English copy rather than raw message keys. */
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<Record<string, unknown>>(),
+  );
+});
+
 const makeEntry = (
   id: string,
   vocSlug: string,

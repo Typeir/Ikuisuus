@@ -1,0 +1,158 @@
+/* ============================================
+   SEARCH BAR — Diegetic console terminal
+   Ritualistic, command-line aesthetic matching
+   the site's systems-console look.
+   All colors via tokens (no literals).
+============================================ */
+
+@use 'mixins-button' as btn;
+
+.searchBar {
+  padding-top: 0.75rem;
+  position: relative;
+  width: 100%;
+
+  &.hero {
+    padding-top: 0;
+
+    .inputWrapper {
+      padding-bottom: 0.5rem;
+      @include btn.button-hover-scale(1.01);
+    }
+
+    .promptLabel {
+      font-size: 0.75rem;
+    }
+
+    .input {
+      font-size: 0.875rem;
+    }
+
+    .searchIcon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding-bottom: 0.375rem;
+  background: transparent;
+  border-bottom: 1px solid var(--color-border);
+  transition:
+    border-color 0.15s ease,
+    border-width 0.15s ease,
+    filter 0.15s ease,
+    transform 0.15s ease;
+
+  &:focus-within {
+    border-bottom-width: 4px;
+    border-color: var(--color-primary);
+    filter: drop-shadow(0 0 1px var(--color-primary));
+    @include btn.button-hover-scale(1.05);
+  }
+
+  &:hover {
+    border-bottom-width: 4px;
+    border-color: var(--color-primary);
+    filter: drop-shadow(0 0 1px var(--color-primary));
+    @include btn.button-hover-scale(1.05);
+  }
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  color: var(--color-text);
+
+  &::placeholder {
+    color: var(--color-primary);
+    opacity: 0.6;
+  }
+
+  &::-webkit-search-cancel-button {
+    display: none;
+  }
+}
+
+.shortcut {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.625rem;
+  color: var(--color-text-secondary);
+  opacity: 0.4;
+  flex-shrink: 0;
+  user-select: none;
+  pointer-events: none;
+
+  @media (max-width: 480px) {
+    display: none;
+  }
+}
+
+.searchIcon {
+  color: var(--color-primary);
+  opacity: 0.6;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* ---- Dropdown ---- */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow:
+    0 8px 24px var(--color-shadow),
+    0 0 0 1px var(--color-border);
+  padding: 0.25rem 0;
+}
+
+.dropdownStatus {
+  padding: 1rem 0.75rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.dropdownRow {
+  border-left: none !important;
+  border-bottom: 1px solid var(--color-border);
+  animation: dropdownEntry 250ms var(--springy-bezier) both;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+@keyframes dropdownEntry {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dropdownRow {
+    animation: none;
+  }
+}

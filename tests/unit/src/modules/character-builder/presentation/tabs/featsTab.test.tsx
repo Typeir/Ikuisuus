@@ -41,7 +41,7 @@ describe('FeatsTab', () => {
       { editing: true },
     );
     expect(
-      await screen.findByRole('list', { name: /available feats/i }),
+      await screen.findByRole('list', { name: 'featAvailableAria' }),
     ).toBeTruthy();
   });
 });

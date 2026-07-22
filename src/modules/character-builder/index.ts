@@ -26,6 +26,21 @@ export type {
 export { CharacterRoster } from './presentation/Roster/characterRoster';
 export type { CharacterRosterProps } from './presentation/Roster/characterRoster';
 
+export { SelectedCharacterBadge } from './presentation/SelectedCharacter/selectedCharacterBadge';
+
+export {
+    CharacterEntityProvider,
+    useCharacterEntity,
+    useCharacterEntityContext,
+    useCharacterEntityField,
+} from './application/context/characterEntityContext';
+export type { CharacterEntityContextValue } from './application/context/characterEntityContext';
+
+export type { CharacterEntity } from './domain/character/characterEntity';
+
+export { getCharacterFormulaScope } from './lib/utils/characterFormulaScope';
+export type { CharacterFormulaScope } from './lib/utils/characterFormulaScope';
+
 export { ActiveCharacterSheet } from './presentation/CharacterSheet/activeCharacterSheet';
 
 export { CharacterSheet } from './presentation/CharacterSheet/characterSheet';

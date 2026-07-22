@@ -41,8 +41,7 @@
   }
 
   &:focus {
-    outline: none;
-    border-color: var(--color-accent);
+    @include focus-ring;
   }
 }
 

@@ -28,6 +28,7 @@ import {
     useReducer,
     type ReactNode,
 } from 'react';
+import { CharacterEntityProvider } from './characterEntityContext';
 import { sheetReducer, type SheetTabId } from './sheetReducer';
 
 export type { SheetTabId };
@@ -213,7 +214,9 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
 
   return (
     <ActiveSheetContext.Provider value={value}>
-      {children}
+      <CharacterEntityProvider entity={value.data} patchEntity={patch}>
+        {children}
+      </CharacterEntityProvider>
     </ActiveSheetContext.Provider>
   );
 };

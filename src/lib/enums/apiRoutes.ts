@@ -29,6 +29,6 @@ export enum ApiRoutes {
   /** Find nearest route for 404 suggestions */
   FindNearestRoute = '/api/find-nearest-route',
 
-  /** Library search endpoint */
-  Search = '/api/search',
+  /** Discovery API endpoint */
+  Discovery = '/api/discovery',
 }

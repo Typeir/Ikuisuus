@@ -21,17 +21,19 @@ import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
 import Icon from '@/lib/components/icon/icon';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
-    useSidebarMenuActions,
-    useSidebarMenuState,
-    useThemeActions,
-    useThemeState,
+  useSidebarMenuActions,
+  useSidebarMenuState,
+  useThemeActions,
+  useThemeState,
 } from '@/lib/context/PersistentUiContext';
-import { SidebarShell } from '@/modules/navigation-sidebar';
 import { Theme } from '@/lib/enums/themes';
+import { SelectedCharacterBadge } from '@/modules/character-builder';
+import { SidebarShell } from '@/modules/navigation-sidebar';
+import { SearchBar } from '@/modules/search/presentation/SearchBar/SearchBar';
 import {
-    ToolsMenu,
-    useToolRegistry,
-    type ToolMenuItem,
+  ToolsMenu,
+  useToolRegistry,
+  type ToolMenuItem,
 } from '@/modules/tools-menu';
 import { Moon, Sun, Wrench } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -213,6 +215,13 @@ function BaseResponsiveLayoutShell({
             </div>
           </div>
 
+          {/* Search Bar — always visible under heading */}
+          <div
+            className='sidebar-search px-3 lg:px-6 pb-2'
+            style={{ flexShrink: 0 }}>
+            <SearchBar onNavigate={closeSidebar} />
+          </div>
+
           {/* Body Region: Scrollable Library Navigation */}
           <div
             className='sidebar-body px-3 lg:px-6 py-3 lg:py-4'
@@ -224,22 +233,27 @@ function BaseResponsiveLayoutShell({
             />
           </div>
 
-          {/* Footer Region: Non-scrolling Tools */}
+          {/* Footer Region: Non-scrolling Tools + Selected Character */}
           <div
             className='sidebar-footer border-t px-3 lg:px-4 py-2'
             style={{ flexShrink: 0 }}>
-            <ToolsMenu
-              items={toolItems}
-              onSelect={handleToolSelect}
-              trigger={
-                <>
-                  <Wrench size={18} aria-hidden='true' />
-                  <span className='hidden lg:inline text-sm'>
-                    {t('tools.label')}
-                  </span>
-                </>
-              }
-            />
+            <div className={styles.footerRow}>
+              <div className={styles.footerTools}>
+                <ToolsMenu
+                  items={toolItems}
+                  onSelect={handleToolSelect}
+                  trigger={
+                    <>
+                      <Wrench size={18} aria-hidden='true' />
+                      <span className='hidden lg:inline text-sm'>
+                        {t('tools.label')}
+                      </span>
+                    </>
+                  }
+                />
+              </div>
+              <SelectedCharacterBadge />
+            </div>
           </div>
         </aside>
 

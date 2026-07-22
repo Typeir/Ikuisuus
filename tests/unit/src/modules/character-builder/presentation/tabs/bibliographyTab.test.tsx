@@ -16,7 +16,10 @@ import { describe, expect, it } from 'vitest';
 
 describe('BibliographyTab', () => {
   it('renders the notes textarea', () => {
-    const data = { ...createEmptyCharacter(), notes: 'Test notes.' };
+    const data = {
+      ...createEmptyCharacter(),
+      bibliographyNotes: 'Test notes.',
+    };
     renderWithActiveSheet(
       <BibliographyTab data={data} editing={false} onChange={() => {}} />,
     );

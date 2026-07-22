@@ -11,7 +11,15 @@
 import { StatTicker } from '@/modules/character-builder/presentation/stats/statTicker';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+/** Assert against real English copy rather than raw message keys. */
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<Record<string, unknown>>(),
+  );
+});
 
 describe('StatTicker', () => {
   it('renders the ticker container', () => {
