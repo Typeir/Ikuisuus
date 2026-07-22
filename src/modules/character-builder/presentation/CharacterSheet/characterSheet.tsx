@@ -15,13 +15,13 @@
 
 'use client';
 
+import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import {
   ActiveSheetProvider,
   useActiveSheet,
   type SheetTabId,
 } from '@/modules/character-builder/application/context/activeSheetContext';
-import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { GradientTabs } from '../../../../lib/components/ui/gradientTabs';
@@ -162,12 +162,6 @@ const CharacterSheetBody: React.FC = () => {
               onSaveTierChange={(tier) =>
                 patch({
                   savingThrows: {
-                    str: 'none',
-                    dex: 'none',
-                    con: 'none',
-                    int: 'none',
-                    wis: 'none',
-                    cha: 'none',
                     ...(data.savingThrows ?? {}),
                     [key]: tier,
                   },
