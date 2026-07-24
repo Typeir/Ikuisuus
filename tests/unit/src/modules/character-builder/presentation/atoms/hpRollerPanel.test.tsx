@@ -9,6 +9,7 @@
  */
 
 import { HpRollerPanel } from '@/modules/character-builder/presentation/atoms/hpRollerPanel';
+import { recalculateHpMax } from '@/modules/character-builder/lib/utils/hitDiceUtils';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
@@ -85,16 +86,16 @@ describe('HpRollerPanel', () => {
     expect(screen.getByText('Add to HP')).toBeTruthy();
   });
 
-  it('calls onCommit when Add to HP is clicked', () => {
+  it('calls onCommit with the updated log when Add to HP is clicked', () => {
     const onCommit = vi.fn();
     const log = [makeEntry('1', 'Berserker', 'Berserker', '12', 1, 8)];
     render(<HpRollerPanel hitDiceLog={log} conMod={2} onCommit={onCommit} />);
     fireEvent.click(screen.getByRole('button', { name: /open hit dice roller/i }));
     fireEvent.click(screen.getByText('Add to HP'));
     expect(onCommit).toHaveBeenCalledOnce();
-    const [updatedLog, hpDelta] = onCommit.mock.calls[0];
-    expect(hpDelta).toBe(10);
+    const [updatedLog] = onCommit.mock.calls[0];
     expect(updatedLog[0].addedToHp).toBe(true);
+    expect(recalculateHpMax(updatedLog)).toBe(10);
   });
 
   it('committed entries are shown as read-only', () => {

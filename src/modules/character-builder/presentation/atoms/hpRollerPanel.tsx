@@ -19,10 +19,18 @@ import { useCallback, useEffect, useState } from 'react';
 import { HpRollerGroup } from './hpRollerGroup';
 import styles from './hpRollerPanel.module.scss';
 
+/**
+ * Props for {@link HpRollerPanel}.
+ *
+ * @interface HpRollerPanelProps
+ * @property {HitDieRollEntry[]} hitDiceLog - Per-level hit die roll log to display
+ * @property {number} conMod - Live CON modifier, shown alongside each entry
+ * @property {(updatedLog: HitDieRollEntry[]) => void} onCommit - Called with the full updated log when confirmed HP changes; the consumer derives hpMax from it
+ */
 export interface HpRollerPanelProps {
   hitDiceLog: HitDieRollEntry[];
   conMod: number;
-  onCommit: (updatedLog: HitDieRollEntry[], hpDelta: number) => void;
+  onCommit: (updatedLog: HitDieRollEntry[]) => void;
 }
 
 function groupByVocation(entries: HitDieRollEntry[]) {
@@ -83,37 +91,37 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
   const handleRollAll = useCallback(
     (vocSlug: string) => {
       setLocalLog((p) => {
-        let hpDelta = 0;
+        let hadAdded = false;
         const updated = p.map((e) => {
           if (e.vocSlug !== vocSlug) return e;
-          if (e.addedToHp) hpDelta -= (e.result ?? 0) + conMod;
+          if (e.addedToHp) hadAdded = true;
           return {
             ...e,
             result: rollDie(parseInt(e.dieType, 10) || 1),
             addedToHp: false,
           };
         });
-        if (hpDelta !== 0) onCommit(updated, hpDelta);
+        if (hadAdded) onCommit(updated);
         return updated;
       });
     },
-    [conMod, onCommit],
+    [onCommit],
   );
 
   const handleAverageAll = useCallback(
     (vocSlug: string) => {
       setLocalLog((p) => {
-        let hpDelta = 0;
+        let hadAdded = false;
         const updated = p.map((e) => {
           if (e.vocSlug !== vocSlug) return e;
-          if (e.addedToHp) hpDelta -= (e.result ?? 0) + conMod;
+          if (e.addedToHp) hadAdded = true;
           return { ...e, result: getAverage(e.dieType), addedToHp: false };
         });
-        if (hpDelta !== 0) onCommit(updated, hpDelta);
+        if (hadAdded) onCommit(updated);
         return updated;
       });
     },
-    [conMod, getAverage, onCommit],
+    [getAverage, onCommit],
   );
 
   const handleSetAll = useCallback(
@@ -125,20 +133,20 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
         } else {
           n.add(vocSlug);
           setLocalLog((prev) => {
-            let hpDelta = 0;
+            let hadAdded = false;
             const updated = prev.map((e) => {
               if (e.vocSlug !== vocSlug || !e.addedToHp) return e;
-              hpDelta -= (e.result ?? 0) + conMod;
+              hadAdded = true;
               return { ...e, addedToHp: false };
             });
-            if (hpDelta !== 0) onCommit(updated, hpDelta);
+            if (hadAdded) onCommit(updated);
             return updated;
           });
         }
         return n;
       });
     },
-    [conMod, onCommit],
+    [onCommit],
   );
 
   const handleManualChange = useCallback(
@@ -157,15 +165,13 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
       const entries = localLog.filter(
         (e) => e.vocSlug === vocSlug && !e.addedToHp,
       );
-      let delta = 0;
       const updated = localLog.map((e) => {
         if (e.vocSlug !== vocSlug || e.addedToHp) return e;
         const val = manualValues.get(e.id) ?? e.result ?? 0;
-        delta += val + conMod;
         return { ...e, result: val, addedToHp: true };
       });
       setLocalLog(updated);
-      onCommit(updated, delta);
+      onCommit(updated);
       setSetAllMode((p) => {
         const n = new Set(p);
         n.delete(vocSlug);
@@ -177,7 +183,7 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
         return m;
       });
     },
-    [localLog, conMod, onCommit, manualValues],
+    [localLog, onCommit, manualValues],
   );
 
   const handleConfirm = useCallback(
@@ -189,28 +195,27 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
         x.id === entryId ? { ...x, result: val, addedToHp: true } : x,
       );
       setLocalLog(updated);
-      onCommit(updated, val + conMod);
+      onCommit(updated);
       setManualValues((p) => {
         const m = new Map(p);
         m.delete(entryId);
         return m;
       });
     },
-    [localLog, conMod, onCommit, manualValues],
+    [localLog, onCommit, manualValues],
   );
 
   const handleRemoveFromHp = useCallback(
     (entryId: string) => {
       const e = localLog.find((x) => x.id === entryId);
       if (!e || !e.addedToHp) return;
-      const val = e.result ?? 0;
       const updated = localLog.map((x) =>
         x.id === entryId ? { ...x, addedToHp: false } : x,
       );
       setLocalLog(updated);
-      onCommit(updated, -(val + conMod));
+      onCommit(updated);
     },
-    [localLog, conMod, onCommit],
+    [localLog, onCommit],
   );
 
   const unrolled = localLog.filter((e) => !e.addedToHp).length;

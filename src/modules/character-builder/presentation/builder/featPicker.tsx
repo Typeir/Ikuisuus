@@ -12,8 +12,10 @@
 
 'use client';
 
+import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
 import { useFeats } from '@/lib/hooks/data/useFeats';
+import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import type { CharacterShard } from '@/lib/types/character';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
@@ -52,6 +54,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
   const t = useTranslations('characterSheet.feats');
   const tCommon = useTranslations('common');
   const locale = useLocale();
+  const isMobile = useIsMobileViewport();
   const { feats, isLoading: loading, error: fetchError } = useFeats({ locale });
   const error = fetchError?.message ?? null;
   const [searchQuery, setSearchQuery] = useState('');
@@ -108,7 +111,14 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
 
   return (
     <div className={styles.boonPicker}>
-      {loading && <p className={styles.boonLoading}>{t('loading')}</p>}
+      {loading && (
+        <SkeletonGroup>
+          <Skeleton variant='button' width='100%' />
+          <Skeleton variant='button' width='100%' />
+          <Skeleton variant='button' width='100%' />
+          <Skeleton variant='button' width='100%' />
+        </SkeletonGroup>
+      )}
       {error && <p className={styles.boonError}>{error}</p>}
 
       {!loading && !error && (
@@ -142,8 +152,14 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
                     readOnly={readOnly}
                     onToggle={() => handleToggle(feat)}
                     onExpand={() => toggleExpanded(feat.slug)}
-                    onFocus={() =>
-                      onFocusShard?.({ contentType: 'feats', slug: feat.slug })
+                    onFocus={
+                      isMobile === true
+                        ? () =>
+                            onFocusShard?.({
+                              contentType: 'feats',
+                              slug: feat.slug,
+                            })
+                        : undefined
                     }
                     contentType='feats'
                     contentSlug={feat.slug}
@@ -151,6 +167,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
                     cachedText={feat.description}
                     bodyId={bodyId}
                     expandLabel={expandLabel}
+                    openLabel={t('viewShardDetails')}
                   />
                 );
               })}

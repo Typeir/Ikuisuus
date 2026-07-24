@@ -46,6 +46,7 @@ export interface AbilitiesMutators {
  *
  * @interface AbilitiesContextValue
  * @property {CharacterAbility[]} abilities - All abilities on the character
+ * @property {string[]} vocationSources - Active vocation titles, for scoping spell import to the character's spell lists
  * @property {boolean} editing - Whether the sheet is in edit mode
  * @property {string | null} selectedId - Currently selected ability id
  * @property {CharacterAbility | null} selected - The selected ability object, or null
@@ -53,6 +54,7 @@ export interface AbilitiesMutators {
  */
 export interface AbilitiesContextValue {
   abilities: CharacterAbility[];
+  vocationSources: string[];
   editing: boolean;
   selectedId: string | null;
   selected: CharacterAbility | null;
@@ -88,6 +90,18 @@ export const AbilitiesProvider: React.FC<AbilitiesProviderProps> = ({
   const abilities = useMemo(
     () => (data.abilities ?? []) as CharacterAbility[],
     [data.abilities],
+  );
+
+  const vocationSources = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          (data.vocations ?? [])
+            .filter((v) => v.slug && v.title)
+            .map((v) => v.title),
+        ),
+      ),
+    [data.vocations],
   );
 
   const selected = useMemo(
@@ -145,8 +159,15 @@ export const AbilitiesProvider: React.FC<AbilitiesProviderProps> = ({
   );
 
   const value = useMemo<AbilitiesContextValue>(
-    () => ({ abilities, editing, selectedId, selected, mutators }),
-    [abilities, editing, selectedId, selected, mutators],
+    () => ({
+      abilities,
+      vocationSources,
+      editing,
+      selectedId,
+      selected,
+      mutators,
+    }),
+    [abilities, vocationSources, editing, selectedId, selected, mutators],
   );
 
   return (

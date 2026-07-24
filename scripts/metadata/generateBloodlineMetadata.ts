@@ -59,11 +59,27 @@ interface ParsedBoonHeading {
 }
 
 /**
+ * A selectable option within a variable-cost boon, parsed from the boon's
+ * Cost-column table or its nested option headings.
+ *
+ * @property {string} name - Option display name
+ * @property {number} bpValue - BP cost of this specific option
+ * @property {string} [effect] - Short effect summary from the non-name/non-cost columns
+ */
+interface BoonSubOption {
+  name: string;
+  bpValue: number;
+  effect?: string;
+}
+
+/**
  * Parsed boon metadata payload.
  *
  * @property {string} name - Boon display name
  * @property {string} bpLabel - Raw BP cost label
- * @property {number} [bpValue] - Numeric BP value when deterministic
+ * @property {number} [bpValue] - Numeric BP value when deterministic; suppressed for variable-cost parents
+ * @property {BoonSubOption[]} [subOptions] - Selectable options for a variable-cost boon
+ * @property {'choose-one' | 'pick-any'} [subOptionMode] - Selection mode for the sub-options
  * @property {number} sortOrder - Stable zero-based order in section
  * @property {number} startLine - 1-indexed start line of the boon heading block in the source MDX
  * @property {number} endLine - 1-indexed last line of the boon content block in the source MDX
@@ -73,6 +89,8 @@ interface ParsedBoon {
   name: string;
   bpLabel: string;
   bpValue?: number;
+  subOptions?: BoonSubOption[];
+  subOptionMode?: 'choose-one' | 'pick-any';
   sortOrder: number;
   startLine: number;
   endLine: number;
@@ -115,6 +133,66 @@ function parseTableRow(row: string): string[] {
     .split('|')
     .slice(1, -1)
     .map((cell) => cell.trim());
+}
+
+/**
+ * Extracts a Cost-column option table from a boon body block. Detects a markdown
+ * table whose header has a `Cost` column and an `Option` column and returns one
+ * sub-option per data row. Returns `[]` when the block has no such table.
+ *
+ * @param {string[]} blockLines - Raw lines of the boon body (between headings)
+ * @returns {BoonSubOption[]} Parsed sub-options, or `[]` when there is no cost table
+ */
+function parseCostTable(blockLines: string[]): BoonSubOption[] {
+  const isSeparatorRow = (cells: string[]): boolean =>
+    cells.length > 0 && cells.every((cell) => /^:?-+:?$/.test(cell.trim()));
+
+  for (let i = 0; i < blockLines.length - 1; i++) {
+    const headerLine = blockLines[i].trim();
+    if (!headerLine.startsWith('|')) {
+      continue;
+    }
+
+    const header = parseTableRow(headerLine);
+    const costIdx = header.findIndex((cell) => /^cost$/i.test(cell));
+    if (costIdx === -1) {
+      continue;
+    }
+    if (!isSeparatorRow(parseTableRow(blockLines[i + 1].trim()))) {
+      continue;
+    }
+
+    const optionIdx = header.findIndex((cell) => /^option$/i.test(cell));
+    const nameIdx = optionIdx === -1 ? 0 : optionIdx;
+    const subOptions: BoonSubOption[] = [];
+
+    for (let r = i + 2; r < blockLines.length; r++) {
+      const rowLine = blockLines[r].trim();
+      if (!rowLine.startsWith('|')) {
+        break;
+      }
+      const cells = parseTableRow(rowLine);
+      if (isSeparatorRow(cells)) {
+        continue;
+      }
+      const name = cells[nameIdx]?.trim();
+      const bpValue = Number.parseInt(cells[costIdx]?.trim() ?? '', 10);
+      if (!name || Number.isNaN(bpValue)) {
+        continue;
+      }
+      const effect =
+        cells
+          .filter((_, index) => index !== nameIdx && index !== costIdx)
+          .map((cell) => cell.trim())
+          .filter(Boolean)
+          .join(' — ') || undefined;
+      subOptions.push({ name, bpValue, effect });
+    }
+
+    return subOptions;
+  }
+
+  return [];
 }
 
 /**
@@ -191,10 +269,14 @@ function parseBoonHeading(line: string): ParsedBoonHeading | null {
     };
   }
 
-  return {
-    name: normalized,
-    bpLabel: 'Variable',
-  };
+  if (BOON_MECHANICS.variableCost.test(normalized)) {
+    return {
+      name: normalized,
+      bpLabel: 'Variable',
+    };
+  }
+
+  return null;
 }
 
 /**
@@ -461,7 +543,13 @@ function parseBoonBudget(content: string): number | undefined {
 /**
  * Parses all boon entries from the Boons section, including 1-indexed absolute
  * start and end line numbers anchored to the full MDX file.
- * Handles nested Collapsible blocks and variable-cost boons.
+ *
+ * Variable-cost boons ("Choose One" / "Pick Any") collapse to a single boon
+ * carrying `subOptions`: a Cost-column table in the boon body becomes one option
+ * per row, and nested `<Collapsible>` option headings (deeper than the parent)
+ * are folded in as sub-options rather than emitted as sibling boons. The phantom
+ * `bpValue` a "N BP - Choose One" parent would otherwise report is suppressed,
+ * since the real cost lives on each chosen sub-option.
  *
  * @param {string} content - Full MDX content
  * @param {SharedData} sharedData - Shared game data used for tag extraction
@@ -478,59 +566,143 @@ function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
     return [];
   }
 
-  const headings: Array<{ lineIdx: number; heading: ParsedBoonHeading }> = [];
+  const headings: Array<{
+    lineIdx: number;
+    heading: ParsedBoonHeading;
+    depth: number;
+  }> = [];
+  let collapsibleDepth = 0;
   for (let i = 0; i < sectionLines.length; i++) {
-    const parsed = parseBoonHeading(sectionLines[i]);
-    if (parsed && parsed.name) {
-      headings.push({ lineIdx: i, heading: parsed });
+    const trimmed = sectionLines[i].trim();
+    if (trimmed.startsWith('</Collapsible')) {
+      collapsibleDepth = Math.max(0, collapsibleDepth - 1);
+      continue;
+    }
+    if (trimmed.startsWith('<Collapsible')) {
+      collapsibleDepth += 1;
+      continue;
+    }
+    const heading = parseBoonHeading(sectionLines[i]);
+    if (heading && heading.name) {
+      headings.push({ lineIdx: i, heading, depth: collapsibleDepth });
     }
   }
 
-  return headings.map((entry, idx) => {
+  const buildBlock = (h: number) => {
+    const entry = headings[h];
     const nextLineIdx =
-      idx < headings.length - 1
-        ? headings[idx + 1].lineIdx
-        : sectionLines.length;
+      h < headings.length - 1 ? headings[h + 1].lineIdx : sectionLines.length;
 
     let endSectionIdx = nextLineIdx - 1;
     while (
       endSectionIdx > entry.lineIdx &&
       (!sectionLines[endSectionIdx]?.trim() ||
-        TEXT.collapsibleTag.test(sectionLines[endSectionIdx].trim()))
+        TEXT.collapsibleTag.test(sectionLines[endSectionIdx].trim()) ||
+        /^-{3,}$/.test(sectionLines[endSectionIdx].trim()))
     ) {
       endSectionIdx--;
     }
 
     const absStart = sectionStart + 1 + entry.lineIdx + 1;
     const absEnd = sectionStart + 1 + endSectionIdx + 1;
-
     const rawBlockLines = sectionLines.slice(entry.lineIdx + 1, nextLineIdx);
     const boonContent = rawBlockLines
-      .filter((line) => {
-        const trimmed = line.trim();
-        return !TEXT.collapsibleTag.test(trimmed);
-      })
+      .filter((line) => !TEXT.collapsibleTag.test(line.trim()))
       .join('\n')
       .trim();
 
-    const bpValue = parseBpValue(entry.heading.bpLabel);
+    return { entry, absStart, absEnd, rawBlockLines, boonContent };
+  };
+
+  const firstProseLine = (text: string): string | undefined =>
+    text
+      .split('\n')
+      .map((line) => line.trim())
+      .find((line) => line.length > 0 && !line.startsWith('|')) || undefined;
+
+  const boons: ParsedBoon[] = [];
+  let idx = 0;
+  while (idx < headings.length) {
+    const { entry, absStart, absEnd, rawBlockLines, boonContent } =
+      buildBlock(idx);
+    const isVariableLabel = BOON_MECHANICS.variableCost.test(
+      entry.heading.bpLabel,
+    );
+
+    const childIdxs: number[] = [];
+    if (isVariableLabel) {
+      let j = idx + 1;
+      while (j < headings.length && headings[j].depth > entry.depth) {
+        childIdxs.push(j);
+        j += 1;
+      }
+    }
+
+    const subByName = new Map<string, BoonSubOption>();
+    if (isVariableLabel) {
+      for (const childIdx of childIdxs) {
+        const childBlock = buildBlock(childIdx);
+        const childHeading = headings[childIdx].heading;
+        subByName.set(childHeading.name, {
+          name: childHeading.name,
+          bpValue: parseBpValue(childHeading.bpLabel) ?? 0,
+          effect: firstProseLine(childBlock.boonContent),
+        });
+      }
+      for (const row of parseCostTable(rawBlockLines)) {
+        if (!subByName.has(row.name)) {
+          subByName.set(row.name, row);
+        }
+      }
+    }
+    const subOptions = [...subByName.values()];
+
+    const childContents = childIdxs.map((c) => buildBlock(c).boonContent);
+    const tagSource = [boonContent, ...childContents]
+      .filter(Boolean)
+      .join('\n');
     const tags = extractBoonTags(
       entry.heading.name,
       entry.heading.bpLabel,
-      boonContent,
+      tagSource,
       sharedData,
     );
 
-    return {
-      name: entry.heading.name,
-      bpLabel: entry.heading.bpLabel,
-      bpValue,
-      sortOrder: idx,
-      startLine: absStart,
-      endLine: absEnd,
-      tags,
-    };
-  });
+    if (isVariableLabel && subOptions.length > 0) {
+      const endLine = childIdxs.length
+        ? buildBlock(childIdxs[childIdxs.length - 1]).absEnd
+        : absEnd;
+
+      boons.push({
+        name: entry.heading.name,
+        bpLabel: entry.heading.bpLabel,
+        bpValue: undefined,
+        subOptions,
+        subOptionMode: /pick any/i.test(entry.heading.bpLabel)
+          ? 'pick-any'
+          : 'choose-one',
+        sortOrder: boons.length,
+        startLine: absStart,
+        endLine,
+        tags,
+      });
+
+      idx += 1 + childIdxs.length;
+    } else {
+      boons.push({
+        name: entry.heading.name,
+        bpLabel: entry.heading.bpLabel,
+        bpValue: parseBpValue(entry.heading.bpLabel),
+        sortOrder: boons.length,
+        startLine: absStart,
+        endLine: absEnd,
+        tags,
+      });
+      idx += 1;
+    }
+  }
+
+  return boons;
 }
 
 /* ────────────────────────  File Parser  ────────────────────────────── */

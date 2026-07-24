@@ -228,69 +228,64 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
     );
   }
 
-  if (collapsed) {
-    return (
-      <div
-        className={styles.vocationSelector}
-        aria-label={t('ariaVocationSelector')}>
-        {identityRows}
-        {summaryBar}
-      </div>
-    );
-  }
-
   return (
     <div
       className={styles.vocationSelector}
       aria-label={t('ariaVocationSelector')}>
       {identityRows}
-      {summaryBar}
-      <div className={styles.selectorRow}>
-        <span className={styles.selectorLabel}>{t('colBloodline')}</span>
-        <div className={styles.selectorInput}>
-          {isLoading ? (
-            <Skeleton variant='button' height='26px' />
-          ) : (
-            <FilterSelect
-              id='bloodline-select'
-              value={bloodlineSlug ?? ''}
-              options={bloodlines.map(toOpt)}
-              onChange={handleBloodlineChange}
-              placeholder={t('selectBloodline')}
-              searchable
-              size='sm'
-              ariaLabel={t('colBloodline')}
-            />
-          )}
-        </div>
+      <div className={styles.summaryPanel}>
+        {summaryBar}
+        {!collapsed && (
+          <div className={styles.summaryBody}>
+            <div className={styles.selectorRow}>
+              <span className={styles.selectorLabel}>{t('colBloodline')}</span>
+              <div className={styles.selectorInput}>
+                {isLoading ? (
+                  <Skeleton variant='button' height='26px' />
+                ) : (
+                  <FilterSelect
+                    id='bloodline-select'
+                    value={bloodlineSlug ?? ''}
+                    options={bloodlines.map(toOpt)}
+                    onChange={handleBloodlineChange}
+                    placeholder={t('selectBloodline')}
+                    searchable
+                    size='sm'
+                    ariaLabel={t('colBloodline')}
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className={styles.entriesRowMulti}>
+              {vocations.map((entry, index) => (
+                <VocationEntryBlock
+                  key={index}
+                  entry={entry}
+                  index={index}
+                  isOnlyEntry={vocations.length === 1}
+                  vocOptions={vocOptions}
+                  specs={specs}
+                  metaLoading={isLoading}
+                  onVocationChange={handleVocationChange}
+                  onSpecChange={handleSpecChange}
+                  onLevelChange={handleLevelChange}
+                  onRemove={handleRemoveVocation}
+                />
+              ))}
+            </div>
+
+            <button
+              type='button'
+              className={styles.addVocationBtn}
+              onClick={handleAddVocation}>
+              {t('addVocation')}
+            </button>
+          </div>
+        )}
       </div>
 
-      <div className={styles.entriesRowMulti}>
-        {vocations.map((entry, index) => (
-          <VocationEntryBlock
-            key={index}
-            entry={entry}
-            index={index}
-            isOnlyEntry={vocations.length === 1}
-            vocOptions={vocOptions}
-            specs={specs}
-            metaLoading={isLoading}
-            onVocationChange={handleVocationChange}
-            onSpecChange={handleSpecChange}
-            onLevelChange={handleLevelChange}
-            onRemove={handleRemoveVocation}
-          />
-        ))}
-      </div>
-
-      <button
-        type='button'
-        className={styles.addVocationBtn}
-        onClick={handleAddVocation}>
-        {t('addVocation')}
-      </button>
-
-      {bloodlineSlug && showBoonPicker && (
+      {!collapsed && bloodlineSlug && showBoonPicker && (
         <BoonPicker
           bloodlineSlug={bloodlineSlug}
           selectedBoons={selectedBoons}

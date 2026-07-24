@@ -34,6 +34,7 @@ describe('FeatureCard', () => {
     contentKey: 'Test Feature',
     bodyId: 'feature-body-test-feat',
     expandLabel: 'Expand Test Feature',
+    openLabel: 'Open Test Feature',
   };
 
   it('renders the label and expand button', () => {
@@ -44,18 +45,18 @@ describe('FeatureCard', () => {
     ).toBeTruthy();
   });
 
-  it('calls onToggle and onFocus when toggle button clicked', async () => {
+  it('calls onToggle (not onFocus) when the toggle button is clicked', async () => {
     const onToggle = vi.fn();
     const onFocus = vi.fn();
     render(
       <FeatureCard {...baseProps} onToggle={onToggle} onFocus={onFocus} />,
     );
     await userEvent.click(screen.getByText('Test Feature'));
-    expect(onFocus).toHaveBeenCalledOnce();
     expect(onToggle).toHaveBeenCalledOnce();
+    expect(onFocus).not.toHaveBeenCalled();
   });
 
-  it('calls onExpand and onFocus when expand button clicked', async () => {
+  it('calls onExpand (not onFocus) when the expand button is clicked', async () => {
     const onExpand = vi.fn();
     const onFocus = vi.fn();
     render(
@@ -64,8 +65,21 @@ describe('FeatureCard', () => {
     await userEvent.click(
       screen.getByRole('button', { name: 'Expand Test Feature' }),
     );
-    expect(onFocus).toHaveBeenCalledOnce();
     expect(onExpand).toHaveBeenCalledOnce();
+    expect(onFocus).not.toHaveBeenCalled();
+  });
+
+  it('calls onFocus only when the open-source button is clicked', async () => {
+    const onFocus = vi.fn();
+    const onToggle = vi.fn();
+    render(
+      <FeatureCard {...baseProps} onFocus={onFocus} onToggle={onToggle} />,
+    );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Open Test Feature' }),
+    );
+    expect(onFocus).toHaveBeenCalledOnce();
+    expect(onToggle).not.toHaveBeenCalled();
   });
 
   it('marks toggle button as aria-disabled when readOnly', () => {

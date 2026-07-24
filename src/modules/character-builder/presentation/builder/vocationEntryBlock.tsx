@@ -19,6 +19,7 @@ import { FilterSelect } from '@/lib/components/ui/filterSelect';
 import { NumericInput } from '@/lib/components/ui/numericInput';
 import type { VocationEntry } from '@/lib/types/character';
 import type { SpecOption, VocationOption } from '@/lib/types/vocations';
+import { VocationProficiencySummary } from './vocationProficiencySummary';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import styles from './vocationSelector.module.scss';
@@ -103,6 +104,10 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
   const filteredSpecs = entry.slug
     ? specs.filter((s) => s.vocation === entry.slug)
     : [];
+
+  const selectedVocation = entry.slug
+    ? vocOptions.find((v) => v.slug === entry.slug)
+    : undefined;
 
   const showSkeleton = metaLoading && !!entry.slug;
   const isAsyncLoading = asyncLoading && !showSkeleton;
@@ -202,6 +207,9 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
           )}
         </div>
       </div>
+      {selectedVocation && !showSkeleton && (
+        <VocationProficiencySummary vocation={selectedVocation} />
+      )}
     </div>
   );
 };

@@ -14,11 +14,30 @@
  */
 
 /**
+ * A selectable option within a variable-cost boon (e.g. Silent One's Frame
+ * sizes, Edaphite's Mind talents). Parsed from the boon's Cost-column table or
+ * its nested option headings.
+ *
+ * @interface BloodlineBoonSubOption
+ * @property {string} name - Option display name (e.g. "Powerful Build")
+ * @property {number} bpValue - BP cost of this specific option
+ * @property {string} [effect] - Short effect summary from the non-name/non-cost table columns
+ */
+export interface BloodlineBoonSubOption {
+  name: string;
+  bpValue: number;
+  effect?: string;
+}
+
+/**
  * Individual boon option parsed from a Collapsible block.
  *
+ * @interface BloodlineBoon
  * @property {string} name - Boon display name (e.g. "Extended Reach")
  * @property {string} bpLabel - Raw BP cost text (e.g. "6 BP", "Variable BP - Choose One")
  * @property {number} [bpValue] - Parsed numeric BP cost when deterministic; absent for variable-cost boons
+ * @property {BloodlineBoonSubOption[]} [subOptions] - Selectable options for a variable-cost boon; each carries its own BP cost
+ * @property {'choose-one' | 'pick-any'} [subOptionMode] - Whether the player picks exactly one sub-option or any number
  * @property {number} sortOrder - Zero-based position within the boon list
  * @property {number} [startLine] - 1-indexed start line of the boon heading block in the source MDX
  * @property {number} [endLine] - 1-indexed last line of the boon content block in the source MDX
@@ -28,6 +47,8 @@ export interface BloodlineBoon {
   name: string;
   bpLabel: string;
   bpValue?: number;
+  subOptions?: BloodlineBoonSubOption[];
+  subOptionMode?: 'choose-one' | 'pick-any';
   sortOrder: number;
   startLine?: number;
   endLine?: number;

@@ -15,15 +15,8 @@ import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
-import {
-    useFocusedShard,
-    useSheetEditing,
-    useSheetMutators,
-} from '@/modules/character-builder/application/context/activeSheetContext';
-import {
-    ContentShardPanel,
-    type ContentShardType,
-} from '@/modules/character-builder/presentation/shards/contentShardPanel';
+import { useSheetEditing } from '@/modules/character-builder/application/context/activeSheetContext';
+import { ContentShardPanel } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
@@ -56,8 +49,6 @@ export const BloodlineTab: React.FC<BloodlineTabProps> = ({
 }) => {
   const t = useTranslations('characterSheet');
   const editing = useSheetEditing();
-  const focusedShard = useFocusedShard();
-  const mutators = useSheetMutators();
 
   const handleBoonsToggle = useCallback(
     (boons: CharacterShard[]) => onChange({ selectedBoons: boons }),
@@ -82,8 +73,6 @@ export const BloodlineTab: React.FC<BloodlineTabProps> = ({
       id='builder.bloodline'
       ariaLabel={t('selectBloodline')}
       sheetTitle={t('shardPreviewTitle', { name: data.bloodlineTitle || '' })}
-      sheetOpen={!!focusedShard}
-      onSheetClose={() => mutators.setFocusedShard(null)}
       mobileTriggerLabel={t('viewShardDetails')}
       left={
         <div className={styles.column}>
@@ -107,23 +96,15 @@ export const BloodlineTab: React.FC<BloodlineTabProps> = ({
             boonBudget={data.boonBudget}
             onToggle={handleBoonsToggle}
             readOnly={!editing}
-            onFocusShard={mutators.setFocusedShard}
           />
         </div>
       }
       right={
         <div className={styles.column}>
-          {focusedShard ? (
-            <ContentShardPanel
-              contentType={focusedShard.contentType as ContentShardType}
-              slug={focusedShard.slug}
-            />
-          ) : (
-            <ContentShardPanel
-              contentType='bloodlines'
-              slug={data.bloodlineSlug}
-            />
-          )}
+          <ContentShardPanel
+            contentType='bloodlines'
+            slug={data.bloodlineSlug}
+          />
         </div>
       }
     />

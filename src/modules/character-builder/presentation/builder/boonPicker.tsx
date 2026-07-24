@@ -28,6 +28,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import { useSWRConfig } from 'swr';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
+import { applySubOptionSelection } from './boonSelection';
+import { BoonSubOptions } from './boonSubOptions';
 import { FeatureCard } from './featureCard';
 import pickerStyles from './pickerControls.module.scss';
 
@@ -49,7 +51,6 @@ export interface BoonPickerProps {
   onToggle: (boons: CharacterShard[]) => void;
   readOnly?: boolean;
   locale?: string;
-  onFocusShard?: (shard: { contentType: string; slug: string }) => void;
 }
 
 /**
@@ -66,7 +67,6 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
   boonBudget,
   onToggle,
   readOnly = false,
-  onFocusShard,
 }) => {
   const locale = useLocale();
   const {
@@ -125,6 +125,10 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
       return;
     }
 
+    if (boon.subOptions !== undefined && boon.subOptions.length > 0) {
+      return;
+    }
+
     const url = `/api/content-shards/bloodlines/${bloodlineSlug}?keys[]=${encodeURIComponent(boon.name)}&locale=${locale}`;
 
     type BoonShardResponse = { shards: Record<string, string> };
@@ -154,6 +158,13 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
       cachedText,
     };
     onToggle([...selectedBoons, shard]);
+  };
+
+  const handleSelectSubOption = (boon: BloodlineBoon, optionName: string) => {
+    if (readOnly) return;
+    onToggle(
+      applySubOptionSelection(selectedBoons, boon, optionName, bloodlineSlug),
+    );
   };
 
   return (
@@ -214,13 +225,31 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
                 const cachedShard = selectedBoons.find(
                   (s) => s.heading === boon.name,
                 );
+                const hasSubOptions =
+                  boon.subOptions !== undefined && boon.subOptions.length > 0;
+                const resolvedCost = cachedShard?.bpCost;
                 const badgeText =
                   boon.bpValue !== undefined
                     ? `${boon.bpValue} ${t('bpUnit')}`
-                    : boon.bpLabel;
+                    : hasSubOptions && resolvedCost !== undefined
+                      ? `${resolvedCost} ${t('bpUnit')}`
+                      : boon.bpLabel;
                 const expandLabel = isExpanded
                   ? t('shardCollapseAria', { name: boon.name })
                   : t('shardExpandAria', { name: boon.name });
+                const subOptionSlot = hasSubOptions ? (
+                  <BoonSubOptions
+                    boonName={boon.name}
+                    options={boon.subOptions ?? []}
+                    mode={boon.subOptionMode ?? 'choose-one'}
+                    selected={cachedShard?.selectedSubOptions ?? []}
+                    readOnly={readOnly}
+                    bpUnitLabel={t('bpUnit')}
+                    onChange={(optionName) =>
+                      handleSelectSubOption(boon, optionName)
+                    }
+                  />
+                ) : undefined;
                 return (
                   <FeatureCard
                     key={boon.name}
@@ -231,18 +260,13 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
                     readOnly={readOnly}
                     onToggle={() => handleToggle(boon)}
                     onExpand={() => toggleExpanded(boon.name)}
-                    onFocus={() =>
-                      onFocusShard?.({
-                        contentType: 'bloodlines',
-                        slug: bloodlineSlug,
-                      })
-                    }
                     contentType='bloodlines'
                     contentSlug={bloodlineSlug}
                     contentKey={boon.name}
                     cachedText={cachedShard?.cachedText}
                     bodyId={bodyId}
                     expandLabel={expandLabel}
+                    subOptions={subOptionSlot}
                   />
                 );
               })}

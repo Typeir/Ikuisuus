@@ -18,7 +18,7 @@
 import { MobileModal } from '@/lib/components/ui/modal';
 import { ResizablePane } from '@/lib/components/ui/resizablePane';
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
-import { PanelBottomOpen } from 'lucide-react';
+import { SquareArrowOutUpRight } from 'lucide-react';
 import { useCallback, useState, type ReactNode } from 'react';
 import styles from './builderSplitPane.module.scss';
 
@@ -105,7 +105,7 @@ export const BuilderSplitPane: React.FC<BuilderSplitPaneProps> = ({
           type='button'
           className={styles.summonBtn}
           onClick={() => setLocalOpen(true)}>
-          <PanelBottomOpen size={14} aria-hidden='true' />
+          <SquareArrowOutUpRight size={14} aria-hidden='true' />
           {mobileTriggerLabel}
         </button>
       )}

@@ -10,6 +10,7 @@
  * @since 7.0.0
  */
 
+import type { BloodlineBoonSubOption } from '@/lib/db/content/schemas/bloodlineMetadata';
 import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { BloodlineEntity } from './index';
 
@@ -68,4 +69,13 @@ export class BloodlineBoonEntity {
     nullable: true,
   })
   endLine?: number | null;
+
+  /** @property {BloodlineBoonSubOption[] | null} subOptions - Selectable options for a variable-cost boon, stored as JSONB */
+  @Property({
+    type: 'json',
+    fieldName: 'sub_options',
+    columnType: 'jsonb',
+    nullable: true,
+  })
+  subOptions?: BloodlineBoonSubOption[] | null;
 }

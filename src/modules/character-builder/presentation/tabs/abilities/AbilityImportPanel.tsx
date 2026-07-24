@@ -13,6 +13,7 @@
 
 'use client';
 
+import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import { Tooltip } from '@/lib/components/ui/tooltip';
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
 import type { HeirloomMetadata } from '@/lib/db/content/schemas/heirloomMetadata';
@@ -58,7 +59,8 @@ export const AbilityImportPanel: React.FC<AbilityImportPanelProps> = ({
   const t = useTranslations('characterSheet');
   const tCommon = useTranslations('common');
   const locale = useLocale();
-  const { importAbility } = useAbilities().mutators;
+  const { mutators, vocationSources } = useAbilities();
+  const { importAbility } = mutators;
   const [activeTab, setActiveTab] = useState<ImportTab>('spells');
   const [search, setSearch] = useState('');
 
@@ -66,7 +68,11 @@ export const AbilityImportPanel: React.FC<AbilityImportPanelProps> = ({
     spells,
     isLoading: spellsLoading,
     error: spellsError,
-  } = useSpellsForImport({ locale, enabled: activeTab === 'spells' });
+  } = useSpellsForImport({
+    locale,
+    enabled: activeTab === 'spells',
+    listSources: vocationSources,
+  });
   const {
     heirlooms,
     isLoading: heirloomsLoading,
@@ -174,7 +180,14 @@ export const AbilityImportPanel: React.FC<AbilityImportPanelProps> = ({
 
       {/* Item list */}
       {currentLoading && (
-        <p className={styles.importStatus}>{tCommon('loading')}</p>
+        <SkeletonGroup>
+          <Skeleton variant='text' width='85%' />
+          <Skeleton variant='text' width='70%' />
+          <Skeleton variant='text' width='90%' />
+          <Skeleton variant='text' width='60%' />
+          <Skeleton variant='text' width='80%' />
+          <Skeleton variant='text' width='72%' />
+        </SkeletonGroup>
       )}
       {currentError && <p className={styles.importStatus}>{currentError}</p>}
       {!currentLoading && !currentError && filteredItems.length > 0 && (

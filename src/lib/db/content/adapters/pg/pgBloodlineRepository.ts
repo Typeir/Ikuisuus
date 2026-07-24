@@ -31,13 +31,23 @@ const rowToBloodline = (row: BloodlineEntity): BloodlineMetadata => {
   const boons: BloodlineBoon[] = row.boons
     .getItems()
     .sort((a, b) => a.sortOrder - b.sortOrder)
-    .map((b) => ({
-      name: b.name,
-      bpLabel: b.bpLabel,
-      bpValue: orUndef(b.bpValue),
-      sortOrder: b.sortOrder,
-      tags: b.tags,
-    }));
+    .map((b) => {
+      const subOptions = nonEmpty(b.subOptions ?? []);
+      const subOptionMode: BloodlineBoon['subOptionMode'] = subOptions
+        ? /pick any/i.test(b.bpLabel)
+          ? 'pick-any'
+          : 'choose-one'
+        : undefined;
+      return {
+        name: b.name,
+        bpLabel: b.bpLabel,
+        bpValue: orUndef(b.bpValue),
+        subOptions,
+        subOptionMode,
+        sortOrder: b.sortOrder,
+        tags: b.tags,
+      };
+    });
 
   return {
     slug: row.slug,

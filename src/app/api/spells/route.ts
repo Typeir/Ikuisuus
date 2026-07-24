@@ -36,6 +36,7 @@ import {
   type FilterExpression,
 } from '@/lib/db/content/filters';
 import { spellRepository } from '@/lib/db/content/repositories/spellRepository';
+import type { SpellMetadata } from '@/lib/db/content/schemas/spellMetadata';
 import { logger } from '@/lib/logging/logger';
 import { NextResponse } from 'next/server';
 
@@ -71,13 +72,29 @@ const findDisallowedField = (filters: FilterExpression[]): string | null => {
 };
 
 /**
+ * Removes duplicate spells by slug, preserving first-seen order. Used when
+ * merging results from multiple vocation spell lists.
+ *
+ * @param {SpellMetadata[]} spells - Spells that may include cross-list duplicates
+ * @returns {SpellMetadata[]} Spells unique by slug
+ */
+const dedupeBySlug = (spells: SpellMetadata[]): SpellMetadata[] => {
+  const bySlug = new Map<string, SpellMetadata>();
+  for (const spell of spells) {
+    if (!bySlug.has(spell.slug)) bySlug.set(spell.slug, spell);
+  }
+  return [...bySlug.values()];
+};
+
+/**
  * POST /api/spells
  *
  * Returns array of spell metadata from the active content repository.
  * Accepts optional locale, spells slug array, listSource, and filters.
  *
  * Branching precedence:
- *   1. `listSource` → `listBySource(locale, listSource)` then in-memory filter pass.
+ *   1. `listSources` (or single `listSource`) → merged `listBySource` per source,
+ *      deduped by slug, then in-memory filter pass.
  *   2. `spells` slugs → `listBySlugs(locale, spells)` then in-memory filter pass.
  *   3. Otherwise → `list(locale, filters)` (filters pushed to repository).
  *
@@ -89,6 +106,9 @@ export async function POST(req: Request) {
   const locale = body.locale || 'en';
   const spellSlugs: string[] | undefined = body.spells;
   const listSource: string | undefined = body.listSource;
+  const listSources: string[] | undefined = Array.isArray(body.listSources)
+    ? body.listSources.filter((s: unknown): s is string => typeof s === 'string')
+    : undefined;
 
   let filters: FilterExpression[] | undefined;
   if (body.filters !== undefined) {
@@ -108,11 +128,21 @@ export async function POST(req: Request) {
     filters = body.filters;
   }
 
+  const sources =
+    listSources && listSources.length > 0
+      ? listSources
+      : listSource
+        ? [listSource]
+        : undefined;
+
   try {
     let spells;
-    if (listSource) {
-      const listSpells = await spellRepository.listBySource(locale, listSource);
-      spells = filters ? applyFiltersInMemory(listSpells, filters) : listSpells;
+    if (sources) {
+      const perSource = await Promise.all(
+        sources.map((s) => spellRepository.listBySource(locale, s)),
+      );
+      const merged = dedupeBySlug(perSource.flat());
+      spells = filters ? applyFiltersInMemory(merged, filters) : merged;
     } else if (spellSlugs && spellSlugs.length > 0) {
       const slugSpells = await spellRepository.listBySlugs(locale, spellSlugs);
       spells = filters ? applyFiltersInMemory(slugSpells, filters) : slugSpells;

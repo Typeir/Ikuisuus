@@ -60,6 +60,39 @@ const MOCK_BLOODLINES = [
   },
 ];
 
+const MOCK_SUBOPT = [
+  {
+    slug: 'silent-one',
+    title: 'Silent One',
+    file: 'src/content/en/character-creation/bloodlines/silent-one.bloodline.mdx',
+    boonBudget: 10,
+    boons: [
+      {
+        name: 'Frame',
+        bpLabel: 'Variable BP - Choose One',
+        subOptions: [
+          { name: 'Powerful Build', bpValue: 1 },
+          { name: 'Large Frame', bpValue: 3 },
+        ],
+        subOptionMode: 'choose-one',
+        sortOrder: 0,
+        tags: [],
+      },
+      {
+        name: 'Vision',
+        bpLabel: 'Variable - Pick Any Combination',
+        subOptions: [
+          { name: 'Darkvision', bpValue: 1 },
+          { name: 'Truesight', bpValue: 5 },
+        ],
+        subOptionMode: 'pick-any',
+        sortOrder: 1,
+        tags: [],
+      },
+    ],
+  },
+];
+
 const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>();
 
 beforeEach(() => {
@@ -280,5 +313,75 @@ describe('BoonPicker', () => {
       name: /shardExpandAria/i,
     });
     expect(expandBtns[0]).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('selecting a choose-one sub-option creates a shard with that option cost', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_SUBOPT), { status: 200 }),
+    );
+    const onToggle = vi.fn();
+    render(
+      <BoonPicker
+        bloodlineSlug='silent-one'
+        selectedBoons={[]}
+        boonBudget={10}
+        onToggle={onToggle}
+      />,
+    );
+    await waitFor(() => screen.getByText('Frame'));
+    await userEvent.click(screen.getByRole('radio', { name: /Large Frame/i }));
+    expect(onToggle).toHaveBeenCalledOnce();
+    const shards = onToggle.mock.calls[0][0] as CharacterShard[];
+    expect(shards[0].heading).toBe('Frame');
+    expect(shards[0].selectedSubOptions).toEqual(['Large Frame']);
+    expect(shards[0].bpCost).toBe(3);
+  });
+
+  it('pick-any sub-options accumulate and sum into bpCost', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_SUBOPT), { status: 200 }),
+    );
+    const existing: CharacterShard = {
+      id: 'silent-one::Vision',
+      sourceFile: 'x',
+      heading: 'Vision',
+      category: 'boon',
+      bpCost: 1,
+      selectedSubOptions: ['Darkvision'],
+    };
+    const onToggle = vi.fn();
+    render(
+      <BoonPicker
+        bloodlineSlug='silent-one'
+        selectedBoons={[existing]}
+        boonBudget={10}
+        onToggle={onToggle}
+      />,
+    );
+    await waitFor(() => screen.getByText('Vision'));
+    await userEvent.click(screen.getByRole('checkbox', { name: /Truesight/i }));
+    expect(onToggle).toHaveBeenCalledOnce();
+    const shards = onToggle.mock.calls[0][0] as CharacterShard[];
+    const vision = shards.find((s) => s.heading === 'Vision');
+    expect(vision?.selectedSubOptions).toEqual(['Darkvision', 'Truesight']);
+    expect(vision?.bpCost).toBe(6);
+  });
+
+  it('does not select a variable boon via the top toggle (a sub-option must be picked)', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify(MOCK_SUBOPT), { status: 200 }),
+    );
+    const onToggle = vi.fn();
+    render(
+      <BoonPicker
+        bloodlineSlug='silent-one'
+        selectedBoons={[]}
+        boonBudget={10}
+        onToggle={onToggle}
+      />,
+    );
+    await waitFor(() => screen.getByText('Frame'));
+    await userEvent.click(screen.getByRole('button', { name: /Frame/i }));
+    expect(onToggle).not.toHaveBeenCalled();
   });
 });

@@ -36,7 +36,7 @@ import styles from '../CharacterSheet/characterSheet.module.scss';
  * @property {VocationEntry[]} vocations - Active vocation entries (used for hit dice counter)
  * @property {HitDieRollEntry[]} hitDiceLog - Hit die roll log for the HP roller panel
  * @property {number} conMod - CON modifier for HP roller calculations
- * @property {(updatedLog: HitDieRollEntry[], hpDelta: number) => void} onHitDiceCommit - Called when a roll is confirmed
+ * @property {(updatedLog: HitDieRollEntry[]) => void} onHitDiceCommit - Called with the updated log when confirmed HP changes
  */
 export interface CombatStatsRowProps {
   hpCurrent: number;
@@ -50,7 +50,7 @@ export interface CombatStatsRowProps {
   vocations: VocationEntry[];
   hitDiceLog: HitDieRollEntry[];
   conMod: number;
-  onHitDiceCommit: (updatedLog: HitDieRollEntry[], hpDelta: number) => void;
+  onHitDiceCommit: (updatedLog: HitDieRollEntry[]) => void;
 }
 
 /**

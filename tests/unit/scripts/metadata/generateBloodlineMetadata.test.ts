@@ -144,22 +144,77 @@ You can use your reaction when hit by a melee weapon attack to reduce extra dama
       boons: Array<Record<string, unknown>>;
     };
 
-    expect(parsed.boons).toHaveLength(2);
-    expect(parsed.boons[0].bpValue).toBeUndefined();
-    expect(parsed.boons[0].tags).toEqual(
+    expect(parsed.boons).toHaveLength(1);
+    const boon = parsed.boons[0];
+    expect(boon.name).toBe('Defense Matrix');
+    expect(boon.bpValue).toBeUndefined();
+    expect(boon.subOptionMode).toBe('pick-any');
+    expect(boon.subOptions).toHaveLength(2);
+    expect(boon.subOptions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'Iron Skin', bpValue: 1 }),
+        expect.objectContaining({ name: 'Inner Bulwark', bpValue: 2 }),
+      ]),
+    );
+    expect(boon.tags).toEqual(
       expect.arrayContaining([
         'mechanic:variable-cost',
         'mechanic:ac',
         'mechanic:saving-throw',
         'mechanic:repose-recharge',
-      ]),
-    );
-    expect(parsed.boons[1].tags).toEqual(
-      expect.arrayContaining([
         'mechanic:reaction',
         'mechanic:weapon',
         'mechanic:extra-damage',
       ]),
     );
+  });
+
+  it('parses a Cost-column table into choose-one sub-options', async () => {
+    const filePath = await createTempBloodline(`# Sample Bloodline
+
+Lore text.
+
+---
+
+## Core Features
+
+| **Ability Scores** | **Movement Speeds** | **Senses** |
+| --- | --- | --- |
+| <ul><li>STR +1</li></ul> | <ul><li>Walk: 30 ft.</li></ul> | <ul><li>Standard vision</li></ul> |
+
+| **Size** | **Creature Types** | **Age** |
+| --- | --- | --- |
+| <ul><li>Medium</li></ul> | <ul><li>Humanoid</li></ul> | <ul><li>Ageless</li></ul> |
+
+---
+
+## Boons
+
+You have a budget of **10 Boon Points**.
+
+###### Frame <span>Variable BP - Choose One</span>
+
+Choose one of the following:
+
+| Option | Size | Effect | Cost |
+| --- | --- | --- | ---: |
+| Powerful Build | Medium | Count as one size larger. | 1 |
+| Large Frame | Large | Your space is 10 ft. | 3 |
+`);
+
+    const sharedData = await loadSharedData();
+    const parsed = (await parseBloodlineFile(filePath, sharedData)) as {
+      boons: Array<Record<string, unknown>>;
+    };
+
+    expect(parsed.boons).toHaveLength(1);
+    const boon = parsed.boons[0];
+    expect(boon.name).toBe('Frame');
+    expect(boon.bpValue).toBeUndefined();
+    expect(boon.subOptionMode).toBe('choose-one');
+    expect(boon.subOptions).toEqual([
+      expect.objectContaining({ name: 'Powerful Build', bpValue: 1 }),
+      expect.objectContaining({ name: 'Large Frame', bpValue: 3 }),
+    ]);
   });
 });

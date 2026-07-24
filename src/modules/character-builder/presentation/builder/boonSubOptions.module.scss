@@ -1,0 +1,46 @@
+/**
+ * Boon sub-option selector — radio/checkbox group for variable-cost boons.
+ * All colors via CSS variables — no color literals.
+ */
+
+.subOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.25rem;
+  padding: 0.25rem 0.4rem;
+  border-top: 1px solid var(--color-secondary);
+  border-radius: 2px;
+
+  &:disabled {
+    opacity: 0.55;
+  }
+}
+
+.subOption {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  overflow: hidden;
+}
+
+.subOptionName {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.subOptionCost {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.subOptionEffect {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-secondary);
+}

@@ -14,6 +14,7 @@
 
 'use client';
 
+import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import { useContentShard } from '@/lib/hooks/data/useContentShard';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { mdxComponents } from '@/modules/library/presentation';
@@ -141,8 +142,14 @@ export const ContentShardPanel: React.FC<ContentShardPanelProps> = ({
 
   if (loading) {
     return (
-      <div className={styles.loading} aria-busy='true'>
-        Loading…
+      <div className={styles.panel} aria-busy='true'>
+        <SkeletonGroup>
+          <Skeleton variant='title' />
+          <Skeleton variant='text' count={3} />
+          <Skeleton variant='text' width='80%' />
+          <Skeleton variant='text' count={2} />
+          <Skeleton variant='text' width='55%' />
+        </SkeletonGroup>
       </div>
     );
   }

@@ -66,7 +66,9 @@ describe('ContentShardPanel', () => {
   it('shows loading state immediately on mount', () => {
     mockFetch.mockReturnValue(new Promise(() => {}));
     render(<ContentShardPanel contentType='feats' slug='alert' />);
-    expect(screen.getByText('Loading…')).toBeTruthy();
+    expect(
+      document.querySelectorAll('[class*="skeleton"]').length,
+    ).toBeGreaterThan(0);
   });
 
   it('renders the markdown returned from the API', async () => {

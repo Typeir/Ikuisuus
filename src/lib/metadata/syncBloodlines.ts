@@ -9,6 +9,7 @@
  * @since 7.0.0
  */
 
+import type { BloodlineBoonSubOption } from '@/lib/db/content/schemas/bloodlineMetadata';
 import { BloodlineBoonEntity, BloodlineEntity } from '@/lib/db/orm/entities';
 import { createLogger } from '@/lib/logging/logger';
 import type { EntityManager } from '@mikro-orm/postgresql';
@@ -157,6 +158,8 @@ export async function syncBloodlines(
           startLine: boon.startLine as number | undefined,
           endLine: boon.endLine as number | undefined,
           tags: (boon.tags as string[]) ?? [],
+          subOptions:
+            (boon.subOptions as BloodlineBoonSubOption[] | undefined) ?? [],
         });
       }
 
@@ -173,6 +176,8 @@ export async function syncBloodlines(
           startLine: boon.startLine as number | undefined,
           endLine: boon.endLine as number | undefined,
           tags: (boon.tags as string[]) ?? [],
+          subOptions:
+            (boon.subOptions as BloodlineBoonSubOption[] | undefined) ?? [],
         });
       }
       result.inserted++;

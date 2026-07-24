@@ -1,10 +1,9 @@
 /**
  * @fileoverview Overview Tab
  * @description Two-column overview: combat stats / skills / tools on the left;
- * attacks, selected feature chips, and notes on the right.
- *
- * Responsible for deriving tier bonus from total vocation level and
- * appending new hit die roll entries when a level-up is detected.
+ * attacks, selected feature chips, and notes on the right. Also hosts the
+ * hit-dice sync effect that keeps the roll log, tier bonus, and hpMax in step
+ * with the character's vocations and level.
  *
  * @module lib/components/characterSheet/tabs/overviewTab
  * @version 2.0.0
@@ -25,6 +24,7 @@ import {
     computeAbilityModifier,
     computeTierBonus,
 } from '@/modules/character-builder/lib/utils/characterStorage';
+import { recalculateHpMax } from '@/modules/character-builder/lib/utils/hitDiceUtils';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect } from 'react';
@@ -76,6 +76,16 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       (s) => s.level === undefined || s.level <= v.level,
     ),
   ]);
+
+  /**
+   * Syncs the hit-dice log, tier bonus, and hpMax with the current vocations
+   * and levels. Backfills a roll entry for every vocation level from 1 (diffing
+   * against the previous render would miss levels assigned while this tab was
+   * unmounted; `alreadyLogged` dedupes), prunes (idempotent) entries beyond the
+   * current level or for removed vocations, derives the tier bonus, and — only
+   * when entries were pruned — recalculates hpMax from the surviving log so HP
+   * confirmed against a removed level leaves no phantom value.
+   */
   useEffect(() => {
     const curr = data.vocations;
 
@@ -91,10 +101,6 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       if (!currEntry.slug) continue;
       const currLevel = currEntry.level ?? 1;
 
-      /* Backfill every level from 1 rather than diffing against the previous
-         render — levels assigned while this tab was unmounted would otherwise
-         never enter the log (the ref initialises to the current state on
-         mount, so the diff sees no change). `alreadyLogged` dedupes. */
       for (let li = 1; li <= currLevel; li++) {
         const id = `${currEntry.slug}-${li}`;
         const alreadyLogged = updatedLog.some((e) => e.id === id);
@@ -112,8 +118,6 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
         }
       }
 
-      /* Idempotent prune of entries beyond the current level — same
-         unmounted-diff blindness applies to level decreases. */
       updatedLog = updatedLog.filter((e) => {
         if (e.vocSlug !== currEntry.slug) return true;
         return e.levelIndex <= currLevel;
@@ -133,21 +137,45 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       patch.hitDiceLog =
         newEntries.length > 0 ? [...updatedLog, ...newEntries] : updatedLog;
     }
+    if (logChanged) {
+      const nextHpMax = recalculateHpMax(patch.hitDiceLog ?? updatedLog);
+      if (nextHpMax !== (data.hpMax ?? 0)) patch.hpMax = nextHpMax;
+    }
     onChange(patch);
   }, [data, onChange]);
 
+  /**
+   * Patches the character's skill list.
+   *
+   * @param {CharacterSheetType['skills']} skills - Updated skill entries
+   */
   const handleSkillsChange = useCallback(
     (skills: CharacterSheetType['skills']) => onChange({ skills }),
     [onChange],
   );
+  /**
+   * Patches the character's tool list.
+   *
+   * @param {CharacterSheetType['tools']} tools - Updated tool entries
+   */
   const handleToolsChange = useCallback(
     (tools: CharacterSheetType['tools']) => onChange({ tools }),
     [onChange],
   );
+  /**
+   * Patches the character's attacks list.
+   *
+   * @param {CharacterSheetType['attacks']} attacks - Updated attack entries
+   */
   const handleAttacksChange = useCallback(
     (attacks: CharacterSheetType['attacks']) => onChange({ attacks }),
     [onChange],
   );
+  /**
+   * Patches the character's notes/identity prose fields.
+   *
+   * @param {Partial<CharacterSheetType>} fields - Partial patch of note fields
+   */
   const handleNotesChange = useCallback(
     (fields: Partial<CharacterSheetType>) => onChange(fields),
     [onChange],

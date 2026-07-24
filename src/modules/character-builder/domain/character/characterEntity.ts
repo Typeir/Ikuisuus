@@ -58,6 +58,7 @@ export type AbilityKey = (typeof ABILITY_KEYS)[number];
  * @property {number} [bpCost] - Boon Point cost (boons only)
  * @property {number} [level] - Minimum level required (vocation/specialization features only)
  * @property {string} [cachedText] - First-paragraph preview cached after first fetch
+ * @property {string[]} [selectedSubOptions] - Chosen sub-option names for a variable-cost boon (boons only); their costs sum into `bpCost`
  * @property {number} [startLine] - 1-indexed start line of this block in the source MDX file
  * @property {number} [endLine] - 1-indexed end line of this block in the source MDX file
  */
@@ -69,6 +70,7 @@ export interface CharacterShard {
   bpCost?: number;
   level?: number;
   cachedText?: string;
+  selectedSubOptions?: string[];
   startLine?: number;
   endLine?: number;
 }

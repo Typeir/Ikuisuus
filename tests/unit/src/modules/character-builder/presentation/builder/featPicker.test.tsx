@@ -70,7 +70,9 @@ describe('FeatPicker', () => {
   it('shows loading state initially', () => {
     mockFetch.mockReturnValueOnce(new Promise(() => {}));
     render(<FeatPicker selectedFeats={[]} onToggle={vi.fn()} />);
-    expect(screen.getByText('loading')).toBeTruthy();
+    expect(
+      document.querySelectorAll('[class*="skeleton"]').length,
+    ).toBeGreaterThan(0);
   });
 
   it('renders feat cards after fetch', async () => {

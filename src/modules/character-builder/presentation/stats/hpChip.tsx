@@ -26,7 +26,7 @@ export interface HpChipProps {
   isUnlocked: (k: string) => boolean;
   toggle: (k: string) => void;
   patch: (p: Partial<CharacterSheetType>) => void;
-  onHitDiceCommit: (log: HitDieRollEntry[], delta: number) => void;
+  onHitDiceCommit: (log: HitDieRollEntry[]) => void;
 }
 
 /** HP chip with Hit Dice counter, roller panel, and lockable edit mode. */
