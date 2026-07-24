@@ -89,7 +89,7 @@ describe('extractActions', () => {
     const section = makeSection('actions', [
       '##### Gnawing Bite',
       '_Melee Weapon Attack:_ +3 to hit, reach 5 ft., one target.',
-      '_Hit:_ 7 (1d8 + 1) necrotic damage.',
+      '_Hit:_ 7 (1d8 + 1) dark damage.',
     ]);
 
     const features = extractActions(section);

@@ -64,7 +64,7 @@ export const ITALIC = {
  */
 export const DAMAGE = {
   weaponDamage:
-    /([\dd+]+)\s+(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)(?:\s*\(([\dd+]+)\s*(?:versatile)?\))?/i,
+    /([\dd+]+)\s+(acid|bludgeoning|frost|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)(?:\s*\(([\dd+]+)\s*(?:versatile)?\))?/i,
 } as const;
 
 /**

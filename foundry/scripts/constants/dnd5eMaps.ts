@@ -26,7 +26,7 @@ export const SIZE_MAP: Record<string, string> = {
 export const DAMAGE_TYPE_MAP: Record<string, string> = {
   chemical: 'acid',
   bludgeoning: 'bludgeoning',
-  cold: 'cold',
+  frost: 'cold',
   fire: 'fire',
   force: 'force',
   lightning: 'lightning',

@@ -142,7 +142,7 @@ describe('extractMultiattack', () => {
         name: 'Acid Shotgun',
         lines: [
           '- **Acid Shotgun.**  ',
-          '  Each creature in a 30-foot cone must make a DC 19 Dexterity saving throw, taking 37 (8d8) acid damage on a failure.',
+          '  Each creature in a 30-foot cone must make a DC 19 Dexterity saving throw, taking 37 (8d8) chemical damage on a failure.',
         ],
         origin: 'bold',
       },

@@ -3,7 +3,7 @@
     "damageTypes": [
       "chemical",
       "bludgeoning",
-      "cold",
+      "frost",
       "fire",
       "force",
       "lightning",
@@ -70,19 +70,13 @@
     ],
     "creatureTypes": [
       "aberration",
-      "beast",
       "celestial",
       "construct",
-      "dragon",
-      "elemental",
-      "fey",
-      "fiend",
-      "giant",
       "humanoid",
       "monstrosity",
-      "ooze",
-      "plant",
-      "undead"
+      "null",
+      "väki",
+      "wildlife"
     ],
     "senses": ["blindsight", "darkvision", "tremorsense", "truesight"],
     "movementTypes": [
