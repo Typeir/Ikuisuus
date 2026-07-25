@@ -2,7 +2,7 @@
  * @fileoverview Tests for HpRollerGroup component
  *
  * @module tests/unit/lib/components/characterSheet/atoms/hpRollerGroup
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 6.0.0
  */
@@ -12,65 +12,73 @@ import { HpRollerGroup } from '@/modules/character-builder/presentation/atoms/hp
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<Record<string, unknown>>(),
+  );
+});
+
+const entry = (
+  over: Partial<HitDieRollEntry> & { id: string },
+): HitDieRollEntry => ({
+  vocSlug: 'warrior',
+  vocTitle: 'Warrior',
+  dieType: '10',
+  levelIndex: 1,
+  result: null,
+  conMod: 2,
+  addedToHp: false,
+  ...over,
+});
+
+const baseProps = {
+  vocSlug: 'warrior',
+  vocTitle: 'Warrior',
+  dieType: '10',
+  conMod: 2,
+  onRoll: vi.fn(),
+  onAverage: vi.fn(),
+  onSet: vi.fn(),
+  onAdd: vi.fn(),
+  onRemove: vi.fn(),
+  onRollAll: vi.fn(),
+  onAverageAll: vi.fn(),
+  onMaxAll: vi.fn(),
+  onSetAll: vi.fn(),
+  onAddAll: vi.fn(),
+  onClearAll: vi.fn(),
+};
+
 describe('HpRollerGroup', () => {
-  const mockEntry: HitDieRollEntry = {
-    id: 'test-1',
-    vocSlug: 'warrior',
-    vocTitle: 'Warrior',
-    dieType: '10',
-    levelIndex: 1,
-    result: null,
-    conMod: 2,
-    addedToHp: false,
-  };
-
-  it('renders group header with vocation name and die type', () => {
+  it('renders the vocation header', () => {
     const { getByText } = render(
-      <HpRollerGroup
-        vocSlug='warrior'
-        vocTitle='Warrior'
-        dieType='10'
-        entries={[mockEntry]}
-        conMod={2}
-        setAllMode={new Set()}
-        manualValues={new Map()}
-        onRoll={vi.fn()}
-        onRollAll={vi.fn()}
-        onAverageAll={vi.fn()}
-        onSetAll={vi.fn()}
-        onAddAll={vi.fn()}
-        onConfirm={vi.fn()}
-        onManualChange={vi.fn()}
-        getAverage={() => 5}
-      />,
+      <HpRollerGroup {...baseProps} entries={[entry({ id: 'a' })]} />,
     );
-
     expect(getByText('Warrior')).toBeTruthy();
     expect(getByText('d10')).toBeTruthy();
   });
 
-  it('renders action buttons', () => {
-    const { getAllByRole } = render(
+  it('gives every row a roll and an average control', () => {
+    const { getByLabelText } = render(
+      <HpRollerGroup {...baseProps} entries={[entry({ id: 'a' })]} />,
+    );
+    expect(getByLabelText(/roll level/i)).toBeTruthy();
+    expect(getByLabelText(/average level/i)).toBeTruthy();
+  });
+
+  it('shows Add to HP for a valued unadded die, and the total for an added one', () => {
+    const { getByText, queryByText, rerender } = render(
+      <HpRollerGroup {...baseProps} entries={[entry({ id: 'a', result: 6 })]} />,
+    );
+    expect(getByText('Add to HP')).toBeTruthy();
+    rerender(
       <HpRollerGroup
-        vocSlug='warrior'
-        vocTitle='Warrior'
-        dieType='10'
-        entries={[]}
-        conMod={2}
-        setAllMode={new Set()}
-        manualValues={new Map()}
-        onRoll={vi.fn()}
-        onRollAll={vi.fn()}
-        onAverageAll={vi.fn()}
-        onSetAll={vi.fn()}
-        onAddAll={vi.fn()}
-        onConfirm={vi.fn()}
-        onManualChange={vi.fn()}
-        getAverage={() => 5}
+        {...baseProps}
+        entries={[entry({ id: 'a', result: 6, addedToHp: true })]}
       />,
     );
-
-    const buttons = getAllByRole('button');
-    expect(buttons.length).toBeGreaterThanOrEqual(4);
+    expect(queryByText('Add to HP')).toBeNull();
+    expect(getByText('+ 2 = 8')).toBeTruthy();
   });
 });

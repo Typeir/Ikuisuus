@@ -16,6 +16,7 @@
 
 import type { CharacterSheet } from '@/lib/types/character';
 import {
+  collectAssignableGrants,
   deriveSkillOffer,
   unassignedByCategory,
 } from './assignableGrants';
@@ -83,11 +84,12 @@ export function countSpentSkillProficiencies(
 }
 
 /**
- * Row-keys that should show a "vocation pick" hint marker: the primary vocation's
- * offered skills, but ONLY when the offer is an EXPLICIT restricted list — an
- * unrestricted ("any") or absent offer yields an empty set. Trades are always
- * empty in current content (no vocation restricts trade choice to a list); the
- * field is present so the tables stay symmetric.
+ * Row-keys that should show a hint marker — the options of every `oneOf` choice
+ * grant the character has, from ANY feature (the primary vocation's restricted
+ * base picks AND feature grants like Scholar's expertise list), unioned per
+ * table. Unrestricted (`any`) grants contribute no per-row hint (marking every
+ * row is noise — the counter carries that signal). A trade `oneOf` would light
+ * up the tools table automatically; none exist in current content.
  *
  * @function deriveProficiencyHints
  * @param {CharacterSheet} character - Character to inspect
@@ -96,9 +98,15 @@ export function countSpentSkillProficiencies(
 export function deriveProficiencyHints(
   character: CharacterSheet,
 ): ProficiencyHints {
-  const skillOffer = deriveSkillOffer(character);
-  return {
-    skills: skillOffer.any ? new Set<string>() : new Set(skillOffer.keys),
-    trades: new Set<string>(),
-  };
+  const skills = new Set<string>();
+  const trades = new Set<string>();
+  for (const grant of collectAssignableGrants(character)) {
+    if (grant.choice.kind !== 'oneOf') continue;
+    if (grant.category === 'skill') {
+      for (const option of grant.choice.options) skills.add(option);
+    } else if (grant.category === 'trade') {
+      for (const option of grant.choice.options) trades.add(option);
+    }
+  }
+  return { skills, trades };
 }

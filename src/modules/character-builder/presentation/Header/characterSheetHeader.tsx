@@ -15,6 +15,7 @@
 
 import { NumericInput } from '@/lib/components/ui/numericInput';
 import { TextInput } from '@/lib/components/ui/textInput';
+import { Tooltip } from '@/lib/components/ui/tooltip';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import type {
@@ -24,6 +25,7 @@ import type {
 import { getCharacterDerived } from '@/modules/character-builder/lib/utils/characterDerivation';
 import { computeBpSpent } from '@/modules/character-builder/lib/utils/shardExtractor';
 import {
+  getXPForLevel,
   getXpAxisPosition,
   MAX_XP_LEVEL,
   XP_THRESHOLDS,
@@ -92,6 +94,7 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
     xpProgressPercent,
     xpFloor,
     xpCeiling,
+    vocationLevel,
     unassignedLevels,
     hasUnassignedLevels,
   } = derived;
@@ -195,9 +198,23 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
 
         <div className={styles.xpTrackGroup}>
           {hasUnassignedLevels && (
-            <span className={styles.warningBadge} role='alert'>
-              {t('unassignedVocationsWarning', { count: unassignedLevels })}
-            </span>
+            <div className={styles.warningRow}>
+              <span className={styles.warningBadge} role='alert'>
+                {t('unassignedVocationsWarning', { count: unassignedLevels })}
+              </span>
+              <Tooltip
+                content={t('clearUnassignedLevelsTooltip')}
+                placement='top'
+                showClickIcon={false}>
+                <button
+                  type='button'
+                  className={styles.clearLevelsBtn}
+                  aria-label={t('ariaClearUnassignedLevels')}
+                  onClick={() => patchExperience(getXPForLevel(vocationLevel))}>
+                  ✕
+                </button>
+              </Tooltip>
+            </div>
           )}
           <div
             className={styles.xpTrackNext}

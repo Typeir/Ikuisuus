@@ -352,6 +352,7 @@ export interface VocationEntry {
  * @property {number} hpMax - Maximum hit points
  * @property {number} hpCurrent - Current hit points
  * @property {number} tempHp - Temporary hit points
+ * @property {number} [grievousWounds] - Grievous-wound pool; degrades the effective max HP (`base − grievousWounds`). Defaults to 0.
  * @property {number} ac - Armor class
  * @property {number} initiativeBonus - Initiative modifier (typically DEX mod)
  * @property {number|null} speedOverride - Override for movement speed (walk); null = no override
@@ -361,6 +362,8 @@ export interface VocationEntry {
  * @property {number} gritMax - Maximum grit points; manually set by player
  * @property {string[]} manualStatOverrides - Stat keys the player has pinned to manual values
  * @property {HitDieRollEntry[]} hitDiceLog - Per-level hit die roll history
+ * @property {Record<string, number>} [spentHitDice] - Hit dice spent (healing / grievous-wound clearing) by vocation slug; recover ½ per Recovery
+ * @property {Record<string, number>} [lostHitDice] - Hit dice lost to Misdeed overshoot by vocation slug; frozen until all grievous wounds clear, then 1 per Recovery
  * @property {string[]} conditions - Active condition labels
  * @property {CharacterAttack[]} attacks - Attack entries
  * @property {CharacterSpellSlot[]} spellSlots - Spell slot tracking (1–9)
@@ -403,6 +406,7 @@ export interface CharacterEntity {
   hpMax: number;
   hpCurrent: number;
   tempHp: number;
+  grievousWounds?: number;
   ac: number;
   initiativeBonus: number;
   speedOverride: number | null;
@@ -412,6 +416,8 @@ export interface CharacterEntity {
   gritMax: number;
   manualStatOverrides: string[];
   hitDiceLog: HitDieRollEntry[];
+  spentHitDice?: Record<string, number>;
+  lostHitDice?: Record<string, number>;
   conditions: string[];
   attacks: CharacterAttack[];
   spellSlots: CharacterSpellSlot[];

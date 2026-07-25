@@ -249,7 +249,7 @@
 .vocationEntryBlockSingle {
   flex: 0 1 33%;
   max-width: 33%;
-  min-width: 16rem;
+  min-width: 24rem;
 }
 
 /* Vertical separator between the vocation picker and the level spinner.
@@ -276,7 +276,7 @@
 }
 
 .levelInput {
-  width: 3.5rem;
+  width: 4.5rem;
   flex-shrink: 0;
   font-size: 0.8rem;
   padding: 0.25rem 0.35rem;

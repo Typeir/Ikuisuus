@@ -86,6 +86,28 @@ function parsePrerequisite(raw: string): {
 }
 
 /**
+ * Removes the italic prerequisite line from a parsed description so a feat's
+ * summary never duplicates its prerequisite. {@link parseDescription}'s
+ * italic-only filter misses prerequisite lines that embed bold (e.g.
+ * `_Prerequisite: **Great Weapon Fighting** style_`), so they must be dropped
+ * explicitly here.
+ *
+ * @param {string | undefined} description - Parsed description prose
+ * @returns {string | undefined} Description without the prerequisite line, or undefined when empty
+ */
+function stripPrerequisiteLine(
+  description: string | undefined,
+): string | undefined {
+  if (!description) return undefined;
+  const joined = description
+    .split('\n')
+    .filter((line) => !PREREQUISITE_REGEX.test(line))
+    .join('\n')
+    .trim();
+  return joined.length > 0 ? joined : undefined;
+}
+
+/**
  * Parses an ability score increase line.
  *
  * @param {string} raw - Full MDX file content
@@ -213,7 +235,7 @@ async function parseFeatFile(
     const lines = raw.split('\n').map((l) => l.trim());
     const slug = filePathToSlug(filePath);
     const title = parseTitle(lines);
-    const description = parseDescription(raw);
+    const description = stripPrerequisiteLine(parseDescription(raw));
 
     const { prerequisite, hasPrerequisite } = parsePrerequisite(raw);
     const abilityIncrease = parseAbilityIncrease(raw);

@@ -1,0 +1,119 @@
+// Compact ('s') density variant + per-row action-cell styles for MetadataTable.
+// Split into this partial (and @use'd back into metadataTable.module.scss) so the
+// core module stays within the file-length budget. Selectors are nested under
+// .metadataTable so they hash into the same CSS module and out-specify the base
+// rules regardless of emit order.
+
+.metadataTable {
+  .rowActionHead {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  .table tbody td.rowActionCell {
+    padding: 0.25rem 0.5rem;
+    width: 1%;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .rowActionButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3rem;
+    border: none;
+    border-radius: 0.25rem;
+    background: none;
+    color: var(--color-secondary);
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
+
+    &:hover {
+      color: var(--color-accent);
+      background-color: var(--color-bg-secondary);
+    }
+
+    &:focus-visible {
+      color: var(--color-accent);
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+  }
+
+  &.sizeS {
+    .controls {
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .searchBar .searchInput {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.8rem;
+    }
+    .filters {
+      gap: 0.75rem;
+    }
+    .filterGroup {
+      gap: 0.25rem;
+      min-width: 110px;
+    }
+    .filterGroup label,
+    .filterLabel {
+      font-size: 0.7rem;
+    }
+    .filterSelect,
+    .filterInput {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    .rangeFilter {
+      gap: 0.4rem;
+    }
+    .rangeInput {
+      width: 60px;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    .resultCount {
+      font-size: 0.72rem;
+      padding: 0.25rem 0;
+    }
+    .table {
+      font-size: 0.78rem;
+    }
+    .table thead th {
+      padding: 0.35rem 0.6rem;
+      font-size: 0.68rem;
+    }
+    .table .headerContent {
+      gap: 0.3rem;
+    }
+    .table .sortIndicator {
+      font-size: 0.6rem;
+    }
+    .table tbody td {
+      padding: 0.35rem 0.6rem;
+    }
+    .table tbody td .rowLink,
+    .table tbody td .rowButton {
+      padding: 0.35rem 0.6rem;
+    }
+    .table tbody td.rowActionCell {
+      padding: 0.2rem 0.4rem;
+    }
+    .pagination {
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+    }
+    .paginationButton {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+    }
+    .pageInfo {
+      font-size: 0.72rem;
+    }
+  }
+}

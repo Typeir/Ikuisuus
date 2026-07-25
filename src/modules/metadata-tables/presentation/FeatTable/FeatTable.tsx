@@ -22,6 +22,7 @@ import MetadataTable, {
 import { MetadataTableSkeleton } from '@/lib/components/mdx/metadataTables/metadataTableSkeleton';
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
 import { useFeats } from '@/lib/hooks/data/useFeats';
+import { toPlainSummary, truncateWords } from '@/lib/utils/plainSummary';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
@@ -63,12 +64,9 @@ export default function FeatTable({ locale: localeProp }: FeatTableProps = {}) {
         sortable: true,
         getValue: (row) =>
           (row as FeatMetadata).hasPrerequisite
-            ? ((row as FeatMetadata).prerequisite ?? '')
+            ? toPlainSummary((row as FeatMetadata).prerequisite ?? '')
             : '',
-        render: (_value, row) =>
-          (row as FeatMetadata).hasPrerequisite
-            ? ((row as FeatMetadata).prerequisite ?? '—')
-            : '—',
+        render: (value) => truncateWords(String(value ?? ''), 100) || '—',
       },
       {
         key: 'multiSelect',
@@ -85,7 +83,9 @@ export default function FeatTable({ locale: localeProp }: FeatTableProps = {}) {
         key: 'description',
         label: tColumns('summary'),
         sortable: false,
-        render: (value) => String(value ?? '—'),
+        getValue: (row) =>
+          toPlainSummary(String((row as FeatMetadata).description ?? '')),
+        render: (value) => truncateWords(String(value ?? ''), 100) || '—',
       },
     ],
     [tColumns, tCommon],

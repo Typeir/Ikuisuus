@@ -1,0 +1,61 @@
+/**
+ * @fileoverview ChevronScroll styles
+ * @description Flex wrapper with flanking chevron buttons and a horizontally
+ * scrollable strip whose native scrollbar is hidden. All colors via tokens.
+ *
+ * @module lib/components/ui/chevronScroll/ChevronScroll.module
+ */
+
+.wrapper {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.scroller {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  > * {
+    flex-shrink: 0;
+  }
+}
+
+.chevron {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.25rem;
+  border: none;
+  background: transparent;
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    opacity 0.15s ease;
+
+  &:hover,
+  &:disabled,
+  &:disabled:hover {
+    background: transparent;
+  }
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    color: var(--color-accent);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+}

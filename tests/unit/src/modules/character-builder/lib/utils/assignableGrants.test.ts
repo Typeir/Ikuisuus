@@ -202,6 +202,35 @@ describe('countAssigned', () => {
   });
 });
 
+describe('feat slot matching (ASI eligibility)', () => {
+  const featChar = (feats: string[]): CharacterSheet =>
+    character({
+      level: 4,
+      experience: 0,
+      vocations: [
+        voc({
+          level: 4,
+          vocationFeatures: [{ heading: 'Feat', level: 4 }] as never,
+        }),
+      ],
+      selectedFeats: feats.map(featShard) as never,
+    });
+
+  it('lets a non-ASI feat fill a tier slot alongside an ASI in the vocation slot', () => {
+    const groups = unassignedByCategory(
+      featChar(['ability-score-improvement', 'alert']),
+    );
+    expect(grantOf(groups as never, 'feat')).toBeUndefined();
+  });
+
+  it('leaves a tier slot unassigned when only ASI is picked (design lever)', () => {
+    const groups = unassignedByCategory(
+      featChar(['ability-score-improvement', 'ability-score-improvement']),
+    );
+    expect(grantOf(groups as never, 'feat')?.count).toBe(1);
+  });
+});
+
 describe('unassignedByCategory', () => {
   it('reports proficient and expertise groups for a fresh wizard', () => {
     const c = character({

@@ -20,6 +20,7 @@ import type {
   TierLevel,
 } from '@/lib/types/character';
 import { TIER_CYCLE } from './characterStorage';
+import { parseHpGrant, type HpValueGrant } from './hpGrants';
 
 /**
  * The kinds of benefit a grant tag can confer. `feat` is an assignable-only
@@ -72,7 +73,8 @@ export type ParsedGrant =
       deny: string[];
       tier: TierLevel;
       count: number;
-    };
+    }
+  | HpValueGrant;
 
 /**
  * Derived proficiencies from a set of grant tags.
@@ -139,19 +141,20 @@ function parseGrantList(raw: string): string[] {
 }
 
 /**
- * Parses a single grant tag `category:value[:tier]` into a discriminated
- * {@link ParsedGrant}. The `value` segment selects the kind: `any`, `!x`/`![x,y]`
- * (anyExcept), `[a,b,c]` (oneOf), or a bare token (specific).
+ * Parses a single grant tag into a discriminated {@link ParsedGrant}. The `hp`
+ * scalar category is dispatched first and parsed positionally (`hp:<term>:<scope>`);
+ * every other category uses the choice grammar `category:value[:tier][:count]`,
+ * where the `value` segment selects the kind: `any`, `!x`/`![x,y]` (anyExcept),
+ * `[a,b,c]` (oneOf), `*` (all), or a bare token (specific).
  *
  * @function parseGrant
  * @param {string} tag - Raw grant tag
  * @returns {ParsedGrant | null} Parsed grant, or `null` when malformed/unknown category
  */
 export function parseGrant(tag: string): ParsedGrant | null {
-  const parts = tag
-    .split(':')
-    .map((part) => part.trim().toLowerCase())
-    .filter(Boolean);
+  const segs = tag.split(':').map((part) => part.trim().toLowerCase());
+  if (segs[0] === 'hp') return parseHpGrant(segs);
+  const parts = segs.filter(Boolean);
   if (parts.length < 2) return null;
 
   const [category, value, ...rest] = parts;

@@ -115,6 +115,69 @@ describe('parseGrant', () => {
   });
 });
 
+describe('parseGrant — hp scalar grants', () => {
+  it('parses a resolver reference term with a level scope', () => {
+    expect(parseGrant('hp:conMod:level')).toEqual({
+      kind: 'value',
+      category: 'hp',
+      term: { t: 'ref', id: 'conmod' },
+      scope: { s: 'level' },
+    });
+  });
+
+  it('resolves a term reference case-insensitively', () => {
+    expect(parseGrant('hp:conMod:level')).toEqual(parseGrant('hp:conmod:level'));
+  });
+
+  it('parses signed integer literal terms', () => {
+    expect(parseGrant('hp:1:level')).toEqual({
+      kind: 'value',
+      category: 'hp',
+      term: { t: 'lit', v: 1 },
+      scope: { s: 'level' },
+    });
+    expect(parseGrant('hp:-1:level')?.term).toEqual({ t: 'lit', v: -1 });
+  });
+
+  it('defaults the scope to once when the third segment is omitted', () => {
+    expect(parseGrant('hp:3')).toEqual({
+      kind: 'value',
+      category: 'hp',
+      term: { t: 'lit', v: 3 },
+      scope: { s: 'once' },
+    });
+  });
+
+  it('parses vocation- and specialization-scoped levels with their slug', () => {
+    expect(parseGrant('hp:1:level-vocation-scion')).toEqual({
+      kind: 'value',
+      category: 'hp',
+      term: { t: 'lit', v: 1 },
+      scope: { s: 'level-vocation', slug: 'scion' },
+    });
+    expect(
+      parseGrant('hp:conScore:level-specialization-draconic-sorcery'),
+    ).toEqual({
+      kind: 'value',
+      category: 'hp',
+      term: { t: 'ref', id: 'conscore' },
+      scope: { s: 'level-specialization', slug: 'draconic-sorcery' },
+    });
+  });
+
+  it('rejects an unknown or level-family term reference', () => {
+    expect(parseGrant('hp:hpMax:level')).toBeNull();
+    expect(parseGrant('hp:level:once')).toBeNull();
+    expect(parseGrant('hp:bogus:once')).toBeNull();
+  });
+
+  it('rejects an empty term or malformed scope (positional, no segment drop)', () => {
+    expect(parseGrant('hp::level')).toBeNull();
+    expect(parseGrant('hp:1:level-vocation-')).toBeNull();
+    expect(parseGrant('hp:1:bogusscope')).toBeNull();
+  });
+});
+
 describe('higherTier', () => {
   it('returns the higher tier by cycle order', () => {
     expect(higherTier('proficient', 'expertise')).toBe('expertise');

@@ -70,6 +70,29 @@ describe('UnassignedChips', () => {
     expect(screen.getByLabelText('Unassigned skill expertise')).toBeTruthy();
   });
 
+  it('condenses to one summary pill when there are 3+ groups', () => {
+    const c = character({}) as unknown as {
+      vocations: { vocationFeatures: unknown[] }[];
+    };
+    c.vocations[0].vocationFeatures.push({
+      id: 'guild',
+      heading: 'Guild Ties',
+      level: 1,
+      category: 'vocation-feature',
+      grants: ['trade:[smithing,alchemy]:proficient'],
+    });
+    render(
+      <UnassignedChips
+        character={c as unknown as CharacterSheet}
+        categories={SKILL_CATS}
+      />,
+    );
+    expect(screen.getAllByRole('status')).toHaveLength(1);
+    expect(
+      screen.getByLabelText('Unassigned grants — hover for the breakdown'),
+    ).toBeTruthy();
+  });
+
   it('excludes categories the anchor does not own', () => {
     render(
       <UnassignedChips character={character({})} categories={FEAT_CATS} />,

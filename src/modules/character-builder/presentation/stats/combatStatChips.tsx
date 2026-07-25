@@ -14,7 +14,7 @@
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { computeAbilityModifier } from '@/modules/character-builder/lib/utils/characterStorage';
-import { recalculateHpMax } from '@/modules/character-builder/lib/utils/hitDiceUtils';
+import { deriveHitPoints } from '@/modules/character-builder/lib/utils/hitDiceUtils';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import styles from '../CharacterSheet/characterSheet.module.scss';
@@ -61,8 +61,11 @@ export const CombatStatChips: React.FC<CombatStatChipsProps> = ({
 
   const handleHitDiceCommit = useCallback(
     (updatedLog: HitDieRollEntry[]) =>
-      patch({ hitDiceLog: updatedLog, hpMax: recalculateHpMax(updatedLog) }),
-    [patch],
+      patch({
+        hitDiceLog: updatedLog,
+        hpMax: deriveHitPoints({ ...data, hitDiceLog: updatedLog }).base,
+      }),
+    [patch, data],
   );
   const spendGrit = useCallback(() => {
     if (data.gritCurrent > 0) patch({ gritCurrent: data.gritCurrent - 1 });

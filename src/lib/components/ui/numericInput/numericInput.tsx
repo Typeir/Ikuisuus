@@ -24,6 +24,10 @@
  * - Empty input produces `undefined` in onChange callback.
  * - Valid finite numbers are displayed as-is.
  * - The component NEVER displays literal strings like "null", "undefined", or "NaN".
+ * - While being edited, a raw text draft is shown so the field can hold an
+ *   intermediate invalid value (empty, 0, out of range) without the controlled
+ *   `value` snapping it back. In-bounds values commit live (snappy); an invalid
+ *   draft commits nothing until blur, which parses the draft and clamps it.
  * 
  * @example
  * // Basic usage
@@ -93,6 +97,7 @@ function isValidDisplayNumber(value: number | null | undefined): value is number
  * @property {boolean} [showChevrons=false] - Whether to show a stacked chevron spinner column (styled replacement for browser-native number arrows)
  * @property {'sm' | 'md' | 'lg'} [size='md'] - Input width preset
  * @property {boolean} [allowDecimals=false] - Whether to allow decimal values
+ * @property {boolean} [selectOnFocus=false] - Select all text on focus, so a default value can be typed over (fixes mobile "can't delete the default" editing)
  */
 export interface NumericInputProps {
   id?: string;
@@ -110,6 +115,7 @@ export interface NumericInputProps {
   showChevrons?: boolean;
   size?: 'sm' | 'md' | 'lg';
   allowDecimals?: boolean;
+  selectOnFocus?: boolean;
 }
 
 /**
@@ -148,12 +154,14 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(func
     showChevrons = false,
     size = 'md',
     allowDecimals = false,
+    selectOnFocus = false,
   },
   forwardedRef
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
-  
+  const [draft, setDraft] = useState<string | null>(null);
+
   useImperativeHandle(forwardedRef, () => inputRef.current!);
 
   const parseValue = useCallback((text: string): number | undefined => {
@@ -177,27 +185,28 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(func
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
-    
-    if (!text.trim()) {
-      onChange(undefined);
-      return;
-    }
-    
     const regex = allowDecimals ? /^-?\d*\.?\d*$/ : /^-?\d*$/;
     if (!regex.test(text)) return;
-    
+    setDraft(text);
     const parsed = parseValue(text);
-    onChange(parsed);
-  }, [onChange, parseValue, allowDecimals]);
+    const inBounds =
+      parsed !== undefined &&
+      (min === undefined || parsed >= min) &&
+      (max === undefined || parsed <= max);
+    if (inBounds) onChange(parsed);
+  }, [onChange, parseValue, allowDecimals, min, max]);
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
-    onChange(clampValue(value));
-  }, [value, onChange, clampValue]);
+    const pending = draft !== null ? parseValue(draft) : value;
+    setDraft(null);
+    onChange(clampValue(pending));
+  }, [draft, value, onChange, clampValue, parseValue]);
 
   const handleStep = useCallback((direction: 1 | -1) => {
     const current = value ?? (min !== undefined ? min : 0);
     const newValue = current + (step * direction);
+    setDraft(null);
     onChange(clampValue(newValue));
     inputRef.current?.focus();
   }, [value, min, step, onChange, clampValue]);
@@ -214,17 +223,20 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(func
         break;
       case 'Escape':
         e.preventDefault();
+        setDraft(null);
         onChange(undefined);
         break;
     }
   }, [handleStep, onChange]);
 
   const handleClear = useCallback(() => {
+    setDraft(null);
     onChange(undefined);
     inputRef.current?.focus();
   }, [onChange]);
 
-  const displayValue = isValidDisplayNumber(value) ? String(value) : '';
+  const displayValue =
+    draft !== null ? draft : isValidDisplayNumber(value) ? String(value) : '';
 
   return (
     <div 
@@ -251,7 +263,10 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(func
         className={styles.input}
         value={displayValue}
         onChange={handleChange}
-        onFocus={() => setIsFocused(true)}
+        onFocus={(e) => {
+          setIsFocused(true);
+          if (selectOnFocus) e.currentTarget.select();
+        }}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}

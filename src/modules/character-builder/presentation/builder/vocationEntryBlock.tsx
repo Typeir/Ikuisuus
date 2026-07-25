@@ -171,6 +171,8 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
             min={1}
             max={30}
             size='sm'
+            showChevrons
+            selectOnFocus
             className={styles.levelInput}
             ariaLabel={t('ariaVocationLevel')}
             onChange={(v) => onLevelChange(index, v ?? 1)}

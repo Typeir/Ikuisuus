@@ -11,10 +11,11 @@
 
 'use client';
 
-import { useEffect, useRef, ReactNode, memo } from 'react';
+import { ReactNode, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import styles from './modal.module.scss';
+import { useModalA11y } from './useModalA11y';
 
 /**
  * @interface ModalProps
@@ -72,58 +73,24 @@ export const Modal = memo(function Modal({
   className = '',
   overlayClassName = '',
 }: ModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  /**
-   * Focus trap: loops tab navigation within modal and handles Escape key.
-   * Prevents body scroll while modal is open.
-   */
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-        return;
-      }
-
-      if (e.key === 'Tab' && modalRef.current) {
-        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
-  }, [isOpen, onClose]);
+  const { overlayRef, contentRef } = useModalA11y(isOpen, onClose);
 
   if (!isOpen) return null;
 
   return createPortal(
     <div
+      ref={overlayRef}
       className={`${styles.overlay} ${overlayClassName}`}
       onClick={(e) => e.target === e.currentTarget && onClose()}
       role="dialog"
       aria-modal="true"
       aria-label={ariaLabel}
     >
-      <div ref={modalRef} className={`${styles.content} ${className}`}>
+      <div
+        ref={contentRef}
+        tabIndex={-1}
+        className={`${styles.content} ${className}`}
+      >
         {(header || title || showCloseButton) && (
           <div className={styles.header}>
             {header || (title && <h2 className={styles.title}>{title}</h2>)}

@@ -1,6 +1,6 @@
 /**
  * @fileoverview HintMarker tests
- * @description Verifies the vocation-pick asterisk renders with an accessible
+ * @description Verifies the feature-grant asterisk renders with an accessible
  * label when shown and renders nothing when hidden.
  *
  * @module tests/unit/src/modules/character-builder/presentation/atoms/hintMarker
@@ -25,7 +25,7 @@ describe('HintMarker', () => {
     render(<HintMarker show={true} />);
     const marker = screen.getByRole('img');
     expect(marker.textContent).toBe('*');
-    expect(marker.getAttribute('aria-label')).toBe('Offered by your vocation');
+    expect(marker.getAttribute('aria-label')).toBe('Offered by a feature');
   });
 
   it('renders nothing when show is false', () => {

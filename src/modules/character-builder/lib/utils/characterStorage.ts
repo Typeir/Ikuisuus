@@ -234,13 +234,22 @@ export const migrateCharacter = (
     const sheet = raw as unknown as CharacterSheet;
     const needsEquipMigration = rawEquipment.some((e) => typeof e === 'string');
     const needsSavesMigration = !sheet.savingThrows;
-    if (!needsEquipMigration && !needsSavesMigration) return sheet;
+    const needsHpRuntime =
+      sheet.grievousWounds === undefined ||
+      sheet.spentHitDice === undefined ||
+      sheet.lostHitDice === undefined;
+    if (!needsEquipMigration && !needsSavesMigration && !needsHpRuntime) {
+      return sheet;
+    }
     return {
       ...sheet,
       equipment: needsEquipMigration
         ? migrateEquipment(rawEquipment)
         : sheet.equipment,
       savingThrows: sheet.savingThrows ?? { ...DEFAULT_SAVES },
+      grievousWounds: sheet.grievousWounds ?? 0,
+      spentHitDice: sheet.spentHitDice ?? {},
+      lostHitDice: sheet.lostHitDice ?? {},
     };
   }
 
@@ -252,6 +261,9 @@ export const migrateCharacter = (
       (raw['savingThrows'] as CharacterSheet['savingThrows']) ?? {
         ...DEFAULT_SAVES,
       },
+    grievousWounds: (raw['grievousWounds'] as number) ?? 0,
+    spentHitDice: (raw['spentHitDice'] as Record<string, number>) ?? {},
+    lostHitDice: (raw['lostHitDice'] as Record<string, number>) ?? {},
   };
 
   const legacySlug = raw['vocationSlug'] as string | null | undefined;
@@ -302,6 +314,7 @@ export const createEmptyCharacter = (): CharacterSheet => {
     hpMax: 0,
     hpCurrent: 0,
     tempHp: 0,
+    grievousWounds: 0,
     ac: 10,
     initiativeBonus: 0,
     speedOverride: null,
@@ -311,6 +324,8 @@ export const createEmptyCharacter = (): CharacterSheet => {
     gritMax: 0,
     manualStatOverrides: [],
     hitDiceLog: [],
+    spentHitDice: {},
+    lostHitDice: {},
     conditions: [],
     attacks: [],
     spellSlots: SPELL_SLOT_DEFAULTS.map((s) => ({ ...s })),

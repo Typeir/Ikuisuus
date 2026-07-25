@@ -26,7 +26,7 @@ import {
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { deriveGrantFloors } from '@/modules/character-builder/lib/utils/grants';
 import { deriveProficiencyHints } from '@/modules/character-builder/lib/utils/proficiencyBudget';
-import { recalculateHpMax } from '@/modules/character-builder/lib/utils/hitDiceUtils';
+import { deriveHitPoints } from '@/modules/character-builder/lib/utils/hitDiceUtils';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -106,25 +106,31 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 
     const newEntries: HitDieRollEntry[] = [];
     const conMod = computeAbilityModifier(data.abilityScores.con);
+    const primarySlug = curr.find((v) => v.slug)?.slug;
     let updatedLog = [...(data.hitDiceLog ?? [])];
 
     for (const currEntry of curr) {
       if (!currEntry.slug) continue;
       const currLevel = currEntry.level ?? 1;
+      const faces = parseInt((currEntry.hitDie ?? '').replace(/^d/i, ''), 10);
 
       for (let li = 1; li <= currLevel; li++) {
         const id = `${currEntry.slug}-${li}`;
         const alreadyLogged = updatedLog.some((e) => e.id === id);
         if (!alreadyLogged) {
+          const seedMax =
+            currEntry.slug === primarySlug &&
+            li === 1 &&
+            Number.isFinite(faces);
           newEntries.push({
             id,
             vocSlug: currEntry.slug,
             vocTitle: currEntry.title,
             dieType: (currEntry.hitDie ?? '').replace(/^d/i, '') || '?',
             levelIndex: li,
-            result: null,
+            result: seedMax ? faces : null,
             conMod,
-            addedToHp: false,
+            addedToHp: seedMax,
           });
         }
       }
@@ -149,7 +155,10 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
         newEntries.length > 0 ? [...updatedLog, ...newEntries] : updatedLog;
     }
     if (logChanged) {
-      const nextHpMax = recalculateHpMax(patch.hitDiceLog ?? updatedLog);
+      const nextHpMax = deriveHitPoints({
+        ...data,
+        hitDiceLog: patch.hitDiceLog ?? updatedLog,
+      }).base;
       if (nextHpMax !== (data.hpMax ?? 0)) patch.hpMax = nextHpMax;
     }
     onChange(patch);

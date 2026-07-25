@@ -35,74 +35,15 @@ import { useCallback, useMemo, useState } from 'react';
 import { FilterSelect, NumericInput } from '../../ui';
 import styles from './metadataTable.module.scss';
 
-/**
- * Represents a single row of metadata - can contain any JSON structure.
- * @typedef {Object} MetadataRow
- * @property {*} [key] - Any property with any value type
- */
-/* health:check-ignore-nextline antipatterns.no-explicit-any */
-export type MetadataRow = Record<string, any>;
+import type {
+  ColumnConfig,
+  FilterState,
+  MetadataRow,
+  MetadataTableProps,
+  SortDirection,
+} from './metadataTable.types';
 
-/* health:check-ignore-nextline antipatterns.no-explicit-any */
-type FilterState = Record<string, any>;
-
-/**
- * Configuration for a single table column, defining display and interaction behavior.
- * @typedef {Object} ColumnConfig
- * @property {string} key - Unique identifier for the column
- * @property {string} label - Display text for column header
- * @property {boolean} [sortable=true] - Whether column can be sorted
- * @property {boolean} [filterable=false] - Whether to show filter control
- * @property {Function} [render] - Custom render function for cell display
- * @property {'text'|'select'|'multiselect'|'range'} [filterType] - Type of filter UI control
- * @property {Function} [getFilterOptions] - Function to generate filter dropdown options
- * @property {Function} [getValue] - Extracts value from row for filtering/sorting (handles nested data)
- * @property {Function} [compareValues] - Custom comparison logic for sorting
- * @property {Record<string, number>} [filterSortOrder] - Sort order map for dropdown options (e.g., RARITY_SORT_ORDER)
- */
-export type ColumnConfig = {
-  key: string;
-  label: string;
-  sortable?: boolean;
-  filterable?: boolean;
-  render?: (value: unknown, row: MetadataRow) => React.ReactNode;
-  filterType?: 'text' | 'select' | 'multiselect' | 'range';
-  getFilterOptions?: (rows: MetadataRow[]) => string[];
-  getValue?: (row: MetadataRow) => unknown;
-  compareValues?: (a: unknown, b: unknown) => number;
-  filterSortOrder?: Record<string, number>;
-};
-
-/**
- * Sort direction indicator.
- * @typedef {('asc'|'desc'|null)} SortDirection
- */
-type SortDirection = 'asc' | 'desc' | null;
-
-/**
- * Props for MetadataTable component.
- * @typedef {Object} MetadataTableProps
- * @property {MetadataRow[]} data - Array of data rows to display
- * @property {ColumnConfig[]} columns - Column configuration array
- * @property {string} [basePath=''] - Base URL path for row navigation
- * @property {Object} [defaultSort] - Initial sort configuration
- * @property {string} defaultSort.key - Column key to sort by
- * @property {SortDirection} defaultSort.direction - Sort direction
- * @property {string} [locale='en'] - Current locale for URL construction
- * @property {number} [pageSize=50] - Number of rows per page
- * @property {Function} [getRowSlug] - Function to extract slug from row data
- * @property {string[]} [searchKeys=['title']] - Row properties to search across
- */
-type MetadataTableProps = {
-  data: MetadataRow[];
-  columns: ColumnConfig[];
-  basePath?: string;
-  defaultSort?: { key: string; direction: SortDirection };
-  locale?: string;
-  pageSize?: number;
-  getRowSlug?: (row: MetadataRow) => string;
-  searchKeys?: string[];
-};
+export type { ColumnConfig, MetadataRow } from './metadataTable.types';
 
 /**
  * Generic filterable, sortable, paginated table component for metadata display.
@@ -168,6 +109,9 @@ export default function MetadataTable({
   pageSize = 50,
   getRowSlug = (row) => row.slug,
   searchKeys = ['title'],
+  onRowSelect,
+  size = 'md',
+  rowAction,
 }: MetadataTableProps) {
   const t = useTranslations('tables.common');
   const tFilters = useTranslations('tables.filters');
@@ -467,7 +411,8 @@ export default function MetadataTable({
   );
 
   return (
-    <div className={styles.metadataTable}>
+    <div
+      className={`${styles.metadataTable} ${size === 's' ? styles.sizeS : ''}`}>
       <div className={styles.controls}>
         <div className={styles.searchBar}>
           <input
@@ -596,11 +541,16 @@ export default function MetadataTable({
                   </div>
                 </th>
               ))}
+              {rowAction && (
+                <th className={styles.rowActionHead} aria-label={rowAction.label} />
+              )}
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((row) => {
-              const { href, external } = getRowHref(row);
+              const { href, external } = onRowSelect
+                ? { href: '', external: false }
+                : getRowHref(row);
               const rowKey = getRowSlug(row);
               return (
                 <tr key={rowKey} className={styles.clickableRow}>
@@ -611,7 +561,14 @@ export default function MetadataTable({
                       : String(value ?? '-');
                     return (
                       <td key={`${rowKey}-${column.key}`}>
-                        {external ? (
+                        {onRowSelect ? (
+                          <button
+                            type='button'
+                            className={styles.rowButton}
+                            onClick={() => onRowSelect(row)}>
+                            {content}
+                          </button>
+                        ) : external ? (
                           <a
                             href={href}
                             target='_blank'
@@ -629,6 +586,18 @@ export default function MetadataTable({
                       </td>
                     );
                   })}
+                  {rowAction && (
+                    <td className={styles.rowActionCell}>
+                      <button
+                        type='button'
+                        className={styles.rowActionButton}
+                        onClick={() => rowAction.onSelect(row)}
+                        aria-label={rowAction.label}
+                        title={rowAction.label}>
+                        {rowAction.icon ?? '↗'}
+                      </button>
+                    </td>
+                  )}
                 </tr>
               );
             })}

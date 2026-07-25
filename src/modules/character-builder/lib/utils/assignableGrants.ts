@@ -23,8 +23,12 @@ import type {
   CharacterSheet,
   TierLevel,
 } from '@/lib/types/character';
+import { getTotalCharacterLevel } from './characterDerivation';
 import { TIER_CYCLE } from './characterStorage';
-import { countEarnedFeats } from './featProgression';
+import {
+  countGlobalTierFeats,
+  countVocationAsiFeats,
+} from './featProgression';
 import {
   collectActiveGrantShards,
   deriveGrantFloors,
@@ -236,14 +240,24 @@ export function collectAssignableGrants(
     }
   }
 
-  const featCount = countEarnedFeats(character);
-  if (featCount > 0) {
+  const vocationFeats = countVocationAsiFeats(character);
+  if (vocationFeats > 0) {
     grants.push({
-      id: 'progression:feat',
+      id: 'progression:feat-vocation',
       category: 'feat',
       choice: { kind: 'any' },
-      count: featCount,
-      source: '',
+      count: vocationFeats,
+      source: 'Vocation',
+    });
+  }
+  const tierFeats = countGlobalTierFeats(getTotalCharacterLevel(character));
+  if (tierFeats > 0) {
+    grants.push({
+      id: 'progression:feat-tier',
+      category: 'feat',
+      choice: { kind: 'anyExcept', deny: ['ability-score-improvement'] },
+      count: tierFeats,
+      source: 'Tier bonus',
     });
   }
 
@@ -299,7 +313,49 @@ export function countAssigned(
 }
 
 /**
- * Aggregates the character's unassigned benefits by `(category, tier)`.
+ * Counts the feat/ASI slots a character has NOT filled, honoring that
+ * ability-score-improvement can only fill slots that allow it (vocation slots),
+ * not the tier-bonus slots that deny it. A single greedy matching: ASI feats fill
+ * only ASI-allowed slots; other feats fill ASI-denied slots first (to preserve
+ * allowed slots for ASI), then any remaining allowed slots.
+ *
+ * @function unassignedFeatSlots
+ * @param {AssignableGrant[]} featGrants - The character's feat-category grants
+ * @param {CharacterSheet} character - Character to inspect
+ * @returns {number} Unfilled feat slots
+ */
+function unassignedFeatSlots(
+  featGrants: AssignableGrant[],
+  character: CharacterSheet,
+): number {
+  let asiAllowed = 0;
+  let asiDenied = 0;
+  for (const grant of featGrants) {
+    if (matchesChoice('ability-score-improvement', grant.choice)) {
+      asiAllowed += grant.count;
+    } else {
+      asiDenied += grant.count;
+    }
+  }
+  const selected = character.selectedFeats ?? [];
+  const asi = selected.filter(
+    (shard) => featSlug(shard) === 'ability-score-improvement',
+  ).length;
+  const other = selected.length - asi;
+  const asiFilled = Math.min(asi, asiAllowed);
+  const otherInDenied = Math.min(other, asiDenied);
+  const otherInAllowed = Math.min(
+    other - otherInDenied,
+    asiAllowed - asiFilled,
+  );
+  const filled = asiFilled + otherInDenied + otherInAllowed;
+  return Math.max(0, asiAllowed + asiDenied - filled);
+}
+
+/**
+ * Aggregates the character's unassigned benefits by `(category, tier)`. Feats are
+ * pooled through a slot-matching pass (see {@link unassignedFeatSlots}) so ASI's
+ * restriction to vocation slots is respected; other categories sum per grant.
  *
  * @function unassignedByCategory
  * @param {CharacterSheet} character - Character to inspect
@@ -308,14 +364,23 @@ export function countAssigned(
 export function unassignedByCategory(
   character: CharacterSheet,
 ): UnassignedGroup[] {
+  const all = collectAssignableGrants(character);
   const groups = new Map<string, UnassignedGroup>();
-  for (const grant of collectAssignableGrants(character)) {
+  for (const grant of all) {
+    if (grant.category === 'feat') continue;
     const unassigned = Math.max(0, grant.count - countAssigned(grant, character));
     if (unassigned === 0) continue;
     const key = `${grant.category}:${grant.tier ?? ''}`;
     const existing = groups.get(key);
     if (existing) existing.count += unassigned;
     else groups.set(key, { category: grant.category, tier: grant.tier, count: unassigned });
+  }
+  const featUnassigned = unassignedFeatSlots(
+    all.filter((grant) => grant.category === 'feat'),
+    character,
+  );
+  if (featUnassigned > 0) {
+    groups.set('feat:', { category: 'feat', count: featUnassigned });
   }
   return [...groups.values()];
 }
