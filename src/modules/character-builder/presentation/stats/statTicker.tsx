@@ -60,6 +60,7 @@ function buildTickerText(character: CharacterSheet): string {
  *
  * @component
  * @param {StatTickerProps} props - Component props
+ * @param {CharacterSheet} props.character - The character whose stats are displayed
  * @returns {JSX.Element} Rendered stat ticker
  */
 export const StatTicker: React.FC<StatTickerProps> = ({ character }) => {

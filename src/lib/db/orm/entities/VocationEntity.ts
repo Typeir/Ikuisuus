@@ -91,6 +91,10 @@ export class VocationFeatureEntity {
     nullable: true,
   })
   endLine?: number | null;
+
+  /** @property {string[] | null} grants - Tag-based proficiency grants this feature confers (e.g. `skill:arcana:expertise`, `armor:heavy`); null when it grants no automatic proficiency */
+  @Property({ type: 'string[]', nullable: true })
+  grants?: string[] | null;
 }
 
 /* ────────────────────────────  Entity  ─────────────────────────────── */

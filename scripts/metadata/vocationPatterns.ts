@@ -44,13 +44,14 @@ export const TABLE = {
  * @property {RegExp} levelHeading - Collapsible block: "## 3rd Level – Feature Name"
  * @property {RegExp} specializationLink - "[name](/en/library/.../slug.specialization)"
  * @property {RegExp} hitDie - Hit die token: "d12"
- * @property {RegExp} skillCount - Skill count: "Choose 2"
+ * @property {RegExp} skillCount - Skill count: "Choose 2", "Choose any 3", "Pick two"
  */
 export const FEATURE = {
   levelHeading: /##\s+(\d+)\w*\s+Level\s+[–—-]\s+(.+)/,
   specializationLink: /\[.*?\]\(\/en\/library\/.*?\/([\w-]+)\.specialization\)/,
   hitDie: /d(\d+)/i,
-  skillCount: /Choose\s+(\d+)/i,
+  skillCount:
+    /(?:Choose|Pick)\s+(?:any\s+)?(\d+|one|two|three|four|five|six|seven|eight|nine|ten)/i,
 } as const;
 
 /**

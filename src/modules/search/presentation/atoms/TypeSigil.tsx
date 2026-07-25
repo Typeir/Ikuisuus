@@ -32,6 +32,8 @@ interface TypeSigilProps {
  * accent color.
  *
  * @param {TypeSigilProps} props - Component props
+ * @param {SearchContentType} props.type - Content type from the taxonomy
+ * @param {string} [props.className] - Optional additional class names
  * @returns {JSX.Element} The sigil badge
  */
 export function TypeSigil({ type, className }: TypeSigilProps): JSX.Element {

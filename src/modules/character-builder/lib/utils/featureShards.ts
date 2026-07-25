@@ -65,6 +65,7 @@ export async function fetchFeatureShards(
       category,
       level: f.level,
       cachedText: data.shards[f.name],
+      grants: f.grants,
     }));
   } catch {
     return [];

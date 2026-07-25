@@ -43,6 +43,14 @@ export interface TextInputProps {
  *
  * @component
  * @param {TextInputProps} props - Component props
+ * @param {string} props.value - Controlled input value
+ * @param {(value: string) => void} props.onChange - Change callback with the new string value
+ * @param {string} [props.id] - Input id attribute
+ * @param {string} [props.placeholder] - Placeholder text
+ * @param {string} [props.ariaLabel] - Accessible label when no visible label is present
+ * @param {string} [props.className] - Additional class applied to the input element
+ * @param {boolean} [props.disabled=false] - Disables the input
+ * @param {'sm' | 'md' | 'lg'} [props.size=md] - Size variant (default `md`)
  * @returns {JSX.Element} Rendered text input
  */
 export const TextInput: React.FC<TextInputProps> = ({

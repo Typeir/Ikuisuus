@@ -38,6 +38,10 @@ export interface SummaryBarProps {
  *
  * @component
  * @param {SummaryBarProps} props - Component props
+ * @param {boolean} props.collapsed - Whether the selector panel is collapsed
+ * @param {() => void} props.onToggle - Toggle collapsed state
+ * @param {string} props.bloodlineTitle - Active bloodline display name
+ * @param {VocationEntry[]} props.vocations - Current vocation entries
  * @returns {JSX.Element} Rendered summary button
  */
 export const SummaryBar: React.FC<SummaryBarProps> = ({

@@ -72,7 +72,12 @@ const entityRow = {
   features: {
     getItems: () => [
       { level: 1, name: 'Rage', sortOrder: 0 },
-      { level: 2, name: 'Reckless Attack', sortOrder: 1 },
+      {
+        level: 2,
+        name: 'Reckless Attack',
+        sortOrder: 1,
+        grants: ['skill:intimidation:proficient'],
+      },
     ],
   },
 };
@@ -113,6 +118,16 @@ describe('pgVocationRepository', () => {
       expect(result[0].features).toHaveLength(2);
       expect(result[0].features[0].name).toBe('Rage');
       expect(result[0].features[1].name).toBe('Reckless Attack');
+    });
+
+    it('should map feature grants, omitting them when the row grants nothing', async () => {
+      mockEM.find.mockResolvedValue([entityRow]);
+
+      const result = await pgVocationRepository.list('en');
+      expect(result[0].features[0].grants).toBeUndefined();
+      expect(result[0].features[1].grants).toEqual([
+        'skill:intimidation:proficient',
+      ]);
     });
 
     it('should map spellcasting for caster vocations', async () => {

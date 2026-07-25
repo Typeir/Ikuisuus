@@ -17,17 +17,19 @@
 
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
+import matter from 'gray-matter';
 import path from 'path';
 import {
-  extractAllTags,
-  filePathToSlug,
-  parseDescription,
-  parseTitle,
-  runGenerator,
-  runWithCli,
-  type SharedData,
-  type StorageAdapter,
+    extractAllTags,
+    filePathToSlug,
+    parseDescription,
+    parseTitle,
+    runGenerator,
+    runWithCli,
+    type SharedData,
+    type StorageAdapter,
 } from '.';
+import { extractFeatureGrants } from './extraction/grantsExtractor';
 import { SLUG } from './parsingPatterns';
 
 const log = createLogger({ component: 'FeatMetadataGenerator' });
@@ -57,7 +59,7 @@ const PREREQUISITE_REGEX = /_([^_\n]*?prerequisite[^_\n]*?)_/i;
  * Examples (case-insensitive):
  *   "Increase your **Strength score by 1**"
  *   "Increase your **Strength or Dexterity score by 1**"
- *   "Increase your Strength score by 1, to a maximum of 20"
+ *   "Increase your Strength score by 1"
  */
 const ABILITY_INCREASE_REGEX =
   /increase your\s+\**\s*([A-Za-z][A-Za-z\s,or]*?)\s+score\s+by\s+(\d+)\s*\**(?:,\s*to a maximum of\s+\**\s*(\d+))?/i;
@@ -216,13 +218,21 @@ async function parseFeatFile(
     const { prerequisite, hasPrerequisite } = parsePrerequisite(raw);
     const abilityIncrease = parseAbilityIncrease(raw);
     const features = parseFeatures(raw, filePath, sharedData);
-    const tags = Array.from(
-      new Set(
-        extractAllTags(raw, filePath, sharedData, {
-          contentType: 'generic',
-        }),
-      ),
-    ).sort();
+
+    const frontmatter = matter(raw).data as Record<string, unknown>;
+    const frontmatterGrants = frontmatter.grants ?? frontmatter.Grants;
+    const grantsMap = Array.isArray(frontmatterGrants)
+      ? { [title]: frontmatterGrants as string[] }
+      : (frontmatterGrants as Record<string, string[]> | undefined);
+    const grants = extractFeatureGrants(title, raw, grantsMap);
+    const multiSelect = frontmatter.multiSelect === true;
+    const tagSet = new Set(
+      extractAllTags(raw, filePath, sharedData, {
+        contentType: 'generic',
+      }),
+    );
+    if (multiSelect) tagSet.add('multi-select');
+    const tags = Array.from(tagSet).sort();
 
     const metadata: Record<string, unknown> = {
       slug,
@@ -240,6 +250,8 @@ async function parseFeatFile(
     if (prerequisite) metadata.prerequisite = prerequisite;
     if (abilityIncrease) metadata.abilityIncrease = abilityIncrease;
     if (features.length > 0) metadata.features = features;
+    if (grants.length > 0) metadata.grants = grants;
+    if (multiSelect) metadata.multiSelect = true;
 
     return metadata;
   } catch (error) {

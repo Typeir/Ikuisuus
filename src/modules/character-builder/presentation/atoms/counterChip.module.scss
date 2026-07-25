@@ -1,0 +1,56 @@
+/**
+ * Floating counter chip: a small pill anchored to a corner of a positioned
+ * ancestor. Absolutely positioned so it overlays without reflowing siblings;
+ * pointer-events disabled since it is a passive status indicator.
+ *
+ * @module presentation/atoms/counterChip.module.scss
+ */
+
+.chip {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
+.top-right {
+  top: -0.5rem;
+  right: 0.25rem;
+}
+
+.top-left {
+  top: -0.5rem;
+  left: 0.25rem;
+}
+
+.warning {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.success {
+  background: color-mix(
+    in srgb,
+    var(--color-success) 14%,
+    var(--color-bg-secondary)
+  );
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.neutral {
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}

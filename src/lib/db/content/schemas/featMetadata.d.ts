@@ -58,6 +58,8 @@ export interface FeatAbilityIncrease {
  * @property {boolean} hasPrerequisite - True when a non-trivial prerequisite is parsed
  * @property {FeatAbilityIncrease} [abilityIncrease] - Parsed ability score increase
  * @property {FeatFeature[]} [features] - Named mechanics parsed from bold bullet items
+ * @property {string[]} [grants] - Tag-based proficiency grants (e.g. `weapon:martial`, `skill:persuasion:expertise`)
+ * @property {boolean} [multiSelect] - When true, the feat may be selected more than once (e.g. Ability Score Improvement). Backed by the `multi-select` tag so it survives both FS and PG backends.
  * @property {string[]} tags - Derived gameplay tags
  * @property {number} [indexVersion] - Schema version
  */
@@ -71,6 +73,8 @@ export interface FeatMetadata {
   hasPrerequisite: boolean;
   abilityIncrease?: FeatAbilityIncrease;
   features?: FeatFeature[];
+  grants?: string[];
+  multiSelect?: boolean;
   tags: string[];
   indexVersion?: number;
 }

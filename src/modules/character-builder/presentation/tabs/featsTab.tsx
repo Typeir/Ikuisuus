@@ -28,9 +28,13 @@ import {
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
+import { UnassignedChips } from '../atoms/unassignedChips';
 import { BuilderSplitPane } from '../builder/builderSplitPane';
 import { FeatPicker } from '../builder/featPicker';
 import styles from './tabs.module.scss';
+
+/** Benefit categories the feats tab accounts for. */
+const FEAT_CATEGORIES = ['feat'] as const;
 
 /**
  * Props for `<FeatsTab>`.
@@ -49,6 +53,8 @@ export interface FeatsTabProps {
  *
  * @component
  * @param {FeatsTabProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
+ * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered tab body
  */
 export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
@@ -84,7 +90,8 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
       sheetOpen={!!focusedShard}
       onSheetClose={() => mutators.setFocusedShard(null)}
       left={
-        <div className={styles.column}>
+        <div className={`${styles.column} ${styles.featColumn}`}>
+          <UnassignedChips character={data} categories={FEAT_CATEGORIES} />
           {editing && selectedFeats.length > 0 && (
             <div className={styles.chipCloud}>
               {selectedFeats.map((feat) => (

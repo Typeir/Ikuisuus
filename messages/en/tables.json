@@ -68,5 +68,14 @@
       "conditions": "Conditions",
       "weight": "Weight"
     }
+  },
+  "feats": {
+    "noFeats": "No feats found.",
+    "columns": {
+      "feat": "Feat",
+      "prerequisite": "Prerequisite",
+      "repeatable": "Repeatable",
+      "summary": "Summary"
+    }
   }
 }

@@ -74,6 +74,8 @@ function resolveDieFaces(entry: VocationEntry, log: HitDieRollEntry[]): string {
  *
  * @component
  * @param {HitDiceCounterProps} props - Component props
+ * @param {VocationEntry[]} props.vocations - Active vocation entries for the character
+ * @param {HitDieRollEntry[]} [props.hitDiceLog=[]] - Per-level hit die roll history; used to recover die types missing from vocation entries
  * @returns {JSX.Element} Rendered counter
  */
 export const HitDiceCounter: React.FC<HitDiceCounterProps> = ({

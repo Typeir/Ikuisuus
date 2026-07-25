@@ -63,6 +63,15 @@ export interface ChipProps {
  *
  * @component
  * @param {ChipProps} props - Component props
+ * @param {string} props.label - Visible text label
+ * @param {ChipVariant} [props.variant='neutral'] - Visual variant (default `neutral`)
+ * @param {ReactNode} [props.icon] - Optional leading icon
+ * @param {() => void} [props.onInfo] - Optional info handler; renders a `?` button inside the chip when set
+ * @param {() => void} [props.onRemove] - Optional remove handler; renders an `×` button inside the chip when set
+ * @param {() => void} [props.onClick] - Optional click handler for the chip body
+ * @param {string} [props.infoLabel] - Accessible label for the info button
+ * @param {string} [props.removeLabel] - Accessible label for the remove button
+ * @param {string} [props.title] - HTML title tooltip
  * @returns {JSX.Element} Rendered chip
  */
 export const Chip: React.FC<ChipProps> = ({

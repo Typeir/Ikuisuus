@@ -64,6 +64,9 @@ export interface VirtualizedSidebarProps {
  * no per-row `<ul>` wrapper.
  *
  * @param {VirtualizedSidebarProps} props - Component props.
+ * @param {LayoutItem[]} props.items - Folder children to virtualize.
+ * @param {() => void} [props.onNavigate] - Navigation callback forwarded to each row.
+ * @param {boolean} [props.collapseSiblings=false] - Whether sibling folders collapse.
  * @returns {JSX.Element} A virtualized sidebar list.
  */
 const VirtualizedSidebar = ({

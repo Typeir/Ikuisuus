@@ -21,12 +21,14 @@
  * @property {string} name - Feature display name
  * @property {number} [startLine] - 1-indexed start line of this feature's heading block in the source MDX
  * @property {number} [endLine] - 1-indexed last line of this feature's heading block in the source MDX
+ * @property {string[]} [grants] - Tag-based proficiency grants this feature confers
  */
 export interface FeatureEntry {
   level: number;
   name: string;
   startLine?: number;
   endLine?: number;
+  grants?: string[];
 }
 
 /**

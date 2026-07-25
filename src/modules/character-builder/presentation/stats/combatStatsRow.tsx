@@ -60,6 +60,18 @@ export interface CombatStatsRowProps {
  *
  * @component
  * @param {CombatStatsRowProps} props - Component props
+ * @param {number} props.hpCurrent - Current hit points
+ * @param {number} props.hpMax - Maximum hit points
+ * @param {number} props.tempHp - Temporary hit points
+ * @param {number} props.ac - Armor class
+ * @param {number} props.initiativeBonus - Initiative modifier
+ * @param {number | null} props.speedOverride - Movement speed override in feet; null means use default
+ * @param {string[]} props.bloodlineSpeeds - All speed modes from the active bloodline
+ * @param {number} props.tierBonus - tier bonus
+ * @param {VocationEntry[]} props.vocations - Active vocation entries (used for hit dice counter)
+ * @param {HitDieRollEntry[]} props.hitDiceLog - Hit die roll log for the HP roller panel
+ * @param {number} props.conMod - CON modifier for HP roller calculations
+ * @param {(updatedLog: HitDieRollEntry[]) => void} props.onHitDiceCommit - Called with the updated log when confirmed HP changes
  * @returns {JSX.Element} Rendered combat stats row
  */
 export const CombatStatsRowImpl: React.FC<CombatStatsRowProps> = ({

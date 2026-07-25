@@ -1,0 +1,33 @@
+/**
+ * @fileoverview Unassigned-chip stack styles
+ * @description A corner-anchored, absolutely-positioned column of status pills.
+ * Absolute so it overlays without reflowing the table; pointer-events disabled
+ * since the pills are passive indicators. Pills stack downward, right-aligned.
+ *
+ * @module modules/character-builder/presentation/atoms/unassignedChips.module
+ */
+
+.stack {
+  position: absolute;
+  top: -0.5rem;
+  right: 0.25rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  border: 1px solid var(--color-danger);
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+}

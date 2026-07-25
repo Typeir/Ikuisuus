@@ -42,6 +42,9 @@ export interface AttacksTableProps {
  *
  * @component
  * @param {AttacksTableProps} props - Component props
+ * @param {CharacterAttack[]} props.attacks - Current list of attack entries
+ * @param {(attacks: CharacterAttack[]) => void} props.onChange - Callback when attacks list changes
+ * @param {boolean} [props.readOnly=false] - When true, add/edit/remove controls are hidden
  * @returns {JSX.Element} Rendered attacks table
  */
 export const AttacksTableImpl: React.FC<AttacksTableProps> = ({

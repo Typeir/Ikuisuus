@@ -61,6 +61,17 @@ export interface AsyncTooltipProps {
  *
  * @component
  * @param {AsyncTooltipProps} props - Component props
+ * @param {() => Promise<ReactNode>} props.fetchContent - Called on first hover to load tooltip content
+ * @param {ReactNode} [props.fallback] - Shown while idle, loading, or on error
+ * @param {ReactElement} props.children - Trigger element passed through to Tooltip
+ * @param {TooltipPlacement} [props.placement='top'] - Tooltip placement (default `top`)
+ * @param {number} [props.showDelay=250] - Delay before showing tooltip in ms
+ * @param {number} [props.hideDelay] - Delay before hiding tooltip in ms
+ * @param {boolean} [props.clickable] - Whether tooltip has a clickable action
+ * @param {() => void} [props.onItemClick] - Callback when clickable tooltip is clicked
+ * @param {boolean} [props.showClickIcon] - Whether to show the click icon
+ * @param {boolean} [props.disabled] - Whether tooltip is disabled
+ * @param {number} [props.maxWidth] - Maximum width of tooltip in px
  * @returns {JSX.Element} Rendered async tooltip
  */
 export const AsyncTooltip: React.FC<AsyncTooltipProps> = ({

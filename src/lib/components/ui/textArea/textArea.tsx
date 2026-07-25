@@ -45,6 +45,15 @@ export interface TextAreaProps {
  *
  * @component
  * @param {TextAreaProps} props - Component props
+ * @param {string} props.value - Controlled textarea value
+ * @param {(value: string) => void} props.onChange - Change callback with the new string value
+ * @param {string} [props.id] - Textarea id attribute
+ * @param {string} [props.placeholder] - Placeholder text
+ * @param {string} [props.ariaLabel] - Accessible label when no visible label is present
+ * @param {string} [props.className] - Additional class applied to the textarea element
+ * @param {boolean} [props.disabled=false] - Disables the textarea
+ * @param {boolean} [props.readOnly=false] - Makes the textarea read-only
+ * @param {number} [props.rows=3] - Number of visible rows (default `3`)
  * @returns {JSX.Element} Rendered textarea
  */
 export const TextArea: React.FC<TextAreaProps> = ({

@@ -16,6 +16,7 @@ vi.mock('@/lib/logging/logger', () => ({
 }));
 
 let fsSpellRepository: typeof import('@/lib/db/content/adapters/fs/fsSpellRepository').fsSpellRepository;
+let spellMatchesSource: typeof import('@/lib/db/content/adapters/fs/fsSpellRepository').spellMatchesSource;
 let readMetadataFiles: ReturnType<typeof vi.fn>;
 
 beforeEach(async () => {
@@ -25,6 +26,7 @@ beforeEach(async () => {
 
   const mod = await import('@/lib/db/content/adapters/fs/fsSpellRepository');
   fsSpellRepository = mod.fsSpellRepository;
+  spellMatchesSource = mod.spellMatchesSource;
 });
 
 afterEach(() => vi.restoreAllMocks());
@@ -140,6 +142,80 @@ describe('fsSpellRepository', () => {
       });
       const result = await fsSpellRepository.getBySlug('en', 'fireball');
       expect(result).toBeNull();
+    });
+  });
+
+  describe('listBySource', () => {
+    const SOURCED = [
+      {
+        slug: 'abominable-grasp',
+        title: 'Abominable Grasp',
+        spellLists: [{ name: 'Revenant', link: '/revenant' }],
+      },
+      {
+        slug: 'fireball',
+        title: 'Fireball',
+        spellLists: [
+          { name: 'Wizard', link: '/wizard' },
+          { name: 'Scion', link: '/scion' },
+        ],
+      },
+      { slug: 'mending', title: 'Mending', spellLists: [] },
+    ];
+
+    it('should return only spells belonging to the source', async () => {
+      readMetadataFiles.mockReturnValue(SOURCED);
+      const result = await fsSpellRepository.listBySource('en', 'Wizard');
+      expect(result.map((s) => s.slug)).toEqual(['fireball']);
+    });
+
+    it('should match a source case-insensitively', async () => {
+      readMetadataFiles.mockReturnValue(SOURCED);
+      const result = await fsSpellRepository.listBySource('en', 'revenant');
+      expect(result.map((s) => s.slug)).toEqual(['abominable-grasp']);
+    });
+
+    it('should return the full library for a blank source', async () => {
+      readMetadataFiles.mockReturnValue(SOURCED);
+      const result = await fsSpellRepository.listBySource('en', '   ');
+      expect(result).toHaveLength(SOURCED.length);
+    });
+
+    it('should return empty array on error', async () => {
+      readMetadataFiles.mockImplementation(() => {
+        throw new Error('fail');
+      });
+      const result = await fsSpellRepository.listBySource('en', 'Wizard');
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('spellMatchesSource', () => {
+    const spell = (lists: string[]) =>
+      ({
+        slug: 'x',
+        title: 'X',
+        spellLists: lists.map((name) => ({ name, link: `/${name}` })),
+      }) as never;
+
+    it('matches when a spell-list name equals the source', () => {
+      expect(spellMatchesSource(spell(['Wizard']), 'Wizard')).toBe(true);
+    });
+
+    it('matches case-insensitively and trims whitespace', () => {
+      expect(spellMatchesSource(spell(['Wizard']), '  wizard ')).toBe(true);
+    });
+
+    it('matches any one of several spell lists', () => {
+      expect(spellMatchesSource(spell(['Wizard', 'Scion']), 'Scion')).toBe(true);
+    });
+
+    it('does not match an unrelated source', () => {
+      expect(spellMatchesSource(spell(['Wizard']), 'Revenant')).toBe(false);
+    });
+
+    it('returns false when the spell has no spell lists', () => {
+      expect(spellMatchesSource(spell([]), 'Wizard')).toBe(false);
     });
   });
 });

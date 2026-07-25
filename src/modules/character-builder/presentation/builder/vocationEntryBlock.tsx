@@ -207,9 +207,7 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
           )}
         </div>
       </div>
-      {selectedVocation && !showSkeleton && (
-        <VocationProficiencySummary vocation={selectedVocation} />
-      )}
+      {!showSkeleton && <VocationProficiencySummary vocation={selectedVocation} />}
     </div>
   );
 };

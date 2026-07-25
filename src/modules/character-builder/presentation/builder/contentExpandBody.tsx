@@ -47,6 +47,11 @@ export interface ContentExpandBodyProps {
  *
  * @component
  * @param {ContentExpandBodyProps} props - Component props
+ * @param {ContentShardType} props.contentType - API path segment (e.g. `'feats'`, `'bloodlines'`)
+ * @param {string} props.contentSlug - Slug of the parent content item
+ * @param {string} props.contentKey - Heading key to fetch within the content item
+ * @param {string} [props.cachedText] - Optional pre-fetched body text (skips fetch)
+ * @param {string} props.id - DOM id used by the row's aria-controls
  * @returns {JSX.Element} Rendered prose body
  */
 export const ContentExpandBody: React.FC<ContentExpandBodyProps> = ({

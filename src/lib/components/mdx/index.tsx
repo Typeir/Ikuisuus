@@ -33,6 +33,7 @@ import Meta from '@/modules/library/presentation/components/Meta/index';
 import ParallaxBackdrop from '@/modules/library/presentation/components/ParallaxBackdrop/index';
 import Tooltip from '@/modules/library/presentation/components/Tooltip/index';
 import {
+    FeatTable,
     FilteredSpellTable,
     HeirloomTable,
     MonsterTable,
@@ -49,6 +50,7 @@ export const components = {
   Meta,
   MonsterTable,
   HeirloomTable,
+  FeatTable,
   FilteredSpellTable,
   SpellTable,
   TrinketTable,

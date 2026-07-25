@@ -30,6 +30,8 @@ interface MatchSnippetProps {
  * Falls back to a hidden element when no snippet is available.
  *
  * @param {MatchSnippetProps} props - Component props
+ * @param {string} [props.snippet] - HTML snippet with optional `<mark>` tags
+ * @param {string} [props.className] - Optional additional class names
  * @returns {JSX.Element | null} The snippet element or null
  */
 export function MatchSnippet({

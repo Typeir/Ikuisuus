@@ -71,6 +71,7 @@ const classifyLoad = (
  *
  * @component
  * @param {CarryingCapacityCalculatorProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
  * @returns {JSX.Element} Rendered calculator
  */
 export const CarryingCapacityCalculator: React.FC<

@@ -75,6 +75,7 @@ export function parseDescription(content: string): string | undefined {
         !l.startsWith('<') &&
         !l.startsWith('{') &&
         !l.startsWith('>') &&
+        !l.startsWith('|') &&
         !/^[_*][^_*\n]+[_*]$/.test(l),
     );
 

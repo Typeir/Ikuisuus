@@ -1,0 +1,125 @@
+/**
+ * @fileoverview Feat Table Wrapper — Client-side data fetching for the feat library table.
+ * @description Fetches feat metadata from `/api/feats` (via `useFeats`) and configures the
+ * shared {@link MetadataTable} with feat-specific columns (feat name, prerequisite, repeatable,
+ * summary), so the feat index reads like the spell, monster, and item table views.
+ *
+ * @version 1.0.0
+ * @author Typeir
+ * @since 8.0.0
+ *
+ * @example
+ * ```mdx
+ * <FeatTable />
+ * ```
+ * @module src/modules/metadata-tables/presentation/FeatTable/FeatTable
+ */
+'use client';
+
+import MetadataTable, {
+    type ColumnConfig,
+} from '@/lib/components/mdx/metadataTables/metadataTable';
+import { MetadataTableSkeleton } from '@/lib/components/mdx/metadataTables/metadataTableSkeleton';
+import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
+import { useFeats } from '@/lib/hooks/data/useFeats';
+import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import { useMemo } from 'react';
+
+/**
+ * Props for the FeatTable component.
+ *
+ * @typedef {Object} FeatTableProps
+ * @property {string} [locale] - Optional locale override (defaults to route param or 'en')
+ */
+type FeatTableProps = {
+  locale?: string;
+};
+
+/**
+ * Client-side feat table. Reuses the generic {@link MetadataTable} so it looks and
+ * behaves like the other library table views (search, sort, filter, pagination,
+ * click-to-open rows). Navigation targets each feat's own `link` field.
+ *
+ * @component
+ * @param {FeatTableProps} props - Component props
+ * @param {string} [props.locale] - Optional locale override (defaults to route param or 'en')
+ * @returns {JSX.Element} The rendered feat table with client-side data fetching
+ */
+export default function FeatTable({ locale: localeProp }: FeatTableProps = {}) {
+  const t = useTranslations('tables.feats');
+  const tColumns = useTranslations('tables.feats.columns');
+  const tCommon = useTranslations('common');
+  const params = useParams();
+  const locale = localeProp || (params?.locale as string) || 'en';
+  const { feats, isLoading, error } = useFeats({ locale });
+
+  const columns = useMemo<ColumnConfig[]>(
+    () => [
+      { key: 'title', label: tColumns('feat'), sortable: true },
+      {
+        key: 'prerequisite',
+        label: tColumns('prerequisite'),
+        sortable: true,
+        getValue: (row) =>
+          (row as FeatMetadata).hasPrerequisite
+            ? ((row as FeatMetadata).prerequisite ?? '')
+            : '',
+        render: (_value, row) =>
+          (row as FeatMetadata).hasPrerequisite
+            ? ((row as FeatMetadata).prerequisite ?? '—')
+            : '—',
+      },
+      {
+        key: 'multiSelect',
+        label: tColumns('repeatable'),
+        sortable: true,
+        filterable: true,
+        filterType: 'select',
+        getValue: (row) =>
+          (row as FeatMetadata).multiSelect ? tCommon('yes') : tCommon('no'),
+        render: (_value, row) =>
+          (row as FeatMetadata).multiSelect ? tCommon('yes') : '—',
+      },
+      {
+        key: 'description',
+        label: tColumns('summary'),
+        sortable: false,
+        render: (value) => String(value ?? '—'),
+      },
+    ],
+    [tColumns, tCommon],
+  );
+
+  if (isLoading) {
+    return (
+      <MetadataTableSkeleton
+        rows={12}
+        columns={4}
+        filters={[{ label: tColumns('repeatable'), type: 'select' }]}
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <div className='text-center py-8 text-red-500'>
+        {tCommon('error')}: {error.message}
+      </div>
+    );
+  }
+
+  if (feats.length === 0) {
+    return <div className='text-center py-8'>{t('noFeats')}</div>;
+  }
+
+  return (
+    <MetadataTable
+      data={feats}
+      columns={columns}
+      getRowSlug={(row) => (row as FeatMetadata).slug}
+      searchKeys={['title', 'prerequisite', 'description']}
+      defaultSort={{ key: 'title', direction: 'asc' }}
+    />
+  );
+}

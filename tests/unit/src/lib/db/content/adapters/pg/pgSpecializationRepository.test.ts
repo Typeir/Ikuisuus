@@ -64,7 +64,12 @@ const entityRow = {
   features: {
     getItems: () => [
       { level: 3, name: 'Frenzy', sortOrder: 0 },
-      { level: 6, name: 'Mindless Rage', sortOrder: 1 },
+      {
+        level: 6,
+        name: 'Mindless Rage',
+        sortOrder: 1,
+        grants: ['saving_throw:wisdom'],
+      },
     ],
   },
   preparedSpells: {
@@ -115,6 +120,14 @@ describe('pgSpecializationRepository', () => {
       expect(result[0].features).toHaveLength(2);
       expect(result[0].features[0].name).toBe('Frenzy');
       expect(result[0].features[1].name).toBe('Mindless Rage');
+    });
+
+    it('should map feature grants, omitting them when the row grants nothing', async () => {
+      mockEM.find.mockResolvedValue([entityRow]);
+
+      const result = await pgSpecializationRepository.list('en');
+      expect(result[0].features[0].grants).toBeUndefined();
+      expect(result[0].features[1].grants).toEqual(['saving_throw:wisdom']);
     });
 
     it('should map spellcasting and preparedSpells for caster subclasses', async () => {

@@ -17,14 +17,20 @@ import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
+import { deriveGrantFloors } from '@/modules/character-builder/lib/utils/grants';
+import { deriveProficiencyHints } from '@/modules/character-builder/lib/utils/proficiencyBudget';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { UnassignedChips } from '../atoms/unassignedChips';
 import { NotesSection } from '../notes/notesSection';
 import { AttacksTable } from '../stats/attacksTable';
 import { SkillsTable } from '../stats/skillsTable';
 import { ToolsTable } from '../stats/toolsTable';
 import styles from './tabs.module.scss';
+
+/** Benefit categories the overview skill/trade tables account for. */
+const SKILL_TABLE_CATEGORIES = ['skill', 'trade'] as const;
 
 /** Overview section tab value on phone layouts. */
 type OverviewSection = 'skills' | 'trades' | 'attacks' | 'notes';
@@ -62,6 +68,16 @@ export interface MobileOverviewTabProps {
  *
  * @component
  * @param {MobileOverviewTabProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
+ * @param {boolean} props.editing - Whether edit mode is active
+ * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch callback
+ * @param {(skills: CharacterSheetType['skills']) => void} props.onSkillsChange - Skills patch
+ * @param {(tools: CharacterSheetType['tools']) => void} props.onToolsChange - Tools patch
+ * @param {(attacks: CharacterSheetType['attacks']) => void} props.onAttacksChange - Attacks patch
+ * @param {(fields: Partial<CharacterSheetType>) => void} props.onNotesChange - Notes patch
+ * @param {CharacterShard[]} props.boonShards - Selected boon shards
+ * @param {CharacterShard[]} props.featShards - Selected feat shards
+ * @param {CharacterShard[]} props.featureShards - Unlocked vocation/spec features
  * @returns {JSX.Element} Rendered mobile overview
  */
 export const MobileOverviewTab: React.FC<MobileOverviewTabProps> = ({
@@ -78,6 +94,8 @@ export const MobileOverviewTab: React.FC<MobileOverviewTabProps> = ({
 }) => {
   const t = useTranslations('characterSheet');
   const [section, setSection] = useState<OverviewSection>('skills');
+  const grantFloors = useMemo(() => deriveGrantFloors(data), [data]);
+  const hints = useMemo(() => deriveProficiencyHints(data), [data]);
 
   return (
     <div className={styles.column}>
@@ -94,13 +112,24 @@ export const MobileOverviewTab: React.FC<MobileOverviewTabProps> = ({
         </TabList>
 
         <TabPanel value='skills'>
-          <SkillsTable
-            skills={data.skills}
-            abilityScores={data.abilityScores}
-            tierBonus={data.tierBonus}
-            onChange={onSkillsChange}
-            readOnly={!editing}
-          />
+          <div className={styles.chipAnchor}>
+            <UnassignedChips
+              character={data}
+              categories={SKILL_TABLE_CATEGORIES}
+            />
+            <SkillsTable
+              skills={data.skills}
+              abilityScores={data.abilityScores}
+              tierBonus={data.tierBonus}
+              onChange={onSkillsChange}
+              readOnly={!editing}
+              grantFloors={grantFloors.skills}
+              hintSet={hints.skills}
+            />
+            {hints.skills.size > 0 && (
+              <p className={styles.hintLegend}>{t('hintLegend')}</p>
+            )}
+          </div>
         </TabPanel>
         <TabPanel value='trades'>
           <ToolsTable
@@ -108,6 +137,8 @@ export const MobileOverviewTab: React.FC<MobileOverviewTabProps> = ({
             tierBonus={data.tierBonus}
             onChange={onToolsChange}
             readOnly={!editing}
+            grantFloors={grantFloors.tools}
+            hintSet={hints.trades}
           />
         </TabPanel>
         <TabPanel value='attacks'>

@@ -66,6 +66,9 @@ const NOTE_FIELD_KEYS: (keyof NoteFields)[] = [
  *
  * @component
  * @param {NotesSectionProps} props - Component props
+ * @param {NoteFields} props.values - Current note field values
+ * @param {(values: NoteFields) => void} props.onChange - Callback when any field changes
+ * @param {boolean} [props.readOnly=false] - When true, renders static text instead of textareas
  * @returns {JSX.Element} Rendered notes section
  */
 export const NotesSectionImpl: React.FC<NotesSectionProps> = ({

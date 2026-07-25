@@ -50,6 +50,8 @@ interface AbilityImportPanelProps {
  *
  * @component
  * @param {AbilityImportPanelProps} props - Component props
+ * @param {boolean} [props.collapsed=false] - Whether the panel is collapsed.
+ * @param {() => void} [props.onToggleCollapse] - Callback to toggle collapse state.
  * @returns {JSX.Element} Rendered import panel
  */
 export const AbilityImportPanel: React.FC<AbilityImportPanelProps> = ({

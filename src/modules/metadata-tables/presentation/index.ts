@@ -6,6 +6,7 @@
  * @since 1.0.0
  */
 
+export { FeatTable } from './FeatTable';
 export { FilteredSpellTable } from './FilteredSpellTable';
 export { HeirloomTable } from './HeirloomTable';
 export { MonsterTable } from './MonsterTable';

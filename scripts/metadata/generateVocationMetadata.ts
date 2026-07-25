@@ -15,7 +15,9 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';
 import { promises as fs } from 'fs';
+import matter from 'gray-matter';
 import path from 'path';
 import {
     clean,
@@ -28,6 +30,7 @@ import {
     type SharedData,
     type StorageAdapter,
 } from '.';
+import { extractFeatureGrants } from './extraction/grantsExtractor';
 import { LIST, SLUG, TEXT } from './parsingPatterns';
 import { CASTING, FEATURE, TABLE } from './vocationPatterns';
 
@@ -105,8 +108,39 @@ function parseSavingThrows(value: string): string[] {
     .filter(Boolean);
 }
 
+/** Maps spelled-out numbers used in "Pick two"/"Choose three" phrasing to digits. */
+const WORD_NUMBERS: Record<string, number> = {
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ten: 10,
+};
+
 /**
- * Parses skill proficiencies into count and choices.
+ * Extracts the number of picks from a "Choose N" / "Pick N" / "Choose any N"
+ * phrase, accepting a digit or a spelled-out number and defaulting to 2.
+ *
+ * @param {string} text - Clean skill text (markdown already stripped)
+ * @returns {number} Number of base skill picks
+ */
+function parseChoiceCount(text: string): number {
+  const match = text.match(FEATURE.skillCount);
+  if (!match) return 2;
+  const token = match[1].toLowerCase();
+  return WORD_NUMBERS[token] ?? parseInt(token, 10) ?? 2;
+}
+
+/**
+ * Parses skill proficiencies into count and choices. A missing colon marks an
+ * unrestricted "any" grant (e.g. "Choose any 3 skills"), which yields the count
+ * with an empty choices list; otherwise the choices are the enumerated list after
+ * the colon. Inline markdown is stripped so bold-wrapped source cells parse clean.
  *
  * @param {string} value - Raw skill text (e.g. "Choose 2: Animal Handling, Athletics, ...")
  * @returns {{ count: number; choices: string[] }}
@@ -115,10 +149,11 @@ function parseSkillProficiencies(value: string): {
   count: number;
   choices: string[];
 } {
-  const countMatch = value.match(FEATURE.skillCount);
-  const count = countMatch ? parseInt(countMatch[1], 10) : 2;
+  const cleaned = stripInlineMarkdown(value);
+  const count = parseChoiceCount(cleaned);
+  if (!cleaned.includes(':')) return { count, choices: [] };
 
-  const afterColon = value.includes(':') ? value.split(':')[1] : value;
+  const afterColon = cleaned.split(':')[1];
   const choices = afterColon
     .split(LIST.orSplit)
     .map((s) => s.replace(LIST.orPrefix, '').trim())
@@ -134,11 +169,56 @@ function parseSkillProficiencies(value: string): {
  * @returns {string[]} Array of proficiency items
  */
 function parseProficiencies(value: string): string[] {
-  if (!value || value.toLowerCase() === 'none') return [];
-  return value
+  const cleaned = stripInlineMarkdown(value).trim();
+  if (!cleaned || cleaned.toLowerCase() === 'none') return [];
+  return cleaned
     .split(LIST.andOrSplit)
     .map((s) => s.trim())
     .filter(Boolean);
+}
+
+/**
+ * Extracts the OUTRIGHT-granted (fixed) trade display names from a raw "Trade
+ * Proficiencies" cell. Only markdown links whose href targets a specific trade
+ * page (`/tools/<slug>`) count; the generic `[Trade](/en/library/items/tools)`
+ * wildcard and any "choose one / any / or …" qualifier parenthetical (which may
+ * name example trades) are excluded, so "one Trade of your choice" grants nothing
+ * fixed. The link text is returned (e.g. "Thievery", "Herbalism", "Music").
+ *
+ * @param {string} value - Raw Trade Proficiencies cell (markdown links intact)
+ * @returns {string[]} Deduped fixed-trade display names
+ */
+function parseFixedTrades(value: string): string[] {
+  if (!value) return [];
+  const withoutQualifiers = value.replace(
+    /\((?:[^()]|\([^()]*\))*?(?:\bany\b|\bchoose\b|\bor\b)(?:[^()]|\([^()]*\))*\)/gi,
+    ' ',
+  );
+  const out: string[] = [];
+  const linkRe = /\[([^\]]+)\]\(([^)]*)\)/g;
+  let match: RegExpExecArray | null;
+  while ((match = linkRe.exec(withoutQualifiers)) !== null) {
+    if (/\/tools\/[a-z0-9-]+/i.test(match[2])) {
+      out.push(stripInlineMarkdown(match[1]).trim());
+    }
+  }
+  return [...new Set(out)];
+}
+
+/**
+ * Splits a markdown table row into its cells, dropping only the empty fragments
+ * the outer pipes produce while PRESERVING empty interior cells, so that an
+ * empty cell (e.g. a level with no feature) does not shift every column after it
+ * and misalign the header-derived column index.
+ *
+ * @param {string} line - Raw table row (starts and ends with `|`)
+ * @returns {string[]} Trimmed cells with interior blanks preserved
+ */
+function splitTableRow(line: string): string[] {
+  const parts = line.split('|').map((c) => c.trim());
+  if (parts[0] === '') parts.shift();
+  if (parts[parts.length - 1] === '') parts.pop();
+  return parts;
 }
 
 /**
@@ -146,7 +226,9 @@ function parseProficiencies(value: string): string[] {
  *
  * Resolves the "Features" column by header name (handles "Features",
  * "Vocation Features", "Class Features") rather than assuming a fixed
- * column index. Falls back to column 2 when no header matches.
+ * column index. Falls back to column 2 when no header matches. Interior empty
+ * cells are preserved via {@link splitTableRow} so a level with no feature is
+ * skipped rather than mis-reading a later column as the feature name.
  *
  * @param {string} raw - Full MDX file content
  * @returns {{ features: Array<{ level: number; name: string }>; hasSpellSlots: boolean; headers: string[] }}
@@ -167,10 +249,7 @@ export function parseFeatureTable(raw: string): {
   for (const line of lines) {
     if (!inTable && TABLE.featuresHeader.test(line)) {
       inTable = true;
-      headers = line
-        .split('|')
-        .map((c) => c.trim())
-        .filter(Boolean);
+      headers = splitTableRow(line);
       featureColIdx = headers.findIndex((h) => TABLE.featuresColumn.test(h));
       if (featureColIdx < 0) {
         featureColIdx = 2;
@@ -182,10 +261,7 @@ export function parseFeatureTable(raw: string): {
       continue;
     }
     if (inTable && headerParsed && line.startsWith('|')) {
-      const cells = line
-        .split('|')
-        .map((c) => c.trim())
-        .filter(Boolean);
+      const cells = splitTableRow(line);
 
       const level = parseInt(cells[0], 10);
       if (isNaN(level) || !cells[featureColIdx]) continue;
@@ -325,7 +401,11 @@ function findFeatureLineRange(
   for (let i = 0; i < lines.length; i++) {
     const m = /^(#{1,6})\s+(.+)$/.exec(lines[i]);
     if (!m) continue;
-    if (m[2].replace(/\*\*/g, '').trim().toLowerCase() === target) {
+    const headingText = m[2].replace(/\*\*/g, '').trim().toLowerCase();
+    const stripped = headingText
+      .replace(/^\d+(?:st|nd|rd|th)?\s+level\b\s*[-–—:]?\s*/i, '')
+      .trim();
+    if (headingText === target || stripped === target) {
       startIdx = i;
       headingLevel = m[1].length;
       break;
@@ -435,16 +515,31 @@ async function parseVocationFile(
     const weaponProficiencies = parseProficiencies(
       traits['Weapon Proficiencies'] || '',
     );
-    const toolProficiencies = parseProficiencies(
-      traits['Tool Proficiencies'] || '',
+    const toolProficiencies = parseFixedTrades(
+      traits['Trade Proficiencies'] || traits['Tool Proficiencies'] || '',
     );
     const primaryAbility = parseProficiencies(traits['Primary Ability'] || '');
 
     const { features, hasSpellSlots, headers } = parseFeatureTable(raw);
-    const rawLines = raw.split('\n');
+    const rawLines = raw.split(/\r?\n/);
+    const vocationFrontmatter = matter(raw).data as Record<string, unknown>;
+    const vocationGrantsRaw =
+      vocationFrontmatter.grants ?? vocationFrontmatter.Grants;
+    const vocationGrantsMap =
+      vocationGrantsRaw &&
+      !Array.isArray(vocationGrantsRaw) &&
+      typeof vocationGrantsRaw === 'object'
+        ? (vocationGrantsRaw as Record<string, string[]>)
+        : undefined;
+
     const featuresWithLines = features.map((f) => {
       const range = findFeatureLineRange(rawLines, f.name);
-      return range ? { ...f, ...range } : f;
+      const prose = range
+        ? rawLines.slice(range.startLine - 1, range.endLine).join('\n')
+        : '';
+      const grants = extractFeatureGrants(f.name, prose, vocationGrantsMap);
+      const base = range ? { ...f, ...range } : f;
+      return grants.length > 0 ? { ...base, grants } : base;
     });
 
     let spellcasting: { ability: string; progression: string } | undefined;

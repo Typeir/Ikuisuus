@@ -41,6 +41,9 @@ export interface ShardDisplayProps {
  *
  * @component
  * @param {ShardDisplayProps} props - Component props
+ * @param {CharacterShard} props.shard - The shard to render
+ * @param {boolean} [props.defaultExpanded=false] - When true, card starts in expanded state
+ * @param {() => void} [props.onExpand] - Callback invoked the first time the card is expanded
  * @returns {JSX.Element} Rendered shard card
  */
 export const ShardDisplay: React.FC<ShardDisplayProps> = ({

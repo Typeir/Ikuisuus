@@ -40,7 +40,26 @@
   gap: 0.75rem;
 }
 
+.featColumn {
+  position: relative;
+  padding-top: 1rem;
+}
+
+.chipAnchor {
+  position: relative;
+  padding-top: 1rem;
+}
+
+.hintLegend {
+  margin: 0.15rem 0 0;
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--color-secondary);
+}
+
 .skillsToolsRow {
+  position: relative;
+  padding-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;

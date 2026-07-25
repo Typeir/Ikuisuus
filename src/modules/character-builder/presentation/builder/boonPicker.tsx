@@ -59,6 +59,12 @@ export interface BoonPickerProps {
  *
  * @component
  * @param {BoonPickerProps} props - Component props
+ * @param {string} props.bloodlineSlug - Slug of the character's bloodline
+ * @param {CharacterShard[]} props.selectedBoons - Currently selected boon shards
+ * @param {number} props.boonBudget - Total boon point budget from the bloodline
+ * @param {(boons: CharacterShard[]) => void} props.onToggle - Callback when a boon is toggled
+ * @param {boolean} [props.readOnly=false] - When true, items are visible but not interactive
+ * @param {string} [props.locale] - Content locale; component uses `useLocale()` internally and this prop is accepted for caller convenience
  * @returns {JSX.Element} Rendered boon picker
  */
 export const BoonPicker: React.FC<BoonPickerProps> = ({

@@ -46,6 +46,7 @@ interface SelectedCharacterBadgeProps {
  *
  * @component
  * @param {SelectedCharacterBadgeProps} props - Component props
+ * @param {'up' | 'down'} [props.dropDirection='up'] - Which way the picker expands. 'up' suits the sidebar footer; 'down' suits top bars.
  * @returns {JSX.Element | null} Rendered badge or null pre-hydration
  */
 export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({

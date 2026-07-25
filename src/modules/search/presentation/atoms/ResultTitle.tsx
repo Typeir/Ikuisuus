@@ -29,6 +29,8 @@ interface ResultTitleProps {
  * Renders the result title in Empyrean display serif.
  *
  * @param {ResultTitleProps} props - Component props
+ * @param {string} props.title - Display title
+ * @param {string} [props.className] - Optional additional class names
  * @returns {JSX.Element} The title element
  */
 export function ResultTitle({

@@ -50,6 +50,9 @@ export interface EquipmentTabProps {
  *
  * @component
  * @param {EquipmentTabProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
+ * @param {boolean} props.editing - Whether edit mode is active
+ * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered tab body
  */
 export const EquipmentTab: React.FC<EquipmentTabProps> = ({

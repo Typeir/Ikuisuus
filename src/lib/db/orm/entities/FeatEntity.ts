@@ -7,7 +7,7 @@
  *
  * Columns produced:
  * - Core: locale, slug, title, file, link, description, prerequisite,
- *   has_prerequisite, tags, index_version, version_hash
+ *   has_prerequisite, tags, grants, index_version, version_hash
  * - Embedded prefix `ability_increase_`:
  *   ability_increase_abilities, ability_increase_amount,
  *   ability_increase_maximum
@@ -160,6 +160,10 @@ export class FeatEntity {
 
   @Property({ type: 'string[]' })
   tags: string[] = [];
+
+  /** @property {string[] | null} grants - Tag-based proficiency grants this feat confers when selected (e.g. `weapon:martial`, `skill:persuasion:expertise`); null when it grants no proficiency */
+  @Property({ type: 'string[]', nullable: true })
+  grants?: string[] | null;
 
   @Property({
     type: 'number',

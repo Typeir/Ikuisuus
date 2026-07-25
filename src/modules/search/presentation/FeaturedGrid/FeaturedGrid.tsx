@@ -52,6 +52,7 @@ interface FeaturedGridProps {
  * and a card grid with one daily-featured entry per content type.
  *
  * @param {FeaturedGridProps} props - Component props
+ * @param {string} props.locale - Current locale code
  * @returns {JSX.Element} The featured section
  */
 export function FeaturedGrid({ locale }: FeaturedGridProps): JSX.Element {

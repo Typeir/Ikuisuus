@@ -42,6 +42,13 @@ export interface DragBarProps {
  *
  * @component
  * @param {DragBarProps} props - Component props
+ * @param {number} props.valueNow - Current left pane percentage for aria
+ * @param {number} props.valueMin - Minimum left pane percentage
+ * @param {number} props.valueMax - Maximum left pane percentage
+ * @param {(e: PointerEvent<HTMLDivElement>) => void} props.onPointerDown - Drag start
+ * @param {(e: PointerEvent<HTMLDivElement>) => void} props.onPointerMove - Drag move
+ * @param {(e: PointerEvent<HTMLDivElement>) => void} props.onPointerUp - Drag end
+ * @param {(e: KeyboardEvent<HTMLDivElement>) => void} props.onKeyDown - Keyboard resize
  * @returns {JSX.Element} Rendered drag handle
  */
 export const DragBar: React.FC<DragBarProps> = ({

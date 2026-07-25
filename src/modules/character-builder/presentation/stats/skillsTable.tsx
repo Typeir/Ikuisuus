@@ -12,12 +12,14 @@
 'use client';
 
 import type { CharacterSkill, TierLevel } from '@/lib/types/character';
+import { higherTier } from '@/modules/character-builder/lib/utils/grants';
 import { computeSkillBonus, updateItemTier } from '@/modules/character-builder/lib/utils/proficiencyUtils';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import tbl from '@/styles/tables.module.scss';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import profRowStyles from '../CharacterSheet/proficiencyRow.module.scss';
+import { HintMarker } from '../atoms/hintMarker';
 import { ProficiencyTrack } from '../components/ProficiencyTrack';
 
 /**
@@ -29,6 +31,8 @@ import { ProficiencyTrack } from '../components/ProficiencyTrack';
  * @property {number} tierBonus - Current tier bonus
  * @property {(skills: CharacterSkill[]) => void} onChange - Callback when proficiency changes
  * @property {boolean} [readOnly] - When true, proficiency toggles are disabled
+ * @property {Record<string, TierLevel>} [grantFloors] - Granted floor tier per skill i18n name; the row shows `higherTier(manual, floor)`
+ * @property {ReadonlySet<string>} [hintSet] - Skill row-keys the vocation offers as free picks; each such row shows an informational hint marker
  */
 export interface SkillsTableProps {
   skills: CharacterSkill[];
@@ -36,6 +40,8 @@ export interface SkillsTableProps {
   tierBonus: number;
   onChange: (skills: CharacterSkill[]) => void;
   readOnly?: boolean;
+  grantFloors?: Record<string, TierLevel>;
+  hintSet?: ReadonlySet<string>;
 }
 
 /**
@@ -44,6 +50,13 @@ export interface SkillsTableProps {
  *
  * @component
  * @param {SkillsTableProps} props - Component props
+ * @param {CharacterSkill[]} props.skills - Full list of character skills
+ * @param {Record<string, number>} props.abilityScores - Map of ability key → raw score
+ * @param {number} props.tierBonus - Current tier bonus
+ * @param {(skills: CharacterSkill[]) => void} props.onChange - Callback when proficiency changes
+ * @param {boolean} [props.readOnly=false] - When true, proficiency toggles are disabled
+ * @param {Record<string, TierLevel>} [props.grantFloors] - Granted floor tier per skill i18n name; the row shows `higherTier(manual, floor)`
+ * @param {ReadonlySet<string>} [props.hintSet] - Skill row-keys the vocation offers as free picks; each such row shows an informational hint marker
  * @returns {JSX.Element} Rendered skills table
  */
 export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
@@ -52,6 +65,8 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
   tierBonus,
   onChange,
   readOnly = false,
+  grantFloors,
+  hintSet,
 }) => {
   const t = useTranslations('characterSheet');
 
@@ -79,14 +94,21 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
       </thead>
       <tbody>
         {skills.map((skill, i) => {
-          const bonus = computeSkillBonus(skill, abilityScores, tierBonus);
+          const floor = grantFloors?.[skill.name] ?? 'none';
+          const effectiveTier = higherTier(skill.tier, floor);
+          const bonus = computeSkillBonus(
+            { ...skill, tier: effectiveTier },
+            abilityScores,
+            tierBonus,
+          );
           const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
           return (
             <tr
               key={`skill-${i}`}
-              className={profRowStyles[`prof-${skill.tier}`]}>
+              className={profRowStyles[`prof-${effectiveTier}`]}>
               <td>
                 {t(skill.name)}
+                <HintMarker show={hintSet?.has(skill.name) ?? false} />
                 <span className={styles.abilityTagInline}>
                   {skill.ability.toUpperCase()}
                 </span>
@@ -96,10 +118,11 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
               </td>
               <td aria-label={t('ariaTierTrack')}>
                 <ProficiencyTrack
-                  currentProficiency={skill.tier}
+                  currentProficiency={effectiveTier}
                   onChange={(level) => handleSkillProficiencyChange(i, level)}
                   readOnly={readOnly}
                   itemName={skill.name}
+                  grantedFloor={floor}
                 />
               </td>
               <td>{bonusStr}</td>

@@ -37,6 +37,9 @@ export interface IdentityRowsProps {
  *
  * @component
  * @param {IdentityRowsProps} props - Component props
+ * @param {string | null} props.bloodlineSlug - Active bloodline slug
+ * @param {string} props.bloodlineTitle - Active bloodline display name
+ * @param {VocationEntry[]} props.vocations - Current vocation entries
  * @returns {JSX.Element} Rendered identity rows
  */
 export const IdentityRows: React.FC<IdentityRowsProps> = ({

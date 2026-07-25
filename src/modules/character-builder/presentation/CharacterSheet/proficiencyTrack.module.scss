@@ -14,7 +14,8 @@
 }
 
 .trackDot-filled,
-.trackDot-empty {
+.trackDot-empty,
+.trackDot-granted {
   border: none;
   padding: 0;
   cursor: pointer;
@@ -51,6 +52,15 @@
   &:hover:not(:disabled) {
     opacity: 0.9;
   }
+}
+
+.trackDot-granted {
+  display: inline-block;
+  width: 8.4px;
+  height: 8.4px;
+  border-radius: 50%;
+  background: var(--color-info);
+  box-shadow: 0 0 0 1px var(--color-info) inset;
 }
 
 @keyframes shimmer-pip {

@@ -176,6 +176,7 @@ const VocationEntryTabs: React.FC<{
  *
  * @component
  * @param {VocationTabProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
  * @returns {JSX.Element} Rendered tab body
  */
 export const VocationTab: React.FC<VocationTabProps> = ({ data }) => {

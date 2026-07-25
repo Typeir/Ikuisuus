@@ -24,16 +24,23 @@ import {
     computeAbilityModifier,
     computeTierBonus,
 } from '@/modules/character-builder/lib/utils/characterStorage';
+import { deriveGrantFloors } from '@/modules/character-builder/lib/utils/grants';
+import { deriveProficiencyHints } from '@/modules/character-builder/lib/utils/proficiencyBudget';
 import { recalculateHpMax } from '@/modules/character-builder/lib/utils/hitDiceUtils';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { NotesSection } from '../notes/notesSection';
 import { AttacksTable } from '../stats/attacksTable';
+import { UnassignedChips } from '../atoms/unassignedChips';
+import { GrantedProficiencies } from '../stats/grantedProficiencies';
 import { SkillsTable } from '../stats/skillsTable';
 import { ToolsTable } from '../stats/toolsTable';
 import { MobileOverviewTab } from './mobileOverviewTab';
 import styles from './tabs.module.scss';
+
+/** Benefit categories the overview skill/trade tables account for. */
+const SKILL_TABLE_CATEGORIES = ['skill', 'trade'] as const;
 
 /**
  * Props for `<OverviewTab>`.
@@ -56,6 +63,10 @@ export interface OverviewTabProps {
  *
  * @component
  * @param {OverviewTabProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
+ * @param {boolean} props.editing - Whether edit mode is active
+ * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
+ * @param {string} [props.locale=en] - Content locale (default `en`)
  * @returns {JSX.Element} Rendered tab body
  */
 export const OverviewTab: React.FC<OverviewTabProps> = ({
@@ -182,6 +193,8 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   );
 
   const conMod = computeAbilityModifier(data.abilityScores.con);
+  const grantFloors = useMemo(() => deriveGrantFloors(data), [data]);
+  const hints = useMemo(() => deriveProficiencyHints(data), [data]);
   const isMobile = useIsMobileViewport();
 
   if (isMobile === true) {
@@ -204,21 +217,30 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   return (
     <div className={styles.twoColumns}>
       <div className={styles.column}>
+        <GrantedProficiencies data={data} />
         <div className={styles.skillsToolsRow}>
+          <UnassignedChips character={data} categories={SKILL_TABLE_CATEGORIES} />
           <SkillsTable
             skills={data.skills}
             abilityScores={data.abilityScores}
             tierBonus={data.tierBonus}
             onChange={handleSkillsChange}
             readOnly={!editing}
+            grantFloors={grantFloors.skills}
+            hintSet={hints.skills}
           />
           <ToolsTable
             tools={data.tools}
             tierBonus={data.tierBonus}
             onChange={handleToolsChange}
             readOnly={!editing}
+            grantFloors={grantFloors.tools}
+            hintSet={hints.trades}
           />
         </div>
+        {hints.skills.size > 0 && (
+          <p className={styles.hintLegend}>{t('hintLegend')}</p>
+        )}
       </div>
 
       <div className={styles.column}>

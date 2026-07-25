@@ -74,6 +74,9 @@ export interface ShardChipProps {
  *
  * @component
  * @param {ShardChipProps} props - Component props
+ * @param {CharacterShard} props.shard - The shard to display
+ * @param {ShardChipColor} [props.color] - Border color tier; if omitted, inferred from `shard.category`
+ * @param {() => void} [props.onRemove] - Optional remove handler
  * @returns {JSX.Element} Rendered shard chip
  */
 const ShardChipImpl: React.FC<ShardChipProps> = ({

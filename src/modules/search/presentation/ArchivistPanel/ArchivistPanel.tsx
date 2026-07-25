@@ -43,6 +43,9 @@ interface ArchivistPanelProps {
  * Renders a library page embed with responsive positioning.
  *
  * @param {ArchivistPanelProps} props - Component props
+ * @param {FeaturedPage} props.page - The page to embed
+ * @param {string} props.locale - Current locale
+ * @param {() => void} [props.onClose] - Callback when the panel is dismissed
  * @returns {JSX.Element} The archivist panel
  */
 export function ArchivistPanel({

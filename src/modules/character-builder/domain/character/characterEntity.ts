@@ -59,6 +59,7 @@ export type AbilityKey = (typeof ABILITY_KEYS)[number];
  * @property {number} [level] - Minimum level required (vocation/specialization features only)
  * @property {string} [cachedText] - First-paragraph preview cached after first fetch
  * @property {string[]} [selectedSubOptions] - Chosen sub-option names for a variable-cost boon (boons only); their costs sum into `bpCost`
+ * @property {string[]} [grants] - Tag-based proficiency grants this feature confers (e.g. `weapon:martial`, `skill:persuasion:expertise`)
  * @property {number} [startLine] - 1-indexed start line of this block in the source MDX file
  * @property {number} [endLine] - 1-indexed end line of this block in the source MDX file
  */
@@ -71,6 +72,7 @@ export interface CharacterShard {
   level?: number;
   cachedText?: string;
   selectedSubOptions?: string[];
+  grants?: string[];
   startLine?: number;
   endLine?: number;
 }
@@ -297,6 +299,10 @@ export interface EquipmentItem {
  * @property {string} title - Display name, e.g. `Wizard`
  * @property {number} level - Levels invested in this vocation specifically
  * @property {string} [hitDie] - Hit die notation without the `d` prefix (e.g. `"10"`), copied from vocation metadata on selection
+ * @property {string[]} [baseSavingThrows] - Saving-throw ability names this vocation confers at its base (e.g. `["Constitution", "Intelligence"]`), copied from vocation metadata on selection and auto-applied as a proficiency floor
+ * @property {number} [baseSkillChoiceCount] - Number of base skill proficiencies this vocation lets the player choose (from its metadata `skillProficiencies.count`), synced from vocation metadata; the primary vocation's value drives the unspent-proficiency counter
+ * @property {string[]} [baseSkillChoices] - The skills this vocation offers as its base picks, stored as table row-keys (`skills.<camel>`). Empty with a non-zero `baseSkillChoiceCount` means "any skill" (unrestricted). Synced from vocation metadata `skillProficiencies.choices`; drives the per-row hint marker and the on-list budget
+ * @property {string[]} [baseTradeFixed] - Trades this vocation grants outright (not chosen), stored as table row-keys (`tools.<camel>`). Synced from vocation metadata `toolProficiencies`; the primary vocation's list is folded into the tools floor
  * @property {string|null} specializationSlug - Specialization identifier, e.g. `evoker`
  * @property {string} specializationTitle - Specialization display name, e.g. `Evoker`
  * @property {CharacterShard[]} vocationFeatures - Unlocked vocation feature shards for this entry
@@ -307,6 +313,10 @@ export interface VocationEntry {
   title: string;
   level: number;
   hitDie?: string;
+  baseSavingThrows?: string[];
+  baseSkillChoiceCount?: number;
+  baseSkillChoices?: string[];
+  baseTradeFixed?: string[];
   specializationSlug: string | null;
   specializationTitle: string;
   vocationFeatures: CharacterShard[];
@@ -357,6 +367,8 @@ export interface VocationEntry {
  * @property {Record<AbilityKey, TierLevel>} savingThrows - Save proficiency per ability
  * @property {CharacterSkill[]} skills - Full skill list with proficiency
  * @property {CharacterTool[]} tools - Tool proficiency list
+ * @property {string[]} [armorProficiencies] - Armor categories granted by active features (derived from grant tags)
+ * @property {string[]} [weaponProficiencies] - Weapon categories/items granted by active features (derived from grant tags)
  * @property {EquipmentItem[]} equipment - Equipment items with name, quantity, and weight
  * @property {CharacterCurrency} currency - Carried currency
  * @property {string} wants - What the character wants
@@ -406,6 +418,8 @@ export interface CharacterEntity {
   savingThrows: Record<AbilityKey, TierLevel>;
   skills: CharacterSkill[];
   tools: CharacterTool[];
+  armorProficiencies?: string[];
+  weaponProficiencies?: string[];
   equipment: EquipmentItem[];
   equipmentNotes: string;
   selectedFeats: CharacterShard[];

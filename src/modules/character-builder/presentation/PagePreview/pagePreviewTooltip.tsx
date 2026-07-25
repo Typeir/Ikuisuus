@@ -44,6 +44,11 @@ export interface PagePreviewTooltipProps {
  *
  * @component
  * @param {PagePreviewTooltipProps} props - Component props
+ * @param {PreviewKind} props.kind - Library kind
+ * @param {string} props.slug - Page slug
+ * @param {string} props.title - Display title for the draggable handle
+ * @param {string} [props.tooltipLabel] - Tooltip body shown on hover; defaults to `title`
+ * @param {string} [props.ariaLabel] - Accessible label override for the icon button
  * @returns {JSX.Element} Rendered icon button
  */
 export const PagePreviewTooltip: React.FC<PagePreviewTooltipProps> = ({

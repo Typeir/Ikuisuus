@@ -81,6 +81,12 @@ export interface TabsProps {
  *
  * @component
  * @param {TabsProps} props - Component props
+ * @param {string} props.value - Active tab value
+ * @param {(value: string) => void} props.onChange - Activation callback
+ * @param {ReactNode} props.children - `<TabList>` and `<TabPanel>`s
+ * @param {string} [props.className] - Optional outer class
+ * @param {string} [props.ariaLabel] - Accessible label for the tab group
+ * @param {'default' | 'nested' | 'inset'} [props.variant='default'] - Visual variant; `nested` recesses into --color-bg for tabs on a surface container, `inset` recesses one layer deeper (--color-bg-secondary) for tabs nested inside a `nested` panel
  * @returns {JSX.Element} Rendered tabs root
  */
 export const Tabs: React.FC<TabsProps> = ({
@@ -134,6 +140,8 @@ export interface TabListProps {
  *
  * @component
  * @param {TabListProps} props - Component props
+ * @param {ReactNode} props.children - `<Tab>` elements
+ * @param {string} [props.ariaLabel] - Accessible label for the tablist
  * @returns {JSX.Element} Rendered tablist
  */
 export const TabList: React.FC<TabListProps> = ({ children, ariaLabel }) => {
@@ -199,6 +207,10 @@ export interface TabProps {
  *
  * @component
  * @param {TabProps} props - Component props
+ * @param {string} props.value - Tab identifier; must match a `<TabPanel value>`
+ * @param {ReactNode} props.children - Rendered label content
+ * @param {boolean} [props.disabled] - When true, the tab cannot be activated
+ * @param {ReactNode} [props.icon] - Optional icon rendered before the label
  * @returns {JSX.Element} Rendered tab button
  */
 export const Tab: React.FC<TabProps> = ({
@@ -247,6 +259,9 @@ export interface TabPanelProps {
  *
  * @component
  * @param {TabPanelProps} props - Component props
+ * @param {string} props.value - Identifier matching the corresponding `<Tab>`
+ * @param {ReactNode} props.children - Panel content
+ * @param {boolean} [props.keepMounted=false] - When true, the panel stays in the DOM even when inactive (hidden via the `hidden` attribute). Useful for preserving form state across tab switches.
  * @returns {JSX.Element | null} Rendered panel, or null when inactive and not kept mounted
  */
 export const TabPanel: React.FC<TabPanelProps> = ({

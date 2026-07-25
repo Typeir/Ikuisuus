@@ -41,6 +41,8 @@ export interface BloodlineTabProps {
  *
  * @component
  * @param {BloodlineTabProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
+ * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered tab body
  */
 export const BloodlineTab: React.FC<BloodlineTabProps> = ({

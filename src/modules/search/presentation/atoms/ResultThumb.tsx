@@ -36,6 +36,10 @@ interface ResultThumbProps {
  * Renders the result thumbnail or falls back to the type sigil.
  *
  * @param {ResultThumbProps} props - Component props
+ * @param {string} [props.image] - Image path (e.g. '/library/images/aboleth.webp')
+ * @param {SearchContentType} props.type - Content type (for sigil fallback)
+ * @param {string} [props.alt] - Alt text (defaults to type + ' thumbnail')
+ * @param {string} [props.className] - Optional additional class names
  * @returns {JSX.Element} The thumb or sigil fallback
  */
 export function ResultThumb({

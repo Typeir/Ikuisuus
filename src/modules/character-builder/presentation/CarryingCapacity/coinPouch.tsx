@@ -64,6 +64,9 @@ export interface CoinPouchProps {
  *
  * @component
  * @param {CoinPouchProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
+ * @param {boolean} props.editing - Whether edit mode is active
+ * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered pouch
  */
 export const CoinPouch: React.FC<CoinPouchProps> = ({

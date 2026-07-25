@@ -1,0 +1,19 @@
+/**
+ * @fileoverview Hint Marker Styles
+ * @description The vocation-pick asterisk: a small accent glyph nudged up like a
+ * superscript, with a help cursor to invite its tooltip.
+ *
+ * @module modules/character-builder/presentation/atoms/hintMarker.module
+ */
+
+.hintMarker {
+  display: inline;
+  margin-left: 0.15rem;
+  color: var(--color-info);
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: super;
+  font-size: 0.75em;
+  cursor: help;
+  user-select: none;
+}

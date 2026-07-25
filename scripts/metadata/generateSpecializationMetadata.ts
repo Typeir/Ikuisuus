@@ -12,6 +12,7 @@
 
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
+import matter from 'gray-matter';
 import path from 'path';
 import {
     clean,
@@ -24,6 +25,7 @@ import {
     type SharedData,
     type StorageAdapter,
 } from '.';
+import { extractFeatureGrants } from './extraction/grantsExtractor';
 import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 import {
     CASTING,
@@ -264,6 +266,18 @@ async function parseSpecializationFile(
     const flavor = parseFlavor(lines);
     const description = parseDescription(raw);
     const features = parseFeatures(raw);
+    const rawLines = raw.split(TEXT.lineSplit);
+    const specFrontmatter = matter(raw).data as Record<string, unknown>;
+    const specGrantsRaw = specFrontmatter.grants ?? specFrontmatter.Grants;
+    const specGrantsMap =
+      specGrantsRaw && !Array.isArray(specGrantsRaw) && typeof specGrantsRaw === 'object'
+        ? (specGrantsRaw as Record<string, string[]>)
+        : undefined;
+    const featuresWithGrants = features.map((f) => {
+      const prose = rawLines.slice(f.startLine - 1, f.endLine).join('\n');
+      const grants = extractFeatureGrants(f.name, prose, specGrantsMap);
+      return grants.length > 0 ? { ...f, grants } : f;
+    });
     const preparedSpells = parseAlwaysPreparedSpells(raw);
     const spellcasting = parseSpecializationSpellcasting(raw);
 
@@ -300,7 +314,7 @@ async function parseSpecializationFile(
       flavor,
       spellcasting,
       preparedSpells,
-      features,
+      features: featuresWithGrants,
       tags: [...tags].sort(),
       indexVersion: 1,
     };

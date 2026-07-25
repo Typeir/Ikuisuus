@@ -106,4 +106,30 @@ describe('BoonSubOptions', () => {
     );
     expect(screen.getByText('1d4 slashing — Melee')).toBeTruthy();
   });
+
+  it('strips inline markdown emphasis from the effect summary', () => {
+    render(
+      <BoonSubOptions
+        boonName='Urban Explorer'
+        options={[
+          {
+            name: 'City Sense',
+            bpValue: 5,
+            effect:
+              'Often **at home in cities**, navigating *complex* social structures.',
+          },
+        ]}
+        mode='pick-any'
+        selected={[]}
+        readOnly={false}
+        bpUnitLabel='BP'
+        onChange={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByText(
+        'Often at home in cities, navigating complex social structures.',
+      ),
+    ).toBeTruthy();
+  });
 });

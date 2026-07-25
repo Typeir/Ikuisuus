@@ -89,6 +89,7 @@
 
 .infoBtn {
   @include icon-rounded;
+  color: var(--color-text);
 }
 
 .boon {

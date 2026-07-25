@@ -43,6 +43,10 @@ export interface FeatPickerProps {
  *
  * @component
  * @param {FeatPickerProps} props - Component props
+ * @param {CharacterShard[]} props.selectedFeats - Currently selected feat shards
+ * @param {(feats: CharacterShard[]) => void} props.onToggle - Callback when a feat is toggled
+ * @param {boolean} [props.readOnly=false] - When true, items are visible but not interactive
+ * @param {(shard: { contentType: string; slug: string }) => void} [props.onFocusShard] - Optional callback to focus a shard's detail view by its content type and slug
  * @returns {JSX.Element} Rendered feat picker
  */
 export const FeatPicker: React.FC<FeatPickerProps> = ({
@@ -105,8 +109,43 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
       heading: feat.title,
       category: 'feat',
       cachedText: feat.description ?? undefined,
+      grants: feat.grants,
     };
     onToggle([...selectedFeats, shard]);
+  };
+
+  /** @param {string} slug - Feat slug to count instances of */
+  const countFor = (slug: string) =>
+    selectedFeats.filter((s) => s.sourceFile === toSourceFile(slug)).length;
+
+  /**
+   * Appends one more instance of a repeatable feat, keyed by a unique id so
+   * multiple copies coexist in the shard list.
+   *
+   * @param {FeatMetadata} feat - Feat to add another instance of
+   */
+  const addInstance = (feat: FeatMetadata) => {
+    const shard: CharacterShard = {
+      id: `feat::${feat.slug}::${crypto.randomUUID()}`,
+      sourceFile: toSourceFile(feat.slug),
+      heading: feat.title,
+      category: 'feat',
+      cachedText: feat.description ?? undefined,
+      grants: feat.grants,
+    };
+    onToggle([...selectedFeats, shard]);
+  };
+
+  /**
+   * Removes the most recently added instance of a repeatable feat.
+   *
+   * @param {FeatMetadata} feat - Feat to remove one instance of
+   */
+  const removeInstance = (feat: FeatMetadata) => {
+    const sf = toSourceFile(feat.slug);
+    const lastIdx = selectedFeats.map((s) => s.sourceFile).lastIndexOf(sf);
+    if (lastIdx === -1) return;
+    onToggle(selectedFeats.filter((_, i) => i !== lastIdx));
   };
 
   return (
@@ -136,7 +175,9 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
           <div className={pickerStyles.pickerScroll}>
             <ul className={styles.boonList} aria-label={t('featAvailableAria')}>
               {displayedFeats.map((feat) => {
-                const selected = isSelected(feat.slug);
+                const multi = feat.multiSelect === true;
+                const count = multi ? countFor(feat.slug) : 0;
+                const selected = multi ? count > 0 : isSelected(feat.slug);
                 const isExpanded = expandedFeats.has(feat.slug);
                 const bodyId = `feat-body-${feat.slug.replace(/\s+/g, '-')}`;
                 const expandLabel = isExpanded
@@ -151,6 +192,18 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
                     expanded={isExpanded}
                     readOnly={readOnly}
                     onToggle={() => handleToggle(feat)}
+                    multiSelect={
+                      multi
+                        ? {
+                            count,
+                            onAdd: () => addInstance(feat),
+                            onRemove: () => removeInstance(feat),
+                            addLabel: t('addInstance', { name: feat.title }),
+                            removeLabel: t('removeInstance', { name: feat.title }),
+                            countLabel: t('instanceCount', { count }),
+                          }
+                        : undefined
+                    }
                     onExpand={() => toggleExpanded(feat.slug)}
                     onFocus={
                       isMobile === true

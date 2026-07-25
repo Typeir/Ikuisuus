@@ -54,6 +54,30 @@ const MOCK_FEATS = [
   },
 ];
 
+const ASI_FEAT = {
+  slug: 'ability-score-improvement',
+  title: 'Ability Score Improvement',
+  file: 'src/content/en/character-creation/feats/ability-score-improvement.mdx',
+  link: '/library/character-creation/feats/ability-score-improvement',
+  hasPrerequisite: false,
+  multiSelect: true,
+  tags: ['multi-select'],
+};
+
+/**
+ * Builds `n` selected instances of the Ability Score Improvement feat.
+ *
+ * @param {number} n - Number of instances to create
+ * @returns {CharacterShard[]} Selected feat shards
+ */
+const asiInstances = (n: number): CharacterShard[] =>
+  Array.from({ length: n }, (_, i) => ({
+    id: `feat::ability-score-improvement::${i}`,
+    sourceFile: 'character-creation/feats/ability-score-improvement.mdx',
+    heading: 'Ability Score Improvement',
+    category: 'feat',
+  }));
+
 const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>();
 
 beforeEach(() => {
@@ -202,5 +226,57 @@ describe('FeatPicker', () => {
       name: /shardExpandAria/i,
     });
     expect(expandBtns[0]).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('adds a new instance when a repeatable feat is clicked', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify([ASI_FEAT]), { status: 200 }),
+    );
+    const handle = vi.fn();
+    render(<FeatPicker selectedFeats={[]} onToggle={handle} />);
+    await waitFor(() => screen.getByText('Ability Score Improvement'));
+
+    await userEvent.click(screen.getByText('Ability Score Improvement'));
+
+    await waitFor(() => expect(handle).toHaveBeenCalled());
+    const next = handle.mock.calls[0][0] as CharacterShard[];
+    expect(next).toHaveLength(1);
+    expect(next[0].sourceFile).toBe(
+      'character-creation/feats/ability-score-improvement.mdx',
+    );
+    expect(
+      next[0].id.startsWith('feat::ability-score-improvement::'),
+    ).toBe(true);
+  });
+
+  it('clicking an already-selected repeatable feat adds another instance', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify([ASI_FEAT]), { status: 200 }),
+    );
+    const handle = vi.fn();
+    render(<FeatPicker selectedFeats={asiInstances(1)} onToggle={handle} />);
+    await waitFor(() => screen.getByText('Ability Score Improvement'));
+
+    await userEvent.click(screen.getByText('Ability Score Improvement'));
+
+    await waitFor(() => expect(handle).toHaveBeenCalled());
+    const next = handle.mock.calls[0][0] as CharacterShard[];
+    expect(next).toHaveLength(2);
+  });
+
+  it('exposes a remove control that drops one instance of a repeatable feat', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify([ASI_FEAT]), { status: 200 }),
+    );
+    const handle = vi.fn();
+    render(<FeatPicker selectedFeats={asiInstances(2)} onToggle={handle} />);
+    await waitFor(() => screen.getByText('Ability Score Improvement'));
+
+    const removeBtn = screen.getByRole('button', { name: /removeInstance/i });
+    await userEvent.click(removeBtn);
+
+    await waitFor(() => expect(handle).toHaveBeenCalled());
+    const next = handle.mock.calls[0][0] as CharacterShard[];
+    expect(next).toHaveLength(1);
   });
 });

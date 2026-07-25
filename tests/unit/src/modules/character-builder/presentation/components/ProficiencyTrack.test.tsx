@@ -67,4 +67,35 @@ describe('ProficiencyTrack', () => {
     await user.click(buttons[0]);
     expect(onChange).not.toHaveBeenCalled();
   });
+
+  it('disables pips at or below the granted floor', () => {
+    const { container } = render(
+      <ProficiencyTrack
+        currentProficiency='proficient'
+        onChange={vi.fn()}
+        grantedFloor='proficient'
+        itemName='test-skill'
+      />,
+    );
+    const buttons = container.querySelectorAll('button');
+    expect((buttons[0] as HTMLButtonElement).disabled).toBe(true);
+    expect((buttons[1] as HTMLButtonElement).disabled).toBe(true);
+    expect((buttons[2] as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it('does not toggle a granted floor pip', async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+    const { container } = render(
+      <ProficiencyTrack
+        currentProficiency='proficient'
+        onChange={onChange}
+        grantedFloor='proficient'
+        itemName='test-skill'
+      />,
+    );
+    const buttons = container.querySelectorAll('button');
+    await user.click(buttons[1]);
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });

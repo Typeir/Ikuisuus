@@ -21,6 +21,7 @@
 import { Skeleton } from '@/lib/components/skeleton/skeleton';
 import { FilterSelect } from '@/lib/components/ui/filterSelect';
 import { useVocationMetadata } from '@/lib/hooks/data/useVocationMetadata';
+import { useVocationBaseSync } from './useVocationBaseSync';
 import type {
   CharacterSheet as CharacterSheetType,
   VocationEntry,
@@ -79,6 +80,14 @@ function toOpt(item: { slug: string; title: string }): {
  *
  * @component
  * @param {VocationSelectorProps} props - Component props
+ * @param {string | null} props.bloodlineSlug - Active bloodline slug
+ * @param {string} props.bloodlineTitle - Active bloodline display name
+ * @param {VocationEntry[]} props.vocations - Current vocation entries (mixing supported)
+ * @param {import('@/lib/types/character').CharacterShard[]} props.selectedBoons - Currently selected boon shards
+ * @param {number} props.boonBudget - Total boon point budget from the bloodline
+ * @param {boolean} props.editing - Whether the sheet is in edit mode
+ * @param {boolean} [props.showBoonPicker=true] - Whether to render the BoonPicker beneath the selectors (default `true`)
+ * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch callback
  * @returns {JSX.Element} Rendered selector panel
  */
 export const VocationSelector: React.FC<VocationSelectorProps> = ({
@@ -143,6 +152,8 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
     },
     [vocations, onChange],
   );
+
+  useVocationBaseSync(vocations, vocOptions, onChange);
 
   const handleVocationChange = useCallback(
     async (index: number, slug: string) => {

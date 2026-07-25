@@ -94,6 +94,9 @@ function renderPreview(source: string, errorLabel: string): ReactNode {
  *
  * @component
  * @param {AbilityEditorProps} props - Component props
+ * @param {CharacterAbility | null} [props.existing] - Existing ability to edit, or null for create
+ * @param {(ability: CharacterAbility) => void} props.onSave - Called with the new/updated ability
+ * @param {() => void} props.onCancel - Called when editing is cancelled
  * @returns {JSX.Element} Rendered editor modal
  */
 export const AbilityEditor: React.FC<AbilityEditorProps> = ({

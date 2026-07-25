@@ -13,6 +13,7 @@
 'use client';
 
 import type { BloodlineBoonSubOption } from '@/lib/db/content/schemas/bloodlineMetadata';
+import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';
 import pipStyles from '../CharacterSheet/proficiencyTrack.module.scss';
 import styles from './boonSubOptions.module.scss';
 
@@ -39,13 +40,15 @@ export interface BoonSubOptionsProps {
 }
 
 /**
- * Strips `[% … %]` dice shortcodes from an effect summary for plain display.
+ * Cleans an effect summary for plain-text display: strips `[% … %]` dice
+ * shortcode wrappers, then removes inline markdown via {@link stripInlineMarkdown},
+ * leaving only the readable text the source table columns carry.
  *
- * @param {string} text - Raw effect text
- * @returns {string} Text with shortcode wrappers removed
+ * @param {string} text - Raw effect text from the boon table
+ * @returns {string} Plain text with shortcodes and markdown markers removed
  */
 function cleanEffect(text: string): string {
-  return text.replace(/\[%\s*(.*?)\s*%\]/g, '$1');
+  return stripInlineMarkdown(text.replace(/\[%\s*(.*?)\s*%\]/g, '$1'));
 }
 
 /**

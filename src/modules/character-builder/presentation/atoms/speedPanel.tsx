@@ -36,6 +36,7 @@ export interface SpeedPanelProps {
  *
  * @component
  * @param {SpeedPanelProps} props - Component props
+ * @param {string[]} props.bloodlineSpeeds - Raw speed strings from the active bloodline (e.g. `["Walk: 30 ft.", "Fly: 60 ft."]`)
  * @returns {JSX.Element | null} Rendered wrapper, or null when no speeds are available
  */
 export const SpeedPanel: React.FC<SpeedPanelProps> = ({ bloodlineSpeeds }) => {

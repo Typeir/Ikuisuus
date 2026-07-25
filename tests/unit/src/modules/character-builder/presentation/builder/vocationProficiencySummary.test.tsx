@@ -1,11 +1,11 @@
 /**
  * @fileoverview VocationProficiencySummary Unit Tests
- * @description Verifies the compact proficiency digest renders granted segments
- * (abbreviated saves, skill count, joined lists) and hides itself when a
- * vocation carries no proficiency metadata.
+ * @description Verifies the fixed proficiency digest: every SAVES/SKILLS/ARMOR/
+ * WEAPONS/TRADES row is always rendered, absent grants (or no vocation) show an
+ * em dash, and inline markdown markers are stripped from grant values.
  *
  * @module tests/unit/modules/character-builder/presentation/builder/vocationProficiencySummary
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 7.0.0
  */
@@ -30,7 +30,7 @@ const baseVocation: VocationOption = {
 };
 
 describe('VocationProficiencySummary', () => {
-  it('renders abbreviated saves, skill count, and grant lists', () => {
+  it('renders every labelled row for a fully-specified vocation', () => {
     const vocation: VocationOption = {
       ...baseVocation,
       savingThrows: ['Strength', 'Constitution'],
@@ -40,6 +40,11 @@ describe('VocationProficiencySummary', () => {
       weaponProficiencies: ['Simple', 'Martial'],
     };
     render(<VocationProficiencySummary vocation={vocation} />);
+    expect(screen.getByText('Saves:')).toBeTruthy();
+    expect(screen.getByText('Skills:')).toBeTruthy();
+    expect(screen.getByText('Armor:')).toBeTruthy();
+    expect(screen.getByText('Weapons:')).toBeTruthy();
+    expect(screen.getByText('Trades:')).toBeTruthy();
     expect(screen.getByText('STR, CON')).toBeTruthy();
     expect(screen.getByText('2 of 6')).toBeTruthy();
     expect(screen.getByText("Thieves' Tools")).toBeTruthy();
@@ -47,7 +52,7 @@ describe('VocationProficiencySummary', () => {
     expect(screen.getByText('Simple, Martial')).toBeTruthy();
   });
 
-  it('omits segments that have no grants', () => {
+  it('shows an em dash for rows the vocation does not grant', () => {
     const vocation: VocationOption = {
       ...baseVocation,
       savingThrows: ['Dexterity'],
@@ -58,14 +63,24 @@ describe('VocationProficiencySummary', () => {
     };
     render(<VocationProficiencySummary vocation={vocation} />);
     expect(screen.getByText('DEX')).toBeTruthy();
-    expect(screen.queryByText('Skills:')).toBeNull();
-    expect(screen.queryByText('Tools:')).toBeNull();
+    expect(screen.getAllByText('—')).toHaveLength(4);
   });
 
-  it('renders nothing when the vocation has no proficiency metadata', () => {
-    const { container } = render(
-      <VocationProficiencySummary vocation={baseVocation} />,
-    );
-    expect(container.firstChild).toBeNull();
+  it('renders all rows with em dashes when no vocation is selected', () => {
+    render(<VocationProficiencySummary />);
+    expect(screen.getByText('Saves:')).toBeTruthy();
+    expect(screen.getByText('Trades:')).toBeTruthy();
+    expect(screen.getAllByText('—')).toHaveLength(5);
+  });
+
+  it('strips inline markdown bold markers split across grant values', () => {
+    const vocation: VocationOption = {
+      ...baseVocation,
+      armorProficiencies: ['**Light', 'Medium', 'Heavy**'],
+      weaponProficiencies: ['**Martial', 'Simple**'],
+    };
+    render(<VocationProficiencySummary vocation={vocation} />);
+    expect(screen.getByText('Light, Medium, Heavy')).toBeTruthy();
+    expect(screen.getByText('Martial, Simple')).toBeTruthy();
   });
 });

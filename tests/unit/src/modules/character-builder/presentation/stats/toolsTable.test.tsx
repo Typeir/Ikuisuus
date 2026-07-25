@@ -27,6 +27,8 @@ const testMessages = {
     colBonus: 'Bonus',
     ariaToolsTable: 'Tools',
     ariaTierTrack: 'Proficiency Track',
+    hintVocationPick: 'Offered by your vocation',
+    ariaVocationPickHint: 'Offered by your vocation',
     tools: {
       "Thieves' Tools": "Thieves' Tools",
       'Smith Tools': 'Smith Tools',
@@ -43,6 +45,22 @@ describe('ToolsTable', () => {
     );
     expect(screen.getByText("Thieves' Tools")).toBeTruthy();
     expect(screen.getByText('Smith Tools')).toBeTruthy();
+  });
+
+  it('renders a hint marker only for rows in the hint set', () => {
+    render(
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={TOOLS}
+          tierBonus={3}
+          onChange={vi.fn()}
+          hintSet={new Set(["Thieves' Tools"])}
+        />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getAllByRole('img')).toHaveLength(1);
+    const thievesRow = screen.getByText("Thieves' Tools").closest('tr');
+    expect(thievesRow?.querySelector('[role="img"]')).toBeTruthy();
   });
 
   it('shows correct bonus for non-proficient tool', () => {
@@ -197,5 +215,23 @@ describe('ToolsTable', () => {
     const firstPip = toolRow?.querySelector('button');
     await userEvent.click(firstPip!);
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('raises the effective tier to a granted floor', () => {
+    render(
+      <NextIntlClientProvider locale='en' messages={testMessages}>
+        <ToolsTable
+          tools={[{ name: 'Smith Tools', tier: 'none' }]}
+          tierBonus={3}
+          onChange={vi.fn()}
+          grantFloors={{ 'Smith Tools': 'proficient' }}
+        />
+      </NextIntlClientProvider>,
+    );
+    // proficient tier bonus +3, though the stored tier is none
+    expect(screen.getByText('+3')).toBeTruthy();
+    const row = screen.getByText('Smith Tools').closest('tr');
+    const pips = row?.querySelectorAll('button');
+    expect((pips![1] as HTMLButtonElement).disabled).toBe(true);
   });
 });

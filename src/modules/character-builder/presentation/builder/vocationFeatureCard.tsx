@@ -69,6 +69,16 @@ export interface VocationFeatureCardProps {
  *
  * @component
  * @param {VocationFeatureCardProps} props - Component props
+ * @param {CharacterShard[]} props.vocationFeatures - Vocation feature shards (all levels)
+ * @param {CharacterShard[]} props.specializationFeatures - Specialization feature shards (all levels)
+ * @param {number} props.characterLevel - Current character level; features above this are locked/dimmed
+ * @param {string} [props.vocationTitle] - Display name for the vocation section header
+ * @param {string} [props.specializationTitle] - Display name for the specialization section header
+ * @param {boolean} [props.hasVocation=false] - Whether a vocation has been selected; controls empty-state text
+ * @param {boolean} [props.hasSpecialization=false] - Whether a specialization has been selected; controls empty-state text
+ * @param {VocationFeatureCardSection} [props.section='both'] - Which section to render: `'both'` (default), `'vocation'`, or `'specialization'`
+ * @param {boolean} [props.hideTitle=false] - When true, suppresses the section heading (useful inside tab panels that already label the section)
+ * @param {(shard: { contentType: string; slug: string }) => void} [props.onFocusShard] - Called when a feature shard is expanded, with the derived content type and slug for the right panel
  * @returns {JSX.Element} Rendered feature viewer
  */
 export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({

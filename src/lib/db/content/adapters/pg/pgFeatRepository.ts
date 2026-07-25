@@ -66,24 +66,29 @@ const buildAbilityIncrease = (
  * @param {FeatEntity} row - MikroORM feat entity
  * @returns {FeatMetadata} Domain model
  */
-const rowToFeat = (row: FeatEntity): FeatMetadata => ({
-  slug: row.slug,
-  title: row.title,
-  file: row.file,
-  link: row.link,
-  description: orUndef(row.description),
-  prerequisite: orUndef(row.prerequisite),
-  hasPrerequisite: row.hasPrerequisite,
-  abilityIncrease: buildAbilityIncrease(row.abilityIncrease),
-  features: row.features.isInitialized()
-    ? row.features
-        .getItems()
-        .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map(toFeatFeature)
-    : undefined,
-  tags: nonEmpty(row.tags) ?? [],
-  indexVersion: orUndef(row.indexVersion),
-});
+const rowToFeat = (row: FeatEntity): FeatMetadata => {
+  const tags = nonEmpty(row.tags) ?? [];
+  return {
+    slug: row.slug,
+    title: row.title,
+    file: row.file,
+    link: row.link,
+    description: orUndef(row.description),
+    prerequisite: orUndef(row.prerequisite),
+    hasPrerequisite: row.hasPrerequisite,
+    abilityIncrease: buildAbilityIncrease(row.abilityIncrease),
+    features: row.features.isInitialized()
+      ? row.features
+          .getItems()
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map(toFeatFeature)
+      : undefined,
+    multiSelect: tags.includes('multi-select') || undefined,
+    grants: nonEmpty(row.grants ?? []),
+    tags,
+    indexVersion: orUndef(row.indexVersion),
+  };
+};
 
 /* ──────────────────────────────  Repository  ─────────────────────────── */
 

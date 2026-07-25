@@ -42,6 +42,10 @@ interface SearchResultRowProps {
  * meta chips, and thumbnail.
  *
  * @param {SearchResultRowProps} props - Component props
+ * @param {SearchResult} props.result - Typed search result with record + snippet
+ * @param {string} [props.className] - Optional additional class names
+ * @param {React.CSSProperties} [props.style] - Optional inline style overrides merged onto the row element
+ * @param {'row' | 'card'} [props.variant=row] - Layout variant: compact row or expanded card
  * @returns {JSX.Element} The result row
  */
 export function SearchResultRow({

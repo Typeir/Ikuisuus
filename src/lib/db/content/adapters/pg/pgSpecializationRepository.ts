@@ -45,6 +45,7 @@ const rowToSpecialization = (
       name: f.name,
       startLine: f.startLine ?? undefined,
       endLine: f.endLine ?? undefined,
+      grants: nonEmpty(f.grants ?? []),
     }));
 
   const spellcasting: SpecializationSpellcasting | undefined =

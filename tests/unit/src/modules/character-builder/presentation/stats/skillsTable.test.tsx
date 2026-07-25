@@ -189,4 +189,38 @@ describe('SkillsTable', () => {
     await userEvent.click(screen.getByText('Acrobatics'));
     expect(onChange).not.toHaveBeenCalled();
   });
+
+  it('renders a hint marker only for rows in the hint set', () => {
+    render(
+      <SkillsTable
+        skills={SKILLS}
+        abilityScores={ABILITY_SCORES}
+        tierBonus={3}
+        onChange={vi.fn()}
+        hintSet={new Set(['Athletics'])}
+      />,
+    );
+    expect(screen.getAllByRole('img')).toHaveLength(1);
+    const athleticsRow = screen.getByText('Athletics').closest('tr');
+    expect(athleticsRow?.querySelector('[role="img"]')).toBeTruthy();
+    const acrobaticsRow = screen.getByText('Acrobatics').closest('tr');
+    expect(acrobaticsRow?.querySelector('[role="img"]')).toBeNull();
+  });
+
+  it('raises the effective tier to a granted floor', () => {
+    render(
+      <SkillsTable
+        skills={[{ name: 'Acrobatics', ability: 'dex', tier: 'none' }]}
+        abilityScores={ABILITY_SCORES}
+        tierBonus={3}
+        onChange={vi.fn()}
+        grantFloors={{ Acrobatics: 'proficient' }}
+      />,
+    );
+    // dex mod +1 + proficient tier bonus +3 = +4, though the stored tier is none
+    expect(screen.getByText('+4')).toBeTruthy();
+    const row = screen.getByText('Acrobatics').closest('tr');
+    const pips = row?.querySelectorAll('button');
+    expect((pips![1] as HTMLButtonElement).disabled).toBe(true);
+  });
 });

@@ -37,6 +37,10 @@ export interface AbilityGridProps {
  *
  * @component
  * @param {AbilityGridProps} props - Component props
+ * @param {CharacterAbility[]} props.abilities - List of abilities to render
+ * @param {boolean} [props.editing=false] - Whether edit controls are shown on cards
+ * @param {(id: string) => void} [props.onEdit] - Called when a card's edit button is clicked
+ * @param {(id: string) => void} [props.onDelete] - Called when a card's delete button is clicked
  * @returns {JSX.Element} Rendered grid
  */
 export const AbilityGrid: React.FC<AbilityGridProps> = ({

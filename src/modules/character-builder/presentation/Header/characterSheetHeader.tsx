@@ -59,6 +59,12 @@ export interface CharacterSheetHeaderProps {
  *
  * @component
  * @param {CharacterSheetHeaderProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
+ * @param {boolean} props.editing - Whether edit mode is active
+ * @param {() => void} props.onEdit - Enter edit mode
+ * @param {() => void} props.onSave - Persist draft
+ * @param {() => void} props.onCancel - Discard draft
+ * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered header
  */
 export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({

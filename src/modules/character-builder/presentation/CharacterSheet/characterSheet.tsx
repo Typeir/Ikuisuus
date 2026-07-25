@@ -22,6 +22,7 @@ import {
   useActiveSheet,
   type SheetTabId,
 } from '@/modules/character-builder/application/context/activeSheetContext';
+import { deriveGrantFloors } from '@/modules/character-builder/lib/utils/grants';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { GradientTabs } from '../../../../lib/components/ui/gradientTabs';
@@ -72,6 +73,7 @@ export interface CharacterSheetProps {
  *
  * @component
  * @param {CharacterSheetProps} props - Component props
+ * @param {CharacterSheetType} props.character - The character sheet to display
  * @returns {JSX.Element} Rendered character sheet
  */
 export const CharacterSheet: React.FC<CharacterSheetProps> = ({
@@ -98,6 +100,7 @@ const CharacterSheetBody: React.FC = () => {
   const { patch, patchAbility, beginEdit, saveEdit, cancelEdit, setActiveTab } =
     mutators;
   const isMobile = useIsMobileViewport();
+  const grantFloors = useMemo(() => deriveGrantFloors(data), [data]);
 
   const tabs = useMemo(
     () => [
@@ -156,6 +159,7 @@ const CharacterSheetBody: React.FC = () => {
               label={label}
               score={data.abilityScores[key]}
               saveTier={data.savingThrows?.[key] ?? 'none'}
+              saveFloor={grantFloors.savingThrows[key] ?? 'none'}
               tierBonus={data.tierBonus}
               editing={editing}
               onChange={(score) => patchAbility(key, score)}

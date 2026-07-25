@@ -55,6 +55,11 @@ function StatusLine({ i18nKey }: { i18nKey: string }): JSX.Element {
  * Renders the quick-results dropdown list with keyboard navigation support.
  *
  * @param {SearchDropdownProps} props - Component props
+ * @param {SearchResult[]} props.results - Search results
+ * @param {boolean} props.loading - Whether a search is in flight
+ * @param {number} props.activeIndex - Index of the currently highlighted result
+ * @param {() => void} props.onNavigate - Callback when a result link is clicked
+ * @param {string} props.searchHref - Full-results page URL for the current query
  * @returns {JSX.Element} The dropdown list
  */
 export function SearchDropdown({

@@ -96,4 +96,18 @@ describe('AbilityScoreBlock', () => {
     });
     expect((pips[0] as HTMLButtonElement).disabled).toBe(true);
   });
+
+  it('raises the save bonus to a granted floor', () => {
+    render(
+      <AbilityScoreBlock
+        label='STR'
+        score={16}
+        saveTier='none'
+        saveFloor='proficient'
+        tierBonus={3}
+      />,
+    );
+    // +3 ability mod + 3 tier bonus (granted proficient), though the stored tier is none
+    expect(screen.getByText('+6')).toBeTruthy();
+  });
 });

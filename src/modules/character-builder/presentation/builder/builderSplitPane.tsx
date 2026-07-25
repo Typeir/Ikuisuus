@@ -59,6 +59,17 @@ export interface BuilderSplitPaneProps {
  *
  * @component
  * @param {BuilderSplitPaneProps} props - Component props
+ * @param {string} props.id - ResizablePane persistence id (desktop only)
+ * @param {ReactNode} props.left - Picker / editor pane content
+ * @param {ReactNode} props.right - Preview pane content (bottom sheet body on phones)
+ * @param {string} props.sheetTitle - Console-label title of the mobile bottom sheet
+ * @param {boolean} [props.sheetOpen=false] - Controlled sheet-open state (e.g. focused shard present)
+ * @param {() => void} [props.onSheetClose] - Called when the controlled sheet is dismissed
+ * @param {string} [props.mobileTriggerLabel] - When set, renders a summon button under the primary pane on phones
+ * @param {'left' | 'right'} [props.mobilePrimary='left'] - Which pane stays inline on phones; the other becomes the sheet body
+ * @param {string} [props.ariaLabel] - Aria label forwarded to the ResizablePane wrapper
+ * @param {number} [props.defaultLeftPercent] - ResizablePane default left width (desktop only)
+ * @param {number} [props.minLeftPercent] - ResizablePane minimum left width (desktop only)
  * @returns {JSX.Element} Rendered split layout
  */
 export const BuilderSplitPane: React.FC<BuilderSplitPaneProps> = ({

@@ -38,6 +38,9 @@ export interface BibliographyTabProps {
  *
  * @component
  * @param {BibliographyTabProps} props - Component props
+ * @param {CharacterSheetType} props.data - Active character data
+ * @param {boolean} props.editing - Whether edit mode is active
+ * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered tab body
  */
 export const BibliographyTab: React.FC<BibliographyTabProps> = ({

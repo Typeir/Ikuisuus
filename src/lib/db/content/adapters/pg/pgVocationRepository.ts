@@ -37,6 +37,7 @@ const rowToVocation = (row: VocationEntity): VocationMetadata => {
       name: f.name,
       startLine: f.startLine ?? undefined,
       endLine: f.endLine ?? undefined,
+      grants: nonEmpty(f.grants ?? []),
     }));
 
   const spellcasting: VocationSpellcasting | undefined =

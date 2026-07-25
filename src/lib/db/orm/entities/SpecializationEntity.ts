@@ -80,6 +80,10 @@ export class SpecializationFeatureEntity {
     nullable: true,
   })
   endLine?: number | null;
+
+  /** @property {string[] | null} grants - Tag-based proficiency grants this feature confers (e.g. `saving_throw:wisdom`); null when it grants no automatic proficiency */
+  @Property({ type: 'string[]', nullable: true })
+  grants?: string[] | null;
 }
 
 /**

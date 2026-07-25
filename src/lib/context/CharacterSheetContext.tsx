@@ -136,6 +136,7 @@ interface CharacterSheetProviderProps {
  *
  * @component
  * @param {CharacterSheetProviderProps} props - Component props
+ * @param {ReactNode} props.children - Child components to render
  * @returns {JSX.Element} Context providers wrapping children
  *
  * @description

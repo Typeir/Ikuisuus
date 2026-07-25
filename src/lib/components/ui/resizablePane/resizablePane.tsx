@@ -124,6 +124,14 @@ function writeStoredPercent(key: string, value: number): void {
  *
  * @component
  * @param {ResizablePaneProps} props - Component props
+ * @param {string} props.id - Unique identifier used as the localStorage key suffix
+ * @param {ReactNode} props.left - Content of the left pane
+ * @param {ReactNode} props.right - Content of the right pane
+ * @param {number} [props.defaultLeftPercent=30] - Initial left pane width as a percentage of the wrapper (default 30)
+ * @param {number} [props.minLeftPercent=18] - Minimum left pane width percentage (default 18)
+ * @param {number} [props.maxLeftPercent=70] - Maximum left pane width percentage (default 70)
+ * @param {string} [props.ariaLabel] - Optional aria-label for the wrapper group
+ * @param {string} [props.className] - Optional extra class for the wrapper
  * @returns {JSX.Element} Rendered split layout
  */
 export const ResizablePane: React.FC<ResizablePaneProps> = ({

@@ -14,6 +14,7 @@ import React from 'react';
 import { useHashNavigation } from '@/modules/library/application/hooks/useHashNavigation';
 import mdxComponents from '@/modules/library/infrastructure/compile/mdxComponents';
 import {
+    FeatTable,
     FilteredSpellTable,
     HeirloomTable,
     MonsterTable,
@@ -43,6 +44,7 @@ export const components = {
   Meta,
   MonsterTable,
   HeirloomTable,
+  FeatTable,
   FilteredSpellTable,
   SpellTable,
   TrinketTable,

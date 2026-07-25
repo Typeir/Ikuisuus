@@ -28,6 +28,28 @@ const log = logger.child({ module: 'FSSpellRepo' });
 const SUBDIR = 'spells';
 
 /**
+ * Reports whether a spell belongs to a named spell list. Membership is a
+ * whitespace-trimmed, case-insensitive match against each `spellLists[].name`,
+ * so a vocation title (e.g. "Wizard") matches the list source the generator
+ * records on every spell in that vocation's list. Mirrors the pg adapter's
+ * `SpellListEntity.name` equality so both backends scope to the same set.
+ *
+ * @function spellMatchesSource
+ * @param {SpellMetadata} spell - Spell record to test
+ * @param {string} source - Spell-list name to match (e.g. a vocation title)
+ * @returns {boolean} True when the spell is a member of the named list
+ */
+export function spellMatchesSource(
+  spell: SpellMetadata,
+  source: string,
+): boolean {
+  const target = source.trim().toLowerCase();
+  return (spell.spellLists ?? []).some(
+    (ref) => ref.name.trim().toLowerCase() === target,
+  );
+}
+
+/**
  * Filesystem-backed spell repository.
  *
  * @class FsSpellRepository
@@ -117,17 +139,29 @@ class FsSpellRepository
   }
 
   /**
-   * Returns all spells regardless of source (source filtering is a PG concern).
+   * Returns the spells whose spell-list membership includes `source`, achieving
+   * parity with the pg adapter (which resolves the same set via the
+   * `spell_lists` table). A blank source returns the full library; membership is
+   * decided by {@link spellMatchesSource}.
    *
    * @param {string} locale - Locale code
-   * @param {string} _source - Ignored in the FS adapter
-   * @returns {Promise<SpellMetadata[]>} All spell records
+   * @param {string} source - Spell-list name to scope to (e.g. a vocation title)
+   * @returns {Promise<SpellMetadata[]>} Spells in the named list, or `[]` on error
    */
-  async listBySource(
-    locale: string,
-    _source: string,
-  ): Promise<SpellMetadata[]> {
-    return this.list(locale);
+  async listBySource(locale: string, source: string): Promise<SpellMetadata[]> {
+    try {
+      const all = await readMetadataFiles<SpellMetadata>(locale, SUBDIR);
+      const target = source.trim();
+      if (!target) return all;
+      return all.filter((spell) => spellMatchesSource(spell, target));
+    } catch (error) {
+      log.error('Error reading spell metadata by source from filesystem', {
+        error: error instanceof Error ? error.message : String(error),
+        locale,
+        source,
+      });
+      return [];
+    }
   }
 }
 

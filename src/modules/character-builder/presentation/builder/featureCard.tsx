@@ -14,7 +14,12 @@
 
 'use client';
 
-import { ChevronDown, ChevronRight, SquareArrowOutUpRight } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Minus,
+  SquareArrowOutUpRight,
+} from 'lucide-react';
 import type { ReactNode } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import type { ContentShardType } from '../shards/contentShardPanel';
@@ -41,6 +46,7 @@ import { ContentExpandBody } from './contentExpandBody';
  * @property {string} expandLabel - Accessible label for the expand button
  * @property {string} [openLabel] - Accessible label for the open-source button (only used when `onFocus` is provided)
  * @property {ReactNode} [subOptions] - Optional sub-option selector rendered beneath the card row
+ * @property {FeatureCardMultiSelect} [multiSelect] - When present, the card is repeatable: the primary button adds an instance, a count chip and a remove button appear, and `onToggle`/`selected` are ignored in favour of the instance count
  */
 export interface FeatureCardProps {
   label: string;
@@ -59,6 +65,28 @@ export interface FeatureCardProps {
   expandLabel: string;
   openLabel?: string;
   subOptions?: ReactNode;
+  multiSelect?: FeatureCardMultiSelect;
+}
+
+/**
+ * Repeatable-selection controls for a {@link FeatureCard}. Supplied for feats
+ * (such as Ability Score Improvement) that may be taken more than once.
+ *
+ * @interface FeatureCardMultiSelect
+ * @property {number} count - How many instances are currently selected
+ * @property {() => void} onAdd - Adds one instance (fired by the primary button)
+ * @property {() => void} onRemove - Removes one instance (fired by the remove button)
+ * @property {string} addLabel - Accessible label / tooltip for the add action
+ * @property {string} removeLabel - Accessible label for the remove button
+ * @property {string} countLabel - Rendered count chip text (e.g. `×2`)
+ */
+export interface FeatureCardMultiSelect {
+  count: number;
+  onAdd: () => void;
+  onRemove: () => void;
+  addLabel: string;
+  removeLabel: string;
+  countLabel: string;
 }
 
 /**
@@ -86,6 +114,7 @@ export interface FeatureCardProps {
  * @param {string} props.expandLabel - Accessible label for the expand button
  * @param {string} [props.openLabel] - Accessible label for the open-source button
  * @param {ReactNode} [props.subOptions] - Optional sub-option selector rendered beneath the card row
+ * @param {FeatureCardMultiSelect} [props.multiSelect] - Repeatable-selection controls; when present the primary button adds an instance and a count chip + remove button appear
  * @returns {JSX.Element} Rendered feature card
  */
 export const FeatureCard: React.FC<FeatureCardProps> = ({
@@ -105,12 +134,15 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   expandLabel,
   openLabel,
   subOptions,
+  multiSelect,
 }) => {
   const Chevron = expanded ? ChevronDown : ChevronRight;
+  const isSelected = multiSelect ? multiSelect.count > 0 : selected;
 
-  const handleToggle = () => {
+  const handlePrimary = () => {
     if (readOnly) return;
-    onToggle();
+    if (multiSelect) multiSelect.onAdd();
+    else onToggle();
   };
 
   const handleExpand = () => {
@@ -118,18 +150,31 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   };
 
   return (
-    <li className={`${styles.boonCard} ${selected ? styles.boonSelected : ''}`}>
+    <li className={`${styles.boonCard} ${isSelected ? styles.boonSelected : ''}`}>
       <div className={expandStyles.boonRow}>
         <button
           type='button'
           className={styles.boonToggleBtn}
-          onClick={handleToggle}
+          onClick={handlePrimary}
           aria-disabled={readOnly}
-          aria-pressed={selected}>
+          aria-pressed={isSelected}
+          title={multiSelect ? multiSelect.addLabel : undefined}>
           <span className={styles.boonName}>{label}</span>
           {badge && <span className={styles.boonBpBadge}>{badge}</span>}
+          {multiSelect && multiSelect.count > 0 && (
+            <span className={styles.boonBpBadge}>{multiSelect.countLabel}</span>
+          )}
         </button>
         <div className={expandStyles.boonActions}>
+          {multiSelect && multiSelect.count > 0 && !readOnly && (
+            <button
+              type='button'
+              className={expandStyles.boonExpandBtn}
+              onClick={multiSelect.onRemove}
+              aria-label={multiSelect.removeLabel}>
+              <Minus size={14} aria-hidden='true' />
+            </button>
+          )}
           {onFocus && (
             <button
               type='button'

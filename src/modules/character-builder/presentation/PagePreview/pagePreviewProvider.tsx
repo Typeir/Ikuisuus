@@ -96,6 +96,7 @@ export interface PagePreviewProviderProps {
  *
  * @component
  * @param {PagePreviewProviderProps} props - Component props
+ * @param {ReactNode} props.children - Subtree that may consume the preview context
  * @returns {JSX.Element} Provider element
  */
 export const PagePreviewProvider: React.FC<PagePreviewProviderProps> = ({

@@ -32,6 +32,8 @@ interface MetaTrailProps {
  * Renders a terminal-style tag list from metadata fields.
  *
  * @param {MetaTrailProps} props - Component props
+ * @param {Record<string, string | number>} [props.meta] - Metadata key-value pairs
+ * @param {string} [props.className] - Optional additional class names
  * @returns {JSX.Element | null} The tag list or null when empty
  */
 export function MetaTrail({

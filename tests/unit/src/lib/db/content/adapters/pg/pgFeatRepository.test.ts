@@ -82,6 +82,14 @@ const rowWithPrereq = {
   hasPrerequisite: true,
 };
 
+/** Entity row that confers proficiency grants when selected. */
+const rowWithGrants = {
+  ...baseRow,
+  slug: 'skilled',
+  title: 'Skilled',
+  grants: ['skill:persuasion:proficient', 'skill:insight:proficient'],
+};
+
 describe('pgFeatRepository', () => {
   describe('list', () => {
     it('maps a basic entity row to FeatMetadata', async () => {
@@ -96,6 +104,17 @@ describe('pgFeatRepository', () => {
         tags: ['initiative', 'passive'],
       });
       expect(result[0].abilityIncrease).toBeUndefined();
+      expect(result[0].grants).toBeUndefined();
+    });
+
+    it('maps feat-level grants, omitting them when the feat grants nothing', async () => {
+      mockEM.find.mockResolvedValue([rowWithGrants]);
+      const result = await pgFeatRepository.list('en');
+
+      expect(result[0].grants).toEqual([
+        'skill:persuasion:proficient',
+        'skill:insight:proficient',
+      ]);
     });
 
     it('maps the ability increase embed to the domain shape', async () => {

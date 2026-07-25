@@ -66,6 +66,12 @@ export interface GradientTabsProps {
  *
  * @component
  * @param {GradientTabsProps} props - Component props
+ * @param {GradientTabItem[]} props.tabs - Ordered list of tab descriptors
+ * @param {string} props.activeTab - Value of the currently selected tab
+ * @param {(value: string) => void} props.onChange - Called when the user activates a tab
+ * @param {Record<string, ReactNode>} [props.panels] - Map of tab value to panel content; use when all panels are declared upfront
+ * @param {ReactNode} [props.children] - Panel content rendered directly; use when content is computed from activeTab externally
+ * @param {'default' | 'compact'} [props.variant='default'] - Visual density; `compact` tightens paddings and sizes tabs for touch
  * @returns {JSX.Element} Rendered tabbed container
  *
  * @example

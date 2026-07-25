@@ -45,6 +45,11 @@ interface SearchBarProps {
  * Always-visible search input with keyboard shortcut and dropdown results.
  *
  * @param {SearchBarProps} props - Component props
+ * @param {string} [props.className] - Optional additional class names
+ * @param {() => void} [props.onNavigate] - Callback when a result link is clicked
+ * @param {'sidebar' | 'hero'} [props.variant='sidebar'] - Visual variant
+ * @param {string} [props.defaultQuery] - Initial query text; re-synced when it
+ * changes (e.g. the search page passing the current `?q=` param)
  * @returns {JSX.Element} The search bar
  */
 export function SearchBar({

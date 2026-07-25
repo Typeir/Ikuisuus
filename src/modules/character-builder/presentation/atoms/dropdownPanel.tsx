@@ -65,6 +65,13 @@ interface PanelCoords {
  *
  * @component
  * @param {DropdownPanelProps} props - Component props
+ * @param {string} props.triggerLabel - Accessible `aria-label` for the ▾ trigger button
+ * @param {React.ReactNode} [props.badge] - Optional node rendered as a sibling before the trigger (e.g. count badge, `+` indicator)
+ * @param {string} [props.triggerClassName] - Class name applied to the ▾ button
+ * @param {string} [props.panelClassName] - Class name applied to the floating panel container
+ * @param {string} [props.panelRole='region'] - ARIA `role` for the panel container; defaults to `'region'`
+ * @param {string} [props.panelLabel] - ARIA `aria-label` for the panel container
+ * @param {React.ReactNode} props.children - Content rendered inside the floating panel
  * @returns {React.ReactElement} Badge + trigger fragment with portaled panel
  */
 export const DropdownPanel: React.FC<DropdownPanelProps> = ({
