@@ -128,6 +128,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
     draft: character,
     editing: false,
     activeTab: initialTab,
+    dirty: false,
   });
 
   /**
@@ -157,19 +158,24 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
   }, [startEditingId, character.id]);
 
   /**
-   * The single path by which this sheet reaches the persistence layer. Any time
-   * the saved character diverges from the one the roster holds — a live-play
-   * write outside edit mode, or a `COMMIT_SAVE` — it is pushed upstream. Guarded
-   * on identity so the roster's echo back through the `character` prop settles
-   * instead of looping.
+   * The single path by which this sheet reaches the persistence layer. Any write
+   * that lands on the saved character — a live-play edit outside edit mode, or a
+   * `COMMIT_SAVE` — marks the reducer dirty, and this pushes it upstream.
+   *
+   * The trigger is the dirty flag rather than a comparison against the incoming
+   * `character` prop. The roster rebuilds every upserted character (not least to
+   * stamp `updatedAt`), so the push comes back as a brand-new object one commit
+   * later; a prop comparison would still be looking at the pre-echo value in the
+   * commit where the adopting `SYNC_CHARACTER` is already queued, push again,
+   * and mint another object — forever.
    */
   useEffect(() => {
-    if (state.editing || state.character === character) return;
+    if (state.editing || !state.dirty) return;
     dispatchRoster({
       type: CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER,
       payload: { character: state.character },
     });
-  }, [state.editing, state.character, character, dispatchRoster]);
+  }, [state.editing, state.dirty, state.character, dispatchRoster]);
 
   const patch = useCallback((partial: Partial<CharacterSheetType>) => {
     dispatch({ type: 'PATCH', payload: partial });

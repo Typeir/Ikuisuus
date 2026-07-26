@@ -51,12 +51,14 @@ export type SheetTabId =
  * @property {CharacterSheetType} draft - Working copy used while editing
  * @property {boolean} editing - Whether the sheet is in edit mode
  * @property {SheetTabId} activeTab - Currently displayed tab
+ * @property {boolean} dirty - Whether `character` holds changes the roster has not been told about yet. Set by any write that lands on the saved character, cleared when a character is adopted from the roster. The provider pushes upstream on this flag alone — comparing `character` against the incoming prop instead would race, because the roster echoes every write back as a fresh object and the comparison would still see the pre-echo value for one commit.
  */
 export interface SheetReducerState {
   character: CharacterSheetType;
   draft: CharacterSheetType;
   editing: boolean;
   activeTab: SheetTabId;
+  dirty: boolean;
 }
 
 /** Discriminated union of reducer actions. */
@@ -113,7 +115,7 @@ const applyWrite = (
 ): SheetReducerState =>
   state.editing
     ? { ...state, draft: next }
-    : { ...state, draft: next, character: next };
+    : { ...state, draft: next, character: next, dirty: true };
 
 /**
  * Refreshes the `level` and `tierBonus` caches from the draft's authoritative
@@ -210,11 +212,11 @@ export const sheetReducer = (
     case 'CANCEL_EDIT':
       return { ...state, editing: false, draft: state.character };
     case 'COMMIT_SAVE':
-      return { ...state, editing: false, character: state.draft };
+      return { ...state, editing: false, character: state.draft, dirty: true };
     case 'SYNC_CHARACTER': {
       if (state.editing) return state;
       const c = action.payload.character;
-      return { ...state, character: c, draft: c };
+      return { ...state, character: c, draft: c, dirty: false };
     }
     case 'SET_TAB':
       return { ...state, activeTab: action.payload.tab };
