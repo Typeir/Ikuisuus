@@ -67,7 +67,7 @@ const mockData = {
 } as const;
 
 describe('HpChip', () => {
-  it('renders HP value and label', () => {
+  it('renders the HP label and keeps current HP editable when locked', () => {
     const patch = vi.fn();
     render(
       <HpChipMemo
@@ -80,7 +80,9 @@ describe('HpChip', () => {
       />,
     );
     expect(screen.getByText('hp')).toBeInTheDocument();
-    expect(screen.getByText('10/10')).toBeInTheDocument();
+    const current = screen.getByLabelText('hpCurrent') as HTMLInputElement;
+    expect(current.value).toBe('10');
+    expect(screen.queryByLabelText('hpMax')).toBeNull();
   });
 
   it('shows temp HP when present', () => {

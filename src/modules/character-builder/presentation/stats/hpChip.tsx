@@ -38,7 +38,6 @@ const HpChip = ({
   patch,
   onHitDiceCommit,
 }: HpChipProps) => {
-  const t = useTranslations('characterSheet');
   const tCommon = useTranslations('common');
   const u = isUnlocked('hp');
   return (
@@ -56,17 +55,17 @@ const HpChip = ({
           onCommit={onHitDiceCommit}
         />
       </div>
-      {u ? (
-        <div className={styles.statChipBtnRow}>
-          <NumericInput
-            value={data.hpCurrent}
-            min={0}
-            max={data.hpMax}
-            size='sm'
-            ariaLabel={tCommon('hpCurrent')}
-            onChange={(v) => patch({ hpCurrent: v ?? 0 })}
-          />
-          <span className={styles.statChipLabel}>/</span>
+      <div className={styles.statChipBtnRow}>
+        <NumericInput
+          value={data.hpCurrent}
+          min={-data.hpMax}
+          max={data.hpMax}
+          size='sm'
+          ariaLabel={tCommon('hpCurrent')}
+          onChange={(v) => patch({ hpCurrent: v ?? 0 })}
+        />
+        <span className={styles.statChipLabel}>/</span>
+        {u ? (
           <NumericInput
             value={data.hpMax}
             min={1}
@@ -75,21 +74,13 @@ const HpChip = ({
             ariaLabel={tCommon('hpMax')}
             onChange={(v) => patch({ hpMax: v ?? 1 })}
           />
-        </div>
-      ) : (
-        <span
-          className={styles.statChipValue}
-          aria-label={t('ariaHp', {
-            current: data.hpCurrent,
-            max: data.hpMax,
-            temp: data.tempHp,
-          })}>
-          {data.hpCurrent}/{data.hpMax}
-          {data.tempHp > 0 && (
-            <span className={styles.tempHp}> +{data.tempHp}</span>
-          )}
-        </span>
-      )}
+        ) : (
+          <span className={styles.statChipValue}>{data.hpMax}</span>
+        )}
+        {data.tempHp > 0 && (
+          <span className={styles.tempHp}> +{data.tempHp}</span>
+        )}
+      </div>
     </div>
   );
 };

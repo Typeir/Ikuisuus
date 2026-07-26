@@ -18,18 +18,13 @@ import type {
     CharacterShard,
     CharacterSheet as CharacterSheetType,
 } from '@/lib/types/character';
-import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { getTotalCharacterLevel } from '@/modules/character-builder/lib/utils/characterDerivation';
-import {
-    computeAbilityModifier,
-    computeTierBonus,
-} from '@/modules/character-builder/lib/utils/characterStorage';
+import { computeAbilityModifier } from '@/modules/character-builder/lib/utils/characterStorage';
 import { deriveGrantFloors } from '@/modules/character-builder/lib/utils/grants';
 import { deriveProficiencyHints } from '@/modules/character-builder/lib/utils/proficiencyBudget';
-import { deriveHitPoints } from '@/modules/character-builder/lib/utils/hitDiceUtils';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { NotesSection } from '../notes/notesSection';
 import { AttacksTable } from '../stats/attacksTable';
 import { UnassignedChips } from '../atoms/unassignedChips';
@@ -87,82 +82,6 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       (s) => s.level === undefined || s.level <= v.level,
     ),
   ]);
-
-  /**
-   * Syncs the hit-dice log, tier bonus, and hpMax with the current vocations
-   * and levels. Backfills a roll entry for every vocation level from 1 (diffing
-   * against the previous render would miss levels assigned while this tab was
-   * unmounted; `alreadyLogged` dedupes), prunes (idempotent) entries beyond the
-   * current level or for removed vocations, derives the tier bonus, and — only
-   * when entries were pruned — recalculates hpMax from the surviving log so HP
-   * confirmed against a removed level leaves no phantom value.
-   */
-  useEffect(() => {
-    const curr = data.vocations;
-
-    const totalLevel = getTotalCharacterLevel(data);
-    const derivedPb = computeTierBonus(totalLevel);
-    const pbChanged = derivedPb !== data.tierBonus;
-
-    const newEntries: HitDieRollEntry[] = [];
-    const conMod = computeAbilityModifier(data.abilityScores.con);
-    const primarySlug = curr.find((v) => v.slug)?.slug;
-    let updatedLog = [...(data.hitDiceLog ?? [])];
-
-    for (const currEntry of curr) {
-      if (!currEntry.slug) continue;
-      const currLevel = currEntry.level ?? 1;
-      const faces = parseInt((currEntry.hitDie ?? '').replace(/^d/i, ''), 10);
-
-      for (let li = 1; li <= currLevel; li++) {
-        const id = `${currEntry.slug}-${li}`;
-        const alreadyLogged = updatedLog.some((e) => e.id === id);
-        if (!alreadyLogged) {
-          const seedMax =
-            currEntry.slug === primarySlug &&
-            li === 1 &&
-            Number.isFinite(faces);
-          newEntries.push({
-            id,
-            vocSlug: currEntry.slug,
-            vocTitle: currEntry.title,
-            dieType: (currEntry.hitDie ?? '').replace(/^d/i, '') || '?',
-            levelIndex: li,
-            result: seedMax ? faces : null,
-            conMod,
-            addedToHp: seedMax,
-          });
-        }
-      }
-
-      updatedLog = updatedLog.filter((e) => {
-        if (e.vocSlug !== currEntry.slug) return true;
-        return e.levelIndex <= currLevel;
-      });
-    }
-
-    const activeSlugs = new Set(curr.filter((v) => v.slug).map((v) => v.slug));
-    updatedLog = updatedLog.filter((e) => activeSlugs.has(e.vocSlug));
-
-    const logChanged = updatedLog.length !== (data.hitDiceLog ?? []).length;
-
-    if (!pbChanged && newEntries.length === 0 && !logChanged) return;
-
-    const patch: Partial<CharacterSheetType> = {};
-    if (pbChanged) patch.tierBonus = derivedPb;
-    if (newEntries.length > 0 || logChanged) {
-      patch.hitDiceLog =
-        newEntries.length > 0 ? [...updatedLog, ...newEntries] : updatedLog;
-    }
-    if (logChanged) {
-      const nextHpMax = deriveHitPoints({
-        ...data,
-        hitDiceLog: patch.hitDiceLog ?? updatedLog,
-      }).base;
-      if (nextHpMax !== (data.hpMax ?? 0)) patch.hpMax = nextHpMax;
-    }
-    onChange(patch);
-  }, [data, onChange]);
 
   /**
    * Patches the character's skill list.

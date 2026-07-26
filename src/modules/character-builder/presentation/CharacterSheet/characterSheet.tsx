@@ -23,8 +23,9 @@ import {
   type SheetTabId,
 } from '@/modules/character-builder/application/context/activeSheetContext';
 import { deriveGrantFloors } from '@/modules/character-builder/lib/utils/grants';
+import { syncHitDiceLog } from '@/modules/character-builder/lib/utils/hitDiceSync';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { GradientTabs } from '../../../../lib/components/ui/gradientTabs';
 import { CharacterSheetHeader } from '../Header/characterSheetHeader';
 import { PagePreviewHost } from '../PagePreview/pagePreviewHost';
@@ -101,6 +102,11 @@ const CharacterSheetBody: React.FC = () => {
     mutators;
   const isMobile = useIsMobileViewport();
   const grantFloors = useMemo(() => deriveGrantFloors(data), [data]);
+
+  useEffect(() => {
+    const update = syncHitDiceLog(data);
+    if (update) patch(update);
+  }, [data, patch]);
 
   const tabs = useMemo(
     () => [
