@@ -54,16 +54,10 @@ export type {
 
 export type { CharacterEntity } from './domain/character/characterEntity';
 
-export { getCharacterFormulaScope } from './lib/utils/characterFormulaScope';
-export type { CharacterFormulaScope } from './lib/utils/characterFormulaScope';
-
 export { ActiveCharacterSheet } from './presentation/CharacterSheet/activeCharacterSheet';
 
 export { CharacterSheet } from './presentation/CharacterSheet/characterSheet';
 export type { CharacterSheetProps } from './presentation/CharacterSheet/characterSheet';
-
-export { CombatStatsRow } from './presentation/stats/combatStatsRow';
-export type { CombatStatsRowProps } from './presentation/stats/combatStatsRow';
 
 export { VocationFeatureCard } from './presentation/builder/vocationFeatureCard';
 export type { VocationFeatureCardProps } from './presentation/builder/vocationFeatureCard';
