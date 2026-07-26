@@ -15,6 +15,7 @@
 
 import { logger } from '@/lib/logging/logger';
 import { fetchPersistentData } from '@/lib/utils/fetchPersistentData';
+import { ensureStorageSchema } from '@/lib/utils/storageSchema';
 import {
     fetchPersistentDataRef,
     removePersistentData,
@@ -67,6 +68,7 @@ const migrateEncounter = (encounter: any): Encounter => {
  */
 export const getEncounters = (): Encounter[] => {
   if (typeof window === 'undefined') return [];
+  ensureStorageSchema();
 
   try {
     const data = fetchPersistentDataRef(EncounterStorage.Encounters);
@@ -93,6 +95,7 @@ export const getEncounters = (): Encounter[] => {
  */
 export const getActiveEncounterId = (): string | null => {
   if (typeof window === 'undefined') return null;
+  ensureStorageSchema();
   return fetchPersistentData(EncounterStorage.ActiveEncounterId);
 };
 

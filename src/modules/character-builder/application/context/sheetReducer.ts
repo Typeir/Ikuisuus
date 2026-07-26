@@ -9,6 +9,12 @@
  * clamped to that same floor. Generic `PATCH` strips direct writes to
  * `level` / `tierBonus` so consumers cannot desync the cache.
  *
+ * Writes are never gated on edit mode. Edit mode only decides *where* a write
+ * lands: while editing it updates the draft alone, so `cancelEdit` can throw it
+ * away; otherwise it updates the saved character directly (live play — damage,
+ * grit, hit-dice reconciliation — which the provider then persists). Deciding
+ * which controls to offer is the consumer's job, via `editing`.
+ *
  * @module lib/components/characterSheet/context/sheetReducer
  * @version 1.0.0
  * @author Typeir
@@ -16,7 +22,11 @@
  */
 
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
-import { computeTierBonus } from '@/modules/character-builder/lib/utils/characterStorage';
+import {
+    getCharacterTierBonus,
+    getTotalCharacterLevel,
+    sumVocationLevels,
+} from '@/modules/character-builder/lib/utils/characterDerivation';
 import {
     getLevelFromXP,
     getXPForLevel,
@@ -68,25 +78,7 @@ export type SheetAction =
   | { type: 'CANCEL_EDIT' }
   | { type: 'COMMIT_SAVE' }
   | { type: 'SYNC_CHARACTER'; payload: { character: CharacterSheetType } }
-  | { type: 'SET_TAB'; payload: { tab: SheetTabId } }
-  | {
-      type: 'SET_FOCUSED_SHARD';
-      payload: { contentType: string; slug: string } | null;
-    };
-
-/**
- * Sums the `level` field of every vocation entry with a non-empty slug.
- *
- * @function sumVocationLevels
- * @param {CharacterSheetType['vocations']} vocations - Vocation entries
- * @returns {number} Allocated vocation level (0 when no slugs)
- */
-export const sumVocationLevels = (
-  vocations: CharacterSheetType['vocations'],
-): number =>
-  vocations
-    .filter((v) => Boolean(v.slug))
-    .reduce((sum, v) => sum + (v.level ?? 0), 0);
+  | { type: 'SET_TAB'; payload: { tab: SheetTabId } };
 
 /**
  * Returns the minimum XP required to satisfy the vocation-sum floor. Returns
@@ -104,8 +96,29 @@ const vocationXpFloor = (
 };
 
 /**
- * Recomputes the cache fields `level` and `tierBonus` from the draft's
- * authoritative `experience` and `vocations` fields.
+ * Applies a computed draft to the state. While editing, the write lands on the
+ * draft alone so `cancelEdit` can discard it. Outside edit mode there is no
+ * transaction to join, so the write lands on the saved character too — the
+ * write path is never gated on edit mode. Consumers decide which controls to
+ * offer by reading `editing`; the reducer never silently swallows a write.
+ *
+ * @function applyWrite
+ * @param {SheetReducerState} state - Previous state
+ * @param {CharacterSheetType} next - The computed next character
+ * @returns {SheetReducerState} Next state
+ */
+const applyWrite = (
+  state: SheetReducerState,
+  next: CharacterSheetType,
+): SheetReducerState =>
+  state.editing
+    ? { ...state, draft: next }
+    : { ...state, draft: next, character: next };
+
+/**
+ * Refreshes the `level` and `tierBonus` caches from the draft's authoritative
+ * `experience` and `vocations` fields, through the module's single derivation
+ * authority so this reducer cannot define a level of its own.
  *
  * @function withRecomputedLevelCache
  * @param {CharacterSheetType} draft - Draft to normalize
@@ -113,19 +126,11 @@ const vocationXpFloor = (
  */
 const withRecomputedLevelCache = (
   draft: CharacterSheetType,
-): CharacterSheetType => {
-  const xpLevel = getLevelFromXP(draft.experience ?? 0);
-  const vocationSum = sumVocationLevels(draft.vocations);
-  const effectiveLevel = Math.min(
-    MAX_XP_LEVEL,
-    Math.max(1, xpLevel, vocationSum),
-  );
-  return {
-    ...draft,
-    level: effectiveLevel,
-    tierBonus: computeTierBonus(effectiveLevel),
-  };
-};
+): CharacterSheetType => ({
+  ...draft,
+  level: getTotalCharacterLevel(draft),
+  tierBonus: getCharacterTierBonus(draft),
+});
 
 /**
  * Reducer for the active-sheet state machine.
@@ -168,17 +173,14 @@ export const sheetReducer = (
           };
         }
       }
-      return { ...state, draft: withRecomputedLevelCache(next) };
+      return applyWrite(state, withRecomputedLevelCache(next));
     }
     case 'PATCH_ABILITY': {
       const { key, score } = action.payload;
-      return {
-        ...state,
-        draft: {
-          ...state.draft,
-          abilityScores: { ...state.draft.abilityScores, [key]: score },
-        },
-      };
+      return applyWrite(state, {
+        ...state.draft,
+        abilityScores: { ...state.draft.abilityScores, [key]: score },
+      });
     }
     case 'PATCH_VOCATIONS': {
       const vocations = action.payload.vocations;
@@ -190,7 +192,7 @@ export const sheetReducer = (
           experience: getXPForLevel(Math.min(MAX_XP_LEVEL, vocationSum)),
         };
       }
-      return { ...state, draft: withRecomputedLevelCache(nextDraft) };
+      return applyWrite(state, withRecomputedLevelCache(nextDraft));
     }
     case 'PATCH_EXPERIENCE': {
       const requested = Math.max(0, action.payload.experience ?? 0);
@@ -198,10 +200,10 @@ export const sheetReducer = (
         vocationXpFloor(state.draft.vocations),
         requested,
       );
-      return {
-        ...state,
-        draft: withRecomputedLevelCache({ ...state.draft, experience }),
-      };
+      return applyWrite(
+        state,
+        withRecomputedLevelCache({ ...state.draft, experience }),
+      );
     }
     case 'BEGIN_EDIT':
       return { ...state, editing: true, draft: state.character };
@@ -216,18 +218,6 @@ export const sheetReducer = (
     }
     case 'SET_TAB':
       return { ...state, activeTab: action.payload.tab };
-    case 'SET_FOCUSED_SHARD': {
-      const p = action.payload;
-      const update = {
-        focusedShardType: p?.contentType ?? null,
-        focusedShardSlug: p?.slug ?? null,
-      };
-      return {
-        ...state,
-        character: { ...state.character, ...update },
-        draft: { ...state.draft, ...update },
-      };
-    }
     default:
       return state;
   }

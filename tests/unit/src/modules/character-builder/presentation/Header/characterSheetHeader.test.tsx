@@ -10,7 +10,6 @@
  */
 
 import { CharacterSheetHeader } from '@/modules/character-builder/presentation/Header/characterSheetHeader';
-import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import { cleanup, screen } from '@testing-library/react';
 import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { describe, expect, it, vi } from 'vitest';
@@ -24,50 +23,23 @@ vi.stubGlobal(
 
 describe('CharacterSheetHeader', () => {
   it('renders the character name in view mode', () => {
-    renderWithActiveSheet(
-      <CharacterSheetHeader
-        data={{ ...createEmptyCharacter(), name: 'Aria Dawnweaver' }}
-        editing={false}
-        onEdit={() => {}}
-        onSave={() => {}}
-        onCancel={() => {}}
-        onChange={() => {}}
-      />,
-      { character: { name: 'Aria Dawnweaver' } },
-    );
+    renderWithActiveSheet(<CharacterSheetHeader />, {
+      character: { name: 'Aria Dawnweaver' },
+    });
     expect(
       screen.getByRole('heading', { name: /Aria Dawnweaver/i }),
     ).toBeTruthy();
   });
 
   it('renders edit/save/cancel actions appropriately', () => {
-    renderWithActiveSheet(
-      <CharacterSheetHeader
-        data={createEmptyCharacter()}
-        editing={false}
-        onEdit={() => {}}
-        onSave={() => {}}
-        onCancel={() => {}}
-        onChange={() => {}}
-      />,
-    );
+    renderWithActiveSheet(<CharacterSheetHeader />);
     expect(
       screen.getByRole('button', { name: 'ariaEditCharacter' }),
     ).toBeTruthy();
 
     cleanup();
 
-    renderWithActiveSheet(
-      <CharacterSheetHeader
-        data={createEmptyCharacter()}
-        editing
-        onEdit={() => {}}
-        onSave={() => {}}
-        onCancel={() => {}}
-        onChange={() => {}}
-      />,
-      { editing: true },
-    );
+    renderWithActiveSheet(<CharacterSheetHeader />, { editing: true });
     expect(screen.getByRole('button', { name: 'save' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'cancel' })).toBeTruthy();
   });

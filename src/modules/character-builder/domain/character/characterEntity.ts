@@ -298,7 +298,7 @@ export interface EquipmentItem {
  * @property {string} slug - Vocation identifier, e.g. `wizard`
  * @property {string} title - Display name, e.g. `Wizard`
  * @property {number} level - Levels invested in this vocation specifically
- * @property {string} [hitDie] - Hit die notation without the `d` prefix (e.g. `"10"`), copied from vocation metadata on selection
+ * @property {number} [hitDie] - Hit die face count (e.g. `10`), copied from vocation metadata on selection. `0` when the vocation has no usable die.
  * @property {string[]} [baseSavingThrows] - Saving-throw ability names this vocation confers at its base (e.g. `["Constitution", "Intelligence"]`), copied from vocation metadata on selection and auto-applied as a proficiency floor
  * @property {number} [baseSkillChoiceCount] - Number of base skill proficiencies this vocation lets the player choose (from its metadata `skillProficiencies.count`), synced from vocation metadata; the primary vocation's value drives the unspent-proficiency counter
  * @property {string[]} [baseSkillChoices] - The skills this vocation offers as its base picks, stored as table row-keys (`skills.<camel>`). Empty with a non-zero `baseSkillChoiceCount` means "any skill" (unrestricted). Synced from vocation metadata `skillProficiencies.choices`; drives the per-row hint marker and the on-list budget
@@ -312,7 +312,7 @@ export interface VocationEntry {
   slug: string;
   title: string;
   level: number;
-  hitDie?: string;
+  hitDie?: number;
   baseSavingThrows?: string[];
   baseSkillChoiceCount?: number;
   baseSkillChoices?: string[];
@@ -429,8 +429,6 @@ export interface CharacterEntity {
   equipment: EquipmentItem[];
   equipmentNotes: string;
   selectedFeats: CharacterShard[];
-  focusedShardType: string | null;
-  focusedShardSlug: string | null;
   currency: CharacterCurrency;
   coinHoldings: CharacterCoinHoldings[];
   wants: string;

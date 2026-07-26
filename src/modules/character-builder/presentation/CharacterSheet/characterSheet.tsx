@@ -20,6 +20,7 @@ import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character
 import {
   ActiveSheetProvider,
   useActiveSheet,
+  useSheetData,
   type SheetTabId,
 } from '@/modules/character-builder/application/context/activeSheetContext';
 import { deriveGrantFloors } from '@/modules/character-builder/lib/utils/grants';
@@ -62,9 +63,11 @@ type TabId = SheetTabId;
  *
  * @interface CharacterSheetProps
  * @property {CharacterSheetType} character - The character sheet to display
+ * @property {string | null} [startEditingId] - When it matches `character.id`, the sheet opens in edit mode (for freshly-created characters)
  */
 export interface CharacterSheetProps {
   character: CharacterSheetType;
+  startEditingId?: string | null;
 }
 
 /**
@@ -75,13 +78,15 @@ export interface CharacterSheetProps {
  * @component
  * @param {CharacterSheetProps} props - Component props
  * @param {CharacterSheetType} props.character - The character sheet to display
+ * @param {string | null} [props.startEditingId] - Opens the sheet in edit mode when it matches `character.id`
  * @returns {JSX.Element} Rendered character sheet
  */
 export const CharacterSheet: React.FC<CharacterSheetProps> = ({
   character,
+  startEditingId,
 }) => (
   <PagePreviewProvider>
-    <ActiveSheetProvider character={character}>
+    <ActiveSheetProvider character={character} startEditingId={startEditingId}>
       <CharacterSheetBody />
     </ActiveSheetProvider>
     <PagePreviewHost />
@@ -97,9 +102,9 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
  */
 const CharacterSheetBody: React.FC = () => {
   const t = useTranslations('characterSheet');
-  const { data, editing, activeTab, mutators } = useActiveSheet();
-  const { patch, patchAbility, beginEdit, saveEdit, cancelEdit, setActiveTab } =
-    mutators;
+  const data = useSheetData();
+  const { editing, activeTab, mutators } = useActiveSheet();
+  const { patch, patchAbility, setActiveTab } = mutators;
   const isMobile = useIsMobileViewport();
   const grantFloors = useMemo(() => deriveGrantFloors(data), [data]);
 
@@ -124,38 +129,29 @@ const CharacterSheetBody: React.FC = () => {
   const activePanel = useMemo(() => {
     switch (activeTab) {
       case 'overview':
-        return <OverviewTab data={data} editing={editing} onChange={patch} />;
+        return <OverviewTab />;
       case 'bloodline':
-        return <BloodlineTab data={data} onChange={patch} />;
+        return <BloodlineTab />;
       case 'vocation':
-        return <VocationTab data={data} />;
+        return <VocationTab />;
       case 'feats':
-        return <FeatsTab data={data} onChange={patch} />;
+        return <FeatsTab />;
       case 'equipment':
-        return <EquipmentTab data={data} editing={editing} onChange={patch} />;
+        return <EquipmentTab />;
       case 'abilities':
         return <AbilitiesTab />;
       case 'bibliography':
-        return (
-          <BibliographyTab data={data} editing={editing} onChange={patch} />
-        );
+        return <BibliographyTab />;
       default:
         return null;
     }
-  }, [activeTab, data, editing, patch]);
+  }, [activeTab]);
 
   return (
     <article
       className={styles.characterSheet}
       aria-label={t('ariaCharacterSheet', { name: data.name })}>
-      <CharacterSheetHeader
-        data={data}
-        editing={editing}
-        onEdit={beginEdit}
-        onSave={saveEdit}
-        onCancel={cancelEdit}
-        onChange={patch}
-      />
+      <CharacterSheetHeader />
 
       <section className={styles.statsRow} aria-label={t('ariaAbilityScores')}>
         <div className={styles.abilityRow}>
@@ -181,7 +177,7 @@ const CharacterSheetBody: React.FC = () => {
           ))}
         </div>
 
-        <CombatStatChips data={data} patch={patch} />
+        <CombatStatChips />
       </section>
 
       <div>

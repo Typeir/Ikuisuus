@@ -21,6 +21,7 @@
 import { Tooltip } from '@/lib/components/ui/tooltip/tooltip';
 import type { VocationEntry } from '@/lib/types/character';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
+import { UNKNOWN_DIE, formatDie } from '@/lib/utils/diceUtils';
 import { useTranslations } from 'next-intl';
 import styles from './hitDiceCounter.module.scss';
 
@@ -37,33 +38,20 @@ export interface HitDiceCounterProps {
 }
 
 /**
- * Returns the die face count from a raw hit die string.
- * Accepts formats like `"d10"`, `"10"`, or `"D10"`.
- *
- * @function parseDieFaces
- * @param {string} raw - Raw hit die value
- * @returns {string} Normalised die size string (e.g. `"10"`) or `"?"` if not parseable
- */
-function parseDieFaces(raw: string): string {
-  const match = raw.replace(/^d/i, '');
-  const n = parseInt(match, 10);
-  return Number.isFinite(n) && n > 0 ? String(n) : '?';
-}
-
-/**
  * Resolves the die faces for a vocation entry: the entry's own `hitDie`
  * first, then the die type recorded in the hit dice log for that vocation.
  *
  * @function resolveDieFaces
  * @param {VocationEntry} entry - Vocation entry
  * @param {HitDieRollEntry[]} log - Hit die roll history
- * @returns {string} Die size string (e.g. `"10"`) or `"?"` when unknown
+ * @returns {number} Die face count, or {@link UNKNOWN_DIE} when unknown
  */
-function resolveDieFaces(entry: VocationEntry, log: HitDieRollEntry[]): string {
-  const own = parseDieFaces(entry.hitDie ?? '');
-  if (own !== '?') return own;
+function resolveDieFaces(entry: VocationEntry, log: HitDieRollEntry[]): number {
+  if (entry.hitDie !== undefined && entry.hitDie > UNKNOWN_DIE) {
+    return entry.hitDie;
+  }
   const logged = log.find((e) => e.vocSlug === entry.slug);
-  return logged ? parseDieFaces(logged.dieType) : '?';
+  return logged?.dieType ?? UNKNOWN_DIE;
 }
 
 /**
@@ -92,11 +80,12 @@ export const HitDiceCounter: React.FC<HitDiceCounterProps> = ({
 
   const dieFaces = active.map((v) => resolveDieFaces(v, hitDiceLog));
   const uniqueDice = new Set(dieFaces);
-  const isMixed = uniqueDice.size > 1 || dieFaces.some((d) => d === '?');
+  const isMixed =
+    uniqueDice.size > 1 || dieFaces.some((d) => d === UNKNOWN_DIE);
 
   const label = isMixed
-    ? `${totalLevel}d?`
-    : `${totalLevel}d${[...uniqueDice][0]}`;
+    ? formatDie(UNKNOWN_DIE, totalLevel)
+    : formatDie([...uniqueDice][0], totalLevel);
 
   if (!isMixed) {
     return (
@@ -114,7 +103,7 @@ export const HitDiceCounter: React.FC<HitDiceCounterProps> = ({
         <div key={`${i}::${v.slug}`} className={styles.tooltipRow}>
           <span className={styles.tooltipVoc}>{v.title || v.slug}</span>
           <span className={styles.tooltipDice}>
-            {v.level}d{resolveDieFaces(v, hitDiceLog)}
+            {formatDie(resolveDieFaces(v, hitDiceLog), v.level)}
           </span>
         </div>
       ))}

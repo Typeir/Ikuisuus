@@ -10,7 +10,6 @@
 'use client';
 
 import { NumericInput } from '@/lib/components/ui/numericInput';
-import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheet.module.scss';
@@ -20,11 +19,11 @@ export interface AcChipProps {
   ac: number;
   isUnlocked: (k: string) => boolean;
   toggle: (k: string) => void;
-  patch: (p: Partial<CharacterSheetType>) => void;
+  onChange: (ac: number) => void;
 }
 
 /** AC chip with lockable edit mode. */
-const AcChip = ({ ac, isUnlocked, toggle, patch }: AcChipProps) => {
+const AcChip = ({ ac, isUnlocked, toggle, onChange }: AcChipProps) => {
   const tCommon = useTranslations('common');
   const u = isUnlocked('ac');
   return (
@@ -38,7 +37,7 @@ const AcChip = ({ ac, isUnlocked, toggle, patch }: AcChipProps) => {
           max={99}
           size='sm'
           ariaLabel={tCommon('ac')}
-          onChange={(v) => patch({ ac: v ?? 10 })}
+          onChange={(v) => onChange(v ?? 10)}
         />
       ) : (
         <span className={styles.statChipValue}>{ac}</span>

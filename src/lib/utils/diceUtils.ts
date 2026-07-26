@@ -27,6 +27,53 @@ export function rollDie(faces: number): number {
 }
 
 /**
+ * Face count meaning "this vocation has no usable hit die". Distinct from a
+ * real die so callers can branch without magic numbers or sentinel strings.
+ *
+ * @constant UNKNOWN_DIE
+ * @type {number}
+ */
+export const UNKNOWN_DIE = 0;
+
+/**
+ * Reads the face count out of authored die notation (`"d12"`, `"12"`, `"D12"`,
+ * `"d12 per Berserker level"`). This is the ONLY place die notation is parsed:
+ * dice are carried as face counts everywhere else, so the two callers are the
+ * MDX metadata generator and the legacy-save migration. Never call it on a
+ * value that is already a face count.
+ *
+ * @function parseDieFaces
+ * @param {string} notation - Authored die notation
+ * @returns {number} Face count, or {@link UNKNOWN_DIE} when none is present
+ * @example
+ * parseDieFaces('d12 per Berserker level'); // 12
+ * parseDieFaces('nonsense');                // 0
+ */
+export function parseDieFaces(notation: string): number {
+  const match = /d?(\d+)/i.exec(notation.trim());
+  if (!match) return UNKNOWN_DIE;
+  const faces = Number.parseInt(match[1], 10);
+  return Number.isFinite(faces) && faces > 0 ? faces : UNKNOWN_DIE;
+}
+
+/**
+ * Renders a face count as display notation. Formatting is a presentation
+ * concern — the value itself stays numeric everywhere.
+ *
+ * @function formatDie
+ * @param {number} faces - Face count
+ * @param {number} [count] - Optional die count for `NdX` form
+ * @returns {string} `"d12"`, `"5d12"`, or `"d?"` when the die is unknown
+ * @example
+ * formatDie(12);    // 'd12'
+ * formatDie(12, 5); // '5d12'
+ */
+export function formatDie(faces: number, count?: number): string {
+  const die = faces > 0 ? `d${faces}` : 'd?';
+  return count === undefined ? die : `${count}${die}`;
+}
+
+/**
  * Determines if a die result is the maximum possible (critical).
  *
  * @function isMaxRoll

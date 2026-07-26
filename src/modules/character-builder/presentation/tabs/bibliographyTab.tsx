@@ -13,48 +13,34 @@
 'use client';
 
 import { TextArea } from '@/lib/components/ui/textArea';
-import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
+import {
+    useSheetData,
+    useSheetEditing,
+    useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import styles from './tabs.module.scss';
 
 /**
- * Props for `<BibliographyTab>`.
- *
- * @interface BibliographyTabProps
- * @property {CharacterSheetType} data - Active character data
- * @property {boolean} editing - Whether edit mode is active
- * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch the draft
- */
-export interface BibliographyTabProps {
-  data: CharacterSheetType;
-  editing: boolean;
-  onChange: (patch: Partial<CharacterSheetType>) => void;
-}
-
-/**
  * Bibliography tab content. Renders the character's notes as a large
- * resizable text area.
+ * resizable text area. Reads the character and edit mode from the active-sheet
+ * context.
  *
  * @component
- * @param {BibliographyTabProps} props - Component props
- * @param {CharacterSheetType} props.data - Active character data
- * @param {boolean} props.editing - Whether edit mode is active
- * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered tab body
  */
-export const BibliographyTab: React.FC<BibliographyTabProps> = ({
-  data,
-  editing,
-  onChange,
-}) => {
+export const BibliographyTab: React.FC = () => {
   const t = useTranslations('characterSheet');
+  const data = useSheetData();
+  const editing = useSheetEditing();
+  const { patch } = useSheetMutators();
 
   const handleNotesChange = useCallback(
     (value: string) => {
-      onChange({ bibliographyNotes: value } as Partial<CharacterSheetType>);
+      patch({ bibliographyNotes: value });
     },
-    [onChange],
+    [patch],
   );
 
   return (

@@ -12,7 +12,10 @@
  * @requires @/lib/types/characterSheet
  */
 
-import { getTotalCharacterLevel } from '@/modules/character-builder/lib/utils/characterDerivation';
+import {
+    getCharacterTierBonus,
+    getTotalCharacterLevel,
+} from '@/modules/character-builder/lib/utils/characterDerivation';
 import {
     getXPForLevel,
     MAX_XP_LEVEL,
@@ -54,10 +57,14 @@ export function characterSheetReducer(
       const normalizedExperience = hasActiveVocations
         ? Math.max(character.experience ?? 0, floor)
         : (character.experience ?? 0);
-      const updated = {
+      const normalized = {
         ...character,
         level: normalizedLevel,
         experience: normalizedExperience,
+      };
+      const updated = {
+        ...normalized,
+        tierBonus: getCharacterTierBonus(normalized),
         updatedAt: new Date().toISOString(),
       };
       const index = state.characters.findIndex((c) => c.id === character.id);

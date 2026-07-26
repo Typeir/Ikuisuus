@@ -43,6 +43,35 @@ describe('CharacterRoster', () => {
     expect(screen.getByText('noCharactersYet')).toBeTruthy();
   });
 
+  it('auto-creates a first character when the roster loads empty and hydrated', () => {
+    mockDispatch.mockClear();
+    mockCharacters.mockReturnValue([]);
+    mockState.mockReturnValue({
+      activeId: null,
+      characters: [],
+      isHydrated: true,
+    });
+    render(<CharacterRoster />);
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'CHARACTER_SHEET/UPSERT_CHARACTER' }),
+    );
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'CHARACTER_SHEET/SET_ACTIVE_ID' }),
+    );
+  });
+
+  it('does not auto-create before hydration', () => {
+    mockDispatch.mockClear();
+    mockCharacters.mockReturnValue([]);
+    mockState.mockReturnValue({
+      activeId: null,
+      characters: [],
+      isHydrated: false,
+    });
+    render(<CharacterRoster />);
+    expect(mockDispatch).not.toHaveBeenCalled();
+  });
+
   it('renders character names in the sidebar', () => {
     const char = { ...createEmptyCharacter(), name: 'Theron Ash' };
     mockCharacters.mockReturnValue([char]);

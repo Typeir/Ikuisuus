@@ -14,8 +14,11 @@
 
 import type { CharacterEntity } from '@/modules/character-builder/domain/character/characterEntity';
 import { ABILITY_KEYS } from '@/modules/character-builder/domain/character/characterEntity';
-import { getCharacterDerived } from './characterDerivation';
-import { computeAbilityModifier, computeTierBonus } from './characterStorage';
+import {
+    getCharacterDerived,
+    getCharacterTierBonus,
+} from './characterDerivation';
+import { computeAbilityModifier } from './characterStorage';
 
 /**
  * Flat map of primitive stat values keyed by dot-notation formula names.
@@ -40,7 +43,7 @@ export const getCharacterFormulaScope = (
     name: entity.name,
     level: derived.totalLevel,
     experience: derived.experience,
-    tierBonus: computeTierBonus(derived.totalLevel),
+    tierBonus: getCharacterTierBonus(entity),
     hpMax: entity.hpMax,
     hpCurrent: entity.hpCurrent,
     tempHp: entity.tempHp,

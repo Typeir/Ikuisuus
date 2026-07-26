@@ -25,13 +25,13 @@ import { useCallback, useEffect, useState } from 'react';
  * @interface HpRollerVocationGroup
  * @property {string} vocSlug - Vocation slug
  * @property {string} vocTitle - Vocation display name
- * @property {string} dieType - Prefix-less die faces (e.g. `"10"`)
+ * @property {number} dieType - Die face count (e.g. `10`)
  * @property {HitDieRollEntry[]} entries - Entries belonging to this vocation
  */
 export interface HpRollerVocationGroup {
   vocSlug: string;
   vocTitle: string;
-  dieType: string;
+  dieType: number;
   entries: HitDieRollEntry[];
 }
 
@@ -62,12 +62,11 @@ function groupByVocation(entries: HitDieRollEntry[]): HpRollerVocationGroup[] {
  * Rounded average for a die: `floor(faces/2) + 1`.
  *
  * @function dieAverage
- * @param {string} dieType - Prefix-less die faces
+ * @param {number} faces - Die face count
  * @returns {number} The average, floored at 1
  */
-function dieAverage(dieType: string): number {
-  const faces = parseInt(dieType, 10);
-  return Number.isFinite(faces) ? Math.floor(faces / 2) + 1 : 1;
+function dieAverage(faces: number): number {
+  return faces > 0 ? Math.floor(faces / 2) + 1 : 1;
 }
 
 /**
@@ -111,11 +110,13 @@ export interface HpRoller {
  * @function useHpRoller
  * @param {HitDieRollEntry[]} hitDiceLog - The character's current hit-dice log
  * @param {(updatedLog: HitDieRollEntry[]) => void} onCommit - Called with the full log on any HP-affecting change
+ * @param {string} [maxedEntryId] - Id of the fixed max die (primary vocation, level 1); value/remove/clear ops skip it
  * @returns {HpRoller} Grouped entries and operations
  */
 export function useHpRoller(
   hitDiceLog: HitDieRollEntry[],
   onCommit: (updatedLog: HitDieRollEntry[]) => void,
+  maxedEntryId?: string,
 ): HpRoller {
   const [localLog, setLocalLog] = useState<HitDieRollEntry[]>(hitDiceLog);
 
@@ -125,6 +126,7 @@ export function useHpRoller(
 
   const valueOne = useCallback(
     (entryId: string, next: (entry: HitDieRollEntry) => number | null) => {
+      if (entryId === maxedEntryId) return;
       let committed = false;
       const updated = localLog.map((e) => {
         if (e.id !== entryId) return e;
@@ -134,12 +136,12 @@ export function useHpRoller(
       setLocalLog(updated);
       if (committed) onCommit(updated);
     },
-    [localLog, onCommit],
+    [localLog, onCommit, maxedEntryId],
   );
 
   const onRoll = useCallback(
     (entryId: string) =>
-      valueOne(entryId, (e) => rollDie(parseInt(e.dieType, 10) || 1)),
+      valueOne(entryId, (e) => rollDie(e.dieType)),
     [valueOne],
   );
   const onAverage = useCallback(
@@ -154,6 +156,7 @@ export function useHpRoller(
 
   const setAddedOne = useCallback(
     (entryId: string, added: boolean) => {
+      if (entryId === maxedEntryId && !added) return;
       let changed = false;
       const updated = localLog.map((e) => {
         if (e.id !== entryId || e.addedToHp === added) return e;
@@ -165,7 +168,7 @@ export function useHpRoller(
       setLocalLog(updated);
       onCommit(updated);
     },
-    [localLog, onCommit],
+    [localLog, onCommit, maxedEntryId],
   );
 
   const onAdd = useCallback(
@@ -181,19 +184,19 @@ export function useHpRoller(
     (vocSlug: string, next: (entry: HitDieRollEntry) => number) => {
       let committed = false;
       const updated = localLog.map((e) => {
-        if (e.vocSlug !== vocSlug) return e;
+        if (e.vocSlug !== vocSlug || e.id === maxedEntryId) return e;
         if (e.addedToHp) committed = true;
         return { ...e, result: next(e) };
       });
       setLocalLog(updated);
       if (committed) onCommit(updated);
     },
-    [localLog, onCommit],
+    [localLog, onCommit, maxedEntryId],
   );
 
   const onRollAll = useCallback(
     (vocSlug: string) =>
-      valueAll(vocSlug, (e) => rollDie(parseInt(e.dieType, 10) || 1)),
+      valueAll(vocSlug, (e) => rollDie(e.dieType)),
     [valueAll],
   );
   const onAverageAll = useCallback(
@@ -201,7 +204,7 @@ export function useHpRoller(
     [valueAll],
   );
   const onMaxAll = useCallback(
-    (vocSlug: string) => valueAll(vocSlug, (e) => parseInt(e.dieType, 10) || 1),
+    (vocSlug: string) => valueAll(vocSlug, (e) => e.dieType || 1),
     [valueAll],
   );
   const onSetAll = useCallback(
@@ -213,7 +216,8 @@ export function useHpRoller(
     (vocSlug: string, added: boolean) => {
       let changed = false;
       const updated = localLog.map((e) => {
-        if (e.vocSlug !== vocSlug || e.addedToHp === added) return e;
+        if (e.vocSlug !== vocSlug || e.id === maxedEntryId) return e;
+        if (e.addedToHp === added) return e;
         if (added && e.result == null) return e;
         changed = true;
         return { ...e, addedToHp: added };
@@ -222,7 +226,7 @@ export function useHpRoller(
       setLocalLog(updated);
       onCommit(updated);
     },
-    [localLog, onCommit],
+    [localLog, onCommit, maxedEntryId],
   );
 
   const onAddAll = useCallback(

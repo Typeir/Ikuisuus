@@ -49,7 +49,7 @@ const VOC_EMPTY: VocationEntry = {
 
 describe('VocationTab', () => {
   it('renders empty state when no vocations are configured', () => {
-    renderWithActiveSheet(<VocationTab data={createEmptyCharacter()} />);
+    renderWithActiveSheet(<VocationTab />);
     expect(screen.getByText('addVocationPrompt')).toBeTruthy();
   });
 
@@ -64,7 +64,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    renderWithActiveSheet(<VocationTab data={data} />);
+    renderWithActiveSheet(<VocationTab />, { character: data });
     const panel = screen.getByTestId('content-shard-panel');
     expect(panel).toHaveAttribute('data-content-type', 'vocations');
     expect(panel).toHaveAttribute('data-slug', 'oathbreaker');
@@ -83,7 +83,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    renderWithActiveSheet(<VocationTab data={data} />);
+    renderWithActiveSheet(<VocationTab />, { character: data });
 
     const specTab = screen.getByRole('tab', { name: 'Abjurer' });
     await userEvent.click(specTab);
@@ -104,7 +104,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    renderWithActiveSheet(<VocationTab data={data} />);
+    renderWithActiveSheet(<VocationTab />, { character: data });
     const specTab = screen.getByRole('tab', { name: 'specializationFeatures' });
     expect(specTab).toBeDisabled();
   });
@@ -127,7 +127,7 @@ describe('VocationTab', () => {
         },
       ],
     };
-    renderWithActiveSheet(<VocationTab data={data} />);
+    renderWithActiveSheet(<VocationTab />, { character: data });
     expect(screen.getByRole('tab', { name: 'Wizard / Abjurer' })).toBeTruthy();
     expect(screen.getByRole('tab', { name: 'Rogue' })).toBeTruthy();
   });

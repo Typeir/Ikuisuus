@@ -36,6 +36,22 @@ export {
 } from './application/context/characterEntityContext';
 export type { CharacterEntityContextValue } from './application/context/characterEntityContext';
 
+export {
+    ActiveSheetProvider,
+    useActiveSheet,
+    useSheetData,
+    useSheetEditing,
+    useSheetField,
+    useSheetMutators,
+    useSheetTab,
+} from './application/context/activeSheetContext';
+export type {
+    ActiveSheetProviderProps,
+    SheetContextValue,
+    SheetMutators,
+    SheetTabId,
+} from './application/context/activeSheetContext';
+
 export type { CharacterEntity } from './domain/character/characterEntity';
 
 export { getCharacterFormulaScope } from './lib/utils/characterFormulaScope';

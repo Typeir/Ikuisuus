@@ -22,6 +22,7 @@ import type {
     InProgressCombatant,
 } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 import { fetchPersistentData } from '@/lib/utils/fetchPersistentData';
+import { ensureStorageSchema } from '@/lib/utils/storageSchema';
 import {
     fetchPersistentDataRef,
     removePersistentData,
@@ -114,6 +115,7 @@ const migrateInProgressCombat = (combat: unknown): InProgressCombat => {
  */
 export const getInProgressCombats = (): InProgressCombat[] => {
   if (typeof window === 'undefined') return [];
+  ensureStorageSchema();
 
   try {
     const data = fetchPersistentDataRef(EncounterStorage.InProgressCombats);
@@ -205,6 +207,7 @@ export const deleteInProgressCombat = (id: string): void => {
  * @returns {string|null} Active combat ID or null if none/SSR
  */
 export const getActiveInProgressCombatId = (): string | null => {
+  ensureStorageSchema();
   if (typeof window === 'undefined') return null;
   return fetchPersistentData(EncounterStorage.ActiveCombatId);
 };

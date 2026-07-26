@@ -1,15 +1,24 @@
 /**
  * @fileoverview Active Sheet Context
- * @description Single source of truth for the character currently being viewed
- * or edited in the character sheet UI. Owns the working draft, edit mode flag,
- * and active tab. Exposes a typed mutator API and selector hooks so consumers
- * never need to receive `data` / `onChange` props.
+ * @description Owns the *session* state of the character sheet: the working
+ * draft lifecycle, the edit mode flag, and the active tab. It deliberately
+ * holds no character data of its own — the entity lives in exactly one place,
+ * {@link CharacterEntityProvider}, which this provider mounts around the sheet
+ * with the display entity (draft while editing, saved snapshot otherwise).
+ * `useSheetData` / `useSheetField` therefore read straight from that one
+ * context, so there is no second copy of the character to drift out of sync.
  *
- * On `saveEdit`, dispatches `UPSERT_CHARACTER` to the outer roster context
- * (`@/lib/context/CharacterSheetContext`) — that is the persistence layer.
+ * Exposes a typed mutator API and selector hooks so consumers never need to
+ * receive `data` / `onChange` props.
+ *
+ * Writes are never gated on edit mode — see {@link sheetReducer}. Edit mode
+ * decides only whether a write joins the cancellable draft transaction. Any
+ * saved-character change (a live-play write, or a `COMMIT_SAVE`) is pushed to
+ * the outer roster context (`@/lib/context/CharacterSheetContext`) by a single
+ * effect, so there is exactly one route to the persistence layer.
  *
  * @module lib/components/characterSheet/context/activeSheetContext
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -26,9 +35,14 @@ import {
     useEffect,
     useMemo,
     useReducer,
+    useRef,
     type ReactNode,
 } from 'react';
-import { CharacterEntityProvider } from './characterEntityContext';
+import {
+    CharacterEntityProvider,
+    useCharacterEntity,
+    useCharacterEntityField,
+} from './characterEntityContext';
 import { sheetReducer, type SheetTabId } from './sheetReducer';
 
 export type { SheetTabId };
@@ -45,7 +59,6 @@ export type { SheetTabId };
  * @property {() => void} saveEdit - Persist draft to the roster context and exit edit mode
  * @property {() => void} cancelEdit - Discard draft and exit edit mode
  * @property {(tab: SheetTabId) => void} setActiveTab - Change the active tab
- * @property {(shard: { contentType: string; slug: string } | null) => void} setFocusedShard - Set the currently focused content shard for the right panel
  */
 export interface SheetMutators {
   patch: (partial: Partial<CharacterSheetType>) => void;
@@ -59,26 +72,19 @@ export interface SheetMutators {
   saveEdit: () => void;
   cancelEdit: () => void;
   setActiveTab: (tab: SheetTabId) => void;
-  setFocusedShard: (
-    shard: { contentType: string; slug: string } | null,
-  ) => void;
 }
 
 /**
- * Read-only view exposed by the context value.
+ * Session state exposed by the context value. Character data is intentionally
+ * absent — read it with {@link useSheetData}, which resolves to the single
+ * entity context.
  *
  * @interface SheetContextValue
- * @property {CharacterSheetType} character - Last saved snapshot
- * @property {CharacterSheetType} draft - Editable working copy
- * @property {CharacterSheetType} data - `draft` when editing, else `character`
  * @property {boolean} editing - Edit mode flag
  * @property {SheetTabId} activeTab - Currently displayed tab
  * @property {SheetMutators} mutators - Write API
  */
 export interface SheetContextValue {
-  character: CharacterSheetType;
-  draft: CharacterSheetType;
-  data: CharacterSheetType;
   editing: boolean;
   activeTab: SheetTabId;
   mutators: SheetMutators;
@@ -92,11 +98,13 @@ const ActiveSheetContext = createContext<SheetContextValue | null>(null);
  * @interface ActiveSheetProviderProps
  * @property {CharacterSheetType} character - Saved character to seed state
  * @property {SheetTabId} [initialTab] - Initial active tab (default 'overview')
+ * @property {string | null} [startEditingId] - When it matches `character.id`, the sheet enters edit mode on mount/selection (used to open freshly-created characters directly in edit mode)
  * @property {ReactNode} children - Subtree that reads from this context
  */
 export interface ActiveSheetProviderProps {
   character: CharacterSheetType;
   initialTab?: SheetTabId;
+  startEditingId?: string | null;
   children: ReactNode;
 }
 
@@ -111,6 +119,7 @@ export interface ActiveSheetProviderProps {
 export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
   character,
   initialTab = 'overview',
+  startEditingId,
   children,
 }) => {
   const dispatchRoster = useCharacterSheetDispatch();
@@ -121,10 +130,46 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
     activeTab: initialTab,
   });
 
-  /** Sync state when outer character prop changes (roster selection). */
+  /**
+   * Adopt a different character when the roster selects one. The reducer is
+   * already seeded from this prop, so the mount pass is deliberately skipped:
+   * child effects run before the provider's, and an unconditional mount-time
+   * sync would discard any write a descendant made on its own mount (the
+   * hit-dice reconciler, for one).
+   */
+  const syncedCharacterRef = useRef(character);
   useEffect(() => {
+    if (syncedCharacterRef.current === character) return;
+    syncedCharacterRef.current = character;
     dispatch({ type: 'SYNC_CHARACTER', payload: { character } });
   }, [character]);
+
+  /**
+   * Enter edit mode when the active character is one flagged to open editing
+   * (a freshly-created character). Runs after SYNC has seeded the draft, and
+   * only re-fires when the flagged id or active character changes — so
+   * cancelling edit does not re-trigger it.
+   */
+  useEffect(() => {
+    if (startEditingId && startEditingId === character.id) {
+      dispatch({ type: 'BEGIN_EDIT' });
+    }
+  }, [startEditingId, character.id]);
+
+  /**
+   * The single path by which this sheet reaches the persistence layer. Any time
+   * the saved character diverges from the one the roster holds — a live-play
+   * write outside edit mode, or a `COMMIT_SAVE` — it is pushed upstream. Guarded
+   * on identity so the roster's echo back through the `character` prop settles
+   * instead of looping.
+   */
+  useEffect(() => {
+    if (state.editing || state.character === character) return;
+    dispatchRoster({
+      type: CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER,
+      payload: { character: state.character },
+    });
+  }, [state.editing, state.character, character, dispatchRoster]);
 
   const patch = useCallback((partial: Partial<CharacterSheetType>) => {
     dispatch({ type: 'PATCH', payload: partial });
@@ -160,20 +205,9 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
     dispatch({ type: 'SET_TAB', payload: { tab } });
   }, []);
 
-  const setFocusedShard = useCallback(
-    (shard: { contentType: string; slug: string } | null) => {
-      dispatch({ type: 'SET_FOCUSED_SHARD', payload: shard });
-    },
-    [],
-  );
-
   const saveEdit = useCallback(() => {
-    dispatchRoster({
-      type: CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER,
-      payload: { character: state.draft },
-    });
     dispatch({ type: 'COMMIT_SAVE' });
-  }, [dispatchRoster, state.draft]);
+  }, []);
 
   const mutators = useMemo<SheetMutators>(
     () => ({
@@ -185,7 +219,6 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
       saveEdit,
       cancelEdit,
       setActiveTab,
-      setFocusedShard,
     }),
     [
       patch,
@@ -196,28 +229,26 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
       saveEdit,
       cancelEdit,
       setActiveTab,
-      setFocusedShard,
     ],
   );
 
-  const value = useMemo<SheetContextValue>(() => {
-    const data = state.editing ? state.draft : state.character;
-    return {
-      character: state.character,
-      draft: state.draft,
-      data,
+  const value = useMemo<SheetContextValue>(
+    () => ({
       editing: state.editing,
       activeTab: state.activeTab,
       mutators,
-    };
-  }, [state, mutators]);
+    }),
+    [state.editing, state.activeTab, mutators],
+  );
+
+  const entity = state.editing ? state.draft : state.character;
 
   return (
-    <ActiveSheetContext.Provider value={value}>
-      <CharacterEntityProvider entity={value.data} patchEntity={patch}>
+    <CharacterEntityProvider entity={entity} patchEntity={patch}>
+      <ActiveSheetContext.Provider value={value}>
         {children}
-      </CharacterEntityProvider>
-    </ActiveSheetContext.Provider>
+      </ActiveSheetContext.Provider>
+    </CharacterEntityProvider>
   );
 };
 
@@ -239,12 +270,14 @@ export const useActiveSheet = (): SheetContextValue => {
 };
 
 /**
- * Read the currently displayed character data (`draft` when editing, else `character`).
+ * Read the currently displayed character data (`draft` when editing, else the
+ * saved snapshot). Resolves to the single {@link CharacterEntityProvider} the
+ * sheet mounts, so this and `useCharacterEntity` always return the same object.
  *
  * @function useSheetData
  * @returns {CharacterSheetType} The display data
  */
-export const useSheetData = (): CharacterSheetType => useActiveSheet().data;
+export const useSheetData = (): CharacterSheetType => useCharacterEntity();
 
 /**
  * Read the edit mode flag.
@@ -274,27 +307,6 @@ export const useSheetTab = (): [SheetTabId, (tab: SheetTabId) => void] => {
 export const useSheetMutators = (): SheetMutators => useActiveSheet().mutators;
 
 /**
- * Read the currently focused shard for the right detail panel.
- * Returns `null` when no shard has been focused yet.
- *
- * @function useFocusedShard
- * @returns {{ contentType: string; slug: string } | null} Focused shard or null
- */
-export const useFocusedShard = (): {
-  contentType: string;
-  slug: string;
-} | null => {
-  const data = useSheetData();
-  if (data.focusedShardType && data.focusedShardSlug) {
-    return {
-      contentType: data.focusedShardType,
-      slug: data.focusedShardSlug,
-    };
-  }
-  return null;
-};
-
-/**
  * Read a single top-level field from the active character data.
  *
  * @function useSheetField
@@ -304,4 +316,4 @@ export const useFocusedShard = (): {
  */
 export const useSheetField = <K extends keyof CharacterSheetType>(
   key: K,
-): CharacterSheetType[K] => useActiveSheet().data[key];
+): CharacterSheetType[K] => useCharacterEntityField(key);

@@ -1,22 +1,24 @@
 /**
  * @fileoverview Combat Stat Chips — HP, AC, Initiative, Speed, Tier, Grit.
- * Lock state is local (useState) — no full-row re-render on toggle.
+ * Lock state is persisted on the character as `manualStatOverrides`.
  * Each chip is memoised in its own module so only the toggled chip re-renders.
  *
  * @module character-builder/presentation/stats/combatStatChips
- * @version 1.2.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
 'use client';
 
-import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
-import { computeAbilityModifier } from '@/modules/character-builder/lib/utils/characterStorage';
+import {
+  useSheetData,
+  useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { deriveHitPoints } from '@/modules/character-builder/lib/utils/hitDiceUtils';
 import { useTranslations } from 'next-intl';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import styles from '../CharacterSheet/characterSheet.module.scss';
 import { AcChipMemo } from './acChip';
 import { GritChipMemo } from './gritChip';
@@ -25,31 +27,37 @@ import { InitChipMemo } from './initChip';
 import { SpeedChipMemo } from './speedChip';
 import { TierChipMemo } from './tierChip';
 
-export interface CombatStatChipsProps {
-  data: CharacterSheetType;
-  patch: (partial: Partial<CharacterSheetType>) => void;
-}
-
-/** Six right-side combat stat chips with per-stat lock toggles. */
-export const CombatStatChips: React.FC<CombatStatChipsProps> = ({
-  data,
-  patch,
-}) => {
+/**
+ * Six right-side combat stat chips with per-stat lock toggles. Reads the
+ * character and write API from the active-sheet context.
+ *
+ * Which stats are unlocked lives on the character as `manualStatOverrides` and
+ * is written straight back there, so a lock the player opens survives a remount,
+ * a tab switch, and a reload — it is a property of the sheet, not of this row.
+ *
+ * @component
+ * @returns {JSX.Element} Rendered chip row
+ */
+export const CombatStatChips: React.FC = () => {
   const t = useTranslations('characterSheet');
-  const [overrides, setOverrides] = useState<string[]>(
-    () => data.manualStatOverrides ?? [],
-  );
+  const data = useSheetData();
+  const { patch } = useSheetMutators();
+  const overrides = data.manualStatOverrides ?? [];
+
   const isUnlocked = useCallback(
     (k: string) => overrides.includes(k),
     [overrides],
   );
-  const toggle = useCallback((k: string) => {
-    setOverrides((prev) =>
-      prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k],
-    );
-  }, []);
+  const toggle = useCallback(
+    (k: string) =>
+      patch({
+        manualStatOverrides: overrides.includes(k)
+          ? overrides.filter((x) => x !== k)
+          : [...overrides, k],
+      }),
+    [patch, overrides],
+  );
 
-  const conMod = computeAbilityModifier(data.abilityScores.con);
   const initStr =
     data.initiativeBonus >= 0
       ? `+${data.initiativeBonus}`
@@ -75,31 +83,51 @@ export const CombatStatChips: React.FC<CombatStatChipsProps> = ({
       patch({ gritCurrent: data.gritCurrent + 1 });
   }, [patch, data.gritCurrent, data.gritMax]);
 
+  const setAc = useCallback((ac: number) => patch({ ac }), [patch]);
+  const setInitiative = useCallback(
+    (initiativeBonus: number) => patch({ initiativeBonus }),
+    [patch],
+  );
+  const setSpeed = useCallback(
+    (speedOverride: number | null) => patch({ speedOverride }),
+    [patch],
+  );
+  const setTierBonus = useCallback(
+    (tierBonus: number) => patch({ tierBonus }),
+    [patch],
+  );
+  const setGritCurrent = useCallback(
+    (gritCurrent: number) => patch({ gritCurrent }),
+    [patch],
+  );
+  const setGritMax = useCallback(
+    (gritMax: number) =>
+      patch({ gritMax, gritCurrent: Math.min(data.gritCurrent, gritMax) }),
+    [patch, data.gritCurrent],
+  );
+
   return (
     <div
       className={styles.combatStatsRow}
       role='group'
       aria-label={t('ariaCombatStats')}>
       <HpChipMemo
-        data={data}
-        conMod={conMod}
         isUnlocked={isUnlocked}
         toggle={toggle}
-        patch={patch}
         onHitDiceCommit={handleHitDiceCommit}
       />
       <AcChipMemo
         ac={data.ac}
         isUnlocked={isUnlocked}
         toggle={toggle}
-        patch={patch}
+        onChange={setAc}
       />
       <InitChipMemo
         initBonus={data.initiativeBonus}
         initStr={initStr}
         isUnlocked={isUnlocked}
         toggle={toggle}
-        patch={patch}
+        onChange={setInitiative}
       />
       <SpeedChipMemo
         speedOverride={data.speedOverride}
@@ -107,21 +135,22 @@ export const CombatStatChips: React.FC<CombatStatChipsProps> = ({
         speedDisplay={speedDisplay}
         isUnlocked={isUnlocked}
         toggle={toggle}
-        patch={patch}
+        onChange={setSpeed}
       />
       <TierChipMemo
         tierBonus={data.tierBonus}
         tierStr={tierStr}
         isUnlocked={isUnlocked}
         toggle={toggle}
-        patch={patch}
+        onChange={setTierBonus}
       />
       <GritChipMemo
         gritCurrent={data.gritCurrent}
         gritMax={data.gritMax}
         isUnlocked={isUnlocked}
         toggle={toggle}
-        patch={patch}
+        onCurrentChange={setGritCurrent}
+        onMaxChange={setGritMax}
         spendGrit={spendGrit}
         restoreGrit={restoreGrit}
       />

@@ -10,7 +10,6 @@
 'use client';
 
 import { NumericInput } from '@/lib/components/ui/numericInput';
-import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheet.module.scss';
@@ -21,7 +20,7 @@ export interface InitChipProps {
   initStr: string;
   isUnlocked: (k: string) => boolean;
   toggle: (k: string) => void;
-  patch: (p: Partial<CharacterSheetType>) => void;
+  onChange: (initiativeBonus: number) => void;
 }
 
 /** Initiative chip with lockable edit mode. */
@@ -30,7 +29,7 @@ const InitChip = ({
   initStr,
   isUnlocked,
   toggle,
-  patch,
+  onChange,
 }: InitChipProps) => {
   const tCommon = useTranslations('common');
   const u = isUnlocked('initiative');
@@ -45,7 +44,7 @@ const InitChip = ({
           max={20}
           size='sm'
           ariaLabel={tCommon('initiative')}
-          onChange={(v) => patch({ initiativeBonus: v ?? 0 })}
+          onChange={(v) => onChange(v ?? 0)}
         />
       ) : (
         <span className={styles.statChipValue}>{initStr}</span>

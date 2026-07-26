@@ -11,7 +11,7 @@
 
 import type { CharacterSheet } from '@/lib/types/character';
 import { GrantedProficiencies } from '@/modules/character-builder/presentation/stats/grantedProficiencies';
-import { render } from '@testing-library/react';
+import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('next-intl', async (importOriginal) => {
@@ -44,7 +44,9 @@ describe('GrantedProficiencies', () => {
       ],
     } as unknown as CharacterSheet;
 
-    const { container } = render(<GrantedProficiencies data={character} />);
+    const { container } = renderWithActiveSheet(<GrantedProficiencies />, {
+      character,
+    });
     expect(container.textContent).toContain('Persuasion (expertise)');
     expect(container.textContent).toContain('Heavy');
     expect(container.textContent).toContain('Martial');
@@ -57,7 +59,9 @@ describe('GrantedProficiencies', () => {
       vocations: [],
       selectedFeats: [],
     } as unknown as CharacterSheet;
-    const { container } = render(<GrantedProficiencies data={empty} />);
+    const { container } = renderWithActiveSheet(<GrantedProficiencies />, {
+      character: empty,
+    });
     expect(container.firstChild).toBeNull();
   });
 });

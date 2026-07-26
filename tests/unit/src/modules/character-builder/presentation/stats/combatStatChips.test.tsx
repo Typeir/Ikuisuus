@@ -1,76 +1,27 @@
 /**
  * @fileoverview CombatStatChips Unit Tests
- * @description Smoke tests for the combat stat chips component.
+ * @description Smoke tests for the combat stat chips component, which reads the
+ * character and write API from the active-sheet context.
  *
  * @module tests/unit/character-builder/presentation/stats/combatStatChips
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
+import { useSheetData } from '@/modules/character-builder/application/context/activeSheetContext';
 import { CombatStatChips } from '@/modules/character-builder/presentation/stats/combatStatChips';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
+import { describe, expect, it } from 'vitest';
 
-/** Minimal character data for smoke testing. */
-const mockData = {
-  id: 'test-1',
-  name: 'Test',
-  playerName: '',
-  level: 1,
-  experience: 0,
-  bloodlineSlug: null,
-  bloodlineTitle: '',
-  boonBudget: 0,
-  selectedBoons: [],
-  vocations: [],
-  abilityScores: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
-  hpMax: 10,
-  hpCurrent: 10,
-  tempHp: 0,
-  ac: 10,
-  initiativeBonus: 0,
-  speedOverride: null,
-  bloodlineSpeeds: [],
-  tierBonus: 2,
-  gritCurrent: 3,
-  gritMax: 5,
-  manualStatOverrides: [],
-  hitDiceLog: [],
-  conditions: [],
-  attacks: [],
-  spellSlots: [],
-  savingThrows: {
-    str: 'none',
-    dex: 'none',
-    con: 'none',
-    int: 'none',
-    wis: 'none',
-    cha: 'none',
-  },
-  skills: [],
-  tools: [],
-  equipment: [],
-  equipmentNotes: '',
-  selectedFeats: [],
-  focusedShardType: null,
-  focusedShardSlug: null,
-  currency: { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 },
-  coinHoldings: [],
-  wants: '',
-  fears: '',
-  virtues: '',
-  flaws: '',
-  bonds: '',
-  notes: '',
-  createdAt: '2026-01-01',
-  updatedAt: '2026-01-01',
-} as const;
+/** Seed overrides applied on top of an empty character. */
+const CHARACTER = { gritCurrent: 3, gritMax: 5, tierBonus: 2 };
 
 describe('CombatStatChips', () => {
   it('renders all six stat chips', () => {
-    const patch = vi.fn();
-    render(<CombatStatChips data={mockData as any} patch={patch} />);
+    renderWithActiveSheet(<CombatStatChips />, { character: CHARACTER });
     expect(screen.getByText('hp')).toBeInTheDocument();
     expect(screen.getByText('ac')).toBeInTheDocument();
     expect(screen.getByText('initiative')).toBeInTheDocument();
@@ -80,15 +31,48 @@ describe('CombatStatChips', () => {
   });
 
   it('shows grit value', () => {
-    const patch = vi.fn();
-    render(<CombatStatChips data={mockData as any} patch={patch} />);
+    renderWithActiveSheet(<CombatStatChips />, { character: CHARACTER });
     expect(screen.getByText('3/5')).toBeInTheDocument();
   });
 
-  it('shows lock buttons', () => {
-    const patch = vi.fn();
-    render(<CombatStatChips data={mockData as any} patch={patch} />);
+  it('shows a lock button for each of the six stat chips', () => {
+    renderWithActiveSheet(<CombatStatChips />, { character: CHARACTER });
     const lockButtons = screen.getAllByRole('button', { name: /lock/i });
     expect(lockButtons.length).toBe(6);
+  });
+
+  it('reflects the locks stored on the character', () => {
+    renderWithActiveSheet(<CombatStatChips />, {
+      character: { ...CHARACTER, manualStatOverrides: ['ac'] },
+    });
+    expect(screen.getByLabelText('ac').tagName).toBe('INPUT');
+  });
+
+  it('writes an unlocked stat back to the character', async () => {
+    const sheet: { overrides: string[] } = { overrides: [] };
+
+    /**
+     * Probe recording the persisted lock list.
+     *
+     * @component
+     * @returns {null} Renders nothing
+     */
+    const Probe: React.FC = () => {
+      sheet.overrides = useSheetData().manualStatOverrides;
+      return null;
+    };
+
+    renderWithActiveSheet(
+      <>
+        <CombatStatChips />
+        <Probe />
+      </>,
+      { character: CHARACTER },
+    );
+
+    const acLock = screen.getAllByRole('button', { name: /lock/i })[1];
+    await userEvent.click(acLock);
+
+    expect(sheet.overrides).toContain('ac');
   });
 });

@@ -139,6 +139,7 @@
   "hpRollerAvgDieAria": "Average level {level} hit die",
   "hpRollerRollDieAria": "Roll level {level} hit die",
   "hpRollerRollTooltip": "Roll this die",
+  "hpRollerMaxedTooltip": "Your first level's hit die is always at maximum",
   "hpRollerAvgTooltip": "Set to average",
   "hpRollerApply": "Apply",
   "hpRollerSetAllPlaceholder": "Value",

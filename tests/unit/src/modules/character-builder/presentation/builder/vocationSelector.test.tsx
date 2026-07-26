@@ -1,19 +1,26 @@
 /**
  * @fileoverview VocationSelector Unit Tests
  * @description Tests for the VocationSelector component — view mode pills,
- * edit mode FilterSelect comboboxes, multi-vocation (mixing) add/remove,
- * and bloodline change callbacks.
+ * edit mode FilterSelect comboboxes, multi-vocation (mixing) add/remove, and
+ * bloodline selection. The component reads the character, edit mode, and write
+ * API from the active-sheet context, so the write assertions check the sheet
+ * the context ends up holding rather than a spy on a drilled callback.
  *
  * @module tests/unit/lib/components/characterSheet/vocationSelector
- * @version 3.0.0
+ * @version 4.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
+import type {
+    CharacterSheet as CharacterSheetType,
+    VocationEntry,
+} from '@/lib/types/character';
+import { useSheetData } from '@/modules/character-builder/application/context/activeSheetContext';
 import { VocationSelector } from '@/modules/character-builder/presentation/builder/vocationSelector';
-import type { CharacterSheet as CharacterSheetType, VocationEntry } from '@/lib/types/character';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const MOCK_BLOODLINES = [
@@ -78,48 +85,68 @@ const warriorEntry: VocationEntry = {
   specializationFeatures: [],
 };
 
-/** Default props for a character with nothing selected. */
-const defaultProps = {
-  bloodlineSlug: null,
-  bloodlineTitle: '',
-  vocations: [] as VocationEntry[],
-  selectedBoons: [],
-  boonBudget: 0,
-  editing: false,
-  onChange: vi.fn(),
+/**
+ * Renders the selector inside the active-sheet context and returns a live view
+ * of the character the context holds.
+ *
+ * @function renderSelector
+ * @param {Partial<CharacterSheetType>} character - Seed character overrides
+ * @param {boolean} [editing] - Whether to enter edit mode after mount
+ * @returns {{ current: CharacterSheetType | null }} Live view of the sheet
+ */
+const renderSelector = (
+  character: Partial<CharacterSheetType>,
+  editing = false,
+): { current: CharacterSheetType | null } => {
+  const captured: { current: CharacterSheetType | null } = { current: null };
+
+  /**
+   * Probe that records the character the context currently holds.
+   *
+   * @component
+   * @returns {null} Renders nothing
+   */
+  const Probe: React.FC = () => {
+    captured.current = useSheetData();
+    return null;
+  };
+
+  renderWithActiveSheet(
+    <>
+      <VocationSelector />
+      <Probe />
+    </>,
+    { character, editing },
+  );
+  return captured;
 };
 
 describe('VocationSelector — view mode', () => {
   it('shows dashes when nothing is selected', () => {
-    render(<VocationSelector {...defaultProps} />);
+    renderSelector({ vocations: [] });
     expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(2);
   });
 
   it('shows bloodline pill when bloodline is set', () => {
-    render(
-      <VocationSelector
-        {...defaultProps}
-        bloodlineSlug='empyrean'
-        bloodlineTitle='Empyrean'
-      />,
-    );
+    renderSelector({
+      vocations: [],
+      bloodlineSlug: 'empyrean',
+      bloodlineTitle: 'Empyrean',
+    });
     expect(screen.getByText('Empyrean')).toBeTruthy();
   });
 
   it('shows combined vocation/spec/level pill in view mode', () => {
-    render(
-      <VocationSelector
-        {...defaultProps}
-        bloodlineSlug='empyrean'
-        bloodlineTitle='Empyrean'
-        vocations={[warriorEntry]}
-      />,
-    );
+    renderSelector({
+      bloodlineSlug: 'empyrean',
+      bloodlineTitle: 'Empyrean',
+      vocations: [warriorEntry],
+    });
     expect(screen.getByText('Warrior / Champion Lv.3')).toBeTruthy();
   });
 
   it('does not render FilterSelect triggers in view mode', () => {
-    render(<VocationSelector {...defaultProps} />);
+    renderSelector({ vocations: [] });
     expect(screen.queryByRole('button', { name: /colBloodline/i })).toBeNull();
   });
 });
@@ -139,51 +166,38 @@ describe('VocationSelector — edit mode', () => {
   });
 
   it('renders bloodline FilterSelect and one vocation entry row in edit mode', async () => {
-    render(
-      <VocationSelector
-        {...defaultProps}
-        editing
-        vocations={[emptyVocation]}
-      />,
-    );
+    renderSelector({ vocations: [emptyVocation] }, true);
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /colBloodline/i })).toBeTruthy();
       expect(screen.getByRole('button', { name: /colVocation/i })).toBeTruthy();
-      expect(screen.getByRole('button', { name: /colSpecialization/i })).toBeTruthy();
+      expect(
+        screen.getByRole('button', { name: /colSpecialization/i }),
+      ).toBeTruthy();
     });
   });
 
-  it('calls onChange with bloodline patch when bloodline is selected', async () => {
-    const onChange = vi.fn();
-    render(
-      <VocationSelector
-        {...defaultProps}
-        editing
-        vocations={[emptyVocation]}
-        onChange={onChange}
-      />,
-    );
+  it('writes the bloodline patch to the sheet when a bloodline is selected', async () => {
+    const sheet = renderSelector({ vocations: [emptyVocation] }, true);
     await waitFor(() => screen.getByRole('button', { name: /colBloodline/i }));
 
     await act(async () => {
-      await userEvent.click(screen.getByRole('button', { name: /colBloodline/i }));
+      await userEvent.click(
+        screen.getByRole('button', { name: /colBloodline/i }),
+      );
     });
     await act(async () => {
       await userEvent.click(screen.getByRole('option', { name: 'Empyrean' }));
     });
 
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        bloodlineSlug: 'empyrean',
-        bloodlineTitle: 'Empyrean',
-        boonBudget: 10,
-        selectedBoons: [],
-      }),
-    );
+    await waitFor(() => {
+      expect(sheet.current?.bloodlineSlug).toBe('empyrean');
+      expect(sheet.current?.bloodlineTitle).toBe('Empyrean');
+      expect(sheet.current?.boonBudget).toBe(10);
+      expect(sheet.current?.selectedBoons).toEqual([]);
+    });
   });
 
-  it('calls onChange with updated vocations when vocation is changed', async () => {
-    const onChange = vi.fn();
+  it('writes the updated vocations to the sheet when a vocation is changed', async () => {
     mockFetch.mockResolvedValueOnce(
       new Response(
         JSON.stringify({
@@ -193,74 +207,40 @@ describe('VocationSelector — edit mode', () => {
         { status: 200 },
       ),
     );
-    render(
-      <VocationSelector
-        {...defaultProps}
-        editing
-        vocations={[emptyVocation]}
-        onChange={onChange}
-      />,
-    );
+    const sheet = renderSelector({ vocations: [emptyVocation] }, true);
     await waitFor(() => screen.getByRole('button', { name: /colVocation/i }));
 
     await userEvent.click(screen.getByRole('button', { name: /colVocation/i }));
     await userEvent.click(screen.getByRole('option', { name: 'Warrior' }));
 
     await waitFor(() => {
-      expect(onChange).toHaveBeenCalled();
-      const call = onChange.mock.calls[0][0] as Partial<CharacterSheetType>;
-      expect(call.vocations).toBeDefined();
-      expect(call.vocations![0].slug).toBe('warrior');
-      expect(call.vocations![0].title).toBe('Warrior');
+      expect(sheet.current?.vocations[0].slug).toBe('warrior');
+      expect(sheet.current?.vocations[0].title).toBe('Warrior');
     });
   });
 
   it('shows Add Vocation button in edit mode', async () => {
-    render(
-      <VocationSelector
-        {...defaultProps}
-        editing
-        vocations={[emptyVocation]}
-      />,
-    );
-    await waitFor(() =>
-      screen.getByRole('button', { name: /addVocation/i }),
-    );
+    renderSelector({ vocations: [emptyVocation] }, true);
+    await waitFor(() => screen.getByRole('button', { name: /addVocation/i }));
     expect(screen.getByRole('button', { name: /addVocation/i })).toBeTruthy();
   });
 
-  it('calls onChange with a new empty entry when Add Vocation is clicked', async () => {
-    const onChange = vi.fn();
-    render(
-      <VocationSelector
-        {...defaultProps}
-        editing
-        vocations={[emptyVocation]}
-        onChange={onChange}
-      />,
-    );
+  it('appends a new empty entry to the sheet when Add Vocation is clicked', async () => {
+    const sheet = renderSelector({ vocations: [emptyVocation] }, true);
     await waitFor(() => screen.getByRole('button', { name: /addVocation/i }));
 
     await userEvent.click(screen.getByRole('button', { name: /addVocation/i }));
 
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        vocations: expect.arrayContaining([
-          expect.objectContaining({ slug: '', level: 1 }),
-          expect.objectContaining({ slug: '', level: 1 }),
-        ]),
-      }),
-    );
+    await waitFor(() => {
+      expect(sheet.current?.vocations).toHaveLength(2);
+      expect(sheet.current?.vocations[1]).toEqual(
+        expect.objectContaining({ slug: '', level: 1 }),
+      );
+    });
   });
 
   it('disables specialization trigger when vocation entry slug is empty', async () => {
-    render(
-      <VocationSelector
-        {...defaultProps}
-        editing
-        vocations={[emptyVocation]}
-      />,
-    );
+    renderSelector({ vocations: [emptyVocation] }, true);
     await waitFor(() =>
       screen.getByRole('button', { name: /colSpecialization/i }),
     );

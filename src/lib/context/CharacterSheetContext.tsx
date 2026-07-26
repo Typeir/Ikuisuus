@@ -15,7 +15,6 @@
 
 'use client';
 
-import { migrateCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import {
     createContext,
     ReactNode,
@@ -33,6 +32,7 @@ import {
     type CharacterSheetAction,
     type CharacterSheetState,
 } from '../types/characterSheet';
+import { ensureStorageSchema } from '../utils/storageSchema';
 import {
     fetchPersistentDataRef,
     storePersistentDataRef,
@@ -54,20 +54,21 @@ interface SerializedCharacterSheetState {
  * Reads and parses the persisted character sheet state from storage.
  * Falls back to an empty state on any parse error.
  *
+ * Runs the schema-version gate first, so anything written against an older
+ * persisted shape has already been discarded by the time it is parsed — the
+ * payload here always matches the current `CharacterSheet` shape.
+ *
  * @function readPersistedCharacters
  * @returns {SerializedCharacterSheetState} Parsed state or safe empty fallback
  */
 function readPersistedCharacters(): SerializedCharacterSheetState {
+  ensureStorageSchema();
   const raw = fetchPersistentDataRef(CHARACTER_SHEET_STORAGE_KEY);
   if (!raw) return { characters: [], activeId: null };
   try {
     const parsed = JSON.parse(raw) as Partial<SerializedCharacterSheetState>;
     return {
-      characters: Array.isArray(parsed.characters)
-        ? parsed.characters.map((c) =>
-            migrateCharacter(c as unknown as Record<string, unknown>),
-          )
-        : [],
+      characters: Array.isArray(parsed.characters) ? parsed.characters : [],
       activeId: typeof parsed.activeId === 'string' ? parsed.activeId : null,
     };
   } catch {

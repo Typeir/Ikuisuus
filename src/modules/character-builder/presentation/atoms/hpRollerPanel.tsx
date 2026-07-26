@@ -27,11 +27,13 @@ import { useHpRoller } from './useHpRoller';
  * @property {HitDieRollEntry[]} hitDiceLog - Per-level hit die roll log to display
  * @property {number} conMod - Live CON modifier, shown alongside each entry
  * @property {(updatedLog: HitDieRollEntry[]) => void} onCommit - Called with the full updated log when confirmed HP changes; the consumer derives hpMax from it
+ * @property {boolean} [disabled] - When true, the roller trigger is locked and the panel cannot open
  */
 export interface HpRollerPanelProps {
   hitDiceLog: HitDieRollEntry[];
   conMod: number;
   onCommit: (updatedLog: HitDieRollEntry[]) => void;
+  disabled?: boolean;
 }
 
 /**
@@ -49,9 +51,12 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
   hitDiceLog,
   conMod,
   onCommit,
+  disabled = false,
 }) => {
   const t = useTranslations('characterSheet');
-  const roller = useHpRoller(hitDiceLog, onCommit);
+  const primaryVocSlug = hitDiceLog[0]?.vocSlug;
+  const maxedEntryId = primaryVocSlug ? `${primaryVocSlug}-1` : undefined;
+  const roller = useHpRoller(hitDiceLog, onCommit, maxedEntryId);
 
   return (
     <DropdownPanel
@@ -64,7 +69,8 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
       triggerClassName={styles.trigger}
       panelClassName={styles.panel}
       panelRole='dialog'
-      panelLabel={t('hpRollerPanelLabel')}>
+      panelLabel={t('hpRollerPanelLabel')}
+      disabled={disabled}>
       <div className={styles.panelHeader}>{t('hpRollerPanelHeader')}</div>
       {roller.groups.length === 0 && (
         <p className={styles.empty}>{t('hpRollerEmpty')}</p>
@@ -77,6 +83,7 @@ export const HpRollerPanel: React.FC<HpRollerPanelProps> = ({
           dieType={g.dieType}
           entries={g.entries}
           conMod={conMod}
+          maxedEntryId={maxedEntryId}
           onRoll={roller.onRoll}
           onAverage={roller.onAverage}
           onSet={roller.onSet}

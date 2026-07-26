@@ -23,9 +23,13 @@ import { NumericInput } from '@/lib/components/ui/numericInput';
 import { computeHoldingsValue } from '@/lib/data/currencySystems';
 import type {
     CharacterCoinHoldings,
-    CharacterSheet as CharacterSheetType,
     CurrencySystem,
 } from '@/lib/types/character';
+import {
+    useSheetData,
+    useSheetEditing,
+    useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { Plus, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
@@ -46,35 +50,17 @@ import btn from '@/styles/buttons.module.scss';
 import styles from './coinPouch.module.scss';
 
 /**
- * Props for `<CoinPouch>`.
- *
- * @interface CoinPouchProps
- * @property {CharacterSheetType} data - Active character data
- * @property {boolean} editing - Whether edit mode is active
- * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch the draft
- */
-export interface CoinPouchProps {
-  data: CharacterSheetType;
-  editing: boolean;
-  onChange: (patch: Partial<CharacterSheetType>) => void;
-}
-
-/**
- * Coin pouch panel.
+ * Coin pouch panel. Reads the character and edit mode from the active-sheet
+ * context.
  *
  * @component
- * @param {CoinPouchProps} props - Component props
- * @param {CharacterSheetType} props.data - Active character data
- * @param {boolean} props.editing - Whether edit mode is active
- * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered pouch
  */
-export const CoinPouch: React.FC<CoinPouchProps> = ({
-  data,
-  editing,
-  onChange,
-}) => {
+export const CoinPouch: React.FC = () => {
   const t = useTranslations('characterSheet.coinPouch');
+  const data = useSheetData();
+  const editing = useSheetEditing();
+  const { patch } = useSheetMutators();
   const holdings = resolveHoldings(data);
 
   const [customSystems, setCustomSystems] = useState<CurrencySystem[]>([]);
@@ -85,7 +71,7 @@ export const CoinPouch: React.FC<CoinPouchProps> = ({
   );
 
   const updateHoldings = (next: CharacterCoinHoldings[]) => {
-    onChange({ coinHoldings: next });
+    patch({ coinHoldings: next });
   };
 
   const updateCount = (systemName: string, coinName: string, raw: string) => {

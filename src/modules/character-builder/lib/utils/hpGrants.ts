@@ -14,8 +14,11 @@
  */
 
 import type { CharacterSheet } from '@/lib/types/character';
-import { getTotalCharacterLevel } from './characterDerivation';
-import { computeAbilityModifier, computeTierBonus } from './characterStorage';
+import {
+    getCharacterTierBonus,
+    getTotalCharacterLevel,
+} from './characterDerivation';
+import { computeAbilityModifier } from './characterStorage';
 
 /**
  * The value term of an `hp` scalar grant: either an integer literal or a
@@ -88,7 +91,7 @@ export const SCALAR_RESOLVERS: Record<
   intscore: (c) => c.abilityScores.int,
   wisscore: (c) => c.abilityScores.wis,
   chascore: (c) => c.abilityScores.cha,
-  tierbonus: (c) => computeTierBonus(getTotalCharacterLevel(c)),
+  tierbonus: (c) => getCharacterTierBonus(c),
 };
 
 const SCALAR_RESOLVER_KEYS = new Set(Object.keys(SCALAR_RESOLVERS));

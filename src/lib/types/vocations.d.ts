@@ -59,7 +59,7 @@ export interface BloodlineOption {
  * @property {string} title - Display name
  * @property {string} file - Source file path (e.g. `src/content/en/character-creation/vocations/warlock/main.mdx`)
  * @property {FeatureEntry[]} features - Level–feature progression
- * @property {string} [hitDie] - Hit die notation without the `d` prefix (e.g. `"10"` for d10); present when returned by the metadata API
+ * @property {number} [hitDie] - Hit die face count (e.g. `10` for d10); present when returned by the metadata API
  * @property {string[]} [savingThrows] - Saving throw proficiencies (full ability names); present when the API returns full metadata
  * @property {string[]} [armorProficiencies] - Armor proficiency list
  * @property {string[]} [weaponProficiencies] - Weapon proficiency list
@@ -70,7 +70,7 @@ export interface VocationOption {
   slug: string;
   title: string;
   file: string;
-  hitDie?: string;
+  hitDie?: number;
   features: FeatureEntry[];
   savingThrows?: string[];
   armorProficiencies?: string[];

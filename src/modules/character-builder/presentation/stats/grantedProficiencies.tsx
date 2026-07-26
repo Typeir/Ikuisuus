@@ -12,23 +12,13 @@
 
 'use client';
 
-import type { CharacterSheet } from '@/lib/types/character';
+import { useSheetData } from '@/modules/character-builder/application/context/activeSheetContext';
 import {
   collectActiveGrants,
   deriveGrants,
 } from '@/modules/character-builder/lib/utils/grants';
 import { useTranslations } from 'next-intl';
 import styles from './grantedProficiencies.module.scss';
-
-/**
- * Props for the GrantedProficiencies component.
- *
- * @interface GrantedProficienciesProps
- * @property {CharacterSheet} data - Active character data
- */
-export interface GrantedProficienciesProps {
-  data: CharacterSheet;
-}
 
 /**
  * A single labelled strip segment.
@@ -58,17 +48,14 @@ function titleCase(value: string): string {
 
 /**
  * Renders the granted-proficiency strip, or nothing when no active feature
- * grants any proficiency.
+ * grants any proficiency. Reads the character from the active-sheet context.
  *
  * @component
- * @param {GrantedProficienciesProps} props - Component props
- * @param {CharacterSheet} props.data - Active character data
  * @returns {JSX.Element | null} The strip, or null when there is nothing granted
  */
-export const GrantedProficiencies: React.FC<GrantedProficienciesProps> = ({
-  data,
-}) => {
+export const GrantedProficiencies: React.FC = () => {
   const t = useTranslations('characterSheet');
+  const data = useSheetData();
   const derived = deriveGrants(collectActiveGrants(data));
 
   const segments: GrantSegment[] = [];

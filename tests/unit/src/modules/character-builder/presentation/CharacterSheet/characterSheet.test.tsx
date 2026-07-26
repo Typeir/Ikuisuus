@@ -77,6 +77,15 @@ describe('CharacterSheet', () => {
     ).toBeTruthy();
   });
 
+  it('opens in edit mode when startEditingId matches the character', () => {
+    const character = makeCharacter();
+    render(
+      <CharacterSheet character={character} startEditingId={character.id} />,
+    );
+    expect(screen.getByRole('button', { name: /save/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeTruthy();
+  });
+
   it('switches to edit mode when Edit is clicked', async () => {
     render(<CharacterSheet character={makeCharacter()} />);
     await userEvent.click(
@@ -102,7 +111,7 @@ describe('CharacterSheet', () => {
     ).toBeTruthy();
   });
 
-  it('dispatches UPSERT_CHARACTER when Save is clicked', async () => {
+  it('dispatches UPSERT_CHARACTER with the edited character when Save is clicked', async () => {
     const { useCharacterSheetDispatch } =
       await import('@/lib/context/CharacterSheetContext');
     const dispatch = vi.fn();
@@ -112,10 +121,43 @@ describe('CharacterSheet', () => {
     await userEvent.click(
       screen.getByRole('button', { name: 'ariaEditCharacter' }),
     );
+    const nameInput = screen.getByRole('textbox', {
+      name: 'ariaCharacterName',
+    });
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'Changed Name');
     await userEvent.click(screen.getByRole('button', { name: 'save' }));
 
     expect(dispatch).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'CHARACTER_SHEET/UPSERT_CHARACTER' }),
+      expect.objectContaining({
+        type: 'CHARACTER_SHEET/UPSERT_CHARACTER',
+        payload: expect.objectContaining({
+          character: expect.objectContaining({ name: 'Changed Name' }),
+        }),
+      }),
+    );
+  });
+
+  it('persists a live-play write made outside edit mode', async () => {
+    const { useCharacterSheetDispatch } =
+      await import('@/lib/context/CharacterSheetContext');
+    const dispatch = vi.fn();
+    vi.mocked(useCharacterSheetDispatch).mockReturnValue(dispatch);
+
+    render(
+      <CharacterSheet
+        character={{ ...makeCharacter(), gritCurrent: 3, gritMax: 5 }}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'gritSpend' }));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'CHARACTER_SHEET/UPSERT_CHARACTER',
+        payload: expect.objectContaining({
+          character: expect.objectContaining({ gritCurrent: 2 }),
+        }),
+      }),
     );
   });
 });

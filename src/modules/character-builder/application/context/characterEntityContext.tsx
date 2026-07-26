@@ -1,20 +1,23 @@
 /**
  * @fileoverview Character Entity Context
- * @description Exposes the canonical {@link CharacterEntity} JSON of the
- * character currently on screen to every member of the character-builder
- * module. The value is always the single flat entity document — never a
- * wrapper, class instance, or self-referencing structure — so consumers can
- * serialize, diff, or derive from it directly.
+ * @description The single source of truth for character data across the whole
+ * module. Holds the canonical {@link CharacterEntity} JSON of the character
+ * currently on screen — always the flat entity document, never a wrapper,
+ * class instance, or self-referencing structure — so consumers can serialize,
+ * diff, or derive from it directly.
  *
- * Provided in two places:
- * - `ActiveSheetProvider` bridges its display data (draft while editing,
- *   saved snapshot otherwise) into this context for the sheet UI.
+ * This is the only context that holds character data. Mounted in two ways:
+ * - `ActiveSheetProvider` mounts it around the sheet, feeding it the display
+ *   entity (draft while editing, saved snapshot otherwise) plus a writable
+ *   patcher. The sheet context itself carries no character data — it owns
+ *   only session state (edit mode, active tab, mutators), so there is exactly
+ *   one read path for the entity inside the sheet.
  * - Any host may mount `CharacterEntityProvider` directly to expose a
- *   read-only entity (e.g. the globally selected character while browsing
- *   the wiki).
+ *   read-only entity with no sheet session at all (e.g. the globally selected
+ *   character while browsing the wiki).
  *
  * @module modules/character-builder/application/context/characterEntityContext
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -29,7 +32,7 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react';
  *
  * @interface CharacterEntityContextValue
  * @property {CharacterEntity} entity - The canonical character JSON
- * @property {((partial: Partial<CharacterEntity>) => void) | null} patchEntity - Merges a partial patch into the entity; `null` when the host is read-only
+ * @property {((partial: Partial<CharacterEntity>) => void) | null} patchEntity - Merges a partial patch into the entity; `null` when the host is read-only. Inside the sheet this is the same function reference as `useSheetMutators().patch`, so both write paths land on one reducer
  */
 export interface CharacterEntityContextValue {
   entity: CharacterEntity;
@@ -85,7 +88,7 @@ export const useCharacterEntityContext = (): CharacterEntityContextValue => {
   const ctx = useContext(CharacterEntityContext);
   if (!ctx) {
     throw new Error(
-      'useCharacterEntityContext must be used inside a CharacterEntityProvider',
+      'useCharacterEntityContext must be used inside a CharacterEntityProvider — ActiveSheetProvider mounts one for the character sheet',
     );
   }
   return ctx;

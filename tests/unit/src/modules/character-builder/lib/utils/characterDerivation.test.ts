@@ -57,13 +57,37 @@ describe('getTotalCharacterLevel', () => {
     ).toBe(5);
   });
 
-  it('ignores vocation entries entirely when computing total level', () => {
+  it('derives from XP when XP already covers the vocation sum', () => {
     expect(
       getTotalCharacterLevel(
         sheet({
           level: 1,
           experience: XP_THRESHOLDS[3],
-          vocations: [voc({ slug: 'wizard', level: 99 })],
+          vocations: [voc({ slug: 'wizard', level: 3 })],
+        }),
+      ),
+    ).toBe(3);
+  });
+
+  it('treats the vocation sum as a floor for un-normalized input', () => {
+    expect(
+      getTotalCharacterLevel(
+        sheet({
+          level: 1,
+          experience: XP_THRESHOLDS[3],
+          vocations: [voc({ slug: 'wizard', level: 8 })],
+        }),
+      ),
+    ).toBe(8);
+  });
+
+  it('ignores the stored level cache once experience or vocations exist', () => {
+    expect(
+      getTotalCharacterLevel(
+        sheet({
+          level: 20,
+          experience: XP_THRESHOLDS[3],
+          vocations: [voc({ slug: 'wizard', level: 3 })],
         }),
       ),
     ).toBe(3);

@@ -10,6 +10,7 @@ import type {
     ColumnConfig,
     MetadataRow,
 } from '@/lib/components/mdx/metadataTables/metadataTable';
+import { toPlainSummary } from '@/lib/utils/plainSummary';
 
 /**
  * Builds localized column config for TrinketTable.
@@ -43,11 +44,12 @@ export function buildTrinketColumns(
     {
       key: 'damage',
       label: tColumns('damage'),
-      getValue: (row: MetadataRow) => row.damage || '—',
+      getValue: (row: MetadataRow) =>
+        row.damage ? toPlainSummary(String(row.damage)) : '—',
       render: (value: unknown, row: MetadataRow) => {
         if (!value || value === '—') return '—';
         const damageType = row.damageType ? ` ${row.damageType}` : '';
-        return `${value}${damageType}`;
+        return `${toPlainSummary(String(value))}${damageType}`;
       },
       sortable: false,
     },

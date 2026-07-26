@@ -22,10 +22,13 @@ import { Skeleton } from '@/lib/components/skeleton/skeleton';
 import { FilterSelect } from '@/lib/components/ui/filterSelect';
 import { useVocationMetadata } from '@/lib/hooks/data/useVocationMetadata';
 import { useVocationBaseSync } from './useVocationBaseSync';
-import type {
-  CharacterSheet as CharacterSheetType,
-  VocationEntry,
-} from '@/lib/types/character';
+import type { VocationEntry } from '@/lib/types/character';
+import { UNKNOWN_DIE } from '@/lib/utils/diceUtils';
+import {
+  useSheetData,
+  useSheetEditing,
+  useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { createEmptyVocationEntry } from '@/modules/character-builder/lib/utils/characterStorage';
 import { fetchFeatureShards } from '@/modules/character-builder/lib/utils/featureShards';
 import { useLocale, useTranslations } from 'next-intl';
@@ -40,24 +43,10 @@ import styles from './vocationSelector.module.scss';
  * Props for the VocationSelector component.
  *
  * @interface VocationSelectorProps
- * @property {string | null} bloodlineSlug - Active bloodline slug
- * @property {string} bloodlineTitle - Active bloodline display name
- * @property {VocationEntry[]} vocations - Current vocation entries (mixing supported)
- * @property {import('@/lib/types/character').CharacterShard[]} selectedBoons - Currently selected boon shards
- * @property {number} boonBudget - Total boon point budget from the bloodline
- * @property {boolean} editing - Whether the sheet is in edit mode
  * @property {boolean} [showBoonPicker] - Whether to render the BoonPicker beneath the selectors (default `true`)
- * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch callback
  */
 export interface VocationSelectorProps {
-  bloodlineSlug: string | null;
-  bloodlineTitle: string;
-  vocations: VocationEntry[];
-  selectedBoons: import('@/lib/types/character').CharacterShard[];
-  boonBudget: number;
-  editing: boolean;
   showBoonPicker?: boolean;
-  onChange: (patch: Partial<CharacterSheetType>) => void;
 }
 
 /**
@@ -78,30 +67,28 @@ function toOpt(item: { slug: string; title: string }): {
  * Selector panel for bloodline and multiple vocations (mixing supported).
  * Uses `FilterSelect` comboboxes in edit mode; shows identity pills in view mode.
  *
+ * Reads the character and edit mode from the active-sheet context.
+ *
  * @component
  * @param {VocationSelectorProps} props - Component props
- * @param {string | null} props.bloodlineSlug - Active bloodline slug
- * @param {string} props.bloodlineTitle - Active bloodline display name
- * @param {VocationEntry[]} props.vocations - Current vocation entries (mixing supported)
- * @param {import('@/lib/types/character').CharacterShard[]} props.selectedBoons - Currently selected boon shards
- * @param {number} props.boonBudget - Total boon point budget from the bloodline
- * @param {boolean} props.editing - Whether the sheet is in edit mode
  * @param {boolean} [props.showBoonPicker=true] - Whether to render the BoonPicker beneath the selectors (default `true`)
- * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch callback
  * @returns {JSX.Element} Rendered selector panel
  */
 export const VocationSelector: React.FC<VocationSelectorProps> = ({
-  bloodlineSlug,
-  bloodlineTitle,
-  vocations,
-  selectedBoons,
-  boonBudget,
-  editing,
   showBoonPicker = true,
-  onChange,
 }) => {
   const t = useTranslations('characterSheet');
   const locale = useLocale();
+  const data = useSheetData();
+  const editing = useSheetEditing();
+  const { patch: onChange } = useSheetMutators();
+  const {
+    bloodlineSlug,
+    vocations,
+    selectedBoons,
+    boonBudget,
+  } = data;
+  const bloodlineTitle = data.bloodlineTitle || '';
   const { bloodlines, vocOptions, specs, isLoading } = useVocationMetadata(
     editing,
     locale,
@@ -153,7 +140,7 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
     [vocations, onChange],
   );
 
-  useVocationBaseSync(vocations, vocOptions, onChange);
+  useVocationBaseSync(vocOptions);
 
   const handleVocationChange = useCallback(
     async (index: number, slug: string) => {
@@ -171,7 +158,7 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
       patchVocationEntry(index, {
         slug: slug || '',
         title: voc?.title ?? '',
-        hitDie: voc?.hitDie ?? '',
+        hitDie: voc?.hitDie ?? UNKNOWN_DIE,
         vocationFeatures,
         specializationSlug: null,
         specializationTitle: '',

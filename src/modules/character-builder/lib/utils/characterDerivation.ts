@@ -1,20 +1,23 @@
 /**
  * @fileoverview Character Derivation Utilities
- * @description Pure helpers that derive secondary values from a
- * {@link CharacterSheet}: total character level (sum of active vocation
- * levels), and the XP progress block used by the header XP bar.
+ * @description The single authority for a character's level and tier bonus,
+ * plus the XP progress block used by the header XP bar.
  *
- * These helpers are the single source of truth for level / XP display.
- * The persisted `character.level` and `character.experience` fields are
- * inputs only — UI must always render the derived block returned here.
+ * `character.level` and `character.tierBonus` are derived *caches*, never
+ * inputs: {@link getTotalCharacterLevel} and {@link getCharacterTierBonus}
+ * define them, and every writer — the active-sheet reducer, the roster reducer,
+ * the formula scope, hp grants — recomputes through these two functions so the
+ * cache can never disagree with the derivation or with another writer. Nothing
+ * else may define what "level" means.
  *
  * @module modules/character-builder/lib/utils/characterDerivation
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 5.0.0
  */
 
-import type { CharacterSheet } from '@/lib/types/character';
+import type { CharacterSheet, VocationEntry } from '@/lib/types/character';
+import { computeTierBonus } from './characterStorage';
 import {
     MAX_XP_LEVEL,
     XP_THRESHOLDS,
@@ -52,33 +55,74 @@ export interface CharacterDerived {
 }
 
 /**
- * Returns the global character level derived from the stored `experience`
- * value. Falls back to the stored `character.level` when `experience` is
- * missing or zero (so newly-created characters keep their displayed level
- * until they earn their first XP).
+ * Sums the `level` of every vocation entry carrying a non-empty slug. Slots
+ * without a slug contribute 0.
+ *
+ * @function sumVocationLevels
+ * @param {VocationEntry[]} vocations - Vocation entries to total
+ * @returns {number} Allocated vocation level (0 when no slugs set)
+ */
+export function sumVocationLevels(vocations: VocationEntry[]): number {
+  return vocations
+    .filter((v) => Boolean(v.slug))
+    .reduce((sum, v) => sum + (v.level ?? 0), 0);
+}
+
+/**
+ * THE definition of a character's level: the greater of the level their
+ * experience buys and the levels they have allocated to vocations, clamped to
+ * `[1, MAX_XP_LEVEL]`.
+ *
+ * Both writers keep `experience` at or above the vocation-sum floor, so for any
+ * character that has been through a reducer the two terms agree and this is
+ * simply the XP level; the vocation term is what stops un-normalized input from
+ * reporting a level below the one its vocations already spend.
+ *
+ * The stored `character.level` is consulted only when there is no other signal
+ * at all — no experience and no vocations — which is the shape of saves written
+ * before `experience` existed. Reading the cache is otherwise forbidden here:
+ * this function produces that cache, and letting it feed back in would let a
+ * stale value perpetuate itself and outvote a genuine XP reduction.
  *
  * @function getTotalCharacterLevel
  * @param {CharacterSheet} character - Character sheet to inspect
  * @returns {number} Global character level (1–{@link MAX_XP_LEVEL})
  */
 export function getTotalCharacterLevel(character: CharacterSheet): number {
-  const xp = character.experience ?? 0;
-  if (xp <= 0) return Math.max(1, character.level ?? 1);
-  return Math.min(MAX_XP_LEVEL, Math.max(1, getLevelFromXP(xp)));
+  const xpLevel = getLevelFromXP(character.experience ?? 0);
+  const vocationLevel = sumVocationLevels(character.vocations);
+  const legacyLevel =
+    (character.experience ?? 0) <= 0 && vocationLevel === 0
+      ? (character.level ?? 1)
+      : 1;
+  return Math.min(
+    MAX_XP_LEVEL,
+    Math.max(1, xpLevel, vocationLevel, legacyLevel),
+  );
+}
+
+/**
+ * THE definition of a character's tier bonus: the progression table applied to
+ * {@link getTotalCharacterLevel}. Every writer of `character.tierBonus` must go
+ * through here so the cache cannot drift from the level it is derived from.
+ *
+ * @function getCharacterTierBonus
+ * @param {CharacterSheet} character - Character sheet to inspect
+ * @returns {number} Tier bonus for the character's derived level
+ */
+export function getCharacterTierBonus(character: CharacterSheet): number {
+  return computeTierBonus(getTotalCharacterLevel(character));
 }
 
 /**
  * Returns the sum of `level` across vocation entries with a non-empty slug.
- * Vocation slots without a slug contribute 0.
  *
  * @function getVocationLevelSum
  * @param {CharacterSheet} character - Character sheet to inspect
  * @returns {number} Total allocated vocation level (0 when no slugs set)
  */
 export function getVocationLevelSum(character: CharacterSheet): number {
-  return character.vocations
-    .filter((v) => Boolean(v.slug))
-    .reduce((sum, v) => sum + (v.level ?? 0), 0);
+  return sumVocationLevels(character.vocations);
 }
 
 /**

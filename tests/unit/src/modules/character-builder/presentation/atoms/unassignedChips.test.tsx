@@ -12,7 +12,8 @@
 
 import type { CharacterSheet } from '@/lib/types/character';
 import { UnassignedChips } from '@/modules/character-builder/presentation/atoms/unassignedChips';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('next-intl', async (importOriginal) => {
@@ -60,9 +61,9 @@ const character = (over: Partial<CharacterSheet>): CharacterSheet =>
 
 describe('UnassignedChips', () => {
   it('renders a pill per unassigned category the anchor owns', () => {
-    render(
-      <UnassignedChips character={character({})} categories={SKILL_CATS} />,
-    );
+    renderWithActiveSheet(<UnassignedChips categories={SKILL_CATS} />, {
+      character: character({}),
+    });
     expect(screen.getAllByRole('status')).toHaveLength(2);
     expect(
       screen.getByLabelText('Unassigned skill proficiencies'),
@@ -81,12 +82,9 @@ describe('UnassignedChips', () => {
       category: 'vocation-feature',
       grants: ['trade:[smithing,alchemy]:proficient'],
     });
-    render(
-      <UnassignedChips
-        character={c as unknown as CharacterSheet}
-        categories={SKILL_CATS}
-      />,
-    );
+    renderWithActiveSheet(<UnassignedChips categories={SKILL_CATS} />, {
+      character: c as unknown as CharacterSheet,
+    });
     expect(screen.getAllByRole('status')).toHaveLength(1);
     expect(
       screen.getByLabelText('Unassigned grants — hover for the breakdown'),
@@ -94,22 +92,21 @@ describe('UnassignedChips', () => {
   });
 
   it('excludes categories the anchor does not own', () => {
-    render(
-      <UnassignedChips character={character({})} categories={FEAT_CATS} />,
-    );
+    renderWithActiveSheet(<UnassignedChips categories={FEAT_CATS} />, {
+      character: character({}),
+    });
     expect(screen.queryByRole('status')).toBeNull();
   });
 
   it('renders nothing when every benefit is assigned', () => {
-    const assigned = character({
-      skills: [
-        { name: 'skills.arcana', ability: 'int', tier: 'expertise' },
-        { name: 'skills.history', ability: 'int', tier: 'proficient' },
-      ] as never,
+    renderWithActiveSheet(<UnassignedChips categories={SKILL_CATS} />, {
+      character: character({
+        skills: [
+          { name: 'skills.arcana', ability: 'int', tier: 'expertise' },
+          { name: 'skills.history', ability: 'int', tier: 'proficient' },
+        ] as never,
+      }),
     });
-    render(
-      <UnassignedChips character={assigned} categories={SKILL_CATS} />,
-    );
     expect(screen.queryByRole('status')).toBeNull();
   });
 });

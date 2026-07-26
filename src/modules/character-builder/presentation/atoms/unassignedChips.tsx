@@ -19,7 +19,7 @@
 'use client';
 
 import { Tooltip } from '@/lib/components/ui/tooltip';
-import type { CharacterSheet } from '@/lib/types/character';
+import { useSheetData } from '@/modules/character-builder/application/context/activeSheetContext';
 import { unassignedByCategory } from '@/modules/character-builder/lib/utils/assignableGrants';
 import type { UnassignedGroup } from '@/modules/character-builder/lib/utils/assignableGrants';
 import type { GrantCategory } from '@/modules/character-builder/lib/utils/grants';
@@ -62,29 +62,27 @@ function groupKey(group: UnassignedGroup): string {
  * Props for `<UnassignedChips>`.
  *
  * @interface UnassignedChipsProps
- * @property {CharacterSheet} character - Character whose unassigned benefits are shown
  * @property {ReadonlyArray<GrantCategory>} categories - Categories this anchor renders (pass a stable reference)
  */
 export interface UnassignedChipsProps {
-  character: CharacterSheet;
   categories: readonly GrantCategory[];
 }
 
 /**
  * Renders the row of unassigned-benefit pills for the given categories, or a
  * single condensed pill with a breakdown tooltip once the row would crowd.
+ * Reads the character from the active-sheet context.
  *
  * @component
  * @param {UnassignedChipsProps} props - Component props
- * @param {CharacterSheet} props.character - Character whose unassigned benefits are shown
  * @param {ReadonlyArray<GrantCategory>} props.categories - Categories this anchor renders
  * @returns {JSX.Element | null} The pill row, or null when nothing is unassigned
  */
 const UnassignedChipsImpl: React.FC<UnassignedChipsProps> = ({
-  character,
   categories,
 }) => {
   const t = useTranslations('characterSheet');
+  const character = useSheetData();
   const groups = useMemo(
     () =>
       unassignedByCategory(character).filter(

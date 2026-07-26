@@ -19,8 +19,11 @@
 
 'use client';
 
-import type { CharacterSheet, VocationEntry } from '@/lib/types/character';
 import type { VocationOption } from '@/lib/types/vocations';
+import {
+    useSheetData,
+    useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { proficiencyRowKey } from '@/modules/character-builder/lib/utils/proficiencyRowKey';
 import { useEffect } from 'react';
 
@@ -73,18 +76,16 @@ interface VocationBaseSnapshot {
 /**
  * Syncs `baseSavingThrows`, `baseSkillChoiceCount`, `baseSkillChoices`, and
  * `baseTradeFixed` on every vocation entry from vocation metadata by slug.
+ * Reads the vocation entries and the write API from the active-sheet context.
  *
  * @function useVocationBaseSync
- * @param {VocationEntry[]} vocations - Current vocation entries
  * @param {VocationOption[]} vocOptions - Loaded vocation metadata options
- * @param {(patch: Partial<CharacterSheet>) => void} onChange - Patches the draft with the synced entries
  * @returns {void}
  */
-export function useVocationBaseSync(
-  vocations: VocationEntry[],
-  vocOptions: VocationOption[],
-  onChange: (patch: Partial<CharacterSheet>) => void,
-): void {
+export function useVocationBaseSync(vocOptions: VocationOption[]): void {
+  const { vocations } = useSheetData();
+  const { patch: onChange } = useSheetMutators();
+
   useEffect(() => {
     if (vocOptions.length === 0) return;
     const metaBySlug = new Map<string, VocationBaseSnapshot>(

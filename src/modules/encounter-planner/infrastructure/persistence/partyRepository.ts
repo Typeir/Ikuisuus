@@ -15,6 +15,7 @@
 
 import { EncounterStorage } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';
 import type { SavedParty } from '@/modules/encounter-planner/domain/parties/party.types';
+import { ensureStorageSchema } from '@/lib/utils/storageSchema';
 import {
     fetchPersistentDataRef,
     storePersistentDataRef,
@@ -28,6 +29,7 @@ import {
  */
 export const getSavedParties = (): SavedParty[] => {
   if (typeof window === 'undefined') return [];
+  ensureStorageSchema();
   const raw = fetchPersistentDataRef(EncounterStorage.SavedParties);
   if (!raw) return [];
   try {

@@ -14,23 +14,13 @@
 
 import { Chip } from '@/lib/components/ui/chip';
 import { NumericInput } from '@/lib/components/ui/numericInput';
-import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
+import { useSheetData } from '@/modules/character-builder/application/context/activeSheetContext';
 import { useEquipmentContext } from '@/modules/character-builder/application/context/equipmentContext';
 import type { CreatureSize } from '@/modules/character-builder/domain/carrying-capacity';
 import { computeCapacity } from '@/modules/character-builder/infrastructure/carrying-capacity';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import styles from './carryingCapacityCalculator.module.scss';
-
-/**
- * Props for `<CarryingCapacityCalculator>`.
- *
- * @interface CarryingCapacityCalculatorProps
- * @property {CharacterSheetType} data - Active character data
- */
-export interface CarryingCapacityCalculatorProps {
-  data: CharacterSheetType;
-}
 
 /**
  * Possible size options offered to the user.
@@ -67,16 +57,14 @@ const classifyLoad = (
 };
 
 /**
- * Carrying capacity panel.
+ * Carrying capacity panel. Reads Strength from the active-sheet context and
+ * carried weight from the equipment context.
  *
  * @component
- * @param {CarryingCapacityCalculatorProps} props - Component props
- * @param {CharacterSheetType} props.data - Active character data
  * @returns {JSX.Element} Rendered calculator
  */
-export const CarryingCapacityCalculator: React.FC<
-  CarryingCapacityCalculatorProps
-> = ({ data }) => {
+export const CarryingCapacityCalculator: React.FC = () => {
+  const data = useSheetData();
   const strength = data.abilityScores?.str ?? 10;
   const { totalWeight } = useEquipmentContext();
 

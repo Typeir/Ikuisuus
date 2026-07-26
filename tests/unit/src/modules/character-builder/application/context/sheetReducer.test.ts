@@ -10,8 +10,71 @@ import {
     DEFAULT_CHARACTER_SHEET_STATE,
     type CharacterSheetState,
 } from '@/lib/types/characterSheet';
+import {
+    getCharacterTierBonus,
+    getTotalCharacterLevel,
+} from '@/modules/character-builder/lib/utils/characterDerivation';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
+import { sheetReducer } from '@/modules/character-builder/application/context/sheetReducer';
+import type { VocationEntry } from '@/lib/types/character';
 import { describe, expect, it } from 'vitest';
+
+describe('level and tierBonus have a single authority', () => {
+  const wizard = (level: number): VocationEntry => ({
+    slug: 'wizard',
+    title: 'Wizard',
+    level,
+    specializationSlug: null,
+    specializationTitle: '',
+    vocationFeatures: [],
+    specializationFeatures: [],
+  });
+
+  it('the sheet reducer writes exactly what the derivation defines', () => {
+    const seed = createEmptyCharacter();
+    const next = sheetReducer(
+      { character: seed, draft: seed, editing: true, activeTab: 'overview' },
+      { type: 'PATCH_VOCATIONS', payload: { vocations: [wizard(7)] } },
+    ).draft;
+
+    expect(next.level).toBe(getTotalCharacterLevel(next));
+    expect(next.tierBonus).toBe(getCharacterTierBonus(next));
+  });
+
+  it('the roster reducer agrees with the sheet reducer for the same character', () => {
+    const seed = createEmptyCharacter();
+    const edited = sheetReducer(
+      { character: seed, draft: seed, editing: true, activeTab: 'overview' },
+      { type: 'PATCH_VOCATIONS', payload: { vocations: [wizard(7)] } },
+    ).draft;
+
+    const persisted = characterSheetReducer(DEFAULT_CHARACTER_SHEET_STATE, {
+      type: CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER,
+      payload: { character: edited },
+    }).characters[0];
+
+    expect(persisted.level).toBe(edited.level);
+    expect(persisted.tierBonus).toBe(edited.tierBonus);
+  });
+
+  it('round-tripping a persisted character through either writer is a no-op', () => {
+    const seed = { ...createEmptyCharacter(), vocations: [wizard(11)] };
+    const persisted = characterSheetReducer(DEFAULT_CHARACTER_SHEET_STATE, {
+      type: CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER,
+      payload: { character: seed },
+    }).characters[0];
+
+    const resynced = characterSheetReducer(DEFAULT_CHARACTER_SHEET_STATE, {
+      type: CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER,
+      payload: { character: persisted },
+    }).characters[0];
+
+    expect(resynced.level).toBe(persisted.level);
+    expect(resynced.tierBonus).toBe(persisted.tierBonus);
+    expect(persisted.level).toBe(getTotalCharacterLevel(persisted));
+    expect(persisted.tierBonus).toBe(getCharacterTierBonus(persisted));
+  });
+});
 
 describe('characterSheetReducer', () => {
   describe('UPSERT_CHARACTER', () => {

@@ -18,10 +18,12 @@ import { TextInput } from '@/lib/components/ui/textInput';
 import { Tooltip } from '@/lib/components/ui/tooltip';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
-import type {
-  CharacterShard,
-  CharacterSheet as CharacterSheetType,
-} from '@/lib/types/character';
+import type { CharacterShard } from '@/lib/types/character';
+import {
+  useSheetData,
+  useSheetEditing,
+  useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { getCharacterDerived } from '@/modules/character-builder/lib/utils/characterDerivation';
 import { computeBpSpent } from '@/modules/character-builder/lib/utils/shardExtractor';
 import {
@@ -33,54 +35,29 @@ import {
 import btn from '@/styles/buttons.module.scss';
 import { useTranslations } from 'next-intl';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import { useSheetMutators } from '../../application/context/activeSheetContext';
 import { VocationSelector } from '../builder/vocationSelector';
 import styles from './characterSheetHeader.module.scss';
 
 /**
- * Props for `<CharacterSheetHeader>`.
- * @interface CharacterSheetHeaderProps
- * @property {CharacterSheetType} data - Active character data
- * @property {boolean} editing - Whether edit mode is active
- * @property {() => void} onEdit - Enter edit mode
- * @property {() => void} onSave - Persist draft
- * @property {() => void} onCancel - Discard draft
- * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch the draft
- */
-export interface CharacterSheetHeaderProps {
-  data: CharacterSheetType;
-  editing: boolean;
-  onEdit: () => void;
-  onSave: () => void;
-  onCancel: () => void;
-  onChange: (patch: Partial<CharacterSheetType>) => void;
-}
-
-/**
- * Sticky character-sheet header.
+ * Sticky character-sheet header. Reads the character, edit mode, and the whole
+ * write API from the active-sheet context.
  *
  * @component
- * @param {CharacterSheetHeaderProps} props - Component props
- * @param {CharacterSheetType} props.data - Active character data
- * @param {boolean} props.editing - Whether edit mode is active
- * @param {() => void} props.onEdit - Enter edit mode
- * @param {() => void} props.onSave - Persist draft
- * @param {() => void} props.onCancel - Discard draft
- * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered header
  */
-export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
-  data,
-  editing,
-  onEdit,
-  onSave,
-  onCancel,
-  onChange,
-}) => {
+export const CharacterSheetHeader: React.FC = () => {
   const t = useTranslations('characterSheet');
   const tCommon = useTranslations('common');
   const isMobile = useIsMobileViewport();
-  const { patchExperience } = useSheetMutators();
+  const data = useSheetData();
+  const editing = useSheetEditing();
+  const {
+    patch: onChange,
+    patchExperience,
+    beginEdit: onEdit,
+    saveEdit: onSave,
+    cancelEdit: onCancel,
+  } = useSheetMutators();
   const bpSpent = useMemo(
     () => computeBpSpent(data.selectedBoons as CharacterShard[]),
     [data.selectedBoons],
@@ -185,16 +162,7 @@ export const CharacterSheetHeader: React.FC<CharacterSheetHeaderProps> = ({
           </div>
         </div>
 
-        <VocationSelector
-          bloodlineSlug={data.bloodlineSlug}
-          bloodlineTitle={data.bloodlineTitle || ''}
-          vocations={data.vocations}
-          selectedBoons={data.selectedBoons}
-          boonBudget={data.boonBudget}
-          editing={editing}
-          showBoonPicker={false}
-          onChange={onChange}
-        />
+        <VocationSelector showBoonPicker={false} />
 
         <div className={styles.xpTrackGroup}>
           {hasUnassignedLevels && (

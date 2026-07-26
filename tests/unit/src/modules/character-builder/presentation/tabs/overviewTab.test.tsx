@@ -9,19 +9,12 @@
  */
 
 import { OverviewTab } from '@/modules/character-builder/presentation/tabs/overviewTab';
-import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
-import { render } from '@testing-library/react';
+import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { describe, expect, it } from 'vitest';
 
 describe('OverviewTab', () => {
   it('renders without crashing for an empty character', () => {
-    const { container } = render(
-      <OverviewTab
-        data={createEmptyCharacter()}
-        editing={false}
-        onChange={() => {}}
-      />,
-    );
+    const { container } = renderWithActiveSheet(<OverviewTab />);
     expect(container.firstChild).toBeTruthy();
   });
 });

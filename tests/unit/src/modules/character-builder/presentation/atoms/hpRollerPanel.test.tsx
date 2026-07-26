@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview HpRollerPanel Unit Tests
  * @description Tests for the HpRollerPanel atom component.
  *
@@ -26,7 +26,7 @@ const makeEntry = (
   id: string,
   vocSlug: string,
   vocTitle: string,
-  dieType: string,
+  dieType: number,
   levelIndex: number,
   result: number | null = null,
   addedToHp = false,
@@ -107,3 +107,4 @@ describe('HpRollerPanel', () => {
     expect(screen.getByText('+ 2 = 10')).toBeTruthy();
   });
 });
+

@@ -11,11 +11,12 @@
 
 'use client';
 
-import type {
-    CharacterShard,
-    CharacterSheet as CharacterSheetType,
-} from '@/lib/types/character';
-import { useSheetEditing } from '@/modules/character-builder/application/context/activeSheetContext';
+import type { CharacterShard } from '@/lib/types/character';
+import {
+    useSheetData,
+    useSheetEditing,
+    useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { ContentShardPanel } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
@@ -25,45 +26,30 @@ import { BuilderSplitPane } from '../builder/builderSplitPane';
 import styles from './tabs.module.scss';
 
 /**
- * Props for `<BloodlineTab>`.
- *
- * @interface BloodlineTabProps
- * @property {CharacterSheetType} data - Active character data
- * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch the draft
- */
-export interface BloodlineTabProps {
-  data: CharacterSheetType;
-  onChange: (patch: Partial<CharacterSheetType>) => void;
-}
-
-/**
- * Bloodline tab content.
+ * Bloodline tab content. Reads the character and edit mode from the
+ * active-sheet context.
  *
  * @component
- * @param {BloodlineTabProps} props - Component props
- * @param {CharacterSheetType} props.data - Active character data
- * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered tab body
  */
-export const BloodlineTab: React.FC<BloodlineTabProps> = ({
-  data,
-  onChange,
-}) => {
+export const BloodlineTab: React.FC = () => {
   const t = useTranslations('characterSheet');
+  const data = useSheetData();
   const editing = useSheetEditing();
+  const { patch } = useSheetMutators();
 
   const handleBoonsToggle = useCallback(
-    (boons: CharacterShard[]) => onChange({ selectedBoons: boons }),
-    [onChange],
+    (boons: CharacterShard[]) => patch({ selectedBoons: boons }),
+    [patch],
   );
 
   const handleRemoveBoon = useCallback(
     (id: string) => {
-      onChange({
+      patch({
         selectedBoons: data.selectedBoons.filter((b) => b.id !== id),
       });
     },
-    [data.selectedBoons, onChange],
+    [data.selectedBoons, patch],
   );
 
   if (!data.bloodlineSlug) {

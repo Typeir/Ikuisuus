@@ -20,10 +20,8 @@
 'use client';
 
 import { Tab, TabList, TabPanel, Tabs } from '@/lib/components/ui/tabs';
-import type {
-    CharacterSheet as CharacterSheetType,
-    VocationEntry,
-} from '@/lib/types/character';
+import type { VocationEntry } from '@/lib/types/character';
+import { useSheetData } from '@/modules/character-builder/application/context/activeSheetContext';
 import { ContentShardPanel } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -31,16 +29,6 @@ import { BuilderSplitPane } from '../builder/builderSplitPane';
 import { VocationFeatureCard } from '../builder/vocationFeatureCard';
 import styles from './tabs.module.scss';
 import vocationStyles from './vocationTab.module.scss';
-
-/**
- * Props for `<VocationTab>`.
- *
- * @interface VocationTabProps
- * @property {CharacterSheetType} data - Active character data
- */
-export interface VocationTabProps {
-  data: CharacterSheetType;
-}
 
 /** Inner-tab section value. */
 type SectionTab = 'vocation' | 'specialization';
@@ -172,15 +160,15 @@ const VocationEntryTabs: React.FC<{
 /**
  * Vocation tab content. Renders the nothing-selected prompt when no vocations
  * are configured; otherwise renders an outer entry-tab strip (only when there
- * are 2+ entries) wrapping inner Vocation/Specialization tabs.
+ * are 2+ entries) wrapping inner Vocation/Specialization tabs. Reads the
+ * character from the active-sheet context.
  *
  * @component
- * @param {VocationTabProps} props - Component props
- * @param {CharacterSheetType} props.data - Active character data
  * @returns {JSX.Element} Rendered tab body
  */
-export const VocationTab: React.FC<VocationTabProps> = ({ data }) => {
+export const VocationTab: React.FC = () => {
   const t = useTranslations('characterSheet');
+  const data = useSheetData();
   const [activeEntry, setActiveEntry] = useState<string>('0');
 
   if (data.vocations.length === 0) {

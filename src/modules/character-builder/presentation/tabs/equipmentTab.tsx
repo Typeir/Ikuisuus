@@ -19,6 +19,11 @@ import type {
   CharacterSheet as CharacterSheetType,
   EquipmentItem,
 } from '@/lib/types/character';
+import {
+  useSheetData,
+  useSheetEditing,
+  useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
 import { EquipmentProvider } from '@/modules/character-builder/application/context/equipmentContext';
 import { Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -31,37 +36,19 @@ import tbl from '@/styles/tables.module.scss';
 import styles from './tabs.module.scss';
 
 /**
- * Props for `<EquipmentTab>`.
- *
- * @interface EquipmentTabProps
- * @property {CharacterSheetType} data - Active character data
- * @property {boolean} editing - Whether edit mode is active
- * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch the draft
- */
-export interface EquipmentTabProps {
-  data: CharacterSheetType;
-  editing: boolean;
-  onChange: (patch: Partial<CharacterSheetType>) => void;
-}
-
-/**
  * Equipment tab content. Renders a table with Name / Units / Weight (lb) columns
- * and exposes derived totals via {@link EquipmentProvider}.
+ * and exposes derived totals via {@link EquipmentProvider}. Reads the character
+ * and edit mode from the active-sheet context.
  *
  * @component
- * @param {EquipmentTabProps} props - Component props
- * @param {CharacterSheetType} props.data - Active character data
- * @param {boolean} props.editing - Whether edit mode is active
- * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered tab body
  */
-export const EquipmentTab: React.FC<EquipmentTabProps> = ({
-  data,
-  editing,
-  onChange,
-}) => {
+export const EquipmentTab: React.FC = () => {
   const t = useTranslations('characterSheet');
   const tCommon = useTranslations('common');
+  const data = useSheetData();
+  const editing = useSheetEditing();
+  const { patch: onChange } = useSheetMutators();
   const equipmentNotes = data.equipmentNotes ?? '';
 
   const items = useMemo(
@@ -211,12 +198,12 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({
           <h3 className={styles.sectionTitle}>
             {t('equipmentCoinPouchTitle')}
           </h3>
-          <CoinPouch data={data} editing={editing} onChange={onChange} />
+          <CoinPouch />
 
           <h3 className={styles.sectionTitle}>
             {t('equipmentCarryingCapacityTitle')}
           </h3>
-          <CarryingCapacityCalculator data={data} />
+          <CarryingCapacityCalculator />
         </div>
       </div>
     </EquipmentProvider>

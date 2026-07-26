@@ -11,7 +11,6 @@
 'use client';
 
 import { NumericInput } from '@/lib/components/ui/numericInput';
-import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheet.module.scss';
@@ -22,7 +21,8 @@ export interface GritChipProps {
   gritMax: number;
   isUnlocked: (k: string) => boolean;
   toggle: (k: string) => void;
-  patch: (p: Partial<CharacterSheetType>) => void;
+  onCurrentChange: (gritCurrent: number) => void;
+  onMaxChange: (gritMax: number) => void;
   spendGrit: () => void;
   restoreGrit: () => void;
 }
@@ -33,7 +33,8 @@ const GritChip = ({
   gritMax,
   isUnlocked,
   toggle,
-  patch,
+  onCurrentChange,
+  onMaxChange,
   spendGrit,
   restoreGrit,
 }: GritChipProps) => {
@@ -52,7 +53,7 @@ const GritChip = ({
             max={gritMax}
             size='sm'
             ariaLabel={t('gritCurrent')}
-            onChange={(v) => patch({ gritCurrent: Math.min(v ?? 0, gritMax) })}
+            onChange={(v) => onCurrentChange(Math.min(v ?? 0, gritMax))}
           />
           <span className={styles.statChipLabel}>/</span>
           <NumericInput
@@ -61,12 +62,7 @@ const GritChip = ({
             max={99}
             size='sm'
             ariaLabel={tCommon('max')}
-            onChange={(v) =>
-              patch({
-                gritMax: v ?? 0,
-                gritCurrent: Math.min(gritCurrent, v ?? 0),
-              })
-            }
+            onChange={(v) => onMaxChange(v ?? 0)}
           />
         </div>
       ) : (

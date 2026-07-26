@@ -10,7 +10,6 @@
 'use client';
 
 import { NumericInput } from '@/lib/components/ui/numericInput';
-import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheet.module.scss';
@@ -21,7 +20,7 @@ export interface TierChipProps {
   tierStr: string;
   isUnlocked: (k: string) => boolean;
   toggle: (k: string) => void;
-  patch: (p: Partial<CharacterSheetType>) => void;
+  onChange: (tierBonus: number) => void;
 }
 
 /** Tier chip with lockable edit mode. */
@@ -30,7 +29,7 @@ const TierChip = ({
   tierStr,
   isUnlocked,
   toggle,
-  patch,
+  onChange,
 }: TierChipProps) => {
   const t = useTranslations('characterSheet');
   const u = isUnlocked('tier');
@@ -45,7 +44,7 @@ const TierChip = ({
           max={20}
           size='sm'
           ariaLabel={t('tierShort')}
-          onChange={(v) => patch({ tierBonus: v ?? 1 })}
+          onChange={(v) => onChange(v ?? 1)}
         />
       ) : (
         <span className={styles.statChipValue}>{tierStr}</span>

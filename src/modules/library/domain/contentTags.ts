@@ -54,8 +54,8 @@ export type CreatureSize =
 | "Colossal"
 | "Titanic";
 
-/** @typedef {"d6" | "d8" | "d10" | "d12"} HitDie */
-export type HitDie = "d4" | "d6" | "d8" | "d10" | "d12";
+/** @typedef {4 | 6 | 8 | 10 | 12} HitDie - Hit die face count; render with `formatDie` */
+export type HitDie = 4 | 6 | 8 | 10 | 12;
 
 /** @typedef {"none" | "half" | "full" | "third"} SpellcastingType */
 export type SpellcastingType = "none" | "half" | "full" | "third";

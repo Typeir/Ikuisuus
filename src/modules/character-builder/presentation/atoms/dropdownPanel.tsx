@@ -32,6 +32,7 @@ import { createPortal } from 'react-dom';
  * @property {string} [panelClassName] - Class name applied to the floating panel container
  * @property {string} [panelRole] - ARIA `role` for the panel container; defaults to `'region'`
  * @property {string} [panelLabel] - ARIA `aria-label` for the panel container
+ * @property {boolean} [disabled] - When true, the trigger is disabled and the panel cannot open
  * @property {React.ReactNode} children - Content rendered inside the floating panel
  */
 export interface DropdownPanelProps {
@@ -41,6 +42,7 @@ export interface DropdownPanelProps {
   panelClassName?: string;
   panelRole?: string;
   panelLabel?: string;
+  disabled?: boolean;
   children: React.ReactNode;
 }
 
@@ -81,6 +83,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
   panelClassName,
   panelRole = 'region',
   panelLabel,
+  disabled = false,
   children,
 }) => {
   const [open, setOpen] = useState(false);
@@ -132,6 +135,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
 
   const panel =
     open &&
+    !disabled &&
     typeof document !== 'undefined' &&
     createPortal(
       <div
@@ -161,6 +165,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         aria-label={triggerLabel}
         aria-expanded={open}
         aria-haspopup='true'
+        disabled={disabled}
         onClick={() => setOpen((v) => !v)}>
         <ChevronDown
           size={14}

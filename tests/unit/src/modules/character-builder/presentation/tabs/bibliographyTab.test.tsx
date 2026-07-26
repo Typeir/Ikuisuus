@@ -9,28 +9,20 @@
  */
 
 import { BibliographyTab } from '@/modules/character-builder/presentation/tabs/bibliographyTab';
-import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import { screen } from '@testing-library/react';
 import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { describe, expect, it } from 'vitest';
 
 describe('BibliographyTab', () => {
   it('renders the notes textarea', () => {
-    const data = {
-      ...createEmptyCharacter(),
-      bibliographyNotes: 'Test notes.',
-    };
-    renderWithActiveSheet(
-      <BibliographyTab data={data} editing={false} onChange={() => {}} />,
-    );
+    renderWithActiveSheet(<BibliographyTab />, {
+      character: { bibliographyNotes: 'Test notes.' },
+    });
     expect(screen.getByText('Test notes.')).toBeTruthy();
   });
 
   it('textarea is readonly when not editing', () => {
-    const data = createEmptyCharacter();
-    renderWithActiveSheet(
-      <BibliographyTab data={data} editing={false} onChange={() => {}} />,
-    );
+    renderWithActiveSheet(<BibliographyTab />);
     expect(screen.getByRole('textbox')).toHaveAttribute('readonly');
   });
 });

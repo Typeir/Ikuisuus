@@ -9,8 +9,8 @@
  */
 
 import { EquipmentTab } from '@/modules/character-builder/presentation/tabs/equipmentTab';
-import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
 import { describe, expect, it, vi } from 'vitest';
 
 /** Assert against real English copy rather than raw message keys. */
@@ -23,24 +23,12 @@ vi.mock('next-intl', async (importOriginal) => {
 
 describe('EquipmentTab', () => {
   it('renders without crashing', () => {
-    const { container } = render(
-      <EquipmentTab
-        data={createEmptyCharacter()}
-        editing={false}
-        onChange={() => {}}
-      />,
-    );
+    const { container } = renderWithActiveSheet(<EquipmentTab />);
     expect(container.firstChild).toBeTruthy();
   });
 
   it('renders coin pouch and carrying capacity placeholders', () => {
-    render(
-      <EquipmentTab
-        data={createEmptyCharacter()}
-        editing={false}
-        onChange={() => {}}
-      />,
-    );
+    renderWithActiveSheet(<EquipmentTab />);
     expect(screen.getByText('Coin Pouch')).toBeTruthy();
     expect(screen.getByText('Carrying Capacity')).toBeTruthy();
   });

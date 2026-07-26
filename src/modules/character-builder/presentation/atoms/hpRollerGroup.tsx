@@ -17,6 +17,7 @@
 import { NumericInput } from '@/lib/components/ui/numericInput';
 import { Tooltip } from '@/lib/components/ui/tooltip';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
+import { formatDie } from '@/lib/utils/diceUtils';
 import { Dices, Sigma } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -28,9 +29,10 @@ import styles from './hpRollerPanel.module.scss';
  * @interface HpRollerGroupProps
  * @property {string} vocSlug - Vocation slug
  * @property {string} vocTitle - Vocation display name
- * @property {string} dieType - Prefix-less die faces
+ * @property {number} dieType - Die face count
  * @property {HitDieRollEntry[]} entries - Level entries for this vocation
  * @property {number} conMod - Live CON modifier, added to each die's contribution
+ * @property {string} [maxedEntryId] - Id of the fixed-max die (primary vocation, level 1); its controls are disabled
  * @property {(entryId: string) => void} onRoll - Roll one die
  * @property {(entryId: string) => void} onAverage - Average one die
  * @property {(entryId: string, value: number | undefined) => void} onSet - Set one die to a typed value
@@ -46,9 +48,10 @@ import styles from './hpRollerPanel.module.scss';
 export interface HpRollerGroupProps {
   vocSlug: string;
   vocTitle: string;
-  dieType: string;
+  dieType: number;
   entries: HitDieRollEntry[];
   conMod: number;
+  maxedEntryId?: string;
   onRoll: (entryId: string) => void;
   onAverage: (entryId: string) => void;
   onSet: (entryId: string, value: number | undefined) => void;
@@ -75,6 +78,7 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
   dieType,
   entries,
   conMod,
+  maxedEntryId,
   onRoll,
   onAverage,
   onSet,
@@ -91,6 +95,11 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
   const [setAllOpen, setSetAllOpen] = useState(false);
   const [setAllValue, setSetAllValue] = useState<number | undefined>(undefined);
 
+  const allAdded = entries.length > 0 && entries.every((e) => e.addedToHp);
+  const anyClearable = entries.some(
+    (e) => e.addedToHp && e.id !== maxedEntryId,
+  );
+
   const applySetAll = () => {
     if (setAllValue !== undefined) onSetAll(vocSlug, setAllValue);
     setSetAllOpen(false);
@@ -101,49 +110,55 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
     <section className={styles.group}>
       <div className={styles.groupHeader}>
         <span className={styles.groupName}>{vocTitle || vocSlug}</span>
-        <span className={styles.groupDie}>d{dieType}</span>
+        <span className={styles.groupDie}>{formatDie(dieType)}</span>
       </div>
 
       <div className={styles.groupActions}>
         <button
           type='button'
           className={styles.groupActionBtn}
-          onClick={() => onRollAll(vocSlug)}>
+          onClick={() => onRollAll(vocSlug)}
+          disabled={allAdded}>
           {t('hpRollerRollAll')}
         </button>
         <button
           type='button'
           className={styles.groupActionBtn}
-          onClick={() => onAverageAll(vocSlug)}>
+          onClick={() => onAverageAll(vocSlug)}
+          disabled={allAdded}>
           {t('hpRollerAvgAll')}
         </button>
         <button
           type='button'
           className={styles.groupActionBtn}
-          onClick={() => onMaxAll(vocSlug)}>
+          onClick={() => onMaxAll(vocSlug)}
+          disabled={allAdded}>
           {t('hpRollerMaxAll')}
         </button>
         <button
           type='button'
           className={`${styles.groupActionBtn}${setAllOpen ? ` ${styles.active}` : ''}`}
-          onClick={() => setSetAllOpen((o) => !o)}>
+          onClick={() => setSetAllOpen((o) => !o)}
+          disabled={allAdded}>
           {t('hpRollerSetAll')}
         </button>
         <button
           type='button'
           className={styles.groupActionBtn}
-          onClick={() => onAddAll(vocSlug)}>
+          onClick={() => onAddAll(vocSlug)}
+          disabled={allAdded}>
           {t('hpRollerAddAll')}
         </button>
         <button
           type='button'
           className={styles.groupActionBtn}
-          onClick={() => onClearAll(vocSlug)}>
+          onClick={() => onClearAll(vocSlug)}
+          disabled={!anyClearable}>
           {t('hpRollerClearAll')}
         </button>
       </div>
 
-      {setAllOpen && (
+      {setAllOpen && !allAdded && (
         <div className={styles.setAllRow}>
           <NumericInput
             value={setAllValue}
@@ -165,72 +180,80 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
         </div>
       )}
 
-      {entries.map((entry) => (
-        <div
-          key={entry.id}
-          className={`${styles.entryRow}${entry.addedToHp ? ` ${styles.committed}` : ''}`}>
-          <span className={styles.entryLabel}>
-            {t('levelAbbrev')} {entry.levelIndex}
-          </span>
-          <Tooltip
-            content={t('hpRollerRollTooltip')}
-            placement='top'
-            showClickIcon={false}>
-            <button
-              type='button'
-              className={styles.iconBtn}
-              onClick={() => onRoll(entry.id)}
-              aria-label={t('hpRollerRollDieAria', { level: entry.levelIndex })}>
-              <Dices size={14} aria-hidden='true' />
-            </button>
-          </Tooltip>
-          <Tooltip
-            content={t('hpRollerAvgTooltip')}
-            placement='top'
-            showClickIcon={false}>
-            <button
-              type='button'
-              className={styles.iconBtn}
-              onClick={() => onAverage(entry.id)}
-              aria-label={t('hpRollerAvgDieAria', { level: entry.levelIndex })}>
-              <Sigma size={14} aria-hidden='true' />
-            </button>
-          </Tooltip>
-          <NumericInput
-            value={entry.result ?? undefined}
-            onChange={(v) => onSet(entry.id, v)}
-            min={1}
-            max={999}
-            size='sm'
-            selectOnFocus
-            placeholder={t('hpRollerManualPlaceholder')}
-            ariaLabel={t('hpRollerLevelHpAria', { level: entry.levelIndex })}
-          />
-          {entry.addedToHp ? (
-            <>
-              <span className={styles.entryDone}>
-                + {conMod} = {(entry.result ?? 0) + conMod}
-              </span>
+      {entries.map((entry) => {
+        const isMaxed = entry.id === maxedEntryId;
+        return (
+          <div
+            key={entry.id}
+            className={`${styles.entryRow}${entry.addedToHp ? ` ${styles.committed}` : ''}`}>
+            <span className={styles.entryLabel}>
+              {t('levelAbbrev')} {entry.levelIndex}
+            </span>
+            <Tooltip
+              content={isMaxed ? t('hpRollerMaxedTooltip') : t('hpRollerRollTooltip')}
+              placement='top'
+              showClickIcon={false}>
               <button
                 type='button'
-                className={styles.removeBtn}
-                onClick={() => onRemove(entry.id)}
-                title={t('hpRollerRemoveTitle')}
-                aria-label={t('hpRollerRemoveAria')}>
-                ✕
+                className={styles.iconBtn}
+                onClick={() => onRoll(entry.id)}
+                disabled={isMaxed}
+                aria-label={t('hpRollerRollDieAria', { level: entry.levelIndex })}>
+                <Dices size={14} aria-hidden='true' />
               </button>
-            </>
-          ) : (
-            <button
-              type='button'
-              className={styles.confirmBtn}
-              onClick={() => onAdd(entry.id)}
-              disabled={entry.result == null}>
-              {t('hpRollerConfirmBtn')}
-            </button>
-          )}
-        </div>
-      ))}
+            </Tooltip>
+            <Tooltip
+              content={t('hpRollerAvgTooltip')}
+              placement='top'
+              showClickIcon={false}>
+              <button
+                type='button'
+                className={styles.iconBtn}
+                onClick={() => onAverage(entry.id)}
+                disabled={isMaxed}
+                aria-label={t('hpRollerAvgDieAria', { level: entry.levelIndex })}>
+                <Sigma size={14} aria-hidden='true' />
+              </button>
+            </Tooltip>
+            <NumericInput
+              value={entry.result ?? undefined}
+              onChange={(v) => onSet(entry.id, v)}
+              min={1}
+              max={999}
+              size='sm'
+              selectOnFocus
+              disabled={isMaxed}
+              placeholder={t('hpRollerManualPlaceholder')}
+              ariaLabel={t('hpRollerLevelHpAria', { level: entry.levelIndex })}
+            />
+            {entry.addedToHp ? (
+              <>
+                <span className={styles.entryDone}>
+                  + {conMod} = {(entry.result ?? 0) + conMod}
+                </span>
+                {!isMaxed && (
+                  <button
+                    type='button'
+                    className={styles.removeBtn}
+                    onClick={() => onRemove(entry.id)}
+                    title={t('hpRollerRemoveTitle')}
+                    aria-label={t('hpRollerRemoveAria')}>
+                    ✕
+                  </button>
+                )}
+              </>
+            ) : (
+              <button
+                type='button'
+                className={styles.confirmBtn}
+                onClick={() => onAdd(entry.id)}
+                disabled={entry.result == null}>
+                {t('hpRollerConfirmBtn')}
+              </button>
+            )}
+          </div>
+        );
+      })}
     </section>
   );
 };

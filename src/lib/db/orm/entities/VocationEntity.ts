@@ -133,8 +133,8 @@ export class VocationEntity {
   @Property({ fieldName: 'primary_ability', type: 'string[]' })
   primaryAbility: string[] = [];
 
-  @Property({ type: 'string', fieldName: 'hit_die' })
-  hitDie!: string;
+  @Property({ type: 'integer', fieldName: 'hit_die' })
+  hitDie!: number;
 
   @Property({ fieldName: 'saving_throws', type: 'string[]' })
   savingThrows: string[] = [];

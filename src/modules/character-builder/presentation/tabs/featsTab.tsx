@@ -12,12 +12,9 @@
 
 'use client';
 
-import type {
-  CharacterShard,
-  CharacterSheet as CharacterSheetType,
-} from '@/lib/types/character';
+import type { CharacterShard } from '@/lib/types/character';
 import {
-  useFocusedShard,
+  useSheetData,
   useSheetEditing,
   useSheetMutators,
 } from '@/modules/character-builder/application/context/activeSheetContext';
@@ -27,7 +24,7 @@ import {
 } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { UnassignedChips } from '../atoms/unassignedChips';
 import { BuilderSplitPane } from '../builder/builderSplitPane';
 import { FeatPicker } from '../builder/featPicker';
@@ -37,49 +34,50 @@ import styles from './tabs.module.scss';
 const FEAT_CATEGORIES = ['feat'] as const;
 
 /**
- * Props for `<FeatsTab>`.
+ * The content shard whose prose fills the right-hand panel.
  *
- * @interface FeatsTabProps
- * @property {CharacterSheetType} data - Active character data
- * @property {(patch: Partial<CharacterSheetType>) => void} onChange - Patch the draft
+ * @interface FocusedShard
+ * @property {string} contentType - Shard route segment (e.g. `feats`)
+ * @property {string} slug - Content item slug
  */
-export interface FeatsTabProps {
-  data: CharacterSheetType;
-  onChange: (patch: Partial<CharacterSheetType>) => void;
+interface FocusedShard {
+  contentType: string;
+  slug: string;
 }
 
 /**
- * Feats tab content.
+ * Feats tab content. Reads the character and edit mode from the active-sheet
+ * context. Which shard is focused is view state belonging to this tab alone —
+ * it is not part of the character, so it lives here and resets with the tab
+ * rather than being persisted and shipped to every other consumer.
  *
  * @component
- * @param {FeatsTabProps} props - Component props
- * @param {CharacterSheetType} props.data - Active character data
- * @param {(patch: Partial<CharacterSheetType>) => void} props.onChange - Patch the draft
  * @returns {JSX.Element} Rendered tab body
  */
-export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
+export const FeatsTab: React.FC = () => {
   const t = useTranslations('characterSheet');
+  const data = useSheetData();
   const editing = useSheetEditing();
-  const focusedShard = useFocusedShard();
   const mutators = useSheetMutators();
+  const [focusedShard, setFocusedShard] = useState<FocusedShard | null>(null);
   const selectedFeats = useMemo(
     () => (data.selectedFeats ?? []) as CharacterShard[],
     [data.selectedFeats],
   );
 
   const handleToggle = useCallback(
-    (next: CharacterShard[]) => onChange({ selectedFeats: next }),
-    [onChange],
+    (next: CharacterShard[]) => mutators.patch({ selectedFeats: next }),
+    [mutators],
   );
 
   const handleRemove = useCallback(
     (id: string) => {
       if (!editing) return;
-      onChange({
+      mutators.patch({
         selectedFeats: selectedFeats.filter((f) => f.id !== id),
       });
     },
-    [editing, onChange, selectedFeats],
+    [editing, mutators, selectedFeats],
   );
 
   return (
@@ -88,10 +86,10 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
       ariaLabel={t('tabFeats')}
       sheetTitle={t('shardPreviewTitle', { name: t('tabFeats') })}
       sheetOpen={!!focusedShard}
-      onSheetClose={() => mutators.setFocusedShard(null)}
+      onSheetClose={() => setFocusedShard(null)}
       left={
         <div className={`${styles.column} ${styles.featColumn}`}>
-          <UnassignedChips character={data} categories={FEAT_CATEGORIES} />
+          <UnassignedChips categories={FEAT_CATEGORIES} />
           {editing && selectedFeats.length > 0 && (
             <div className={styles.chipCloud}>
               {selectedFeats.map((feat) => (
@@ -108,7 +106,7 @@ export const FeatsTab: React.FC<FeatsTabProps> = ({ data, onChange }) => {
             selectedFeats={selectedFeats}
             onToggle={handleToggle}
             readOnly={!editing}
-            onFocusShard={mutators.setFocusedShard}
+            onFocusShard={setFocusedShard}
           />
         </div>
       }

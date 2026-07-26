@@ -24,7 +24,7 @@ import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import { ChevronLeft, ChevronRight, PlusCircle, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CharacterSheet } from '../CharacterSheet/characterSheet';
 import styles from './roster.module.scss';
 
@@ -53,6 +53,8 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
   const dispatch = useCharacterSheetDispatch();
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [startEditingId, setStartEditingId] = useState<string | null>(null);
+  const autoCreatedRef = useRef(false);
 
   useEffect(() => {
     try {
@@ -88,10 +90,12 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
       type: CHARACTER_SHEET_ACTION_TYPES.SET_ACTIVE_ID,
       payload: { id: newChar.id },
     });
+    setStartEditingId(newChar.id);
   }, [dispatch]);
 
   const handleSelect = useCallback(
     (id: string) => {
+      setStartEditingId(null);
       dispatch({
         type: CHARACTER_SHEET_ACTION_TYPES.SET_ACTIVE_ID,
         payload: { id },
@@ -99,6 +103,20 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
     },
     [dispatch],
   );
+
+  /**
+   * Auto-create a first character (opened directly in edit mode via
+   * `startEditingId`) when the roster is empty on load, so the creator never
+   * opens to a bare placeholder. Guarded by a ref so deleting the last
+   * character does not immediately re-create one.
+   */
+  useEffect(() => {
+    if (!isHydrated || autoCreatedRef.current) return;
+    if (characters.length === 0) {
+      autoCreatedRef.current = true;
+      handleCreate();
+    }
+  }, [isHydrated, characters.length, handleCreate]);
 
   const handleDelete = useCallback((id: string) => {
     setConfirmDeleteId(id);
@@ -208,7 +226,10 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
           className={styles.rosterMain}
           aria-label={t('ariaCharacterSheetPanel')}>
           {activeCharacter ? (
-            <CharacterSheet character={activeCharacter} />
+            <CharacterSheet
+              character={activeCharacter}
+              startEditingId={startEditingId}
+            />
           ) : (
             <div className={styles.rosterPlaceholder}>
               <p>{t('selectOrCreate')}</p>

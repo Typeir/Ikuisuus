@@ -15,6 +15,7 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import { formatDie } from '@/lib/utils/diceUtils';
 import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
@@ -84,14 +85,18 @@ function parseCoreTraits(raw: string): Record<string, string> {
 }
 
 /**
- * Extracts the hit die token from a traits value.
+ * Extracts the hit die's face count from a traits value. This is the ingest
+ * boundary — authored MDX is the only place die notation exists as text, and
+ * everything downstream carries the face count as a number.
  *
  * @param {string} value - Raw hit die text (e.g. "d12 per Berserker level")
- * @returns {string} Normalized hit die (e.g. "d12")
+ * @returns {number} Face count (e.g. 12), or 0 when the traits declare none
  */
-function parseHitDie(value: string): string {
+function parseHitDie(value: string): number {
   const match = value.match(FEATURE.hitDie);
-  return match ? `d${match[1]}` : 'unknown';
+  if (!match) return 0;
+  const faces = Number.parseInt(match[1], 10);
+  return Number.isFinite(faces) && faces > 0 ? faces : 0;
 }
 
 /**
@@ -368,13 +373,12 @@ function parseSpecializations(raw: string): string[] {
 }
 
 /**
- * Determines the archetype based on hit die and spellcasting.
+ * Determines the archetype from the spellcasting progression.
  *
- * @param {string} hitDie - Hit die type (e.g. "d12")
  * @param {string | null} progression - Spellcasting progression or null
  * @returns {string} Archetype label
  */
-function classifyArchetype(hitDie: string, progression: string | null): string {
+function classifyArchetype(progression: string | null): string {
   if (!progression) return 'Martial';
   if (progression === 'Full') return 'Full Caster';
   if (progression === 'Half') return 'Half Caster';
@@ -447,7 +451,7 @@ function buildVocationTags(
   const tags = new Set<string>();
 
   tags.add(`archetype:${metadata.archetype}`);
-  tags.add(`hit-die:${metadata.hitDie}`);
+  tags.add(`hit-die:${formatDie(metadata.hitDie as number)}`);
 
   const saves = metadata.savingThrows as string[];
   for (const save of saves) {
@@ -552,10 +556,7 @@ async function parseVocationFile(
     }
 
     const specializations = parseSpecializations(raw);
-    const archetype = classifyArchetype(
-      hitDie,
-      spellcasting?.progression ?? null,
-    );
+    const archetype = classifyArchetype(spellcasting?.progression ?? null);
 
     const link = `/library/character-creation/vocations/${slug}/main`;
     const file = path

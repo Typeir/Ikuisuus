@@ -21,7 +21,10 @@ import {
     useState,
     type ReactNode,
 } from 'react';
-import { useActiveSheet } from '../../../application/context/activeSheetContext';
+import {
+    useActiveSheet,
+    useSheetData,
+} from '../../../application/context/activeSheetContext';
 
 /**
  * Mutator API exposed to consumers via `useAbilities`.
@@ -84,7 +87,8 @@ export interface AbilitiesProviderProps {
 export const AbilitiesProvider: React.FC<AbilitiesProviderProps> = ({
   children,
 }) => {
-  const { data, editing, mutators: sheetMutators } = useActiveSheet();
+  const data = useSheetData();
+  const { editing, mutators: sheetMutators } = useActiveSheet();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const abilities = useMemo(

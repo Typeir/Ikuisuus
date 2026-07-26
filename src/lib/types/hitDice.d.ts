@@ -20,7 +20,7 @@
  * @property {string} id - Unique entry identifier (e.g. `"warrior-3"`)
  * @property {string} vocSlug - Vocation slug this entry belongs to
  * @property {string} vocTitle - Vocation display name (e.g. `"Berserker"`)
- * @property {string} dieType - Hit die notation without the `d` prefix: `"12"`, `"10"`, `"8"`, etc.
+ * @property {number} dieType - Hit die face count: `12`, `10`, `8`, etc. `0` when the vocation has no usable die. Render with `formatDie`; never parse it.
  * @property {number} levelIndex - 1-indexed level within this vocation for this roll
  * @property {number | null} result - The raw die result (1–N), or `null` if not yet rolled
  * @property {number} conMod - CON modifier captured at the time this entry was created
@@ -30,7 +30,7 @@ export interface HitDieRollEntry {
   id: string;
   vocSlug: string;
   vocTitle: string;
-  dieType: string;
+  dieType: number;
   levelIndex: number;
   result: number | null;
   conMod: number;

@@ -19,6 +19,7 @@ import type {
     EquipmentItem,
     VocationEntry
 } from '@/lib/types/character';
+import { UNKNOWN_DIE } from '@/lib/utils/diceUtils';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 
 /**
@@ -190,7 +191,7 @@ export const createEmptyVocationEntry = (): VocationEntry => ({
   slug: '',
   title: '',
   level: 1,
-  hitDie: '',
+  hitDie: UNKNOWN_DIE,
   baseSavingThrows: [],
   baseSkillChoiceCount: 0,
   baseSkillChoices: [],
@@ -200,94 +201,6 @@ export const createEmptyVocationEntry = (): VocationEntry => ({
   vocationFeatures: [],
   specializationFeatures: [],
 });
-
-/**
- * Migrate a legacy character (pre-vocations array) to the current schema.
- * If the character already has a `vocations` array it is returned unchanged.
- *
- * @function migrateCharacter
- * @param {Record<string, unknown>} raw - Raw character object loaded from storage
- * @returns {CharacterSheet} Migrated character sheet
- */
-/**
- * Normalise a raw equipment array: converts legacy `string[]` entries to
- * `EquipmentItem` objects so old saves work after the schema upgrade.
- *
- * @function migrateEquipment
- * @param {unknown[]} items - Raw equipment array from storage
- * @returns {EquipmentItem[]} Normalised equipment items
- */
-const migrateEquipment = (items: unknown[]): EquipmentItem[] =>
-  items.map((item, idx) => {
-    if (typeof item === 'string') {
-      return { id: `item-${idx}`, name: item, quantity: 1, weightLb: 0 };
-    }
-    return item as EquipmentItem;
-  });
-
-export const migrateCharacter = (
-  raw: Record<string, unknown>,
-): CharacterSheet => {
-  const rawEquipment = Array.isArray(raw['equipment']) ? raw['equipment'] : [];
-
-  if (Array.isArray((raw as unknown as CharacterSheet).vocations)) {
-    const sheet = raw as unknown as CharacterSheet;
-    const needsEquipMigration = rawEquipment.some((e) => typeof e === 'string');
-    const needsSavesMigration = !sheet.savingThrows;
-    const needsHpRuntime =
-      sheet.grievousWounds === undefined ||
-      sheet.spentHitDice === undefined ||
-      sheet.lostHitDice === undefined;
-    if (!needsEquipMigration && !needsSavesMigration && !needsHpRuntime) {
-      return sheet;
-    }
-    return {
-      ...sheet,
-      equipment: needsEquipMigration
-        ? migrateEquipment(rawEquipment)
-        : sheet.equipment,
-      savingThrows: sheet.savingThrows ?? { ...DEFAULT_SAVES },
-      grievousWounds: sheet.grievousWounds ?? 0,
-      spentHitDice: sheet.spentHitDice ?? {},
-      lostHitDice: sheet.lostHitDice ?? {},
-    };
-  }
-
-  const migrated: CharacterSheet = {
-    ...(raw as unknown as CharacterSheet),
-    vocations: [],
-    equipment: migrateEquipment(rawEquipment),
-    savingThrows:
-      (raw['savingThrows'] as CharacterSheet['savingThrows']) ?? {
-        ...DEFAULT_SAVES,
-      },
-    grievousWounds: (raw['grievousWounds'] as number) ?? 0,
-    spentHitDice: (raw['spentHitDice'] as Record<string, number>) ?? {},
-    lostHitDice: (raw['lostHitDice'] as Record<string, number>) ?? {},
-  };
-
-  const legacySlug = raw['vocationSlug'] as string | null | undefined;
-  if (legacySlug) {
-    migrated.vocations = [
-      {
-        slug: legacySlug,
-        title: (raw['vocationTitle'] as string) || '',
-        level: (raw['level'] as number) || 1,
-        specializationSlug:
-          (raw['specializationSlug'] as string | null) ?? null,
-        specializationTitle: (raw['specializationTitle'] as string) || '',
-        vocationFeatures:
-          (raw['vocationFeatures'] as VocationEntry['vocationFeatures']) || [],
-        specializationFeatures:
-          (raw[
-            'specializationFeatures'
-          ] as VocationEntry['specializationFeatures']) || [],
-      },
-    ];
-  }
-
-  return migrated;
-};
 
 /**
  * Create a fresh empty character sheet with defaults.
@@ -335,8 +248,6 @@ export const createEmptyCharacter = (): CharacterSheet => {
     equipment: [],
     equipmentNotes: '',
     selectedFeats: [],
-    focusedShardType: null,
-    focusedShardSlug: null,
     currency: { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 },
     coinHoldings: [],
     wants: '',

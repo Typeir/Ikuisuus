@@ -62,7 +62,7 @@ export interface VocationSkillProficiencies {
  * @property {string} link - Public route path
  * @property {string} archetype - Vocation archetype (e.g. "Martial", "Full Caster")
  * @property {string[]} primaryAbility - Primary ability scores (e.g. ["Strength"])
- * @property {string} hitDie - Hit die type (e.g. "d12")
+ * @property {number} hitDie - Hit die face count (e.g. 12 for a d12); 0 when the vocation declares none
  * @property {string[]} savingThrows - Saving throw proficiencies (e.g. ["Strength", "Constitution"])
  * @property {string[]} armorProficiencies - Armor proficiency list
  * @property {string[]} weaponProficiencies - Weapon proficiency list
@@ -82,7 +82,7 @@ export interface VocationMetadata {
   link: string;
   archetype: string;
   primaryAbility: string[];
-  hitDie: string;
+  hitDie: number;
   savingThrows: string[];
   armorProficiencies: string[];
   weaponProficiencies: string[];
@@ -102,14 +102,14 @@ export interface VocationMetadata {
  * @interface VocationIndexEntry
  * @property {string} slug - Vocation slug
  * @property {string} title - Vocation title
- * @property {string} hitDie - Hit die type
+ * @property {number} hitDie - Hit die face count
  * @property {string} archetype - Vocation archetype
  * @property {string[]} primaryAbility - Primary ability scores
  */
 export interface VocationIndexEntry {
   slug: string;
   title: string;
-  hitDie: string;
+  hitDie: number;
   archetype: string;
   primaryAbility: string[];
 }

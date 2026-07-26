@@ -11,7 +11,6 @@
 'use client';
 
 import { NumericInput } from '@/lib/components/ui/numericInput';
-import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { SpeedPanel } from '@/modules/character-builder/presentation/atoms/speedPanel';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
@@ -24,7 +23,7 @@ export interface SpeedChipProps {
   speedDisplay: string;
   isUnlocked: (k: string) => boolean;
   toggle: (k: string) => void;
-  patch: (p: Partial<CharacterSheetType>) => void;
+  onChange: (speedOverride: number | null) => void;
 }
 
 /** Speed chip with bloodline speed panel and lockable edit mode. */
@@ -34,7 +33,7 @@ const SpeedChip = ({
   speedDisplay,
   isUnlocked,
   toggle,
-  patch,
+  onChange,
 }: SpeedChipProps) => {
   const tCommon = useTranslations('common');
   const u = isUnlocked('speed');
@@ -52,7 +51,7 @@ const SpeedChip = ({
           max={999}
           size='sm'
           ariaLabel={tCommon('speed')}
-          onChange={(v) => patch({ speedOverride: v })}
+          onChange={(v) => onChange(v ?? null)}
         />
       ) : (
         <span className={styles.statChipValue}>{speedDisplay}</span>
