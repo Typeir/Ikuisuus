@@ -72,6 +72,10 @@ export class SpellListEntity {
 
   @Property({ type: 'string' })
   link!: string;
+
+  /** @property {string | null} specialization - Owning specialization slug when the list belongs to a specialization rather than a vocation */
+  @Property({ type: 'string', nullable: true })
+  specialization?: string | null;
 }
 
 /**

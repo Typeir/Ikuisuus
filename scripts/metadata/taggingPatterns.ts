@@ -85,8 +85,8 @@ export const MONSTER_MECHANICS = {
 /**
  * Item mechanic detection patterns. Each key maps to a tag suffix.
  *
- * @property {RegExp} attackBonus - "+N to attack/hit"
- * @property {RegExp} damageBonus - "+N to damage/AC"
+ * @property {RegExp} attackBonus - "+N to attack/hit", or an accuracy bonus in canonical wording
+ * @property {RegExp} damageBonus - "+N to damage/AC", or a damage bonus in canonical wording
  * @property {RegExp} acBonus - "+N to AC"
  * @property {RegExp} savingThrowBonus - "+N to saving throws"
  * @property {RegExp} advantageDisadvantage - Advantage or disadvantage
@@ -110,8 +110,9 @@ export const MONSTER_MECHANICS = {
  * @property {RegExp} proficiency - Proficiency keyword
  */
 export const ITEM_MECHANICS = {
-  attackBonus: /\+\d+\s+(?:to\s+)?(?:attack|hit)/i,
-  damageBonus: /\+\d+\s+(?:to\s+)?(?:damage|AC)/i,
+  attackBonus:
+    /\+\d+\s+(?:to\s+)?(?:attack|hit)|\baccuracy(?:\s+and\s+damage)?\s+bonus\b/i,
+  damageBonus: /\+\d+\s+(?:to\s+)?(?:damage|AC)|\bdamage\s+bonus\b/i,
   acBonus: /\+\d+\s+(?:to\s+|bonus\s+to\s+)?AC/i,
   savingThrowBonus: /\+\d+\s+(?:to\s+|bonus\s+to\s+)?saving throws?/i,
   advantageDisadvantage: /\b(advantage|disadvantage)\b/i,

@@ -11,9 +11,9 @@
  */
 
 import * as generatorModule from '@scripts/metadata/generateWorldMetadata';
-import { promises as fs } from 'fs';
+import { existsSync, promises as fs } from 'fs';
 import path from 'path';
-import { afterAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('generateWorldMetadata', () => {
   describe('exports', () => {
@@ -59,19 +59,27 @@ describe('generateWorldMetadata', () => {
   });
 
   describe('output sidecar files', () => {
-    const contentDir = path.resolve(process.cwd(), 'src/content/en/world');
+    const metaDir = path.resolve(process.cwd(), '.meta/en/world');
+    const srcDir = path.resolve(process.cwd(), 'src/content/en/world');
+    const usesMetaTree = existsSync(metaDir);
 
-    afterAll(() => {
-      // No cleanup needed — sidecars are committed alongside source
-    });
+    /**
+     * Resolves a sidecar path for either backend layout: the pg backend
+     * writes a flat tree under `.meta/en/world`, while the fs backend writes
+     * sidecars alongside source under the world subfolder.
+     *
+     * @param {string} subdir - Source subfolder under `world/`
+     * @param {string} name - Sidecar file name
+     * @returns {string} Absolute path to the sidecar file
+     */
+    const sidecarPath = (subdir: string, name: string): string =>
+      usesMetaTree ? path.join(metaDir, name) : path.join(srcDir, subdir, name);
 
     it('should emit a sidecar for a known lore file', async () => {
-      const sidecarPath = path.join(
-        contentDir,
-        'gods-and-demigods',
-        'paivatar.lore.metadata.json',
+      const raw = await fs.readFile(
+        sidecarPath('gods-and-demigods', 'paivatar.lore.metadata.json'),
+        'utf-8',
       );
-      const raw = await fs.readFile(sidecarPath, 'utf-8');
       const record = JSON.parse(raw);
 
       expect(record.slug).toBe('paivatar');
@@ -83,24 +91,20 @@ describe('generateWorldMetadata', () => {
     });
 
     it('should derive correct links for nested paths', async () => {
-      const sidecarPath = path.join(
-        contentDir,
-        'the-lands-of-damocles',
-        'thule.lore.metadata.json',
+      const raw = await fs.readFile(
+        sidecarPath('the-lands-of-damocles', 'thule.lore.metadata.json'),
+        'utf-8',
       );
-      const raw = await fs.readFile(sidecarPath, 'utf-8');
       const record = JSON.parse(raw);
 
       expect(record.link).toBe('/library/world/the-lands-of-damocles/thule');
     });
 
     it('should have at least one sidecar per lore file', async () => {
-      const sampleSidecar = path.join(
-        contentDir,
-        'gods-and-demigods',
-        'dragon.lore.metadata.json',
+      const raw = await fs.readFile(
+        sidecarPath('gods-and-demigods', 'dragon.lore.metadata.json'),
+        'utf-8',
       );
-      const raw = await fs.readFile(sampleSidecar, 'utf-8');
       const record = JSON.parse(raw);
 
       expect(record.slug).toBe('dragon');

@@ -71,12 +71,13 @@ async function findSourceFiles(
  * @returns Full path to test file or null
  */
 async function findTestFile(sourcePath: string): Promise<string | null> {
-  const ext = path.extname(sourcePath);
   const baseName = sourcePath.replace(/\.(ts|tsx)$/, '');
 
   const possibleTestPaths = [
-    path.join(ROOT, 'tests', 'unit', `${baseName}.test${ext}`),
-    path.join(ROOT, 'tests', 'integration', `${baseName}.test${ext}`),
+    path.join(ROOT, 'tests', 'unit', `${baseName}.test.ts`),
+    path.join(ROOT, 'tests', 'unit', `${baseName}.test.tsx`),
+    path.join(ROOT, 'tests', 'integration', `${baseName}.test.ts`),
+    path.join(ROOT, 'tests', 'integration', `${baseName}.test.tsx`),
   ];
 
   for (const testPath of possibleTestPaths) {

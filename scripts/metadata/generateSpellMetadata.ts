@@ -293,13 +293,18 @@ function generateSpellTags(
 }
 
 /**
- * Parses spell lists section from MDX content.
+ * Parses spell lists section from MDX content. A link that targets a
+ * `.specialization` page marks the list as specialization-owned; the owning
+ * slug is derived from the link's basename.
  *
  * @param {string} content - Full MDX content
- * @returns {Array<{ name: string, link: string }>} Spell list references
+ * @returns {Array<{ name: string, link: string, specialization?: string }>} Spell list references
  */
-function parseSpellLists(content: string): { name: string; link: string }[] {
-  const spellLists: { name: string; link: string }[] = [];
+function parseSpellLists(
+  content: string,
+): { name: string; link: string; specialization?: string }[] {
+  const spellLists: { name: string; link: string; specialization?: string }[] =
+    [];
 
   const spellListsMatch = content.match(SPELL_LISTS.section);
   if (!spellListsMatch) return spellLists;
@@ -315,7 +320,12 @@ function parseSpellLists(content: string): { name: string; link: string }[] {
     const rawName = clean(match[1]);
     const link = clean(match[2]);
     const name = rawName.replace(SPELL_LISTS.nameSuffix, '').trim();
-    spellLists.push({ name, link });
+    const specMatch = /\/([^/]+)\.specialization$/.exec(link);
+    spellLists.push({
+      name,
+      link,
+      ...(specMatch ? { specialization: specMatch[1] } : {}),
+    });
   }
 
   return spellLists;

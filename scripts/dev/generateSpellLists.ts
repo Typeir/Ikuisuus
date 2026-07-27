@@ -42,8 +42,8 @@ const LISTS_DIR = path.join(
 );
 
 /**
- * Maps spell list names from metadata to their listSource value and the
- * folder containing spells.list.mdx.
+ * Maps vocation spell list names from metadata to their listSource value and
+ * the folder containing spells.list.mdx.
  *
  * @typedef {{ source: string, folder: string }} ListInfo
  */
@@ -59,6 +59,20 @@ const LIST_MAP: Record<string, { source: string; folder: string }> = {
   Tinker: { source: 'Tinker', folder: 'tinker' },
   Villein: { source: 'Villein', folder: 'villein' },
   Wizard: { source: 'Wizard', folder: 'wizard' },
+};
+
+/**
+ * Maps specialization-owned spell list names to the specialization file that
+ * embeds their SpellTable. Specialization lists live inside the main
+ * specialization MDX file rather than a standalone spells.list.mdx.
+ *
+ * @typedef {{ folder: string, file: string }} SpecListInfo
+ */
+const SPEC_LIST_MAP: Record<string, { folder: string; file: string }> = {
+  'Want of Knowledge': {
+    folder: 'berserker',
+    file: 'want-of-knowledge.specialization.mdx',
+  },
 };
 
 /**
@@ -84,12 +98,18 @@ interface ListRef {
 }
 
 /**
- * Reads all spell metadata files and groups slugs by vocation list.
+ * Reads all spell metadata files and groups slugs by list. Vocation lists and
+ * specialization-owned lists (link targets a `.specialization` page) are
+ * grouped separately, since they are written to different file shapes.
  *
- * @returns {Record<string, SpellEntry[]>} Map of list name to spell entries
+ * @returns {{ byList: Record<string, SpellEntry[]>, bySpecList: Record<string, SpellEntry[]> }} Vocation and specialization list groupings
  */
-function scanSpells(): Record<string, SpellEntry[]> {
+function scanSpells(): {
+  byList: Record<string, SpellEntry[]>;
+  bySpecList: Record<string, SpellEntry[]>;
+} {
   const byList: Record<string, SpellEntry[]> = {};
+  const bySpecList: Record<string, SpellEntry[]> = {};
   const entries = readdirSync(SPELLS_DIR, { withFileTypes: true });
   let count = 0;
 
@@ -103,20 +123,19 @@ function scanSpells(): Record<string, SpellEntry[]> {
 
     for (const list of spellLists) {
       const name = list.name;
-      // Skip specialization-gated entries — spells tied to a
-      // specialization (link contains '.specialization') belong to
-      // that spec's spell list, not the main vocation spell list.
-      if (list.link.includes('.specialization')) continue;
-      if (!byList[name]) byList[name] = [];
-      byList[name].push({ slug, level });
+      const target = list.link.includes('.specialization')
+        ? bySpecList
+        : byList;
+      if (!target[name]) target[name] = [];
+      target[name].push({ slug, level });
     }
     count++;
   }
 
-  log.message(
-    `Scanned ${count} spells across ${Object.keys(byList).length} lists`,
-  );
-  return byList;
+  const listCount =
+    Object.keys(byList).length + Object.keys(bySpecList).length;
+  log.message(`Scanned ${count} spells across ${listCount} lists`);
+  return { byList, bySpecList };
 }
 
 /**
@@ -150,14 +169,14 @@ function formatSpellsArray(spells: SpellEntry[], indent: number = 4): string {
 }
 
 /**
- * Updates a single spells.list.mdx file with the correct spell array.
+ * Replaces the spells={[...]} array in the file at the given path. The file
+ * must contain exactly one SpellTable spells array.
  *
- * @param {string} folder - Vocation folder name
+ * @param {string} filePath - Absolute path to the MDX file holding the array
  * @param {SpellEntry[]} spells - Sorted spell entries for this list
  * @returns {boolean} Whether the file was modified
  */
-function updateListFile(folder: string, spells: SpellEntry[]): boolean {
-  const filePath = path.join(LISTS_DIR, folder, 'spells.list.mdx');
+function updateListFile(filePath: string, spells: SpellEntry[]): boolean {
   let content: string;
 
   try {
@@ -178,10 +197,36 @@ function updateListFile(folder: string, spells: SpellEntry[]): boolean {
 }
 
 /**
- * Entry point. Scans metadata, groups spells, and writes updated list files.
+ * Sorts a list's entries and writes them into the target file, logging the
+ * outcome under the given display name.
+ *
+ * @param {string} displayName - Path-like label used in log lines
+ * @param {string} filePath - Absolute path to the MDX file holding the array
+ * @param {SpellEntry[]} spells - Unsorted spell entries for this list
+ * @returns {boolean} Whether the file was modified
+ */
+function writeList(
+  displayName: string,
+  filePath: string,
+  spells: SpellEntry[],
+): boolean {
+  const sorted = sortSpells(spells);
+  const changed = updateListFile(filePath, sorted);
+
+  if (changed) {
+    log.message(`Updated ${displayName} (${sorted.length} spells)`);
+  } else {
+    log.message(`${displayName} already up to date (${sorted.length} spells)`);
+  }
+  return changed;
+}
+
+/**
+ * Entry point. Scans metadata, groups spells, and writes updated arrays into
+ * vocation spells.list.mdx files and specialization MDX files.
  */
 function main(): void {
-  const byList = scanSpells();
+  const { byList, bySpecList } = scanSpells();
   let updated = 0;
   let skipped = 0;
 
@@ -193,18 +238,23 @@ function main(): void {
       continue;
     }
 
-    const sorted = sortSpells(spells);
-    const changed = updateListFile(info.folder, sorted);
-
-    if (changed) {
-      log.message(
-        `Updated ${info.folder}/spells.list.mdx (${sorted.length} spells)`,
-      );
+    const filePath = path.join(LISTS_DIR, info.folder, 'spells.list.mdx');
+    if (writeList(`${info.folder}/spells.list.mdx`, filePath, spells)) {
       updated++;
-    } else {
-      log.message(
-        `${info.folder}/spells.list.mdx already up to date (${sorted.length} spells)`,
-      );
+    }
+  }
+
+  for (const [listName, info] of Object.entries(SPEC_LIST_MAP)) {
+    const spells = bySpecList[listName] || [];
+    if (spells.length === 0) {
+      log.warning(`No spells found for ${listName} — skipping`);
+      skipped++;
+      continue;
+    }
+
+    const filePath = path.join(LISTS_DIR, info.folder, info.file);
+    if (writeList(`${info.folder}/${info.file}`, filePath, spells)) {
+      updated++;
     }
   }
 

@@ -11,14 +11,16 @@
  */
 
 /**
- * Reference to a class/vocation spell list that includes this spell.
+ * Reference to a vocation or specialization spell list that includes this spell.
  *
- * @property {string} name - Class/vocation name (e.g. "Revenant")
+ * @property {string} name - List name (e.g. "Revenant", "Want of Knowledge")
  * @property {string} link - Path to the spell list page
+ * @property {string} [specialization] - Owning specialization slug when the list belongs to a specialization rather than a vocation (derived from a `.specialization` link target)
  */
 export interface SpellListRef {
   name: string;
   link: string;
+  specialization?: string;
 }
 
 /**

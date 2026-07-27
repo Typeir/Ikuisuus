@@ -38,7 +38,13 @@ const buildSpellLists = (
   lists: SpellListEntity[],
 ): SpellListRef[] | undefined => {
   if (!lists || lists.length === 0) return undefined;
-  return lists.map((sl): SpellListRef => ({ name: sl.name, link: sl.link }));
+  return lists.map(
+    (sl): SpellListRef => ({
+      name: sl.name,
+      link: sl.link,
+      ...(sl.specialization ? { specialization: sl.specialization } : {}),
+    }),
+  );
 };
 
 /* ─────────────────────────────  Row mapper  ──────────────────────────── */

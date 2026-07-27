@@ -169,6 +169,24 @@ describe('extractItemMechanicTags', () => {
     );
   });
 
+  it('should detect an accuracy bonus in canonical wording', () => {
+    expect(extractItemMechanicTags('+1 accuracy bonus')).toContain(
+      'mechanic:attack-bonus',
+    );
+  });
+
+  it('should detect both stats in a combined accuracy and damage bonus', () => {
+    const tags = extractItemMechanicTags('+4 accuracy and damage bonus');
+    expect(tags).toContain('mechanic:attack-bonus');
+    expect(tags).toContain('mechanic:damage-bonus');
+  });
+
+  it('should detect a damage bonus in canonical wording', () => {
+    expect(extractItemMechanicTags('gains a damage bonus equal to the die')).toContain(
+      'mechanic:damage-bonus',
+    );
+  });
+
   it('should detect charges', () => {
     expect(extractItemMechanicTags('This item has 3 charges')).toContain(
       'mechanic:charges',

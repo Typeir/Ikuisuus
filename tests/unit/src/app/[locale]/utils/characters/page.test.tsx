@@ -5,6 +5,7 @@
  * @module tests/unit/src/app/locale/utils/characters/page.test
  */
 
+import CharactersPage from '@/app/[locale]/utils/characters/page';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -26,8 +27,6 @@ vi.mock(
 
 describe('CharactersPage', () => {
   const renderPage = async (locale = 'en') => {
-    const { default: CharactersPage } =
-      await import('@/app/[locale]/utils/characters/page');
     const jsx = await CharactersPage({ params: Promise.resolve({ locale }) });
     render(jsx as React.ReactElement);
   };
