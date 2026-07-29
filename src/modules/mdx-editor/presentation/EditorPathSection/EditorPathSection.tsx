@@ -14,6 +14,7 @@
 
 import { useCorrectionsTree } from '@/modules/mdx-editor/application/hooks/useCorrectionsTree';
 import { FileTreeSelect } from '@/modules/mdx-editor/presentation/FileTreeSelect/FileTreeSelect';
+import type { JSX } from 'react';
 import { useCallback, useState } from 'react';
 import styles from './EditorPathSection.module.scss';
 

@@ -13,6 +13,7 @@
  * @since 8.0.0
  */
 
+import type { JSX } from 'react';
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { cn } from '@/lib/utils/classNameMerge';
 import { typeColorVar, type SearchResult } from '../../domain';

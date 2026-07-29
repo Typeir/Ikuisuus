@@ -9,6 +9,7 @@
  * @since 1.0.0
  */
 
+import type { JSX } from 'react';
 import sk from '@/lib/components/skeleton/skeleton.module.scss';
 import { cn } from '@/lib/utils/classNameMerge';
 import styles from './metadataTable.module.scss';

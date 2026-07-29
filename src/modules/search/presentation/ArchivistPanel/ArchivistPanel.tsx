@@ -15,6 +15,7 @@
 import { buildEmbedUrl } from '@/lib/components/ui/embedPanel/GenericEmbedPanel';
 import { cn } from '@/lib/utils/classNameMerge';
 import { useTranslations } from 'next-intl';
+import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { type FeaturedPage } from '../../domain/featuredPages';
 import styles from './ArchivistPanel.module.scss';

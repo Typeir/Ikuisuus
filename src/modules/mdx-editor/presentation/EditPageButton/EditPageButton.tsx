@@ -15,6 +15,7 @@
 import { Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import type { JSX } from 'react';
 import { useCallback } from 'react';
 import styles from './EditPageButton.module.scss';
 

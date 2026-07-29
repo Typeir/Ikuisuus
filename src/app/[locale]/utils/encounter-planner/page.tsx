@@ -24,6 +24,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import { CombatantRow } from '@/modules/encounter-planner/presentation/combatantRow';
 import { EncounterCombobox } from '@/modules/encounter-planner/presentation/comboboxes';
 import styles from '@/modules/encounter-planner/presentation/EncounterPlanner/encounterPlanner.module.scss';

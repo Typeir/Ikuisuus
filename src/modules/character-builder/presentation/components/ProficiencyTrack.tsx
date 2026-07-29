@@ -9,6 +9,7 @@
  * @since 1.0.0
  */
 
+import type { JSX } from 'react';
 import { Tooltip } from '@/lib/components/ui';
 import type { TierLevel } from '@/lib/types/character';
 import {

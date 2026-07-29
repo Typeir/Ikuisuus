@@ -13,7 +13,7 @@
 'use client';
 
 import Link from 'next/link';
-import type { ComponentProps } from 'react';
+import type { JSX, ComponentProps } from 'react';
 import { useState } from 'react';
 
 /**

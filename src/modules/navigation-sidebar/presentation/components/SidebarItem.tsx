@@ -19,6 +19,7 @@ import type {
 } from '@/modules/navigation-sidebar/domain/types';
 import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
+import type { JSX } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './sidebar.module.scss';
 import { SkeletonSidebarItems } from './SkeletonSidebarItems';

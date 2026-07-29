@@ -8,6 +8,7 @@
  * @since 1.0.0
  */
 
+import type { JSX } from 'react';
 import React, { ReactNode } from 'react';
 
 /**
@@ -62,7 +63,10 @@ function getTextFromChildren(children: ReactNode): string {
   if (Array.isArray(children)) {
     return children.map(getTextFromChildren).join('');
   }
-  if (React.isValidElement(children) && children.props.children) {
+  if (
+    React.isValidElement<{ children?: ReactNode }>(children) &&
+    children.props.children
+  ) {
     return getTextFromChildren(children.props.children);
   }
   return '';

@@ -19,6 +19,7 @@ import type {
 import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights';
 import dynamic from 'next/dynamic';
 import { useParams, usePathname } from 'next/navigation';
+import type { JSX } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styles from './sidebar.module.scss';
 

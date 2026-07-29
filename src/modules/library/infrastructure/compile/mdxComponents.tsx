@@ -7,6 +7,7 @@
  */
 /* paw:gate:* ignore */
 import { jsx as _jsx } from "react/jsx-runtime";
+import type { JSX } from "react";
 
 /**
  * Map of auto-generated MDX components.

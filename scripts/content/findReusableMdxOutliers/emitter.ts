@@ -111,6 +111,14 @@ export const emitComponentsModule = async (
     moduleSpecifier: 'react/jsx-runtime',
   });
 
+  /* React 19 types dropped the global JSX namespace, so the emitted
+     `JSX.Element` return annotations need an explicit type import. */
+  sourceFile.addImportDeclaration({
+    isTypeOnly: true,
+    namedImports: ['JSX'],
+    moduleSpecifier: 'react',
+  });
+
   const componentDocs = results
     .map((r) => {
       const relativePath = path

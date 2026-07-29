@@ -16,6 +16,7 @@
 import { Skeleton } from '@/lib/components/skeleton';
 import { cn } from '@/lib/utils/classNameMerge';
 import { useTranslations } from 'next-intl';
+import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import {
   localizeLink,

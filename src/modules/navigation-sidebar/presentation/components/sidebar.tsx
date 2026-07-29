@@ -14,6 +14,7 @@ import type {
 } from '@/modules/navigation-sidebar/domain/types';
 import SidebarActivePathStore from '@/modules/navigation-sidebar/infrastructure/store/sidebarActivePath';
 import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights';
+import type { JSX } from 'react';
 import { useMemo, useState } from 'react';
 import { SidebarItem } from './SidebarItem';
 

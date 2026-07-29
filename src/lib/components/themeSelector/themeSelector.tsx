@@ -27,6 +27,7 @@
  */
 'use client';
 
+import type { JSX } from 'react';
 import { useState } from 'react';
 import { Theme } from '../../enums/themes';
 import { rangeWrap } from '../../utils/rangeWrap';

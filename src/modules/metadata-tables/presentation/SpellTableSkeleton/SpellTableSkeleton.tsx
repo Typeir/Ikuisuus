@@ -9,6 +9,7 @@
  * @since 1.0.0
  */
 
+import type { JSX } from 'react';
 import { MetadataTableSkeleton } from '@/lib/components/mdx/metadataTables/metadataTableSkeleton';
 import skeletonStyles from '@/lib/components/skeleton/skeleton.module.scss';
 import gradientTabStyles from '@/lib/components/ui/gradientTabs/gradientTabs.module.scss';

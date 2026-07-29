@@ -9,6 +9,7 @@
  * @since 1.0.0
  */
 
+import type { JSX } from 'react';
 import styles from './skeleton.module.scss';
 
 /**

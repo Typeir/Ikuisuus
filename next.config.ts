@@ -66,8 +66,10 @@ function disableServerMinification(
 }
 
 const nextConfig: NextConfig = {
+  /* Next 16 ships sass-loader 16, which drives the modern Sass API where
+     `includePaths` is spelled `loadPaths`. */
   sassOptions: {
-    includePaths: [path.join(__dirname, 'src/styles')],
+    loadPaths: [path.join(__dirname, 'src/styles')],
   },
   serverExternalPackages: [
     '@mikro-orm/core',

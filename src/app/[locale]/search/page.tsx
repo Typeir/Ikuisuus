@@ -17,6 +17,7 @@ import { SearchBar } from '@/modules/search/presentation/SearchBar/SearchBar';
 import { SearchResultRow } from '@/modules/search/presentation/SearchResultRow/SearchResultRow';
 import { useTranslations } from 'next-intl';
 import { useParams, useSearchParams } from 'next/navigation';
+import type { JSX } from 'react';
 import { Suspense } from 'react';
 import styles from './page.module.scss';
 

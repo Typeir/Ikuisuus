@@ -12,6 +12,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import { deriveExpandedPathsFromUrl } from '@/modules/library/application/selectors/deriveExpandedPathsFromUrl';
 import { isStaticContentRoute } from '@/modules/library/application/selectors/isStaticContentRoute';
 import {

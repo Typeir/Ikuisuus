@@ -17,6 +17,8 @@
  * @since 4.0.0
  */
 
+import type { JSX } from 'react';
+
 /**
  * Props for the Meta MDX component.
  *

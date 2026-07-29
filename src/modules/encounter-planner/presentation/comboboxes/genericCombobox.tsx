@@ -48,13 +48,13 @@ import {
  * Custom hook for imperative dropdown positioning with rAF batching.
  * Directly manipulates DOM via transform for minimal layout work and zero React rerender lag.
  *
- * @param {React.RefObject<HTMLInputElement>} inputRef - Input element reference
- * @param {React.RefObject<HTMLDivElement>} dropdownRef - Dropdown element reference
+ * @param {React.RefObject<HTMLInputElement | null>} inputRef - Input element reference
+ * @param {React.RefObject<HTMLDivElement | null>} dropdownRef - Dropdown element reference
  * @returns {Object} Position update functions
  */
 const useRafPositioner = (
-  inputRef: React.RefObject<HTMLInputElement>,
-  dropdownRef: React.RefObject<HTMLDivElement>,
+  inputRef: React.RefObject<HTMLInputElement | null>,
+  dropdownRef: React.RefObject<HTMLDivElement | null>,
 ) => {
   const rafIdRef = useRef<number | null>(null);
 

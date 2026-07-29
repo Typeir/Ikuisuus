@@ -12,6 +12,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Draggable } from '../draggable/Draggable';
 

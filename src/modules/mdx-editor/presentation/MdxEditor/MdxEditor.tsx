@@ -13,6 +13,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import { useCorrectionsAuth } from '@/modules/mdx-editor/application/hooks/useCorrectionsAuth';
 import { useEditorState } from '@/modules/mdx-editor/application/hooks/useEditorState';
 import { EditorAuthSection } from '@/modules/mdx-editor/presentation/EditorAuthSection/EditorAuthSection';

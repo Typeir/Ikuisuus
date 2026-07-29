@@ -33,7 +33,7 @@ import { WorldSimMediator } from '@/modules/world-sim/application/mediator/World
  */
 export interface UseWorldSimCanvasReturn {
   /** @property {React.RefObject<HTMLDivElement | null>} containerRef - Container element ref */
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   /** @property {React.MutableRefObject<WorldSimMediator | null>} mediatorRef - Mediator ref */
   mediatorRef: React.MutableRefObject<WorldSimMediator | null>;
   /** @property {Function} subscribeToProjections - Subscribe to 2D position updates */

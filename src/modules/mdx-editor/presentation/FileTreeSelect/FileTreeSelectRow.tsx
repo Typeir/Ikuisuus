@@ -6,6 +6,7 @@
  * @since 2.0.0
  */
 
+import type { JSX } from 'react';
 import type { TreeNode } from '@/modules/mdx-editor/domain/types';
 import {
     ChevronDown,

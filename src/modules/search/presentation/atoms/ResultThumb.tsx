@@ -10,6 +10,7 @@
  * @since 8.0.0
  */
 
+import type { JSX } from 'react';
 import { cn } from '@/lib/utils/classNameMerge';
 import Image from 'next/image';
 import type { SearchContentType } from '../../domain';

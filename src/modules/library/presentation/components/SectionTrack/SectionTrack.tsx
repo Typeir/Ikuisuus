@@ -16,6 +16,7 @@ import { useSidebarMenuState } from '@/lib/context/PersistentUiContext';
 import { useSectionTrack } from '@/modules/library/application/hooks/useSectionTrack';
 import type { SectionTrackItem } from '@/modules/library/domain';
 import type { TooltipPlacement } from '@/lib/components/ui/tooltip';
+import type { JSX } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './SectionTrack.module.scss';
 

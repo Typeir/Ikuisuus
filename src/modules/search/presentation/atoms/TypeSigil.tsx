@@ -10,6 +10,7 @@
  * @since 8.0.0
  */
 
+import type { JSX } from 'react';
 import { cn } from '@/lib/utils/classNameMerge';
 import { typeColorVar, type SearchContentType } from '../../domain';
 import styles from './atoms.module.scss';
