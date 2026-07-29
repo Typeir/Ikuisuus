@@ -10,18 +10,18 @@
  * @since 1.0.0
  */
 
-'use client';
+"use client";
 
-import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
-import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
-import { useFeats } from '@/lib/hooks/data/useFeats';
-import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
-import type { CharacterShard } from '@/lib/types/character';
-import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useMemo, useState } from 'react';
-import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
-import { FeatureCard } from './featureCard';
-import pickerStyles from './pickerControls.module.scss';
+import { Skeleton, SkeletonGroup } from "@/lib/components/skeleton/skeleton";
+import type { FeatMetadata } from "@/lib/db/content/schemas/featMetadata";
+import { useFeats } from "@/lib/hooks/data/useFeats";
+import { useIsMobileViewport } from "@/lib/hooks/useMediaQuery";
+import type { CharacterShard } from "@/lib/types/character";
+import { useLocale, useTranslations } from "next-intl";
+import { useCallback, useMemo, useState } from "react";
+import styles from "../CharacterSheet/characterSheetWidgets.module.scss";
+import { FeatureCard } from "./featureCard";
+import pickerStyles from "./pickerControls.module.scss";
 
 /**
  * Props for `<FeatPicker>`.
@@ -55,13 +55,13 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
   readOnly = false,
   onFocusShard,
 }) => {
-  const t = useTranslations('characterSheet.feats');
-  const tCommon = useTranslations('common');
+  const t = useTranslations("characterSheet.feats");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
   const isMobile = useIsMobileViewport();
   const { feats, isLoading: loading, error: fetchError } = useFeats({ locale });
   const error = fetchError?.message ?? null;
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [expandedFeats, setExpandedFeats] = useState<Set<string>>(
     () => new Set(),
   );
@@ -107,7 +107,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
       id: `feat::${feat.slug}`,
       sourceFile: sf,
       heading: feat.title,
-      category: 'feat',
+      category: "feat",
       cachedText: feat.description ?? undefined,
       grants: feat.grants,
     };
@@ -129,7 +129,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
       id: `feat::${feat.slug}::${crypto.randomUUID()}`,
       sourceFile: toSourceFile(feat.slug),
       heading: feat.title,
-      category: 'feat',
+      category: "feat",
       cachedText: feat.description ?? undefined,
       grants: feat.grants,
     };
@@ -152,10 +152,10 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
     <div className={styles.boonPicker}>
       {loading && (
         <SkeletonGroup>
-          <Skeleton variant='button' width='100%' />
-          <Skeleton variant='button' width='100%' />
-          <Skeleton variant='button' width='100%' />
-          <Skeleton variant='button' width='100%' />
+          <Skeleton variant="button" width="100%" />
+          <Skeleton variant="button" width="100%" />
+          <Skeleton variant="button" width="100%" />
+          <Skeleton variant="button" width="100%" />
         </SkeletonGroup>
       )}
       {error && <p className={styles.boonError}>{error}</p>}
@@ -164,30 +164,30 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
         <>
           {!readOnly && (
             <input
-              type='search'
+              type="search"
               className={pickerStyles.pickerSearch}
-              placeholder={tCommon('searchPlaceholder')}
+              placeholder={tCommon("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label={tCommon('searchPlaceholder')}
+              aria-label={tCommon("searchPlaceholder")}
             />
           )}
           <div className={pickerStyles.pickerScroll}>
-            <ul className={styles.boonList} aria-label={t('featAvailableAria')}>
+            <ul className={styles.boonList} aria-label={t("featAvailableAria")}>
               {displayedFeats.map((feat) => {
                 const multi = feat.multiSelect === true;
                 const count = multi ? countFor(feat.slug) : 0;
                 const selected = multi ? count > 0 : isSelected(feat.slug);
                 const isExpanded = expandedFeats.has(feat.slug);
-                const bodyId = `feat-body-${feat.slug.replace(/\s+/g, '-')}`;
+                const bodyId = `feat-body-${feat.slug.replace(/\s+/g, "-")}`;
                 const expandLabel = isExpanded
-                  ? t('shardCollapseAria', { name: feat.title })
-                  : t('shardExpandAria', { name: feat.title });
+                  ? t("shardCollapseAria", { name: feat.title })
+                  : t("shardExpandAria", { name: feat.title });
                 return (
                   <FeatureCard
                     key={feat.slug}
                     label={feat.title}
-                    badge={feat.hasPrerequisite ? t('prereq') : undefined}
+                    badge={feat.hasPrerequisite ? t("prereq") : undefined}
                     selected={selected}
                     expanded={isExpanded}
                     readOnly={readOnly}
@@ -198,34 +198,33 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
                             count,
                             onAdd: () => addInstance(feat),
                             onRemove: () => removeInstance(feat),
-                            addLabel: t('addInstance', { name: feat.title }),
-                            removeLabel: t('removeInstance', { name: feat.title }),
-                            countLabel: t('instanceCount', { count }),
+                            addLabel: t("addInstance", { name: feat.title }),
+                            removeLabel: t("removeInstance", {
+                              name: feat.title,
+                            }),
+                            countLabel: t("instanceCount", { count }),
                           }
                         : undefined
                     }
                     onExpand={() => toggleExpanded(feat.slug)}
-                    onFocus={
-                      isMobile === true
-                        ? () =>
-                            onFocusShard?.({
-                              contentType: 'feats',
-                              slug: feat.slug,
-                            })
-                        : undefined
+                    onFocus={() =>
+                      onFocusShard?.({
+                        contentType: "feats",
+                        slug: feat.slug,
+                      })
                     }
-                    contentType='feats'
+                    contentType="feats"
                     contentSlug={feat.slug}
                     contentKey={feat.title}
                     cachedText={feat.description}
                     bodyId={bodyId}
                     expandLabel={expandLabel}
-                    openLabel={t('viewShardDetails')}
+                    openLabel={t("viewShardDetails")}
                   />
                 );
               })}
               {displayedFeats.length === 0 && (
-                <li className={styles.boonEmpty}>{t('noAvailable')}</li>
+                <li className={styles.boonEmpty}>{t("noAvailable")}</li>
               )}
             </ul>
           </div>
