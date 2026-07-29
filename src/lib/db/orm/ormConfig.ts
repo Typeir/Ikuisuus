@@ -9,6 +9,7 @@
  * @since 5.0.0
  */
 
+import { toSchemas } from '@/lib/db/orm/schema';
 import { defineConfig } from '@mikro-orm/postgresql';
 import {
     AuditRecordEntity,
@@ -19,6 +20,7 @@ import {
     DraftEntity,
     FeatAbilityIncreaseEmbed,
     FeatEntity,
+    FeatFeatureEntity,
     HeirloomChargesEmbed,
     HeirloomEntity,
     MonsterACEmbed,
@@ -54,13 +56,14 @@ export const ormConfig = defineConfig({
           : { rejectUnauthorized: false },
     },
   },
-  entities: [
+  entities: toSchemas([
     AuditRecordEntity,
     BannedIpEntity,
     BloodlineEntity,
     BloodlineBoonEntity,
     DraftEntity,
     FeatEntity,
+    FeatFeatureEntity,
     FeatAbilityIncreaseEmbed,
     MonsterEntity,
     MonsterACEmbed,
@@ -86,6 +89,6 @@ export const ormConfig = defineConfig({
     SpecializationSpellcastingEmbed,
     CorrectionsUserEntity,
     SchemaMigrationEntity,
-  ],
+  ]),
   debug: process.env.NODE_ENV !== 'production',
 });

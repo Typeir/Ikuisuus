@@ -12,14 +12,14 @@
  */
 
 import {
-    Embeddable,
-    Embedded,
-    Entity,
-    Index,
-    PrimaryKey,
-    Property,
-    Unique,
-} from '@mikro-orm/core';
+    OrmEmbeddable,
+    OrmEmbedded,
+    OrmEntity,
+    OrmIndex,
+    OrmPrimaryKey,
+    OrmProperty,
+    OrmUnique,
+} from '@/lib/db/orm/schema';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
 
@@ -27,15 +27,15 @@ import {
  * Charge economy value object — maps to `charges_initial`,
  * `charges_recharge`, `charges_depletes`.
  */
-@Embeddable()
+@OrmEmbeddable('HeirloomChargesEmbed')
 export class HeirloomChargesEmbed {
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   initial?: string | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   recharge?: string | null;
 
-  @Property({ type: 'boolean', nullable: true })
+  @OrmProperty({ type: 'boolean', nullable: true })
   depletes?: boolean | null;
 }
 
@@ -44,68 +44,68 @@ export class HeirloomChargesEmbed {
 /**
  * MikroORM entity for the `heirlooms` table.
  */
-@Entity({ tableName: 'heirlooms' })
-@Unique({ properties: ['locale', 'slug'] })
-@Index({
+@OrmEntity('HeirloomEntity', { tableName: 'heirlooms' })
+@OrmUnique({ properties: ['locale', 'slug'] })
+@OrmIndex({
   properties: ['locale', 'rarity'],
   name: 'heirlooms_locale_rarity_idx',
 })
-@Index({
+@OrmIndex({
   properties: ['locale', 'itemType'],
   name: 'heirlooms_locale_item_type_idx',
 })
 export class HeirloomEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   locale!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   slug!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   title!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   file!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   link!: string;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   rarity?: string | null;
 
-  @Property({ type: 'string', fieldName: 'item_type', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'item_type', nullable: true })
   itemType?: string | null;
 
-  @Property({ type: 'string', fieldName: 'weapon_type', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'weapon_type', nullable: true })
   weaponType?: string | null;
 
-  @Property({
+  @OrmProperty({
     type: 'boolean',
     fieldName: 'requires_attunement',
     nullable: true,
   })
   requiresAttunement?: boolean | null;
 
-  @Property({
+  @OrmProperty({
     type: 'string',
     fieldName: 'attunement_requirements',
     nullable: true,
   })
   attunementRequirements?: string | null;
 
-  @Property({ type: 'string', fieldName: 'weapon_damage', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'weapon_damage', nullable: true })
   weaponDamage?: string | null;
 
-  @Property({ type: 'string', fieldName: 'weapon_damage_type', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'weapon_damage_type', nullable: true })
   weaponDamageType?: string | null;
 
-  @Property({ type: 'string', fieldName: 'versatile_damage', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'versatile_damage', nullable: true })
   versatileDamage?: string | null;
 
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'hit_modifier',
     columnType: 'smallint',
@@ -113,39 +113,43 @@ export class HeirloomEntity {
   })
   hitModifier?: number | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   range?: string | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   weight?: string | null;
 
-  @Embedded(() => HeirloomChargesEmbed, { prefix: 'charges_', object: false })
+  @OrmEmbedded({
+    entity: 'HeirloomChargesEmbed',
+    prefix: 'charges_',
+    object: false,
+  })
   charges = new HeirloomChargesEmbed();
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   mastery: string[] = [];
 
-  @Property({ fieldName: 'weapon_properties', type: 'string[]' })
+  @OrmProperty({ fieldName: 'weapon_properties', type: 'string[]' })
   weaponProperties: string[] = [];
 
-  @Property({ fieldName: 'damage_types_dealt', type: 'string[]' })
+  @OrmProperty({ fieldName: 'damage_types_dealt', type: 'string[]' })
   damageTypesDealt: string[] = [];
 
-  @Property({ fieldName: 'saving_throw_types', type: 'string[]' })
+  @OrmProperty({ fieldName: 'saving_throw_types', type: 'string[]' })
   savingThrowTypes: string[] = [];
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
   /** @property {string | null} description - Prose description extracted from the heirloom MDX */
-  @Property({ type: 'text', nullable: true })
+  @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
   /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'index_version',
     columnType: 'smallint',
@@ -154,6 +158,6 @@ export class HeirloomEntity {
   indexVersion?: number | null;
 
   /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
-  @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
 }

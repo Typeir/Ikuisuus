@@ -10,26 +10,26 @@
  */
 
 import {
-    Embeddable,
-    Embedded,
-    Entity,
-    Index,
-    PrimaryKey,
-    Property,
-    Unique,
-} from '@mikro-orm/core';
+    OrmEmbeddable,
+    OrmEmbedded,
+    OrmEntity,
+    OrmIndex,
+    OrmPrimaryKey,
+    OrmProperty,
+    OrmUnique,
+} from '@/lib/db/orm/schema';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
 
 /**
  * Saving throw requirement — maps to `saving_throw_dc`, `saving_throw_ability`.
  */
-@Embeddable()
+@OrmEmbeddable('TrinketSavingThrowEmbed')
 export class TrinketSavingThrowEmbed {
-  @Property({ type: 'number', columnType: 'smallint', nullable: true })
+  @OrmProperty({ type: 'number', columnType: 'smallint', nullable: true })
   dc?: number | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   ability?: string | null;
 }
 
@@ -38,73 +38,74 @@ export class TrinketSavingThrowEmbed {
 /**
  * MikroORM entity for the `trinkets` table.
  */
-@Entity({ tableName: 'trinkets' })
-@Unique({ properties: ['locale', 'slug'] })
-@Index({
+@OrmEntity('TrinketEntity', { tableName: 'trinkets' })
+@OrmUnique({ properties: ['locale', 'slug'] })
+@OrmIndex({
   properties: ['locale', 'itemType'],
   name: 'trinkets_locale_item_type_idx',
 })
 export class TrinketEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   locale!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   slug!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   title!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   file!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   link!: string;
 
-  @Property({ type: 'string', fieldName: 'item_type' })
+  @OrmProperty({ type: 'string', fieldName: 'item_type' })
   itemType!: string;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   damage?: string | null;
 
-  @Property({ type: 'string', fieldName: 'damage_type', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'damage_type', nullable: true })
   damageType?: string | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   range?: string | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   weight?: string | null;
 
-  @Embedded(() => TrinketSavingThrowEmbed, {
+  @OrmEmbedded({
+    entity: 'TrinketSavingThrowEmbed',
     prefix: 'saving_throw_',
     object: false,
   })
   savingThrow = new TrinketSavingThrowEmbed();
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   properties: string[] = [];
 
-  @Property({ fieldName: 'special_effects', type: 'string[]' })
+  @OrmProperty({ fieldName: 'special_effects', type: 'string[]' })
   specialEffects: string[] = [];
 
-  @Property({ fieldName: 'inflicts_conditions', type: 'string[]' })
+  @OrmProperty({ fieldName: 'inflicts_conditions', type: 'string[]' })
   inflictsConditions: string[] = [];
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
   /** @property {string | null} description - Prose description extracted from the trinket MDX */
-  @Property({ type: 'text', nullable: true })
+  @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
   /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 
   /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
-  @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
 }

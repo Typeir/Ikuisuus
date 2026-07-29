@@ -14,15 +14,16 @@
     "clean-fullsize": "npx tsx --tsconfig tsconfig.scripts.json scripts/build/cleanFullSize.ts",
     "merge-locales": "npx tsx --tsconfig tsconfig.scripts.json scripts/i18n/mergeMessages.ts",
     "clean-translations": "npx tsx --tsconfig tsconfig.scripts.json scripts/i18n/cleanTranslations.ts",
-    "pre-init": "npm run compress-assets && npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers && npm run search:index",
-    "pre-init:ci": "npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers:ci",
+    "bundle-mdx-plugins": "npx tsx --tsconfig tsconfig.scripts.json scripts/build/bundleMdxPlugins.ts",
+    "pre-init": "npm run compress-assets && npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers && npm run bundle-mdx-plugins && npm run search:index",
+    "pre-init:ci": "npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers:ci && npm run bundle-mdx-plugins",
     "find-reusable-mdx-outliers:ci": "npx tsx --tsconfig tsconfig.scripts.json scripts/content/findReusableMdxOutliers/ci.ts",
     "clean-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/cleanMetadata.ts",
     "clean": "npm run clean-fullsize && npm run clean-translations && rm -rf ./stl",
-    "build": "rm -rf .next/cache && npm run pre-init && npm run test && next build --webpack",
-    "build:ci": "rm -rf .next/cache && npm run pre-init:ci && npm run test && next build --webpack",
+    "build": "rm -rf .next/cache && npm run pre-init && npm run test && next build",
+    "build:ci": "rm -rf .next/cache && npm run pre-init:ci && npm run test && next build",
     "fetch-content": "npx tsx --tsconfig tsconfig.scripts.json scripts/build/fetchContent.ts",
-    "build:vercel": "npm run fetch-content && rm -rf .next && npm run pre-init && next build --webpack",
+    "build:vercel": "npm run fetch-content && rm -rf .next && npm run pre-init && next build",
     "generate-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/generateMetadata.ts",
     "generate-spell-lists": "npx tsx scripts/dev/generateSpellLists.ts",
     "fix-metadata": "npm run clean-metadata && npm run generate-metadata && npm run generate-spell-lists",
@@ -158,5 +159,12 @@
     "postcss": "$postcss",
     "sharp": "$sharp",
     "uuid": "^11.1.1"
+  },
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "@swc/core": false,
+    "classic-level": false,
+    "esbuild": false,
+    "unrs-resolver": false
   }
 }

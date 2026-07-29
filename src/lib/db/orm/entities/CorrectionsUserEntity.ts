@@ -8,26 +8,26 @@
  * @since 5.0.0
  */
 
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { OrmEntity, OrmPrimaryKey, OrmProperty } from '@/lib/db/orm/schema';
 
 /**
  * MikroORM entity for the `corrections_users` table.
  */
-@Entity({ tableName: 'corrections_users' })
+@OrmEntity('CorrectionsUserEntity', { tableName: 'corrections_users' })
 export class CorrectionsUserEntity {
-  @PrimaryKey({ type: 'string' })
+  @OrmPrimaryKey({ type: 'string' })
   id!: string;
 
-  @Property({ type: 'string', unique: true })
+  @OrmProperty({ type: 'string', unique: true })
   username!: string;
 
-  @Property({ type: 'string', fieldName: 'password_hash' })
+  @OrmProperty({ type: 'string', fieldName: 'password_hash' })
   passwordHash!: string;
 
-  @Property({ type: 'string', default: 'editor' })
+  @OrmProperty({ type: 'string', default: 'editor' })
   role!: string;
 
-  @Property({
+  @OrmProperty({
     type: 'Date',
     fieldName: 'created_at',
     columnType: 'timestamptz',
@@ -35,7 +35,7 @@ export class CorrectionsUserEntity {
   })
   createdAt!: Date;
 
-  @Property({
+  @OrmProperty({
     type: 'Date',
     fieldName: 'last_login_at',
     columnType: 'timestamptz',

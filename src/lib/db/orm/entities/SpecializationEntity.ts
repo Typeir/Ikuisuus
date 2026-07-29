@@ -11,17 +11,17 @@
  */
 
 import {
-    Collection,
-    Embeddable,
-    Embedded,
-    Entity,
-    Index,
-    ManyToOne,
-    OneToMany,
-    PrimaryKey,
-    Property,
-    Unique,
-} from '@mikro-orm/core';
+    OrmEmbeddable,
+    OrmEmbedded,
+    OrmEntity,
+    OrmIndex,
+    OrmManyToOne,
+    OrmOneToMany,
+    OrmPrimaryKey,
+    OrmProperty,
+    OrmUnique,
+} from '@/lib/db/orm/schema';
+import { Collection } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
 
@@ -29,12 +29,12 @@ import {
  * Spellcasting summary for third-caster subclasses — maps to
  * `spellcasting_ability`, `spellcasting_progression`.
  */
-@Embeddable()
+@OrmEmbeddable('SpecializationSpellcastingEmbed')
 export class SpecializationSpellcastingEmbed {
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   ability?: string | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   progression?: string | null;
 }
 
@@ -43,28 +43,31 @@ export class SpecializationSpellcastingEmbed {
 /**
  * MikroORM entity for the `specialization_features` child table.
  */
-@Entity({ tableName: 'specialization_features' })
+@OrmEntity('SpecializationFeatureEntity', {
+  tableName: 'specialization_features',
+})
 export class SpecializationFeatureEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @ManyToOne(() => SpecializationEntity, {
+  @OrmManyToOne({
+    entity: 'SpecializationEntity',
     fieldName: 'specialization_id',
     deleteRule: 'cascade',
   })
   specialization!: SpecializationEntity;
 
-  @Property({ type: 'number', columnType: 'smallint' })
+  @OrmProperty({ type: 'number', columnType: 'smallint' })
   level!: number;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   name!: string;
 
-  @Property({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
+  @OrmProperty({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
   sortOrder!: number;
 
   /** @property {number | null} startLine - 1-indexed start line of this feature's heading block in the source MDX */
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'start_line',
     columnType: 'smallint',
@@ -73,7 +76,7 @@ export class SpecializationFeatureEntity {
   startLine?: number | null;
 
   /** @property {number | null} endLine - 1-indexed last line of this feature's heading block in the source MDX */
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'end_line',
     columnType: 'smallint',
@@ -82,7 +85,7 @@ export class SpecializationFeatureEntity {
   endLine?: number | null;
 
   /** @property {string[] | null} grants - Tag-based proficiency grants this feature confers (e.g. `saving_throw:wisdom`); null when it grants no automatic proficiency */
-  @Property({ type: 'string[]', nullable: true })
+  @OrmProperty({ type: 'string[]', nullable: true })
   grants?: string[] | null;
 }
 
@@ -90,24 +93,27 @@ export class SpecializationFeatureEntity {
  * MikroORM entity for the `specialization_prepared_spells` child table.
  * Each row represents a level threshold with a list of always-prepared spells.
  */
-@Entity({ tableName: 'specialization_prepared_spells' })
+@OrmEntity('SpecializationPreparedSpellEntity', {
+  tableName: 'specialization_prepared_spells',
+})
 export class SpecializationPreparedSpellEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @ManyToOne(() => SpecializationEntity, {
+  @OrmManyToOne({
+    entity: 'SpecializationEntity',
     fieldName: 'specialization_id',
     deleteRule: 'cascade',
   })
   specialization!: SpecializationEntity;
 
-  @Property({ type: 'number', columnType: 'smallint' })
+  @OrmProperty({ type: 'number', columnType: 'smallint' })
   level!: number;
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   spells: string[] = [];
 
-  @Property({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
+  @OrmProperty({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
   sortOrder!: number;
 }
 
@@ -116,59 +122,60 @@ export class SpecializationPreparedSpellEntity {
 /**
  * MikroORM entity for the `specializations` table.
  */
-@Entity({ tableName: 'specializations' })
-@Unique({ properties: ['locale', 'slug'] })
-@Index({
+@OrmEntity('SpecializationEntity', { tableName: 'specializations' })
+@OrmUnique({ properties: ['locale', 'slug'] })
+@OrmIndex({
   properties: ['locale', 'vocation'],
   name: 'specializations_locale_vocation_idx',
 })
 export class SpecializationEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   locale!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   slug!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   title!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   file!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   link!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   vocation!: string;
 
-  @Property({ type: 'string', fieldName: 'specialization_type' })
+  @OrmProperty({ type: 'string', fieldName: 'specialization_type' })
   specializationType!: string;
 
-  @Property({ type: 'text', nullable: true })
+  @OrmProperty({ type: 'text', nullable: true })
   flavor?: string | null;
 
   /** @property {string | null} description - Prose description extracted from the specialization MDX */
-  @Property({ type: 'text', nullable: true })
+  @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
   /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 
-  @Embedded(() => SpecializationSpellcastingEmbed, {
+  @OrmEmbedded({
+    entity: 'SpecializationSpellcastingEmbed',
     prefix: 'spellcasting_',
     object: false,
     nullable: true,
   })
   spellcasting?: SpecializationSpellcastingEmbed | null;
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'index_version',
     columnType: 'smallint',
@@ -177,15 +184,19 @@ export class SpecializationEntity {
   indexVersion?: number | null;
 
   /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
-  @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
 
-  @OneToMany(() => SpecializationFeatureEntity, (f) => f.specialization, {
+  @OrmOneToMany({
+    entity: 'SpecializationFeatureEntity',
+    mappedBy: 'specialization',
     orphanRemoval: true,
   })
   features = new Collection<SpecializationFeatureEntity>(this);
 
-  @OneToMany(() => SpecializationPreparedSpellEntity, (p) => p.specialization, {
+  @OrmOneToMany({
+    entity: 'SpecializationPreparedSpellEntity',
+    mappedBy: 'specialization',
     orphanRemoval: true,
   })
   preparedSpells = new Collection<SpecializationPreparedSpellEntity>(this);

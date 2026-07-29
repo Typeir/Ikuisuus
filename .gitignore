@@ -85,3 +85,5 @@ next-env.d.ts
 
 # Pagefind search index (built at build time)
 public/pagefind/
+
+.mdx-plugins

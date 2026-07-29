@@ -11,7 +11,12 @@
  * @since 6.0.0
  */
 
-import { Entity, Index, PrimaryKey, Property } from '@mikro-orm/core';
+import {
+    OrmEntity,
+    OrmIndex,
+    OrmPrimaryKey,
+    OrmProperty,
+} from '@/lib/db/orm/schema';
 
 /**
  * Valid draft lifecycle statuses.
@@ -34,34 +39,34 @@ export type DraftStatus = 'active' | 'pending' | 'archived';
  * @property {Date} updatedAt - Timestamp of the last update
  * @property {string | null} versionHash - FNV-1a content hash derived from locale+slug+content
  */
-@Entity({ tableName: 'drafts' })
-@Index({
+@OrmEntity('DraftEntity', { tableName: 'drafts' })
+@OrmIndex({
   properties: ['locale', 'slug', 'status'],
   name: 'drafts_locale_slug_status_idx',
 })
 export class DraftEntity {
   /** @property {number} id - Auto-incrementing primary key */
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
   /** @property {string} locale - Content locale code */
-  @Property({ type: 'string', default: 'en' })
+  @OrmProperty({ type: 'string', default: 'en' })
   locale!: string;
 
   /** @property {string} slug - Content slug path */
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   slug!: string;
 
   /** @property {string} content - Raw MDX content */
-  @Property({ type: 'string', columnType: 'text' })
+  @OrmProperty({ type: 'string', columnType: 'text' })
   content!: string;
 
   /** @property {DraftStatus} status - Lifecycle status: 'active', 'pending', or 'archived' */
-  @Property({ type: 'string', default: 'active' })
+  @OrmProperty({ type: 'string', default: 'active' })
   status!: DraftStatus;
 
   /** @property {Date} createdAt - Creation timestamp */
-  @Property({
+  @OrmProperty({
     type: 'Date',
     fieldName: 'created_at',
     columnType: 'timestamptz',
@@ -70,7 +75,7 @@ export class DraftEntity {
   createdAt!: Date;
 
   /** @property {Date} updatedAt - Last update timestamp */
-  @Property({
+  @OrmProperty({
     type: 'Date',
     fieldName: 'updated_at',
     columnType: 'timestamptz',
@@ -80,6 +85,6 @@ export class DraftEntity {
   updatedAt!: Date;
 
   /** @property {string | null} versionHash - Optional content hash */
-  @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
 }

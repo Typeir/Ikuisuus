@@ -28,12 +28,12 @@ html:not([data-theme]) body {
   visibility: hidden;
 }
 
-:global(input::-webkit-outer-spin-button),
-:global(input::-webkit-inner-spin-button) {
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-:global(input[type='number']) {
+input[type='number'] {
   -moz-appearance: textfield;
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {

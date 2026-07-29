@@ -250,13 +250,9 @@ async function main() {
 
   const localeWatcher = startLocaleWatcher();
 
-  /* Next 16 defaults to Turbopack, which ignores next.config.ts `webpack()`.
-     That hook carries the svgr loader, the .glsl asset rule, the path aliases
-     and the server-side minification opt-out MikroORM entity names depend on,
-     so dev and build both stay on Webpack until those move to `turbopack`. */
   nextExitCode = await runCommand(
     'npx',
-    ['next', 'dev', '--webpack', ...nextArgs],
+    ['next', 'dev', ...nextArgs],
     backendEnv,
   );
 

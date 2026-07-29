@@ -8,23 +8,23 @@
  * @since 8.0.0
  */
 
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { OrmEntity, OrmPrimaryKey, OrmProperty } from '@/lib/db/orm/schema';
 
 /**
  * MikroORM entity for the `banned_ips` table.
  */
-@Entity({ tableName: 'banned_ips' })
+@OrmEntity('BannedIpEntity', { tableName: 'banned_ips' })
 export class BannedIpEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @Property({ type: 'string', unique: true })
+  @OrmProperty({ type: 'string', unique: true })
   range!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   reason!: string;
 
-  @Property({
+  @OrmProperty({
     type: 'Date',
     fieldName: 'banned_at',
     columnType: 'timestamptz',
@@ -32,6 +32,6 @@ export class BannedIpEntity {
   })
   bannedAt!: Date;
 
-  @Property({ type: 'string', fieldName: 'source_ip', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'source_ip', nullable: true })
   sourceIp?: string;
 }

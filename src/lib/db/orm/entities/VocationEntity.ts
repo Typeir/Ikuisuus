@@ -11,41 +11,41 @@
  */
 
 import {
-    Collection,
-    Embeddable,
-    Embedded,
-    Entity,
-    Index,
-    ManyToOne,
-    OneToMany,
-    PrimaryKey,
-    Property,
-    Unique,
-} from '@mikro-orm/core';
+    OrmEmbeddable,
+    OrmEmbedded,
+    OrmEntity,
+    OrmIndex,
+    OrmManyToOne,
+    OrmOneToMany,
+    OrmPrimaryKey,
+    OrmProperty,
+    OrmUnique,
+} from '@/lib/db/orm/schema';
+import { Collection } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
 
 /**
  * Skill proficiency grant — maps to `skill_count`, `skill_choices`.
  */
-@Embeddable()
+@OrmEmbeddable('VocationSkillProficienciesEmbed')
 export class VocationSkillProficienciesEmbed {
-  @Property({ type: 'number', columnType: 'smallint' })
+  @OrmProperty({ type: 'number', columnType: 'smallint' })
   count!: number;
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   choices: string[] = [];
 }
 
 /**
  * Spellcasting summary — maps to `spellcasting_ability`, `spellcasting_progression`.
  */
-@Embeddable()
+@OrmEmbeddable('VocationSpellcastingEmbed')
 export class VocationSpellcastingEmbed {
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   ability?: string | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   progression?: string | null;
 }
 
@@ -54,28 +54,29 @@ export class VocationSpellcastingEmbed {
 /**
  * MikroORM entity for the `vocation_features` child table.
  */
-@Entity({ tableName: 'vocation_features' })
+@OrmEntity('VocationFeatureEntity', { tableName: 'vocation_features' })
 export class VocationFeatureEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @ManyToOne(() => VocationEntity, {
+  @OrmManyToOne({
+    entity: 'VocationEntity',
     fieldName: 'vocation_id',
     deleteRule: 'cascade',
   })
   vocation!: VocationEntity;
 
-  @Property({ type: 'number', columnType: 'smallint' })
+  @OrmProperty({ type: 'number', columnType: 'smallint' })
   level!: number;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   name!: string;
 
-  @Property({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
+  @OrmProperty({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
   sortOrder!: number;
 
   /** @property {number | null} startLine - 1-indexed start line of this feature's heading block in the source MDX */
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'start_line',
     columnType: 'smallint',
@@ -84,7 +85,7 @@ export class VocationFeatureEntity {
   startLine?: number | null;
 
   /** @property {number | null} endLine - 1-indexed last line of this feature's heading block in the source MDX */
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'end_line',
     columnType: 'smallint',
@@ -93,7 +94,7 @@ export class VocationFeatureEntity {
   endLine?: number | null;
 
   /** @property {string[] | null} grants - Tag-based proficiency grants this feature confers (e.g. `skill:arcana:expertise`, `armor:heavy`); null when it grants no automatic proficiency */
-  @Property({ type: 'string[]', nullable: true })
+  @OrmProperty({ type: 'string[]', nullable: true })
   grants?: string[] | null;
 }
 
@@ -102,80 +103,82 @@ export class VocationFeatureEntity {
 /**
  * MikroORM entity for the `vocations` table.
  */
-@Entity({ tableName: 'vocations' })
-@Unique({ properties: ['locale', 'slug'] })
-@Index({
+@OrmEntity('VocationEntity', { tableName: 'vocations' })
+@OrmUnique({ properties: ['locale', 'slug'] })
+@OrmIndex({
   properties: ['locale'],
   name: 'vocations_locale_idx',
 })
 export class VocationEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   locale!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   slug!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   title!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   file!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   link!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   archetype!: string;
 
-  @Property({ fieldName: 'primary_ability', type: 'string[]' })
+  @OrmProperty({ fieldName: 'primary_ability', type: 'string[]' })
   primaryAbility: string[] = [];
 
-  @Property({ type: 'integer', fieldName: 'hit_die' })
+  @OrmProperty({ type: 'integer', fieldName: 'hit_die' })
   hitDie!: number;
 
-  @Property({ fieldName: 'saving_throws', type: 'string[]' })
+  @OrmProperty({ fieldName: 'saving_throws', type: 'string[]' })
   savingThrows: string[] = [];
 
-  @Property({ fieldName: 'armor_proficiencies', type: 'string[]' })
+  @OrmProperty({ fieldName: 'armor_proficiencies', type: 'string[]' })
   armorProficiencies: string[] = [];
 
-  @Property({ fieldName: 'weapon_proficiencies', type: 'string[]' })
+  @OrmProperty({ fieldName: 'weapon_proficiencies', type: 'string[]' })
   weaponProficiencies: string[] = [];
 
-  @Property({ fieldName: 'tool_proficiencies', type: 'string[]' })
+  @OrmProperty({ fieldName: 'tool_proficiencies', type: 'string[]' })
   toolProficiencies: string[] = [];
 
-  @Embedded(() => VocationSkillProficienciesEmbed, {
+  @OrmEmbedded({
+    entity: 'VocationSkillProficienciesEmbed',
     prefix: 'skill_',
     object: false,
   })
   skillProficiencies = new VocationSkillProficienciesEmbed();
 
-  @Embedded(() => VocationSpellcastingEmbed, {
+  @OrmEmbedded({
+    entity: 'VocationSpellcastingEmbed',
     prefix: 'spellcasting_',
     object: false,
     nullable: true,
   })
   spellcasting?: VocationSpellcastingEmbed | null;
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   specializations: string[] = [];
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
   /** @property {string | null} description - Prose description extracted from the vocation MDX */
-  @Property({ type: 'text', nullable: true })
+  @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
   /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'index_version',
     columnType: 'smallint',
@@ -184,10 +187,12 @@ export class VocationEntity {
   indexVersion?: number | null;
 
   /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
-  @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
 
-  @OneToMany(() => VocationFeatureEntity, (f) => f.vocation, {
+  @OrmOneToMany({
+    entity: 'VocationFeatureEntity',
+    mappedBy: 'vocation',
     orphanRemoval: true,
   })
   features = new Collection<VocationFeatureEntity>(this);
