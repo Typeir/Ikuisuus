@@ -37,21 +37,29 @@
   }
 }
 
-/* Block-shading banner. Mirrors .dropdownStatus in searchBar.module.scss. */
+/* Block-shading banner. Mirrors .dropdownStatus in searchBar.module.scss.
+   The corrupted glyph runs are accent-toned so they read as signal rather
+   than as prose that failed to load. */
 .title {
   width: 100%;
-  margin-top: 1.5rem;
   overflow: hidden;
   white-space: nowrap;
   font-family: var(--font-mono), monospace;
   font-size: 0.6875rem;
   font-weight: 400;
   letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
+  color: var(--color-accent);
+}
+
+/* Dither rule between sections, borrowing the loader's shimmer as a divider. */
+.divider {
+  width: 100%;
+  max-width: 32rem;
+  height: 0.5rem;
+  margin: 1.25rem 0;
 }
 
 .description {
-  margin-top: 1rem;
   font-size: 0.9375rem;
   font-style: italic;
   color: var(--color-text-muted);
@@ -94,7 +102,7 @@
   font-family: var(--font-mono), monospace;
   font-size: 0.6875rem;
   letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
+  color: var(--color-accent);
 }
 
 .suggestionLink {
@@ -121,7 +129,6 @@
 .backLink {
   width: 100%;
   max-width: 32rem;
-  margin-top: 2rem;
   padding: 0.625rem 0.75rem;
   overflow: hidden;
   white-space: nowrap;
@@ -129,7 +136,7 @@
   font-size: 0.6875rem;
   letter-spacing: 0.05em;
   text-decoration: none;
-  color: var(--color-primary);
+  color: var(--color-accent);
   border-top: 1px solid var(--color-border);
   transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 

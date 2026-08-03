@@ -32,7 +32,13 @@ export function NotFoundContent(): JSX.Element {
   return (
     <div className={styles.notFoundContainer}>
       <h1 className={styles.heading}>{t('heading')}</h1>
+
+      <Skeleton className={styles.divider} />
+
       <h2 className={styles.title}>{t('subtitle')}</h2>
+
+      <Skeleton className={styles.divider} />
+
       <p className={styles.description}>{t('description')}</p>
 
       {loading && (
@@ -57,6 +63,8 @@ export function NotFoundContent(): JSX.Element {
           </span>
         </Link>
       )}
+
+      <Skeleton className={styles.divider} />
 
       <Link href='/' className={styles.backLink}>
         {t('backToLibrary')}

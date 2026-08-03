@@ -48,7 +48,13 @@ export default async function RootLayout({
       lang={locale}
       suppressHydrationWarning
       className={cn(fonts.map((font) => font.variable))}>
-      {/* Theme init script - runs synchronously before React hydration */}
+      {/* Must stay inside <head>: the paired rule
+          `html:not([data-theme]) body { visibility: hidden }` keeps the page
+          blank until this runs, so moving it later only lengthens the blank.
+          next/script `beforeInteractive` was tried and emits into <body>,
+          past </head>, which breaks that contract. React warns that scripts
+          in components do not execute on client renders; this one only has
+          to run on the initial document, where it does. */}
       <head>
         <script dangerouslySetInnerHTML={{ __html: getCombinedInitScript() }} />
       </head>
