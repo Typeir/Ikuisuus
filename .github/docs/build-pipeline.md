@@ -234,32 +234,34 @@ Output:
 - Namespace organization during development
 - Single file simplifies deployment
 
-### Stage 6: Find Reusable MDX Outliers (`find-reusable-mdx-outliers`)
+### Stage 6: Bundle MDX Plugins (`bundle-mdx-plugins`)
 
-**Script**: `scripts/content/findReusableMdxOutliers/index.ts`  
-**Purpose**: Analyze MDX content for repeated patterns that could be componentized
+**Script**: `scripts/build/bundleMdxPlugins.ts`  
+**Purpose**: Compile local remark plugins to plain ESM for the `@next/mdx` loader
 
-**Input**: `src/content/**/*.mdx`  
-**Output**: Compiled mdx files componentized and exported in `./src/lib/components/mdx...`
+**Input**: `src/lib/md/remark*.ts`  
+**Output**: `.mdx-plugins/*.mjs` (generated, gitignored)
 
-**Process**:
+**Why Required**: Turbopack runs loaders in a Rust host and cannot receive JavaScript
+functions, so plugins must be named as resolvable path strings. `next.config.ts` points at
+these bundles, so this stage must run before `next build`.
 
-1. Scans all MDX files for repeated structures
-2. Identifies candidates for custom components
-3. Reports frequency and examples
-4. Compiles and exports within the component folder
+Register a new plugin in the `PLUGINS` array, then reference its `.mjs` path in
+`next.config.ts`.
 
-**Example output**:
+## Reusable Content Regions
 
-```bash
-Deleted existing output file: ...\Ikuisuus\src\lib\components\mdx\mdxComponents.tsx
-✅ LesserMooncleave: compiled and rendered from ...\Ikuisuus\src\content\en\spells\lesser-mooncleave.mdx
-✅ FoldDeduplication: compiled and rendered from ...\Ikuisuus\src\content\en\spells\fold-deduplication.mdx
+Reuse is **no longer a build stage**. A content file opts in with `reusable: true` in its
+frontmatter and optionally marks named regions with paired `reusable:start <name>` and
+`reusable:end` MDX comments. Regions are spliced into their host at source level by
+`resolveReusableSource`, which both MDX compilers call before evaluating.
 
-✨ Wrote compiled components to ...\Ikuisuus\src\lib\components\mdx\mdxComponents.tsx
-```
+This replaced a scanner that compiled every MDX file to discover reuse, then froze the result
+to static HTML. That approach left interactive components dead — `DiceRoll` buttons rendered
+as inert markup with CSS module hashes baked into content — and matched components by
+filename, which collided with real components such as `Image`.
 
-**Why Required**: Certain Mdx components encapsulate others, importing reduces general file size.
+**Relevant modules**: `src/lib/content/reusable/`
 
 ## Pipeline Execution
 
@@ -292,7 +294,7 @@ npm run kebabify-content
 npm run md-to-mdx
 npm run generate-metadata
 npm run merge-locales
-npm run find-reusable-mdx-outliers
+npm run bundle-mdx-plugins
 ```
 
 ## Dependency Graph
@@ -304,12 +306,19 @@ kebabify-content (requires stable filenames)
       ↓
 md-to-mdx (requires kebab-case names)
       ↓
-generate-metadata (requires .mdx extension)
+fix-metadata (requires .mdx extension)
       ↓
 merge-locales (independent but conventionally last)
       ↓
-find-reusable-mdx-outliers
+bundle-mdx-plugins (must precede next build)
+      ↓
+search:index
 ```
+
+`pre-init` runs `fix-metadata` rather than `generate-metadata` alone. `generate-metadata`
+writes sidecars but never removes them, so a renamed or deleted content file left its
+`.metadata.json` orphaned indefinitely. `fix-metadata` cleans first, regenerates, then
+rebuilds the spell lists.
 
 ## Error Scenarios
 

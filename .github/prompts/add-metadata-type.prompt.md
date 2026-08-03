@@ -50,7 +50,7 @@ Create `src/app/api/{type}/route.ts`:
    - Define `searchKeys` for the search bar
    - Use the generic `MetadataTable` component
 
-2. Register in `src/lib/components/mdx/index.tsx` component map
+2. Register in `src/modules/library/presentation/components/index.tsx` component map
 
 ## Step 6: Update Shared Data (If Needed)
 

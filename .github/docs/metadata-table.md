@@ -82,7 +82,7 @@ All wrappers are **client components** that fetch data from API routes.
 
 ## Usage in MDX
 
-Tables are registered in `src/lib/components/mdx/index.tsx` and available in all `.mdx` files.
+Tables are registered in `src/modules/library/presentation/components/index.tsx` and available in all `.mdx` files.
 
 ### Monster Table
 
@@ -244,7 +244,7 @@ export default function YourTypeTableWrapper({ locale: localeProp }: YourTypeTab
 
 ### 3. Register Component
 
-**File**: `src/lib/components/mdx/index.tsx`
+**File**: `src/modules/library/presentation/components/index.tsx`
 
 ```typescript
 import YourTypeTableWrapper from './MetadataTable/yourTypeTableWrapper';

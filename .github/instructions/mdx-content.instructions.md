@@ -9,7 +9,7 @@ Before modifying any MDX content or MDX component, you MUST:
 1. **Read** `.github/docs/content-system.md` for the full content architecture (filesystem routing, locale handling, MDX compilation).
 2. **Verify** file naming: kebab-case only, `.mdx` extension, `.sheet.mdx` for monster stat blocks.
 3. **Check locale mirroring**: changes to `src/content/en/` must be mirrored in `es/` and `fi/` if translations exist.
-4. **Confirm component registration**: any new MDX component must be registered in `src/lib/components/mdx/index.tsx`.
+4. **Confirm component registration**: any new MDX component must be registered in `src/modules/library/presentation/components/index.tsx`.
 5. **Run `npm run pre-init`** after content changes to regenerate metadata and merge locales.
 
 ## Task Summary Requirement
@@ -88,7 +88,7 @@ Required elements:
 
 ## MDX Component Registry
 
-Components available in MDX (from `src/lib/components/mdx/index.tsx`):
+Components available in MDX (from `src/modules/library/presentation/components/index.tsx`):
 
 - `<BlendedImage>` — Image with blend effects
 - `<Image>` — Next.js optimized image (600×600 default)
@@ -99,7 +99,8 @@ Components available in MDX (from `src/lib/components/mdx/index.tsx`):
 - `<FlexRenderer>` — Flexible rendering
 - `<MonsterTable>` / `<HeirloomTable>` / `<SpellTable>` / `<TrinketTable>` — Metadata tables
 
-Auto-generated components from `mdxComponents.tsx` are also valid (spell components).
+Content files that opt in with `reusable: true` in frontmatter are also valid tags
+(e.g. `<LesserMooncleave />`). See [Reusable Content Regions](../docs/build-pipeline.md).
 
 ## Format Refactoring Workflow
 

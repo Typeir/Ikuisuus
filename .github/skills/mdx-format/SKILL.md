@@ -92,7 +92,7 @@ When performing a format refactor:
 
 ## Component Registry
 
-Components available in MDX files (registered in `src/lib/components/mdx/index.tsx`):
+Components available in MDX files (registered in `src/modules/library/presentation/components/index.tsx`):
 
 | Component              | Purpose                                   |
 | ---------------------- | ----------------------------------------- |
@@ -112,5 +112,7 @@ Components available in MDX files (registered in `src/lib/components/mdx/index.t
 | `<Tooltip>`            | Inline tooltip for rules terms            |
 | `<Meta>`               | Monster metadata directive (sheet files)  |
 
-Auto-generated spell components from `mdxComponents.tsx` are also available (e.g., `<LesserMooncleave>`, `<FoldDeduplication>`).
+Content files carrying `reusable: true` in frontmatter are available as tags too
+(e.g. `<LesserMooncleave />`). They are spliced in at source level at request
+time — there is no generated component file.
 ```

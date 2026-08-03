@@ -43,14 +43,14 @@ export interface MonsterHP {
 
 /**
  * Movement speed parsed from the stat block speed row.
- * All distances are in feet. Matches `MonsterSpeedEmbed` property names.
+ * All distances are in strides, the native Damocles unit. Consumers needing imperial convert at their own boundary; see the Foundry transformer. Matches `MonsterSpeedEmbed` property names.
  *
  * @property {string} raw - Original speed text
- * @property {number} [walk] - Walk speed in feet
- * @property {number} [fly] - Fly speed in feet
- * @property {number} [climb] - Climb speed in feet
- * @property {number} [swim] - Swim speed in feet
- * @property {number} [burrow] - Burrow speed in feet
+ * @property {number} [walk] - Walk speed in strides
+ * @property {number} [fly] - Fly speed in strides
+ * @property {number} [climb] - Climb speed in strides
+ * @property {number} [swim] - Swim speed in strides
+ * @property {number} [burrow] - Burrow speed in strides
  * @property {boolean} [hover] - Whether the creature hovers while flying
  */
 export interface MonsterSpeed {
@@ -109,10 +109,10 @@ export interface MonsterSaves {
  *
  * @property {string} raw - Original senses text
  * @property {number} [passivePerception] - Passive Perception score
- * @property {number} [darkvision] - Darkvision range in feet
- * @property {number} [blindsight] - Blindsight range in feet
- * @property {number} [tremorsense] - Tremorsense range in feet
- * @property {number} [truesight] - Truesight range in feet
+ * @property {number} [darkvision] - Darkvision range in strides
+ * @property {number} [blindsight] - Blindsight range in strides
+ * @property {number} [tremorsense] - Tremorsense range in strides
+ * @property {number} [truesight] - Truesight range in strides
  */
 export interface MonsterSenses {
   raw: string;

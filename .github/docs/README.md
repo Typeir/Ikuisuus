@@ -303,7 +303,7 @@ Quick reference for where key files are located:
 - `scripts/content/mdToMdx.ts` - Stage 3: Extension conversion
 - `scripts/metadata/generateMetadata.ts` - Stage 4: Orchestrator
 - `scripts/i18n/mergeMessages.ts` - Stage 5: Translation merging
-- `scripts/content/findReusableMdxOutliers/index.ts` - Stage 6: Duplication analysis
+- `scripts/build/bundleMdxPlugins.ts` - Stage 6: MDX plugin bundling
 
 **Metadata System**:
 
@@ -387,7 +387,7 @@ Quick reference for where key files are located:
 - `src/content/{locale}/` - All MDX content (en, es, fi)
 - `src/app/[locale]/library/[...slug]/page.tsx` - Dynamic content route
 - `src/lib/utils/resolveContentFilePath.ts` - Locale fallback resolver
-- `src/lib/components/mdx/index.tsx` - MDX component registration
+- `src/modules/library/presentation/components/index.tsx` - MDX component registration
 - `src/i18n/routing.ts` - Locale configuration
 - `src/middleware.ts` - next-intl middleware
 - `messages/{locale}/` - Translation files
@@ -404,7 +404,7 @@ Quick reference for where key files are located:
 4. Create: `scripts/metadata/generate{Type}Metadata.ts` (import from `@/lib/metadata`)
 5. Create: `src/app/api/{type}/route.ts`
 6. Create: `src/lib/components/mdx/MetadataTable/{type}TableWrapper.tsx`
-7. Register: `src/lib/components/mdx/index.tsx`
+7. Register: `src/modules/library/presentation/components/index.tsx`
 
 ### Debugging Build Failures
 

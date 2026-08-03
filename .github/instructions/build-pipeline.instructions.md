@@ -7,7 +7,7 @@ applyTo: 'scripts/build/**,scripts/assets/**,scripts/content/**,scripts/i18n/**'
 Before modifying build scripts or pipeline stages, you MUST:
 
 1. **Read** `.github/docs/build-pipeline.md` for the full pipeline architecture (6 stages, dependency graph, extension points).
-2. **Pipeline order is critical**: compress-assets → kebabify-content → md-to-mdx → generate-metadata → merge-locales → find-reusable-mdx-outliers. Stages have dependencies — do not reorder.
+2. **Pipeline order is critical**: compress-assets → kebabify-content → md-to-mdx → generate-metadata → merge-locales → bundle-mdx-plugins. Stages have dependencies — do not reorder.
 3. **`npm run pre-init`** runs the full pipeline. It must succeed before `npm run dev` or `npm run build`.
 4. **Asset compression** (Stage 1) uses Sharp for WebP conversion to `public/library/`. Never reference `public/full-size/` in content.
 5. **Kebabify** (Stage 2) normalizes filenames to kebab-case in `src/content/`. Uses `toKebabCase` utility.
@@ -20,7 +20,7 @@ Before modifying build scripts or pipeline stages, you MUST:
 - `scripts/content/mdToMdx.ts` — Stage 3
 - `scripts/metadata/generateMetadata.ts` — Stage 4 orchestrator
 - `scripts/i18n/mergeMessages.ts` — Stage 5
-- `scripts/content/findReusableMdxOutliers/index.ts` — Stage 6
+- `scripts/build/bundleMdxPlugins.ts` — Stage 6
 
 ## Task Summary Requirement
 
