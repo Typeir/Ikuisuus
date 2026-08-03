@@ -61,7 +61,7 @@ describe('compileRuntime (async)', () => {
       source,
       components: {},
     });
-    expect(result1).toBe(result2);
+    expect(result1.content.type).toBe(result2.content.type);
   });
 
   it('skips cache when skipCache is true', async () => {
@@ -75,7 +75,7 @@ describe('compileRuntime (async)', () => {
       components: {},
       skipCache: true,
     });
-    expect(result1).not.toBe(result2);
+    expect(result1.content.type).not.toBe(result2.content.type);
   });
 
   it('clears cache when clearCompileRuntimeCache is called', async () => {
@@ -125,7 +125,7 @@ describe('compileRuntimeSync (sync)', () => {
       source,
       components: {},
     });
-    expect(result1).toBe(result2);
+    expect(result1.content.type).toBe(result2.content.type);
   });
 
   it('skips cache when skipCache is true', () => {
@@ -139,7 +139,7 @@ describe('compileRuntimeSync (sync)', () => {
       components: {},
       skipCache: true,
     });
-    expect(result1).not.toBe(result2);
+    expect(result1.content.type).not.toBe(result2.content.type);
   });
 });
 
@@ -164,7 +164,7 @@ describe('mdx` ` (async template literal)', () => {
   it('caches template literal results by hash', async () => {
     const result1 = await mdx`Cached **content**`;
     const result2 = await mdx`Cached **content**`;
-    expect(result1).toBe(result2);
+    expect(result1.content.type).toBe(result2.content.type);
   });
 });
 
@@ -189,6 +189,58 @@ describe('mdxSync` ` (sync template literal)', () => {
   it('caches template literal results by hash', () => {
     const result1 = mdxSync`Cached **content**`;
     const result2 = mdxSync`Cached **content**`;
-    expect(result1).toBe(result2);
+    expect(result1.content.type).toBe(result2.content.type);
+  });
+});
+
+describe('component map is per call, not per cache entry', () => {
+  const SOURCE = 'Range [= 2 stride =] from the target.';
+
+  beforeEach(() => {
+    clearCompileRuntimeCache();
+  });
+
+  /**
+   * Reproduces a production black screen in the character builder. Two shard
+   * renderers compile the same shard source: the chip passes `{}`, the preview
+   * panel passes the full registry. When the cache stored a built element, the
+   * chip's empty map was reused for the panel and `Unit` resolved to nothing,
+   * throwing `Expected component Unit to be defined` during render.
+   */
+  it('should not let an earlier empty component map poison a later caller', () => {
+    const Unit = () => null;
+
+    compileRuntimeSync({ source: SOURCE, components: {} });
+    const second = compileRuntimeSync({ source: SOURCE, components: { Unit } });
+
+    expect(
+      (second.content.props as { components: Record<string, unknown> })
+        .components,
+    ).toHaveProperty('Unit', Unit);
+  });
+
+  it('should reuse the compiled component across differing component maps', () => {
+    const first = compileRuntimeSync({ source: SOURCE, components: {} });
+    const second = compileRuntimeSync({
+      source: SOURCE,
+      components: { Unit: () => null },
+    });
+
+    expect(second.content.type).toBe(first.content.type);
+  });
+
+  it('should apply the caller component map on the async path too', async () => {
+    const Unit = () => null;
+
+    await compileRuntime({ source: SOURCE, components: {} });
+    const second = await compileRuntime({
+      source: SOURCE,
+      components: { Unit },
+    });
+
+    expect(
+      (second.content.props as { components: Record<string, unknown> })
+        .components,
+    ).toHaveProperty('Unit', Unit);
   });
 });

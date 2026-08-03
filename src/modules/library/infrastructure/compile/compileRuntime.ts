@@ -34,11 +34,22 @@ export interface MdxCompileResult {
 }
 
 /**
- * Internal cache maps for compiled MDX.
- * Async and sync caches are separate.
+ * Compiled MDX component produced by `run`/`runSync`.
  */
-const asyncCache = new Map<string, MdxCompileResult>();
-const syncCache = new Map<string, MdxCompileResult>();
+type MdxContentComponent = React.FC<{ components?: unknown }>;
+
+/**
+ * Internal cache maps for compiled MDX, async and sync kept separate.
+ *
+ * These cache the compiled component, never a built element. The cache key is
+ * the source alone, so caching an element would bake the first caller's
+ * component map into every later caller's render: a caller passing `{}` would
+ * poison the entry for one passing the full registry, and the second caller
+ * would throw `Expected component X to be defined` at render time. Components
+ * are applied per call instead.
+ */
+const asyncCache = new Map<string, MdxContentComponent>();
+const syncCache = new Map<string, MdxContentComponent>();
 
 /**
  * Compute a simple hash of the source string for cache keying.
@@ -77,30 +88,28 @@ export async function compileRuntime(
   const { source, components, skipCache = false } = opts;
   const sourceHash = hashSource(source);
 
-  if (!skipCache && asyncCache.has(sourceHash)) {
-    return asyncCache.get(sourceHash)!;
+  let MDXContent = skipCache ? undefined : asyncCache.get(sourceHash);
+
+  if (!MDXContent) {
+    const compiled = await compile(source, {
+      ...(PLUGIN_OPTIONS as any),
+    });
+
+    const mod = await run(compiled, {
+      ...(runtime as any),
+      baseUrl: import.meta.url,
+    });
+
+    MDXContent = mod.default as MdxContentComponent;
+
+    if (!skipCache) {
+      asyncCache.set(sourceHash, MDXContent);
+    }
   }
 
-  const compiled = await compile(source, {
-    ...(PLUGIN_OPTIONS as any),
-  });
-
-  const { default: MDXContent } = await run(compiled, {
-    ...(runtime as any),
-    baseUrl: import.meta.url,
-  });
-
-  const result: MdxCompileResult = {
-    content: createElement(MDXContent as React.FC<{ components?: unknown }>, {
-      components: components as any,
-    }),
+  return {
+    content: createElement(MDXContent, { components: components as any }),
   };
-
-  if (!skipCache) {
-    asyncCache.set(sourceHash, result);
-  }
-
-  return result;
 }
 
 /**
@@ -118,30 +127,26 @@ export function compileRuntimeSync(
   const { source, components, skipCache = false } = opts;
   const sourceHash = hashSource(source);
 
-  if (!skipCache && syncCache.has(sourceHash)) {
-    return syncCache.get(sourceHash)!;
+  let MDXContent = skipCache ? undefined : syncCache.get(sourceHash);
+
+  if (!MDXContent) {
+    const compiled = compileSync(source, {
+      ...(PLUGIN_OPTIONS as any),
+    });
+
+    MDXContent = runSync(compiled, {
+      ...(runtime as any),
+      baseUrl: import.meta.url,
+    }).default as MdxContentComponent;
+
+    if (!skipCache) {
+      syncCache.set(sourceHash, MDXContent);
+    }
   }
 
-  const compiled = compileSync(source, {
-    ...(PLUGIN_OPTIONS as any),
-  });
-
-  const { default: MDXContent } = runSync(compiled, {
-    ...(runtime as any),
-    baseUrl: import.meta.url,
-  });
-
-  const result: MdxCompileResult = {
-    content: createElement(MDXContent as React.FC<{ components?: unknown }>, {
-      components: components as any,
-    }),
+  return {
+    content: createElement(MDXContent, { components: components as any }),
   };
-
-  if (!skipCache) {
-    syncCache.set(sourceHash, result);
-  }
-
-  return result;
 }
 
 /**

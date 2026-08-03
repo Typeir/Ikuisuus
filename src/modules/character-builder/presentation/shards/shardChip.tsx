@@ -24,6 +24,7 @@ import type { CharacterShard } from '@/lib/types/character';
 import { shardToPreview } from '@/modules/character-builder/lib/utils/shardToPreview';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { cleanTruncatedMdx } from '@/modules/library/infrastructure/content/cleanTruncatedMdx';
+import { mdxComponents } from '@/modules/library/presentation';
 import { useLocale } from 'next-intl';
 import type { ReactNode } from 'react';
 import { memo, useCallback, useMemo } from 'react';
@@ -134,7 +135,7 @@ const ShardChipImpl: React.FC<ShardChipProps> = ({
     }
 
     try {
-      return compileRuntimeSync({ source, components: {} }).content;
+      return compileRuntimeSync({ source, components: mdxComponents }).content;
     } catch {
       return source;
     }
