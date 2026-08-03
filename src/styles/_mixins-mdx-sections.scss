@@ -7,19 +7,34 @@
  * @module styles/mixins-mdx-sections
  */
 
-/* Helper mixin to build mask-image with parameterized ellipse and position
-   Avoids duplicate CSS by centralizing the radial-gradient logic. */
+// Helper mixin to build mask-image with parameterized ellipse and position.
+// Avoids duplicate CSS by centralizing the radial-gradient logic.
+//
+// Layer order is load-bearing. The first mask layer is the topmost, and so is
+// the *source*; layers beneath it are the *destination*. Keeping the linear
+// gradient on top lets the standard `subtract` operator — source AND NOT
+// destination — yield "linear minus radial", which is the single lit corner.
+//
+// The previous form listed the radial first and paired `mask-composite:
+// exclude` with `-webkit-mask-composite: destination-out`. Those are different
+// operations, xor versus destination-out, so the rule rendered correctly only
+// while a processor happened to emit the prefixed property last. Autoprefixer
+// preserves author order; Lightning CSS hoists prefixed declarations, which let
+// `exclude` win and revealed the parts of the frame the mask should remove.
+//
+// Both declarations below now express the same operation, so hoisting is
+// harmless whichever processor runs.
 @mixin mdx--mask-image($mask-ellipse, $mask-position, $mask-linear) {
   mask-image:
+    #{$mask-linear},
     radial-gradient(
       ellipse #{$mask-ellipse} at #{$mask-position},
       transparent 0%,
       transparent 60%,
       black 65%
-    ),
-    #{$mask-linear};
-  mask-composite: exclude;
-  -webkit-mask-composite: destination-out;
+    );
+  mask-composite: subtract;
+  -webkit-mask-composite: source-out;
 }
 
 /* Nine-slice base for a section ::before (call from your ::before) */
