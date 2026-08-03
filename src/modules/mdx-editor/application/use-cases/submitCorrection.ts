@@ -59,11 +59,13 @@ export interface SubmitCorrectionPayload {
  *
  * @interface SubmitCorrectionResult
  * @property {string} prUrl - Created pull request URL.
- * @property {string} slugFromPath - Slug derived from file path.
+ * @property {string} locale - Locale segment taken from the file path, defaulting to `en`.
+ * @property {string} slugFromPath - Slug derived from file path, with the locale segment removed.
  * @property {string} [oldSlugFromPath] - Slug derived from old file path if renamed.
  */
 export interface SubmitCorrectionResult {
   prUrl: string;
+  locale: string;
   slugFromPath: string;
   oldSlugFromPath?: string;
 }
@@ -166,5 +168,5 @@ export async function submitCorrection(
     token_id: payload.auditId,
   });
 
-  return { prUrl, slugFromPath, oldSlugFromPath };
+  return { prUrl, locale, slugFromPath, oldSlugFromPath };
 }

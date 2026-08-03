@@ -212,9 +212,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
 
     try {
-      revalidatePath(`/library/${result.slugFromPath}`);
+      revalidatePath(`/${result.locale}/library/${result.slugFromPath}`);
       if (result.oldSlugFromPath) {
-        revalidatePath(`/library/${result.oldSlugFromPath}`);
+        revalidatePath(`/${result.locale}/library/${result.oldSlugFromPath}`);
       }
     } catch {
       log.debug('ISR revalidation failed (non-blocking)', {
