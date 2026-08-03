@@ -42,8 +42,6 @@ a:hover .sigil {
 }
 
 /* ---- ResultTitle ---- */
-/* `anywhere` rather than `break-word`: it also lowers the min-content width,
-   so a single long title cannot force the card wider than its grid track. */
 .resultTitle {
   font-family: inherit;
   font-weight: 600;
@@ -211,10 +209,6 @@ a:hover .resultTitle {
   gap: 0.35rem;
 }
 
-/* Wraps rather than running past the card edge. Without flex-wrap the label
-   and the reading time are pinned to one line, and `min-width: 0` lets this
-   item shrink below the intrinsic width of a word like SPECIALIZATIONS, which
-   letter-spacing makes wider still. */
 .cardTypeLabel {
   font-family: var(--font-mono), monospace;
   font-size: 0.625rem;
