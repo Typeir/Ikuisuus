@@ -20,21 +20,25 @@
   -webkit-overflow-scrolling: touch;
   @include scrollbar-thin(
     $thumb: var(--color-secondary),
-    $track: var(--color-surface),
+    $track: var(--gradient-tabs-surface, var(--color-surface)),
     $height: 8px,
     $thumb-radius: 4px
   );
   background: linear-gradient(
     0deg,
-    var(--color-surface) 20%,
+    var(--gradient-tabs-surface, var(--color-surface)) 20%,
     var(--color-transparent) 30%
   );
 }
 
-// Container for tab navigation with side fade borders
+/* The frame, active tab and panel all sit on `--gradient-tabs-surface`, and
+   resting tabs on `--gradient-tabs-well`. A container that already occupies
+   the default surface can recess both so the group still reads as a deeper
+   layer instead of dissolving into its parent — the same move `tabsNested`
+   makes for the plain Tabs component. */
 .gradientContainer {
   position: relative;
-  border: 0.2rem solid var(--color-surface);
+  border: 0.2rem solid var(--gradient-tabs-surface, var(--color-surface));
   border-radius: 10px 10px 0 0;
   padding-top: 2rem;
 }
@@ -61,7 +65,7 @@
     height: 100%;
     background: linear-gradient(
       0deg,
-      var(--color-surface) 20%,
+      var(--gradient-tabs-surface, var(--color-surface)) 20%,
       var(--color-transparent) 50%
     );
     pointer-events: none;
@@ -75,9 +79,9 @@
 
   button {
     padding: 0.5rem 0.875rem 1rem;
-    border: 1px solid var(--color-surface);
+    border: 1px solid var(--gradient-tabs-surface, var(--color-surface));
     border-bottom: none;
-    background: var(--color-bg);
+    background: var(--gradient-tabs-well, var(--color-bg));
     color: var(--color-secondary);
     font-size: 0.875rem;
     font-weight: 500;
@@ -89,14 +93,14 @@
 
     &:hover {
       color: var(--color-text);
-      background: var(--color-bg);
+      background: var(--gradient-tabs-well, var(--color-bg));
       filter: brightness(1.05);
     }
   }
 
   &.active {
     button {
-      background: var(--color-surface);
+      background: var(--gradient-tabs-surface, var(--color-surface));
       color: var(--color-accent);
 
       // Extend the bottom border to cover the content box border
@@ -107,7 +111,7 @@
         left: 0;
         right: 0;
         height: 2px;
-        background: var(--color-surface);
+        background: var(--gradient-tabs-surface, var(--color-surface));
       }
     }
   }
@@ -117,7 +121,7 @@
 .tabContent {
   position: relative;
   min-height: 200px;
-  background: var(--color-surface);
+  background: var(--gradient-tabs-surface, var(--color-surface));
   border-radius: 0 0 6px 6px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgb(var(--color-shadow-light));
@@ -144,7 +148,7 @@
     background: linear-gradient(
       90deg,
       var(--color-transparent),
-      var(--color-surface)
+      var(--gradient-tabs-surface, var(--color-surface))
     );
     pointer-events: none;
     z-index: 2;
