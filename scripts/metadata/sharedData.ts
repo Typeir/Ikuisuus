@@ -127,6 +127,37 @@ export interface PatternsSection {
 }
 
 /**
+ * One aspect group in the closed vocabulary.
+ *
+ * A group is either the prefix of a player-facing aspect (`damage:`) or, when the
+ * key carries the `meta:` prefix, of an internal one that is indexed and searchable
+ * but never drawn in prose.
+ *
+ * Values are declared literally or borrowed from elsewhere in shared data via
+ * `valuesFrom`, which keeps a single source of truth for lists the game already
+ * defines. References are resolved one level deep and never chain: a group that
+ * needs conditions points at `gameData.conditions`, not at the `condition` group.
+ *
+ * @property {"*" | string[]} scope - Content types carrying the group, or `"*"` for all
+ * @property {string[]} [values] - Literal value list
+ * @property {string[]} [valuesFrom] - `section.key` paths, or a sibling group name, to borrow values from
+ * @property {boolean} [open] - Group accepts any value; excluded from closed-set validation
+ * @property {string} [rule] - Route of the rule page defining the group, pinned first in aspect searches
+ */
+export interface AspectGroup {
+  scope: '*' | string[];
+  values?: string[];
+  valuesFrom?: string[];
+  open?: boolean;
+  rule?: string;
+}
+
+/**
+ * The closed aspect vocabulary, keyed by group name without its trailing colon.
+ */
+export type AspectSection = Record<string, AspectGroup>;
+
+/**
  * Complete shared data schema.
  */
 export interface SharedData {
@@ -136,6 +167,7 @@ export interface SharedData {
   worldData: WorldDataSection;
   taxonomies: TaxonomySection;
   patterns: PatternsSection;
+  aspects: AspectSection;
 }
 
 /* ──────────────────────────  Loader  ──────────────────────────────── */
@@ -169,4 +201,82 @@ export async function loadSharedData(): Promise<SharedData> {
  */
 export function clearSharedDataCache(): void {
   cached = null;
+}
+
+/* ──────────────────────────  Aspects  ─────────────────────────────── */
+
+/**
+ * Resolves a group's values, following `valuesFrom` one level.
+ *
+ * @param {SharedData} sharedData - Loaded shared data
+ * @param {string} group - Group name without its trailing colon
+ * @returns {string[]} Every value the group accepts, empty when the group is open or unknown
+ */
+export function resolveAspectValues(
+  sharedData: SharedData,
+  group: string,
+): string[] {
+  const definition = sharedData.aspects[group];
+  if (!definition || definition.open) return [];
+
+  const values = [...(definition.values ?? [])];
+
+  for (const reference of definition.valuesFrom ?? []) {
+    const [section, key] = reference.split('.');
+    const borrowed = key
+      ? (sharedData as unknown as Record<string, Record<string, unknown>>)[
+          section
+        ]?.[key]
+      : sharedData.aspects[section]?.values;
+
+    if (Array.isArray(borrowed)) values.push(...(borrowed as string[]));
+  }
+
+  return [...new Set(values)];
+}
+
+/**
+ * Whether a group applies to a given content type.
+ *
+ * @param {SharedData} sharedData - Loaded shared data
+ * @param {string} group - Group name without its trailing colon
+ * @param {string} contentType - The `contentType` frontmatter value
+ * @returns {boolean} True when the group is universal or lists this content type
+ */
+export function aspectGroupAppliesTo(
+  sharedData: SharedData,
+  group: string,
+  contentType: string,
+): boolean {
+  const definition = sharedData.aspects[group];
+  if (!definition) return false;
+  return definition.scope === '*' || definition.scope.includes(contentType);
+}
+
+/**
+ * Splits an aspect into its group and value on the last colon, so that both
+ * `damage:fire` and `meta:source:official` yield a usable pair.
+ *
+ * @param {string} aspect - A full aspect token
+ * @returns {{ group: string; value: string } | null} The pair, or null when there is no colon
+ */
+export function parseAspect(
+  aspect: string,
+): { group: string; value: string } | null {
+  const boundary = aspect.lastIndexOf(':');
+  if (boundary <= 0 || boundary === aspect.length - 1) return null;
+  return {
+    group: aspect.slice(0, boundary),
+    value: aspect.slice(boundary + 1),
+  };
+}
+
+/**
+ * Whether an aspect is internal, and therefore indexed but never drawn in prose.
+ *
+ * @param {string} aspect - A full aspect token
+ * @returns {boolean} True for `meta:`-prefixed aspects
+ */
+export function isInternalAspect(aspect: string): boolean {
+  return aspect.startsWith('meta:');
 }

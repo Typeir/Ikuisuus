@@ -366,5 +366,321 @@
       "conditions": "\\\\b({CONDITION})\\\\b",
       "movement": "\\\\b(fly|flying|flight|burrow|swim|climb|teleport)\\\\b"
     }
+  },
+  "aspects": {
+    "damage": {
+      "scope": "*",
+      "rule": "rules/steel-and-strife/damage",
+      "values": [
+        "chemical",
+        "bludgeoning",
+        "frost",
+        "fire",
+        "force",
+        "lightning",
+        "dark",
+        "piercing",
+        "poison",
+        "psychic",
+        "holy",
+        "slashing",
+        "true"
+      ]
+    },
+    "defense": {
+      "scope": "*",
+      "values": ["resistance", "immunity", "vulnerability"]
+    },
+    "resistance": { "scope": "*", "valuesFrom": ["damage"] },
+    "immunity": {
+      "scope": "*",
+      "valuesFrom": ["damage", "gameData.conditions"]
+    },
+    "vulnerability": { "scope": "*", "valuesFrom": ["damage"] },
+    "condition": {
+      "scope": "*",
+      "rule": "rules/steel-and-strife/conditions",
+      "valuesFrom": ["gameData.conditions"]
+    },
+    "mechanic": {
+      "scope": "*",
+      "values": [
+        "bleed",
+        "crit",
+        "sneak-attack",
+        "multiattack",
+        "pack-tactics",
+        "opportunity-attack",
+        "grapple",
+        "shapeshifting",
+        "regeneration",
+        "objection",
+        "dispel"
+      ]
+    },
+    "phase": {
+      "scope": "*",
+      "values": ["wounded", "bloodied", "doomed", "slain"]
+    },
+    "range": {
+      "scope": "*",
+      "values": [
+        "self",
+        "touch",
+        "reach",
+        "melee",
+        "close",
+        "medium",
+        "long",
+        "sight",
+        "unlimited"
+      ]
+    },
+    "delivery": {
+      "scope": "*",
+      "rule": "rules/steel-and-strife/maps-grids-and-shapes",
+      "values": [
+        "self",
+        "touch",
+        "attack",
+        "projectile",
+        "line",
+        "cone",
+        "sphere",
+        "area",
+        "aura",
+        "zone",
+        "summon"
+      ]
+    },
+    "tempo": {
+      "scope": "*",
+      "rule": "rules/steel-and-strife/effects-and-enhancements",
+      "values": [
+        "instant",
+        "sustained",
+        "reactive",
+        "ritual",
+        "persistent",
+        "incipient",
+        "minor",
+        "major",
+        "free"
+      ]
+    },
+    "pressure": {
+      "scope": "*",
+      "values": [
+        "burst",
+        "attrition",
+        "control",
+        "denial",
+        "mobility",
+        "protection",
+        "restoration",
+        "enhancement",
+        "affliction",
+        "utility",
+        "insight",
+        "summoning"
+      ]
+    },
+    "resource": {
+      "scope": "*",
+      "values": [
+        "slot",
+        "charge",
+        "abandon",
+        "hit-die",
+        "temp-hp",
+        "material-cost",
+        "consumable",
+        "per-turn",
+        "per-repose",
+        "per-recovery"
+      ]
+    },
+    "scaling": {
+      "scope": "*",
+      "values": ["slot", "level", "tier", "ability", "stacks", "flat"]
+    },
+    "save": {
+      "scope": "*",
+      "values": ["str", "dex", "con", "int", "wis", "cha", "contested"]
+    },
+    "source": {
+      "scope": "*",
+      "values": ["fold", "vaki", "will", "key", "material", "null"]
+    },
+    "access": {
+      "scope": ["specializations"],
+      "values": ["fold", "vaki", "will", "key"]
+    },
+    "position": {
+      "scope": "*",
+      "rule": "rules/steel-and-strife/contextual-conflict",
+      "values": ["charging", "flanking", "high-ground", "mounted", "underwater"]
+    },
+    "cover": {
+      "scope": "*",
+      "rule": "rules/steel-and-strife/making-an-attack",
+      "values": ["half", "three-quarters", "total", "grants", "ignores"]
+    },
+    "sense": {
+      "scope": "*",
+      "rule": "rules/the-long-road/vision-light-and-environment",
+      "values": [
+        "blindsight",
+        "darkvision",
+        "tremorsense",
+        "truesight",
+        "bright",
+        "dim",
+        "darkness",
+        "magical-darkness",
+        "lightly-obscured",
+        "heavily-obscured",
+        "concealed",
+        "reveals",
+        "pierces"
+      ]
+    },
+    "movement": {
+      "scope": "*",
+      "rule": "rules/steel-and-strife/movement-terrain-and-traversal",
+      "values": [
+        "flight",
+        "swimming",
+        "burrowing",
+        "climbing",
+        "teleportation",
+        "hover",
+        "ethereal",
+        "dimensional",
+        "difficult-terrain",
+        "jump",
+        "squeeze",
+        "crawl",
+        "fall"
+      ]
+    },
+    "size": {
+      "scope": ["monsters", "heirlooms", "trinkets", "equipment"],
+      "valuesFrom": ["gameData.sizes"]
+    },
+    "creaturetype": {
+      "scope": ["monsters"],
+      "valuesFrom": ["gameData.creatureTypes"]
+    },
+    "rarity": {
+      "scope": "*",
+      "values": [
+        "common",
+        "uncommon",
+        "rare",
+        "legendary",
+        "epic",
+        "mythic",
+        "ancient",
+        "forbidden",
+        "lost"
+      ]
+    },
+    "quality": {
+      "scope": ["heirlooms", "trinkets", "equipment"],
+      "values": ["enhanced"]
+    },
+    "myth": {
+      "scope": "*",
+      "values": [
+        "canvas",
+        "true-god",
+        "vestige",
+        "hiisi",
+        "emergent",
+        "mortal",
+        "faith",
+        "nulls",
+        "arkhe",
+        "fold",
+        "everdark",
+        "golden-one",
+        "dragon",
+        "dreamcatcher",
+        "wax",
+        "kultharja",
+        "taiva",
+        "kuutar",
+        "paivatar",
+        "urmela",
+        "kalmora",
+        "selkara",
+        "mana",
+        "opaline-belt",
+        "nigredo",
+        "albedo",
+        "xanthous",
+        "rubedo",
+        "nullbrand",
+        "demiurge",
+        "yskeia",
+        "baku",
+        "ukkonhemmo",
+        "nekarion",
+        "ludwig",
+        "felicia",
+        "anaximander",
+        "lycophron",
+        "gorgias",
+        "plato",
+        "aeridas",
+        "godslayers",
+        "the-miracle",
+        "paimar",
+        "poet-and-swordsman",
+        "empyrean",
+        "pieni",
+        "the-shifted",
+        "vaki",
+        "void-giants",
+        "earthmovers",
+        "homunculus"
+      ]
+    },
+    "theme": {
+      "scope": "*",
+      "values": [
+        "death",
+        "entropy",
+        "blood",
+        "mind",
+        "light",
+        "ice",
+        "storm",
+        "iron",
+        "plague",
+        "void",
+        "nature",
+        "time",
+        "fate",
+        "growth",
+        "rot",
+        "sulphur",
+        "oil",
+        "commerce",
+        "memory",
+        "dream",
+        "severance",
+        "obsession"
+      ]
+    },
+    "meta:source": {
+      "scope": "*",
+      "values": ["official", "basic", "ikuisuus"]
+    },
+    "meta:locale": { "scope": "*", "values": ["en", "es", "fi"] },
+    "meta:category": { "scope": "*", "open": true },
+    "meta:faction": { "scope": "*", "valuesFrom": ["worldData.factions"] },
+    "meta:location": { "scope": "*", "valuesFrom": ["worldData.locations"] }
   }
 }
