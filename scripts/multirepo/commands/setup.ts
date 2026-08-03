@@ -25,7 +25,6 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir, platform } from 'node:os';
 import { resolve } from 'node:path';
 
-import { ensurePawCli, PAW_CLI_PATH } from '../../../.github/PAW/pawBootstrap';
 import type { CommandMeta } from '../../utils/cli-loader';
 import { MAIN_REPO } from '../constants';
 import { attachContentToBranch } from '../git';
@@ -199,10 +198,27 @@ function initializeSubmodules(repoRoot: string): void {
 /**
  * Runs `paw sync` to populate the hook bundles, building the CLI first if
  * the compiled artifact is not yet present.
+ *
+ * `pawBootstrap` is imported here rather than at module scope because it lives
+ * in the `.github/PAW` submodule that `initializeSubmodules` checks out earlier
+ * in this same command. A static import resolves before `run` executes, so on
+ * the fresh clone this command exists to bootstrap it threw
+ * `Cannot find module '../../../.github/PAW/pawBootstrap'` and nothing ran.
+ *
  * @param {string} repoRoot - Absolute path to the main repo root.
- * @returns {string | null} Error message if failed, null otherwise.
+ * @returns {Promise<string | null>} Error message if failed, null otherwise.
  */
-function runPawSync(repoRoot: string): string | null {
+async function runPawSync(repoRoot: string): Promise<string | null> {
+  let ensurePawCli: () => string | null;
+  let PAW_CLI_PATH: string;
+  try {
+    ({ ensurePawCli, PAW_CLI_PATH } = await import(
+      '../../../.github/PAW/pawBootstrap'
+    ));
+  } catch {
+    return 'PAW submodule not available — skipping hook sync';
+  }
+
   const prepErr = ensurePawCli();
   if (prepErr) {
     return prepErr;
@@ -288,7 +304,7 @@ export async function run(_args: string[]): Promise<void> {
   }
 
   s.start('Syncing PAW hooks');
-  const pawErr = runPawSync(repoRoot);
+  const pawErr = await runPawSync(repoRoot);
   if (pawErr) {
     s.stop('PAW synced (with warnings)');
     log.error(pawErr);
