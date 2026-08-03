@@ -31,6 +31,7 @@ export async function compileAsync(opts: CompileOptions) {
   const {
     evaluate,
     remarkDiceRoll,
+    remarkUnit,
     remarkGfm,
     remarkMath,
     rehypeKatex,
@@ -45,7 +46,7 @@ export async function compileAsync(opts: CompileOptions) {
       mdxOptions: buildMdxOptions(
         mdxOptions,
         {
-          remarkPlugins: [remarkGfm, remarkMath, remarkDiceRoll],
+          remarkPlugins: [remarkGfm, remarkMath, remarkDiceRoll, remarkUnit],
           rehypePlugins: [rehypeKatex, rehypeSectionize],
         },
         baseUrl,

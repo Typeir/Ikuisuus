@@ -32,6 +32,7 @@ import {
   PersistentUiState,
   SerializedPersistentUiState,
   ThemeValue,
+  UnitSystemValue,
 } from '../types/persistentUiState';
 import { fetchPersistentData } from '../utils/fetchPersistentData';
 import { storePersistentData } from '../utils/storePersistentData';
@@ -102,6 +103,7 @@ function readPersistedState(
   }
 
   let theme: ThemeValue = 'dark';
+  let unitSystem: UnitSystemValue = 'stride';
   let correctionsToken: string | null = null;
   const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
   if (stored) {
@@ -109,6 +111,13 @@ function readPersistedState(
       const parsed = JSON.parse(stored) as SerializedPersistentUiState;
       if (parsed.theme === 'dark' || parsed.theme === 'light') {
         theme = parsed.theme;
+      }
+      if (
+        parsed.unitSystem === 'stride' ||
+        parsed.unitSystem === 'metric' ||
+        parsed.unitSystem === 'imperial'
+      ) {
+        unitSystem = parsed.unitSystem;
       }
       if (
         typeof parsed.correctionsToken === 'string' ||
@@ -131,6 +140,7 @@ function readPersistedState(
 
   return {
     theme,
+    unitSystem,
     correctionsToken,
     sidebarMenu: { expandedPaths, isOpen: false },
   };
@@ -153,6 +163,7 @@ function writePersistedState(state: PersistentUiState): void {
   const serialized: SerializedPersistentUiState = {
     sidebarMenu: state.sidebarMenu,
     theme: state.theme,
+    unitSystem: state.unitSystem,
     correctionsToken: state.correctionsToken,
   };
 

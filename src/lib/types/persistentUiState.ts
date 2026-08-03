@@ -41,6 +41,7 @@ export const PERSISTED_UI_ACTION_TYPES = {
   SET_SIDEBAR_EXPANSION: 'PERSISTED_UI/SET_SIDEBAR_EXPANSION',
   TOGGLE_SIDEBAR_PATH: 'PERSISTED_UI/TOGGLE_SIDEBAR_PATH',
   SET_CORRECTIONS_TOKEN: 'PERSISTED_UI/SET_CORRECTIONS_TOKEN',
+  SET_UNIT_SYSTEM: 'PERSISTED_UI/SET_UNIT_SYSTEM',
   RESET: 'PERSISTED_UI/RESET',
 } as const;
 
@@ -64,17 +65,27 @@ export interface SidebarMenuState {
 export type ThemeValue = 'dark' | 'light';
 
 /**
+ * Unit system display preference. `stride` is the native Damocles system and the
+ * server-rendered default; the others are reader-facing conversions.
+ *
+ * @typedef {'stride' | 'metric' | 'imperial'} UnitSystemValue
+ */
+export type UnitSystemValue = 'stride' | 'metric' | 'imperial';
+
+/**
  * Complete persistent UI state shape
  *
  * @interface PersistentUiState
  * @property {SidebarMenuState} sidebarMenu - Sidebar menu state
  * @property {ThemeValue} theme - Current theme value
+ * @property {UnitSystemValue} unitSystem - Current unit display preference
  * @property {string | null} correctionsToken - HMAC token for corrections API (persists annually)
  * @property {boolean} isHydrated - Whether state has been hydrated from storage
  */
 export interface PersistentUiState {
   sidebarMenu: SidebarMenuState;
   theme: ThemeValue;
+  unitSystem: UnitSystemValue;
   correctionsToken: string | null;
   isHydrated: boolean;
 }
@@ -86,11 +97,13 @@ export interface PersistentUiState {
  * @interface SerializedPersistentUiState
  * @property {SidebarMenuState} [sidebarMenu] - Optional sidebar menu state
  * @property {ThemeValue} [theme] - Optional theme value
+ * @property {UnitSystemValue} [unitSystem] - Optional unit display preference
  * @property {string | null} [correctionsToken] - Optional corrections API token
  */
 export interface SerializedPersistentUiState {
   sidebarMenu?: SidebarMenuState;
   theme?: ThemeValue;
+  unitSystem?: UnitSystemValue;
   correctionsToken?: string | null;
 }
 
@@ -188,6 +201,18 @@ export interface SetCorrectionsTokenAction {
 }
 
 /**
+ * Action to set the unit display system
+ *
+ * @interface SetUnitSystemAction
+ * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_UNIT_SYSTEM} type - Action type identifier
+ * @property {{ unitSystem: UnitSystemValue }} payload - New unit system value
+ */
+export interface SetUnitSystemAction {
+  type: typeof PERSISTED_UI_ACTION_TYPES.SET_UNIT_SYSTEM;
+  payload: { unitSystem: UnitSystemValue };
+}
+
+/**
  * Action to reset state to defaults
  *
  * @interface ResetAction
@@ -210,6 +235,7 @@ export type PersistentUiAction =
   | SetSidebarExpansionAction
   | ToggleSidebarPathAction
   | SetCorrectionsTokenAction
+  | SetUnitSystemAction
   | ResetAction;
 
 /**
@@ -223,6 +249,7 @@ export const DEFAULT_PERSISTENT_UI_STATE: PersistentUiState = {
     expandedPaths: [],
   },
   theme: 'dark',
+  unitSystem: 'stride',
   correctionsToken: null,
   isHydrated: false,
 };

@@ -15,7 +15,7 @@
     "merge-locales": "npx tsx --tsconfig tsconfig.scripts.json scripts/i18n/mergeMessages.ts",
     "clean-translations": "npx tsx --tsconfig tsconfig.scripts.json scripts/i18n/cleanTranslations.ts",
     "bundle-mdx-plugins": "npx tsx --tsconfig tsconfig.scripts.json scripts/build/bundleMdxPlugins.ts",
-    "pre-init": "npm run compress-assets && npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers && npm run bundle-mdx-plugins && npm run search:index",
+    "pre-init": "npm run compress-assets && npm run kebabify-content && npm run md-to-mdx && npm run fix-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers && npm run bundle-mdx-plugins && npm run search:index",
     "pre-init:ci": "npm run kebabify-content && npm run md-to-mdx && npm run generate-metadata && npm run merge-locales && npm run find-reusable-mdx-outliers:ci && npm run bundle-mdx-plugins",
     "find-reusable-mdx-outliers:ci": "npx tsx --tsconfig tsconfig.scripts.json scripts/content/findReusableMdxOutliers/ci.ts",
     "clean-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/cleanMetadata.ts",

@@ -1,0 +1,61 @@
+{
+  "ariaLabel": "{renderings} — see Measures",
+  "switcherLabel": "Display measures as",
+  "switcherStride": "Strides",
+  "switcherMetric": "Metric",
+  "switcherImperial": "Imperial",
+  "switcherHint": "Every measure in the Library redraws in the system you choose here.",
+  "fraction": {
+    "stride": {
+      "1_8": {
+        "stride": "an eighth of a stride",
+        "metric": "a quarter of a metre",
+        "imperial": "ten inches"
+      },
+      "1_5": {
+        "stride": "a fifth of a stride",
+        "metric": "forty centimetres",
+        "imperial": "a foot"
+      },
+      "1_4": {
+        "stride": "a quarter of a stride",
+        "metric": "half a metre",
+        "imperial": "a foot and a half"
+      },
+      "1_3": {
+        "stride": "a third of a stride",
+        "metric": "two thirds of a metre",
+        "imperial": "two feet"
+      },
+      "1_2": {
+        "stride": "half a stride",
+        "metric": "a metre",
+        "imperial": "two and a half feet"
+      },
+      "2_3": {
+        "stride": "two thirds of a stride",
+        "metric": "a metre and a third",
+        "imperial": "three feet"
+      },
+      "3_4": {
+        "stride": "three quarters of a stride",
+        "metric": "a metre and a half",
+        "imperial": "four feet"
+      }
+    },
+    "burden": {
+      "1_2": {
+        "stride": "half a burden",
+        "metric": "half a kilogram",
+        "imperial": "a pound"
+      }
+    },
+    "volume": {
+      "1_2": {
+        "stride": "half a volume",
+        "metric": "half a litre",
+        "imperial": "a pint"
+      }
+    }
+  }
+}

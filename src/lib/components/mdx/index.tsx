@@ -17,6 +17,8 @@ import BlendedImage from '@/modules/library/presentation/components/BlendedImage
 import ClearFloats from '@/modules/library/presentation/components/ClearFloats/index';
 import Collapsible from '@/modules/library/presentation/components/Collapsible/index';
 import DiceRoll from '@/modules/library/presentation/components/DiceRoll/index';
+import Unit from '@/modules/library/presentation/components/Unit/index';
+import UnitSwitcher from '@/modules/library/presentation/components/UnitSwitcher/index';
 import FlexRenderer from '@/modules/library/presentation/components/FlexRenderer/index';
 import FloatedContainer from '@/modules/library/presentation/components/FloatedContainer/index';
 import { HashNavigationProvider } from '@/modules/library/presentation/components/HashNavigationProvider/index';
@@ -46,6 +48,8 @@ export const components = {
   BlendedImage,
   Collapsible,
   DiceRoll,
+  Unit,
+  UnitSwitcher,
   FlexRenderer,
   Meta,
   MonsterTable,

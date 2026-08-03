@@ -9,6 +9,7 @@
  */
 
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
+import remarkUnit from '@/lib/md/remarkUnit';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
@@ -40,7 +41,7 @@ export async function compileSync(opts: CompileOptions) {
       mdxOptions: buildMdxOptions(
         mdxOptions,
         {
-          remarkPlugins: [remarkGfm, remarkMath, remarkDiceRoll],
+          remarkPlugins: [remarkGfm, remarkMath, remarkDiceRoll, remarkUnit],
           rehypePlugins: [rehypeKatex, rehypeSectionize],
         },
         baseUrl,

@@ -36,6 +36,7 @@ const withMdx = withMDX({
       "remark-gfm",
       "remark-math",
       path.join(__dirname, ".mdx-plugins/remarkDiceRoll.mjs"),
+      path.join(__dirname, ".mdx-plugins/remarkUnit.mjs"),
     ],
     rehypePlugins: ["rehype-katex"],
   },
