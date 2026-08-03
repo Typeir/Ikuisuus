@@ -1,10 +1,10 @@
 {
   "title": "Page Not Found",
   "heading": "[REDACTED]",
-  "subtitle": "The subject of this search has been disambiguated.",
+  "subtitle": "░░░░▒▒▒▓▓█ THE SUBJECT OF THIS SEARCH HAS BEEN DISAMBIGUATED █▓▓▒▒▒░░░░",
   "description": "Only the black flames of the everdark burn here.",
-  "searchingNearby": "Looking for similar subjects...",
-  "didYouMean": "Did you mean:",
+  "searchingNearby": "Consulting the Index…",
+  "didYouMean": "░░░░▒▒▒▓▓█ NEAREST SURVIVING RECORD █▓▓▒▒▒░░░░",
   "similarity": "Similarity",
-  "backToLibrary": "Go back to the library"
+  "backToLibrary": "░░░░▒▒▒▓▓█ RETURN TO THE ARCHIVES █▓▓▒▒▒░░░░"
 }

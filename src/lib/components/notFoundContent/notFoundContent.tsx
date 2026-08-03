@@ -37,6 +37,7 @@ export function NotFoundContent(): JSX.Element {
 
       {loading && (
         <div className={styles.skeletonCard}>
+          <p className={styles.status}>{t('searchingNearby')}</p>
           <SkeletonGroup>
             <Skeleton variant='text' width='80%' />
             <Skeleton variant='button' width='200px' height='3rem' />
@@ -46,21 +47,19 @@ export function NotFoundContent(): JSX.Element {
       )}
 
       {!loading && nearestRoute && (
-        <Link href={nearestRoute.path}>
-          <div className={styles.suggestionCard}>
-            <p className={styles.suggestionLabel}>{t('didYouMean')}</p>
-            <p className={styles.suggestionLink}>
-              {nearestRoute.title || nearestRoute.path}
-            </p>
-            <p className={styles.similarityScore}>
-              {t('similarity')}: {Math.round(nearestRoute.similarity * 100)}%
-            </p>
-          </div>
+        <Link href={nearestRoute.path} className={styles.suggestionCard}>
+          <span className={styles.suggestionLabel}>{t('didYouMean')}</span>
+          <span className={styles.suggestionLink}>
+            {nearestRoute.title || nearestRoute.path}
+          </span>
+          <span className={styles.similarityScore}>
+            {t('similarity')}: {Math.round(nearestRoute.similarity * 100)}%
+          </span>
         </Link>
       )}
 
       <Link href='/' className={styles.backLink}>
-        ← {t('backToLibrary')}
+        {t('backToLibrary')}
       </Link>
     </div>
   );
