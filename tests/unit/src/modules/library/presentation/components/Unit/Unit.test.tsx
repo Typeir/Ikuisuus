@@ -17,7 +17,7 @@ import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockUnitState = {
-  unitSystem: 'stride' as 'stride' | 'metric' | 'imperial',
+  unitSystem: { distance: 'stride', weight: 'stride', volume: 'stride' } as Record<string, 'stride'|'metric'|'imperial'>,
   isHydrated: false,
 };
 
@@ -27,52 +27,72 @@ vi.mock('@/lib/hooks/useUnitSystem', () => ({
 
 vi.mock('next-intl', () => ({
   useLocale: () => 'en',
-  useTranslations: () => (key: string, values?: Record<string, string>) =>
-    values?.renderings ? `${values.renderings} — see Measures` : key,
+  useTranslations:
+    () =>
+    (key: string, values?: Record<string, string | number>): string => {
+      if (values?.renderings) {
+        return `${values.renderings} — see Measures`;
+      }
+      if (!values) {
+        return key;
+      }
+      const args = Object.entries(values)
+        .map(([k, v]) => `${k}=${v}`)
+        .join('|');
+      return `${key}(${args})`;
+    },
 }));
 
 import Unit from '@/modules/library/presentation/components/Unit/Unit';
 
 describe('Unit', () => {
   beforeEach(() => {
-    mockUnitState.unitSystem = 'stride';
+    mockUnitState.unitSystem = { distance: 'stride', weight: 'stride', volume: 'stride' };
     mockUnitState.isHydrated = false;
   });
 
-  describe('before hydration', () => {
-    it('should render the native stride form', () => {
+  describe('rendering the chosen system', () => {
+    it('should render the native form by default', () => {
       render(<Unit value='6' unit='stride' />);
       expect(screen.getByRole('link')).toHaveTextContent('6 strides');
-    });
-
-    it('should render strides even when a different preference is stored', () => {
-      mockUnitState.unitSystem = 'imperial';
-      render(<Unit value='6' unit='stride' />);
-      expect(screen.getByRole('link')).toHaveTextContent('6 strides');
-    });
-  });
-
-  describe('after hydration', () => {
-    beforeEach(() => {
-      mockUnitState.isHydrated = true;
     });
 
     it('should render metric when preferred', () => {
-      mockUnitState.unitSystem = 'metric';
+      mockUnitState.unitSystem = { distance: 'metric', weight: 'metric', volume: 'metric' };
       render(<Unit value='6' unit='stride' />);
       expect(screen.getByRole('link')).toHaveTextContent('12 metres');
     });
 
     it('should render imperial when preferred', () => {
-      mockUnitState.unitSystem = 'imperial';
+      mockUnitState.unitSystem = { distance: 'imperial', weight: 'imperial', volume: 'imperial' };
       render(<Unit value='6' unit='stride' />);
       expect(screen.getByRole('link')).toHaveTextContent('30 feet');
     });
+  });
 
-    it('should convert burdens to pounds', () => {
-      mockUnitState.unitSystem = 'imperial';
+  describe('per-dimension preferences', () => {
+    it('should read the weight preference for a burden', () => {
+      mockUnitState.unitSystem = { distance: 'stride', weight: 'imperial', volume: 'stride' };
       render(<Unit value='30' unit='burden' />);
       expect(screen.getByRole('link')).toHaveTextContent('60 pounds');
+    });
+
+    it('should not let the weight preference affect a distance', () => {
+      mockUnitState.unitSystem = { distance: 'stride', weight: 'imperial', volume: 'stride' };
+      render(<Unit value='6' unit='stride' />);
+      expect(screen.getByRole('link')).toHaveTextContent('6 strides');
+    });
+
+    it('should read the distance preference for a league', () => {
+      mockUnitState.unitSystem = { distance: 'metric', weight: 'stride', volume: 'stride' };
+      render(<Unit value='3' unit='league' />);
+      expect(screen.getByRole('link')).toHaveTextContent('6 kilometres');
+    });
+
+    it('should read the volume preference independently', () => {
+      mockUnitState.unitSystem = { distance: 'stride', weight: 'stride', volume: 'imperial' };
+      render(<Unit value='2' unit='volume' />);
+      expect(screen.getByRole('link')).toHaveTextContent('4 pints');
     });
   });
 
@@ -107,10 +127,41 @@ describe('Unit', () => {
   });
 
   describe('fractional quantities', () => {
-    it('should resolve fractions through the translation dictionary', () => {
+    it('should compose fraction prose by substitution', () => {
       render(<Unit value='1' unit='stride' denominator='5' />);
+
       expect(screen.getByRole('link')).toHaveTextContent(
-        'fraction.stride.1_5.stride',
+        'fraction.ofA(amount=fraction.amount.1_5|unit=stride)',
+      );
+    });
+
+    it('should use the irregular template for a half', () => {
+      mockUnitState.isHydrated = true;
+      mockUnitState.unitSystem = { distance: 'stride', weight: 'stride', volume: 'stride' };
+      render(<Unit value='1' unit='stride' denominator='2' />);
+
+      expect(screen.getByRole('link')).toHaveTextContent(
+        'fraction.halfA(unit=stride)',
+      );
+    });
+
+    it('should render a scaled fraction that resolves whole', () => {
+      mockUnitState.isHydrated = true;
+      mockUnitState.unitSystem = { distance: 'imperial', weight: 'imperial', volume: 'imperial' };
+      render(<Unit value='1' unit='stride' denominator='5' />);
+
+      expect(screen.getByRole('link')).toHaveTextContent(
+        'fraction.whole(value=1|unit=foot)',
+      );
+    });
+
+    it('should render a mixed quantity', () => {
+      mockUnitState.isHydrated = true;
+      mockUnitState.unitSystem = { distance: 'imperial', weight: 'imperial', volume: 'imperial' };
+      render(<Unit value='1' unit='stride' denominator='2' />);
+
+      expect(screen.getByRole('link')).toHaveTextContent(
+        'fraction.mixedHalf(whole=2|unit=feet)',
       );
     });
   });

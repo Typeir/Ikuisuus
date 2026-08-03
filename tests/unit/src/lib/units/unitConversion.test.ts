@@ -15,6 +15,7 @@
 
 import {
   allUnitRenderings,
+  convertFraction,
   convertUnit,
   formatUnit,
 } from '@/lib/units/unitConversion';
@@ -127,6 +128,71 @@ describe('unitConversion', () => {
 
     it('should use foot rather than feet in attributive position', () => {
       expect(formatUnit(6, 'stride', 'imperial', true)).toBe('30-foot');
+    });
+  });
+
+  describe('convertFraction', () => {
+    it('should leave a native fraction unscaled', () => {
+      expect(convertFraction(1, 5, 'stride', 'stride')).toMatchObject({
+        whole: 0,
+        numerator: 1,
+        denominator: 5,
+      });
+    });
+
+    it('should scale a fifth of a stride to two fifths of a metre', () => {
+      expect(convertFraction(1, 5, 'stride', 'metric')).toMatchObject({
+        whole: 0,
+        numerator: 2,
+        denominator: 5,
+      });
+    });
+
+    it('should resolve a fifth of a stride to exactly one foot', () => {
+      expect(convertFraction(1, 5, 'stride', 'imperial')).toMatchObject({
+        whole: 1,
+        numerator: 0,
+      });
+    });
+
+    it('should resolve two fifths of a stride to two feet', () => {
+      expect(convertFraction(2, 5, 'stride', 'imperial')).toMatchObject({
+        whole: 2,
+        numerator: 0,
+      });
+    });
+
+    it('should resolve half a stride to one metre', () => {
+      expect(convertFraction(1, 2, 'stride', 'metric')).toMatchObject({
+        whole: 1,
+        numerator: 0,
+      });
+    });
+
+    it('should produce a mixed quantity for half a stride in feet', () => {
+      expect(convertFraction(1, 2, 'stride', 'imperial')).toMatchObject({
+        whole: 2,
+        numerator: 1,
+        denominator: 2,
+      });
+    });
+
+    it('should reduce the scaled fraction', () => {
+      expect(convertFraction(2, 4, 'stride', 'stride')).toMatchObject({
+        numerator: 1,
+        denominator: 2,
+      });
+    });
+
+    it('should pluralise the whole part', () => {
+      expect(convertFraction(1, 5, 'stride', 'imperial').noun).toBe('foot');
+      expect(convertFraction(2, 5, 'stride', 'imperial').noun).toBe('feet');
+    });
+
+    it('should keep a singular noun for composing prose', () => {
+      expect(convertFraction(1, 5, 'stride', 'stride').singularNoun).toBe(
+        'stride',
+      );
     });
   });
 

@@ -66,7 +66,10 @@ export function persistentUiReducer(
           expandedPaths: sidebarMenu?.expandedPaths ?? [],
         },
         theme: theme ?? state.theme,
-        unitSystem: unitSystem ?? state.unitSystem,
+        unitSystem:
+          unitSystem && typeof unitSystem === 'object'
+            ? unitSystem
+            : state.unitSystem,
         correctionsToken: correctionsToken ?? state.correctionsToken,
         isHydrated: true,
       };
@@ -109,7 +112,10 @@ export function persistentUiReducer(
     case PERSISTED_UI_ACTION_TYPES.SET_UNIT_SYSTEM: {
       return {
         ...state,
-        unitSystem: action.payload.unitSystem,
+        unitSystem: {
+          ...state.unitSystem,
+          [action.payload.dimension]: action.payload.system,
+        },
       };
     }
 

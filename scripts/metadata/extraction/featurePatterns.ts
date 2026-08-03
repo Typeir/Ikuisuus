@@ -55,25 +55,80 @@ export const SAVES = {
 } as const;
 
 /**
+ * Regex source matching a distance in either the `[= N stride =]` macro form
+ * used throughout content or the legacy imperial spellings.
+ *
+ * The opening bracket is optional rather than the two forms being alternatives,
+ * so the numeric value always lands in a single capture group and consumers
+ * need no special handling.
+ *
+ * Distances extracted from content are **strides**. Consumers that need
+ * imperial units convert at their own boundary — see the Foundry transformer.
+ *
+ * @constant
+ */
+const MEASURE = String.raw`(?:\[=\s*)?(\d+)[- ]?(?:stride(?:;ADJ)?\s*=\]|foot|feet|ft\.?)`;
+
+/**
+ * Builds a case-insensitive pattern around the shared measure fragment.
+ *
+ * @param {string} source - Regex source, with `{M}` marking the measure slot
+ * @returns {RegExp} The compiled pattern
+ */
+const measurePattern = (source: string): RegExp =>
+  new RegExp(source.replace('{M}', MEASURE), 'i');
+
+/**
  * Pre-compiled patterns for distances, areas, and shapes.
  *
- * @property {RegExp} feet - "30 ft", "60-foot", "10 feet"
- * @property {RegExp} wide - "10-foot wide"
+ * Each distance pattern accepts the `[= N stride =]` macro as well as the
+ * legacy imperial spellings, so extraction survives the units migration.
+ *
+ * @property {RegExp} feet - "[= 6 stride =]", "30 ft", "60-foot", "10 feet"
+ * @property {RegExp} wide - "[= 2 stride;ADJ =]-wide", "10-foot wide"
  * @property {RegExp} high - "20 feet high", "30-foot tall"
- * @property {RegExp} reach - "reach 10 ft"
+ * @property {RegExp} reach - "reach [= 1 stride =]", "reach 10 ft"
  * @property {RegExp} range - "range 30/120 ft"
  * @property {RegExp} aoeShape - "sphere", "cone", "cube", etc.
- * @property {RegExp} sense - "darkvision 60 ft."
+ * @property {RegExp} sense - "darkvision [= 12 stride =]"
  */
 export const DISTANCE = {
-  feet: /(\d+)[- ]?(?:foot|feet|ft\.?)/i,
-  wide: /(\d+)[- ]?(?:foot|feet|ft\.?)[- ]?wide/i,
-  high: /(\d+)[- ]?(?:foot|feet|ft\.?)[- ]?(?:high|tall)/i,
-  reach: /reach\s+(\d+)\s*ft/i,
+  feet: measurePattern(String.raw`{M}`),
+  wide: measurePattern(String.raw`{M}[- ]?wide`),
+  high: measurePattern(String.raw`{M}[- ]?(?:high|tall)`),
+  reach: measurePattern(String.raw`reach\s+{M}`),
   range: /range\s+(\d+)(?:\/(\d+))?\s*ft/i,
   aoeShape: /\b(sphere|cube|cone|line|cylinder|radius|wall|square)\b/i,
-  sense: /(\d+)\s*ft\.?/i,
+  sense: measurePattern(String.raw`{M}`),
 } as const;
+
+/**
+ * Reads the numeric value from a match produced by a measure-bearing pattern.
+ * The macro and legacy alternatives occupy different capture groups, so
+ * consumers should not index groups directly.
+ *
+ * @param {RegExpMatchArray | null} match - A match from a DISTANCE pattern
+ * @returns {number | undefined} The distance, or undefined when absent
+ *
+ * @example
+ * measureValue('[= 6 stride =]'.match(DISTANCE.feet)) // 6
+ * measureValue('30 ft'.match(DISTANCE.feet))          // 30
+ */
+export function measureValue(
+  match: RegExpMatchArray | null,
+): number | undefined {
+  if (!match) {
+    return undefined;
+  }
+
+  for (let i = 1; i < match.length; i += 1) {
+    if (match[i] !== undefined && /^\d+$/.test(match[i])) {
+      return Number.parseInt(match[i], 10);
+    }
+  }
+
+  return undefined;
+}
 
 /**
  * Pre-compiled patterns for action types and timing.
@@ -200,7 +255,8 @@ export const MONSTER = {
   chargeRecharge: /\((\d+)\s*charges?,?\s*Recharge\s*(\d+)(?:[–\-](\d+))?\)/i,
   targets: /(?:one|two|three|four|all)\s+(?:target|creature|enemy|object)s?/i,
   passivePerception: /passive\s+Perception\s+(\d+)/i,
-  speedMode: /(?:(walk|climb|fly|swim|burrow)\s+)?(\d+)\s*ft\.?/i,
+  speedMode:
+    /(?:(walk|climb|fly|swim|burrow)\s+)?(?:\[=\s*)?(\d+)\s*(?:stride(?:;ADJ)?\s*=\]|ft\.?)/i,
   hover: /\bhover\b/i,
   armorClassHeader: /\|\s*\*\*Armor\s*Class\*\*/i,
   savingThrowBonus: /^(Str|Dex|Con|Int|Wis|Cha)\s*([+-]?\d+)/i,

@@ -19,13 +19,61 @@
 
 import { useUnitSystemState } from '@/lib/hooks/useUnitSystem';
 import type { UnitName } from '@/lib/md/unitExpressionParser';
+import type { UnitSystemValue } from '@/lib/types/persistentUiState';
 import {
   allUnitRenderings,
+  convertFraction,
+  dimensionOf,
   formatUnit,
 } from '@/lib/units/unitConversion';
 import { useLocale, useTranslations } from 'next-intl';
 import React from 'react';
 import styles from './Unit.module.scss';
+
+/** Translator shape used for fraction prose. */
+type Translate = (key: string, values?: Record<string, string | number>) => string;
+
+/**
+ * Renders a fractional measure as prose.
+ *
+ * The fraction is scaled into the target system first, so the wording follows
+ * the converted value rather than the native one. English fraction prose is
+ * irregular around a half, which gets its own templates.
+ *
+ * @param {Translate} t - Translator scoped to the `units` namespace
+ * @param {number} numerator - Native fraction numerator
+ * @param {number} denominator - Native fraction denominator
+ * @param {UnitName} unit - The native unit
+ * @param {UnitSystemValue} system - Display system
+ * @returns {string} The rendered prose
+ */
+function formatFraction(
+  t: Translate,
+  numerator: number,
+  denominator: number,
+  unit: UnitName,
+  system: UnitSystemValue,
+): string {
+  const f = convertFraction(numerator, denominator, unit, system);
+  const key = `${f.numerator}_${f.denominator}`;
+  const isHalf = f.numerator === 1 && f.denominator === 2;
+
+  if (f.numerator === 0) {
+    return t('fraction.whole', { value: f.whole, unit: f.noun });
+  }
+
+  const amount = t(`fraction.amount.${key}`);
+
+  if (f.whole === 0) {
+    return isHalf
+      ? t('fraction.halfA', { unit: f.singularNoun })
+      : t('fraction.ofA', { amount, unit: f.singularNoun });
+  }
+
+  return isHalf
+    ? t('fraction.mixedHalf', { whole: f.whole, unit: f.noun })
+    : t('fraction.mixed', { whole: f.whole, amount, unit: f.noun });
+}
 
 /**
  * Props for the Unit component. All values arrive as strings from the MDX
@@ -63,7 +111,7 @@ export const Unit: React.FC<UnitProps> = ({
   denominator,
   flags,
 }) => {
-  const { unitSystem, isHydrated } = useUnitSystemState();
+  const { unitSystem } = useUnitSystemState();
   const locale = useLocale();
   const t = useTranslations('units');
 
@@ -71,19 +119,17 @@ export const Unit: React.FC<UnitProps> = ({
   const divisor = denominator ? Number.parseInt(denominator, 10) : 1;
   const attributive = (flags ?? '').split(',').includes('ADJ');
 
-  const system = isHydrated ? unitSystem : 'stride';
+  const system = unitSystem[dimensionOf(unit)];
 
   const isFraction = divisor !== 1;
 
-  const fractionKey = `fraction.${unit}.${numerator}_${divisor}`;
-
   const label = isFraction
-    ? t(`${fractionKey}.${system}`)
+    ? formatFraction(t, numerator, divisor, unit, system)
     : formatUnit(numerator, unit, system, attributive);
 
   const title = isFraction
     ? (['stride', 'metric', 'imperial'] as const)
-        .map((mode) => t(`${fractionKey}.${mode}`))
+        .map((mode) => formatFraction(t, numerator, divisor, unit, mode))
         .join(' · ')
     : allUnitRenderings(numerator, unit, attributive).join(' · ');
 

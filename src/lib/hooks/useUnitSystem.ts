@@ -1,68 +1,100 @@
 /**
  * Unit System State Hooks
  *
- * @fileoverview React hooks for the unit display preference and its actions.
- * Mirrors the theme hooks: state exposes the hydration flag so consumers can
- * render the server-safe default until persisted state is available.
+ * @fileoverview React hooks for the unit display preferences and their actions.
+ *
+ * Preferences are read from persistent storage during render, which the server
+ * cannot do. These hooks therefore report the native system until after the
+ * first client render, so server markup and first paint agree and hydration
+ * has nothing to reconcile.
+ *
+ * `PersistentUiState.isHydrated` cannot serve that purpose: the provider sets
+ * it true in its initial state, so it is already true on the very first render.
  *
  * @module lib/hooks/useUnitSystem
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 2026-08-03
  */
 
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   usePersistentUiDispatch,
-  usePersistentUiState,
+  usePersistentUiStateOptional,
 } from '../context/PersistentUiContext';
 import {
+  DEFAULT_UNIT_SYSTEM,
   PERSISTED_UI_ACTION_TYPES,
+  UnitDimension,
+  UnitSystemPreferences,
   UnitSystemValue,
 } from '../types/persistentUiState';
 
 /**
- * Unit system state
+ * Unit system state.
  *
  * @interface UnitSystemState
- * @property {UnitSystemValue} unitSystem - Current unit display preference
- * @property {boolean} isHydrated - Whether state has been hydrated from storage
+ * @property {UnitSystemPreferences} unitSystem - Display preference per family
+ * @property {boolean} isHydrated - Whether the client has completed its first render
  */
 export interface UnitSystemState {
-  unitSystem: UnitSystemValue;
+  unitSystem: UnitSystemPreferences;
   isHydrated: boolean;
 }
 
 /**
- * Hook to access unit system state.
- * Consumers must render the native `stride` output while `isHydrated` is false,
- * because the server has no access to the reader's preference.
+ * Hook to access unit display preferences.
+ *
+ * Returns the native defaults until the first client render has committed,
+ * which keeps server and client markup identical through hydration.
  *
  * @function useUnitSystemState
- * @returns {UnitSystemState} Unit system state with hydration flag
+ * @returns {UnitSystemState} Preferences with a hydration flag
  */
 export function useUnitSystemState(): UnitSystemState {
-  const state = usePersistentUiState();
+  const state = usePersistentUiStateOptional();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return {
-    unitSystem: state.unitSystem,
-    isHydrated: state.isHydrated,
+    unitSystem: mounted ? state.unitSystem : DEFAULT_UNIT_SYSTEM,
+    isHydrated: mounted,
   };
 }
 
 /**
- * Unit system action helpers
+ * Resolves the preference governing a single measurement family.
  *
- * @interface UnitSystemActions
- * @property {(unitSystem: UnitSystemValue) => void} setUnitSystem - Set the display preference
+ * @function useUnitSystemFor
+ * @param {UnitDimension} dimension - The measurement family
+ * @returns {UnitSystemValue} The system to render in
  */
-export interface UnitSystemActions {
-  setUnitSystem: (unitSystem: UnitSystemValue) => void;
+export function useUnitSystemFor(dimension: UnitDimension): UnitSystemValue {
+  const { unitSystem } = useUnitSystemState();
+  return unitSystem[dimension];
 }
 
 /**
- * Hook to access unit system actions
+ * Unit system action helpers.
+ *
+ * @interface UnitSystemActions
+ * @property {(dimension: UnitDimension, system: UnitSystemValue) => void} setUnitSystem
+ *   Sets the preference for one measurement family
+ */
+export interface UnitSystemActions {
+  setUnitSystem: (
+    dimension: UnitDimension,
+    system: UnitSystemValue,
+  ) => void;
+}
+
+/**
+ * Hook to access unit system actions.
  *
  * @function useUnitSystemActions
  * @returns {UnitSystemActions} Action functions for unit system control
@@ -71,10 +103,10 @@ export function useUnitSystemActions(): UnitSystemActions {
   const dispatch = usePersistentUiDispatch();
 
   const setUnitSystem = useCallback(
-    (unitSystem: UnitSystemValue) => {
+    (dimension: UnitDimension, system: UnitSystemValue) => {
       dispatch({
         type: PERSISTED_UI_ACTION_TYPES.SET_UNIT_SYSTEM,
-        payload: { unitSystem },
+        payload: { dimension, system },
       });
     },
     [dispatch],

@@ -17,17 +17,22 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockDispatch = vi.fn();
 const mockState = {
-  unitSystem: 'stride' as const,
-  isHydrated: false,
+  unitSystem: {
+    distance: 'stride' as 'stride' | 'metric' | 'imperial',
+    weight: 'stride' as 'stride' | 'metric' | 'imperial',
+    volume: 'stride' as 'stride' | 'metric' | 'imperial',
+  },
+  isHydrated: true,
 };
 
 vi.mock('@/lib/context/PersistentUiContext', () => ({
-  usePersistentUiState: () => mockState,
+  usePersistentUiStateOptional: () => mockState,
   usePersistentUiDispatch: () => mockDispatch,
 }));
 
 import {
   useUnitSystemActions,
+  useUnitSystemFor,
   useUnitSystemState,
 } from '@/lib/hooks/useUnitSystem';
 import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
@@ -35,29 +40,60 @@ import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
 describe('useUnitSystem', () => {
   beforeEach(() => {
     mockDispatch.mockClear();
-    mockState.unitSystem = 'stride';
-    mockState.isHydrated = false;
+    mockState.unitSystem = {
+      distance: 'stride',
+      weight: 'stride',
+      volume: 'stride',
+    };
+    mockState.isHydrated = true;
   });
 
   describe('useUnitSystemState', () => {
-    it('should expose the current unit system', () => {
+    it('should expose a preference per measurement family', () => {
       const { result } = renderHook(() => useUnitSystemState());
-      expect(result.current.unitSystem).toBe('stride');
+
+      expect(result.current.unitSystem).toEqual({
+        distance: 'stride',
+        weight: 'stride',
+        volume: 'stride',
+      });
     });
 
-    it('should expose the hydration flag', () => {
+    it('should report hydrated after the first client render', () => {
       const { result } = renderHook(() => useUnitSystemState());
-      expect(result.current.isHydrated).toBe(false);
-    });
-
-    it('should reflect a hydrated preference', () => {
-      mockState.unitSystem = 'imperial';
-      mockState.isHydrated = true;
-
-      const { result } = renderHook(() => useUnitSystemState());
-
-      expect(result.current.unitSystem).toBe('imperial');
       expect(result.current.isHydrated).toBe(true);
+    });
+
+    it('should reflect independent preferences once mounted', () => {
+      mockState.unitSystem = {
+        distance: 'metric',
+        weight: 'imperial',
+        volume: 'stride',
+      };
+
+      const { result } = renderHook(() => useUnitSystemState());
+
+      expect(result.current.unitSystem.distance).toBe('metric');
+      expect(result.current.unitSystem.weight).toBe('imperial');
+      expect(result.current.unitSystem.volume).toBe('stride');
+    });
+  });
+
+  describe('useUnitSystemFor', () => {
+    it.each([
+      ['distance', 'metric'],
+      ['weight', 'imperial'],
+      ['volume', 'stride'],
+    ] as const)('should resolve the %s preference', (dimension, expected) => {
+      mockState.unitSystem = {
+        distance: 'metric',
+        weight: 'imperial',
+        volume: 'stride',
+      };
+
+      const { result } = renderHook(() => useUnitSystemFor(dimension));
+
+      expect(result.current).toBe(expected);
     });
   });
 
@@ -67,26 +103,28 @@ describe('useUnitSystem', () => {
       expect(typeof result.current.setUnitSystem).toBe('function');
     });
 
-    it('should dispatch SET_UNIT_SYSTEM with the chosen value', () => {
+    it('should dispatch SET_UNIT_SYSTEM for one family only', () => {
       const { result } = renderHook(() => useUnitSystemActions());
 
-      result.current.setUnitSystem('metric');
+      result.current.setUnitSystem('weight', 'imperial');
 
       expect(mockDispatch).toHaveBeenCalledWith({
         type: PERSISTED_UI_ACTION_TYPES.SET_UNIT_SYSTEM,
-        payload: { unitSystem: 'metric' },
+        payload: { dimension: 'weight', system: 'imperial' },
       });
     });
 
-    it.each(['stride', 'metric', 'imperial'] as const)(
-      'should dispatch for the %s system',
-      (system) => {
+    it.each(['distance', 'weight', 'volume'] as const)(
+      'should dispatch for the %s family',
+      (dimension) => {
         const { result } = renderHook(() => useUnitSystemActions());
 
-        result.current.setUnitSystem(system);
+        result.current.setUnitSystem(dimension, 'metric');
 
         expect(mockDispatch).toHaveBeenCalledWith(
-          expect.objectContaining({ payload: { unitSystem: system } }),
+          expect.objectContaining({
+            payload: { dimension, system: 'metric' },
+          }),
         );
       },
     );

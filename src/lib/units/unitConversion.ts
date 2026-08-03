@@ -13,7 +13,34 @@
  */
 
 import type { UnitName } from '../md/unitExpressionParser';
-import type { UnitSystemValue } from '../types/persistentUiState';
+import type { UnitDimension, UnitSystemValue } from '../types/persistentUiState';
+
+/**
+ * Measurement family each unit belongs to, so a reader's per-family preference
+ * can be resolved from the unit alone.
+ *
+ * @constant
+ */
+const UNIT_DIMENSION: Record<UnitName, UnitDimension> = {
+  stride: 'distance',
+  league: 'distance',
+  burden: 'weight',
+  volume: 'volume',
+};
+
+/**
+ * Returns the measurement family a unit belongs to.
+ *
+ * @param {UnitName} unit - The native unit
+ * @returns {UnitDimension} Its measurement family
+ *
+ * @example
+ * dimensionOf('league') // 'distance'
+ * dimensionOf('burden') // 'weight'
+ */
+export function dimensionOf(unit: UnitName): UnitDimension {
+  return UNIT_DIMENSION[unit];
+}
 
 /**
  * A converted measure ready for display.
@@ -209,6 +236,81 @@ export function formatUnit(
   return attributive
     ? `${converted.value}-${converted.adjectiveNoun}`
     : `${converted.value} ${converted.noun}`;
+}
+
+/**
+ * Greatest common divisor, used to reduce a scaled fraction.
+ *
+ * @param {number} a - First operand
+ * @param {number} b - Second operand
+ * @returns {number} The greatest common divisor
+ */
+function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+/**
+ * A fractional measure converted into a display system.
+ *
+ * @interface ConvertedFraction
+ * @property {number} whole - Whole units, zero when the value is under one
+ * @property {number} numerator - Remaining fraction numerator, zero when exact
+ * @property {number} denominator - Remaining fraction denominator
+ * @property {string} noun - Unit noun, pluralised for the whole part
+ * @property {string} singularNoun - Unit noun in the singular
+ */
+export interface ConvertedFraction {
+  whole: number;
+  numerator: number;
+  denominator: number;
+  noun: string;
+  singularNoun: string;
+}
+
+/**
+ * Converts a fractional native measure into the chosen display system.
+ *
+ * The conversion factor scales the fraction rather than the value, so the
+ * result stays exact: a fifth of a stride is two fifths of a metre and
+ * precisely one foot. The result is reduced, and split into a whole part and
+ * a remainder so mixed quantities can be rendered.
+ *
+ * @param {number} numerator - Native fraction numerator
+ * @param {number} denominator - Native fraction denominator
+ * @param {UnitName} unit - The native unit
+ * @param {UnitSystemValue} system - The reader's display preference
+ * @returns {ConvertedFraction} The converted, reduced fraction
+ *
+ * @example
+ * convertFraction(1, 5, 'stride', 'stride')   // 1/5 stride
+ * convertFraction(1, 5, 'stride', 'metric')   // 2/5 metre
+ * convertFraction(1, 5, 'stride', 'imperial') // 1 foot, no remainder
+ */
+export function convertFraction(
+  numerator: number,
+  denominator: number,
+  unit: UnitName,
+  system: UnitSystemValue,
+): ConvertedFraction {
+  const conversion = CONVERSIONS[unit][system];
+
+  const scaledNumerator = numerator * conversion.numerator;
+  const scaledDenominator = denominator * conversion.denominator;
+
+  const divisor = gcd(scaledNumerator, scaledDenominator) || 1;
+  const n = scaledNumerator / divisor;
+  const d = scaledDenominator / divisor;
+
+  const whole = Math.floor(n / d);
+  const remainder = n % d;
+
+  return {
+    whole,
+    numerator: remainder,
+    denominator: remainder === 0 ? 1 : d,
+    noun: whole === 1 && remainder === 0 ? conversion.singular : conversion.plural,
+    singularNoun: conversion.singular,
+  };
 }
 
 /**

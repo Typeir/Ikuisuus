@@ -18,6 +18,15 @@ import type { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 import { parseUnitExpression, UNIT_EXPR_REGEX } from './unitExpressionParser';
 
+/**
+ * Name of the component this plugin emits. The MDX runtime resolves it through
+ * the component map, so any registry that renders content must provide it —
+ * see the registry guard test.
+ *
+ * @constant
+ */
+export const UNIT_COMPONENT_NAME = 'Unit';
+
 /** MDAST node type for an inline MDX JSX element. */
 const MDX_JSX_TEXT_ELEMENT = 'mdxJsxTextElement' as const;
 
@@ -108,7 +117,7 @@ function unitNode(
 
   return {
     type: MDX_JSX_TEXT_ELEMENT,
-    name: 'Unit',
+    name: UNIT_COMPONENT_NAME,
     attributes,
     children: [],
   };

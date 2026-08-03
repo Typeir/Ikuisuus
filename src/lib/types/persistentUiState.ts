@@ -73,19 +73,53 @@ export type ThemeValue = 'dark' | 'light';
 export type UnitSystemValue = 'stride' | 'metric' | 'imperial';
 
 /**
+ * Measurement families a reader can set independently. Someone may think in
+ * metres but weigh things in pounds, so distance, weight and volume each carry
+ * their own preference.
+ *
+ * @typedef {'distance' | 'weight' | 'volume'} UnitDimension
+ */
+export type UnitDimension = 'distance' | 'weight' | 'volume';
+
+/**
+ * Display preference per measurement family.
+ *
+ * @interface UnitSystemPreferences
+ * @property {UnitSystemValue} distance - Preference for strides and leagues
+ * @property {UnitSystemValue} weight - Preference for burdens
+ * @property {UnitSystemValue} volume - Preference for volumes
+ */
+export interface UnitSystemPreferences {
+  distance: UnitSystemValue;
+  weight: UnitSystemValue;
+  volume: UnitSystemValue;
+}
+
+/**
+ * Default preferences: the native system across the board.
+ *
+ * @constant
+ */
+export const DEFAULT_UNIT_SYSTEM: UnitSystemPreferences = {
+  distance: 'stride',
+  weight: 'stride',
+  volume: 'stride',
+};
+
+/**
  * Complete persistent UI state shape
  *
  * @interface PersistentUiState
  * @property {SidebarMenuState} sidebarMenu - Sidebar menu state
  * @property {ThemeValue} theme - Current theme value
- * @property {UnitSystemValue} unitSystem - Current unit display preference
+ * @property {UnitSystemPreferences} unitSystem - Display preference per measurement family
  * @property {string | null} correctionsToken - HMAC token for corrections API (persists annually)
  * @property {boolean} isHydrated - Whether state has been hydrated from storage
  */
 export interface PersistentUiState {
   sidebarMenu: SidebarMenuState;
   theme: ThemeValue;
-  unitSystem: UnitSystemValue;
+  unitSystem: UnitSystemPreferences;
   correctionsToken: string | null;
   isHydrated: boolean;
 }
@@ -97,13 +131,15 @@ export interface PersistentUiState {
  * @interface SerializedPersistentUiState
  * @property {SidebarMenuState} [sidebarMenu] - Optional sidebar menu state
  * @property {ThemeValue} [theme] - Optional theme value
- * @property {UnitSystemValue} [unitSystem] - Optional unit display preference
+ * @property {UnitSystemPreferences | UnitSystemValue} [unitSystem] - Display
+ *   preferences. A bare string is accepted from records written before the
+ *   preference was split per measurement family, and applies to all three.
  * @property {string | null} [correctionsToken] - Optional corrections API token
  */
 export interface SerializedPersistentUiState {
   sidebarMenu?: SidebarMenuState;
   theme?: ThemeValue;
-  unitSystem?: UnitSystemValue;
+  unitSystem?: UnitSystemPreferences | UnitSystemValue;
   correctionsToken?: string | null;
 }
 
@@ -209,7 +245,7 @@ export interface SetCorrectionsTokenAction {
  */
 export interface SetUnitSystemAction {
   type: typeof PERSISTED_UI_ACTION_TYPES.SET_UNIT_SYSTEM;
-  payload: { unitSystem: UnitSystemValue };
+  payload: { dimension: UnitDimension; system: UnitSystemValue };
 }
 
 /**
@@ -249,7 +285,7 @@ export const DEFAULT_PERSISTENT_UI_STATE: PersistentUiState = {
     expandedPaths: [],
   },
   theme: 'dark',
-  unitSystem: 'stride',
+  unitSystem: DEFAULT_UNIT_SYSTEM,
   correctionsToken: null,
   isHydrated: false,
 };

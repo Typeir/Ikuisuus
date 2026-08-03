@@ -1,14 +1,17 @@
 /**
  * @fileoverview UnitSwitcher MDX Component
- * @description Lets a reader choose which system every measure in the Library
- * renders in. Lives on the Measures rule page rather than in global chrome, so
- * the page that defines the units is also the page that changes them.
+ * @description Lets a reader choose which system each measurement family
+ * renders in. Distance, weight and volume are set independently, so someone
+ * can read distances in metres while weighing things in pounds.
  *
- * Renders the native stride option as selected until persistent state has
- * hydrated, matching the server-rendered default.
+ * Lives on the Measures rule page rather than in global chrome, so the page
+ * that defines the units is also the page that changes them.
+ *
+ * Until the first client render commits, the hook reports the native defaults,
+ * which is what the server rendered — so hydration has nothing to reconcile.
  *
  * @module modules/library/presentation/components/UnitSwitcher/UnitSwitcher
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 2026-08-03
  */
@@ -19,64 +22,75 @@ import {
   useUnitSystemActions,
   useUnitSystemState,
 } from '@/lib/hooks/useUnitSystem';
-import type { UnitSystemValue } from '@/lib/types/persistentUiState';
+import type {
+  UnitDimension,
+  UnitSystemValue,
+} from '@/lib/types/persistentUiState';
 import { useTranslations } from 'next-intl';
 import React from 'react';
 import styles from './UnitSwitcher.module.scss';
 
-/**
- * Selectable systems in display order.
- *
- * @constant
- */
+/** Selectable systems, in display order. */
 const SYSTEMS: UnitSystemValue[] = ['stride', 'metric', 'imperial'];
 
+/** Measurement families, in display order. */
+const DIMENSIONS: UnitDimension[] = ['distance', 'weight', 'volume'];
+
 /**
- * Maps a system to its translation key suffix.
+ * Builds the translation key for a system's label.
  *
- * @param {UnitSystemValue} system - The system value
- * @returns {string} The translation key for the system's label
+ * @param {string} value - System or dimension value
+ * @param {string} prefix - Key prefix
+ * @returns {string} The translation key
  */
-function labelKey(system: UnitSystemValue): string {
-  return `switcher${system.charAt(0).toUpperCase()}${system.slice(1)}`;
+function labelKey(value: string, prefix: string): string {
+  return `${prefix}${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 }
 
 /**
- * Renders the unit system switcher.
+ * Renders the unit system switcher, one row per measurement family.
  *
  * @returns {React.ReactElement} The rendered switcher
  */
 export const UnitSwitcher: React.FC = () => {
-  const { unitSystem, isHydrated } = useUnitSystemState();
+  const { unitSystem } = useUnitSystemState();
   const { setUnitSystem } = useUnitSystemActions();
   const t = useTranslations('units');
 
-  const active = isHydrated ? unitSystem : 'stride';
-
   return (
     <div className={styles.switcher}>
-      <p className={styles.label} id='unit-switcher-label'>
-        {t('switcherLabel')}
-      </p>
-      <div
-        className={styles.options}
-        role='radiogroup'
-        aria-labelledby='unit-switcher-label'
-      >
-        {SYSTEMS.map((system) => (
-          <button
-            key={system}
-            type='button'
-            role='radio'
-            aria-checked={active === system}
-            className={styles.option}
-            data-active={active === system}
-            onClick={() => setUnitSystem(system)}
-          >
-            {t(labelKey(system))}
-          </button>
-        ))}
-      </div>
+      <p className={styles.label}>{t('switcherLabel')}</p>
+
+      {DIMENSIONS.map((dimension) => {
+        const groupId = `unit-switcher-${dimension}`;
+        const active = unitSystem[dimension];
+
+        return (
+          <div className={styles.row} key={dimension}>
+            <p className={styles.rowLabel} id={groupId}>
+              {t(labelKey(dimension, 'dimension'))}
+            </p>
+            <div
+              className={styles.options}
+              role='radiogroup'
+              aria-labelledby={groupId}>
+              {SYSTEMS.map((system) => (
+                <button
+                  key={system}
+                  type='button'
+                  role='radio'
+                  aria-checked={active === system}
+                  className={styles.option}
+                  data-active={active === system}
+                  onClick={() => setUnitSystem(dimension, system)}>
+                  {t(labelKey(system, 'switcher'))}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+
       <p className={styles.hint}>{t('switcherHint')}</p>
     </div>
   );

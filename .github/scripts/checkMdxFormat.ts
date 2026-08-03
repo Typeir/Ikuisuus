@@ -30,12 +30,18 @@ const MDX_COMPONENTS_FILE = path.join(
   'mdx',
   'mdxComponents.tsx',
 );
+/**
+ * The registry content is actually rendered through. `src/lib/components/mdx`
+ * is no longer imported at runtime, so validating against it lets a component
+ * pass this check and still fail when the page renders.
+ */
 const MDX_INDEX_FILE = path.join(
   ROOT,
   'src',
-  'lib',
+  'modules',
+  'library',
+  'presentation',
   'components',
-  'mdx',
   'index.tsx',
 );
 

@@ -279,7 +279,10 @@ function parseSenses(raw: string | undefined, sharedData: SharedData) {
   if (p) senses.passivePerception = Number(p[1]);
   const senseKeys = GameData.getSenses(sharedData);
   for (const key of senseKeys) {
-    const r = new RegExp(`${key}\\s+(\\d+)\\s*ft\\.?`, 'i');
+    const r = new RegExp(
+      `${key}\\s+(?:\\[=\\s*)?(\\d+)\\s*(?:stride(?:;ADJ)?\\s*=\\]|ft\\.?)`,
+      'i',
+    );
     const m = raw.match(r);
     if (m) senses[key] = Number(m[1]);
   }
