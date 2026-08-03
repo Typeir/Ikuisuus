@@ -85,7 +85,7 @@ export const MONSTER_MECHANICS = {
 /**
  * Item mechanic detection patterns. Each key maps to a tag suffix.
  *
- * @property {RegExp} attackBonus - "+N to attack/hit", or an accuracy bonus in canonical wording
+ * @property {RegExp} accuracyBonus - "+N to attack/hit", or an accuracy bonus in canonical wording
  * @property {RegExp} damageBonus - "+N to damage/AC", or a damage bonus in canonical wording
  * @property {RegExp} acBonus - "+N to AC"
  * @property {RegExp} savingThrowBonus - "+N to saving throws"
@@ -110,7 +110,7 @@ export const MONSTER_MECHANICS = {
  * @property {RegExp} proficiency - Proficiency keyword
  */
 export const ITEM_MECHANICS = {
-  attackBonus:
+  accuracyBonus:
     /\+\d+\s+(?:to\s+)?(?:attack|hit)|\baccuracy(?:\s+and\s+damage)?\s+bonus\b/i,
   damageBonus: /\+\d+\s+(?:to\s+)?(?:damage|AC)|\bdamage\s+bonus\b/i,
   acBonus: /\+\d+\s+(?:to\s+|bonus\s+to\s+)?AC/i,

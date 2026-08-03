@@ -165,19 +165,19 @@ describe('extractMonsterMechanicTags', () => {
 describe('extractItemMechanicTags', () => {
   it('should detect attack bonus', () => {
     expect(extractItemMechanicTags('+1 to attack')).toContain(
-      'mechanic:attack-bonus',
+      'mechanic:accuracy-bonus',
     );
   });
 
   it('should detect an accuracy bonus in canonical wording', () => {
     expect(extractItemMechanicTags('+1 accuracy bonus')).toContain(
-      'mechanic:attack-bonus',
+      'mechanic:accuracy-bonus',
     );
   });
 
   it('should detect both stats in a combined accuracy and damage bonus', () => {
     const tags = extractItemMechanicTags('+4 accuracy and damage bonus');
-    expect(tags).toContain('mechanic:attack-bonus');
+    expect(tags).toContain('mechanic:accuracy-bonus');
     expect(tags).toContain('mechanic:damage-bonus');
   });
 

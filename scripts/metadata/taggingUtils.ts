@@ -207,7 +207,8 @@ export function extractMonsterMechanicTags(text: string): string[] {
 export function extractItemMechanicTags(text: string): string[] {
   const tags: string[] = [];
 
-  if (ITEM_MECHANICS.attackBonus.test(text)) tags.push('mechanic:attack-bonus');
+  if (ITEM_MECHANICS.accuracyBonus.test(text))
+    tags.push('mechanic:accuracy-bonus');
   if (ITEM_MECHANICS.damageBonus.test(text)) tags.push('mechanic:damage-bonus');
   if (ITEM_MECHANICS.acBonus.test(text)) tags.push('mechanic:ac-bonus');
   if (ITEM_MECHANICS.savingThrowBonus.test(text))

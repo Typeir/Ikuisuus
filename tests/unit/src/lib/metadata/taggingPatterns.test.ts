@@ -44,7 +44,7 @@ describe('MONSTER_MECHANICS patterns', () => {
 
 describe('ITEM_MECHANICS patterns', () => {
   it('detects bonus patterns', () => {
-    expect(ITEM_MECHANICS.attackBonus.test('+2 to hit')).toBe(true);
+    expect(ITEM_MECHANICS.accuracyBonus.test('+2 to hit')).toBe(true);
     expect(ITEM_MECHANICS.acBonus.test('+1 bonus to AC')).toBe(true);
   });
 

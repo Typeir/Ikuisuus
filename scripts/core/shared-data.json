@@ -16,9 +16,12 @@
       "true"
     ],
     "conditions": [
+      "bleeding",
       "blinded",
+      "burning",
       "charmed",
       "deafened",
+      "exhaustion",
       "frightened",
       "grappled",
       "incapacitated",
@@ -28,9 +31,14 @@
       "poisoned",
       "prone",
       "restrained",
+      "slowed",
+      "staggered",
       "stunned",
+      "suffocating",
+      "sundered",
+      "terrified",
       "unconscious",
-      "exhausted"
+      "unsteady"
     ],
     "abilities": [
       {
@@ -107,7 +115,7 @@
       "charges",
       "limited-uses",
       "recharge",
-      "attack-bonus",
+      "accuracy-bonus",
       "damage-bonus",
       "ac-bonus",
       "saving-throw-bonus"
