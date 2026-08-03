@@ -107,7 +107,16 @@ function installPosixShim(repoRoot: string): string | null {
 
 /**
  * Installs the `ik` shim on Windows by writing `%USERPROFILE%\.ik\ik.cmd` and
- * prepending that folder to the user PATH via `setx`.
+ * prepending that folder to the user PATH.
+ *
+ * Deliberately not `setx PATH "<dir>;%PATH%"`. That expands `%PATH%` to the
+ * *combined* system and user PATH and writes the result back into the user
+ * scope, so every system entry gets duplicated there. Those copies then shadow
+ * later system PATH changes, and `setx` silently truncates at 1024 characters,
+ * which can destroy the variable outright on a machine with a long PATH.
+ *
+ * Reads and writes the user scope directly instead, which has neither problem.
+ *
  * @param {string} repoRoot - Absolute path to the main repo root.
  * @returns {string | null} Error message if failed, null otherwise.
  */
@@ -119,17 +128,42 @@ function installWindowsShim(repoRoot: string): string | null {
   const cmdBody = `@echo off\r\nnpx tsx --tsconfig "${repoRoot}\\tsconfig.scripts.json" "${repoRoot}\\scripts\\multirepo\\ik.ts" %*\r\n`;
   writeFileSync(cmdPath, cmdBody, { encoding: 'utf8' });
 
-  const currentPath = process.env.PATH ?? '';
-  if (currentPath.toLowerCase().includes(ikDir.toLowerCase())) {
+  const read = spawnSync(
+    'powershell',
+    [
+      '-NoProfile',
+      '-Command',
+      '[Environment]::GetEnvironmentVariable("PATH","User")',
+    ],
+    { encoding: 'utf8', stdio: 'pipe' },
+  );
+  if (read.status !== 0) {
+    return `Could not read the user PATH. Add "${ikDir}" to PATH manually.`;
+  }
+
+  const entries = (read.stdout ?? '')
+    .trim()
+    .split(';')
+    .filter(Boolean);
+  if (entries.some((entry) => entry.toLowerCase() === ikDir.toLowerCase())) {
     return null;
   }
 
-  const setxResult = spawnSync('setx', ['PATH', `${ikDir};%PATH%`], {
-    stdio: 'pipe',
-  });
-  if (setxResult.status !== 0) {
-    const stderr = setxResult.stderr?.toString() ?? 'unknown error';
-    return `setx failed: ${stderr.trim()}. Add "${ikDir}" to PATH manually.`;
+  const write = spawnSync(
+    'powershell',
+    [
+      '-NoProfile',
+      '-Command',
+      '[Environment]::SetEnvironmentVariable("PATH", $env:IK_NEXT_PATH, "User")',
+    ],
+    {
+      stdio: 'pipe',
+      env: { ...process.env, IK_NEXT_PATH: [ikDir, ...entries].join(';') },
+    },
+  );
+  if (write.status !== 0) {
+    const stderr = write.stderr?.toString() ?? 'unknown error';
+    return `PATH update failed: ${stderr.trim()}. Add "${ikDir}" to PATH manually.`;
   }
   return null;
 }
