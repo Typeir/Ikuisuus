@@ -24,16 +24,23 @@
  * @module src/lib/utils/getContentFolder
  */
 import { join } from 'path';
-import { FolderName } from '../enums/constants';
 
 /**
  * Returns the absolute path to the content folder.
  *
  * This uses the current working directory and joins
  * the configured source and content folder names.
+ *
+ * The segments are written as literals rather than `FolderName.Src` and
+ * `FolderName.Content`. Turbopack constant-folds string literals when it
+ * derives the file pattern for output tracing, but not enum members, so the
+ * enum form left the prefix as bare `/ROOT/` and traced all 36851 project
+ * files into every function reaching this helper. The literals narrow the
+ * pattern to `src/content`, which is all this function can ever return.
+ *
  * @param {string} locale the locale for the content language, defaults to en
  * @returns {string} The absolute path to the content directory.
  */
 export const getContentFolder = (locale: string = 'en'): string => {
-  return join(process.cwd(), FolderName.Src, FolderName.Content, locale);
+  return join(process.cwd(), 'src', 'content', locale);
 };
