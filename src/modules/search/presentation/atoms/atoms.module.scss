@@ -42,12 +42,16 @@ a:hover .sigil {
 }
 
 /* ---- ResultTitle ---- */
+/* `anywhere` rather than `break-word`: it also lowers the min-content width,
+   so a single long title cannot force the card wider than its grid track. */
 .resultTitle {
   font-family: inherit;
   font-weight: 600;
   font-size: 0.9375rem;
   line-height: 1.35;
   color: var(--color-text);
+  min-width: 0;
+  overflow-wrap: anywhere;
   transition: color var(--search-anim-duration, 200ms) var(--springy-bezier);
 }
 
@@ -207,6 +211,10 @@ a:hover .resultTitle {
   gap: 0.35rem;
 }
 
+/* Wraps rather than running past the card edge. Without flex-wrap the label
+   and the reading time are pinned to one line, and `min-width: 0` lets this
+   item shrink below the intrinsic width of a word like SPECIALIZATIONS, which
+   letter-spacing makes wider still. */
 .cardTypeLabel {
   font-family: var(--font-mono), monospace;
   font-size: 0.625rem;
@@ -215,8 +223,11 @@ a:hover .resultTitle {
   color: var(--sigil-color, var(--color-accent));
   opacity: 0.8;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.5rem;
+  gap: 0 0.5rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .readingTime {
@@ -238,6 +249,8 @@ a:hover .resultTitle {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .rowMeta {
