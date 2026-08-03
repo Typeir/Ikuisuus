@@ -9,6 +9,12 @@
  * and hosts the switcher. The accessible name carries all three systems so the
  * measure is legible regardless of which one is shown.
  *
+ * The other two systems are shown in the wiki tooltip rather than the browser's
+ * `title` popup. The tooltip renders nothing until it has mounted, so static
+ * output and first client paint are both the bare link, and it is attached in
+ * inline mode so a measure sitting mid-sentence is not wrapped in a flex box
+ * that would break the line around it.
+ *
  * @module modules/library/presentation/components/Unit/Unit
  * @version 1.0.0
  * @author Typeir
@@ -17,6 +23,7 @@
 
 'use client';
 
+import { Tooltip } from '@/lib/components/ui/tooltip';
 import { useUnitSystemState } from '@/lib/hooks/useUnitSystem';
 import type { UnitName } from '@/lib/md/unitExpressionParser';
 import type { UnitSystemValue } from '@/lib/types/persistentUiState';
@@ -127,23 +134,33 @@ export const Unit: React.FC<UnitProps> = ({
     ? formatFraction(t, numerator, divisor, unit, system)
     : formatUnit(numerator, unit, system, attributive);
 
-  const title = isFraction
-    ? (['stride', 'metric', 'imperial'] as const)
-        .map((mode) => formatFraction(t, numerator, divisor, unit, mode))
-        .join(' · ')
-    : allUnitRenderings(numerator, unit, attributive).join(' · ');
+  const renderings = isFraction
+    ? (['stride', 'metric', 'imperial'] as const).map((mode) =>
+        formatFraction(t, numerator, divisor, unit, mode),
+      )
+    : allUnitRenderings(numerator, unit, attributive);
 
   return (
-    <a
-      className={styles.unit}
-      href={`/${locale}/${MEASURES_PATH}`}
-      title={title}
-      aria-label={t('ariaLabel', { renderings: title.replace(/ · /g, ', ') })}
-      data-unit={unit}
-      data-unit-system={system}
+    <Tooltip
+      content={renderings.map((rendering) => (
+        <span key={rendering} className={styles.rendering}>
+          {rendering}
+        </span>
+      ))}
+      className={styles.tooltip}
+      showArrow={false}
+      inline
     >
-      {label}
-    </a>
+      <a
+        className={styles.unit}
+        href={`/${locale}/${MEASURES_PATH}`}
+        aria-label={t('ariaLabel', { renderings: renderings.join(', ') })}
+        data-unit={unit}
+        data-unit-system={system}
+      >
+        {label}
+      </a>
+    </Tooltip>
   );
 };
 

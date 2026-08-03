@@ -13,8 +13,16 @@
  * @requires @testing-library/react Rendering utilities
  */
 
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('react-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-dom')>();
+  return {
+    ...actual,
+    createPortal: (node: React.ReactNode) => node,
+  };
+});
 
 const mockUnitState = {
   unitSystem: { distance: 'stride', weight: 'stride', volume: 'stride' } as Record<string, 'stride'|'metric'|'imperial'>,
@@ -112,12 +120,42 @@ describe('Unit', () => {
       );
     });
 
-    it('should carry all three systems in the title', () => {
+    it('should not use the browser title popup', () => {
       render(<Unit value='6' unit='stride' />);
-      expect(screen.getByRole('link')).toHaveAttribute(
-        'title',
-        '6 strides · 12 metres · 30 feet',
+      expect(screen.getByRole('link')).not.toHaveAttribute('title');
+    });
+
+    it('should carry all three systems in the accessible name', () => {
+      render(<Unit value='6' unit='stride' />);
+      expect(screen.getByRole('link')).toHaveAccessibleName(
+        '6 strides, 12 metres, 30 feet — see Measures',
       );
+    });
+
+    it('should show all three systems in the wiki tooltip on hover', () => {
+      vi.useFakeTimers();
+      try {
+        render(<Unit value='6' unit='stride' />);
+
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+
+        fireEvent.mouseEnter(screen.getByRole('link'));
+        act(() => {
+          vi.advanceTimersByTime(300);
+        });
+
+        const tooltip = screen.getByRole('tooltip');
+        for (const rendering of ['6 strides', '12 metres', '30 feet']) {
+          expect(tooltip).toHaveTextContent(rendering);
+        }
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should leave the link untouched before mount so static output matches', () => {
+      const { container } = render(<Unit value='6' unit='stride' />);
+      expect(container.querySelector('a')).toBe(screen.getByRole('link'));
     });
 
     it('should expose the unit as a data attribute', () => {

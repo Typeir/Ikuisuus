@@ -11,3 +11,13 @@
     border-bottom-style: solid;
   }
 }
+
+.tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.rendering {
+  white-space: nowrap;
+}
