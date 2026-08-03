@@ -10,6 +10,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import { useNearestRoute } from '@/lib/hooks/data/useDraftAndRouteData';
 import { useTranslations } from 'next-intl';

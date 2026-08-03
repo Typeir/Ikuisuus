@@ -13,7 +13,7 @@
  * @see {@link extractMonsterDescription} for monster-specific extraction
  */
 
-import { compileAsync } from '@/modules/library/infrastructure/compile/compileAsync';
+import { compileDynamic } from '@/modules/library/infrastructure/compile/compileDynamic';
 import { renderToHtml } from '@/modules/library/infrastructure/compile/serverRender';
 import React from 'react';
 import remarkGfm from 'remark-gfm';
@@ -93,7 +93,7 @@ const FOUNDRY_COMPONENTS: Record<string, React.FC<any>> = {
  * @returns {Promise<string>} Clean HTML string for Foundry VTT description fields
  */
 export async function mdxToHtml(mdx: string): Promise<string> {
-  const result = await compileAsync({
+  const result = await compileDynamic({
     source: mdx,
     components: FOUNDRY_COMPONENTS,
     mdxOptions: { remarkPlugins: [remarkGfm] },

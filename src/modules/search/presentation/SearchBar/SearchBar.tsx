@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils/classNameMerge';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
+import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearch } from '../../application/useSearch';
 import { MAX_DROPDOWN_RESULTS, SearchDropdown } from './SearchDropdown';

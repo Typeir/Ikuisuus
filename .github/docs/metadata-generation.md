@@ -826,7 +826,7 @@ Or view Spanish monsters:
 
 ### Component Registration
 
-**File**: `src/lib/components/mdx/index.tsx`
+**File**: `src/modules/library/presentation/components/index.tsx`
 
 ```typescript
 import { MonsterTableWrapper } from './MetadataTable/monsterTableWrapper';
@@ -835,7 +835,7 @@ import { SpellTableWrapper } from './MetadataTable/spellTableWrapper';
 import { BlendedImage } from './BlendedImage';
 
 // Register all MDX components here
-export const mdxComponents = {
+export const components = {
   MonsterTable: MonsterTableWrapper,
   HeirloomTable: HeirloomTableWrapper,
   SpellTable: SpellTableWrapper,

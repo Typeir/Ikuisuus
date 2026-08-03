@@ -10,6 +10,7 @@
  * @fileoverview Module for src/lib/components/mdx/horizontalSplit/horizontalSplit.tsx
  */
 
+import type { JSX } from 'react';
 import { toCssValue } from '@/lib/utils/toCssValue';
 import React, { CSSProperties, ReactNode } from 'react';
 import styles from './HorizontalSplit.module.scss';

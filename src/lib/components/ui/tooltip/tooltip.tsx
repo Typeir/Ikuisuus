@@ -115,10 +115,10 @@ export const Tooltip = memo(function Tooltip({
 
   const triggerRef = useRef<HTMLElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const showTimeoutRef = useRef<NodeJS.Timeout>();
-  const hideTimeoutRef = useRef<NodeJS.Timeout>();
+  const showTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const exitingRef = useRef(false);
-  const exitTimerRef = useRef<NodeJS.Timeout>();
+  const exitTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const positionedRef = useRef(false);
 
   /** Duration of the CSS exit animation — must match SCSS. */

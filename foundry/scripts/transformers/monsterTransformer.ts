@@ -27,6 +27,25 @@ import {
     parseLanguages,
 } from '../utils/traitParsers';
 
+/** Feet in one stride. Damocles measures natively in strides; Foundry does not. */
+const FEET_PER_STRIDE = 5;
+
+/**
+ * Converts a native stride distance into the feet Foundry expects.
+ *
+ * Metadata mirrors content, which is measured in strides. Foundry's dnd5e
+ * schema hardcodes `units: 'ft'`, so the conversion happens here at the
+ * boundary rather than polluting the stored values.
+ *
+ * @param {number | undefined} strides - Distance in strides
+ * @returns {number} The distance in feet, or 0 when absent
+ *
+ * @example
+ * stridesToFeet(6) // 30
+ */
+const stridesToFeet = (strides: number | undefined): number =>
+  (strides ?? 0) * FEET_PER_STRIDE;
+
 /**
  * Foundry VTT dnd5e NPC Actor JSON structure.
  *
@@ -177,19 +196,19 @@ export async function transformMonster(
           formula: monster.hp?.formula ?? '',
         },
         movement: {
-          walk: monster.speed?.walk ?? 0,
-          fly: monster.speed?.fly ?? 0,
-          swim: monster.speed?.swim ?? 0,
-          climb: monster.speed?.climb ?? 0,
-          burrow: monster.speed?.burrow ?? 0,
+          walk: stridesToFeet(monster.speed?.walk),
+          fly: stridesToFeet(monster.speed?.fly),
+          swim: stridesToFeet(monster.speed?.swim),
+          climb: stridesToFeet(monster.speed?.climb),
+          burrow: stridesToFeet(monster.speed?.burrow),
           hover: monster.speed?.hover ?? false,
           units: 'ft',
         },
         senses: {
-          darkvision: monster.senses?.darkvision ?? 0,
-          blindsight: monster.senses?.blindsight ?? 0,
-          tremorsense: monster.senses?.tremorsense ?? 0,
-          truesight: monster.senses?.truesight ?? 0,
+          darkvision: stridesToFeet(monster.senses?.darkvision),
+          blindsight: stridesToFeet(monster.senses?.blindsight),
+          tremorsense: stridesToFeet(monster.senses?.tremorsense),
+          truesight: stridesToFeet(monster.senses?.truesight),
           units: 'ft',
           special: '',
         },

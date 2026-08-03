@@ -14,7 +14,7 @@ From the user's request, determine:
 - **Component name** (PascalCase)
 - **Location** (which feature area in `src/lib/components/`)
 - **Client or Server** — default to server component unless interactivity is needed
-- **MDX usage** — whether it should be registered in `src/lib/components/mdx/index.tsx`
+- **MDX usage** — whether it should be registered in `src/modules/library/presentation/components/index.tsx`
 
 ## Step 2: Read Architecture Docs
 
@@ -40,7 +40,7 @@ Create the following files:
 
 ## Step 4: Register in MDX (If Applicable)
 
-If the component should be available in `.mdx` files, add it to the component map in `src/lib/components/mdx/index.tsx`.
+If the component should be available in `.mdx` files, add it to the component map in `src/modules/library/presentation/components/index.tsx`.
 
 ## Step 5: Create Test File
 

@@ -233,7 +233,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (fetchTag) {
-        revalidateTag(fetchTag);
+        revalidateTag(fetchTag, 'max');
         log.message('Invalidated fetch cache tag', { tag: fetchTag });
       }
 

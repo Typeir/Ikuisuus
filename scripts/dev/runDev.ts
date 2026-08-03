@@ -250,7 +250,11 @@ async function main() {
 
   const localeWatcher = startLocaleWatcher();
 
-  nextExitCode = await runCommand('npx', ['next', 'dev', ...nextArgs], backendEnv);
+  nextExitCode = await runCommand(
+    'npx',
+    ['next', 'dev', ...nextArgs],
+    backendEnv,
+  );
 
   localeWatcher.close();
   process.exit(nextExitCode);

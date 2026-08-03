@@ -8,6 +8,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import { FilterSelect, type FilterSelectOption } from '@/lib/components/ui';
 import { useTranslations } from 'next-intl';
 import type {

@@ -63,6 +63,7 @@ export async function importAllAsync() {
   const [
     mdxRemote,
     remarkDiceRollMod,
+    remarkUnitMod,
     remarkGfmMod,
     remarkMathMod,
     rehypeKatexMod,
@@ -70,6 +71,7 @@ export async function importAllAsync() {
   ] = await Promise.all([
     import('next-mdx-remote-client/rsc'),
     import('@/lib/md/remarkDiceRoll'),
+    import('@/lib/md/remarkUnit'),
     import('remark-gfm'),
     import('remark-math'),
     import('rehype-katex'),
@@ -79,6 +81,7 @@ export async function importAllAsync() {
   return {
     evaluate: mdxRemote.evaluate,
     remarkDiceRoll: (remarkDiceRollMod as any).default ?? remarkDiceRollMod,
+    remarkUnit: (remarkUnitMod as any).default ?? remarkUnitMod,
     remarkGfm: (remarkGfmMod as any).default ?? remarkGfmMod,
     remarkMath: (remarkMathMod as any).default ?? remarkMathMod,
     rehypeKatex: (rehypeKatexMod as any).default ?? rehypeKatexMod,

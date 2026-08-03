@@ -15,6 +15,7 @@
 import type { TreeNode } from '@/modules/mdx-editor/domain/types';
 import { FileTreeSelectRow } from '@/modules/mdx-editor/presentation/FileTreeSelect/FileTreeSelectRow';
 import { ChevronDown } from 'lucide-react';
+import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './FileTreeSelect.module.scss';
 

@@ -11,6 +11,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import { cn } from '@/lib/utils/classNameMerge';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';

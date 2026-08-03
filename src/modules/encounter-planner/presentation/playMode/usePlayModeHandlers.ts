@@ -68,7 +68,7 @@ export interface UsePlayModeHandlersParams {
  * @interface UsePlayModeHandlersResult
  * @property {string} sessionOnlyName - Input value for session-only combatant name
  * @property {Dispatch<SetStateAction<string>>} setSessionOnlyName - Setter for session-only name input
- * @property {RefObject<HTMLInputElement>} fileInputRef - Hidden combat import input ref
+ * @property {RefObject<HTMLInputElement | null>} fileInputRef - Hidden combat import input ref
  * @property {(index: number, updater: (c: InProgressCombatant) => InProgressCombatant) => void} handleUpdateCombatant - Updates one combatant by index
  * @property {() => void} handleEndTurn - Advances turn and emits lifecycle events
  * @property {() => void} handleSortByInitiative - Resorts combatants by initiative
@@ -84,7 +84,7 @@ export interface UsePlayModeHandlersParams {
 export interface UsePlayModeHandlersResult {
   sessionOnlyName: string;
   setSessionOnlyName: Dispatch<SetStateAction<string>>;
-  fileInputRef: RefObject<HTMLInputElement>;
+  fileInputRef: RefObject<HTMLInputElement | null>;
   handleUpdateCombatant: (
     index: number,
     updater: (c: InProgressCombatant) => InProgressCombatant,

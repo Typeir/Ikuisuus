@@ -1,40 +1,49 @@
 /**
  * @fileoverview MikroORM Entity — Bloodline Boon
- * @description Decorator-based entity for the `bloodline_boons` child table.
- * Each row represents a single boon option belonging to a bloodline.
- * Foreign-keyed to `bloodlines.id` via ManyToOne.
+ * @description Entity for the `bloodline_boons` child table. Each row
+ * represents a single boon option belonging to a bloodline. Foreign-keyed to
+ * `bloodlines.id` via ManyToOne.
+ *
+ * Uses the in-house schema decorators rather than MikroORM's, so the entity
+ * name survives class-name minification in production server builds.
  *
  * @module lib/db/orm/entities/BloodlineBoonEntity
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 7.0.0
  */
 
 import type { BloodlineBoonSubOption } from '@/lib/db/content/schemas/bloodlineMetadata';
-import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { BloodlineEntity } from './index';
+import {
+    OrmEntity,
+    OrmManyToOne,
+    OrmPrimaryKey,
+    OrmProperty,
+} from '@/lib/db/orm/schema';
+import type { BloodlineEntity } from './BloodlineEntity';
 
 /**
  * MikroORM entity for the `bloodline_boons` table.
  */
-@Entity({ tableName: 'bloodline_boons' })
+@OrmEntity('BloodlineBoonEntity', { tableName: 'bloodline_boons' })
 export class BloodlineBoonEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @ManyToOne(() => BloodlineEntity, {
+  @OrmManyToOne({
+    entity: 'BloodlineEntity',
     fieldName: 'bloodline_id',
     deleteRule: 'cascade',
   })
   bloodline!: BloodlineEntity;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   name!: string;
 
-  @Property({ type: 'string', fieldName: 'bp_label' })
+  @OrmProperty({ type: 'string', fieldName: 'bp_label' })
   bpLabel!: string;
 
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'bp_value',
     columnType: 'smallint',
@@ -42,18 +51,18 @@ export class BloodlineBoonEntity {
   })
   bpValue?: number | null;
 
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'sort_order',
     columnType: 'smallint',
   })
   sortOrder!: number;
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
   /** @property {number | null} startLine - 1-indexed start line of this boon's heading block in the source MDX */
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'start_line',
     columnType: 'smallint',
@@ -62,7 +71,7 @@ export class BloodlineBoonEntity {
   startLine?: number | null;
 
   /** @property {number | null} endLine - 1-indexed last line of this boon's content block in the source MDX */
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'end_line',
     columnType: 'smallint',
@@ -71,7 +80,7 @@ export class BloodlineBoonEntity {
   endLine?: number | null;
 
   /** @property {BloodlineBoonSubOption[] | null} subOptions - Selectable options for a variable-cost boon, stored as JSONB */
-  @Property({
+  @OrmProperty({
     type: 'json',
     fieldName: 'sub_options',
     columnType: 'jsonb',

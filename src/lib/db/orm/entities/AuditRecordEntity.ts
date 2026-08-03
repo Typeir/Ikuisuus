@@ -8,32 +8,32 @@
  * @since 8.0.0
  */
 
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { OrmEntity, OrmPrimaryKey, OrmProperty } from '@/lib/db/orm/schema';
 
 /**
  * MikroORM entity for the `audit_logs` table.
  */
-@Entity({ tableName: 'audit_logs' })
+@OrmEntity('AuditRecordEntity', { tableName: 'audit_logs' })
 export class AuditRecordEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @Property({ type: 'string', fieldName: 'content_path' })
+  @OrmProperty({ type: 'string', fieldName: 'content_path' })
   contentPath!: string;
 
-  @Property({ type: 'string', fieldName: 'base_sha' })
+  @OrmProperty({ type: 'string', fieldName: 'base_sha' })
   baseSha!: string;
 
-  @Property({ type: 'string', fieldName: 'pr_url', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'pr_url', nullable: true })
   prUrl?: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   status!: string;
 
-  @Property({ type: 'string', fieldName: 'token_id' })
+  @OrmProperty({ type: 'string', fieldName: 'token_id' })
   tokenId!: string;
 
-  @Property({
+  @OrmProperty({
     type: 'Date',
     columnType: 'timestamptz',
     defaultRaw: 'now()',

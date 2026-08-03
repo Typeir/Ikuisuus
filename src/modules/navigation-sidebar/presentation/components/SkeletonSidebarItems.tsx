@@ -7,6 +7,7 @@
  */
 'use client';
 
+import type { JSX } from 'react';
 import sk from '@/lib/components/skeleton/skeleton.module.scss';
 import { cn } from '@/lib/utils/classNameMerge';
 

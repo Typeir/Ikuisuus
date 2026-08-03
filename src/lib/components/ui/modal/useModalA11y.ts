@@ -104,8 +104,8 @@ function isTopModal(id: string): boolean {
  * @property {RefObject<HTMLDivElement | null>} contentRef - Ref for the focus-trapped content container
  */
 export interface ModalA11y {
-  overlayRef: RefObject<HTMLDivElement>;
-  contentRef: RefObject<HTMLDivElement>;
+  overlayRef: RefObject<HTMLDivElement | null>;
+  contentRef: RefObject<HTMLDivElement | null>;
 }
 
 /**

@@ -21,17 +21,17 @@
  */
 
 import {
-    Collection,
-    Embeddable,
-    Embedded,
-    Entity,
-    Index,
-    ManyToOne,
-    OneToMany,
-    PrimaryKey,
-    Property,
-    Unique,
-} from '@mikro-orm/core';
+    OrmEmbeddable,
+    OrmEmbedded,
+    OrmEntity,
+    OrmIndex,
+    OrmManyToOne,
+    OrmOneToMany,
+    OrmPrimaryKey,
+    OrmProperty,
+    OrmUnique,
+} from '@/lib/db/orm/schema';
+import { Collection } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VO  ─────────────────────────── */
 
@@ -43,19 +43,19 @@ import {
  * All fields are nullable because the entire embed may be absent for feats
  * that do not grant an ability score increase.
  */
-@Embeddable()
+@OrmEmbeddable('FeatAbilityIncreaseEmbed')
 export class FeatAbilityIncreaseEmbed {
-  @Property({ type: 'string[]', nullable: true })
+  @OrmProperty({ type: 'string[]', nullable: true })
   abilities?: string[] | null;
 
-  @Property({
+  @OrmProperty({
     type: 'number',
     columnType: 'smallint',
     nullable: true,
   })
   amount?: number | null;
 
-  @Property({
+  @OrmProperty({
     type: 'number',
     columnType: 'smallint',
     nullable: true,
@@ -70,28 +70,29 @@ export class FeatAbilityIncreaseEmbed {
  * Each row represents a named mechanic (bold bullet item) from a feat MDX file.
  * Foreign-keyed to `feats.id` via ManyToOne.
  */
-@Entity({ tableName: 'feat_features' })
+@OrmEntity('FeatFeatureEntity', { tableName: 'feat_features' })
 export class FeatFeatureEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @ManyToOne(() => FeatEntity, {
+  @OrmManyToOne({
+    entity: 'FeatEntity',
     fieldName: 'feat_id',
     deleteRule: 'cascade',
   })
   feat!: FeatEntity;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   name!: string;
 
-  @Property({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
+  @OrmProperty({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
   sortOrder!: number;
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
   /** @property {number | null} startLine - 1-indexed start line of this feature's bullet block in the source MDX */
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'start_line',
     columnType: 'smallint',
@@ -100,7 +101,7 @@ export class FeatFeatureEntity {
   startLine?: number | null;
 
   /** @property {number | null} endLine - 1-indexed last line of this feature's bullet block in the source MDX */
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'end_line',
     columnType: 'smallint',
@@ -114,58 +115,59 @@ export class FeatFeatureEntity {
 /**
  * MikroORM entity for the `feats` table.
  */
-@Entity({ tableName: 'feats' })
-@Unique({ properties: ['locale', 'slug'] })
-@Index({
+@OrmEntity('FeatEntity', { tableName: 'feats' })
+@OrmUnique({ properties: ['locale', 'slug'] })
+@OrmIndex({
   properties: ['locale'],
   name: 'feats_locale_idx',
 })
 export class FeatEntity {
-  @PrimaryKey({ type: 'number', autoincrement: true })
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
   id!: number;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   locale!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   slug!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   title!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   file!: string;
 
-  @Property({ type: 'string' })
+  @OrmProperty({ type: 'string' })
   link!: string;
 
-  @Property({ type: 'text', nullable: true })
+  @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 
-  @Property({ type: 'string', nullable: true })
+  @OrmProperty({ type: 'string', nullable: true })
   prerequisite?: string | null;
 
-  @Property({ type: 'boolean', fieldName: 'has_prerequisite' })
+  @OrmProperty({ type: 'boolean', fieldName: 'has_prerequisite' })
   hasPrerequisite!: boolean;
 
-  @Embedded(() => FeatAbilityIncreaseEmbed, {
+  @OrmEmbedded({
+    entity: 'FeatAbilityIncreaseEmbed',
     prefix: 'ability_increase_',
     object: false,
     nullable: true,
   })
   abilityIncrease?: FeatAbilityIncreaseEmbed | null;
 
-  @Property({ type: 'string[]' })
+  @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
   /** @property {string[] | null} grants - Tag-based proficiency grants this feat confers when selected (e.g. `weapon:martial`, `skill:persuasion:expertise`); null when it grants no proficiency */
-  @Property({ type: 'string[]', nullable: true })
+  @OrmProperty({ type: 'string[]', nullable: true })
   grants?: string[] | null;
 
-  @Property({
+  @OrmProperty({
     type: 'number',
     fieldName: 'index_version',
     columnType: 'smallint',
@@ -174,10 +176,12 @@ export class FeatEntity {
   indexVersion?: number | null;
 
   /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
-  @Property({ type: 'string', fieldName: 'version_hash', nullable: true })
+  @OrmProperty({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
 
-  @OneToMany(() => FeatFeatureEntity, (f) => f.feat, {
+  @OrmOneToMany({
+    entity: 'FeatFeatureEntity',
+    mappedBy: 'feat',
     orphanRemoval: true,
   })
   features = new Collection<FeatFeatureEntity>(this);

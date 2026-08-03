@@ -14,6 +14,7 @@
 import { compileMdxToComponent } from '@/modules/library/infrastructure/compile/compileMdxToComponent';
 import { mdxComponents } from '@/modules/library/presentation';
 import contentStyles from '@/styles/mdxContent.module.scss';
+import type { JSX } from 'react';
 import { Suspense, useEffect, useRef, useState, useTransition } from 'react';
 import cn from '../../../../lib/utils/classNameMerge';
 import styles from './MdxPreview.module.scss';

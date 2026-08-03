@@ -1,7 +1,7 @@
 /** Text Area Component Styles */
 
-@use 'src/styles/mixins-input' as *;
-@use 'src/styles/mixins-disabled' as *;
+@use 'mixins-input' as *;
+@use 'mixins-disabled' as *;
 
 .textArea {
   @include input-field(0.8125rem);

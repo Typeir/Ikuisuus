@@ -15,6 +15,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import {
     createContext,
     ReactNode,

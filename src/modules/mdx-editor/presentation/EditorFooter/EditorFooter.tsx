@@ -10,6 +10,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import type { EditorStatus } from '@/modules/mdx-editor/domain/types';
 import styles from './EditorFooter.module.scss';
 

@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -11,7 +15,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
@@ -21,11 +25,21 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@content/*": ["./src/content/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@src/*": ["./src/*"],
-      "@i18n/*": ["./src/lib/i18n/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@content/*": [
+        "./src/content/*"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ],
+      "@i18n/*": [
+        "./src/lib/i18n/*"
+      ]
     }
   },
   "include": [
@@ -53,7 +67,11 @@
     "scripts/metadata/gameData.ts",
     "scripts/metadata/fileUtils.ts",
     "src/lib/metadata/contentHash.ts",
-    "scripts/metadata/cliRunner.ts"
+    "scripts/metadata/cliRunner.ts",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "scripts"]
+  "exclude": [
+    "node_modules",
+    "scripts"
+  ]
 }

@@ -1,0 +1,40 @@
+{
+  "ariaLabel": "{renderings} — see Measures",
+  "switcherLabel": "Display measures as",
+  "switcherStride": "Damocles",
+  "switcherMetric": "Metric",
+  "switcherImperial": "Imperial",
+  "dimensionDistance": "Distance",
+  "dimensionWeight": "Weight",
+  "dimensionVolume": "Volume",
+  "switcherHint": "Every measure in the Library redraws in the systems you choose here. Each kind is set on its own.",
+  "fraction": {
+    "ofA": "{amount} of a {unit}",
+    "halfA": "half a {unit}",
+    "mixed": "{whole} and {amount} {unit}",
+    "mixedHalf": "{whole} and a half {unit}",
+    "whole": "{value} {unit}",
+    "amount": {
+      "1_2": "half",
+      "1_3": "a third",
+      "2_3": "two thirds",
+      "1_4": "a quarter",
+      "3_4": "three quarters",
+      "1_5": "a fifth",
+      "2_5": "two fifths",
+      "3_5": "three fifths",
+      "4_5": "four fifths",
+      "1_6": "a sixth",
+      "5_6": "five sixths",
+      "1_8": "an eighth",
+      "3_8": "three eighths",
+      "5_8": "five eighths",
+      "7_8": "seven eighths",
+      "1_10": "a tenth",
+      "3_10": "three tenths",
+      "7_10": "seven tenths",
+      "9_10": "nine tenths",
+      "1_16": "a sixteenth"
+    }
+  }
+}

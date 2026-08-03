@@ -12,6 +12,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import { deriveExpandedPathsFromUrl } from '@/modules/library/application/selectors/deriveExpandedPathsFromUrl';
 import { isStaticContentRoute } from '@/modules/library/application/selectors/isStaticContentRoute';
 import {
@@ -25,13 +26,51 @@ import {
 import { persistentUiReducer } from '../reducers/persistentUiReducer';
 import {
   DEFAULT_PERSISTENT_UI_STATE,
+  DEFAULT_UNIT_SYSTEM,
   LEGACY_THEME_KEY,
   PERSISTENT_UI_STORAGE_KEY,
   PersistentUiAction,
   PersistentUiState,
   SerializedPersistentUiState,
   ThemeValue,
+  UnitSystemPreferences,
+  UnitSystemValue,
 } from '../types/persistentUiState';
+
+/** Recognised display systems. */
+const SYSTEMS: readonly UnitSystemValue[] = ['stride', 'metric', 'imperial'];
+
+/**
+ * Normalises a stored unit preference into the per-dimension shape.
+ *
+ * Records written before the preference was split hold a bare string; that
+ * value is applied to every measurement family so older sessions keep working.
+ *
+ * @param {UnitSystemPreferences | UnitSystemValue | undefined} stored - Raw stored value
+ * @returns {UnitSystemPreferences} Normalised preferences
+ */
+function readUnitSystem(
+  stored: UnitSystemPreferences | UnitSystemValue | undefined,
+): UnitSystemPreferences {
+  if (typeof stored === 'string') {
+    return SYSTEMS.includes(stored)
+      ? { distance: stored, weight: stored, volume: stored }
+      : DEFAULT_UNIT_SYSTEM;
+  }
+
+  if (!stored || typeof stored !== 'object') {
+    return DEFAULT_UNIT_SYSTEM;
+  }
+
+  const pick = (value: UnitSystemValue, fallback: UnitSystemValue) =>
+    SYSTEMS.includes(value) ? value : fallback;
+
+  return {
+    distance: pick(stored.distance, DEFAULT_UNIT_SYSTEM.distance),
+    weight: pick(stored.weight, DEFAULT_UNIT_SYSTEM.weight),
+    volume: pick(stored.volume, DEFAULT_UNIT_SYSTEM.volume),
+  };
+}
 import { fetchPersistentData } from '../utils/fetchPersistentData';
 import { storePersistentData } from '../utils/storePersistentData';
 
@@ -73,7 +112,7 @@ const PersistentUiDispatchContext =
  */
 function readPersistedState(
   serverExpandedPaths: string[],
-): SerializedPersistentUiState {
+): SerializedPersistentUiState & { unitSystem: UnitSystemPreferences } {
   let expandedPaths: string[] = [];
   const isStatic = isStaticContentRoute();
 
@@ -101,6 +140,7 @@ function readPersistedState(
   }
 
   let theme: ThemeValue = 'dark';
+  let unitSystem: UnitSystemPreferences = DEFAULT_UNIT_SYSTEM;
   let correctionsToken: string | null = null;
   const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
   if (stored) {
@@ -109,6 +149,7 @@ function readPersistedState(
       if (parsed.theme === 'dark' || parsed.theme === 'light') {
         theme = parsed.theme;
       }
+      unitSystem = readUnitSystem(parsed.unitSystem);
       if (
         typeof parsed.correctionsToken === 'string' ||
         parsed.correctionsToken === null
@@ -130,6 +171,7 @@ function readPersistedState(
 
   return {
     theme,
+    unitSystem,
     correctionsToken,
     sidebarMenu: { expandedPaths, isOpen: false },
   };
@@ -152,6 +194,7 @@ function writePersistedState(state: PersistentUiState): void {
   const serialized: SerializedPersistentUiState = {
     sidebarMenu: state.sidebarMenu,
     theme: state.theme,
+    unitSystem: state.unitSystem,
     correctionsToken: state.correctionsToken,
   };
 
@@ -236,6 +279,21 @@ export function usePersistentUiState(): PersistentUiState {
     );
   }
   return context.state;
+}
+
+/**
+ * Hook to access persistent UI state without requiring a provider.
+ *
+ * Returns the default state when no provider is present, which happens when
+ * MDX is rendered outside the React tree — the build-time content scanners do
+ * exactly this. Consumers that must render in both settings should use this
+ * rather than `usePersistentUiState`.
+ *
+ * @returns {PersistentUiState} Provider state, or the unhydrated defaults
+ */
+export function usePersistentUiStateOptional(): PersistentUiState {
+  const context = useContext(PersistentUiStateContext);
+  return context?.state ?? DEFAULT_PERSISTENT_UI_STATE;
 }
 
 /**

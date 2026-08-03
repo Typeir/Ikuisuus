@@ -94,7 +94,7 @@ function parseHeading(headingNode: ReactNode): ParsedHeading {
 
   const lastNode = nodes[nodes.length - 1];
   const hasCostSpan =
-    React.isValidElement(lastNode) &&
+    React.isValidElement<{ children?: React.ReactNode }>(lastNode) &&
     typeof lastNode.type === 'string' &&
     lastNode.type.toLowerCase() === 'span';
 

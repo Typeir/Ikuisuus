@@ -8,17 +8,17 @@
  * @since 5.0.0
  */
 
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { OrmEntity, OrmPrimaryKey, OrmProperty } from '@/lib/db/orm/schema';
 
 /**
  * MikroORM entity for the `schema_migrations` table.
  */
-@Entity({ tableName: 'schema_migrations' })
+@OrmEntity('SchemaMigrationEntity', { tableName: 'schema_migrations' })
 export class SchemaMigrationEntity {
-  @PrimaryKey({ type: 'string' })
+  @OrmPrimaryKey({ type: 'string' })
   name!: string;
 
-  @Property({
+  @OrmProperty({
     type: 'Date',
     fieldName: 'applied_at',
     columnType: 'timestamptz',

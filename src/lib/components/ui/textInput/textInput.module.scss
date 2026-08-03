@@ -1,6 +1,6 @@
 /** Text Input Component Styles */
 
-@use 'src/styles/mixins-input' as *;
+@use 'mixins-input' as *;
 
 .textInput {
   @include input-field(0.8125rem);

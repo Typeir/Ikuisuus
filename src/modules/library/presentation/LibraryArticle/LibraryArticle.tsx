@@ -6,7 +6,7 @@
  * @since 6.0.0
  */
 
-import type { CSSProperties, ReactNode } from 'react';
+import type { JSX, CSSProperties, ReactNode } from 'react';
 import styles from './LibraryArticle.module.scss';
 
 /**

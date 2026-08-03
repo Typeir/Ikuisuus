@@ -15,6 +15,7 @@ import { handleEditorKeyDown } from '@/modules/mdx-editor/domain/editorCommands'
 import { EditorToolbar } from '@/modules/mdx-editor/presentation/EditorToolbar/EditorToolbar';
 import { MdxPreview } from '@/modules/mdx-editor/presentation/MdxPreview/MdxPreview';
 import { Eye, EyeOff } from 'lucide-react';
+import type { JSX } from 'react';
 import { useCallback, useRef, useState } from 'react';
 import Editor from 'react-simple-code-editor';
 import styles from './EditorSplitPane.module.scss';

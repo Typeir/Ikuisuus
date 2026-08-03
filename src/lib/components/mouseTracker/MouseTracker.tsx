@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 
 type Props = {
   /** Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement */
-  targetRef?: React.RefObject<HTMLElement>;
+  targetRef?: React.RefObject<HTMLElement | null>;
   /** Optional callback fired on first mouse movement */
   onFirstMove?: () => void;
 };
@@ -49,7 +49,7 @@ function setMouseVars(
  * to use the vars in transform-only ways, so a full-rate rAF is composite-cheap.
  *
  * @param {Props} props
- * @param {React.RefObject<HTMLElement>} props.targetRef - Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement
+ * @param {React.RefObject<HTMLElement | null>} props.targetRef - Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement
  * @param {() => void} props.onFirstMove - Optional callback fired once on first mouse movement
  *
  * @returns {null}

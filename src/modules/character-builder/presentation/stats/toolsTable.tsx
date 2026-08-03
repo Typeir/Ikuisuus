@@ -11,6 +11,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import type { CharacterTool, TierLevel } from '@/lib/types/character';
 import { higherTier } from '@/modules/character-builder/lib/utils/grants';
 import { computeToolBonus, updateItemTier } from '@/modules/character-builder/lib/utils/proficiencyUtils';

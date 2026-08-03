@@ -82,7 +82,7 @@ src/content/en/monsters/[monster].sheet.mdx → /en/library/monsters/[monster]
 ```tsx
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote-client/rsc';
-import { mdxComponents } from '@/lib/components/mdx';
+import { mdxComponents } from '@/modules/library/presentation';
 import { resolveContentFilePath } from '@/lib/utils/resolveContentFilePath';
 
 interface PageProps {
@@ -160,7 +160,7 @@ export default async function ContentPage({ params }: PageProps) {
 - **`generateStaticParams()`**: Pre-renders all pages at build time
 - **Catch-all route**: `[...slug]` captures any depth of path
 - **MDXRemote**: Server-side compilation for performance
-- **Custom components**: Registered in `mdxComponents` object
+- **Custom components**: Registered in `export const components` in `src/modules/library/presentation/components/index.tsx`
 
 ### Content Resolution with Locale Fallback
 
@@ -215,12 +215,12 @@ export const resolveContentFilePath = async (
 
 ### Component Registration
 
-**File**: `src/lib/components/mdx/index.tsx`
+**File**: `src/modules/library/presentation/components/index.tsx`
 
 ```typescript
-import BlendedImage from './blendedImage';
-import FlexRenderer from './flexRenderer';
-import mdxComponents from './mdxComponents';
+import BlendedImage from './BlendedImage';
+import FlexRenderer from './FlexRenderer';
+import Unit from './Unit';
 import MonsterTableWrapper from './MetadataTable/monsterTableWrapper';
 import HeirloomTableWrapper from './MetadataTable/heirloomTableWrapper';
 
@@ -228,7 +228,7 @@ import HeirloomTableWrapper from './MetadataTable/heirloomTableWrapper';
  * Components available in all MDX files
  * Add new components here to make them globally accessible
  */
-const components = {
+export const components = {
   // Metadata tables
   MonsterTable: MonsterTableWrapper,
   HeirloomTable: HeirloomTableWrapper,
@@ -237,8 +237,8 @@ const components = {
   BlendedImage,
   FlexRenderer,
 
-  // Spread additional components from mdxComponents
-  ...mdxComponents,
+  // Macro output (remark plugins emit these)
+  Unit,
 
   // Table wrapper for responsive tables
   table: ({ children }: any) => (
@@ -314,7 +314,7 @@ export function Callout({ type, children }: CalloutProps) {
 **Register**:
 
 ```tsx
-// src/lib/components/mdx/index.tsx
+// src/modules/library/presentation/components/index.tsx
 import { Callout } from './Callout/Callout';
 
 const components = {

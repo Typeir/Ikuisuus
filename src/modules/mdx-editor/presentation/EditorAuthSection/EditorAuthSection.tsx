@@ -10,6 +10,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import { useState } from 'react';
 import btn from '@/styles/buttons.module.scss';
 import styles from './EditorAuthSection.module.scss';

@@ -11,6 +11,7 @@
 
 'use client';
 
+import type { JSX } from 'react';
 import {
     insertAtCursor,
     insertLinePrefix,

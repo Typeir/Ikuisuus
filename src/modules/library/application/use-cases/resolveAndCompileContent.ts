@@ -7,7 +7,7 @@
  */
 
 import { isMdFile } from '@/lib/md/isMdFile';
-import { compileSync } from '@/modules/library/infrastructure/compile/compileSync';
+import { compileStatic } from '@/modules/library/infrastructure/compile/compileStatic';
 import { fetchContent } from '@/modules/library/infrastructure/content/fetchContent';
 import components from '@/modules/library/presentation/components';
 import { resolveStreamText } from '@/modules/library/presentation/components/utils';
@@ -117,7 +117,7 @@ export async function resolveAndCompileContent({
       ? pathToFileURL(resolvedPath).toString()
       : undefined;
 
-    const evalResult = await compileSync({
+    const evalResult = await compileStatic({
       source: rawContent,
       components,
       baseUrl,

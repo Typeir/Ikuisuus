@@ -6,7 +6,7 @@
  * @since 6.0.0
  */
 
-export { compileAsync } from './compileAsync';
+export { compileDynamic } from './compileDynamic';
 export { compileMdxToComponent } from './compileMdxToComponent';
 export {
     clearCompileRuntimeCache,
@@ -15,6 +15,6 @@ export {
     mdx,
     mdxSync
 } from './compileRuntime';
-export { compileSync } from './compileSync';
+export { compileStatic } from './compileStatic';
 export { renderToHtml } from './serverRender';
 

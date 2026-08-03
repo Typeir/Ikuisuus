@@ -231,6 +231,8 @@ export default defineConfig({
             'tests/unit/src/lib/context/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/md/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/mdx/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/units/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/content/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/services/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/security/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/logging/**/*.test.{ts,tsx}',

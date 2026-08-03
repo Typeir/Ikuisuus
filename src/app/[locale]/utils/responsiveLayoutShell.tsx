@@ -40,6 +40,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import cn from '../../../lib/utils/classNameMerge';
 import styles from './responsiveLayoutShell.module.scss';

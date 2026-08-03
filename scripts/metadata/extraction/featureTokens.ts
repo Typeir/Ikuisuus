@@ -31,6 +31,7 @@ import {
     DICE,
     DISTANCE,
     DURATION,
+    measureValue,
     RECHARGE_TIMINGS,
     RESOURCE_ENTRIES,
     RESOURCES,
@@ -126,8 +127,10 @@ export function recognizeSave(text: string): SaveToken | null {
 export function recognizeRange(text: string): RangeToken | null {
   const match = text.match(DISTANCE.feet);
   if (!match) return null;
+  const distance = measureValue(match);
+  if (distance === undefined) return null;
   const result: RangeToken = {
-    distance: parseInt(match[1], 10),
+    distance,
   };
   const afterDist = text.slice(match.index! + match[0].length).toLowerCase();
   const beforeDist = text.slice(0, match.index!).toLowerCase();
@@ -138,13 +141,13 @@ export function recognizeRange(text: string): RangeToken | null {
       break;
     }
   }
-  const widthMatch = text.match(DISTANCE.wide);
-  if (widthMatch) {
-    result.width = parseInt(widthMatch[1], 10);
+  const width = measureValue(text.match(DISTANCE.wide));
+  if (width !== undefined) {
+    result.width = width;
   }
-  const heightMatch = text.match(DISTANCE.high);
-  if (heightMatch) {
-    result.height = parseInt(heightMatch[1], 10);
+  const height = measureValue(text.match(DISTANCE.high));
+  if (height !== undefined) {
+    result.height = height;
   }
   return result;
 }

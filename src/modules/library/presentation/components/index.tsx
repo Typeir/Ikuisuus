@@ -12,7 +12,6 @@ import Link from 'next/link';
 import React from 'react';
 
 import { useHashNavigation } from '@/modules/library/application/hooks/useHashNavigation';
-import mdxComponents from '@/modules/library/infrastructure/compile/mdxComponents';
 import {
     FeatTable,
     FilteredSpellTable,
@@ -35,11 +34,15 @@ import Meta from './Meta';
 import ParallaxBackdrop from './ParallaxBackdrop';
 import { SectionTrack } from './SectionTrack';
 import Tooltip from './Tooltip';
+import Unit from './Unit';
+import UnitSwitcher from './UnitSwitcher';
 
 export const components = {
   BlendedImage,
   Collapsible,
   DiceRoll,
+  Unit,
+  UnitSwitcher,
   FlexRenderer,
   Meta,
   MonsterTable,
@@ -87,8 +90,13 @@ export const components = {
   ),
 };
 
+/**
+ * Reusable content regions are spliced in at source level before compilation,
+ * so they no longer arrive as pre-rendered components. The generated map is
+ * retained only until the emitter is deleted; spreading it here would shadow
+ * real components whose names collide with a content filename.
+ */
 const enrichedComponents = {
-  ...mdxComponents,
   ...components,
 };
 

@@ -25,12 +25,36 @@ afterEach(() => {
 });
 
 describe('ormConfig', () => {
-  it('should include all 31 entity classes', async () => {
+  it('should include all 32 entity and embeddable schemas', async () => {
     vi.resetModules();
     const { ormConfig } = await import('@/lib/db/orm/ormConfig');
 
     expect(ormConfig.entities).toBeDefined();
-    expect(ormConfig.entities).toHaveLength(31);
+    expect(ormConfig.entities).toHaveLength(32);
+  });
+
+  it('should register every entity as a resolved EntitySchema', async () => {
+    vi.resetModules();
+    const { ormConfig } = await import('@/lib/db/orm/ormConfig');
+    const { EntitySchema } = await import('@mikro-orm/core');
+
+    for (const entity of ormConfig.entities ?? []) {
+      expect(entity).toBeInstanceOf(EntitySchema);
+    }
+  });
+
+  it('should carry authored entity names rather than minified ones', async () => {
+    vi.resetModules();
+    const { ormConfig } = await import('@/lib/db/orm/ormConfig');
+
+    const names = (ormConfig.entities ?? []).map(
+      (entity) => (entity as { name: string }).name,
+    );
+
+    expect(names).toContain('MonsterEntity');
+    expect(names).toContain('FeatFeatureEntity');
+    expect(names).toContain('MonsterACEmbed');
+    expect(new Set(names).size).toBe(names.length);
   });
 
   it('should use DATABASE_URL as clientUrl', async () => {

@@ -33,48 +33,46 @@
     outline: none;
   }
 
-  :global {
-    .token.comment,
-    .token.prolog,
-    .token.cdata {
-      color: var(--prism-comment);
-      font-style: italic;
-    }
+  :global(.token.comment),
+  :global(.token.prolog),
+  :global(.token.cdata) {
+    color: var(--prism-comment);
+    font-style: italic;
+  }
 
-    .token.keyword,
-    .token.tag,
-    .token.operator {
-      color: var(--prism-keyword);
-    }
+  :global(.token.keyword),
+  :global(.token.tag),
+  :global(.token.operator) {
+    color: var(--prism-keyword);
+  }
 
-    .token.string,
-    .token.attr-value {
-      color: var(--prism-string);
-    }
+  :global(.token.string),
+  :global(.token.attr-value) {
+    color: var(--prism-string);
+  }
 
-    .token.title,
-    .token.important {
-      color: var(--prism-title);
-      font-weight: 600;
-    }
+  :global(.token.title),
+  :global(.token.important) {
+    color: var(--prism-title);
+    font-weight: 600;
+  }
 
-    .token.punctuation {
-      color: var(--prism-punctuation);
-    }
+  :global(.token.punctuation) {
+    color: var(--prism-punctuation);
+  }
 
-    .token.url {
-      color: var(--prism-url);
-    }
+  :global(.token.url) {
+    color: var(--prism-url);
+  }
 
-    .token.bold {
-      color: var(--prism-bold);
-      font-weight: 700;
-    }
+  :global(.token.bold) {
+    color: var(--prism-bold);
+    font-weight: 700;
+  }
 
-    .token.italic {
-      color: var(--prism-italic);
-      font-style: italic;
-    }
+  :global(.token.italic) {
+    color: var(--prism-italic);
+    font-style: italic;
   }
 }
 
