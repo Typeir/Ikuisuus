@@ -66,6 +66,29 @@ const nextConfig: NextConfig = {
     "@resvg/resvg-js",
   ],
   pageExtensions: ["ts", "tsx", "mdx"],
+  /* Content is read off disk at request time, so the path helpers build their
+     targets with `path.join(process.cwd(), ...)`. Turbopack cannot narrow those
+     expressions statically, gives up, and traces the whole project into every
+     function that reaches one — dragging `tests/`, build scripts and the
+     Foundry exporter into production bundles.
+
+     Suppressing the tracing at the call sites would also drop `src/content`,
+     which those functions genuinely need, so the unused trees are excluded
+     here instead. `public/` stays: `resolvePageImage` stats it while building
+     page metadata, which runs at request time.
+
+     Nothing here may match `.mdx`. A `./*.md` entry excluded every content
+     file from the trace and would have served 404s for the whole library,
+     because the matcher treats the extension as a prefix. */
+  outputFileTracingExcludes: {
+    "**/*": [
+      "./tests/**",
+      "./scripts/**",
+      "./foundry/**",
+      "./.github/**",
+      "./.ignore/**",
+    ],
+  },
   generateBuildId: async () => {
     return process.env.VERCEL_GIT_COMMIT_SHA ?? `local-${Date.now()}`;
   },
