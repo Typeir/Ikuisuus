@@ -144,7 +144,7 @@ describe('ToolsMenu', () => {
     });
   });
 
-  it('should close menu when clicking outside if closeOnClickOutside is enabled', async () => {
+  it('should close menu when clicking outside', async () => {
     const user = userEvent.setup();
     render(
       <div>
@@ -153,7 +153,6 @@ describe('ToolsMenu', () => {
           items={mockItems}
           trigger={<span>Open Tools</span>}
           onSelect={vi.fn()}
-          closeOnClickOutside={true}
         />
       </div>,
     );
@@ -172,29 +171,153 @@ describe('ToolsMenu', () => {
     });
   });
 
-  it('should NOT close menu when clicking outside by default', async () => {
-    const user = userEvent.setup();
-    render(
-      <div>
-        <div data-testid='outside'>Outside element</div>
+  describe('accessibility', () => {
+    /**
+     * Renders the menu already open and returns the trigger.
+     *
+     * @returns {Promise<HTMLElement>} The trigger button
+     */
+    async function openMenu(
+      user: ReturnType<typeof userEvent.setup>,
+      items: ToolMenuItem[] = mockItems,
+      onSelect = vi.fn(),
+    ): Promise<HTMLElement> {
+      render(
+        <ToolsMenu
+          items={items}
+          trigger={<span>Open Tools</span>}
+          onSelect={onSelect}
+        />,
+      );
+      const button = screen.getByRole('button', { name: /open tools/i });
+      await user.click(button);
+      await waitFor(() => {
+        expect(screen.getByRole('menu')).toBeInTheDocument();
+      });
+      return button;
+    }
+
+    it('should move focus into the menu when opened', async () => {
+      const user = userEvent.setup();
+      await openMenu(user);
+
+      await waitFor(() => {
+        expect(screen.getAllByRole('menuitem')[0]).toHaveFocus();
+      });
+    });
+
+    it('should return focus to the trigger on Escape', async () => {
+      const user = userEvent.setup();
+      const button = await openMenu(user);
+
+      await user.keyboard('{Escape}');
+
+      await waitFor(() => {
+        expect(button).toHaveFocus();
+      });
+    });
+
+    it('should close when focus leaves via Tab', async () => {
+      const user = userEvent.setup();
+      await openMenu(user);
+
+      await user.tab();
+
+      await waitFor(() => {
+        expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should wrap from last item to first with ArrowDown', async () => {
+      const user = userEvent.setup();
+      await openMenu(user);
+      const items = screen.getAllByRole('menuitem');
+
+      await user.keyboard('{ArrowDown}{ArrowDown}');
+
+      await waitFor(() => {
+        expect(items[0]).toHaveFocus();
+      });
+    });
+
+    it('should wrap from first item to last with ArrowUp', async () => {
+      const user = userEvent.setup();
+      await openMenu(user);
+      const items = screen.getAllByRole('menuitem');
+
+      await user.keyboard('{ArrowUp}');
+
+      await waitFor(() => {
+        expect(items[items.length - 1]).toHaveFocus();
+      });
+    });
+
+    it('should jump to the last item with End and back with Home', async () => {
+      const user = userEvent.setup();
+      await openMenu(user);
+      const items = screen.getAllByRole('menuitem');
+
+      await user.keyboard('{End}');
+      await waitFor(() => {
+        expect(items[items.length - 1]).toHaveFocus();
+      });
+
+      await user.keyboard('{Home}');
+      await waitFor(() => {
+        expect(items[0]).toHaveFocus();
+      });
+    });
+
+    it('should open at the last item when the trigger receives ArrowUp', async () => {
+      const user = userEvent.setup();
+      render(
         <ToolsMenu
           items={mockItems}
           trigger={<span>Open Tools</span>}
           onSelect={vi.fn()}
-        />
-      </div>,
-    );
+        />,
+      );
 
-    const button = screen.getByRole('button', { name: /open tools/i });
-    await user.click(button);
+      screen.getByRole('button', { name: /open tools/i }).focus();
+      await user.keyboard('{ArrowUp}');
 
-    await waitFor(() => {
-      expect(screen.getByRole('menu')).toBeInTheDocument();
+      await waitFor(() => {
+        const items = screen.getAllByRole('menuitem');
+        expect(items[items.length - 1]).toHaveFocus();
+      });
     });
 
-    await user.click(screen.getByTestId('outside'));
+    it('should expose only the active item in the tab order', async () => {
+      const user = userEvent.setup();
+      await openMenu(user);
+      const items = screen.getAllByRole('menuitem');
 
-    expect(screen.getByRole('menu')).toBeInTheDocument();
+      expect(items[0]).toHaveAttribute('tabindex', '0');
+      expect(items[1]).toHaveAttribute('tabindex', '-1');
+    });
+
+    it('should point the trigger at the menu it controls', async () => {
+      const user = userEvent.setup();
+      const button = await openMenu(user);
+
+      const menu = screen.getByRole('menu');
+      expect(button).toHaveAttribute('aria-controls', menu.id);
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+      expect(menu).toHaveAttribute('aria-labelledby', button.id);
+    });
+
+    it('should return focus to the trigger after selecting an item', async () => {
+      const user = userEvent.setup();
+      const onSelect = vi.fn();
+      const button = await openMenu(user, mockItems, onSelect);
+
+      await user.keyboard('{Enter}');
+
+      expect(onSelect).toHaveBeenCalledWith(mockItems[0]);
+      await waitFor(() => {
+        expect(button).toHaveFocus();
+      });
+    });
   });
 
   it('should have correct aria attributes', async () => {
@@ -275,12 +398,12 @@ describe('ToolsMenu', () => {
 
     await user.keyboard('{ArrowDown}');
     await waitFor(() => {
-      expect(items[1].className).toMatch(/_selected_/);
+      expect(items[0].className).toMatch(/_selected_/);
     });
 
     await user.keyboard('{ArrowUp}');
     await waitFor(() => {
-      expect(items[0].className).toMatch(/_selected_/);
+      expect(items[1].className).toMatch(/_selected_/);
     });
   });
 });

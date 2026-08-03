@@ -109,7 +109,12 @@
   &.selected {
     background-color: var(--color-secondary);
   }
-  
+
+  &:focus-visible {
+    @include focus-outline(2px);
+    outline-offset: -2px;
+  }
+
   &:active {
     background-color: var(--color-accent);
     color: var(--color-bg);
