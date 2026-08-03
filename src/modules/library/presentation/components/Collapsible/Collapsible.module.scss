@@ -53,13 +53,6 @@
   white-space: nowrap;
 }
 
-/* The collapsible already occupies `--color-surface`, which is also the
-   default surface of a tab group. A spell list rendered in here would frame
-   itself in its own background and read flat, so the group recesses a layer:
-   frame, active tab and panel drop to `--color-bg`, and resting tabs go
-   transparent so they read as the frame. This mirrors the `nested` variant of
-   the Tabs component and applies to any tab group nested here, without the
-   content author passing anything. */
 .content {
   padding: 0.5rem 1rem 1rem;
   border-top: 1px solid var(--color-border);

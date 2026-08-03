@@ -31,11 +31,6 @@
   );
 }
 
-/* The frame, active tab and panel all sit on `--gradient-tabs-surface`, and
-   resting tabs on `--gradient-tabs-well`. A container that already occupies
-   the default surface can recess both so the group still reads as a deeper
-   layer instead of dissolving into its parent — the same move `tabsNested`
-   makes for the plain Tabs component. */
 .gradientContainer {
   position: relative;
   border: 0.2rem solid var(--gradient-tabs-surface, var(--color-surface));

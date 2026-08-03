@@ -1,10 +1,7 @@
 /**
  * Not Found Page Styles
  *
- * @description 404 styling in the same register as the search dropdown's empty
- * state: monospace, letter-spaced, unrounded. The block-shading banners are set
- * nowrap and clipped by their container so the ramp runs off both edges instead
- * of wrapping into broken rows on narrow screens.
+ * @description 404 styling in the register of the search dropdown's empty state.
  */
 
 @use 'mixins' as *;
@@ -37,9 +34,6 @@
   }
 }
 
-/* Block-shading banner. Mirrors .dropdownStatus in searchBar.module.scss.
-   The corrupted glyph runs are accent-toned so they read as signal rather
-   than as prose that failed to load. */
 .title {
   width: 100%;
   overflow: hidden;
@@ -51,7 +45,6 @@
   color: var(--color-accent);
 }
 
-/* Dither rule between sections, borrowing the loader's shimmer as a divider. */
 .divider {
   width: 100%;
   max-width: 32rem;
@@ -125,7 +118,6 @@
   color: var(--color-text-muted);
 }
 
-/* Final row, matching .digDeeper: a bordered mono banner rather than a link. */
 .backLink {
   width: 100%;
   max-width: 32rem;

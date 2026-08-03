@@ -4,6 +4,11 @@
  * @fileoverview Next.js root layout with locale support, theme initialization,
  * and sidebar navigation tree generation. Wraps all pages with client providers.
  *
+ * The persistent-UI script is rendered inline in `<head>`, where
+ * `lib/utils/persistentUiScript` requires it. `next/script` with
+ * `beforeInteractive` emits past `</head>` into `<body>` and cannot be used
+ * here.
+ *
  * @module app/[locale]/layout
  * @version 2.1.0
  * @author Typeir
@@ -48,13 +53,6 @@ export default async function RootLayout({
       lang={locale}
       suppressHydrationWarning
       className={cn(fonts.map((font) => font.variable))}>
-      {/* Must stay inside <head>: the paired rule
-          `html:not([data-theme]) body { visibility: hidden }` keeps the page
-          blank until this runs, so moving it later only lengthens the blank.
-          next/script `beforeInteractive` was tried and emits into <body>,
-          past </head>, which breaks that contract. React warns that scripts
-          in components do not execute on client renders; this one only has
-          to run on the initial document, where it does. */}
       <head>
         <script dangerouslySetInnerHTML={{ __html: getCombinedInitScript() }} />
       </head>
