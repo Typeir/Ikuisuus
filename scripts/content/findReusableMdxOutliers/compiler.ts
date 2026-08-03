@@ -12,7 +12,7 @@
  * @since 3.0.0
  */
 
-import { compileAsync } from '@/modules/library/infrastructure/compile/compileAsync';
+import { compileDynamic } from '@/modules/library/infrastructure/compile/compileDynamic';
 import { renderToHtml } from '@/modules/library/infrastructure/compile/serverRender';
 import fs from 'fs/promises';
 import React from 'react';
@@ -103,7 +103,7 @@ export const compileOutliers = async (
       componentMap[compiledName] = htmlComponent(html);
     }
 
-    const result = await compileAsync({
+    const result = await compileDynamic({
       source: rawContent,
       components: componentMap,
       mdxOptions: {

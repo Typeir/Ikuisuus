@@ -1,23 +1,19 @@
 /**
- * @fileoverview Async-import flavor MDX compiler.
+ * @fileoverview Dynamic-import flavour MDX compiler.
  * Dynamically imports evaluator and plugins in parallel to avoid bundling them
- * until runtime.
- * @module src/lib/mdx/compileAsync/compileAsync
+ * until runtime. "Dynamic" refers to that deferred loading, not to JavaScript
+ * asynchronicity — both compilers in this directory are async.
+ * @module src/lib/mdx/compileDynamic/compileDynamic
  *
  * @author Typeir
  * @version 0.1.0
  * @since 2026-04-28
  */
 
-import { inlineReusables } from '@/lib/content/reusable/inlineReusables';
-import { discoverReusables } from '@/lib/content/reusable/reusableRegistry';
+import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
 import type { EvaluateOptions } from 'next-mdx-remote-client/rsc';
-import path from 'path';
 import type { CompileOptions } from '../../domain/compileOptions';
 import { buildMdxOptions, importAllAsync } from './compileUtils';
-
-/** Content root scanned for files that opt into reuse. */
-const CONTENT_ROOT = path.join(process.cwd(), 'src/content');
 
 /**
  * Compile MDX by dynamically importing evaluator + plugins in parallel.
@@ -28,7 +24,7 @@ const CONTENT_ROOT = path.join(process.cwd(), 'src/content');
  * @param {CompileOptions} opts - Compilation options
  * @returns {Promise<Awaited<ReturnType<import('next-mdx-remote-client/rsc')['evaluate']>>>}
  */
-export async function compileAsync(opts: CompileOptions) {
+export async function compileDynamic(opts: CompileOptions) {
   const {
     source,
     components,
@@ -47,8 +43,7 @@ export async function compileAsync(opts: CompileOptions) {
     rehypeSectionize,
   } = await importAllAsync();
 
-  const registry = await discoverReusables(CONTENT_ROOT);
-  const resolvedSource = inlineReusables(source, registry);
+  const resolvedSource = await resolveReusableSource(source);
 
   const result = await evaluate({
     source: resolvedSource,

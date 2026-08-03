@@ -7,7 +7,7 @@
  */
 
 import { resolveAndCompileContent } from '@/modules/library/application/use-cases/resolveAndCompileContent';
-import { compileSync } from '@/modules/library/infrastructure/compile/compileSync';
+import { compileStatic } from '@/modules/library/infrastructure/compile/compileStatic';
 import { fetchContent } from '@/modules/library/infrastructure/content/fetchContent';
 import { resolveStreamText } from '@/modules/library/presentation/components/utils';
 import { isMdFile } from '@/lib/md/isMdFile';
@@ -21,8 +21,8 @@ vi.mock('@/lib/md/isMdFile', () => ({
   isMdFile: vi.fn(),
 }));
 
-vi.mock('@/modules/library/infrastructure/compile/compileSync', () => ({
-  compileSync: vi.fn(),
+vi.mock('@/modules/library/infrastructure/compile/compileStatic', () => ({
+  compileStatic: vi.fn(),
 }));
 
 vi.mock('@/modules/library/infrastructure/content/fetchContent', () => ({
@@ -86,7 +86,7 @@ describe('resolveAndCompileContent', () => {
     });
     vi.mocked(isMdFile).mockReturnValueOnce(false);
     vi.mocked(resolveStreamText).mockResolvedValueOnce('stream');
-    vi.mocked(compileSync).mockResolvedValueOnce({
+    vi.mocked(compileStatic).mockResolvedValueOnce({
       content: 'compiled',
     } as never);
 
@@ -111,7 +111,7 @@ describe('resolveAndCompileContent', () => {
     });
     vi.mocked(isMdFile).mockReturnValueOnce(false);
     vi.mocked(resolveStreamText).mockResolvedValueOnce('stream');
-    vi.mocked(compileSync).mockRejectedValueOnce(new Error('compile failed'));
+    vi.mocked(compileStatic).mockRejectedValueOnce(new Error('compile failed'));
 
     const result = await resolveAndCompileContent({
       slug: ['en', 'world', 'page'],

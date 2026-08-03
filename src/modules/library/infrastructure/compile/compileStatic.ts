@@ -1,13 +1,19 @@
 /**
  * @fileoverview Synchronous-import flavor MDX compiler.
  * Uses file-scoped (static) imports so bundlers include the evaluator at build time.
- * @module src/lib/mdx/compileSync/compileSync
+ * @description "Static" refers to the page being built statically, not to
+ * JavaScript synchronicity — this function is async and must be awaited. It is
+ * the compiler the library route uses, so anything that must reach a rendered
+ * page has to be wired here.
+ *
+ * @module src/lib/mdx/compileStatic/compileStatic
  *
  * @author Typeir
  * @version 0.1.0
  * @since 2026-04-28
  */
 
+import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
@@ -24,7 +30,7 @@ import rehypeSectionize from './rehypeSectionize';
  * @param {CompileOptions} opts
  * @returns {Promise<Awaited<ReturnType<typeof evaluate>>>}
  */
-export async function compileSync(opts: CompileOptions) {
+export async function compileStatic(opts: CompileOptions) {
   const {
     source,
     components,
@@ -33,8 +39,10 @@ export async function compileSync(opts: CompileOptions) {
     parseFrontmatter = true,
   } = opts;
 
+  const resolvedSource = await resolveReusableSource(source);
+
   const result = await evaluate({
-    source,
+    source: resolvedSource,
     components: components as any,
     options: {
       parseFrontmatter,
