@@ -68,6 +68,24 @@ export default async function RootLayout({
 export const dynamic = 'force-static';
 
 /**
+ * Enumerates the locale segment so nested routes can prerender at build time.
+ *
+ * Without this, `[locale]` has no known values, and a child's
+ * `generateStaticParams` cannot be paired with a parent param. Every content
+ * page then deferred to first request, which is why the library route rendered
+ * from disk at runtime and needed the whole corpus inside its function bundle.
+ *
+ * Only `en` is listed because only `en` has content. The other configured
+ * locales stay on demand rather than prerendering hundreds of pages that would
+ * resolve to nothing.
+ *
+ * @returns {Array<{ locale: string }>} Locale params to prerender
+ */
+export function generateStaticParams(): Array<{ locale: string }> {
+  return [{ locale: 'en' }];
+}
+
+/**
  * Site-wide metadataBase so all relative `/library/images/...` paths in
  * page-level Metadata objects are resolved to absolute URLs by Next.js.
  *

@@ -28,7 +28,7 @@ export const fsDirectorySource: DirectorySourceAdapter = {
     relativePath: string,
   ): Promise<DirectoryEntry[]> {
     const dir = path.join(
-      process.cwd(),
+      /*turbopackIgnore: true*/ process.cwd(),
       'src',
       'content',
       locale,

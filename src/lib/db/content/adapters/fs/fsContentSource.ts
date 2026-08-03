@@ -30,11 +30,19 @@ export const fsContentSource: ContentSourceAdapter = {
     locale: string,
     slugPath: string,
   ): Promise<ContentFetchResult | null> {
-    const rootDir = path.join(process.cwd(), 'src', 'content', locale);
+    const rootDir = path.join(
+      /*turbopackIgnore: true*/ process.cwd(),
+      'src',
+      'content',
+      locale,
+    );
     const slugDirectory = path.posix.dirname(slugPath);
     const relativeDirectory = slugDirectory === '.' ? '' : slugDirectory;
     const slugLeaf = path.posix.basename(slugPath);
-    const fullDirectoryPath = path.join(rootDir, relativeDirectory);
+    const fullDirectoryPath = path.join(
+      /*turbopackIgnore: true*/ rootDir,
+      relativeDirectory,
+    );
 
     try {
       const entries = await fs.readdir(fullDirectoryPath, {
@@ -51,7 +59,10 @@ export const fsContentSource: ContentSourceAdapter = {
         return null;
       }
 
-      const resolvedPath = path.join(fullDirectoryPath, mdxFile.name);
+      const resolvedPath = path.join(
+        /*turbopackIgnore: true*/ fullDirectoryPath,
+        mdxFile.name,
+      );
       const content = await fs.readFile(resolvedPath, 'utf8');
       log.message('Fetched MDX file from filesystem', {
         path: resolvedPath,

@@ -89,6 +89,14 @@ const nextConfig: NextConfig = {
       "./.ignore/**",
     ],
   },
+  /* The content path builders carry `turbopackIgnore`, so Turbopack no longer
+     infers what they might read and no longer traces the corpus by accident.
+     That inference was the only thing putting `src/content` in the bundles,
+     so the requirement is declared here instead. Removing this entry does not
+     fail the build: it serves 404s for every content route at runtime. */
+  outputFileTracingIncludes: {
+    "**/*": ["./src/content/**"],
+  },
   generateBuildId: async () => {
     return process.env.VERCEL_GIT_COMMIT_SHA ?? `local-${Date.now()}`;
   },

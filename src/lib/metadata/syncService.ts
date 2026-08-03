@@ -68,7 +68,7 @@ function readMetadataFiles(
 ): { records: Record<string, unknown>[]; sourceExists: boolean } {
   const root = getProjectRoot();
   const metaDirPath = join(root, '.meta', locale, subdir);
-  const contentDirPath = join(root, 'src', 'content', locale, subdir);
+  const contentDirPath = join(/*turbopackIgnore: true*/ root, 'src', 'content', locale, subdir);
   const metaExists = existsSync(metaDirPath);
   const contentExists = existsSync(contentDirPath);
   const dir = metaExists ? metaDirPath : contentDirPath;
