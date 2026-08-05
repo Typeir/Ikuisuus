@@ -20,7 +20,7 @@ describe('ArchivistPanel', () => {
     expect(screen.getByText('Abominable Avian')).toBeTruthy();
     const iframe = screen.getByTitle('Preview: Abominable Avian');
     expect(iframe.getAttribute('src')).toBe(
-      '/en/library/monsters/abominable-avian?embed=true',
+      '/en/embed/monsters/abominable-avian',
     );
   });
 });

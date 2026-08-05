@@ -63,16 +63,11 @@ export const BOON = {
 /**
  * Proficiency detection patterns for boon tagging.
  *
- * @property {RegExp} keyword - "proficiency" or "proficient"
  * @property {ReadonlyArray<{ pattern: RegExp; tag: string }>} tools - Tool proficiency matchers
  * @property {RegExp} instrument - Musical instrument keyword
  * @property {RegExp} weaponMastery - Weapon mastery keyword
- * @property {RegExp} repose - Repose-recharge detection
- * @property {RegExp} recovery - Recovery-recharge detection
- * @property {RegExp} variableCost - Variable/choice cost indicators
  */
 export const PROFICIENCY = {
-  keyword: /\bproficien(?:cy|t)\b/,
   tools: [
     { pattern: /mason'?s tools?/i, tag: 'mason-tools' },
     { pattern: /navigator'?s tools?/i, tag: 'navigators-tools' },
@@ -93,8 +88,6 @@ export const PROFICIENCY = {
  * @property {RegExp} recovery - Recovery-recharge detection
  * @property {RegExp} limitedUses - Limited uses per tier bonus
  * @property {RegExp} armorClass - AC or armor class mechanic
- * @property {RegExp} savingThrow - Saving throw or spell save DC
- * @property {RegExp} weapon - Weapon, melee, or natural weapon mechanic
  * @property {RegExp} reach - Weapon reach
  * @property {RegExp} extraDamage - Extra damage dealing
  * @property {RegExp} minorAction - Minor Action
@@ -111,8 +104,6 @@ export const BOON_MECHANICS = {
   recovery: /\brecovery\b/,
   limitedUses: /\b(per|equal to your tier bonus)\b/i,
   armorClass: /\bac\b|\barmor class\b|\bunarmored\b/i,
-  savingThrow: /\bsaving throws?\b|\bspell save dc\b|\bsave dc\b/i,
-  weapon: /\bweapon\b|\bmelee\b|\bnatural weapon\b|\bopportunity attack\b/i,
   reach: /\breach\b/i,
   extraDamage: /\bextra\b[\s\S]{0,20}\bdamage\b|\bdeal extra\b/i,
   minorAction: /\bminor action\b/i,

@@ -65,6 +65,19 @@ function makePostRequest(
   });
 }
 
+/**
+ * Drafts exist only on the pg backend, so these tests declare it. Without it the
+ * route short-circuits before reaching the repository, which is the correct
+ * production behaviour on `fs` and would make every assertion below vacuous.
+ */
+beforeEach(() => {
+  process.env.METADATA_BACKEND = 'pg';
+});
+
+afterEach(() => {
+  delete process.env.METADATA_BACKEND;
+});
+
 describe('GET /api/drafts', () => {
   beforeEach(() => {
     mockFindActive.mockReset();
@@ -255,5 +268,48 @@ describe('POST /api/drafts', () => {
     expect(mockUpsert).toHaveBeenCalledWith(
       expect.objectContaining({ locale: 'en' }),
     );
+  });
+});
+
+/**
+ * There is no filesystem draft store. Reaching the repository on `fs` hits an
+ * unconfigured ORM and throws about a missing `dbName`, which surfaced as a 500
+ * on every editor page load — a broken server, rather than a feature that is
+ * simply not present on this backend.
+ */
+describe('drafts on the fs backend', () => {
+  beforeEach(() => {
+    process.env.METADATA_BACKEND = 'fs';
+    mockFindActive.mockReset();
+    mockUpsert.mockReset();
+  });
+
+  it('answers GET with no draft instead of an error', async () => {
+    const res = await GET(
+      new NextRequest('http://localhost/api/drafts?locale=en&slug=monsters/x'),
+    );
+
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toEqual({
+      draft: null,
+      available: false,
+    });
+    expect(mockFindActive).not.toHaveBeenCalled();
+  });
+
+  it('answers POST with 501 rather than attempting a write', async () => {
+    process.env.REVALIDATION_SECRET = SECRET;
+
+    const res = await POST(
+      makePostRequest(
+        { slug: 'test', content: '# Test' },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+
+    expect(res.status).toBe(501);
+    expect(mockUpsert).not.toHaveBeenCalled();
+
+    delete process.env.REVALIDATION_SECRET;
   });
 });

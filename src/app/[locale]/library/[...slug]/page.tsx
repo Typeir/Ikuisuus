@@ -1,11 +1,11 @@
-/**
+﻿/**
  * @fileoverview Dynamic MDX content page for the library.
  * @module app/[locale]/library/[...slug]/page
  *
- * Renders MDX/MD content files from the content directory using
- * next-mdx-remote-client for server-side compilation with client fallback.
+ * The rendering itself lives in `<LibraryContent>`, shared with the embed route
+ * at `/{locale}/embed/[...slug]`. This route supplies the full wiki chrome.
  * @author Typeir
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2.0.0
  */
 
@@ -13,20 +13,10 @@ import { logger } from '@/lib/logging/logger';
 import {
   buildLibraryMetadata,
   generateLibraryStaticParams,
-  resolveAndCompileContent,
 } from '@/modules/library/application/use-cases';
-import {
-  HashNavigationProvider,
-  LibraryArticle,
-  MdRawPage,
-  SectionTrack,
-} from '@/modules/library/presentation';
+import { LibraryContent } from '@/modules/library/presentation/LibraryContent';
 import { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
-
-import StreamBootstrap from '@/lib/components/stream/StreamBootstrap';
-import { DraftOverlay, EditPageButton } from '@/modules/mdx-editor';
-import ClientRenderer from '../../utils/clientRenderer';
+import type { JSX } from 'react';
 
 const log = logger.child({ module: 'LibraryPage' });
 
@@ -55,9 +45,9 @@ type PageProps = {
 /**
  * Generates full SEO metadata for the page.
  *
- * Title resolution order: frontmatter `title` → first MDX H1 → slug-derived title.
- * Description resolution order: frontmatter `description` → first prose paragraph.
- * Image resolution order: frontmatter `image` → slug-derived public file → `.webp` candidate.
+ * Title resolution order: frontmatter `title` â†’ first MDX H1 â†’ slug-derived title.
+ * Description resolution order: frontmatter `description` â†’ first prose paragraph.
+ * Image resolution order: frontmatter `image` â†’ slug-derived public file â†’ `.webp` candidate.
  *
  * @param {PageProps} props - Route params
  * @param {Promise<{ slug: string[], locale: string }>} props.params - Async route parameters
@@ -84,71 +74,16 @@ export async function generateMetadata({
 }
 
 /**
- * Dynamic content page with fallback to ClientRenderer if MDX precompilation fails.
- * Normalizes slugs: handles accidental locale duplication, decodes percent-encoded Unicode
- * If the slug doesn't resolve, tries redirecting to slug/main
- * Renders raw MD content with a simple component if the file isn't MDX
- * Precompiles MDX content with frontmatter support; falls back to ClientRenderer on errors
+ * Dynamic content page rendering one library article inside the wiki chrome.
+ *
  * @param {PageProps} props - Route params
  * @param {Promise<{ slug: string[], locale: string }>} props.params - Async route parameters
- * @returns {JSX.Element} Rendered page or fallback
+ * @returns {Promise<JSX.Element>} Rendered page
  */
-const Page = async ({ params }: PageProps) => {
+const Page = async ({ params }: PageProps): Promise<JSX.Element> => {
   const { slug, locale } = await params;
 
-  const resolved = await resolveAndCompileContent({ slug, locale });
-
-  if (resolved.kind === 'redirect') {
-    redirect(resolved.href);
-  }
-
-  if (resolved.kind === 'not-found') {
-    notFound();
-  }
-
-  if (resolved.kind === 'md') {
-    return (
-      <MdRawPage
-        slugPath={resolved.slugPath}
-        rawContent={resolved.rawContent}
-      />
-    );
-  }
-
-  if (!resolved.evalResult || resolved.evalResult.error) {
-    log.warning('MDX precompilation failed, falling back to ClientRenderer', {
-      slugPath: resolved.slugPath,
-      error: resolved.evalResult?.error
-        ? String(resolved.evalResult.error)
-        : resolved.compileError
-          ? String(resolved.compileError)
-          : 'Unknown error',
-    });
-
-    return (
-      <div className='prose prose-invert mx-auto'>
-        <h1 className='text-4xl font-mono font-black mb-6'>
-          {resolved.slugPath}
-        </h1>
-        <LibraryArticle containerClassName='mx-auto'>
-          <ClientRenderer locale={locale} slug={resolved.slugPath} />
-        </LibraryArticle>
-        <EditPageButton slug={resolved.slugPath} locale={locale} />
-      </div>
-    );
-  }
-
-  return (
-    <DraftOverlay locale={locale} slug={resolved.slugPath}>
-      <HashNavigationProvider />
-      <SectionTrack />
-      <LibraryArticle streamText={resolved.streamText}>
-        {resolved.evalResult.content}
-      </LibraryArticle>
-      <StreamBootstrap />
-      <EditPageButton slug={resolved.slugPath} locale={locale} />
-    </DraftOverlay>
-  );
+  return <LibraryContent slug={slug} locale={locale} basePath='library' />;
 };
 
 export default Page;

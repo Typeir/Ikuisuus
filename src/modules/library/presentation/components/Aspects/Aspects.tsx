@@ -1,0 +1,322 @@
+/**
+ * @fileoverview Aspects MDX Component
+ * @description Renders a row of aspect pills, or a compressed carousel once the
+ * set passes the density threshold.
+ *
+ * Every pill links to a pre-filtered search rather than to a definition — the row
+ * is a build-exploration tool, not a glossary. That is the point of a taxonomy
+ * over a single category: a reader arrives at a page from any axis it sits on.
+ *
+ * Given a `section`, the row reads its own aspects from the article metadata
+ * context. `remarkAspects` places one of these under each heading that has them,
+ * which puts a section's facets with the section rather than in a block of
+ * metadata above the article. `list` remains for authored overrides.
+ *
+ * Display mode is read from `data-aspect-display` on the document root, set
+ * before first paint alongside `data-theme`, so switching modes is pure CSS and
+ * server markup matches the first client paint. Carousel expansion works the
+ * same way through `data-aspect-expanded`: the toggle writes one attribute on
+ * the root and every carousel on the page opens together.
+ *
+ * @module modules/library/presentation/components/Aspects/Aspects
+ * @version 1.0.0
+ * @author Typeir
+ * @since 2026-08-04
+ */
+
+'use client';
+
+import {
+  usePersistentUiDispatchOptional,
+  usePersistentUiStateOptional,
+} from '@/lib/context/PersistentUiContext';
+import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
+import { useArticleMetadata } from '@/modules/library/application/context/ArticleMetadataContext';
+import {
+  aspectColour,
+  aspectMark,
+  displayAspects,
+  type ParsedAspect,
+} from '@/modules/library/domain/aspects';
+import { Plus } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import React, { useEffect, useRef, useState } from 'react';
+import styles from './Aspects.module.scss';
+
+/**
+ * Aspect count past which a flat row becomes a compressed carousel.
+ *
+ * The median record carries twelve aspects and the worst carries fifty-one, so a
+ * flat row is the exception rather than the rule.
+ */
+const CAROUSEL_THRESHOLD = 14;
+
+/**
+ * Where each member of a damage stratum sits around the mark.
+ *
+ * A stratum is permanently three types, so the arrangement can be fixed rather
+ * than computed: one above, one to each side. The same three positions on every
+ * stratum mean the shape itself becomes recognisable before the glyphs are read.
+ */
+const STRATUM_SLOTS = ['top', 'left', 'right'] as const;
+
+/**
+ * Props for the Aspects component.
+ *
+ * @property {string} [section] - Heading text to look up in the article metadata
+ * @property {string} [list] - Space-separated aspects, for authored overrides
+ * @property {string[]} [aspects] - Explicit tag list, for callers holding metadata
+ * @property {string} [label] - Optional caption shown before the row
+ * @property {string} [from] - Slot level at which these aspects are gained
+ */
+export interface AspectsProps {
+  section?: string;
+  list?: string;
+  aspects?: string[];
+  label?: string;
+  from?: string;
+}
+
+/**
+ * Renders one aspect as a link to its pre-filtered search.
+ *
+ * The accessible name is the full aspect in every display mode — an icon that
+ * announces nothing is a regression over a pill — and every glyph is hidden from
+ * assistive technology because a shield over a flame does not compose into a
+ * readable name.
+ *
+ * @param {object} props - Component props
+ * @param {ParsedAspect} props.aspect - The aspect to draw
+ * @param {string} props.locale - Active locale, for the search href
+ * @param {boolean} [props.compact] - Render as a circular glyph for the carousel
+ * @returns {React.ReactElement} The rendered pill
+ */
+const AspectPill: React.FC<{
+  aspect: ParsedAspect;
+  locale: string;
+  compact?: boolean;
+}> = ({ aspect, locale, compact }) => {
+  const { Icon, Badge, badgeVar, strata } = aspectMark(aspect);
+  const name = `${aspect.group}: ${aspect.value}`;
+
+  return (
+    <a
+      className={compact ? styles.glyph : styles.aspect}
+      href={`/${locale}/search?aspect=${encodeURIComponent(aspect.raw)}`}
+      aria-label={name}
+      title={name}
+      data-group={aspect.group}
+      style={{ '--aspect-fg': aspectColour(aspect) } as React.CSSProperties}
+    >
+      <span
+        className={strata ? `${styles.mark} ${styles.markStrata}` : styles.mark}
+        aria-hidden='true'
+      >
+        <Icon className={styles.icon} />
+        {strata?.map((member, index) => (
+          <span
+            key={member.value}
+            className={styles.stratum}
+            data-slot={STRATUM_SLOTS[index]}
+            style={
+              { '--badge-fg': `var(${member.colourVar})` } as React.CSSProperties
+            }
+          >
+            <member.Icon className={styles.icon} />
+          </span>
+        ))}
+        {Badge ? (
+          <span
+            className={styles.badge}
+            style={
+              badgeVar
+                ? ({ '--badge-fg': `var(${badgeVar})` } as React.CSSProperties)
+                : undefined
+            }
+          >
+            <Badge className={styles.icon} />
+          </span>
+        ) : null}
+      </span>
+      {compact ? null : (
+        <span className={styles.label}>
+          <span className={styles.group}>{aspect.group}</span>
+          <span className={styles.separator}>:</span>
+          <span className={styles.value}>{aspect.value}</span>
+        </span>
+      )}
+    </a>
+  );
+};
+
+/**
+ * Toggles carousel expansion for the whole site.
+ *
+ * The preference is global on purpose. A stat block carries one carousel per
+ * feature, and a reader who wants the dense rows open wants them all open —
+ * a per-row control would have to be pressed twenty times on the Mucklord and
+ * forgotten again on the next page.
+ *
+ * Nothing here reads the expansion to decide layout: the attribute on the
+ * document root drives the CSS, so pressing this opens every carousel on the
+ * page without a single one of them re-rendering.
+ *
+ * @returns {React.ReactElement | null} The toggle, or null with no provider to write to
+ */
+const ExpandToggle: React.FC = () => {
+  const dispatch = usePersistentUiDispatchOptional();
+  const { aspectExpanded } = usePersistentUiStateOptional();
+
+  if (!dispatch) return null;
+
+  return (
+    <button
+      type='button'
+      className={styles.toggle}
+      aria-pressed={aspectExpanded}
+      aria-label={aspectExpanded ? 'Collapse aspects' : 'Expand aspects'}
+      onClick={() =>
+        dispatch({
+          type: PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED,
+          payload: { expanded: !aspectExpanded },
+        })
+      }
+    >
+      {/* A plus turned 45 degrees is already the cancel glyph, so the state
+          change is one rotation rather than two elements trading places. Driven
+          by CSS off the root attribute, it also cannot flash the wrong icon
+          before hydration reaches this button. */}
+      <Plus className={styles.toggleIcon} size={14} aria-hidden='true' />
+    </button>
+  );
+};
+
+/**
+ * Renders a dense aspect set as a compressed stack that unpacks on hover.
+ *
+ * Glyphs are absolutely positioned and moved with `transform` alone, so
+ * unpacking a large set costs no layout on the prose around it. The stack builds
+ * its glyphs only once it reaches the viewport, because a stat block carries one
+ * of these per feature and twenty idle animated tracks is a page that scrolls
+ * badly.
+ *
+ * @param {object} props - Component props
+ * @param {ParsedAspect[]} props.aspects - Display-ordered aspects
+ * @param {string} props.locale - Active locale
+ * @returns {React.ReactElement} The rendered carousel
+ */
+const AspectCarousel: React.FC<{
+  aspects: ParsedAspect[];
+  locale: string;
+}> = ({ aspects, locale }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className={styles.carouselWrap}>
+      <span className={styles.controls}>
+        <span className={styles.toggleWrap}>
+          <ExpandToggle />
+          <span className={styles.count} aria-hidden='true'>
+            {aspects.length}
+          </span>
+        </span>
+      </span>
+      <div
+        ref={ref}
+        className={styles.carousel}
+        style={{ '--count': aspects.length } as React.CSSProperties}
+      >
+        <div className={styles.track}>
+          {visible
+            ? aspects.map((aspect, index) => (
+                <span
+                  key={aspect.raw}
+                  className={styles.slot}
+                  style={
+                    {
+                      '--index': index,
+                      zIndex: aspects.length - index,
+                    } as React.CSSProperties
+                  }
+                >
+                  <AspectPill aspect={aspect} locale={locale} compact />
+                </span>
+              ))
+            : null}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Renders the aspects of a page, a stat block or a single feature.
+ *
+ * @param {AspectsProps} props - Component props
+ * @returns {React.ReactElement | null} The rendered row, or null when there is nothing to draw
+ */
+export const Aspects: React.FC<AspectsProps> = ({
+  section,
+  list,
+  aspects,
+  label,
+  from,
+}) => {
+  const locale = useLocale();
+  const { aspectsFor } = useArticleMetadata();
+
+  const raw =
+    aspects ??
+    (list
+      ? list.split(/\s+/).filter(Boolean)
+      : section
+        ? (aspectsFor(section) ?? [])
+        : []);
+
+  const parsed = displayAspects(raw);
+
+  if (!parsed.length) return null;
+
+  return (
+    <div className={styles.row} data-from={from ?? undefined}>
+      {label || from ? (
+        <span className={styles.caption}>{from ? `from ${from}` : label}</span>
+      ) : null}
+      {parsed.length > CAROUSEL_THRESHOLD ? (
+        <AspectCarousel aspects={parsed} locale={locale} />
+      ) : (
+        <span className={styles.flat}>
+          {parsed.map((aspect) => (
+            <AspectPill key={aspect.raw} aspect={aspect} locale={locale} />
+          ))}
+        </span>
+      )}
+    </div>
+  );
+};
+
+export default Aspects;

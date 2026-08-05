@@ -24,6 +24,7 @@ export { HeirloomChargesEmbed, HeirloomEntity } from './HeirloomEntity';
 export {
     MonsterACEmbed,
     MonsterEntity,
+    MonsterFeatureEntity,
     MonsterHPEmbed,
     MonsterSaveEmbed,
     MonsterScoreEmbed,

@@ -148,6 +148,11 @@ function installWindowsShim(repoRoot: string): string | null {
     return null;
   }
 
+  const contamination = describeMachineContamination(entries);
+  if (contamination) {
+    return `${contamination} Writing to it would preserve the damage, so nothing was changed. Add "${ikDir}" to PATH manually, and remove the machine-scope entries from your user PATH.`;
+  }
+
   const write = spawnSync(
     'powershell',
     [

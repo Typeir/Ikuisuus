@@ -119,6 +119,13 @@ export function persistentUiReducer(
       };
     }
 
+    case PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED: {
+      return {
+        ...state,
+        aspectExpanded: action.payload.expanded,
+      };
+    }
+
     case PERSISTED_UI_ACTION_TYPES.SET_SIDEBAR_EXPANSION: {
       const { path, expanded } = action.payload;
       const currentPaths = state.sidebarMenu.expandedPaths ?? [];

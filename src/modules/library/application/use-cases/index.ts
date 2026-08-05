@@ -15,6 +15,7 @@ export { findNearestRoute } from './findNearestRoute';
 export { generateLibraryStaticParams } from './generateStaticParams';
 export {
     resolveAndCompileContent,
+    type LibraryBasePath,
     type ResolveAndCompileResult
 } from './resolveAndCompileContent';
 

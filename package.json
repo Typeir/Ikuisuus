@@ -2,6 +2,12 @@
   "name": "ikuisuus",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    "chrome >= 111",
+    "edge >= 111",
+    "firefox >= 113",
+    "safari >= 16.4"
+  ],
   "scripts": {
     "dev": "npx tsx --tsconfig tsconfig.scripts.json scripts/dev/runDev.ts",
     "start": "npm run build:vercel && next start",
@@ -19,6 +25,8 @@
     "clean-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/cleanMetadata.ts",
     "clean": "npm run clean-fullsize && npm run clean-translations && rm -rf ./stl",
     "build": "rm -rf .next/cache && npm run pre-init && npm run test && next build",
+    "build:dry": "rm -rf .next/cache && npm run pre-init && next build",
+    "build:only": "next build",
     "build:ci": "rm -rf .next/cache && npm run pre-init:ci && npm run test && next build",
     "fetch-content": "npx tsx --tsconfig tsconfig.scripts.json scripts/build/fetchContent.ts",
     "build:vercel": "npm run fetch-content && rm -rf .next && npm run pre-init && next build",
@@ -42,7 +50,9 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage --reporter=default --reporter=json --outputFile=vitest-report.json",
-    "test:unit": "vitest run --project unit:components --project unit:utils:a --project unit:utils:b --project unit:utils:node --project unit:db:auth --project unit:db:orm --project unit:db:content:fs --project unit:db:content:pg --project unit:hooks --project unit:metadata --project unit:api --project unit:app:pages --project unit:app:utils --project unit:other",
+    "test:unit": "vitest run --project unit:components --project unit:utils:a --project unit:utils:b --project unit:utils:node --project unit:db:auth --project unit:db:orm --project unit:db:content:fs --project unit:db:content:pg --project unit:hooks --project unit:metadata --project unit:api --project unit:app:pages --project unit:app:utils --project unit:md --project unit:scripts --project unit:other",
+    "test:modules": "vitest run --project unit:modules:character-builder --project unit:modules:encounter-planner --project unit:modules:world-sim --project unit:modules:library --project unit:modules:mdx-editor --project unit:modules:rest",
+    "test:projects": "npx tsx --tsconfig tsconfig.scripts.json tests/scripts/listProjects.ts",
     "test:integration": "vitest run --project integration",
     "test:file": "vitest run",
     "test:e2e": "playwright test tests/e2e",

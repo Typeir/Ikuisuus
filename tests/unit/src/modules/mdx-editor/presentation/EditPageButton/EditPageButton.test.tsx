@@ -38,15 +38,23 @@ afterEach(() => cleanup());
 describe('EditPageButton', () => {
   it('should render with translated label', () => {
     render(<EditPageButton slug='monsters/aboleth' locale='en' />);
-    expect(screen.getByRole('button')).toBeDefined();
+    expect(screen.getByRole('link')).toBeDefined();
     expect(screen.getByText('editButton')).toBeDefined();
+  });
+
+  it('should expose the editor target as a real href', () => {
+    render(<EditPageButton slug='monsters/aboleth' locale='en' />);
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'href',
+      '/en/utils/mdx-editor?slug=monsters/aboleth&locale=en',
+    );
   });
 
   it('should navigate to editor on click', async () => {
     const user = userEvent.setup();
     render(<EditPageButton slug='monsters/aboleth' locale='en' />);
 
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByRole('link'));
 
     expect(mockPush).toHaveBeenCalledWith(
       '/en/utils/mdx-editor?slug=monsters/aboleth&locale=en',
@@ -62,7 +70,7 @@ describe('EditPageButton', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByRole('link'));
 
     expect(mockPush).toHaveBeenCalledWith(
       '/en/utils/mdx-editor?slug=character-creation/bloodlines/v%C3%A4%C3%A4r%C3%A4t&locale=en',
@@ -73,7 +81,7 @@ describe('EditPageButton', () => {
     const user = userEvent.setup();
     render(<EditPageButton slug='items/sword & shield' locale='es' />);
 
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByRole('link'));
 
     expect(mockPush).toHaveBeenCalledWith(
       expect.stringContaining('sword%20%26%20shield'),

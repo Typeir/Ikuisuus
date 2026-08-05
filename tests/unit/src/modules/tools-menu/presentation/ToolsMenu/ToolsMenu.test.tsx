@@ -89,6 +89,26 @@ describe('ToolsMenu', () => {
     });
   });
 
+  it('should render each item as a link carrying its own href', async () => {
+    const user = userEvent.setup();
+    render(
+      <ToolsMenu
+        items={mockItems}
+        trigger={<span>Open Tools</span>}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: /open tools/i }));
+
+    await waitFor(() => {
+      const items = screen.getAllByRole('menuitem');
+      expect(items[0].tagName).toBe('A');
+      expect(items[0]).toHaveAttribute('href', '/tool-1');
+      expect(items[1]).toHaveAttribute('href', '/tool-2');
+    });
+  });
+
   it('should close menu on Escape key', async () => {
     const user = userEvent.setup();
     const mockOnSelect = vi.fn();

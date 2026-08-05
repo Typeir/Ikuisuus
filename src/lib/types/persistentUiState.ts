@@ -42,6 +42,7 @@ export const PERSISTED_UI_ACTION_TYPES = {
   TOGGLE_SIDEBAR_PATH: 'PERSISTED_UI/TOGGLE_SIDEBAR_PATH',
   SET_CORRECTIONS_TOKEN: 'PERSISTED_UI/SET_CORRECTIONS_TOKEN',
   SET_UNIT_SYSTEM: 'PERSISTED_UI/SET_UNIT_SYSTEM',
+  SET_ASPECT_EXPANDED: 'PERSISTED_UI/SET_ASPECT_EXPANDED',
   RESET: 'PERSISTED_UI/RESET',
 } as const;
 
@@ -114,6 +115,7 @@ export const DEFAULT_UNIT_SYSTEM: UnitSystemPreferences = {
  * @property {ThemeValue} theme - Current theme value
  * @property {UnitSystemPreferences} unitSystem - Display preference per measurement family
  * @property {string | null} correctionsToken - HMAC token for corrections API (persists annually)
+ * @property {boolean} aspectExpanded - Whether aspect carousels stay unpacked without hovering
  * @property {boolean} isHydrated - Whether state has been hydrated from storage
  */
 export interface PersistentUiState {
@@ -121,6 +123,7 @@ export interface PersistentUiState {
   theme: ThemeValue;
   unitSystem: UnitSystemPreferences;
   correctionsToken: string | null;
+  aspectExpanded: boolean;
   isHydrated: boolean;
 }
 
@@ -135,12 +138,14 @@ export interface PersistentUiState {
  *   preferences. A bare string is accepted from records written before the
  *   preference was split per measurement family, and applies to all three.
  * @property {string | null} [correctionsToken] - Optional corrections API token
+ * @property {boolean} [aspectExpanded] - Optional aspect carousel expansion
  */
 export interface SerializedPersistentUiState {
   sidebarMenu?: SidebarMenuState;
   theme?: ThemeValue;
   unitSystem?: UnitSystemPreferences | UnitSystemValue;
   correctionsToken?: string | null;
+  aspectExpanded?: boolean;
 }
 
 /**
@@ -249,6 +254,22 @@ export interface SetUnitSystemAction {
 }
 
 /**
+ * Action to set whether aspect carousels stay unpacked.
+ *
+ * The preference is global rather than per-row: a reader who wants the dense
+ * rows open wants all of them open, and a per-row toggle would have to be
+ * pressed once per section on a stat block with twenty.
+ *
+ * @interface SetAspectExpandedAction
+ * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED} type - Action type identifier
+ * @property {{ expanded: boolean }} payload - New expansion state
+ */
+export interface SetAspectExpandedAction {
+  type: typeof PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED;
+  payload: { expanded: boolean };
+}
+
+/**
  * Action to reset state to defaults
  *
  * @interface ResetAction
@@ -272,6 +293,7 @@ export type PersistentUiAction =
   | ToggleSidebarPathAction
   | SetCorrectionsTokenAction
   | SetUnitSystemAction
+  | SetAspectExpandedAction
   | ResetAction;
 
 /**
@@ -287,6 +309,7 @@ export const DEFAULT_PERSISTENT_UI_STATE: PersistentUiState = {
   theme: 'dark',
   unitSystem: DEFAULT_UNIT_SYSTEM,
   correctionsToken: null,
+  aspectExpanded: false,
   isHydrated: false,
 };
 

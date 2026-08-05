@@ -47,6 +47,7 @@ import {
     HeirloomEntity,
     MonsterACEmbed,
     MonsterEntity,
+    MonsterFeatureEntity,
     MonsterHPEmbed,
     MonsterSaveEmbed,
     MonsterScoreEmbed,
@@ -227,6 +228,26 @@ const SEED_CONFIGS: ContentSeedConfig[] = [
   {
     entityClass: MonsterEntity,
     subdir: 'monsters',
+    seedChildren: (em, allMeta, parent, raw) => {
+      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
+      for (let i = 0; i < features.length; i++) {
+        const feature = features[i];
+        const source = (feature.source ?? {}) as Record<string, unknown>;
+        const init = recordToEntityInit(
+          allMeta,
+          MonsterFeatureEntity.name,
+          feature,
+        );
+        em.create(MonsterFeatureEntity, {
+          ...init,
+          monster: parent,
+          featureId: feature.id as string,
+          sortOrder: i,
+          startLine: source.start as number | undefined,
+          endLine: source.end as number | undefined,
+        } as never);
+      }
+    },
   },
   {
     entityClass: HeirloomEntity,

@@ -14,6 +14,7 @@
  */
 
 import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
+import remarkAspects from '@/lib/md/remarkAspects';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
@@ -37,6 +38,7 @@ export async function compileStatic(opts: CompileOptions) {
     mdxOptions,
     baseUrl,
     parseFrontmatter = true,
+    aspectSections,
   } = opts;
 
   const resolvedSource = await resolveReusableSource(source);
@@ -49,7 +51,13 @@ export async function compileStatic(opts: CompileOptions) {
       mdxOptions: buildMdxOptions(
         mdxOptions,
         {
-          remarkPlugins: [remarkGfm, remarkMath, remarkDiceRoll, remarkUnit],
+          remarkPlugins: [
+            remarkGfm,
+            remarkMath,
+            [remarkAspects, { sections: aspectSections }],
+            remarkDiceRoll,
+            remarkUnit,
+          ],
           rehypePlugins: [rehypeKatex, rehypeSectionize],
         },
         baseUrl,

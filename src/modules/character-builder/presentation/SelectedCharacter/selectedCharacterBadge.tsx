@@ -7,6 +7,12 @@
  * dispatches `SET_ACTIVE_ID` on the global roster context, and the final
  * row navigates to the character manager page.
  *
+ * The picker is a mixed menu. Character rows are buttons because they act on
+ * state without leaving the page; the manager row is an anchor with a real
+ * `href`, since a control that navigates has to be a link for middle-click,
+ * ctrl-click and "open in new tab" to work. An unmodified left click is
+ * upgraded to a client-side push, and the browser keeps every other gesture.
+ *
  * @module modules/character-builder/presentation/SelectedCharacter/selectedCharacterBadge
  * @version 1.0.0
  * @author Typeir
@@ -16,6 +22,7 @@
 'use client';
 
 import { Tooltip } from '@/lib/components/ui/tooltip';
+import { isPlainLeftClick } from '@/lib/utils/isPlainLeftClick';
 import {
   useActiveCharacter,
   useCharacters,
@@ -111,10 +118,17 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
     [dispatch],
   );
 
-  const handleManage = useCallback(() => {
-    close();
-    router.push(`/${locale}/utils/characters`);
-  }, [close, router, locale]);
+  const manageHref = `/${locale}/utils/characters`;
+
+  const handleManage = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      if (!isPlainLeftClick(event)) return;
+      event.preventDefault();
+      close();
+      router.push(manageHref);
+    },
+    [close, router, manageHref],
+  );
 
   if (!isHydrated) return null;
 
@@ -198,13 +212,13 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
               );
             })}
             <li>
-              <button
-                type='button'
+              <a
                 role='menuitem'
+                href={manageHref}
                 className={`${styles.listItem} ${styles.manageRow}`}
                 onClick={handleManage}>
                 {t('characterBadge.manage')}
-              </button>
+              </a>
             </li>
           </ul>
         </div>

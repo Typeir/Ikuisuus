@@ -51,8 +51,14 @@ const sampleDraft = {
   versionHash: null,
 };
 
+/**
+ * Drafts exist only on the pg backend, so these tests declare it. On `fs` the
+ * route short-circuits before reaching the repository — correct in production,
+ * and it would make every assertion below vacuous here.
+ */
 beforeEach(() => {
   process.env.REVALIDATION_SECRET = 'test-secret-123';
+  process.env.METADATA_BACKEND = 'pg';
 });
 
 afterEach(() => {
@@ -61,6 +67,7 @@ afterEach(() => {
   mockFindActive.mockReset();
   mockArchive.mockReset();
   mockSyncMetadata.mockReset();
+  delete process.env.METADATA_BACKEND;
 });
 
 describe('Drafts API (POST /api/drafts)', () => {

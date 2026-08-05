@@ -12,10 +12,24 @@
 
 /* paw:gate:file-length ignore */
 
+import { extractDerivedAspects, extractStrataTags } from './aspectExtractors';
+import {
+  CLAUSE_AFTER,
+  CLAUSE_BEFORE,
+  CLAUSE_BREAK,
+  DAMAGE_WORD,
+  DICE_EXPRESSION,
+  ENTITY_CITATION,
+} from './aspectPatterns';
 import { GameData } from './gameData';
 import { SLUG } from './parsingPatterns';
 import type { SharedData } from './sharedData';
-import { ITEM_MECHANICS, MONSTER_MECHANICS, MOVEMENT } from './taggingPatterns';
+import {
+  FRONTMATTER,
+  ITEM_MECHANICS,
+  MONSTER_MECHANICS,
+  MOVEMENT,
+} from './taggingPatterns';
 
 /**
  * Options for tag extraction.
@@ -33,6 +47,59 @@ export interface TagExtractionOptions {
 }
 
 /**
+ * Removes the labels of links that cite another content entity.
+ *
+ * The href survives — it is not prose and matches nothing — while the label goes,
+ * because a page that links to a spell is referring to it rather than doing what
+ * it does. Rules links keep their labels; see `ENTITY_CITATION`.
+ *
+ * @param {string} text - Content to clean
+ * @returns {string} The text with entity link labels removed
+ */
+export function stripCitations(text: string): string {
+  const citations = new RegExp(ENTITY_CITATION.source, ENTITY_CITATION.flags);
+  return text.replace(citations, ' ');
+}
+
+/**
+ * Collects the stretches of text where a damage type may legitimately appear.
+ *
+ * Damage types are ordinary English words. A bare "fire" is a campfire, a bare
+ * "true" is an adjective, and a bare "frost" is weather — none of them are
+ * damage, and matching them as damage put `damage:true` on a third of the spell
+ * list. A type counts in exactly two places: a clause that says "damage", and a
+ * dice expression, which names its type and never says the word.
+ *
+ * Returning one joined string rather than testing each type against the whole
+ * document keeps this linear in the text rather than in text × vocabulary.
+ *
+ * @param {string} text - Content to analyze
+ * @returns {string} The damage-bearing regions of the text, joined
+ */
+export function damageContexts(text: string): string {
+  const regions: string[] = [];
+
+  const words = new RegExp(DAMAGE_WORD.source, DAMAGE_WORD.flags);
+  let match: RegExpExecArray | null;
+  while ((match = words.exec(text)) !== null) {
+    const head = text.slice(Math.max(0, match.index - CLAUSE_BEFORE), match.index);
+    const tail = text.slice(
+      match.index,
+      match.index + match[0].length + CLAUSE_AFTER,
+    );
+
+    const headBreak = head.split(CLAUSE_BREAK);
+    const tailBreak = tail.split(CLAUSE_BREAK);
+    regions.push(headBreak[headBreak.length - 1] + tailBreak[0]);
+  }
+
+  const dice = new RegExp(DICE_EXPRESSION.source, DICE_EXPRESSION.flags);
+  regions.push(...(text.match(dice) ?? []));
+
+  return regions.join(' | ');
+}
+
+/**
  * Extract damage type tags from content.
  *
  * @param {string} text - Content to analyze
@@ -43,16 +110,12 @@ export function extractDamageTags(
   text: string,
   sharedData: SharedData,
 ): string[] {
-  const tags: string[] = [];
-  const damageTypes = GameData.getDamageTypes(sharedData);
+  const context = damageContexts(text);
+  if (!context) return [];
 
-  for (const type of damageTypes) {
-    if (new RegExp(`\\b${type}\\s+damage\\b`, 'gi').test(text)) {
-      tags.push(`damage:${type}`);
-    }
-  }
-
-  return tags;
+  return GameData.getDamageTypes(sharedData)
+    .filter((type) => new RegExp(`\\b${type}\\b`, 'i').test(context))
+    .map((type) => `damage:${type}`);
 }
 
 /**
@@ -81,6 +144,9 @@ export function extractConditionTags(
 /**
  * Extract ability save tags from content.
  *
+ * Emits the abbreviated form (`save:dex`) so that the shared tagger and the spell
+ * generator, which derived the same fact independently, agree on one spelling.
+ *
  * @param {string} text - Content to analyze
  * @param {SharedData} sharedData - Shared game data
  * @returns {string[]} Array of save tags
@@ -106,7 +172,7 @@ export function extractAbilitySaveTags(
         a.short.toLowerCase() === matchedAbility,
     );
     if (ability) {
-      tags.push(`mechanic:${ability.long}-save`);
+      tags.push(`save:${ability.short.toLowerCase()}`);
     }
   }
 
@@ -154,17 +220,16 @@ export function extractMonsterMechanicTags(text: string): string[] {
 
   if (MONSTER_MECHANICS.legendaryDeed.test(text))
     tags.push('mechanic:legendary-deed');
-  if (MONSTER_MECHANICS.deedResist.test(text)) tags.push('mechanic:resist');
-  if (MONSTER_MECHANICS.deedLair.test(text)) tags.push('mechanic:lair');
+  if (MONSTER_MECHANICS.deedResist.test(text))
+    tags.push('mechanic:deed-resist');
+  if (MONSTER_MECHANICS.deedLair.test(text)) tags.push('mechanic:deed-lair');
   if (MONSTER_MECHANICS.deedStratagem.test(text))
-    tags.push('mechanic:stratagem');
-  if (MONSTER_MECHANICS.deedPhase.test(text))
-    tags.push('mechanic:phase-actions');
+    tags.push('mechanic:deed-stratagem');
+  if (MONSTER_MECHANICS.deedPhase.test(text)) tags.push('mechanic:deed-phase');
   if (MONSTER_MECHANICS.multiattack.test(text))
     tags.push('mechanic:multiattack');
-  if (MONSTER_MECHANICS.reactions.test(text)) tags.push('mechanic:reactions');
-  if (MONSTER_MECHANICS.minorActions.test(text))
-    tags.push('mechanic:minor-actions');
+  if (MONSTER_MECHANICS.reactions.test(text)) tags.push('tempo:reactive');
+  if (MONSTER_MECHANICS.minorActions.test(text)) tags.push('tempo:minor');
 
   if (MONSTER_MECHANICS.regeneration.test(text))
     tags.push('mechanic:regeneration');
@@ -178,22 +243,21 @@ export function extractMonsterMechanicTags(text: string): string[] {
   if (MONSTER_MECHANICS.magicResistance.test(text))
     tags.push('mechanic:magic-resistance');
   if (MONSTER_MECHANICS.magicWeapons.test(text))
-    tags.push('mechanic:magic-weapons');
+    tags.push('mechanic:magic-weapon');
   if (MONSTER_MECHANICS.packTactics.test(text))
     tags.push('mechanic:pack-tactics');
   if (MONSTER_MECHANICS.sneakAttack.test(text))
     tags.push('mechanic:sneak-attack');
-  if (MONSTER_MECHANICS.aura.test(text)) tags.push('mechanic:aura');
-  if (MONSTER_MECHANICS.summoning.test(text)) tags.push('mechanic:summoning');
+  if (MONSTER_MECHANICS.aura.test(text)) tags.push('delivery:aura');
+  if (MONSTER_MECHANICS.summoning.test(text)) tags.push('delivery:summon');
   if (MONSTER_MECHANICS.shapeshifting.test(text))
     tags.push('mechanic:shapeshifting');
 
   if (MONSTER_MECHANICS.damageResistance.test(text))
-    tags.push('mechanic:damage-resistance');
-  if (MONSTER_MECHANICS.damageImmunity.test(text))
-    tags.push('mechanic:damage-immunity');
+    tags.push('defense:resistance');
+  if (MONSTER_MECHANICS.damageImmunity.test(text)) tags.push('defense:immunity');
   if (MONSTER_MECHANICS.damageVulnerability.test(text))
-    tags.push('mechanic:damage-vulnerability');
+    tags.push('defense:vulnerability');
 
   return tags;
 }
@@ -212,33 +276,27 @@ export function extractItemMechanicTags(text: string): string[] {
   if (ITEM_MECHANICS.damageBonus.test(text)) tags.push('mechanic:damage-bonus');
   if (ITEM_MECHANICS.acBonus.test(text)) tags.push('mechanic:ac-bonus');
   if (ITEM_MECHANICS.savingThrowBonus.test(text))
-    tags.push('mechanic:saving-throw-bonus');
+    tags.push('mechanic:save-bonus');
 
-  if (ITEM_MECHANICS.advantageDisadvantage.test(text))
-    tags.push('mechanic:advantage-disadvantage');
-  if (ITEM_MECHANICS.criticalHit.test(text))
-    tags.push('mechanic:critical-hits');
-  if (ITEM_MECHANICS.reaction.test(text)) tags.push('mechanic:reaction');
-  if (ITEM_MECHANICS.minorAction.test(text)) tags.push('mechanic:bonus-action');
+  if (ITEM_MECHANICS.reaction.test(text)) tags.push('tempo:reactive');
+  if (ITEM_MECHANICS.minorAction.test(text)) tags.push('tempo:minor');
   if (ITEM_MECHANICS.opportunityAttack.test(text))
-    tags.push('mechanic:opportunity-attacks');
+    tags.push('mechanic:opportunity-attack');
   if (ITEM_MECHANICS.noOpportunityAttack.test(text))
-    tags.push('mechanic:no-opportunity-attacks');
+    tags.push('mechanic:no-opportunity-attack');
 
   if (ITEM_MECHANICS.damageResistanceTo.test(text))
-    tags.push('mechanic:damage-resistance');
-  if (ITEM_MECHANICS.damageImmunityTo.test(text))
-    tags.push('mechanic:damage-immunity');
+    tags.push('defense:resistance');
+  if (ITEM_MECHANICS.damageImmunityTo.test(text)) tags.push('defense:immunity');
   if (ITEM_MECHANICS.damageVulnerabilityTo.test(text))
-    tags.push('mechanic:damage-vulnerability');
+    tags.push('defense:vulnerability');
 
   if (ITEM_MECHANICS.spellcasting.test(text))
     tags.push('mechanic:spellcasting');
-  if (ITEM_MECHANICS.cantrips.test(text)) tags.push('mechanic:cantrips');
-  if (ITEM_MECHANICS.charges.test(text)) tags.push('mechanic:charges');
-  if (ITEM_MECHANICS.limitedUses.test(text)) tags.push('mechanic:limited-uses');
-  if (ITEM_MECHANICS.recharge.test(text)) tags.push('mechanic:recharge');
-  if (ITEM_MECHANICS.reroll.test(text)) tags.push('mechanic:reroll');
+  if (ITEM_MECHANICS.cantrips.test(text)) tags.push('mechanic:cantrip');
+  if (ITEM_MECHANICS.charges.test(text)) tags.push('resource:charge');
+  if (ITEM_MECHANICS.limitedUses.test(text)) tags.push('resource:limited');
+  if (ITEM_MECHANICS.recharge.test(text)) tags.push('resource:recharge');
 
   if (
     ITEM_MECHANICS.consumable.test(text) ||
@@ -256,6 +314,10 @@ export function extractItemMechanicTags(text: string): string[] {
 /**
  * Extract lore tags (factions, locations) from content.
  *
+ * Both carry the `meta:` prefix: naming a faction places a page in the world
+ * rather than describing what it does at the table, which is the line the pill
+ * row draws.
+ *
  * @param {string} text - Content to analyze
  * @param {string[]} factions - List of faction names to search for
  * @param {string[]} locations - List of location names to search for
@@ -270,13 +332,13 @@ export function extractLoreTags(
 
   for (const faction of factions) {
     if (new RegExp(`\\b${faction}\\b`, 'i').test(text)) {
-      tags.push(`faction:${faction.toLowerCase()}`);
+      tags.push(`meta:faction:${faction.toLowerCase().replace(/\s+/g, '-')}`);
     }
   }
 
   for (const location of locations) {
     if (new RegExp(`\\b${location}\\b`, 'i').test(text)) {
-      tags.push(`location:${location.toLowerCase()}`);
+      tags.push(`meta:location:${location.toLowerCase().replace(/\s+/g, '-')}`);
     }
   }
 
@@ -284,15 +346,23 @@ export function extractLoreTags(
 }
 
 /**
- * Extract organizational tags from file path (category, locale, source).
+ * Extract organizational tags from file path (category, locale, provenance).
+ *
+ * These carry the `meta:` prefix because they describe where a page sits in the
+ * library rather than what it does at the table. They are indexed and searchable
+ * like any other aspect and never drawn in the pill row. The prefix also frees
+ * the bare `source:` group for the Fold/Väki/Will axis, which is a different
+ * question that happens to share the English word.
  *
  * @param {string} filePath - Absolute path to content file
  * @param {string} [projectRoot] - Root directory of the project
+ * @param {string} [declaredSource] - Frontmatter `source` value
  * @returns {string[]} Array of organizational tags
  */
 export function extractOrganizationalTags(
   filePath: string,
   projectRoot: string = process.cwd(),
+  declaredSource?: string,
 ): string[] {
   const tags: string[] = [];
   const relativePath = filePath
@@ -300,21 +370,21 @@ export function extractOrganizationalTags(
     .replace(SLUG.pathSeparatorLeading, '');
   const pathParts = relativePath.split(SLUG.pathSeparator);
 
-  if (pathParts.includes('monsters')) tags.push('category:monsters');
-  if (pathParts.includes('items')) tags.push('category:items');
-  if (pathParts.includes('heirlooms')) tags.push('category:heirlooms');
+  if (pathParts.includes('monsters')) tags.push('meta:category:monsters');
+  if (pathParts.includes('items')) tags.push('meta:category:items');
+  if (pathParts.includes('heirlooms')) tags.push('meta:category:heirlooms');
   if (pathParts.includes('character-creation'))
-    tags.push('category:character-creation');
-  if (pathParts.includes('vocations')) tags.push('category:vocations');
-  if (pathParts.includes('spells')) tags.push('category:spells');
-  if (pathParts.includes('world')) tags.push('category:world');
-  if (pathParts.includes('rules')) tags.push('category:rules');
+    tags.push('meta:category:character-creation');
+  if (pathParts.includes('vocations')) tags.push('meta:category:vocations');
+  if (pathParts.includes('spells')) tags.push('meta:category:spells');
+  if (pathParts.includes('world')) tags.push('meta:category:world');
+  if (pathParts.includes('rules')) tags.push('meta:category:rules');
 
-  if (pathParts.includes('en')) tags.push('locale:en');
-  if (pathParts.includes('es')) tags.push('locale:es');
-  if (pathParts.includes('fi')) tags.push('locale:fi');
+  if (pathParts.includes('en')) tags.push('meta:locale:en');
+  if (pathParts.includes('es')) tags.push('meta:locale:es');
+  if (pathParts.includes('fi')) tags.push('meta:locale:fi');
 
-  tags.push('source:official');
+  if (declaredSource) tags.push(`meta:source:${declaredSource.toLowerCase()}`);
 
   return tags;
 }
@@ -356,7 +426,7 @@ export function extractContentTypeTags(
   )
     tags.push('class');
 
-  return tags.map((tag) => `content:${tag}`);
+  return tags.map((tag) => `meta:content:${tag}`);
 }
 
 /**
@@ -376,35 +446,44 @@ export function extractAllTags(
 ): string[] {
   const {
     contentType = 'generic',
-    factions = [],
-    locations = [],
+    factions = sharedData.worldData?.factions ?? [],
+    locations = sharedData.worldData?.locations ?? [],
     requireFlightMeasurement = false,
   } = options;
 
   const allTags: string[] = [];
+  const prose = stripCitations(content);
 
-  allTags.push(...extractDamageTags(content, sharedData));
-  allTags.push(...extractConditionTags(content, sharedData));
-  allTags.push(...extractAbilitySaveTags(content, sharedData));
+  allTags.push(...extractDamageTags(prose, sharedData));
+  allTags.push(...extractConditionTags(prose, sharedData));
+  allTags.push(...extractAbilitySaveTags(prose, sharedData));
   allTags.push(
-    ...extractMovementTags(content, sharedData, requireFlightMeasurement),
+    ...extractMovementTags(prose, sharedData, requireFlightMeasurement),
   );
+  allTags.push(...extractDerivedAspects(prose, sharedData));
 
   if (contentType === 'monster') {
-    allTags.push(...extractMonsterMechanicTags(content));
+    allTags.push(...extractMonsterMechanicTags(prose));
   } else if (contentType === 'item') {
-    allTags.push(...extractItemMechanicTags(content));
+    allTags.push(...extractItemMechanicTags(prose));
   } else {
-    allTags.push(...extractMonsterMechanicTags(content));
-    allTags.push(...extractItemMechanicTags(content));
+    allTags.push(...extractMonsterMechanicTags(prose));
+    allTags.push(...extractItemMechanicTags(prose));
   }
 
   if (factions.length > 0 || locations.length > 0) {
     allTags.push(...extractLoreTags(content, factions, locations));
   }
 
-  allTags.push(...extractOrganizationalTags(filePath, process.cwd()));
+  allTags.push(
+    ...extractOrganizationalTags(
+      filePath,
+      process.cwd(),
+      content.match(FRONTMATTER.source)?.[1]?.trim(),
+    ),
+  );
   allTags.push(...extractContentTypeTags(filePath, content));
+  allTags.push(...extractStrataTags(allTags, sharedData));
 
   return Array.from(new Set(allTags)).sort();
 }

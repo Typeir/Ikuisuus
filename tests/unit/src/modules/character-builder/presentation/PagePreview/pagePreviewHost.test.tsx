@@ -64,7 +64,7 @@ describe('PagePreviewHost', () => {
     expect(frames.length).toBeGreaterThanOrEqual(1);
     expect(frames[0]).toHaveAttribute(
       'src',
-      '/en/library/character-creation/feats/tough?embed=true',
+      '/en/embed/character-creation/feats/tough',
     );
   });
 });

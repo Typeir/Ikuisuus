@@ -17,6 +17,7 @@
 'use client';
 
 import btn from '@/styles/buttons.module.scss';
+import { EmbedLinkBridge, isEmbedPathname } from '@/lib/embed';
 import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
 import Icon from '@/lib/components/icon/icon';
 import { NotificationProvider } from '@/lib/components/ui';
@@ -39,7 +40,7 @@ import { Moon, Sun, Wrench } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import cn from '../../../lib/utils/classNameMerge';
@@ -89,8 +90,8 @@ function BaseResponsiveLayoutShell({
   const locale = params?.locale as string;
   const toolItems = useToolRegistry();
 
-  const searchParams = useSearchParams();
-  const isEmbed = searchParams.get('embed') === 'true';
+  const pathname = usePathname();
+  const isEmbed = isEmbedPathname(pathname ?? '');
 
   useEffect(() => {
     setMounted(true);
@@ -110,36 +111,17 @@ function BaseResponsiveLayoutShell({
   }, [currentTheme, mounted]);
 
   /**
-   * Intercept link clicks in embed mode to preserve ?embed=true across
-   * in-iframe navigations. Without this, clicking a link inside the embedded
-   * page loses the query param and the full layout (with sidebar) renders.
+   * In embed mode, render only the bare page content — no sidebar, no header.
+   *
+   * The branch is taken from the pathname rather than a query parameter so it
+   * resolves during static generation: `/{locale}/embed/...` prerenders without
+   * chrome instead of shipping the sidebar in its HTML and hiding it after
+   * hydration. `<EmbedLinkBridge>` owns navigation out of the frame.
    */
-  useEffect(() => {
-    if (!isEmbed) return;
-    const handleClick = (e: MouseEvent) => {
-      const anchor = (e.target as HTMLElement).closest('a');
-      if (!anchor) return;
-      const href = anchor.getAttribute('href');
-      if (!href || href.startsWith('#') || href.startsWith('mailto:')) return;
-      try {
-        const url = new URL(href, window.location.origin);
-        if (url.origin !== window.location.origin) return;
-        if (url.searchParams.has('embed')) return;
-        e.preventDefault();
-        url.searchParams.set('embed', 'true');
-        router.push(`${url.pathname}${url.search}`);
-      } catch {
-        return;
-      }
-    };
-    document.addEventListener('click', handleClick, true);
-    return () => document.removeEventListener('click', handleClick, true);
-  }, [isEmbed, router]);
-
-  /** In embed mode, render only the bare page content — no sidebar, no header */
   if (isEmbed) {
     return (
       <div className={styles.embedShell} data-embed>
+        <EmbedLinkBridge />
         <main className={styles.embedContent}>{children}</main>
       </div>
     );

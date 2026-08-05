@@ -124,9 +124,9 @@ vi.mock('@/lib/components/ui/embedPanel/GenericEmbedPanel', async () => {
         <div role='complementary'>
           {url && (
             <iframe
-              src={`/${locale}/library/${url}?embed=true`}
+              src={`/${locale}/embed/${url}`}
               title={iframeTitle ?? 'Embed'}
-              sandbox='allow-same-origin allow-scripts allow-popups'
+              sandbox='allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox'
             />
           )}
         </div>
@@ -204,7 +204,7 @@ describe('WorldSimContentPanel', () => {
 
     const iframe = screen.getByTitle('Content preview') as HTMLIFrameElement;
     expect(iframe).toBeInTheDocument();
-    expect(iframe.src).toContain('/en/library/world/test-body?embed=true');
+    expect(iframe.src).toContain('/en/embed/world/test-body');
   });
 
   it('returns null when body has no contentPath', () => {
@@ -230,7 +230,7 @@ describe('WorldSimContentPanel', () => {
 
     const iframe = screen.getByTitle('Content preview') as HTMLIFrameElement;
     expect(iframe.src).toContain(
-      '/en/library/world/test-body/reg-1?embed=true',
+      '/en/embed/world/test-body/reg-1',
     );
   });
 

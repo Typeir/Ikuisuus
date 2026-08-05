@@ -9,5 +9,8 @@
   "resultsFor": "Results for",
   "found": "found",
   "archivistReading": "The Archivist is reading…",
-  "closePanel": "Close reading panel"
+  "closePanel": "Close reading panel",
+  "filteredBy": "Filtered by",
+  "removeFilter": "Remove the {aspect} filter",
+  "resultsForAspects": "Cross-referenced by"
 }

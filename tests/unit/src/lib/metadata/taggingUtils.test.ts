@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview Tagging Utilities Unit Tests
  * @description Tests for all tag extraction functions.
  *
@@ -97,12 +97,12 @@ describe('extractAbilitySaveTags', () => {
       'DC 15 Wisdom saving throw',
       MOCK_DATA,
     );
-    expect(result).toContain('mechanic:wisdom-save');
+    expect(result).toContain('save:wis');
   });
 
   it('should extract from short name', () => {
     const result = extractAbilitySaveTags('DEX save', MOCK_DATA);
-    expect(result).toContain('mechanic:dexterity-save');
+    expect(result).toContain('save:dex');
   });
 
   it('should return empty for no saves', () => {
@@ -153,7 +153,7 @@ describe('extractMonsterMechanicTags', () => {
 
   it('should detect damage resistance', () => {
     expect(extractMonsterMechanicTags('resistance to fire')).toContain(
-      'mechanic:damage-resistance',
+      'defense:resistance',
     );
   });
 
@@ -189,7 +189,7 @@ describe('extractItemMechanicTags', () => {
 
   it('should detect charges', () => {
     expect(extractItemMechanicTags('This item has 3 charges')).toContain(
-      'mechanic:charges',
+      'resource:charge',
     );
   });
 
@@ -213,12 +213,12 @@ describe('extractLoreTags', () => {
       ['Order of the Flame'],
       [],
     );
-    expect(result).toContain('faction:order of the flame');
+    expect(result).toContain('meta:faction:order-of-the-flame');
   });
 
   it('should extract location tags', () => {
     const result = extractLoreTags('Near Ashvale', [], ['Ashvale']);
-    expect(result).toContain('location:ashvale');
+    expect(result).toContain('meta:location:ashvale');
   });
 
   it('should return empty for no matches', () => {
@@ -232,9 +232,8 @@ describe('extractOrganizationalTags', () => {
       '/project/src/content/en/monsters/goblin.sheet.mdx',
       '/project',
     );
-    expect(result).toContain('category:monsters');
-    expect(result).toContain('locale:en');
-    expect(result).toContain('source:official');
+    expect(result).toContain('meta:category:monsters');
+    expect(result).toContain('meta:locale:en');
   });
 
   it('should extract items category', () => {
@@ -242,15 +241,39 @@ describe('extractOrganizationalTags', () => {
       '/project/src/content/en/items/heirlooms/sword.mdx',
       '/project',
     );
-    expect(result).toContain('category:heirlooms');
+    expect(result).toContain('meta:category:heirlooms');
+  });
+
+  /**
+   * Provenance is read from the page's own frontmatter. It used to be hardcoded
+   * to `official`, which asserted the same thing about every page in the corpus
+   * and so carried no information at all.
+   */
+  it('should take provenance from the declared source', () => {
+    const result = extractOrganizationalTags(
+      '/project/src/content/en/monsters/goblin.sheet.mdx',
+      '/project',
+      'Ikuisuus',
+    );
+
+    expect(result).toContain('meta:source:ikuisuus');
+  });
+
+  it('should emit no provenance when the page declares none', () => {
+    const result = extractOrganizationalTags(
+      '/project/src/content/en/monsters/goblin.sheet.mdx',
+      '/project',
+    );
+
+    expect(result.some((tag) => tag.startsWith('meta:source:'))).toBe(false);
   });
 });
 
 describe('extractContentTypeTags', () => {
   it('should tag sheet files', () => {
     const result = extractContentTypeTags('monster.sheet.mdx', '');
-    expect(result).toContain('content:sheet');
-    expect(result).toContain('content:statblock');
+    expect(result).toContain('meta:content:sheet');
+    expect(result).toContain('meta:content:statblock');
   });
 
   it('should tag monster content', () => {
@@ -258,8 +281,8 @@ describe('extractContentTypeTags', () => {
       'goblin.mdx',
       '**Armor Class** 13\n**Challenge Rating** 1/4',
     );
-    expect(result).toContain('content:statblock');
-    expect(result).toContain('content:monster');
+    expect(result).toContain('meta:content:statblock');
+    expect(result).toContain('meta:content:monster');
   });
 
   it('should tag spell content', () => {
@@ -267,7 +290,7 @@ describe('extractContentTypeTags', () => {
       'fireball.mdx',
       '**Casting Time** 1 action',
     );
-    expect(result).toContain('content:spell');
+    expect(result).toContain('meta:content:spell');
   });
 });
 
@@ -303,7 +326,7 @@ describe('extractAllTags', () => {
         locations: ['Ashvale'],
       },
     );
-    expect(result).toContain('faction:order of the flame');
-    expect(result).toContain('location:ashvale');
+    expect(result).toContain('meta:faction:order-of-the-flame');
+    expect(result).toContain('meta:location:ashvale');
   });
 });

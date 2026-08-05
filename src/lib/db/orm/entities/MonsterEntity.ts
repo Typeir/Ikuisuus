@@ -16,10 +16,13 @@ import {
   OrmEmbedded,
   OrmEntity,
   OrmIndex,
+  OrmManyToOne,
+  OrmOneToMany,
   OrmPrimaryKey,
   OrmProperty,
   OrmUnique,
 } from '@/lib/db/orm/schema';
+import { Collection } from '@mikro-orm/core';
 
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
 
@@ -274,4 +277,75 @@ export class MonsterEntity {
   /** @property {string | null} versionHash - FNV-1a content hash for incremental sync */
   @OrmProperty({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
+
+  /** @property {Collection<MonsterFeatureEntity>} features - Feature shards parsed from the stat block */
+  @OrmOneToMany({
+    entity: 'MonsterFeatureEntity',
+    mappedBy: 'monster',
+    orphanRemoval: true,
+  })
+  features = new Collection<MonsterFeatureEntity>(this);
+}
+
+/* ─────────────────────────  Child Entity  ──────────────────────────── */
+
+/**
+ * MikroORM entity for the `monster_features` child table.
+ *
+ * One row per feature shard in a stat block. Aspects are derived per feature as
+ * well as per stat block, because "does this creature deal force damage
+ * anywhere" is the wrong grain for the question a reader has — the useful fact
+ * is which feature does it, and that fact only reaches the live site through
+ * this table.
+ */
+@OrmEntity('MonsterFeatureEntity', { tableName: 'monster_features' })
+export class MonsterFeatureEntity {
+  @OrmPrimaryKey({ type: 'number', autoincrement: true })
+  id!: number;
+
+  @OrmManyToOne({
+    entity: 'MonsterEntity',
+    fieldName: 'monster_id',
+    deleteRule: 'cascade',
+  })
+  monster!: MonsterEntity;
+
+  /** @property {string} featureId - Stable shard identifier, e.g. `mucklord/garbage-communion` */
+  @OrmProperty({ type: 'string', fieldName: 'feature_id' })
+  featureId!: string;
+
+  @OrmProperty({ type: 'string' })
+  name!: string;
+
+  /** @property {string | null} trigger - `passive`, `action` or `reaction` */
+  @OrmProperty({ type: 'string', nullable: true })
+  trigger?: string | null;
+
+  @OrmProperty({
+    type: 'number',
+    fieldName: 'sort_order',
+    columnType: 'smallint',
+  })
+  sortOrder!: number;
+
+  @OrmProperty({ type: 'string[]' })
+  tags: string[] = [];
+
+  /** @property {number | null} startLine - Start line of this feature's block in the source MDX */
+  @OrmProperty({
+    type: 'number',
+    fieldName: 'start_line',
+    columnType: 'smallint',
+    nullable: true,
+  })
+  startLine?: number | null;
+
+  /** @property {number | null} endLine - Exclusive end line of this feature's block in the source MDX */
+  @OrmProperty({
+    type: 'number',
+    fieldName: 'end_line',
+    columnType: 'smallint',
+    nullable: true,
+  })
+  endLine?: number | null;
 }

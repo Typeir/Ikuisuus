@@ -9,11 +9,15 @@
  * @since 3.0.0
  */
 
+import {
+  toNativeMeasure,
+  toPlainMeasure,
+} from '@/lib/units/nativeMeasure';
 import { stripDiceWrappers } from './diceExpressionUtils';
 import { GameData } from './gameData';
 import { CHARGES, HEADING, LIST, PROPERTIES } from './parsingPatterns';
 import type { SharedData } from './sharedData';
-import { clean, stripMarkdown } from './textUtils';
+import { clean, plain, stripMarkdown } from './textUtils';
 
 /**
  * Extracts the title from the first H1 heading.
@@ -23,7 +27,7 @@ import { clean, stripMarkdown } from './textUtils';
  */
 export function parseTitle(lines: string[]): string {
   const h1 = lines.find((l) => HEADING.h1.test(l));
-  return h1 ? clean(h1.replace(HEADING.h1, '')) : '';
+  return h1 ? plain(h1.replace(HEADING.h1, '')) : '';
 }
 
 /**
@@ -79,7 +83,10 @@ export function parseDescription(content: string): string | undefined {
         !/^[_*][^_*\n]+[_*]$/.test(l),
     );
 
-  return introLines.length > 0 ? introLines.join('\n') : undefined;
+  /* The description reads as prose but is consumed as plaintext: it becomes
+     `og:description` and a Pagefind search key, neither of which ever renders a
+     macro, and a reader searching "12 stride" must match it. */
+  return introLines.length > 0 ? plain(introLines.join('\n')) : undefined;
 }
 
 /**
@@ -250,7 +257,9 @@ export function parseFirstProseParagraph(
   }
   if (paragraph.length === 0) return undefined;
 
-  const text = stripMarkdown(paragraph.join(' ')).trim();
+  /* A description is plaintext: it becomes `og:description` and a search key,
+     so link syntax and emphasis must not survive into it. */
+  const text = plain(paragraph.join(' '));
   if (!text) return undefined;
   if (text.length <= maxLength) return text;
   const cut = text.slice(0, maxLength);
@@ -298,13 +307,13 @@ export function parseWeight(
 ): string | undefined {
   if (!properties || !properties.Weight) return undefined;
 
-  const weightText = properties.Weight;
-  const weightMatch = weightText.match(PROPERTIES.weight);
-  if (weightMatch) {
-    return `${weightMatch[1]} lb${weightMatch[1] !== '1' ? 's' : ''}`;
-  }
+  /* Every heirloom writes `[= 2 burden =]`, which the imperial pattern here
+     never matched — so the field came back empty for the entire set while the
+     one item written in pounds came back in pounds. Normalising handles both
+     and answers in the native unit either way. */
+  const native = toNativeMeasure(properties.Weight).trim();
 
-  return undefined;
+  return native || undefined;
 }
 
 /**
@@ -318,11 +327,11 @@ export function parseRange(
 ): string | undefined {
   if (!properties || !properties.Range) {
     if (properties && properties.Reach) {
-      return properties.Reach;
+      return toNativeMeasure(properties.Reach);
     }
     return undefined;
   }
-  return properties.Range;
+  return toNativeMeasure(properties.Range);
 }
 
 /**

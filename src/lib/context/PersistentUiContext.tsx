@@ -142,6 +142,7 @@ function readPersistedState(
   let theme: ThemeValue = 'dark';
   let unitSystem: UnitSystemPreferences = DEFAULT_UNIT_SYSTEM;
   let correctionsToken: string | null = null;
+  let aspectExpanded = false;
   const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
   if (stored) {
     try {
@@ -155,6 +156,9 @@ function readPersistedState(
         parsed.correctionsToken === null
       ) {
         correctionsToken = parsed.correctionsToken;
+      }
+      if (typeof parsed.aspectExpanded === 'boolean') {
+        aspectExpanded = parsed.aspectExpanded;
       }
     } catch {
       const legacyTheme = fetchPersistentData(LEGACY_THEME_KEY);
@@ -173,6 +177,7 @@ function readPersistedState(
     theme,
     unitSystem,
     correctionsToken,
+    aspectExpanded,
     sidebarMenu: { expandedPaths, isOpen: false },
   };
 }
@@ -196,11 +201,19 @@ function writePersistedState(state: PersistentUiState): void {
     theme: state.theme,
     unitSystem: state.unitSystem,
     correctionsToken: state.correctionsToken,
+    aspectExpanded: state.aspectExpanded,
   };
 
   storePersistentData(PERSISTENT_UI_STORAGE_KEY, JSON.stringify(serialized));
   storePersistentData(LEGACY_THEME_KEY, state.theme);
   document.documentElement.setAttribute('data-theme', state.theme);
+  /* Stamped on the root rather than passed down, so every carousel on the page
+     reacts through CSS alone. A hundred rows re-rendering to change one class
+     would be the same picture at a much worse price. */
+  document.documentElement.setAttribute(
+    'data-aspect-expanded',
+    state.aspectExpanded ? 'true' : 'false',
+  );
 }
 
 /**
@@ -309,6 +322,22 @@ export function usePersistentUiDispatch(): (
     );
   }
   return context.dispatch;
+}
+
+/**
+ * Hook to access dispatch without requiring a provider.
+ *
+ * Returns null outside a provider rather than a no-op, so a control that cannot
+ * possibly work is not rendered at all. A silently inert button is worse than an
+ * absent one: it invites a click and answers with nothing.
+ *
+ * @returns {((action: PersistentUiAction) => void) | null} Dispatch, or null with no provider
+ */
+export function usePersistentUiDispatchOptional():
+  | ((action: PersistentUiAction) => void)
+  | null {
+  const context = useContext(PersistentUiDispatchContext);
+  return context?.dispatch ?? null;
 }
 
 export {

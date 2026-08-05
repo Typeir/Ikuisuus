@@ -433,10 +433,7 @@ describe('Spell Metadata Generator', () => {
       const filePath = path.join(FIXTURES_DIR, 'high-level-concentration.mdx');
       const result = await parseSpellFile(filePath, sharedData);
 
-      const hasConcentrationTag = result.tags.some((tag: string) =>
-        tag.includes('concentration'),
-      );
-      expect(hasConcentrationTag).toBe(true);
+      expect(result.tags).toContain('tempo:sustained');
     });
 
     /**
@@ -448,10 +445,7 @@ describe('Spell Metadata Generator', () => {
       const filePath = path.join(FIXTURES_DIR, 'reaction-spell.mdx');
       const result = await parseSpellFile(filePath, sharedData);
 
-      const hasReactionTag = result.tags.some((tag: string) =>
-        tag.includes('reaction'),
-      );
-      expect(hasReactionTag).toBe(true);
+      expect(result.tags).toContain('tempo:reactive');
     });
   });
 

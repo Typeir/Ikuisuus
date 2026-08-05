@@ -100,6 +100,7 @@ describe('resolveAndCompileContent', () => {
       slugPath: 'world/page',
       rawContent: '# Title',
       streamText: 'stream',
+      articleMetadata: null,
       evalResult: { content: 'compiled' },
     });
   });

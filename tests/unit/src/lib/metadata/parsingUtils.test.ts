@@ -63,8 +63,26 @@ describe('parseTitle', () => {
     expect(parseTitle(['# Goblin', '', 'Some text'])).toBe('Goblin');
   });
 
+  /**
+   * A title is atomic plaintext. It reaches the browser tab, `og:title` and a
+   * search key, none of which render markdown — the asterisks were shown to the
+   * reader verbatim.
+   */
   it('should strip markdown from title', () => {
-    expect(parseTitle(['# **Bold Title**'])).toBe('**Bold Title**');
+    expect(parseTitle(['# **Bold Title**'])).toBe('Bold Title');
+    expect(parseTitle(['# Ballista _(Loading)_'])).toBe('Ballista (Loading)');
+  });
+
+  /** A link in a title keeps its label and loses its target. */
+  it('should reduce a markdown link to its label', () => {
+    expect(parseTitle(['# See [Cerithol](/en/library/monsters/cerithol)'])).toBe(
+      'See Cerithol',
+    );
+  });
+
+  /** Authoring macros are not plaintext either. */
+  it('should strip a unit macro from a title', () => {
+    expect(parseTitle(['# Rope ([= 10 stride =])'])).toBe('Rope (10 stride)');
   });
 
   it('should return empty string when no H1 found', () => {
@@ -100,12 +118,22 @@ describe('parseProperties', () => {
 });
 
 describe('parseWeight', () => {
-  it('should parse weight with lbs suffix', () => {
-    expect(parseWeight({ Weight: '3 lbs' })).toBe('3 lbs');
+  /**
+   * Weight is answered in burden, whatever unit the source used. The imperial
+   * pattern this once relied on never matched `[= 2 burden =]`, so every
+   * heirloom in the corpus came back with no weight at all while the lone item
+   * written in pounds came back in pounds.
+   */
+  it('should read the native expression the corpus actually uses', () => {
+    expect(parseWeight({ Weight: '[= 2 burden =]' })).toBe('2 burden');
   });
 
-  it('should handle singular lb', () => {
-    expect(parseWeight({ Weight: '1 lb' })).toBe('1 lb');
+  it('should convert an imperial weight into burden', () => {
+    expect(parseWeight({ Weight: '3 lbs' })).toBe('3/2 burden');
+  });
+
+  it('should convert a singular pound into burden', () => {
+    expect(parseWeight({ Weight: '1 lb' })).toBe('1/2 burden');
   });
 
   it('should return undefined for missing Weight', () => {
@@ -118,12 +146,17 @@ describe('parseWeight', () => {
 });
 
 describe('parseRange', () => {
-  it('should return Range value when present', () => {
-    expect(parseRange({ Range: '60 ft' })).toBe('60 ft');
+  /** Stored ranges carry the measurement, never the syntax that expressed it. */
+  it('should unwrap an authoring expression', () => {
+    expect(parseRange({ Range: '[= 12 stride =]' })).toBe('12 stride');
+  });
+
+  it('should convert an imperial range into strides', () => {
+    expect(parseRange({ Range: '60 ft' })).toBe('12 stride');
   });
 
   it('should fall back to Reach when Range is missing', () => {
-    expect(parseRange({ Reach: '10 ft' })).toBe('10 ft');
+    expect(parseRange({ Reach: '10 ft' })).toBe('2 stride');
   });
 
   it('should return undefined when neither exists', () => {

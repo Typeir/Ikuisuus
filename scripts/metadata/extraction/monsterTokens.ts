@@ -12,6 +12,7 @@
  * @module scripts/metadata/extraction/monsterTokens
  */
 
+import { plain } from '../textUtils';
 import type {
     AttackToken,
     AutoFailToken,
@@ -105,7 +106,7 @@ export function recognizeMultiattack(text: string): MultiattackToken | null {
     const countWord = match[1].toLowerCase();
     const count = WORD_NUMBERS[countWord] ?? parseInt(countWord, 10);
     if (isNaN(count)) continue;
-    attacks.push({ name: match[2].trim().toLowerCase(), count });
+    attacks.push({ name: plain(match[2]).toLowerCase(), count });
   }
   if (attacks.length === 0) return null;
   const hasOr = /\bor\b/i.test(text);
@@ -143,7 +144,7 @@ export function recognizePhaseThreshold(text: string): PhaseToken | null {
   const nameMatch = text.match(MONSTER.phaseThreshold);
   if (nameMatch) {
     return {
-      name: nameMatch[1].toLowerCase(),
+      name: plain(nameMatch[1]).toLowerCase(),
       threshold: parseInt(nameMatch[2], 10),
     };
   }

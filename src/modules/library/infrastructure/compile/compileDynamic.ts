@@ -31,10 +31,12 @@ export async function compileDynamic(opts: CompileOptions) {
     mdxOptions,
     baseUrl,
     parseFrontmatter = true,
+    aspectSections,
   } = opts;
 
   const {
     evaluate,
+    remarkAspects,
     remarkDiceRoll,
     remarkUnit,
     remarkGfm,
@@ -53,7 +55,13 @@ export async function compileDynamic(opts: CompileOptions) {
       mdxOptions: buildMdxOptions(
         mdxOptions,
         {
-          remarkPlugins: [remarkGfm, remarkMath, remarkDiceRoll, remarkUnit],
+          remarkPlugins: [
+            remarkGfm,
+            remarkMath,
+            [remarkAspects, { sections: aspectSections }],
+            remarkDiceRoll,
+            remarkUnit,
+          ],
           rehypePlugins: [rehypeKatex, rehypeSectionize],
         },
         baseUrl,

@@ -24,6 +24,7 @@
 import {
     HeirloomEntity,
     MonsterEntity,
+    MonsterFeatureEntity,
     SpellEntity,
     SpellListEntity,
 } from '@/lib/db/orm/entities';
@@ -101,6 +102,41 @@ function monsterSlugKey(record: Record<string, unknown>): string {
 }
 
 /**
+ * Writes a monster's feature shards as child rows.
+ *
+ * Shards are replaced wholesale rather than diffed: a feature has no identity a
+ * reader would recognise across an edit, and the parent's version hash already
+ * decides whether anything is rewritten at all.
+ *
+ * @param {EntityManager} em - Active entity manager
+ * @param {MonsterEntity} monster - Owning monster row
+ * @param {Array<Record<string, unknown>>} features - Feature shards from metadata
+ * @returns {void}
+ */
+function createMonsterFeatures(
+  em: EntityManager,
+  monster: MonsterEntity,
+  features: Array<Record<string, unknown>>,
+): void {
+  features.forEach((feature, index) => {
+    const source = feature.source as
+      | { start?: number; end?: number }
+      | undefined;
+
+    em.create(MonsterFeatureEntity, {
+      monster,
+      featureId: (feature.id as string) ?? `${monster.slug}/${index}`,
+      name: (feature.name as string) ?? '',
+      trigger: feature.trigger as string | undefined,
+      sortOrder: index,
+      startLine: source?.start,
+      endLine: source?.end,
+      tags: (feature.tags as string[]) ?? [],
+    });
+  });
+}
+
+/**
  * Syncs the `monsters` table for a locale using hash-based diffing.
  *
  * @param {EntityManager} em - Transaction-scoped entity manager
@@ -127,7 +163,11 @@ async function syncMonsters(
     return result;
   }
 
-  const existing = await em.find(MonsterEntity, { locale });
+  const existing = await em.find(
+    MonsterEntity,
+    { locale },
+    { populate: ['features'] },
+  );
   const existingMap = new Map(existing.map((e) => [e.subSlug || e.slug, e]));
 
   const incomingKeys = new Set<string>();
@@ -222,11 +262,18 @@ async function syncMonsters(
       versionHash: hash,
     };
 
+    const featureRows =
+      (m.features as Array<Record<string, unknown>> | undefined) ?? [];
+
     if (entity) {
       em.assign(entity, data);
+      entity.features.removeAll();
+      await em.flush();
+      createMonsterFeatures(em, entity, featureRows);
       result.updated++;
     } else {
-      em.create(MonsterEntity, data);
+      const monster = em.create(MonsterEntity, data);
+      createMonsterFeatures(em, monster, featureRows);
       result.inserted++;
     }
   }

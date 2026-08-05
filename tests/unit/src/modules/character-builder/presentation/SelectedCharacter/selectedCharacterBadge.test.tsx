@@ -113,7 +113,10 @@ describe('SelectedCharacterBadge', () => {
       screen.getByRole('button', { name: 'characterBadge.ariaToggle' }),
     );
     expect(screen.getByText('characterBadge.empty')).toBeInTheDocument();
-    await user.click(screen.getByText('characterBadge.manage'));
+    const manage = screen.getByText('characterBadge.manage');
+    expect(manage.tagName).toBe('A');
+    expect(manage).toHaveAttribute('href', '/en/utils/characters');
+    await user.click(manage);
     expect(mockPush).toHaveBeenCalledWith('/en/utils/characters');
   });
 });

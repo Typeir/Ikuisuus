@@ -102,6 +102,19 @@ describe('aspect vocabulary', () => {
       expect(chained).toEqual([]);
     });
 
+    /**
+     * Borrowed lists are human-readable game data while aspects are kebab-case,
+     * so a borrowed `"mythic artifact"` has to arrive as `mythic-artifact` or the
+     * group silently rejects a value the game considers canonical.
+     */
+    it('should kebab-case borrowed values', () => {
+      const rarity = resolveAspectValues(sharedData, 'rarity');
+
+      expect(sharedData.itemData.rarities).toContain('mythic artifact');
+      expect(rarity).toContain('mythic-artifact');
+      expect(rarity).not.toContain('mythic artifact');
+    });
+
     it('should resolve every group to at least one value unless open', () => {
       const barren = Object.keys(sharedData.aspects).filter(
         (name) =>
@@ -142,12 +155,10 @@ describe('aspect vocabulary', () => {
     });
 
     it('should confine a scoped group to its listed content types', () => {
-      expect(aspectGroupAppliesTo(sharedData, 'creaturetype', 'monsters')).toBe(
+      expect(aspectGroupAppliesTo(sharedData, 'creature', 'monsters')).toBe(
         true,
       );
-      expect(aspectGroupAppliesTo(sharedData, 'creaturetype', 'spells')).toBe(
-        false,
-      );
+      expect(aspectGroupAppliesTo(sharedData, 'creature', 'spells')).toBe(false);
     });
 
     it('should reject an unknown group', () => {

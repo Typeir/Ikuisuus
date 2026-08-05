@@ -212,10 +212,14 @@ describe('pgMonsterRepository', () => {
     it('should query with $or condition for subSlug/slug', async () => {
       mockEM.findOne.mockResolvedValue(null);
       await pgMonsterRepository.getBySlug('en', 'aboleth');
-      expect(mockEM.findOne).toHaveBeenCalledWith(expect.anything(), {
-        locale: 'en',
-        $or: [{ subSlug: 'aboleth' }, { slug: 'aboleth' }],
-      });
+      expect(mockEM.findOne).toHaveBeenCalledWith(
+        expect.anything(),
+        {
+          locale: 'en',
+          $or: [{ subSlug: 'aboleth' }, { slug: 'aboleth' }],
+        },
+        { populate: ['features'] },
+      );
     });
 
     it('should return null when not found', async () => {

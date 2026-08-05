@@ -26,6 +26,7 @@ import {
     type StorageAdapter,
 } from '.';
 import { extractFeatureGrants } from './extraction/grantsExtractor';
+import { tagRangedFeatures, type RangedFeature } from './featureAspects';
 import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 import {
     CASTING,
@@ -278,6 +279,12 @@ async function parseSpecializationFile(
       const grants = extractFeatureGrants(f.name, prose, specGrantsMap);
       return grants.length > 0 ? { ...f, grants } : f;
     });
+
+    tagRangedFeatures(
+      featuresWithGrants as RangedFeature[],
+      rawLines,
+      sharedData,
+    );
     const preparedSpells = parseAlwaysPreparedSpells(raw);
     const spellcasting = parseSpecializationSpellcasting(raw);
 
@@ -288,7 +295,7 @@ async function parseSpecializationFile(
 
     const tags = new Set<string>();
     tags.add(`vocation:${vocation}`);
-    tags.add(`type:${specializationType.toLowerCase()}`);
+    tags.add(`specialization:${specializationType.toLowerCase()}`);
 
     if (spellcasting) {
       tags.add(`spellcasting:${spellcasting.progression.toLowerCase()}`);
@@ -296,7 +303,7 @@ async function parseSpecializationFile(
     }
 
     if (preparedSpells) {
-      tags.add('has-always-prepared-spells');
+      tags.add('mechanic:always-prepared-spells');
     }
 
     const contentTags = extractAllTags(raw, filePath, sharedData);

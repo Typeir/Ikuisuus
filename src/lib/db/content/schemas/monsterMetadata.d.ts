@@ -154,6 +154,7 @@ export interface MonsterSenses {
  * @property {string} [cr] - Challenge rating (fractional or whole, e.g. "1/4", "10")
  * @property {number} [tierBonus] - Tier bonus
  * @property {string[]} [tags] - Gameplay tags for filtering and search
+ * @property {MonsterFeatureSummary[]} [features] - Extracted feature shards, each with its own aspects
  * @property {string} [image] - Image path extracted from BlendedImage in MDX (e.g. "/library/images/Albedo.webp")
  * @property {string} [description] - Short prose lore description extracted from the stat block MDX
  * @property {number} [indexVersion] - Metadata format version
@@ -182,9 +183,30 @@ export interface MonsterMetadata {
   cr?: string;
   tierBonus?: number;
   tags?: string[];
+  features?: MonsterFeatureSummary[];
   image?: string;
   description?: string;
   indexVersion?: number;
+}
+
+/**
+ * The parts of an extracted feature shard the presentation layer reads.
+ *
+ * Aspects are derived per feature as well as per stat block, because "does this
+ * creature deal force damage anywhere" is the wrong grain for the question a
+ * reader has — the useful fact is which feature does it.
+ *
+ * @interface MonsterFeatureSummary
+ * @property {string} id - Stable feature identifier, e.g. `mucklord/garbage-communion`
+ * @property {string} name - Feature name as written in the stat block
+ * @property {string} [trigger] - `passive`, `action` or `reaction`
+ * @property {string[]} [tags] - Aspects derived from this feature alone
+ */
+export interface MonsterFeatureSummary {
+  id: string;
+  name: string;
+  trigger?: string;
+  tags?: string[];
 }
 
 /**

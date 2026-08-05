@@ -16,6 +16,7 @@
 
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { hasFilters, type PagefindFilters } from '../domain/aspectFilters';
 import type { SearchQuery, SearchResponse } from '../domain/types';
 import { mapPagefindResult } from '../infrastructure/mapRecord';
 import { searchPagefind } from '../infrastructure/pagefindClient';
@@ -51,6 +52,7 @@ export function useSearch(
   term: string,
   locale: string,
   debounceMs: number = DEFAULT_DEBOUNCE_MS,
+  filters?: PagefindFilters,
 ): UseSearchState {
   const debouncedTerm = useDebounce(term, debounceMs);
   const [results, setResults] = useState<SearchResponse['results']>([]);
@@ -59,9 +61,22 @@ export function useSearch(
   const [error, setError] = useState<Error | null>(null);
   const requestIdRef = useRef(0);
 
+  /* Serialized so a caller building the object inline does not retrigger the
+     search on every render. */
+  const filterKey = JSON.stringify(filters ?? {});
+
   const doSearch = useCallback(
-    async (q: string, loc: string, reqId: number): Promise<void> => {
-      if (q.length < MIN_QUERY_LENGTH) {
+    async (
+      q: string,
+      loc: string,
+      reqId: number,
+      active: PagefindFilters,
+    ): Promise<void> => {
+      const filtered = hasFilters(active);
+
+      /* A filter is a query in its own right, so the minimum length applies
+         only when there is nothing else to search by. */
+      if (q.length < MIN_QUERY_LENGTH && !filtered) {
         setResults([]);
         setTotal(0);
         setLoading(false);
@@ -70,7 +85,11 @@ export function useSearch(
 
       setLoading(true);
 
-      const response = await searchPagefind(loc, q);
+      const response = await searchPagefind(
+        loc,
+        q,
+        filtered ? { filters: active } : undefined,
+      );
 
       if (requestIdRef.current !== reqId) return;
 
@@ -102,13 +121,18 @@ export function useSearch(
   useEffect(() => {
     const reqId = ++requestIdRef.current;
     setError(null);
-    doSearch(debouncedTerm, locale, reqId).catch(() => {
+    doSearch(
+      debouncedTerm,
+      locale,
+      reqId,
+      JSON.parse(filterKey) as PagefindFilters,
+    ).catch(() => {
       if (requestIdRef.current === reqId) {
         setError(new Error('Search failed'));
         setLoading(false);
       }
     });
-  }, [debouncedTerm, locale, doSearch]);
+  }, [debouncedTerm, locale, doSearch, filterKey]);
 
   return { results, total, loading, error, debouncing: term !== debouncedTerm };
 }

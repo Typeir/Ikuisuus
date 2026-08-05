@@ -7,6 +7,11 @@
  */
 
 import { isMdFile } from '@/lib/md/isMdFile';
+import type { ArticleMetadata } from '@/modules/library/application/context/ArticleMetadataContext';
+import {
+  aspectSectionsOf,
+  loadArticleMetadata,
+} from '@/modules/library/application/use-cases/loadArticleMetadata';
 import { compileStatic } from '@/modules/library/infrastructure/compile/compileStatic';
 import { fetchContent } from '@/modules/library/infrastructure/content/fetchContent';
 import components from '@/modules/library/presentation/components';
@@ -16,11 +21,19 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 
 /**
+ * Route tree the resolved content is being rendered under. Both trees serve the
+ * same files; they differ only in the shell around them, so a redirect has to
+ * land in the tree it started from.
+ */
+export type LibraryBasePath = 'library' | 'embed';
+
+/**
  * Route params for content resolution.
  */
 export interface ResolveAndCompileParams {
   slug: string[];
   locale: string;
+  basePath?: LibraryBasePath;
 }
 
 /**
@@ -40,6 +53,7 @@ export interface MdxResolution {
   slugPath: string;
   rawContent: string;
   streamText: string;
+  articleMetadata: ArticleMetadata | null;
   evalResult?: EvaluateResult;
   compileError?: unknown;
 }
@@ -74,11 +88,13 @@ export type ResolveAndCompileResult =
  * @param {ResolveAndCompileParams} params - Route resolution params.
  * @param {string[]} params.slug - Route slug segments.
  * @param {string} params.locale - Active locale.
+ * @param {LibraryBasePath} [params.basePath='library'] - Route tree redirects should stay inside.
  * @returns {Promise<ResolveAndCompileResult>} Route resolution outcome.
  */
 export async function resolveAndCompileContent({
   slug,
   locale,
+  basePath = 'library',
 }: ResolveAndCompileParams): Promise<ResolveAndCompileResult> {
   const slugSegments = (slug[0] === locale ? slug.slice(1) : slug).map(
     (segment) => decodeURIComponent(segment),
@@ -93,7 +109,7 @@ export async function resolveAndCompileContent({
     if (mainResult) {
       return {
         kind: 'redirect',
-        href: `/${locale}/library/${slugPath}/main`,
+        href: `/${locale}/${basePath}/${slugPath}/main`,
       };
     }
 
@@ -111,6 +127,7 @@ export async function resolveAndCompileContent({
   }
 
   const streamText = await resolveStreamText(locale, slugSegments, rawContent);
+  const articleMetadata = await loadArticleMetadata(slugSegments, locale);
 
   try {
     const baseUrl = path.isAbsolute(resolvedPath)
@@ -122,6 +139,7 @@ export async function resolveAndCompileContent({
       components,
       baseUrl,
       parseFrontmatter: true,
+      aspectSections: aspectSectionsOf(articleMetadata),
     });
 
     return {
@@ -129,6 +147,7 @@ export async function resolveAndCompileContent({
       slugPath,
       rawContent,
       streamText,
+      articleMetadata,
       evalResult,
     };
   } catch (compileError) {
@@ -137,6 +156,7 @@ export async function resolveAndCompileContent({
       slugPath,
       rawContent,
       streamText,
+      articleMetadata,
       compileError,
     };
   }

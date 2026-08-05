@@ -63,6 +63,7 @@ export type { TagExtractionOptions } from './taggingUtils';
 export {
     clean,
     filePathToSlug,
+    plain,
     readLines,
     stripMarkdown,
     toKebabCase

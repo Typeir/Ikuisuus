@@ -52,8 +52,9 @@ interface PagefindSubResult {
  * Shape of the Pagefind JS API exposed by the browser bundle.
  */
 interface PagefindInstance {
+  /** A null term is a filter-only query — Pagefind returns everything matching. */
   search: (
-    term: string,
+    term: string | null,
     options?: Record<string, unknown>,
   ) => Promise<{
     results: PagefindResult[];
@@ -145,13 +146,23 @@ export async function searchPagefind(
   results: PagefindResult[];
   filters?: Record<string, Record<string, number>>;
 } | null> {
-  if (term.length < 2) return null;
+  /* A filter carries a query on its own: "everything with elemental
+     resistance" is a complete question with no words in it. Pagefind takes a
+     null term for exactly that, so the length guard applies only when there is
+     nothing else to search by. */
+  const filters = (options as { filters?: Record<string, string[]> } | undefined)
+    ?.filters;
+  const hasFilters = Boolean(
+    filters && Object.values(filters).some((values) => values.length > 0),
+  );
+
+  if (term.length < 2 && !hasFilters) return null;
 
   const pf = await getPagefind(locale);
   if (!pf) return null;
 
   try {
-    return await pf.search(term, options);
+    return await pf.search(term.length >= 2 ? term : null, options);
   } catch (err) {
     console.error('[pagefind] Search failed:', err);
     return null;

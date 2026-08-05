@@ -9,6 +9,7 @@
  * @since 1.0.0
  */
 
+import { toNativeMeasure } from '@/lib/units/nativeMeasure';
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -19,6 +20,7 @@ import {
     filePathToSlug,
     findContentImage,
     parseTitle,
+    plain,
     runGenerator,
     runWithCli,
     type SharedData,
@@ -106,7 +108,7 @@ function parseTrinketProperties(
         );
         result.properties = cleanedText
           .split(',')
-          .map((p) => clean(p).toLowerCase())
+          .map((p) => plain(p).toLowerCase())
           .filter(Boolean);
       }
     }
@@ -114,14 +116,14 @@ function parseTrinketProperties(
     if (trimmed.startsWith('**Range**:')) {
       const rangeMatch = trimmed.match(PROPERTY.range);
       if (rangeMatch) {
-        result.range = clean(rangeMatch[1]);
+        result.range = toNativeMeasure(clean(rangeMatch[1]));
       }
     }
 
     if (trimmed.startsWith('**Weight**:')) {
       const weightMatch = trimmed.match(PROPERTY.weight);
       if (weightMatch) {
-        result.weight = clean(weightMatch[1]);
+        result.weight = toNativeMeasure(clean(weightMatch[1]));
       }
     }
   }

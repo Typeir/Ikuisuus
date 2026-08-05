@@ -12,6 +12,7 @@
  */
 
 import type { MonsterFeature } from '@/lib/types/feature';
+import { plain } from '../textUtils';
 import {
   DAMAGE_TYPES,
   DURATION,
@@ -262,7 +263,7 @@ export function splitBySubHeadings(lines: string[]): SubSection[] {
         result.push(current);
       }
       current = {
-        name: headingMatch[1].replace(/\*\*/g, '').trim(),
+        name: plain(headingMatch[1]),
         lines: [],
         origin: 'heading',
         startOffset: idx,
@@ -276,7 +277,7 @@ export function splitBySubHeadings(lines: string[]): SubSection[] {
         result.push(current);
       }
       current = {
-        name: boldMatch[1].replace(/\./g, '').trim(),
+        name: plain(boldMatch[1].replace(/\./g, '')),
         lines: [line],
         origin: 'bold',
         startOffset: idx,

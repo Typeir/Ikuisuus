@@ -99,6 +99,10 @@ const SUPPLEMENTARY_INDEXES: string[] = [
      ON monsters (locale, COALESCE(sub_slug, slug))`,
   `CREATE INDEX IF NOT EXISTS monsters_tags_gin_idx
      ON monsters USING GIN (tags)`,
+  `CREATE INDEX IF NOT EXISTS monster_features_monster_id_idx
+     ON monster_features (monster_id)`,
+  `CREATE INDEX IF NOT EXISTS monster_features_tags_gin_idx
+     ON monster_features USING GIN (tags)`,
   `CREATE INDEX IF NOT EXISTS heirlooms_tags_gin_idx
      ON heirlooms USING GIN (tags)`,
   `CREATE INDEX IF NOT EXISTS spells_tags_gin_idx

@@ -17,6 +17,7 @@
  * @since 7.0.0
  */
 
+import { toNativeMeasure } from '@/lib/units/nativeMeasure';
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -31,6 +32,7 @@ import {
     filePathToSlug,
     parseDescription,
     parseTitle,
+    plain,
     runGenerator,
     runWithCli,
     type SharedData,
@@ -175,7 +177,9 @@ function parseCostTable(blockLines: string[]): BoonSubOption[] {
       if (isSeparatorRow(cells)) {
         continue;
       }
-      const name = cells[nameIdx]?.trim();
+      /* The name is atomic and the effect is prose, so only the name is
+         normalised — the effect keeps its macros for the MDX renderer. */
+      const name = plain(cells[nameIdx]?.trim() ?? '');
       const bpValue = Number.parseInt(cells[costIdx]?.trim() ?? '', 10);
       if (!name || Number.isNaN(bpValue)) {
         continue;
@@ -250,7 +254,7 @@ function parseBoonHeading(line: string): ParsedBoonHeading | null {
   const spanHeading = trimmed.match(BOON.spanHeading);
   if (spanHeading) {
     return {
-      name: clean(normalizeForTagging(spanHeading[1])),
+      name: plain(normalizeForTagging(spanHeading[1])),
       bpLabel: clean(normalizeForTagging(spanHeading[2])),
     };
   }
@@ -260,11 +264,11 @@ function parseBoonHeading(line: string): ParsedBoonHeading | null {
     return null;
   }
 
-  const normalized = clean(normalizeForTagging(inlineHeading[1]));
+  const normalized = plain(normalizeForTagging(inlineHeading[1]));
   const inlineCost = normalized.match(BOON.inlineCost);
   if (inlineCost) {
     return {
-      name: clean(inlineCost[1]),
+      name: plain(inlineCost[1]),
       bpLabel: clean(inlineCost[2]),
     };
   }
@@ -296,16 +300,17 @@ function parseBpValue(bpLabel: string): number | undefined {
 /**
  * Extracts proficiency tags for skills/tools/instruments.
  *
+ * The kind of proficiency and the thing proficient in share one group, so
+ * `proficiency:stealth` and `proficiency:skill` both answer a question a reader
+ * can act on. A bare "grants some proficiency" match emits nothing: it would
+ * return the whole corpus and tell the reader nothing.
+ *
  * @param {string} normalizedText - Normalized boon text
  * @returns {string[]} Derived proficiency tags
  */
 function extractProficiencyTags(normalizedText: string): string[] {
   const tags = new Set<string>();
   const lower = normalizedText.toLowerCase();
-
-  if (PROFICIENCY.keyword.test(lower)) {
-    tags.add('mechanic:proficiency');
-  }
 
   const skills = [
     'acrobatics',
@@ -335,26 +340,24 @@ function extractProficiencyTags(normalizedText: string): string[] {
       'i',
     );
     if (skillPattern.test(lower)) {
-      tags.add('mechanic:skill-proficiency');
-      tags.add(
-        `mechanic:skill-tier:${skill.replace(TEXT.whitespaceCollapse, '-')}`,
-      );
+      tags.add('proficiency:skill');
+      tags.add(`proficiency:${skill.replace(TEXT.whitespaceCollapse, '-')}`);
     }
   }
 
   for (const entry of PROFICIENCY.tools) {
     if (entry.pattern.test(lower)) {
-      tags.add('mechanic:tool-proficiency');
-      tags.add(`mechanic:tool-tier:${entry.tag}`);
+      tags.add('proficiency:tool');
+      tags.add(`proficiency:${entry.tag}`);
     }
   }
 
   if (PROFICIENCY.instrument.test(lower)) {
-    tags.add('mechanic:instrument-proficiency');
+    tags.add('proficiency:instrument');
   }
 
   if (PROFICIENCY.weaponMastery.test(lower)) {
-    tags.add('mechanic:weapon-proficiency');
+    tags.add('proficiency:weapon');
   }
 
   return Array.from(tags);
@@ -375,47 +378,38 @@ function extractBoonMechanicTags(
   const lower = normalizedText.toLowerCase();
 
   if (BOON_MECHANICS.variableCost.test(bpLabel)) {
-    tags.add('mechanic:variable-cost');
-    tags.add('mechanic:choice');
+    tags.add('resource:variable');
   }
 
   if (BOON_MECHANICS.repose.test(lower)) {
-    tags.add('mechanic:repose');
-    tags.add('mechanic:repose-recharge');
+    tags.add('resource:per-repose');
   }
   if (BOON_MECHANICS.recovery.test(lower)) {
-    tags.add('mechanic:recovery');
-    tags.add('mechanic:recovery-recharge');
+    tags.add('resource:per-recovery');
   }
   if (BOON_MECHANICS.limitedUses.test(lower)) {
-    tags.add('mechanic:limited-uses');
+    tags.add('resource:limited');
   }
 
   if (BOON_MECHANICS.armorClass.test(lower)) {
-    tags.add('mechanic:ac');
-  }
-  if (BOON_MECHANICS.savingThrow.test(lower)) {
-    tags.add('mechanic:saving-throw');
+    tags.add('mechanic:ac-bonus');
   }
 
-  if (BOON_MECHANICS.weapon.test(lower)) {
-    tags.add('mechanic:weapon');
-  }
   if (BOON_MECHANICS.reach.test(lower)) {
-    tags.add('mechanic:weapon-reach');
+    tags.add('range:reach');
   }
   if (BOON_MECHANICS.extraDamage.test(lower)) {
-    tags.add('mechanic:extra-damage');
+    tags.add('mechanic:damage-bonus');
   }
 
   if (BOON_MECHANICS.minorAction.test(lower)) {
-    tags.add('mechanic:bonus-action');
+    tags.add('tempo:minor');
   }
   if (BOON_MECHANICS.reaction.test(lower)) {
-    tags.add('mechanic:reaction');
+    tags.add('tempo:reactive');
   }
   if (BOON_MECHANICS.concentration.test(lower)) {
-    tags.add('mechanic:concentration');
+    tags.add('tempo:sustained');
   }
 
   if (BOON_MECHANICS.spellcasting.test(lower)) {
@@ -425,10 +419,10 @@ function extractBoonMechanicTags(
     tags.add('mechanic:innate-spellcasting');
   }
   if (BOON_MECHANICS.cantrip.test(lower)) {
-    tags.add('mechanic:cantrips');
+    tags.add('mechanic:cantrip');
   }
   if (BOON_MECHANICS.materialComponents.test(lower)) {
-    tags.add('mechanic:material-components');
+    tags.add('resource:material-cost');
   }
 
   return Array.from(tags);
@@ -513,8 +507,8 @@ function parseCoreFeatures(content: string): {
   if (dataRows[0]) {
     const cells = parseTableRow(dataRows[0]);
     result.abilityScores = parseListItems(cells[0] || '');
-    result.movementSpeeds = parseListItems(cells[1] || '');
-    result.senses = parseListItems(cells[2] || '');
+    result.movementSpeeds = parseListItems(cells[1] || '').map((v) => toNativeMeasure(v));
+    result.senses = parseListItems(cells[2] || '').map((v) => toNativeMeasure(v));
   }
 
   if (dataRows[1]) {

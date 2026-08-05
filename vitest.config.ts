@@ -202,6 +202,7 @@ export default defineConfig({
             'tests/unit/src/app/[locale]/page.test.{ts,tsx}',
             'tests/unit/src/app/[locale]/not-found.test.{ts,tsx}',
             'tests/unit/src/app/[locale]/library/**/*.test.{ts,tsx}',
+            'tests/unit/src/app/[locale]/embed/**/*.test.{ts,tsx}',
             'tests/unit/src/app/[locale]/search/**/*.test.{ts,tsx}',
             'tests/unit/src/app/[locale]/[...rest]/**/*.test.{ts,tsx}',
           ],
@@ -214,11 +215,79 @@ export default defineConfig({
           include: ['tests/unit/src/app/[locale]/utils/**/*.test.{ts,tsx}'],
         },
       },
+      /* One project per feature module rather than one for all of them.
+         `unit:modules` was 385 files against a 20-to-60 file median, so it was
+         always the last runner still going, holding a fork open while competing
+         for CPU with whatever started beside it — which is what made its heavier
+         suites time out under load and pass in isolation. */
       {
         extends: true,
         test: {
-          name: 'unit:modules',
-          include: ['tests/unit/src/modules/**/*.test.{ts,tsx}'],
+          name: 'unit:modules:character-builder',
+          include: [
+            'tests/unit/src/modules/character-builder/**/*.test.{ts,tsx}',
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:modules:encounter-planner',
+          include: [
+            'tests/unit/src/modules/encounter-planner/**/*.test.{ts,tsx}',
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:modules:world-sim',
+          include: ['tests/unit/src/modules/world-sim/**/*.test.{ts,tsx}'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:modules:library',
+          include: ['tests/unit/src/modules/library/**/*.test.{ts,tsx}'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:modules:mdx-editor',
+          include: ['tests/unit/src/modules/mdx-editor/**/*.test.{ts,tsx}'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:modules:rest',
+          include: [
+            'tests/unit/src/modules/search/**/*.test.{ts,tsx}',
+            'tests/unit/src/modules/navigation-sidebar/**/*.test.{ts,tsx}',
+            'tests/unit/src/modules/metadata-tables/**/*.test.{ts,tsx}',
+            'tests/unit/src/modules/tools-menu/**/*.test.{ts,tsx}',
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:md',
+          include: [
+            'tests/unit/src/lib/md/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/mdx/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/content/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/units/**/*.test.{ts,tsx}',
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:scripts',
+          include: ['tests/unit/scripts/**/*.test.{ts,tsx}'],
         },
       },
       {
@@ -229,18 +298,14 @@ export default defineConfig({
             'tests/unit/src/lib/types/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/enums/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/context/**/*.test.{ts,tsx}',
-            'tests/unit/src/lib/md/**/*.test.{ts,tsx}',
-            'tests/unit/src/lib/mdx/**/*.test.{ts,tsx}',
-            'tests/unit/src/lib/units/**/*.test.{ts,tsx}',
-            'tests/unit/src/lib/content/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/services/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/security/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/logging/**/*.test.{ts,tsx}',
             'tests/unit/src/i18n/**/*.test.{ts,tsx}',
             'tests/unit/src/styles/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/seo/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/embed/**/*.test.{ts,tsx}',
             'tests/unit/src/middleware*.test.{ts,tsx}',
-            'tests/unit/scripts/**/*.test.{ts,tsx}',
           ],
         },
       },

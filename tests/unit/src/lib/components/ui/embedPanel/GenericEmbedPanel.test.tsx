@@ -93,7 +93,7 @@ describe('GenericEmbedPanel', () => {
 
     const iframe = screen.getByTitle('Test Embed') as HTMLIFrameElement;
     expect(iframe).toBeInTheDocument();
-    expect(iframe.src).toContain('/en/library/world/test-body?embed=true');
+    expect(iframe.src).toContain('/en/embed/world/test-body');
   });
 
   it('renders null iframe src when url is null', () => {

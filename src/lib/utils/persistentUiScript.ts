@@ -48,7 +48,17 @@ import {
  * Creates a self-executing script that:
  * 1. Reads theme from cookies (source of truth for SSR compatibility)
  * 2. Falls back to sessionStorage, then localStorage
- * 3. Sets data-theme attribute on document element
+ * 3. Sets data-theme, data-aspect-display and data-aspect-expanded on document element
+ *
+ * Aspect display mode is stamped here rather than resolved in React so the
+ * switch stays pure CSS: server markup and first client paint agree, nothing
+ * re-renders after hydration, and prerendered pages stay static. It defaults to
+ * `compact`, which pairs a glyph with the value — two ways to recognise the same
+ * pill, which is what makes it work for colourblind and dyslexic readers.
+ *
+ * Carousel expansion is stamped for the same reason. A reader who left the rows
+ * unpacked would otherwise watch every one of them collapse and re-open on load,
+ * because the preference cannot reach React until after first paint.
  *
  * This runs synchronously before React hydration to prevent FOUC.
  * Sidebar expansion is handled client-side by PersistentUiProvider
@@ -86,16 +96,28 @@ export function getPersistentUiInitScript(): string {
           stored = localStorage.getItem('${PERSISTENT_UI_STORAGE_KEY}');
         }
         
+        var aspectDisplay = 'compact';
+        var aspectExpanded = false;
+
         if (stored) {
           try {
             var state = JSON.parse(stored);
             if (state.theme && (state.theme === 'dark' || state.theme === 'light')) {
               theme = state.theme;
             }
+            if (state.aspectDisplay === 'compact' || state.aspectDisplay === 'verbose' || state.aspectDisplay === 'glyph') {
+              aspectDisplay = state.aspectDisplay;
+            }
+            if (typeof state.aspectExpanded === 'boolean') {
+              aspectExpanded = state.aspectExpanded;
+            }
           } catch (e) {
           }
         }
-        
+
+        document.documentElement.setAttribute('data-aspect-display', aspectDisplay);
+        document.documentElement.setAttribute('data-aspect-expanded', aspectExpanded ? 'true' : 'false');
+
         if (theme === 'dark') {
           var legacyTheme = readCookie('${LEGACY_THEME_KEY}');
           if (!legacyTheme && typeof sessionStorage !== 'undefined') {

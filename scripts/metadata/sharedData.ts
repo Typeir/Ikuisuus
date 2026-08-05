@@ -47,9 +47,11 @@ export interface RarityThreshold {
  * @property {string[]} senses - Special sense types
  * @property {string[]} movementTypes - Movement mode types
  * @property {string[]} mechanicTypes - Mechanic keyword types
+ * @property {Record<string, string[]>} [damageStrata] - Damage types grouped by stratum
  */
 export interface GameDataSection {
   damageTypes: string[];
+  damageStrata?: Record<string, string[]>;
   conditions: string[];
   abilities: AbilityRef[];
   sizes: string[];
@@ -206,6 +208,21 @@ export function clearSharedDataCache(): void {
 /* ──────────────────────────  Aspects  ─────────────────────────────── */
 
 /**
+ * Normalises a borrowed value to the kebab-case form aspects are written in.
+ *
+ * Borrowed sections are human-readable game lists — `"monstrous graft"`,
+ * `"very rare"` — while every aspect value is kebab-case. Normalising at the
+ * borrow boundary is what lets a group point at a list it does not control
+ * instead of keeping a hand-maintained copy that drifts.
+ *
+ * @param {string} value - A value from a borrowed shared-data list
+ * @returns {string} The kebab-case aspect form
+ */
+function toAspectValue(value: string): string {
+  return value.trim().toLowerCase().replace(/\s+/g, '-');
+}
+
+/**
  * Resolves a group's values, following `valuesFrom` one level.
  *
  * @param {SharedData} sharedData - Loaded shared data
@@ -229,7 +246,9 @@ export function resolveAspectValues(
         ]?.[key]
       : sharedData.aspects[section]?.values;
 
-    if (Array.isArray(borrowed)) values.push(...(borrowed as string[]));
+    if (Array.isArray(borrowed)) {
+      values.push(...(borrowed as string[]).map(toAspectValue));
+    }
   }
 
   return [...new Set(values)];

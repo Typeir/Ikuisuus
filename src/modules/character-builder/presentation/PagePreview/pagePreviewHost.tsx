@@ -1,8 +1,9 @@
 /**
  * @fileoverview Page Preview Host
  * @description Renders all currently-open library page previews as
- * `<GenericEmbedPanel>` iframes with `?embed=true`. Place once at the top of
- * the character sheet inside the `<PagePreviewProvider>` subtree.
+ * `<GenericEmbedPanel>` iframes pointed at the `/{locale}/embed/` route tree.
+ * Place once at the top of the character sheet inside the
+ * `<PagePreviewProvider>` subtree.
  *
  * @module lib/components/characterSheet/pagePreviewHost
  * @version 1.0.0
@@ -13,6 +14,7 @@
 'use client';
 
 import { GenericEmbedPanel } from '@/lib/components/ui/embedPanel/GenericEmbedPanel';
+import { buildEmbedUrl } from '@/lib/embed';
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useLocale } from 'next-intl';
@@ -151,8 +153,9 @@ export const PagePreviewHost: React.FC<PagePreviewHostProps> = () => {
         {contentPath ? (
           <iframe
             className={styles.mobileFrame}
-            src={`/${locale}/library/${contentPath}?embed=true`}
+            src={buildEmbedUrl(contentPath, locale)}
             title={entry.title}
+            sandbox='allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox'
           />
         ) : (
           <div className={styles.loading}>

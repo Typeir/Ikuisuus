@@ -102,7 +102,7 @@ interface DraggableProps {
  * @example
  * ```tsx
  * <Draggable handleLabel="Preview" initialPosition={{ x: 100, y: 50 }} resizable>
- *   <iframe src="/content?embed=true" />
+ *   <iframe src="/en/embed/world/ordovica" />
  * </Draggable>
  * ```
  */

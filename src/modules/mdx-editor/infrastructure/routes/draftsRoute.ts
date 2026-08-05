@@ -15,6 +15,30 @@ import { NextRequest, NextResponse } from 'next/server';
 const log = logger.child({ module: 'API:Drafts' });
 
 /**
+ * Whether drafts are available at all.
+ *
+ * Drafts live only in Postgres — there is no filesystem draft store — so on the
+ * `fs` backend the repository reaches an unconfigured ORM and throws about a
+ * missing `dbName`. That surfaced as a 500 on every editor page load, which
+ * reads as a broken server rather than a feature that is simply not present
+ * here.
+ *
+ * @returns {boolean} True when a draft store exists
+ */
+function draftsAvailable(): boolean {
+  return (process.env.METADATA_BACKEND || 'fs') === 'pg';
+}
+
+/**
+ * The response for a backend with no draft store: no draft, and no error.
+ *
+ * @returns {NextResponse} A 200 carrying a null draft
+ */
+function noDraftStore(): NextResponse {
+  return NextResponse.json({ draft: null, available: false }, { status: 200 });
+}
+
+/**
  * Returns active draft for locale and slug.
  *
  * @param {NextRequest} req - Incoming request.
@@ -30,6 +54,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       { status: 400 },
     );
   }
+
+  if (!draftsAvailable()) return noDraftStore();
 
   try {
     const draft = await draftRepository.findActive(locale, slug);
@@ -73,6 +99,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json(
       { error: 'Missing required fields: slug, content' },
       { status: 400 },
+    );
+  }
+
+  if (!draftsAvailable()) {
+    return NextResponse.json(
+      { error: 'Drafts require the pg metadata backend' },
+      { status: 501 },
     );
   }
 

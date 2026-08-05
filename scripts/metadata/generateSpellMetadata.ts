@@ -10,6 +10,10 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import {
+  toNativeMeasure,
+  toPlainMeasure,
+} from '@/lib/units/nativeMeasure';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
@@ -19,11 +23,18 @@ import {
     filePathToSlug,
     parseDescription,
     parseTitle,
+    plain,
     runGenerator,
     runWithCli,
     type SharedData,
     type StorageAdapter,
 } from '.';
+import { extractDerivedAspects, extractStrataTags } from './aspectExtractors';
+import {
+  extractDamageTags,
+  extractOrganizationalTags,
+  stripCitations,
+} from './taggingUtils';
 import {
     CASTING_TIME,
     COMPONENTS,
@@ -203,7 +214,7 @@ function parseSpellProperties(lines: string[]) {
 
   const castingTimeLine = lines.find((l) => STAT_BLOCK.castingTimeLine.test(l));
   if (castingTimeLine) {
-    const rawCastingTime = clean(
+    const rawCastingTime = plain(
       castingTimeLine.replace(STAT_BLOCK.castingTimeStrip, ''),
     );
     result.castingTimeRaw = rawCastingTime;
@@ -212,7 +223,9 @@ function parseSpellProperties(lines: string[]) {
 
   const rangeLine = lines.find((l) => STAT_BLOCK.rangeLine.test(l));
   if (rangeLine) {
-    result.range = clean(rangeLine.replace(STAT_BLOCK.rangeStrip, ''));
+    result.range = toNativeMeasure(
+      clean(rangeLine.replace(STAT_BLOCK.rangeStrip, '')),
+    );
   }
 
   const durationLine = lines.find((l) => STAT_BLOCK.durationLine.test(l));
@@ -243,7 +256,8 @@ function generateSpellTags(
   sharedData: SharedData,
 ): string[] {
   const tags: string[] = [];
-  const lowerText = fullText.toLowerCase();
+  const prose = stripCitations(fullText);
+  const lowerText = prose.toLowerCase();
 
   if (metadata.level !== undefined) {
     tags.push(
@@ -253,32 +267,31 @@ function generateSpellTags(
   if (metadata.school)
     tags.push(`school:${(metadata.school as string).toLowerCase()}`);
   if (metadata.quality)
-    tags.push(`quality:${(metadata.quality as string).toLowerCase()}`);
-  if (metadata.concentration) tags.push('mechanic:concentration');
+    tags.push(`rarity:${(metadata.quality as string).toLowerCase()}`);
+  if (metadata.concentration) tags.push('tempo:sustained');
   if (metadata.verbal) tags.push('component:verbal');
   if (metadata.somatic) tags.push('component:somatic');
   if (metadata.material) tags.push('component:material');
 
-  const damageTypes = GameData.getDamageTypes(sharedData);
-  for (const dt of damageTypes) {
-    if (lowerText.includes(dt.toLowerCase()))
-      tags.push(`damage:${dt.toLowerCase()}`);
-  }
+  tags.push(...extractDamageTags(prose, sharedData));
 
   const conditions = GameData.getConditions(sharedData);
   for (const condition of conditions) {
-    if (lowerText.includes(condition.toLowerCase()))
+    if (new RegExp(`\\b${condition}\\b`, 'i').test(lowerText))
       tags.push(`condition:${condition.toLowerCase()}`);
   }
 
   const mechanics = GameData.getMechanicTypes(sharedData);
   for (const mechanic of mechanics) {
-    if (lowerText.includes(mechanic.toLowerCase()))
+    if (new RegExp(`\\b${mechanic}\\b`, 'i').test(lowerText))
       tags.push(`mechanic:${mechanic.toLowerCase()}`);
   }
 
-  if (SPELL_TAGS.ritual.test(fullText)) tags.push('mechanic:ritual');
-  if (SPELL_TAGS.aoeShape.test(fullText)) tags.push('mechanic:area-of-effect');
+  if (SPELL_TAGS.ritual.test(prose)) tags.push('tempo:ritual');
+  if (SPELL_TAGS.aoeShape.test(prose)) tags.push('delivery:area');
+
+  tags.push(...extractDerivedAspects(prose, sharedData));
+  tags.push(...extractStrataTags(tags, sharedData));
 
   const abilities = GameData.getAbilities(sharedData);
   for (const ability of abilities) {
@@ -357,11 +370,16 @@ async function parseSpellFile(
   const spellLists = parseSpellLists(content);
   const description = parseDescription(content);
 
-  const tags = generateSpellTags(
-    content,
-    { ...headerData, ...properties, ...components },
-    sharedData,
-  );
+  const tags = Array.from(
+    new Set([
+      ...generateSpellTags(
+        content,
+        { ...headerData, ...properties, ...components },
+        sharedData,
+      ),
+      ...extractOrganizationalTags(filePath, process.cwd(), source),
+    ]),
+  ).sort();
 
   const relativePath = path
     .relative(process.cwd(), filePath)

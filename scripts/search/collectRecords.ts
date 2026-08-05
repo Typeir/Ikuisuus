@@ -326,8 +326,53 @@ function metadataToMeta(
   return meta;
 }
 
+/** Shape of an aspect token: kebab-case segments joined by colons. */
+const ASPECT_TOKEN = /^[a-z][a-z0-9-]*(:[a-z0-9-]+)+$/;
+
+/**
+ * Splits aspects into one filter per group.
+ *
+ * A single flat `tags` facet is unusable once the corpus carries twelve thousand
+ * aspects: the rail becomes one list of every value in the game, and narrowing by
+ * damage type means scrolling past every condition. Splitting on the group gives
+ * the rail the axes the taxonomy already defines, and `useSearchFacets` renders
+ * whatever keys arrive, so a new group appears in the UI without a change here.
+ *
+ * Group names are flattened with a dash so that `meta:source` reaches Pagefind as
+ * `meta-source`, keeping filter keys free of the delimiter the aspects use.
+ *
+ * @param {unknown} tags - The metadata `tags` value
+ * @param {Record<string, string[]>} filters - Filter map, mutated in place
+ * @returns {void}
+ */
+function assignAspectFilters(
+  tags: unknown,
+  filters: Record<string, string[]>,
+): void {
+  if (!Array.isArray(tags)) return;
+
+  for (const tag of tags) {
+    if (typeof tag !== 'string') continue;
+
+    const lower = tag.toLowerCase();
+    if (!ASPECT_TOKEN.test(lower)) continue;
+
+    const boundary = lower.lastIndexOf(':');
+    const field = lower.slice(0, boundary).replace(/:/g, '-');
+    const value = lower.slice(boundary + 1);
+
+    if (!filters[field]) filters[field] = [];
+    if (!filters[field].includes(value)) filters[field].push(value);
+  }
+}
+
 /**
  * Converts metadata fields to Pagefind filters (string arrays).
+ *
+ * `level` and `rarity` are read from aspects rather than the raw fields they
+ * duplicate: the field spells a cantrip `0` and a rarity `very rare`, the aspect
+ * spells them `cantrip` and `very-rare`, and carrying both puts two spellings of
+ * one value in the same facet. `cr` and `category` have no aspect and stay.
  *
  * @param {Record<string, unknown>} metadata - Parsed metadata record
  * @param {string} contentType - Content type key
@@ -341,7 +386,7 @@ function metadataToFilters(
     type: [contentType],
   };
 
-  const tagFields = ['tags', 'school', 'cr', 'level', 'rarity', 'category'];
+  const tagFields = ['school', 'cr', 'category'];
   for (const field of tagFields) {
     const value = metadata[field];
     if (Array.isArray(value)) {
@@ -352,6 +397,19 @@ function metadataToFilters(
       filters[field] = [value.toLowerCase()];
     } else if (typeof value === 'number') {
       filters[field] = [String(value)];
+    }
+  }
+
+  assignAspectFilters(metadata.tags, filters);
+
+  if (Array.isArray(metadata.features)) {
+    for (const feature of metadata.features) {
+      if (feature && typeof feature === 'object') {
+        assignAspectFilters(
+          (feature as Record<string, unknown>).tags,
+          filters,
+        );
+      }
     }
   }
 
@@ -421,14 +479,9 @@ export async function collectRecords(locale: string): Promise<IndexRecord[]> {
       }
 
       if (variants && variants.length > 1) {
-        const allTags = new Set(filters.tags ?? []);
         for (const variant of variants) {
-          if (!Array.isArray(variant.tags)) continue;
-          for (const tag of variant.tags) {
-            if (typeof tag === 'string') allTags.add(tag.toLowerCase());
-          }
+          assignAspectFilters(variant.tags, filters);
         }
-        if (allTags.size > 0) filters.tags = [...allTags];
       }
 
       allRecords.push({

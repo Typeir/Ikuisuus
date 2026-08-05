@@ -145,7 +145,7 @@ describe('ContentPanel', () => {
 
     const iframe = screen.getByTitle('Content preview') as HTMLIFrameElement;
     expect(iframe).toBeInTheDocument();
-    expect(iframe.src).toContain('/en/library/world/test-body?embed=true');
+    expect(iframe.src).toContain('/en/embed/world/test-body');
   });
 
   it('returns null when body has no contentPath', () => {
@@ -171,7 +171,7 @@ describe('ContentPanel', () => {
 
     const iframe = screen.getByTitle('Content preview') as HTMLIFrameElement;
     expect(iframe.src).toContain(
-      '/en/library/world/test-body/reg-1?embed=true',
+      '/en/embed/world/test-body/reg-1',
     );
   });
 

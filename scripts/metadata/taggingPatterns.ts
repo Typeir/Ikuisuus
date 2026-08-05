@@ -11,6 +11,15 @@
  */
 
 /**
+ * Frontmatter field patterns.
+ *
+ * @property {RegExp} source - The declared `source` field, anchored to the frontmatter block
+ */
+export const FRONTMATTER = {
+  source: /^source:\s*(.+?)\s*$/m,
+} as const;
+
+/**
  * Movement type detection patterns keyed by movement category.
  *
  * @property {RegExp} flight - Fly, flying, or flight
@@ -34,7 +43,7 @@ export const MOVEMENT: Record<string, RegExp> = {
 /**
  * Monster mechanic detection patterns. Each key maps to a tag suffix.
  *
- * @property {RegExp} legendaryDeed - Legendary Deed: Act or Resist
+ * @property {RegExp} legendaryDeed - Any mention of legendary deeds, including the bare section heading
  * @property {RegExp} deedResist - Legendary Deed: Resist
  * @property {RegExp} deedLair - Legendary Deed: Lair
  * @property {RegExp} deedStratagem - Legendary Deed: Stratagem
@@ -58,7 +67,7 @@ export const MOVEMENT: Record<string, RegExp> = {
  * @property {RegExp} damageVulnerability - Vulnerable or vulnerability
  */
 export const MONSTER_MECHANICS = {
-  legendaryDeed: /\b(Legendary Deed: act?|Legendary Deed: resist)\b/i,
+  legendaryDeed: /\blegendary deeds?\b/i,
   deedResist: /\bLegendary Deed: resist?\b/i,
   deedLair: /\bLegendary Deed: lair?\b/i,
   deedStratagem: /\bLegendary Deed: Stratagem?\b/i,
@@ -89,7 +98,8 @@ export const MONSTER_MECHANICS = {
  * @property {RegExp} damageBonus - "+N to damage/AC", or a damage bonus in canonical wording
  * @property {RegExp} acBonus - "+N to AC"
  * @property {RegExp} savingThrowBonus - "+N to saving throws"
- * @property {RegExp} advantageDisadvantage - Advantage or disadvantage
+ * @property {RegExp} advantage - Advantage, excluding the "disadvantage" substring
+ * @property {RegExp} disadvantage - Disadvantage
  * @property {RegExp} criticalHit - Critical hit
  * @property {RegExp} reaction - Reaction keyword
  * @property {RegExp} minorAction - Minor Action
@@ -98,7 +108,7 @@ export const MONSTER_MECHANICS = {
  * @property {RegExp} damageResistanceTo - "resistance to"
  * @property {RegExp} damageImmunityTo - "immune/immunity to"
  * @property {RegExp} damageVulnerabilityTo - "vulnerable/vulnerability to"
- * @property {RegExp} spellcasting - Casts spell or spell keyword
+ * @property {RegExp} spellcasting - Casts a named spell, or the spellcasting and spell-slot keywords
  * @property {RegExp} cantrips - Cantrip keyword
  * @property {RegExp} charges - Charge(s) keyword
  * @property {RegExp} limitedUses - "N/Repose" or "N/Recovery"
@@ -115,7 +125,8 @@ export const ITEM_MECHANICS = {
   damageBonus: /\+\d+\s+(?:to\s+)?(?:damage|AC)|\bdamage\s+bonus\b/i,
   acBonus: /\+\d+\s+(?:to\s+|bonus\s+to\s+)?AC/i,
   savingThrowBonus: /\+\d+\s+(?:to\s+|bonus\s+to\s+)?saving throws?/i,
-  advantageDisadvantage: /\b(advantage|disadvantage)\b/i,
+  advantage: /\badvantage\b/i,
+  disadvantage: /\bdisadvantage\b/i,
   criticalHit: /\bcritical(?:\s+hit)?/i,
   reaction: /\breaction\b/i,
   minorAction: /\bminor action\b/i,
@@ -124,7 +135,7 @@ export const ITEM_MECHANICS = {
   damageResistanceTo: /\bresistance\s+to/i,
   damageImmunityTo: /\bimmun(?:e|ity)\s+to/i,
   damageVulnerabilityTo: /\bvulnerab(?:le|ility)\s+to/i,
-  spellcasting: /\bcasts?\s+\[?_?[A-Z][a-z]+|spell/i,
+  spellcasting: /\bcasts?\s+\[?_?[A-Z][a-z]+|\bspellcasting\b|\bspell slots?\b/i,
   cantrips: /\bcantrips?\b/i,
   charges: /\bcharges?\b/i,
   limitedUses: /\b\d+\/(?:Repose|Recovery)/i,

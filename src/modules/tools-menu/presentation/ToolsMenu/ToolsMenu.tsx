@@ -11,8 +11,14 @@
  * means. Escape and selection return focus to the trigger; dismissals that
  * move focus elsewhere leave it where the user put it.
  *
+ * Every item is an anchor carrying its own `href`, wrapped in a presentational
+ * `<li>`. Menu items that navigate must be links, or middle-click, ctrl-click,
+ * "open in new tab" and the link role are all lost. `onSelect` fires only for
+ * an unmodified left click or a keyboard activation; the browser keeps every
+ * other gesture.
+ *
  * @component ToolsMenu
- * @version 3.0.0
+ * @version 4.0.0
  * @author Typeir
  * @since 1.0.0
  *
@@ -35,8 +41,10 @@
 
 'use client';
 
+import { isPlainLeftClick } from '@/lib/utils/isPlainLeftClick';
 import { ChevronUp } from 'lucide-react';
 import {
+  MouseEvent,
   ReactNode,
   useCallback,
   useEffect,
@@ -96,7 +104,7 @@ export function ToolsMenu({
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const itemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const baseId = useId();
   const menuId = `${baseId}-menu`;
   const triggerId = `${baseId}-trigger`;
@@ -137,7 +145,11 @@ export function ToolsMenu({
   }, []);
 
   const handleSelect = useCallback(
-    (item: ToolMenuItem) => {
+    (item: ToolMenuItem, event?: MouseEvent<HTMLAnchorElement>) => {
+      if (event) {
+        if (!isPlainLeftClick(event)) return;
+        event.preventDefault();
+      }
       onSelect(item);
       close(true);
       setActiveIndex(0);
@@ -227,19 +239,21 @@ export function ToolsMenu({
             aria-labelledby={label ? undefined : triggerId}
             onKeyDown={handleMenuKeyDown}>
             {items.map((item, index) => (
-              <li
-                key={item.id}
-                ref={(element) => {
-                  itemRefs.current[index] = element;
-                }}
-                className={`${styles.listItem} ${
-                  index === activeIndex ? styles.selected : ''
-                }`}
-                onClick={() => handleSelect(item)}
-                onMouseEnter={() => setActiveIndex(index)}
-                role='menuitem'
-                tabIndex={index === activeIndex ? 0 : -1}>
-                {item.label}
+              <li key={item.id} className={styles.listRow} role='none'>
+                <a
+                  ref={(element) => {
+                    itemRefs.current[index] = element;
+                  }}
+                  href={item.href}
+                  className={`${styles.listItem} ${
+                    index === activeIndex ? styles.selected : ''
+                  }`}
+                  onClick={(event) => handleSelect(item, event)}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  role='menuitem'
+                  tabIndex={index === activeIndex ? 0 : -1}>
+                  {item.label}
+                </a>
               </li>
             ))}
           </ul>

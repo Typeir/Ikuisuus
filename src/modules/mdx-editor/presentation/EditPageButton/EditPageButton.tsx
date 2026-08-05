@@ -1,22 +1,29 @@
 /**
- * @fileoverview Edit Page Button
- * @description A lightweight client component that renders an "Edit" link-button
- * on library content pages. Clicking navigates to the MDX Editor tool view
- * pre-populated with the current page's slug.
+ * @fileoverview Edit Page Link
+ * @description Renders an "Edit" control on library content pages that leads to
+ * the MDX Editor tool view pre-populated with the current page's slug.
+ *
+ * The control is an anchor carrying a real `href`, styled to look like a
+ * button. Navigation belongs to links: only an anchor gives middle-click,
+ * ctrl/cmd-click, "open in new tab", the link role in assistive technology, and
+ * a target the browser can show in the status bar. An unmodified left click is
+ * upgraded to a client-side route push; every other gesture is left to the
+ * browser.
  *
  * @module lib/components/mdxEditor/editPageButton
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 2.0.0
  */
 
 'use client';
 
+import { isPlainLeftClick } from '@/lib/utils/isPlainLeftClick';
 import { Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import type { JSX } from 'react';
-import { useCallback } from 'react';
+import type { JSX, MouseEvent } from 'react';
+import { useCallback, useMemo } from 'react';
 import styles from './EditPageButton.module.scss';
 
 /**
@@ -33,14 +40,17 @@ interface EditPageButtonProps {
 }
 
 /**
- * Renders a small "✏️ Edit" button that navigates to the MDX Editor tool page
- * with the current content slug pre-filled.
+ * Renders a small "✏️ Edit" link, styled as a button, pointing at the MDX
+ * Editor tool page with the current content slug pre-filled.
+ *
+ * Each slug segment is percent-encoded individually so separators survive while
+ * non-ASCII and reserved characters are escaped.
  *
  * @component
  * @param {EditPageButtonProps} props - Component properties
  * @param {string} props.slug - Content slug relative to locale
  * @param {string} props.locale - Current locale
- * @returns {JSX.Element} Edit trigger button
+ * @returns {JSX.Element} Edit link
  *
  * @example
  * <EditPageButton slug="monsters/aboleth" locale="en" />
@@ -52,21 +62,28 @@ export const EditPageButton = ({
   const t = useTranslations('mdxEditor');
   const router = useRouter();
 
-  const handleClick = useCallback(() => {
+  const href = useMemo(() => {
     const encodedSlug = slug.split('/').map(encodeURIComponent).join('/');
-    router.push(
-      `/${locale}/utils/mdx-editor?slug=${encodedSlug}&locale=${locale}`,
-    );
-  }, [router, locale, slug]);
+    return `/${locale}/utils/mdx-editor?slug=${encodedSlug}&locale=${locale}`;
+  }, [locale, slug]);
+
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      if (!isPlainLeftClick(event)) return;
+      event.preventDefault();
+      router.push(href);
+    },
+    [href, router],
+  );
 
   return (
-    <button
-      type='button'
+    <a
+      href={href}
       className={styles.editButton}
       onClick={handleClick}
       aria-label={t('editButton')}>
       <Pencil size={14} aria-hidden='true' />
       {t('editButton')}
-    </button>
+    </a>
   );
 };

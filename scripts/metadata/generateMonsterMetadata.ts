@@ -12,6 +12,10 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import {
+  toNativeMeasure,
+  toPlainMeasure,
+} from '@/lib/units/nativeMeasure';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
@@ -23,6 +27,7 @@ import {
     parseFirstProseParagraph,
     parseKeyBullets,
     parseNumericValue,
+    plain,
     readLines,
     runGenerator,
     runWithCli,
@@ -33,6 +38,8 @@ import {
     type StorageAdapter,
 } from '.';
 import { MONSTER, STRUCTURE } from './extraction/featurePatterns';
+import { extractStrataTags } from './aspectExtractors';
+import { extractStatBlockFieldAspects, tagFeatures } from './featureAspects';
 import { parseMonsterFeatures } from './generateFeatureMetadata';
 import {
     IMAGE,
@@ -180,7 +187,9 @@ function parseSpeed(raw: string): SpeedData | undefined {
   if (!raw) return undefined;
 
   const parts = raw.split(LIST.commaWhitespace);
-  const result: SpeedData = { raw };
+  /* Parsed from the source form, stored in the native one: the mode patterns
+     below read `[= 8 stride =]`, while the stored value must carry no markdown. */
+  const result: SpeedData = { raw: toNativeMeasure(raw) };
 
   for (const p of parts) {
     const isHover = MONSTER.hover.test(p);
@@ -274,7 +283,7 @@ function parseSavingThrows(raw?: string): Record<string, number> | undefined {
  */
 function parseSenses(raw: string | undefined, sharedData: SharedData) {
   if (!raw) return undefined;
-  const senses: Record<string, unknown> = { raw };
+  const senses: Record<string, unknown> = { raw: toNativeMeasure(raw) };
   const p = raw.match(MONSTER.passivePerception);
   if (p) senses.passivePerception = Number(p[1]);
   const senseKeys = GameData.getSenses(sharedData);
@@ -513,7 +522,7 @@ function parseMonsterDescription(sectionLines: string[]): string | undefined {
   );
 
   return descLines.length > 0
-    ? descLines.map((l) => stripMarkdown(l)).join('\n')
+    ? descLines.map((l) => plain(l)).join('\n')
     : undefined;
 }
 
@@ -547,12 +556,13 @@ function parseStatBlockSection(
   const bulletMap = parseKeyBullets(sectionText);
   const savingThrows = parseSavingThrows(bulletMap['Saving Throws']);
   const senses = parseSenses(bulletMap['Senses'], sharedData);
-  const languages = splitList(bulletMap['Languages']);
+  const languages = splitList(bulletMap['Languages']).map((v) => plain(v));
   const nonmagicalPattern = STAT_CONTENT.nonmagicalDamage;
+  /* Scoped defence entries are atomic values a reader filters by, not prose. */
   const resist = splitListWithGrouping(
     bulletMap['Damage Resistances'],
     nonmagicalPattern,
-  );
+  ).map((v) => plain(v));
   const immune = splitListWithGrouping(
     bulletMap['Damage Immunities'],
     nonmagicalPattern,
@@ -609,7 +619,27 @@ function parseStatBlockSection(
     tags.push(`size:${italicMeta.size.toLowerCase()}`);
   }
 
-  tags.sort();
+  tags.push(
+    ...extractStatBlockFieldAspects(
+      {
+        resistances: resist,
+        immunities: immune,
+        vulnerabilities: vuln,
+        conditionImmunities: condImm,
+        senses,
+        speed: headerStats.speed as Record<string, unknown> | undefined,
+      },
+      sharedData,
+    ),
+  );
+
+  /* The declared Damage Resistances / Immunities land after the shared tagger
+     has already run, so the stratum pass repeats over the finished list. */
+  tags.push(...extractStrataTags(tags, sharedData));
+
+  const uniqueTags = Array.from(new Set(tags)).sort();
+  tags.length = 0;
+  tags.push(...uniqueTags);
 
   const displayName = title || baseSlug;
   const isNested = statBlockIndex > 0 || isBlockquote;
@@ -769,9 +799,11 @@ async function parseMonsterFile(
     const r = results[i] as Record<string, unknown>;
     const bStart = r.blockStart as number;
     const bEnd = r.blockEnd as number;
-    r.features = features.filter(
+    const owned = features.filter(
       (f) => f.source && f.source.start >= bStart && f.source.start < bEnd,
     );
+    tagFeatures(owned, lines, sharedData);
+    r.features = owned;
   }
 
   return results;

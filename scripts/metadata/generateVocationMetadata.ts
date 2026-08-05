@@ -32,6 +32,8 @@ import {
     type StorageAdapter,
 } from '.';
 import { extractFeatureGrants } from './extraction/grantsExtractor';
+import { tagRangedFeatures, type RangedFeature } from './featureAspects';
+import { GameData } from './gameData';
 import { LIST, SLUG, TEXT } from './parsingPatterns';
 import { CASTING, FEATURE, TABLE } from './vocationPatterns';
 
@@ -450,12 +452,16 @@ function buildVocationTags(
 ): string[] {
   const tags = new Set<string>();
 
-  tags.add(`archetype:${metadata.archetype}`);
+  tags.add(`archetype:${String(metadata.archetype).toLowerCase()}`);
   tags.add(`hit-die:${formatDie(metadata.hitDie as number)}`);
 
+  const abilities = GameData.getAbilities(sharedData);
   const saves = metadata.savingThrows as string[];
   for (const save of saves) {
-    tags.add(`saving-throw:${save.toLowerCase()}`);
+    const ability = abilities.find(
+      (candidate) => candidate.long.toLowerCase() === save.toLowerCase(),
+    );
+    if (ability) tags.add(`save:${ability.short.toLowerCase()}`);
   }
 
   if (metadata.spellcasting) {
@@ -545,6 +551,12 @@ async function parseVocationFile(
       const base = range ? { ...f, ...range } : f;
       return grants.length > 0 ? { ...base, grants } : base;
     });
+
+    tagRangedFeatures(
+      featuresWithLines as RangedFeature[],
+      rawLines,
+      sharedData,
+    );
 
     let spellcasting: { ability: string; progression: string } | undefined;
     if (hasSpellSlots) {

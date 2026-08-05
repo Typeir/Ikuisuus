@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview CharacterSheet Unit Tests
  * @description Tests for the CharacterSheet and ActiveCharacterSheet components.
  *
@@ -39,6 +39,14 @@ function makeCharacter(
 }
 
 describe('CharacterSheet', () => {
+  /**
+   * `userEvent`'s default session waits on real timers between keystrokes, so a
+   * twelve-character name cost twelve scheduler round-trips and the file drifted
+   * past the per-test timeout whenever the machine was busy. `delay: null`
+   * dispatches the sequence without waiting, which is what made this suite pass
+   * alone and fail beside anything else.
+   */
+  const user = userEvent.setup({ delay: null });
   it('renders the character name', () => {
     render(<CharacterSheet character={makeCharacter()} />);
     expect(
@@ -88,7 +96,7 @@ describe('CharacterSheet', () => {
 
   it('switches to edit mode when Edit is clicked', async () => {
     render(<CharacterSheet character={makeCharacter()} />);
-    await userEvent.click(
+    await user.click(
       screen.getByRole('button', { name: 'ariaEditCharacter' }),
     );
     expect(screen.getByRole('button', { name: /save/i })).toBeTruthy();
@@ -97,15 +105,15 @@ describe('CharacterSheet', () => {
 
   it('reverts changes when Cancel is clicked', async () => {
     render(<CharacterSheet character={makeCharacter()} />);
-    await userEvent.click(
+    await user.click(
       screen.getByRole('button', { name: 'ariaEditCharacter' }),
     );
     const nameInput = screen.getByRole('textbox', {
       name: 'ariaCharacterName',
     });
-    await userEvent.clear(nameInput);
-    await userEvent.type(nameInput, 'Changed Name');
-    await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Changed Name');
+    await user.click(screen.getByRole('button', { name: /cancel/i }));
     expect(
       screen.getByRole('heading', { name: /Aria Dawnweaver/i }),
     ).toBeTruthy();
@@ -118,15 +126,15 @@ describe('CharacterSheet', () => {
     vi.mocked(useCharacterSheetDispatch).mockReturnValue(dispatch);
 
     render(<CharacterSheet character={makeCharacter()} />);
-    await userEvent.click(
+    await user.click(
       screen.getByRole('button', { name: 'ariaEditCharacter' }),
     );
     const nameInput = screen.getByRole('textbox', {
       name: 'ariaCharacterName',
     });
-    await userEvent.clear(nameInput);
-    await userEvent.type(nameInput, 'Changed Name');
-    await userEvent.click(screen.getByRole('button', { name: 'save' }));
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Changed Name');
+    await user.click(screen.getByRole('button', { name: 'save' }));
 
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -149,7 +157,7 @@ describe('CharacterSheet', () => {
         character={{ ...makeCharacter(), gritCurrent: 3, gritMax: 5 }}
       />,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'gritSpend' }));
+    await user.click(screen.getByRole('button', { name: 'gritSpend' }));
 
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({

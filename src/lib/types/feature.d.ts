@@ -280,6 +280,7 @@ export type FeatureFlag =
  * @property {string} [pick_mode] - Selection mode: choose_one, pick_any, random
  * @property {number} [confidence] - Quality score 0.0–1.0 (separate rollout phase)
  * @property {FeatureFlag[]} flags - Structural/quality flags
+ * @property {string[]} [tags] - Aspects derived from this feature alone, not from the whole stat block
  */
 export interface Feature {
   id: string;
@@ -304,6 +305,7 @@ export interface Feature {
   pick_mode?: string;
   confidence?: number;
   flags: FeatureFlag[];
+  tags?: string[];
 }
 
 /**

@@ -694,6 +694,67 @@ html[data-theme='dark'] {
 }
 
 /* ============================================
+   ASPECT PALETTE
+   One hue per aspect group; the pill derives its background and border from it
+   with color-mix, so a group needs one token rather than three. Groups without
+   a token fall back to --aspect-default, which is what lets a new group ship
+   before its colour is chosen.
+
+   damage: carries per-value hues because thirteen types is the one group where
+   a single family colour discards what colour is best at. phase: deliberately
+   has no tokens — it reuses --color-phase-* so the pill and the encounter
+   tracker cannot drift apart.
+============================================ */
+:root {
+  --aspect-default: #8d9194;
+  /* A stratum mark carries three member glyphs in their own hues, so its own
+     chip stays neutral and lets them read. Colouring it would put a fourth
+     competing hue in a mark that already has three. */
+  --aspect-stratum: #8d9194;
+  --aspect-damage: #c27661;
+  --aspect-condition: #b199cc;
+  --aspect-defense: #8ba7bd;
+  --aspect-delivery: #7cb2a8;
+  --aspect-range: #959dad;
+  --aspect-tempo: #c19c59;
+  --aspect-resource: #89a576;
+  --aspect-scaling: #79a4ba;
+  --aspect-save: #baac79;
+  --aspect-source: #9b9bcd;
+  --aspect-access: #a69bcd;
+  --aspect-sense: #9eb8ce;
+  --aspect-movement: #b6a584;
+  --aspect-mechanic: #9ca69c;
+  --aspect-rarity: #c29bcd;
+  --aspect-size: #a1a1a7;
+  --aspect-creature: #94ab94;
+  --aspect-component: #ada495;
+  --aspect-cover: #8ea0a3;
+  --aspect-position: #a29585;
+  --aspect-slot: #9a94a5;
+  --aspect-myth: #baa379;
+  --aspect-theme: #ad95a6;
+  --aspect-proficiency: #9fab94;
+  --aspect-property: #a59a94;
+  --aspect-level: #959dad;
+
+  --aspect-damage-fire: #c77a55;
+  --aspect-damage-frost: #80b1c8;
+  --aspect-damage-lightning: #cbb76a;
+  --aspect-damage-dark: #9f91be;
+  --aspect-damage-force: #90383e;
+  --aspect-damage-poison: #89a576;
+  --aspect-damage-psychic: #cb8daf;
+  --aspect-damage-holy: #ddd2ab;
+  --aspect-damage-chemical: #a3b678;
+  --aspect-damage-bludgeoning: #b2a696;
+  --aspect-damage-piercing: #c6c3bb;
+  --aspect-damage-slashing: #cab7ae;
+  --aspect-damage-true: #e7e6e3;
+}
+
+
+/* ============================================
    TAILWIND LAYERS
 ============================================ */
 

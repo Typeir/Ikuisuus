@@ -12,6 +12,7 @@
  */
 
 import type { MonsterFeature } from '@/lib/types/feature';
+import { plain } from '../textUtils';
 import { MONSTER, SECTIONS } from './featurePatterns';
 import {
   enrichFromBody,
@@ -91,7 +92,7 @@ export function extractDeedActs(section: MonsterSection): MonsterFeature[] {
     const match = section.lines[idx].match(SECTIONS.deedBullet);
     if (!match) continue;
     bulletIndices.push(idx);
-    const name = match[1].replace(/\./g, '').trim();
+    const name = plain(match[1].replace(/\./g, ''));
     const cost = match[2] ? parseInt(match[2], 10) : 1;
     const feat = baseDeedFeature(name);
     feat.legendary_deed = { category: 'act', cost };
@@ -354,7 +355,7 @@ function splitBySubHeadings(lines: string[]): DeedSubSection[] {
         result.push(current);
       }
       current = {
-        name: match[1].replace(/\*\*/g, '').trim(),
+        name: plain(match[1]),
         lines: [],
         startOffset: idx,
         endOffset: lines.length,

@@ -18,8 +18,13 @@ import { spawn } from 'child_process';
 const CI_PROJECT_CONCURRENCY = 2;
 const LOCAL_PROJECT_CONCURRENCY = 3;
 
-/** Project names matching vitest.config.ts `projects[].test.name` */
-const PROJECTS = [
+/**
+ * Project names matching vitest.config.ts `projects[].test.name`.
+ *
+ * Exported so CI can build its matrix from this list rather than a copy that
+ * silently drifts whenever a project is split.
+ */
+export const PROJECTS = [
   'unit:components',
   'unit:utils:a',
   'unit:utils:b',
@@ -33,14 +38,33 @@ const PROJECTS = [
   'unit:api',
   'unit:app:pages',
   'unit:app:utils',
-  'unit:modules',
+  'unit:modules:character-builder',
+  'unit:modules:encounter-planner',
+  'unit:modules:world-sim',
+  'unit:modules:library',
+  'unit:modules:mdx-editor',
+  'unit:modules:rest',
+  'unit:md',
+  'unit:scripts',
   'unit:other',
   'integration',
 ];
 
+/**
+ * Rough file counts, used to start the heaviest projects first so the pipeline
+ * fills rather than tailing off on one long runner.
+ */
 const PROJECT_WEIGHTS: Record<string, number> = {
-  'unit:components': 97,
-  'unit:other': 54,
+  'unit:components': 58,
+  'unit:modules:character-builder': 95,
+  'unit:modules:encounter-planner': 71,
+  'unit:modules:world-sim': 60,
+  'unit:modules:library': 60,
+  'unit:modules:mdx-editor': 35,
+  'unit:modules:rest': 64,
+  'unit:scripts': 40,
+  'unit:md': 35,
+  'unit:other': 45,
   'unit:utils:a': 22,
   'unit:utils:b': 17,
   'unit:utils:node': 5,
@@ -48,13 +72,12 @@ const PROJECT_WEIGHTS: Record<string, number> = {
   'unit:db:content:pg': 20,
   'unit:db:orm': 19,
   'unit:db:auth': 14,
-  'unit:api': 20,
+  'unit:api': 37,
   'unit:app:pages': 14,
   'unit:app:utils': 6,
-  'unit:modules': 46,
   'unit:metadata': 16,
   'unit:hooks': 8,
-  integration: 7,
+  integration: 20,
 };
 
 type ProjectResult = { project: string; exitCode: number };
@@ -72,7 +95,29 @@ function mapPathToProject(testPath: string): string | undefined {
     return 'unit:components';
   }
   if (normalized.includes('tests/unit/src/modules')) {
-    return 'unit:modules';
+    for (const module of [
+      'character-builder',
+      'encounter-planner',
+      'world-sim',
+      'library',
+      'mdx-editor',
+    ]) {
+      if (normalized.includes(`tests/unit/src/modules/${module}`)) {
+        return `unit:modules:${module}`;
+      }
+    }
+    return 'unit:modules:rest';
+  }
+  if (normalized.includes('tests/unit/scripts')) {
+    return 'unit:scripts';
+  }
+  if (
+    normalized.includes('tests/unit/src/lib/md') ||
+    normalized.includes('tests/unit/src/lib/mdx') ||
+    normalized.includes('tests/unit/src/lib/content') ||
+    normalized.includes('tests/unit/src/lib/units')
+  ) {
+    return 'unit:md';
   }
   if (normalized.includes('tests/unit/src/lib/utils/a')) {
     return 'unit:utils:a';
@@ -374,7 +419,15 @@ async function main(): Promise<void> {
   process.exit(0);
 }
 
-main().catch((error: unknown) => {
-  console.error('❌ Fatal error in test runner:', error);
-  process.exit(1);
-});
+/**
+ * Only run when invoked directly. `PROJECTS` is imported by the matrix helper,
+ * and an unguarded call would start the whole suite just to print a list.
+ */
+const invokedDirectly = process.argv[1]?.replace(/\\/g, '/').endsWith('runTests.ts');
+
+if (invokedDirectly) {
+  main().catch((error: unknown) => {
+    console.error('❌ Fatal error in test runner:', error);
+    process.exit(1);
+  });
+}

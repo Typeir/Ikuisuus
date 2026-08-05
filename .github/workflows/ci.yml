@@ -7,13 +7,44 @@ on:
     branches: [main, develop]
 
 jobs:
-  test:
-    name: Test & Build
+  # Reads the project list straight out of the runner so the matrix cannot drift
+  # from what runs locally. Plain node over the source — no install needed just
+  # to print a list.
+  projects:
+    name: Enumerate test projects
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.list.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Read project names
+        id: list
+        run: |
+          node -e "
+            const fs = require('fs');
+            const src = fs.readFileSync('tests/scripts/runTests.ts', 'utf8');
+            const block = src.match(/export const PROJECTS = \[([\s\S]*?)\];/)[1];
+            const names = [...block.matchAll(/'([^']+)'/g)].map((m) => m[1]);
+            if (!names.length) throw new Error('No vitest projects found');
+            console.log('matrix=' + JSON.stringify(names));
+          " >> "$GITHUB_OUTPUT"
+
+  # One job per project rather than one job for the whole suite. A large batch
+  # buys nothing: the projects share CPU, the slowest holds the job open, and
+  # contention alone is enough to time out suites that pass on their own.
+  test:
+    name: Test ${{ matrix.project }}
+    needs: projects
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJSON(needs.projects.outputs.matrix) }}
     env:
       CI: 1
       TEST_MAX_WORKERS: 2
-      TEST_CONCURRENCY: 2
 
     steps:
       - name: Checkout repository
@@ -25,30 +56,40 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22.21.1
-
-      - name: Update npm to latest
-        run: npm install -g npm@10
-
-      - name: Remove node_modules
-        run: rm -rf node_modules
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run pre-initialization scripts (CI-safe)
         run: npm run pre-init:ci
 
-      - name: Run tests with coverage
-        run: npm run test:coverage
+      - name: Run ${{ matrix.project }}
+        run: npx vitest run --project "${{ matrix.project }}" --coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: true
+          flags: ${{ matrix.project }}
+          name: ${{ matrix.project }}
+          fail_ci_if_error: false
+
+  # A single required check to gate on, so branch protection does not have to
+  # name every shard.
+  test-suite:
+    name: Test Suite
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any project failed
+        if: contains(needs.test.result, 'failure') || contains(needs.test.result, 'cancelled')
+        run: exit 1
+
+      - name: All projects passed
+        run: echo "All test projects passed."
 
   lint:
     name: Lint Code

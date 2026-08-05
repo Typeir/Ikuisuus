@@ -21,6 +21,7 @@ import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {
     MonsterAC,
+    MonsterFeatureSummary,
     MonsterHP,
     MonsterIndexEntry,
     MonsterMetadata,
@@ -124,6 +125,31 @@ const mapSenses = (row: MonsterEntity): MonsterSenses => ({
   truesight: orUndef(row.senses.truesight),
 });
 
+/**
+ * Maps the loaded feature collection to the domain summary shape.
+ *
+ * Returns undefined when the collection was not populated, so a caller cannot
+ * mistake "not loaded" for "this monster has no features".
+ *
+ * @param {MonsterEntity} row - Monster entity row
+ * @returns {MonsterFeatureSummary[] | undefined} Feature summaries in stat block order
+ */
+const mapFeatures = (
+  row: MonsterEntity,
+): MonsterFeatureSummary[] | undefined => {
+  if (!row.features?.isInitialized()) return undefined;
+
+  return row.features
+    .getItems()
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((feature) => ({
+      id: feature.featureId,
+      name: feature.name,
+      trigger: orUndef(feature.trigger),
+      tags: nonEmpty(feature.tags),
+    }));
+};
+
 /* ─────────────────────────────  Row mapper  ──────────────────────────── */
 
 /**
@@ -156,6 +182,7 @@ const rowToMonster = (row: MonsterEntity): MonsterMetadata => ({
   conditionImmunities: nonEmpty(row.conditionImmunities),
   languages: nonEmpty(row.languages),
   tags: nonEmpty(row.tags),
+  features: mapFeatures(row),
   image: orUndef(row.image),
   description: orUndef(row.description),
   indexVersion: orUndef(row.indexVersion),
@@ -230,10 +257,14 @@ class PgMonsterRepository
   ): Promise<MonsterMetadata | null> {
     try {
       const em = await getEM();
-      const row = await em.findOne(MonsterEntity, {
-        locale,
-        $or: [{ subSlug: slug }, { slug }],
-      });
+      const row = await em.findOne(
+        MonsterEntity,
+        {
+          locale,
+          $or: [{ subSlug: slug }, { slug }],
+        },
+        { populate: ['features'] },
+      );
       return row ? rowToMonster(row) : null;
     } catch (error) {
       log.error('Error reading single monster from PostgreSQL', {

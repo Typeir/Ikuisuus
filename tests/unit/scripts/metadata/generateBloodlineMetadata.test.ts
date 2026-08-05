@@ -83,9 +83,9 @@ You can use this a number of times equal to your tier bonus, regaining all uses 
     });
     expect(parsed.boons[0].tags).toEqual(
       expect.arrayContaining([
-        'mechanic:cantrips',
-        'mechanic:recovery-recharge',
-        'mechanic:skill-tier:arcana',
+        'mechanic:cantrip',
+        'resource:per-recovery',
+        'proficiency:arcana',
       ]),
     );
     expect(parsed.boons[0]).not.toHaveProperty('body');
@@ -158,13 +158,11 @@ You can use your reaction when hit by a melee weapon attack to reduce extra dama
     );
     expect(boon.tags).toEqual(
       expect.arrayContaining([
-        'mechanic:variable-cost',
-        'mechanic:ac',
-        'mechanic:saving-throw',
-        'mechanic:repose-recharge',
-        'mechanic:reaction',
-        'mechanic:weapon',
-        'mechanic:extra-damage',
+        'resource:variable',
+        'mechanic:ac-bonus',
+        'resource:per-repose',
+        'tempo:reactive',
+        'mechanic:damage-bonus',
       ]),
     );
   });

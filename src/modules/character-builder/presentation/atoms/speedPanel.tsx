@@ -15,6 +15,7 @@
 
 'use client';
 
+import { Measure } from '@/modules/library/presentation/components/Measure';
 import { DropdownPanel } from '@/modules/character-builder/presentation/atoms/dropdownPanel';
 import { useTranslations } from 'next-intl';
 import styles from './speedPanel.module.scss';
@@ -23,7 +24,7 @@ import styles from './speedPanel.module.scss';
  * Props for the SpeedPanel component.
  *
  * @interface SpeedPanelProps
- * @property {string[]} bloodlineSpeeds - Raw speed strings from the active bloodline (e.g. `["Walk: 30 ft.", "Fly: 60 ft."]`)
+ * @property {string[]} bloodlineSpeeds - Native speed strings from the active bloodline (e.g. `["Walk: 6 stride", "Fly: 12 stride"]`)
  */
 export interface SpeedPanelProps {
   bloodlineSpeeds: string[];
@@ -36,7 +37,7 @@ export interface SpeedPanelProps {
  *
  * @component
  * @param {SpeedPanelProps} props - Component props
- * @param {string[]} props.bloodlineSpeeds - Raw speed strings from the active bloodline (e.g. `["Walk: 30 ft.", "Fly: 60 ft."]`)
+ * @param {string[]} props.bloodlineSpeeds - Native speed strings from the active bloodline (e.g. `["Walk: 6 stride", "Fly: 12 stride"]`)
  * @returns {JSX.Element | null} Rendered wrapper, or null when no speeds are available
  */
 export const SpeedPanel: React.FC<SpeedPanelProps> = ({ bloodlineSpeeds }) => {
@@ -61,7 +62,7 @@ export const SpeedPanel: React.FC<SpeedPanelProps> = ({ bloodlineSpeeds }) => {
       panelLabel={t('speedPanelLabel')}>
       {bloodlineSpeeds.map((speed, i) => (
         <div key={i} className={styles.speedRow} role='listitem'>
-          {speed}
+          <Measure text={speed} />
         </div>
       ))}
     </DropdownPanel>

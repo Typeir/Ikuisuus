@@ -12,20 +12,12 @@
 
 'use client';
 
+import { buildEmbedUrl } from '@/lib/embed';
 import type { JSX } from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Draggable } from '../draggable/Draggable';
 
-/**
- * Build the embed URL for a given content path and locale.
- *
- * @param {string} contentPath - Relative library path (e.g. "world/the-lands-of-damocles/ordovica")
- * @param {string} locale - Current locale code (e.g. "en")
- * @returns {string} Full embed URL with query parameter
- */
-export function buildEmbedUrl(contentPath: string, locale: string): string {
-  return `/${locale}/library/${contentPath}?embed=true`;
-}
+export { buildEmbedUrl };
 
 /**
  * @interface GenericEmbedPanelProps
@@ -166,7 +158,7 @@ export function GenericEmbedPanel({
           className={iframeClassName}
           onLoad={handleLoad}
           title={iframeTitle}
-          sandbox='allow-same-origin allow-scripts allow-popups'
+          sandbox='allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox'
         />
       </div>
     </Draggable>

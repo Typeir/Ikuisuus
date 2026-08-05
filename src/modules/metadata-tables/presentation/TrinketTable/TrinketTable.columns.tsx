@@ -6,6 +6,7 @@
  * @since 1.0.0
  */
 
+import { Measure } from '@/modules/library/presentation/components/Measure';
 import type {
     ColumnConfig,
     MetadataRow,
@@ -57,10 +58,10 @@ export function buildTrinketColumns(
       key: 'range',
       label: tColumns('range'),
       getValue: (row: MetadataRow) => row.range || '—',
-      render: (value: unknown) => {
-        if (!value || value === '—') return '—';
-        return String(value);
-      },
+      /* Sorting and filtering still see the native string; only the drawn cell
+         converts, so a reader on metres does not get a column ordered by the
+         text of a unit they never see. */
+      render: (value: unknown) => <Measure text={String(value ?? '')} />,
       sortable: false,
     },
     {
@@ -102,6 +103,7 @@ export function buildTrinketColumns(
       key: 'weight',
       label: tColumns('weight'),
       getValue: (row: MetadataRow) => row.weight || '—',
+      render: (value: unknown) => <Measure text={String(value ?? '')} />,
       sortable: false,
     },
   ];
