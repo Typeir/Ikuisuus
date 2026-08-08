@@ -66,7 +66,7 @@ export function useSpellColumns(): ColumnConfig[] {
         /* Sorting and filtering still see the native string; only the drawn
            cell converts, so a reader on metres does not get a column sorted by
            the text of a unit they never see. */
-        render: (value: unknown) => <Measure text={String(value ?? '')} />,
+        render: (value: unknown) => <Measure text={String(value ?? '')} noLink />,
         sortable: true,
       },
       {

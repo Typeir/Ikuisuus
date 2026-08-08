@@ -31,7 +31,7 @@ export const SIDEBAR_CLOSE_ANIMATION_MS = 500;
  * @constant
  * @type {number}
  */
-export const VIRTUALIZATION_THRESHOLD = 100;
+export const VIRTUALIZATION_THRESHOLD = 50;
 
 /**
  * Maximum depth for shallow walk traversal of sidebar tree structure.

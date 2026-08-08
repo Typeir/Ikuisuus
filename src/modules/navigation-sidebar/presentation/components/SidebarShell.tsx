@@ -11,6 +11,11 @@
 
 import Icon from '@/lib/components/icon/icon';
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
+import {
+    usePersistentUiDispatch,
+    useSidebarMenuActions,
+} from '@/lib/context/PersistentUiContext';
+import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
 import { cn } from '@/lib/utils/classNameMerge';
 import type {
     Item,
@@ -33,7 +38,10 @@ const SidebarClient = dynamic(
  *
  * @interface SidebarShellProps
  * @property {Item[]} items - Root navigation items to render
- * @property {() => void} [onNavigate] - Callback when a navigation link is clicked
+ * @property {() => void} [onNavigate] - Callback when a navigation link is clicked.
+ *   Defaults to closing the mobile sidebar. The shell renders inside the
+ *   `@sidebar` slot, where the layout cannot hand it a client callback, so it
+ *   reads the menu store itself.
  * @property {boolean} [collapseSiblings=false] - If true, opening one folder collapses siblings
  */
 interface SidebarShellProps {
@@ -236,6 +244,19 @@ function expandedPathsFromPathname(pathname: string): Set<string> {
  * Sidebar shell that renders a static navigation tree as the Suspense fallback
  * and lazily loads the interactive client sidebar.
  *
+ * On every pathname change the ancestor chain of the open page is written into
+ * the expansion store. Stored expansion alone left a deep route with its
+ * grandparent's folder closed, so that folder's children never mounted and never
+ * fetched; recovering meant collapsing and reopening the whole tree by hand.
+ * Seeding from the URL keeps the chain to the current page open, and because it
+ * writes through the store rather than overriding it, folders opened by hand
+ * still survive a navigation and every route outside the library keeps its
+ * remembered state untouched.
+ *
+ * The seed dispatches directly rather than going through `useSidebarExpansion`,
+ * whose return identity changes with every expansion. Subscribing here re-rendered
+ * the whole shell — and recomputed every node's height — on each folder click.
+ *
  * @component
  * @param {SidebarShellProps} props - Component props.
  * @param {Item[]} props.items - Root navigation items.
@@ -251,7 +272,9 @@ export function SidebarShell({
   const params = useParams();
   const locale = (params?.locale as string) ?? 'en';
   const pathname = usePathname() ?? '';
-  const layoutItems = calculateHeights(items ?? []);
+  const layoutItems = useMemo(() => calculateHeights(items ?? []), [items]);
+  const { close: closeSidebar } = useSidebarMenuActions();
+  const dispatch = usePersistentUiDispatch();
   const expandedPaths = useMemo(
     () => expandedPathsFromPathname(pathname),
     [pathname],
@@ -261,16 +284,26 @@ export function SidebarShell({
     [expandedPaths],
   );
   const [mounted, setMounted] = useState(false);
+  const handleNavigate = onNavigate ?? closeSidebar;
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    for (const path of expandedPaths) {
+      dispatch({
+        type: PERSISTED_UI_ACTION_TYPES.SET_SIDEBAR_EXPANSION,
+        payload: { path, expanded: true },
+      });
+    }
+  }, [expandedPaths, dispatch]);
+
   if (!mounted) {
     return (
       <SidebarStaticTree
         items={layoutItems}
-        onNavigate={onNavigate}
+        onNavigate={handleNavigate}
         collapseSiblings={collapseSiblings}
         locale={locale}
         isExpanded={isExpanded}
@@ -281,7 +314,7 @@ export function SidebarShell({
   return (
     <SidebarClient
       items={items}
-      onNavigate={onNavigate}
+      onNavigate={handleNavigate}
       collapseSiblings={collapseSiblings}
     />
   );

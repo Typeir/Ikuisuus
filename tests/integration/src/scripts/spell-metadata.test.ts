@@ -481,14 +481,16 @@ describe('Spell Metadata Generator', () => {
     /**
      * Tests range extraction for spells
      *
-     * @description Validates parsing of spell range
+     * @description Validates parsing of spell range. The fixture states
+     * `120 feet`, one of the few authoring slips left in imperial, so the
+     * stored value is the converted native measure rather than the source
+     * quantity.
      */
     it('should extract range for targeted spells', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
       const result = await parseSpellFile(filePath, sharedData);
 
-      expect(result.range).toBeDefined();
-      expect(result.range).toContain('120');
+      expect(result.range).toBe('24 stride');
     });
 
     /**

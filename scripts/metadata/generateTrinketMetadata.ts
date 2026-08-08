@@ -14,17 +14,18 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-    GameData,
-    clean,
-    extractAllTags,
-    filePathToSlug,
-    findContentImage,
-    parseTitle,
-    plain,
-    runGenerator,
-    runWithCli,
-    type SharedData,
-    type StorageAdapter,
+  GameData,
+  clean,
+  extractAllTags,
+  filePathToSlug,
+  findContentImage,
+  normalizeWeight,
+  parseTitle,
+  plain,
+  runGenerator,
+  runWithCli,
+  type SharedData,
+  type StorageAdapter,
 } from '.';
 import { MECHANICS, PROPERTY } from './trinketPatterns';
 
@@ -123,7 +124,7 @@ function parseTrinketProperties(
     if (trimmed.startsWith('**Weight**:')) {
       const weightMatch = trimmed.match(PROPERTY.weight);
       if (weightMatch) {
-        result.weight = toNativeMeasure(clean(weightMatch[1]));
+        Object.assign(result, normalizeWeight(clean(weightMatch[1])));
       }
     }
   }
@@ -281,4 +282,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export { main, parseTrinketFile };
-

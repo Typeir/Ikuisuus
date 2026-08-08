@@ -13,66 +13,66 @@
 export { runWithCli } from './cliRunner';
 export type { CliOptions } from './cliRunner';
 export {
-    ensureDirectory,
-    getMatchingFiles,
-    safeReadFile,
-    safeWriteFile
+  ensureDirectory,
+  getMatchingFiles,
+  safeReadFile,
+  safeWriteFile,
 } from './fileUtils';
 export { GameData, ItemData } from './gameData';
 export {
-    getContentDirectory,
-    getMetadataBackend,
-    getMetadataOutputPath,
-    getMetaSubdir,
-    runGenerator
+  getContentDirectory,
+  getMetadataBackend,
+  getMetadataOutputPath,
+  getMetaSubdir,
+  runGenerator,
 } from './generatorUtils';
 export type { GeneratorConfig, StorageAdapter } from './generatorUtils';
 export {
-    calculateReadingTime,
-    findContentImage,
-    parseCharges,
-    parseDamageTypesDealt,
-    parseDescription,
-    parseFirstProseParagraph,
-    parseKeyBullets,
-    parseNumericValue,
-    parseProperties,
-    parseRange,
-    parseSavingThrowTypes,
-    parseTitle,
-    parseWeight,
-    splitList,
-    splitListWithGrouping
+  calculateReadingTime,
+  findContentImage,
+  normalizeWeight,
+  parseCharges,
+  parseDamageTypesDealt,
+  parseDescription,
+  parseFirstProseParagraph,
+  parseKeyBullets,
+  parseNumericValue,
+  parseProperties,
+  parseRange,
+  parseSavingThrowTypes,
+  parseTitle,
+  parseWeight,
+  splitList,
+  splitListWithGrouping,
 } from './parsingUtils';
 export { endTimer, startTimer } from './performanceUtils';
 export { loadSharedData } from './sharedData';
 export type { SharedData } from './sharedData';
 export {
-    extractAbilitySaveTags,
-    extractAllTags,
-    extractConditionTags,
-    extractContentTypeTags,
-    extractDamageTags,
-    extractItemMechanicTags,
-    extractLoreTags,
-    extractMonsterMechanicTags,
-    extractMovementTags,
-    extractOrganizationalTags
+  extractAbilitySaveTags,
+  extractAllTags,
+  extractConditionTags,
+  extractContentTypeTags,
+  extractDamageTags,
+  extractItemMechanicTags,
+  extractLoreTags,
+  extractMonsterMechanicTags,
+  extractMovementTags,
+  extractOrganizationalTags,
 } from './taggingUtils';
 export type { TagExtractionOptions } from './taggingUtils';
 export {
-    clean,
-    filePathToSlug,
-    plain,
-    readLines,
-    stripMarkdown,
-    toKebabCase
+  clean,
+  filePathToSlug,
+  plain,
+  readLines,
+  stripMarkdown,
+  toKebabCase,
 } from './textUtils';
 export type { ContentType, GeneratorModule } from './types';
 export {
-    getRarityFromCR,
-    validateMetadata,
-    validateTag
+  getRarityFromCR,
+  validateMetadata,
+  validateTag,
 } from './validationUtils';
 export type { ValidationResult } from './validationUtils';
-

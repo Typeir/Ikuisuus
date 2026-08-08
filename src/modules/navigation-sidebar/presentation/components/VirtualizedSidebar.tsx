@@ -22,19 +22,30 @@ import { SidebarItem } from './SidebarItem';
  * Number of items in a folder that triggers virtualization.
  * Below this threshold the normal recursive `Sidebar` is used.
  *
- * @constant
- * @type {number}
- */
-export const VIRTUALIZE_THRESHOLD = 100;
-
-/**
- * Pixel height of a single row in the virtualized list.
- * Must match `BASE_HEIGHT` in `sidebar.tsx` (20 px).
+ * At 50 the mid-sized flat folders — monsters (73) and heirlooms (71) — stop
+ * mounting every row.
  *
  * @constant
  * @type {number}
  */
-const ITEM_ROW_HEIGHT = 20;
+export const VIRTUALIZE_THRESHOLD = 50;
+
+/**
+ * Pixel pitch of a single row in the virtualized list.
+ *
+ * Measured from the non-virtualized list so both paths lay rows out identically:
+ * a leaf `li` is 20 px tall and `space-y-1` adds a 4 px gap between siblings.
+ * Virtualized rows are absolutely positioned and never receive that margin, so
+ * the gap has to live in the row pitch. The previous 20 px was the content height
+ * with the gap dropped, which butted every row against the next.
+ *
+ * Unrelated to `BASE_HEIGHT` (52), which sizes the accordion's `--expanded-height`
+ * rather than a rendered row — an earlier comment here conflated the two.
+ *
+ * @constant
+ * @type {number}
+ */
+const ITEM_ROW_HEIGHT = 24;
 
 /**
  * Maximum pixel height of the virtualized window before scrolling.

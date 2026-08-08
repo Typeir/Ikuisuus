@@ -266,7 +266,8 @@ function parseWeaponTitleLine(
       properties.push(trimmed.toLowerCase());
     }
 
-    if (properties.length > 0) info.properties = properties.map((v) => plain(v));
+    if (properties.length > 0)
+      info.properties = properties.map((v) => plain(v));
     if (mastery.length > 0) info.mastery = mastery;
   }
 
@@ -710,7 +711,7 @@ async function parseHeirloomFile(
     versatileDamage: weaponDamage?.versatileDamage,
     hitModifier,
     range,
-    weight,
+    ...(weight ?? {}),
     damageTypesDealt,
     savingThrowTypes,
     charges,

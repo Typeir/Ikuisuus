@@ -97,6 +97,8 @@ export interface UnitProps {
   unit: UnitName;
   denominator?: string;
   flags?: string;
+  /** When true, renders a `<span>` instead of an `<a>` to avoid nested anchors in tables. */
+  noLink?: boolean;
 }
 
 /**
@@ -117,6 +119,7 @@ export const Unit: React.FC<UnitProps> = ({
   unit,
   denominator,
   flags,
+  noLink = false,
 }) => {
   const { unitSystem } = useUnitSystemState();
   const locale = useLocale();
@@ -151,15 +154,26 @@ export const Unit: React.FC<UnitProps> = ({
       showArrow={false}
       inline
     >
-      <a
-        className={styles.unit}
-        href={`/${locale}/${MEASURES_PATH}`}
-        aria-label={t('ariaLabel', { renderings: renderings.join(', ') })}
-        data-unit={unit}
-        data-unit-system={system}
-      >
-        {label}
-      </a>
+      {noLink ? (
+        <span
+          className={styles.unit}
+          aria-label={t('ariaLabel', { renderings: renderings.join(', ') })}
+          data-unit={unit}
+          data-unit-system={system}
+        >
+          {label}
+        </span>
+      ) : (
+        <a
+          className={styles.unit}
+          href={`/${locale}/${MEASURES_PATH}`}
+          aria-label={t('ariaLabel', { renderings: renderings.join(', ') })}
+          data-unit={unit}
+          data-unit-system={system}
+        >
+          {label}
+        </a>
+      )}
     </Tooltip>
   );
 };

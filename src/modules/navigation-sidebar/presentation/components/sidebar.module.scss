@@ -8,9 +8,25 @@
   background-color: var(--color-transparent);
   * {
     &::marker {
-      color: var(--color-accent);
-      content: '▹ ';
+      content: '';
     }
+  }
+}
+
+/* `::marker` takes only colour, content and font properties, so the glyph sat on
+   the text baseline with no way to lift it. Drawing it as a `::before` inside a
+   flex row centres it against the label instead. */
+.accordion li:not(:has(.label)) {
+  display: flex;
+  align-items: center;
+  list-style: none;
+
+  &::before {
+    content: '▹';
+    color: var(--color-accent);
+    flex: 0 0 auto;
+    margin-right: 0.35rem;
+    line-height: 1;
   }
 }
 
@@ -106,6 +122,15 @@
 
 .link-item {
   display: inline-block;
+}
+
+/* A folder that owns a `main` page wraps its label in this link. Left as
+   `inline-block` the wrapper shrank to the text, which pulled the arrow in from
+   the right edge and cut the open-state underline short — so folders with an
+   index page looked unlike folders without one. Only leaf links want to hug
+   their text. */
+.link-item:has(.label) {
+  display: block;
 }
 
 /* Only leaf links shift on hover — folder links stay put */

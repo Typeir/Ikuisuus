@@ -32,6 +32,7 @@ export const PROPERTIES = {
     /##\s+(Item\s+|Weapon\s+|Armor\s+)?Properties\s*\n([\s\S]*?)(?=\n##|\n---|\n$)/i,
   bulletItem: /^[-*]\s+\*\*(.+?)(?::)?\*\*\s*:?\s*(.+?)\s*$/gm,
   weight: /([\d.]+)\s*lbs?\.?/i,
+  weightPer: /\bper\s+(\d+)\s*$/,
   keyBullets: /^-\s*\*\*([^*]+)\*\*\s*:\s*(.+?)\s*$/gim,
 } as const;
 

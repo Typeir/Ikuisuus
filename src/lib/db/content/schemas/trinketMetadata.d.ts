@@ -30,7 +30,8 @@
  * @property {string} [damageType] - Damage type (e.g. "piercing", "bludgeoning")
  * @property {string[]} [properties] - Item properties (e.g. ["thrown", "special"])
  * @property {string} [range] - Weapon or thrown range (e.g. "30/60")
- * @property {string} [weight] - Item weight (e.g. "1 lb.")
+ * @property {string} [weight] - Item weight in its native unit (e.g. "1 burden per 5")
+ * @property {number} [weightPer] - Stack size the weight is stated for, so a single unit weighs `weight / weightPer`
  * @property {Object} [savingThrow] - Saving throw info matching `TrinketSavingThrowEmbed`
  * @property {number} [savingThrow.dc] - Saving throw DC
  * @property {string} [savingThrow.ability] - Saving throw ability (e.g. "dexterity")
@@ -50,6 +51,7 @@ export interface TrinketMetadata {
   properties?: string[];
   range?: string;
   weight?: string;
+  weightPer?: number;
   savingThrow?: {
     dc?: number;
     ability?: string;

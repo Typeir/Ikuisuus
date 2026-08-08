@@ -9,6 +9,7 @@
  */
 
 import {
+    normalizeWeight,
     parseCharges,
     parseDamageTypesDealt,
     parseKeyBullets,
@@ -125,15 +126,34 @@ describe('parseWeight', () => {
    * written in pounds came back in pounds.
    */
   it('should read the native expression the corpus actually uses', () => {
-    expect(parseWeight({ Weight: '[= 2 burden =]' })).toBe('2 burden');
+    expect(parseWeight({ Weight: '[= 2 burden =]' })).toEqual({
+      weight: '2 burden',
+    });
   });
 
   it('should convert an imperial weight into burden', () => {
-    expect(parseWeight({ Weight: '3 lbs' })).toBe('3/2 burden');
+    expect(parseWeight({ Weight: '3 lbs' })).toEqual({ weight: '3/2 burden' });
   });
 
   it('should convert a singular pound into burden', () => {
-    expect(parseWeight({ Weight: '1 lb' })).toBe('1/2 burden');
+    expect(parseWeight({ Weight: '1 lb' })).toEqual({ weight: '1/2 burden' });
+  });
+
+  /**
+   * Stackable gear states its weight for the stack, so the divisor has to
+   * survive parsing or a single throwable would carry the weight of five.
+   */
+  it('should carry the per-N divisor for stackable weights', () => {
+    expect(parseWeight({ Weight: '[= 1 burden =] per 5' })).toEqual({
+      weight: '1 burden per 5',
+      weightPer: 5,
+    });
+  });
+
+  it('should omit weightPer when the weight is not stackable', () => {
+    expect(parseWeight({ Weight: '[= 2 burden =]' })).not.toHaveProperty(
+      'weightPer',
+    );
   });
 
   it('should return undefined for missing Weight', () => {
@@ -142,6 +162,35 @@ describe('parseWeight', () => {
 
   it('should return undefined for undefined properties', () => {
     expect(parseWeight(undefined)).toBeUndefined();
+  });
+});
+
+describe('normalizeWeight', () => {
+  /**
+   * The trinket generator reaches for this directly rather than through
+   * `parseWeight`, because it reads the weight off a bullet line instead of a
+   * properties table.
+   */
+  it('should unwrap an authoring expression', () => {
+    expect(normalizeWeight('[= 2 burden =]')).toEqual({ weight: '2 burden' });
+  });
+
+  it('should convert an imperial weight into burden', () => {
+    expect(normalizeWeight('3 lbs')).toEqual({ weight: '3/2 burden' });
+  });
+
+  it('should extract the per-N divisor', () => {
+    expect(normalizeWeight('[= 1 burden =] per 5')).toEqual({
+      weight: '1 burden per 5',
+      weightPer: 5,
+    });
+  });
+
+  /** `per` only counts as a divisor at the end of the expression. */
+  it('should ignore a per that is not the trailing divisor', () => {
+    expect(normalizeWeight('[= 1 burden =] per 5 crates')).toEqual({
+      weight: '1 burden per 5 crates',
+    });
   });
 });
 

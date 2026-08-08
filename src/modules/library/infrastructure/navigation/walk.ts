@@ -8,5 +8,9 @@
 
 export type { WalkNode } from './types';
 export { walk, walkTree } from './walkFull';
-export { SHALLOW_WALK_DEPTH, shallowWalk } from './walkShallow';
+export {
+    SHALLOW_WALK_DEPTH,
+    STUB_CHILD_THRESHOLD,
+    shallowWalk,
+} from './walkShallow';
 

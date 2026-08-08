@@ -41,6 +41,7 @@ npm test
 | RenderLifecycle  | Phase bus replaces callbacks. PreUpdate → Update → PostUpdate → PreRender → render → PostRender. | [World Sim](.github/docs/world-sim-module.md)           |
 | Foundry Export   | MonsterMetadata → d20 NPC JSON, images, tokens, LevelDB packs.                                   | [Foundry](.github/docs/foundry-module.md)               |
 | tools-menu DDD   | Moved to `src/modules/tools-menu/`. Domain types, registry, hook, tests.                         | [tools-menu](src/modules/tools-menu/README.md)          |
+| Sidebar Scaling  | Wide folders stub at 50. 497 MB → 328 MB. Slots remount — never hold state in one.                | [Sidebar](.github/docs/navigation-sidebar-scaling.md)   |
 
 ### 2025
 
@@ -136,6 +137,7 @@ Add module: Define in `src/lib/debug/ik.ts`. `registerIkModule('key', obj)` on m
 - [Theme](.github/docs/theme-system.md)
 - [Content](.github/docs/content-system.md)
 - [Encounter](.github/docs/encounter-module.md)
+- [Sidebar Scaling](.github/docs/navigation-sidebar-scaling.md)
 - [World Sim](.github/docs/world-sim-module.md)
 - [Foundry](.github/docs/foundry-module.md)
 - [Copilot Workflow](.github/docs/copilot-workflow-system.md)

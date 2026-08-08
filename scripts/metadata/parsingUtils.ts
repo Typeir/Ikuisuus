@@ -9,10 +9,7 @@
  * @since 3.0.0
  */
 
-import {
-  toNativeMeasure,
-  toPlainMeasure,
-} from '@/lib/units/nativeMeasure';
+import { toNativeMeasure, toPlainMeasure } from '@/lib/units/nativeMeasure';
 import { stripDiceWrappers } from './diceExpressionUtils';
 import { GameData } from './gameData';
 import { CHARGES, HEADING, LIST, PROPERTIES } from './parsingPatterns';
@@ -297,23 +294,51 @@ export function parseProperties(
 }
 
 /**
+ * Normalized weight result.
+ *
+ * @interface NormalizedWeight
+ * @property {string} weight - Prose weight string, e.g. "1 burden per 5"
+ * @property {number} [weightPer] - Divisor for stackable items, e.g. 5
+ */
+export interface NormalizedWeight {
+  weight: string;
+  weightPer?: number;
+}
+
+/**
+ * Normalizes a raw weight string into its native form and extracts
+ * the optional "per N" divisor for stackable items.
+ *
+ * @param {string} raw - Raw weight text from source, e.g. "[= 1 burden =] per 5"
+ * @returns {NormalizedWeight} Normalized weight with optional divisor
+ */
+export function normalizeWeight(raw: string): NormalizedWeight {
+  const weight = toNativeMeasure(raw).trim();
+  const perMatch = weight.match(PROPERTIES.weightPer);
+  if (perMatch) {
+    return { weight, weightPer: parseInt(perMatch[1], 10) };
+  }
+  return { weight };
+}
+
+/**
  * Parses weight from properties object.
  *
  * @param {Record<string, string> | undefined} properties - Parsed properties object
- * @returns {string | undefined} Weight value
+ * @returns {NormalizedWeight | undefined} Weight value with optional divisor
  */
 export function parseWeight(
   properties: Record<string, string> | undefined,
-): string | undefined {
+): NormalizedWeight | undefined {
   if (!properties || !properties.Weight) return undefined;
 
   /* Every heirloom writes `[= 2 burden =]`, which the imperial pattern here
      never matched — so the field came back empty for the entire set while the
      one item written in pounds came back in pounds. Normalising handles both
      and answers in the native unit either way. */
-  const native = toNativeMeasure(properties.Weight).trim();
+  const normalized = normalizeWeight(properties.Weight);
 
-  return native || undefined;
+  return normalized.weight ? normalized : undefined;
 }
 
 /**

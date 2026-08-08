@@ -20,8 +20,8 @@ describe('navigation-sidebar constants', () => {
     expect(SIDEBAR_CLOSE_ANIMATION_MS).toBe(500);
   });
 
-  it('should export VIRTUALIZATION_THRESHOLD as 100', () => {
-    expect(VIRTUALIZATION_THRESHOLD).toBe(100);
+  it('should export VIRTUALIZATION_THRESHOLD as 50', () => {
+    expect(VIRTUALIZATION_THRESHOLD).toBe(50);
   });
 
   it('should export SHALLOW_WALK_DEPTH as 2', () => {

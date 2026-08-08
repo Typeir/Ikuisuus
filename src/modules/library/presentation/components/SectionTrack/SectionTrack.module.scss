@@ -14,13 +14,23 @@
 
   transition: opacity 0.3s ease;
 
+  /* The track reserves a 5.5rem × 80vh column, but its bars occupy a few thin
+     slivers of it. Hit-testing the whole column stole clicks from whatever sat
+     behind. A mask does not opt an area out of hit-testing either, so even the
+     faded ends took them. Only the bars accept pointer events; `:hover` still
+     reaches this element from a hovered bar, so the group expand below survives. */
+  pointer-events: none;
+
   &[data-visible='false'] {
     opacity: 0;
-    pointer-events: none;
   }
 
   &[data-menu-open='true'] {
     opacity: 0;
+  }
+
+  &[data-visible='false'] .bar,
+  &[data-menu-open='true'] .bar {
     pointer-events: none;
   }
 
@@ -71,6 +81,20 @@
   border-radius: 2px;
   background-color: var(--color-text);
   cursor: pointer;
+  pointer-events: auto;
+
+  /* A resting bar is 0.35rem wide and 2.5–5 px tall — too small to aim at once
+     the column stops accepting the pointer. The hit area spans the full track
+     width and a few pixels either side, so approaching a bar still expands the
+     set while the gaps between bars stay click-through. */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    left: 0;
+    width: 5.5rem;
+  }
   transition:
     top 0.3s ease,
     width 0.25s ease,
@@ -82,6 +106,11 @@
     left: auto;
     right: 0;
     transform-origin: right center;
+
+    &::before {
+      left: auto;
+      right: 0;
+    }
   }
 
   &:hover {

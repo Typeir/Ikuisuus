@@ -50,7 +50,8 @@ export interface HeirloomCharges {
  * @property {string} [versatileDamage] - Versatile damage dice expression (e.g. "1d12"). Matches `HeirloomEntity.versatileDamage`.
  * @property {number} [hitModifier] - Magic weapon attack bonus (e.g. +1, +3)
  * @property {string} [range] - Weapon or thrown range (e.g. "30/90")
- * @property {string} [weight] - Item weight (e.g. "3 lbs")
+ * @property {string} [weight] - Item weight in its native unit (e.g. "3 burden")
+ * @property {number} [weightPer] - Stack size the weight is stated for, so a single unit weighs `weight / weightPer`
  * @property {string[]} [damageTypesDealt] - Damage types the item can deal
  * @property {string[]} [savingThrowTypes] - Saving throw types the item requires
  * @property {HeirloomCharges} [charges] - Charge economy info (initial count, recharge formula, depletion flag)
@@ -76,6 +77,7 @@ export interface HeirloomMetadata {
   hitModifier?: number;
   range?: string;
   weight?: string;
+  weightPer?: number;
   damageTypesDealt?: string[];
   savingThrowTypes?: string[];
   charges?: HeirloomCharges;

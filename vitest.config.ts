@@ -45,10 +45,28 @@ const maxOldSpaceMb = Number.isNaN(parsedMaxOldSpaceMb)
   ? DEFAULT_MAX_OLD_SPACE_MB
   : Math.max(1024, parsedMaxOldSpaceMb);
 
+/**
+ * Mirrors `scripts/build/glslRawLoader.cjs` so a `.glsl` import resolves to
+ * shader source under test exactly as it does under Turbopack.
+ *
+ * The former `assetsInclude: ['**\/*.glsl']` took Vite's asset path, which
+ * resolves such an import to a URL. Renderer suites therefore had to `vi.mock`
+ * every shader module, and the one thing a real import could have proven — that
+ * the bundler hands back GLSL rather than a path or `undefined` — went untested
+ * through the whole Next 16 migration.
+ */
+const glslSourcePlugin = {
+  name: 'glsl-source',
+  enforce: 'pre' as const,
+  transform(code: string, id: string) {
+    if (!id.endsWith('.glsl')) return null;
+    return { code: `export default ${JSON.stringify(code)};`, map: null };
+  },
+};
+
 /** Shared test settings inherited by all projects via `extends: true` */
 export default defineConfig({
-  plugins: [react()],
-  assetsInclude: ['**/*.glsl'],
+  plugins: [react(), glslSourcePlugin],
   clearScreen: false,
   logLevel: 'warn',
   css: {

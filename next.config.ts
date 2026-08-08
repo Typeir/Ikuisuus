@@ -124,7 +124,10 @@ const nextConfig: NextConfig = {
         loaders: ["@svgr/webpack"],
         as: "*.js",
       },
-      "*.glsl": { type: "raw" },
+      "*.glsl": {
+        loaders: ["./scripts/build/glslRawLoader.cjs"],
+        as: "*.js",
+      },
     },
   },
 };

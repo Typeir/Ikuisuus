@@ -33,6 +33,8 @@ import Unit from '../Unit';
 export interface MeasureProps {
   text?: string | null;
   fallback?: string;
+  /** When true, renders measures as `<span>` instead of `<a>` to avoid nested anchors. */
+  noLink?: boolean;
 }
 
 /**
@@ -41,7 +43,7 @@ export interface MeasureProps {
  * @param {MeasureProps} props - Component props
  * @returns {React.ReactElement | null} The rendered measurement
  */
-export const Measure: React.FC<MeasureProps> = ({ text, fallback = '—' }) => {
+export const Measure: React.FC<MeasureProps> = ({ text, fallback = '—', noLink = false }) => {
   if (!text) return <>{fallback}</>;
 
   const segments = splitMeasures(text);
@@ -60,6 +62,7 @@ export const Measure: React.FC<MeasureProps> = ({ text, fallback = '—' }) => {
                 : undefined
             }
             flags={segment.flags}
+            noLink={noLink}
           />
         ) : (
           <React.Fragment key={`${segment.text}-${index}`}>
