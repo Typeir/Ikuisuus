@@ -5,7 +5,6 @@
 }
 
 .accordion * {
-  background-color: var(--color-transparent);
   * {
     &::marker {
       content: '';
@@ -15,8 +14,12 @@
 
 /* `::marker` takes only colour, content and font properties, so the glyph sat on
    the text baseline with no way to lift it. Drawing it as a `::before` inside a
-   flex row centres it against the label instead. */
-.accordion li:not(:has(.label)) {
+   flex row centres it against the label instead.
+
+   Scoped to rows holding a link so it reaches leaf pages only. Loading skeletons
+   are `<li>` without one, and without this they picked up a marker they should
+   never have and became flex items, which re-resolved their percentage widths. */
+.accordion li:not(:has(.label)):has(a) {
   display: flex;
   align-items: center;
   list-style: none;

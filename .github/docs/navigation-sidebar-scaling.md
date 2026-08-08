@@ -150,16 +150,34 @@ flight data in the same file. Docusaurus keeps sidebar data in the JS bundle,
 Starlight is static Astro, MediaWiki is server-rendered HTML. This is why RSC
 (147 MB) and HTML (182 MB) are the same order of magnitude.
 
-### Directly applicable takeaway
+### Considered and measured: per-locale tree memo — NOT WORTH IT
 
 Starlight caches the **finished sidebar**; we cache **directory listings**.
 `repositoryShallowWalk(locale)` is deterministic per locale — identical output for
 all 910 pages — yet it re-walks on every one, including `countDescendants`
-recursing all 393 spells just to compute a stub's `childCount`.
+recursing all 393 spells just to compute a stub's `childCount`. Memoising the
+finished tree would turn 910 walks into 1.
 
-> **Action.** Memoise the finished tree per locale: 910 walks → 1. Needs a TTL
-> matching the LRU so runtime revalidation still picks up content changes.
-> Measure against a clean build before quoting a figure.
+Measured before building it:
+
+```
+tree                     33 nodes, 3.7 KB of JSON
+deterministic per locale true
+cold walk (first)        36.5 ms
+warm walks (909)         1151 ms  →  1.27 ms each
+
+total saving             1.15 s per build worker
+```
+
+**Rejected.** The LRU already does what Starlight's cache does, one layer down.
+Their 133 s saving across ~4,000 pages is **33 ms per page**; ours is **1.27 ms
+per page** — roughly 26× cheaper — because `listDirectory` is memoised and
+stubbing left only 33 nodes to walk. A memo would recover ~1.1 s of a build
+measured in minutes, at the cost of a second cache needing a TTL aligned with the
+LRU so runtime revalidation still sees content changes.
+
+Do not revisit without a reason the tree has grown: the figure to re-check is
+**ms per warm walk**, not the walk count.
 
 ## Our actual new ground
 

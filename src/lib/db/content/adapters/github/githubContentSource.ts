@@ -85,7 +85,11 @@ export const githubContentSource: ContentSourceAdapter = {
     );
     const mdxFile = entries
       .filter((entry) => !entry.isDirectory && entry.name.endsWith('.mdx'))
-      .find((entry) => entry.name.startsWith(slugLeaf));
+      .find(
+        (entry) =>
+          entry.name === `${slugLeaf}.mdx` ||
+          entry.name.startsWith(`${slugLeaf}.`),
+      );
 
     if (!mdxFile) {
       return null;

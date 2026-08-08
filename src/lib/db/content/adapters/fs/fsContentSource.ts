@@ -51,8 +51,9 @@ export const fsContentSource: ContentSourceAdapter = {
       const mdxFile = entries.find(
         (entry) =>
           entry.isFile() &&
-          entry.name.startsWith(slugLeaf) &&
-          entry.name.endsWith('.mdx'),
+          entry.name.endsWith('.mdx') &&
+          (entry.name === `${slugLeaf}.mdx` ||
+            entry.name.startsWith(`${slugLeaf}.`)),
       );
 
       if (!mdxFile) {
