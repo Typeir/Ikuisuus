@@ -1,22 +1,7 @@
 /**
- * @fileoverview Real-message next-intl mock
- * @description The global setup (`tests/setup/vitest.setup.ts`) mocks
- * `useTranslations` to echo the key back, which is fine for tests that only
- * assert wiring. Tests that assert user-visible copy — button labels, aria
- * names, interpolated values like `Light ≤ 66 lb` — need the real catalogue
- * instead.
- *
- * `createRealMessageIntlMock` builds a `next-intl` module replacement backed
- * by the committed English message files, with `{param}` interpolation. Opt in
- * per test file:
- *
- * ```ts
- * vi.mock('next-intl', async (importOriginal) => {
- *   const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
- *   return createRealMessageIntlMock(await importOriginal());
- * });
- * ```
- *
+ * @fileoverview next-intl mock backed by the real English message files with
+ * `{param}` interpolation. Provides `createRealMessageIntlMock` for tests that
+ * assert user-visible copy.
  * @module tests/setup/intlMock
  * @version 1.0.0
  * @author Typeir
@@ -53,8 +38,7 @@ const resolvePath = (root: unknown, path?: string): unknown => {
 
 /**
  * Substitutes `{param}` placeholders using the supplied values. Placeholders
- * with no matching value are left intact so a missing param is visible in the
- * assertion rather than silently blank.
+ * with no matching value are left intact.
  *
  * @function interpolate
  * @param {string} template - Message template
@@ -71,8 +55,7 @@ const interpolate = (
 
 /**
  * Builds a `next-intl` module replacement whose `useTranslations` resolves
- * against the real English messages. Unknown keys fall back to the key itself,
- * matching the global mock's behaviour.
+ * against the real English messages. Unknown keys fall back to the key itself.
  *
  * @function createRealMessageIntlMock
  * @param {T} actual - The unmocked `next-intl` module (spread through so

@@ -1,8 +1,6 @@
 /**
- * @fileoverview Summary Bar — Collapsed identity summary button
- * @description Shows bloodline + vocation summary in a toggle button.
- * Extracted from {@link VocationSelector} to satisfy file-length gate
- * (max 250 code lines).
+ * @fileoverview Summary Bar — Collapsed identity summary button.
+ * Renders bloodline + vocation summary in a toggle button.
  *
  * @module modules/character-builder/presentation/builder/summaryBar
  * @version 1.0.0

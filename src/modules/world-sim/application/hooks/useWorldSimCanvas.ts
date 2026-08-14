@@ -1,8 +1,6 @@
 /**
- * @fileoverview useWorldSimCanvas Hook — Three.js Lifecycle Bridge to React
- * @description Custom hook that mounts the Three.js canvas into a React ref,
- * initializes the SceneManager, CameraController, ProjectionBridge, EventBus,
- * and WorldSimMediator, and handles cleanup on unmount.
+ * @fileoverview Mounts the Three.js canvas into a React ref, initializes all
+ * subsystems, and cleans them up on unmount.
  *
  * @module worldSim/hooks/useWorldSimCanvas
  * @version 1.0.0
@@ -22,7 +20,7 @@ import { useWorldSimDispatch } from '@/modules/world-sim/application/state/World
 import { WorldSimMediator } from '@/modules/world-sim/application/mediator/WorldSimMediator';
 
 /**
- * Return type for the useWorldSimCanvas hook.
+ * Return type for useWorldSimCanvas.
  *
  * @interface UseWorldSimCanvasReturn
  * @property {React.RefObject<HTMLDivElement | null>} containerRef - Ref to attach to the container div
@@ -47,9 +45,8 @@ export interface UseWorldSimCanvasReturn {
 }
 
 /**
- * Hook that bridges the Three.js canvas lifecycle with React.
- * Mounts the renderer into the provided container ref, creates all subsystems,
- * and starts the animation loop. Cleans up everything on unmount.
+ * Mounts the renderer into the container ref, creates all subsystems, starts
+ * the animation loop, and disposes everything on unmount.
  *
  * @returns {UseWorldSimCanvasReturn} Container ref, mediator ref, and projection subscription
  *

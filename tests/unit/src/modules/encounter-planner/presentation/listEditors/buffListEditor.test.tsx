@@ -2,7 +2,6 @@
  * @fileoverview Unit tests for Buff List Editor component
  * @module tests/unit/src/lib/components/encounterPlanner/listEditors/buffListEditor.test
  * @description Validates BuffListEditor export and component signature.
- * Tests list editor component for managing buffs in encounter planner.
  * 
  * @version 1.0.0
  * @author Typeir

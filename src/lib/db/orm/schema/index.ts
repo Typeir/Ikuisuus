@@ -1,7 +1,7 @@
 /**
- * @fileoverview Barrel for the in-house ORM schema layer.
- * @description Entity modules import their decorators from here; `ormConfig`
- * imports `toSchemas`.
+ * @fileoverview Barrel for the ORM schema layer.
+ * @description Re-exports the schema decorators, registry helpers, and type
+ * options.
  *
  * @module lib/db/orm/schema
  * @version 1.0.0

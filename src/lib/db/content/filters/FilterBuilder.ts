@@ -1,13 +1,8 @@
 /**
- * @fileoverview Filter Builder - JSON-serializable filter DSL
- * @description Provides a serializable filter expression language and a
- * builder that converts expressions into a MikroORM-compatible query object.
- * Used by repository adapters and API routes to push frontend filter state
- * down to the database (or in-memory equivalent for the fs adapter).
- *
- * Supports operators `eq`, `neq`, `in`, `nin`. Multiple expressions targeting
- * the same field are merged into a single operator object so callers can
- * compose mixed predicates (e.g. `$ne` plus `$in`) without losing either.
+ * @fileoverview JSON-serializable filter DSL producing MikroORM-compatible query objects.
+ * @description Converts filter expressions into a query object usable by
+ * repository adapters. Supports operators `eq`, `neq`, `in`, `nin`; multiple
+ * expressions on the same field are merged into a single operator object.
  *
  * @module lib/db/content/filters/FilterBuilder
  * @version 1.0.0
@@ -107,7 +102,7 @@ const toOperatorClause = (expr: FilterExpression): unknown => {
  *
  * Multiple expressions on the same field are merged into a single operator
  * object. A bare-value `eq` followed by another operator on the same field
- * is promoted to `{ $eq: value, $op: value }` so neither clause is lost.
+ * is promoted to `{ $eq: value, $op: value }`.
  *
  * @param {FilterExpression[]} filters - Expressions to compose.
  * @returns {Record<string, unknown>} Plain object suitable for `em.find`.
@@ -141,8 +136,6 @@ export const buildFilterQuery = (
 
 /**
  * Applies a filter expression list against an in-memory record set.
- * Used by filesystem-backed repositories to keep behavioral parity with the
- * pg adapter when `METADATA_BACKEND=fs`.
  *
  * Records whose fields are missing are excluded from `eq` / `in` matches and
  * included by `neq` / `nin` matches (mirroring SQL `IS NULL` semantics with

@@ -1,5 +1,4 @@
 /**
-/**
  * @file clearFloats.tsx
  * @description A React component that clears floated elements on the specified side.
  *
@@ -35,8 +34,6 @@ export interface ClearFloatsProps {
  * @returns {JSX.Element} The ClearFloats component.
  * @example
  * <ClearFloats side="left" height={20} className="my-clear" />
- * This will create a div that clears left floats with a height of 20px and an additional class "my-clear".
- *
  */
 export const ClearFloats: React.FC<ClearFloatsProps> = ({
   side = 'both',

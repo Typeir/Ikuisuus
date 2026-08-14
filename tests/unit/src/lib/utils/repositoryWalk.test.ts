@@ -1,5 +1,5 @@
 /**
- * @fileoverview Unit tests for library navigation repository walk adapters.
+ * @fileoverview Unit tests for repositoryWalk and repositoryShallowWalk.
  * @module tests/unit/src/lib/utils/repositoryWalk
  * @author Typeir
  * @version 1.0.0

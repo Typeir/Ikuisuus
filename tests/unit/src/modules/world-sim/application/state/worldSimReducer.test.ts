@@ -1,7 +1,7 @@
 /**
  * @fileoverview World Sim Reducer Unit Tests
- * @description Tests every action type in the reducer, verifying correct
- * state transitions and immutability. Pure function — no mocking needed.
+ * @description Exercises every action type: verifies state transitions and
+ * immutability.
  *
  * @module tests/unit/worldSim/context/worldSimReducer
  */

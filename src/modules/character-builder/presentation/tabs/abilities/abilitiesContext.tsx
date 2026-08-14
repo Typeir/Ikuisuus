@@ -1,8 +1,7 @@
 /**
  * @fileoverview Abilities Tab Context
- * @description Single source of truth for the Abilities tab. Owns ability CRUD
- * and selected-ability state. Consumes `useSheetEditing()` and `useSheetMutators()`
- * from ActiveSheetContext so consumers never need data/onChange props.
+ * @description Owns ability CRUD and selected-ability state from the active
+ * sheet context.
  *
  * @module modules/character-builder/presentation/tabs/abilities/abilitiesContext
  * @version 1.0.0
@@ -33,7 +32,7 @@ import {
  * @property {(ability: CharacterAbility) => void} addAbility - Insert a new ability
  * @property {(id: string, patch: Partial<CharacterAbility>) => void} updateAbility - Merge patch into an existing ability
  * @property {(id: string) => void} deleteAbility - Remove an ability by id
- * @property {(ability: CharacterAbility) => void} importAbility - Import from metadata (same as add but marks provenance)
+ * @property {(ability: CharacterAbility) => void} importAbility - Import an ability from metadata
  * @property {(id: string | null) => void} setSelected - Set the currently selected ability id
  */
 export interface AbilitiesMutators {
@@ -49,7 +48,7 @@ export interface AbilitiesMutators {
  *
  * @interface AbilitiesContextValue
  * @property {CharacterAbility[]} abilities - All abilities on the character
- * @property {string[]} vocationSources - Active vocation titles, for scoping spell import to the character's spell lists
+ * @property {string[]} vocationSources - Unique, deduplicated titles of vocations that have a slug and title
  * @property {boolean} editing - Whether the sheet is in edit mode
  * @property {string | null} selectedId - Currently selected ability id
  * @property {CharacterAbility | null} selected - The selected ability object, or null

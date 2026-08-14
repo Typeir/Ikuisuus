@@ -1,11 +1,8 @@
 /**
  * @fileoverview Lazy Client MDX Fallback Tests
- * @description Covers the wrapper that keeps the client-side MDX toolchain off
- * the critical path.
- *
- * The point of the wrapper is that the heavy chunk is requested rather than
- * bundled, so the test asserts it loads without server rendering and forwards
- * its props intact.
+ * @description Tests ClientRendererLazy with a mocked next/dynamic loader.
+ * Asserts the loaded renderer receives locale and slug props and loads with
+ * ssr disabled.
  *
  * @module tests/unit/src/app/[locale]/utils/clientRendererLazy
  * @version 1.0.0
@@ -19,7 +16,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-/** Hoisted so the mock factory can record what `next/dynamic` was given. */
+/** Hoisted storage for the options the next/dynamic mock captures. */
 const captured = vi.hoisted(() => ({ options: null as unknown }));
 
 vi.mock('next/dynamic', async () => {
@@ -50,8 +47,7 @@ describe('ClientRendererLazy', () => {
   });
 
   /**
-   * Server-rendering the fallback would defeat it: the toolchain should reach
-   * the browser only when the fallback actually runs.
+   * Asserts next/dynamic is invoked with ssr set to false.
    */
   it('should load the renderer without server rendering', () => {
     render(<ClientRendererLazy locale='en' slug='x' />);

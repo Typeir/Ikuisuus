@@ -1,9 +1,7 @@
 /**
- * @fileoverview Specializations API Route - Specialization metadata JSON endpoint
- * @description Next.js API route that serves specialization metadata via the content
- * adapter layer. Supports locale-aware content via ?locale query parameter and
- * optional ?vocation filter. Returns array of specialization objects with features,
- * spellcasting info, and gameplay tags.
+ * @fileoverview Specializations API route. Serves specialization metadata as JSON.
+ * @description Reads specialization metadata from the content repository. Supports
+ * ?locale query parameter (default 'en') and optional ?vocation filter.
  *
  * @version 1.0.0
  * @author Typeir
@@ -27,10 +25,8 @@ const log = logger.child({ module: 'API:Specializations' });
 
 /**
  * GET /api/specializations
- *
- * Returns array of specialization metadata from the active content repository.
- * Accepts optional locale (defaults to 'en') and vocation query parameters.
- * When vocation is provided, filters to only that vocation's specializations.
+ * Returns array of specialization metadata from the content repository.
+ * Accepts locale (default 'en') and optional vocation query parameters.
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON array of specialization objects

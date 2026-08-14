@@ -1,11 +1,8 @@
 /**
  * @fileoverview Search domain types
  * @module modules/search/domain/types
- * @description Shared, JSON-safe contracts for the search system: the unified
- * index/result record, query, result, facet, and response shapes. Consumed by the
- * build-time index generator, the client search hooks, the result atoms, and the
- * results page. Locale is a required part of a query to prevent implicit en-only
- * assumptions downstream.
+ * @description Shared, JSON-safe contracts for the search system: index/result
+ * record, query, result, facet, and response shapes.
  *
  * @author Typeir
  * @version 1.0.0
@@ -58,7 +55,7 @@ export interface SearchFilter {
 }
 
 /**
- * A search query. `locale` is required to keep the system locale-explicit.
+ * A search query; `locale` is required.
  *
  * @interface SearchQuery
  * @property {string} term - Raw search term

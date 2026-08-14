@@ -1,8 +1,7 @@
 /**
  * @fileoverview Granted Proficiencies Strip
  * @description Read-only digest of the proficiencies a character's active
- * features and feats confer via grant tags. Live-derived from the character's
- * shards (no stored state), so it stays correct as features are added/removed.
+ * features and feats confer via grant tags. Derived from the character's shards.
  *
  * @module modules/character-builder/presentation/stats/grantedProficiencies
  * @version 1.0.0

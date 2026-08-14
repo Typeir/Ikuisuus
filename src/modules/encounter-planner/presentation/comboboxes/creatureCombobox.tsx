@@ -1,8 +1,7 @@
 /**
  * @fileoverview Creature Combobox Component
- * @description Searchable dropdown for importing creatures from monster library.
- * Built on top of GenericCombobox for consistent behavior. Fetches monster data
- * from /api/monsters/index and renders with size/type/CR information.
+ * @description Searchable dropdown for importing creatures from the monster
+ * library. Fetches monster data from /api/monsters/index and renders size/type/CR.
  *
  * @module creatureCombobox
  * @version 1.0.0
@@ -31,7 +30,7 @@ import styles from './combobox.module.scss';
 import { ComboboxItem, GenericCombobox } from './genericCombobox';
 
 /**
- * Monster index entry with metadata fields
+ * Monster index entry with metadata fields.
  * @interface MonsterIndexEntry
  */
 interface MonsterIndexEntry extends ComboboxItem {
@@ -52,8 +51,8 @@ interface CreatureComboboxProps {
 }
 
 /**
- * Creature combobox wrapper around GenericCombobox.
- * Fetches monster index from API and provides creature-specific rendering.
+ * Creature combobox wrapping GenericCombobox. Fetches the monster index from
+ * the API and renders species-specific item content.
  *
  * @component
  * @param {CreatureComboboxProps} props - Component props

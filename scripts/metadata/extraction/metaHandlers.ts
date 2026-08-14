@@ -2,8 +2,7 @@
  * @fileoverview Custom Meta Handler Registry
  * @description Implements extraction handlers for `<Meta customHandler="...">` directives.
  * Each handler enriches a MonsterFeature's `meta` map with structured data
- * extracted from the feature's body text. Handlers parse mechanics that are
- * too irregular for the automatic `enrichFromBody()` pipeline.
+ * extracted from the feature's body text.
  *
  * @module scripts/metadata/extraction/metaHandlers
  * @version 1.0.0
@@ -29,8 +28,7 @@ type MetaHandler = (
 
 /**
  * Parses a blockquote stat table with AC/HP/DT columns.
- * Finds the header row to determine column positions, then reads
- * the first numeric data row.
+ * Finds the header row to determine column positions, then reads the first numeric data row.
  *
  * @param {string} body - Raw body text containing a markdown table
  * @returns {{ ac?: string; hp?: string; dt?: string }} Extracted stats
@@ -170,8 +168,7 @@ function handleAutoHit(
 
 /**
  * Extracts summoning data: creature name, count, range, and tether status.
- * AC/HP are intentionally omitted — the summoned creature's own sheet
- * contains those stats and Foundry resolves them from the linked actor.
+ * AC/HP are not extracted.
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text
@@ -249,8 +246,7 @@ function handleGeometryTeleport(
 }
 
 /**
- * Extracts damage reflection/link mechanics: range, save DC, link
- * duration, and reflection type.
+ * Extracts damage reflection/link mechanics: range, save DC, link duration, and reflection type.
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text
@@ -287,12 +283,11 @@ function handleDamageReflection(
 }
 
 /**
- * Passthrough handler for overly complex mechanics (Tier 3).
+ * Passthrough handler for mechanics not parsed here.
  * Sets `textPipe: 'true'` and forwards any passthrough attributes.
- * Foundry's decorated `@handler(featureId)` parses raw text directly.
  *
  * @param {MonsterFeature} feat - Feature to enrich
- * @param {string} _body - Raw body text (unused — Foundry reads raw text directly)
+ * @param {string} _body - Raw body text (unused)
  * @param {Record<string, string>} attrs - Meta tag attributes
  */
 function handleTextPipe(

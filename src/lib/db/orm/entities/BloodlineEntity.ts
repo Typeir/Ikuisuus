@@ -1,13 +1,9 @@
 /**
  * @fileoverview MikroORM Entity — Bloodline
- * @description Entity for the `bloodlines` table. Core features are stored as
- * explicit typed columns (text arrays for multi-value fields like ability
- * scores and senses) — no JSONB payload storage.
- *
- * Boons are stored in a separate `bloodline_boons` child table via OneToMany.
- *
- * Uses the in-house schema decorators rather than MikroORM's, so the entity
- * name survives class-name minification in production server builds.
+ * @description Maps the `bloodlines` table. Multi-value fields use text-array
+ * columns; boons live in a `bloodline_boons` child table via OneToMany.
+ * Uses in-house schema decorators so the entity name survives class-name
+ * minification.
  *
  * @module lib/db/orm/entities/BloodlineEntity
  * @version 2.0.0

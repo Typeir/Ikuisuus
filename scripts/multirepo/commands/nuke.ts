@@ -1,10 +1,7 @@
 /**
- * @fileoverview `ik nuke` — Hard-delete command for data management.
- * @description Removes spell entries from the PostgreSQL database atomically.
- *
- * Supported shape:
- *   ik nuke spell:<slug>
- *     - Deletes the row from the `spells` table — FK cascade removes `spell_lists`
+ * @fileoverview Hard-deletes a spell row from Postgres by slug.
+ * @description Accepts `ik nuke spell:<slug>`. Deletes the `spells` row; FK
+ * cascade removes matching `spell_lists` rows.
  *
  * @module multirepo/commands/nuke
  * @version 2.0.0
@@ -32,8 +29,7 @@ export const meta: CommandMeta = {
 };
 
 /**
- * Loads environment variables from `.env.local` if present.
- * No-ops silently when the file is absent (CI relies on system env).
+ * Loads environment variables from `.env.local` if present; no-ops when absent.
  *
  * @returns {void}
  */
@@ -58,9 +54,7 @@ function loadEnv(): void {
 }
 
 /**
- * Deletes a spell row (and its cascaded `spell_lists`) from Postgres.
- * The `spell_lists.spell_id` FK is defined with `ON DELETE CASCADE`, so no
- * explicit join-table delete is needed.
+ * Deletes a spell row from Postgres; `spell_lists` rows cascade via FK.
  *
  * @param {string} slug - Spell slug to delete (matched across all locales)
  * @returns {Promise<number>} Total number of `spells` rows deleted

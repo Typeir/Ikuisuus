@@ -2,7 +2,6 @@
  * Translation File Merger
  *
  * @fileoverview Merges namespaced translation files into a single index.json per locale.
- * Consolidates i18n messages for next-intl consumption at runtime.
  *
  * @module mergeMessages
  * @version 1.0.1
@@ -13,8 +12,7 @@
  * @requires path Node.js path utilities
  *
  * @description
- * Iterates through each locale directory (en, es, fi) and merges all .json files
- * (except index.json) into a single namespaced index.json file.
+ * Processes locales en, es, fi; excludes index.json files from merging.
  *
  * @example
  * npx tsx scripts/i18n/mergeMessages.ts

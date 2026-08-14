@@ -1,8 +1,8 @@
 /**
  * Numeric Input Component
  * 
- * @fileoverview Accessible numeric input with validation, clear button, and consistent styling.
- * Supports min/max bounds, step increments, and optional clear/reset functionality.
+ * @fileoverview Controlled numeric input. Clamps to min/max on blur; empties on non-finite
+ * values; optional step buttons and clear button.
  * 
  * @module numericInput
  * @version 1.1.0
@@ -10,24 +10,16 @@
  * @since 1.0.0
  * 
  * @description
- * A controlled numeric input component that provides:
- * - Automatic clamping to min/max bounds on blur
- * - Increment/decrement step buttons (optional)
- * - Clear button to reset value (optional)
- * - Keyboard navigation (ArrowUp/Down for stepping, Escape to clear)
- * - Full ARIA support for screen readers (role="spinbutton")
- * - Size variants (sm, md, lg)
- * - Decimal value support (optional)
+ * Controlled numeric input with on-blur clamping, optional step buttons, clear button,
+ * and role="spinbutton" ARIA. Supports size variants and optional decimals.
  * 
- * Value Handling (CRITICAL):
+ * Value Handling:
  * - null, undefined, NaN, and non-finite values render as empty input ("").
  * - Empty input produces `undefined` in onChange callback.
  * - Valid finite numbers are displayed as-is.
- * - The component NEVER displays literal strings like "null", "undefined", or "NaN".
- * - While being edited, a raw text draft is shown so the field can hold an
- *   intermediate invalid value (empty, 0, out of range) without the controlled
- *   `value` snapping it back. In-bounds values commit live (snappy); an invalid
- *   draft commits nothing until blur, which parses the draft and clamps it.
+ * - The component never renders literal "null", "undefined", or "NaN" strings.
+ * - Edited text is held as a draft; in-bounds values commit live, invalid drafts
+ *   commit on blur after parsing and clamping.
  * 
  * @example
  * // Basic usage
@@ -94,10 +86,10 @@ function isValidDisplayNumber(value: number | null | undefined): value is number
  * @property {string} [className] - CSS class for the container
  * @property {boolean} [showClear=false] - Whether to show clear button
  * @property {boolean} [showButtons=false] - Whether to show flanking increment/decrement buttons
- * @property {boolean} [showChevrons=false] - Whether to show a stacked chevron spinner column (styled replacement for browser-native number arrows)
+ * @property {boolean} [showChevrons=false] - Whether to show a stacked chevron spinner column
  * @property {'sm' | 'md' | 'lg'} [size='md'] - Input width preset
  * @property {boolean} [allowDecimals=false] - Whether to allow decimal values
- * @property {boolean} [selectOnFocus=false] - Select all text on focus, so a default value can be typed over (fixes mobile "can't delete the default" editing)
+ * @property {boolean} [selectOnFocus=false] - Select all text on focus
  */
 export interface NumericInputProps {
   id?: string;
@@ -119,7 +111,7 @@ export interface NumericInputProps {
 }
 
 /**
- * Accessible numeric input with validation and enhanced controls.
+ * Controlled numeric input with min/max validation.
  * 
  * @component
  * @param {NumericInputProps} props - Configuration for numeric input behavior

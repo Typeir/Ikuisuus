@@ -1,8 +1,5 @@
 /**
- * Integration tests for the content file-tree API route (route.test.ts)
- *
- * Mirrors the existing test pattern used by other API route integration
- * tests so the repository's test coverage enforcement recognizes the file.
+ * Integration tests for the content file-tree API route.
  */
 
 import { NextRequest } from 'next/server';

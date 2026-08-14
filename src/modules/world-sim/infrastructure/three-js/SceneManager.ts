@@ -1,9 +1,8 @@
 /**
  * @fileoverview Scene Manager — Three.js Lifecycle Owner
  * @description Creates and manages the Three.js renderer, scene, camera, lights,
- * and animation loop. Delegates frame-phase dispatch to RenderLifecycle so
- * subsystems can subscribe to typed phases (PreUpdate → PostRender) with
- * priority ordering and full pipeline access.
+ * and animation loop. Dispatches frame phases to RenderLifecycle
+ * (PreUpdate → PostRender) with priority ordering.
  *
  * @module worldSim/canvas/SceneManager
  * @version 2.0.0
@@ -42,8 +41,7 @@ import {
 } from '@/modules/world-sim/infrastructure/three-js/RenderLifecycle';
 
 /**
- * Detect whether the current device is likely a mobile/touch device.
- * Combines touch-capability with viewport width for reliability.
+ * Detect whether the current device is a mobile/touch device.
  *
  * @function isMobileDevice
  * @returns {boolean} True if the device appears to be mobile
@@ -56,8 +54,8 @@ function isMobileDevice(): boolean {
 }
 
 /**
- * Compute the initial maximum pixel ratio based on device capability.
- * Mobile devices get DPR 1 to cut fill rate by 4× vs DPR 2.
+ * Compute the initial maximum pixel ratio.
+ * Mobile devices get DPR 1; touch devices get 1.5; others get 2.
  *
  * @function getInitialMaxDPR
  * @returns {number} Maximum pixel ratio for the WebGL renderer
@@ -121,10 +119,8 @@ export class SceneManager {
   private isRunning: boolean = false;
 
   /**
-   * Maximum `deltaTime` clamped per frame in seconds.
-   * Prevents physics and rotation jumps when the tab resumes from being
-   * backgrounded. Writable via `window.ik.ws.deltaTimeCap`.
-   * Clamped to the range [1/120, 1] on write.
+   * @property {number} deltaTimeCap - Max deltaTime clamped per frame in seconds;
+   * defaults to 1/15; clamped to [1/120, 1] on write
    */
   private deltaTimeCap: number = 1 / 15;
 
@@ -132,16 +128,14 @@ export class SceneManager {
   private lastFps: number = 0;
 
   /**
-   * Accumulated simulation time in seconds since the loop started.
-   * Advances at `clampedDelta * simSpeed` each frame.
-   * Passed as `FrameContext.time` to all subscribers.
+   * @property {number} simTime - Accumulated simulation time in seconds since
+   * the loop started; advances at `clampedDelta * simSpeed` each frame
    */
   private simTime: number = 0;
 
   /**
-   * Simulation speed multiplier applied to `deltaTime` to produce
-   * `FrameContext.simDeltaTime` and to advance `simTime`.
-   * Writable via `window.ik.ws.simulationSpeed`. Clamped to [0, 1000].
+   * @property {number} simSpeed - Simulation speed multiplier applied to
+   * `deltaTime`; clamped to [0, 1000]
    */
   private simSpeed: number = 1;
 
@@ -196,8 +190,7 @@ export class SceneManager {
 
   /**
    * Register a callback for the Update phase (before WebGL render).
-   * Convenience wrapper — prefer `lifecycle.on(RenderPhase.*, ...)` for
-   * full phase and priority control.
+   * Wrapper for `lifecycle.on(RenderPhase.Update, ...)`.
    *
    * @param {LifecycleCallback} callback - Function called with FrameContext
    * @returns {Function} Unsubscribe function
@@ -208,8 +201,7 @@ export class SceneManager {
 
   /**
    * Register a callback for the PostRender phase (after WebGL render).
-   * Convenience wrapper — prefer `lifecycle.on(RenderPhase.*, ...)` for
-   * full phase and priority control.
+   * Wrapper for `lifecycle.on(RenderPhase.PostRender, ...)`.
    *
    * @param {LifecycleCallback} callback - Function called with FrameContext
    * @returns {Function} Unsubscribe function
@@ -267,9 +259,7 @@ export class SceneManager {
   }
 
   /**
-   * Adaptively cap the WebGL pixel ratio. Called by the mediator when
-   * the performance controller transitions between quality tiers.
-   * Reduces fill rate on struggling devices without a full resize.
+   * Update the WebGL pixel ratio and resize the renderer and pixelate pass.
    *
    * @param {number} maxDPR - Maximum device pixel ratio to allow
    */
@@ -329,7 +319,7 @@ export class SceneManager {
 
   /**
    * Main animation loop tick. Builds a FrameContext and dispatches
-   * lifecycle phases around the WebGL render call:
+   * phases around the WebGL render call:
    * PreUpdate → Update → PostUpdate → PreRender → render() → PostRender
    *
    * @private
@@ -365,7 +355,7 @@ export class SceneManager {
   }
 
   /**
-   * Set up ambient and directional lighting for the scene.
+   * Set up ambient and point lighting for the scene.
    *
    * @private
    */
@@ -380,7 +370,7 @@ export class SceneManager {
   }
 
   /**
-   * Create a particle starfield as background decoration.
+   * Create a particle starfield background.
    *
    * @private
    */

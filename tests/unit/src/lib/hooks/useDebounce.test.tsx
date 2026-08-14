@@ -1,8 +1,5 @@
 /**
- * @fileoverview useDebounce Hook Unit Tests
- * @description Tests for the useDebounce hook that delays value updates
- * until the input stops changing for a specified duration.
- *
+ * @fileoverview Tests for the useDebounce hook.
  * @module tests/unit/lib/hooks/useDebounce
  * @version 1.0.0
  * @author Typeir

@@ -1,11 +1,6 @@
 /**
- * @fileoverview Unit tests for the PNG conversion utility.
- *
- * The sharp and fetch dependencies are mocked so that no real image
- * processing or network I/O occurs. Tests validate the conditional
- * branching logic: data URIs, PNG pass-through, remote fetch, and
- * failure handling.
- *
+ * @fileoverview Unit tests for convertToPngDataUri. Mocks sharp and fetch.
+ * Covers data URIs, PNG pass-through, remote fetch, and failure handling.
  * @module tests/unit/src/lib/seo/og/pngConverter.test
  */
 

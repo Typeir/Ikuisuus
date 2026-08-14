@@ -1,10 +1,8 @@
 /**
  * @fileoverview Feature Card Component
- * @description Generic toggleable card for feature lists (feats, boons).
- * Renders a row with a toggle button (select/deselect), an open-source button
- * that focuses the shard for the right detail panel, an expand chevron for
- * inline prose, and an optional badge. Focusing the shard is an explicit action
- * via the open-source button — never a side effect of toggling or expanding.
+ * @description Toggleable card for feature lists (feats, boons). Renders a
+ * toggle button (select/deselect), an optional open-source button that focuses
+ * the shard for the detail panel, an expand chevron, and an optional badge.
  *
  * @module lib/components/characterSheet/builder/featureCard
  * @version 1.0.0
@@ -46,7 +44,7 @@ import { ContentExpandBody } from './contentExpandBody';
  * @property {string} expandLabel - Accessible label for the expand button
  * @property {string} [openLabel] - Accessible label for the open-source button (only used when `onFocus` is provided)
  * @property {ReactNode} [subOptions] - Optional sub-option selector rendered beneath the card row
- * @property {FeatureCardMultiSelect} [multiSelect] - When present, the card is repeatable: the primary button adds an instance, a count chip and a remove button appear, and `onToggle`/`selected` are ignored in favour of the instance count
+ * @property {FeatureCardMultiSelect} [multiSelect] - When present, the primary button adds an instance, a count chip and remove button appear, and `onToggle`/`selected` are ignored
  */
 export interface FeatureCardProps {
   label: string;
@@ -69,7 +67,7 @@ export interface FeatureCardProps {
 }
 
 /**
- * Repeatable-selection controls for a {@link FeatureCard}. Supplied for feats
+ * Repeatable-selection controls for a {@link FeatureCard}. Used for feats
  * (such as Ability Score Improvement) that may be taken more than once.
  *
  * @interface FeatureCardMultiSelect
@@ -90,11 +88,10 @@ export interface FeatureCardMultiSelect {
 }
 
 /**
- * Generic feature card used by picker lists (FeatPicker, BoonPicker).
- * The open-source button focuses the shard for the right detail panel; the
- * toggle selects/deselects and the chevron expands inline prose — neither
- * focuses the shard. The inline expand body fetches prose lazily on first
- * expand.
+ * Feature card for picker lists (FeatPicker, BoonPicker). The open-source
+ * button focuses the shard for the detail panel; the toggle selects/deselects
+ * and the chevron expands inline prose. The inline expand body fetches prose
+ * lazily on first expand.
  *
  * @component
  * @param {FeatureCardProps} props - Component props

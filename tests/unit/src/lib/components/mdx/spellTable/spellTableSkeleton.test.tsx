@@ -1,8 +1,7 @@
 /**
- * @fileoverview Unit tests for Spell Table Skeleton component
+ * @fileoverview Unit tests for SpellTableSkeleton component.
  * @module tests/unit/src/lib/components/mdx/spellTable/spellTableSkeleton.test
- * @description Validates SpellTableSkeleton export and component signature.
- * Tests skeleton loading state for SpellTable component.
+ * @description Validates the SpellTableSkeleton export, signature, and single-member module namespace.
  * 
  * @version 1.0.0
  * @author Typeir

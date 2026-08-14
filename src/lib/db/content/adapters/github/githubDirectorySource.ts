@@ -1,11 +1,7 @@
 /**
  * @fileoverview GitHub Directory Source Adapter
- * @description Implements the DirectorySourceAdapter interface using the GitHub
- * Git Trees API. Used at production runtime to enable ISR revalidation — directory
- * listings reflect the latest content structure without a full rebuild.
- *
- * Fetches the full recursive tree once and caches it in memory. Subsequent
- * listEntries calls filter the cached tree for O(n) lookups.
+ * @description Implements DirectorySourceAdapter via the GitHub Git Trees API.
+ * Fetches the full recursive tree once and caches it in memory; listEntries filters the cached tree.
  *
  * @module lib/db/content/adapters/github/githubDirectorySource
  * @author Typeir

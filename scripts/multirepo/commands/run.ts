@@ -1,15 +1,6 @@
 /**
- * @fileoverview `ik run <name>` — Registry-backed dispatcher for one-off scripts.
- *
- * Replaces the `npm run util:*`, `linkify:*`, `scaffold:*`, `seed-admin*`,
- * `generate-token`, `lottery`, `multirepo:extract`, `multirepo:toggle`
- * entries in `package.json`. Keeps the actual script files untouched and
- * just spawns `npx tsx` (or `bash` for `.sh` files) with inherited stdio.
- *
- * Usage:
- *   ik run                 # list available scripts
- *   ik run tree-size       # invoke scripts/utils/treeSize.ts
- *   ik run linkify:world   # invoke scripts/content/linkifyRunner.ts with args
+ * @fileoverview `ik run <name>` — registry-backed dispatcher for one-off scripts.
+ * Spawns `npx tsx` (or `bash` for `.sh` files) with inherited stdio.
  *
  * @module multirepo/commands/run
  * @author Typeir

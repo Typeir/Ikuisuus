@@ -1,11 +1,8 @@
 /**
  * @fileoverview Gas Giant Renderer — Multi-Layer Cloud Sphere with Storm Effects
- * @description Renders gas giant bodies (Länsihenkï, Itähenkï) with procedural
- * cloud bands computed entirely in the fragment shader using world-space noise
- * sampling. Two concentric spheres create parallax depth: an opaque base layer
- * with broad bands, and a transparent swirl overlay with finer cloud detail.
- * This Everdark-style approach avoids vertex displacement, eliminating jitter
- * artefacts at large viewing distances.
+ * @description Renders gas giant bodies with procedural cloud bands computed in
+ * the fragment shader via world-space noise sampling. Two concentric spheres —
+ * an opaque base layer and a transparent overlay — provide parallax depth.
  *
  * @module worldSim/celestials/GasGiantRenderer
  * @version 3.0.0
@@ -65,7 +62,6 @@ const DEFAULT_TIME_SCALE = 0.08;
 
 /**
  * Gradient stops for the gas giant atmospheric haze texture.
- * Softer center with faster falloff than star corona.
  * @constant {import('@/modules/world-sim/infrastructure/effects/CelestialGlow').GradientStop[]}
  */
 const HAZE_GLOW_STOPS = [
@@ -77,8 +73,8 @@ const HAZE_GLOW_STOPS = [
 
 /**
  * Configuration for a single concentric cloud layer in the gas giant atmosphere.
- * Outer layer is opaque with broad bands; inner layer is translucent with
- * finer detail, creating parallax depth like the Everdark renderer.
+ * Outer layer is opaque with broad bands; inner layer is translucent with finer
+ * detail.
  *
  * @interface CloudLayerConfig
  * @property {number} radiusScale - Shell radius as fraction of body radius
@@ -98,7 +94,7 @@ interface CloudLayerConfig {
   bandFrequencyMultiplier: number;
   /** @property {number} timeScaleMultiplier - Animation speed scale */
   timeScaleMultiplier: number;
-  /** @property {number} noiseOffset - Spatial offset to de-correlate from other layers */
+  /** @property {number} noiseOffset - Spatial offset to de-correlate layers */
   noiseOffset: number;
   /** @property {number} segments - Geometry segment count */
   segments: number;
@@ -108,8 +104,6 @@ interface CloudLayerConfig {
 
 /**
  * Cloud layer definitions from outermost to innermost.
- * Base layer provides the dominant cloud band silhouette; swirl overlay
- * adds finer detail at a different drift speed for parallax.
  *
  * @constant {CloudLayerConfig[]}
  */
@@ -136,8 +130,8 @@ const CLOUD_LAYER_CONFIGS: CloudLayerConfig[] = [
 
 /**
  * Renders gas giant celestial bodies with layered fragment-based cloud bands
- * and atmospheric haze. Cloud noise is computed entirely in the fragment shader
- * using world-space coordinates, avoiding vertex displacement jitter.
+ * and atmospheric haze. Cloud noise is computed in the fragment shader using
+ * world-space coordinates.
  *
  * @class GasGiantRenderer
  * @implements {ICelestialRenderer}
@@ -149,7 +143,7 @@ export class GasGiantRenderer implements ICelestialRenderer {
   /** @property {Sprite | null} hazeSprite - Atmospheric haze sprite */
   private hazeSprite: Sprite | null = null;
 
-  /** @property {Mesh | null} bodyMesh - Stored reference to the outermost cloud layer mesh */
+  /** @property {Mesh | null} bodyMesh - Outermost cloud layer mesh */
   private bodyMesh: Mesh | null = null;
 
   /** @property {ShaderMaterial | null} bodyMaterial - Outermost cloud band shader material */
@@ -193,8 +187,6 @@ export class GasGiantRenderer implements ICelestialRenderer {
 
   /**
    * Create a gas giant mesh with two concentric cloud shells and haze sprite.
-   * The opaque base layer carries the main band pattern; a slightly larger
-   * transparent overlay drifts at a different speed for parallax depth.
    *
    * @param {CelestialBodyData | BoundaryData} data - Body definition data
    * @returns {Object3D} Group containing the gas giant layers and haze

@@ -1,20 +1,8 @@
 #!/usr/bin/env tsx
 /**
- * @fileoverview Postinstall bootstrap — runs automatically after `npm install`.
- *
- * Idempotently syncs PAW framework artifacts so a fresh clone is functional
- * with zero manual steps:
- *
- *   1. Ensures `.paw/node_modules/sql.js/` is populated (sql.js can't be
- *      ESM-bundled, so it is copied from the framework's `node_modules`).
- *   2. Runs `paw sync` via the compiled CLI at `.github/PAW/dist/cli.mjs`
- *      (idempotent — copies hook bundles into `.paw/hooks/` and writes
- *      `.github/hooks/hooks.json`).
- *   3. Initialises `.paw/paw.sqlite` on first run.
- *
- * Guarded so CI environments can opt out via `PAW_SKIP_POSTINSTALL=1`.
- * When the compiled CLI is missing (e.g. framework checked out as submodule
- * before first build), logs a clear remediation hint instead of failing.
+ * @fileoverview Postinstall bootstrap, run after `npm install`. Skips when
+ * `PAW_SKIP_POSTINSTALL=1` or in CI unless `PAW_FORCE_POSTINSTALL=1`.
+ * Exits 0 when `PAW_CLI` is missing.
  *
  * @module bootstrap/postinstall
  * @author Typeir
@@ -39,7 +27,7 @@ const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PAW_CLI = resolve(REPO_ROOT, '.github', 'PAW', 'dist', 'cli.mjs');
 
 /**
- * Whether the bootstrap should be skipped (CI opt-out or explicit flag).
+ * True when the bootstrap should be skipped.
  * @returns {boolean}
  */
 function shouldSkip(): boolean {
@@ -53,8 +41,7 @@ function shouldSkip(): boolean {
 }
 
 /**
- * Entry point — invokes `node .github/PAW/dist/cli.mjs sync` and exits with 0
- * on all outcomes except catastrophic failure. Never blocks `npm install`.
+ * Invokes `node .github/PAW/dist/cli.mjs sync`, then exits 0.
  * @returns {void}
  */
 function main(): void {

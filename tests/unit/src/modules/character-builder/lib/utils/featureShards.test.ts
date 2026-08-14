@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for fetchFeatureShards
- * @description Tests the fetchFeatureShards utility for both vocation and
- * specialization endpoints, verifying shard assembly, error handling, and
- * the empty-array fallback on failed fetches.
+ * @description Covers vocation and specialization endpoints, shard assembly,
+ * and the empty-array fallback on failed fetches.
  *
  * @module tests/unit/lib/utils/featureShards
  * @version 1.0.0

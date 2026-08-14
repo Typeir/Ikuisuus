@@ -1,7 +1,6 @@
 /**
  * @fileoverview Combobox Components Exports
- * @description Barrel export for all combobox components.
- * Re-exports for convenient import from single module.
+ * @description Barrel export of all combobox components.
  *
  * @module encounterPlanner/comboboxes
  * @version 1.0.0

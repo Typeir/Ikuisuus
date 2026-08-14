@@ -1,8 +1,7 @@
 /**
  * @fileoverview Link wrapper that defers prefetch until hover intent.
- * @description Prevents ISR write spam from viewport-triggered prefetch on
- * large link lists (spell tables, sidebar navigation). Defaults to no prefetch
- * and enables `prefetch={null}` (static prefetch) on `onMouseEnter`.
+ * @description Defaults to no prefetch and sets `prefetch={null}` (static
+ * prefetch) on `onMouseEnter`.
  *
  * @module lib/components/lazyPrefetchLink/LazyPrefetchLink
  * @author Typeir
@@ -23,9 +22,7 @@ import { useState } from 'react';
 type LazyPrefetchLinkProps = Omit<ComponentProps<typeof Link>, 'prefetch'>;
 
 /**
- * Link that only prefetches when the user hovers, not when the link enters
- * the viewport. This avoids massive ISR write amplification on pages with
- * hundreds of links (e.g. spell tables, navigation trees).
+ * Link that only prefetches on hover, not on viewport entry.
  *
  * @component
  * @param {LazyPrefetchLinkProps} props - Standard Next.js Link props (prefetch is managed internally).

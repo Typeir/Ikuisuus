@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for the OG image API route.
  *
- * Mocks the data layer and renderer so the test runs without a real filesystem
- * or network. Validates 400 / 404 / 500 / 200 response paths.
+ * Mocks the data layer and renderer. Validates 400 / 404 / 500 / 200 response paths.
  *
  * @module tests/unit/src/app/api/og/route.test
  */

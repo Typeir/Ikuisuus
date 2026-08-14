@@ -1,8 +1,6 @@
 /**
- * @fileoverview Celestial Label — Floating Name Tag for Bodies
- * @description Renders a positioned label that tracks a celestial body's 2D
- * screen position. Position and visibility are managed externally via the
- * forwarded ref to avoid React re-render storms on every frame.
+ * @fileoverview User-facing label for a celestial body.
+ * @description Renders a positioned label tracking a body's 2D screen position.
  *
  * @module worldSim/overlay/CelestialLabel
  * @version 2.0.0
@@ -43,9 +41,7 @@ interface CelestialLabelProps {
 }
 
 /**
- * A floating label that tracks a celestial body's projected screen position.
- * Uses a forwarded ref so the parent can directly mutate CSS transforms at
- * 60fps without triggering React re-renders.
+ * Positioned label tracking a celestial body's projected screen position.
  *
  * @param {CelestialLabelProps} props - Component props
  * @param {string} props.bodyId - Unique identifier of the celestial body

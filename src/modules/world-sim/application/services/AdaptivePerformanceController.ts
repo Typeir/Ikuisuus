@@ -1,9 +1,7 @@
 /**
  * @fileoverview Adaptive Performance Controller
  * @description Tracks frame timing, computes smoothed FPS, and selects
- * runtime render-quality profiles with hysteresis. The controller is
- * renderer-agnostic and exposes profile data that renderers/mediators can
- * consume without coupling to implementation details.
+ * runtime render-quality profiles with hysteresis.
  *
  * @module worldSim/optimization/AdaptivePerformanceController
  * @version 1.0.0
@@ -204,7 +202,6 @@ export class AdaptivePerformanceController {
 
   /**
    * Compute target quality level from smoothed FPS using hysteretic thresholds.
-   * Different thresholds apply for upgrading vs downgrading to prevent oscillation.
    *
    * @private
    * @returns {RenderQualityLevel} Candidate target level

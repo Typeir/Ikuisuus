@@ -1,9 +1,7 @@
 /**
  * @fileoverview Row Mapping Utilities
- * @description Reusable helper functions for mapping DB entity rows to domain
- * objects. Database drivers may return `null` for absent nullable columns —
- * these helpers normalise those values to the `undefined` semantics used by
- * our domain schemas.
+ * @description Helpers mapping DB entity rows to domain objects. Normalise
+ * `null` DB column values to `undefined`.
  *
  * @module lib/db/orm/helpers
  * @version 1.0.0

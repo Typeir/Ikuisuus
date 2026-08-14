@@ -1,7 +1,5 @@
 /**
- * @fileoverview Scene Event Bus — Observer Pattern
- * @description Typed event emitter that decouples Three.js interactions from React UI updates.
- * Provides type-safe publish/subscribe for scene events without direct coupling between subsystems.
+ * @fileoverview Typed publish/subscribe bus for scene events.
  *
  * @module worldSim/bridge/SceneEventBus
  * @version 1.0.0
@@ -29,7 +27,6 @@ type EventCallback<T> = T extends void ? () => void : (payload: T) => void;
 
 /**
  * Typed event bus for World Sim scene events.
- * Decouples Three.js interaction detection from React state updates.
  *
  * @class SceneEventBus
  *

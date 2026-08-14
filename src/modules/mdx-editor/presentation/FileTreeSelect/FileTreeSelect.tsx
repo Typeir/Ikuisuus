@@ -1,8 +1,7 @@
 /**
  * @fileoverview FileTreeSelect Component
- * @description Filesystem-style tree combobox for selecting content folder paths.
- * Displays a hierarchical tree of folders with expandable nodes. Each folder
- * ends with a dotted-line "New file" option that selects that folder path.
+ * @description Combobox that selects a content folder path from an expandable
+ * folder tree. Each folder ends with a "New file" option that selects it.
  *
  * @module lib/components/mdxEditor/fileTreeSelect
  * @version 1.0.0
@@ -45,9 +44,8 @@ interface FileTreeSelectProps {
 }
 
 /**
- * Filesystem-style tree combobox for content folder selection.
- * Opens a dropdown with expandable folder nodes. Each folder ends with
- * a "New file" option styled with a dashed border to draw attention.
+ * Combobox for selecting a folder from a tree. Renders expandable folder
+ * nodes; each ends with a "New file" option styled with a dashed border.
  *
  * @component
  * @param {FileTreeSelectProps} props - Component properties

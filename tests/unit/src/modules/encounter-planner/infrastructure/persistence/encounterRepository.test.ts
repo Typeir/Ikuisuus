@@ -1,7 +1,6 @@
 /**
  * @fileoverview Unit tests for Encounter Storage Utilities
- * @description Tests for encounter persistence and management functions.
- * Tests pure functions directly and localStorage operations with mocked storage.
+ * @description Tests encounter persistence, management, import/export, and initiative utilities.
  *
  * @version 1.0.0
  * @author Typeir

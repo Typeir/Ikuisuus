@@ -1,7 +1,6 @@
 /**
  * @fileoverview Migration 009 — Create audit_logs + banned_ips tables
- * @description Adds persistence tables for the audit trail and IP ban system,
- * replacing the previous Vercel Edge Config KV storage with portable PostgreSQL.
+ * @description Creates the audit_logs and banned_ips tables.
  *
  * @module scripts/db/migrations/009_create_audit_and_banned_ips_tables
  */

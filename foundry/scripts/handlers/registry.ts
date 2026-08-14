@@ -35,10 +35,8 @@ interface DispatchEntry {
 /**
  * Registry that collects parser classes and provides feature-level dispatch.
  *
- * Parser classes are registered via {@link register} (or auto-discovered via
- * the `parsers` array passed to the constructor). The registry reads decorator
- * metadata to build a `Map<fullFeatureId, DispatchEntry>` and exposes
- * {@link dispatch} to invoke the correct handler.
+ * Parser classes are registered via {@link register} or the constructor's
+ * `parsers` array; {@link dispatch} routes full feature IDs to handler methods.
  *
  * @property {Map<string, DispatchEntry>} handlers - Full feature ID → dispatch entry
  * @property {Map<string, IFeatureParser>} parsers - Sheet slug → parser instance
@@ -64,8 +62,7 @@ export class ParserRegistry {
   }
 
   /**
-   * Registers a `@parser`-decorated class. Reads the sheet slug from the class
-   * and handler entries from its prototype, then populates the dispatch map.
+   * Registers a `@parser`-decorated class into the dispatch maps.
    *
    * @param {new () => IFeatureParser} ParserClass - The decorated parser class constructor
    * @throws {Error} If the class is missing the `@parser()` decorator

@@ -1,8 +1,7 @@
 /**
- * @fileoverview Unit tests for the resolveStreamText machine-text stream resolver.
- * @description Mocks all six repository adapters and the fnv1a32 hash. Verifies
- * that real domain fields appear in the output string and that the value is
- * correctly doubled for the CSS seamless-loop animation.
+ * @fileoverview Unit tests for resolveStreamText.
+ * @description Mocks the six repository adapters and fnv1a32. Asserts domain
+ * fields appear in the output and that the string is doubled for the CSS loop.
  *
  * @module tests/unit/src/lib/machineText/index
  * @version 1.0.0

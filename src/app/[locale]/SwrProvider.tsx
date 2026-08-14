@@ -1,10 +1,6 @@
 /**
- * SWR Global Configuration Provider
- *
- * @fileoverview Client-side `SWRConfig` wrapper that establishes project-wide
- * defaults for all SWR data hooks. Inserted in the provider tree between
- * `NextIntlClientProvider` and `PersistentUiProvider` in
- * `ClientProviders.tsx`.
+ * @fileoverview Client-side `SWRConfig` wrapper setting project-wide SWR
+ * defaults. Mounted in the provider tree in `ClientProviders.tsx`.
  *
  * @module app/[locale]/SwrProvider
  * @version 1.0.0
@@ -15,15 +11,13 @@
  * @requires lib/fetch/fetcher Typed global JSON fetcher
  *
  * @description
- * Global SWR defaults applied here:
+ * Applied defaults:
  * - `fetcher` — URL-string-based typed JSON fetcher from `lib/fetch/fetcher`
- * - `revalidateOnFocus: false` — avoids unexpected refetches when the user
- *   tabs back to the application
- * - `shouldRetryOnError: false` — errors are surfaced immediately; retries are
+ * - `revalidateOnFocus: false` — no refetch on window focus
+ * - `shouldRetryOnError: false` — errors surface immediately; retries are
  *   opt-in per hook
- * - `dedupingInterval: 5000` — requests with the same key are deduplicated
- *   within a 5-second window
- * - `errorRetryCount: 0` — consistent with `shouldRetryOnError: false`
+ * - `dedupingInterval: 5000` — deduplicates same-key requests within 5 seconds
+ * - `errorRetryCount: 0` — no automatic retry on error
  *
  * @example
  * // Already mounted in ClientProviders.tsx — no manual setup needed:
@@ -40,7 +34,7 @@ import { SWRConfig } from 'swr';
  * Props for `<SwrProvider>`.
  *
  * @interface SwrProviderProps
- * @property {ReactNode} children - Child components that can consume SWR hooks
+ * @property {ReactNode} children - Child components consuming SWR hooks
  */
 interface SwrProviderProps {
   children: ReactNode;

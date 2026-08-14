@@ -1,8 +1,7 @@
 /**
- * @fileoverview Trinket Repository Port + Factory
- * @description Defines the hexagonal port contract for trinket metadata persistence
- * and exports a factory-resolved instance based on `METADATA_BACKEND` env var.
- * Provides access patterns matching the real API route (`/api/trinkets`).
+ * @fileoverview Trinket repository port and factory.
+ * @description Defines the trinket metadata repository contract and resolves
+ * the instance from `METADATA_BACKEND` env var.
  *
  * @module lib/db/content/repositories/trinketRepository
  * @version 2.0.0

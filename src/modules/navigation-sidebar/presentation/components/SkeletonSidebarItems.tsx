@@ -35,15 +35,7 @@ export function SkeletonSidebarItems({
   const count = Math.min(childCount, 20);
 
   /**
-   * Sidebar skeletons dither in the color of the links they stand in for.
-   *
-   * The matter is a plain color and the resting strength rides the sheet's
-   * own dilution, which resolves to the same 45% the previous form produced.
-   * That form pre-diluted the matter and then set the dilution to 100% to stop
-   * it compounding, which nested one `color-mix` inside another. This was the
-   * only nested case in the codebase and the only skeleton that rendered
-   * invisible: the substituted value failed at computed-value time, leaving
-   * `background` unset and the bar fully transparent.
+   * CSS custom properties for the skeleton bar color and resting alpha.
    */
   const matterStyle = {
     '--skeleton-matter': 'var(--color-primary)',

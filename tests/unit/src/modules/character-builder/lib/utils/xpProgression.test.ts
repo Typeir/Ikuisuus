@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tests for xpProgression utilities
  * @description Unit tests for getLevelFromXP, getXPForLevel, and getXPProgressPercent.
- * Covers the full level 1–30 range including epic levels 21–30.
+ * Covers levels 1–30 including epic levels 21–30.
  *
  * @module tests/unit/src/lib/utils/xpProgression.test
  */
@@ -115,9 +115,8 @@ describe('getXPProgressPercent', () => {
 
 /**
  * @fileoverview Tests for getXpAxisPosition
- * @description Verifies the power-law XP axis helper used to render
- * the overall XP bar — zero boundary, max boundary, monotonicity,
- * diminishing-returns slope, and growing level-segment property.
+ * @description Verifies the XP axis helper: zero and max boundaries, monotonicity,
+ * slope, and level-segment property.
  */
 describe('getXpAxisPosition', () => {
   it('returns 0 at XP 0', () => {

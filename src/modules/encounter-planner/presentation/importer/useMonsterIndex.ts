@@ -1,7 +1,6 @@
 /**
  * @fileoverview Monster Index Hook
  * @description Custom hook for loading and caching the monster index from the API.
- * Encapsulates fetch logic, loading state, and search filtering.
  *
  * @module useMonsterIndex
  * @version 1.0.0

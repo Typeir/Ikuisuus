@@ -1,7 +1,6 @@
 /**
- * @fileoverview Shared UI Components
- * @description Barrel export for all reusable UI primitives.
- * These components replace native browser elements with accessible, styled alternatives.
+ * @fileoverview UI components.
+ * @description Barrel export for UI primitives.
  *
  * @module ui
  * @author Typeir
@@ -9,27 +8,27 @@
  * @since 2.0.0
  */
 
-/** FilterSelect — Accessible dropdown with mobile modal & virtualization */
+/** FilterSelect — dropdown with mobile modal & virtualization */
 export { FilterSelect } from './filterSelect';
 export type { FilterSelectOption, FilterSelectProps } from './filterSelect';
 
-/** NumericInput — Accessible number input with step buttons */
+/** NumericInput — number input with step buttons */
 export { NumericInput } from './numericInput';
 export type { NumericInputProps } from './numericInput';
 
-/** TextInput — Accessible styled text input */
+/** TextInput — styled text input */
 export { TextInput } from './textInput';
 export type { TextInputProps } from './textInput';
 
-/** TextArea — Accessible styled textarea */
+/** TextArea — styled textarea */
 export { TextArea } from './textArea';
 export type { TextAreaProps } from './textArea';
 
-/** Tooltip — Accessible tooltip with hover/focus activation */
+/** Tooltip — tooltip with hover/focus activation */
 export { Tooltip, WithTooltip, withTooltip } from './tooltip';
 export type { TooltipPlacement, TooltipProps } from './tooltip';
 
-/** PushNotification — Toast-style notification system */
+/** PushNotification — toast-style notification system */
 export { NotificationProvider, useNotifications } from './pushNotification';
 export type {
     NotificationConfig,
@@ -38,26 +37,26 @@ export type {
     NotificationType
 } from './pushNotification';
 
-/** MobileModal — Generic mobile-optimized modal with focus management */
+/** MobileModal — mobile-optimized modal with focus management */
 export { MobileModal, Modal } from './modal';
 export type { MobileModalProps, ModalProps } from './modal';
 
-/** Draggable — Generic moveable container with drag handle */
+/** Draggable — moveable container with drag handle */
 export { Draggable } from './draggable/Draggable';
 
-/** GenericEmbedPanel — Generic draggable iframe wrapper container */
+/** GenericEmbedPanel — draggable iframe wrapper container */
 export { GenericEmbedPanel } from './embedPanel/GenericEmbedPanel';
 export type { GenericEmbedPanelProps } from './embedPanel/GenericEmbedPanel';
 
-/** ResizablePane — Two-pane horizontal split with a draggable handle */
+/** ResizablePane — two-pane horizontal split with a draggable handle */
 export { ResizablePane } from './resizablePane';
 export type { ResizablePaneProps } from './resizablePane';
 
-/** GradientTabs — Spell-list-style tabbed container (gradient nav + surface panel) */
+/** GradientTabs — spell-list-style tabbed container (gradient nav + surface panel) */
 export { GradientTabs } from './gradientTabs';
 export type { GradientTabItem, GradientTabsProps } from './gradientTabs';
 
-/** AsyncTooltip — Lazy-fetching tooltip with single-flight content loading */
+/** AsyncTooltip — lazy-fetching tooltip with single-flight content loading */
 export { AsyncTooltip } from './asyncTooltip';
 export type { AsyncTooltipProps } from './asyncTooltip';
 

@@ -1,6 +1,5 @@
 /**
- * @fileoverview Play Mode Component
- * @description Turn tracker and combat runner for in-progress encounters.
+ * @fileoverview Turn tracker and combat runner for in-progress encounters.
  * Displays combatants in initiative order with runtime editing and auto-scroll to active combatant.
  *
  * @module playMode

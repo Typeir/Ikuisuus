@@ -1,8 +1,7 @@
 /**
  * @fileoverview Performance Tuning Constants — Adaptive Quality Thresholds
  * @description FPS thresholds, frame-time smoothing, and hysteresis windows
- * consumed by `AdaptivePerformanceController`. Extracting them isolates the
- * quality-tier curve from the controller logic.
+ * consumed by `AdaptivePerformanceController`.
  *
  * @module worldSim/config/performanceTuning
  * @version 1.0.0
@@ -42,5 +41,5 @@ export const FRAME_TIME_ALPHA = 0.08;
 /** @constant {number} DOWNSHIFT_CONFIRMATION_FRAMES - Consecutive low-FPS frames required before dropping a quality tier. */
 export const DOWNSHIFT_CONFIRMATION_FRAMES = 20;
 
-/** @constant {number} UPSHIFT_CONFIRMATION_FRAMES - Consecutive high-FPS frames required before raising a quality tier (intentionally higher than downshift for stickiness). */
+/** @constant {number} UPSHIFT_CONFIRMATION_FRAMES - Consecutive high-FPS frames required before raising a quality tier. */
 export const UPSHIFT_CONFIRMATION_FRAMES = 90;

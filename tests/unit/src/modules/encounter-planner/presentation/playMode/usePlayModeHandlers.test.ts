@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for usePlayModeHandlers hook.
  * @module tests/unit/src/lib/components/encounterPlanner/playMode/usePlayModeHandlers.test
- * @description Verifies core handler behavior for session-only combatant flow.
+ * @description Verifies session-only combatant handling and turn lifecycle events.
  *
  * @version 1.0.0
  * @author Typeir

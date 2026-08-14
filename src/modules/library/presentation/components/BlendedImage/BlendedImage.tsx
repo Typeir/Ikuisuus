@@ -1,6 +1,6 @@
 /**
  * @file blendedImage.tsx
- * @description A custom image component that wraps images in a vignette container with blend mode styling.
+ * @description Wraps an image in a vignette container with blend mode styling.
  *
  * @module blendedImage
  * @version 1.0.0
@@ -15,7 +15,7 @@ import type { ImgHTMLAttributes } from 'react';
 import React from 'react';
 import styles from './BlendedImage.module.scss';
 /**
- * A custom image component that wraps images in a vignette container with blend mode styling.
+ * Renders an image inside a vignette div, applying blend mode via CSS custom property.
  *
  * @param {ImgHTMLAttributes<HTMLImageElement>} props - Standard HTML image attributes
  * @param {string} [mode='square'] - Display mode for the vignette effect

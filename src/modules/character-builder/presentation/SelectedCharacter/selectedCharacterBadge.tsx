@@ -1,17 +1,11 @@
 /**
  * @fileoverview Selected Character Badge
- * @description Round profile-picture style badge showing the globally
- * selected character (the one whose stats will drive wiki formula
- * substitution). Lives in the sidebar footer next to the tools menu.
- * Clicking it opens an upward character picker; selecting an entry
- * dispatches `SET_ACTIVE_ID` on the global roster context, and the final
- * row navigates to the character manager page.
- *
- * The picker is a mixed menu. Character rows are buttons because they act on
- * state without leaving the page; the manager row is an anchor with a real
- * `href`, since a control that navigates has to be a link for middle-click,
- * ctrl-click and "open in new tab" to work. An unmodified left click is
- * upgraded to a client-side push, and the browser keeps every other gesture.
+ * @description Round badge rendering the globally selected character.
+ * Clicking opens a picker; selecting an entry dispatches `SET_ACTIVE_ID`
+ * on the roster context, and the final row navigates to the character
+ * manager page. The manager row is an anchor with a real `href`; character
+ * rows are buttons. An unmodified left click on the anchor is upgraded to
+ * a client-side push.
  *
  * @module modules/character-builder/presentation/SelectedCharacter/selectedCharacterBadge
  * @version 1.0.0
@@ -40,8 +34,8 @@ import styles from './selectedCharacterBadge.module.scss';
  * Props for the SelectedCharacterBadge component.
  *
  * @interface SelectedCharacterBadgeProps
- * @property {'up' | 'down'} [dropDirection='up'] - Which way the picker
- * expands. 'up' suits the sidebar footer; 'down' suits top bars.
+ * @property {'up' | 'down'} [dropDirection='up'] - Direction the picker
+ * expands. Defaults to 'up'.
  */
 interface SelectedCharacterBadgeProps {
   dropDirection?: 'up' | 'down';
@@ -53,7 +47,7 @@ interface SelectedCharacterBadgeProps {
  *
  * @component
  * @param {SelectedCharacterBadgeProps} props - Component props
- * @param {'up' | 'down'} [props.dropDirection='up'] - Which way the picker expands. 'up' suits the sidebar footer; 'down' suits top bars.
+ * @param {'up' | 'down'} [props.dropDirection='up'] - Direction the picker expands. Defaults to 'up'.
  * @returns {JSX.Element | null} Rendered badge or null pre-hydration
  */
 export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({

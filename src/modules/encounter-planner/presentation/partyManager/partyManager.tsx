@@ -1,8 +1,7 @@
 /**
- * @fileoverview Party Manager Modal Component
+ * @fileoverview Party Manager Modal.
  * @description Modal for creating, editing, deleting, and importing saved parties.
- * Two-view modal: party list view and party editor view.
- * Uses generic Modal component and chip-based member list pattern.
+ * Two views: party list and party editor.
  *
  * @module partyManager
  * @version 1.0.0

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Spell Combobox Component
- * @description Searchable dropdown for selecting spells from metadata index.
- * Built on top of GenericCombobox for consistent behavior. Fetches spell data
- * from /api/spells/index and renders with level/school information.
+ * @description Searchable spell dropdown. Fetches spell data from
+ * /api/spells/index and renders each item with level and school.
  *
  * @module spellCombobox
  * @version 1.0.0
@@ -53,8 +52,7 @@ interface SpellComboboxProps {
 }
 
 /**
- * Spell combobox wrapper around GenericCombobox.
- * Fetches spell index from API and provides spell-specific rendering.
+ * Spell combobox backed by GenericCombobox.
  *
  * @component
  * @param {SpellComboboxProps} props - Component props

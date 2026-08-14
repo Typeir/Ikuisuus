@@ -1,13 +1,12 @@
 /**
- * @fileoverview Search Record Collector
- * @description Walks content directories for all 9 searchable content types,
- * extracts prose from MDX files, and joins metadata from `.metadata.json`
- * sidecars to produce `SearchRecord`-shaped entries for the Pagefind index.
+ * @fileoverview Collects search index records for a locale.
+ * @description Walks content directories for the 9 searchable content types,
+ * extracts prose from MDX files, and joins `.metadata.json` sidecars to
+ * produce IndexRecord entries for the Pagefind index.
  *
- * Locale-parameterized: accepts a `locale` argument. Sidecar lookup honors
- * METADATA_BACKEND: in `pg` mode `.meta/{locale}/{subdir}/` is tried first,
- * falling back to source-adjacent `src/content/{locale}/...` files (same
- * semantics as `src/lib/db/content/adapters/fs/readMetadataFiles.ts`).
+ * Sidecar lookup is locale-parameterized: with `pg` METADATA_BACKEND,
+ * `.meta/{locale}/{subdir}/` is tried first, then source-adjacent
+ * `src/content/{locale}/...` files ({@link sidecarCandidates}).
  *
  * @module scripts/search/collectRecords
  * @version 1.0.0
@@ -100,11 +99,9 @@ function humanizeFolderName(folderName: string): string {
 }
 
 /**
- * Derives a display title for a record. Prefers a sidecar `title`; otherwise
- * falls back to the filename-derived slug. When that slug is empty or a bare
- * `main` — i.e. a `main.mdx` index file with no usable title — the parent
- * folder name is humanised and used instead, so index pages never surface as
- * "main".
+ * Derives a display title for a record: the sidecar `title` when set, else
+ * the filename-derived slug. If the slug is empty or `main`, the parent
+ * folder name is humanised and used instead.
  *
  * @param {string} filePath - Absolute path to the source MDX file
  * @param {string} contentType - Content type key
@@ -204,19 +201,16 @@ async function scanDir(
 }
 
 /**
- * Candidate sidecar paths for a source file, in lookup-priority order.
+ * Candidate sidecar paths for a source file, highest priority first.
  *
- * Mirrors the metadata generators' output naming (`generateMetadata.ts`
- * CONTENT_TYPES patterns; `resolveVocationOutputPath` in
- * `generateVocationMetadata.ts`):
+ * Naming (per metadata generators, e.g. `generateMetadata.ts`):
  * - vocations: `{dir}/main.mdx` → `{dir}/{dirName}.metadata.json`
- * - world: type suffix kept — `x.lore.mdx` → `x.lore.metadata.json`
- *   (plus the suffix-stripped form the standalone generator default emits)
- * - all others: type suffix replaced — e.g. `x.sheet.mdx` → `x.metadata.json`
+ * - world: `x.lore.mdx` → `x.lore.metadata.json` and suffix-stripped
+ *   `x.metadata.json`
+ * - all others: type suffix replaced — `x.sheet.mdx` → `x.metadata.json`
  *
- * With METADATA_BACKEND=pg the generators write to
- * `.meta/{locale}/{metaSubdir}/{basename}` instead, so those paths are tried
- * first and the source-adjacent locations act as the fallback.
+ * With `pg` METADATA_BACKEND the `.meta/{locale}/{metaSubdir}/{basename}`
+ * paths are prepended in front of the source-adjacent locations.
  *
  * @param {string} filePath - Absolute path to the source MDX file
  * @param {string} contentType - Content type key
@@ -275,11 +269,11 @@ function sidecarCandidates(
 }
 
 /**
- * Reads the metadata sidecar for a source file, if it exists.
+ * Reads the metadata sidecar for a source file, if any exists.
  *
- * Tries each candidate path from {@link sidecarCandidates} and returns the
- * first that parses. Monster sidecars are JSON arrays (one entry per stat
- * variant); all other types are single objects — callers must handle both.
+ * Tries each candidate from {@link sidecarCandidates} and returns the first
+ * that parses. Monster sidecars are JSON arrays (one entry per stat variant);
+ * all other types are single objects — callers must handle both.
  *
  * @param {string} filePath - Absolute path to the source MDX file
  * @param {string} contentType - Content type key
@@ -330,16 +324,12 @@ function metadataToMeta(
 const ASPECT_TOKEN = /^[a-z][a-z0-9-]*(:[a-z0-9-]+)+$/;
 
 /**
- * Splits aspects into one filter per group.
+ * Splits aspect tags into one filter per group.
  *
- * A single flat `tags` facet is unusable once the corpus carries twelve thousand
- * aspects: the rail becomes one list of every value in the game, and narrowing by
- * damage type means scrolling past every condition. Splitting on the group gives
- * the rail the axes the taxonomy already defines, and `useSearchFacets` renders
- * whatever keys arrive, so a new group appears in the UI without a change here.
- *
- * Group names are flattened with a dash so that `meta:source` reaches Pagefind as
- * `meta-source`, keeping filter keys free of the delimiter the aspects use.
+ * A token `a:b:c` becomes filter key `a-b` value `c`. Group names are joined
+ * with a dash so `meta:source` reaches Pagefind as `meta-source`. Only
+ * matches {@link ASPECT_TOKEN}; non-matching tags are skipped. Mutates
+ * `filters` in place, de-duplicating values.
  *
  * @param {unknown} tags - The metadata `tags` value
  * @param {Record<string, string[]>} filters - Filter map, mutated in place
@@ -369,10 +359,9 @@ function assignAspectFilters(
 /**
  * Converts metadata fields to Pagefind filters (string arrays).
  *
- * `level` and `rarity` are read from aspects rather than the raw fields they
- * duplicate: the field spells a cantrip `0` and a rarity `very rare`, the aspect
- * spells them `cantrip` and `very-rare`, and carrying both puts two spellings of
- * one value in the same facet. `cr` and `category` have no aspect and stay.
+ * `level` and `rarity` are read from aspects instead of the raw duplicated
+ * fields (`0`/`very rare` in the field vs `cantrip`/`very-rare` in the
+ * aspect). `cr` and `category` have no aspect and stay.
  *
  * @param {Record<string, unknown>} metadata - Parsed metadata record
  * @param {string} contentType - Content type key

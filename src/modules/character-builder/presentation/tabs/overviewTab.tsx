@@ -2,11 +2,7 @@
  * @fileoverview Overview Tab
  * @description Two-column overview: granted proficiencies, skills and trades on
  * the left; attacks, selected shard chips, and notes on the right. Phone
- * viewports get the same blocks arranged as a tab strip by
- * {@link MobileOverviewTab}.
- *
- * This file holds arrangement only — every block reads the character itself, so
- * the two layouts share their content rather than mirroring it.
+ * viewports use the tab strip layout in {@link MobileOverviewTab}.
  *
  * @module lib/components/characterSheet/tabs/overviewTab
  * @version 3.0.0

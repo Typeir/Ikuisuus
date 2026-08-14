@@ -1,8 +1,7 @@
 /**
- * @fileoverview Unit tests for Combatant Name Section component
+ * @fileoverview Unit tests for CombatantNameSection.
  * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantNameSection.test
- * @description Validates CombatantNameSection component rendering and interactions.
- * Tests name display, CR badge, awakening badges, stratagem badge, and remove button.
+ * @description Tests name display, CR badge, awakening badges, stratagem badge, and remove button.
  *
  * @version 2.0.0
  * @author Typeir

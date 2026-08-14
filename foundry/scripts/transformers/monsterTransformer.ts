@@ -31,11 +31,7 @@ import {
 const FEET_PER_STRIDE = 5;
 
 /**
- * Converts a native stride distance into the feet Foundry expects.
- *
- * Metadata mirrors content, which is measured in strides. Foundry's dnd5e
- * schema hardcodes `units: 'ft'`, so the conversion happens here at the
- * boundary rather than polluting the stored values.
+ * Converts a distance in strides to feet.
  *
  * @param {number | undefined} strides - Distance in strides
  * @returns {number} The distance in feet, or 0 when absent

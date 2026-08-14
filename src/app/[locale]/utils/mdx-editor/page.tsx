@@ -1,16 +1,14 @@
 /**
- * @fileoverview MDX Editor Tool Page
- * @description Dedicated tool page for creating and editing MDX content files.
- * Accessible from the Tools menu and via the "Edit" button on library content pages.
- * When navigated to with `?slug=...&locale=...` query parameters, pre-loads the
- * file for editing. Without query parameters, presents a blank editor for new files.
+ * @fileoverview MDX Editor tool page.
+ * @description Creates and edits MDX content files. With `?slug=...&locale=...`
+ * query params, pre-loads a file for editing; without them, shows a blank editor for new files.
  *
  * @module mdxEditorPage
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0
  *
- * @requires @/modules/mdx-editor Main MdxEditor component
+ * @requires @/modules/mdx-editor Renders the MdxEditor component
  *
  * @example
  * ```
@@ -24,8 +22,6 @@ import { Metadata } from 'next';
 import styles from './page.module.scss';
 
 /**
- * Page props interface
- *
  * @interface PageProps
  * @property {Promise<Object>} params - Route parameters (async in Next.js 15)
  * @property {string} params.locale - Current locale from route segment
@@ -47,8 +43,7 @@ export const generateMetadata = (): Metadata => ({
 
 /**
  * MDX Editor page component.
- * Renders the MdxEditor with locale from route parameters.
- * Uses a left-aligned, non-prose layout for tool-style display.
+ * Renders MdxEditor with locale from route params.
  *
  * @async
  * @param {PageProps} props - Page props with locale parameter

@@ -1,8 +1,7 @@
 /**
- * @fileoverview Integration test — ToolsMenu rendered with live useToolRegistry items.
- * @description Exercises the full data flow: registry config → hook → component rendering.
- * Verifies that all 4 tools appear as menu items and that onSelect is called with the
- * correct ToolMenuItem object when an item is clicked.
+ * @fileoverview Integration tests for ToolsMenu with useToolRegistry items.
+ * @description Verifies all registry tools render as menu items, items have non-empty
+ * labels, onSelect receives the ToolMenuItem on click, and the menu closes after selection.
  *
  * @module tests/unit/src/modules/tools-menu/tools-menu-registry
  * @version 1.0.0

@@ -1,5 +1,5 @@
 /**
- * Global markdown linkifier.
+ * Converts plain text references to markdown links in MDX content.
  *
  * @fileoverview Converts plain text references to markdown links in MDX content.
  * Skips self-links when `opts.selfPath` is provided.
@@ -27,10 +27,11 @@ interface LinkifyOptions {
 
 /**
  * Applies link specs to markdown text, converting plain text references to markdown links.
+ * Skips self-links and existing links; supports bold-wrapped terms.
  *
  * @param {string} markdown - Source markdown text
  * @param {LinkSpec[]} specs - Array of link specifications
- * @param {LinkifyOptions} opts - Options including optional selfPath to skip self-links
+ * @param {LinkifyOptions} opts - Options including optional selfPath
  * @returns Linkified markdown text
  */
 export const linkifyMarkdown = (

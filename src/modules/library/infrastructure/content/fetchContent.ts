@@ -1,8 +1,8 @@
 /**
- * @fileoverview Content Fetcher - Adapter-resolved content resolution
- * @description Resolves a ContentSourceAdapter (filesystem or GitHub) based on
- * the current environment and delegates all fetching through it. React `cache()`
- * deduplicates calls within a single server request (e.g. generateMetadata + Page).
+ * @fileoverview Content Fetcher
+ * @description Resolves a ContentSourceAdapter (filesystem or GitHub) by
+ * environment and delegates fetching through it. React `cache()` deduplicates
+ * calls within one server request.
  *
  * @module lib/utils/fetchContent
  * @author Typeir
@@ -21,19 +21,11 @@ const log = logger.child({ module: 'ContentFetcher' });
 
 /**
  * @function isBuildTime
- * @description
- * Determines whether we should prefer filesystem fetching.
+ * @description Returns whether the filesystem adapter should be used.
+ * `CONTENT_FETCH_MODE` overrides; otherwise reads `NODE_ENV` and
+ * `NEXT_PHASE` (`phase-production-build`, `phase-development-server`).
  *
- * Use the filesystem during development and build phases so local content is
- * used for `next dev` and `next build` operations. At runtime (production
- * server) we prefer the GitHub remote fetch to allow ISR updates from the
- * content repo.
- *
- * Relies on `process.env.NEXT_PHASE` values emitted by Next.js:
- *  - `phase-development-server` (dev)
- *  - `phase-production-build` (build)
- *
- * @returns {boolean} True when running dev or build, false in production runtime
+ * @returns {boolean} True during dev or build, false in production runtime
  */
 const isBuildTime = (): boolean => {
   if (process.env.CONTENT_FETCH_MODE === 'build') return true;
@@ -50,8 +42,8 @@ const isBuildTime = (): boolean => {
 
 /**
  * @function resolveContentSource
- * @description Factory that returns the active ContentSourceAdapter based on
- * the current environment (filesystem at build time, GitHub at runtime).
+ * @description Returns the active ContentSourceAdapter: filesystem at build
+ * time, GitHub at runtime.
  * @returns {ContentSourceAdapter} The resolved content source adapter
  */
 const resolveContentSource = (): ContentSourceAdapter => {
@@ -60,10 +52,8 @@ const resolveContentSource = (): ContentSourceAdapter => {
 
 /**
  * @function fetchContent
- * @description
- * Fetches MDX content using the environment-appropriate adapter.
- * Wrapped with React `cache()` to deduplicate calls within a single
- * server request (generateMetadata and Page both call this).
+ * @description Fetches MDX content via the environment-appropriate adapter,
+ * wrapped with React `cache()` to deduplicate calls in one server request.
  *
  * @param {string} locale - Content locale (e.g. "en")
  * @param {string} slugPath - Slash-separated content path (e.g. "monsters/albedo")

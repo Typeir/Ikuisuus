@@ -1,7 +1,7 @@
 /**
  * @fileoverview Combat Mechanics Utilities
- * @description Heroic Awakening system: fate die rolling, affix generation,
- * tier resolution, and HP maximization for in-progress combatants.
+ * @description Heroic Awakening utilities: affix generation and HP maximization
+ * for in-progress combatants.
  *
  * @module combatMechanics
  * @version 1.0.0
@@ -129,8 +129,8 @@ export const parseMechanicsFromTags = (tags?: string[]): CombatantMechanics => {
 };
 
 /**
- * Get default number of resist uses based on CR.
- * Returns 3 (d20 standard for legendary resistances).
+ * Get default number of resist uses.
+ * Returns 3.
  *
  * @function getDefaultResistCount
  * @param {string} [_crText] - CR text (currently unused, reserved for future scaling)
@@ -141,8 +141,8 @@ export const getDefaultResistCount = (_crText?: string): number => {
 };
 
 /**
- * Get default number of legendary deeds based on CR.
- * Returns 3 (d20 standard for legendary actions per round).
+ * Get default number of legendary deeds.
+ * Returns 3.
  *
  * @function getDefaultDeedCount
  * @param {string} [_crText] - CR text (currently unused, reserved for future scaling)
@@ -153,9 +153,9 @@ export const getDefaultDeedCount = (_crText?: string): number => {
 };
 
 /**
- * Maximize hit dice for a combatant based on their HP formula.
- * If formula exists: parses "NdM" and calculates N*M + constant.
- * If formula missing: uses percentage-based approach.
+ * Set a combatant's HP to its maximized value.
+ * Uses the "NdM" hpFormula with the constant term when present;
+ * otherwise estimates from hpMax.
  *
  * @function maximizeHitDice
  * @param {InProgressCombatant} combatant - The combatant to maximize HP for (mutated in place)

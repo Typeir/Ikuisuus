@@ -1,8 +1,7 @@
 /**
  * @fileoverview Scene Graph Dispose Utility
- * @description Shared utility for recursively disposing all GPU resources
- * (geometries, materials, and textures) in a Three.js scene graph subtree.
- * Replaces the identical dispose() boilerplate across all renderer classes.
+ * @description Recursively disposes geometries, materials, and textures in a
+ * Three.js scene graph subtree.
  *
  * @module worldSim/celestials/disposeUtils
  * @version 1.0.0
@@ -14,7 +13,6 @@ import type { BufferGeometry, Material, Object3D, Texture } from 'three';
 
 /**
  * Mesh-like object with optional geometry and material properties.
- * Used for type-safe traversal of scene graph children.
  *
  * @interface DisposableChild
  * @property {BufferGeometry} [geometry] - Geometry to dispose
@@ -39,9 +37,8 @@ interface DisposableMaterial extends Material {
 }
 
 /**
- * Recursively traverse a scene graph node and dispose all geometries,
- * materials, and textures found on each child. Call this in renderer
- * dispose() methods instead of duplicating the traversal boilerplate.
+ * Recursively traverses the scene graph node and disposes each child's
+ * geometry, material, and texture map.
  *
  * @function disposeSceneGraph
  * @param {Object3D} root - Root node to traverse and dispose

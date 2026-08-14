@@ -49,8 +49,6 @@ describe('useSearch', () => {
     await waitFor(() => expect(result.current.total).toBe(1));
     expect(result.current.results[0]).toBe(mapped);
     expect(result.current.error).toBeNull();
-    /* The third argument carries Pagefind options; an unfiltered query passes
-       none, so the search behaves exactly as it did before filters existed. */
     expect(searchPagefindMock).toHaveBeenCalledWith('en', 'dragon', undefined);
   });
 
@@ -68,7 +66,7 @@ describe('useSearch', () => {
     );
   });
 
-  /** A filter is a complete query, so the minimum term length must not block it. */
+  /** Filters bypass the minimum term length check. */
   it('should search on filters alone with no term', async () => {
     searchPagefindMock.mockResolvedValue({ results: [] });
 

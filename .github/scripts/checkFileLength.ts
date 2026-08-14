@@ -38,7 +38,7 @@ const FILE_SIZE_DEFAULTS_PATH = path.join(
 );
 
 /**
- * A single allowlist entry that grants an individual file a custom line-count cap.
+ * One allowlisted file with a custom line-count cap.
  *
  * @interface AllowlistEntry
  * @property {string} file - Relative file path (forward-slash separated)
@@ -52,8 +52,7 @@ interface AllowlistEntry {
 }
 
 /**
- * A single per-extension default entry that sets a custom line-count cap for
- * all files matching a given extension.
+ * One extension with a default line-count cap.
  *
  * @interface ExtensionDefault
  * @property {string} extension - File extension including leading dot (e.g. ".scss")

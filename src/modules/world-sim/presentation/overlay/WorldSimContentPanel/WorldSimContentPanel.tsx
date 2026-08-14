@@ -1,8 +1,8 @@
 /**
- * @fileoverview WorldSim Content Panel — WorldSim-Specific Embed Panel Wrapper
- * @description Wraps GenericEmbedPanel with WorldSim-specific state management,
- * positioning logic, and selection tracking. Determines which celestial body or region
- * to render and passes the embed URL to GenericEmbedPanel.
+ * @fileoverview WorldSim-specific wrapper around GenericEmbedPanel.
+ * @description Wraps GenericEmbedPanel with WorldSim state management, positioning,
+ * and selection tracking. Resolves the selected celestial body or region into an
+ * embed URL passed to GenericEmbedPanel.
  *
  * @module worldSim/overlay/WorldSimContentPanel
  * @version 1.0.0
@@ -31,7 +31,7 @@ const CONTENT_PANEL_LEFT = 32;
 const CONTENT_PANEL_TOP = 100;
 
 /**
- * Compute initial position so the panel sits on the left side under the header.
+ * Compute initial panel position.
  *
  * @param {{ width: number; height: number }} parentBounds - Dimensions of the bounding parent
  * @returns {{ x: number; y: number }} Computed initial position
@@ -61,9 +61,7 @@ export function WorldSimContentPanel(): React.ReactElement | null {
   const registry = useMemo(() => CelestialRegistry.shared(), []);
 
   /**
-   * Reset the camera and clear selection when the panel is closed so the
-   * scene returns to system overview and re-clicking the same body produces
-   * a fresh selection transition (which re-opens the panel).
+   * Reset the camera when the panel is closed.
    */
   const handleClosed = useCallback(() => {
     controls.resetView();

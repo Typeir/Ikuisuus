@@ -1,9 +1,6 @@
 /**
- * @fileoverview MDX prose description extractor.
- *
- * Extracts the first substantive prose paragraph from raw MDX source for use
- * as og:description and twitter:description meta values. Skips frontmatter,
- * headings, JSX components, blockquotes, and other structural noise.
+ * @fileoverview Extracts the first substantive prose paragraph from raw MDX
+ * source for og:description and twitter:description meta values.
  *
  * @module lib/seo/extractDescription
  * @version 1.0.0
@@ -33,9 +30,6 @@ function stripFrontmatter(content: string): string {
 
 /**
  * Determines whether a single line is structural rather than prose.
- *
- * Structural lines include headings, JSX component tags, blockquotes,
- * horizontal rules, italic-only rarity lines, and bold list items.
  *
  * @param {string} line - A single line of MDX text.
  * @returns {boolean} True when the line should be excluded from prose candidates.
@@ -77,9 +71,6 @@ function splitIntoParagraphs(content: string): string[] {
 /**
  * Filters normalised paragraph candidates to substantive prose only.
  *
- * A paragraph is considered prose when it meets the minimum length threshold
- * and does not begin with a JSX tag.
- *
  * @param {string[]} paragraphs - Normalised paragraph strings.
  * @returns {string[]} Prose-only paragraphs above the minimum length.
  */
@@ -103,9 +94,6 @@ function truncateDescription(text: string): string {
 
 /**
  * Extracts the first substantive prose paragraph from raw MDX source.
- *
- * Strips frontmatter, skips structural lines, normalises whitespace, and
- * truncates the result to 160 characters for social preview compatibility.
  *
  * @param {string} content - Raw MDX source string.
  * @returns {string | null} First prose paragraph or null if none is found.

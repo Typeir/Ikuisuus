@@ -109,7 +109,7 @@ class PgSpellRepository
   }
 
   /**
-   * Returns a lightweight sorted index of all spells.
+   * Returns a sorted index of all spells (slug, title, level, school).
    *
    * @param {string} locale - Locale code
    * @returns {Promise<SpellIndexEntry[]>} Sorted index entries, or `[]` on error

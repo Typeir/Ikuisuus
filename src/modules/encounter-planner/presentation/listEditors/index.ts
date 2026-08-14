@@ -1,7 +1,6 @@
 /**
  * @fileoverview List Editors Exports
- * @description Barrel export for all list editor components.
- * Re-exports for convenient import from single module.
+ * @description Barrel export re-exporting all list editor components from one module.
  *
  * @module encounterPlanner/listEditors
  * @version 1.0.0

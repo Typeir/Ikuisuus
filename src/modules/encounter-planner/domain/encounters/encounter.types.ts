@@ -1,7 +1,6 @@
 /**
- * @fileoverview Encounter Planner Types - TypeScript interfaces for encounter persistence
- * @description Type definitions for encounter planner data structures. Defines the complete
- * data model for encounters, creatures, conditions, and spell references.
+ * @fileoverview TypeScript interfaces for encounter planner persistence.
+ * @description Defines the data model for encounters, creatures, conditions, and spell references.
  *
  * @version 1.0.0
  * @author Typeir
@@ -25,7 +24,6 @@ export interface ConditionEntry {
 
 /**
  * Reference to a spell using only its slug identifier.
- * Full metadata is loaded lazily from spell metadata files.
  *
  * @interface SpellRef
  * @property {string} slug - URL-safe spell identifier for API lookups
@@ -57,7 +55,6 @@ export interface CreatureStats {
 
 /**
  * Affix entry with optional wiki source link.
- * Affixes can be plain text or backed by metadata with a wiki link.
  *
  * @interface AffixEntry
  * @property {string} text - Display name of the affix
@@ -74,7 +71,7 @@ export interface AffixEntry {
 }
 
 /**
- * Details section for a creature containing buffs, items, spells, and affixes.
+ * Extended details section for a creature.
  *
  * @interface CreatureDetails
  * @property {string[]} buffs - Active buff names
@@ -154,7 +151,6 @@ export interface Encounter {
 
 /**
  * Spell metadata structure for dropdown display.
- * Minimal interface containing only fields needed for spell selection UI.
  *
  * @interface SpellMetadata
  * @property {string} slug - URL-safe identifier

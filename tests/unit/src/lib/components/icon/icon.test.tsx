@@ -1,7 +1,7 @@
 /**
  * @fileoverview Icon Component Unit Tests
- * @description Tests for the Icon component that renders SVG icons from
- * a predefined icon map with support for custom styling and SVG props.
+ * @description Unit tests for the Icon component: rendering, unknown-type
+ * handling, and prop passthrough.
  *
  * @module tests/unit/lib/components/icon/icon
  * @version 1.0.0

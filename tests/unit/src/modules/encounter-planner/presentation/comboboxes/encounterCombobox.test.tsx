@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for Encounter Combobox component
  * @module tests/unit/src/lib/components/encounterPlanner/comboboxes/encounterCombobox.test
- * @description Validates EncounterCombobox export and component signature.
- * Tests combobox component for selecting encounters in the encounter planner.
+ * @description Validates the EncounterCombobox export and its component signature.
  *
  * @version 1.0.0
  * @author Typeir

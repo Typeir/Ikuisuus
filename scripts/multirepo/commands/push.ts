@@ -20,7 +20,7 @@ export const meta: CommandMeta = {
 };
 
 /**
- * Pushes content first (remote must have that SHA before main references it).
+ * Pushes the content repo, then the main repo.
  * Detects a stale submodule ref and amends the last main commit before pushing.
  * @param {string[]} args - Arguments forwarded verbatim to `git push`.
  * @returns {Promise<void>} Resolves when both pushes complete.
@@ -28,11 +28,7 @@ export const meta: CommandMeta = {
 export async function run(args: string[]): Promise<void> {
   ensureContentOnBranch();
   const s = spinner();
-  /**
-   * Allow an explicit override flag to force pushing main even if content
-   * push fails. This is purposely a CLI-only sentinel and removed from the
-   * arguments forwarded to `git push` so it won't be passed to Git.
-   */
+  /** Removes the CLI-only `--force-main` flag from args before forwarding to git. */
   const safeArgs = args.filter((a) => a !== '--force-main');
   const forceMain = safeArgs.length !== args.length;
 
@@ -50,7 +46,7 @@ export async function run(args: string[]): Promise<void> {
 
   if (contentResult.status !== 0) {
     s.stop('Content push failed');
-    /** Provide actionable diagnostics to avoid silent failures. */
+    /** Combined stderr and stdout of the failed content push. */
     const details = (contentStderr + '\n' + contentStdout).trim();
     if (details.length > 0) {
       log.error(`Content push error:\n${details}`);

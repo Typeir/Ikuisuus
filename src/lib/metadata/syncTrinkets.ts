@@ -1,6 +1,5 @@
 /**
- * @fileoverview Trinket Metadata Sync Worker
- * @description Hash-based incremental sync for the `trinkets` table
+ * @fileoverview Hash-based incremental sync of the `trinkets` table
  * from local metadata sidecars into PostgreSQL via MikroORM.
  *
  * @module lib/metadata/syncTrinkets
@@ -31,10 +30,8 @@ function getProjectRoot(): string {
  * Reads and flattens `.metadata.json` files from a locale subdirectory.
  * Checks `.meta/{locale}/{subdir}` first, falls back to `src/content/{locale}/{subdir}`.
  *
- * Returns `sourceExists: false` when neither directory exists **or** when the
- * chosen directory contains no `.metadata.json` files, preventing destructive
- * deletion in serverless deployments where content dirs exist but metadata
- * sidecars were not bundled.
+ * Returns `sourceExists: false` when neither directory exists or the chosen
+ * directory contains no `.metadata.json` files.
  *
  * @param {string} locale - Locale code
  * @param {string} subdir - Content subdirectory

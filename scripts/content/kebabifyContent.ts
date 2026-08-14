@@ -2,8 +2,6 @@
  * Kebabifies all folders and `.mdx` files in `src/content/` recursively.
  *
  * @fileoverview Content filename normalization script.
- * - Skips ignored folders
- * - Handles renaming safely (depth-first)
  *
  * @module kebabifyContent
  * @author Typeir

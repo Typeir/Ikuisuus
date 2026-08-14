@@ -1,7 +1,6 @@
 /**
  * @fileoverview useUnitSystem Hook Unit Tests
- * @description Tests for the unit display preference hooks, covering state
- * exposure, the hydration flag, and action dispatch.
+ * @description Tests state exposure, the hydration flag, and action dispatch.
  *
  * @module tests/unit/lib/hooks/useUnitSystem
  * @version 1.0.0

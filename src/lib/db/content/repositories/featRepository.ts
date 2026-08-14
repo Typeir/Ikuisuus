@@ -1,7 +1,7 @@
 /**
  * @fileoverview Feat Repository Port + Factory
- * @description Defines the hexagonal port contract for feat metadata persistence
- * and exports a factory-resolved instance based on `METADATA_BACKEND` env var.
+ * @description Selects the feat metadata repository from `METADATA_BACKEND`
+ * and exports a resolved instance.
  *
  * @module lib/db/content/repositories/featRepository
  * @version 1.1.0

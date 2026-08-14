@@ -3,9 +3,6 @@
  * @description Implements the `UserAdapter` interface using a local JSON file.
  * User records are persisted as an array in `.meta/runtime/users.json`.
  *
- * Suitable for local development and single-instance deployments.
- * For multi-instance production use, prefer the PostgreSQL adapter.
- *
  * @module lib/db/auth/fsUserAdapter
  * @version 1.0.0
  * @author Typeir

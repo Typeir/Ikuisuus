@@ -1,11 +1,7 @@
 /**
  * @fileoverview Banned IP Manager
- * @description Manages a list of banned IP ranges. IPs are stored as /24 CIDR
- * ranges so that banning one address blocks the entire local subnet, preventing
- * evasion from the same network.
- *
- * Persistence is delegated to the adapter resolved by `METADATA_BACKEND`
- * (filesystem JSON or PostgreSQL).
+ * @description Manages a list of banned IP /24 CIDR ranges. Persistence is
+ * delegated to the adapter resolved by `METADATA_BACKEND` (filesystem JSON or PostgreSQL).
  *
  * @module lib/security/bannedIps
  * @author Typeir
@@ -157,7 +153,7 @@ export const banIp = async (
 };
 
 /**
- * Removes a banned IP range. Useful for admin un-banning.
+ * Removes a banned IP range.
  *
  * @param {string} range - The CIDR range to remove (e.g. "192.168.1.0/24")
  * @returns {Promise<boolean>} True if the range was found and removed

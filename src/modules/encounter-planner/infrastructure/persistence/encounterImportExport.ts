@@ -1,7 +1,6 @@
 /**
  * @fileoverview Encounter Import/Export
- * @description Serialization helpers for exporting encounters to JSON strings
- * and importing them back with validation and fresh IDs.
+ * @description Serializes encounters to JSON strings and parses them back with validation and fresh IDs.
  *
  * @module encounter-planner/infrastructure/persistence/encounterImportExport
  * @version 1.0.0
@@ -16,8 +15,7 @@ import type {
 import { generateId } from '../../domain/shared/utils';
 
 /**
- * Export encounter to JSON string with pretty formatting.
- * Use for clipboard copy or file download.
+ * Serializes encounter to JSON string.
  *
  * @function exportEncounter
  * @param {Encounter} encounter - Encounter to serialize
@@ -32,9 +30,7 @@ export const exportEncounter = (encounter: Encounter): string => {
 };
 
 /**
- * Import encounter from JSON string with validation.
- * Generates new ID to prevent conflicts with existing encounters.
- * Validates structure and ensures timestamps exist.
+ * Parses and validates encounter from JSON string. Assigns a new ID and ensures timestamps exist.
  *
  * @function importEncounter
  * @param {string} jsonString - JSON string to parse

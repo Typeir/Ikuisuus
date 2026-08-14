@@ -1,11 +1,7 @@
 /**
- * @fileoverview OGTemplate unit tests.
- *
- * Validates the tag line builder helper and verifies that the template
- * renders without throwing for the key data combinations.
- *
- * Satori itself is not invoked here — rendering integration is covered by
- * the renderer tests.
+ * @fileoverview OGTemplate unit tests. Validates the tag line builder
+ * helper and verifies the template renders without throwing for key data
+ * combinations.
  *
  * @module tests/unit/src/lib/seo/og/OGTemplate.test
  */

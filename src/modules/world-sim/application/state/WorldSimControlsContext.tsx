@@ -1,9 +1,6 @@
 /**
- * @fileoverview WorldSim Controls Context — Imperative Mediator Bridge
- * @description Exposes the imperative `WorldSimMediator` control surface
- * (`zoomToBody`, `zoomToRegion`, `zoomToLocalCoordinate`, `resetView`,
- * `toggleOrbitLines`) as a stable React context so descendant components
- * can trigger camera/scene actions without prop-drilling a mediator ref.
+ * @fileoverview React context exposing WorldSimMediator control methods.
+ * @description Exposes WorldSimMediator methods as a stable React context for descendant components.
  *
  * @module worldSim/context/WorldSimControlsContext
  * @version 1.0.0
@@ -74,10 +71,9 @@ interface WorldSimControlsProviderProps {
 }
 
 /**
- * Provider that builds a stable controls object bound to the mediator ref.
- * The returned callbacks read `mediatorRef.current` at call time, so they
- * remain valid even before the mediator finishes initializing — calls made
- * pre-init are silently ignored.
+ * Provider providing a stable controls object bound to `mediatorRef`.
+ * Callbacks read `mediatorRef.current` at call time; calls made before the
+ * mediator initializes are silently ignored.
  *
  * @component
  * @param {WorldSimControlsProviderProps} props - Provider props

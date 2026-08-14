@@ -1,11 +1,10 @@
 /**
- * @fileoverview Client bootstrap that measures stream text height per section.
- * @description Runs after mount to compute the exact rendered height of the
- * doubled stream text for each `<section data-stream>` element. Sets
- * `--stream-px` (half the text height = one copy) and `--stream-speed`
- * (derived from a target px/s) as inline CSS custom properties on the section
- * so the CSS animation is pixel-perfect and speed-consistent regardless of
- * section height.
+ * @fileoverview Client bootstrap that sets stream animation custom properties
+ * on sections after mount.
+ * @description Computes the rendered height of each `<section data-stream>`
+ * element's doubled stream text, then sets `--stream-px` (half the text height
+ * = one copy) and `--stream-speed` (derived from a target px/s) as inline CSS
+ * custom properties on the section.
  *
  * @module lib/components/stream/StreamBootstrap
  * @version 1.0.1
@@ -27,8 +26,8 @@ const MIN_DURATION = 4;
 const MAX_DURATION = 120;
 
 /**
- * Measures the rendered height of the given stream text string using a
- * temporary off-screen probe element with matching typographic properties.
+ * Measures the rendered height of a stream text string with a temporary
+ * off-screen probe element.
  *
  * @param {string} text - Stream text to measure
  * @returns {number} Rendered height in pixels, or 0 if measurement fails
@@ -81,9 +80,7 @@ function stampSection(sec: HTMLElement): void {
 }
 
 /**
- * Client component that computes per-section pixel distances and animation
- * durations so the stream ticker moves at a consistent visual speed and loops
- * without a visible seam, regardless of each section's rendered height.
+ * Client component that sets --stream-px and --stream-speed per section.
  *
  * @component
  * @returns {null} No DOM output — side-effects only.

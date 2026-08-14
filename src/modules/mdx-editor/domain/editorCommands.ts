@@ -1,9 +1,7 @@
 /**
  * @fileoverview Editor Text Mutation Commands
- * @description Low-level text mutation utilities that operate on a textarea via
- * `document.execCommand('insertText')`. This preserves the browser native undo/redo
- * stack and avoids the cursor desync that occurs with React controlled-component
- * string slicing.
+ * @description Text mutation utilities operating on a textarea via
+ * `document.execCommand('insertText')`, preserving the native undo/redo stack.
  *
  * @module lib/components/mdxEditor/editorCommands
  * @version 1.0.0
@@ -26,8 +24,7 @@ export function getSelection(
 }
 
 /**
- * Replaces the current selection with new text using execCommand('insertText').
- * This preserves the browser's native undo/redo stack and avoids cursor desync.
+ * Replaces the current selection with new text using `execCommand('insertText')`.
  *
  * @param {HTMLTextAreaElement} el - Textarea element
  * @param {string} text - Text to insert (replaces selection)
@@ -39,8 +36,7 @@ export function nativeInsert(el: HTMLTextAreaElement, text: string): void {
 
 /**
  * Selects a range in the textarea, then inserts replacement text natively.
- * Use when you need to replace a region wider than the current selection
- * (e.g. inserting a prefix at line-start while cursor is mid-line).
+ * Replaces a region wider than the current selection.
  *
  * @param {HTMLTextAreaElement} el - Textarea element
  * @param {number} start - Start of the range to replace
@@ -60,7 +56,7 @@ export function nativeReplace(
 
 /**
  * Wraps the selected text with a prefix and suffix, or inserts placeholder text
- * when nothing is selected. Uses native insertion to preserve undo stack.
+ * when nothing is selected.
  *
  * @param {string} id - Textarea DOM id
  * @param {string} value - Full editor text
@@ -91,7 +87,6 @@ export function wrapSelection(
 
 /**
  * Inserts a line prefix (e.g. heading marker) at the start of the current line.
- * Uses native replacement to preserve undo stack.
  *
  * @param {string} id - Textarea DOM id
  * @param {string} value - Full editor text
@@ -128,7 +123,7 @@ export function insertAtCursor(id: string, text: string): void {
 
 /**
  * Inserts a markdown link wrapping the selected text.
- * Places cursor inside the URL placeholder for immediate typing.
+ * Places cursor inside the URL placeholder.
  *
  * @param {string} id - Textarea DOM id
  * @param {string} value - Full editor text
@@ -147,8 +142,7 @@ export function insertLink(id: string, value: string): void {
 }
 
 /**
- * Duplicates the current line (VS Code: Ctrl+Shift+D).
- * Uses native insertion to preserve undo stack.
+ * Duplicates the current line.
  *
  * @param {string} id - Textarea DOM id
  * @param {string} value - Full editor text
@@ -169,7 +163,7 @@ export function duplicateLine(id: string, value: string): void {
 }
 
 /**
- * Triggers undo via execCommand. Used by the toolbar undo button.
+ * Triggers undo via execCommand.
  *
  * @param {string} id - Textarea DOM id
  */
@@ -181,7 +175,7 @@ export function triggerUndo(id: string): void {
 }
 
 /**
- * Triggers redo via execCommand. Used by the toolbar redo button.
+ * Triggers redo via execCommand.
  *
  * @param {string} id - Textarea DOM id
  */
@@ -194,8 +188,7 @@ export function triggerRedo(id: string): void {
 
 /**
  * Handles VS Code-style keyboard shortcuts on the editor textarea.
- * Undo (Ctrl+Z) and Redo (Ctrl+Y / Ctrl+Shift+Z) are handled natively
- * by the browser since all mutations use execCommand.
+ * Undo (Ctrl+Z) and Redo (Ctrl+Y / Ctrl+Shift+Z) are handled natively by the browser.
  *
  * @param {React.KeyboardEvent} e - Keyboard event
  * @param {string} textareaId - Textarea DOM id

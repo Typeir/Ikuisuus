@@ -2,7 +2,7 @@
  * @fileoverview CharacterSheet Unit Tests
  * @description Tests for the CharacterSheet and ActiveCharacterSheet components.
  *
- * @module tests/unit/lib/components/characterSheet/characterSheet
+ * @module tests/unit/src/modules/character-builder/presentation/CharacterSheet/characterSheet
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -40,11 +40,7 @@ function makeCharacter(
 
 describe('CharacterSheet', () => {
   /**
-   * `userEvent`'s default session waits on real timers between keystrokes, so a
-   * twelve-character name cost twelve scheduler round-trips and the file drifted
-   * past the per-test timeout whenever the machine was busy. `delay: null`
-   * dispatches the sequence without waiting, which is what made this suite pass
-   * alone and fail beside anything else.
+   * userEvent dispatches keystrokes without real-timer waits.
    */
   const user = userEvent.setup({ delay: null });
   it('renders the character name', () => {

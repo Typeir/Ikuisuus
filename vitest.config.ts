@@ -1,8 +1,7 @@
 /**
- * @fileoverview Vitest Configuration
- * @description Root vitest config with inline projects for modularized test execution.
- * Each project runs in its own worker pool to prevent OOM crashes with 374+ test files.
- * Use `--project <name>` to run a single module, or `vitest run` for all projects.
+ * @fileoverview Root vitest config. Defines inline projects, one per test suite;
+ * each runs in its own worker pool. Run a project with `--project <name>` or run
+ * all with `vitest run`.
  *
  * @module vitestConfig
  * @author Typeir
@@ -46,14 +45,8 @@ const maxOldSpaceMb = Number.isNaN(parsedMaxOldSpaceMb)
   : Math.max(1024, parsedMaxOldSpaceMb);
 
 /**
- * Mirrors `scripts/build/glslRawLoader.cjs` so a `.glsl` import resolves to
- * shader source under test exactly as it does under Turbopack.
- *
- * The former `assetsInclude: ['**\/*.glsl']` took Vite's asset path, which
- * resolves such an import to a URL. Renderer suites therefore had to `vi.mock`
- * every shader module, and the one thing a real import could have proven — that
- * the bundler hands back GLSL rather than a path or `undefined` — went untested
- * through the whole Next 16 migration.
+ * Mirrors `scripts/build/glslRawLoader.cjs`: a `.glsl` import resolves to the raw
+ * shader source string rather than a Vite asset URL.
  */
 const glslSourcePlugin = {
   name: 'glsl-source',

@@ -2,7 +2,6 @@
  * @fileoverview Unit tests for Encounter Planner page component
  * @module tests/unit/src/app/[locale]/utils/encounter-planner/page.test
  * @description Validates EncounterPlannerPage default export and component signature.
- * Tests async server component for encounter planner utility page.
  * 
  * @version 1.0.0
  * @author Typeir

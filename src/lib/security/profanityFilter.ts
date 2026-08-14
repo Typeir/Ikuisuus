@@ -1,12 +1,8 @@
 /**
  * @fileoverview Profanity Filter
- * @description Server-side profanity detection for user-submitted content.
- * Loads a banned-terms list from `banned-terms.txt` at startup and checks
- * strings against it using word-boundary-aware regex matching. Returns match
- * details so callers can decide how to respond (reject, ban, audit, etc.).
- *
- * To update the word list, edit `src/lib/security/banned-terms.txt` — no code
- * changes required.
+ * @description Server-side profanity detection. Loads banned terms from
+ * `banned-terms.txt` at module init and matches strings against them with
+ * word-boundary regex. Returns match details.
  *
  * @module lib/security/profanityFilter
  * @author Typeir
@@ -34,9 +30,8 @@ export interface ProfanityCheckResult {
 }
 
 /**
- * Loads banned terms from the `banned-terms.txt` file co-located with this module.
- * Skips blank lines and comment lines (starting with #). Results are cached
- * in `cachedTerms` so the file is only read once per process lifetime.
+ * Reads `banned-terms.txt` co-located with this module.
+ * Skips blank lines and comment lines (starting with #).
  *
  * @returns {string[]} Array of trimmed, non-empty banned terms
  */

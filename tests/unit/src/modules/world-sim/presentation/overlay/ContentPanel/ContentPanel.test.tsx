@@ -49,7 +49,7 @@ vi.mock('@/modules/world-sim/domain/celestials/celestialRegistry', () => ({
   },
 }));
 
-/** Mock Draggable to simplify DOM output while exposing close & resize props */
+/** Mock Draggable exposing close and resize props in DOM output */
 vi.mock('@/lib/components/ui/draggable/Draggable', () => ({
   Draggable: ({
     children,
@@ -249,10 +249,7 @@ describe('ContentPanel', () => {
 
     expect(container.querySelector('iframe')).toBeNull();
 
-    /**
-     * Re-render with different body to trigger reopen. We use a fresh
-     * wrapper that dispatches a new selection.
-     */
+    /** Re-render with a fresh wrapper dispatching a new selection */
     function NewSelector({ children }: { children: React.ReactNode }) {
       const dispatch = useWorldSimDispatch();
       React.useEffect(() => {

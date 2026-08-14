@@ -1,10 +1,7 @@
 /**
- * Compresses full-resolution images from `public/full-size` into `.webp` format,
- * saving optimized versions in `public/library/images` with mirrored structure.
- *
- * @fileoverview Image asset compression pipeline using Sharp.
- * Supported formats: .png, .jpg, .jpeg
- * Keeps originals untouched.
+ * @fileoverview Compresses images from `public/full-size` into `.webp`,
+ * writing mirrored files under `public/library`. Supports .png, .jpg, .jpeg.
+ * Originals kept untouched.
  *
  * @module compressAssets
  * @version 1.0.0

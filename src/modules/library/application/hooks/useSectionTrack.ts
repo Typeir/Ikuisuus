@@ -27,10 +27,7 @@ const MOBILE_IDLE_MS = 1_500;
 const MOBILE_BREAKPOINT = 768;
 
 /**
- * Extracts heading-level data-anchor elements from the DOM.
- *
- * Filters to H1–H6 elements with `data-anchor` attributes, sorts
- * by document position, and returns structured items.
+ * Extracts H1–H6 `[data-anchor]` elements from the DOM, sorted by document position.
  *
  * @returns {SectionTrackItem[]} Ordered heading items.
  */
@@ -62,8 +59,7 @@ function scanHeadings(): SectionTrackItem[] {
 }
 
 /**
- * Returns true when two SectionTrackItem arrays describe the same headings
- * at the same positions — prevents unnecessary re-renders.
+ * Returns true when two SectionTrackItem arrays have equal length, anchors, and positions.
  *
  * @param {SectionTrackItem[]} a - Previous items.
  * @param {SectionTrackItem[]} b - Next items.
@@ -101,11 +97,7 @@ interface SectionTrackState {
 }
 
 /**
- * Tracks page headings for the Section Track navigation widget.
- *
- * Scans all `[data-anchor]` headings (H1–H6), determines the active
- * section via scroll position, and computes proportional positions for
- * rendering bars on the track. On mobile, auto-hides after idle timeout.
+ * Tracks `[data-anchor]` headings: active section, proportional positions, mobile auto-hide.
  *
  * @returns {SectionTrackState} Heading items, active anchor, visibility flag, center proximity function.
  */
@@ -228,9 +220,6 @@ export function useSectionTrack(): SectionTrackState {
 
   /**
    * Computes how close an item is to the center of the visible viewport.
-   *
-   * Returns 0 when the item is at the viewport edge and 1 when it's
-   * at the exact center. Clamped to [0, 1].
    *
    * @param {SectionTrackItem} item - The heading item.
    * @returns {number} Proximity score (0 = edge, 1 = center).

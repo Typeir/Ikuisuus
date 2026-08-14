@@ -1,19 +1,9 @@
 /**
  * @fileoverview Render Lifecycle — Phase-Based Frame Event System
  * @description Typed, priority-sorted observer system for the render loop.
- * Subscribers register for specific lifecycle phases and receive a shared
- * context object with full read/write access to the renderer, scene, camera,
- * and frame timing. Inspired by Unity's OnPreRender/OnPostRender and
- * GameMaker's pre/post draw events.
- *
- * Phase execution order per frame:
- * 1. **PreUpdate**  — Input sampling, physics prep
- * 2. **Update**     — Simulation tick (orbits, AI, animation)
- * 3. **PostUpdate** — Camera resolution, constraint solving
- * 4. **PreRender**  — Last-chance scene mutations before draw
- * 5. *(WebGL render)*
- * 6. **PostRender** — DOM overlay sync, debug gizmos, readback
- *
+ * Subscribers register for lifecycle phases and receive a shared FrameContext
+ * with renderer, scene, camera, and frame timing. Phases execute each frame in
+ * numeric order: PreUpdate, Update, PostUpdate, PreRender, PostRender.
  * @module worldSim/canvas/RenderLifecycle
  * @version 1.0.0
  * @author Typeir
@@ -43,7 +33,6 @@ export enum RenderPhase {
 
 /**
  * Shared context passed to every lifecycle subscriber each frame.
- * Provides full read/write access to the rendering pipeline.
  *
  * @interface FrameContext
  * @property {WebGLRenderer} renderer - The WebGL renderer (read pixels, draw to canvas)
@@ -198,7 +187,6 @@ export class RenderLifecycle {
 
   /**
    * Execute all pre-render phases in order: PreUpdate → Update → PostUpdate → PreRender.
-   * Convenience method for the SceneManager's tick loop.
    *
    * @param {FrameContext} ctx - Shared frame context
    */
@@ -211,7 +199,6 @@ export class RenderLifecycle {
 
   /**
    * Execute all post-render phases in order. Currently only PostRender.
-   * Convenience method for the SceneManager's tick loop.
    *
    * @param {FrameContext} ctx - Shared frame context
    */
@@ -220,7 +207,7 @@ export class RenderLifecycle {
   }
 
   /**
-   * Get the count of subscribers for a specific phase (useful for debugging).
+   * Get the count of subscribers for a specific phase.
    *
    * @param {RenderPhase} phase - The phase to query
    * @returns {number} Number of subscribers
@@ -230,7 +217,7 @@ export class RenderLifecycle {
   }
 
   /**
-   * Remove all subscribers from all phases. Call during dispose.
+   * Remove all subscribers from all phases.
    */
   clear(): void {
     this.phases.clear();

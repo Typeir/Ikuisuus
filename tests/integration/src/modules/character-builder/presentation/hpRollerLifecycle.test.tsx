@@ -1,19 +1,7 @@
 /**
  * @fileoverview HP Roller Lifecycle Integration Test
- * @description End-to-end coverage of the hit-dice roller as wired in
- * production. The harness mirrors `CharacterSheetBody`'s contract on the real
- * `ActiveSheetProvider` — the character in the sheet context, the
- * `syncHitDiceLog` reconciler in an effect, and the always-mounted
- * `CombatStatChips` (which hosts the roller and HP chip) — with NO
- * `OverviewTab` present. This proves the three regressions are fixed:
- * (1) dice for levels gained while off the Overview tab still appear in the
- * roller; (2) `hpMax` folds in CON x N (and passive hp grants); and (3) current
- * HP is always editable and clamped, independent of the lock.
- *
- * The harness runs in view mode, which is how the roller is actually used: the
- * HP chip is gated by its own lock, not by edit mode, and writes made outside
- * edit mode land on the saved character rather than being swallowed.
- *
+ * @description Mounts a `CombatStatChips` harness on the real
+ * `ActiveSheetProvider` with a `syncHitDiceLog` effect and no `OverviewTab`.
  * @module tests/integration/character-builder/presentation/hpRollerLifecycle
  * @version 2.0.0
  * @author Typeir
@@ -74,11 +62,9 @@ const makeChar = (
 });
 
 /**
- * Stand-in for `CharacterSheetBody`: reads the character from the sheet
- * context, runs the same `syncHitDiceLog` reconciler in an effect, and renders
- * only the always-mounted `CombatStatChips`. A test button bumps the first
- * vocation's level to simulate levelling up while no tab-scoped effect is
- * mounted.
+ * Reads the character from the sheet context, runs `syncHitDiceLog` in an
+ * effect, and renders only `CombatStatChips`. Test buttons bump the first
+ * vocation's level and drop CON.
  *
  * @function Harness
  * @returns {JSX.Element} The harness element
@@ -116,7 +102,6 @@ function Harness() {
 
 /**
  * Mounts the harness on the real sheet context seeded with `character`.
- *
  * @function renderHarness
  * @param {CharacterSheet} character - The starting character
  * @returns {void}

@@ -1,8 +1,8 @@
 /**
  * @fileoverview Carrying Capacity Calculator
- * @description Live read-out of a character's light / medium / heavy load
- * thresholds based on Strength, size, and bipedal/quadruped status. Includes
- * a carried-weight input and a coloured load bar.
+ * @description Displays light/medium/heavy load thresholds from Strength,
+ * size, and quadruped status. Computes load tier from carried weight and
+ * total equipment weight; renders a load bar and tier label.
  *
  * @module lib/components/characterSheet/carryingCapacityCalculator
  * @version 1.0.0

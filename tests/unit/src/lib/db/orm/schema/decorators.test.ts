@@ -1,8 +1,7 @@
 /**
  * ORM Schema Decorators Unit Tests
  *
- * @fileoverview Tests for the in-house entity decorators, including the
- * minification regression they exist to prevent.
+ * @fileoverview Unit tests for entity decorators and the minification regression.
  *
  * @module tests/unit/lib/db/orm/schema/decorators
  * @version 1.0.0

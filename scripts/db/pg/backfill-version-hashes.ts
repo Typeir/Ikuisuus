@@ -1,12 +1,7 @@
 /**
- * @fileoverview Backfill missing content version hashes in PostgreSQL
- * @description Scans content tables, derives a deterministic hash payload from
- * each entity row via MikroORM reflection metadata, and updates rows where
- * `version_hash` is null or empty.
- *
- * All field selection is driven by `orm.getMetadata()` — no property names are
- * hardcoded. Relation payloads (spell lists, bloodline boons) are appended via
- * per-entity `appendRelations` hooks in the config array.
+ * @fileoverview Backfills missing content version hashes in PostgreSQL.
+ * @description Scans tables for rows where `version_hash` is null or empty,
+ * computes `contentHash` from each reflected row, and flushes updates.
  *
  * @module scripts/db/pg/backfill-version-hashes
  * @version 2.0.0
@@ -177,10 +172,6 @@ interface BackfillConfig {
 /**
  * Scans all rows for `config.entityClass`, computes a deterministic hash for
  * each row that is missing one, and persists updates via `em.flush()`.
- *
- * Field selection is driven entirely by `entityToRecord` and the ORM metadata —
- * no property names are hardcoded here. The optional `appendRelations` callback
- * in `config` handles relation payloads that `entityToRecord` skips.
  *
  * @param {EntityManager} em - Transaction-scoped entity manager
  * @param {MetadataStorage} allMeta - ORM metadata from `orm.getMetadata()`

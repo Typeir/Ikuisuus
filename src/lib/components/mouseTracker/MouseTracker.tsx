@@ -19,10 +19,9 @@ type Props = {
 
 /**
  * Write mouse coordinates to CSS variables on the target element.
- * Emits both percentage vars (--mouse-x/--mouse-y, for gradient positions)
- * and pixel vars (--mouse-px/--mouse-py, for transform-driven consumers —
- * percentages inside translate() resolve against the element's own box, so
- * transforms need absolute pixels).
+ * Emits percentage vars (--mouse-x/--mouse-y, for gradient positions) and
+ * pixel vars (--mouse-px/--mouse-py, for transforms; percentages in
+ * translate() resolve against the element's own box, not the viewport).
  * @param {number} clientX
  * @param {number} clientY
  */
@@ -45,8 +44,7 @@ function setMouseVars(
  * Client component that tracks pointer movement and updates CSS variables.
  * Stateless — does not cause React re-renders on movement.
  * Respects user preferences for reduced motion and coarse pointers by disabling tracking.
- * Coalesces updates to one write per animation frame; consumers are expected
- * to use the vars in transform-only ways, so a full-rate rAF is composite-cheap.
+ * Coalesces updates to one write per animation frame.
  *
  * @param {Props} props
  * @param {React.RefObject<HTMLElement | null>} props.targetRef - Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement

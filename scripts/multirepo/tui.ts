@@ -1,9 +1,5 @@
 /**
- * @fileoverview Interactive TUI for the ik multirepo CLI.
- *
- * Exports `guardCancel` (Ctrl-C handler) and `runInteractive` (arrow-key menu).
- * Handlers live in `tui-handlers.ts` to keep this file focused on orchestration.
- *
+ * @fileoverview Interactive TUI for the ik multirepo CLI. Exports `guardCancel` (Ctrl-C handler) and `runInteractive` (arrow-key menu).
  * @module multirepo/tui
  * @author Typeir
  * @version 2.0.0
@@ -17,7 +13,7 @@ import { repoSummaryLine } from './git';
 import { TUI_HANDLERS } from './tui-handlers';
 
 /**
- * Exits with a friendly cancellation message when the user presses Ctrl-C.
+ * Exits the process when the prompt returns the cancel symbol.
  * @param {unknown} value - Value returned by a clack prompt (may be a cancel symbol).
  * @returns {void}
  */
@@ -62,8 +58,7 @@ const MENU_ENTRIES: MenuEntry[] = [
 ];
 
 /**
- * Builds and runs the full interactive TUI when `ik` is called with no arguments.
- * Uses arrow-key selectors, spinners, and confirmation prompts.
+ * Runs the interactive CLI loop starting with a repo-state note and a menu select, repeating until the user selects `quit`.
  * @returns {Promise<void>} Resolves when the user chooses `quit`.
  */
 export async function runInteractive(): Promise<void> {

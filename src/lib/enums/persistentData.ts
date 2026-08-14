@@ -1,8 +1,6 @@
 /**
- * @fileoverview Persistent Data Keys Enum - localStorage and data attribute identifiers
- * @description Defines standardized keys for persistent client-side data storage and DOM
- * attributes. Ensures consistency between localStorage operations and HTML data attributes.
- * Used by theme system for persistence across page loads and browser sessions.
+ * @fileoverview Keys for persistent client-side storage and DOM data attributes.
+ * @description Standard identifiers shared by localStorage operations and HTML data attributes.
  * 
  * @version 1.0.0
  * @author Typeir

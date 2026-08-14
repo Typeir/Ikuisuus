@@ -1,13 +1,10 @@
 /**
  * @fileoverview Collision Cloud Effect — Länsihenki × Itähenki Impact Visual
- * @description Multi-layer collision visual built around a phase-time state
- *   machine: the moment surface contact triggers, a phase clock starts and
- *   drives an unbounded logarithmic growth curve, a smoothstep opacity
- *   envelope (ramp up to apex, ramp down through fade), and a high-frequency
- *   capped jitter coupled to live opacity so motion never freezes. Outer
- *   layers keep expanding past apex and only fade through alpha; the core's
- *   vertex displacement collapses with opacity so it stabilizes into a smooth
- *   sphere as the explosion dissipates. Owned entirely by WorldSimMediator.
+ * @description Multi-layer collision visual driven by a phase-time state
+ *   machine. Surface contact starts a phase clock that drives a logarithmic
+ *   growth curve, a smoothstep opacity envelope, and jitter coupled to live
+ *   opacity. Outer layers expand past apex and fade through alpha; core vertex
+ *   displacement collapses with opacity.
  *
  * @module worldSim/celestials/CollisionCloudEffect
  * @version 3.0.0
@@ -50,10 +47,7 @@ import {
 import { computePhaseEnvelope } from '@/modules/world-sim/infrastructure/effects/collisionCloudPhase';
 
 /**
- * Per-frame update parameters for `CollisionCloudEffect.update`. Replaces a
- * 6-positional-argument call signature with a single named-field object so
- * the meaning of each value is obvious at the call site and adding new
- * inputs (e.g. shader detail level) is non-breaking.
+ * Per-frame update parameters for `CollisionCloudEffect.update`.
  *
  * @interface CollisionCloudUpdateParams
  * @property {Vector3} bodyAPosition - Current world position of body A
@@ -73,11 +67,9 @@ export interface CollisionCloudUpdateParams {
 }
 
 /**
- * Proximity-driven multi-layer collision cloud centered between two
- * orbiting bodies (currently Länsihenki and Itähenki, but the effect itself
- * is body-agnostic — pair identity is injected via `pairId`). Driven by
- * surface-gap (not center distance) so the effect tightly tracks actual
- * overlap of the two bodies.
+ * Proximity-driven multi-layer collision cloud centered between two bodies.
+ * Pair identity is injected via `pairId`. Surface-gap triggers it, not center
+ * distance.
  *
  * Usage:
  * ```typescript
@@ -140,14 +132,12 @@ export class CollisionCloudEffect {
   private shellBaseDisplacements: number[] = [];
 
   /**
-   * Build the four-layer scene graph: debris points, opaque grey core,
-   * russian-doll additive shells, and the corona shell. All layer geometry
-   * and material construction is delegated to `collisionCloudLayers`.
+   * Builds the four-layer scene graph: debris points, opaque grey core,
+   * russian-doll additive shells, and the corona shell.
    *
-   * @param {string} pairId - Stable identifier for the collision pair this
-   *   effect represents. Used as the scene-graph group name (so DevTools and
-   *   raycast filters can locate it) and is the same id the registry exposes
-   *   via `CelestialRegistry.getCollisionPair(id)`.
+   * @param {string} pairId - Collision pair identifier. Used as the
+   *   scene-graph group name; same id `CelestialRegistry.getCollisionPair(id)`
+   *   exposes.
    */
   constructor(pairId: string) {
     this.group = new Group();
@@ -216,21 +206,12 @@ export class CollisionCloudEffect {
   }
 
   /**
-   * Update the cloud each frame. A phase clock starts the first frame the
-   * planets' surfaces come within `TRIGGER_GAP_SCALE * avgRadius`, then
-   * advances by `deltaTime` until the fade completes — even if the planets
-   * drift apart mid-explosion the animation finishes naturally.
+   * Updates the cloud each frame. Phase clock starts the first frame surfaces
+   * come within `TRIGGER_GAP_SCALE * avgRadius` and advances by `deltaTime`
+   * until the fade completes, even if the planets drift apart.
    *
-   * Size grows logarithmically without bound (outer layers keep expanding and
-   * dispersing while their alpha fades). Opacity follows a smoothstep ramp
-   * up to apex and a smoothstep ramp down through fade. Jitter is a
-   * high-frequency capped sinusoid scaled by live opacity so motion stays
-   * alive through the entire explosion. Vertex displacement scales with
-   * opacity so the core stabilizes into a smooth sphere as it fades.
-   *
-   * @param {CollisionCloudUpdateParams} params - Per-frame inputs (body
-   *   positions, body radii, simulation time, and frame delta). See the
-   *   `CollisionCloudUpdateParams` interface for field semantics.
+   * @param {CollisionCloudUpdateParams} params - Per-frame inputs. See
+   *   `CollisionCloudUpdateParams` for field semantics.
    */
   update(params: CollisionCloudUpdateParams): void {
     const {

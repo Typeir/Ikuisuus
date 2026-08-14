@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for Not Found page component
  * @module tests/unit/src/app/[locale]/not-found.test
- * @description Validates NotFound page default export and component signature.
- * Tests 404 error page component.
+ * @description Asserts NotFound module exports a default function component.
  * 
  * @version 1.0.0
  * @author Typeir

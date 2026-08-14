@@ -15,7 +15,7 @@ import type { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
 /**
- * Wrap the hook in the provider for testing.
+ * Wraps children in PagePreviewProvider.
  *
  * @function wrapper
  * @param {{ children: ReactNode }} props - React children

@@ -1,7 +1,7 @@
 /**
- * @fileoverview Metadata Generator Orchestration Utilities
- * @description Core orchestration for metadata generators: content directory resolution,
- * output path mapping, standardized run loop, and CLI integration.
+ * @fileoverview Orchestrates metadata generators: backend detection, content
+ * directory resolution, output path mapping, and run loop.
+ * @description Core orchestration for metadata generators.
  *
  * @module lib/metadata/generatorUtils
  * @version 1.0.1
@@ -204,10 +204,9 @@ export interface GeneratorConfig {
 }
 
 /**
- * Stamps page-level shared fields (version hash, reading time) onto metadata
- * records. For arrays, every record receives the same values (same source
- * file, same page). Generator-set values are never overwritten except
- * `versionHash`, which is always authoritative here.
+ * Stamps shared fields (versionHash, readingTime) onto metadata records.
+ * Arrays receive the same values on every record. Generator-set values are
+ * never overwritten except versionHash, which is always set here.
  *
  * @param {unknown} metadata - Parsed metadata object, array, or null
  * @param {string} hash - Pre-computed version hash

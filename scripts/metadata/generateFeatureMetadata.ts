@@ -1,9 +1,8 @@
 /**
  * @fileoverview Monster Feature Metadata Generator
  * @description Reads `.sheet.mdx` monster files, classifies sections, extracts
- * MonsterFeature records via the extraction pipeline, and appends a `features`
- * subsection to each record in the existing `.metadata.json` files.
- * Runs after the main metadata generator.
+ * MonsterFeature records, and appends a `features` subsection to each record in
+ * existing `.metadata.json` files. Runs after the main metadata generator.
  *
  * @module scripts/metadata/generateFeatureMetadata
  * @version 2.0.0
@@ -178,8 +177,7 @@ export async function parseMonsterFeatures(
 
 /**
  * Builds a map from feature ID to body text for handler dispatch.
- * Reconstructs body text from classified sections so handlers can
- * parse patterns without storing rawText on features.
+ * Reconstructs body text from classified section line ranges.
  *
  * @param {MonsterSection[]} sections - Classified sections
  * @param {string} slug - Monster slug for ID generation

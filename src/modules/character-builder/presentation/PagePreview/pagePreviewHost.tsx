@@ -1,9 +1,7 @@
 /**
  * @fileoverview Page Preview Host
- * @description Renders all currently-open library page previews as
- * `<GenericEmbedPanel>` iframes pointed at the `/{locale}/embed/` route tree.
- * Place once at the top of the character sheet inside the
- * `<PagePreviewProvider>` subtree.
+ * @description Renders all open previews as `<GenericEmbedPanel>` iframes
+ * pointed at the `/{locale}/embed/` route tree.
  *
  * @module lib/components/characterSheet/pagePreviewHost
  * @version 1.0.0
@@ -47,8 +45,6 @@ export interface PagePreviewHostProps {}
 
 /**
  * Renders one `<GenericEmbedPanel>` per open preview entry.
- * Memoizes position functions by preview ID to prevent recreating
- * them on every render, which would cause jittery repositioning.
  *
  * @component
  * @param {PagePreviewHostProps} props - Component props
@@ -65,8 +61,7 @@ export const PagePreviewHost: React.FC<PagePreviewHostProps> = () => {
   }, [previews.length]);
 
   /**
-   * Memoize position functions per preview ID to prevent recreating
-   * them on every render. This stabilizes positioning for the Draggable component.
+   * Position functions keyed by preview kind::slug.
    */
   const positionFunctions = useMemo(() => {
     const functions: Record<

@@ -1,7 +1,7 @@
 /**
  * @fileoverview CelestialGlow Unit Tests
  * @description Tests createRadialGradientTexture and createCelestialGlow.
- * Mocks canvas 2D context since jsdom lacks full canvas support.
+ * Mocks canvas 2D context.
  *
  * @module tests/unit/worldSim/celestials/CelestialGlow
  */

@@ -1,8 +1,6 @@
 /**
- * @fileoverview Dynamic-import flavour MDX compiler.
- * Dynamically imports evaluator and plugins in parallel to avoid bundling them
- * until runtime. "Dynamic" refers to that deferred loading, not to JavaScript
- * asynchronicity — both compilers in this directory are async.
+ * @fileoverview MDX compiler that imports its evaluator and plugins at runtime
+ * via dynamic imports.
  * @module src/lib/mdx/compileDynamic/compileDynamic
  *
  * @author Typeir
@@ -16,10 +14,8 @@ import type { CompileOptions } from '../../domain/compileOptions';
 import { buildMdxOptions, importAllAsync } from './compileUtils';
 
 /**
- * Compile MDX by dynamically importing evaluator + plugins in parallel.
- * Reusable regions are spliced in at source level so they compile as part of
- * this document, with this document's component map. Components inside a
- * region therefore stay interactive.
+ * Splices reusable regions into the source at text level, then compiles the
+ * resulting MDX with dynamically imported evaluator and plugins.
  *
  * @param {CompileOptions} opts - Compilation options
  * @returns {Promise<Awaited<ReturnType<import('next-mdx-remote-client/rsc')['evaluate']>>>}

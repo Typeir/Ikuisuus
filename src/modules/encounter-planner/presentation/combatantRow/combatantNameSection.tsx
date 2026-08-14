@@ -1,8 +1,8 @@
 /**
  * Combatant Name Section Component
  *
- * @fileoverview Displays combatant name, CR badge, awakening badges, and action controls.
- * Includes lock toggle, wiki link, and remove button.
+ * @fileoverview Renders combatant name, CR badge, awakening badges, and action controls.
+ * Handles lock toggle, wiki link, and remove button.
  *
  * @module combatantNameSection
  * @version 2.0.0
@@ -18,8 +18,8 @@
  * @requires ../playMode/CombatantContext useCombatant hook for context
  *
  * @description
- * Extracted from CombatantRow for atomic composition. Displays the name section with
- * CR badge, awakening tier badges, and control buttons. Uses CombatantContext for state.
+ * Renders the combatant name section with CR badge, awakening tier badges, and control buttons.
+ * Reads state from CombatantContext.
  */
 
 'use client';
@@ -39,8 +39,8 @@ import { useCombatant } from './utils/context/combatantContext';
 import { useEditableField } from './utils/useEditableField';
 
 /**
- * Props for CombatantNameSection component.
- * All props are optional when used within CombatantProvider (values come from context).
+ * Props for CombatantNameSection.
+ * Optional when used within CombatantProvider (values come from context).
  *
  * @interface CombatantNameSectionProps
  * @property {string[]} [locked] - Array of locked field names
@@ -54,7 +54,7 @@ export interface CombatantNameSectionProps {
 /**
  * Name section for Play Mode combatants.
  * Displays name, lock toggle, badges (CR, awakened tier, stratagem), wiki link, and remove button.
- * Uses CombatantContext for state.
+ * Reads state from CombatantContext.
  *
  * @component
  * @param {CombatantNameSectionProps} props - Component props

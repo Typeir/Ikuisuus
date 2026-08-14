@@ -1,7 +1,6 @@
 /**
- * @fileoverview Feats API Route - Character feat metadata JSON endpoint
- * @description Next.js API route that serves feat metadata via the content
- * adapter layer. Supports locale-aware content via ?locale query parameter.
+ * @fileoverview Feats API route serving feat metadata JSON.
+ * @description Reads ?locale query parameter; defaults to 'en'.
  *
  * @version 1.0.0
  * @author Typeir
@@ -23,8 +22,8 @@ const log = logger.child({ module: 'API:Feats' });
 /**
  * GET /api/feats
  *
- * Returns array of feat metadata from the active content repository.
- * Accepts optional locale query parameter (defaults to 'en').
+ * Returns array of feat metadata. locale defaults to 'en'.
+ * Returns 500 on repository error.
  *
  * @param {Request} req - Next.js request object
  * @returns {Promise<NextResponse>} JSON array of feat objects

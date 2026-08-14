@@ -89,10 +89,8 @@ if (!process.env.DATABASE_URL) {
 /* ───────────────────  Supplementary Indexes  ─────────────────────── */
 
 /**
- * Expression-based and GIN indexes that supplement the MikroORM-managed schema.
- * Only includes indexes that cannot be expressed via `@Index` decorators
- * (COALESCE expressions, GIN array indexes) or child-table FK/composite indexes
- * on entities without `@Index` annotations.
+ * Supplementary indexes MikroORM `@Index` decorators cannot express:
+ * COALESCE expressions, GIN array indexes, child-table FK/composite indexes.
  */
 const SUPPLEMENTARY_INDEXES: string[] = [
   `CREATE UNIQUE INDEX IF NOT EXISTS monsters_locale_display_slug_uidx

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Content Shard Hook
  * @description SWR hooks for loading content shards via `/api/shards` and
- * `/api/content-shards/[type]/[slug]`. Provides a unified interface covering
- * both lazy-expand and eager-load patterns.
+ * `/api/content-shards/[type]/[slug]`.
  *
  * @module lib/hooks/data/useContentShard
  * @author Typeir
@@ -75,9 +74,8 @@ export interface UseContentShardResult<T> {
 }
 
 /**
- * Fetches a single heading block from `/api/shards`. The key is `null` until
- * `enabled` becomes truthy, implementing the lazy-expand pattern used by
- * `ShardDisplay`.
+ * Fetches a single heading block from `/api/shards`. The SWR key is `null`
+ * until `enabled` becomes truthy, skipping the fetch.
  *
  * @param {UseShardOptions} options - Hook configuration
  * @returns {UseContentShardResult<ShardResponse>} Shard loading state
@@ -104,8 +102,7 @@ export function useShard({
 }
 
 /**
- * Fetches a content shard map from `/api/content-shards/[type]/[slug]`. Used
- * by `ContentShardPanel` for eager full-page body loading.
+ * Fetches a content shard map from `/api/content-shards/[type]/[slug]`.
  *
  * @param {UseContentShardOptions} options - Hook configuration
  * @returns {UseContentShardResult<ContentShardResponse>} Content shard loading state
@@ -157,8 +154,7 @@ export interface UseContentShardSingleOptions {
 
 /**
  * Fetches a single named shard from the DB-backed
- * `/api/content-shards/[type]/[slug]?keys[]=` endpoint. This replaces
- * `useShard` and works on Vercel where filesystem reads are unavailable.
+ * `/api/content-shards/[type]/[slug]?keys[]=` endpoint.
  *
  * @param {UseContentShardSingleOptions} options - Hook configuration
  * @returns {UseContentShardResult<ContentShardResponse>} Shard loading state

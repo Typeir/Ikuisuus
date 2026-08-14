@@ -1,8 +1,8 @@
 /**
- * @fileoverview Generates the correct spell slug arrays for all spell list
- * files from per-spell metadata. Reads every .metadata.json in the spells
- * directory, groups slugs by vocation list, sorts by level then alphabetically,
- * and writes the updated spells={[...]} array into each spells.list.mdx file.
+ *  @fileoverview Generates spell slug arrays for spell list files from
+  * per-spell metadata. Reads every .metadata.json in the spells directory,
+  * groups slugs by vocation list, sorts by level then alphabetically, and writes
+  * the spells={[...]} array into each spells.list.mdx file.
  *
  * @module scripts/dev/generateSpellLists
  * @version 1.0.0
@@ -26,8 +26,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 
 /**
- * Spell sidecar directory. In pg backend mode the generators write to
- * `.meta/en/spells`; fall back to the source-adjacent location otherwise.
+ * Directory of spell .metadata.json files. Uses `.meta/en/spells` if it
+ * exists, else `src/content/en/spells`.
  */
 const SPELLS_DIR = existsSync(path.join(ROOT, '.meta', 'en', 'spells'))
   ? path.join(ROOT, '.meta', 'en', 'spells')
@@ -62,9 +62,8 @@ const LIST_MAP: Record<string, { source: string; folder: string }> = {
 };
 
 /**
- * Maps specialization-owned spell list names to the specialization file that
- * embeds their SpellTable. Specialization lists live inside the main
- * specialization MDX file rather than a standalone spells.list.mdx.
+ * Maps specialization-owned spell list names to the specialization MDX file
+ * that embeds their SpellTable.
  *
  * @typedef {{ folder: string, file: string }} SpecListInfo
  */
@@ -100,7 +99,7 @@ interface ListRef {
 /**
  * Reads all spell metadata files and groups slugs by list. Vocation lists and
  * specialization-owned lists (link targets a `.specialization` page) are
- * grouped separately, since they are written to different file shapes.
+ * grouped separately.
  *
  * @returns {{ byList: Record<string, SpellEntry[]>, bySpecList: Record<string, SpellEntry[]> }} Vocation and specialization list groupings
  */

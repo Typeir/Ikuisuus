@@ -1,8 +1,8 @@
 /**
  * Persistent UI Context and Provider
  *
- * @fileoverview Minimal React Context for persistent UI state management.
- * Hooks are exported from lib/hooks/ for SOLID separation.
+ * @fileoverview React Context for persistent UI state (theme, unit system,
+ * sidebar). Exports provider and access hooks.
  *
  * @module lib/context/PersistentUiContext
  * @version 2.2.0
@@ -41,10 +41,8 @@ import {
 const SYSTEMS: readonly UnitSystemValue[] = ['stride', 'metric', 'imperial'];
 
 /**
- * Normalises a stored unit preference into the per-dimension shape.
- *
- * Records written before the preference was split hold a bare string; that
- * value is applied to every measurement family so older sessions keep working.
+ * Normalises a stored unit preference into the per-dimension shape. A bare
+ * string value is applied to every measurement family.
  *
  * @param {UnitSystemPreferences | UnitSystemValue | undefined} stored - Raw stored value
  * @returns {UnitSystemPreferences} Normalised preferences
@@ -104,11 +102,8 @@ const PersistentUiDispatchContext =
  * @param {string[]} serverExpandedPaths - Paths from server cookies for hydration match
  * @returns {SerializedPersistentUiState} State with theme and sidebar expansion
  *
- * @description
- * Uses serverExpandedPaths on initial render (SSR and client hydration) for static routes.
- * For dynamic routes, restores expansion from unified storage (cookies → session → local).
- * Falls back to URL-derived paths when no persisted state exists.
- * Theme is read from unified storage with legacy key migration.
+ * @description Falls back to URL-derived or default values when no persisted
+ * state exists.
  */
 function readPersistedState(
   serverExpandedPaths: string[],
@@ -189,9 +184,8 @@ function readPersistedState(
  * @param {PersistentUiState} state - Current UI state to persist
  * @returns {void}
  *
- * @description
- * Serializes state and writes to all storage layers (cookies, sessionStorage, localStorage)
- * via storePersistentData. Also updates the DOM data-theme attribute for CSS theming.
+ * @description Writes serialized state to storage layers and sets the DOM
+ * data-theme and data-aspect-expanded attributes.
  */
 function writePersistedState(state: PersistentUiState): void {
   if (typeof window === 'undefined') return;
@@ -237,9 +231,8 @@ interface PersistentUiProviderProps {
  * @param {string[]} props.initialExpandedPaths - Server-read expanded paths for SSR hydration match
  * @returns {JSX.Element} Context providers wrapping children
  *
- * @description
- * Uses server-provided initialExpandedPaths to prevent hydration mismatch.
- * Server reads cookies; client uses same values on first render.
+ * @description Uses server-provided initialExpandedPaths to prevent hydration
+ * mismatch.
  */
 export function PersistentUiProvider({
   children,
@@ -297,10 +290,7 @@ export function usePersistentUiState(): PersistentUiState {
 /**
  * Hook to access persistent UI state without requiring a provider.
  *
- * Returns the default state when no provider is present, which happens when
- * MDX is rendered outside the React tree — the build-time content scanners do
- * exactly this. Consumers that must render in both settings should use this
- * rather than `usePersistentUiState`.
+ * Returns the default state when no provider is present.
  *
  * @returns {PersistentUiState} Provider state, or the unhydrated defaults
  */
@@ -327,8 +317,7 @@ export function usePersistentUiDispatch(): (
 /**
  * Hook to access dispatch without requiring a provider.
  *
- * Returns null outside a provider instead of a no-op, so a control that cannot
- * possibly work is not rendered at all.
+ * Returns null when no provider is present.
  *
  * @returns {((action: PersistentUiAction) => void) | null} Dispatch, or null with no provider
  */

@@ -1,9 +1,7 @@
 /**
- * @fileoverview Monster Feature Extractor — Actions & Traits
+ * @fileoverview Monster Feature Extractor
  * @description Extracts MonsterFeature records from classified monster
- * sections. Handles traits, actions, reactions, Minor Actions, multiattack,
- * recharge abilities, and spellcasting blocks. Used by the feature metadata
- * generator for `.sheet.mdx` files.
+ * sections.
  *
  * @version 1.0.0
  * @author Typeir
@@ -107,9 +105,7 @@ export function extractActions(
 }
 
 /**
- * Splits a section by sub-headings (H4+) or bold-label bullets, creating
- * one feature per sub-heading. Delegates multiattack sections to the
- * dedicated multiattack extractor module.
+ * Produces one feature per sub-heading (H4+) or bold-label bullet.
  *
  * @param {MonsterSection} section - Parent section
  * @param {string} defaultTrigger - Default trigger type
@@ -242,8 +238,7 @@ export function enrichFromBody(feat: MonsterFeature, body: string): void {
 
 /**
  * Splits section lines by H4/H5/H6 sub-headings or bold-label bullets.
- * Tracks whether each sub-section originated from a heading or bold bullet
- * so the caller can detect inline multiattack children.
+ * Tracks each sub-section's origin (heading or bold bullet).
  *
  * @param {string[]} lines - Section content lines
  * @returns {SubSection[]} Named sub-sections with origin tracking

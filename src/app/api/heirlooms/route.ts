@@ -1,9 +1,6 @@
 /**
- * @fileoverview Heirlooms API Route - Magical item metadata JSON endpoint for HeirloomTable
- * @description Next.js API route that serves heirloom item metadata via the content
- * adapter layer. Supports locale-aware content via ?locale query parameter. Returns
- * array of heirloom objects with rarity, item type, weapon properties, and attunement
- * requirements. Used by HeirloomTableWrapper for client-side data fetching.
+ * @fileoverview Heirlooms API route.
+ * @description Next.js route serving heirloom item metadata via the content adapter. Supports locale via ?locale query parameter. Returns array of heirlooms with rarity, item type, weapon properties, and attunement requirements. Consumed by HeirloomTableWrapper.
  *
  * @version 2.0.0
  * @author Typeir
@@ -27,10 +24,9 @@ import { NextResponse } from 'next/server';
 const log = logger.child({ module: 'API:Heirlooms' });
 
 /**
- * GET /api/heirlooms
+ * GET /api/heirlooms.
  *
- * Returns array of heirloom item metadata from the active content repository.
- * Accepts optional locale query parameter (defaults to 'en').
+ * Returns array of heirloom item metadata from the active content repository. Optional locale query parameter, defaults to 'en'.
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON array of heirloom objects

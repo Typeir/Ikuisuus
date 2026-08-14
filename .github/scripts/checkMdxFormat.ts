@@ -22,12 +22,8 @@ const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '../..');
 
 /**
- * Path segments of the registry content is actually rendered through, relative
- * to the project root. Kept as segments so `runCheck` can rebuild it against a
- * caller-supplied root.
- *
- * Validating against any other map lets a component pass this check and still
- * fail when the page renders.
+ * Path segments relative to the project root that registry content renders
+ * through.
  */
 const MDX_REGISTRY_SEGMENTS = [
   'src',
@@ -227,9 +223,7 @@ const RULES: FormatRule[] = [
  * Load registered MDX component names from `export const components = { ... }`
  * in the live registry.
  *
- * Throws when the registry cannot be read or yields nothing. An empty set would
- * otherwise make every component tag in the corpus look unregistered, reporting
- * a broken check as hundreds of content violations.
+ * Throws when the registry cannot be read or yields nothing.
  *
  * @param {string} indexFile - Path to the registry index.tsx
  * @returns Set of registered component names that can appear as MDX tags
@@ -279,9 +273,7 @@ async function loadRegisteredComponents(
 /**
  * Derive content type from a relative file path.
  *
- * Uses path-segment matching (e.g. `/spells/`) to avoid false positives
- * from files whose names contain a content-type keyword (e.g. `spells.list.mdx`
- * in a `vocations/` directory is NOT a spell file).
+ * Matches on path segments (e.g. `/spells/`), not basenames.
  *
  * @param relPath Relative path from project root
  * @returns Content type identifier string

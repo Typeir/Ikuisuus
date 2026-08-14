@@ -38,8 +38,7 @@ afterEach(() => {
 });
 
 /**
- * Tests use a single module import per describe block to
- * avoid the singleton pool state leaking between tests.
+ * One module import per describe block to isolate the singleton pool.
  */
 describe('postgres/pool', () => {
   describe('getPool', () => {

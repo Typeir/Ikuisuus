@@ -1,7 +1,6 @@
 /**
  * @fileoverview remarkAspects Plugin Tests
- * @description Covers placement of aspect rows beneath the headings that have
- * them, and the matching rules that decide which headings those are.
+ * @description Tests aspect row placement and heading match rules.
  *
  * @module tests/unit/src/lib/md/remarkAspects
  * @version 1.0.0
@@ -107,8 +106,7 @@ describe('remarkAspects', () => {
   });
 
   /**
-   * Indices shift as elements are inserted, so a forward pass would place later
-   * rows under the wrong heading.
+   * Indices shift as elements are inserted during iteration.
    */
   it('should place every row correctly when several headings match', () => {
     const tree = run(
@@ -129,14 +127,10 @@ describe('remarkAspects', () => {
   });
 
   /**
-   * Feature names are extracted from the raw heading line, so a heading holding
-   * an unconverted measure has to match verbatim. This is why the plugin runs
-   * before `remarkUnit`.
+   * Feature names are extracted from the raw heading line.
    */
   /**
-   * The heading is written with the authoring macro; the stored feature name is
-   * normalised. Both sides run the same normalisation, so they meet in the
-   * middle — matching the raw form against the stored one never would.
+   * The stored name is normalised before matching.
    */
   it('should match a macro heading against its normalised section name', () => {
     const heading = 'Aura of Stillness ([= 12 stride;ADJ =] radius)';
@@ -195,9 +189,7 @@ describe('remarkAspects', () => {
   });
 
   /**
-   * Boon headings carry a cost badge — `###### Monady <span>5 BP</span>` — and
-   * the generator names the boon from the text before it. Reading the badge back
-   * in matched nothing and left every annotated heading bare.
+   * A heading may contain an inline JSX badge after the stored name.
    */
   it('should ignore a JSX badge when matching a heading', () => {
     const tree = {

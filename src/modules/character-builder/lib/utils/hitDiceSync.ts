@@ -1,13 +1,9 @@
 /**
  * @fileoverview Hit Dice Log Sync
- * @description Single source of truth that keeps a character's hit-dice log,
- * tier bonus, and `hpMax` in step with its vocations and level — decoupled from
- * any tab's render lifecycle. Backfills one entry per vocation level, heals
- * never-rolled dice to their average (the very first level of the primary
- * vocation to its die max), prunes entries beyond the current level or for
- * removed vocations, and recomputes `hpMax` from the surviving log. Because
- * every level's die is seeded added-at-average, a freshly-levelled sheet reflects
- * the character's full HP immediately; the roller can still re-roll any die.
+ * @description Rebuilds a character's hit-dice log from its vocations and level:
+ * one entry per vocation level, never-rolled dice seeded to their default, entries
+ * beyond the current level or for removed vocations pruned, and `hpMax` recomputed
+ * from the surviving log.
  *
  * @module modules/character-builder/lib/utils/hitDiceSync
  * @version 1.0.0
@@ -22,9 +18,9 @@ import { computeAbilityModifier } from './characterStorage';
 import { deriveHitPoints } from './hitDiceUtils';
 
 /**
- * The default value a freshly-seeded or never-rolled die contributes: the die
- * average (`floor(faces/2) + 1`), or the die maximum for the very first level of
- * the primary vocation, or `null` when the vocation has no valid hit die.
+ * Seed value for a freshly-seeded or never-rolled die: `floor(faces/2) + 1`, or
+ * `faces` for the first level of the primary vocation, or `null` when `faces` is
+ * not finite or `<= UNKNOWN_DIE`.
  *
  * @function defaultDieResult
  * @param {number} faces - The die's face count (e.g. 8)
@@ -40,12 +36,11 @@ function defaultDieResult(
 }
 
 /**
- * Rebuilds the canonical hit-dice log for a character: one entry per vocation
- * level, in vocation-then-level order. Preserves any entry that already carries a
- * rolled value (respecting the player's rolls and removals), heals never-rolled
- * entries to their default seed added-to-HP, and drops entries whose level or
- * vocation no longer exists. Reference-stable for unchanged entries so callers
- * can detect a real change cheaply.
+ * Rebuilds the canonical hit-dice log: one entry per vocation level, in
+ * vocation-then-level order. Keeps existing entries' rolled values, seeds
+ * never-rolled entries to their default with `addedToHp` true, and drops entries
+ * whose level or vocation no longer exists. Reuses the existing entry object when
+ * `dieType`, `result`, and `addedToHp` are unchanged.
  *
  * @function buildCanonicalLog
  * @param {CharacterSheet} character - Character to rebuild the log for
@@ -112,18 +107,10 @@ function buildCanonicalLog(character: CharacterSheet): {
 }
 
 /**
- * Computes the patch needed to bring a character's hit-dice log and `hpMax`
- * into sync with its vocations and level. Returns `null` when everything is
- * already consistent, so the caller can skip an idempotent no-op patch (and
- * avoid a render loop). `hpMax` is treated as a pure derived cache of
- * {@link deriveHitPoints}, recomputed on ANY input change — dice, CON, or passive
- * hp grants — not only when the log changes, so a raised CON or a newly-picked
- * Tough feat is reflected immediately.
- *
- * `tierBonus` is deliberately NOT part of this patch. The sheet reducer owns it
- * as a derived cache and recomputes it on every write, stripping any incoming
- * value — so emitting one here could never land, and would leave this function
- * returning a non-null patch forever once the caller's writes take effect.
+ * Computes the patch to bring a character's `hitDiceLog` and `hpMax` into sync
+ * with its vocations and level. Returns `null` when already in sync. `hpMax` is
+ * recomputed from {@link deriveHitPoints} on every call, so any dice, CON, or
+ * passive-HP change is reflected. `tierBonus` is never included in the patch.
  *
  * @function syncHitDiceLog
  * @param {CharacterSheet} character - Character to reconcile

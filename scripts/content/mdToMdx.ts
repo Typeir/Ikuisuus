@@ -2,7 +2,7 @@
  * Markdown to MDX Extension Converter
  *
  * @fileoverview Converts .md files to .mdx extension for Next.js MDX processing.
- * Part of the pre-initialization build pipeline (Stage 3).
+ * Recursively walks src/content/<locale> and renames .md to .mdx.
  *
  * @module mdToMdx
  * @version 1.0.0
@@ -13,7 +13,6 @@
  *
  * @description
  * Recursively scans content directories and renames all .md files to .mdx.
- * Required because Next.js MDX plugin only processes .mdx files.
  *
  * @example
  * npx tsx scripts/content/mdToMdx.ts

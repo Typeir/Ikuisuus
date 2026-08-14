@@ -1,7 +1,7 @@
 /**
  * @fileoverview DiceRoll Component Unit Tests
- * @description Tests for the interactive DiceRoll MDX component.
- * Covers rendering, click-to-roll behavior, special modifiers, and edge cases.
+ * @description Tests DiceRoll MDX component rendering, click-to-roll, special
+ * modifiers, and edge cases.
  *
  * @module tests/unit/modules/library/presentation/components/DiceRoll/DiceRoll
  * @version 1.0.0

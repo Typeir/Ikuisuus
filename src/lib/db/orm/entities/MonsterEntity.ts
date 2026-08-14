@@ -1,9 +1,8 @@
 /**
  * @fileoverview MikroORM Entity — Monster
  * @description Decorator-based entity for the `monsters` table.
- * Uses `@Embedded` with `prefix` to group flat DB columns into value objects
- * (AC, HP, Speed, Scores, Saves, Senses) — the ORM handles prefix-based
- * column mapping automatically, eliminating manual field-by-field reconstruction.
+ * Groups flat DB columns into value objects (AC, HP, Speed, Scores, Saves,
+ * Senses) via `@Embedded` with `prefix`.
  *
  * @module lib/db/orm/entities/MonsterEntity
  * @version 4.0.0
@@ -291,12 +290,7 @@ export class MonsterEntity {
 
 /**
  * MikroORM entity for the `monster_features` child table.
- *
- * One row per feature shard in a stat block. Aspects are derived per feature as
- * well as per stat block, because "does this creature deal force damage
- * anywhere" is the wrong grain for the question a reader has — the useful fact
- * is which feature does it, and that fact only reaches the live site through
- * this table.
+ * One row per feature shard in a stat block.
  */
 @OrmEntity('MonsterFeatureEntity', { tableName: 'monster_features' })
 export class MonsterFeatureEntity {

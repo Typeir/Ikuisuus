@@ -1,6 +1,6 @@
 /**
  * @fileoverview Text Input Component
- * @description Accessible styled text input replacing raw `<input type="text">`.
+ * @description Styled text input over `<input type="text">`.
  * Supports size variants and forwards all standard input attributes.
  *
  * @module lib/components/ui/textInput

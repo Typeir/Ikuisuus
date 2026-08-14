@@ -1,19 +1,10 @@
 #!/usr/bin/env tsx
 /**
- * @fileoverview Pre-commit warning hook for the multirepo setup.
- *
- * Detects which repo it's running in, then checks the OTHER repo for
- * uncommitted changes. Only warns when the other repo is dirty.
- *
- *   Committing on main repo    → warns if content repo has changes
- *   Committing on content repo → warns if main repo has changes
- *
- * Installed as `.git/hooks/pre-commit` in the content submodule by
- * `setup-hooks.ts`. Main repo hooks are managed by husky.
- *
+ * @fileoverview Pre-commit hook that warns when the other repo in the
+ * multirepo setup has uncommitted changes. Installed as
+ * `.git/hooks/pre-commit` in the content submodule by `setup-hooks.ts`.
  * @module multirepo/pre-commit-warn
  */
-
 import { spawnSync } from 'child_process';
 import { existsSync, statSync } from 'fs';
 import { resolve } from 'path';

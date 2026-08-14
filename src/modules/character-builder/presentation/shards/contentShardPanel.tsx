@@ -1,10 +1,8 @@
 /**
  * @fileoverview Content Shard Panel
- * @description Fetches the `main` prose shard for a content item via the
- * `/api/content-shards` routes and renders it using the full MDX component
- * registry. When the shard source is truncated or malformed — a common
- * occurrence with line-range–sliced boon blocks — compilation falls back to
- * plain HTML rendering via `renderMarkdownToHtml`.
+ * @description Fetches the `main` prose shard via `/api/content-shards` and
+ * renders it with the full MDX component registry. Falls back to plain HTML
+ * via `renderMarkdownToHtml` when the source is truncated or malformed.
  *
  * @module lib/components/characterSheet/contentShardPanel
  * @version 2.0.0
@@ -46,9 +44,8 @@ export interface ContentShardPanelProps {
 }
 
 /**
- * Attempts synchronous MDX compilation with the full enriched component
- * registry. Throws if the source contains truncated or malformed tokens;
- * callers should catch and fall back to `renderMarkdownFallback`.
+ * Compiles MDX synchronously with the full component registry. Throws on
+ * truncated or malformed tokens.
  *
  * @param {string} source - Raw MDX/markdown source text
  * @returns {ReactNode} Compiled React element tree
@@ -58,9 +55,8 @@ function tryCompileMdxSync(source: string): ReactNode {
 }
 
 /**
- * Renders a markdown source string to a plain HTML fragment via
- * `renderMarkdownToHtml`. Used when MDX compilation fails due to truncated
- * or malformed tokens in line-range–sliced shard content.
+ * Renders markdown to a plain HTML fragment via `renderMarkdownToHtml`.
+ * Used when MDX compilation fails on truncated or malformed tokens.
  *
  * @param {string} source - Raw markdown source text
  * @returns {Promise<ReactNode>} React element wrapping the rendered HTML
@@ -92,11 +88,9 @@ function stripYamlFrontmatter(source: string): string {
 }
 
 /**
- * Fetches and renders the `main` prose shard for the given content item.
- * Attempts full MDX compilation (tooltips, tables, all registered components)
- * and falls back to plain HTML on malformed or token-truncated input.
- * Displays a loading state while the shard is in-flight and an error state
- * on failure.
+ * Fetches and renders the `main` prose shard for the content item.
+ * Attempts MDX compilation; falls back to plain HTML on malformed input.
+ * Shows a loading state while fetching and an error state on failure.
  *
  * @component
  * @param {ContentShardPanelProps} props - Component props

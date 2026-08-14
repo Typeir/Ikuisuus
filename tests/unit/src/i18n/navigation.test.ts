@@ -1,16 +1,13 @@
 /**
- * i18n Navigation Utilities Unit Tests
- *
- * @fileoverview Tests for the navigation utilities that wrap Next.js navigation
- * APIs with locale-aware behavior using next-intl.
+ * @fileoverview Tests Navigation exports for the locale-aware Next.js navigation wrappers.
  *
  * @module tests/unit/i18n/navigation
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  *
- * @requires vitest Testing framework
- * @requires @/i18n/navigation Module under test
+ * @requires vitest Test framework.
+ * @requires @/i18n/navigation Module under test.
  */
 
 import { describe, it, expect } from 'vitest';

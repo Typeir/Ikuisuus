@@ -16,7 +16,7 @@ export const meta: CommandMeta = {
 };
 
 /**
- * Warns when both repos are dirty at diverged HEADs (forgot to use `ik commit`).
+ * Warns when both repos are dirty at diverged HEADs.
  * @param _args - Unused; present for the CliCommand contract.
  */
 export function run(_args: string[]): void {

@@ -1,12 +1,6 @@
 /**
- * @fileoverview Deprecated monolith — superseded by `./commands/*.ts`.
- *
- * This file previously contained all ik subcommand implementations in a single
- * module. Each command now lives in its own file under `./commands/` and is
- * discovered at runtime by the fs-based loader in `scripts/utils/cli-loader.ts`.
- *
- * Kept as an empty module so any stale build artifact references resolve to a
- * no-op rather than a missing-module error.
+ * @fileoverview Deprecated module that exports nothing; keeps stale build
+ * artifact references resolving to a no-op instead of a missing module.
  *
  * @module multirepo/commands
  * @author Typeir

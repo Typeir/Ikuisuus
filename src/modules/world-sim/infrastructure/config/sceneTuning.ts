@@ -1,9 +1,7 @@
 /**
- * @fileoverview Scene Tuning Constants — Renderer, Bridge, and Mediator Defaults
- * @description Numeric configuration shared by `SceneManager`, `ProjectionBridge`,
- * `RaycastService`, `CelestialGlow`, and `WorldSimMediator`. Centralized so that
- * scene visuals (FOV, clipping, background), label scaling, and frame throttling
- * can be tuned without code-spelunking.
+ * @fileoverview Numeric defaults for scene visuals, label scaling, and occlusion throttling.
+ * @description Config shared by `SceneManager`, `ProjectionBridge`, `RaycastService`,
+ * `CelestialGlow`, and `WorldSimMediator`.
  *
  * @module worldSim/config/sceneTuning
  * @version 1.0.0
@@ -50,7 +48,7 @@ export const REGION_VIEW_DISTANCE = 40;
 /** @constant {number} LOCAL_COORD_VIEW_DISTANCE - Fallback orbit distance when surface-region coords are missing. */
 export const LOCAL_COORD_VIEW_DISTANCE = 30;
 
-/** @constant {number} OCCLUSION_FRAME_STRIDE - Run occlusion raycasts only every Nth frame to bound CPU cost. */
+/** @constant {number} OCCLUSION_FRAME_STRIDE - Run occlusion raycasts only every Nth frame. */
 export const OCCLUSION_FRAME_STRIDE = 3;
 
 /** @constant {number} OCCLUSION_OPACITY_THRESHOLD - Minimum material opacity for a mesh to be treated as opaque when computing label occlusion. */

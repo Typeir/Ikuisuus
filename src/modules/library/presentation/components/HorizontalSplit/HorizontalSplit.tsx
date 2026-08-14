@@ -1,6 +1,6 @@
 /**
  * @file horizontalSplit.tsx
- * @description A two-column horizontal split layout component for Wikipedia-style headers.
+ * @description Two-column horizontal split layout for Wikipedia-style headers.
  *
  * @module horizontalSplit
  * @version 1.0.0
@@ -22,11 +22,7 @@ type HorizontalSplitPadding = string | number;
 /**
  * Props for the HorizontalSplit component.
  *
- * A simple two-column wrapper intended for Wikipedia-style headers:
- * left compartment for prose, right compartment for an infobox-like panel.
- *
- * Widths, padding, and inter-column gap are configurable. Content is provided
- * by the developer via slots.
+ * Configures two-column widths, padding, and inter-column gap. Content passed via props or slots.
  *
  * @property {ReactNode} left - Left slot content (typically text/prose)
  * @property {ReactNode} right - Right slot content (typically description/infobox)
@@ -73,7 +69,7 @@ export interface HorizontalSplitProps {
 }
 
 /**
- *
+ * Props for a HorizontalSplit slot (Left/Right).
  *
  * @interface HorizontalSplitSlotProps
  */
@@ -88,7 +84,7 @@ interface HorizontalSplitSlotProps {
 }
 
 /**
- *
+ * HorizontalSplit component augmented with Left/Right slot components.
  *
  * @interface HorizontalSplitComponent
  * @extends {React.FC<HorizontalSplitProps>}
@@ -100,7 +96,7 @@ interface HorizontalSplitComponent extends React.FC<HorizontalSplitProps> {
 
 /**
  * @function HorizontalSlot
- * @description A slot component for use within HorizontalSplit for defining left/right content.
+ * @description Renders a slot (div) within HorizontalSplit with configurable width/height/padding/float.
  *
  * @param {HorizontalSplitSlotProps} props
  * @param {ReactNode} props.children - Slot content
@@ -139,7 +135,7 @@ export const HorizontalSlot: React.FC<HorizontalSplitSlotProps> = ({
 
 /**
  * @function HorizontalSplit
- * @description A two-column horizontal split layout component for Wikipedia-style headers.
+ * @description Two-column horizontal split layout with configurable gap.
  * @param {HorizontalSplitProps} props - Component props.
  * @param {ReactNode} [props.left] - Content for the left column (prop-based API)
  * @param {ReactNode} [props.right] - Content for the right column (prop-based API)

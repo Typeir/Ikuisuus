@@ -1,7 +1,7 @@
 /**
  * @fileoverview Monster feature to dnd5e 5.3 Foundry Item transformer.
- * @description Orchestrates feature-to-item conversion and handler override
- * merging. Item construction logic lives in `itemBuilders.ts`.
+ * @description Converts a MonsterFeature to a Foundry Item and applies
+ * handler overrides.
  *
  * @module foundry/scripts/transformers/featureTransformer
  * @version 3.0.0

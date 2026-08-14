@@ -1,11 +1,6 @@
 /**
- * @fileoverview Locale-enforcing middleware for Library of Ikuisuus
+ * @fileoverview Locale-enforcing middleware.
  * @description Forces all non-API/non-asset requests into locale-prefixed URLs using next-intl.
- * Handles three cases:
- * 1) Root path `/` redirects to `/{defaultLocale}`
- * 2) Unsupported locale-like prefixes (e.g. `/fr/...`) are replaced: `/{defaultLocale}/...`
- * 3) Missing locale prefixes (e.g. `/library/...`) are prepended: `/{defaultLocale}/library/...`
- *
  *
  * @version 1.0.0
  * @author Typeir
@@ -58,8 +53,7 @@ export default function middleware(req: NextRequest): Response {
   const defaultLocale = routing.defaultLocale;
 
   /**
-   * Whitelist checked ONLY for the first path segment.
-   * Extend this set to allow additional top-level routes.
+   * Whitelist checked only for the first path segment.
    */
   const topLevelWhitelist = new Set<string>([...routing.locales]);
 

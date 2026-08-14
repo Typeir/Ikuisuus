@@ -1,7 +1,7 @@
 /**
  * @fileoverview isPlainLeftClick Unit Tests
- * @description Covers the modifier and button combinations that must be left
- * to the browser, so link interception never swallows "open in new tab".
+ * @description Tests the modifier and button combinations isPlainLeftClick
+ * must reject.
  *
  * @module tests/unit/src/lib/utils/isPlainLeftClick
  * @version 1.0.0

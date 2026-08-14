@@ -1,11 +1,8 @@
 /**
  * Character Sheet Context and Provider
  *
- * @fileoverview React Context for character sheet state management.
- * Follows the PersistentUiContext pattern: split state/dispatch contexts,
- * useReducer, and multi-layer persistence via fetchPersistentData /
- * storePersistentDataFallbackOnly. Character data is too large for cookies so
- * the fallback-only writer targets sessionStorage and localStorage.
+ * @fileoverview React context for character sheet state. Splits state and
+ * dispatch contexts, persists via storePersistentDataFallbackOnly.
  *
  * @module lib/context/CharacterSheetContext
  * @version 1.0.0
@@ -53,11 +50,7 @@ interface SerializedCharacterSheetState {
 
 /**
  * Reads and parses the persisted character sheet state from storage.
- * Falls back to an empty state on any parse error.
- *
- * Runs the schema-version gate first, so anything written against an older
- * persisted shape has already been discarded by the time it is parsed — the
- * payload here always matches the current `CharacterSheet` shape.
+ * Returns an empty state on missing or unparseable data.
  *
  * @function readPersistedCharacters
  * @returns {SerializedCharacterSheetState} Parsed state or safe empty fallback
@@ -79,8 +72,7 @@ function readPersistedCharacters(): SerializedCharacterSheetState {
 
 /**
  * Writes the current character sheet state to the fallback storage layers
- * (sessionStorage and localStorage). Cookies are skipped because character
- * data routinely exceeds the 4 KB cookie limit.
+ * (sessionStorage and localStorage).
  *
  * @function writePersistedCharacters
  * @param {CharacterSheetState} state - Current state to persist
@@ -142,9 +134,8 @@ interface CharacterSheetProviderProps {
  * @returns {JSX.Element} Context providers wrapping children
  *
  * @description
- * Reads persisted state from storage on first render, hydrates the reducer,
- * and writes back on every state change. Uses storePersistentDataFallbackOnly
- * to bypass cookies (data is too large) and target sessionStorage + localStorage.
+ * Hydrates the reducer from persisted storage on first render; writes back
+ * (debounced 250 ms) on every state change.
  */
 export function CharacterSheetProvider({
   children,
@@ -228,9 +219,8 @@ export function useCharacterSheetDispatch(): (
 }
 
 /**
- * Convenience hook that returns the active CharacterSheet, or null if none is selected.
- * The result is memoized per provider render so multiple consumers share the same
- * reference instead of each re-running `.find` independently.
+ * Returns the active CharacterSheet, or null if none is selected.
+ * Result is memoized per provider render.
  *
  * @function useActiveCharacter
  * @returns {CharacterSheet | null} The active character or null
@@ -244,7 +234,7 @@ export function useActiveCharacter(): CharacterSheet | null {
 }
 
 /**
- * Convenience hook that returns all saved characters.
+ * Returns all saved characters.
  *
  * @function useCharacters
  * @returns {CharacterSheet[]} All saved character sheets

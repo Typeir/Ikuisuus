@@ -1,8 +1,6 @@
 /**
- * @fileoverview Feat Table Wrapper — Client-side data fetching for the feat library table.
- * @description Fetches feat metadata from `/api/feats` (via `useFeats`) and configures the
- * shared {@link MetadataTable} with feat-specific columns (feat name, prerequisite, repeatable,
- * summary), so the feat index reads like the spell, monster, and item table views.
+ * @fileoverview Wraps {@link MetadataTable} for the feat library index.
+ * @description Fetches feat metadata from `/api/feats` via `useFeats`.
  *
  * @version 1.0.0
  * @author Typeir
@@ -38,9 +36,7 @@ type FeatTableProps = {
 };
 
 /**
- * Client-side feat table. Reuses the generic {@link MetadataTable} so it looks and
- * behaves like the other library table views (search, sort, filter, pagination,
- * click-to-open rows). Navigation targets each feat's own `link` field.
+ * Client-side feat table. Renders `feats` from `useFeats` in a {@link MetadataTable}.
  *
  * @component
  * @param {FeatTableProps} props - Component props

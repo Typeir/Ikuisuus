@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for Play Mode Combatant Row component
  * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantRow.test
- * @description Validates CombatantRow export and component signature.
- * Tests row component for displaying combatants during play mode with deed and resist mechanics.
+ * @description Asserts CombatantRow export, sub-component exports, and resist/heroic-awakening rendering.
  *
  * @version 1.0.0
  * @author Typeir

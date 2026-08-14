@@ -1,8 +1,6 @@
 /**
  * @fileoverview Mediator Events Helpers
- * @description Extracted input-handler factory from WorldSimMediator.
- * Creates and attaches a CanvasInputHandler with all dependencies bound,
- * returning the handler for the mediator to hold and detach on dispose.
+ * @description Creates and attaches a CanvasInputHandler with injected dependencies.
  *
  * @module modules/world-sim/application/mediator/mediatorEvents
  * @version 1.0.0
@@ -15,8 +13,7 @@ import { CanvasInputHandler } from '@/modules/world-sim/infrastructure/input/Can
 import type { PerspectiveCamera } from 'three';
 
 /**
- * Create and attach a CanvasInputHandler with all dependencies injected.
- * The handler is immediately attached to the provided DOM element.
+ * Create a CanvasInputHandler with injected dependencies and attach it to the canvas.
  *
  * @param {HTMLCanvasElement} canvas - Canvas element to listen on
  * @param {PerspectiveCamera} camera - Active scene camera for raycasting

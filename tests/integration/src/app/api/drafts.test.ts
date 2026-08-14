@@ -2,8 +2,7 @@
  * Drafts API + Revalidation Integration Tests
  *
  * @fileoverview Integration tests for the draft CRUD API and the
- * revalidation endpoint's draft archival behavior. Uses mocked
- * database layer to test the full request→service→response flow.
+ * revalidation endpoint's draft archival behavior, with mocked DB layer.
  *
  * @module tests/integration/src/app/api/drafts
  */
@@ -52,9 +51,8 @@ const sampleDraft = {
 };
 
 /**
- * Drafts exist only on the pg backend, so these tests declare it. On `fs` the
- * route short-circuits before reaching the repository — correct in production,
- * and it would make every assertion below vacuous here.
+ * Drafts exist only on the pg backend. On `fs` the route short-circuits
+ * before reaching the repository, so METADATA_BACKEND is declared here.
  */
 beforeEach(() => {
   process.env.REVALIDATION_SECRET = 'test-secret-123';

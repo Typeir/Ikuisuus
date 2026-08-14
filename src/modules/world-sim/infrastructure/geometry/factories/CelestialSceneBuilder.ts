@@ -1,9 +1,7 @@
 /**
  * @fileoverview Celestial Scene Builder
- * @description Pure construction helpers that build the celestial body meshes,
- * orbit lines, Everdark boundary, and collision cloud effect. Extracted from
- * `WorldSimMediator` so the mediator can focus on lifecycle coordination
- * rather than scene assembly.
+ * @description Builds celestial body meshes, orbit lines, the Everdark
+ * boundary, and collision cloud effects.
  *
  * @module worldSim/celestials/CelestialSceneBuilder
  * @version 1.0.0

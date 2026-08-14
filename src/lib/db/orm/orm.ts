@@ -1,7 +1,7 @@
 /**
  * @fileoverview MikroORM Singleton
  * @description Lazy-initialised MikroORM instance backed by the shared `pg.Pool`.
- * Uses the Next.js global singleton pattern to survive HMR restarts in development.
+ * Cached on `globalThis` in development.
  *
  * @module lib/db/orm/orm
  * @version 1.0.0
@@ -23,11 +23,7 @@ let initPromise: Promise<MikroORM> | null = null;
 
 /**
  * Returns the singleton MikroORM instance, initialising it on first call.
- * In development the instance is cached on `globalThis` so HMR restarts
- * do not open duplicate connection pools.
- *
- * Uses dynamic `import()` for ormConfig to defer entity module evaluation
- * and avoid TDZ errors during webpack module concatenation.
+ * The instance is cached on `globalThis` when `NODE_ENV` is not `production`.
  *
  * @returns {Promise<MikroORM>} Ready-to-use ORM instance
  */

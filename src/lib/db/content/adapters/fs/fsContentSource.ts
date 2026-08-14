@@ -1,8 +1,7 @@
 /**
  * @fileoverview Filesystem Content Source Adapter
- * @description Implements the ContentSourceAdapter interface using the local
- * filesystem. Used during development and build phases where content lives
- * in `src/content/{locale}/`.
+ * @description Implements the ContentSourceAdapter interface using the
+ * local filesystem. Reads content from `src/content/{locale}/`.
  *
  * @module lib/db/content/adapters/fs/fsContentSource
  * @author Typeir

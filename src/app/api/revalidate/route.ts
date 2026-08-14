@@ -1,11 +1,7 @@
 /**
- * @fileoverview On-Demand ISR Revalidation API
- * @description Accepts POST requests with a shared secret and a list of paths
- * to revalidate. Called by the content repo's auto-merge GitHub Action after
- * a correction PR is merged, ensuring the affected pages are regenerated.
- *
- * When revalidation succeeds for a path, any active draft for that
- * locale+slug pair is archived in the drafts table.
+ * @fileoverview POST endpoint that revalidates ISR paths.
+ * @description Authenticates via shared secret and archives active drafts
+ * for revalidated locale+slug pairs.
  *
  * @module app/api/revalidate/route
  * @author Typeir
@@ -71,8 +67,8 @@ const resolveContentType = (slugPath: string): string | null => {
 
 /**
  * @function archiveDraftForPath
- * @description Archives the active draft for a locale+slug pair after successful
- * ISR revalidation. Failures are logged but do not block the revalidation response.
+ * @description Archives the active draft for a locale+slug pair.
+ * Failures are logged; never throws.
  * @param {string | null} locale - Content locale, or null if extraction failed
  * @param {string} slugPath - Content slug path
  * @returns {Promise<boolean>} True if a draft was archived
@@ -104,9 +100,9 @@ const archiveDraftForPath = async (
 
 /**
  * @function syncMetadataForPath
- * @description Triggers a hash-based incremental metadata sync for the content type
- * associated with a slug path after a draft is published. Only runs when the slug
- * resolves to a known content type. Failures are logged but do not block the caller.
+ * @description Runs a hash-based incremental metadata sync for the content type
+ * of a slug path. No-op when the slug has no known content type; failures
+ * are logged, never thrown.
  * @param {string | null} locale - Content locale
  * @param {string} slugPath - Content slug path
  * @returns {Promise<void>}

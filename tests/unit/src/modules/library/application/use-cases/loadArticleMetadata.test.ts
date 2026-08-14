@@ -1,7 +1,6 @@
 /**
  * @fileoverview Article Metadata Loader Tests
- * @description Covers resolving generated metadata for a route, and the failure
- * paths that must degrade to no aspects rather than to a broken page.
+ * @description Tests `loadArticleMetadata` and `aspectSectionsOf`.
  *
  * @module tests/unit/src/modules/library/application/use-cases/loadArticleMetadata
  * @version 1.0.0
@@ -18,9 +17,8 @@ const getSpellBySlug = vi.fn();
 const getSpecializationBySlug = vi.fn();
 
 /**
- * Every kind the loader can reach is stubbed. Leaving one live let the real
- * filesystem adapter answer a route the test believed was unresolvable, which
- * made the assertion depend on whether a spell of that slug happened to exist.
+ * Stubs every repository the loader can reach. Monster, spell, and
+ * specialization calls go through mock functions; the rest resolve null.
  */
 vi.mock('@/lib/db/content/repositories/monsterRepository', () => ({
   monsterRepository: { getBySlug: (...a: unknown[]) => getBySlug(...a) },
@@ -68,10 +66,7 @@ beforeEach(() => {
 });
 
 describe('loadArticleMetadata', () => {
-  /**
-   * Every kind carries aspects, so every kind resolves. Loading only monsters
-   * left seven kinds with aspects in metadata and nothing on the page.
-   */
+  /** A kind with no section aspects still resolves. */
   it('should resolve a kind that has no sections', async () => {
     getSpellBySlug.mockResolvedValue({
       slug: 'acid-splash',
@@ -90,7 +85,7 @@ describe('loadArticleMetadata', () => {
     expect(getBySlug).not.toHaveBeenCalled();
   });
 
-  /** A vocation's own page and its specializations share a path prefix. */
+  /** A specialization and its vocation share a path prefix; the trailing segment disambiguates. */
   it('should read the trailing segment to tell a specialization from its vocation', async () => {
     getSpecializationBySlug.mockResolvedValue({
       slug: 'oath-of-devotion',
@@ -121,7 +116,7 @@ describe('loadArticleMetadata', () => {
     expect(await loadArticleMetadata(['monsters', 'nobody'], 'en')).toBeNull();
   });
 
-  /** A metadata backend failure costs the page its aspects, not its content. */
+  /** A repository rejection degrades to null. */
   it('should return null when the repository throws', async () => {
     getBySlug.mockRejectedValue(new Error('backend down'));
 
@@ -152,10 +147,7 @@ describe('loadArticleMetadata', () => {
     });
   });
 
-  /**
-   * Monster features have no pg representation yet, so production returns a
-   * record with no `features` at all.
-   */
+  /** The repository may return a record with no `features` key. */
   it('should map a monster whose backend returns no features', async () => {
     getBySlug.mockResolvedValue({
       slug: 'mucklord',

@@ -1,8 +1,6 @@
 /**
  * @fileoverview Exclusion rules for dice expression migration
  * @description Lines matching any exclusion rule are skipped entirely.
- * Protects only structural patterns that would produce broken output.
- * All tables and stat blocks are intentionally included — every dice is rollable.
  *
  * @module scripts/content/migration/exclusions
  * @version 1.1.0

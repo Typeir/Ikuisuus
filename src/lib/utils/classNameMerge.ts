@@ -1,7 +1,7 @@
 /**
- * Lightweight className merge utility
+ * className merge utility
  *
- * @fileoverview A minimal alternative to clsx for conditionally combining classnames.
+ * @fileoverview Combines class inputs into a single className string.
  * Handles strings, objects with conditional keys, and arrays. Filters out falsy values.
  *
  * @module lib/utils/classNameMerge
@@ -10,12 +10,7 @@
  * @since 2026-01-17
  *
  * @description
- * Combines multiple class inputs into a single className string. Supports:
- * - String classes: `'className'`
- * - Conditional strings: `open && 'open-class'`
- * - Object conditions: `{ [styles.active]: isActive }`
- * - Arrays and nested structures
- *
+ * Combines multiple class inputs into a single className string.
  * Zero dependencies. Filters falsy values automatically.
  *
  * @example
@@ -50,13 +45,7 @@ type ClassValue =
  * @returns {string} Merged className string with falsy values filtered out
  *
  * @description
- * Recursively processes all input types:
- * - Strings: included as-is
- * - Objects: keys included if value is truthy
- * - Arrays: flattened and processed recursively
- * - Falsy values (false, null, undefined, empty strings): filtered out
- *
- * Performance optimized with early returns for common cases.
+ * Recursively processes all input types.
  *
  * @example
  * const styles = { open: '_open_abc', icon: '_icon_def' };

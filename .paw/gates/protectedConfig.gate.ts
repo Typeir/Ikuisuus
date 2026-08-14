@@ -1,10 +1,6 @@
 /**
- * Protected Config Gate
- *
- * @fileoverview Prevents direct code manipulation of protected paw_config keys
- * (severity_override, etc.). These config values should only be changed via
- * the password-protected PAW CLI (`npm run paw:severity-override`), not through
- * in-code calls to setPawConfig or raw SQL.
+ * @fileoverview Emits a critical finding when code directly modifies protected
+ * paw_config keys (e.g. severity_override) via in-code calls or raw SQL.
  *
  * @module .paw/gates/protected-config
  * @author Typeir
@@ -39,8 +35,8 @@ const IGNORE_SEGMENTS = [
 ];
 
 /**
- * Build a regex that matches direct assignment to protected paw_config keys.
- * Detects patterns like:
+ * Build a regex matching direct assignment to protected paw_config keys.
+ * Matches patterns like:
  *   setPawConfig(db, 'severity_override', ...)
  *   setSeverityOverride(db, ...)
  *   setPawConfig( db , "severity_override" , ...

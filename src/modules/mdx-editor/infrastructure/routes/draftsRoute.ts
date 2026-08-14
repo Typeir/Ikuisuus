@@ -15,15 +15,9 @@ import { NextRequest, NextResponse } from 'next/server';
 const log = logger.child({ module: 'API:Drafts' });
 
 /**
- * Whether drafts are available at all.
+ * Whether drafts are available: true when METADATA_BACKEND is 'pg'.
  *
- * Drafts live only in Postgres — there is no filesystem draft store — so on the
- * `fs` backend the repository reaches an unconfigured ORM and throws about a
- * missing `dbName`. That surfaced as a 500 on every editor page load, which
- * reads as a broken server rather than a feature that is simply not present
- * here.
- *
- * @returns {boolean} True when a draft store exists
+ * @returns {boolean} True when METADATA_BACKEND is 'pg'
  */
 function draftsAvailable(): boolean {
   return (process.env.METADATA_BACKEND || 'fs') === 'pg';

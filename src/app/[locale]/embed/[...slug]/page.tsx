@@ -1,13 +1,9 @@
 ﻿/**
- * @fileoverview Chrome-less embed route for library content.
+ * @fileoverview Embed route serving library articles with the wiki chrome stripped.
  * @module app/[locale]/embed/[...slug]/page
  *
- * Serves the same articles as `/{locale}/library/[...slug]` with the wiki
- * chrome stripped, for rendering inside iframes â€” draggable preview panels,
- * world-sim overlays, archivist snippets. Statically generated alongside the
- * library tree, so an embed costs a cached document fetch rather than a
- * client-side compile.
- *
+ * Serves the same articles as `/{locale}/library/[...slug]` without wiki chrome.
+ * Statically generated; renders inside iframes.
  *
  * @author Typeir
  * @version 1.0.0
@@ -28,8 +24,7 @@ const log = logger.child({ module: 'EmbedPage' });
 /**
  * Generates all static params for the embed `[...slug]` route.
  *
- * Mirrors the library tree exactly â€” every page that can be read can be
- * embedded.
+ * Generates a param set matching the library tree.
  *
  * @returns {Promise<Array<{ slug: string[] }>>} Array of slug params.
  */
@@ -52,9 +47,7 @@ type PageProps = {
 /**
  * Generates metadata for the embed variant.
  *
- * Reuses the library metadata for title and description, then marks the page
- * `noindex, nofollow`. The embed and library trees serve identical prose, and
- * only the library URL should be the one search engines rank and users share.
+ * Returns library metadata with `noindex, nofollow` robots set.
  *
  * @param {PageProps} props - Route params
  * @param {Promise<{ slug: string[], locale: string }>} props.params - Async route parameters

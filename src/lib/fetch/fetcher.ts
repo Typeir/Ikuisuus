@@ -2,8 +2,7 @@
  * SWR Global Fetcher
  *
  * @fileoverview Typed HTTP JSON fetcher for use as the SWR global fetcher.
- * Provides a structured {@link FetchError} on non-OK responses so hooks can
- * distinguish network failures from data-not-found cases.
+ * Throws {@link FetchError} on non-OK responses.
  *
  * @module lib/fetch/fetcher
  * @version 1.0.0
@@ -13,10 +12,7 @@
  * @requires fetch Browser Fetch API (available in Next.js client and server)
  *
  * @description
- * This module is the single source of truth for JSON HTTP requests made
- * through SWR. All SWR hooks that fetch plain URL strings use this as their
- * default fetcher (configured in `SwrProvider.tsx`). Hooks that need custom
- * `RequestInit` options pass an inline arrow fetcher calling this function.
+ * Default fetcher for SWR hooks. Accepts a URL string or a `[url, RequestInit]` tuple.
  *
  * @example
  * // Used automatically by SWRConfig default fetcher
@@ -102,10 +98,7 @@ function resolveInput(
  * @throws {FetchError} When the response status is not in the 2xx range
  *
  * @description
- * Accepts both a plain URL string and a two-element tuple so it can serve as
- * SWR's default fetcher regardless of key shape. On non-OK responses the body
- * is parsed and attached to the thrown {@link FetchError} to aid error display
- * and logging in consuming hooks.
+ * Throws {@link FetchError} with the parsed body on non-OK responses.
  *
  * @example
  * const monsters = await fetcher<MonsterMetadata[]>('/api/monsters?locale=en');

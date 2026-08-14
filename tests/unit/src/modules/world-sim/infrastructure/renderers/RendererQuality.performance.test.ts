@@ -1,8 +1,7 @@
 /**
  * @fileoverview Renderer Quality Optimization Tests
- * @description Validates adaptive quality degradation behavior across celestial
- * renderers (shader detail reduction, optional effect disabling, and
- * optimization-friendly culling flags).
+ * @description Tests setQualityLevel swaps LOD geometry and toggles child
+ * visibility across celestial renderers.
  *
  * @module tests/unit/worldSim/optimization/RendererQuality.performance
  */

@@ -1,11 +1,9 @@
 /**
  * @fileoverview Builder Split Pane
  * @description Viewport-aware wrapper around the two-pane builder layout.
- * On desktop it renders the shared `ResizablePane` exactly as before. On
- * phone viewports (≤768px) it renders only the left pane full-width and
- * summons the right pane in a console-skinned bottom sheet — either
- * controlled by the caller (focused-shard flow) or via a local trigger
- * button when `mobileTriggerLabel` is provided.
+ * Desktop (≥768px) renders `ResizablePane`; phone (≤768px) renders one
+ * pane full-width and the other in a console-skinned `MobileModal` bottom
+ * sheet.
  *
  * @module lib/components/characterSheet/builder/builderSplitPane
  * @version 1.0.0
@@ -53,9 +51,8 @@ export interface BuilderSplitPaneProps {
 }
 
 /**
- * Two-pane builder layout that degrades to a single pane plus a summoned
- * bottom sheet on phone viewports. Desktop rendering is byte-identical to
- * the previous direct `ResizablePane` usage.
+ * Two-pane builder layout; single pane plus summoned bottom sheet on phone
+ * viewports.
  *
  * @component
  * @param {BuilderSplitPaneProps} props - Component props

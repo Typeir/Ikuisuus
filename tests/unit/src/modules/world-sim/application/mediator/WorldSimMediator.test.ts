@@ -1,8 +1,6 @@
 /**
  * @fileoverview WorldSimMediator Unit Tests
- * @description Tests the central mediator that coordinates all World Sim subsystems.
- * Verifies initialization, body creation, camera delegation, orbit line toggling,
- * event-driven zoom/reset, and disposal.
+ * @description Unit tests for WorldSimMediator: initialize, zoomToBody, zoomToRegion, resetView, toggleOrbitLines, dispose.
  *
  * @module tests/unit/worldSim/WorldSimMediator
  */
@@ -133,7 +131,7 @@ vi.mock('@/modules/world-sim/application/services/RaycastService', () => ({
   }),
 }));
 
-/** Lifecycle phase on-handler storage */
+/** Labeled lifecycle-phase handlers */
 const lifecycleHandlers: Map<string, Function> = new Map();
 
 /** Mock SceneManager-like object */
@@ -301,7 +299,6 @@ describe('WorldSimMediator', () => {
 
   it('toggleOrbitLines flips visibility (starts visible in createOrbitLines)', () => {
     mediator.initialize();
-    /** Initially orbit lines exist but the mock returns empty map — toggleOrbitLines should still work */
     expect(() => mediator.toggleOrbitLines()).not.toThrow();
   });
 

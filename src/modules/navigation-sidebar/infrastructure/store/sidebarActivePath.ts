@@ -1,6 +1,5 @@
 /**
- * A simple reactive store for the currently active sidebar path.
- * Subscribers will be notified whenever the active path changes.
+ * Reactive store holding the active sidebar path; notifies subscribers on set.
  * @fileoverview Module for src/lib/components/sidebar/store/sidebarActivePath.ts
  * @module src/lib/components/sidebar/store/sidebarActivePath
  * @author Typeir

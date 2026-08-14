@@ -1,9 +1,7 @@
 /**
  * Persistent UI State Types and Action Schema
  *
- * @fileoverview Defines typed state shapes and action types for the persistent UI state system.
- * This module provides the foundation for a reducer-driven persistent storage approach,
- * enabling sidebar menu state persistence across page loads and navigation.
+ * @fileoverview Typed state shapes and action types for persistent UI state.
  *
  * @module lib/types/persistentUiState
  * @version 1.0.0
@@ -29,7 +27,7 @@
 
 /**
  * Action type constants for persistent UI state management.
- * Uses namespaced string literals for clarity and conflict prevention.
+ * Namespaced string literals.
  *
  * @constant
  */
@@ -50,8 +48,8 @@ export const PERSISTED_UI_ACTION_TYPES = {
  * Sidebar menu state shape
  *
  * @interface SidebarMenuState
- * @property {boolean} isOpen - Whether the sidebar menu is currently open
- * @property {string[]} expandedPaths - Array of expanded sidebar tree paths
+ * @property {boolean} isOpen - Whether the sidebar menu is open
+ * @property {string[]} expandedPaths - Expanded sidebar tree paths
  */
 export interface SidebarMenuState {
   isOpen: boolean;
@@ -66,17 +64,14 @@ export interface SidebarMenuState {
 export type ThemeValue = 'dark' | 'light';
 
 /**
- * Unit system display preference. `stride` is the native Damocles system and the
- * server-rendered default; the others are reader-facing conversions.
+ * Unit system display preference. `stride` is the server-rendered default.
  *
  * @typedef {'stride' | 'metric' | 'imperial'} UnitSystemValue
  */
 export type UnitSystemValue = 'stride' | 'metric' | 'imperial';
 
 /**
- * Measurement families a reader can set independently. Someone may think in
- * metres but weigh things in pounds, so distance, weight and volume each carry
- * their own preference.
+ * Measurement families with independently set unit preferences.
  *
  * @typedef {'distance' | 'weight' | 'volume'} UnitDimension
  */
@@ -97,7 +92,7 @@ export interface UnitSystemPreferences {
 }
 
 /**
- * Default preferences: the native system across the board.
+ * All preferences default to `stride`.
  *
  * @constant
  */
@@ -254,11 +249,8 @@ export interface SetUnitSystemAction {
 }
 
 /**
- * Action to set whether aspect carousels stay unpacked.
- *
- * The preference is global rather than per-row: a reader who wants the dense
- * rows open wants all of them open, and a per-row toggle would have to be
- * pressed once per section on a stat block with twenty.
+ * Action to set whether aspect carousels stay unpacked. Preference is global,
+ * not per-row.
  *
  * @interface SetAspectExpandedAction
  * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED} type - Action type identifier

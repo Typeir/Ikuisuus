@@ -1,16 +1,8 @@
 #!/usr/bin/env tsx
 /**
  * @fileoverview Bundles local remark/rehype plugins for the `@next/mdx` loader.
- *
- * Turbopack runs webpack loaders in a Rust host and cannot receive JavaScript
- * functions, so `@next/mdx` plugins must be named as resolvable strings. The
- * loader resolves those strings with `require.resolve` and imports them in a
- * plain Node ESM context — which cannot follow this project's extensionless
- * TypeScript imports.
- *
- * Bundling each local plugin into a single self-contained `.mjs` removes both
- * problems: the artifact is plain JavaScript with no unresolved specifiers, and
- * `next.config.ts` can point at a stable absolute path.
+ * Emits one self-contained `.mjs` per plugin so `next.config.ts` can reference
+ * a stable absolute path.
  *
  * @module scripts/build/bundleMdxPlugins
  * @version 1.0.0
@@ -34,8 +26,7 @@ const PLUGINS = [
 /**
  * Bundles every local MDX plugin into `.mdx-plugins/`.
  *
- * Dependencies that the loader can already resolve on its own are left
- * external, so the bundles stay small and share the installed copies.
+ * Leaves resolvable dependencies external.
  */
 const main = async (): Promise<void> => {
   await mkdir(OUTPUT_DIR, { recursive: true });

@@ -1,9 +1,9 @@
 #!/usr/bin/env npx tsx --tsconfig tsconfig.scripts.json
 
 /**
- * @fileoverview MDX Lottery - Select a random MDX file from a directory
- * @description Selects and outputs the name of a random .mdx file from a specified
- * directory and its subdirectories, with options to ignore certain directories.
+ * @fileoverview CLI that prints a random .mdx file name.
+ * @description Walks a directory recursively for .mdx files, optionally filters
+ * by substring patterns, picks one at random, and writes its basename to stdout.
  *
  * @version 1.1.0
  * @since 1.0.0
@@ -21,7 +21,7 @@ import path from 'node:path';
 
 const log = createLogger({ script: 'mdxLottery' });
 
-/** Default directories to ignore when walking */
+/** Directories ignored by default when walking. */
 const DEFAULT_IGNORES = new Set([
   'node_modules',
   '.git',
@@ -31,10 +31,10 @@ const DEFAULT_IGNORES = new Set([
 ]);
 
 /**
- * Check if path is a directory
+ * Read-only path existence check.
  *
  * @param p - Path to check
- * @returns True if the path is a directory
+ * @returns True if the path is a directory, false if stat fails
  */
 const isDir = (p: string): boolean => {
   try {
@@ -55,15 +55,15 @@ interface Args {
 }
 
 /**
- * Normalize for path matching — forward slashes, lowercase
+ * Normalize for path matching.
  *
  * @param s - Input string
- * @returns Normalized string
+ * @returns The string with backslashes replaced by forward slashes, lowercased
  */
 const norm = (s: string): string => s.replace(/\\/g, '/').toLowerCase();
 
 /**
- * Recursive MDX walker with directory ignore
+ * Recursive walker collecting .mdx files.
  *
  * @param dir - Directory to walk
  * @param ignore - Set of directory names to skip
@@ -89,7 +89,7 @@ const walk = async (dir: string, ignore: Set<string>): Promise<string[]> => {
 };
 
 /**
- * Parse command line arguments
+ * Parse command line arguments.
  *
  * @param argv - Raw CLI arguments
  * @returns Parsed args

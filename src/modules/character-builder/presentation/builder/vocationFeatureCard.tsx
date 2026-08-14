@@ -1,13 +1,8 @@
 /**
  * @fileoverview Vocation Feature Card Component
- * @description Displays vocation and specialization features for a character at
- * their current level. Features above the character's level are rendered as
- * locked/dimmed `ShardDisplay` cards (not hidden). When no selection has been
- * made the section shows a "nothing selected" prompt instead.
- *
- * Supports a `section` prop to render only one of the two feature lists.
- * Useful when callers (such as the Vocation tab) want to display the lists
- * inside their own tab structure rather than stacked.
+ * @description Renders vocation and specialization feature lists for a
+ * character. Features with `level > characterLevel` are locked/dimmed. Shows a
+ * "nothing selected" prompt when no selection exists.
  *
  * @module lib/components/characterSheet/vocationFeatureCard
  * @version 4.0.0

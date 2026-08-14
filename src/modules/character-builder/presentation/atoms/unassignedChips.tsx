@@ -1,14 +1,9 @@
 /**
  * @fileoverview Unassigned-benefit chip stack
- * @description Floating, non-reflowing row of status pills — one per
- * `(category, tier)` group of benefits the character is owed but has not yet
- * assigned (e.g. "2 unassigned proficiencies", "1 unassigned expertise",
- * "3 unassigned feats"). The pills flex horizontally so they never stack down
- * into the table; once there are enough groups to crowd the row they condense
- * into a single "N unassigned grants" pill whose tooltip lists the breakdown.
- * Reads the unified {@link unassignedByCategory} model and shows only the groups
- * whose category the anchor is responsible for. Purely informational — nothing is
- * ever disabled. Renders nothing when there is nothing to assign.
+ * @description Row of status pills, one per `(category, tier)` group of
+ * unassigned benefits. Condenses into a single summary pill with breakdown
+ * tooltip when the group count reaches {@link CONDENSE_AT}. Reads
+ * {@link unassignedByCategory}; renders nothing when there is nothing to assign.
  *
  * @module modules/character-builder/presentation/atoms/unassignedChips
  * @version 2.0.0
@@ -62,16 +57,16 @@ function groupKey(group: UnassignedGroup): string {
  * Props for `<UnassignedChips>`.
  *
  * @interface UnassignedChipsProps
- * @property {ReadonlyArray<GrantCategory>} categories - Categories this anchor renders (pass a stable reference)
+ * @property {ReadonlyArray<GrantCategory>} categories - Categories this anchor renders
  */
 export interface UnassignedChipsProps {
   categories: readonly GrantCategory[];
 }
 
 /**
- * Renders the row of unassigned-benefit pills for the given categories, or a
- * single condensed pill with a breakdown tooltip once the row would crowd.
- * Reads the character from the active-sheet context.
+ * Renders a pill row for the given categories, or one condensed pill with a
+ * breakdown tooltip at or above {@link CONDENSE_AT} groups. Reads the
+ * character from the active-sheet context.
  *
  * @component
  * @param {UnassignedChipsProps} props - Component props

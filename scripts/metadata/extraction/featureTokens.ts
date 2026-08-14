@@ -1,9 +1,7 @@
 /**
  * @fileoverview Shared Feature Token Recognizers
- * @description Pure-function token recognizers for the feature extraction
- * pipeline. Each recognizer takes a text string and returns a parsed token
- * or null. All regex patterns and lookup tables are imported from the
- * centralized featurePatterns module.
+ * @description Pure functions that parse a text string into a token
+ * or null. Regex patterns and lookup tables come from featurePatterns.
  *
  * @version 1.1.0
  * @author Typeir

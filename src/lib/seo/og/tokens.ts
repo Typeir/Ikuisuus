@@ -1,10 +1,5 @@
 /**
- * @fileoverview OG image design tokens.
- *
- * Mirrors the dark-theme CSS custom properties from `globals.scss` as plain
- * JavaScript constants. This file is the single source of truth for colors
- * used in satori-rendered OG images — satori does not run in a browser
- * context and cannot read CSS variables.
+ * @fileoverview OG image dark-theme color tokens as plain JS constants.
  *
  * @module lib/seo/og/tokens
  * @version 1.0.0
@@ -15,8 +10,8 @@
 /**
  * Design token map for OG image rendering.
  *
- * All values correspond 1-to-1 with dark-theme CSS custom properties
- * in `src/app/[locale]/globals.scss`.
+ * Values 1-to-1 with dark-theme CSS custom properties in
+ * `src/app/[locale]/globals.scss`.
  *
  * @property {string} bg - Main background colour (`--color-bg`)
  * @property {string} bgSecondary - Secondary background (`--color-bg-secondary`)

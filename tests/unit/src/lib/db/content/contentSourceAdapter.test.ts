@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit Tests — ContentSourceAdapter
- * @description Validates the hexagonal port contract for content source adapters.
+ * @description Tests ContentSourceAdapter.fetch behavior and ContentFetchResult shape.
  *
  * @module tests/unit/lib/db/content/contentSourceAdapter
  */

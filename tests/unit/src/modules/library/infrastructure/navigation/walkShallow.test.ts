@@ -15,8 +15,7 @@ import {
 import { describe, expect, it } from 'vitest';
 
 /**
- * Builds an adapter whose root holds one directory of `fileCount` markdown
- * files, so width can be varied against {@link STUB_CHILD_THRESHOLD}.
+ * Builds an adapter whose root holds one directory of `fileCount` markdown files.
  *
  * @param {number} fileCount - Number of markdown files inside `spells`.
  * @returns {DirectorySourceAdapter} Adapter over the synthetic tree.

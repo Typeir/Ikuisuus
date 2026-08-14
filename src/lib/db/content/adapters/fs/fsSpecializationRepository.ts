@@ -3,10 +3,6 @@
  * @description Implements `SpecializationRepository` by reading `.metadata.json`
  * sidecar files from `.meta/{locale}/character-creation/vocations/` or
  * `src/content/{locale}/character-creation/vocations/`.
- *
- * Distinguishes specialization records from vocation records by the presence of
- * the `vocation` field (unique to specializations).
- *
  * @module lib/db/content/adapters/fs/fsSpecializationRepository
  * @version 1.0.0
  * @author Typeir
@@ -22,7 +18,7 @@ import { readMetadataFiles } from './readMetadataFiles';
 
 const log = logger.child({ module: 'FSSpecializationRepo' });
 
-/** Content subdirectory for specialization pages (shared with vocations; filter distinguishes record types). */
+/** Content subdirectory for specialization pages. */
 const SUBDIR = path.join('character-creation', 'vocations');
 
 /**
@@ -32,10 +28,7 @@ const SUBDIR = path.join('character-creation', 'vocations');
  * @extends {FsMetadataRepository<SpecializationMetadata>}
  * @implements {SpecializationRepository}
  *
- * @description
- * Reads `.metadata.json` sidecar files from `character-creation/vocations/` recursively.
- * Overrides `filter` to exclude vocation records (distinguished from specializations
- * by the absence of `vocation` and `specializationType` fields).
+ * @description Reads `.metadata.json` sidecar files from `character-creation/vocations/`.
  */
 class FsSpecializationRepository
   extends FsMetadataRepository<SpecializationMetadata>

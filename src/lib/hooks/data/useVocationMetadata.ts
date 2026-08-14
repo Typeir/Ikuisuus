@@ -1,8 +1,7 @@
 /**
  * @fileoverview Vocation Metadata Hook
  * @description Client hook that loads bloodline, vocation, and specialization
- * metadata once when the character sheet enters edit mode. Uses SWR for
- * automatic deduplication, caching, and race-free data loading.
+ * metadata when the character sheet enters edit mode.
  *
  * @module lib/hooks/data/useVocationMetadata
  * @version 2.0.0
@@ -45,8 +44,7 @@ export interface VocationMetadataState {
 
 /**
  * Loads bloodline, vocation, and specialization metadata in parallel when
- * `editing` becomes `true`. SWR caches and deduplicates requests so
- * toggling edit mode repeatedly does not cause additional network calls.
+ * `editing` becomes `true`.
  *
  * @param {boolean} editing - Whether the character sheet is in edit mode
  * @param {string} locale - Content locale (e.g. `'en'`, `'es'`)

@@ -1,19 +1,9 @@
 /**
  * @fileoverview Global Debug Namespace — window.ik
  * @description Defines and initialises the `window.ik` runtime debug namespace.
- * Each subsystem of the application registers its own module under a short key:
- *
- * ```
- * window.ik          — root namespace
- * window.ik.ws       — World Sim module  (populated when WorldSim mounts)
- * ```
- *
- * The pattern is deliberately extensible: future modules (e.g. `window.ik.db`,
- * `window.ik.auth`) call `registerIkModule('db', debugObj)` and the type
- * system picks them up automatically through the `IkModules` interface.
- *
- * All module interfaces use TypeScript getters / setters so that browser
- * DevTools show live values when you inspect `window.ik.ws` in the console.
+ * Each subsystem registers its own module under a short key
+ * (`window.ik.ws` for World Sim, populated when WorldSim mounts) via
+ * `registerIkModule`. Modules are typed through the `IkModules` interface.
  *
  * @example Console usage
  * ```js
@@ -36,9 +26,8 @@
 export interface IkWorldSimDebug {
   /**
    * Maximum `deltaTime` allowed per frame in seconds.
-   * Prevents physics/rotation jumps when the tab resumes from being
-   * backgrounded. Clamped internally to the range [1/120, 1].
-   * Default: `1/15` (~66 ms — equivalent to a 15 fps floor).
+   * Clamped internally to the range [1/120, 1].
+   * Default: `1/15` (~66 ms, a 15 fps floor).
    *
    * @type {number}
    * @example window.ik.ws.deltaTimeCap = 1 / 30
@@ -56,8 +45,7 @@ export interface IkWorldSimDebug {
 
   /**
    * Accumulated simulation time in seconds since the loop started.
-   * Advances at `deltaTime * simulationSpeed` each frame, so it runs
-   * faster or slower than wall time when `simulationSpeed` is not 1 (read-only).
+   * Advances at `deltaTime * simulationSpeed` each frame (read-only).
    *
    * @type {number}
    * @readonly
@@ -66,8 +54,7 @@ export interface IkWorldSimDebug {
 
   /**
    * Simulation speed multiplier. Default `1` (real-time).
-   * Set to `2` for 2× speed, `0.5` for half speed, `0` to freeze the
-   * simulation entirely. Clamped to [0, 1000].
+   * `0` freezes the simulation. Clamped to [0, 1000].
    * Affects orbital positions, shader animations, and mesh rotations.
    *
    * @type {number}
@@ -85,8 +72,8 @@ export interface IkWorldSimDebug {
 }
 
 /**
- * Maps short module keys to their debug interface. Extend this interface in
- * the module's own file using declaration merging when a new module is added.
+ * Maps short module keys to their debug interface. Extend via declaration
+ * merging in the module's own file when adding a new module.
  *
  * @interface IkModules
  */
@@ -117,8 +104,8 @@ declare global {
 }
 
 /**
- * Lazily initialise `window.ik` and return it. Safe to call multiple times
- * and safe in non-browser environments (returns a detached stub object).
+ * Lazily initialise `window.ik` and return it. In non-browser
+ * environments returns a detached stub object.
  *
  * @function ensureIkNamespace
  * @returns {IkNamespace} The `window.ik` namespace object

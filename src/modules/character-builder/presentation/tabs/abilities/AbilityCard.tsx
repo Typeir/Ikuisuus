@@ -46,9 +46,8 @@ const ABILITY_TYPE_I18N: Record<string, string> = {
 };
 
 /**
- * Ability type → search content type, for the shared TypeSigil / type-color
- * visual language. `Feature` and `Other` have no search taxonomy entry, so
- * they borrow the closest sigil (specialization star / world scroll).
+ * Ability type → search content type. `Feature` and `Other` have no search
+ * taxonomy entry and use the closest sigil.
  */
 const ABILITY_SIGIL_TYPE: Record<string, SearchContentType> = {
   Spell: 'spells',

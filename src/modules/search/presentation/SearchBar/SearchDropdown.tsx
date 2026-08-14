@@ -1,7 +1,6 @@
 /**
- * @fileoverview Search Dropdown Component
- * @description Quick-results dropdown for the SearchBar. Shows up to 8
- * SearchResultRow items with staggered animation. Keyboard-navigable.
+ * @fileoverview Dropdown for SearchBar.
+ * @description Renders up to 8 SearchResultRow items plus a full-results link.
  *
  * @module modules/search/presentation/SearchBar/SearchDropdown
  * @version 1.0.0

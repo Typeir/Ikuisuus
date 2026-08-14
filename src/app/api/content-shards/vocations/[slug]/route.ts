@@ -1,8 +1,6 @@
 /**
  * @fileoverview Vocation Content Shards API Route
- * @description Returns named prose shards for a specific vocation. The server
- * resolves each shard server-side using metadata line anchors or heading-text
- * search so callers never need to know the internal file structure.
+ * @description Returns named prose shards for a specific vocation.
  *
  * @module src/app/api/content-shards/vocations/[slug]/route
  * @version 1.1.0

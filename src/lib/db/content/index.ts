@@ -1,17 +1,9 @@
 /**
- * @fileoverview Content Module — Public Barrel Export
- * @description Re-exports the public API surface for the content metadata system.
- * Import from `@/lib/db/content` instead of reaching into individual files.
- *
- * Preferred entry points (new architecture):
- * - Factory-resolved repositories from `./repositories`
- * - Entity schemas from `./schemas`
- * - Repository port interfaces from `./repositories`
- * - FS adapters from `./adapters/fs`
- * - PG adapters from `./adapters/pg`
- *
- * Legacy shim (deprecated — will be removed in next major):
- * - `setContentAdapter` / `getContentAdapter` / `listMonsters` / etc. from `./contentService`
+ * @fileoverview Public barrel export for the content metadata system.
+ * @description Re-exports repositories, schemas, port interfaces, adapters, and
+ * file-tree services. Import from `@/lib/db/content` instead of individual files.
+ * The legacy shim (`setContentAdapter`, `getContentAdapter`, `listMonsters`, etc.)
+ * lives in `./contentService` and is deprecated.
  *
  * @module lib/db/content
  * @version 3.0.0

@@ -1,6 +1,6 @@
 /**
- * @fileoverview Unit tests for the SWR global fetcher
- * @description Verifies that `fetcher` returns parsed JSON on success, throws
+ * @fileoverview Tests for the SWR global fetcher.
+ * @description Verifies `fetcher` returns parsed JSON on success, throws
  * `FetchError` with correct fields on non-OK responses, and handles both
  * JSON-body and plain-text error bodies.
  *

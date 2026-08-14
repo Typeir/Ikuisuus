@@ -1,8 +1,7 @@
 /**
  * Persistent Data Retrieval Utility
  *
- * @fileoverview Retrieves persisted UI state from multi-layer storage.
- * Uses cookie-first priority for SSR compatibility.
+ * @fileoverview Retrieves persisted UI state from storage by priority.
  *
  * @module lib/utils/fetchPersistentData
  * @version 1.0.0
@@ -10,12 +9,8 @@
  * @since 1.0.0
  *
  * @description
- * Lookup priority order:
- * 1. Cookies - Source of truth, enables server-side reading for SSR
- * 2. sessionStorage - Tab-scoped fallback
- * 3. localStorage - Long-term fallback
- *
- * Returns first non-null value found. SSR-safe (returns null when window unavailable).
+ * Lookup priority order: cookies, sessionStorage, localStorage.
+ * Returns first non-null value; null when window is unavailable (SSR).
  */
 
 import { readCookie } from './storePersistentData';
@@ -28,8 +23,8 @@ import { readCookie } from './storePersistentData';
  * @returns {string | null} The stored value, or null if not found / SSR
  *
  * @description
- * Reads from cookies first (for SSR compatibility), then sessionStorage,
- * then localStorage. Returns the first non-null value found.
+ * Checks cookies, then sessionStorage, then localStorage; returns the
+ * first non-null value found.
  *
  * @example
  * const uiState = fetchPersistentData('ikuisuus-ui');

@@ -1,10 +1,8 @@
 /**
  * @fileoverview Search Hook
- * @description Debounced, race-safe client hook for Pagefind search. Uses
- * the existing `useDebounce` utility from the project. Handles loading,
- * empty, and error states. Pagefind bundle is lazy-loaded on first query.
- *
- * Locale-parameterized — no `'en'` literal.
+ * @description Debounced, race-safe client hook for Pagefind search.
+ * Handles loading, empty, and error states; lazy-loads the Pagefind bundle
+ * on first query.
  *
  * @module modules/search/application/useSearch
  * @version 1.0.0

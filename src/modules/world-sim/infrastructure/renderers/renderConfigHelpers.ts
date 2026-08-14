@@ -1,9 +1,7 @@
 /**
  * @fileoverview Render Config Helpers
- * @description Tiny shared helpers for safely reading optional fields off a
- * celestial body's `renderConfig` blob. Centralizes the repeated
- * `new Color((config.X as string) ?? '#default')` pattern so renderers no
- * longer cast `unknown` to `string` ad-hoc.
+ * @description Helpers for reading optional fields off a celestial body's
+ * `renderConfig` blob and building a Three.js `Color` from a named field.
  *
  * @module worldSim/celestials/renderConfigHelpers
  * @version 1.0.0

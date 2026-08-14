@@ -1,15 +1,10 @@
 /**
  * @fileoverview Dropdown Panel Atom
- * @description Reusable behavioral atom for any ▾-triggered floating panel.
- * Owns open/close state, click-outside detection, and keyboard dismissal.
- * Uses {@link https://react.dev/reference/react-dom/createPortal createPortal}
- * to render the panel at `document.body` level, escaping all parent stacking
- * contexts and eliminating z-index collisions.
- *
- * Consumers are responsible for all visual styling — pass class names via
- * `triggerClassName` and `panelClassName`. Positioning is computed from the
- * trigger button's bounding rect and applied as inline fixed coordinates.
- *
+ * @description ▾-triggered floating panel. Owns open/close state, click-outside
+ * detection, and keyboard dismissal. Renders via
+ * {@link https://react.dev/reference/react-dom/createPortal createPortal} at
+ * `document.body`. Positioning derived from the trigger's bounding rect, applied
+ * as inline fixed coordinates.
  * @module lib/components/characterSheet/atoms/dropdownPanel
  * @version 1.0.0
  * @author Typeir
@@ -48,7 +43,6 @@ export interface DropdownPanelProps {
 
 /**
  * Coordinates for the portaled panel, derived from the trigger's bounding rect.
- *
  * @interface PanelCoords
  * @property {number} top - Fixed `top` value in px (below the trigger)
  * @property {number} left - Fixed `left` value in px (aligned to trigger left)
@@ -59,12 +53,9 @@ interface PanelCoords {
 }
 
 /**
- * Behavioral atom for a ▾-triggered floating panel.
- *
- * Renders as a React Fragment: optional badge node, then the trigger button.
- * The panel is portaled to `document.body` when open, positioned with
- * `position: fixed` so it always renders above any parent stacking context.
- *
+ * ▾-triggered floating panel portaled to `document.body` when open and
+ * positioned with `position: fixed`. Renders as a Fragment: badge node, then
+ * trigger button, then panel.
  * @component
  * @param {DropdownPanelProps} props - Component props
  * @param {string} props.triggerLabel - Accessible `aria-label` for the ▾ trigger button

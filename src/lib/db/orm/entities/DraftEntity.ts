@@ -1,9 +1,7 @@
 /**
  * @fileoverview MikroORM Entity — Draft
  * @description Decorator-based entity for the `drafts` table.
- * Stores temporary .mdx draft content during the edit-revalidate cycle.
- * GitHub/Bucket remains the single source of truth; this table holds
- * candidate content that is archived once revalidation succeeds.
+ * Stores temporary .mdx draft content prior to revalidation.
  *
  * @module lib/db/orm/entities/DraftEntity
  * @version 1.0.0
@@ -21,9 +19,9 @@ import {
 /**
  * Valid draft lifecycle statuses.
  *
- * @property {'active'} active - Draft is the current candidate for its slug; shown by DraftOverlay
- * @property {'pending'} pending - Submitted by a non-admin user; awaits explicit review before auto-merge
- * @property {'archived'} archived - Draft was archived after successful revalidation
+ * @property {'active'} active - Current candidate for its slug
+ * @property {'pending'} pending - Submitted by non-admin; awaits review before merge
+ * @property {'archived'} archived - Archived after successful revalidation
  */
 export type DraftStatus = 'active' | 'pending' | 'archived';
 

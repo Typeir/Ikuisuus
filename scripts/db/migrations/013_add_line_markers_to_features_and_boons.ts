@@ -1,9 +1,8 @@
 /**
- * @fileoverview Migration 013 — Add start/end line markers to feature and boon rows
+ * @fileoverview Adds `start_line` and `end_line` columns to feature and boon tables.
  * @description Adds `start_line` and `end_line` nullable smallint columns to
- * `vocation_features`, `specialization_features`, and `bloodline_boons`. These
- * columns store 1-indexed line offsets in the source MDX file, enabling
- * O(1) text extraction by the sharding layer without a full heading scan.
+ * `vocation_features`, `specialization_features`, and `bloodline_boons`,
+ * storing 1-indexed line offsets in the source MDX file.
  *
  * @module scripts/db/migrations/013_add_line_markers_to_features_and_boons
  * @author Typeir
@@ -14,8 +13,8 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies migration 013: adds `start_line` and `end_line` columns to the three
- * child tables that store per-feature or per-boon rules-text anchors.
+ * Adds `start_line` and `end_line` columns to `vocation_features`,
+ * `specialization_features`, and `bloodline_boons`.
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}
@@ -41,8 +40,8 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 013: drops the `start_line` and `end_line` columns from all
- * three affected tables.
+ * Drops the `start_line` and `end_line` columns from `vocation_features`,
+ * `specialization_features`, and `bloodline_boons`.
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}

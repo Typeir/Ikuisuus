@@ -1,14 +1,8 @@
 /**
  * @fileoverview Vocation Selector Component
- * @description Panel for selecting a character's bloodline, vocations, and
- * specializations. Supports mixing (multiclassing) — multiple `VocationEntry`
- * rows, each managed by a {@link VocationEntryBlock}.
- *
- * Metadata is loaded lazily via {@link useVocationMetadata} when the panel first
- * enters edit mode. While loading, a skeleton placeholder replaces the bloodline
- * combobox and each entry block with an existing slug shows skeleton rows in-place.
- * Feature shards are fetched per-entry on selection; each {@link VocationEntryBlock}
- * manages its own async loading state so multiclassing entries remain independent.
+ * @description Renders bloodline, vocation, and specialization selection.
+ * Multiclassing supported via multiple {@link VocationEntryBlock} rows.
+ * Metadata loads via {@link useVocationMetadata}; skeletons shown while loading.
  *
  * @module lib/components/characterSheet/vocationSelector
  * @version 7.0.0
@@ -64,10 +58,9 @@ function toOpt(item: { slug: string; title: string }): {
 }
 
 /**
- * Selector panel for bloodline and multiple vocations (mixing supported).
- * Uses `FilterSelect` comboboxes in edit mode; shows identity pills in view mode.
- *
- * Reads the character and edit mode from the active-sheet context.
+ * Selector panel for bloodline and multiple vocations.
+ * Uses `FilterSelect` comboboxes in edit mode; identity pills in view mode.
+ * Reads character and edit mode from the active-sheet context.
  *
  * @component
  * @param {VocationSelectorProps} props - Component props

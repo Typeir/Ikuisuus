@@ -1,9 +1,6 @@
 /**
- * @fileoverview Async Tooltip Component
- * @description Generic tooltip that lazily fetches its content on first hover.
+ * @fileoverview Tooltip that lazily fetches its content on first hover.
  * Content is fetched exactly once; subsequent hovers use the cached result.
- * The `fetchContent` callback is caller-owned, keeping this component agnostic
- * of MDX, REST, or any other content source.
  *
  * @module lib/components/ui/asyncTooltip/asyncTooltip
  * @version 1.0.0

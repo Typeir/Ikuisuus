@@ -1,8 +1,7 @@
 /**
  * @fileoverview MikroORM Entities — Spell + SpellList
  * @description Decorator-based entities for the `spells` and `spell_lists`
- * tables. SpellList is a child entity with a many-to-one relation to Spell.
- * Uses `@Embedded` with `prefix` for the spell-component value object.
+ * tables.
  *
  * @module lib/db/orm/entities/SpellEntity
  * @version 3.0.0

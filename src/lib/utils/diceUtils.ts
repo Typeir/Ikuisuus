@@ -1,8 +1,7 @@
 /**
  * @fileoverview Dice Rolling Utilities
- * @description Shared primitive for all dice rolls across the application.
- * Used by both the character sheet HP roller and the encounter planner combat
- * mechanics (heroic affix rolling, fate dice).
+ * @description Shared primitives for dice rolls: rolling, parsing face counts
+ * from die notation, formatting, and max/min result checks.
  *
  * @module lib/utils/diceUtils
  * @version 1.0.0
@@ -27,8 +26,7 @@ export function rollDie(faces: number): number {
 }
 
 /**
- * Face count meaning "this vocation has no usable hit die". Distinct from a
- * real die so callers can branch without magic numbers or sentinel strings.
+ * Face count meaning "this vocation has no usable hit die".
  *
  * @constant UNKNOWN_DIE
  * @type {number}
@@ -37,10 +35,7 @@ export const UNKNOWN_DIE = 0;
 
 /**
  * Reads the face count out of authored die notation (`"d12"`, `"12"`, `"D12"`,
- * `"d12 per Berserker level"`). This is the ONLY place die notation is parsed:
- * dice are carried as face counts everywhere else, so the two callers are the
- * MDX metadata generator and the legacy-save migration. Never call it on a
- * value that is already a face count.
+ * `"d12 per Berserker level"`).
  *
  * @function parseDieFaces
  * @param {string} notation - Authored die notation
@@ -57,8 +52,7 @@ export function parseDieFaces(notation: string): number {
 }
 
 /**
- * Renders a face count as display notation. Formatting is a presentation
- * concern — the value itself stays numeric everywhere.
+ * Renders a face count as display notation.
  *
  * @function formatDie
  * @param {number} faces - Face count

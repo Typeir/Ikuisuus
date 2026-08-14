@@ -284,9 +284,7 @@ function findDisallowedBrowserDialogCalls(
 }
 
 /**
- * Execute the jsdoc-quality check and return a structured result.
- * When options.files is provided, uses those instead of self-discovering.
- * When options.readFile is provided, uses that instead of fs.readFile.
+ * Run the jsdoc-quality check and return a structured result.
  *
  * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations

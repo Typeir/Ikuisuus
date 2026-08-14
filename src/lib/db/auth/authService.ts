@@ -1,11 +1,8 @@
 /**
  * @fileoverview Auth Service — User Management & Session Facade
- * @description Central service layer that sits between API routes and the storage
- * adapter. Handles password hashing, session token generation/verification,
- * and user CRUD. Adapter is swappable via `setUserAdapter()`.
- *
- * Session tokens are non-expiring HMAC digests: `sha256(CORRECTIONS_SECRET + userId)`.
- * They are validated by re-computing the digest, so no token storage is needed.
+ * @description Handles password hashing, session token generation/verification,
+ * and user CRUD via a swappable adapter (`setUserAdapter()`). Session tokens are
+ * non-expiring `sha256(CORRECTIONS_SECRET + userId)` digests, validated by recomputation.
  *
  * @module lib/db/auth/authService
  * @version 1.0.0
@@ -35,7 +32,6 @@ let adapter: UserAdapter = initialAdapter;
 
 /**
  * Replaces the active user storage adapter.
- * Call this once at startup (e.g. in an instrumentation file) to switch backends.
  *
  * @param {UserAdapter} newAdapter - Adapter to use
  */
@@ -92,8 +88,6 @@ export const createSessionToken = (userId: string): string => {
 
 /**
  * Validates a session token by brute-searching all users.
- * Since the token is a deterministic function of (secret, userId),
- * we recompute it for each user and compare.
  *
  * @param {string} token - Raw session token from the Authorization header
  * @returns {Promise<ValidateResponse>} Validation result with session payload
@@ -179,7 +173,7 @@ export const login = async (
 /* ────────────────────────  User management  ──────────────────────── */
 
 /**
- * Creates a new user. Called from the admin API or the seed script.
+ * Creates a new user.
  *
  * @param {CreateUserRequest} input - Validated user creation request
  * @returns {Promise<StoredUser>} The newly created user record
@@ -202,7 +196,7 @@ export const createUser = async (
 };
 
 /**
- * Extracts a SessionPayload from a Bearer token on an incoming request.
+ * Extracts a SessionPayload from a Bearer token in an incoming Authorization header.
  * Returns null if the token is missing, malformed, or invalid.
  *
  * @param {string | null} authHeader - Raw Authorization header value

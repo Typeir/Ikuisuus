@@ -1,18 +1,8 @@
 /**
  * @fileoverview Migration 016 — Rename proficiency_bonus → tier_bonus
- * @description Renames the `proficiency_bonus` column in the `monsters` table
- * to `tier_bonus`, aligning the database schema with the tier bonus terminology
- * change. The companion entity (`MonsterEntity`) and all application-layer
- * references are updated separately.
- *
- * Guarded/idempotent: databases whose `monsters` table was created after the
- * terminology change already have `tier_bonus` and no `proficiency_bonus` —
- * the rename is skipped there. (The original version of this file had both
- * column names clobbered to `tier_bonus` by a global rename, making the
- * statement a self-rename that always failed.)
- *
- * After applying, run `npm run db:seed` to refresh content from regenerated
- * `.metadata.json` sidecars.
+ * @description Renames `monsters.proficiency_bonus` to `tier_bonus`.
+ * Idempotent: skipped when the old column is absent or the new column exists.
+ * Run `npm run db:seed` after to refresh `.metadata.json` sidecars.
  *
  * @module scripts/db/migrations/016_rename_proficiency_bonus_to_tier_bonus
  * @author Typeir

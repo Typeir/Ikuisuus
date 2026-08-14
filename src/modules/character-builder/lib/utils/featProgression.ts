@@ -1,14 +1,9 @@
 /**
- * @fileoverview Feat progression helpers
- * @description Derives how many feats a character has EARNED and how many remain
- * unspent, per the Damocles progression rules
- * (`src/content/en/rules/the-measure-of-the-self/character-progression.mdx`):
- * every character gains an extra feat each time their tier bonus increases —
- * levels 4, 7, 10, 13, 16, 19, 22, 25, 28, i.e. `ceil(totalLevel / 3) - 1` — and
- * each vocation additionally grants a feat/ASI at its own listed levels (warrior
- * 4/6/8/12/14/16, rogue 4/8/10/12/16, revenant/tinker 4/8/12/16/19, most others
- * 4/8/12/16). An ASI and a feat are the same slot: the "Ability Score Improvement"
- * feat is one option among all feats.
+ * @fileoverview Derives earned and remaining feat slots per Damocles progression
+ * rules (`src/content/en/rules/the-measure-of-the-self/character-progression.mdx`):
+ * one extra feat per tier-bonus increase (`computeTierBonus(level) - 1`), plus a
+ * feat/ASI at each vocation's listed levels. <br />An ASI and a feat occupy the
+ * same slot: "Ability Score Improvement" is one feat option.
  *
  * @module modules/character-builder/lib/utils/featProgression
  * @version 1.0.0
@@ -43,9 +38,8 @@ export function countGlobalTierFeats(totalLevel: number): number {
 
 /**
  * Counts the feat/ASI slots a character's vocations have unlocked at or below
- * each vocation's own level. Reads the ASI/Feat rows already stored on each
- * vocation entry's feature shards (heading "Feat" or "Ability Score
- * Improvement"), so no metadata re-fetch is needed.
+ * each vocation's own level, by reading the "Feat" or "Ability Score
+ * Improvement" rows already stored on each vocation entry's feature shards.
  *
  * @function countVocationAsiFeats
  * @param {CharacterSheet} character - Character to inspect

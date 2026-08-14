@@ -1,13 +1,7 @@
 /**
  * @fileoverview Symbol-keyed metadata registry for the in-house ORM decorators.
- * @description MikroORM's own decorators bucket metadata by `constructor.name`,
- * which SWC mangles in minified server builds — two entities both named `n`
- * collapse into one record and the second silently overwrites the first.
- *
- * This registry hangs the collected definition off the class object under a
- * module-private `Symbol` instead. Symbol identity is by reference, so it is
- * unaffected by renaming, and the class object itself is the key.
- *
+ * @description Stores ORM decorator metadata on a class object under a
+ * module-private Symbol keyed by class reference, immune to name mangling.
  * @module lib/db/orm/schema/registry
  * @version 1.0.0
  * @author Typeir
@@ -42,10 +36,7 @@ export type EntityClass = abstract new (...args: never[]) => unknown;
 
 /**
  * Returns the definition owned by this exact class, creating it on first use.
- *
- * A subclass must not mutate its parent's record, so ownership is checked with
- * `Object.hasOwn` and any inherited definition is shallow-copied rather than
- * shared.
+ * Shallow-copies an inherited definition onto the class on first access.
  *
  * @param {EntityClass} target - Class collecting the definition.
  * @returns {EntityDefinition} The class's own mutable definition.
@@ -71,12 +62,8 @@ export const getOwnDefinition = (target: EntityClass): EntityDefinition => {
 };
 
 /**
- * Restores the authored name onto a class constructor.
- *
- * `Function.prototype.name` is configurable, so the authored name can be
- * written back over whatever the minifier produced. MikroORM reads
- * `class.name` when an `EntitySchema` references a class, so this must run
- * before the schema is constructed.
+ * Restores the authored name onto a class constructor via configurable
+ * `Function.prototype.name`. Must run before the EntitySchema is built.
  *
  * @param {EntityClass} target - Class whose name is being restored.
  * @param {string} name - Authored entity name.

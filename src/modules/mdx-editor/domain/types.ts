@@ -2,8 +2,8 @@
  * Mdx Editor Domain Types
  *
  * @fileoverview Shared domain types for the mdx-editor module.
- * @description Centralized contracts used by application hooks, presentation
- * components, and infrastructure clients/routes.
+ * @description Used by application hooks, presentation components, and
+ * infrastructure clients/routes.
  *
  * @module modules/mdx-editor/domain/types
  * @version 1.0.0

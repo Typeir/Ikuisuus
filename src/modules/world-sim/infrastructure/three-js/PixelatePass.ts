@@ -1,23 +1,8 @@
 /**
  * @fileoverview Pixelation Post-Processing Pass
- * @description Renders the Three.js scene into a WebGLRenderTarget at full
- * canvas resolution, then draws it through a combined post-processing shader:
- * pixelation, chromatic aberration, sharpening, and pseudo-emboss — all in a
- * single fragment pass with no extra render targets.
- *
- * Usage:
- * ```ts
- * const pass = new PixelatePass(canvasWidth, canvasHeight);
- * // In render loop, replace renderer.render(scene, camera) with:
- * pass.render(renderer, scene, camera);
- * // Tweak effects at any time:
- * pass.setPixelCount(320, 180);
- * pass.setCAStrength(0.005);
- * pass.setSharpenStrength(1.2);
- * pass.setEmbossStrength(0.3);
- * // Toggle on/off (bypasses to a direct render when off):
- * pass.setEnabled(false);
- * ```
+ * @description Renders the scene into a WebGLRenderTarget, then draws it
+ * through a single fragment pass applying pixelation, chromatic aberration,
+ * sharpening, and pseudo-emboss, with no extra render targets.
  *
  * @module worldSim/canvas/PixelatePass
  * @author Typeir
@@ -47,9 +32,8 @@ const DEFAULT_PIXEL_COUNT_X = 960;
 const DEFAULT_PIXEL_COUNT_Y = 540;
 
 /**
- * Default chromatic aberration strength in real canvas-pixel units.
- * Near-white pixels are automatically suppressed by the shader, so this
- * only visibly affects coloured mid-tone edges. 1.5 ≈ <1 px shift at corner.
+ * Default chromatic aberration strength in canvas-pixel units.
+ * Shader suppresses near-white pixels; 1.5 ≈ <1 px shift at corner.
  */
 const DEFAULT_CA_STRENGTH = 1.5;
 
@@ -60,7 +44,7 @@ const DEFAULT_SHARPEN_STRENGTH = 0.7;
 const DEFAULT_EMBOSS_STRENGTH = 0.25;
 
 /**
- * Post-processing pass combining pixelation, chromatic aberration,
+ * Post-processing pass applying pixelation, chromatic aberration,
  * sharpening, and pseudo-emboss in a single fragment-shader pass.
  *
  * @class PixelatePass
@@ -142,10 +126,7 @@ export class PixelatePass {
   }
 
   /**
-   * Execute the two-pass render:
-   * 1. Scene → render target (full resolution)
-   * 2. Pixelation quad → screen
-   *
+   * Two-pass render: scene → render target, then quad → screen.
    * When disabled, falls back to a direct render with no extra allocation.
    *
    * @param {WebGLRenderer} renderer - Active WebGL renderer
@@ -168,10 +149,10 @@ export class PixelatePass {
 
   /**
    * Change the pixel grid resolution.
-   * Lower values produce coarser, more obviously pixelated output.
+   * Lower values produce coarser output.
    *
-   * @param {number} x - Horizontal cell count (e.g. 480)
-   * @param {number} y - Vertical cell count (e.g. 270)
+   * @param {number} x - Horizontal cell count
+   * @param {number} y - Vertical cell count
    */
   setPixelCount(x: number, y: number): void {
     this.pixelCountX = x;
@@ -180,10 +161,10 @@ export class PixelatePass {
   }
 
   /**
-   * Set chromatic aberration spread.
-   * Larger values produce more pronounced colour fringing at screen edges.
+   * Set chromatic aberration spread. Larger values produce more colour
+   * fringing at screen edges.
    *
-   * @param {number} strength - Radial UV offset per channel (e.g. 0.003)
+   * @param {number} strength - Radial UV offset per channel
    */
   setCAStrength(strength: number): void {
     this.caStrength = strength;
@@ -191,10 +172,10 @@ export class PixelatePass {
   }
 
   /**
-   * Set unsharp-mask sharpening weight.
-   * Values above ~1.5 will introduce haloing; 0.5–1.0 is a natural range.
+   * Set unsharp-mask sharpening weight. Values above ~1.5 cause haloing;
+   * 0.5–1.0 is a natural range.
    *
-   * @param {number} strength - Sharpening blend weight (e.g. 0.7)
+   * @param {number} strength - Sharpening blend weight
    */
   setSharpenStrength(strength: number): void {
     this.sharpenStrength = strength;
@@ -202,10 +183,9 @@ export class PixelatePass {
   }
 
   /**
-   * Set pseudo-emboss bevel intensity.
-   * Creates a subtle lit-edge / relief feel from the luminance gradient.
+   * Set pseudo-emboss bevel intensity from the luminance gradient.
    *
-   * @param {number} strength - Bevel intensity (e.g. 0.25)
+   * @param {number} strength - Bevel intensity
    */
   setEmbossStrength(strength: number): void {
     this.embossStrength = strength;
@@ -213,8 +193,8 @@ export class PixelatePass {
   }
 
   /**
-   * Enable or disable the pixelation effect.
-   * When disabled the scene is rendered directly without any extra pass.
+   * Enable or disable the pixelation effect. When disabled, the scene is
+   * rendered directly without the extra pass.
    *
    * @param {boolean} enabled - Whether to apply the effect
    */

@@ -1,6 +1,6 @@
 /**
  * @fileoverview ToolMenuItem domain type for the tools-menu module.
- * @description Defines the canonical shape of a single item in the tools navigation menu.
+ * @description Describes one item in the tools navigation menu.
  *
  * @module src/modules/tools-menu/domain/toolMenuItem.types
  * @version 1.0.0

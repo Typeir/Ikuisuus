@@ -1,6 +1,6 @@
 /**
- * @fileoverview PipCheckbox tests
- * @description Verifies the pip renders as a checkbox/radio with the label as its
+ * @fileoverview PipCheckbox tests.
+ * @description Verifies the pip renders as checkbox/radio with the label as its
  * accessible name, reflects the checked state, and calls `onChange` with the
  * negated value on activation.
  *

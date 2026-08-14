@@ -1,9 +1,8 @@
 /**
- * @fileoverview Proficiency budget tests
- * @description Verifies the rules-correct free-pick model: the granted count
- * comes from the primary vocation, a pick is spent only for an on-offer skill at
- * or above the granted Proficiency tier that no feature floor already covers, and
- * hints surface only for an explicit (restricted) offer.
+ * @fileoverview Unit tests for proficiencyBudget utils.
+ * @description Covers deriveSkillOffer, countGrantedSkillProficiencies,
+ * countSpentSkillProficiencies, countUnspentSkillProficiencies, and
+ * deriveProficiencyHints edge cases.
  *
  * @module tests/unit/src/modules/character-builder/lib/utils/proficiencyBudget
  * @version 2.0.0

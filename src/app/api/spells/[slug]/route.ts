@@ -1,8 +1,7 @@
 /**
  * @fileoverview Spell Details API Route - Fetch single spell by slug
- * @description Returns full metadata for a specific spell by slug. Uses the spell
- * repository for typed, adapter-agnostic data access. Handles both local and
- * external spells transparently.
+ * @description Returns full metadata for a specific spell by slug via the
+ * spell repository.
  *
  * @version 2.0.0
  * @author Typeir

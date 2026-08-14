@@ -1,9 +1,7 @@
 /**
  * @fileoverview MikroORM Entity — Heirloom
  * @description Decorator-based entity for the `heirlooms` table.
- * Uses `@Embedded` with `prefix` for the charges value object.
- * Weapon damage fields don't share a clean prefix (`versatile_damage`
- * breaks the `weapon_` pattern) so they stay flat.
+ * Charges map via `@Embedded` with `prefix`; weapon damage fields stay flat.
  *
  * @module lib/db/orm/entities/HeirloomEntity
  * @version 3.0.0

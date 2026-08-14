@@ -1,7 +1,5 @@
 /**
- * @fileoverview Module for src/lib/components/mdx/index.tsx
- * Provides a centralized export of MDX components and related utilities for use across the application.
- * Uses React.ComponentProps to avoid auto-removal of necessary React import by linters/build tools.
+ * @fileoverview Centralized export of MDX components and utilities.
  * @module src/lib/components/mdx/index
  * @author Typeir
  * @version 1.0.0
@@ -93,10 +91,7 @@ export const components = {
 };
 
 /**
- * Reusable content regions are spliced in at source level before compilation,
- * so they no longer arrive as pre-rendered components. The generated map is
- * retained only until the emitter is deleted; spreading it here would shadow
- * real components whose names collide with a content filename.
+ * Spread copy of `components` as the default export.
  */
 const enrichedComponents = {
   ...components,

@@ -1,10 +1,7 @@
 /**
  * @fileoverview Migration 007 — Create bloodlines + bloodline_boons tables
- * @description Fully typed schema for bloodline metadata. Core features are stored
- * as explicit typed columns (text arrays for multi-value fields). Boons are stored
- * in a normalised child table with a foreign key to the parent bloodline row.
- *
- * No JSONB payload columns — every field has a dedicated column and type.
+ * @description Creates bloodlines and bloodline_boons tables. Multi-value fields are
+ * text[] columns. Boons live in a normalised child table keyed by bloodline_id. No JSONB columns.
  *
  * @module scripts/db/migrations/007_create_bloodlines_tables
  * @author Typeir
@@ -15,8 +12,7 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies the migration: creates `bloodlines` and `bloodline_boons` tables
- * with all supporting indexes.
+ * Creates `bloodlines` and `bloodline_boons` tables plus indexes.
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}
@@ -80,7 +76,7 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverses the migration: drops child table and indexes first, then parent.
+ * Drops bloodline_boons indexes/table, then bloodlines indexes/table.
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}

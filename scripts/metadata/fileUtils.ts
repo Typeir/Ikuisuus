@@ -1,7 +1,6 @@
 /**
  * @fileoverview File Processing Utilities
- * @description Safe file I/O helpers for metadata generators. Wraps fs/promises
- * with structured logging and error handling.
+ * @description File I/O helpers wrapping fs/promises, returning null/false on error.
  *
  * @module lib/metadata/fileUtils
  * @version 1.0.0
@@ -16,7 +15,7 @@ import path from 'path';
 const log = createLogger({ component: 'metadata-file-utils' });
 
 /**
- * Safely reads a file, returning null on failure.
+ * Reads a file, returning null on error.
  *
  * @param {string} filePath - Path to the file
  * @param {BufferEncoding} [encoding='utf8'] - File encoding
@@ -37,7 +36,7 @@ export async function safeReadFile(
 }
 
 /**
- * Safely writes a file, returning success/failure.
+ * Writes a file, returning true on success.
  *
  * @param {string} filePath - Path to write
  * @param {string} content - Content to write
@@ -61,7 +60,7 @@ export async function safeWriteFile(
 }
 
 /**
- * Recursively walks a directory, collecting files matching a pattern.
+ * Recursively walks a directory, pushing files matching a pattern to results.
  *
  * @param {string} dir - Directory to walk
  * @param {RegExp} pattern - Pattern to match filenames against
@@ -91,8 +90,9 @@ async function walkDirectory(
 }
 
 /**
- * Gets all files matching a pattern in a directory.
- * When `recursive` is true, walks subdirectories and does NOT exclude `main.mdx`.
+ * Returns paths of files matching a pattern in a directory.
+ * When `recursive` is true, walks subdirectories and does not exclude `main.mdx`.
+ * Non-recursive mode excludes `main.mdx`.
  *
  * @param {string} directory - Directory to search
  * @param {RegExp} pattern - Pattern to match filenames against
@@ -129,7 +129,7 @@ export async function getMatchingFiles(
 }
 
 /**
- * Ensures a directory exists, creating it recursively if necessary.
+ * Creates a directory recursively; returns true if it exists or was created.
  *
  * @param {string} dirPath - Path to the directory
  * @returns {Promise<boolean>} True if directory exists or was created

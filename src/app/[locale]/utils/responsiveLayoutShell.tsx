@@ -10,8 +10,8 @@
  * @since 1.0.0
  *
  * @description
- * Sidebar open/close state persists across page navigations and refreshes
- * via PersistentUiContext. Integrates with NotificationProvider for toast messages.
+ * Sidebar open/close state persists via PersistentUiContext. Renders within
+ * NotificationProvider for toast messages.
  */
 
 'use client';
@@ -61,10 +61,10 @@ type Item = {
 };
 
 /**
- * Responsive layout shell component wrapping the application content.
+ * Responsive layout shell wrapping the application content.
  *
  * Provides a 3-region sidebar: header (logo+theme), scrollable library navigation, and tools footer.
- * The sidebar open/close state persists via PersistentUiContext.
+ * Sidebar open/close state persists via PersistentUiContext.
  *
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - The main content to render
@@ -98,8 +98,7 @@ function BaseResponsiveLayoutShell({
   }, []);
 
   /**
-   * Dispatch theme-change event on window so non-React subsystems
-   * (e.g. Three.js World Sim) can react to theme toggles.
+   * Dispatch `ik:theme-changed` CustomEvent on window with current theme.
    */
   useEffect(() => {
     if (!mounted) return;
@@ -112,11 +111,7 @@ function BaseResponsiveLayoutShell({
 
   /**
    * In embed mode, render only the bare page content — no sidebar, no header.
-   *
-   * The branch is taken from the pathname instead of a query parameter so it
-   * resolves during static generation: `/{locale}/embed/...` prerenders without
-   * chrome instead of shipping the sidebar in its HTML and hiding it after
-   * hydration. `<EmbedLinkBridge>` owns navigation out of the frame.
+   * `<EmbedLinkBridge>` handles navigation out of the frame.
    */
   if (isEmbed) {
     return (

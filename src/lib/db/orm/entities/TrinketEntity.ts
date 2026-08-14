@@ -1,7 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Trinket
  * @description Decorator-based entity for the `trinkets` table.
- * Uses `@Embedded` with `prefix` for the saving-throw value object.
  *
  * @module lib/db/orm/entities/TrinketEntity
  * @version 3.0.0

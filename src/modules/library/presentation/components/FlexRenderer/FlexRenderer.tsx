@@ -1,7 +1,6 @@
 /**
  * @fileoverview Flex Renderer Component
- * @description Generic horizontal flex container that lays out its children in a row,
- * with spacing and horizontal scrolling support.
+ * @description Renders children in a horizontal flex row.
  *
  * @module flexRenderer
  * @version 1.0.0
@@ -17,8 +16,7 @@ type FlexRendererProps = {
 };
 
 /**
- * Generic horizontal flex container that lays out its children in a row,
- * with spacing and horizontal scrolling support.
+ * Renders children in a horizontal flex row.
  *
  * @param {FlexRendererProps} props - Component props.
  * @param {React.ReactNode} props.children - React nodes to render inside the flex container.

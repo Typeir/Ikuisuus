@@ -2,7 +2,7 @@
  * @fileoverview cleanTruncatedMdx Tests
  * @description Verifies tail-only cleanup of fixed-length MDX truncations:
  * incomplete tags / links, unbalanced inline delimiters, and trailing pipes
- * or dashes are all removed without disturbing the leading content.
+ * or dashes are removed.
  *
  * @module tests/unit/lib/utils/cleanTruncatedMdx
  * @version 1.0.0

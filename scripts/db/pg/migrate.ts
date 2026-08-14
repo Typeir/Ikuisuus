@@ -27,7 +27,7 @@ import pg, { type PoolClient } from 'pg';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 /**
- * Contract for TypeScript migration modules.
+ * Shape of a TypeScript migration module.
  *
  * @interface MigrationModule
  * @property {Function} up - Apply the migration inside an active transaction.
@@ -82,7 +82,7 @@ if (!process.env.DATABASE_URL) {
 
 /**
  * Returns all migration files (`.sql` and `.ts`) in the migrations directory,
- * sorted alphabetically so they apply in the correct sequence.
+ * sorted alphabetically.
  *
  * @returns {string[]} Absolute file paths.
  */
@@ -94,9 +94,9 @@ function getMigrationFiles(): string[] {
 }
 
 /**
- * Executes the `up` phase of one migration inside an already-open transaction.
- * TypeScript modules have their exported `up(client)` called directly.
- * SQL files are read from disk and forwarded as a single query string.
+ * Runs one migration's `up` phase inside an open transaction.
+ * TypeScript: calls the exported `up(client)`. SQL: reads the file and
+ * executes its contents as a single query.
  *
  * @param {PoolClient} client - Transactional pg client.
  * @param {string} file - Absolute path to the migration file.
@@ -113,9 +113,9 @@ async function runUp(client: PoolClient, file: string): Promise<void> {
 }
 
 /**
- * Executes the `down` phase of one migration inside an already-open transaction.
- * Only TypeScript migration modules support rollback; attempting to roll back a
- * raw SQL file exits with an error.
+ * Runs one migration's `down` phase inside an open transaction.
+ * Only TypeScript migration modules support rollback; rolling back a raw SQL
+ * file exits with an error.
  *
  * @param {PoolClient} client - Transactional pg client.
  * @param {string} file - Absolute path to the migration file.
@@ -135,7 +135,7 @@ async function runDown(client: PoolClient, file: string): Promise<void> {
 /**
  * Applies all unapplied migrations in ascending alphabetical order.
  * Each migration runs in its own transaction; a failure rolls back only that
- * migration and halts the runner.
+ * migration and stops the run.
  *
  * @param {pg.Pool} pool - Active connection pool.
  * @returns {Promise<void>}

@@ -1,8 +1,8 @@
 /**
- * @fileoverview Vocations API Route - Vocation metadata JSON endpoint
- * @description Next.js API route that serves vocation metadata via the content
- * adapter layer. Supports locale-aware content via ?locale query parameter. Returns
- * array of vocation objects with core traits, features, and gameplay tags.
+ * @fileoverview GET /api/vocations JSON endpoint.
+ * @description Serves vocation metadata from the active content repository.
+ * Accepts ?locale query parameter; defaults to 'en'. Returns array of vocation
+ * objects with core traits, features, and gameplay tags.
  *
  * @version 1.0.0
  * @author Typeir
@@ -28,10 +28,9 @@ const log = logger.child({ module: 'API:Vocations' });
  * GET /api/vocations
  *
  * Returns array of vocation metadata from the active content repository.
- * Accepts optional locale query parameter (defaults to 'en').
  *
  * @param {Request} req - Next.js request object
- * @returns {NextResponse} JSON array of vocation objects
+ * @returns {NextResponse} 200 with JSON array of vocation objects, or 500 on load failure
  *
  * @example
  * fetch('/api/vocations?locale=en')

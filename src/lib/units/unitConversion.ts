@@ -1,10 +1,9 @@
 /**
  * Unit Conversion
  *
- * @fileoverview Pure conversion of Damocles measures into the reader's chosen
- * display system. Every conversion yields whole numbers; halves round upward,
- * anything below a half rounds down. Fractional quantities are not converted
- * here — they resolve to prose through the i18n fraction dictionary.
+ * @fileoverview Converts Damocles measures into a chosen display system.
+ * Whole-number conversions round halves upward. Fractional quantities resolve
+ * to prose via the i18n fraction dictionary, not here.
  *
  * @module lib/units/unitConversion
  * @version 1.0.0
@@ -16,8 +15,7 @@ import type { UnitName } from '../md/unitExpressionParser';
 import type { UnitDimension, UnitSystemValue } from '../types/persistentUiState';
 
 /**
- * Measurement family each unit belongs to, so a reader's per-family preference
- * can be resolved from the unit alone.
+ * Measurement family each unit belongs to.
  *
  * @constant
  */
@@ -213,7 +211,7 @@ export function convertUnit(
 /**
  * Renders a converted measure as display text.
  * With the `ADJ` flag the measure is hyphenated for attributive use and the
- * unit noun stays singular, matching English compound-adjective form.
+ * unit noun stays singular.
  *
  * @param {number} value - The native quantity, a whole number
  * @param {UnitName} unit - The native unit
@@ -270,10 +268,8 @@ export interface ConvertedFraction {
 /**
  * Converts a fractional native measure into the chosen display system.
  *
- * The conversion factor scales the fraction rather than the value, so the
- * result stays exact: a fifth of a stride is two fifths of a metre and
- * precisely one foot. The result is reduced, and split into a whole part and
- * a remainder so mixed quantities can be rendered.
+ * Scales the fraction by the conversion factor, reducing it and splitting
+ * into a whole part and a remainder.
  *
  * @param {number} numerator - Native fraction numerator
  * @param {number} denominator - Native fraction denominator
@@ -314,9 +310,8 @@ export function convertFraction(
 }
 
 /**
- * Builds the full set of renderings for a measure, in a fixed order, for use
- * as an accessible label and tooltip. The reader receives every system
- * regardless of which one is displayed.
+ * Builds every system's rendering of a measure in fixed stride, metric,
+ * imperial order, for use as an accessible label and tooltip.
  *
  * @param {number} value - The native quantity, a whole number
  * @param {UnitName} unit - The native unit

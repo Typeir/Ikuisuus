@@ -1,9 +1,8 @@
 /**
- * @fileoverview Unit tests for Combatant Conditions Manager component
+ * @fileoverview Unit tests for CombatantConditionsManager component.
  * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantConditionsManager.test
- * @description Validates CombatantConditionsManager component rendering and interactions.
- * Tests condition display, add/remove functionality.
- * Uses CombatantProvider wrapper pattern for context-based component testing.
+ * @description Tests condition display and add/remove behavior.
+ * Renders component inside CombatantProvider.
  *
  * @version 2.0.0
  * @author Typeir
@@ -38,7 +37,7 @@ const createConditionEntry = (id: string, text: string): ConditionEntry => ({
 });
 
 /**
- * Creates default heroic awakening state for combatant mock.
+ * Returns default HeroicAwakeningState for combatant mock.
  */
 const createDefaultHeroicAwakening = (): HeroicAwakeningState => ({
   fateDieResult: 0,
@@ -51,7 +50,7 @@ const createDefaultHeroicAwakening = (): HeroicAwakeningState => ({
 });
 
 /**
- * Creates default mechanics state for combatant mock.
+ * Returns default CombatantMechanics for combatant mock.
  */
 const createDefaultMechanics = (): CombatantMechanics => ({
   lair: false,
@@ -62,7 +61,7 @@ const createDefaultMechanics = (): CombatantMechanics => ({
 });
 
 /**
- * Creates a mock combatant with optional overrides.
+ * Returns a mock InProgressCombatant with optional overrides.
  */
 const createMockCombatant = (
   overrides: Partial<InProgressCombatant> = {},
@@ -95,8 +94,7 @@ const createMockCombatant = (
 });
 
 /**
- * Renders CombatantConditionsManager wrapped in CombatantProvider.
- * Component now gets all props from context, so we pass combatant overrides.
+ * Renders CombatantConditionsManager inside CombatantProvider.
  *
  * @param combatantOverrides - Partial combatant state to merge
  * @param onUpdate - Optional mock function for updates

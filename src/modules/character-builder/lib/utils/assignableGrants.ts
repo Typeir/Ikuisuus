@@ -1,16 +1,8 @@
 /**
- * @fileoverview Assignable grants — the unified "unassigned benefits" model
- * @description One typed, derived array of every benefit a character is OWED but
- * must still ASSIGN: base skill picks, feature choice grants (e.g. Scholar's
- * "choose one → Expertise"), and feat/ASI slots. Each carries its category, tier,
- * choice-constraint, count, and source, so the UI can report per-category counts
- * ("N unassigned proficiencies / expertise / feats") with the verb "assign".
- *
- * A benefit is "assigned" when the character has a matching manual choice at or
- * above the granted tier that a deterministic grant floor does not already cover
- * (feature-floored proficiencies are free, not picks). Nothing is stored — this
- * is a pure derivation, so it is always fresh and needs no migration. Per the
- * Damocles training rules, the counts are advisory: no selector is ever disabled.
+ * @fileoverview Derived array of every unassigned benefit a character owes: base
+ * skill picks, feature choice grants, and feat/ASI slots.
+ * @description Pure derivation from the character; nothing is stored. Per Damocles
+ * training rules the counts are advisory — no selector is disabled.
  *
  * @module modules/character-builder/lib/utils/assignableGrants
  * @version 1.0.0
@@ -42,8 +34,8 @@ import {
  * A vocation's free base-pick offer for one proficiency table.
  *
  * @interface ProficiencyOffer
- * @property {number} count - Number of free base picks the primary vocation grants
- * @property {boolean} any - True when picks may target ANY row (no restricted list)
+ * @property {number} count - Free base picks the primary vocation grants
+ * @property {boolean} any - True when picks may target any row (no restricted list)
  * @property {ReadonlySet<string>} keys - Offered row-keys; empty when `any` or no offer
  */
 export interface ProficiencyOffer {
@@ -99,9 +91,8 @@ export interface UnassignedGroup {
 }
 
 /**
- * Derives the primary vocation's SKILL pick offer. An absent list (legacy /
- * unsynced entries) or an empty list with a non-zero count both mean "any skill";
- * a non-empty list is an explicit restricted offer.
+ * Derives the primary vocation's skill pick offer. An absent or empty list means
+ * "any skill"; a non-empty list is the restricted offer.
  *
  * @function deriveSkillOffer
  * @param {CharacterSheet} character - Character to inspect
@@ -191,9 +182,9 @@ function featSlug(shard: CharacterShard): string {
 }
 
 /**
- * Collects every assignable benefit a character is owed: the primary vocation's
- * base skill picks, feature choice grants (choice-kind tags on active shards),
- * and earned feat/ASI slots.
+ * Collects every assignable benefit: the primary vocation's base skill picks,
+ * feature choice grants (choice-kind tags on active shards), and earned feat/ASI
+ * slots.
  *
  * @function collectAssignableGrants
  * @param {CharacterSheet} character - Character to inspect
@@ -265,10 +256,10 @@ export function collectAssignableGrants(
 }
 
 /**
- * Counts how many of an assignable grant's `count` the character has already
- * assigned. For proficiency categories: skills/tools matching the choice at or
- * above the granted tier that no floor already covers at that tier. For feats:
- * selected feats matching the choice. Capped at `grant.count`.
+ * Counts how many of an assignable grant's `count` are already assigned.
+ * Proficiency categories: skills/tools matching the choice at or above the
+ * granted tier, not floored at that tier. Feats: selected feats matching the
+ * choice. Capped at `grant.count`.
  *
  * @function countAssigned
  * @param {AssignableGrant} grant - The grant to check
@@ -313,11 +304,8 @@ export function countAssigned(
 }
 
 /**
- * Counts the feat/ASI slots a character has NOT filled, honoring that
- * ability-score-improvement can only fill slots that allow it (vocation slots),
- * not the tier-bonus slots that deny it. A single greedy matching: ASI feats fill
- * only ASI-allowed slots; other feats fill ASI-denied slots first (to preserve
- * allowed slots for ASI), then any remaining allowed slots.
+ * Counts unfilled feat/ASI slots. ASI feats fill only ASI-allowed slots; other
+ * feats fill ASI-denied slots first, then remaining allowed slots.
  *
  * @function unassignedFeatSlots
  * @param {AssignableGrant[]} featGrants - The character's feat-category grants
@@ -353,9 +341,8 @@ function unassignedFeatSlots(
 }
 
 /**
- * Aggregates the character's unassigned benefits by `(category, tier)`. Feats are
- * pooled through a slot-matching pass (see {@link unassignedFeatSlots}) so ASI's
- * restriction to vocation slots is respected; other categories sum per grant.
+ * Aggregates the character's unassigned benefits by `(category, tier)`. Feats
+ * are pooled via {@link unassignedFeatSlots}; other categories sum per grant.
  *
  * @function unassignedByCategory
  * @param {CharacterSheet} character - Character to inspect

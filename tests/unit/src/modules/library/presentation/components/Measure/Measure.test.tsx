@@ -1,7 +1,7 @@
 /**
- * @fileoverview Measure Component Tests
- * @description Covers the bridge between a stored native measurement and the
- * reader's display system, including the prose that surrounds a measure.
+ * @fileoverview Unit tests for the Measure component.
+ * @description Renders stored measurements through the unit renderer while
+ * preserving surrounding prose.
  *
  * @module tests/unit/src/modules/library/presentation/components/Measure/Measure
  * @version 1.0.0
@@ -34,14 +34,14 @@ describe('Measure', () => {
     expect(screen.getByText('none')).toBeInTheDocument();
   });
 
-  /** The native form is the stored one; the reader's system is applied on top. */
+  /** Renders a stored measure through the unit renderer. */
   it('should draw a measure through the unit renderer', () => {
     const { container } = render(<Measure text='12 stride' />);
 
     expect(container.querySelector('[data-unit="stride"]')).toBeInTheDocument();
   });
 
-  /** `Self` and `cone` carry meaning the number does not, so they survive. */
+  /** Preserves non-numeric tokens around a measure. */
   it('should keep the prose around a measure', () => {
     const { container } = render(<Measure text='Self (6 stride;ADJ cone)' />);
 
@@ -58,7 +58,7 @@ describe('Measure', () => {
     expect(container.querySelectorAll('[data-unit="stride"]')).toHaveLength(3);
   });
 
-  /** A keyword range has no measure to convert and must pass through intact. */
+  /** Passes a keyword with no measure through unchanged. */
   it('should pass a keyword through untouched', () => {
     const { container } = render(<Measure text='Self' />);
 

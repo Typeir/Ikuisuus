@@ -1,7 +1,7 @@
 /**
  * @fileoverview Metadata Generation Orchestrator
  * @description Coordinates metadata generation across all content types.
- * Provides unified CLI entry point with --persist and --type flags.
+ * CLI entry point reads --persist and per-type flags.
  *
  * @module scripts/metadata/generateMetadata
  * @version 3.0.0

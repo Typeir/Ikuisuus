@@ -17,7 +17,7 @@ import { HeroicAffix } from '@/modules/encounter-planner/domain/storage/encounte
 
 /**
  * Valid affix keys for CSS class generation.
- * Keys are lowercase to match CSS class naming conventions.
+ * Keys are lowercase.
  * @type {string}
  */
 export type AffixKey = 
@@ -102,7 +102,6 @@ export function getAwakeningTier(affixCount: number): AwakeningTier | null {
 
 /**
  * Computes the CSS class names for a heroically awakened combatant.
- * The first affix determines the visual identity (color family).
  * 
  * @function computeAwakeningClasses
  * @param {HeroicAwakeningState} heroicAwakening - The combatant's awakening state
@@ -157,7 +156,6 @@ export function computeAwakeningClasses(heroicAwakening: HeroicAwakeningState): 
 
 /**
  * Generates the CSS class string for a combatant row element.
- * Joins computed awakening classes with the base row class.
  * 
  * @function getAwakeningClassString
  * @param {HeroicAwakeningState} heroicAwakening - The combatant's awakening state

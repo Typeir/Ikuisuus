@@ -1,8 +1,7 @@
 /**
- * @fileoverview Theme Enum - Available UI theme definitions
- * @description Defines the supported color themes for the application. Currently includes
- * Dark and Light themes. Used by ThemeSelector component, themeScript for initialization,
- * and CSS custom properties in globals.scss via data-theme attribute.
+ * @fileoverview Theme enum - supported UI color themes.
+ * @description Enum of supported color themes: Dark and Light. Applied to the DOM via the
+ * data-theme attribute for CSS custom properties in globals.scss.
  * 
  * @version 1.0.0
  * @author Typeir

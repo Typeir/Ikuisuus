@@ -2,18 +2,12 @@
  * @fileoverview Metadata Sync Service
  * @description Hash-based incremental sync from filesystem metadata to PostgreSQL
  * via MikroORM. Compares FNV-1a content hashes between incoming records and
- * existing DB rows — only inserts/updates/deletes when data actually changed.
+ * existing DB rows — only inserts/updates/deletes when data changed.
+ * Uses the app's ORM singleton (`getEM()`).
  *
- * Designed to be called from the sync API endpoint after ISR revalidation
- * or from the seed script. Uses the app's ORM singleton (`getEM()`) so it
- * shares the runtime connection pool.
- *
- * Strategy per content type per locale:
- *   1. Read `.metadata.json` files from `.meta/{locale}/` (fallback: `src/content/{locale}/`)
- *   2. Compute content hash for each incoming record
- *   3. Load existing `(slug → versionHash)` map from DB
- *   4. Diff: skip unchanged, update changed, insert new
- *   5. Delete stale rows (in DB but not in incoming set)
+ * Per content type per locale: reads `.metadata.json` from `.meta/{locale}/`
+ * (fallback `src/content/{locale}/`), computes content hash, loads existing
+ * `(slug → versionHash)` map, diffs, and deletes stale rows.
  *
  * @module lib/metadata/syncService
  * @version 1.0.0
@@ -40,7 +34,7 @@ import type { SyncResult } from './types';
 const log = createLogger({ component: 'MetadataSync' });
 
 /**
- * Resolves the root directory of the project.
+ * Resolves the project root via `__dirname` (three levels up).
  *
  * @returns {string} Absolute path to project root
  */
@@ -50,14 +44,11 @@ function getProjectRoot(): string {
 }
 
 /**
- * Reads and flattens all `.metadata.json` files from a content subdirectory.
- * Checks `.meta/{locale}/{subdir}` first, falls back to `src/content/{locale}/{subdir}`.
+ * Reads and flattens all `.metadata.json` files from `.meta/{locale}/{subdir}`,
+ * falling back to `src/content/{locale}/{subdir}`.
  *
- * Returns `sourceExists: false` when neither directory exists **or** when the
- * chosen directory contains no `.metadata.json` files. Callers treat a false
- * `sourceExists` as "no authoritative source — skip sync to prevent destructive
- * deletion". This guards against serverless deployments where content directories
- * exist but metadata sidecars were not bundled (they are git-ignored).
+ * Returns `sourceExists: false` when neither directory exists or the chosen
+ * directory contains no `.metadata.json` files.
  *
  * @param {string} locale - Locale code
  * @param {string} subdir - Content subdirectory (e.g. 'monsters')
@@ -103,10 +94,7 @@ function monsterSlugKey(record: Record<string, unknown>): string {
 
 /**
  * Writes a monster's feature shards as child rows.
- *
- * Shards are replaced wholesale rather than diffed: a feature has no identity a
- * reader would recognise across an edit, and the parent's version hash already
- * decides whether anything is rewritten at all.
+ * Shards are replaced wholesale (not diffed).
  *
  * @param {EntityManager} em - Active entity manager
  * @param {MonsterEntity} monster - Owning monster row

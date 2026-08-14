@@ -1,10 +1,6 @@
 /**
- * @fileoverview Everdark Renderer — Multi-Layer Boundary Shell with Fire Effect
- * @description Renders the Everdark as multiple concentric inverted spheres at
- * different depths, each with independently tuned noise parameters and opacity.
- * More opaque (outer) layers use larger, smoother flame blotches; less opaque
- * (inner) layers use finer, more jagged detail — creating parallax depth.
- * Uses GLSL shaders imported from external .glsl files.
+ * @fileoverview Renders the Everdark as concentric inverted spheres with fire shaders.
+ * @description Layered noise and opacity; GLSL shaders imported from .glsl files.
  *
  * @module worldSim/celestials/EverdarkRenderer
  * @version 1.2.0
@@ -38,7 +34,7 @@ import type {
 import { createDisplacedShaderMaterial } from '@/modules/world-sim/infrastructure/renderers/shaderMaterialFactory';
 
 /**
- * Self-contained configuration for a single Everdark shell layer.
+ * Configuration for a single Everdark shell layer.
  * All values are absolute — no multipliers against a shared base.
  *
  * @interface EverdarkLayerConfig
@@ -77,11 +73,6 @@ interface EverdarkLayerConfig {
 
 /**
  * Layer definitions from outermost to innermost.
- *
- * Design intent:
- * - Outer (most opaque): large, smooth flame shapes — the dominant silhouette
- * - Middle: medium detail, moderate jaggedness — transitional depth
- * - Inner (least opaque): fine, jagged detail — subtle texture fill
  *
  * @constant {EverdarkLayerConfig[]}
  */
@@ -159,8 +150,7 @@ function createLayerMaterial(layer: EverdarkLayerConfig): ShaderMaterial {
 
 /**
  * Renders the Everdark boundary as multiple concentric inverted spheres with
- * layered fire shaders. Each layer has independently tuned noise parameters
- * for a volumetric parallax effect.
+ * layered fire shaders.
  *
  * @class EverdarkRenderer
  * @implements {ICelestialRenderer}
@@ -232,7 +222,7 @@ export class EverdarkRenderer implements ICelestialRenderer {
 
   /**
    * Apply adaptive quality level — swap LOD geometry and hide innermost layer
-   * at low quality to save a full draw call.
+   * at low quality.
    *
    * @param {RenderQualityLevel} level - New quality level
    */

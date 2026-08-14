@@ -1,17 +1,7 @@
 /**
  * @fileoverview Lazily-loaded client MDX fallback.
- * @description Wraps `ClientRenderer` so the MDX toolchain it needs is fetched
- * only when the fallback actually renders.
- *
- * `ClientRenderer` imports content with a fully dynamic specifier, so the
- * bundler builds a context over every MDX file and pulls the compiler — acorn,
- * micromark, mdast-util, katex — into the browser graph. Imported directly from
- * the route, that ships to every visitor to serve a path that only runs when
- * server compilation has already failed. Behind `next/dynamic` it becomes a
- * separate chunk that is requested on demand and, in practice, never.
- *
- * The wrapper exists because `ssr: false` is not permitted in a Server
- * Component, and the library route is one.
+ * @description Wraps `ClientRenderer` in `next/dynamic` with `ssr: false`,
+ * deferring chunk load until the fallback renders.
  *
  * @module src/app/[locale]/utils/clientRendererLazy
  * @author Typeir

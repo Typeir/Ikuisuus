@@ -1,8 +1,6 @@
 /**
- * @fileoverview Feature Shard Fetcher
- * @description Shared utility for fetching vocation and specialization feature
- * shards from the content-shards API. Generalises the previously duplicated
- * `fetchVocationShards` / `fetchSpecShards` functions from `vocationSelector.tsx`.
+ * @fileoverview Fetches vocation and specialization feature shards from the
+ * content-shards API.
  *
  * @module modules/character-builder/lib/utils/featureShards
  * @version 1.0.0
@@ -28,15 +26,14 @@ function stripContentPrefix(file: string): string {
 /**
  * Fetches feature shards for a vocation or specialization from
  * `/api/content-shards/{endpoint}/{slug}` and assembles them into
- * {@link CharacterShard} objects ready for `VocationEntry`.
+ * {@link CharacterShard} objects.
  *
- * Returns an empty array on any fetch or parse failure so callers never
- * need to handle the error case explicitly.
+ * Returns an empty array on fetch or parse failure.
  *
  * @async
  * @function fetchFeatureShards
  * @param {string} slug - Vocation or specialization slug (used in the URL and shard `id`)
- * @param {string} file - Full metadata file path (e.g. `src/content/en/character-creation/vocations/warlock/main.mdx`); used as `sourceFile` on each returned shard so lazy re-fetches resolve to the correct `/api/shards` path
+ * @param {string} file - Full metadata file path (e.g. `src/content/en/character-creation/vocations/warlock/main.mdx`); used as `sourceFile` on each returned shard
  * @param {FeatureEntry[]} features - Feature list from vocation or specialization metadata
  * @param {'vocation-feature'|'specialization-feature'} category - Shard category tag
  * @param {'vocations'|'specializations'} endpoint - API endpoint segment

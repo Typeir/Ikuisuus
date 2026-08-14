@@ -277,7 +277,6 @@ describe('POST /api/corrections', () => {
       role: 'editor' as const,
     });
 
-    /** GitHub API chain: get ref → create branch → commit → open PR */
     mockFetch
       .mockResolvedValueOnce({
         ok: true,
@@ -313,7 +312,6 @@ describe('POST /api/corrections', () => {
       role: 'editor' as const,
     });
 
-    /** get ref → create branch → commit returns 409 */
     mockFetch
       .mockResolvedValueOnce({
         ok: true,

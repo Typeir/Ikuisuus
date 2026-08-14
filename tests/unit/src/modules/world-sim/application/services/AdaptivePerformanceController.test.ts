@@ -1,7 +1,6 @@
 /**
  * @fileoverview AdaptivePerformanceController Unit Tests
- * @description Validates smoothed frame timing, quality-level transitions,
- * and runtime quality profile values for the world-sim adaptive optimizer.
+ * @description Tests frame-timing smoothing, quality-level transitions, and quality profile values.
  *
  * @module tests/unit/worldSim/optimization/AdaptivePerformanceController
  */

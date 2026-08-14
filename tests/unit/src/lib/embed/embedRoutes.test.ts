@@ -1,8 +1,7 @@
 /**
  * @fileoverview Embed Route Vocabulary Tests
- * @description Covers detection and rewriting between the library and embed
- * route trees, including the near-misses that a naive prefix check would
- * wrongly claim.
+ * @description Tests detection and pathname rewriting between library and
+ * embed route trees. Asserts prefix near-misses are rejected.
  *
  * @module tests/unit/src/lib/embed/embedRoutes
  * @version 1.0.0

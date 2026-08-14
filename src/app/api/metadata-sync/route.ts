@@ -1,8 +1,7 @@
 /**
  * @fileoverview Metadata Sync API Endpoint
  * @description Triggers hash-based incremental metadata sync from filesystem
- * to PostgreSQL. Designed to be called after ISR revalidation or content
- * pipeline updates to keep the database in sync with on-disk metadata.
+ * to PostgreSQL.
  *
  * Auth: `x-sync-secret` header compared via constant-time equality against
  * the `METADATA_SYNC_SECRET` environment variable.

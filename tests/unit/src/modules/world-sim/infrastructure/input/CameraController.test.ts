@@ -1,7 +1,6 @@
 /**
- * @fileoverview CameraController Unit Tests
- * @description Tests the camera controller facade: command execution, follow targeting,
- * orbit integration, reset, update loop, and disposal.
+ * @fileoverview CameraController unit tests.
+ * @description Covers command execution, follow targeting, orbit, reset, update loop, and disposal.
  *
  * @module tests/unit/worldSim/camera/CameraController
  */

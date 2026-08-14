@@ -1,8 +1,7 @@
 /**
- * @fileoverview Damage Context Tests
- * @description Guards the rule that licenses a damage type. Damage types are
- * ordinary English words, so a bare occurrence is not evidence of damage and
- * matching one as damage puts pills on pages that never deal any.
+ * @fileoverview Damage context tests.
+ * @description Damage-type words are English words; a bare word is not
+ * evidence of damage. Matching requires surrounding context.
  *
  * @module tests/unit/scripts/metadata/damageContexts
  * @version 1.0.0
@@ -64,7 +63,6 @@ describe('extractDamageTags', () => {
     ]);
   });
 
-  /** The old `<type> damage` regex could not span a list or its markdown. */
   it('should tag every type in a list', () => {
     expect(
       extractDamageTags(

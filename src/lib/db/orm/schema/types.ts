@@ -1,8 +1,7 @@
 /**
  * @fileoverview Option shapes for the in-house ORM schema decorators.
  * @description Mirrors the subset of MikroORM's property options this codebase
- * actually uses. Every option maps 1:1 onto an `EntitySchema` property
- * definition, so the emitter is a pass-through rather than a translation layer.
+ * uses. Every option maps 1:1 onto an `EntitySchema` property definition.
  *
  * @module lib/db/orm/schema/types
  * @version 1.0.0

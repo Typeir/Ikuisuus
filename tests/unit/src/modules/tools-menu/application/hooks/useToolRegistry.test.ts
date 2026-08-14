@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for the useToolRegistry hook.
- * @description Verifies that the hook resolves all registry entries into locale-aware
- * ToolMenuItem objects. Uses the global vitest setup mocks for next-intl — no wrapper needed.
+ * @description Verifies the hook returns one ToolMenuItem per registry entry, with ids
+ * in entry order and hrefs embedding the mocked locale. Uses global vitest mocks.
  *
  * @module tests/unit/src/modules/tools-menu/application/hooks/useToolRegistry
  * @version 1.0.0

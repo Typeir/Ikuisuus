@@ -1,7 +1,7 @@
 /**
  * @fileoverview GrantedProficiencies tests
- * @description Verifies the strip live-derives and groups feature/feat grants,
- * and renders nothing when there are none.
+ * @description Verifies the strip groups feature/feat grants by category and
+ * renders nothing when there are none.
  *
  * @module tests/unit/src/modules/character-builder/presentation/stats/grantedProficiencies
  * @version 1.0.0

@@ -1,8 +1,7 @@
 /**
  * ThemeSelector Component Unit Tests
  *
- * @fileoverview Tests for the theme selector component that provides circular
- * theme switching functionality using rangeWrap for wrap-around navigation.
+ * @fileoverview Unit tests for the ThemeSelector component.
  *
  * @module tests/unit/lib/components/themeSelector
  * @version 1.0.0

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for Item List Editor component
  * @module tests/unit/src/lib/components/encounterPlanner/listEditors/itemListEditor.test
- * @description Validates ItemListEditor export and component signature.
- * Tests list editor component for managing items in encounter planner.
+ * @description Asserts ItemListEditor is the module's sole function export.
  * 
  * @version 1.0.0
  * @author Typeir

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Single Affix API Route
  * @description Returns metadata for a single heroic awakening affix by slug.
- * Maps HeroicAffix enum values to wiki routes based on locale.
  *
  * @module /api/affixes/[slug]
  * @version 1.0.0

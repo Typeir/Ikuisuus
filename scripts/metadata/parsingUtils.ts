@@ -1,8 +1,6 @@
 /**
- * @fileoverview MDX Content Parsing Utilities
- * @description Common parsing functions for extracting structured data from MDX content.
+ * @fileoverview Parsing functions for extracting structured data from MDX content.
  * Used by metadata generators for monsters, heirlooms, spells, and trinkets.
- *
  * @module lib/metadata/parsingUtils
  * @version 1.0.0
  * @author Typeir
@@ -28,16 +26,13 @@ export function parseTitle(lines: string[]): string {
 }
 
 /**
- * Extracts the lore description from the intro region of an MDX file.
+ * Extracts the description from the intro region of an MDX file.
  *
- * The intro region spans from the line after the H1 title to the first
+ * Intro region spans from the line after the H1 title to the first
  * structural stop marker (`---`, an H2+ heading, or a `<Collapsible` JSX
- * element). Lines that are empty, JSX elements, italic-only (flavor text),
- * headings, or blockquotes are filtered out. The remaining prose is joined
- * with newlines.
- *
- * Covers the common `---`-divider pattern used by bloodlines, vocations,
- * spells, and specializations. Returns `undefined` when no prose is found.
+ * element). Filters out empty lines, JSX, italic-only lines, headings, and
+ * blockquotes. Joins remaining prose with newlines. Returns `undefined` when
+ * no prose is found.
  *
  * @param {string} content - Full MDX file content
  * @returns {string | undefined} Joined prose paragraphs or undefined
@@ -87,12 +82,11 @@ export function parseDescription(content: string): string | undefined {
 }
 
 /**
- * Estimates the reading time of an MDX file from its prose word count.
+ * Estimates reading time of an MDX file from its prose word count.
  *
- * Frontmatter, import/export statements, JSX tag lines, code fences, and
- * table rows are excluded from the count — only readable prose contributes.
- * Formatted per the site convention: whole minutes ("4 min read"), or
- * seconds when the page is under a minute ("40 sec read").
+ * Excludes frontmatter, import/export statements, JSX tag lines, code fences,
+ * and table rows. Formats as whole minutes ("4 min read"), or seconds when
+ * under a minute ("40 sec read").
  *
  * @param {string} raw - Raw MDX file content
  * @param {number} [wordsPerMinute=200] - Average reading speed
@@ -155,9 +149,9 @@ const SRC_ATTR_LINE = /^\s*src\s*=\s*['"]([^'"]+)['"]/;
  * Finds the last content image in a line range.
  *
  * Matches `<BlendedImage …>` and `<Image …>` elements, single- or
- * multi-line. Other components with `src` attributes (`<ParallaxBackdrop`
- * background layers in particular) are excluded: a non-image JSX opening
- * ends any pending attribute scan, so their src lines are never captured.
+ * multi-line. Non-image JSX openings (`<ParallaxBackdrop` background layers
+ * in particular) end any pending attribute scan, so their src lines are not
+ * captured.
  *
  * @param {string[]} lines - File lines
  * @param {number} [start=0] - First line index to scan (inclusive)
@@ -203,14 +197,12 @@ export function findContentImage(
 }
 
 /**
- * Fallback description extractor: the first run of consecutive prose lines
- * anywhere in the body. Unlike {@link parseDescription} it is not limited to
- * the intro region, so it works for files whose first structural marker sits
- * directly after the title (monster sheets, lore knowledge-tier dividers).
+ * Returns the first run of consecutive prose lines anywhere in the body.
+ * Unlike {@link parseDescription} it is not limited to the intro region.
  *
- * A leading YAML frontmatter block is skipped. Headings, JSX, blockquotes,
- * tables, list items, imports/exports, and italic-only flavor lines are not
- * prose. The paragraph is markdown-stripped and truncated at a word boundary.
+ * Skips a leading YAML frontmatter block. Headings, JSX, blockquotes, tables,
+ * list items, imports/exports, and italic-only lines are not prose. Result is
+ * markdown-stripped and truncated at a word boundary.
  *
  * @param {string[]} lines - Array of file lines
  * @param {number} [maxLength=300] - Maximum description length

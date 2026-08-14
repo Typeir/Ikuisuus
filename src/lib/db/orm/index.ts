@@ -1,6 +1,6 @@
 /**
  * @fileoverview ORM Module Barrel Export
- * @description Re-exports the MikroORM singleton and entity schemas.
+ * @description Re-exports the ORM instance accessors and configuration.
  *
  * @module lib/db/orm
  * @version 1.0.0

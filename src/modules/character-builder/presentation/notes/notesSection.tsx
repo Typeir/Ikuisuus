@@ -1,8 +1,7 @@
 /**
- * @fileoverview Notes Section Component
- * @description Renders the character narrative fields:
- * wants, fears, flaws, virtues, bonds, and miscellaneous notes.
- * Each field is a textarea; changes are batched through a single onChange callback.
+ * @fileoverview Notes Section Component.
+ * @description Renders the character note fields as labelled textareas.
+ * Edits are passed to a single onChange callback.
  *
  * @module lib/components/characterSheet/notesSection
  * @version 1.0.0
@@ -18,7 +17,7 @@ import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 
 /**
- * Shape of the notes data managed by this component.
+ * Note field values managed by this component.
  *
  * @interface NoteFields
  * @property {string} wants - What the character wants
@@ -62,7 +61,7 @@ const NOTE_FIELD_KEYS: (keyof NoteFields)[] = [
 ];
 
 /**
- * Narrative notes panel with labelled textareas for each character personality field.
+ * Panel rendering the character note fields as labelled textareas; static text when readOnly.
  *
  * @component
  * @param {NotesSectionProps} props - Component props

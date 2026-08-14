@@ -1,7 +1,6 @@
 /**
  * @fileoverview Native Measure Tests
- * @description Guards the boundary between authoring syntax and stored data.
- * Metadata must carry the measurement, never the markdown that expressed it.
+ * @description Converts stored markdown measures to native form.
  *
  * @module tests/unit/src/lib/units/nativeMeasure
  * @version 1.0.0
@@ -41,7 +40,7 @@ describe('toNativeMeasure', () => {
     expect(toNativeMeasure('15ft')).toBe('3 stride');
   });
 
-  /** Seven feet is one and two fifths of a stride; rounding would restate the rule. */
+  /** Seven feet equals 7/5 stride. */
   it('should convert an inexact imperial distance as a fraction', () => {
     expect(toNativeMeasure('7 feet')).toBe('7/5 stride');
   });

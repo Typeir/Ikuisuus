@@ -1,10 +1,7 @@
 /**
  * @fileoverview Inline GLSL for the collision-cloud corona.
- * @description Extracted from `collisionCloudLayers.ts` so that file stays
- *   under the max-file-length gate. The corona uses its own shaders (instead
- *   of the shared `atmosphere.*.glsl`) because it needs per-fragment noise
- *   sampling to break up the uniform halo tint and an inward fade so the
- *   outermost silhouette dissipates first.
+ * @description Inline GLSL shaders for the collision-cloud corona: per-fragment
+ *   noise sampling and an inward fade on the outer silhouette.
  *
  * @module worldSim/celestials/collisionCoronaShaders
  * @version 1.0.0
@@ -13,10 +10,9 @@
  */
 
 /**
- * Vertex shader for the collision corona. Passes view-space normal (for the
- * rim/Fresnel term) and a multi-octave simplex-noise sample of local
- * position so the fragment stage can break up the otherwise uniformly
- * tinted halo. `noise3d.glsl` is prepended at runtime.
+ * Vertex shader for the collision corona. Passes view-space normal and a
+ * three-octave simplex-noise sample of local position. `noise3d.glsl` is
+ * prepended at runtime.
  */
 export const CORONA_VERT = `
 uniform float uTime;
@@ -38,12 +34,10 @@ void main() {
 `;
 
 /**
- * Fragment shader for the collision corona. Atmosphere-style rim (Fresnel)
- * term, but mixes between primary and secondary colours by noise and
- * modulates alpha by noise so the halo reads as lightning-veined plasma
- * instead of a uniform tint. `uFadeT` drives an inward fade: the outer rim
- * attenuates first, so as `uFadeT` approaches 1 the corona collapses
- * inward.
+ * Fragment shader for the collision corona. Computes a Fresnel rim term,
+ * mixes primary and secondary colours by noise, and modulates alpha by
+ * noise. `uFadeT` attenuates the outer rim first; at `uFadeT` = 1 the corona
+ * collapses to the core.
  */
 export const CORONA_FRAG = `
 uniform vec3 uColor;

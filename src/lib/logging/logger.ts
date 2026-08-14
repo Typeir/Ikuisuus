@@ -1,32 +1,17 @@
 /**
  * Structured Logging System
  *
- * @fileoverview Provides a standardized logging abstraction with level gating,
- * environment-based configuration, safe metadata serialization, and file-based persistence.
- * Replaces direct console.* usage throughout the codebase.
+ * @fileoverview Logging abstraction with level gating, env-based config, safe metadata serialization.
  *
  * @module lib/logging/logger
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  *
- * @requires fs Node.js filesystem module for log file writes
- * @requires path Node.js path module for log file path resolution
- *
  * @description
- * Logging system with five levels (DEBUG, MESSAGE, WARNING, ERROR, SILENT).
- * Automatically detects context (test, build, session) and writes to appropriate
- * log files in .logs/ directory. Supports scoped loggers for module-specific context,
- * safe serialization of complex objects with circular reference detection, and
- * environment-based configuration via IKUISUUS_LOG_LEVEL and NODE_ENV.
- *
- * Features:
- * - Level-based filtering (DEBUG < MESSAGE < WARNING < ERROR < SILENT)
- * - File-based persistence (.logs/test-logs.log, build-logs.log, session-logs.log)
- * - Scoped loggers with inherited metadata
- * - Circular reference detection
- * - Browser-safe (file writes disabled in browser environments)
- * - Silent error handling (never crashes due to failed log writes)
+ * Five levels (DEBUG, MESSAGE, WARNING, ERROR, SILENT, ascending). Supports scoped loggers,
+ * safe serialization of complex objects with circular reference detection, and configuration
+ * via IKUISUUS_LOG_LEVEL, LOG_LEVEL, and NODE_ENV.
  *
  * @example
  * // Basic usage
@@ -93,7 +78,7 @@ const MAX_STRING_LENGTH = 200;
 const MAX_ARRAY_ELEMENTS = 5;
 
 /**
- * Safely serialize metadata with circular reference handling and truncation
+ * Serialize metadata with circular reference handling and truncation
  *
  * @param {unknown} value - Value to serialize
  * @param {number} depth - Current depth in object tree

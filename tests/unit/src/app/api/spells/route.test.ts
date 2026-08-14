@@ -35,7 +35,7 @@ vi.mock('@/lib/db/content/repositories/spellRepository', () => ({
   },
 }));
 
-/** Import after mock setup so vitest intercepts the module. */
+/** Module imported after mock setup. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 let SpellsRoute: typeof import('@/app/api/spells/route');
 let spellRepository: SpellRepository;

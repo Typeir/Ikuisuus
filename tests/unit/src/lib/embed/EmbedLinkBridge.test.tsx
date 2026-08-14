@@ -1,8 +1,7 @@
 /**
  * @fileoverview Embed Link Bridge Tests
- * @description Verifies the delegated listener routes library links in-frame,
- * opens everything else in a new window, and keeps its hands off modified
- * clicks and in-page anchors.
+ * @description Verifies the delegated listener routes library links in-frame
+ * and opens everything else in a new window.
  *
  * @module tests/unit/src/lib/embed/EmbedLinkBridge
  * @version 1.0.0
@@ -24,14 +23,13 @@ import { EmbedLinkBridge } from '@/lib/embed/EmbedLinkBridge';
 const openSpy = vi.fn();
 
 /**
- * Whether the bridge called `preventDefault`, sampled at bubble phase before
- * the test's own guard cancels the event.
+ * Whether the bridge called `preventDefault`, sampled at bubble phase.
  */
 let preventedByBridge = false;
 
 /**
- * Bubble-phase guard. Records the bridge's verdict, then cancels the event so
- * jsdom does not attempt a real navigation and log "Not implemented".
+ * Records the bridge's verdict, then cancels the event to stop jsdom
+ * navigation.
  *
  * @function navigationGuard
  * @param {Event} event - The click travelling back up the tree
@@ -58,8 +56,7 @@ const addAnchor = (href: string): HTMLAnchorElement => {
 };
 
 /**
- * Dispatch a click from the anchor's inner span, so delegation is genuinely
- * exercised rather than a direct hit on the anchor.
+ * Dispatch a click from the anchor's inner span to exercise delegation.
  *
  * @function clickInside
  * @param {HTMLAnchorElement} anchor - The anchor to click through

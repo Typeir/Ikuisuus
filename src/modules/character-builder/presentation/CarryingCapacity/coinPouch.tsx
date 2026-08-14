@@ -1,14 +1,9 @@
 /**
  * @fileoverview Coin Pouch Component
- * @description Renders the character's coin holdings across one or more
- * currency systems. Built-in systems (e.g. `Gold Standard`) are read-only at the
- * structural level — counts can be edited, but denominations cannot be added
- * or removed. Custom systems can be created at runtime; their denominations
- * are user-editable.
- *
- * Holdings are stored on `CharacterSheet.coinHoldings` keyed by `systemName`.
- * The component falls back to a single `Gold Standard` holdings row when no
- * holdings are present, derived from the legacy `currency` field if needed.
+ * @description Renders the character's coin holdings across currency systems,
+ * keyed by `systemName` on `CharacterSheet.coinHoldings`. Built-in systems are
+ * structurally read-only; custom systems allow editing of denominations.
+ * Falls back to a single `Gold Standard` row when no holdings are present.
  *
  * @module lib/components/characterSheet/coinPouch
  * @version 1.0.0

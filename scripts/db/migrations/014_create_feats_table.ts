@@ -1,15 +1,8 @@
 /**
  * @fileoverview Migration 014 — Create feats table
- * @description Creates the `feats` parent table that stores feat metadata
- * extracted from `src/content/{locale}/character-creation/feats/*.mdx`.
- *
- * The optional ability-score increase is stored as flat prefixed columns
- * (`ability_increase_*`) rather than JSONB, consistent with every other
- * content entity in this codebase.
- *
- * After applying this migration, run migration 015 to create the child
- * `feat_features` table, then seed with
- * `npx tsx scripts/db/pg/seed-from-fs.ts`.
+ * @description Creates the `feats` parent table storing feat metadata from
+ * `src/content/{locale}/character-creation/feats/*.mdx`,
+ * plus locale and tags indexes.
  *
  * @module scripts/db/migrations/014_create_feats_table
  * @author Typeir
@@ -20,7 +13,7 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies migration 014: creates the `feats` table and its supporting indexes.
+ * Applies migration 014: creates the `feats` table and its indexes.
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}

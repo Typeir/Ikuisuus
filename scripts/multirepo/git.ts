@@ -1,9 +1,7 @@
 /**
- * @fileoverview Git primitives for the ik multirepo CLI.
- *
- * Provides low-level wrappers around `git` child processes, dirty-state
- * checks, submodule validation, and human-readable summary helpers.
- * All functions operate on absolute repo paths; none contain UI logic.
+ * @fileoverview Git primitives for the ik multirepo CLI: wrappers around
+ * `git` child processes, dirty-state checks, submodule validation, and
+ * summary helpers. All functions operate on absolute repo paths.
  *
  * @module multirepo/git
  * @author Typeir
@@ -28,8 +26,7 @@ export function logRepo(label: string, msg: string): void {
 }
 
 /**
- * Runs a git command in a repository, inheriting all stdio handles so that
- * interactive output (colours, pager, progress bars) works correctly.
+ * Runs a git command in a repository, inheriting stdio handles.
  * @param {string} repo - Absolute path to the repository root.
  * @param {string[]} args - Git arguments (subcommand + flags).
  * @returns {number} Exit code of the git process (0 = success).
@@ -92,7 +89,7 @@ export function isSubmoduleRefDirty(): boolean {
 }
 
 /**
- * Aborts with a descriptive error when the content submodule is not initialised.
+ * Exits with an error when the content submodule is not initialised.
  */
 export function checkSubmodule(): void {
   if (!existsSync(`${CONTENT_REPO}/.git`)) {
@@ -105,19 +102,8 @@ export function checkSubmodule(): void {
 }
 
 /**
- * Re-attaches the content submodule to its `main` tracking branch when it is
- * in a detached-HEAD state.
- *
- * `git submodule update` (without `--rebase`/`--merge`) always checks out a
- * bare SHA, which leaves the working tree in detached-HEAD mode. Any
- * subsequent `git commit` in the content repo would then go nowhere. This
- * guard detects the situation and runs `git checkout main` before ik proceeds
- * with any write operation.
- */
-/**
- * Guards against operating on a detached HEAD in the content repo.
- * Prints the detached SHA and instructions, then exits.
- * NEVER performs an automatic checkout — that risks orphaning commits.
+ * Exits when the content repo HEAD is detached. Prints the detached SHA and
+ * instructions; never performs an automatic checkout.
  */
 export function ensureContentOnBranch(): void {
   const headResult = spawnSync(
@@ -151,14 +137,9 @@ export function ensureContentOnBranch(): void {
 }
 
 /**
- * Safely re-attaches the content submodule to its `main` branch when HEAD is
- * detached AND the detached commit is an ancestor of `origin/main` (so no
- * orphaning risk). A no-op when already on a branch, and a warn-and-return
- * when the detached SHA has unique commits above `origin/main`.
- *
- * Intended to be called from `ik setup`, `ik pull`, and post-checkout /
- * post-merge hooks so that routine workflows self-heal from the detached
- * HEAD state that bare `git submodule update` produces.
+ * Attaches the content submodule to `main` when HEAD is detached and the
+ * detached commit is an ancestor of `origin/main`. No-op when already on a
+ * branch or when the detached HEAD has commits above `origin/main`.
  *
  * @returns {boolean} `true` when a reattachment occurred, `false` otherwise.
  */
@@ -232,8 +213,7 @@ export function listDirtyFiles(): string[] {
 }
 
 /**
- * Runs an arbitrary git command in both repos sequentially, inheriting stdio
- * so interactive output (diff colours, log pager, progress) works as expected.
+ * Runs an arbitrary git command in both repos sequentially, inheriting stdio.
  * @param {string} command - Git subcommand name.
  * @param {string[]} args - Additional flags and arguments forwarded verbatim.
  * @returns {void}

@@ -12,7 +12,6 @@ import { logger } from '@/lib/logging/logger';
 
 /**
  * Minimal monster index entry for combobox display.
- * Contains only fields needed for search/filter operations.
  *
  * @interface MonsterIndexEntry
  * @property {string} slug - Unique identifier/URL slug for the monster
@@ -31,7 +30,6 @@ export interface MonsterIndexEntry {
 
 /**
  * Full monster data returned from individual monster API.
- * Includes all combat-relevant fields for creature creation.
  *
  * @interface MonsterData
  * @property {string} slug - Unique identifier

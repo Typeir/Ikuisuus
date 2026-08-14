@@ -1,10 +1,8 @@
 /**
- * @fileoverview Synchronous-import flavor MDX compiler.
- * Uses file-scoped (static) imports so bundlers include the evaluator at build time.
- * @description "Static" refers to the page being built statically, not to
- * JavaScript synchronicity — this function is async and must be awaited. It is
- * the compiler the library route uses, so anything that must reach a rendered
- * page has to be wired here.
+ * @fileoverview Compiles MDX with file-scoped (static) imports.
+ * Async; must be awaited. Used by the library route.
+ * @description Compiles MDX with file-scoped (static) imports so bundlers
+ * include the evaluator at build time.
  *
  * @module src/lib/mdx/compileStatic/compileStatic
  *

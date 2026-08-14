@@ -1,8 +1,7 @@
 /**
  * @fileoverview User Storage Adapter Interface
- * @description Defines the pluggable adapter contract for user persistence.
- * Implementations can target Vercel Edge Config, PostgreSQL, or any other backend
- * without changing consumer code. Mirrors the existing `AuditAdapter` pattern.
+ * @description Defines the adapter contract for user persistence.
+ * Implementations plug in any backend without changing consumer code.
  *
  * @module lib/db/auth/userAdapter
  * @version 1.0.0
@@ -14,8 +13,7 @@ import type { StoredUser } from './schemas';
 
 /**
  * Adapter interface for user persistence.
- * Implementations MUST be safe to call even when the backing store is unavailable
- * (graceful degradation over hard failures).
+ * Implementations must be safe to call when the backing store is unavailable.
  */
 export interface UserAdapter {
   /**

@@ -1,7 +1,6 @@
 /**
  * @fileoverview useDebouncedValueWithRaceControl Hook Unit Tests
- * @description Tests for the useDebouncedValueWithRaceControl hook that debounces
- * values and ensures only the most recent async response is accepted.
+ * @description Tests the useDebouncedValueWithRaceControl hook.
  *
  * @module tests/unit/lib/hooks/useDebouncedValueWithRaceControl
  * @version 1.0.0

@@ -64,11 +64,7 @@ describe('parseTitle', () => {
     expect(parseTitle(['# Goblin', '', 'Some text'])).toBe('Goblin');
   });
 
-  /**
-   * A title is atomic plaintext. It reaches the browser tab, `og:title` and a
-   * search key, none of which render markdown — the asterisks were shown to the
-   * reader verbatim.
-   */
+  /** Strips markdown from a title, since it is plaintext. */
   it('should strip markdown from title', () => {
     expect(parseTitle(['# **Bold Title**'])).toBe('Bold Title');
     expect(parseTitle(['# Ballista _(Loading)_'])).toBe('Ballista (Loading)');
@@ -81,7 +77,7 @@ describe('parseTitle', () => {
     );
   });
 
-  /** Authoring macros are not plaintext either. */
+  /** Authoring macros are not plaintext and are stripped. */
   it('should strip a unit macro from a title', () => {
     expect(parseTitle(['# Rope ([= 10 stride =])'])).toBe('Rope (10 stride)');
   });
@@ -120,10 +116,8 @@ describe('parseProperties', () => {
 
 describe('parseWeight', () => {
   /**
-   * Weight is answered in burden, whatever unit the source used. The imperial
-   * pattern this once relied on never matched `[= 2 burden =]`, so every
-   * heirloom in the corpus came back with no weight at all while the lone item
-   * written in pounds came back in pounds.
+   * Weight is answered in burden, whatever unit the source used. Imperative
+   * units matched no authoring expression.
    */
   it('should read the native expression the corpus actually uses', () => {
     expect(parseWeight({ Weight: '[= 2 burden =]' })).toEqual({
@@ -139,10 +133,7 @@ describe('parseWeight', () => {
     expect(parseWeight({ Weight: '1 lb' })).toEqual({ weight: '1/2 burden' });
   });
 
-  /**
-   * Stackable gear states its weight for the stack, so the divisor has to
-   * survive parsing or a single throwable would carry the weight of five.
-   */
+  /** Stackable weights carry the per-N divisor. */
   it('should carry the per-N divisor for stackable weights', () => {
     expect(parseWeight({ Weight: '[= 1 burden =] per 5' })).toEqual({
       weight: '1 burden per 5',
@@ -167,9 +158,8 @@ describe('parseWeight', () => {
 
 describe('normalizeWeight', () => {
   /**
-   * The trinket generator reaches for this directly rather than through
-   * `parseWeight`, because it reads the weight off a bullet line instead of a
-   * properties table.
+   * The trinket generator calls this directly instead of `parseWeight`,
+   * reading the weight off a bullet line.
    */
   it('should unwrap an authoring expression', () => {
     expect(normalizeWeight('[= 2 burden =]')).toEqual({ weight: '2 burden' });
@@ -195,7 +185,7 @@ describe('normalizeWeight', () => {
 });
 
 describe('parseRange', () => {
-  /** Stored ranges carry the measurement, never the syntax that expressed it. */
+  /** Stored ranges carry the measurement, not the authoring syntax. */
   it('should unwrap an authoring expression', () => {
     expect(parseRange({ Range: '[= 12 stride =]' })).toBe('12 stride');
   });

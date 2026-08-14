@@ -284,7 +284,7 @@ describe('API Routes', () => {
 
       if (data.length > 0) {
         data.forEach((spell: any) => {
-          // Homebrew content may exceed standard D&D 0-9 range, just verify it's a non-negative number
+          // Homebrew content may exceed standard Damocles 0-9 range, just verify it's a non-negative number
           expect(typeof spell.level).toBe('number');
           expect(spell.level).toBeGreaterThanOrEqual(0);
         });

@@ -1,7 +1,7 @@
 /**
  * @fileoverview MDX Editor Toolbar
  * @description Toolbar with formatting buttons and VS Code-style keyboard shortcuts.
- * Text mutation commands live in editorCommands.ts to keep this file under 250 lines.
+ * Text mutation commands are imported from editorCommands.ts.
  *
  * @module lib/components/mdxEditor/editorToolbar
  * @version 2.0.0
@@ -41,8 +41,8 @@ export { handleEditorKeyDown } from '@/modules/mdx-editor/domain/editorCommands'
 
 /**
  * @property {string} textareaId - DOM id of the code editor textarea
- * @property {string} value - Current editor content (needed for cursor math)
- * @property {boolean} disabled - Whether the toolbar should be inactive
+ * @property {string} value - Current editor content
+ * @property {boolean} disabled - Whether the toolbar is inactive
  */
 interface EditorToolbarProps {
   /** DOM id of the underlying textarea */

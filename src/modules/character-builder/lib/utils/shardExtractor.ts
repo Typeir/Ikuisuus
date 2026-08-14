@@ -1,8 +1,6 @@
 /**
- * @fileoverview Shard Extractor Utility
- * @description Client-side helper that fetches a named MDX heading block from
- * the `/api/shards` endpoint and assembles it into a `CharacterShard`. Also
- * provides a pure helper for computing total Boon Points spent.
+ * @fileoverview Fetches a named MDX heading block from `/api/shards` into a
+ * `CharacterShard`. Computes total Boon Points spent.
  *
  * @module modules/character-builder/lib/utils/shardExtractor
  * @version 1.0.0
@@ -45,8 +43,8 @@ export interface FetchShardOptions {
 }
 
 /**
- * Fetch a named heading block from the `/api/shards` endpoint and build a
- * `CharacterShard` with the first non-blank paragraph cached in `cachedText`.
+ * Fetch a named heading block from `/api/shards` and build a `CharacterShard`,
+ * cached with the first non-blank paragraph of the block body.
  *
  * @function fetchShard
  * @param {FetchShardOptions} options - Shard fetch options

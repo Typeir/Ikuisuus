@@ -1,15 +1,8 @@
 /**
- * Unit System State Hooks
- *
- * @fileoverview React hooks for the unit display preferences and their actions.
- *
- * Preferences are read from persistent storage during render, which the server
- * cannot do. These hooks therefore report the native system until after the
- * first client render, so server markup and first paint agree and hydration
- * has nothing to reconcile.
- *
- * `PersistentUiState.isHydrated` cannot serve that purpose: the provider sets
- * it true in its initial state, so it is already true on the very first render.
+ * @fileoverview React hooks for unit display preferences and their actions.
+ * Returns the native system until the first client render commits, matching
+ * server markup for hydration. Reports `isHydrated`, not
+ * `PersistentUiState.isHydrated`, which the provider sets true on first render.
  *
  * @module lib/hooks/useUnitSystem
  * @version 2.0.0
@@ -47,8 +40,7 @@ export interface UnitSystemState {
 /**
  * Hook to access unit display preferences.
  *
- * Returns the native defaults until the first client render has committed,
- * which keeps server and client markup identical through hydration.
+ * Returns native defaults until the first client render commits.
  *
  * @function useUnitSystemState
  * @returns {UnitSystemState} Preferences with a hydration flag

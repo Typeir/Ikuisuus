@@ -1,15 +1,8 @@
 /**
  * @fileoverview Roster Write-Back Integration Test
- * @description Exercises the full persistence round trip the app actually runs:
- * a write lands on the sheet, the provider pushes it to the roster context, the
- * roster rebuilds the character as a fresh object, and that object flows back in
- * as the `character` prop.
- *
- * Unit fixtures mount `ActiveSheetProvider` with a fixed `character` prop, so
- * the echo never happens there and a feedback loop between the push and the
- * adopting sync goes unnoticed. This mounts the real `CharacterRoster` over a
- * persisted character, which is the stack the loop was reported from — a loop
- * surfaces as React's "Maximum update depth exceeded".
+ * @description Exercises the full write-back round trip: sheet write, provider
+ * push to roster context, roster rebuild to a fresh object, and flow back as the
+ * `character` prop. Mounts the real `CharacterRoster` over a persisted character.
  *
  * @module tests/integration/character-builder/presentation/rosterWriteBack
  * @version 1.0.0
@@ -64,10 +57,9 @@ const SEED: CharacterSheet = {
 };
 
 /**
- * Persists the seed character so the provider hydrates it, exactly as a
- * returning player's browser would. Seeding through storage rather than a
- * dispatch matters: `CharacterRoster` auto-creates a character when it finds the
- * roster empty at hydration, which would take over the panel.
+ * Persists the seed character to storage so the provider hydrates it.
+ * Seeding through storage avoids `CharacterRoster` auto-creating a character
+ * when it finds the roster empty at hydration.
  *
  * @function persistSeed
  * @returns {void}

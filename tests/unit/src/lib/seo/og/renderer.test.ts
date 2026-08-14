@@ -1,9 +1,8 @@
 /**
  * @fileoverview Unit tests for the OG image renderer.
  *
- * Mocks both satori and @resvg/resvg-js so the tests run without a network
- * connection or native binaries. Validates that `renderOgCard` correctly
- * pipes the satori output into Resvg and returns the PNG buffer.
+ * Mocks satori and @resvg/resvg-js. Validates that `renderOgCard` pipes the
+ * satori output into Resvg and returns the PNG buffer.
  *
  * @module tests/unit/src/lib/seo/og/renderer.test
  */
@@ -31,7 +30,7 @@ vi.mock('sharp', () => ({
   })),
 }));
 
-/** Stub font fetch so loadFontBuffer doesn't hit the network. */
+/** Stub fetch to return fake font data. */
 vi.stubGlobal('fetch', async (_url: string) => ({
   text: async () =>
     `src: url(https://fonts.gstatic.com/s/inter/fake.woff2) format('woff2')`,

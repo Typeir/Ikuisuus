@@ -1,10 +1,8 @@
 /**
  * Remark Unit Plugin
  *
- * @fileoverview Remark plugin that finds `[= ... =]` unit expressions in text nodes
- * and replaces them with MDX JSX elements (`<Unit>` component).
- * Handles mixed text + expression nodes by splitting into sequences.
- * Malformed expressions are left as plain text (fail-safe).
+ * @fileoverview Remark plugin replacing `[= ... =]` unit expressions in text
+ * nodes with `<Unit>` MDX JSX elements. Malformed expressions stay as plain text.
  *
  * @module lib/md/remarkUnit
  * @version 1.0.0
@@ -19,9 +17,7 @@ import { visit } from 'unist-util-visit';
 import { parseUnitExpression, UNIT_EXPR_REGEX } from './unitExpressionParser';
 
 /**
- * Name of the component this plugin emits. The MDX runtime resolves it through
- * the component map, so any registry that renders content must provide it —
- * see the registry guard test.
+ * Name of the component this plugin emits.
  *
  * @constant
  */
@@ -87,13 +83,12 @@ function attributeNode(name: string, value: string): MdxJsxAttributeNode {
 
 /**
  * Builds an MDAST mdxJsxTextElement node for the `<Unit>` component.
- * All props are passed as string attributes; flags are comma-joined.
- * The denominator is omitted for whole quantities.
+ * Props are string attributes; flags comma-joined; denominator omitted when 1.
  *
  * @param {number} numerator - Quantity numerator
  * @param {number} denominator - Quantity denominator, 1 for whole quantities
- * @param {string} unit - The unit name
- * @param {string[]} flags - Array of flag shortcodes
+ * @param {string} unit - Unit name
+ * @param {string[]} flags - Flag shortcodes
  * @returns {MdxJsxTextElementNode} An MDAST JSX element node
  */
 function unitNode(

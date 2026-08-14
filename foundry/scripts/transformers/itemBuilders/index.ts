@@ -1,7 +1,6 @@
 /**
  * @fileoverview Barrel export for Foundry item builders.
- * @description Centralizes re-exports from all builder modules for clean
- * public API and backward compatibility.
+ * @description Re-exports all builder modules and their public symbols.
  *
  * @module foundry/scripts/transformers/itemBuilders
  * @version 1.0.0

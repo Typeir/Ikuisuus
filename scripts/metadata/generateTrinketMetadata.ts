@@ -34,9 +34,7 @@ const log = createLogger({ component: 'TrinketMetadataGenerator' });
 /**
  * Extracts the prose description from a trinket MDX file.
  *
- * Trinket files have no `---` divider. The description is the block of text
- * after the H1 title and optional item-type line, ending at the first bold
- * property line (`**Damage**:`, `**Properties**:`, etc.).
+ * Stops at the first bold property line (`**Damage**:`, `**Properties**:`).
  *
  * @param {string} content - Full MDX file content
  * @returns {string | undefined} Joined prose lines or undefined

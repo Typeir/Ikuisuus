@@ -1,7 +1,6 @@
 /**
- * @fileoverview Shared Domain Utilities
- * @description Pure utility functions shared across the encounter-planner module.
- * No external dependencies — safe to import anywhere in the module.
+ * @fileoverview Pure utility functions shared across the encounter-planner module.
+ * No external dependencies.
  *
  * @module encounter-planner/domain/shared/utils
  * @version 1.0.0
@@ -10,8 +9,7 @@
  */
 
 /**
- * Generate a unique ID for encounters or creatures using timestamp and random string.
- * Combines Date.now() with base36-encoded random value for collision resistance.
+ * Generate a unique ID for encounters or creatures.
  *
  * @function generateId
  * @returns {string} Unique identifier in format "timestamp-randomString"
@@ -25,7 +23,6 @@ export const generateId = (): string => {
 
 /**
  * Calculate d20 initiative modifier from dexterity ability score.
- * Uses standard formula: (ability - 10) / 2, rounded down.
  *
  * @function calculateInitiativeMod
  * @param {number} dex - Dexterity ability score (typically 1-30)
@@ -42,7 +39,6 @@ export const calculateInitiativeMod = (dex: number): number => {
 
 /**
  * Roll 1d20 and add initiative modifier for creature initiative.
- * Uses standard d20 initiative rules.
  *
  * @function rollInitiative
  * @param {number} initiativeMod - Initiative modifier to add to roll

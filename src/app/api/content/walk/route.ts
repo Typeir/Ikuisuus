@@ -1,17 +1,8 @@
 /**
- * @fileoverview Lazy Sidebar Walk API
- * @description Route handler that delegates to walkHandler orchestrator.
- * Returns a shallow {@link WalkNode} tree for a given content path.
- * Called by the sidebar when a stub folder is expanded to fetch its
- * immediate children without a full page reload.
- *
- * Query parameters:
- * - `locale` (string, default "en") — locale code
- * - `path`   (string, default "")   — path relative to the content root
- *
- * Always fetches two levels (maxDepth = 2): each returned directory at the
- * second level is a stub node (`isStub: true, children: []`) that the sidebar
- * can expand again to fetch its own children.
+ * @fileoverview Route handler delegating to walkHandler.
+ * @description GET fetches a shallow ({@link WalkNode}) tree for a content
+ * path. Fetches two levels (maxDepth = 2); each second-level directory is a
+ * stub node (`isStub: true, children: []`).
  *
  * @module app/api/content/walk/route
  * @version 1.0.0
@@ -27,8 +18,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Returns a two-level-deep {@link WalkNode} array for the requested path.
- * Sub-directories beyond the second level are returned as stub nodes so the
- * sidebar can continue paginating expansion two levels at a time.
+ * Sub-directories beyond the second level are returned as stub nodes.
+ * Returns 500 with `{ error }` on failure.
  *
  * @param {NextRequest} req - Incoming request with `locale` and `path` params
  * @returns {Promise<NextResponse>} JSON array of {@link WalkNode} objects

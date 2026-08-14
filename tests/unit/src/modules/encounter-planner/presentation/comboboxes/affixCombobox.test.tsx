@@ -2,7 +2,6 @@
  * @fileoverview Unit tests for Affix Combobox component
  * @module tests/unit/src/lib/components/encounterPlanner/comboboxes/affixCombobox.test
  * @description Validates AffixCombobox export and component signature.
- * Tests combobox component for selecting affixes in encounter planner.
  * 
  * @version 1.0.0
  * @author Typeir

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Celestial Registry — Runtime Query Layer Over Registry Data
- * @description Wraps the static blackCradleRegistry.json data with typed query methods.
- * Provides lookups by ID, type, and content path, plus region retrieval.
+ * @description Wraps the static blackCradleRegistry.json data with typed query
+ * methods for lookups by ID and type plus region and collision-pair retrieval.
  *
  * @module worldSim/celestials/CelestialRegistry
  * @version 1.0.0
@@ -43,8 +43,7 @@ export class CelestialRegistry {
   private static instance: CelestialRegistry | null = null;
 
   /**
-   * Get the shared singleton CelestialRegistry instance.
-   * Creates it on first call; subsequent calls return the same instance.
+   * Get the shared singleton instance, creating it on first call.
    *
    * @static
    * @returns {CelestialRegistry} The shared registry instance
@@ -132,8 +131,7 @@ export class CelestialRegistry {
   }
 
   /**
-   * Get all collision-pair definitions declared in the registry. Each pair
-   * describes two bodies whose proximity drives a collision-cloud effect.
+   * Get all declared collision-pair definitions.
    *
    * @returns {CollisionPairData[]} Array of collision pairs (empty if none defined)
    */

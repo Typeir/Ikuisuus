@@ -1,11 +1,8 @@
 /**
  * @fileoverview ChevronScroll Component
- * @description Wraps a horizontal strip (e.g. a tab row) in a scroll container
- * flanked by always-visible left/right chevron buttons. The chevrons scroll the
- * strip by a fixed step and disable when the strip is at (or cannot reach) that
- * edge. The native scrollbar is hidden — the chevrons are the affordance. Content
- * is passed as children and rendered unchanged, so callers keep their own tab
- * markup and styling.
+ * @description Wraps a horizontal strip in a scroll container flanked by
+ * always-visible left/right chevron buttons. Chevrons scroll by a fixed step and
+ * disable at the scroll edges. Native scrollbar hidden. Children rendered unchanged.
  *
  * @module lib/components/ui/chevronScroll/ChevronScroll
  * @author Typeir

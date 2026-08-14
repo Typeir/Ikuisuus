@@ -1,8 +1,6 @@
 /**
  * @fileoverview Editor Path Section
  * @description Slug/path input with load button for the MDX editor.
- * In new-file mode, shows a FileTreeSelect to pick a folder, plus a text input
- * for the filename. In edit mode, shows a slug input with a load button.
  *
  * @module lib/components/mdxEditor/editorPathSection
  * @version 2.0.0
@@ -64,8 +62,6 @@ interface EditorPathSectionProps {
 
 /**
  * Path/slug input section for the MDX editor.
- * In edit mode shows a slug input with a load button.
- * In new mode shows a folder tree picker and filename input.
  *
  * @component
  * @param {EditorPathSectionProps} props - Component properties

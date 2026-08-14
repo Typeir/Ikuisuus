@@ -1,6 +1,6 @@
 /**
  * @fileoverview Performance Monitoring Utilities
- * @description Timer and memory profiling for metadata generators.
+ * @description Times operations and profiles memory for metadata generators.
  *
  * @module lib/metadata/performanceUtils
  * @version 1.0.0

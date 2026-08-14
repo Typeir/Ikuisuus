@@ -36,8 +36,7 @@ export interface TreeQueryParams {
 }
 
 /**
- * Orchestrator for directory tree listing endpoint
- * Coordinates parameter parsing, service invocation, and error handling
+ * Handles directory tree listing endpoint
  *
  * @param {TreeQueryParams} params - Query parameters from request
  * @returns {Promise<unknown>} Directory listing result or error object

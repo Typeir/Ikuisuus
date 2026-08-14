@@ -1,8 +1,7 @@
 /**
  * @fileoverview CLI Runner for Metadata Generators
  * @description Wraps generator main functions with `--persist` and `--file`
- * flag handling. Creates a storage adapter when persistence is requested,
- * and narrows generation to a single source file when `--file` is provided.
+ * flag handling.
  *
  * @module lib/metadata/cliRunner
  * @version 1.1.0

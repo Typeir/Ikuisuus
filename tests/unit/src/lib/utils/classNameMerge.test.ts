@@ -1,7 +1,5 @@
 /**
- * classNameMerge Utility Tests
- *
- * @fileoverview Tests for the lightweight className merge utility
+ * @fileoverview Tests for the cn() className merge utility.
  */
 
 import { cn } from '@/lib/utils/classNameMerge';

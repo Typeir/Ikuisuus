@@ -1,14 +1,10 @@
 /**
  * Persistent UI State Initialization Script Generator
  *
- * @fileoverview Generates an inline JavaScript IIFE that runs before DOM render
- * to restore persistent UI state from storage. Reads from cookies first (SSR source
- * of truth), then falls back to sessionStorage and localStorage. Prevents flash of
- * incorrect state (FOUC) by setting data-theme attribute synchronously.
- *
- * CRITICAL: This script MUST be placed in <head> (not <body>) to run before
- * first paint. Combined with the CSS rule `html:not([data-theme]) body { visibility: hidden; }`,
- * this ensures zero FOUC for both dark and light themes.
+ * @fileoverview Returns an inline JavaScript IIFE that restores persistent UI
+ * state. Reads cookies first, then sessionStorage, then localStorage. Sets
+ * data-theme attribute synchronously. Must be placed in <head> to run before
+ * first paint; pairs with `html:not([data-theme]) body { visibility: hidden; }`.
  *
  * @module lib/utils/persistentUiScript
  * @version 1.2.0
@@ -45,24 +41,10 @@ import {
  * @returns {string} Inline JavaScript IIFE string
  *
  * @description
- * Creates a self-executing script that:
- * 1. Reads theme from cookies (source of truth for SSR compatibility)
- * 2. Falls back to sessionStorage, then localStorage
- * 3. Sets data-theme, data-aspect-display and data-aspect-expanded on document element
- *
- * Aspect display mode is stamped here rather than resolved in React so the
- * switch stays pure CSS: server markup and first client paint agree, nothing
- * re-renders after hydration, and prerendered pages stay static. It defaults to
- * `compact`, which pairs a glyph with the value — two ways to recognise the same
- * pill, which is what makes it work for colourblind and dyslexic readers.
- *
- * Carousel expansion is stamped for the same reason. A reader who left the rows
- * unpacked would otherwise watch every one of them collapse and re-open on load,
- * because the preference cannot reach React until after first paint.
- *
- * This runs synchronously before React hydration to prevent FOUC.
- * Sidebar expansion is handled client-side by PersistentUiProvider
- * using a deterministic fallback chain (no bootstrap script needed).
+ * Returns an IIFE that reads theme from cookies, then sessionStorage, then
+ * localStorage, and sets data-theme, data-aspect-display and
+ * data-aspect-expanded on the document element. aspectDisplay defaults to
+ * `compact`. Runs synchronously before React hydration.
  */
 export function getPersistentUiInitScript(): string {
   return `
@@ -148,8 +130,7 @@ export function getPersistentUiInitScript(): string {
  * @returns {string} Combined initialization script
  *
  * @description
- * Provides theme initialization script that runs before React hydration.
- * Sidebar expansion is handled client-side by PersistentUiProvider.
+ * Returns the persistent UI initialization script for theme and UI state.
  */
 export function getCombinedInitScript(): string {
   return getPersistentUiInitScript();

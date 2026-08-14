@@ -1,14 +1,7 @@
 /**
  * @fileoverview Resolves decorated classes into MikroORM `EntitySchema` instances.
- * @description `ormConfig` keeps listing entity classes, exactly as it did with
- * MikroORM's decorators; this helper swaps each class for the schema its
- * decorator built.
- *
- * A missing schema means the class was never decorated, which under the old
- * decorators would have surfaced at runtime as a confusing discovery error.
- * Failing loudly here keeps the ORM bootstrap contract in
- * `mikroorm.instructions.md`: discovery problems are blocking failures, never
- * silent empty results.
+ * @description Maps a list of entity classes to the schema each decorator
+ * built. Throws on any class that has no schema.
  *
  * @module lib/db/orm/schema/toSchemas
  * @version 1.0.0

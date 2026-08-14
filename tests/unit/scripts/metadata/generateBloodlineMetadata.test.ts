@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for bloodline metadata boon parsing.
- * @description Verifies tag-only boon extraction and robust parsing of variable
+ * @description Verifies tag-only boon extraction and parsing of variable
  * cost + nested collapsible structures.
  *
  * @module tests/unit/scripts/metadata/generateBloodlineMetadata

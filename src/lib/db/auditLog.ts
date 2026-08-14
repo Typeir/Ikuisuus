@@ -1,8 +1,7 @@
 /**
  * @fileoverview Audit Log Facade
- * @description Provides the public `writeAuditLog` function consumed by the corrections
- * API. Delegates to the factory-resolved `AuditAdapter` implementation. The active
- * backend is selected by `METADATA_BACKEND` env var (fs or pg).
+ * @description Exports the public `writeAuditLog` function, delegating to the
+ * factory-resolved `AuditAdapter`. Backend selected by `METADATA_BACKEND` env var (fs or pg).
  *
  * @module lib/db/auditLog
  * @version 3.0.0
@@ -26,8 +25,7 @@ const adapter = auditAdapter;
 /**
  * Persists an audit record via the active adapter.
  *
- * Never throws — failed writes are logged but swallowed so they do not
- * block the corrections flow.
+ * Never throws — failed writes are logged and swallowed.
  *
  * @param {AuditRecord} record - The audit data to persist
  * @returns {Promise<void>}

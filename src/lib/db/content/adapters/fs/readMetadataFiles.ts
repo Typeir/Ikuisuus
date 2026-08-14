@@ -1,8 +1,7 @@
 /**
- * @fileoverview Filesystem Metadata Reader Utility
- * @description Shared helper for reading `.metadata.json` sidecar files from the
- * content directory tree. Used by all entity-specific filesystem repository
- * implementations to avoid duplicating directory traversal logic.
+ * @fileoverview Reads `.metadata.json` sidecar files from the content tree.
+ * @description Shared helper to read and parse `.metadata.json` files for the
+ * filesystem content repository adapters.
  *
  * @module lib/db/content/adapters/fs/readMetadataFiles
  * @version 1.0.0
@@ -26,12 +25,12 @@ const getMetaFolder = (locale: string): string => {
 /**
  * Reads and parses all `.metadata.json` files from a content subdirectory.
  *
- * When METADATA_BACKEND is 'pg', checks `.meta/{locale}/{subdir}` first, then
- * falls back to `src/content/{locale}/{subdir}`. When 'fs' or unset, reads
- * directly from `src/content/{locale}/{subdir}` to avoid stale `.meta/` data.
+ * With METADATA_BACKEND 'pg', checks `.meta/{locale}/{subdir}` first, then
+ * falls back to `src/content/{locale}/{subdir}`. Otherwise reads from
+ * `src/content/{locale}/{subdir}` directly.
  *
  * Returns an empty array if neither directory exists or cannot be read.
- * Multi-record files (arrays) are automatically flattened.
+ * Multi-record files (arrays) are flattened.
  *
  * @template T - The expected metadata record type
  * @param {string} locale - Locale code (e.g. 'en', 'es')

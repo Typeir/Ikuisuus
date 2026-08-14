@@ -62,8 +62,6 @@ function makeCombatant(
 /**
  * Mock Math.random to produce a high fate die (d20 = 20, passes any DC)
  * followed by safe affix rolls (d10 = 6, never hits "Reroll").
- * Using a flat 0.99 would cause an infinite Reroll loop because
- * rollAffix() would always return 10 which maps to "Reroll".
  */
 function mockHighRolls(): void {
   vi.spyOn(Math, 'random').mockReturnValueOnce(0.99).mockReturnValue(0.5);

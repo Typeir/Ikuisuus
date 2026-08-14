@@ -1,8 +1,6 @@
 /**
- * Sidebar Navigation E2E Tests
- *
- * @fileoverview End-to-end tests for sidebar behavior, navigation, and responsive states.
- * Tests the 3-region layout (header, scrollable library, footer) and tools menu.
+ * @fileoverview E2E tests for sidebar layout and locale switching. Verifies the
+ * 3-region layout and tools menu navigation.
  */
 
 import { expect, test } from '@playwright/test';

@@ -1,18 +1,9 @@
 /**
  * @fileoverview Content Hash Utility (FNV-1a 32-bit)
- * @description Produces small, deterministic, high-variance hashes for
- * metadata records. Used by the seed script and sync service to detect
- * changes: if the hash in the database matches the hash of the incoming
- * record, the row is skipped.
- *
- * FNV-1a properties:
- *   - 32-bit -> 8 hex characters (compact, fits in a text column easily)
- *   - Zero dependencies (pure math, no crypto import)
- *   - Excellent avalanche — a single character change flips ~half the bits
- *   - Deterministic across platforms (same input -> same hash)
- *
- * The hash is computed over `JSON.stringify(record)` with keys sorted so
- * insertion order doesn't affect the result.
+ * @description Computes FNV-1a 32-bit hashes of metadata records over
+ * stable (key-sorted) JSON. Output is 8 lowercase hex chars,
+ * deterministic across platforms. The seed script and sync service
+ * compare it against the stored hash to skip unchanged rows.
  *
  * @module lib/metadata/contentHash
  * @version 2.0.0
@@ -42,9 +33,8 @@ export function fnv1a32(str: string): string {
 }
 
 /**
- * Produces a deterministic JSON string with sorted keys so that
- * semantically identical objects always produce the same hash
- * regardless of property insertion order.
+ * Serializes an object to JSON with keys sorted recursively.
+ * Object property insertion order does not affect the output.
  *
  * @param {unknown} obj - Object to serialize
  * @returns {string} Deterministic JSON string

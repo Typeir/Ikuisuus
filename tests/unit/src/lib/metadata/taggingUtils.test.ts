@@ -245,9 +245,7 @@ describe('extractOrganizationalTags', () => {
   });
 
   /**
-   * Provenance is read from the page's own frontmatter. It used to be hardcoded
-   * to `official`, which asserted the same thing about every page in the corpus
-   * and so carried no information at all.
+   * Provenance is read from the page's declared source.
    */
   it('should take provenance from the declared source', () => {
     const result = extractOrganizationalTags(

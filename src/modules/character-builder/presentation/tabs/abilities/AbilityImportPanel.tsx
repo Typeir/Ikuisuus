@@ -2,10 +2,9 @@
  * @fileoverview Ability Import Panel
  * @description Segmented import panel for the Abilities tab. Sources:
  * Spells, Heirlooms, Trinkets, Feats. Each tab fetches metadata via SWR and
- * renders the shared {@link MetadataTable} with source-specific columns, so
- * importing shares the same search, filter, sort, and pagination UX as the
- * library table views. Rows render as buttons (via `onRowSelect`) that import
- * the selected item as a `CharacterAbility` through the abilities context.
+ * renders {@link MetadataTable} with source-specific columns. Rows render as
+ * buttons (`onRowSelect`) that import the item as a `CharacterAbility` through
+ * the abilities context.
  *
  * @module lib/components/characterSheet/tabs/abilities/AbilityImportPanel
  * @version 2.0.0

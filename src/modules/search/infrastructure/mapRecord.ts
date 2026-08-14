@@ -20,9 +20,8 @@ import {
 import type { PagefindFragment } from './pagefindClient';
 
 /**
- * Maps a raw Pagefind result (post-`data()` resolution) into a domain
- * `SearchResult`. Extracts the content type from `filters.type[0]` and
- * maps `meta` fields to the flat result shape.
+ * Maps a resolved Pagefind fragment into a domain `SearchResult`.
+ * Content type comes from `filters.type[0]`; `meta` maps to the flat shape.
  *
  * @param {PagefindFragment} fragment - Resolved Pagefind fragment
  * @param {string} locale - Locale code for id construction

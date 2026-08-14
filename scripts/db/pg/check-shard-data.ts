@@ -1,10 +1,9 @@
 /**
- * @fileoverview Diagnostic script to check shard data in PostgreSQL.
+ * @fileoverview Checks shard data in PostgreSQL.
  *
  * Queries bloodline_boons, vocation_features, specialization_features, and
- * feat_features tables. Reports row counts and identifies any rows with null
- * line anchors (start_line / end_line), which would cause heading-text fallback
- * in the content-shard resolver.
+ * feat_features tables for row counts and rows with null line anchors
+ * (start_line / end_line).
  *
  * @module check-shard-data
  * @version 1.0.0

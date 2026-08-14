@@ -1,12 +1,7 @@
 /**
  * @fileoverview HMAC Capability Token Utilities
- * @description Signed capability tokens for the Corrections module.
- * Tokens are HMAC-SHA256–signed JSON payloads carrying expiry, scope, and
- * an optional human-readable label for audit trails. No user accounts or
- * sessions are involved — possession of a valid token is sufficient.
- *
- * Token format: `<base64url(payload)>.<base64url(signature)>`
- *
+ * @description Creates and verifies HMAC-SHA256-signed JSON capability tokens
+ * for the Corrections module. Format: `<base64url(payload)>.<base64url(signature)>`.
  * @module lib/utils/auth/hmacToken
  * @version 1.0.0
  * @author Typeir
@@ -62,7 +57,7 @@ const computeSignature = (payloadB64: string, secret: string): string =>
 /**
  * Creates a signed capability token.
  *
- * @param {TokenPayload} payload - Token payload with required `exp` and `scope`
+ * @param {TokenPayload} payload - Token payload to sign
  * @param {string} secret - HMAC signing secret (must match `CORRECTIONS_SECRET`)
  * @returns {string} Signed token string `<payload>.<signature>`
  *
@@ -131,12 +126,11 @@ export const verifyToken = (
 };
 
 /**
- * Extracts a short, non-sensitive identifier from a token for audit logging.
- * Returns the label if present, otherwise the first 8 characters of a SHA-256
- * hash of the full token.
+ * Returns a short audit identifier for a token: the label if set, else the
+ * first 8 hex chars of a SHA-256 hash of the token.
  *
  * @param {string} token - Raw token string
- * @param {TokenPayload} [payload] - Already-decoded payload (avoids re-parsing)
+ * @param {TokenPayload} [payload] - Already-decoded payload
  * @returns {string} Audit-safe identifier (never the raw token)
  */
 export const tokenAuditId = (token: string, payload?: TokenPayload): string => {

@@ -1,9 +1,7 @@
 /**
  * @fileoverview Tower World Renderer — Impossibly Tall Vertical Structure with Orbiting Pillars
- * @description Renders Selkara as an impossibly tall tapered tower (no planet base)
- * surrounded by smaller pillars orbiting at random distances and heights.
- * Stacked cylinder segments that taper upward evoke the lore of the
- * mile-wide, sky-piercing tower formed from the Golden One's marrow and spine.
+ * @description Renders a tapered tower of stacked cylinder segments (no planet base)
+ * surrounded by smaller pillars orbiting at random radii and heights.
  *
  * @module worldSim/celestials/TowerWorldRenderer
  * @version 2.0.0

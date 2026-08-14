@@ -1,13 +1,8 @@
 /**
  * @fileoverview Migration 018 — Add sub_options to bloodline_boons
- * @description Adds a `sub_options` JSONB column to the `bloodline_boons` table,
- * storing the selectable options of a variable-cost boon (each with its own BP
- * cost). Populated wholesale by the bloodline seed from regenerated
- * `.metadata.json` sidecars; never queried by inner field, so no index.
- *
- * Guarded/idempotent via `information_schema.columns`, so re-runs and freshly
- * created tables are safe. After applying, run `npm run db:seed` to backfill
- * sub-options from the regenerated bloodline metadata.
+ * @description Adds a nullable `sub_options` JSONB column to the `bloodline_boons`
+ * table. Stored via `information_schema.columns` check, so re-runs are safe.
+ * After applying, run `npm run db:seed` to backfill sub-options.
  *
  * @module scripts/db/migrations/018_add_sub_options_to_bloodline_boons
  * @author Typeir

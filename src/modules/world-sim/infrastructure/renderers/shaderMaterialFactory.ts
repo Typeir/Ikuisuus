@@ -1,11 +1,7 @@
 /**
  * @fileoverview Shader Material Factory
- * @description Single-responsibility constructor for `ShaderMaterial`
- * instances whose vertex (and optionally fragment) shader needs a noise GLSL
- * snippet prepended. Every renderer in `celestials/` previously repeated the
- * `noise3d + '\n' + customVert` boilerplate; this factory centralizes the
- * concatenation so the noise source (or future shader-feature toggles) can be
- * swapped from one place.
+ * @description Constructs `ShaderMaterial` instances with a noise GLSL
+ * snippet prepended to the vertex (and optionally fragment) shader.
  *
  * @module worldSim/celestials/shaderMaterialFactory
  * @version 1.0.0
@@ -42,15 +38,6 @@ export interface DisplacedShaderMaterialOptions {
 /**
  * Construct a `ShaderMaterial` with a noise GLSL snippet automatically
  * prepended to the vertex shader (and optionally the fragment shader).
- *
- * Replaces the pre-factory pattern:
- * ```ts
- * new ShaderMaterial({
- *   vertexShader: noise3d + '\n' + vert,
- *   fragmentShader: frag,
- *   uniforms,
- * });
- * ```
  *
  * @param {DisplacedShaderMaterialOptions} options - Shader sources, uniforms, and optional material params.
  * @returns {ShaderMaterial} A configured `ShaderMaterial` ready for assignment.

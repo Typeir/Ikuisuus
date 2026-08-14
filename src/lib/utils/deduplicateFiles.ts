@@ -11,10 +11,10 @@ import { getBaseName } from './getBaseName';
  * Deduplicates a list of filenames by their base name.
  *
  * If two files share the same base name (e.g., "entry.mdx" and "entry.sheet.mdx"),
- * the file with the longer name is kept, assuming it has higher priority.
+ * the file with the longer name is kept.
  *
  * @param {string[]} files - A sorted array of filenames.
- * @returns {string[]} Deduplicated array of filenames with preferred variants kept.
+ * @returns {string[]} Deduplicated array of filenames; longer name kept per base name.
  */
 export const deduplicateFiles = (files: string[]): string[] => {
   const result: string[] = [];

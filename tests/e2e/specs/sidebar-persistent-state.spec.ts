@@ -1,14 +1,11 @@
 /**
  * Sidebar Persistent State E2E Tests
  *
- * @fileoverview TDD test for sidebar tree expansion state persistence across page reloads.
- * Tests that sidebar expansion state is persisted to storage, survives full page reload,
- * and is restored immediately on load.
+ * @fileoverview Verifies sidebar tree expansion state persists to storage, survives full page
+ * reload, and restores immediately on load.
  *
- * @description This test SHOULD FAIL on the current broken implementation and pass only when:
- * - Sidebar expansion state is correctly persisted to storage
- * - State is restored across reload
- * - State is applied immediately on page load
+ * @description Verifies expansion state persists to storage, restores across reload, and applies
+ * immediately on page load.
  *
  * @requires @playwright/test
  */

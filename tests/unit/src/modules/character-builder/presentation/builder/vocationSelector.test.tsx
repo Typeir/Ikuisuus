@@ -1,10 +1,8 @@
 /**
  * @fileoverview VocationSelector Unit Tests
- * @description Tests for the VocationSelector component — view mode pills,
- * edit mode FilterSelect comboboxes, multi-vocation (mixing) add/remove, and
- * bloodline selection. The component reads the character, edit mode, and write
- * API from the active-sheet context, so the write assertions check the sheet
- * the context ends up holding rather than a spy on a drilled callback.
+ * @description Tests view-mode pills, edit-mode FilterSelect comboboxes,
+ * multi-vocation add/remove, and bloodline selection. Write assertions read
+ * the sheet from the active-sheet context.
  *
  * @module tests/unit/lib/components/characterSheet/vocationSelector
  * @version 4.0.0

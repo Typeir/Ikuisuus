@@ -1,11 +1,7 @@
 /**
  * @fileoverview GitHub Raw Content Source Adapter
- * @description Implements the ContentSourceAdapter interface using GitHub's raw
- * content API. Used at production runtime to enable ISR revalidation — content
- * changes merged into the content repo are picked up without a full rebuild.
- *
- * Cache tags follow the format `content-{locale}-{slugPath}` so that the
- * revalidation API can bust the correct entry via `revalidateTag`.
+ * @description Implements ContentSourceAdapter using GitHub's raw content API.
+ * Cache tags follow the format `content-{locale}-{slugPath}` for revalidation.
  *
  * @module lib/db/content/adapters/github/githubContentSource
  * @author Typeir

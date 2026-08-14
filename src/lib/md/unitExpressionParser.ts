@@ -1,9 +1,7 @@
 /**
  * Unit Expression Parser
  *
- * @fileoverview Pure parser for `[= ... =]` unit expression syntax used in MDX content.
- * Parses a whole or fractional quantity, a unit name, and optional flag shortcodes.
- * Mirrors the grammar conventions of the dice expression parser.
+ * @fileoverview Parses a whole or fractional quantity, a unit name, and optional flag shortcodes from `[= ... =]` blocks.
  *
  * @module lib/md/unitExpressionParser
  * @version 1.0.0

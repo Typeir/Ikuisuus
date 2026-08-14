@@ -1,8 +1,7 @@
 /**
- * @fileoverview Archivist Panel — "The Archivist is reading…"
- * @description Renders a library page embed on the home page. Positions
- * to the right of main content when space allows, below otherwise.
- * Not draggable — fixed position.
+ * @fileoverview Renders a library page embed on the home page.
+ * @description Embeds a FeaturedPage in an iframe. Side-by-side layout when
+ * space allows, stacked otherwise. Fixed position, not draggable.
  *
  * @module modules/search/presentation/ArchivistPanel/ArchivistPanel
  * @version 1.0.0

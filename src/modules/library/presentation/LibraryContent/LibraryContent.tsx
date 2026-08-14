@@ -1,12 +1,8 @@
 /**
  * @fileoverview Library Content Body
  * @description Resolves a library slug and renders the compiled article. Shared
- * by the two route trees that serve the same content: `/{locale}/library/...`
- * with the full wiki chrome, and `/{locale}/embed/...` without it.
- *
- * The trees differ only in the shell the layout wraps around this body, so the
- * body itself lives here once. `basePath` travels down to content resolution so
- * a `slug` → `slug/main` redirect lands back in the tree the request came from.
+ * by the `/{locale}/library/...` and `/{locale}/embed/...` route trees. `basePath`
+ * carries the originating tree down to content resolution.
  *
  * @module modules/library/presentation/LibraryContent/LibraryContent
  * @version 1.0.0
@@ -32,8 +28,6 @@ import { MdRawPage } from '../MdRawPage';
 const log = logger.child({ module: 'LibraryContent' });
 
 /**
- * Props for `<LibraryContent>`.
- *
  * @interface LibraryContentProps
  * @property {string[]} slug - Route slug segments beneath the locale
  * @property {string} locale - Active locale code
@@ -46,11 +40,10 @@ export interface LibraryContentProps {
 }
 
 /**
- * Resolves and renders one library article.
- *
- * Redirects when the slug resolves only via its `main` child, 404s when nothing
- * resolves, renders raw markdown through `<MdRawPage>`, and falls back to the
- * client renderer when server-side MDX compilation fails.
+ * Resolves and renders one library article. Redirects when the slug resolves
+ * only via its `main` child, 404s when nothing resolves, renders raw markdown
+ * through `<MdRawPage>`, and falls back to the client renderer when MDX
+ * compilation fails.
  *
  * @component
  * @param {LibraryContentProps} props - Component props

@@ -1,7 +1,6 @@
 /**
  * @fileoverview World Sim React Context
  * @description Provides state management for the World Sim module via React Context + useReducer.
- * Follows the same pattern as PersistentUiContext.
  *
  * @module worldSim/context/WorldSimContext
  * @version 1.0.0

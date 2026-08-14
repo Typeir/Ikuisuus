@@ -1,8 +1,6 @@
 /**
  * @fileoverview Mediator Simulation Helpers
- * @description Extracted orbital and collision update logic from WorldSimMediator.
- * Runs during RenderPhase.Update — advances orbital positions, ticks renderer strategies,
- * and propagates collision-cloud positions each frame.
+ * @description Per-frame orbital, collision-cloud, and renderer update calculations for WorldSimMediator.
  *
  * @module modules/world-sim/application/mediator/mediatorSimulation
  * @version 1.0.0
@@ -22,8 +20,7 @@ import type {
 import type { Object3D } from 'three';
 
 /**
- * Advance all celestial orbital positions and tick renderer strategies for one frame.
- * Handles parent-relative positioning and calls renderer.update() for each body.
+ * Compute one frame of orbital positions and call renderer.update() for every celestial.
  *
  * @param {Map<string, CelestialEntry>} celestials - All active celestial entries
  * @param {SceneContext} ctx - Current frame scene context

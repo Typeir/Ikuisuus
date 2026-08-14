@@ -1,16 +1,7 @@
 /**
  * @fileoverview MDX Prose Extractor
  * @description Strips MDX/JSX/frontmatter/imports/code-fences to produce
- * readable plain text suitable for Pagefind full-text indexing. Does not depend
- * on the Foundry codebase; this is a self-contained build-script utility.
- *
- * Strategy:
- * 1. Remove YAML frontmatter (gray-matter).
- * 2. Strip MDX import/export statements.
- * 3. Strip JSX elements and `{/* paw:... *​/}` gate comments.
- * 4. Strip Markdown code fences and inline code.
- * 5. Strip Markdown formatting (bold/italic/link syntax) leaving the text.
- * 6. Collapse whitespace and return a single prose string.
+ * readable plain text for Pagefind full-text indexing.
  *
  * @module scripts/search/extractProse
  * @version 1.0.0

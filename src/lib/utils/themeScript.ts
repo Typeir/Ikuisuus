@@ -1,9 +1,8 @@
 /**
- * @fileoverview Theme Initialization Script Generator - FOUC prevention for theme system
- * @description Generates an inline JavaScript IIFE that runs before DOM render to apply
- * the user's theme preference from localStorage. Prevents flash of unstyled content (FOUC)
- * by setting data-theme attribute on <html> element synchronously. Returns 'dark' as
- * fallback for invalid or missing theme values.
+ * @fileoverview Generates a theme initialization script.
+ * @description Returns an inline IIFE string that reads Theme from localStorage and sets the
+ * data-theme attribute on <html> to the stored value if it is in Theme; otherwise sets it
+ * to 'dark'. Falls back to 'dark' on localStorage access errors.
  * 
  * @version 1.0.0
  * @author Typeir

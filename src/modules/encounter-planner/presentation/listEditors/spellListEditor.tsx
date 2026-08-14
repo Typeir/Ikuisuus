@@ -1,8 +1,6 @@
 /**
  * @fileoverview Spell List Editor Component
- * @description Reusable component for managing spell lists with metadata-backed combobox.
- * Fetches spell links on demand and renders spells with wiki links.
- * Used in both CreatureRow (design mode) and PlayModeCombatantRow (play mode).
+ * @description Renders spell chips with wiki links and a combobox for adding spells.
  *
  * @module spellListEditor
  * @version 1.0.0
@@ -36,7 +34,7 @@ import btn from '@/styles/buttons.module.scss';
 
 /**
  * @interface SpellListEditorProps
- * Configuration for SpellListEditor component
+ * Props for SpellListEditor.
  * @property {SpellRef[]} spells - Current spell list
  * @property {(spells: SpellRef[]) => void} onChange - Callback when spell list changes
  * @property {boolean} [readOnly=false] - Whether editing is disabled

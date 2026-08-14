@@ -1,9 +1,6 @@
 /**
- * @fileoverview interfaces.ts Type Export Verification Tests
- * @description Verifies that all public types and interfaces are importable.
- * Since these are pure type definitions, we verify they can be used in type
- * assertions without runtime errors.
- *
+ * @fileoverview Verifies celestials public types/interfaces are importable.
+ * @description Verifies all public types and interfaces can be used in structural type assertions.
  * @module tests/unit/worldSim/celestials/interfaces
  */
 

@@ -1,12 +1,7 @@
 /**
- * @fileoverview Spell Repository Port + Factory
- * @description Defines the hexagonal port contract for spell metadata persistence
- * and exports a factory-resolved instance based on `METADATA_BACKEND` env var.
- * Provides access patterns matching the real API routes:
- * - `/api/spells` (list all, or POST with slug array)
- * - `/api/spells/index` (lightweight index)
- * - `/api/spells/[slug]` (single-record lookup)
- *
+ * @fileoverview Spell repository port and factory.
+ * @description Defines the spell metadata repository contract and exports an
+ * instance resolved from `METADATA_BACKEND` (`'fs'` default or `'pg'`).
  * @module lib/db/content/repositories/spellRepository
  * @version 2.0.0
  * @author Typeir
@@ -19,18 +14,13 @@ import type { FilterExpression } from '../filters';
 import type { SpellIndexEntry, SpellMetadata } from '../schemas/spellMetadata';
 
 /**
- * Repository contract for spell metadata.
- *
- * Implementations MUST be safe to call even when the backing store is
- * unavailable — return empty arrays or null rather than throwing.
+ * Spell metadata repository contract.
+ * Implementations return empty arrays or null when the backing store is unavailable.
  */
 export interface SpellRepository {
   /**
    * Returns all spell metadata records for a locale.
-   *
-   * Optional filters are pushed down to the backing store. The pg adapter
-   * translates them into a MikroORM query; the fs adapter applies them in
-   * memory after reading the metadata files.
+   * Optional filters are pushed down to the backing store.
    *
    * @param {string} locale - Locale code (e.g. 'en', 'es')
    * @param {FilterExpression[]} [filters] - Optional JSON-serializable filter list
@@ -40,7 +30,6 @@ export interface SpellRepository {
 
   /**
    * Returns a lightweight index of all spells for a locale.
-   * Used by dropdowns and select components.
    *
    * @param {string} locale - Locale code
    * @returns {Promise<SpellIndexEntry[]>} Projected index entries
@@ -49,7 +38,6 @@ export interface SpellRepository {
 
   /**
    * Returns spells matching the given slugs.
-   * Used by POST /api/spells for filtered table views.
    *
    * @param {string} locale - Locale code
    * @param {string[]} slugs - Array of spell slug identifiers

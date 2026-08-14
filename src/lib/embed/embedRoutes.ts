@@ -1,16 +1,7 @@
 /**
  * @fileoverview Embed Route Vocabulary
- * @description Single source of truth for the `/{locale}/embed/...` route tree
- * and its relationship to `/{locale}/library/...`.
- *
- * Embed mode is carried by the path rather than a query parameter. The library
- * routes are statically generated, and `useSearchParams()` returns empty values
- * during prerender, so a `?embed=true` flag could only take effect after
- * hydration — every embedded page shipped the full wiki chrome in its HTML and
- * swapped it out later, and any navigation that dropped the parameter left the
- * chrome in place for good. A path segment is known at build time, so each
- * variant prerenders with the shell it actually wants and needs no JavaScript to
- * stay correct.
+ * @description Maps pathnames and URLs between the `/{locale}/embed/...` route
+ * tree and the `/{locale}/library/...` route tree.
  *
  * @version 1.0.0
  * @author Typeir

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Type → Lucide Icon Map
  * @description Maps domain `SearchContentType` strings to Lucide icon
- * components. Kept separate from TypeSigil to avoid circular imports
- * and make tree-shaking explicit.
+ * components.
  *
  * @module modules/search/presentation/atoms/iconMap
  * @version 1.0.0

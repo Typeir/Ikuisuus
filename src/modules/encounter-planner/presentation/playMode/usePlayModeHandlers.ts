@@ -1,6 +1,6 @@
 /**
  * @fileoverview Play Mode Handlers Hook
- * @description Encapsulates Play Mode state mutation handlers for combat updates, turn flow, imports, exports, and session-only combatants.
+ * @description Provides Play Mode state-mutation handlers for combat updates, turn flow, imports, exports, and session-only combatants.
  *
  * @module usePlayModeHandlers
  * @version 1.0.0

@@ -1,7 +1,6 @@
 /**
- * @fileoverview Simple visual test for slain checkbox
- * Tests that clicking slain checkbox adds the slain class to the combatant row
- * @description Validates slain visual state changes in CombatantRow component
+ * @fileoverview Visual test for the CombatantRow slain checkbox.
+ * @description Verifies the row's `slain` class tracks the slain flag.
  *
  * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/slainVisualTest
  * @version 1.0.0

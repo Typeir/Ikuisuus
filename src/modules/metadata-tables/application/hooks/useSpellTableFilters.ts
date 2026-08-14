@@ -1,13 +1,7 @@
 /**
  * @fileoverview Spell Table Filter Hook
- * @description Owns the UI filter state for the filtered spell table
- * (Damocles-only toggle, school select, concentration select) and derives a
- * JSON-serializable `FilterExpression[]` payload that can be forwarded to
- * `useSpellSources` and ultimately to `/api/spells`.
- *
- * This hook intentionally does no client-side filtering — the database (or
- * the fs adapter's in-memory parity layer) is the source of truth.
- *
+ * @description Owns the spell-table UI filter state and derives the
+ * JSON-serializable `FilterExpression[]` payload for `/api/spells`.
  * @module lib/hooks/data/useSpellTableFilters
  * @author Typeir
  * @version 1.0.0
@@ -67,12 +61,8 @@ export interface UseSpellTableFiltersResult {
 }
 
 /**
- * Manages the spell-table UI filter state and derives the corresponding
- * `FilterExpression[]` payload.
- *
- * - `damoclesOnly` true → `{ source: { $ne: 'basic' } }` (preserves null rows).
- * - `schoolFilter` non-empty → `{ school: <value> }`.
- * - `concentrationFilter` 'yes'/'no' → `{ concentration: true/false }`.
+ * Manages the spell-table UI filter state and derives the `FilterExpression[]`.
+ * `damoclesOnly` emits source neq 'basic', preserving null rows.
  *
  * @returns {UseSpellTableFiltersResult} Filter state, setters, and derived expressions.
  */

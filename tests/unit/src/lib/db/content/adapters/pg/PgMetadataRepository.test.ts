@@ -21,7 +21,7 @@ vi.mock('@/lib/logging/logger', () => ({
 type TestEntity = { locale: string; slug: string; name: string };
 type TestMetadata = { slug: string; name: string };
 
-/** Stub entity class — MikroORM only needs the constructor reference at runtime. */
+/** Stub entity class. */
 class StubEntity {
   locale = '';
   slug = '';

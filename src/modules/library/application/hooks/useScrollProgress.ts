@@ -46,10 +46,7 @@ function readScrollState(): ScrollProgress {
 
 /**
  * Returns current scroll position, viewport height, document height,
- * and normalized scroll percentage.
- *
- * Uses `requestAnimationFrame` throttling and only triggers re-renders
- * when values actually change, preventing infinite update loops.
+ * and normalized scroll percentage (readScrollState).
  *
  * @returns {ScrollProgress} Current scroll state.
  */

@@ -20,8 +20,7 @@ export const meta: CommandMeta = {
 };
 
 /**
- * Pulls content first, then main. Runs `submodule update` afterwards to
- * reconcile the pointer when main received a new submodule ref from upstream.
+ * Pulls content repo first, then main repo. Then runs `submodule update`.
  * @param {string[]} args - Arguments forwarded verbatim to `git pull`.
  * @returns {Promise<void>}
  */
@@ -54,10 +53,8 @@ export async function run(args: string[]): Promise<void> {
 
   s.start('Updating submodule ref');
   /**
-   * Use --remote --merge so the submodule tracks the branch declared in
-   * `.gitmodules` (main) and merges upstream changes into the local branch
-   * instead of detaching HEAD. This prevents the "detached HEAD" drift that
-   * happens with the default `submodule update` behavior.
+   * --remote tracks the branch declared in `.gitmodules`; --merge merges
+   * upstream changes into the local branch instead of detaching HEAD.
    */
   spawnSync(
     'git',

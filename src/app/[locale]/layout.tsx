@@ -1,13 +1,8 @@
 /**
- * Root Layout Component
+ * Root layout component.
  *
- * @fileoverview Next.js root layout with locale support, theme initialization,
- * and sidebar navigation tree generation. Wraps all pages with client providers.
- *
- * The persistent-UI script is rendered inline in `<head>`, where
- * `lib/utils/persistentUiScript` requires it. `next/script` with
- * `beforeInteractive` emits past `</head>` into `<body>` and cannot be used
- * here.
+ * @fileoverview Next.js root layout with locale support and sidebar navigation
+ * tree generation. Wraps all pages with client providers.
  *
  * @module app/[locale]/layout
  * @version 2.1.0
@@ -74,15 +69,7 @@ export default async function RootLayout({
 export const dynamic = 'force-static';
 
 /**
- * Enumerates the locale segment so nested routes can prerender at build time.
- *
- * Without this, `[locale]` has no known values, and a child's
- * `generateStaticParams` cannot be paired with a parent param. Every content
- * page then deferred to first request, which is why the library route rendered
- * from disk at runtime and needed the whole corpus inside its function bundle.
- *
- * Only `en` is listed because only `en` has content. The other configured
- * locales stay on demand.
+ * Returns the locale params to prerender.
  *
  * @returns {Array<{ locale: string }>} Locale params to prerender
  */
@@ -91,8 +78,8 @@ export function generateStaticParams(): Array<{ locale: string }> {
 }
 
 /**
- * Site-wide metadataBase so all relative `/library/images/...` paths in
- * page-level Metadata objects are resolved to absolute URLs by Next.js.
+ * Site-wide metadataBase so Next.js resolves relative `/library/images/...`
+ * paths in page-level Metadata objects to absolute URLs.
  *
  * @type {Metadata}
  */

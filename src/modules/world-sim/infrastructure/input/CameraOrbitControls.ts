@@ -1,9 +1,8 @@
 /**
  * @fileoverview Camera Orbit Controls — Input-Driven Spherical Orbit
  * @description Pure input handler for mouse drag, scroll zoom, and touch gestures.
- * Maintains spherical coordinates relative to an externally managed orbit center.
- * Does NOT own the target or camera — the CameraController reads from this
- * and applies positions.
+ * Maintains spherical coordinates relative to an orbit center. Does not own
+ * the target or camera; the CameraController reads these and applies positions.
  *
  * @module worldSim/camera/CameraOrbitControls
  * @version 2.0.0
@@ -27,7 +26,6 @@ import {
 /**
  * Manages user input for orbiting a camera around a center point.
  * Owns the spherical coordinate state and angular velocity damping.
- * The controller reads the spherical state and applies it to the camera.
  *
  * @class CameraOrbitControls
  */
@@ -62,7 +60,7 @@ export class CameraOrbitControls {
   /** @property {Vector3} panDelta - Accumulated pan offset for current frame */
   public panDelta: Vector3 = new Vector3();
 
-  /** @property {(() => void) | null} onPan - Callback fired when user pans, used to unlock follow */
+  /** @property {(() => void) | null} onPan - Callback fired when user pans */
   public onPan: (() => void) | null = null;
 
   /** @property {(e: MouseEvent) => void} boundOnMouseDown - Bound handler */
@@ -131,7 +129,6 @@ export class CameraOrbitControls {
 
   /**
    * Reset all transient state — angular velocity, pan delta, drag/pan flags.
-   * Called during a full camera reset to ensure a clean slate.
    */
   resetState(): void {
     this.isDragging = false;
@@ -220,7 +217,7 @@ export class CameraOrbitControls {
   }
 
   /**
-   * Clamp the phi angle to prevent gimbal lock.
+   * Clamp this.spherical.phi to [MIN_POLAR_ANGLE, MAX_POLAR_ANGLE].
    *
    * @private
    */

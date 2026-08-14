@@ -1,7 +1,7 @@
 /**
  * Hooks Index
  *
- * @fileoverview Re-exports all custom hooks for convenient importing.
+ * @fileoverview Re-exports all custom hooks.
  * @module lib/hooks
  * @author Typeir
  * @version 1.0.0

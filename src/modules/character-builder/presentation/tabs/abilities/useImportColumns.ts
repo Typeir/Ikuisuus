@@ -1,9 +1,7 @@
 /**
- * @fileoverview Import-tab column configs hook
- * @description Builds the per-tab MetadataTable column configurations for the
- * ability import panel (spells, heirlooms, trinkets, feats), reusing the shared
- * library-table column builders. Extracted from AbilityImportPanel to keep that
- * component within the file-length budget.
+ * @fileoverview Import-tab column configs hook.
+ * @description Returns MetadataTable column configurations for the
+ * ability import tabs (spells, heirlooms, trinkets, feats).
  *
  * @module modules/character-builder/presentation/tabs/abilities/useImportColumns
  * @version 1.0.0

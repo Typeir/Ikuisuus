@@ -1,7 +1,6 @@
 /**
  * @fileoverview Filter Select Component
- * @description Accessible, virtualized dropdown select for table filters with mobile modal support.
- * Provides consistent styling, keyboard navigation, and responsive behavior.
+ * @description Dropdown select for table filters. Renders as a bottom sheet below 640px viewport width.
  *
  * @module filterSelect
  * @version 1.0.0
@@ -138,8 +137,7 @@ const VirtualizedOption = memo(function VirtualizedOption({
 });
 
 /**
- * Filter-specific modal content renderer used by FilterSelect.
- * Wraps the generic MobileModal with filter-specific search and option rendering.
+ * MobileModal wrapper with search input and option list for FilterSelect.
  */
 const FilterMobileModal = memo(function FilterMobileModal({
   isOpen,
@@ -221,7 +219,7 @@ const FilterMobileModal = memo(function FilterMobileModal({
 });
 
 /**
- * Accessible filter select component with mobile modal support and virtualization.
+ * Select dropdown for table filters. Renders as a bottom sheet on mobile viewports.
  *
  * @component
  * @param {FilterSelectProps} props - Component configuration

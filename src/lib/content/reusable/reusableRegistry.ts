@@ -2,16 +2,8 @@
  * Reusable Region Registry
  *
  * @fileoverview Discovers content files that opt into reuse and exposes their
- * regions as MDX component sources.
- *
- * Discovery reads frontmatter only, and only for files that declare the flag,
- * so no content is compiled to find candidates. Results are cached for the
- * lifetime of the process.
- *
- * The registry deliberately returns *sources* rather than rendered output. The
- * compile pipeline embeds them as real MDX, so interactive components inside a
- * reused region stay interactive and no CSS module hashes are frozen into
- * content.
+ * regions as MDX component sources. Reads frontmatter only; results cached for
+ * the process lifetime.
  *
  * @module lib/content/reusable/reusableRegistry
  * @version 1.0.0
@@ -23,7 +15,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { parseReusableRegions } from './parseReusableRegions';
 
-/** Fast pre-check so files that never opted in are not parsed further. */
+/** True when the file declares `reusable: true`. */
 const HAS_FLAG = /^\s*reusable\s*:\s*true\s*$/m;
 
 /**
@@ -126,7 +118,7 @@ export async function discoverReusables(
 }
 
 /**
- * Clears the discovery cache. Intended for tests and for watch-mode rebuilds.
+ * Clears the discovery cache.
  *
  * @returns {void}
  */

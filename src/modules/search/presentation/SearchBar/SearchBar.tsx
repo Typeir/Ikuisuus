@@ -1,11 +1,8 @@
 /**
  * @fileoverview Search Bar Component
  * @description Always-visible search input mounted under the sidebar heading
- * in `responsiveLayoutShell.tsx`. Command-palette feel with Empyrean-serif
- * placeholder, Cmd/Ctrl-K shortcut, and ARIA combobox pattern. Delegates
- * dropdown rendering to SearchDropdown.
- *
- * Locale-aware — the `locale` prop comes from route params.
+ * in `responsiveLayoutShell.tsx`. Cmd/Ctrl-K shortcut, ARIA combobox pattern,
+ * locale from route params. Delegates dropdown rendering to SearchDropdown.
  *
  * @module modules/search/presentation/SearchBar/SearchBar
  * @version 1.0.0
@@ -159,13 +156,7 @@ export function SearchBar({
   }, [onNavigate]);
 
   /**
-   * Global Cmd/Ctrl-K shortcut.
-   *
-   * The shell mounts one SearchBar per breakpoint (mobile header,
-   * desktop sidebar) and hides the inactive one with CSS, so each
-   * instance only claims the shortcut while its input is actually
-   * visible. checkVisibility is feature-detected: absent in jsdom,
-   * where the guard is skipped so tests exercise the focus path.
+   * Global Cmd/Ctrl-K shortcut focuses the input if visible.
    */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -202,11 +193,7 @@ export function SearchBar({
   const showDropdown = open && query.length >= 2 && !debouncing;
 
   /**
-   * Cap the dropdown to the space below the input. The dropdown is
-   * absolutely positioned, but absolute boxes still extend the page's
-   * scrollable overflow — without this cap a tall result list grows the
-   * document instead of scrolling internally. Measured once per open
-   * (plus resizes), never per frame.
+   * Dropdown max height defaulting to 160px, capped to space under the input.
    */
   const [dropdownMax, setDropdownMax] = useState<number | null>(null);
   const measureDropdownRoom = useCallback(() => {

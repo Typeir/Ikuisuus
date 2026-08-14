@@ -1,8 +1,6 @@
 /**
- * EncounterPlanner Integration Tests
- *
- * @fileoverview Comprehensive integration tests for the EncounterPlanner component,
- * focusing on lock functionality and input disabling behavior.
+ * @fileoverview Integration tests for the EncounterPlanner lock functionality and
+ * input disabling behavior.
  *
  * @module encounterPlanner-integration
  * @version 1.0.0
@@ -14,10 +12,7 @@
  * @requires @/modules/encounter-planner EncounterPlanner component
  *
  * @description
- * Tests the EncounterPlanner lock functionality, focusing on verifying that:
- * - Locked fields are properly disabled in the UI
- * - Lock button toggles work correctly
- * - Lock state persists through component updates
+ * Tests locked and unlocked stat input disabling in CombatantRow.
  */
 
 import { createInProgressCombatant } from '@/modules/encounter-planner/application/factories/combatSnapshot.factory';
@@ -28,7 +23,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
- * Messages for intl provider - minimal to avoid missing message errors
+ * Intl messages passed to NextIntlClientProvider during tests.
  */
 const testMessages = {
   encounterPlanner: {

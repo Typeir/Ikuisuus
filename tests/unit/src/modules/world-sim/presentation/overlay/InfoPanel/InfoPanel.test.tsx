@@ -17,7 +17,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-/** Mock CelestialRegistry to avoid coupling to real JSON data */
+/** Mocked CelestialRegistry with test body data */
 vi.mock('@/modules/world-sim/domain/celestials/celestialRegistry', () => ({
   CelestialRegistry: {
     shared: () => ({

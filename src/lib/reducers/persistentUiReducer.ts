@@ -1,9 +1,8 @@
 /**
  * Persistent UI Reducer
  *
- * @fileoverview Pure reducer function for persistent UI state management.
- * Handles all state transitions for sidebar menu, theme, and hydration state.
- * Implements action-driven state updates for predictable state management.
+ * @fileoverview Pure reducer for persistent UI state. Handles sidebar menu,
+ * theme, unit system, corrections token, and hydration state transitions.
  *
  * @module lib/reducers/persistentUiReducer
  * @version 1.0.0
@@ -42,14 +41,15 @@ import {
  * @description
  * Handles the following action types:
  * - HYDRATE_FROM_STORAGE: Merges persisted data into state
- * - SET_SIDEBAR_OPEN: Explicitly sets sidebar open state
+ * - SET_SIDEBAR_OPEN: Sets sidebar open state
  * - TOGGLE_SIDEBAR: Toggles sidebar open state
- * - SET_THEME: Updates theme value
- * - SET_SIDEBAR_EXPANSION: Sets expansion with sibling auto-close
- * - TOGGLE_SIDEBAR_PATH: Toggles expansion with sibling auto-close
- * - SET_CORRECTIONS_TOKEN: Updates corrections API token
- * - SET_UNIT_SYSTEM: Updates unit display preference
- * - RESET: Returns to default state
+ * - SET_THEME: Sets theme value
+ * - SET_SIDEBAR_EXPANSION: Sets expanded paths, auto-closing siblings
+ * - TOGGLE_SIDEBAR_PATH: Toggles a path in expandedPaths
+ * - SET_CORRECTIONS_TOKEN: Sets corrections API token
+ * - SET_UNIT_SYSTEM: Sets unit system for one dimension
+ * - SET_ASPECT_EXPANDED: Sets aspect collapse state
+ * - RESET: Returns to default state, preserving isHydrated
  */
 export function persistentUiReducer(
   state: PersistentUiState,

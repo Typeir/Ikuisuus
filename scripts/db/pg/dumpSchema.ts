@@ -1,17 +1,7 @@
 #!/usr/bin/env tsx
 /**
- * @fileoverview Emits the DDL MikroORM derives from the entity metadata.
- *
- * The ORM entity definitions are being migrated off MikroORM's decorators onto
- * an in-house shim, because `constructor.name` does not survive SWC
- * minification. That migration must be schema-neutral, and a dropped
- * `nullable`, `fieldName` or `columnType` would be invisible to both
- * type-checking and the unit tests.
- *
- * This script renders the schema to SQL straight from metadata, with no
- * database connection, so the output can be captured before the migration and
- * diffed against the output after it. A byte-identical diff is the proof that
- * nothing drifted.
+ * @fileoverview Emits the DDL MikroORM derives from the entity metadata and a
+ * sorted metadata manifest, without a database connection.
  *
  * @module scripts/db/pg/dumpSchema
  * @version 1.0.0
@@ -27,10 +17,8 @@ import path from 'path';
 const OUTPUT_DIR = path.join(process.cwd(), '.ignore', 'schema');
 
 /**
- * Renders the create-schema DDL for the configured entities.
- *
- * `connect: false` keeps this usable without a live database — the generator
- * works purely from discovered metadata and the platform's type mappings.
+ * Renders the create-schema DDL for the configured entities with no database
+ * connection.
  *
  * @returns {Promise<string>} Newline-terminated DDL.
  */
@@ -52,10 +40,6 @@ const renderSchema = async (): Promise<string> => {
 
 /**
  * Sorts entity metadata into a stable order and summarises it.
- *
- * The DDL alone can hide ordering churn, so a companion manifest records every
- * entity name, table and property mapping in sorted order. Diffing both catches
- * changes the SQL renders identically.
  *
  * @returns {Promise<string>} Sorted metadata manifest.
  */

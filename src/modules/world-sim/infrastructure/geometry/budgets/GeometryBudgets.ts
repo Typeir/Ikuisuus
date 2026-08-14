@@ -1,16 +1,6 @@
 /**
  * @fileoverview Geometry LOD Budget Definitions
- * @description Centralized segment-count budgets for every celestial body type at
- * three quality tiers. Renderers import these instead of hard-coding segment counts,
- * enabling scene-wide LOD control from a single file.
- *
- * Vertex budget summary (approximate):
- * | Tier   | Total scene vertices | Reduction vs original |
- * |--------|---------------------:|----------------------:|
- * | Legacy |            ~85 000   |                    —  |
- * | High   |            ~21 000   |                 75 %  |
- * | Medium |             ~5 000   |                 94 %  |
- * | Low    |             ~2 500   |                 97 %  |
+ * @description Segment-count budgets per quality tier for every celestial body type.
  *
  * @module worldSim/optimization/GeometryBudgets
  * @version 1.0.0
@@ -42,7 +32,6 @@ export const SPHERE_LOD: Record<RenderQualityLevel, number> = {
 
 /**
  * Atmosphere shell segment counts per quality tier.
- * Simpler than surface spheres since the atmosphere is a smooth rim-lit shell.
  *
  * @constant {Record<RenderQualityLevel, number>}
  */
@@ -92,49 +81,48 @@ export const EVERDARK_LOD: Record<RenderQualityLevel, number[]> = {
 
 /**
  * Torus ring segments (applied once at creation, not LOD-swapped).
- * Reduced from legacy 24 radial / 120 tubular.
  *
  * @constant {number}
  */
 export const TORUS_RADIAL_SEGMENTS = 12;
 
 /**
- * Torus tubular segments (legacy: 120 → 48).
+ * Torus tubular segments.
  *
  * @constant {number}
  */
 export const TORUS_TUBULAR_SEGMENTS = 48;
 
 /**
- * Main tower cylinder radial segments (legacy: 32 → 12).
+ * Main tower cylinder radial segments.
  *
  * @constant {number}
  */
 export const TOWER_CYLINDER_RADIAL = 12;
 
 /**
- * Main tower cylinder height segments (legacy: 24 → 8).
+ * Main tower cylinder height segments.
  *
  * @constant {number}
  */
 export const TOWER_CYLINDER_HEIGHT = 8;
 
 /**
- * Orbiter pillar radial segments (legacy: 16 → 8).
+ * Orbiter pillar radial segments.
  *
  * @constant {number}
  */
 export const ORBITER_CYLINDER_RADIAL = 8;
 
 /**
- * Orbiter pillar height segments (legacy: 12 → 6).
+ * Orbiter pillar height segments.
  *
  * @constant {number}
  */
 export const ORBITER_CYLINDER_HEIGHT = 6;
 
 /**
- * Star corona ring geometry segments (legacy: 64 → 32).
+ * Star corona ring geometry segments.
  *
  * @constant {number}
  */
@@ -142,7 +130,6 @@ export const STAR_RING_SEGMENTS = 32;
 
 /**
  * Maximum visible torus rings on ring-world per quality tier.
- * Hiding distant rings saves entire shader draw calls.
  *
  * @constant {Record<RenderQualityLevel, number>}
  */
@@ -154,7 +141,6 @@ export const MAX_VISIBLE_RINGS: Record<RenderQualityLevel, number> = {
 
 /**
  * Maximum visible orbiter pillars on tower-world per quality tier.
- * Each hidden orbiter saves a ShaderMaterial draw call plus its glow sprite.
  *
  * @constant {Record<RenderQualityLevel, number>}
  */
@@ -166,7 +152,6 @@ export const MAX_VISIBLE_ORBITERS: Record<RenderQualityLevel, number> = {
 
 /**
  * Device pixel ratio cap per quality tier.
- * Reducing DPR from 2→1 on a 1080p phone cuts fragment count by 4×.
  *
  * @constant {Record<RenderQualityLevel, number>}
  */
@@ -177,16 +162,15 @@ export const DPR_CAP: Record<RenderQualityLevel, number> = {
 };
 
 /**
- * Background starfield particle count (legacy: 2000 → 1200).
+ * Background starfield particle count.
  *
  * @constant {number}
  */
 export const STARFIELD_BUDGET = 1200;
 
 /**
- * Create a set of three SphereGeometry instances at LOD tiers for a given radius.
- * Renderers call this once during mesh construction and store the result for
- * swap-on-quality-change. The caller owns disposal of all three geometries.
+ * Create three SphereGeometry instances at LOD tiers for a given radius.
+ * The caller owns disposal of all three geometries.
  *
  * @function createSphereLODSet
  * @param {number} radius - Sphere radius in scene units

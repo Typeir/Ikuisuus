@@ -1,8 +1,6 @@
 /**
- * @fileoverview Abstract Filesystem Metadata Repository
- * @description Base class for all filesystem-backed repository adapters. Provides
- * concrete implementations of `list` and `getBySlug` backed by `readMetadataFiles`.
- * Subclasses override `filter` and `matchSlug` to customise record selection.
+ * @fileoverview Abstract Filesystem Metadata Repository. Base class for filesystem-backed
+ * repository adapters. Provides `list` and `getBySlug` backed by `readMetadataFiles`.
  *
  * @module lib/db/content/adapters/fs/FsMetadataRepository
  * @version 1.0.0
@@ -21,9 +19,8 @@ import { readMetadataFiles } from './readMetadataFiles';
  * @template T - Domain metadata record type. Must expose a `slug` string field.
  *
  * @description
- * Subclasses provide `subdir` and `logModule` via `super()` and may override
- * `filter` or `matchSlug` to specialise record selection without duplicating
- * the read/error-handling boilerplate.
+ * Subclasses pass `subdir` to the constructor and may override `filter` or
+ * `matchSlug` to specialise record selection.
  */
 export abstract class FsMetadataRepository<T extends { slug: string }> {
   /** @protected */
@@ -47,9 +44,8 @@ export abstract class FsMetadataRepository<T extends { slug: string }> {
    * @returns {record is T} True when the record should be included.
    *
    * @description
-   * Default implementation accepts any non-null value. Override in subclasses
-   * that share a content directory with records of a different type (e.g.
-   * vocations and specializations share the same directory).
+   * Default accepts any non-null record. Return false to exclude records of
+   * another type sharing the same content directory.
    */
   protected filter(record: unknown): record is T {
     return record != null;
@@ -63,8 +59,8 @@ export abstract class FsMetadataRepository<T extends { slug: string }> {
    * @returns {boolean} True when `record` is the requested item.
    *
    * @description
-   * Default implementation compares `record.slug` strictly. Override when a
-   * record type carries a secondary slug field (e.g. `MonsterMetadata.subSlug`).
+   * Default compares `record.slug` strictly. Override to match a record type's
+   * secondary slug field.
    */
   protected matchSlug(record: T, slug: string): boolean {
     return record.slug === slug;

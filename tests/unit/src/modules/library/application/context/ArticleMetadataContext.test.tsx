@@ -1,7 +1,6 @@
 /**
  * @fileoverview Article Metadata Context Tests
- * @description Covers the section lookup the aspect rows depend on, and the
- * safety behaviour outside an article.
+ * @description Tests section lookup and behaviour with missing or null metadata.
  *
  * @module tests/unit/src/modules/library/application/context/ArticleMetadataContext
  * @version 1.0.0
@@ -22,8 +21,7 @@ import React from 'react';
 import { describe, expect, it } from 'vitest';
 
 /**
- * Reads one section's aspects and renders them, standing in for any component
- * embedded in an article.
+ * Reads one section's aspects and renders them with the page title.
  *
  * @param {object} props - Component props
  * @param {string} props.section - Section to look up
@@ -62,7 +60,7 @@ describe('ArticleMetadataProvider', () => {
     );
   });
 
-  /** The page title carries the page-level aspects, so the H1 row resolves. */
+  /** Resolves the page title to the page-level aspects. */
   it('should resolve the title to the page-level aspects', () => {
     render(
       <ArticleMetadataProvider metadata={MUCKLORD}>
@@ -116,11 +114,7 @@ describe('ArticleMetadataProvider', () => {
     expect(screen.getByTestId('title')).toHaveTextContent('none');
   });
 
-  /**
-   * A component embedded in a page that has no metadata must render nothing
-   * rather than throw, because the same components are used across every kind of
-   * content.
-   */
+  /** Renders nothing when no provider is present. */
   it('should tolerate being used with no provider at all', () => {
     render(<Probe section='Garbage Communion' />);
 

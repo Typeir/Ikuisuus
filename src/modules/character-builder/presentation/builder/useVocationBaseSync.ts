@@ -1,15 +1,8 @@
 /**
  * @fileoverview Vocation base-proficiency sync hook
- * @description Keeps each vocation entry's base-proficiency snapshot in sync with
- * the vocation metadata its slug resolves to: `baseSavingThrows` (ability names),
- * `baseSkillChoiceCount` (how many base skill picks it offers), `baseSkillChoices`
- * (the offered skills as table row-keys, empty = "any"), and `baseTradeFixed`
- * (outright-granted trades as table row-keys). This is the single source for those
- * snapshots, so behaviour is identical whether a vocation is assigned for the first
- * time, swapped, or promoted to first when an earlier entry is removed; it also
- * backfills entries stored before the fields existed. No-ops until metadata is
- * present and patches solely on a real difference, so it converges without looping.
- * Extracted from {@link VocationSelector} to keep it within the file length gate.
+ * @description Syncs each vocation entry's `baseSavingThrows`, `baseSkillChoiceCount`,
+ * `baseSkillChoices`, and `baseTradeFixed` from the vocation metadata its slug
+ * resolves to. Patches only on a real difference.
  *
  * @module modules/character-builder/presentation/builder/useVocationBaseSync
  * @version 2.0.0

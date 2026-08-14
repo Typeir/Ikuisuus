@@ -1,8 +1,6 @@
 /**
  * @fileoverview Aspect Vocabulary Tests
- * @description Guards the closed aspect vocabulary in `shared-data.json` and the
- * helpers that read it. The vocabulary is the thing a health check validates
- * content against, so a mistake here silently weakens every downstream check.
+ * @description Tests the aspect vocabulary in `shared-data.json` and its reader helpers.
  *
  * @module tests/unit/scripts/metadata/aspects
  * @version 1.0.0
@@ -86,8 +84,7 @@ describe('aspect vocabulary', () => {
     });
 
     /**
-     * References resolve one level and must never chain, because a chain makes
-     * resolution order significant and lets a group silently resolve to nothing.
+     * References resolve only one level and never chain.
      */
     it('should not require chained resolution', () => {
       const chained: string[] = [];
@@ -103,9 +100,7 @@ describe('aspect vocabulary', () => {
     });
 
     /**
-     * Borrowed lists are human-readable game data while aspects are kebab-case,
-     * so a borrowed `"mythic artifact"` has to arrive as `mythic-artifact` or the
-     * group silently rejects a value the game considers canonical.
+     * Borrowed values are converted to kebab-case.
      */
     it('should kebab-case borrowed values', () => {
       const rarity = resolveAspectValues(sharedData, 'rarity');

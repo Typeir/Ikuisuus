@@ -1,9 +1,7 @@
 /**
  * Gate Result Adapter
  *
- * @fileoverview Converts CheckResult from health check scripts into GateResult
- * for the PAW gate system. Used by all thin-wrapper gates to bridge the two
- * type systems without duplicating conversion logic.
+ * @fileoverview Converts CheckResult from health check scripts into GateResult.
  *
  * @module .paw/gates/adapt-result
  * @author Typeir
@@ -19,7 +17,7 @@ import type { GateFinding, GateResult, GateStats } from '../healthCheckTypes';
  *
  * @param {string} gateId - Gate identifier
  * @param {CheckResult} result - Script check result
- * @returns GateResult compatible with the PAW gate system
+ * @returns GateResult for the PAW gate system
  */
 export function adaptCheckResult(
   gateId: string,

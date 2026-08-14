@@ -1,6 +1,5 @@
 /**
- * @fileoverview Detects main.mdx presence and returns navigable path.
- * Used by API handlers to mark stub nodes with mainPath so folders are immediately clickable.
+ * @fileoverview Detects main.mdx files in navigation items and maps folder paths to their main.mdx paths.
  * @module modules/navigation-sidebar/infrastructure/tree-walk/detectMainPath
  * @author Typeir
  * @version 1.0.0
@@ -11,7 +10,7 @@ import type { Item } from '@/modules/navigation-sidebar/domain/types';
 
 /**
  * Recursively detects main.mdx in directories and returns its path.
- * Marks directories so they can be navigated even before children are expanded.
+ * Maps each folder path to its main.mdx path.
  *
  * @param {Item[]} items - Navigation items
  * @param {string} [basePath=''] - Current path prefix
@@ -46,7 +45,7 @@ export function detectMainPaths(
 }
 
 /**
- * Simpler variant: returns mainPath for a specific directory if it exists.
+ * Returns the main.mdx path for a single directory if present.
  *
  * @param {Item[]} items - Child items of the directory
  * @param {string} basePath - Current directory path

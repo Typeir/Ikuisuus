@@ -14,11 +14,7 @@
  * @requires ./getContentFolder Locale-aware content directory resolver
  *
  * @description
- * Provides filesystem-based content search for the library:
- * - Recursively walks content directories
- * - Matches filenames against query (case-insensitive)
- * - Returns kebab-case paths suitable for URLs
- * - Ignores infrastructure directories (.git, node_modules, etc.)
+ * Searches content directories for files whose name matches the query (case-insensitive).
  *
  * @example
  * ```typescript

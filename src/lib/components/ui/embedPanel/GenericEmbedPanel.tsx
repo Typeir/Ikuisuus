@@ -1,8 +1,7 @@
 /**
- * @fileoverview Generic Embed Panel — Reusable Draggable Iframe Container
- * @description A generic, context-agnostic wrapper around Draggable for embedding
- * iframe content in moveable, resizable windows. Handles drag, resize, close,
- * and loading state without any domain-specific state or positioning.
+ * @fileoverview Draggable iframe embed panel.
+ * @description A context-agnostic Draggable wrapper that embeds iframe content,
+ * handling drag, resize, close, and loading state.
  *
  * @module ui/embedPanel/GenericEmbedPanel
  * @version 1.0.0
@@ -70,11 +69,8 @@ export interface GenericEmbedPanelProps {
 }
 
 /**
- * Generic, context-agnostic draggable iframe container.
- * Wraps Draggable and provides a standardized interface for embedded iframe panels.
- * Manages loading state, close state, and renders both loading spinner and iframe.
- * Handles embedding logic internally using buildEmbedUrl.
- * Exposes lifecycle events for extensibility.
+ * Draggable iframe container. Builds the embed URL via buildEmbedUrl, tracks
+ * loading and close state, and fires lifecycle callbacks.
  *
  * @component
  * @param {GenericEmbedPanelProps} props - Configuration
@@ -121,7 +117,6 @@ export function GenericEmbedPanel({
     onClosed?.();
   }, [onClosed]);
 
-  /** Trigger events when URL changes */
   const previousUrl = useRef<string | null>(null);
   if (url !== previousUrl.current) {
     previousUrl.current = url;

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Page Preview Host Tests
- * @description Verifies that the host renders one iframe per open preview.
- *
+ * @description Verifies the host renders one iframe per open preview.
  * @module tests/unit/src/lib/components/characterSheet/pagePreviewHost.test
  */
 
@@ -14,11 +13,7 @@ import { act, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-/**
- * The host resolves each preview's content path through
- * `POST /api/resolve-preview-path`. jsdom cannot fetch a relative URL, so the
- * endpoint is stubbed with the path the component would receive in the app.
- */
+/** Stub for `POST /api/resolve-preview-path`, returning the app's resolved path. */
 const mockFetch = vi.fn();
 
 beforeEach(() => {
@@ -37,8 +32,7 @@ afterEach(() => {
 });
 
 /**
- * Helper that opens a preview during render so the host has something to draw.
- *
+ * Opens a preview during render.
  * @function Opener
  * @returns {null} No DOM output
  */

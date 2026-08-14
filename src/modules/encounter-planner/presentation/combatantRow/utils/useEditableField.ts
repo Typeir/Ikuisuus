@@ -1,8 +1,8 @@
 /**
- * @fileoverview Reusable hook for inline-editable numeric fields.
- * @description Encapsulates the edit/commit/cancel cycle shared by HP Max, AC,
- * and Initiative fields in CombatantMainStats. Each instance manages its own
- * editing state while sharing a cancel-pending ref to coordinate blur vs Escape.
+ * @fileoverview Hook for inline-editable numeric fields.
+ * @description React hook implementing an edit/commit/cancel cycle. Each
+ * instance owns its editing state and shares a cancel-pending ref to
+ * coordinate blur with Escape.
  *
  * @module useEditableField
  * @version 1.0.0
@@ -19,8 +19,8 @@ import { useCallback, useState } from 'react';
  *
  * @interface EditableField
  * @property {string | null} editing - Current editing value, or null when not editing
- * @property {(value: string) => void} setEditing - Directly set the editing value (used for onFocus)
- * @property {(value: string) => void} onChange - Handler for input onChange
+ * @property {(value: string) => void} setEditing - Sets the editing value directly (for onFocus)
+ * @property {(value: string) => void} onChange - Input onChange handler
  * @property {() => void} commit - Commits the current editing value via the updater
  * @property {() => void} cancel - Cancels editing and sets the cancel-pending flag
  */
@@ -34,11 +34,9 @@ interface EditableField {
 
 /**
  * Hook for inline-editable numeric fields with commit/cancel semantics.
- * Manages editing state and coordinates with a shared cancel-pending ref
- * to prevent blur from committing after an Escape keypress.
  *
- * @param {React.MutableRefObject<boolean>} cancelPendingRef - Shared ref to coordinate cancel-on-blur
- * @param {(value: string) => void} updater - Function called with the raw editing string on commit
+ * @param {React.MutableRefObject<boolean>} cancelPendingRef - Shared ref; true prevents commit on blur
+ * @param {(value: string) => void} updater - Called with the raw editing string on commit
  * @returns {EditableField} Editing state and handlers
  */
 export function useEditableField(

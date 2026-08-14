@@ -1,16 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * @fileoverview Post-commit sync validation hook for the multirepo setup.
- *
- * After a commit, checks if the OTHER repo is still dirty. If so, the user
- * committed here without committing there — warn them to sync.
- *
- *   Post-commit on main repo    → warns if content repo still has changes
- *   Post-commit on content repo → warns if main repo still has changes
- *
- * Installed as `.git/hooks/post-commit` in the content submodule by
- * `setup-hooks.ts`. Main repo hooks are managed by husky.
- *
+ * @fileoverview Post-commit hook that warns when the other repo is dirty.
  * @module multirepo/validate-sync
  */
 
@@ -19,8 +9,8 @@ import { existsSync, statSync } from 'fs';
 import { resolve } from 'path';
 
 /**
- * Runs a git command in a repo directory, suppressing all git env-var
- * interference. Returns the process exit status.
+ * Runs a git command in a repo directory with git env-vars unset.
+ * Returns the process exit status.
  * @param repo - Absolute path to the repository root.
  * @param args - Git subcommand and flags.
  */
@@ -38,7 +28,7 @@ function gitStatus(repo: string, args: string[]): number {
 }
 
 /**
- * Returns `true` if the given repository has any staged or unstaged changes.
+ * Returns whether the repository has any staged or unstaged changes.
  * @param repo - Absolute path to the repository root.
  */
 function isDirty(repo: string): boolean {
@@ -49,7 +39,7 @@ function isDirty(repo: string): boolean {
 }
 
 /**
- * Entry point. Exits 0 in all cases — this hook only warns, never blocks.
+ * Entry point. Exits 0 in all cases; the hook only warns, never blocks.
  */
 function main(): void {
   if (process.env['IK_RUNNING'] === '1') {

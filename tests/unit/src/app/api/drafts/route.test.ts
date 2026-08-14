@@ -1,7 +1,7 @@
 /**
- * @fileoverview Unit Tests — drafts API route
- * @description Validates the GET and POST handlers for draft CRUD including
- * authentication, input validation, and error handling.
+ * @fileoverview Unit tests for the drafts API route.
+ * @description Tests the GET and POST handlers: authentication, input
+ * validation, and error handling.
  *
  * @module tests/unit/src/app/api/drafts/route
  */
@@ -66,9 +66,8 @@ function makePostRequest(
 }
 
 /**
- * Drafts exist only on the pg backend, so these tests declare it. Without it the
- * route short-circuits before reaching the repository, which is the correct
- * production behaviour on `fs` and would make every assertion below vacuous.
+ * Sets METADATA_BACKEND=pg so the route reaches the repository. On `fs` the
+ * route short-circuits before the repository call.
  */
 beforeEach(() => {
   process.env.METADATA_BACKEND = 'pg';
@@ -272,10 +271,8 @@ describe('POST /api/drafts', () => {
 });
 
 /**
- * There is no filesystem draft store. Reaching the repository on `fs` hits an
- * unconfigured ORM and throws about a missing `dbName`, which surfaced as a 500
- * on every editor page load — a broken server, rather than a feature that is
- * simply not present on this backend.
+ * Tests GET/POST on the `fs` backend, where drafts are not implemented: GET
+ * returns no draft, POST returns 501.
  */
 describe('drafts on the fs backend', () => {
   beforeEach(() => {

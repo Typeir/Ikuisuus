@@ -1,10 +1,8 @@
 /**
- * @fileoverview Vocation Entry Block Component
- * @description Single-row editor for one {@link VocationEntry} (vocation picker,
- * specialization picker, and level spinner with {@link NumericInput}). Each block
- * manages its own async loading state via `asyncLoading` so multiclassing entries
- * remain fully independent. Skeleton placeholders replace selector inputs in-place
- * while metadata or feature shards are loading.
+ * @fileoverview Single-row editor for one {@link VocationEntry}: vocation picker,
+ * specialization picker, and level spinner with {@link NumericInput}. Tracks
+ * async loading via `asyncLoading`. Replaces selector inputs with skeletons while
+ * loading.
  *
  * @module lib/components/characterSheet/vocationEntryBlock
  * @version 3.0.0
@@ -67,10 +65,7 @@ export interface VocationEntryBlockProps {
 }
 
 /**
- * Single vocation entry row for the VocationSelector edit panel.
- * Manages its own async loading state so multiclassing entries are fully
- * independent. Skeleton placeholders appear in-place of the selector inputs
- * while loading — no extra elements are injected outside the row layout.
+ * Vocation entry row for the VocationSelector edit panel.
  *
  * @component
  * @param {VocationEntryBlockProps} props - Component props

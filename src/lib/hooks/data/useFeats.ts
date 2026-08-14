@@ -35,7 +35,7 @@ export interface UseFeatsOptions {
  * @property {boolean} isLoading - True while the request is in-flight
  * @property {Error | undefined} error - Error object when loading failed
  * @property {KeyedMutator<FeatMetadata[]>} mutate - SWR mutate for cache invalidation
- * @property {() => void} revalidate - Convenience helper that triggers a revalidation
+ * @property {() => void} revalidate - Triggers a revalidation
  */
 export interface UseFeatsResult {
   feats: FeatMetadata[];
@@ -46,9 +46,8 @@ export interface UseFeatsResult {
 }
 
 /**
- * Fetches feat metadata from `/api/feats`. Results are cached by SWR so
- * multiple components using this hook within the same locale do not issue
- * duplicate requests.
+ * Fetches feat metadata from `/api/feats`. Results are cached by SWR per
+ * locale key.
  *
  * @param {UseFeatsOptions} options - Hook configuration
  * @returns {UseFeatsResult} Feat loading state

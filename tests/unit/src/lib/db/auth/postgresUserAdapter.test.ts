@@ -2,7 +2,7 @@
  * PostgreSQL User Adapter Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL user adapter.
- * Mocks `@/lib/db/orm/orm` (getEM) to avoid real DB connections.
+ * `@/lib/db/orm/orm` (getEM) is mocked.
  *
  * @module tests/unit/lib/db/auth/postgresUserAdapter
  */

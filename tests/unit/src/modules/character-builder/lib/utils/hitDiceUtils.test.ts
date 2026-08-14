@@ -1,6 +1,6 @@
 /**
  * @fileoverview Hit-dice HP derivation unit tests
- * @description Verifies `recalculateHpMax` (legacy frozen-conMod fold) and
+ * @description Tests `recalculateHpMax` (legacy frozen-conMod fold) and
  * `deriveHitPoints` / `perLevelGrantBonus` (the live fold: rolled dice + CON × N
  * + passive hp grants, minus the grievous-wound pool).
  *
@@ -20,7 +20,7 @@ import {
 import { describe, expect, it } from 'vitest';
 
 /**
- * Builds a hit die entry with sensible defaults, overridable per test.
+ * Builds a hit die entry with defaults.
  *
  * @param {Partial<HitDieRollEntry> & { id: string }} overrides - Field overrides; `id` required
  * @returns {HitDieRollEntry} Fully-populated entry

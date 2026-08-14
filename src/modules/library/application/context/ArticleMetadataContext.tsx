@@ -1,21 +1,15 @@
 /**
  * @fileoverview Article Metadata Context
- * @description Scopes one page's generated metadata to the whole MDX tree, so a
- * component embedded anywhere in an article can read what page it is on.
+ * @description Scopes one page's generated metadata to the whole MDX tree so any
+ * embedded component can read the current article.
  *
- * MDX has no prop drilling. Without this, every interactive component that needs
- * page data grows its own fetch — which is why the metadata tables each call
- * their own API route — and each one re-learns the same lesson about which
- * backend it is talking to.
- *
- * **The provider receives metadata; it never loads it.** The repository reaches
- * the ORM, and this file is imported by client components. Loading belongs in the
+ * The provider receives metadata; it never loads it. Loading belongs in the
  * server component that renders the provider.
  *
- * **Sidecars are the dev backend, not the live one.** The site runs
- * `METADATA_BACKEND=pg`, so a field that exists in a `.metadata.json` file but
- * not in the pg schema is present locally and absent in production. Consumers
- * must treat every field as optional and render nothing rather than assume.
+ * The dev backend is a sidecar (`.metadata.json`); production runs
+ * `METADATA_BACKEND=pg`. A field in the sidecar not in the pg schema is absent
+ * in production, so consumers must treat every field as optional and render
+ * nothing rather than assume.
  *
  * @module modules/library/application/context/ArticleMetadataContext
  * @version 1.0.0
@@ -108,9 +102,8 @@ export const ArticleMetadataProvider: React.FC<{
 /**
  * Reads the metadata of the article currently being rendered.
  *
- * Safe outside an article: returns a null record and a lookup that finds
- * nothing, so a component embedded in a page without metadata renders nothing
- * rather than throwing.
+ * Outside an article: returns a null metadata record and a lookup that finds
+ * nothing; components render nothing instead of throwing.
  *
  * @returns {ArticleMetadataValue} The article's metadata and section lookup
  */

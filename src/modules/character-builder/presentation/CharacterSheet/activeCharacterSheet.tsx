@@ -1,7 +1,7 @@
 /**
  * @fileoverview Active Character Sheet Wrapper
- * @description Reads the active character from context and renders the full
- * character sheet. Returns null when no character is selected.
+ * @description Renders the full character sheet for the active character.
+ * Returns null when no character is selected.
  *
  * @module lib/components/characterSheet/activeCharacterSheet
  * @version 1.0.0

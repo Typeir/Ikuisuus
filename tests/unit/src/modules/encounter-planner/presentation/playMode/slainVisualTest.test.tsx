@@ -1,6 +1,5 @@
 /**
- * @fileoverview Simple visual test for slain checkbox
- * Tests that clicking slain checkbox adds the slain class to the combatant row
+ * @fileoverview Tests that the slain checkbox adds the slain class to the combatant row.
  */
 
 import { PlayModeCombatantRow } from '@/modules/encounter-planner/presentation/playMode';

@@ -1,9 +1,7 @@
 /**
  * @fileoverview Aspect Extractor Tests
- * @description Covers the derivations that turn prose and structured fields into
- * aspects, with the damage strata as the focus: they are inferred from the types
- * already present rather than authored, so a mistake here silently mislabels
- * every record carrying that type.
+ * @description Tests extractStrataTags, which maps damage, resistance, immunity,
+ * and vulnerability types to their damage stratum aspect.
  *
  * @module tests/unit/scripts/metadata/aspectExtractors
  * @version 1.0.0
@@ -65,10 +63,7 @@ describe('extractStrataTags', () => {
     expect(result).not.toContain('resistance:elemental');
   });
 
-  /**
-   * True damage stands outside every stratum: it cannot be resisted, reduced or
-   * avoided, so giving it one would imply a defence that does not exist.
-   */
+  /** True damage maps to no stratum. */
   it('should give true damage no stratum', () => {
     expect(extractStrataTags(['damage:true'], sharedData)).toEqual([]);
   });
@@ -86,7 +81,7 @@ describe('extractStrataTags', () => {
     expect(twice.sort()).toEqual(once.sort());
   });
 
-  /** Every stratum member must be a real damage type, or nothing will match it. */
+  /** Asserts every non-true damage type appears in a damage stratum. */
   it('should stratify every damage type except true', () => {
     const strata = sharedData.gameData.damageStrata ?? {};
     const stratified = new Set(Object.values(strata).flat());

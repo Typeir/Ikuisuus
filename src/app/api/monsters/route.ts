@@ -1,9 +1,9 @@
 /**
- * @fileoverview Monsters API Route - Monster metadata JSON endpoint for MonsterTable
- * @description Next.js API route that serves monster stat block metadata via the
+ * @fileoverview Monsters API route - monster metadata JSON endpoint
+ * @description GET /api/monsters returns monster metadata via the
  * content adapter layer. Supports locale-aware content via ?locale query parameter.
- * Flattens multi-stat-block arrays (e.g., dragon variants in single file) into
- * unified response. Used by MonsterTableWrapper for client-side data fetching.
+ * Flattens multi-stat-block arrays (e.g., dragon variants in single file) into a
+ * unified response.
  *
  * @version 2.0.0
  * @author Typeir

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Not Found Content Component
- * @description 404 page with smart route suggestion using nearest match algorithm
+ * @description Renders the 404 page and a link to the nearest matching route.
  *
  * @module NotFoundContent
  * @version 1.0.0
@@ -19,7 +19,7 @@ import { usePathname } from 'next/navigation';
 import styles from './notFound.module.scss';
 
 /**
- * Not Found content component with smart suggestions
+ * Renders 404 page with nearest-route suggestion and back-to-library link.
  *
  * @component
  * @returns {JSX.Element} 404 page content

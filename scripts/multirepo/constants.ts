@@ -1,9 +1,6 @@
 /**
- * @fileoverview Shared constants for the ik multirepo CLI.
- *
- * Centralises repo paths, ANSI colour codes, child-process environment,
- * the ASCII logo, and the `MenuOption` union type so every module imports
- * from a single source of truth.
+ * @fileoverview Repo paths, ANSI colour codes, child-process environment,
+ * ASCII logo, and the `MenuOption` union type.
  *
  * @module multirepo/constants
  */
@@ -33,8 +30,7 @@ export const C = {
 } as const;
 
 /**
- * Shared environment forwarded to every child git process.
- * Sets `IK_RUNNING=1` so hook scripts suppress cross-repo warnings.
+ * Environment forwarded to child git processes. Adds `IK_RUNNING=1`.
  */
 export const CHILD_ENV = { ...process.env, IK_RUNNING: '1' };
 

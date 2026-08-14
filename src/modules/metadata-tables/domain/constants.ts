@@ -1,8 +1,7 @@
 /**
- * @fileoverview Table Constants - Sort orders and display labels for metadata tables
+ * @fileoverview Sort orders and display labels for metadata tables.
  * @description Defines standardized sorting sequences for item rarities, creature sizes,
- * and spell levels. Used across MonsterTable, HeirloomTable, TrinketTable, and SpellTable
- * components to ensure consistent data ordering and filtering behavior.
+ * and spell levels.
  *
  * @version 1.0.0
  * @author Typeir
@@ -22,8 +21,7 @@
  */
 
 /**
- * Item rarity sorting order (from lowest to highest quality).
- * Used for sorting heirloom tables by rarity.
+ * Order index per rarity string.
  *
  * @type {Readonly<Record<string, number>>}
  */
@@ -41,8 +39,7 @@ export const RARITY_SORT_ORDER: Readonly<Record<string, number>> = {
 } as const;
 
 /**
- * Creature size sorting order (from smallest to largest).
- * Used for sorting monster tables by size.
+ * Order index per creature size string.
  *
  * @type {Readonly<Record<string, number>>}
  */
@@ -58,8 +55,7 @@ export const SIZE_SORT_ORDER: Readonly<Record<string, number>> = {
 } as const;
 
 /**
- * Default labels for spell level tabs (Cantrip through 12th level).
- * Note: These are fallback values - actual display uses localized strings from translations.
+ * Label per spell level. Fallback values; localized strings override these.
  *
  * @type {Readonly<Record<number, string>>}
  */

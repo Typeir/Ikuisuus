@@ -25,18 +25,6 @@ export const SHALLOW_WALK_DEPTH = 2;
 /**
  * Renderable child count above which a directory is emitted as a stub even when
  * it sits below the depth cap.
- *
- * A flat directory such as `spells/` (393 entries) sits at depth 1 and would
- * otherwise expand inline, putting every leaf into the prerendered sidebar of
- * every page — once as DOM and once again in the serialized RSC payload, since
- * the tree crosses into a client component at the root layout. None of that
- * markup survives hydration: `SidebarItem` mounts children lazily and hands any
- * folder above `VIRTUALIZE_THRESHOLD` to the virtualized list, which renders a
- * window of rows rather than the full set.
- *
- * Kept equal to `VIRTUALIZE_THRESHOLD` so the rule reads as one statement: a
- * folder large enough to be virtualized on the client is never worth walking
- * into at build time.
  */
 export const STUB_CHILD_THRESHOLD = 50;
 
@@ -107,9 +95,6 @@ async function countDescendants(
 /**
  * Counts the entries of a directory that the sidebar would render as rows:
  * its subdirectories plus its deduplicated markdown files.
- *
- * Distinct from {@link countDescendants}, which recurses; this looks one level
- * down only, because the stub decision is about how wide a single expansion is.
  *
  * @param {DirectorySourceAdapter} adapter - Directory source adapter.
  * @param {string} locale - Locale code.

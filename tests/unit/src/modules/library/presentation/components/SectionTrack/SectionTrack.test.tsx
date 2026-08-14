@@ -12,8 +12,7 @@ import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
 import { SectionTrack } from '@/modules/library/presentation/components/SectionTrack';
 
 /**
- * Wraps children in the required context provider so that
- * {@link SectionTrack} can read the sidebar menu state.
+ * Wraps children in a {@link PersistentUiProvider}.
  */
 function wrapper({ children }: { children: React.ReactNode }) {
   return <PersistentUiProvider>{children}</PersistentUiProvider>;

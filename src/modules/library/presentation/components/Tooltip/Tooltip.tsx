@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tooltip MDX Component
- * @description MDX-friendly wrapper around the UI Tooltip component.
- * Maintains two-children API (trigger, content) for seamless MDX usage.
+ * @description MDX wrapper for the UI Tooltip component.
+ * Accepts two children: trigger and content.
  *
  * @module lib/components/mdx/tooltip/tooltip
  * @version 2.0.0
@@ -25,9 +25,9 @@ export interface TooltipProps {
 }
 
 /**
- * Tooltip component for MDX content.
+ * Tooltip MDX component.
  * Accepts two children: trigger element and tooltip content.
- * Always displays with arrow and icon by default.
+ * Always renders with arrow and click icon.
  *
  * @component
  * @param {TooltipProps} props - Component props

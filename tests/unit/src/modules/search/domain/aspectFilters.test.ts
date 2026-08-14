@@ -1,11 +1,7 @@
 /**
  * @fileoverview Aspect Filter Tests
  * @description Covers the translation from `?aspect=` parameters into Pagefind
- * filters.
- *
- * The keys have to match what `collectRecords` wrote into the index exactly. A
- * mismatch does not error — it returns zero results, which is indistinguishable
- * from "nothing matches" and is how the pills were inert to begin with.
+ * filters. Filter keys must match those written into the index.
  *
  * @module tests/unit/src/modules/search/domain/aspectFilters
  * @version 1.0.0
@@ -27,10 +23,7 @@ describe('aspectsToFilters', () => {
     expect(aspectsToFilters(['damage:fire'])).toEqual({ damage: ['fire'] });
   });
 
-  /**
-   * The index flattens colons in a filter key, so `meta:source` is stored as
-   * `meta-source`. Splitting on the last colon is what makes one rule cover both.
-   */
+  /** The index stores `meta:source` with the colon flattened to `meta-source`. */
   it('should flatten an internal aspect to the key the index uses', () => {
     expect(aspectsToFilters(['meta:source:ikuisuus'])).toEqual({
       'meta-source': ['ikuisuus'],
@@ -86,7 +79,10 @@ describe('hasFilters', () => {
 });
 
 describe('filtersToAspects', () => {
-  /** Round-tripping is what lets each active filter render a link that drops it. */
+  /**
+   * Each active filter renders a link that drops it; that link round-trips
+   * through aspectsToFilters and back.
+   */
   it('should restore the tokens the filters came from', () => {
     const aspects = ['damage:fire', 'damage:frost', 'meta:source:ikuisuus'];
 

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Encounter Planner Page
- * @description Dedicated page for the encounter planner tool at /[locale]/utils/encounter-planner.
- * Provides interface for creating, managing, and tracking combat encounters with full
- * creature stat management, initiative tracking, and condition monitoring.
+ * @description Page component for /[locale]/utils/encounter-planner. Renders encounter
+ * management, creature import, and combat tracking UI from encounter planner module parts.
  *
  * @module encounterPlannerPage
  * @version 1.0.0

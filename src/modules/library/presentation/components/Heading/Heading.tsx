@@ -1,6 +1,6 @@
 /**
  * @fileoverview Heading Components with Auto-Generated Anchors
- * @description Heading components that automatically generate anchor slugs for hash navigation
+ * @description Heading components that generate anchor slugs for hash navigation.
  *
  * @module heading
  * @version 1.0.0
@@ -12,10 +12,7 @@ import type { JSX } from 'react';
 import React, { ReactNode } from 'react';
 
 /**
- * Converts text to a URL-friendly slug for use as heading anchors.
- *
- * Transforms heading text into lowercase, hyphen-separated format suitable
- * for use in data-anchor attributes and URL hashes.
+ * Converts text to a lowercase, hyphen-separated URL-safe slug.
  *
  * @param {string} text - The heading text to convert
  * @returns {string} Slug-formatted string (lowercase, hyphen-separated)
@@ -39,11 +36,7 @@ function textToSlug(text: string): string {
 }
 
 /**
- * Extracts text content from React children recursively.
- *
- * Handles strings, numbers, arrays, and nested React elements to produce
- * a flat string representation of all text content. Used to generate anchor
- * slugs from heading content that may contain formatting elements.
+ * Recursively extracts text content from React children.
  *
  * @param {ReactNode} children - React children to extract text from
  * @returns {string} Concatenated text content
@@ -73,11 +66,10 @@ function getTextFromChildren(children: ReactNode): string {
 }
 
 /**
- * Wraps the first letter of children in a span with className 'first-letter'.
+ * Wraps the first character of the first text node in a span with className 'first-letter'.
  *
- * Recursively processes nested elements to find the first text node and wraps
- * its first character in a `<span className="first-letter">`. Allows styling
- * of the initial character independently and supports pseudo-elements (::before, ::after).
+ * Recursively walks nested elements to locate the first text node and wraps its
+ * first character in `<span className="first-letter">`.
  *
  * @param {ReactNode} children - Content to process
  * @returns {ReactNode} Children with first letter wrapped in <span>
@@ -162,11 +154,10 @@ interface HeadingProps {
 }
 
 /**
- * Generic heading component that auto-generates data-anchor attributes from heading text.
+ * Renders a semantic heading element with an auto-generated data-anchor attribute.
  *
- * Renders semantic HTML heading elements (h1-h6) with `data-anchor` attributes for
- * hash navigation. Automatically extracts text from children and converts to a slug
- * unless a custom anchor is provided.
+ * Extracts text from children, converts it to a slug, and sets it as data-anchor
+ * unless a custom anchor is provided. Wraps the first letter in a span.
  *
  * @param {HeadingProps} props - Component props
  * @param {1 | 2 | 3 | 4 | 5 | 6} props.level - HTML heading level
@@ -213,18 +204,13 @@ export function Heading({
 }
 
 /**
- * Factory function to create heading components for a specific heading level.
- *
- * Generates memoized heading components (H1–H6) that auto-generate data-anchor
- * attributes from heading text.
+ * Creates a memoized heading component for a fixed heading level.
  *
  * @param {1 | 2 | 3 | 4 | 5 | 6} level - HTML heading level
  * @returns {React.FC<Omit<HeadingProps, 'level'>>} A heading component for the specified level
  *
  * @remarks
- * Uses React.memo to prevent unnecessary re-renders. Each component receives
- * the same props interface (children, anchor, className) and passes the fixed
- * level to the Heading component.
+ * Uses React.memo. The fixed level is set on the Heading component.
  *
  * @example
  * const H1 = createHeadingComponent(1);

@@ -1,10 +1,9 @@
 /**
  * TypeScript Compilation Check
  *
- * @fileoverview Validates TypeScript compilation by running tsc --noEmit and
- * parsing diagnostics. Differentiates between errors (critical severity) and
- * warnings (warning severity). Supports both standalone execution (checks all
- * .ts/.tsx files) and PAW gate integration (filters to specified file list).
+ * @fileoverview Runs tsc --noEmit and parses diagnostics. Errors map to
+ * critical, warnings to warning. With options.files set, filters to those
+ * files.
  *
  * @module .github/scripts/check-tsc-compilation
  * @author Typeir
@@ -100,11 +99,8 @@ function filterDiagnosticsByFile(
 }
 
 /**
- * Execute the TypeScript compilation check and return a structured result.
- *
- * When options.files is provided, runs tsc once and filters diagnostics to
- * only those files. When options.files is not provided, returns diagnostics
- * for all files that tsc reports.
+ * Run tsc --noEmit and return a structured result. When options.files is set,
+ * diagnostics are filtered to those files.
  *
  * @param options - Optional execution context from PAW gates or CLI
  * @returns Check result with any violations

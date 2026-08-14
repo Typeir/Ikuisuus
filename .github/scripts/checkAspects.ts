@@ -2,15 +2,8 @@
  * Aspect Vocabulary Check
  *
  * @fileoverview Validates every aspect emitted into generated metadata against the
- * closed vocabulary in `scripts/core/shared-data.json`.
- *
- * The failure mode of a tag system is vocabulary rot, not extraction: a typo, a
- * quietly-invented group, or a monster-only aspect landing on a spell each degrade
- * search silently, because a wrong aspect looks exactly like a right one until
- * somebody filters by it and gets the wrong set back. This check makes that loud.
- *
- * It reads the generated `*.metadata.json` sidecars rather than MDX source, so it
- * validates what actually reaches the search index and the pill row.
+ * closed vocabulary in `scripts/core/shared-data.json`. Reads generated
+ * `*.metadata.json` sidecars.
  *
  * @module .github/scripts/check-aspects
  */
@@ -60,8 +53,7 @@ interface SharedDataShape {
 }
 
 /**
- * Splits an aspect on its last colon so `meta:source:official` yields a group and
- * a value rather than being mistaken for a malformed token.
+ * Splits an aspect on its last colon into a group and a value.
  *
  * @param {string} aspect - A full aspect token
  * @returns {{ group: string; value: string } | null} The pair, or null when unusable
@@ -77,8 +69,7 @@ function parseAspect(
 /**
  * Resolves a group's accepted values, following `valuesFrom` one level.
  *
- * Borrowed lists are human-readable game data (`"monstrous graft"`) while aspects
- * are kebab-case, so borrowed values are normalised on the way in.
+ * Borrowed values are trimmed, lowercased, and spaces replaced with hyphens.
  *
  * @param {SharedDataShape} shared - Parsed shared data
  * @param {string} group - Group name without its trailing colon
@@ -143,12 +134,7 @@ const ASPECT_TOKEN = /^[a-z][a-z0-9-]*(:[a-z0-9-]+)+$/;
 /**
  * Pulls every aspect out of a parsed metadata document.
  *
- * Collection is keyed on `tags` at any depth, because generators nest it
- * differently per content type — a monster carries one list, a bloodline carries
- * one per boon, a vocation one per feature. It is deliberately not a whole-document
- * walk: `grants` holds a different DSL that is also colon-delimited
- * (`skill:any:expertise:2`, `hp:1:level`), and reading those as aspects would
- * report parser output as vocabulary violations.
+ * Collects all string values in `tags` keys at any depth, skipping nested keys.
  *
  * @param {unknown} node - Any node of the parsed document
  * @param {Set<string>} found - Accumulator

@@ -1,8 +1,7 @@
 /**
  * File Length Gate
  *
- * @fileoverview Thin wrapper that delegates to the canonical check-file-length
- * script and adapts the result for the PAW gate system.
+ * @fileoverview Delegates to check-file-length and adapts the result for the PAW gate system.
  *
  * @module .paw/gates/file-length.gate
  * @author Typeir

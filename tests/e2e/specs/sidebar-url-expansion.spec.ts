@@ -1,8 +1,5 @@
 /**
- * Sidebar URL-Based Expansion E2E Tests
- *
- * @fileoverview Tests that sidebar automatically expands to show the current page's
- * location in the navigation tree based on URL pathname.
+ * @fileoverview Tests sidebar expansion driven by the URL pathname.
  */
 
 import { expect, test } from '@playwright/test';

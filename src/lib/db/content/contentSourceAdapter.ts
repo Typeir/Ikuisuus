@@ -1,8 +1,6 @@
 /**
  * @fileoverview Content Source Adapter Interface
- * @description Defines the hexagonal port contract for fetching raw MDX/MD content.
- * Implementations target the local filesystem (build-time) or a remote Git host
- * (runtime ISR) without changing consumer code.
+ * @description Port interface for fetching raw MDX/MD content.
  *
  * @module lib/db/content/contentSourceAdapter
  * @author Typeir

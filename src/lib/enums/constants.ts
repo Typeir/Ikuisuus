@@ -36,7 +36,6 @@ export const REGEX_CONTENT_SUFFIX =
 
 /**
  * Strips any recognized content-type suffix from a slug or filename stem.
- * This is the single canonical way to convert a suffixed name to a clean URL slug.
  *
  * @param {string} slug - Slug or filename stem that may contain a content suffix
  * @returns {string} Clean slug with content suffix removed

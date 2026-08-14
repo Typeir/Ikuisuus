@@ -1,15 +1,5 @@
 /**
- * @fileoverview Guards the `.glsl` import pipeline itself, deliberately unmocked.
- *
- * Every renderer suite stubs its shader modules with `vi.mock`, so none of them
- * can observe what the bundler actually hands back. When the Next 16 migration
- * swapped webpack's `asset/source` for Turbopack's `type: 'raw'`, all 25 shaders
- * resolved to `undefined`, every `ShaderMaterial` failed to compile, and the
- * suite stayed green. These assertions are the ones that fail in that case.
- *
- * A truthiness or non-empty check is not enough: Vite's asset path and
- * Turbopack's `type: 'asset'` both resolve a shader to a URL string, which
- * passes any such check. The source must be identified by its GLSL contents.
+ * @fileoverview Asserts bundled `.glsl` imports resolve to raw shader source strings, not URLs, paths, or `undefined`.
  *
  * @module tests/unit/modules/world-sim/shaders/glslImports
  * @version 1.0.0

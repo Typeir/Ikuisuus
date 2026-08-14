@@ -1,8 +1,7 @@
 /**
- * @fileoverview Banned IP Storage Adapter Interface
- * @description Defines a pluggable adapter contract for persisting banned IP ranges.
- * Implementations can target the filesystem, PostgreSQL, or any other backend
- * without changing business logic in `bannedIps.ts`.
+ * @fileoverview Persistence adapter contract for banned IP ranges.
+ * @description Adapter interface used by `bannedIps.ts` to read, write, and
+ * remove banned IP ranges.
  *
  * @module lib/security/bannedIpsAdapter
  * @version 1.0.0
@@ -13,9 +12,8 @@
 import type { BannedIpEntry } from './bannedIps';
 
 /**
- * Adapter interface for banned IP range persistence.
- * Implementations MUST be safe to call even when the backing store is unavailable
- * (graceful degradation over hard failures).
+ * Persistence contract for banned IP ranges.
+ * Implementations MUST be safe to call when the backing store is unavailable.
  */
 export interface BannedIpsAdapter {
   /**

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Vitest Global Setup
- * @description Global mocks and warning suppression for the test environment.
- * Mocks logger, next-intl, SVG imports, and filters noisy stderr/console output.
+ * @description Mocks logger, next-intl, SVG imports, and filters stderr/console output.
  */
 
 import '@testing-library/jest-dom';
@@ -9,7 +8,7 @@ import { vi } from 'vitest';
 
 /**
  * Mock logger globally to suppress all logging output during tests.
- * Preserves all exports so logger's own tests work correctly.
+ * Preserves all exports.
  */
 vi.mock('@/lib/logging/logger', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/logging/logger')>();
@@ -64,7 +63,6 @@ import React from 'react';
 
 /**
  * Factory for mock SVG components used in place of real .svg imports.
- * Prevents jsdom XML parsing errors on file paths with forward slashes.
  *
  * @param testId - data-testid attribute for the mock SVG element
  * @returns React component rendering a stub `<svg>` element
@@ -121,9 +119,8 @@ function evaluateMediaQuery(query: string): boolean {
 }
 
 /**
- * jsdom does not ship matchMedia. Provide a width-aware stub that
- * re-evaluates on window resize events so tests that mock innerWidth and
- * fire `resize` exercise viewport hooks realistically.
+ * jsdom does not ship matchMedia. Width-aware stub that re-evaluates match
+ * on window resize events.
  */
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -162,8 +159,7 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 /**
- * jsdom does not ship ResizeObserver.  Stub it globally so that hooks /
- * components depending on it don't crash in the test environment.
+ * jsdom does not ship ResizeObserver. Stub it globally on window.
  */
 class MockResizeObserver {
   observe = vi.fn();

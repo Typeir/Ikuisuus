@@ -1,6 +1,6 @@
 /**
- * @fileoverview Unit tests for Encounter Planner Enums
- * @description Tests for EncounterStorage and HeroicAffix enum exports, values, and usage patterns.
+ * @fileoverview Unit tests for EncounterStorage and HeroicAffix enum exports, values, and usage.
+ * @description Verifies enum exports, storage key values, affix values, and format constraints.
  *
  * @version 1.0.0
  * @author Typeir

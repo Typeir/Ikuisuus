@@ -1,8 +1,7 @@
 /**
  * @fileoverview Overlay Container — Positions DOM Elements Over 3D Scene
- * @description Binds CelestialLabel DOM elements to the ProjectionBridge for direct
- * CSS transform updates each frame. The bridge applies position, visibility, and
- * scale transforms without React re-renders or subscriber indirection.
+ * @description Binds CelestialLabel DOM elements to the ProjectionBridge, applying
+ * position, visibility, and scale transforms each frame without React re-renders.
  *
  * @module worldSim/overlay/OverlayContainer
  * @version 3.0.0
@@ -38,9 +37,9 @@ interface OverlayContainerProps {
 }
 
 /**
- * Renders floating DOM labels positioned over celestial bodies in the 3D scene.
- * Each label element is bound directly to the ProjectionBridge, which applies
- * CSS transforms (position, visibility, scale) each frame without React re-renders.
+ * Renders DOM labels over celestial bodies, bound to the ProjectionBridge
+ * which applies CSS transforms (position, visibility, scale) each frame
+ * without React re-renders.
  *
  * @param {OverlayContainerProps} props - Component props
  * @param {(id: string, element: HTMLElement) => void} props.bindElement - Bind a DOM element for direct CSS transform updates

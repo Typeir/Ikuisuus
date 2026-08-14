@@ -1,7 +1,7 @@
 /**
  * @fileoverview Vocation Repository Port + Factory
- * @description Defines the hexagonal port contract for vocation metadata persistence
- * and exports a factory-resolved instance based on `METADATA_BACKEND` env var.
+ * @description Defines the port contract for vocation metadata persistence and
+ * exports a factory-resolved instance based on `METADATA_BACKEND` env var.
  *
  * @module lib/db/content/repositories/vocationRepository
  * @version 1.0.0

@@ -1,8 +1,6 @@
 /**
- * Metadata Generation Integration Tests
- *
- * @fileoverview Integration tests for the metadata generation pipeline,
- * testing monster, heirloom, and spell metadata extraction.
+ * @fileoverview Integration tests for monster, heirloom, and spell
+ * metadata extraction.
  */
 
 import { parseHeirloomFile } from '@scripts/metadata/generateHeirloomMetadata';

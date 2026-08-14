@@ -1,21 +1,10 @@
 /**
  * @fileoverview Foundry feature parser for War Goddess Yskeia.
- * @description Dedicated handler class for Yskeia's Tier 3 text_pipe features.
- * Since this parser is bound to a specific sheet, all mechanic values are
- * known at authoring time and hardcoded — no regex extraction needed.
- *
- * Returns dnd5e 5.3.0 Activity-model overrides: each handler provides an
- * `activities` map containing Save or Utility activities that replace the
- * generic transformer's auto-generated activities.
- *
- * Handled features:
- * - **Faterender Railgun** — Line AoE, ability-score-sum damage, instant death,
- *   sequential targeting, disintegration, Mark synergy.
- * - **Arms Race** — Expanding maelstrom pair with collision resonance.
- * - **Tides of Ruin** — Advancing debris wall with restrain and shrapnel collapse.
- * - **Missile Batteries** — Auto-hit force damage at extreme range.
- * - **Warlings** — Summon construct deployment.
- * - **Protected Air space** — Anti-flight reaction with flat force damage.
+ * @description Returns dnd5e 5.3.0 Activity-model overrides; each handler
+ * provides an `activities` map containing Save or Utility activities
+ * replacing the generic transformer's auto-generated ones.
+ * Handled features: Faterender Railgun, Arms Race, Tides of Ruin, Missile
+ * Batteries, Warlings, Protected Air space.
  *
  * @module foundry/scripts/handlers/yskeiaParser
  * @version 3.0.0

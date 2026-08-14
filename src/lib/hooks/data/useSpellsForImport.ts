@@ -1,8 +1,7 @@
 /**
  * @fileoverview Spells for Import Hook
- * @description SWR hook for loading spell metadata for the Abilities tab import
- * panel. Scopes to the character's vocation spell lists when `listSources` is
- * provided; otherwise POSTs /api/spells with no filters (full library).
+ * @description SWR hook fetching spell metadata. Scopes to vocation spell lists
+ * when `listSources` is provided; otherwise returns the full library.
  *
  * @module lib/hooks/data/useSpellsForImport
  * @author Typeir
@@ -49,9 +48,8 @@ export interface UseSpellsForImportResult {
 }
 
 /**
- * Fetches spells for the abilities import panel. When `listSources` is non-empty
- * the results are scoped to those vocation spell lists (merged, deduped); with no
- * sources the full library is returned.
+ * Fetches spells. Scoped to `listSources` lists (merged, deduped) when non-empty;
+ * otherwise returns the full library.
  *
  * @param {UseSpellsForImportOptions} options - Hook configuration
  * @returns {UseSpellsForImportResult} Spell loading state

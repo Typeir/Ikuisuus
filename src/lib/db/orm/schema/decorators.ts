@@ -1,18 +1,10 @@
 /**
- * @fileoverview In-house ORM decorators that survive class-name minification.
+ * @fileoverview In-house ORM decorators safe under class-name minification.
  * @description Drop-in replacements for MikroORM's `@Entity`, `@Property`,
  * `@PrimaryKey`, `@ManyToOne`, `@OneToMany`, `@Embedded`, `@Embeddable`,
- * `@Index` and `@Unique`.
- *
- * Two rules make these minification-safe. Every entity declares its name as a
- * literal string rather than relying on `constructor.name`, and every relation
- * names its target as a literal string rather than a class reference. The class
- * decorator writes the authored name back onto the constructor before building
- * the `EntitySchema`, so MikroORM reads the intended name even when SWC has
- * rewritten the class to a single letter.
- *
- * Class decorators run bottom-up, so `@OrmIndex` and `@OrmUnique` must sit
- * below `@OrmEntity` — they populate the definition that `@OrmEntity` consumes.
+ * `@Index` and `@Unique`. Entity and relation targets are literal strings, not
+ * class references. `@OrmIndex` and `@OrmUnique` must sit below `@OrmEntity`
+ * because class decorators run bottom-up.
  *
  * @module lib/db/orm/schema/decorators
  * @version 1.0.0
@@ -142,10 +134,6 @@ export const OrmUnique =
 
 /**
  * Declares a persisted entity and builds its `EntitySchema`.
- *
- * The name is written back onto the constructor first, because `EntitySchema`
- * derives its entity name from `class.name` and would otherwise inherit the
- * minified identifier.
  *
  * @param {string} name - Authored entity name, used as the MikroORM entity name.
  * @param {EntityOptions} options - Table mapping options.

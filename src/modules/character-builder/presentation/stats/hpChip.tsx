@@ -1,6 +1,6 @@
 /**
- * @fileoverview HP combat stat chip — current/max HP with temp HP display,
- * Hit Dice counter, and HP roller panel.
+ * @fileoverview HP stat chip: current/max HP with temp HP display, Hit Dice
+ * counter, and HP roller panel.
  *
  * @module character-builder/presentation/stats/hpChip
  * @version 1.0.0
@@ -31,12 +31,11 @@ export interface HpChipProps {
 }
 
 /**
- * HP chip with Hit Dice counter and roller panel. Reads the character and write
- * API from the active-sheet context. The `hp` lock guards edits: while locked,
- * current HP is read-only and the roller cannot open; unlocking makes current
- * HP editable (clamped to `[-hpMax, hpMax]`) and enables the roller. Max HP is
- * always a read-only derived value (a pure cache of `deriveHitPoints`, kept in
- * sync by the hit-dice reconciler).
+ * Renders the HP chip with Hit Dice counter and roller panel. Reads character
+ * and write API from the active-sheet context. While the `hp` lock is engaged,
+ * current HP is read-only and the roller is disabled; unlocked, current HP is
+ * editable, clamped to `[-hpMax, hpMax]`. Max HP is a read-only derived value
+ * (cache of `deriveHitPoints`); temp HP shows when positive.
  */
 const HpChip = ({ isUnlocked, toggle, onHitDiceCommit }: HpChipProps) => {
   const tCommon = useTranslations('common');

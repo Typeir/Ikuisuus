@@ -1,12 +1,8 @@
 /**
  * @fileoverview Search Result Row Composer
- * @description Composes the five search result atoms into a single "catalog
- * entry" row layout: `[ sigil | title+snippet+meta | thumb ]`. Used by both
- * the dropdown quick-results (T5) and the /search results page (T7).
- *
- * Asymmetric layout — sigil column, content block, optional meta/thumb.
- * Each row is a link to the page-level result URL.
- *
+ * @description Composes the five search result atoms into a row layout:
+ * `[ sigil | title+content+meta | thumb ]`. Rendered as a link to the
+ * page-level result URL.
  * @module modules/search/presentation/SearchResultRow/SearchResultRow
  * @version 1.0.0
  * @author Typeir
@@ -29,7 +25,7 @@ import styles from '../atoms/atoms.module.scss';
  *
  * @interface SearchResultRowProps
  * @property {SearchResult} result - Typed search result with record + snippet
- * @property {string} [className] - Optional additional class names
+ * @property {string} [className] - Additional class names
  */
 interface SearchResultRowProps {
   result: SearchResult;
@@ -39,14 +35,13 @@ interface SearchResultRowProps {
 }
 
 /**
- * Renders a single search result as a linked row with sigil, title, snippet,
- * meta chips, and thumbnail.
+ * Renders one search result as a linked row.
  *
  * @param {SearchResultRowProps} props - Component props
  * @param {SearchResult} props.result - Typed search result with record + snippet
- * @param {string} [props.className] - Optional additional class names
- * @param {React.CSSProperties} [props.style] - Optional inline style overrides merged onto the row element
- * @param {'row' | 'card'} [props.variant=row] - Layout variant: compact row or expanded card
+ * @param {string} [props.className] - Additional class names
+ * @param {React.CSSProperties} [props.style] - Inline style overrides merged onto the row element
+ * @param {'row' | 'card'} [props.variant=row] - Layout variant: 'row' or 'card'
  * @returns {JSX.Element} The result row
  */
 export function SearchResultRow({

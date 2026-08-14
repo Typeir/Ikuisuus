@@ -1,9 +1,7 @@
 /**
  * @fileoverview Viewport Media Query Hooks
- * @description SSR-safe `matchMedia` subscription hooks. During server render
- * and the first client render (pre-hydration) the result is `undefined` so
- * consumers can defer viewport-dependent tree changes until the real value is
- * known, avoiding hydration mismatches.
+ * @description SSR-safe `matchMedia` subscription hooks. Returns `undefined`
+ * on the server and during pre-hydration client render.
  *
  * @module lib/hooks/useMediaQuery
  * @author Typeir
@@ -16,10 +14,7 @@
 import { useSyncExternalStore } from 'react';
 
 /**
- * Breakpoint below which the app renders phone-oriented layouts. Strictly
- * below the SCSS `$bp-desktop` token (1024px) — the exact width at which
- * the shell's Tailwind `lg:` sidebar appears — so the two layouts never
- * desync into a mixed state.
+ * Matches viewport widths below the desktop breakpoint (max-width: 1023.98px).
  */
 export const MOBILE_VIEWPORT_QUERY = '(max-width: 1023.98px)';
 
@@ -52,9 +47,7 @@ export function useMediaQuery(query: string): boolean | undefined {
 }
 
 /**
- * Whether the viewport is below the desktop breakpoint (≤1024px).
- * Convenience wrapper around {@link useMediaQuery} bound to
- * {@link MOBILE_VIEWPORT_QUERY}.
+ * Wrapper around {@link useMediaQuery} bound to {@link MOBILE_VIEWPORT_QUERY}.
  *
  * @function useIsMobileViewport
  * @returns {boolean | undefined} True on phone-sized viewports, `undefined` pre-hydration

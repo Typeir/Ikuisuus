@@ -1,12 +1,8 @@
 /**
- * @fileoverview Monster Repository Port + Factory
- * @description Defines the hexagonal port contract for monster metadata persistence
- * and exports a factory-resolved instance based on `METADATA_BACKEND` env var.
- *
- * Provides three access patterns matching the real API routes:
- * - `list()` — full metadata array for the table view (`/api/monsters`)
- * - `listIndex()` — lightweight projection for combobox search (`/api/monsters/index`)
- * - `getBySlug()` — single record lookup (`/api/monsters/[slug]`)
+ * @fileoverview Monster repository port + factory.
+ * @description Monster metadata persistence port, resolved by `METADATA_BACKEND` env var.
+ * Exposes `list()` (`/api/monsters`), `listIndex()` (`/api/monsters/index`),
+ * and `getBySlug()` (`/api/monsters/[slug]`).
  *
  * @module lib/db/content/repositories/monsterRepository
  * @version 2.0.0

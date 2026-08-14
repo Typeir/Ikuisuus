@@ -1,6 +1,6 @@
 /**
- * @fileoverview Comprehensive unit tests for slain checkbox functionality
- * @description Tests slain checkbox behavior, styling, state persistence, and visual feedback
+ * @fileoverview Unit tests for the CombatantRow slain checkbox.
+ * @description Tests slain checkbox visibility, interaction, styling, and state persistence.
  * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/slainCheckbox
  * @version 1.0.0
  * @author Typeir

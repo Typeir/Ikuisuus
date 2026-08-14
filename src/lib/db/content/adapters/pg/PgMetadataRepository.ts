@@ -1,9 +1,7 @@
 /**
- * @fileoverview Abstract PostgreSQL Metadata Repository (MikroORM)
- * @description Base class for all MikroORM-backed content repository adapters.
- * Provides concrete implementations of `list` and `getBySlug` built on top of
- * `getEM`. Subclasses declare the entity class and the row-to-domain mapper;
- * `populate` and `orderBy` can be overridden when needed.
+ * @fileoverview Abstract PostgreSQL metadata repository, MikroORM-backed.
+ * @description Implements `list` and `getBySlug` on `getEM`. Subclasses supply
+ * the entity class and row-to-domain mapper; `populate` and `orderBy` are overridable.
  *
  * @module lib/db/content/adapters/pg/PgMetadataRepository
  * @version 1.0.0
@@ -27,10 +25,8 @@ import {
  * @template TEntity - MikroORM entity type. Must expose `locale` and `slug` string fields.
  * @template TMetadata - Domain metadata record type. Must expose a `slug` string field.
  *
- * @description
- * Subclasses provide the entity constructor and a row mapper via abstract members,
- * then optionally override `populate()` and `orderBy()` to customise query options.
- * All error handling and logging is centralised here.
+ * @description Abstract members require an entity constructor and a row mapper; `populate()`
+ * and `orderBy()` may be overridden.
  */
 export abstract class PgMetadataRepository<
   TEntity extends { locale: string; slug: string },
@@ -66,9 +62,7 @@ export abstract class PgMetadataRepository<
    *
    * @returns {string[]} Array of relation field names. Defaults to `[]`.
    *
-   * @description
-   * Override in subclasses that require relation data (e.g. `['boons']` for
-   * bloodlines, `['features', 'preparedSpells']` for specializations).
+   * @description Override to load relation paths (e.g. `['boons']`, `['features']`).
    */
   protected populate(): string[] {
     return [];
@@ -79,9 +73,7 @@ export abstract class PgMetadataRepository<
    *
    * @returns {Record<string, 'asc' | 'desc'> | undefined} Order map or `undefined`.
    *
-   * @description
-   * Override in subclasses to control sort order. Defaults to `undefined`
-   * (database-native order).
+   * @description Override to control sort order. Defaults to `undefined` (database-native order).
    */
   protected orderBy(): Record<string, 'asc' | 'desc'> | undefined {
     return undefined;
@@ -90,9 +82,7 @@ export abstract class PgMetadataRepository<
   /**
    * Returns all metadata records for the given locale.
    *
-   * Optional filters are translated into a MikroORM query object and merged
-   * with the locale predicate before the `em.find` call. Subclasses inherit
-   * this behavior automatically.
+   * Translates optional filters into a MikroORM query object merged with the locale predicate before `em.find`.
    *
    * @param {string} locale - Locale code (e.g. `'en'`, `'es'`).
    * @param {FilterExpression[]} [filters] - JSON-serializable filter list.

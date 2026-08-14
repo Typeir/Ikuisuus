@@ -1,9 +1,8 @@
 /**
  * @fileoverview Unit tests for Combatant Heroic Section component
  * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantHeroicSection.test
- * @description Validates CombatantHeroicSection component rendering and interactions.
- * Tests heroic awakening display, affixes, bonuses, and force awakening controls.
- * Uses CombatantProvider wrapper pattern for context-based component testing.
+ * @description Tests CombatantHeroicSection rendering and interactions: awakening display,
+ * affixes, bonuses, and force awakening controls. Renders inside CombatantProvider.
  *
  * @version 2.0.0
  * @author Typeir
@@ -104,12 +103,11 @@ const createAffixEntry = (text: string): AffixEntry => ({
 });
 
 /**
- * Renders CombatantHeroicSection wrapped in CombatantProvider.
- * Component now gets all props from context, so we pass combatant overrides.
+ * Renders CombatantHeroicSection wrapped in CombatantProvider with given overrides.
  *
  * @param combatantOverrides - Partial combatant state to merge
- * @param onUpdate - Optional mock function for updates
- * @returns Render result with combatant and onUpdate refs
+ * @param onUpdate - Mock function called on updates
+ * @returns Render result plus combatant and onUpdate
  */
 const renderWithProvider = (
   combatantOverrides: Partial<InProgressCombatant> = {},

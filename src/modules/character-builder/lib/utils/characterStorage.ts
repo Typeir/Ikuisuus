@@ -11,13 +11,13 @@
  */
 
 import type {
-    AbilityKey,
-    CharacterSheet,
-    CharacterSkill,
-    CharacterSpellSlot,
-    CharacterTool,
-    EquipmentItem,
-    VocationEntry
+  AbilityKey,
+  CharacterSheet,
+  CharacterSkill,
+  CharacterSpellSlot,
+  CharacterTool,
+  EquipmentItem,
+  VocationEntry,
 } from '@/lib/types/character';
 import { UNKNOWN_DIE } from '@/lib/utils/diceUtils';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
@@ -67,7 +67,7 @@ export const TIER_LABELS: Record<
 };
 
 /**
- * All 28 standard D&D skills with their linked ability.
+ * All 28 standard Damocles skills with their linked ability.
  *
  * @constant SKILL_DEFAULTS
  * @type {CharacterSkill[]}
@@ -95,7 +95,7 @@ export const SKILL_DEFAULTS: CharacterSkill[] = [
 ];
 
 /**
- * All standard D&D tools with no proficiency by default.
+ * All standard Damocles tools with no proficiency by default.
  *
  * @constant TOOL_DEFAULTS
  * @type {CharacterTool[]}
@@ -146,9 +146,7 @@ const DEFAULT_SAVES: Record<AbilityKey, 'none'> = {
 };
 
 /**
- * Compute tier bonus from level using the Damocles progression table.
- * Starts at +1 (levels 1–3) and increases every 3 levels: `⌈level / 3⌉`.
- * Level 30 yields +10.
+ * Compute tier bonus from level: `⌈level / 3⌉`. Yields +10 at level 30.
  *
  * @function computeTierBonus
  * @param {number} level - Character level (1–30)
@@ -182,7 +180,7 @@ export const rollAbilityScore = (): number => {
 };
 
 /**
- * Create a blank vocation entry for use in the vocation selector.
+ * Create a blank vocation entry.
  *
  * @function createEmptyVocationEntry
  * @returns {VocationEntry} New vocation entry with level 1 and empty features

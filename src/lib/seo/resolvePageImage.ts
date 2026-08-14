@@ -1,13 +1,9 @@
 /**
- * @fileoverview OG image path resolver for library content pages.
+ * @fileoverview Resolves the OG image path for a content page.
  *
- * Resolves the social preview image path for a content page using a priority
- * chain: explicit frontmatter path → slug-derived public file (multiple
- * extensions) → slug-derived `.webp` candidate for CDN-served images.
- *
- * This module only performs filesystem checks — it is safe to call at build
- * time. The slug page uses `force-static`, so `generateMetadata` executes
- * exclusively during `next build` or `next dev`, where `public/` is on disk.
+ * Priority chain: explicit frontmatter path → slug-derived public file across
+ * multiple extensions → slug-derived `.webp` candidate for CDN-served images.
+ * Performs filesystem checks only.
  *
  * @module lib/seo/resolvePageImage
  * @version 1.0.0
@@ -24,9 +20,7 @@ const IMAGE_EXTENSIONS = ['.webp', '.png', '.jpg', '.jpeg'] as const;
 
 /**
  * Checks whether a root-relative path exists under the `public/` directory.
- *
- * Wrapped in a try-catch so unexpected filesystem errors degrade gracefully
- * to a false return rather than crashing the metadata generation step.
+ * Returns false on filesystem error.
  *
  * @param {string} relativePath - Root-relative path starting with `/`.
  * @returns {boolean} True when the file exists on the local filesystem.

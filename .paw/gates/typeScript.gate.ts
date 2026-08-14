@@ -1,9 +1,8 @@
 /**
  * TypeScript Compilation Gate
  *
- * @fileoverview Thin wrapper that delegates to the canonical check-tsc-compilation
- * script and adapts the result for the PAW gate system. Runs tsc compilation check
- * filtered to target files via PAW context.
+ * @fileoverview Runs tsc compilation via check-tsc-compilation on the target files
+ * and adapts the result for the PAW gate system.
  *
  * @module .paw/gates/typeScript.gate
  * @author Typeir

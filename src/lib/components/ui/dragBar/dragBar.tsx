@@ -1,8 +1,7 @@
 /**
  * @fileoverview Drag Bar Atom
  * @description Thin vertical drag handle for resizable split panes.
- * Keyboard-accessible (ArrowLeft/Right, Home/End). Pure presentational —
- * all drag logic lives in the parent (`ResizablePane`).
+ * Keyboard-accessible (ArrowLeft/Right, Home/End).
  *
  * @module ui/dragBar
  * @author Typeir

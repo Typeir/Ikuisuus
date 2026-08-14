@@ -1,7 +1,7 @@
 /**
  * @fileoverview Live MDX Preview Panel
- * @description Compiles raw MDX source at runtime and renders it inside a prose container.
- * Uses a debounced compilation cycle with React transitions so updates never block typing.
+ * @description Compiles raw MDX source at runtime and renders it in a prose-styled container.
+ * Preview compiles after a 400ms debounce on source changes.
  *
  * @module lib/components/mdxEditor/mdxPreview
  * @version 2.0.0
@@ -28,7 +28,7 @@ interface MdxPreviewProps {
 }
 
 /**
- * Fallback shown while the preview compiles.
+ * Loading indicator rendered while the preview compiles.
  *
  * @returns {JSX.Element} Loading indicator
  */
@@ -37,12 +37,11 @@ function PreviewFallback(): JSX.Element {
 }
 
 /**
- * Inner renderer that holds the compiled component.
- * Applies a fade-in animation each time the content re-compiles.
+ * Renders the compiled MDX component in a prose-styled container with a fade-in animation.
  *
  * @param {{ Component: React.ComponentType<any>; renderKey: number }} props - Compiled MDX component and render key
  * @param {React.ComponentType<any>} props.Component - Compiled MDX component
- * @param {number} props.renderKey - Render key for animation reset
+ * @param {number} props.renderKey - Changes key to reset the fade-in animation
  * @returns {JSX.Element} Rendered MDX
  */
 function PreviewContent({
@@ -69,8 +68,7 @@ function PreviewContent({
 
 /**
  * Renders a live preview of MDX source text.
- * Debounces compilation by 400ms and wraps updates in `startTransition`
- * so the editor stays responsive while the preview re-compiles.
+ * Compiles 400ms after source changes; empty source and compile errors return status messages.
  *
  * @component
  * @param {MdxPreviewProps} props - Component properties

@@ -2,8 +2,7 @@
  * Full-Size Asset Cleanup Script
  *
  * @fileoverview Removes the full-size image source folder after build completion.
- * Safety mechanism prevents execution outside Vercel environment to avoid accidental
- * deletion of local development assets.
+ * Exits unless process.env.VERCEL === '1'.
  *
  * @module cleanFullSize
  * @version 1.0.0

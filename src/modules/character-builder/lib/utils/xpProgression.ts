@@ -1,8 +1,6 @@
 /**
- * @fileoverview XP Progression Utilities
- * @description Lookup tables and helper functions for the experience point
- * progression system. Thresholds are taken directly from the canonical
- * `character-progression.mdx` rules page (levels 1–30).
+ * @fileoverview XP progression lookup tables and helpers. Thresholds from
+ * `character-progression.mdx` (levels 1–30).
  *
  * @module modules/character-builder/lib/utils/xpProgression
  * @version 2.0.0
@@ -13,8 +11,6 @@
 /**
  * XP required to reach each level index (1-based).
  * Index 0 is unused; `XP_THRESHOLDS[n]` is the XP needed to be level `n`.
- * Levels 1–20 follow the standard Damocles progression; levels 21–30 are epic
- * tier thresholds sourced from the same `character-progression.mdx` rules page.
  *
  * @constant {number[]} XP_THRESHOLDS
  */
@@ -25,15 +21,14 @@ export const XP_THRESHOLDS: number[] = [
 ];
 
 /**
- * The maximum level for which XP-to-level auto-sync is supported.
- * Encompasses both standard play (1–20) and epic tier (21–30).
+ * Maximum supported XP level (1–30).
  *
  * @constant {number} MAX_XP_LEVEL
  */
 export const MAX_XP_LEVEL = 30;
 
 /**
- * Returns the character level corresponding to the given XP total.
+ * Returns the character level for the given XP total.
  * Capped at {@link MAX_XP_LEVEL}; never returns less than 1.
  *
  * @function getLevelFromXP
@@ -66,17 +61,11 @@ export function getXPForLevel(level: number): number {
 }
 
 /**
- * Returns a log-compressed position (0–100) for a given XP value along the
- * full 0 → {@link XP_THRESHOLDS}[{@link MAX_XP_LEVEL}] axis.
- *
- * Uses `(xp / maxXp) ** 0.325` so that each additional XP point contributes
- * progressively less width, while the visual segment for each level still
- * grows with level number — level 1 is the smallest segment, level 30 is
- * the largest, and levels 1–20 occupy roughly 50% of the bar (versus 11.8%
- * under a linear scale).
- *
- * Guarantees: `getXpAxisPosition(0) === 0`, `getXpAxisPosition(maxXp) === 100`,
- * and the function is strictly monotonically increasing.
+ * Returns a power-law position (0–100) for the given XP along the
+ * 0 → {@link XP_THRESHOLDS}[{@link MAX_XP_LEVEL}] axis.
+ * Uses `(xp / maxXp) ** 0.325`, expanded ×100. `xp` is clamped to [0, maxXp].
+ * Guarantees `getXpAxisPosition(0) === 0`, `getXpAxisPosition(maxXp) === 100`,
+ * and no decrease.
  *
  * @function getXpAxisPosition
  * @param {number} xp - Total accumulated experience points (clamped to [0, maxXp])
@@ -90,8 +79,8 @@ export function getXpAxisPosition(xp: number): number {
 }
 
 /**
- * Returns the percentage progress (0–100) from the current level's XP floor
- * toward the next level's XP threshold. Returns 100 for level ≥ {@link MAX_XP_LEVEL}.
+ * Returns percentage progress (0–100) from the current level's XP floor
+ * toward the next level's XP threshold. Returns 100 when level ≥ {@link MAX_XP_LEVEL}.
  *
  * @function getXPProgressPercent
  * @param {number} xp - Total accumulated experience points

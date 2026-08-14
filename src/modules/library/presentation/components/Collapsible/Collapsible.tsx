@@ -1,7 +1,6 @@
 /**
  * @fileoverview Collapsible MDX Component
- * @description A collapsible details/summary block for use in MDX content.
- * Built on native HTML details/summary for accessibility and zero-JS operation.
+ * @description Collapsible details/summary block for MDX content. Uses native HTML details/summary.
  *
  * @module Collapsible
  * @version 1.0.0
@@ -120,12 +119,12 @@ function parseHeading(headingNode: ReactNode): ParsedHeading {
 /**
  * @component Collapsible
  * @description Renders a collapsible content block using native details/summary.
- * Summary content is derived from the first heading child found inside the component.
+ * Summary content is derived from the first heading child inside the component.
  *
  * @param {CollapsibleProps} props
  * @param {boolean} [props.open] - Start expanded
  * @param {ReactNode} [props.children] - Collapsible heading and body content
- * @returns {JSX.Element} A styled details/summary element
+ * @returns {JSX.Element} A details/summary element
  *
  * @example
  * <Collapsible>

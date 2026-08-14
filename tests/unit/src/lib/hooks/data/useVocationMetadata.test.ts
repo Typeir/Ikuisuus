@@ -1,8 +1,8 @@
 /**
  * @fileoverview Unit tests for useVocationMetadata
- * @description Tests the useVocationMetadata hook — verifying that metadata is
- * fetched once on entering edit mode, the cancel-flag prevents stale updates,
- * and failed fetches mark metaFetched without setting state.
+ * @description Tests that useVocationMetadata fetches all three endpoints on
+ * entering edit mode, does not re-fetch once loaded or when editing is false,
+ * passes the locale to each endpoint, and returns empty arrays on fetch failure.
  *
  * @module tests/unit/lib/hooks/data/useVocationMetadata
  * @version 1.0.0

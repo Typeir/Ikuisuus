@@ -1,9 +1,9 @@
 /**
  * @fileoverview Draggable Component Tests
- * @description Unit tests for the generic Draggable container component.
- * Tests rendering, drag handle interaction, pointer-event-based movement,
- * boundary clamping, resize re-clamping, resize handle, close button,
- * and function-based initial positioning.
+ * @description Unit tests for the Draggable container component.
+ * Covers rendering, drag handle interaction, pointer movement, boundary
+ * clamping, resize re-clamping, resize handle, close button, and
+ * function-based initial positioning.
  *
  * @module tests/unit/draggable
  */
@@ -126,11 +126,6 @@ describe('Draggable', () => {
       handle.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
     });
 
-    /**
-     * Position should have moved by the delta (30, 20) from drag start.
-     * The clamp may adjust to 0,0 min since jsdom getBoundingClientRect
-     * returns all zeros — so position won't go negative.
-     */
     expect(container.style.left).toBeDefined();
     expect(container.style.top).toBeDefined();
   });
@@ -155,10 +150,6 @@ describe('Draggable', () => {
       );
     });
 
-    /**
-     * After pointerdown the isDragging state should be true,
-     * which adds the isDragging CSS module class.
-     */
     expect(container.className).toContain('isDragging');
 
     await act(async () => {
@@ -178,15 +169,11 @@ describe('Draggable', () => {
     const container = screen.getByTestId('drag-container');
     expect(container.style.left).toBe('500px');
 
-    /** Trigger window resize — clamp recalculation fires */
+    /** Trigger window resize */
     await act(async () => {
       window.dispatchEvent(new Event('resize'));
     });
 
-    /**
-     * In jsdom, getBoundingClientRect returns zeros, so clamping will
-     * constrain to 0,0. The test validates the resize listener is wired.
-     */
     expect(container.style.left).toBeDefined();
   });
 

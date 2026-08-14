@@ -1,14 +1,8 @@
 /**
  * Composite Health Check
  *
- * @fileoverview Orchestrates all code health sub-checks and aggregates results.
- * Runs file-length, duplicate-css, jsdoc-quality, antipatterns, test-gaps, and
- * mdx-format checks. Returns a unified JSON report and exits with code 1 if any
- * critical check fails.
- *
- * Supports --changed-only flag: when set, gets the list of uncommitted changed
- * files from git and post-filters each check's failures to only include violations
- * in those files. This prevents pre-existing tech debt from blocking sessions.
+ * @fileoverview Runs all code health sub-checks and aggregates results.
+ * Supports --changed-only flag to post-filter failures to uncommitted changed files.
  *
  * @module .github/scripts/health-check
  * @author Typeir

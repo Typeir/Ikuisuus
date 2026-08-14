@@ -1,7 +1,6 @@
 /**
  * @fileoverview Unit Tests — EditorFooter
- * @description Validates status message rendering and submit button behavior
- * across all editor lifecycle phases.
+ * @description Tests status message rendering and submit button behavior.
  *
  * @module tests/unit/lib/components/mdxEditor/editorFooter
  */

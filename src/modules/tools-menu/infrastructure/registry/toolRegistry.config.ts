@@ -1,8 +1,7 @@
 /**
  * @fileoverview Static tool registry configuration for the tools-menu module.
- * @description Defines the canonical list of DM tools available in the sidebar menu.
- * This is the single source of truth for tool entries — adding or removing a tool
- * means editing this file only; the shell and component consume it via `useToolRegistry()`.
+ * @description Defines the canonical list of DM tools in the sidebar menu, consumed
+ * by the shell and component via `useToolRegistry()`.
  *
  * @module src/modules/tools-menu/infrastructure/registry/toolRegistry.config
  * @version 1.0.0

@@ -1,9 +1,8 @@
 /**
  * @fileoverview Ring World Renderer — Frozen Core with Orbiting Rings
- * @description Renders Mana as a small frozen ice core surrounded by multiple
- * independently spinning torus rings at varying radii and tilts. Each ring
- * rotates at a different speed and axis angle, creating a dynamic orrery-like
- * appearance. Optionally applies noise-displaced icy surface shaders to the core.
+ * @description Renders a frozen ice core surrounded by multiple torus rings at
+ * varying radii and tilt angles, each rotating at a different speed. Optionally
+ * applies noise-displaced icy surface shaders to the core.
  *
  * @module worldSim/celestials/RingWorldRenderer
  * @version 3.0.0

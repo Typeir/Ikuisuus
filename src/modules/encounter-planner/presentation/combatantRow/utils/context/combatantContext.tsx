@@ -1,7 +1,7 @@
 /**
  * @fileoverview Combatant Context for Play Mode
- * @description Provides combatant state and update functions to all child components
- * without prop drilling. Each combatant row creates its own context.
+ * @description Provides combatant state and update functions to child components.
+ * Each combatant row creates its own context.
  *
  * @module CombatantContext
  * @version 1.0.0

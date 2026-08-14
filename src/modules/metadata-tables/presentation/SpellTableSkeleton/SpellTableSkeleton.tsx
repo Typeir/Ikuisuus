@@ -1,7 +1,6 @@
 /**
  * @fileoverview Spell Table Skeleton Component
  * @description Skeleton loading state for SpellTable with tab navigation.
- * Uses actual styled elements to prevent layout shifts during loading.
  *
  * @module SpellTableSkeleton
  * @version 1.0.0

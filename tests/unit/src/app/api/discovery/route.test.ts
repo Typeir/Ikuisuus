@@ -1,8 +1,6 @@
 /**
- * Discovery API Route Unit Tests
- *
- * @fileoverview Tests for the /api/discovery endpoint exports and structure.
- * Full integration testing is handled by e2e tests.
+ * @fileoverview Unit tests for the /api/discovery route exports, handler
+ * signature, and input validation.
  *
  * @module tests/unit/app/api/discovery/route
  * @version 1.0.0

@@ -21,8 +21,7 @@ const LOCAL_PROJECT_CONCURRENCY = 3;
 /**
  * Project names matching vitest.config.ts `projects[].test.name`.
  *
- * Exported so CI can build its matrix from this list rather than a copy that
- * silently drifts whenever a project is split.
+ * Exported for CI matrix building.
  */
 export const PROJECTS = [
   'unit:components',
@@ -51,8 +50,7 @@ export const PROJECTS = [
 ];
 
 /**
- * Rough file counts, used to start the heaviest projects first so the pipeline
- * fills rather than tailing off on one long runner.
+ * Rough file counts per project.
  */
 const PROJECT_WEIGHTS: Record<string, number> = {
   'unit:components': 58,
@@ -220,7 +218,7 @@ function parsePositiveInteger(value: string | undefined): number | undefined {
 }
 
 /**
- * Sort projects so heavier suites start first for better pipeline fill.
+ * Sort projects by descending weight.
  *
  * @param {string[]} projects - Project names to sort
  * @returns {string[]} Sorted project names by descending estimated weight
@@ -420,8 +418,7 @@ async function main(): Promise<void> {
 }
 
 /**
- * Only run when invoked directly. `PROJECTS` is imported by the matrix helper,
- * and an unguarded call would start the whole suite just to print a list.
+ * Runs only when invoked directly.
  */
 const invokedDirectly = process.argv[1]?.replace(/\\/g, '/').endsWith('runTests.ts');
 

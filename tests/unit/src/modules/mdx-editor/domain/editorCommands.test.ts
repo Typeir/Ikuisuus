@@ -1,8 +1,8 @@
 /**
  * @fileoverview Editor Commands Unit Tests
- * @description Tests for low-level text mutation commands operating on a textarea
- * via execCommand. Validates selection handling, wrapping, prefix insertion,
- * link insertion, line duplication, and keyboard shortcut dispatch.
+ * @description Tests for execCommand-based textarea mutations: selection,
+ * wrapping, prefix insertion, link insertion, line duplication, and keyboard
+ * shortcut dispatch.
  */
 
 import {

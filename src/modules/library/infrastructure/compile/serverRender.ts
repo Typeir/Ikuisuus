@@ -1,8 +1,6 @@
 /**
- * @fileoverview Server-only helper that serializes evaluated MDX React nodes
- * to an HTML string using react-dom/server. This module must only be imported
- * from server-side code or scripts (not from modules used by the Next.js app
- * client graph).
+ * @fileoverview Serializes evaluated MDX React nodes to an HTML string via
+ * react-dom/server. Server-only; not to be imported from the client graph.
  * @module src/lib/mdx/serverRender
  * @author Typeir
  * @version 1.0.0

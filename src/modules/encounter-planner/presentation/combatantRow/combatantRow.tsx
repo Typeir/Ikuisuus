@@ -1,9 +1,6 @@
 /**
- * Combatant Row Component
- *
- * @fileoverview Single combatant row for encounter management with runtime editing.
- * Displays combatant name, HP, AC, stats, initiative, and toggles for slain/details expansion.
- * Uses CombatantContext to provide state to all child components without prop drilling.
+ * @fileoverview Renders a combatant row for design and play mode. Wraps children in
+ * CombatantProvider to supply shared state via React Context.
  *
  * @module combatantRow
  * @version 3.0.0
@@ -24,23 +21,9 @@
  * @requires ./combatantConditionsManager Manages active conditions
  *
  * @description
- * The CombatantRow is the primary display component for combatants in both design mode
- * (EncounterPlanner) and play mode. It wraps all child components in CombatantProvider
- * to provide centralized state management via React Context, eliminating prop drilling.
- *
- * Layout:
- * 1. Name section (name, CR, awakening badges, lock toggle, remove button)
- * 2. Main stats row (HP, AC, ability scores, initiative, slain checkbox)
- * 3. Mechanics section (legendary deeds tracker, resist counter)
- * 4. Details section (collapsible):
- *    - Heroic section (awakening info, force awakening buttons)
- *    - Details columns (buffs, items, spells, affixes)
- *    - Conditions manager
- *
- * Styling:
- * - Applies awakening-related CSS classes dynamically
- * - Applies .slain class when combatant is marked as slain (opacity, strikethrough)
- * - Supports locked state for UI feedback
+ * Applies awakening CSS classes and .slain class when combatant.slain is true.
+ * Renders details section (heroic section, buffs, items, spells, affixes, conditions)
+ * only when detailsExpanded is true.
  */
 
 'use client';
@@ -92,8 +75,7 @@ export interface CombatantRowProps {
  *
  * @component
  * @description
- * This is the actual rendered content. It's separated from the main component
- * to allow clean context consumption without wrapper div interference.
+ * Renders the combatant row using state from useCombatant().
  *
  * @returns {React.ReactElement} Rendered row content with all sections
  */

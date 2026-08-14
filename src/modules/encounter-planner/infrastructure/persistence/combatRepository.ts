@@ -39,11 +39,7 @@ import {
  * @returns {InProgressCombatant} Migrated combatant with all required fields
  *
  * @description
- * Migration steps:
- * 1. Add mechanics object if missing (all false)
- * 2. Add legendaryDeedsUsed array if missing (empty or 3 slots)
- * 3. Add resistRemaining count if missing (0 or 3)
- * 4. Add phaseDeeds tracking if missing
+ * Fills missing mechanics, legendaryDeedsUsed, resistRemaining, and phaseDeeds fields.
  */
 const migrateCombatant = (combatant: unknown): InProgressCombatant => {
   const typedCombatant =

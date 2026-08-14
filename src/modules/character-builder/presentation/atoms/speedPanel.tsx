@@ -1,11 +1,10 @@
 /**
- * @fileoverview Speed Panel Component
- * @description Expandable panel triggered by a ▼ button adjacent to the SPEED
- * value. Shows all movement speeds from the character's selected bloodline.
- * A `+` badge is displayed when more than one speed mode is available.
+ * @fileoverview Speed panel component.
+ * @description Expandable panel triggered by a ▼ button next to the SPEED
+ * value; lists all movement speeds from the selected bloodline. Renders a `+`
+ * badge when more than one speed mode is available.
  *
- * Panel open/close state and portal rendering are delegated to
- * {@link DropdownPanel}, which escapes parent stacking contexts.
+ * Open/close state and portal rendering are delegated to {@link DropdownPanel}.
  *
  * @module lib/components/characterSheet/atoms/speedPanel
  * @version 2.0.0
@@ -32,8 +31,8 @@ export interface SpeedPanelProps {
 
 /**
  * Expandable speed modes panel. Renders a ▼ button next to the SPEED value;
- * clicking opens a small dropdown listing every movement mode the bloodline
- * provides. A `+` badge appears when there are two or more speed entries.
+ * opens a dropdown listing every movement mode the bloodline provides. A `+`
+ * badge appears when there are two or more speed entries.
  *
  * @component
  * @param {SpeedPanelProps} props - Component props

@@ -1,8 +1,8 @@
 /**
- * Unit tests for isStaticContentRoute utility
+ * Unit tests for isStaticContentRoute and allowsSidebarPersistence.
  *
- * @fileoverview Tests for route scope detection utility that distinguishes
- * static MDX routes from dynamic routes.
+ * @fileoverview Tests static-content route detection for isStaticContentRoute
+ * and its inverse allowsSidebarPersistence.
  */
 
 import {

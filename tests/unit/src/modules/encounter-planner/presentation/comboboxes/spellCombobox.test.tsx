@@ -2,7 +2,6 @@
  * @fileoverview Unit tests for Spell Combobox component
  * @module tests/unit/src/lib/components/encounterPlanner/comboboxes/spellCombobox.test
  * @description Validates SpellCombobox export and component signature.
- * Tests combobox component for selecting spells in encounter planner.
  * 
  * @version 1.0.0
  * @author Typeir

@@ -1,19 +1,8 @@
 /**
- * @fileoverview Article Metadata Loader
- * @description Resolves the generated metadata for a library route into the flat
+ * @fileoverview Resolves the generated metadata for a library route into the flat
  * shape the article context provides to components.
- *
- * Every content kind carries aspects, so every content kind is resolved here.
- * Loading only monsters left the other seven kinds with aspects sitting in
- * metadata and nothing rendering them — the pills existed in the index and never
- * on the page.
- *
- * Lookups go through the content repositories, which are adapter-agnostic: the
- * live site reads pg and dev reads sidecars. Fields that exist only in one of
- * those backends must not be relied on — anything absent from the pg schema is
- * simply missing in production, which is why every field here is optional and a
- * miss returns null rather than throwing.
- *
+ * @description Loads every content kind through its repository and returns null
+ * on no match or load failure.
  * @module modules/library/application/use-cases/loadArticleMetadata
  * @version 2.0.0
  * @author Typeir
@@ -62,8 +51,7 @@ interface ContentKind {
  * Resolution table, ordered so a longer prefix is tested before a shorter one
  * that would also match.
  *
- * Vocations are absent: their route nests specializations underneath, so the two
- * are told apart by shape rather than by prefix. See `resolveVocationRoute`.
+ * Vocations are absent, handled by `resolveVocationRoute`.
  */
 const KINDS: ContentKind[] = [
   {
@@ -125,11 +113,10 @@ function matchKind(
 }
 
 /**
- * Resolves a vocation route, which is the one kind whose children share its path.
+ * Resolves a vocation route.
  *
  * `…/vocations/wizard/main` is the vocation; `…/vocations/wizard/evocation` is a
- * specialization of it. The trailing segment decides which, so the two cannot be
- * separated by prefix like every other kind.
+ * specialization of it. The trailing segment decides which.
  *
  * @param {string[]} slug - Route slug segments
  * @param {string} locale - Active locale
@@ -176,9 +163,6 @@ async function resolveVocationRoute(
 /**
  * Collects the sub-records of a document that carry their own aspects.
  *
- * The field differs by kind — a bloodline has `boons`, everything else has
- * `features` — which is why the key is declared per kind rather than guessed.
- *
  * @param {TaggedRecord} record - The loaded metadata record
  * @param {string[]} shardKeys - Fields to read
  * @returns {ArticleSection[]} Sections carrying aspects
@@ -206,9 +190,7 @@ function sectionsOf(
 /**
  * Loads the article metadata for a resolved library slug.
  *
- * A kind with no match, or a backend that fails, returns null — the provider
- * then mounts with nothing and every consumer renders nothing, which is the same
- * path a page without metadata takes.
+ * Returns null on no match, load failure, or an empty slug.
  *
  * @param {string[]} slug - Route slug segments, e.g. `['monsters', 'mucklord']`
  * @param {string} locale - Active locale

@@ -1,9 +1,7 @@
 /**
- * @fileoverview Monster Table Wrapper - Client-side data fetching for creature stat blocks
- * @description Fetches monster metadata from API and configures MetadataTable with
- * d20 creature statistics (size, type, CR, AC, HP, alignment). Uses shared
- * compareChallengeRating utility for fractional values (e.g., "1/2", "1/4") and
- * SIZE_SORT_ORDER for consistent size-based sorting.
+ * @fileoverview Monster table wrapper that fetches and renders creature stat blocks.
+ * @description Fetches monster metadata from the API and configures MetadataTable
+ * with d20 creature stat columns (size, type, CR, AC, HP, alignment).
  *
  * @version 2.0.0
  * @author Typeir
@@ -48,13 +46,13 @@ type MonsterTableWrapperProps = {
 };
 
 /**
- * Client-side wrapper for MonsterTable that fetches locale-aware data via API.
- * Can use locale from props, route params, or defaults to 'en'.
+ * Fetches locale-aware monster data via API and renders MetadataTable.
+ * Uses locale from props, route params, or defaults to 'en'.
  *
  * @component
  * @param {MonsterTableWrapperProps} props - Component props
  * @param {string} [props.locale] - Optional locale override (defaults to route param or 'en')
- * @returns {JSX.Element} The rendered monster table with client-side data fetching
+ * @returns {JSX.Element} The rendered monster table
  */
 export default function MonsterTableWrapper({
   locale: localeProp,

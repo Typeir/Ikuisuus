@@ -1,9 +1,6 @@
 /**
- * @fileoverview Client-side MDX compiler.
- * @description Lightweight MDX compilation for tooltips and other client-side content.
- * Uses @mdx-js/mdx compile/run API for both sync and async compilation.
- * Includes hash-based caching to avoid recompiling identical sources.
- * Supports both async and sync template literal syntax.
+ * @fileoverview Client-side MDX compiler using @mdx-js/mdx compile/run.
+ * Hash-caches compiled components by source for sync and async paths.
  *
  * @module lib/mdx/compileRuntime
  * @version 2.0.0
@@ -40,13 +37,7 @@ type MdxContentComponent = React.FC<{ components?: unknown }>;
 
 /**
  * Internal cache maps for compiled MDX, async and sync kept separate.
- *
- * These cache the compiled component, never a built element. The cache key is
- * the source alone, so caching an element would bake the first caller's
- * component map into every later caller's render: a caller passing `{}` would
- * poison the entry for one passing the full registry, and the second caller
- * would throw `Expected component X to be defined` at render time. Components
- * are applied per call instead.
+ * Keys are source hashes; values are compiled components, not built elements.
  */
 const asyncCache = new Map<string, MdxContentComponent>();
 const syncCache = new Map<string, MdxContentComponent>();
@@ -76,7 +67,7 @@ const PLUGIN_OPTIONS = {
 
 /**
  * Compile MDX client-side async using @mdx-js/mdx compile + run.
- * Results are cached by source hash to avoid recompilation.
+ * Results cached by source hash unless skipCache is set.
  *
  * @param {CompileOptions} opts - Compilation options
  * @param {boolean} [opts.skipCache=false] - Skip cache and force recompilation
@@ -114,8 +105,7 @@ export async function compileRuntime(
 
 /**
  * Compile MDX client-side synchronously using @mdx-js/mdx compileSync + runSync.
- * Results are cached by source hash to avoid recompilation.
- * Much faster than async variant for repeated compilations.
+ * Results cached by source hash unless skipCache is set.
  *
  * @param {CompileOptions} opts - Compilation options
  * @param {boolean} [opts.skipCache=false] - Skip cache and force recompilation
@@ -176,7 +166,6 @@ export async function mdx(
 /**
  * Sync template literal for compiling MDX.
  * Interpolations are joined into the source text.
- * Much faster than async variant.
  *
  * @example
  * ```tsx
@@ -200,7 +189,6 @@ export function mdxSync(
 
 /**
  * Clear both async and sync compilation caches.
- * Useful for testing or when you need to force fresh compilations.
  */
 export function clearCompileRuntimeCache(): void {
   asyncCache.clear();

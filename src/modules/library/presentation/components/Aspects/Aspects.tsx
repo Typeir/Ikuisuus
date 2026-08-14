@@ -3,20 +3,11 @@
  * @description Renders a row of aspect pills, or a compressed carousel once the
  * set passes the density threshold.
  *
- * Every pill links to a pre-filtered search rather than to a definition — the row
- * is a build-exploration tool, not a glossary. That is the point of a taxonomy
- * over a single category: a reader arrives at a page from any axis it sits on.
- *
- * Given a `section`, the row reads its own aspects from the article metadata
- * context. `remarkAspects` places one of these under each heading that has them,
- * which puts a section's facets with the section rather than in a block of
- * metadata above the article. `list` remains for authored overrides.
- *
- * Display mode is read from `data-aspect-display` on the document root, set
- * before first paint alongside `data-theme`, so switching modes is pure CSS and
- * server markup matches the first client paint. Carousel expansion works the
- * same way through `data-aspect-expanded`: the toggle writes one attribute on
- * the root and every carousel on the page opens together.
+ * Each pill links to a pre-filtered search. Given a `section`, aspects come from
+ * the article metadata context; `list` supplies authored overrides. Display mode
+ * is read from `data-aspect-display` and expansion from `data-aspect-expanded`,
+ * both on the document root; the toggle writes one root attribute and every
+ * carousel on the page opens together.
  *
  * @module modules/library/presentation/components/Aspects/Aspects
  * @version 1.0.0
@@ -45,18 +36,11 @@ import styles from './Aspects.module.scss';
 
 /**
  * Aspect count past which a flat row becomes a compressed carousel.
- *
- * The median record carries twelve aspects and the worst carries fifty-one, so a
- * flat row is the exception rather than the rule.
  */
 const CAROUSEL_THRESHOLD = 14;
 
 /**
- * Where each member of a damage stratum sits around the mark.
- *
- * A stratum is permanently three types, so the arrangement can be fixed rather
- * than computed: one above, one to each side. The same three positions on every
- * stratum mean the shape itself becomes recognisable before the glyphs are read.
+ * Position of each member of a damage stratum around the mark.
  */
 const STRATUM_SLOTS = ['top', 'left', 'right'] as const;
 
@@ -79,11 +63,6 @@ export interface AspectsProps {
 
 /**
  * Renders one aspect as a link to its pre-filtered search.
- *
- * The accessible name is the full aspect in every display mode — an icon that
- * announces nothing is a regression over a pill — and every glyph is hidden from
- * assistive technology because a shield over a flame does not compose into a
- * readable name.
  *
  * @param {object} props - Component props
  * @param {ParsedAspect} props.aspect - The aspect to draw
@@ -150,16 +129,8 @@ const AspectPill: React.FC<{
 };
 
 /**
- * Toggles carousel expansion for the whole site.
- *
- * The preference is global on purpose. A stat block carries one carousel per
- * feature, and a reader who wants the dense rows open wants them all open —
- * a per-row control would have to be pressed twenty times on the Mucklord and
- * forgotten again on the next page.
- *
- * Nothing here reads the expansion to decide layout: the attribute on the
- * document root drives the CSS, so pressing this opens every carousel on the
- * page without a single one of them re-rendering.
+ * Toggles carousel expansion for the whole site by writing a root attribute.
+ * Returns null when no provider is available.
  *
  * @returns {React.ReactElement | null} The toggle, or null with no provider to write to
  */
@@ -193,12 +164,7 @@ const ExpandToggle: React.FC = () => {
 
 /**
  * Renders a dense aspect set as a compressed stack that unpacks on hover.
- *
- * Glyphs are absolutely positioned and moved with `transform` alone, so
- * unpacking a large set costs no layout on the prose around it. The stack builds
- * its glyphs only once it reaches the viewport, because a stat block carries one
- * of these per feature and twenty idle animated tracks is a page that scrolls
- * badly.
+ * Builds glyphs once the element reaches the viewport.
  *
  * @param {object} props - Component props
  * @param {ParsedAspect[]} props.aspects - Display-ordered aspects

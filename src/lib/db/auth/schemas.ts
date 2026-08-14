@@ -1,9 +1,7 @@
 /**
  * @fileoverview Auth Zod Schemas & DTOs
- * @description Defines all validation schemas and TypeScript types for the user
- * authentication system. Uses Zod for runtime validation and type inference.
- * Follows OpenAPI-style contracts so adapters and API routes share a single
- * source of truth.
+ * @description Validation schemas and TypeScript types for the user auth
+ * system. Zod for runtime validation and type inference.
  *
  * @module lib/db/auth/schemas
  * @version 1.0.0
@@ -29,8 +27,8 @@ export type UserRole = z.infer<typeof UserRole>;
 /* ────────────────────────────  Stored User  ─────────────────────────── */
 
 /**
- * Shape of a user record as persisted in the storage backend.
- * Passwords are stored as SHA-256 hex digests — never in plain text.
+ * User record as persisted in the storage backend.
+ * Passwords stored as SHA-256 hex digests.
  *
  * @property {string} id - Unique identifier (UUID v4 or similar)
  * @property {string} username - Display / login name (3-32 chars, alphanumeric + hyphens)
@@ -129,12 +127,11 @@ export type CreateUserRequest = z.infer<typeof CreateUserRequestSchema>;
 /* ────────────────────────  Session Payload  ──────────────────────────── */
 
 /**
- * Decoded information from a session token. Used internally for
- * authorization checks after token validation.
+ * Decoded information from a session token.
  *
- * @property {string} userId - The authenticated user's ID
- * @property {string} username - The authenticated user's display name
- * @property {UserRole} role - The authenticated user's role
+ * @property {string} userId - Authenticated user's ID
+ * @property {string} username - Authenticated user's display name
+ * @property {UserRole} role - Authenticated user's role
  */
 export const SessionPayloadSchema = z.object({
   userId: z.string().min(1),

@@ -10,11 +10,7 @@
  * @since 1.0.0
  *
  * @description
- * Enables server-side reading of persistent UI state stored in cookies.
- * This allows SSR to render with the same expanded paths as client hydration,
- * preventing hydration mismatch warnings.
- *
- * The cookie is set client-side via PersistentUiContext when state changes.
+ * Reads persistent UI state stored in a server cookie set by PersistentUiContext on the client.
  */
 
 import { cookies } from 'next/headers';
@@ -66,9 +62,7 @@ export async function getServerPersistentData(): Promise<SerializedPersistentUiS
  * @returns {Promise<string[]>} Array of expanded paths from cookies
  *
  * @description
- * Returns the sidebar expanded paths stored in the persistent UI cookie.
- * Used by layout.tsx to pass initial state to client providers,
- * ensuring SSR and client hydration use identical expanded paths.
+ * Returns the sidebar expandedPaths from the persistent UI cookie, or [] if unset.
  *
  * @example
  * // In layout.tsx (Server Component)

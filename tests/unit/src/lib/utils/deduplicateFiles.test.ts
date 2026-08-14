@@ -1,8 +1,7 @@
 /**
  * deduplicateFiles Utility Unit Tests
  *
- * @fileoverview Tests for filename deduplication utility that keeps longer variants
- * when files share the same base name.
+ * @fileoverview Tests deduplicateFiles, which keeps longer variants of files sharing a base name.
  *
  * @module tests/unit/lib/utils/deduplicateFiles
  * @version 1.0.0

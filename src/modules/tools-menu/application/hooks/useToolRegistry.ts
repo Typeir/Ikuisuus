@@ -1,8 +1,7 @@
 /**
- * @fileoverview i18n-aware hook that resolves the tool registry into renderable menu items.
- * @description Single supported entry point for obtaining the tools-menu item list.
- * Wraps `TOOL_REGISTRY` with `useTranslations` and `useLocale` from next-intl so
- * consumers never need to know about raw label keys or href builders.
+ * @fileoverview Resolves `TOOL_REGISTRY` items into locale-aware menu items.
+ * @description Single entry point for obtaining the tools-menu item list.
+ * Wraps `TOOL_REGISTRY` with `useTranslations` and `useLocale` from next-intl.
  *
  * @module src/modules/tools-menu/application/hooks/useToolRegistry
  * @version 1.0.0
@@ -18,14 +17,14 @@ import type { ToolMenuItem } from '../../domain/toolMenuItem.types';
 import { TOOL_REGISTRY } from '../../infrastructure/registry/toolRegistry.config';
 
 /**
- * Returns the fully-resolved list of tool menu items for the current locale.
+ * Returns the tool menu items for the current locale.
  *
- * Labels are translated via the `layout` i18n namespace. Hrefs include the
- * active locale segment. The returned array is memoized and only recomputed
- * when the locale or translation function reference changes.
+ * Labels use the `layout` i18n namespace. Hrefs include the active locale
+ * segment. Memoized; recomputed only when locale or translation function
+ * reference changes.
  *
  * @function useToolRegistry
- * @returns {ToolMenuItem[]} Ordered array of resolved tool menu items ready for rendering.
+ * @returns {ToolMenuItem[]} Ordered array of resolved tool menu items.
  *
  * @example
  * ```tsx

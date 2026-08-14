@@ -1,7 +1,7 @@
 /**
- * @fileoverview Bloodline Repository Port + Factory
- * @description Defines the hexagonal port contract for bloodline metadata persistence
- * and exports a factory-resolved instance based on `METADATA_BACKEND` env var.
+ * @fileoverview Bloodline repository interface and factory.
+ * @description Exports the BloodlineRepository interface and a factory-resolved
+ * instance based on the `METADATA_BACKEND` env var.
  *
  * @module lib/db/content/repositories/bloodlineRepository
  * @version 1.0.0

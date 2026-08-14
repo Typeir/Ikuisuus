@@ -1,15 +1,10 @@
 /**
  * @fileoverview Hit Dice Counter Component
- * @description Compact counter displayed above the HP chip in the combat stats
- * row. Shows the character's total hit dice — expressed as `Nd{type}` for
- * single-vocation characters and as `Nd?` with a breakdown tooltip for mixed
- * (multiclassing) characters.
- *
- * Die type resolution per vocation entry: the entry's own `hitDie` (copied
- * from vocation metadata on selection) wins; when absent (older saves made
- * before `hitDie` existed) the die type is recovered from the character's
- * `hitDiceLog`, which stores the rolled die per level.
- *
+ * @description Compact counter above the HP cell in the combat stats row.
+ * Shows the character's total hit dice as `Nd{type}` for a single vocation
+ * and as `Nd?` with a breakdown tooltip for mixed (multiclassing) characters.
+ * Die type per vocation resolves from `hitDie` first, then from `hitDiceLog`;
+ * else {@link UNKNOWN_DIE}. Skips vocations with empty slug.
  * @module lib/components/characterSheet/atoms/hitDiceCounter
  * @version 2.0.0
  * @author Typeir
@@ -38,8 +33,8 @@ export interface HitDiceCounterProps {
 }
 
 /**
- * Resolves the die faces for a vocation entry: the entry's own `hitDie`
- * first, then the die type recorded in the hit dice log for that vocation.
+ * Die face count for a vocation entry: `hitDie` first, else the die type in
+ * the hit dice log.
  *
  * @function resolveDieFaces
  * @param {VocationEntry} entry - Vocation entry
@@ -55,10 +50,9 @@ function resolveDieFaces(entry: VocationEntry, log: HitDieRollEntry[]): number {
 }
 
 /**
- * Compact hit dice counter rendered above the HP cell.
- * Single vocation: shows e.g. `5d10`. Mixed vocations: shows `Nd?` with a
- * tooltip listing each vocation's contribution and a reminder to track them
- * separately.
+ * Compact hit dice counter rendered above the HP cell. Single vocation: shows
+ * e.g. `5d10`. Mixed vocations: shows `Nd?` with a tooltip listing each
+ * vocation's die contribution and a note.
  *
  * @component
  * @param {HitDiceCounterProps} props - Component props

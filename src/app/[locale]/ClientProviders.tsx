@@ -1,8 +1,7 @@
 /**
- * ClientProviders wrapper for client-only context/providers
+ * Client-only providers for the app layout.
  *
- * @fileoverview Provides client-only providers for layout including internationalization
- * and persistent UI state management.
+ * @fileoverview Supplies client-only providers: internationalization and persistent UI state.
  * @module ClientProviders
  * @version 2.1.0
  * @author Typeir
@@ -37,7 +36,7 @@ interface ClientProvidersProps {
 }
 
 /**
- * Root provider component wrapping the application with client-side contexts
+ * Composes client-side providers around children.
  *
  * @component
  * @param {ClientProvidersProps} props - Component props
@@ -49,16 +48,10 @@ interface ClientProvidersProps {
  * @returns {JSX.Element} Nested provider tree with children
  *
  * @description
- * Provider hierarchy (outermost to innermost):
- * 1. NextIntlClientProvider - Internationalization context
- * 2. SwrProvider - Global SWRConfig (fetcher defaults, deduping, retry)
- * 3. PersistentUiProvider - Persistent UI state (theme, sidebar expansion)
- * 4. CharacterSheetProvider - Global character roster + selected character
- * 5. ResponsiveLayoutShell - Layout with sidebar and notifications
- *
- * PersistentUiProvider uses deterministic client-side initialization:
- * - Server provides initialExpandedPaths from cookies for SSR/client match
- * - Fallback chain: in-memory state → localStorage → URL-derived ancestors
+ * Nests providers outermost-to-innermost: NextIntlClientProvider, SwrProvider,
+ * PersistentUiProvider, CharacterSheetProvider, ResponsiveLayoutShell.
+ * PersistentUiProvider falls back to localStorage then URL-derived ancestors when
+ * initialExpandedPaths is absent.
  */
 export default function ClientProviders({
   locale,

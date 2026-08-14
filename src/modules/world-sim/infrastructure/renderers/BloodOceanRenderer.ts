@@ -1,11 +1,8 @@
 /**
  * @fileoverview Blood Ocean Renderer — Two-Shell Translucent Blood World
- * @description Renders Urmela: a dark opaque core sphere visible through a
- * semi-transparent, procedurally displaced blood ocean shell. The ocean shell
- * uses vertex-displacement noise (bloodOcean.vert.glsl) and a colour-variance
- * fragment shader (bloodOcean.frag.glsl) so the boiling surface reads as a
- * churning ocean of blood. A reused atmosphere corona shell and glow sprite
- * complete the visual.
+ * @description Renders a dark opaque core sphere visible through a
+ * semi-transparent blood ocean shell displaced by bloodOcean.vert.glsl and
+ * coloured by bloodOcean.frag.glsl, plus a corona atmosphere and glow sprite.
  *
  * Layer order (back to front):
  * 1. Dark core sphere — opaque, depthWrite true
@@ -79,9 +76,8 @@ const CORONA_SCALE = 1.12;
 const CORONA_INTENSITY = 2.2;
 
 /**
- * Renders the blood ocean world Urmela with a two-shell architecture:
- * an opaque dark core and a semi-transparent vertex-displaced ocean shell
- * that reveals the core through its churning translucent surface.
+ * Renders the blood ocean world: an opaque dark core and a semi-transparent
+ * vertex-displaced ocean shell.
  *
  * @class BloodOceanRenderer
  * @implements {ICelestialRenderer}
@@ -115,8 +111,7 @@ export class BloodOceanRenderer implements ICelestialRenderer {
   private qualityLevel: RenderQualityLevel = 'high';
 
   /**
-   * Apply adaptive quality level — swap LOD geometries and hide the corona
-   * at low quality to stay within the 60fps frame budget.
+   * Swap LOD geometries to the given quality level and hide the corona at 'low'.
    *
    * @param {RenderQualityLevel} level - New quality level
    */
@@ -240,8 +235,6 @@ export class BloodOceanRenderer implements ICelestialRenderer {
 
   /**
    * Rotate the ocean shell on its axis and advance the noise time uniform.
-   * The core and corona are static relatives of the group; only the ocean
-   * shell rotates to simulate surface drift.
    *
    * @param {Object3D} _mesh - The blood ocean group (unused — meshes stored internally)
    * @param {number} time - Elapsed time in seconds

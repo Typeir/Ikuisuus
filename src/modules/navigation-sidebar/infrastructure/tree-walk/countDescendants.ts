@@ -1,6 +1,5 @@
 /**
  * @fileoverview Counts total descendants in a navigation tree.
- * Used to pre-calculate expanded height for stub nodes before fetching children.
  * @module modules/navigation-sidebar/infrastructure/tree-walk/countDescendants
  * @author Typeir
  * @version 1.0.0
@@ -10,8 +9,7 @@
 import type { Item } from '@/modules/navigation-sidebar/domain/types';
 
 /**
- * Recursively counts all descendants (files + folders) in a tree.
- * Used by API handlers to pre-set childCount on stub nodes.
+ * Recursively counts all descendants (folders and files) in a tree.
  *
  * @param {Item[]} items - Navigation items
  * @returns {number} Total descendant count

@@ -37,16 +37,15 @@ const Sidebar = dynamic(
 );
 
 /**
- * Recursive SidebarItem that renders a link or a collapsible folder.
- * Children are lazily mounted on first open and kept mounted through the
- * closing animation (driven by `isClosing`) before unmounting.
+ * Renders an item as a link or a collapsible folder. Children mount on
+ * first open and unmount after the closing animation.
  *
  * @param {SidebarItemProps} props - Component props.
  * @param {LayoutItem} props.item - The item to render.
- * @param {() => void=} props.onNavigate - Optional navigation callback.
- * @param {boolean} props.collapseSiblings - Whether to collapse other items.
- * @param {any} props.pathStore - the open/closed path store.
- * @returns {JSX.Element | null} Sidebar entry element or null if no valid data.
+ * @param {() => void=} props.onNavigate - Navigation callback.
+ * @param {boolean} props.collapseSiblings - Whether to collapse sibling items.
+ * @param {any} props.pathStore - Open/closed path store.
+ * @returns {JSX.Element | null} The rendered element, or null if no valid data.
  */
 export const SidebarItem = ({
   item,

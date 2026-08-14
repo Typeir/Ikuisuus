@@ -1,7 +1,6 @@
 /**
  * @fileoverview Nearest-Route Service
  * @description API service helper for nearest-route suggestion lookups.
- * Legacy library-search functions removed in v8 (replaced by Pagefind).
  *
  * @module lib/services/api/searchService
  * @author Typeir

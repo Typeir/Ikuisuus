@@ -1,10 +1,7 @@
 /**
  * @fileoverview Pre-compiled Regex Pattern Dictionary
- * @description Single source of truth for all regular expressions and lookup
- * tables used across the feature extraction pipeline and metadata generators.
- * Patterns are pre-compiled at module load time and organized by semantic
- * domain. Consumer modules import named pattern groups instead of inlining
- * regex literals.
+ * @description Named pre-compiled regex and lookup tables for the feature
+ * extraction pipeline and metadata generators.
  *
  * @version 1.0.0
  * @author Typeir
@@ -55,15 +52,10 @@ export const SAVES = {
 } as const;
 
 /**
- * Regex source matching a distance in either the `[= N stride =]` macro form
- * used throughout content or the legacy imperial spellings.
- *
- * The opening bracket is optional rather than the two forms being alternatives,
- * so the numeric value always lands in a single capture group and consumers
- * need no special handling.
- *
- * Distances extracted from content are **strides**. Consumers that need
- * imperial units convert at their own boundary — see the Foundry transformer.
+ * Regex source matching a distance in the `[= N stride =]` macro form or
+ * the legacy imperial spellings. The opening bracket is optional, so the
+ * numeric value always lands in capture group 1. Values are strides; convert
+ * to imperial units downstream.
  *
  * @constant
  */
@@ -82,7 +74,7 @@ const measurePattern = (source: string): RegExp =>
  * Pre-compiled patterns for distances, areas, and shapes.
  *
  * Each distance pattern accepts the `[= N stride =]` macro as well as the
- * legacy imperial spellings, so extraction survives the units migration.
+ * legacy imperial spellings.
  *
  * @property {RegExp} feet - "[= 6 stride =]", "30 ft", "60-foot", "10 feet"
  * @property {RegExp} wide - "[= 2 stride;ADJ =]-wide", "10-foot wide"

@@ -1,9 +1,5 @@
 /**
- * Tailwind Typography Prose Theme Configuration
- *
- * Maps Tailwind prose CSS variables to our dynamic theme color variables.
- * This allows prose content to automatically adapt to dark/light themes
- * without requiring !important declarations or SCSS overrides.
+ * Maps Tailwind prose CSS variables to theme color variables.
  *
  * @see https://tailwindcss.com/docs/typography-plugin
  * @see src/app/[locale]/globals.scss for theme color definitions
@@ -17,8 +13,7 @@
 import type { CSSRuleObject } from 'tailwindcss/types/config';
 
 /**
- * Theme color mappings for Tailwind prose plugin
- * All values reference CSS custom properties defined in globals.scss
+ * Prose color mappings. Values reference CSS custom properties in globals.scss.
  */
 const proseColorVariables = {
   '--tw-prose-body': 'var(--color-text)',
@@ -40,9 +35,8 @@ const proseColorVariables = {
 } as const;
 
 /**
- * Custom prose layout and element-specific styles.
- * maxWidth increased for readability.
- * Blockquote overrides prevent color cascade to children (strong, headings).
+ * Custom prose layout and element-specific styles. maxWidth set to 150ch.
+ * Blockquote overrides set explicit colors for strong, b, and headings.
  */
 const proseCustomStyles: CSSRuleObject = {
   maxWidth: '150ch',
@@ -60,8 +54,7 @@ const proseCustomStyles: CSSRuleObject = {
 };
 
 /**
- * Complete Tailwind prose theme configuration
- * Exported for use in tailwind.config.ts
+ * Complete Tailwind prose theme configuration. Exported for tailwind.config.ts.
  */
 export const proseTheme = {
   DEFAULT: {
@@ -72,7 +65,7 @@ export const proseTheme = {
   },
   invert: {
     css: {
-      /** prose-invert variant uses same theme mappings for light/dark consistency */
+      /** prose-invert variant uses same theme color mappings. */
       ...proseColorVariables,
     },
   },

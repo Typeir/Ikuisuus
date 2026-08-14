@@ -16,9 +16,8 @@
  * @requires @/modules/encounter-planner/application/factories/combatSnapshot.factory forceHeroicAwakening utility
  * @requires ../playMode/CombatantContext useCombatant hook for context
  *
- * @description
- * Extracted from CombatantRow for atomic composition. Displays awakening state,
- * force awakening buttons, and bonuses. Uses CombatantContext for state.
+ * @description Displays awakening state, force awakening buttons, and bonuses.
+ * Uses CombatantContext for state.
  */
 
 'use client';

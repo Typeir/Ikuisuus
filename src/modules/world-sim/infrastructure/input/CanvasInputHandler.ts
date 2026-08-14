@@ -1,9 +1,7 @@
 /**
- * @fileoverview Canvas Input Handler
- * @description Encapsulates pointer event binding and raycast resolution for
- * the World Sim canvas. Translates raw `MouseEvent`s into body-level callbacks
- * (`onBodyClick`, `onHoverChange`) so the mediator can stay focused on state
- * dispatch and scene coordination.
+ * @fileoverview Binds and raycasts pointer events on the World Sim canvas.
+ * @description Translates `MouseEvent`s into `onBodyClick` and `onHoverChange`
+ * callbacks.
  *
  * @module worldSim/input/CanvasInputHandler
  * @version 1.0.0
@@ -15,7 +13,7 @@ import type { PerspectiveCamera } from 'three';
 import type { RaycastService } from '@/modules/world-sim/application/services/RaycastService';
 
 /**
- * Dependencies required to construct the canvas input handler.
+ * Dependencies required to construct the handler.
  *
  * @interface CanvasInputHandlerDeps
  * @property {HTMLCanvasElement} canvas - The DOM canvas element to listen on
@@ -44,8 +42,8 @@ export interface CanvasInputHandlerDeps {
 }
 
 /**
- * Attaches and detaches pointer listeners on the World Sim canvas. Owns the
- * bound handler references so listeners can be removed cleanly on dispose.
+ * Attaches and detaches pointer listeners on the canvas and holds bound handler
+ * references for removal on dispose.
  *
  * @class CanvasInputHandler
  */

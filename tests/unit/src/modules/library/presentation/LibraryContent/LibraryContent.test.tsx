@@ -1,10 +1,7 @@
 /**
  * @fileoverview LibraryContent Tests
- * @description Covers the branch each resolution kind takes, and the `basePath`
- * hand-off that keeps a redirect inside the route tree it started from.
- *
- * The component is an async server component, so it is invoked directly and its
- * returned element inspected — no renderer is involved.
+ * @description Tests each resolution kind (md, mdx, redirect, not-found) and the
+ * `basePath` hand-off. Invokes the async component directly and inspects the returned element.
  *
  * @module tests/unit/src/modules/library/presentation/LibraryContent/LibraryContent
  * @version 1.0.0

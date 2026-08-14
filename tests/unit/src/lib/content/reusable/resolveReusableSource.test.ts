@@ -1,16 +1,8 @@
 /**
- * @fileoverview resolveReusableSource Contract Tests
- * @description Two guards around reusable content, both written after real
- * failures reached the browser.
- *
- * The first checks that every PascalCase tag authored in content can actually
- * resolve — either as a registered component or as a reusable region. An
- * unresolvable tag throws at request time, which is how `Unit` shipped broken.
- *
- * The second checks that every MDX compiler resolves reusables before
- * evaluating. Wiring that step into one compiler and not the other is how
- * `LesserMooncleave` shipped broken: the library route compiles through
- * `compileStatic`, which had been missed.
+ * @fileoverview resolveReusableSource tests
+ * @description Asserts that every PascalCase tag in authored content resolves
+ * to a registered component or reusable region, and that each compile entry
+ * point calls resolveReusableSource.
  *
  * @module tests/unit/lib/content/reusable/resolveReusableSource
  * @version 1.0.0

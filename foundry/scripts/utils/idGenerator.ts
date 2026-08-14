@@ -1,8 +1,7 @@
 /**
  * @fileoverview Deterministic Foundry VTT document ID generator.
- * @description Generates stable 16-character alphanumeric IDs from content slugs
- * using SHA-256 hashing. Same input always produces the same ID, enabling
- * idempotent re-exports without duplicate compendium entries.
+ * @description Generates a 16-character alphanumeric ID from a content slug via
+ * SHA-256. Same input always yields the same ID.
  *
  * Foundry VTT requires document IDs to be exactly 16 characters, alphanumeric only.
  *
@@ -23,9 +22,6 @@ const FOUNDRY_ID_LENGTH = 16;
 
 /**
  * Generates a deterministic 16-character Foundry VTT document ID from a slug.
- *
- * Uses SHA-256 hash of the input, then maps each byte to the Foundry ID
- * character set. The same slug always produces the same ID.
  *
  * @param {string} slug - Content slug used as seed (e.g. "albedo-the-bleak-bloom")
  * @param {string} [namespace] - Optional namespace prefix to avoid collisions across

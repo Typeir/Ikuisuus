@@ -1,8 +1,7 @@
 /**
  * @fileoverview Generic Mobile Modal Component
- * @description Reusable mobile-optimized bottom-sheet modal with focus trap,
- * keyboard navigation, and an optional `console` skin matching the site's
- * terminal aesthetic. Renders to portal for proper z-index stacking.
+ * @description Mobile bottom-sheet modal with focus trap, keyboard navigation,
+ * and optional `console` variant. Renders to a portal for z-index stacking.
  *
  * @module ui/modal/mobileModal
  * @version 2.0.0
@@ -20,7 +19,7 @@ import { useModalA11y } from './useModalA11y';
 
 /**
  * @interface MobileModalProps
- * Configuration for generic mobile modal
+ * Mobile modal configuration props.
  * @property {boolean} isOpen - Whether modal is visible
  * @property {() => void} onClose - Callback when modal should close (Escape key, backdrop click)
  * @property {ReactNode} children - Modal content
@@ -46,12 +45,12 @@ export interface MobileModalProps {
 }
 
 /**
- * Generic mobile bottom-sheet modal with focus management and keyboard
- * navigation. Renders to document.body via portal for proper modal stacking.
+ * Mobile bottom-sheet modal with focus management and keyboard navigation.
+ * Renders to document.body via portal.
  *
  * @component
- * @param {MobileModalProps} props - Modal configuration
- * @returns {JSX.Element | null} Rendered modal or null when closed
+ * @param {MobileModalProps} props - Modal configuration.
+ * @returns {JSX.Element | null} Rendered modal or null when closed.
  * @example
  * ```tsx
  * const [isOpen, setIsOpen] = useState(false);

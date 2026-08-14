@@ -1,9 +1,8 @@
 /**
  * @fileoverview MDX-to-HTML converter for Foundry VTT descriptions.
- * @description Compiles MDX content to clean HTML using the same
- * next-mdx-remote-client/rsc + ReactDOMServer pipeline as the outlier
- * compiler. Custom JSX components are replaced with no-op stubs so the
- * evaluation succeeds without Next.js context or API routes.
+ * @description Compiles MDX content to HTML via next-mdx-remote-client/rsc
+ * evaluate + ReactDOMServer. Custom JSX components are no-op or pass-through
+ * stubs.
  *
  * @module foundry/scripts/utils/mdxToHtml
  * @version 2.0.0
@@ -20,8 +19,8 @@ import remarkGfm from 'remark-gfm';
 import type { MonsterFeature } from '../../../src/lib/types/feature';
 
 /**
- * No-op React component used to stub out JSX tags that are irrelevant
- * in the Foundry VTT export (BlendedImage, MonsterTable, etc.).
+ * No-op component that renders nothing. Stubs JSX tags irrelevant to the
+ * Foundry VTT export (BlendedImage, MonsterTable, etc.).
  *
  * @returns {null} Renders nothing
  */
@@ -29,7 +28,6 @@ const Noop: React.FC<Record<string, unknown>> = () => null;
 
 /**
  * Wrapping stub that renders only its children.
- * Used for layout wrappers like FlexRenderer.
  *
  * @param {object} props - Component props
  * @param {React.ReactNode} props.children - Child content
@@ -39,8 +37,7 @@ const PassThrough: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
   React.createElement(React.Fragment, null, children);
 
 /**
- * Table wrapper that renders an HTML table element.
- * Mirrors the app's table component without the CSS wrapper div.
+ * Renders an HTML table element.
  *
  * @param {object} props - Component props
  * @param {React.ReactNode} props.children - Table contents (thead, tbody, etc.)
@@ -51,7 +48,6 @@ const TableWrapper: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
 
 /**
  * Renders a BlendedImage as a plain HTML img tag.
- * BlendedImage takes standard img attributes (src, alt, etc.).
  *
  * @param {Record<string, unknown>} props - Image attributes
  * @returns {React.ReactElement} An img element
@@ -60,8 +56,7 @@ const ImgStub: React.FC<Record<string, unknown>> = (props) =>
   React.createElement('img', { src: props.src, alt: props.alt });
 
 /**
- * Component map passed to MDX evaluate(). Interactive or data-fetching
- * components become Noop; layout wrappers become PassThrough.
+ * Component map passed to MDX evaluate().
  */
 const FOUNDRY_COMPONENTS: Record<string, React.FC<any>> = {
   BlendedImage: ImgStub,
@@ -85,10 +80,6 @@ const FOUNDRY_COMPONENTS: Record<string, React.FC<any>> = {
 /**
  * Converts full MDX content string to Foundry-compatible HTML.
  *
- * Uses the same next-mdx-remote-client/rsc evaluate + ReactDOMServer
- * pipeline as the outlier compiler. Custom components are stubbed with
- * no-op or pass-through components.
- *
  * @param {string} mdx - Raw MDX file content
  * @returns {Promise<string>} Clean HTML string for Foundry VTT description fields
  */
@@ -104,10 +95,10 @@ export async function mdxToHtml(mdx: string): Promise<string> {
 }
 
 /**
- * Extracts the description portion of a monster MDX file.
- * Strips the stat block header (title, type line, AC/HP/Speed table,
- * ability score table, and properties list) to return only the traits,
- * actions, and other narrative content.
+ * Extracts the description portion of a monster MDX file. Strips the stat
+ * block header (title, type line, AC/HP/Speed table, ability score table, and
+ * properties list); returns only the traits, actions, and other narrative
+ * content.
  *
  * @param {string} mdx - Full MDX content of a monster sheet
  * @returns {Promise<string>} HTML of the description portion only

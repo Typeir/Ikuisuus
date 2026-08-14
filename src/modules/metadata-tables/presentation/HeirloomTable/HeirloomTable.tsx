@@ -1,9 +1,7 @@
 /**
- * @fileoverview Heirloom Table Wrapper - Client-side data fetching for magical items table
- * @description Fetches heirloom metadata from API and configures MetadataTable with
- * heirloom-specific columns (rarity, item type, weapon type, attunement). Supports
- * locale-aware content via route params or props override. Uses RARITY_SORT_ORDER
- * for consistent rarity-based sorting.
+ * @fileoverview Heirloom Table Wrapper
+ * @description Fetches heirloom metadata from the API and configures MetadataTable
+ * with heirloom-specific columns and locale-aware content.
  *
  * @version 2.0.0
  * @author Typeir
@@ -37,14 +35,14 @@ import { useParams } from 'next/navigation';
 /**
  * Heirloom metadata structure from API
  * @typedef {Object} HeirloomMetadata
- * @property {string} slug - URL-friendly heirloom identifier
- * @property {string} title - Display name of the heirloom
- * @property {string} rarity - Item rarity (e.g., 'common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact')
- * @property {string} itemType - Type of item (e.g., 'weapon', 'armor', 'wondrous item')
- * @property {string} [weaponType] - Specific weapon type if applicable (e.g., 'longsword', 'greatsword')
+ * @property {string} slug - URL-friendly identifier
+ * @property {string} title - Display name
+ * @property {string} rarity - Item rarity
+ * @property {string} itemType - Type of item
+ * @property {string} [weaponType] - Specific weapon type if applicable
  * @property {boolean} [requiresAttunement] - Whether the item requires attunement
  * @property {{dice: string; type: string}} [damage] - Weapon damage dice and type
- * @property {string[]} [properties] - Weapon properties (e.g., 'versatile', 'finesse')
+ * @property {string[]} [properties] - Weapon properties
  * @property {*} [key] - Additional metadata properties
  */
 type HeirloomMetadata = {
@@ -69,13 +67,12 @@ type HeirloomTableWrapperProps = {
 };
 
 /**
- * Client-side wrapper for HeirloomTable that fetches locale-aware data via API.
- * Can use locale from props, route params, or defaults to 'en'.
+ * Client-side wrapper for HeirloomTable.
  *
  * @component
  * @param {HeirloomTableWrapperProps} props - Component props
  * @param {string} [props.locale] - Optional locale override (defaults to route param or 'en')
- * @returns {JSX.Element} The rendered heirloom table with client-side data fetching
+ * @returns {JSX.Element} Rendered heirloom table
  */
 export default function HeirloomTableWrapper({
   locale: localeProp,

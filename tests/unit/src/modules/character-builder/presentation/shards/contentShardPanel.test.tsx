@@ -1,8 +1,7 @@
 /**
  * @fileoverview ContentShardPanel Unit Tests
- * @description Verifies fetch, render, loading, error, and MDX compilation
- * fallback states for the ContentShardPanel. Network, MDX compilation, and
- * markdown rendering are mocked so tests remain fast and environment-agnostic.
+ * @description Mocks ContentShardPanel fetch, MDX compilation, and markdown
+ * rendering to verify its fetch, render, loading, error, and MDX fallback states.
  *
  * @module tests/unit/lib/components/characterSheet/contentShardPanel
  * @version 2.0.0

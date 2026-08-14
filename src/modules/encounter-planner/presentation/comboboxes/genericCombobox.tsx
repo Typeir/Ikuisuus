@@ -1,12 +1,8 @@
 /**
  * @fileoverview Generic Combobox Component
- * @description Reusable searchable dropdown with keyboard navigation and ARIA support.
- * Provides base functionality for spell, affix, and creature comboboxes.
- * Implements arrow key selection, Enter to select, Escape to close, click-outside-to-close,
- * viewport-aware positioning with scroll tracking, and full screen reader accessibility.
- *
- * Uses React Portal to render dropdown to document.body, escaping any ancestor
- * overflow clipping from scrollable containers, modals, or other stacking contexts.
+ * @description Searchable dropdown with keyboard navigation, ARIA attributes,
+ * click-outside-to-close, and viewport-aware positioning. Dropdown renders to
+ * document.body via React Portal, escaping ancestor overflow clipping.
  *
  * @module genericCombobox
  * @version 2.1.0
@@ -45,8 +41,7 @@ import {
 } from './comboboxConstants';
 
 /**
- * Custom hook for imperative dropdown positioning with rAF batching.
- * Directly manipulates DOM via transform for minimal layout work and zero React rerender lag.
+ * Imperative dropdown positioning with rAF batching, positioned via CSS transform.
  *
  * @param {React.RefObject<HTMLInputElement | null>} inputRef - Input element reference
  * @param {React.RefObject<HTMLDivElement | null>} dropdownRef - Dropdown element reference
@@ -106,8 +101,7 @@ const useRafPositioner = (
 };
 
 /**
- * Base interface for combobox items.
- * All item types must extend this interface to be compatible with GenericCombobox.
+ * Base interface for combobox items; item types extend it for GenericCombobox compatibility.
  *
  * @interface ComboboxItem
  * @property {string} id - Unique identifier for the item
@@ -136,9 +130,8 @@ interface GenericComboboxProps<T extends ComboboxItem> {
 }
 
 /**
- * Generic combobox with keyboard navigation and search filtering.
- * Serves as base component for SpellCombobox, AffixCombobox, and CreatureCombobox.
- * Handles all interaction logic while allowing custom rendering and filtering.
+ * Combobox with keyboard navigation and search filtering; base for SpellCombobox,
+ * AffixCombobox, and CreatureCombobox. Custom rendering and filtering via props.
  *
  * @component
  * @template T - Item type extending ComboboxItem
@@ -218,8 +211,7 @@ export function GenericCombobox<T extends ComboboxItem>({
   }, []);
 
   /**
-   * Attach scroll/resize listeners for imperative positioning.
-   * Uses passive listeners and rAF batching for optimal performance.
+   * Attaches passive scroll/resize listeners to scrollable ancestors for positioning.
    */
   useEffect(() => {
     if (!isOpen || !inputRef.current) return;

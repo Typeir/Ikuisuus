@@ -1,7 +1,7 @@
 /**
  * @fileoverview Skeleton Component Unit Tests
- * @description Tests for the generic skeleton loader component that provides
- * customizable loading placeholders with multiple variants and styling options.
+ * @description Unit tests for the skeleton loader component: renders a given
+ * count, applies variant classes, width/height styles, and className.
  *
  * @module tests/unit/lib/components/skeleton/skeleton
  * @version 1.0.0

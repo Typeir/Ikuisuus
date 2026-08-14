@@ -1,8 +1,6 @@
 /**
- * @fileoverview Tagging Utility Patterns
- * @description Pre-compiled regex patterns used by the tagging utility functions.
- * Centralizes movement detection, monster mechanic matching, and item mechanic
- * matching into grouped dictionaries.
+ * @fileoverview Pre-compiled regex patterns for tagging: movement, monster mechanic,
+ * and item mechanic matching, grouped into constant dictionaries.
  *
  * @module lib/metadata/taggingPatterns
  * @version 1.0.0

@@ -1,8 +1,7 @@
 /**
  * Persistent Storage Utilities
  *
- * @fileoverview Persistent storage helpers with cookie-first source of truth.
- * Cookies are the authoritative layer. sessionStorage and localStorage are fallbacks for regeneration only.
+ * @fileoverview Persistence helpers with cookie-first source of truth.
  *
  * @module lib/utils/storePersistentData
  * @version 1.1.0
@@ -10,24 +9,8 @@
  * @since 1.0.0
  *
  * @description
- * Multi-layer persistence strategy for UI state:
- *
- * **Storage Layers** (priority order):
- * 1. Cookies - Source of truth, readable server-side for SSR
- * 2. sessionStorage - Tab-scoped fallback, survives refreshes
- * 3. localStorage - Long-term fallback, persists across sessions
- *
- * **Provided Functions**:
- * - `storePersistentData()` - Cookie-first canonical writes
- * - `storePersistentDataCookieFirst()` - Explicit cookie-first writes
- * - `storePersistentDataFallbackOnly()` - Regeneration without cookie override
- * - `storePersistentDataRef()` - Large-payload writes via cookie integrity pointer
- * - `readPersistentDataCookieFirst()` - Cookie-prioritized reads
- * - `fetchPersistentDataRef()` - Large-payload reads with hash verification
- * - `removePersistentData()` - Removes key from all storage layers
- * - `readCookie()` / `writeCookie()` - Low-level cookie operations
- *
- * All functions are SSR-safe (no-ops or null returns when `window` unavailable).
+ * Cookies are the authoritative layer; sessionStorage and localStorage are fallbacks.
+ * All functions return null or no-op when `window` is unavailable.
  */
 
 /**
@@ -146,8 +129,7 @@ export const writeCookie = (
  * @returns {void}
  *
  * @description
- * Writes to all three storage layers: cookie (canonical), sessionStorage, and localStorage.
- * Use this for authoritative state updates that should be readable server-side.
+ * Writes value to cookie, sessionStorage, and localStorage.
  */
 export const storePersistentDataCookieFirst = (
   key: string,
@@ -169,8 +151,7 @@ export const storePersistentDataCookieFirst = (
  * @returns {void}
  *
  * @description
- * Writes to sessionStorage and localStorage only, leaving cookies unchanged.
- * Use for regeneration/repair when cookie is missing or invalid.
+ * Writes to sessionStorage and localStorage only; cookies unchanged.
  */
 export const storePersistentDataFallbackOnly = (
   key: string,
@@ -190,8 +171,7 @@ export const storePersistentDataFallbackOnly = (
  * @returns {string | null} Found value or null
  *
  * @description
- * Reads from storage layers in priority order: cookie → sessionStorage → localStorage.
- * Returns the first non-null value found.
+ * Read priority: cookie → sessionStorage → localStorage.
  */
 export const readPersistentDataCookieFirst = (key: string): string | null => {
   const cookieValue = readCookie(key);
@@ -215,8 +195,7 @@ export const readPersistentDataCookieFirst = (key: string): string | null => {
  * @returns {void}
  *
  * @description
- * Backwards-compatible alias for `storePersistentDataCookieFirst`.
- * Writes to cookies, sessionStorage, and localStorage with proper URL encoding.
+ * Alias for `storePersistentDataCookieFirst`.
  */
 export const storePersistentData = (key: string, value: string): void => {
   storePersistentDataCookieFirst(key, value);
@@ -231,15 +210,8 @@ export const storePersistentData = (key: string, value: string): void => {
  * @returns {void}
  *
  * @description
- * Large payloads cannot reliably fit inside a cookie (4 KB limit). This function
- * keeps the cookie as source-of-truth for **integrity** by storing only a short
- * reference pointer `ref:<hash>` in the cookie, while the full payload lives in
+ * Stores a `ref:<hash>` pointer in the cookie and the full payload in
  * sessionStorage and localStorage.
- *
- * Read pattern: `fetchPersistentDataRef` reads the cookie pointer, retrieves the
- * payload from fallback storage, recomputes the hash, and returns the value only
- * when the hashes match — guaranteeing referential integrity without stuffing raw
- * data into a cookie.
  *
  * @example
  * storePersistentDataRef('ikuisuus-characters', JSON.stringify(characters));
@@ -266,14 +238,9 @@ export const storePersistentDataRef = (key: string, value: string): void => {
  * or the hash verification fails
  *
  * @description
- * Read priority:
- * 1. Cookie must contain a valid `ref:<hash>` pointer — returns null otherwise
- * 2. sessionStorage checked first, then localStorage for the payload
- * 3. Hash of retrieved payload is compared against the cookie pointer
- * 4. Returns the payload only when hashes match; null on any mismatch or absence
- *
- * A hash mismatch indicates the storage payload was cleared or tampered with.
- * Callers should treat null as "no valid persisted data" and reinitialise.
+ * Reads the payload whose cookie pointer is `ref:<hash>`. Payload read from
+ * sessionStorage first, then localStorage. Returns the payload only when its
+ * hash matches the cookie pointer.
  */
 export const fetchPersistentDataRef = (key: string): string | null => {
   if (typeof window === 'undefined') return null;

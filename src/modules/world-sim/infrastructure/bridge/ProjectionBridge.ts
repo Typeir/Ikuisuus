@@ -1,10 +1,5 @@
 /**
- * @fileoverview Projection Bridge — 3D to 2D Adapter with Direct DOM Manipulation
- * @description Projects tracked 3D world positions to 2D screen coordinates each frame.
- * Supports two modes: (1) direct DOM element binding where the bridge applies CSS
- * transforms itself, and (2) a subscriber pattern for custom position handling.
- * Direct binding eliminates the subscriber indirection for the common label case.
- *
+ * @fileoverview Requires a three.js camera and canvas rect; projects 3D points to 2D.
  * @module worldSim/bridge/ProjectionBridge
  * @version 2.0.0
  * @author Typeir
@@ -32,9 +27,6 @@ type GlobalPositionSubscriber = (
 /**
  * Projects 3D world-space points to 2D screen coordinates.
  * Manages tracked points and notifies subscribers of position changes each frame.
- *
- * Performance note: Updates happen via direct callback (not React state) so overlay
- * DOM elements can apply CSS transforms without triggering re-renders.
  *
  * @class ProjectionBridge
  *
@@ -69,8 +61,7 @@ export class ProjectionBridge {
   private occludedIds: Set<string> = new Set();
 
   /**
-   * Set the IDs of bodies currently occluded by other scene objects.
-   * Called by the mediator each frame before update().
+   * Set the IDs of bodies currently occluded by scene objects.
    *
    * @param {Set<string>} ids - Set of occluded body IDs
    */
@@ -114,8 +105,7 @@ export class ProjectionBridge {
   }
 
   /**
-   * Bind a DOM element to a tracked point. The bridge will directly apply
-   * CSS transforms (position, visibility, scale) each frame — no subscriber needed.
+   * Bind a DOM element to a tracked point. update() applies CSS transforms to it.
    *
    * @param {string} id - Identifier matching a tracked point
    * @param {HTMLElement} element - DOM element to position
@@ -148,10 +138,7 @@ export class ProjectionBridge {
 
   /**
    * Project all tracked points, apply transforms to bound DOM elements,
-   * and notify subscribers. Called once per frame from the animation loop — hot path.
-   *
-   * Bound elements get CSS transforms applied directly, bypassing the subscriber
-   * layer entirely. Subscribers still receive the full positions map for custom handling.
+   * and notify subscribers. Called once per frame from the animation loop.
    *
    * @param {PerspectiveCamera} camera - The scene camera
    * @param {DOMRect} canvasRect - Bounding rect of the Three.js canvas element
@@ -221,8 +208,8 @@ export class ProjectionBridge {
   }
 
   /**
-   * Convert camera distance to a DOM scale factor.
-   * Uses inverse-linear interpolation clamped between MIN_LABEL_SCALE and MAX_LABEL_SCALE.
+   * Convert camera distance to a DOM scale factor, clamped between
+   * MIN_LABEL_SCALE and MAX_LABEL_SCALE.
    *
    * @private
    * @param {number} distance - Distance from camera to world point

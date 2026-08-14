@@ -1,8 +1,6 @@
 /**
- * @fileoverview CameraOrbitControls Unit Tests
- * @description Tests spherical coordinate management, damping, enable/disable,
- * reset, getOffset, and syncFromOffset without requiring real DOM input events.
- *
+ * @fileoverview CameraOrbitControls unit tests.
+ * @description Exercises controls without real DOM input events.
  * @module tests/unit/worldSim/camera/CameraOrbitControls
  */
 

@@ -1,13 +1,9 @@
 /**
  * @fileoverview Decorator factories for the Foundry feature handler system.
- * @description Provides `@parser()` and `@handler()` decorators that register
- * monster sheet parsers and per-feature handler methods. Uses a module-level
- * accumulator pattern for cross-runtime compatibility (esbuild TC39 Stage 3
- * decorators and legacy TypeScript experimentalDecorators).
- *
- * Method decorators push entries to a pending queue; the class decorator
- * sweeps them onto the class constructor. The {@link ParserRegistry} reads
- * these stored entries at discovery time.
+ * @description `@parser()` registers a monster sheet parser class; `@handler()`
+ * registers a per-feature handler method. Method decorators queue entries;
+ * the class decorator stores them on the constructor. The {@link ParserRegistry}
+ * reads them at discovery time.
  *
  * @module foundry/scripts/handlers/decorators
  * @version 2.0.0
@@ -81,8 +77,7 @@ export function parser(sheetSlug: string): ClassDecorator {
 
 /**
  * Method decorator factory that registers a class method as the handler for a
- * specific feature ID. Compatible with both TC39 Stage 3 decorators (esbuild)
- * and legacy TypeScript experimentalDecorators.
+ * specific feature ID.
  *
  * @param {string} featureId - Feature ID suffix (everything after `slug/`)
  * @returns {MethodDecorator} Decorator that queues the method in the handler accumulator

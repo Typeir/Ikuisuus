@@ -2,19 +2,8 @@
  * @fileoverview Persisted Storage Schema Version
  * @description Guards every client-persisted store behind a single schema
  * version. On the first read of a page load the stored version is compared with
- * {@link STORAGE_SCHEMA_VERSION}; anything missing or older means the payloads
- * were written against a shape this build no longer understands, so they are
- * dropped wholesale and the current version is written in their place.
- *
- * This deliberately replaces per-field data migrations. While the app has no
- * production audience, a discarded local save costs nothing, whereas migration
- * code is permanent surface that has to stay correct for every historical shape.
- * Bump {@link STORAGE_SCHEMA_VERSION} whenever a persisted shape changes and the
- * stale data takes care of itself.
- *
- * Character and encounter data are purged together: a party in the encounter
- * planner references characters by id, so keeping one without the other would
- * leave dangling references.
+ * {@link STORAGE_SCHEMA_VERSION}; missing or older version drops all payloads
+ * and writes the current version.
  *
  * @module lib/utils/storageSchema
  * @version 1.0.0
@@ -28,9 +17,8 @@ import { fetchPersistentData } from './fetchPersistentData';
 import { removePersistentData, storePersistentData } from './storePersistentData';
 
 /**
- * Current shape of everything persisted on the client. Bump on ANY change to a
- * persisted structure — character entity, hit-dice log, encounter, party, or
- * in-progress combat — to discard saves written against the previous shape.
+ * Current shape of everything persisted on the client. Increment on any change
+ * to a persisted structure to discard saves written against the previous shape.
  *
  * @constant STORAGE_SCHEMA_VERSION
  * @type {number}
@@ -74,9 +62,8 @@ const purgeVersionedStorage = (): void => {
 };
 
 /**
- * Ensures the persisted stores match {@link STORAGE_SCHEMA_VERSION}, purging
- * them when they do not. Call at the top of every persisted read path; the
- * check runs at most once per page load and is a no-op on the server.
+ * Purges stored data when it does not match {@link STORAGE_SCHEMA_VERSION}.
+ * Runs at most once per page load; no-op on the server.
  *
  * @function ensureStorageSchema
  * @returns {void}
@@ -95,8 +82,7 @@ export const ensureStorageSchema = (): void => {
 };
 
 /**
- * Clears the once-per-load guard. Test seam only — production code has no
- * reason to re-run the check within a single page load.
+ * Resets the once-per-load check guard so the check can run again next call.
  *
  * @function resetStorageSchemaCheck
  * @returns {void}

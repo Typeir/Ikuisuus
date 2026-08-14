@@ -1,8 +1,7 @@
 /**
  * @fileoverview Draft Banner Component
- * @description Client-side component that displays a visually distinct indicator
- * when the user is viewing draft content. Shows the "DRAFT" badge and metadata
- * timestamps (created_at and updated_at).
+ * @description Client-side banner showing the "DRAFT" badge and the created_at
+ * and updated_at timestamps for draft content.
  *
  * @module lib/components/draftBanner/draftBanner
  * @version 1.0.0
@@ -28,10 +27,10 @@ interface DraftBannerProps {
 }
 
 /**
- * Formats an ISO 8601 date string into a human-readable locale string.
+ * Formats an ISO 8601 date string via toLocaleString.
  *
  * @param {string} iso - ISO 8601 timestamp
- * @returns {string} Formatted date string
+ * @returns {string} Locale-formatted date string, or iso on parse failure
  */
 const formatDate = (iso: string): string => {
   try {

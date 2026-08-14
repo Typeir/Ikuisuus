@@ -1,8 +1,6 @@
 /**
- * @fileoverview Identity Rows — Bloodline + Vocation pill display
- * @description Read-only identity pills shown in view mode and collapsed
- * edit mode. Extracted from {@link VocationSelector} to satisfy file-length
- * gate (max 250 code lines).
+ * @fileoverview Identity Rows — Bloodline + Vocation pill display.
+ * @description Read-only identity pills shown in view mode and collapsed edit mode.
  *
  * @module modules/character-builder/presentation/builder/identityRows
  * @version 1.0.0

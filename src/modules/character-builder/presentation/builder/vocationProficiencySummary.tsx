@@ -1,13 +1,7 @@
 /**
- * @fileoverview Vocation Proficiency Summary
- * @description Compact fixed summary of the proficiencies a vocation grants
- * (saving throws, skill choices, armor, weapons, trades), shown beneath a
- * vocation entry so the player sees what it confers without opening the vocation
- * page. Every row is always rendered in a stable order; a row the vocation does
- * not provide — or the empty state when no vocation is selected — shows an em
- * dash, so the summary never changes height and the layout never shifts. Values
- * are stripped of inline markdown so bold markers from the source traits table
- * never leak into the display.
+ * @fileoverview Renders the SAVES / SKILLS / ARMOR / WEAPONS / TRADES summary
+ * for a vocation entry. Missing grants (or no vocation) render an em dash;
+ * values are stripped of inline markdown.
  *
  * @module lib/components/characterSheet/builder/vocationProficiencySummary
  * @version 2.0.0
@@ -61,8 +55,7 @@ function abbreviateAbility(name: string): string {
 }
 
 /**
- * Cleans and comma-joins a proficiency value list, stripping inline markdown
- * from each entry and substituting an em dash when the list is empty.
+ * Returns a comma-joined, inline-markdown-stripped grant list, or an em dash when empty.
  *
  * @function formatGrantList
  * @param {string[] | undefined} values - Raw grant values from vocation metadata
@@ -76,8 +69,7 @@ function formatGrantList(values: string[] | undefined): string {
 }
 
 /**
- * Formats a vocation's saving-throw grants as abbreviated codes, or an em dash
- * when there are none.
+ * Returns saving-throw grants as comma-joined 3-letter codes, or an em dash when empty.
  *
  * @function formatSaves
  * @param {string[] | undefined} saves - Saving-throw ability names
@@ -91,9 +83,8 @@ function formatSaves(saves: string[] | undefined): string {
 }
 
 /**
- * Renders a compact, fixed-layout proficiency summary for a vocation entry.
- * Always shows the SAVES / SKILLS / ARMOR / WEAPONS / TRADES rows; absent grants
- * (or the no-vocation state) render an em dash so the row set never changes.
+ * Renders the fixed SAVES / SKILLS / ARMOR / WEAPONS / TRADES row set; absent
+ * grants (or no vocation) render an em dash.
  *
  * @component
  * @param {VocationProficiencySummaryProps} props - Component props

@@ -1,8 +1,7 @@
 /**
- * @fileoverview Equipment Tab
- * @description Equipment table editor with per-item quantity and weight columns.
- * Exposes a lightweight {@link EquipmentProvider} context so the
- * `CarryingCapacityCalculator` can consume `totalWeight` without prop-drilling.
+ * @fileoverview Equipment Tab.
+ * @description Edits the equipment table (name, quantity, weight lb) and notes.
+ * Provides `EquipmentProvider` with derived `totalWeight` and `totalCount`.
  *
  * @module lib/components/characterSheet/tabs/equipmentTab
  * @version 2.0.0
@@ -36,9 +35,9 @@ import tbl from '@/styles/tables.module.scss';
 import styles from './tabs.module.scss';
 
 /**
- * Equipment tab content. Renders a table with Name / Units / Weight (lb) columns
- * and exposes derived totals via {@link EquipmentProvider}. Reads the character
- * and edit mode from the active-sheet context.
+ * Equipment tab content. Renders Name / Units / Weight (lb) columns and passes
+ * derived totals to {@link EquipmentProvider}. Reads character data and edit
+ * mode from the active-sheet context.
  *
  * @component
  * @returns {JSX.Element} Rendered tab body

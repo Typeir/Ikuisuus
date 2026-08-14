@@ -1,7 +1,7 @@
 /**
- * @fileoverview CelestialLabel Unit Tests
- * @description Tests rendering, click handling, keyboard interaction,
- * CSS class toggling, and ref forwarding for the floating label component.
+ * @fileoverview CelestialLabel unit tests
+ * @description Tests rendering, click and keyboard handling, CSS class
+ * toggling, and ref forwarding.
  *
  * @module tests/unit/worldSim/overlay/CelestialLabel
  */

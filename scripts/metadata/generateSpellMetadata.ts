@@ -1,6 +1,6 @@
 /**
  * @fileoverview Spell Metadata Generator
- * @description Parses D&D spell entries in MDX format. Extracts level, school,
+ * @description Parses Damocles spell entries in MDX format. Extracts level, school,
  * casting time, range, components, duration, concentration, and gameplay tags.
  *
  * @module scripts/metadata/generateSpellMetadata
@@ -10,24 +10,21 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import {
-  toNativeMeasure,
-  toPlainMeasure,
-} from '@/lib/units/nativeMeasure';
+import { toNativeMeasure, toPlainMeasure } from '@/lib/units/nativeMeasure';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 import {
-    GameData,
-    clean,
-    filePathToSlug,
-    parseDescription,
-    parseTitle,
-    plain,
-    runGenerator,
-    runWithCli,
-    type SharedData,
-    type StorageAdapter,
+  GameData,
+  clean,
+  filePathToSlug,
+  parseDescription,
+  parseTitle,
+  plain,
+  runGenerator,
+  runWithCli,
+  type SharedData,
+  type StorageAdapter,
 } from '.';
 import { extractDerivedAspects, extractStrataTags } from './aspectExtractors';
 import {
@@ -36,12 +33,12 @@ import {
   stripCitations,
 } from './taggingUtils';
 import {
-    CASTING_TIME,
-    COMPONENTS,
-    DURATION,
-    SPELL_LISTS,
-    SPELL_TAGS,
-    STAT_BLOCK,
+  CASTING_TIME,
+  COMPONENTS,
+  DURATION,
+  SPELL_LISTS,
+  SPELL_TAGS,
+  STAT_BLOCK,
 } from './spellPatterns';
 
 const log = createLogger({ component: 'SpellMetadataGenerator' });
@@ -446,4 +443,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export { generateSpellMetadata, generateSpellMetadata as main, parseSpellFile };
-

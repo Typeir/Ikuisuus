@@ -3,9 +3,6 @@
  * @description Implements the `AuditAdapter` interface using a local JSON file.
  * Audit records are persisted as an array in `.meta/runtime/audit-log.json`.
  *
- * Suitable for local development and single-instance deployments.
- * For multi-instance production use, prefer the PostgreSQL adapter.
- *
  * @module lib/db/adapters/fs/fsAuditAdapter
  * @version 1.0.0
  * @author Typeir

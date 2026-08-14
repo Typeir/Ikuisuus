@@ -1,8 +1,7 @@
 /**
  * @fileoverview Feat progression tests
- * @description Verifies global tier-transition feats (ceil(L/3)-1), vocation
- * ASI/Feat row counting (level-gated, both label strings, multiclass), and the
- * earned/unspent totals.
+ * @description Covers global tier feats (ceil(L/3)-1), vocation ASI/Feat rows,
+ * and earned/unspent totals.
  *
  * @module tests/unit/src/modules/character-builder/lib/utils/featProgression
  * @version 1.0.0

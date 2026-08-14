@@ -1,16 +1,9 @@
 /**
- * @fileoverview `ik setup` — One-shot bootstrap for a fresh clone.
+ * @fileoverview `ik setup` — one-shot bootstrap for a fresh clone.
  *
- * Cross-platform setup that:
- *
- *   1. Installs a PATH-resolvable `ik` shim so users can invoke `ik` from any
- *      directory without typing `npx tsx ...`.
- *   2. Configures the content submodule to merge (not detach) on update.
- *   3. Installs content-repo git hooks via `setup-hooks.ts::main`.
- *   4. Triggers `paw sync` to populate `.paw/hooks/` and `.github/hooks/`.
- *
- * Idempotent: re-running detects managed blocks (sentinel-delimited) in rc
- * files and replaces them instead of appending duplicates.
+ * Installs the `ik` PATH shim, configures the content submodule to merge on
+ * update, installs content-repo git hooks, and runs `paw sync`. Idempotent;
+ * re-running replaces sentinel-delimited rc blocks instead of duplicating.
  *
  * @module multirepo/commands/setup
  * @author Typeir
@@ -108,14 +101,6 @@ function installPosixShim(repoRoot: string): string | null {
  * Installs the `ik` shim on Windows by writing `%USERPROFILE%\.ik\ik.cmd` and
  * prepending that folder to the user PATH.
  *
- * Deliberately not `setx PATH "<dir>;%PATH%"`. That expands `%PATH%` to the
- * *combined* system and user PATH and writes the result back into the user
- * scope, so every system entry gets duplicated there. Those copies then shadow
- * later system PATH changes, and `setx` silently truncates at 1024 characters,
- * which can destroy the variable outright on a machine with a long PATH.
- *
- * Reads and writes the user scope directly instead, which has neither problem.
- *
  * @param {string} repoRoot - Absolute path to the main repo root.
  * @returns {string | null} Error message if failed, null otherwise.
  */
@@ -203,12 +188,6 @@ function initializeSubmodules(repoRoot: string): void {
 /**
  * Runs `paw sync` to populate the hook bundles, building the CLI first if
  * the compiled artifact is not yet present.
- *
- * `pawBootstrap` is imported here rather than at module scope because it lives
- * in the `.github/PAW` submodule that `initializeSubmodules` checks out earlier
- * in this same command. A static import resolves before `run` executes, so on
- * the fresh clone this command exists to bootstrap it threw
- * `Cannot find module '../../../.github/PAW/pawBootstrap'` and nothing ran.
  *
  * @param {string} repoRoot - Absolute path to the main repo root.
  * @returns {Promise<string | null>} Error message if failed, null otherwise.

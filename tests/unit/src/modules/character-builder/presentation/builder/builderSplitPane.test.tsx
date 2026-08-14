@@ -20,8 +20,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
- * Sets the mocked viewport width and dispatches a resize event so the
- * viewport hook re-evaluates.
+ * Sets window.innerWidth and dispatches a resize event.
  *
  * @param width - New innerWidth value
  */

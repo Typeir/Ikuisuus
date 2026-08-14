@@ -1,17 +1,8 @@
 /**
  * @fileoverview Server-Only Import Boundary Tests
- * @description Fails when a barrel that client components import can reach the
- * ORM.
- *
- * This has broken the build twice. `MonsterAspects` was re-exported from the
- * component barrel that the MDX map imports; later `LibraryContent` reached the
- * metadata repository through `resolveAndCompileContent`. Both dragged MikroORM
- * and its native sqlite driver into the browser and surfaced as
- * `Can't resolve 'better-sqlite3'` — a module trace fifteen frames deep that
- * names neither the barrel nor the offending edge.
- *
- * A static walk of the import graph catches it at the boundary instead, naming
- * the path that crosses it.
+ * @description Asserts that barrels reachable from client components cannot
+ * transitively import server-only modules. Walks the import graph and names
+ * the first path that crosses a server-only module.
  *
  * @module tests/unit/src/modules/library/presentation/serverOnlyBoundaries
  * @version 1.0.0
@@ -71,10 +62,9 @@ function resolveInSrc(specifier: string, fromFile: string): string | null {
 
 /**
  * Walks the import graph and returns the first path that reaches a server-only
- * module, so the failure names the edge rather than the symptom.
+ * module.
  *
- * Type-only imports are ignored: they are erased at compile time and cannot
- * pull a runtime dependency into the bundle.
+ * Type-only imports are ignored; they are erased at compile time.
  *
  * @param {string} entry - Absolute path of the entry file
  * @returns {string[] | null} The offending import chain, or null when clean

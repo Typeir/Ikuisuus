@@ -139,7 +139,7 @@ export const PagePreviewProvider: React.FC<PagePreviewProviderProps> = ({
 
 /**
  * Read the page-preview context. Returns a no-op fallback when used outside
- * a provider so isolated tooltips degrade gracefully.
+ * a provider.
  *
  * @function usePagePreview
  * @returns {PagePreviewContextValue} Context value or a no-op stub

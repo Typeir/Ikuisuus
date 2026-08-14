@@ -4,10 +4,6 @@
  * inline below its picker row. Fetches the heading block via the DB-backed
  * `/api/content-shards/[type]/[slug]` endpoint lazily on mount and renders
  * it as HTML via the markdown renderer.
- *
- * This component intentionally has no header — the parent row supplies the
- * item name, badge, and expand chevron. Expanding is decoupled from selecting.
- *
  * @module lib/components/characterSheet/builder/contentExpandBody
  * @version 1.0.0
  * @author Typeir

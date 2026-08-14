@@ -1,8 +1,7 @@
 /**
  * @fileoverview Rehype plugin that wraps MDX content between headings in semantic section elements.
  * @description Groups sibling nodes that follow a heading into a `<section>` with a
- * `data-heading-level` attribute. Sections are visually transparent — they are plain
- * block containers with no inherent styles — so prose layout is unaffected.
+ * `data-heading-level` attribute.
  *
  * @module rehypeSectionize
  * @version 1.0.0
@@ -50,7 +49,7 @@ function headingLevel(node: Element): number {
  * Determines whether a HAST node is a thematic break / horizontal rule.
  *
  * Accepts both the HAST `element` form (`<hr>`) and a literal
- * `thematicBreak` node in case upstream transforms emit it.
+ * `thematicBreak` node.
  *
  * @param {RootContent} node - HAST node to test
  * @returns {boolean} True when the node is a horizontal rule
@@ -69,9 +68,6 @@ type StackItem = { level: number; section: Element };
 
 /**
  * Close any open sections whose level is greater than or equal to `level`.
- *
- * This utility centralizes the stack-popping logic so the main transformer
- * body does not contain inline comments or ad-hoc control flow notes.
  */
 function closeOpenSections(stack: StackItem[], level: number): void {
   while (stack.length && stack[stack.length - 1].level >= level) {
@@ -97,7 +93,7 @@ function attachSection(
 }
 
 /**
- * Clear all open sections (used when a thematic break is encountered).
+ * Clear all open sections.
  */
 function clearSections(stack: StackItem[]): void {
   stack.length = 0;

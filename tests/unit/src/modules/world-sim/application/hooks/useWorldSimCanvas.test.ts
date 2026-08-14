@@ -1,8 +1,7 @@
 /**
  * @fileoverview useWorldSimCanvas Hook Unit Tests
- * @description Tests the React hook that bridges Three.js lifecycle with React.
- * Verifies subsystem creation, animation start, cleanup on unmount,
- * and projection subscription wiring.
+ * @description Tests the useWorldSimCanvas React hook. Verifies subsystem
+ * creation, animation start, cleanup on unmount, and projection subscription.
  *
  * @module tests/unit/worldSim/hooks/useWorldSimCanvas
  */
@@ -83,10 +82,7 @@ describe('useWorldSimCanvas', () => {
     vi.clearAllMocks();
   });
 
-  /**
-   * Wrapper that provides a div with a ref for the container.
-   * The hook's useEffect needs a mounted container to initialize.
-   */
+  /** Wrapper that provides a div for the container ref. */
   function renderWithContainer() {
     /** Store the ref callback result */
     let containerEl: HTMLDivElement | null = null;
@@ -99,10 +95,7 @@ describe('useWorldSimCanvas', () => {
       wrapper,
     });
 
-    /**
-     * The hook returns a containerRef but useEffect won't fire for the container
-     * because in testing there's no real DOM mounting. We test the returned shape.
-     */
+    /** Tests the returned hook shape since useEffect does not fire without a mounted DOM. */
     return { result, unmount };
   }
 

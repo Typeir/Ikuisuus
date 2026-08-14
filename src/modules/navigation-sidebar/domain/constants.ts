@@ -15,9 +15,7 @@ export const BASE_HEIGHT = 52;
 
 /**
  * Duration in milliseconds that matches the `max-height` CSS closing
- * transition defined in `sidebar.module.scss`. Children stay mounted for
- * this window so the collapse animation fully plays before the subtree
- * is unmounted.
+ * transition in `sidebar.module.scss`.
  *
  * @constant
  * @type {number}
@@ -34,8 +32,7 @@ export const SIDEBAR_CLOSE_ANIMATION_MS = 500;
 export const VIRTUALIZATION_THRESHOLD = 50;
 
 /**
- * Maximum depth for shallow walk traversal of sidebar tree structure.
- * Imported from library navigation module for sidebar consistency.
+ * Maximum depth for shallow walk traversal of the sidebar tree.
  *
  * @constant
  * @type {number}

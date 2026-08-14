@@ -1,7 +1,7 @@
 /**
- * @fileoverview World Sim Constants — Shared Configuration Values
- * @description Centralizes magic numbers and default values used across multiple
- * World Sim subsystems. Prevents duplication and drift between modules.
+ * @fileoverview World Sim shared constants.
+ * @description Centralizes magic numbers and default values used across World Sim
+ * modules.
  *
  * @module worldSim/constants
  * @version 1.0.0

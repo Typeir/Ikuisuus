@@ -1,19 +1,10 @@
 /**
  * @fileoverview Active Sheet Reducer
- * @description Pure reducer for the active character sheet. Owns the
- * "experience is source of truth" invariant: `level` and `tierBonus`
- * are derived cache fields, always recomputed from
- * `max(getLevelFromXP(experience), sumVocationLevels(vocations))`. Increasing
- * vocation-level sum past the XP-derived level bumps `experience` up to the
- * corresponding XP threshold (the "vocation-sum floor"). Lowering XP is
- * clamped to that same floor. Generic `PATCH` strips direct writes to
- * `level` / `tierBonus` so consumers cannot desync the cache.
- *
- * Writes are never gated on edit mode. Edit mode only decides *where* a write
- * lands: while editing it updates the draft alone, so `cancelEdit` can throw it
- * away; otherwise it updates the saved character directly (live play — damage,
- * grit, hit-dice reconciliation — which the provider then persists). Deciding
- * which controls to offer is the consumer's job, via `editing`.
+ * @description Pure reducer for the active character sheet. `level` and
+ * `tierBonus` are derived caches recomputed from `experience` and
+ * `vocations`; XP writes are clamped to the vocation-sum floor, and PATCH
+ * strips direct writes to `level`/`tierBonus`. While editing, writes land on
+ * the draft only; otherwise on the saved character with `dirty` set.
  *
  * @module lib/components/characterSheet/context/sheetReducer
  * @version 1.0.0
@@ -51,7 +42,7 @@ export type SheetTabId =
  * @property {CharacterSheetType} draft - Working copy used while editing
  * @property {boolean} editing - Whether the sheet is in edit mode
  * @property {SheetTabId} activeTab - Currently displayed tab
- * @property {boolean} dirty - Whether `character` holds changes the roster has not been told about yet. Set by any write that lands on the saved character, cleared when a character is adopted from the roster. The provider pushes upstream on this flag alone — comparing `character` against the incoming prop instead would race, because the roster echoes every write back as a fresh object and the comparison would still see the pre-echo value for one commit.
+ * @property {boolean} dirty - Whether `character` holds changes the roster has not been told about yet. Set by any write landing on the saved character, cleared when a character is adopted from the roster.
  */
 export interface SheetReducerState {
   character: CharacterSheetType;
@@ -98,11 +89,8 @@ const vocationXpFloor = (
 };
 
 /**
- * Applies a computed draft to the state. While editing, the write lands on the
- * draft alone so `cancelEdit` can discard it. Outside edit mode there is no
- * transaction to join, so the write lands on the saved character too — the
- * write path is never gated on edit mode. Consumers decide which controls to
- * offer by reading `editing`; the reducer never silently swallows a write.
+ * Applies a computed draft to the state: writes to the draft alone while
+ * editing, otherwise to the saved character with `dirty` set.
  *
  * @function applyWrite
  * @param {SheetReducerState} state - Previous state
@@ -118,9 +106,8 @@ const applyWrite = (
     : { ...state, draft: next, character: next, dirty: true };
 
 /**
- * Refreshes the `level` and `tierBonus` caches from the draft's authoritative
- * `experience` and `vocations` fields, through the module's single derivation
- * authority so this reducer cannot define a level of its own.
+ * Recomputes `level` and `tierBonus` from the draft's `experience` and
+ * `vocations` via the module's derivation functions.
  *
  * @function withRecomputedLevelCache
  * @param {CharacterSheetType} draft - Draft to normalize

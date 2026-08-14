@@ -1,8 +1,7 @@
 /**
  * @fileoverview Bloodline Content Shards API Route
- * @description Returns named prose shards for a specific bloodline. The server
- * resolves each shard server-side using metadata line anchors or heading-text
- * search so callers never need to know the internal file structure.
+ * @description Returns named prose shards for a bloodline. Shards are resolved
+ * server-side via metadata line anchors or heading-text search.
  *
  * @module src/app/api/content-shards/bloodlines/[slug]/route
  * @version 1.1.0
@@ -28,9 +27,9 @@ const log = logger.child({ module: 'API:ContentShards:Bloodlines' });
 /**
  * GET /api/content-shards/bloodlines/[slug]
  *
- * Returns resolved prose shards for the requested bloodline. Accepts optional
- * `keys[]` query parameters to request a subset of shards. When no keys are
- * provided all known shards (including `main`) are returned.
+ * Returns resolved prose shards for the requested bloodline. `keys[]` query
+ * params request a subset of shards; absence returns all known shards
+ * (including `main`).
  *
  * @param {Request} req - Next.js request object
  * @param {{ params: Promise<{ slug: string }> }} context - Route segment params

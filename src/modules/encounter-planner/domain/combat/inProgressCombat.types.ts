@@ -1,7 +1,6 @@
 /**
  * @fileoverview In-Progress Combat Types
  * @description TypeScript interfaces for runtime combat snapshots during Play Mode.
- * Separate from the encounter planner to avoid mutating base encounter data.
  *
  * @version 1.0.0
  * @author Typeir
@@ -25,7 +24,6 @@ export interface ConditionEntry {
 
 /**
  * Mechanics flags derived from monster metadata tags.
- * Used for DM quality-of-life features in Play Mode.
  *
  * @interface CombatantMechanics
  * @property {boolean} lair - True if creature has mechanic:lair tag - triggers alert on round start

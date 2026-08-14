@@ -1,12 +1,7 @@
 /**
  * @fileoverview Overview Panels
- * @description The content blocks the overview is built from, each reading the
- * character straight from the active-sheet context.
- *
- * The desktop and mobile overviews show the same blocks in different
- * arrangements — two columns versus a tab strip. Keeping the blocks here means
- * the layouts hold nothing but arrangement, so a change to what a block renders
- * lands in one place instead of being mirrored between two near-identical files.
+ * @description Content blocks composing the overview, each reading the
+ * character from the active-sheet context.
  *
  * @module modules/character-builder/presentation/tabs/overview/overviewPanels
  * @version 1.0.0

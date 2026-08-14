@@ -1,19 +1,9 @@
 /**
  * @fileoverview Unit Inline MDX Component
  * @description Inline MDX component that renders a Damocles measure in the
- * reader's chosen display system. The server always renders the native stride
- * form, so server markup and first client paint agree; the stored preference
- * takes over once persistent state has hydrated.
- *
- * Every rendering links to the Measures rule page, which both defines the units
- * and hosts the switcher. The accessible name carries all three systems so the
- * measure is legible regardless of which one is shown.
- *
- * The other two systems are shown in the wiki tooltip rather than the browser's
- * `title` popup. The tooltip renders nothing until it has mounted, so static
- * output and first client paint are both the bare link, and it is attached in
- * inline mode so a measure sitting mid-sentence is not wrapped in a flex box
- * that would break the line around it.
+ * reader's chosen display system. Renders the native stride form on the server;
+ * the stored preference takes over after hydration. Links to the Measures rule
+ * page; all three systems are shown in the mounted tooltip.
  *
  * @module modules/library/presentation/components/Unit/Unit
  * @version 1.0.0
@@ -41,11 +31,7 @@ import styles from './Unit.module.scss';
 type Translate = (key: string, values?: Record<string, string | number>) => string;
 
 /**
- * Renders a fractional measure as prose.
- *
- * The fraction is scaled into the target system first, so the wording follows
- * the converted value rather than the native one. English fraction prose is
- * irregular around a half, which gets its own templates.
+ * Renders a fractional measure as prose in the target system.
  *
  * @param {Translate} t - Translator scoped to the `units` namespace
  * @param {number} numerator - Native fraction numerator
@@ -102,7 +88,7 @@ export interface UnitProps {
 }
 
 /**
- * Path of the rule page that defines the measures and hosts the switcher.
+ * Rule page path that defines the measures.
  *
  * @constant
  */

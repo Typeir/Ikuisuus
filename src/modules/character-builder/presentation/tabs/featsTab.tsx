@@ -1,6 +1,6 @@
 /**
  * @fileoverview Feats Tab
- * @description Renders the feat picker (live `/api/feats` data) plus a chip
+ * @description Renders the feat picker (from `/api/feats` data) plus a chip
  * cloud of currently selected feats. The right-hand column renders the most
  * recently selected feat's prose content via the content-shards API.
  *

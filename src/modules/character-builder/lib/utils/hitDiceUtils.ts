@@ -1,9 +1,6 @@
 /**
  * @fileoverview Hit Dice Utilities
- * @description Pure derivations over the per-level hit die roll log. `hpMax` is
- * treated as a pure function of the log rather than an accumulator, so that
- * re-rolls, level/vocation pruning, and CON changes can never let it drift or
- * strand phantom HP from removed entries.
+ * @description Pure derivations over the per-level hit die roll log.
  *
  * @module modules/character-builder/lib/utils/hitDiceUtils
  * @version 1.0.0
@@ -20,10 +17,7 @@ import { resolveHpTerm, type HpScope } from './hpGrants';
 /**
  * Recomputes maximum HP from the hit dice log: the sum of `(result + conMod)`
  * across every entry that has been confirmed and added to HP. `conMod` is the
- * value frozen on each entry at creation time — never a live modifier — so the
- * result is deterministic regardless of how many times dice were re-rolled or
- * how CON has changed since. Clamped at 0 so a degenerate log can never yield a
- * negative maximum.
+ * value frozen on each entry at creation time. Clamped at 0.
  *
  * @function recalculateHpMax
  * @param {HitDieRollEntry[]} log - The character's hit dice roll log
@@ -39,8 +33,7 @@ export function recalculateHpMax(log: HitDieRollEntry[]): number {
 
 /**
  * A character's derived hit points. `base` is the maximum from rolled dice, CON,
- * and passive `hp` grants; `effective` is `base` reduced by the grievous-wound
- * pool (the value the sheet shows and against which current HP is measured).
+ * and passive `hp` grants; `effective` is `base` reduced by the grievous-wound pool.
  *
  * @interface DerivedHitPoints
  * @property {number} base - Maximum HP from dice + CON + hp grants (>= 0)
@@ -67,8 +60,7 @@ interface HpScopeContext {
 }
 
 /**
- * Coerces a non-finite result to 0 so a degenerate term or scope can never
- * poison the aggregate with `NaN`/`Infinity`.
+ * Coerces a non-finite result to 0.
  *
  * @function finiteOrZero
  * @param {number} value - The value to guard
@@ -80,8 +72,7 @@ function finiteOrZero(value: number): number {
 
 /**
  * Resolves an {@link HpScope} to its level-count multiplier against the rolled
- * dice. `once` is flat; the level scopes read the assigned-dice counts, so an
- * unrolled level contributes nothing.
+ * dice. `once` is flat; the level scopes read the assigned-dice counts.
  *
  * @function resolveHpScope
  * @param {HpScope} scope - The parsed scope
@@ -127,14 +118,10 @@ function readAssignedDice(character: CharacterSheet): {
 }
 
 /**
- * Derives a character's hit points from the single source of truth: the rolled
- * hit dice, plus CON as the universal `conMod:level` grant, plus every active
- * passive `hp` grant resolved live, minus the grievous-wound pool. `hpMax` should
- * be treated as a cache of `base`; `effective` is what the sheet displays.
- *
- * CON contributes `conMod × N` where `N` is the count of assigned dice (a die is
- * rolled per level), so display and total agree by construction. The aggregate is
- * clamped once at the end; individual terms may be negative.
+ * Derives a character's hit points from the rolled hit dice, plus CON, plus every
+ * active passive `hp` grant, minus the grievous-wound pool. CON contributes
+ * `conMod × N` where `N` is the count of assigned dice. The aggregate is clamped
+ * once at the end; individual terms may be negative.
  *
  * @function deriveHitPoints
  * @param {CharacterSheet} character - Character to derive from
@@ -157,10 +144,9 @@ export function deriveHitPoints(character: CharacterSheet): DerivedHitPoints {
 }
 
 /**
- * The HP a single rolled die of the given vocation carries for the roller's
- * per-row display: the CON modifier plus every per-level `hp` grant whose scope
- * matches this die (`level`, or the matching `level-vocation`/`level-specialization`).
- * Flat `once` grants are excluded — they belong to a separate flat-bonus line.
+ * The HP a single rolled die of the given vocation carries: the CON modifier
+ * plus every per-level `hp` grant whose scope matches this die (`level`, or the
+ * matching `level-vocation`/`level-specialization`). Flat `once` grants are excluded.
  *
  * @function perLevelGrantBonus
  * @param {CharacterSheet} character - Character to read grants from

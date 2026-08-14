@@ -20,10 +20,8 @@ import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 /**
- * Test-local wrapper that supplies both the state and controls providers so
- * existing assertions remain unchanged. The mediator stub dispatches
- * `Deselect` on `resetView` to mirror the real mediator's behavior, allowing
- * the close→reselect flow to be exercised without a real Three.js scene.
+ * Test-local wrapper supplying both the state and controls providers. The
+ * mediator stub dispatches `Deselect` on `resetView`.
  */
 const mediatorRef: { current: WorldSimMediator | null } = { current: null };
 
@@ -85,7 +83,7 @@ vi.mock('@/modules/world-sim/domain/celestials/celestialRegistry', () => ({
   },
 }));
 
-/** Mock GenericEmbedPanel to simplify DOM output while testing WorldSim logic */
+/** Mock GenericEmbedPanel for tests. */
 vi.mock('@/lib/components/ui/embedPanel/GenericEmbedPanel', async () => {
   const { useState, useEffect } = await import('react');
 
@@ -309,8 +307,7 @@ describe('WorldSimContentPanel', () => {
     expect(container.querySelector('iframe')).toBeNull();
 
     /**
-     * Re-render with different body to trigger reopen. We use a fresh
-     * wrapper that dispatches a new selection.
+     * Re-renders with a new selector that dispatches a new selection.
      */
     function NewSelector({ children }: { children: React.ReactNode }) {
       const dispatch = useWorldSimDispatch();

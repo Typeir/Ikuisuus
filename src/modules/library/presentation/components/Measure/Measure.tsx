@@ -2,15 +2,9 @@
  * @fileoverview Measure Component
  * @description Renders a stored measurement in the reader's chosen system.
  *
- * Metadata holds measures in the native form — `12 stride`, `Self (6 stride;ADJ
- * cone)` — because that is the fact the rules state. Turning it into metres or
- * feet is a display decision, and this is where it is made.
- *
- * The measures themselves are drawn by `Unit`, the same component the MDX
- * pipeline emits, so a range in a table and the identical range in an article
- * convert alike and link to the same definition. Everything between them is
- * prose and is passed through untouched: `Self` and `cone` carry meaning the
- * number does not.
+ * Metadata stores measures in native form (`12 stride`, `Self (6 stride;ADJ
+ * cone)`); metres or feet conversion happens at display time here.
+ * Measures are drawn by the `Unit` component; prose segments pass through.
  *
  * @module modules/library/presentation/components/Measure/Measure
  * @version 1.0.0
@@ -33,7 +27,7 @@ import Unit from '../Unit';
 export interface MeasureProps {
   text?: string | null;
   fallback?: string;
-  /** When true, renders measures as `<span>` instead of `<a>` to avoid nested anchors. */
+  /** When true, renders measures as `<span>` instead of `<a>`. */
   noLink?: boolean;
 }
 

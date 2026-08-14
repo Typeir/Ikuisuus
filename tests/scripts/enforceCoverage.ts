@@ -1,9 +1,6 @@
 /**
- * Test Coverage Enforcement Script
- *
- * @fileoverview Validates that every source file has at least one corresponding test file.
- * Enforces namespace mirroring between src/ and tests/ directories.
- * Fails CI if any source file lacks test coverage.
+ * @fileoverview Fails if any src/ file lacks a corresponding test file.
+ * Must run before CI merge.
  *
  * @module enforceCoverage
  * @version 1.0.0

@@ -1,10 +1,8 @@
 /**
  * CombatantRow Utils Index Tests
  *
- * @fileoverview Unit tests for combatantRow utils barrel export.
- * Verifies all utilities are properly exported.
- * @description This test suite ensures that all utility functions and constants
- * from the combatantRow utils module are correctly exported through the index file.
+ * @fileoverview Unit tests for the combatantRow utils barrel export.
+ * @description Verifies all utilities and constants are exported through the index file.
  * 
  * @version 1.0.0
  * @author Typeir

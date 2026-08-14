@@ -1,7 +1,6 @@
 /**
- * @fileoverview Paginated Content File-Tree API
- * @description Route handler that delegates to treeHandler orchestrator.
- * Accepts query params for paging and filtering and returns `{ entries, total, nextCursor }`.
+ * @fileoverview Content file-tree API.
+ * @description GET handler. Reads query params into TreeQueryParams and returns `{ entries, total, nextCursor }`.
  * @module app/api/content/tree/route
  * @version 1.0.0
  * @author Typeir

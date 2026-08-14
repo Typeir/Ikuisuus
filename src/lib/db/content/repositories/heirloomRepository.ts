@@ -1,8 +1,8 @@
 /**
- * @fileoverview Heirloom Repository Port + Factory
- * @description Defines the hexagonal port contract for heirloom metadata persistence
- * and exports a factory-resolved instance based on `METADATA_BACKEND` env var.
- * Provides access patterns matching the real API route (`/api/heirlooms`).
+ * @fileoverview Heirloom Repository interface and factory.
+ * @description Defines the heirloom metadata repository contract and exports a
+ * factory-resolved instance based on `METADATA_BACKEND` env var. Matches the
+ * `/api/heirlooms` route.
  *
  * @module lib/db/content/repositories/heirloomRepository
  * @version 2.0.0

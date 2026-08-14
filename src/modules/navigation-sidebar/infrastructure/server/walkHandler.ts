@@ -1,5 +1,5 @@
 /**
- * @fileoverview Orchestrator for lazy sidebar walk API
+ * @fileoverview Sidebar walk API handler.
  * @module modules/navigation-sidebar/infrastructure/server/walkHandler
  * @author Typeir
  * @version 1.0.0
@@ -27,8 +27,7 @@ export interface WalkQueryParams {
 }
 
 /**
- * Orchestrator for shallow sidebar walk endpoint
- * Coordinates parameter parsing, repository walk, and error handling
+ * Runs a shallow repository walk for the request params; logs and rethrows errors.
  *
  * @param {WalkQueryParams} params - Query parameters from request
  * @returns {Promise<Item[]>} Array of WalkNode objects or throws error

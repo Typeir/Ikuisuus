@@ -1,8 +1,7 @@
 /**
  * @fileoverview Featured Pages for "The Archivist is reading…"
- * @description Hardcoded list of impressive wiki pages to showcase on the
- * home page. One entry picked at a time. Will be replaced with pseudo-random
- * selection once the wiki is more complete.
+ * @description Hardcoded list of wiki pages for display on the home page.
+ * One entry picked at a time.
  *
  * @module modules/search/domain/featuredPages
  * @version 1.0.0

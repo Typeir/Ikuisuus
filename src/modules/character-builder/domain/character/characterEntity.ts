@@ -1,21 +1,14 @@
 /**
- * @fileoverview Character Entity — canonical single-JSON character model
- * @description Domain-layer home of the character data model. A
- * {@link CharacterEntity} is one flat, self-contained JSON structure:
- * plain objects and arrays only, no class instances, no functions, and no
- * self-referencing / circular links. Everything else in the module
- * (contexts, reducers, persistence, print/QR output, combatant snapshots)
- * derives from this one shape.
- *
- * The interfaces here were previously declared in `@/lib/types/character`;
- * that path now re-exports from this file so existing imports keep working.
+ * @fileoverview Character Entity — canonical single-JSON character model.
+ * @description One flat, self-contained JSON structure: plain objects and
+ * arrays only, no class instances, no functions, no circular links.
+ * Re-exported from `@/lib/types/character`.
  *
  * @module modules/character-builder/domain/character/characterEntity
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  */
-
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 
 /**
@@ -45,10 +38,8 @@ export const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'] as const;
 export type AbilityKey = (typeof ABILITY_KEYS)[number];
 
 /**
- * A shard extracted from an MDX source file — a named block of content
- * (a boon or a vocation/specialization feature) identified by heading name
- * and line range. Used to display the full text of a chosen feature without
- * duplicating content.
+ * A named block of MDX content extracted from a source file, identified by
+ * heading text and line range.
  *
  * @interface CharacterShard
  * @property {string} id - Unique shard identifier
@@ -99,8 +90,8 @@ export type AbilityImportSource = 'spells' | 'heirlooms' | 'trinkets' | 'feats';
 
 /**
  * A single ability card on the character's Abilities tab.
- * Stores raw MDX for mechanics and description, rendered client-side
- * via `compileRuntimeSync` + `enrichedComponents`.
+ * Stores raw MDX for mechanics and description, rendered client-side via
+ * `compileRuntimeSync` + `enrichedComponents`.
  *
  * @interface CharacterAbility
  * @property {string} id - Unique identifier
@@ -324,11 +315,8 @@ export interface VocationEntry {
 }
 
 /**
- * The canonical character entity: one flat JSON document per character.
- * Stored verbatim in localStorage, sent verbatim across the persistence
- * layer, and consumed verbatim by every context in the module. All other
- * representations (combatants, compact refs, print output, formula scopes)
- * are derived from this.
+ * The canonical character entity: one flat JSON document per character,
+ * stored verbatim in localStorage and across the persistence layer.
  *
  * Invariants:
  * - Serializable with `JSON.stringify` (round-trips losslessly)
@@ -459,8 +447,7 @@ export const serializeCharacterEntity = (entity: CharacterEntity): string =>
   JSON.stringify(entity);
 
 /**
- * Deep-clone an entity through its JSON form. Because the entity is plain
- * JSON with no self-references, this round-trip is lossless.
+ * Deep-clone an entity losslessly through its JSON form.
  *
  * @function cloneCharacterEntity
  * @param {CharacterEntity} entity - Entity to clone

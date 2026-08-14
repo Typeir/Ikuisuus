@@ -1,6 +1,6 @@
 /**
  * @fileoverview Watches `messages/` for changes to namespace JSON files and
- * re-runs merge-locales automatically. Designed to run alongside `next dev`.
+ * re-runs merge-locales. For use alongside `next dev`.
  *
  * @module scripts/dev/watchLocales
  * @version 1.0.0
@@ -22,7 +22,7 @@ const ROOT = path.resolve(__dirname, '../..');
 /** Directory containing locale namespace JSON files. */
 const MESSAGES_DIR = path.join(ROOT, 'messages');
 
-/** Debounce interval in milliseconds to avoid rapid re-merges. */
+/** Debounce interval in milliseconds. */
 const DEBOUNCE_MS = 300;
 
 /** Tracks the debounce timer. */

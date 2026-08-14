@@ -1,7 +1,7 @@
 /**
- * @fileoverview Auth Module — Public Barrel Export
- * @description Re-exports the public API surface for the authentication system.
- * Import from `@/lib/db/auth` instead of reaching into individual files.
+ * @fileoverview Auth Module — Barrel Export
+ * @description Re-exports the auth service, schema types/validators, and the
+ * user adapter type. Import from `@/lib/db/auth`.
  *
  * @module lib/db/auth
  * @version 1.0.0

@@ -1,8 +1,5 @@
 /**
- * Combatant Mechanics Section Component
- *
- * @fileoverview Displays and manages legendary deeds and resist mechanics for combatants.
- * Includes deed tracker pips and resist counter.
+ * @fileoverview Legendary deed and resist mechanics UI for combatants.
  *
  * @module combatantMechanicsSection
  * @version 2.0.0
@@ -14,9 +11,7 @@
  * @requires @/modules/encounter-planner/domain/combat/inProgressCombat.types Combatant mechanics type definitions
  * @requires ../playMode/CombatantContext useCombatant hook for context
  *
- * @description
- * Extracted from CombatantRow for atomic composition. Manages legendary deed pips
- * and resist counters with use/reset controls. Uses CombatantContext for state.
+ * @description Manages legendary deed pips and resist counters with use/reset controls. Uses CombatantContext for state.
  */
 
 'use client';
@@ -28,22 +23,14 @@ import styles from './combatantRow.module.scss';
 
 /**
  * Props for CombatantMechanicsSection component.
- * All props are optional when used within CombatantProvider (values come from context).
  *
  * @interface CombatantMechanicsSectionProps
  */
 export interface CombatantMechanicsSectionProps {}
 
 /**
- * Mechanics section for Play Mode combatants.
- * Displays legendary deed tracker pips and resist counter with use/reset controls.
- * Uses CombatantContext for state and updates.
- *
- * Features:
- * - Clickable deed pips to toggle individual deed usage
- * - Reset button to restore all deeds
- * - Resist counter with use button (consumes deed + resist)
- * - Reset button to restore resists to 3
+ * Mechanics section for Play Mode combatants. Renders null if combatant has no mechanics.
+ * Displays legendary deed tracker pips and resist counter. Resist reset restores to 3.
  *
  * @component
  * @param {CombatantMechanicsSectionProps} props - Component props

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Barrel export for the Foundry feature handler system.
  * @description Re-exports decorators, types, the parser registry, and all
- * registered parser classes. Import this module to access the full handler
- * infrastructure.
+ * registered parser classes.
  *
  * @module foundry/scripts/handlers
  * @version 1.0.0

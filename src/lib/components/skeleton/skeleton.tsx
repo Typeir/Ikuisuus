@@ -1,7 +1,6 @@
 /**
- * @fileoverview Generic Skeleton Loader Component
- * @description SOLID-compliant skeleton component following Single Responsibility
- * and Open/Closed principles. Provides customizable loading placeholders.
+ * @fileoverview Renders loading placeholder components.
+ * Supports variants, width/height overrides, and element count.
  * 
  * @module Skeleton
  * @version 1.0.0
@@ -87,7 +86,7 @@ export function Skeleton({
 }
 
 /**
- * Skeleton group for complex layouts
+ * Wraps multiple Skeleton components in a single container div.
  * 
  * @component
  * @param {Object} props - Component properties

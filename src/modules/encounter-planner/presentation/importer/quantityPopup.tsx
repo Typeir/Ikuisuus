@@ -1,8 +1,7 @@
 /**
  * @fileoverview Quantity Popup Component
- * @description Modal dialog for selecting quantity when importing creatures.
- * Features keyboard navigation (Enter confirms, Escape cancels), autofocus on confirm button,
- * and accessible labeling. Renders as centered modal overlay.
+ * @description Modal dialog for selecting creature import quantity, rendered as a centered
+ * overlay. Enter confirms, Escape cancels. Confirm button autofocuses on open.
  *
  * @module quantityPopup
  * @version 2.0.0
@@ -33,8 +32,7 @@ import styles from './quantityPopup.module.scss';
 import btn from '@/styles/buttons.module.scss';
 
 /**
- * Maximum allowed quantity for creature import.
- * Prevents performance issues from adding too many creatures at once.
+ * Maximum quantity for creature import.
  *
  * @constant
  * @type {number}
@@ -73,8 +71,8 @@ export interface QuantityPopupProps {
 
 /**
  * Modal dialog for selecting creature import quantity.
- * Autofocuses confirm button on open for quick single-click addition.
- * Supports keyboard navigation: Enter confirms, Escape cancels.
+ * Autofocuses confirm button when opened.
+ * Enter confirms, Escape cancels.
  *
  * @component
  * @param {QuantityPopupProps} props - Component props

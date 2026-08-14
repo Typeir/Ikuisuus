@@ -1,7 +1,7 @@
 /**
  * @fileoverview Metadata Validation Utilities
  * @description Validates tags against known categories/values and checks metadata
- * structure against expected schemas. Used by generators to ensure correctness.
+ * structure against expected schemas.
  *
  * @module lib/metadata/validationUtils
  * @version 1.0.0

@@ -1,11 +1,8 @@
 /**
  * @fileoverview HP Expression Grants
  * @description The scalar `hp:<term>:<scope>` grant sub-grammar and its live
- * resolvers. A term is an integer literal or a whitelisted resolver reference
- * (`conMod`, `strMod`, `conScore`, `tierBonus`, …); a scope is a level-count
- * multiplier following the generic→specific cascade. The value carries a formula,
- * resolved against the live sheet — never a number baked at extraction. Kept in a
- * sibling module so the core grant grammar stays within the file-length budget.
+ * resolvers. A term is an integer literal or a whitelisted resolver reference; a
+ * scope is a level-count multiplier. Values resolve against the live sheet.
  *
  * @module modules/character-builder/lib/utils/hpGrants
  * @version 1.0.0
@@ -21,10 +18,8 @@ import {
 import { computeAbilityModifier } from './characterStorage';
 
 /**
- * The value term of an `hp` scalar grant: either an integer literal or a
- * whitelisted resolver reference evaluated live against the sheet. Level-family
- * tokens are deliberately not valid terms — level scaling belongs to the scope
- * multiplier, never the term.
+ * The value term of an `hp` scalar grant: an integer literal or a whitelisted
+ * resolver reference evaluated against the sheet.
  *
  * @typedef {object} HpTerm
  * @property {'lit'|'ref'} t - Literal integer or resolver reference
@@ -34,10 +29,9 @@ import { computeAbilityModifier } from './characterStorage';
 export type HpTerm = { t: 'lit'; v: number } | { t: 'ref'; id: string };
 
 /**
- * The scope of an `hp` scalar grant — a level-count multiplier following the
- * generic→specific cascade. `once` = ×1; `level` = × total character level
- * (equal to the count of rolled hit dice, since a die is rolled per level);
- * `level-vocation` / `level-specialization` = × the level invested in that named
+ * The scope of an `hp` scalar grant — a level-count multiplier. `once` = ×1;
+ * `level` = × total character level (equal to the count of rolled hit dice);
+ * `level-vocation` / `level-specialization` = × the level in that named
  * vocation / specialization.
  *
  * @typedef {object} HpScope
@@ -68,7 +62,7 @@ export interface HpValueGrant {
 
 /**
  * Live resolvers for `hp` grant term references, each a pure function of the
- * sheet returning a finite number. The keyset IS the term whitelist — a term
+ * sheet returning a finite number. The keyset IS the term whitelist; a term
  * reference outside it is rejected at parse time. Keys are lowercase because
  * grant tags are lowercased before parsing.
  *
@@ -150,9 +144,8 @@ function parseHpScope(raw: string): HpScope | null {
 }
 
 /**
- * Parses an `hp` scalar grant body positionally: `hp:<term>[:<scope>]`. The term
- * is required; the scope defaults to `once`. Unlike the choice grammar this does
- * not drop empty segments, so `hp::level` is malformed rather than `hp:level`.
+ * Parses `hp:<term>[:<scope>]` positionally. Term is required; scope defaults
+ * to `once`. Does not drop empty segments, so `hp::level` is malformed.
  *
  * @function parseHpGrant
  * @param {string[]} segs - Colon-split, lowercased segments (`segs[0] === 'hp'`)

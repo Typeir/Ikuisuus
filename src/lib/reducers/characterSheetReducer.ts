@@ -34,13 +34,6 @@ import {
  * @param {CharacterSheetState} state - Current state
  * @param {CharacterSheetAction} action - Action to process
  * @returns {CharacterSheetState} New state after applying the action
- *
- * @description
- * Handles the following action types:
- * - UPSERT_CHARACTER: Add or replace a character by ID; refreshes updatedAt
- * - DELETE_CHARACTER: Remove a character by ID; clears activeId if it matched
- * - SET_ACTIVE_ID: Set which character is currently viewed or edited
- * - RESET: Return to DEFAULT_CHARACTER_SHEET_STATE
  */
 export function characterSheetReducer(
   state: CharacterSheetState,

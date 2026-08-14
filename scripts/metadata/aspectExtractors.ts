@@ -2,13 +2,8 @@
  * @fileoverview Aspect Extractors
  * @description Derives faceted aspects from content text. Each function owns one
  * group and returns fully-qualified aspects (`resistance:fire`,
- * `sense:darkvision`), so callers concatenate rather than assemble strings.
- *
- * Every extractor here derives a mechanical fact that the prose states outright.
- * The facets that encode a judgement — `source:`, `access:`, `myth:`, `theme:` —
- * have no extractor and are authored, because deriving them would put guesses in
- * the pill row and a wrong aspect is indistinguishable from a right one until a
- * reader filters by it.
+ * `sense:darkvision`). Judgement facets — `source:`, `access:`, `myth:`,
+ * `theme:` — are authored, with no extractor.
  *
  * @module lib/metadata/aspectExtractors
  * @version 1.0.0
@@ -73,11 +68,7 @@ function captureAll(pattern: RegExp, text: string): string[] {
 
 /**
  * Extract scoped defence aspects naming what is resisted, ignored or amplified.
- *
- * The coarse `defense:resistance` answers whether a page grants a resistance at
- * all, which is where a build search starts; these answer which one, which is
- * where it ends. Immunity additionally admits conditions, because immunity to
- * being frightened is the same kind of fact as immunity to fire.
+ * Immunity also matches conditions.
  *
  * @param {string} text - Content to analyze
  * @param {SharedData} sharedData - Shared game data
@@ -117,10 +108,6 @@ export function extractScopedDefenceTags(
 /**
  * Extract the retaliation aspect for damage returned to an attacker.
  *
- * Retaliation is a build keystone rather than a delivery shape: a thorns build
- * asks for everything that punishes being hit, across armour, bloodlines and
- * monster traits alike, and no other facet answers that.
- *
  * @param {string} text - Content to analyze
  * @returns {string[]} The retaliation aspect, or an empty array
  */
@@ -147,10 +134,6 @@ export function extractRollTags(text: string): string[] {
 
 /**
  * Extract perception aspects covering special senses and lighting.
- *
- * Senses and lighting are one axis because they answer the same question — what
- * can be perceived, and what prevents it. A build that cares about seeing in the
- * dark cares about both halves.
  *
  * @param {string} text - Content to analyze
  * @param {SharedData} sharedData - Shared game data
@@ -243,13 +226,10 @@ export function extractDeliveryTags(text: string): string[] {
 /**
  * Extract range aspects from the stat-block Range field.
  *
- * A numeric distance becomes a band rather than the number itself, because the
- * question a reader brings to a filter is whether something reaches, not how many
- * feet it reaches. The distance stays in the stat block for the map.
- *
- * A `Self` range whose parentheses carry a measurement — `Self ([= 6 stride =]
- * cone)` — is sized by its area, not its range, so the measurement is ignored and
- * the shape is left to `delivery:`.
+ * A numeric distance maps to a band (its max feet threshold); the raw distance
+ * stays in the stat block. A `Self` range sized by its area — parentheses carry
+ * a measurement such as `Self ([= 6 stride =] cone)` — yields no ranged aspect;
+ * the measurement is ignored and the shape is left to `delivery:`.
  *
  * @param {string} text - Content to analyze
  * @returns {string[]} Array of range aspects
@@ -359,10 +339,8 @@ export function extractExtraMovementTags(text: string): string[] {
 }
 
 /**
- * Groups that a damage stratum can be asserted on.
- *
- * A stratum is a fact about a damage type, so it applies wherever a damage type
- * does: the damage dealt, and each of the three scoped defences against it.
+ * Groups that a damage stratum can be asserted on: the damage dealt and each of
+ * the three scoped defences against it.
  */
 const STRATUM_GROUPS = [
   'damage',
@@ -374,16 +352,8 @@ const STRATUM_GROUPS = [
 /**
  * Adds the stratum an aspect's damage type belongs to.
  *
- * Damage is stratified — physical, elemental, somatic, akashic — and the rules
- * hang real mechanics off the stratum rather than the type: armour, wards,
- * grafts and blessings all interact at that level. Without these a reader can
- * ask for fire resistance but not for elemental resistance, which is the coarser
- * question and usually the one a build starts from.
- *
- * Derived rather than authored. A stratum is a property of the type, so
- * asserting it separately would only create a way for the two to disagree.
- * `true` damage is deliberately excluded: it stands outside all strata and
- * cannot be resisted at all.
+ * Derived, not authored: a stratum is a property of the type. `true` damage is
+ * excluded — it stands outside all strata and cannot be resisted.
  *
  * @param {string[]} aspects - Aspects already derived for the content
  * @param {SharedData} sharedData - Shared game data

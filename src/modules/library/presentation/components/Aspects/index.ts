@@ -7,9 +7,7 @@
  */
 
 /**
- * Client-safe surface only. `MonsterAspects` reads the monster repository, which
- * reaches the ORM, so it is imported from its own path by the server components
- * that need it — re-exporting it here would drag the database layer into the MDX
- * component map and from there into the browser bundle.
+ * Re-exports `Aspects` for client-safe usage only. `MonsterAspects` stays on its
+ * own path so its ORM dependency is not pulled into the browser bundle.
  */
 export { Aspects, default, type AspectsProps } from './Aspects';

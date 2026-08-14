@@ -1,9 +1,7 @@
 /**
  * @fileoverview Unit tests — ORM Entity Reflection Utilities
- * @description Tests for `entityToRecord` and `recordToEntityInit` using a
- * minimal mock of MikroORM's `MetadataStorage`. No real ORM connection is
- * required; the mock supplies just the property descriptor objects that the
- * functions inspect.
+ * @description Tests `entityToRecord` and `recordToEntityInit` against a
+ * mock of MikroORM's `MetadataStorage` supplying property descriptors only.
  *
  * @module tests/unit/lib/db/orm/reflect
  * @version 1.0.0
@@ -24,11 +22,11 @@ import { ReferenceKind } from '@mikro-orm/core';
 import { describe, expect, it } from 'vitest';
 
 /**
- * Builds a minimal `MetadataStorage` stub for a set of named entity class
- * descriptors, each containing a flat `properties` map.
+ * Builds a `MetadataStorage` stub for named entity class descriptors with
+ * flat `properties` maps.
  *
  * @param {Record<string, Record<string, object>>} classes - Map of className → propertyName → property descriptor
- * @returns {MetadataStorage} Minimal stub satisfying the functions under test
+ * @returns {MetadataStorage} Stub with a `get` returning `properties` per class
  */
 function buildMetaStub(
   classes: Record<string, Record<string, object>>,

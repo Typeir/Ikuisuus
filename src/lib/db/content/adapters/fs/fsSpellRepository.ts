@@ -29,10 +29,7 @@ const SUBDIR = 'spells';
 
 /**
  * Reports whether a spell belongs to a named spell list. Membership is a
- * whitespace-trimmed, case-insensitive match against each `spellLists[].name`,
- * so a vocation title (e.g. "Wizard") matches the list source the generator
- * records on every spell in that vocation's list. Mirrors the pg adapter's
- * `SpellListEntity.name` equality so both backends scope to the same set.
+ * whitespace-trimmed, case-insensitive match against each `spellLists[].name`.
  *
  * @function spellMatchesSource
  * @param {SpellMetadata} spell - Spell record to test
@@ -69,9 +66,6 @@ class FsSpellRepository
 
   /**
    * Returns all spell metadata for the locale, optionally filtered in memory.
-   *
-   * Maintains parity with the pg adapter when `METADATA_BACKEND=fs` so that
-   * the same `FilterExpression[]` payload behaves identically across backends.
    *
    * @param {string} locale - Locale code
    * @param {FilterExpression[]} [filters] - Optional JSON-serializable filter list
@@ -139,10 +133,9 @@ class FsSpellRepository
   }
 
   /**
-   * Returns the spells whose spell-list membership includes `source`, achieving
-   * parity with the pg adapter (which resolves the same set via the
-   * `spell_lists` table). A blank source returns the full library; membership is
-   * decided by {@link spellMatchesSource}.
+   * Returns the spells whose spell-list membership includes `source`. A blank
+   * source returns the full library; membership is decided by
+   * {@link spellMatchesSource}.
    *
    * @param {string} locale - Locale code
    * @param {string} source - Spell-list name to scope to (e.g. a vocation title)

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Storage Schema Version Tests
- * @description Covers the gate that replaces per-field data migrations: stale or
- * unversioned client storage is dropped wholesale, current-version storage is
- * left alone, and the check runs once per page load.
+ * @description Tests that ensureStorageSchema drops stale or unversioned
+ * storage, leaves current-version storage alone, and runs once per page load.
  *
  * @module tests/unit/src/lib/utils/storageSchema
  * @version 1.0.0
@@ -22,7 +21,7 @@ import { EncounterStorage } from '@/modules/encounter-planner/domain/storage/enc
 import { beforeEach, describe, expect, it } from 'vitest';
 
 /**
- * Seeds every versioned store with a recognisable payload.
+ * Writes a stale payload to every versioned store in both local and session storage.
  *
  * @function seedAllStores
  * @returns {void}

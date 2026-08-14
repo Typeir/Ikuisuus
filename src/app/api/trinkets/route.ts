@@ -1,9 +1,9 @@
 /**
- * @fileoverview Trinkets API Route - Adventuring gear metadata JSON endpoint for TrinketTable
- * @description Next.js API route that serves trinket item metadata via the content
- * adapter layer. Supports locale-aware content via ?locale query parameter. Returns
- * array of trinket objects with item type, damage, properties, range, weight, and
- * special effects. Used by TrinketTableWrapper for client-side data fetching.
+ * @fileoverview Serves trinket item metadata as JSON.
+ * @description Next.js API route returning trinket item metadata from the content
+ * adapter. Supports ?locale query parameter (defaults to 'en'). Returns array of
+ * trinket objects with item type, damage, properties, range, weight, and special
+ * effects.
  *
  * @version 2.0.0
  * @author Typeir
@@ -29,7 +29,7 @@ const log = logger.child({ module: 'API:Trinkets' });
 /**
  * GET /api/trinkets
  *
- * Returns array of trinket item metadata from the active content repository.
+ * Returns array of trinket item metadata from the content repository.
  * Accepts optional locale query parameter (defaults to 'en').
  *
  * @param {Request} req - Next.js request object

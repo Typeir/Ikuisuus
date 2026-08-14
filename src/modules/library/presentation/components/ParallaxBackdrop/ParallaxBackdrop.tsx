@@ -2,9 +2,7 @@
  * @file parallaxBackdrop.tsx
  * @description
  * Fixed, uninteractable, full-viewport parallax background component.
- * Renders an image as a secondary background layer that subtly shifts with
- * scroll position. Intended to sit behind all page content without affecting
- * layout or interaction.
+ * Renders an image as a background layer that shifts vertically with scroll.
  *
  * @module parallaxBackdrop
  * @version 1.0.0
@@ -22,8 +20,7 @@ import styles from './ParallaxBackdrop.module.scss';
 /**
  * @interface ParallaxBackdropProps
  * @description
- * Props for {@link ParallaxBackdrop}. Controls image source, parallax strength,
- * visual appearance, and stacking behavior of the background layer.
+ * Props for {@link ParallaxBackdrop}.
  *
  * @property {string} src - The source URL of the backdrop image.
  * @property {string} [alt] - Alternative text for the image (if not aria-hidden).
@@ -51,14 +48,11 @@ export interface ParallaxBackdropProps {
 /**
  * @function ParallaxBackdrop
  * @description
- * Renders a fixed, full-viewport image behind all content and applies a subtle
- * vertical parallax effect based on scroll position.
- *
- * The element is non-interactive (`pointer-events: none`), does not participate
- * in document flow, and defaults to covering the entire viewport (100vw / 100vh).
- *
- * Scroll handling is throttled via `requestAnimationFrame`, and movement is
- * clamped to a configurable maximum range to avoid excessive drift.
+ * Renders a fixed, full-viewport image behind all content, shifted vertically
+ * by scroll position and clamped to {@link ParallaxBackdropProps.maxShiftPx}.
+ * Non-interactive (`pointer-events: none`), out of document flow, covering the
+ * viewport (100vw / 100vh). Scroll updates are throttled via
+ * `requestAnimationFrame`.
  *
  * @param {ParallaxBackdropProps} props
  * @param {string} props.src - The source URL of the backdrop image.

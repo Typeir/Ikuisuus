@@ -1,6 +1,6 @@
 /**
  * @fileoverview API Routes Enum
- * @description Centralized API endpoint constants for type-safe route references
+ * @description Enum of API endpoint path constants.
  *
  * @module apiRoutes
  * @version 1.0.0

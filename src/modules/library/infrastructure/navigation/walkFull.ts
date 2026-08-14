@@ -94,6 +94,6 @@ export async function walk(
 }
 
 /**
- * Alias export maintained for backward compatibility.
+ * Alias of walk.
  */
 export const walkTree = walk;

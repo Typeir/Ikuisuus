@@ -1,11 +1,7 @@
 /**
  * @fileoverview Content Shard Resolver
- * @description Server-side utility that extracts named text blocks from MDX content
- * files. Given metadata with optional line anchors and raw MDX text, resolves each
- * requested key to its full prose body.
- *
- * This module is intended for use only in server-side API routes. It has no
- * dependency on Next.js request/response types and can be unit-tested in isolation.
+ * @description Resolves named text blocks from MDX content by line anchors or
+ * heading text.
  *
  * @module lib/utils/contentShardResolver
  * @version 1.0.0
@@ -31,13 +27,10 @@ export interface ShardableEntry {
 /**
  * Resolve a named set of shards from raw MDX content.
  *
- * Each requested key is looked up in `entries` to obtain optional line anchors.
- * When anchors are present the text is sliced by line range and the heading line
- * is stripped. When anchors are absent the function falls back to a
- * case-insensitive heading-text search. The special key `"main"` returns all
- * content that appears before the first `<Collapsible` tag.
- *
- * If `keys` is empty or omitted all entries plus `"main"` are resolved.
+ * Resolves by line range when line anchors are present, else by case-insensitive
+ * heading-text match. The heading line is stripped from each result. The key
+ * `"main"` returns all content before the first `<Collapsible` tag. If `keys` is
+ * empty or omitted, all entries plus `"main"` are resolved.
  *
  * @function resolveShards
  * @param {string} content - Full MDX file content
@@ -119,9 +112,8 @@ function extractByLineRange(
 /**
  * Find a heading by case-insensitive text match and extract its block.
  * The block ends immediately before the next heading of the same or higher level.
- *
- * Accepts both exact matches and suffix matches so that a feature stored as
- * `"Memorize Spell"` resolves against a heading like `"5th Level – Memorize Spell"`.
+ * Matches exact heading text or a heading suffix (e.g. `"Memorize Spell"` matches
+ * `"5th Level – Memorize Spell"`).
  *
  * @function extractByHeadingText
  * @param {string[]} lines - File lines array
@@ -168,8 +160,8 @@ function extractByHeadingText(lines: string[], heading: string): string | null {
 
 /**
  * Strip the first line from a block only when it is a Markdown heading line.
- * Bullet-based blocks (feat features) start with `- **Name.**` and must not
- * have their first line removed.
+ * Bullet-based blocks (e.g. feat features starting with `- **Name.**`) keep their
+ * first line.
  *
  * @function stripHeadingLine
  * @param {string} block - Full block text

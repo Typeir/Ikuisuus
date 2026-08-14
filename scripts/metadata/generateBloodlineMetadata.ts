@@ -1,15 +1,8 @@
 /**
  * @fileoverview Bloodline Metadata Generator
- * @description Parses .mdx files from the bloodlines directory and extracts
- * metadata including core features, boon options, ability scores, and gameplay tags.
- *
- * Bloodline MDX files follow a canonical structure:
- *   H1 title → lore intro → `---` → Core Features tables → racial traits →
- *   `---` → Boons section with Collapsible blocks.
- *
- * Files named `main.mdx` and files inside `shared-boons/` are excluded from
- * processing (now also excluded by the `.bloodline.mdx` file pattern).
- * metadata generation (they are index/aggregate pages, not individual bloodlines).
+ * @description Parses `.bloodline.mdx` files into metadata: core features,
+ * boons, ability scores, and gameplay tags. Excludes `main.mdx` files and files
+ * under `shared-boons/`.
  *
  * @module scripts/metadata/generateBloodlineMetadata
  * @version 1.0.0
@@ -298,12 +291,9 @@ function parseBpValue(bpLabel: string): number | undefined {
 }
 
 /**
- * Extracts proficiency tags for skills/tools/instruments.
- *
- * The kind of proficiency and the thing proficient in share one group, so
- * `proficiency:stealth` and `proficiency:skill` both answer a question a reader
- * can act on. A bare "grants some proficiency" match emits nothing: it would
- * return the whole corpus and tell the reader nothing.
+ * Extracts proficiency tags for skills/tools/instruments. Emits a generic
+ * `proficiency:skill` and `proficiency:tool` tag plus a specific tag per matched
+ * item. A bare "grants some proficiency" match emits no tag.
  *
  * @param {string} normalizedText - Normalized boon text
  * @returns {string[]} Derived proficiency tags
@@ -535,15 +525,12 @@ function parseBoonBudget(content: string): number | undefined {
 }
 
 /**
- * Parses all boon entries from the Boons section, including 1-indexed absolute
- * start and end line numbers anchored to the full MDX file.
+ * Parses all boon entries from the Boons section, with 1-indexed absolute start
+ * and end line numbers anchored to the full MDX file.
  *
- * Variable-cost boons ("Choose One" / "Pick Any") collapse to a single boon
- * carrying `subOptions`: a Cost-column table in the boon body becomes one option
- * per row, and nested `<Collapsible>` option headings (deeper than the parent)
- * are folded in as sub-options rather than emitted as sibling boons. The phantom
- * `bpValue` a "N BP - Choose One" parent would otherwise report is suppressed,
- * since the real cost lives on each chosen sub-option.
+ * Variable-cost boons ("Choose One" / "Pick Any") collapse to a single boon with
+ * `subOptions` from the Cost-column table and nested `<Collapsible>` option
+ * headings; their `bpValue` is undefined. Other boons set `bpValue`.
  *
  * @param {string} content - Full MDX content
  * @param {SharedData} sharedData - Shared game data used for tag extraction

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Creature Handlers Hook
- * @description Manages creature-level CRUD callbacks for the EncounterPlanner.
- * Separated from encounter-level IO to keep each hook within the 250-line limit.
+ * @description Provides creature-level CRUD callbacks for the EncounterPlanner.
  *
  * @module encounter-planner/presentation/EncounterPlanner/useCreatureHandlers
  * @version 1.0.0
@@ -36,7 +35,7 @@ export interface UseCreatureHandlersResult {
 }
 
 /**
- * Provides creature-level event handlers that mutate the active encounter.
+ * Returns creature-level event handlers that mutate the active encounter.
  *
  * @function useCreatureHandlers
  * @param {(updater: (prev: Encounter) => Encounter) => void} updateEncounter - State updater from parent hook

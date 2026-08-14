@@ -1,7 +1,6 @@
 /**
  * @fileoverview API Routes Enum Unit Tests
- * @description Tests for centralized API endpoint constants ensuring type safety
- * and correct route path definitions.
+ * @description Asserts ApiRoutes enum values and route path format.
  *
  * @module tests/unit/lib/enums/apiRoutes
  * @version 1.0.0

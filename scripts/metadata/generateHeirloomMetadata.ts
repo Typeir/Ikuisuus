@@ -1,7 +1,7 @@
 /**
  * @fileoverview Heirloom Metadata Generator
- * @description Parses .mdx files from the heirlooms directory and extracts comprehensive metadata
- * including rarity, item types, attunement, weapon properties, and gameplay mechanics tags.
+ * @description Parses .mdx files from the heirlooms directory and extracts metadata:
+ * rarity, item types, attunement, weapon properties, and gameplay mechanics tags.
  *
  * @module scripts/metadata/generateHeirloomMetadata
  * @version 3.0.0
@@ -49,12 +49,8 @@ import { LIST, SLUG, TEXT } from './parsingPatterns';
 const log = createLogger({ component: 'HeirloomMetadataGenerator' });
 
 /**
- * Splits a leading size word off a parsed type.
- *
- * A type line reads `Large Greatsword`, which is a greatsword at a size, not a
- * distinct weapon. Left joined, the size spawns a near-duplicate weapon type for
- * every size it appears at and a reader filtering `weapon:greatsword` never sees
- * the item.
+ * Splits a leading size word off a parsed type when the first word matches a
+ * recognised size.
  *
  * @param {string} value - Parsed type text
  * @param {string[]} sizes - Recognised size words
@@ -74,8 +70,7 @@ function splitSizeModifier(
 }
 
 /**
- * Content of the first balanced paren group. First-`(`-to-last-`)` slicing
- * glues both groups of a dual-form line (`Longsword (A) and Greatshield (B)`).
+ * Content of the first balanced-parenthesis group.
  *
  * @param {string} text - Line to scan
  * @returns {string | undefined} Group content, or undefined
@@ -110,8 +105,7 @@ function normalizeMasteryValues(value: string): string[] {
 }
 
 /**
- * Mastery names defined in the file's own Weapon Mastery section. Item-unique
- * masteries: no warning, no aspect.
+ * Lower-case mastery names defined in the file's own Weapon Mastery section.
  *
  * @param {string[]} lines - File lines
  * @returns {Set<string>} Lower-case mastery names
@@ -428,18 +422,13 @@ function parseWeaponDamageFromProperties(properties: Record<string, string>) {
 }
 
 /**
- * Parses Type property and extracts weapon properties and weapon type.
- *
- * The parenthetical after a type means different things by base type: a weapon
- * lists properties (`Longsword (Martial, Versatile)`) while everything else lists
- * the slots it occupies (`Monstrous Graft (Liver, Gut)`, `Clothing (Cloak)`).
- * The base type decides which, rather than a list of known slots — a new graft
- * site should start filtering the day it is written, not the day somebody
- * remembers to add it to shared data.
+ * Parses the Type property and extracts weapon properties, weapon type, unique
+ * tags, and mastery. The parenthetical lists weapon properties for weapon base
+ * types and occupied slots for all other base types.
  *
  * @param {Record<string, string>} properties - Parsed properties
  * @param {SharedData} sharedData - Shared data
- * @returns {{ weaponType?: string, weaponProperties: string[], uniqueTags: string[], mastery: string[], typeFromParen: boolean }} Parsed type info; `typeFromParen` marks a weaponType drawn from a base category's parenthetical, which names a slot rather than a type
+ * @returns {{ weaponType?: string, weaponProperties: string[], uniqueTags: string[], mastery: string[], typeFromParen: boolean }} Parsed type info; typeFromParen is true when weaponType came from a base category's parenthetical
  */
 function parseTypeProperty(
   properties: Record<string, string>,
@@ -535,12 +524,9 @@ function parseTypeProperty(
 }
 
 /**
- * Extracts the prose description from a heirloom MDX file.
- *
- * Heirloom files have no `---` divider. The description is the first natural
- * prose paragraph after the H1 title, skipping JSX component blocks, italic
- * metadata lines (rarity, type), headings, table rows, blockquotes, and
- * code fences.
+ * First prose paragraph after the H1 title, with markdown stripped. Skips JSX
+ * component blocks, italic metadata lines, headings, table rows, blockquotes,
+ * and code fences.
  *
  * @param {string[]} lines - File lines (trimmed)
  * @returns {string | undefined} First prose line with markdown stripped, or undefined

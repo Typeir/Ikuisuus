@@ -1,10 +1,9 @@
 /**
  * Secrets Gate
  *
- * @fileoverview Scans files for restricted string patterns (encoded in
- * .github/PAW/git-hooks/.patterns). Blocks commits and agent edits that would
- * introduce sensitive content. Ported from the former Husky pre-commit
- * security scanner.
+ * @fileoverview Scans files for restricted base64-encoded patterns from the
+ * .patterns file. Blocks commits and agent edits that introduce sensitive
+ * content.
  *
  * @module .paw/gates/secrets
  * @author Typeir
@@ -24,7 +23,6 @@ import type {
 
 /**
  * File extensions to scan for restricted patterns.
- * Mirrors the original pre-commit.ts CHECKED_EXTENSIONS list.
  */
 const CHECKED_EXTENSIONS = [
   '.ts',

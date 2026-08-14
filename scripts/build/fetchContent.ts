@@ -1,11 +1,7 @@
 /**
- * @fileoverview Ensures the content submodule is populated before build.
- *
- * Vercel strips the `.git` directory before running build commands, which
- * means `git submodule update` is unavailable. This script instead performs
- * a direct shallow clone of the content repository when `src/content/en` is
- * missing or empty. It is a no-op in local development where the submodule is
- * already checked out. On Vercel, always re-clones to avoid stale cached content.
+ * @fileoverview Shallow-clones the content repository into `src/content`.
+ * Skips when `src/content/en` is populated and not on Vercel. On Vercel,
+ * removes existing content before re-cloning.
  *
  * @module build/fetchContent
  * @version 1.1.0
@@ -37,8 +33,7 @@ const CONTENT_DIR = join(process.cwd(), 'src', 'content');
 const CONTENT_EN_DIR = join(CONTENT_DIR, 'en');
 
 /**
- * Returns `true` when the content directory appears to be populated with at
- * least one file under `src/content/en`.
+ * Returns `true` when `src/content/en` exists and is non-empty.
  */
 function isContentPopulated(): boolean {
   if (!existsSync(CONTENT_EN_DIR)) return false;
@@ -50,17 +45,15 @@ function isContentPopulated(): boolean {
 }
 
 /**
- * Returns `true` when running on Vercel where the build cache may contain
- * stale content that should always be re-cloned.
+ * Returns `true` when `process.env.VERCEL` equals `'1'`.
  */
 function isVercelEnvironment(): boolean {
   return process.env['VERCEL'] === '1';
 }
 
 /**
- * Entry point. Clones the content repository shallowly when content is absent
- * or when running on Vercel (where cached content may be stale).
- * Exits with a non-zero code on clone failure so the build fails visibly.
+ * Entry point. Shallow-clones the content repository when content is absent
+ * or on Vercel. Exits with code 1 on clone failure.
  */
 function main(): void {
   if (isContentPopulated() && !isVercelEnvironment()) {

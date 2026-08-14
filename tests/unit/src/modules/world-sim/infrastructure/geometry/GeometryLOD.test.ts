@@ -1,8 +1,7 @@
 /**
  * @fileoverview Geometry LOD Integration Tests
- * @description Verifies that renderers correctly swap geometry when quality
- * level changes, that segment counts are within budget at each tier, and
- * that draw-call reduction (hiding meshes) works for ring/tower worlds.
+ * @description Verifies renderers swap geometry on quality-level changes,
+ * stay within segment budgets per tier, and hide meshes to cut draw calls.
  *
  * @module tests/unit/worldSim/optimization/GeometryLOD
  */

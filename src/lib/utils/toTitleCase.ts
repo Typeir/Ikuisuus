@@ -1,15 +1,13 @@
 /**
- * @fileoverview Title Case Converter - Kebab-case to human-readable title formatter
- * @description Converts kebab-case strings to Title Case with normalized spacing.
- * Inverse operation of toKebabCase. Collapses multiple consecutive dashes into single
- * spaces and capitalizes the first letter of each word. Used for displaying slugs
- * as page titles and breadcrumb labels.
+ * @fileoverview Title case conversion utility.
+ * @description Converts kebab-case strings to Title Case. Inverse of toKebabCase.
+ * Collapses consecutive dashes into single spaces and capitalizes each word.
  *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  *
- * @requires None - Pure string utility
+ * @requires None
  *
  * @example
  * ```typescript
@@ -22,14 +20,10 @@
  */
 
 /**
- * Converts a dash-separated string (e.g., kebab-case) to Title Case.
- * Collapses multiple dashes into a single space.
+ * Lowercases a word and uppercases its first character.
  *
- * Example:
- * - "iron-snail---warrior" → "Iron Snail Warrior"
- *
- * @param {string} str - The input string using dashes as separators.
- * @returns {string} The converted string in Title Case with normalized spacing.
+ * @param {string} str - The word to capitalize.
+ * @returns {string} The word with one uppercase leading character.
  */
 function capitalizeWord(word: string): string {
   const normalized = word.toLocaleLowerCase();

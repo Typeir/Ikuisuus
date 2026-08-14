@@ -2,8 +2,7 @@
  * Character Sheet State Types and Action Schema
  *
  * @fileoverview Defines typed state shapes and action types for the character sheet
- * persistent state system. Mirrors the PersistentUiState pattern: reducer-driven
- * state management with multi-layer storage via fetchPersistentData / storePersistentData.
+ * persistent state system, stored via fetchPersistentData / storePersistentData.
  *
  * @module lib/types/characterSheet
  * @version 1.0.0
@@ -17,8 +16,8 @@ import type { CharacterSheet } from '@/lib/types/character';
 
 /**
  * Storage key used by fetchPersistentData / storePersistentData for the character array.
- * Character data is large, so the cookie layer will silently reject it and reads
- * will fall through to sessionStorage → localStorage automatically.
+ * Reads fall through cookie → sessionStorage → localStorage; the cookie layer rejects
+ * data too large for it.
  *
  * @constant CHARACTER_SHEET_STORAGE_KEY
  */
@@ -26,7 +25,6 @@ export const CHARACTER_SHEET_STORAGE_KEY = 'ikuisuus-characters' as const;
 
 /**
  * Action type constants for character sheet state management.
- * Uses namespaced string literals for clarity and conflict prevention.
  *
  * @constant CHARACTER_SHEET_ACTION_TYPES
  */
@@ -102,9 +100,8 @@ export interface ResetCharacterSheetAction {
 }
 
 /**
- * Action to hydrate state from persistent storage after mount.
- * Fires once in a client-side `useEffect`, replacing the empty SSR-initial state
- * with whatever was saved in sessionStorage / localStorage.
+ * Action to hydrate state from persistent storage.
+ * Fires once client-side, replacing the initial SSR state with stored data.
  *
  * @interface HydrateCharacterSheetAction
  * @property {typeof CHARACTER_SHEET_ACTION_TYPES.HYDRATE} type - Action type identifier

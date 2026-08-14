@@ -1,9 +1,5 @@
 /**
- * @fileoverview Unified Tagging Utilities
- * @description Centralized tagging system that combines mechanics-based tagging
- * (damage types, conditions, abilities) with organizational and lore-based tagging
- * (factions, locations, categories). Used by metadata generators and the sync service.
- *
+ * @fileoverview Tag extraction utilities: mechanics, organizational, lore, and content tags.
  * @module lib/metadata/taggingUtils
  * @version 1.0.0
  * @author Typeir
@@ -47,11 +43,7 @@ export interface TagExtractionOptions {
 }
 
 /**
- * Removes the labels of links that cite another content entity.
- *
- * The href survives — it is not prose and matches nothing — while the label goes,
- * because a page that links to a spell is referring to it rather than doing what
- * it does. Rules links keep their labels; see `ENTITY_CITATION`.
+ * Removes the labels of links that cite another content entity. Rules links keep their labels.
  *
  * @param {string} text - Content to clean
  * @returns {string} The text with entity link labels removed
@@ -62,19 +54,10 @@ export function stripCitations(text: string): string {
 }
 
 /**
- * Collects the stretches of text where a damage type may legitimately appear.
- *
- * Damage types are ordinary English words. A bare "fire" is a campfire, a bare
- * "true" is an adjective, and a bare "frost" is weather — none of them are
- * damage, and matching them as damage put `damage:true` on a third of the spell
- * list. A type counts in exactly two places: a clause that says "damage", and a
- * dice expression, which names its type and never says the word.
- *
- * Returning one joined string rather than testing each type against the whole
- * document keeps this linear in the text rather than in text × vocabulary.
+ * Collects text regions where a damage type may appear: clauses containing "damage" and dice expressions.
  *
  * @param {string} text - Content to analyze
- * @returns {string} The damage-bearing regions of the text, joined
+ * @returns {string} The damage-bearing regions of the text, joined with ' | '
  */
 export function damageContexts(text: string): string {
   const regions: string[] = [];
@@ -142,10 +125,7 @@ export function extractConditionTags(
 }
 
 /**
- * Extract ability save tags from content.
- *
- * Emits the abbreviated form (`save:dex`) so that the shared tagger and the spell
- * generator, which derived the same fact independently, agree on one spelling.
+ * Extract ability save tags from content. Emits the abbreviated form (`save:dex`).
  *
  * @param {string} text - Content to analyze
  * @param {SharedData} sharedData - Shared game data
@@ -312,11 +292,7 @@ export function extractItemMechanicTags(text: string): string[] {
 }
 
 /**
- * Extract lore tags (factions, locations) from content.
- *
- * Both carry the `meta:` prefix: naming a faction places a page in the world
- * rather than describing what it does at the table, which is the line the pill
- * row draws.
+ * Extract lore tags (factions, locations) from content. Both carry the `meta:` prefix.
  *
  * @param {string} text - Content to analyze
  * @param {string[]} factions - List of faction names to search for
@@ -347,12 +323,6 @@ export function extractLoreTags(
 
 /**
  * Extract organizational tags from file path (category, locale, provenance).
- *
- * These carry the `meta:` prefix because they describe where a page sits in the
- * library rather than what it does at the table. They are indexed and searchable
- * like any other aspect and never drawn in the pill row. The prefix also frees
- * the bare `source:` group for the Fold/Väki/Will axis, which is a different
- * question that happens to share the English word.
  *
  * @param {string} filePath - Absolute path to content file
  * @param {string} [projectRoot] - Root directory of the project

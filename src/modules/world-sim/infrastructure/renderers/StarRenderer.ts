@@ -1,8 +1,6 @@
 /**
- * @fileoverview Star Renderer — Turbulent Solar Surface with Corona Effect
- * @description Renders Kultharja as a displaced sphere with turbulent noise-driven
- * vertex displacement mapped to a hot colour gradient, plus a corona glow sprite
- * and ring. Uses GLSL shaders for the convective photosphere look.
+ * @fileoverview StarRenderer — renders a sphere with noise-displaced surface,
+ * corona glow sprite, and ring via GLSL shaders.
  *
  * @module worldSim/celestials/StarRenderer
  * @version 2.0.0
@@ -60,7 +58,6 @@ const DEFAULT_DISPLACEMENT_SCALE = 12;
 
 /**
  * Gradient stops for the star corona glow texture.
- * Brighter center with smooth falloff for a hot emissive look.
  * @constant {import('@/modules/world-sim/infrastructure/effects/CelestialGlow').GradientStop[]}
  */
 const CORONA_GLOW_STOPS = [
@@ -72,7 +69,7 @@ const CORONA_GLOW_STOPS = [
 ];
 
 /**
- * Renders a star body with noise-displaced surface, hot colour gradient, and corona glow.
+ * Renders a star body with noise-displaced surface, colour gradient, and corona glow.
  *
  * @class StarRenderer
  * @implements {ICelestialRenderer}

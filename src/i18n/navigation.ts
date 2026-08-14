@@ -8,6 +8,6 @@
 import { createNavigation } from 'next-intl/navigation';
 import { routing } from './routing';
 
-/** Lightweight wrappers around Next.js navigation APIs that consider the routing configuration */
+/** Navigation exports from next-intl, configured with the routing setup. */
 export const { Link, redirect, usePathname, useRouter, getPathname } =
   createNavigation(routing);

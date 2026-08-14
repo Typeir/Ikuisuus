@@ -1,12 +1,7 @@
 /**
- * @fileoverview Pagefind Client Loader
- * @description Singleton loader for the Pagefind browser JS bundle. Each locale
- * gets its own cached instance. Guards against SSR (no `window`). Loads the
- * Pagefind ESM bundle from `public/pagefind/{locale}/` via native dynamic
- * `import()` and exposes typed search/filter/preload methods.
- *
- * Locale-parameterized — no `'en'` literal.
- *
+ * @fileoverview Loads and caches the Pagefind browser ESM bundle per locale.
+ * @description Loads `/pagefind/{locale}/pagefind.js` via dynamic `import()`,
+ * caches one instance per locale, returns typed search/filter methods.
  * @module modules/search/infrastructure/pagefindClient
  * @version 1.0.0
  * @author Typeir
@@ -52,7 +47,7 @@ interface PagefindSubResult {
  * Shape of the Pagefind JS API exposed by the browser bundle.
  */
 interface PagefindInstance {
-  /** A null term is a filter-only query — Pagefind returns everything matching. */
+  /** Null term returns all results filtered by options only. */
   search: (
     term: string | null,
     options?: Record<string, unknown>,
@@ -76,11 +71,10 @@ const instances = new Map<string, PagefindInstance>();
 const loading = new Map<string, Promise<PagefindInstance>>();
 
 /**
- * Dynamically loads the Pagefind browser bundle for a locale via native
- * ESM `import()`. The bundle is a pure ES module — its API (`search`,
- * `init`, `filters`, `preload`) lives on the module namespace; it does not
- * attach anything to `window`, and it uses `import.meta` internally so it
- * cannot be loaded as a classic `<script>` tag.
+ * Loads and caches the Pagefind ESM bundle for a locale via native `import()`.
+ * The bundle is a pure ES module: its API lives on the module namespace,
+ * not `window`, and it uses `import.meta` so it cannot load as a classic
+ * `<script>` tag.
  *
  * @param {string} locale - Locale code (e.g. 'en')
  * @returns {Promise<PagefindInstance>} Initialised Pagefind instance

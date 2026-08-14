@@ -1,11 +1,8 @@
 /**
- * @fileoverview Metadata Persistence Storage for Build Scripts
- * @description Provides a lightweight Postgres storage adapter for use in
- * Node.js build scripts. Handles upserting canonical metadata records into
- * the `content_metadata` table that the runtime content adapters read from.
- *
- * This module is script-side only — it uses `pg` directly and has no
- * dependency on the Next.js runtime or the TypeScript source tree.
+ * @fileoverview Postgres storage adapter for build scripts.
+ * @description Upserts canonical metadata records into the `content_metadata`
+ * table using `pg` directly. No dependency on the Next.js runtime or the
+ * TypeScript source tree.
  *
  * @module scripts/core/metadataStorage
  * @version 1.0.0
@@ -154,7 +151,7 @@ export function createPostgresStorage(
 
 /**
  * Creates a Postgres storage instance from the `DATABASE_URL` env var.
- * Calls `ensureTable()` before returning so the schema is ready to use.
+ * Calls `ensureTable()` before returning.
  *
  * @returns Initialized storage instance
  * @throws If `DATABASE_URL` is not set

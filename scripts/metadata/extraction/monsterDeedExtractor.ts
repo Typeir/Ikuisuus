@@ -1,9 +1,7 @@
 /**
- * @fileoverview Monster Deed & Phase Extractor
- * @description Extracts MonsterFeature records from legendary deed sections
- * (Act, Stratagem, Lair, Phase) of monster `.sheet.mdx` files. Handles
- * declare/resolve stratagems, deed cost parsing, phase HP thresholds,
- * phase-added features, and lair action options.
+ * @fileoverview Extracts MonsterFeature records from legendary deed sections
+ * (Act, Stratagem, Lair, Phase) of monster `.sheet.mdx` files. Parses deed
+ * costs, phase HP thresholds, and phase-added features.
  *
  * @version 1.0.0
  * @author Typeir

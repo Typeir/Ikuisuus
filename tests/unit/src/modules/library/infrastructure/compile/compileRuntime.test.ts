@@ -201,11 +201,7 @@ describe('component map is per call, not per cache entry', () => {
   });
 
   /**
-   * Reproduces a production black screen in the character builder. Two shard
-   * renderers compile the same shard source: the chip passes `{}`, the preview
-   * panel passes the full registry. When the cache stored a built element, the
-   * chip's empty map was reused for the panel and `Unit` resolved to nothing,
-   * throwing `Expected component Unit to be defined` during render.
+   * Verifies a cached compile does not reuse an earlier caller's component map.
    */
   it('should not let an earlier empty component map poison a later caller', () => {
     const Unit = () => null;

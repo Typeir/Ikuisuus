@@ -4,10 +4,6 @@
  * extracts core traits, feature progression, proficiency grants, optional
  * spellcasting summary, and specialization links.
  *
- * Only targets `main.mdx` inside vocation subdirectories (e.g.
- * `vocations/Berserker/main.mdx`). The root `vocations/main.mdx` overview
- * page is excluded.
- *
  * @module scripts/metadata/generateVocationMetadata
  * @version 1.0.0
  * @author Typeir
@@ -87,9 +83,7 @@ function parseCoreTraits(raw: string): Record<string, string> {
 }
 
 /**
- * Extracts the hit die's face count from a traits value. This is the ingest
- * boundary — authored MDX is the only place die notation exists as text, and
- * everything downstream carries the face count as a number.
+ * Extracts the hit die's face count from a traits value.
  *
  * @param {string} value - Raw hit die text (e.g. "d12 per Berserker level")
  * @returns {number} Face count (e.g. 12), or 0 when the traits declare none
@@ -145,9 +139,8 @@ function parseChoiceCount(text: string): number {
 
 /**
  * Parses skill proficiencies into count and choices. A missing colon marks an
- * unrestricted "any" grant (e.g. "Choose any 3 skills"), which yields the count
- * with an empty choices list; otherwise the choices are the enumerated list after
- * the colon. Inline markdown is stripped so bold-wrapped source cells parse clean.
+ * unrestricted "any" grant, yielding the count with an empty choices list.
+ * Inline markdown is stripped.
  *
  * @param {string} value - Raw skill text (e.g. "Choose 2: Animal Handling, Athletics, ...")
  * @returns {{ count: number; choices: string[] }}
@@ -185,12 +178,10 @@ function parseProficiencies(value: string): string[] {
 }
 
 /**
- * Extracts the OUTRIGHT-granted (fixed) trade display names from a raw "Trade
- * Proficiencies" cell. Only markdown links whose href targets a specific trade
- * page (`/tools/<slug>`) count; the generic `[Trade](/en/library/items/tools)`
- * wildcard and any "choose one / any / or …" qualifier parenthetical (which may
- * name example trades) are excluded, so "one Trade of your choice" grants nothing
- * fixed. The link text is returned (e.g. "Thievery", "Herbalism", "Music").
+ * Extracts fixed trade display names from a raw "Trade Proficiencies" cell.
+ * Only link text whose href targets `/tools/<slug>` is kept. The generic
+ * `[Trade](/en/library/items/tools)` wildcard and "choose one / any / or …"
+ * qualifier parentheticals are excluded.
  *
  * @param {string} value - Raw Trade Proficiencies cell (markdown links intact)
  * @returns {string[]} Deduped fixed-trade display names
@@ -213,10 +204,8 @@ function parseFixedTrades(value: string): string[] {
 }
 
 /**
- * Splits a markdown table row into its cells, dropping only the empty fragments
- * the outer pipes produce while PRESERVING empty interior cells, so that an
- * empty cell (e.g. a level with no feature) does not shift every column after it
- * and misalign the header-derived column index.
+ * Splits a markdown table row into cells, dropping only the empty fragments the
+ * outer pipes produce. Empty interior cells are preserved.
  *
  * @param {string} line - Raw table row (starts and ends with `|`)
  * @returns {string[]} Trimmed cells with interior blanks preserved
@@ -232,10 +221,9 @@ function splitTableRow(line: string): string[] {
  * Parses the vocation feature table and extracts feature entries.
  *
  * Resolves the "Features" column by header name (handles "Features",
- * "Vocation Features", "Class Features") rather than assuming a fixed
- * column index. Falls back to column 2 when no header matches. Interior empty
- * cells are preserved via {@link splitTableRow} so a level with no feature is
- * skipped rather than mis-reading a later column as the feature name.
+ * "Vocation Features", "Class Features"), falling back to column 2 when no
+ * header matches. Interior empty cells are preserved via
+ * {@link splitTableRow}.
  *
  * @param {string} raw - Full MDX file content
  * @returns {{ features: Array<{ level: number; name: string }>; hasSpellSlots: boolean; headers: string[] }}
@@ -618,8 +606,7 @@ async function parseVocationFile(
 
 /**
  * Resolves the output path for a vocation metadata file.
- * Uses the parent directory name (vocation slug) as the filename
- * since all source files are named `main.mdx`.
+ * Uses the parent directory name (vocation slug) as the filename.
  *
  * @param {string} sourceFilePath - Absolute path to main.mdx
  * @param {string} contentType - Content type key

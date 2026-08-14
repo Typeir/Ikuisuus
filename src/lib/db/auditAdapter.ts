@@ -1,9 +1,5 @@
 /**
- * @fileoverview Audit Storage Adapter Interface
- * @description Defines a pluggable adapter contract for persisting audit records.
- * Implementations can target Vercel Edge Config, a database, or any other backend
- * without changing consumer code.
- *
+ * @fileoverview Interface contract for persisting audit records.
  * @module lib/db/auditAdapter
  * @version 1.0.0
  * @author Typeir
@@ -37,8 +33,7 @@ export interface AuditRecord {
 
 /**
  * Adapter interface for audit log persistence.
- * Implementations MUST be safe to call even when the backing store is unavailable
- * (graceful degradation over hard failures).
+ * Implementations MUST still be callable when the backing store is unavailable.
  */
 export interface AuditAdapter {
   /**

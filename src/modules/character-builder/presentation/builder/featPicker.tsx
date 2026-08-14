@@ -1,8 +1,7 @@
 /**
  * @fileoverview Feat Picker Component
  * @description Fetches `/api/feats` and renders a toggleable list of feats.
- * Selected feats are stored as `CharacterShard` entries with `category: 'feat'`
- * so the same shard rendering pipeline used elsewhere can display them.
+ * Selected feats are stored as `CharacterShard` entries with `category: 'feat'`.
  *
  * @module lib/components/characterSheet/featPicker
  * @version 1.0.0

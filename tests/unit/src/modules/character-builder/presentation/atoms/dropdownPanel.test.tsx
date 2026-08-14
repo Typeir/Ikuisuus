@@ -1,7 +1,6 @@
 /**
- * @fileoverview DropdownPanel Atom Unit Tests
- * @description Tests for the DropdownPanel behavioral atom.
- * Verifies open/close state, click-outside, Escape key, badge, and portal rendering.
+ * @fileoverview DropdownPanel atom unit tests.
+ * @description Tests open/close toggle, click-outside and Escape-key close, badge, and panel role.
  *
  * @module tests/unit/lib/components/characterSheet/atoms/dropdownPanel
  * @version 1.0.0

@@ -1,9 +1,6 @@
 /**
- * @fileoverview World Sim Mediator — Central Coordinator
- * @description Implements the Mediator pattern to coordinate between all World Sim
- * subsystems: SceneManager, CameraController, ProjectionBridge, SceneEventBus,
- * CelestialRegistry, and the React dispatch function. This is the single point of
- * orchestration — subsystems communicate through the mediator, not directly.
+ * @fileoverview Coordinates World Sim subsystems: SceneManager, CameraController,
+ * ProjectionBridge, SceneEventBus, CelestialRegistry, and React dispatch.
  *
  * @module modules/world-sim/application/mediator/WorldSimMediator
  * @version 1.0.0
@@ -61,9 +58,9 @@ const ORBIT_COLOR_DARK = 0x8fd3a1;
 const ORBIT_COLOR_LIGHT = 0x5a8a6a;
 
 /**
- * Central mediator coordinating all World Sim subsystems.
- * Owns the lifecycle of celestial meshes, handles raycasting for interaction,
- * updates orbits and renderers each frame, and tracks projected positions.
+ * Coordinates World Sim subsystems. Owns celestial mesh lifecycle, handles
+ * interaction raycasting, updates orbits and renderers each frame, tracks
+ * projected positions.
  *
  * @class WorldSimMediator
  *
@@ -166,8 +163,8 @@ export class WorldSimMediator {
   }
 
   /**
-   * Initialize the scene: create all celestial bodies, set up event listeners,
-   * and register the animation callback.
+   * Build celestials, orbit lines, everdark, collision clouds; register
+   * projections and lifecycle phases; attach input and theme listeners.
    */
   initialize(): void {
     const scene = this.sceneManager.scene;
@@ -221,8 +218,8 @@ export class WorldSimMediator {
   }
 
   /**
-   * Update phase: advance orbital positions and tick renderer strategies.
-   * Runs during RenderPhase.Update. Delegates simulation logic to mediatorSimulation helpers.
+   * Update phase: advances orbital positions, ticks renderer strategies,
+   * applies quality changes. Runs during RenderPhase.Update.
    *
    * @private
    * @param {FrameContext} frameCtx - Shared frame context from the lifecycle
@@ -258,9 +255,9 @@ export class WorldSimMediator {
   }
 
   /**
-   * Post-render projection pass: runs after renderer.render() so the camera's
-   * matrixWorldInverse is fully finalized. This eliminates compositor-layer
-   * desync between the WebGL canvas and DOM overlay labels during rotation.
+   * Post-render projection pass, runs after renderer.render(). Recomputes
+   * occlusion throttled by OCCLUSION_FRAME_STRIDE and updates the projection
+   * bridge.
    *
    * @private
    */
@@ -343,7 +340,6 @@ export class WorldSimMediator {
 
   /**
    * Reset the camera to the default system overview.
-   * Delegates all camera state cleanup to the controller's resetToDefault.
    */
   resetView(): void {
     this.followedBodyId = null;
@@ -402,8 +398,8 @@ export class WorldSimMediator {
   }
 
   /**
-   * Handle theme change from the site-wide ik:theme-changed event.
-   * Updates orbit ring mesh colors to match the current theme.
+   * Handle the site-wide ik:theme-changed event. Updates orbit ring mesh colors
+   * to match the current theme.
    *
    * @param {Event} e - CustomEvent with detail.theme ('dark' | 'light')
    */
@@ -418,9 +414,8 @@ export class WorldSimMediator {
   }
 
   /**
-   * Register all celestial bodies with the ProjectionBridge for 2D overlay tracking.
-   * Passes live mesh.position references so the bridge always reads current positions
-   * without needing per-frame updatePosition() calls.
+   * Register all celestial bodies with the ProjectionBridge for 2D overlay
+   * tracking.
    *
    * @private
    */
@@ -432,7 +427,6 @@ export class WorldSimMediator {
 
   /**
    * Attach the canvas input handler with mediator-bound click and hover callbacks.
-   * Delegates to createInputHandler from mediatorEvents.
    *
    * @private
    */
@@ -475,7 +469,6 @@ export class WorldSimMediator {
 
   /**
    * Build cached mesh arrays for raycasting and occlusion testing.
-   * Delegates to RaycastService. Called once after all bodies are created.
    *
    * @private
    */

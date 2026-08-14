@@ -1,11 +1,7 @@
 /**
  * @fileoverview Emits the vitest project list.
- * @description Prints the projects defined for the suite, so CI can build a
- * matrix from the same list the local runner uses instead of a copy that drifts
- * every time a project is split.
- *
- * `--json` emits a JSON array for `fromJSON()` in a workflow matrix; the default
- * is one name per line for shell use.
+ * @description Prints the projects defined for the suite. With `--json`, emits
+ * a JSON array; otherwise one name per line.
  *
  * @module tests/scripts/listProjects
  * @author Typeir

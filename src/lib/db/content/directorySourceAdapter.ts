@@ -1,8 +1,7 @@
 /**
  * @fileoverview Directory Source Adapter Interface
- * @description Defines the hexagonal port contract for listing directory contents.
- * Implementations target the local filesystem (build-time / dev) or the GitHub
- * Git Trees API (production runtime) without changing consumer code.
+ * @description Port contract for listing directory contents. Consumers
+ * switch between filesystem and GitHub Git Trees API implementations unchanged.
  *
  * @module lib/db/content/directorySourceAdapter
  * @author Typeir

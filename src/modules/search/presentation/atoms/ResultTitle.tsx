@@ -1,8 +1,6 @@
 /**
  * @fileoverview Search Result Title Atom
- * @description Renders the result title in the Empyrean display serif with
- * hover accent transition. Used in both dropdown quick-results and the
- * /search page.
+ * @description Renders the result title in Empyrean display serif.
  *
  * @module modules/search/presentation/atoms/ResultTitle
  * @version 1.0.0

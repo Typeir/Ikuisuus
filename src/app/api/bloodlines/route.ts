@@ -1,8 +1,8 @@
 /**
- * @fileoverview Bloodlines API Route - Character ancestry metadata JSON endpoint
- * @description Next.js API route that serves bloodline metadata via the content
- * adapter layer. Supports locale-aware content via ?locale query parameter. Returns
- * array of bloodline objects with core features, boons, and gameplay tags.
+ * @fileoverview Bloodlines API route.
+ * @description Serves bloodline metadata via the content adapter layer. Supports
+ * ?locale query parameter for locale-aware content. Returns array of bloodline
+ * objects with core features, boons, and gameplay tags.
  *
  * @version 1.0.0
  * @author Typeir

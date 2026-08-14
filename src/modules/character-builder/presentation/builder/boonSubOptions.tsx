@@ -1,8 +1,6 @@
 /**
- * @fileoverview Boon Sub-Option Selector
- * @description Radio (choose-one) or checkbox (pick-any) group for a variable-cost
- * bloodline boon's sub-options. Rendered inside a FeatureCard beneath the boon
- * toggle; changing a selection drives the boon's BP cost via the parent picker.
+ * @fileoverview Radio (choose-one) or checkbox (pick-any) group for a variable-cost
+ * bloodline boon's sub-options.
  *
  * @module lib/components/characterSheet/builder/boonSubOptions
  * @version 1.0.0
@@ -40,12 +38,11 @@ export interface BoonSubOptionsProps {
 }
 
 /**
- * Cleans an effect summary for plain-text display: strips `[% … %]` dice
- * shortcode wrappers, then removes inline markdown via {@link stripInlineMarkdown},
- * leaving only the readable text the source table columns carry.
+ * Strips `[% … %]` shortcode wrappers then inline markdown via
+ * {@link stripInlineMarkdown}.
  *
  * @param {string} text - Raw effect text from the boon table
- * @returns {string} Plain text with shortcodes and markdown markers removed
+ * @returns {string} Text with shortcodes and markdown markers removed
  */
 function cleanEffect(text: string): string {
   return stripInlineMarkdown(text.replace(/\[%\s*(.*?)\s*%\]/g, '$1'));

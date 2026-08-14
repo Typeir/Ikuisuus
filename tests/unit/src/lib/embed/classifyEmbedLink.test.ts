@@ -1,7 +1,6 @@
 /**
- * @fileoverview Embed Link Classifier Tests
- * @description Pins the rule that decides what an embedded frame does with a
- * clicked link: library content stays in the frame, everything else leaves it.
+ * @fileoverview Tests for classifyEmbedLink.
+ * @description Maps links to { ignore | internal | bubble } based on href and origin.
  *
  * @module tests/unit/src/lib/embed/classifyEmbedLink
  * @version 1.0.0

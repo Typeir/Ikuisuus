@@ -1,18 +1,13 @@
 /**
  * @fileoverview Dynamic OG image API route.
  *
- * Generates a 1200×630 PNG Open Graph card on demand for any supported
- * content type and slug. The route is intentionally excluded from
- * static generation (`force-static`) so it runs at request time.
- *
- * URL pattern: `/api/og/[type]/[slug]`
+ * Generates a 1200×630 PNG Open Graph card for a content type and slug.
+ * Runs at request time (`force-dynamic`); URL `/api/og/[type]/[slug]`.
  *
  * Supported types: `monsters`, `heirlooms`, `spells`, `trinkets`,
  * `bloodlines`, `vocations`, `specializations`
  *
- * The PNG is aggressively cached (`s-maxage=31536000, immutable`) because
- * content rarely changes between deployments and re-generating a card is
- * expensive (font fetch + satori + resvg).
+ * PNG cached with `s-maxage=31536000, immutable`.
  *
  * @module src/app/api/og/[type]/[slug]/route
  * @version 1.0.0
@@ -59,12 +54,8 @@ interface RouteParams {
 /**
  * GET /api/og/[type]/[slug]
  *
- * Validates the type and slug, renders the OG card to a PNG buffer, and
- * returns it with long-lived immutable caching headers.
- *
- * Returns 400 when the type is not in the supported list.
- * Returns 404 when no metadata record exists for the slug.
- * Returns 500 when rendering fails unexpectedly.
+ * Renders the OG card to a PNG buffer and returns it with immutable caching
+ * headers.
  *
  * @param {Request} _req - Incoming request (unused; params carry all info)
  * @param {{ params: Promise<RouteParams> }} context - Next.js route context

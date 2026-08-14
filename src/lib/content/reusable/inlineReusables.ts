@@ -1,13 +1,7 @@
 /**
  * Reusable Region Inliner
  *
- * @fileoverview Splices reusable region sources into a host document before it
- * is compiled.
- *
- * Inlining at source level means the region compiles as part of its host, with
- * the host's component map. Interactive components inside a region therefore
- * behave exactly as they would written inline, and nothing is pre-rendered to
- * frozen HTML.
+ * @fileoverview Splices reusable region sources into a host document source.
  *
  * @module lib/content/reusable/inlineReusables
  * @version 1.0.0
@@ -19,11 +13,11 @@ import type { ReusableEntry } from './reusableRegistry';
 
 /**
  * Matches a self-closing PascalCase tag, optionally dotted for a named region.
- * Attributes are tolerated and discarded — a region takes no props.
+ * Attributes are ignored.
  */
 const REUSABLE_TAG = /<([A-Z][A-Za-z0-9]*)(?:\.([A-Za-z][A-Za-z0-9]*))?\s*\/>/g;
 
-/** Depth limit guarding against a region that references itself. */
+/** Maximum recursion depth for region inlining. */
 const MAX_DEPTH = 5;
 
 /**
@@ -51,11 +45,7 @@ function resolveSource(
 
 /**
  * Replaces reusable references in a document with their region sources.
- *
- * A reference to an unknown component is left untouched, so ordinary MDX
- * components continue to resolve through the component map as before. This is
- * what keeps a built-in like `Image` working even though a content file shares
- * its name.
+ * Unknown references are left unchanged.
  *
  * @param {string} source - Host document source
  * @param {Map<string, ReusableEntry>} registry - Discovered reusable entries

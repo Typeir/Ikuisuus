@@ -1,11 +1,8 @@
 /**
- * @fileoverview Camera Commands — Encapsulated Camera Transitions
- * @description Implements the Command pattern for camera movements. Each command
- * encapsulates a specific camera transition (zoom to body, zoom to region, reset).
- * Commands are executed by the CameraController and can be queued or cancelled.
- *
- * Body tracking during transitions is handled by the CameraFollowSystem, so
- * commands only need to lerp toward relative offsets from the (moving) target.
+ * @fileoverview Implements the Command pattern for camera transitions.
+ * @description Commands zoom to a body, zoom to a region, or reset the view. Body
+ * tracking is handled by CameraFollowSystem; commands lerp toward offsets from the
+ * moving target.
  *
  * @module worldSim/camera/CameraCommand
  * @version 2.0.0
@@ -44,10 +41,9 @@ interface CameraTransitionState {
 }
 
 /**
- * Smoothly transitions the camera to a position relative to a celestial body.
- * The CameraFollowSystem handles body tracking — this command just lerps toward
- * the body's position at the time of initialization (which moves with the body
- * because the follow system shifts everything).
+ * Transitions the camera to a position relative to a celestial body.
+ * Lerps toward the body's position at initialization, which moves with
+ * the body because the follow system shifts everything.
  *
  * @class ZoomToBodyCommand
  * @implements {ICameraCommand}
@@ -116,8 +112,7 @@ export class ZoomToBodyCommand implements ICameraCommand {
   }
 
   /**
-   * Apply the follow system's frame delta to the command's target positions,
-   * keeping the command in sync with the moving body.
+   * Applies the follow system's frame delta to target positions.
    *
    * @param {Vector3} delta - Frame-to-frame movement of the followed body
    */
@@ -129,7 +124,7 @@ export class ZoomToBodyCommand implements ICameraCommand {
   }
 
   /**
-   * Set up the target position based on the camera's current angle to the body.
+   * Computes the target position from the camera's angle to the body.
    *
    * @private
    * @param {PerspectiveCamera} camera - Current camera
@@ -150,9 +145,8 @@ export class ZoomToBodyCommand implements ICameraCommand {
 }
 
 /**
- * Slerp (spherical linear interpolation) between two unit-length direction vectors.
- * Produces an arc path instead of a straight line, preventing the camera from
- * cutting through the planet interior.
+ * Spherical linear interpolation between two unit-length direction vectors.
+ * Produces an arc path to avoid cutting through the planet interior.
  *
  * @param {Vector3} a - Start direction (unit length)
  * @param {Vector3} b - End direction (unit length)
@@ -174,8 +168,7 @@ function slerpDirections(a: Vector3, b: Vector3, t: number): Vector3 {
 }
 
 /**
- * Cosine ease-in-out: starts slow, accelerates through the middle, decelerates to a stop.
- * Produces a smooth S-curve that feels natural for camera orbiting.
+ * Cosine ease-in-out curve for camera orbiting.
  * Formula: $\frac{1 - \cos(\pi t)}{2}$
  *
  * @param {number} t - Linear progress from 0 to 1
@@ -187,9 +180,8 @@ function easeInOut(t: number): number {
 
 /**
  * Transition state for region camera commands using spherical interpolation.
- * Stores directions and radii relative to the planet center so the camera
- * arcs around the surface instead of cutting through the interior.
- * Uses time-based progression with ease-in-out for satellite-like orbiting.
+ * Stores directions and radii relative to the planet center. Uses time-based
+ * progression with ease-in-out.
  *
  * @interface RegionTransitionState
  * @property {Vector3} startDirection - Normalized direction from planet center to initial camera position
@@ -215,11 +207,9 @@ interface RegionTransitionState {
 }
 
 /**
- * Smoothly transitions the camera to focus on a specific surface region.
- * Uses spherical interpolation to arc the camera around the planet surface
- * rather than cutting through the interior via linear interpolation.
- * The camera ends positioned along the planet's outward surface normal
- * at the region and oriented to face toward the planet center.
+ * Transitions the camera to focus on a specific surface region.
+ * Uses spherical interpolation to arc the camera around the planet. Ends
+ * along the region's outward surface normal, facing the planet center.
  *
  * @class ZoomToRegionCommand
  * @implements {ICameraCommand}
@@ -271,10 +261,8 @@ export class ZoomToRegionCommand implements ICameraCommand {
 
   /**
    * Advance the camera transition by one frame.
-   * Uses time-based progression with a cosine ease-in-out curve to produce
-   * a smooth satellite-like orbit: starts slow, accelerates through the middle
-   * of the arc, and decelerates to a gentle stop at the target.
-   * The camera always faces the planet center throughout the transition.
+   * Uses time-based progression with a cosine ease-in-out curve. The camera
+   * always faces the planet center.
    *
    * @param {PerspectiveCamera} camera - The camera to move
    * @param {number} deltaTime - Time since last frame in seconds
@@ -311,8 +299,7 @@ export class ZoomToRegionCommand implements ICameraCommand {
   }
 
   /**
-   * Apply the follow system's frame delta to world-space positions.
-   * Directions and radii are relative to planetCenter so they stay valid.
+   * Applies the follow system's frame delta to world-space positions.
    *
    * @param {Vector3} delta - Frame-to-frame movement of the followed body
    */
@@ -323,9 +310,9 @@ export class ZoomToRegionCommand implements ICameraCommand {
   }
 
   /**
-   * Compute start/end directions and radii for the spherical arc.
-   * The start direction is from the planet center toward the camera's current position.
-   * The end direction is the surface normal at the region (planet center → region).
+   * Computes start/end directions and radii for the spherical arc.
+   * Start direction is from planet center toward the camera; end direction
+   * is the surface normal at the region.
    *
    * @private
    * @param {PerspectiveCamera} camera - Current camera for initial direction/radius
@@ -405,7 +392,7 @@ export class ResetViewCommand implements ICameraCommand {
   }
 
   /**
-   * No-op for reset commands (follow target is cleared before reset).
+   * No-op; the follow target is cleared before reset.
    *
    * @param {Vector3} _delta - Unused movement delta
    */

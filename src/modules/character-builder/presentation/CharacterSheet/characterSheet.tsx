@@ -1,11 +1,7 @@
 /**
- * @fileoverview Character Sheet Component
- * @description Tabbed character sheet view. Renders a sticky header
- * (`<CharacterSheetHeader>`) with name + level + bloodline / vocation /
- * specialization selectors + edit controls, and a five-tab body
- * (Overview / Bloodline / Vocation / Equipment / Feats). All tabs are wrapped
- * in a `<PagePreviewProvider>` so library-page tooltips can open draggable
- * iframes anywhere inside the sheet.
+ * @fileoverview Character sheet component. Renders a sticky header and the
+ * active tab body wrapped in a `<PagePreviewProvider>` so library-page
+ * tooltips open draggable iframes inside the sheet.
  *
  * @module lib/components/characterSheet/characterSheet
  * @version 2.0.0
@@ -63,7 +59,7 @@ type TabId = SheetTabId;
  *
  * @interface CharacterSheetProps
  * @property {CharacterSheetType} character - The character sheet to display
- * @property {string | null} [startEditingId] - When it matches `character.id`, the sheet opens in edit mode (for freshly-created characters)
+ * @property {string | null} [startEditingId] - Opens in edit mode when it matches `character.id`
  */
 export interface CharacterSheetProps {
   character: CharacterSheetType;
@@ -72,8 +68,7 @@ export interface CharacterSheetProps {
 
 /**
  * Full character sheet view. Wraps the body in an `ActiveSheetProvider`
- * so every descendant can read state and call mutators via context hooks
- * instead of prop drilling.
+ * and a `PagePreviewProvider`.
  *
  * @component
  * @param {CharacterSheetProps} props - Component props
@@ -94,8 +89,7 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
 );
 
 /**
- * Inner body of the character sheet. Reads all state from the active-sheet
- * context and renders the header, ability row, and active tab.
+ * Renders the header, ability row, and active tab from active-sheet context.
  *
  * @component
  * @returns {JSX.Element} Rendered sheet body

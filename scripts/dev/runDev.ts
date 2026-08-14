@@ -1,14 +1,8 @@
 #!/usr/bin/env tsx
 /**
- * @fileoverview Runs local dev with explicit metadata backend controls.
- *
- * Behavior:
- * - Default backend: fs
- * - `--pg`: force pg backend
- * - `--fs`: force fs backend
- * - `--no-preinit`: skip pre-init pipeline
- * - `--no-replace`: do not auto-stop an existing same-project Next dev process
- * - Any other args are passed through to `next dev`
+ * @fileoverview Runs `next dev` with a metadata backend (default fs).
+ * Flags: --pg (pg backend), --fs (fs backend), --no-preinit (skip pre-init),
+ * --no-replace (keep existing Next dev process). Other args pass to `next dev`.
  *
  * @module scripts/dev/runDev
  * @version 1.1.1
@@ -209,10 +203,6 @@ async function main() {
   const metadataBackend = usePg ? 'pg' : 'fs';
   const contentFetchMode = forceFs ? 'build' : 'runtime';
 
-  /* Pre-init must run under the SAME backend as the dev server it precedes.
-     Without the override, generators fall back to .env.local (pg) and write
-     sidecars to .meta/ while an fs-mode server reads the stale
-     source-adjacent ones — the two silently diverge. */
   const backendEnv: NodeJS.ProcessEnv = {
     METADATA_BACKEND: metadataBackend,
     CONTENT_FETCH_MODE: contentFetchMode,

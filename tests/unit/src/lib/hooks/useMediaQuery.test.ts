@@ -1,9 +1,8 @@
 /**
- * @fileoverview useMediaQuery Hook Unit Tests
- * @description Tests for the SSR-safe matchMedia subscription hooks. Relies
- * on the global width-aware matchMedia stub from vitest.setup.ts, which
- * evaluates `(max-width: Npx)` queries against window.innerWidth and
- * re-evaluates on window resize events.
+ * @fileoverview Unit tests for the useMediaQuery and useIsMobileViewport hooks.
+ * @description Tests matchMedia queries against the vitest.setup.ts stub,
+ * which matches `(max-width: Npx)` against window.innerWidth and re-evaluates
+ * on window resize.
  *
  * @module tests/unit/lib/hooks/useMediaQuery
  * @version 1.0.0
@@ -24,8 +23,7 @@ import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 /**
- * Sets the mocked viewport width and dispatches a resize event so
- * subscribed media query listeners re-evaluate.
+ * Sets window.innerWidth to width and dispatches a resize event.
  *
  * @param width - New innerWidth value
  */

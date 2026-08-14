@@ -1,8 +1,7 @@
 /**
- * toKebabCase Utility Unit Tests
+ * Unit tests for toKebabCase.
  *
- * @fileoverview Tests for the toKebabCase utility function that converts
- * strings to kebab-case format for URLs and filenames.
+ * @fileoverview Tests that toKebabCase converts strings to kebab-case.
  */
 
 import { toKebabCase } from '@/lib/utils/toKebabCase';
@@ -69,7 +68,7 @@ describe('toKebabCase', () => {
     expect(toKebabCase('Attack2D6Fire')).toBe('attack2-d6-fire');
   });
 
-  it('should handle D&D monster names', () => {
+  it('should handle Damocles monster names', () => {
     expect(toKebabCase('Albedo, the Bleak Bloom')).toBe(
       'albedo-the-bleak-bloom',
     );

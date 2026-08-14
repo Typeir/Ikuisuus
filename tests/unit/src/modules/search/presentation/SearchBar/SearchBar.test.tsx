@@ -1,9 +1,8 @@
 /**
  * @fileoverview SearchBar Unit Tests
- * @description Covers input wiring, dropdown open/close rules, keyboard
- * navigation (arrows / Enter / Escape), form submit to the full search page,
- * the global Cmd/Ctrl-K shortcut, and outside-click dismissal. `useSearch`
- * is mocked so no Pagefind bundle is needed.
+ * @description Tests input wiring, dropdown open/close rules, arrow/Enter/
+ * Escape keyboard navigation, form submit, Cmd/Ctrl-K shortcut, and
+ * outside-click dismissal. `useSearch` is mocked.
  *
  * @module tests/unit/src/modules/search/presentation/SearchBar/SearchBar
  * @author Typeir

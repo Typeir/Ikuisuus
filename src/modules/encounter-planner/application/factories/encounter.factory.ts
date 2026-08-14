@@ -1,7 +1,6 @@
 /**
  * @fileoverview Encounter Factory Utilities
- * @description Factory functions for creating creature and encounter objects.
- * Separated from storage to isolate object construction from persistence concerns.
+ * @description Constructs creature and encounter objects.
  *
  * @module encounterFactory
  * @version 1.0.0
@@ -17,8 +16,7 @@ import type {
 import { calculateInitiativeMod, generateId } from '../../domain/shared/utils';
 
 /**
- * Partial shape for monster metadata as provided by the content API
- * Only fields used by the encounter factory are declared here.
+ * Partial shape for monster metadata as provided by the content API. Only fields used by the factory.
  */
 type MonsterLibraryData = {
   hp?: { average?: number; formula?: string } | null;
@@ -40,12 +38,10 @@ type MonsterLibraryData = {
 };
 
 /**
- * Create a new empty creature entry with default values.
- * All ability scores default to 10 (modifier +0), HP and AC default to 10.
- * Initiative modifier is recalculated when dexterity changes.
+ * Creates an empty creature entry with default values: ability scores, HP, and AC of 10.
  *
  * @function createEmptyCreature
- * @returns {CreatureEntry} Newly created creature with default values
+ * @returns {CreatureEntry} Creature with default values
  *
  * @example
  * const creature = createEmptyCreature();
@@ -86,8 +82,7 @@ export const createEmptyCreature = (): CreatureEntry => {
 };
 
 /**
- * Create a new empty encounter with default name and no creatures.
- * Automatically sets creation and update timestamps to current ISO time.
+ * Creates an empty encounter with default name and no creatures. Sets creation and update timestamps to the current ISO time.
  *
  * @function createEmptyEncounter
  * @returns {Encounter} Newly created encounter
@@ -107,9 +102,7 @@ export const createEmptyEncounter = (): Encounter => {
 };
 
 /**
- * Create a new creature entry from monster library metadata.
- * Hydrates a CreatureEntry with combat-relevant data from the monster stat block.
- * Generates a new unique runtime ID to allow multiple instances.
+ * Creates a creature entry from monster library metadata. Generates a new runtime ID per call.
  *
  * @function createCreatureFromMonster
  * @param {any} monsterData - Full monster metadata object from library
@@ -176,8 +169,7 @@ export const createCreatureFromMonster = (
 };
 
 /**
- * Create multiple creature entries from monster library metadata.
- * Each creature gets a unique runtime ID to prevent conflicts.
+ * Creates creature entries from monster library metadata. Quantity is clamped to 1..20.
  *
  * @function createMultipleCreaturesFromMonster
  * @param {any} monsterData - Full monster metadata object from library

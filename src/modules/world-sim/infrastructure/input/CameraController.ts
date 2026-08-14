@@ -1,10 +1,8 @@
 /**
- * @fileoverview Camera Controller — Facade Coordinating Orbit, Follow, and Commands
- * @description Slim facade composing CameraOrbitControls, CameraFollowSystem, and
- * CameraCommand execution. The orbit controls always work relative to the current
- * orbit center (target), and the follow system moves that center with a tracked body.
- * This means manual orbit + zoom work identically whether free-floating or locked
- * to a moving celestial body.
+ * @fileoverview Camera Controller — facade composing orbit, follow, and command execution.
+ * @description Composes CameraOrbitControls, CameraFollowSystem, and CameraCommand
+ * execution. Orbit works relative to the current orbit center (target); follow moves
+ * that center with a tracked body.
  *
  * @module worldSim/camera/CameraController
  * @version 2.0.0
@@ -27,9 +25,8 @@ import { CameraOrbitControls } from '@/modules/world-sim/infrastructure/input/Ca
 const TEMP_PAN = new Vector3();
 
 /**
- * Coordinates camera orbit controls, body-follow tracking, and animated
- * command transitions. Manual orbit and zoom always work relative to the
- * current orbit center, whether that center is static or tracking a body.
+ * Coordinates camera orbit controls, body-follow tracking, and command transitions.
+ * Manual orbit and zoom work relative to the current orbit center, static or tracking.
  *
  * @class CameraController
  * @implements {ICameraController}
@@ -100,8 +97,8 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Execute a camera command, suspending manual controls during the transition.
-   * The follow system continues to operate so the command can track moving bodies.
+   * Execute a camera command, disabling manual controls during the transition.
+   * The follow system continues to operate during the command.
    *
    * @param {ICameraCommand} command - The command to execute
    */
@@ -123,10 +120,8 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Fully reset the camera to the initial system overview state.
-   * Clears follow target, cancels any active command, resets the orbit center
-   * to the origin, zeros all control state, and executes a smooth transition
-   * back to the default position.
+   * Clear follow target, cancel active command, reset orbit center to origin,
+   * and execute ResetViewCommand.
    */
   resetToDefault(): void {
     this.followSystem.clearTarget();
@@ -147,9 +142,8 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Set a dynamic follow target. Snaps the orbit center to the body's current
-   * position so that when the transition command completes, the spherical offset
-   * is correct relative to the body (not the old orbit center).
+   * Set a dynamic follow target, snapping the orbit center to the body's
+   * current position.
    *
    * @param {() => Vector3} positionGetter - Function returning the body's current world position
    */
@@ -173,12 +167,8 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Main per-frame update. The follow delta only shifts the orbit center
-   * (target), never the camera directly. The camera position is always
-   * resolved in a single deterministic path — either by a command, by orbit
-   * recomputation, or by an explicit reposition when following a moving body.
-   * This eliminates double-write jitter when a body moves while the user
-   * orbits the camera simultaneously.
+   * Per-frame update. Applies follow delta to the orbit center, then either
+   * advances the active command or updates manual orbit.
    *
    * @param {number} deltaTime - Time since last frame in seconds
    */
@@ -246,10 +236,8 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Apply orbit damping, pan, and recompute the camera position from
-   * spherical coordinates + orbit center. When the followed body moved
-   * this frame, the camera is always repositioned from the updated target
-   * so both transforms are applied in a single write.
+   * Apply orbit damping and pan, and recompute camera position from
+   * spherical coords + orbit center.
    *
    * @private
    * @param {boolean} hasFollowDelta - Whether the follow target moved this frame
@@ -287,11 +275,7 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Project a world-space vector back inside the Everdark sphere centered at
-   * the origin. Non-sticky: a clamped position is overwritten next frame from
-   * `target + offset`, so any input that pulls inward (zoom in, drag the other
-   * way, pan back toward origin) takes effect on the very next frame without
-   * any accumulated lag.
+   * Clamp a world-space vector to the BOUND_RADIUS sphere centered at the origin.
    *
    * @private
    * @param {Vector3} vec - Vector to clamp in place

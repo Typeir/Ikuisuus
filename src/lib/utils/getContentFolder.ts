@@ -1,8 +1,8 @@
 /**
- * @fileoverview Content Folder Path Builder - Locale-aware content directory resolution
- * @description Constructs absolute filesystem paths to locale-specific content directories.
- * Uses process.cwd() for build-time and runtime compatibility. Central utility for all
- * content file operations including metadata generation, API routes, and dynamic routing.
+ * @fileoverview Returns absolute paths to locale-specific content directories.
+ * @description Constructs absolute filesystem paths to locale-specific content directories
+ * under process.cwd(). Used by content file operations including metadata generation,
+ * API routes, and dynamic routing.
  *
  * @version 1.0.0
  * @author Typeir
@@ -28,15 +28,7 @@ import { join } from 'path';
 /**
  * Returns the absolute path to the content folder.
  *
- * This uses the current working directory and joins
- * the configured source and content folder names.
- *
- * The segments are written as literals rather than `FolderName.Src` and
- * `FolderName.Content`. Turbopack constant-folds string literals when it
- * derives the file pattern for output tracing, but not enum members, so the
- * enum form left the prefix as bare `/ROOT/` and traced all 36851 project
- * files into every function reaching this helper. The literals narrow the
- * pattern to `src/content`, which is all this function can ever return.
+ * Joins process.cwd() with the 'src', 'content', and locale segments.
  *
  * @param {string} locale the locale for the content language, defaults to en
  * @returns {string} The absolute path to the content directory.

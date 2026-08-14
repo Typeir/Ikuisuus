@@ -1,14 +1,9 @@
 /**
  * @fileoverview UnitSwitcher MDX Component
- * @description Lets a reader choose which system each measurement family
- * renders in. Distance, weight and volume are set independently, so someone
- * can read distances in metres while weighing things in pounds.
+ * @description Lets a reader choose which unit system each measurement family
+ * renders in. Distance, weight and volume are set independently.
  *
- * Lives on the Measures rule page rather than in global chrome, so the page
- * that defines the units is also the page that changes them.
- *
- * Until the first client render commits, the hook reports the native defaults,
- * which is what the server rendered — so hydration has nothing to reconcile.
+ * Until the first client render commits, the hook reports the native defaults.
  *
  * @module modules/library/presentation/components/UnitSwitcher/UnitSwitcher
  * @version 2.0.0

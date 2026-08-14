@@ -1,8 +1,6 @@
 /**
- * Test Template Generator
- *
- * @fileoverview Generates smoke test templates for all source files lacking tests.
- * Creates properly structured test files with namespace mirroring.
+ * @fileoverview Generates smoke test templates for source files lacking tests.
+ * Writes templates to tests/unit mirroring the source path. Skips excluded patterns.
  *
  * @module generateTestTemplates
  * @version 1.0.0

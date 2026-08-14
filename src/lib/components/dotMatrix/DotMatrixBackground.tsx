@@ -1,8 +1,8 @@
 /**
- * @fileoverview Flashlight reveal background using the counter-translate
- * architecture: a static pattern field under a transform-driven aperture,
- * so pointer movement costs two composite-only transform updates and zero
- * paint. See dotMatrix.module.scss for the layer breakdown.
+ * @fileoverview Renders the flashlight-reveal background: an outer reveal
+ * div wrapping an aperture div around a pattern field. Sets the
+ * --reveal-radius CSS var to {radius}px and toggles opacity and
+ * pointer-events via the hidden prop.
  * @module lib/components/dotMatrix/DotMatrixBackground
  * @author Typeir
  * @version 0.2.0

@@ -2,7 +2,7 @@
  * Heirloom Metadata Generator Integration Tests
  *
  * @fileoverview Integration tests for the heirloom (magical item) metadata extraction system.
- * Tests parsing of D&D magical items including weapons, armor, and accessories with various
+ * Tests parsing of Damocles magical items including weapons, armor, and accessories with various
  * rarities, properties, and attunement requirements.
  *
  * @module tests/integration/heirloom-metadata
@@ -39,7 +39,6 @@ let sharedData: unknown;
 describe('Heirloom Metadata Generator', () => {
   /**
    * Load shared data once before running tests
-   * This mimics the production behavior where shared data is loaded at generator startup
    */
   beforeAll(async () => {
     sharedData = await loadSharedData();

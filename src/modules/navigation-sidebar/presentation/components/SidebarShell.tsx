@@ -1,6 +1,5 @@
 /**
- * @fileoverview Sidebar shell that renders a static navigation tree as the Suspense fallback
- * and lazily loads the interactive client sidebar.
+ * @fileoverview Renders a static navigation tree as the Suspense fallback and lazily loads the client sidebar.
  * @module modules/navigation-sidebar/presentation/components/SidebarShell
  * @author Typeir
  * @version 2.0.0
@@ -40,8 +39,7 @@ const SidebarClient = dynamic(
  * @property {Item[]} items - Root navigation items to render
  * @property {() => void} [onNavigate] - Callback when a navigation link is clicked.
  *   Defaults to closing the mobile sidebar. The shell renders inside the
- *   `@sidebar` slot, where the layout cannot hand it a client callback, so it
- *   reads the menu store itself.
+ *   `@sidebar` slot where no client callback is available, so it reads the menu store.
  * @property {boolean} [collapseSiblings=false] - If true, opening one folder collapses siblings
  */
 interface SidebarShellProps {
@@ -244,18 +242,9 @@ function expandedPathsFromPathname(pathname: string): Set<string> {
  * Sidebar shell that renders a static navigation tree as the Suspense fallback
  * and lazily loads the interactive client sidebar.
  *
- * On every pathname change the ancestor chain of the open page is written into
- * the expansion store. Stored expansion alone left a deep route with its
- * grandparent's folder closed, so that folder's children never mounted and never
- * fetched; recovering meant collapsing and reopening the whole tree by hand.
- * Seeding from the URL keeps the chain to the current page open, and because it
- * writes through the store rather than overriding it, folders opened by hand
- * still survive a navigation and every route outside the library keeps its
- * remembered state untouched.
- *
- * The seed dispatches directly rather than going through `useSidebarExpansion`,
- * whose return identity changes with every expansion. Subscribing here re-rendered
- * the whole shell — and recomputed every node's height — on each folder click.
+ * On every pathname change the ancestor chain of the open page is dispatched
+ * into the expansion store, keeping the chain to the current page open without
+ * overriding folders opened by hand.
  *
  * @component
  * @param {SidebarShellProps} props - Component props.

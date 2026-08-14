@@ -1,16 +1,9 @@
 /**
- * @fileoverview OG image PNG renderer.
+ * @fileoverview Renders an OG card to a compressed PNG buffer.
  *
- * Converts a React element tree (via satori) to an SVG string and then uses
- * `@resvg/resvg-js` to rasterise it into a PNG buffer. The result is intended
- * for use as the response body of the `/api/og/[type]/[slug]` route.
- *
- * PNG compression uses Sharp's aggressive settings (level 9, palette reduction)
- * to ensure images are optimized for social media platforms with file size limits.
- *
- * Font loading uses a module-level cache so that both Inter Bold and Crimson
- * Text Italic are fetched once per process. In development the cache may be
- * invalidated on each restart, which is acceptable.
+ * satori converts a React tree to SVG; resvg rasterises it to PNG; Sharp
+ * compresses (level 9, palette). Fonts resolve via Google Fonts CSS and cache
+ * module-level.
  *
  * @module lib/seo/og/renderer
  * @version 1.0.0
@@ -43,9 +36,8 @@ const fontCache = new Map<string, ArrayBuffer>();
 /**
  * Fetches the raw font binary from a Google Fonts CSS URL.
  *
- * The helper first fetches the CSS file (which contains a `src: url(...)` line),
- * extracts the binary URL, then fetches the binary itself.
- * Results are cached module-level to avoid repeated network round-trips.
+ * Fetches the CSS, extracts the font binary URL via FONT_SRC_RE, then fetches
+ * the binary. Caches results module-level.
  *
  * @param {string} cssUrl - Google Fonts CSS API URL
  * @returns {Promise<ArrayBuffer>} Raw font binary
@@ -72,7 +64,7 @@ async function loadFontBuffer(cssUrl: string): Promise<ArrayBuffer> {
 }
 
 /**
- * Loads and returns both satori font descriptors used by the OG template.
+ * Returns satori font descriptors for Inter Bold and Crimson Text Italic.
  *
  * @returns {Promise<import('satori').Font[]>} Array of satori font configs
  */
@@ -91,16 +83,8 @@ async function loadFonts(): Promise<import('satori').Font[]> {
 /**
  * Renders an OG card to a compressed PNG buffer.
  *
- * Calls satori to produce an SVG string from the React element tree, then
- * passes the SVG through Resvg to produce a PNG. The PNG is then aggressively
- * compressed using Sharp (compression level 9, palette optimization) to ensure
- * it meets social media file size limits (e.g., WhatsApp < 600 KB).
- *
- * Compression pipeline:
- * 1. Resvg renders SVG to uncompressed PNG
- * 2. Sharp applies maximum PNG compression (level 9)
- * 3. Palette reduction to minimize color depth where possible
- * 4. Effort level 10 for optimal compression trade-off
+ * satori produces an SVG string from the React tree; Resvg renders it to PNG;
+ * Sharp compresses (compressionLevel 9, palette, effort 10). Target size < 600 KB.
  *
  * @param {OGTemplateProps} props - Data and optional image URL for the card
  * @returns {Promise<Uint8Array>} Compressed PNG image data (target: < 600 KB)

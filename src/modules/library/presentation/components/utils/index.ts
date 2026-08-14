@@ -1,10 +1,8 @@
 /**
  * @fileoverview Machine text stream resolver for MDX section decorations.
- * @description Composes a deterministic stream string from real content metadata
- * fields via the repository adapter layer. The composed string is doubled so
- * that a CSS `translateY(0 → -50%)` animation creates a seamless infinite scroll
- * without repeating gaps. Falls back to an FNV-1a32 hash of the raw content
- * when no typed metadata record is available for the current slug path.
+ * @description Resolves a deterministic stream string from content metadata,
+ * with the result doubled and separated. Falls back to an FNV-1a32 hash of the
+ * raw content when no metadata record exists for the slug path.
  *
  * @module lib/machineText
  * @version 1.0.0
@@ -49,12 +47,10 @@ function wrapSegment(body: string): string {
 }
 
 /**
- * Doubles a stream string so the CSS infinite-scroll animation loops seamlessly.
- * The animation moves from `translateY(0)` to `translateY(-50%)`, landing at
- * the same visual position because the second half is identical to the first.
+ * Doubles a stream string by appending a normalized copy.
  *
  * @param {string} segment - Single-pass stream string
- * @returns {string} Doubled string for seamless looping
+ * @returns {string} Doubled stream string
  */
 function doubleStream(segment: string): string {
   const normalized = segment.replace(/\s+/g, ' ').trim();
@@ -171,8 +167,6 @@ function fromFallback(rawContent: string): string {
 
 /**
  * Resolves a deterministic single stream segment (NOT doubled) for a given page.
- * This is useful when consumers (e.g., OG card renderer) need the canonical
- * single-pass segment and will handle duplication or tiling themselves.
  *
  * @param {string} locale - Content locale (e.g. "en", "es")
  * @param {string[]} slugSegments - Decoded slug path segments
@@ -231,11 +225,8 @@ export async function resolveStreamSegment(
 }
 
 /**
- * Resolves a deterministic machine-text stream string for a given page.
- *
- * Dispatches to the correct repository based on the leading slug segment.
- * Falls back to an FNV-1a32 hash of the raw content for pages without
- * structured metadata (e.g., world lore, rules pages).
+ * Resolves a deterministic stream string for a given page, doubled.
+ * Falls back to an FNV-1a32 hash of the raw content.
  *
  * @param {string} locale - Content locale (e.g. "en", "es")
  * @param {string[]} slugSegments - Decoded slug path segments (e.g. ["monsters", "albedo"])

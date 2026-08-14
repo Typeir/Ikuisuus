@@ -1,17 +1,11 @@
 /**
  * @fileoverview Migration 006 — Add draft_status enum
- * @description Converts `drafts.status` from unconstrained `text` to a native
- * PostgreSQL enum type and introduces the `pending` status for non-admin
- * submissions that require review before becoming visible.
- *
- * Status semantics after migration:
- *   active   — Current editing candidate; shown by DraftOverlay; auto-archived on revalidation.
- *   pending  — Submitted by a non-admin user; NOT auto-archived; awaits review/approval.
- *   archived — Retired after successful ISR revalidation or manual rejection.
- *
- * The partial unique index on `(locale, slug) WHERE status = 'active'` is
- * intentionally NOT extended to `pending`. Multiple editors may queue
- * concurrent corrections for the same slug; only one active draft is allowed.
+ * @description Converts `drafts.status` from `text` to the `draft_status`
+ * enum type and adds the `pending` status. Post-migration statuses: active is
+ * the editing candidate; pending is a non-admin submission awaiting review;
+ * archived is retired after revalidation or rejection. The unique index on
+ * `(locale, slug)` stays scoped to `status = 'active'`; `pending` rows are
+ * not unique per slug.
  *
  * @module scripts/db/migrations/006_add_draft_status_enum
  * @author Typeir
@@ -24,8 +18,6 @@ import type { PoolClient } from 'pg';
 /**
  * Applies the migration: creates the `draft_status` enum type, converts the
  * `drafts.status` column, and rebuilds the affected indexes.
- * Each statement is issued as a separate query so the column type is fully
- * committed before the index predicate is evaluated.
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}

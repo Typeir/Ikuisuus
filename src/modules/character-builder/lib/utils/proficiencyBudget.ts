@@ -1,12 +1,9 @@
 /**
- * @fileoverview Skill proficiency budget & hint helpers
- * @description Thin adapter over the unified {@link module:modules/character-builder/lib/utils/assignableGrants}
- * model for the skill table's two skill-specific concerns: the free-pick counter
- * (delegated to `unassignedByCategory`, skill/proficient group) and the hint set
- * for the vocation's offered skills. See `assignableGrants` for the general model
- * and the rules rationale (a pick is charged only on-offer, ≥ proficient, and not
- * feature-floored; nothing is ever disabled). Re-exports `deriveSkillOffer` /
- * `ProficiencyOffer` for callers that still consume the skill offer directly.
+ * @fileoverview Skill proficiency counter & hint helpers.
+ * @description Adapter over {@link module:modules/character-builder/lib/utils/assignableGrants}
+ * providing the free-pick counter (via `unassignedByCategory`, skill/proficient
+ * group) and per-table hint sets. Re-exports `deriveSkillOffer` /
+ * `ProficiencyOffer`.
  *
  * @module modules/character-builder/lib/utils/proficiencyBudget
  * @version 3.0.0
@@ -84,12 +81,9 @@ export function countSpentSkillProficiencies(
 }
 
 /**
- * Row-keys that should show a hint marker — the options of every `oneOf` choice
- * grant the character has, from ANY feature (the primary vocation's restricted
- * base picks AND feature grants like Scholar's expertise list), unioned per
- * table. Unrestricted (`any`) grants contribute no per-row hint (marking every
- * row is noise — the counter carries that signal). A trade `oneOf` would light
- * up the tools table automatically; none exist in current content.
+ * Row-keys per table to hint — the options of every `oneOf` grant in the
+ * character's assignable grants, unioned per table. `any` grants contribute
+ * no hint.
  *
  * @function deriveProficiencyHints
  * @param {CharacterSheet} character - Character to inspect

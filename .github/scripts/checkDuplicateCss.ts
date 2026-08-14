@@ -1,15 +1,7 @@
 /**
- * Duplicate CSS Check
- *
- * @fileoverview Detects duplicate CSS selectors and property blocks across SCSS/CSS
- * files. Reports exact duplicates as warning findings.
- *
- * Excluded from duplicate detection:
- * - `@keyframes` stop selectors (`from`, `to`, `0%`, `100%` etc.) — identical stops
- *   legitimately appear across unrelated animations
- * - Selectors that contain semicolons — these are parsing artefacts produced by the
- *   naive regex when encountering deeply-nested SCSS blocks (the text before an inner
- *   `{` includes partial CSS properties from the parent rule)
+ * Detects duplicate CSS selectors and property blocks across SCSS/CSS files;
+ * reports exact duplicates as warning findings. Keyframe stop selectors and
+ * selectors containing semicolons are excluded from detection.
  *
  * @module .github/scripts/check-duplicate-css
  */
@@ -66,16 +58,7 @@ async function findStyleFiles(
 }
 
 /**
- * Patterns that identify selectors which should be excluded from duplicate detection.
- *
- * Keyframe stop selectors (`from`, `to`, `0%`, `50%`, `100%` etc.) legitimately
- * appear identical across unrelated `@keyframes` blocks — they are not true
- * duplicates. Selectors containing semicolons are parsing artefacts produced by
- * the naive regex when it encounters deeply-nested SCSS blocks; they represent
- * partial property text, not real CSS selectors. CSS-module-scoped class
- * selectors (starting with `.`) that are simple (no nesting indicators) are
- * excluded from cross-file comparison because `.module.scss` files are locally
- * scoped by the build tool.
+ * Matches keyframe stop selectors: `from`, `to`, or a percentage value.
  */
 const KEYFRAME_STOP_RE = /^(from|to|\d+(\.\d+)?%)$/;
 
@@ -135,9 +118,9 @@ function normalizeProperties(body: string): string {
 }
 
 /**
- * Execute the duplicate-css check and return a structured result.
- * When options.files is provided, uses those instead of self-discovering.
- * When options.readFile is provided, uses that instead of fs.readFile.
+ * Execute the duplicate-css check and return a structured result. Uses
+ * options.files when provided; otherwise discovers files. Uses options.readFile
+ * when provided; otherwise reads via fs.readFile.
  *
  * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations

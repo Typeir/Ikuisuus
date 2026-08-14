@@ -1,11 +1,8 @@
 /**
  * @fileoverview Ability Score Block Component
- * @description Renders a single D&D ability score with its modifier.
- * Displays the score name, numeric value, and computed modifier in a compact
- * block, plus the linked saving throw: a proficiency pip track and computed
- * save bonus. In edit mode exposes a {@link NumericInput} for the score, a
- * roll button (4d6 drop lowest via {@link rollAbilityScore}), and clickable
- * save pips.
+ * @description Renders a single ability score with its modifier and saving
+ * throw. In edit mode exposes a {@link NumericInput}, a 4d6-drop-lowest roll
+ * button via {@link rollAbilityScore}, and clickable save pips.
  *
  * @module lib/components/characterSheet/abilityScoreBlock
  * @version 3.0.0

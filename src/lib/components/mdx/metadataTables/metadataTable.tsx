@@ -1,8 +1,6 @@
 /**
- * @fileoverview Generic filterable and sortable table component for metadata display.
- * @description Provides interactive data browsing with search, column filtering, sorting,
- * and pagination. Fully data-agnostic - accepts any JSON structure with configurable
- * column definitions and value extraction logic.
+ * @fileoverview Filterable, sortable, paginated table component for metadata display.
+ * @description Accepts any JSON structure with configurable column definitions and value extraction.
  *
  * @module metadataTable
  * @version 1.0.0
@@ -46,17 +44,11 @@ import type {
 export type { ColumnConfig, MetadataRow } from './metadataTable.types';
 
 /**
- * Generic filterable, sortable, paginated table component for metadata display.
+ * Filterable, sortable, paginated table for metadata display.
  *
- * @description This client component provides interactive data browsing with:
- * - Global text search across configured keys
- * - Per-column filtering (text, select, range inputs)
- * - Click-to-sort on column headers (ascending/descending/none)
- * - Pagination for large datasets
- * - Click-to-navigate row interaction
- *
- * The component is fully data-agnostic - it accepts any JSON structure and uses
- * configuration functions (getValue, compareValues, render) to handle data-specific logic.
+ * @description Client component providing text search, per-column filtering
+ * (text/select/range), column sort, pagination, and click-to-navigate rows.
+ * Uses config functions (getValue, compareValues, render) for data-specific logic.
  *
  * @param {MetadataTableProps} props - Component props
  * @param {MetadataRow[]} props.data - Array of data rows to display
@@ -127,8 +119,7 @@ export default function MetadataTable({
   const [searchTerm, setSearchTerm] = useState('');
 
   /**
-   * Extracts cell value from row data using column configuration.
-   * Allows columns to define custom value extraction for nested objects.
+   * Returns column.getValue(row) if defined, else row[column.key].
    *
    * @function getCellValue
    * @param {MetadataRow} row - Data row
@@ -152,19 +143,13 @@ export default function MetadataTable({
   }, []);
 
   /**
-   * Applies global search and column-specific filters to dataset.
-   * Memoized to prevent unnecessary recalculations on unrelated state changes.
+   * Applies global search and column-specific filters to the dataset.
    *
    * @function filteredData
    * @returns {MetadataRow[]} Filtered array of data rows
    *
-   * @description Filtering logic:
-   * 1. Global search: Checks if any configured searchKey contains the search term
-   * 2. Column filters: Applies filter based on column's filterType:
-   *    - 'text': Substring match (case-insensitive)
-   *    - 'select': Exact value match
-   *    - 'range': Numeric comparison (min/max)
-   *    - 'multiselect': Array intersection check
+   * @description Global search: case-insensitive substring match on any searchKey.
+   * Column filters by filterType: 'text' substring, 'select' exact, 'range' numeric min/max, 'multiselect' array intersection.
    */
   const filteredData = useMemo(() => {
     return data.filter((row) => {
@@ -215,17 +200,13 @@ export default function MetadataTable({
   }, [data, filters, searchTerm, columns, searchKeys, getCellValue]);
 
   /**
-   * Applies sorting to filtered dataset based on current sort state.
-   * Memoized to prevent re-sorting when unrelated state changes.
+   * Sorts filtered dataset by current sort state.
    *
    * @function sortedData
    * @returns {MetadataRow[]} Sorted array of filtered data rows
    *
-   * @description Sorting behavior:
-   * - Uses column's compareValues function if provided
-   * - Falls back to default comparison (<, >, ===)
-   * - Handles null/undefined by pushing to end
-   * - Respects sortDirection ('asc' or 'desc')
+   * @description Uses column.compareValues if defined, else default (<, >, ===).
+   * null/undefined sort last. Uses sortDirection ('asc' or 'desc').
    */
   const sortedData = useMemo(() => {
     if (!sortKey || !sortDirection) return filteredData;
@@ -262,17 +243,13 @@ export default function MetadataTable({
   );
 
   /**
-   * Handles column header click to cycle through sort states.
+   * Cycles sort state on column header click: asc → desc → clear.
    *
    * @function handleSort
    * @param {string} key - Column key to sort by
    *
-   * @description Sort cycle:
-   * 1. First click: Sort ascending
-   * 2. Second click: Sort descending
-   * 3. Third click: Clear sort
-   * Clicking a different column resets to ascending.
-   * Resets pagination to page 1 when sort changes.
+   * @description Clicking a different column resets to ascending.
+   * Resets pagination to page 1.
    */
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -292,8 +269,7 @@ export default function MetadataTable({
   };
 
   /**
-   * Updates filter state for a specific column.
-   * Resets pagination to page 1 when filters change.
+   * Sets filter value for a column key. Resets pagination to page 1.
    *
    * @function handleFilterChange
    * @param {string} key - Column key being filtered
@@ -305,17 +281,15 @@ export default function MetadataTable({
   };
 
   /**
-   * Resolves the navigation target for a row as a URL string.
-   * Uses the 'link' field if available, otherwise constructs URL from slug.
+   * Resolves the navigation URL for a row.
    *
    * @function getRowHref
    * @param {MetadataRow} row - Data row to resolve
    * @returns {{ href: string; external: boolean }} Resolved href and whether it is external
    *
-   * @description Priority:
-   * 1. If row.link exists and is external (http/https), return it as external
-   * 2. If row.link exists and is internal, return /{locale}{link}
-   * 3. Otherwise, construct URL: /{locale}/library{basePath}/{slug}
+   * @description External http/https row.link returns external. Internal link returns
+   * /{locale}{link} (prefixes /library if not already). Otherwise builds
+   * /{locale}/library/{basePath}/{slug}, preserving any '#hash'.
    *
    * @example
    * // Internal link: { link: "/library/spells/fireball" } → /en/library/spells/fireball
@@ -356,18 +330,15 @@ export default function MetadataTable({
   );
 
   /**
-   * Generates filter dropdown options for a column.
-   * Uses column's getFilterOptions if defined, otherwise auto-generates from data.
+   * Returns filter dropdown options for a column.
    *
    * @function getFilterOptions
    * @param {ColumnConfig} column - Column configuration
    * @returns {string[]} Sorted array of unique filter options
    *
-   * @description Auto-generation:
-   * - Extracts values using getCellValue
-   * - Flattens array values
-   * - Removes duplicates
-   * - Sorts using column.filterSortOrder if provided (e.g., RARITY_SORT_ORDER), otherwise alphabetically
+   * @description Returns column.getFilterOptions(data) if defined. Otherwise derives
+   * unique string values from rows (flattening arrays) and sorts by column.filterSortOrder
+   * if provided, else alphabetically.
    */
   const getFilterOptions = useCallback(
     (column: ColumnConfig): string[] => {
@@ -399,8 +370,7 @@ export default function MetadataTable({
   );
 
   /**
-   * Converts filter options to FilterSelect-compatible format.
-   * Memoized function to avoid recreation on each render.
+   * Maps filter options to { value, label } pairs for FilterSelect.
    */
   const getSelectOptions = useCallback(
     (column: ColumnConfig) => {

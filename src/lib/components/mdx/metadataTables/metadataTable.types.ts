@@ -1,8 +1,7 @@
 /**
  * @fileoverview MetadataTable type definitions
  * @description Row shape, column configuration, sort direction, filter state, and
- * component props for the generic MetadataTable. Extracted from metadataTable.tsx
- * to keep that module within the file-length budget.
+ * component props for the generic MetadataTable.
  *
  * @module metadataTable.types
  * @version 1.0.0
@@ -11,7 +10,7 @@
  */
 
 /**
- * Represents a single row of metadata - can contain any JSON structure.
+ * A single metadata row; any key mapped to any value.
  * @typedef {Object} MetadataRow
  * @property {*} [key] - Any property with any value type
  */
@@ -22,7 +21,7 @@ export type MetadataRow = Record<string, any>;
 export type FilterState = Record<string, any>;
 
 /**
- * Configuration for a single table column, defining display and interaction behavior.
+ * Column display and interaction config.
  * @typedef {Object} ColumnConfig
  * @property {string} key - Unique identifier for the column
  * @property {string} label - Display text for column header
@@ -67,9 +66,9 @@ export type SortDirection = 'asc' | 'desc' | null;
  * @property {number} [pageSize=50] - Number of rows per page
  * @property {Function} [getRowSlug] - Function to extract slug from row data
  * @property {string[]} [searchKeys=['title']] - Row properties to search across
- * @property {Function} [onRowSelect] - When provided, rows render as buttons that call this with the row instead of navigating; used by the ability importer
+ * @property {Function} [onRowSelect] - When provided, rows render as buttons that call this with the row instead of navigating
  * @property {'md'|'s'} [size='md'] - Density variant; 's' renders a compact table (smaller font + tighter rows/columns) for embedded contexts
- * @property {{ label: string; icon?: React.ReactNode; onSelect: (row: MetadataRow) => void }} [rowAction] - Optional trailing per-row action button (e.g. consult source), rendered in its own cell so it never triggers `onRowSelect`
+ * @property {{ label: string; icon?: React.ReactNode; onSelect: (row: MetadataRow) => void }} [rowAction] - Optional trailing per-row action button, rendered in its own cell
  */
 export type MetadataTableProps = {
   data: MetadataRow[];

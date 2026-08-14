@@ -1,7 +1,6 @@
 /**
  * @fileoverview Preview Path API Route
  * @description Resolves a PreviewKind + slug into a library content path.
- * Keeps URL construction out of the client.
  *
  * @module app/api/resolve-preview-path
  * @version 1.0.0

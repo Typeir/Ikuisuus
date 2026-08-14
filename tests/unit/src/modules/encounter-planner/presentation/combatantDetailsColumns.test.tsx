@@ -1,8 +1,7 @@
 /**
- * @fileoverview Unit tests for Combatant Details Columns component
+ * @fileoverview Unit tests for CombatantDetailsColumns.
  * @module tests/unit/src/lib/components/encounterPlanner/combatantDetailsColumns.test
- * @description Validates CombatantDetailsColumns export and component signature.
- * Tests component for displaying combatant details in encounter planner.
+ * @description Verifies CombatantDetailsColumns export, React component type, and single-member module export.
  * 
  * @version 1.0.0
  * @author Typeir

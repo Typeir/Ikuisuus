@@ -1,8 +1,7 @@
 /**
  * @fileoverview Monster Importer Component
- * @description Unified monster importer used by both Encounter Planner and Play Mode.
- * Combines CreatureCombobox with QuantityPopup for selecting creatures and specifying
- * how many to add. Uses cached monster data to minimize API calls.
+ * @description Importer selecting a monster and quantity. Combines CreatureCombobox
+ * with QuantityPopup. Reads monster data from monsterCache.
  *
  * @module monsterImporter
  * @version 1.0.0
@@ -47,8 +46,8 @@ const log = logger.child({ module: 'MonsterImporter' });
  * Props for MonsterImporter component
  *
  * @interface MonsterImporterProps
- * @property {(monsterData: MonsterData, quantity: number) => void} onImport - Callback when creatures are confirmed
- * @property {boolean} [disabled] - Whether the importer is disabled
+ * @property {(monsterData: MonsterData, quantity: number) => void} onImport - Callback on confirmed import
+ * @property {boolean} [disabled] - Disables the importer
  */
 export interface MonsterImporterProps {
   onImport: (monsterData: MonsterData, quantity: number) => void;
@@ -56,7 +55,7 @@ export interface MonsterImporterProps {
 }
 
 /**
- * Pending import state while waiting for user confirmation.
+ * Pending import state awaiting user confirmation.
  *
  * @interface PendingImport
  * @property {string} slug - Monster slug for fetching full data
@@ -68,19 +67,14 @@ interface PendingImport {
 }
 
 /**
- * Unified monster importer component for Encounter Planner and Play Mode.
- * Provides creature search via combobox and quantity selection via popup.
- *
- * Flow:
- * 1. User searches and selects a creature from combobox
- * 2. Quantity popup appears with default quantity of 1
- * 3. User adjusts quantity (optional) and confirms or cancels
- * 4. On confirm, fetches full monster data and calls onImport with quantity
+ * Monster importer component for Encounter Planner and Play Mode.
+ * Selects a creature via combobox and a quantity via popup, then
+ * fetches the full monster data and calls onImport.
  *
  * @component
  * @param {MonsterImporterProps} props - Component props
  * @param {(monsterData: MonsterData, quantity: number) => void} props.onImport - Callback with monster data and quantity
- * @param {boolean} [props.disabled] - Whether the importer is disabled
+ * @param {boolean} [props.disabled] - Disables the importer
  * @returns {JSX.Element} Rendered monster importer
  *
  * @example

@@ -2,11 +2,10 @@
  * @fileoverview Feat Metadata Generator
  * @description Parses plain `.mdx` files in `src/content/{locale}/character-creation/feats/`
  * and emits `.metadata.json` sidecars consumed by `/api/feats`. Excludes
- * `main.mdx` and any files under `fighting-styles/` (treated as a sub-index).
+ * `main.mdx` and files under `fighting-styles/`.
  *
- * Extracted fields: title, slug, description, prerequisite line, ability score
- * increase ("Increase your **X score by N**" / "Increase your X or Y score by
- * N"), named mechanics features (bold bullet items), and derived gameplay tags
+ * Extracts: title, slug, description, prerequisite line, ability score
+ * increase, named mechanic features (bold bullets), and derived gameplay tags
  * via the shared `extractAllTags` utility.
  *
  * @module scripts/metadata/generateFeatMetadata
@@ -86,11 +85,9 @@ function parsePrerequisite(raw: string): {
 }
 
 /**
- * Removes the italic prerequisite line from a parsed description so a feat's
- * summary never duplicates its prerequisite. {@link parseDescription}'s
- * italic-only filter misses prerequisite lines that embed bold (e.g.
- * `_Prerequisite: **Great Weapon Fighting** style_`), so they must be dropped
- * explicitly here.
+ * Removes the italic prerequisite line from a parsed description.
+ * {@link parseDescription}'s italic-only filter misses prerequisite lines that
+ * embed bold (e.g. `_Prerequisite: **Great Weapon Fighting** style_`).
  *
  * @param {string | undefined} description - Parsed description prose
  * @returns {string | undefined} Description without the prerequisite line, or undefined when empty

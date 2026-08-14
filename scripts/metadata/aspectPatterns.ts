@@ -1,14 +1,9 @@
 /**
  * @fileoverview Aspect Detection Patterns
- * @description Pre-compiled patterns for the aspect groups introduced by the
- * faceted taxonomy. Grouped by the facet they feed so that a pattern and the
- * aspect it produces stay adjacent.
- *
- * Patterns here answer mechanical questions with a textual answer: what shape
- * does this take, what does it resist, what can it perceive. Facets whose value
- * is a judgement rather than a phrase — `source:`, `myth:`, `theme:` — are
- * deliberately absent, because a regex that guesses at them produces pills a
- * reader cannot trust.
+ * @description Pre-compiled regex patterns for aspect groups, keyed by facet
+ * and grouped so a pattern sits adjacent to the aspect it produces. Excludes
+ * judgement-valued facets (`source:`, `myth:`, `theme:`) which no regex can
+ * reliably guess.
  *
  * @module lib/metadata/aspectPatterns
  * @version 1.0.0
@@ -17,8 +12,7 @@
  */
 
 /**
- * Scoped defence patterns. Each captures the clause following the keyword so the
- * damage types and conditions inside it can be resolved against shared data.
+ * Scoped defence patterns. Each captures the clause following the keyword.
  *
  * @property {RegExp} resistance - "resistance to …"
  * @property {RegExp} immunity - "immune to …", "immunity to …"
@@ -31,12 +25,8 @@ export const SCOPED_DEFENCE = {
 } as const;
 
 /**
- * Flat damage-reduction patterns.
- *
- * Reduction is a different fact from resistance: resistance halves whatever
- * arrives, reduction subtracts a fixed amount, and the two behave in opposite
- * directions as incoming damage grows. A build choosing between them needs to
- * see which one a page offers.
+ * Flat damage-reduction patterns. Reduction subtracts a fixed amount, distinct
+ * from resistance which halves incoming damage.
  *
  * @property {RegExp} reduction - Damage reduced by a fixed amount
  */
@@ -56,12 +46,7 @@ export const RETALIATION = {
 } as const;
 
 /**
- * Roll-modifier patterns.
- *
- * These are universal rather than item-only. Advantage, disadvantage, crits and
- * rerolls are the vocabulary every kind of content uses, and scoping them to
- * items meant a monster trait reading "disadvantage on attack rolls" carried no
- * aspect saying so.
+ * Roll-modifier patterns applying to all content types, not just items.
  *
  * @property {RegExp} advantage - Advantage, excluding the "disadvantage" substring
  * @property {RegExp} disadvantage - Disadvantage
@@ -224,10 +209,6 @@ export const FEET_PER_STRIDE = 5;
 
 /**
  * Upper bound in feet for each named range band, in ascending order.
- *
- * A band is the coarse answer to "can I hit that from here", which is the form
- * the question takes before a battle map exists. The exact distance stays in the
- * stat block for when it does.
  */
 export const RANGE_BANDS: ReadonlyArray<{ band: string; maxFeet: number }> = [
   { band: 'close', maxFeet: 30 },
@@ -291,29 +272,19 @@ export const MOVEMENT_EXTRA = {
 } as const;
 
 /**
- * The word that licenses a damage type.
- *
- * A damage type is an ordinary English word — fire, frost, true, dark — and a
- * bare occurrence of one says nothing. `lowerText.includes('fire')` tagged every
- * spell that mentioned a campfire with `damage:fire`, and `true` matched on the
- * word "true" in any sentence at all. A type counts only where the text is
- * actually talking about damage.
+ * The word that licenses a damage type. A type word alone is ambiguous, so it
+ * counts only where the text is talking about damage.
  */
 export const DAMAGE_WORD = /\bdamage\b/gi;
 
 /**
- * A dice expression, the other place a damage type is stated.
- *
- * `[% 2d6 dark %]` never contains the word "damage" and is the most common way
- * the content names a type, so the clause window alone would miss it.
+ * A dice expression, the other place a damage type is stated, which never
+ * contains the word "damage".
  */
 export const DICE_EXPRESSION = /\[%[^%]*%\]/g;
 
 /**
- * How far either side of "damage" still counts as the same clause.
- *
- * Wide enough to hold a list — "fire, frost, or lightning damage" — and narrow
- * enough that the next sentence's unrelated nouns stay out.
+ * How far before "damage" still counts as the same clause.
  */
 export const CLAUSE_BEFORE = 60;
 
@@ -321,27 +292,14 @@ export const CLAUSE_BEFORE = 60;
 export const CLAUSE_AFTER = 24;
 
 /**
- * Punctuation that ends a clause.
- *
- * Trimming to these keeps "...extinguishes the fire. It deals frost damage"
- * from reading as fire damage. A colon is absent on purpose: a stat block
- * writes `**Damage**: 1d4 poison`, so the colon introduces the type rather than
- * separating it.
+ * Punctuation that ends a clause. A colon does not end a clause because a stat
+ * block writes `**Damage**: 1d4 poison`, where the colon introduces the type.
  */
 export const CLAUSE_BREAK = /[.;!?\n]/;
 
 /**
- * A markdown link that cites another content entity.
- *
- * Naming a thing is not exhibiting it. A wizard's spellbook recommends
- * `[Feather Fall](/en/library/spells/feather-fall)` and was tagged
- * `movement:fall` for it, which reads as though the vocation grants falling
- * control. The same leak puts a monster's damage types on any page that links
- * to the monster.
- *
- * Rules links are deliberately absent from the href list: "you gain
- * [flight](…/rules/flight)" does exhibit the mechanic, and its label must
- * survive.
+ * A markdown link that cites another content entity. Excludes links under a
+ * rules path, which cite the mechanic rather than name an entity.
  */
 export const ENTITY_CITATION =
   /\[([^\]]*)\]\((?:[^)]*\/)?(?:spells|monsters|heirlooms|trinkets|feats|bloodlines|vocations|specializations)\/[^)]*\)/gi;

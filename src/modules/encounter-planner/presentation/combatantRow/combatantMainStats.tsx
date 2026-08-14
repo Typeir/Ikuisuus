@@ -18,9 +18,8 @@
  * @requires ../playMode/utils getPhaseMarker utility function
  *
  * @description
- * Extracted from CombatantRow for atomic composition. Manages all numeric stat editing
- * with inline validation and keyboard support. Includes the slain toggle checkbox.
- * Uses CombatantContext for centralized state management.
+ * Renders HP, AC, initiative, and the slain checkbox. Reads state and
+ * update functions from CombatantContext.
  */
 
 'use client';

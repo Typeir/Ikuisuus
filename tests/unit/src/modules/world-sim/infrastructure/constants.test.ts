@@ -1,7 +1,7 @@
 /**
  * @fileoverview World Sim Constants Unit Tests
- * @description Verifies default camera configuration values are correct
- * Vector3 instances with the expected components.
+ * @description Tests DEFAULT_CAMERA_POSITION and DEFAULT_CAMERA_LOOK_AT
+ * are Vector3 instances with expected components.
  *
  * @module tests/unit/worldSim/constants
  */

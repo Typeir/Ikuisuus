@@ -1,9 +1,8 @@
 /**
- * @fileoverview Theme Selector Component - Circular theme switching UI control
- * @description Client-side component for cycling through available themes (dark/light).
- * Uses rangeWrap for wrap-around navigation. Updates DOM data-theme attribute,
- * persists to localStorage, and triggers optional callback for parent state updates.
- * Integrates with themeScript.ts for FOUC prevention.
+ * @fileoverview Theme Selector Component
+ * @description Client-side component that cycles through available themes
+ * (dark/light). Uses rangeWrap to wrap the theme index within bounds.
+ * Invokes onThemeChange with the next theme on click.
  *
  * @version 1.0.0
  * @author Typeir
@@ -48,10 +47,10 @@ export type ThemeSelectorProps = {
 };
 
 /**
- * A React client component that allows users to cycle through a list of predefined themes.
+ * React client component that cycles through predefined themes via a button.
  *
- * Displays the current theme and provides a button to switch to the next one.
- * When clicked, the theme index is incremented in a circular fashion and applied to `document.body`.
+ * Increments the current theme index with wrap-around and calls onThemeChange
+ * with the next theme.
  *
  * @param {ThemeSelectorProps} props - The component props.
  * @property {Theme} props.onThemeChange - callback for when theme changes

@@ -1,8 +1,6 @@
 /**
  * @fileoverview Smoke test for the ToolMenuItem domain type.
- * @description Validates that the ToolMenuItem interface is correctly shaped at runtime.
- * Pure type tests — verifies that objects conforming to the interface satisfy structural checks.
- *
+ * @description Validates that ToolMenuItem objects satisfy runtime structural checks.
  * @module tests/unit/src/modules/tools-menu/domain/toolMenuItem.types
  * @version 1.0.0
  * @author Typeir

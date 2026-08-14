@@ -1,9 +1,8 @@
 /**
  * Dice Expression Metadata Utilities
  *
- * @fileoverview Utility functions for stripping `[% ... %]` wrapping from dice
- * expressions in raw MDX content during metadata extraction. Enables existing
- * regex-based parsers to handle both plain dice notation and wrapped syntax.
+ * @fileoverview Strips `[% ... %]` wrapping from dice expressions in raw MDX
+ * content and extracts dice notation.
  *
  * @module scripts/metadata/diceExpressionUtils
  * @version 1.0.0

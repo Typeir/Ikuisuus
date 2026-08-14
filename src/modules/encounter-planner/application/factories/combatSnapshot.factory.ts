@@ -1,7 +1,6 @@
 /**
  * @fileoverview In-Progress Combat Storage Utilities
  * @description Utilities for persisting and managing in-progress combat snapshots.
- * Separate from encounter planner storage to avoid mutating base encounters.
  *
  * @module inProgressCombatStorage
  * @version 1.0.0
@@ -59,7 +58,7 @@ export {
  *
  * @function createInProgressCombatant
  * @param {CreatureEntry} creature - Base creature to convert
- * @returns {InProgressCombatant} Combat-ready combatant with preserved awakening state
+ * @returns {InProgressCombatant} In-progress combatant with preserved awakening state
  */
 export const createInProgressCombatant = (
   creature: CreatureEntry,
@@ -181,13 +180,6 @@ export const resortCombatants = (
  * @param {CreatureEntry[]} encounter.creatures - Array of creatures
  * @param {string} [locale='en'] - Locale for affix wiki links
  * @returns {InProgressCombat} Fresh combat snapshot
- *
- * @description
- * Combat creation flow:
- * 1. Convert creatures to combatants
- * 2. Roll initiative for combatants missing values
- * 3. Apply Heroic Awakening to non-awakened combatants (preserves manual awakenings)
- * 4. Sort by initiative to establish turn order
  */
 export const createInProgressCombat = (
   encounter: { id: string; name: string; creatures: CreatureEntry[] },

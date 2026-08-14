@@ -3,14 +3,8 @@
 /**
  * Submodule Staging Guard
  *
- * @fileoverview Blocks commits that include staged files inside the
- * content submodule directory (src/content). Those changes should be
- * committed in the content repository instead. Skipped when
- * IK_RUNNING=1 (multirepo coordinator intentionally stages the
- * submodule pointer).
- *
- * Extracted from the former pre-commit.ts to run as a standalone hook
- * step appended to the PAW pre-commit shim.
+ * @fileoverview Blocks commits with staged files in the content
+ * submodule (src/content). Skipped when IK_RUNNING=1.
  *
  * @module .github/PAW/git-hooks/submodule-guard
  * @author Typeir
@@ -22,12 +16,11 @@ import { execSync } from 'child_process';
 
 /**
  * Content submodule path (relative to repo root).
- * Staged files under this path should be committed in the content repo.
  */
 const SUBMODULE_PATH = 'src/content';
 
 /**
- * Gets the list of staged files from git.
+ * Lists staged files via git diff --cached --name-only.
  *
  * @returns {string[]} Array of relative staged file paths
  */
@@ -45,8 +38,7 @@ function getStagedFiles(): string[] {
 }
 
 /**
- * Checks whether any staged files reside inside the content submodule directory.
- * If so, prints an error message and exits with code 1.
+ * Exits with code 1 if any staged file is under the content submodule path.
  */
 function runSubmoduleGuard(): void {
   if (process.env.IK_RUNNING === '1') {

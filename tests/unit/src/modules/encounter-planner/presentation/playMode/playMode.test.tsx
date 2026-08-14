@@ -1,8 +1,8 @@
 /**
- * @fileoverview Comprehensive tests for PlayMode Component
+ * @fileoverview Unit tests for the PlayMode component.
  * @module tests/unit/src/lib/components/encounterPlanner/playMode/playMode.test
  * @description Tests turn advancement, round counting, combatant management, initiative sorting,
- * state persistence, and error handling for the PlayMode combat runner.
+ * state persistence, and error handling.
  *
  * @version 1.0.0
  * @author Typeir

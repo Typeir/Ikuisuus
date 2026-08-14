@@ -1,8 +1,6 @@
 /**
- * @fileoverview Camera Follow System — Dynamic Target Tracking
- * @description Manages the follow-target concept for the camera system.
- * When a follow target is active, the orbit center moves with the body
- * each frame so orbit controls naturally work relative to the moving body.
+ * @fileoverview Follows a moving body as the camera orbit center.
+ * @description Tracks a follow target so the orbit center moves with the body each frame.
  *
  * @module worldSim/camera/CameraFollowSystem
  * @version 2.0.0
@@ -14,8 +12,7 @@ import { Vector3 } from 'three';
 
 /**
  * Tracks a moving celestial body as the camera's orbit center.
- * Each frame, call `update()` to get the new target position.
- * The delta between frames is used by the controller to shift the camera.
+ * Returns the body's movement delta per frame.
  *
  * @class CameraFollowSystem
  */

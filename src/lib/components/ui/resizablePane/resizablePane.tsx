@@ -1,13 +1,9 @@
 /**
  * @fileoverview Resizable Pane Component
- * @description Two-pane horizontal split with a draggable vertical handle.
- * The left pane's width is expressed as a percentage of the total wrapper
- * width and persisted to `localStorage` under the consumer-provided `id`.
- * Stacks vertically below 900px to match existing tab breakpoints.
- *
- * Keyboard support on the handle:
- *  - ArrowLeft / ArrowRight: shift left pane by ±2%
- *  - Home / End: jump to `minLeftPercent` / `maxLeftPercent`
+ * @description Two-pane horizontal split. Left pane width is a percentage of
+ * the wrapper, persisted to `localStorage` under the consumer-provided `id`,
+ * and stacks vertically below 900px. Handle keyboard: ArrowLeft/ArrowRight
+ * shift by ±2%, Home/End jump to min/max.
  *
  * @module ui/resizablePane
  * @author Typeir

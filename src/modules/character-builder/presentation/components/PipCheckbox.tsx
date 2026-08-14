@@ -1,10 +1,8 @@
 /**
  * @fileoverview PipCheckbox Component
- * @description A single pip-styled checkbox/radio control: an accent "pip" dot
- * button (filled when checked, hollow when not) with an optional inline label.
- * Two sizes: `sm` reuses the proficiency-track pip dots (8.4px); `lg` is the
- * larger deed-tracker pip (28px). Encapsulates the pip markup so callers only
- * pass state + a label, not the button/aria wiring.
+ * @description A pip-styled checkbox/radio control: an accent pip dot button
+ * (filled when checked, hollow when not) with an optional inline label. Sizes:
+ * `sm` (8.4px), `lg` (28px).
  * @todo TODO: move pip to shared
  * @module modules/character-builder/presentation/components/PipCheckbox
  * @version 1.0.0

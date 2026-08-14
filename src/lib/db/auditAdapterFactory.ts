@@ -1,7 +1,6 @@
 /**
  * @fileoverview Audit Adapter Factory
  * @description Resolves the audit storage adapter based on `METADATA_BACKEND` env var.
- * Mirrors the same factory pattern used by the content repositories and auth system.
  *
  * Supported backends:
  * - `fs` → Filesystem JSON file (default for local development)

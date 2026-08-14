@@ -1,21 +1,8 @@
 /**
  * @fileoverview Native Measure Normalisation
- * @description Rewrites a measurement written for prose into the bare native
- * form that metadata should carry, and splits that form back apart for display.
- *
- * A stat block writes its reach as `[= 12 stride =]`, which is authoring syntax:
- * the delimiters exist so `remarkUnit` can find the measure in an MDX document.
- * Storing them verbatim put markdown into the data, so a table cell rendered the
- * literal text `[= 12 stride =]` and a reader who preferred metres got nothing —
- * the value was never a measurement, it was a fragment of source.
- *
- * The stored form is the inner expression alone, `12 stride`, which is exactly
- * the grammar `parseUnitExpression` accepts. That keeps one parser for both
- * sides: the generator writes what the renderer reads.
- *
- * Surrounding prose survives. A range reads `Self ([= 6 stride;ADJ =] cone)` and
- * a speed reads `[= 8 stride =], burrow [= 4 stride =]` — the words carry meaning
- * the number does not, so only the measures are rewritten.
+ * @description Rewrites authoring syntax `[= 12 stride =]` to the bare form
+ * `12 stride` that `parseUnitExpression` accepts, and splits that form back into
+ * prose and measure segments for display. Prose outside measures is kept as-is.
  *
  * @module lib/units/nativeMeasure
  * @version 1.0.0
@@ -30,13 +17,7 @@ import {
 } from '../md/unitExpressionParser';
 
 /**
- * Imperial quantities that appear in content written before the native units
- * settled, and the native unit each converts into.
- *
- * These are authoring slips rather than a supported form — four spells state a
- * range in feet and one item states a weight in pounds. Converting them here
- * rather than leaving them alone means a reader on metric sees a metric answer
- * instead of an imperial one that ignored the preference entirely.
+ * Imperial authoring slips and the native unit each converts into.
  *
  * @property {RegExp} pattern - Matches the quantity and its imperial unit
  * @property {UnitName} unit - Native unit to convert into
@@ -49,10 +30,8 @@ const IMPERIAL: Array<{ pattern: RegExp; unit: UnitName; per: number }> = [
 ];
 
 /**
- * A bare native measure inside an already-normalised string.
- *
- * Mirrors the grammar `parseUnitExpression` accepts, so whatever this matches
- * that parser can read.
+ * A bare native measure inside an already-normalised string. Matches the
+ * grammar `parseUnitExpression` accepts.
  *
  * @constant
  */
@@ -62,9 +41,7 @@ export const NATIVE_MEASURE =
 /**
  * Renders a parsed quantity back into the bare expression.
  *
- * Flags are kept. `;ADJ` is what tells the renderer to write "6-stride cone"
- * rather than "6 strides cone", and dropping it would quietly degrade thirteen
- * spell ranges into ungrammatical prose.
+ * Flags are kept.
  *
  * @param {number} numerator - Quantity numerator
  * @param {number} denominator - Quantity denominator, 1 when whole
@@ -86,9 +63,6 @@ function bare(
 /**
  * Reduces a fraction so a converted imperial quantity stays exact.
  *
- * Seven feet is one and two fifths of a stride, and rounding it would state a
- * distance the rules never gave.
- *
  * @param {number} numerator - Fraction numerator
  * @param {number} denominator - Fraction denominator
  * @returns {[number, number]} The reduced pair
@@ -102,8 +76,7 @@ function reduce(numerator: number, denominator: number): [number, number] {
 /**
  * Rewrites every measurement in a string into its bare native form.
  *
- * Idempotent: a string that already holds bare measures is returned unchanged,
- * so a generator may call this on a value it has already normalised.
+ * Idempotent: a string that already holds bare measures is returned unchanged.
  *
  * @param {string} text - Measurement text as written in the source
  * @returns {string} The same text with native measures in place of authoring syntax
@@ -165,10 +138,6 @@ export interface MeasureSegment {
 /**
  * Splits a normalised measurement string into prose and measures.
  *
- * The renderer walks these and draws each measure through the same component
- * the MDX pipeline uses, so a value in a table converts exactly as the same
- * value converts in an article.
- *
  * @param {string} text - A string of bare native measures and prose
  * @returns {MeasureSegment[]} Ordered segments; measures carry a unit
  *
@@ -209,15 +178,9 @@ export function splitMeasures(text: string): MeasureSegment[] {
 /**
  * Rewrites every measurement into a form fit for an atomic plaintext field.
  *
- * Same as `toNativeMeasure` except that flags are **dropped**. A name, title or
- * tag is read as-is by things that will never run a renderer over it — an
- * `og:description` meta tag, a search key, a table cell, a section lookup — so a
- * `;ADJ` sitting in the middle of `Aura of Stillness (12 stride;ADJ radius)` is
- * a token leaking into prose, and `Rope ([= 10 stride =])` is worse.
- *
- * The trade is deliberate: an atomic field loses the attributive rendering and
- * keeps its legibility. Measurement fields still use `toNativeMeasure`, which
- * preserves the flag for `Measure` to act on.
+ * Same as `toNativeMeasure` except flags are dropped, removing `;ADJ` tokens
+ * from the output. Measurement fields use `toNativeMeasure`, which preserves
+ * the flag.
  *
  * @param {string} text - Text destined for an atomic plaintext field
  * @returns {string} The same text with plain native measures and no flags

@@ -12,13 +12,8 @@ export {
 export { LibraryArticle } from './LibraryArticle';
 export type { LibraryArticleProps } from './LibraryArticle';
 /**
- * `LibraryContent` is deliberately absent. It resolves and compiles content,
- * which reaches the metadata repository and from there the ORM, and this barrel
- * is imported by client components â€” `contentShardPanel` pulls `mdxComponents`
- * from it. Re-exporting a server component here drags MikroORM and its native
- * sqlite driver into the browser bundle and fails the build.
- *
- * Routes import it from `./LibraryContent` directly.
+ * `LibraryContent` is not re-exported from this barrel; it is a server
+ * component imported directly via `./LibraryContent`.
  */
 export type { LibraryContentProps } from './LibraryContent';
 export { MdRawPage } from './MdRawPage';

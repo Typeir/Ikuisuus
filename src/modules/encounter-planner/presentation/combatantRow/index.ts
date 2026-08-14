@@ -1,9 +1,7 @@
 /**
  * Combatant Row Module
  *
- * @fileoverview Barrel export for combatant row component and all sub-components.
- * The CombatantRow is the primary display component for combatants in both design mode
- * and play mode, with complete state management via CombatantContext.
+ * @fileoverview Barrel export for the combatant row component and all sub-components.
  *
  * @module combatantRow
  * @version 1.0.0

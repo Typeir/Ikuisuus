@@ -1,7 +1,7 @@
 /**
  * @fileoverview useEditorState hook
  * @description Encapsulates the MDX editor state machine, content loading, and
- * submission logic. Extracted from mdxEditor.tsx to keep the view under 250 lines.
+ * submission logic.
  *
  * @module lib/components/mdxEditor/useEditorState
  * @version 1.0.0

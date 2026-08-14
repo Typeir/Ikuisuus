@@ -73,6 +73,7 @@ next-env.d.ts
 /.paw/healthCheckTypes.ts
 /.paw/daemon.token
 /.paw/daemon.log
+/.paw/console.endpoint.json
 /.paw/*.provider.env
 
 # foundry vtt compiled packs and build output (source JSON is tracked)

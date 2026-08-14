@@ -1,13 +1,8 @@
 /**
- * @fileoverview Spells API Route - Spell metadata JSON endpoint for SpellTable
- * @description Next.js API route that serves spell metadata via the content adapter
- * layer. Supports locale-aware content via ?locale query parameter. Returns array of
- * spell objects with level, school, casting time, components, and concentration
- * requirements. Used by SpellTableWrapper for client-side data fetching.
- *
- * Accepts an optional `filters` array of `FilterExpression` objects. Filter
- * fields are checked against a per-route allow-list as a security boundary
- * against arbitrary entity-field probing from untrusted POST bodies.
+ * @fileoverview Spell metadata JSON endpoint.
+ * @description Serves spell metadata from the content repository. Accepts
+ * `locale`, `spells`, `listSource`, `listSources`, and `filters` in the POST
+ * body. Returns an array of spell objects.
  *
  * @version 3.0.0
  * @author Typeir
@@ -43,9 +38,8 @@ import { NextResponse } from 'next/server';
 const log = logger.child({ module: 'API:Spells:List' });
 
 /**
- * Allow-list of filter fields exposed by this route. Any incoming filter
- * targeting a field outside this set is rejected with 400 to prevent
- * arbitrary entity-field probing.
+ * Filter fields this route accepts. Any filter targeting a field outside this
+ * set is rejected with 400.
  *
  * @type {ReadonlySet<string>}
  */
@@ -72,8 +66,7 @@ const findDisallowedField = (filters: FilterExpression[]): string | null => {
 };
 
 /**
- * Removes duplicate spells by slug, preserving first-seen order. Used when
- * merging results from multiple vocation spell lists.
+ * Removes duplicate spells by slug, preserving first-seen order.
  *
  * @param {SpellMetadata[]} spells - Spells that may include cross-list duplicates
  * @returns {SpellMetadata[]} Spells unique by slug
@@ -89,14 +82,8 @@ const dedupeBySlug = (spells: SpellMetadata[]): SpellMetadata[] => {
 /**
  * POST /api/spells
  *
- * Returns array of spell metadata from the active content repository.
- * Accepts optional locale, spells slug array, listSource, and filters.
- *
- * Branching precedence:
- *   1. `listSources` (or single `listSource`) → merged `listBySource` per source,
- *      deduped by slug, then in-memory filter pass.
- *   2. `spells` slugs → `listBySlugs(locale, spells)` then in-memory filter pass.
- *   3. Otherwise → `list(locale, filters)` (filters pushed to repository).
+ * Returns spell metadata from the active content repository. Samples
+ * `sources`, then `spells` slugs, else all spells, in that order.
  *
  * @param {Request} req - Next.js request object
  * @returns {Promise<NextResponse>} JSON array of spell objects

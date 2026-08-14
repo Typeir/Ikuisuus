@@ -1,15 +1,8 @@
 /**
- * @fileoverview Edit Page Link
- * @description Renders an "Edit" control on library content pages that leads to
- * the MDX Editor tool view pre-populated with the current page's slug.
- *
- * The control is an anchor carrying a real `href`, styled to look like a
- * button. Navigation belongs to links: only an anchor gives middle-click,
- * ctrl/cmd-click, "open in new tab", the link role in assistive technology, and
- * a target the browser can show in the status bar. An unmodified left click is
- * upgraded to a client-side route push; every other gesture is left to the
- * browser.
- *
+ * @fileoverview Renders an "Edit" anchor, styled as a button, that links to the
+ * MDX Editor tool view with the current page's slug pre-filled. Plain left
+ * clicks are intercepted for a client-side route push; other clicks use the
+ * browser's default link navigation.
  * @module lib/components/mdxEditor/editPageButton
  * @version 2.0.0
  * @author Typeir
@@ -40,11 +33,8 @@ interface EditPageButtonProps {
 }
 
 /**
- * Renders a small "✏️ Edit" link, styled as a button, pointing at the MDX
- * Editor tool page with the current content slug pre-filled.
- *
- * Each slug segment is percent-encoded individually so separators survive while
- * non-ASCII and reserved characters are escaped.
+ * Renders an "Edit" anchor pointing at the MDX Editor tool page with the slug
+ * pre-filled. Percent-encodes each slug segment individually.
  *
  * @component
  * @param {EditPageButtonProps} props - Component properties

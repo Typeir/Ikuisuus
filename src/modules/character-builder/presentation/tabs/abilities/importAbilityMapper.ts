@@ -1,7 +1,7 @@
 /**
  * @fileoverview Import Ability Mapper
  * @description Maps imported metadata items (Spells, Heirlooms, Trinkets, Feats)
- * into {@link CharacterAbility} objects for the abilities context.
+ * into {@link CharacterAbility} objects.
  *
  * @module modules/character-builder/presentation/tabs/abilities/importAbilityMapper
  * @version 1.0.0

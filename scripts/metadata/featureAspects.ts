@@ -1,17 +1,8 @@
 /**
  * @fileoverview Feature-Scoped Aspects
- * @description Derives aspects for a single monster feature rather than for the
- * whole stat block.
- *
- * A statblock-level aspect answers "does this creature do fire damage anywhere",
- * which is the wrong grain for the question a reader actually has. Mucklord
- * carries forty-one aspects; knowing that Garbage Communion in particular is the
- * aura that inflicts them is the fact worth having, and it is the fact the
- * feature shard already has the line range to recover.
- *
- * Structured shard fields are preferred over the prose wherever they exist —
- * `trigger`, `target` and `saving_throw` were already parsed, so re-deriving them
- * with a regex would be both slower and less reliable than reading them.
+ * @description Derives aspects for a single monster feature, not the whole stat
+ * block. Returns facets from the feature's line range and, where present, the
+ * parsed `trigger`, `target` and `saving_throw` shard fields.
  *
  * @module lib/metadata/featureAspects
  * @version 1.0.0
@@ -35,10 +26,6 @@ import {
 
 /**
  * Maps a feature's declared trigger onto the tempo axis.
- *
- * Applied only when the prose said nothing about timing. A trait classified
- * `passive` whose text opens "As a Minor Action" is a Minor Action, and the two
- * tempos together would assert both.
  */
 const TRIGGER_TEMPO: Record<string, string> = {
   action: 'tempo:major',
@@ -68,15 +55,9 @@ const TARGET_DELIVERY: Record<string, string> = {
 const WITHIN_STRIDES = /\bwithin\s+\*{0,2}\[=\s*(\d+)\s*stride/gi;
 
 /**
- * Derives a feature's range band.
- *
- * A feature has no `**Range**` line — that field belongs to a spell stat block —
- * so its reach is stated inline: "any point it can see within [= 120 stride =]".
- * Without this a feature that reaches six hundred feet carries no range at all,
- * which is the fact a reader most wants from it.
- *
- * The furthest distance wins. Cannon Tongue reaches 120 strides and takes
- * disadvantage within 2, and the feature's reach is the former.
+ * Derives a feature's range band from its parsed target range and any inline
+ * `within ... stride` text. The furthest distance wins; the feet are remapped
+ * to a band from `RANGE_BANDS`.
  *
  * @param {MonsterFeature} feature - The feature being tagged
  * @param {string} body - The feature's text
@@ -104,11 +85,9 @@ function rangeAspect(feature: MonsterFeature, body: string): string[] {
 }
 
 /**
- * Recovers a feature's own text from the source line range on its shard.
- *
- * The range's end is exclusive — it addresses the following feature's heading —
- * so an inclusive slice pulls the next feature's title into this one's text and
- * tags each feature with a little of its neighbour.
+ * Recovers a feature's own text from the 0-based source line range on its shard.
+ * The range's end is exclusive; pastes the following feature's title when
+ * inclusive-sliced. Returns empty when the range is missing or empty.
  *
  * @param {MonsterFeature} feature - Feature carrying a source range
  * @param {string[]} lines - Lines of the stat block file
@@ -212,19 +191,8 @@ const SPEED_MOVEMENT: Record<string, string> = {
 };
 
 /**
- * Derives aspects from a stat block's declared fields.
- *
- * A stat block states its defences as fields — `**Damage Immunities** chemical,
- * poison` — and never as the prose "immune to poison" that the text extractors
- * look for. Reading the fields is both more reliable than a regex over the
- * surrounding text and the only way these aspects appear at all: the coarse
- * `defense:immunity` was landing from an unrelated sentence while the scoped
- * `immunity:poison` that a reader actually filters by was missing.
- *
- * Entries outside the vocabulary are skipped rather than emitted. `Banishment`
- * and `Polymorphs` appear as condition immunities but are not conditions, and
- * inventing aspects for them would put values in the facet rail that no rule
- * defines.
+ * Derives aspects from a stat block's declared defence, sense and movement
+ * fields. Entries outside the damage-type or condition vocabulary are skipped.
  *
  * @param {StatBlockFields} fields - Declared stat block fields
  * @param {SharedData} sharedData - Shared game data
@@ -285,12 +253,6 @@ export function extractStatBlockFieldAspects(
 /**
  * A feature that states its own line range flatly.
  *
- * Vocations, specializations and feats carry `startLine` / `endLine` rather than
- * the monster shard's nested `source`, and they use the opposite convention:
- * **1-based and inclusive**, where a monster range is 0-based with an exclusive
- * end. Mixing them up shifts every body by a line and quietly tags each feature
- * with a slice of its neighbour.
- *
  * @property {string} name - Feature name, as written in the heading
  * @property {number} [startLine] - First line of the feature, 1-based
  * @property {number} [endLine] - Last line of the feature, inclusive
@@ -305,10 +267,6 @@ export interface RangedFeature {
 
 /**
  * Tags features that declare a 1-based inclusive line range.
- *
- * Without this a vocation shows twenty-two features and not one of them says
- * what it does, while the vocation's own row carries the aspects of all of them
- * at once — which is the wrong grain for every question a reader has.
  *
  * @param {RangedFeature[]} features - Features to tag, mutated in place
  * @param {string[]} lines - Lines of the source file

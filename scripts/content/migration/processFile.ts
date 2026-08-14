@@ -1,7 +1,6 @@
 /**
- * @fileoverview Single-file processing logic
- * @description Reads, transforms, and optionally writes MDX files
- * during dice expression migration.
+ * @fileoverview Processes one MDX file, applying exclusions and shape transforms.
+ * @description Returns transformed content or null when no changes.
  *
  * @module scripts/content/migration/processFile
  * @version 1.0.0
@@ -31,7 +30,7 @@ const WRAPPED_RE = /\[%\s*.*?\s*%\]/g;
 
 /**
  * Splits a line into wrapped and unwrapped segments with position offsets.
- * Unwrapped segments are safe for shape matching; wrapped ones are preserved verbatim.
+ * Unwrapped segments match shapes; wrapped ones are preserved verbatim.
  *
  * @param {string} line - The line to split
  * @returns {Segment[]} Array of segments with text, wrapped flag, and offset in the line
@@ -61,9 +60,7 @@ function splitWrapped(line: string): Segment[] {
 }
 
 /**
- * Replaces a specific occurrence of oldText within a line, identified by its position
- * within an unwrapped segment at a known offset. Avoids replacing earlier occurrences
- * that may be inside already-wrapped regions.
+ * Replaces a specific occurrence of oldText at an absolute position in the line.
  *
  * @param {string} line - The full line containing oldText
  * @param {string} oldText - The exact substring to replace

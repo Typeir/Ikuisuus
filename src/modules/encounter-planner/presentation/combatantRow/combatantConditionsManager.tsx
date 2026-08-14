@@ -1,9 +1,7 @@
 /**
  * Combatant Conditions Manager Component
  *
- * @fileoverview Manages conditions list for combatants with add/remove functionality.
- * Renders condition chips with remove buttons and input field for adding new conditions.
- * Uses the same chip-based layout pattern as BuffListEditor and ItemListEditor.
+ * @fileoverview Manages conditions on combatants. Renders condition chips and an input to add new conditions.
  *
  * @module combatantConditionsManager
  * @version 3.0.0
@@ -16,8 +14,7 @@
  * @requires ../playMode/CombatantContext useCombatant hook for context
  *
  * @description
- * Extracted from CombatantRow for atomic composition. Displays condition chips
- * matching the details column chip style (buffs, items, spells). Uses CombatantContext for state.
+ * Reads and updates conditions via CombatantContext.
  */
 
 'use client';
@@ -32,7 +29,6 @@ import { useCombatant } from './utils/context/combatantContext';
 
 /**
  * Props for CombatantConditionsManager component.
- * All props are optional when used within CombatantProvider (values come from context).
  *
  * @interface CombatantConditionsManagerProps
  */

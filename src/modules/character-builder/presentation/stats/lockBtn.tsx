@@ -1,6 +1,6 @@
 /**
- * @fileoverview Lock toggle button — shared by all combat stat chips.
- * Memoised to prevent full-row re-render on single toggle.
+ * @fileoverview Lock toggle button shared by all combat stat chips.
+ * Memoised component.
  *
  * @module character-builder/presentation/stats/lockBtn
  * @version 1.0.0

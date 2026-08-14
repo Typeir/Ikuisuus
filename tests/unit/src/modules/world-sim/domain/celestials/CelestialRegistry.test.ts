@@ -1,8 +1,7 @@
 /**
  * @fileoverview Celestial Registry Unit Tests
- * @description Tests query methods using injected fixture data.
- * Uses the customData constructor parameter to avoid coupling to
- * the real blackCradleRegistry.json and singleton state.
+ * @description Tests query methods using injected fixture data via
+ * the customData constructor parameter.
  *
  * @module tests/unit/worldSim/celestials/CelestialRegistry
  */

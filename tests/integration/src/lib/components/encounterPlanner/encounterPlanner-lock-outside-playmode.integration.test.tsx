@@ -1,9 +1,9 @@
 /**
  * EncounterPlanner Lock Outside PlayMode Integration Tests
  *
- * @fileoverview Integration tests verifying lock functionality works outside PlayMode.
- * This tests the bug fix where lock wasn't initialized in createInProgressCombatant,
- * causing lock buttons to not work in the design mode / EncounterPlanner context.
+ * @fileoverview Tests lock functionality in EncounterPlanner (non-PlayMode) context.
+ * Verifies createInProgressCombatant initializes locked, CombatantRow renders lock
+ * state, and lock toggles work outside PlayMode.
  *
  * @module encounterPlanner-lock-outside-playmode
  * @version 1.0.0
@@ -15,12 +15,9 @@
  * @requires @/modules/encounter-planner EncounterPlanner component
  * @requires @/modules/encounter-planner/application/factories/combatSnapshot.factory Combat storage utilities
  *
- * @description
- * Tests verify that:
- * 1. createInProgressCombatant initializes locked: []
- * 2. CombatantRow renders with proper lock state in EncounterPlanner context
- * 3. Lock button toggles work in design mode (non-playmode)
- * 4. Inputs disable/enable based on lock state outside playmode
+ * @description Tests verify createInProgressCombatant initializes locked to [], CombatantRow
+ * renders lock state in EncounterPlanner context, lock toggles work in design mode, and inputs
+ * disable/enable based on lock state outside PlayMode.
  *
  * @example
  * // Test that combatant created from CreatureEntry has locked field
@@ -37,11 +34,10 @@ import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
- * Integration tests for lock functionality outside PlayMode
+ * Integration tests for lock functionality outside PlayMode.
  *
- * Verifies that the lock system works in EncounterPlanner context,
- * not just in PlayMode context. This tests the fix for the bug where
- * locked field was missing from createInProgressCombatant.
+ * Verifies the lock system works in EncounterPlanner context; locked field
+ * is initialized by createInProgressCombatant.
  */
 
 // Helper to wrap component with intl context

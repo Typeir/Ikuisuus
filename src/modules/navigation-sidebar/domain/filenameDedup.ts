@@ -11,9 +11,7 @@ import type { Item } from './types';
 
 /**
  * Deduplicates items when both .sheet.mdx and .mdx variants exist.
- * In monsters/spells modules, `.sheet.mdx` is the canonical stat block,
- * but `.mdx` description may also be present. When both exist at the same
- * level, we keep `.sheet.mdx` and collapse the description variant.
+ * When both exist at the same level, keeps `.sheet.mdx` and collapses the `.mdx` variant.
  *
  * @param {Item[]} items - Items to deduplicate
  * @returns {Item[]} Deduplicated items

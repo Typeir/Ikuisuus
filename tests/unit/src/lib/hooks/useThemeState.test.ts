@@ -1,8 +1,7 @@
 /**
  * useThemeState Hook Tests
  *
- * @fileoverview Smoke tests for theme state hooks. Full integration testing
- * is covered in PersistentUiContext.test.tsx since these hooks consume the context.
+ * @fileoverview Smoke tests asserting the theme state hooks are exported functions.
  */
 
 import { useThemeActions, useThemeState } from '@/lib/hooks/useThemeState';

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Phase Marker Utility
- * @description Determines combat phase based on HP percentage thresholds.
- * Used by PlayModeCombatantRow to display visual phase indicators.
+ * @description Determines combat phase from HP percentage thresholds.
  *
  * @module phaseMarker
  * @version 1.0.0
@@ -27,8 +26,7 @@ export const PHASE_THRESHOLDS = {
 } as const;
 
 /**
- * Determines phase marker based on HP percentage.
- * Returns phase state for visual combat status indication.
+ * Determines phase marker from HP percentage.
  *
  * Phase thresholds:
  * - > 75%: null (healthy)

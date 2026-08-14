@@ -31,7 +31,7 @@ import btn from '@/styles/buttons.module.scss';
 import styles from './abilities.module.scss';
 
 /**
- * Shape of the form state managed by the editor.
+ * Form state managed by the editor.
  *
  * @interface AbilityFormState
  * @property {string} name - Ability name
@@ -47,7 +47,7 @@ interface AbilityFormState {
 }
 
 /**
- * All six ability type options for the select dropdown.
+ * The six ability type options for the select dropdown.
  *
  * @constant {readonly AbilityType[]} ABILITY_TYPES
  */

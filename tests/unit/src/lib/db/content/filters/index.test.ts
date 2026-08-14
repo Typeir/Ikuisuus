@@ -1,7 +1,6 @@
 /**
- * @fileoverview Smoke tests for the filter module barrel.
- * @description Verifies that all public exports from the filters barrel
- * are resolvable and behave at a basic level.
+ * @fileoverview Smoke tests for the filters barrel exports.
+ * @description Verifies public exports of the filters barrel.
  */
 
 import { describe, expect, it } from 'vitest';

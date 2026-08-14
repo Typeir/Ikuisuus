@@ -64,9 +64,8 @@ describe('generateWorldMetadata', () => {
     const usesMetaTree = existsSync(metaDir);
 
     /**
-     * Resolves a sidecar path for either backend layout: the pg backend
-     * writes a flat tree under `.meta/en/world`, while the fs backend writes
-     * sidecars alongside source under the world subfolder.
+     * Resolves the sidecar path for the active backend: pg writes under
+     * `.meta/en/world`, fs alongside source in the world subfolder.
      *
      * @param {string} subdir - Source subfolder under `world/`
      * @param {string} name - Sidecar file name

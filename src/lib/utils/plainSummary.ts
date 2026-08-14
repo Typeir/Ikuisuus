@@ -1,9 +1,7 @@
 /**
  * @fileoverview Plain-text summary helpers
  * @description Converts inline-markdown / shortcode source text into plain text
- * for compact display (table cells, chips), and truncates by word count. Mirrors
- * the character-creator pill-shard treatment: resolve `[% … %]` dice shortcodes
- * (a mini-compile), then strip inline markdown, then collapse whitespace.
+ * and truncates by word count.
  *
  * @module lib/utils/plainSummary
  * @version 1.0.0

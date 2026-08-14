@@ -1,8 +1,8 @@
 /**
  * @fileoverview Unit tests for Trinket Table Wrapper component
  * @module tests/unit/src/lib/components/mdx/metadataTables/trinketTableWrapper.test
- * @description Validates TrinketTableWrapper rendering across loading, error,
- * empty, and data states with complex render logic (damage + type, conditions).
+ * @description Tests TrinketTableWrapper rendering across loading, error,
+ * empty, and data states (damage + type, conditions).
  *
  * @version 2.0.0
  * @author Typeir

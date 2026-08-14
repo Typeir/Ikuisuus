@@ -1,7 +1,6 @@
 /**
- * @fileoverview World Sim Page
- * @description Dedicated page for the World Sim tool at /[locale]/utils/world-sim.
- * Renders a Three.js-powered interactive solar system visualization of the Black Cradle.
+ * @fileoverview World Sim route page at /[locale]/utils/world-sim.
+ * @description Renders a Three.js-powered interactive solar system visualization of the Black Cradle.
  *
  * @module worldSimPage
  * @version 1.0.0
@@ -83,7 +82,7 @@ function WorldSimPageInner(): React.ReactElement {
 
 /**
  * World Sim page component.
- * Renders the route-owned World Sim composition.
+ * Renders the world sim composition.
  *
  * @function WorldSimPage
  * @returns {React.ReactElement} Rendered page with world sim.

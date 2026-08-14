@@ -1,9 +1,9 @@
 /**
  * @fileoverview Characters Page
- * @description Dedicated page for the character creator and manager at /[locale]/utils/characters.
- * Renders the roster; character state comes from the global CharacterSheetProvider
- * mounted in ClientProviders.
+ * @description Renders the roster at /[locale]/utils/characters.
+ * Character state comes from the global CharacterSheetProvider in ClientProviders.
  *
+
  * @module charactersPage
  * @version 1.0.0
  * @author Typeir
@@ -21,7 +21,7 @@
 import { CharacterRoster } from '@/modules/character-builder';
 
 /**
- * Page props interface.
+ * Page props.
  *
  * @interface PageProps
  * @property {Promise<Object>} params - Route parameters (async in Next.js 15)
@@ -35,7 +35,6 @@ interface PageProps {
 
 /**
  * Characters page component.
- * Character state is available through the global CharacterSheetProvider.
  *
  * @async
  * @function CharactersPage

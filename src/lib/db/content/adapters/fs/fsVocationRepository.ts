@@ -4,9 +4,6 @@
  * files from `.meta/{locale}/character-creation/vocations/` or
  * `src/content/{locale}/character-creation/vocations/`.
  *
- * Distinguishes vocation records from specialization records by the presence of
- * the `archetype` field (unique to vocations).
- *
  * @module lib/db/content/adapters/fs/fsVocationRepository
  * @version 1.0.0
  * @author Typeir
@@ -27,8 +24,6 @@ import { FsMetadataRepository } from './FsMetadataRepository';
  *
  * @description
  * Reads `.metadata.json` sidecar files from `character-creation/vocations/`.
- * Overrides `filter` to exclude specialization records (distinguished from
- * vocations by the absence of `archetype` and `hitDie` fields).
  */
 class FsVocationRepository
   extends FsMetadataRepository<VocationMetadata>

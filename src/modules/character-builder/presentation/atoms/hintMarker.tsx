@@ -1,10 +1,7 @@
 /**
  * @fileoverview Vocation-pick Hint Marker
- * @description An accessible asterisk shown next to a skill/trade a vocation
- * offers as one of its free base picks. Informational ONLY — it never disables
- * or restricts the row, since Damocles training rules allow raising any
- * proficiency (off-list raises are simply "trained" in fiction). Renders nothing
- * when `show` is false so rows without a hint add no markup.
+ * @description Hint asterisk for a skill/trade a vocation offers as a free base
+ * pick. Never disables or restricts the row. Renders nothing when `show` is false.
  *
  * @module modules/character-builder/presentation/atoms/hintMarker
  * @version 1.0.0

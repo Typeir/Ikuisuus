@@ -1,9 +1,8 @@
 /**
  * @fileoverview Orbit Line Factory — Generates Elliptical Orbit Ring Meshes
- * @description Creates thin torus-like ring meshes that trace each celestial body's
- * Keplerian elliptical orbit path. Each orbit is a single `TubeGeometry` extruded
- * along an `EllipseCurve`, producing one draw call per orbit with consistent visual
- * thickness at any zoom level. Supports inclined orbits and parent-relative parenting.
+ * @description Builds orbit ring meshes by extruding `TubeGeometry` along an
+ * `EllipseCurve` per celestial body. Supports inclined orbits and parent-relative
+ * parenting.
  *
  * @module worldSim/celestials/OrbitLineFactory
  * @version 2.0.0
@@ -39,9 +38,8 @@ const ORBIT_LINE_OPACITY = 0.45;
 const ORBIT_LINE_COLOR = 0x8fd3a1;
 
 /**
- * 3D curve adaptor that lifts a 2D EllipseCurve into 3D space with inclination.
- * The ellipse lies in the XZ plane and is tilted by the inclination angle around
- * the X axis.
+ * 3D curve adaptor wrapping a 2D `EllipseCurve`. The ellipse lies in the XZ
+ * plane and is tilted around the X axis by the inclination angle.
  *
  * @class OrbitCurve3D
  * @extends {Curve<Vector3>}
@@ -85,7 +83,7 @@ class OrbitCurve3D extends Curve<Vector3> {
   }
 
   /**
-   * Sample a point on the 3D orbit curve at parameter t (0–1).
+   * Samples a point on the 3D orbit curve at parameter t (0–1).
    *
    * @param {number} t - Parameter along the curve
    * @param {Vector3} [optionalTarget] - Optional target vector to write into
@@ -146,7 +144,7 @@ export function createOrbitRing(
 /**
  * Creates orbit ring meshes for all bodies that have orbital parameters.
  * Bodies with a parentBodyId have their ring added as a child of the parent
- * mesh so it moves with the parent automatically.
+ * mesh.
  *
  * @function createAllOrbitLines
  * @param {Array<{ id: string; orbit: OrbitalParameters | null; parentBodyId?: string }>} bodies - Body definitions

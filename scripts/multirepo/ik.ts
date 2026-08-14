@@ -1,14 +1,9 @@
 #!/usr/bin/env tsx
 /**
- * @fileoverview ik — Interactive multirepo sync CLI entry point.
- *
- * When called with no arguments: launches an arrow-key TUI that walks the user
- * through all common git operations with spinners and confirmations.
- *
- * When called with arguments: routes to the matching command discovered via
- * filesystem-based loading of `./commands/*.ts`. Each command exports a `meta`
- * descriptor and a `run` handler. Unrecognised commands fall through to a
- * dual-repo git passthrough.
+ * @fileoverview ik — Interactive multirepo sync CLI entry point. With no
+ * arguments, launches the interactive TUI. With arguments, routes to the
+ * matching command in `./commands/*.ts`; unrecognised commands fall through to
+ * a dual-repo git passthrough.
  *
  * @module ik
  * @author Typeir

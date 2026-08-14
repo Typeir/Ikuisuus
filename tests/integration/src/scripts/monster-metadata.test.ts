@@ -1,9 +1,6 @@
 /**
- * Monster Metadata Generator Integration Tests
- *
- * @fileoverview Integration tests for the monster metadata extraction system.
- * Tests parsing of D&D monster stat blocks in various formats including single monsters,
- * multi-stat block files, blockquote spawn statlets, and extreme stat values.
+ * @fileoverview Integration tests for parseMonsterFile covering single monsters,
+ * multi-stat-block files, blockquote spawn statlets, and extreme stat values.
  *
  * @module tests/integration/monster-metadata
  * @version 1.0.0
@@ -25,7 +22,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { loadSharedData } from '../../../../scripts/metadata';
 
 /**
- * Path to the fixtures directory containing test monster files
+ * Absolute path to the test monster fixtures directory
  * @constant {string}
  */
 const FIXTURES_DIR = path.resolve(process.cwd(), 'tests/fixtures/monsters');
@@ -39,7 +36,6 @@ let sharedData: unknown;
 describe('Monster Metadata Generator', () => {
   /**
    * Load shared data once before running tests
-   * This mimics the production behavior where shared data is loaded at generator startup
    */
   beforeAll(async () => {
     sharedData = await loadSharedData();
@@ -47,10 +43,7 @@ describe('Monster Metadata Generator', () => {
 
   describe('Simple Monster Parsing', () => {
     /**
-     * Tests basic monster stat block extraction
-     *
-     * @description Validates that a simple, single-monster file is parsed correctly
-     * with all standard fields extracted: size, type, AC, HP, abilities, CR, etc.
+     * @description Verifies a single-monster file parses with size, type, alignment extracted
      */
     it('should parse a simple single-monster stat block', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
@@ -68,9 +61,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests armor class extraction with notes
-     *
-     * @description Validates AC parsing including parenthetical notes like "natural armor"
+     * @description Verifies AC includes parenthetical notes
      */
     it('should extract armor class with notes', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
@@ -83,9 +74,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests hit points extraction with formula
-     *
-     * @description Validates HP parsing including average value and dice formula
+     * @description Verifies HP parses with average value and dice formula
      */
     it('should extract hit points with formula', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
@@ -98,9 +87,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests ability score extraction
-     *
-     * @description Validates all six ability scores and their modifiers are parsed
+     * @description Verifies all six ability scores parse
      */
     it('should extract all ability scores', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
@@ -113,9 +100,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests challenge rating extraction
-     *
-     * @description Validates CR parsing from the stat block
+     * @description Verifies CR parses from the stat block
      */
     it('should extract challenge rating', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
@@ -126,9 +111,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests damage immunity extraction
-     *
-     * @description Validates parsing of damage immunities list
+     * @description Verifies damage immunities list parses
      */
     it('should extract damage immunities', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
@@ -140,9 +123,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests condition immunity extraction
-     *
-     * @description Validates parsing of condition immunities list
+     * @description Verifies condition immunities list parses
      */
     it('should extract condition immunities', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
@@ -157,10 +138,7 @@ describe('Monster Metadata Generator', () => {
 
   describe('Multi-Stat Block Files', () => {
     /**
-     * Tests files containing multiple separate stat blocks
-     *
-     * @description Validates that files with multiple monsters (like creature variants)
-     * are parsed into an array of metadata objects
+     * @description Verifies multiple stat blocks in one file parse into an array
      */
     it('should parse multiple stat blocks from a single file', async () => {
       const filePath = path.join(FIXTURES_DIR, 'multi-statblock.sheet.mdx');
@@ -172,10 +150,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests that each stat block has unique metadata
-     *
-     * @description Validates that monsters in multi-stat block files maintain
-     * their individual properties and don't bleed data between entries
+     * @description Verifies each stat block keeps its own property values
      */
     it('should extract unique data for each stat block', async () => {
       const filePath = path.join(FIXTURES_DIR, 'multi-statblock.sheet.mdx');
@@ -200,10 +175,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests subSlug generation for multi-stat blocks
-     *
-     * @description Validates that each monster gets a unique subSlug while
-     * sharing the same base slug from the filename
+     * @description Verifies each stat block gets a unique subSlug
      */
     it('should generate unique subSlugs for each monster', async () => {
       const filePath = path.join(FIXTURES_DIR, 'multi-statblock.sheet.mdx');
@@ -218,10 +190,7 @@ describe('Monster Metadata Generator', () => {
 
   describe('Blockquote Spawn Statlets', () => {
     /**
-     * Tests parsing of nested blockquote stat blocks
-     *
-     * @description Validates extraction of spawn/minion stat blocks that appear
-     * in blockquotes within the main monster's file (like Albedo's Petals and Blooms)
+     * @description Verifies blockquote-nested spawn stat blocks parse
      */
     it('should parse blockquote-style spawn stat blocks', async () => {
       const filePath = path.join(FIXTURES_DIR, 'blockquote-spawns.sheet.mdx');
@@ -234,10 +203,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests that main monster is included alongside spawns
-     *
-     * @description Validates the primary creature (Albedo) is parsed separately
-     * from its spawn statlets
+     * @description Verifies the primary creature parses alongside its spawns
      */
     it('should include the main monster with full stats', async () => {
       const filePath = path.join(FIXTURES_DIR, 'blockquote-spawns.sheet.mdx');
@@ -254,11 +220,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests spawn statlet extraction
-     *
-     * @description Validates that smaller spawn creatures in blockquotes
-     * are parsed with their own stats.
-     * Note: Blockquote spawns may inherit main creature size in current parser
+     * @description Verifies blockquote spawns parse with valid size values
      */
     it('should extract spawn statlets with correct sizes', async () => {
       const filePath = path.join(FIXTURES_DIR, 'blockquote-spawns.sheet.mdx');
@@ -291,10 +253,7 @@ describe('Monster Metadata Generator', () => {
 
   describe('Extreme Stats Handling', () => {
     /**
-     * Tests parsing of very high stat values
-     *
-     * @description Validates that extreme values like CR 35, AC 35, 1640 HP,
-     * and ability scores of 30+ are handled correctly
+     * @description Verifies high values (CR 35, AC 35, HP 1640) parse
      */
     it('should handle extreme stat values (CR 35, high AC, massive HP)', async () => {
       const filePath = path.join(FIXTURES_DIR, 'extreme-stats.sheet.mdx');
@@ -309,9 +268,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests ability scores above 20
-     *
-     * @description Validates parsing of divine/epic ability scores (30+)
+     * @description Verifies ability scores above 20 parse
      */
     it('should parse ability scores above 20', async () => {
       const filePath = path.join(FIXTURES_DIR, 'extreme-stats.sheet.mdx');
@@ -323,10 +280,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests complex movement speed parsing
-     *
-     * @description Validates extraction of multiple movement modes including
-     * fly (hover) and climb
+     * @description Verifies multiple movement modes (walk/fly/climb) parse
      */
     it('should parse complex movement speeds', async () => {
       const filePath = path.join(FIXTURES_DIR, 'extreme-stats.sheet.mdx');
@@ -340,9 +294,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests multiple damage type resistances/immunities
-     *
-     * @description Validates parsing of long lists of damage types
+     * @description Verifies long damage resistance/immunity lists parse
      */
     it('should parse multiple damage resistances and immunities', async () => {
       const filePath = path.join(FIXTURES_DIR, 'extreme-stats.sheet.mdx');
@@ -359,10 +311,7 @@ describe('Monster Metadata Generator', () => {
 
   describe('Tag Generation', () => {
     /**
-     * Tests automatic tag generation
-     *
-     * @description Validates that tags are generated based on creature type,
-     * size, damage types, conditions, and mechanics
+     * @description Verifies tags generate from creature stats
      */
     it('should generate appropriate tags', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
@@ -375,9 +324,7 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * Tests creature type tag
-     *
-     * @description Validates creature type is included in tags
+     * @description Verifies creature type appears in tags
      */
     it('should include creature type in tags', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');

@@ -1,15 +1,8 @@
 /**
- * @fileoverview World / Lore Metadata Generator
- * @description Parses `.lore.mdx` files in `src/content/{locale}/world/` and
- * emits `.metadata.json` sidecars. Frontmatter fields take precedence; when
- * absent, `description` falls back to the first prose paragraph of the body
- * and `tags`/`category` fall back to the `world/` subfolder path.
- *
- * Frontmatter vs. tier-HR disambiguation: many lore files use `---` as
- * knowledge-tier horizontal rules (Common / Advanced / Deep / Truth). The
- * generator distinguishes true leading frontmatter via `gray-matter` (which
- * only parses a leading `---`…`---` block), so body HRs are never mis-parsed
- * as frontmatter.
+ * @fileoverview Parses `.lore.mdx` files in `src/content/{locale}/world/` and
+ * emits `.metadata.json` sidecars. Parses leading frontmatter via `gray-matter`;
+ * `description` falls back to the first prose paragraph, `tags`/`category` to
+ * the `world/` subfolder path.
  *
  * @module scripts/metadata/generateWorldMetadata
  * @version 1.0.0
@@ -39,8 +32,7 @@ const log = createLogger({ component: 'WorldMetadataGenerator' });
 const WORLD_DIR_SEGMENTS = ['src', 'content', 'en', 'world'];
 
 /**
- * Frontmatter field name → metadata key mapping used when a lore file does
- * have YAML frontmatter.
+ * Frontmatter field name → metadata key mapping.
  */
 const FRONTMATTER_FIELD_MAP: Record<string, string> = {
   description: 'description',
@@ -101,11 +93,10 @@ function deriveWorldFolderTags(filePath: string): string[] {
 }
 
 /**
- * Parses a single world/lore MDX file into a metadata record.
+ * Parses a world/lore MDX file into a metadata record.
  *
- * Uses `gray-matter` to attempt frontmatter extraction at file head. When no
- * frontmatter block is found, `matter(raw).data` is an empty object and the
- * record falls back to the minimal shape (slug, title from H1, file, link).
+ * When no frontmatter block is found, falls back to the minimal shape
+ * (slug, title from H1, file, link).
  *
  * @param {string} filePath - Absolute path to the lore file
  * @param {SharedData} _sharedData - Shared game data (unused for world lore)
@@ -179,10 +170,7 @@ async function parseWorldFile(
 /**
  * Main entry point for world/lore metadata generation.
  *
- * Passes a custom `contentDir` because world content lives outside of
- * `CONTENT_PATHS` (which is en-specific). When called through the
- * orchestrator (`generateMetadata.ts`), the content directory is resolved
- * from `CONTENT_TYPES.world.dir`.
+ * Passes a custom `contentDir`; world content lives outside `CONTENT_PATHS`.
  *
  * @param {object} [options] - Configuration
  * @param {string} [options.contentDir] - Override content directory

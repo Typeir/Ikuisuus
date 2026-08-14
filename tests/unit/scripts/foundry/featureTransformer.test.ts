@@ -1,8 +1,8 @@
 /**
- * @fileoverview Tests for the Foundry feature transformer (dnd5e 5.3 Activity model).
- * @description Verifies that MonsterFeature records are correctly transformed
- * into dnd5e Activity-model Foundry Items, and that ParserRegistry overrides
- * are properly merged when a handler exists for a given feature.
+ * @fileoverview Tests featureTransformer (dnd5e 5.3 Activity model).
+ * @description Verifies MonsterFeature records transform into dnd5e
+ * Activity-model Foundry Items and that ParserRegistry overrides merge
+ * when a handler exists for a feature.
  *
  * @module tests/unit/scripts/foundry/featureTransformer.test
  * @version 2.0.0

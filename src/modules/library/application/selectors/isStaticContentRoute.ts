@@ -1,9 +1,6 @@
 /**
- * Static Route Detection Utility
- *
  * @fileoverview Determines if the current route is a statically generated MDX content route.
- * Used to control persistence behavior: static routes derive expansion from URL only,
- * while dynamic routes can restore from localStorage.
+ * Static routes derive expansion from URL only; dynamic routes can restore from localStorage.
  *
  * @module lib/utils/isStaticContentRoute
  * @version 1.0.0
@@ -11,11 +8,6 @@
  * @since 1.0.0
  *
  * @description
- * The distinction between static and dynamic routes is critical for:
- * - Build-time generation: Static routes must not depend on per-request state
- * - Deterministic expansion: Static pages expand ancestors based on URL pathname
- * - Persistence: Only dynamic routes should restore sidebar state from localStorage
- *
  * Static routes (expansion from URL only):
  * - /[locale]/library/** (MDX content pages)
  *
@@ -36,29 +28,23 @@
  */
 
 /**
- * Pattern matching static content routes
- *
  * @constant
  * @type {RegExp}
  *
  * @description
- * Matches routes under /[locale]/library/ which are statically generated MDX pages.
- * These routes use `export const dynamic = 'force-static'` and must not depend
- * on per-request state like localStorage values.
+ * Matches routes under /[locale]/library/, the statically generated MDX pages.
  */
 const STATIC_CONTENT_ROUTE_PATTERN = /^\/[a-z]{2}\/library\//;
 
 /**
- * Determines if the current route is a statically generated content route
+ * Determines if the current route is a statically generated content route.
  *
  * @function isStaticContentRoute
  * @param {string} [pathname] - Optional pathname to check. Defaults to window.location.pathname
- * @returns {boolean} True if the route is a static content route
+ * @returns {boolean} True if the route is a static content route, false when window is undefined and no pathname is given
  *
  * @description
- * Checks if the current (or provided) pathname matches the pattern for static
- * content routes. Static routes derive sidebar expansion deterministically from
- * the URL pathname rather than restoring from localStorage.
+ * Tests if the current (or provided) pathname matches the static content route pattern.
  *
  * @example
  * ```typescript
@@ -82,15 +68,14 @@ export function isStaticContentRoute(pathname?: string): boolean {
 }
 
 /**
- * Determines if the current route allows sidebar persistence
+ * Inverse of isStaticContentRoute.
  *
  * @function allowsSidebarPersistence
  * @param {string} [pathname] - Optional pathname to check. Defaults to window.location.pathname
  * @returns {boolean} True if the route allows restoring sidebar state from localStorage
  *
  * @description
- * Inverse of isStaticContentRoute. Dynamic routes can restore sidebar state
- * from localStorage for a consistent user experience across page loads.
+ * Returns the negation of isStaticContentRoute(pathname).
  *
  * @example
  * ```typescript

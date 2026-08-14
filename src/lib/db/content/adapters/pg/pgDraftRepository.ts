@@ -24,7 +24,7 @@ import type {
 const log = logger.child({ module: 'PGDraftRepo' });
 
 /**
- * Creates a standardized stale-concurrency error.
+ * Creates a stale-concurrency error.
  *
  * @returns {Error & { code: string }} Error with `code = 'STALE_DRAFT'`
  */
@@ -97,7 +97,7 @@ const rowToDraft = (row: DraftEntity): DraftMetadata => ({
  * PostgreSQL implementation of the DraftRepository port.
  *
  * Uses MikroORM EntityManager for all persistence operations.
- * Each method forks a fresh EntityManager to maintain request isolation.
+ * Each method forks a fresh EntityManager.
  */
 export const pgDraftRepository: DraftRepository = {
   /**

@@ -2,14 +2,8 @@
 /* paw:gate:no-inline-comments ignore */
 /**
  * @fileoverview Build-Time Pagefind Search Index
- * @description Orchestrates the hybrid search index build: collects records
- * (prose + metadata) for all configured locales, feeds them into the Pagefind
- * Node API (`createIndex` + `addCustomRecord`), and writes the output to
- * `public/pagefind/{locale}/`.
- *
- * Locale loop is driven by the `LOCALES` constant — add `'es'` or `'fi'` when
- * those locales have enough content to justify indexing.
- *
+ * @description Collects records for each configured locale, feeds them into
+ * Pagefind, and writes bundles to `public/pagefind/{locale}/`.
  * @module scripts/search/buildSearchIndex
  * @version 1.0.0
  * @author Typeir
@@ -20,7 +14,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { collectRecords } from './collectRecords';
 
-/** Locales to index. v1 is en-only; es/fi drop in by adding to this array. */
+/** Locales to index. */
 const LOCALES = ['en'];
 
 /** Output root for the generated Pagefind bundles. */
@@ -28,12 +22,6 @@ const OUTPUT_ROOT = path.resolve(process.cwd(), 'public', 'pagefind');
 
 /**
  * Main entry point for build-time search index generation.
- *
- * Steps:
- * 1. Create a fresh Pagefind index.
- * 2. Collect prose+metadata records for each configured locale.
- * 3. Feed records into the index via `addCustomRecord`.
- * 4. Write the compiled index bundle per locale.
  *
  * @returns {Promise<void>}
  */

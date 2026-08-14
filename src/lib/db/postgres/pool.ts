@@ -1,11 +1,7 @@
 /**
  * @fileoverview Shared PostgreSQL Connection Pool
- * @description Lazy-initialised `pg.Pool` singleton. Every adapter that needs
- * PostgreSQL imports `getPool()` from here — no duplicate connections.
- *
- * The pool is created on first call to `getPool()` using `DATABASE_URL`.
- * If the env var is missing, `getPool()` throws so callers can fall back to
- * another adapter or surface a clear error.
+ * @description Singleton `pg.Pool`, created on first `getPool()` call from
+ * `DATABASE_URL`. `getPool()` throws if `DATABASE_URL` is unset.
  *
  * @module lib/db/postgres/pool
  * @version 1.0.0
@@ -43,7 +39,7 @@ export const getPool = (): Pool => {
 };
 
 /**
- * Convenience wrapper that runs a parameterised SQL query on the shared pool.
+ * Runs a parameterised SQL query on the shared pool.
  *
  * @param {string} text - SQL with $1, $2, … placeholders
  * @param {unknown[]} [params] - Bind values
@@ -57,7 +53,7 @@ export const query = async (
 };
 
 /**
- * Gracefully shuts down the pool. Call during process cleanup.
+ * Shuts down the pool. Call during process cleanup.
  *
  * @returns {Promise<void>}
  */

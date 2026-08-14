@@ -1,13 +1,8 @@
 /**
  * @fileoverview Monster Multiattack Extractor
- * @description Dedicated module for extracting multiattack parent and child
- * attack features from monster stat block sections. When a multiattack heading
- * is detected by the feature extractor, this module receives the multiattack
- * sub-section and its inline bold-label children, creates the parent feature
- * with the multiattack token, and produces enriched child attack features.
- *
- * The generator post-processes multiattack_refs after all feature IDs are
- * assigned, linking the parent to child feature IDs by name matching.
+ * @description Extracts multiattack parent and child attack features from
+ * monster stat block sub-sections. Creates the parent feature with the
+ * multiattack token and enriched child attack features.
  *
  * @version 1.0.0
  * @author Typeir
@@ -27,12 +22,10 @@ import { recognizeMultiattack } from './monsterTokens';
 
 /**
  * Generates a stable feature ID from slug and feature name.
- * Used by the metadata generator to assign IDs to features and to
- * resolve multiattack_refs.
  *
  * @param {string} slug - Monster slug (e.g. "abominable-avian")
  * @param {string} name - Feature name (e.g. "Gnawing Bite")
- * @returns {string} Stable feature ID (e.g. "abominable-avian/gnawing-bite")
+ * @returns {string} Feature ID: "<slug>/<name-kebab-cased>"
  */
 export function featureId(slug: string, name: string): string {
   const kebab = name
@@ -44,13 +37,7 @@ export function featureId(slug: string, name: string): string {
 
 /**
  * Extracts a multiattack parent feature and its inline child attack features.
- *
- * The parent feature receives the multiattack token parsed from the
- * description text. Each bold-label child sub becomes a separate
- * MonsterFeature enriched with attack, damage, and save tokens.
- *
- * Multiattack_refs are NOT populated here — the generator resolves them
- * after all feature IDs are assigned.
+ * Multiattack_refs are not populated here.
  *
  * @param {SubSection} multiSub - The multiattack sub-section (description only)
  * @param {SubSection[]} childSubs - Bold-label attack subs following the multiattack

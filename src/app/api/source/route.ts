@@ -1,13 +1,7 @@
 /**
  * @fileoverview MDX Source API Route
- * @description Returns the raw MDX content of a content file. Used by the
- * character sheet's local sharding system to fetch a full source file once
- * and extract heading blocks client-side, avoiding per-feature `/api/shards`
- * round-trips.
- *
- * Security: file resolution is delegated entirely to `fetchContent`, which
- * uses the environment-appropriate ContentSourceAdapter. Path traversal and
- * access outside the content root are prevented at the adapter layer.
+ * @description Returns the raw MDX content of a content file by path.
+ * Path traversal outside the content root is prevented at the adapter layer.
  *
  * @version 1.0.0
  * @author Typeir
@@ -28,7 +22,6 @@ import { NextResponse } from 'next/server';
  * GET /api/source
  *
  * Returns the raw MDX content for the requested file path.
- * Accepts `file` (required) and `locale` (optional, defaults to `en`).
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON `{ content: string }` or error response

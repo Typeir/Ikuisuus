@@ -1,29 +1,17 @@
 /**
- * Push Notification System
- *
  * @fileoverview Singleton notification manager with toast-style push notifications.
  * Supports multiple notification types, auto-dismiss, stacking, and ARIA live regions.
+ * Durations are in milliseconds; 0 disables auto-dismiss.
  *
  * @module pushNotification
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  *
- * @description
- * A React context-based notification system that provides:
- * - Type-based styling (info, success, warning, error)
- * - Configurable auto-dismiss with explicit timing constants
- * - Manual dismissal with keyboard accessibility
- * - Stacking with configurable maximum visible count
- * - Position-aware entrance/exit animations
- * - ARIA live regions for screen reader announcements
- * - Portal-based rendering to document.body
- *
- * Timing Configuration:
- * - All durations are in milliseconds
- * - Duration of 0 disables auto-dismiss
- * - Exit animation duration: NOTIFICATION_EXIT_ANIMATION_MS (200ms)
- * - Default durations vary by type (see NOTIFICATION_DEFAULT_DURATIONS)
+ * @description React context-based notification system providing type-based
+ * styling (info, success, warning, error), configurable auto-dismiss,
+ * manual dismissal, stacking with a maximum visible count, entrance/exit
+ * animations, ARIA live regions, and portal rendering to document.body.
  *
  * @example
  * // Wrap your app with the provider
@@ -75,10 +63,10 @@ export const NOTIFICATION_EXIT_ANIMATION_MS = 200;
  * A value of 0 disables auto-dismiss for that type.
  *
  * @constant {Record<NotificationType, number>}
- * @property {number} info - 5000ms (5 seconds)
- * @property {number} success - 4000ms (4 seconds)
- * @property {number} warning - 6000ms (6 seconds)
- * @property {number} error - 8000ms (8 seconds, longer for critical messages)
+ * @property {number} info - 5000ms
+ * @property {number} success - 4000ms
+ * @property {number} warning - 6000ms
+ * @property {number} error - 8000ms
  * @since 1.0.0
  */
 export const NOTIFICATION_DEFAULT_DURATIONS: Record<NotificationType, number> =
@@ -90,8 +78,8 @@ export const NOTIFICATION_DEFAULT_DURATIONS: Record<NotificationType, number> =
   };
 
 /**
- * Maximum number of notifications visible simultaneously.
- * Older notifications are dismissed when this limit is exceeded.
+ * Maximum number of notifications visible simultaneously. Dismisses the oldest
+ * when the limit is exceeded.
  *
  * @constant {number}
  * @default 5
@@ -100,21 +88,21 @@ export const NOTIFICATION_DEFAULT_DURATIONS: Record<NotificationType, number> =
 export const NOTIFICATION_MAX_VISIBLE = 5;
 
 /**
- * Notification types with semantic meaning.
- * Each type has distinct styling and default duration.
+ * Notification types with semantic meaning. Each type has distinct styling
+ * and default duration.
  *
  * @typedef {'info' | 'success' | 'warning' | 'error'} NotificationType
  * @property {string} info - Informational messages (blue accent)
  * @property {string} success - Success confirmations (green accent)
  * @property {string} warning - Warning alerts (amber/yellow accent)
- * @property {string} error - Error messages (red accent, longer duration)
+ * @property {string} error - Error messages (red accent)
  * @since 1.0.0
  */
 export type NotificationType = 'info' | 'success' | 'warning' | 'error';
 
 /**
- * Position where notifications appear on screen.
- * Affects entrance animation direction and stacking order.
+ * Position where notifications appear on screen. Affects entrance animation
+ * direction and stacking order.
  *
  * @typedef {string} NotificationPosition
  * @since 1.0.0
@@ -131,7 +119,6 @@ export type NotificationPosition =
  * Configuration options for creating a notification.
  *
  * @interface NotificationConfig
- * @description User-facing configuration for pushing notifications.
  * @property {string} [id] - Unique ID (auto-generated if not provided)
  * @property {NotificationType} [type='info'] - Notification type for styling
  * @property {ReactNode} message - Main message content (required)
@@ -232,7 +219,6 @@ function generateId(): string {
  * Props for NotificationProvider component.
  *
  * @interface NotificationProviderProps
- * @description Configuration for the notification provider.
  * @property {ReactNode} children - Child components that can access notifications
  * @property {NotificationPosition} [position='top-right'] - Where notifications appear on screen
  * @property {number} [maxNotifications=NOTIFICATION_MAX_VISIBLE] - Maximum notifications to show at once
@@ -245,7 +231,7 @@ export interface NotificationProviderProps {
 }
 
 /**
- * Provider component that manages notification state and renders portal.
+ * Provider component that manages notification state and renders the portal.
  * Must wrap any components that use the useNotifications hook.
  *
  * @component NotificationProvider
@@ -255,17 +241,8 @@ export interface NotificationProviderProps {
  * @param {number} [props.maxNotifications=NOTIFICATION_MAX_VISIBLE] - Maximum notifications shown at once
  * @returns {JSX.Element} Provider with notification portal
  *
- * @description
- * Manages the notification lifecycle:
- * 1. Tracks active notifications in state
- * 2. Handles auto-dismiss timers with proper cleanup
- * 3. Renders notification portal to document.body
- * 4. Provides context to child components
- *
- * Timer Management:
- * - Auto-dismiss timers are tracked in a ref Map
- * - Timers are cleared on unmount to prevent memory leaks
- * - Manual dismissal cancels any pending auto-dismiss timer
+ * @description Runs auto-dismiss timers, caps the visible count to
+ * maxNotifications, and renders the portal to document.body.
  *
  * @example
  * <NotificationProvider position="bottom-right" maxNotifications={3}>
@@ -286,9 +263,7 @@ export const NotificationProvider = memo(function NotificationProvider({
   const timerMapRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
   /**
-   * Client-side only initialization.
-   * Copies ref to local variable per React lint rules for cleanup closure.
-   * Clears all timers on unmount.
+   * Client-side-only initialization. Clears all timers on unmount.
    */
   useEffect(() => {
     setIsMounted(true);
@@ -459,8 +434,7 @@ export const NotificationProvider = memo(function NotificationProvider({
  * SVG path data for each notification type icon.
  * All icons use a 20x20 viewBox with evenodd fill/clip rules.
  */
-const NOTIFICATION_ICON_PATHS: Record<NotificationType, string> = {
-  info: 'M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z',
+const NOTIFICATION_ICON_PATHS: Record<NotificationType, string> = {  info: 'M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z',
   success:
     'M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z',
   warning:

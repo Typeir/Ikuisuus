@@ -1,8 +1,8 @@
 /**
  * @fileoverview Chip Primitive
- * @description Compact pill-style label used for tag-like UIs (selected boons,
- * vocation features, specialization features, feats). Optional leading icon,
- * trailing remove button, and a variant prop that maps to a CSS hue token.
+ * @description Compact pill-style label for boons, vocation/specialization
+ * features, and feats. Supports an optional leading icon, info and remove
+ * buttons, and a variant prop.
  *
  * @module lib/components/ui/chip/chip
  * @version 1.0.0
@@ -17,8 +17,7 @@ import type { MouseEvent, ReactNode } from 'react';
 import styles from './chip.module.scss';
 
 /**
- * Visual variant. Each variant maps to a CSS class that picks a tinted
- * background + accent border via existing CSS variables.
+ * Visual variant. Maps to a CSS class.
  *
  * @typedef {'boon'|'vocation-feature'|'specialization-feature'|'feat'|'neutral'|'success'|'warning'|'danger'} ChipVariant
  */

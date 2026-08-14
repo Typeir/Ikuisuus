@@ -1,18 +1,12 @@
 /**
- * @fileoverview MikroORM Entity — Feat
- * @description Decorator-based entity for the `feats` table. The optional
- * ability-score increase is represented as a nullable `@Embedded` value object
- * with a flat column prefix. Named mechanics are stored in the child
- * `feat_features` table via a `@OneToMany` collection.
- *
- * Columns produced:
- * - Core: locale, slug, title, file, link, description, prerequisite,
- *   has_prerequisite, tags, grants, index_version, version_hash
- * - Embedded prefix `ability_increase_`:
- *   ability_increase_abilities, ability_increase_amount,
- *   ability_increase_maximum
- * - Child table: feat_features (feat_id FK, name, sort_order, start_line,
- *   end_line, tags)
+ * @fileoverview MikroORM entity for the `feats` table.
+ * @description Entity for `feats`; nullable `ability_increase_`-prefixed
+ * embedded value object, named mechanics in child `feat_features` table via
+ * `@OneToMany`. Columns: locale, slug, title, file, link, description,
+ * prerequisite, has_prerequisite, tags, grants, index_version, version_hash;
+ * embedded ability_increase_abilities, ability_increase_amount,
+ * ability_increase_maximum; child feat_features (feat_id FK, name,
+ * sort_order, start_line, end_line, tags).
  *
  * @module lib/db/orm/entities/FeatEntity
  * @version 1.1.0
@@ -36,12 +30,10 @@ import { Collection } from '@mikro-orm/core';
 /* ─────────────────────────  Embeddable VO  ─────────────────────────── */
 
 /**
- * Optional ability-score increase value object — maps to
+ * Optional ability-score increase value object. Maps to
  * `ability_increase_abilities`, `ability_increase_amount`,
- * `ability_increase_maximum`.
- *
- * All fields are nullable because the entire embed may be absent for feats
- * that do not grant an ability score increase.
+ * `ability_increase_maximum`. All fields nullable; the whole embed may be
+ * absent when a feat grants no ability score increase.
  */
 @OrmEmbeddable('FeatAbilityIncreaseEmbed')
 export class FeatAbilityIncreaseEmbed {

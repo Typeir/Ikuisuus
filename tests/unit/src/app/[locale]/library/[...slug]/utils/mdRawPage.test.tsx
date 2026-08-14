@@ -2,7 +2,6 @@
  * @fileoverview Unit tests for MD Raw Page component
  * @module tests/unit/src/app/[locale]/library/[...slug]/utils/mdRawPage.test
  * @description Validates MdRawPage export and component signature.
- * Tests component for rendering raw markdown files.
  *
  * @version 1.0.0
  * @author Typeir

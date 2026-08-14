@@ -1,8 +1,7 @@
 /**
- * @fileoverview Unit tests for Affix List Editor component
+ * @fileoverview Unit tests for Affix List Editor component.
  * @module tests/unit/src/lib/components/encounterPlanner/listEditors/affixListEditor.test
- * @description Validates AffixListEditor export and component signature.
- * Tests list editor component for managing affixes in encounter planner.
+ * @description Asserts AffixListEditor is exported, is a function, and is the module's only export.
  * 
  * @version 1.0.0
  * @author Typeir

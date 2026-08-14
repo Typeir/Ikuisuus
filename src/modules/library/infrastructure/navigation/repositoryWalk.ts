@@ -1,12 +1,9 @@
 /**
  * Repository Walk Utilities
  *
- * @fileoverview Environment-coupled wrappers around the pure {@link walk} and
- * {@link shallowWalk} functions. Resolves the correct
- * {@link DirectorySourceAdapter} from the runtime environment and, for the
- * shallow variant, wraps the LRU-cached {@link listDirectory} facade so the
- * caller benefits from in-process caching without walk.ts depending on
- * fileTreeService.
+ * @fileoverview Wraps {@link walk} and {@link shallowWalk} with the
+ * {@link DirectorySourceAdapter} resolved from the runtime environment. The
+ * shallow variant uses the LRU-cached {@link listDirectory} facade.
  *
  * @module repositoryWalk
  * @version 1.0.0
@@ -19,8 +16,7 @@
  * @requires ../db/content/directorySourceAdapter Adapter interface
  *
  * @description
- * Separation of concerns:
- * - `walk.ts` — pure traversal, no external service dependencies (testable in isolation)
+ * - `walk.ts` — pure traversal, no external service dependencies
  * - `repositoryWalk.ts` — wires up concrete adapters from the running environment
  *
  * @example
@@ -44,11 +40,9 @@ import { walk } from './walkFull';
 import { SHALLOW_WALK_DEPTH, shallowWalk } from './walkShallow';
 
 /**
- * Builds an adapter that wraps `listDirectory` so callers of
- * {@link shallowWalk} benefit from the service-level LRU cache.
- * The adapter ignores the `locale` argument forwarded by the walk engine
- * because the locale is already captured in closure from
- * {@link repositoryShallowWalk}.
+ * Builds an adapter that wraps the LRU-cached `listDirectory` for
+ * {@link shallowWalk}. Ignores the `locale` argument forwarded by the walk
+ * engine; the locale is captured in closure from {@link repositoryShallowWalk}.
  *
  * @param {string} locale - Locale code captured from the calling context
  * @returns {DirectorySourceAdapter} Adapter backed by the cached `listDirectory`
@@ -72,9 +66,9 @@ const makeFileTreeAdapter = (locale: string): DirectorySourceAdapter => ({
 /**
  * Full recursive navigation tree walk.
  *
- * Resolves the correct {@link DirectorySourceAdapter} for the current
- * environment (filesystem during dev/build, GitHub API in production) and
- * delegates to the pure {@link walk} function.
+ * Resolves the {@link DirectorySourceAdapter} for the current environment
+ * (filesystem during dev/build, GitHub API in production) and runs
+ * {@link walk}.
  *
  * @param {string} locale - Locale code (e.g. "en", "es")
  * @param {string} [base=''] - URL base prefix for path construction
@@ -92,12 +86,11 @@ export const repositoryWalk = async (
  * Shallow navigation tree walk backed by the LRU-cached `listDirectory`.
  *
  * Recurses to `maxDepth` levels. Directories at the limit are returned as
- * stub nodes (`{ isStub: true, children: [] }`) so the sidebar can lazy-load
- * them on demand via the `/api/content/walk` route.
+ * stub nodes (`{ isStub: true, children: [] }`), lazy-loaded on demand via
+ * the `/api/content/walk` route.
  *
- * Calling with `maxDepth = 1` returns only the immediate children of
- * `relativePath` — all subdirectories are stubs. This is what the
- * `/api/content/walk` endpoint uses for on-demand folder expansion.
+ * `maxDepth = 1` returns only the immediate children of `relativePath`; all
+ * subdirectories are stubs. Used by `/api/content/walk` for folder expansion.
  *
  * @param {string} locale - Locale code (e.g. "en", "es")
  * @param {string} [relativePath=''] - Starting path relative to the content root

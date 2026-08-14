@@ -1,7 +1,6 @@
 /**
  * @fileoverview World Sim State & Action Type Definitions
  * @description Defines the state shape and action union for the World Sim reducer.
- * Follows the existing PersistentUiContext pattern.
  *
  * @module worldSim/context/worldSimTypes
  * @version 1.0.0
@@ -10,20 +9,20 @@
  */
 
 /**
- * Zoom level enum representing the three navigation tiers.
+ * Zoom level enum. Three levels: System, Body, Region.
  * @enum {string}
  */
 export enum ZoomLevel {
-  /** Full system view — all bodies visible */
+  /** Full system view, all bodies visible */
   System = 'system',
-  /** Zoomed to single body — surface details visible */
+  /** Single body, surface details visible */
   Body = 'body',
-  /** Close-up on region — DOM panel anchored */
+  /** Surface region, DOM panel anchored */
   Region = 'region',
 }
 
 /**
- * Complete state shape for the World Sim module.
+ * State shape for the World Sim reducer.
  * @interface WorldSimState
  * @property {string | null} selectedBodyId - Currently selected celestial body
  * @property {string | null} selectedRegionId - Currently selected surface region
@@ -50,32 +49,32 @@ export interface WorldSimState {
  * @enum {string}
  */
 export enum WorldSimActionType {
-  /** Scene finished mounting */
+  /** Scene mounted */
   Initialize = 'INITIALIZE',
-  /** Select a celestial body */
+  /** Select a body */
   SelectBody = 'SELECT_BODY',
-  /** Select a surface region on a body */
+  /** Select a surface region */
   SelectRegion = 'SELECT_REGION',
   /** Clear body and region selection */
   Deselect = 'DESELECT',
-  /** Clear region selection only */
+  /** Clear region selection */
   DeselectRegion = 'DESELECT_REGION',
-  /** Set navigation zoom level */
+  /** Set zoom level */
   SetZoomLevel = 'SET_ZOOM_LEVEL',
-  /** Set camera transition state */
+  /** Set transition state */
   SetTransitioning = 'SET_TRANSITIONING',
   /** Set hovered body */
   HoverBody = 'HOVER_BODY',
-  /** Toggle floating label visibility */
+  /** Toggle label visibility */
   ToggleLabels = 'TOGGLE_LABELS',
-  /** Toggle orbit line visibility */
+  /** Toggle orbit visibility */
   ToggleOrbits = 'TOGGLE_ORBITS',
   /** Reset to initial state */
   Reset = 'RESET',
 }
 
 /**
- * Union of all actions the World Sim reducer can handle.
+ * Union of all World Sim reducer actions.
  * @typedef {Object} WorldSimAction
  */
 export type WorldSimAction =
@@ -92,7 +91,7 @@ export type WorldSimAction =
   | { type: WorldSimActionType.Reset };
 
 /**
- * Initial state for the World Sim reducer.
+ * Default World Sim reducer state.
  * @constant
  */
 export const INITIAL_WORLD_SIM_STATE: WorldSimState = {

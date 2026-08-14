@@ -1,8 +1,7 @@
 /**
  * @fileoverview ChevronScroll tests
- * @description Verifies the strip renders its children inside a labelled tablist
- * scroller flanked by two chevron buttons, and that both chevrons disable when
- * the strip cannot scroll (jsdom reports zero layout, i.e. no overflow).
+ * @description Verifies children render in a labelled tablist scroller with two
+ * chevron buttons, and that both chevrons disable when the strip cannot scroll.
  *
  * @module tests/unit/src/lib/components/ui/chevronScroll/ChevronScroll
  * @version 1.0.0

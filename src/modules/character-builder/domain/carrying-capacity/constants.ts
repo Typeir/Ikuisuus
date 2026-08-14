@@ -1,7 +1,6 @@
 /**
  * @fileoverview Carrying Capacity Constants
- * @description Domain constants and lookup tables for carrying capacity calculations
- * modeled on d20 SRD encumbrance rules.
+ * @description Domain constants and lookup tables for carrying capacity calculations.
  *
  * @module modules/character-builder/domain/carrying-capacity/constants
  * @version 1.0.0

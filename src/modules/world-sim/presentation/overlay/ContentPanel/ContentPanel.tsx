@@ -1,7 +1,6 @@
 /**
- * @fileoverview DEPRECATED: Content Panel — Use WorldSimContentPanel Instead
- * @description This component has been refactored into WorldSimContentPanel (WorldSim-specific)
- * and GenericEmbedPanel (generic reusable wrapper). Use WorldSimContentPanel instead.
+ * @fileoverview DEPRECATED Content Panel. Refactored into WorldSimContentPanel and GenericEmbedPanel.
+ * @description Use WorldSimContentPanel from '@/modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel' instead.
  *
  * @module worldSim/overlay/ContentPanel
  * @deprecated Use WorldSimContentPanel from '@/modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel' instead
@@ -31,10 +30,10 @@ const CONTENT_PANEL_LEFT = 32;
 const CONTENT_PANEL_TOP = 100;
 
 /**
- * Compute initial position so the panel sits on the left side under the header.
+ * Compute the panel's initial position.
  *
  * @param {{ width: number; height: number }} parentBounds - Dimensions of the bounding parent
- * @returns {{ x: number; y: number }} Computed initial position
+ * @returns {{ x: number; y: number }} Initial position
  */
 function computeInitialPosition(parentBounds: {
   width: number;

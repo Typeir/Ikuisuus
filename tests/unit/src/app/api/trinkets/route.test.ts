@@ -1,9 +1,8 @@
 /**
- * Trinkets API Route Unit Tests
+ * Unit tests for the /api/trinkets GET endpoint.
  *
- * @fileoverview Tests for the /api/trinkets endpoint. Verifies export structure,
- * locale handling, repository integration, and error resilience by mocking the
- * trinket repository module.
+ * @fileoverview Mocks the trinket repository module and verifies exports,
+ * locale handling, and error resilience.
  *
  * @module tests/unit/app/api/trinkets/route
  * @version 3.0.0
@@ -25,7 +24,7 @@ vi.mock('@/lib/db/content/repositories/trinketRepository', () => ({
   },
 }));
 
-/** Import after mock setup so vitest intercepts the module. */
+/** Imports the route module after the mock is defined. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 let TrinketsRoute: typeof import('@/app/api/trinkets/route');
 let trinketRepository: TrinketRepository;

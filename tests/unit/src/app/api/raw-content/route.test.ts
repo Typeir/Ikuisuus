@@ -18,9 +18,7 @@ const { mockExistsSync, mockReadFile } = vi.hoisted(() => ({
 }));
 
 /**
- * The route imports `fs` / `fs/promises` directly, so both the bare and
- * `node:`-prefixed specifiers are mocked — vitest resolves builtins under
- * either, and leaving one unmocked lets the real filesystem through.
+ * Mocks both the bare and `node:`-prefixed `fs`/`fs/promises` specifiers.
  */
 vi.mock('fs', () => {
   const api = { existsSync: mockExistsSync };

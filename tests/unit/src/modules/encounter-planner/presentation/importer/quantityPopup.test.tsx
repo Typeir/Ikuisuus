@@ -1,8 +1,8 @@
 /**
- * @fileoverview Tests for QuantityPopup Component
+ * @fileoverview Unit tests for QuantityPopup.
  * @module tests/unit/src/lib/components/encounterPlanner/importer/quantityPopup.test
- * @description Tests quantity selection, keyboard navigation (Enter/Escape),
- * autofocus behavior, and accessibility attributes.
+ * @description Tests QuantityPopup rendering, quantity bounds (1-20),
+ * keyboard navigation, autofocus, and accessibility attributes.
  *
  * @version 1.0.0
  * @author Typeir

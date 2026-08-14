@@ -1,24 +1,9 @@
 /**
- * Remark Aspects Plugin
- *
- * @fileoverview Places an `<Aspects>` element directly beneath the headings and
- * bold-label list entries that have aspects, so a section's facets sit with the
- * section they describe rather than in a block of metadata above the article.
- * List-entry rows go inside the `<li>` — a sibling insert breaks the list —
- * and the entry splits at its first hard break so the row sits between the
- * bold label and the prose, as under a heading.
- *
- * The plugin carries **placement only**. It is handed the list of section names
- * that have aspects and emits a `section` key; the aspects themselves are read at
- * render time from the article metadata context. Keeping the data out of the
- * compile step means no per-file IO in the MDX pipeline and nothing to
- * invalidate when metadata changes.
- *
- * **Order matters: this must run before `remarkUnit`.** A heading's measures are
- * normalised here exactly as the generator normalises a feature name, so the two
- * agree. Once `remarkUnit` has run the measure is a `<Unit>` element instead,
- * and `headingText` skips JSX — the heading would resolve to
- * `Aura of Stillness ( radius)` and match nothing.
+ * @fileoverview Inserts an `<Aspects section="..." />` element after each heading
+ * and inside each qualifying bold-label list entry whose text appears in
+ * `sections`. Rows go inside the `<li>`; the entry splits at its first hard break.
+ * Emits a `section` key only; aspects are read from metadata at render time.
+ * Must run before `remarkUnit`, which replaces measures with `<Unit>` elements.
  *
  * @module lib/md/remarkAspects
  * @version 1.0.0
@@ -33,8 +18,7 @@ import type { Node, Parent } from 'unist';
 import { SKIP, visit } from 'unist-util-visit';
 
 /**
- * Name of the component this plugin emits. The MDX runtime resolves it through
- * the component map, so any registry that renders content must provide it.
+ * Name of the component this plugin emits; the MDX runtime resolves it via the component map.
  *
  * @constant
  */
@@ -50,9 +34,7 @@ export interface RemarkAspectsOptions {
 }
 
 /**
- * Concatenates text/inlineCode/html values of a node's inline children. JSX
- * skipped whole: boon cost badges (`###### Monady <span>5 BP</span>`) would
- * otherwise pollute the key and match nothing.
+ * Concatenates text/inlineCode/html values of a node's inline children. JSX is skipped whole.
  *
  * @param {Node} node - The node whose text to gather
  * @returns {string} The concatenated text

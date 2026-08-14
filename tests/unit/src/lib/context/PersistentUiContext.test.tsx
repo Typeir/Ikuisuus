@@ -1,8 +1,7 @@
 /**
  * PersistentUiContext Unit Tests
  *
- * @fileoverview Tests for the persistent UI context provider including hydration,
- * persistence, and hook behavior.
+ * @fileoverview Tests for the persistent UI context provider: hydration, persistence, and hook behavior.
  */
 
 import {
@@ -21,7 +20,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
- * Test component that displays and manipulates sidebar state
+ * Test component displaying and manipulating sidebar state.
  */
 function SidebarTestConsumer() {
   const { isOpen } = useSidebarMenuState();
@@ -39,7 +38,7 @@ function SidebarTestConsumer() {
 }
 
 /**
- * Test component that displays and manipulates theme state
+ * Test component displaying and manipulating theme state.
  */
 function ThemeTestConsumer() {
   const { theme } = useThemeState();

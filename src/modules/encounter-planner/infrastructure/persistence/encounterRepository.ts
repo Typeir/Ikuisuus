@@ -1,11 +1,8 @@
 /**
- * @fileoverview Encounter Repository
- * @description CRUD operations for persisting and retrieving encounter data using the
- * multi-layer persistent storage abstraction. All storage operations use the
- * EncounterStorage enum for consistent key naming.
- *
- * Large payloads (encounters array) use the ref strategy via
- * storePersistentDataRef/fetchPersistentDataRef; scalar IDs use storePersistentData.
+ * @fileoverview Persists and retrieves encounter data via the persistent storage abstraction.
+ * @description CRUD for encounter data keyed by the EncounterStorage enum.
+ * Encounters array uses the ref strategy (storePersistentDataRef/fetchPersistentDataRef);
+ * scalar IDs use storePersistentData.
  *
  * @module encounter-planner/infrastructure/persistence/encounterRepository
  * @version 1.0.0
@@ -30,13 +27,12 @@ import type {
 import { EncounterStorage } from '../../domain/storage/encounterStorageKeys';
 
 /**
- * Migrate encounter data from old format to new format.
- * Handles backward compatibility for affixes stored as string[] → AffixEntry[].
+ * Migrates encounter data from old format, converting affixes from string[] to AffixEntry[].
  *
  * @function migrateEncounter
  * @param {any} encounter - Encounter data from localStorage (may be old format)
  * @returns {Encounter} Encounter with migrated data
- * @deprecated Legacy migration path retained for reference; current encounter reads no longer invoke this helper.
+ * @deprecated Legacy migration path; current encounter reads do not invoke this helper.
  */
 const migrateEncounter = (encounter: any): Encounter => {
   const creatures = (encounter.creatures || []).map((creature: any) => {
@@ -60,8 +56,8 @@ const migrateEncounter = (encounter: any): Encounter => {
 };
 
 /**
- * Retrieve all encounters from localStorage.
- * Returns empty array if no encounters exist, on parse error, or in SSR context.
+ * Returns all encounters from localStorage.
+ * Returns empty array if none exist, on parse error, or in SSR context.
  *
  * @function getEncounters
  * @returns {Encounter[]} Array of all saved encounters, or empty array on error
@@ -87,8 +83,8 @@ export const getEncounters = (): Encounter[] => {
 };
 
 /**
- * Retrieve the ID of the currently active encounter from localStorage.
- * Returns null if no active encounter is set or in SSR context.
+ * Returns the active encounter ID from localStorage.
+ * Returns null if none set or in SSR context.
  *
  * @function getActiveEncounterId
  * @returns {string | null} Active encounter ID, or null if none set
@@ -100,8 +96,7 @@ export const getActiveEncounterId = (): string | null => {
 };
 
 /**
- * Set the active encounter ID in localStorage.
- * Pass null to clear the active encounter selection.
+ * Sets the active encounter ID in localStorage; null clears it.
  *
  * @function setActiveEncounterId
  * @param {string | null} id - Encounter ID to set as active, or null to clear
@@ -118,7 +113,7 @@ export const setActiveEncounterId = (id: string | null): void => {
 };
 
 /**
- * Retrieve the currently active encounter from localStorage.
+ * Returns the active encounter from localStorage by matching the active ID.
  *
  * @function getActiveEncounter
  * @returns {Encounter | null} Active encounter object, or null if none set/found
@@ -133,7 +128,7 @@ export const getActiveEncounter = (): Encounter | null => {
 };
 
 /**
- * Save all encounters to localStorage, replacing existing data.
+ * Saves all encounters to localStorage, replacing existing data.
  *
  * @function saveEncounters
  * @param {Encounter[]} encounters - Complete array of encounters to persist
@@ -156,8 +151,7 @@ export const saveEncounters = (encounters: Encounter[]): void => {
 };
 
 /**
- * Save or update a single encounter in localStorage.
- * Automatically updates the updatedAt timestamp.
+ * Saves or updates a single encounter in localStorage; sets updatedAt to now.
  *
  * @function saveEncounter
  * @param {Encounter} encounter - Encounter to save (id must be set)
@@ -179,8 +173,8 @@ export const saveEncounter = (encounter: Encounter): void => {
 };
 
 /**
- * Delete an encounter by ID from localStorage.
- * Also clears the active encounter ID if deleting the currently active encounter.
+ * Deletes an encounter by ID from localStorage.
+ * Clears the active encounter ID if the deleted encounter is active.
  *
  * @function deleteEncounter
  * @param {string} id - ID of encounter to delete

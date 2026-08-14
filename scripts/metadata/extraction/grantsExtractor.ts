@@ -3,12 +3,8 @@
  * @description Heuristic prose parser that turns "you gain proficiency…" style
  * feature text into flat grant tags (`weapon:martial`, `armor:medium`,
  * `saving_throw:dexterity`, `skill:persuasion:expertise`, `trade:smithing:proficient`).
- * Prose parsing is intentionally conservative and imperfect; an explicit
- * frontmatter `Grants` map (feature name → tags) is authoritative for any
- * feature it names — its tags fully REPLACE the prose parse for that feature,
- * and an empty list suppresses a feature the heuristic misreads (e.g. a
- * "choose one proficiency from this list" clause). The heuristic is left to
- * handle only the features the map does not name.
+ * A frontmatter `Grants` map (feature name → tags) overrides the prose parse for
+ * named features.
  *
  * @module scripts/metadata/extraction/grantsExtractor
  * @version 1.0.0
@@ -66,7 +62,7 @@ const TOOL_KEYS = [
 
 /**
  * Maps a tool key to a regex alternation of the agent-noun prose forms that
- * name it, so "smith's tools" / "alchemist's supplies" resolve to the right key.
+ * name it.
  */
 const TOOL_ALIASES: Record<string, string> = {
   smithing: 'smith',
@@ -131,9 +127,9 @@ function escapeRegex(phrase: string): string {
 }
 
 /**
- * Extracts grant tags from a feature's prose body using conservative,
- * proximity-anchored patterns. Only emits a grant when a proficiency/expertise
- * keyword sits near the target within the same sentence.
+ * Extracts grant tags from a feature's prose body using proximity-anchored
+ * patterns. Emits a grant only when a proficiency/expertise keyword appears
+ * within the same sentence as the target.
  *
  * @param {string} prose - Feature body text
  * @returns {string[]} Sorted, deduped grant tags
@@ -194,13 +190,10 @@ export function extractGrantsFromProse(prose: string): string[] {
 }
 
 /**
- * Produces the final grant tags for a feature. When the feature's name is a key
- * in the frontmatter `Grants` map, the author's tags are authoritative and the
- * prose heuristic is skipped entirely for that feature — an empty list therefore
- * suppresses a feature the parser would otherwise misread (e.g. a "choose one
- * proficiency from this list" clause emitting spurious per-option grants). When
- * the feature is absent from the map, the grants come solely from the
- * conservative prose parse.
+ * Produces the final grant tags for a feature. If the feature name is a key in
+ * the frontmatter `Grants` map, returns the map's tags (lowercased, trimmed,
+ * deduped); an empty list suppresses the prose parse. Otherwise returns the
+ * prose-parsed grants.
  *
  * @param {string} featureName - Parsed feature name (frontmatter key)
  * @param {string} prose - Feature body text

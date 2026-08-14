@@ -2,10 +2,8 @@
  * @fileoverview Search content-type taxonomy
  * @module modules/search/domain/contentTypes
  * @description Canonical union of searchable content types and a display-metadata
- * registry (label, icon name, color token key, URL segment). Kept free of React,
- * Lucide, and SCSS coupling: `icon` is a Lucide icon name string and
- * `colorTokenKey` is a CSS custom-property name string. The presentation layer
- * maps these to real icon components and CSS variables.
+ * registry (label, icon name, color token key, URL segment). `icon` is a Lucide
+ * icon name string; `colorTokenKey` is a CSS custom-property name string.
  *
  * @author Typeir
  * @version 1.0.0
@@ -37,10 +35,10 @@ export type SearchContentType =
  *
  * @interface ContentTypeMeta
  * @property {string} label - Human-readable singular/collection label
- * @property {string} icon - Lucide icon name (resolved to a component in presentation)
+ * @property {string} icon - Lucide icon name
  * @property {string} colorTokenKey - CSS custom-property name for the type accent
  *   (e.g. `--search-type-monster`), defined in `globals.scss`
- * @property {string} urlSegment - Library URL segment for links
+ * @property {string} urlSegment - URL segment for library links
  *   (e.g. `monsters` → `/{locale}/library/monsters/{slug}`)
  */
 export interface ContentTypeMeta {
@@ -52,7 +50,6 @@ export interface ContentTypeMeta {
 
 /**
  * Registry mapping every {@link SearchContentType} to its display metadata.
- * Exhaustive by construction; enforced by an exhaustiveness unit test.
  *
  * @type {Record<SearchContentType, ContentTypeMeta>}
  */
@@ -120,7 +117,7 @@ export const CONTENT_TYPE_META: Record<SearchContentType, ContentTypeMeta> = {
 };
 
 /**
- * Content type → content subdirectory (derived from canonical metadata).
+ * Content type → content subdirectory URL segment.
  *
  * @type {Record<SearchContentType, string>}
  */
@@ -131,12 +128,7 @@ export const CONTENT_SUBDIR: Record<SearchContentType, string> =
 
 /**
  * CSS `var()` expression for a content type's accent color, resolved through
- * the canonical `colorTokenKey` registry entry.
- *
- * This is the ONLY sanctioned route from a content type to its color —
- * presentation code must never build `--search-type-*` names by string
- * interpolation (type keys are plural, token names singular; interpolated
- * names silently resolve to nothing and fall through to `--color-accent`).
+ * the `colorTokenKey` registry entry.
  *
  * @param {SearchContentType} type - Content type from the taxonomy
  * @returns {string} CSS var() expression with theme-aware accent fallback
@@ -147,7 +139,7 @@ export function typeColorVar(type: SearchContentType): string {
 }
 
 /**
- * All content types as an array, useful for iteration and facet construction.
+ * All content types as an array.
  *
  * @type {SearchContentType[]}
  */

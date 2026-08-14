@@ -1,9 +1,6 @@
 /**
  * @fileoverview assignableGrants tests
- * @description Verifies the unified "unassigned benefits" model: collecting base
- * skill picks, feature choice grants (Scholar-style expertise), and feat slots;
- * counting assignments (on-offer, ≥ tier, not floor-covered; feats by selection);
- * and aggregating unassigned counts per (category, tier).
+ * @description Tests collectAssignableGrants, countAssigned, and unassignedByCategory.
  *
  * @module tests/unit/src/modules/character-builder/lib/utils/assignableGrants
  * @version 1.0.0

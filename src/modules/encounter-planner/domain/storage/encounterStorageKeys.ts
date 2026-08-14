@@ -1,6 +1,6 @@
 /**
- * @fileoverview Encounter Planner Enums - Storage keys and constants for encounter data
- * @description Defines standardized enums for encounter planner persistence and heroic affixes.
+ * @fileoverview Storage keys and hero affix constants for the encounter planner.
+ * @description Enums of localStorage keys and heroic affix string values.
  *
  * @version 1.0.0
  * @author Typeir
@@ -27,7 +27,7 @@ export enum EncounterStorage {
 }
 
 /**
- * Heroic Awakening Affixes from D&D Homebrew Rules
+ * Heroic Awakening Affixes from Damocles Homebrew Rules
  * @enum {string} HeroicAffix
  * @see {@link src/content/en/rules/heroic-awakening/}
  */

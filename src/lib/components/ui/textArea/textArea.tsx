@@ -1,7 +1,6 @@
 /**
  * @fileoverview Text Area Component
- * @description Accessible styled textarea replacing raw `<textarea>`.
- * Supports rows, disabled, and readOnly states.
+ * @description Styled accessible textarea with controlled value.
  *
  * @module lib/components/ui/textArea
  * @version 1.0.0

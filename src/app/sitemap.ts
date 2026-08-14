@@ -1,9 +1,6 @@
 /**
- * @fileoverview Dynamic sitemap.xml for the Library of Ikuisuus.
- *
- * Crawls the English content tree at build time using the same file-discovery
- * logic as `generateStaticParams`. Excludes `main.mdx` category index files
- * and maps every content MDX file to a canonical locale-prefixed URL.
+ * @fileoverview Builds sitemap.xml from the English content tree,
+ * mapping each MDX file to a locale-prefixed URL and excluding main.mdx files.
  *
  * @module app/sitemap
  * @version 1.0.0

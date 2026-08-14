@@ -1,16 +1,7 @@
 /**
  * @fileoverview Aspect Domain
- * @description Parsing, ordering and glyph selection for the faceted aspect
- * vocabulary.
- *
- * Nothing here replaces schools. Schools were deleted because a single axis
- * answers almost nothing a reader can act on; aspects are the taxonomy schools
- * only gestured at  many independent axes that compose, where school was one
- * box a spell had to sit in.
- *
- * An aspect is a `group:value` token — `damage:fire`, `meta:source:ikuisuus` —
- * and the group is everything before the last colon, so internal aspects carrying
- * a `meta:` prefix still resolve to a usable pair.
+ * @description Parsing, ordering and glyph selection for aspects. An aspect is
+ * a `group:value` token split on the last colon.
  *
  * @module modules/library/domain/aspects
  * @version 1.0.0
@@ -70,12 +61,7 @@ export function isInternalAspect(aspect: string): boolean {
 }
 
 /**
- * Display order for aspect groups: what a thing is, then what it does, then how
- * it is answered.
- *
- * Fixed by the taxonomy rather than by the order tags happen to be generated in,
- * so the same axis sits in the same place on every page and the eye learns one
- * layout.
+ * Display order for aspect groups.
  */
 export const ASPECT_GROUP_ORDER: readonly string[] = [
   'creature',
@@ -117,10 +103,6 @@ export const ASPECT_GROUP_ORDER: readonly string[] = [
 /**
  * The marks that draw one aspect.
  *
- * A scoped defence is two glyphs — the modifier and the element it applies to —
- * because `resistance:` needs no glyph of its own once it can compose over the
- * `damage:` set. Everything else is a single glyph.
- *
  * @property {LucideIcon} Icon - The primary glyph
  * @property {LucideIcon} [Badge] - Element glyph overlaid on the primary
  * @property {string} [badgeVar] - CSS variable holding the badge's own colour
@@ -147,11 +129,7 @@ export interface StratumMember {
 }
 
 /**
- * Resolves a stratum into its three member marks.
- *
- * Each member keeps its own glyph and its own hue, so `damage:elemental` reads
- * as frost, fire and lightning rather than as a new symbol to learn. A stratum
- * is permanently three types, which is what lets the arrangement be fixed.
+ * Resolves a stratum into its member marks.
  *
  * @param {string} stratum - Stratum name, e.g. `elemental`
  * @returns {StratumMember[] | undefined} Its members, or undefined when not a stratum
@@ -225,12 +203,6 @@ export function aspectMark(aspect: ParsedAspect): AspectMark {
 /**
  * The CSS variable carrying an aspect's colour.
  *
- * A damage stratum stays neutral whichever group it sits on, because its mark
- * already carries three member hues and a fourth would compete with them.
- * Otherwise `damage:` resolves per value and `phase:` borrows the encounter
- * tracker's palette so one state cannot be two colours; everything else is per
- * group, and an undeclared group falls back rather than failing to render.
- *
  * @param {ParsedAspect} aspect - A parsed aspect
  * @returns {string} A `var(...)` expression
  */
@@ -250,8 +222,7 @@ export function aspectColour(aspect: ParsedAspect): string {
 /**
  * Parses, filters and orders a raw tag list for display.
  *
- * Internal aspects are dropped: they are indexed and reach the facet rail, and
- * they are never drawn in prose.
+ * Internal (`meta:`) aspects are dropped.
  *
  * @param {string[] | undefined} tags - Raw tag list from generated metadata
  * @returns {ParsedAspect[]} Display-ordered aspects

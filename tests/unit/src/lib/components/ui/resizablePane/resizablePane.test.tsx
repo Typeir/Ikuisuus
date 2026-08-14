@@ -1,8 +1,7 @@
 /**
  * @fileoverview ResizablePane Component Tests
- * @description Unit tests for the resizable pane primitive — verifies
- * rendering, ARIA semantics on the handle, keyboard resize step/clamp
- * behaviour, and localStorage round-trip persistence.
+ * @description Tests ResizablePane rendering, handle ARIA semantics,
+ * keyboard resize step/clamp behaviour, and localStorage persistence.
  */
 
 import { ResizablePane } from '@/lib/components/ui/resizablePane';

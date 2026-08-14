@@ -1,11 +1,8 @@
 /**
  * @fileoverview GradientTabs Component
- * @description Generic tabbed container with the spell-list visual style.
- * Verbatim DOM structure and CSS from SpellTable: bordered outer container,
- * scrollable tablist with bottom gradient overlay, card-tab buttons that merge
- * into the surface panel via a seam cover, and a surface content panel.
- * The opt-in `compact` variant tightens paddings, enforces touch-sized tab
- * buttons, and adds a right-edge fade hinting at off-screen tabs.
+ * @description Tabbed container. Renders a scrollable tab strip above a surface
+ * panel. DOM and CSS copied from SpellTable. `compact` variant tightens
+ * paddings and sizes tabs for touch.
  *
  * @module lib/components/ui/gradientTabs/gradientTabs
  * @author Typeir
@@ -59,10 +56,8 @@ export interface GradientTabsProps {
 }
 
 /**
- * Tabbed container with the spell-list visual style. Renders a scrollable row
- * of card-tab buttons above a surface panel. DOM structure is a verbatim copy
- * of the SpellTable tab nav. Keeps the active tab scrolled into view when the
- * strip overflows horizontally.
+ * Renders a scrollable row of tab buttons above a surface panel. Scrolls the
+ * active tab into view when the strip overflows horizontally.
  *
  * @component
  * @param {GradientTabsProps} props - Component props

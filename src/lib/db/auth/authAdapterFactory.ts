@@ -1,11 +1,7 @@
 /**
  * @fileoverview Auth Adapter Factory
- * @description Resolves the user storage adapter based on `METADATA_BACKEND` env var.
- * Mirrors the same factory pattern used by the content repositories.
- *
- * Supported backends:
- * - `fs`  → Filesystem JSON file (`fsUserAdapter`) — default for local development
- * - `pg`  → PostgreSQL via MikroORM (`postgresUserAdapter`)
+ * @description Resolves the user storage adapter from `METADATA_BACKEND`.
+ * Backends: `'fs'` (default, Filesystem JSON) or `'pg'` (PostgreSQL via MikroORM).
  *
  * @module lib/db/auth/authAdapterFactory
  * @version 2.0.0
@@ -21,7 +17,7 @@ import type { UserAdapter } from './userAdapter';
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**
- * Factory function that resolves the user adapter for the active backend.
+ * Resolves the user adapter for the active backend.
  *
  * @returns {UserAdapter} User storage adapter
  * @throws {Error} If `METADATA_BACKEND` is set to an unsupported value
@@ -38,7 +34,7 @@ const createUserAdapter = (): UserAdapter => {
 };
 
 /**
- * Resolved user adapter instance based on environment.
+ * User adapter for the resolved backend.
  *
  * @property {UserAdapter} userAdapter - Factory-resolved user adapter
  */

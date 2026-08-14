@@ -1,6 +1,6 @@
 /**
- * @fileoverview Integration tests for CombatantRow lock functionality
- * Tests the full lock array system: toggling lock, disabling inputs, state persistence
+ * @fileoverview Integration tests for CombatantRow lock functionality.
+ * Verifies lock toggle, input disabling, and state persistence via the locked array.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';

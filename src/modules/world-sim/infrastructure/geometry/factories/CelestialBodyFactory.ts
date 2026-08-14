@@ -1,8 +1,5 @@
 /**
- * @fileoverview Celestial Body Factory — Strategy-Based Renderer Creation
- * @description Implements the Factory pattern to create the correct renderer
- * strategy based on the body's renderConfig.renderer type. Maps renderer type
- * strings to concrete ICelestialRenderer implementations.
+ * @fileoverview Maps renderer type strings to concrete ICelestialRenderer factories.
  *
  * @module worldSim/celestials/CelestialBodyFactory
  * @version 1.0.0
@@ -36,9 +33,7 @@ const RENDERER_MAP: Record<CelestialRendererType, () => ICelestialRenderer> = {
 };
 
 /**
- * Factory for creating celestial body renderer instances based on their type.
- * Uses the Strategy pattern — the factory selects the correct renderer strategy
- * from the RENDERER_MAP based on the renderer type string in the body's config.
+ * Creates celestial body renderer instances.
  *
  * @class CelestialBodyFactory
  *

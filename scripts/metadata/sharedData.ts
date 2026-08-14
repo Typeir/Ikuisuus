@@ -1,7 +1,6 @@
 /**
  * @fileoverview Shared Game Data Types and Loader
- * @description Typed interface for scripts/core/shared-data.json and a loader
- * function that works both at build-time (scripts) and runtime (Next.js).
+ * @description Typed interface for scripts/core/shared-data.json and a loader usable in build-time scripts and Next.js runtime.
  *
  * @module lib/metadata/sharedData
  * @version 1.0.0
@@ -131,14 +130,9 @@ export interface PatternsSection {
 /**
  * One aspect group in the closed vocabulary.
  *
- * A group is either the prefix of a player-facing aspect (`damage:`) or, when the
- * key carries the `meta:` prefix, of an internal one that is indexed and searchable
- * but never drawn in prose.
- *
- * Values are declared literally or borrowed from elsewhere in shared data via
- * `valuesFrom`, which keeps a single source of truth for lists the game already
- * defines. References are resolved one level deep and never chain: a group that
- * needs conditions points at `gameData.conditions`, not at the `condition` group.
+ * A `meta:`-prefixed group is indexed and searchable but never drawn in prose.
+ * Values are declared literally or borrowed via `valuesFrom`; references resolve
+ * one level deep and never chain.
  *
  * @property {"*" | string[]} scope - Content types carrying the group, or `"*"` for all
  * @property {string[]} [values] - Literal value list
@@ -199,7 +193,7 @@ export async function loadSharedData(): Promise<SharedData> {
 }
 
 /**
- * Clears the cached shared data (useful for testing).
+ * Clears the cached shared data.
  */
 export function clearSharedDataCache(): void {
   cached = null;
@@ -208,12 +202,7 @@ export function clearSharedDataCache(): void {
 /* ──────────────────────────  Aspects  ─────────────────────────────── */
 
 /**
- * Normalises a borrowed value to the kebab-case form aspects are written in.
- *
- * Borrowed sections are human-readable game lists — `"monstrous graft"`,
- * `"very rare"` — while every aspect value is kebab-case. Normalising at the
- * borrow boundary is what lets a group point at a list it does not control
- * instead of keeping a hand-maintained copy that drifts.
+ * Normalises a borrowed value to kebab-case, the form aspect values use.
  *
  * @param {string} value - A value from a borrowed shared-data list
  * @returns {string} The kebab-case aspect form

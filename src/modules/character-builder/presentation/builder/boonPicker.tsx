@@ -1,14 +1,9 @@
 /**
  * @fileoverview Boon Picker Component
  * @description Fetches the bloodline's boon list from `/api/bloodlines` and renders
- * selectable boon cards with BP cost badges. An advisory budget meter shows total
- * BP spent vs the bloodline's boon budget. Selected boons are highlighted with the
- * accent gradient.
- *
- * When a boon is toggled on, the full prose body is fetched from the
- * `/api/content-shards/bloodlines/[slug]` endpoint — the server resolves line
- * anchors and heading search internally so this component never needs to know
- * the MDX file structure.
+ * selectable boon cards with BP cost badges, a BP budget meter, and search
+ * filtering. On toggle, fetches the boon's full body from
+ * `/api/content-shards/bloodlines/[slug]`.
  *
  * @module lib/components/characterSheet/boonPicker
  * @version 1.2.0
@@ -42,7 +37,7 @@ import pickerStyles from './pickerControls.module.scss';
  * @property {number} boonBudget - Total boon point budget from the bloodline
  * @property {(boons: CharacterShard[]) => void} onToggle - Callback when a boon is toggled
  * @property {boolean} [readOnly] - When true, items are visible but not interactive
- * @property {string} [locale] - Content locale; component uses `useLocale()` internally and this prop is accepted for caller convenience
+ * @property {string} [locale] - Content locale; ignored because the component uses `useLocale()` internally
  */
 export interface BoonPickerProps {
   bloodlineSlug: string;
@@ -54,8 +49,8 @@ export interface BoonPickerProps {
 }
 
 /**
- * Boon picker panel. Fetches available boons for the bloodline, renders them as
- * toggle cards with tag-based tooltips, and shows an advisory budget meter.
+ * Boon picker panel. Fetches available boons for the bloodline and renders them
+ * as selectable cards with BP budget meter and search filtering.
  *
  * @component
  * @param {BoonPickerProps} props - Component props
@@ -64,8 +59,8 @@ export interface BoonPickerProps {
  * @param {number} props.boonBudget - Total boon point budget from the bloodline
  * @param {(boons: CharacterShard[]) => void} props.onToggle - Callback when a boon is toggled
  * @param {boolean} [props.readOnly=false] - When true, items are visible but not interactive
- * @param {string} [props.locale] - Content locale; component uses `useLocale()` internally and this prop is accepted for caller convenience
- * @returns {JSX.Element} Rendered boon picker
+ * @param {string} [props.locale] - Content locale; ignored because the component uses `useLocale()` internally
+ * @returns {JSX.Element} JSX tree
  */
 export const BoonPicker: React.FC<BoonPickerProps> = ({
   bloodlineSlug,

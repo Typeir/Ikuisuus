@@ -1,11 +1,9 @@
 /**
  * SCSS ESM Loader Hook
  *
- * @fileoverview Node.js ESM load hook that intercepts .scss and .module.scss
- * imports. Returns a Proxy default export so CSS module property access (e.g.
- * styles.container) returns the property name as a plain string. This allows
- * importing React components that depend on CSS modules in a Node/tsx script
- * context without a bundler.
+ * @fileoverview Node.js ESM load hook intercepting .scss imports. Returns a
+ * Proxy default export so CSS module property access returns the property name
+ * as a string.
  *
  * @module scripts/utils/scssLoader
  */
@@ -36,7 +34,7 @@ type NextLoad = (url: string, context?: LoadContext) => Promise<LoadReturn>;
 
 /**
  * ESM load hook — short-circuits .scss imports with a Proxy default export so
- * CSS class lookups return the property name rather than undefined.
+ * CSS class lookups return the property name.
  *
  * @param url Resolved module URL
  * @param context Load context object

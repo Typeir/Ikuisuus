@@ -1,8 +1,6 @@
 /**
- * @fileoverview Buff List Editor Component
- * @description Reusable component for managing buff lists (add/remove).
- * Simple text-based list with inline input field for adding new buffs.
- * Used in both CreatureRow (design mode) and PlayModeCombatantRow (play mode).
+ * @fileoverview Buff list editor component.
+ * @description Renders a text list of buffs with add/remove controls.
  *
  * @module buffListEditor
  * @version 1.0.0
@@ -29,11 +27,10 @@ import styles from '../creatureRow.module.scss';
 import btn from '@/styles/buttons.module.scss';
 
 /**
- * Props for BuffListEditor component
  * @interface BuffListEditorProps
  * @property {string[]} buffs - Current buff list
  * @property {Function} onChange - Callback when buff list changes
- * @property {boolean} [readOnly=false] - Whether editing is disabled
+ * @property {boolean} [readOnly=false] - Disables editing when true
  * @property {string} [addBuffLabel] - Placeholder for input field
  * @property {string} [removeChipAriaLabel] - Accessibility label for remove button
  */
@@ -46,8 +43,7 @@ interface BuffListEditorProps {
 }
 
 /**
- * Buff list editor with inline text input.
- * Displays buff chips and allows adding new buffs via input field.
+ * Renders buff chips with add/remove controls.
  *
  * @component
  * @param {BuffListEditorProps} props - Component props

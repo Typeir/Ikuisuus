@@ -1,6 +1,6 @@
 /**
- * @fileoverview Comprehensive unit tests for slain checkbox functionality
- * @description Tests slain checkbox behavior, styling, state persistence, and visual feedback
+ * @fileoverview Unit tests for the PlayModeCombatantRow slain checkbox.
+ * @description Covers checkbox rendering, toggle behavior, slain styling, state persistence, and accessibility.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Constants Unit Tests
- * @description Tests for file extension constants, regex patterns, and folder name enums
- * used throughout the codebase for content processing.
+ * @description Unit tests for file extension constants, regex patterns, and folder name enums.
  *
  * @module tests/unit/lib/enums/constants
  * @version 1.0.0

@@ -63,9 +63,6 @@ export function useSpellColumns(): ColumnConfig[] {
         key: 'range',
         label: tColumns('range'),
         getValue: (row: MetadataRow) => row.range ?? '—',
-        /* Sorting and filtering still see the native string; only the drawn
-           cell converts, so a reader on metres does not get a column sorted by
-           the text of a unit they never see. */
         render: (value: unknown) => <Measure text={String(value ?? '')} noLink />,
         sortable: true,
       },

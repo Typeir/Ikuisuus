@@ -25,7 +25,7 @@ vi.mock('@/lib/db/content/repositories/heirloomRepository', () => ({
   },
 }));
 
-/** Import after mock setup so vitest intercepts the module. */
+/** Imports the route module after the mock is registered. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 let HeirloomsRoute: typeof import('@/app/api/heirlooms/route');
 let heirloomRepository: HeirloomRepository;

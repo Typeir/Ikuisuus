@@ -1,11 +1,8 @@
 /**
- * @fileoverview Celestial Glow — Shared Radial Glow Sprite Factory
- * @description Creates a soft additive-blended glow sprite that can be attached to
- * any celestial body. Uses a procedural radial gradient CanvasTexture so no image
- * assets are needed. The texture is cached and shared across all instances.
- *
- * Also exports a generic radial-gradient texture factory used by StarRenderer
- * (corona glow) and GasGiantRenderer (atmospheric haze).
+ * @fileoverview Shared radial glow sprite factory.
+ * @description Creates additive-blended glow sprites from a procedural radial
+ * gradient CanvasTexture. Texture is cached across instances. Also exports a
+ * radial-gradient texture factory used by StarRenderer and GasGiantRenderer.
  *
  * @module worldSim/celestials/CelestialGlow
  * @version 1.1.0
@@ -113,8 +110,7 @@ function getGlowTexture(): CanvasTexture {
 }
 
 /**
- * Create a glow sprite for a celestial body. The sprite uses additive blending
- * so it brightens whatever is behind it, giving a soft halo effect.
+ * Create a glow sprite for a celestial body with additive blending.
  *
  * @function createCelestialGlow
  * @param {number} radius - Body radius in scene units (used to scale the sprite)

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Chip Primitive Tests
- * @description Smoke tests for label rendering, variant class application,
- * remove handler, and click handler.
+ * @description Smoke tests for label rendering, click handler, and remove handler.
  *
  * @module tests/unit/src/lib/components/ui/chip/chip.test
  */

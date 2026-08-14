@@ -1,14 +1,11 @@
 /**
- * Common timing constants for UI behavior (milliseconds)
-/**
- * @fileoverview Common timing constants for UI behavior (milliseconds)
+ * @fileoverview Timing constants for UI behavior, in milliseconds.
  * @module src/lib/constants/delays
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0
  *
- * Consolidates small timeout/delay constants used across UI components so they
- * can be referenced from a single place and tested.
+ * Shared timeout/delay constants used across UI components.
  */
 
 /**

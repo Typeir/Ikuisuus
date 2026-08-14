@@ -1,13 +1,7 @@
 /**
- * @fileoverview MikroORM Entity Reflection Utilities
- * @description Pure functions for converting between MikroORM entity instances
- * and plain JS records, driven entirely by decorator-derived metadata. No field
- * names are hardcoded — the `MetadataStorage` produced by `orm.getMetadata()`
- * is the sole source of truth for property names, kinds, and embedded types.
- *
- * Both functions are intentionally stateless and accept `MetadataStorage` as an
- * explicit argument so they remain pure and testable without an active ORM
- * connection. Callers initialise the ORM once and pass `orm.getMetadata()`.
+ * @fileoverview MikroORM entity reflection utilities.
+ * @description Converts MikroORM entity instances to and from plain records
+ * using the property metadata from `orm.getMetadata()`.
  *
  * @module lib/db/orm/reflect
  * @version 1.0.0
@@ -24,9 +18,7 @@ import type { MetadataStorage } from '@mikro-orm/core';
 import { ReferenceKind } from '@mikro-orm/core';
 
 /**
- * Property kinds that represent cross-entity associations.
- * These are always skipped by both converters — callers handle relation
- * payloads explicitly after the base record is built.
+ * Cross-entity association property kinds. Skipped by both converters.
  */
 const RELATION_KINDS = new Set<ReferenceKind>([
   ReferenceKind.MANY_TO_ONE,
@@ -36,9 +28,8 @@ const RELATION_KINDS = new Set<ReferenceKind>([
 ]);
 
 /**
- * Default skip set for `entityToRecord` when building content hash payloads.
- * Excludes the synthetic `id` PK, the multi-tenancy `locale` discriminator,
- * and the `versionHash` field itself (the hash must not include its own value).
+ * Default skip set for `entityToRecord` content hash payloads.
+ * Excludes `id`, `locale`, and `versionHash`.
  */
 export const HASH_SKIP: ReadonlySet<string> = new Set([
   'id',
@@ -47,15 +38,11 @@ export const HASH_SKIP: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Converts a loaded MikroORM entity instance to a plain JS record by iterating
- * the decorator-derived property metadata for `className`.
+ * Converts a loaded MikroORM entity instance to a plain JS record using the
+ * property metadata for `className`.
  *
- * Traversal rules:
- * - Primary-key properties are always omitted.
- * - Properties whose names appear in `skip` are omitted.
- * - Relation properties (1:m, m:1, m:n, 1:1) are omitted.
- * - Embedded value-object properties are recursed using the embedded class name.
- * - All remaining scalar properties are copied by value.
+ * Omits primary-key, relation, and `skip`-listed properties; recurses embedded
+ * value objects; copies remaining scalars by value.
  *
  * @param {MetadataStorage} allMeta - Full ORM metadata storage from `orm.getMetadata()`
  * @param {object} entity - Loaded entity instance (or embedded VO instance)
@@ -97,17 +84,11 @@ export function entityToRecord(
 }
 
 /**
- * Builds a MikroORM `em.create()` init payload from a plain JSON record by
- * iterating the decorator-derived property metadata for `className`.
+ * Builds a MikroORM `em.create()` init payload from a plain JSON record using
+ * the property metadata for `className`.
  *
- * Only properties that are present as keys in `record` are written to the init
- * object, so entity default values apply for absent fields. Primary-key and
- * relation properties are never written; the caller adds FK references manually
- * before passing to `em.create`.
- *
- * Embedded value objects in the record are recursed using the metadata for the
- * embedded class, producing a nested plain object that MikroORM accepts
- * directly in `em.create`.
+ * Writes only keys present in `record`; omits primary-key and relation
+ * properties; recurses embedded value objects.
  *
  * @param {MetadataStorage} allMeta - Full ORM metadata storage from `orm.getMetadata()`
  * @param {string} className - Target entity or embeddable class name

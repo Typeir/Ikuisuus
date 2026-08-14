@@ -1,7 +1,6 @@
 /**
  * @fileoverview Aspects Component Tests
- * @description Covers the pill row, the density threshold that turns it into a
- * carousel, and the accessibility contract that holds in every display mode.
+ * @description Covers rendering, density threshold carousel compression, and accessibility.
  *
  * @module tests/unit/src/modules/library/presentation/components/Aspects/Aspects
  * @version 1.0.0
@@ -62,8 +61,7 @@ describe('Aspects', () => {
   });
 
   /**
-   * The full aspect is the accessible name in every mode — an icon that
-   * announces nothing is a regression over a pill.
+   * Each pill's accessible name is its full aspect.
    */
   it('should name every pill with its full aspect', () => {
     render(<Aspects aspects={['save:dex']} />);
@@ -88,7 +86,7 @@ describe('Aspects', () => {
     expect(screen.queryByText('14')).not.toBeInTheDocument();
   });
 
-  /** Past the threshold the row compresses, and the count stands in for it. */
+  /** Past the density threshold the row compresses and shows a count. */
   it('should compress into a carousel past the density threshold', () => {
     const aspects = Array.from({ length: 15 }, (_, i) => `save:s${i}`);
     render(<Aspects aspects={aspects} />);
@@ -98,8 +96,7 @@ describe('Aspects', () => {
   });
 
   /**
-   * A control that cannot write anywhere is worse than no control: it invites a
-   * click and answers with nothing. Outside a provider it must be absent.
+   * The expand toggle is absent when there is no provider to write to.
    */
   it('should omit the expand toggle when there is no provider to write to', () => {
     const aspects = Array.from({ length: 15 }, (_, i) => `save:s${i}`);
@@ -120,7 +117,7 @@ describe('Aspects', () => {
     expect(toggle).toHaveAttribute('aria-pressed', 'false');
   });
 
-  /** Expansion is global, so the toggle writes the document root, not a class. */
+  /** Writing the toggle sets data-aspect-expanded on the document root. */
   it('should stamp the document root and flip its label when pressed', async () => {
     const user = userEvent.setup({ delay: null });
     const aspects = Array.from({ length: 15 }, (_, i) => `save:s${i}`);
@@ -146,8 +143,7 @@ describe('Aspects', () => {
   });
 
   /**
-   * This is the path `remarkAspects` produces: the plugin emits a section key and
-   * the row resolves its own aspects from the article metadata.
+   * Resolves aspects from article metadata by section key.
    */
   it('should read its aspects from the article metadata by section', () => {
     render(
@@ -175,7 +171,7 @@ describe('Aspects', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  /** An explicit list is an authored override and wins over the lookup. */
+  /** An explicit list overrides the section lookup. */
   it('should prefer an explicit list over the section lookup', () => {
     render(
       <ArticleMetadataProvider

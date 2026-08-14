@@ -40,8 +40,7 @@ interface MetaProps {
 /**
  * Renders an invisible `<span>` carrying metadata as `data-*` attributes.
  * The generator's regex parser extracts `<Meta>` from raw MDX at build time;
- * this component ensures the rendered HTML also retains the directive data
- * for inspection and downstream tooling.
+ * this component renders the directive data as `data-*` attributes.
  *
  * @component Meta
  * @param {MetaProps} props - Meta attributes

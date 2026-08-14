@@ -1,21 +1,10 @@
 /**
- * Tools Menu Component
- *
- * @fileoverview Button-triggered dropdown menu for sidebar tools navigation,
- * following the ARIA menu button pattern.
- *
- * Focus moves into the menu when it opens and rides the active item, so the
- * item a keyboard or screen-reader user is on is the focused element rather
- * than a purely visual highlight. Dismissal is handled for every route out of
- * the menu: pointer press outside, Escape, Tab, and focus leaving by any other
- * means. Escape and selection return focus to the trigger; dismissals that
- * move focus elsewhere leave it where the user put it.
- *
- * Every item is an anchor carrying its own `href`, wrapped in a presentational
- * `<li>`. Menu items that navigate must be links, or middle-click, ctrl-click,
- * "open in new tab" and the link role are all lost. `onSelect` fires only for
- * an unmodified left click or a keyboard activation; the browser keeps every
- * other gesture.
+ * @fileoverview Button-triggered dropdown menu for sidebar tools navigation (ARIA menu button pattern).
+ * Focus enters the list on open and follows the active item. Closes on pointer
+ * press outside, Escape, Tab, or focus leaving; Escape and selection return
+ * focus to the trigger, other dismissals leave focus where it is.
+ * Items are anchors with their own `href` in presentational `<li>`s. `onSelect`
+ * fires only on unmodified left click or keyboard activation.
  *
  * @component ToolsMenu
  * @version 4.0.0

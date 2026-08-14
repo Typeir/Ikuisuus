@@ -1,9 +1,7 @@
 /**
- * @fileoverview SEO module barrel export.
- *
- * Re-exports the public API of the `src/lib/seo/` module. Provides
- * utilities for building Next.js Metadata objects targeting Open Graph
- * and Twitter Card social previews for library content pages.
+ * @fileoverview Barrel export for the `src/lib/seo/` module.
+ * Re-exports utilities for building Next.js Metadata objects for Open Graph
+ * and Twitter Card social previews.
  *
  * @module lib/seo
  * @version 1.0.0

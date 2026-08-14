@@ -1,7 +1,6 @@
 /**
  * @fileoverview Equipment Context
- * @description Lightweight React context that exposes derived equipment
- * totals to all children of the Equipment Tab without prop-drilling.
+ * @description React context exposing derived equipment totals.
  *
  * @module lib/components/characterSheet/context/equipmentContext
  * @version 1.0.0

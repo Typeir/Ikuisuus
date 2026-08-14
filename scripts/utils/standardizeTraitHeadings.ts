@@ -1,8 +1,6 @@
 /**
- * Monster Trait Heading Standardizer
- *
  * @fileoverview Normalizes trait and action headings in monster stat block files.
- * Converts inconsistent markdown formats to standardized H4/H5 headings.
+ * Converts markdown headings to H4/H5.
  *
  * @module standardizeTraitHeadings
  * @version 1.0.0
@@ -23,14 +21,14 @@ const log = createLogger({ script: 'standardizeTraitHeadings' });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-/** Path to the monsters content directory. */
+/** Absolute path to the monsters content directory. */
 const MONSTERS_DIR = path.join(__dirname, '../../src/content/en/monsters');
 
 /**
- * Processes a single monster file to standardize trait headings.
+ * Standardizes trait headings in a single monster file.
  *
  * @param filePath - Absolute path to the .sheet.mdx file
- * @returns The processed file content with standardized headings
+ * @returns The processed file content
  */
 async function standardizeFile(filePath: string): Promise<string> {
   const content = await fs.readFile(filePath, 'utf-8');

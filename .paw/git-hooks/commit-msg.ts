@@ -3,13 +3,8 @@
 /**
  * Commit Message Format Validator
  *
- * @fileoverview Validates commit message format
- * Requires format: [action]: imperative text
- * Examples:
- *   [fix]: resolve authentication issue
- *   [feat]: add new export modal
- *   [TICKET-123]: implement feature request
- *   [dirty]: quick test commit
+ * @fileoverview Validates commit message format.
+ * Requires "[action]: imperative text", e.g. "[fix]: resolve issue".
  *
  * @module .github/PAW/git-hooks/commit-msg
  * @author Typeir

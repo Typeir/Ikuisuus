@@ -1,7 +1,7 @@
 /**
- * @fileoverview Generic Modal Component
- * @description Reusable desktop modal with focus trap, keyboard navigation,
- * and backdrop. Renders to portal for proper z-index stacking. Centered on screen.
+ * @fileoverview Modal component.
+ * @description Renders a modal to document.body via portal with focus management,
+ * keyboard navigation, and backdrop.
  *
  * @module ui/modal/modal
  * @version 1.0.0
@@ -19,13 +19,13 @@ import { useModalA11y } from './useModalA11y';
 
 /**
  * @interface ModalProps
- * Configuration for generic modal
+ * Modal configuration.
  * @property {boolean} isOpen - Whether modal is visible
- * @property {() => void} onClose - Callback when modal should close (Escape key, backdrop click)
+ * @property {() => void} onClose - Called when the modal closes (Escape key, backdrop click)
  * @property {ReactNode} children - Modal content
- * @property {string} [title] - Optional modal title/header text
- * @property {ReactNode} [header] - Optional custom header element (takes precedence over title)
- * @property {boolean} [showCloseButton=true] - Whether to show X button
+ * @property {string} [title] - Title/header text
+ * @property {ReactNode} [header] - Custom header element; takes precedence over title
+ * @property {boolean} [showCloseButton=true] - Whether to render the X button
  * @property {string} [ariaLabel] - Accessible label for screen readers
  * @property {string} [className] - Additional CSS classes for modal content
  * @property {string} [overlayClassName] - Additional CSS classes for overlay
@@ -43,8 +43,8 @@ export interface ModalProps {
 }
 
 /**
- * Generic modal component with focus management and keyboard navigation.
- * Renders to document.body via portal for proper modal stacking.
+ * Modal component with focus management and keyboard navigation.
+ * Renders to document.body via portal.
  *
  * @component
  * @param {ModalProps} props - Modal configuration

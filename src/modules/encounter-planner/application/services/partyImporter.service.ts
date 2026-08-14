@@ -21,8 +21,6 @@ import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 /**
  * Create a minimal InProgressCombatant from a party member name.
  * Party members have no HP, AC, stats, or mechanics — only name, initiative, and slain toggle.
- * When an optional CharacterSheet is provided, its HP, AC, ability scores,
- * initiative bonus, and tier bonus are seeded into the combatant.
  *
  * @function createPartyMemberCombatant
  * @param {string} name - Character name

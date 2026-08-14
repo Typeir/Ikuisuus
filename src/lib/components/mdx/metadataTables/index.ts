@@ -1,7 +1,6 @@
 /**
- * @fileoverview Metadata table component exports - interactive data browsing system.
- * @description Provides filterable, sortable, paginated tables for structured content.
- * Includes generic MetadataTable component for client-side data display.
+ * @fileoverview Re-exports the metadata table component and its types.
+ * @description Exports MetadataTable, MetadataRow, and ColumnConfig from metadataTable.
  * 
  * @module MetadataTable
  * @version 1.0.0

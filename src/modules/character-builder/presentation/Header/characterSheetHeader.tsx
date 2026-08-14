@@ -1,9 +1,8 @@
 /**
  * @fileoverview Character Sheet Header
- * @description Sticky header for the character sheet. Renders the character
- * name (editable in edit mode), the level/XP meta, the compact
- * `<VocationSelector>` (selectors only — boon picker is relegated to the
- * Bloodline tab), the BP counter, and the edit/save/cancel button group.
+ * @description Sticky character-sheet header. Renders character name
+ * (editable in edit mode), level/XP meta, `<VocationSelector>` selectors only,
+ * a BP counter, and edit/save/cancel buttons.
  *
  * @module lib/components/characterSheet/characterSheetHeader
  * @version 1.0.0
@@ -39,8 +38,8 @@ import { VocationSelector } from '../builder/vocationSelector';
 import styles from './characterSheetHeader.module.scss';
 
 /**
- * Sticky character-sheet header. Reads the character, edit mode, and the whole
- * write API from the active-sheet context.
+ * Sticky character-sheet header. Reads character, edit mode, and write API
+ * from the active-sheet context.
  *
  * @component
  * @returns {JSX.Element} Rendered header

@@ -1,15 +1,11 @@
 /**
  * Reusable Region Parser
  *
- * @fileoverview Pure parser for reusable MDX regions. A file opts in with
- * `reusable: true` in its frontmatter, then either marks named regions with
- * paired `reusable:start <name>` and `reusable:end` MDX comments, or exposes
- * its whole body with the title heading and flavour lede removed.
- *
- * Headings inside a region are normalised so the region's own shallowest
- * heading sits at level 1, then shifted down by the declared offset when
- * embedded. This keeps a region's internal structure while letting the host
- * document own the outline.
+ * @fileoverview Parses reusable MDX regions. A file opts in with
+ * `reusable: true` in frontmatter, then marks named regions with paired
+ * `reusable:start <name>` and `reusable:end` MDX comments, or exposes its
+ * whole body with the title heading and lede removed. Headings are
+ * normalised to start at level 1, then shifted by the heading offset.
  *
  * @module lib/content/reusable/parseReusableRegions
  * @version 1.0.0
@@ -53,8 +49,6 @@ export interface ParsedReusable {
 
 /**
  * Reads the `reusable` and `headingOffset` keys out of raw frontmatter.
- * Deliberately minimal: this runs against every content file, so it avoids
- * pulling in a YAML parser for two scalar lookups.
  *
  * @param {string} raw - The full document source
  * @returns {{ isReusable: boolean; headingOffset: number }} The parsed flags
@@ -90,12 +84,7 @@ function stripFrontmatter(raw: string): string {
 }
 
 /**
- * Removes the document's title heading and flavour lede.
- *
- * A content file leads with an H1 and a paragraph of flavour, separated from
- * the mechanical body by a thematic break. Neither belongs in a reused
- * fragment: the host already has a title, and the lede reads as an
- * interruption mid-page.
+ * Removes the document's title heading and lede paragraph.
  *
  * @param {string} body - Document body with frontmatter already removed
  * @returns {string} The body from the mechanical content onward
@@ -122,7 +111,7 @@ function stripTitleAndLede(body: string): string {
 /**
  * Extracts every named region delimited by start and end markers.
  * An unterminated region is ignored rather than swallowing the rest of the
- * file, so a typo degrades to "no region" instead of corrupting the output.
+ * file.
  *
  * @param {string} body - Document body with frontmatter already removed
  * @returns {Record<string, string>} Region sources keyed by name
@@ -155,10 +144,8 @@ function extractNamedRegions(body: string): Record<string, string> {
 
 /**
  * Normalises heading levels within a region and applies an embedding offset.
- *
- * The shallowest heading present becomes level 1 before the offset is added,
- * so a region lifted from deep in a document does not carry that depth with
- * it. Relative structure between headings is preserved.
+ * The shallowest heading becomes level 1 before the offset is added; relative
+ * structure between headings is preserved.
  *
  * @param {string} source - Region source
  * @param {number} offset - Levels to shift down once normalised

@@ -13,7 +13,7 @@ import type {
 import { Object3D, PerspectiveCamera, Points, Scene } from 'three';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-/** Mock CelestialGlow to avoid canvas dependency */
+/** Mock CelestialGlow */
 vi.mock('@/modules/world-sim/infrastructure/effects/CelestialGlow', () => ({
   createCelestialGlow: () => {
     const { Object3D } = require('three');

@@ -2,8 +2,7 @@
  * @fileoverview Dynamic MDX content page for the library.
  * @module app/[locale]/library/[...slug]/page
  *
- * The rendering itself lives in `<LibraryContent>`, shared with the embed route
- * at `/{locale}/embed/[...slug]`. This route supplies the full wiki chrome.
+ * Renders `<LibraryContent>` and supplies the full wiki chrome.
  * @author Typeir
  * @version 2.0.0
  * @since 2.0.0
@@ -21,9 +20,7 @@ import type { JSX } from 'react';
 const log = logger.child({ module: 'LibraryPage' });
 
 /**
- * Generates all static params for dynamic `[...slug]` route.
- *
- * Next.js uses this at build time to statically generate all MDX pages.
+ * Generates all static params for the dynamic `[...slug]` route.
  *
  * @returns {Promise<Array<{ slug: string[] }>>} Array of slug params.
  */

@@ -17,11 +17,8 @@ import {
 import { describe, expect, it } from 'vitest';
 
 /**
- * `importAllAsync` pulls eight ESM packages — the evaluator, four remark
- * plugins and two rehype ones — in parallel. That is a real second or two of
- * module loading on an idle machine and several under load, so this test is
- * given a budget that reflects what it measures rather than the default five
- * seconds, which it crossed only when other suites were competing for CPU.
+ * Timeout for `importAllAsync`, which loads eight ESM packages in parallel.
+ * Exceeds Vitest's default 5s budget for loaded module count.
  */
 const MODULE_LOAD_TIMEOUT_MS = 30_000;
 

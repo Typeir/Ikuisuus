@@ -1,9 +1,7 @@
 /**
- * @fileoverview Page Preview Tooltip
- * @description Small icon button rendered next to combobox options and identity
- * pills. On hover, shows a `<Tooltip>` with the entity title; on click, toggles
- * a shared `<Draggable>` iframe (managed by `PagePreviewProvider`) that loads
- * the library page for the entity.
+ * @fileoverview Icon button that shows a `<Tooltip>` with the entity title on
+ * hover and toggles a shared `<Draggable>` iframe via `PagePreviewProvider` on
+ * click.
  *
  * @module lib/components/characterSheet/pagePreviewTooltip
  * @version 1.0.0
@@ -39,8 +37,8 @@ export interface PagePreviewTooltipProps {
 }
 
 /**
- * Icon button that hover-shows a tooltip and click-toggles a draggable
- * library-page preview managed by the surrounding `PagePreviewProvider`.
+ * Tab toggles a draggable library-page preview managed by the surrounding
+ * `PagePreviewProvider`.
  *
  * @component
  * @param {PagePreviewTooltipProps} props - Component props

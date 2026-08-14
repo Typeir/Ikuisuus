@@ -1,11 +1,8 @@
 /**
  * SWR Cache Key Builders
  *
- * @fileoverview Typed SWR cache key builder functions for every data resource
- * in the application. Each builder returns a `readonly` tuple that SWR uses as
- * the cache key, or `null` to opt out of fetching when the resource is
- * disabled. Co-locates the corresponding URL builders so callers never
- * construct API URLs by hand.
+ * @fileoverview Typed SWR cache key builder functions. Each builder returns a
+ * `readonly` tuple or `null` to skip fetching. Co-locates URL builders.
  *
  * @module lib/fetch/swrKeys
  * @version 1.0.0
@@ -13,12 +10,9 @@
  * @since 1.0.0
  *
  * @description
- * Key tuples follow the convention `[resourceName, ...params]`.
- * All builder functions that accept an `enabled` parameter return `null` when
- * `enabled` is `false` or `undefined`, signalling SWR to skip the request.
- *
- * URL builders follow the convention `urlFor{Resource}(params)` and are used
- * exclusively by the hook fetcher closures, not by components.
+ * Key tuples follow `[resourceName, ...params]`. Builders with an `enabled`
+ * parameter return `null` when `enabled` is falsy. URL builders follow
+ * `urlFor{Resource}(params)`.
  *
  * @example
  * // In a hook:

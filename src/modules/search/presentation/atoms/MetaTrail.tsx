@@ -1,8 +1,7 @@
 /**
  * @fileoverview Meta Trail Atom
- * @description Renders matched metadata as a terminal-style tag list:
- * `>:/// TAGS:` prefix, each tag in its own container with bottom border,
- * all caps, mono font, slightly transparent.
+ * @description Renders matched metadata as uppercase tags with `//>: TAGS:`
+ * prefix, capped at 8 tags.
  *
  * @module modules/search/presentation/atoms/MetaTrail
  * @version 2.0.0
@@ -30,7 +29,7 @@ interface MetaTrailProps {
 }
 
 /**
- * Renders a terminal-style tag list from metadata fields.
+ * Renders matched metadata as uppercase tags.
  *
  * @param {MetaTrailProps} props - Component props
  * @param {Record<string, string | number>} [props.meta] - Metadata key-value pairs

@@ -1,9 +1,8 @@
 /**
  * DraftRepository Factory Unit Tests
  *
- * @fileoverview Tests for the draft repository factory export.
- * Verifies that the factory resolves to the pgDraftRepository since
- * drafts are always PG-backed (no filesystem adapter).
+ * @fileoverview Tests the draft repository factory export resolves
+ * to pgDraftRepository.
  *
  * @module tests/unit/lib/db/content/repositories/draftRepository
  */

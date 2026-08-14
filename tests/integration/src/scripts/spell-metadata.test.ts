@@ -1,9 +1,7 @@
 /**
  * Spell Metadata Generator Integration Tests
  *
- * @fileoverview Integration tests for the spell metadata extraction system.
- * Tests parsing of D&D spells including cantrips, leveled spells, and legendary
- * spells with various casting times, components, and special mechanics.
+ * @fileoverview Integration tests for spell metadata extraction.
  *
  * @module tests/integration/spell-metadata
  * @version 1.0.0
@@ -37,20 +35,15 @@ const FIXTURES_DIR = path.resolve(process.cwd(), 'tests/fixtures/spells');
 let sharedData: unknown;
 
 describe('Spell Metadata Generator', () => {
-  /**
-   * Load shared data once before running tests
-   * This mimics the production behavior where shared data is loaded at generator startup
-   */
+  /** Loads shared data once before the test suite runs. */
   beforeAll(async () => {
     sharedData = await loadSharedData();
   });
 
   describe('Dual Casting Time Spell Parsing', () => {
     /**
-     * Tests spell with action or reaction casting time
-     *
-     * @description Validates parsing of spells that can be cast as either
-     * an action or reaction (e.g., "1 action or reaction")
+     * Parses a spell with action-or-reaction casting time.
+     * @description Asserts the resulting spell title is 'Forbidden Sun'.
      */
     it('should parse a legendary spell with dual casting time', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -61,9 +54,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests spell level extraction
-     *
-     * @description Validates parsing of spell level from header
+     * Extracts spell level.
+     * @description Asserts parsed level is 5.
      */
     it('should extract spell level (5th)', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -73,9 +65,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests spell school extraction
-     *
-     * @description Validates parsing of spell school (Evocation, Abjuration, etc.)
+     * Extracts spell school.
+     * @description Asserts parsed school is 'Evocation'.
      */
     it('should extract spell school', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -85,9 +76,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests legendary quality extraction
-     *
-     * @description Validates parsing of spell quality (Legendary, Epic, Mythic)
+     * Extracts spell quality (Legendary, Epic, Mythic).
+     * @description Asserts parsed quality is 'Legendary'.
      */
     it('should extract legendary quality', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -97,10 +87,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests casting time array extraction
-     *
-     * @description Validates that castingTime is parsed as an array
-     * containing both 'action' and 'reaction'
+     * Parses casting time into an array.
+     * @description Asserts castingTime contains both 'action' and 'reaction'.
      */
     it('should extract casting time as array with both action and reaction', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -113,9 +101,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests raw casting time preservation
-     *
-     * @description Validates that the original casting time text is preserved
+     * Preserves original casting time text.
+     * @description Asserts castingTimeRaw contains both 'action' and 'reaction'.
      */
     it('should preserve raw casting time text', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -127,9 +114,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests concentration detection
-     *
-     * @description Validates detection of concentration requirement
+     * Detects concentration requirement.
+     * @description Asserts concentration is true.
      */
     it('should detect concentration requirement', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -139,9 +125,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests component extraction
-     *
-     * @description Validates parsing of spell components (V, S, M)
+     * Parses spell components (V, S, M).
+     * @description Asserts the somatic flag is true.
      */
     it('should extract somatic component', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -153,9 +138,8 @@ describe('Spell Metadata Generator', () => {
 
   describe('Cantrip Parsing', () => {
     /**
-     * Tests cantrip (level 0) spell extraction
-     *
-     * @description Validates parsing of cantrips which have special formatting
+     * Parses a cantrip (level 0) spell.
+     * @description Asserts the resulting spell title is 'Lesser Mooncleave'.
      */
     it('should parse a cantrip spell', async () => {
       const filePath = path.join(FIXTURES_DIR, 'cantrip.mdx');
@@ -166,9 +150,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests cantrip level detection
-     *
-     * @description Validates that cantrips are identified as level 0
+     * Identifies cantrip level.
+     * @description Asserts parsed level is 0.
      */
     it('should identify as cantrip (level 0)', async () => {
       const filePath = path.join(FIXTURES_DIR, 'cantrip.mdx');
@@ -178,9 +161,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests simple casting time extraction
-     *
-     * @description Validates parsing of single-action casting time
+     * Extracts a single action casting time.
+     * @description Asserts castingTime contains 'action'.
      */
     it('should extract action casting time', async () => {
       const filePath = path.join(FIXTURES_DIR, 'cantrip.mdx');
@@ -191,9 +173,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests verbal component detection
-     *
-     * @description Validates detection of verbal component
+     * Detects verbal component.
+     * @description Asserts the verbal flag is true.
      */
     it('should detect verbal component', async () => {
       const filePath = path.join(FIXTURES_DIR, 'cantrip.mdx');
@@ -204,9 +185,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests no concentration for cantrip
-     *
-     * @description Validates cantrips without concentration
+     * Verifies cantrip has no concentration.
+     * @description Asserts concentration is false.
      */
     it('should have no concentration', async () => {
       const filePath = path.join(FIXTURES_DIR, 'cantrip.mdx');
@@ -218,9 +198,8 @@ describe('Spell Metadata Generator', () => {
 
   describe('High-Level Concentration Spell Parsing', () => {
     /**
-     * Tests 9th-level spell extraction
-     *
-     * @description Validates parsing of the highest level spells
+     * Parses a 9th-level spell.
+     * @description Asserts title is 'True Light' and level is 9.
      */
     it('should parse a 9th-level spell', async () => {
       const filePath = path.join(FIXTURES_DIR, 'high-level-concentration.mdx');
@@ -232,9 +211,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests legendary quality at high level
-     *
-     * @description Validates legendary quality detection for high-level spells
+     * Extracts legendary quality at high level.
+     * @description Asserts parsed quality is 'Legendary'.
      */
     it('should extract legendary quality', async () => {
       const filePath = path.join(FIXTURES_DIR, 'high-level-concentration.mdx');
@@ -244,9 +222,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests concentration spell at high level
-     *
-     * @description Validates concentration detection for sustained spells
+     * Detects concentration at high level.
+     * @description Asserts concentration is true.
      */
     it('should detect concentration requirement', async () => {
       const filePath = path.join(FIXTURES_DIR, 'high-level-concentration.mdx');
@@ -256,9 +233,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests component extraction for this spell
-     *
-     * @description Validates parsing of V, S components (no material in this fixture)
+     * Parses components.
+     * @description Asserts verbal and somatic are true and material is falsy.
      */
     it('should extract components correctly', async () => {
       const filePath = path.join(FIXTURES_DIR, 'high-level-concentration.mdx');
@@ -271,9 +247,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests duration extraction for concentration spells
-     *
-     * @description Validates parsing of concentration duration
+     * Extracts duration for concentration spells.
+     * @description Asserts duration contains '10 minutes'.
      */
     it('should extract duration', async () => {
       const filePath = path.join(FIXTURES_DIR, 'high-level-concentration.mdx');
@@ -286,9 +261,8 @@ describe('Spell Metadata Generator', () => {
 
   describe('Reaction Spell Parsing', () => {
     /**
-     * Tests reaction-only spell extraction
-     *
-     * @description Validates parsing of spells that can only be cast as reactions
+     * Parses a reaction-only spell.
+     * @description Asserts the resulting spell title is 'Shield Spell'.
      */
     it('should parse a reaction spell', async () => {
       const filePath = path.join(FIXTURES_DIR, 'reaction-spell.mdx');
@@ -300,9 +274,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests 1st-level spell detection
-     *
-     * @description Validates parsing of 1st-level spell
+     * Detects 1st-level spell.
+     * @description Asserts parsed level is 1.
      */
     it('should identify as 1st-level', async () => {
       const filePath = path.join(FIXTURES_DIR, 'reaction-spell.mdx');
@@ -312,9 +285,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests abjuration school detection
-     *
-     * @description Validates parsing of Abjuration school
+     * Extracts abjuration school.
+     * @description Asserts parsed school is 'Abjuration'.
      */
     it('should extract abjuration school', async () => {
       const filePath = path.join(FIXTURES_DIR, 'reaction-spell.mdx');
@@ -324,9 +296,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests reaction-only casting time
-     *
-     * @description Validates that reaction is the only casting time
+     * Extracts reaction-only casting time.
+     * @description Asserts castingTime contains 'reaction'.
      */
     it('should extract reaction casting time', async () => {
       const filePath = path.join(FIXTURES_DIR, 'reaction-spell.mdx');
@@ -337,9 +308,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests instantaneous duration
-     *
-     * @description Validates detection of instantaneous duration
+     * Detects instantaneous duration.
+     * @description Asserts duration contains 'round'.
      */
     it('should have instantaneous duration', async () => {
       const filePath = path.join(FIXTURES_DIR, 'reaction-spell.mdx');
@@ -349,9 +319,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests non-concentration spell
-     *
-     * @description Validates that instantaneous spells don't require concentration
+     * Verifies spell requires no concentration.
+     * @description Asserts concentration is false.
      */
     it('should not require concentration', async () => {
       const filePath = path.join(FIXTURES_DIR, 'reaction-spell.mdx');
@@ -363,10 +332,8 @@ describe('Spell Metadata Generator', () => {
 
   describe('Tag Generation', () => {
     /**
-     * Tests automatic tag generation for spells
-     *
-     * @description Validates that tags are generated based on spell level,
-     * school, damage types, conditions, and mechanics
+     * Generates tags for a spell.
+     * @description Tags derive from spell level, school, damage types, conditions, and mechanics.
      */
     it('should generate appropriate tags', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -378,9 +345,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests level tag generation
-     *
-     * @description Validates level is included in tags
+     * Includes a level tag.
+     * @description Asserts a tag starting with 'level:' exists.
      */
     it('should include level tag', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -393,9 +359,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests school tag generation
-     *
-     * @description Validates school is included in tags
+     * Includes a school tag.
+     * @description Asserts a tag starting with 'school:' or containing 'evocation' exists.
      */
     it('should include school tag', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -409,9 +374,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests quality tag for legendary spells
-     *
-     * @description Validates quality tag for legendary/epic/mythic spells
+     * Includes a quality tag for legendary spells.
+     * @description Asserts a tag starting with 'quality:' or containing 'legendary' exists.
      */
     it('should include quality tag for legendary spell', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -425,9 +389,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests concentration mechanic tag
-     *
-     * @description Validates concentration is included in tags
+     * Includes a concentration tag.
+     * @description Asserts tags contain 'tempo:sustained'.
      */
     it('should include concentration tag when applicable', async () => {
       const filePath = path.join(FIXTURES_DIR, 'high-level-concentration.mdx');
@@ -437,9 +400,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests reaction mechanic tag
-     *
-     * @description Validates reaction is included in tags for reaction spells
+     * Includes a reaction tag.
+     * @description Asserts tags contain 'tempo:reactive'.
      */
     it('should include reaction tag for reaction spells', async () => {
       const filePath = path.join(FIXTURES_DIR, 'reaction-spell.mdx');
@@ -451,9 +413,8 @@ describe('Spell Metadata Generator', () => {
 
   describe('Slug Generation', () => {
     /**
-     * Tests slug generation from file path
-     *
-     * @description Validates that slugs are correctly generated from filenames
+     * Generates a slug from the filename.
+     * @description Asserts slug equals 'dual-casting-time'.
      */
     it('should generate correct slug from filename', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -464,9 +425,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests file path is included in metadata
-     *
-     * @description Validates the source file path is stored in metadata
+     * Stores source file path in metadata.
+     * @description Asserts file contains 'dual-casting-time.mdx'.
      */
     it('should include file path in metadata', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -479,12 +439,8 @@ describe('Spell Metadata Generator', () => {
 
   describe('Range Extraction', () => {
     /**
-     * Tests range extraction for spells
-     *
-     * @description Validates parsing of spell range. The fixture states
-     * `120 feet`, one of the few authoring slips left in imperial, so the
-     * stored value is the converted native measure rather than the source
-     * quantity.
+     * Extracts spell range.
+     * @description Asserts range equals the converted native measure '24 stride' (source is 120 feet).
      */
     it('should extract range for targeted spells', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
@@ -494,9 +450,8 @@ describe('Spell Metadata Generator', () => {
     });
 
     /**
-     * Tests self range for personal spells
-     *
-     * @description Validates detection of Self range
+     * Extracts self range for personal spells.
+     * @description Asserts range contains 'self'.
      */
     it('should extract self range for personal spells', async () => {
       const filePath = path.join(FIXTURES_DIR, 'reaction-spell.mdx');

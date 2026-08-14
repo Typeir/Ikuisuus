@@ -1,7 +1,7 @@
 /**
  * @fileoverview Monster Feature Generator Integration Tests
- * @description Tests the end-to-end feature extraction pipeline by feeding
- * real-format MDX content through the classifier and extractors.
+ * @description Runs the section classifier and feature extractors against
+ * sample MDX content.
  *
  * @module tests/unit/scripts/metadata/generateFeatureMetadata.test
  */

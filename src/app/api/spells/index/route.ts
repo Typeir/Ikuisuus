@@ -1,7 +1,6 @@
 /**
- * @fileoverview Spell Index API Route - Lightweight spell list for dropdown search
- * @description Returns minimal spell data for efficient dropdown/combobox search.
- * Only includes slug, title, level, and school fields to minimize payload size.
+ * @fileoverview Spell index API route.
+ * @description Returns spells with slug, title, level, and school fields only.
  *
  * @version 2.0.0
  * @author Typeir
@@ -27,8 +26,7 @@ const log = logger.child({ module: 'API:Spells:Index' });
 /**
  * GET /api/spells/index
  *
- * Returns lightweight spell index with minimal fields for dropdown search.
- * Accepts optional locale query parameter (defaults to 'en').
+ * Returns spell index. `locale` query parameter defaults to 'en'.
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON array of spell index entries

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Specialization Content Shards API Route
- * @description Returns named prose shards for a specific specialization. The server
- * resolves each shard server-side using metadata line anchors or heading-text
- * search so callers never need to know the internal file structure.
+ * @description Returns named prose shards for a specialization. Resolves each
+ * shard server-side via metadata line anchors or heading-text search.
  *
  * @module src/app/api/content-shards/specializations/[slug]/route
  * @version 1.1.0

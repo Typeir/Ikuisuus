@@ -1,7 +1,6 @@
 /**
- * @fileoverview Tests for useEditableField hook
- * @description Validates the edit/commit/cancel state machine including
- * the cancel-pending ref coordination that prevents blur-after-Escape commits.
+ * @fileoverview Tests for useEditableField hook.
+ * @description Verifies edit/commit/cancel behavior and cancelPendingRef handling.
  */
 
 import { useEditableField } from '@/modules/encounter-planner/presentation/combatantRow/utils/useEditableField';
@@ -9,7 +8,7 @@ import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 /**
- * Create a mock cancel-pending ref for testing.
+ * Creates a cancel-pending ref for testing.
  *
  * @returns MutableRefObject<boolean> with current = false
  */

@@ -1,9 +1,7 @@
 /**
- * @fileoverview Search domain types unit tests
- * @description Type-level and JSON-safety assertions for the search domain
- * contracts. Runtime tests are lightweight since these are primarily interfaces;
- * the checks guard against accidental non-serializable shapes and required-field
- * regressions (notably `SearchQuery.locale`).
+ * @fileoverview Unit tests for search domain types.
+ * @description Asserts search domain types are JSON-serializable and
+ * `SearchQuery.locale` is required.
  *
  * @module tests/unit/modules/search/domain/types
  * @version 1.0.0

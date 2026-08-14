@@ -1,12 +1,8 @@
 /**
- * @fileoverview Proficiency Row-Key Mapper
- * @description Maps a vocation's Title-Case skill/trade grant name (as authored
- * in the Core Traits table) to the i18n ROW KEY the skills/tools tables use
- * (`skills.<camel>` / `tools.<camel>`), so a hint marker or floor can be placed
- * on the correct row. Output is byte-identical to the keys `deriveGrantFloors`
- * emits, so both share the same `map[skill.name]` / `map[tool.name]` lookup.
- * Wildcard / category tokens ("Trade", "Skills", "one Trade of your choice")
- * resolve to `null` — they are not a single row.
+ * @fileoverview Maps a vocation skill/trade grant name to the i18n row key
+ * (`skills.<camel>` / `tools.<camel>`) the skills/tools tables use. Output is
+ * byte-identical to `deriveGrantFloors` keys. Wildcard/category tokens resolve
+ * to `null`.
  *
  * @module modules/character-builder/lib/utils/proficiencyRowKey
  * @version 1.0.0

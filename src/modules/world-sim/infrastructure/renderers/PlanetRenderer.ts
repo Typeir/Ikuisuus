@@ -1,9 +1,7 @@
 /**
  * @fileoverview Planet Renderer — Terrain-Displaced Sphere with Surface Features
- * @description Renders terrestrial planets with procedural noise-driven vertex
- * displacement and a 5-band terrain colour ramp. The same noise mask drives
- * both geometry displacement and colour interpolation so terrain features
- * (oceans, grasslands, mountains, snow) align naturally.
+ * @description Renders a terrestrial planet from procedural noise-driven
+ * vertex displacement and a 5-band terrain colour ramp driven by the same noise mask.
  *
  * @module worldSim/celestials/PlanetRenderer
  * @version 2.0.0
@@ -68,7 +66,7 @@ const DEFAULT_NOISE_SEED = 0;
 const DEFAULT_POLAR_LATITUDE = 0.75;
 
 /**
- * Default terrain colour stops: ocean → lowland → highlands → mountains → peaks.
+ * Default terrain colour stops ordered lowest to highest elevation band.
  * @constant {TerrainColorStop[]}
  */
 const DEFAULT_TERRAIN_COLORS: TerrainColorStop[] = [
@@ -80,8 +78,7 @@ const DEFAULT_TERRAIN_COLORS: TerrainColorStop[] = [
 ];
 
 /**
- * Renders terrestrial planet bodies with noise-displaced terrain and
- * 5-band elevation colour ramp, plus optional atmosphere.
+ * Renders a terrestrial planet with noise-displaced terrain and a 5-band colour ramp.
  *
  * @class PlanetRenderer
  * @implements {ICelestialRenderer}
@@ -109,7 +106,7 @@ export class PlanetRenderer implements ICelestialRenderer {
   private qualityLevel: RenderQualityLevel = 'high';
 
   /**
-   * Apply adaptive quality level to terrain shader detail and secondary effects.
+   * Swap surface and atmosphere geometry to the level's LOD; hides the atmosphere below 'low'.
    *
    * @param {RenderQualityLevel} level - New quality level
    */

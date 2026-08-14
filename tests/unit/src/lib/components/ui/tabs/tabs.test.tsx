@@ -12,8 +12,7 @@ import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
 
 /**
- * Test harness wrapping `<Tabs>` in a controlled state container so tests can
- * exercise activation behaviour without external state plumbing.
+ * Controlled-state `<Tabs>` harness for use by tests.
  *
  * @function Harness
  * @returns {JSX.Element} Rendered tabs harness

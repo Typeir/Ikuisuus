@@ -1,20 +1,7 @@
 /**
  * @fileoverview Embed Link Bridge
- * @description Mounted once inside the chrome-less embed shell, this component
- * owns every link click in the frame: library links navigate in place, and
- * everything else opens a new top-level window.
- *
- * A single delegated capture-phase listener covers the whole document, so MDX
- * prose links, aspect pills and any component-rendered anchor are handled
- * without each one knowing it is inside an embed.
- *
- * The new window is opened from within the click handler rather than by asking
- * the host page to open it. Popup blockers require transient user activation in
- * the window that calls `open`, and activation does not travel across a
- * `postMessage`, so a host-side handler would be blocked. The frame itself has
- * the activation, and the iframe's `allow-popups` plus
- * `allow-popups-to-escape-sandbox` let the result be an ordinary window.
- *
+ * @description Routes link clicks inside an embedded frame: library links
+ * navigate via the router, all others open in a new window.
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -30,16 +17,16 @@ import { useEffect } from 'react';
 import { classifyEmbedLink } from './classifyEmbedLink';
 
 /**
- * Window features for bubbled navigations. `noopener` severs the new window's
- * handle back to the frame that opened it.
+ * Window features for bubbled navigations. `noopener` detaches the new window
+ * from the opening frame.
  */
 const BUBBLE_FEATURES = 'noopener';
 
 /**
- * Intercepts link clicks inside an embedded frame and routes them by target.
+ * Intercepts and routes link clicks inside an embedded frame.
  *
- * Renders nothing. Modified clicks — middle button, ctrl/cmd, shift, alt — are
- * left to the browser, which already opens them in a new tab or window.
+ * Modified clicks — middle button, ctrl/cmd, shift, alt — are ignored and left
+ * to the browser.
  *
  * @component
  * @returns {null} Nothing; the component exists for its side effect

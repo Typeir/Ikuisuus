@@ -1,9 +1,7 @@
 /**
  * @fileoverview Monster Metadata Generator
- * @description Advanced parser for D&D monster stat blocks in MDX format.
- * Extracts structured metadata including combat stats, abilities, resistances,
- * challenge ratings, and gameplay mechanics. Supports multiple stat blocks per file
- * and nested blockquote stat blocks for variants.
+ * @description Parses monster stat blocks in MDX format and extracts metadata.
+ * Supports multiple stat blocks per file and blockquote stat blocks for variants.
  *
  * @module scripts/metadata/generateMonsterMetadata
  * @version 4.0.0
@@ -12,42 +10,39 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
-import {
-  toNativeMeasure,
-  toPlainMeasure,
-} from '@/lib/units/nativeMeasure';
+import { toNativeMeasure, toPlainMeasure } from '@/lib/units/nativeMeasure';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
-    GameData,
-    clean,
-    extractAllTags,
-    filePathToSlug,
-    findContentImage,
-    parseFirstProseParagraph,
-    parseKeyBullets,
-    parseNumericValue,
-    plain,
-    readLines,
-    runGenerator,
-    runWithCli,
-    splitList,
-    splitListWithGrouping,
-    stripMarkdown,
-    type SharedData,
-    type StorageAdapter,
+  GameData,
+  clean,
+  extractAllTags,
+  filePathToSlug,
+  findContentImage,
+  parseFirstProseParagraph,
+  parseKeyBullets,
+  parseNumericValue,
+  plain,
+  readLines,
+  runGenerator,
+  runWithCli,
+  splitList,
+  splitListWithGrouping,
+  stripMarkdown,
+  type SharedData,
+  type StorageAdapter,
 } from '.';
 import { MONSTER, STRUCTURE } from './extraction/featurePatterns';
 import { extractStrataTags } from './aspectExtractors';
 import { extractStatBlockFieldAspects, tagFeatures } from './featureAspects';
 import { parseMonsterFeatures } from './generateFeatureMetadata';
 import {
-    IMAGE,
-    ITALIC_META,
-    MONSTER_HEADING,
-    SPEED,
-    STAT_CONTENT,
-    STAT_TABLE,
+  IMAGE,
+  ITALIC_META,
+  MONSTER_HEADING,
+  SPEED,
+  STAT_CONTENT,
+  STAT_TABLE,
 } from './monsterPatterns';
 import { LIST, SLUG, TEXT, UTILITY } from './parsingPatterns';
 
@@ -178,7 +173,7 @@ function findArmorHpSpeed(lines: string[]) {
 }
 
 /**
- * Parses D&D speed string into structured movement modes.
+ * Parses Damocles speed string into structured movement modes.
  *
  * @param {string} raw - Raw speed text
  * @returns {SpeedData | undefined} Parsed speed data
@@ -424,12 +419,8 @@ function findStatBlockTitle(
 /**
  * Finds the image path closest to a stat block by scanning backwards from the
  * italic creature-type line towards the variant heading. For the first stat
- * block (index 0) also scans from the file start.
- *
- * For multi-variant files with per-variant images (e.g. xanthous.sheet.mdx),
- * each variant gets the image between its heading and the italic line.
- * When no per-variant image is found, falls back to the first image in
- * the entire file (shared header pattern, e.g. cornucopios.sheet.mdx).
+ * block (index 0) also scans from the file start. Falls back to the first image
+ * in the file when a variant block has no per-variant image.
  *
  * @param {string[]} allLines - All file lines
  * @param {number} statBlockLineIdx - Index of the italic stat block line
@@ -486,12 +477,8 @@ function findMonsterImage(
  */
 /**
  * Extracts the lore description from a stat block section.
- *
- * Some monster files include a prose paragraph between the BlendedImage JSX
- * and the first stat table. This function finds that text by scanning the
- * section lines (which include up to ten lines of context before the italic
- * creature-type line), filtering out italics, JSX elements, headings,
- * blockquotes, and empty lines, and collecting prose before the first table row.
+ * Collects prose lines between the italic creature-type line and the first table
+ * row, filtering out italics, JSX elements, headings, blockquotes, and empty lines.
  *
  * @param {string[]} sectionLines - Lines extracted for this stat block
  * @returns {string | undefined} Prose description with markdown stripped, or undefined
@@ -858,4 +845,3 @@ if (isDirectRun) {
 }
 
 export { main, parseMonsterFile };
-

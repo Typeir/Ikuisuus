@@ -1,8 +1,7 @@
 /**
  * @fileoverview Boon Selection Helpers
  * @description Pure functions computing the next selected-boon shard array when a
- * variable-cost boon's sub-option is toggled. Keeps BoonPicker thin and makes the
- * choose-one / pick-any BP math independently testable.
+ * variable-cost boon's sub-option is toggled.
  *
  * @module lib/components/characterSheet/builder/boonSelection
  * @version 1.0.0
@@ -15,14 +14,14 @@ import type { CharacterShard } from '@/lib/types/character';
 
 /**
  * Computes the next selected-boon array after toggling a sub-option of a
- * variable-cost boon. `choose-one` replaces the choice; `pick-any` accumulates;
- * clearing the last option removes the boon entirely. `bpCost` is the summed
- * cost of the chosen options, so the budget meter stays accurate.
+ * variable-cost boon. `choose-one` replaces the choice; `pick-any` toggles the
+ * option in/out. Empty result removes the boon. `bpCost` is the summed cost of
+ * the chosen options.
  *
  * @param {CharacterShard[]} selectedBoons - Current selection
  * @param {BloodlineBoon} boon - The boon whose sub-option changed
  * @param {string} optionName - The toggled sub-option name
- * @param {string} bloodlineSlug - Active bloodline slug (for a new shard's id/source)
+ * @param {string} bloodlineSlug - Active bloodline slug, used for a new shard's id/source
  * @returns {CharacterShard[]} Next selection
  */
 export function applySubOptionSelection(

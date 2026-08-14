@@ -1,9 +1,8 @@
 /**
  * pgSpecializationRepository Unit Tests
  *
- * @fileoverview Tests for the MikroORM-backed PostgreSQL specialization repository.
- * Verifies row-mapping from `SpecializationEntity` rows (with populated features
- * and preparedSpells) to `SpecializationMetadata` domain objects.
+ * @fileoverview Tests row-mapping from `SpecializationEntity` rows (with populated
+ * features and preparedSpells) to `SpecializationMetadata` domain objects.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgSpecializationRepository
  * @version 1.0.0

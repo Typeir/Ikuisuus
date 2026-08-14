@@ -2,7 +2,7 @@
  * @fileoverview Encounter Data Hooks
  * @description Client hooks for encounter planner combobox indexes and
  * spell link hydration. Index hooks use SWR; spell link accumulation
- * retains useEffect due to its per-slug accumulation pattern.
+ * uses useEffect.
  *
  * @module lib/hooks/data/useEncounterData
  * @author Typeir

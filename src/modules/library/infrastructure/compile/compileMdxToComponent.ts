@@ -7,7 +7,7 @@
  * @author Typeir
  * @since 1.0.0
  *
- * @fileoverview Module for src/lib/components/mdx/compileMdxToComponent.ts
+ * @fileoverview Compiles MDX source into a React component.
  */
 
 import { compile } from '@mdx-js/mdx';
@@ -18,8 +18,7 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
 /**
- * Compiles raw MDX source into a runtime-safe React component.
- * Useful for rendering MDX dynamically when static import is not possible.
+ * Compiles raw MDX source into a React component.
  *
  * @param {string} source - The raw MDX string to compile.
  * @returns {Promise<React.ComponentType>} - The compiled React component.

@@ -1,9 +1,7 @@
 /**
  * @fileoverview Character Roster Component
- * @description Two-panel character management view: a left sidebar lists all saved
- * characters; the right panel shows the selected character's full sheet. Provides
- * buttons to create a new character, delete the active character, and select between
- * existing ones.
+ * @description Two-panel view: left sidebar lists saved characters; the right panel
+ * shows the active character's sheet. Provides create, delete, and select actions.
  *
  * @module lib/components/characterSheet/characterRoster
  * @version 1.0.0
@@ -104,12 +102,6 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
     [dispatch],
   );
 
-  /**
-   * Auto-create a first character (opened directly in edit mode via
-   * `startEditingId`) when the roster is empty on load, so the creator never
-   * opens to a bare placeholder. Guarded by a ref so deleting the last
-   * character does not immediately re-create one.
-   */
   useEffect(() => {
     if (!isHydrated || autoCreatedRef.current) return;
     if (characters.length === 0) {

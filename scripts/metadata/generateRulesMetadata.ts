@@ -1,13 +1,9 @@
 /**
  * @fileoverview Rules Metadata Generator
  * @description Parses `.mdx` files in `src/content/{locale}/rules/` and emits
- * `.metadata.json` sidecars so rule pages are indexed by search with proper
- * descriptions. Simple by design: slug, title, link, description, and
- * folder-derived tags/category — rules pages carry no stat blocks.
- *
- * Section hub files (`main.mdx`) are slugged and sidecar-named after their
- * parent folder (same convention as vocations), since 13 of them share the
- * `main.mdx` basename.
+ * `.metadata.json` sidecars with slug, title, link, description, and
+ * folder-derived tags/category. Section hubs (`main.mdx`) are slugged and
+ * sidecar-named after their parent folder.
  *
  * @module scripts/metadata/generateRulesMetadata
  * @version 1.0.0
@@ -169,8 +165,7 @@ async function parseRulesFile(
 
 /**
  * Resolves the sidecar output path for a rules file. Section hubs
- * (`main.mdx`) are named after their parent folder so the 13 hubs don't
- * collide in the flat `.meta/{locale}/rules/` directory; regular rule pages
+ * (`main.mdx`) are named after their parent folder; regular rule pages
  * use the default suffix replacement.
  *
  * @param {string} sourceFilePath - Original MDX file path

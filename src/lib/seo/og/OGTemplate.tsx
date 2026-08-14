@@ -1,21 +1,11 @@
 /**
  * @fileoverview OG image JSX template for satori.
  *
- * Renders a 1200×630 dark-theme card using only satori-compatible inline
- * styles (no CSS classes, no CSS variables). The layout is a two-column
- * split: left 40% for text, right 60% for the entity image that extends
- * beyond the canvas with 12% overflow on right/top/bottom. The description
- * renders as a faint watermark behind the entity image.
- *
- * Layer stack (back → front):
- * 1. Solid background (`OG_TOKENS.bg`)
- * 2. Description watermark at opacity 0.07 (italic Crimson Text)
- * 3. Radial gradient glow behind the entity image
- * 4. Entity image (820×820) with drop-shadow, positioned to clip
- * 5. Text panel: title, type/rarity tag line, site attribution
- *
- * This component must only use the React element syntax that satori supports:
- * no hooks, no context, no browser APIs.
+ * Renders a 1200×630 dark card using only satori-compatible inline styles (no
+ * CSS classes or variables). Two-column layout: text 40%, entity image 820×820
+ * overflowing the canvas, description as a faint watermark behind the image.
+ * Uses only satori-supported React element syntax — no hooks, context, or
+ * browser APIs.
  *
  * @module lib/seo/og/OGTemplate
  * @version 1.0.0
@@ -68,9 +58,7 @@ function buildTagLine(data: OGCardData): string {
 /**
  * Satori-compatible JSX card template for OG image generation.
  *
- * This is a plain function component — it must remain free of hooks, event
- * handlers, and browser globals so that satori can convert it to SVG in a
- * Node.js context.
+ * Plain function component with no hooks, event handlers, or browser globals.
  *
  * @param {OGTemplateProps} props - Template data and optional image URL
  * @returns {React.ReactElement} JSX element tree for satori

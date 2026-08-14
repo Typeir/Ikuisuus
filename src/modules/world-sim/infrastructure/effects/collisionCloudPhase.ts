@@ -1,13 +1,8 @@
 /**
  * @fileoverview Collision Cloud Phase Envelope
- * @description Computes the animation envelope for the collision cloud: a
- *   logarithmic, unbounded `sizeNorm` (so layers keep expanding past apex), a
- *   smoothstep opacity ramp (up to apex, down through fade), and a high-frequency
- *   capped jitter coupled to the live opacity envelope so motion never freezes.
- *
- *   Decoupling this from CollisionCloudEffect lets timing/feel constants be
- *   tuned (in `collisionCloudLayers.ts`) and validated in isolation.
- *
+ * @description Computes the collision cloud animation envelope: logarithmic
+ *   unbounded `sizeNorm`, smoothstep opacity ramp (up to apex, down through
+ *   fade), and capped sinusoidal jitter scaled by the opacity envelope.
  * @module worldSim/celestials/collisionCloudPhase
  * @version 1.0.0
  * @author Typeir
@@ -16,10 +11,10 @@
 
 /**
  * @interface PhaseEnvelope
- * @property {number} opacity - Normalized opacity [0,1]; smoothstep ramp up to
- *   1 at `apexTime`, smoothstep ramp down to 0 at `apexTime + fadeDuration`.
- * @property {number} sizeNorm - Logarithmic size factor; equals 1 at apex and
- *   continues growing beyond it (never shrinks).
+ * @property {number} opacity - Normalized opacity [0,1]; 1 at `apexTime`,
+ *   0 at `apexTime + fadeDuration`.
+ * @property {number} sizeNorm - Logarithmic size factor; = 1 at apex, grows
+ *   beyond it (never shrinks).
  */
 export interface PhaseEnvelope {
   opacity: number;
@@ -39,12 +34,9 @@ function smoothstep01(x: number): number {
 /**
  * Compute the phase envelope at a given elapsed phase time.
  *
- * Size uses unbounded logarithmic growth, normalized so `sizeNorm = 1` at
- * `apexTime`. After apex it keeps growing (slowly), giving outer layers a
- * dispersal feel as they fade.
- *
- * Opacity uses a smoothstep ramp from 0 → 1 over `[0, apexTime]` and a
- * smoothstep ramp from 1 → 0 over `[apexTime, apexTime + fadeDuration]`.
+ * `sizeNorm` is unbounded logarithmic growth, normalized to 1 at `apexTime`.
+ * Opacity ramps 0 → 1 over `[0, apexTime]` and 1 → 0 over
+ * `[apexTime, apexTime + fadeDuration]`.
  *
  * @param {number} phaseTime - Seconds since the phase was triggered
  * @param {number} apexTime - Seconds from trigger to opacity peak
@@ -67,14 +59,12 @@ export function computePhaseEnvelope(
   if (safeT <= 0) {
     opacity = 0;
   } else if (safeT < apexTime) {
-    /* Pre-apex: fully opaque from the first frame. The explosion appears
-       instantly jagged and solid, then grows. No alpha ramp-in. */
+    /* Pre-apex: fully opaque from the first frame. No alpha ramp-in. */
     opacity = 1;
   } else {
     const fadeT = (safeT - apexTime) / fadeDuration;
     /* Concave ease-out (1 - fadeT)^2: alpha drops fast right after apex
-       and tapers, instead of smoothstep's S-curve where the first ~30% of
-       fade barely changes — which reads as "it pops out of existence". */
+       and tapers. */
     opacity = fadeT >= 1 ? 0 : (1 - fadeT) * (1 - fadeT);
   }
 
@@ -83,10 +73,8 @@ export function computePhaseEnvelope(
 
 /**
  * Compute a linear taper envelope that decays from 1 at phase start to 0 at
- * `totalDuration`. Unlike the smoothstep opacity envelope (which is roughly
- * S-shaped), this falls off at a constant rate — useful as the amplitude
- * envelope for jitter so the shaking weakens evenly over the explosion's
- * lifetime instead of dropping off sharply with opacity.
+ * `totalDuration` (falloff at a constant rate). Returns 0 if
+ * `totalDuration <= 0`.
  *
  * @param {number} phaseTime - Seconds since the phase was triggered
  * @param {number} totalDuration - Full phase duration (apex + fade)
@@ -105,8 +93,7 @@ export function computeLinearTaper(
 
 /**
  * Compute a high-frequency capped sinusoidal jitter scaled by the live
- * envelope (typically opacity). Coupling the envelope keeps motion alive
- * throughout the explosion's lifetime instead of dying off near apex.
+ * envelope (typically opacity).
  *
  * @param {number} time - Global elapsed seconds (drives the oscillation)
  * @param {number} envelope - Live amplitude scalar in [0,1]

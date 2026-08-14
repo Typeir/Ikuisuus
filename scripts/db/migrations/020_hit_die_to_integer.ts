@@ -1,18 +1,8 @@
 /**
  * @fileoverview Migration 020 — vocations.hit_die text → integer
- * @description Converts `vocations.hit_die` from die notation held as text
- * (`'d12'`) to the die's face count as an integer (`12`). Dice are always
- * `d{faces}` or `{n}d{faces}`, so the face count is the only real datum; storing
- * the notation forced every reader to strip the prefix and `parseInt` it, and
- * two conflicting conventions (`'d12'` from the generator, `'12'` claimed by the
- * API type) had already taken hold. Notation is now produced at render time by
- * `formatDie`.
- *
- * Guarded/idempotent: skipped when `hit_die` is already an integer column. The
- * `USING` clause salvages existing rows by extracting their digits; rows with no
- * digits (the generator's old `'unknown'` sentinel) become 0, which the
- * application reads as "no usable die".
- *
+ * @description Converts `vocations.hit_die` from die-notation text (`'d12'`) to
+ * an integer face count (`12`). Idempotent: skipped when the column is already
+ * integer. A `USING` clause extracts digits, turning digit-less rows into 0.
  * After applying, run `npm run db:seed` to refresh content from the regenerated
  * `.metadata.json` sidecars.
  *

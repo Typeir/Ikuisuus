@@ -1,9 +1,8 @@
 /**
- * @fileoverview Shared CLI command contract and filesystem-based loader.
+ * @fileoverview CLI command contract and filesystem-based loader.
  *
- * Both the ik and paw CLIs use this module to discover commands at runtime
- * by scanning a commands/ directory. Each command file must export a `meta`
- * object and a `run` function conforming to the {@link CliCommand} interface.
+ * Discovers command modules by scanning a commands/ directory. Each command
+ * file exports `meta` and `run` conforming to the {@link CliCommand} interface.
  *
  * @module cli-loader
  * @author Typeir
@@ -73,9 +72,7 @@ export interface CommandRegistry {
  * Load all command modules from a directory.
  *
  * Scans for `.ts` files (excluding `index.ts`), dynamically imports each,
- * and indexes by primary name + aliases. Uses `file://` URLs so the loader
- * works regardless of whether the package lives in the project tree or in
- * node_modules.
+ * and indexes by primary name and aliases. Imports use `file://` URLs.
  *
  * @param {string} commandsDir - Absolute path to the commands/ directory
  * @returns {Promise<CommandRegistry>} Registry of loaded commands
@@ -177,7 +174,6 @@ export function formatCommandHelp(registry: CommandRegistry): string {
 
 /**
  * Resolve the commands directory relative to the calling module.
- * Works whether the package is in the project tree or node_modules.
  *
  * @param {string} importMetaUrl - The calling module's `import.meta.url`
  * @param {string} [relPath] - Relative path from the calling module to commands/

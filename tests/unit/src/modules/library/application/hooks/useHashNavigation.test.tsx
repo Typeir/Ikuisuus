@@ -1,7 +1,7 @@
 /**
  * @fileoverview useHashNavigation Hook Unit Tests
- * @description Tests for the useHashNavigation hook — collapsible-aware hash
- * navigation with 40%-from-top scroll positioning.
+ * @description Unit tests for the useHashNavigation hook: hash navigation,
+ * 40%-from-top smooth scroll, and collapsible auto-open.
  *
  * @module tests/unit/lib/hooks/useHashNavigation
  * @version 1.1.0

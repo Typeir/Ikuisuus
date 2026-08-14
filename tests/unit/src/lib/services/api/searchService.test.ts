@@ -1,7 +1,6 @@
 /**
- * @fileoverview Search Service Unit Tests
- * @description Covers the nearest-route API service helper with a mocked
- * JSON client — no network access needed.
+ * @fileoverview Unit tests for the nearest-route API service helper.
+ * @description Uses a mocked JSON client; no network access.
  *
  * @module tests/unit/src/lib/services/api/searchService
  */

@@ -1,11 +1,9 @@
 /**
- * @fileoverview MikroORM Entity — Bloodline Boon
- * @description Entity for the `bloodline_boons` child table. Each row
- * represents a single boon option belonging to a bloodline. Foreign-keyed to
- * `bloodlines.id` via ManyToOne.
- *
- * Uses the in-house schema decorators rather than MikroORM's, so the entity
- * name survives class-name minification in production server builds.
+ * @fileoverview MikroORM entity for the `bloodline_boons` table.
+ * @description Entity for the `bloodline_boons` child table. Each row is one
+ * boon option for a bloodline, foreign-keyed to `bloodlines.id` via ManyToOne.
+ * Uses in-house schema decorators that preserve the entity name through
+ * class-name minification.
  *
  * @module lib/db/orm/entities/BloodlineBoonEntity
  * @version 2.0.0

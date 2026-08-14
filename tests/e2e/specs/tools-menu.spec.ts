@@ -1,7 +1,6 @@
 /**
  * @fileoverview End-to-end tests for the tools-menu module.
- * @description Verifies that the sidebar tools menu displays all four registered tools,
- * opens and closes correctly, and navigates to the correct routes when items are selected.
+ * @description Verifies the tools menu shows four tools, opens and closes, and navigates to the correct routes.
  *
  * @module tests/e2e/specs/tools-menu
  * @version 1.0.0

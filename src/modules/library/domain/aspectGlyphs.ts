@@ -1,11 +1,7 @@
 ﻿/**
  * @fileoverview Aspect Glyphs
- * @description The glyph tables behind `aspectMark`, split out so the domain
- * module stays under the file-length gate.
- *
- * Colour carries the group, which is what lets one glyph serve several
- * vocabularies: `Flame` is `damage:fire` in ember and `condition:burning` in
- * violet, and the two are different marks rather than a collision.
+ * @description Glyph lookup tables (group, damage, condition, stratum) backing
+ * `aspectMark`.
  *
  * @module modules/library/domain/aspectGlyphs
  * @version 1.0.0
@@ -79,9 +75,7 @@ export const FALLBACK_ICON: LucideIcon = Cog;
 
 /** Glyph per group, used when a value has no glyph of its own. */
 export const GROUP_ICON: Record<string, LucideIcon> = {
-  /* Crossed swords for damage in general; a single sword is slashing. `Flame`
-     was wrong here because it is fire's own glyph, which made a stratum read as
-     "fire, plus three others" rather than as damage as such. */
+  /* Crossed swords for damage in general; a single sword is slashing. */
   damage: Swords,
   defense: Shield,
   resistance: Shield,
@@ -119,8 +113,7 @@ export const GROUP_ICON: Record<string, LucideIcon> = {
 };
 
 /**
- * Glyph per damage type. These double as the badge on a scoped defence, so the
- * element is recognisable inside a composed mark.
+ * Glyph per damage type. Doubles as the badge on a scoped defence.
  */
 export const DAMAGE_ICON: Record<string, LucideIcon> = {
   fire: Flame,
@@ -141,33 +134,24 @@ export const DAMAGE_ICON: Record<string, LucideIcon> = {
 /**
  * How much worse a condition is than the family it belongs to.
  *
- * Drawn as a chevron badge over the family's base glyph, so a reader who has
- * never seen `terrified` can still tell it is the worse version of the thing
- * beside it.
+ * Drawn as a chevron badge over the family's base glyph.
  */
 export type Severity = 'base' | 'worse' | 'worst';
 
 /**
  * Glyph and severity per condition.
  *
- * **Every condition gets its own glyph, and the chevron carries the ladder.**
- * Sharing one base across a family was tried first and breaks under
- * composition: `immunity:stunned` draws the condition as a 12px badge under a
- * `Ban`, which has no room for a severity chevron, so every member of a family
- * collapsed into the same mark. Identity has to survive being shrunk; the
- * relationship is what degrades gracefully.
+ * Every condition gets its own glyph; the chevron carries the family ladder.
  *
- * Four ladders are written into the rules rather than inferred:
+ * Four ladders are written into the rules:
  *
  * - **Incapacitation.** `stunned` and `paralyzed` each open with "is
- *   **incapacitated**", and paralyzed adds auto-crits on top of stunned.
+ *   **incapacitated**"; paralyzed adds auto-crits.
  * - **Restraint.** `restrained` is `grappled` plus advantage against it and
  *   disadvantage on its own attacks and Dexterity saves.
- * - **Fear.** `terrified` is `frightened` plus a forced Dash away and
- *   disadvantage even when the source is out of sight.
- * - **Action economy.** `staggered` only forbids reactions; `slowed` forbids
- *   reactions *and* halves speed, caps attacks and taxes casting. Staggered is
- *   the lighter of the two, which is the reverse of how the words sound.
+ * - **Fear.** `terrified` is `frightened` plus a forced Dash away.
+ * - **Action economy.** `staggered` forbids reactions; `slowed` forbids
+ *   reactions, halves speed, caps attacks and taxes casting.
  */
 export const CONDITION_MARK: Record<string, { Icon: LucideIcon; severity: Severity }> =
   {
@@ -217,10 +201,7 @@ export const VALUE_ICON: Record<string, LucideIcon> = {
 /**
  * The three damage types in each stratum, in canon order.
  *
- * A stratum is always exactly three types and always will be, which is what
- * makes it drawable: the mark is the three member glyphs in their own colours,
- * arranged around a point. `true` damage has no stratum — it stands outside all
- * of them and cannot be resisted.
+ * A stratum is always exactly three types. `true` damage has no stratum.
  */
 export const STRATUM_TYPES: Record<string, readonly string[]> = {
   physical: ['slashing', 'bludgeoning', 'piercing'],

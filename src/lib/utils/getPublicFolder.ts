@@ -1,10 +1,6 @@
 /**
- * @fileoverview Public folder path builder — resolves the absolute path to the
- * project's `public/` directory for build-time asset existence checks.
- *
- * Mirrors `getContentFolder` so that all raw `process.cwd()` + directory
- * concatenation is confined to a single utility layer rather than scattered
- * across SEO helpers, API routes, or other application code.
+ * @fileoverview Resolves the absolute path to the project's `public/` directory
+ * for build-time asset existence checks.
  *
  * @module src/lib/utils/getPublicFolder
  * @version 1.0.0
@@ -15,10 +11,8 @@
 import { join } from 'path';
 
 /**
- * Returns the absolute path to the project's `public/` directory.
- *
- * Uses `process.cwd()` for build-time and runtime compatibility, consistent
- * with `getContentFolder`.
+ * Returns the absolute path to the project's `public/` directory via
+ * `join(process.cwd(), 'public')`.
  *
  * @returns {string} Absolute path to the public directory.
  *

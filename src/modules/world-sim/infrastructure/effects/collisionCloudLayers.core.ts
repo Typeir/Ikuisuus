@@ -1,9 +1,8 @@
 /**
- * @fileoverview Collision Cloud Layer Factories
- * @description Builds the four visual layers used by `CollisionCloudEffect`:
- *   debris point cloud, opaque grey core, russian-doll additive outer shells,
- *   and corona shell. Each factory returns a `{ geometry, material, mesh }`
- *   triple so the owner can manage scene graph membership and disposal.
+ * @fileoverview Collision cloud layer factories.
+ * @description Builds the four visual layers for `CollisionCloudEffect`:
+ *   debris point cloud, opaque grey core, additive outer shells, corona shell.
+ *   Each factory returns a `{ geometry, material, mesh }` triple.
  *
  * @module worldSim/celestials/collisionCloudLayers
  * @version 1.0.0
@@ -32,7 +31,7 @@ import collisionCoreVert from '../../shaders/collisionCore.vert.glsl';
 import { CORONA_FRAG, CORONA_VERT } from '@/modules/world-sim/infrastructure/effects/collisionCoronaShaders';
 import { createDisplacedShaderMaterial } from '@/modules/world-sim/infrastructure/renderers/shaderMaterialFactory';
 
-/** @constant {number} TRIGGER_GAP_SCALE - Surface-gap threshold (as multiple of avg planet radius) that triggers the collision phase. */
+/** @constant {number} TRIGGER_GAP_SCALE - Surface-gap threshold, as multiple of avg planet radius, that triggers the collision phase. */
 export const TRIGGER_GAP_SCALE = 1.0;
 
 /** @constant {number} CORE_RADIUS_SCALE - Opaque core radius multiplier at apex (sizeNorm=1). */
@@ -50,7 +49,7 @@ const DEBRIS_COUNT = 380;
 /** @constant {number} DEBRIS_ROTATION_SPEED - Tumble speed of the debris field (rad/s). */
 export const DEBRIS_ROTATION_SPEED = 0.0006;
 
-/** @constant {number} CORE_BASE_DISPLACEMENT - Core shader displacement at full opacity; scales down with opacity to stabilize into a smooth sphere as the explosion fades. */
+/** @constant {number} CORE_BASE_DISPLACEMENT - Core shader displacement at full opacity; scales down with opacity to produce a smooth sphere as the explosion fades. */
 export const CORE_BASE_DISPLACEMENT = 0.22;
 
 /** @constant {number} APEX_TIME - Seconds from phase trigger to peak opacity. */
@@ -68,13 +67,13 @@ export const CORONA_FADE_DURATION = Math.max(
   FADE_DURATION - CORONA_FADE_LEAD,
 );
 
-/** @constant {number} NOISE_TIME_SCALE - Multiplier applied to `time` before feeding it into every shader's `uTime` uniform; raises the apparent scroll speed of vertex-displacement noise across all collision-cloud layers. */
+/** @constant {number} NOISE_TIME_SCALE - Multiplier applied to `time` before feeding it into every shader's `uTime` uniform; raises apparent scroll speed of vertex-displacement noise across all collision-cloud layers. */
 export const NOISE_TIME_SCALE = 1.5;
 
-/** @constant {number} GROWTH_RATE - Logarithmic growth coefficient. Smaller = slower-feeling expansion. */
+/** @constant {number} GROWTH_RATE - Logarithmic growth coefficient. Smaller = slower expansion. */
 export const GROWTH_RATE = 0.55;
 
-/** @constant {number} JITTER_FREQ_HZ - Jitter oscillations per second. High enough to feel turbulent throughout the explosion's life. */
+/** @constant {number} JITTER_FREQ_HZ - Jitter oscillations per second. */
 export const JITTER_FREQ_HZ = 7;
 
 /** @constant {number} JITTER_AMPLITUDE - Base jitter amplitude before clamping. */
@@ -87,13 +86,12 @@ export const JITTER_CAP = 0.11;
 export const ROTATION_BASE_SPIN = 0.18;
 
 /**
- * Per-axis multipliers applied to `ROTATION_BASE_SPIN` to give the explosion
- * group a biased tumble (faster on Y, slower on Z). Values are dimensionless
- * scalars between 0 and 1.
+ * Per-axis multipliers applied to `ROTATION_BASE_SPIN` to bias the explosion
+ * group's tumble (faster on Y, slower on Z). Dimensionless scalars 0-1.
  *
  * @constant {Object} COLLISION_ROTATION_AXIS_DAMPING
  * @property {number} x - Multiplier for the X-axis spin rate
- * @property {number} y - Multiplier for the Y-axis spin rate (typically 1.0)
+ * @property {number} y - Multiplier for the Y-axis spin rate
  * @property {number} z - Multiplier for the Z-axis spin rate
  */
 export const COLLISION_ROTATION_AXIS_DAMPING = {
@@ -104,19 +102,19 @@ export const COLLISION_ROTATION_AXIS_DAMPING = {
 
 /**
  * Per-axis multipliers applied to `DEBRIS_ROTATION_SPEED` for the debris
- * field's idle tumble. Y-axis is the primary spin; X-axis is dampened so the
- * cloud reads as a flattened disk rather than a uniform sphere.
+ * field's idle tumble. X-axis dampened so the cloud reads as a flattened
+ * disk rather than a uniform sphere.
  *
  * @constant {Object} DEBRIS_ROTATION_AXIS_DAMPING
  * @property {number} x - Multiplier for the X-axis spin rate
- * @property {number} y - Multiplier for the Y-axis spin rate (typically 1.0)
+ * @property {number} y - Multiplier for the Y-axis spin rate
  */
 export const DEBRIS_ROTATION_AXIS_DAMPING = {
   x: 0.4,
   y: 1.0,
 } as const;
 
-/** @constant {number} ROTATION_JITTER_AMPLITUDE - Peak jittery rotation offset (radians) applied per axis at phase start. */
+/** @constant {number} ROTATION_JITTER_AMPLITUDE - Peak rotation offset (radians) applied per axis at phase start. */
 export const ROTATION_JITTER_AMPLITUDE = 0.35;
 
 /** @constant {number} ROTATION_JITTER_FREQ_HZ - Base oscillation rate of the rotation jitter (Hz). Per-axis frequencies are detuned from this. */
@@ -150,7 +148,7 @@ export interface OuterShellConfig {
 /**
  * Russian-doll outer shells. Each is an inverted (BackSide) additive sphere
  * with progressively larger radius, lower opacity, more displacement, and a
- * unique noise offset for decorrelation. Explicit `renderOrder` controls sort.
+ * unique noise offset. `renderOrder` controls sort.
  */
 export const OUTER_SHELL_CONFIGS: OuterShellConfig[] = [
   {
@@ -242,8 +240,8 @@ export function createDebrisLayer(): DebrisLayer {
 }
 
 /**
- * Build the opaque grey core. This is the only depth-writing surface in the
- * effect, acting as a z-fighting anchor for the additive shells around it.
+ * Build the opaque grey core. The only depth-writing surface in the effect;
+ * acts as a z-fighting anchor for the additive shells.
  *
  * @returns {ShaderLayer} Geometry, material, and mesh
  */
@@ -279,9 +277,8 @@ export function createCoreLayer(): ShaderLayer {
 }
 
 /**
- * Build the russian-doll set of additive outer shells driven by
- * `OUTER_SHELL_CONFIGS`. Each shell uses BackSide rendering with additive
- * blending to layer color contributions without z-fighting.
+ * Build the set of additive outer shells from `OUTER_SHELL_CONFIGS`. Each
+ * uses BackSide rendering with additive blending.
  *
  * @returns {ShaderLayer[]} One shader layer per config entry
  */
@@ -324,8 +321,7 @@ export function createOuterShells(): ShaderLayer[] {
  * @interface CoronaLayers
  * @description Two-pass corona: a near (FrontSide) pass for the rim glow on
  *   the hemisphere facing the camera, and a far (BackSide, depthTest:false)
- *   pass for the dome halo behind the opaque core. The far pass renders
- *   unconditionally so the core's depth buffer can't eat it.
+ *   pass for the dome halo behind the opaque core.
  * @property {SphereGeometry} geometry - Shared unit-sphere geometry
  * @property {ShaderMaterial} nearMaterial - Front-facing pass material
  * @property {Mesh} nearMesh - Front-facing pass mesh
@@ -341,11 +337,9 @@ export interface CoronaLayers {
 }
 
 /**
- * Build the outermost corona as a two-pass additive halo. The near pass
- * uses FrontSide and respects depth so the rim glow integrates correctly
- * with whatever is in front of the explosion; the far pass uses BackSide
- * with `depthTest: false` so the dome halo behind the opaque core isn't
- * discarded by the core's depth writes.
+ * Build the outermost corona as a two-pass additive halo. The near pass uses
+ * FrontSide and depth testing; the far pass uses BackSide with
+ * `depthTest: false` so it renders even when occluded by the core.
  *
  * Both passes share geometry; dispose `geometry` exactly once.
  *

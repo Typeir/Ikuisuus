@@ -21,9 +21,7 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 
 /**
- * Route tree the resolved content is being rendered under. Both trees serve the
- * same files; they differ only in the shell around them, so a redirect has to
- * land in the tree it started from.
+ * Route tree the resolved content is rendered under. Redirects stay in the same tree.
  */
 export type LibraryBasePath = 'library' | 'embed';
 

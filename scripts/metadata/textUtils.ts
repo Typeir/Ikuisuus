@@ -1,7 +1,6 @@
 /**
- * @fileoverview Pure Text Processing Utilities
- * @description Common text manipulation functions used across metadata generators
- * and runtime services. No Node.js or filesystem dependencies.
+ * @fileoverview Pure text processing utilities.
+ * @description Common text manipulation functions for metadata generators and runtime services. No Node.js or filesystem dependencies.
  *
  * @module lib/metadata/textUtils
  * @version 1.0.0
@@ -24,22 +23,7 @@ export function clean(text: string): string {
 }
 
 /**
- * Cleans text destined for an **atomic plaintext field**.
- *
- * A title, name, tag or language is consumed by things that never run a
- * renderer over it: an `og:description` meta tag, a Pagefind search key, a table
- * cell, a section lookup. Authoring syntax reaching one of those is not markup
- * awaiting a pass, it is a token the reader sees — `Rope ([= 10 stride =])` in a
- * page title, `unique:reach-([=-6-stride-=]` in a facet.
- *
- * Markdown goes the same way and for the same reason. A feature called
- * `Expulsion Strike _(Minor Action)_` is named that in a table cell, and a lore
- * page titled `**Demons / Hiisi**:` carries its asterisks into the browser tab.
- * Emphasis, inline code and link syntax are all markup a plaintext consumer
- * renders literally; the link's label survives, its target does not.
- *
- * Prose keeps both its macros and its markdown. Rules text is rendered through
- * the MDX pipeline, where the markup is the whole point.
+ * Cleans text for atomic plaintext fields: strips markdown, link syntax, and authoring macros.
  *
  * @param {string} text - Input string for an atomic field
  * @returns {string} Cleaned string, free of markdown and of authoring macros

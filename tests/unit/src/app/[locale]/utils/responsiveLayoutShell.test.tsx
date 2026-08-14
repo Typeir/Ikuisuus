@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for Responsive Layout Shell component
  * @module tests/unit/src/app/[locale]/utils/responsiveLayoutShell.test
- * @description Validates ResponsiveLayoutShell default export and component signature.
- * Tests layout wrapper component for responsive navigation.
+ * @description Validates ResponsiveLayoutShell default export returns a function.
  * 
  * @version 1.0.0
  * @author Typeir

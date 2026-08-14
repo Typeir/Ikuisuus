@@ -1,8 +1,6 @@
 /**
  * @fileoverview Mediator Navigation Helpers
- * @description Extracted camera-navigation methods from WorldSimMediator.
- * Implements zoom-to-body, zoom-to-region, and zoom-to-local-coordinate logic
- * as pure functions that accept explicit dependencies rather than `this` references.
+ * @description Pure functions for zooming the camera to a body, region, or local coordinate, accepting explicit dependencies.
  *
  * @module modules/world-sim/application/mediator/mediatorNavigation
  * @version 1.0.0

@@ -26,7 +26,7 @@ import { useHpRoller } from './useHpRoller';
  * @interface HpRollerPanelProps
  * @property {HitDieRollEntry[]} hitDiceLog - Per-level hit die roll log to display
  * @property {number} conMod - Live CON modifier, shown alongside each entry
- * @property {(updatedLog: HitDieRollEntry[]) => void} onCommit - Called with the full updated log when confirmed HP changes; the consumer derives hpMax from it
+ * @property {(updatedLog: HitDieRollEntry[]) => void} onCommit - Called with the full updated log when HP changes are confirmed
  * @property {boolean} [disabled] - When true, the roller trigger is locked and the panel cannot open
  */
 export interface HpRollerPanelProps {

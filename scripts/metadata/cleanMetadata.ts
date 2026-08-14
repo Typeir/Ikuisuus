@@ -1,9 +1,7 @@
 /**
  * @fileoverview Metadata Sidecar Cleaner
- * @description Cross-platform replacement for the Unix `find … -delete` chain:
- * removes every `*.metadata.json` sidecar under `src/content/` and
- * `scripts/core/`, and deletes the `.meta/en` and `.meta/runtime` trees.
- * Run before `generate-metadata` for a from-scratch regeneration.
+ * @description Removes every `*.metadata.json` sidecar under `src/content/`
+ * and `scripts/core/`, and deletes the `.meta/en` and `.meta/runtime` trees.
  *
  * @module scripts/metadata/cleanMetadata
  * @version 1.0.0

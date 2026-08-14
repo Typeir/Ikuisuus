@@ -2,8 +2,7 @@
  * Corrections Auth Hook
  *
  * @fileoverview React hook for session-based authentication in the corrections module.
- * Replaces the old HMAC token paste workflow with username/password login.
- * Session token persists in the unified PersistentUiState storage.
+ * Session token is stored in PersistentUiState.
  *
  * @module lib/hooks/useCorrectionsAuth
  * @version 1.0.0
@@ -61,7 +60,7 @@ export interface CorrectionsAuthActions {
 
 /**
  * Hook that manages corrections module authentication.
- * On mount, if a stored token exists, validates it. Provides login/logout actions.
+ * Validates a stored token on mount. Provides login/logout actions.
  *
  * @returns {CorrectionsAuthState & CorrectionsAuthActions} Auth state and actions
  */

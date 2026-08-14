@@ -1,9 +1,7 @@
 /**
- * @fileoverview Trinket Table Wrapper - Client-side data fetching for adventuring gear table
- * @description Fetches trinket metadata from API and configures MetadataTable with
- * equipment-specific columns (item type, damage, damage type, properties, range, weight).
- * Supports locale-aware content via route params or props override. Handles thrown weapons,
- * special items, and saving throw mechanics.
+ * @fileoverview Fetches trinket metadata from API and renders MetadataTable.
+ * @description Configures MetadataTable with equipment columns (item type, damage,
+ * damage type, properties, range, weight).
  *
  * @version 1.0.0
  * @author Typeir
@@ -77,12 +75,11 @@ type TrinketTableWrapperProps = {
 
 /**
  * Client-side wrapper for TrinketTable that fetches locale-aware data via API.
- * Can use locale from props, route params, or defaults to 'en'.
  *
  * @component
  * @param {TrinketTableWrapperProps} props - Component props
  * @param {string} [props.locale] - Optional locale override (defaults to route param or 'en')
- * @returns {JSX.Element} The rendered trinket table with client-side data fetching
+ * @returns {JSX.Element} The rendered trinket table
  */
 export default function TrinketTableWrapper({
   locale: localeProp,

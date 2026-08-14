@@ -50,17 +50,33 @@ describe('RARITY_SORT_ORDER', () => {
     });
 
     it('should order common rarities correctly', () => {
-      expect(RARITY_SORT_ORDER['common']).toBeLessThan(RARITY_SORT_ORDER['uncommon']);
-      expect(RARITY_SORT_ORDER['uncommon']).toBeLessThan(RARITY_SORT_ORDER['rare']);
-      expect(RARITY_SORT_ORDER['rare']).toBeLessThan(RARITY_SORT_ORDER['very rare']);
-      expect(RARITY_SORT_ORDER['very rare']).toBeLessThan(RARITY_SORT_ORDER['legendary']);
+      expect(RARITY_SORT_ORDER['common']).toBeLessThan(
+        RARITY_SORT_ORDER['uncommon'],
+      );
+      expect(RARITY_SORT_ORDER['uncommon']).toBeLessThan(
+        RARITY_SORT_ORDER['rare'],
+      );
+      expect(RARITY_SORT_ORDER['rare']).toBeLessThan(
+        RARITY_SORT_ORDER['very rare'],
+      );
+      expect(RARITY_SORT_ORDER['very rare']).toBeLessThan(
+        RARITY_SORT_ORDER['legendary'],
+      );
     });
 
     it('should order high rarities correctly', () => {
-      expect(RARITY_SORT_ORDER['legendary']).toBeLessThan(RARITY_SORT_ORDER['artifact']);
-      expect(RARITY_SORT_ORDER['artifact']).toBeLessThan(RARITY_SORT_ORDER['mythic artifact']);
-      expect(RARITY_SORT_ORDER['mythic artifact']).toBeLessThan(RARITY_SORT_ORDER['mythic']);
-      expect(RARITY_SORT_ORDER['mythic']).toBeLessThan(RARITY_SORT_ORDER['unique']);
+      expect(RARITY_SORT_ORDER['legendary']).toBeLessThan(
+        RARITY_SORT_ORDER['artifact'],
+      );
+      expect(RARITY_SORT_ORDER['artifact']).toBeLessThan(
+        RARITY_SORT_ORDER['mythic artifact'],
+      );
+      expect(RARITY_SORT_ORDER['mythic artifact']).toBeLessThan(
+        RARITY_SORT_ORDER['mythic'],
+      );
+      expect(RARITY_SORT_ORDER['mythic']).toBeLessThan(
+        RARITY_SORT_ORDER['unique'],
+      );
     });
 
     it('should have unique as highest', () => {
@@ -90,7 +106,7 @@ describe('RARITY_SORT_ORDER', () => {
         { rarity: 'rare' },
       ];
       const sorted = [...items].sort(
-        (a, b) => RARITY_SORT_ORDER[a.rarity] - RARITY_SORT_ORDER[b.rarity]
+        (a, b) => RARITY_SORT_ORDER[a.rarity] - RARITY_SORT_ORDER[b.rarity],
       );
       expect(sorted[0].rarity).toBe('common');
       expect(sorted[1].rarity).toBe('rare');
@@ -105,7 +121,7 @@ describe('SIZE_SORT_ORDER', () => {
       expect(SIZE_SORT_ORDER).toBeDefined();
     });
 
-    it('should have all D&D sizes plus extended sizes', () => {
+    it('should have all Damocles sizes plus extended sizes', () => {
       const expectedSizes = [
         'tiny',
         'small',
@@ -127,17 +143,23 @@ describe('SIZE_SORT_ORDER', () => {
       expect(SIZE_SORT_ORDER['tiny']).toBe(0);
     });
 
-    it('should order standard D&D sizes correctly', () => {
+    it('should order standard Damocles sizes correctly', () => {
       expect(SIZE_SORT_ORDER['tiny']).toBeLessThan(SIZE_SORT_ORDER['small']);
       expect(SIZE_SORT_ORDER['small']).toBeLessThan(SIZE_SORT_ORDER['medium']);
       expect(SIZE_SORT_ORDER['medium']).toBeLessThan(SIZE_SORT_ORDER['large']);
       expect(SIZE_SORT_ORDER['large']).toBeLessThan(SIZE_SORT_ORDER['huge']);
-      expect(SIZE_SORT_ORDER['huge']).toBeLessThan(SIZE_SORT_ORDER['gargantuan']);
+      expect(SIZE_SORT_ORDER['huge']).toBeLessThan(
+        SIZE_SORT_ORDER['gargantuan'],
+      );
     });
 
     it('should order extended sizes correctly', () => {
-      expect(SIZE_SORT_ORDER['gargantuan']).toBeLessThan(SIZE_SORT_ORDER['colossal']);
-      expect(SIZE_SORT_ORDER['colossal']).toBeLessThan(SIZE_SORT_ORDER['titanic']);
+      expect(SIZE_SORT_ORDER['gargantuan']).toBeLessThan(
+        SIZE_SORT_ORDER['colossal'],
+      );
+      expect(SIZE_SORT_ORDER['colossal']).toBeLessThan(
+        SIZE_SORT_ORDER['titanic'],
+      );
     });
 
     it('should have titanic as largest', () => {
@@ -161,7 +183,7 @@ describe('SIZE_SORT_ORDER', () => {
         { size: 'medium' },
       ];
       const sorted = [...creatures].sort(
-        (a, b) => SIZE_SORT_ORDER[a.size] - SIZE_SORT_ORDER[b.size]
+        (a, b) => SIZE_SORT_ORDER[a.size] - SIZE_SORT_ORDER[b.size],
       );
       expect(sorted[0].size).toBe('tiny');
       expect(sorted[1].size).toBe('medium');

@@ -1,13 +1,8 @@
 /**
- * @fileoverview Next.js Metadata builder for library content pages.
+ * @fileoverview Builds Next.js Metadata objects for library content pages.
  *
- * Assembles Open Graph and Twitter Card metadata objects from a content
- * page's SEO input record. Intended for use exclusively inside
- * `generateMetadata` exports in page routes.
- *
- * All image and URL paths are root-relative strings. Next.js resolves them
- * to absolute URLs automatically using the `metadataBase` set in the root
- * layout.
+ * Assembles Open Graph and Twitter metadata from a PageSeoInput. Image and
+ * URL paths are root-relative strings.
  *
  * @module lib/seo/buildPageMetadata
  * @version 1.0.0
@@ -25,10 +20,10 @@ const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;
 
 /**
- * Maps a `slugPath` segment to an OG content type string.
+ * Parses a `slugPath` into an OG content type and slug.
  *
- * Handles both flat paths (`monsters/slug`) and nested paths
- * (`items/heirlooms/slug`). Returns `null` when no type can be identified.
+ * Supports flat paths (`monsters/slug`) and nested item paths
+ * (`items/heirlooms/slug`). Returns `null` when no type is identified.
  *
  * @param {string} slugPath - Slash-separated content path
  * @returns {{ type: string; slug: string } | null} Parsed type + slug or null
@@ -58,7 +53,7 @@ function parseOgType(slugPath: string): { type: string; slug: string } | null {
 }
 
 /**
- * Appends the site name suffix to a raw page title.
+ * Appends the site name suffix to a page title.
  *
  * @param {string} title - Page title without site suffix.
  * @returns {string} Full formatted title for `<title>` and `og:title`.
@@ -115,11 +110,6 @@ function buildTwitter(
 
 /**
  * Assembles a full Next.js `Metadata` object for a library content page.
- *
- * Resolves the OG image from frontmatter or slug convention and builds
- * `openGraph` and `twitter` sub-objects with consistent dimensions and
- * alt text. Also sets canonical URL, robots directives, author, publisher,
- * and page keywords.
  *
  * @param {PageSeoInput} input - SEO input record for the page.
  * @returns {Metadata} Complete Next.js Metadata object.

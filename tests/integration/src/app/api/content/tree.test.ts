@@ -1,9 +1,8 @@
 /**
- * Integration tests for the content file-tree API route
+ * Integration tests for GET /api/content/tree.
  *
- * Verifies that the route forwards query params to `listDirectory` and
- * returns the expected JSON shape. Uses a mocked `listDirectory` to avoid
- * touching the real content adapters.
+ * Asserts the route forwards query params to `listDirectory` and returns
+ * the expected JSON shape. Runs against a mocked `listDirectory`.
  */
 
 import { NextRequest } from 'next/server';

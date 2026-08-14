@@ -1,9 +1,6 @@
 /**
- * @fileoverview Content Tags System - Type definitions and tag utilities for MDX metadata
- * @description Defines TypeScript enums and type definitions for categorizing d20 content.
- * Includes spells, monsters, bloodlines, vocations, items, locations, and rules. Provides
- * union types for action economies, creature sizes, hit dice, and spellcasting progression.
- * Used by metadata generators and content filtering systems.
+ * @fileoverview Type definitions and tag utilities for MDX metadata.
+ * Categorizes d20 content and provides union types for content fields.
  * 
  * @version 1.0.0
  * @author Typeir

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for the rehypeSectionize rehype plugin.
- * @description Verifies that heading-delimited content is grouped into section elements
- * and that pre-heading content and data-heading-level attributes are handled correctly.
+ * @description Verifies heading-delimited grouping into section elements,
+ * pre-heading content handling, and data-heading-level/stamp attributes.
  *
  * @version 1.0.0
  * @author Typeir

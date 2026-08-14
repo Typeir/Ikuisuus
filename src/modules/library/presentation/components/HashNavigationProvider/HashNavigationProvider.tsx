@@ -1,6 +1,6 @@
 /**
- * @fileoverview Hash Navigation Provider Component
- * @description Client-side wrapper to enable hash navigation for MDX headings
+ * @fileoverview React component that calls useHashNavigation for MDX hash navigation.
+ * @description Renders null; activates hash navigation for MDX content.
  *
  * @module HashNavigationProvider
  * @version 1.0.0
@@ -13,12 +13,7 @@
 import { useHashNavigation } from '@/modules/library/application/hooks/useHashNavigation';
 
 /**
- * Client-side wrapper component that enables hash navigation for MDX headings.
- *
- * Provides hash navigation functionality to server-rendered MDX content by
- * wrapping the `useHashNavigation` hook in a client component that renders nothing.
- * This allows async server components to enable hash navigation without violating
- * React's rules about hooks in server components.
+ * Client component that calls the `useHashNavigation` hook and renders null.
  *
  * @remarks
  * - Must be rendered in the component tree (typically near the MDX content)

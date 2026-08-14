@@ -1,11 +1,8 @@
 /**
  * @fileoverview Raycast Service — Interaction & Occlusion Raycasting
  * @description Encapsulates all Three.js raycasting logic for the World Sim.
- * Handles two concerns: mouse-based body picking (click/hover) and camera-based
- * occlusion detection (which bodies are hidden behind others).
- *
- * Owns the Raycaster instance, cached mesh arrays, and reusable math objects
- * to avoid per-frame allocations.
+ * Performs mouse-based body picking (click/hover) and camera-based occlusion
+ * detection, and owns the Raycaster instance plus cached mesh arrays.
  *
  * @module worldSim/RaycastService
  * @version 1.0.0

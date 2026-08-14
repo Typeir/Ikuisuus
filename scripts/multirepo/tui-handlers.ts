@@ -1,9 +1,6 @@
 /**
  * @fileoverview Handlers for the ik multirepo TUI.
  *
- * Each handler corresponds to one menu option and composes clack prompts with
- * the git primitives in `./git.ts` and the command runners in `./commands/`.
- *
  * @module multirepo/tui-handlers
  * @author Typeir
  * @version 1.0.0
@@ -29,7 +26,7 @@ import { cmdPassthrough, git, listDirtyFiles, logRepo } from './git';
 import { guardCancel } from './tui';
 
 /**
- * Handles the `status` TUI action — short status for both repos.
+ * Shows short status for both repos.
  * @returns {Promise<void>}
  */
 async function tuiStatus(): Promise<void> {
@@ -43,7 +40,7 @@ async function tuiStatus(): Promise<void> {
 }
 
 /**
- * Handles the `add` TUI action — file picker then stage.
+ * Stages files via picker or path input.
  * @returns {Promise<void>}
  */
 async function tuiAdd(): Promise<void> {
@@ -81,7 +78,7 @@ async function tuiAdd(): Promise<void> {
 }
 
 /**
- * Handles the `commit` TUI action — message prompt then commit.
+ * Prompts for a message and commits it.
  * @returns {Promise<void>}
  */
 async function tuiCommit(): Promise<void> {
@@ -94,7 +91,7 @@ async function tuiCommit(): Promise<void> {
 }
 
 /**
- * Handles the `push` TUI action — confirm + optional flags then push.
+ * Confirms and pushes both repos, with optional extra flags.
  * @returns {Promise<void>}
  */
 async function tuiPush(): Promise<void> {
@@ -113,7 +110,7 @@ async function tuiPush(): Promise<void> {
 }
 
 /**
- * Handles the `pull` TUI action — strategy picker then pull.
+ * Pulls with a user-selected strategy.
  * @returns {Promise<void>}
  */
 async function tuiPull(): Promise<void> {
@@ -130,7 +127,7 @@ async function tuiPull(): Promise<void> {
 }
 
 /**
- * Handles the `fetch` TUI action — remote scope picker then fetch.
+ * Fetches with a user-selected remote scope.
  * @returns {Promise<void>}
  */
 async function tuiFetch(): Promise<void> {
@@ -147,7 +144,7 @@ async function tuiFetch(): Promise<void> {
 }
 
 /**
- * Handles the `log` TUI action — format picker then log.
+ * Shows log with a user-selected format.
  * @returns {Promise<void>}
  */
 async function tuiLog(): Promise<void> {
@@ -171,7 +168,7 @@ async function tuiLog(): Promise<void> {
 }
 
 /**
- * Handles the `diff` TUI action — scope picker then diff.
+ * Shows diff for a user-selected scope.
  * @returns {Promise<void>}
  */
 async function tuiDiff(): Promise<void> {
@@ -188,7 +185,7 @@ async function tuiDiff(): Promise<void> {
 }
 
 /**
- * Handles the `stash` TUI action — sub-command picker then stash.
+ * Runs a user-selected stash sub-command.
  * @returns {Promise<void>}
  */
 async function tuiStash(): Promise<void> {
@@ -213,7 +210,7 @@ async function tuiStash(): Promise<void> {
 }
 
 /**
- * Handles the `branch` TUI action — operation picker then branch management.
+ * Runs a user-selected branch operation.
  * @returns {Promise<void>}
  */
 async function tuiBranch(): Promise<void> {
@@ -273,7 +270,7 @@ async function tuiBranch(): Promise<void> {
 }
 
 /**
- * Handles the free-form `passthrough` TUI action.
+ * Runs a free-form git command from user input.
  * @returns {Promise<void>}
  */
 async function tuiPassthrough(): Promise<void> {
@@ -287,7 +284,7 @@ async function tuiPassthrough(): Promise<void> {
   cmdPassthrough(parts[0]!, parts.slice(1));
 }
 
-/** Dispatch table mapping each non-quit `MenuOption` to its TUI handler. */
+/** Maps each non-quit `MenuOption` to its handler. */
 export const TUI_HANDLERS: Record<
   Exclude<MenuOption, 'quit'>,
   () => Promise<void>

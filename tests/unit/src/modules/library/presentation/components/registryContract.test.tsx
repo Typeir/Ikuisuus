@@ -1,15 +1,7 @@
 /**
  * @fileoverview MDX Component Registry Contract Tests
- * @description Guards the contract between the remark plugins and the live
- * component registry.
- *
- * A remark plugin emits JSX referring to a component by name. If that name is
- * absent from the registry the page renders through, MDX throws at request time
- * — long after the build, the metadata pass and the unit tests have all passed.
- * That is exactly how `Unit` shipped broken.
- *
- * These tests assert the registry actually used at runtime, not the one the
- * documentation names.
+ * @description Asserts that components emitted by remark plugins and referenced
+ * by content resolve through the live runtime registry.
  *
  * @module tests/unit/modules/library/presentation/components/registryContract
  * @version 1.0.0
@@ -24,15 +16,12 @@ import { components } from '@/modules/library/presentation/components';
 import { describe, expect, it } from 'vitest';
 
 /**
- * Component names emitted by remark plugins during MDX compilation. Every entry
- * must resolve through the live registry or content fails to render.
+ * Component names emitted by remark plugins during MDX compilation.
  */
 const PLUGIN_EMITTED = [UNIT_COMPONENT_NAME, 'DiceRoll'] as const;
 
 /**
- * Components referenced directly by rule content that the reader can interact
- * with. These are authored by hand rather than emitted, but a missing entry
- * fails identically at request time.
+ * Component names referenced directly by rule content, not emitted by plugins.
  */
 const CONTENT_REFERENCED = ['UnitSwitcher', 'Collapsible'] as const;
 

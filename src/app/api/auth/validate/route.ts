@@ -1,9 +1,5 @@
 /**
  * @fileoverview Auth Validate API Route
- * @description Validates an existing session token and returns the session payload.
- *
- * GET /api/auth/validate
- *
  * @module app/api/auth/validate/route
  * @version 1.0.0
  * @author Typeir
@@ -14,6 +10,8 @@ import { extractSession } from '@/lib/db/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
+ * Validates a session token and returns the session payload.
+ *
  * GET /api/auth/validate
  *
  * Expects `Authorization: Bearer <session-token>` header.

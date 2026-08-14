@@ -1,22 +1,12 @@
 /**
  * @fileoverview Active Sheet Context
- * @description Owns the *session* state of the character sheet: the working
- * draft lifecycle, the edit mode flag, and the active tab. It deliberately
- * holds no character data of its own — the entity lives in exactly one place,
- * {@link CharacterEntityProvider}, which this provider mounts around the sheet
- * with the display entity (draft while editing, saved snapshot otherwise).
- * `useSheetData` / `useSheetField` therefore read straight from that one
- * context, so there is no second copy of the character to drift out of sync.
- *
- * Exposes a typed mutator API and selector hooks so consumers never need to
- * receive `data` / `onChange` props.
- *
- * Writes are never gated on edit mode — see {@link sheetReducer}. Edit mode
- * decides only whether a write joins the cancellable draft transaction. Any
- * saved-character change (a live-play write, or a `COMMIT_SAVE`) is pushed to
- * the outer roster context (`@/lib/context/CharacterSheetContext`) by a single
- * effect, so there is exactly one route to the persistence layer.
- *
+ * @description Owns the sheet session state: draft lifecycle, edit-mode flag,
+ * and active tab. Holds no character data; the sheet mounts a single
+ * {@link CharacterEntityProvider} with the display entity (draft while
+ * editing, saved snapshot otherwise). Exposes a typed mutator API and selector
+ * hooks. Writes are not gated on edit mode — see {@link sheetReducer}. Any
+ * saved-character change is pushed to the outer roster context
+ * (`@/lib/context/CharacterSheetContext`) by a single effect.
  * @module lib/components/characterSheet/context/activeSheetContext
  * @version 2.0.0
  * @author Typeir
@@ -48,8 +38,7 @@ import { sheetReducer, type SheetTabId } from './sheetReducer';
 export type { SheetTabId };
 
 /**
- * Mutator API exposed to consumers via `useSheetMutators`.
- *
+ * Mutator API exposed via `useSheetMutators`.
  * @interface SheetMutators
  * @property {(partial: Partial<CharacterSheetType>) => void} patch - Merge a partial patch into the draft
  * @property {(key: keyof CharacterSheetType['abilityScores'], score: number) => void} patchAbility - Update a single ability score
@@ -75,10 +64,8 @@ export interface SheetMutators {
 }
 
 /**
- * Session state exposed by the context value. Character data is intentionally
- * absent — read it with {@link useSheetData}, which resolves to the single
- * entity context.
- *
+ * Session state exposed by the context value. Character data lives in the
+ * entity context — read it with {@link useSheetData}.
  * @interface SheetContextValue
  * @property {boolean} editing - Edit mode flag
  * @property {SheetTabId} activeTab - Currently displayed tab
@@ -94,11 +81,10 @@ const ActiveSheetContext = createContext<SheetContextValue | null>(null);
 
 /**
  * Props for the ActiveSheetProvider.
- *
  * @interface ActiveSheetProviderProps
  * @property {CharacterSheetType} character - Saved character to seed state
  * @property {SheetTabId} [initialTab] - Initial active tab (default 'overview')
- * @property {string | null} [startEditingId] - When it matches `character.id`, the sheet enters edit mode on mount/selection (used to open freshly-created characters directly in edit mode)
+ * @property {string | null} [startEditingId] - If it matches `character.id`, the sheet enters edit mode on mount/selection
  * @property {ReactNode} children - Subtree that reads from this context
  */
 export interface ActiveSheetProviderProps {
@@ -109,9 +95,8 @@ export interface ActiveSheetProviderProps {
 }
 
 /**
- * Provides the active-sheet state and mutators to descendants.
- * Calling `saveEdit` dispatches `UPSERT_CHARACTER` to the outer roster context.
- *
+ * Provides the active-sheet state and mutators to descendants. `saveEdit`
+ * dispatches `UPSERT_CHARACTER` to the outer roster context.
  * @component
  * @param {ActiveSheetProviderProps} props - Provider props
  * @returns {JSX.Element} Context provider element
@@ -132,11 +117,8 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
   });
 
   /**
-   * Adopt a different character when the roster selects one. The reducer is
-   * already seeded from this prop, so the mount pass is deliberately skipped:
-   * child effects run before the provider's, and an unconditional mount-time
-   * sync would discard any write a descendant made on its own mount (the
-   * hit-dice reconciler, for one).
+   * Adopts a different character when the roster selects one. Skips the initial
+   * mount pass; the reducer is already seeded from the `character` prop.
    */
   const syncedCharacterRef = useRef(character);
   useEffect(() => {
@@ -146,10 +128,8 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
   }, [character]);
 
   /**
-   * Enter edit mode when the active character is one flagged to open editing
-   * (a freshly-created character). Runs after SYNC has seeded the draft, and
-   * only re-fires when the flagged id or active character changes — so
-   * cancelling edit does not re-trigger it.
+   * Enters edit mode when `startEditingId` matches `character.id`. Re-fires
+   * only when the flagged id or active character changes.
    */
   useEffect(() => {
     if (startEditingId && startEditingId === character.id) {
@@ -158,16 +138,9 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
   }, [startEditingId, character.id]);
 
   /**
-   * The single path by which this sheet reaches the persistence layer. Any write
-   * that lands on the saved character — a live-play edit outside edit mode, or a
-   * `COMMIT_SAVE` — marks the reducer dirty, and this pushes it upstream.
-   *
-   * The trigger is the dirty flag rather than a comparison against the incoming
-   * `character` prop. The roster rebuilds every upserted character (not least to
-   * stamp `updatedAt`), so the push comes back as a brand-new object one commit
-   * later; a prop comparison would still be looking at the pre-echo value in the
-   * commit where the adopting `SYNC_CHARACTER` is already queued, push again,
-   * and mint another object — forever.
+   * Pushes dirty saved-character writes to the outer roster context via
+   * `UPSERT_CHARACTER`. Skips while editing. Triggered by the dirty flag, not
+   * by comparison against the incoming `character` prop.
    */
   useEffect(() => {
     if (state.editing || !state.dirty) return;
@@ -259,8 +232,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
 };
 
 /**
- * Read the full active-sheet context. Throws if used outside the provider.
- *
+ * Reads the full active-sheet context. Throws outside the provider.
  * @function useActiveSheet
  * @returns {SheetContextValue} The current context value
  * @throws {Error} When called outside an ActiveSheetProvider
@@ -276,26 +248,23 @@ export const useActiveSheet = (): SheetContextValue => {
 };
 
 /**
- * Read the currently displayed character data (`draft` when editing, else the
- * saved snapshot). Resolves to the single {@link CharacterEntityProvider} the
- * sheet mounts, so this and `useCharacterEntity` always return the same object.
- *
+ * Reads the currently displayed character data (`draft` when editing, else the
+ * saved snapshot). Resolves to {@link useCharacterEntity}; both return the
+ * same object.
  * @function useSheetData
  * @returns {CharacterSheetType} The display data
  */
 export const useSheetData = (): CharacterSheetType => useCharacterEntity();
 
 /**
- * Read the edit mode flag.
- *
+ * Reads the edit mode flag.
  * @function useSheetEditing
  * @returns {boolean} `true` when in edit mode
  */
 export const useSheetEditing = (): boolean => useActiveSheet().editing;
 
 /**
- * Read the active tab + setter.
- *
+ * Reads the active tab and its setter.
  * @function useSheetTab
  * @returns {[SheetTabId, (tab: SheetTabId) => void]} Tuple of current tab and setter
  */
@@ -305,16 +274,14 @@ export const useSheetTab = (): [SheetTabId, (tab: SheetTabId) => void] => {
 };
 
 /**
- * Read the mutator API.
- *
+ * Reads the mutator API.
  * @function useSheetMutators
  * @returns {SheetMutators} The write API
  */
 export const useSheetMutators = (): SheetMutators => useActiveSheet().mutators;
 
 /**
- * Read a single top-level field from the active character data.
- *
+ * Reads a single top-level field from the active character data.
  * @function useSheetField
  * @param {K} key - Key of the character field to read
  * @returns {CharacterSheetType[K]} The current value of that field

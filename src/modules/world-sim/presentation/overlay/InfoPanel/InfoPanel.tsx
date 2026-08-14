@@ -33,7 +33,6 @@ interface InfoPanelProps {
 
 /**
  * Side panel showing details of the currently selected celestial body.
- * Renders body name, subtitle, lore origin description, and clickable region list.
  *
  * @param {InfoPanelProps} props - Component props
  * @param {React.MutableRefObject<WorldSimMediator | null>} props.mediatorRef - Ref to the WorldSim mediator instance
