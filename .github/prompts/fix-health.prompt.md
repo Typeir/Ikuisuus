@@ -47,7 +47,7 @@ For each critical finding:
 
 1. Read the affected file
 2. Read the relevant architecture doc:
-   - JSDoc issues → `.github/docs/jsdoc.md`
+   - JSDoc issues → `.github/docs/jsdoc.md` (tone: dry caveman technical. No philosophy/prose/poetry/allegory/bible. If caveman can't explain, strict ASD-STE100)
    - CSS issues → `.github/docs/scss-theme-rules.md`
    - Test issues → `.github/docs/testing-rules.md`
    - MDX issues → `.github/skills/mdx-format/SKILL.md`

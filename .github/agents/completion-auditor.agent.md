@@ -24,6 +24,7 @@ Full overview. Do NOT skip.
    - ALL `- [ ]` in DoD, Milestones, Checklist → `- [x]`
    - `## Health Check Results` populated, NO CRITICAL findings
    - `npm run health:check` + `npm test` passed
+   - JSDoc tone dry (caveman technical; else strict ASD-STE100) — no philosophy/prose/poetry/allegory/bible
    - Status: `IN_PROGRESS` (not BLOCKED/FAILED)
 
 4. If incomplete items → list clearly, launch subagent (Implementer or HealthReviewer) to fix, re-validate.
@@ -66,6 +67,7 @@ Create in `.ignore/reports/` — filename: `YYYY-MM-DD-HHMMSS-report-{kebab-task
 | File length   | PASS/FAIL |         |
 | Duplicate CSS | PASS/FAIL |         |
 | JSDoc quality | PASS/FAIL |         |
+| JSDoc tone    | PASS/FAIL |         |
 | Anti-patterns | PASS/FAIL |         |
 | Test gaps     | PASS/FAIL |         |
 | ESLint        | PASS/FAIL |         |

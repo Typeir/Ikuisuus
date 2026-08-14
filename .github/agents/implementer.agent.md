@@ -46,6 +46,7 @@ Read ALL matching files.
 From `.github/copilot-instructions.md`:
 
 - JSDoc on exports, no inline comments
+- JSDoc tone dry: caveman technical, nothing else, nothing more. No philosophy/prose/poetry/allegory/bible. If caveman can't explain, strict ASD-STE100
 - No color literals outside globals.scss
 - Zero act() warnings in tests
 - Use NotificationProvider, not alert()

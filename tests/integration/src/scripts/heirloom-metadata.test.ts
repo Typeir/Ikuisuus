@@ -376,4 +376,101 @@ describe('Heirloom Metadata Generator', () => {
       expect(result.file).toContain('mythic-weapon.mdx');
     });
   });
+
+  describe('Prose Stripping', () => {
+    /**
+     * Tests dual-form title line parsing
+     *
+     * @description First balanced paren group only; second form must not bleed
+     * into properties or mastery
+     */
+    it('should parse a dual-form title line without gluing paren groups', async () => {
+      const filePath = path.join(FIXTURES_DIR, 'dual-form-weapon.mdx');
+      const result = await parseHeirloomFile(filePath, sharedData);
+
+      expect(result.weaponType?.toLowerCase()).toBe('longsword');
+      expect(result.hitModifier).toBe(1);
+      expect(result.mastery).toEqual(['emberfall']);
+      expect(
+        result.tags.every((tag: string) => !tag.includes('greatshield (')),
+      ).toBe(true);
+    });
+
+    /**
+     * Tests custom in-file mastery handling
+     *
+     * @description Mastery defined in the item's own Weapon Mastery section:
+     * kept in metadata, no property: aspect
+     */
+    it('should not emit a property aspect for an item-defined mastery', async () => {
+      const filePath = path.join(FIXTURES_DIR, 'dual-form-weapon.mdx');
+      const result = await parseHeirloomFile(filePath, sharedData);
+
+      expect(result.tags).not.toContain('property:emberfall');
+      expect(result.tags).toContain('property:versatile');
+      expect(result.tags).toContain('property:magical');
+    });
+
+    /**
+     * Tests mastery clause normalization
+     *
+     * @description "**Push** or **Slow** — see Weapon Mastery" yields push and
+     * slow, note stripped
+     */
+    it('should split mastery alternatives and strip em-dash notes', async () => {
+      const filePath = path.join(FIXTURES_DIR, 'mastery-notes.mdx');
+      const result = await parseHeirloomFile(filePath, sharedData);
+
+      expect(result.mastery).toContain('push');
+      expect(result.mastery).toContain('slow');
+      expect(
+        result.mastery?.every((m: string) => !m.includes('see weapon mastery')),
+      ).toBe(true);
+      expect(result.tags).toContain('property:push');
+      expect(result.tags).toContain('property:slow');
+    });
+
+    /**
+     * Tests "Mastery: None" handling
+     *
+     * @description None names no mastery; no value, no warning, no aspect
+     */
+    it('should drop a "None" mastery silently', async () => {
+      const filePath = path.join(FIXTURES_DIR, 'mastery-none.mdx');
+      const result = await parseHeirloomFile(filePath, sharedData);
+
+      expect(result.mastery).toBeUndefined();
+      expect(result.tags).not.toContain('property:none');
+    });
+
+    /**
+     * Tests graft slot routing
+     *
+     * @description Base category parenthetical names slots; slot: aspects, no
+     * type aspect for the slot value
+     */
+    it('should tag graft slots without a type aspect for the slot', async () => {
+      const filePath = path.join(FIXTURES_DIR, 'graft-item.mdx');
+      const result = await parseHeirloomFile(filePath, sharedData);
+
+      expect(result.tags).toContain('slot:liver');
+      expect(result.tags).toContain('slot:gut');
+      expect(result.tags).toContain('item:monstrous-graft');
+      expect(result.tags).not.toContain('weapon:liver');
+      expect(result.tags).not.toContain('item:liver');
+    });
+
+    /**
+     * Tests itemType detection past leading JSX
+     *
+     * @description Italic header pushed beyond line 5 by JSX blocks must still
+     * be found
+     */
+    it('should detect the item type when JSX precedes the italic header', async () => {
+      const filePath = path.join(FIXTURES_DIR, 'jsx-header.mdx');
+      const result = await parseHeirloomFile(filePath, sharedData);
+
+      expect(result.itemType).toBe('consumable');
+    });
+  });
 });

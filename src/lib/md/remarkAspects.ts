@@ -1,9 +1,12 @@
 /**
  * Remark Aspects Plugin
  *
- * @fileoverview Places an `<Aspects>` element directly beneath the headings that
- * have aspects, so a section's facets sit with the section they describe rather
- * than in a block of metadata above the article.
+ * @fileoverview Places an `<Aspects>` element directly beneath the headings and
+ * bold-label list entries that have aspects, so a section's facets sit with the
+ * section they describe rather than in a block of metadata above the article.
+ * List-entry rows go inside the `<li>` — a sibling insert breaks the list —
+ * and the entry splits at its first hard break so the row sits between the
+ * bold label and the prose, as under a heading.
  *
  * The plugin carries **placement only**. It is handed the list of section names
  * that have aspects and emits a `section` key; the aspects themselves are read at
@@ -24,8 +27,9 @@
  */
 
 import { toPlainMeasure } from '@/lib/units/nativeMeasure';
-import type { Heading, Root } from 'mdast';
+import type { Heading, ListItem, Paragraph, Root } from 'mdast';
 import type { Plugin } from 'unified';
+import type { Node, Parent } from 'unist';
 import { SKIP, visit } from 'unist-util-visit';
 
 /**
@@ -46,47 +50,70 @@ export interface RemarkAspectsOptions {
 }
 
 /**
- * Concatenates the literal text of a heading's children.
+ * Concatenates text/inlineCode/html values of a node's inline children. JSX
+ * skipped whole: boon cost badges (`###### Monady <span>5 BP</span>`) would
+ * otherwise pollute the key and match nothing.
  *
- * Only value-bearing nodes contribute, so emphasis and inline code inside a
- * heading collapse to their text the same way the extractor saw them.
- *
- * Embedded JSX is skipped whole. A boon is written
- * `###### Cognitive Matrix <span>7 BP</span>`, and the generator's `spanHeading`
- * pattern captures the name alone — so reading the badge back in produced
- * "Cognitive Matrix 7 BP", which matched no section and left every annotated
- * heading without its aspects. Every heading of that shape sits inside a
- * `<Collapsible>`, which is why the gap read as a Collapsible problem.
- *
- * @param {Heading} heading - The heading node
- * @returns {string} The heading's text
+ * @param {Node} node - The node whose text to gather
+ * @returns {string} The concatenated text
  */
-function headingText(heading: Heading): string {
+function inlineText(node: Node): string {
   let text = '';
 
-  visit(heading, (node) => {
-    /* Only the text-level form can appear here — a heading holds phrasing
-       content, so there is no flow element to skip. */
-    if (node.type === 'mdxJsxTextElement') return SKIP;
+  visit(node, (child) => {
+    if (child.type === 'mdxJsxTextElement') return SKIP;
 
     if (
-      (node.type === 'text' ||
-        node.type === 'inlineCode' ||
-        node.type === 'html') &&
-      'value' in node &&
-      typeof node.value === 'string'
+      (child.type === 'text' ||
+        child.type === 'inlineCode' ||
+        child.type === 'html') &&
+      'value' in child &&
+      typeof child.value === 'string'
     ) {
-      text += node.value;
+      text += child.value;
     }
 
     return undefined;
   });
 
-  /* Normalised the same way the generator normalises a feature name. A heading
-     reads `### Aura of Stillness ([= 12 stride;ADJ =] radius)` and the stored
-     name is `Aura of Stillness (12 stride radius)`; without this the two never
-     meet and the section silently loses its aspects. */
-  return toPlainMeasure(text.trim());
+  return text;
+}
+
+/**
+ * Heading section key, measure-normalised the same way the generator
+ * normalises feature names (`[= 12 stride;ADJ =]` → `12 stride`).
+ *
+ * @param {Heading} heading - The heading node
+ * @returns {string} The heading's text
+ */
+function headingText(heading: Heading): string {
+  return toPlainMeasure(inlineText(heading).trim());
+}
+
+/**
+ * Section key of a bold-label list entry (`- **Pseudopod Slam.** prose`).
+ * Qualifies with prose after the label — inline or as a following block; a
+ * label holding only a nested list does not. Key mirrors the extractor's
+ * bold-label normalisation: plain text, periods removed.
+ *
+ * @param {ListItem} item - The list entry to inspect
+ * @returns {string | undefined} The section key, or undefined for a non-feature entry
+ */
+function listItemSection(item: ListItem): string | undefined {
+  const [lead, next] = item.children;
+  if (lead?.type !== 'paragraph') return undefined;
+
+  const [label, ...rest] = lead.children;
+  if (label?.type !== 'strong') return undefined;
+
+  const hasInlineProse = rest.some(
+    (node) =>
+      node.type !== 'break' &&
+      !(node.type === 'text' && node.value.trim() === ''),
+  );
+  if (!hasInlineProse && next?.type !== 'paragraph') return undefined;
+
+  return toPlainMeasure(inlineText(label).replace(/\./g, '').trim());
 }
 
 /**
@@ -107,8 +134,9 @@ function aspectsNode(section: string) {
 }
 
 /**
- * Remark plugin factory that inserts an aspect row after each heading whose text
- * appears in `sections`.
+ * Remark plugin factory that inserts an aspect row after each heading — and
+ * inside each qualifying bold-label list entry — whose text appears in
+ * `sections`.
  *
  * @param {RemarkAspectsOptions} [options] - Plugin options
  * @returns {Plugin<[], Root>} A unified plugin that transforms the MDAST
@@ -119,8 +147,11 @@ const remarkAspects: Plugin<[RemarkAspectsOptions?], Root> = (options) => {
   return (tree: Root) => {
     if (sections.size === 0) return;
 
-    const insertions: Array<{ parent: Root; index: number; section: string }> =
-      [];
+    const insertions: Array<{
+      parent: Parent;
+      index: number;
+      section: string;
+    }> = [];
 
     visit(tree, 'heading', (node, index, parent) => {
       if (!parent || index === null || index === undefined) return;
@@ -128,11 +159,51 @@ const remarkAspects: Plugin<[RemarkAspectsOptions?], Root> = (options) => {
       const text = headingText(node as Heading);
       if (!sections.has(text)) return;
 
-      insertions.push({ parent: parent as Root, index, section: text });
+      insertions.push({ parent: parent as Parent, index, section: text });
+    });
+
+    const entries: Array<{ item: ListItem; section: string }> = [];
+
+    visit(tree, 'listItem', (node) => {
+      const item = node as ListItem;
+      const section = listItemSection(item);
+      if (!section || !sections.has(section)) return;
+
+      entries.push({ item, section });
     });
 
     for (const { parent, index, section } of insertions.reverse()) {
       parent.children.splice(index + 1, 0, aspectsNode(section) as never);
+    }
+
+    /* Inside the entry, not between list items — keeps the ul intact. The
+       lead paragraph splits at its first hard break so the row sits between
+       label and prose, matching heading placement. */
+    for (const { item, section } of entries) {
+      const lead = item.children[0] as Paragraph;
+      const breakIndex = lead.children.findIndex(
+        (child) => child.type === 'break',
+      );
+
+      if (breakIndex === -1) {
+        item.children.splice(1, 0, aspectsNode(section) as never);
+        continue;
+      }
+
+      const label: Paragraph = {
+        type: 'paragraph',
+        children: lead.children.slice(0, breakIndex),
+      };
+      const body = lead.children.slice(breakIndex + 1);
+      const rest: Paragraph[] = body.length
+        ? [{ type: 'paragraph', children: body }]
+        : [];
+
+      item.children.splice(
+        0,
+        1,
+        ...([label, aspectsNode(section), ...rest] as never[]),
+      );
     }
   };
 };

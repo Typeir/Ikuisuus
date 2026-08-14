@@ -22,7 +22,7 @@ When user describes task:
 
 1. Load matching `.github/instructions/` files based on affected files.
 2. Identify architecture domains (see mapping table).
-3. Scan affected files (scope, JSDoc, test coverage).
+3. Scan affected files (scope, JSDoc incl. dry tone, test coverage).
 4. Generate task summary in `.ignore/tasks/` — filename: `YYYY-MM-DD-HHMMSS-{kebab-task-title}.md`
 5. Set Status `IN_PROGRESS`.
 
@@ -84,6 +84,7 @@ See `.github/skills/task-lifecycle/SKILL.md`. Required sections:
 
 - [ ] Compile
 - [ ] JSDoc on exports
+- [ ] JSDoc dry caveman tone — no philosophy/prose/poetry/allegory/bible. Else strict ASD-STE100
 - [ ] No inline comments
 - [ ] No color literals outside globals.scss
 - [ ] Tests exist

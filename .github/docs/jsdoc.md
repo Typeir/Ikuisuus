@@ -16,6 +16,36 @@ This document defines the JSDoc formatting standards used throughout the project
 | Inline comments inside logic          | **PROHIBITED** - extract to helper functions with JSDoc              |
 | `@component` tag for React components | Required with function prop signatures                               |
 | Component `@param` exhaustiveness     | **REQUIRED** - every prop must have a `@param {Type} [props.x]` line |
+| Tone (dry, technical)                 | **REQUIRED** - caveman style. If caveman can't explain it, strict ASD-STE100 |
+
+---
+
+## Tone: Dry Caveman. Nothing Else.
+
+> **HARD RULE**: JSDoc is **dry, caveman-style technical description**. Nothing else. Nothing more.
+
+**FORBIDDEN in all JSDoc**: philosophy, literary prose, poetry, poetic allegory, bible-style writing, storytelling, narrative flourish, metaphors, filler.
+
+**Rule**: shortest description that says what the thing does, in code terms.
+If caveman can't explain it, use **strict ASD-STE100** (Simplified Technical English: one meaning per word, short sentences, approved word list).
+
+### ❌ DO NOT
+
+```typescript
+/**
+ * Aura of Stillness — like the hush before dawn, this aura weaves a
+ * tapestry of silence over the battlefield, as if the world itself
+ * held its breath to honor the fallen.
+ */
+```
+
+### ✅ DO
+
+```typescript
+/**
+ * Aura that prevents sound within 30 ft. Creatures inside are silenced.
+ */
+```
 
 ---
 
@@ -69,7 +99,8 @@ function filterActiveItems(items: Item[]): Item[] {
 
 ## File-Level Documentation
 
-Every JavaScript/TypeScript file should begin with a comprehensive file-level JSDoc block:
+Every JavaScript/TypeScript file should begin with a file-level JSDoc block.
+Dry, technical — same tone rule as all JSDoc (no philosophy, prose, poetry, allegory, bible):
 
 ```javascript
 /**
@@ -87,8 +118,9 @@ Every JavaScript/TypeScript file should begin with a comprehensive file-level JS
  * @requires dependency2 Description of what this dependency provides
  *
  * @description
- * Detailed multi-paragraph explanation of the module's purpose, architecture,
- * and key concepts. Include:
+ * Dry technical bullets only — no prose, no philosophy, no narrative.
+ * If caveman can't explain it, use strict ASD-STE100.
+ * Include:
  * - What problem this solves
  * - How it fits into the larger system
  * - Key algorithms or patterns used

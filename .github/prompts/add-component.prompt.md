@@ -27,8 +27,8 @@ From the user's request, determine:
 Create the following files:
 
 1. **Component file** (`{componentName}.tsx`):
-   - `@fileoverview` JSDoc at top
-   - `@component` tag with `@param` for each prop
+   - `@fileoverview` JSDoc at top — dry caveman technical. No philosophy/prose/poetry/allegory/bible. If caveman can't explain, strict ASD-STE100
+   - `@component` tag with `@param` for each prop — same dry tone
    - Use CSS modules for styling (`.module.scss`)
    - Use `'use client'` directive ONLY if needed for interactivity
 

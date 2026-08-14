@@ -28,3 +28,4 @@ no headers, no markdown, no explanation. 3-5 sentences max.
 - Never hallucinate; be specific
 - Note patterns (barrel exports useful, "has imports" not)
 - Flag gotchas (mutations, non-obvious coupling)
+- Dry, technical only — no philosophy, no prose, no poetry, no allegory, no bible. If caveman can't explain it, use strict ASD-STE100.

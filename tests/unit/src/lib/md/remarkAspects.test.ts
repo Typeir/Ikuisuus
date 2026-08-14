@@ -266,3 +266,196 @@ describe('remarkAspects', () => {
     expect(emitted(tree)).toEqual(['Mucklord', 'Detect']);
   });
 });
+
+/**
+ * A list entry: lead paragraph children, then optional further blocks.
+ *
+ * @param {unknown[]} lead - Lead paragraph children
+ * @param {unknown[]} [blocks] - Blocks after the lead paragraph
+ * @returns {object} An mdast listItem
+ */
+function entry(lead: unknown[], blocks: unknown[] = []): object {
+  return {
+    type: 'listItem',
+    children: [{ type: 'paragraph', children: lead }, ...blocks],
+  };
+}
+
+/**
+ * Wraps entries in a list under a root.
+ *
+ * @param {object[]} entries - List items
+ * @returns {Root} An mdast root holding one list
+ */
+function listDoc(entries: object[]): Root {
+  return {
+    type: 'root',
+    children: [{ type: 'list', ordered: false, children: entries }],
+  } as unknown as Root;
+}
+
+/**
+ * Children of the list's nth entry.
+ *
+ * @param {Root} tree - Transformed tree
+ * @param {number} index - Entry index
+ * @returns {Array<{ type: string; name?: string }>} Entry children
+ */
+function entryChildren(
+  tree: Root,
+  index: number,
+): Array<{ type: string; name?: string }> {
+  const list = tree.children[0] as unknown as {
+    children: Array<{ children: Array<{ type: string; name?: string }> }>;
+  };
+  return list.children[index].children;
+}
+
+const bold = (value: string): object => ({
+  type: 'strong',
+  children: [{ type: 'text', value }],
+});
+
+describe('remarkAspects list entries', () => {
+  it('should place the row between the bold label and its prose', () => {
+    const tree = run(
+      listDoc([
+        entry([
+          bold('Pseudopod Slam.'),
+          { type: 'break' },
+          { type: 'text', value: 'Melee Weapon Attack: +14 to hit.' },
+        ]),
+      ]),
+      { sections: ['Pseudopod Slam'] },
+    );
+
+    const children = entryChildren(tree, 0);
+    expect(children[0]).toMatchObject({
+      type: 'paragraph',
+      children: [{ type: 'strong' }],
+    });
+    expect(children[1]).toMatchObject({
+      type: 'mdxJsxFlowElement',
+      name: ASPECTS_COMPONENT_NAME,
+    });
+    expect(children[2]).toMatchObject({
+      type: 'paragraph',
+      children: [{ type: 'text' }],
+    });
+  });
+
+  it('should keep the list intact — no siblings between entries', () => {
+    const tree = run(
+      listDoc([
+        entry([
+          bold('Pseudopod Slam.'),
+          { type: 'break' },
+          { type: 'text', value: 'prose' },
+        ]),
+        entry([
+          bold('Acid Shotgun.'),
+          { type: 'break' },
+          { type: 'text', value: 'prose' },
+        ]),
+      ]),
+      { sections: ['Pseudopod Slam', 'Acid Shotgun'] },
+    );
+
+    const list = tree.children[0] as unknown as {
+      children: Array<{ type: string }>;
+    };
+    expect(list.children).toHaveLength(2);
+    expect(list.children.every((node) => node.type === 'listItem')).toBe(true);
+    expect(entryChildren(tree, 0)[1].name).toBe(ASPECTS_COMPONENT_NAME);
+    expect(entryChildren(tree, 1)[1].name).toBe(ASPECTS_COMPONENT_NAME);
+  });
+
+  it('should match a label with inline prose after a colon', () => {
+    const tree = run(
+      listDoc([
+        entry([
+          bold('Pseudopod Lash.'),
+          { type: 'text', value: ' (Costs 1 Deed) The War Machine attacks.' },
+        ]),
+      ]),
+      { sections: ['Pseudopod Lash'] },
+    );
+
+    expect(entryChildren(tree, 0)[1].name).toBe(ASPECTS_COMPONENT_NAME);
+  });
+
+  it('should match a label followed by a paragraph block', () => {
+    const tree = run(
+      listDoc([
+        entry(
+          [bold('Null Spark.')],
+          [
+            {
+              type: 'paragraph',
+              children: [{ type: 'text', value: 'A brief nullwave.' }],
+            },
+          ],
+        ),
+      ]),
+      { sections: ['Null Spark'] },
+    );
+
+    expect(entryChildren(tree, 0)[1].name).toBe(ASPECTS_COMPONENT_NAME);
+  });
+
+  it('should skip a bold label holding only a nested list', () => {
+    const tree = run(
+      listDoc([
+        entry(
+          [bold('Options.')],
+          [
+            {
+              type: 'list',
+              ordered: false,
+              children: [
+                entry([{ type: 'text', value: 'first option' }]),
+              ],
+            },
+          ],
+        ),
+      ]),
+      { sections: ['Options'] },
+    );
+
+    expect(entryChildren(tree, 0)).toHaveLength(2);
+    expect(entryChildren(tree, 0)[1].type).toBe('list');
+  });
+
+  it('should skip a bold label with no prose at all', () => {
+    const tree = run(listDoc([entry([bold('Bare Label.')])]), {
+      sections: ['Bare Label'],
+    });
+
+    expect(entryChildren(tree, 0)).toHaveLength(1);
+  });
+
+  it('should skip entries that do not open with a bold label', () => {
+    const tree = run(
+      listDoc([
+        entry([{ type: 'text', value: 'Pseudopod Slam. plain prose entry' }]),
+      ]),
+      { sections: ['Pseudopod Slam'] },
+    );
+
+    expect(entryChildren(tree, 0)).toHaveLength(1);
+  });
+
+  it('should not match a label absent from sections', () => {
+    const tree = run(
+      listDoc([
+        entry([
+          bold('Effect — The Toll'),
+          { type: 'text', value: ': The target must save.' },
+        ]),
+      ]),
+      { sections: ['Pseudopod Slam'] },
+    );
+
+    expect(entryChildren(tree, 0)).toHaveLength(1);
+  });
+});

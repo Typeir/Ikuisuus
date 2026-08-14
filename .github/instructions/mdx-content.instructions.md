@@ -113,6 +113,6 @@ Content files that opt in with `reusable: true` in frontmatter are also valid ta
 ## Critical Checks (Hard Rules)
 
 - No color literals in TSX components (use CSS variables from `globals.scss`)
-- JSDoc on all component declarations
+- JSDoc on all component declarations — dry caveman technical. No philosophy/prose/poetry/allegory/bible. If caveman can't explain, strict ASD-STE100
 - Monster `.sheet.mdx` files must parse correctly with metadata generators
 - Images always use `/library/` paths (compressed WebP from build pipeline)

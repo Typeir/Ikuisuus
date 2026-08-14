@@ -27,6 +27,7 @@ Always runs after implementation. Job:
 5. Read stdout (JSON-structured).
 6. Classify:
    - **CRITICAL** (blocks): build/test fail, hard-rule violations (JSDoc, colors, alert()), files >250 lines, duplicate CSS, missing tests
+   - **JSDoc tone** (manual read, every new/modified block): dry caveman technical only. Philosophy, literary prose, poetry, allegory, bible-style → CRITICAL. If caveman can't explain it, require strict ASD-STE100.
    - **WARNING** (allowed): minor style, near-duplicate CSS, suggestions
 7. Update task file with health + test results.
 8. Report:

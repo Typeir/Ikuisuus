@@ -59,6 +59,7 @@ and .github/docs/_.md consulted}
 
 - [ ] Compile without errors
 - [ ] JSDoc on exports
+- [ ] JSDoc dry caveman tone — no philosophy/prose/poetry/allegory/bible. If caveman can't explain, strict ASD-STE100
 - [ ] No inline comments
 - [ ] No color literals outside globals.scss
 - [ ] Tests exist for modified source

@@ -34,7 +34,7 @@ Based on the source file's imports, identify which mocks are needed:
 
 Create the test in the mirrored path under `tests/unit/src/` (or `tests/integration/src/`):
 
-- `@fileoverview` JSDoc
+- `@fileoverview` JSDoc — dry caveman technical. No philosophy/prose/poetry/allegory/bible. If caveman can't explain, strict ASD-STE100
 - Mirror the source file structure
 - Use `describe` blocks matching exported functions/components
 - Use `userEvent.setup()` for user interactions (never bare `fireEvent`)

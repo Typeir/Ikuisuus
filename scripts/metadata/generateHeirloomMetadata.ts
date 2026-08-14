@@ -40,6 +40,7 @@ import {
   ATTUNEMENT,
   DAMAGE,
   ITALIC,
+  MASTERY,
   TYPE_PARSING,
   WEAPON,
 } from './heirloomPatterns';
@@ -73,17 +74,75 @@ function splitSizeModifier(
 }
 
 /**
- * Routes a parsed specific type to whichever group owns it.
+ * Content of the first balanced paren group. First-`(`-to-last-`)` slicing
+ * glues both groups of a dual-form line (`Longsword (A) and Greatshield (B)`).
  *
- * The type line names a weapon for a sword and an armour class for a breastplate,
- * so the parser cannot know which group its answer belongs to. Trying each in
- * turn keeps a single warning for a type no group recognises, rather than one
- * false alarm per group that legitimately declined it.
+ * @param {string} text - Line to scan
+ * @returns {string | undefined} Group content, or undefined
+ */
+function firstParenGroup(text: string): string | undefined {
+  const open = text.indexOf('(');
+  if (open === -1) return undefined;
+
+  let depth = 0;
+  for (let i = open; i < text.length; i++) {
+    if (text[i] === '(') depth++;
+    else if (text[i] === ')' && --depth === 0) {
+      return text.substring(open + 1, i);
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Splits a mastery clause into lower-case names. Strips markdown and em-dash
+ * notes, splits on "or"/commas, drops "None".
+ *
+ * @param {string} value - Raw mastery clause
+ * @returns {string[]} Mastery names
+ */
+function normalizeMasteryValues(value: string): string[] {
+  return plain(value)
+    .replace(MASTERY.note, '')
+    .split(LIST.orSplit)
+    .map((entry) => entry.trim().toLowerCase())
+    .filter((entry) => entry.length > 0 && !MASTERY.none.test(entry));
+}
+
+/**
+ * Mastery names defined in the file's own Weapon Mastery section. Item-unique
+ * masteries: no warning, no aspect.
+ *
+ * @param {string[]} lines - File lines
+ * @returns {Set<string>} Lower-case mastery names
+ */
+function parseCustomMasteryNames(lines: string[]): Set<string> {
+  const names = new Set<string>();
+  let inMasterySection = false;
+
+  for (const line of lines) {
+    const heading = line.match(MASTERY.sectionHeading);
+    if (heading) {
+      inMasterySection = MASTERY.sectionName.test(heading[1]);
+      continue;
+    }
+    if (!inMasterySection) continue;
+
+    const label = line.match(MASTERY.definitionLabel);
+    if (label) names.add(plain(label[1]).trim().toLowerCase());
+  }
+
+  return names;
+}
+
+/**
+ * Routes a parsed specific type to whichever group owns it.
  *
  * @param {string[]} tags - Tag accumulator, mutated in place
  * @param {string} value - Parsed specific type
  * @param {string} label - Heirloom name, for the warning
  * @param {SharedData} sharedData - Shared game data
+ * @param {boolean} [quiet] - Skip the warning when no group recognises the value
  * @returns {void}
  */
 function pushTypeTag(
@@ -91,6 +150,7 @@ function pushTypeTag(
   value: string,
   label: string,
   sharedData: SharedData,
+  quiet = false,
 ): void {
   const normalized = value.trim().toLowerCase();
   const armorCategory = normalized.replace(/\s+armou?r$/, '');
@@ -113,6 +173,8 @@ function pushTypeTag(
     }
   }
 
+  if (quiet) return;
+
   log.warning(
     `${label}: "${value}" is not a known weapon, armor or item type — no type aspect emitted`,
   );
@@ -121,12 +183,6 @@ function pushTypeTag(
 /**
  * Appends an aspect only when its value belongs to the group's vocabulary.
  *
- * The type line is free prose, so the parser returns whatever it finds there.
- * Emitting that unchecked is how `weapon:liver` and `weapon:food-and-drink`
- * reached the index: a wrong aspect is indistinguishable from a right one until
- * a reader filters by it. An unrecognised value is dropped and reported, so the
- * page keeps the aspects it earned and the prose that confused the parser gets
- * named rather than silently indexed.
  *
  * @param {string[]} tags - Tag accumulator, mutated in place
  * @param {string} group - Aspect group without its trailing colon
@@ -197,11 +253,8 @@ function parseWeaponTitleLine(
     }
   }
 
-  const firstParen = line.indexOf('(');
-  const lastParen = line.lastIndexOf(')');
-  if (firstParen !== -1 && lastParen !== -1 && lastParen > firstParen) {
-    const content = line.substring(firstParen + 1, lastParen);
-
+  const content = firstParenGroup(line);
+  if (content !== undefined) {
     const parts: string[] = [];
     let current = '';
     let depth = 0;
@@ -228,8 +281,7 @@ function parseWeaponTitleLine(
       const masteryMatch = trimmed.match(WEAPON.mastery);
       if (masteryMatch) {
         capturingMastery = true;
-        const firstMastery = masteryMatch[1].trim();
-        if (firstMastery) mastery.push(plain(firstMastery).toLowerCase());
+        mastery.push(...normalizeMasteryValues(masteryMatch[1]));
         continue;
       }
 
@@ -237,7 +289,7 @@ function parseWeaponTitleLine(
         if (WEAPON.masteryEnd.test(trimmed)) {
           capturingMastery = false;
         } else {
-          mastery.push(plain(trimmed).toLowerCase());
+          mastery.push(...normalizeMasteryValues(trimmed));
           continue;
         }
       }
@@ -387,7 +439,7 @@ function parseWeaponDamageFromProperties(properties: Record<string, string>) {
  *
  * @param {Record<string, string>} properties - Parsed properties
  * @param {SharedData} sharedData - Shared data
- * @returns {{ weaponType?: string, weaponProperties: string[], uniqueTags: string[], mastery: string[] }}
+ * @returns {{ weaponType?: string, weaponProperties: string[], uniqueTags: string[], mastery: string[], typeFromParen: boolean }} Parsed type info; `typeFromParen` marks a weaponType drawn from a base category's parenthetical, which names a slot rather than a type
  */
 function parseTypeProperty(
   properties: Record<string, string>,
@@ -399,6 +451,7 @@ function parseTypeProperty(
       weaponProperties: [] as string[],
       uniqueTags: [] as string[],
       mastery: [] as string[],
+      typeFromParen: false,
     };
 
   const typeText = properties.Type;
@@ -407,6 +460,7 @@ function parseTypeProperty(
     weaponProperties: [] as string[],
     uniqueTags: [] as string[],
     mastery: [] as string[],
+    typeFromParen: false,
   };
 
   const typeMatch = typeText.match(WEAPON.typeExtract);
@@ -428,11 +482,7 @@ function parseTypeProperty(
 
       const masteryMatch = trimmed.match(WEAPON.mastery);
       if (masteryMatch) {
-        result.mastery.push(
-          ...masteryMatch[1]
-            .split(LIST.commaWhitespace)
-            .map((m: string) => plain(m).toLowerCase()),
-        );
+        result.mastery.push(...normalizeMasteryValues(masteryMatch[1]));
         continue;
       }
 
@@ -474,6 +524,7 @@ function parseTypeProperty(
       const firstItem = parenMatch[1].split(',')[0].trim();
       if (firstItem && !TYPE_PARSING.masterySpecialGuard.test(firstItem)) {
         result.weaponType = firstItem;
+        result.typeFromParen = true;
       }
     }
   } else {
@@ -559,6 +610,7 @@ async function parseHeirloomFile(
 
   let weaponType: string | undefined =
     weaponInfo?.weaponType || typeInfo.weaponType;
+  let weaponTypeFromParen = !weaponInfo?.weaponType && typeInfo.typeFromParen;
   const hitModifier = weaponInfo?.hitModifier;
   const range = weaponInfo?.range || rangeFromProps;
 
@@ -567,6 +619,7 @@ async function parseHeirloomFile(
       const parenMatch = properties.Type.match(TYPE_PARSING.parenContent);
       if (parenMatch) {
         weaponType = parenMatch[1].split(',')[0].trim();
+        weaponTypeFromParen = true;
       }
     }
 
@@ -651,7 +704,7 @@ async function parseHeirloomFile(
   if (weaponType) {
     const sized = splitSizeModifier(weaponType, GameData.getSizes(sharedData));
     if (sized.size) tags.push(`size:${sized.size.toLowerCase()}`);
-    pushTypeTag(tags, sized.type, label, sharedData);
+    pushTypeTag(tags, sized.type, label, sharedData, weaponTypeFromParen);
   }
 
   for (const property of typeInfo.weaponProperties ?? []) {
@@ -664,14 +717,14 @@ async function parseHeirloomFile(
     );
   }
 
+  const customMasteries = parseCustomMasteryNames(lines);
+  const masteryVocabulary = ItemData.getMasteryProperties(sharedData);
   for (const entry of mastery ?? []) {
-    pushVocabularyTag(
-      tags,
-      'property',
-      entry,
-      label,
-      ItemData.getMasteryProperties(sharedData),
+    const known = masteryVocabulary.some(
+      (candidate) => candidate.toLowerCase() === entry,
     );
+    if (!known && customMasteries.has(entry)) continue;
+    pushVocabularyTag(tags, 'property', entry, label, masteryVocabulary);
   }
 
   if (raw.toLowerCase().includes('nonmagical')) {

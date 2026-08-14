@@ -10,6 +10,7 @@
  * @since 3.0.0
  */
 
+import { TEXT } from './parsingPatterns';
 import type { AbilityRef, SharedData } from './sharedData';
 
 /**
@@ -138,8 +139,13 @@ export class ItemData {
           )
         : /\bclothing\b/i;
 
-    const italicLines = lines
-      .slice(0, 5)
+    /* Header italics live before the first HR; leading JSX pushes them past
+       any fixed line offset. */
+    const cutoffIndex = lines.findIndex((l) => TEXT.horizontalRule.test(l));
+    const headerLines =
+      cutoffIndex === -1 ? lines.slice(0, 40) : lines.slice(0, cutoffIndex);
+
+    const italicLines = headerLines
       .filter((l) => /^_.*_$/.test(l.trim()))
       .map((l) => l.replace(/^_/, '').replace(/_$/, '').trim().toLowerCase());
 

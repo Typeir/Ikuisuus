@@ -158,6 +158,7 @@
       "scroll",
       "consumable",
       "monstrous graft",
+      "heirloom",
       "focus"
     ],
     "itemTypes": [
@@ -186,6 +187,7 @@
       "tool",
       "instrument",
       "monstrous graft",
+      "weapon modification",
       "trinket",
       "sustenance",
       "lantern",

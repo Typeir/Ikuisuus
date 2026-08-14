@@ -11,6 +11,7 @@ Before modifying any TypeScript or script file, you MUST:
 3. **Every exported declaration** must have JSDoc: functions, interfaces, types, classes, constants.
 4. **Interface properties** use `@property` tags in the interface JSDoc, not inline `/** */` on each property.
 5. **React components** require `@component` tag and exhaustive `@param` for every prop.
+6. **Tone is dry. Caveman style. Technical descriptions only. Nothing else. Nothing more.** NO philosophy. NO literary prose. NO poetry. NO poetic allegory. NO bible-style writing. NO storytelling. NO metaphors. If caveman can't explain it, use strict ASD-STE100 (Simplified Technical English).
 
 ## Task Summary Requirement
 
@@ -23,3 +24,5 @@ When implementation begins, create a task summary in `.ignore/tasks/` using the 
 ## Hard Rule Verification
 
 After implementation, `grep -rn "// " src/` must find NO logic comments in modified files.
+
+Read every JSDoc block written. Tone must be dry, caveman-style, technical. Reject philosophy, literary prose, poetry, allegory, bible-style. If caveman can't explain it, use strict ASD-STE100. Nothing else. Nothing more.

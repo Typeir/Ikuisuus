@@ -36,6 +36,23 @@ export const WEAPON = {
 } as const;
 
 /**
+ * Mastery clause normalisation and self-definition patterns.
+ *
+ * @property {RegExp} note - Trailing em/en-dash note: "— see Weapon Mastery"
+ * @property {RegExp} none - Placeholder naming no mastery: "None"
+ * @property {RegExp} sectionHeading - H2–H6 heading with text capture
+ * @property {RegExp} sectionName - Weapon Mastery section heading text
+ * @property {RegExp} definitionLabel - Bold label opening a mastery definition bullet
+ */
+export const MASTERY = {
+  note: /\s+[—–]\s+.*$/,
+  none: /^none$/i,
+  sectionHeading: /^#{2,6}\s+(.+?)\s*$/,
+  sectionName: /weapon\s+mastery/i,
+  definitionLabel: /^\s*[-*]\s+\*\*([^*]+?)\*\*/,
+} as const;
+
+/**
  * Attunement detection patterns.
  *
  * @property {RegExp} requirement - "requires attunement (by a Pilgrim)"
