@@ -1,4 +1,32 @@
 {
+  "root": ".paw",
+  "gatesDir": ".paw/gates",
+  "connector": "copilot-hooks",
+  "models": {
+    "deepseek-chat": {
+      "contextTokens": 128000,
+      "maxOutputTokens": 8192,
+      "tools": true,
+      "structuredOutput": true,
+      "reasoning": true,
+      "vision": false,
+      "costClass": "cheap"
+    },
+    "deepseek-reasoner": {
+      "contextTokens": 128000,
+      "maxOutputTokens": 32768,
+      "tools": true,
+      "structuredOutput": true,
+      "reasoning": true,
+      "vision": false,
+      "costClass": "cheap"
+    }
+  },
+  "roles": {
+    "edit.apply": "deepseek-chat",
+    "review.graze": "deepseek-chat",
+    "review.judge": "deepseek-reasoner"
+  },
   "surface": "all",
   "sourceDirectories": ["src/", "scripts/"],
   "tasksDir": ".ignore/tasks",

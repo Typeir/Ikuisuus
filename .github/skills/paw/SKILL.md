@@ -15,16 +15,16 @@ every edit. Blocks until violations fixed. Real-time linter at agent level.
 
 ## Layout
 
+PAW source lives in its own repo: `C:/Users/dtira/Desktop/PAW` (github.com/Typeir/paw).
+Ikuisuus is a consumer: hooks call the PAW CLI at that path; nothing of PAW's
+source lives in this repo.
+
 ```
-.github/PAW/          ← Core (runtime, adapters, types, sync)
-  hooks/              ← Defaults (→ .paw/ on sync)
-  templates/          ← Synced (skills, agents, prompts, tsconfig)
-  adapters/           ← Surface adapters
-  cli/                ← Commands (status, violations, gates, unblock)
-  docs/               ← Documentation
+C:/Users/dtira/Desktop/PAW/   ← PAW source repo (packages/: core, adapters,
+                                 daemon, cli, tui, gui, electron, installer)
 
 .paw/                 ← Project install (gitignored)
-  hooks/              ← Active (from .github/PAW/hooks/)
+  hooks/              ← Active hook scripts
   gates/              ← Quality gates (*.gate.ts)
   plugins/            ← Hooks (gate-name/*.ts)
   config.json         ← Surface config
@@ -32,7 +32,7 @@ every edit. Blocks until violations fixed. Real-time linter at agent level.
   paw.log             ← Hook log
 
 .pawignore            ← Skip patterns
-.github/hooks/hooks.json ← Generated (VS Code reads)  
+.github/hooks/hooks.json ← Hook commands (VS Code reads); point at the PAW repo
 ```
 
 ## Enforcement Loop
@@ -52,7 +52,7 @@ every edit. Blocks until violations fixed. Real-time linter at agent level.
 
 **3. Exempt tools never blocked:** read_file, grep_search, file_search, semantic_search, list_dir, get_errors, get_terminal_output, memory, manage_todo_list.
 
-**4. .pawignore always allowed.** Patterns in .pawignore + .github/PAW/, .paw/ editable anytime.
+**4. .pawignore always allowed.** Patterns in .pawignore + .paw/ editable anytime.
 
 **5. Indirect-fix unblocks all.** If violation marked `indirectFix: true` (fix needs new file, not current), gates allow tools through to create fix file.
 
@@ -65,7 +65,7 @@ Glob patterns at root. Matched files:
 - Always editable during PreToolUse
 - Excluded from health checks
 
-Built-in (no .pawignore needed): `.github/PAW/`, `.paw/`
+Built-in (no .pawignore needed): `.paw/`
 
 ## Gates
 

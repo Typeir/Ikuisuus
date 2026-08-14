@@ -327,9 +327,8 @@ export function usePersistentUiDispatch(): (
 /**
  * Hook to access dispatch without requiring a provider.
  *
- * Returns null outside a provider rather than a no-op, so a control that cannot
- * possibly work is not rendered at all. A silently inert button is worse than an
- * absent one: it invites a click and answers with nothing.
+ * Returns null outside a provider instead of a no-op, so a control that cannot
+ * possibly work is not rendered at all.
  *
  * @returns {((action: PersistentUiAction) => void) | null} Dispatch, or null with no provider
  */
@@ -340,27 +339,20 @@ export function usePersistentUiDispatchOptional():
   return context?.dispatch ?? null;
 }
 
-export {
-  useSidebarExpansion as useSidebarExpansionActions
-} from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
+export { useSidebarExpansion as useSidebarExpansionActions } from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
 export { useSidebarMenuActions } from '@/modules/navigation-sidebar/application/hooks/useSidebarMenuActions';
 export { useSidebarMenu as useSidebarMenuState } from '@/modules/navigation-sidebar/application/hooks/useSidebarMenu';
-export type {
-  SidebarExpansionActions
-} from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
-export type {
-  SidebarMenuActions
-} from '@/modules/navigation-sidebar/application/hooks/useSidebarMenuActions';
+export type { SidebarExpansionActions } from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
+export type { SidebarMenuActions } from '@/modules/navigation-sidebar/application/hooks/useSidebarMenuActions';
 
 export { useThemeActions, useThemeState } from '../hooks/useThemeState';
 export type { ThemeActions, ThemeState } from '../hooks/useThemeState';
 
 export {
   useCorrectionsTokenActions,
-  useCorrectionsTokenState
+  useCorrectionsTokenState,
 } from '../../modules/mdx-editor/application/hooks/useCorrectionsToken';
 export type {
   CorrectionsTokenActions,
-  CorrectionsTokenState
+  CorrectionsTokenState,
 } from '../../modules/mdx-editor/application/hooks/useCorrectionsToken';
-

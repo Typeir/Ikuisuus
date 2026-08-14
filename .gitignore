@@ -71,7 +71,9 @@ next-env.d.ts
 /.paw/gateWrapper.ts
 /.paw/gateContext.ts
 /.paw/healthCheckTypes.ts
-/.github/PAW/node_modules
+/.paw/daemon.token
+/.paw/daemon.log
+/.paw/*.provider.env
 
 # foundry vtt compiled packs and build output (source JSON is tracked)
 /foundry/packs/_source/

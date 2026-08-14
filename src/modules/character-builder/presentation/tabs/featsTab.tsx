@@ -47,9 +47,7 @@ interface FocusedShard {
 
 /**
  * Feats tab content. Reads the character and edit mode from the active-sheet
- * context. Which shard is focused is view state belonging to this tab alone —
- * it is not part of the character, so it lives here and resets with the tab
- * rather than being persisted and shipped to every other consumer.
+ * context.
  *
  * @component
  * @returns {JSX.Element} Rendered tab body

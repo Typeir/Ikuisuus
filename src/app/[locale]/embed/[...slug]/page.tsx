@@ -8,8 +8,6 @@
  * library tree, so an embed costs a cached document fetch rather than a
  * client-side compile.
  *
- * Embed mode rides the path rather than a query parameter deliberately; see
- * `src/lib/embed/embedRoutes.ts` for why.
  *
  * @author Typeir
  * @version 1.0.0

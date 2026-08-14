@@ -1,24 +1,35 @@
 {
   "version": 1,
   "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot tool.pre",
+        "windows": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot tool.pre",
+        "linux": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot tool.pre",
+        "osx": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot tool.pre",
+        "cwd": ".",
+        "timeout": 10
+      }
+    ],
     "PostToolUse": [
       {
         "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/postToolUse.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/postToolUse.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/postToolUse.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/postToolUse.mjs",
+        "command": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot tool.post",
+        "windows": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot tool.post",
+        "linux": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot tool.post",
+        "osx": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot tool.post",
         "cwd": ".",
         "timeout": 15
       }
     ],
-    "PreToolUse": [
+    "UserPromptSubmit": [
       {
         "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/preToolUse.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/preToolUse.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/preToolUse.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/preToolUse.mjs",
+        "command": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot prompt.submitted",
+        "windows": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot prompt.submitted",
+        "linux": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot prompt.submitted",
+        "osx": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot prompt.submitted",
         "cwd": ".",
         "timeout": 10
       }
@@ -26,39 +37,10 @@
     "Stop": [
       {
         "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/sessionEndHealth.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/sessionEndHealth.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/sessionEndHealth.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/sessionEndHealth.mjs",
-        "cwd": ".",
-        "timeout": 120
-      },
-      {
-        "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/sessionEndMemorySave.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/sessionEndMemorySave.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/sessionEndMemorySave.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/sessionEndMemorySave.mjs",
-        "cwd": ".",
-        "timeout": 15
-      },
-      {
-        "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/sessionEndMissingTests.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/sessionEndMissingTests.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/sessionEndMissingTests.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/sessionEndMissingTests.mjs",
-        "cwd": ".",
-        "timeout": 30
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "type": "command",
-        "command": "node --import tsx/esm .paw/hooks/userPromptSubmitted.mjs",
-        "windows": "node --import tsx/esm .paw/hooks/userPromptSubmitted.mjs",
-        "linux": "node --import tsx/esm .paw/hooks/userPromptSubmitted.mjs",
-        "osx": "node --import tsx/esm .paw/hooks/userPromptSubmitted.mjs",
+        "command": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot session.end",
+        "windows": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot session.end",
+        "linux": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot session.end",
+        "osx": "node --import tsx C:/Users/dtira/Desktop/PAW/packages/cli/src/infrastructure/main.ts hook --copilot session.end",
         "cwd": ".",
         "timeout": 10
       }

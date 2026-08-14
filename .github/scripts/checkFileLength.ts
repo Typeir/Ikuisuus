@@ -30,10 +30,10 @@ const EXCLUDED_PATTERNS = [
   /globals\.scss$/,
 ];
 
-const ALLOWLIST_PATH = path.join(ROOT, '.github', 'file-length-allowlist.json');
+const ALLOWLIST_PATH = path.join(ROOT, '.paw', 'file-length-allowlist.json');
 const FILE_SIZE_DEFAULTS_PATH = path.join(
   ROOT,
-  '.github',
+  '.paw',
   'file-size-defaults.json',
 );
 
@@ -190,7 +190,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
   const rootDir = options?.rootDir ?? ROOT;
   const allowlistPath = path.join(
     rootDir,
-    '.github',
+    '.paw',
     'file-length-allowlist.json',
   );
   const readFile =
@@ -198,7 +198,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
     ((rel: string) => fs.readFile(path.join(rootDir, rel), 'utf-8'));
   const allowlist = await loadAllowlist(allowlistPath);
   const extensionDefaults = await loadExtensionDefaults(
-    path.join(rootDir, '.github', 'file-size-defaults.json'),
+    path.join(rootDir, '.paw', 'file-size-defaults.json'),
   );
   const violations: Array<{ file: string; lines: number; threshold: number }> =
     [];

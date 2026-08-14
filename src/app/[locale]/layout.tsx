@@ -52,7 +52,8 @@ export default async function RootLayout({
     <html
       lang={locale}
       suppressHydrationWarning
-      className={cn(fonts.map((font) => font.variable))}>
+      className={cn(fonts.map((font) => font.variable))}
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: getCombinedInitScript() }} />
       </head>
@@ -61,7 +62,8 @@ export default async function RootLayout({
           locale={locale}
           tree={tree}
           messages={messages}
-          initialExpandedPaths={initialExpandedPaths}>
+          initialExpandedPaths={initialExpandedPaths}
+        >
           {children}
         </ClientProviders>
       </body>
@@ -80,8 +82,7 @@ export const dynamic = 'force-static';
  * from disk at runtime and needed the whole corpus inside its function bundle.
  *
  * Only `en` is listed because only `en` has content. The other configured
- * locales stay on demand rather than prerendering hundreds of pages that would
- * resolve to nothing.
+ * locales stay on demand.
  *
  * @returns {Array<{ locale: string }>} Locale params to prerender
  */

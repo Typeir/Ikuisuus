@@ -109,7 +109,7 @@ npm run health:report         # Generate report
 
 ## File-Length Allowlist
 
-Files that are permitted to exceed 250 lines can be added to `.github/file-length-allowlist.json`:
+Files that are permitted to exceed 250 lines can be added to `.paw/file-length-allowlist.json` (per-extension caps live beside it in `.paw/file-size-defaults.json`):
 
 ```json
 ["src/app/[locale]/globals.scss"]

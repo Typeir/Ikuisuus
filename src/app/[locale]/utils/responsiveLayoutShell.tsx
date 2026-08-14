@@ -113,7 +113,7 @@ function BaseResponsiveLayoutShell({
   /**
    * In embed mode, render only the bare page content — no sidebar, no header.
    *
-   * The branch is taken from the pathname rather than a query parameter so it
+   * The branch is taken from the pathname instead of a query parameter so it
    * resolves during static generation: `/{locale}/embed/...` prerenders without
    * chrome instead of shipping the sidebar in its HTML and hiding it after
    * hydration. `<EmbedLinkBridge>` owns navigation out of the frame.
@@ -142,7 +142,8 @@ function BaseResponsiveLayoutShell({
     <button
       onClick={toggleTheme}
       className={cn(btn.tertiary, styles.themeToggle, extraClassName)}
-      aria-label='Toggle theme'>
+      aria-label='Toggle theme'
+    >
       {mounted ? (
         currentTheme === Theme.Dark ? (
           <Moon size={20} aria-hidden='true' />
@@ -164,11 +165,13 @@ function BaseResponsiveLayoutShell({
             The search bar lives here on mobile; the sidebar's copy is
             desktop-only. */}
         <div
-          className={`mobile-title-bar solid lg:hidden fixed top-0 left-0 w-full z-40 flex items-center gap-1 px-2 border-b bg-background shadow-sm max-w-full ${styles.mobileTitleBar}`}>
+          className={`mobile-title-bar solid lg:hidden fixed top-0 left-0 w-full z-40 flex items-center gap-1 px-2 border-b bg-background shadow-sm max-w-full ${styles.mobileTitleBar}`}
+        >
           <Link
             href='/'
             className={styles.headerIconSlot}
-            aria-label={t('libraryTitle')}>
+            aria-label={t('libraryTitle')}
+          >
             <Image
               src='/logo.png'
               alt={t('libraryTitle')}
@@ -187,7 +190,8 @@ function BaseResponsiveLayoutShell({
           <button
             onClick={toggleSidebar}
             className={cn(btn.tertiary, styles.headerIconSlot)}
-            aria-label={t('toggleSidebar')}>
+            aria-label={t('toggleSidebar')}
+          >
             <Icon
               type='hamburger'
               className={`${styles.hamburger} ${open ? styles.isOpen : ''} w-5 h-5`}
@@ -201,16 +205,19 @@ function BaseResponsiveLayoutShell({
           className={`${styles.mobileMenu} ${
             open ? styles.isOpen : ''
           } lg:translate-x-0 lg:block w-full lg:w-80 border-r fixed lg:sticky top-0 h-screen solid bg-background z-30`}
-          style={{ display: 'flex', flexDirection: 'column' }}>
+          style={{ display: 'flex', flexDirection: 'column' }}
+        >
           {/* Header Region: desktop only — the mobile bar carries the
               logo and theme toggle below lg */}
           <div
             className='sidebar-header hidden lg:block border-b px-3 lg:px-6 py-2 lg:py-3'
-            style={{ flexShrink: 0 }}>
+            style={{ flexShrink: 0 }}
+          >
             <div className='flex items-center justify-between gap-2'>
               <Link
                 href='/'
-                className={`text-lg font-semibold hidden lg:block ${styles.title} flex-1`}>
+                className={`text-lg font-semibold hidden lg:block ${styles.title} flex-1`}
+              >
                 <div className='flex flex-row gap-3 items-center'>
                   <Image
                     src='/logo.png'
@@ -233,14 +240,21 @@ function BaseResponsiveLayoutShell({
           {/* Search Bar — desktop only; the mobile title bar owns it below lg */}
           <div
             className='sidebar-search hidden lg:block px-3 lg:px-6 pb-2'
-            style={{ flexShrink: 0 }}>
+            style={{ flexShrink: 0 }}
+          >
             <SearchBar onNavigate={closeSidebar} />
           </div>
 
           {/* Body Region: Scrollable Library Navigation */}
           <div
             className='sidebar-body px-3 lg:px-6 py-3 lg:py-4'
-            style={{ flex: 1, minHeight: 0, overflowY: 'auto', scrollbarGutter: 'stable' }}>
+            style={{
+              flex: 1,
+              minHeight: 0,
+              overflowY: 'auto',
+              scrollbarGutter: 'stable',
+            }}
+          >
             <SidebarShell
               onNavigate={closeSidebar}
               items={tree}
@@ -251,7 +265,8 @@ function BaseResponsiveLayoutShell({
           {/* Footer Region: Non-scrolling Tools + Selected Character */}
           <div
             className='sidebar-footer border-t px-3 lg:px-4 py-2'
-            style={{ flexShrink: 0 }}>
+            style={{ flexShrink: 0 }}
+          >
             <div className={styles.footerRow}>
               <div className={styles.footerTools}>
                 <ToolsMenu
