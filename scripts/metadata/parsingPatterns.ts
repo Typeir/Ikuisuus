@@ -69,6 +69,8 @@ export const CHARGES = {
  * @property {RegExp} underscoreLeading - Leading underscore
  * @property {RegExp} underscoreTrailing - Trailing underscore
  * @property {RegExp} collapsibleTag - Collapsible JSX tag
+ * @property {RegExp} frontmatterBlock - Leading YAML frontmatter block including both `---` delimiters
+ * @property {RegExp} nonLineBreak - Every character that is not a line terminator
  */
 export const TEXT = {
   carriageReturn: /\r/g,
@@ -87,6 +89,9 @@ export const TEXT = {
   underscoreLeading: /^_/,
   underscoreTrailing: /_$/,
   collapsibleTag: /^<\/?Collapsible/i,
+  frontmatterBlock:
+    /^(?:[^\S\r\n]*\r?\n)*[^\S\r\n]*---[^\S\r\n]*\r?\n[\s\S]*?\r?\n[^\S\r\n]*---[^\S\r\n]*(?=\r?\n|$)/,
+  nonLineBreak: /[^\r\n]/g,
 } as const;
 
 /**

@@ -155,6 +155,29 @@ describe('FileTreeSelect', () => {
     expect(onSelect).toHaveBeenCalledWith('en/monsters/goblin.sheet.mdx');
   });
 
+  it('hides file rows but keeps destinations in foldersOnly mode', async () => {
+    const onSelect = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <FileTreeSelect
+        value=''
+        onSelect={onSelect}
+        tree={sampleTree}
+        placeholder='Select'
+        newFileLabel='New file'
+        foldersOnly
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { expanded: false }));
+    await user.click(screen.getByText('monsters/'));
+
+    expect(screen.queryByText('goblin.sheet.mdx')).toBeNull();
+    await user.click(screen.getByText('New file'));
+    expect(onSelect).toHaveBeenCalledWith('en/monsters/');
+  });
+
   it('is disabled when disabled prop is true', () => {
     render(
       <FileTreeSelect

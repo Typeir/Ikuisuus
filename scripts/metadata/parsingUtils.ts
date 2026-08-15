@@ -12,7 +12,7 @@ import { stripDiceWrappers } from './diceExpressionUtils';
 import { GameData } from './gameData';
 import { CHARGES, HEADING, LIST, PROPERTIES } from './parsingPatterns';
 import type { SharedData } from './sharedData';
-import { clean, plain, stripMarkdown } from './textUtils';
+import { blankFrontmatter, clean, plain, stripMarkdown } from './textUtils';
 
 /**
  * Extracts the title from the first H1 heading.
@@ -23,6 +23,16 @@ import { clean, plain, stripMarkdown } from './textUtils';
 export function parseTitle(lines: string[]): string {
   const h1 = lines.find((l) => HEADING.h1.test(l));
   return h1 ? plain(h1.replace(HEADING.h1, '')) : '';
+}
+
+/**
+ * Returns the index of the first H1 heading line, or -1 when there is none.
+ *
+ * @param {string[]} lines - Array of file lines
+ * @returns {number} Zero-based index of the H1 line, or -1
+ */
+export function findTitleIndex(lines: string[]): number {
+  return lines.findIndex((l) => HEADING.h1.test(l.trim()));
 }
 
 /**
@@ -38,19 +48,10 @@ export function parseTitle(lines: string[]): string {
  * @returns {string | undefined} Joined prose paragraphs or undefined
  */
 export function parseDescription(content: string): string | undefined {
-  const lines = content.split('\n');
+  const lines = blankFrontmatter(content).split('\n');
 
-  /* Skip a leading YAML frontmatter block — some callers pass raw file
-     content, and the `---` delimiters would otherwise be taken for the
-     intro-region stop marker (and the YAML fields for prose). */
-  let bodyStart = 0;
-  const firstContent = lines.findIndex((l) => l.trim().length > 0);
-  if (firstContent !== -1 && lines[firstContent].trim() === '---') {
-    const close = lines.findIndex(
-      (l, i) => i > firstContent && l.trim() === '---',
-    );
-    if (close !== -1) bodyStart = close + 1;
-  }
+  const titleIdx = findTitleIndex(lines);
+  const bodyStart = titleIdx === -1 ? 0 : titleIdx;
 
   let stopIdx = lines.length;
   for (let i = bodyStart + 1; i < lines.length; i++) {
@@ -75,40 +76,53 @@ export function parseDescription(content: string): string | undefined {
         !/^[_*][^_*\n]+[_*]$/.test(l),
     );
 
-  /* The description reads as prose but is consumed as plaintext: it becomes
-     `og:description` and a Pagefind search key, neither of which ever renders a
-     macro, and a reader searching "12 stride" must match it. */
   return introLines.length > 0 ? plain(introLines.join('\n')) : undefined;
 }
+
+/**
+ * Reading speed and label templates per locale. Finnish words are long and
+ * few, so its words-per-minute sits lower than English or Spanish.
+ */
+const READING_PROFILES: Record<
+  string,
+  { wpm: number; min: (n: number) => string; sec: (n: number) => string }
+> = {
+  en: {
+    wpm: 200,
+    min: (n) => `${n} min read`,
+    sec: (n) => `${n} sec read`,
+  },
+  fi: {
+    wpm: 160,
+    min: (n) => `${n} min lukuaika`,
+    sec: (n) => `${n} s lukuaika`,
+  },
+  es: {
+    wpm: 215,
+    min: (n) => `${n} min de lectura`,
+    sec: (n) => `${n} s de lectura`,
+  },
+};
 
 /**
  * Estimates reading time of an MDX file from its prose word count.
  *
  * Excludes frontmatter, import/export statements, JSX tag lines, code fences,
- * and table rows. Formats as whole minutes ("4 min read"), or seconds when
- * under a minute ("40 sec read").
+ * and table rows. Speed and label localize per the file's locale; unknown
+ * locales fall back to English. Formats as whole minutes ("4 min read"), or
+ * seconds when under a minute ("40 sec read").
  *
  * @param {string} raw - Raw MDX file content
- * @param {number} [wordsPerMinute=200] - Average reading speed
+ * @param {string} [locale='en'] - Content locale driving speed and label
  * @returns {string} Human-readable reading time (e.g. "4 min read")
  */
-export function calculateReadingTime(
-  raw: string,
-  wordsPerMinute = 200,
-): string {
-  const withoutFences = raw.replace(/```[\s\S]*?```/g, '');
+export function calculateReadingTime(raw: string, locale = 'en'): string {
+  const profile = READING_PROFILES[locale] ?? READING_PROFILES.en;
+  const wordsPerMinute = profile.wpm;
+  const withoutFences = blankFrontmatter(raw).replace(/```[\s\S]*?```/g, '');
   const lines = withoutFences.split('\n');
 
-  let bodyStart = 0;
-  const firstContent = lines.findIndex((l) => l.trim().length > 0);
-  if (firstContent !== -1 && lines[firstContent].trim() === '---') {
-    const close = lines.findIndex(
-      (l, i) => i > firstContent && l.trim() === '---',
-    );
-    if (close !== -1) bodyStart = close + 1;
-  }
-
-  const proseLines = lines.slice(bodyStart).filter((line) => {
+  const proseLines = lines.filter((line) => {
     const t = line.trim();
     return (
       t.length > 0 &&
@@ -127,9 +141,9 @@ export function calculateReadingTime(
 
   const totalSeconds = Math.ceil((words / wordsPerMinute) * 60);
   if (totalSeconds < 60) {
-    return `${Math.max(totalSeconds, 1)} sec read`;
+    return profile.sec(Math.max(totalSeconds, 1));
   }
-  return `${Math.round(totalSeconds / 60)} min read`;
+  return profile.min(Math.round(totalSeconds / 60));
 }
 
 /** Opening of an image-bearing JSX tag, with src on the same line. */
@@ -212,18 +226,11 @@ export function parseFirstProseParagraph(
   lines: string[],
   maxLength = 300,
 ): string | undefined {
-  let startIdx = 0;
-  const firstContent = lines.findIndex((l) => l.trim().length > 0);
-  if (firstContent !== -1 && lines[firstContent].trim() === '---') {
-    const close = lines.findIndex(
-      (l, i) => i > firstContent && l.trim() === '---',
-    );
-    if (close !== -1) startIdx = close + 1;
-  }
+  const body = blankFrontmatter(lines.join('\n')).split('\n');
 
   const paragraph: string[] = [];
-  for (let i = startIdx; i < lines.length; i++) {
-    const line = lines[i].trim();
+  for (let i = 0; i < body.length; i++) {
+    const line = body[i].trim();
     const isProse =
       line.length > 0 &&
       !line.startsWith('#') &&

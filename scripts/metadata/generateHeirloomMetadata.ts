@@ -578,7 +578,26 @@ async function parseHeirloomFile(
   filePath: string,
   sharedData: SharedData,
 ): Promise<object> {
-  const rawFile = await fs.readFile(filePath, 'utf8');
+  return parseHeirloomSource(
+    await fs.readFile(filePath, 'utf8'),
+    filePath,
+    sharedData,
+  );
+}
+
+/**
+ * Parses heirloom metadata from raw MDX source, no file read.
+ *
+ * @param {string} rawFile - Complete file text including frontmatter
+ * @param {string} filePath - Path the source belongs to, for slug and org tags
+ * @param {SharedData} sharedData - Shared game data
+ * @returns {object} Parsed heirloom metadata
+ */
+export function parseHeirloomSource(
+  rawFile: string,
+  filePath: string,
+  sharedData: SharedData,
+): object {
   const { content: raw } = matter(rawFile);
   const lines = readLines(raw);
   const baseSlug = filePathToSlug(filePath);

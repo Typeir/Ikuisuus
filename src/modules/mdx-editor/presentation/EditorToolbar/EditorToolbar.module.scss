@@ -16,6 +16,9 @@
   justify-content: center;
   width: 28px;
   height: 28px;
+  /* The global `button, .actionable` rule pads .5rem 1rem; on a 28px
+     border-box that clamps the content box to 0 and collapses the icon. */
+  padding: 0;
   border-radius: 3px;
   border: none;
   background: transparent;
@@ -39,4 +42,8 @@
   height: 18px;
   margin: 0 0.25rem;
   background-color: var(--color-border);
+}
+
+.sampleSelect {
+  margin-left: auto;
 }

@@ -10,10 +10,11 @@
 
 /**
  * Shape of a raw Pagefind search result before `data()` resolution.
+ * A hit is cheap; `data()` is one network fetch per result.
  *
  * @interface PagefindResult
  */
-interface PagefindResult {
+export interface PagefindResult {
   id: string;
   data: () => Promise<PagefindFragment>;
 }

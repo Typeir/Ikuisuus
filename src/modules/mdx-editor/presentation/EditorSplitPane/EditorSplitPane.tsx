@@ -14,7 +14,8 @@
 import { handleEditorKeyDown } from '@/modules/mdx-editor/domain/editorCommands';
 import { EditorToolbar } from '@/modules/mdx-editor/presentation/EditorToolbar/EditorToolbar';
 import { MdxPreview } from '@/modules/mdx-editor/presentation/MdxPreview/MdxPreview';
-import { Eye, EyeOff } from 'lucide-react';
+import { MetadataPane } from '@/modules/mdx-editor/presentation/MetadataPane/MetadataPane';
+import { Braces, Eye, EyeOff, FileText, RefreshCw } from 'lucide-react';
 import type { JSX } from 'react';
 import { useCallback, useRef, useState } from 'react';
 import Editor from 'react-simple-code-editor';
@@ -45,6 +46,8 @@ interface EditorSplitPaneProps {
   mode: 'edit' | 'new';
   /** Placeholder text for new file mode */
   newPlaceholder: string;
+  /** Locale-relative content path (e.g. `en/spells/foo.mdx`), for metadata preview */
+  filePath?: string;
 }
 
 /**
@@ -78,11 +81,15 @@ export function EditorSplitPane({
   disabled,
   mode,
   newPlaceholder,
+  filePath = '',
 }: EditorSplitPaneProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const [showPreview, setShowPreview] = useState(true);
+  const [previewFace, setPreviewFace] = useState<'file' | 'meta'>('file');
+  const [metaRefreshToken, setMetaRefreshToken] = useState(0);
   const [splitPercent, setSplitPercent] = useState(50);
+  const repoPath = filePath ? `src/content/${filePath.replace(/^\/+/, '')}` : '';
 
   const handleDividerDown = useCallback((e: React.PointerEvent) => {
     isDragging.current = true;
@@ -145,7 +152,43 @@ export function EditorSplitPane({
               title='Hide preview'>
               <EyeOff size={14} />
             </button>
-            <MdxPreview source={content} />
+            <button
+              type='button'
+              className={styles.faceBadge}
+              onClick={() =>
+                setPreviewFace(previewFace === 'file' ? 'meta' : 'file')
+              }
+              title={
+                previewFace === 'file' ? 'Show metadata' : 'Show file preview'
+              }
+              aria-label={
+                previewFace === 'file' ? 'Show metadata' : 'Show file preview'
+              }>
+              {previewFace === 'file' ? (
+                <Braces size={14} />
+              ) : (
+                <FileText size={14} />
+              )}
+            </button>
+            {previewFace === 'meta' && (
+              <button
+                type='button'
+                className={styles.refreshBadge}
+                onClick={() => setMetaRefreshToken((n) => n + 1)}
+                title='Refresh metadata'
+                aria-label='Refresh metadata'>
+                <RefreshCw size={14} />
+              </button>
+            )}
+            {previewFace === 'file' ? (
+              <MdxPreview source={content} />
+            ) : (
+              <MetadataPane
+                path={repoPath}
+                content={content}
+                refreshToken={metaRefreshToken}
+              />
+            )}
           </div>
         </>
       )}

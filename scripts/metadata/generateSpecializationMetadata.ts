@@ -15,9 +15,11 @@ import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 import {
+    blankFrontmatter,
     clean,
     extractAllTags,
     filePathToSlug,
+    findTitleIndex,
     parseDescription,
     parseTitle,
     runGenerator,
@@ -58,7 +60,8 @@ function classifySpecializationType(title: string): string {
  * @returns {string | undefined} Flavor text without underscores
  */
 function parseFlavor(lines: string[]): string | undefined {
-  for (let i = 0; i < Math.min(lines.length, 10); i++) {
+  const start = Math.max(findTitleIndex(lines), 0);
+  for (let i = start; i < Math.min(lines.length, start + 10); i++) {
     const trimmed = lines[i].trim();
     if (
       FLAVOR.underscoreItalic.test(trimmed) ||
@@ -256,7 +259,8 @@ async function parseSpecializationFile(
 ): Promise<Record<string, unknown> | null> {
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const lines = raw.split(TEXT.lineSplit).map((l) => l.trim());
+    const body = blankFrontmatter(raw);
+    const lines = body.split(TEXT.lineSplit).map((l) => l.trim());
     const title = parseTitle(lines);
     const slug = filePathToSlug(filePath);
 
@@ -265,9 +269,9 @@ async function parseSpecializationFile(
 
     const specializationType = classifySpecializationType(title);
     const flavor = parseFlavor(lines);
-    const description = parseDescription(raw);
-    const features = parseFeatures(raw);
-    const rawLines = raw.split(TEXT.lineSplit);
+    const description = parseDescription(body);
+    const features = parseFeatures(body);
+    const rawLines = body.split(TEXT.lineSplit);
     const specFrontmatter = matter(raw).data as Record<string, unknown>;
     const specGrantsRaw = specFrontmatter.grants ?? specFrontmatter.Grants;
     const specGrantsMap =
@@ -285,8 +289,8 @@ async function parseSpecializationFile(
       rawLines,
       sharedData,
     );
-    const preparedSpells = parseAlwaysPreparedSpells(raw);
-    const spellcasting = parseSpecializationSpellcasting(raw);
+    const preparedSpells = parseAlwaysPreparedSpells(body);
+    const spellcasting = parseSpecializationSpellcasting(body);
 
     const file = path
       .relative(process.cwd(), filePath)

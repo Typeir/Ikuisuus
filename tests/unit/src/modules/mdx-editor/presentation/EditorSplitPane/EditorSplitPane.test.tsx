@@ -28,6 +28,20 @@ vi.mock('@/modules/mdx-editor/presentation/MdxPreview/MdxPreview', () => ({
   ),
 }));
 
+vi.mock('@/modules/mdx-editor/presentation/MetadataPane/MetadataPane', () => ({
+  MetadataPane: ({
+    path,
+    refreshToken,
+  }: {
+    path: string;
+    refreshToken: number;
+  }) => (
+    <div data-testid='metadata-pane' data-refresh-token={refreshToken}>
+      {path}
+    </div>
+  ),
+}));
+
 vi.mock('@/modules/mdx-editor/presentation/EditorToolbar/EditorToolbar', () => ({
   EditorToolbar: () => <div data-testid='editor-toolbar' />,
   handleEditorKeyDown: vi.fn(),
@@ -129,5 +143,49 @@ describe('EditorSplitPane', () => {
     });
 
     expect(screen.getByTestId('mdx-preview')).toBeDefined();
+  });
+
+  it('toggles between file preview and metadata pane', async () => {
+    const { default: userEvent } = await import('@testing-library/user-event');
+    const user = userEvent.setup();
+
+    await act(async () => {
+      render(
+        <EditorSplitPane
+          textareaId='test-editor'
+          content='# Faces'
+          setContent={vi.fn()}
+          disabled={false}
+          mode='edit'
+          newPlaceholder=''
+          filePath='en/spells/faces.mdx'
+        />,
+      );
+    });
+
+    expect(screen.getByTestId('mdx-preview')).toBeDefined();
+    expect(
+      screen.queryByRole('button', { name: 'Refresh metadata' }),
+    ).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Show metadata' }));
+
+    const pane = screen.getByTestId('metadata-pane');
+    expect(pane.textContent).toBe('src/content/en/spells/faces.mdx');
+    expect(screen.queryByTestId('mdx-preview')).toBeNull();
+
+    const refresh = screen.getByRole('button', { name: 'Refresh metadata' });
+    expect(pane.getAttribute('data-refresh-token')).toBe('0');
+    await user.click(refresh);
+    expect(
+      screen.getByTestId('metadata-pane').getAttribute('data-refresh-token'),
+    ).toBe('1');
+
+    await user.click(
+      screen.getByRole('button', { name: 'Show file preview' }),
+    );
+    expect(screen.getByTestId('mdx-preview')).toBeDefined();
+    expect(
+      screen.queryByRole('button', { name: 'Refresh metadata' }),
+    ).toBeNull();
   });
 });

@@ -12,17 +12,23 @@
 'use client';
 
 import type { JSX } from 'react';
+import { FilterSelect } from '@/lib/components/ui/filterSelect/filterSelect';
 import {
     insertAtCursor,
     insertLinePrefix,
     insertLink,
+    replaceAllText,
     triggerRedo,
     triggerUndo,
     wrapSelection,
 } from '@/modules/mdx-editor/domain/editorCommands';
+import { SAMPLE_TEMPLATES } from '@/modules/mdx-editor/domain/sampleTemplates';
+import type { SearchContentType } from '@/modules/search/domain';
+import { typeIconMap } from '@/modules/search/presentation/atoms/iconMap';
 import {
     Bold,
     Code,
+    Copy,
     Heading1,
     Heading2,
     Heading3,
@@ -192,6 +198,64 @@ export function EditorToolbar({
           </button>
         ),
       )}
+      <div className={styles.toolbarSep} />
+      <SampleMenu textareaId={textareaId} disabled={disabled} />
     </div>
+  );
+}
+
+/**
+ * Icons for the sample menu options, borrowed from the search taxonomy so a
+ * sample creature wears the same sigil the site uses for monsters.
+ */
+const SAMPLE_ICONS: Record<string, SearchContentType> = {
+  creature: 'monsters',
+  heirloom: 'heirlooms',
+  spell: 'spells',
+  trinket: 'trinkets',
+  rule: 'rules',
+  world: 'world',
+};
+
+/**
+ * Sample insertion dropdown built on the FilterSelect atom: choosing a
+ * content-type template replaces the whole buffer, undo-ably.
+ *
+ * @component
+ * @param {object} props - Component properties
+ * @param {string} props.textareaId - DOM id of the underlying textarea
+ * @param {boolean} props.disabled - Whether the toolbar is inactive
+ * @returns {JSX.Element} Sample menu
+ */
+function SampleMenu({
+  textareaId,
+  disabled,
+}: {
+  textareaId: string;
+  disabled: boolean;
+}): JSX.Element {
+  const options = SAMPLE_TEMPLATES.map((template) => ({
+    value: template.key,
+    label: template.label,
+  }));
+
+  return (
+    <FilterSelect
+      value=''
+      options={options}
+      onChange={(key) => {
+        const template = SAMPLE_TEMPLATES.find((t) => t.key === key);
+        if (template) replaceAllText(textareaId, template.content);
+      }}
+      ariaLabel='Insert sample'
+      disabled={disabled}
+      hideAllOption
+      iconTrigger={<Copy size={15} />}
+      className={styles.sampleSelect}
+      renderOptionLeading={(option) => {
+        const Icon = typeIconMap[SAMPLE_ICONS[option.value]];
+        return Icon ? <Icon size={14} aria-hidden='true' /> : null;
+      }}
+    />
   );
 }

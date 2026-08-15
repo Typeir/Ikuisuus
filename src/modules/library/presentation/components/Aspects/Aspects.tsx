@@ -132,24 +132,35 @@ const AspectPill: React.FC<{
  * Toggles carousel expansion for the whole site by writing a root attribute.
  * Returns null when no provider is available.
  *
+ * The label and pressed state read collapsed until the first client render
+ * commits, since the provider reads storage the server cannot see and would
+ * otherwise emit ARIA that does not match the server markup.
+ *
  * @returns {React.ReactElement | null} The toggle, or null with no provider to write to
  */
 const ExpandToggle: React.FC = () => {
   const dispatch = usePersistentUiDispatchOptional();
   const { aspectExpanded } = usePersistentUiStateOptional();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (!dispatch) return null;
+
+  const expanded = mounted && aspectExpanded;
 
   return (
     <button
       type='button'
       className={styles.toggle}
-      aria-pressed={aspectExpanded}
-      aria-label={aspectExpanded ? 'Collapse aspects' : 'Expand aspects'}
+      aria-pressed={expanded}
+      aria-label={expanded ? 'Collapse aspects' : 'Expand aspects'}
       onClick={() =>
         dispatch({
           type: PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED,
-          payload: { expanded: !aspectExpanded },
+          payload: { expanded: !expanded },
         })
       }
     >

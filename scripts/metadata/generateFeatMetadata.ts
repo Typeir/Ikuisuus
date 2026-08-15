@@ -19,6 +19,7 @@ import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 import {
+    blankFrontmatter,
     extractAllTags,
     filePathToSlug,
     parseDescription,
@@ -229,21 +230,22 @@ async function parseFeatFile(
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const lines = raw.split('\n').map((l) => l.trim());
+    const body = blankFrontmatter(raw);
+    const lines = body.split('\n').map((l) => l.trim());
     const slug = filePathToSlug(filePath);
     const title = parseTitle(lines);
-    const description = stripPrerequisiteLine(parseDescription(raw));
+    const description = stripPrerequisiteLine(parseDescription(body));
 
-    const { prerequisite, hasPrerequisite } = parsePrerequisite(raw);
-    const abilityIncrease = parseAbilityIncrease(raw);
-    const features = parseFeatures(raw, filePath, sharedData);
+    const { prerequisite, hasPrerequisite } = parsePrerequisite(body);
+    const abilityIncrease = parseAbilityIncrease(body);
+    const features = parseFeatures(body, filePath, sharedData);
 
     const frontmatter = matter(raw).data as Record<string, unknown>;
     const frontmatterGrants = frontmatter.grants ?? frontmatter.Grants;
     const grantsMap = Array.isArray(frontmatterGrants)
       ? { [title]: frontmatterGrants as string[] }
       : (frontmatterGrants as Record<string, string[]> | undefined);
-    const grants = extractFeatureGrants(title, raw, grantsMap);
+    const grants = extractFeatureGrants(title, body, grantsMap);
     const multiSelect = frontmatter.multiSelect === true;
     const tagSet = new Set(
       extractAllTags(raw, filePath, sharedData, {

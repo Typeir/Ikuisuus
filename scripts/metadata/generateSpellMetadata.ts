@@ -27,7 +27,9 @@ import {
   type StorageAdapter,
 } from '.';
 import { extractDerivedAspects, extractStrataTags } from './aspectExtractors';
+import { MONSTER_MECHANICS } from './taggingPatterns';
 import {
+  applyAspectDenyList,
   extractDamageTags,
   extractOrganizationalTags,
   stripCitations,
@@ -253,7 +255,7 @@ function generateSpellTags(
   sharedData: SharedData,
 ): string[] {
   const tags: string[] = [];
-  const prose = stripCitations(fullText);
+  const prose = stripCitations(fullText).replace(/[*_]+/g, ' ');
   const lowerText = prose.toLowerCase();
 
   if (metadata.level !== undefined) {
@@ -266,6 +268,13 @@ function generateSpellTags(
   if (metadata.quality)
     tags.push(`rarity:${(metadata.quality as string).toLowerCase()}`);
   if (metadata.concentration) tags.push('tempo:sustained');
+  if (
+    metadata.duration &&
+    !/instant/i.test(String(metadata.duration)) &&
+    !metadata.concentration
+  ) {
+    tags.push('tempo:persistent');
+  }
   if (metadata.verbal) tags.push('component:verbal');
   if (metadata.somatic) tags.push('component:somatic');
   if (metadata.material) tags.push('component:material');
@@ -282,6 +291,10 @@ function generateSpellTags(
   for (const mechanic of mechanics) {
     if (new RegExp(`\\b${mechanic}\\b`, 'i').test(lowerText))
       tags.push(`mechanic:${mechanic.toLowerCase()}`);
+  }
+
+  if (MONSTER_MECHANICS.shapeshifting.test(prose)) {
+    tags.push('mechanic:shapeshifting');
   }
 
   if (SPELL_TAGS.ritual.test(prose)) tags.push('tempo:ritual');
@@ -352,7 +365,26 @@ async function parseSpellFile(
   filePath: string,
   sharedData: SharedData,
 ): Promise<object> {
-  const raw = await fs.readFile(filePath, 'utf8');
+  return parseSpellSource(
+    await fs.readFile(filePath, 'utf8'),
+    filePath,
+    sharedData,
+  );
+}
+
+/**
+ * Parses spell metadata from raw MDX source, no file read.
+ *
+ * @param {string} raw - Complete file text including frontmatter
+ * @param {string} filePath - Path the source belongs to, for slug and org tags
+ * @param {SharedData} sharedData - Shared game data
+ * @returns {object} Parsed spell metadata
+ */
+export function parseSpellSource(
+  raw: string,
+  filePath: string,
+  sharedData: SharedData,
+): object {
   const { data: frontmatter, content } = matter(raw);
   const lines = content.split('\n');
   const source =
@@ -367,16 +399,19 @@ async function parseSpellFile(
   const spellLists = parseSpellLists(content);
   const description = parseDescription(content);
 
-  const tags = Array.from(
-    new Set([
-      ...generateSpellTags(
-        content,
-        { ...headerData, ...properties, ...components },
-        sharedData,
-      ),
-      ...extractOrganizationalTags(filePath, process.cwd(), source),
-    ]),
-  ).sort();
+  const tags = applyAspectDenyList(
+    Array.from(
+      new Set([
+        ...generateSpellTags(
+          content,
+          { ...headerData, ...properties, ...components },
+          sharedData,
+        ),
+        ...extractOrganizationalTags(filePath, process.cwd(), source),
+      ]),
+    ).sort(),
+    frontmatter.denyAspects,
+  );
 
   const relativePath = path
     .relative(process.cwd(), filePath)

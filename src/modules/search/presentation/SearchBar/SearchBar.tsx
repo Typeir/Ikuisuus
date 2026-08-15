@@ -73,7 +73,15 @@ export function SearchBar({
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { results, loading, debouncing } = useSearch(query, locale, 250);
+  /* The dropdown never shows more than its cap, so nothing past it is worth
+     a fetch. */
+  const { results, loading, debouncing } = useSearch(
+    query,
+    locale,
+    250,
+    undefined,
+    MAX_DROPDOWN_RESULTS,
+  );
 
   const maxResults = Math.min(results.length, MAX_DROPDOWN_RESULTS);
 

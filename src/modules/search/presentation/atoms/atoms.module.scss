@@ -152,13 +152,18 @@ a:hover .resultTitle {
   transition:
     background var(--search-anim-duration, 200ms) var(--springy-bezier),
     transform var(--search-anim-duration, 200ms) var(--springy-bezier);
-  will-change: transform;
 
+  /* A result list runs to hundreds of rows. The ticker below is invisible at
+     rest, so it is paused and left off the compositor until a row is actually
+     hovered — otherwise every row pays for a masked, per-frame repaint it
+     never shows. Same reason there is no resting `will-change` on the row. */
   &::after {
     @include mdx.mdx-terminal-stream(right);
     color: var(--search-row-stream-color, var(--color-accent));
     opacity: 0;
     transition: opacity 150ms ease;
+    animation-play-state: paused;
+    will-change: auto;
 
     @media (prefers-reduced-motion: reduce) {
       animation: none;
@@ -177,6 +182,8 @@ a:hover .resultTitle {
 
     &::after {
       opacity: 0.4;
+      animation-play-state: running;
+      will-change: transform, mask-position;
     }
   }
 }
@@ -259,7 +266,6 @@ a:hover .resultTitle {
 @media (prefers-reduced-motion: reduce) {
   .row {
     transition: none;
-    will-change: auto;
 
     &:hover,
     &:focus-visible {

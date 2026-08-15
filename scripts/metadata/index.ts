@@ -30,6 +30,7 @@ export type { GeneratorConfig, StorageAdapter } from './generatorUtils';
 export {
   calculateReadingTime,
   findContentImage,
+  findTitleIndex,
   normalizeWeight,
   parseCharges,
   parseDamageTypesDealt,
@@ -62,6 +63,7 @@ export {
 } from './taggingUtils';
 export type { TagExtractionOptions } from './taggingUtils';
 export {
+  blankFrontmatter,
   clean,
   filePathToSlug,
   plain,

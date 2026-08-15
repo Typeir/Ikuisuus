@@ -15,10 +15,12 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import {
   GameData,
+  blankFrontmatter,
   clean,
   extractAllTags,
   filePathToSlug,
   findContentImage,
+  findTitleIndex,
   normalizeWeight,
   parseTitle,
   plain,
@@ -34,8 +36,6 @@ const log = createLogger({ component: 'TrinketMetadataGenerator' });
 /**
  * Extracts the prose description from a trinket MDX file.
  *
- * Stops at the first bold property line (`**Damage**:`, `**Properties**:`).
- *
  * @param {string} content - Full MDX file content
  * @returns {string | undefined} Joined prose lines or undefined
  */
@@ -44,7 +44,10 @@ function parseTrinketDescription(content: string): string | undefined {
   const descLines: string[] = [];
   let foundContent = false;
 
-  for (let i = 2; i < lines.length; i++) {
+  const itemTypeIdx = findItemTypeIndex(lines);
+  const start = itemTypeIdx === -1 ? 0 : itemTypeIdx + 1;
+
+  for (let i = start; i < lines.length; i++) {
     const l = lines[i].trim();
 
     if (/^\*\*\w/.test(l) && l.includes(':')) break;
@@ -173,20 +176,36 @@ function parseTrinketProperties(
 }
 
 /**
- * Parses the item type from the second line (after title).
+ * Returns the index of the item-type line
+ *
+ * @param {string[]} lines - Full MDX file lines
+ * @returns {number} Zero-based index of the item-type line, or -1
+ */
+function findItemTypeIndex(lines: string[]): number {
+  const titleIdx = findTitleIndex(lines);
+  if (titleIdx === -1) return -1;
+
+  for (let i = titleIdx + 1; i < lines.length; i++) {
+    const l = lines[i].trim();
+    if (!l) continue;
+    if (l.startsWith('_') || l.startsWith('*') || l.startsWith('<')) return -1;
+    return i;
+  }
+  return -1;
+}
+
+/**
+ * Parses the item type from the line below the title.
  *
  * @param {string} content - Full MDX content
  * @returns {string | undefined} Item type
  */
 function parseItemType(content: string): string | undefined {
-  const lines = content.split('\n').map((l) => l.trim());
-  if (lines.length > 1) {
-    const secondLine = clean(lines[1]);
-    if (secondLine && !secondLine.startsWith('_')) {
-      return secondLine;
-    }
-  }
-  return undefined;
+  const lines = content.split('\n');
+  const idx = findItemTypeIndex(lines);
+  if (idx === -1) return undefined;
+
+  return clean(lines[idx]) || undefined;
 }
 
 /**
@@ -200,15 +219,35 @@ async function parseTrinketFile(
   filePath: string,
   sharedData: SharedData,
 ): Promise<object | null> {
+  return parseTrinketSource(
+    await fs.readFile(filePath, 'utf-8'),
+    filePath,
+    sharedData,
+  );
+}
+
+/**
+ * Parses trinket metadata from raw MDX source
+ *
+ * @param {string} raw - Complete file text including frontmatter
+ * @param {string} filePath - Path the source belongs to, for slug and org tags
+ * @param {SharedData} sharedData - Shared game data
+ * @returns {object | null} Parsed metadata or null on error
+ */
+export function parseTrinketSource(
+  raw: string,
+  filePath: string,
+  sharedData: SharedData,
+): object | null {
   try {
-    const raw = await fs.readFile(filePath, 'utf-8');
-    const lines = raw.split('\n').map((l) => l.trim());
+    const body = blankFrontmatter(raw);
+    const lines = body.split('\n').map((l) => l.trim());
 
     const slug = filePathToSlug(filePath);
     const title = parseTitle(lines);
-    const itemType = parseItemType(raw);
-    const description = parseTrinketDescription(raw);
-    const properties = parseTrinketProperties(raw, sharedData);
+    const itemType = parseItemType(body);
+    const description = parseTrinketDescription(body);
+    const properties = parseTrinketProperties(body, sharedData);
 
     const metadata: Record<string, unknown> = {
       slug,

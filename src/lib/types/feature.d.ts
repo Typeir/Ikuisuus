@@ -255,7 +255,8 @@ export type FeatureFlag =
   | 'escalation'
   | 'conditional_multiattack'
   | 'multi_aspect'
-  | 'shared_resource';
+  | 'shared_resource'
+  | 'phase_added';
 
 /**
  * Canonical extracted feature record. Represents a single game mechanic

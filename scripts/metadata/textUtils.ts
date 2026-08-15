@@ -88,3 +88,17 @@ export function filePathToSlug(filePath: string): string {
 export function readLines(raw: string): string[] {
   return raw.split(TEXT.lineSplit);
 }
+
+/**
+ * Empties a leading YAML frontmatter block, delimiters included, keeping its
+ * line breaks so line numbers still match the source file. Content without
+ * frontmatter is returned unchanged.
+ *
+ * @param {string} raw - Raw MDX file content
+ * @returns {string} Content with the frontmatter lines blanked
+ */
+export function blankFrontmatter(raw: string): string {
+  return raw.replace(TEXT.frontmatterBlock, (block) =>
+    block.replace(TEXT.nonLineBreak, ''),
+  );
+}

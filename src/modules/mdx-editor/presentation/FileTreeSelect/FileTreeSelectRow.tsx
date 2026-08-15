@@ -28,6 +28,7 @@ import styles from './FileTreeSelect.module.scss';
  * @property {(path: string) => void} toggle - Toggle directory expansion.
  * @property {(path: string) => void} onSelect - Selection callback.
  * @property {string} newFileLabel - Label for new-file pseudo-node.
+ * @property {boolean} [foldersOnly] - Skip file rows; folders remain as destinations.
  */
 interface FileTreeSelectRowProps {
   node: TreeNode;
@@ -36,6 +37,7 @@ interface FileTreeSelectRowProps {
   toggle: (path: string) => void;
   onSelect: (path: string) => void;
   newFileLabel: string;
+  foldersOnly?: boolean;
 }
 
 /**
@@ -51,11 +53,13 @@ export function FileTreeSelectRow({
   toggle,
   onSelect,
   newFileLabel,
-}: FileTreeSelectRowProps): JSX.Element {
+  foldersOnly = false,
+}: FileTreeSelectRowProps): JSX.Element | null {
   const isOpen = expanded.has(node.path);
   const indent = depth * 16;
 
   if (node.isFile) {
+    if (foldersOnly) return null;
     return (
       <button
         type='button'
@@ -99,6 +103,7 @@ export function FileTreeSelectRow({
               toggle={toggle}
               onSelect={onSelect}
               newFileLabel={newFileLabel}
+              foldersOnly={foldersOnly}
             />
           ))}
           <button

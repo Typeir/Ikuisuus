@@ -93,7 +93,6 @@ export function EditorPathSection({
 }: EditorPathSectionProps): JSX.Element {
   const { tree, loading: treeLoading } = useCorrectionsTree(locale);
   const [selectedFolder, setSelectedFolder] = useState('');
-  const [fileName, setFileName] = useState('');
 
   const handleFolderSelect = useCallback(
     (folderPath: string) => {
@@ -109,18 +108,22 @@ export function EditorPathSection({
           );
         setSlug(stripped);
       } else {
-        setFilePath(fileName ? folderPath + fileName : folderPath);
+        /* Keep whatever filename the flat path already holds; only the
+           destination folder changes. */
+        const fileName = filePath.slice(filePath.lastIndexOf('/') + 1);
+        setFilePath(folderPath + fileName);
       }
     },
-    [mode, locale, fileName, setFilePath, setSlug],
+    [mode, locale, filePath, setFilePath, setSlug],
   );
 
-  const handleFileNameChange = useCallback(
-    (name: string) => {
-      setFileName(name);
-      setFilePath(selectedFolder + name);
+  const handlePathChange = useCallback(
+    (value: string) => {
+      setFilePath(value);
+      const slash = value.lastIndexOf('/');
+      setSelectedFolder(slash === -1 ? '' : value.slice(0, slash + 1));
     },
-    [selectedFolder, setFilePath],
+    [setFilePath],
   );
 
   return (
@@ -139,6 +142,7 @@ export function EditorPathSection({
           }
           newFileLabel={t('newFile')}
           disabled={isLoading}
+          foldersOnly={mode === 'new'}
         />
         {mode === 'edit' ? (
           <>
@@ -163,9 +167,9 @@ export function EditorPathSection({
             id='mdx-editor-path'
             type='text'
             className={styles.pathInput}
-            placeholder='filename.mdx'
-            value={fileName}
-            onChange={(e) => handleFileNameChange(e.target.value)}
+            placeholder='folder/filename.mdx'
+            value={filePath}
+            onChange={(e) => handlePathChange(e.target.value)}
           />
         )}
       </div>

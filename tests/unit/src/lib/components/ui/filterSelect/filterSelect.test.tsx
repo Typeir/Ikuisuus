@@ -8,6 +8,13 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { FilterSelect } from '@/lib/components/ui/filterSelect';
 
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<typeof import('next-intl')>(),
+  );
+});
+
 // Mock createPortal for modal rendering
 vi.mock('react-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-dom')>();
@@ -345,7 +352,7 @@ describe('FilterSelect', () => {
       });
 
       // Find and use search input
-      const searchInput = screen.getByPlaceholderText('Search...');
+      const searchInput = screen.getByPlaceholderText('Search…');
       await user.type(searchInput, 'Item 5');
 
       // Should show only matching items
@@ -482,6 +489,42 @@ describe('FilterSelect', () => {
       await waitFor(() => {
         expect(screen.getByRole('listbox')).toBeInTheDocument();
       });
+    });
+  });
+
+  describe('icon-option variant', () => {
+    it('renders leading content before option labels', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <FilterSelect
+          {...defaultProps}
+          renderOptionLeading={(option) => (
+            <span data-testid={`leading-${option.value}`} />
+          )}
+        />
+      );
+
+      await user.click(screen.getByRole('button'));
+
+      expect(
+        screen.getByTestId(`leading-${defaultProps.options[0].value}`)
+      ).toBeInTheDocument();
+    });
+
+    it('omits the All option when hideAllOption is set', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <FilterSelect {...defaultProps} allLabel='Everything' hideAllOption />
+      );
+
+      await user.click(screen.getByRole('button'));
+
+      expect(screen.queryByText('Everything')).not.toBeInTheDocument();
+      expect(screen.getAllByRole('option')).toHaveLength(
+        defaultProps.options.length
+      );
     });
   });
 });

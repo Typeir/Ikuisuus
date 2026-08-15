@@ -41,6 +41,8 @@ interface FileTreeSelectProps {
   newFileLabel?: string;
   /** Whether the select is disabled */
   disabled?: boolean;
+  /** Render folders as destinations only; file rows are hidden */
+  foldersOnly?: boolean;
 }
 
 /**
@@ -66,6 +68,7 @@ export function FileTreeSelect({
   placeholder = 'Select folder...',
   newFileLabel = 'New file',
   disabled = false,
+  foldersOnly = false,
 }: FileTreeSelectProps): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -149,6 +152,7 @@ export function FileTreeSelect({
                 toggle={toggle}
                 onSelect={handleSelect}
                 newFileLabel={newFileLabel}
+                foldersOnly={foldersOnly}
               />
             ))
           )}

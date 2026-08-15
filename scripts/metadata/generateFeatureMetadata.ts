@@ -15,6 +15,7 @@ import type { MonsterFeature } from '@/lib/types/feature';
 import fs from 'fs/promises';
 import path from 'path';
 import {
+    blankFrontmatter,
     endTimer,
     filePathToSlug,
     getMatchingFiles,
@@ -121,8 +122,21 @@ export async function parseMonsterFeatures(
   filePath: string,
 ): Promise<MonsterFeature[]> {
   const raw = await fs.readFile(filePath, 'utf8');
-  const lines = readLines(raw);
-  const slug = filePathToSlug(filePath, /\.sheet\.mdx$/i);
+  return parseMonsterFeaturesSource(raw, filePathToSlug(filePath));
+}
+
+/**
+ * Extracts features from raw sheet source, no file read.
+ *
+ * @param {string} raw - Complete sheet text including frontmatter
+ * @param {string} slug - Monster slug for feature IDs
+ * @returns {MonsterFeature[]} Extracted features
+ */
+export function parseMonsterFeaturesSource(
+  raw: string,
+  slug: string,
+): MonsterFeature[] {
+  const lines = readLines(blankFrontmatter(raw));
 
   const sections = classifySections(lines);
 

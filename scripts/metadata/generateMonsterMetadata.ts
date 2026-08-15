@@ -15,6 +15,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import {
   GameData,
+  blankFrontmatter,
   clean,
   extractAllTags,
   filePathToSlug,
@@ -35,7 +36,7 @@ import {
 import { MONSTER, STRUCTURE } from './extraction/featurePatterns';
 import { extractStrataTags } from './aspectExtractors';
 import { extractStatBlockFieldAspects, tagFeatures } from './featureAspects';
-import { parseMonsterFeatures } from './generateFeatureMetadata';
+import { parseMonsterFeaturesSource } from './generateFeatureMetadata';
 import {
   IMAGE,
   ITALIC_META,
@@ -737,8 +738,27 @@ async function parseMonsterFile(
   filePath: string,
   sharedData: SharedData,
 ): Promise<object[]> {
-  const raw = await fs.readFile(filePath, 'utf8');
-  const lines = readLines(raw);
+  return parseMonsterSource(
+    await fs.readFile(filePath, 'utf8'),
+    filePath,
+    sharedData,
+  );
+}
+
+/**
+ * Parses monster metadata from raw sheet source, no file read.
+ *
+ * @param {string} raw - Complete sheet text including frontmatter
+ * @param {string} filePath - Path the source belongs to, for slug and org tags
+ * @param {SharedData} sharedData - Shared game data
+ * @returns {object[]} One metadata record per stat block
+ */
+export function parseMonsterSource(
+  raw: string,
+  filePath: string,
+  sharedData: SharedData,
+): object[] {
+  const lines = readLines(blankFrontmatter(raw));
   const baseSlug = filePathToSlug(filePath);
 
   const statBlockPositions = findStatBlockPositions(lines, sharedData);
@@ -781,7 +801,7 @@ async function parseMonsterFile(
     results.push(metadata);
   }
 
-  const features = await parseMonsterFeatures(filePath);
+  const features = parseMonsterFeaturesSource(raw, baseSlug);
   for (let i = 0; i < results.length; i++) {
     const r = results[i] as Record<string, unknown>;
     const bStart = r.blockStart as number;

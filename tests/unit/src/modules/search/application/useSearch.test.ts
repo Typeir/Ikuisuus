@@ -7,7 +7,7 @@
  */
 
 import { toSearchQuery, useSearch } from '@/modules/search/application/useSearch';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { searchPagefindMock, mapPagefindResultMock } = vi.hoisted(() => ({
@@ -81,6 +81,58 @@ describe('useSearch', () => {
     renderHook(() => useSearch('', 'en', 0, {}));
 
     await waitFor(() => expect(searchPagefindMock).not.toHaveBeenCalled());
+  });
+
+  /** A broad query must not resolve a fragment per hit up front. */
+  it('should resolve only the first batch and report the full total', async () => {
+    const hits = Array.from({ length: 45 }, (_, i) => ({
+      data: vi.fn(async () => ({ url: `/en/library/page-${i}` })),
+    }));
+    searchPagefindMock.mockResolvedValue({ results: hits });
+    mapPagefindResultMock.mockImplementation((fragment: { url: string }) => ({
+      record: { id: fragment.url },
+    }));
+
+    const { result } = renderHook(() => useSearch('as', 'en', 0));
+
+    await waitFor(() => expect(result.current.total).toBe(45));
+    expect(result.current.results).toHaveLength(20);
+    expect(result.current.hasMore).toBe(true);
+    expect(hits.filter((hit) => hit.data.mock.calls.length > 0)).toHaveLength(
+      20,
+    );
+
+    await act(async () => {
+      result.current.loadMore();
+    });
+
+    await waitFor(() => expect(result.current.results).toHaveLength(40));
+    expect(hits[39]?.data).toHaveBeenCalled();
+    expect(hits[40]?.data).not.toHaveBeenCalled();
+
+    await act(async () => {
+      result.current.loadMore();
+    });
+
+    await waitFor(() => expect(result.current.results).toHaveLength(45));
+    expect(result.current.hasMore).toBe(false);
+  });
+
+  it('should honour an explicit page size', async () => {
+    const hits = Array.from({ length: 30 }, (_, i) => ({
+      data: vi.fn(async () => ({ url: `/en/library/page-${i}` })),
+    }));
+    searchPagefindMock.mockResolvedValue({ results: hits });
+    mapPagefindResultMock.mockImplementation((fragment: { url: string }) => ({
+      record: { id: fragment.url },
+    }));
+
+    const { result } = renderHook(() =>
+      useSearch('as', 'en', 0, undefined, 7),
+    );
+
+    await waitFor(() => expect(result.current.results).toHaveLength(7));
+    expect(result.current.total).toBe(30);
   });
 
   it('should set an error when the search bundle is unavailable', async () => {

@@ -14,6 +14,8 @@
   "unnamed": "Nimetön",
   "levelShort": "Taso {level}",
   "searchPlaceholder": "Hae…",
+  "select": "Valitse…",
+  "noMatches": "Ei osumia",
   "hp": "HP",
   "ac": "AC",
   "initiative": "Aloite",

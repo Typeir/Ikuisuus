@@ -400,6 +400,28 @@ export function extractContentTypeTags(
 }
 
 /**
+ * Filters generated aspects through the frontmatter `denyAspects` list.
+ * An author lists exact aspects the generator must not assign to this
+ * file. Unknown or absent list returns tags unchanged.
+ *
+ * @param {string[]} tags - Generated aspects
+ * @param {unknown} denyAspects - Frontmatter `denyAspects` value
+ * @returns {string[]} Aspects minus the denied
+ */
+export function applyAspectDenyList(
+  tags: string[],
+  denyAspects: unknown,
+): string[] {
+  if (!Array.isArray(denyAspects) || denyAspects.length === 0) return tags;
+  const denied = new Set(
+    denyAspects
+      .filter((t): t is string => typeof t === 'string')
+      .map((t) => t.trim().toLowerCase()),
+  );
+  return tags.filter((t) => !denied.has(t.toLowerCase()));
+}
+
+/**
  * Extract all tags from content — unified entry point.
  *
  * @param {string} content - File content to analyze

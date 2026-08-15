@@ -27,6 +27,23 @@ interface MdxPreviewProps {
   source: string;
 }
 
+const FRONTMATTER = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
+
+/**
+ * Splits leading YAML frontmatter from MDX source.
+ *
+ * @param {string} source - Raw MDX text
+ * @returns {{ yaml: string | null; body: string }} Frontmatter text (without fences) and the remaining body
+ */
+export function splitFrontmatter(source: string): {
+  yaml: string | null;
+  body: string;
+} {
+  const match = FRONTMATTER.exec(source);
+  if (!match) return { yaml: null, body: source };
+  return { yaml: match[1], body: source.slice(match[0].length) };
+}
+
 /**
  * Loading indicator rendered while the preview compiles.
  *
@@ -82,10 +99,12 @@ export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [, startTransition] = useTransition();
 
+  const { yaml, body } = splitFrontmatter(source);
+
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
-    if (!source.trim()) {
+    if (!body.trim()) {
       setContent(null);
       setError(null);
       return;
@@ -93,7 +112,7 @@ export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
 
     debounceRef.current = setTimeout(async () => {
       try {
-        const Compiled = await compileMdxToComponent(source);
+        const Compiled = await compileMdxToComponent(body);
         startTransition(() => {
           setContent(() => Compiled);
           setRenderKey((k) => k + 1);
@@ -107,19 +126,38 @@ export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [source, startTransition]);
+  }, [body, startTransition]);
+
+  const frontmatterBlock = yaml ? (
+    <pre className={styles.frontmatterBlock} aria-label='Frontmatter'>
+      {yaml}
+    </pre>
+  ) : null;
 
   if (error) {
-    return <div className={styles.previewError}>{error}</div>;
+    return (
+      <>
+        {frontmatterBlock}
+        <div className={styles.previewError}>{error}</div>
+      </>
+    );
   }
 
   if (!Content) {
-    return <div className={styles.previewEmpty}>Preview</div>;
+    return (
+      <>
+        {frontmatterBlock}
+        <div className={styles.previewEmpty}>Preview</div>
+      </>
+    );
   }
 
   return (
-    <Suspense fallback={<PreviewFallback />}>
-      <PreviewContent Component={Content} renderKey={renderKey} />
-    </Suspense>
+    <>
+      {frontmatterBlock}
+      <Suspense fallback={<PreviewFallback />}>
+        <PreviewContent Component={Content} renderKey={renderKey} />
+      </Suspense>
+    </>
   );
 }

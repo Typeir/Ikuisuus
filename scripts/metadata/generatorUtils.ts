@@ -310,7 +310,7 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
           const metadataWithHash = stampSharedFields(
             processed.metadata,
             versionHash,
-            calculateReadingTime(sourceContent),
+            calculateReadingTime(sourceContent, locale),
           );
 
           const backend = getMetadataBackend();

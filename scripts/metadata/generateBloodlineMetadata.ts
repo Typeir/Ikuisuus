@@ -15,6 +15,7 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
+    blankFrontmatter,
     clean,
     extractAbilitySaveTags,
     extractAllTags,
@@ -707,13 +708,14 @@ async function parseBloodlineFile(
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const lines = raw.split('\n').map((l) => l.trim());
+    const body = blankFrontmatter(raw);
+    const lines = body.split('\n').map((l) => l.trim());
     const slug = filePathToSlug(filePath);
     const title = parseTitle(lines);
-    const description = parseDescription(raw);
-    const coreFeatures = parseCoreFeatures(raw);
-    const boonBudget = parseBoonBudget(raw);
-    const boons = parseBoons(raw, sharedData);
+    const description = parseDescription(body);
+    const coreFeatures = parseCoreFeatures(body);
+    const boonBudget = parseBoonBudget(body);
+    const boons = parseBoons(body, sharedData);
     const boonTags = boons.flatMap((boon) => boon.tags);
 
     const metadata: Record<string, unknown> = {

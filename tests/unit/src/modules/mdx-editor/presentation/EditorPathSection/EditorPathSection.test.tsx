@@ -5,7 +5,7 @@
  * @module tests/unit/lib/components/mdxEditor/editorPathSection
  */
 
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/hooks/data/useDraftAndRouteData', () => ({
@@ -15,11 +15,24 @@ vi.mock('@/lib/hooks/data/useDraftAndRouteData', () => ({
 vi.mock('@/modules/mdx-editor/presentation/FileTreeSelect/FileTreeSelect', () => ({
   FileTreeSelect: ({
     placeholder,
-    disabled,
+    onSelect,
+    foldersOnly,
   }: {
     placeholder?: string;
-    disabled?: boolean;
-  }) => <div data-testid='file-tree-select'>{placeholder}</div>,
+    onSelect: (path: string) => void;
+    foldersOnly?: boolean;
+  }) => (
+    <div
+      data-testid='file-tree-select'
+      data-folders-only={String(Boolean(foldersOnly))}>
+      {placeholder}
+      <button
+        type='button'
+        data-testid='mock-select-folder'
+        onClick={() => onSelect('en/spells/')}
+      />
+    </div>
+  ),
 }));
 
 vi.mock('@/modules/mdx-editor/presentation/MdxEditor/MdxEditor.module.scss', () => ({
@@ -135,5 +148,87 @@ describe('EditorPathSection (new mode)', () => {
     );
 
     expect(screen.getByTestId('file-tree-select')).toBeDefined();
+  });
+
+  it('renders the selector folders-only in new mode, full tree in edit mode', () => {
+    const { unmount } = render(
+      <EditorPathSection
+        mode='new'
+        slug=''
+        setSlug={vi.fn()}
+        filePath=''
+        setFilePath={vi.fn()}
+        handleLoad={vi.fn()}
+        isLoading={false}
+        locale='en'
+        t={t}
+      />,
+    );
+    expect(
+      screen.getByTestId('file-tree-select').getAttribute('data-folders-only'),
+    ).toBe('true');
+    unmount();
+
+    render(
+      <EditorPathSection
+        mode='edit'
+        slug='monsters/goblin'
+        setSlug={vi.fn()}
+        filePath=''
+        setFilePath={vi.fn()}
+        handleLoad={vi.fn()}
+        isLoading={false}
+        locale='en'
+        t={t}
+      />,
+    );
+    expect(
+      screen.getByTestId('file-tree-select').getAttribute('data-folders-only'),
+    ).toBe('false');
+  });
+
+  it('shows the full flat path and forwards edits to setFilePath', () => {
+    const setFilePath = vi.fn();
+    render(
+      <EditorPathSection
+        mode='new'
+        slug=''
+        setSlug={vi.fn()}
+        filePath='en/monsters/goblin.sheet.mdx'
+        setFilePath={setFilePath}
+        handleLoad={vi.fn()}
+        isLoading={false}
+        locale='en'
+        t={t}
+      />,
+    );
+
+    const input = screen.getByPlaceholderText(
+      'folder/filename.mdx',
+    ) as HTMLInputElement;
+    expect(input.value).toBe('en/monsters/goblin.sheet.mdx');
+
+    fireEvent.change(input, { target: { value: 'en/spells/frostbite.mdx' } });
+    expect(setFilePath).toHaveBeenCalledWith('en/spells/frostbite.mdx');
+  });
+
+  it('preserves the filename when a destination folder is selected', () => {
+    const setFilePath = vi.fn();
+    render(
+      <EditorPathSection
+        mode='new'
+        slug=''
+        setSlug={vi.fn()}
+        filePath='en/monsters/frostbite.mdx'
+        setFilePath={setFilePath}
+        handleLoad={vi.fn()}
+        isLoading={false}
+        locale='en'
+        t={t}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('mock-select-folder'));
+    expect(setFilePath).toHaveBeenCalledWith('en/spells/frostbite.mdx');
   });
 });

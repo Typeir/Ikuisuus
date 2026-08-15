@@ -55,6 +55,18 @@ export function nativeReplace(
 }
 
 /**
+ * Replaces the entire editor content natively, preserving the undo stack.
+ *
+ * @param {string} id - Textarea DOM id
+ * @param {string} text - Replacement text
+ */
+export function replaceAllText(id: string, text: string): void {
+  const sel = getSelection(id);
+  if (!sel) return;
+  nativeReplace(sel.el, 0, sel.el.value.length, text);
+}
+
+/**
  * Wraps the selected text with a prefix and suffix, or inserts placeholder text
  * when nothing is selected.
  *

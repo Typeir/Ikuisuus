@@ -14,6 +14,8 @@
   "unnamed": "Sin nombre",
   "levelShort": "Nv {level}",
   "searchPlaceholder": "Buscar…",
+  "select": "Selecciona…",
+  "noMatches": "Sin coincidencias",
   "hp": "PG",
   "ac": "CA",
   "initiative": "Iniciativa",

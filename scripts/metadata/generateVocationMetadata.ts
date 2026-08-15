@@ -17,6 +17,7 @@ import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 import {
+    blankFrontmatter,
     clean,
     extractAllTags,
     getMetaSubdir,
@@ -493,11 +494,12 @@ async function parseVocationFile(
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const title = parseTitle(raw.split(TEXT.lineSplit).map((l) => l.trim()));
+    const body = blankFrontmatter(raw);
+    const title = parseTitle(body.split(TEXT.lineSplit).map((l) => l.trim()));
     const slug = parentDir;
 
-    const traits = parseCoreTraits(raw);
-    const description = parseDescription(raw);
+    const traits = parseCoreTraits(body);
+    const description = parseDescription(body);
     const hitDie = parseHitDie(
       traits['Hit Point Die'] || traits['Hit Die'] || '',
     );
@@ -518,8 +520,8 @@ async function parseVocationFile(
     );
     const primaryAbility = parseProficiencies(traits['Primary Ability'] || '');
 
-    const { features, hasSpellSlots, headers } = parseFeatureTable(raw);
-    const rawLines = raw.split(/\r?\n/);
+    const { features, hasSpellSlots, headers } = parseFeatureTable(body);
+    const rawLines = body.split(/\r?\n/);
     const vocationFrontmatter = matter(raw).data as Record<string, unknown>;
     const vocationGrantsRaw =
       vocationFrontmatter.grants ?? vocationFrontmatter.Grants;
@@ -548,14 +550,14 @@ async function parseVocationFile(
 
     let spellcasting: { ability: string; progression: string } | undefined;
     if (hasSpellSlots) {
-      const ability = parseSpellcastingAbility(raw);
-      const progression = classifyProgression(headers, raw);
+      const ability = parseSpellcastingAbility(body);
+      const progression = classifyProgression(headers, body);
       if (ability && progression) {
         spellcasting = { ability, progression };
       }
     }
 
-    const specializations = parseSpecializations(raw);
+    const specializations = parseSpecializations(body);
     const archetype = classifyArchetype(spellcasting?.progression ?? null);
 
     const link = `/library/character-creation/vocations/${slug}/main`;

@@ -32,7 +32,10 @@ vi.mock('@/styles/mdxContent.module.scss', () => ({
   },
 }));
 
-import { MdxPreview } from '@/modules/mdx-editor/presentation/MdxPreview/MdxPreview';
+import {
+  MdxPreview,
+  splitFrontmatter,
+} from '@/modules/mdx-editor/presentation/MdxPreview/MdxPreview';
 
 afterEach(() => {
   vi.clearAllTimers();
@@ -96,5 +99,49 @@ describe('MdxPreview', () => {
     });
 
     expect(mockCompile).not.toHaveBeenCalled();
+  });
+
+  it('strips frontmatter from the compiled body and shows it separately', async () => {
+    vi.useFakeTimers();
+    mockCompile.mockResolvedValue(() => (
+      <div data-testid='compiled-output'>Result</div>
+    ));
+
+    render(
+      <MdxPreview source={'---\ncontentType: spells\n---\n\n# Content\n'} />,
+    );
+
+    await act(async () => {
+      vi.advanceTimersByTime(400);
+    });
+    await act(async () => {});
+
+    expect(mockCompile).toHaveBeenCalledWith('\n# Content\n');
+    expect(screen.getByLabelText('Frontmatter').textContent).toContain(
+      'contentType: spells',
+    );
+  });
+
+  it('does not compile a frontmatter-only buffer', async () => {
+    await act(async () => {
+      render(<MdxPreview source={'---\ncontentType: spells\n---\n'} />);
+    });
+
+    expect(mockCompile).not.toHaveBeenCalled();
+    expect(screen.getByLabelText('Frontmatter')).toBeDefined();
+  });
+});
+
+describe('splitFrontmatter', () => {
+  it('splits fenced YAML from the body', () => {
+    const { yaml, body } = splitFrontmatter('---\na: 1\n---\n# X\n');
+    expect(yaml).toBe('a: 1');
+    expect(body).toBe('# X\n');
+  });
+
+  it('passes sources without frontmatter through untouched', () => {
+    const { yaml, body } = splitFrontmatter('# X\n');
+    expect(yaml).toBeNull();
+    expect(body).toBe('# X\n');
   });
 });

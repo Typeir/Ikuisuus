@@ -163,6 +163,52 @@
   align-items: center;
 }
 
+.optionLeading {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.5rem;
+  color: var(--color-text-secondary);
+}
+
+.iconRoot {
+  min-width: 0;
+
+  .dropdown {
+    left: auto;
+    right: 0;
+    width: max-content;
+    min-width: 10rem;
+  }
+}
+
+.iconTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  /* The global `button, .actionable` rule pads .5rem 1rem; on a fixed-size
+     border-box that clamps the content box to 0 and collapses the icon. */
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.12s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  &.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
 .noResults {
   padding: 1rem;
   text-align: center;

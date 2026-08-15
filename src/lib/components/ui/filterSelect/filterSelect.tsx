@@ -12,10 +12,10 @@
 
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
     forwardRef,
     KeyboardEvent,
-    memo,
     type ReactNode,
     useCallback,
     useEffect,
@@ -24,32 +24,17 @@ import {
     useRef,
     useState,
 } from 'react';
-import { MobileModal } from '../modal';
 import styles from './filterSelect.module.scss';
+import {
+    FilterMobileModal,
+    filterOptionsByQuery,
+    VirtualizedOption,
+} from './filterSelectParts';
 
 /**
  * Viewport width below which the dropdown renders as a bottom sheet.
  */
 const SHEET_VIEWPORT_QUERY = '(max-width: 640px)';
-
-/**
- * Filters options array by a search query string
- *
- * @function filterOptionsByQuery
- * @param {FilterSelectOption[]} options - Options to filter
- * @param {string} searchQuery - Current search query
- * @returns {FilterSelectOption[]} Filtered options matching the query
- */
-function filterOptionsByQuery(
-  options: FilterSelectOption[],
-  searchQuery: string,
-): FilterSelectOption[] {
-  if (!searchQuery.trim()) return options;
-  const query = searchQuery.toLowerCase();
-  return options.filter(
-    (opt) => opt.value === '' || opt.label.toLowerCase().includes(query),
-  );
-}
 
 /**
  * @interface FilterSelectOption
@@ -69,8 +54,8 @@ export interface FilterSelectOption {
  * @property {string} value - Current selected value (empty string for "All")
  * @property {FilterSelectOption[]} options - Array of available options
  * @property {(value: string) => void} onChange - Callback when value changes
- * @property {string} [placeholder='Select...'] - Placeholder text when no value selected
- * @property {string} [allLabel='All'] - Label text for "All" option
+ * @property {string} [placeholder] - Placeholder text when no value selected; defaults to the localized common.select string
+ * @property {string} [allLabel] - Label text for "All" option; defaults to the localized common.all string
  * @property {boolean} [disabled=false] - Whether the select is disabled
  * @property {string} [ariaLabel] - Accessible label for screen readers
  * @property {number} [modalThreshold=15] - Legacy no-op; phones always use the bottom sheet regardless of option count
@@ -78,6 +63,9 @@ export interface FilterSelectOption {
  * @property {boolean} [searchable=false] - Whether to show search input in dropdown
  * @property {'sm' | 'md' | 'lg'} [size='md'] - Size variant
  * @property {(option: FilterSelectOption) => ReactNode} [renderOptionTrailing] - Optional renderer for trailing content inside each option row (e.g. a preview icon). Click handlers in the trailing slot must call `e.stopPropagation()` to keep the dropdown open.
+ * @property {(option: FilterSelectOption) => ReactNode} [renderOptionLeading] - Optional renderer for leading content before each option label (e.g. a content-type icon)
+ * @property {boolean} [hideAllOption=false] - Omit the "All" option; for action selects where every row is a concrete choice
+ * @property {ReactNode} [iconTrigger] - Render the trigger as a compact icon-only button holding this node instead of the text-and-chevron trigger; pair with `ariaLabel`
  */
 export interface FilterSelectProps {
   id?: string;
@@ -93,130 +81,10 @@ export interface FilterSelectProps {
   searchable?: boolean;
   size?: 'sm' | 'md' | 'lg';
   renderOptionTrailing?: (option: FilterSelectOption) => ReactNode;
+  renderOptionLeading?: (option: FilterSelectOption) => ReactNode;
+  hideAllOption?: boolean;
+  iconTrigger?: ReactNode;
 }
-
-/**
- * @interface VirtualizedOptionProps
- * Props for individual virtualized option renderer
- * @property {FilterSelectOption} option - The option to render
- * @property {boolean} isSelected - Whether this option is currently selected
- * @property {boolean} isHighlighted - Whether this option is keyboard-highlighted
- * @property {() => void} onClick - Handler when option is clicked
- * @property {() => void} onMouseEnter - Handler when mouse enters option
- * @property {React.CSSProperties} style - CSS styles for virtualization positioning
- */
-const VirtualizedOption = memo(function VirtualizedOption({
-  option,
-  isSelected,
-  isHighlighted,
-  onClick,
-  onMouseEnter,
-  style,
-  trailing,
-}: {
-  option: FilterSelectOption;
-  isSelected: boolean;
-  isHighlighted: boolean;
-  onClick: () => void;
-  onMouseEnter: () => void;
-  style: React.CSSProperties;
-  trailing?: ReactNode;
-}) {
-  return (
-    <div
-      role='option'
-      aria-selected={isSelected}
-      className={`${styles.option} ${isSelected ? styles.selected : ''} ${isHighlighted ? styles.highlighted : ''}`}
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      style={style}>
-      <span className={styles.optionLabel}>{option.label}</span>
-      {trailing && <span className={styles.optionTrailing}>{trailing}</span>}
-    </div>
-  );
-});
-
-/**
- * MobileModal wrapper with search input and option list for FilterSelect.
- */
-const FilterMobileModal = memo(function FilterMobileModal({
-  isOpen,
-  onClose,
-  options,
-  value,
-  onSelect,
-  searchQuery,
-  onSearchChange,
-  ariaLabel,
-  allLabel,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  options: FilterSelectOption[];
-  value: string;
-  onSelect: (value: string) => void;
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  ariaLabel?: string;
-  allLabel: string;
-}) {
-  const filteredOptions = useMemo(
-    () => filterOptionsByQuery(options, searchQuery),
-    [options, searchQuery],
-  );
-
-  return (
-    <MobileModal
-      isOpen={isOpen}
-      onClose={onClose}
-      ariaLabel={ariaLabel || 'Select option'}
-      title={ariaLabel || 'Select an option'}
-      variant='console'
-      showCloseButton>
-      <div>
-        <div className={styles.modalSearchContainer}>
-          <input
-            type='text'
-            className={styles.modalSearch}
-            placeholder='Search...'
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            aria-label='Search options'
-            autoFocus
-          />
-        </div>
-        <div role='listbox' className={styles.modalOptionsList}>
-          <div
-            role='option'
-            aria-selected={value === ''}
-            className={`${styles.modalOption} ${value === '' ? styles.selected : ''}`}
-            onClick={() => {
-              onSelect('');
-              onClose();
-            }}>
-            {allLabel}
-          </div>
-          {filteredOptions.map((option) => (
-            <div
-              key={option.value}
-              role='option'
-              aria-selected={value === option.value}
-              className={`${styles.modalOption} ${value === option.value ? styles.selected : ''}`}
-              onClick={() => {
-                onSelect(option.value);
-                onClose();
-              }}>
-              {option.label}
-            </div>
-          ))}
-          {filteredOptions.length === 0 && searchQuery && (
-            <div className={styles.noResults}>No matches found</div>
-          )}
-        </div>
-      </div>
-    </MobileModal>
-  );
-});
 
 /**
  * Select dropdown for table filters. Renders as a bottom sheet on mobile viewports.
@@ -247,17 +115,24 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
       value,
       options,
       onChange,
-      placeholder = 'Select...',
-      allLabel = 'All',
+      placeholder,
+      allLabel,
       disabled = false,
       ariaLabel,
       className = '',
       searchable = false,
       size = 'md',
       renderOptionTrailing,
+      renderOptionLeading,
+      hideAllOption = false,
+      iconTrigger,
     },
     forwardedRef,
   ) {
+    const t = useTranslations('common');
+    const resolvedPlaceholder = placeholder ?? t('select');
+    const resolvedAllLabel = allLabel ?? t('all');
+
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const [searchQuery, setSearchQuery] = useState('');
@@ -273,22 +148,25 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
     /** Expose button ref for external focus management */
     useImperativeHandle(forwardedRef, () => buttonRef.current!);
 
-    /** Filter options by search query, always include 'All' option */
+    /** Filter options by search query; include 'All' unless hidden */
     const filteredOptions = useMemo(() => {
-      const allOption: FilterSelectOption = { value: '', label: allLabel };
-      const baseOptions = [allOption, ...options];
+      const allOption: FilterSelectOption = {
+        value: '',
+        label: resolvedAllLabel,
+      };
+      const baseOptions = hideAllOption ? options : [allOption, ...options];
 
       if (!searchable || !searchQuery.trim()) return baseOptions;
 
       return filterOptionsByQuery(baseOptions, searchQuery);
-    }, [options, allLabel, searchable, searchQuery]);
+    }, [options, resolvedAllLabel, hideAllOption, searchable, searchQuery]);
 
     /** Resolve display text from current value */
     const displayText = useMemo(() => {
-      if (!value) return placeholder;
+      if (!value) return resolvedPlaceholder;
       const selected = options.find((opt) => opt.value === value);
       return selected?.label || value;
-    }, [value, options, placeholder]);
+    }, [value, options, resolvedPlaceholder]);
 
     /** Close dropdown when clicking outside */
     useEffect(() => {
@@ -415,23 +293,33 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
 
     if (useMobileModal) {
       return (
-        <div className={`${styles.filterSelect} ${className}`}>
+        <div
+          className={`${styles.filterSelect} ${iconTrigger ? styles.iconRoot : ''} ${className}`}>
           <button
             ref={buttonRef}
             id={id}
             type='button'
-            className={`${styles.trigger} ${styles[size]} ${disabled ? styles.disabled : ''}`}
+            className={
+              iconTrigger
+                ? `${styles.iconTrigger} ${disabled ? styles.disabled : ''}`
+                : `${styles.trigger} ${styles[size]} ${disabled ? styles.disabled : ''}`
+            }
             onClick={() => !disabled && setIsOpen(true)}
             disabled={disabled}
             aria-haspopup='listbox'
             aria-expanded={isOpen}
-            aria-label={ariaLabel}>
-            <span className={styles.triggerText}>{displayText}</span>
-            <ChevronDown
-              size={14}
-              className={styles.triggerIcon}
-              aria-hidden='true'
-            />
+            aria-label={ariaLabel}
+            title={iconTrigger ? ariaLabel : undefined}>
+            {iconTrigger ?? (
+              <>
+                <span className={styles.triggerText}>{displayText}</span>
+                <ChevronDown
+                  size={14}
+                  className={styles.triggerIcon}
+                  aria-hidden='true'
+                />
+              </>
+            )}
           </button>
           <FilterMobileModal
             isOpen={isOpen}
@@ -445,7 +333,9 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             ariaLabel={ariaLabel}
-            allLabel={allLabel}
+            allLabel={resolvedAllLabel}
+            hideAllOption={hideAllOption}
+            renderLeading={renderOptionLeading}
           />
         </div>
       );
@@ -454,25 +344,34 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
     return (
       <div
         ref={containerRef}
-        className={`${styles.filterSelect} ${className}`}
+        className={`${styles.filterSelect} ${iconTrigger ? styles.iconRoot : ''} ${className}`}
         onKeyDown={handleKeyDown}>
         <button
           ref={buttonRef}
           id={id}
           type='button'
-          className={`${styles.trigger} ${styles[size]} ${disabled ? styles.disabled : ''} ${isOpen ? styles.open : ''}`}
+          className={
+            iconTrigger
+              ? `${styles.iconTrigger} ${disabled ? styles.disabled : ''} ${isOpen ? styles.open : ''}`
+              : `${styles.trigger} ${styles[size]} ${disabled ? styles.disabled : ''} ${isOpen ? styles.open : ''}`
+          }
           onClick={handleButtonClick}
           disabled={disabled}
           aria-haspopup='listbox'
           aria-expanded={isOpen}
           aria-label={ariaLabel}
+          title={iconTrigger ? ariaLabel : undefined}
           aria-controls={isOpen ? `${id}-listbox` : undefined}>
-          <span className={styles.triggerText}>{displayText}</span>
-          <ChevronDown
-            size={14}
-            className={styles.triggerIcon}
-            aria-hidden='true'
-          />
+          {iconTrigger ?? (
+            <>
+              <span className={styles.triggerText}>{displayText}</span>
+              <ChevronDown
+                size={14}
+                className={styles.triggerIcon}
+                aria-hidden='true'
+              />
+            </>
+          )}
         </button>
 
         {isOpen && (
@@ -487,13 +386,13 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
                 <input
                   type='text'
                   className={styles.searchInput}
-                  placeholder='Search...'
+                  placeholder={t('searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
                     setHighlightedIndex(0);
                   }}
-                  aria-label='Search options'
+                  aria-label={t('searchPlaceholder')}
                   autoFocus
                 />
               </div>
@@ -513,10 +412,15 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
                       ? renderOptionTrailing(option)
                       : undefined
                   }
+                  leading={
+                    option.value && renderOptionLeading
+                      ? renderOptionLeading(option)
+                      : undefined
+                  }
                 />
               ))}
               {filteredOptions.length === 0 && searchQuery && (
-                <div className={styles.noResults}>No matches found</div>
+                <div className={styles.noResults}>{t('noMatches')}</div>
               )}
             </div>
           </div>

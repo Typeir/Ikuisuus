@@ -128,6 +128,7 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
           disabled={editor.editorDisabled}
           mode={editor.mode}
           newPlaceholder={t('newPlaceholder')}
+          filePath={editor.filePath}
         />
       )}
 

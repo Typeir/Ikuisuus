@@ -32,7 +32,7 @@ export const SCOPED_DEFENCE = {
  */
 export const DAMAGE_REDUCTION = {
   reduction:
-    /\bdamage reduction\b|\breduce[sd]?\s+(?:the\s+)?damage\b|\bdamage\s+(?:taken\s+)?is reduced by\b|\btakes?\s+\d+\s+less\s+damage\b|\breduce[sd]?\s+by\s+\d+\s+.{0,20}damage\b/i,
+    /\bdamage reduction\b|\breduce[sd]?\s+(?:the\s+)?damage\b|\bdamage\s+(?:taken\s+)?is reduced by\b|\btakes?\s+\d+\s+less\s+damage\b|\breduce[sd]?\s+by\s+\d+\s+.{0,20}damage\b|\bdamage (?:it takes|dealt|taken) is halved\b|\bhalv(?:e|es|ed|ing) (?:the |all )?damage\b/i,
 } as const;
 
 /**
@@ -150,10 +150,10 @@ export const DELIVERY = {
   cone: /\bcone\b/i,
   line: /\bline\s+\d+\s*(?:ft|feet)\b|\b\d+\s*(?:ft|feet)[- ]long line\b|\bin a line\b/i,
   sphere: /\bsphere\b|\bradius\b/i,
-  zone: /\bthe area (?:is|becomes)\b|\bfor the duration,? the\b|\bzone\b/i,
-  attack: /\b(?:ranged|melee)\s+spell attack\b|\bmake a spell attack\b/i,
+  zone: /\bthe area (?:is|becomes)\b|\bfor the duration,? the\b|\bzone\b|\b(?:enters?|starts? its turn in) the (?:area|sphere|cloud|fog|wall)\b/i,
+  attack: /\b(?:ranged|melee)\s+spell attack\b|\bmake a spell attack\b|\bspell attack roll\b|\bwhen you hit\b.{0,50}\battack\b|\byour (?:melee |ranged )?attacks\b/i,
   touch: /\byou touch\b|\brange[:*_\s]+touch\b/i,
-  projectile: /\bray\b|\bbolt\b|\bmissile\b|\bdart(?:s)? of\b/i,
+  projectile: /\bray\b|\bbolt\b|\bmissile\b|\bdart(?:s)? of\b|\bhurls?\b/i,
   summon: /\bsummons?\b|\bconjures?\b|\bappears? in an unoccupied space\b/i,
   self: /\brange[:*_\s]+self\b/i,
 } as const;
@@ -191,7 +191,7 @@ export const TEMPO = {
  * @property {RegExp} reach - Weapon reach
  */
 export const RANGE = {
-  field: /\*\*Range\*\*:\s*(.+?)\s*(?=\r?\n|$)/i,
+  field: /(?:^|\n)[>\s]*\*{0,2}Range\*{0,2}\s*:\s*(.+?)\s*(?=\r?\n|$)/i,
   self: /^Self\b/i,
   touch: /^Touch\b/i,
   sight: /^Sight\b/i,
@@ -263,7 +263,7 @@ export const RESOURCE = {
 export const MOVEMENT_EXTRA = {
   hover: /\bhover(?:s|ing)?\b/i,
   ethereal: /\bethereal\b/i,
-  dimensional: /\bdimension(?:al)?\b|\bplanar\b|\banother plane\b/i,
+  dimensional: /\bdimension(?:al)?\b|\bplanar\b|\banother plane\b|\bteleports?\b|\bteleportation\b/i,
   difficultTerrain: /\bdifficult terrain\b/i,
   jump: /\bjump(?:s|ing)?\b|\blong jump\b|\bhigh jump\b/i,
   squeeze: /\bsqueez(?:e|es|ing)\b/i,

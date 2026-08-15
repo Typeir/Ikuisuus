@@ -120,6 +120,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
+  padding: 0;
   border-radius: 4px;
   border: 1px solid var(--color-border);
   background-color: var(--color-bg);
@@ -140,6 +141,16 @@
 .showPreviewBadge {
   composes: previewBadge;
   opacity: 0.5;
+}
+
+.faceBadge {
+  composes: previewBadge;
+  right: 2.5rem;
+}
+
+.refreshBadge {
+  composes: previewBadge;
+  right: 4.5rem;
 }
 
 @keyframes fadeSlideIn {

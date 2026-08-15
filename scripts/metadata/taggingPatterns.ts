@@ -83,7 +83,8 @@ export const MONSTER_MECHANICS = {
   sneakAttack: /\b(sneak attack)\b/i,
   aura: /\b(aura)\b/i,
   summoning: /\b(summon|summoning)\b/i,
-  shapeshifting: /\b(shapechange|polymorph)\b/i,
+  shapeshifting:
+    /\b(shapechange|polymorph|shapeshift\w*|transmogrif\w+)\b|\btransforms?\s+(you\b|yourself\b|itself\b|each\s+target\b|the\s+target\b|a\s+willing\s+creature\b)|\b(assume|take)s?\s+(the\s+(form|shape)\s+of|a\s+\w+\s+form)\b|\binto\s+the\s+form\s+of\b/i,
   damageResistance: /\b(resistant|resistance)\b/i,
   damageImmunity: /\b(immune|immunity)\b/i,
   damageVulnerability: /\b(vulnerable|vulnerability)\b/i,

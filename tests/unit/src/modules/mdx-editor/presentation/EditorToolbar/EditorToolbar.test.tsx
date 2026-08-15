@@ -23,12 +23,50 @@ vi.mock('@/modules/mdx-editor/domain/editorCommands', () => ({
   insertLinePrefix: vi.fn(),
   insertAtCursor: vi.fn(),
   insertLink: vi.fn(),
+  replaceAllText: vi.fn(),
   triggerUndo: vi.fn(),
   triggerRedo: vi.fn(),
   handleEditorKeyDown: vi.fn(),
 }));
 
-vi.mock('lucide-react', () => ({
+vi.mock('@/lib/components/ui/filterSelect/filterSelect', () => ({
+  FilterSelect: ({
+    options,
+    onChange,
+    ariaLabel,
+    hideAllOption,
+    iconTrigger,
+    disabled,
+  }: {
+    options: { value: string; label: string }[];
+    onChange: (value: string) => void;
+    ariaLabel?: string;
+    hideAllOption?: boolean;
+    iconTrigger?: React.ReactNode;
+    disabled?: boolean;
+  }) => (
+    <div
+      data-testid='filter-select'
+      aria-label={ariaLabel}
+      data-hide-all={String(Boolean(hideAllOption))}>
+      {iconTrigger && (
+        <span data-testid='select-icon-trigger'>{iconTrigger}</span>
+      )}
+      {options.map((opt) => (
+        <button
+          key={opt.value}
+          type='button'
+          disabled={disabled}
+          onClick={() => onChange(opt.value)}>
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  ),
+}));
+
+vi.mock('lucide-react', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('lucide-react')>()),
   Bold: () => <span data-testid='icon-bold' />,
   Italic: () => <span data-testid='icon-italic' />,
   Code: () => <span data-testid='icon-code' />,
@@ -42,6 +80,7 @@ vi.mock('lucide-react', () => ({
   Link: () => <span data-testid='icon-link' />,
   Undo2: () => <span data-testid='icon-undo' />,
   Redo2: () => <span data-testid='icon-redo' />,
+  Copy: () => <span data-testid='icon-copy' />,
 }));
 
 import { EditorToolbar } from '@/modules/mdx-editor/presentation/EditorToolbar/EditorToolbar';
@@ -101,5 +140,32 @@ describe('EditorToolbar', () => {
     await user.click(screen.getByRole('button', { name: /bold/i }));
 
     expect(wrapSelection).toHaveBeenCalled();
+  });
+
+  it('inserts a sample template through the sample select', async () => {
+    const { replaceAllText } =
+      await import('@/modules/mdx-editor/domain/editorCommands');
+    const { SAMPLE_TEMPLATES } =
+      await import('@/modules/mdx-editor/domain/sampleTemplates');
+    const user = userEvent.setup();
+
+    render(<EditorToolbar textareaId='editor' value='' disabled={false} />);
+
+    const select = screen.getByTestId('filter-select');
+    expect(select.getAttribute('data-hide-all')).toBe('true');
+
+    await user.click(screen.getByRole('button', { name: 'Sample creature' }));
+
+    const creature = SAMPLE_TEMPLATES.find((t) => t.key === 'creature');
+    expect(replaceAllText).toHaveBeenCalledWith('editor', creature?.content);
+  });
+
+  it('renders the sample select as a copy icon trigger with all samples', () => {
+    render(<EditorToolbar textareaId='editor' value='' disabled={false} />);
+
+    const trigger = screen.getByTestId('select-icon-trigger');
+    expect(trigger.querySelector('[data-testid="icon-copy"]')).not.toBeNull();
+    expect(screen.getByRole('button', { name: 'Sample rule' })).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Sample world' })).toBeDefined();
   });
 });
