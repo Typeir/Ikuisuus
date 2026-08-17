@@ -105,7 +105,6 @@ describe('API Routes', () => {
         expect(spell).toHaveProperty('slug');
         expect(spell).toHaveProperty('title');
         expect(spell).toHaveProperty('level');
-        expect(spell).toHaveProperty('school');
         expect(spell).toHaveProperty('castingTime');
         expect(Array.isArray(spell.castingTime)).toBe(true);
         expect(spell).toHaveProperty('tags');

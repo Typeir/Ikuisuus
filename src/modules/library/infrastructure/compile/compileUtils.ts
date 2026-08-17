@@ -63,6 +63,7 @@ export async function importAllAsync() {
   const [
     mdxRemote,
     rehypeAspectsMod,
+    remarkAspectMod,
     remarkDiceRollMod,
     remarkUnitMod,
     remarkGfmMod,
@@ -72,6 +73,7 @@ export async function importAllAsync() {
   ] = await Promise.all([
     import('next-mdx-remote-client/rsc'),
     import('./rehypeAspects'),
+    import('@/lib/md/remarkAspect'),
     import('@/lib/md/remarkDiceRoll'),
     import('@/lib/md/remarkUnit'),
     import('remark-gfm'),
@@ -83,6 +85,7 @@ export async function importAllAsync() {
   return {
     evaluate: mdxRemote.evaluate,
     rehypeAspects: (rehypeAspectsMod as any).default ?? rehypeAspectsMod,
+    remarkAspect: (remarkAspectMod as any).default ?? remarkAspectMod,
     remarkDiceRoll: (remarkDiceRollMod as any).default ?? remarkDiceRollMod,
     remarkUnit: (remarkUnitMod as any).default ?? remarkUnitMod,
     remarkGfm: (remarkGfmMod as any).default ?? remarkGfmMod,

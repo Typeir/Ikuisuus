@@ -137,9 +137,10 @@ describe('parseMonsterSource — statlets', () => {
     expect(records.map((r) => r.subSlug)).toEqual([
       'hive-mother',
       'drone',
-      'wax-comb',
+      'hive-wax-comb',
     ]);
     expect(records[2].kind).toBe('object');
+    expect(records[2].link).toBe('/library/monsters/hive#wax-comb');
     expect(records[2].damageThreshold).toBe(10);
     expect((records[2].ac as { value: number }).value).toBe(12);
     expect(records[2].tags).toContain('meta:content:object');

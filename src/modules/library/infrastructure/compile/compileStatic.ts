@@ -12,6 +12,7 @@
  */
 
 import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
+import remarkAspect from '@/lib/md/remarkAspect';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
@@ -52,6 +53,7 @@ export async function compileStatic(opts: CompileOptions) {
           remarkPlugins: [
             remarkGfm,
             remarkMath,
+            remarkAspect,
             remarkDiceRoll,
             remarkUnit,
           ],

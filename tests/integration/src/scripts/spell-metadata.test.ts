@@ -362,15 +362,11 @@ describe('Spell Metadata Generator', () => {
      * Includes a school tag.
      * @description Asserts a tag starting with 'school:' or containing 'evocation' exists.
      */
-    it('should include school tag', async () => {
+    it('should not derive a school tag from the subtitle', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-casting-time.mdx');
       const result = await parseSpellFile(filePath, sharedData);
 
-      const hasSchoolTag = result.tags.some(
-        (tag: string) =>
-          tag.startsWith('school:') || tag.toLowerCase().includes('evocation'),
-      );
-      expect(hasSchoolTag).toBe(true);
+      expect(result.tags.some((tag: string) => tag.startsWith('school:'))).toBe(false);
     });
 
     /**

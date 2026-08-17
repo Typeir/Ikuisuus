@@ -1010,12 +1010,16 @@ function parseObjectBlock(
     .map((l) => l.replace(STAT_CONTENT.blockquotePrefix, ''));
   const title =
     lines[start].match(MONSTER_HEADING.blockquoteHeading)?.[1].trim() ?? '';
-  const subSlug = title
+  /* Objects are owned by their sheet — the same plating or blade can sit
+     in two sheets — so the record slug is sheet-scoped; the page fragment
+     stays the bare object anchor. */
+  const objectSlug = title
     .toLowerCase()
     .replace(SLUG.nonAlphaKeepSpaces, '')
     .replace(TEXT.whitespaceCollapse, '-')
     .replace(SLUG.multiHyphens, '-')
     .replace(SLUG.singleEdgeHyphens, '');
+  const subSlug = `${baseSlug}-${objectSlug}`;
   const headerStats = findArmorHpSpeed(quoted);
   const headerIdx = quoted.findIndex((l) => MONSTER.armorClassHeader.test(l));
   const thresholdRow =
@@ -1040,7 +1044,7 @@ function parseObjectBlock(
     subSlug,
     title,
     file: path.relative(process.cwd(), filePath).replace(SLUG.pathBackslash, '/'),
-    link: `/library/monsters/${baseSlug}#${subSlug}`,
+    link: `/library/monsters/${baseSlug}#${objectSlug}`,
     kind: 'object',
     ac: headerStats.ac,
     hp: headerStats.hp,

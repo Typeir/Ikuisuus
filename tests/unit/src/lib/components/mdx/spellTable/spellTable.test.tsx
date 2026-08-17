@@ -130,16 +130,6 @@ describe('SpellTable', () => {
     expect(screen.getByText('150 feet')).toBeInTheDocument();
   });
 
-  it('renders school in italic', () => {
-    mockHook.mockReturnValue({
-      spellData: [makeSpell()],
-      loading: false,
-      error: null,
-    });
-    render(<SpellTable sources={['/api/spells']} levels={[3]} />);
-    const schoolCell = screen.getByText('Evocation');
-    expect(schoolCell.tagName).toBe('EM');
-  });
 
   it('renders casting time with ritual tag', () => {
     mockHook.mockReturnValue({

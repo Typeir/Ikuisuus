@@ -98,7 +98,6 @@ describe('Spell Index API Route', () => {
         expect(firstSpell).toHaveProperty('slug');
         expect(firstSpell).toHaveProperty('title');
         expect(firstSpell).toHaveProperty('level');
-        expect(firstSpell).toHaveProperty('school');
       }
     });
   });

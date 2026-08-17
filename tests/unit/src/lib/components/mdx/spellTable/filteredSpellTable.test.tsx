@@ -145,26 +145,4 @@ describe('FilteredSpellTable', () => {
     );
   });
 
-  it('forwards school selection as a school eq filter expression', async () => {
-    const user = userEvent.setup();
-
-    mockHook.mockReturnValue({
-      spellData: [makeSpell({ title: 'Fireball', level: 1 })],
-      loading: false,
-      refetching: false,
-      error: null,
-    });
-
-    render(<FilteredSpellTable sources={['/api/spells']} levels={[1]} />);
-
-    await user.selectOptions(screen.getByLabelText(/school/i), 'Evocation');
-
-    expect(mockHook).toHaveBeenLastCalledWith(
-      ['/api/spells'],
-      'en',
-      undefined,
-      undefined,
-      [{ field: 'school', operator: 'eq', value: 'Evocation' }],
-    );
-  });
 });

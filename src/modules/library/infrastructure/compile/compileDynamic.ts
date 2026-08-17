@@ -33,6 +33,7 @@ export async function compileDynamic(opts: CompileOptions) {
   const {
     evaluate,
     rehypeAspects,
+    remarkAspect,
     remarkDiceRoll,
     remarkUnit,
     remarkGfm,
@@ -54,6 +55,7 @@ export async function compileDynamic(opts: CompileOptions) {
           remarkPlugins: [
             remarkGfm,
             remarkMath,
+            remarkAspect,
             remarkDiceRoll,
             remarkUnit,
           ],

@@ -41,7 +41,7 @@ describe('resolveAspectVocabulary', () => {
     const groups = resolveAspectVocabulary((await loadSharedData()) as never);
     const form = groups.find((g) => g.group === 'form');
     expect(form?.values).toContain('blade');
-    expect(form?.values).toHaveLength(36);
+    expect(form?.values).toHaveLength(38);
     expect(groups.some((g) => g.group.startsWith('meta:'))).toBe(false);
   });
 

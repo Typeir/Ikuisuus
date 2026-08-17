@@ -22,13 +22,12 @@ vi.mock('next-intl', () => ({
 import { useSpellColumns } from '@/modules/metadata-tables/presentation/useSpellColumns/useSpellColumns';
 
 describe('useSpellColumns', () => {
-  it('returns the six standard spell columns', () => {
+  it('returns the five standard spell columns', () => {
     const { result } = renderHook(() => useSpellColumns());
 
-    expect(result.current).toHaveLength(6);
+    expect(result.current).toHaveLength(5);
     expect(result.current.map((column) => column.key)).toEqual([
       'title',
-      'school',
       'castingTime',
       'range',
       'duration',

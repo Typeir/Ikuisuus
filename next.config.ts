@@ -35,6 +35,7 @@ const withMdx = withMDX({
     remarkPlugins: [
       "remark-gfm",
       "remark-math",
+      path.join(__dirname, ".mdx-plugins/remarkAspect.mjs"),
       path.join(__dirname, ".mdx-plugins/remarkDiceRoll.mjs"),
       path.join(__dirname, ".mdx-plugins/remarkUnit.mjs"),
     ],

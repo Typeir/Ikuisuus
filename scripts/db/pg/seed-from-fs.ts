@@ -449,6 +449,7 @@ async function main(): Promise<void> {
         BloodlineBoonOptionEntity,
         BloodlineFeatureEntity,
         MonsterEntity,
+        MonsterFeatureEntity,
         MonsterACEmbed,
         MonsterHPEmbed,
         MonsterSpeedEmbed,

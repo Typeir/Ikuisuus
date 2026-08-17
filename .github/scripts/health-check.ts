@@ -16,6 +16,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runCheck as checkAnchors } from './checkAnchors';
 import { runCheck as checkAntipatterns } from './checkAntipatterns';
+import { runCheck as checkAspects } from './checkAspects';
 import { runCheck as checkDuplicateCss } from './checkDuplicateCss';
 import { runCheck as checkFileLength } from './checkFileLength';
 import { runCheck as checkJsdocQuality } from './checkJsdocQuality';
@@ -69,6 +70,7 @@ const CHECKS: CheckEntry[] = [
   { name: 'smoke-tests', run: checkSmokeTests },
   { name: 'type-script-check', run: checkTsCompilation },
   { name: 'anchors', run: checkAnchors },
+  { name: 'aspects', run: checkAspects },
 ];
 
 /**

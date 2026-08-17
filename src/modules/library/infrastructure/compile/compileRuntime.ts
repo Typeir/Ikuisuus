@@ -10,6 +10,7 @@
 
 'use client';
 
+import remarkAspect from '@/lib/md/remarkAspect';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { compile, compileSync, run, runSync } from '@mdx-js/mdx';
@@ -60,7 +61,7 @@ function hashSource(source: string): string {
 
 /** @internal Shared plugin options for all compile calls */
 const PLUGIN_OPTIONS = {
-  remarkPlugins: [remarkGfm, remarkMath, remarkDiceRoll, remarkUnit],
+  remarkPlugins: [remarkGfm, remarkMath, remarkAspect, remarkDiceRoll, remarkUnit],
   rehypePlugins: [rehypeKatex],
   outputFormat: 'function-body' as const,
 };

@@ -21,6 +21,7 @@ const OUTPUT_DIR = path.join(process.cwd(), '.mdx-plugins');
 const PLUGINS = [
   { entry: 'src/lib/md/remarkDiceRoll.ts', out: 'remarkDiceRoll.mjs' },
   { entry: 'src/lib/md/remarkUnit.ts', out: 'remarkUnit.mjs' },
+  { entry: 'src/lib/md/remarkAspect.ts', out: 'remarkAspect.mjs' },
 ];
 
 /**
