@@ -9,31 +9,16 @@
  */
 
 import type { JSX } from 'react';
+import { anchorSlug } from '@/modules/library/domain/anchorSlug';
 import React, { ReactNode } from 'react';
 
 /**
- * Converts text to a lowercase, hyphen-separated URL-safe slug.
+ * Heading slug — the shared anchor rule (see `anchorSlug`).
  *
  * @param {string} text - The heading text to convert
- * @returns {string} Slug-formatted string (lowercase, hyphen-separated)
- *
- * @example
- * textToSlug('My Awesome Heading!');
- * // Returns: 'my-awesome-heading'
- *
- * @example
- * textToSlug('  Multiple   Spaces  ');
- * // Returns: 'multiple-spaces'
+ * @returns {string} Slug-formatted string
  */
-function textToSlug(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/[^\w\-]/g, '') // Remove non-word characters except hyphens
-    .replace(/\-+/g, '-') // Replace multiple hyphens with single hyphen
-    .replace(/^\-+|\-+$/g, ''); // Remove leading/trailing hyphens
-}
+const textToSlug = anchorSlug;
 
 /**
  * Recursively extracts text content from React children.

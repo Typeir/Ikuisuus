@@ -12,15 +12,14 @@
  */
 
 /**
- * One insertable sample.
+ * One insertable sample. Menu labels live in the mdxEditor.toolbar message
+ * namespace, keyed off `key`.
  *
  * @property {string} key - Stable identifier
- * @property {string} label - Menu label
  * @property {string} content - Full MDX source including frontmatter
  */
 export interface SampleTemplate {
   key: string;
-  label: string;
   content: string;
 }
 
@@ -169,10 +168,10 @@ ${LOREM}
  * The insertable samples, in menu order.
  */
 export const SAMPLE_TEMPLATES: readonly SampleTemplate[] = [
-  { key: 'creature', label: 'Sample creature', content: CREATURE },
-  { key: 'heirloom', label: 'Sample heirloom', content: HEIRLOOM },
-  { key: 'spell', label: 'Sample spell', content: SPELL },
-  { key: 'trinket', label: 'Sample trinket', content: TRINKET },
-  { key: 'rule', label: 'Sample rule', content: RULE },
-  { key: 'world', label: 'Sample world', content: WORLD },
+  { key: 'creature', content: CREATURE },
+  { key: 'heirloom', content: HEIRLOOM },
+  { key: 'spell', content: SPELL },
+  { key: 'trinket', content: TRINKET },
+  { key: 'rule', content: RULE },
+  { key: 'world', content: WORLD },
 ];

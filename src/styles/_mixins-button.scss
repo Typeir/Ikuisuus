@@ -271,10 +271,28 @@
 }
 
 /**
+ * Still button — pins the global `button` hover motion. The base rule scales
+ * every button 1.05 on hover with a springy bezier; wide controls (triggers,
+ * comboboxes, list rows) must not move, so this holds transform at none in
+ * every state and normalises weight. Include in any button that is not a CTA.
+ */
+@mixin button-still {
+  transform: none;
+  font-weight: 400;
+
+  &:hover,
+  &:focus,
+  &:active {
+    transform: none;
+  }
+}
+
+/**
  * Field trigger — full-width bordered control that opens a menu/popover.
  * Accent border on hover; background is held explicitly so it never flips green.
  */
 @mixin button-field-trigger($padding: 0.4rem 0.6rem, $font-size: 0.85rem) {
+  @include button-still;
   display: flex;
   align-items: center;
   justify-content: space-between;

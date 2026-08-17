@@ -18,9 +18,12 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-vi.mock('next-intl', () => ({
-  useLocale: () => 'en',
-}));
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<typeof import('next-intl')>(),
+  );
+});
 
 beforeAll(() => {
   class MockObserver {

@@ -32,5 +32,66 @@
   "newPlaceholder": "# My New Page\n\nStart writing MDX content here…",
   "newFile": "New file",
   "renameFile": "Rename file",
-  "newPath": "New path"
+  "newPath": "New path",
+  "fullPathPlaceholder": "folder/filename.mdx",
+  "selectFolder": "Select folder…",
+  "noFolders": "No folders found",
+  "toolbar": {
+    "ariaLabel": "Formatting",
+    "undo": "Undo",
+    "redo": "Redo",
+    "heading1": "Heading 1",
+    "heading2": "Heading 2",
+    "heading3": "Heading 3",
+    "bold": "Bold",
+    "italic": "Italic",
+    "inlineCode": "Inline code",
+    "link": "Link",
+    "blockquote": "Blockquote",
+    "bulletList": "Bullet list",
+    "numberedList": "Numbered list",
+    "horizontalRule": "Horizontal rule",
+    "insertSample": "Insert sample",
+    "sampleCreature": "Sample creature",
+    "sampleHeirloom": "Sample heirloom",
+    "sampleSpell": "Sample spell",
+    "sampleTrinket": "Sample trinket",
+    "sampleRule": "Sample rule",
+    "sampleWorld": "Sample world"
+  },
+  "preview": {
+    "hide": "Hide preview",
+    "show": "Show preview",
+    "showMetadata": "Show metadata",
+    "showFile": "Show file preview",
+    "refreshMetadata": "Refresh metadata",
+    "compiling": "Compiling…",
+    "empty": "Preview",
+    "compileFailed": "Compilation failed",
+    "frontmatter": "Frontmatter"
+  },
+  "aspects": {
+    "open": "Edit aspects",
+    "title": "Aspects",
+    "stagedLabel": "Authored aspects",
+    "stagedEmpty": "None yet — pick from the vocabulary below.",
+    "vocabularyLabel": "Vocabulary",
+    "loadFailed": "Could not load the aspect vocabulary.",
+    "apply": "Apply",
+    "close": "Close",
+    "notAuthored": "(not yet authored)"
+  },
+  "copyFrom": {
+    "label": "Copy from existing page",
+    "placeholder": "Search the library…",
+    "hint": "Search the library for a page to copy.",
+    "noResults": "No pages match.",
+    "failed": "Could not load page: {reason}"
+  },
+  "metadata": {
+    "label": "metadata",
+    "kind": "kind: {kind}",
+    "untitled": "untitled",
+    "parseFailed": "Metadata parse failed."
+  }
 }

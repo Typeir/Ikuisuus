@@ -20,6 +20,7 @@ import {
 } from '@/modules/metadata-tables/presentation';
 import type { PropsWithChildren } from 'react';
 import Aspects from './Aspects';
+import Aspect from './Aspects/Aspect';
 import BlendedImage from './BlendedImage';
 import ClearFloats from './ClearFloats';
 import Collapsible from './Collapsible';
@@ -37,6 +38,7 @@ import Unit from './Unit';
 import UnitSwitcher from './UnitSwitcher';
 
 export const components = {
+  Aspect,
   Aspects,
   BlendedImage,
   Collapsible,

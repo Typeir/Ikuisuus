@@ -18,6 +18,8 @@ import { spellRepository } from '@/lib/db/content/repositories/spellRepository';
 import { trinketRepository } from '@/lib/db/content/repositories/trinketRepository';
 import { vocationRepository } from '@/lib/db/content/repositories/vocationRepository';
 import { logger } from '@/lib/logging/logger';
+import { toPlainMeasure } from '@/lib/units/nativeMeasure';
+import { anchorSlug } from '@/modules/library/domain/anchorSlug';
 import type {
   ArticleMetadata,
   ArticleSection,
@@ -39,12 +41,14 @@ interface TaggedRecord {
  * @property {string} contentType - The kind's name, as the context reports it
  * @property {string[]} shardKeys - Fields holding sub-records that carry their own aspects
  * @property {(locale: string, slug: string) => Promise<unknown>} load - Repository lookup
+ * @property {(locale: string, slug: string) => Promise<unknown[]>} [loadAll] - Every record sharing the slug, for multi-record files
  */
 interface ContentKind {
   prefix: string[];
   contentType: string;
   shardKeys: string[];
   load: (locale: string, slug: string) => Promise<unknown>;
+  loadAll?: (locale: string, slug: string) => Promise<unknown[]>;
 }
 
 /**
@@ -59,6 +63,7 @@ const KINDS: ContentKind[] = [
     contentType: 'monsters',
     shardKeys: ['features'],
     load: (locale, slug) => monsterRepository.getBySlug(locale, slug),
+    loadAll: (locale, slug) => monsterRepository.getAllBySlug(locale, slug),
   },
   {
     prefix: ['spells'],
@@ -87,7 +92,7 @@ const KINDS: ContentKind[] = [
   {
     prefix: ['character-creation', 'bloodlines'],
     contentType: 'bloodlines',
-    shardKeys: ['boons'],
+    shardKeys: ['boons', 'features'],
     load: (locale, slug) => bloodlineRepository.getBySlug(locale, slug),
   },
 ];
@@ -161,15 +166,33 @@ async function resolveVocationRoute(
 }
 
 /**
- * Collects the sub-records of a document that carry their own aspects.
+ * Anchor of a heading or feature name: the same slug the sectionizer stamps
+ * on the matching `<section>`/`<article>`, measure-normalised.
+ *
+ * @param {string} text - Heading text or feature name
+ * @returns {string} Anchor slug
+ */
+function anchorOf(text: string): string {
+  return anchorSlug(toPlainMeasure(text));
+}
+
+/**
+ * Collects the sub-records of one stat block that carry their own aspects,
+ * keyed by anchor. Each shard yields its record-scoped key
+ * (`record/anchor`) and the bare anchor; a feature whose heading differs
+ * from its name (`## 1st Level – Spellcasting` → `Spellcasting`) yields both
+ * anchors, since the heading is what the sectionizer sees and the name is
+ * what list-entry and paragraph articles carry.
  *
  * @param {TaggedRecord} record - The loaded metadata record
  * @param {string[]} shardKeys - Fields to read
+ * @param {string | undefined} recordAnchor - Anchor of the record's own title
  * @returns {ArticleSection[]} Sections carrying aspects
  */
 function sectionsOf(
   record: TaggedRecord,
   shardKeys: string[],
+  recordAnchor: string | undefined,
 ): ArticleSection[] {
   const sections: ArticleSection[] = [];
 
@@ -179,12 +202,73 @@ function sectionsOf(
 
     for (const shard of shards) {
       if (!shard || typeof shard !== 'object') continue;
-      const { name, tags } = shard as { name?: string; tags?: string[] };
-      if (name) sections.push({ name, tags });
+      const { name, heading, tags } = shard as {
+        name?: string;
+        heading?: string;
+        tags?: string[];
+      };
+      const anchors = new Set<string>();
+      if (heading) anchors.add(anchorOf(heading));
+      if (name) anchors.add(anchorOf(name));
+      for (const anchor of anchors) {
+        if (recordAnchor) sections.push({ name: `${recordAnchor}/${anchor}`, tags });
+        sections.push({ name: anchor, tags });
+      }
     }
   }
 
   return sections;
+}
+
+/**
+ * Builds the article's aspect index from its records: every stat block title
+ * becomes a record entry carrying that block's tags, features are keyed
+ * record-scoped and bare, and bare keys shared across records union their
+ * tags as a fallback for a row whose record cannot be told apart.
+ *
+ * @param {TaggedRecord[]} records - All records of the file, in file order
+ * @param {string[]} shardKeys - Fields holding sub-records
+ * @returns {{ title?: string; tags?: string[]; sections: ArticleSection[]; records: string[] }} Merged article parts
+ */
+function mergeRecords(
+  records: TaggedRecord[],
+  shardKeys: string[],
+): {
+  title?: string;
+  tags?: string[];
+  sections: ArticleSection[];
+  records: string[];
+} {
+  const byName = new Map<string, Set<string>>();
+  const order: string[] = [];
+  const add = (name: string, tags?: string[]) => {
+    if (!byName.has(name)) {
+      byName.set(name, new Set());
+      order.push(name);
+    }
+    const bucket = byName.get(name)!;
+    for (const tag of tags ?? []) bucket.add(tag);
+  };
+
+  const recordAnchors: string[] = [];
+  for (const record of records) {
+    const recordAnchor = record.title ? anchorOf(record.title) : undefined;
+    if (recordAnchor) {
+      recordAnchors.push(recordAnchor);
+      add(recordAnchor, record.tags);
+    }
+    for (const section of sectionsOf(record, shardKeys, recordAnchor)) {
+      add(section.name, section.tags);
+    }
+  }
+
+  const first = records[0];
+  return {
+    title: first?.title,
+    tags: first?.tags,
+    sections: order.map((name) => ({ name, tags: [...byName.get(name)!] })),
+    records: recordAnchors,
+  };
 }
 
 /**
@@ -215,22 +299,31 @@ export async function loadArticleMetadata(
       const matched = matchKind(slug);
       if (!matched) return null;
 
-      record = (await matched.kind.load(
-        locale,
-        matched.key,
-      )) as TaggedRecord | null;
       contentType = matched.kind.contentType;
       shardKeys = matched.kind.shardKeys;
+
+      if (matched.kind.loadAll) {
+        const records = (await matched.kind.loadAll(
+          locale,
+          matched.key,
+        )) as TaggedRecord[];
+        if (records.length > 1) {
+          return { contentType, ...mergeRecords(records, shardKeys) };
+        }
+        record = records[0] ?? null;
+      }
+
+      if (!record) {
+        record = (await matched.kind.load(
+          locale,
+          matched.key,
+        )) as TaggedRecord | null;
+      }
     }
 
     if (!record) return null;
 
-    return {
-      title: record.title,
-      contentType,
-      tags: record.tags,
-      sections: sectionsOf(record, shardKeys),
-    };
+    return { contentType, ...mergeRecords([record], shardKeys) };
   } catch (error) {
     log.warning('Could not load article metadata', {
       slug: slug.join('/'),
@@ -242,19 +335,20 @@ export async function loadArticleMetadata(
 }
 
 /**
- * The heading texts that carry aspects, for the placement plugin.
+ * The keys and record anchors the placement plugin needs.
  *
  * @param {ArticleMetadata | null} metadata - Loaded article metadata
- * @returns {string[]} Heading texts an aspect row should be placed under
+ * @returns {{ keys: string[]; records: string[] }} Section keys carrying aspects, record anchors in file order
  */
-export function aspectSectionsOf(metadata: ArticleMetadata | null): string[] {
-  if (!metadata) return [];
-
-  const sections = (metadata.sections ?? [])
-    .filter((section) => section.tags?.length)
-    .map((section) => section.name);
-
-  if (metadata.title && metadata.tags?.length) sections.push(metadata.title);
-
-  return sections;
+export function aspectIndexOf(metadata: ArticleMetadata | null): {
+  keys: string[];
+  records: string[];
+} {
+  if (!metadata) return { keys: [], records: [] };
+  return {
+    keys: (metadata.sections ?? [])
+      .filter((section) => section.tags?.length)
+      .map((section) => section.name),
+    records: metadata.records ?? [],
+  };
 }

@@ -16,6 +16,7 @@ import {
   fetchMetadataPreview,
   type MetadataPreviewResult,
 } from '@/modules/mdx-editor/infrastructure/api-clients/metadataPreviewClient';
+import { useTranslations } from 'next-intl';
 import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './MetadataPane.module.scss';
@@ -46,12 +47,13 @@ function RecordBlock({
 }: {
   record: Record<string, unknown>;
 }): JSX.Element {
+  const t = useTranslations('mdxEditor.metadata');
   const tags = Array.isArray(record.tags) ? (record.tags as string[]) : [];
 
   return (
     <div className={styles.record}>
       <div className={styles.recordTitle}>
-        {String(record.title ?? record.slug ?? 'untitled')}
+        {String(record.title ?? record.slug ?? t('untitled'))}
       </div>
       {tags.length > 0 && (
         <div className={styles.tagRow}>
@@ -81,6 +83,7 @@ export function MetadataPane({
   content,
   refreshToken,
 }: MetadataPaneProps): JSX.Element {
+  const t = useTranslations('mdxEditor.metadata');
   const [result, setResult] = useState<MetadataPreviewResult | null>(null);
   const [phase, setPhase] = useState<'idle' | 'loading' | 'error'>('idle');
   const requestSeq = useRef(0);
@@ -109,13 +112,13 @@ export function MetadataPane({
     <div className={styles.pane}>
       <div className={styles.header}>
         <span className={styles.kind}>
-          {result ? `kind: ${result.kind}` : 'metadata'}
+          {result ? t('kind', { kind: result.kind }) : t('label')}
         </span>
         {phase === 'loading' && <span className={styles.notice}>…</span>}
       </div>
 
       {phase === 'error' && (
-        <div className={styles.notice}>Metadata parse failed.</div>
+        <div className={styles.notice}>{t('parseFailed')}</div>
       )}
       {result?.records.map((record, index) => (
         <RecordBlock

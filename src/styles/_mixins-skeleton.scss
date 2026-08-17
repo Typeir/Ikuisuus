@@ -1,0 +1,123 @@
+/**
+ * Skeleton lattice mixins — "static ink, moving light".
+ *
+ * The dithered character-cell lattice and its traveling density band,
+ * shared by the skeleton loader and by any surface that wants to read as
+ * console matter (toast fences). One pitch, one mask, one strip; consumers
+ * recolor through the `--skeleton-matter` / `--skeleton-glint-1` /
+ * `--skeleton-glint-2` custom properties and never redraw the geometry.
+ *
+ * Mixins:
+ *   - skeleton-lattice   — host: resting matter under the 2D dither mask
+ *   - skeleton-strip     — ::before: the sweeping density band (needs the
+ *                          skeletonSweep keyframes in scope)
+ */
+
+/* Dither lattice — everything derives from the pitch. Single pitch is
+   load-bearing: overlaying two different pitches beats at their common
+   period and reads as periodic "orbs". */
+$skeleton-pitch: 8px; /* character-cell size, straight row/column grid */
+$skeleton-cell-solid: 60%; /* solid square side — resting pixel size */
+$skeleton-cell-apron: 85%; /* growth ceiling — crest pixel size */
+$skeleton-apron-alpha: 0.3;
+$skeleton-band-x: linear-gradient(
+  90deg,
+  #000 0,
+  #000 $skeleton-cell-solid,
+  rgba(#000, $skeleton-apron-alpha) $skeleton-cell-solid,
+  rgba(#000, $skeleton-apron-alpha) $skeleton-cell-apron,
+  transparent $skeleton-cell-apron
+);
+$skeleton-band-y: linear-gradient(
+  0deg,
+  #000 0,
+  #000 $skeleton-cell-solid,
+  rgba(#000, $skeleton-apron-alpha) $skeleton-cell-solid,
+  rgba(#000, $skeleton-apron-alpha) $skeleton-cell-apron,
+  transparent $skeleton-cell-apron
+);
+
+/* Traveling density band — symmetric envelope around the crest. */
+$skeleton-band-crest: 50%;
+$skeleton-band-glint-half-width: 2%;
+$skeleton-band-matter-half-width: 6%;
+$skeleton-band-half-width: 15%;
+$skeleton-sweep-duration: 2.4s;
+
+/**
+ * Host: faint resting matter, visible only inside the dither cells of the
+ * static two-band mask (x ∩ y). Matter color and resting alpha are the
+ * `--skeleton-matter` and `--skeleton-rest-alpha` custom properties.
+ *
+ * @mixin skeleton-lattice
+ * @param {string} $rest-alpha - Default resting strength between band passes
+ */
+@mixin skeleton-lattice($rest-alpha: 35%) {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: color-mix(
+    in srgb,
+    var(--skeleton-matter, var(--skeleton-surface))
+      var(--skeleton-rest-alpha, #{$rest-alpha}),
+    transparent
+  );
+
+  -webkit-mask-image: $skeleton-band-x, $skeleton-band-y;
+  -webkit-mask-size:
+    $skeleton-pitch $skeleton-pitch,
+    $skeleton-pitch $skeleton-pitch;
+  -webkit-mask-position:
+    0 0,
+    0 0;
+  -webkit-mask-composite: source-in, source-over;
+  mask-image: $skeleton-band-x, $skeleton-band-y;
+  mask-size:
+    $skeleton-pitch $skeleton-pitch,
+    $skeleton-pitch $skeleton-pitch;
+  mask-position:
+    0 0,
+    0 0;
+  mask-composite: intersect, add;
+}
+
+/**
+ * The traveling density band. Strip is 2x host width; translateX
+ * percentages resolve against the strip itself, so -100% → 50% is one full
+ * left-to-right pass. Sparse matter swelling to a glint crest and tapering
+ * back, so the dither reads sparse → dense → sparse as it moves.
+ *
+ * @mixin skeleton-strip
+ * @param {number} $duration - Sweep duration
+ */
+@mixin skeleton-strip($duration: $skeleton-sweep-duration) {
+  $matter: var(--skeleton-matter, var(--skeleton-surface));
+  $band-matter: color-mix(in srgb, $matter 85%, transparent);
+  $band-shoulder: color-mix(in srgb, var(--skeleton-glint-1) 90%, transparent);
+  $band-crest-color: color-mix(
+    in srgb,
+    var(--skeleton-glint-2) 95%,
+    transparent
+  );
+
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent ($skeleton-band-crest - $skeleton-band-half-width),
+    $band-matter ($skeleton-band-crest - $skeleton-band-matter-half-width),
+    $band-shoulder ($skeleton-band-crest - $skeleton-band-glint-half-width),
+    $band-crest-color $skeleton-band-crest,
+    $band-shoulder ($skeleton-band-crest + $skeleton-band-glint-half-width),
+    $band-matter ($skeleton-band-crest + $skeleton-band-matter-half-width),
+    transparent ($skeleton-band-crest + $skeleton-band-half-width)
+  );
+  transform: translateX(-100%);
+  animation: skeletonSweep $duration ease-in-out infinite;
+}

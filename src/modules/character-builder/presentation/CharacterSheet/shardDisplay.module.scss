@@ -72,6 +72,13 @@
   background: var(--color-accent);
   color: var(--color-bg);
   font-weight: 700;
+  white-space: nowrap;
+  flex: none;
+}
+
+.shardAspects {
+  padding: 0.5rem 0.6rem 0.4rem;
+  border-top: 1px dashed var(--color-border-secondary);
 }
 
 .shardBody {
@@ -127,6 +134,42 @@
     padding: 0.25rem 0.75rem;
     color: var(--color-secondary);
     font-style: italic;
+  }
+
+  /* Nested tables take the card frame: same border token and radius as the
+     picker container, so a cost/effect table reads as part of the selector. */
+  table {
+    width: 100%;
+    margin: 0.5rem 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 0.8rem;
+  }
+
+  th,
+  td {
+    padding: 0.3rem 0.5rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-border-secondary);
+  }
+
+  th {
+    font-weight: 700;
+    color: var(--color-emphasis);
+    background: var(--color-bg-secondary);
+  }
+
+  th + th,
+  td + td {
+    border-left: 1px solid var(--color-border-secondary);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
   }
 }
 

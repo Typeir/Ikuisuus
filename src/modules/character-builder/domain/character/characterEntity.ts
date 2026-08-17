@@ -44,12 +44,14 @@ export type AbilityKey = (typeof ABILITY_KEYS)[number];
  * @interface CharacterShard
  * @property {string} id - Unique shard identifier
  * @property {string} sourceFile - Relative path from `src/content/en/`, e.g. `character-creation/bloodlines/empyrean.bloodline.mdx`
+ * @property {string} [key] - Anchor slug of the source feature; the identity a pick is matched on. Absent on older saves — `shardKey()` derives it from `heading`
  * @property {string} heading - The exact heading text, e.g. `Extended Reach`
  * @property {'boon'|'vocation-feature'|'specialization-feature'|'feat'} category - Type of content block
  * @property {number} [bpCost] - Boon Point cost (boons only)
  * @property {number} [level] - Minimum level required (vocation/specialization features only)
  * @property {string} [cachedText] - First-paragraph preview cached after first fetch
  * @property {string[]} [selectedSubOptions] - Chosen sub-option names for a variable-cost boon (boons only); their costs sum into `bpCost`
+ * @property {string[]} [tags] - Aspects of the source feature, copied at selection time
  * @property {string[]} [grants] - Tag-based proficiency grants this feature confers (e.g. `weapon:martial`, `skill:persuasion:expertise`)
  * @property {number} [startLine] - 1-indexed start line of this block in the source MDX file
  * @property {number} [endLine] - 1-indexed end line of this block in the source MDX file
@@ -58,12 +60,14 @@ export interface CharacterShard {
   id: string;
   sourceFile: string;
   heading: string;
+  key?: string;
   category: 'boon' | 'vocation-feature' | 'specialization-feature' | 'feat';
   bpCost?: number;
   level?: number;
   cachedText?: string;
   selectedSubOptions?: string[];
   grants?: string[];
+  tags?: string[];
   startLine?: number;
   endLine?: number;
 }

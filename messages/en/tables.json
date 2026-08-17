@@ -8,7 +8,8 @@
     "pageInfo": "Page {current} of {total}",
     "noDataFound": "No data found.",
     "sortAscending": "▲",
-    "sortDescending": "▼"
+    "sortDescending": "▼",
+    "aspects": "Aspects"
   },
   "filters": {
     "minPlaceholder": "Min",
@@ -22,7 +23,6 @@
     },
     "columns": {
       "spellName": "Spell Name",
-      "school": "School",
       "castingTime": "Casting Time",
       "range": "Range",
       "duration": "Duration",
@@ -30,8 +30,6 @@
     },
     "filters": {
       "damoclesOnly": "Damocles Only",
-      "school": "School",
-      "allSchools": "All Schools",
       "concentration": "Concentration"
     }
   },

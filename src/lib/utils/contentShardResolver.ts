@@ -9,17 +9,22 @@
  * @since 1.0.0
  */
 
+import { toPlainMeasure } from '@/lib/units/nativeMeasure';
+import { anchorSlug } from '@/modules/library/domain/anchorSlug';
+
 /**
  * A single named entry with optional line anchors pointing to its location in
  * the source MDX file.
  *
  * @interface ShardableEntry
+ * @property {string} [anchor] - Anchor slug of the rendered heading; the preferred lookup key
  * @property {string} name - Human-readable name used as the shard key
  * @property {number} [startLine] - 1-based start line of the block in the source file
  * @property {number} [endLine] - 1-based end line of the block in the source file
  */
 export interface ShardableEntry {
   name: string;
+  anchor?: string;
   startLine?: number;
   endLine?: number;
 }
@@ -57,7 +62,12 @@ export function resolveShards(
       continue;
     }
 
-    const entry = entries.find((e) => e.name === key);
+    /* Anchor first (the stable key), name second (older callers and saved
+       characters that predate anchors). */
+    const entry =
+      entries.find((e) => e.anchor === key) ??
+      entries.find((e) => e.name === key) ??
+      entries.find((e) => e.anchor === anchorSlug(toPlainMeasure(key)));
 
     if (entry?.startLine !== undefined && entry?.endLine !== undefined) {
       const block = extractByLineRange(lines, entry.startLine, entry.endLine);
@@ -67,7 +77,7 @@ export function resolveShards(
       }
     }
 
-    const block = extractByHeadingText(lines, key);
+    const block = extractByHeadingText(lines, entry?.name ?? key);
     if (block !== null) {
       result[key] = stripHeadingLine(block);
     }

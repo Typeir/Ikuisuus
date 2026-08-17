@@ -9,7 +9,11 @@
  */
 
 import type { BloodlineBoonSubOption } from '@/lib/db/content/schemas/bloodlineMetadata';
-import { BloodlineBoonEntity, BloodlineEntity } from '@/lib/db/orm/entities';
+import {
+  BloodlineBoonEntity,
+  BloodlineBoonOptionEntity,
+  BloodlineEntity,
+} from '@/lib/db/orm/entities';
 import { createLogger } from '@/lib/logging/logger';
 import type { EntityManager } from '@mikro-orm/postgresql';
 import { existsSync, readdirSync, readFileSync } from 'fs';
@@ -72,6 +76,44 @@ function readMetadataFiles(
  * @param {string} locale - Locale code
  * @returns {Promise<SyncResult>} Sync statistics
  */
+/**
+ * Creates a boon row and its option rows from a generated boon record.
+ *
+ * @param {EntityManager} em - Entity manager
+ * @param {BloodlineEntity} bloodline - Owning bloodline
+ * @param {Record<string, unknown>} boon - Generated boon record
+ */
+function createBoon(
+  em: EntityManager,
+  bloodline: BloodlineEntity,
+  boon: Record<string, unknown>,
+): void {
+  const row = em.create(BloodlineBoonEntity, {
+    bloodline,
+    name: boon.name as string,
+    anchor: (boon.anchor as string | undefined) ?? null,
+    parentName: (boon.parentName as string | undefined) ?? null,
+    bpLabel: boon.bpLabel as string,
+    bpValue: boon.bpValue as number | undefined,
+    sortOrder: boon.sortOrder as number,
+    startLine: boon.startLine as number | undefined,
+    endLine: boon.endLine as number | undefined,
+    tags: (boon.tags as string[]) ?? [],
+  });
+  const options = (boon.subOptions as BloodlineBoonSubOption[] | undefined) ?? [];
+  options.forEach((option, index) => {
+    em.create(BloodlineBoonOptionEntity, {
+      boon: row,
+      name: option.name,
+      anchor: option.anchor ?? null,
+      bpValue: option.bpValue,
+      effect: option.effect ?? null,
+      tags: option.tags ?? [],
+      sortOrder: index,
+    });
+  });
+}
+
 export async function syncBloodlines(
   em: EntityManager,
   locale: string,
@@ -146,36 +188,14 @@ export async function syncBloodlines(
       await em.flush();
 
       for (const boon of boonRows) {
-        em.create(BloodlineBoonEntity, {
-          bloodline: entity,
-          name: boon.name as string,
-          bpLabel: boon.bpLabel as string,
-          bpValue: boon.bpValue as number | undefined,
-          sortOrder: boon.sortOrder as number,
-          startLine: boon.startLine as number | undefined,
-          endLine: boon.endLine as number | undefined,
-          tags: (boon.tags as string[]) ?? [],
-          subOptions:
-            (boon.subOptions as BloodlineBoonSubOption[] | undefined) ?? [],
-        });
+        createBoon(em, entity, boon);
       }
 
       result.updated++;
     } else {
       const bloodline = em.create(BloodlineEntity, data);
       for (const boon of boonRows) {
-        em.create(BloodlineBoonEntity, {
-          bloodline,
-          name: boon.name as string,
-          bpLabel: boon.bpLabel as string,
-          bpValue: boon.bpValue as number | undefined,
-          sortOrder: boon.sortOrder as number,
-          startLine: boon.startLine as number | undefined,
-          endLine: boon.endLine as number | undefined,
-          tags: (boon.tags as string[]) ?? [],
-          subOptions:
-            (boon.subOptions as BloodlineBoonSubOption[] | undefined) ?? [],
-        });
+        createBoon(em, bloodline, boon);
       }
       result.inserted++;
     }

@@ -35,6 +35,9 @@ const rowToVocation = (row: VocationEntity): VocationMetadata => {
     .map((f) => ({
       level: f.level,
       name: f.name,
+      heading: f.heading ?? undefined,
+      anchor: f.anchor ?? undefined,
+      tags: nonEmpty(f.tags ?? []),
       startLine: f.startLine ?? undefined,
       endLine: f.endLine ?? undefined,
       grants: nonEmpty(f.grants ?? []),

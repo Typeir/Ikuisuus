@@ -86,6 +86,15 @@ describe('fsMonsterRepository', () => {
       ]);
     });
 
+    it('should exclude object statlets from the index', async () => {
+      readMetadataFiles.mockReturnValue([
+        ...MONSTERS,
+        { slug: 'yskeia', subSlug: 'primeval-plating', title: 'Plating', kind: 'object' },
+      ]);
+      const result = await fsMonsterRepository.listIndex('en');
+      expect(result.map((r) => r.slug)).not.toContain('primeval-plating');
+    });
+
     it('should prefer subSlug over slug in index', async () => {
       readMetadataFiles.mockReturnValue([
         {
@@ -135,6 +144,37 @@ describe('fsMonsterRepository', () => {
       });
       const result = await fsMonsterRepository.getBySlug('en', 'aboleth');
       expect(result).toBeNull();
+    });
+  });
+
+  describe('getAllBySlug', () => {
+    it('should return every stat block sharing the file slug', async () => {
+      readMetadataFiles.mockReturnValue([
+        ...MONSTERS,
+        { slug: 'goblin', subSlug: 'goblin-scout', title: 'Goblin Scout' },
+      ]);
+      const result = await fsMonsterRepository.getAllBySlug('en', 'goblin');
+      expect(result.map((m) => m.title)).toEqual([
+        'Goblin Chief',
+        'Goblin Scout',
+      ]);
+    });
+
+    it('should not match on subSlug', async () => {
+      readMetadataFiles.mockReturnValue(MONSTERS);
+      const result = await fsMonsterRepository.getAllBySlug(
+        'en',
+        'goblin-chief',
+      );
+      expect(result).toEqual([]);
+    });
+
+    it('should return empty array on error', async () => {
+      readMetadataFiles.mockImplementation(() => {
+        throw new Error('fail');
+      });
+      const result = await fsMonsterRepository.getAllBySlug('en', 'goblin');
+      expect(result).toEqual([]);
     });
   });
 });

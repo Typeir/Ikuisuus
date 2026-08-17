@@ -11,6 +11,13 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<typeof import('next-intl')>(),
+  );
+});
+
 vi.mock(
   '@/modules/mdx-editor/infrastructure/api-clients/metadataPreviewClient',
   () => ({

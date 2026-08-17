@@ -15,6 +15,7 @@ import { Tab, TabList, TabPanel, Tabs } from '@/lib/components/ui/tabs';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import {
+    AspectSummary,
     AttacksPanel,
     HintLegend,
     NotesPanel,
@@ -68,6 +69,7 @@ export const MobileOverviewTab: React.FC = () => {
         </TabPanel>
       </Tabs>
 
+      <AspectSummary />
       <SelectedShardClouds />
     </div>
   );

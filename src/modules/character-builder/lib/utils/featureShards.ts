@@ -8,6 +8,7 @@
  * @since 1.0.0
  */
 
+import { entryKey } from './shardKey';
 import type { CharacterShard } from '@/lib/types/character';
 import type { FeatureEntry } from '@/lib/types/vocations';
 
@@ -59,10 +60,12 @@ export async function fetchFeatureShards(
       id: `${slug}::${f.level}::${f.name}`,
       sourceFile,
       heading: f.name,
+      key: entryKey(f),
       category,
       level: f.level,
       cachedText: data.shards[f.name],
       grants: f.grants,
+      tags: f.tags,
     }));
   } catch {
     return [];

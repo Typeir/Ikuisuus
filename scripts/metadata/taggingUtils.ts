@@ -8,6 +8,8 @@
 
 /* paw:gate:file-length ignore */
 
+import { toPlainMeasure } from '@/lib/units/nativeMeasure';
+import { anchorSlug } from '@/modules/library/domain/anchorSlug';
 import { extractDerivedAspects, extractStrataTags } from './aspectExtractors';
 import {
   CLAUSE_AFTER,
@@ -397,6 +399,136 @@ export function extractContentTypeTags(
     tags.push('class');
 
   return tags.map((tag) => `meta:content:${tag}`);
+}
+
+/** A well-formed `group:value` aspect. */
+const ASPECT_SHAPE = /^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9-]*$/;
+
+/**
+ * Slug rule shared with the page anchors: lowercase, hyphenated, ASCII word
+ * chars only. Feature-scoped frontmatter entries key on this.
+ *
+ * @param {string} text - Feature name or heading
+ * @returns {string} Slug
+ */
+export function aspectAnchor(text: string): string {
+  return featureAnchor(text);
+}
+
+/**
+ * Anchor of a feature: the slug the sectionizer stamps on the matching
+ * `<section>`/`<article>` — shared `anchorSlug` over the measure-normalised
+ * heading text. Shards key on this; the heading text may change without
+ * orphaning them as long as the slug holds.
+ *
+ * @param {string} text - Rendered heading text, or the feature name
+ * @returns {string} Anchor slug
+ */
+export function featureAnchor(text: string): string {
+  return anchorSlug(toPlainMeasure(text));
+}
+
+/**
+ * Stamps `anchor` on every shard from its heading (or name) in place.
+ *
+ * @param {Array<{ name?: string; heading?: string; anchor?: string }>} shards - Feature shards (mutated)
+ */
+export function stampAnchors(
+  shards: Array<{ name?: string; heading?: string; anchor?: string }>,
+): void {
+  for (const shard of shards) {
+    const text = shard.heading ?? shard.name;
+    if (text) shard.anchor = featureAnchor(text);
+  }
+}
+
+/**
+ * Splits an `aspects:` / `denyAspects:` frontmatter list into sheet-level
+ * aspects and feature-scoped aspects. Entries are either a bare
+ * `group:value` string (sheet) or a single-key map `{ anchor: [aspects] }`
+ * (feature — anchor is the feature name or heading slug). Malformed entries
+ * are ignored.
+ *
+ * @param {unknown} list - Frontmatter list value
+ * @returns {{ sheet: string[]; features: Map<string, string[]> }} Parsed scopes
+ */
+export function parseAuthoredAspectList(list: unknown): {
+  sheet: string[];
+  features: Map<string, string[]>;
+} {
+  const sheet: string[] = [];
+  const features = new Map<string, string[]>();
+  if (!Array.isArray(list)) return { sheet, features };
+  const clean = (v: unknown): string | null => {
+    if (typeof v !== 'string') return null;
+    const t = v.trim().toLowerCase();
+    return ASPECT_SHAPE.test(t) ? t : null;
+  };
+  for (const entry of list) {
+    const bare = clean(entry);
+    if (bare) {
+      sheet.push(bare);
+      continue;
+    }
+    if (entry && typeof entry === 'object' && !Array.isArray(entry)) {
+      for (const [key, value] of Object.entries(entry as Record<string, unknown>)) {
+        const anchor = aspectAnchor(key);
+        const values = (Array.isArray(value) ? value : [value])
+          .map(clean)
+          .filter((v): v is string => v !== null);
+        if (!anchor || values.length === 0) continue;
+        features.set(anchor, [...(features.get(anchor) ?? []), ...values]);
+      }
+    }
+  }
+  return { sheet, features };
+}
+
+/**
+ * Applies the sheet-level authored aspect frontmatter to a generated tag set:
+ * bare `aspects:` entries are added, bare `denyAspects:` entries removed.
+ * Feature-scoped entries are ignored here; see `applyAuthoredFeatureAspects`.
+ * Output is deduplicated and sorted.
+ *
+ * @param {string[]} tags - Generated aspects
+ * @param {Record<string, unknown> | undefined} frontmatter - Parsed frontmatter
+ * @returns {string[]} Final aspects
+ */
+export function applyAuthoredAspects(
+  tags: string[],
+  frontmatter: Record<string, unknown> | undefined,
+): string[] {
+  const add = parseAuthoredAspectList(frontmatter?.aspects).sheet;
+  const deny = parseAuthoredAspectList(frontmatter?.denyAspects).sheet;
+  const merged = Array.from(new Set([...tags, ...add])).sort();
+  return applyAspectDenyList(merged, deny);
+}
+
+/**
+ * Applies feature-scoped authored aspects to a list of feature shards in
+ * place. A shard matches an entry when the anchor of its `heading` or `name`
+ * equals the entry key.
+ *
+ * @param {Array<{ name?: string; heading?: string; tags?: string[] }>} features - Feature shards (mutated)
+ * @param {Record<string, unknown> | undefined} frontmatter - Parsed frontmatter
+ */
+export function applyAuthoredFeatureAspects(
+  features: Array<{ name?: string; heading?: string; anchor?: string; tags?: string[] }>,
+  frontmatter: Record<string, unknown> | undefined,
+): void {
+  const add = parseAuthoredAspectList(frontmatter?.aspects).features;
+  const deny = parseAuthoredAspectList(frontmatter?.denyAspects).features;
+  if (add.size === 0 && deny.size === 0) return;
+  for (const feature of features) {
+    const keys = [feature.heading, feature.name]
+      .filter((k): k is string => typeof k === 'string' && k.length > 0)
+      .map(aspectAnchor);
+    const extra = keys.flatMap((k) => add.get(k) ?? []);
+    const denied = keys.flatMap((k) => deny.get(k) ?? []);
+    if (extra.length === 0 && denied.length === 0) continue;
+    const merged = Array.from(new Set([...(feature.tags ?? []), ...extra])).sort();
+    feature.tags = applyAspectDenyList(merged, denied);
+  }
 }
 
 /**

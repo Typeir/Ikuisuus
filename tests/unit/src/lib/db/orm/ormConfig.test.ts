@@ -25,12 +25,12 @@ afterEach(() => {
 });
 
 describe('ormConfig', () => {
-  it('should include all 33 entity and embeddable schemas', async () => {
+  it('should include all 37 entity and embeddable schemas', async () => {
     vi.resetModules();
     const { ormConfig } = await import('@/lib/db/orm/ormConfig');
 
     expect(ormConfig.entities).toBeDefined();
-    expect(ormConfig.entities).toHaveLength(33);
+    expect(ormConfig.entities).toHaveLength(37);
   });
 
   it('should register every entity as a resolved EntitySchema', async () => {

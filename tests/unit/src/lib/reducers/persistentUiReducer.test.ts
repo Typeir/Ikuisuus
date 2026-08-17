@@ -66,6 +66,17 @@ describe('persistentUiReducer', () => {
     });
   });
 
+  describe('SET_ASPECT_DISPLAY', () => {
+    it('should default to compact and set the display mode', () => {
+      expect(DEFAULT_PERSISTENT_UI_STATE.aspectDisplay).toBe('compact');
+      const result = persistentUiReducer(DEFAULT_PERSISTENT_UI_STATE, {
+        type: PERSISTED_UI_ACTION_TYPES.SET_ASPECT_DISPLAY,
+        payload: { display: 'verbose' },
+      });
+      expect(result.aspectDisplay).toBe('verbose');
+    });
+  });
+
   describe('TOGGLE_SIDEBAR', () => {
     it('should toggle sidebar from closed to open', () => {
       const result = persistentUiReducer(DEFAULT_PERSISTENT_UI_STATE, {

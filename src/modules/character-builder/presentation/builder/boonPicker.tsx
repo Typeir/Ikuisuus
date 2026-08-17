@@ -15,7 +15,6 @@
 
 import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import type { BloodlineBoon } from '@/lib/db/content/schemas/bloodlineMetadata.d';
-import { fetcher } from '@/lib/fetch/fetcher';
 import { useBloodlines } from '@/lib/hooks/data/useBloodlines';
 import type { CharacterShard } from '@/lib/types/character';
 import { computeBpSpent } from '@/modules/character-builder/lib/utils/shardExtractor';
@@ -23,8 +22,11 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import { useSWRConfig } from 'swr';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
-import { applySubOptionSelection } from './boonSelection';
+import { applySubOptionSelection, buildBoonShard } from './boonSelection';
 import { BoonSubOptions } from './boonSubOptions';
+import { AspectFilterBar, useAspectFilter } from '../aspects/aspectFilterBar';
+import { matchesAspects } from '../../lib/utils/aspectRollup';
+import { shardIs } from '../../lib/utils/shardKey';
 import { FeatureCard } from './featureCard';
 import pickerStyles from './pickerControls.module.scss';
 
@@ -84,8 +86,14 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
     () => new Set(),
   );
 
+  /* Options written as their own headings are also emitted as boons with a
+     `parentName`; they are picked through the parent's sub-options, so the
+     card list shows top-level boons only. */
   const boons: BloodlineBoon[] = useMemo(
-    () => bloodlines.find((b) => b.slug === bloodlineSlug)?.boons ?? [],
+    () =>
+      (bloodlines.find((b) => b.slug === bloodlineSlug)?.boons ?? []).filter(
+        (boon) => !boon.parentName,
+      ),
     [bloodlines, bloodlineSlug],
   );
 
@@ -98,17 +106,27 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
     });
   }, []);
 
+  const aspectFilter = useAspectFilter();
+  /* The bar summarises the current picks; pressing one narrows the list. */
+  const boonTagLists = useMemo(
+    () => selectedBoons.map((s) => s.tags),
+    [selectedBoons],
+  );
+
   const filteredBoons = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return boons;
-    return boons.filter((b) => b.name.toLowerCase().includes(q));
-  }, [boons, searchQuery]);
+    return boons.filter(
+      (b) =>
+        (!q || b.name.toLowerCase().includes(q)) &&
+        matchesAspects(b.tags, aspectFilter.selected),
+    );
+  }, [boons, searchQuery, aspectFilter.selected]);
 
   const displayedBoons = useMemo(
     () =>
       readOnly
         ? filteredBoons.filter((b) =>
-            selectedBoons.some((s) => s.heading === b.name),
+            selectedBoons.some((s) => shardIs(s, b)),
           )
         : filteredBoons,
     [readOnly, filteredBoons, selectedBoons],
@@ -117,12 +135,12 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
   const bpSpent = computeBpSpent(selectedBoons);
   const bpRemaining = boonBudget - bpSpent;
 
-  const isBoonSelected = (name: string) =>
-    selectedBoons.some((s) => s.heading === name);
+  const isBoonSelected = (boon: BloodlineBoon) =>
+    selectedBoons.some((s) => shardIs(s, boon));
 
   const handleToggle = async (boon: BloodlineBoon) => {
-    if (isBoonSelected(boon.name)) {
-      onToggle(selectedBoons.filter((s) => s.heading !== boon.name));
+    if (isBoonSelected(boon)) {
+      onToggle(selectedBoons.filter((s) => !shardIs(s, boon)));
       return;
     }
 
@@ -130,34 +148,10 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
       return;
     }
 
-    const url = `/api/content-shards/bloodlines/${bloodlineSlug}?keys[]=${encodeURIComponent(boon.name)}&locale=${locale}`;
-
-    type BoonShardResponse = { shards: Record<string, string> };
-    let cachedText: string | undefined;
-    const cached = cache.get(url)?.data as BoonShardResponse | undefined;
-    if (cached) {
-      cachedText = cached.shards[boon.name];
-    } else {
-      try {
-        const data = await mutate<BoonShardResponse>(
-          url,
-          fetcher<BoonShardResponse>(url),
-          { revalidate: false, populateCache: true },
-        );
-        cachedText = data?.shards[boon.name];
-      } catch {
-        /** cachedText stays undefined; ShardDisplay will lazy-fetch on expand */
-      }
-    }
-
-    const shard: CharacterShard = {
-      id: `${bloodlineSlug}::${boon.name}`,
-      sourceFile: `character-creation/bloodlines/${bloodlineSlug}.bloodline.mdx`,
-      heading: boon.name,
-      category: 'boon',
-      bpCost: boon.bpValue,
-      cachedText,
-    };
+    const shard = await buildBoonShard(boon, bloodlineSlug, locale, {
+      cache,
+      mutate,
+    });
     onToggle([...selectedBoons, shard]);
   };
 
@@ -215,16 +209,24 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
               aria-label={tCommon('searchPlaceholder')}
             />
           )}
+          {!readOnly && (
+            <AspectFilterBar
+              tagLists={boonTagLists}
+              selected={aspectFilter.selected}
+              onToggle={aspectFilter.toggle}
+              onClear={aspectFilter.clear}
+            />
+          )}
           <div className={pickerStyles.pickerScroll}>
             <ul
               className={styles.boonList}
               aria-label={t('ariaAvailableBoons')}>
               {displayedBoons.map((boon) => {
-                const selected = isBoonSelected(boon.name);
+                const selected = isBoonSelected(boon);
                 const isExpanded = expandedBoons.has(boon.name);
                 const bodyId = `boon-body-${bloodlineSlug}-${boon.name.replace(/\s+/g, '-')}`;
-                const cachedShard = selectedBoons.find(
-                  (s) => s.heading === boon.name,
+                const cachedShard = selectedBoons.find((s) =>
+                  shardIs(s, boon),
                 );
                 const hasSubOptions =
                   boon.subOptions !== undefined && boon.subOptions.length > 0;
@@ -268,6 +270,7 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
                     bodyId={bodyId}
                     expandLabel={expandLabel}
                     subOptions={subOptionSlot}
+                    aspects={hasSubOptions ? undefined : boon.tags}
                   />
                 );
               })}

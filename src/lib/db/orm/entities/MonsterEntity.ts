@@ -189,6 +189,19 @@ export class MonsterEntity {
   @OrmProperty({ type: 'string', fieldName: 'sub_slug', nullable: true })
   subSlug?: string | null;
 
+  /** @property {string | null} kind - `object` for quoted object statlets; null for creatures */
+  @OrmProperty({ type: 'string', nullable: true })
+  kind?: string | null;
+
+  /** @property {number | null} damageThreshold - Object damage threshold */
+  @OrmProperty({
+    type: 'number',
+    columnType: 'smallint',
+    fieldName: 'damage_threshold',
+    nullable: true,
+  })
+  damageThreshold?: number | null;
+
   @OrmProperty({ type: 'string' })
   title!: string;
 
@@ -308,8 +321,16 @@ export class MonsterFeatureEntity {
   @OrmProperty({ type: 'string', fieldName: 'feature_id' })
   featureId!: string;
 
+  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  @OrmProperty({ type: 'string', nullable: true })
+  anchor?: string | null;
+
   @OrmProperty({ type: 'string' })
   name!: string;
+
+  /** @property {string | null} heading - Rendered heading text when it differs from `name` */
+  @OrmProperty({ type: 'string', nullable: true })
+  heading?: string | null;
 
   /** @property {string | null} trigger - `passive`, `action` or `reaction` */
   @OrmProperty({ type: 'string', nullable: true })

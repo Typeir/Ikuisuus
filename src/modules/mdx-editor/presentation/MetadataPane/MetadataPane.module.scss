@@ -52,7 +52,7 @@
   font-size: 0.7rem;
   font-family: var(--font-mono, monospace);
   color: var(--color-accent);
-  background-color: var(--color-accent-a10);
+  background-color: rgb(var(--color-accent-a10));
   border-radius: 3px;
   padding: 0.1rem 0.35rem;
 }

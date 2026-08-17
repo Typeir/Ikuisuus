@@ -204,7 +204,7 @@ describe('EditorPathSection (new mode)', () => {
     );
 
     const input = screen.getByPlaceholderText(
-      'folder/filename.mdx',
+      'fullPathPlaceholder',
     ) as HTMLInputElement;
     expect(input.value).toBe('en/monsters/goblin.sheet.mdx');
 

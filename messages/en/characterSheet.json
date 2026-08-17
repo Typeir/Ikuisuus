@@ -215,9 +215,9 @@
   "colBloodline": "Bloodline",
   "colVocation": "Vocation",
   "colSpecialization": "Specialization",
-  "selectBloodline": "\u2014 Select Bloodline \u2014",
-  "selectVocation": "\u2014 Select Vocation \u2014",
-  "selectSpecialization": "\u2014 Select Specialization \u2014",
+  "selectBloodline": "— Select Bloodline —",
+  "selectVocation": "— Select Vocation —",
+  "selectSpecialization": "— Select Specialization —",
   "ariaVocationSelector": "Bloodline, Vocation, Specialization editor",
   "ariaVocationSelectorView": "Bloodline, Vocation, Specialization",
   "ariaVocationEntryTabs": "Vocation entry",
@@ -302,5 +302,13 @@
     "tinkering": "Tinkering",
     "vehicles": "Vehicles",
     "weaving": "Weaving"
-  }
+  },
+  "aspectFilterLabel": "Aspects",
+  "aspectFilterAria": "Filter by aspect",
+  "aspectFilterClear": "Clear",
+  "aspectFilterMore": "+{count} more",
+  "aspectFilterLess": "Fewer",
+  "aspectSummary": "Aspects",
+  "ariaAspectSummary": "Aspects of the character's picks",
+  "aspectSummaryEmpty": "Pick boons, feats and features to see their aspects here."
 }

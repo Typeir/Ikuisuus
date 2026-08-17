@@ -64,6 +64,8 @@ export function isInternalAspect(aspect: string): boolean {
  * Display order for aspect groups.
  */
 export const ASPECT_GROUP_ORDER: readonly string[] = [
+  'form',
+  'myth',
   'creature',
   'size',
   'rarity',
@@ -97,7 +99,6 @@ export const ASPECT_GROUP_ORDER: readonly string[] = [
   'weapon',
   'armor',
   'theme',
-  'myth',
 ];
 
 /**
@@ -214,7 +215,7 @@ export function aspectColour(aspect: ParsedAspect): string {
     return `var(--aspect-damage-${aspect.value}, var(--aspect-damage))`;
   }
   if (aspect.group === 'phase') {
-    return `var(--color-phase-${aspect.value}, var(--aspect-default))`;
+    return `var(--aspect-phase-${aspect.value}, var(--color-phase-${aspect.value}, var(--aspect-default)))`;
   }
   return `var(--aspect-${aspect.group}, var(--aspect-default))`;
 }

@@ -14,6 +14,7 @@
 import type { TreeNode } from '@/modules/mdx-editor/domain/types';
 import { FileTreeSelectRow } from '@/modules/mdx-editor/presentation/FileTreeSelect/FileTreeSelectRow';
 import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './FileTreeSelect.module.scss';
@@ -55,8 +56,8 @@ interface FileTreeSelectProps {
  * @param {Function} props.onSelect - Callback when a folder is selected
  * @param {TreeNode[]} props.tree - Tree data
  * @param {boolean} [props.loading=false] - Whether tree data is loading
- * @param {string} [props.placeholder='Select folder...'] - Placeholder text
- * @param {string} [props.newFileLabel='New file'] - Label for the "New file" row
+ * @param {string} [props.placeholder] - Placeholder text; defaults to the localized mdxEditor.selectFolder string
+ * @param {string} [props.newFileLabel] - Label for the "New file" row; defaults to the localized mdxEditor.newFile string
  * @param {boolean} [props.disabled=false] - Whether the select is disabled
  * @returns {JSX.Element} Tree select dropdown
  */
@@ -65,11 +66,14 @@ export function FileTreeSelect({
   onSelect,
   tree,
   loading = false,
-  placeholder = 'Select folder...',
-  newFileLabel = 'New file',
+  placeholder,
+  newFileLabel,
   disabled = false,
   foldersOnly = false,
 }: FileTreeSelectProps): JSX.Element {
+  const t = useTranslations('mdxEditor');
+  const resolvedPlaceholder = placeholder ?? t('selectFolder');
+  const resolvedNewFileLabel = newFileLabel ?? t('newFile');
   const [isOpen, setIsOpen] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
@@ -128,7 +132,7 @@ export function FileTreeSelect({
         aria-expanded={isOpen}>
         <span
           className={`${styles.pathLabel} ${!value ? styles.triggerPlaceholder : ''}`}>
-          {loading ? '...' : value || placeholder}
+          {loading ? '...' : value || resolvedPlaceholder}
         </span>
         <ChevronDown
           size={14}
@@ -140,7 +144,7 @@ export function FileTreeSelect({
         <div className={styles.dropdown} role='listbox'>
           {tree.length === 0 ? (
             <div className={styles.emptyState}>
-              {loading ? '...' : 'No folders found'}
+              {loading ? '...' : t('noFolders')}
             </div>
           ) : (
             tree.map((node) => (
@@ -151,7 +155,7 @@ export function FileTreeSelect({
                 expanded={expanded}
                 toggle={toggle}
                 onSelect={handleSelect}
-                newFileLabel={newFileLabel}
+                newFileLabel={resolvedNewFileLabel}
                 foldersOnly={foldersOnly}
               />
             ))

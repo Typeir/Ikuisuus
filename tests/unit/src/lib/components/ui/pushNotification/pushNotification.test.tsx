@@ -146,6 +146,7 @@ describe('NotificationProvider', () => {
       fireEvent.click(screen.getByText('Show Error'));
       
       expect(screen.getByText('Error message')).toBeInTheDocument();
+      expect(screen.getByText('levelError:')).toBeInTheDocument();
     });
   });
 

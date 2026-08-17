@@ -11,6 +11,8 @@
 export { AuditRecordEntity } from './AuditRecordEntity';
 export { BannedIpEntity } from './BannedIpEntity';
 export { BloodlineBoonEntity } from './BloodlineBoonEntity';
+export { BloodlineBoonOptionEntity } from './BloodlineBoonOptionEntity';
+export { BloodlineFeatureEntity } from './BloodlineFeatureEntity';
 export { BloodlineEntity } from './BloodlineEntity';
 export { CorrectionsUserEntity } from './CorrectionsUserEntity';
 export { DraftEntity } from './DraftEntity';
@@ -43,7 +45,9 @@ export {
     SpellEntity,
     SpellListEntity
 } from './SpellEntity';
+export { RuleEntity } from './RuleEntity';
 export { TrinketEntity, TrinketSavingThrowEmbed } from './TrinketEntity';
+export { WorldEntity } from './WorldEntity';
 export {
     VocationEntity,
     VocationFeatureEntity,

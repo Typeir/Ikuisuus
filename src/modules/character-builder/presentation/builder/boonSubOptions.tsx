@@ -12,6 +12,8 @@
 
 import type { BloodlineBoonSubOption } from '@/lib/db/content/schemas/bloodlineMetadata';
 import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';
+import { displayAspects } from '@/modules/library/domain/aspects';
+import { AspectGlyphs } from '@/modules/library/presentation/components/Aspects/AspectGlyphs';
 import pipStyles from '../CharacterSheet/proficiencyTrack.module.scss';
 import styles from './boonSubOptions.module.scss';
 
@@ -101,6 +103,11 @@ export const BoonSubOptions: React.FC<BoonSubOptionsProps> = ({
             {option.effect && (
               <span className={styles.subOptionEffect}>
                 {cleanEffect(option.effect)}
+              </span>
+            )}
+            {displayAspects(option.tags).length > 0 && (
+              <span className={styles.subOptionAspects}>
+                <AspectGlyphs tags={option.tags} inert max={6} />
               </span>
             )}
           </div>

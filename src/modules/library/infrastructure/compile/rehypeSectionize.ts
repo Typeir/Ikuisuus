@@ -1,14 +1,27 @@
 /**
- * @fileoverview Rehype plugin that wraps MDX content between headings in semantic section elements.
- * @description Groups sibling nodes that follow a heading into a `<section>` with a
- * `data-heading-level` attribute.
+ * @fileoverview Rehype plugin that wraps MDX content between headings in semantic section
+ * elements, then wraps feature entries in articles.
+ * @description Pass 1 groups the sibling nodes that follow a heading into a `<section>`
+ * (`data-heading-level`, `data-anchor`); a horizontal rule closes every open
+ * section and opens an anonymous one for what follows. The pass recurses into
+ * blockquotes and MDX JSX flow elements (statlets, collapsibles) so every
+ * heading in the document owns a section. Pass 2 wraps feature entries —
+ * bold-led list items and bold-led paragraphs inside a section — in
+ * `<article data-anchor>` (`li > article`, never `ul > article`). Anchors use
+ * the shared `anchorSlug` rule so headings, sections, articles and metadata
+ * agree; a duplicate anchor inside one document is prefixed with its parent
+ * section's anchor. Every section and article also carries its bare
+ * (pre-dedup) slug on `node.data.slug` for `rehypeAspects`.
  *
  * @module rehypeSectionize
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
+import { toPlainMeasure } from '@/lib/units/nativeMeasure';
+import { anchorSlug } from '@/modules/library/domain/anchorSlug';
+import { Anchors, articleize, textOf, type Parent } from './sectionizeArticles';
 import type { Element, ElementContent, Root, RootContent } from 'hast';
 import { h } from 'hastscript';
 import type { Plugin } from 'unified';
@@ -20,10 +33,13 @@ import type { Plugin } from 'unified';
  *   `data-stream` on every emitted `<section>` element. Read by the CSS
  *   terminal-stream animation via `content: attr(data-stream)`.
  *   When absent, no `data-stream` attribute is added.
+ * @property {boolean} [articles=true] - Run the entry → article pass
  */
 export type RehypeSectionizeOptions = {
   streamText?: string;
+  articles?: boolean;
 };
+
 
 /**
  * Determines whether a HAST node is an H1–H6 heading element.
@@ -48,158 +64,158 @@ function headingLevel(node: Element): number {
 /**
  * Determines whether a HAST node is a thematic break / horizontal rule.
  *
- * Accepts both the HAST `element` form (`<hr>`) and a literal
- * `thematicBreak` node.
- *
  * @param {RootContent} node - HAST node to test
  * @returns {boolean} True when the node is a horizontal rule
  */
 function isHr(node: RootContent): boolean {
   return (
     (node.type === 'element' && (node as Element).tagName === 'hr') ||
-    (node.type as any) === 'thematicBreak'
+    (node.type as unknown as string) === 'thematicBreak'
   );
 }
 
 /**
- * Stack item representing an open section and its heading level.
+ * Containers the sectionizer descends into: blockquotes (statlets) and MDX
+ * JSX flow elements (collapsibles and other authored wrappers).
+ *
+ * @param {RootContent} node - HAST node to test
+ * @returns {boolean} True when the node's children should be sectioned
  */
-type StackItem = { level: number; section: Element };
+function isContainer(node: RootContent): node is RootContent & Parent {
+  if (node.type === 'element') return (node as Element).tagName === 'blockquote';
+  return (node.type as unknown as string) === 'mdxJsxFlowElement';
+}
 
 /**
- * Close any open sections whose level is greater than or equal to `level`.
+ * Anchor of a heading: slug of its text minus any trailing inline JSX
+ * (a Collapsible's `<span>5 BP</span>` cost).
+ *
+ * @param {Element} heading - Heading element
+ * @returns {string} Anchor slug
  */
-function closeOpenSections(stack: StackItem[], level: number): void {
-  while (stack.length && stack[stack.length - 1].level >= level) {
-    stack.pop();
+export function headingAnchor(heading: Element): string {
+  const own = heading.children.filter(
+    (c) => (c.type as unknown as string) !== 'mdxJsxTextElement',
+  );
+  return anchorSlug(toPlainMeasure(own.map((c) => textOf(c)).join('')));
+}
+
+/* ─────────────────────────  Pass 1: sections  ───────────────────────── */
+
+type StackItem = { level: number; section: Element; anchor: string };
+
+/**
+ * Sections one list of siblings in place, recursing into containers.
+ *
+ * @param {RootContent[]} nodes - Sibling nodes to section
+ * @param {RehypeSectionizeOptions | undefined} opts - Plugin options
+ * @param {Anchors} anchors - Document anchor registry
+ * @param {string | undefined} parentAnchor - Anchor of the enclosing section, if any
+ * @returns {RootContent[]} Sectioned siblings
+ */
+function sectionize(
+  nodes: RootContent[],
+  opts: RehypeSectionizeOptions | undefined,
+  anchors: Anchors,
+  parentAnchor: string | undefined,
+  ownerHeading = false,
+): RootContent[] {
+  const result: RootContent[] = [];
+  const stack: StackItem[] = [];
+  let pendingAnonymousSection = false;
+  /* An MDX component (Collapsible) reads its own first heading as its
+     summary; that heading stays a direct child, everything after it is
+     sectioned as usual. */
+  let leadHeadingPending = ownerHeading;
+
+  const attach = (section: Element) => {
+    if (stack.length === 0) result.push(section);
+    else stack[stack.length - 1].section.children.push(section as ElementContent);
+  };
+  const append = (node: RootContent) => {
+    if (stack.length) stack[stack.length - 1].section.children.push(node as ElementContent);
+    else result.push(node);
+  };
+  const props = (extra: Record<string, unknown>) => ({
+    ...extra,
+    ...(opts?.streamText ? { 'data-stream': opts.streamText } : {}),
+  });
+
+  for (const node of nodes) {
+    if (isContainer(node)) {
+      const owner = stack.length ? stack[stack.length - 1].anchor : parentAnchor;
+      const isJsx = (node.type as unknown as string) === 'mdxJsxFlowElement';
+      node.children = sectionize(node.children, opts, anchors, owner, isJsx);
+      append(node);
+      continue;
+    }
+
+    if (isHeading(node) && leadHeadingPending) {
+      leadHeadingPending = false;
+      result.push(node);
+      continue;
+    }
+
+    if (isHeading(node)) {
+      const level = headingLevel(node);
+      pendingAnonymousSection = false;
+      while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+      const owner = stack.length ? stack[stack.length - 1].anchor : parentAnchor;
+      const slug = headingAnchor(node);
+      const anchor = anchors.claim(slug, owner);
+      const section = (h as unknown as (t: string, p: object) => Element)(
+        'section',
+        props({ 'data-heading-level': level, 'data-anchor': anchor }),
+      );
+      section.data = { slug } as unknown as Element["data"];
+      section.children = [node];
+      attach(section);
+      stack.push({ level, section, anchor });
+      continue;
+    }
+
+    if (isHr(node)) {
+      stack.length = 0;
+      pendingAnonymousSection = true;
+      result.push(node);
+      continue;
+    }
+
+    if (pendingAnonymousSection && stack.length === 0) {
+      pendingAnonymousSection = false;
+      const section = (h as unknown as (t: string, p: object) => Element)(
+        'section',
+        props({ 'data-heading-level': 0 }),
+      );
+      section.children = [node as ElementContent];
+      attach(section);
+      stack.push({ level: 0, section, anchor: parentAnchor ?? '' });
+      continue;
+    }
+
+    append(node);
   }
+
+  return result;
 }
 
-/**
- * Attach `section` to its parent section if available; otherwise append it
- * to the top-level `result` array.
- */
-function attachSection(
-  result: RootContent[],
-  stack: StackItem[],
-  section: Element,
-): void {
-  if (stack.length === 0) {
-    result.push(section);
-  } else {
-    const parent = stack[stack.length - 1].section;
-    parent.children.push(section as ElementContent);
-  }
-}
+/* ────────────────────────────  Plugin  ─────────────────────────────── */
 
 /**
- * Clear all open sections.
- */
-function clearSections(stack: StackItem[]): void {
-  stack.length = 0;
-}
-
-/**
- * Append a non-heading node either to the deepest open section or to the
- * top-level `result` array if no section is open.
- */
-function appendNode(
-  result: RootContent[],
-  stack: StackItem[],
-  node: RootContent,
-): void {
-  if (stack.length) {
-    const parent = stack[stack.length - 1].section;
-    parent.children.push(node as ElementContent);
-  } else {
-    result.push(node);
-  }
-}
-/**
- * Rehype plugin that sectionizes MDX output by wrapping content between headings.
+ * Rehype plugin: sections, then articles. See file overview.
  *
- * Each heading and the nodes that follow it (up to the next heading of the same
- * or higher level) are grouped into a `<section data-heading-level="N">` element.
- * Content before the first heading is left unwrapped.
- *
- * @returns {(tree: Root) => void} Unified transformer function
- *
- * @example
- * // Source MDX:
- * // ## Overview
- * // Some text.
- * // ## Details
- * // More text.
- *
- * // Output HAST structure:
- * // <section data-heading-level="2">
- * //   <h2>Overview</h2>
- * //   <p>Some text.</p>
- * // </section>
- * // <section data-heading-level="2">
- * //   <h2>Details</h2>
- * //   <p>More text.</p>
- * // </section>
+ * @param {RehypeSectionizeOptions} [opts] - Plugin options
+ * @returns {(tree: Root) => void} Transformer
  */
 const rehypeSectionize: Plugin<[RehypeSectionizeOptions?], Root> = (
   opts?: RehypeSectionizeOptions,
 ) => {
   return (tree: Root) => {
-    const result: RootContent[] = [];
-
-    type StackItem = { level: number; section: Element };
-    const stack: StackItem[] = [];
-    let pendingAnonymousSection = false;
-
-    for (const node of tree.children) {
-      if (isHeading(node)) {
-        const level = headingLevel(node);
-
-        pendingAnonymousSection = false;
-
-        closeOpenSections(stack, level);
-
-        const sectionProps: Record<string, unknown> = {
-          'data-heading-level': level,
-        };
-        if (opts?.streamText) {
-          sectionProps['data-stream'] = opts.streamText;
-        }
-        const section = (h as any)('section', sectionProps) as Element;
-        section.children = [node];
-
-        attachSection(result, stack, section);
-
-        stack.push({ level, section });
-      } else if (isHr(node)) {
-        clearSections(stack);
-        pendingAnonymousSection = true;
-        result.push(node);
-      } else {
-        if (pendingAnonymousSection && stack.length === 0 && !isHeading(node)) {
-          pendingAnonymousSection = false;
-
-          const anonSectionProps: Record<string, unknown> = {
-            'data-heading-level': 0,
-          };
-          if (opts?.streamText) {
-            anonSectionProps['data-stream'] = opts.streamText;
-          }
-          const anonSection = (h as any)(
-            'section',
-            anonSectionProps,
-          ) as Element;
-          anonSection.children = [node as ElementContent];
-
-          attachSection(result, stack, anonSection);
-          stack.push({ level: 0, section: anonSection });
-        } else {
-          appendNode(result, stack, node);
-        }
-      }
+    const anchors = new Anchors();
+    tree.children = sectionize(tree.children, opts, anchors, undefined);
+    if (opts?.articles !== false) {
+      articleize(tree as unknown as Parent, anchors, undefined, false, false, false);
     }
-
-    tree.children = result;
   };
 };
 

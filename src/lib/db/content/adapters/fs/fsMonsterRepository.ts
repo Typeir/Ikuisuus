@@ -54,6 +54,27 @@ class FsMonsterRepository
   }
 
   /**
+   * Returns every stat block sharing the file slug, in file order.
+   *
+   * @param {string} locale - Locale code
+   * @param {string} slug - File-level monster slug
+   * @returns {Promise<MonsterMetadata[]>} Matched records, or `[]` on error
+   */
+  async getAllBySlug(locale: string, slug: string): Promise<MonsterMetadata[]> {
+    try {
+      const all = await readMetadataFiles<MonsterMetadata>(locale, SUBDIR);
+      return all.filter((m) => m.slug === slug);
+    } catch (error) {
+      log.error('Error reading monster sheet from filesystem', {
+        error: error instanceof Error ? error.message : String(error),
+        locale,
+        slug,
+      });
+      return [];
+    }
+  }
+
+  /**
    * Returns a lightweight index of all monsters for use in dropdowns and search.
    *
    * @param {string} locale - Locale code
@@ -62,7 +83,9 @@ class FsMonsterRepository
   async listIndex(locale: string): Promise<MonsterIndexEntry[]> {
     try {
       const all = await readMetadataFiles<MonsterMetadata>(locale, SUBDIR);
-      return all.map((m) => ({
+      /* Object statlets (plating, blades) are not creatures; the index feeds
+         encounter imports and dropdowns. */
+      return all.filter((m) => m.kind !== 'object').map((m) => ({
         slug: m.subSlug || m.slug,
         title: m.title,
         cr: m.cr,

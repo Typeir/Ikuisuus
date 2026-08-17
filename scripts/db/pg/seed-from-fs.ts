@@ -38,6 +38,8 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import {
     BloodlineBoonEntity,
+    BloodlineBoonOptionEntity,
+    BloodlineFeatureEntity,
     BloodlineEntity,
     CorrectionsUserEntity,
     FeatAbilityIncreaseEmbed,
@@ -61,7 +63,9 @@ import {
     SpellComponentEmbed,
     SpellEntity,
     SpellListEntity,
+    RuleEntity,
     TrinketEntity,
+    WorldEntity,
     TrinketSavingThrowEmbed,
     VocationEntity,
     VocationFeatureEntity,
@@ -270,6 +274,14 @@ const SEED_CONFIGS: ContentSeedConfig[] = [
     subdir: join('items', 'trinkets'),
   },
   {
+    entityClass: RuleEntity,
+    subdir: 'rules',
+  },
+  {
+    entityClass: WorldEntity,
+    subdir: 'world',
+  },
+  {
     entityClass: BloodlineEntity,
     subdir: join('character-creation', 'bloodlines'),
     seedChildren: (em, allMeta, parent, raw) => {
@@ -279,7 +291,41 @@ const SEED_CONFIGS: ContentSeedConfig[] = [
           BloodlineBoonEntity.name,
           boon,
         );
-        em.create(BloodlineBoonEntity, { bloodline: parent, ...init } as never);
+        const boonEntity = em.create(BloodlineBoonEntity, {
+          bloodline: parent,
+          ...init,
+        } as never) as unknown as BloodlineBoonEntity;
+        const options = (boon.subOptions ?? []) as Array<Record<string, unknown>>;
+        for (let i = 0; i < options.length; i++) {
+          const option = options[i];
+          em.create(BloodlineBoonOptionEntity, {
+            boon: boonEntity,
+            name: option.name as string,
+            anchor: (option.anchor as string | undefined) ?? null,
+            bpValue: (option.bpValue as number | undefined) ?? 0,
+            effect: (option.effect as string | undefined) ?? null,
+            tags: (option.tags as string[] | undefined) ?? [],
+            sortOrder: i,
+          } as never);
+        }
+      }
+      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
+      for (let i = 0; i < features.length; i++) {
+        const feature = features[i];
+        const source = (feature.source ?? {}) as Record<string, unknown>;
+        const init = recordToEntityInit(
+          allMeta,
+          BloodlineFeatureEntity.name,
+          feature,
+        );
+        em.create(BloodlineFeatureEntity, {
+          ...init,
+          bloodline: parent,
+          featureId: feature.id as string,
+          sortOrder: i,
+          startLine: source.start as number | undefined,
+          endLine: source.end as number | undefined,
+        } as never);
       }
     },
   },
@@ -400,6 +446,8 @@ async function main(): Promise<void> {
       entities: [
         BloodlineEntity,
         BloodlineBoonEntity,
+        BloodlineBoonOptionEntity,
+        BloodlineFeatureEntity,
         MonsterEntity,
         MonsterACEmbed,
         MonsterHPEmbed,
@@ -414,6 +462,8 @@ async function main(): Promise<void> {
         SpellListEntity,
         TrinketEntity,
         TrinketSavingThrowEmbed,
+        RuleEntity,
+        WorldEntity,
         VocationEntity,
         VocationFeatureEntity,
         VocationSkillProficienciesEmbed,

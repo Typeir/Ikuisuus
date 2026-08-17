@@ -15,6 +15,8 @@ import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 import {
+    applyAuthoredFeatureAspects,
+  stampAnchors,
     blankFrontmatter,
     clean,
     extractAllTags,
@@ -78,14 +80,15 @@ function parseFlavor(lines: string[]): string | undefined {
  * end line numbers within the MDX file.
  *
  * @param {string} raw - Full MDX file content
- * @returns {Array<{ level: number; name: string; startLine: number; endLine: number }>} Feature entries with line ranges
+ * @returns {Array<{ level: number; name: string; heading: string; startLine: number; endLine: number }>} Feature entries with the raw heading text and line ranges
  */
 function parseFeatures(
   raw: string,
-): Array<{ level: number; name: string; startLine: number; endLine: number }> {
+): Array<{ level: number; name: string; heading: string; startLine: number; endLine: number }> {
   const features: Array<{
     level: number;
     name: string;
+    heading: string;
     startLine: number;
     endLine: number;
   }> = [];
@@ -111,7 +114,8 @@ function parseFeatures(
     }
     while (endIdx > i && !lines[endIdx]?.trim()) endIdx--;
 
-    features.push({ level, name, startLine: i + 1, endLine: endIdx + 1 });
+    const heading = lines[i].replace(/^#+\s+/, '').replace(/\*\*/g, '').trim();
+    features.push({ level, name, heading, startLine: i + 1, endLine: endIdx + 1 });
   }
 
   return features;
@@ -288,6 +292,11 @@ async function parseSpecializationFile(
       featuresWithGrants as RangedFeature[],
       rawLines,
       sharedData,
+    );
+    stampAnchors(featuresWithGrants as Array<{ name?: string; heading?: string }>);
+    applyAuthoredFeatureAspects(
+      featuresWithGrants as Array<{ name?: string; heading?: string; tags?: string[] }>,
+      matter(raw).data as Record<string, unknown>,
     );
     const preparedSpells = parseAlwaysPreparedSpells(body);
     const spellcasting = parseSpecializationSpellcasting(body);

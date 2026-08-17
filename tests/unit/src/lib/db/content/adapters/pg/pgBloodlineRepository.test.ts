@@ -66,6 +66,7 @@ const entityRow = {
   tags: ['humanoid'],
   indexVersion: 1,
   versionHash: null,
+  features: { getItems: () => [] },
   boons: {
     getItems: () => [
       {
@@ -74,6 +75,7 @@ const entityRow = {
         bpValue: 6,
         sortOrder: 0,
         tags: ['mechanic:weapon-reach', 'mechanic:weapon'],
+        options: { getItems: () => [] },
       },
       {
         name: 'First Step',
@@ -85,6 +87,20 @@ const entityRow = {
           'mechanic:recovery-recharge',
           'movement:enhanced',
         ],
+        options: { getItems: () => [] },
+      },
+      {
+        name: 'Frame',
+        bpLabel: 'Variable - Choose One',
+        bpValue: null,
+        sortOrder: 2,
+        tags: ['resource:variable'],
+        options: {
+          getItems: () => [
+            { name: 'Large Frame', anchor: 'large-frame', bpValue: 3, effect: 'Large', tags: ['size:large'], sortOrder: 1 },
+            { name: 'Powerful Build', anchor: 'powerful-build', bpValue: 1, effect: null, tags: [], sortOrder: 0 },
+          ],
+        },
       },
     ],
   },
@@ -119,7 +135,10 @@ describe('pgBloodlineRepository', () => {
       const result = await pgBloodlineRepository.list('en');
       const boons = result[0].boons;
 
-      expect(boons).toHaveLength(2);
+      expect(boons).toHaveLength(3);
+      expect(boons[2].subOptions?.map((o) => o.name)).toEqual(['Powerful Build', 'Large Frame']);
+      expect(boons[2].subOptionMode).toBe('choose-one');
+      expect(boons[2].subOptions?.[1]).toMatchObject({ anchor: 'large-frame', bpValue: 3, effect: 'Large', tags: ['size:large'] });
       expect(boons[0].name).toBe('Extended Reach');
       expect(boons[0].bpValue).toBe(6);
       expect(boons[0].tags).toContain('mechanic:weapon-reach');
@@ -133,7 +152,7 @@ describe('pgBloodlineRepository', () => {
       expect(mockEM.find).toHaveBeenCalledWith(
         expect.anything(),
         { locale: 'en' },
-        { populate: ['boons'], orderBy: { title: 'asc' } },
+        { populate: ['boons', 'boons.options', 'features'], orderBy: { title: 'asc' } },
       );
     });
 
@@ -152,7 +171,7 @@ describe('pgBloodlineRepository', () => {
 
       expect(result).not.toBeNull();
       expect(result?.slug).toBe('empyrean');
-      expect(result?.boons).toHaveLength(2);
+      expect(result?.boons).toHaveLength(3);
     });
 
     it('should query by locale and slug with boons populated', async () => {
@@ -161,7 +180,7 @@ describe('pgBloodlineRepository', () => {
       expect(mockEM.findOne).toHaveBeenCalledWith(
         expect.anything(),
         { locale: 'en', slug: 'empyrean' },
-        { populate: ['boons'] },
+        { populate: ['boons', 'boons.options', 'features'] },
       );
     });
 

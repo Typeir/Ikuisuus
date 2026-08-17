@@ -18,6 +18,8 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import { ShardDisplay } from '../shards/shardDisplay';
+import { matchesAspects } from '../../lib/utils/aspectRollup';
+import { AspectFilterBar, useAspectFilter } from '../aspects/aspectFilterBar';
 import pickerStyles from './pickerControls.module.scss';
 
 /**
@@ -95,6 +97,9 @@ export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({
   const [vocationQuery, setVocationQuery] = useState('');
   const [specQuery, setSpecQuery] = useState('');
 
+  const vocationAspects = useAspectFilter();
+  const specAspects = useAspectFilter();
+
   const filterByHeading = (list: CharacterShard[], q: string) => {
     const needle = q.trim().toLowerCase();
     if (!needle) return list;
@@ -102,12 +107,18 @@ export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({
   };
 
   const filteredVocation = useMemo(
-    () => filterByHeading(vocationFeatures, vocationQuery),
-    [vocationFeatures, vocationQuery],
+    () =>
+      filterByHeading(vocationFeatures, vocationQuery).filter((s) =>
+        matchesAspects(s.tags, vocationAspects.selected),
+      ),
+    [vocationFeatures, vocationQuery, vocationAspects.selected],
   );
   const filteredSpec = useMemo(
-    () => filterByHeading(specializationFeatures, specQuery),
-    [specializationFeatures, specQuery],
+    () =>
+      filterByHeading(specializationFeatures, specQuery).filter((s) =>
+        matchesAspects(s.tags, specAspects.selected),
+      ),
+    [specializationFeatures, specQuery, specAspects.selected],
   );
 
   const renderFeatures = (
@@ -119,6 +130,7 @@ export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({
     query: string,
     setQuery: (q: string) => void,
     contentType: string,
+    aspectFilter: ReturnType<typeof useAspectFilter>,
   ) => {
     if (rawFeatures.length === 0) {
       const emptyText = hasSelection ? t('noFeaturesSelected') : t(emptyKey);
@@ -142,6 +154,14 @@ export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label={tCommon('searchPlaceholder')}
+        />
+        <AspectFilterBar
+          tagLists={rawFeatures
+            .filter((s) => s.level === undefined || s.level <= characterLevel)
+            .map((s) => s.tags)}
+          selected={aspectFilter.selected}
+          onToggle={aspectFilter.toggle}
+          onClear={aspectFilter.clear}
         />
         <div className={pickerStyles.pickerScroll}>
           <div className={styles.featureList}>
@@ -188,6 +208,7 @@ export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({
           vocationQuery,
           setVocationQuery,
           'vocations',
+          vocationAspects,
         )}
       {showSpec &&
         renderFeatures(
@@ -199,6 +220,7 @@ export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({
           specQuery,
           setSpecQuery,
           'specializations',
+          specAspects,
         )}
     </div>
   );

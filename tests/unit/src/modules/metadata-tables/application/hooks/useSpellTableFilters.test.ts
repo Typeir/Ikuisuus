@@ -8,7 +8,6 @@ describe('useSpellTableFilters', () => {
 
     expect(result.current.state).toEqual({
       damoclesOnly: false,
-      schoolFilter: '',
       concentrationFilter: '',
     });
     expect(result.current.expressions).toEqual([]);
@@ -19,13 +18,11 @@ describe('useSpellTableFilters', () => {
 
     act(() => {
       result.current.setters.setDamoclesOnly(true);
-      result.current.setters.setSchoolFilter('Evocation');
       result.current.setters.setConcentrationFilter('yes');
     });
 
     expect(result.current.expressions).toEqual([
       { field: 'source', operator: 'neq', value: 'basic' },
-      { field: 'school', operator: 'eq', value: 'Evocation' },
       { field: 'concentration', operator: 'eq', value: true },
     ]);
   });

@@ -76,7 +76,9 @@ export const IMAGE = {
  *
  * @property {RegExp} nonmagicalDamage - "bludgeoning, piercing, and slashing from nonmagical..."
  * @property {RegExp} keyValueBullet - Key-value bullet with known stat label
- * @property {RegExp} blockquotePrefix - Blockquote line prefix "> "
+ * @property {RegExp} blockquotePrefix - Blockquote line prefix "> " and any indentation after it
+ * @property {RegExp} blockquoteMarker - Just the "> " marker; keeps the line's own indentation
+ * @property {RegExp} armorClassRow - Header-table row opening with **Armor Class**, quoted or not
  * @property {RegExp} sheetFilePattern - Monster sheet file extension pattern
  */
 export const STAT_CONTENT = {
@@ -85,5 +87,7 @@ export const STAT_CONTENT = {
   keyValueBullet:
     /^[-*]\s+\*\*(Tier Bonus|Challenge|Languages|Senses|Condition Immunities|Damage|Skills|Saving Throws)\*\*/i,
   blockquotePrefix: /^>\s*/,
+  blockquoteMarker: /^> ?/,
+  armorClassRow: /^>?\s*\|\s*\*\*Armor Class\*\*/i,
   sheetFilePattern: /\.sheet\.mdx$/i,
 } as const;

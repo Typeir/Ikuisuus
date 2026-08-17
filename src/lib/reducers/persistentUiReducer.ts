@@ -49,6 +49,7 @@ import {
  * - SET_CORRECTIONS_TOKEN: Sets corrections API token
  * - SET_UNIT_SYSTEM: Sets unit system for one dimension
  * - SET_ASPECT_EXPANDED: Sets aspect collapse state
+ * - SET_ASPECT_DISPLAY: Sets aspect pill display mode
  * - RESET: Returns to default state, preserving isHydrated
  */
 export function persistentUiReducer(
@@ -123,6 +124,13 @@ export function persistentUiReducer(
       return {
         ...state,
         aspectExpanded: action.payload.expanded,
+      };
+    }
+
+    case PERSISTED_UI_ACTION_TYPES.SET_ASPECT_DISPLAY: {
+      return {
+        ...state,
+        aspectDisplay: action.payload.display,
       };
     }
 

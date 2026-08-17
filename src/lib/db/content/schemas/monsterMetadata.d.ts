@@ -158,10 +158,14 @@ export interface MonsterSenses {
  * @property {string} [image] - Image path extracted from BlendedImage in MDX (e.g. "/library/images/Albedo.webp")
  * @property {string} [description] - Short prose lore description extracted from the stat block MDX
  * @property {number} [indexVersion] - Metadata format version
+ * @property {'object'} [kind] - Set on quoted object statlets (plating, blades); absent on creatures
+ * @property {number} [damageThreshold] - Object damage threshold
  */
 export interface MonsterMetadata {
   slug: string;
   subSlug?: string;
+  kind?: 'object';
+  damageThreshold?: number;
   title: string;
   file: string;
   link: string;
@@ -201,10 +205,14 @@ export interface MonsterMetadata {
  * @property {string} name - Feature name as written in the stat block
  * @property {string} [trigger] - `passive`, `action` or `reaction`
  * @property {string[]} [tags] - Aspects derived from this feature alone
+ * @property {string} [heading] - Rendered heading text when it differs from `name`
+ * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
 export interface MonsterFeatureSummary {
   id: string;
   name: string;
+  heading?: string;
+  anchor?: string;
   trigger?: string;
   tags?: string[];
 }

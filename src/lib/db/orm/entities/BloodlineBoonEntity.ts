@@ -11,13 +11,15 @@
  * @since 7.0.0
  */
 
-import type { BloodlineBoonSubOption } from '@/lib/db/content/schemas/bloodlineMetadata';
 import {
     OrmEntity,
     OrmManyToOne,
+    OrmOneToMany,
     OrmPrimaryKey,
     OrmProperty,
 } from '@/lib/db/orm/schema';
+import { Collection } from '@mikro-orm/core';
+import type { BloodlineBoonOptionEntity } from './BloodlineBoonOptionEntity';
 import type { BloodlineEntity } from './BloodlineEntity';
 
 /**
@@ -34,6 +36,10 @@ export class BloodlineBoonEntity {
     deleteRule: 'cascade',
   })
   bloodline!: BloodlineEntity;
+
+  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  @OrmProperty({ type: 'string', nullable: true })
+  anchor?: string | null;
 
   @OrmProperty({ type: 'string' })
   name!: string;
@@ -59,6 +65,10 @@ export class BloodlineBoonEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
+  /** @property {string | null} parentName - Parent boon when this is an option written as its own heading */
+  @OrmProperty({ type: 'string', fieldName: 'parent_name', nullable: true })
+  parentName?: string | null;
+
   /** @property {number | null} startLine - 1-indexed start line of this boon's heading block in the source MDX */
   @OrmProperty({
     type: 'number',
@@ -77,12 +87,11 @@ export class BloodlineBoonEntity {
   })
   endLine?: number | null;
 
-  /** @property {BloodlineBoonSubOption[] | null} subOptions - Selectable options for a variable-cost boon, stored as JSONB */
-  @OrmProperty({
-    type: 'json',
-    fieldName: 'sub_options',
-    columnType: 'jsonb',
-    nullable: true,
+  /** @property {Collection<BloodlineBoonOptionEntity>} options - Selectable options of a variable-cost boon */
+  @OrmOneToMany({
+    entity: 'BloodlineBoonOptionEntity',
+    mappedBy: 'boon',
+    orphanRemoval: true,
   })
-  subOptions?: BloodlineBoonSubOption[] | null;
+  options = new Collection<BloodlineBoonOptionEntity>(this);
 }

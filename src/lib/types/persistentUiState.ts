@@ -41,6 +41,7 @@ export const PERSISTED_UI_ACTION_TYPES = {
   SET_CORRECTIONS_TOKEN: 'PERSISTED_UI/SET_CORRECTIONS_TOKEN',
   SET_UNIT_SYSTEM: 'PERSISTED_UI/SET_UNIT_SYSTEM',
   SET_ASPECT_EXPANDED: 'PERSISTED_UI/SET_ASPECT_EXPANDED',
+  SET_ASPECT_DISPLAY: 'PERSISTED_UI/SET_ASPECT_DISPLAY',
   RESET: 'PERSISTED_UI/RESET',
 } as const;
 
@@ -111,6 +112,7 @@ export const DEFAULT_UNIT_SYSTEM: UnitSystemPreferences = {
  * @property {UnitSystemPreferences} unitSystem - Display preference per measurement family
  * @property {string | null} correctionsToken - HMAC token for corrections API (persists annually)
  * @property {boolean} aspectExpanded - Whether aspect carousels stay unpacked without hovering
+ * @property {AspectDisplayMode} aspectDisplay - How aspect pills render: icon+value, icon+group:value, or glyph only
  * @property {boolean} isHydrated - Whether state has been hydrated from storage
  */
 export interface PersistentUiState {
@@ -119,8 +121,24 @@ export interface PersistentUiState {
   unitSystem: UnitSystemPreferences;
   correctionsToken: string | null;
   aspectExpanded: boolean;
+  aspectDisplay: AspectDisplayMode;
   isHydrated: boolean;
 }
+
+/**
+ * Aspect pill display modes. `compact` = icon + value, `verbose` = icon +
+ * `group: value`, `glyph` = icon only.
+ */
+export type AspectDisplayMode = 'compact' | 'verbose' | 'glyph';
+
+/**
+ * Every valid aspect display mode, for validation of stored values.
+ */
+export const ASPECT_DISPLAY_MODES: readonly AspectDisplayMode[] = [
+  'compact',
+  'verbose',
+  'glyph',
+];
 
 /**
  * Serialized format for localStorage/cookie storage.
@@ -134,6 +152,7 @@ export interface PersistentUiState {
  *   preference was split per measurement family, and applies to all three.
  * @property {string | null} [correctionsToken] - Optional corrections API token
  * @property {boolean} [aspectExpanded] - Optional aspect carousel expansion
+ * @property {AspectDisplayMode} [aspectDisplay] - Optional aspect pill display mode
  */
 export interface SerializedPersistentUiState {
   sidebarMenu?: SidebarMenuState;
@@ -141,6 +160,7 @@ export interface SerializedPersistentUiState {
   unitSystem?: UnitSystemPreferences | UnitSystemValue;
   correctionsToken?: string | null;
   aspectExpanded?: boolean;
+  aspectDisplay?: AspectDisplayMode;
 }
 
 /**
@@ -262,6 +282,18 @@ export interface SetAspectExpandedAction {
 }
 
 /**
+ * Action to set the aspect pill display mode.
+ *
+ * @interface SetAspectDisplayAction
+ * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_ASPECT_DISPLAY} type - Action type identifier
+ * @property {{ display: AspectDisplayMode }} payload - New display mode
+ */
+export interface SetAspectDisplayAction {
+  type: typeof PERSISTED_UI_ACTION_TYPES.SET_ASPECT_DISPLAY;
+  payload: { display: AspectDisplayMode };
+}
+
+/**
  * Action to reset state to defaults
  *
  * @interface ResetAction
@@ -286,6 +318,7 @@ export type PersistentUiAction =
   | SetCorrectionsTokenAction
   | SetUnitSystemAction
   | SetAspectExpandedAction
+  | SetAspectDisplayAction
   | ResetAction;
 
 /**
@@ -302,6 +335,7 @@ export const DEFAULT_PERSISTENT_UI_STATE: PersistentUiState = {
   unitSystem: DEFAULT_UNIT_SYSTEM,
   correctionsToken: null,
   aspectExpanded: false,
+  aspectDisplay: 'compact',
   isHydrated: false,
 };
 

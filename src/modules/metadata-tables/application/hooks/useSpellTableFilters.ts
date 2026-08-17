@@ -23,12 +23,10 @@ export type ConcentrationFilter = '' | 'yes' | 'no';
  *
  * @interface SpellTableFilterState
  * @property {boolean} damoclesOnly - Hide SRD/basic-source rows when true.
- * @property {string} schoolFilter - Selected school name; empty means all.
  * @property {ConcentrationFilter} concentrationFilter - Concentration tri-state.
  */
 export interface SpellTableFilterState {
   damoclesOnly: boolean;
-  schoolFilter: string;
   concentrationFilter: ConcentrationFilter;
 }
 
@@ -37,12 +35,10 @@ export interface SpellTableFilterState {
  *
  * @interface SpellTableFilterSetters
  * @property {(value: boolean) => void} setDamoclesOnly - Updates the Damocles-only flag.
- * @property {(value: string) => void} setSchoolFilter - Updates the school filter.
  * @property {(value: ConcentrationFilter) => void} setConcentrationFilter - Updates the concentration filter.
  */
 export interface SpellTableFilterSetters {
   setDamoclesOnly: (value: boolean) => void;
-  setSchoolFilter: (value: string) => void;
   setConcentrationFilter: (value: ConcentrationFilter) => void;
 }
 
@@ -68,7 +64,6 @@ export interface UseSpellTableFiltersResult {
  */
 export function useSpellTableFilters(): UseSpellTableFiltersResult {
   const [damoclesOnly, setDamoclesOnly] = useState(false);
-  const [schoolFilter, setSchoolFilter] = useState('');
   const [concentrationFilter, setConcentrationFilter] =
     useState<ConcentrationFilter>('');
 
@@ -77,20 +72,17 @@ export function useSpellTableFilters(): UseSpellTableFiltersResult {
     if (damoclesOnly) {
       out.push({ field: 'source', operator: 'neq', value: 'basic' });
     }
-    if (schoolFilter) {
-      out.push({ field: 'school', operator: 'eq', value: schoolFilter });
-    }
     if (concentrationFilter === 'yes') {
       out.push({ field: 'concentration', operator: 'eq', value: true });
     } else if (concentrationFilter === 'no') {
       out.push({ field: 'concentration', operator: 'eq', value: false });
     }
     return out;
-  }, [damoclesOnly, schoolFilter, concentrationFilter]);
+  }, [damoclesOnly, concentrationFilter]);
 
   return {
-    state: { damoclesOnly, schoolFilter, concentrationFilter },
-    setters: { setDamoclesOnly, setSchoolFilter, setConcentrationFilter },
+    state: { damoclesOnly, concentrationFilter },
+    setters: { setDamoclesOnly, setConcentrationFilter },
     expressions,
   };
 }

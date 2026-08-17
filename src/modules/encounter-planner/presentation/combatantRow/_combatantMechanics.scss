@@ -103,7 +103,7 @@
   @include button-hover-scale;
 
   &:hover {
-    background: var(--color-accent-a10);
+    background: rgb(var(--color-accent-a10));
   }
 
   &.deedUsed {

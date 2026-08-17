@@ -12,6 +12,8 @@
 'use client';
 
 import type { JSX } from 'react';
+import { useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { FilterSelect } from '@/lib/components/ui/filterSelect/filterSelect';
 import {
     insertAtCursor,
@@ -23,12 +25,19 @@ import {
     wrapSelection,
 } from '@/modules/mdx-editor/domain/editorCommands';
 import { SAMPLE_TEMPLATES } from '@/modules/mdx-editor/domain/sampleTemplates';
+import { ContentPicker } from '@/modules/mdx-editor/presentation/ContentPicker';
+import { AspectEditor } from '@/modules/mdx-editor/presentation/AspectEditor';
+import {
+  readFrontmatterAspects,
+  writeFrontmatterAspects,
+} from '@/modules/mdx-editor/domain/frontmatterAspects';
 import type { SearchContentType } from '@/modules/search/domain';
 import { typeIconMap } from '@/modules/search/presentation/atoms/iconMap';
 import {
     Bold,
     Code,
     Copy,
+    FileText,
     Heading1,
     Heading2,
     Heading3,
@@ -39,6 +48,7 @@ import {
     Minus,
     Quote,
     Redo2,
+    Tag,
     Undo2,
 } from 'lucide-react';
 import styles from './EditorToolbar.module.scss';
@@ -49,6 +59,7 @@ export { handleEditorKeyDown } from '@/modules/mdx-editor/domain/editorCommands'
  * @property {string} textareaId - DOM id of the code editor textarea
  * @property {string} value - Current editor content
  * @property {boolean} disabled - Whether the toolbar is inactive
+ * @property {(slug: string) => void} [onCopyFrom] - Loads an existing page's source into the buffer; renders the copy-from picker when given
  */
 interface EditorToolbarProps {
   /** DOM id of the underlying textarea */
@@ -57,6 +68,8 @@ interface EditorToolbarProps {
   value: string;
   /** Whether the editor is disabled */
   disabled: boolean;
+  /** Loads an existing page's source into the buffer, by editor slug */
+  onCopyFrom?: (slug: string) => void;
 }
 
 /**
@@ -94,7 +107,14 @@ export function EditorToolbar({
   textareaId,
   value,
   disabled,
+  onCopyFrom,
 }: EditorToolbarProps): JSX.Element {
+  const t = useTranslations('mdxEditor.toolbar');
+  const tCopy = useTranslations('mdxEditor.copyFrom');
+  const tAspects = useTranslations('mdxEditor.aspects');
+  const [aspectsOpen, setAspectsOpen] = useState(false);
+  const authoredAspects = useMemo(() => readFrontmatterAspects(value), [value]);
+
   const wrap = (pre: string, suf: string, ph: string) =>
     wrapSelection(textareaId, value, pre, suf, ph);
 
@@ -105,83 +125,83 @@ export function EditorToolbar({
 
   const buttons: (ToolbarButton | 'sep')[] = [
     {
-      label: 'Undo',
+      label: t('undo'),
       icon: <Undo2 size={15} />,
       action: () => triggerUndo(textareaId),
       shortcut: 'Ctrl+Z',
     },
     {
-      label: 'Redo',
+      label: t('redo'),
       icon: <Redo2 size={15} />,
       action: () => triggerRedo(textareaId),
       shortcut: 'Ctrl+Y',
     },
     'sep',
     {
-      label: 'Heading 1',
+      label: t('heading1'),
       icon: <Heading1 size={15} />,
       action: () => linePrefix('# '),
     },
     {
-      label: 'Heading 2',
+      label: t('heading2'),
       icon: <Heading2 size={15} />,
       action: () => linePrefix('## '),
     },
     {
-      label: 'Heading 3',
+      label: t('heading3'),
       icon: <Heading3 size={15} />,
       action: () => linePrefix('### '),
     },
     'sep',
     {
-      label: 'Bold',
+      label: t('bold'),
       icon: <Bold size={15} />,
       action: () => wrap('**', '**', 'bold'),
       shortcut: 'Ctrl+B',
     },
     {
-      label: 'Italic',
+      label: t('italic'),
       icon: <Italic size={15} />,
       action: () => wrap('*', '*', 'italic'),
       shortcut: 'Ctrl+I',
     },
     {
-      label: 'Inline code',
+      label: t('inlineCode'),
       icon: <Code size={15} />,
       action: () => wrap('`', '`', 'code'),
       shortcut: 'Ctrl+`',
     },
     'sep',
     {
-      label: 'Link',
+      label: t('link'),
       icon: <Link size={15} />,
       action: () => insertLink(textareaId, value),
       shortcut: 'Ctrl+K',
     },
     {
-      label: 'Blockquote',
+      label: t('blockquote'),
       icon: <Quote size={15} />,
       action: () => linePrefix('> '),
     },
     {
-      label: 'Bullet list',
+      label: t('bulletList'),
       icon: <List size={15} />,
       action: () => linePrefix('- '),
     },
     {
-      label: 'Numbered list',
+      label: t('numberedList'),
       icon: <ListOrdered size={15} />,
       action: () => linePrefix('1. '),
     },
     {
-      label: 'Horizontal rule',
+      label: t('horizontalRule'),
       icon: <Minus size={15} />,
       action: () => insert('\n---\n'),
     },
   ];
 
   return (
-    <div className={styles.toolbar} role='toolbar' aria-label='Formatting'>
+    <div className={styles.toolbar} role='toolbar' aria-label={t('ariaLabel')}>
       {buttons.map((btn, i) =>
         btn === 'sep' ? (
           <div key={`sep-${i}`} className={styles.toolbarSep} />
@@ -199,7 +219,34 @@ export function EditorToolbar({
         ),
       )}
       <div className={styles.toolbarSep} />
-      <SampleMenu textareaId={textareaId} disabled={disabled} />
+      <div className={styles.toolbarEnd}>
+        <button
+          type='button'
+          className={styles.toolbarButton}
+          onClick={() => setAspectsOpen(true)}
+          disabled={disabled}
+          title={tAspects('open')}
+          aria-label={tAspects('open')}>
+          <Tag size={15} />
+        </button>
+        <AspectEditor
+          isOpen={aspectsOpen}
+          onClose={() => setAspectsOpen(false)}
+          initial={authoredAspects}
+          onApply={(aspects) =>
+            replaceAllText(textareaId, writeFrontmatterAspects(value, aspects))
+          }
+        />
+        {onCopyFrom && (
+          <ContentPicker
+            icon={<Copy size={15} />}
+            label={tCopy('label')}
+            onPick={onCopyFrom}
+            disabled={disabled}
+          />
+        )}
+        <SampleMenu textareaId={textareaId} disabled={disabled} />
+      </div>
     </div>
   );
 }
@@ -215,6 +262,18 @@ const SAMPLE_ICONS: Record<string, SearchContentType> = {
   trinket: 'trinkets',
   rule: 'rules',
   world: 'world',
+};
+
+/**
+ * Translation keys (mdxEditor.toolbar namespace) for the sample menu labels.
+ */
+const SAMPLE_LABEL_KEYS: Record<string, string> = {
+  creature: 'sampleCreature',
+  heirloom: 'sampleHeirloom',
+  spell: 'sampleSpell',
+  trinket: 'sampleTrinket',
+  rule: 'sampleRule',
+  world: 'sampleWorld',
 };
 
 /**
@@ -234,9 +293,11 @@ function SampleMenu({
   textareaId: string;
   disabled: boolean;
 }): JSX.Element {
+  const t = useTranslations('mdxEditor.toolbar');
+
   const options = SAMPLE_TEMPLATES.map((template) => ({
     value: template.key,
-    label: template.label,
+    label: t(SAMPLE_LABEL_KEYS[template.key]),
   }));
 
   return (
@@ -247,10 +308,10 @@ function SampleMenu({
         const template = SAMPLE_TEMPLATES.find((t) => t.key === key);
         if (template) replaceAllText(textareaId, template.content);
       }}
-      ariaLabel='Insert sample'
+      ariaLabel={t('insertSample')}
       disabled={disabled}
       hideAllOption
-      iconTrigger={<Copy size={15} />}
+      iconTrigger={<FileText size={15} />}
       className={styles.sampleSelect}
       renderOptionLeading={(option) => {
         const Icon = typeIconMap[SAMPLE_ICONS[option.value]];

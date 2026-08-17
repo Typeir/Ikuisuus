@@ -32,13 +32,6 @@ export function useSpellColumns(): ColumnConfig[] {
         sortable: true,
       },
       {
-        key: 'school',
-        label: tColumns('school'),
-        getValue: (row: MetadataRow) => row.school ?? '—',
-        render: (value: unknown) => <em>{String(value ?? '—')}</em>,
-        sortable: true,
-      },
-      {
         key: 'castingTime',
         label: tColumns('castingTime'),
         getValue: (row: MetadataRow) => row.castingTime ?? [],

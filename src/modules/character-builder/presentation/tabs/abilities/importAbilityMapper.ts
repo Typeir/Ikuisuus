@@ -41,9 +41,8 @@ function mapSpell(s: SpellMetadata): CharacterAbility {
     s.level !== undefined
       ? s.level === 0
         ? 'Cantrip'
-        : `${s.level}${s.level === 1 ? 'st' : s.level === 2 ? 'nd' : s.level === 3 ? 'rd' : 'th'}-level`
+        : `${s.level}${s.level === 1 ? 'st' : s.level === 2 ? 'nd' : s.level === 3 ? 'rd' : 'th'}-level Spell`
       : '',
-    s.school ? ` ${s.school}` : '',
   ]
     .join('')
     .trim();

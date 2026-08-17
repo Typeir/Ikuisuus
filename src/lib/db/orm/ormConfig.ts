@@ -15,7 +15,9 @@ import {
     AuditRecordEntity,
     BannedIpEntity,
     BloodlineBoonEntity,
+    BloodlineBoonOptionEntity,
     BloodlineEntity,
+    BloodlineFeatureEntity,
     CorrectionsUserEntity,
     DraftEntity,
     FeatAbilityIncreaseEmbed,
@@ -31,6 +33,7 @@ import {
     MonsterScoreEmbed,
     MonsterSenseEmbed,
     MonsterSpeedEmbed,
+    RuleEntity,
     SchemaMigrationEntity,
     SpecializationEntity,
     SpecializationFeatureEntity,
@@ -45,6 +48,7 @@ import {
     VocationFeatureEntity,
     VocationSkillProficienciesEmbed,
     VocationSpellcastingEmbed,
+    WorldEntity,
 } from './entities';
 
 export const ormConfig = defineConfig({
@@ -62,6 +66,8 @@ export const ormConfig = defineConfig({
     BannedIpEntity,
     BloodlineEntity,
     BloodlineBoonEntity,
+    BloodlineBoonOptionEntity,
+    BloodlineFeatureEntity,
     DraftEntity,
     FeatEntity,
     FeatFeatureEntity,
@@ -81,6 +87,8 @@ export const ormConfig = defineConfig({
     SpellListEntity,
     TrinketEntity,
     TrinketSavingThrowEmbed,
+    RuleEntity,
+    WorldEntity,
     VocationEntity,
     VocationFeatureEntity,
     VocationSkillProficienciesEmbed,

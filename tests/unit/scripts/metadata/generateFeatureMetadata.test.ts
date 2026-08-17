@@ -185,3 +185,10 @@ describe('Full pipeline feature count', () => {
     expect(count).toBe(11);
   });
 });
+
+describe('classifySections — heading variants', () => {
+  it('should read Major/Minor Actions as action groups', () => {
+    const lines = ['## Major Actions', '#### Bite', 'Text.', '## Minor Actions', '#### Skitter', 'Text.', '## Bonus Actions', '#### Dash', 'x'];
+    expect(classifySections(lines).map((s) => s.type)).toEqual(['actions', 'minor_actions', 'minor_actions']);
+  });
+});

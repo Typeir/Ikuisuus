@@ -32,7 +32,18 @@ const rowToBloodline = (row: BloodlineEntity): BloodlineMetadata => {
     .getItems()
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map((b) => {
-      const subOptions = nonEmpty(b.subOptions ?? []);
+      const subOptions = nonEmpty(
+        b.options
+          .getItems()
+          .sort((x, y) => x.sortOrder - y.sortOrder)
+          .map((o) => ({
+            name: o.name,
+            anchor: orUndef(o.anchor),
+            bpValue: o.bpValue,
+            effect: orUndef(o.effect),
+            tags: nonEmpty(o.tags),
+          })),
+      );
       const subOptionMode: BloodlineBoon['subOptionMode'] = subOptions
         ? /pick any/i.test(b.bpLabel)
           ? 'pick-any'
@@ -46,6 +57,8 @@ const rowToBloodline = (row: BloodlineEntity): BloodlineMetadata => {
         subOptionMode,
         sortOrder: b.sortOrder,
         tags: b.tags,
+        parentName: orUndef(b.parentName),
+        anchor: orUndef(b.anchor),
       };
     });
 
@@ -65,6 +78,19 @@ const rowToBloodline = (row: BloodlineEntity): BloodlineMetadata => {
     },
     boonBudget: orUndef(row.boonBudget),
     boons,
+    features: row.features
+      .getItems()
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((f) => ({
+        id: f.featureId,
+        name: f.name,
+        anchor: orUndef(f.anchor),
+        tags: f.tags,
+        source:
+          f.startLine != null && f.endLine != null
+            ? { start: f.startLine, end: f.endLine }
+            : undefined,
+      })),
     tags: nonEmpty(row.tags),
     indexVersion: orUndef(row.indexVersion),
   };
@@ -86,7 +112,7 @@ class PgBloodlineRepository
   protected readonly entityClass = BloodlineEntity;
 
   protected override populate(): string[] {
-    return ['boons'];
+    return ['boons', 'boons.options', 'features'];
   }
 
   protected override orderBy(): Record<string, 'asc' | 'desc'> {

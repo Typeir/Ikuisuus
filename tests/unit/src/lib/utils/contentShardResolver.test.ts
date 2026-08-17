@@ -148,4 +148,27 @@ describe('resolveShards', () => {
       expect(result['main']).toBe('');
     });
   });
+
+  describe('anchor keys', () => {
+    const entries = [
+      { name: 'Rage', anchor: 'rage', startLine: 5, endLine: 9 },
+      { name: 'Unarmored Defense', anchor: 'unarmored-defense', startLine: 11, endLine: 13 },
+    ];
+
+    it('resolves an anchor key to its entry range and echoes the key', () => {
+      const result = resolveShards(HEADING_MDX, entries, ['unarmored-defense']);
+      expect(result['unarmored-defense']).toContain('your AC is better');
+      expect(result['unarmored-defense']).not.toContain('Rage');
+    });
+
+    it('still resolves a name key for older callers', () => {
+      const result = resolveShards(HEADING_MDX, entries, ['Rage']);
+      expect(result['Rage']).toContain('bonus damage');
+    });
+
+    it('slugs a name key when only anchors are known', () => {
+      const result = resolveShards(HEADING_MDX, [{ name: 'x', anchor: 'unarmored-defense', startLine: 11, endLine: 13 }], ['Unarmored Defense']);
+      expect(result['Unarmored Defense']).toContain('your AC is better');
+    });
+  });
 });

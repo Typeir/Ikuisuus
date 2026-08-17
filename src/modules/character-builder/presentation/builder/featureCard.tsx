@@ -23,6 +23,8 @@ import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import type { ContentShardType } from '../shards/contentShardPanel';
 import expandStyles from './boonExpand.module.scss';
 import { ContentExpandBody } from './contentExpandBody';
+import { displayAspects } from '@/modules/library/domain/aspects';
+import { AspectGlyphs } from '@/modules/library/presentation/components/Aspects/AspectGlyphs';
 
 /**
  * Props for the FeatureCard component.
@@ -45,6 +47,7 @@ import { ContentExpandBody } from './contentExpandBody';
  * @property {string} [openLabel] - Accessible label for the open-source button (only used when `onFocus` is provided)
  * @property {ReactNode} [subOptions] - Optional sub-option selector rendered beneath the card row
  * @property {FeatureCardMultiSelect} [multiSelect] - When present, the primary button adds an instance, a count chip and remove button appear, and `onToggle`/`selected` are ignored
+ * @property {string[]} [aspects] - Aspects of the feature, shown as glyphs under the row
  */
 export interface FeatureCardProps {
   label: string;
@@ -64,6 +67,7 @@ export interface FeatureCardProps {
   openLabel?: string;
   subOptions?: ReactNode;
   multiSelect?: FeatureCardMultiSelect;
+  aspects?: string[];
 }
 
 /**
@@ -112,6 +116,7 @@ export interface FeatureCardMultiSelect {
  * @param {string} [props.openLabel] - Accessible label for the open-source button
  * @param {ReactNode} [props.subOptions] - Optional sub-option selector rendered beneath the card row
  * @param {FeatureCardMultiSelect} [props.multiSelect] - Repeatable-selection controls; when present the primary button adds an instance and a count chip + remove button appear
+ * @param {string[]} [props.aspects] - Aspects shown as glyphs under the row
  * @returns {JSX.Element} Rendered feature card
  */
 export const FeatureCard: React.FC<FeatureCardProps> = ({
@@ -132,6 +137,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   openLabel,
   subOptions,
   multiSelect,
+  aspects,
 }) => {
   const Chevron = expanded ? ChevronDown : ChevronRight;
   const isSelected = multiSelect ? multiSelect.count > 0 : selected;
@@ -192,6 +198,11 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
           </button>
         </div>
       </div>
+      {displayAspects(aspects).length > 0 && (
+        <div className={expandStyles.boonAspects}>
+          <AspectGlyphs tags={aspects} />
+        </div>
+      )}
       {subOptions}
       {expanded && (
         <ContentExpandBody

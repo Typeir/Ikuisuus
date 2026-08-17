@@ -34,7 +34,7 @@ describe('compileUtils exports', () => {
 
       expect(mods).toHaveProperty('evaluate');
       expect(mods).toHaveProperty('remarkGfm');
-      expect(mods).toHaveProperty('remarkAspects');
+      expect(mods).toHaveProperty('rehypeAspects');
     },
     MODULE_LOAD_TIMEOUT_MS,
   );

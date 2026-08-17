@@ -16,6 +16,7 @@ import { EditorToolbar } from '@/modules/mdx-editor/presentation/EditorToolbar/E
 import { MdxPreview } from '@/modules/mdx-editor/presentation/MdxPreview/MdxPreview';
 import { MetadataPane } from '@/modules/mdx-editor/presentation/MetadataPane/MetadataPane';
 import { Braces, Eye, EyeOff, FileText, RefreshCw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { JSX } from 'react';
 import { useCallback, useRef, useState } from 'react';
 import Editor from 'react-simple-code-editor';
@@ -48,6 +49,8 @@ interface EditorSplitPaneProps {
   newPlaceholder: string;
   /** Locale-relative content path (e.g. `en/spells/foo.mdx`), for metadata preview */
   filePath?: string;
+  /** Loads an existing page's source into the buffer, by editor slug */
+  onCopyFrom?: (slug: string) => void;
 }
 
 /**
@@ -82,7 +85,9 @@ export function EditorSplitPane({
   mode,
   newPlaceholder,
   filePath = '',
+  onCopyFrom,
 }: EditorSplitPaneProps): JSX.Element {
+  const t = useTranslations('mdxEditor.preview');
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const [showPreview, setShowPreview] = useState(true);
@@ -121,6 +126,7 @@ export function EditorSplitPane({
           textareaId={textareaId}
           value={content}
           disabled={disabled}
+          onCopyFrom={onCopyFrom}
         />
         <Editor
           value={content}
@@ -149,7 +155,8 @@ export function EditorSplitPane({
               type='button'
               className={styles.previewBadge}
               onClick={() => setShowPreview(false)}
-              title='Hide preview'>
+              title={t('hide')}
+              aria-label={t('hide')}>
               <EyeOff size={14} />
             </button>
             <button
@@ -158,11 +165,9 @@ export function EditorSplitPane({
               onClick={() =>
                 setPreviewFace(previewFace === 'file' ? 'meta' : 'file')
               }
-              title={
-                previewFace === 'file' ? 'Show metadata' : 'Show file preview'
-              }
+              title={previewFace === 'file' ? t('showMetadata') : t('showFile')}
               aria-label={
-                previewFace === 'file' ? 'Show metadata' : 'Show file preview'
+                previewFace === 'file' ? t('showMetadata') : t('showFile')
               }>
               {previewFace === 'file' ? (
                 <Braces size={14} />
@@ -175,8 +180,8 @@ export function EditorSplitPane({
                 type='button'
                 className={styles.refreshBadge}
                 onClick={() => setMetaRefreshToken((n) => n + 1)}
-                title='Refresh metadata'
-                aria-label='Refresh metadata'>
+                title={t('refreshMetadata')}
+                aria-label={t('refreshMetadata')}>
                 <RefreshCw size={14} />
               </button>
             )}
@@ -198,7 +203,8 @@ export function EditorSplitPane({
           type='button'
           className={styles.showPreviewBadge}
           onClick={() => setShowPreview(true)}
-          title='Show preview'>
+          title={t('show')}
+          aria-label={t('show')}>
           <Eye size={14} />
         </button>
       )}

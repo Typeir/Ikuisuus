@@ -1,5 +1,5 @@
 /**
- * @fileoverview Spell table with school, concentration, and Damocles-setting filters.
+ * @fileoverview Spell table with concentration and Damocles-setting filters.
  * Intended for use on the main spell library page.
  * @module src/modules/metadata-tables/presentation/FilteredSpellTable/FilteredSpellTable
  * @author Typeir
@@ -25,7 +25,7 @@ import { useMemo, useState } from 'react';
 /**
  * Spell table with external filter controls rendered above the level-tab strip.
  * Provides a "Damocles Only" toggle (hides SRD spells where `file === "external"`),
- * a school select, and a concentration select. All filter state is local.
+ * and a concentration select. All filter state is local.
  *
  * @component
  * @param {SpellTablesProps} props
@@ -77,21 +77,6 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
   );
   const columns = useSpellColumns();
 
-  const availableSchools = useMemo(
-    () =>
-      (
-        Array.from(new Set(spellData.map((s) => s.school))).filter(
-          Boolean,
-        ) as string[]
-      ).sort(),
-    [spellData],
-  );
-
-  const schoolOptions = useMemo<FilterSelectOption[]>(
-    () => availableSchools.map((school) => ({ value: school, label: school })),
-    [availableSchools],
-  );
-
   const concentrationOptions = useMemo<FilterSelectOption[]>(
     () => [
       { value: 'yes', label: tCommon('yes') },
@@ -130,7 +115,6 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
       <FilteredSpellTableControls
         state={state}
         setters={setters}
-        schoolOptions={schoolOptions}
         concentrationOptions={concentrationOptions}
         tFilters={tFilters}
       />
@@ -166,7 +150,6 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
             getRowSlug={(row) => `${basePath}/${row.slug}`}
             searchKeys={[
               'title',
-              'school',
               'castingTimeRaw',
               'duration',
               'range',

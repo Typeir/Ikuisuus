@@ -11,7 +11,10 @@
 
 import type { BloodlineBoon } from '@/lib/db/content/schemas/bloodlineMetadata';
 import type { CharacterShard } from '@/lib/types/character';
-import { applySubOptionSelection } from '@/modules/character-builder/presentation/builder/boonSelection';
+import {
+  applySubOptionSelection,
+  pickedOptionTags,
+} from '@/modules/character-builder/presentation/builder/boonSelection';
 import { describe, expect, it } from 'vitest';
 
 const chooseOne: BloodlineBoon = {
@@ -109,3 +112,32 @@ describe('applySubOptionSelection', () => {
     expect(next[0].bpCost).toBe(1);
   });
 });
+
+describe('pickedOptionTags', () => {
+  const tagged: BloodlineBoon = {
+    ...pickAny,
+    subOptions: [
+      { name: 'Darkvision', bpValue: 1, tags: ['sense:darkvision'] },
+      { name: 'Truesight', bpValue: 5, tags: ['sense:truesight', 'sense:darkvision'] },
+    ],
+    tags: ['sense:darkvision', 'sense:truesight', 'resource:variable'],
+  };
+
+  it('unions the tags of the picked options only', () => {
+    expect(pickedOptionTags(tagged, ['Darkvision'])).toEqual(['sense:darkvision']);
+    expect(pickedOptionTags(tagged, ['Truesight', 'Darkvision'])).toEqual([
+      'sense:truesight',
+      'sense:darkvision',
+    ]);
+  });
+
+  it('falls back to the boon roll-up when no option carries tags', () => {
+    expect(pickedOptionTags({ ...pickAny, tags: ['a:b'] }, ['Darkvision'])).toEqual(['a:b']);
+  });
+
+  it('writes the picked tags onto the shard', () => {
+    const [s] = applySubOptionSelection([], tagged, 'Truesight', 'x');
+    expect(s.tags).toEqual(['sense:truesight', 'sense:darkvision']);
+  });
+});
+

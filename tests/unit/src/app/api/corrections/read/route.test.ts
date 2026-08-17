@@ -18,6 +18,11 @@ vi.mock('@/lib/logging/logger', () => ({
     child: () => ({ error: vi.fn(), debug: vi.fn(), message: vi.fn() }),
   },
 }));
+const fsFetch = vi.hoisted(() => vi.fn());
+vi.mock('@/lib/db/content/adapters/fs/fsContentSource', () => ({
+  fsContentSource: { fetch: (...a: unknown[]) => fsFetch(...a) },
+}));
+
 vi.mock('@/lib/db/content/repositories/draftRepository', () => ({
   draftRepository: {
     findActive: (...args: unknown[]) => mockFindActiveDraft(...args),
@@ -173,5 +178,36 @@ describe('GET /api/corrections/read', () => {
 
     expect(res.status).toBe(200);
     expect(json.path).toBe('en/items/trinkets/smoke-pellet.trinket.mdx');
+  });
+
+  describe('without GitHub configuration', () => {
+    beforeEach(() => {
+      delete process.env.GITHUB_PAT;
+      fsFetch.mockReset();
+    });
+
+    it('should serve the file from the working tree', async () => {
+      fsFetch.mockResolvedValue({
+        content: '# Aboleth',
+        resolvedPath: '/repo/src/content/en/monsters/aboleth.sheet.mdx',
+      });
+
+      const { GET } = await import('@/app/api/corrections/read/route');
+      const res = await GET(makeReq({ slug: 'monsters/aboleth' }));
+      const body = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(fsFetch).toHaveBeenCalledWith('en', 'monsters/aboleth');
+      expect(body.content).toBe('# Aboleth');
+      expect(body.sha).toBe('');
+    });
+
+    it('should 404 when the file is absent locally', async () => {
+      fsFetch.mockResolvedValue(null);
+
+      const { GET } = await import('@/app/api/corrections/read/route');
+      const res = await GET(makeReq({ slug: 'monsters/nope' }));
+      expect(res.status).toBe(404);
+    });
   });
 });

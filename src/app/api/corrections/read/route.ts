@@ -7,6 +7,7 @@
  */
 
 import { draftRepository } from '@/lib/db/content/repositories/draftRepository';
+import { fsContentSource } from '@/lib/db/content/adapters/fs/fsContentSource';
 import { logger } from '@/lib/logging/logger';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -26,6 +27,19 @@ const PATH_VARIANTS = [
  * @param {string} filePath - Relative file path in repository.
  * @returns {Promise<{ content: string; sha: string; path: string } | null>} Decoded file payload.
  */
+/**
+ * Whether the GitHub content source is configured.
+ *
+ * @returns {boolean} True when owner, repo and token are all present
+ */
+function isGitHubConfigured(): boolean {
+  return Boolean(
+    process.env.CONTENT_REPO_OWNER &&
+      process.env.CONTENT_REPO_NAME &&
+      process.env.GITHUB_PAT,
+  );
+}
+
 async function fetchFileFromGitHub(
   filePath: string,
 ): Promise<{ content: string; sha: string; path: string } | null> {
@@ -87,6 +101,31 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   const basePath = `${locale}/${slug}`;
+
+  /* Without a GitHub configuration (local dev, previews) the same slug is
+     served from the working tree through the filesystem adapter; the
+     content is identical, only the sha is absent. */
+  if (!isGitHubConfigured()) {
+    const local = await fsContentSource.fetch(locale, slug);
+    if (!local) {
+      return NextResponse.json(
+        { error: 'Content file not found' },
+        { status: 404 },
+      );
+    }
+    const activeDraft = await draftRepository
+      .findActive(locale, slug)
+      .catch(() => null);
+    return NextResponse.json({
+      content: local.content,
+      sha: '',
+      path: local.resolvedPath,
+      draftCursor: {
+        updatedAt: activeDraft?.updatedAt ?? null,
+        versionHash: activeDraft?.versionHash ?? null,
+      },
+    });
+  }
 
   try {
     for (const ext of PATH_VARIANTS) {

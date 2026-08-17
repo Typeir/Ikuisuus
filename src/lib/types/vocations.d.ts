@@ -22,13 +22,17 @@
  * @property {number} [startLine] - 1-indexed start line of this feature's heading block in the source MDX
  * @property {number} [endLine] - 1-indexed last line of this feature's heading block in the source MDX
  * @property {string[]} [grants] - Tag-based proficiency grants this feature confers
+ * @property {string[]} [tags] - Aspects extracted from the feature body
+ * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
 export interface FeatureEntry {
   level: number;
   name: string;
+  anchor?: string;
   startLine?: number;
   endLine?: number;
   grants?: string[];
+  tags?: string[];
 }
 
 /**

@@ -29,7 +29,7 @@ import {
 import { extractDerivedAspects, extractStrataTags } from './aspectExtractors';
 import { MONSTER_MECHANICS } from './taggingPatterns';
 import {
-  applyAspectDenyList,
+  applyAuthoredAspects,
   extractDamageTags,
   extractOrganizationalTags,
   stripCitations,
@@ -263,8 +263,8 @@ function generateSpellTags(
       metadata.level === 0 ? 'level:cantrip' : `level:${metadata.level}`,
     );
   }
-  if (metadata.school)
-    tags.push(`school:${(metadata.school as string).toLowerCase()}`);
+  /* `school:` is authored in frontmatter during the school → form
+     migration, never derived from the subtitle. */
   if (metadata.quality)
     tags.push(`rarity:${(metadata.quality as string).toLowerCase()}`);
   if (metadata.concentration) tags.push('tempo:sustained');
@@ -399,7 +399,7 @@ export function parseSpellSource(
   const spellLists = parseSpellLists(content);
   const description = parseDescription(content);
 
-  const tags = applyAspectDenyList(
+  const tags = applyAuthoredAspects(
     Array.from(
       new Set([
         ...generateSpellTags(
@@ -410,7 +410,7 @@ export function parseSpellSource(
         ...extractOrganizationalTags(filePath, process.cwd(), source),
       ]),
     ).sort(),
-    frontmatter.denyAspects,
+    frontmatter,
   );
 
   const relativePath = path

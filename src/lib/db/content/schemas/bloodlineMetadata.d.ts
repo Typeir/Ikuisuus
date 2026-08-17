@@ -22,11 +22,15 @@
  * @property {string} name - Option display name (e.g. "Powerful Build")
  * @property {number} bpValue - BP cost of this specific option
  * @property {string} [effect] - Short effect summary from the non-name/non-cost table columns
+ * @property {string[]} [tags] - Aspects of this option alone
+ * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
 export interface BloodlineBoonSubOption {
   name: string;
   bpValue: number;
   effect?: string;
+  tags?: string[];
+  anchor?: string;
 }
 
 /**
@@ -42,6 +46,8 @@ export interface BloodlineBoonSubOption {
  * @property {number} [startLine] - 1-indexed start line of the boon heading block in the source MDX
  * @property {number} [endLine] - 1-indexed last line of the boon content block in the source MDX
  * @property {string[]} tags - Derived gameplay tags for filtering/searching boon behavior
+ * @property {string} [parentName] - Parent boon when this option is written as its own heading
+ * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
 export interface BloodlineBoon {
   name: string;
@@ -53,6 +59,8 @@ export interface BloodlineBoon {
   startLine?: number;
   endLine?: number;
   tags: string[];
+  parentName?: string;
+  anchor?: string;
 }
 
 /**
@@ -87,9 +95,27 @@ export interface BloodlineCoreFeatures {
  * @property {BloodlineCoreFeatures} coreFeatures - Shared ancestry features
  * @property {number} [boonBudget] - Total boon point budget
  * @property {BloodlineBoon[]} boons - Ordered list of boon metadata
+ * @property {BloodlineFeature[]} [features] - Core-feature traits with their own aspects
  * @property {string[]} [tags] - Root-level bloodline tags
  * @property {number} [indexVersion] - Metadata schema/index version
  */
+/**
+ * A core-feature trait of a bloodline.
+ *
+ * @property {string} id - `${slug}:${anchor}`
+ * @property {string} name - Heading text
+ * @property {string[]} tags - Aspects extracted from the trait body
+ * @property {{ start: number; end: number }} [source] - 0-based line range
+ * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
+ */
+export interface BloodlineFeature {
+  id: string;
+  name: string;
+  anchor?: string;
+  tags: string[];
+  source?: { start: number; end: number };
+}
+
 export interface BloodlineMetadata {
   slug: string;
   title: string;
@@ -99,6 +125,7 @@ export interface BloodlineMetadata {
   coreFeatures: BloodlineCoreFeatures;
   boonBudget?: number;
   boons: BloodlineBoon[];
+  features?: BloodlineFeature[];
   tags?: string[];
   indexVersion?: number;
 }

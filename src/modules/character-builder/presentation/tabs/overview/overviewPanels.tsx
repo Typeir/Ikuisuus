@@ -23,13 +23,17 @@ import {
 import { deriveGrantFloors } from '@/modules/character-builder/lib/utils/grants';
 import { deriveProficiencyHints } from '@/modules/character-builder/lib/utils/proficiencyBudget';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
-import { useTranslations } from 'next-intl';
+import { rollUpAspects } from '@/modules/character-builder/lib/utils/aspectRollup';
+import { displayAspects } from '@/modules/library/domain/aspects';
+import { AspectPill } from '@/modules/library/presentation/components/Aspects/Aspects';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { UnassignedChips } from '../../atoms/unassignedChips';
 import { NotesSection } from '../../notes/notesSection';
 import { AttacksTable } from '../../stats/attacksTable';
 import { SkillsTable } from '../../stats/skillsTable';
 import { ToolsTable } from '../../stats/toolsTable';
+import aspectStyles from '../../aspects/aspects.module.scss';
 import styles from '../tabs.module.scss';
 
 /** Benefit categories the overview skill/trade tables account for. */
@@ -186,6 +190,62 @@ const unlockedFeatureShards = (
       (s) => s.level === undefined || s.level <= v.level,
     ),
   ]);
+
+/**
+ * Every aspect the character's chosen boons, feats and unlocked features
+ * carry, most frequent first, each with how many picks carry it.
+ *
+ * @component
+ * @returns {JSX.Element} Rendered aspect summary section
+ */
+export const AspectSummary: React.FC = () => {
+  const t = useTranslations('characterSheet');
+  const locale = useLocale();
+  const data = useSheetData();
+
+  const counts = useMemo(
+    () =>
+      rollUpAspects(
+        [
+          ...data.selectedBoons,
+          ...(data.selectedFeats ?? []),
+          ...unlockedFeatureShards(data),
+        ].map((s) => s.tags),
+      ),
+    [data],
+  );
+  const byRaw = useMemo(
+    () => new Map(counts.map((c) => [c.aspect, c.count])),
+    [counts],
+  );
+  const parsed = useMemo(
+    () => displayAspects(counts.map((c) => c.aspect)),
+    [counts],
+  );
+
+  return (
+    <section aria-label={t('ariaAspectSummary')}>
+      <h3 className={styles.sectionTitle}>{t('aspectSummary')}</h3>
+      {parsed.length === 0 ? (
+        <p className={aspectStyles.summaryEmpty}>{t('aspectSummaryEmpty')}</p>
+      ) : (
+        <div className={aspectStyles.summary}>
+          {parsed.map((aspect) => {
+            const count = byRaw.get(aspect.raw) ?? 0;
+            return (
+              <span key={aspect.raw} className={aspectStyles.summaryItem}>
+                <AspectPill aspect={aspect} locale={locale} />
+                {count > 1 && (
+                  <span className={aspectStyles.summaryCount}>×{count}</span>
+                )}
+              </span>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+};
 
 /**
  * Chip clouds for the character's chosen boons, feats, and unlocked features.

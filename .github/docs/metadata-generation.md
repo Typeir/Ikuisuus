@@ -846,6 +846,20 @@ export const components = {
 
 **Why Centralized**: Components need to be passed to the mdx compiler for pre-rendering.
 
+## Aspect Rows (in-page pills)
+
+Aspects render inside library pages as pill rows placed by the compile pipeline, keyed by anchor.
+
+| Step | Where | Output |
+| --- | --- | --- |
+| Extract | generators (`features`, `boons`, …) | shard `name`, optional `heading` (rendered text when it differs, e.g. deed cost suffixes), `tags` |
+| Index | `loadArticleMetadata` → `aspectIndexOf` | `sections[]` keyed `anchorSlug(toPlainMeasure(heading ?? name))`, both bare and `record/anchor`; `records[]` = stat block title anchors |
+| Section | `rehypeSectionize` | `<section data-anchor>` / `<article data-anchor>`, bare slug on `node.data.slug` |
+| Place | `rehypeAspects` | `<Aspects section=key />` after headings, after entry labels, after Collapsible summaries; record-first key resolution (`record/slug`, then `slug`) |
+| Render | `Aspects` + `ArticleMetadataContext` | `aspectsFor(key)` |
+
+Records: a level-1 heading or a quoted heading (statlet) whose slug is in `records` starts a record scope that holds for following siblings; a quote's records end with the quote. Authored `aspects:` / `denyAspects:` frontmatter targets a feature via `{ anchor: [aspects] }` entries; bare `group:value` entries target the sheet.
+
 ## Related Documentation
 
 - [Build Pipeline](./build-pipeline.md) - Pre-init stages and dependencies

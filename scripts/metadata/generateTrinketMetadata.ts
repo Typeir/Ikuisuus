@@ -13,10 +13,12 @@ import { toNativeMeasure } from '@/lib/units/nativeMeasure';
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
+import matter from 'gray-matter';
 import {
   GameData,
   blankFrontmatter,
   clean,
+  applyAuthoredAspects,
   extractAllTags,
   filePathToSlug,
   findContentImage,
@@ -256,9 +258,10 @@ export function parseTrinketSource(
       link: `/library/items/trinkets/${slug}`,
       itemType: itemType || 'adventuring gear',
       ...properties,
-      tags: extractAllTags(raw, filePath, sharedData, {
-        contentType: 'generic',
-      }),
+      tags: applyAuthoredAspects(
+        extractAllTags(raw, filePath, sharedData, { contentType: 'generic' }),
+        matter(raw).data,
+      ),
     };
 
     if (description) {

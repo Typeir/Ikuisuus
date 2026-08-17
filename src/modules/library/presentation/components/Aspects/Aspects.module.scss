@@ -1,12 +1,15 @@
 @use 'mixins-icon' as *;
 @use 'mixins-focus' as *;
+@use 'mixins-button' as *;
 
 .row {
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin-block: 0.5rem 0.9rem;
+  /* About one line of body text top and bottom together, so the row sits
+     inside the heading→prose rhythm rather than opening a gap in it. */
+  margin-block: 0.35rem 0.6rem;
 }
 
 .caption {
@@ -30,10 +33,15 @@
    `stroke: currentColor` — losing the cascade repaints the icon in link green,
    not just the text. Specificity alone cannot settle an inherited value against
    a hover rule, so the declaration is marked instead. */
-a.aspect {
+a.aspect,
+button.aspect,
+span.aspect {
   --aspect-fg: var(--aspect-default);
 
+  @include button-still;
   display: inline-flex;
+  font-family: inherit;
+  cursor: pointer;
   align-items: center;
   gap: 0.3rem;
   padding: 0.14rem 0.42rem;
@@ -49,7 +57,9 @@ a.aspect {
   background: color-mix(in oklab, var(--aspect-fg) 14%, var(--color-bg));
   border: 1px solid color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
   border-radius: 999px;
-  text-decoration: none;
+  /* The prose/link rules underline every anchor in an article; a pill is a
+     chip, never underlined, in any display mode. */
+  text-decoration: none !important;
   transition:
     background 0.14s ease,
     border-color 0.14s ease;
@@ -62,6 +72,24 @@ a.aspect {
   &:focus-visible {
     outline: 2px solid var(--aspect-fg);
     outline-offset: 2px;
+  }
+
+  &[aria-pressed='true'] {
+    background: color-mix(in oklab, var(--aspect-fg) 30%, var(--color-bg));
+    border-color: var(--aspect-fg);
+  }
+
+  /* Authored facets — form and myth — are the ones a build hinges on; the
+     rest can be read off the text. They wear a heavier, fuller-toned ring so
+     they read first in a row without changing size or layout. */
+  &[data-group='form'],
+  &[data-group='myth'] {
+    border-color: color-mix(in oklab, var(--aspect-fg) 70%, var(--color-bg));
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--aspect-fg) 45%, var(--color-bg));
+
+    &:hover {
+      box-shadow: 0 0 0 1px var(--aspect-fg);
+    }
   }
 }
 
@@ -149,6 +177,13 @@ a.aspect {
   .group,
   .separator {
     display: none;
+  }
+}
+
+/* Verbose keeps the full `group: value` text and still shows the mark. */
+:global(html[data-aspect-display='verbose']) {
+  .mark {
+    display: block;
   }
 }
 
@@ -313,7 +348,11 @@ a.aspect {
   }
 }
 
-a.glyph {
+/* Glyphs fill their carousel slot; a glyph in a plain row (`AspectGlyphs`)
+   sizes itself instead. */
+a.glyph,
+button.glyph,
+span.glyph {
   --aspect-fg: var(--aspect-default);
 
   display: grid;
@@ -351,6 +390,14 @@ a.glyph {
   }
 }
 
+/* Same authored emphasis on carousel glyphs. */
+a.glyph[data-group='form'],
+a.glyph[data-group='myth'],
+span.glyph[data-group='form'],
+span.glyph[data-group='myth'] {
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--aspect-fg) 55%, var(--color-bg));
+}
+
 /* Floats under the button rather than sitting at the far edge: at the edge it
    was the one thing a reader had to look away from the row to find, and the
    pills covered it the moment the row unpacked. Absolute so it can never push
@@ -383,5 +430,92 @@ a.glyph {
 
   .slot {
     transform: translate3d(calc(var(--index) * var(--step)), 0, 0) scale(1);
+  }
+}
+
+/* `AspectGlyphs`: a plain glyph row outside the carousel. Each glyph is its
+   own 26px slot; a capped row folds the rest into a `+n` marker. */
+.glyphs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+  min-width: 0;
+
+  > a,
+  > button,
+  > span:not(.glyphMore) {
+    width: 26px;
+    height: 26px;
+    flex: none;
+  }
+}
+
+.glyphsCapped {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.glyphMore {
+  font-size: 0.65rem;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+
+/* Inline `<Aspect>` in prose: its own display mode wins over the site-wide
+   setting, and it sits on the text baseline. */
+.inline {
+  display: inline-flex;
+  align-items: center;
+  /* Centred on the x-height, not the baseline, and capped to the line so
+     the pill never grows the line box. */
+  vertical-align: middle;
+  height: 1em;
+  margin: 0 0.1em;
+
+  > a,
+  > span {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    height: auto;
+    max-height: 1.55em;
+    border-radius: 999px;
+    padding: 3px 0.45rem 4px 0.35rem;
+    line-height: 1.2;
+    font-size: 0.85em;
+  }
+}
+
+.inline.inlineVerbose {
+  .mark,
+  .label,
+  .group,
+  .separator {
+    display: inline-block;
+  }
+}
+
+.inline.inlineCompact {
+  .mark {
+    display: inline-block;
+  }
+  .group,
+  .separator {
+    display: none;
+  }
+}
+
+.inline.inlineGlyph {
+  > a {
+    width: 1.4em;
+    height: 1.4em;
+    max-height: none;
+    padding: 0;
+    display: inline-grid;
+  }
+  .label {
+    display: none;
   }
 }

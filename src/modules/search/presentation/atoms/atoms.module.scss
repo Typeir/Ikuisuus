@@ -70,10 +70,10 @@ a:hover .resultTitle {
 
   :global(mark) {
     color: var(--color-accent);
-    background: var(--color-accent-a10);
+    background: rgb(var(--color-accent-a10));
     border-radius: 2px;
     padding: 0 1px;
-    box-shadow: 0 0 6px 1px var(--color-accent-a20);
+    box-shadow: 0 0 6px 1px rgb(var(--color-accent-a20));
   }
 }
 
@@ -172,7 +172,7 @@ a:hover .resultTitle {
 
   &:hover,
   &:focus-visible {
-    background: var(--color-accent-a10);
+    background: rgb(var(--color-accent-a10));
     transform: scale(var(--row-scale)) translateX(var(--row-translate));
     outline: none;
 

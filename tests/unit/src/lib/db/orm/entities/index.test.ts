@@ -21,7 +21,9 @@ import {
     SpellComponentEmbed,
     SpellEntity,
     SpellListEntity,
+    RuleEntity,
     TrinketEntity,
+    WorldEntity,
     TrinketSavingThrowEmbed,
 } from '@/lib/db/orm/entities';
 import { describe, expect, it } from 'vitest';
@@ -34,6 +36,8 @@ describe('entities/index barrel', () => {
     expect(SpellListEntity).toBeDefined();
     expect(HeirloomEntity).toBeDefined();
     expect(TrinketEntity).toBeDefined();
+    expect(RuleEntity).toBeDefined();
+    expect(WorldEntity).toBeDefined();
     expect(SchemaMigrationEntity).toBeDefined();
   });
 

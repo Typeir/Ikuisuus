@@ -24,14 +24,12 @@ import styles from '@/modules/metadata-tables/presentation/SpellTable/SpellTable
  * @interface FilteredSpellTableControlsProps
  * @property {SpellTableFilterState} state - Current filter state.
  * @property {SpellTableFilterSetters} setters - Filter state setters.
- * @property {FilterSelectOption[]} schoolOptions - School options.
  * @property {FilterSelectOption[]} concentrationOptions - Concentration options.
  * @property {(key: string) => string} tFilters - Translation function for filter labels.
  */
 interface FilteredSpellTableControlsProps {
   state: SpellTableFilterState;
   setters: SpellTableFilterSetters;
-  schoolOptions: FilterSelectOption[];
   concentrationOptions: FilterSelectOption[];
   tFilters: (key: string) => string;
 }
@@ -46,7 +44,6 @@ interface FilteredSpellTableControlsProps {
 export function FilteredSpellTableControls({
   state,
   setters,
-  schoolOptions,
   concentrationOptions,
   tFilters,
 }: FilteredSpellTableControlsProps): JSX.Element {
@@ -67,20 +64,6 @@ export function FilteredSpellTableControls({
               onChange={(e) => setters.setDamoclesOnly(e.target.checked)}
             />
           </div>
-        </div>
-
-        <div className={styles.filterGroup}>
-          <span className={styles.filterLabel}>{tFilters('school')}</span>
-          <FilterSelect
-            id='spell-school-filter'
-            value={state.schoolFilter}
-            options={schoolOptions}
-            onChange={setters.setSchoolFilter}
-            allLabel={tFilters('allSchools')}
-            placeholder={tFilters('allSchools')}
-            ariaLabel={tFilters('school')}
-            size='sm'
-          />
         </div>
 
         <div className={styles.filterGroup}>

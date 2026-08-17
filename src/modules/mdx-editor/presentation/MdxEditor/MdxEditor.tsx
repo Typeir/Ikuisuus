@@ -19,6 +19,10 @@ import { EditorAuthSection } from '@/modules/mdx-editor/presentation/EditorAuthS
 import { EditorFooter } from '@/modules/mdx-editor/presentation/EditorFooter/EditorFooter';
 import { EditorPathSection } from '@/modules/mdx-editor/presentation/EditorPathSection/EditorPathSection';
 import { EditorSplitPane } from '@/modules/mdx-editor/presentation/EditorSplitPane/EditorSplitPane';
+import { useNotifications } from '@/lib/components/ui';
+import { replaceAllText } from '@/modules/mdx-editor/domain/editorCommands';
+import { loadContentForEditing } from '@/modules/mdx-editor/application/use-cases/loadContentForEditing';
+import { useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import styles from './MdxEditor.module.scss';
@@ -53,6 +57,23 @@ interface MdxEditorProps {
  */
 export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
   const t = useTranslations('mdxEditor');
+  const notifications = useNotifications();
+
+  const handleCopyFrom = useCallback(
+    async (slug: string) => {
+      try {
+        const data = await loadContentForEditing(slug, locale);
+        replaceAllText(TEXTAREA_ID, data.content);
+      } catch (error) {
+        notifications.error(
+          t('copyFrom.failed', {
+            reason: error instanceof Error ? error.message : String(error),
+          }),
+        );
+      }
+    },
+    [locale, notifications, t],
+  );
   const searchParams = useSearchParams();
   const {
     token,
@@ -129,6 +150,7 @@ export const MdxEditor = ({ locale }: MdxEditorProps): JSX.Element => {
           mode={editor.mode}
           newPlaceholder={t('newPlaceholder')}
           filePath={editor.filePath}
+          onCopyFrom={handleCopyFrom}
         />
       )}
 

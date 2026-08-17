@@ -19,7 +19,7 @@ type EvaluateMdxOptions = EvaluateOptions['mdxOptions'];
  * @property {EvaluateMdxOptions} [mdxOptions] - Optional MDX plugin options.
  * @property {string} [baseUrl] - Optional base URL for relative links.
  * @property {boolean} [parseFrontmatter=true] - Whether frontmatter should be parsed.
- * @property {string[]} [aspectSections] - Heading texts that carry aspects; an aspect row is placed under each.
+ * @property {{ keys: string[]; records: string[] }} [aspects] - Aspect index: section keys carrying aspects and record anchors; a row is placed under each matching section.
  */
 export interface CompileOptions {
   source: string;
@@ -27,7 +27,7 @@ export interface CompileOptions {
   mdxOptions?: EvaluateMdxOptions;
   baseUrl?: string;
   parseFrontmatter?: boolean;
-  aspectSections?: string[];
+  aspects?: { keys: string[]; records: string[] };
 }
 
 export type { EvaluateMdxOptions };

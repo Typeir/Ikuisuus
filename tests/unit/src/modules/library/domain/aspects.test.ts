@@ -120,9 +120,9 @@ describe('aspectColour', () => {
   });
 
   /** One state must not be two colours across the wiki. */
-  it('should borrow the encounter tracker palette for phases', () => {
+  it('should borrow the encounter tracker palette for phases, behind a pill-only override', () => {
     expect(aspectColour(parseAspect('phase:bloodied')!)).toBe(
-      'var(--color-phase-bloodied, var(--aspect-default))',
+      'var(--aspect-phase-bloodied, var(--color-phase-bloodied, var(--aspect-default)))',
     );
   });
 

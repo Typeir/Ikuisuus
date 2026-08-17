@@ -17,6 +17,8 @@ import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 import {
+    applyAuthoredFeatureAspects,
+  stampAnchors,
     blankFrontmatter,
     clean,
     extractAllTags,
@@ -383,15 +385,16 @@ function classifyArchetype(progression: string | null): string {
  *
  * @param {string[]} lines - MDX file split by newline
  * @param {string} featureName - Feature display name to search for
- * @returns {{ startLine: number; endLine: number } | null} Line range or null if not found
+ * @returns {{ startLine: number; endLine: number; heading: string } | null} Line range and the raw heading text (level prefix kept, bold stripped), or null if not found
  */
 function findFeatureLineRange(
   lines: string[],
   featureName: string,
-): { startLine: number; endLine: number } | null {
+): { startLine: number; endLine: number; heading: string } | null {
   const target = featureName.replace(/\*\*/g, '').trim().toLowerCase();
   let startIdx = -1;
   let headingLevel = 0;
+  let heading = '';
 
   for (let i = 0; i < lines.length; i++) {
     const m = /^(#{1,6})\s+(.+)$/.exec(lines[i]);
@@ -403,6 +406,7 @@ function findFeatureLineRange(
     if (headingText === target || stripped === target) {
       startIdx = i;
       headingLevel = m[1].length;
+      heading = m[2].replace(/\*\*/g, '').trim();
       break;
     }
   }
@@ -422,7 +426,7 @@ function findFeatureLineRange(
     endIdx--;
   }
 
-  return { startLine: startIdx + 1, endLine: endIdx + 1 };
+  return { startLine: startIdx + 1, endLine: endIdx + 1, heading };
 }
 
 /**
@@ -546,6 +550,11 @@ async function parseVocationFile(
       featuresWithLines as RangedFeature[],
       rawLines,
       sharedData,
+    );
+    stampAnchors(featuresWithLines as Array<{ name?: string; heading?: string }>);
+    applyAuthoredFeatureAspects(
+      featuresWithLines as Array<{ name?: string; heading?: string; tags?: string[] }>,
+      matter(raw).data as Record<string, unknown>,
     );
 
     let spellcasting: { ability: string; progression: string } | undefined;

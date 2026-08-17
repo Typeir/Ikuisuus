@@ -28,6 +28,7 @@ import {
     runWithCli,
     type SharedData,
     type StorageAdapter,
+  featureAnchor,
 } from '.';
 import { extractFeatureGrants } from './extraction/grantsExtractor';
 import { SLUG } from './parsingPatterns';
@@ -187,6 +188,7 @@ function parseFeatures(
   const lines = raw.split('\n');
   const features: Array<{
     name: string;
+    anchor?: string;
     startLine: number;
     endLine: number;
     tags: string[];
@@ -205,7 +207,7 @@ function parseFeatures(
         }),
       ),
     ).sort();
-    features.push({ name, startLine: i + 1, endLine: endIdx + 1, tags });
+    features.push({ name, anchor: featureAnchor(name), startLine: i + 1, endLine: endIdx + 1, tags });
   }
 
   return features;

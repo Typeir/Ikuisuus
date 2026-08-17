@@ -9,6 +9,52 @@ import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<typeof import('next-intl')>(),
+  );
+});
+
+vi.mock('@/modules/mdx-editor/presentation/AspectEditor', () => ({
+  AspectEditor: ({
+    isOpen,
+    initial,
+    onApply,
+  }: {
+    isOpen: boolean;
+    initial: string[];
+    onApply: (a: string[]) => void;
+  }) =>
+    isOpen ? (
+      <div data-testid='aspect-editor' data-initial={initial.join(',')}>
+        <button type='button' onClick={() => onApply([...initial, 'form:blade'])}>
+          apply-stub
+        </button>
+      </div>
+    ) : null,
+}));
+
+vi.mock('@/modules/mdx-editor/presentation/ContentPicker', () => ({
+  ContentPicker: ({
+    label,
+    onPick,
+    icon,
+  }: {
+    label: string;
+    onPick: (slug: string) => void;
+    icon: React.ReactNode;
+  }) => (
+    <button
+      type='button'
+      data-testid='content-picker'
+      aria-label={label}
+      onClick={() => onPick('monsters/mucklord')}>
+      {icon}
+    </button>
+  ),
+}));
+
 vi.mock('@/modules/mdx-editor/presentation/MdxEditor/MdxEditor.module.scss', () => ({
   default: {
     toolbar: 'toolbar',
@@ -81,6 +127,8 @@ vi.mock('lucide-react', async (importOriginal) => ({
   Undo2: () => <span data-testid='icon-undo' />,
   Redo2: () => <span data-testid='icon-redo' />,
   Copy: () => <span data-testid='icon-copy' />,
+  FileText: () => <span data-testid='icon-file-text' />,
+  Tag: () => <span data-testid='icon-tag' />,
 }));
 
 import { EditorToolbar } from '@/modules/mdx-editor/presentation/EditorToolbar/EditorToolbar';
@@ -160,12 +208,58 @@ describe('EditorToolbar', () => {
     expect(replaceAllText).toHaveBeenCalledWith('editor', creature?.content);
   });
 
-  it('renders the sample select as a copy icon trigger with all samples', () => {
+  it('renders the sample select as a document icon trigger with all samples', () => {
     render(<EditorToolbar textareaId='editor' value='' disabled={false} />);
 
     const trigger = screen.getByTestId('select-icon-trigger');
-    expect(trigger.querySelector('[data-testid="icon-copy"]')).not.toBeNull();
+    expect(
+      trigger.querySelector('[data-testid="icon-file-text"]'),
+    ).not.toBeNull();
     expect(screen.getByRole('button', { name: 'Sample rule' })).toBeDefined();
     expect(screen.getByRole('button', { name: 'Sample world' })).toBeDefined();
+  });
+
+  it('omits the copy-from picker without a handler and renders it with one', async () => {
+    const { unmount } = render(
+      <EditorToolbar textareaId='editor' value='' disabled={false} />,
+    );
+    expect(screen.queryByTestId('content-picker')).toBeNull();
+    unmount();
+
+    const onCopyFrom = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <EditorToolbar
+        textareaId='editor'
+        value=''
+        disabled={false}
+        onCopyFrom={onCopyFrom}
+      />,
+    );
+    const picker = screen.getByTestId('content-picker');
+    expect(picker.getAttribute('aria-label')).toBe('Copy from existing page');
+    expect(picker.querySelector('[data-testid="icon-copy"]')).not.toBeNull();
+    await user.click(picker);
+    expect(onCopyFrom).toHaveBeenCalledWith('monsters/mucklord');
+  });
+
+  it('opens the aspect editor seeded from the frontmatter and writes aspects back on apply', async () => {
+    const { replaceAllText } =
+      await import('@/modules/mdx-editor/domain/editorCommands');
+    const user = userEvent.setup();
+    const value = '---\nsource: a\naspects:\n  - damage:fire\n---\n\n# X\n';
+
+    render(<EditorToolbar textareaId='editor' value={value} disabled={false} />);
+    expect(screen.queryByTestId('aspect-editor')).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: 'Edit aspects' }));
+    const editor = screen.getByTestId('aspect-editor');
+    expect(editor.getAttribute('data-initial')).toBe('damage:fire');
+
+    await user.click(screen.getByText('apply-stub'));
+    expect(replaceAllText).toHaveBeenCalledWith(
+      'editor',
+      '---\nsource: a\naspects:\n  - damage:fire\n  - form:blade\n---\n\n# X\n',
+    );
   });
 });

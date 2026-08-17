@@ -44,10 +44,10 @@ import { useImportColumns } from './useImportColumns';
 
 /** Row properties searched per import tab, mirroring the library table views. */
 const SEARCH_KEYS: Record<ImportTab, string[]> = {
-  spells: ['title', 'school', 'castingTimeRaw', 'duration', 'range'],
-  heirlooms: ['title', 'itemType'],
-  trinkets: ['title', 'itemType', 'specialEffects', 'inflictsConditions'],
-  feats: ['title', 'prerequisite', 'description'],
+  spells: ['title', 'castingTimeRaw', 'duration', 'range', 'tags'],
+  heirlooms: ['title', 'itemType', 'tags'],
+  trinkets: ['title', 'itemType', 'specialEffects', 'inflictsConditions', 'tags'],
+  feats: ['title', 'prerequisite', 'description', 'tags'],
 };
 
 /**

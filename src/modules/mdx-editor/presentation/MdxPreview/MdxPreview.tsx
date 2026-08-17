@@ -14,6 +14,7 @@
 import { compileMdxToComponent } from '@/modules/library/infrastructure/compile/compileMdxToComponent';
 import { mdxComponents } from '@/modules/library/presentation';
 import contentStyles from '@/styles/mdxContent.module.scss';
+import { useTranslations } from 'next-intl';
 import type { JSX } from 'react';
 import { Suspense, useEffect, useRef, useState, useTransition } from 'react';
 import cn from '../../../../lib/utils/classNameMerge';
@@ -50,7 +51,8 @@ export function splitFrontmatter(source: string): {
  * @returns {JSX.Element} Loading indicator
  */
 function PreviewFallback(): JSX.Element {
-  return <div className={styles.previewLoading}>Compiling…</div>;
+  const t = useTranslations('mdxEditor.preview');
+  return <div className={styles.previewLoading}>{t('compiling')}</div>;
 }
 
 /**
@@ -93,6 +95,7 @@ function PreviewContent({
  * @returns {JSX.Element} Rendered preview or status message
  */
 export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
+  const t = useTranslations('mdxEditor.preview');
   const [Content, setContent] = useState<React.ComponentType<any> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [renderKey, setRenderKey] = useState(0);
@@ -119,17 +122,17 @@ export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
           setError(null);
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Compilation failed');
+        setError(err instanceof Error ? err.message : t('compileFailed'));
       }
     }, 400);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [body, startTransition]);
+  }, [body, startTransition, t]);
 
   const frontmatterBlock = yaml ? (
-    <pre className={styles.frontmatterBlock} aria-label='Frontmatter'>
+    <pre className={styles.frontmatterBlock} aria-label={t('frontmatter')}>
       {yaml}
     </pre>
   ) : null;
@@ -147,7 +150,7 @@ export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
     return (
       <>
         {frontmatterBlock}
-        <div className={styles.previewEmpty}>Preview</div>
+        <div className={styles.previewEmpty}>{t('empty')}</div>
       </>
     );
   }

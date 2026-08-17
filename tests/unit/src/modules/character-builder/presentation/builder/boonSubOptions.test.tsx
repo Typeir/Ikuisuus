@@ -132,4 +132,20 @@ describe('BoonSubOptions', () => {
       ),
     ).toBeTruthy();
   });
+
+  it('renders inert aspect glyphs per option', () => {
+    const { container } = render(
+      <BoonSubOptions
+        boonName='Frame'
+        options={[{ name: 'Powerful Build', bpValue: 1, tags: ['damage:fire'] }, { name: 'Large Frame', bpValue: 3 }]}
+        mode='choose-one'
+        selected={[]}
+        readOnly={false}
+        bpUnitLabel='BP'
+        onChange={vi.fn()}
+      />,
+    );
+    expect(container.querySelectorAll('span[title="damage: fire"]')).toHaveLength(1);
+    expect(container.querySelectorAll('a')).toHaveLength(0);
+  });
 });

@@ -8,12 +8,22 @@
  * @since 1.0.0
  */
 
+import aspects from '../../messages/en/aspects.json';
 import characterSheet from '../../messages/en/characterSheet.json';
 import common from '../../messages/en/common.json';
 import layout from '../../messages/en/layout.json';
+import mdxEditor from '../../messages/en/mdxEditor.json';
+import search from '../../messages/en/search.json';
 
 /** English catalogue keyed by top-level i18n namespace. */
-const MESSAGES: Record<string, unknown> = { characterSheet, common, layout };
+const MESSAGES: Record<string, unknown> = {
+  aspects,
+  characterSheet,
+  common,
+  layout,
+  mdxEditor,
+  search,
+};
 
 /**
  * Walks a dot-separated path through the message tree.

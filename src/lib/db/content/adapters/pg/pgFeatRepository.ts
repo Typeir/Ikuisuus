@@ -34,6 +34,7 @@ import { PgMetadataRepository } from './PgMetadataRepository';
  */
 const toFeatFeature = (f: FeatFeatureEntity): FeatFeature => ({
   name: f.name,
+  anchor: f.anchor ?? undefined,
   startLine: f.startLine ?? undefined,
   endLine: f.endLine ?? undefined,
   tags: nonEmpty(f.tags) ?? [],

@@ -9,7 +9,7 @@
 import { isMdFile } from '@/lib/md/isMdFile';
 import type { ArticleMetadata } from '@/modules/library/application/context/ArticleMetadataContext';
 import {
-  aspectSectionsOf,
+  aspectIndexOf,
   loadArticleMetadata,
 } from '@/modules/library/application/use-cases/loadArticleMetadata';
 import { compileStatic } from '@/modules/library/infrastructure/compile/compileStatic';
@@ -137,7 +137,7 @@ export async function resolveAndCompileContent({
       components,
       baseUrl,
       parseFrontmatter: true,
-      aspectSections: aspectSectionsOf(articleMetadata),
+      aspects: aspectIndexOf(articleMetadata),
     });
 
     return {

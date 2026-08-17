@@ -20,10 +20,16 @@
  * @property {number} [startLine] - 1-indexed start line of the feature heading block in the source MDX
  * @property {number} [endLine] - 1-indexed last line of the feature heading block in the source MDX
  * @property {string[]} [grants] - Tag-based proficiency grants this feature confers
+ * @property {string} [heading] - Raw heading text the feature renders under
+ * @property {string[]} [tags] - Aspects extracted from the feature body
+ * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
 export interface SpecializationFeature {
   level: number;
   name: string;
+  anchor?: string;
+  heading?: string;
+  tags?: string[];
   startLine?: number;
   endLine?: number;
   grants?: string[];

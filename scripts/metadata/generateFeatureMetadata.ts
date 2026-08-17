@@ -12,6 +12,7 @@
 
 import { createLogger } from '@/lib/logging/logger';
 import type { MonsterFeature } from '@/lib/types/feature';
+import { normalizeStatlet } from './extraction/statletNormalizer';
 import fs from 'fs/promises';
 import path from 'path';
 import {
@@ -25,6 +26,7 @@ import {
     safeWriteFile,
     startTimer,
 } from '.';
+import { CLASSIFIER } from './extraction/featurePatterns';
 import { applyMetaHandler } from './extraction/metaHandlers';
 import { findMetaForFeature, parseMetaTags } from './extraction/metaTagParser';
 import {
@@ -130,13 +132,18 @@ export async function parseMonsterFeatures(
  *
  * @param {string} raw - Complete sheet text including frontmatter
  * @param {string} slug - Monster slug for feature IDs
+ * @param {{ statlet?: { start: number; end: number } }} [options] - `statlet` normalizes that de-quoted line range into section grammar first
  * @returns {MonsterFeature[]} Extracted features
  */
 export function parseMonsterFeaturesSource(
   raw: string,
   slug: string,
+  options?: { statlet?: { start: number; end: number } },
 ): MonsterFeature[] {
   const lines = readLines(blankFrontmatter(raw));
+  if (options?.statlet) {
+    normalizeStatlet(lines, options.statlet.start, options.statlet.end);
+  }
 
   const sections = classifySections(lines);
 
@@ -164,6 +171,17 @@ export function parseMonsterFeaturesSource(
   }
 
   resolveMultiattackRefs(features, slug);
+
+  /* The heading as rendered, when the extractor's name differs from it
+     (`#### **Reposition** (Costs 1 Deed)` → `Reposition`); the section
+     anchor in the DOM comes from the heading. */
+  for (const feat of features) {
+    const line = feat.source ? lines[feat.source.start] : undefined;
+    const match = line?.match(CLASSIFIER.heading);
+    if (!match) continue;
+    const heading = match[2].replace(/\*\*/g, '').trim();
+    if (heading && heading !== feat.name) feat.heading = heading;
+  }
 
   const bodyMap = buildFeatureBodyMap(sections, slug);
 

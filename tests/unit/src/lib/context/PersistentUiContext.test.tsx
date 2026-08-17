@@ -15,7 +15,7 @@ import { Theme } from '@/lib/enums/themes';
 import {
   PERSISTENT_UI_STORAGE_KEY
 } from '@/lib/types/persistentUiState';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -297,5 +297,62 @@ describe('PersistentUiContext', () => {
       consoleError.mockRestore();
     });
   });
-});
 
+  describe('Aspect display mode', () => {
+    it('should stamp the root, expose window.ik.ui, and persist a change', async () => {
+      render(
+        <PersistentUiProvider initialExpandedPaths={[]}>
+          <div />
+        </PersistentUiProvider>
+      );
+      await waitFor(() =>
+        expect(document.documentElement.getAttribute('data-aspect-display')).toBe('compact'),
+      );
+      const ik = (window as unknown as { ik: { ui: { aspectDisplay: string } } }).ik;
+      expect(ik.ui.aspectDisplay).toBe('compact');
+
+      await act(async () => {
+        ik.ui.aspectDisplay = 'verbose';
+      });
+      await waitFor(() =>
+        expect(document.documentElement.getAttribute('data-aspect-display')).toBe('verbose'),
+      );
+      const stored = JSON.parse(localStorage.getItem('ikuisuus-ui-state') ?? '{}');
+      expect(stored.aspectDisplay).toBe('verbose');
+      expect(ik.ui.aspectDisplay).toBe('verbose');
+    });
+
+    it('should hydrate the mode from storage and ignore invalid values', async () => {
+      const seed = (state: object) => {
+        document.cookie = 'ikuisuus-ui-state=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+        localStorage.clear();
+        sessionStorage.clear();
+        localStorage.setItem('ikuisuus-ui-state', JSON.stringify(state));
+      };
+      seed({ theme: 'dark', aspectDisplay: 'glyph' });
+      localStorage.setItem(
+        'ikuisuus-ui-state',
+        JSON.stringify({ theme: 'dark', aspectDisplay: 'glyph' }),
+      );
+      const { unmount } = render(
+        <PersistentUiProvider initialExpandedPaths={[]}>
+          <div />
+        </PersistentUiProvider>
+      );
+      await waitFor(() =>
+        expect(document.documentElement.getAttribute('data-aspect-display')).toBe('glyph'),
+      );
+      unmount();
+
+      seed({ theme: 'dark', aspectDisplay: 'nonsense' });
+      render(
+        <PersistentUiProvider initialExpandedPaths={[]}>
+          <div />
+        </PersistentUiProvider>
+      );
+      await waitFor(() =>
+        expect(document.documentElement.getAttribute('data-aspect-display')).toBe('compact'),
+      );
+    });
+  });
+});

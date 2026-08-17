@@ -146,12 +146,12 @@ export const MonsterImporter: React.FC<MonsterImporterProps> = ({
 
   const isDisabled = disabled || isImporting || pendingImport !== null;
 
-  const filteredItems = searchQuery.trim()
-    ? index.filter(
-        (m) =>
-          m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          m.creatureType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          m.slug.toLowerCase().includes(searchQuery.toLowerCase()),
+  const needle = searchQuery.trim().toLowerCase();
+  const filteredItems = needle
+    ? index.filter((m) =>
+        [m.title, m.creatureType, m.slug].some((field) =>
+          (field ?? '').toLowerCase().includes(needle),
+        ),
       )
     : index;
 

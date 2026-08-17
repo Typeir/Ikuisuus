@@ -24,9 +24,8 @@ export function spellToAbility(spell: SpellMetadata): CharacterAbility {
     spell.level !== undefined
       ? spell.level === 0
         ? 'Cantrip'
-        : `${spell.level}${spell.level === 1 ? 'st' : spell.level === 2 ? 'nd' : spell.level === 3 ? 'rd' : 'th'}-level`
+        : `${spell.level}${spell.level === 1 ? 'st' : spell.level === 2 ? 'nd' : spell.level === 3 ? 'rd' : 'th'}-level Spell`
       : '',
-    spell.school ? ` ${spell.school}` : '',
   ]
     .join('')
     .trim();

@@ -18,7 +18,7 @@ import { parseSpellSource } from './generateSpellMetadata';
 import { parseTrinketSource } from './generateTrinketMetadata';
 import { parseTitle } from './parsingUtils';
 import type { SharedData } from './sharedData';
-import { applyAspectDenyList, extractAllTags } from './taggingUtils';
+import { applyAuthoredAspects, extractAllTags } from './taggingUtils';
 import { filePathToSlug, readLines } from './textUtils';
 
 /**
@@ -158,9 +158,9 @@ export function parseMetadataFromSource(
           {
             slug: filePathToSlug(filePath),
             title: parseTitle(lines),
-            tags: applyAspectDenyList(
+            tags: applyAuthoredAspects(
               extractAllTags(raw, filePath, sharedData),
-              frontmatter.denyAspects,
+              frontmatter,
             ),
           },
         ],

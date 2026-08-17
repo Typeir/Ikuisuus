@@ -337,11 +337,15 @@ export interface Feature {
  * @property {{ type: string; trigger: string; per?: string }} [escalation_mechanic] - Escalating mechanic descriptor
  * @property {Record<string, string>} [meta] - Metadata directives from `<Meta>` MDX tags
  * @property {string} [description] - HTML description text populated at Foundry export time
+ * @property {string} [heading] - Rendered heading text when it differs from `name` (deed cost suffixes)
+ * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
 export interface MonsterFeature extends Omit<
   Feature,
   'damage' | 'saving_throw' | 'description' | 'rawText'
 > {
+  heading?: string;
+  anchor?: string;
   damage?: string;
   damageType?: string;
   damageFlat?: string;

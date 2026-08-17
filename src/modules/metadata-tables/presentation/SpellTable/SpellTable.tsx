@@ -100,7 +100,6 @@ const SpellTable: React.FC<SpellTablesProps> = ({
             getRowSlug={(row) => `${basePath}/${row.slug}`}
             searchKeys={[
               'title',
-              'school',
               'castingTimeRaw',
               'duration',
               'range',

@@ -1,5 +1,6 @@
 {
   "placeholder": "//>: SEARCH",
+  "loading": "Loading search…",
   "ariaLabel": "Search the Archive",
   "searching": "Consulting the Index…",
   "noResults": "░░░░▒▒▒▓▓█ THE SUBJECT OF THIS QUERY HAS BEEN DISAMBIGUATED █▓▓▒▒▒░░░░",

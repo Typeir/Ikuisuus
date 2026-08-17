@@ -32,6 +32,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import { FilterSelect, NumericInput } from '../../ui';
 import styles from './metadataTable.module.scss';
+import { useAspectsColumn } from './useAspectsColumn';
 
 import type {
   ColumnConfig,
@@ -94,7 +95,7 @@ export type { ColumnConfig, MetadataRow } from './metadataTable.types';
  */
 export default function MetadataTable({
   data,
-  columns,
+  columns: ownColumns,
   basePath = '',
   defaultSort,
   locale = 'en',
@@ -108,6 +109,8 @@ export default function MetadataTable({
   const t = useTranslations('tables.common');
   const tFilters = useTranslations('tables.filters');
   const tCommon = useTranslations('common');
+
+  const columns = useAspectsColumn(ownColumns, data, size);
   const [sortKey, setSortKey] = useState<string | null>(
     defaultSort?.key || null,
   );

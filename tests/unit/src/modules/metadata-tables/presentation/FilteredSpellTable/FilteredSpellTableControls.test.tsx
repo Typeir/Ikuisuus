@@ -6,12 +6,10 @@ describe('FilteredSpellTableControls', () => {
   it('renders all filter labels', () => {
     const state = {
       damoclesOnly: false,
-      schoolFilter: '',
       concentrationFilter: '' as const,
     };
     const setters = {
       setDamoclesOnly: vi.fn(),
-      setSchoolFilter: vi.fn(),
       setConcentrationFilter: vi.fn(),
     };
 
@@ -19,14 +17,12 @@ describe('FilteredSpellTableControls', () => {
       <FilteredSpellTableControls
         state={state}
         setters={setters}
-        schoolOptions={[]}
         concentrationOptions={[]}
         tFilters={(key) => key}
       />,
     );
 
     expect(screen.getByText('damoclesOnly')).toBeInTheDocument();
-    expect(screen.getByText('school')).toBeInTheDocument();
     expect(screen.getByText('concentration')).toBeInTheDocument();
   });
 });

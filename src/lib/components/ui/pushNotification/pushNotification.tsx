@@ -28,6 +28,15 @@
 
 'use client';
 
+import {
+  CircleCheck,
+  CircleX,
+  Info,
+  TriangleAlert,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { logger } from '@/lib/logging/logger';
 import {
     createContext,
@@ -99,6 +108,16 @@ export const NOTIFICATION_MAX_VISIBLE = 5;
  * @since 1.0.0
  */
 export type NotificationType = 'info' | 'success' | 'warning' | 'error';
+
+/**
+ * Message key (common namespace) of each level's spoken label.
+ */
+const LEVEL_KEYS: Record<NotificationType, string> = {
+  info: 'levelInfo',
+  success: 'levelSuccess',
+  warning: 'levelWarning',
+  error: 'levelError',
+};
 
 /**
  * Position where notifications appear on screen. Affects entrance animation
@@ -431,16 +450,13 @@ export const NotificationProvider = memo(function NotificationProvider({
 });
 
 /**
- * SVG path data for each notification type icon.
- * All icons use a 20x20 viewBox with evenodd fill/clip rules.
+ * Lucide outline icon per level — transparent body, thick stroke.
  */
-const NOTIFICATION_ICON_PATHS: Record<NotificationType, string> = {  info: 'M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z',
-  success:
-    'M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z',
-  warning:
-    'M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z',
-  error:
-    'M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z',
+const NOTIFICATION_ICONS: Record<NotificationType, LucideIcon> = {
+  info: Info,
+  success: CircleCheck,
+  warning: TriangleAlert,
+  error: CircleX,
 };
 
 /**
@@ -457,6 +473,8 @@ const NotificationItem = memo(function NotificationItem({
   onDismiss,
   position,
 }: NotificationItemProps) {
+  const tCommon = useTranslations('common');
+  const levelLabel = tCommon(LEVEL_KEYS[notification.type]);
   const [isExiting, setIsExiting] = useState(false);
 
   /** Triggers exit animation before calling onDismiss after 200ms animation completes */
@@ -465,20 +483,7 @@ const NotificationItem = memo(function NotificationItem({
     setTimeout(onDismiss, NOTIFICATION_EXIT_ANIMATION_MS);
   }, [onDismiss]);
 
-  /** Returns the appropriate SVG icon based on notification type */
-  const getIcon = () => (
-    <svg
-      className={styles.icon}
-      viewBox='0 0 20 20'
-      fill='currentColor'
-      aria-hidden='true'>
-      <path
-        fillRule='evenodd'
-        d={NOTIFICATION_ICON_PATHS[notification.type ?? 'info']}
-        clipRule='evenodd'
-      />
-    </svg>
-  );
+  const LevelIcon = NOTIFICATION_ICONS[notification.type ?? 'info'];
 
   const enterDirection = position.includes('left') ? 'Left' : 'Right';
 
@@ -492,13 +497,20 @@ const NotificationItem = memo(function NotificationItem({
           '--enter-direction': enterDirection === 'Left' ? '-100%' : '100%',
         } as React.CSSProperties
       }>
-      <div className={styles.iconWrapper}>{getIcon()}</div>
+      <span className={`${styles.fence} ${styles.top}`} aria-hidden='true' />
+      <span className={`${styles.fence} ${styles.bottom}`} aria-hidden='true' />
+      <div className={styles.iconWrapper}>
+        <LevelIcon className={styles.icon} strokeWidth={2.5} aria-hidden='true' />
+      </div>
 
       <div className={styles.content}>
         {notification.title && (
           <div className={styles.title}>{notification.title}</div>
         )}
-        <div className={styles.message}>{notification.message}</div>
+        <div className={styles.message}>
+          <span className={styles.level}>{levelLabel}:</span>{' '}
+          {notification.message}
+        </div>
 
         {notification.action && (
           <button
@@ -517,13 +529,7 @@ const NotificationItem = memo(function NotificationItem({
           className={styles.dismissButton}
           onClick={handleDismiss}
           aria-label='Dismiss notification'>
-          <svg viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
-            <path
-              fillRule='evenodd'
-              d='M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z'
-              clipRule='evenodd'
-            />
-          </svg>
+          <X strokeWidth={2.5} aria-hidden='true' />
         </button>
       )}
     </div>

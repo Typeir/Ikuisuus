@@ -106,6 +106,7 @@ Live inspection in DevTools. Each subsystem registers short key.
 | Key            | Registered             | Purpose                                     |
 | -------------- | ---------------------- | ------------------------------------------- |
 | `window.ik.ws` | `SceneManager.start()` | World Sim controls (removed in `dispose()`) |
+| `window.ik.ui` | `PersistentUiProvider` mount | Persistent UI prefs: `aspectDisplay` (`compact`/`verbose`/`glyph`), `aspectExpanded`, `theme` — all RW, persisted |
 
 ### `window.ik.ws` Properties
 

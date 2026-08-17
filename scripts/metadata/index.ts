@@ -60,6 +60,10 @@ export {
   extractMonsterMechanicTags,
   extractMovementTags,
   extractOrganizationalTags,
+  applyAuthoredAspects,
+  applyAuthoredFeatureAspects,
+  featureAnchor,
+  stampAnchors,
 } from './taggingUtils';
 export type { TagExtractionOptions } from './taggingUtils';
 export {

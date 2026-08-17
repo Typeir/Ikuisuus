@@ -80,6 +80,22 @@ export interface IkWorldSimDebug {
 export interface IkModules {
   /** World Sim module — registered when WorldSim mounts */
   ws: IkWorldSimDebug;
+  /** Persistent UI preferences — registered while PersistentUiProvider is mounted */
+  ui: IkUiDebug;
+}
+
+/**
+ * `window.ik.ui` — persistent UI preferences, live.
+ *
+ * @interface IkUiDebug
+ * @property {'compact' | 'verbose' | 'glyph'} aspectDisplay - RW. How aspect pills render: icon+value, icon+group:value, glyph only.
+ * @property {boolean} aspectExpanded - RW. Whether aspect carousels stay unpacked.
+ * @property {'dark' | 'light'} theme - RW. Active theme.
+ */
+export interface IkUiDebug {
+  aspectDisplay: 'compact' | 'verbose' | 'glyph';
+  aspectExpanded: boolean;
+  theme: 'dark' | 'light';
 }
 
 /**

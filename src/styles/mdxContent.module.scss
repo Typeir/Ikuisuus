@@ -49,7 +49,7 @@
   }
 
   p {
-    margin-bottom: 1em;
+    margin-block: 0.75em;
   }
 
   a {
@@ -213,7 +213,10 @@
   padding-bottom: 5rem;
   overflow-y: clip;
 
-  details {
+  /* Sections nested inside collapsibles and statlet quotes carry no frame or
+     stream: the container is the visual unit there, not each heading. */
+  details,
+  blockquote {
     section[data-heading-level] {
       &::before,
       &::after,

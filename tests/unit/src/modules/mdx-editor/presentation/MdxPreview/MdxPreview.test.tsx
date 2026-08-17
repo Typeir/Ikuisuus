@@ -10,6 +10,13 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const mockCompile = vi.hoisted(() => vi.fn());
 
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('@tests/setup/intlMock');
+  return createRealMessageIntlMock(
+    await importOriginal<typeof import('next-intl')>(),
+  );
+});
+
 vi.mock('@/modules/library/infrastructure/compile/compileMdxToComponent', () => ({
   compileMdxToComponent: mockCompile,
 }));

@@ -25,6 +25,8 @@ import {
 } from 'react';
 import { persistentUiReducer } from '../reducers/persistentUiReducer';
 import {
+  ASPECT_DISPLAY_MODES,
+  type AspectDisplayMode,
   DEFAULT_PERSISTENT_UI_STATE,
   DEFAULT_UNIT_SYSTEM,
   LEGACY_THEME_KEY,
@@ -69,6 +71,7 @@ function readUnitSystem(
     volume: pick(stored.volume, DEFAULT_UNIT_SYSTEM.volume),
   };
 }
+import { useIkUiHandle } from './useIkUiHandle';
 import { fetchPersistentData } from '../utils/fetchPersistentData';
 import { storePersistentData } from '../utils/storePersistentData';
 
@@ -138,6 +141,7 @@ function readPersistedState(
   let unitSystem: UnitSystemPreferences = DEFAULT_UNIT_SYSTEM;
   let correctionsToken: string | null = null;
   let aspectExpanded = false;
+  let aspectDisplay: AspectDisplayMode = 'compact';
   const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
   if (stored) {
     try {
@@ -154,6 +158,12 @@ function readPersistedState(
       }
       if (typeof parsed.aspectExpanded === 'boolean') {
         aspectExpanded = parsed.aspectExpanded;
+      }
+      if (
+        parsed.aspectDisplay &&
+        ASPECT_DISPLAY_MODES.includes(parsed.aspectDisplay)
+      ) {
+        aspectDisplay = parsed.aspectDisplay;
       }
     } catch {
       const legacyTheme = fetchPersistentData(LEGACY_THEME_KEY);
@@ -173,6 +183,7 @@ function readPersistedState(
     unitSystem,
     correctionsToken,
     aspectExpanded,
+    aspectDisplay,
     sidebarMenu: { expandedPaths, isOpen: false },
   };
 }
@@ -196,6 +207,7 @@ function writePersistedState(state: PersistentUiState): void {
     unitSystem: state.unitSystem,
     correctionsToken: state.correctionsToken,
     aspectExpanded: state.aspectExpanded,
+    aspectDisplay: state.aspectDisplay,
   };
 
   storePersistentData(PERSISTENT_UI_STORAGE_KEY, JSON.stringify(serialized));
@@ -207,6 +219,10 @@ function writePersistedState(state: PersistentUiState): void {
   document.documentElement.setAttribute(
     'data-aspect-expanded',
     state.aspectExpanded ? 'true' : 'false',
+  );
+  document.documentElement.setAttribute(
+    'data-aspect-display',
+    state.aspectDisplay,
   );
 }
 
@@ -251,6 +267,8 @@ export function PersistentUiProvider({
   };
 
   const [state, dispatch] = useReducer(persistentUiReducer, initialState);
+
+  useIkUiHandle(state, dispatch);
 
   useEffect(() => {
     writePersistedState(state);

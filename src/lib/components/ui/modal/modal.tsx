@@ -28,6 +28,7 @@ import { useModalA11y } from './useModalA11y';
  * @property {boolean} [showCloseButton=true] - Whether to render the X button
  * @property {string} [ariaLabel] - Accessible label for screen readers
  * @property {string} [className] - Additional CSS classes for modal content
+ * @property {string} [bodyClassName] - Additional CSS classes for the scrolling body
  * @property {string} [overlayClassName] - Additional CSS classes for overlay
  */
 export interface ModalProps {
@@ -39,6 +40,7 @@ export interface ModalProps {
   showCloseButton?: boolean;
   ariaLabel?: string;
   className?: string;
+  bodyClassName?: string;
   overlayClassName?: string;
 }
 
@@ -71,6 +73,7 @@ export const Modal = memo(function Modal({
   showCloseButton = true,
   ariaLabel,
   className = '',
+  bodyClassName = '',
   overlayClassName = '',
 }: ModalProps) {
   const { overlayRef, contentRef } = useModalA11y(isOpen, onClose);
@@ -107,7 +110,7 @@ export const Modal = memo(function Modal({
           </div>
         )}
 
-        <div className={styles.body}>{children}</div>
+        <div className={`${styles.body} ${bodyClassName}`}>{children}</div>
       </div>
     </div>,
     document.body

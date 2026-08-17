@@ -69,8 +69,20 @@ export class VocationFeatureEntity {
   @OrmProperty({ type: 'number', columnType: 'smallint' })
   level!: number;
 
+  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  @OrmProperty({ type: 'string', nullable: true })
+  anchor?: string | null;
+
   @OrmProperty({ type: 'string' })
   name!: string;
+
+  /** @property {string | null} heading - Raw heading text (`1st Level – Spellcasting`), the section the feature renders under */
+  @OrmProperty({ type: 'string', nullable: true })
+  heading?: string | null;
+
+  /** @property {string[] | null} tags - Aspects extracted from the feature body */
+  @OrmProperty({ type: 'string[]', nullable: true })
+  tags?: string[] | null;
 
   @OrmProperty({ type: 'number', fieldName: 'sort_order', columnType: 'smallint' })
   sortOrder!: number;

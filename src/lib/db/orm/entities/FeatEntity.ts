@@ -74,6 +74,10 @@ export class FeatFeatureEntity {
   })
   feat!: FeatEntity;
 
+  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  @OrmProperty({ type: 'string', nullable: true })
+  anchor?: string | null;
+
   @OrmProperty({ type: 'string' })
   name!: string;
 

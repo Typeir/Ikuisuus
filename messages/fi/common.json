@@ -21,5 +21,9 @@
   "initiative": "Aloite",
   "speed": "Nopeus",
   "hpCurrent": "Nykyiset HP",
-  "hpMax": "Maksimi-HP"
+  "hpMax": "Maksimi-HP",
+  "levelInfo": "Tieto",
+  "levelSuccess": "Onnistui",
+  "levelWarning": "Varoitus",
+  "levelError": "Virhe"
 }

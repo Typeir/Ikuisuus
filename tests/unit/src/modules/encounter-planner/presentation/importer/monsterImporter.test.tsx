@@ -148,6 +148,10 @@ describe('MonsterImporter Component', () => {
       size: 'medium',
       creatureType: 'humanoid',
     },
+    {
+      slug: 'primeval-plating',
+      title: 'Primeval Plating',
+    },
   ];
 
   beforeEach(() => {
@@ -187,6 +191,12 @@ describe('MonsterImporter Component', () => {
   });
 
   describe('Rendering', () => {
+    it('should filter without crashing when an entry lacks creatureType', async () => {
+      const user = userEvent.setup();
+      render(<MonsterImporter onImport={mockOnImport} />);
+      await selectCreature(user, 'Primeval Plating');
+    });
+
     it('should export MonsterImporter component', () => {
       expect(MonsterImporter).toBeDefined();
       expect(typeof MonsterImporter).toBe('function');

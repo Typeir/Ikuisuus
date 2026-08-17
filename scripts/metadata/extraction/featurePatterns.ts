@@ -456,9 +456,9 @@ export const ENRICHMENT = {
  * @property {RegExp} spellcasting - Spellcasting heading
  * @property {RegExp} condition - Condition heading
  * @property {RegExp} bloodrage - Bloodrage heading
- * @property {RegExp} minorActions - Minor Actions heading
+ * @property {RegExp} minorActions - Minor / Bonus Actions heading
  * @property {RegExp} reactions - Reactions heading
- * @property {RegExp} actions - Actions heading
+ * @property {RegExp} actions - Actions / Major Actions heading
  * @property {RegExp} traits - Traits heading
  * @property {RegExp} heading - Any heading with level and text capture
  */
@@ -470,9 +470,9 @@ export const CLASSIFIER = {
   spellcasting: /^spellcasting/i,
   condition: /^condition:\s*/i,
   bloodrage: /^bloodrage/i,
-  minorActions: /^bonus\s*actions?/i,
+  minorActions: /^(?:bonus|minor)\s*actions?$/i,
   reactions: /^reactions?$/i,
-  actions: /^actions?$/i,
+  actions: /^(?:major\s+)?actions?$/i,
   traits: /^traits?$/i,
   heading: /^(#{1,6})\s+(.+?)\s*$/,
 } as const;

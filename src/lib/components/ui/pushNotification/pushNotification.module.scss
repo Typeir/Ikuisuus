@@ -4,6 +4,7 @@
  */
 
 @use 'mixins' as *;
+@include skeleton-sweep-keyframes;
 
 // Container positions
 .container {
@@ -72,16 +73,24 @@
   border: 0;
 }
 
-// Individual notification
+// Individual notification — a fenced console block. The top and bottom
+// fences ARE the skeleton lattice (same mask, same pitch, same traveling
+// density band), recoloured to the level: the level colour is the matter,
+// its two glints are lighter mixes of it. A solid cell top-left is the
+// corner mark. Near-square corners, no coloured side bar.
 .notification {
+  --level: var(--color-info);
+  --fence-h: #{$skeleton-pitch};
+
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
 
   min-width: 300px;
   max-width: 420px;
-  padding: 0.875rem 1rem;
-  border-radius: 0.5rem;
+  padding: calc(var(--fence-h) + 0.75rem) 1rem calc(var(--fence-h) + 0.625rem);
+  border-radius: 2px;
 
   background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
@@ -107,39 +116,51 @@
     to { --_: pn-slideOut-to; opacity: 0; transform: translateX(var(--enter-direction, 100%)); }
   }
 
-  // Type variants - using theme tokens from globals.scss
-  &.info {
-    border-left: 4px solid var(--color-info);
+  // Level variants
+  &.info { --level: var(--color-info); }
+  &.success { --level: var(--color-success); }
+  &.warning { --level: var(--color-warning); }
+  &.error { --level: var(--color-error); }
 
-    .iconWrapper {
-      color: var(--color-info);
-    }
+  .iconWrapper,
+  .level {
+    color: var(--level);
+  }
+}
+
+// One lattice bar, level-toned. Matter is the level colour; the band's
+// shoulder and crest are the same colour lifted toward white so the sweep
+// reads as light moving through the fence, not a second hue.
+.fence {
+  --skeleton-matter: var(--level);
+  --skeleton-rest-alpha: 55%;
+  --skeleton-glint-1: color-mix(in srgb, var(--level) 70%, white);
+  --skeleton-glint-2: color-mix(in srgb, var(--level) 45%, white);
+
+  @include skeleton-lattice;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--fence-h);
+  pointer-events: none;
+
+  &::before {
+    @include skeleton-strip;
   }
 
-  &.success {
-    border-left: 4px solid var(--color-success);
-
-    .iconWrapper {
-      color: var(--color-success);
-    }
+  &.top {
+    top: 0;
   }
 
-  &.warning {
-    border-left: 4px solid var(--color-warning);
+  &.bottom {
+    bottom: 0;
 
-    .iconWrapper {
-      color: var(--color-warning);
-    }
-  }
-
-  &.error {
-    border-left: 4px solid var(--color-error);
-
-    .iconWrapper {
-      color: var(--color-error);
+    &::before {
+      animation-delay: -1.2s;
     }
   }
 }
+
 
 // Icon wrapper
 .iconWrapper {
@@ -174,6 +195,13 @@
   word-wrap: break-word;
 }
 
+.level {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
 // Action button
 // Bare <button> = primary CTA (color + hover from the global rule); local class
 // keeps the compact toast sizing + focus ring.
@@ -186,36 +214,30 @@
   @include focus-accent-outline;
 }
 
-// Dismiss button
+// Dismiss — the site's transparent icon button (secondary at rest, colour
+// lift on hover), cut into the top-left corner of the fence. The block's
+// own background shows through the button so the lattice reads as broken
+// there rather than covered.
 .dismissButton {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 1.5rem;
-  height: 1.5rem;
+  @include icon-transparent(var(--level));
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--fence-h) * 2);
+  height: calc(var(--fence-h) * 2);
   padding: 0;
-  border: none;
-  border-radius: 0.25rem;
-  background: var(--color-bg);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+  z-index: 1;
+  background: var(--color-bg-secondary) !important;
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: calc(var(--fence-h) * 1.5);
+    height: calc(var(--fence-h) * 1.5);
   }
 
-  &:hover {
-    background-color: var(--color-bg-tertiary);
-    color: var(--color-text);
+  &:focus-visible {
+    outline: 2px solid var(--level);
+    outline-offset: -2px;
   }
-
-  @include focus-accent-outline;
 }
 
 // Light theme
@@ -258,5 +280,15 @@
     min-width: 0;
     max-width: none;
     width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notification {
+    animation: none;
+  }
+
+  .fence::before {
+    animation: none; /* band parks off-left: static dithered fence only */
   }
 }

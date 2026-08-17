@@ -14,6 +14,7 @@ import { execSync } from 'node:child_process';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { runCheck as checkAnchors } from './checkAnchors';
 import { runCheck as checkAntipatterns } from './checkAntipatterns';
 import { runCheck as checkDuplicateCss } from './checkDuplicateCss';
 import { runCheck as checkFileLength } from './checkFileLength';
@@ -67,6 +68,7 @@ const CHECKS: CheckEntry[] = [
   { name: 'orphaned-mdx-links', run: checkOrphanedMdxLinks },
   { name: 'smoke-tests', run: checkSmokeTests },
   { name: 'type-script-check', run: checkTsCompilation },
+  { name: 'anchors', run: checkAnchors },
 ];
 
 /**

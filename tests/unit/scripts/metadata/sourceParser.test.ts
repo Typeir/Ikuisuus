@@ -193,3 +193,124 @@ describe('parseMetadataFromSource', () => {
     expect(record.tags).not.toContain('damage:fire');
   });
 });
+
+describe('authored aspects frontmatter', () => {
+  it('should add `aspects:` entries and honour `denyAspects:` in the spell parser', () => {
+    const raw = [
+      '---',
+      'contentType: spells',
+      'aspects:',
+      '  - form:blade',
+      '  - myth:dreamcatcher',
+      'denyAspects:',
+      '  - damage:fire',
+      '---',
+      '',
+      '# Bolt',
+      '',
+      '> **Bolt**  ',
+      '> _1st-level Evocation_  ',
+      '> **Range**: [= 12 stride =]  ',
+      '>',
+      '> The target takes [% 1d8 fire %].',
+      '',
+    ].join('\n');
+    const record = parseMetadataFromSource(raw, '', sharedData)
+      .records[0] as { tags: string[] };
+    expect(record.tags).toContain('form:blade');
+    expect(record.tags).toContain('myth:dreamcatcher');
+    expect(record.tags).not.toContain('damage:fire');
+  });
+
+  it('should add `aspects:` on the generic path and ignore malformed entries', () => {
+    const raw = [
+      '---',
+      'aspects:',
+      '  - myth:sun',
+      '  - not a tag',
+      '  - 42',
+      '---',
+      '',
+      '# Rule',
+      '',
+      'Prose.',
+    ].join('\n');
+    const record = parseMetadataFromSource(raw, '', sharedData)
+      .records[0] as { tags: string[] };
+    expect(record.tags).toContain('myth:sun');
+    expect(record.tags.some((t) => t.includes('not a tag'))).toBe(false);
+  });
+
+  it('should add `aspects:` to the sheet parent for monsters', () => {
+    const raw = [
+      '---',
+      'contentType: monsters',
+      'aspects: [myth:fold]',
+      '---',
+      '',
+      '# Thing',
+      '_Medium Beast, Neutral_',
+      '',
+      '| **Armor Class** | **Hit Points** | **Speed** |',
+      '| --- | --- | --- |',
+      '| 10 | 10 ([% 2d8 %]) | [= 6 stride =] |',
+      '',
+      '- **Challenge**: 1 (200 XP)',
+      '',
+    ].join('\n');
+    const record = parseMetadataFromSource(raw, '', sharedData)
+      .records[0] as { tags: string[] };
+    expect(record.tags).toContain('myth:fold');
+  });
+});
+
+describe('feature-scoped authored aspects', () => {
+  it('should apply `{ anchor: [aspects] }` entries to the matching monster feature only', () => {
+    const raw = [
+      '---',
+      'contentType: monsters',
+      'aspects:',
+      '  - myth:fold',
+      '  - lorem-strike: [form:blade]',
+      'denyAspects:',
+      '  - lorem-strike: [tempo:major]',
+      '---',
+      '',
+      '# Thing',
+      '_Medium Beast, Neutral_',
+      '',
+      '| **Armor Class** | **Hit Points** | **Speed** |',
+      '| --- | --- | --- |',
+      '| 10 | 10 ([% 2d8 %]) | [= 6 stride =] |',
+      '',
+      '- **Challenge**: 1 (200 XP)',
+      '',
+      '---',
+      '',
+      '## Traits',
+      '',
+      '#### Lorem Ipsum',
+      'Prose.',
+      '',
+      '---',
+      '',
+      '## Actions',
+      '',
+      '#### Lorem Strike',
+      '_Melee Weapon Attack:_ +2 to hit, reach [= 1 stride =], one target.',
+      '_Hit:_ 3 ([% 1d4 +1 bludgeoning %]).',
+      '',
+    ].join('\n');
+    const record = parseMetadataFromSource(raw, '', sharedData).records[0] as {
+      tags: string[];
+      features: Array<{ name: string; tags?: string[] }>;
+    };
+    expect(record.tags).toContain('myth:fold');
+    const strike = record.features.find((f) => f.name === 'Lorem Strike')!;
+    expect(strike.tags).toContain('form:blade');
+    expect(strike.tags).not.toContain('tempo:major');
+    const ipsum = record.features.find((f) => f.name === 'Lorem Ipsum')!;
+    expect(ipsum.tags ?? []).not.toContain('form:blade');
+    expect(record.tags).not.toContain('form:blade');
+  });
+});

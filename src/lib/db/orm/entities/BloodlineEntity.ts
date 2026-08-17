@@ -21,6 +21,7 @@ import {
 } from '@/lib/db/orm/schema';
 import { Collection } from '@mikro-orm/core';
 import type { BloodlineBoonEntity } from './BloodlineBoonEntity';
+import type { BloodlineFeatureEntity } from './BloodlineFeatureEntity';
 
 /**
  * MikroORM entity for the `bloodlines` table.
@@ -103,4 +104,11 @@ export class BloodlineEntity {
     orphanRemoval: true,
   })
   boons = new Collection<BloodlineBoonEntity>(this);
+
+  @OrmOneToMany({
+    entity: 'BloodlineFeatureEntity',
+    mappedBy: 'bloodline',
+    orphanRemoval: true,
+  })
+  features = new Collection<BloodlineFeatureEntity>(this);
 }

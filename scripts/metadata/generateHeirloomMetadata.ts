@@ -15,6 +15,7 @@ import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 import {
+  applyAuthoredAspects,
   ItemData,
   clean,
   extractAllTags,
@@ -598,7 +599,7 @@ export function parseHeirloomSource(
   filePath: string,
   sharedData: SharedData,
 ): object {
-  const { content: raw } = matter(rawFile);
+  const { content: raw, data: frontmatter } = matter(rawFile);
   const lines = readLines(raw);
   const baseSlug = filePathToSlug(filePath);
 
@@ -736,7 +737,7 @@ export function parseHeirloomSource(
     tags.push('property:nonmagical');
   }
 
-  const uniqueTags = Array.from(new Set(tags)).sort();
+  const uniqueTags = applyAuthoredAspects(tags, frontmatter);
   tags.length = 0;
   tags.push(...uniqueTags);
 

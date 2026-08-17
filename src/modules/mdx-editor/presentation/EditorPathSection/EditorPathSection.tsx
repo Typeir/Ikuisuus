@@ -167,7 +167,7 @@ export function EditorPathSection({
             id='mdx-editor-path'
             type='text'
             className={styles.pathInput}
-            placeholder='folder/filename.mdx'
+            placeholder={t('fullPathPlaceholder')}
             value={filePath}
             onChange={(e) => handlePathChange(e.target.value)}
           />

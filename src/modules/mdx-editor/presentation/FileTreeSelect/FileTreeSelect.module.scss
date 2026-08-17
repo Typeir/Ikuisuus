@@ -25,12 +25,17 @@
   color: var(--color-text);
   font-size: 0.875rem;
   cursor: pointer;
-  transition: border-color 0.15s ease;
   text-align: left;
+  @include button-still;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
 
   &:hover:not(:disabled) {
     border-color: var(--color-accent);
     background: var(--color-surface);
+    box-shadow: 0 0 0 2px rgb(var(--color-accent-a20));
   }
 
   @include focus-accent-outline(1px);
@@ -94,10 +99,18 @@
   font-size: 0.8125rem;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.1s ease;
+  @include button-still;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease;
 
   &:hover {
-    background-color: var(--color-accent-a10);
+    background-color: rgb(var(--color-accent-a10));
+    color: var(--color-accent);
+  }
+
+  &:hover .nodeName {
+    transform: translateX(2px);
   }
 
   @include focus-visible-outline(var(--color-accent), -2px);
@@ -119,6 +132,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: transform 0.12s ease;
 }
 
 .newFileNode {
@@ -135,10 +149,16 @@
   font-style: italic;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.1s ease;
+  @include button-still;
+  transition:
+    background-color 0.12s ease;
 
   &:hover {
-    background-color: var(--color-accent-a10);
+    background-color: rgb(var(--color-accent-a10));
+  }
+
+  &:hover .nodeName {
+    transform: translateX(2px);
   }
 
   @include focus-visible-outline(var(--color-accent), -2px);
@@ -160,11 +180,18 @@
   font-size: 0.75rem;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.1s ease;
+  @include button-still;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease;
 
   &:hover {
-    background-color: var(--color-accent-a10);
+    background-color: rgb(var(--color-accent-a10));
     color: var(--color-text);
+  }
+
+  &:hover .nodeName {
+    transform: translateX(2px);
   }
 
   @include focus-visible-outline(var(--color-accent), -2px);
@@ -183,7 +210,12 @@
   }
 
   .chevron,
-  .nodeIcon {
+  .nodeIcon,
+  .nodeName,
+  .trigger,
+  .treeNode,
+  .newFileNode,
+  .fileNode {
     transition: none;
   }
 }

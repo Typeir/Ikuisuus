@@ -45,7 +45,7 @@ describe('importHelpers', () => {
       expect(ability.id).toBeTruthy();
     });
 
-    it('renders a blockquote mechanics block with level and school', () => {
+    it('renders a blockquote mechanics block with the level line', () => {
       const spell = {
         title: 'Fireball',
         slug: 'fireball',
@@ -59,7 +59,8 @@ describe('importHelpers', () => {
 
       expect(mechanics).toContain('> **Fireball**');
       expect(mechanics).toContain('3rd-level');
-      expect(mechanics).toContain('Evocation');
+      expect(mechanics).toContain('3rd-level Spell');
+      expect(mechanics).not.toContain('Evocation');
       expect(mechanics).toContain('> **Range**: 150 feet');
       expect(mechanics).toContain('> **Duration**: Instantaneous');
     });

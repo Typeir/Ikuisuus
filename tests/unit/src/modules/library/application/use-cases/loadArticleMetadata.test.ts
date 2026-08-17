@@ -1,6 +1,6 @@
 /**
  * @fileoverview Article Metadata Loader Tests
- * @description Tests `loadArticleMetadata` and `aspectSectionsOf`.
+ * @description Tests `loadArticleMetadata` and `aspectIndexOf`.
  *
  * @module tests/unit/src/modules/library/application/use-cases/loadArticleMetadata
  * @version 1.0.0
@@ -13,6 +13,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const getBySlug = vi.fn();
+const getAllBySlug = vi.fn();
 const getSpellBySlug = vi.fn();
 const getSpecializationBySlug = vi.fn();
 
@@ -21,7 +22,10 @@ const getSpecializationBySlug = vi.fn();
  * specialization calls go through mock functions; the rest resolve null.
  */
 vi.mock('@/lib/db/content/repositories/monsterRepository', () => ({
-  monsterRepository: { getBySlug: (...a: unknown[]) => getBySlug(...a) },
+  monsterRepository: {
+    getBySlug: (...a: unknown[]) => getBySlug(...a),
+    getAllBySlug: (...a: unknown[]) => getAllBySlug(...a),
+  },
 }));
 
 vi.mock('@/lib/db/content/repositories/spellRepository', () => ({
@@ -55,12 +59,14 @@ vi.mock('@/lib/db/content/repositories/specializationRepository', () => ({
 }));
 
 import {
-  aspectSectionsOf,
+  aspectIndexOf,
   loadArticleMetadata,
 } from '@/modules/library/application/use-cases/loadArticleMetadata';
 
 beforeEach(() => {
   getBySlug.mockReset();
+  getAllBySlug.mockReset();
+  getAllBySlug.mockResolvedValue([]);
   getSpellBySlug.mockReset();
   getSpecializationBySlug.mockReset();
 });
@@ -80,7 +86,8 @@ describe('loadArticleMetadata', () => {
       title: 'Acid Splash',
       contentType: 'spells',
       tags: ['damage:chemical'],
-      sections: [],
+      sections: [{ name: 'acid-splash', tags: ['damage:chemical'] }],
+      records: ['acid-splash'],
     });
     expect(getBySlug).not.toHaveBeenCalled();
   });
@@ -102,7 +109,9 @@ describe('loadArticleMetadata', () => {
     expect(getSpecializationBySlug).toHaveBeenCalledWith('en', 'oath-of-devotion');
     expect(metadata?.contentType).toBe('specializations');
     expect(metadata?.sections).toEqual([
-      { name: 'Sacred Weapon', tags: ['damage:holy'] },
+      { name: 'oath-of-devotion', tags: ['vocation:paladin'] },
+      { name: 'oath-of-devotion/sacred-weapon', tags: ['damage:holy'] },
+      { name: 'sacred-weapon', tags: ['damage:holy'] },
     ]);
   });
 
@@ -141,9 +150,13 @@ describe('loadArticleMetadata', () => {
       contentType: 'monsters',
       tags: ['creature:construct'],
       sections: [
-        { name: 'Garbage Communion', tags: ['resource:temp-hp'] },
-        { name: 'Detect', tags: undefined },
+        { name: 'mucklord', tags: ['creature:construct'] },
+        { name: 'mucklord/garbage-communion', tags: ['resource:temp-hp'] },
+        { name: 'garbage-communion', tags: ['resource:temp-hp'] },
+        { name: 'mucklord/detect', tags: [] },
+        { name: 'detect', tags: [] },
       ],
+      records: ['mucklord'],
     });
   });
 
@@ -157,35 +170,126 @@ describe('loadArticleMetadata', () => {
 
     const metadata = await loadArticleMetadata(['monsters', 'mucklord'], 'en');
 
-    expect(metadata?.sections).toEqual([]);
+    expect(metadata?.sections).toEqual([
+      { name: 'mucklord', tags: ['creature:construct'] },
+    ]);
     expect(metadata?.tags).toEqual(['creature:construct']);
+  });
+
+  it('should merge every stat block of a multi-sheet monster file', async () => {
+    getAllBySlug.mockResolvedValue([
+      {
+        slug: 'hounds',
+        subSlug: 'hound',
+        title: 'Hound',
+        tags: ['creature:beast'],
+        features: [
+          { id: 'a', name: 'Bite', tags: ['damage:piercing'] },
+          { id: 'b', name: 'Keen Smell', tags: ['sense:smell'] },
+        ],
+      },
+      {
+        slug: 'hounds',
+        subSlug: 'dire-hound',
+        title: 'Dire Hound',
+        tags: ['creature:beast', 'size:large'],
+        features: [
+          { id: 'c', name: 'Bite', tags: ['damage:piercing', 'condition:prone'] },
+          { id: 'd', name: 'Howl', tags: ['condition:frightened'] },
+        ],
+      },
+    ]);
+
+    const metadata = await loadArticleMetadata(['monsters', 'hounds'], 'en');
+
+    expect(getBySlug).not.toHaveBeenCalled();
+    expect(metadata).toEqual({
+      title: 'Hound',
+      contentType: 'monsters',
+      tags: ['creature:beast'],
+      sections: [
+        { name: 'hound', tags: ['creature:beast'] },
+        { name: 'hound/bite', tags: ['damage:piercing'] },
+        { name: 'bite', tags: ['damage:piercing', 'condition:prone'] },
+        { name: 'hound/keen-smell', tags: ['sense:smell'] },
+        { name: 'keen-smell', tags: ['sense:smell'] },
+        { name: 'dire-hound', tags: ['creature:beast', 'size:large'] },
+        { name: 'dire-hound/bite', tags: ['damage:piercing', 'condition:prone'] },
+        { name: 'dire-hound/howl', tags: ['condition:frightened'] },
+        { name: 'howl', tags: ['condition:frightened'] },
+      ],
+      records: ['hound', 'dire-hound'],
+    });
+  });
+
+  it('should fall back to getBySlug for a subSlug route', async () => {
+    getAllBySlug.mockResolvedValue([]);
+    getBySlug.mockResolvedValue({
+      slug: 'hounds',
+      subSlug: 'dire-hound',
+      title: 'Dire Hound',
+      tags: ['creature:beast'],
+      features: [{ id: 'd', name: 'Howl', tags: ['condition:frightened'] }],
+    });
+
+    const metadata = await loadArticleMetadata(
+      ['monsters', 'dire-hound'],
+      'en',
+    );
+
+    expect(getBySlug).toHaveBeenCalledWith('en', 'dire-hound');
+    expect(metadata?.title).toBe('Dire Hound');
+    expect(metadata?.sections).toEqual([
+      { name: 'dire-hound', tags: ['creature:beast'] },
+      { name: 'dire-hound/howl', tags: ['condition:frightened'] },
+      { name: 'howl', tags: ['condition:frightened'] },
+    ]);
+  });
+
+  it('should key a feature by both its heading and its name anchors', async () => {
+    getSpecializationBySlug.mockResolvedValue({
+      slug: 'evocation',
+      title: 'Evocation',
+      tags: [],
+      features: [
+        { name: 'Spellcasting', heading: '1st Level – Spellcasting', tags: ['mechanic:spellcasting'] },
+      ],
+    });
+
+    const metadata = await loadArticleMetadata(
+      ['character-creation', 'vocations', 'wizard', 'evocation'],
+      'en',
+    );
+
+    expect(metadata?.sections?.map((s) => s.name)).toEqual([
+      'evocation',
+      'evocation/1st-level-spellcasting',
+      '1st-level-spellcasting',
+      'evocation/spellcasting',
+      'spellcasting',
+    ]);
   });
 });
 
-describe('aspectSectionsOf', () => {
-  it('should return nothing for a null record', () => {
-    expect(aspectSectionsOf(null)).toEqual([]);
+describe('aspectIndexOf', () => {
+  it('should return an empty index for a null record', () => {
+    expect(aspectIndexOf(null)).toEqual({ keys: [], records: [] });
   });
 
-  it('should list only sections that carry aspects', () => {
+  it('should list only sections that carry aspects, with the record anchors', () => {
     expect(
-      aspectSectionsOf({
+      aspectIndexOf({
         sections: [
-          { name: 'Has', tags: ['damage:fire'] },
-          { name: 'HasNot' },
-          { name: 'Empty', tags: [] },
+          { name: 'has', tags: ['damage:fire'] },
+          { name: 'has-not' },
+          { name: 'empty', tags: [] },
         ],
+        records: ['mucklord'],
       }),
-    ).toEqual(['Has']);
+    ).toEqual({ keys: ['has'], records: ['mucklord'] });
   });
 
-  it('should include the title when the page itself has aspects', () => {
-    expect(
-      aspectSectionsOf({ title: 'Mucklord', tags: ['creature:construct'] }),
-    ).toEqual(['Mucklord']);
-  });
-
-  it('should omit the title when the page has no aspects', () => {
-    expect(aspectSectionsOf({ title: 'Mucklord', tags: [] })).toEqual([]);
+  it('should default records to none', () => {
+    expect(aspectIndexOf({ title: 'Mucklord', tags: [] })).toEqual({ keys: [], records: [] });
   });
 });

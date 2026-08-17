@@ -30,7 +30,7 @@ import {
   type ParsedAspect,
 } from '@/modules/library/domain/aspects';
 import { Plus } from 'lucide-react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './Aspects.module.scss';
 
@@ -62,31 +62,34 @@ export interface AspectsProps {
 }
 
 /**
- * Renders one aspect as a link to its pre-filtered search.
+ * One aspect pill: mark (icon, strata, badge) plus `group: value` label. A
+ * link to the pre-filtered search by default; with `onSelect` it renders as
+ * a button that reports its aspect instead (pickers), same look.
  *
- * @param {object} props - Component props
- * @param {ParsedAspect} props.aspect - The aspect to draw
- * @param {string} props.locale - Active locale, for the search href
- * @param {boolean} [props.compact] - Render as a circular glyph for the carousel
- * @returns {React.ReactElement} The rendered pill
+ * @param {object} props - Component properties
+ * @param {ParsedAspect} props.aspect - The aspect to render
+ * @param {string} props.locale - Active locale, for the search link
+ * @param {boolean} [props.compact] - Glyph-only rendering
+ * @param {(aspect: ParsedAspect) => void} [props.onSelect] - Button mode: click handler
+ * @param {boolean} [props.inert] - Plain span, for cells already inside a link or button
+ * @param {boolean} [props.pressed] - Button mode: aria-pressed state
+ * @param {boolean} [props.disabled] - Button mode: inert, for groups not yet open to authoring
+ * @returns {React.ReactElement} The pill
  */
-const AspectPill: React.FC<{
+export const AspectPill: React.FC<{
   aspect: ParsedAspect;
   locale: string;
   compact?: boolean;
-}> = ({ aspect, locale, compact }) => {
+  onSelect?: (aspect: ParsedAspect) => void;
+  pressed?: boolean;
+  disabled?: boolean;
+  inert?: boolean;
+}> = ({ aspect, locale, compact, onSelect, pressed, disabled, inert }) => {
   const { Icon, Badge, badgeVar, strata } = aspectMark(aspect);
   const name = `${aspect.group}: ${aspect.value}`;
 
-  return (
-    <a
-      className={compact ? styles.glyph : styles.aspect}
-      href={`/${locale}/search?aspect=${encodeURIComponent(aspect.raw)}`}
-      aria-label={name}
-      title={name}
-      data-group={aspect.group}
-      style={{ '--aspect-fg': aspectColour(aspect) } as React.CSSProperties}
-    >
+  const body = (
+    <>
       <span
         className={strata ? `${styles.mark} ${styles.markStrata}` : styles.mark}
         aria-hidden='true'
@@ -124,6 +127,41 @@ const AspectPill: React.FC<{
           <span className={styles.value}>{aspect.value}</span>
         </span>
       )}
+    </>
+  );
+
+  const shared = {
+    className: compact ? styles.glyph : styles.aspect,
+    'aria-label': name,
+    title: name,
+    'data-group': aspect.group,
+    style: { '--aspect-fg': aspectColour(aspect) } as React.CSSProperties,
+  };
+
+  if (inert) {
+    return <span {...shared}>{body}</span>;
+  }
+
+  if (onSelect || disabled) {
+    return (
+      <button
+        type='button'
+        {...shared}
+        aria-pressed={pressed}
+        disabled={disabled}
+        onClick={onSelect ? () => onSelect(aspect) : undefined}
+      >
+        {body}
+      </button>
+    );
+  }
+
+  return (
+    <a
+      {...shared}
+      href={`/${locale}/search?aspect=${encodeURIComponent(aspect.raw)}`}
+    >
+      {body}
     </a>
   );
 };
@@ -139,6 +177,7 @@ const AspectPill: React.FC<{
  * @returns {React.ReactElement | null} The toggle, or null with no provider to write to
  */
 const ExpandToggle: React.FC = () => {
+  const t = useTranslations('aspects');
   const dispatch = usePersistentUiDispatchOptional();
   const { aspectExpanded } = usePersistentUiStateOptional();
   const [mounted, setMounted] = useState(false);
@@ -156,7 +195,7 @@ const ExpandToggle: React.FC = () => {
       type='button'
       className={styles.toggle}
       aria-pressed={expanded}
-      aria-label={expanded ? 'Collapse aspects' : 'Expand aspects'}
+      aria-label={expanded ? t('collapse') : t('expand')}
       onClick={() =>
         dispatch({
           type: PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED,
@@ -264,6 +303,7 @@ export const Aspects: React.FC<AspectsProps> = ({
   from,
 }) => {
   const locale = useLocale();
+  const t = useTranslations('aspects');
   const { aspectsFor } = useArticleMetadata();
 
   const raw =
@@ -281,7 +321,9 @@ export const Aspects: React.FC<AspectsProps> = ({
   return (
     <div className={styles.row} data-from={from ?? undefined}>
       {label || from ? (
-        <span className={styles.caption}>{from ? `from ${from}` : label}</span>
+        <span className={styles.caption}>
+          {from ? t('from', { source: from }) : label}
+        </span>
       ) : null}
       {parsed.length > CAROUSEL_THRESHOLD ? (
         <AspectCarousel aspects={parsed} locale={locale} />

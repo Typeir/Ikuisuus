@@ -11,6 +11,7 @@
 }
 
 .toolbarButton {
+  @include button-still;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -44,6 +45,13 @@
   background-color: var(--color-border);
 }
 
-.sampleSelect {
+.toolbarEnd {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   margin-left: auto;
+}
+
+.sampleSelect {
+  display: inline-flex;
 }

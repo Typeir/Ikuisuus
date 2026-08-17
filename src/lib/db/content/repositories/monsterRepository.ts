@@ -51,6 +51,16 @@ export interface MonsterRepository {
    * @returns {Promise<MonsterMetadata | null>} Matched record or null
    */
   getBySlug(locale: string, slug: string): Promise<MonsterMetadata | null>;
+
+  /**
+   * Returns every stat block that shares a file slug — all creatures of a
+   * multi-stat-block sheet, in file order. Empty when nothing matches.
+   *
+   * @param {string} locale - Locale code
+   * @param {string} slug - File-level monster slug
+   * @returns {Promise<MonsterMetadata[]>} Matched records
+   */
+  getAllBySlug(locale: string, slug: string): Promise<MonsterMetadata[]>;
 }
 
 /** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */

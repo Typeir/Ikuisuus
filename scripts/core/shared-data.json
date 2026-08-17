@@ -16,10 +16,26 @@
       "true"
     ],
     "damageStrata": {
-      "physical": ["slashing", "bludgeoning", "piercing"],
-      "elemental": ["frost", "fire", "lightning"],
-      "somatic": ["poison", "chemical", "psychic"],
-      "akashic": ["holy", "dark", "force"]
+      "physical": [
+        "slashing",
+        "bludgeoning",
+        "piercing"
+      ],
+      "elemental": [
+        "frost",
+        "fire",
+        "lightning"
+      ],
+      "somatic": [
+        "poison",
+        "chemical",
+        "psychic"
+      ],
+      "akashic": [
+        "holy",
+        "dark",
+        "force"
+      ]
     },
     "conditions": [
       "bleeding",
@@ -92,7 +108,12 @@
       "väki",
       "wildlife"
     ],
-    "senses": ["blindsight", "darkvision", "tremorsense", "truesight"],
+    "senses": [
+      "blindsight",
+      "darkvision",
+      "tremorsense",
+      "truesight"
+    ],
     "movementTypes": [
       "flight",
       "swimming",
@@ -317,7 +338,14 @@
       "Necromancy",
       "Transmutation"
     ],
-    "qualities": ["Legendary", "Epic", "Mythic", "Ancient", "Forbidden", "Lost"]
+    "qualities": [
+      "Legendary",
+      "Epic",
+      "Mythic",
+      "Ancient",
+      "Forbidden",
+      "Lost"
+    ]
   },
   "worldData": {
     "factions": [
@@ -422,26 +450,53 @@
     },
     "defense": {
       "scope": "*",
-      "values": ["resistance", "immunity", "vulnerability", "reduction"]
+      "values": [
+        "resistance",
+        "immunity",
+        "vulnerability",
+        "reduction"
+      ]
     },
-    "resistance": { "scope": "*", "valuesFrom": ["damage"] },
+    "resistance": {
+      "scope": "*",
+      "valuesFrom": [
+        "damage"
+      ]
+    },
     "immunity": {
       "scope": "*",
-      "valuesFrom": ["damage", "gameData.conditions"]
+      "valuesFrom": [
+        "damage",
+        "gameData.conditions"
+      ]
     },
-    "vulnerability": { "scope": "*", "valuesFrom": ["damage"] },
+    "vulnerability": {
+      "scope": "*",
+      "valuesFrom": [
+        "damage"
+      ]
+    },
     "condition": {
       "scope": "*",
       "rule": "rules/steel-and-strife/conditions",
-      "valuesFrom": ["gameData.conditions"]
+      "valuesFrom": [
+        "gameData.conditions"
+      ]
     },
     "mechanic": {
       "scope": "*",
-      "valuesFrom": ["gameData.mechanicTypes"]
+      "valuesFrom": [
+        "gameData.mechanicTypes"
+      ]
     },
     "phase": {
       "scope": "*",
-      "values": ["wounded", "bloodied", "doomed", "slain"]
+      "values": [
+        "wounded",
+        "bloodied",
+        "doomed",
+        "slain"
+      ]
     },
     "range": {
       "scope": "*",
@@ -543,29 +598,70 @@
     },
     "scaling": {
       "scope": "*",
-      "values": ["slot", "level", "tier", "ability", "stacks", "flat"]
+      "values": [
+        "slot",
+        "level",
+        "tier",
+        "ability",
+        "stacks",
+        "flat"
+      ]
     },
     "save": {
       "scope": "*",
-      "values": ["str", "dex", "con", "int", "wis", "cha", "contested"]
+      "values": [
+        "str",
+        "dex",
+        "con",
+        "int",
+        "wis",
+        "cha",
+        "contested"
+      ]
     },
     "source": {
       "scope": "*",
-      "values": ["fold", "vaki", "will", "key", "material", "null"]
+      "values": [
+        "fold",
+        "vaki",
+        "will",
+        "key",
+        "material",
+        "null"
+      ]
     },
     "access": {
-      "scope": ["specializations"],
-      "values": ["fold", "vaki", "will", "key"]
+      "scope": [
+        "specializations"
+      ],
+      "values": [
+        "fold",
+        "vaki",
+        "will",
+        "key"
+      ]
     },
     "position": {
       "scope": "*",
       "rule": "rules/steel-and-strife/contextual-conflict",
-      "values": ["charging", "flanking", "high-ground", "mounted", "underwater"]
+      "values": [
+        "charging",
+        "flanking",
+        "high-ground",
+        "mounted",
+        "underwater"
+      ]
     },
     "cover": {
       "scope": "*",
       "rule": "rules/steel-and-strife/making-an-attack",
-      "values": ["half", "three-quarters", "total", "grants", "ignores"]
+      "values": [
+        "half",
+        "three-quarters",
+        "total",
+        "grants",
+        "ignores"
+      ]
     },
     "sense": {
       "scope": "*",
@@ -607,14 +703,32 @@
       ]
     },
     "size": {
-      "scope": ["monsters", "heirlooms", "trinkets", "equipment"],
-      "valuesFrom": ["gameData.sizes"]
+      "scope": [
+        "monsters",
+        "heirlooms",
+        "trinkets",
+        "equipment"
+      ],
+      "valuesFrom": [
+        "gameData.sizes"
+      ]
     },
     "creature": {
-      "scope": ["monsters"],
-      "valuesFrom": ["gameData.creatureTypes"]
+      "scope": [
+        "monsters"
+      ],
+      "valuesFrom": [
+        "gameData.creatureTypes"
+      ]
     },
-    "component": { "scope": "*", "values": ["verbal", "somatic", "material"] },
+    "component": {
+      "scope": "*",
+      "values": [
+        "verbal",
+        "somatic",
+        "material"
+      ]
+    },
     "level": {
       "scope": "*",
       "values": [
@@ -655,23 +769,57 @@
       ]
     },
     "archetype": {
-      "scope": ["vocations", "specializations"],
-      "values": ["martial", "caster", "spellblade"]
+      "scope": [
+        "vocations",
+        "specializations"
+      ],
+      "values": [
+        "martial",
+        "caster",
+        "spellblade"
+      ]
     },
     "spellcasting": {
-      "scope": ["vocations", "specializations"],
-      "values": ["full", "half", "third", "pact", "none"]
+      "scope": [
+        "vocations",
+        "specializations"
+      ],
+      "values": [
+        "full",
+        "half",
+        "third",
+        "pact",
+        "none"
+      ]
     },
     "spellcasting-ability": {
-      "scope": ["vocations", "specializations"],
-      "values": ["intelligence", "wisdom", "charisma"]
+      "scope": [
+        "vocations",
+        "specializations"
+      ],
+      "values": [
+        "intelligence",
+        "wisdom",
+        "charisma"
+      ]
     },
     "hit-die": {
-      "scope": ["vocations"],
-      "values": ["d4", "d6", "d8", "d10", "d12"]
+      "scope": [
+        "vocations"
+      ],
+      "values": [
+        "d4",
+        "d6",
+        "d8",
+        "d10",
+        "d12"
+      ]
     },
     "specialization": {
-      "scope": ["vocations", "specializations"],
+      "scope": [
+        "vocations",
+        "specializations"
+      ],
       "values": [
         "archetype",
         "circle",
@@ -683,54 +831,102 @@
       ]
     },
     "item": {
-      "scope": ["heirlooms", "trinkets", "equipment"],
-      "valuesFrom": ["itemData.itemTypes", "itemData.baseCategoryTypes"]
+      "scope": [
+        "heirlooms",
+        "trinkets",
+        "equipment"
+      ],
+      "valuesFrom": [
+        "itemData.itemTypes",
+        "itemData.baseCategoryTypes"
+      ]
     },
     "weapon": {
-      "scope": ["heirlooms", "trinkets", "equipment"],
-      "valuesFrom": ["itemData.weaponTypes"]
+      "scope": [
+        "heirlooms",
+        "trinkets",
+        "equipment"
+      ],
+      "valuesFrom": [
+        "itemData.weaponTypes"
+      ]
     },
     "armor": {
-      "scope": ["heirlooms", "trinkets", "equipment"],
-      "values": ["light", "medium", "heavy"],
-      "valuesFrom": ["itemData.armorTypes"]
+      "scope": [
+        "heirlooms",
+        "trinkets",
+        "equipment"
+      ],
+      "values": [
+        "light",
+        "medium",
+        "heavy"
+      ],
+      "valuesFrom": [
+        "itemData.armorTypes"
+      ]
     },
     "property": {
-      "scope": ["heirlooms", "trinkets", "equipment"],
+      "scope": [
+        "heirlooms",
+        "trinkets",
+        "equipment"
+      ],
       "values": [
         "consumable",
         "nonmagical",
         "attunement-required",
         "proficiency-required"
       ],
-      "valuesFrom": ["itemData.weaponProperties", "itemData.masteryProperties"]
+      "valuesFrom": [
+        "itemData.weaponProperties",
+        "itemData.masteryProperties"
+      ]
     },
     "slot": {
-      "scope": ["heirlooms", "trinkets", "equipment"],
+      "scope": [
+        "heirlooms",
+        "trinkets",
+        "equipment"
+      ],
       "open": true
     },
     "unique": {
-      "scope": ["heirlooms", "trinkets", "equipment"],
+      "scope": [
+        "heirlooms",
+        "trinkets",
+        "equipment"
+      ],
       "open": true
     },
     "rarity": {
       "scope": "*",
-      "values": ["epic", "ancient", "forbidden", "lost"],
-      "valuesFrom": ["itemData.rarities", "spellData.qualities"]
+      "values": [
+        "epic",
+        "ancient",
+        "forbidden",
+        "lost"
+      ],
+      "valuesFrom": [
+        "itemData.rarities",
+        "spellData.qualities"
+      ]
     },
     "quality": {
-      "scope": ["heirlooms", "trinkets", "equipment"],
-      "values": ["enhanced"]
+      "scope": [
+        "heirlooms",
+        "trinkets",
+        "equipment"
+      ],
+      "values": [
+        "enhanced"
+      ]
     },
     "myth": {
       "scope": "*",
       "values": [
         "canvas",
-        "true-god",
-        "vestige",
         "hiisi",
-        "emergent",
-        "mortal",
         "faith",
         "nulls",
         "arkhe",
@@ -760,7 +956,6 @@
         "ukkonhemmo",
         "nekarion",
         "ludwig",
-        "felicia",
         "anaximander",
         "lycophron",
         "gorgias",
@@ -769,18 +964,25 @@
         "godslayers",
         "the-miracle",
         "paimar",
-        "poet-and-swordsman",
         "empyrean",
         "pieni",
-        "the-shifted",
         "vaki",
-        "void-giants",
         "earthmovers",
-        "homunculus"
+        "homunculus",
+        "bilupine",
+        "edaphite",
+        "edonian-giant",
+        "etienn",
+        "pellervi",
+        "silent-one",
+        "tallian",
+        "tammeni",
+        "vaarat"
       ]
     },
     "theme": {
       "scope": "*",
+      "authored": false,
       "values": [
         "death",
         "entropy",
@@ -806,12 +1008,88 @@
         "obsession"
       ]
     },
+    "form": {
+      "scope": [
+        "spells"
+      ],
+      "authored": true,
+      "values": [
+        "armament",
+        "armor",
+        "arrow",
+        "barrier",
+        "blade",
+        "bone",
+        "cage",
+        "chain",
+        "chromatic",
+        "cloud",
+        "companion",
+        "dragon",
+        "eye",
+        "gate",
+        "glamour",
+        "gravity",
+        "growth",
+        "hand",
+        "lash",
+        "maw",
+        "mount",
+        "omen",
+        "orbit",
+        "path",
+        "puppet",
+        "scrying",
+        "shadow",
+        "sigil",
+        "sonic",
+        "speech",
+        "stone",
+        "storm",
+        "sustenance",
+        "swarm",
+        "tide",
+        "time",
+        "transmogrification",
+        "wind"
+      ]
+    },
+    "school": {
+      "scope": [
+        "spells"
+      ],
+      "authored": true,
+      "transitional": true,
+      "values": [
+        "abjuration",
+        "conjuration",
+        "divination",
+        "enchantment",
+        "evocation",
+        "illusion",
+        "necromancy",
+        "transmutation"
+      ]
+    },
     "meta:source": {
       "scope": "*",
-      "values": ["basic", "ikuisuus"]
+      "values": [
+        "basic",
+        "ikuisuus"
+      ]
     },
-    "meta:locale": { "scope": "*", "values": ["en", "es", "fi"] },
-    "meta:category": { "scope": "*", "open": true },
+    "meta:locale": {
+      "scope": "*",
+      "values": [
+        "en",
+        "es",
+        "fi"
+      ]
+    },
+    "meta:category": {
+      "scope": "*",
+      "open": true
+    },
     "meta:content": {
       "scope": "*",
       "values": [
@@ -827,7 +1105,17 @@
         "class"
       ]
     },
-    "meta:faction": { "scope": "*", "valuesFrom": ["worldData.factions"] },
-    "meta:location": { "scope": "*", "valuesFrom": ["worldData.locations"] }
+    "meta:faction": {
+      "scope": "*",
+      "valuesFrom": [
+        "worldData.factions"
+      ]
+    },
+    "meta:location": {
+      "scope": "*",
+      "valuesFrom": [
+        "worldData.locations"
+      ]
+    }
   }
 }

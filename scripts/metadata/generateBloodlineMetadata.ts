@@ -13,8 +13,10 @@
 import { toNativeMeasure } from '@/lib/units/nativeMeasure';
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
+import matter from 'gray-matter';
 import path from 'path';
 import {
+    applyAuthoredFeatureAspects,
     blankFrontmatter,
     clean,
     extractAbilitySaveTags,
@@ -31,6 +33,7 @@ import {
     runWithCli,
     type SharedData,
     type StorageAdapter,
+  stampAnchors,
 } from '.';
 import {
     BOON,
@@ -61,11 +64,15 @@ interface ParsedBoonHeading {
  * @property {string} name - Option display name
  * @property {number} bpValue - BP cost of this specific option
  * @property {string} [effect] - Short effect summary from the non-name/non-cost columns
+ * @property {string[]} [tags] - Aspects of this option alone, from its own row or heading body
+ * @property {string} [anchor] - Anchor slug of the option name
  */
 interface BoonSubOption {
   name: string;
   bpValue: number;
   effect?: string;
+  tags?: string[];
+  anchor?: string;
 }
 
 /**
@@ -80,6 +87,8 @@ interface BoonSubOption {
  * @property {number} startLine - 1-indexed start line of the boon heading block in the source MDX
  * @property {number} endLine - 1-indexed last line of the boon content block in the source MDX
  * @property {string[]} tags - Derived boon gameplay tags
+ * @property {string} [anchor] - Anchor slug of the boon heading
+ * @property {string} [parentName] - For an option of a variable-cost boon written as its own heading: the parent boon's name
  */
 interface ParsedBoon {
   name: string;
@@ -91,6 +100,8 @@ interface ParsedBoon {
   startLine: number;
   endLine: number;
   tags: string[];
+  parentName?: string;
+  anchor?: string;
 }
 
 /* ────────────────────────  Parsing Helpers  ────────────────────────── */
@@ -139,7 +150,10 @@ function parseTableRow(row: string): string[] {
  * @param {string[]} blockLines - Raw lines of the boon body (between headings)
  * @returns {BoonSubOption[]} Parsed sub-options, or `[]` when there is no cost table
  */
-function parseCostTable(blockLines: string[]): BoonSubOption[] {
+function parseCostTable(
+  blockLines: string[],
+  sharedData: SharedData,
+): BoonSubOption[] {
   const isSeparatorRow = (cells: string[]): boolean =>
     cells.length > 0 && cells.every((cell) => /^:?-+:?$/.test(cell.trim()));
 
@@ -184,7 +198,8 @@ function parseCostTable(blockLines: string[]): BoonSubOption[] {
           .map((cell) => cell.trim())
           .filter(Boolean)
           .join(' — ') || undefined;
-      subOptions.push({ name, bpValue, effect });
+      const tags = extractBoonTags(name, `${bpValue} BP`, effect ?? '', sharedData);
+      subOptions.push({ name, bpValue, effect, tags });
     }
 
     return subOptions;
@@ -465,6 +480,67 @@ function extractBoonTags(
 }
 
 /**
+ * A core feature trait: one `###` under `## Core Features`, tagged from its
+ * own text so it renders an aspect row like a boon does.
+ *
+ * @property {string} id - `${slug}:${anchorSlug(name)}`
+ * @property {string} name - Heading text
+ * @property {string[]} tags - Aspects extracted from the trait's body
+ * @property {{ start: number; end: number }} source - 0-based line range in the file
+ */
+interface CoreFeatureShard {
+  id: string;
+  name: string;
+  tags: string[];
+  source: { start: number; end: number };
+}
+
+/**
+ * Splits `## Core Features` into its `###` traits and tags each. Pure stat
+ * blocks (Languages) carry no gameplay tags and are dropped when empty.
+ *
+ * @param {string} body - File body (frontmatter blanked)
+ * @param {string} slug - Bloodline slug, for ids
+ * @param {SharedData} sharedData - Shared game data
+ * @returns {CoreFeatureShard[]} Tagged core feature shards
+ */
+function parseCoreFeatureShards(
+  body: string,
+  slug: string,
+  sharedData: SharedData,
+): CoreFeatureShard[] {
+  const lines = body.split('\n');
+  const start = lines.findIndex((l) => /^##\s+Core Features\s*$/.test(l.trim()));
+  if (start === -1) return [];
+  let end = lines.length;
+  for (let i = start + 1; i < lines.length; i++) {
+    if (/^##\s+/.test(lines[i].trim())) {
+      end = i;
+      break;
+    }
+  }
+  const heads: number[] = [];
+  for (let i = start + 1; i < end; i++) {
+    if (/^###\s+/.test(lines[i].trim())) heads.push(i);
+  }
+  const shards: CoreFeatureShard[] = [];
+  heads.forEach((h, k) => {
+    const next = heads[k + 1] ?? end;
+    const name = lines[h].trim().replace(/^###\s+/, '').replace(/\*\*/g, '').trim();
+    const text = lines.slice(h + 1, next).join('\n');
+    const tags = extractBoonTags(name, '', text, sharedData);
+    if (tags.length === 0) return;
+    shards.push({
+      id: `${slug}:${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`,
+      name,
+      tags,
+      source: { start: h, end: next },
+    });
+  });
+  return shards;
+}
+
+/**
  * Parses the Core Features section into a structured object.
  *
  * @param {string} content - Full MDX file content
@@ -629,9 +705,15 @@ function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
           name: childHeading.name,
           bpValue: parseBpValue(childHeading.bpLabel) ?? 0,
           effect: firstProseLine(childBlock.boonContent),
+          tags: extractBoonTags(
+            childHeading.name,
+            childHeading.bpLabel,
+            childBlock.boonContent,
+            sharedData,
+          ),
         });
       }
-      for (const row of parseCostTable(rawBlockLines)) {
+      for (const row of parseCostTable(rawBlockLines, sharedData)) {
         if (!subByName.has(row.name)) {
           subByName.set(row.name, row);
         }
@@ -668,6 +750,29 @@ function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
         endLine,
         tags,
       });
+
+      /* Options written as their own headings (nested Collapsibles) are
+         boons in their own right: they get a shard, tagged from their own
+         body, so their heading renders an aspect row. */
+      for (const childIdx of childIdxs) {
+        const child = buildBlock(childIdx);
+        const childHeading = headings[childIdx].heading;
+        boons.push({
+          name: childHeading.name,
+          bpLabel: childHeading.bpLabel,
+          bpValue: parseBpValue(childHeading.bpLabel),
+          sortOrder: boons.length,
+          startLine: child.absStart,
+          endLine: child.absEnd,
+          tags: extractBoonTags(
+            childHeading.name,
+            childHeading.bpLabel,
+            child.boonContent,
+            sharedData,
+          ),
+          parentName: entry.heading.name,
+        });
+      }
 
       idx += 1 + childIdxs.length;
     } else {
@@ -717,6 +822,14 @@ async function parseBloodlineFile(
     const boonBudget = parseBoonBudget(body);
     const boons = parseBoons(body, sharedData);
     const boonTags = boons.flatMap((boon) => boon.tags);
+    const features = parseCoreFeatureShards(body, slug, sharedData);
+    const fileFrontmatter = matter(raw).data as Record<string, unknown>;
+    stampAnchors(features);
+    stampAnchors(boons);
+    for (const boon of boons) if (boon.subOptions) stampAnchors(boon.subOptions);
+    applyAuthoredFeatureAspects(features, fileFrontmatter);
+    applyAuthoredFeatureAspects(boons as Array<{ name?: string; tags?: string[] }>, fileFrontmatter);
+    const featureTags = features.flatMap((f) => f.tags);
 
     const metadata: Record<string, unknown> = {
       slug,
@@ -733,12 +846,14 @@ async function parseBloodlineFile(
       age: coreFeatures.age,
       boonBudget,
       boons,
+      features,
       tags: Array.from(
         new Set([
           ...extractAllTags(raw, filePath, sharedData, {
             contentType: 'generic',
           }),
           ...boonTags,
+          ...featureTags,
         ]),
       ).sort(),
       indexVersion: 1,

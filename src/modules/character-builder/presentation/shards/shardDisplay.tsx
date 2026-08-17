@@ -22,6 +22,8 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
+import { displayAspects } from '@/modules/library/domain/aspects';
+import { AspectGlyphs } from '@/modules/library/presentation/components/Aspects/AspectGlyphs';
 
 /**
  * Props for the ShardDisplay component.
@@ -104,6 +106,11 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
           </span>
         )}
       </button>
+      {displayAspects(shard.tags).length > 0 && (
+        <div className={styles.shardAspects}>
+          <AspectGlyphs tags={shard.tags} />
+        </div>
+      )}
 
       {expanded && (
         <div className={styles.shardBody}>

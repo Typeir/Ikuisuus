@@ -141,6 +141,8 @@ const mapFeatures = (
     .map((feature) => ({
       id: feature.featureId,
       name: feature.name,
+      heading: orUndef(feature.heading),
+      anchor: orUndef(feature.anchor),
       trigger: orUndef(feature.trigger),
       tags: nonEmpty(feature.tags),
     }));
@@ -157,6 +159,8 @@ const mapFeatures = (
 const rowToMonster = (row: MonsterEntity): MonsterMetadata => ({
   slug: row.slug,
   subSlug: orUndef(row.subSlug),
+  kind: row.kind === 'object' ? 'object' : undefined,
+  damageThreshold: orUndef(row.damageThreshold),
   title: row.title,
   file: row.file,
   link: row.link,
@@ -218,7 +222,7 @@ class PgMonsterRepository
       const em = await getEM();
       const rows = await em.find(
         MonsterEntity,
-        { locale },
+        { locale, kind: null },
         {
           fields: ['slug', 'subSlug', 'title', 'cr', 'size', 'creatureType'],
           orderBy: { slug: 'asc' },
@@ -235,6 +239,32 @@ class PgMonsterRepository
       log.error('Error reading monster index from PostgreSQL', {
         error: error instanceof Error ? error.message : String(error),
         locale,
+      });
+      return [];
+    }
+  }
+
+  /**
+   * Returns every stat block sharing the file slug, in id order.
+   *
+   * @param {string} locale - Locale code
+   * @param {string} slug - File-level monster slug
+   * @returns {Promise<MonsterMetadata[]>} Matched records, or `[]` on error
+   */
+  async getAllBySlug(locale: string, slug: string): Promise<MonsterMetadata[]> {
+    try {
+      const em = await getEM();
+      const rows = await em.find(
+        MonsterEntity,
+        { locale, slug },
+        { populate: ['features'], orderBy: { id: 'asc' } },
+      );
+      return rows.map(rowToMonster);
+    } catch (error) {
+      log.error('Error reading monster sheet from PostgreSQL', {
+        error: error instanceof Error ? error.message : String(error),
+        locale,
+        slug,
       });
       return [];
     }

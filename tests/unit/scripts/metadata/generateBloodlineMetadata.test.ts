@@ -144,9 +144,14 @@ You can use your reaction when hit by a melee weapon attack to reduce extra dama
       boons: Array<Record<string, unknown>>;
     };
 
-    expect(parsed.boons).toHaveLength(1);
+    expect(parsed.boons).toHaveLength(2);
     const boon = parsed.boons[0];
     expect(boon.name).toBe('Defense Matrix');
+    const child = parsed.boons[1];
+    expect(child.name).toBe('Inner Bulwark');
+    expect(child.bpValue).toBe(2);
+    expect(child.parentName).toBe('Defense Matrix');
+    expect(child.tags).toContain('tempo:reactive');
     expect(boon.bpValue).toBeUndefined();
     expect(boon.subOptionMode).toBe('pick-any');
     expect(boon.subOptions).toHaveLength(2);
@@ -156,6 +161,9 @@ You can use your reaction when hit by a melee weapon attack to reduce extra dama
         expect.objectContaining({ name: 'Inner Bulwark', bpValue: 2 }),
       ]),
     );
+    const subs = boon.subOptions as Array<{ name: string; tags?: string[] }>;
+    expect(subs.find((s) => s.name === 'Iron Skin')?.tags).toContain('mechanic:ac-bonus');
+    expect(subs.find((s) => s.name === 'Inner Bulwark')?.tags).toContain('tempo:reactive');
     expect(boon.tags).toEqual(
       expect.arrayContaining([
         'resource:variable',

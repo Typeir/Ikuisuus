@@ -60,7 +60,7 @@
 
     &:focus {
       border-color: var(--color-accent);
-      box-shadow: 0 0 0 2px var(--color-accent-a10);
+      box-shadow: 0 0 0 2px rgb(var(--color-accent-a10));
     }
   }
 

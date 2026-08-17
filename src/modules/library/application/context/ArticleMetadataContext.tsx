@@ -24,7 +24,7 @@ import React, { createContext, useContext, useMemo } from 'react';
 /**
  * One section of an article that carries its own aspects.
  *
- * @property {string} name - Section heading text, exactly as written in the source
+ * @property {string} name - Section key: the heading's anchor slug, or `record/anchor` inside a multi-block file
  * @property {string[]} [tags] - Aspects derived from that section alone
  */
 export interface ArticleSection {
@@ -38,13 +38,15 @@ export interface ArticleSection {
  * @property {string} [title] - Page title
  * @property {string} [contentType] - Content kind, e.g. `monsters`
  * @property {string[]} [tags] - Page-level aspects
- * @property {ArticleSection[]} [sections] - Per-section aspects, keyed by heading text
+ * @property {ArticleSection[]} [sections] - Per-section aspects, keyed by anchor
+ * @property {string[]} [records] - Anchors of the file's stat block titles, file order
  */
 export interface ArticleMetadata {
   title?: string;
   contentType?: string;
   tags?: string[];
   sections?: ArticleSection[];
+  records?: string[];
 }
 
 /**

@@ -21,5 +21,9 @@
   "initiative": "Iniciativa",
   "speed": "Velocidad",
   "hpCurrent": "PG actuales",
-  "hpMax": "PG máximos"
+  "hpMax": "PG máximos",
+  "levelInfo": "Info",
+  "levelSuccess": "Éxito",
+  "levelWarning": "Aviso",
+  "levelError": "Error"
 }

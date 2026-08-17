@@ -12,7 +12,6 @@ describe('useSpellColumns', () => {
 
     expect(result.current.map((column) => column.key)).toEqual([
       'title',
-      'school',
       'castingTime',
       'range',
       'duration',

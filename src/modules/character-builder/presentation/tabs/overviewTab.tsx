@@ -16,6 +16,7 @@ import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import { GrantedProficiencies } from '../stats/grantedProficiencies';
 import { MobileOverviewTab } from './mobileOverviewTab';
 import {
+    AspectSummary,
     AttacksPanel,
     HintLegend,
     NotesPanel,
@@ -49,6 +50,7 @@ export const OverviewTab: React.FC = () => {
 
       <div className={styles.column}>
         <AttacksPanel />
+        <AspectSummary />
         <SelectedShardClouds />
         <NotesPanel />
       </div>

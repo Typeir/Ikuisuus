@@ -12,9 +12,13 @@
 import { createLogger } from '@/lib/logging/logger';
 import { toNativeMeasure, toPlainMeasure } from '@/lib/units/nativeMeasure';
 import { promises as fs } from 'fs';
+import matter from 'gray-matter';
 import path from 'path';
 import {
   GameData,
+  applyAuthoredAspects,
+  applyAuthoredFeatureAspects,
+  stampAnchors,
   blankFrontmatter,
   clean,
   extractAllTags,
@@ -36,6 +40,7 @@ import {
 import { MONSTER, STRUCTURE } from './extraction/featurePatterns';
 import { extractStrataTags } from './aspectExtractors';
 import { extractStatBlockFieldAspects, tagFeatures } from './featureAspects';
+import type { MonsterFeature } from '@/lib/types/feature';
 import { parseMonsterFeaturesSource } from './generateFeatureMetadata';
 import {
   IMAGE,
@@ -328,8 +333,8 @@ function parseTierBonus(rawPB?: string): number | undefined {
 function findStatBlockPositions(
   lines: string[],
   sharedData: SharedData,
-): { lineIndex: number; isBlockquote: boolean }[] {
-  const positions: { lineIndex: number; isBlockquote: boolean }[] = [];
+): StatBlockPosition[] {
+  const positions: StatBlockPosition[] = [];
   const sizeList = GameData.getSizes(sharedData);
   const sizePattern = sizeList.concat(['Colossal', 'Titanic']).join('|');
   const mainStatBlockPattern = new RegExp(`^_(${sizePattern})\\s+.*,.*_$`, 'i');
@@ -342,11 +347,54 @@ function findStatBlockPositions(
     const isMain = mainStatBlockPattern.test(line);
     const isBlockquote = blockquoteStatBlockPattern.test(line);
     if (isMain || isBlockquote) {
-      positions.push({ lineIndex: idx, isBlockquote });
+      positions.push({ lineIndex: idx, isBlockquote, isObject: false });
+      return;
+    }
+    if (isObjectBlockAnchor(lines, idx, blockquoteStatBlockPattern)) {
+      positions.push({ lineIndex: idx, isBlockquote: true, isObject: true });
     }
   });
 
   return positions;
+}
+
+/**
+ * A stat block anchor: the `_Size Type_` line of a creature, or the heading of
+ * a quoted object block (AC/HP table, no creature line).
+ *
+ * @property {number} lineIndex - Anchor line
+ * @property {boolean} isBlockquote - Block lives inside a `>` quote
+ * @property {boolean} isObject - Object block (plating, blade, drone) rather than a creature
+ */
+interface StatBlockPosition {
+  lineIndex: number;
+  isBlockquote: boolean;
+  isObject: boolean;
+}
+
+/**
+ * True when `idx` is the heading of a quoted object block: a `> #### Title`
+ * heading followed within a few quoted lines by an Armor Class table row and
+ * no `_Size Type_` creature line in between.
+ *
+ * @param {string[]} lines - All file lines
+ * @param {number} idx - Candidate heading line
+ * @param {RegExp} creatureLine - Quoted `_Size …_` pattern that marks a creature instead
+ * @returns {boolean} Whether an object block starts here
+ */
+function isObjectBlockAnchor(
+  lines: string[],
+  idx: number,
+  creatureLine: RegExp,
+): boolean {
+  if (!MONSTER_HEADING.blockquoteHeading.test(lines[idx])) return false;
+  for (let i = idx + 1; i < Math.min(lines.length, idx + 6); i++) {
+    const line = lines[i];
+    if (!line.startsWith('>')) return false;
+    if (creatureLine.test(line)) return false;
+    if (STAT_CONTENT.armorClassRow.test(line)) return true;
+  }
+  return false;
 }
 
 /**
@@ -760,6 +808,7 @@ export function parseMonsterSource(
 ): object[] {
   const lines = readLines(blankFrontmatter(raw));
   const baseSlug = filePathToSlug(filePath);
+  const fileFrontmatter = matter(raw).data as Record<string, unknown>;
 
   const statBlockPositions = findStatBlockPositions(lines, sharedData);
 
@@ -772,12 +821,47 @@ export function parseMonsterSource(
     });
   }
 
-  const results = [];
+  const results: Record<string, unknown>[] = [];
+  const creaturePositions = statBlockPositions.filter((p) => !p.isObject);
 
   for (let i = 0; i < statBlockPositions.length; i++) {
-    const { lineIndex, isBlockquote } = statBlockPositions[i];
-    const nextPos = statBlockPositions[i + 1];
-    const endIdx = nextPos ? nextPos.lineIndex : lines.length;
+    const { lineIndex, isBlockquote, isObject } = statBlockPositions[i];
+
+    if (isObject) {
+      const endIdx = blockquoteEnd(lines, lineIndex);
+      const metadata = parseObjectBlock(
+        lines,
+        lineIndex,
+        endIdx,
+        baseSlug,
+        filePath,
+        sharedData,
+      );
+      metadata.blockStart = lineIndex;
+      metadata.blockEnd = endIdx;
+      results.push(metadata);
+      continue;
+    }
+
+    /* Stat parsing runs to the next creature of any kind. Feature
+       ownership differs: a quoted creature (a summon's statlet inside its
+       summoner's sheet) owns only its quote, and the sheet's own creature
+       runs on past it to the next unquoted creature; embedded object blocks
+       (a goddess's plating) stay inside that range and are carved out of
+       ownership below. */
+    const creatureIdx = creaturePositions.findIndex(
+      (p) => p.lineIndex === lineIndex,
+    );
+    const nextAny = creaturePositions[creatureIdx + 1];
+    const endIdx = nextAny ? nextAny.lineIndex : lines.length;
+    const nextUnquoted = creaturePositions
+      .slice(creatureIdx + 1)
+      .find((p) => !p.isBlockquote);
+    const featureEnd = isBlockquote
+      ? Math.min(blockquoteEnd(lines, lineIndex), endIdx)
+      : nextUnquoted
+        ? nextUnquoted.lineIndex
+        : lines.length;
 
     const sectionLines = extractStatBlockSection(
       lines,
@@ -792,29 +876,261 @@ export function parseMonsterSource(
       isBlockquote,
       baseSlug,
       filePath,
-      i,
+      creatureIdx,
       sharedData,
-      statBlockPositions,
-    );
-    (metadata as Record<string, unknown>).blockStart = lineIndex;
-    (metadata as Record<string, unknown>).blockEnd = endIdx;
+      creaturePositions,
+    ) as Record<string, unknown>;
+    metadata.blockStart = lineIndex;
+    metadata.blockEnd = featureEnd;
+    metadata.isBlockquote = isBlockquote;
+    metadata.isObject = false;
     results.push(metadata);
   }
 
+  const objectRanges = results
+    .filter((r) => r.isObject || r.isBlockquote)
+    .map((r) => [r.blockStart as number, r.blockEnd as number] as const);
+  const insideObject = (line: number) =>
+    objectRanges.some(([s, e]) => line >= s && line < e);
+
   const features = parseMonsterFeaturesSource(raw, baseSlug);
-  for (let i = 0; i < results.length; i++) {
-    const r = results[i] as Record<string, unknown>;
+  /* Quoted creature blocks span to the next creature for stat parsing, but
+     their features end where the quote ends — the lines after belong to the
+     next statlet's title or to prose. */
+  const quotedFeatures = parseQuotedBlockFeatures(
+    lines,
+    results
+      .filter((r) => r.isBlockquote || r.isObject)
+      .map((r, _i, all) => {
+        const start = quoteStart(lines, r.blockStart as number);
+        const nextStart = all
+          .map((o) => quoteStart(lines, o.blockStart as number))
+          .filter((o) => o > start)
+          .sort((a, b) => a - b)[0];
+        const quoteEnd = r.isObject
+          ? (r.blockEnd as number)
+          : blockquoteEnd(lines, r.blockStart as number);
+        return {
+          ...r,
+          blockStart: start,
+          blockEnd: Math.min(quoteEnd, nextStart ?? quoteEnd),
+        };
+      }),
+    baseSlug,
+  );
+
+  for (const r of results) {
     const bStart = r.blockStart as number;
     const bEnd = r.blockEnd as number;
-    const owned = features.filter(
-      (f) => f.source && f.source.start >= bStart && f.source.start < bEnd,
-    );
+    const own = (f: MonsterFeature) =>
+      !!f.source && f.source.start >= bStart && f.source.start < bEnd;
+    const owned =
+      r.isObject || r.isBlockquote
+        ? quotedFeatures.filter(own)
+        : features.filter((f) => own(f) && !insideObject(f.source!.start));
     tagFeatures(owned, lines, sharedData);
-    r.features = owned;
+    r.features = dedupeFeatures(owned);
+    stampAnchors(r.features as MonsterFeature[]);
+    applyAuthoredFeatureAspects(r.features as MonsterFeature[], fileFrontmatter);
+  }
+
+  rollUpSubRecordTags(results);
+
+  /* File-level frontmatter aspects/denyAspects apply to the sheet's parent
+     record — the one that carries the rolled-up set. */
+  const parent = results.find((r) => !r.isObject);
+  if (parent) {
+    parent.tags = applyAuthoredAspects(parent.tags as string[], fileFrontmatter);
+  }
+
+  for (const r of results) {
+    delete r.blockStart;
+    delete r.blockEnd;
+    delete r.isBlockquote;
+    delete r.isObject;
   }
 
   return results;
 }
+
+/**
+ * Start of the statlet containing `line`: walks back over `>` lines to the
+ * nearest quoted heading (the statlet's title) or the quote's first line, so
+ * several statlets sharing one quote each get their own range.
+ *
+ * @param {string[]} lines - All file lines
+ * @param {number} line - A line inside the quote
+ * @returns {number} Start index
+ */
+function quoteStart(lines: string[], line: number): number {
+  let i = line;
+  while (i > 0 && lines[i - 1].startsWith('>')) {
+    i--;
+    if (MONSTER_HEADING.blockquoteHeading.test(lines[i])) return i;
+  }
+  return i;
+}
+
+/**
+ * Index one past the last quoted line of the block starting at `start`.
+ *
+ * @param {string[]} lines - All file lines
+ * @param {number} start - First line of the block
+ * @returns {number} Exclusive end index
+ */
+function blockquoteEnd(lines: string[], start: number): number {
+  let i = start;
+  while (i < lines.length && lines[i].startsWith('>')) i++;
+  return i;
+}
+
+/**
+ * Parses a quoted object block (plating, blade, drone): heading title, AC/HP/
+ * damage-threshold header row, tags from the block text. Objects carry no
+ * scores or challenge; `meta:content:object` marks them.
+ *
+ * @param {string[]} lines - All file lines
+ * @param {number} start - Heading line of the block
+ * @param {number} end - Exclusive end of the quote
+ * @param {string} baseSlug - File slug
+ * @param {string} filePath - Source path
+ * @param {SharedData} sharedData - Shared game data
+ * @returns {Record<string, unknown>} Object metadata record
+ */
+function parseObjectBlock(
+  lines: string[],
+  start: number,
+  end: number,
+  baseSlug: string,
+  filePath: string,
+  sharedData: SharedData,
+): Record<string, unknown> {
+  const quoted = lines
+    .slice(start, end)
+    .map((l) => l.replace(STAT_CONTENT.blockquotePrefix, ''));
+  const title =
+    lines[start].match(MONSTER_HEADING.blockquoteHeading)?.[1].trim() ?? '';
+  const subSlug = title
+    .toLowerCase()
+    .replace(SLUG.nonAlphaKeepSpaces, '')
+    .replace(TEXT.whitespaceCollapse, '-')
+    .replace(SLUG.multiHyphens, '-')
+    .replace(SLUG.singleEdgeHyphens, '');
+  const headerStats = findArmorHpSpeed(quoted);
+  const headerIdx = quoted.findIndex((l) => MONSTER.armorClassHeader.test(l));
+  const thresholdRow =
+    headerIdx === -1
+      ? undefined
+      : quoted
+          .slice(headerIdx + 1)
+          .find((l) => STAT_TABLE.dataRow.test(l) && !/^\|\s*-/.test(l));
+  const thresholdRaw = thresholdRow ? parseTableRowCells(thresholdRow)[2] : '';
+  const threshold = parseInt((thresholdRaw ?? '').replace(/\D/g, ''), 10);
+  const content = quoted.join('\n');
+
+  const tags = extractAllTags(content, filePath, sharedData, {
+    contentType: 'monster',
+    requireFlightMeasurement: true,
+  });
+  tags.push('meta:content:object', 'meta:content:sheet');
+  tags.push(...extractStrataTags(tags, sharedData));
+
+  return {
+    slug: baseSlug,
+    subSlug,
+    title,
+    file: path.relative(process.cwd(), filePath).replace(SLUG.pathBackslash, '/'),
+    link: `/library/monsters/${baseSlug}#${subSlug}`,
+    kind: 'object',
+    ac: headerStats.ac,
+    hp: headerStats.hp,
+    damageThreshold: Number.isNaN(threshold) ? undefined : threshold,
+    tags: Array.from(new Set(tags)).sort(),
+    isBlockquote: true,
+    isObject: true,
+  };
+}
+
+/**
+ * Features of quoted blocks. Each block's own line range is de-quoted in
+ * place (line numbers preserved) and run through the standard feature parser
+ * with statlet rules on; only features anchored inside the block are kept.
+ *
+ * @param {string[]} lines - All file lines
+ * @param {Record<string, unknown>[]} blocks - Records with blockStart/blockEnd
+ * @param {string} baseSlug - File slug for feature IDs
+ * @returns {MonsterFeature[]} Features across all quoted blocks
+ */
+function parseQuotedBlockFeatures(
+  lines: string[],
+  blocks: Record<string, unknown>[],
+  baseSlug: string,
+): MonsterFeature[] {
+  const out: MonsterFeature[] = [];
+  for (const block of blocks) {
+    const start = block.blockStart as number;
+    const end = block.blockEnd as number;
+    const dequoted = lines.map((l, i) =>
+      i >= start && i < end ? l.replace(STAT_CONTENT.blockquoteMarker, '') : l,
+    );
+    const feats = parseMonsterFeaturesSource(dequoted.join('\n'), baseSlug, {
+      statlet: { start, end },
+    });
+    for (const f of feats) {
+      if (!f.source || f.source.start < start || f.source.start >= end) continue;
+      /* The last feature of a statlet otherwise runs to the section end,
+         past the quote, and picks up the next block's tags. */
+      f.source.end = Math.min(f.source.end, end);
+      out.push(f);
+    }
+  }
+  return out;
+}
+
+/**
+ * Drops features that share an id and source start (a quoted block re-parsed
+ * from two overlapping ranges).
+ *
+ * @param {MonsterFeature[]} features - Owned features
+ * @returns {MonsterFeature[]} Deduplicated features, order preserved
+ */
+function dedupeFeatures(features: MonsterFeature[]): MonsterFeature[] {
+  const seen = new Set<string>();
+  return features.filter((f) => {
+    const key = `${f.id}@${f.source?.start ?? -1}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+/**
+ * Unions every sub-record's tags into the file's parent record so a sheet
+ * is findable by anything its statlets carry. Sub-records keep their own
+ * tags. The parent is the first non-object record.
+ *
+ * @param {Record<string, unknown>[]} results - All records of the file
+ */
+function rollUpSubRecordTags(results: Record<string, unknown>[]): void {
+  const parent = results.find((r) => !r.isObject);
+  if (!parent || results.length < 2) return;
+  const union = new Set(parent.tags as string[]);
+  for (const r of results) {
+    if (r === parent) continue;
+    for (const t of (r.tags as string[]) ?? []) {
+      if (ROLL_UP_EXCLUDED.test(t)) continue;
+      union.add(t);
+    }
+  }
+  parent.tags = [...union].sort();
+}
+
+/**
+ * Tag groups that describe the record itself, never its parent: `meta:*`
+ * (an object statlet does not make the sheet an object) and `rarity:*`
+ * (derived from each record's own challenge rating).
+ */
+const ROLL_UP_EXCLUDED = /^(meta|rarity):/;
 
 /**
  * Main execution function.
