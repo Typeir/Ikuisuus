@@ -1,0 +1,64 @@
+@use 'mixins' as *;
+
+/* ============================================
+   SITE-WIDE CLASSES
+============================================ */
+
+@media print {
+  /* Single-column print mode opt-in via Meta component */
+  .prose:has([data-meta-print-mode='single']) article {
+    column-count: 1 !important;
+  }
+  * {
+    *::before,
+    *::after {
+      content: none !important;
+      display: none !important;
+      visibility: hidden !important;
+    }
+  }
+  .mdxContent section[data-heading-level] {
+    color: red !important;
+    display: none !important;
+  }
+
+  /* Hide all scrollbars in print mode */
+  * {
+    overflow: visible !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+
+    &::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+  }
+
+  .sidebar-container {
+    > aside {
+      display: none;
+    }
+    > .hamburger {
+      display: none;
+    }
+    > .mobile-title-bar {
+      display: none;
+    }
+  }
+}
+
+/* Responsive prose margin-left: ml-60 on desktop, ml-auto below lg breakpoint */
+.prose {
+  margin-left: 8vw;
+
+  @media (max-width: 1023px) {
+    @apply ml-auto;
+    max-width: 90%;
+  }
+}
+
+/* near the mdx-first-letter include in mdxContent.module.scss */
+h1 .first-letter {
+  @include mdx-first-letter-decor();
+}

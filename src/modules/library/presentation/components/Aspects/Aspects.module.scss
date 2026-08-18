@@ -519,3 +519,18 @@ span.glyph[data-group='myth'] {
     display: none;
   }
 }
+
+/* ---- Constrained hue: hover vibrancy ----
+   The rest colour is greyed at the root. Every aspect token redirects through
+   --aspect-constrained, so re-pointing that one property on the hovered pill
+   re-resolves the whole chain — including the inline --aspect-fg, which holds
+   a var() reference rather than a colour. Both values live in globals.scss;
+   this rule only chooses between them. */
+:global(html[data-constrained-hue='true']) {
+  a.aspect:hover,
+  button.aspect:hover,
+  a.glyph:hover,
+  button.glyph:hover {
+    --aspect-constrained: var(--aspect-constrained-active);
+  }
+}

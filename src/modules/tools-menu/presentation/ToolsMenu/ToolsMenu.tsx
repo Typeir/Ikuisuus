@@ -83,12 +83,7 @@ interface ToolsMenuProps {
  * - `Escape` closes and returns focus to the trigger
  * - `Tab` closes and lets focus continue past the menu
  */
-export function ToolsMenu({
-  items,
-  onSelect,
-  trigger,
-  label,
-}: ToolsMenuProps) {
+export function ToolsMenu({ items, onSelect, trigger, label }: ToolsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -122,8 +117,7 @@ export function ToolsMenu({
     };
 
     document.addEventListener('pointerdown', handlePointerDown);
-    return () =>
-      document.removeEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, [isOpen]);
 
   const handleBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
@@ -156,7 +150,11 @@ export function ToolsMenu({
         return;
       }
 
-      if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+      if (
+        event.key === 'ArrowDown' ||
+        event.key === 'Enter' ||
+        event.key === ' '
+      ) {
         event.preventDefault();
         openAt(0);
       }

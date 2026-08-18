@@ -187,6 +187,16 @@
   left: 0;
   z-index: 60;
   will-change: transform;
+
+  @supports (anchor-name: --a) {
+    top: auto;
+    left: auto;
+    will-change: auto;
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block;
+    margin-block-start: 4px;
+    min-width: anchor-size(width);
+  }
   display: flex;
   flex-direction: column;
   gap: 0.15rem;

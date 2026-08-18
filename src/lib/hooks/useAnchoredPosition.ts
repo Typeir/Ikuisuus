@@ -11,7 +11,35 @@
 
 'use client';
 
-import { useCallback, useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+
+/**
+ * Reports whether the browser supports CSS anchor positioning.
+ *
+ * Returns false during SSR and on browsers without support, which is the signal
+ * to run the JavaScript positioning fallback.
+ *
+ * @returns {boolean} True when `anchor-name` is supported
+ */
+export function useCssAnchorSupport(): boolean {
+  const [supported] = useState(
+    () =>
+      typeof CSS !== 'undefined' &&
+      typeof CSS.supports === 'function' &&
+      CSS.supports('anchor-name: --a'),
+  );
+  return supported;
+}
+
+/**
+ * Builds a CSS dashed-ident anchor name from a React id.
+ *
+ * @param {string} id - Value from `useId`
+ * @returns {string} Anchor name usable as a custom property value
+ */
+export function toAnchorName(id: string): string {
+  return `--ik-anchor-${id.replace(/[^a-zA-Z0-9]/g, '')}`;
+}
 
 /**
  * Position produced by a compute function.

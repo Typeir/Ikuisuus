@@ -35,14 +35,6 @@
   border-radius: 4px;
 }
 
-/** Solid danger (filled). For confirmed destructive actions. */
-.danger {
-  @include button-base;
-  @include button-danger;
-  @include button-hover-scale;
-  border-radius: 4px;
-}
-
 /* ── Outline ────────────────────────────────────────────── */
 
 /** Accent outline that fills on hover. The default "add / CTA" outline. */
@@ -50,7 +42,11 @@
   @include button-secondary;
 }
 
-/** Danger outline — transparent, fills danger on hover. Remove / logout. */
+/**
+ * The danger button. Transparent, fills danger on hover. Remove / logout /
+ * destructive confirmations. There is no filled danger variant — the outline
+ * reads more clearly and one destructive treatment is enough.
+ */
 .dangerOutline {
   @include button-danger-outline;
 }

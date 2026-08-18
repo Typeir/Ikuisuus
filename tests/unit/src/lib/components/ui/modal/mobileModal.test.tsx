@@ -189,7 +189,7 @@ describe('MobileModal', () => {
         </MobileModal>
       );
 
-      expect(document.body.style.overflow).toBe('hidden');
+      expect(document.documentElement.style.overflow).toBe('hidden');
     });
 
     it('should restore body scroll when modal closes', () => {
@@ -199,7 +199,7 @@ describe('MobileModal', () => {
         </MobileModal>
       );
 
-      expect(document.body.style.overflow).toBe('hidden');
+      expect(document.documentElement.style.overflow).toBe('hidden');
 
       rerender(
         <MobileModal isOpen={false} onClose={mockOnClose}>
@@ -207,7 +207,7 @@ describe('MobileModal', () => {
         </MobileModal>
       );
 
-      expect(document.body.style.overflow).toBe('');
+      expect(document.documentElement.style.overflow).toBe('');
     });
   });
 

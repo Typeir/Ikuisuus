@@ -1,0 +1,87 @@
+/* ============================================
+   BASE HTML ELEMENT STYLING (override Tailwind reset)
+============================================ */
+@use '../mixins-button' as *;
+
+@layer base {
+  strong,
+  b {
+    font-weight: 700;
+  }
+
+  em,
+  i {
+    font-style: italic;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  ul,
+  ol {
+    --depth: 0;
+  }
+
+  li > ul,
+  li > ol {
+    --depth: calc(var(--parent-depth, 0) + 1);
+  }
+
+  /* Print-specific prose adjustments */
+  @media print {
+    .prose {
+      max-width: 100vw !important;
+    }
+  }
+
+  /* ── Global text selection ────────────────── */
+  ::selection {
+    background-color: var(--color-selection-bg);
+    color: var(--color-selection-text);
+  }
+
+  /* ── Autofill / autocomplete overrides ────── */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-autofill-text);
+    -webkit-box-shadow: 0 0 0 1000px var(--color-autofill-bg) inset;
+    box-shadow: 0 0 0 1000px var(--color-autofill-bg) inset;
+    border-color: var(--color-autofill-border);
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: var(--color-autofill-text);
+  }
+
+  /* `body` prefix outranks the `body *` border reset in _document.scss.
+     Do not add :not(:disabled) to the generated hover — it beats single-class
+     component hovers. */
+  body button,
+  .actionable {
+    @include button-outline(var(--color-accent));
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+}

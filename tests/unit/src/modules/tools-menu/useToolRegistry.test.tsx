@@ -1,7 +1,8 @@
 /**
  * @fileoverview Unit tests for the useToolRegistry hook.
- * @description Verifies that the hook resolves all registry entries into locale-aware
- * ToolMenuItem objects and guards against missing i18n keys.
+ * @description Verifies that the hook resolves the visible registry entries into
+ * locale-aware ToolMenuItem objects and guards against missing i18n keys. `NODE_ENV`
+ * is `test` here, so `devOnly` entries are excluded.
  *
  * @module tests/unit/src/modules/tools-menu/useToolRegistry
  * @version 1.0.0
@@ -10,7 +11,7 @@
  */
 
 import { useToolRegistry } from '@/modules/tools-menu/application/hooks/useToolRegistry';
-import { TOOL_REGISTRY } from '@/modules/tools-menu/infrastructure/registry/toolRegistry.config';
+import { selectVisibleTools } from '@/modules/tools-menu/infrastructure/registry/toolRegistry.config';
 import { renderHook } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import type { ReactNode } from 'react';
@@ -33,9 +34,11 @@ function wrapper({ children }: { children: ReactNode }) {
 }
 
 describe('useToolRegistry', () => {
-  it('returns one item per registry entry', () => {
+  const visibleEntries = selectVisibleTools(false);
+
+  it('returns one item per visible registry entry', () => {
     const { result } = renderHook(() => useToolRegistry(), { wrapper });
-    expect(result.current).toHaveLength(TOOL_REGISTRY.length);
+    expect(result.current).toHaveLength(visibleEntries.length);
   });
 
   it('each item has id, non-empty label, and locale-prefixed href', () => {
@@ -51,7 +54,7 @@ describe('useToolRegistry', () => {
   it('item ids match registry entry ids in order', () => {
     const { result } = renderHook(() => useToolRegistry(), { wrapper });
     const ids = result.current.map((item) => item.id);
-    expect(ids).toEqual(TOOL_REGISTRY.map((entry) => entry.id));
+    expect(ids).toEqual(visibleEntries.map((entry) => entry.id));
   });
 
   it('hrefs embed the locale segment correctly', () => {
@@ -72,6 +75,11 @@ describe('useToolRegistry', () => {
 
     const mdxEditorItem = result.current.find((i) => i.id === 'mdx-editor');
     expect(mdxEditorItem?.href).toBe('/en/utils/mdx-editor');
+  });
+
+  it('omits the dev-only labs entry outside development', () => {
+    const { result } = renderHook(() => useToolRegistry(), { wrapper });
+    expect(result.current.find((i) => i.id === 'labs')).toBeUndefined();
   });
 
   it('labels are resolved strings (mocked to return label keys)', () => {

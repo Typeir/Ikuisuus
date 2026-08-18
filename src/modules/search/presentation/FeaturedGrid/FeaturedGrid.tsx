@@ -98,16 +98,18 @@ export function FeaturedGrid({ locale }: FeaturedGridProps): JSX.Element {
             {t('featuredLoading')}
           </p>
           {/* One skeleton card per content type — same grid as the data.
-              Mirrors the card anatomy: 24px sigil beside a content column
-              of type label, title, and description lines. */}
+              Mirrors the card anatomy: 24px sigil inline with the type label,
+              over a full-width column of title and description lines. */}
           <div
-            className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 not-prose'
+            className={cn(styles.featuredGrid, 'not-prose')}
             aria-hidden='true'>
             {SEARCH_CONTENT_TYPES.map((type) => (
               <div key={type} className={styles.skeletonCard}>
-                <Skeleton variant='card' width='24px' height='24px' />
-                <div className={styles.skeletonCardContent}>
+                <div className={styles.skeletonCardHeader}>
+                  <Skeleton variant='card' width='24px' height='24px' />
                   <Skeleton variant='text' width='35%' height='0.625rem' />
+                </div>
+                <div className={styles.skeletonCardContent}>
                   <Skeleton variant='text' width='70%' height='0.9375rem' />
                   <Skeleton variant='text' width='100%' height='0.75rem' />
                   <Skeleton variant='text' width='55%' height='0.75rem' />
@@ -124,7 +126,7 @@ export function FeaturedGrid({ locale }: FeaturedGridProps): JSX.Element {
         </p>
       )}
 
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 not-prose'>
+      <div className={cn(styles.featuredGrid, 'not-prose')}>
         {types.map((type) => {
           const entry = featured[type];
           if (!entry) return null;

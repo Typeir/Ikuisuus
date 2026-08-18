@@ -14,8 +14,12 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import { useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  toAnchorName,
+  useAnchoredPosition,
+  useCssAnchorSupport,
+} from '@/lib/hooks/useAnchoredPosition';
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 
 /**
@@ -79,7 +83,12 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
     };
   }, []);
 
-  useAnchoredPosition(triggerRef, panelRef, compute, { active: open && !disabled });
+  const cssAnchored = useCssAnchorSupport();
+  const anchorName = toAnchorName(useId());
+
+  useAnchoredPosition(triggerRef, panelRef, compute, {
+    active: !cssAnchored && open && !disabled,
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -112,14 +121,15 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         className={panelClassName}
         role={panelRole}
         aria-label={panelLabel}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 'auto',
-          zIndex: 1100,
-          willChange: 'transform',
-        }}>
+        style={
+          {
+            position: 'fixed',
+            zIndex: 1100,
+            ...(cssAnchored
+              ? { positionAnchor: anchorName, positionArea: 'block-end span-inline-end', marginBlockStart: 4 }
+              : { top: 0, left: 0, right: 'auto', willChange: 'transform' }),
+          } as CSSProperties
+        }>
         {children}
       </div>,
       document.body,
@@ -136,6 +146,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         aria-expanded={open}
         aria-haspopup='true'
         disabled={disabled}
+        style={{ anchorName } as CSSProperties}
         onClick={() => setOpen((v) => !v)}>
         <ChevronDown
           size={14}

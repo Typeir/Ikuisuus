@@ -1,0 +1,77 @@
+/* ============================================
+   CONSTRAINED HUE
+
+   Collapses every aspect token onto one theme-keyed colour. Group identity
+   moves entirely to the glyph, which each group already carries, so a reader
+   who cannot separate the hues loses nothing that was not already redundant.
+
+   Every token redirects through --aspect-constrained rather than naming a
+   colour, so the hover state in Aspects.module.scss re-points one property
+   and the whole chain re-resolves. aspectColour() hands the pill a var()
+   reference, never a resolved colour, which is what lets a root-level
+   redefinition reach an inline style at all.
+
+   --color-phase-* is deliberately absent: the encounter tracker's phase ramp
+   is a health gauge, not a taxonomy, and its meaning is carried by lightness
+   rather than hue. The --aspect-phase-* tokens below intercept the pill
+   before it falls through to that ramp, so the pill collapses and the
+   tracker keeps its semantics.
+============================================ */
+html[data-constrained-hue='true'] {
+  --aspect-constrained-rest: color-mix(
+    in oklab,
+    var(--color-accent) 45%,
+    var(--color-text-secondary)
+  );
+  --aspect-constrained-active: var(--color-accent);
+  --aspect-constrained: var(--aspect-constrained-rest);
+
+  --aspect-default: var(--aspect-constrained);
+  --aspect-stratum: var(--aspect-constrained);
+  --aspect-damage: var(--aspect-constrained);
+  --aspect-condition: var(--aspect-constrained);
+  --aspect-defense: var(--aspect-constrained);
+  --aspect-delivery: var(--aspect-constrained);
+  --aspect-range: var(--aspect-constrained);
+  --aspect-tempo: var(--aspect-constrained);
+  --aspect-resource: var(--aspect-constrained);
+  --aspect-scaling: var(--aspect-constrained);
+  --aspect-save: var(--aspect-constrained);
+  --aspect-source: var(--aspect-constrained);
+  --aspect-access: var(--aspect-constrained);
+  --aspect-sense: var(--aspect-constrained);
+  --aspect-movement: var(--aspect-constrained);
+  --aspect-mechanic: var(--aspect-constrained);
+  --aspect-rarity: var(--aspect-constrained);
+  --aspect-size: var(--aspect-constrained);
+  --aspect-creature: var(--aspect-constrained);
+  --aspect-component: var(--aspect-constrained);
+  --aspect-cover: var(--aspect-constrained);
+  --aspect-position: var(--aspect-constrained);
+  --aspect-slot: var(--aspect-constrained);
+  --aspect-myth: var(--aspect-constrained);
+  --aspect-theme: var(--aspect-constrained);
+  --aspect-proficiency: var(--aspect-constrained);
+  --aspect-property: var(--aspect-constrained);
+  --aspect-level: var(--aspect-constrained);
+  --aspect-form: var(--aspect-constrained);
+
+  --aspect-phase-wounded: var(--aspect-constrained);
+  --aspect-phase-bloodied: var(--aspect-constrained);
+  --aspect-phase-doomed: var(--aspect-constrained);
+  --aspect-phase-slain: var(--aspect-constrained);
+
+  --aspect-damage-fire: var(--aspect-constrained);
+  --aspect-damage-frost: var(--aspect-constrained);
+  --aspect-damage-lightning: var(--aspect-constrained);
+  --aspect-damage-dark: var(--aspect-constrained);
+  --aspect-damage-force: var(--aspect-constrained);
+  --aspect-damage-poison: var(--aspect-constrained);
+  --aspect-damage-psychic: var(--aspect-constrained);
+  --aspect-damage-holy: var(--aspect-constrained);
+  --aspect-damage-chemical: var(--aspect-constrained);
+  --aspect-damage-bludgeoning: var(--aspect-constrained);
+  --aspect-damage-piercing: var(--aspect-constrained);
+  --aspect-damage-slashing: var(--aspect-constrained);
+  --aspect-damage-true: var(--aspect-constrained);
+}

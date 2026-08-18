@@ -1,0 +1,13 @@
+{
+  "title": "Preferences",
+  "textSize": "Text size",
+  "textSizeHint": "Percent of the base text size.",
+  "proseMeasure": "Line length",
+  "proseMeasureHint": "Characters per line in articles.",
+  "constrainedHue": "Hue",
+  "constrainedHueHint": "Aspect colours collapse to the theme.",
+  "theme": "Theme",
+  "themeHint": "Dark or light palette.",
+  "themeToggle": "Toggle theme",
+  "open": "Preferences"
+}

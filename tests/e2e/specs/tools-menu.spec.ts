@@ -1,6 +1,8 @@
 /**
  * @fileoverview End-to-end tests for the tools-menu module.
- * @description Verifies the tools menu shows four tools, opens and closes, and navigates to the correct routes.
+ * @description Verifies the tools menu lists the shipped tools plus the dev-only Labs
+ * entry, opens and closes, and navigates to the correct routes. The Playwright web
+ * server runs `npm run dev`, so `devOnly` registry entries are listed here.
  *
  * @module tests/e2e/specs/tools-menu
  * @version 1.0.0
@@ -30,7 +32,7 @@ test.describe('Tools Menu', () => {
     await expect(menu).toBeVisible({ timeout: 5000 });
   });
 
-  test('displays all four tool labels after opening', async ({ page }) => {
+  test('displays the shipped tool labels after opening', async ({ page }) => {
     const toolsButton = page.locator('.sidebar-footer button');
     await toolsButton.click();
 
@@ -43,6 +45,29 @@ test.describe('Tools Menu', () => {
     });
     await expect(page.locator('text=MDX Editor')).toBeVisible({
       timeout: 5000,
+    });
+  });
+
+  test('displays the dev-only Labs entry against the dev server', async ({
+    page,
+  }) => {
+    const toolsButton = page.locator('.sidebar-footer button');
+    await toolsButton.click();
+
+    await expect(page.locator('text=Labs')).toBeVisible({ timeout: 5000 });
+  });
+
+  test('navigates to the dev canvas when Labs is clicked', async ({ page }) => {
+    test.setTimeout(60000);
+
+    const toolsButton = page.locator('.sidebar-footer button');
+    await toolsButton.click();
+
+    await page.locator('text=Labs').first().click();
+
+    await expect(page).toHaveURL(/\/labs\/dev/, { timeout: 30000 });
+    await expect(page.getByTestId('labs-dev-canvas')).toBeVisible({
+      timeout: 10000,
     });
   });
 

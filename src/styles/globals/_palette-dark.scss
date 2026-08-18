@@ -1,0 +1,179 @@
+html[data-theme='dark'] {
+  --color-bg: #111217;
+  --color-bg-secondary: #28303b;
+  --color-bg-tertiary: #1e1f26;
+  --color-text: #c8ccc7;
+  --color-text-secondary: #a1a1aa;
+  --color-accent: #8fd3a1;
+  --color-accent-hover: #7bc392;
+  --color-surface: #1b1d23;
+  --color-border: #2a2c35;
+  /* Elevated border for nested/inset panels — visible against both bg and
+     surface where --color-border melts away in dark themes. */
+  --color-border-secondary: #454b59;
+
+  --color-primary: #7fc7a3;
+  --color-secondary: #545d6a;
+  --color-actionable: #b2dfdb;
+  --color-emphasis: #8acfd4;
+
+  /* Semantic notification colors */
+  --color-success: #86efac;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+  --color-info: #93c5fd;
+  --color-danger: #f87171;
+  --color-stratagem: #d8b4fe;
+
+  /* Per-type search accents — mirror the :root (dark fallback) values */
+  --search-type-monster: #d4736d;
+  --search-type-spell: #8acfd4;
+  --search-type-heirloom: #c9a85c;
+  --search-type-trinket: #c9a0dc;
+  --search-type-bloodline: #e48b8b;
+  --search-type-vocation: #a8b4c0;
+  --search-type-specialization: #c9a85c;
+  --search-type-feat: #8fb8a0;
+  --search-type-world: #8fd3a1;
+  --search-type-rule: #d8c8a0;
+
+  /* Search bar visibility — dark tolerates heavy dimming */
+  --search-muted-alpha: 0.6;
+  --search-hint-alpha: 0.4;
+  --search-input-weight: 400;
+
+  /* Lair/special event colors */
+  --color-lair-bg-start: #8b5a2b;
+  --color-lair-bg-end: #6b4226;
+  --color-lair-border: #e6c200;
+  --color-lair-text: #ffffff;
+
+  /* Shadow and overlay tokens */
+  --color-shadow: 0 0 0 / 0.3;
+  --color-shadow-light: 0 0 0 / 0.1;
+  --color-shadow-medium: 0 0 0 / 0.15;
+  --color-overlay: 0 0 0 / 0.6;
+  --color-accent-a10: 143 211 161 / 0.1;
+  --color-accent-a20: 143 211 161 / 0.2;
+  --color-stratagem-a15: 216 180 254 / 0.15;
+  --color-lair-shadow: 139 90 43 / 0.4;
+  --color-lair-glow: 230 194 0 / 0.3;
+  --color-lair-glow-dim: 230 194 0 / 0.15;
+  --color-lair-button-bg: 230 194 0 / 0.15;
+
+  /* Structural transparency token */
+  --color-transparent: transparent;
+
+  /* ============================================
+     HEROIC AWAKENING TOKENS - Dark theme
+  ============================================ */
+
+  /* Bloodthirsty: red family (muted rose) */
+  --ha-bloodthirsty-bg-1: #3d2632;
+  --ha-bloodthirsty-bg-2: #4d303d;
+  --ha-bloodthirsty-border: #9c6b7a;
+
+  /* Championed: iron/grey family (muted steel) */
+  --ha-championed-bg-1: #2d3038;
+  --ha-championed-bg-2: #383b44;
+  --ha-championed-border: #7a8090;
+
+  /* Crusading: yellow/gold family (muted gold) */
+  --ha-crusading-bg-1: #3d3826;
+  --ha-crusading-bg-2: #4d4530;
+  --ha-crusading-border: #a89860;
+
+  /* Flametongued: red/orange family (muted ember) */
+  --ha-flametongued-bg-1: #3d2e26;
+  --ha-flametongued-bg-2: #4d3a30;
+  --ha-flametongued-border: #b08060;
+
+  /* Frostveined: blue/cyan family (muted ice) */
+  --ha-frostveined-bg-1: #262d3d;
+  --ha-frostveined-bg-2: #303a4d;
+  --ha-frostveined-border: #6090a8;
+
+  /* Psionic: pink/magenta family (muted violet) */
+  --ha-psionic-bg-1: #38263d;
+  --ha-psionic-bg-2: #45304d;
+  --ha-psionic-border: #9068a0;
+
+  /* Rakish: silver/white family (muted pearl) */
+  --ha-rakish-bg-1: #333540;
+  --ha-rakish-bg-2: #3e404d;
+  --ha-rakish-border: #a0a5b8;
+
+  /* Stormbound: purple/violet family (muted storm) */
+  --ha-stormbound-bg-1: #30263d;
+  --ha-stormbound-bg-2: #3c304d;
+  --ha-stormbound-border: #8068a8;
+
+  /* Sulphurous: green family (muted bile) */
+  --ha-sulphurous-bg-1: #2d3826;
+  --ha-sulphurous-bg-2: #384530;
+  --ha-sulphurous-border: #78a060;
+
+  /* Tier shimmer tokens */
+  --ha-legendary-shimmer-1: #4a4228; /* Deep gold */
+  --ha-legendary-shimmer-2: #5d5530; /* Warm gold */
+  --ha-legendary-shimmer-3: #706858; /* Silver-gold (slightly lighter) */
+  --ha-legendary-shimmer-4: #5d5530; /* Warm gold */
+  --ha-legendary-shimmer-5: #4a4228; /* Back to deep gold */
+  --ha-legendary-border: #d4b858; /* Gold border */
+
+  /* Mythic tier shimmer (prismatic/opaline: purple→teal→pink→yellow) */
+  --ha-mythic-shimmer-1: #38303d; /* Purple */
+  --ha-mythic-shimmer-2: #303d3d; /* Teal */
+  --ha-mythic-shimmer-3: #484850; /* White highlight */
+  --ha-mythic-shimmer-4: #3d3038; /* Pink */
+  --ha-mythic-shimmer-5: #3d3d30; /* Yellow */
+  --ha-mythic-shimmer-6: #38303d; /* Back to purple */
+  --ha-mythic-border: #b890d0; /* Purple border */
+
+  /* Skeleton: static ink, moving light */
+  --skeleton-surface: var(--color-bg-secondary); /* default matter color */
+  --skeleton-glint-1: #3f5a4a; /* --color-accent desaturated toward surface (green) */
+  --skeleton-glint-2: #4d7580; /* --color-emphasis darkened (cyan crest) */
+
+  /* Flashlight reveal — scanlines are light-on-dark in dark mode */
+  --flashlight-scanline: rgba(255, 255, 255, 0.4);
+  --flashlight-scanline-opacity: 0.2;
+
+  /* Sidebar folder glow — a luminous halo, so light-on-dark here */
+  --sidebar-glow: var(--color-text);
+
+  /* Awakened badge token */
+  --ha-badge-bg: #2d303a;
+  --ha-badge-text: #b8c0d0;
+  --ha-badge-border: #505868;
+
+  /* World Sim tokens - dark theme */
+  --worldsim-bg: #050508;
+  --worldsim-label-text: #ffffff;
+  --worldsim-label-accent: var(--color-accent);
+  --worldsim-label-bg: 0 0 0 / 0.65;
+  --worldsim-region-hover: rgba(255, 255, 255, 0.08);
+  --worldsim-panel-text: var(--color-text);
+  --worldsim-controls-bg: rgba(8, 8, 14, 0.85);
+  --worldsim-controls-shadow: rgba(0, 0, 0, 0.5);
+  --worldsim-controls-btn-bg: rgba(255, 255, 255, 0.06);
+  --worldsim-controls-btn-hover: rgba(255, 255, 255, 0.12);
+  --worldsim-controls-btn-active: rgba(255, 255, 255, 0.14);
+
+  /* Selection + autofill */
+  --color-selection-bg: rgba(143, 211, 161, 0.25);
+  --color-selection-text: inherit;
+  --color-autofill-bg: #1b1d23;
+  --color-autofill-text: #c8ccc7;
+  --color-autofill-border: #2a2c35;
+
+  /* Prism syntax tokens */
+  --prism-comment: #6a737d;
+  --prism-keyword: #8acfd4;
+  --prism-string: #8fd3a1;
+  --prism-title: #d4a8e0;
+  --prism-punctuation: #a1a1aa;
+  --prism-url: #8fd3a1;
+  --prism-bold: #c8ccc7;
+  --prism-italic: #c8ccc7;
+}

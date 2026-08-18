@@ -93,6 +93,16 @@ Cascade order strict, FOUC prevention active. CSS specificity, token vars, pitfa
 
 Mediator Pattern, phase bus, Strategy (renderers), DOM bridge. Three.js owns canvas, React owns UI. Boundary strict.
 
+### 6. Motion & Floating Elements
+
+[Deep Dive](.github/skills/frontend-design/SKILL.md)
+
+CSS-only motion for HTML. Enter/exit via transitions + `@starting-style`. `@keyframes` restart from their own `from` value and snap the element — reserve them for looping motion.
+
+Per-frame visual state stays out of React state. A `setState` from a native scroll listener commits one frame late, so the element trails by the scroll delta. Bridge imperatively: `useRef` + rAF, write `transform`, never `left`/`top`.
+
+Anchored/floating elements (tooltip, dropdowns, comboboxes) use CSS anchor positioning, with `useAnchoredPosition` as the fallback. Hold `visibility: hidden` until first position write, else the element paints at the viewport origin.
+
 ---
 
 ## Documentation Rules
@@ -130,6 +140,7 @@ Add module: Define in `src/lib/debug/ik.ts`. `registerIkModule('key', obj)` on m
 - [SCSS](.github/docs/scss-theme-rules.md)
 - [Testing](.github/docs/testing-rules.md)
 - [MDX](.github/instructions/mdx-content.instructions.md)
+- [Motion](.github/skills/frontend-design/SKILL.md)
 
 ### Architecture
 

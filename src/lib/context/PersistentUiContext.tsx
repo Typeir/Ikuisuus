@@ -13,8 +13,6 @@
 'use client';
 
 import type { JSX } from 'react';
-import { deriveExpandedPathsFromUrl } from '@/modules/library/application/selectors/deriveExpandedPathsFromUrl';
-import { isStaticContentRoute } from '@/modules/library/application/selectors/isStaticContentRoute';
 import {
   createContext,
   ReactNode,
@@ -25,54 +23,15 @@ import {
 } from 'react';
 import { persistentUiReducer } from '../reducers/persistentUiReducer';
 import {
-  ASPECT_DISPLAY_MODES,
-  type AspectDisplayMode,
   DEFAULT_PERSISTENT_UI_STATE,
-  DEFAULT_UNIT_SYSTEM,
-  LEGACY_THEME_KEY,
-  PERSISTENT_UI_STORAGE_KEY,
   PersistentUiAction,
   PersistentUiState,
-  SerializedPersistentUiState,
-  ThemeValue,
-  UnitSystemPreferences,
-  UnitSystemValue,
 } from '../types/persistentUiState';
-
-/** Recognised display systems. */
-const SYSTEMS: readonly UnitSystemValue[] = ['stride', 'metric', 'imperial'];
-
-/**
- * Normalize stored unit preference to per-dimension shape.
- *
- * @param {UnitSystemPreferences | UnitSystemValue | undefined} stored - Raw stored value
- * @returns {UnitSystemPreferences} Normalized preferences
- */
-function readUnitSystem(
-  stored: UnitSystemPreferences | UnitSystemValue | undefined,
-): UnitSystemPreferences {
-  if (typeof stored === 'string') {
-    return SYSTEMS.includes(stored)
-      ? { distance: stored, weight: stored, volume: stored }
-      : DEFAULT_UNIT_SYSTEM;
-  }
-
-  if (!stored || typeof stored !== 'object') {
-    return DEFAULT_UNIT_SYSTEM;
-  }
-
-  const pick = (value: UnitSystemValue, fallback: UnitSystemValue) =>
-    SYSTEMS.includes(value) ? value : fallback;
-
-  return {
-    distance: pick(stored.distance, DEFAULT_UNIT_SYSTEM.distance),
-    weight: pick(stored.weight, DEFAULT_UNIT_SYSTEM.weight),
-    volume: pick(stored.volume, DEFAULT_UNIT_SYSTEM.volume),
-  };
-}
+import {
+  readPersistedState,
+  writePersistedState,
+} from './persistentUiStorage';
 import { useIkUiHandle } from './useIkUiHandle';
-import { fetchPersistentData } from '../utils/fetchPersistentData';
-import { storePersistentData } from '../utils/storePersistentData';
 
 /**
  * State context value shape
@@ -96,134 +55,6 @@ const PersistentUiStateContext =
   createContext<PersistentUiStateContextValue | null>(null);
 const PersistentUiDispatchContext =
   createContext<PersistentUiDispatchContextValue | null>(null);
-
-/**
- * Reads persisted state with server-provided expanded paths for SSR
- *
- * @function readPersistedState
- * @param {string[]} serverExpandedPaths - Paths from server cookies for hydration match
- * @returns {SerializedPersistentUiState} State with theme and sidebar expansion
- *
- * @description Falls back to URL-derived or default values when no persisted
- * state exists.
- */
-function readPersistedState(
-  serverExpandedPaths: string[],
-): SerializedPersistentUiState & { unitSystem: UnitSystemPreferences } {
-  let expandedPaths: string[] = [];
-  const isStatic = isStaticContentRoute();
-
-  if (isStatic) {
-    expandedPaths =
-      serverExpandedPaths.length > 0
-        ? serverExpandedPaths
-        : deriveExpandedPathsFromUrl();
-  } else {
-    const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as SerializedPersistentUiState;
-        if (parsed.sidebarMenu?.expandedPaths) {
-          expandedPaths = parsed.sidebarMenu.expandedPaths;
-        }
-      } catch {
-        expandedPaths = deriveExpandedPathsFromUrl();
-      }
-    }
-
-    if (expandedPaths.length === 0) {
-      expandedPaths = deriveExpandedPathsFromUrl();
-    }
-  }
-
-  let theme: ThemeValue = 'dark';
-  let unitSystem: UnitSystemPreferences = DEFAULT_UNIT_SYSTEM;
-  let correctionsToken: string | null = null;
-  let aspectExpanded = false;
-  let aspectDisplay: AspectDisplayMode = 'compact';
-  const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored) as SerializedPersistentUiState;
-      if (parsed.theme === 'dark' || parsed.theme === 'light') {
-        theme = parsed.theme;
-      }
-      unitSystem = readUnitSystem(parsed.unitSystem);
-      if (
-        typeof parsed.correctionsToken === 'string' ||
-        parsed.correctionsToken === null
-      ) {
-        correctionsToken = parsed.correctionsToken;
-      }
-      if (typeof parsed.aspectExpanded === 'boolean') {
-        aspectExpanded = parsed.aspectExpanded;
-      }
-      if (
-        parsed.aspectDisplay &&
-        ASPECT_DISPLAY_MODES.includes(parsed.aspectDisplay)
-      ) {
-        aspectDisplay = parsed.aspectDisplay;
-      }
-    } catch {
-      const legacyTheme = fetchPersistentData(LEGACY_THEME_KEY);
-      if (legacyTheme === 'dark' || legacyTheme === 'light') {
-        theme = legacyTheme;
-      }
-    }
-  } else {
-    const legacyTheme = fetchPersistentData(LEGACY_THEME_KEY);
-    if (legacyTheme === 'dark' || legacyTheme === 'light') {
-      theme = legacyTheme;
-    }
-  }
-
-  return {
-    theme,
-    unitSystem,
-    correctionsToken,
-    aspectExpanded,
-    aspectDisplay,
-    sidebarMenu: { expandedPaths, isOpen: false },
-  };
-}
-
-/**
- * Writes state to unified persistent storage and updates DOM theme attribute
- *
- * @function writePersistedState
- * @param {PersistentUiState} state - Current UI state to persist
- * @returns {void}
- *
- * @description Writes serialized state to storage layers and sets the DOM
- * data-theme and data-aspect-expanded attributes.
- */
-function writePersistedState(state: PersistentUiState): void {
-  if (typeof window === 'undefined') return;
-
-  const serialized: SerializedPersistentUiState = {
-    sidebarMenu: state.sidebarMenu,
-    theme: state.theme,
-    unitSystem: state.unitSystem,
-    correctionsToken: state.correctionsToken,
-    aspectExpanded: state.aspectExpanded,
-    aspectDisplay: state.aspectDisplay,
-  };
-
-  storePersistentData(PERSISTENT_UI_STORAGE_KEY, JSON.stringify(serialized));
-  storePersistentData(LEGACY_THEME_KEY, state.theme);
-  document.documentElement.setAttribute('data-theme', state.theme);
-  /* Stamped on the root rather than passed down, so every carousel on the page
-     reacts through CSS alone. A hundred rows re-rendering to change one class
-     would be the same picture at a much worse price. */
-  document.documentElement.setAttribute(
-    'data-aspect-expanded',
-    state.aspectExpanded ? 'true' : 'false',
-  );
-  document.documentElement.setAttribute(
-    'data-aspect-display',
-    state.aspectDisplay,
-  );
-}
 
 /**
  * Props for PersistentUiProvider
@@ -353,6 +184,15 @@ export type { SidebarMenuActions } from '@/modules/navigation-sidebar/applicatio
 
 export { useThemeActions, useThemeState } from '../hooks/useThemeState';
 export type { ThemeActions, ThemeState } from '../hooks/useThemeState';
+
+export {
+  useDisplayPrefsActions,
+  useDisplayPrefsState,
+} from '../hooks/useDisplayPrefs';
+export type {
+  DisplayPrefsActions,
+  DisplayPrefsState,
+} from '../hooks/useDisplayPrefs';
 
 export {
   useCorrectionsTokenActions,

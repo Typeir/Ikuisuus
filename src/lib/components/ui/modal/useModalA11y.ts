@@ -1,11 +1,7 @@
 /**
  * @fileoverview Modal accessibility hook
  * @description Shared focus-trap, focus-restore, and modal-stacking behaviour for
- * `Modal` and `MobileModal`. A single global stack ensures only the top-most modal
- * responds to Escape and traps Tab, body scroll-lock is reference-counted across
- * nested modals, and every modal below the top is made `inert` (background gating).
- * Focus moves into the modal on open and returns to the triggering element on close.
- *
+ * `Modal` and `MobileModal`.s
  * @module ui/modal/useModalA11y
  * @version 1.0.0
  * @author Typeir
@@ -32,7 +28,7 @@ interface ModalStackEntry {
 }
 
 const modalStack: ModalStackEntry[] = [];
-let savedBodyOverflow = '';
+let savedRootOverflow = '';
 
 /**
  * Applies or clears `inert` + `aria-hidden` so only the top-of-stack modal is
@@ -56,7 +52,8 @@ function syncModalInert(): void {
 }
 
 /**
- * Pushes a modal onto the global stack, locking body scroll on the first entry.
+ * Pushes a modal onto the global stack, locking scroll on the first entry.
+ *
  *
  * @function pushModal
  * @param {ModalStackEntry} entry - The modal's id and overlay element
@@ -64,15 +61,15 @@ function syncModalInert(): void {
  */
 function pushModal(entry: ModalStackEntry): void {
   if (modalStack.length === 0) {
-    savedBodyOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    savedRootOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
   }
   modalStack.push(entry);
   syncModalInert();
 }
 
 /**
- * Removes a modal from the global stack, restoring body scroll when it empties.
+ * Removes a modal from the global stack, restoring scroll when it empties.
  *
  * @function popModal
  * @param {string} id - The modal id to remove
@@ -81,7 +78,9 @@ function pushModal(entry: ModalStackEntry): void {
 function popModal(id: string): void {
   const index = modalStack.findIndex((entry) => entry.id === id);
   if (index !== -1) modalStack.splice(index, 1);
-  if (modalStack.length === 0) document.body.style.overflow = savedBodyOverflow;
+  if (modalStack.length === 0) {
+    document.documentElement.style.overflow = savedRootOverflow;
+  }
   syncModalInert();
 }
 
@@ -111,9 +110,7 @@ export interface ModalA11y {
 /**
  * Wires modal accessibility for a controlled modal: focus trap, initial focus,
  * focus restore to the trigger, top-of-stack Escape handling, reference-counted
- * body scroll-lock, and `inert` gating of lower modals. Attach the returned refs
- * to the overlay and content elements; give the content element `tabIndex={-1}`
- * so it can receive focus when it holds no focusable children.
+ * body scroll-lock, and `inert` gating of lower modals.
  *
  * @function useModalA11y
  * @param {boolean} isOpen - Whether the modal is currently open

@@ -119,6 +119,27 @@ export function persistentUiReducer(
       };
     }
 
+    case PERSISTED_UI_ACTION_TYPES.SET_TEXT_SCALE: {
+      return {
+        ...state,
+        textScale: action.payload.scale,
+      };
+    }
+
+    case PERSISTED_UI_ACTION_TYPES.SET_PROSE_MEASURE: {
+      return {
+        ...state,
+        proseMeasure: action.payload.measure,
+      };
+    }
+
+    case PERSISTED_UI_ACTION_TYPES.SET_CONSTRAINED_HUE: {
+      return {
+        ...state,
+        constrainedHue: action.payload.constrained,
+      };
+    }
+
     case PERSISTED_UI_ACTION_TYPES.SET_SIDEBAR_EXPANSION: {
       const { path, expanded } = action.payload;
       const currentPaths = state.sidebarMenu.expandedPaths ?? [];

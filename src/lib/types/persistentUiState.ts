@@ -42,6 +42,9 @@ export const PERSISTED_UI_ACTION_TYPES = {
   SET_UNIT_SYSTEM: 'PERSISTED_UI/SET_UNIT_SYSTEM',
   SET_ASPECT_EXPANDED: 'PERSISTED_UI/SET_ASPECT_EXPANDED',
   SET_ASPECT_DISPLAY: 'PERSISTED_UI/SET_ASPECT_DISPLAY',
+  SET_TEXT_SCALE: 'PERSISTED_UI/SET_TEXT_SCALE',
+  SET_PROSE_MEASURE: 'PERSISTED_UI/SET_PROSE_MEASURE',
+  SET_CONSTRAINED_HUE: 'PERSISTED_UI/SET_CONSTRAINED_HUE',
   RESET: 'PERSISTED_UI/RESET',
 } as const;
 
@@ -113,6 +116,9 @@ export const DEFAULT_UNIT_SYSTEM: UnitSystemPreferences = {
  * @property {string | null} correctionsToken - HMAC token for corrections API (persists annually)
  * @property {boolean} aspectExpanded - Aspect carousel expansion
  * @property {AspectDisplayMode} aspectDisplay - Aspect pill display mode
+ * @property {number} textScale - Multiplier applied over the shipped base text size
+ * @property {number} proseMeasure - Article line length, in characters
+ * @property {boolean} constrainedHue - Collapse aspect colour to the theme hue
  * @property {boolean} isHydrated - Whether state has been hydrated from storage
  */
 export interface PersistentUiState {
@@ -122,6 +128,9 @@ export interface PersistentUiState {
   correctionsToken: string | null;
   aspectExpanded: boolean;
   aspectDisplay: AspectDisplayMode;
+  textScale: number;
+  proseMeasure: number;
+  constrainedHue: boolean;
   isHydrated: boolean;
 }
 
@@ -150,6 +159,9 @@ export const ASPECT_DISPLAY_MODES: readonly AspectDisplayMode[] = [
  * @property {string | null} [correctionsToken] - Optional corrections API token
  * @property {boolean} [aspectExpanded] - Optional aspect carousel expansion
  * @property {AspectDisplayMode} [aspectDisplay] - Optional aspect pill display mode
+ * @property {number} [textScale] - Optional text size multiplier
+ * @property {number} [proseMeasure] - Optional article line length in characters
+ * @property {boolean} [constrainedHue] - Optional constrained-hue flag
  */
 export interface SerializedPersistentUiState {
   sidebarMenu?: SidebarMenuState;
@@ -158,6 +170,9 @@ export interface SerializedPersistentUiState {
   correctionsToken?: string | null;
   aspectExpanded?: boolean;
   aspectDisplay?: AspectDisplayMode;
+  textScale?: number;
+  proseMeasure?: number;
+  constrainedHue?: boolean;
 }
 
 /**
@@ -290,6 +305,42 @@ export interface SetAspectDisplayAction {
 }
 
 /**
+ * Action to set the text size multiplier.
+ *
+ * @interface SetTextScaleAction
+ * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_TEXT_SCALE} type - Action type identifier
+ * @property {{ scale: number }} payload - Multiplier over the shipped base size
+ */
+export interface SetTextScaleAction {
+  type: typeof PERSISTED_UI_ACTION_TYPES.SET_TEXT_SCALE;
+  payload: { scale: number };
+}
+
+/**
+ * Action to set the article line length.
+ *
+ * @interface SetProseMeasureAction
+ * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_PROSE_MEASURE} type - Action type identifier
+ * @property {{ measure: number }} payload - Line length in characters
+ */
+export interface SetProseMeasureAction {
+  type: typeof PERSISTED_UI_ACTION_TYPES.SET_PROSE_MEASURE;
+  payload: { measure: number };
+}
+
+/**
+ * Action to set constrained-hue mode.
+ *
+ * @interface SetConstrainedHueAction
+ * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_CONSTRAINED_HUE} type - Action type identifier
+ * @property {{ constrained: boolean }} payload - Whether aspect colour collapses to the theme hue
+ */
+export interface SetConstrainedHueAction {
+  type: typeof PERSISTED_UI_ACTION_TYPES.SET_CONSTRAINED_HUE;
+  payload: { constrained: boolean };
+}
+
+/**
  * Action to reset state to defaults
  *
  * @interface ResetAction
@@ -315,7 +366,41 @@ export type PersistentUiAction =
   | SetUnitSystemAction
   | SetAspectExpandedAction
   | SetAspectDisplayAction
+  | SetTextScaleAction
+  | SetProseMeasureAction
+  | SetConstrainedHueAction
   | ResetAction;
+
+/**
+ * Neutral text scale: the shipped base size, unmultiplied.
+ *
+ * @constant
+ */
+export const DEFAULT_TEXT_SCALE = 1;
+
+/**
+ * Article line length in characters when the reader has not set one.
+ *
+ * @constant
+ */
+export const DEFAULT_PROSE_MEASURE = 100;
+
+/**
+ * Narrows a stored preference to a usable positive number.
+ *
+ * Guards rendering against a corrupt or hand-edited store; it is not an input
+ * restriction, so any positive value a reader types is honoured.
+ *
+ * @function readPositiveNumber
+ * @param {unknown} stored - Raw stored value
+ * @param {number} fallback - Value used when `stored` is unusable
+ * @returns {number} The stored value, or the fallback
+ */
+export function readPositiveNumber(stored: unknown, fallback: number): number {
+  return typeof stored === 'number' && Number.isFinite(stored) && stored > 0
+    ? stored
+    : fallback;
+}
 
 /**
  * Default initial state for persistent UI
@@ -332,6 +417,9 @@ export const DEFAULT_PERSISTENT_UI_STATE: PersistentUiState = {
   correctionsToken: null,
   aspectExpanded: false,
   aspectDisplay: 'compact',
+  textScale: DEFAULT_TEXT_SCALE,
+  proseMeasure: DEFAULT_PROSE_MEASURE,
+  constrainedHue: false,
   isHydrated: false,
 };
 

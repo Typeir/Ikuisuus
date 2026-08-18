@@ -273,3 +273,21 @@ a:hover .resultTitle {
     }
   }
 }
+
+/* ---- Card header line ----
+   The card variant nests the sigil in the type-label line instead of giving
+   it its own flex column, so the content column owns the card's full width.
+   Narrow cards then wrap the title normally instead of breaking mid-word. */
+.cardHeader {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0 0.5rem;
+  overflow-wrap: normal;
+}
+
+.cardHeaderLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -282,7 +282,7 @@ describe('Modal Component', () => {
         </Modal>
       );
 
-      expect(document.body.style.overflow).toBe('hidden');
+      expect(document.documentElement.style.overflow).toBe('hidden');
     });
 
     it('should restore body scroll when modal closes', () => {
@@ -292,7 +292,7 @@ describe('Modal Component', () => {
         </Modal>
       );
 
-      expect(document.body.style.overflow).toBe('hidden');
+      expect(document.documentElement.style.overflow).toBe('hidden');
 
       rerender(
         <Modal isOpen={false} onClose={mockOnClose}>
@@ -300,7 +300,7 @@ describe('Modal Component', () => {
         </Modal>
       );
 
-      expect(document.body.style.overflow).toBe('');
+      expect(document.documentElement.style.overflow).toBe('');
     });
 
     it('should not affect body scroll when modal is not open', () => {
@@ -310,7 +310,7 @@ describe('Modal Component', () => {
         </Modal>
       );
 
-      expect(document.body.style.overflow).not.toBe('hidden');
+      expect(document.documentElement.style.overflow).not.toBe('hidden');
     });
   });
 

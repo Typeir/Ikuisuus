@@ -15,10 +15,15 @@ import styles from './dotMatrix.module.scss';
 type Props = {
   radius?: number;
   hidden?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
 };
 
 export default React.forwardRef<HTMLDivElement, Props>(
-  function DotMatrixBackground({ radius = 200, hidden = false }, ref) {
+  function DotMatrixBackground(
+    { radius = 200, hidden = false, className, style: styleOverride },
+    ref,
+  ) {
     const style: React.CSSProperties = {
       opacity: hidden ? 0 : 0.5,
       pointerEvents: hidden ? 'none' : 'auto',
@@ -26,12 +31,13 @@ export default React.forwardRef<HTMLDivElement, Props>(
     if (radius != null) {
       (style as any)['--reveal-radius'] = `${radius}px`;
     }
+    Object.assign(style, styleOverride);
 
     return (
       <div
         ref={ref}
         data-flashlight='true'
-        className={styles.reveal}
+        className={className ? `${styles.reveal} ${className}` : styles.reveal}
         style={style}
         aria-hidden='true'>
         <div className={styles.aperture} data-flashlight-aperture='true'>

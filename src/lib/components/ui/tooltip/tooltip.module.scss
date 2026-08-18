@@ -39,32 +39,55 @@
     display: none;
   }
 
-  opacity: 0;
-  animation: tooltipFadeIn 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 1;
+  transition: opacity 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 
-  @keyframes tooltipFadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+  @starting-style {
+    opacity: 0;
   }
 
+}
+
+.tooltip.top,
+.tooltip.bottom,
+.tooltip.left,
+.tooltip.right {
+  position: fixed;
+}
+
+@supports (anchor-name: --a) {
+  .tooltip {
+    top: auto;
+    left: auto;
+    will-change: auto;
+    position-try-fallbacks: flip-block, flip-inline;
+  }
+
+  .tooltip.top {
+    position-area: block-start center;
+    margin-block-end: 8px;
+  }
+
+  .tooltip.bottom {
+    position-area: block-end center;
+    margin-block-start: 8px;
+  }
+
+  .tooltip.left {
+    position-area: center inline-start;
+    margin-inline-end: 8px;
+  }
+
+  .tooltip.right {
+    position-area: center inline-end;
+    margin-inline-start: 8px;
+  }
 }
 
 .tooltip.tooltipExiting {
-  animation: tooltipFadeOut 0.15s ease forwards;
+  opacity: 0;
+  transition: opacity 0.15s ease;
   pointer-events: none;
-}
-
-@keyframes tooltipFadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
 }
 
 // Trigger styles when clickable

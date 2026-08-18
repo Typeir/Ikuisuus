@@ -1,6 +1,6 @@
 /**
  * @fileoverview Integration tests for ToolsMenu with useToolRegistry items.
- * @description Verifies all registry tools render as menu items, items have non-empty
+ * @description Verifies all visible registry tools render as menu items, items have non-empty
  * labels, onSelect receives the ToolMenuItem on click, and the menu closes after selection.
  *
  * @module tests/unit/src/modules/tools-menu/tools-menu-registry
@@ -10,7 +10,7 @@
  */
 
 import { ToolsMenu, useToolRegistry } from '@/modules/tools-menu';
-import { TOOL_REGISTRY } from '@/modules/tools-menu/infrastructure/registry/toolRegistry.config';
+import { selectVisibleTools } from '@/modules/tools-menu/infrastructure/registry/toolRegistry.config';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
@@ -63,7 +63,9 @@ describe('ToolsMenu + useToolRegistry integration', () => {
       expect(screen.getByRole('menu')).toBeInTheDocument();
     });
 
-    expect(screen.getAllByRole('menuitem')).toHaveLength(TOOL_REGISTRY.length);
+    expect(screen.getAllByRole('menuitem')).toHaveLength(
+      selectVisibleTools(false).length,
+    );
   });
 
   it('each menu item displays a non-empty label string', async () => {

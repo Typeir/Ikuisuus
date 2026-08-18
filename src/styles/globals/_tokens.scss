@@ -1,0 +1,20 @@
+/* ============================================
+   GLOBAL CSS & SCSS VARIABLES
+============================================ */
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'icon-action' as *;
+@import 'katex/dist/katex.min.css';
+
+:root {
+  --springy-bezier: #{$transition-ease-springy};
+}
+
+/* Media max-width tokens (px) — used for JS/CSS responsive helpers */
+:root {
+  --mw-tiny: 320px;
+  --mw-small: 480px;
+  --mw-normal: 768px;
+  --mw-big: 1024px;
+  --mw-xlarge: 1280px;
+}

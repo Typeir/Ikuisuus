@@ -1,14 +1,7 @@
 /**
- * @fileoverview Button Mixins
- * @description Button base styles, hover/variant modifiers, and scale animation.
- * Canonical compositions:
- * Primary is a BARE `<button>` (global rule) — there is no primary mixin/class.
- * Distribute variants via `src/styles/buttons.module.scss`. Compositions:
- *   - `.buttonBase`      → button-base + button-hover-secondary + button-hover-scale
- *   - `.buttonSecondary` → button-secondary + button-hover-scale
- *   - `.buttonDanger`    → button-base + button-danger + button-hover-scale
- *   - `.buttonGhost`     → button-ghost + button-hover-scale
- *   - `.buttonIcon`      → button-icon + button-hover-scale
+ * @fileoverview Button mixins. Primary is a bare `<button>` styled by the global
+ * rule in `globals/_base-elements.scss`; every other variant is distributed as a
+ * class in `src/styles/buttons.module.scss`.
  *
  * @module styles/mixins-button
  */
@@ -29,13 +22,7 @@
     border-color 0.2s ease,
     transform 0.15s ease;
 
-  /**
-   * Self-contained hover guard. Without an explicit hover background, a
-   * button-base button (light text) falls through to the global
-   * `button:hover { background: var(--color-primary) }` and renders
-   * unreadable light-on-green. Consumers that want a different hover simply
-   * declare their own `&:hover` (later cascade wins).
-   */
+  /** Owns its hover background so the global button hover cannot show through. */
   &:hover:not(:disabled) {
     background: var(--color-secondary);
     border-color: var(--color-secondary);
@@ -48,64 +35,42 @@
   }
 }
 
-@mixin button-hover-secondary {
-  &:hover {
-    background: var(--color-secondary);
-    border-color: var(--color-secondary);
-  }
-}
-
-@mixin button-hover-accent {
-  &:hover {
-    background: var(--color-accent);
-    color: var(--color-surface);
-    border-color: var(--color-accent);
-  }
-}
-
-/** @deprecated Use button-hover-secondary directly. */
-@mixin button-secondary-bg {
-  @include button-hover-secondary;
-}
-
 /**
- * @deprecated Retired. A bare `<button>` IS the primary button (styled by the
- * global rule in globals.scss). Do not add a primary class; render `<button>`.
+ * Canonical button shape: transparent fill, 1px border and glyph in `$color`,
+ * hover washing that color in at low alpha.
+ *
+ * Hover must not set `color` — the global primary is an element selector and
+ * would repaint every variant's label.
  */
-
-@mixin button-danger {
-  background: var(--color-emphasis);
-  color: var(--color-bg);
-  border-color: var(--color-emphasis);
-
-  &:hover {
-    filter: brightness(0.9);
-  }
-}
-
-/**
- * Secondary button — transparent background with accent border at rest,
- * fills with accent color on hover. For outline-style action CTAs.
- */
-@mixin button-secondary($padding: 0.3rem 0.65rem, $font-size: 0.8rem) {
+@mixin button-outline(
+  $color,
+  $padding: 0.5rem 1rem,
+  $font-size: 0.85rem,
+  $font-weight: 600
+) {
   padding: $padding;
-  border: 1px solid var(--color-accent);
+  border: 1px solid #{$color};
   border-radius: 4px;
-  background: transparent;
-  color: var(--color-accent);
+  background-color: transparent;
+  color: #{$color};
   cursor: pointer;
   font-size: $font-size;
+  font-weight: $font-weight;
   transition:
-    background 0.15s ease,
-    color 0.15s ease,
-    border-color 0.15s ease,
+    background-color 0.2s var(--springy-bezier),
     transform 0.15s ease;
 
-  &:hover:not(:disabled) {
-    background: var(--color-accent);
-    color: var(--color-bg);
-    border-color: var(--color-accent);
+  &:hover {
+    background-color: color-mix(in srgb, #{$color} 15%, transparent);
+    transform: scale(1.05);
   }
+}
+
+/**
+ * Secondary button. The canonical outline in `--color-emphasis`.
+ */
+@mixin button-secondary($padding: 0.5rem 1rem, $font-size: 0.85rem) {
+  @include button-outline(var(--color-emphasis), $padding, $font-size);
 }
 
 /**
@@ -120,11 +85,7 @@
   font-size: $font-size;
   transition: transform 0.15s ease;
 
-  /**
-   * Transparent hover guard. Ghost buttons only recolor text/icon on hover, so
-   * without this they inherit the global green background. Consumers that want a
-   * hover fill declare their own `&:hover` background (later cascade wins).
-   */
+  /** Ghost recolors text only, so the global button hover is cancelled here. */
   &:hover {
     background: transparent;
   }
@@ -155,9 +116,9 @@
 
 /* ============================================================
    GAP ARCHETYPES
-   Variants that recur across the app but fit none of the six
-   canonical mixins above. Each fully owns its hover background so
-   it cleanly displaces the global `button:hover` primary fill.
+   Variants that recur across the app but fit none of the canonical
+   mixins above. Each owns its hover background so the global button
+   hover cannot show through.
 ============================================================ */
 
 /**
@@ -208,7 +169,9 @@
     transform 0.15s ease;
 
   &:hover:not(:disabled) {
-    background: var(--color-bg-secondary); /* explicit → beats global green */
+    background: var(
+      --color-bg-secondary
+    ); /* explicit → beats the global button hover */
     color: var(--color-accent);
     border-color: var(--color-accent);
   }
@@ -309,7 +272,7 @@
     border-color 0.15s ease;
 
   &:hover:not(:disabled) {
-    background: var(--color-bg); /* explicit → beats global green */
+    background: var(--color-bg); /* explicit → beats the global button hover */
     border-color: var(--color-accent);
   }
 }

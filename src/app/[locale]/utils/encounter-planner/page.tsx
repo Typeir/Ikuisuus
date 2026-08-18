@@ -85,9 +85,7 @@ export default function EncounterPlannerPage(): JSX.Element {
           <span className={styles.resumeText}>
             {t('resumeCombatAvailable')}
           </span>
-          <button onClick={handleResumeCombat}>
-            {t('resumeCombat')}
-          </button>
+          <button onClick={handleResumeCombat}>{t('resumeCombat')}</button>
         </div>
       )}
       <div className={styles.header}>
@@ -104,9 +102,7 @@ export default function EncounterPlannerPage(): JSX.Element {
           </div>
         </div>
         <div className={styles.controls}>
-          <button onClick={handleStartCombat}>
-            {t('startCombat')}
-          </button>
+          <button onClick={handleStartCombat}>{t('startCombat')}</button>
           <button onClick={handleNewEncounter} className={btn.neutral}>
             {t('newEncounter')}
           </button>
@@ -123,9 +119,7 @@ export default function EncounterPlannerPage(): JSX.Element {
           <button onClick={handleImport} className={btn.neutral}>
             {t('importEncounter')}
           </button>
-          <button
-            onClick={handleDeleteEncounter}
-            className={btn.danger}>
+          <button onClick={handleDeleteEncounter} className={btn.dangerOutline}>
             {t('deleteEncounter')}
           </button>
           <input
@@ -138,12 +132,8 @@ export default function EncounterPlannerPage(): JSX.Element {
         </div>
       </div>
       <div className={styles.addCreatureControls}>
-        <button onClick={handleAddCreature}>
-          {t('addCreature')}
-        </button>
-        <button
-          onClick={() => setShowCreatureImport(!showCreatureImport)}
-          className={btn.secondary}>
+        <button onClick={handleAddCreature}>{t('addCreature')}</button>
+        <button onClick={() => setShowCreatureImport(!showCreatureImport)}>
           {t('importCreature')}
         </button>
         {showCreatureImport && (

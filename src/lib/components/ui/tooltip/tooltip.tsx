@@ -18,6 +18,7 @@ import {
   memo,
   ReactElement,
   ReactNode,
+  type CSSProperties,
   useCallback,
   useEffect,
   useId,
@@ -25,7 +26,11 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';
+import {
+  toAnchorName,
+  useAnchoredPosition,
+  useCssAnchorSupport,
+} from '@/lib/hooks/useAnchoredPosition';
 import { calculatePosition } from './calculatePosition';
 import styles from './tooltip.module.scss';
 
@@ -124,6 +129,8 @@ export const Tooltip = memo(function Tooltip({
 
   const reactId = useId();
   const tooltipId = id || `tooltip-${reactId}`;
+  const cssAnchored = useCssAnchorSupport();
+  const anchorName = toAnchorName(reactId);
 
   const showPortal = isVisible || exiting;
 
@@ -141,7 +148,7 @@ export const Tooltip = memo(function Tooltip({
   );
 
   const { reposition } = useAnchoredPosition(triggerRef, tooltipRef, compute, {
-    active: showPortal || forceVisible,
+    active: !cssAnchored && (showPortal || forceVisible),
     onPlacementChange: (resolved) =>
       setActualPlacement(resolved as TooltipPlacement),
   });
@@ -229,6 +236,10 @@ export const Tooltip = memo(function Tooltip({
   if (inline) {
     const cloned = cloneElement(Children.only(children) as ReactElement<any>, {
       ref: triggerRef,
+      style: {
+        ...((child.props as { style?: CSSProperties }).style ?? {}),
+        anchorName,
+      } as CSSProperties,
       onMouseEnter: show,
       onMouseLeave: hide,
       onFocus: show,
@@ -246,7 +257,7 @@ export const Tooltip = memo(function Tooltip({
               id={tooltipId}
               role='tooltip'
               className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
-              style={{ maxWidth }}>
+              style={{ maxWidth, positionAnchor: anchorName } as CSSProperties}>
               {content}
               {showArrow && <div className={styles.arrow} />}
             </div>,
@@ -272,7 +283,7 @@ export const Tooltip = memo(function Tooltip({
         onFocus={() => show()}
         onBlur={() => hide()}
         onClick={handleClick}
-        style={{ display: 'inline-flex' }}
+        style={{ display: 'inline-flex', anchorName } as CSSProperties}
         className={triggerClassName}
         aria-describedby={showPortal ? tooltipId : undefined}>
         {Children.only(children)}
@@ -291,7 +302,7 @@ export const Tooltip = memo(function Tooltip({
             id={tooltipId}
             role='tooltip'
             className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
-            style={{ maxWidth }}>
+            style={{ maxWidth, positionAnchor: anchorName } as CSSProperties}>
             {content}
             {showArrow && <div className={styles.arrow} />}
           </div>,

@@ -11,4 +11,3 @@
 export { useToolRegistry } from './application/hooks/useToolRegistry';
 export type { ToolMenuItem } from './domain/toolMenuItem.types';
 export { ToolsMenu } from './presentation/ToolsMenu';
-

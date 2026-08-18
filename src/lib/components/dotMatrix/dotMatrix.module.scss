@@ -140,9 +140,18 @@
   }
 }
 
-/* Disable reveal on touch/coarse pointer devices */
+/* Disable reveal on touch/coarse pointer devices. Scoped reveals are exempt:
+   they are decoration at a fixed position, not a cursor effect, so there is
+   no pointer to lack. */
 @media (hover: none) and (pointer: coarse) {
-  .reveal {
+  .reveal:not(.scoped) {
     display: none;
   }
+}
+
+/* Scoped reveal: fills its positioned ancestor instead of the viewport.
+   Positioning only — every painted rule above is shared verbatim, which is
+   what keeps a scoped reveal identical to the pointer-driven one. */
+.scoped {
+  position: absolute;
 }

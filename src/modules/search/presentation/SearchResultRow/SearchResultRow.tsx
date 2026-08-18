@@ -1,8 +1,9 @@
 /**
  * @fileoverview Search Result Row Composer
- * @description Composes the five search result atoms into a row layout:
- * `[ sigil | title+content+meta | thumb ]`. Rendered as a link to the
- * page-level result URL.
+ * @description Composes the five search result atoms into a link to the
+ * page-level result URL. The `row` variant lays them out as
+ * `[ sigil | title+content+meta | thumb ]`; the `card` variant drops the
+ * sigil into the type-label line so the content column spans the full width.
  * @module modules/search/presentation/SearchResultRow/SearchResultRow
  * @version 1.0.0
  * @author Typeir
@@ -51,6 +52,7 @@ export function SearchResultRow({
   variant = 'row',
 }: SearchResultRowProps): JSX.Element {
   const { record, snippet } = result;
+  const isCard = variant === 'card';
   const typeLabel = record.type.toUpperCase();
   const streamText = `${typeLabel}  ·  ${typeLabel}  //  ${typeLabel}  ·  ${typeLabel}`;
 
@@ -67,35 +69,30 @@ export function SearchResultRow({
   return (
     <LazyPrefetchLink
       href={record.link}
-      className={cn(
-        styles.row,
-        variant === 'card' && styles.rowCard,
-        className,
-      )}
+      className={cn(styles.row, isCard && styles.rowCard, className)}
       style={mergedStyle}
       data-testid='search-result-row'>
-      <TypeSigil type={record.type} />
+      {!isCard && <TypeSigil type={record.type} />}
 
-      <span
-        className={cn(
-          styles.rowContent,
-          variant === 'card' && styles.rowContentCard,
-        )}>
-        <span className={cn(styles.cardTypeLabel)}>
-          {typeLabel}
+      <span className={cn(styles.rowContent, isCard && styles.rowContentCard)}>
+        <span className={cn(styles.cardTypeLabel, isCard && styles.cardHeader)}>
+          {isCard && <TypeSigil type={record.type} />}
+          <span className={isCard ? styles.cardHeaderLabel : undefined}>
+            {typeLabel}
+          </span>
           {readingTime && (
             <span className={styles.readingTime}>{readingTime}</span>
           )}
         </span>
         <ResultTitle title={record.title} />
-        {variant === 'row' && snippet && <MatchSnippet snippet={snippet} />}
-        {variant === 'card' && description && (
+        {!isCard && snippet && <MatchSnippet snippet={snippet} />}
+        {isCard && description && (
           <p className={styles.cardDescription}>{description}</p>
         )}
         <MetaTrail meta={record.meta} />
       </span>
 
-      {record.image && variant === 'row' && (
+      {record.image && !isCard && (
         <span className={styles.rowMeta}>
           <ResultThumb image={record.image} type={record.type} />
         </span>

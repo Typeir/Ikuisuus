@@ -215,6 +215,7 @@ export default defineConfig({
             'tests/unit/src/app/[locale]/library/**/*.test.{ts,tsx}',
             'tests/unit/src/app/[locale]/embed/**/*.test.{ts,tsx}',
             'tests/unit/src/app/[locale]/search/**/*.test.{ts,tsx}',
+            'tests/unit/src/app/[locale]/labs/**/*.test.{ts,tsx}',
             'tests/unit/src/app/[locale]/[...rest]/**/*.test.{ts,tsx}',
           ],
         },

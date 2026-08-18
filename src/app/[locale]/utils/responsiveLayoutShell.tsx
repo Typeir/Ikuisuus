@@ -20,14 +20,15 @@ import btn from '@/styles/buttons.module.scss';
 import { EmbedLinkBridge, isEmbedPathname } from '@/lib/embed';
 import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
 import Icon from '@/lib/components/icon/icon';
+import { PreferencesModal } from '@/lib/components/preferences/PreferencesModal';
+import { ThemeToggleButton } from '@/lib/components/themeToggle/ThemeToggleButton';
+import themeToggleStyles from '@/lib/components/themeToggle/themeToggle.module.scss';
 import { NotificationProvider } from '@/lib/components/ui';
 import {
   useSidebarMenuActions,
   useSidebarMenuState,
-  useThemeActions,
   useThemeState,
 } from '@/lib/context/PersistentUiContext';
-import { Theme } from '@/lib/enums/themes';
 import { SelectedCharacterBadge } from '@/modules/character-builder';
 import { SidebarShell } from '@/modules/navigation-sidebar';
 import { SearchBar } from '@/modules/search/presentation/SearchBar/SearchBar';
@@ -36,7 +37,7 @@ import {
   useToolRegistry,
   type ToolMenuItem,
 } from '@/modules/tools-menu';
-import { Moon, Sun, Wrench } from 'lucide-react';
+import { SlidersHorizontal, Wrench } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -82,9 +83,10 @@ function BaseResponsiveLayoutShell({
   const { toggle: toggleSidebar, close: closeSidebar } =
     useSidebarMenuActions();
   const { theme: currentTheme } = useThemeState();
-  const { setTheme } = useThemeActions();
   const [mounted, setMounted] = useState(false);
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
   const t = useTranslations('layout');
+  const tPreferences = useTranslations('preferences');
   const params = useParams();
   const router = useRouter();
   const locale = params?.locale as string;
@@ -122,11 +124,6 @@ function BaseResponsiveLayoutShell({
     );
   }
 
-  const toggleTheme = () => {
-    const newTheme = currentTheme === Theme.Dark ? Theme.Light : Theme.Dark;
-    setTheme(newTheme);
-  };
-
   const handleToolSelect = (tool: ToolMenuItem) => {
     closeSidebar();
     router.push(tool.href);
@@ -134,26 +131,26 @@ function BaseResponsiveLayoutShell({
 
   /** Theme toggle — rendered in the mobile bar and the desktop sidebar. */
   const themeToggle = (extraClassName?: string) => (
+    <ThemeToggleButton className={extraClassName} />
+  );
+
+  /** Preferences launcher — sits beside the theme toggle in both bars. */
+  const preferencesButton = (extraClassName?: string) => (
     <button
-      onClick={toggleTheme}
-      className={cn(btn.tertiary, styles.themeToggle, extraClassName)}
-      aria-label='Toggle theme'
-    >
-      {mounted ? (
-        currentTheme === Theme.Dark ? (
-          <Moon size={20} aria-hidden='true' />
-        ) : (
-          <Sun size={20} aria-hidden='true' />
-        )
-      ) : (
-        <span className={styles.ssrThemeIcon} aria-hidden='true' />
-      )}
+      onClick={() => setPreferencesOpen(true)}
+      className={cn(btn.tertiary, themeToggleStyles.themeToggle, extraClassName)}
+      aria-label={tPreferences('open')}>
+      <SlidersHorizontal size={16} aria-hidden='true' />
     </button>
   );
 
   return (
     <NotificationProvider position='top-right'>
       <FlashlightLayer />
+      <PreferencesModal
+        isOpen={preferencesOpen}
+        onClose={() => setPreferencesOpen(false)}
+      />
       <div className='sidebar-container flex flex-col lg:flex-row min-h-screen relative max-w-full'>
         {/* Sticky Mobile Title Bar: four equal icon slots flanking a
             centered search bar — logo, theme, search, character, hamburger.
@@ -176,6 +173,7 @@ function BaseResponsiveLayoutShell({
             />
           </Link>
           {themeToggle(styles.headerIconSlot)}
+          {preferencesButton(styles.headerIconSlot)}
           <div className='flex-1 min-w-0 px-1'>
             <SearchBar onNavigate={closeSidebar} />
           </div>
@@ -208,7 +206,11 @@ function BaseResponsiveLayoutShell({
             className='sidebar-header hidden lg:block border-b px-3 lg:px-6 py-2 lg:py-3'
             style={{ flexShrink: 0 }}
           >
-            <div className='flex items-center justify-between gap-2'>
+            <div
+              className={cn(
+                'flex items-center justify-between gap-2',
+                styles.headerRow,
+              )}>
               <Link
                 href='/'
                 className={`text-lg font-semibold hidden lg:block ${styles.title} flex-1`}
@@ -228,7 +230,10 @@ function BaseResponsiveLayoutShell({
                   </p>
                 </div>
               </Link>
-              {themeToggle()}
+              <div className={styles.headerControls}>
+                {themeToggle()}
+                {preferencesButton()}
+              </div>
             </div>
           </div>
 

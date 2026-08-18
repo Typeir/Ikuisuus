@@ -1,0 +1,54 @@
+/* Preferences modal layout. */
+
+.preferencesModal {
+  width: min(30rem, 90vw);
+}
+
+/* Positioned so the scoped reveal fills this box. */
+.body {
+  position: relative;
+}
+
+/* Two columns of equal track, one row per control pair. The floor is wide
+   enough that three tracks never fit the modal, so the pairing holds until
+   the grid drops to a single column. */
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+/* Labels are short by design: a wrapped label would offset its control from
+   the one beside it and break the row. */
+.fieldLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+/* Two lines' worth whether the hint fills them or not, so the controls below
+   stay on one baseline across the row. */
+.fieldHint {
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  min-height: 2.9em;
+  color: var(--color-text-secondary);
+}
+
+/* One row height across all four cells, so a 28px pip, a 32px toggle and an
+   input sit on the same line. */
+.control {
+  display: flex;
+  align-items: center;
+  min-height: 2.25rem;
+}

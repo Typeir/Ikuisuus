@@ -62,6 +62,14 @@
 .body {
   padding: 1.25rem;
   overflow-y: auto;
+  /* Positions and clips the reveal layer to the body box. */
+  position: relative;
+}
+
+/* Above the reveal, which paints at the body's z-index floor. */
+.bodyContent {
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes fadeIn {

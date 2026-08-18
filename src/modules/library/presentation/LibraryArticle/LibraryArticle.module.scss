@@ -15,10 +15,12 @@
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
-  max-width: 50vw;
-  @media (max-width: 1024px) {
-    max-width: 100vw;
-  }
+  /* Measure, in characters — the only unit that holds a constant line length.
+     A viewport width does not: 50vw ran 85 characters at 1280 and 170 at 2560,
+     and drifted again with browser zoom. 100ch is the permissive end of the
+     range, chosen because rules text is scanned in short blocks rather than
+     read linearly. `min()` covers narrow screens, so no breakpoint override. */
+  max-width: min(100%, var(--prose-measure, 100ch));
 
   @media print {
     max-width: 100%;

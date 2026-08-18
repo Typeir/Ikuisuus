@@ -1,0 +1,13 @@
+/* ============================================
+   THEME-AWARE COMPONENT OVERRIDES
+============================================ */
+
+@layer components {
+  .primary {
+    color: var(--color-primary);
+  }
+
+  .secondary {
+    color: var(--color-secondary) !important;
+  }
+}

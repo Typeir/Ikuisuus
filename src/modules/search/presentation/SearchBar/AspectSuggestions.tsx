@@ -16,8 +16,22 @@
 import { displayAspects } from '@/modules/library/domain/aspects';
 import { AspectPill } from '@/modules/library/presentation/components/Aspects/Aspects';
 import { useLocale, useTranslations } from 'next-intl';
-import { useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';
-import { useCallback, useEffect, useRef, useState, type JSX, type RefObject } from 'react';
+import {
+  toAnchorName,
+  useAnchoredPosition,
+  useCssAnchorSupport,
+} from '@/lib/hooks/useAnchoredPosition';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type JSX,
+  type RefObject,
+} from 'react';
 import { createPortal } from 'react-dom';
 import styles from './searchBar.module.scss';
 
@@ -65,9 +79,20 @@ export function AspectSuggestions({
   }, []);
 
   const hasAnchor = isMounted && anchorRef.current !== null;
+  const cssAnchored = useCssAnchorSupport();
+  const anchorName = toAnchorName(useId());
+
+  useLayoutEffect(() => {
+    const el = anchorRef.current;
+    if (!cssAnchored || !el) return;
+    el.style.setProperty('anchor-name', anchorName);
+    return () => {
+      el.style.removeProperty('anchor-name');
+    };
+  }, [anchorRef, anchorName, cssAnchored, hasAnchor]);
 
   useAnchoredPosition(anchorRef, listRef, compute, {
-    active: hasAnchor && suggestions.length > 0,
+    active: !cssAnchored && hasAnchor && suggestions.length > 0,
   });
 
   if (!hasAnchor || suggestions.length === 0 || typeof document === 'undefined')
@@ -80,7 +105,8 @@ export function AspectSuggestions({
       role='listbox'
       aria-label={t('aspectSuggestions')}
       ref={listRef}
-      className={styles.aspectSuggestions}>
+      className={styles.aspectSuggestions}
+      style={{ positionAnchor: anchorName } as CSSProperties}>
       {parsed.map((aspect, i) => (
         <div
           key={aspect.raw}

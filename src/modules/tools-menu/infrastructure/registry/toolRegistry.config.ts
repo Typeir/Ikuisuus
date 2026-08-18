@@ -4,7 +4,7 @@
  * by the shell and component via `useToolRegistry()`.
  *
  * @module src/modules/tools-menu/infrastructure/registry/toolRegistry.config
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -16,11 +16,13 @@
  * @property {string} id - Unique stable identifier matching the tool slug.
  * @property {string} labelKey - Dot-notation key within the `layout` i18n namespace, e.g. `tools.encounterCreator`.
  * @property {(locale: string) => string} hrefBuilder - Pure function that constructs the locale-prefixed href.
+ * @property {boolean} [devOnly] - When true the entry is listed only while `NODE_ENV` is `development`.
  */
 export interface ToolRegistryEntry {
   id: string;
   labelKey: string;
   hrefBuilder: (locale: string) => string;
+  devOnly?: boolean;
 }
 
 /**
@@ -51,4 +53,27 @@ export const TOOL_REGISTRY: readonly ToolRegistryEntry[] = [
     labelKey: 'tools.mdxEditor',
     hrefBuilder: (l) => `/${l}/utils/mdx-editor`,
   },
+  {
+    id: 'labs',
+    labelKey: 'tools.labs',
+    hrefBuilder: (l) => `/${l}/labs/dev`,
+    devOnly: true,
+  },
 ] as const;
+
+/**
+ * Narrows `TOOL_REGISTRY` to the entries listable under the given build mode.
+ * Entries flagged `devOnly` survive only when `isDevelopment` is true; the
+ * `/labs` routes they point at return 404 outside development.
+ *
+ * @function selectVisibleTools
+ * @param {boolean} isDevelopment - Whether the app runs in development mode.
+ * @returns {readonly ToolRegistryEntry[]} Registry entries in declaration order.
+ */
+export function selectVisibleTools(
+  isDevelopment: boolean,
+): readonly ToolRegistryEntry[] {
+  return isDevelopment
+    ? TOOL_REGISTRY
+    : TOOL_REGISTRY.filter((entry) => !entry.devOnly);
+}

@@ -29,6 +29,16 @@
   max-height: 300px;
   overflow-y: auto;
   will-change: transform;
+
+  @supports (anchor-name: --a) {
+    top: auto;
+    left: auto;
+    will-change: auto;
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block;
+    margin-block-start: 4px;
+    width: max(anchor-size(width), 180px);
+  }
 }
 
 .noResults {

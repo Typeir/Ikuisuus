@@ -75,6 +75,7 @@ next-env.d.ts
 /.paw/daemon.log
 /.paw/console.endpoint.json
 /.paw/*.provider.env
+*.lock
 
 # foundry vtt compiled packs and build output (source JSON is tracked)
 /foundry/packs/_source/

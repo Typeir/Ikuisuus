@@ -36,15 +36,15 @@ const Harness: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
 };
 
 describe('useModalA11y', () => {
-  it('locks body scroll while open and restores it on close', () => {
+  it('locks root scroll while open and restores it on close', () => {
     const { rerender } = render(
       createElement(Harness, { isOpen: true, onClose: () => undefined }),
     );
-    expect(document.body.style.overflow).toBe('hidden');
+    expect(document.documentElement.style.overflow).toBe('hidden');
     rerender(
       createElement(Harness, { isOpen: false, onClose: () => undefined }),
     );
-    expect(document.body.style.overflow).toBe('');
+    expect(document.documentElement.style.overflow).toBe('');
   });
 
   it('calls onClose when Escape is pressed on the top modal', () => {

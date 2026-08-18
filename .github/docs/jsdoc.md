@@ -1,22 +1,6 @@
-# JSDoc Standards for Library of Ikuisuus
+# JSDoc Standards
 
-This document defines the JSDoc formatting standards used throughout the project's scripts and utility modules.
-
----
-
-## Hard Rules Summary
-
-> **REQUIRED on all touched code**: JSDoc must be present on every exported function, interface, type, class, and constant.
-
-| Rule                                  | Enforcement                                                          |
-| ------------------------------------- | -------------------------------------------------------------------- |
-| File-level `@fileoverview`            | Required for all `.ts`/`.tsx`/`.mjs` files                           |
-| Interface `@property` tags            | REQUIRED - no inline `/** */` on properties                          |
-| Function callbacks in props           | Include full type signature: `{(arg: T) => R}`                       |
-| Inline comments inside logic          | **PROHIBITED** - extract to helper functions with JSDoc              |
-| `@component` tag for React components | Required with function prop signatures                               |
-| Component `@param` exhaustiveness     | **REQUIRED** - every prop must have a `@param {Type} [props.x]` line |
-| Tone (dry, technical)                 | **REQUIRED** - caveman style. If caveman can't explain it, strict ASD-STE100 |
+JSDoc is a technical manual entry. It states what a thing is and what it does. Nothing else.
 
 ---
 
@@ -29,602 +13,283 @@ This document defines the JSDoc formatting standards used throughout the project
 **Rule**: shortest description that says what the thing does, in code terms.
 If caveman can't explain it, use **strict ASD-STE100** (Simplified Technical English: one meaning per word, short sentences, approved word list).
 
-### ❌ DO NOT
-
-```typescript
-/**
- * Aura of Stillness — like the hush before dawn, this aura weaves a
- * tapestry of silence over the battlefield, as if the world itself
- * held its breath to honor the fallen.
- */
-```
-
-### ✅ DO
-
-```typescript
-/**
- * Aura that prevents sound within 30 ft. Creatures inside are silenced.
- */
-```
+This is the spec `plans/caveman-jsdoc.swarm.mjs` rewrites files against. The sections below are how it is measured.
 
 ---
 
-## Inline Comments Policy
+## Length Budget — Hard Limit
 
-> **HARD RULE**: NO inline comments inside function/method bodies.
+| Block           | Budget                                                                              |
+| --------------- | ----------------------------------------------------------------------------------- |
+| `@fileoverview` | 1–3 sentences                                                                       |
+| Function / hook | 1 sentence, plus `@param` / `@returns`                                              |
+| Component       | 1 sentence, plus per-prop `@param` lines                                            |
+| Interface       | 1 sentence, plus `@property` lines                                                  |
+| Constant        | 1 sentence                                                                          |
+| `@description`  | Do not author one. See [When @description Is Allowed](#when-description-is-allowed) |
 
-### ❌ DO NOT
+Over budget is a review rejection. If a function description needs a third sentence, the code needs a better name or a smaller function.
 
-```typescript
-function processData(items: Item[]) {
-  // Filter out inactive items  ❌
-  const active = items.filter((i) => i.active);
+Never leave a JSDoc block empty. One dry sentence is the floor.
 
-  // Sort by priority  ❌
-  const sorted = active.sort((a, b) => a.priority - b.priority);
-
-  // Take top 10  ❌
-  return sorted.slice(0, 10);
-}
-```
-
-### ✅ DO
-
-```typescript
-/**
- * Processes items by filtering, sorting, and limiting results
- *
- * @param {Item[]} items - Raw items to process
- * @returns {Item[]} Top 10 active items sorted by priority
- */
-function processData(items: Item[]) {
-  const active = filterActiveItems(items);
-  const sorted = sortByPriority(active);
-  return limitResults(sorted, 10);
-}
-
-/**
- * Filters items to only include active ones
- * @param {Item[]} items - Items to filter
- * @returns {Item[]} Active items only
- */
-function filterActiveItems(items: Item[]): Item[] {
-  return items.filter((i) => i.active);
-}
-```
-
-**Why**: Inline comments become stale. Helper functions with JSDoc are self-documenting, testable, and maintainable.
+Trimming an existing block rewrites the prose after a tag. It never deletes the tag line.
 
 ---
 
-## File-Level Documentation
+## Sentence Form
 
-Every JavaScript/TypeScript file should begin with a file-level JSDoc block.
-Dry, technical — same tone rule as all JSDoc (no philosophy, prose, poetry, allegory, bible):
+Write **"X is Y"** and **"Does Z"**. Declarative, present tense, no subject pronoun.
 
-```javascript
+```typescript
+/** Resolves a slug to its content path. Returns null when the slug is unknown. */
+/** Registry of DM tools shown in the sidebar menu. */
+/** True when the viewport is below the `lg` breakpoint. */
+```
+
+Banned openers: "This function...", "A utility that...", "Helper which...", "Responsible for...".
+
+---
+
+## Forbidden Content
+
+Never appears in JSDoc:
+
+| Forbidden                                        | Goes instead in               |
+| ------------------------------------------------ | ----------------------------- |
+| Rationale, "why we chose X"                      | `.ignore/tasks/`              |
+| Trade-offs, alternatives weighed                 | `.ignore/tasks/`              |
+| History, "used to be", "we moved from"           | git log                       |
+| Bug war stories                                  | git log                       |
+| Architecture essays                              | `.github/docs/`               |
+| Philosophy, metaphor, prose, narrative           | nowhere                       |
+| "not X, but Y" antithesis                        | nowhere — state it positively |
+| "load-bearing", "the real trick is", "note that" | nowhere                       |
+
+## Always Keep
+
+Terse means fewer words, not fewer facts. These are caller-facing and stay in, however short the block gets:
+
+- Units, ranges, and hard limits — "truncates at 1024 chars", "clamped to [0, 1]"
+- Defaults for optional params
+- Error conditions and what throws
+- Side effects — writes to disk, mutates the argument, fires a request
+- Null/empty return cases
+
+**Exception**: a constraint that will be broken by the next person editing that exact line may carry one sentence, stated as an instruction.
+
+```scss
+/* Do not add :not(:disabled) here — it beats single-class component hovers. */
+```
+
+That is an instruction, not an explanation. It is one line. It is not a paragraph about the cascade.
+
+---
+
+## Enforcement
+
+Three surfaces, one spec — this file.
+
+| Surface                                | Enforces                                           |
+| -------------------------------------- | -------------------------------------------------- |
+| `.github/scripts/checkJsdocQuality.ts` | Mechanical rules below, via `npm run health:check` |
+| `.paw/gates/jsdocQuality.gate.ts`      | Same rules, `severity: critical`, in real time     |
+| `plans/caveman-jsdoc.swarm.mjs`        | Tone and length, one agent per tracked file        |
+
+Mechanical rules:
+
+| Rule                         | Check                                                       |
+| ---------------------------- | ----------------------------------------------------------- |
+| File heading tags            | `@fileoverview`, `@module`, `@author`, `@version`, `@since` |
+| No inline comments in bodies | `// ` inside a function → failure                           |
+| Typed `@param` tags          | `@param {Type} name - desc`, never bare `@param name`       |
+| No color literals            | Hex codes outside `globals.scss`                            |
+| No browser dialogs           | `alert()`, `confirm()`, `prompt()`                          |
+
+Exempt: `*.test.ts(x)`, `*.stories.ts(x)`, `*.d.ts`, `*.config.ts`.
+
+Allowed inline prefixes: `eslint`, `@ts-`, `TODO:`, `FIXME:`, `HACK:`, `prettier-ignore`, `region`, a bare URL.
+
+---
+
+## Templates
+
+### File heading
+
+```typescript
 /**
- * Module Title
+ * @fileoverview Resolves tool registry entries into locale-aware menu items.
  *
- * @fileoverview Brief description of what this file does (1-3 sentences).
- * Additional context about purpose, use cases, or architectural decisions.
- *
- * @module moduleName
+ * @module src/modules/tools-menu/application/hooks/useToolRegistry
  * @version 1.0.0
- * @author AuthorName
+ * @author Typeir
  * @since 1.0.0
- *
- * @requires dependency1 Description of what this dependency provides
- * @requires dependency2 Description of what this dependency provides
- *
- * @description
- * Dry technical bullets only — no prose, no philosophy, no narrative.
- * If caveman can't explain it, use strict ASD-STE100.
- * Include:
- * - What problem this solves
- * - How it fits into the larger system
- * - Key algorithms or patterns used
- * - Performance characteristics
- *
- * @example
- * // How to use this module
- * const result = await myFunction('input');
- *
- * @example
- * // Advanced usage
- * const advanced = await myFunction('input', { option: true });
  */
 ```
 
-## Function Documentation
+`@requires` is optional and takes one clause per dependency. Skip it unless the dependency is non-obvious.
 
-Functions must document parameters, return values, errors, and include examples:
-
-```javascript
-/**
- * Brief one-line description of what the function does
- *
- * @async (if function is async)
- * @function functionName
- * @param {Type} paramName - Parameter description
- * @param {Type} [optionalParam] - Optional parameter description
- * @param {Type} [optionalParam="default"] - Optional with default value
- * @returns {ReturnType} Description of what is returned
- * @throws {ErrorType} Description of when errors are thrown
- *
- * @description
- * Detailed explanation of function behavior:
- * 1. Step one of the process
- * 2. Step two of the process
- * 3. Step three of the process
- *
- * Additional notes about edge cases, performance, or limitations.
- *
- * @example
- * // Basic usage
- * const result = parseStatBlock(lines);
- * // Returns: { ac: 20, hp: 780, cr: "23" }
- *
- * @example
- * // With optional parameters
- * const result = parseStatBlock(lines, { strict: true });
- */
-async function parseStatBlock(lines, options = {}) {
-  // Implementation
-}
-```
-
-## Interface/Type Documentation
-
-> **HARD RULE**: All interface properties MUST use `@property` tags in the JSDoc block.  
-> **DO NOT** use inline `/** comments */` on individual properties.
-
-TypeScript interfaces and complex types should be fully documented:
-
-```javascript
-/**
- * @interface InterfaceName
- * @description Complete description of the interface purpose
- * @property {string} requiredProp - Description of required property
- * @property {number} [optionalProp] - Description of optional property
- * @property {Type} [optionalProp=default] - Optional with default value
- * @property {(value: T) => void} onChange - Function prop with type signature
- */
-interface InterfaceName {
-  requiredProp: string;
-  optionalProp?: number;
-}
-```
-
-### ✅ Correct Interface Documentation
+### Function
 
 ```typescript
 /**
- * Props for FilterSelect component
+ * Returns the tool menu items for the current locale.
  *
- * @interface FilterSelectProps
- * @property {string} value - Currently selected value
- * @property {FilterSelectOption[]} options - Available options
- * @property {(value: string) => void} onChange - Callback when selection changes
- * @property {string} [placeholder] - Placeholder text when no selection
- * @property {boolean} [disabled=false] - Whether the select is disabled
+ * @function useToolRegistry
+ * @returns {ToolMenuItem[]} Ordered menu items.
  */
-interface FilterSelectProps {
-  value: string;
-  options: FilterSelectOption[];
-  onChange: (value: string) => void;
-  placeholder?: string;
-  disabled?: boolean;
-}
 ```
 
-### ❌ Incorrect (DO NOT use inline comments)
+### Component
+
+Every prop gets a `@param` line. This is the one place exhaustiveness beats brevity — the lines are the contract, and they surface in IDE hover.
+
+```tsx
+/**
+ * Dropdown menu of DM tools.
+ *
+ * @component
+ * @param {ToolsMenuProps} props - Component props.
+ * @param {ToolMenuItem[]} props.items - Items to display.
+ * @param {(item: ToolMenuItem) => void} props.onSelect - Fires on selection.
+ * @param {ReactNode} props.trigger - Trigger button content.
+ * @param {string} [props.label] - Accessible name for the menu.
+ * @returns {JSX.Element} Menu with trigger and dropdown.
+ */
+```
+
+### Interface
+
+`@property` tags only. Never inline `/** */` on members.
 
 ```typescript
-// ❌ WRONG - Inline comments on properties
-interface FilterSelectProps {
-  /** Currently selected value */
-  value: string;
-  /** Available options */
-  options: FilterSelectOption[];
-  /** Callback when selection changes */
-  onChange: (value: string) => void;
+/**
+ * One item in the DM tools menu.
+ *
+ * @interface ToolMenuItem
+ * @property {string} id - Stable identifier, used as React key.
+ * @property {string} label - Translated display text.
+ * @property {string} href - Locale-prefixed URL.
+ */
+```
+
+### Constant
+
+```typescript
+/**
+ * DM tools exposed in the sidebar, in display order.
+ *
+ * @constant TOOL_REGISTRY
+ * @type {readonly ToolRegistryEntry[]}
+ */
+```
+
+---
+
+## ❌ / ✅
+
+### Too long
+
+```typescript
+/**
+ * ❌
+ * Narrows TOOL_REGISTRY to the entries listable under the given build mode.
+ * Entries flagged devOnly survive only when isDevelopment is true; the /labs
+ * routes they point at return 404 outside development, so listing them in
+ * production would hand the user a dead link. This keeps the menu honest
+ * without needing a second registry.
+ */
+
+/**
+ * ✅
+ * Returns registry entries visible in the given build mode. Drops `devOnly`
+ * entries outside development.
+ */
+```
+
+### Editorializing
+
+```typescript
+/**
+ * ❌
+ * The `body` prefix is deliberate and load-bearing. _document.scss loads after
+ * this file and resets border-color at (0,0,1) — the same specificity as a bare
+ * button — so it won the tie on source order and repainted the outline grey.
+ */
+
+/**
+ * ✅
+ * Prefixed with `body` to outrank the `body *` border reset in _document.scss.
+ */
+```
+
+### Prose
+
+```typescript
+/**
+ * ❌
+ * Aura of Stillness — like the hush before dawn, this aura weaves a tapestry
+ * of silence over the battlefield.
+ */
+
+/**
+ * ✅
+ * Silences creatures within 30 ft.
+ */
+```
+
+---
+
+## When `@description` Is Allowed
+
+Only for a parser, generator, or algorithm where the ordered steps are the contract and cannot be read off the signature. Bullets or a numbered list. No paragraphs. Never a restatement of the `@param` lines or a walkthrough of the code.
+
+```typescript
+/**
+ * Parses casting time into action-economy types.
+ *
+ * @function parseCastingTimeToArray
+ * @param {string} raw - Raw casting time text.
+ * @returns {string[]} Action types.
+ *
+ * @description Priority, first match wins:
+ * 1. Minor Action
+ * 2. action
+ * 3. reaction
+ * 4. minute / hour / day
+ */
+```
+
+`@example` follows the same rule: one input, one output, no commentary.
+
+---
+
+## Inline Comments
+
+Prohibited inside function bodies. Extract a named helper and document that instead.
+
+```typescript
+// ❌
+function processData(items: Item[]) {
+  // Filter out inactive items
+  const active = items.filter((i) => i.active);
+}
+
+// ✅
+function processData(items: Item[]) {
+  return limitResults(sortByPriority(filterActive(items)), 10);
 }
 ```
 
-## Constant Documentation
+SCSS stays near-silent. A section banner is fine. A paragraph is not.
 
-Constants should document their type and purpose:
-
-```javascript
-/**
- * Brief description of what this constant represents
- * @constant
- * @type {Type}
- * @default defaultValue (if applicable)
- */
-const MY_CONSTANT = value;
-```
-
-## React Component Documentation
-
-> **HARD RULE**: Every React component's JSDoc **must** list each prop individually via `@param {Type} [props.x]` lines between the `@param {PropsType} props` line and the `@returns` line. A bare `@param` + `@returns` without per-prop lines is a violation.
-
-This applies to **all** component-level JSDoc blocks — functional components, providers, page components, and inner render helpers.
-
-### Why
-
-A single `@param {MyProps} props` tells consumers nothing about the actual contract. Exhaustive `@param [props.x]` lines make every prop visible in IDE hover tooltips, enforce documentation coverage, and prevent props from being added without documentation.
-
-### ✅ Correct: Exhaustive per-prop `@param` lines
-
-```tsx
-/**
- * Split-pane editor layout with a draggable divider.
- *
- * @component
- * @param {EditorSplitPaneProps} props - Component properties
- * @param {string} props.textareaId - DOM id of the code editor textarea
- * @param {string} props.content - Editor text content
- * @param {Function} props.setContent - Update editor content callback
- * @param {boolean} props.disabled - Whether the editor is inactive
- * @param {'edit' | 'new'} props.mode - Editor mode
- * @param {string} props.newPlaceholder - Placeholder text for new file mode
- * @returns {JSX.Element} Split pane editor
- */
-```
-
-### ❌ Wrong: Missing per-prop lines
-
-```tsx
-/**
- * Split-pane editor layout with a draggable divider.
- *
- * @component
- * @param {EditorSplitPaneProps} props - Component properties
- * @returns {JSX.Element} Split pane editor
- */
-```
-
-### Formatting Rules
-
-| Scenario                     | Format                                                                         |
-| ---------------------------- | ------------------------------------------------------------------------------ |
-| Required prop                | `@param {Type} props.name - Description`                                       |
-| Optional prop                | `@param {Type} [props.name] - Description`                                     |
-| Optional with default        | `@param {Type} [props.name=default] - Description`                             |
-| Callback/function prop       | `@param {Function} props.onChange - Description of when it fires`              |
-| Union literal prop           | `@param {'edit' \| 'new'} props.mode - Description`                            |
-| Complex object prop          | `@param {{ username: string, role: string } \| null} props.user - Description` |
-| Promise prop (Next.js pages) | `@param {Promise<{ locale: string }>} props.params - Async route parameters`   |
-
-### Provider / Context Components
-
-Providers follow the same rule — `children` and config props must all be listed:
-
-```tsx
-/**
- * Provider component that wraps a combatant row.
- *
- * @component CombatantProvider
- * @param {CombatantProviderProps} props - Provider props
- * @param {InProgressCombatant} props.combatant - The combatant data object
- * @param {string} props.locale - Current locale
- * @param {Function} props.onUpdate - Callback when combatant data changes
- * @param {Function} [props.onRemoveSessionOnly] - Remove combatant from session
- * @param {ReactNode} props.children - Child components to wrap
- * @param {boolean} [props.disableLocking=false] - Whether to disable row locking
- * @returns {React.ReactElement} Provider with children
- */
-```
-
-### Empty Props Interfaces
-
-Components with empty prop interfaces (e.g., components that get all data from context) are exempt — there are no props to document:
-
-```tsx
-/**
- * @component
- * @param {CombatantConditionsManagerProps} props - Component props
- * @returns {JSX.Element} Rendered conditions manager
- */
-```
-
-## Class Documentation
-
-Classes require documentation at the class level and for each method:
-
-```javascript
-/**
- * Brief description of the class purpose
- *
- * @class ClassName
- * @description Detailed explanation of the class:
- * - What it represents
- * - Key responsibilities
- * - Usage patterns
- *
- * @example
- * const instance = new ClassName('param');
- * instance.method();
- */
-class ClassName {
-  /**
-   * Creates an instance of ClassName
-   *
-   * @constructor
-   * @param {Type} param - Parameter description
-   */
-  constructor(param) {
-    // Implementation
-  }
-
-  /**
-   * Method description
-   *
-   * @method methodName
-   * @param {Type} param - Parameter description
-   * @returns {Type} Return value description
-   *
-   * @example
-   * instance.methodName('value');
-   */
-  methodName(param) {
-    // Implementation
-  }
-}
-```
-
-## Project-Specific Tags
-
-### Metadata Generators
-
-For metadata generation scripts, include additional context:
-
-```javascript
-/**
- * @fileoverview Parser for Damocles monster stat blocks.
- * Extracts structured metadata including combat stats, abilities, resistances.
- *
- * @module generateMonsterMetadata
- * @version 3.0.0
- * @since 1.0.0
- *
- * @requires @/lib/metadata Performance monitoring and utility functions
- * @requires scripts/core/shared-data.json Centralized game data and validation patterns
- *
- * @description
- * Advanced parser supporting:
- * - Multiple stat blocks per file
- * - Nested blockquote variants
- * - Comprehensive tag generation
- * - Performance profiling
- *
- * Output Format:
- * - Writes .metadata.json files alongside source .sheet.mdx files
- * - Supports arrays for multi-variant monsters
- * - Includes auto-generated tags for filtering
- */
-```
-
-### Build Scripts
-
-For build pipeline scripts:
-
-```javascript
-/**
- * @fileoverview Compresses full-resolution images to WebP format.
- * Part of the pre-initialization build pipeline.
- *
- * @module compressAssets
- * @version 2.0.0
- *
- * @requires sharp Image processing library
- * @requires fs.promises File system operations
- *
- * @description
- * Pipeline Stage: 1 (runs first in pre-init)
- *
- * Process:
- * 1. Scans public/full-size/ for images
- * 2. Converts to WebP (max 1600px width)
- * 3. Outputs to public/library/
- * 4. Mirrors directory structure
- * 5. Skips existing files
- *
- * Performance: ~5-30 seconds for 50 images
- * Memory: Peak ~200MB during processing
- */
-```
+---
 
 ## Tag Reference
 
-### Common Tags
+`@fileoverview` `@module` `@version` `@author` `@since` `@requires` `@function` `@async` `@param` `@returns` `@throws` `@constant` `@type` `@default` `@interface` `@property` `@component` `@class` `@constructor` `@method` `@example` `@description`
 
-- `@fileoverview` - Brief file description
-- `@module` - Module name
-- `@version` - Current version
-- `@author` - Author name
-- `@since` - Initial version
-- `@requires` - Dependencies with descriptions
-- `@description` - Detailed explanation
-- `@example` - Usage examples (multiple allowed)
-- `@function` - Function definition
-- `@async` - Marks async functions
-- `@param` - Function parameter
-- `@returns` - Return value
-- `@throws` - Error conditions
-- `@constant` - Constant value
-- `@type` - Type annotation
-- `@default` - Default value
-- `@interface` - Interface definition
-- `@property` - Interface property
-- `@class` - Class definition
-- `@constructor` - Constructor method
-- `@method` - Class method
-
-### Type Syntax
-
-```javascript
-@param {string} name - Simple type
-@param {string|number} id - Union type
-@param {string[]} tags - Array type
-@param {Object} options - Generic object
-@param {{ key: string, value: number }} obj - Literal object type
-@param {Record<string, any>} map - Record/map type
-@param {Promise<string>} result - Promise type
-@param {Type} [optional] - Optional parameter
-@param {Type} [optional="default"] - Optional with default
-```
-
-## Examples from Codebase
-
-### Metadata Generator (Complex)
-
-```javascript
-/**
- * Spell Metadata Generator
- *
- * @fileoverview Parser for d20 spell descriptions in MDX format.
- * Extracts level, school, casting time, components, and game mechanics tags.
- *
- * @module generateSpellMetadata
- * @version 2.0.0
- * @since 1.0.0
- *
- * @requires fs.promises File system operations
- * @requires @/lib/metadata Shared parsing and tagging utilities
- *
- * @description
- * Parses spell MDX files to extract:
- * - Level (0-12, where 0 = cantrip)
- * - School (Evocation, Abjuration, etc.)
- * - Casting time (parsed as array: action, Minor Action, reaction)
- * - Components (V, S, M with descriptions)
- * - Concentration requirement
- * - Damage types and conditions
- *
- * Special Handling:
- * - Dual casting times (e.g., "1 action or reaction")
- * - Ritual casting detection
- * - Material component extraction with descriptions
- *
- * @example
- * // Run generator
- * npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/generateSpellMetadata.ts
- * // Output: Creates .metadata.json files alongside spell .mdx files
- */
-
-/**
- * Parses spell casting time into array of action economy types
- *
- * @function parseCastingTimeToArray
- * @param {string} castingTimeRaw - Raw casting time text from spell
- * @returns {string[]} Array of action types (e.g., ['action', 'reaction'])
- *
- * @description
- * Priority order (first match wins):
- * 1. "Minor Action" - Highest priority
- * 2. "action" - Second priority
- * 3. "reaction" - Third priority
- * 4. Time durations - "minute", "hour", "day"
- * 5. "ritual" - Special flag
- *
- * Handles dual casting times:
- * "1 action or reaction" → ['action', 'reaction']
- *
- * @example
- * parseCastingTimeToArray('1 action');
- * // Returns: ['action']
- *
- * @example
- * parseCastingTimeToArray('1 Minor Action or reaction');
- * // Returns: ['Minor Action', 'reaction']
- *
- * @example
- * parseCastingTimeToArray('1 minute (ritual)');
- * // Returns: ['minute', 'ritual']
- */
-function parseCastingTimeToArray(castingTimeRaw) {
-  // Implementation
-}
-```
-
-### Utility Script (Simple)
-
-```javascript
-/**
- * Translation File Merger
- *
- * @fileoverview Merges namespaced translation files into single index.json per locale.
- *
- * @module mergeMessages
- * @version 1.0.0
- *
- * @requires fs Node.js file system module
- * @requires glob File pattern matching
- *
- * @description
- * Consolidates separate namespace files (layout.json, search.json) into
- * a unified index.json for next-intl. Maintains namespace structure.
- *
- * @example
- * npx tsx --tsconfig tsconfig.scripts.json scripts/i18n/mergeMessages.ts
- * // Output: ✅ en: merged 4 files into index.json (namespaced)
- */
-```
-
-## Documentation Best Practices
-
-1. **Be Specific**: Use concrete examples, not generic placeholders
-2. **Show Input/Output**: Examples should demonstrate actual usage
-3. **Explain Why**: Include rationale for design decisions
-4. **Document Edge Cases**: Note special handling or limitations
-5. **Link Related Code**: Reference related functions or modules
-6. **Update Version**: Increment @version for breaking changes
-7. **Keep Examples Working**: Test example code periodically
-8. **Use Proper Types**: Match TypeScript types exactly
-9. **Multi-line for Clarity**: Break long descriptions into readable paragraphs
-10. **Consistency**: Follow this standard across all files
-
-## Tools and Validation
-
-### VSCode Integration
-
-- Install "Document This" extension for JSDoc generation
-- Enable `checkJs` in jsconfig.json for type checking
-- Use TypeScript language server for inline docs
-
-### Type Checking
-
-```json
-// jsconfig.json
-{
-  "compilerOptions": {
-    "checkJs": true,
-    "strict": true
-  }
-}
-```
-
-### Documentation Generation
-
-```bash
-# Generate HTML documentation (if jsdoc is configured)
-npm run generate-docs
-
-# View generated docs
-open docs/index.html
-```
-
-## References
-
-- [JSDoc Official Documentation](https://jsdoc.app/)
-- [TypeScript JSDoc Reference](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
-- [Google JavaScript Style Guide - JSDoc](https://google.github.io/styleguide/jsguide.html#jsdoc)
+Types: `{string}` `{string|number}` `{string[]}` `{Record<string, T>}` `{Promise<T>}` `{(v: T) => void}` `{Type} [optional]` `{Type} [optional=default]`
 
 ---
 
-**Maintained by**: Typeir  
-**Last Updated**: December 5, 2025  
-**Version**: 1.0.0
+**Maintained by**: Typeir

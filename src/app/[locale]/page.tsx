@@ -68,10 +68,11 @@ const Home = () => {
   const locale = (params?.locale as string) || 'en';
   const archivistPage = useArchivistPick();
   const [panelOpen, setPanelOpen] = useState(true);
+  const showPanel = panelOpen && Boolean(archivistPage);
 
   return (
-    <div className='flex flex-wrap gap-8 items-start w-full'>
-      <div className='prose max-w-5xl p-4 pr-8 flex-1'>
+    <div className={cn(styles.bento, showPanel && styles.bentoPaneled)}>
+      <div className={cn(styles.bentoIntro, 'prose max-w-5xl p-4 pr-8')}>
         <section
           className={styles.streamSection}
           data-stream={STREAM_TEXT}
@@ -85,18 +86,23 @@ const Home = () => {
           <section className='py-6 not-prose'>
             <SearchBar onNavigate={() => {}} variant='hero' />
           </section>
-
-          <FeaturedGrid locale={locale} />
         </section>
         <StreamBootstrap />
       </div>
+
       {panelOpen && archivistPage && (
-        <ArchivistPanel
-          page={archivistPage}
-          locale={locale}
-          onClose={() => setPanelOpen(false)}
-        />
+        <div className={styles.bentoPanel}>
+          <ArchivistPanel
+            page={archivistPage}
+            locale={locale}
+            onClose={() => setPanelOpen(false)}
+          />
+        </div>
       )}
+
+      <div className={cn(styles.bentoFeatured, 'prose max-w-none px-4')}>
+        <FeaturedGrid locale={locale} />
+      </div>
     </div>
   );
 };

@@ -27,3 +27,37 @@
     animation: none;
   }
 }
+
+/* ---- Bento shell ----
+   One column by default: welcome + search, the archivist panel, then the
+   featured grid. From xl up the panel takes the right half over both rows
+   while the welcome block and the featured grid stack down the left, so the
+   grid fills the height the panel occupies instead of leaving it empty. */
+.bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 2rem;
+  width: 100%;
+}
+
+@media (min-width: 1280px) {
+  .bentoPaneled {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bentoPaneled .bentoIntro {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .bentoPaneled .bentoPanel {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .bentoPaneled .bentoFeatured {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}

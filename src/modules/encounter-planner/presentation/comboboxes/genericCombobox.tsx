@@ -30,9 +30,21 @@
 
 'use client';
 
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react';
 import { createPortal } from 'react-dom';
-import { useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';
+import {
+  toAnchorName,
+  useAnchoredPosition,
+  useCssAnchorSupport,
+} from '@/lib/hooks/useAnchoredPosition';
 import styles from './combobox.module.scss';
 import {
     DROPDOWN_MAX_HEIGHT,
@@ -139,7 +151,12 @@ export function GenericCombobox<T extends ComboboxItem>({
     return { x: left, y: top };
   }, []);
 
-  useAnchoredPosition(inputRef, dropdownRef, compute, { active: isOpen });
+  const cssAnchored = useCssAnchorSupport();
+  const anchorName = toAnchorName(useId());
+
+  useAnchoredPosition(inputRef, dropdownRef, compute, {
+    active: !cssAnchored && isOpen,
+  });
 
   const defaultFilter = useCallback((item: T, query: string) => {
     return item.searchableText.toLowerCase().includes(query.toLowerCase());
@@ -224,6 +241,7 @@ export function GenericCombobox<T extends ComboboxItem>({
         ref={inputRef}
         type='text'
         role='combobox'
+        style={{ anchorName } as CSSProperties}
         aria-expanded={isOpen}
         aria-controls={listboxId}
         aria-activedescendant={activeDescendantId}
@@ -251,10 +269,11 @@ export function GenericCombobox<T extends ComboboxItem>({
             role='listbox'
             aria-label={placeholder}
             className={styles.dropdown}
-            style={{
-              transform: 'translate3d(0, 0, 0)',
-              willChange: 'transform',
-            }}>
+            style={
+              (cssAnchored
+                ? { positionAnchor: anchorName }
+                : { transform: 'translate3d(0, 0, 0)', willChange: 'transform' }) as CSSProperties
+            }>
             {filteredItems.length === 0 ? (
               <div className={styles.noResults} role='status'>
                 {noResultsMessage}

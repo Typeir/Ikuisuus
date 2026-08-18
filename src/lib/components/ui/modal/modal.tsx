@@ -14,6 +14,7 @@
 import { ReactNode, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
+import StaticFlashlight, { type FlashlightCorner } from '@/lib/components/flashlight/StaticFlashlight';
 import styles from './modal.module.scss';
 import { useModalA11y } from './useModalA11y';
 
@@ -30,6 +31,8 @@ import { useModalA11y } from './useModalA11y';
  * @property {string} [className] - Additional CSS classes for modal content
  * @property {string} [bodyClassName] - Additional CSS classes for the scrolling body
  * @property {string} [overlayClassName] - Additional CSS classes for overlay
+ * @property {boolean} [flashlight=true] - Render the reveal layer behind the body
+ * @property {FlashlightCorner} [flashlightCorner='bottom-left'] - Corner the reveal sits on
  */
 export interface ModalProps {
   isOpen: boolean;
@@ -42,6 +45,8 @@ export interface ModalProps {
   className?: string;
   bodyClassName?: string;
   overlayClassName?: string;
+  flashlight?: boolean;
+  flashlightCorner?: FlashlightCorner;
 }
 
 /**
@@ -75,6 +80,8 @@ export const Modal = memo(function Modal({
   className = '',
   bodyClassName = '',
   overlayClassName = '',
+  flashlight = true,
+  flashlightCorner = 'bottom-left',
 }: ModalProps) {
   const { overlayRef, contentRef } = useModalA11y(isOpen, onClose);
 
@@ -110,7 +117,10 @@ export const Modal = memo(function Modal({
           </div>
         )}
 
-        <div className={`${styles.body} ${bodyClassName}`}>{children}</div>
+        <div className={`${styles.body} ${bodyClassName}`}>
+          {flashlight && <StaticFlashlight corner={flashlightCorner} />}
+          <div className={styles.bodyContent}>{children}</div>
+        </div>
       </div>
     </div>,
     document.body

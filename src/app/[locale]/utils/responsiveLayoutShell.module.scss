@@ -99,48 +99,20 @@ h1.title {
   text-decoration: none !important;
 }
 
-.ssrThemeIcon {
-  display: inline-flex;
+.headerRow {
+  position: relative;
+}
+
+/* Lifted out of the flex row: in the sidebar's 20rem the pair took enough
+   width to wrap the title onto a third line. */
+.headerControls {
+  position: absolute;
+  top: 0.5rem;
+  right: -0.5rem;
+  z-index: 2;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  user-select: none;
-}
-
-.ssrThemeIcon {
-  font-size: 1rem;
-  width: 1.5rem;
-  height: 1.5rem;
-
-  &::before {
-    content: '☀️';
-  }
-
-  @media (min-width: 1024px) {
-    font-size: 1.25rem;
-  }
-}
-
-html[data-theme='dark'] .ssrThemeIcon {
-  filter: saturate(0.05) contrast(0.3) brightness(2.5);
-
-  &::before {
-    content: '🌙';
-  }
-}
-
-html[data-theme='light'] .ssrThemeIcon {
-  filter: saturate(0.05) contrast(0.3) brightness(0);
-}
-
-/* `button.` qualifier (0,1,1) reliably beats btn.tertiary (0,1,0) at the
-   border-radius/border tie — a bare `.themeToggle` would lose on source order. */
-button.themeToggle {
-  border-radius: 9999px;
-  border: 1px solid var(--color-border);
-
-  &:hover:not(:disabled) {
-    border-color: var(--color-accent);
-  }
+  gap: 0.25rem;
 }
 
 /* ── Embed Mode ──────────────────────────────────────────────── */

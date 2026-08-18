@@ -1,7 +1,8 @@
 /**
  * @fileoverview Unit tests for the useToolRegistry hook.
- * @description Verifies the hook returns one ToolMenuItem per registry entry, with ids
- * in entry order and hrefs embedding the mocked locale. Uses global vitest mocks.
+ * @description Verifies the hook returns one ToolMenuItem per visible registry entry,
+ * with ids in entry order and hrefs embedding the mocked locale. `NODE_ENV` is `test`
+ * here, so `devOnly` entries are excluded. Uses global vitest mocks.
  *
  * @module tests/unit/src/modules/tools-menu/application/hooks/useToolRegistry
  * @version 1.0.0
@@ -10,14 +11,16 @@
  */
 
 import { useToolRegistry } from '@/modules/tools-menu/application/hooks/useToolRegistry';
-import { TOOL_REGISTRY } from '@/modules/tools-menu/infrastructure/registry/toolRegistry.config';
+import { selectVisibleTools } from '@/modules/tools-menu/infrastructure/registry/toolRegistry.config';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 describe('useToolRegistry', () => {
-  it('returns one item per registry entry', () => {
+  const visibleEntries = selectVisibleTools(false);
+
+  it('returns one item per visible registry entry', () => {
     const { result } = renderHook(() => useToolRegistry());
-    expect(result.current).toHaveLength(TOOL_REGISTRY.length);
+    expect(result.current).toHaveLength(visibleEntries.length);
   });
 
   it('each item has a non-empty id', () => {
@@ -39,7 +42,7 @@ describe('useToolRegistry', () => {
   it('item ids match registry entry ids in order', () => {
     const { result } = renderHook(() => useToolRegistry());
     const ids = result.current.map((item) => item.id);
-    expect(ids).toEqual(TOOL_REGISTRY.map((entry) => entry.id));
+    expect(ids).toEqual(visibleEntries.map((entry) => entry.id));
   });
 
   it('hrefs embed the locale segment from global useLocale mock', () => {

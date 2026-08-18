@@ -1,7 +1,7 @@
 /**
  * @fileoverview Renders a library page embed on the home page.
- * @description Embeds a FeaturedPage in an iframe. Side-by-side layout when
- * space allows, stacked otherwise. Fixed position, not draggable.
+ * @description Embeds a FeaturedPage in an iframe. Fills the layout cell it
+ * is given; the home-page bento decides side-by-side versus stacked.
  *
  * @module modules/search/presentation/ArchivistPanel/ArchivistPanel
  * @version 1.0.0
@@ -12,18 +12,11 @@
 'use client';
 
 import { buildEmbedUrl } from '@/lib/components/ui/embedPanel/GenericEmbedPanel';
-import { cn } from '@/lib/utils/classNameMerge';
 import { useTranslations } from 'next-intl';
 import type { JSX } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { type FeaturedPage } from '../../domain/featuredPages';
 import styles from './ArchivistPanel.module.scss';
-
-/** Minimum viewport width remaining for side-panel layout. */
-const MIN_SIDE_PANEL_WIDTH = 360;
-
-/** Minimum percentage of viewport remaining for side layout. */
-const MIN_SIDE_PANEL_PCT = 0.25;
 
 /**
  * Props for the ArchivistPanel component.
@@ -40,7 +33,7 @@ interface ArchivistPanelProps {
 }
 
 /**
- * Renders a library page embed with responsive positioning.
+ * Renders a library page embed that fills its layout cell.
  *
  * @param {ArchivistPanelProps} props - Component props
  * @param {FeaturedPage} props.page - The page to embed
@@ -53,37 +46,15 @@ export function ArchivistPanel({
   locale,
   onClose,
 }: ArchivistPanelProps): JSX.Element {
-  const [sideLayout, setSideLayout] = useState(true);
-  const [open, setOpen] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [open] = useState(true);
   const t = useTranslations('search');
-
-  useEffect(() => {
-    function measure(): void {
-      if (!containerRef.current) return;
-      const vw = window.innerWidth;
-      const rect = containerRef.current.getBoundingClientRect();
-      const remaining = vw - rect.right;
-      const threshold = Math.max(
-        vw * MIN_SIDE_PANEL_PCT - 40,
-        MIN_SIDE_PANEL_WIDTH,
-      );
-      setSideLayout(remaining > threshold);
-    }
-
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, []);
 
   if (!open) return <></>;
 
   const url = buildEmbedUrl(page.path, locale);
 
   return (
-    <div
-      ref={containerRef}
-      className={cn(styles.panel, sideLayout ? styles.side : styles.below)}>
+    <div className={styles.panel}>
       <div className={styles.header}>
         <span className={styles.label}>{t('archivistReading')}</span>
         <span className={styles.pageTitle}>{page.title}</span>

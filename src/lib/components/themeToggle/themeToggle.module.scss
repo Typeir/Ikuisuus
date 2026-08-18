@@ -1,0 +1,46 @@
+/* Theme toggle. Moved here verbatim from responsiveLayoutShell so the
+   sidebar, the mobile bar and the preferences panel share one definition. */
+
+/* `button.` qualifier (0,1,1) reliably beats btn.tertiary (0,1,0) at the
+   border-radius/border tie — a bare `.themeToggle` would lose on source order. */
+button.themeToggle {
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-accent);
+  }
+}
+
+.ssrThemeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  font-size: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+
+  &::before {
+    content: '☀️';
+  }
+}
+
+:global(html[data-theme='dark']) .ssrThemeIcon {
+  filter: saturate(0.05) contrast(0.3) brightness(2.5);
+
+  &::before {
+    content: '🌙';
+  }
+}
+
+:global(html[data-theme='light']) .ssrThemeIcon {
+  filter: saturate(0.05) contrast(0.3) brightness(0);
+}
