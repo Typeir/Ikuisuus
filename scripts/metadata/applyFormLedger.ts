@@ -1,11 +1,6 @@
 /**
- * @fileoverview Apply the curated form ledger to spell frontmatter
- * @description Reads `.ignore/form-analysis-curated.md` (one row per spell:
- * `| slug | form form … |`) and writes `form:<value>` entries into each
- * spell's `aspects:` frontmatter list, keeping any authored entries already
- * there. `none` and `—` rows write nothing; existing `form:*` entries not in
- * the ledger row are removed so the ledger stays the source of truth.
- * `--dry` prints the plan without writing.
+ * @fileoverview Apply curated form ledger to spell frontmatter.
+ * @description Reads form-analysis-curated.md and syncs form: aspects; ledger is source of truth.
  *
  * @module scripts/metadata/applyFormLedger
  * @version 1.0.0
@@ -23,10 +18,10 @@ const SPELLS = path.join(ROOT, 'src', 'content', 'en', 'spells');
 const SHARED = path.join(ROOT, 'scripts', 'core', 'shared-data.json');
 
 /**
- * Parses the ledger's Assignments table.
+ * Parse ledger table; skip none/— rows.
  *
  * @param {string} text - Ledger markdown
- * @returns {Map<string, string[]>} slug → forms (`none`/`—` → empty)
+ * @returns {Map<string, string[]>} slug → forms
  */
 function parseLedger(text: string): Map<string, string[]> {
   const rows = new Map<string, string[]>();

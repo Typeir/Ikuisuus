@@ -1,7 +1,5 @@
 /**
- * @fileoverview Aspect Vocabulary Client
- * @description Fetches the closed, authorable aspect vocabulary for the
- * editor's aspect picker.
+ * @fileoverview Fetch authorable aspect vocabulary for picker.
  *
  * @module modules/mdx-editor/infrastructure/api-clients/aspectVocabularyClient
  * @author Typeir
@@ -12,7 +10,7 @@
 import type { AspectVocabularyGroup } from '@/lib/metadata/aspectVocabulary';
 
 /**
- * Fetches the aspect vocabulary. Null on failure.
+ * Fetch vocabulary. Null on failure.
  *
  * @returns {Promise<AspectVocabularyGroup[] | null>} Groups with values
  */

@@ -1,8 +1,5 @@
 /**
- * @fileoverview Frontmatter Aspects
- * @description Reads and rewrites the `aspects:` list in an MDX buffer's YAML
- * frontmatter without disturbing the rest of the document. Text-level and
- * order-preserving so the editor's undo stack sees one clean replacement.
+ * @fileoverview Read/write aspects: list in YAML frontmatter. Preserves order and undo stack.
  *
  * @module modules/mdx-editor/domain/frontmatterAspects
  * @version 1.0.0
@@ -39,9 +36,7 @@ export function readFrontmatterAspects(source: string): string[] {
 }
 
 /**
- * Returns the buffer with its frontmatter `aspects:` replaced by `aspects`.
- * Writes a block list; removes the key when the list is empty; creates the
- * frontmatter block when the buffer has none.
+ * Replace frontmatter aspects: with list. Creates block when missing, removes when empty.
  *
  * @param {string} source - Full MDX buffer
  * @param {string[]} aspects - Aspects to write, in order

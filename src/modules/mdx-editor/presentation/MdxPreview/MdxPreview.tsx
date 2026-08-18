@@ -1,7 +1,5 @@
 /**
- * @fileoverview Live MDX Preview Panel
- * @description Compiles raw MDX source at runtime and renders it in a prose-styled container.
- * Preview compiles after a 400ms debounce on source changes.
+ * @fileoverview Compile and render MDX preview. Debounces source changes.
  *
  * @module lib/components/mdxEditor/mdxPreview
  * @version 2.0.0

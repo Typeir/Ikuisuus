@@ -1,11 +1,6 @@
 /**
- * @fileoverview Vocation Metadata Domain Schema
- * @description Canonical TypeScript types for vocation metadata generated from
- * `scripts/metadata/generateVocationMetadata.ts`.
- *
- * Each vocation record captures the core traits table, feature progression,
- * proficiency grants, and optional spellcasting summary. A lightweight index
- * entry projection is also provided for table display.
+ * @fileoverview Vocation metadata domain schema.
+ * @description Canonical types for vocation metadata from generators.
  *
  * @module lib/db/content/schemas/vocationMetadata
  * @version 1.0.0

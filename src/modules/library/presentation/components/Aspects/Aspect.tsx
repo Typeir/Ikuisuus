@@ -1,11 +1,5 @@
 /**
- * @fileoverview Inline aspect pill for MDX prose.
- * @description `<Aspect value="school:necromancy" />` renders one aspect as
- * a link pill inside a sentence. Compact by default — glyph plus the value
- * word, since prose already names the kind of thing (`a … spell`, `the …
- * condition`); `display` forces `verbose` (group: value) or `glyph` (glyph
- * only) regardless of the reader's site-wide aspect display setting. Malformed values render their raw text so a typo stays
- * visible in the page.
+ * @fileoverview Inline aspect pill. Compact default; display prop overrides site setting.
  *
  * @module modules/library/presentation/components/Aspects/Aspect
  * @version 1.0.0

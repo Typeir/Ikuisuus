@@ -1,17 +1,13 @@
 /**
- * @fileoverview Singleton notification manager with toast-style push notifications.
- * Supports multiple notification types, auto-dismiss, stacking, and ARIA live regions.
- * Durations are in milliseconds; 0 disables auto-dismiss.
+ * @fileoverview Singleton notification manager with toast-style notifications.
+ * Supports types (info/success/warning/error), auto-dismiss, stacking, live regions.
  *
  * @module pushNotification
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  *
- * @description React context-based notification system providing type-based
- * styling (info, success, warning, error), configurable auto-dismiss,
- * manual dismissal, stacking with a maximum visible count, entrance/exit
- * animations, ARIA live regions, and portal rendering to document.body.
+ * @description React context-based system; auto-dismiss times in ms (0=disabled).
  *
  * @example
  * // Wrap your app with the provider

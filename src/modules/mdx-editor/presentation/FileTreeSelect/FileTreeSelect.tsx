@@ -1,7 +1,5 @@
 /**
- * @fileoverview FileTreeSelect Component
- * @description Combobox that selects a content folder path from an expandable
- * folder tree. Each folder ends with a "New file" option that selects it.
+ * @fileoverview Combobox for folder path selection from tree.
  *
  * @module lib/components/mdxEditor/fileTreeSelect
  * @version 1.0.0

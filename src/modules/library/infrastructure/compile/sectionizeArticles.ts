@@ -1,10 +1,5 @@
 /**
- * @fileoverview Sectionize helpers: shared anchor registry, text helpers and
- * the entry → article pass used by `rehypeSectionize`.
- * @description Wraps feature entries (bold-led list items and paragraphs
- * inside a section) in `<article data-anchor>` — `li > article`, never
- * `ul > article`. Entry rules mirror the metadata extractor's statlet
- * normaliser so DOM and metadata agree on what a feature is.
+ * @fileoverview Sectionize helpers: anchor registry, text helpers, entry→article pass. Wraps feature entries in articles.
  *
  * @module sectionizeArticles
  * @version 1.0.0
@@ -45,8 +40,7 @@ const STAT_LINE_LABELS = new Set(
 );
 
 /**
- * Section headings under which a colon-labelled line (`**Infallible**: …`) is
- * a feature entry rather than a field. The statlet trait form.
+ * Section headings where colon-labels are entries, not fields.
  */
 const ENTRY_GROUP_HEADINGS = /^(traits?|actions?|minor actions?|reactions?|legendary actions?)$/i;
 
@@ -71,8 +65,7 @@ export function textOf(node: RootContent | ElementContent): string {
 
 
 /**
- * Anchor registry for one document: first use keeps the bare slug, a repeat
- * is prefixed with its parent section's anchor.
+ * Anchor registry: first use is bare slug, repeats prefixed with parent anchor.
  */
 export class Anchors {
   private readonly used = new Set<string>();
@@ -97,14 +90,7 @@ interface Entry {
 }
 
 /**
- * Reads a bold-led block as a feature entry.
- *
- * Entry: first significant child is `<strong>`, followed by prose. The label
- * ends with a period or dash, or the paragraph breaks right after it (label
- * line + body). `**Label**: value` is a field of a feature, not an entry —
- * unless `colonEntries` is set (statlet traits under a group heading). A bold
- * run followed by inline continuation with no terminator is emphasis, not a
- * label. Stat-line labels are never entries.
+ * Extract bold-led feature entry from paragraph or list item.
  *
  * @param {Element} block - `<p>` or tight `<li>`
  * @param {boolean} colonEntries - Whether colon-labels count as entries here
@@ -127,8 +113,7 @@ function entryOf(
   const restTrimmed = restText.trim();
   const colon = restTrimmed.startsWith(':') || labelRaw.endsWith(':');
   const terminated = /[.—–-]$/.test(labelRaw);
-  /* A hard break, or a soft line break right after the label (`- **Bite**⏎
-     _Melee Weapon Attack:_ …`) — the label is its own line either way. */
+  /* Hard break or soft line break after label means it's on own line. */
   const afterLabel = block.children[block.children.indexOf(first) + 1];
   const breakNext =
     (afterLabel?.type === 'element' && afterLabel.tagName === 'br') ||
@@ -142,8 +127,7 @@ function entryOf(
   if (!label || STAT_LINE_LABELS.has(label.toLowerCase())) return null;
 
   if (colon) return colonEntries && hasProse ? { label } : null;
-  /* `- **Mitotic Rend**` with the body in the following blocks of the same
-     list item: a label line, so an entry. */
+  /* Label line with body in following blocks of same list item. */
   if (!hasProse) return hasFollowingBody ? { label } : null;
   if (!terminated && !breakNext) return null;
   return { label };
@@ -167,9 +151,7 @@ function article(children: ElementContent[], anchor: string, slug: string): Elem
 }
 
 /**
- * Article pass over one subtree. Tracks the nearest section's anchor (for
- * collision prefixing) and whether the nearest section is a statlet group
- * heading (for colon entries).
+ * Article pass over subtree. Tracks section anchor and group heading status.
  *
  * @param {Parent} node - Node whose children to scan
  * @param {Anchors} anchors - Document anchor registry
@@ -203,8 +185,7 @@ export function articleize(
         | Element
         | undefined;
       const group = heading ? ENTRY_GROUP_HEADINGS.test(textOf(heading).trim()) : false;
-      /* A group heading (Traits, Actions) is not an identity; entries under
-         it prefix with the enclosing feature or statlet section instead. */
+      /* Group headings use enclosing feature's anchor for entries. */
       const owner = group ? sectionAnchor : (anchor ?? sectionAnchor);
       articleize(c as unknown as Parent, anchors, owner, inQuote && group, inQuote, true);
       continue;

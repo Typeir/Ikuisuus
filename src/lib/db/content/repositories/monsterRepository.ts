@@ -1,8 +1,6 @@
 /**
  * @fileoverview Monster repository port + factory.
- * @description Monster metadata persistence port, resolved by `METADATA_BACKEND` env var.
- * Exposes `list()` (`/api/monsters`), `listIndex()` (`/api/monsters/index`),
- * and `getBySlug()` (`/api/monsters/[slug]`).
+ * @description Metadata persistence port; resolved by METADATA_BACKEND env var.
  *
  * @module lib/db/content/repositories/monsterRepository
  * @version 2.0.0

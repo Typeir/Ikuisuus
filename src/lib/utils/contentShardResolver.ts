@@ -17,7 +17,7 @@ import { anchorSlug } from '@/modules/library/domain/anchorSlug';
  * the source MDX file.
  *
  * @interface ShardableEntry
- * @property {string} [anchor] - Anchor slug of the rendered heading; the preferred lookup key
+ * @property {string} [anchor] - Anchor slug of the rendered heading
  * @property {string} name - Human-readable name used as the shard key
  * @property {number} [startLine] - 1-based start line of the block in the source file
  * @property {number} [endLine] - 1-based end line of the block in the source file
@@ -30,18 +30,13 @@ export interface ShardableEntry {
 }
 
 /**
- * Resolve a named set of shards from raw MDX content.
- *
- * Resolves by line range when line anchors are present, else by case-insensitive
- * heading-text match. The heading line is stripped from each result. The key
- * `"main"` returns all content before the first `<Collapsible` tag. If `keys` is
- * empty or omitted, all entries plus `"main"` are resolved.
+ * Resolve named text blocks from MDX by line anchor or heading text.
  *
  * @function resolveShards
  * @param {string} content - Full MDX file content
- * @param {ShardableEntry[]} entries - Metadata entries for each named block
- * @param {string[]} [keys] - Specific keys to resolve; resolves all when omitted
- * @returns {Record<string, string>} Map from key name to resolved prose text
+ * @param {ShardableEntry[]} entries - Metadata entries for each block
+ * @param {string[]} [keys] - Keys to resolve; all when omitted
+ * @returns {Record<string, string>} Map of key to prose text
  */
 export function resolveShards(
   content: string,
@@ -62,8 +57,7 @@ export function resolveShards(
       continue;
     }
 
-    /* Anchor first (the stable key), name second (older callers and saved
-       characters that predate anchors). */
+    /* Try anchor, then name (fallback for legacy saved characters). */
     const entry =
       entries.find((e) => e.anchor === key) ??
       entries.find((e) => e.name === key) ??

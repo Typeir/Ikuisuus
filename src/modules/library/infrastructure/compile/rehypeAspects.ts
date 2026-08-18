@@ -1,18 +1,5 @@
 /**
- * @fileoverview Rehype plugin that places an `<Aspects section="…" />` row in
- * every section and article whose anchor carries aspects in the article's
- * metadata.
- * @description Runs after `rehypeSectionize` and reads the bare slug it leaves
- * on `node.data.slug`. A row goes right after a section's heading, after the
- * label of an entry article (the lead paragraph splits at its first hard
- * break), and after the summary heading of an MDX container (Collapsible).
- * Keys are resolved record-first: `${record}/${slug}` when the enclosing stat
- * block has its own entry, else the bare `slug`. A record starts at a level-1
- * heading, or at a quoted heading (a statlet), whose slug is in `records`,
- * and holds for the siblings that follow it; a quote's records end with the
- * quote.
- * The component only receives the key; aspects are read from
- * `ArticleMetadataContext` at render time.
+ * @fileoverview Rehype plugin inserting Aspects rows in sections and articles. Reads from rehypeSectionize.
  *
  * @module rehypeAspects
  * @version 1.0.0
@@ -26,7 +13,7 @@ import { headingAnchor } from './rehypeSectionize';
 import type { Parent } from './sectionizeArticles';
 
 /**
- * Name of the component this plugin emits; the MDX runtime resolves it via the component map.
+ * Component name emitted by plugin.
  *
  * @constant
  */
@@ -59,7 +46,7 @@ function aspectsNode(section: string): RootContent {
 }
 
 /**
- * Bare slug `rehypeSectionize` stamped on a section or article.
+ * Extract slug from node data.
  *
  * @param {Element} node - Section or article element
  * @returns {string | undefined} The slug
@@ -69,8 +56,7 @@ function slugOf(node: Element): string | undefined {
 }
 
 /**
- * Splits an entry paragraph at its first `<br>` and places the row between
- * label and body; with no break the row follows the paragraph.
+ * Split paragraph at first br; place row between label and body.
  *
  * @param {Parent} parent - Node holding the paragraph
  * @param {number} index - Index of the paragraph in `parent.children`
@@ -94,7 +80,7 @@ function placeAfterLabel(parent: Parent, index: number, key: string): void {
 }
 
 /**
- * Rehype plugin factory. See file overview.
+ * Plugin factory.
  *
  * @param {RehypeAspectsOptions} [options] - Plugin options
  * @returns {(tree: Root) => void} Transformer
@@ -109,9 +95,7 @@ const rehypeAspects: Plugin<[RehypeAspectsOptions?], Root> = (options) => {
     return keys.has(slug) ? slug : null;
   };
 
-  /* `record` is scoped to one sibling list: a record heading changes it for
-     the siblings that follow (a statlet's `---` closes the section but not
-     the record), and a blockquote's records never leak out of the quote. */
+  /* Record scope: headings set for following siblings; blockquote scope is local. */
   const walk = (
     node: Parent,
     initialRecord: string | undefined,

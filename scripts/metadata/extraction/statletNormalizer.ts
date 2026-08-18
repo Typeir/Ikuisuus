@@ -1,12 +1,6 @@
 /**
- * @fileoverview Statlet Normalizer
- * @description Rewrites the lines of one quoted statlet (already de-quoted)
- * into the heading-and-bullet grammar the section classifier and feature
- * splitter understand, without changing the line count. Statlets are written
- * three ways in the corpus: bold-label bullets with no section headings
- * (albedo), bare bold paragraphs after the stat lines (plato), and headed
- * sections at H4–H5 with colon-labelled traits (yskeia). All three become
- * `## Section` + `- **Name.** body`.
+ * @fileoverview Normalize quoted statlets to heading-bullet grammar.
+ * @description Rewrite three grammar styles to `## Section` + `- **Name.** body`; preserve line count.
  *
  * @module scripts/metadata/extraction/statletNormalizer
  * @version 1.0.0

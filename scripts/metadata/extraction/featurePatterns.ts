@@ -1,7 +1,6 @@
 /**
- * @fileoverview Pre-compiled Regex Pattern Dictionary
- * @description Named pre-compiled regex and lookup tables for the feature
- * extraction pipeline and metadata generators.
+ * @fileoverview Pre-compiled regex patterns for feature extraction.
+ * @description Named patterns and lookup tables for extraction and generators.
  *
  * @version 1.0.0
  * @author Typeir

@@ -1,6 +1,5 @@
 /**
- * @fileoverview Heading Components with Auto-Generated Anchors
- * @description Heading components that generate anchor slugs for hash navigation.
+ * @fileoverview Heading components with auto-generated anchors for hash navigation.
  *
  * @module heading
  * @version 1.0.0
@@ -13,7 +12,7 @@ import { anchorSlug } from '@/modules/library/domain/anchorSlug';
 import React, { ReactNode } from 'react';
 
 /**
- * Heading slug — the shared anchor rule (see `anchorSlug`).
+ * Heading slug via shared anchor rule.
  *
  * @param {string} text - The heading text to convert
  * @returns {string} Slug-formatted string
@@ -51,10 +50,7 @@ function getTextFromChildren(children: ReactNode): string {
 }
 
 /**
- * Wraps the first character of the first text node in a span with className 'first-letter'.
- *
- * Recursively walks nested elements to locate the first text node and wraps its
- * first character in `<span className="first-letter">`.
+ * Wrap first character in span.first-letter.
  *
  * @param {ReactNode} children - Content to process
  * @returns {ReactNode} Children with first letter wrapped in <span>
@@ -139,10 +135,7 @@ interface HeadingProps {
 }
 
 /**
- * Renders a semantic heading element with an auto-generated data-anchor attribute.
- *
- * Extracts text from children, converts it to a slug, and sets it as data-anchor
- * unless a custom anchor is provided. Wraps the first letter in a span.
+ * Render semantic heading with auto-generated data-anchor.
  *
  * @param {HeadingProps} props - Component props
  * @param {1 | 2 | 3 | 4 | 5 | 6} props.level - HTML heading level
@@ -150,10 +143,6 @@ interface HeadingProps {
  * @param {string} [props.anchor] - Custom anchor (overrides auto-generation)
  * @param {string} [props.className] - Additional CSS classes
  * @returns {JSX.Element} Heading element with data-anchor attribute
- *
- * @remarks
- * Uses `data-anchor` instead of `id` to avoid HTML uniqueness constraints.
- * Works with `HashNavigationProvider` for automatic scroll-to-anchor behavior.
  *
  * @example
  * <Heading level={2}>My Section Title</Heading>
@@ -167,7 +156,7 @@ interface HeadingProps {
  * @example
  * // Navigate programmatically:
  * window.location.hash = '#my-section-title';
- * // With HashNavigationProvider, will scroll to the heading
+ * // Will scroll to the heading
  */
 export function Heading({
   level,

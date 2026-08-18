@@ -172,9 +172,7 @@ export function parseMonsterFeaturesSource(
 
   resolveMultiattackRefs(features, slug);
 
-  /* The heading as rendered, when the extractor's name differs from it
-     (`#### **Reposition** (Costs 1 Deed)` → `Reposition`); the section
-     anchor in the DOM comes from the heading. */
+  /* `heading` = rendered heading text when it differs from `name`. */
   for (const feat of features) {
     const line = feat.source ? lines[feat.source.start] : undefined;
     const match = line?.match(CLASSIFIER.heading);

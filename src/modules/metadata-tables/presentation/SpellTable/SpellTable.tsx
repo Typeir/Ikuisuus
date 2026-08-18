@@ -19,9 +19,7 @@ import { useState } from 'react';
 import styles from './SpellTable.module.scss';
 
 /**
- * Tabbed spell table. Fetches spell data from API endpoints or inline arrays and
- * renders one level-tab per spell level. For the full library page with school,
- * concentration, and setting filters, use FilteredSpellTable.
+ * Tabbed spell table from API or inline data. See FilteredSpellTable for full library.
  *
  * @component
  * @param {SpellTablesProps} props

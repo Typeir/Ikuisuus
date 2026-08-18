@@ -1,7 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Bloodline Feature
- * @description Child table for a bloodline's core-feature traits (`###`
- * headings under `## Core Features`), each with its own aspects.
+ * @description Core-feature traits (`###` headings under `## Core Features`) with aspects.
  *
  * @module lib/db/orm/entities/BloodlineFeatureEntity
  * @version 1.0.0
@@ -38,7 +37,7 @@ export class BloodlineFeatureEntity {
   @OrmProperty({ type: 'string', fieldName: 'feature_id' })
   featureId!: string;
 
-  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  /** @property {string | null} anchor - Anchor slug of the rendered heading */
   @OrmProperty({ type: 'string', nullable: true })
   anchor?: string | null;
 

@@ -1,6 +1,6 @@
 /**
- * @fileoverview Pure text processing utilities.
- * @description Common text manipulation functions for metadata generators and runtime services. No Node.js or filesystem dependencies.
+ * @fileoverview Text processing utilities.
+ * @description Common text manipulation; no Node.js or filesystem dependencies.
  *
  * @module lib/metadata/textUtils
  * @version 1.0.0

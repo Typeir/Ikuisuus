@@ -117,8 +117,7 @@ export interface ShardCacheHandles {
 }
 
 /**
- * Builds the shard for a plain (single-cost) boon, warming its prose from
- * the content-shards API by anchor when it can; the body stays lazy on failure.
+ * Builds the shard for a single-cost boon. Prefetches its prose by anchor; on failure the body stays lazy.
  *
  * @param {BloodlineBoon} boon - The boon being picked
  * @param {string} bloodlineSlug - Bloodline slug
@@ -147,7 +146,6 @@ export async function buildBoonShard(
       })) as BoonShardResponse | undefined;
       cachedText = data?.shards[key];
     } catch {
-      /* stays undefined; the card fetches lazily on expand */
     }
   }
   return {

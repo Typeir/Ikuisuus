@@ -1,6 +1,5 @@
 /**
- * @fileoverview Hash-based incremental sync of `bloodlines` and
- * `bloodline_boons` from local metadata sidecars into PostgreSQL.
+ * @fileoverview Incremental sync of `bloodlines` and `bloodline_boons` tables.
  *
  * @module lib/metadata/syncBloodlines
  * @version 1.0.0
@@ -34,12 +33,9 @@ function getProjectRoot(): string {
 /**
  * Reads and flattens `.metadata.json` files from a locale subdirectory.
  *
- * Returns `sourceExists: false` when neither directory exists or the chosen
- * directory contains no `.metadata.json` files.
- *
  * @param {string} locale - Locale code
  * @param {string} subdir - Content subdirectory
- * @returns {{ records: Record<string, unknown>[]; sourceExists: boolean }} Flattened records and source presence flag
+ * @returns {{ records: Record<string, unknown>[]; sourceExists: boolean }} Records and source presence flag
  */
 function readMetadataFiles(
   locale: string,

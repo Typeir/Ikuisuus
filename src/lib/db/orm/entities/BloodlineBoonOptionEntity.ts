@@ -1,8 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Bloodline Boon Option
- * @description Child table for the selectable options of a variable-cost boon
- * (`bloodline_boons.sub_options` before 026, now one row per option): name,
- * anchor, cost, effect summary and the option's own aspects.
+ * @description One selectable option of a variable-cost boon: name, anchor, cost, effect, aspects.
  *
  * @module lib/db/orm/entities/BloodlineBoonOptionEntity
  * @version 1.0.0
@@ -38,7 +36,7 @@ export class BloodlineBoonOptionEntity {
   @OrmProperty({ type: 'string' })
   name!: string;
 
-  /** @property {string | null} anchor - Anchor slug of the option name; the stable shard key */
+  /** @property {string | null} anchor - Anchor slug of the option name */
   @OrmProperty({ type: 'string', nullable: true })
   anchor?: string | null;
 

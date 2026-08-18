@@ -1,6 +1,5 @@
 /**
- * @fileoverview Editor Path Section
- * @description Slug/path input with load button for the MDX editor.
+ * @fileoverview Path/slug input section for MDX editor.
  *
  * @module lib/components/mdxEditor/editorPathSection
  * @version 2.0.0

@@ -43,11 +43,10 @@ import {
 const SYSTEMS: readonly UnitSystemValue[] = ['stride', 'metric', 'imperial'];
 
 /**
- * Normalises a stored unit preference into the per-dimension shape. A bare
- * string value is applied to every measurement family.
+ * Normalize stored unit preference to per-dimension shape.
  *
  * @param {UnitSystemPreferences | UnitSystemValue | undefined} stored - Raw stored value
- * @returns {UnitSystemPreferences} Normalised preferences
+ * @returns {UnitSystemPreferences} Normalized preferences
  */
 function readUnitSystem(
   stored: UnitSystemPreferences | UnitSystemValue | undefined,

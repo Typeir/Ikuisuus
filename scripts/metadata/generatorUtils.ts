@@ -1,7 +1,6 @@
 /**
- * @fileoverview Orchestrates metadata generators: backend detection, content
- * directory resolution, output path mapping, and run loop.
- * @description Core orchestration for metadata generators.
+ * @fileoverview Orchestrate metadata generators: backend detection, paths, run loop.
+ * @description Detects backend, resolves directories, maps output paths.
  *
  * @module lib/metadata/generatorUtils
  * @version 1.0.1

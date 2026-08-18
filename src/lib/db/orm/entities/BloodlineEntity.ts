@@ -1,9 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Bloodline
- * @description Maps the `bloodlines` table. Multi-value fields use text-array
- * columns; boons live in a `bloodline_boons` child table via OneToMany.
- * Uses in-house schema decorators so the entity name survives class-name
- * minification.
+ * @description Maps the `bloodlines` table. Multi-value fields in text-array columns; boons in `bloodline_boons` child table.
  *
  * @module lib/db/orm/entities/BloodlineEntity
  * @version 2.0.0

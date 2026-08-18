@@ -185,8 +185,7 @@ function parseCostTable(
       if (isSeparatorRow(cells)) {
         continue;
       }
-      /* The name is atomic and the effect is prose, so only the name is
-         normalised — the effect keeps its macros for the MDX renderer. */
+      /* Only the name is normalised; the effect keeps its macros. */
       const name = plain(cells[nameIdx]?.trim() ?? '');
       const bpValue = Number.parseInt(cells[costIdx]?.trim() ?? '', 10);
       if (!name || Number.isNaN(bpValue)) {
@@ -751,9 +750,7 @@ function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
         tags,
       });
 
-      /* Options written as their own headings (nested Collapsibles) are
-         boons in their own right: they get a shard, tagged from their own
-         body, so their heading renders an aspect row. */
+      /* Nested option headings are emitted as boons with `parentName`. */
       for (const childIdx of childIdxs) {
         const child = buildBlock(childIdx);
         const childHeading = headings[childIdx].heading;

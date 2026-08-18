@@ -1,8 +1,5 @@
 /**
- * @fileoverview Aspect Glyph Row
- * @description Dense glyph-only pill row for picker cards and table cells.
- * `inert` renders plain spans for cells that already sit inside a button
- * or link.
+ * @fileoverview Glyph-only pill row. Inert mode for nested buttons.
  *
  * @module modules/library/presentation/components/Aspects/AspectGlyphs
  * @version 1.0.0
@@ -21,10 +18,10 @@ import styles from './Aspects.module.scss';
  * Props for AspectGlyphs.
  *
  * @interface AspectGlyphsProps
- * @property {string[]} [tags] - Raw aspects of the item
- * @property {boolean} [inert] - Render spans instead of links
- * @property {string} [ariaLabel] - Accessible name of the row
- * @property {number} [max] - Show at most this many glyphs; the rest fold into a `+n` marker naming them on hover
+ * @property {string[]} [tags] - Raw aspects
+ * @property {boolean} [inert] - Render spans not links
+ * @property {string} [ariaLabel] - Row label
+ * @property {number} [max] - Max glyphs; rest fold into +n marker
  */
 export interface AspectGlyphsProps {
   tags?: string[];

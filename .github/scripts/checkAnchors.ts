@@ -1,11 +1,6 @@
 /**
  * @fileoverview Anchor coverage check
- * @description Every feature shard the generators emit carries an `anchor`;
- * every rendered feature carries the same slug on its `<section>`/`<article>`
- * (`rehypeSectionize`). This check compiles each shard-bearing content file
- * and reports extractor anchors that no rendered element carries — a shard
- * the builder or the aspect rows could not place. Info severity: gaps are
- * warnings, never a failed gate.
+ * @description Compares generator anchors to rendered elements; gaps are warnings.
  *
  * @module .github/scripts/checkAnchors
  * @version 1.0.0
@@ -79,7 +74,7 @@ function sidecarOf(file: string): string {
 }
 
 /**
- * Anchors the generators stamped on a sidecar's shards.
+ * Extracts anchors from sidecar shards.
  *
  * @param {unknown} sidecar - Parsed sidecar (record or record array)
  * @param {string[]} fields - Shard fields to read
@@ -108,8 +103,7 @@ function extractorAnchors(sidecar: unknown, fields: string[]): Set<string> {
 }
 
 /**
- * Bare slugs the sectionizer stamped on sections and articles of a compiled
- * file, plus the slugs of headings left as Collapsible summaries.
+ * Extracts rendered anchors from compiled MDX sections and Collapsible headings.
  *
  * @param {string} source - MDX source
  * @returns {Promise<Set<string>>} Rendered anchors

@@ -1,9 +1,6 @@
 /**
  * @fileoverview Global Debug Namespace — window.ik
- * @description Defines and initialises the `window.ik` runtime debug namespace.
- * Each subsystem registers its own module under a short key
- * (`window.ik.ws` for World Sim, populated when WorldSim mounts) via
- * `registerIkModule`. Modules are typed through the `IkModules` interface.
+ * @description Runtime debug namespace for subsystems. Subsystems register modules under short keys.
  *
  * @example Console usage
  * ```js
@@ -25,9 +22,7 @@
  */
 export interface IkWorldSimDebug {
   /**
-   * Maximum `deltaTime` allowed per frame in seconds.
-   * Clamped internally to the range [1/120, 1].
-   * Default: `1/15` (~66 ms, a 15 fps floor).
+   * Maximum `deltaTime` per frame (seconds). Clamped [1/120, 1], default 1/15.
    *
    * @type {number}
    * @example window.ik.ws.deltaTimeCap = 1 / 30
@@ -35,8 +30,7 @@ export interface IkWorldSimDebug {
   deltaTimeCap: number;
 
   /**
-   * Approximate frames-per-second for the last rendered frame (read-only).
-   * Computed as `1 / deltaTime` before clamping.
+   * Frames-per-second for last frame (read-only).
    *
    * @type {number}
    * @readonly
@@ -44,8 +38,7 @@ export interface IkWorldSimDebug {
   readonly fps: number;
 
   /**
-   * Accumulated simulation time in seconds since the loop started.
-   * Advances at `deltaTime * simulationSpeed` each frame (read-only).
+   * Accumulated simulation time (seconds, read-only).
    *
    * @type {number}
    * @readonly
@@ -53,9 +46,7 @@ export interface IkWorldSimDebug {
   readonly time: number;
 
   /**
-   * Simulation speed multiplier. Default `1` (real-time).
-   * `0` freezes the simulation. Clamped to [0, 1000].
-   * Affects orbital positions, shader animations, and mesh rotations.
+   * Simulation speed multiplier. Default 1, clamped [0, 1000]. 0 freezes.
    *
    * @type {number}
    * @example window.ik.ws.simulationSpeed = 50
@@ -63,7 +54,7 @@ export interface IkWorldSimDebug {
   simulationSpeed: number;
 
   /**
-   * Whether the animation loop is currently running (read-only).
+   * Animation loop running (read-only).
    *
    * @type {boolean}
    * @readonly
@@ -72,8 +63,7 @@ export interface IkWorldSimDebug {
 }
 
 /**
- * Maps short module keys to their debug interface. Extend via declaration
- * merging in the module's own file when adding a new module.
+ * Maps short module keys to debug interfaces.
  *
  * @interface IkModules
  */
@@ -99,8 +89,7 @@ export interface IkUiDebug {
 }
 
 /**
- * The root `window.ik` namespace object.
- * Modules are optional so the namespace is safe to inspect at any lifecycle stage.
+ * Root `window.ik` namespace. Modules optional.
  *
  * @interface IkNamespace
  */
@@ -120,11 +109,10 @@ declare global {
 }
 
 /**
- * Lazily initialise `window.ik` and return it. In non-browser
- * environments returns a detached stub object.
+ * Initialise and return `window.ik`. Returns stub in non-browser environments.
  *
  * @function ensureIkNamespace
- * @returns {IkNamespace} The `window.ik` namespace object
+ * @returns {IkNamespace} The `window.ik` namespace
  */
 export function ensureIkNamespace(): IkNamespace {
   if (typeof window === 'undefined') return {};
@@ -133,14 +121,12 @@ export function ensureIkNamespace(): IkNamespace {
 }
 
 /**
- * Register a debug module under `window.ik[key]`. Creates `window.ik` if
- * needed. Overwrites any previous registration under the same key (safe to
- * re-register on hot-reload).
+ * Register debug module under `window.ik[key]`. Overwrites previous registration.
  *
  * @template K
  * @function registerIkModule
- * @param {K} key - Short module key (e.g. `'ws'`)
- * @param {IkModules[K]} module - The debug object to expose
+ * @param {K} key - Module key (e.g. `'ws'`)
+ * @param {IkModules[K]} module - Debug object to expose
  */
 export function registerIkModule<K extends keyof IkModules>(
   key: K,
@@ -151,12 +137,11 @@ export function registerIkModule<K extends keyof IkModules>(
 }
 
 /**
- * Remove a debug module from `window.ik[key]`. Called on module unmount so
- * stale references do not linger after cleanup.
+ * Remove debug module from `window.ik[key]`.
  *
  * @template K
  * @function unregisterIkModule
- * @param {K} key - Short module key to remove
+ * @param {K} key - Module key to remove
  */
 export function unregisterIkModule<K extends keyof IkModules>(key: K): void {
   const ns = ensureIkNamespace();

@@ -1,7 +1,6 @@
 /**
- * @fileoverview Spell Table Filter Hook
- * @description Owns the spell-table UI filter state and derives the
- * JSON-serializable `FilterExpression[]` payload for `/api/spells`.
+ * @fileoverview Spell-table filter state and API payload.
+ *
  * @module lib/hooks/data/useSpellTableFilters
  * @author Typeir
  * @version 1.0.0

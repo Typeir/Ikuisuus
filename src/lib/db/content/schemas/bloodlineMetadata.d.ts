@@ -1,11 +1,6 @@
 /**
- * @fileoverview Bloodline Metadata Domain Schema
- * @description Canonical TypeScript types for bloodline metadata generated from
- * `scripts/metadata/generateBloodlineMetadata.ts`.
- *
- * Each bloodline record includes core features and an ordered list of boon options.
- * Boon records intentionally store only queryable fields and derived tags. Prose
- * remains in MDX content and is not duplicated in metadata.
+ * @fileoverview Bloodline metadata domain schema.
+ * @description Canonical types for bloodline metadata from generators.
  *
  * @module lib/db/content/schemas/bloodlineMetadata
  * @version 1.0.0

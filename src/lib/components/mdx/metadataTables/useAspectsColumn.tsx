@@ -1,8 +1,6 @@
 /**
  * @fileoverview Aspects column for MetadataTable
- * @description Appends an Aspects column to any table whose rows carry
- * `tags`, so no table builder has to know about it. Cells render inert glyphs
- * because the whole cell is already a link or button.
+ * @description Appends an Aspects column when rows carry `tags`. Cells render inert glyphs.
  *
  * @module lib/components/mdx/metadataTables/useAspectsColumn
  * @version 1.0.0
@@ -31,7 +29,7 @@ function tagsOf(row: MetadataRow): string[] | undefined {
  *
  * @param {ColumnConfig[]} columns - Caller columns
  * @param {MetadataRow[]} data - Table rows
- * @param {'md' | 's'} size - Table density; the compact table caps at fewer glyphs
+ * @param {'md' | 's'} size - Table density; caps glyphs at 8 or 5
  * @returns {ColumnConfig[]} Columns to render
  */
 export function useAspectsColumn(

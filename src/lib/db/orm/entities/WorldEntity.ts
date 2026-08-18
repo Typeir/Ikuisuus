@@ -1,7 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — World
- * @description Decorator-based entity for the `world` table. One row per
- * lore page, mirroring the world metadata sidecar.
+ * @description One row per lore page.
  *
  * @module lib/db/orm/entities/WorldEntity
  * @version 1.0.0
@@ -54,15 +53,15 @@ export class WorldEntity {
   @OrmProperty({ type: 'string[]', fieldName: 'related_slugs' })
   relatedSlugs: string[] = [];
 
-  /** @property {string[]} knowledgeTiers - Declared knowledge-tier names from frontmatter */
+  /** @property {string[]} knowledgeTiers - Knowledge-tier names */
   @OrmProperty({ type: 'string[]', fieldName: 'knowledge_tiers' })
   knowledgeTiers: string[] = [];
 
-  /** @property {string | null} description - Prose description extracted from the lore MDX */
+  /** @property {string | null} description - Prose description */
   @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
-  /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
+  /** @property {string | null} image - Image path */
   @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 

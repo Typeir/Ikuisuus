@@ -39,7 +39,7 @@ import pickerStyles from './pickerControls.module.scss';
  * @property {number} boonBudget - Total boon point budget from the bloodline
  * @property {(boons: CharacterShard[]) => void} onToggle - Callback when a boon is toggled
  * @property {boolean} [readOnly] - When true, items are visible but not interactive
- * @property {string} [locale] - Content locale; ignored because the component uses `useLocale()` internally
+ * @property {string} [locale] - Unused; locale comes from `useLocale()`
  */
 export interface BoonPickerProps {
   bloodlineSlug: string;
@@ -61,7 +61,7 @@ export interface BoonPickerProps {
  * @param {number} props.boonBudget - Total boon point budget from the bloodline
  * @param {(boons: CharacterShard[]) => void} props.onToggle - Callback when a boon is toggled
  * @param {boolean} [props.readOnly=false] - When true, items are visible but not interactive
- * @param {string} [props.locale] - Content locale; ignored because the component uses `useLocale()` internally
+ * @param {string} [props.locale] - Unused; locale comes from `useLocale()`
  * @returns {JSX.Element} JSX tree
  */
 export const BoonPicker: React.FC<BoonPickerProps> = ({
@@ -86,9 +86,7 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
     () => new Set(),
   );
 
-  /* Options written as their own headings are also emitted as boons with a
-     `parentName`; they are picked through the parent's sub-options, so the
-     card list shows top-level boons only. */
+  /* Top-level boons only; `parentName` children are picked via sub-options. */
   const boons: BloodlineBoon[] = useMemo(
     () =>
       (bloodlines.find((b) => b.slug === bloodlineSlug)?.boons ?? []).filter(

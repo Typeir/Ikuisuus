@@ -15,10 +15,14 @@
 import { cn } from '@/lib/utils/classNameMerge';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearch } from '../../application/useSearch';
+import { searchHref } from '../../domain/searchHref';
+import { AspectSuggestions } from './AspectSuggestions';
+import { useAspectSuggestions } from './useAspectSuggestions';
+import { useDropdownRoom, useFocusShortcut, useOutsideClick } from './useSearchBarChrome';
 import { MAX_DROPDOWN_RESULTS, SearchDropdown } from './SearchDropdown';
 import styles from './searchBar.module.scss';
 
@@ -59,9 +63,11 @@ export function SearchBar({
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('search');
 
   const [query, setQuery] = useState(defaultQuery ?? '');
+  const [caret, setCaret] = useState(0);
 
   /** Follow external query changes (URL param updates on the search page). */
   useEffect(() => {
@@ -69,6 +75,10 @@ export function SearchBar({
   }, [defaultQuery]);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [aspectIndex, setAspectIndex] = useState(-1);
+
+  const { suggestions, pick } = useAspectSuggestions(query, caret);
+  const suggesting = suggestions.length > 0;
   const [isMac, setIsMac] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -97,10 +107,36 @@ export function SearchBar({
 
   const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
+    setCaret(e.target.selectionStart ?? e.target.value.length);
+    setAspectIndex(-1);
     if (e.target.value.length >= 2) {
       setOpen(true);
     }
   }, []);
+
+  const handleCaret = useCallback((e: React.SyntheticEvent<HTMLInputElement>) => {
+    setCaret(e.currentTarget.selectionStart ?? e.currentTarget.value.length);
+  }, []);
+
+  /**
+   * Applies a suggested aspect: the token leaves the text and becomes a
+   * filter on the search page, keeping any filters already in the URL.
+   *
+   * @param {number} index - Suggestion index
+   */
+  const pickAspect = useCallback(
+    (index: number) => {
+      const picked = pick(index);
+      if (!picked) return;
+      const existing = searchParams.getAll('aspect');
+      setOpen(false);
+      setAspectIndex(-1);
+      setQuery(picked.rest);
+      router.push(searchHref(locale, picked.rest, [...existing, picked.aspect]));
+      onNavigate?.();
+    },
+    [pick, searchParams, router, locale, onNavigate],
+  );
 
   const handleFocus = useCallback(() => {
     if (query.length >= 2) setOpen(true);
@@ -120,6 +156,29 @@ export function SearchBar({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      if (suggesting) {
+        switch (e.key) {
+          case 'ArrowDown':
+            e.preventDefault();
+            setAspectIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+            return;
+          case 'ArrowUp':
+            e.preventDefault();
+            setAspectIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+            return;
+          case 'Enter':
+          case 'Tab':
+            if (aspectIndex >= 0 || e.key === 'Enter') {
+              e.preventDefault();
+              pickAspect(aspectIndex >= 0 ? aspectIndex : 0);
+              return;
+            }
+            break;
+          case 'Escape':
+            setAspectIndex(-1);
+            break;
+        }
+      }
       switch (e.key) {
         case 'Escape':
           setOpen(false);
@@ -142,7 +201,7 @@ export function SearchBar({
           break;
       }
     },
-    [maxResults, activeIndex, navigateToResult],
+    [maxResults, activeIndex, navigateToResult, suggesting, suggestions.length, aspectIndex, pickAspect],
   );
 
   const handleSubmit = useCallback(
@@ -163,60 +222,13 @@ export function SearchBar({
     onNavigate?.();
   }, [onNavigate]);
 
-  /**
-   * Global Cmd/Ctrl-K shortcut focuses the input if visible.
-   */
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        const input = inputRef.current;
-        if (!input) return;
-        if (typeof input.checkVisibility === 'function' && !input.checkVisibility()) {
-          return;
-        }
-        e.preventDefault();
-        input.focus();
-      }
-    };
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
-  }, []);
+  useFocusShortcut(inputRef);
+  const closeDropdown = useCallback(() => setOpen(false), []);
+  useOutsideClick(dropdownRef, inputRef, closeDropdown);
 
-  /** Close dropdown on outside click. */
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node) &&
-        inputRef.current &&
-        !inputRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  const showDropdown = open && query.length >= 2 && !debouncing && !suggesting;
 
-  const showDropdown = open && query.length >= 2 && !debouncing;
-
-  /**
-   * Dropdown max height defaulting to 160px, capped to space under the input.
-   */
-  const [dropdownMax, setDropdownMax] = useState<number | null>(null);
-  const measureDropdownRoom = useCallback(() => {
-    const wrap = dropdownRef.current;
-    if (!wrap) return;
-    const rect = wrap.getBoundingClientRect();
-    setDropdownMax(Math.max(160, window.innerHeight - rect.bottom - 16));
-  }, []);
-
-  useEffect(() => {
-    if (!showDropdown) return;
-    measureDropdownRoom();
-    window.addEventListener('resize', measureDropdownRoom);
-    return () => window.removeEventListener('resize', measureDropdownRoom);
-  }, [showDropdown, measureDropdownRoom]);
+  const dropdownMax = useDropdownRoom(dropdownRef, showDropdown);
 
   return (
     <div
@@ -242,13 +254,18 @@ export function SearchBar({
             onChange={handleInput}
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
+            onKeyUp={handleCaret}
+            onClick={handleCaret}
+            onSelect={handleCaret}
             role='combobox'
-            aria-expanded={showDropdown}
-            aria-controls='search-dropdown'
+            aria-expanded={showDropdown || suggesting}
+            aria-controls={suggesting ? 'search-aspect-suggestions' : 'search-dropdown'}
             aria-activedescendant={
-              showDropdown && activeIndex >= 0
-                ? `search-result-${activeIndex}`
-                : undefined
+              suggesting && aspectIndex >= 0
+                ? `search-aspect-${aspectIndex}`
+                : showDropdown && activeIndex >= 0
+                  ? `search-result-${activeIndex}`
+                  : undefined
             }
             aria-label={t('ariaLabel')}
             autoComplete='off'
@@ -257,6 +274,15 @@ export function SearchBar({
           <Search size={16} className={styles.searchIcon} aria-hidden='true' />
         </div>
       </form>
+
+      {suggesting && (
+        <AspectSuggestions
+          suggestions={suggestions}
+          activeIndex={aspectIndex}
+          onPick={pickAspect}
+          anchorRef={inputRef}
+        />
+      )}
 
       {showDropdown && (
         <SearchDropdown

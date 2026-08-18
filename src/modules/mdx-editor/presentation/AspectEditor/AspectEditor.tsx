@@ -1,10 +1,5 @@
 /**
- * @fileoverview Aspect Editor Modal
- * @description Two-pane aspect picker for the MDX editor. Top: the staged
- * aspects (thin, grows). Bottom: the closed vocabulary by group as
- * flex-wrapped pills (starts tall, yields to the top). Clicking a vocabulary
- * pill stages it; clicking a staged pill unstages it. Nothing touches the
- * buffer until Apply.
+ * @fileoverview Two-pane aspect picker. Staged aspects top, vocabulary bottom. Apply commits to buffer.
  *
  * @module modules/mdx-editor/presentation/AspectEditor/AspectEditor
  * @version 1.0.0

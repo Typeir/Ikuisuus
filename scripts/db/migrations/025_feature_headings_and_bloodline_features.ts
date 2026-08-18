@@ -1,12 +1,6 @@
 /**
- * @fileoverview Migration 025 — Feature headings, feature tags, bloodline features
- * @description Monster, vocation and specialization features gain the raw heading
- * text they render under and their extracted aspects; bloodlines gain a
- * `bloodline_features` child table for core-feature traits, mirroring
- * `bloodline_boons`; boon options written as their own headings carry
- * `parent_name`.
- *
- * After applying, run `npx tsx scripts/db/pg/seed-from-fs.ts` to backfill.
+ * @fileoverview Migration 025: add feature headings, tags, and bloodline_features table.
+ * @description Adds heading and tags to features; creates bloodline_features child table.
  *
  * @module scripts/db/migrations/025_feature_headings_and_bloodline_features
  * @author Typeir
@@ -17,9 +11,9 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies migration 025.
+ * Add feature columns and bloodline_features table.
  *
- * @param {PoolClient} client - Transactional pg client (BEGIN already called).
+ * @param {PoolClient} client - Transactional pg client.
  * @returns {Promise<void>}
  */
 export async function up(client: PoolClient): Promise<void> {
@@ -48,9 +42,9 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 025.
+ * Drop feature columns and bloodline_features table.
  *
- * @param {PoolClient} client - Transactional pg client (BEGIN already called).
+ * @param {PoolClient} client - Transactional pg client.
  * @returns {Promise<void>}
  */
 export async function down(client: PoolClient): Promise<void> {

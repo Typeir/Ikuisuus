@@ -7,8 +7,7 @@
  */
 
 /**
- * Re-exports `Aspects` for client-safe usage only. `MonsterAspects` stays on its
- * own path so its ORM dependency is not pulled into the browser bundle.
+ * Re-exports `Aspects` for client-safe usage only.
  */
 export {
   AspectPill,

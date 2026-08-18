@@ -1,6 +1,6 @@
 /**
- * @fileoverview Spell table with concentration and Damocles-setting filters.
- * Intended for use on the main spell library page.
+ * @fileoverview Spell table with concentration and Damocles filters.
+ *
  * @module src/modules/metadata-tables/presentation/FilteredSpellTable/FilteredSpellTable
  * @author Typeir
  * @version 2.0.0
@@ -23,9 +23,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 /**
- * Spell table with external filter controls rendered above the level-tab strip.
- * Provides a "Damocles Only" toggle (hides SRD spells where `file === "external"`),
- * and a concentration select. All filter state is local.
+ * Spell table with external filter controls. Damocles and concentration filters.
  *
  * @component
  * @param {SpellTablesProps} props

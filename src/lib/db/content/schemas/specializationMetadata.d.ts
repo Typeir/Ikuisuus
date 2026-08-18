@@ -1,10 +1,6 @@
 /**
- * @fileoverview Specialization Metadata Domain Schema
- * @description Canonical TypeScript types for specialization metadata generated from
- * `scripts/metadata/generateSpecializationMetadata.ts`.
- *
- * Each specialization record captures the subclass features, type classification,
- * optional always-prepared spells, and optional spellcasting for third-caster subclasses.
+ * @fileoverview Specialization metadata domain schema.
+ * @description Canonical types for specialization metadata from generators.
  *
  * @module lib/db/content/schemas/specializationMetadata
  * @version 1.0.0

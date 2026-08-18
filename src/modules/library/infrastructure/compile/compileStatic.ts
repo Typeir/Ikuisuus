@@ -1,8 +1,5 @@
 /**
- * @fileoverview Compiles MDX with file-scoped (static) imports.
- * Async; must be awaited. Used by the library route.
- * @description Compiles MDX with file-scoped (static) imports so bundlers
- * include the evaluator at build time.
+ * @fileoverview Compiles MDX with file-scoped imports. Async. Used by library route.
  *
  * @module src/lib/mdx/compileStatic/compileStatic
  *

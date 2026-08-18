@@ -1,7 +1,7 @@
 /**
  * Persistent UI State Types and Action Schema
  *
- * @fileoverview Typed state shapes and action types for persistent UI state.
+ * @fileoverview State shapes and action types for persistent UI.
  *
  * @module lib/types/persistentUiState
  * @version 1.0.0
@@ -111,8 +111,8 @@ export const DEFAULT_UNIT_SYSTEM: UnitSystemPreferences = {
  * @property {ThemeValue} theme - Current theme value
  * @property {UnitSystemPreferences} unitSystem - Display preference per measurement family
  * @property {string | null} correctionsToken - HMAC token for corrections API (persists annually)
- * @property {boolean} aspectExpanded - Whether aspect carousels stay unpacked without hovering
- * @property {AspectDisplayMode} aspectDisplay - How aspect pills render: icon+value, icon+group:value, or glyph only
+ * @property {boolean} aspectExpanded - Aspect carousel expansion
+ * @property {AspectDisplayMode} aspectDisplay - Aspect pill display mode
  * @property {boolean} isHydrated - Whether state has been hydrated from storage
  */
 export interface PersistentUiState {
@@ -126,8 +126,7 @@ export interface PersistentUiState {
 }
 
 /**
- * Aspect pill display modes. `compact` = icon + value, `verbose` = icon +
- * `group: value`, `glyph` = icon only.
+ * Aspect pill display modes: `compact`, `verbose`, `glyph`.
  */
 export type AspectDisplayMode = 'compact' | 'verbose' | 'glyph';
 
@@ -147,9 +146,7 @@ export const ASPECT_DISPLAY_MODES: readonly AspectDisplayMode[] = [
  * @interface SerializedPersistentUiState
  * @property {SidebarMenuState} [sidebarMenu] - Optional sidebar menu state
  * @property {ThemeValue} [theme] - Optional theme value
- * @property {UnitSystemPreferences | UnitSystemValue} [unitSystem] - Display
- *   preferences. A bare string is accepted from records written before the
- *   preference was split per measurement family, and applies to all three.
+ * @property {UnitSystemPreferences | UnitSystemValue} [unitSystem] - Display preferences (bare string legacy)
  * @property {string | null} [correctionsToken] - Optional corrections API token
  * @property {boolean} [aspectExpanded] - Optional aspect carousel expansion
  * @property {AspectDisplayMode} [aspectDisplay] - Optional aspect pill display mode
@@ -269,12 +266,11 @@ export interface SetUnitSystemAction {
 }
 
 /**
- * Action to set whether aspect carousels stay unpacked. Preference is global,
- * not per-row.
+ * Action to set aspect carousel expansion.
  *
  * @interface SetAspectExpandedAction
  * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED} type - Action type identifier
- * @property {{ expanded: boolean }} payload - New expansion state
+ * @property {{ expanded: boolean }} payload - Expansion state
  */
 export interface SetAspectExpandedAction {
   type: typeof PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED;

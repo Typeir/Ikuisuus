@@ -29,6 +29,7 @@ const { pushMock, searchState } = vi.hoisted(() => ({
 vi.mock('next/navigation', () => ({
   useParams: () => ({ locale: 'en' }),
   useRouter: () => ({ push: pushMock }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock('@/modules/search/application/useSearch', () => ({

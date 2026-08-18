@@ -1,11 +1,6 @@
 /**
- * @fileoverview Migration 023 — Create rules and world tables
- * @description Creates the `rules` and `world` page tables so rules and lore
- * metadata have pg entities matching the other content kinds. Columns mirror
- * the metadata sidecar records the rules/world generators emit.
- *
- * After applying, run `npx tsx scripts/db/pg/seed-from-fs.ts` to backfill
- * from regenerated sidecars.
+ * @fileoverview Migration 023: creates rules and world tables.
+ * @description Columns match metadata sidecar records from generators.
  *
  * @module scripts/db/migrations/023_create_rules_and_world_tables
  * @author Typeir
@@ -16,10 +11,9 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies migration 023: creates `rules` and `world` with their unique
- * (locale, slug) constraints and category indexes.
+ * Create rules and world tables with (locale, slug) unique constraints.
  *
- * @param {PoolClient} client - Transactional pg client (BEGIN already called).
+ * @param {PoolClient} client - Transactional pg client.
  * @returns {Promise<void>}
  */
 export async function up(client: PoolClient): Promise<void> {
@@ -72,9 +66,9 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 023: drops both tables (cascade removes the indexes).
+ * Drop rules and world tables.
  *
- * @param {PoolClient} client - Transactional pg client (BEGIN already called).
+ * @param {PoolClient} client - Transactional pg client.
  * @returns {Promise<void>}
  */
 export async function down(client: PoolClient): Promise<void> {

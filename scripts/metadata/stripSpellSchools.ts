@@ -1,16 +1,6 @@
 /**
- * @fileoverview Migration: drop the school from spell subtitles
- * @description Rewrites the italic subtitle under each spell's stat-block
- * title from the school grammar to a school-free one, keeping level, quality
- * and qualifiers:
- *
- *   `_1st-level Divination (Ritual)_`  → `_1st-level Spell (Ritual)_`
- *   `_3rd-level Legendary Necromancy_` → `_3rd-level Legendary Spell_`
- *   `_Evocation cantrip_`              → `_Cantrip_`
- *
- * The same word `Spell` is what spell-like abilities will use, so a future
- * `_5th-level Spell_` inside a stat block parses the same way. `--dry` prints
- * the plan; the extractor reads level/quality from the new form unchanged.
+ * @fileoverview Migration: drop school from spell subtitles.
+ * @description Rewrite subtitle from school grammar to school-free form; keep level and quality.
  *
  * @module scripts/metadata/stripSpellSchools
  * @version 1.0.0
@@ -27,9 +17,9 @@ const SCHOOLS =
 const dry = process.argv.includes('--dry');
 
 /**
- * Rewrites one subtitle line, or returns it unchanged.
+ * Rewrite one subtitle line or return unchanged.
  *
- * @param {string} line - A `> _…_` line
+ * @param {string} line - Subtitle line
  * @returns {string} Rewritten line
  */
 export function rewriteSubtitle(line: string): string {

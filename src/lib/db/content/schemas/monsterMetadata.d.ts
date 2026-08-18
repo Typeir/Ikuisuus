@@ -1,13 +1,6 @@
 /**
- * @fileoverview Monster Metadata Domain Schema
- * @description Canonical TypeScript types derived from the real metadata output of
- * `scripts/metadata/generateMonsterMetadata.ts`. Every field corresponds to a
- * parsed property emitted by `parseStatBlockSection()`.
- *
- * Monsters are unique because a single `.sheet.mdx` file may contain multiple
- * stat blocks (e.g., a dragon and its lair variant). Each stat block produces
- * one `MonsterMetadata` record. Multi-stat-block files use `subSlug` to
- * differentiate variants while sharing the same `slug` (filename base).
+ * @fileoverview Monster metadata domain schema.
+ * @description Canonical types from generator; multi-stat files use subSlug for variants.
  *
  * @module lib/db/content/schemas/monsterMetadata
  * @version 1.0.0
@@ -42,8 +35,7 @@ export interface MonsterHP {
 }
 
 /**
- * Movement speed parsed from the stat block speed row.
- * All distances are in strides, the native Damocles unit. Consumers needing imperial convert at their own boundary; see the Foundry transformer. Matches `MonsterSpeedEmbed` property names.
+ * Movement speed from stat block; distances in strides (native unit).
  *
  * @property {string} raw - Original speed text
  * @property {number} [walk] - Walk speed in strides

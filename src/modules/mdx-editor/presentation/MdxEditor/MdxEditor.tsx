@@ -1,8 +1,5 @@
 /**
- * @fileoverview MDX Editor Component
- * @description Full-page shell for creating or editing MDX content files via the content repo
- * GitHub API. Orchestrates useEditorState; UI sections: EditorAuthSection, EditorPathSection,
- * EditorSplitPane, EditorFooter.
+ * @fileoverview Full-page MDX editor shell. Edit or New mode via ?slug.
  *
  * @module lib/components/mdxEditor/mdxEditor
  * @version 3.0.0
@@ -41,11 +38,7 @@ interface MdxEditorProps {
 }
 
 /**
- * MDX Editor tool view.
- *
- * Renders a full-page editor with file path input, authorization token input,
- * MDX textarea, and submit button. Two modes via `?slug`: **Edit** pre-loads an
- * existing file from the content repo; **New** shows a blank editor.
+ * Full-page editor. Edit or New mode via ?slug.
  *
  * @component
  * @param {MdxEditorProps} props - Component properties

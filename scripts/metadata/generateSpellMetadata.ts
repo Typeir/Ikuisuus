@@ -263,8 +263,7 @@ function generateSpellTags(
       metadata.level === 0 ? 'level:cantrip' : `level:${metadata.level}`,
     );
   }
-  /* `school:` is authored in frontmatter during the school → form
-     migration, never derived from the subtitle. */
+  /* `school:` is authored in frontmatter, not derived. */
   if (metadata.quality)
     tags.push(`rarity:${(metadata.quality as string).toLowerCase()}`);
   if (metadata.concentration) tags.push('tempo:sustained');

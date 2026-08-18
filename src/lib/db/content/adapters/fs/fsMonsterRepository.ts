@@ -1,8 +1,6 @@
 /**
- * @fileoverview Filesystem Monster Repository
- * @description Implements `MonsterRepository` by reading `.metadata.json` sidecar
- * files from `src/content/{locale}/monsters/`. Multi-stat-block files are
- * automatically flattened (one entry per stat block).
+ * @fileoverview Filesystem monster repository.
+ * @description Read .metadata.json from monsters/; flatten multi-stat files.
  *
  * @module lib/db/content/adapters/fs/fsMonsterRepository
  * @version 1.0.0
@@ -31,10 +29,7 @@ const SUBDIR = 'monsters';
  * @extends {FsMetadataRepository<MonsterMetadata>}
  * @implements {MonsterRepository}
  *
- * @description
- * Reads `.metadata.json` sidecar files from `monsters/`. Multi-stat-block files
- * are automatically flattened (one entry per stat block). Overrides `matchSlug`
- * to resolve lookups against both `slug` and `subSlug`.
+ * @description Match on slug or subSlug.
  */
 class FsMonsterRepository
   extends FsMetadataRepository<MonsterMetadata>

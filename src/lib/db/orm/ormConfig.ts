@@ -1,7 +1,6 @@
 /**
  * @fileoverview MikroORM Configuration
- * @description Code-first configuration for MikroORM using the PostgreSQL driver.
- * References all entity classes — no code generation needed.
+ * @description Code-first MikroORM config with PostgreSQL, all entities referenced.
  *
  * @module lib/db/orm/ormConfig
  * @version 2.0.0

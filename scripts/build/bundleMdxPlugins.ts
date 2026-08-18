@@ -1,8 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * @fileoverview Bundles local remark/rehype plugins for the `@next/mdx` loader.
- * Emits one self-contained `.mjs` per plugin so `next.config.ts` can reference
- * a stable absolute path.
+ * @fileoverview Bundles local remark/rehype plugins to .mjs.
  *
  * @module scripts/build/bundleMdxPlugins
  * @version 1.0.0
@@ -25,9 +23,7 @@ const PLUGINS = [
 ];
 
 /**
- * Bundles every local MDX plugin into `.mdx-plugins/`.
- *
- * Leaves resolvable dependencies external.
+ * Bundle local MDX plugins; leave dependencies external.
  */
 const main = async (): Promise<void> => {
   await mkdir(OUTPUT_DIR, { recursive: true });

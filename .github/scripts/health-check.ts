@@ -1,8 +1,5 @@
 /**
- * Composite Health Check
- *
- * @fileoverview Runs all code health sub-checks and aggregates results.
- * Supports --changed-only flag to post-filter failures to uncommitted changed files.
+ * @fileoverview Aggregates health checks with optional --changed-only filtering.
  *
  * @module .github/scripts/health-check
  * @author Typeir
@@ -55,7 +52,7 @@ interface IgnoreDirectives {
 interface CheckEntry {
   /** Display name */
   name: string;
-  /** Async function that runs the check and returns a result */
+  /** Function that runs the check */
   run: () => Promise<CheckResult>;
 }
 
@@ -318,8 +315,7 @@ function buildFilteredResult(
 }
 
 /**
- * Get the set of uncommitted changed files relative to ROOT.
- * Normalises all separators to forward slashes.
+ * Get uncommitted changed files with normalized forward slashes.
  *
  * @returns Set of relative file paths
  */
@@ -364,11 +360,11 @@ function getChangedFiles(): Set<string> {
 }
 
 /**
- * Post-filter a check result to only include failures from changed files.
+ * Filter check result to changed files only.
  *
  * @param result Original check result
  * @param changedFiles Set of changed file paths
- * @returns Filtered check result (original not mutated)
+ * @returns Filtered check result
  */
 function filterToChangedFiles(
   result: CheckResult,
@@ -444,7 +440,7 @@ async function filterIgnoredFailures(
 }
 
 /**
- * Run a single check entry, returning an error placeholder on failure.
+ * Run a check entry; return error placeholder on failure.
  *
  * @param entry Check entry to run
  * @returns Check result

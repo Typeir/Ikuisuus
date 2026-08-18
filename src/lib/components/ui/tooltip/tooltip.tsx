@@ -21,11 +21,11 @@ import {
   useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';
 import { calculatePosition } from './calculatePosition';
 import styles from './tooltip.module.scss';
 
@@ -109,7 +109,6 @@ export const Tooltip = memo(function Tooltip({
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [exiting, setExiting] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [actualPlacement, setActualPlacement] = useState(placement);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -119,7 +118,6 @@ export const Tooltip = memo(function Tooltip({
   const hideTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const exitingRef = useRef(false);
   const exitTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const positionedRef = useRef(false);
 
   /** Duration of the CSS exit animation — must match SCSS. */
   const EXIT_DURATION = 150;
@@ -127,23 +125,26 @@ export const Tooltip = memo(function Tooltip({
   const reactId = useId();
   const tooltipId = id || `tooltip-${reactId}`;
 
-  /** Recalculate tooltip position based on trigger element */
-  const updatePosition = useCallback(() => {
-    if (!triggerRef.current || !tooltipRef.current) return;
+  const showPortal = isVisible || exiting;
 
-    const triggerRect = triggerRef.current.getBoundingClientRect();
-    const tooltipRect = tooltipRef.current.getBoundingClientRect();
+  /** Derives the tooltip position from the trigger rect. */
+  const compute = useCallback(
+    (triggerRect: DOMRect, tooltipEl: HTMLElement) => {
+      const { x, y, actualPlacement: resolved } = calculatePosition(
+        triggerRect,
+        tooltipEl.getBoundingClientRect(),
+        placement,
+      );
+      return { x, y, placement: resolved };
+    },
+    [placement],
+  );
 
-    const {
-      x,
-      y,
-      actualPlacement: newPlacement,
-    } = calculatePosition(triggerRect, tooltipRect, placement);
-
-    setPosition({ x, y });
-    setActualPlacement(newPlacement);
-    positionedRef.current = true;
-  }, [placement]);
+  const { reposition } = useAnchoredPosition(triggerRef, tooltipRef, compute, {
+    active: showPortal || forceVisible,
+    onPlacementChange: (resolved) =>
+      setActualPlacement(resolved as TooltipPlacement),
+  });
 
   /** Show tooltip after delay. Cancels any in-progress exit. */
   const show = useCallback(() => {
@@ -177,34 +178,10 @@ export const Tooltip = memo(function Tooltip({
         setIsVisible(false);
         setExiting(false);
         exitingRef.current = false;
-        positionedRef.current = false;
       }, EXIT_DURATION);
       return () => clearTimeout(exitTimerRef.current);
     }
   }, [exiting]);
-
-  /** Position synchronously on first render to prevent flicker */
-  useLayoutEffect(() => {
-    if (isVisible || forceVisible) {
-      updatePosition();
-    }
-  }, [isVisible, forceVisible, updatePosition]);
-
-  /** Reposition on scroll and resize */
-  useEffect(() => {
-    if (!isVisible && !forceVisible && !exiting) return;
-
-    const handleScroll = () => updatePosition();
-    const handleResize = () => updatePosition();
-
-    window.addEventListener('scroll', handleScroll, true);
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll, true);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [isVisible, forceVisible, exiting, updatePosition]);
 
   /** Cleanup timeouts on unmount */
   useEffect(() => {
@@ -230,11 +207,9 @@ export const Tooltip = memo(function Tooltip({
         exitingRef.current = false;
       }
       setIsVisible(true);
-      positionedRef.current = false;
+      reposition();
     }
-  }, [forceVisible]);
-
-  const showPortal = isVisible || exiting;
+  }, [forceVisible, reposition]);
 
   if (!isMounted || !content) {
     return children;
@@ -271,13 +246,7 @@ export const Tooltip = memo(function Tooltip({
               id={tooltipId}
               role='tooltip'
               className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
-              style={{
-                left: position.x,
-                top: position.y,
-                maxWidth,
-                visibility: positionedRef.current ? 'visible' : 'hidden',
-                opacity: position ? undefined : 0,
-              }}>
+              style={{ maxWidth }}>
               {content}
               {showArrow && <div className={styles.arrow} />}
             </div>,
@@ -322,13 +291,7 @@ export const Tooltip = memo(function Tooltip({
             id={tooltipId}
             role='tooltip'
             className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
-            style={{
-              left: position.x,
-              top: position.y,
-              maxWidth,
-              visibility: positionedRef.current ? 'visible' : 'hidden',
-              opacity: position ? undefined : 0,
-            }}>
+            style={{ maxWidth }}>
             {content}
             {showArrow && <div className={styles.arrow} />}
           </div>,

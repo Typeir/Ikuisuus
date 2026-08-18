@@ -1,7 +1,5 @@
 /**
- * @fileoverview Editor Text Mutation Commands
- * @description Text mutation utilities operating on a textarea via
- * `document.execCommand('insertText')`, preserving the native undo/redo stack.
+ * @fileoverview Text mutation utilities via execCommand. Preserves native undo/redo.
  *
  * @module lib/components/mdxEditor/editorCommands
  * @version 1.0.0
@@ -35,8 +33,7 @@ export function nativeInsert(el: HTMLTextAreaElement, text: string): void {
 }
 
 /**
- * Selects a range in the textarea, then inserts replacement text natively.
- * Replaces a region wider than the current selection.
+ * Select range and insert replacement text natively.
  *
  * @param {HTMLTextAreaElement} el - Textarea element
  * @param {number} start - Start of the range to replace

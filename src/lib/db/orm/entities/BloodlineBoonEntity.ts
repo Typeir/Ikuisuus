@@ -1,9 +1,6 @@
 /**
  * @fileoverview MikroORM entity for the `bloodline_boons` table.
- * @description Entity for the `bloodline_boons` child table. Each row is one
- * boon option for a bloodline, foreign-keyed to `bloodlines.id` via ManyToOne.
- * Uses in-house schema decorators that preserve the entity name through
- * class-name minification.
+ * @description One boon option for a bloodline, foreign-keyed to `bloodlines.id`.
  *
  * @module lib/db/orm/entities/BloodlineBoonEntity
  * @version 2.0.0
@@ -37,7 +34,7 @@ export class BloodlineBoonEntity {
   })
   bloodline!: BloodlineEntity;
 
-  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  /** @property {string | null} anchor - Anchor slug of the rendered heading */
   @OrmProperty({ type: 'string', nullable: true })
   anchor?: string | null;
 
@@ -65,7 +62,7 @@ export class BloodlineBoonEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
-  /** @property {string | null} parentName - Parent boon when this is an option written as its own heading */
+  /** @property {string | null} parentName - Parent boon name */
   @OrmProperty({ type: 'string', fieldName: 'parent_name', nullable: true })
   parentName?: string | null;
 
@@ -87,7 +84,7 @@ export class BloodlineBoonEntity {
   })
   endLine?: number | null;
 
-  /** @property {Collection<BloodlineBoonOptionEntity>} options - Selectable options of a variable-cost boon */
+  /** @property {Collection<BloodlineBoonOptionEntity>} options - Variable-cost boon options */
   @OrmOneToMany({
     entity: 'BloodlineBoonOptionEntity',
     mappedBy: 'boon',

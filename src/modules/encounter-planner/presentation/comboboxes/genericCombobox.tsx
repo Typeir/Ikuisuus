@@ -32,6 +32,7 @@
 
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';
 import styles from './combobox.module.scss';
 import {
     DROPDOWN_MAX_HEIGHT,
@@ -39,66 +40,6 @@ import {
     OFFSET_Y,
     VIEWPORT_MARGIN,
 } from './comboboxConstants';
-
-/**
- * Imperative dropdown positioning with rAF batching, positioned via CSS transform.
- *
- * @param {React.RefObject<HTMLInputElement | null>} inputRef - Input element reference
- * @param {React.RefObject<HTMLDivElement | null>} dropdownRef - Dropdown element reference
- * @returns {Object} Position update functions
- */
-const useRafPositioner = (
-  inputRef: React.RefObject<HTMLInputElement | null>,
-  dropdownRef: React.RefObject<HTMLDivElement | null>,
-) => {
-  const rafIdRef = useRef<number | null>(null);
-
-  const updatePositionNow = useCallback(() => {
-    const input = inputRef.current;
-    const dropdown = dropdownRef.current;
-    if (!input || !dropdown) return;
-
-    const rect = input.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const width = Math.max(rect.width, DROPDOWN_MIN_WIDTH);
-
-    let top = rect.bottom + OFFSET_Y;
-    let left = rect.left;
-
-    if (left + width > viewportWidth) {
-      left = Math.max(0, viewportWidth - width - VIEWPORT_MARGIN);
-    }
-
-    const spaceBelow = viewportHeight - rect.bottom - OFFSET_Y;
-    const spaceAbove = rect.top - OFFSET_Y;
-    if (spaceBelow < DROPDOWN_MAX_HEIGHT && spaceAbove > spaceBelow) {
-      top = rect.top - Math.min(DROPDOWN_MAX_HEIGHT, spaceAbove);
-    }
-
-    dropdown.style.transform = `translate3d(${left}px, ${top}px, 0)`;
-    dropdown.style.width = `${width}px`;
-  }, [inputRef, dropdownRef]);
-
-  const scheduleUpdate = useCallback(() => {
-    if (rafIdRef.current != null) return;
-    rafIdRef.current = window.requestAnimationFrame(() => {
-      rafIdRef.current = null;
-      updatePositionNow();
-    });
-  }, [updatePositionNow]);
-
-  useEffect(() => {
-    return () => {
-      if (rafIdRef.current != null) {
-        window.cancelAnimationFrame(rafIdRef.current);
-        rafIdRef.current = null;
-      }
-    };
-  }, []);
-
-  return { updatePositionNow, scheduleUpdate };
-};
 
 /**
  * Base interface for combobox items; item types extend it for GenericCombobox compatibility.
@@ -179,10 +120,26 @@ export function GenericCombobox<T extends ComboboxItem>({
     setIsMounted(true);
   }, []);
 
-  const { updatePositionNow, scheduleUpdate } = useRafPositioner(
-    inputRef,
-    dropdownRef,
-  );
+  const compute = useCallback((rect: DOMRect, dropdown: HTMLElement) => {
+    const width = Math.max(rect.width, DROPDOWN_MIN_WIDTH);
+    dropdown.style.width = `${width}px`;
+
+    let left = rect.left;
+    if (left + width > window.innerWidth) {
+      left = Math.max(0, window.innerWidth - width - VIEWPORT_MARGIN);
+    }
+
+    const spaceBelow = window.innerHeight - rect.bottom - OFFSET_Y;
+    const spaceAbove = rect.top - OFFSET_Y;
+    const top =
+      spaceBelow < DROPDOWN_MAX_HEIGHT && spaceAbove > spaceBelow
+        ? rect.top - Math.min(DROPDOWN_MAX_HEIGHT, spaceAbove)
+        : rect.bottom + OFFSET_Y;
+
+    return { x: left, y: top };
+  }, []);
+
+  useAnchoredPosition(inputRef, dropdownRef, compute, { active: isOpen });
 
   const defaultFilter = useCallback((item: T, query: string) => {
     return item.searchableText.toLowerCase().includes(query.toLowerCase());
@@ -209,49 +166,6 @@ export function GenericCombobox<T extends ComboboxItem>({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  /**
-   * Attaches passive scroll/resize listeners to scrollable ancestors for positioning.
-   */
-  useEffect(() => {
-    if (!isOpen || !inputRef.current) return;
-
-    updatePositionNow();
-
-    const scrollableAncestors: (Element | Window)[] = [];
-    let element: HTMLElement | null = inputRef.current.parentElement;
-
-    while (element) {
-      const { overflow, overflowY, overflowX } =
-        window.getComputedStyle(element);
-      const isScrollable =
-        overflow === 'auto' ||
-        overflow === 'scroll' ||
-        overflowY === 'auto' ||
-        overflowY === 'scroll' ||
-        overflowX === 'auto' ||
-        overflowX === 'scroll';
-
-      if (isScrollable) {
-        scrollableAncestors.push(element);
-      }
-      element = element.parentElement;
-    }
-
-    scrollableAncestors.push(window);
-
-    scrollableAncestors.forEach((ancestor) => {
-      ancestor.addEventListener('scroll', scheduleUpdate, { passive: true });
-    });
-    window.addEventListener('resize', scheduleUpdate, { passive: true });
-
-    return () => {
-      scrollableAncestors.forEach((ancestor) => {
-        ancestor.removeEventListener('scroll', scheduleUpdate);
-      });
-      window.removeEventListener('resize', scheduleUpdate);
-    };
-  }, [isOpen, scheduleUpdate, updatePositionNow]);
 
   const handleSelect = useCallback(
     (item: T) => {

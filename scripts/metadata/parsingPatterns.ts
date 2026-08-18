@@ -1,8 +1,6 @@
 /**
- * @fileoverview Parsing Utility Patterns
- * @description Pre-compiled regex patterns used by the MDX content parsing
- * utilities. Centralizes heading detection, properties-section extraction,
- * and charge-mechanic patterns.
+ * @fileoverview Pre-compiled regex patterns for MDX content parsing.
+ * @description Heading, properties, and charge-mechanic patterns centralized.
  *
  * @module lib/metadata/parsingPatterns
  * @version 1.0.0

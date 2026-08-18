@@ -1,0 +1,47 @@
+@use '@/styles/mixins-button' as *;
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.label {
+  font-size: 0.7rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.trigger,
+.clear {
+  @include button-still;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font: inherit;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 999px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  cursor: pointer;
+  &:hover,
+  &:focus-visible {
+    border-color: var(--color-accent);
+    outline: none;
+  }
+}
+
+.clear {
+  color: var(--color-text-secondary);
+}

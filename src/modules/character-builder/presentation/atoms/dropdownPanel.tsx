@@ -4,7 +4,7 @@
  * detection, and keyboard dismissal. Renders via
  * {@link https://react.dev/reference/react-dom/createPortal createPortal} at
  * `document.body`. Positioning derived from the trigger's bounding rect, applied
- * as inline fixed coordinates.
+ * as a transform by {@link useAnchoredPosition}.
  * @module lib/components/characterSheet/atoms/dropdownPanel
  * @version 1.0.0
  * @author Typeir
@@ -14,7 +14,8 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 /**
@@ -39,17 +40,6 @@ export interface DropdownPanelProps {
   panelLabel?: string;
   disabled?: boolean;
   children: React.ReactNode;
-}
-
-/**
- * Coordinates for the portaled panel, derived from the trigger's bounding rect.
- * @interface PanelCoords
- * @property {number} top - Fixed `top` value in px (below the trigger)
- * @property {number} left - Fixed `left` value in px (aligned to trigger left)
- */
-interface PanelCoords {
-  top: number;
-  left: number;
 }
 
 /**
@@ -78,25 +68,18 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
   children,
 }) => {
   const [open, setOpen] = useState(false);
-  const [coords, setCoords] = useState<PanelCoords>({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const updateCoords = useCallback(() => {
-    if (!triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    const panelWidth = panelRef.current?.offsetWidth ?? 0;
-    const maxLeft = Math.max(8, window.innerWidth - panelWidth - 8);
-    setCoords({
-      top: rect.bottom + 4,
-      left: Math.min(Math.max(8, rect.left), maxLeft),
-    });
+  const compute = useCallback((rect: DOMRect, panel: HTMLElement) => {
+    const maxLeft = Math.max(8, window.innerWidth - panel.offsetWidth - 8);
+    return {
+      x: Math.min(Math.max(8, rect.left), maxLeft),
+      y: rect.bottom + 4,
+    };
   }, []);
 
-  useLayoutEffect(() => {
-    if (!open) return;
-    updateCoords();
-  }, [open, updateCoords]);
+  useAnchoredPosition(triggerRef, panelRef, compute, { active: open && !disabled });
 
   useEffect(() => {
     if (!open) return;
@@ -108,21 +91,16 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         return;
       setOpen(false);
     };
-    const handleReposition = () => updateCoords();
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('scroll', handleReposition, true);
-    window.addEventListener('resize', handleReposition);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('scroll', handleReposition, true);
-      window.removeEventListener('resize', handleReposition);
     };
-  }, [open, updateCoords]);
+  }, [open]);
 
   const panel =
     open &&
@@ -136,10 +114,11 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         aria-label={panelLabel}
         style={{
           position: 'fixed',
-          top: coords.top,
-          left: coords.left,
+          top: 0,
+          left: 0,
           right: 'auto',
           zIndex: 1100,
+          willChange: 'transform',
         }}>
         {children}
       </div>,

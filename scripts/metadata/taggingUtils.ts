@@ -416,10 +416,7 @@ export function aspectAnchor(text: string): string {
 }
 
 /**
- * Anchor of a feature: the slug the sectionizer stamps on the matching
- * `<section>`/`<article>` — shared `anchorSlug` over the measure-normalised
- * heading text. Shards key on this; the heading text may change without
- * orphaning them as long as the slug holds.
+ * Anchor of a feature: `anchorSlug` of the measure-normalised heading text.
  *
  * @param {string} text - Rendered heading text, or the feature name
  * @returns {string} Anchor slug
@@ -444,10 +441,8 @@ export function stampAnchors(
 
 /**
  * Splits an `aspects:` / `denyAspects:` frontmatter list into sheet-level
- * aspects and feature-scoped aspects. Entries are either a bare
- * `group:value` string (sheet) or a single-key map `{ anchor: [aspects] }`
- * (feature — anchor is the feature name or heading slug). Malformed entries
- * are ignored.
+ * and feature-scoped aspects. Entry: bare `group:value` (sheet) or
+ * `{ anchor: [aspects] }` (feature). Malformed entries are ignored.
  *
  * @param {unknown} list - Frontmatter list value
  * @returns {{ sheet: string[]; features: Map<string, string[]> }} Parsed scopes
@@ -554,7 +549,7 @@ export function applyAspectDenyList(
 }
 
 /**
- * Extract all tags from content — unified entry point.
+ * Extract all tags from content. Unified entry point.
  *
  * @param {string} content - File content to analyze
  * @param {string} filePath - Absolute path to file

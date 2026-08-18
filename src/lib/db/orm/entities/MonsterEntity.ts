@@ -1,8 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Monster
- * @description Decorator-based entity for the `monsters` table.
- * Groups flat DB columns into value objects (AC, HP, Speed, Scores, Saves,
- * Senses) via `@Embedded` with `prefix`.
+ * @description Entity for the `monsters` table with embedded value objects.
  *
  * @module lib/db/orm/entities/MonsterEntity
  * @version 4.0.0
@@ -164,9 +162,7 @@ export class MonsterSenseEmbed {
 /* ────────────────────────────  Entity  ─────────────────────────────── */
 
 /**
- * MikroORM entity for the `monsters` table.
- * Each row represents a single monster stat block; files containing multiple
- * variants produce multiple rows sharing the same `slug` but differing `subSlug`.
+ * Single monster stat block. Multiple variants share slug, differ in subSlug.
  */
 @OrmEntity('MonsterEntity', { tableName: 'monsters' })
 @OrmUnique({ properties: ['locale', 'slug', 'subSlug'] })
@@ -270,11 +266,11 @@ export class MonsterEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
-  /** @property {string | null} image - Image path extracted from BlendedImage in MDX */
+  /** @property {string | null} image - Image path */
   @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 
-  /** @property {string | null} description - Lore description extracted from the stat block MDX */
+  /** @property {string | null} description - Lore description */
   @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
@@ -290,7 +286,7 @@ export class MonsterEntity {
   @OrmProperty({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
 
-  /** @property {Collection<MonsterFeatureEntity>} features - Feature shards parsed from the stat block */
+  /** @property {Collection<MonsterFeatureEntity>} features - Feature shards */
   @OrmOneToMany({
     entity: 'MonsterFeatureEntity',
     mappedBy: 'monster',
@@ -317,18 +313,18 @@ export class MonsterFeatureEntity {
   })
   monster!: MonsterEntity;
 
-  /** @property {string} featureId - Stable shard identifier, e.g. `mucklord/garbage-communion` */
+  /** @property {string} featureId - Shard identifier, e.g. `mucklord/garbage-communion` */
   @OrmProperty({ type: 'string', fieldName: 'feature_id' })
   featureId!: string;
 
-  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  /** @property {string | null} anchor - Anchor slug of the rendered heading */
   @OrmProperty({ type: 'string', nullable: true })
   anchor?: string | null;
 
   @OrmProperty({ type: 'string' })
   name!: string;
 
-  /** @property {string | null} heading - Rendered heading text when it differs from `name` */
+  /** @property {string | null} heading - Rendered heading text */
   @OrmProperty({ type: 'string', nullable: true })
   heading?: string | null;
 

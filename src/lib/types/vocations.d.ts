@@ -1,9 +1,6 @@
 /**
  * @fileoverview Vocation Metadata Types
- * @description TypeScript interfaces for vocation, specialization, and bloodline
- * metadata as returned by the `/api/bloodlines`, `/api/vocations`, and
- * `/api/specializations` endpoints. Also contains the shared `FeatureEntry`
- * shape used by metadata generators and character-sheet components.
+ * @description Interfaces for vocation, specialization, bloodline metadata from API endpoints.
  *
  * @module src/lib/types/vocations
  * @version 1.0.0
@@ -22,8 +19,8 @@
  * @property {number} [startLine] - 1-indexed start line of this feature's heading block in the source MDX
  * @property {number} [endLine] - 1-indexed last line of this feature's heading block in the source MDX
  * @property {string[]} [grants] - Tag-based proficiency grants this feature confers
- * @property {string[]} [tags] - Aspects extracted from the feature body
- * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
+ * @property {string[]} [tags] - Aspects
+ * @property {string} [anchor] - Anchor slug of the rendered heading
  */
 export interface FeatureEntry {
   level: number;
@@ -43,7 +40,7 @@ export interface FeatureEntry {
  * @property {string} title - Display name
  * @property {string} file - Source file path
  * @property {number} [boonBudget] - Total boon point budget
- * @property {{ movementSpeeds?: string[] }} [coreFeatures] - Core racial features; `movementSpeeds` is an array of strings like `"Walk: 30 ft."`
+ * @property {{ movementSpeeds?: string[] }} [coreFeatures] - Core features
  */
 export interface BloodlineOption {
   slug: string;
@@ -63,12 +60,12 @@ export interface BloodlineOption {
  * @property {string} title - Display name
  * @property {string} file - Source file path (e.g. `src/content/en/character-creation/vocations/warlock/main.mdx`)
  * @property {FeatureEntry[]} features - Level–feature progression
- * @property {number} [hitDie] - Hit die face count (e.g. `10` for d10); present when returned by the metadata API
- * @property {string[]} [savingThrows] - Saving throw proficiencies (full ability names); present when the API returns full metadata
+ * @property {number} [hitDie] - Hit die face count
+ * @property {string[]} [savingThrows] - Saving throw proficiencies
  * @property {string[]} [armorProficiencies] - Armor proficiency list
  * @property {string[]} [weaponProficiencies] - Weapon proficiency list
  * @property {string[]} [toolProficiencies] - Tool proficiency list
- * @property {{ count: number, choices: string[] }} [skillProficiencies] - Skill choice structure: number to pick from the choices list
+ * @property {{ count: number, choices: string[] }} [skillProficiencies] - Skill choice structure
  */
 export interface VocationOption {
   slug: string;

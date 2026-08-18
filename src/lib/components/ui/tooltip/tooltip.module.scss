@@ -8,6 +8,7 @@
   top: 0;
   left: 0;
   z-index: 10000;
+  will-change: transform;
 
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
@@ -38,68 +39,18 @@
     display: none;
   }
 
-  // Animation — brief invisible hold lets useLayoutEffect position before paint
   opacity: 0;
-  animation: tooltipSlideUp 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-
-  @keyframes tooltipSlideUp {
-    0% {
-      opacity: 0;
-      transform: translateY(5px);
-    }
-    20% {
-      opacity: 0;
-      transform: translateY(5px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes tooltipSlideDown {
-    0% {
-      opacity: 0;
-      transform: translateY(-5px);
-    }
-    20% {
-      opacity: 0;
-      transform: translateY(-5px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  animation: tooltipFadeIn 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 
   @keyframes tooltipFadeIn {
-    0% {
+    from {
       opacity: 0;
     }
-    20% {
-      opacity: 0;
-    }
-    100% {
+    to {
       opacity: 1;
     }
   }
 
-  // Placement-specific entrance animations
-  &.top {
-    animation-name: tooltipSlideUp;
-  }
-
-  &.bottom {
-    animation-name: tooltipSlideDown;
-  }
-
-  &.left {
-    animation-name: tooltipFadeIn;
-  }
-
-  &.right {
-    animation-name: tooltipFadeIn;
-  }
 }
 
 .tooltip.tooltipExiting {
@@ -108,13 +59,11 @@
 }
 
 @keyframes tooltipFadeOut {
-  0% {
+  from {
     opacity: 1;
-    transform: translateY(0);
   }
-  100% {
+  to {
     opacity: 0;
-    transform: translateY(4px);
   }
 }
 

@@ -1,8 +1,6 @@
 /**
- * @fileoverview Scripts Metadata Module Barrel Export
- * @description Re-exports all metadata generation utilities used by build-time
- * scripts and generators. App-side utilities (syncService, contentHash) live
- * in src/lib/metadata/ and are NOT re-exported here.
+ * @fileoverview Metadata generation utilities barrel export.
+ * @description Re-exports for build-time scripts and generators.
  *
  * @module scripts/metadata
  * @version 2.0.0

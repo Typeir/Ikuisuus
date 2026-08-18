@@ -1,13 +1,6 @@
 /**
- * @fileoverview Metadata Preview API Endpoint
- * @description Parses metadata records from a raw MDX buffer without touching
- * disk. The MDX editor posts its unsaved buffer and renders the records the
- * build-time generators would produce on save.
- *
- * Body (JSON):
- *   - path: string — repo-relative content path under `src/content/`; may be
- *     omitted or empty, in which case kind is inferred from frontmatter
- *   - content: string — complete MDX source including frontmatter
+ * @fileoverview Metadata Preview API.
+ * @description Parse metadata from raw MDX buffer; no disk access.
  *
  * @module app/api/metadata/preview/route
  * @version 1.0.0
@@ -28,11 +21,10 @@ const log = logger.child({ module: 'API:MetadataPreview' });
 const MAX_CONTENT_BYTES = 2 * 1024 * 1024;
 
 /**
- * Validates the posted content path. Absent or empty paths are valid — the
- * parser infers kind from frontmatter — and normalize to ''.
+ * Validate posted path; empty/absent paths valid (parser infers from frontmatter).
  *
  * @param {unknown} path - Posted path value
- * @returns {string | null} Normalized path ('' when absent), or null when invalid
+ * @returns {string | null} Normalized path or null if invalid
  */
 function validPath(path: unknown): string | null {
   if (path === undefined || path === null || path === '') return '';

@@ -1,10 +1,6 @@
 /**
  * @fileoverview Feature Extractor Types
- * @description TypeScript interfaces for the concise feature extraction system.
- * Defines the complete data model for extracted game features from MDX content
- * files, including class features, monster mechanics, spells, items, and
- * bloodline boons. Covers both the canonical Feature schema and the
- * MonsterFeature extension for stat-block-specific data.
+ * @description TypeScript interfaces for feature extraction: game features, monster mechanics, spells, items, boons.
  *
  * @version 1.0.0
  * @author Typeir

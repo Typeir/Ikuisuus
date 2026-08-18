@@ -1,13 +1,5 @@
 /**
- * @fileoverview Aspects MDX Component
- * @description Renders a row of aspect pills, or a compressed carousel once the
- * set passes the density threshold.
- *
- * Each pill links to a pre-filtered search. Given a `section`, aspects come from
- * the article metadata context; `list` supplies authored overrides. Display mode
- * is read from `data-aspect-display` and expansion from `data-aspect-expanded`,
- * both on the document root; the toggle writes one root attribute and every
- * carousel on the page opens together.
+ * @fileoverview Aspects MDX component. Pills link to searches. Display and expansion driven by root attributes.
  *
  * @module modules/library/presentation/components/Aspects/Aspects
  * @version 1.0.0
@@ -62,18 +54,16 @@ export interface AspectsProps {
 }
 
 /**
- * One aspect pill: mark (icon, strata, badge) plus `group: value` label. A
- * link to the pre-filtered search by default; with `onSelect` it renders as
- * a button that reports its aspect instead (pickers), same look.
+ * Aspect pill: icon mark plus label. Link by default, button with onSelect.
  *
  * @param {object} props - Component properties
  * @param {ParsedAspect} props.aspect - The aspect to render
- * @param {string} props.locale - Active locale, for the search link
+ * @param {string} props.locale - Active locale, for search link
  * @param {boolean} [props.compact] - Glyph-only rendering
- * @param {(aspect: ParsedAspect) => void} [props.onSelect] - Button mode: click handler
- * @param {boolean} [props.inert] - Plain span, for cells already inside a link or button
- * @param {boolean} [props.pressed] - Button mode: aria-pressed state
- * @param {boolean} [props.disabled] - Button mode: inert, for groups not yet open to authoring
+ * @param {(aspect: ParsedAspect) => void} [props.onSelect] - Button click handler
+ * @param {boolean} [props.inert] - Plain span for cells in link/button
+ * @param {boolean} [props.pressed] - Button aria-pressed state
+ * @param {boolean} [props.disabled] - Button disabled state
  * @returns {React.ReactElement} The pill
  */
 export const AspectPill: React.FC<{
@@ -167,12 +157,7 @@ export const AspectPill: React.FC<{
 };
 
 /**
- * Toggles carousel expansion for the whole site by writing a root attribute.
- * Returns null when no provider is available.
- *
- * The label and pressed state read collapsed until the first client render
- * commits, since the provider reads storage the server cannot see and would
- * otherwise emit ARIA that does not match the server markup.
+ * Toggle carousel expansion via root attribute. Returns null without provider.
  *
  * @returns {React.ReactElement | null} The toggle, or null with no provider to write to
  */
@@ -203,10 +188,6 @@ const ExpandToggle: React.FC = () => {
         })
       }
     >
-      {/* A plus turned 45 degrees is already the cancel glyph, so the state
-          change is one rotation rather than two elements trading places. Driven
-          by CSS off the root attribute, it also cannot flash the wrong icon
-          before hydration reaches this button. */}
       <Plus className={styles.toggleIcon} size={14} aria-hidden='true' />
     </button>
   );

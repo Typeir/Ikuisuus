@@ -1,9 +1,5 @@
 /**
- * @fileoverview Sample Content Templates
- * @description Perfectly formatted nothingburgers, one per content kind, for
- * blank-page syndrome. Neutral stats, lorem ipsum feature text, no prose of
- * interest. Every template must stay parseable by its metadata generator —
- * the unit tests run each through `parseMetadataFromSource`.
+ * @fileoverview Sample templates for each content kind. Must parse via metadata generator.
  *
  * @module modules/mdx-editor/domain/sampleTemplates
  * @version 1.0.0
@@ -12,8 +8,7 @@
  */
 
 /**
- * One insertable sample. Menu labels live in the mdxEditor.toolbar message
- * namespace, keyed off `key`.
+ * Insertable sample template.
  *
  * @property {string} key - Stable identifier
  * @property {string} content - Full MDX source including frontmatter

@@ -1,28 +1,11 @@
 /**
- * @fileoverview PostgreSQL Seed Script — FS → Postgres (MikroORM)
+ * @fileoverview Seeds .metadata.json sidecars to PostgreSQL via MikroORM.
+ * @description Replaces data per locale each run (delete + insert in transaction).
+ *
  * @module scripts/db/pg/seed-from-fs
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
- * @description Reads every `.metadata.json` sidecar file from the local content
- * tree and seeds it into PostgreSQL via MikroORM entity manager.
- *
- * Safe to run multiple times: each locale is fully replaced per run (DELETE
- * then bulk INSERT inside a transaction), so stale rows never accumulate.
- *
- * Uses MikroORM entities directly — schema changes (add/rename/drop a column)
- * are handled by updating the entity class; no positional $1…$N arrays to maintain.
- *
- * Tables populated:
- *   monsters, heirlooms, spells + spell_lists, trinkets, bloodlines + bloodline_boons
- *
- * Usage:
- *   npx tsx scripts/db/pg/seed-from-fs.ts [locale]
- *   npx tsx scripts/db/pg/seed-from-fs.ts en
- *   npx tsx scripts/db/pg/seed-from-fs.ts        # seeds all supported locales
- *
- * Required env:
- *   DATABASE_URL — Neon / Postgres connection string
  */
 
 import {
@@ -125,12 +108,10 @@ const contentDir = (locale: string): string =>
 const metaDir = (locale: string): string => join(ROOT, '.meta', locale);
 
 /**
- * Reads and flattens all `.metadata.json` sidecar files from a subdirectory.
- * Checks `.meta/{locale}/{subdir}` first, falls back to `src/content/{locale}/{subdir}`.
- * Recursively walks subdirectories.
+ * Read and flatten .metadata.json files; check .meta first, then src/content.
  *
  * @param {string} locale - Locale code
- * @param {string} subdir - Subdirectory (e.g. 'monsters', 'items/heirlooms')
+ * @param {string} subdir - Subdirectory
  * @returns Flattened metadata records
  */
 const readMetadata = <T>(locale: string, subdir: string): T[] => {
@@ -179,21 +160,13 @@ interface ContentSeedConfig {
 }
 
 /**
- * Generic seeder: reads all `.metadata.json` sidecar files for `config.subdir`,
- * deletes existing rows for the locale, and inserts fresh rows using
- * `recordToEntityInit` driven by ORM reflection metadata.
- *
- * Field selection is entirely reflection-driven — no property names are enumerated
- * here. The optional `seedChildren` handles child tables after each parent row.
- *
- * Version hash is always recomputed from the raw payload to
- * stay consistent with `backfillTable` in `backfill-version-hashes.ts`.
+ * Read metadata, delete existing rows, insert fresh via ORM reflection.
  *
  * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {MetadataStorage} allMeta - ORM metadata from `orm.getMetadata()`
+ * @param {MetadataStorage} allMeta - ORM metadata
  * @param {string} locale - Locale being seeded
- * @param {ContentSeedConfig} config - Entity class, subdirectory, and optional children seeder
- * @returns {Promise<number>} Number of parent rows inserted
+ * @param {ContentSeedConfig} config - Entity class and subdirectory
+ * @returns {Promise<number>} Count of parent rows inserted
  */
 async function seedContent(
   em: EntityManager,

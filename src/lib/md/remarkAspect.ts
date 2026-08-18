@@ -1,10 +1,6 @@
 /**
  * @fileoverview Inline aspect shorthand `[( group:value )]` → `<Aspect />`.
- * @description Prose authors write `[( condition:frightened )]` instead of the
- * JSX element; an optional `;display` picks the rendering mode
- * (`[( form:blade;glyph )]`). Runs before `remarkUnit`; the shorthand cannot
- * contain `=` or `%`, so the delimiters never collide. Malformed tokens are
- * left as text so a typo stays visible.
+ * @description Shorthand rendering mode via optional `;display`. Malformed tokens stay as text.
  *
  * @module lib/md/remarkAspect
  * @version 1.0.0
@@ -18,7 +14,7 @@ import type { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 
 /**
- * Name of the component this plugin emits; the MDX runtime resolves it via the component map.
+ * Component name emitted by this plugin.
  *
  * @constant
  */
@@ -110,7 +106,7 @@ function processTextNode(
 }
 
 /**
- * Remark plugin factory. See file overview.
+ * Remark plugin transformer.
  *
  * @returns {(tree: Root) => void} Transformer
  */

@@ -1,9 +1,6 @@
 /**
- * @fileoverview Monster Metadata Generator Patterns
- * @description Pre-compiled regex patterns specific to the monster metadata
- * generator. Patterns shared with the feature extraction pipeline are in
- * `extraction/featurePatterns.ts`; this file covers stat-block identification,
- * table parsing, speed modes, ability scores, and image detection.
+ * @fileoverview Regex patterns for monster metadata parsing.
+ * @description Stat blocks, tables, speed, ability scores, image detection.
  *
  * @module scripts/metadata/monsterPatterns
  * @version 1.0.0

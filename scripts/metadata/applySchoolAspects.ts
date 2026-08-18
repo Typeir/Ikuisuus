@@ -1,10 +1,6 @@
 /**
- * @fileoverview Migration: hardcode `school:<x>` into spell frontmatter
- * @description One-shot bridge for the school → form migration. Reads each
- * spell's school from its current sidecar (still parsed from the subtitle)
- * and writes `school:<value>` into the `aspects:` list, after any `form:`
- * entries and before other authored aspects, so wizard riders keep resolving
- * while the subtitle line goes away. Idempotent; `--dry` prints the plan.
+ * @fileoverview Migrate: hardcode school: into spell frontmatter aspects.
+ * @description One-shot bridge for school → form migration; idempotent.
  *
  * @module scripts/metadata/applySchoolAspects
  * @version 1.0.0

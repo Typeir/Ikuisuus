@@ -1,17 +1,5 @@
 /**
- * @fileoverview Rehype plugin that wraps MDX content between headings in semantic section
- * elements, then wraps feature entries in articles.
- * @description Pass 1 groups the sibling nodes that follow a heading into a `<section>`
- * (`data-heading-level`, `data-anchor`); a horizontal rule closes every open
- * section and opens an anonymous one for what follows. The pass recurses into
- * blockquotes and MDX JSX flow elements (statlets, collapsibles) so every
- * heading in the document owns a section. Pass 2 wraps feature entries —
- * bold-led list items and bold-led paragraphs inside a section — in
- * `<article data-anchor>` (`li > article`, never `ul > article`). Anchors use
- * the shared `anchorSlug` rule so headings, sections, articles and metadata
- * agree; a duplicate anchor inside one document is prefixed with its parent
- * section's anchor. Every section and article also carries its bare
- * (pre-dedup) slug on `node.data.slug` for `rehypeAspects`.
+ * @fileoverview Rehype plugin: wraps content between headings in sections, entries in articles. Adds anchors and slugs.
  *
  * @module rehypeSectionize
  * @version 2.0.0
@@ -27,13 +15,10 @@ import { h } from 'hastscript';
 import type { Plugin } from 'unified';
 
 /**
- * Options accepted by the rehypeSectionize plugin.
+ * Plugin options.
  *
- * @property {string} [streamText] - Pre-composed doubled stream string to stamp as
- *   `data-stream` on every emitted `<section>` element. Read by the CSS
- *   terminal-stream animation via `content: attr(data-stream)`.
- *   When absent, no `data-stream` attribute is added.
- * @property {boolean} [articles=true] - Run the entry → article pass
+ * @property {string} [streamText] - Stream string for terminal-stream animation
+ * @property {boolean} [articles=true] - Run entry → article pass
  */
 export type RehypeSectionizeOptions = {
   streamText?: string;
@@ -75,8 +60,7 @@ function isHr(node: RootContent): boolean {
 }
 
 /**
- * Containers the sectionizer descends into: blockquotes (statlets) and MDX
- * JSX flow elements (collapsibles and other authored wrappers).
+ * Test if node's children should be sectioned.
  *
  * @param {RootContent} node - HAST node to test
  * @returns {boolean} True when the node's children should be sectioned
@@ -87,8 +71,7 @@ function isContainer(node: RootContent): node is RootContent & Parent {
 }
 
 /**
- * Anchor of a heading: slug of its text minus any trailing inline JSX
- * (a Collapsible's `<span>5 BP</span>` cost).
+ * Slug of heading text without trailing inline JSX.
  *
  * @param {Element} heading - Heading element
  * @returns {string} Anchor slug
@@ -123,9 +106,7 @@ function sectionize(
   const result: RootContent[] = [];
   const stack: StackItem[] = [];
   let pendingAnonymousSection = false;
-  /* An MDX component (Collapsible) reads its own first heading as its
-     summary; that heading stays a direct child, everything after it is
-     sectioned as usual. */
+  /* MDX component's first heading is its summary; stays as direct child. */
   let leadHeadingPending = ownerHeading;
 
   const attach = (section: Element) => {
@@ -202,7 +183,7 @@ function sectionize(
 /* ────────────────────────────  Plugin  ─────────────────────────────── */
 
 /**
- * Rehype plugin: sections, then articles. See file overview.
+ * Plugin: sections, then articles.
  *
  * @param {RehypeSectionizeOptions} [opts] - Plugin options
  * @returns {(tree: Root) => void} Transformer

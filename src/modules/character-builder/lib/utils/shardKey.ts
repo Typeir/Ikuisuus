@@ -1,11 +1,7 @@
 /**
  * @fileoverview Shard identity
- * @description The key a character shard is matched on: the anchor slug of
- * its source feature. Shards saved before anchors existed carry none, so the
- * key is derived from the heading text at read time — the same slug the
- * generator would have stamped — which upgrades old characters lazily and
- * losslessly. Metadata entries resolve their key the same way, so a heading
- * restyle that keeps its slug never orphans a pick.
+ * @description Shard identity = anchor slug of the source feature. Shards
+ * without a stored key derive it from the heading text at read time.
  *
  * @module modules/character-builder/lib/utils/shardKey
  * @version 1.0.0

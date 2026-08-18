@@ -1,8 +1,5 @@
 /**
- * @fileoverview Metadata Preview Client
- * @description Posts the editor's raw MDX buffer to the metadata preview API
- * and returns the parsed records — the metadata the generators would produce
- * on save.
+ * @fileoverview Post MDX buffer to preview API. Returns parsed metadata.
  *
  * @module modules/mdx-editor/infrastructure/api-clients/metadataPreviewClient
  * @author Typeir

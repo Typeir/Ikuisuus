@@ -1,8 +1,5 @@
 /**
- * @fileoverview Content Picker
- * @description Icon-triggered, searchable dropdown over existing library
- * content, backed by the shared pagefind `useSearch` hook. Picking a result
- * hands back its editor slug (`monsters/mucklord`) for the caller to load.
+ * @fileoverview Searchable dropdown over library content. Returns editor slug on pick.
  *
  * @module modules/mdx-editor/presentation/ContentPicker/ContentPicker
  * @version 1.0.0
@@ -34,8 +31,7 @@ interface ContentPickerProps {
 }
 
 /**
- * Editor slug of a search record: its library link minus locale and
- * `library/` (`/en/library/monsters/mucklord` → `monsters/mucklord`).
+ * Extract editor slug from search record.
  *
  * @param {SearchRecord} record - Search record
  * @param {string} locale - Active locale

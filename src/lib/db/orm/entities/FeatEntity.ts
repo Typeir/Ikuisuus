@@ -1,12 +1,6 @@
 /**
  * @fileoverview MikroORM entity for the `feats` table.
- * @description Entity for `feats`; nullable `ability_increase_`-prefixed
- * embedded value object, named mechanics in child `feat_features` table via
- * `@OneToMany`. Columns: locale, slug, title, file, link, description,
- * prerequisite, has_prerequisite, tags, grants, index_version, version_hash;
- * embedded ability_increase_abilities, ability_increase_amount,
- * ability_increase_maximum; child feat_features (feat_id FK, name,
- * sort_order, start_line, end_line, tags).
+ * @description Feat entity with embedded ability-increase VO and child feat_features.
  *
  * @module lib/db/orm/entities/FeatEntity
  * @version 1.1.0
@@ -30,10 +24,7 @@ import { Collection } from '@mikro-orm/core';
 /* ─────────────────────────  Embeddable VO  ─────────────────────────── */
 
 /**
- * Optional ability-score increase value object. Maps to
- * `ability_increase_abilities`, `ability_increase_amount`,
- * `ability_increase_maximum`. All fields nullable; the whole embed may be
- * absent when a feat grants no ability score increase.
+ * Optional ability-score increase value object. All fields nullable.
  */
 @OrmEmbeddable('FeatAbilityIncreaseEmbed')
 export class FeatAbilityIncreaseEmbed {
@@ -58,9 +49,7 @@ export class FeatAbilityIncreaseEmbed {
 /* ─────────────────────────  Child Entity  ──────────────────────────── */
 
 /**
- * MikroORM entity for the `feat_features` child table.
- * Each row represents a named mechanic (bold bullet item) from a feat MDX file.
- * Foreign-keyed to `feats.id` via ManyToOne.
+ * Named feat mechanic from MDX. Foreign-keyed to `feats.id`.
  */
 @OrmEntity('FeatFeatureEntity', { tableName: 'feat_features' })
 export class FeatFeatureEntity {
@@ -74,7 +63,7 @@ export class FeatFeatureEntity {
   })
   feat!: FeatEntity;
 
-  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  /** @property {string | null} anchor - Anchor slug of the rendered heading */
   @OrmProperty({ type: 'string', nullable: true })
   anchor?: string | null;
 
@@ -159,7 +148,7 @@ export class FeatEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
-  /** @property {string[] | null} grants - Tag-based proficiency grants this feat confers when selected (e.g. `weapon:martial`, `skill:persuasion:expertise`); null when it grants no proficiency */
+  /** @property {string[] | null} grants - Tag-based proficiency grants when selected (e.g. `weapon:martial`, `skill:persuasion:expertise`) */
   @OrmProperty({ type: 'string[]', nullable: true })
   grants?: string[] | null;
 

@@ -1,13 +1,6 @@
 /**
- * @fileoverview Migration 026 — Feature anchors, boon options table
- * @description Every feature shard table gains `anchor`: the slug of the
- * rendered heading (shared `anchorSlug` rule), the stable key character
- * shards and the content-shards API resolve by. Boon options move out of the
- * `bloodline_boons.sub_options` JSONB (018) into a `bloodline_boon_options`
- * child table, and `world.knowledge_tiers` becomes `text[]`; JSONB columns
- * are not allowed in this schema.
- *
- * After applying, run `npx tsx scripts/db/pg/seed-from-fs.ts` to backfill.
+ * @fileoverview Migration 026: add anchors to features; move boon options to child table.
+ * @description Anchors are heading slugs shared with shards; knowledge_tiers converged to text[].
  *
  * @module scripts/db/migrations/026_feature_anchors
  * @author Typeir
@@ -27,9 +20,9 @@ const TABLES = [
 ] as const;
 
 /**
- * Applies migration 026.
+ * Add anchor columns; create bloodline_boon_options table.
  *
- * @param {PoolClient} client - Transactional pg client (BEGIN already called).
+ * @param {PoolClient} client - Transactional pg client.
  * @returns {Promise<void>}
  */
 export async function up(client: PoolClient): Promise<void> {
@@ -55,8 +48,7 @@ export async function up(client: PoolClient): Promise<void> {
     `CREATE INDEX IF NOT EXISTS bloodline_boon_options_boon_id_idx ON bloodline_boon_options (boon_id)`,
   );
   await client.query(`ALTER TABLE bloodline_boons DROP COLUMN IF EXISTS sub_options`);
-  /* 023 shipped `knowledge_tiers` as jsonb on databases migrated before this
-     fix; converge on text[]. */
+  /* Converge knowledge_tiers to text[] (023 shipped as jsonb on some dbs). */
   const { rows } = await client.query<{ data_type: string }>(
     `SELECT data_type FROM information_schema.columns
      WHERE table_name = 'world' AND column_name = 'knowledge_tiers'`,
@@ -74,9 +66,9 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 026.
+ * Drop anchor columns and bloodline_boon_options table.
  *
- * @param {PoolClient} client - Transactional pg client (BEGIN already called).
+ * @param {PoolClient} client - Transactional pg client.
  * @returns {Promise<void>}
  */
 export async function down(client: PoolClient): Promise<void> {

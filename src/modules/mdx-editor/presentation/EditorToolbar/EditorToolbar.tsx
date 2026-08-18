@@ -1,7 +1,5 @@
 /**
- * @fileoverview MDX Editor Toolbar
- * @description Toolbar with formatting buttons and VS Code-style keyboard shortcuts.
- * Text mutation commands are imported from editorCommands.ts.
+ * @fileoverview Toolbar with formatting buttons and shortcuts.
  *
  * @module lib/components/mdxEditor/editorToolbar
  * @version 2.0.0

@@ -1,9 +1,6 @@
 /**
- * @fileoverview window.ik.ui handle
- * @description Registers the persistent UI preferences on the `window.ik`
- * debug namespace while the provider is mounted: live getters, validated
- * setters that dispatch and persist. Lets DevTools flip preferences that have
- * no on-page control (aspect display mode).
+ * @fileoverview Register window.ik.ui handle.
+ * @description Persistent UI preferences with live getters and validated setters.
  *
  * @module lib/context/useIkUiHandle
  * @version 1.0.0

@@ -1,9 +1,6 @@
 /**
  * @fileoverview Aspect Vocabulary Resolver
- * @description Flattens the closed aspect vocabulary in shared-data into
- * `{ group, values }` rows for pickers. Groups declaring `valuesFrom` are
- * expanded from the referenced game/item lists (or other aspect groups);
- * `open` groups and `meta:*` groups are omitted since they are not authorable.
+ * @description Flattens closed aspect vocabulary into authorable groups.
  *
  * @module lib/metadata/aspectVocabulary
  * @version 1.0.0
@@ -12,14 +9,12 @@
  */
 
 /**
- * One authorable aspect group.
+ * Authorable aspect group.
  *
- * @property {string} group - Group key (`damage`, `myth`)
- * @property {string[]} values - Closed value list, in shared-data order
- * @property {string[] | '*'} scope - Content kinds the group applies to
- * @property {boolean} [authored] - Judgment facet: true when the vocabulary is
- *   ratified for authoring, false when the group exists but is not yet
- *   authored (pickers show it disabled); absent for machine-derived groups
+ * @property {string} group - Group key
+ * @property {string[]} values - Closed value list
+ * @property {string[] | '*'} scope - Content kinds
+ * @property {boolean} [authored] - Authoring ratification status
  */
 export interface AspectVocabularyGroup {
   group: string;

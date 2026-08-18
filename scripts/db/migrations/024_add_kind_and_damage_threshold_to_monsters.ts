@@ -1,8 +1,6 @@
 /**
- * @fileoverview Migration 024 — Add kind and damage_threshold to monsters
- * @description Quoted object statlets (plating, blades, drones) now emit
- * their own monster records with `kind = 'object'` and a damage threshold in
- * place of ability scores. Creatures keep `kind` null.
+ * @fileoverview Migration 024: add kind and damage_threshold to monsters.
+ * @description Object statlets get kind='object' and damage threshold; creatures keep kind=null.
  *
  * @module scripts/db/migrations/024_add_kind_and_damage_threshold_to_monsters
  * @author Typeir
@@ -13,9 +11,9 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies migration 024.
+ * Add kind and damage_threshold columns.
  *
- * @param {PoolClient} client - Transactional pg client (BEGIN already called).
+ * @param {PoolClient} client - Transactional pg client.
  * @returns {Promise<void>}
  */
 export async function up(client: PoolClient): Promise<void> {
@@ -26,9 +24,9 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 024.
+ * Drop kind and damage_threshold columns.
  *
- * @param {PoolClient} client - Transactional pg client (BEGIN already called).
+ * @param {PoolClient} client - Transactional pg client.
  * @returns {Promise<void>}
  */
 export async function down(client: PoolClient): Promise<void> {

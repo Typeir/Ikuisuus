@@ -1,9 +1,6 @@
 /**
- * @fileoverview Source Parser Dispatcher
- * @description Parses metadata from raw MDX source without touching disk.
- * Routes a (path, content) pair to the matching content-type parser, so
- * callers holding an unsaved buffer (the MDX editor) get the same records
- * the build-time generators produce for the saved file.
+ * @fileoverview Parse metadata from raw MDX source.
+ * @description Route (path, content) to matching parser; no disk access.
  *
  * @module scripts/metadata/sourceParser
  * @version 1.0.0
@@ -22,8 +19,7 @@ import { applyAuthoredAspects, extractAllTags } from './taggingUtils';
 import { filePathToSlug, readLines } from './textUtils';
 
 /**
- * Content kinds the dispatcher recognises. `generic` covers every path
- * without a dedicated parser: tags only, via the shared extractors.
+ * Content kinds the dispatcher recognizes.
  */
 export type SourceContentKind =
   | 'monster'

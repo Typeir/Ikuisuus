@@ -1,8 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Specialization
- * @description Decorator-based entity for the `specializations` table. Features
- * are stored in a child `specialization_features` table, always-prepared spells
- * in `specialization_prepared_spells`, and optional spellcasting as an embed.
+ * @description Entity for the `specializations` table with child features and prepared spells.
  *
  * @module lib/db/orm/entities/SpecializationEntity
  * @version 1.0.0
@@ -26,8 +24,7 @@ import { Collection } from '@mikro-orm/core';
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
 
 /**
- * Spellcasting summary for third-caster subclasses — maps to
- * `spellcasting_ability`, `spellcasting_progression`.
+ * Spellcasting summary: ability, progression.
  */
 @OrmEmbeddable('SpecializationSpellcastingEmbed')
 export class SpecializationSpellcastingEmbed {
@@ -60,18 +57,18 @@ export class SpecializationFeatureEntity {
   @OrmProperty({ type: 'number', columnType: 'smallint' })
   level!: number;
 
-  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  /** @property {string | null} anchor - Anchor slug of the rendered heading */
   @OrmProperty({ type: 'string', nullable: true })
   anchor?: string | null;
 
   @OrmProperty({ type: 'string' })
   name!: string;
 
-  /** @property {string | null} heading - Raw heading text (`1st Level – Spellcasting`), the section the feature renders under */
+  /** @property {string | null} heading - Raw heading text */
   @OrmProperty({ type: 'string', nullable: true })
   heading?: string | null;
 
-  /** @property {string[] | null} tags - Aspects extracted from the feature body */
+  /** @property {string[] | null} tags - Aspects */
   @OrmProperty({ type: 'string[]', nullable: true })
   tags?: string[] | null;
 
@@ -96,7 +93,7 @@ export class SpecializationFeatureEntity {
   })
   endLine?: number | null;
 
-  /** @property {string[] | null} grants - Tag-based proficiency grants this feature confers (e.g. `saving_throw:wisdom`); null when it grants no automatic proficiency */
+  /** @property {string[] | null} grants - Tag-based proficiency grants (e.g. `saving_throw:wisdom`) */
   @OrmProperty({ type: 'string[]', nullable: true })
   grants?: string[] | null;
 }
@@ -168,11 +165,11 @@ export class SpecializationEntity {
   @OrmProperty({ type: 'text', nullable: true })
   flavor?: string | null;
 
-  /** @property {string | null} description - Prose description extracted from the specialization MDX */
+  /** @property {string | null} description - Prose description */
   @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
-  /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
+  /** @property {string | null} image - Image path */
   @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 

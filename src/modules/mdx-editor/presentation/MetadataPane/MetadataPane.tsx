@@ -1,8 +1,5 @@
 /**
- * @fileoverview Metadata Pane
- * @description Preview-panel face showing the metadata records the generators
- * would produce for the current buffer, fetched from the metadata preview API.
- * Carries its own refresh button; nothing refetches implicitly while typing.
+ * @fileoverview Show parsed metadata records from API. Manual refresh button.
  *
  * @module modules/mdx-editor/presentation/MetadataPane/MetadataPane
  * @version 1.0.0

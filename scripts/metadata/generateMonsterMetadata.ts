@@ -364,7 +364,7 @@ function findStatBlockPositions(
  *
  * @property {number} lineIndex - Anchor line
  * @property {boolean} isBlockquote - Block lives inside a `>` quote
- * @property {boolean} isObject - Object block (plating, blade, drone) rather than a creature
+ * @property {boolean} isObject - Object block (plating, blade, drone)
  */
 interface StatBlockPosition {
   lineIndex: number;
@@ -669,8 +669,7 @@ function parseStatBlockSection(
     ),
   );
 
-  /* The declared Damage Resistances / Immunities land after the shared tagger
-     has already run, so the stratum pass repeats over the finished list. */
+  /* Stratum pass runs again after declared resistances/immunities land. */
   tags.push(...extractStrataTags(tags, sharedData));
 
   const uniqueTags = Array.from(new Set(tags)).sort();
@@ -843,12 +842,8 @@ export function parseMonsterSource(
       continue;
     }
 
-    /* Stat parsing runs to the next creature of any kind. Feature
-       ownership differs: a quoted creature (a summon's statlet inside its
-       summoner's sheet) owns only its quote, and the sheet's own creature
-       runs on past it to the next unquoted creature; embedded object blocks
-       (a goddess's plating) stay inside that range and are carved out of
-       ownership below. */
+    /* Stat range: to the next creature. Feature range: quoted creature =
+       its quote; unquoted creature = to the next unquoted creature. */
     const creatureIdx = creaturePositions.findIndex(
       (p) => p.lineIndex === lineIndex,
     );
@@ -894,9 +889,6 @@ export function parseMonsterSource(
     objectRanges.some(([s, e]) => line >= s && line < e);
 
   const features = parseMonsterFeaturesSource(raw, baseSlug);
-  /* Quoted creature blocks span to the next creature for stat parsing, but
-     their features end where the quote ends — the lines after belong to the
-     next statlet's title or to prose. */
   const quotedFeatures = parseQuotedBlockFeatures(
     lines,
     results
@@ -936,8 +928,7 @@ export function parseMonsterSource(
 
   rollUpSubRecordTags(results);
 
-  /* File-level frontmatter aspects/denyAspects apply to the sheet's parent
-     record — the one that carries the rolled-up set. */
+  /* Frontmatter aspects/denyAspects apply to the parent record. */
   const parent = results.find((r) => !r.isObject);
   if (parent) {
     parent.tags = applyAuthoredAspects(parent.tags as string[], fileFrontmatter);
@@ -1010,9 +1001,7 @@ function parseObjectBlock(
     .map((l) => l.replace(STAT_CONTENT.blockquotePrefix, ''));
   const title =
     lines[start].match(MONSTER_HEADING.blockquoteHeading)?.[1].trim() ?? '';
-  /* Objects are owned by their sheet — the same plating or blade can sit
-     in two sheets — so the record slug is sheet-scoped; the page fragment
-     stays the bare object anchor. */
+  /* Object record slug is sheet-scoped. Page fragment is the bare object slug. */
   const objectSlug = title
     .toLowerCase()
     .replace(SLUG.nonAlphaKeepSpaces, '')

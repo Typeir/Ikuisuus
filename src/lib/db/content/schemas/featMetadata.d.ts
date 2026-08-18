@@ -1,12 +1,6 @@
 /**
- * @fileoverview Feat Metadata Domain Schema
- * @description Canonical TypeScript types for feat metadata generated from
- * `scripts/metadata/generateFeatMetadata.ts`.
- *
- * Each record describes a single feat plain `.mdx` file under
- * `src/content/{locale}/character-creation/feats/`. The `features` array
- * captures named mechanics (bold bullet items) with 1-indexed line anchors
- * into the source MDX, enabling O(1) shard extraction.
+ * @fileoverview Feat metadata domain schema.
+ * @description Canonical types for feat metadata from generators.
  *
  * @module lib/db/content/schemas/featMetadata
  * @version 1.1.0

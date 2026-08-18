@@ -1,6 +1,5 @@
 /**
- * @fileoverview Client-side MDX compiler using @mdx-js/mdx compile/run.
- * Hash-caches compiled components by source for sync and async paths.
+ * @fileoverview Client-side MDX compiler. Hash-caches by source, async and sync separate.
  *
  * @module lib/mdx/compileRuntime
  * @version 2.0.0
@@ -37,8 +36,7 @@ export interface MdxCompileResult {
 type MdxContentComponent = React.FC<{ components?: unknown }>;
 
 /**
- * Internal cache maps for compiled MDX, async and sync kept separate.
- * Keys are source hashes; values are compiled components, not built elements.
+ * Internal cache maps by source hash. Async and sync separate.
  */
 const asyncCache = new Map<string, MdxContentComponent>();
 const syncCache = new Map<string, MdxContentComponent>();

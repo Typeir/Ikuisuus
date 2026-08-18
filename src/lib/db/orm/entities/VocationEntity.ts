@@ -1,8 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Vocation
- * @description Decorator-based entity for the `vocations` table. Features are
- * stored in a child `vocation_features` table via OneToMany. Skill proficiencies
- * and optional spellcasting are stored as embedded value objects.
+ * @description Entity for the `vocations` table with child features and embedded skill/spell data.
  *
  * @module lib/db/orm/entities/VocationEntity
  * @version 1.0.0
@@ -69,18 +67,18 @@ export class VocationFeatureEntity {
   @OrmProperty({ type: 'number', columnType: 'smallint' })
   level!: number;
 
-  /** @property {string | null} anchor - Anchor slug of the rendered heading; the stable shard key */
+  /** @property {string | null} anchor - Anchor slug of the rendered heading */
   @OrmProperty({ type: 'string', nullable: true })
   anchor?: string | null;
 
   @OrmProperty({ type: 'string' })
   name!: string;
 
-  /** @property {string | null} heading - Raw heading text (`1st Level – Spellcasting`), the section the feature renders under */
+  /** @property {string | null} heading - Raw heading text */
   @OrmProperty({ type: 'string', nullable: true })
   heading?: string | null;
 
-  /** @property {string[] | null} tags - Aspects extracted from the feature body */
+  /** @property {string[] | null} tags - Aspects */
   @OrmProperty({ type: 'string[]', nullable: true })
   tags?: string[] | null;
 
@@ -105,7 +103,7 @@ export class VocationFeatureEntity {
   })
   endLine?: number | null;
 
-  /** @property {string[] | null} grants - Tag-based proficiency grants this feature confers (e.g. `skill:arcana:expertise`, `armor:heavy`); null when it grants no automatic proficiency */
+  /** @property {string[] | null} grants - Tag-based proficiency grants (e.g. `skill:arcana:expertise`, `armor:heavy`) */
   @OrmProperty({ type: 'string[]', nullable: true })
   grants?: string[] | null;
 }
@@ -182,11 +180,11 @@ export class VocationEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
-  /** @property {string | null} description - Prose description extracted from the vocation MDX */
+  /** @property {string | null} description - Prose description */
   @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
-  /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
+  /** @property {string | null} image - Image path */
   @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 

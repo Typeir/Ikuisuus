@@ -1,7 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Rule
- * @description Decorator-based entity for the `rules` table. One row per
- * rules page (section hubs included), mirroring the rules metadata sidecar.
+ * @description One row per rules page (section hubs included).
  *
  * @module lib/db/orm/entities/RuleEntity
  * @version 1.0.0
@@ -48,11 +47,11 @@ export class RuleEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
-  /** @property {string | null} description - Prose description extracted from the rules MDX */
+  /** @property {string | null} description - Prose description */
   @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
 
-  /** @property {string | null} image - Image path extracted from Image/BlendedImage in MDX */
+  /** @property {string | null} image - Image path */
   @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 

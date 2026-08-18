@@ -1,9 +1,6 @@
 /**
- * @fileoverview Aspect Detection Patterns
- * @description Pre-compiled regex patterns for aspect groups, keyed by facet
- * and grouped so a pattern sits adjacent to the aspect it produces. Excludes
- * judgement-valued facets (`source:`, `myth:`, `theme:`) which no regex can
- * reliably guess.
+ * @fileoverview Pre-compiled regex patterns for aspect detection.
+ * @description Keyed by facet; excludes judgement-valued facets (source, myth, theme).
  *
  * @module lib/metadata/aspectPatterns
  * @version 1.0.0
