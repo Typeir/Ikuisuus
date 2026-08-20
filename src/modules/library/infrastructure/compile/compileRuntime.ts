@@ -11,6 +11,7 @@
 
 import remarkAspect from '@/lib/md/remarkAspect';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
+import remarkKeyword from '@/lib/md/remarkKeyword';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { compile, compileSync, run, runSync } from '@mdx-js/mdx';
 import { createElement, type ReactElement } from 'react';
@@ -59,7 +60,7 @@ function hashSource(source: string): string {
 
 /** @internal Shared plugin options for all compile calls */
 const PLUGIN_OPTIONS = {
-  remarkPlugins: [remarkGfm, remarkMath, remarkAspect, remarkDiceRoll, remarkUnit],
+  remarkPlugins: [remarkGfm, remarkMath, remarkAspect, remarkDiceRoll, remarkUnit, remarkKeyword],
   rehypePlugins: [rehypeKatex],
   outputFormat: 'function-body' as const,
 };

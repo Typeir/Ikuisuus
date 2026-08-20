@@ -1,0 +1,22 @@
+.keyword {
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--color-accent);
+  white-space: nowrap;
+  cursor: help;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-accent-hover);
+    border-bottom-style: solid;
+  }
+}
+
+.tooltip {
+  max-width: min(32rem, 90vw);
+  text-align: left;
+}
+
+.blurb {
+  white-space: normal;
+}

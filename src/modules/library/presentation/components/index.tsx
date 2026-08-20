@@ -30,6 +30,7 @@ import FloatedContainer from './FloatedContainer';
 import { HashNavigationProvider } from './HashNavigationProvider';
 import { H1, H2, H3, H4, H5, H6 } from './Heading';
 import HorizontalSplit from './HorizontalSplit';
+import Keyword from './Keyword';
 import Meta from './Meta';
 import ParallaxBackdrop from './ParallaxBackdrop';
 import { SectionTrack } from './SectionTrack';
@@ -43,6 +44,7 @@ export const components = {
   BlendedImage,
   Collapsible,
   DiceRoll,
+  Keyword,
   Unit,
   UnitSwitcher,
   FlexRenderer,

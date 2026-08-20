@@ -108,6 +108,22 @@
       background-color: var(--color-bg);
       color: var(--color-accent);
     }
+
+    blockquote {
+      max-width: 90%;
+      opacity: 1;
+      border-left-color: var(--color-emphasis);
+      background: var(--color-bg);
+
+      th,
+      td {
+        border-color: var(--color-surface);
+      }
+
+      th {
+        background-color: var(--color-surface);
+      }
+    }
   }
 
   code {

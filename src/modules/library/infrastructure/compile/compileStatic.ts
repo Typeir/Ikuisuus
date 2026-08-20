@@ -11,6 +11,7 @@
 import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
 import remarkAspect from '@/lib/md/remarkAspect';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
+import remarkKeyword from '@/lib/md/remarkKeyword';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import rehypeKatex from 'rehype-katex';
@@ -53,6 +54,7 @@ export async function compileStatic(opts: CompileOptions) {
             remarkAspect,
             remarkDiceRoll,
             remarkUnit,
+            remarkKeyword,
           ],
           rehypePlugins: [rehypeKatex, rehypeSectionize, [rehypeAspects, aspects]],
         },
