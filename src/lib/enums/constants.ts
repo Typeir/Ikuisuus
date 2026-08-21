@@ -32,11 +32,12 @@ export const CONTENT_SUFFIXES = [
   '.tool',
   '.rule',
   '.boon',
+  '.vocation',
 ] as const;
 
 /** Precompiled regex matching any content-type suffix from the double-extension convention */
 export const REGEX_CONTENT_SUFFIX =
-  /\.(sheet|specialization|list|heirloom|trinket|bloodline|lore|spell|feat|tool|rule|boon)$/;
+  /\.(sheet|specialization|list|heirloom|trinket|bloodline|lore|spell|feat|tool|rule|boon|vocation)$/;
 
 /** Slug of the index file that stands for its containing folder */
 export const MAIN_INDEX_SLUG = 'main';
@@ -48,8 +49,7 @@ export const MAIN_INDEX_FILE = `${MAIN_INDEX_SLUG}${FILE_EXT_MDX}`;
 export const LIBRARY_SEGMENT = 'library';
 
 /**
- * Whether a filename is the index file standing for its containing folder,
- * in either markdown extension.
+ * Whether a filename is the generic folder index, in either markdown extension.
  *
  * @param {string} fileName - Filename including extension
  * @returns {boolean} True for `main.mdx` and `main.md`
@@ -60,8 +60,50 @@ export const LIBRARY_SEGMENT = 'library';
  * isMainIndexFile('bane.mdx')  // false
  */
 export function isMainIndexFile(fileName: string): boolean {
+  return fileName === MAIN_INDEX_FILE || fileName === `${MAIN_INDEX_SLUG}.md`;
+}
+
+/**
+ * True when the file stem equals its containing folder name.
+ *
+ * @param {string} fileName - Filename including extension
+ * @param {string} folderName - Name of the containing folder
+ * @returns {boolean} True when the stem equals the folder name
+ */
+export function isNamedIndexFile(
+  fileName: string,
+  folderName: string,
+): boolean {
+  if (!folderName) return false;
+  const stem = stripContentSuffix(fileName.replace(REGEX_EXTENSION, ''));
+  return stem === folderName;
+}
+
+/**
+ * True for a folder-named index or `main`.
+ *
+ * @param {string} fileName - Filename including extension
+ * @param {string} folderName - Name of the containing folder
+ * @returns {boolean} True for a folder-named index or `main`
+ */
+export function isIndexFile(fileName: string, folderName: string): boolean {
+  return isNamedIndexFile(fileName, folderName) || isMainIndexFile(fileName);
+}
+
+/**
+ * Picks the folder index, preferring the folder-named file over `main`.
+ *
+ * @param {string[]} fileNames - Filenames within the folder
+ * @param {string} folderName - Name of the containing folder
+ * @returns {string | undefined} The index filename, or undefined when absent
+ */
+export function resolveIndexFile(
+  fileNames: string[],
+  folderName: string,
+): string | undefined {
   return (
-    fileName === MAIN_INDEX_FILE || fileName === `${MAIN_INDEX_SLUG}.md`
+    fileNames.find((name) => isNamedIndexFile(name, folderName)) ??
+    fileNames.find((name) => isMainIndexFile(name))
   );
 }
 

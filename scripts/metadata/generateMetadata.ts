@@ -74,7 +74,7 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
   },
   vocations: {
     dir: 'src/content/en/character-creation/vocations',
-    pattern: /main\.mdx$/,
+    pattern: /\.vocation\.mdx$/,
     generator: 'generateVocationMetadata.ts',
     contentType: 'character-creation',
     subType: 'vocation',

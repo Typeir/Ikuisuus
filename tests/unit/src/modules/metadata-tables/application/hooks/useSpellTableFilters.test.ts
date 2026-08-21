@@ -7,7 +7,6 @@ describe('useSpellTableFilters', () => {
     const { result } = renderHook(() => useSpellTableFilters());
 
     expect(result.current.state).toEqual({
-      damoclesOnly: false,
       concentrationFilter: '',
     });
     expect(result.current.expressions).toEqual([]);
@@ -17,12 +16,10 @@ describe('useSpellTableFilters', () => {
     const { result } = renderHook(() => useSpellTableFilters());
 
     act(() => {
-      result.current.setters.setDamoclesOnly(true);
       result.current.setters.setConcentrationFilter('yes');
     });
 
     expect(result.current.expressions).toEqual([
-      { field: 'source', operator: 'neq', value: 'basic' },
       { field: 'concentration', operator: 'eq', value: true },
     ]);
   });

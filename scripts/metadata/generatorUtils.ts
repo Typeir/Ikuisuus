@@ -126,12 +126,13 @@ export function getMetaSubdir(contentType: string): string {
 
 /**
  * Resolves the output path for a .metadata.json file.
- * In pg mode, writes to .meta/{locale}/{subdir}/ instead of alongside source.
+ * Always writes to the .meta/{locale}/{subdir}/ mirror tree, never alongside
+ * the source; sidecars in the content tree are build clutter in a submodule
+ * that serves as the content bucket.
  *
  * @param {string} sourceFilePath - Original MDX file path
  * @param {RegExp} filePattern - Pattern to replace with .metadata.json
  * @param {string} contentType - Content type key
- * @param {string} backend - 'pg' or 'fs'
  * @param {string} locale - Locale code
  * @returns {string} Absolute output path
  */
@@ -139,12 +140,8 @@ export function getMetadataOutputPath(
   sourceFilePath: string,
   filePattern: RegExp,
   contentType: string,
-  backend: string,
   locale: string,
 ): string {
-  if (backend !== 'pg') {
-    return sourceFilePath.replace(filePattern, '.metadata.json');
-  }
   const baseName = path
     .basename(sourceFilePath)
     .replace(filePattern, '.metadata.json');
@@ -197,7 +194,6 @@ export interface GeneratorConfig {
   resolveOutputPath?: (
     sourceFilePath: string,
     contentType: string,
-    backend: string,
     locale: string,
   ) => string;
   metadataVersion?: string;
@@ -314,14 +310,12 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
             calculateReadingTime(sourceContent, locale),
           );
 
-          const backend = getMetadataBackend();
           const metadataFilePath = resolveOutputPath
-            ? resolveOutputPath(filePath, contentType, backend, locale)
+            ? resolveOutputPath(filePath, contentType, locale)
             : getMetadataOutputPath(
                 filePath,
                 filePattern,
                 contentType,
-                backend,
                 locale,
               );
 
@@ -399,11 +393,7 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
     }
 
     log.message(statsMessage);
-    const outputLocation =
-      getMetadataBackend() === 'pg' ? '.meta/' : 'alongside source';
-    log.message(
-      `Wrote ${successful.length} metadata files (${outputLocation})`,
-    );
+    log.message(`Wrote ${successful.length} metadata files (.meta/)`);
 
     if (failed.length > 0) {
       log.warning(`${failed.length} processing errors encountered`);

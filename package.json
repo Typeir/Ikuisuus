@@ -42,6 +42,7 @@
     "db:migrate:down": "npx tsx scripts/db/pg/migrate.ts --down",
     "db:seed": "npx tsx scripts/db/pg/seed-from-fs.ts",
     "db:backfill-spell-lists": "npx tsx --tsconfig tsconfig.scripts.json scripts/db/pg/backfill-spell-lists.ts",
+    "metadata:sync:unsafe": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/unsafeFullSync.ts",
     "setup": "npm install && npx tsx --tsconfig tsconfig.scripts.json scripts/multirepo/ik.ts setup",
     "postinstall": "npx tsx --tsconfig tsconfig.scripts.json scripts/bootstrap/postinstall.ts",
     "health:check": "npx tsx --tsconfig tsconfig.scripts.json .github/scripts/health-check.ts",

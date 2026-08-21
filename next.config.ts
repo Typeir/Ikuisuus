@@ -63,9 +63,9 @@ const nextConfig: NextConfig = {
       "./.ignore/**",
     ],
   },
-  /* Requires src/content in bundles for content routes. */
+  /* Requires src/content and the .meta mirror tree in bundles for content routes. */
   outputFileTracingIncludes: {
-    "**/*": ["./src/content/**"],
+    "**/*": ["./src/content/**", "./.meta/**"],
   },
   generateBuildId: async () => {
     return process.env.VERCEL_GIT_COMMIT_SHA ?? `local-${Date.now()}`;

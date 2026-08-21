@@ -169,4 +169,41 @@ describe('middleware function behavior', () => {
     expect(response).toBeDefined();
     expect(response.status).toBe(308);
   });
+
+
+  describe('index canonicalisation', () => {
+    it('should redirect a library main index to its folder', () => {
+      const res = middleware(
+        createMockRequest('/en/library/rules/arcana-and-the-fold/main'),
+      );
+      expect(res.status).toBe(308);
+      expect(res.headers.get('location')).toContain(
+        '/en/library/rules/arcana-and-the-fold',
+      );
+      expect(res.headers.get('location')).not.toContain('/main');
+    });
+
+    it('should redirect a top-level library folder index', () => {
+      const res = middleware(createMockRequest('/en/library/spells/main'));
+      expect(res.status).toBe(308);
+      expect(res.headers.get('location')).toContain('/en/library/spells');
+    });
+
+    it('should redirect a vocations folder index', () => {
+      const res = middleware(
+        createMockRequest('/en/library/character-creation/vocations/main'),
+      );
+      expect(res.status).toBe(308);
+      expect(res.headers.get('location')).toContain(
+        '/en/library/character-creation/vocations',
+      );
+    });
+
+    it('should not redirect a main segment outside the library', () => {
+      const res = middleware(createMockRequest('/en/something/main'));
+      expect(res?.headers?.get('location') ?? '').not.toContain(
+        '/en/something',
+      );
+    });
+  });
 });

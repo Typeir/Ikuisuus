@@ -11,6 +11,7 @@
 import createMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { LIBRARY_SEGMENT, MAIN_INDEX_SLUG } from './lib/enums/constants';
 import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
@@ -40,6 +41,19 @@ const replaceFirstSegment = (parts: string[], replacement: string): string => {
 };
 
 /**
+ * Strips a trailing `main` segment from library paths.
+ *
+ * @param {string[]} parts - Path segments, empty segments excluded
+ * @returns {string | null} Canonical pathname, or null when already canonical
+ */
+const canonicalIndexPath = (parts: string[]): string | null => {
+  if (parts.length < 3) return null;
+  if (parts[parts.length - 1] !== MAIN_INDEX_SLUG) return null;
+  if (parts[1] !== LIBRARY_SEGMENT) return null;
+  return `/${parts.slice(0, -1).join('/')}`;
+};
+
+/**
  * Next.js middleware entry point.
  *
  * @param {NextRequest} req - Incoming request
@@ -66,6 +80,13 @@ export default function middleware(req: NextRequest): Response {
   if (!topLevelWhitelist.has(first)) {
     const url = req.nextUrl.clone();
     url.pathname = replaceFirstSegment(parts, defaultLocale);
+    return NextResponse.redirect(url, 308);
+  }
+
+  const canonical = canonicalIndexPath(parts);
+  if (canonical) {
+    const url = req.nextUrl.clone();
+    url.pathname = canonical;
     return NextResponse.redirect(url, 308);
   }
 

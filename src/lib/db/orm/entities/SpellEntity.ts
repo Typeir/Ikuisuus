@@ -160,7 +160,7 @@ export class SpellEntity {
   @OrmProperty({ type: 'string', fieldName: 'version_hash', nullable: true })
   versionHash?: string | null;
 
-  /** @property {string | null} source - Content provenance: null = native Damocles, "basic" = SRD 5.1 (OGL), other = campaign-specific */
+  /** @property {string | null} source - Sourcebook the entry comes from */
   @OrmProperty({ type: 'string', nullable: true })
   source?: string | null;
 }

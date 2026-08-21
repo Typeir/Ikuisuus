@@ -628,18 +628,9 @@ async function parseVocationFile(
 function resolveVocationOutputPath(
   sourceFilePath: string,
   contentType: string,
-  backend: string,
   locale: string,
 ): string {
   const parentDir = path.basename(path.dirname(sourceFilePath));
-
-  if (backend !== 'pg') {
-    return path.join(
-      path.dirname(sourceFilePath),
-      `${parentDir}.metadata.json`,
-    );
-  }
-
   const subdir = getMetaSubdir(contentType);
   return path.join(
     process.cwd(),
@@ -669,7 +660,7 @@ async function main(
   await runGenerator({
     name: 'Vocation Metadata Generator',
     contentType: 'vocations',
-    filePattern: options.filePattern || /main\.mdx$/,
+    filePattern: options.filePattern || /\.vocation\.mdx$/,
     parseFile: parseVocationFile,
     recursive: true,
     resolveOutputPath: resolveVocationOutputPath,

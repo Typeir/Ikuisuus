@@ -75,7 +75,7 @@ export interface SpellMetadata {
   description?: string;
   tags?: string[];
   spellLists?: SpellListRef[];
-  /** Content provenance: null = native Damocles, "basic" = SRD 5.1 (OGL), other = campaign-specific */
+  /** Sourcebook the entry comes from */
   source?: string | null;
 }
 

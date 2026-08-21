@@ -76,14 +76,36 @@ jobs:
             exit 0
           fi
 
-          # Build JSON array of paths from merged file paths
           PATHS="[]"
           while IFS= read -r file; do
             [ -z "$file" ] && continue
-            # Extract locale (e.g. "en") and content path, strip .mdx extension
+
             LOCALE=$(echo "$file" | cut -d'/' -f1)
-            CONTENT_PATH=$(echo "$file" | cut -d'/' -f2- | sed 's|\.sheet\.mdx$||' | sed 's|\.mdx$||')
-            PATHS=$(echo "$PATHS" | jq --arg p "/${LOCALE}/library/${CONTENT_PATH}" '. + [$p]')
+            REST=$(echo "$file" | cut -d'/' -f2-)
+            STEM=$(echo "$REST" | sed -E "s/\.(md|mdx)$//")
+            SUFFIX=$(echo "$STEM" | sed -nE "s/.*\.([a-z]+)$//p")
+            CONTENT_PATH=$(echo "$STEM" | sed -E "s/\.(sheet|specialization|list|heirloom|trinket|bloodline|lore|spell|feat|tool|rule|boon)$//")
+
+            case "$SUFFIX" in
+              spell)     CONTENT_TYPE="spells" ;;
+              heirloom)  CONTENT_TYPE="heirlooms" ;;
+              trinket)   CONTENT_TYPE="trinkets" ;;
+              bloodline) CONTENT_TYPE="bloodlines" ;;
+              sheet)
+                CONTENT_TYPE=$(sed -nE "s/^contentType:[[:space:]]*([A-Za-z-]+).*//p" "$file" 2>/dev/null | head -1)
+                ;;
+              *) CONTENT_TYPE="" ;;
+            esac
+
+            TARGET_PATH="/${LOCALE}/library/${CONTENT_PATH}"
+            if [ -n "$CONTENT_TYPE" ]; then
+              PATHS=$(echo "$PATHS" | jq \
+                --arg p "$TARGET_PATH" \
+                --arg t "$CONTENT_TYPE" \
+                '. + [{path: $p, contentType: $t}]')
+            else
+              PATHS=$(echo "$PATHS" | jq --arg p "$TARGET_PATH" '. + [{path: $p}]')
+            fi
           done <<< "${{ steps.merge.outputs.merged_files }}"
 
           echo "Revalidating paths: $PATHS"

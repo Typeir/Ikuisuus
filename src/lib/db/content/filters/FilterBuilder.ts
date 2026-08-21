@@ -12,11 +12,11 @@
  * @example
  * ```ts
  * const filters: FilterExpression[] = [
- *   { field: 'source', operator: 'neq', value: 'basic' },
+ *   { field: 'source', operator: 'eq', value: 'Ikuisuus' },
  *   { field: 'school', operator: 'eq', value: 'Evocation' },
  * ];
  * buildFilterQuery(filters);
- * // => { source: { $ne: 'basic' }, school: 'Evocation' }
+ * // => { source: 'Ikuisuus', school: 'Evocation' }
  * ```
  */
 

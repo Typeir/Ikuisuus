@@ -15,6 +15,7 @@
  * @since 7.0.0
  */
 
+import { readMetadataFiles } from './metadataSource';
 import {
     HeirloomEntity,
     MonsterEntity,
@@ -25,63 +26,14 @@ import {
 import { getEM } from '@/lib/db/orm/orm';
 import { createLogger } from '@/lib/logging/logger';
 import type { EntityManager } from '@mikro-orm/postgresql';
-import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { syncBloodlines } from './syncBloodlines';
+import { syncSpells } from './syncSpells';
 import { ContentType } from './contentTypes';
 import { syncTrinkets } from './syncTrinkets';
-import type { SyncResult } from './types';
+import type { SyncOptions, SyncResult } from './types';
 
 const log = createLogger({ component: 'MetadataSync' });
-
-/**
- * Resolves the project root via `__dirname` (three levels up).
- *
- * @returns {string} Absolute path to project root
- */
-function getProjectRoot(): string {
-  /** Works from src/lib/metadata/ at build time and at runtime */
-  return join(__dirname, '..', '..', '..');
-}
-
-/**
- * Reads and flattens all `.metadata.json` files from `.meta/{locale}/{subdir}`,
- * falling back to `src/content/{locale}/{subdir}`.
- *
- * Returns `sourceExists: false` when neither directory exists or the chosen
- * directory contains no `.metadata.json` files.
- *
- * @param {string} locale - Locale code
- * @param {string} subdir - Content subdirectory (e.g. 'monsters')
- * @returns {{ records: Record<string, unknown>[]; sourceExists: boolean }} Flattened records and source presence flag
- */
-function readMetadataFiles(
-  locale: string,
-  subdir: string,
-): { records: Record<string, unknown>[]; sourceExists: boolean } {
-  const root = getProjectRoot();
-  const metaDirPath = join(root, '.meta', locale, subdir);
-  const contentDirPath = join(/*turbopackIgnore: true*/ root, 'src', 'content', locale, subdir);
-  const metaExists = existsSync(metaDirPath);
-  const contentExists = existsSync(contentDirPath);
-  const dir = metaExists ? metaDirPath : contentDirPath;
-  const sourceExists = metaExists || contentExists;
-
-  if (!sourceExists) return { records: [], sourceExists: false };
-
-  const metaFiles = readdirSync(dir).filter((f) =>
-    f.endsWith('.metadata.json'),
-  );
-
-  if (metaFiles.length === 0) return { records: [], sourceExists: false };
-
-  const records = metaFiles.flatMap((f) => {
-    const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
-    return Array.isArray(parsed) ? parsed : [parsed];
-  });
-
-  return { records, sourceExists: true };
-}
 
 /**
  * Slug key for a monster record — uses subSlug if present.
@@ -135,8 +87,11 @@ function createMonsterFeatures(
 async function syncMonsters(
   em: EntityManager,
   locale: string,
+  options: SyncOptions = {},
 ): Promise<SyncResult> {
-  const { records, sourceExists } = readMetadataFiles(locale, 'monsters');
+  const { records, sourceExists } = options.records
+    ? { records: options.records, sourceExists: true }
+    : readMetadataFiles(locale, 'monsters');
   const result: SyncResult = {
     inserted: 0,
     updated: 0,
@@ -267,10 +222,12 @@ async function syncMonsters(
     }
   }
 
-  for (const [key, entity] of Array.from(existingMap)) {
-    if (!incomingKeys.has(key)) {
-      em.remove(entity);
-      result.deleted++;
+  if (options.allowDeletion) {
+    for (const [key, entity] of Array.from(existingMap)) {
+      if (!incomingKeys.has(key)) {
+        em.remove(entity);
+        result.deleted++;
+      }
     }
   }
 
@@ -287,11 +244,11 @@ async function syncMonsters(
 async function syncHeirlooms(
   em: EntityManager,
   locale: string,
+  options: SyncOptions = {},
 ): Promise<SyncResult> {
-  const { records, sourceExists } = readMetadataFiles(
-    locale,
-    join('items', 'heirlooms'),
-  );
+  const { records, sourceExists } = options.records
+    ? { records: options.records, sourceExists: true }
+    : readMetadataFiles(locale, join('items', 'heirlooms'));
   const result: SyncResult = {
     inserted: 0,
     updated: 0,
@@ -367,126 +324,12 @@ async function syncHeirlooms(
     }
   }
 
-  for (const [key, entity] of Array.from(existingMap)) {
-    if (!incomingKeys.has(key)) {
-      em.remove(entity);
-      result.deleted++;
-    }
-  }
-
-  return result;
-}
-
-/**
- * Syncs the `spells` + `spell_lists` tables for a locale using hash-based diffing.
- *
- * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {string} locale - Locale code
- * @returns {Promise<SyncResult>} Sync statistics
- */
-async function syncSpells(
-  em: EntityManager,
-  locale: string,
-): Promise<SyncResult> {
-  const { records, sourceExists } = readMetadataFiles(locale, 'spells');
-  const result: SyncResult = {
-    inserted: 0,
-    updated: 0,
-    skipped: 0,
-    deleted: 0,
-  };
-
-  if (!sourceExists) {
-    log.warning(
-      'Spell metadata source directory missing, skipping sync to prevent destructive deletion',
-      { locale },
-    );
-    return result;
-  }
-
-  const existing = await em.find(
-    SpellEntity,
-    { locale },
-    { populate: ['spellLists'] },
-  );
-  const existingMap = new Map(existing.map((e) => [e.slug, e]));
-  const incomingKeys = new Set<string>();
-
-  for (const s of records) {
-    const slug = s.slug as string;
-    incomingKeys.add(slug);
-    const hash = s.versionHash as string;
-    const entity = existingMap.get(slug);
-
-    if (hash && entity?.versionHash === hash) {
-      result.skipped++;
-      continue;
-    }
-
-    const spellLists = (s.spellLists ?? []) as {
-      name: string;
-      link: string;
-    }[];
-
-    const data = {
-      locale,
-      slug,
-      title: s.title as string,
-      file: s.file as string,
-      link: s.link as string,
-      level: s.level as number | undefined,
-      school: s.school as string | undefined,
-      quality: s.quality as string | undefined,
-      castingTimeRaw: s.castingTimeRaw as string | undefined,
-      castingTime: (s.castingTime as string[]) ?? [],
-      range: s.range as string | undefined,
-      concentration: s.concentration as boolean | undefined,
-      duration: s.duration as string | undefined,
-      components: {
-        verbal: s.verbal as boolean | undefined,
-        somatic: s.somatic as boolean | undefined,
-        material: s.material as boolean | undefined,
-        materialDescription: s.materialDescription as string | undefined,
-      },
-      hasRitual: s.hasRitual as boolean | undefined,
-      description: s.description as string | undefined,
-      image: s.image as string | undefined,
-      tags: (s.tags as string[]) ?? [],
-      source: s.source as string | undefined,
-      versionHash: hash,
-    };
-
-    if (entity) {
-      em.assign(entity, data);
-      /** Rebuild spell lists: remove old, add new */
-      entity.spellLists.removeAll();
-      await em.flush();
-      for (const ref of spellLists) {
-        em.create(SpellListEntity, {
-          spell: entity,
-          name: ref.name,
-          link: ref.link,
-        });
+  if (options.allowDeletion) {
+    for (const [key, entity] of Array.from(existingMap)) {
+      if (!incomingKeys.has(key)) {
+        em.remove(entity);
+        result.deleted++;
       }
-      result.updated++;
-    } else {
-      const spell = em.create(SpellEntity, data);
-      for (const ref of spellLists) {
-        em.create(SpellListEntity, { spell, name: ref.name, link: ref.link });
-      }
-      result.inserted++;
-    }
-  }
-
-  for (const [key, entity] of Array.from(existingMap)) {
-    if (!incomingKeys.has(key)) {
-      /** Never delete basic-source spells — they are seeded once via db:seed
-       * and are not present in the local .meta directory that revalidation
-       * sync reads from. Deleting them would nuke all 500+ SRD spells every
-       * time a custom-spell correction is published. */
-      if (entity.source === 'basic') continue;
-      em.remove(entity);
-      result.deleted++;
     }
   }
 
@@ -499,15 +342,22 @@ async function syncSpells(
 const SYNC_MAP: Record<
   string,
   {
-    sync: (em: EntityManager, locale: string) => Promise<SyncResult>;
+    sync: (
+      em: EntityManager,
+      locale: string,
+      options?: SyncOptions,
+    ) => Promise<SyncResult>;
     label: string;
   }
 > = {
-  monsters: { sync: syncMonsters, label: 'monsters' },
-  heirlooms: { sync: syncHeirlooms, label: 'heirlooms' },
-  spells: { sync: syncSpells, label: 'spells' },
-  trinkets: { sync: syncTrinkets, label: 'trinkets' },
-  bloodlines: { sync: syncBloodlines, label: 'bloodlines' },
+  [ContentType.Monsters]: { sync: syncMonsters, label: ContentType.Monsters },
+  [ContentType.Heirlooms]: { sync: syncHeirlooms, label: ContentType.Heirlooms },
+  [ContentType.Spells]: { sync: syncSpells, label: ContentType.Spells },
+  [ContentType.Trinkets]: { sync: syncTrinkets, label: ContentType.Trinkets },
+  [ContentType.Bloodlines]: {
+    sync: syncBloodlines,
+    label: ContentType.Bloodlines,
+  },
 };
 
 /**
@@ -517,17 +367,28 @@ const SYNC_MAP: Record<
  * @param {Object} options - Sync options
  * @param {string} [options.locale='en'] - Locale to sync
  * @param {string[]} [options.contentTypes] - Content types to sync (defaults to all)
+ * @param {Record<string, unknown>[]} [options.records] - Pre-parsed records for a single content type
+ * @param {boolean} [options.allowDeletion] - Remove DB rows with no incoming record; defaults to false
  * @returns {Promise<Record<string, SyncResult>>} Per-type sync results
+ * @throws {Error} When `records` is supplied for other than exactly one content type
  */
 export async function syncMetadata(
   options: {
     locale?: string;
     contentTypes?: string[];
+    records?: Record<string, unknown>[];
+    allowDeletion?: boolean;
   } = {},
 ): Promise<Record<string, SyncResult>> {
   const locale = options.locale ?? 'en';
   const types = options.contentTypes ?? Object.keys(SYNC_MAP);
   const results: Record<string, SyncResult> = {};
+
+  if (options.records && types.length !== 1) {
+    throw new Error(
+      `records may only be supplied for exactly one content type, got ${types.length}`,
+    );
+  }
 
   log.message('Starting metadata sync', { locale, contentTypes: types });
 
@@ -542,7 +403,10 @@ export async function syncMetadata(
           continue;
         }
 
-        const result = await config.sync(tx, locale);
+        const result = await config.sync(tx, locale, {
+          records: options.records,
+          allowDeletion: options.allowDeletion ?? false,
+        });
         results[type] = result;
 
         log.message(`Synced ${config.label}`, {

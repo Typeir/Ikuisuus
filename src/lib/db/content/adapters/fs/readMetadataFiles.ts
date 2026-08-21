@@ -1,5 +1,5 @@
 /**
- * @fileoverview Reads `.metadata.json` sidecar files from the content tree.
+ * @fileoverview Reads `.metadata.json` files from the `.meta` mirror tree.
  * @description Shared helper to read and parse `.metadata.json` files for the
  * filesystem content repository adapters.
  *
@@ -25,9 +25,8 @@ const getMetaFolder = (locale: string): string => {
 /**
  * Reads and parses all `.metadata.json` files from a content subdirectory.
  *
- * With METADATA_BACKEND 'pg', checks `.meta/{locale}/{subdir}` first, then
- * falls back to `src/content/{locale}/{subdir}`. Otherwise reads from
- * `src/content/{locale}/{subdir}` directly.
+ * Reads `.meta/{locale}/{subdir}`, falling back to
+ * `src/content/{locale}/{subdir}` when the mirror tree is absent.
  *
  * Returns an empty array if neither directory exists or cannot be read.
  * Multi-record files (arrays) are flattened.
@@ -41,20 +40,14 @@ export const readMetadataFiles = async <T>(
   locale: string,
   subdir: string,
 ): Promise<T[]> => {
-  const contentPath = path.join(getContentFolder(locale), subdir);
-  const backend = process.env.METADATA_BACKEND || 'fs';
+  const metaPath = path.join(getMetaFolder(locale), subdir);
   let dirPath: string;
 
-  if (backend === 'pg') {
-    const metaPath = path.join(getMetaFolder(locale), subdir);
-    try {
-      await fs.stat(metaPath);
-      dirPath = metaPath;
-    } catch {
-      dirPath = contentPath;
-    }
-  } else {
-    dirPath = contentPath;
+  try {
+    await fs.stat(metaPath);
+    dirPath = metaPath;
+  } catch {
+    dirPath = path.join(getContentFolder(locale), subdir);
   }
 
   try {

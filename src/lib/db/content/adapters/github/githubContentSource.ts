@@ -12,6 +12,7 @@
 import { logger } from '@/lib/logging/logger';
 import path from 'path';
 
+import { resolveIndexFile } from '@/lib/enums/constants';
 import type {
   ContentFetchResult,
   ContentSourceAdapter,
@@ -90,7 +91,25 @@ export const githubContentSource: ContentSourceAdapter = {
       );
 
     if (!mdxFile) {
-      return null;
+      const isFolder = entries.some(
+        (entry) => entry.isDirectory && entry.name === slugLeaf,
+      );
+      if (!isFolder) {
+        return null;
+      }
+
+      const folderEntries = await githubDirectorySource.listEntries(
+        locale,
+        slugPath,
+      );
+      const indexFile = resolveIndexFile(
+        folderEntries.filter((entry) => !entry.isDirectory).map((e) => e.name),
+        slugLeaf,
+      );
+
+      return indexFile
+        ? fetchConcreteFile(locale, `${slugPath}/${indexFile}`)
+        : null;
     }
 
     const filePath = relativeDirectory

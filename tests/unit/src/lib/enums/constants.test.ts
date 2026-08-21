@@ -22,6 +22,9 @@ import {
   REGEX_EXTENSION,
   REGEX_SHEET_SUFFIX,
   RegexPatterns,
+  isIndexFile,
+  isNamedIndexFile,
+  resolveIndexFile,
   stripContentSuffix,
 } from '@/lib/enums/constants';
 import { describe, expect, it } from 'vitest';
@@ -200,5 +203,54 @@ describe('FolderName enum', () => {
 
   it('should define Content folder', () => {
     expect(FolderName.Content).toBe('content');
+  });
+});
+
+
+describe('isNamedIndexFile', () => {
+  it('matches a file whose stem equals its folder', () => {
+    expect(isNamedIndexFile('bard.vocation.mdx', 'bard')).toBe(true);
+    expect(isNamedIndexFile('bard.mdx', 'bard')).toBe(true);
+    expect(isNamedIndexFile('bard.md', 'bard')).toBe(true);
+  });
+
+  it('rejects a sibling that is not the folder name', () => {
+    expect(isNamedIndexFile('spells.list.mdx', 'bard')).toBe(false);
+    expect(isNamedIndexFile('main.mdx', 'bard')).toBe(false);
+  });
+
+  it('rejects when there is no folder name', () => {
+    expect(isNamedIndexFile('bard.vocation.mdx', '')).toBe(false);
+  });
+});
+
+describe('isIndexFile', () => {
+  it('accepts either convention', () => {
+    expect(isIndexFile('bard.vocation.mdx', 'bard')).toBe(true);
+    expect(isIndexFile('main.mdx', 'bard')).toBe(true);
+  });
+
+  it('rejects an ordinary sibling', () => {
+    expect(isIndexFile('spells.list.mdx', 'bard')).toBe(false);
+  });
+});
+
+describe('resolveIndexFile', () => {
+  it('prefers the folder-named file over main', () => {
+    expect(
+      resolveIndexFile(['main.mdx', 'bard.vocation.mdx'], 'bard'),
+    ).toBe('bard.vocation.mdx');
+  });
+
+  it('falls back to main when no folder-named file exists', () => {
+    expect(resolveIndexFile(['main.mdx', 'spells.list.mdx'], 'bard')).toBe(
+      'main.mdx',
+    );
+  });
+
+  it('returns undefined when the folder has no index', () => {
+    expect(
+      resolveIndexFile(['spells.list.mdx', 'bane.spell.mdx'], 'bard'),
+    ).toBeUndefined();
   });
 });

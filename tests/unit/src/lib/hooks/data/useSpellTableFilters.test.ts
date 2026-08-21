@@ -15,22 +15,9 @@ describe('useSpellTableFilters', () => {
     const { result } = renderHook(() => useSpellTableFilters());
 
     expect(result.current.state).toEqual({
-      damoclesOnly: false,
       concentrationFilter: '',
     });
     expect(result.current.expressions).toEqual([]);
-  });
-
-  it('emits a source neq basic expression when Damocles-only is enabled', () => {
-    const { result } = renderHook(() => useSpellTableFilters());
-
-    act(() => {
-      result.current.setters.setDamoclesOnly(true);
-    });
-
-    expect(result.current.expressions).toEqual([
-      { field: 'source', operator: 'neq', value: 'basic' },
-    ]);
   });
 
   it('emits a concentration eq true expression when concentration is yes', () => {
@@ -57,16 +44,14 @@ describe('useSpellTableFilters', () => {
     ]);
   });
 
-  it('combines multiple filters into a single expressions array', () => {
+  it('emits a single expression for the one active filter', () => {
     const { result } = renderHook(() => useSpellTableFilters());
 
     act(() => {
-      result.current.setters.setDamoclesOnly(true);
       result.current.setters.setConcentrationFilter('yes');
     });
 
     expect(result.current.expressions).toEqual([
-      { field: 'source', operator: 'neq', value: 'basic' },
       { field: 'concentration', operator: 'eq', value: true },
     ]);
   });

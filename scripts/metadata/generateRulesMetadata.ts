@@ -177,16 +177,12 @@ async function parseRulesFile(
 function resolveRulesOutputPath(
   sourceFilePath: string,
   contentType: string,
-  backend: string,
   locale: string,
 ): string {
   const baseName = isSectionHub(sourceFilePath)
     ? `${path.basename(path.dirname(sourceFilePath))}.metadata.json`
     : path.basename(sourceFilePath).replace(/\.mdx$/, '.metadata.json');
 
-  if (backend !== 'pg') {
-    return path.join(path.dirname(sourceFilePath), baseName);
-  }
   return path.join(
     process.cwd(),
     '.meta',

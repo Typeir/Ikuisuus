@@ -7,6 +7,7 @@
  * @since 7.0.0
  */
 
+import { readMetadataFiles } from './metadataSource';
 import type { BloodlineBoonSubOption } from '@/lib/db/content/schemas/bloodlineMetadata';
 import {
   BloodlineBoonEntity,
@@ -15,55 +16,10 @@ import {
 } from '@/lib/db/orm/entities';
 import { createLogger } from '@/lib/logging/logger';
 import type { EntityManager } from '@mikro-orm/postgresql';
-import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
-import type { SyncResult } from './types';
+import type { SyncOptions, SyncResult } from './types';
 
 const log = createLogger({ component: 'MetadataSync:Bloodlines' });
-
-/**
- * Resolves the root directory of the project.
- *
- * @returns {string} Absolute path to project root
- */
-function getProjectRoot(): string {
-  return join(__dirname, '..', '..', '..');
-}
-
-/**
- * Reads and flattens `.metadata.json` files from a locale subdirectory.
- *
- * @param {string} locale - Locale code
- * @param {string} subdir - Content subdirectory
- * @returns {{ records: Record<string, unknown>[]; sourceExists: boolean }} Records and source presence flag
- */
-function readMetadataFiles(
-  locale: string,
-  subdir: string,
-): { records: Record<string, unknown>[]; sourceExists: boolean } {
-  const root = getProjectRoot();
-  const metaDirPath = join(root, '.meta', locale, subdir);
-  const contentDirPath = join(/*turbopackIgnore: true*/ root, 'src', 'content', locale, subdir);
-  const metaExists = existsSync(metaDirPath);
-  const contentExists = existsSync(contentDirPath);
-  const dir = metaExists ? metaDirPath : contentDirPath;
-  const sourceExists = metaExists || contentExists;
-
-  if (!sourceExists) return { records: [], sourceExists: false };
-
-  const metaFiles = readdirSync(dir).filter((f) =>
-    f.endsWith('.metadata.json'),
-  );
-
-  if (metaFiles.length === 0) return { records: [], sourceExists: false };
-
-  const records = metaFiles.flatMap((f) => {
-    const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
-    return Array.isArray(parsed) ? parsed : [parsed];
-  });
-
-  return { records, sourceExists: true };
-}
 
 /**
  * Syncs the `bloodlines` + `bloodline_boons` tables for one locale.
@@ -113,11 +69,11 @@ function createBoon(
 export async function syncBloodlines(
   em: EntityManager,
   locale: string,
+  options: SyncOptions = {},
 ): Promise<SyncResult> {
-  const { records: rawRecords, sourceExists } = readMetadataFiles(
-    locale,
-    join('character-creation', 'bloodlines'),
-  );
+  const { records: rawRecords, sourceExists } = options.records
+    ? { records: options.records, sourceExists: true }
+    : readMetadataFiles(locale, join('character-creation', 'bloodlines'));
   const records = rawRecords.filter(Boolean);
   const result: SyncResult = {
     inserted: 0,
@@ -197,10 +153,12 @@ export async function syncBloodlines(
     }
   }
 
-  for (const [key, entity] of Array.from(existingMap)) {
-    if (!incomingKeys.has(key)) {
-      em.remove(entity);
-      result.deleted++;
+  if (options.allowDeletion) {
+    for (const [key, entity] of Array.from(existingMap)) {
+      if (!incomingKeys.has(key)) {
+        em.remove(entity);
+        result.deleted++;
+      }
     }
   }
 

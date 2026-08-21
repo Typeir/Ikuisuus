@@ -8,60 +8,14 @@
  * @since 7.0.0
  */
 
+import { readMetadataFiles } from './metadataSource';
 import { TrinketEntity } from '@/lib/db/orm/entities';
 import { createLogger } from '@/lib/logging/logger';
 import type { EntityManager } from '@mikro-orm/postgresql';
-import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
-import type { SyncResult } from './types';
+import type { SyncOptions, SyncResult } from './types';
 
 const log = createLogger({ component: 'MetadataSync:Trinkets' });
-
-/**
- * Resolves the root directory of the project.
- *
- * @returns {string} Absolute path to project root
- */
-function getProjectRoot(): string {
-  return join(__dirname, '..', '..', '..');
-}
-
-/**
- * Reads and flattens `.metadata.json` files from a locale subdirectory.
- * Checks `.meta/{locale}/{subdir}` first, falls back to `src/content/{locale}/{subdir}`.
- *
- * Returns `sourceExists: false` when neither directory exists or the chosen
- * directory contains no `.metadata.json` files.
- *
- * @param {string} locale - Locale code
- * @param {string} subdir - Content subdirectory
- * @returns {{ records: Record<string, unknown>[]; sourceExists: boolean }} Flattened records and source presence flag
- */
-function readMetadataFiles(
-  locale: string,
-  subdir: string,
-): { records: Record<string, unknown>[]; sourceExists: boolean } {
-  const root = getProjectRoot();
-  const metaDirPath = join(root, '.meta', locale, subdir);
-  const contentDirPath = join(/*turbopackIgnore: true*/ root, 'src', 'content', locale, subdir);
-  const metaExists = existsSync(metaDirPath);
-  const contentExists = existsSync(contentDirPath);
-  const dir = metaExists ? metaDirPath : contentDirPath;
-  const sourceExists = metaExists || contentExists;
-
-  if (!sourceExists) return { records: [], sourceExists: false };
-
-  const metaFiles = readdirSync(dir).filter((f) => f.endsWith('.metadata.json'));
-
-  if (metaFiles.length === 0) return { records: [], sourceExists: false };
-
-  const records = metaFiles.flatMap((f) => {
-    const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
-    return Array.isArray(parsed) ? parsed : [parsed];
-  });
-
-  return { records, sourceExists: true };
-}
 
 /**
  * Syncs the `trinkets` table for a locale using hash-based diffing.
@@ -73,11 +27,11 @@ function readMetadataFiles(
 export async function syncTrinkets(
   em: EntityManager,
   locale: string,
+  options: SyncOptions = {},
 ): Promise<SyncResult> {
-  const { records, sourceExists } = readMetadataFiles(
-    locale,
-    join('items', 'trinkets'),
-  );
+  const { records, sourceExists } = options.records
+    ? { records: options.records, sourceExists: true }
+    : readMetadataFiles(locale, join('items', 'trinkets'));
   const result: SyncResult = {
     inserted: 0,
     updated: 0,
@@ -141,10 +95,12 @@ export async function syncTrinkets(
     }
   }
 
-  for (const [key, entity] of Array.from(existingMap)) {
-    if (!incomingKeys.has(key)) {
-      em.remove(entity);
-      result.deleted++;
+  if (options.allowDeletion) {
+    for (const [key, entity] of Array.from(existingMap)) {
+      if (!incomingKeys.has(key)) {
+        em.remove(entity);
+        result.deleted++;
+      }
     }
   }
 

@@ -52,21 +52,6 @@ export function FilteredSpellTableControls({
     <div className={styles.filterControls}>
       <div className={styles.filters}>
         <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor='spell-damocles-filter'>
-            {tFilters('damoclesOnly')}
-          </label>
-          <div className={styles.filterCheckboxRow}>
-            <input
-              id='spell-damocles-filter'
-              className={styles.filterCheckbox}
-              type='checkbox'
-              checked={state.damoclesOnly}
-              onChange={(e) => setters.setDamoclesOnly(e.target.checked)}
-            />
-          </div>
-        </div>
-
-        <div className={styles.filterGroup}>
           <span className={styles.filterLabel}>
             {tFilters('concentration')}
           </span>

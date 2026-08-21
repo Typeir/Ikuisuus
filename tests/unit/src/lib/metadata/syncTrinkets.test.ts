@@ -175,9 +175,71 @@ describe('syncTrinkets', () => {
       remove: vi.fn(),
     };
 
-    const result = await syncTrinkets(em as never, 'en');
+    const result = await syncTrinkets(em as never, 'en', {
+      allowDeletion: true,
+    });
 
     expect(result.deleted).toBe(1);
     expect(em.remove).toHaveBeenCalledWith(staleEntity);
+  });
+
+  it('should not delete stale rows by default', async () => {
+    const activeRecord = {
+      slug: 'new-relic',
+      title: 'New Relic',
+      file: 'src/content/en/items/trinkets/new-relic.trinket.mdx',
+      link: '/library/items/trinkets/new-relic',
+      itemType: 'Trinket',
+      tags: [],
+      versionHash: 'abc123',
+    };
+
+    fsMock.existsSync.mockReturnValue(true);
+    fsMock.readdirSync.mockReturnValue(['new-relic.metadata.json'] as never);
+    fsMock.readFileSync.mockReturnValue(JSON.stringify(activeRecord));
+
+    const staleEntity = { slug: 'old-relic', versionHash: 'stale' };
+    const em = {
+      find: vi.fn().mockResolvedValue([staleEntity]),
+      assign: vi.fn(),
+      create: vi.fn(),
+      remove: vi.fn(),
+    };
+
+    const result = await syncTrinkets(em as never, 'en');
+
+    expect(result.deleted).toBe(0);
+    expect(em.remove).not.toHaveBeenCalled();
+  });
+
+  it('should sync supplied records without reading sidecars', async () => {
+    fsMock.existsSync.mockClear();
+    fsMock.readdirSync.mockClear();
+    fsMock.readFileSync.mockClear();
+
+    const em = {
+      find: vi.fn().mockResolvedValue([]),
+      assign: vi.fn(),
+      create: vi.fn(),
+      remove: vi.fn(),
+    };
+
+    const result = await syncTrinkets(em as never, 'en', {
+      records: [
+        {
+          slug: 'fetched-relic',
+          title: 'Fetched Relic',
+          file: 'src/content/en/items/trinkets/fetched-relic.trinket.mdx',
+          link: '/library/items/trinkets/fetched-relic',
+          itemType: 'Trinket',
+          tags: [],
+          versionHash: 'live1',
+        },
+      ],
+    });
+
+    expect(fsMock.readdirSync).not.toHaveBeenCalled();
+    expect(result.inserted).toBe(1);
+    expect(result.deleted).toBe(0);
   });
 });

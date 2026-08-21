@@ -19,7 +19,6 @@ import { localizeLink } from '@/modules/search/domain/localizeLink';
 import { promises as fs, type Dirent } from 'fs';
 import path from 'path';
 import {
-  getMetadataBackend,
   getMetaSubdir,
 } from '../metadata/generatorUtils';
 import { extractProse } from './extractProse';
@@ -209,8 +208,8 @@ async function scanDir(
  *   `x.metadata.json`
  * - all others: type suffix replaced — `x.sheet.mdx` → `x.metadata.json`
  *
- * With `pg` METADATA_BACKEND the `.meta/{locale}/{metaSubdir}/{basename}`
- * paths are prepended in front of the source-adjacent locations.
+ * The `.meta/{locale}/{metaSubdir}/{basename}` paths take priority; the
+ * source-adjacent locations remain as a fallback.
  *
  * @param {string} filePath - Absolute path to the source MDX file
  * @param {string} contentType - Content type key
@@ -251,18 +250,16 @@ function sidecarCandidates(
   }
 
   const candidates: string[] = [];
-  if (getMetadataBackend() === 'pg') {
-    for (const sidecarPath of sourceAdjacent) {
-      candidates.push(
-        path.join(
-          process.cwd(),
-          '.meta',
-          locale,
-          getMetaSubdir(contentType),
-          path.basename(sidecarPath),
-        ),
-      );
-    }
+  for (const sidecarPath of sourceAdjacent) {
+    candidates.push(
+      path.join(
+        process.cwd(),
+        '.meta',
+        locale,
+        getMetaSubdir(contentType),
+        path.basename(sidecarPath),
+      ),
+    );
   }
   candidates.push(...sourceAdjacent);
   return candidates;

@@ -12,6 +12,7 @@
 import { logger } from '@/lib/logging/logger';
 import fs from 'fs/promises';
 import path from 'path';
+import { resolveIndexFile } from '@/lib/enums/constants';
 
 import type {
   ContentFetchResult,
@@ -55,14 +56,41 @@ export const fsContentSource: ContentSourceAdapter = {
             entry.name.startsWith(`${slugLeaf}.`)),
       );
 
-      if (!mdxFile) {
+      const folderEntry = entries.find(
+        (entry) => entry.isDirectory() && entry.name === slugLeaf,
+      );
+
+      if (!mdxFile && !folderEntry) {
         return null;
       }
 
-      const resolvedPath = path.join(
-        /*turbopackIgnore: true*/ fullDirectoryPath,
-        mdxFile.name,
-      );
+      let resolvedPath: string;
+
+      if (mdxFile) {
+        resolvedPath = path.join(
+          /*turbopackIgnore: true*/ fullDirectoryPath,
+          mdxFile.name,
+        );
+      } else {
+        const folderPath = path.join(
+          /*turbopackIgnore: true*/ fullDirectoryPath,
+          slugLeaf,
+        );
+        const folderFiles = await fs.readdir(folderPath, {
+          withFileTypes: true,
+        });
+        const indexFile = resolveIndexFile(
+          folderFiles.filter((e) => e.isFile()).map((e) => e.name),
+          slugLeaf,
+        );
+        if (!indexFile) {
+          return null;
+        }
+        resolvedPath = path.join(
+          /*turbopackIgnore: true*/ folderPath,
+          indexFile,
+        );
+      }
       const content = await fs.readFile(resolvedPath, 'utf8');
       log.message('Fetched MDX file from filesystem', {
         path: resolvedPath,

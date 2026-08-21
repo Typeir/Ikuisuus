@@ -19,7 +19,7 @@
  *   headers: { 'Content-Type': 'application/json' },
  *   body: JSON.stringify({
  *     locale: 'en',
- *     filters: [{ field: 'source', operator: 'neq', value: 'basic' }],
+ *     filters: [{ field: 'school', operator: 'eq', value: 'Evocation' }],
  *   }),
  * });
  * ```

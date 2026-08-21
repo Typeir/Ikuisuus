@@ -5,11 +5,9 @@ import { describe, expect, it, vi } from 'vitest';
 describe('FilteredSpellTableControls', () => {
   it('renders all filter labels', () => {
     const state = {
-      damoclesOnly: false,
       concentrationFilter: '' as const,
     };
     const setters = {
-      setDamoclesOnly: vi.fn(),
       setConcentrationFilter: vi.fn(),
     };
 
@@ -22,7 +20,7 @@ describe('FilteredSpellTableControls', () => {
       />,
     );
 
-    expect(screen.getByText('damoclesOnly')).toBeInTheDocument();
     expect(screen.getByText('concentration')).toBeInTheDocument();
+    expect(screen.queryByText('damoclesOnly')).toBeNull();
   });
 });

@@ -21,11 +21,9 @@ export type ConcentrationFilter = '' | 'yes' | 'no';
  * UI filter state surface.
  *
  * @interface SpellTableFilterState
- * @property {boolean} damoclesOnly - Hide SRD/basic-source rows when true.
  * @property {ConcentrationFilter} concentrationFilter - Concentration tri-state.
  */
 export interface SpellTableFilterState {
-  damoclesOnly: boolean;
   concentrationFilter: ConcentrationFilter;
 }
 
@@ -33,11 +31,9 @@ export interface SpellTableFilterState {
  * UI filter state setters.
  *
  * @interface SpellTableFilterSetters
- * @property {(value: boolean) => void} setDamoclesOnly - Updates the Damocles-only flag.
  * @property {(value: ConcentrationFilter) => void} setConcentrationFilter - Updates the concentration filter.
  */
 export interface SpellTableFilterSetters {
-  setDamoclesOnly: (value: boolean) => void;
   setConcentrationFilter: (value: ConcentrationFilter) => void;
 }
 
@@ -57,31 +53,26 @@ export interface UseSpellTableFiltersResult {
 
 /**
  * Manages the spell-table UI filter state and derives the `FilterExpression[]`.
- * `damoclesOnly` emits source neq 'basic', preserving null rows.
  *
  * @returns {UseSpellTableFiltersResult} Filter state, setters, and derived expressions.
  */
 export function useSpellTableFilters(): UseSpellTableFiltersResult {
-  const [damoclesOnly, setDamoclesOnly] = useState(false);
   const [concentrationFilter, setConcentrationFilter] =
     useState<ConcentrationFilter>('');
 
   const expressions = useMemo<FilterExpression[]>(() => {
     const out: FilterExpression[] = [];
-    if (damoclesOnly) {
-      out.push({ field: 'source', operator: 'neq', value: 'basic' });
-    }
     if (concentrationFilter === 'yes') {
       out.push({ field: 'concentration', operator: 'eq', value: true });
     } else if (concentrationFilter === 'no') {
       out.push({ field: 'concentration', operator: 'eq', value: false });
     }
     return out;
-  }, [damoclesOnly, concentrationFilter]);
+  }, [concentrationFilter]);
 
   return {
-    state: { damoclesOnly, concentrationFilter },
-    setters: { setDamoclesOnly, setConcentrationFilter },
+    state: { concentrationFilter },
+    setters: { setConcentrationFilter },
     expressions,
   };
 }
