@@ -100,30 +100,26 @@ describe('getMetaSubdir', () => {
 });
 
 describe('getMetadataOutputPath', () => {
-  it('should replace extension for fs backend', () => {
+  it('should redirect to the .meta mirror tree', () => {
     const result = getMetadataOutputPath(
       '/project/src/content/en/monsters/goblin.sheet.mdx',
       /\.sheet\.mdx$/,
       'monsters',
-      'fs',
-      'en',
-    );
-    expect(result).toBe(
-      '/project/src/content/en/monsters/goblin.metadata.json',
-    );
-  });
-
-  it('should redirect to .meta for pg backend', () => {
-    const result = getMetadataOutputPath(
-      '/project/src/content/en/monsters/goblin.sheet.mdx',
-      /\.sheet\.mdx$/,
-      'monsters',
-      'pg',
       'en',
     );
     expect(result).toContain('.meta');
     expect(result).toContain('monsters');
     expect(result).toContain('goblin.metadata.json');
+  });
+
+  it('should never write alongside the source file', () => {
+    const result = getMetadataOutputPath(
+      '/project/src/content/en/monsters/goblin.sheet.mdx',
+      /\.sheet\.mdx$/,
+      'monsters',
+      'en',
+    );
+    expect(result).not.toContain(path.join('src', 'content'));
   });
 });
 

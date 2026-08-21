@@ -10,6 +10,7 @@
  * @since 3.0.0
  */
 
+import { isIndexFile } from '@/lib/enums/constants';
 import { createLogger } from '@/lib/logging/logger';
 import { formatDie } from '@/lib/utils/diceUtils';
 import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';
@@ -489,9 +490,9 @@ async function parseVocationFile(
   sharedData: SharedData,
 ): Promise<Record<string, unknown> | null> {
   const baseName = path.basename(filePath);
-  if (baseName !== 'main.mdx') return null;
-
   const parentDir = path.basename(path.dirname(filePath));
+  if (!isIndexFile(baseName, parentDir)) return null;
+
   const grandParentDir = path.basename(path.dirname(path.dirname(filePath)));
 
   if (grandParentDir !== 'vocations') return null;
