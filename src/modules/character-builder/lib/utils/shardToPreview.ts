@@ -9,6 +9,7 @@
  */
 
 import type { PreviewKind } from '@/modules/character-builder/presentation/PagePreview/pagePreviewProvider';
+import { MAIN_INDEX_FILE } from '@/lib/enums/constants';
 
 /**
  * Preview entry data extracted from a shard.
@@ -94,7 +95,7 @@ function isVocationPattern(parts: string[], lastSegment: string): boolean {
   return (
     parts[0] === 'character-creation' &&
     parts[1] === 'vocations' &&
-    lastSegment === 'main.mdx' &&
+    lastSegment === MAIN_INDEX_FILE &&
     parts.length === 4
   );
 }
@@ -115,7 +116,7 @@ function isSpecializationPattern(
   return (
     parts[0] === 'character-creation' &&
     parts[1] === 'specializations' &&
-    lastSegment === 'main.mdx' &&
+    lastSegment === MAIN_INDEX_FILE &&
     parts.length === 4
   );
 }

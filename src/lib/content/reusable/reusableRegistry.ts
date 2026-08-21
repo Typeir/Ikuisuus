@@ -14,6 +14,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { parseReusableRegions } from './parseReusableRegions';
+import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/enums/constants';
 
 /** True when the file declares `reusable: true`. */
 const HAS_FLAG = /^\s*reusable\s*:\s*true\s*$/m;
@@ -44,10 +45,12 @@ const cache = new Map<string, Map<string, ReusableEntry>>();
  * @returns {string} PascalCase name, e.g. "LesserMooncleave"
  *
  * @example
- * componentNameFromPath('spells/lesser-mooncleave.mdx') // 'LesserMooncleave'
+ * componentNameFromPath('spells/lesser-mooncleave.spell.mdx') // 'LesserMooncleave'
  */
 export function componentNameFromPath(filePath: string): string {
-  const base = path.basename(filePath).replace(/\.mdx$/, '');
+  const base = stripContentSuffix(
+    path.basename(filePath).replace(REGEX_EXTENSION, ''),
+  );
   return base
     .split(/[-_.]/)
     .filter(Boolean)

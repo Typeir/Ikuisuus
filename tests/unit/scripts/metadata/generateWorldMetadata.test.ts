@@ -76,7 +76,7 @@ describe('generateWorldMetadata', () => {
 
     it('should emit a sidecar for a known lore file', async () => {
       const raw = await fs.readFile(
-        sidecarPath('gods-and-demigods', 'paivatar.lore.metadata.json'),
+        sidecarPath('gods-and-demigods', 'paivatar.metadata.json'),
         'utf-8',
       );
       const record = JSON.parse(raw);
@@ -91,7 +91,7 @@ describe('generateWorldMetadata', () => {
 
     it('should derive correct links for nested paths', async () => {
       const raw = await fs.readFile(
-        sidecarPath('the-lands-of-damocles', 'thule.lore.metadata.json'),
+        sidecarPath('the-lands-of-damocles', 'thule.metadata.json'),
         'utf-8',
       );
       const record = JSON.parse(raw);
@@ -101,7 +101,7 @@ describe('generateWorldMetadata', () => {
 
     it('should have at least one sidecar per lore file', async () => {
       const raw = await fs.readFile(
-        sidecarPath('gods-and-demigods', 'dragon.lore.metadata.json'),
+        sidecarPath('gods-and-demigods', 'dragon.metadata.json'),
         'utf-8',
       );
       const record = JSON.parse(raw);

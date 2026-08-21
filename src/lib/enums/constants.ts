@@ -23,16 +23,47 @@ export const CONTENT_SUFFIXES = [
   '.sheet',
   '.specialization',
   '.list',
-  '.reference',
   '.heirloom',
   '.trinket',
   '.bloodline',
   '.lore',
+  '.spell',
+  '.feat',
+  '.tool',
+  '.rule',
+  '.boon',
 ] as const;
 
 /** Precompiled regex matching any content-type suffix from the double-extension convention */
 export const REGEX_CONTENT_SUFFIX =
-  /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/;
+  /\.(sheet|specialization|list|heirloom|trinket|bloodline|lore|spell|feat|tool|rule|boon)$/;
+
+/** Slug of the index file that stands for its containing folder */
+export const MAIN_INDEX_SLUG = 'main';
+
+/** Filename of the index file that stands for its containing folder */
+export const MAIN_INDEX_FILE = `${MAIN_INDEX_SLUG}${FILE_EXT_MDX}`;
+
+/** Route segment under which all library content is served */
+export const LIBRARY_SEGMENT = 'library';
+
+/**
+ * Whether a filename is the index file standing for its containing folder,
+ * in either markdown extension.
+ *
+ * @param {string} fileName - Filename including extension
+ * @returns {boolean} True for `main.mdx` and `main.md`
+ *
+ * @example
+ * isMainIndexFile('main.mdx')  // true
+ * isMainIndexFile('main.md')   // true
+ * isMainIndexFile('bane.mdx')  // false
+ */
+export function isMainIndexFile(fileName: string): boolean {
+  return (
+    fileName === MAIN_INDEX_FILE || fileName === `${MAIN_INDEX_SLUG}.md`
+  );
+}
 
 /**
  * Strips any recognized content-type suffix from a slug or filename stem.

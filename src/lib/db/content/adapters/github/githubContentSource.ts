@@ -24,8 +24,10 @@ const log = logger.child({ module: 'GitHubContentSource' });
 const CONTENT_REPO_OWNER = process.env.CONTENT_REPO_OWNER;
 /** @property {string} CONTENT_REPO_NAME - GitHub repository name */
 const CONTENT_REPO_NAME = process.env.CONTENT_REPO_NAME;
+/** @property {string} CONTENT_REPO_BRANCH - Branch to read from; defaults to `main` */
+const CONTENT_REPO_BRANCH = process.env.CONTENT_REPO_BRANCH || 'main';
 /** @property {string} GITHUB_RAW_BASE - Base URL for raw content from the content repo */
-const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${CONTENT_REPO_OWNER}/${CONTENT_REPO_NAME}/main`;
+const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${CONTENT_REPO_OWNER}/${CONTENT_REPO_NAME}/${CONTENT_REPO_BRANCH}`;
 
 /**
  * Fetches a concrete file path from GitHub raw content.

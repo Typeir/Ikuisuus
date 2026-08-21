@@ -8,7 +8,7 @@
  * @since 3.0.0
  */
 
-import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
+import { MAIN_INDEX_FILE, REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
 import { resolveMetadataBase } from '@/lib/seo';
 import findAllMdxFiles from '@/modules/library/infrastructure/content/findAllMdxFiles';
 import type { MetadataRoute } from 'next';
@@ -27,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const mdxFiles = await findAllMdxFiles(CONTENT_ROOT);
 
   return mdxFiles
-    .filter((filePath) => !filePath.endsWith('main.mdx'))
+    .filter((filePath) => !filePath.endsWith(MAIN_INDEX_FILE))
     .map((filePath) => {
       const relativePath = path.relative(CONTENT_ROOT, filePath);
       const slugPath = relativePath

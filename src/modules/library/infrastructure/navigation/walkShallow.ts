@@ -18,6 +18,7 @@ import { deduplicateFiles } from '@/lib/utils/deduplicateFiles';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import { toTitleCase } from '@/lib/utils/toTitleCase';
 import type { WalkNode } from './types';
+import { isMainIndexFile } from '@/lib/enums/constants';
 
 /** Default recursion depth for shallow walk operations. */
 export const SHALLOW_WALK_DEPTH = 2;
@@ -146,7 +147,7 @@ async function detectMainPath(
   const hasMain = entries.some(
     (entry) =>
       !entry.isDirectory &&
-      (entry.name === 'main.mdx' || entry.name === 'main.md'),
+      isMainIndexFile(entry.name),
   );
 
   if (!hasMain) {

@@ -249,7 +249,9 @@ describe('Revalidation + Draft Archival', () => {
         'x-revalidation-secret': 'test-secret-123',
       },
       body: JSON.stringify({
-        paths: ['/en/library/monsters/albedo'],
+        paths: [
+          { path: '/en/library/monsters/albedo', contentType: 'monsters' },
+        ],
       }),
     });
 
@@ -282,7 +284,9 @@ describe('Revalidation + Draft Archival', () => {
         'x-revalidation-secret': 'test-secret-123',
       },
       body: JSON.stringify({
-        paths: ['/en/library/monsters/albedo'],
+        paths: [
+          { path: '/en/library/monsters/albedo', contentType: 'monsters' },
+        ],
       }),
     });
 

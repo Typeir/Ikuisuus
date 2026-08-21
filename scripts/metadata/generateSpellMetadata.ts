@@ -458,7 +458,7 @@ async function generateSpellMetadata(
   await runGenerator({
     name: 'Spell Metadata Generator',
     contentType: 'spells',
-    filePattern: options.filePattern || /\.mdx$/i,
+    filePattern: options.filePattern || /\.spell\.mdx$/i,
     parseFile: parseSpellFile,
     contentDir: options.contentDir,
     storage: options.storage,

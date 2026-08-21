@@ -17,18 +17,12 @@
  */
 
 import { logger } from '@/lib/logging/logger';
+import { isContentType } from '@/lib/metadata/contentTypes';
 import { syncMetadata } from '@/lib/metadata/syncService';
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 const log = logger.child({ module: 'API:MetadataSync' });
-
-const VALID_CONTENT_TYPES = new Set([
-  'monsters',
-  'heirlooms',
-  'spells',
-  'trinkets',
-]);
 
 /**
  * POST /api/metadata-sync
@@ -75,7 +69,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
     for (const ct of contentTypes) {
-      if (!VALID_CONTENT_TYPES.has(ct)) {
+      if (typeof ct !== 'string' || !isContentType(ct)) {
         return NextResponse.json(
           { error: `Unknown content type: ${ct}` },
           { status: 400 },

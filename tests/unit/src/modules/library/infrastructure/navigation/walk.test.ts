@@ -194,9 +194,9 @@ describe('walk', () => {
       expect(result[0].name).toBe('Spells');
     });
 
-    it('should strip .reference from path', async () => {
+    it('should strip .rule from path', async () => {
       const adapter = createMockAdapter({
-        '': [{ name: 'maneuvers.reference.mdx', isDirectory: false }],
+        '': [{ name: 'maneuvers.rule.mdx', isDirectory: false }],
       });
 
       const result = await walkTree(adapter, 'en', '', '');
@@ -239,7 +239,7 @@ describe('walk', () => {
       const adapter = createMockAdapter({
         '': [
           { name: 'berserker.specialization.mdx', isDirectory: false },
-          { name: 'maneuvers.reference.mdx', isDirectory: false },
+          { name: 'maneuvers.rule.mdx', isDirectory: false },
           { name: 'spells.list.mdx', isDirectory: false },
           { name: 'plain-file.mdx', isDirectory: false },
         ],

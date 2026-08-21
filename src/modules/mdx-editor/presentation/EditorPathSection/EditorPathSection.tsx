@@ -14,6 +14,7 @@ import { FileTreeSelect } from '@/modules/mdx-editor/presentation/FileTreeSelect
 import type { JSX } from 'react';
 import { useCallback, useState } from 'react';
 import styles from './EditorPathSection.module.scss';
+import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
 
 /**
  * @property {'edit' | 'new'} mode - Editor mode
@@ -101,10 +102,7 @@ export function EditorPathSection({
           .replace(/\/$/, '')
           .replace(new RegExp(`^${locale}/`), '')
           .replace(/\.(md|mdx)$/, '')
-          .replace(
-            /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/,
-            '',
-          );
+          .replace(REGEX_CONTENT_SUFFIX, '');
         setSlug(stripped);
       } else {
         /* Keep whatever filename the flat path already holds; only the

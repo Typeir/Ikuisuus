@@ -31,6 +31,7 @@ import { fetchHeirloomMetadata } from '@/modules/metadata-tables/infrastructure/
 import { buildHeirloomColumns } from '@/modules/metadata-tables/presentation/HeirloomTable/HeirloomTable.columns';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/enums/constants';
 
 /**
  * Heirloom metadata structure from API
@@ -126,7 +127,7 @@ export default function HeirloomTableWrapper({
       data={data}
       columns={columns}
       getRowSlug={(row) =>
-        `/items/heirlooms/${row.slug.replace(/\.mdx$/, '').replace(/\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/, '')}`
+        `/items/heirlooms/${stripContentSuffix(row.slug.replace(REGEX_EXTENSION, ''))}`
       }
       searchKeys={['title', 'itemType']}
       defaultSort={{ key: 'title', direction: 'asc' }}

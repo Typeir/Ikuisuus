@@ -31,6 +31,7 @@ import { fetchTrinketMetadata } from '@/modules/metadata-tables/infrastructure/a
 import { buildTrinketColumns } from '@/modules/metadata-tables/presentation/TrinketTable/TrinketTable.columns';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/enums/constants';
 
 /**
  * Trinket metadata structure from API
@@ -129,7 +130,7 @@ export default function TrinketTableWrapper({
       data={data}
       columns={columns}
       getRowSlug={(row) =>
-        `/items/trinkets/${row.slug.replace(/\.mdx$/, '').replace(/\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/, '')}`
+        `/items/trinkets/${stripContentSuffix(row.slug.replace(REGEX_EXTENSION, ''))}`
       }
       searchKeys={['title', 'itemType', 'specialEffects', 'inflictsConditions']}
       defaultSort={{ key: 'title', direction: 'asc' }}

@@ -53,7 +53,7 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
   },
   spells: {
     dir: 'src/content/en/spells',
-    pattern: /\.mdx$/,
+    pattern: /\.spell\.mdx$/,
     generator: 'generateSpellMetadata.ts',
     contentType: 'spell',
     subType: 'standard',
@@ -88,21 +88,21 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
   },
   feats: {
     dir: 'src/content/en/character-creation/feats',
-    pattern: /\.mdx$/,
+    pattern: /\.feat\.mdx$/,
     generator: 'generateFeatMetadata.ts',
     contentType: 'character-creation',
     subType: 'feat',
   },
   world: {
     dir: 'src/content/en/world',
-    pattern: /\.mdx$/,
+    pattern: /\.lore\.mdx$/,
     generator: 'generateWorldMetadata.ts',
     contentType: 'world',
     subType: 'lore',
   },
   rules: {
     dir: 'src/content/en/rules',
-    pattern: /\.mdx$/,
+    pattern: /\.rule\.mdx$/,
     generator: 'generateRulesMetadata.ts',
     contentType: 'rules',
     subType: 'rule',

@@ -305,7 +305,7 @@ async function main(
   await runGenerator({
     name: 'Feat Metadata Generator',
     contentType: 'feats',
-    filePattern: options.filePattern || /\.mdx$/,
+    filePattern: options.filePattern || /\.feat\.mdx$/,
     parseFile: parseFeatFile,
     processResult: (result) => {
       if (result === null) return { metadata: null, count: 0 };

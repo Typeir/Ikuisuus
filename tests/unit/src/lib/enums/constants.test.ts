@@ -169,9 +169,17 @@ describe('stripContentSuffix', () => {
 
   it('should strip all recognized suffixes', () => {
     expect(stripContentSuffix('name.list')).toBe('name');
-    expect(stripContentSuffix('name.reference')).toBe('name');
     expect(stripContentSuffix('name.bloodline')).toBe('name');
     expect(stripContentSuffix('name.lore')).toBe('name');
+    expect(stripContentSuffix('name.spell')).toBe('name');
+    expect(stripContentSuffix('name.feat')).toBe('name');
+    expect(stripContentSuffix('name.tool')).toBe('name');
+    expect(stripContentSuffix('name.rule')).toBe('name');
+    expect(stripContentSuffix('name.boon')).toBe('name');
+  });
+
+  it('should not strip the retired .reference suffix', () => {
+    expect(stripContentSuffix('name.reference')).toBe('name.reference');
   });
 
   it('should not modify strings without a suffix', () => {

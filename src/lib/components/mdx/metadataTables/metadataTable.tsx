@@ -27,6 +27,7 @@
 
 'use client';
 
+import { LIBRARY_SEGMENT } from '@/lib/enums/constants';
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
@@ -309,7 +310,7 @@ export default function MetadataTable({
           return { href: row.link, external: true };
         }
 
-        const targetPath = row.link.startsWith('/library')
+        const targetPath = row.link.startsWith(`/${LIBRARY_SEGMENT}`)
           ? `/${locale}${row.link}`
           : `/${locale}/library${row.link}`;
 

@@ -257,4 +257,37 @@ describe('githubContentSource', () => {
       'bone-coin.trinket.mdx',
     );
   });
+
+  it('fetches from the branch named by CONTENT_REPO_BRANCH', async () => {
+    process.env.CONTENT_REPO_BRANCH = 'staging';
+    const fetchMock = vi.fn().mockResolvedValue(response(true, '# staged'));
+    global.fetch = fetchMock as any;
+    listEntriesMock.mockResolvedValue([{ name: 'bane.mdx', isDirectory: false }]);
+
+    const { githubContentSource } = await import(
+      '@/lib/db/content/adapters/github/githubContentSource'
+    );
+    await githubContentSource.fetch('en', 'spells/bane');
+
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      'https://raw.githubusercontent.com/owner/repo/staging/en/spells/bane.mdx',
+    );
+  });
+
+  it('defaults to the main branch when CONTENT_REPO_BRANCH is unset', async () => {
+    delete process.env.CONTENT_REPO_BRANCH;
+    const fetchMock = vi.fn().mockResolvedValue(response(true, '# default'));
+    global.fetch = fetchMock as any;
+    listEntriesMock.mockResolvedValue([{ name: 'bane.mdx', isDirectory: false }]);
+
+    const { githubContentSource } = await import(
+      '@/lib/db/content/adapters/github/githubContentSource'
+    );
+    await githubContentSource.fetch('en', 'spells/bane');
+
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      'https://raw.githubusercontent.com/owner/repo/main/en/spells/bane.mdx',
+    );
+  });
+
 });

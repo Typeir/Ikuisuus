@@ -9,7 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
+import { MAIN_INDEX_FILE, REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
 import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { calculateSimilarity } from './findNearestRoute.levenshtein';
 
@@ -51,7 +51,7 @@ function collectRoutes(dir: string, basePath = ''): string[] {
         continue;
       }
 
-      if (entry.name === 'main.mdx') {
+      if (entry.name === MAIN_INDEX_FILE) {
         routes.push(`/library/${basePath.replace(/\\/g, '/')}/main`);
         continue;
       }

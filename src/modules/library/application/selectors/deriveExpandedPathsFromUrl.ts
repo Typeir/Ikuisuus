@@ -10,6 +10,8 @@
  * @since 1.0.0
  */
 
+import { stripContentSuffix } from '@/lib/enums/constants';
+
 /**
  * Derives which sidebar paths should be expanded based on the current URL
  *
@@ -43,10 +45,7 @@ export function deriveExpandedPathsFromUrl(): string[] {
 
   const contentPath = match[1];
 
-  const normalizedPath = contentPath.replace(
-    /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/,
-    '',
-  );
+  const normalizedPath = stripContentSuffix(contentPath);
 
   const segments = normalizedPath.split('/');
   const expandedPaths: string[] = [];

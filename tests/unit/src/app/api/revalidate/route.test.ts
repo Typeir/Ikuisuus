@@ -17,6 +17,19 @@ const mockRevalidatePath = vi.fn();
 const mockRevalidateTag = vi.fn();
 const mockArchive = vi.fn().mockResolvedValue(false);
 const mockSyncMetadata = vi.fn().mockResolvedValue(undefined);
+const mockListEntries = vi.fn().mockResolvedValue([]);
+
+/**
+ * Directory entries for a slug, as the suffixed file that would sit on disk.
+ *
+ * @param {string} stem - Slug stem without suffix
+ * @param {string} suffix - Content suffix without dots
+ * @returns {{ name: string; isDirectory: boolean }[]} Listing entries
+ */
+const listingFor = (stem: string, suffix: string) => [
+  { name: 'main.mdx', isDirectory: false },
+  { name: `${stem}.${suffix}.mdx`, isDirectory: false },
+];
 
 vi.mock('next/cache', () => ({
   revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
@@ -30,6 +43,12 @@ vi.mock('@/lib/db/content/contentCacheTags', () => ({
 
 vi.mock('@/lib/db/content/repositories/draftRepository', () => ({
   draftRepository: { archive: (...args: unknown[]) => mockArchive(...args) },
+}));
+
+vi.mock('@/lib/db/content/directorySourceResolver', () => ({
+  resolveDirectorySource: () => ({
+    listEntries: (...args: unknown[]) => mockListEntries(...args),
+  }),
 }));
 
 vi.mock('@/lib/metadata/syncService', () => ({
@@ -79,6 +98,7 @@ describe('POST /api/revalidate', () => {
     mockRevalidateTag.mockReset();
     mockArchive.mockReset().mockResolvedValue(false);
     mockSyncMetadata.mockReset().mockResolvedValue(undefined);
+    mockListEntries.mockReset().mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -154,7 +174,11 @@ describe('POST /api/revalidate', () => {
   it('revalidates valid path and returns 200', async () => {
     const res = await POST(
       makeRequest(
-        { paths: ['/en/library/monsters/goblin'] },
+        {
+          paths: [
+            { path: '/en/library/monsters/goblin', contentType: 'monsters' },
+          ],
+        },
         { 'x-revalidation-secret': SECRET },
       ),
     );
@@ -194,7 +218,11 @@ describe('POST /api/revalidate', () => {
     mockArchive.mockResolvedValue(true);
     await POST(
       makeRequest(
-        { paths: ['/en/library/monsters/goblin'] },
+        {
+          paths: [
+            { path: '/en/library/monsters/goblin', contentType: 'monsters' },
+          ],
+        },
         { 'x-revalidation-secret': SECRET },
       ),
     );
@@ -204,14 +232,209 @@ describe('POST /api/revalidate', () => {
     );
   });
 
-  it('does not call syncMetadata when no draft archived', async () => {
+  it('calls syncMetadata when no draft was archived', async () => {
     mockArchive.mockResolvedValue(false);
+    await POST(
+      makeRequest(
+        {
+          paths: [
+            { path: '/en/library/monsters/goblin', contentType: 'monsters' },
+          ],
+        },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockSyncMetadata).toHaveBeenCalledWith(
+      expect.objectContaining({ locale: 'en', contentTypes: ['monsters'] }),
+    );
+  });
+
+  it('syncs each content type once for many paths of that type', async () => {
+    await POST(
+      makeRequest(
+        {
+          paths: [
+            { path: '/en/library/monsters/goblin', contentType: 'monsters' },
+            { path: '/en/library/monsters/orc', contentType: 'monsters' },
+            { path: '/en/library/monsters/troll', contentType: 'monsters' },
+          ],
+        },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockSyncMetadata).toHaveBeenCalledTimes(1);
+  });
+
+  it('syncs every distinct content type in one request', async () => {
+    await POST(
+      makeRequest(
+        {
+          paths: [
+            { path: '/en/library/monsters/goblin', contentType: 'monsters' },
+            { path: '/en/library/spells/bane', contentType: 'spells' },
+            {
+              path: '/en/library/items/heirlooms/deep-dredge',
+              contentType: 'heirlooms',
+            },
+            { path: '/en/library/items/trinkets/torch', contentType: 'trinkets' },
+            {
+              path: '/en/library/character-creation/bloodlines/tallian',
+              contentType: 'bloodlines',
+            },
+          ],
+        },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    const synced = mockSyncMetadata.mock.calls
+      .map((c) => (c[0] as { contentTypes: string[] }).contentTypes[0])
+      .sort();
+    expect(synced).toEqual([
+      'bloodlines',
+      'heirlooms',
+      'monsters',
+      'spells',
+      'trinkets',
+    ]);
+  });
+
+  it('separates sync by locale', async () => {
+    await POST(
+      makeRequest(
+        {
+          paths: [
+            { path: '/en/library/spells/bane', contentType: 'spells' },
+            { path: '/es/library/spells/bane', contentType: 'spells' },
+          ],
+        },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    const locales = mockSyncMetadata.mock.calls
+      .map((c) => (c[0] as { locale: string }).locale)
+      .sort();
+    expect(locales).toEqual(['en', 'es']);
+  });
+
+  it('does not sync for paths with no synced content table', async () => {
+    await POST(
+      makeRequest(
+        { paths: ['/en/library/rules/steel-and-strife/conditions'] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockSyncMetadata).not.toHaveBeenCalled();
+  });
+
+  it('reports metadata outcomes in the response', async () => {
+    const res = await POST(
+      makeRequest(
+        { paths: [{ path: '/en/library/spells/bane', contentType: 'spells' }] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    const json = await res.json();
+    expect(json.metadata).toEqual([
+      { locale: 'en', contentType: 'spells', status: 'ok' },
+    ]);
+  });
+
+  it('reports a failed sync without failing the request', async () => {
+    mockSyncMetadata.mockRejectedValue(new Error('db down'));
+    const res = await POST(
+      makeRequest(
+        { paths: [{ path: '/en/library/spells/bane', contentType: 'spells' }] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.results[0].status).toBe('ok');
+    expect(json.metadata[0]).toMatchObject({
+      contentType: 'spells',
+      status: 'error',
+      error: 'db down',
+    });
+  });
+
+  it('still syncs when draft archival throws', async () => {
+    mockArchive.mockRejectedValue(new Error('draft table missing'));
+    await POST(
+      makeRequest(
+        { paths: [{ path: '/en/library/spells/bane', contentType: 'spells' }] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockSyncMetadata).toHaveBeenCalledWith(
+      expect.objectContaining({ locale: 'en', contentTypes: ['spells'] }),
+    );
+  });
+
+  it('classifies by listing when the caller declares no content type', async () => {
+    mockListEntries.mockResolvedValue(listingFor('bane', 'spell'));
+    await POST(
+      makeRequest(
+        { paths: ['/en/library/spells/bane'] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockListEntries).toHaveBeenCalledWith('en', 'spells');
+    expect(mockSyncMetadata).toHaveBeenCalledWith(
+      expect.objectContaining({ locale: 'en', contentTypes: ['spells'] }),
+    );
+  });
+
+  it('prefers the declared content type over a listing', async () => {
+    await POST(
+      makeRequest(
+        {
+          paths: [{ path: '/en/library/spells/bane', contentType: 'spells' }],
+        },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockListEntries).not.toHaveBeenCalled();
+    expect(mockSyncMetadata).toHaveBeenCalledWith(
+      expect.objectContaining({ contentTypes: ['spells'] }),
+    );
+  });
+
+  it('ignores an unknown declared content type and falls back to listing', async () => {
+    mockListEntries.mockResolvedValue(listingFor('bane', 'spell'));
+    await POST(
+      makeRequest(
+        {
+          paths: [{ path: '/en/library/spells/bane', contentType: 'nonsense' }],
+        },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockListEntries).toHaveBeenCalled();
+    expect(mockSyncMetadata).toHaveBeenCalledWith(
+      expect.objectContaining({ contentTypes: ['spells'] }),
+    );
+  });
+
+  it('does not sync an ambiguous sheet suffix without a declared type', async () => {
+    mockListEntries.mockResolvedValue(listingFor('goblin', 'sheet'));
     await POST(
       makeRequest(
         { paths: ['/en/library/monsters/goblin'] },
         { 'x-revalidation-secret': SECRET },
       ),
     );
+    expect(mockSyncMetadata).not.toHaveBeenCalled();
+  });
+
+  it('survives a failing listing without failing the request', async () => {
+    mockListEntries.mockRejectedValue(new Error('bucket unreachable'));
+    const res = await POST(
+      makeRequest(
+        { paths: ['/en/library/spells/bane'] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(res.status).toBe(200);
     expect(mockSyncMetadata).not.toHaveBeenCalled();
   });
 });

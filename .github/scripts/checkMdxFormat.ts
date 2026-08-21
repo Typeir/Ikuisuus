@@ -11,11 +11,17 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
 import type {
   CheckFailure,
   CheckOptions,
   CheckResult,
 } from './health-check-types';
+
+/** Matches a content filename's extension together with any content-type suffix. */
+const REGEX_CONTENT_FILE = new RegExp(
+  `(${REGEX_CONTENT_SUFFIX.source.replace(/\$$/, '')})?\\.mdx$`,
+);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -82,7 +88,7 @@ function buildContentBasenameSet(files: string[]): Set<string> {
     const base = path
       .basename(absPath)
       .replace(
-        /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)\.mdx$|\.mdx$/,
+        REGEX_CONTENT_FILE,
         '',
       );
     basenames.add(base.toLowerCase());
@@ -98,7 +104,7 @@ const RULES: FormatRule[] = [
         path
           .basename(rel)
           .replace(
-            /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)\.mdx$|\.mdx$/,
+            REGEX_CONTENT_FILE,
             '',
           ),
       ),

@@ -28,6 +28,7 @@ import type { EntityManager } from '@mikro-orm/postgresql';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { syncBloodlines } from './syncBloodlines';
+import { ContentType } from './contentTypes';
 import { syncTrinkets } from './syncTrinkets';
 import type { SyncResult } from './types';
 

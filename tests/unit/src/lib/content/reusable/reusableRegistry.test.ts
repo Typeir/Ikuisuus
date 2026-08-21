@@ -60,8 +60,14 @@ describe('reusableRegistry', () => {
       expect(componentNameFromPath('image.mdx')).toBe('Image');
     });
 
-    it('should split on dots as well as dashes', () => {
-      expect(componentNameFromPath('rubedo.sheet.mdx')).toBe('RubedoSheet');
+    it('should strip the content suffix rather than name it', () => {
+      expect(componentNameFromPath('rubedo.sheet.mdx')).toBe('Rubedo');
+      expect(componentNameFromPath('lesser-mooncleave.spell.mdx')).toBe(
+        'LesserMooncleave',
+      );
+      expect(componentNameFromPath('selenic-boons.boon.mdx')).toBe(
+        'SelenicBoons',
+      );
     });
   });
 

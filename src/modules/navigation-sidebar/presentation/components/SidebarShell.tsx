@@ -26,6 +26,7 @@ import { useParams, usePathname } from 'next/navigation';
 import type { JSX } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styles from './sidebar.module.scss';
+import { stripContentSuffix } from '@/lib/enums/constants';
 
 const SidebarClient = dynamic(
   () => import('./SidebarClient').then((mod) => ({ default: mod.default })),
@@ -226,10 +227,7 @@ function SidebarStaticTree({
 function expandedPathsFromPathname(pathname: string): Set<string> {
   const match = pathname.match(/^\/[^/]+\/library\/(.+)$/);
   if (!match) return new Set();
-  const contentPath = match[1].replace(
-    /\.(sheet|specialization|list|reference|heirloom|trinket|bloodline|lore)$/,
-    '',
-  );
+  const contentPath = stripContentSuffix(match[1]);
   const segments = contentPath.split('/');
   const paths = new Set<string>();
   for (let i = 0; i < segments.length; i++) {
