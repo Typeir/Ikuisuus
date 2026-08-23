@@ -40,9 +40,60 @@
   white-space: nowrap;
 }
 
-.iframe {
-  width: 100%;
-  border: none;
+/* Stands in for .pageTitle: same line box, so the header height is identical
+   whether the pick has resolved or not. */
+.titleSkeleton {
+  flex: 1;
+  max-width: 16rem;
+  margin-bottom: 0 !important;
+}
+
+/* Stacking context for the embed and its placeholder. Owns the height the
+   iframe used to claim, so the box is reserved before the iframe exists. */
+.body {
+  position: relative;
   flex: 1;
   min-height: 500px;
+}
+
+.iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.bodySkeleton {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.5rem;
+  overflow: hidden;
+  background: var(--color-surface);
+  transition: opacity 400ms ease;
+
+  > * {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* content-visibility flips discretely at the end of the fade, which parks the
+   shimmer instead of leaving it compositing behind the loaded embed. */
+.bodySkeletonDone {
+  opacity: 0;
+  pointer-events: none;
+  content-visibility: hidden;
+  transition:
+    opacity 400ms ease,
+    content-visibility 400ms allow-discrete;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bodySkeleton,
+  .bodySkeletonDone {
+    transition: none;
+  }
 }

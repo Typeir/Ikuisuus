@@ -10,6 +10,7 @@
   "resultsFor": "Results for",
   "found": "found",
   "archivistReading": "The Archivist is reading…",
+  "archivistLoading": "Fetching the Archivist’s page…",
   "closePanel": "Close reading panel",
   "filteredBy": "Filtered by",
   "removeFilter": "Remove the {aspect} filter",

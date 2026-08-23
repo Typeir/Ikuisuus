@@ -68,10 +68,9 @@ const Home = () => {
   const locale = (params?.locale as string) || 'en';
   const archivistPage = useArchivistPick();
   const [panelOpen, setPanelOpen] = useState(true);
-  const showPanel = panelOpen && Boolean(archivistPage);
 
   return (
-    <div className={cn(styles.bento, showPanel && styles.bentoPaneled)}>
+    <div className={cn(styles.bento, panelOpen && styles.bentoPaneled)}>
       <div className={cn(styles.bentoIntro, 'prose max-w-5xl p-4 pr-8')}>
         <section
           className={styles.streamSection}
@@ -90,7 +89,7 @@ const Home = () => {
         <StreamBootstrap />
       </div>
 
-      {panelOpen && archivistPage && (
+      {panelOpen && (
         <div className={styles.bentoPanel}>
           <ArchivistPanel
             page={archivistPage}
