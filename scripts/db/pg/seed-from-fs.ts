@@ -13,10 +13,9 @@ import {
     MikroORM,
     type EntityClass,
     type EntityManager,
-    type MetadataStorage,
 } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
-import { existsSync, readdirSync, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import {
@@ -55,8 +54,8 @@ import {
     VocationSkillProficienciesEmbed,
     VocationSpellcastingEmbed,
 } from '../../../src/lib/db/orm/entities/index';
-import { recordToEntityInit } from '../../../src/lib/db/orm/reflect';
-import { contentHash } from '../../../src/lib/metadata/contentHash';
+import { syncTable, type SyncTarget } from '../../../src/lib/metadata/genericSync';
+import { SYNC_TARGETS } from '../../../src/lib/metadata/syncTargets';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '../../../');
@@ -90,311 +89,33 @@ const SUPPORTED_LOCALES = ['en', 'es', 'fi'];
 
 /* ─────────────────────  Filesystem helpers  ────────────────────────── */
 
-/**
- * Returns the content directory for a given locale.
- *
- * @param {string} locale - Locale code
- * @returns Absolute path to `src/content/{locale}`
- */
-const contentDir = (locale: string): string =>
-  join(ROOT, 'src', 'content', locale);
-
-/**
- * Returns the `.meta/` directory for a given locale.
- *
- * @param {string} locale - Locale code
- * @returns Absolute path to `.meta/{locale}`
- */
-const metaDir = (locale: string): string => join(ROOT, '.meta', locale);
-
-/**
- * Read and flatten .metadata.json files; check .meta first, then src/content.
- *
- * @param {string} locale - Locale code
- * @param {string} subdir - Subdirectory
- * @returns Flattened metadata records
- */
-const readMetadata = <T>(locale: string, subdir: string): T[] => {
-  const metaDirPath = join(metaDir(locale), subdir);
-  const contentDirPath = join(contentDir(locale), subdir);
-  const dir = existsSync(metaDirPath) ? metaDirPath : contentDirPath;
-  if (!existsSync(dir)) return [];
-
-  const results: T[] = [];
-  const walk = (current: string) => {
-    for (const entry of readdirSync(current, { withFileTypes: true })) {
-      const full = join(current, entry.name);
-      if (entry.isDirectory()) {
-        walk(full);
-      } else if (entry.isFile() && entry.name.endsWith('.metadata.json')) {
-        const parsed = JSON.parse(readFileSync(full, 'utf8'));
-        results.push(...(Array.isArray(parsed) ? parsed : [parsed]));
-      }
-    }
-  };
-  walk(dir);
-  return results;
-};
-
 /* ────────────────────  Generic Seeder  ────────────────────────────── */
 
 /**
- * Configuration for a single-table content seed pass.
- *
- * @interface ContentSeedConfig
- * @property {EntityClass<object>} entityClass - MikroORM entity constructor
- * @property {string} subdir - Content subdirectory path within the locale folder
- * @property {Function} [seedChildren] - Creates child entities (relations) after the parent row
- */
-interface ContentSeedConfig {
-  entityClass: EntityClass<object>;
-  subdir: string;
-  /** Optional filter to separate entity types sharing a subdir (e.g. vocations vs specializations) */
-  filter?: (raw: Record<string, unknown>) => boolean;
-  seedChildren?: (
-    em: EntityManager,
-    allMeta: MetadataStorage,
-    parent: object,
-    raw: Record<string, unknown>,
-  ) => void;
-}
-
-/**
- * Read metadata, delete existing rows, insert fresh via ORM reflection.
+ * Seeds one content table for a locale by replacing its rows.
  *
  * @param {EntityManager} em - Transaction-scoped entity manager
- * @param {MetadataStorage} allMeta - ORM metadata
- * @param {string} locale - Locale being seeded
- * @param {ContentSeedConfig} config - Entity class and subdirectory
- * @returns {Promise<number>} Count of parent rows inserted
+ * @param {string} locale - Locale code
+ * @param {SyncTarget} target - Table to seed
+ * @returns {Promise<number>} Rows written
  */
 async function seedContent(
   em: EntityManager,
-  allMeta: MetadataStorage,
   locale: string,
-  config: ContentSeedConfig,
+  target: SyncTarget,
 ): Promise<number> {
-  const records = readMetadata<Record<string, unknown>>(locale, config.subdir);
-  const filtered = config.filter ? records.filter(config.filter) : records;
-  if (filtered.length === 0) return 0;
-
-  await em.nativeDelete(config.entityClass, { locale } as never);
-
-  for (const raw of filtered.filter(Boolean)) {
-    const hashPayload: Record<string, unknown> = { ...raw };
-    delete hashPayload['versionHash'];
-    const versionHash = contentHash(hashPayload);
-    const init = recordToEntityInit(allMeta, config.entityClass.name, {
-      locale,
-      ...raw,
-      versionHash,
-    });
-    const parent = em.create(config.entityClass, init as never);
-    config.seedChildren?.(em, allMeta, parent, raw);
-  }
-
-  await em.flush();
-  return filtered.length;
+  const result = await syncTable(em, locale, target, { allowDeletion: true });
+  return result.inserted + result.updated + result.skipped;
 }
 
-/**
- * Seed configurations for all content entity types, ordered to respect FK
- * constraints (parent entities before child entities).
- */
-const SEED_CONFIGS: ContentSeedConfig[] = [
-  {
-    entityClass: MonsterEntity,
-    subdir: 'monsters',
-    seedChildren: (em, allMeta, parent, raw) => {
-      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
-      for (let i = 0; i < features.length; i++) {
-        const feature = features[i];
-        const source = (feature.source ?? {}) as Record<string, unknown>;
-        const init = recordToEntityInit(
-          allMeta,
-          MonsterFeatureEntity.name,
-          feature,
-        );
-        em.create(MonsterFeatureEntity, {
-          ...init,
-          monster: parent,
-          featureId: feature.id as string,
-          sortOrder: i,
-          startLine: source.start as number | undefined,
-          endLine: source.end as number | undefined,
-        } as never);
-      }
-    },
-  },
-  {
-    entityClass: HeirloomEntity,
-    subdir: join('items', 'heirlooms'),
-  },
-  {
-    entityClass: SpellEntity,
-    subdir: 'spells',
-    seedChildren: (em, allMeta, parent, raw) => {
-      for (const ref of (raw.spellLists ?? []) as Array<
-        Record<string, unknown>
-      >) {
-        const init = recordToEntityInit(allMeta, SpellListEntity.name, ref);
-        em.create(SpellListEntity, { spell: parent, ...init } as never);
-      }
-    },
-  },
-  {
-    entityClass: TrinketEntity,
-    subdir: join('items', 'trinkets'),
-  },
-  {
-    entityClass: RuleEntity,
-    subdir: 'rules',
-  },
-  {
-    entityClass: WorldEntity,
-    subdir: 'world',
-  },
-  {
-    entityClass: BloodlineEntity,
-    subdir: join('character-creation', 'bloodlines'),
-    seedChildren: (em, allMeta, parent, raw) => {
-      for (const boon of (raw.boons ?? []) as Array<Record<string, unknown>>) {
-        const init = recordToEntityInit(
-          allMeta,
-          BloodlineBoonEntity.name,
-          boon,
-        );
-        const boonEntity = em.create(BloodlineBoonEntity, {
-          bloodline: parent,
-          ...init,
-        } as never) as unknown as BloodlineBoonEntity;
-        const options = (boon.subOptions ?? []) as Array<Record<string, unknown>>;
-        for (let i = 0; i < options.length; i++) {
-          const option = options[i];
-          em.create(BloodlineBoonOptionEntity, {
-            boon: boonEntity,
-            name: option.name as string,
-            anchor: (option.anchor as string | undefined) ?? null,
-            bpValue: (option.bpValue as number | undefined) ?? 0,
-            effect: (option.effect as string | undefined) ?? null,
-            tags: (option.tags as string[] | undefined) ?? [],
-            sortOrder: i,
-          } as never);
-        }
-      }
-      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
-      for (let i = 0; i < features.length; i++) {
-        const feature = features[i];
-        const source = (feature.source ?? {}) as Record<string, unknown>;
-        const init = recordToEntityInit(
-          allMeta,
-          BloodlineFeatureEntity.name,
-          feature,
-        );
-        em.create(BloodlineFeatureEntity, {
-          ...init,
-          bloodline: parent,
-          featureId: feature.id as string,
-          sortOrder: i,
-          startLine: source.start as number | undefined,
-          endLine: source.end as number | undefined,
-        } as never);
-      }
-    },
-  },
-  {
-    filter: (raw) => !!raw.archetype,
-    entityClass: VocationEntity,
-    subdir: join('character-creation', 'vocations'),
-    seedChildren: (em, allMeta, parent, raw) => {
-      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
-      for (let i = 0; i < features.length; i++) {
-        const init = recordToEntityInit(
-          allMeta,
-          VocationFeatureEntity.name,
-          features[i],
-        );
-        em.create(VocationFeatureEntity, {
-          ...init,
-          vocation: parent,
-          sortOrder: i,
-        } as never);
-      }
-    },
-  },
-  {
-    filter: (raw) => !raw.archetype,
-    entityClass: SpecializationEntity,
-    subdir: join('character-creation', 'vocations'),
-    seedChildren: (em, allMeta, parent, raw) => {
-      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
-      for (let i = 0; i < features.length; i++) {
-        const init = recordToEntityInit(
-          allMeta,
-          SpecializationFeatureEntity.name,
-          features[i],
-        );
-        em.create(SpecializationFeatureEntity, {
-          ...init,
-          specialization: parent,
-          sortOrder: i,
-        } as never);
-      }
-      const prepared = (raw.preparedSpells ?? []) as Array<
-        Record<string, unknown>
-      >;
-      for (let i = 0; i < prepared.length; i++) {
-        const init = recordToEntityInit(
-          allMeta,
-          SpecializationPreparedSpellEntity.name,
-          prepared[i],
-        );
-        em.create(SpecializationPreparedSpellEntity, {
-          ...init,
-          specialization: parent,
-          sortOrder: i,
-        } as never);
-      }
-    },
-  },
-  {
-    entityClass: FeatEntity,
-    subdir: join('character-creation', 'feats'),
-    seedChildren: (em, allMeta, parent, raw) => {
-      const features = (raw.features ?? []) as Array<Record<string, unknown>>;
-      for (let i = 0; i < features.length; i++) {
-        const init = recordToEntityInit(
-          allMeta,
-          FeatFeatureEntity.name,
-          features[i],
-        );
-        em.create(FeatFeatureEntity, {
-          ...init,
-          feat: parent,
-          sortOrder: i,
-        } as never);
-      }
-    },
-  },
-];
-
-/* ────────────────────────  Orchestrator  ───────────────────────────── */
-
-/**
- * Seeds all content tables for a single locale inside one transaction.
- *
- * @param {MikroORM} orm - MikroORM instance
- * @param {string} locale - Locale code
- */
 async function seedLocale(orm: MikroORM, locale: string): Promise<void> {
-  const allMeta = orm.getMetadata();
   const em = orm.em.fork();
 
   await em.transactional(async (tx) => {
     const counts: string[] = [];
-    for (const cfg of SEED_CONFIGS) {
-      const n = await seedContent(tx, allMeta, locale, cfg);
-      counts.push(`${allMeta.get(cfg.entityClass.name).collection}=${n}`);
+    for (const [type, target] of Object.entries(SYNC_TARGETS)) {
+      const n = await seedContent(tx as EntityManager, locale, target);
+      counts.push(`${type}=${n}`);
     }
     console.log(`  ✅  ${locale}:  ${counts.join('  ')}`);
   });

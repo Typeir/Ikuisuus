@@ -18,6 +18,9 @@ import {
 
 /**
  * MikroORM entity for the `world` table.
+ *
+ * @property {string[]} consumes - Shard references this file declares, as `file#anchor`
+ * @property {string[]} consumers - Files declaring a reference into this one
  */
 @OrmEntity('WorldEntity', { tableName: 'world' })
 @OrmUnique({ properties: ['locale', 'slug'] })
@@ -46,6 +49,12 @@ export class WorldEntity {
 
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
 
   @OrmProperty({ type: 'string[]' })
   aliases: string[] = [];

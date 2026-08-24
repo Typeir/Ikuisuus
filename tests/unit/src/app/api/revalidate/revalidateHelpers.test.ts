@@ -139,13 +139,20 @@ describe('classifyByListing', () => {
     await expect(classifyByListing('en', 'monsters/albedo')).resolves.toBeNull();
   });
 
-  it('returns null for a suffix with no synced table', async () => {
+  it('resolves a rules suffix', async () => {
     mockListEntries.mockResolvedValue([
       { name: 'conditions.rule.mdx', isDirectory: false },
     ]);
-    await expect(
-      classifyByListing('en', 'rules/conditions'),
-    ).resolves.toBeNull();
+    await expect(classifyByListing('en', 'rules/conditions')).resolves.toBe(
+      ContentType.Rules,
+    );
+  });
+
+  it('returns null for an unknown suffix', async () => {
+    mockListEntries.mockResolvedValue([
+      { name: 'bane.wibble.mdx', isDirectory: false },
+    ]);
+    await expect(classifyByListing('en', 'spells/bane')).resolves.toBeNull();
   });
 
   it('does not match a different stem sharing a prefix', async () => {

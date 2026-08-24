@@ -8,6 +8,7 @@
  * @since 1.0.0
  */
 
+import type { ChildSyncContext } from '@/lib/db/orm/childSync';
 import {
     OrmEmbeddable,
     OrmEmbedded,
@@ -148,6 +149,12 @@ export class FeatEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
+
   /** @property {string[] | null} grants - Tag-based proficiency grants when selected (e.g. `weapon:martial`, `skill:persuasion:expertise`) */
   @OrmProperty({ type: 'string[]', nullable: true })
   grants?: string[] | null;
@@ -170,4 +177,30 @@ export class FeatEntity {
     orphanRemoval: true,
   })
   features = new Collection<FeatFeatureEntity>(this);
+
+  /**
+   * Creates `feat_features` rows for one feat metadata record.
+   *
+   * @param {ChildSyncContext} ctx - Child sync operations
+   * @param {unknown} parent - Owning feat row
+   * @param {Record<string, unknown>} record - Source feat metadata record
+   * @returns {void}
+   */
+  static syncChildren(
+    ctx: ChildSyncContext,
+    parent: unknown,
+    record: Record<string, unknown>,
+  ): void {
+    const feat = parent as FeatEntity;
+    const features = (record.features ?? []) as Array<Record<string, unknown>>;
+
+    for (let i = 0; i < features.length; i++) {
+      const init = ctx.init(FeatFeatureEntity, features[i]);
+      ctx.create(FeatFeatureEntity, {
+        ...init,
+        feat,
+        sortOrder: i,
+      });
+    }
+  }
 }

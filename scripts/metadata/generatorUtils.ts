@@ -11,6 +11,7 @@
 /* paw:gate:file-length ignore */
 
 import { createLogger } from '@/lib/logging/logger';
+import { extractKeywordRefs } from '@/lib/md/extractKeywordRefs';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { fnv1a32 } from '../../src/lib/metadata/contentHash';
@@ -214,16 +215,20 @@ function stampSharedFields(
   metadata: unknown,
   hash: string,
   readingTime: string,
+  consumes: string[],
 ): unknown {
   if (metadata === null || metadata === undefined) return metadata;
   if (Array.isArray(metadata)) {
-    return metadata.map((item) => stampSharedFields(item, hash, readingTime));
+    return metadata.map((item) =>
+      stampSharedFields(item, hash, readingTime, consumes),
+    );
   }
   if (typeof metadata !== 'object') return metadata;
   return {
     readingTime,
     ...(metadata as Record<string, unknown>),
     versionHash: hash,
+    consumes,
   };
 }
 
@@ -308,6 +313,7 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
             processed.metadata,
             versionHash,
             calculateReadingTime(sourceContent, locale),
+            extractKeywordRefs(sourceContent),
           );
 
           const metadataFilePath = resolveOutputPath

@@ -8,6 +8,8 @@
  * @since 1.0.0
  */
 
+import type { BaseMetadata } from './baseMetadata';
+
 /**
  * A named mechanic within a feat, parsed from a bold bullet item
  * (`- **Name.** description`).
@@ -16,7 +18,6 @@
  * @property {string} name - Mechanic display name (text between `**` and `.**`)
  * @property {number} [startLine] - 1-indexed start line of the bullet block in the source MDX
  * @property {number} [endLine] - 1-indexed last line of the bullet block in the source MDX
- * @property {string[]} tags - Derived gameplay tags for this mechanic
  * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
 export interface FeatFeature {
@@ -45,26 +46,14 @@ export interface FeatAbilityIncrease {
  * Complete feat metadata record as emitted by the generator.
  *
  * @interface FeatMetadata
- * @property {string} slug - Filename-derived slug
- * @property {string} title - H1 title
- * @property {string} file - Workspace-relative path to the source MDX
- * @property {string} link - Library route to the rendered page
- * @property {string} [description] - Short prose description used in tooltips
  * @property {string} [prerequisite] - Raw prerequisite text (italics line)
  * @property {boolean} hasPrerequisite - True when a non-trivial prerequisite is parsed
  * @property {FeatAbilityIncrease} [abilityIncrease] - Parsed ability score increase
  * @property {FeatFeature[]} [features] - Named mechanics parsed from bold bullet items
  * @property {string[]} [grants] - Tag-based proficiency grants (e.g. `weapon:martial`, `skill:persuasion:expertise`)
  * @property {boolean} [multiSelect] - When true, the feat may be selected more than once (e.g. Ability Score Improvement). Backed by the `multi-select` tag so it survives both FS and PG backends.
- * @property {string[]} tags - Derived gameplay tags
- * @property {number} [indexVersion] - Schema version
  */
-export interface FeatMetadata {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
-  description?: string;
+export interface FeatMetadata extends BaseMetadata {
   prerequisite?: string;
   hasPrerequisite: boolean;
   abilityIncrease?: FeatAbilityIncrease;

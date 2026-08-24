@@ -48,12 +48,11 @@ export const readMetadataFiles = async <T>(
     dirPath = metaPath;
   } catch {
     dirPath = path.join(getContentFolder(locale), subdir);
-  }
-
-  try {
-    await fs.stat(dirPath);
-  } catch {
-    return [];
+    try {
+      await fs.stat(dirPath);
+    } catch {
+      return [];
+    }
   }
 
   const files = await fs.readdir(dirPath, { recursive: true });

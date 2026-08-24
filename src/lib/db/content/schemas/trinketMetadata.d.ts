@@ -14,6 +14,8 @@
  * @since 3.0.0
  */
 
+import type { BaseMetadata } from './baseMetadata';
+
 /**
  * Complete trinket metadata record as emitted by the generator.
  *
@@ -21,10 +23,6 @@
  * `scripts/metadata/generateTrinketMetadata.ts`.
  *
  * @interface TrinketMetadata
- * @property {string} slug - URL-friendly identifier
- * @property {string} title - Display name
- * @property {string} file - Relative file path
- * @property {string} link - Wiki link path (e.g. "/library/items/trinkets/bolas")
  * @property {string} itemType - Item category (e.g. "Adventuring Gear")
  * @property {string} [damage] - Damage dice expression (e.g. "1d6")
  * @property {string} [damageType] - Damage type (e.g. "piercing", "bludgeoning")
@@ -37,14 +35,8 @@
  * @property {string} [savingThrow.ability] - Saving throw ability (e.g. "dexterity")
  * @property {string[]} [specialEffects] - Special effect keywords (e.g. ["restrain", "trip"])
  * @property {string[]} [inflictsConditions] - Conditions inflicted (e.g. ["prone"])
- * @property {string[]} [tags] - Gameplay tags for filtering and search
- * @property {string} [description] - Short prose description extracted from the trinket MDX
  */
-export interface TrinketMetadata {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
+export interface TrinketMetadata extends BaseMetadata {
   itemType: string;
   damage?: string;
   damageType?: string;
@@ -58,7 +50,6 @@ export interface TrinketMetadata {
   };
   specialEffects?: string[];
   inflictsConditions?: string[];
-  tags?: string[];
   description?: string;
 }
 
@@ -66,8 +57,6 @@ export interface TrinketMetadata {
  * Lightweight projection for table display.
  *
  * @interface TrinketIndexEntry
- * @property {string} slug - URL-friendly identifier
- * @property {string} title - Display name
  * @property {string} itemType - Item category
  * @property {string} [damage] - Damage dice expression
  * @property {string} [damageType] - Damage type

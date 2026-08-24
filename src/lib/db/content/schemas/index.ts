@@ -8,6 +8,10 @@
  * @since 3.0.0
  */
 
+export type { BaseMetadata } from './baseMetadata';
+export type { RuleMetadata } from './ruleMetadata';
+export type { WorldMetadata } from './worldMetadata';
+
 export type {
     BloodlineBoon,
     BloodlineCoreFeatures,

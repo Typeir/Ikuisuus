@@ -8,6 +8,7 @@
  * @since 7.0.0
  */
 
+import type { ChildSyncContext } from '@/lib/db/orm/childSync';
 import {
     OrmEmbeddable,
     OrmEmbedded,
@@ -184,6 +185,12 @@ export class SpecializationEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
+
   @OrmProperty({
     type: 'number',
     fieldName: 'index_version',
@@ -209,4 +216,42 @@ export class SpecializationEntity {
     orphanRemoval: true,
   })
   preparedSpells = new Collection<SpecializationPreparedSpellEntity>(this);
+
+  /**
+   * Creates the feature and prepared-spell child rows for a specialization record.
+   *
+   * @param {ChildSyncContext} ctx - Child row operations
+   * @param {unknown} parent - Persisted specialization row
+   * @param {Record<string, unknown>} record - Source metadata record
+   * @returns {void}
+   */
+  static syncChildren(
+    ctx: ChildSyncContext,
+    parent: unknown,
+    record: Record<string, unknown>,
+  ): void {
+    const specialization = parent as SpecializationEntity;
+
+    const features = (record.features ?? []) as Array<Record<string, unknown>>;
+    for (let i = 0; i < features.length; i++) {
+      const init = ctx.init(SpecializationFeatureEntity, features[i]);
+      ctx.create(SpecializationFeatureEntity, {
+        ...init,
+        specialization,
+        sortOrder: i,
+      });
+    }
+
+    const prepared = (record.preparedSpells ?? []) as Array<
+      Record<string, unknown>
+    >;
+    for (let i = 0; i < prepared.length; i++) {
+      const init = ctx.init(SpecializationPreparedSpellEntity, prepared[i]);
+      ctx.create(SpecializationPreparedSpellEntity, {
+        ...init,
+        specialization,
+        sortOrder: i,
+      });
+    }
+  }
 }

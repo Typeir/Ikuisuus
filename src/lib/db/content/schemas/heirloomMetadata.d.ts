@@ -13,6 +13,8 @@
  * @since 3.0.0
  */
 
+import type { BaseMetadata } from './baseMetadata';
+
 /**
  * Charge economy info parsed from the item description.
  *
@@ -34,10 +36,6 @@ export interface HeirloomCharges {
  * `scripts/metadata/generateHeirloomMetadata.ts`.
  *
  * @interface HeirloomMetadata
- * @property {string} slug - URL-friendly identifier
- * @property {string} title - Display name
- * @property {string} file - Relative file path
- * @property {string} link - Wiki link path (e.g. "/library/items/heirlooms/alfanjon-of-the-crescent-moon")
  * @property {string} [rarity] - Rarity tier (e.g. "common", "uncommon", "rare", "very rare", "legendary")
  * @property {string} [itemType] - High-level item category (e.g. "weapon", "armor", "wondrous item")
  * @property {string} [weaponType] - Specific weapon/armor subtype (e.g. "curved longsword", "cloak")
@@ -55,15 +53,8 @@ export interface HeirloomCharges {
  * @property {string[]} [damageTypesDealt] - Damage types the item can deal
  * @property {string[]} [savingThrowTypes] - Saving throw types the item requires
  * @property {HeirloomCharges} [charges] - Charge economy info (initial count, recharge formula, depletion flag)
- * @property {string[]} [tags] - Gameplay tags for filtering and search
- * @property {string} [description] - Short prose description extracted from the heirloom MDX
- * @property {number} [indexVersion] - Metadata format version
  */
-export interface HeirloomMetadata {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
+export interface HeirloomMetadata extends BaseMetadata {
   rarity?: string;
   itemType?: string;
   weaponType?: string;
@@ -81,8 +72,6 @@ export interface HeirloomMetadata {
   damageTypesDealt?: string[];
   savingThrowTypes?: string[];
   charges?: HeirloomCharges;
-  tags?: string[];
-  description?: string;
   indexVersion?: number;
 }
 
@@ -90,8 +79,6 @@ export interface HeirloomMetadata {
  * Lightweight projection for table and dropdown display.
  *
  * @interface HeirloomIndexEntry
- * @property {string} slug - URL-friendly identifier
- * @property {string} title - Display name
  * @property {string} [rarity] - Rarity tier
  * @property {string} [itemType] - Item category
  * @property {boolean} [requiresAttunement] - Whether attunement is required

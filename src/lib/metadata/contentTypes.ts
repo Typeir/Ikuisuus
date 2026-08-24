@@ -1,11 +1,8 @@
 /**
  * @fileoverview Metadata Content Types
- * @description Canonical content type keys for the metadata sync layer, and
- * classification of a content path onto them by filename suffix. Classification
- * never reads a file: the suffix carries the type, so a listing is enough.
- *
- * Folder location is not a signal. Content of any type may live anywhere,
- * including inside campaign trees.
+ * @description Content type keys, and classification of a content path onto them
+ * by filename suffix. Classification reads the suffix, never the file. Folder
+ * location is not a signal.
  *
  * @module lib/metadata/contentTypes
  * @version 2.0.0
@@ -14,7 +11,7 @@
  */
 
 /**
- * Content types with a synced metadata table.
+ * Every content type.
  *
  * @enum {string}
  */
@@ -24,15 +21,19 @@ export enum ContentType {
   Spells = 'spells',
   Trinkets = 'trinkets',
   Bloodlines = 'bloodlines',
+  Rules = 'rules',
+  Specializations = 'specializations',
+  Vocations = 'vocations',
+  Feats = 'feats',
+  World = 'world',
+  Tools = 'tools',
+  Lists = 'lists',
+  Boons = 'boons',
 }
 
 /**
- * Outcome of classifying a content path.
- *
- * `Resolved` carries a content type. `Ambiguous` means the suffix is shared by
- * several interoperable types and only the file's `contentType` frontmatter can
- * decide; `.sheet` covers creatures, monsters, players, objects and structures.
- * `Untyped` means the suffix has no synced metadata table.
+ * Outcome of classifying a content path. `Ambiguous` means the suffix maps to
+ * several types and only frontmatter decides. `Untyped` means no suffix matched.
  *
  * @enum {string}
  */
@@ -56,7 +57,7 @@ export type Classification =
   | { kind: ClassificationKind.Untyped; suffix: string | null };
 
 /**
- * Suffixes that map onto exactly one synced content type.
+ * Suffixes that map onto exactly one content type.
  *
  * @constant
  */
@@ -65,11 +66,18 @@ export const SUFFIX_CONTENT_TYPES: Readonly<Record<string, ContentType>> = {
   heirloom: ContentType.Heirlooms,
   trinket: ContentType.Trinkets,
   bloodline: ContentType.Bloodlines,
+  rule: ContentType.Rules,
+  specialization: ContentType.Specializations,
+  vocation: ContentType.Vocations,
+  feat: ContentType.Feats,
+  lore: ContentType.World,
+  tool: ContentType.Tools,
+  list: ContentType.Lists,
+  boon: ContentType.Boons,
 };
 
 /**
- * Suffixes shared by several interoperable types, resolved only by the file's
- * `contentType` frontmatter.
+ * Suffixes shared by several types, resolved by `contentType` frontmatter.
  *
  * @constant
  */
@@ -114,7 +122,7 @@ export function suffixOf(path: string): string | null {
  * classifyContent('monsters/albedo.sheet.mdx')
  * // { kind: 'ambiguous', suffix: 'sheet' }
  * classifyContent('rules/conditions.rule.mdx')
- * // { kind: 'untyped', suffix: 'rule' }
+ * // { kind: 'resolved', contentType: 'rules', suffix: 'rule' }
  */
 export function classifyContent(path: string): Classification {
   const suffix = suffixOf(path);
@@ -132,10 +140,8 @@ export function classifyContent(path: string): Classification {
 }
 
 /**
- * Resolves a content path to its synced content type by suffix alone.
- *
- * Returns null for ambiguous suffixes: callers that can afford to read the file
- * should fall back to its `contentType` frontmatter via {@link classifyContent}.
+ * Resolves a content path to its content type by suffix. Returns null for
+ * ambiguous suffixes; read `contentType` frontmatter instead.
  *
  * @param {string} path - Content path, slug, or filename
  * @returns {ContentType | null} The content type, or null when the suffix cannot decide
@@ -158,8 +164,7 @@ export function isContentType(value: string): value is ContentType {
 }
 
 /**
- * Narrows a declared `contentType` frontmatter value to a synced content type.
- * Used to settle {@link ClassificationKind.Ambiguous} paths.
+ * Narrows a declared `contentType` frontmatter value to a content type.
  *
  * @param {unknown} declared - Value of the file's `contentType` frontmatter field
  * @returns {ContentType | null} The content type, or null when absent or unknown

@@ -18,6 +18,9 @@ import {
 
 /**
  * MikroORM entity for the `rules` table.
+ *
+ * @property {string[]} consumes - Shard references this file declares, as `file#anchor`
+ * @property {string[]} consumers - Files declaring a reference into this one
  */
 @OrmEntity('RuleEntity', { tableName: 'rules' })
 @OrmUnique({ properties: ['locale', 'slug'] })
@@ -46,6 +49,12 @@ export class RuleEntity {
 
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
 
   /** @property {string | null} description - Prose description */
   @OrmProperty({ type: 'text', nullable: true })

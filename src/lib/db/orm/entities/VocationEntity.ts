@@ -8,6 +8,7 @@
  * @since 7.0.0
  */
 
+import type { ChildSyncContext } from '@/lib/db/orm/childSync';
 import {
     OrmEmbeddable,
     OrmEmbedded,
@@ -180,6 +181,12 @@ export class VocationEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
+
   /** @property {string | null} description - Prose description */
   @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
@@ -206,4 +213,30 @@ export class VocationEntity {
     orphanRemoval: true,
   })
   features = new Collection<VocationFeatureEntity>(this);
+
+  /**
+   * Creates this vocation's feature rows from a source metadata record.
+   *
+   * @param {ChildSyncContext} ctx - Child row operations
+   * @param {unknown} parent - Persisted vocation row
+   * @param {Record<string, unknown>} record - Source metadata record
+   * @returns {void}
+   */
+  static syncChildren(
+    ctx: ChildSyncContext,
+    parent: unknown,
+    record: Record<string, unknown>,
+  ): void {
+    const vocation = parent as VocationEntity;
+    const features = (record.features ?? []) as Array<Record<string, unknown>>;
+
+    for (let i = 0; i < features.length; i++) {
+      const init = ctx.init(VocationFeatureEntity, features[i]);
+      ctx.create(VocationFeatureEntity, {
+        ...init,
+        vocation,
+        sortOrder: i,
+      });
+    }
+  }
 }

@@ -8,17 +8,19 @@
  * @since 7.0.0
  */
 
+import type { ChildSyncContext } from '@/lib/db/orm/childSync';
 import {
-    OrmEntity,
-    OrmIndex,
-    OrmOneToMany,
-    OrmPrimaryKey,
-    OrmProperty,
-    OrmUnique,
+  OrmEntity,
+  OrmIndex,
+  OrmOneToMany,
+  OrmPrimaryKey,
+  OrmProperty,
+  OrmUnique,
 } from '@/lib/db/orm/schema';
 import { Collection } from '@mikro-orm/core';
-import type { BloodlineBoonEntity } from './BloodlineBoonEntity';
-import type { BloodlineFeatureEntity } from './BloodlineFeatureEntity';
+import { BloodlineBoonEntity } from './BloodlineBoonEntity';
+import { BloodlineBoonOptionEntity } from './BloodlineBoonOptionEntity';
+import { BloodlineFeatureEntity } from './BloodlineFeatureEntity';
 
 /**
  * MikroORM entity for the `bloodlines` table.
@@ -83,6 +85,12 @@ export class BloodlineEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
+
   @OrmProperty({
     type: 'number',
     fieldName: 'index_version',
@@ -108,4 +116,62 @@ export class BloodlineEntity {
     orphanRemoval: true,
   })
   features = new Collection<BloodlineFeatureEntity>(this);
+
+  /**
+   * Creates the boon, boon-option, and core-feature rows for a bloodline record.
+   *
+   * @param {ChildSyncContext} ctx - Child-row operations
+   * @param {unknown} parent - Persisted bloodline row
+   * @param {Record<string, unknown>} record - Source bloodline metadata record
+   * @returns {void}
+   */
+  static syncChildren(
+    ctx: ChildSyncContext,
+    parent: unknown,
+    record: Record<string, unknown>,
+  ): void {
+    const bloodline = parent as BloodlineEntity;
+    const boons = (record.boons ?? []) as Array<Record<string, unknown>>;
+
+    for (const boon of boons) {
+      const boonInit = ctx.init(BloodlineBoonEntity, boon);
+      const boonRow = ctx.create(BloodlineBoonEntity, {
+        ...boonInit,
+        bloodline,
+      }) as BloodlineBoonEntity;
+
+      const options = (boon.subOptions ?? []) as Array<
+        Record<string, unknown>
+      >;
+      for (let i = 0; i < options.length; i++) {
+        const option = options[i];
+        const optionInit = ctx.init(BloodlineBoonOptionEntity, option);
+        ctx.create(BloodlineBoonOptionEntity, {
+          ...optionInit,
+          boon: boonRow,
+          name: option.name as string,
+          anchor: (option.anchor as string | undefined) ?? null,
+          bpValue: (option.bpValue as number | undefined) ?? 0,
+          effect: (option.effect as string | undefined) ?? null,
+          tags: (option.tags as string[] | undefined) ?? [],
+          sortOrder: i,
+        });
+      }
+    }
+
+    const features = (record.features ?? []) as Array<Record<string, unknown>>;
+    for (let i = 0; i < features.length; i++) {
+      const feature = features[i];
+      const source = (feature.source ?? {}) as Record<string, unknown>;
+      const init = ctx.init(BloodlineFeatureEntity, feature);
+      ctx.create(BloodlineFeatureEntity, {
+        ...init,
+        bloodline,
+        featureId: feature.id as string,
+        sortOrder: i,
+        startLine: source.start as number | undefined,
+        endLine: source.end as number | undefined,
+      });
+    }
+  }
 }

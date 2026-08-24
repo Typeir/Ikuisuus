@@ -8,6 +8,8 @@
  * @since 3.0.0
  */
 
+import type { BaseMetadata } from './baseMetadata';
+
 /**
  * A single feature row from the vocation features table.
  *
@@ -17,7 +19,6 @@
  * @property {number} [endLine] - 1-indexed last line of the feature heading block in the source MDX
  * @property {string[]} [grants] - Tag-based proficiency grants this feature confers
  * @property {string} [heading] - Raw heading text the feature renders under (`1st Level – Spellcasting`)
- * @property {string[]} [tags] - Aspects extracted from the feature body
  * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
 export interface VocationFeature {
@@ -57,10 +58,6 @@ export interface VocationSkillProficiencies {
  * Complete vocation metadata record as emitted by the generator.
  *
  * @interface VocationMetadata
- * @property {string} slug - URL-friendly identifier (e.g. "Berserker")
- * @property {string} title - Display name (e.g. "Berserker")
- * @property {string} file - Relative file path from content root
- * @property {string} link - Public route path
  * @property {string} archetype - Vocation archetype (e.g. "Martial", "Full Caster")
  * @property {string[]} primaryAbility - Primary ability scores (e.g. ["Strength"])
  * @property {number} hitDie - Hit die face count (e.g. 12 for a d12); 0 when the vocation declares none
@@ -72,15 +69,8 @@ export interface VocationSkillProficiencies {
  * @property {VocationSpellcasting} [spellcasting] - Spellcasting summary if applicable
  * @property {string[]} specializations - Slugs of available specializations
  * @property {VocationFeature[]} features - Level-feature progression
- * @property {string[]} tags - Derived gameplay tags for filtering
- * @property {string} [description] - Prose description extracted from the vocation MDX
- * @property {number} [indexVersion] - Metadata schema version
  */
-export interface VocationMetadata {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
+export interface VocationMetadata extends BaseMetadata {
   archetype: string;
   primaryAbility: string[];
   hitDie: number;
@@ -93,7 +83,6 @@ export interface VocationMetadata {
   specializations: string[];
   features: VocationFeature[];
   tags: string[];
-  description?: string;
   indexVersion?: number;
 }
 
@@ -101,8 +90,6 @@ export interface VocationMetadata {
  * Lightweight projection for table and dropdown display.
  *
  * @interface VocationIndexEntry
- * @property {string} slug - Vocation slug
- * @property {string} title - Vocation title
  * @property {number} hitDie - Hit die face count
  * @property {string} archetype - Vocation archetype
  * @property {string[]} primaryAbility - Primary ability scores

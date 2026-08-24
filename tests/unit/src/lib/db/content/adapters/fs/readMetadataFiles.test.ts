@@ -112,7 +112,7 @@ describe('readMetadataFiles', () => {
     expect(fs.stat).toHaveBeenCalledWith(expect.stringContaining('items'));
   });
 
-  it('should skip .meta/ directory when METADATA_BACKEND is fs', async () => {
+  it('should prefer .meta/ directory regardless of METADATA_BACKEND', async () => {
     vi.stubEnv('METADATA_BACKEND', 'fs');
     vi.mocked(fs.stat).mockResolvedValue({} as any);
     vi.mocked(fs.readdir).mockResolvedValue([
@@ -125,6 +125,23 @@ describe('readMetadataFiles', () => {
     await readMetadataFiles('en', 'spells');
 
     expect(fs.stat).toHaveBeenCalledTimes(1);
+    expect(fs.stat).toHaveBeenCalledWith(expect.stringContaining('.meta'));
+  });
+
+  it('should fall back to the content tree when .meta/ is absent', async () => {
+    vi.stubEnv('METADATA_BACKEND', 'fs');
+    vi.mocked(fs.stat)
+      .mockRejectedValueOnce(new Error('ENOENT'))
+      .mockResolvedValue({} as any);
+    vi.mocked(fs.readdir).mockResolvedValue([
+      'fireball.metadata.json',
+    ] as unknown as string[]);
+    vi.mocked(fs.readFile).mockResolvedValue(
+      JSON.stringify({ slug: 'fireball' }),
+    );
+
+    await readMetadataFiles('en', 'spells');
+
     expect(fs.stat).toHaveBeenCalledWith(expect.stringContaining('content'));
   });
 

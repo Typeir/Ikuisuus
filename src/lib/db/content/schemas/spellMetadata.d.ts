@@ -10,11 +10,12 @@
  * @since 3.0.0
  */
 
+import type { BaseMetadata } from './baseMetadata';
+
 /**
  * Reference to a vocation or specialization spell list that includes this spell.
  *
  * @property {string} name - List name (e.g. "Revenant", "Want of Knowledge")
- * @property {string} link - Path to the spell list page
  * @property {string} [specialization] - Owning specialization slug when the list belongs to a specialization rather than a vocation (derived from a `.specialization` link target)
  */
 export interface SpellListRef {
@@ -30,10 +31,6 @@ export interface SpellListRef {
  * `scripts/metadata/generateSpellMetadata.ts`.
  *
  * @interface SpellMetadata
- * @property {string} slug - URL-friendly identifier
- * @property {string} title - Display name
- * @property {string} file - Relative file path ("external" for imported spells)
- * @property {string} link - Wiki link path or external URL
  * @property {number} [level] - Spell level (0 = cantrip, 1–10 = leveled)
  * @property {string} [school] - School of magic (e.g. "Evocation", "Transmutation")
  * @property {string} [quality] - Quality tier for high-level spells (e.g. "Legendary", "Epic")
@@ -48,15 +45,9 @@ export interface SpellListRef {
  * @property {boolean} [components.material] - Requires material component
  * @property {string} [components.materialDescription] - Material component description
  * @property {boolean} [hasRitual] - Whether the spell can be cast as a ritual (external spells)
- * @property {string} [description] - Short prose description extracted from the spell MDX
- * @property {string[]} [tags] - Gameplay tags for filtering and search
  * @property {SpellListRef[]} [spellLists] - Class/vocation spell lists that include this spell
  */
-export interface SpellMetadata {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
+export interface SpellMetadata extends BaseMetadata {
   level?: number;
   school?: string;
   quality?: string;
@@ -72,8 +63,6 @@ export interface SpellMetadata {
     materialDescription?: string;
   };
   hasRitual?: boolean;
-  description?: string;
-  tags?: string[];
   spellLists?: SpellListRef[];
   /** Sourcebook the entry comes from */
   source?: string | null;
@@ -84,8 +73,6 @@ export interface SpellMetadata {
  * Corresponds to the fields returned by `/api/spells/index`.
  *
  * @interface SpellIndexEntry
- * @property {string} slug - URL-friendly identifier
- * @property {string} title - Display name
  * @property {number} [level] - Spell level
  * @property {string} [school] - School of magic
  */

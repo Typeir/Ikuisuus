@@ -15,11 +15,17 @@ vi.mock('@/lib/db/orm/orm', () => ({
 }));
 
 vi.mock('@/lib/db/orm/entities', () => ({
-  MonsterEntity: class {},
+  BloodlineEntity: class {},
+  FeatEntity: class {},
   HeirloomEntity: class {},
+  MonsterEntity: class {},
+  RuleEntity: class {},
+  SpecializationEntity: class {},
   SpellEntity: class {},
   SpellListEntity: class {},
   TrinketEntity: class {},
+  VocationEntity: class {},
+  WorldEntity: class {},
 }));
 
 vi.mock('fs', () => {
@@ -61,6 +67,7 @@ describe('syncMetadata', () => {
     fsMock.existsSync.mockReturnValue(false);
 
     const mockTx = {
+        getMetadata: () => ({ get: () => ({ properties: {} }) }),
       find: vi.fn().mockResolvedValue([]),
       assign: vi.fn(),
       create: vi.fn(),
@@ -90,7 +97,7 @@ describe('syncMetadata', () => {
   it('should handle unknown content types gracefully', async () => {
     const mockEm = {
       transactional: vi.fn(async (fn: (tx: unknown) => Promise<void>) => {
-        await fn({});
+        await fn({ getMetadata: () => ({ get: () => ({ properties: {} }) }) });
       }),
       clear: vi.fn(),
     };
@@ -114,6 +121,7 @@ describe('syncMetadata', () => {
     const mockRemove = vi.fn();
 
     const mockTx = {
+        getMetadata: () => ({ get: () => ({ properties: {} }) }),
       find: vi.fn().mockResolvedValue([
         { subSlug: undefined, slug: 'albedo-the-bleak-bloom', versionHash: 'abc' },
         { subSlug: undefined, slug: 'goblin', versionHash: 'def' },
@@ -146,6 +154,7 @@ describe('syncMetadata', () => {
     fsMock.existsSync.mockReturnValue(false);
 
     const mockTx = {
+        getMetadata: () => ({ get: () => ({ properties: {} }) }),
       find: vi.fn().mockResolvedValue([]),
       assign: vi.fn(),
       create: vi.fn(),

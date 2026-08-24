@@ -8,6 +8,7 @@
  * @since 5.0.0
  */
 
+import type { ChildSyncContext } from '@/lib/db/orm/childSync';
 import {
   OrmEmbeddable,
   OrmEmbedded,
@@ -266,6 +267,12 @@ export class MonsterEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
+
   /** @property {string | null} image - Image path */
   @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
@@ -293,6 +300,36 @@ export class MonsterEntity {
     orphanRemoval: true,
   })
   features = new Collection<MonsterFeatureEntity>(this);
+
+  /**
+   * Creates the feature shard rows for a monster record.
+   *
+   * @param {ChildSyncContext} ctx - Child sync operations
+   * @param {unknown} parent - Owning monster row
+   * @param {Record<string, unknown>} record - Monster metadata record
+   * @returns {void}
+   */
+  static syncChildren(
+    ctx: ChildSyncContext,
+    parent: unknown,
+    record: Record<string, unknown>,
+  ): void {
+    const monster = parent as MonsterEntity;
+    const features = (record.features ?? []) as Array<Record<string, unknown>>;
+
+    features.forEach((feature, index) => {
+      const source = (feature.source ?? {}) as Record<string, unknown>;
+
+      ctx.create(MonsterFeatureEntity, {
+        ...ctx.init(MonsterFeatureEntity, feature),
+        monster,
+        featureId: feature.id as string,
+        sortOrder: index,
+        startLine: source.start as number | undefined,
+        endLine: source.end as number | undefined,
+      });
+    });
+  }
 }
 
 /* ─────────────────────────  Child Entity  ──────────────────────────── */

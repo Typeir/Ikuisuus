@@ -9,6 +9,7 @@
  * @since 5.0.0
  */
 
+import type { ChildSyncContext } from '@/lib/db/orm/childSync';
 import {
     OrmEmbeddable,
     OrmEmbedded,
@@ -80,6 +81,9 @@ export class SpellListEntity {
 
 /**
  * MikroORM entity for the `spells` table.
+ *
+ * @property {string[]} consumes - Shard references this file declares, as `file#anchor`
+ * @property {string[]} consumers - Files declaring a reference into this one
  */
 @OrmEntity('SpellEntity', { tableName: 'spells' })
 @OrmUnique({ properties: ['locale', 'slug'] })
@@ -149,6 +153,12 @@ export class SpellEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
+
   @OrmOneToMany({
     entity: 'SpellListEntity',
     mappedBy: 'spell',
@@ -163,4 +173,26 @@ export class SpellEntity {
   /** @property {string | null} source - Sourcebook the entry comes from */
   @OrmProperty({ type: 'string', nullable: true })
   source?: string | null;
+
+  /**
+   * Creates the `spell_lists` rows declared by a spell record's `spellLists`.
+   *
+   * @param {ChildSyncContext} ctx - Child-row operations
+   * @param {unknown} parent - Persisted spell row
+   * @param {Record<string, unknown>} record - Source spell metadata record
+   * @returns {void}
+   */
+  static syncChildren(
+    ctx: ChildSyncContext,
+    parent: unknown,
+    record: Record<string, unknown>,
+  ): void {
+    const spell = parent as SpellEntity;
+    const refs = (record.spellLists ?? []) as Array<Record<string, unknown>>;
+
+    for (const ref of refs) {
+      const init = ctx.init(SpellListEntity, ref);
+      ctx.create(SpellListEntity, { ...init, spell });
+    }
+  }
 }

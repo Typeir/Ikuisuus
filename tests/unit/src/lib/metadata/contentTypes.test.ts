@@ -70,14 +70,22 @@ describe('classifyContent', () => {
   });
 
   it.each([
-    ['rules/steel-and-strife/conditions.rule.mdx', 'rule'],
-    ['world/plato-station.lore.mdx', 'lore'],
-    ['character-creation/feats/anima-warrior.feat.mdx', 'feat'],
-    ['items/tools/alchemy.tool.mdx', 'tool'],
-  ])('reports %s as untyped', (path, suffix) => {
+    ['rules/steel-and-strife/conditions.rule.mdx', ContentType.Rules],
+    ['world/plato-station.lore.mdx', ContentType.World],
+    ['character-creation/feats/anima-warrior.feat.mdx', ContentType.Feats],
+    ['items/tools/alchemy.tool.mdx', ContentType.Tools],
+  ])('resolves %s by suffix', (path, expected) => {
     expect(classifyContent(path)).toEqual({
+      kind: ClassificationKind.Resolved,
+      contentType: expected,
+      suffix: expect.any(String),
+    });
+  });
+
+  it('reports an unknown suffix as untyped', () => {
+    expect(classifyContent('spells/bane.wibble.mdx')).toEqual({
       kind: ClassificationKind.Untyped,
-      suffix,
+      suffix: 'wibble',
     });
   });
 
@@ -106,7 +114,7 @@ describe('resolveContentType', () => {
 
   it.each([
     ['monsters/albedo.sheet.mdx'],
-    ['rules/conditions.rule.mdx'],
+    ['spells/bane.wibble.mdx'],
     ['spells/bane'],
   ])('returns null when the suffix cannot decide: %s', (path) => {
     expect(resolveContentType(path)).toBeNull();
@@ -118,7 +126,7 @@ describe('contentTypeFromFrontmatter', () => {
     expect(contentTypeFromFrontmatter(declared)).toBe(declared);
   });
 
-  it.each([[undefined], [null], [''], ['vocations'], [42], [{}]])(
+  it.each([[undefined], [null], [''], ['wibbles'], [42], [{}]])(
     'rejects %s',
     (declared) => {
       expect(contentTypeFromFrontmatter(declared)).toBeNull();
@@ -147,7 +155,7 @@ describe('isContentType', () => {
     expect(isContentType(value)).toBe(true);
   });
 
-  it.each([['vocations'], ['feats'], ['rules'], ['']])(
+  it.each([['wibbles'], ['sheets'], ['']])(
     'rejects %s',
     (value) => {
       expect(isContentType(value)).toBe(false);

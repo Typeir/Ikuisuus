@@ -96,6 +96,12 @@ export class TrinketEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
+
   /** @property {string | null} description - Prose description extracted from the trinket MDX */
   @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;

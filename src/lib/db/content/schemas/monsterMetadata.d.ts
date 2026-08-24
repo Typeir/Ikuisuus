@@ -8,6 +8,8 @@
  * @since 3.0.0
  */
 
+import type { BaseMetadata } from './baseMetadata';
+
 /**
  * Armor class parsed from stat block table.
  *
@@ -123,11 +125,7 @@ export interface MonsterSenses {
  * `scripts/metadata/generateMonsterMetadata.ts`.
  *
  * @interface MonsterMetadata
- * @property {string} slug - URL-friendly filename base (e.g. "abominable-avian")
  * @property {string} [subSlug] - Variant identifier for multi-stat-block files (e.g. "albedo", "petal")
- * @property {string} title - Display name
- * @property {string} file - Relative file path (e.g. "src/content/en/monsters/abominable-avian.sheet.mdx")
- * @property {string} link - Wiki link path (e.g. "/library/monsters/abominable-avian")
  * @property {string} [size] - Creature size (lowercase: "tiny" | "small" | "medium" | "large" | "huge" | "gargantuan")
  * @property {string} [creatureType] - Creature type (lowercase: "aberration" | "beast" | "dragon" etc.)
  * @property {string} [alignment] - Alignment (lowercase: "chaotic evil" | "neutral" etc.)
@@ -145,22 +143,15 @@ export interface MonsterSenses {
  * @property {string[]} [languages] - Known languages
  * @property {string} [cr] - Challenge rating (fractional or whole, e.g. "1/4", "10")
  * @property {number} [tierBonus] - Tier bonus
- * @property {string[]} [tags] - Gameplay tags for filtering and search
  * @property {MonsterFeatureSummary[]} [features] - Extracted feature shards, each with its own aspects
  * @property {string} [image] - Image path extracted from BlendedImage in MDX (e.g. "/library/images/Albedo.webp")
- * @property {string} [description] - Short prose lore description extracted from the stat block MDX
- * @property {number} [indexVersion] - Metadata format version
  * @property {'object'} [kind] - Set on quoted object statlets (plating, blades); absent on creatures
  * @property {number} [damageThreshold] - Object damage threshold
  */
-export interface MonsterMetadata {
-  slug: string;
+export interface MonsterMetadata extends BaseMetadata {
   subSlug?: string;
   kind?: 'object';
   damageThreshold?: number;
-  title: string;
-  file: string;
-  link: string;
   size?: string;
   creatureType?: string;
   alignment?: string;
@@ -178,10 +169,8 @@ export interface MonsterMetadata {
   languages?: string[];
   cr?: string;
   tierBonus?: number;
-  tags?: string[];
   features?: MonsterFeatureSummary[];
   image?: string;
-  description?: string;
   indexVersion?: number;
 }
 
@@ -196,7 +185,6 @@ export interface MonsterMetadata {
  * @property {string} id - Stable feature identifier, e.g. `mucklord/garbage-communion`
  * @property {string} name - Feature name as written in the stat block
  * @property {string} [trigger] - `passive`, `action` or `reaction`
- * @property {string[]} [tags] - Aspects derived from this feature alone
  * @property {string} [heading] - Rendered heading text when it differs from `name`
  * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
@@ -214,8 +202,6 @@ export interface MonsterFeatureSummary {
  * Corresponds to the fields returned by `/api/monsters/index`.
  *
  * @interface MonsterIndexEntry
- * @property {string} slug - URL-friendly identifier
- * @property {string} title - Display name
  * @property {string} [cr] - Challenge rating
  * @property {string} [size] - Creature size
  * @property {string} [creatureType] - Creature type

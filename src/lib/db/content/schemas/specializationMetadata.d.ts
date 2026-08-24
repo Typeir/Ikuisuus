@@ -8,6 +8,8 @@
  * @since 3.0.0
  */
 
+import type { BaseMetadata } from './baseMetadata';
+
 /**
  * A single feature gained at a specific level.
  *
@@ -17,7 +19,6 @@
  * @property {number} [endLine] - 1-indexed last line of the feature heading block in the source MDX
  * @property {string[]} [grants] - Tag-based proficiency grants this feature confers
  * @property {string} [heading] - Raw heading text the feature renders under
- * @property {string[]} [tags] - Aspects extracted from the feature body
  * @property {string} [anchor] - Anchor slug of the rendered heading; the stable shard key
  */
 export interface SpecializationFeature {
@@ -57,29 +58,17 @@ export interface SpecializationSpellcasting {
  * Complete specialization metadata record as emitted by the generator.
  *
  * @interface SpecializationMetadata
- * @property {string} slug - URL-friendly identifier (e.g. "path-of-the-berserker")
- * @property {string} title - Display name (e.g. "Path of Frenzy")
- * @property {string} file - Relative file path from content root
- * @property {string} link - Public route path
  * @property {string} vocation - Parent vocation slug (e.g. "Berserker")
  * @property {string} specializationType - Type classification (e.g. "Path", "Domain", "School")
  * @property {string} [flavor] - Introductory flavor text
- * @property {string} [description] - Prose description extracted from the specialization MDX
  * @property {SpecializationSpellcasting} [spellcasting] - Own spellcasting if applicable
  * @property {AlwaysPreparedSpells[]} [preparedSpells] - Level-keyed lists of always-prepared spells. Matches `SpecializationEntity.preparedSpells` relation.
  * @property {SpecializationFeature[]} features - Level-feature list
- * @property {string[]} tags - Derived gameplay tags for filtering
- * @property {number} [indexVersion] - Metadata schema version
  */
-export interface SpecializationMetadata {
-  slug: string;
-  title: string;
-  file: string;
-  link: string;
+export interface SpecializationMetadata extends BaseMetadata {
   vocation: string;
   specializationType: string;
   flavor?: string;
-  description?: string;
   spellcasting?: SpecializationSpellcasting;
   preparedSpells?: AlwaysPreparedSpells[];
   features: SpecializationFeature[];
@@ -91,8 +80,6 @@ export interface SpecializationMetadata {
  * Lightweight projection for table and dropdown display.
  *
  * @interface SpecializationIndexEntry
- * @property {string} slug - Specialization slug
- * @property {string} title - Specialization title
  * @property {string} vocation - Parent vocation slug
  * @property {string} specializationType - Type classification
  */

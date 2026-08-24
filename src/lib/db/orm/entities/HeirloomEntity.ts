@@ -139,6 +139,12 @@ export class HeirloomEntity {
   @OrmProperty({ type: 'string[]' })
   tags: string[] = [];
 
+  @OrmProperty({ type: 'string[]' })
+  consumes: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
+  consumers: string[] = [];
+
   /** @property {string | null} description - Prose description extracted from the heirloom MDX */
   @OrmProperty({ type: 'text', nullable: true })
   description?: string | null;
