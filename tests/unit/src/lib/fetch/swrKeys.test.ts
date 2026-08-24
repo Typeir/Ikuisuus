@@ -20,7 +20,6 @@ import {
     monstersIndexKey,
     monstersKey,
     nearestRouteKey,
-    shardKey,
     specializationsKey,
     spellKey,
     spellSourcesKey,
@@ -29,7 +28,6 @@ import {
     urlForBloodlines,
     urlForContentShard,
     urlForFeats,
-    urlForShard,
     urlForSpecializations,
     urlForVocations,
     vocationsKey,
@@ -143,19 +141,6 @@ describe('swrKeys', () => {
     });
   });
 
-  describe('shardKey', () => {
-    it('returns tuple when enabled', () => {
-      expect(shardKey('goblin', 'Goblin Attack', true)).toEqual([
-        'shard',
-        'goblin',
-        'Goblin Attack',
-      ]);
-    });
-    it('returns null when disabled', () => {
-      expect(shardKey('goblin', 'Goblin Attack', false)).toBeNull();
-    });
-  });
-
   describe('contentShardKey', () => {
     it('returns tuple when enabled', () => {
       expect(contentShardKey('feats', 'tough', 'en', true)).toEqual([
@@ -199,12 +184,6 @@ describe('swrKeys', () => {
       expect(urlForContentShard('feats', 'tough', 'en')).toBe(
         '/api/content-shards/feats/tough?locale=en',
       );
-    });
-    it('urlForShard builds correct URL with encoded params', () => {
-      const url = urlForShard('goblin', 'Goblin Attack');
-      expect(url).toContain('/api/shards?');
-      expect(url).toContain('file=goblin');
-      expect(url).toContain('heading=Goblin+Attack');
     });
   });
 });

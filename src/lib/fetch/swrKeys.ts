@@ -195,22 +195,6 @@ export function nearestRouteKey(
 }
 
 /**
- * Builds the SWR cache key for a shard heading fetch.
- *
- * @param {string} sourceFile - Source file slug
- * @param {string} heading - Heading within the file
- * @param {boolean} [enabled] - When falsy, returns null to skip fetch
- * @returns {readonly ['shard', string, string] | null} Cache key or null
- */
-export function shardKey(
-  sourceFile: string,
-  heading: string,
-  enabled?: boolean,
-): readonly ['shard', string, string] | null {
-  return enabled ? (['shard', sourceFile, heading] as const) : null;
-}
-
-/**
  * Builds the SWR cache key for a content shard panel fetch.
  *
  * @param {string} contentType - API path segment (e.g. `'feats'`)
@@ -298,18 +282,6 @@ export function urlForContentShard(
   locale: string,
 ): string {
   return `/api/content-shards/${contentType}/${slug}?locale=${locale}`;
-}
-
-/**
- * Builds the API URL for a shard heading fetch.
- *
- * @param {string} sourceFile - Source file slug
- * @param {string} heading - Heading within the file
- * @returns {string} API URL
- */
-export function urlForShard(sourceFile: string, heading: string): string {
-  const params = new URLSearchParams({ file: sourceFile, heading });
-  return `/api/shards?${params.toString()}`;
 }
 
 /**

@@ -47,16 +47,6 @@ export interface BloodlineApiItem {
 }
 
 /**
- * Response shape for `/api/shards`.
- *
- * @interface ShardResponse
- * @property {string} text - Raw markdown text of the shard
- */
-export interface ShardResponse {
-  text: string;
-}
-
-/**
  * Response shape for `/api/content-shards/[type]/[slug]`.
  *
  * @interface ContentShardResponse

@@ -17,7 +17,7 @@ import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import type { BloodlineBoon } from '@/lib/db/content/schemas/bloodlineMetadata.d';
 import { useBloodlines } from '@/lib/hooks/data/useBloodlines';
 import type { CharacterShard } from '@/lib/types/character';
-import { computeBpSpent } from '@/modules/character-builder/lib/utils/shardExtractor';
+import { computeBpSpent } from '@/modules/character-builder/lib/utils/boonPoints';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import { useSWRConfig } from 'swr';

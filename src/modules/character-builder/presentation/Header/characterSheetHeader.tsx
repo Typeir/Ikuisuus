@@ -24,7 +24,7 @@ import {
   useSheetMutators,
 } from '@/modules/character-builder/application/context/activeSheetContext';
 import { getCharacterDerived } from '@/modules/character-builder/lib/utils/characterDerivation';
-import { computeBpSpent } from '@/modules/character-builder/lib/utils/shardExtractor';
+import { computeBpSpent } from '@/modules/character-builder/lib/utils/boonPoints';
 import {
   getXPForLevel,
   getXpAxisPosition,

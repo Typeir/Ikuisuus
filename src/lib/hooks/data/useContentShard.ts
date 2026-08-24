@@ -15,28 +15,12 @@ import { fetcher } from '@/lib/fetch/fetcher';
 import {
     contentShardKey,
     contentShardSingleKey,
-    shardKey,
     urlForContentShard,
     urlForContentShardSingle,
-    urlForShard,
 } from '@/lib/fetch/swrKeys';
-import type { ContentShardResponse, ShardResponse } from '@/lib/types/api.d';
+import type { ContentShardResponse } from '@/lib/types/api.d';
 import type { ContentShardType } from '@/modules/character-builder/presentation/shards/contentShardPanel';
 import useSWR, { type KeyedMutator } from 'swr';
-
-/**
- * Options for the `/api/shards` (single heading) variant.
- *
- * @interface UseShardOptions
- * @property {string} sourceFile - Source file slug
- * @property {string} heading - Heading key within the file
- * @property {boolean} [enabled] - Set to `false` to skip fetching (default `true`)
- */
-export interface UseShardOptions {
-  sourceFile: string;
-  heading: string;
-  enabled?: boolean;
-}
 
 /**
  * Options for the `/api/content-shards/[type]/[slug]` variant.
@@ -71,34 +55,6 @@ export interface UseContentShardResult<T> {
   error: Error | undefined;
   mutate: KeyedMutator<T>;
   revalidate: () => void;
-}
-
-/**
- * Fetches a single heading block from `/api/shards`. The SWR key is `null`
- * until `enabled` becomes truthy, skipping the fetch.
- *
- * @param {UseShardOptions} options - Hook configuration
- * @returns {UseContentShardResult<ShardResponse>} Shard loading state
- */
-export function useShard({
-  sourceFile,
-  heading,
-  enabled = true,
-}: UseShardOptions): UseContentShardResult<ShardResponse> {
-  const { data, isLoading, error, mutate } = useSWR<ShardResponse, Error>(
-    shardKey(sourceFile, heading, enabled),
-    () => fetcher<ShardResponse>(urlForShard(sourceFile, heading)),
-  );
-
-  return {
-    data,
-    isLoading,
-    error,
-    mutate,
-    revalidate: () => {
-      void mutate();
-    },
-  };
 }
 
 /**
