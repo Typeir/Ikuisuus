@@ -220,17 +220,12 @@
   }
 }
 
-/* MDX Section framing and first-letter decoration moved to mixins
-     The mixins are provided by `@use 'mixins' as *;` at the top of this file.
-  */
 .mdxContent {
   composes: mdxBase;
   padding-top: 5rem;
   padding-bottom: 5rem;
   overflow-y: clip;
 
-  /* Sections nested inside collapsibles and statlet quotes carry no frame or
-     stream: the container is the visual unit there, not each heading. */
   details,
   blockquote {
     section[data-heading-level] {
@@ -278,10 +273,7 @@
 
     /* Responsive adjustments for all section pseudo-decorators */
     @media (max-width: 1023px) {
-      /* Freeze decoration stream positions and nesting depth on mobile.
-         Prevent per-depth adjustments that rely on custom properties
-         like --stream-x, --depth, or --heading-level so decorations
-         remain consistent across breakpoints. */
+      scroll-margin-top: $mobile-header-height;
       --stream-x: -1.4rem;
       --depth: 0;
       --heading-level: 1;
@@ -337,6 +329,10 @@
         }
       }
     }
+  }
+
+  h1:has(.first-letter) {
+    @include mdx-first-letter-headroom();
   }
 
   h1 .first-letter {

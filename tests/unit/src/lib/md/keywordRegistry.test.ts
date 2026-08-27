@@ -12,11 +12,8 @@
  * @requires @/lib/md/keywordRegistry Registry under test
  */
 
-import {
-  KEYWORD_REGISTRY,
-  lookupKeyword,
-  normalizeKeyword,
-} from '@/lib/md/keywordRegistry';
+import { normalizeKeyword } from '@/lib/md/keywordExpressionParser';
+import { KEYWORD_REGISTRY, lookupKeyword } from '@/lib/md/keywordRegistry';
 import { describe, expect, it } from 'vitest';
 
 describe('keywordRegistry', () => {
@@ -39,16 +36,6 @@ describe('keywordRegistry', () => {
         expect(entry.term).toBe(key);
         expect(normalizeKeyword(key)).toBe(key);
       }
-    });
-  });
-
-  describe('normalizeKeyword', () => {
-    it('should lowercase and trim', () => {
-      expect(normalizeKeyword('  Accuracy ')).toBe('accuracy');
-    });
-
-    it('should collapse inner whitespace', () => {
-      expect(normalizeKeyword('damage   bonus')).toBe('damage bonus');
     });
   });
 

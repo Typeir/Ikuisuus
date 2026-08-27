@@ -11,7 +11,7 @@
 
 import { displayAspects } from '@/modules/library/domain/aspects';
 import { useLocale } from 'next-intl';
-import { AspectPill } from './Aspects';
+import { AspectPill } from './AspectPill';
 import styles from './Aspects.module.scss';
 
 /**

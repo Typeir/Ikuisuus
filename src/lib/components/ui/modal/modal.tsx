@@ -30,6 +30,7 @@ import { useModalA11y } from './useModalA11y';
  * @property {string} [ariaLabel] - Accessible label for screen readers
  * @property {string} [className] - Additional CSS classes for modal content
  * @property {string} [bodyClassName] - Additional CSS classes for the scrolling body
+ * @property {string} [contentClassName] - Additional CSS classes for the wrapper holding the children
  * @property {string} [overlayClassName] - Additional CSS classes for overlay
  * @property {boolean} [flashlight=true] - Render the reveal layer behind the body
  * @property {FlashlightCorner} [flashlightCorner='bottom-left'] - Corner the reveal sits on
@@ -44,6 +45,7 @@ export interface ModalProps {
   ariaLabel?: string;
   className?: string;
   bodyClassName?: string;
+  contentClassName?: string;
   overlayClassName?: string;
   flashlight?: boolean;
   flashlightCorner?: FlashlightCorner;
@@ -79,6 +81,7 @@ export const Modal = memo(function Modal({
   ariaLabel,
   className = '',
   bodyClassName = '',
+  contentClassName = '',
   overlayClassName = '',
   flashlight = true,
   flashlightCorner = 'bottom-left',
@@ -119,7 +122,7 @@ export const Modal = memo(function Modal({
 
         <div className={`${styles.body} ${bodyClassName}`}>
           {flashlight && <StaticFlashlight corner={flashlightCorner} />}
-          <div className={styles.bodyContent}>{children}</div>
+          <div className={`${styles.bodyContent} ${contentClassName}`}>{children}</div>
         </div>
       </div>
     </div>,

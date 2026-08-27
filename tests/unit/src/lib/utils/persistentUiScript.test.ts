@@ -42,6 +42,18 @@ describe('persistentUiScript', () => {
       const script = getPersistentUiInitScript();
       expect(script).toContain("'dark'");
     });
+
+    it('should stamp both decorator flags before first paint', () => {
+      const script = getPersistentUiInitScript();
+      expect(script).toContain('data-stream-text');
+      expect(script).toContain('data-section-decor');
+    });
+
+    it('should read the stored decorator flags', () => {
+      const script = getPersistentUiInitScript();
+      expect(script).toContain("typeof state.streamText === 'boolean'");
+      expect(script).toContain("typeof state.sectionDecor === 'boolean'");
+    });
   });
 
   describe('getCombinedInitScript', () => {

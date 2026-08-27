@@ -19,7 +19,7 @@
   flex-direction: column;
   gap: 0.65rem;
 
-  /* Below the desktop breakpoint the shell's fixed 72px title bar exists;
+  /* Below the desktop breakpoint the shell's fixed title bar exists;
      offset the sticky header so it pins beneath the bar, not under it. */
   @include desktop {
     top: $mobile-header-height;

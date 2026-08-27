@@ -42,9 +42,11 @@ import {
  *
  * @description
  * Returns an IIFE that reads theme from cookies, then sessionStorage, then
- * localStorage, and sets data-theme, data-aspect-display and
- * data-aspect-expanded on the document element. aspectDisplay defaults to
- * `compact`. Runs synchronously before React hydration.
+ * localStorage, and sets data-theme, data-aspect-display,
+ * data-aspect-expanded, data-stream-text and data-section-decor on the
+ * document element. aspectDisplay defaults to `compact`; both decorator flags
+ * default to drawn. Runs synchronously before React hydration, so a reader who
+ * turned a decorator off never sees it paint.
  */
 export function getPersistentUiInitScript(): string {
   return `
@@ -80,6 +82,8 @@ export function getPersistentUiInitScript(): string {
         
         var aspectDisplay = 'compact';
         var aspectExpanded = false;
+        var streamText = true;
+        var sectionDecor = true;
 
         if (stored) {
           try {
@@ -93,12 +97,20 @@ export function getPersistentUiInitScript(): string {
             if (typeof state.aspectExpanded === 'boolean') {
               aspectExpanded = state.aspectExpanded;
             }
+            if (typeof state.streamText === 'boolean') {
+              streamText = state.streamText;
+            }
+            if (typeof state.sectionDecor === 'boolean') {
+              sectionDecor = state.sectionDecor;
+            }
           } catch (e) {
           }
         }
 
         document.documentElement.setAttribute('data-aspect-display', aspectDisplay);
         document.documentElement.setAttribute('data-aspect-expanded', aspectExpanded ? 'true' : 'false');
+        document.documentElement.setAttribute('data-stream-text', streamText ? 'true' : 'false');
+        document.documentElement.setAttribute('data-section-decor', sectionDecor ? 'true' : 'false');
 
         if (theme === 'dark') {
           var legacyTheme = readCookie('${LEGACY_THEME_KEY}');

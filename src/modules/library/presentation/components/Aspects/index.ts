@@ -9,10 +9,6 @@
 /**
  * Re-exports `Aspects` for client-safe usage only.
  */
-export {
-  AspectPill,
-  Aspects,
-  default,
-  type AspectsProps,
-} from './Aspects';
+export { Aspects, default, type AspectsProps } from './Aspects';
+export { AspectPill } from './AspectPill';
 export { Aspect, type AspectProps } from './Aspect';

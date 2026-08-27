@@ -6,7 +6,7 @@
  * Until the first client render commits, the hook reports the native defaults.
  *
  * @module modules/library/presentation/components/UnitSwitcher/UnitSwitcher
- * @version 2.0.0
+ * @version 2.1.0
  * @author Typeir
  * @since 2026-08-03
  */
@@ -43,18 +43,36 @@ function labelKey(value: string, prefix: string): string {
 }
 
 /**
+ * Props for {@link UnitSwitcher}.
+ *
+ * @interface UnitSwitcherProps
+ * @property {boolean} [embedded=false] - Render as rows alone, for a panel that
+ *   supplies its own frame, heading and hint
+ */
+export interface UnitSwitcherProps {
+  embedded?: boolean;
+}
+
+/**
  * Renders the unit system switcher, one row per measurement family.
  *
+ * @param {UnitSwitcherProps} props - Component props
+ * @param {boolean} [props.embedded=false] - Render as rows alone
  * @returns {React.ReactElement} The rendered switcher
  */
-export const UnitSwitcher: React.FC = () => {
+export const UnitSwitcher: React.FC<UnitSwitcherProps> = ({
+  embedded = false,
+}) => {
   const { unitSystem } = useUnitSystemState();
   const { setUnitSystem } = useUnitSystemActions();
   const t = useTranslations('units');
 
   return (
-    <div className={styles.switcher}>
-      <p className={styles.label}>{t('switcherLabel')}</p>
+    <div
+      className={
+        embedded ? `${styles.switcher} ${styles.embedded}` : styles.switcher
+      }>
+      {!embedded && <p className={styles.label}>{t('switcherLabel')}</p>}
 
       {DIMENSIONS.map((dimension) => {
         const groupId = `unit-switcher-${dimension}`;
@@ -86,7 +104,7 @@ export const UnitSwitcher: React.FC = () => {
         );
       })}
 
-      <p className={styles.hint}>{t('switcherHint')}</p>
+      {!embedded && <p className={styles.hint}>{t('switcherHint')}</p>}
     </div>
   );
 };

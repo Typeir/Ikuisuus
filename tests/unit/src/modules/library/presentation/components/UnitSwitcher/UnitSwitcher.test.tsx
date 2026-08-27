@@ -167,4 +167,28 @@ describe('UnitSwitcher', () => {
       expect(mockSetUnitSystem).toHaveBeenCalledWith('volume', 'metric');
     });
   });
+
+  describe('embedded', () => {
+    it('should drop the heading and hint for a panel that supplies them', () => {
+      render(<UnitSwitcher embedded />);
+
+      expect(screen.queryByText('switcherLabel')).toBeNull();
+      expect(screen.queryByText('switcherHint')).toBeNull();
+    });
+
+    it('should keep every family selectable', async () => {
+      const user = userEvent.setup();
+      render(<UnitSwitcher embedded />);
+
+      expect(screen.getAllByRole('radiogroup')).toHaveLength(3);
+
+      await user.click(
+        within(groupFor('dimensionWeight')).getByRole('radio', {
+          name: 'switcherMetric',
+        }),
+      );
+
+      expect(mockSetUnitSystem).toHaveBeenCalledWith('weight', 'metric');
+    });
+  });
 });

@@ -38,6 +38,8 @@ describe('useDisplayPrefs', () => {
     sessionStorage.clear();
     document.cookie = `${PERSISTENT_UI_STORAGE_KEY}=; Max-Age=0; Path=/`;
     document.documentElement.removeAttribute('data-constrained-hue');
+    document.documentElement.removeAttribute('data-stream-text');
+    document.documentElement.removeAttribute('data-section-decor');
     document.documentElement.style.removeProperty('--text-scale-user');
     document.documentElement.style.removeProperty('--prose-measure');
   });
@@ -48,6 +50,8 @@ describe('useDisplayPrefs', () => {
     expect(result.current.state.textScale).toBe(1);
     expect(result.current.state.proseMeasure).toBe(100);
     expect(result.current.state.constrainedHue).toBe(false);
+    expect(result.current.state.streamText).toBe(true);
+    expect(result.current.state.sectionDecor).toBe(true);
   });
 
   it('should apply the text scale as a root custom property', () => {

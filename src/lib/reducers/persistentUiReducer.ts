@@ -140,6 +140,20 @@ export function persistentUiReducer(
       };
     }
 
+    case PERSISTED_UI_ACTION_TYPES.SET_STREAM_TEXT: {
+      return {
+        ...state,
+        streamText: action.payload.enabled,
+      };
+    }
+
+    case PERSISTED_UI_ACTION_TYPES.SET_SECTION_DECOR: {
+      return {
+        ...state,
+        sectionDecor: action.payload.enabled,
+      };
+    }
+
     case PERSISTED_UI_ACTION_TYPES.SET_SIDEBAR_EXPANSION: {
       const { path, expanded } = action.payload;
       const currentPaths = state.sidebarMenu.expandedPaths ?? [];

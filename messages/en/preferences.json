@@ -9,5 +9,13 @@
   "theme": "Theme",
   "themeHint": "Dark or light palette.",
   "themeToggle": "Toggle theme",
+  "immersive": "Immersive",
+  "immersiveHint": "Fullscreen, hiding the browser bars. Not offered on every browser.",
+  "streamText": "Stream text",
+  "streamTextHint": "Vertical ticker beside sections.",
+  "sectionDecor": "Section frames",
+  "sectionDecorHint": "Knotwork borders around sections.",
+  "units": "Measures",
+  "unitsHint": "System each kind of measure renders in.",
   "open": "Preferences"
 }

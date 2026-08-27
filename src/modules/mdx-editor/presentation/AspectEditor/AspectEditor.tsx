@@ -24,12 +24,16 @@ import styles from './AspectEditor.module.scss';
  * @property {() => void} onClose - Close without applying
  * @property {string[]} initial - Aspects currently authored in the buffer
  * @property {(aspects: string[]) => void} onApply - Commit the staged list
+ * @property {string} [stagedLabel] - Heading for the staged pane; the editor's authoring wording by default
+ * @property {string} [stagedEmpty] - Placeholder shown while nothing is staged
  */
 interface AspectEditorProps {
   isOpen: boolean;
   onClose: () => void;
   initial: string[];
   onApply: (aspects: string[]) => void;
+  stagedLabel?: string;
+  stagedEmpty?: string;
 }
 
 /** Groups rendered in the first commit; the rest follow in idle slices. */
@@ -65,6 +69,8 @@ export function AspectEditor({
   onClose,
   initial,
   onApply,
+  stagedLabel,
+  stagedEmpty,
 }: AspectEditorProps): JSX.Element | null {
   const t = useTranslations('mdxEditor.aspects');
   const locale = useLocale();
@@ -142,6 +148,8 @@ export function AspectEditor({
 
   if (!isOpen) return null;
 
+  const heading = stagedLabel ?? t('stagedLabel');
+
   return (
     <Modal
       isOpen={isOpen}
@@ -149,23 +157,29 @@ export function AspectEditor({
       title={t('title')}
       ariaLabel={t('title')}
       className={styles.modal}
-      bodyClassName={styles.modalBody}>
+      bodyClassName={styles.modalBody}
+      contentClassName={styles.modalContent}>
       <div className={styles.body}>
-        <section className={styles.staged} aria-label={t('stagedLabel')}>
-          <div className={styles.sectionLabel}>{t('stagedLabel')}</div>
+        <section className={styles.staged} aria-label={heading}>
+          <div className={styles.sectionLabel}>{heading}</div>
           <div className={styles.pills}>
             {staged.length === 0 && (
-              <span className={styles.empty}>{t('stagedEmpty')}</span>
+              <span className={styles.empty}>{stagedEmpty ?? t('stagedEmpty')}</span>
             )}
-            {staged.map((raw) => (
-              <AspectPill
-                key={raw}
-                aspect={toParsed(raw)}
-                locale={locale}
-                onSelect={unstage}
-                pressed
-              />
-            ))}
+            {staged.map((raw) => {
+              const aspect = toParsed(raw);
+              return (
+                <AspectPill
+                  key={raw}
+                  aspect={aspect}
+                  locale={locale}
+                  onRemove={unstage}
+                  removeLabel={t('remove', {
+                    aspect: `${aspect.group}: ${aspect.value}`,
+                  })}
+                />
+              );
+            })}
           </div>
         </section>
 

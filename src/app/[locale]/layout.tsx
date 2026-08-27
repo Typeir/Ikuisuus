@@ -16,7 +16,7 @@ import { getServerExpandedPaths } from '@/lib/utils/getServerPersistentData';
 import { getCombinedInitScript } from '@/lib/utils/persistentUiScript';
 import { repositoryShallowWalk } from '@/modules/library/infrastructure/navigation/repositoryWalk';
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -85,4 +85,33 @@ export function generateStaticParams(): Array<{ locale: string }> {
  */
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
+  appleWebApp: {
+    capable: true,
+    title: 'Ikuisuus',
+    statusBarStyle: 'black-translucent',
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
+};
+
+/**
+ * Viewport contract for the document.
+ *
+ * `viewportFit: 'cover'` lets the page paint into the display cutout instead
+ * of being letterboxed beside it; the mobile title bar pads itself clear with
+ * the `--safe-area-*` tokens. Browsers without cutout support report zero
+ * insets and lay out unchanged.
+ *
+ * `interactiveWidget: 'resizes-content'` shrinks the layout viewport when the
+ * on-screen keyboard opens, so the fixed title bar stays anchored to the
+ * visible area while the search field is focused.
+ *
+ * @type {Viewport}
+ */
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  interactiveWidget: 'resizes-content',
 };

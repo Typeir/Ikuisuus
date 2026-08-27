@@ -2,11 +2,13 @@
  * Remark Keyword Plugin
  *
  * @fileoverview Remark plugin replacing `[# kw:... #]` keyword expressions in
- * text nodes with `<Keyword>` MDX JSX elements. Malformed or unregistered
- * expressions stay as plain text.
+ * text nodes with `<Keyword>` MDX JSX elements. A reference is resolved against
+ * a keyword registry when one is supplied, which adds the `href` attribute.
+ * Malformed expressions stay as plain text; a well-formed expression that
+ * resolves to nothing still renders its display text, never its source markup.
  *
  * @module lib/md/remarkKeyword
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 2026-08-19
  */
@@ -17,8 +19,15 @@ import type { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 import {
   KEYWORD_EXPR_REGEX,
-  parseKeywordExpression,
+  parseKeywordReference,
+  type KeywordReference,
 } from './keywordExpressionParser';
+import {
+  keywordTemplateId,
+  resolveKeywordRef,
+  routeForFile,
+  type KeywordRegistry,
+} from './keywordIndex';
 
 /**
  * Name of the component this plugin emits.
@@ -88,18 +97,44 @@ function attributeNode(name: string, value: string): MdxJsxAttributeNode {
 /**
  * Builds an MDAST mdxJsxTextElement node for the `<Keyword>` component.
  *
- * @param {string} term - Canonical registry term
- * @param {string} display - Author-written text with casing preserved
+ * @param {KeywordReference} reference - Parsed reference parts
+ * @param {KeywordRegistry} [registry] - Registry used to resolve the link target
  * @returns {MdxJsxTextElementNode} An MDAST JSX element node
  */
-function keywordNode(term: string, display: string): MdxJsxTextElementNode {
+function keywordNode(
+  reference: KeywordReference,
+  registry?: KeywordRegistry,
+): MdxJsxTextElementNode {
+  const attributes = [
+    attributeNode('term', reference.value),
+    attributeNode('display', reference.display),
+  ];
+
+  if (reference.namespace) {
+    attributes.push(attributeNode('namespace', reference.namespace));
+  }
+
+  const resolved = registry
+    ? resolveKeywordRef(registry, reference.namespace, reference.value)
+    : null;
+
+  if (resolved) {
+    attributes.push(
+      attributeNode(
+        'href',
+        `${routeForFile(resolved.filePath)}#${resolved.anchor}`,
+      ),
+      attributeNode(
+        'templateId',
+        keywordTemplateId(reference.namespace, resolved.anchor),
+      ),
+    );
+  }
+
   return {
     type: MDX_JSX_TEXT_ELEMENT,
     name: KEYWORD_COMPONENT_NAME,
-    attributes: [
-      attributeNode('term', term),
-      attributeNode('display', display),
-    ],
+    attributes,
     children: [],
   };
 }
@@ -117,6 +152,7 @@ function processTextNode(
   node: TextNode,
   index: number | null,
   parent: Parent | null,
+  registry?: KeywordRegistry,
 ): void {
   if (!parent || typeof index !== 'number') {
     return;
@@ -144,9 +180,9 @@ function processTextNode(
       replacementNodes.push(textNode(beforeText));
     }
 
-    const parsed = parseKeywordExpression(m[1]);
-    if (parsed) {
-      replacementNodes.push(keywordNode(parsed.term, parsed.display));
+    const reference = parseKeywordReference(m[1]);
+    if (reference) {
+      replacementNodes.push(keywordNode(reference, registry));
     } else {
       replacementNodes.push(textNode(m[0]));
     }
@@ -163,15 +199,31 @@ function processTextNode(
 }
 
 /**
+ * Options accepted by the plugin.
+ *
+ * @interface RemarkKeywordOptions
+ * @property {KeywordRegistry} [registry] - Discovered namespaces used to resolve link targets
+ */
+export interface RemarkKeywordOptions {
+  registry?: KeywordRegistry;
+}
+
+/**
  * Remark plugin factory that transforms `[# kw:... #]` keyword expressions in
  * text nodes into `<Keyword>` MDX JSX elements.
  *
- * @returns {Plugin<[], Root>} A unified plugin that transforms the MDAST
+ * @param {RemarkKeywordOptions} [options] - Plugin options
+ * @returns {Plugin<[RemarkKeywordOptions?], Root>} A unified plugin that transforms the MDAST
  */
-const remarkKeyword: Plugin<[], Root> = () => {
+const remarkKeyword: Plugin<[RemarkKeywordOptions?], Root> = (options) => {
   return (tree: Root) => {
     visit(tree, 'text', (node, idx, parent) => {
-      processTextNode(node as TextNode, idx ?? null, parent as Parent | null);
+      processTextNode(
+        node as TextNode,
+        idx ?? null,
+        parent as Parent | null,
+        options?.registry,
+      );
     });
   };
 };

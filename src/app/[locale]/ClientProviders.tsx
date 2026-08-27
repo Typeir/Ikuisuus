@@ -13,6 +13,7 @@
 import type { Item as SidebarItem } from '@/modules/navigation-sidebar/domain/types';
 import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
+import { ThemeColorSync } from '@/lib/components/viewport/ThemeColorSync';
 import { NextIntlClientProvider, type AbstractIntlMessages } from 'next-intl';
 import SwrProvider from './SwrProvider';
 import ResponsiveLayoutShell from './utils/responsiveLayoutShell';
@@ -50,6 +51,8 @@ interface ClientProvidersProps {
  * @description
  * Nests providers outermost-to-innermost: NextIntlClientProvider, SwrProvider,
  * PersistentUiProvider, CharacterSheetProvider, ResponsiveLayoutShell.
+ * ThemeColorSync sits inside PersistentUiProvider so the UA chrome colour
+ * follows the reader's theme.
  * PersistentUiProvider falls back to localStorage then URL-derived ancestors when
  * initialExpandedPaths is absent.
  */
@@ -64,6 +67,7 @@ export default function ClientProviders({
     <NextIntlClientProvider locale={locale} messages={messages} timeZone='UTC'>
       <SwrProvider>
         <PersistentUiProvider initialExpandedPaths={initialExpandedPaths}>
+          <ThemeColorSync />
           <CharacterSheetProvider>
             {/* @ts-ignore */}
             <ResponsiveLayoutShell tree={tree}>{children}</ResponsiveLayoutShell>

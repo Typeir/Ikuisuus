@@ -3,13 +3,17 @@
   text-decoration: none;
   border-bottom: 1px dotted var(--color-accent);
   white-space: nowrap;
-  cursor: help;
 
   &:hover,
   &:focus-visible {
     color: var(--color-accent-hover);
     border-bottom-style: solid;
   }
+}
+
+.defined {
+  @extend .keyword;
+  cursor: help;
 }
 
 .tooltip {
@@ -19,4 +23,8 @@
 
 .blurb {
   white-space: normal;
+
+  :last-child {
+    margin-bottom: 0;
+  }
 }

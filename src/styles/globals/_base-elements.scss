@@ -7,6 +7,7 @@
   strong,
   b {
     font-weight: 700;
+    font-family: var(--font-grand-cru), system-ui, sans-serif;
   }
 
   em,
@@ -22,6 +23,13 @@
   h6 {
     font-weight: 600;
     line-height: 1.25;
+    font-family: var(--font-stropica), system-ui, sans-serif;
+  }
+
+  /* Outranks `strong, b` on specificity, so heading emphasis keeps the
+     heading face. `.first-letter` keeps Empyrean via its own `!important`. */
+  :is(h1, h2, h3, h4, h5, h6) :is(strong, b) {
+    font-family: inherit;
   }
 
   ul {

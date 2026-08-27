@@ -45,6 +45,8 @@ export const PERSISTED_UI_ACTION_TYPES = {
   SET_TEXT_SCALE: 'PERSISTED_UI/SET_TEXT_SCALE',
   SET_PROSE_MEASURE: 'PERSISTED_UI/SET_PROSE_MEASURE',
   SET_CONSTRAINED_HUE: 'PERSISTED_UI/SET_CONSTRAINED_HUE',
+  SET_STREAM_TEXT: 'PERSISTED_UI/SET_STREAM_TEXT',
+  SET_SECTION_DECOR: 'PERSISTED_UI/SET_SECTION_DECOR',
   RESET: 'PERSISTED_UI/RESET',
 } as const;
 
@@ -119,6 +121,8 @@ export const DEFAULT_UNIT_SYSTEM: UnitSystemPreferences = {
  * @property {number} textScale - Multiplier applied over the shipped base text size
  * @property {number} proseMeasure - Article line length, in characters
  * @property {boolean} constrainedHue - Collapse aspect colour to the theme hue
+ * @property {boolean} streamText - Render the vertical ticker beside sections
+ * @property {boolean} sectionDecor - Render the knotwork nine-slice frames
  * @property {boolean} isHydrated - Whether state has been hydrated from storage
  */
 export interface PersistentUiState {
@@ -131,6 +135,8 @@ export interface PersistentUiState {
   textScale: number;
   proseMeasure: number;
   constrainedHue: boolean;
+  streamText: boolean;
+  sectionDecor: boolean;
   isHydrated: boolean;
 }
 
@@ -162,6 +168,8 @@ export const ASPECT_DISPLAY_MODES: readonly AspectDisplayMode[] = [
  * @property {number} [textScale] - Optional text size multiplier
  * @property {number} [proseMeasure] - Optional article line length in characters
  * @property {boolean} [constrainedHue] - Optional constrained-hue flag
+ * @property {boolean} [streamText] - Optional stream ticker flag
+ * @property {boolean} [sectionDecor] - Optional section decorator flag
  */
 export interface SerializedPersistentUiState {
   sidebarMenu?: SidebarMenuState;
@@ -173,6 +181,8 @@ export interface SerializedPersistentUiState {
   textScale?: number;
   proseMeasure?: number;
   constrainedHue?: boolean;
+  streamText?: boolean;
+  sectionDecor?: boolean;
 }
 
 /**
@@ -341,6 +351,30 @@ export interface SetConstrainedHueAction {
 }
 
 /**
+ * Action to set the stream ticker decorator.
+ *
+ * @interface SetStreamTextAction
+ * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_STREAM_TEXT} type - Action type identifier
+ * @property {{ enabled: boolean }} payload - Whether sections render their ticker
+ */
+export interface SetStreamTextAction {
+  type: typeof PERSISTED_UI_ACTION_TYPES.SET_STREAM_TEXT;
+  payload: { enabled: boolean };
+}
+
+/**
+ * Action to set the section frame decorator.
+ *
+ * @interface SetSectionDecorAction
+ * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_SECTION_DECOR} type - Action type identifier
+ * @property {{ enabled: boolean }} payload - Whether sections render their knotwork frame
+ */
+export interface SetSectionDecorAction {
+  type: typeof PERSISTED_UI_ACTION_TYPES.SET_SECTION_DECOR;
+  payload: { enabled: boolean };
+}
+
+/**
  * Action to reset state to defaults
  *
  * @interface ResetAction
@@ -369,6 +403,8 @@ export type PersistentUiAction =
   | SetTextScaleAction
   | SetProseMeasureAction
   | SetConstrainedHueAction
+  | SetStreamTextAction
+  | SetSectionDecorAction
   | ResetAction;
 
 /**
@@ -384,6 +420,20 @@ export const DEFAULT_TEXT_SCALE = 1;
  * @constant
  */
 export const DEFAULT_PROSE_MEASURE = 100;
+
+/**
+ * Sections ship with their ticker drawn.
+ *
+ * @constant
+ */
+export const DEFAULT_STREAM_TEXT = true;
+
+/**
+ * Sections ship with their knotwork frames drawn.
+ *
+ * @constant
+ */
+export const DEFAULT_SECTION_DECOR = true;
 
 /**
  * Narrows a stored preference to a usable positive number.
@@ -420,6 +470,8 @@ export const DEFAULT_PERSISTENT_UI_STATE: PersistentUiState = {
   textScale: DEFAULT_TEXT_SCALE,
   proseMeasure: DEFAULT_PROSE_MEASURE,
   constrainedHue: false,
+  streamText: DEFAULT_STREAM_TEXT,
+  sectionDecor: DEFAULT_SECTION_DECOR,
   isHydrated: false,
 };
 

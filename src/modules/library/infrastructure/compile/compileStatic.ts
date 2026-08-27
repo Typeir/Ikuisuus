@@ -13,6 +13,9 @@ import remarkAspect from '@/lib/md/remarkAspect';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkKeyword from '@/lib/md/remarkKeyword';
 import remarkUnit from '@/lib/md/remarkUnit';
+import { bakeKeywordShards } from '@/lib/md/bakeKeywordShards';
+import { keywordShardTemplates } from '@/modules/library/presentation/components/Keyword/KeywordShardTemplates';
+import { resolveKeywordRegistry } from '@/lib/md/resolveKeywordRegistry';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
@@ -38,11 +41,18 @@ export async function compileStatic(opts: CompileOptions) {
     aspects,
   } = opts;
 
-  const resolvedSource = await resolveReusableSource(source);
+  const keywords = await resolveKeywordRegistry();
+  const { source: resolvedSource, shards } = await bakeKeywordShards(
+    await resolveReusableSource(source),
+    keywords,
+  );
+  const resolvedComponents = shards.length
+    ? { ...components, KeywordShardTemplates: keywordShardTemplates(shards) }
+    : components;
 
   const result = await evaluate({
     source: resolvedSource,
-    components: components as any,
+    components: resolvedComponents as any,
     options: {
       parseFrontmatter,
       mdxOptions: buildMdxOptions(
@@ -54,7 +64,7 @@ export async function compileStatic(opts: CompileOptions) {
             remarkAspect,
             remarkDiceRoll,
             remarkUnit,
-            remarkKeyword,
+            [remarkKeyword, { registry: keywords }],
           ],
           rehypePlugins: [rehypeKatex, rehypeSectionize, [rehypeAspects, aspects]],
         },

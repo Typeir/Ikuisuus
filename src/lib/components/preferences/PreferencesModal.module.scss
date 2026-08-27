@@ -45,10 +45,21 @@
   color: var(--color-text-secondary);
 }
 
-/* One row height across all four cells, so a 28px pip, a 32px toggle and an
-   input sit on the same line. */
 .control {
   display: flex;
   align-items: center;
   min-height: 2.25rem;
+}
+
+.fieldWide {
+  grid-column: 1 / -1;
+
+  .fieldHint {
+    min-height: 0;
+  }
+
+  .control {
+    display: block;
+    min-height: 0;
+  }
 }

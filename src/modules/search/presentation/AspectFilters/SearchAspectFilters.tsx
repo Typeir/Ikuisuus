@@ -14,7 +14,7 @@
 'use client';
 
 import { displayAspects } from '@/modules/library/domain/aspects';
-import { AspectPill } from '@/modules/library/presentation/components/Aspects/Aspects';
+import { AspectPill } from '@/modules/library/presentation/components/Aspects/AspectPill';
 import { AspectEditor } from '@/modules/mdx-editor/presentation/AspectEditor';
 import { Tag } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -77,8 +77,10 @@ export function SearchAspectFilters({
                 key={aspect.raw}
                 aspect={aspect}
                 locale={locale}
-                pressed
-                onSelect={() => go(active.filter((a) => a !== aspect.raw))}
+                onRemove={() => go(active.filter((a) => a !== aspect.raw))}
+                removeLabel={t('removeFilter', {
+                  aspect: `${aspect.group}: ${aspect.value}`,
+                })}
               />
             ))}
           </span>
@@ -92,6 +94,8 @@ export function SearchAspectFilters({
         onClose={() => setOpen(false)}
         initial={active}
         onApply={(aspects) => go(aspects)}
+        stagedLabel={t('selectedAspects')}
+        stagedEmpty={t('selectedEmpty')}
       />
     </section>
   );

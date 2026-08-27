@@ -29,8 +29,9 @@ vi.mock('@/modules/mdx-editor/presentation/AspectEditor', () => ({
 describe('SearchAspectFilters', () => {
   it('should render active aspects as pressed pills and drop one on click', async () => {
     render(<SearchAspectFilters query='fire' active={['form:blade', 'damage:fire']} />);
-    const blade = screen.getByRole('button', { name: 'form: blade' });
-    expect(blade).toHaveAttribute('aria-pressed', 'true');
+    const blade = screen.getByRole('button', {
+      name: 'Remove the form: blade filter',
+    });
     await userEvent.click(blade);
     expect(pushMock).toHaveBeenLastCalledWith('/en/search?q=fire&aspect=damage%3Afire');
   });

@@ -7,7 +7,7 @@
 import { PreferencesModal } from '@/lib/components/preferences/PreferencesModal';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
 import { PERSISTENT_UI_STORAGE_KEY } from '@/lib/types/persistentUiState';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -26,6 +26,8 @@ describe('PreferencesModal', () => {
     sessionStorage.clear();
     document.cookie = `${PERSISTENT_UI_STORAGE_KEY}=; Max-Age=0; Path=/`;
     document.documentElement.removeAttribute('data-constrained-hue');
+    document.documentElement.removeAttribute('data-stream-text');
+    document.documentElement.removeAttribute('data-section-decor');
   });
 
   it('should render nothing when closed', () => {
@@ -61,6 +63,63 @@ describe('PreferencesModal', () => {
     expect(document.documentElement.getAttribute('data-constrained-hue')).toBe(
       'true',
     );
+  });
+
+  it('should stamp the stream decorator on the root when the pip is toggled', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await user.click(screen.getByRole('checkbox', { name: 'streamText' }));
+
+    expect(document.documentElement.getAttribute('data-stream-text')).toBe(
+      'false',
+    );
+  });
+
+  it('should stamp the section decorator on the root when the pip is toggled', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await user.click(screen.getByRole('checkbox', { name: 'sectionDecor' }));
+
+    expect(document.documentElement.getAttribute('data-section-decor')).toBe(
+      'false',
+    );
+  });
+
+  it('should render both decorators drawn by default', () => {
+    renderModal();
+
+    expect(
+      screen.getByRole('checkbox', { name: 'streamText' }),
+    ).toHaveAttribute('aria-checked', 'true');
+    expect(
+      screen.getByRole('checkbox', { name: 'sectionDecor' }),
+    ).toHaveAttribute('aria-checked', 'true');
+  });
+
+  it('should carry the unit switcher, headed by the panel itself', () => {
+    renderModal();
+
+    expect(
+      screen.getByRole('radiogroup', { name: 'dimensionDistance' }),
+    ).toBeTruthy();
+    expect(screen.queryByText('switcherLabel')).toBeNull();
+  });
+
+  it('should write a unit choice through the shared port', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    const group = screen.getByRole('radiogroup', { name: 'dimensionWeight' });
+    await user.click(
+      within(group).getByRole('radio', { name: 'switcherMetric' }),
+    );
+
+    const stored = JSON.parse(
+      localStorage.getItem(PERSISTENT_UI_STORAGE_KEY) as string,
+    );
+    expect(stored.unitSystem.weight).toBe('metric');
   });
 
   it('should drive theme through the shared port', async () => {

@@ -7,6 +7,7 @@
 
 .pageTitle {
   color: var(--color-accent);
+  @include mdx.mdx-first-letter-headroom;
 }
 
 .nameFirstLetter {
@@ -28,11 +29,6 @@
   }
 }
 
-/* ---- Bento shell ----
-   One column by default: welcome + search, the archivist panel, then the
-   featured grid. From xl up the panel takes the right half over both rows
-   while the welcome block and the featured grid stack down the left, so the
-   grid fills the height the panel occupies instead of leaving it empty. */
 .bento {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

@@ -25,7 +25,7 @@ import { deriveProficiencyHints } from '@/modules/character-builder/lib/utils/pr
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { rollUpAspects } from '@/modules/character-builder/lib/utils/aspectRollup';
 import { displayAspects } from '@/modules/library/domain/aspects';
-import { AspectPill } from '@/modules/library/presentation/components/Aspects/Aspects';
+import { AspectPill } from '@/modules/library/presentation/components/Aspects/AspectPill';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { UnassignedChips } from '../../atoms/unassignedChips';

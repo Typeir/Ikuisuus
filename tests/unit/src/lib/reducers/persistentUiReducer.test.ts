@@ -77,6 +77,30 @@ describe('persistentUiReducer', () => {
     });
   });
 
+  describe('SET_STREAM_TEXT', () => {
+    it('should ship drawn and drop the ticker on request', () => {
+      expect(DEFAULT_PERSISTENT_UI_STATE.streamText).toBe(true);
+      const result = persistentUiReducer(DEFAULT_PERSISTENT_UI_STATE, {
+        type: PERSISTED_UI_ACTION_TYPES.SET_STREAM_TEXT,
+        payload: { enabled: false },
+      });
+      expect(result.streamText).toBe(false);
+      expect(result.sectionDecor).toBe(true);
+    });
+  });
+
+  describe('SET_SECTION_DECOR', () => {
+    it('should ship drawn and drop the frames on request', () => {
+      expect(DEFAULT_PERSISTENT_UI_STATE.sectionDecor).toBe(true);
+      const result = persistentUiReducer(DEFAULT_PERSISTENT_UI_STATE, {
+        type: PERSISTED_UI_ACTION_TYPES.SET_SECTION_DECOR,
+        payload: { enabled: false },
+      });
+      expect(result.sectionDecor).toBe(false);
+      expect(result.streamText).toBe(true);
+    });
+  });
+
   describe('TOGGLE_SIDEBAR', () => {
     it('should toggle sidebar from closed to open', () => {
       const result = persistentUiReducer(DEFAULT_PERSISTENT_UI_STATE, {

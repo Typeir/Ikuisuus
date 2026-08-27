@@ -1,22 +1,30 @@
 @use '@/styles/mixins' as *;
 @use 'variables' as *;
 
-/* Fixed mobile title bar (hidden on lg+ via utility classes in the TSX). */
 .mobileTitleBar {
   height: $mobile-header-height;
+  padding-top: var(--safe-area-top);
+  padding-left: max(0.5rem, var(--safe-area-left));
+  padding-right: max(0.5rem, var(--safe-area-right));
 }
 
-/* Uniform slot for the mobile bar's four icon controls (logo, theme,
-   character, hamburger) — equal boxes so the search bar centers between
-   symmetric flanks. */
 .headerIconSlot {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   padding: 0;
+}
+
+button.headerIconSlot {
+  width: 2rem;
+  height: 2rem;
+}
+
+.headerSearchSlot > div {
+  padding-top: 0;
 }
 
 /* Main content clears the fixed title bar on mobile. */
@@ -84,12 +92,55 @@
     width: 120vw;
     z-index: 20;
     padding-left: 24vw;
-    /* The title bar is fixed above the sidebar (z-40 vs z-30); start the
-       sidebar's content below it instead of underneath it. */
+
     padding-top: $mobile-header-height;
+    padding-bottom: var(--safe-area-bottom);
+
+    height: 100dvh;
 
     &.isOpen {
       transform: translateX(-20vw);
+    }
+  }
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgb(var(--color-overlay));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    visibility 0s linear 0.4s;
+
+  &.isOpen {
+    opacity: 0.5;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity 0.4s ease,
+      visibility 0s;
+  }
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+
+  @media print {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &.isOpen {
+      transition: none;
     }
   }
 }
@@ -103,8 +154,6 @@ h1.title {
   position: relative;
 }
 
-/* Lifted out of the flex row: in the sidebar's 20rem the pair took enough
-   width to wrap the title onto a third line. */
 .headerControls {
   position: absolute;
   top: 0.5rem;

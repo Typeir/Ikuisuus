@@ -148,6 +148,7 @@ Add module: Define in `src/lib/debug/ik.ts`. `registerIkModule('key', obj)` on m
 - [Metadata](.github/docs/metadata-generation.md)
 - [Theme](.github/docs/theme-system.md)
 - [Content](.github/docs/content-system.md)
+- [Keywords](.github/docs/keyword-system.md)
 - [Encounter](.github/docs/encounter-module.md)
 - [Sidebar Scaling](.github/docs/navigation-sidebar-scaling.md)
 - [World Sim](.github/docs/world-sim-module.md)

@@ -59,6 +59,10 @@
 }
 
 /* near the mdx-first-letter include in mdxContent.module.scss */
+h1:has(.first-letter) {
+  @include mdx-first-letter-headroom();
+}
+
 h1 .first-letter {
   @include mdx-first-letter-decor();
 }

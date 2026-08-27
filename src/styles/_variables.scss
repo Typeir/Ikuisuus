@@ -10,6 +10,8 @@ $bp-mobile: 480px;
 $bp-tablet: 768px;
 $bp-desktop: 1024px;
 
-/* Height of the fixed mobile title bar rendered by ResponsiveLayoutShell.
-   Sticky elements on mobile must offset by this to clear the bar. */
-$mobile-header-height: 72px;
+/* Height of the fixed mobile title bar rendered by ResponsiveLayoutShell,
+   including the status-bar/notch inset the bar paints behind. Resolves to
+   --mobile-header-total (globals/_tokens.scss), so every sticky offset
+   tracks the safe area without restating env(). */
+$mobile-header-height: var(--mobile-header-total);

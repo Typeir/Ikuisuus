@@ -2,7 +2,7 @@
  * Display Preference Hooks
  *
  * @fileoverview React hooks for reader display preferences: text scale,
- * article measure, and constrained hue.
+ * article measure, constrained hue, and the two section decorators.
  *
  * @module lib/hooks/useDisplayPrefs
  * @version 1.0.0
@@ -26,12 +26,16 @@ import { PERSISTED_UI_ACTION_TYPES } from '../types/persistentUiState';
  * @property {number} textScale - Multiplier over the shipped base text size
  * @property {number} proseMeasure - Article line length, in characters
  * @property {boolean} constrainedHue - Whether aspect colour collapses to the theme hue
+ * @property {boolean} streamText - Whether sections draw their ticker
+ * @property {boolean} sectionDecor - Whether sections draw their knotwork frame
  * @property {boolean} isHydrated - Whether state has been hydrated
  */
 export interface DisplayPrefsState {
   textScale: number;
   proseMeasure: number;
   constrainedHue: boolean;
+  streamText: boolean;
+  sectionDecor: boolean;
   isHydrated: boolean;
 }
 
@@ -47,6 +51,8 @@ export function useDisplayPrefsState(): DisplayPrefsState {
     textScale: state.textScale,
     proseMeasure: state.proseMeasure,
     constrainedHue: state.constrainedHue,
+    streamText: state.streamText,
+    sectionDecor: state.sectionDecor,
     isHydrated: state.isHydrated,
   };
 }
@@ -58,11 +64,15 @@ export function useDisplayPrefsState(): DisplayPrefsState {
  * @property {(scale: number) => void} setTextScale - Set the text size multiplier
  * @property {(measure: number) => void} setProseMeasure - Set the article measure in characters
  * @property {(constrained: boolean) => void} setConstrainedHue - Set constrained-hue mode
+ * @property {(enabled: boolean) => void} setStreamText - Draw or drop the section ticker
+ * @property {(enabled: boolean) => void} setSectionDecor - Draw or drop the section frames
  */
 export interface DisplayPrefsActions {
   setTextScale: (scale: number) => void;
   setProseMeasure: (measure: number) => void;
   setConstrainedHue: (constrained: boolean) => void;
+  setStreamText: (enabled: boolean) => void;
+  setSectionDecor: (enabled: boolean) => void;
 }
 
 /**
@@ -104,8 +114,40 @@ export function useDisplayPrefsActions(): DisplayPrefsActions {
     [dispatch],
   );
 
+  const setStreamText = useCallback(
+    (enabled: boolean) => {
+      dispatch({
+        type: PERSISTED_UI_ACTION_TYPES.SET_STREAM_TEXT,
+        payload: { enabled },
+      });
+    },
+    [dispatch],
+  );
+
+  const setSectionDecor = useCallback(
+    (enabled: boolean) => {
+      dispatch({
+        type: PERSISTED_UI_ACTION_TYPES.SET_SECTION_DECOR,
+        payload: { enabled },
+      });
+    },
+    [dispatch],
+  );
+
   return useMemo(
-    () => ({ setTextScale, setProseMeasure, setConstrainedHue }),
-    [setTextScale, setProseMeasure, setConstrainedHue],
+    () => ({
+      setTextScale,
+      setProseMeasure,
+      setConstrainedHue,
+      setStreamText,
+      setSectionDecor,
+    }),
+    [
+      setTextScale,
+      setProseMeasure,
+      setConstrainedHue,
+      setStreamText,
+      setSectionDecor,
+    ],
   );
 }

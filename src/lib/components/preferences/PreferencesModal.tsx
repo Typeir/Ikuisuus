@@ -1,12 +1,10 @@
 /**
  * @fileoverview Reader preferences modal.
- * @description Text scale, article measure, constrained hue, and a second
- * theme control. Every value is read and written through the persistent UI
- * port, so this panel holds no state of its own and cannot drift from the
- * toggles elsewhere in the shell.
+ * @description Text scale, article measure, constrained hue, the two section
+ * decorators, a second theme control, immersive mode, and the unit switcher.
  *
  * @module lib/components/preferences/PreferencesModal
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 9.0.0
  */
@@ -15,6 +13,7 @@
 
 import { Modal } from '@/lib/components/ui/modal';
 import { NumericInput } from '@/lib/components/ui/numericInput/numericInput';
+import { useImmersiveMode } from '@/lib/components/viewport/useImmersiveMode';
 import {
   useDisplayPrefsActions,
   useDisplayPrefsState,
@@ -24,6 +23,7 @@ import {
   DEFAULT_TEXT_SCALE,
 } from '@/lib/types/persistentUiState';
 import { PipCheckbox } from '@/modules/character-builder/presentation/components/PipCheckbox';
+import UnitSwitcher from '@/modules/library/presentation/components/UnitSwitcher/UnitSwitcher';
 import { useTranslations } from 'next-intl';
 import type { JSX } from 'react';
 import { ThemeToggleButton } from '../themeToggle/ThemeToggleButton';
@@ -65,9 +65,16 @@ export function PreferencesModal({
   onClose,
 }: PreferencesModalProps): JSX.Element {
   const t = useTranslations('preferences');
-  const { textScale, proseMeasure, constrainedHue } = useDisplayPrefsState();
-  const { setTextScale, setProseMeasure, setConstrainedHue } =
-    useDisplayPrefsActions();
+  const { textScale, proseMeasure, constrainedHue, streamText, sectionDecor } =
+    useDisplayPrefsState();
+  const {
+    setTextScale,
+    setProseMeasure,
+    setConstrainedHue,
+    setStreamText,
+    setSectionDecor,
+  } = useDisplayPrefsActions();
+  const immersive = useImmersiveMode();
 
   return (
     <Modal
@@ -139,6 +146,55 @@ export function PreferencesModal({
           <span className={styles.fieldHint}>{t('themeHint')}</span>
           <div className={styles.control}>
             <ThemeToggleButton ariaLabel={t('themeToggle')} />
+          </div>
+        </div>
+
+        <div className={styles.field}>
+          <span className={styles.fieldLabel}>{t('streamText')}</span>
+          <span className={styles.fieldHint}>{t('streamTextHint')}</span>
+          <div className={styles.control}>
+            <PipCheckbox
+              checked={streamText}
+              onChange={setStreamText}
+              ariaLabel={t('streamText')}
+              size='lg'
+            />
+          </div>
+        </div>
+
+        <div className={styles.field}>
+          <span className={styles.fieldLabel}>{t('sectionDecor')}</span>
+          <span className={styles.fieldHint}>{t('sectionDecorHint')}</span>
+          <div className={styles.control}>
+            <PipCheckbox
+              checked={sectionDecor}
+              onChange={setSectionDecor}
+              ariaLabel={t('sectionDecor')}
+              size='lg'
+            />
+          </div>
+        </div>
+
+        {immersive.supported && (
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>{t('immersive')}</span>
+            <span className={styles.fieldHint}>{t('immersiveHint')}</span>
+            <div className={styles.control}>
+              <PipCheckbox
+                checked={immersive.active}
+                onChange={immersive.toggle}
+                ariaLabel={t('immersive')}
+                size='lg'
+              />
+            </div>
+          </div>
+        )}
+
+        <div className={`${styles.field} ${styles.fieldWide}`}>
+          <span className={styles.fieldLabel}>{t('units')}</span>
+          <span className={styles.fieldHint}>{t('unitsHint')}</span>
+          <div className={styles.control}>
+            <UnitSwitcher embedded />
           </div>
         </div>
       </div>

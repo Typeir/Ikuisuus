@@ -93,6 +93,25 @@ span.aspect {
   }
 }
 
+/* Removal lives on the button inside, so the pill body is not a target. */
+.aspect.removable {
+  cursor: default;
+  padding-right: 0.18rem;
+
+  &:hover {
+    background: color-mix(in oklab, var(--aspect-fg) 14%, var(--color-bg));
+    border-color: color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
+  }
+}
+
+/* The chip primitive's remove control, carrying the pill's own hue. */
+.removeBtn {
+  composes: removeBtn from '@/lib/components/ui/chip/chip.module.scss';
+  color: var(--aspect-fg);
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
 /* A glyph that has to be squinted at is a worse label than the word it replaced,
    so the mark is sized to be read at a glance rather than to sit politely
    inside the cap height. */

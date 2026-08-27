@@ -1,16 +1,17 @@
 /**
  * Keyword Registry
  *
- * @fileoverview Canonical registry of rules keywords rendered by the
- * `<Keyword>` MDX component. Each entry carries the hover definition and the
- * rule page the keyword links to. Lookup is case-insensitive and collapses
- * inner whitespace, so display casing in content stays free.
+ * @fileoverview Hand-written hover definitions for rules keywords. Kept until
+ * these terms are declared in content frontmatter and their prose is served as
+ * shards. Lookup is case-insensitive and collapses inner whitespace.
  *
  * @module lib/md/keywordRegistry
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 2026-08-19
  */
+
+import { normalizeKeyword } from './keywordExpressionParser';
 
 /**
  * A single keyword definition.
@@ -50,16 +51,6 @@ export const KEYWORD_REGISTRY: Record<string, KeywordEntry> = {
       'The default duration. The effect ends at the end of the sufferer’s turn, when it is resisted or ended externally, or when its source dies or loses concentration.',
   },
 };
-
-/**
- * Normalizes a raw keyword to its canonical lookup form.
- *
- * @param {string} raw - Author-written keyword text, any casing
- * @returns {string} Lowercased text with inner whitespace collapsed
- */
-export function normalizeKeyword(raw: string): string {
-  return raw.trim().toLowerCase().replace(/\s+/g, ' ');
-}
 
 /**
  * Resolves a keyword to its registry entry.

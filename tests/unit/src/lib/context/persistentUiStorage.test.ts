@@ -35,6 +35,37 @@ describe('persistentUiStorage', () => {
       expect(state.constrainedHue).toBe(false);
     });
 
+    it('should default both decorators to drawn', () => {
+      const state = readPersistedState([]);
+
+      expect(state.streamText).toBe(true);
+      expect(state.sectionDecor).toBe(true);
+    });
+
+    it('should read stored decorator preferences', () => {
+      localStorage.setItem(
+        PERSISTENT_UI_STORAGE_KEY,
+        JSON.stringify({ streamText: false, sectionDecor: false }),
+      );
+
+      const state = readPersistedState([]);
+
+      expect(state.streamText).toBe(false);
+      expect(state.sectionDecor).toBe(false);
+    });
+
+    it('should keep decorators drawn when the stored flag is not a boolean', () => {
+      localStorage.setItem(
+        PERSISTENT_UI_STORAGE_KEY,
+        JSON.stringify({ streamText: 'off', sectionDecor: null }),
+      );
+
+      const state = readPersistedState([]);
+
+      expect(state.streamText).toBe(true);
+      expect(state.sectionDecor).toBe(true);
+    });
+
     it('should read stored display preferences', () => {
       localStorage.setItem(
         PERSISTENT_UI_STORAGE_KEY,
@@ -77,6 +108,8 @@ describe('persistentUiStorage', () => {
       textScale: 1.25,
       proseMeasure: 111,
       constrainedHue: true,
+      streamText: false,
+      sectionDecor: false,
     };
 
     it('should stamp preferences on the root element', () => {
@@ -84,6 +117,8 @@ describe('persistentUiStorage', () => {
 
       const root = document.documentElement;
       expect(root.getAttribute('data-constrained-hue')).toBe('true');
+      expect(root.getAttribute('data-stream-text')).toBe('false');
+      expect(root.getAttribute('data-section-decor')).toBe('false');
       expect(root.style.getPropertyValue('--text-scale-user')).toBe('1.25');
       expect(root.style.getPropertyValue('--prose-measure')).toBe('111ch');
     });
@@ -97,6 +132,8 @@ describe('persistentUiStorage', () => {
       expect(stored.textScale).toBe(1.25);
       expect(stored.proseMeasure).toBe(111);
       expect(stored.constrainedHue).toBe(true);
+      expect(stored.streamText).toBe(false);
+      expect(stored.sectionDecor).toBe(false);
     });
 
     it('should round-trip through the storage port', () => {
@@ -106,6 +143,8 @@ describe('persistentUiStorage', () => {
       expect(read.textScale).toBe(1.25);
       expect(read.proseMeasure).toBe(111);
       expect(read.constrainedHue).toBe(true);
+      expect(read.streamText).toBe(false);
+      expect(read.sectionDecor).toBe(false);
     });
   });
 });

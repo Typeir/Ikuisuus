@@ -1,9 +1,6 @@
 // Global stylesheet entry point.
 //
-// Nothing but an ordered load list. Theme variables must precede the Tailwind
-// layers and the @layer base overrides must follow them, so the order below is
-// the cascade and is not free to reorder. Silent comments only: this file
-// compiles to no CSS of its own.
+// Nothing but an ordered load list.
 
 @use 'globals/tokens';
 @use 'globals/fouc';
@@ -12,6 +9,7 @@
 @use 'globals/palette-dark';
 @use 'globals/aspects';
 @use 'globals/constrained-hue';
+@use 'globals/section-decorators';
 @use 'globals/tailwind';
 @use 'globals/base-elements';
 @use 'globals/document';

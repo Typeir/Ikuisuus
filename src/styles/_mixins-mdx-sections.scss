@@ -7,23 +7,6 @@
  * @module styles/mixins-mdx-sections
  */
 
-// Helper mixin to build mask-image with parameterized ellipse and position.
-// Avoids duplicate CSS by centralizing the radial-gradient logic.
-//
-// Layer order is load-bearing. The first mask layer is the topmost, and so is
-// the *source*; layers beneath it are the *destination*. Keeping the linear
-// gradient on top lets the standard `subtract` operator — source AND NOT
-// destination — yield "linear minus radial", which is the single lit corner.
-//
-// The previous form listed the radial first and paired `mask-composite:
-// exclude` with `-webkit-mask-composite: destination-out`. Those are different
-// operations, xor versus destination-out, so the rule rendered correctly only
-// while a processor happened to emit the prefixed property last. Autoprefixer
-// preserves author order; Lightning CSS hoists prefixed declarations, which let
-// `exclude` win and revealed the parts of the frame the mask should remove.
-//
-// Both declarations below now express the same operation, so hoisting is
-// harmless whichever processor runs.
 @mixin mdx--mask-image($mask-ellipse, $mask-position, $mask-linear) {
   mask-image:
     #{$mask-linear},
@@ -61,7 +44,7 @@
   border-image-outset: 0;
   border-image-repeat: stretch;
   box-sizing: border-box;
-  display: block;
+  display: var(--mdx-section-decor-display, block);
   background-clip: padding-box;
   opacity: 0.85;
 
@@ -95,7 +78,7 @@
   border-image-outset: 0;
   border-image-repeat: stretch;
   box-sizing: border-box;
-  display: block;
+  display: var(--mdx-section-decor-display, block);
   background-clip: padding-box;
   opacity: 0.85;
 
@@ -241,6 +224,10 @@
   }
 }
 
+@mixin mdx-first-letter-headroom($size: 4.5em) {
+  padding-top: calc(#{$size} * 0.04 + 0.22em);
+}
+
 /* Keyframes (names preserved to avoid breaking existing references) */
 @keyframes crt-pulse {
   0%,
@@ -280,18 +267,6 @@
  * Renders the doubled `data-stream` attribute value as a vertical,
  * monospace ticker on the `::after` pseudo-element of an MDX section.
  *
- * The element is pinned `top: 0; bottom: 0` so its height equals the section.
- * Its horizontal position is driven entirely by the `--stream-x` CSS custom
- * property, which callers compute from `--heading-level`. Using `transform`
- * for the X offset (instead of a negative `left` value) keeps the layout box
- * at `left: 0` so it never contributes to horizontal scroll.
- *
- * Scrolling animation uses `translateY(0 → -50%)` while `mask-position-y`
- * counter-animates `0% → 100%` in the opposite direction. Because the mask
- * tile is sized to exactly half the element height (`mask-size: 100% 50%`)
- * and repeats: none, the tile always covers exactly the screen-visible half of
- * the element at every frame — making the fade-in/fade-out edges appear fixed
- * in section-space regardless of the scroll position.
  */
 @mixin mdx-terminal-stream($side: left) {
   content: var(--stream-text);
@@ -318,7 +293,7 @@
   opacity: var(--stream-opacity, 0.35);
   pointer-events: none;
   user-select: none;
-  display: block;
+  display: var(--mdx-stream-display, block);
   overflow: hidden;
   will-change: transform, mask-position, opacity;
   transform-origin: #{$side} top;

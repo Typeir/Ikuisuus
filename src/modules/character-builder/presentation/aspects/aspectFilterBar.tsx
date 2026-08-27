@@ -12,7 +12,7 @@
 'use client';
 
 import { displayAspects } from '@/modules/library/domain/aspects';
-import { AspectPill } from '@/modules/library/presentation/components/Aspects/Aspects';
+import { AspectPill } from '@/modules/library/presentation/components/Aspects/AspectPill';
 import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { availableAspects } from '../../lib/utils/aspectRollup';

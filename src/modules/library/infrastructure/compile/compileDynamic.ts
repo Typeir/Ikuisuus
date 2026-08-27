@@ -9,6 +9,9 @@
  */
 
 import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
+import { bakeKeywordShards } from '@/lib/md/bakeKeywordShards';
+import { keywordShardTemplates } from '@/modules/library/presentation/components/Keyword/KeywordShardTemplates';
+import { resolveKeywordRegistry } from '@/lib/md/resolveKeywordRegistry';
 import type { EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import type { CompileOptions } from '../../domain/compileOptions';
 import { buildMdxOptions, importAllAsync } from './compileUtils';
@@ -43,11 +46,18 @@ export async function compileDynamic(opts: CompileOptions) {
     rehypeSectionize,
   } = await importAllAsync();
 
-  const resolvedSource = await resolveReusableSource(source);
+  const keywords = await resolveKeywordRegistry();
+  const { source: resolvedSource, shards } = await bakeKeywordShards(
+    await resolveReusableSource(source),
+    keywords,
+  );
+  const resolvedComponents = shards.length
+    ? { ...components, KeywordShardTemplates: keywordShardTemplates(shards) }
+    : components;
 
   const result = await evaluate({
     source: resolvedSource,
-    components: components as any,
+    components: resolvedComponents as any,
     options: {
       parseFrontmatter,
       mdxOptions: buildMdxOptions(
@@ -59,7 +69,7 @@ export async function compileDynamic(opts: CompileOptions) {
             remarkAspect,
             remarkDiceRoll,
             remarkUnit,
-            remarkKeyword,
+            [remarkKeyword, { registry: keywords }],
           ],
           rehypePlugins: [rehypeKatex, rehypeSectionize, [rehypeAspects, aspects]],
         },

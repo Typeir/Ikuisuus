@@ -17,6 +17,8 @@ import {
   ASPECT_DISPLAY_MODES,
   type AspectDisplayMode,
   DEFAULT_PROSE_MEASURE,
+  DEFAULT_SECTION_DECOR,
+  DEFAULT_STREAM_TEXT,
   DEFAULT_TEXT_SCALE,
   DEFAULT_UNIT_SYSTEM,
   LEGACY_THEME_KEY,
@@ -109,6 +111,8 @@ export function readPersistedState(
   let textScale = DEFAULT_TEXT_SCALE;
   let proseMeasure = DEFAULT_PROSE_MEASURE;
   let constrainedHue = false;
+  let streamText = DEFAULT_STREAM_TEXT;
+  let sectionDecor = DEFAULT_SECTION_DECOR;
   const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
 
   if (stored) {
@@ -141,6 +145,12 @@ export function readPersistedState(
       if (typeof parsed.constrainedHue === 'boolean') {
         constrainedHue = parsed.constrainedHue;
       }
+      if (typeof parsed.streamText === 'boolean') {
+        streamText = parsed.streamText;
+      }
+      if (typeof parsed.sectionDecor === 'boolean') {
+        sectionDecor = parsed.sectionDecor;
+      }
     } catch {
       const legacyTheme = fetchPersistentData(LEGACY_THEME_KEY);
       if (legacyTheme === 'dark' || legacyTheme === 'light') {
@@ -163,6 +173,8 @@ export function readPersistedState(
     textScale,
     proseMeasure,
     constrainedHue,
+    streamText,
+    sectionDecor,
     sidebarMenu: { expandedPaths, isOpen: false },
   };
 }
@@ -191,6 +203,8 @@ export function writePersistedState(state: PersistentUiState): void {
     textScale: state.textScale,
     proseMeasure: state.proseMeasure,
     constrainedHue: state.constrainedHue,
+    streamText: state.streamText,
+    sectionDecor: state.sectionDecor,
   };
 
   storePersistentData(PERSISTENT_UI_STORAGE_KEY, JSON.stringify(serialized));
@@ -206,6 +220,11 @@ export function writePersistedState(state: PersistentUiState): void {
   root.setAttribute(
     'data-constrained-hue',
     state.constrainedHue ? 'true' : 'false',
+  );
+  root.setAttribute('data-stream-text', state.streamText ? 'true' : 'false');
+  root.setAttribute(
+    'data-section-decor',
+    state.sectionDecor ? 'true' : 'false',
   );
   root.style.setProperty('--text-scale-user', String(state.textScale));
   root.style.setProperty('--prose-measure', `${state.proseMeasure}ch`);

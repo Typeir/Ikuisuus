@@ -16,6 +16,8 @@
   "removeFilter": "Remove the {aspect} filter",
   "resultsForAspects": "Cross-referenced by",
   "filterByAspects": "Filter by aspects",
+  "selectedAspects": "Selected",
+  "selectedEmpty": "Nothing selected — pick from the vocabulary below.",
   "clearFilters": "Clear",
   "aspectSuggestions": "Aspect suggestions"
 }

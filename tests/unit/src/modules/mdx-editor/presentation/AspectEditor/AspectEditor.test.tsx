@@ -55,7 +55,9 @@ describe('AspectEditor', () => {
     await screen.findByText('damage:');
     expect(screen.getByText('form:')).toBeDefined();
     const staged = screen.getByLabelText('Authored aspects');
-    expect(staged.querySelector('button[aria-label="damage: fire"]')).not.toBeNull();
+    expect(
+      staged.querySelector('button[aria-label="Remove damage: fire"]'),
+    ).not.toBeNull();
   });
 
   it('should stage on vocabulary click and unstage on staged click, applying only on Apply', async () => {
@@ -70,7 +72,9 @@ describe('AspectEditor', () => {
 
     const staged = screen.getByLabelText('Authored aspects');
     expect(staged.querySelectorAll('button[aria-label]')).toHaveLength(2);
-    await user.click(staged.querySelector('button[aria-label="damage: frost"]')!);
+    await user.click(
+      staged.querySelector('button[aria-label="Remove damage: frost"]')!,
+    );
     expect(staged.querySelectorAll('button[aria-label]')).toHaveLength(1);
 
     await user.click(screen.getByRole('button', { name: 'Apply' }));
@@ -92,6 +96,23 @@ describe('AspectEditor', () => {
     await waitFor(() =>
       expect(screen.getByText(/pick from the vocabulary/)).toBeDefined(),
     );
+  });
+
+  it('should take caller wording for the staged pane', async () => {
+    render(
+      <AspectEditor
+        isOpen
+        initial={[]}
+        onApply={vi.fn()}
+        onClose={vi.fn()}
+        stagedLabel='Selected'
+        stagedEmpty='Nothing selected.'
+      />,
+    );
+    await screen.findByText('form:');
+    expect(screen.getByLabelText('Selected')).toBeDefined();
+    expect(screen.getByText('Nothing selected.')).toBeDefined();
+    expect(screen.queryByText('Authored aspects')).toBeNull();
   });
 
   it('should render not-authored groups disabled and not stage from them', async () => {

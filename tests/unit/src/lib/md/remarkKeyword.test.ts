@@ -26,6 +26,18 @@ const rootWithText = (value: string) => ({
   children: [{ type: 'text', value }],
 });
 
+/**
+ * Reads the MDX JSX attributes of a node into a plain object.
+ *
+ * @param {unknown} node - The MDAST node to read
+ * @returns {Record<string, string>} Attribute name mapped to value
+ */
+const attributesOf = (node: unknown): Record<string, string> =>
+  Object.fromEntries(
+    ((node as { attributes?: { name: string; value: string }[] }).attributes ??
+      []).map((attribute) => [attribute.name, attribute.value]),
+  );
+
 describe('remarkKeyword', () => {
   describe('exports', () => {
     it('should export default function', () => {
@@ -134,9 +146,9 @@ describe('remarkKeyword', () => {
 
   describe('fail-safe behaviour', () => {
     it.each([
-      ['unregistered keyword', '[# kw:swiftness #]'],
       ['missing kw: marker', '[# accuracy #]'],
       ['empty expression', '[# #]'],
+      ['stray semicolon', '[# kw:;prone #]'],
     ])('should leave %s as plain text', (_label, input) => {
       const tree = rootWithText(input);
       remarkKeyword()(tree);
@@ -145,12 +157,98 @@ describe('remarkKeyword', () => {
       expect(tree.children[0]).toMatchObject({ type: 'text', value: input });
     });
 
+    it('should render an unresolved term rather than its source markup', () => {
+      const tree = rootWithText('[# kw:swiftness #]');
+      remarkKeyword()(tree);
+
+      expect(tree.children).toHaveLength(1);
+      expect(tree.children[0]).toMatchObject({ name: 'Keyword' });
+      expect(attributesOf(tree.children[0])).toMatchObject({
+        term: 'swiftness',
+        display: 'swiftness',
+      });
+    });
+
+    it('should never leave a well-formed expression as raw text', () => {
+      const tree = rootWithText('resists [# kw:resist #] the effect');
+      remarkKeyword()(tree);
+
+      const text = tree.children
+        .filter((child: { type: string }) => child.type === 'text')
+        .map((child: { value: string }) => child.value)
+        .join('');
+      expect(text).not.toContain('[#');
+    });
+
     it('should keep valid expressions when a malformed one is adjacent', () => {
-      const tree = rootWithText('[# kw:swiftness #] and [# kw:accuracy #]');
+      const tree = rootWithText('[# accuracy #] and [# kw:accuracy #]');
       remarkKeyword()(tree);
 
       expect(tree.children[0]).toMatchObject({ type: 'text' });
       expect(tree.children[2]).toMatchObject({ name: 'Keyword' });
+    });
+  });
+
+  describe('registry resolution', () => {
+    it('should carry the namespace through as an attribute', () => {
+      const tree = rootWithText('[# kw:condition;Prone #]');
+      remarkKeyword()(tree);
+
+      expect(attributesOf(tree.children[0])).toMatchObject({
+        term: 'prone',
+        display: 'Prone',
+        namespace: 'condition',
+      });
+    });
+
+    it('should omit href when no registry is supplied', () => {
+      const tree = rootWithText('[# kw:condition;prone #]');
+      remarkKeyword()(tree);
+
+      expect(attributesOf(tree.children[0])).not.toHaveProperty('href');
+    });
+
+    it('should add href for a resolved reference', () => {
+      const registry = new Map([
+        [
+          'condition',
+          {
+            namespace: 'condition',
+            sources: ['rules/steel-and-strife/conditions.rule.mdx'],
+            values: new Map([
+              [
+                'prone',
+                [
+                  {
+                    anchor: 'prone',
+                    heading: 'Prone',
+                    filePath: 'rules/steel-and-strife/conditions.rule.mdx',
+                  },
+                ],
+              ],
+            ]),
+          },
+        ],
+      ]);
+      const tree = rootWithText('[# kw:condition;prone #]');
+      remarkKeyword({ registry })(tree);
+
+      expect(attributesOf(tree.children[0]).href).toBe(
+        'library/rules/steel-and-strife/conditions#prone',
+      );
+    });
+
+    it('should omit href when the registry cannot resolve the value', () => {
+      const registry = new Map([
+        [
+          'condition',
+          { namespace: 'condition', sources: [], values: new Map() },
+        ],
+      ]);
+      const tree = rootWithText('[# kw:condition;prone #]');
+      remarkKeyword({ registry })(tree);
+
+      expect(attributesOf(tree.children[0])).not.toHaveProperty('href');
     });
   });
 });

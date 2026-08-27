@@ -11,7 +11,10 @@
  *
  * @description
  * Sidebar open/close state persists via PersistentUiContext. Renders within
- * NotificationProvider for toast messages.
+ * NotificationProvider for toast messages. Below `lg` the fixed title bar
+ * paints behind the status bar / display cutout and pads its controls clear
+ * with the `--safe-area-*` tokens, and an always-mounted scrim dims the page
+ * while the menu is open.
  */
 
 'use client';
@@ -167,14 +170,14 @@ function BaseResponsiveLayoutShell({
             <Image
               src='/logo.png'
               alt={t('libraryTitle')}
-              className='w-8 h-8'
+              className='w-7 h-7'
               width={32}
               height={32}
             />
           </Link>
           {themeToggle(styles.headerIconSlot)}
           {preferencesButton(styles.headerIconSlot)}
-          <div className='flex-1 min-w-0 px-1'>
+          <div className={`flex-1 min-w-0 px-1 ${styles.headerSearchSlot}`}>
             <SearchBar onNavigate={closeSidebar} />
           </div>
           <div className={styles.headerIconSlot}>
@@ -182,16 +185,31 @@ function BaseResponsiveLayoutShell({
           </div>
           <button
             onClick={toggleSidebar}
-            className={cn(btn.tertiary, styles.headerIconSlot)}
+            className={cn(
+              btn.tertiary,
+              themeToggleStyles.themeToggle,
+              styles.headerIconSlot,
+            )}
             aria-label={t('toggleSidebar')}
           >
             <Icon
               type='hamburger'
-              className={`${styles.hamburger} ${open ? styles.isOpen : ''} w-5 h-5`}
+              className={`${styles.hamburger} ${open ? styles.isOpen : ''} w-4 h-4`}
               aria-hidden='true'
             />
           </button>
         </div>
+
+        {/* Scrim: dims the page behind the open mobile menu and closes it on
+            tap. Always mounted so it fades in and out. */}
+        <button
+          type='button'
+          onClick={closeSidebar}
+          tabIndex={open ? 0 : -1}
+          aria-hidden={!open}
+          aria-label={t('closeSidebar')}
+          className={`${styles.scrim} ${open ? styles.isOpen : ''}`}
+        />
 
         {/* Sidebar: 3-Region Layout */}
         <aside
