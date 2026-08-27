@@ -31,6 +31,70 @@ describe('KEYWORD_EXPR_REGEX', () => {
   });
 });
 
+describe('parseKeywordExpression namespaced', () => {
+  it('splits a namespaced reference on the semicolon', () => {
+    expect(parseKeywordExpression('kw:condition;prone')).toEqual({
+      namespace: 'condition',
+      term: 'prone',
+      display: 'prone',
+    });
+  });
+
+  it('preserves author casing in display and lowercases the term', () => {
+    expect(parseKeywordExpression('kw:condition;Prone')).toEqual({
+      namespace: 'condition',
+      term: 'prone',
+      display: 'Prone',
+    });
+  });
+
+  it('lowercases the namespace', () => {
+    expect(parseKeywordExpression('kw:Condition;prone')?.namespace).toBe(
+      'condition',
+    );
+  });
+
+  it('does not require registry membership', () => {
+    expect(parseKeywordExpression('kw:condition;unregistered-thing')).toEqual({
+      namespace: 'condition',
+      term: 'unregistered-thing',
+      display: 'unregistered-thing',
+    });
+  });
+
+  it('tolerates whitespace around the separator parts', () => {
+    expect(parseKeywordExpression('kw:  condition ; prone  ')).toEqual({
+      namespace: 'condition',
+      term: 'prone',
+      display: 'prone',
+    });
+  });
+
+  it('handles a multi-word value', () => {
+    expect(parseKeywordExpression('kw:mechanic;damage bonus')).toEqual({
+      namespace: 'mechanic',
+      term: 'damage bonus',
+      display: 'damage bonus',
+    });
+  });
+
+  it('returns null for an empty namespace', () => {
+    expect(parseKeywordExpression('kw:;prone')).toBeNull();
+  });
+
+  it('returns null for an empty value', () => {
+    expect(parseKeywordExpression('kw:condition;')).toBeNull();
+  });
+
+  it('splits on the first semicolon only', () => {
+    expect(parseKeywordExpression('kw:condition;a;b')).toEqual({
+      namespace: 'condition',
+      term: 'a;b',
+      display: 'a;b',
+    });
+  });
+});
+
 describe('parseKeywordExpression', () => {
   it('should parse a registered keyword', () => {
     expect(parseKeywordExpression('kw:accuracy')).toEqual({
