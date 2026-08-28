@@ -4,10 +4,14 @@
 @use '../mixins-button' as *;
 
 @layer base {
+  /* The emphasis face ships a single 400 cut, so a 700 request makes the
+     browser smear the outlines. Suppressing weight synthesis renders the true
+     letterforms; the fallback stack still resolves its own bold cut. */
   strong,
   b {
     font-weight: 700;
-    font-family: var(--font-grand-cru), system-ui, sans-serif;
+    font-family: var(--font-emphasis), var(--font-default);
+    font-synthesis-weight: none;
   }
 
   em,
@@ -23,11 +27,12 @@
   h6 {
     font-weight: 600;
     line-height: 1.25;
-    font-family: var(--font-stropica), system-ui, sans-serif;
+    font-family: var(--font-headings), var(--font-default);
   }
 
-  /* Outranks `strong, b` on specificity, so heading emphasis keeps the
-     heading face. `.first-letter` keeps Empyrean via its own `!important`. */
+  /* Outranks `strong, b` on specificity, so heading emphasis keeps the heading
+     face. The decorative first letter keeps the initialem face via its own
+     `!important`. */
   :is(h1, h2, h3, h4, h5, h6) :is(strong, b) {
     font-family: inherit;
   }

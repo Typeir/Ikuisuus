@@ -1,0 +1,38 @@
+/**
+ * @fileoverview Detachable Tooltip Styles
+ * @description The viewport-sized layer detached panels live in, and the panel
+ * chrome itself.
+ */
+
+/* The layer is what `Draggable` measures for its bounds, so it has to be the
+   viewport rather than the document: `position: fixed` gives it exactly that.
+   It stays inert so the page underneath keeps its own pointer events. */
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  pointer-events: none;
+}
+
+.panel {
+  pointer-events: auto;
+  max-height: 80vh;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text);
+  box-shadow: 0 10px 28px rgb(var(--color-shadow));
+  overflow: hidden;
+}
+
+/* `Draggable` locks selection so a drag never paints a text selection. A parked
+   reference card is read rather than dragged, so text selection comes back
+   inside the body; the handle keeps its own lock. */
+.panelBody {
+  user-select: text;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  text-align: left;
+  word-wrap: break-word;
+}

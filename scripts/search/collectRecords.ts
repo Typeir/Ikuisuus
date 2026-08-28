@@ -14,6 +14,7 @@
  * @since 8.0.0
  */
 
+import { stripContentSuffix } from '@/lib/enums/constants';
 import { CONTENT_SUBDIR } from '@/modules/search/domain/contentTypes';
 import { localizeLink } from '@/modules/search/domain/localizeLink';
 import { promises as fs, type Dirent } from 'fs';
@@ -70,17 +71,16 @@ export interface IndexRecord {
 }
 
 /**
- * Strip the MDX-specific suffix from a filename to derive the slug.
+ * Strips the extension and any content-type suffix from a filename to derive
+ * the slug. `TYPE_PATTERNS` is not used here: it doubles as the file matcher,
+ * and several of its entries match the extension alone, which would leave the
+ * type suffix inside the slug.
  *
  * @param {string} fileName - Base filename (e.g. `aboleth.sheet.mdx`)
  * @returns {string} Sluggified name (e.g. `aboleth`)
  */
-function deriveSlug(fileName: string, contentType: string): string {
-  const pattern = TYPE_PATTERNS[contentType];
-  if (!pattern) {
-    return fileName.replace(/\.(md|mdx)$/, '');
-  }
-  return fileName.replace(pattern, '');
+function deriveSlug(fileName: string): string {
+  return stripContentSuffix(fileName.replace(/\.(md|mdx)$/, ''));
 }
 
 /**
@@ -117,7 +117,7 @@ function deriveTitle(
     return sidecarTitle;
   }
 
-  const slug = deriveSlug(path.basename(filePath), contentType);
+  const slug = deriveSlug(path.basename(filePath));
   if (!slug || slug.toLowerCase() === 'main') {
     return humanizeFolderName(path.basename(path.dirname(filePath)));
   }
@@ -146,14 +146,12 @@ function deriveUrl(
       contentIdx + `/content/${locale}/`.length,
     );
 
-    relative = relative
-      .replace(/\.(?:sheet|lore|heirloom|trinket|bloodline|specialization)\.(?:md|mdx)$/, '')
-      .replace(/\.(?:md|mdx)$/, '');
+    relative = stripContentSuffix(relative.replace(/\.(?:md|mdx)$/, ''));
 
     return `/${locale}/library/${relative}`;
   }
 
-  return `/${locale}/library/${deriveSlug(path.basename(filePath), _contentType)}`;
+  return `/${locale}/library/${deriveSlug(path.basename(filePath))}`;
 }
 
 /**
@@ -446,7 +444,7 @@ export async function collectRecords(locale: string): Promise<IndexRecord[]> {
               typeof v === 'object' && v !== null,
           )
         : null;
-      const fileSlug = deriveSlug(path.basename(filePath), contentType);
+      const fileSlug = deriveSlug(path.basename(filePath));
       const sidecar = variants
         ? (variants.find((v) => v.slug === fileSlug) ?? variants[0] ?? null)
         : (parsed as Record<string, unknown> | null);

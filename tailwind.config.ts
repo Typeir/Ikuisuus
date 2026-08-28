@@ -19,7 +19,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ['var(--font-empyrean)', 'ui-serif', 'Georgia'],
+        serif: ['var(--font-initialem)', 'ui-serif', 'Georgia'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

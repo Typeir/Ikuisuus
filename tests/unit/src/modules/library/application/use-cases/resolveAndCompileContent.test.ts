@@ -60,6 +60,51 @@ describe('resolveAndCompileContent', () => {
     });
   });
 
+  it('redirects a suffixed leaf to its bare route without fetching', async () => {
+    vi.mocked(fetchContent).mockClear();
+
+    const result = await resolveAndCompileContent({
+      slug: ['en', 'spells', 'acid-splash.spell'],
+      locale: 'en',
+    });
+
+    expect(result).toEqual({
+      kind: 'redirect',
+      href: '/en/library/spells/acid-splash',
+    });
+    expect(fetchContent).not.toHaveBeenCalled();
+  });
+
+  it('keeps the redirect inside the embed tree', async () => {
+    vi.mocked(fetchContent).mockClear();
+
+    const result = await resolveAndCompileContent({
+      slug: ['en', 'rules', 'combat', 'cover.rule'],
+      locale: 'en',
+      basePath: 'embed',
+    });
+
+    expect(result).toEqual({
+      kind: 'redirect',
+      href: '/en/embed/rules/combat/cover',
+    });
+  });
+
+  it('leaves a bare leaf alone when it merely contains a dot', async () => {
+    vi.mocked(fetchContent).mockClear();
+    vi.mocked(fetchContent)
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null);
+
+    const result = await resolveAndCompileContent({
+      slug: ['en', 'spells', 'acid-splash'],
+      locale: 'en',
+    });
+
+    expect(result).toEqual({ kind: 'not-found' });
+    expect(fetchContent).toHaveBeenCalledWith('en', 'spells/acid-splash');
+  });
+
   it('returns markdown payload for .md files', async () => {
     vi.mocked(fetchContent).mockResolvedValueOnce({
       content: '# Title',

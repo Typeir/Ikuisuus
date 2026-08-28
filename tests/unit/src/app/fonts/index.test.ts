@@ -20,26 +20,26 @@ describe('app/fonts/index', () => {
   });
 
   it('Empyrean font has expected properties', () => {
-    expect(empyrean).toHaveProperty('variable', '--font-empyrean');
+    expect(empyrean).toHaveProperty('variable', '--font-initialem');
     expect(empyrean).toHaveProperty('style');
     expect(empyrean).toHaveProperty('className');
   });
 
-  it('exports Stropica as the heading face', () => {
-    expect(stropica).toHaveProperty('variable', '--font-stropica');
+  it('exports Stropica as the emphasis face', () => {
+    expect(stropica).toHaveProperty('variable', '--font-emphasis');
     expect(stropica).toHaveProperty('style');
     expect(stropica).toHaveProperty('className');
   });
 
-  it('compensates Stropica cap height so authored font sizes hold', () => {
+  it('compensates Stropica cap height so bold runs match body copy', () => {
     expect(optionsOf(stropica).declarations).toEqual([
       { prop: 'size-adjust', value: '141%' },
     ]);
     expect(optionsOf(stropica).adjustFontFallback).toBe(false);
   });
 
-  it('exports Grand Cru as the emphasis face at its true weight', () => {
-    expect(grandCru).toHaveProperty('variable', '--font-grand-cru');
+  it('exports Grand Cru as the heading face at its true weight', () => {
+    expect(grandCru).toHaveProperty('variable', '--font-headings');
     expect(optionsOf(grandCru).src).toEqual([
       expect.objectContaining({ weight: '300' }),
     ]);

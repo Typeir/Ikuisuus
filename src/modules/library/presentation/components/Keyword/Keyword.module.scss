@@ -21,6 +21,27 @@
   text-align: left;
 }
 
+.panel {
+  max-width: min(32rem, 90vw);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* Sized as an h3 so a parked card reads as a titled entry rather than as a
+   tooltip with a bold first line. */
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-headings), var(--font-default);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--color-accent);
+}
+
 .blurb {
   white-space: normal;
 

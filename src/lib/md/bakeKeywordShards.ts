@@ -41,10 +41,13 @@ export const KEYWORD_SHARDS_TAG = 'KeywordShardTemplates';
 /**
  * A shard resolved and rendered, ready to bake.
  *
+ * The heading stays out of `html` so the consuming card owns its own title
+ * element and can size it as a heading rather than as bold body text.
+ *
  * @interface BakedShard
  * @property {string} id - Template element id
  * @property {string} heading - Heading text of the defining section
- * @property {string} html - Rendered section body
+ * @property {string} html - Rendered section body, without the heading
  */
 export interface BakedShard {
   id: string;
@@ -131,9 +134,7 @@ export async function collectKeywordShards(
     const prose = await readShard(target, locale);
     if (!prose) continue;
 
-    const html = await renderMarkdownToHtml(
-      `**${target.heading}**\n\n${prose}`,
-    );
+    const html = await renderMarkdownToHtml(prose);
     shards.set(id, { id, heading: target.heading, html });
   }
 

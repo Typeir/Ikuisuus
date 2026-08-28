@@ -3,7 +3,7 @@
  * @description Accessible tooltip with hover/focus activation, delay, and placement options.
  *
  * @module tooltip
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -19,29 +19,15 @@ import {
   ReactElement,
   ReactNode,
   type CSSProperties,
-  useCallback,
   useEffect,
-  useId,
-  useRef,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import {
-  toAnchorName,
-  useAnchoredPosition,
-  useCssAnchorSupport,
-} from '@/lib/hooks/useAnchoredPosition';
-import { calculatePosition } from './calculatePosition';
 import styles from './tooltip.module.scss';
+import { useTooltipAnchor, type TooltipPlacement } from './useTooltipAnchor';
+import { useTooltipVisibility } from './useTooltipVisibility';
 
-/**
- * Allowed tooltip placement values relative to the trigger element.
- * The tooltip will auto-flip to the opposite placement if there is
- * insufficient viewport space.
- *
- * @typedef {'top' | 'bottom' | 'left' | 'right'} TooltipPlacement
- */
-export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
+export type { TooltipPlacement } from './useTooltipAnchor';
 
 /**
  * @interface TooltipProps
@@ -61,6 +47,7 @@ export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
  * @property {boolean} [showClickIcon=true] - When clickable, whether to show CircleHelp icon (default true)
  * @property {boolean} [inline=false] - When true, attaches handlers directly to child via cloneElement
  *   instead of wrapping in a span. Use for absolutely-positioned triggers.
+ * @property {boolean} [forceVisible=false] - When true, tooltip is shown regardless of hover state
  */
 export interface TooltipProps {
   content: ReactNode;
@@ -77,7 +64,6 @@ export interface TooltipProps {
   onItemClick?: () => void;
   showClickIcon?: boolean;
   inline?: boolean;
-  /** When true, tooltip is shown regardless of hover state. */
   forceVisible?: boolean;
 }
 
@@ -112,111 +98,37 @@ export const Tooltip = memo(function Tooltip({
   inline = false,
   forceVisible = false,
 }: TooltipProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [exiting, setExiting] = useState(false);
-  const [actualPlacement, setActualPlacement] = useState(placement);
   const [isMounted, setIsMounted] = useState(false);
 
-  const triggerRef = useRef<HTMLElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const showTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const hideTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const exitingRef = useRef(false);
-  const exitTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
-
-  /** Duration of the CSS exit animation — must match SCSS. */
-  const EXIT_DURATION = 150;
-
-  const reactId = useId();
-  const tooltipId = id || `tooltip-${reactId}`;
-  const cssAnchored = useCssAnchorSupport();
-  const anchorName = toAnchorName(reactId);
-
-  const showPortal = isVisible || exiting;
-
-  /** Derives the tooltip position from the trigger rect. */
-  const compute = useCallback(
-    (triggerRect: DOMRect, tooltipEl: HTMLElement) => {
-      const { x, y, actualPlacement: resolved } = calculatePosition(
-        triggerRect,
-        tooltipEl.getBoundingClientRect(),
-        placement,
-      );
-      return { x, y, placement: resolved };
-    },
-    [placement],
-  );
-
-  const { reposition } = useAnchoredPosition(triggerRef, tooltipRef, compute, {
-    active: !cssAnchored && (showPortal || forceVisible),
-    onPlacementChange: (resolved) =>
-      setActualPlacement(resolved as TooltipPlacement),
+  const { showPortal, exiting, show, hide, showNow } = useTooltipVisibility({
+    showDelay,
+    hideDelay,
+    disabled,
   });
 
-  /** Show tooltip after delay. Cancels any in-progress exit. */
-  const show = useCallback(() => {
-    if (disabled) return;
+  const {
+    triggerRef,
+    surfaceRef,
+    anchorName,
+    actualPlacement,
+    anchorId,
+    reposition,
+  } = useTooltipAnchor(placement, showPortal || forceVisible);
 
-    clearTimeout(hideTimeoutRef.current);
-    if (exitingRef.current) {
-      clearTimeout(exitTimerRef.current);
-      setExiting(false);
-      exitingRef.current = false;
-      return;
-    }
-    showTimeoutRef.current = setTimeout(() => {
-      setIsVisible(true);
-    }, showDelay);
-  }, [disabled, showDelay]);
-
-  /** Hide tooltip after delay, with exit animation before unmount. */
-  const hide = useCallback(() => {
-    clearTimeout(showTimeoutRef.current);
-    hideTimeoutRef.current = setTimeout(() => {
-      setExiting(true);
-      exitingRef.current = true;
-    }, hideDelay);
-  }, [hideDelay]);
-
-  /** When exit animation completes, actually unmount the tooltip. */
-  useEffect(() => {
-    if (exiting) {
-      exitTimerRef.current = setTimeout(() => {
-        setIsVisible(false);
-        setExiting(false);
-        exitingRef.current = false;
-      }, EXIT_DURATION);
-      return () => clearTimeout(exitTimerRef.current);
-    }
-  }, [exiting]);
-
-  /** Cleanup timeouts on unmount */
-  useEffect(() => {
-    return () => {
-      clearTimeout(showTimeoutRef.current);
-      clearTimeout(hideTimeoutRef.current);
-      clearTimeout(exitTimerRef.current);
-    };
-  }, []);
+  const tooltipId = id || `tooltip-${anchorId}`;
 
   /** Track client-side mounting for SSR compatibility */
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  /** When forceVisible flips true, show instantly. When false, trigger exit. */
+  /** When forceVisible flips true, show instantly. */
   useEffect(() => {
     if (forceVisible) {
-      clearTimeout(hideTimeoutRef.current);
-      if (exitingRef.current) {
-        clearTimeout(exitTimerRef.current);
-        setExiting(false);
-        exitingRef.current = false;
-      }
-      setIsVisible(true);
+      showNow();
       reposition();
     }
-  }, [forceVisible, reposition]);
+  }, [forceVisible, showNow, reposition]);
 
   if (!isMounted || !content) {
     return children;
@@ -232,6 +144,18 @@ export const Tooltip = memo(function Tooltip({
       onItemClick();
     }
   };
+
+  const surface = (
+    <div
+      ref={surfaceRef}
+      id={tooltipId}
+      role='tooltip'
+      className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
+      style={{ maxWidth, positionAnchor: anchorName } as CSSProperties}>
+      {content}
+      {showArrow && <div className={styles.arrow} />}
+    </div>
+  );
 
   if (inline) {
     const cloned = cloneElement(Children.only(children) as ReactElement<any>, {
@@ -250,19 +174,7 @@ export const Tooltip = memo(function Tooltip({
     return (
       <>
         {cloned}
-        {showPortal &&
-          createPortal(
-            <div
-              ref={tooltipRef}
-              id={tooltipId}
-              role='tooltip'
-              className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
-              style={{ maxWidth, positionAnchor: anchorName } as CSSProperties}>
-              {content}
-              {showArrow && <div className={styles.arrow} />}
-            </div>,
-            document.body,
-          )}
+        {showPortal && createPortal(surface, document.body)}
       </>
     );
   }
@@ -295,19 +207,7 @@ export const Tooltip = memo(function Tooltip({
           />
         )}
       </span>
-      {showPortal &&
-        createPortal(
-          <div
-            ref={tooltipRef}
-            id={tooltipId}
-            role='tooltip'
-            className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
-            style={{ maxWidth, positionAnchor: anchorName } as CSSProperties}>
-            {content}
-            {showArrow && <div className={styles.arrow} />}
-          </div>,
-          document.body,
-        )}
+      {showPortal && createPortal(surface, document.body)}
     </>
   );
 });

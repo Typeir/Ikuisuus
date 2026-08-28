@@ -128,6 +128,7 @@ function keywordNode(
         'templateId',
         keywordTemplateId(reference.namespace, resolved.anchor),
       ),
+      attributeNode('heading', resolved.heading),
     );
   }
 

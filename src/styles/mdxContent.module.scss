@@ -1,4 +1,5 @@
 @use 'mixins' as *;
+@use 'mixins-mdx-media' as *;
 
 /**
  * @fileoverview Shared MDX Content Typography Styles
@@ -55,10 +56,18 @@
   a {
     color: var(--color-accent);
     text-decoration: underline;
+    font-family: var(--font-emphasis), var(--font-default);
+    font-synthesis-weight: none;
 
     &:hover {
       opacity: 0.85;
     }
+  }
+
+  :is(h1, h2, h3, h4, h5, h6) a {
+    /* Outranks the rule above, so a link inside a heading keeps the heading
+       face instead of flipping to the emphasis face. */
+    font-family: inherit;
   }
 
   blockquote {
@@ -183,40 +192,7 @@
   }
 
   img {
-    display: block;
-    position: relative;
-    margin: 2rem auto;
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-    border-radius: 1.5rem;
-    z-index: 1;
-    max-height: 90vh;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-      pointer-events: none;
-      z-index: 1;
-      background-color: var(--color-bg);
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-      max-height: 75vh;
-    }
-
-    @media (min-aspect-ratio: 3/1) {
-      max-width: 60vw;
-    }
-
-    @media (max-aspect-ratio: 1/3) {
-      max-height: 60vh;
-    }
+    @include mdx-image;
   }
 }
 

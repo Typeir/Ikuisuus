@@ -6,6 +6,7 @@
  * @since 6.0.0
  */
 
+import { stripContentSuffix } from '@/lib/enums/constants';
 import { isMdFile } from '@/lib/md/isMdFile';
 import type { ArticleMetadata } from '@/modules/library/application/context/ArticleMetadataContext';
 import {
@@ -57,7 +58,7 @@ export interface MdxResolution {
 }
 
 /**
- * Redirect payload when slug/main exists.
+ * Redirect payload
  */
 export interface RedirectResolution {
   kind: 'redirect';
@@ -98,6 +99,15 @@ export async function resolveAndCompileContent({
     (segment) => decodeURIComponent(segment),
   );
   const slugPath = slugSegments.join('/');
+
+  const bareSegments = slugSegments.map((segment, index) =>
+    index === slugSegments.length - 1 ? stripContentSuffix(segment) : segment,
+  );
+  const barePath = bareSegments.join('/');
+
+  if (barePath !== slugPath) {
+    return { kind: 'redirect', href: `/${locale}/${basePath}/${barePath}` };
+  }
 
   const result = await fetchContent(locale, slugPath);
 

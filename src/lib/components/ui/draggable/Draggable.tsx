@@ -67,6 +67,7 @@ type PositionFromBounds = (parentBounds: {
  * @property {string} [testId] - data-testid for testing
  * @property {boolean} [resizable] - Whether the container can be resized via a corner handle
  * @property {Function} [onClose] - Callback when the close button is clicked; shows close button when provided
+ * @property {string} [closeLabel] - Accessible name for the close button
  */
 interface DraggableProps {
   children: ReactNode;
@@ -80,6 +81,7 @@ interface DraggableProps {
   testId?: string;
   resizable?: boolean;
   onClose?: () => void;
+  closeLabel?: string;
 }
 
 /**
@@ -97,6 +99,7 @@ interface DraggableProps {
  * @param {string} [props.testId] - data-testid for testing
  * @param {boolean} [props.resizable=false] - Whether the container can be resized via a corner handle
  * @param {() => void} [props.onClose] - Callback when the close button is clicked; shows close button when provided
+ * @param {string} [props.closeLabel='Close panel'] - Accessible name for the close button
  * @returns {React.ReactElement} The draggable container
  *
  * @example
@@ -118,6 +121,7 @@ export function Draggable({
   testId,
   resizable = false,
   onClose,
+  closeLabel = 'Close panel',
 }: DraggableProps): React.ReactElement {
   /** Resolve a static initial position; functions resolve to {0,0} until layout effect runs */
   const staticInitial: PositionValue =
@@ -330,7 +334,7 @@ export function Draggable({
             className={styles.closeButton}
             onClick={onClose}
             type='button'
-            aria-label='Close panel'>
+            aria-label={closeLabel}>
             <X size={16} aria-hidden='true' />
           </button>
         )}

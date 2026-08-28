@@ -10,6 +10,16 @@
   --springy-bezier: #{$transition-ease-springy};
 }
 
+/* Typeface roles. The three display faces are registered by `next/font` in
+   `src/app/fonts`, which writes `--font-initialem`, `--font-headings` and
+   `--font-emphasis` onto the root element. `--font-default` is the body stack
+   and is the tail of every role's fallback chain. */
+:root {
+  --font-default:
+    system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
 /* Safe-area insets. `env()` resolves to 0px wherever the UA does not expose
    them, so these are safe to consume unconditionally. They are only non-zero
    once the document opts into `viewport-fit=cover` (set in the root

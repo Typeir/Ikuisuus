@@ -11,6 +11,7 @@
  * @since 8.0.0
  */
 
+import { stripContentSuffix } from '@/lib/enums/constants';
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
@@ -65,8 +66,7 @@ function deriveRulesLink(filePath: string, slug: string): string {
 
   const kebabSegments = relativeSegments
     .map((s) =>
-      s
-        .replace(/\.mdx$/, '')
+      stripContentSuffix(s.replace(/\.mdx$/, ''))
         .replace(/\s+/g, '-')
         .replace(/_/g, '-')
         .toLowerCase(),

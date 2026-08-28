@@ -28,6 +28,14 @@ export type { TextAreaProps } from './textArea';
 export { Tooltip, WithTooltip, withTooltip } from './tooltip';
 export type { TooltipPlacement, TooltipProps } from './tooltip';
 
+/** Tooltip primitives — hover lifecycle and anchoring, for custom surfaces */
+export { useTooltipAnchor, useTooltipVisibility } from './tooltip/index';
+export type { TooltipAnchor, TooltipVisibility } from './tooltip/index';
+
+/** DetachableTooltip — hover tooltip that parks as a draggable panel on shift-leave */
+export { DetachableTooltip } from './detachableTooltip';
+export type { DetachableTooltipProps } from './detachableTooltip';
+
 /** PushNotification — toast-style notification system */
 export { NotificationProvider, useNotifications } from './pushNotification';
 export type {

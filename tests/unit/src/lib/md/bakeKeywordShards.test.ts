@@ -146,13 +146,14 @@ describe('bakeKeywordShards', () => {
     expect(shards).toHaveLength(1);
   });
 
-  it('should render the heading into the shard html', async () => {
+  it('should report the heading separately from the shard html', async () => {
     const { shards } = await bakeKeywordShards(
       '[# kw:condition;blinded #]',
       registryWithBlinded() as never,
     );
 
-    expect(shards[0].html).toContain('<strong>Blinded</strong>');
+    expect(shards[0].heading).toBe('Blinded');
+    expect(shards[0].html).not.toContain('<strong>Blinded</strong>');
   });
 
   it('should render markdown structure rather than a flat string', async () => {

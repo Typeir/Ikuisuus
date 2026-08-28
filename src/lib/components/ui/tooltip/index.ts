@@ -8,3 +8,10 @@
 
 export { Tooltip, WithTooltip, withTooltip } from './tooltip';
 export type { TooltipProps, TooltipPlacement } from './tooltip';
+export { useTooltipAnchor, type TooltipAnchor } from './useTooltipAnchor';
+export {
+  TOOLTIP_EXIT_DURATION,
+  useTooltipVisibility,
+  type TooltipVisibility,
+  type TooltipVisibilityOptions,
+} from './useTooltipVisibility';
