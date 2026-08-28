@@ -9,7 +9,7 @@
   gap: 1.5rem;
   padding: 1.5rem;
   background: var(--color-surface);
-  border-radius: 8px;
+  border-radius: var(--border-round-l);
 }
 
 .playModeHeader {
@@ -75,7 +75,7 @@
     flex: 1;
     padding: 0.4rem 0.6rem;
     border: 1px solid var(--color-secondary);
-    border-radius: 4px;
+    border-radius: var(--border-round-s);
     background: var(--color-bg);
     color: var(--color-text);
     font-size: 0.8rem;
@@ -99,7 +99,7 @@
 }
 
 .combatantWrapper {
-  border-radius: 8px;
+  border-radius: var(--border-round-l);
   background: var(--color-bg);
   transition: all 0.2s ease;
 

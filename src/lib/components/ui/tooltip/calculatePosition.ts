@@ -9,7 +9,12 @@
  * @since 1.0.0
  */
 
-import type { TooltipPlacement } from './tooltip';
+/**
+ * Placement relative to the trigger. Flips to the opposite side when short of room.
+ *
+ * @typedef {'top' | 'bottom' | 'left' | 'right'} TooltipPlacement
+ */
+export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
 export function calculatePosition(
   triggerRect: DOMRect,

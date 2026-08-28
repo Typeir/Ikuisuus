@@ -9,7 +9,7 @@
   justify-content: center;
   min-width: 0.8rem;
   height: 0.8rem;
-  border-radius: 999px;
+  border-radius: var(--border-round-pill);
   background: var(--color-accent);
   color: var(--color-bg);
   font-size: 0.5rem;

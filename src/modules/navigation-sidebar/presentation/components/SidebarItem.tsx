@@ -9,32 +9,22 @@
 
 import Icon from '@/lib/components/icon/icon';
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
-import { useSidebarExpansionActions } from '@/lib/context/PersistentUiContext';
 import { cn } from '@/lib/utils/classNameMerge';
 import { useFetchStubChildren } from '@/modules/navigation-sidebar/application/hooks/useFetchStubChildren';
+import { useIsPathExpanded } from '@/modules/navigation-sidebar/application/hooks/useIsPathExpanded';
+import { useSidebarExpansionDispatch } from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
 import { SIDEBAR_CLOSE_ANIMATION_MS } from '@/modules/navigation-sidebar/domain/constants';
 import type {
     LayoutItem,
     SidebarItemProps,
 } from '@/modules/navigation-sidebar/domain/types';
-import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import type { JSX } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Sidebar } from './sidebar';
 import styles from './sidebar.module.scss';
 import { SkeletonSidebarItems } from './SkeletonSidebarItems';
-import { VIRTUALIZE_THRESHOLD } from './VirtualizedSidebar';
-
-const VirtualizedSidebar = dynamic(() => import('./VirtualizedSidebar'), {
-  ssr: false,
-});
-
-const Sidebar = dynamic(
-  () => import('./sidebar').then((mod) => ({ default: mod.Sidebar })),
-  {
-    ssr: false,
-  },
-);
+import VirtualizedSidebar, { VIRTUALIZE_THRESHOLD } from './VirtualizedSidebar';
 
 /**
  * Renders an item as a link or a collapsible folder. Children mount on
@@ -53,23 +43,22 @@ export const SidebarItem = ({
   collapseSiblings,
   pathStore,
 }: SidebarItemProps): JSX.Element | null => {
-  const { isExpanded, setExpanded } = useSidebarExpansionActions();
-  const [open, setOpen] = useState<boolean>(() => isExpanded(item.path));
-  const [isHydrated, setIsHydrated] = useState(false);
-  const [mounted, setMounted] = useState<boolean>(() => isExpanded(item.path));
+  const { setExpanded } = useSidebarExpansionDispatch();
+  const expanded = useIsPathExpanded(item.path);
+  const [open, setOpen] = useState<boolean>(expanded);
+  const [mounted, setMounted] = useState<boolean>(expanded);
   const [isClosing, setIsClosing] = useState(false);
-  const openRef = useRef(false);
+  const openRef = useRef(expanded);
   const params = useParams();
   const locale = params?.locale as string;
-  const [localExpandedHeight, setLocalExpandedHeight] = useState<number | null>(
-    null,
-  );
 
-  const {
-    stubChildren,
-    isFetchingChildren,
-    localExpandedHeight: hookHeight,
-  } = useFetchStubChildren(open, !!item.isStub, item.path, locale);
+  const { stubChildren, localExpandedHeight } = useFetchStubChildren(
+    open,
+    !!item.isStub,
+    item.path,
+    locale,
+  );
+  const expandedHeight = localExpandedHeight ?? item.expandedHeight;
 
   const effectiveChildren = useMemo(() => {
     if (item.isStub) return stubChildren ?? [];
@@ -82,23 +71,19 @@ export const SidebarItem = ({
 
   useEffect(() => {
     openRef.current = open;
-    setIsHydrated(true);
   }, [open]);
 
   useEffect(() => {
-    if (!isHydrated) return;
-    const expanded = isExpanded(item.path);
-    if (expanded !== open) {
-      openRef.current = expanded;
-      setOpen(expanded);
-      if (expanded) {
-        setMounted(true);
-        setIsClosing(false);
-      } else {
-        setIsClosing(true);
-      }
+    if (expanded === open) return;
+    openRef.current = expanded;
+    setOpen(expanded);
+    if (expanded) {
+      setMounted(true);
+      setIsClosing(false);
+    } else {
+      setIsClosing(true);
     }
-  }, [isExpanded, item.path, open, isHydrated]);
+  }, [expanded, open]);
 
   useEffect(() => {
     return pathStore.subscribe((path: string | null) => {
@@ -134,12 +119,6 @@ export const SidebarItem = ({
     }, SIDEBAR_CLOSE_ANIMATION_MS);
     return () => clearTimeout(timerId);
   }, [isClosing]);
-
-  useEffect(() => {
-    if (hookHeight !== null) {
-      setLocalExpandedHeight(hookHeight);
-    }
-  }, [hookHeight]);
 
   const hasIndex =
     (index !== undefined && index !== -1) ||
@@ -202,9 +181,9 @@ export const SidebarItem = ({
         <div
           className={cn(styles.content, open && styles.expanded)}
           style={{
-            ['--expanded-height' as string]: `${localExpandedHeight ?? item.expandedHeight}px`,
+            ['--expanded-height' as string]: `${expandedHeight}px`,
           }}>
-          {mounted && isFetchingChildren ? (
+          {mounted && item.isStub && stubChildren === null ? (
             <SkeletonSidebarItems childCount={item.childCount} />
           ) : mounted ? (
             folderChildren.items.length > VIRTUALIZE_THRESHOLD ? (

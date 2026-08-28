@@ -71,13 +71,19 @@ describe('Keyword', () => {
   });
 
   describe('hover definition', () => {
-    it('should show the blurb in the tooltip on hover', () => {
+    it('should show the blurb in the tooltip on hover', async () => {
+      render(<Keyword term='damage bonus' />);
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+
+      /* The card machinery is imported after mount, so the bare link renders
+         first and the hover handlers only exist once the swap has happened. */
+      await act(async () => {
+        await import('@/lib/components/ui/detachableTooltip');
+      });
+
       vi.useFakeTimers();
       try {
-        render(<Keyword term='damage bonus' />);
-
-        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
-
         fireEvent.mouseEnter(screen.getByRole('link'));
         act(() => {
           vi.advanceTimersByTime(300);

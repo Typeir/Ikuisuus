@@ -9,7 +9,7 @@
   .crBadge {
     padding: 0.25rem 0.5rem;
     border: 1px solid var(--color-accent);
-    border-radius: 4px;
+    border-radius: var(--border-round-s);
     background: var(--color-transparent);
     color: var(--color-accent);
     font-size: 0.75rem;
@@ -22,7 +22,7 @@
     display: inline-block;
     padding: 0.25rem 0.5rem;
     border: 1px solid var(--color-stratagem);
-    border-radius: 3px;
+    border-radius: var(--border-round-s);
     background: rgb(var(--color-stratagem-a15));
     color: var(--color-stratagem);
     font-size: 0.75rem;
@@ -35,7 +35,7 @@
     display: inline-flex;
     align-items: center;
     padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    border-radius: var(--border-round-s);
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -66,7 +66,7 @@
   flex-wrap: wrap;
   padding: 0.75rem;
   background: var(--color-bg);
-  border-radius: 6px;
+  border-radius: var(--border-round-m);
   border: 1px solid var(--color-secondary);
 }
 
@@ -91,7 +91,7 @@
   height: 28px;
   padding: 0;
   border: 2px solid var(--color-accent);
-  border-radius: 50%;
+  border-radius: var(--border-round-circle);
   background: var(--color-transparent);
   color: var(--color-accent);
   cursor: pointer;
@@ -140,7 +140,7 @@
 .resistButton {
   padding: 0.375rem 0.625rem;
   border: 1px solid var(--color-emphasis);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   background: var(--color-transparent);
   color: var(--color-emphasis);
   cursor: pointer;
@@ -165,7 +165,7 @@
   height: 28px;
   padding: 0;
   border: 1px solid var(--color-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   background: var(--color-transparent);
   color: var(--color-secondary);
   cursor: pointer;
@@ -196,7 +196,7 @@
   align-items: center;
   gap: 0.5rem;
   border: 1px solid var(--color-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   color: var(--color-secondary);
   font-size: 0.875rem;
   font-weight: 600;

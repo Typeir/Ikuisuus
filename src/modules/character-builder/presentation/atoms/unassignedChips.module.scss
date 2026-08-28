@@ -27,7 +27,7 @@
   display: inline-flex;
   align-items: center;
   padding: 0.15rem 0.5rem;
-  border-radius: 999px;
+  border-radius: var(--border-round-pill);
   font-size: 0.65rem;
   line-height: 1.2;
   white-space: nowrap;

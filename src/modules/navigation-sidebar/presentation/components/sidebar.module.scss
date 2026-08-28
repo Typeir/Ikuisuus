@@ -123,6 +123,24 @@
   }
 }
 
+/* Virtualized rows mount as they scroll into the window; @starting-style fades
+   each new row in instead of popping it. Transition, not @keyframes — keyframes
+   would restart from their own `from` on every style recalc. */
+.leafFade {
+  opacity: 1;
+  transition: opacity 0.12s ease-out;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leafFade {
+    transition: none;
+  }
+}
+
 .link-item {
   display: inline-block;
 }

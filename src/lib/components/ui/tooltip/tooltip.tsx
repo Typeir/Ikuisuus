@@ -24,6 +24,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './tooltip.module.scss';
+import { useEscapeDismiss } from './useEscapeDismiss';
 import { useTooltipAnchor, type TooltipPlacement } from './useTooltipAnchor';
 import { useTooltipVisibility } from './useTooltipVisibility';
 
@@ -100,11 +101,12 @@ export const Tooltip = memo(function Tooltip({
 }: TooltipProps) {
   const [isMounted, setIsMounted] = useState(false);
 
-  const { showPortal, exiting, show, hide, showNow } = useTooltipVisibility({
-    showDelay,
-    hideDelay,
-    disabled,
-  });
+  const { showPortal, exiting, show, hide, showNow, hideNow } =
+    useTooltipVisibility({
+      showDelay,
+      hideDelay,
+      disabled,
+    });
 
   const {
     triggerRef,
@@ -121,6 +123,13 @@ export const Tooltip = memo(function Tooltip({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  /**
+   * Escape dismisses the tooltip without moving the pointer, which content
+   * shown on hover or focus has to allow (WCAG 2.1 SC 1.4.13). A pinned
+   * tooltip is the caller's to close, so it opts out.
+   */
+  useEscapeDismiss(showPortal && !forceVisible, hideNow);
 
   /** When forceVisible flips true, show instantly. */
   useEffect(() => {

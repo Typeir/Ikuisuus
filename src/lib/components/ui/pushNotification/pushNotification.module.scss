@@ -90,7 +90,7 @@
   min-width: 300px;
   max-width: 420px;
   padding: calc(var(--fence-h) + 0.75rem) 1rem calc(var(--fence-h) + 0.625rem);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
 
   background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
@@ -208,7 +208,7 @@
 .actionButton {
   margin-top: 0.5rem;
   padding: 0.25rem 0.625rem;
-  border-radius: 0.25rem;
+  border-radius: var(--border-round-s);
   font-size: 0.8125rem;
 
   @include focus-accent-outline;

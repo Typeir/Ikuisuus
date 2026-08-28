@@ -154,6 +154,39 @@ All theme colors are CSS custom properties defined in:
 --color-transparent     // Use instead of 'transparent' keyword
 ```
 
+### Corner Radii (`src/styles/globals/_tokens.scss`)
+
+One scale for every rounded corner on the site, so the whole UI can be squared
+off by editing one block — the terminal / Greek-architecture idiom the design
+draws on has no rounded corners, and un-roundening tests flip these tokens.
+
+```scss
+--border-round-xs       // 2px  — hairline chips, focus rings
+--border-round-s        // 4px  — buttons, inputs, scrollbar thumbs
+--border-round-m        // 6px  — cards, panels, search results
+--border-round-l        // 8px  — larger panels
+--border-round-xl       // 12px — sheets, tab strips, section frames
+--border-round-2xl      // 24px — hero media
+--border-round-pill     // 999px — badges, pills
+--border-round-circle   // 50%  — avatars, dots
+```
+
+```scss
+// ✅ Tokens, including per-corner shorthands
+.card { border-radius: var(--border-round-m); }
+.tab  { border-radius: var(--border-round-m) var(--border-round-m) 0 0; }
+
+// ✅ Sass mixin params carry the token through
+@include scrollbar-thin($thumb-radius: var(--border-round-s));
+
+// ❌ Literal radii
+.bad { border-radius: 4px; }
+.bad { border-radius: 0.375rem; }
+```
+
+`0` and `inherit` stay literal. The only literal radius left in the tree is the
+`35%` squircle in `BlendedImage` — a deliberate shape, not a scale step.
+
 ---
 
 ## Adding New Tokens
@@ -208,6 +241,9 @@ grep -rn "color:\s*\(red\|blue\|green\|white\|black\|transparent\)[^-]" src/ --i
 # Find inline style colors in TSX
 grep -rn "style={{.*color.*#" src/ --include="*.tsx"
 grep -rn "style={{.*background.*#" src/ --include="*.tsx"
+
+# Find literal corner radii (expected: only BlendedImage's 35% squircle)
+grep -rnE "border(-[a-z]+)*-radius\s*:\s*[0-9.]+(px|rem|em|%)" src/ --include="*.scss" --include="*.css"
 ```
 
 ---

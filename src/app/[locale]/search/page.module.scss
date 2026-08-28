@@ -38,7 +38,7 @@
   color: var(--color-accent);
   background: color-mix(in oklab, var(--color-accent) 12%, var(--color-bg));
   border: 1px solid color-mix(in oklab, var(--color-accent) 34%, var(--color-bg));
-  border-radius: 999px;
+  border-radius: var(--border-round-pill);
   text-decoration: none;
   transition:
     background 0.14s ease,

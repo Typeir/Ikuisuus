@@ -15,5 +15,6 @@ export { ResultThumb } from './atoms/ResultThumb';
 export { ResultTitle } from './atoms/ResultTitle';
 export { TypeSigil } from './atoms/TypeSigil';
 export { SearchBar } from './SearchBar/SearchBar';
+export { SearchResultList } from './SearchResultList/SearchResultList';
 export { SearchResultRow } from './SearchResultRow/SearchResultRow';
 

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Tooltip Anchoring
  * @description Binds a floating surface to its trigger: CSS anchor positioning
- * where the engine supports it, {@link useAnchoredPosition} everywhere else,
- * and the resolved placement the surface needs for its arrow and offsets.
+ * where supported, {@link useAnchoredPosition} otherwise.
  *
  * @module lib/components/ui/tooltip/useTooltipAnchor
  * @version 1.0.0
@@ -18,15 +17,9 @@ import {
   useCssAnchorSupport,
 } from '@/lib/hooks/useAnchoredPosition';
 import { useCallback, useId, useRef, useState } from 'react';
-import { calculatePosition } from './calculatePosition';
+import { calculatePosition, type TooltipPlacement } from './calculatePosition';
 
-/**
- * Placement of a floating surface relative to its trigger. The surface flips to
- * the opposite side when the preferred one has no room.
- *
- * @typedef {'top' | 'bottom' | 'left' | 'right'} TooltipPlacement
- */
-export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
+export type { TooltipPlacement } from './calculatePosition';
 
 /**
  * Result of {@link useTooltipAnchor}.
@@ -91,12 +84,7 @@ export function useTooltipAnchor(
       setActualPlacement(resolved as TooltipPlacement),
   });
 
-  /**
-   * Repositions only while the JavaScript fallback owns the surface. Where the
-   * engine positions natively the surface carries no inline transform, and
-   * writing one would offset it a second time from the position the engine
-   * already resolved.
-   */
+  /** Repositions only under the JS fallback; a native write would double the offset. */
   const repositionIfOwned = useCallback(() => {
     if (cssAnchored) return;
     reposition();

@@ -13,7 +13,7 @@
 // Wrapper for tab navigation - handles scrolling
 .tabNavWrapper {
   position: relative;
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--border-round-m) var(--border-round-m) 0 0;
   margin-bottom: -1px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -22,7 +22,7 @@
     $thumb: var(--color-secondary),
     $track: var(--gradient-tabs-surface, var(--color-surface)),
     $height: 8px,
-    $thumb-radius: 4px
+    $thumb-radius: var(--border-round-s)
   );
   background: linear-gradient(
     0deg,
@@ -34,7 +34,7 @@
 .gradientContainer {
   position: relative;
   border: 0.2rem solid var(--gradient-tabs-surface, var(--color-surface));
-  border-radius: 10px 10px 0 0;
+  border-radius: var(--border-round-xl) var(--border-round-xl) 0 0;
   padding-top: 2rem;
 }
 
@@ -83,7 +83,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
-    border-radius: 6px 6px 0 0;
+    border-radius: var(--border-round-m) var(--border-round-m) 0 0;
     position: relative;
 
     &:hover {
@@ -117,7 +117,7 @@
   position: relative;
   min-height: 200px;
   background: var(--gradient-tabs-surface, var(--color-surface));
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 var(--border-round-m) var(--border-round-m);
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgb(var(--color-shadow-light));
 }
@@ -139,7 +139,7 @@
     right: 0;
     bottom: 0;
     width: 2rem;
-    border-radius: 0 10px 0 0;
+    border-radius: 0 var(--border-round-xl) 0 0;
     background: linear-gradient(
       90deg,
       var(--color-transparent),

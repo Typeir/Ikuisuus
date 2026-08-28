@@ -71,10 +71,8 @@ export interface IndexRecord {
 }
 
 /**
- * Strips the extension and any content-type suffix from a filename to derive
- * the slug. `TYPE_PATTERNS` is not used here: it doubles as the file matcher,
- * and several of its entries match the extension alone, which would leave the
- * type suffix inside the slug.
+ * Strips the extension and content-type suffix to derive the slug. `TYPE_PATTERNS`
+ * is the file matcher, and several entries would leave the suffix in.
  *
  * @param {string} fileName - Base filename (e.g. `aboleth.sheet.mdx`)
  * @returns {string} Sluggified name (e.g. `aboleth`)

@@ -13,10 +13,13 @@
 import { VirtualList } from '@/lib/components/ui/virtualList/virtualList';
 import type { LayoutItem } from '@/modules/navigation-sidebar/domain/types';
 import SidebarActivePathStore from '@/modules/navigation-sidebar/infrastructure/store/sidebarActivePath';
+import { useLeafRowPitch } from '@/modules/navigation-sidebar/application/hooks/useLeafRowPitch';
 import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights';
+import { useParams } from 'next/navigation';
 import type { JSX } from 'react';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { SidebarItem } from './SidebarItem';
+import { SidebarLeafRow } from './SidebarLeafRow';
 
 /**
  * Number of items in a folder that triggers virtualization.
@@ -28,23 +31,22 @@ import { SidebarItem } from './SidebarItem';
 export const VIRTUALIZE_THRESHOLD = 50;
 
 /**
- * Pixel pitch of a single row in the virtualized list.
- *
- * A leaf row is 20 px tall plus a 4 px `space-y-1` gap between siblings, for 24 px.
- * Unrelated to `BASE_HEIGHT` (52), which sizes the accordion's `--expanded-height`.
- *
- * @constant
- * @type {number}
- */
-const ITEM_ROW_HEIGHT = 24;
-
-/**
  * Maximum pixel height of the virtualized window before scrolling.
  *
  * @constant
  * @type {number}
  */
 const MAX_WINDOW_HEIGHT = 600;
+
+/**
+ * Rows rendered beyond the visible window on each side. react-window defaults
+ * to 3, which fast scrolling outruns; 12 rows buys about half a window of
+ * runway now that leaf rows are cheap to mount.
+ *
+ * @constant
+ * @type {number}
+ */
+const OVERSCAN_ROWS = 12;
 
 /**
  * Props for `VirtualizedSidebar`.
@@ -62,8 +64,8 @@ export interface VirtualizedSidebarProps {
 
 /**
  * Renders a folder's children as a virtualized list when the item count is high.
- * Each row renders a `SidebarItem` directly — one shared `<ul>` via `VirtualList`,
- * no per-row `<ul>` wrapper.
+ * Leaf rows render the hook-free `SidebarLeafRow`; folders and stubs render
+ * `SidebarItem` — one shared `<ul>` via `VirtualList`, no per-row `<ul>` wrapper.
  *
  * @param {VirtualizedSidebarProps} props - Component props.
  * @param {LayoutItem[]} props.items - Folder children to virtualize.
@@ -78,25 +80,34 @@ const VirtualizedSidebar = ({
 }: VirtualizedSidebarProps): JSX.Element => {
   const [pathStore] = useState(() => new SidebarActivePathStore());
   const layoutItems = useMemo(() => calculateHeights(items), [items]);
-  const windowHeight = Math.min(
-    items.length * ITEM_ROW_HEIGHT,
-    MAX_WINDOW_HEIGHT,
-  );
+  const params = useParams();
+  const locale = params?.locale as string;
+  const rowHeight = useLeafRowPitch();
+  const windowHeight = Math.min(items.length * rowHeight, MAX_WINDOW_HEIGHT);
 
-  return (
-    <VirtualList
-      items={layoutItems}
-      rowHeight={ITEM_ROW_HEIGHT}
-      maxHeight={windowHeight}
-      rowElement='div'
-      renderRow={(item) => (
+  const renderRow = useCallback(
+    (item: LayoutItem) =>
+      item.children !== undefined || item.isStub ? (
         <SidebarItem
           item={item}
           onNavigate={onNavigate}
           collapseSiblings={collapseSiblings}
           pathStore={pathStore}
         />
-      )}
+      ) : (
+        <SidebarLeafRow item={item} locale={locale} onNavigate={onNavigate} />
+      ),
+    [onNavigate, collapseSiblings, pathStore, locale],
+  );
+
+  return (
+    <VirtualList
+      items={layoutItems}
+      rowHeight={rowHeight}
+      maxHeight={windowHeight}
+      rowElement='div'
+      overscanCount={OVERSCAN_ROWS}
+      renderRow={renderRow}
     />
   );
 };

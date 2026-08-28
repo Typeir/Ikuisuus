@@ -30,7 +30,7 @@
 .record {
   margin-bottom: 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   padding: 0.5rem;
 }
 
@@ -53,7 +53,7 @@
   font-family: var(--font-mono, monospace);
   color: var(--color-accent);
   background-color: rgb(var(--color-accent-a10));
-  border-radius: 3px;
+  border-radius: var(--border-round-s);
   padding: 0.1rem 0.35rem;
 }
 
@@ -62,7 +62,7 @@
   line-height: 1.4;
   color: var(--color-text-secondary);
   background-color: var(--color-bg);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   padding: 0.5rem;
   overflow-x: auto;
   margin: 0;

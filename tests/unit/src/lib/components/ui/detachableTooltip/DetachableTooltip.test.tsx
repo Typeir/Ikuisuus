@@ -62,20 +62,37 @@ describe('DetachableTooltip', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    Element.prototype.getBoundingClientRect = function () {
-      return {
-        x: 120,
-        y: 240,
-        width: 300,
-        height: 90,
-        top: 240,
-        right: 420,
-        bottom: 330,
-        left: 120,
-        toJSON() {
-          return this;
-        },
-      } as DOMRect;
+    /* The layer is the drag bounds, so it has to measure larger than the
+       surface or every position clamps to the origin. */
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const isLayer = String(this.className).includes('layer');
+      return isLayer
+        ? ({
+            x: 0,
+            y: 0,
+            width: 1024,
+            height: 768,
+            top: 0,
+            right: 1024,
+            bottom: 768,
+            left: 0,
+            toJSON() {
+              return this;
+            },
+          } as DOMRect)
+        : ({
+            x: 120,
+            y: 240,
+            width: 300,
+            height: 90,
+            top: 240,
+            right: 420,
+            bottom: 330,
+            left: 120,
+            toJSON() {
+              return this;
+            },
+          } as DOMRect);
     };
   });
 
@@ -133,7 +150,7 @@ describe('DetachableTooltip', () => {
     ).toBeInTheDocument();
   });
 
-  it('opens the panel where the tooltip stood', () => {
+  it('raises the panel by its chrome so the body lands where the tooltip was', () => {
     renderTooltip();
     const trigger = openTooltip();
 
@@ -143,9 +160,10 @@ describe('DetachableTooltip', () => {
 
     const handle = screen.getByRole('separator', { name: 'Blinded' });
     const panel = handle.parentElement as HTMLElement;
+    const chrome = handle.getBoundingClientRect().height;
 
     expect(panel.style.left).toBe('120px');
-    expect(panel.style.top).toBe('240px');
+    expect(panel.style.top).toBe(`${240 - chrome}px`);
     expect(panel.style.width).toBe('300px');
   });
 
@@ -160,11 +178,50 @@ describe('DetachableTooltip', () => {
     act(() => {
       fireEvent.click(screen.getByRole('button', { name: 'Close Blinded' }));
     });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
 
     expect(screen.queryByText('Definition body')).not.toBeInTheDocument();
   });
 
-  it('keeps a parked panel open while the keyword is hovered again', () => {
+  it('holds the panel mounted while it fades out', () => {
+    renderTooltip();
+    const trigger = openTooltip();
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'Close Blinded' }));
+    });
+
+    expect(screen.getByText('Definition body')).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+    expect(screen.queryByText('Definition body')).not.toBeInTheDocument();
+  });
+
+  it('closes the parked panel with Escape', () => {
+    renderTooltip();
+    const trigger = openTooltip();
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+    act(() => {
+      fireEvent.keyDown(document, { key: 'Escape' });
+    });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+
+    expect(screen.queryByText('Definition body')).not.toBeInTheDocument();
+  });
+
+  it('closes the hover card with Escape before any parked card', () => {
     renderTooltip();
     const trigger = openTooltip();
 
@@ -173,10 +230,81 @@ describe('DetachableTooltip', () => {
     });
     openTooltip();
 
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    act(() => {
+      fireEvent.keyDown(document, { key: 'Escape' });
+    });
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    expect(screen.getByText('Definition body')).toBeInTheDocument();
+  });
+
+  it('parks from the keyboard with Shift+Enter', () => {
+    renderTooltip();
+    const trigger = screen.getByRole('link', { name: 'blinded' });
+
+    act(() => {
+      fireEvent.focus(trigger);
+      vi.advanceTimersByTime(0);
+    });
+    act(() => {
+      fireEvent.keyDown(trigger, { key: 'Enter', shiftKey: true });
+    });
+
     expect(
-      screen.getByRole('separator', { name: 'Blinded' }),
+      screen.getByRole('region', { name: 'Blinded' }),
     ).toBeInTheDocument();
+  });
+
+  it('moves the existing panel instead of stacking a duplicate', () => {
+    renderTooltip();
+    const trigger = openTooltip();
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+    openTooltip();
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+
+    expect(screen.getAllByRole('region', { name: 'Blinded' })).toHaveLength(1);
+  });
+
+  it('names the parked panel for assistive technology', () => {
+    renderTooltip();
+    const trigger = openTooltip();
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+
+    expect(screen.getByRole('region', { name: 'Blinded' })).toBeInTheDocument();
+  });
+
+  it('does not raise a second surface while one is parked', () => {
+    renderTooltip();
+    const trigger = openTooltip();
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+    openTooltip();
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('region', { name: 'Blinded' })).toHaveLength(1);
+  });
+
+  it('hands the same element over rather than replacing it', () => {
+    renderTooltip();
+    const trigger = openTooltip();
+    const before = screen.getByRole('tooltip');
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+
+    const after = screen.getByRole('region', { name: 'Blinded' });
+    expect(after).toBe(before);
   });
 
   it('returns the trigger untouched when there is no content', () => {

@@ -51,7 +51,7 @@
   height: $size;
   padding: 0;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--border-round-pill);
   background: transparent;
   color: var(--color-secondary);
   cursor: pointer;

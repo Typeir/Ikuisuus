@@ -14,7 +14,7 @@
   justify-content: center;
   width: var(--search-sigil-size, 24px);
   height: var(--search-sigil-size, 24px);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   color: var(--sigil-color, var(--color-accent));
   background: color-mix(
     in srgb,
@@ -50,6 +50,10 @@ a:hover .sigil {
   color: var(--color-text);
   min-width: 0;
   overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--search-title-max-lines, 2);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   transition: color var(--search-anim-duration, 200ms) var(--springy-bezier);
 }
 
@@ -71,7 +75,7 @@ a:hover .resultTitle {
   :global(mark) {
     color: var(--color-accent);
     background: rgb(var(--color-accent-a10));
-    border-radius: 2px;
+    border-radius: var(--border-round-xs);
     padding: 0 1px;
     box-shadow: 0 0 6px 1px rgb(var(--color-accent-a20));
   }
@@ -112,7 +116,7 @@ a:hover .resultTitle {
   display: block;
   width: var(--search-thumb-size, 48px);
   height: var(--search-thumb-size, 48px);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   overflow: hidden;
   flex-shrink: 0;
   position: relative;
@@ -143,10 +147,13 @@ a:hover .resultTitle {
   gap: var(--search-result-gap, 0.75rem);
   align-items: flex-start;
   padding: 0.625rem 0.75rem;
-  border-radius: var(--search-result-radius, 6px);
+  border-radius: var(--search-result-radius, var(--border-round-m));
   text-decoration: none;
   color: inherit;
   position: relative;
+  /* A virtualized list sets the pitch; rows never change size on hover, so
+     nothing below them moves. */
+  height: var(--search-row-height, auto);
   --row-scale: 1.05;
   --row-translate: 2px;
   transition:
@@ -175,10 +182,7 @@ a:hover .resultTitle {
     background: rgb(var(--color-accent-a10));
     transform: scale(var(--row-scale)) translateX(var(--row-translate));
     outline: none;
-
-    .matchSnippet {
-      -webkit-line-clamp: unset;
-    }
+    z-index: 1;
 
     &::after {
       opacity: 0.4;
@@ -191,7 +195,7 @@ a:hover .resultTitle {
 .rowCard {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   --row-scale: 1.02;
   --row-translate: 0.25rem;
   &::after {
@@ -207,6 +211,8 @@ a:hover .resultTitle {
 .rowContent {
   flex: 1;
   min-width: 0;
+  max-height: 100%;
+  overflow: visible clip;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;

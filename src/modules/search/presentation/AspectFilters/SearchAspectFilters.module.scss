@@ -31,7 +31,7 @@
   font-size: 0.75rem;
   padding: 0.2rem 0.6rem;
   border: 1px solid var(--color-border-secondary);
-  border-radius: 999px;
+  border-radius: var(--border-round-pill);
   background: var(--color-bg-secondary);
   color: var(--color-text);
   cursor: pointer;

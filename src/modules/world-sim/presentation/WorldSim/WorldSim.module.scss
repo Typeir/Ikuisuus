@@ -11,7 +11,7 @@
   min-height: 400px;
   background: var(--worldsim-bg);
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: var(--border-round-l);
 
   @media (max-width: 768px) {
     height: calc(100vh - 56px);

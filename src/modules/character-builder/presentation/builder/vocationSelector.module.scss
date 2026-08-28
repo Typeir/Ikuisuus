@@ -34,7 +34,7 @@
   min-width: 0;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 3px;
+  border-radius: var(--border-round-s);
 
   .identitySummary {
     border: none;
@@ -71,7 +71,7 @@
   padding: 0.3rem 0.5rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   cursor: pointer;
   text-align: left;
   transition:
@@ -151,7 +151,7 @@
   color: var(--color-accent);
   padding: 0.15rem 0.5rem;
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   background: var(--color-surface);
 }
 
@@ -187,7 +187,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   cursor: pointer;
   min-width: 0;
 
@@ -235,7 +235,7 @@
   gap: 0.35rem;
   padding: 0.3rem 0.4rem;
   border: 1px solid var(--color-border);
-  border-radius: 3px;
+  border-radius: var(--border-round-s);
   background: var(--color-surface);
 
   .selectorLabel {
@@ -283,7 +283,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   text-align: center;
 
   &:focus {
@@ -327,7 +327,7 @@
   margin-top: 0.2rem;
   @include button-secondary(0.3rem 0.65rem, 0.7rem);
   font-weight: 600;
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   @include button-hover-scale;
 }
 

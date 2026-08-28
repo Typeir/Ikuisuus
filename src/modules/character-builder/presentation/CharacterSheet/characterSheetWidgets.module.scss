@@ -113,7 +113,7 @@
 .noteTextarea {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   color: var(--color-text);
   font-size: 0.85rem;
   padding: 0.4rem;
@@ -141,13 +141,13 @@
 .boonBudgetBar {
   height: 4px;
   background: var(--color-bg-tertiary, var(--color-border));
-  border-radius: 99px;
+  border-radius: var(--border-round-pill);
   overflow: hidden;
 }
 .boonBudgetFill {
   height: 100%;
   background: var(--color-accent);
-  border-radius: 99px;
+  border-radius: var(--border-round-pill);
   transition: width 0.2s ease;
 }
 .boonBudgetOver {
@@ -180,7 +180,7 @@
 }
 .boonCard {
   border: 1px solid var(--color-border-secondary);
-  border-radius: 6px;
+  border-radius: var(--border-round-m);
   overflow: hidden;
   transition: transform 0.15s ease;
   @include button-hover-scale(1.01);
@@ -220,7 +220,7 @@
 .boonBpBadge {
   font-size: 0.65rem;
   padding: 0.1rem 0.35rem;
-  border-radius: 99px;
+  border-radius: var(--border-round-pill);
   background: var(--color-accent);
   color: var(--color-bg);
   font-weight: 700;

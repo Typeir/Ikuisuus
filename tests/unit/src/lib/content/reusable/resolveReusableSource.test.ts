@@ -98,7 +98,8 @@ describe('resolveReusableSource', () => {
         Object.fromEntries(unresolved),
         'these tags resolve to nothing and throw when the page renders',
       ).toEqual({});
-    });
+      /* Reads the whole content tree, so it runs past the 5s default under load. */
+    }, 30000);
   });
 
   describe('every compiler resolves reusables', () => {

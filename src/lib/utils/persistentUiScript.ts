@@ -30,6 +30,8 @@
  */
 
 import {
+  DEFAULT_PROSE_MEASURE,
+  DEFAULT_TEXT_SCALE,
   LEGACY_THEME_KEY,
   PERSISTENT_UI_STORAGE_KEY,
 } from '../types/persistentUiState';
@@ -41,12 +43,17 @@ import {
  * @returns {string} Inline JavaScript IIFE string
  *
  * @description
- * Returns an IIFE that reads theme from cookies, then sessionStorage, then
- * localStorage, and sets data-theme, data-aspect-display,
- * data-aspect-expanded, data-stream-text and data-section-decor on the
- * document element. aspectDisplay defaults to `compact`; both decorator flags
- * default to drawn. Runs synchronously before React hydration, so a reader who
- * turned a decorator off never sees it paint.
+ * Returns an IIFE that reads the stored state from cookies, then
+ * sessionStorage, then localStorage, and stamps the document element with
+ * every root hook the stylesheets key off: data-theme, data-aspect-display,
+ * data-aspect-expanded, data-stream-text, data-section-decor,
+ * data-constrained-hue, and the `--text-scale-user` / `--prose-measure`
+ * custom properties. Numeric preferences accept any finite positive number,
+ * mirroring `readPositiveNumber`; everything else falls back to the shipped
+ * defaults. Runs synchronously before React hydration and before data-theme
+ * lifts the body's visibility, so the first paint already carries the
+ * reader's text scale and measure instead of reflowing after the provider's
+ * effect writes them.
  */
 export function getPersistentUiInitScript(): string {
   return `
@@ -84,6 +91,13 @@ export function getPersistentUiInitScript(): string {
         var aspectExpanded = false;
         var streamText = true;
         var sectionDecor = true;
+        var constrainedHue = false;
+        var textScale = ${DEFAULT_TEXT_SCALE};
+        var proseMeasure = ${DEFAULT_PROSE_MEASURE};
+
+        function positiveNumber(value, fallback) {
+          return typeof value === 'number' && isFinite(value) && value > 0 ? value : fallback;
+        }
 
         if (stored) {
           try {
@@ -103,6 +117,11 @@ export function getPersistentUiInitScript(): string {
             if (typeof state.sectionDecor === 'boolean') {
               sectionDecor = state.sectionDecor;
             }
+            if (typeof state.constrainedHue === 'boolean') {
+              constrainedHue = state.constrainedHue;
+            }
+            textScale = positiveNumber(state.textScale, textScale);
+            proseMeasure = positiveNumber(state.proseMeasure, proseMeasure);
           } catch (e) {
           }
         }
@@ -111,6 +130,9 @@ export function getPersistentUiInitScript(): string {
         document.documentElement.setAttribute('data-aspect-expanded', aspectExpanded ? 'true' : 'false');
         document.documentElement.setAttribute('data-stream-text', streamText ? 'true' : 'false');
         document.documentElement.setAttribute('data-section-decor', sectionDecor ? 'true' : 'false');
+        document.documentElement.setAttribute('data-constrained-hue', constrainedHue ? 'true' : 'false');
+        document.documentElement.style.setProperty('--text-scale-user', String(textScale));
+        document.documentElement.style.setProperty('--prose-measure', proseMeasure + 'ch');
 
         if (theme === 'dark') {
           var legacyTheme = readCookie('${LEGACY_THEME_KEY}');

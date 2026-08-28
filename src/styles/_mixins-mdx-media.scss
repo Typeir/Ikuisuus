@@ -1,15 +1,12 @@
 /**
  * @fileoverview MDX Media Mixins
- * @description Figure sizing for images inside rendered MDX prose. Extracted
- * from `mdxContent.module.scss` as a mixin rather than a plain partial so the
- * rules still emit at their original position in the cascade.
+ * @description Image sizing for MDX prose. A mixin, not a partial, so the rules
+ * still emit at their original position in the cascade.
  *
  * @module styles/mixins-mdx-media
  */
 
-/* An MDX image is bounded by the viewport rather than by its own pixel size, so
-   a tall plate cannot push the surrounding prose off the fold. The aspect-ratio
-   queries trade height for width as the viewport gets narrower or wider. */
+/* Bounded by the viewport, not its pixel size, so a tall plate can't push prose off. */
 @mixin mdx-image {
   display: block;
   position: relative;
@@ -17,7 +14,7 @@
   max-width: 100%;
   height: auto;
   object-fit: contain;
-  border-radius: 1.5rem;
+  border-radius: var(--border-round-2xl);
   z-index: 1;
   max-height: 90vh;
 

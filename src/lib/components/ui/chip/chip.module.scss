@@ -22,7 +22,7 @@
   gap: 0.25rem;
   padding: 0.2rem 0.35rem 0.2rem 0.55rem;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--border-round-pill);
   background: var(--color-bg-secondary);
   color: var(--color-text);
   font-size: 0.75rem;
@@ -70,7 +70,7 @@
   height: 1rem;
   padding: 0;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--border-round-pill);
   background: transparent;
   color: var(--color-secondary);
   cursor: pointer;

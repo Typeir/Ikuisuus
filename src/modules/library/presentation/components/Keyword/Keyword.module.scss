@@ -31,8 +31,23 @@
   gap: 0.35rem;
 }
 
-/* Sized as an h3 so a parked card reads as a titled entry rather than as a
-   tooltip with a bold first line. */
+/* Takes back the site's list treatment. Doubled to outrank the tooltip frame's
+   reset, which matches specificity and would otherwise win on bundle order. */
+.card.card {
+  ul,
+  ol {
+    list-style: revert;
+    padding-left: 1.1rem;
+  }
+
+  li::marker {
+    display: revert;
+    color: var(--color-accent);
+    content: '▹ ';
+  }
+}
+
+/* Sized as an h3 so a parked card reads as a titled entry. */
 .cardTitle {
   margin: 0;
   font-family: var(--font-headings), var(--font-default);
@@ -40,6 +55,11 @@
   font-weight: 600;
   line-height: 1.15;
   color: var(--color-accent);
+
+  /* Levels namespaced titles against bare ones, which fall back to authored text. */
+  &::first-letter {
+    text-transform: uppercase;
+  }
 }
 
 .blurb {

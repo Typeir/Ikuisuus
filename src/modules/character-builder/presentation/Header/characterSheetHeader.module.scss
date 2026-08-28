@@ -174,7 +174,7 @@ input.nameInput {
 .warningBadge {
   font-size: 0.65rem;
   padding: 0.15rem 0.5rem;
-  border-radius: 999px;
+  border-radius: var(--border-round-pill);
   background: var(--color-danger-subtle);
   color: var(--color-danger);
   border: 1px solid var(--color-danger);
@@ -194,7 +194,7 @@ input.nameInput {
   background: var(--color-surface);
   color: var(--color-secondary);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   cursor: pointer;
   transition:
     color 0.15s ease,
@@ -243,7 +243,7 @@ input.nameInput {
   background: var(--color-surface);
   color: var(--color-text);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   text-align: center;
 
   &:focus {
@@ -260,7 +260,7 @@ input.nameInput {
   padding: 0.15rem 0.4rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   min-width: 4rem;
   text-align: center;
 }
@@ -269,7 +269,7 @@ input.nameInput {
   margin-left: auto;
   padding: 0.25rem 0.6rem;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   background: var(--color-surface);
   font-size: 0.78rem;
   color: var(--color-secondary);
@@ -339,7 +339,7 @@ input.nameInput {
   .commandStripBp {
     padding: 0.15rem 0.5rem;
     border: 1px solid var(--color-border);
-    border-radius: 4px;
+    border-radius: var(--border-round-s);
     background: var(--color-surface);
   }
 

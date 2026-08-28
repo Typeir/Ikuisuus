@@ -10,14 +10,19 @@
   --springy-bezier: #{$transition-ease-springy};
 }
 
-/* Typeface roles. The three display faces are registered by `next/font` in
-   `src/app/fonts`, which writes `--font-initialem`, `--font-headings` and
-   `--font-emphasis` onto the root element. `--font-default` is the body stack
-   and is the tail of every role's fallback chain. */
+/* Typeface roles. `next/font` in `src/app/fonts` writes `--font-initialem`,
+   `--font-stropica` and `--font-grandcru` onto the root element. `--font-default`
+   is the body stack and the tail of every role's fallback chain; `--font-mono`
+   backs the code and data surfaces. Headings use the system Times face, whose glyphs
+   sit closest to the ornament lettering in Empyrean Initialem. */
 :root {
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
   --font-default:
     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
+  --font-headings: 'Times New Roman', Times, serif;
 }
 
 /* Safe-area insets. `env()` resolves to 0px wherever the UA does not expose
@@ -34,6 +39,20 @@
   --mobile-header-total: calc(
     var(--mobile-header-height) + var(--safe-area-top)
   );
+}
+
+/* Corner radii. One scale, consumed by every rounded corner on the site, so
+   the whole UI can be squared off by editing this block alone
+  */
+:root {
+  --border-round-xs: 0px;
+  --border-round-s: 0px;
+  --border-round-m: 0px;
+  --border-round-l: 0px;
+  --border-round-xl: 0px;
+  --border-round-2xl: 0px;
+  --border-round-pill: 0px;
+  --border-round-circle: 0%;
 }
 
 /* Media max-width tokens (px) — used for JS/CSS responsive helpers */

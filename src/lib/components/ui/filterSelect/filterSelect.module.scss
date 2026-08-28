@@ -18,7 +18,7 @@
   width: 100%;
   padding: 0.375rem 0.625rem;
   border: 1px solid var(--color-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 0.8125rem;
@@ -93,7 +93,7 @@
   flex-direction: column;
   background: var(--color-bg);
   border: 1px solid var(--color-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   @include shadow-medium;
   z-index: 1000;
 }
@@ -107,7 +107,7 @@
   width: 100%;
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--color-secondary);
-  border-radius: 3px;
+  border-radius: var(--border-round-s);
   background: var(--color-surface);
   color: var(--color-text);
   font-size: 0.8125rem;
@@ -195,7 +195,7 @@
      border-box that clamps the content box to 0 and collapses the icon. */
   padding: 0;
   border: none;
-  border-radius: 3px;
+  border-radius: var(--border-round-s);
   background: transparent;
   color: var(--color-text-secondary);
   cursor: pointer;

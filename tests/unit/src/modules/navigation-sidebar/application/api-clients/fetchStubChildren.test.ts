@@ -18,6 +18,7 @@ describe('fetchStubChildren', () => {
   it('should fetch children from API endpoint with correct parameters', async () => {
     const mockFetch = vi.mocked(global.fetch);
     mockFetch.mockResolvedValueOnce({
+      ok: true,
       json: async () => [{ name: 'child1', path: '/child1' }],
     } as Response);
 
@@ -41,6 +42,7 @@ describe('fetchStubChildren', () => {
       { name: 'child2', path: '/child2' },
     ];
     mockFetch.mockResolvedValueOnce({
+      ok: true,
       json: async () => mockData,
     } as Response);
 
@@ -58,9 +60,35 @@ describe('fetchStubChildren', () => {
     expect(result).toEqual([]);
   });
 
+  it('should return empty array on a non-2xx response instead of its error body', async () => {
+    const mockFetch = vi.mocked(global.fetch);
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: 'walk failed' }),
+    } as Response);
+
+    const result = await fetchStubChildren('test-path', 'en');
+
+    expect(result).toEqual([]);
+  });
+
+  it('should return empty array when a 2xx body is not an array', async () => {
+    const mockFetch = vi.mocked(global.fetch);
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ error: 'unexpected shape' }),
+    } as Response);
+
+    const result = await fetchStubChildren('test-path', 'en');
+
+    expect(result).toEqual([]);
+  });
+
   it('should URL-encode path and locale parameters', async () => {
     const mockFetch = vi.mocked(global.fetch);
     mockFetch.mockResolvedValueOnce({
+      ok: true,
       json: async () => [],
     } as Response);
 

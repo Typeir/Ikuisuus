@@ -14,11 +14,35 @@
 
 'use client';
 
-import { DetachableTooltip } from '@/lib/components/ui/detachableTooltip';
+import type { DetachableTooltipProps } from '@/lib/components/ui/detachableTooltip';
 import { lookupKeyword } from '@/lib/md/keywordRegistry';
 import { useLocale } from 'next-intl';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, type ComponentType } from 'react';
 import styles from './Keyword.module.scss';
+
+/**
+ * Loads the card machinery after hydration, so the server and the first client
+ * render both emit the bare link and `Draggable` stays out of the initial
+ * bundle. Resolves once per page rather than once per keyword.
+ *
+ * @returns {ComponentType<DetachableTooltipProps> | null} The component, or null until loaded
+ */
+function useDetachableTooltip(): ComponentType<DetachableTooltipProps> | null {
+  const [component, setComponent] =
+    useState<ComponentType<DetachableTooltipProps> | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void import('@/lib/components/ui/detachableTooltip').then((module) => {
+      if (active) setComponent(() => module.DetachableTooltip);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return component;
+}
 
 /**
  * Props for the Keyword component. All values arrive as strings from the MDX
@@ -117,6 +141,7 @@ export const Keyword: React.FC<KeywordProps> = ({
   noLink = false,
 }) => {
   const locale = useLocale();
+  const DetachableTooltip = useDetachableTooltip();
   const entry = lookupKeyword(term);
   const label = display ?? term;
   const target = href ?? entry?.href;
@@ -147,7 +172,7 @@ export const Keyword: React.FC<KeywordProps> = ({
     </a>
   );
 
-  if (!body) {
+  if (!body || !DetachableTooltip) {
     return trigger;
   }
 

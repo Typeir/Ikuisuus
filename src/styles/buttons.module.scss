@@ -32,7 +32,7 @@
 .neutral {
   @include button-base;
   @include button-hover-scale;
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
 }
 
 /* ── Outline ────────────────────────────────────────────── */
@@ -75,7 +75,7 @@
   padding: 0.5rem;
   cursor: pointer;
   color: var(--color-text);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   transition:
     background-color 0.2s ease,
     opacity 0.2s ease,
@@ -154,6 +154,6 @@
   width: fit-content;
   gap: 0.35rem;
   border-style: dashed;
-  border-radius: 6px;
+  border-radius: var(--border-round-m);
   font-weight: 600;
 }

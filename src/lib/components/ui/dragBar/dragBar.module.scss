@@ -19,7 +19,7 @@
     height: 24px;
     transform: translate(-50%, -50%);
     background: var(--color-secondary);
-    border-radius: 1px;
+    border-radius: var(--border-round-xs);
     opacity: 0.4;
     transition: opacity 0.15s ease;
   }

@@ -16,7 +16,7 @@
   min-height: 5.25rem;
   padding: 0.4rem 0.75rem;
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   background: var(--color-surface);
   backdrop-filter: blur(4px);
   gap: 0.15rem;
@@ -60,7 +60,7 @@
   align-items: center;
   justify-content: center;
   @include button-secondary(0.15rem 0.25rem, inherit);
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   @include button-hover-scale(1.2);
 }
 

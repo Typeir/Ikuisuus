@@ -27,7 +27,7 @@
 .loginInput {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   border: 1px solid var(--color-border);
   background-color: var(--color-bg);
   color: var(--color-text);

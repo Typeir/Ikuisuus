@@ -18,7 +18,7 @@
 
 .content {
   background: var(--color-bg);
-  border-radius: 8px;
+  border-radius: var(--border-round-l);
   max-width: 90vw;
   max-height: 90vh;
   display: flex;

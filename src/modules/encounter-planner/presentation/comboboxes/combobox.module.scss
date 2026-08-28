@@ -23,7 +23,7 @@
   left: 0;
   background: var(--color-bg);
   border: 1px solid var(--color-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   @include shadow-medium;
   z-index: 2000;
   max-height: 300px;

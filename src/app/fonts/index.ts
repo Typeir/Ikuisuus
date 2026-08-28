@@ -22,12 +22,12 @@ export const empyrean = localFont({
 });
 
 /**
- * Stropica local font registration. Emphasis face for `strong` and `b`.
+ * Stropica local font registration. Exposed as `--font-stropica`.
  * @type {ReturnType<import('next/font/local').default>}
  */
 export const stropica = localFont({
   src: [{ path: '../../../public/fonts/Stropica.otf', weight: '400' }],
-  variable: '--font-emphasis',
+  variable: '--font-stropica',
   display: 'swap',
   fallback: ['system-ui', 'sans-serif'],
   declarations: [{ prop: 'size-adjust', value: '141%' }],
@@ -36,13 +36,12 @@ export const stropica = localFont({
 });
 
 /**
- * Grand Cru local font registration. Heading face for `h1`–`h6`.
- *
+ * Grand Cru local font registration. Exposed as `--font-grandcru`.
  * @type {ReturnType<import('next/font/local').default>}
  */
 export const grandCru = localFont({
   src: [{ path: '../../../public/fonts/GrandCru-LightS.otf', weight: '300' }],
-  variable: '--font-headings',
+  variable: '--font-grandcru',
   display: 'swap',
   fallback: ['system-ui', 'sans-serif'],
   preload: true,

@@ -117,8 +117,8 @@
   $outer-color: var(--color-actionable),
   $inner-inset: -12px,
   $outer-inset: -20px,
-  $inner-radius: 10px,
-  $outer-radius: 14px,
+  $inner-radius: var(--border-round-xl),
+  $outer-radius: calc(var(--border-round-xl) * 1.4),
   $inner-opacity: 0.3,
   $outer-opacity: 0.15
 ) {

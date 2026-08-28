@@ -16,7 +16,7 @@
   gap: 0.75rem;
   padding: 1rem;
   background-color: var(--color-surface);
-  border-radius: 6px;
+  border-radius: var(--border-round-m);
   border: 1px solid var(--color-secondary);
   transition:
     opacity 0.2s ease,
@@ -50,7 +50,7 @@
     flex: 1;
     background: transparent;
     border: 1px solid transparent;
-    border-radius: 4px;
+    border-radius: var(--border-round-s);
     padding: 0.125rem 0.25rem;
     outline: none;
 
@@ -67,7 +67,7 @@
   .sourceLink {
     padding: 0.25rem 0.5rem;
     border: 1px solid var(--color-secondary);
-    border-radius: 4px;
+    border-radius: var(--border-round-s);
     background: var(--color-transparent);
     color: var(--color-secondary);
     text-decoration: none;

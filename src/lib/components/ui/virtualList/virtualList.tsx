@@ -15,6 +15,14 @@ import type { CSSProperties, JSX } from 'react';
 import { List } from 'react-window';
 
 /**
+ * Index range reported by react-window whenever the rendered rows change.
+ */
+export interface VirtualRowRange {
+  startIndex: number;
+  stopIndex: number;
+}
+
+/**
  * Row renderer signature. Receives item and index.
  * Row is already wrapped in a positioned element by the atom.
  *
@@ -41,8 +49,12 @@ export interface VirtualListProps<T> {
   renderRow: VirtualRowRenderer<T>;
   /** HTML tag for each row. Default `'li'`. Use `'div'` when row content is already `<li>`. */
   rowElement?: 'li' | 'div';
+  /** Rows rendered beyond the visible window. Defaults to react-window's 3. */
+  overscanCount?: number;
   /** Optional className for the outer `<ul>`. */
   className?: string;
+  /** Fires when the rendered range changes: visible rows, then rows including overscan. */
+  onRowsRendered?: (visible: VirtualRowRange, all: VirtualRowRange) => void;
 }
 
 /**
@@ -90,7 +102,10 @@ function RowComponent<T>({
 
 /**
  * Generic virtualized list. Renders a `<ul>` with virtualized `<li>` rows.
- * Only rows within the viewport are rendered.
+ * Only rows within the viewport are rendered. The box scrolls vertically
+ * only: anything a row hangs past its inline edges is clipped instead of
+ * becoming a horizontal scrollbar, so a consumer with outsets (decorations,
+ * hover transforms) bleeds the box outward and insets its rows to match.
  *
  * @template T - Item type
  */
@@ -100,7 +115,9 @@ export function VirtualList<T>({
   maxHeight,
   renderRow,
   rowElement = 'li',
+  overscanCount,
   className,
+  onRowsRendered,
 }: VirtualListProps<T>): JSX.Element | null {
   if (items.length === 0) return null;
   const height = Math.min(items.length * rowHeight, maxHeight);
@@ -112,7 +129,9 @@ export function VirtualList<T>({
       rowHeight={rowHeight}
       rowComponent={RowComponent}
       rowProps={{ items, renderRow, rowElement }}
-      style={{ height }}
+      overscanCount={overscanCount}
+      onRowsRendered={onRowsRendered}
+      style={{ height, overflowX: 'hidden' }}
       defaultHeight={maxHeight}
       className={className}
     />

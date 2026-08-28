@@ -1,6 +1,6 @@
 .switcher {
   border: 1px solid var(--color-border);
-  border-radius: 0.25rem;
+  border-radius: var(--border-round-s);
   padding: 1rem;
   margin: 1.5rem 0;
   background: var(--color-surface);
@@ -37,7 +37,7 @@
 .option {
   padding: 0.4rem 0.9rem;
   border: 1px solid var(--color-border);
-  border-radius: 0.2rem;
+  border-radius: var(--border-round-s);
   background: transparent;
   color: var(--color-text);
   cursor: pointer;
@@ -90,7 +90,7 @@
   .option {
     padding: 0.25rem 0.5rem;
     border-color: var(--color-secondary);
-    border-radius: 4px;
+    border-radius: var(--border-round-s);
     font-size: 0.75rem;
 
     &[data-active='true'] {

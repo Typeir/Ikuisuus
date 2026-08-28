@@ -23,7 +23,7 @@
   width: 28px;
   height: 28px;
   padding: 0;
-  border-radius: 50%;
+  border-radius: var(--border-round-circle);
   border: 2px solid var(--color-accent);
   cursor: pointer;
   /* Matches .deedPip in the encounter runner: the glyph inside is what makes

@@ -41,8 +41,7 @@ export const KEYWORD_SHARDS_TAG = 'KeywordShardTemplates';
 /**
  * A shard resolved and rendered, ready to bake.
  *
- * The heading stays out of `html` so the consuming card owns its own title
- * element and can size it as a heading rather than as bold body text.
+ * The heading stays out of `html` so the card owns its own title element.
  *
  * @interface BakedShard
  * @property {string} id - Template element id

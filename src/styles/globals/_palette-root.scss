@@ -74,7 +74,7 @@
 
   /* Shared search tokens */
   --search-result-gap: 0.75rem;
-  --search-result-radius: 6px;
+  --search-result-radius: var(--border-round-m);
   --search-sigil-size: 24px;
   --search-snippet-max-lines: 2;
   --search-thumb-size: 48px;

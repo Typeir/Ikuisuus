@@ -13,7 +13,7 @@ import type { Item } from '@/modules/navigation-sidebar/domain/types';
  *
  * @param {string} itemPath - Path of the item to fetch children for
  * @param {string} locale - Locale code for API call
- * @returns {Promise<Item[]>} Array of items (WalkNode structure from API), or empty array on error
+ * @returns {Promise<Item[]>} Array of items (WalkNode structure from API); empty on a network error, a non-2xx status, or a non-array body
  */
 export async function fetchStubChildren(
   itemPath: string,
@@ -23,8 +23,9 @@ export async function fetchStubChildren(
     const response = await fetch(
       `/api/content/walk?locale=${encodeURIComponent(locale)}&path=${encodeURIComponent(itemPath)}`,
     );
-    const nodes: Item[] = await response.json();
-    return nodes;
+    if (!response.ok) return [];
+    const nodes: unknown = await response.json();
+    return Array.isArray(nodes) ? (nodes as Item[]) : [];
   } catch {
     return [];
   }

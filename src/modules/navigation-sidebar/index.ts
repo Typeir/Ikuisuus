@@ -13,9 +13,11 @@ export {
     shallowWalk as repositoryShallowWalk,
     walk as repositoryWalk
 } from '@/modules/library/infrastructure/navigation/walk';
+export { useIsPathExpanded } from './application/hooks/useIsPathExpanded';
 export {
     useSidebarExpansion,
-    useSidebarExpansion as useSidebarExpansionActions
+    useSidebarExpansion as useSidebarExpansionActions,
+    useSidebarExpansionDispatch
 } from './application/hooks/useSidebarExpansion';
 export { useSidebarMenu } from './application/hooks/useSidebarMenu';
 export { useSidebarMenuActions } from './application/hooks/useSidebarMenuActions';

@@ -20,7 +20,7 @@
   /* The global `button, .actionable` rule pads .5rem 1rem; on a 28px
      border-box that clamps the content box to 0 and collapses the icon. */
   padding: 0;
-  border-radius: 3px;
+  border-radius: var(--border-round-s);
   border: none;
   background: transparent;
   color: var(--color-text-secondary);

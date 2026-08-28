@@ -78,7 +78,7 @@
   right: auto;
   transform-origin: left center;
   border: none;
-  border-radius: 2px;
+  border-radius: var(--border-round-xs);
   background-color: var(--color-text);
   cursor: pointer;
   pointer-events: auto;

@@ -16,7 +16,7 @@
      hover; a fixed-size icon button must do neither. */
   padding: 0;
   border: none;
-  border-radius: 3px;
+  border-radius: var(--border-round-s);
   background: transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
@@ -45,7 +45,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--border-round-m);
   background: var(--color-surface);
   @include shadow-medium;
   z-index: 60;
@@ -74,7 +74,7 @@
   width: 100%;
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 0.8125rem;

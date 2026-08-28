@@ -13,7 +13,7 @@
  * @param {String}  $height        - Scrollbar height for horizontal bars (default: $width)
  * @param {String}  $thumb         - Thumb colour (default: var(--color-secondary))
  * @param {String}  $track         - Track colour (default: transparent)
- * @param {String}  $thumb-radius  - Thumb border-radius (default: 3px)
+ * @param {String}  $thumb-radius  - Thumb border-radius (default: var(--border-round-s))
  * @param {String}  $thumb-border  - Optional thumb border shorthand, e.g. "1px solid var(--color-surface)" (default: null)
  * @param {String}  $firefox-width - Firefox scrollbar-width keyword: "thin" | "auto" | "none" (default: "thin")
  */
@@ -22,7 +22,7 @@
   $height: $width,
   $thumb: var(--color-surface),
   $track: transparent,
-  $thumb-radius: 3px,
+  $thumb-radius: var(--border-round-s),
   $thumb-border: null,
   $firefox-width: thin
 ) {
@@ -55,7 +55,7 @@
   $thumb: var(--color-surface),
   $track: transparent,
   $height: 6px,
-  $thumb-radius: 3px
+  $thumb-radius: var(--border-round-s)
 ) {
   @include scrollbar-custom(
     $width: 6px,

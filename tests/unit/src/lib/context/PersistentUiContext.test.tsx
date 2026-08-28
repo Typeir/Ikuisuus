@@ -6,6 +6,7 @@
 
 import {
   PersistentUiProvider,
+  usePersistentUiSelector,
   useSidebarMenuActions,
   useSidebarMenuState,
   useThemeActions,
@@ -293,6 +294,73 @@ describe('PersistentUiContext', () => {
       expect(() => {
         render(<ThemeTestConsumer />);
       }).toThrow('usePersistentUiState must be used within a PersistentUiProvider');
+
+      consoleError.mockRestore();
+    });
+  });
+
+  describe('usePersistentUiSelector', () => {
+    /**
+     * Theme probe that tallies its own renders.
+     */
+    function ThemeSelectorProbe({ renders }: { renders: { count: number } }) {
+      renders.count += 1;
+      const theme = usePersistentUiSelector((state) => state.theme);
+      return <span data-testid="selected-theme">{theme}</span>;
+    }
+
+    it('re-renders on a change to the selected value', async () => {
+      const user = userEvent.setup();
+      const renders = { count: 0 };
+
+      render(
+        <PersistentUiProvider initialExpandedPaths={[]}>
+          <ThemeSelectorProbe renders={renders} />
+          <ThemeTestConsumer />
+        </PersistentUiProvider>
+      );
+
+      const initial = screen.getByTestId('selected-theme').textContent;
+      await user.click(screen.getByText('Toggle Theme'));
+
+      expect(screen.getByTestId('selected-theme')).not.toHaveTextContent(
+        initial ?? ''
+      );
+      expect(screen.getByTestId('selected-theme')).toHaveTextContent(
+        screen.getByTestId('theme-state').textContent ?? ''
+      );
+      expect(renders.count).toBe(2);
+    });
+
+    it('skips the component when an unrelated slice changes', async () => {
+      const user = userEvent.setup();
+      const renders = { count: 0 };
+
+      render(
+        <PersistentUiProvider initialExpandedPaths={[]}>
+          <ThemeSelectorProbe renders={renders} />
+          <SidebarTestConsumer />
+        </PersistentUiProvider>
+      );
+
+      await user.click(screen.getByText('Toggle'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('menu-state')).toHaveTextContent('open');
+      });
+      expect(renders.count).toBe(1);
+    });
+
+    it('throws outside a provider', () => {
+      const consoleError = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      expect(() => {
+        render(<ThemeSelectorProbe renders={{ count: 0 }} />);
+      }).toThrow(
+        'usePersistentUiSelector must be used within a PersistentUiProvider'
+      );
 
       consoleError.mockRestore();
     });

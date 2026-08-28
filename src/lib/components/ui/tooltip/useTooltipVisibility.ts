@@ -1,9 +1,7 @@
 /**
  * @fileoverview Tooltip Visibility State Machine
- * @description Open/close lifecycle shared by every hover surface: show delay,
- * hide delay, and a held-open exit phase so the surface can play its CSS exit
- * transition before it unmounts. Owns no DOM and no positioning, so any
- * floating surface can drive itself from it.
+ * @description Open/close lifecycle for hover surfaces: show delay, hide delay,
+ * and a held-open exit phase. Owns no DOM and no positioning.
  *
  * @module lib/components/ui/tooltip/useTooltipVisibility
  * @version 1.0.0
@@ -61,10 +59,8 @@ export interface TooltipVisibility {
 }
 
 /**
- * Drives a hover surface's open/close lifecycle.
- *
- * A `show` during the exit phase cancels it and leaves the surface mounted, so
- * moving the pointer back onto the trigger never restarts the enter transition.
+ * Drives a hover surface's open/close lifecycle. A `show` during the exit phase
+ * cancels it, so returning to the trigger never restarts the enter transition.
  *
  * @param {TooltipVisibilityOptions} [options] - Timing and disabled state
  * @returns {TooltipVisibility} Visibility flags and imperative controls

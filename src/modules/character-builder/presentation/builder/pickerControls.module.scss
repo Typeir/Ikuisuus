@@ -11,7 +11,7 @@
   width: 100%;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-border-secondary);
-  border-radius: 6px;
+  border-radius: var(--border-round-m);
   background: var(--color-bg-secondary);
   color: var(--color-text);
   font-size: 0.875rem;
@@ -31,7 +31,7 @@
   /* Container follows the self-coloured nest-frame ladder; the
      shard/feature cards inside carry --color-border-secondary. */
   border: 1px solid var(--color-bg-secondary);
-  border-radius: 6px;
+  border-radius: var(--border-round-m);
   padding: 0.5rem;
   min-height: 0;
 

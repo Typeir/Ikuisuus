@@ -56,7 +56,7 @@
 
   &.square {
     img {
-      border-radius: 0px;
+      border-radius: 0;
     }
 
     &::before {
@@ -65,7 +65,7 @@
       left: 10%;
       width: 80%;
       height: 80%;
-      border-radius: 4px;
+      border-radius: var(--border-round-s);
       background-image: var(--bg-image);
       background-position: center;
       background-repeat: no-repeat;
@@ -82,7 +82,7 @@
       width: 105%;
       height: 105%;
       // inset: 0;
-      border-radius: 4px;
+      border-radius: var(--border-round-s);
       z-index: 3;
       background:
         linear-gradient(

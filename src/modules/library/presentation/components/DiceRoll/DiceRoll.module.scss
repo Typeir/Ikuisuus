@@ -22,7 +22,7 @@
   align-items: center;
   padding: 0.125rem 0.22rem;
   border: 1px solid var(--transparent);
-  border-radius: 0.25rem;
+  border-radius: var(--border-round-s);
   background: var(--transparent);
   color: var(--color-actionable);
   font-weight: 600;

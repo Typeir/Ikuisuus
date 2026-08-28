@@ -38,11 +38,13 @@ that becomes a stub regardless of depth, and its children are fetched from
 Paired with `VIRTUALIZE_THRESHOLD = 50` so one sentence covers both: *a folder too
 wide to prerender is exactly a folder the client renders as a window.*
 
-`ITEM_ROW_HEIGHT = 24` is measured from the non-virtualized list — a leaf `li` is
-20 px and `space-y-1` adds a 4 px gap. Virtualized rows are absolutely positioned
-and never receive that margin, so the gap has to live in the pitch. It was 20
-(the content height with the gap dropped), which butted every row against the
-next.
+The row pitch is `1.5rem` resolved at runtime (`useLeafRowPitch`) — a leaf `li`
+is the `text-sm` line box (1.25rem) and `space-y-1` adds a 0.25rem gap.
+Virtualized rows are absolutely positioned and never receive that margin, so the
+gap has to live in the pitch. Two px constants got this wrong before: 20 (the
+content height with the gap dropped) butted every row against the next, and 24
+(measured at a 16 px root) drifted once the root moved to 87.5% and the reader's
+text-scale multiplier — 21 px static rows under 24 px virtual rows.
 
 ## Rejected: contextual prerendering via a parallel route slot
 
@@ -203,10 +205,10 @@ adjacent rather than applicable.
 | `SHALLOW_WALK_DEPTH` | 2 | `navigation/walkShallow.ts` |
 | `STUB_CHILD_THRESHOLD` | 50 | `navigation/walkShallow.ts` |
 | `VIRTUALIZE_THRESHOLD` | 50 | `presentation/components/VirtualizedSidebar.tsx` |
-| `ITEM_ROW_HEIGHT` | 24 | `presentation/components/VirtualizedSidebar.tsx` |
+| `LEAF_ROW_PITCH_REM` | 1.5 | `application/hooks/useLeafRowPitch.ts` — resolved to px against the root font size at runtime |
 | `BASE_HEIGHT` | 52 | `domain/constants.ts` — sizes `--expanded-height`, **not** a row |
 
-`BASE_HEIGHT` and `ITEM_ROW_HEIGHT` are unrelated. An earlier comment claimed they
+`BASE_HEIGHT` and the row pitch are unrelated. An earlier comment claimed they
 had to match, which is how the virtualizer ended up sizing rows at 20 px.
 
 ## Sorting

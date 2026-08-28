@@ -24,7 +24,7 @@
   gap: 0.75rem;
   padding: 0.75rem;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--border-round-m);
   background: var(--color-surface);
 }
 
@@ -87,7 +87,7 @@
 .editorInput {
   padding: 0.5rem;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
   background: var(--color-surface);
   color: var(--color-text);
   font-size: 0.9rem;
@@ -113,7 +113,7 @@
   width: 100%;
   border-collapse: collapse;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-round-s);
 }
 
 .memberTableHeader {
@@ -151,7 +151,7 @@
   width: 100%;
   padding: 0.25rem 0.375rem;
   border: 1px solid var(--color-transparent);
-  border-radius: 3px;
+  border-radius: var(--border-round-s);
   background: var(--color-transparent);
   color: var(--color-text);
   font-size: 0.9rem;

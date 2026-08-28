@@ -27,9 +27,25 @@ export interface SidebarExpansionActions {
   isExpanded: (path: string) => boolean;
 }
 
-export function useSidebarExpansion(): SidebarExpansionActions {
+/**
+ * Write half of the expansion actions. Reads no state, so a consumer that
+ * only writes re-renders on nothing but its own props; pair with
+ * `useIsPathExpanded` for a per-path read.
+ *
+ * @type {Pick<SidebarExpansionActions, 'setExpanded' | 'togglePath'>}
+ */
+export type SidebarExpansionDispatch = Pick<
+  SidebarExpansionActions,
+  'setExpanded' | 'togglePath'
+>;
+
+/**
+ * Dispatch-only expansion actions, identity-stable for the provider's lifetime.
+ *
+ * @returns {SidebarExpansionDispatch} Path expansion writers
+ */
+export function useSidebarExpansionDispatch(): SidebarExpansionDispatch {
   const dispatch = usePersistentUiDispatch();
-  const { expandedPaths } = useSidebarMenu();
 
   const setExpanded = useCallback(
     (path: string, expanded: boolean) => {
@@ -50,6 +66,13 @@ export function useSidebarExpansion(): SidebarExpansionActions {
     },
     [dispatch],
   );
+
+  return useMemo(() => ({ setExpanded, togglePath }), [setExpanded, togglePath]);
+}
+
+export function useSidebarExpansion(): SidebarExpansionActions {
+  const { setExpanded, togglePath } = useSidebarExpansionDispatch();
+  const { expandedPaths } = useSidebarMenu();
 
   const isExpanded = useCallback(
     (path: string) => {

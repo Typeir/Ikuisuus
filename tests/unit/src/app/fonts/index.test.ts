@@ -25,8 +25,8 @@ describe('app/fonts/index', () => {
     expect(empyrean).toHaveProperty('className');
   });
 
-  it('exports Stropica as the emphasis face', () => {
-    expect(stropica).toHaveProperty('variable', '--font-emphasis');
+  it('exports Stropica under its own variable', () => {
+    expect(stropica).toHaveProperty('variable', '--font-stropica');
     expect(stropica).toHaveProperty('style');
     expect(stropica).toHaveProperty('className');
   });
@@ -38,8 +38,8 @@ describe('app/fonts/index', () => {
     expect(optionsOf(stropica).adjustFontFallback).toBe(false);
   });
 
-  it('exports Grand Cru as the heading face at its true weight', () => {
-    expect(grandCru).toHaveProperty('variable', '--font-headings');
+  it('exports Grand Cru under its own variable at its true weight', () => {
+    expect(grandCru).toHaveProperty('variable', '--font-grandcru');
     expect(optionsOf(grandCru).src).toEqual([
       expect.objectContaining({ weight: '300' }),
     ]);

@@ -1,0 +1,14 @@
+/* The list is a scroll box, so anything a row hangs past its edge — the
+   terminal-stream ticker (0.9rem past the right edge), the hover scale, the
+   vertical scrollbar itself — would either scroll horizontally or clip. The
+   box bleeds into the page gutter by those amounts and each row insets by the
+   same, so rows keep the width and position they had in the static list. */
+.list {
+  --list-bleed-start: 1.5rem;
+  --list-bleed-end: 2.5rem;
+  margin-inline: calc(-1 * var(--list-bleed-start)) calc(-1 * var(--list-bleed-end));
+
+  li {
+    padding-inline: var(--list-bleed-start) var(--list-bleed-end);
+  }
+}

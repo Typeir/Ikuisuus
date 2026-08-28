@@ -56,7 +56,7 @@ span.aspect {
      percentages darkens in dark mode and lightens in light mode by itself. */
   background: color-mix(in oklab, var(--aspect-fg) 14%, var(--color-bg));
   border: 1px solid color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
-  border-radius: 999px;
+  border-radius: var(--border-round-pill);
   /* The prose/link rules underline every anchor in an article; a pill is a
      chip, never underlined, in any display mode. */
   text-decoration: none !important;
@@ -170,7 +170,7 @@ span.aspect {
      shield. A severity chevron is part of the same mark, so it inherits. */
   color: var(--badge-fg, currentColor);
   background: var(--color-bg);
-  border-radius: 50%;
+  border-radius: var(--border-round-circle);
 }
 
 /* Dimmed toward the ground rather than to partial alpha, so the group name
@@ -265,7 +265,7 @@ span.aspect {
   justify-content: center;
   width: 26px;
   height: 26px;
-  border-radius: 50%;
+  border-radius: var(--border-round-circle);
   border: 1px solid var(--color-border);
   background: var(--color-surface) !important;
   cursor: pointer;
@@ -382,7 +382,7 @@ span.glyph {
   color: var(--aspect-fg) !important;
   background: color-mix(in oklab, var(--aspect-fg) 13%, var(--color-bg));
   border: 2px solid color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
-  border-radius: 50%;
+  border-radius: var(--border-round-circle);
   text-decoration: none;
   transition:
     background 0.18s ease,
@@ -500,7 +500,7 @@ span.glyph[data-group='myth'] {
     width: auto;
     height: auto;
     max-height: 1.55em;
-    border-radius: 999px;
+    border-radius: var(--border-round-pill);
     padding: 3px 0.45rem 4px 0.35rem;
     line-height: 1.2;
     font-size: 0.85em;

@@ -18,8 +18,12 @@ import {
   ReactNode,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useReducer,
+  useRef,
+  useState,
+  useSyncExternalStore,
 } from 'react';
 import { persistentUiReducer } from '../reducers/persistentUiReducer';
 import {
@@ -51,10 +55,24 @@ interface PersistentUiDispatchContextValue {
   dispatch: (action: PersistentUiAction) => void;
 }
 
+/**
+ * Subscription surface behind `usePersistentUiSelector`. Stable for the
+ * provider's lifetime, so holding it in context never re-renders consumers.
+ *
+ * @interface PersistentUiStore
+ * @property {(listener: () => void) => () => void} subscribe - Registers a change listener; returns the unsubscribe
+ * @property {() => PersistentUiState} getSnapshot - Latest reducer state
+ */
+interface PersistentUiStore {
+  subscribe: (listener: () => void) => () => void;
+  getSnapshot: () => PersistentUiState;
+}
+
 const PersistentUiStateContext =
   createContext<PersistentUiStateContextValue | null>(null);
 const PersistentUiDispatchContext =
   createContext<PersistentUiDispatchContextValue | null>(null);
+const PersistentUiStoreContext = createContext<PersistentUiStore | null>(null);
 
 /**
  * Props for PersistentUiProvider
@@ -78,7 +96,10 @@ interface PersistentUiProviderProps {
  * @returns {JSX.Element} Context providers wrapping children
  *
  * @description Uses server-provided initialExpandedPaths to prevent hydration
- * mismatch.
+ * mismatch. The selector snapshot ref is written during render rather than in
+ * an effect so a consumer rendering in the same commit as a dispatch reads
+ * the new state; deferred one commit, a row mirroring expansion into local
+ * state would see a stale snapshot and revert its own toggle.
  */
 export function PersistentUiProvider({
   children,
@@ -97,12 +118,19 @@ export function PersistentUiProvider({
   };
 
   const [state, dispatch] = useReducer(persistentUiReducer, initialState);
+  const snapshotRef = useRef(state);
+  snapshotRef.current = state;
+  const [listeners] = useState(() => new Set<() => void>());
 
   useIkUiHandle(state, dispatch);
 
   useEffect(() => {
     writePersistedState(state);
   }, [state]);
+
+  useLayoutEffect(() => {
+    listeners.forEach((listener) => listener());
+  }, [state, listeners]);
 
   const stateValue = useMemo<PersistentUiStateContextValue>(
     () => ({ state }),
@@ -112,11 +140,25 @@ export function PersistentUiProvider({
     () => ({ dispatch }),
     [],
   );
+  const store = useMemo<PersistentUiStore>(
+    () => ({
+      subscribe: (listener) => {
+        listeners.add(listener);
+        return () => {
+          listeners.delete(listener);
+        };
+      },
+      getSnapshot: () => snapshotRef.current,
+    }),
+    [listeners],
+  );
 
   return (
     <PersistentUiStateContext.Provider value={stateValue}>
       <PersistentUiDispatchContext.Provider value={dispatchValue}>
-        {children}
+        <PersistentUiStoreContext.Provider value={store}>
+          {children}
+        </PersistentUiStoreContext.Provider>
       </PersistentUiDispatchContext.Provider>
     </PersistentUiStateContext.Provider>
   );
@@ -174,6 +216,30 @@ export function usePersistentUiDispatchOptional():
   | null {
   const context = useContext(PersistentUiDispatchContext);
   return context?.dispatch ?? null;
+}
+
+/**
+ * Subscribes to one derived value of the persistent UI state. The component
+ * re-renders only when the selected value changes (`Object.is`), so dispatches
+ * that leave it untouched skip the component entirely. Selectors must return
+ * a primitive or a reference stable across identical state.
+ *
+ * @template T - Selected value type
+ * @param {(state: PersistentUiState) => T} selector - Pure projection of the state
+ * @returns {T} The selected value
+ * @throws {Error} When used outside a PersistentUiProvider
+ */
+export function usePersistentUiSelector<T>(
+  selector: (state: PersistentUiState) => T,
+): T {
+  const store = useContext(PersistentUiStoreContext);
+  if (!store) {
+    throw new Error(
+      'usePersistentUiSelector must be used within a PersistentUiProvider',
+    );
+  }
+  const getSelected = () => selector(store.getSnapshot());
+  return useSyncExternalStore(store.subscribe, getSelected, getSelected);
 }
 
 export { useSidebarExpansion as useSidebarExpansionActions } from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';

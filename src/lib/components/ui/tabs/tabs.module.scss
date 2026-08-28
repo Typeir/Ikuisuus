@@ -46,7 +46,7 @@
   background: var(--color-bg);
   border: 1px solid var(--color-surface);
   border-bottom: none;
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--border-round-m) var(--border-round-m) 0 0;
   color: var(--color-secondary);
   font-size: 0.875rem;
   font-weight: 500;
@@ -104,7 +104,7 @@
   flex: 1 1 auto;
   min-height: 0;
   background: var(--color-surface);
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 var(--border-round-m) var(--border-round-m);
   padding: 1.5rem;
   border: 1px solid var(--color-surface);
   animation: tabFadeIn 0.2s ease-in;
@@ -126,7 +126,7 @@
     background: linear-gradient(0deg, var(--color-bg) 20%, transparent 30%);
     border: 0.2rem solid var(--color-bg);
     border-bottom-width: 1px;
-    border-radius: 10px 10px 0 0;
+    border-radius: var(--border-round-xl) var(--border-round-xl) 0 0;
     padding: 1.25rem 0.125rem 0;
   }
 
@@ -163,7 +163,7 @@
   .tabPanel {
     background: var(--color-bg);
     border-color: var(--color-bg);
-    border-radius: 0 4px 4px 4px;
+    border-radius: 0 var(--border-round-s) var(--border-round-s) var(--border-round-s);
     padding: 1rem;
   }
 }
@@ -185,7 +185,7 @@
     );
     border: 0.2rem solid var(--color-surface);
     border-bottom-width: 1px;
-    border-radius: 10px 10px 0 0;
+    border-radius: var(--border-round-xl) var(--border-round-xl) 0 0;
     padding: 1.25rem 0.125rem 0;
   }
 
@@ -222,7 +222,7 @@
   .tabPanel {
     background: var(--color-surface);
     border: 1px solid var(--color-surface);
-    border-radius: 0 4px 4px 4px;
+    border-radius: 0 var(--border-round-s) var(--border-round-s) var(--border-round-s);
     padding: 1rem;
   }
 }
