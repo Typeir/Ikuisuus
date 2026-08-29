@@ -28,6 +28,7 @@ import styles from './detachableTooltip.module.scss';
  * @property {() => void} onClose - Closes the card
  * @property {string} [title] - Card title, also the handle's accessible name
  * @property {string} [closeLabel] - Accessible name for the close control
+ * @property {boolean} [resizable] - Shows the resize corner
  */
 export interface CardChromeProps {
   children: ReactNode;
@@ -36,6 +37,7 @@ export interface CardChromeProps {
   onClose: () => void;
   title?: string;
   closeLabel?: string;
+  resizable?: boolean;
 }
 
 /**
@@ -51,6 +53,7 @@ export function CardChrome({
   onClose,
   title,
   closeLabel,
+  resizable = false,
 }: CardChromeProps): React.ReactElement {
   return (
     <>
@@ -71,13 +74,15 @@ export function CardChrome({
         </button>
       </div>
       <div className={styles.panelBody}>{children}</div>
-      <div
-        className={draggableStyles.resizeHandle}
-        {...resizeHandleProps}
-        role='separator'
-        aria-orientation='vertical'
-        aria-label='Resize handle'
-      />
+      {resizable && (
+        <div
+          className={draggableStyles.resizeHandle}
+          {...resizeHandleProps}
+          role='separator'
+          aria-orientation='vertical'
+          aria-label='Resize handle'
+        />
+      )}
     </>
   );
 }

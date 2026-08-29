@@ -137,6 +137,7 @@ export const ParallaxBackdrop: React.FC<ParallaxBackdropProps> = ({
         alt={ariaHidden ? '' : alt}
         style={{ filter: blurPx > 0 ? `blur(${blurPx}px)` : undefined }}
         unoptimized={true}
+        priority
         fill
         draggable={false}
       />

@@ -185,9 +185,18 @@ export function useDrag({
       target.setPointerCapture?.(event.pointerId);
       setIsDragging(true);
       dragStart.current = { x: event.clientX, y: event.clientY };
-      posAtDragStart.current = { ...position };
+
+      const container = containerRef.current;
+      const bounds = boundsRef?.current ?? container?.parentElement;
+      const rect = container?.getBoundingClientRect();
+      const boundsRect = bounds?.getBoundingClientRect();
+
+      posAtDragStart.current =
+        rect && boundsRect
+          ? { x: rect.left - boundsRect.left, y: rect.top - boundsRect.top }
+          : { ...position };
     },
-    [position],
+    [boundsRef, containerRef, position],
   );
 
   const onDragPointerMove = useCallback(
@@ -327,8 +336,7 @@ export function useDrag({
 
   /** Re-clamp on window resize so the element cannot strand off-screen. */
   useEffect(() => {
-    const onResize = () =>
-      setPosition((prev) => clampToBounds(prev.x, prev.y));
+    const onResize = () => setPosition((prev) => clampToBounds(prev.x, prev.y));
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, [clampToBounds]);

@@ -116,13 +116,6 @@
   transition: max-height 0.5s var(--springy-bezier);
 }
 
-.expanded {
-  max-height: var(--expanded-height);
-  a {
-    overflow: hidden;
-  }
-}
-
 /* Virtualized rows mount as they scroll into the window; @starting-style fades
    each new row in instead of popping it. Transition, not @keyframes — keyframes
    would restart from their own `from` on every style recalc. */

@@ -1,3 +1,5 @@
+@use 'mixins-anchored-surface' as *;
+
 /**
  * @fileoverview Detachable Tooltip Styles
  * @description The viewport-sized layer detached panels live in, and the panel
@@ -19,9 +21,9 @@
 }
 
 /* The surface adopts drag rather than being wrapped by `Draggable`, so it also
-   takes on the layout that wrapper used to provide. */
+   takes on the layout that wrapper used to provide. Positioning is not here:
+   `.anchored` and `.moved` supply it. */
 .panel {
-  position: absolute;
   display: flex;
   flex-direction: column;
   touch-action: none;
@@ -37,18 +39,50 @@
   box-shadow: 0 10px 28px rgb(var(--color-shadow));
   overflow: hidden;
 
-  /* No entrance transition. The panel takes over the tooltip's exact frame, so a
-     fade or scale reads as the card jumping rather than being handed over. */
+  /* Opacity only. `left`/`top` are written every frame during a drag and on
+     every scroll while unpinned, so a transition on them would lag the pointer. */
   opacity: 1;
   transition: opacity 0.18s ease;
+
+  @starting-style {
+    opacity: 0;
+  }
 }
 
-/* Set only for the glide; a standing transition would make a drag lag the pointer. */
-.panel.moving {
-  transition:
-    left 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
-    top 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 0.18s ease;
+/* Same anchoring contract the tooltip uses, so the card is placed before paint
+   and never appears in a spot it is about to leave. Intrinsic sizing is part of
+   that contract: `position-area` stretches a surface that has none. */
+.anchored {
+  @include anchored-surface-base;
+  width: max-content;
+  height: max-content;
+}
+
+@supports (anchor-name: --a) {
+  .anchored {
+    @include anchored-surface-native;
+  }
+
+  .anchored.top {
+    @include anchored-surface-side(top);
+  }
+
+  .anchored.bottom {
+    @include anchored-surface-side(bottom);
+  }
+
+  .anchored.left {
+    @include anchored-surface-side(left);
+  }
+
+  .anchored.right {
+    @include anchored-surface-side(right);
+  }
+}
+
+/* Once dragged the card keeps its own coordinates inside the layer. */
+.moved {
+  position: absolute;
 }
 
 .panel.closing {
@@ -58,7 +92,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .panel,
-  .panel.moving,
   .panel.closing {
     transition: none;
   }

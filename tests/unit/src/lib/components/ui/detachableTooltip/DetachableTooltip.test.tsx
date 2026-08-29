@@ -1,10 +1,10 @@
 /**
  * @fileoverview DetachableTooltip Tests
- * @description Covers hover open/close and the shift-leave promotion into a
- * draggable panel that outlives the hover.
+ * @description Covers the card opening on hover, fading out when the pointer
+ * leaves, and staying when it is pinned by Shift, by Shift+Enter or by a drag.
  *
  * @module tests/unit/src/lib/components/ui/detachableTooltip/DetachableTooltip
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 8.0.0
  *
@@ -30,7 +30,7 @@ vi.mock('react-dom', async (importOriginal) => {
  *
  * @returns {ReturnType<typeof render>} Testing Library render result
  */
-function renderTooltip() {
+function renderCard() {
   return render(
     <DetachableTooltip
       content={<p>Definition body</p>}
@@ -44,11 +44,11 @@ function renderTooltip() {
 }
 
 /**
- * Opens the tooltip by hovering the trigger.
+ * Hovers the trigger and lets the open delay elapse.
  *
  * @returns {HTMLElement} The trigger element
  */
-function openTooltip(): HTMLElement {
+function openCard(): HTMLElement {
   const trigger = screen.getByRole('link', { name: 'blinded' });
   act(() => {
     fireEvent.mouseEnter(trigger);
@@ -57,42 +57,45 @@ function openTooltip(): HTMLElement {
   return trigger;
 }
 
+/** Runs the hide delay and the fade to completion. */
+function settle(): void {
+  act(() => {
+    vi.advanceTimersByTime(0);
+  });
+  act(() => {
+    vi.advanceTimersByTime(300);
+  });
+}
+
+/**
+ * The card, identified by the chrome only it has.
+ *
+ * @returns {HTMLElement | null} The card element, or null
+ */
+function card(): HTMLElement | null {
+  return screen.queryByRole('region', { name: 'Blinded' });
+}
+
 describe('DetachableTooltip', () => {
   const originalGetBCR = Element.prototype.getBoundingClientRect;
 
   beforeEach(() => {
     vi.useFakeTimers();
-    /* The layer is the drag bounds, so it has to measure larger than the
-       surface or every position clamps to the origin. */
     Element.prototype.getBoundingClientRect = function (this: Element) {
       const isLayer = String(this.className).includes('layer');
-      return isLayer
-        ? ({
-            x: 0,
-            y: 0,
-            width: 1024,
-            height: 768,
-            top: 0,
-            right: 1024,
-            bottom: 768,
-            left: 0,
-            toJSON() {
-              return this;
-            },
-          } as DOMRect)
-        : ({
-            x: 120,
-            y: 240,
-            width: 300,
-            height: 90,
-            top: 240,
-            right: 420,
-            bottom: 330,
-            left: 120,
-            toJSON() {
-              return this;
-            },
-          } as DOMRect);
+      const box = isLayer
+        ? { x: 0, y: 0, width: 1024, height: 768 }
+        : { x: 120, y: 240, width: 300, height: 90 };
+      return {
+        ...box,
+        top: box.y,
+        left: box.x,
+        right: box.x + box.width,
+        bottom: box.y + box.height,
+        toJSON() {
+          return this;
+        },
+      } as DOMRect;
     };
   });
 
@@ -102,144 +105,104 @@ describe('DetachableTooltip', () => {
     vi.clearAllMocks();
   });
 
-  it('renders the trigger without a tooltip', () => {
-    renderTooltip();
+  it('renders the trigger with no card', () => {
+    renderCard();
 
     expect(screen.getByRole('link', { name: 'blinded' })).toBeInTheDocument();
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    expect(card()).not.toBeInTheDocument();
   });
 
-  it('opens on hover', () => {
-    renderTooltip();
-    openTooltip();
+  it('opens a card on hover, chrome and all', () => {
+    renderCard();
+    openCard();
 
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
-  });
-
-  it('closes on a plain leave and leaves nothing behind', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: false });
-      vi.advanceTimersByTime(0);
-    });
-    act(() => {
-      vi.advanceTimersByTime(200);
-    });
-
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /close/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('parks a draggable panel when Shift is held on leave', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-      vi.advanceTimersByTime(200);
-    });
-
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    expect(card()).toBeInTheDocument();
     expect(screen.getByText('Definition body')).toBeInTheDocument();
     expect(
       screen.getByRole('separator', { name: 'Blinded' }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Close Blinded' }),
+    ).toBeInTheDocument();
   });
 
-  it('raises the panel by its chrome so the body lands where the tooltip was', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-    });
-
-    const handle = screen.getByRole('separator', { name: 'Blinded' });
-    const panel = handle.parentElement as HTMLElement;
-    const chrome = handle.getBoundingClientRect().height;
-
-    expect(panel.style.left).toBe('120px');
-    expect(panel.style.top).toBe(`${240 - chrome}px`);
-    expect(panel.style.width).toBe('300px');
-  });
-
-  it('closes the parked panel through its own control', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-    });
-
-    act(() => {
-      fireEvent.click(screen.getByRole('button', { name: 'Close Blinded' }));
-    });
-    act(() => {
-      vi.advanceTimersByTime(200);
-    });
-
-    expect(screen.queryByText('Definition body')).not.toBeInTheDocument();
-  });
-
-  it('holds the panel mounted while it fades out', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-    });
-    act(() => {
-      fireEvent.click(screen.getByRole('button', { name: 'Close Blinded' }));
-    });
-
-    expect(screen.getByText('Definition body')).toBeInTheDocument();
-
-    act(() => {
-      vi.advanceTimersByTime(200);
-    });
-    expect(screen.queryByText('Definition body')).not.toBeInTheDocument();
-  });
-
-  it('closes the parked panel with Escape', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-    });
-    act(() => {
-      fireEvent.keyDown(document, { key: 'Escape' });
-    });
-    act(() => {
-      vi.advanceTimersByTime(200);
-    });
-
-    expect(screen.queryByText('Definition body')).not.toBeInTheDocument();
-  });
-
-  it('closes the hover card with Escape before any parked card', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-    });
-    openTooltip();
-
-    act(() => {
-      fireEvent.keyDown(document, { key: 'Escape' });
-    });
+  it('never renders a tooltip phase', () => {
+    renderCard();
+    openCard();
 
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
-    expect(screen.getByText('Definition body')).toBeInTheDocument();
   });
 
-  it('parks from the keyboard with Shift+Enter', () => {
-    renderTooltip();
+  it('fades out when the pointer leaves without Shift', () => {
+    renderCard();
+    const trigger = openCard();
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: false });
+    });
+    settle();
+
+    expect(card()).not.toBeInTheDocument();
+  });
+
+  it('stays when the pointer leaves with Shift held', () => {
+    renderCard();
+    const trigger = openCard();
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+    settle();
+
+    expect(card()).toBeInTheDocument();
+  });
+
+  it('survives the pointer moving onto it', () => {
+    renderCard();
+    const trigger = openCard();
+    const surface = card() as HTMLElement;
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: false });
+      fireEvent.mouseEnter(surface);
+    });
+    settle();
+
+    expect(card()).toBeInTheDocument();
+  });
+
+  it('closes through its own control', () => {
+    renderCard();
+    const trigger = openCard();
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'Close Blinded' }));
+    });
+    settle();
+
+    expect(card()).not.toBeInTheDocument();
+  });
+
+  it('closes a pinned card with Escape', () => {
+    renderCard();
+    const trigger = openCard();
+
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: true });
+    });
+    act(() => {
+      fireEvent.keyDown(document, { key: 'Escape' });
+    });
+    settle();
+
+    expect(card()).not.toBeInTheDocument();
+  });
+
+  it('pins from the keyboard with Shift+Enter', () => {
+    renderCard();
     const trigger = screen.getByRole('link', { name: 'blinded' });
 
     act(() => {
@@ -249,62 +212,40 @@ describe('DetachableTooltip', () => {
     act(() => {
       fireEvent.keyDown(trigger, { key: 'Enter', shiftKey: true });
     });
+    act(() => {
+      fireEvent.blur(trigger);
+    });
+    settle();
 
-    expect(
-      screen.getByRole('region', { name: 'Blinded' }),
-    ).toBeInTheDocument();
+    expect(card()).toBeInTheDocument();
   });
 
-  it('moves the existing panel instead of stacking a duplicate', () => {
-    renderTooltip();
-    const trigger = openTooltip();
+  it('pins when the card is dragged', () => {
+    renderCard();
+    const trigger = openCard();
+    const handle = screen.getByRole('separator', { name: 'Blinded' });
+
+    act(() => {
+      fireEvent.pointerDown(handle, { clientX: 10, clientY: 10 });
+    });
+    act(() => {
+      fireEvent.mouseLeave(trigger, { shiftKey: false });
+    });
+    settle();
+
+    expect(card()).toBeInTheDocument();
+  });
+
+  it('opens one card, not one per hover', () => {
+    renderCard();
+    const trigger = openCard();
 
     act(() => {
       fireEvent.mouseLeave(trigger, { shiftKey: true });
     });
-    openTooltip();
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-    });
+    openCard();
 
     expect(screen.getAllByRole('region', { name: 'Blinded' })).toHaveLength(1);
-  });
-
-  it('names the parked panel for assistive technology', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-    });
-
-    expect(screen.getByRole('region', { name: 'Blinded' })).toBeInTheDocument();
-  });
-
-  it('does not raise a second surface while one is parked', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-    });
-    openTooltip();
-
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
-    expect(screen.getAllByRole('region', { name: 'Blinded' })).toHaveLength(1);
-  });
-
-  it('hands the same element over rather than replacing it', () => {
-    renderTooltip();
-    const trigger = openTooltip();
-    const before = screen.getByRole('tooltip');
-
-    act(() => {
-      fireEvent.mouseLeave(trigger, { shiftKey: true });
-    });
-
-    const after = screen.getByRole('region', { name: 'Blinded' });
-    expect(after).toBe(before);
   });
 
   it('returns the trigger untouched when there is no content', () => {
@@ -315,6 +256,6 @@ describe('DetachableTooltip', () => {
     );
 
     expect(screen.getByRole('link', { name: 'blinded' })).toBeInTheDocument();
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    expect(screen.queryByRole('region')).not.toBeInTheDocument();
   });
 });

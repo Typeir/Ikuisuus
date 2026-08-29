@@ -1,14 +1,18 @@
 /**
  * @fileoverview Detachable Tooltip
- * @description One floating surface with two states. Hovering anchors it to the
- * trigger; leaving with Shift held, or Shift+Enter, parks it as a draggable card
- * without unmounting, so the handover never drops a frame.
+ * @description A draggable card that opens on hover. It is a card from the
+ * first frame — there is no tooltip phase and no promotion, so nothing shifts
+ * when it is kept. Leaving the trigger fades it out; leaving with Shift held,
+ * or Shift+Enter, pins it.
  *
- * Hover lifecycle, anchoring and Escape come from the shared tooltip primitives;
- * drag comes from `useDrag`, adopted by the surface rather than wrapped round it.
+ * Placement is `useTooltipAnchor`, unchanged from the plain `Tooltip`: the
+ * position is written straight to the DOM before paint and the card stays
+ * hidden until the first write, so it never appears in a spot it then leaves.
+ * The card keeps that anchoring until it is dragged, at which point `useDrag`
+ * takes the position it already has.
  *
  * @module lib/components/ui/detachableTooltip/DetachableTooltip
- * @version 3.0.0
+ * @version 5.0.0
  * @author Typeir
  * @since 8.0.0
  */
@@ -17,8 +21,6 @@
 
 import draggableStyles from '@/lib/components/ui/draggable/draggable.module.scss';
 import { useDrag } from '@/lib/components/ui/draggable/useDrag';
-import { calculatePosition } from '@/lib/components/ui/tooltip/calculatePosition';
-import tooltipStyles from '@/lib/components/ui/tooltip/tooltip.module.scss';
 import { useEscapeDismiss } from '@/lib/components/ui/tooltip/useEscapeDismiss';
 import {
   useTooltipAnchor,
@@ -31,13 +33,13 @@ import {
   isValidElement,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
   type ReactElement,
   type ReactNode,
 } from 'react';
@@ -45,35 +47,22 @@ import { createPortal } from 'react-dom';
 import { CardChrome } from './CardChrome';
 import styles from './detachableTooltip.module.scss';
 
-/** Length of the card's fade-out. Mirrors `detachableTooltip.module.scss`. */
-const PANEL_EXIT_DURATION = 180;
-
-/** Length of the glide onto a new call site. Outside this window a drag is instant. */
-const PANEL_MOVE_DURATION = 320;
-
-/**
- * Height of the card's chrome. The surface keeps the frame it had as a tooltip,
- * but the handle sits above the body, so the frame is raised by this much to
- * leave the text where it already was. Measured from the first card.
- */
-let chromeOffset = 0;
-
 /**
  * Props for {@link DetachableTooltip}.
  *
  * @interface DetachableTooltipProps
- * @property {ReactNode} content - Body rendered in both states
- * @property {ReactElement} children - Trigger element; receives the anchor ref and handlers
+ * @property {ReactNode} content - Card body
+ * @property {ReactElement} children - Trigger element; receives the ref and handlers
  * @property {string} [title] - Card title, shown in the handle and used as its accessible name
- * @property {TooltipPlacement} [placement] - Preferred placement while hovering
- * @property {number} [showDelay] - Delay before the tooltip opens, in ms
- * @property {number} [hideDelay] - Delay before the tooltip closes, in ms
- * @property {number} [maxWidth] - Maximum width while hovering, in px
- * @property {boolean} [disabled] - When true, neither hover nor park happens
- * @property {string} [className] - Extra class for the surface while hovering
- * @property {string} [panelClassName] - Extra class for the surface while parked
+ * @property {TooltipPlacement} [placement] - Preferred side of the trigger
+ * @property {number} [showDelay] - Delay before the card opens, in ms
+ * @property {number} [hideDelay] - Delay before the card closes, in ms
+ * @property {number} [maxWidth] - Maximum width of the card, in px
+ * @property {boolean} [disabled] - When true, the card never opens
+ * @property {string} [className] - Extra class for the card
+ * @property {string} [panelClassName] - Extra class for the card, applied after `className`
  * @property {string} [id] - Id used for the ARIA relationship
- * @property {string} [closeLabel] - Accessible name for the card's close control
+ * @property {string} [closeLabel] - Accessible name for the close control
  */
 export interface DetachableTooltipProps {
   content: ReactNode;
@@ -91,12 +80,12 @@ export interface DetachableTooltipProps {
 }
 
 /**
- * Hover surface that becomes a draggable card in place.
+ * Draggable card that opens on hover and stays when pinned.
  *
  * The trigger is cloned, not wrapped, so no layout box lands in running prose.
  *
  * @param {DetachableTooltipProps} props - Component props
- * @returns {React.ReactElement} The trigger plus the floating surface
+ * @returns {React.ReactElement} The trigger plus the card portal
  *
  * @example
  * ```tsx
@@ -120,14 +109,11 @@ export function DetachableTooltip({
   closeLabel,
 }: DetachableTooltipProps): React.ReactElement {
   const [isMounted, setIsMounted] = useState(false);
-  const [parked, setParked] = useState(false);
-  const [closing, setClosing] = useState(false);
-  const [moving, setMoving] = useState(false);
-  const [frame, setFrame] = useState({ x: 0, y: 0, width: 0 });
+  const [pinned, setPinned] = useState(false);
+  const [moved, setMoved] = useState(false);
+  const [frame, setFrame] = useState({ x: 0, y: 0 });
 
   const layerRef = useRef<HTMLDivElement>(null);
-  const exitTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const moveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const { showPortal, exiting, show, hide, hideNow } = useTooltipVisibility({
     showDelay,
@@ -136,7 +122,7 @@ export function DetachableTooltip({
   });
 
   const { triggerRef, surfaceRef, anchorName, actualPlacement, anchorId } =
-    useTooltipAnchor(placement, showPortal && !parked);
+    useTooltipAnchor(placement, showPortal && !moved);
 
   const initialPosition = useMemo(
     () => ({ x: frame.x, y: frame.y }),
@@ -149,85 +135,37 @@ export function DetachableTooltip({
       boundsRef: layerRef,
     });
 
-  const tooltipId = id || `detachable-${anchorId}`;
-  const visible = showPortal || parked;
+  const cardId = id || `card-${anchorId}`;
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  useEffect(
-    () => () => {
-      clearTimeout(exitTimer.current);
-      clearTimeout(moveTimer.current);
-    },
-    [],
-  );
-
-  /**
-   * Freezes the surface where it stands and switches it to the parked state.
-   * The element is not replaced, so nothing unmounts and nothing fades in.
-   *
-   * @returns {boolean} Whether the surface parked
-   */
-  const park = useCallback((): boolean => {
-    const surface = surfaceRef.current;
-    if (!surface) return false;
-
-    const rect = surface.getBoundingClientRect();
-    clearTimeout(exitTimer.current);
-    setClosing(false);
-    setFrame({
-      x: Math.round(rect.left),
-      y: Math.round(rect.top) - chromeOffset,
-      width: Math.round(rect.width),
-    });
-    setParked(true);
+  /** Closes the card and forgets both that it was pinned and that it was moved. */
+  const close = useCallback(() => {
+    setPinned(false);
+    setMoved(false);
     hideNow();
-    return true;
-  }, [hideNow, surfaceRef]);
+  }, [hideNow]);
 
   /**
-   * Glides a parked card to where a tooltip on this trigger would sit.
+   * Leaves the trigger: pins when Shift is held, otherwise starts the fade.
    *
-   * @returns {boolean} Whether a glide started
-   */
-  const glideToTrigger = useCallback((): boolean => {
-    const trigger = triggerRef.current;
-    const surface = surfaceRef.current;
-    if (!trigger || !surface) return false;
-
-    const { x, y } = calculatePosition(
-      trigger.getBoundingClientRect(),
-      surface.getBoundingClientRect(),
-      placement,
-    );
-
-    clearTimeout(moveTimer.current);
-    setMoving(true);
-    moveTimer.current = setTimeout(() => setMoving(false), PANEL_MOVE_DURATION);
-    setFrame((current) => ({ ...current, x: Math.round(x), y: Math.round(y) }));
-    return true;
-  }, [placement, surfaceRef, triggerRef]);
-
-  /**
-   * Closes the tooltip, parking it when Shift is held.
-   *
-   * @param {ReactMouseEvent} event - Pointer leave event from the trigger
+   * @param {ReactMouseEvent} event - Pointer leave event
    */
   const handleLeave = useCallback(
     (event: ReactMouseEvent) => {
-      if (event.shiftKey) {
-        if (parked && glideToTrigger()) return;
-        if (showPortal && park()) return;
+      if (event.shiftKey && showPortal) {
+        setPinned(true);
+        return;
       }
-      hide();
+      if (!pinned) hide();
     },
-    [glideToTrigger, hide, park, parked, showPortal],
+    [hide, pinned, showPortal],
   );
 
   /**
-   * Parks or glides from the keyboard, mirroring the pointer gesture.
+   * Pins from the keyboard, mirroring the pointer gesture.
    *
    * @param {ReactKeyboardEvent} event - Key event from the trigger
    */
@@ -236,51 +174,39 @@ export function DetachableTooltip({
       if (event.key !== 'Enter' || !event.shiftKey || disabled) return;
 
       event.preventDefault();
-      if (parked) {
-        glideToTrigger();
-        return;
-      }
-      if (showPortal) park();
+      if (showPortal) setPinned(true);
     },
-    [disabled, glideToTrigger, park, parked, showPortal],
+    [disabled, showPortal],
   );
 
-  /** Fades the card out, then drops it. */
-  const handleClose = useCallback(() => {
-    setClosing(true);
-    clearTimeout(exitTimer.current);
-    exitTimer.current = setTimeout(() => {
-      setParked(false);
-      setClosing(false);
-    }, PANEL_EXIT_DURATION);
-  }, []);
-
   /**
-   * Clears the anchoring transform and corrects the chrome offset, both before
-   * paint, so the surface never shows a frame at the anchored position.
+   * Starting a drag keeps the card and takes it off the anchor.
+   *
+   * @param {ReactPointerEvent} event - Pointer event from the handle
    */
-  useLayoutEffect(() => {
-    if (!parked) return;
+  const handleDragStart = useCallback(
+    (event: ReactPointerEvent) => {
+      const surface = surfaceRef.current;
+      const layer = layerRef.current;
+      if (!surface || !layer) return;
 
-    const surface = surfaceRef.current;
-    if (surface) surface.style.transform = '';
+      const rect = surface.getBoundingClientRect();
+      const bounds = layer.getBoundingClientRect();
 
-    const handle = layerRef.current?.querySelector(
-      '[role="separator"][aria-orientation="horizontal"]',
-    );
-    const height = handle
-      ? Math.round(handle.getBoundingClientRect().height)
-      : 0;
+      setPinned(true);
+      setMoved(true);
+      setFrame({
+        x: Math.round(rect.left - bounds.left),
+        y: Math.round(rect.top - bounds.top),
+      });
+      surface.style.transform = '';
 
-    if (height && height !== chromeOffset) {
-      const delta = height - chromeOffset;
-      chromeOffset = height;
-      setFrame((current) => ({ ...current, y: current.y - delta }));
-    }
-  }, [parked, surfaceRef]);
+      dragHandleProps.onPointerDown(event);
+    },
+    [dragHandleProps, surfaceRef],
+  );
 
-  useEscapeDismiss(showPortal && !parked, hideNow);
-  useEscapeDismiss(parked && !closing, handleClose);
+  useEscapeDismiss(showPortal, close);
 
   const child = isValidElement(children) ? Children.only(children) : null;
 
@@ -294,62 +220,69 @@ export function DetachableTooltip({
       ...((child.props as { style?: CSSProperties }).style ?? {}),
       anchorName,
     } as CSSProperties,
-    onMouseEnter: parked ? undefined : show,
+    onMouseEnter: show,
     onMouseLeave: handleLeave,
-    onFocus: parked ? undefined : show,
-    onBlur: hide,
+    onFocus: show,
+    onBlur: () => {
+      if (!pinned) hide();
+    },
     onKeyDown: handleKeyDown,
-    'aria-describedby': showPortal && !parked ? tooltipId : undefined,
+    'aria-describedby': showPortal ? cardId : undefined,
   });
 
-  const surfaceClass = parked
-    ? [
-        styles.panel,
-        moving ? styles.moving : '',
-        closing ? styles.closing : '',
-        isDragging ? draggableStyles.isDragging : '',
-        panelClassName,
-      ]
-        .filter(Boolean)
-        .join(' ')
-    : `${tooltipStyles.tooltip} ${tooltipStyles[actualPlacement]} ${styles.hoverable} ${exiting ? tooltipStyles.tooltipExiting : ''} ${className}`;
+  const cardClass = [
+    styles.panel,
+    moved ? styles.moved : styles.anchored,
+    moved ? '' : styles[actualPlacement],
+    exiting ? styles.closing : '',
+    isDragging ? draggableStyles.isDragging : '',
+    className,
+    panelClassName,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
-  const surfaceStyle: CSSProperties = parked
+  const cardStyle: CSSProperties = moved
     ? {
         left: position.x,
         top: position.y,
-        width: size?.width ?? frame.width,
-        ...(size ? { height: size.height } : {}),
+        /* The opening cap stops applying once the reader sets a width, or the
+           card could never be resized wider than it opened. */
+        maxWidth,
       }
-    : ({ maxWidth, positionAnchor: anchorName } as CSSProperties);
+    : ({
+        maxWidth,
+        positionAnchor: anchorName,
+      } as CSSProperties);
 
   return (
     <>
       {trigger}
-      {visible &&
+      {showPortal &&
         createPortal(
           <div className={styles.layer} ref={layerRef}>
             <div
               ref={surfaceRef}
-              id={parked ? undefined : tooltipId}
-              role={parked ? 'region' : 'tooltip'}
-              aria-label={parked ? title : undefined}
-              className={surfaceClass}
-              style={surfaceStyle}
-              onMouseEnter={parked ? undefined : show}
-              onMouseLeave={parked ? undefined : hide}>
-              {parked ? (
-                <CardChrome
-                  dragHandleProps={dragHandleProps}
-                  resizeHandleProps={resizeHandleProps}
-                  onClose={handleClose}
-                  title={title}
-                  closeLabel={closeLabel}>
-                  {content}
-                </CardChrome>
-              ) : (
-                <div>{content}</div>
-              )}
+              id={cardId}
+              role='region'
+              aria-label={title}
+              className={cardClass}
+              style={cardStyle}
+              onMouseEnter={show}
+              onMouseLeave={() => {
+                if (!pinned) hide();
+              }}>
+              <CardChrome
+                dragHandleProps={{
+                  ...dragHandleProps,
+                  onPointerDown: handleDragStart,
+                }}
+                resizeHandleProps={resizeHandleProps}
+                onClose={close}
+                title={title}
+                closeLabel={closeLabel}>
+                {content}
+              </CardChrome>
             </div>
           </div>,
           document.body,

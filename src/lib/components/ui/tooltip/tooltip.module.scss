@@ -1,14 +1,13 @@
+@use 'mixins-anchored-surface' as *;
+
 /**
  * @fileoverview Tooltip Styles
  * @description SCSS module for Tooltip component with placement variants and animations.
  */
 
 .tooltip {
-  position: fixed;
-  top: 0;
-  left: 0;
+  @include anchored-surface-base;
   z-index: 10000;
-  will-change: transform;
 
   padding: 0.5rem 0.75rem;
   border-radius: var(--border-round-m);
@@ -60,30 +59,23 @@
 
 @supports (anchor-name: --a) {
   .tooltip {
-    top: auto;
-    left: auto;
-    will-change: auto;
-    position-try-fallbacks: flip-block, flip-inline;
+    @include anchored-surface-native;
   }
 
   .tooltip.top {
-    position-area: block-start center;
-    margin-block-end: 8px;
+    @include anchored-surface-side(top);
   }
 
   .tooltip.bottom {
-    position-area: block-end center;
-    margin-block-start: 8px;
+    @include anchored-surface-side(bottom);
   }
 
   .tooltip.left {
-    position-area: center inline-start;
-    margin-inline-end: 8px;
+    @include anchored-surface-side(left);
   }
 
   .tooltip.right {
-    position-area: center inline-end;
-    margin-inline-start: 8px;
+    @include anchored-surface-side(right);
   }
 }
 

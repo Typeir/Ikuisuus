@@ -109,17 +109,10 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22.21.1
-
-      - name: Update npm to latest
-        run: npm install -g npm@10
-
-      - name: Remove node_modules
-        run: rm -rf node_modules
+          cache: npm
 
       - name: Install dependencies
-        env:
-          CI: 1
-        run: npm install
+        run: npm ci
 
       - name: Run pre-initialization scripts (CI-safe)
         run: npm run pre-init:ci
@@ -143,17 +136,10 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22.21.1
-
-      - name: Update npm to latest
-        run: npm install -g npm@10
-
-      - name: Remove node_modules
-        run: rm -rf node_modules
+          cache: npm
 
       - name: Install dependencies
-        env:
-          CI: 1
-        run: npm install
+        run: npm ci
 
       - name: Run pre-initialization scripts (CI-safe)
         run: npm run pre-init:ci
