@@ -58,6 +58,11 @@
   }
 }
 
+/* Diamond control for TSX that has no module of its own; see the mixin. */
+.rhombus {
+  @include rhombus;
+}
+
 /* near the mdx-first-letter include in mdxContent.module.scss */
 h1:has(.first-letter) {
   @include mdx-first-letter-headroom();

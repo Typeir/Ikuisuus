@@ -1,8 +1,8 @@
 /**
- * @fileoverview MDX section mixins — nine-slice frame + first-letter decor
- * @description Reusable mixins for MDX section nine-slice borders and the
- * decorative first-letter used by MDX headings. Extracted from the global
- * stylesheet so other components can opt-in via `@include`.
+ * @fileoverview MDX section mixins — nine-slice frame, stream rail, first-letter decor
+ * @description Reusable mixins for MDX section nine-slice borders, the vertical
+ * stream rail and the decorative first-letter used by MDX headings. Extracted
+ * from the global stylesheet so other components can opt-in via `@include`.
  *
  * @module styles/mixins-mdx-sections
  */
@@ -17,7 +17,6 @@
       black 65%
     );
   mask-composite: subtract;
-  -webkit-mask-composite: source-out;
 }
 
 /* Nine-slice base for a section ::before (call from your ::before) */
@@ -54,7 +53,8 @@
   user-select: none;
 }
 
-/* Variant used for nested sections (not-last-child) */
+/* Variant used for nested sections (not-last-child): the base with its
+   defaults moved to the bottom-right corner. */
 @mixin mdx-nine-slice-nested(
   $image: '/render/terminalKnotwork9slice.png',
   $border: 48px,
@@ -66,26 +66,17 @@
   $mask-position: bottom right,
   $mask-linear: linear-gradient(transparent, black)
 ) {
-  content: '';
-  position: absolute;
-  min-width: $min-w;
-  min-height: $min-h;
-  top: $top;
-  left: $left;
-  border: $border solid transparent;
-  border-image-source: url(#{$image});
-  border-image-slice: 100 fill;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  box-sizing: border-box;
-  display: var(--mdx-section-decor-display, block);
-  background-clip: padding-box;
-  opacity: 0.85;
-
-  @include mdx--mask-image($mask-ellipse, $mask-position, $mask-linear);
-
-  pointer-events: none;
-  user-select: none;
+  @include mdx-nine-slice-base(
+    $image,
+    $border,
+    $min-w,
+    $min-h,
+    $top,
+    $left,
+    $mask-ellipse,
+    $mask-position,
+    $mask-linear
+  );
 }
 
 /* Small helper to hide the pseudo when needed */
@@ -107,8 +98,6 @@
  * @param {string} $outer-color (default `var(--color-actionable)`) — outer glow colour
  * @param {number} $inner-inset (default `-12px`) — `::before` inset
  * @param {number} $outer-inset (default `-20px`) — `::after` inset
- * @param {number} $inner-radius (default `10px`) — `::before` border-radius
- * @param {number} $outer-radius (default `14px`) — `::after` border-radius
  * @param {number} $inner-opacity (default `0.3`) — target `::before` opacity on reveal
  * @param {number} $outer-opacity (default `0.15`) — target `::after` opacity on reveal
  */
@@ -117,8 +106,6 @@
   $outer-color: var(--color-actionable),
   $inner-inset: -12px,
   $outer-inset: -20px,
-  $inner-radius: var(--border-round-xl),
-  $outer-radius: calc(var(--border-round-xl) * 1.4),
   $inner-opacity: 0.3,
   $outer-opacity: 0.15
 ) {
@@ -126,7 +113,6 @@
     content: '';
     position: absolute;
     inset: $inner-inset;
-    border-radius: $inner-radius;
     z-index: -1;
     background: radial-gradient(circle at center, $color 0%, transparent 70%);
     opacity: 0;
@@ -137,7 +123,6 @@
     content: '';
     position: absolute;
     inset: $outer-inset;
-    border-radius: $outer-radius;
     z-index: -2;
     background: radial-gradient(
       circle at center,
@@ -157,7 +142,6 @@
   $offset-right: -0.018em,
   $dot-position: center
 ) {
-  height: 1ch;
   font-family: var(--font-initialem), serif !important;
   font-weight: 500 !important;
   font-size: $size;
@@ -165,7 +149,7 @@
   display: inline;
   vertical-align: sub;
   color: transparent !important;
-  letter-spacing: -0.65rem;
+  letter-spacing: -0.0722em;
   background: linear-gradient(
     to bottom,
     var(--color-accent),
@@ -177,9 +161,7 @@
   -webkit-text-fill-color: transparent !important;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-
   position: relative;
-  overflow: hidden;
 
   &::before {
     content: '';
@@ -189,7 +171,6 @@
     width: $dot-size;
     height: $dot-size;
     z-index: 1;
-    pointer-events: none;
     background: radial-gradient(
       circle at #{$dot-position},
       var(--color-primary) 0%,
@@ -197,11 +178,15 @@
       var(--color-actionable) 30%,
       transparent 50%
     );
-    overflow: visible;
     animation: crt-pulse 2s ease-in-out infinite;
     filter: blur(0.1em);
     pointer-events: none;
     user-select: none;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      opacity: 0.2;
+    }
   }
 
   &::after {
@@ -218,9 +203,14 @@
       transparent 70%
     );
     opacity: 0.9;
+    filter: blur(0.3em);
     animation: crt-bloom 5s ease-in-out infinite;
     pointer-events: none;
     user-select: none;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
   }
 }
 
@@ -239,13 +229,18 @@
   }
 }
 
+/* The bloom breathes by scale over a fixed blur. Chromium keeps transform and
+   opacity animations on the compositor; animating a pixel-moving filter
+   forces a main-thread frame every tick. */
 @keyframes crt-bloom {
   0%,
   100% {
-    filter: blur(0.2em);
+    transform: scale(0.8);
+    opacity: 0.9;
   }
   50% {
-    filter: blur(0.4em);
+    transform: scale(1.25);
+    opacity: 0.7;
   }
 }
 
@@ -262,28 +257,32 @@
 }
 
 /**
- * Mixin: mdx-terminal-stream
+ * Mixin: mdx-stream-rail
  *
- * Renders the doubled `data-stream` attribute value as a vertical,
- * monospace ticker on the `::after` pseudo-element of an MDX section.
+ * Vertical monospace ticker beside a section. Include on the rail element
+ * (`<span aria-hidden data-stream-rail>`). The rail stays put and owns the
+ * fade mask and the clip; its in-flow `::before` sizes it to one copy of
+ * `--stream-text`, and its `::after` carries four copies and is the only box
+ * that moves, so the loop runs on the compositor. A `-25%` translate of a
+ * four-copy box is exactly one copy at any text length.
  *
+ * @param {string} $side (`left` | `right`) — which edge of the host the rail hugs
  */
-@mixin mdx-terminal-stream($side: left) {
-  content: var(--stream-text);
+@mixin mdx-stream-rail($side: left) {
   position: absolute;
+  top: 0;
   @if $side == left {
     left: 0;
   } @else if $side == right {
     right: -3.4rem;
   } @else {
-    @error "Invalid side '#{$side}' for mdx-terminal-stream mixin. Use 'left' or 'right'.";
+    @error "Invalid side #{$side} for mdx-stream-rail mixin. Use left or right.";
   }
-  top: 0;
-  text-transform: uppercase;
-  height: calc(var(--stream-px, 50%) * 2);
+  height: max-content;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   white-space: pre;
+  text-transform: uppercase;
   font-family: monospace;
   font-size: 0.6rem;
   line-height: 1;
@@ -291,14 +290,10 @@
   -webkit-font-smoothing: antialiased;
   color: var(--color-accent);
   opacity: var(--stream-opacity, 0.35);
-  pointer-events: none;
-  user-select: none;
   display: var(--mdx-stream-display, block);
   overflow: hidden;
-  will-change: transform, mask-position, opacity;
-  transform-origin: #{$side} top;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  pointer-events: none;
+  user-select: none;
   transform: translate3d(var(--stream-x, -2.5rem), 0, 0);
   mask-image: linear-gradient(
     to bottom,
@@ -307,33 +302,33 @@
     black 82%,
     transparent
   );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 18%,
-    black 82%,
-    transparent
-  );
-  mask-size: 100% var(--stream-px, 50%);
-  -webkit-mask-size: 100% var(--stream-px, 50%);
-  mask-repeat: no-repeat;
-  -webkit-mask-repeat: no-repeat;
-  animation: stream-scroll var(--stream-speed, 18s) linear infinite;
+
+  &::before {
+    content: var(--stream-text) ' ';
+    visibility: hidden;
+  }
+
+  &::after {
+    content: var(--stream-text) ' ' var(--stream-text) ' ' var(--stream-text)
+      ' ' var(--stream-text) ' ';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: max-content;
+    will-change: transform;
+    animation: stream-scroll var(--stream-speed, 18s) linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
 }
 
 @keyframes stream-scroll {
   from {
-    transform: translate3d(var(--stream-x, -2.5rem), 0, 0);
-    mask-position: center 0%;
-    -webkit-mask-position: center 0%;
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(
-      var(--stream-x, -2.5rem),
-      calc(-1 * var(--stream-px, 50%)),
-      0
-    );
-    mask-position: center 100%;
-    -webkit-mask-position: center 100%;
+    transform: translate3d(0, -25%, 0);
   }
 }

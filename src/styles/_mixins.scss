@@ -13,6 +13,7 @@
  *   - mixins-layout     — Shadow tokens, dropdown panel, transitions
  *   - mixins-encounter  — Encounter-planner label and action-row patterns
  *   - mixins-responsive — Breakpoint media-query wrappers
+ *   - mixins-rhombus    — Diamond control: box turned 45°, children turned back
  *
  * @module styles/mixins
  */
@@ -34,3 +35,4 @@
 @forward 'mixins-skeleton';
 @forward 'mixins-icon';
 @forward 'mixins-tab';
+@forward 'mixins-rhombus';

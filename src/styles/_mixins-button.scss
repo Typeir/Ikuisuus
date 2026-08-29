@@ -10,7 +10,7 @@
 
 @mixin button-base($padding: 0.5rem 0.75rem, $font-size: 0.8rem) {
   padding: $padding;
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-s);
   background: var(--color-bg);
   color: var(--color-text);
@@ -49,7 +49,7 @@
   $font-weight: 600
 ) {
   padding: $padding;
-  border: 1px solid #{$color};
+  border: var(--border-width-xs) solid #{$color};
   border-radius: var(--border-round-s);
   background-color: transparent;
   color: #{$color};
@@ -127,7 +127,7 @@
  */
 @mixin button-danger-outline($padding: 0.3rem 0.65rem, $font-size: 0.8rem) {
   padding: $padding;
-  border: 1px solid var(--color-danger, var(--color-emphasis));
+  border: var(--border-width-xs) solid var(--color-danger, var(--color-emphasis));
   border-radius: var(--border-round-s);
   background: transparent;
   color: var(--color-danger, var(--color-emphasis));
@@ -157,7 +157,7 @@
   width: $size;
   height: $size;
   padding: 0;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-s);
   background: var(--color-bg-secondary);
   color: var(--color-secondary);
@@ -183,7 +183,7 @@
  */
 @mixin button-tab($padding: 0.4rem 0.8rem, $font-size: 0.8rem) {
   padding: $padding;
-  border: 1px solid transparent;
+  border: var(--border-width-xs) solid transparent;
   border-radius: var(--border-round-s);
   background: transparent;
   color: var(--color-secondary);
@@ -261,7 +261,7 @@
   justify-content: space-between;
   width: 100%;
   padding: $padding;
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-s);
   background: var(--color-bg);
   color: var(--color-text);

@@ -12,6 +12,12 @@
   pointer-events: none;
 }
 
+/* Content shown on hover has to survive the pointer moving onto it (WCAG 2.1
+   SC 1.4.13), which the shared tooltip frame prevents by going inert. */
+.hoverable {
+  pointer-events: auto;
+}
+
 /* The surface adopts drag rather than being wrapped by `Draggable`, so it also
    takes on the layout that wrapper used to provide. */
 .panel {
@@ -24,7 +30,7 @@
 
   pointer-events: auto;
   max-height: 80vh;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-m);
   background-color: var(--color-bg-tertiary);
   color: var(--color-text);

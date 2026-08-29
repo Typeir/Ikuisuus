@@ -15,7 +15,7 @@
   min-height: 60vh;
   max-height: 80vh;
   overflow-y: auto;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-m);
   background: var(--color-bg);
   padding: 1.25rem;
@@ -46,7 +46,7 @@
   min-height: 60vh;
   color: var(--color-secondary);
   font-style: italic;
-  border: 1px dashed var(--color-border);
+  border: var(--border-width-xs) dashed var(--color-border);
   border-radius: var(--border-round-m);
   background: var(--color-bg-secondary);
 
@@ -62,7 +62,7 @@
   min-height: 60vh;
   color: var(--color-error, var(--color-secondary));
   font-style: italic;
-  border: 1px dashed var(--color-border);
+  border: var(--border-width-xs) dashed var(--color-border);
   border-radius: var(--border-round-m);
   background: var(--color-bg-secondary);
   padding: 1rem;

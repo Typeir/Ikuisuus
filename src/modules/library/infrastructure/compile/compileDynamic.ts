@@ -9,8 +9,7 @@
  */
 
 import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
-import { bakeKeywordShards } from '@/lib/md/bakeKeywordShards';
-import { keywordShardTemplates } from '@/modules/library/presentation/components/Keyword/KeywordShardTemplates';
+import { collectKeywordShards } from '@/lib/md/bakeKeywordShards';
 import { resolveKeywordRegistry } from '@/lib/md/resolveKeywordRegistry';
 import type { EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import type { CompileOptions } from '../../domain/compileOptions';
@@ -47,17 +46,12 @@ export async function compileDynamic(opts: CompileOptions) {
   } = await importAllAsync();
 
   const keywords = await resolveKeywordRegistry();
-  const { source: resolvedSource, shards } = await bakeKeywordShards(
-    await resolveReusableSource(source),
-    keywords,
-  );
-  const resolvedComponents = shards.length
-    ? { ...components, KeywordShardTemplates: keywordShardTemplates(shards) }
-    : components;
+  const resolvedSource = await resolveReusableSource(source);
+  const shards = await collectKeywordShards(resolvedSource, keywords, 'en');
 
   const result = await evaluate({
     source: resolvedSource,
-    components: resolvedComponents as any,
+    components: components as any,
     options: {
       parseFrontmatter,
       mdxOptions: buildMdxOptions(
@@ -78,5 +72,5 @@ export async function compileDynamic(opts: CompileOptions) {
     } as unknown as EvaluateOptions,
   });
 
-  return result;
+  return { ...result, shards };
 }

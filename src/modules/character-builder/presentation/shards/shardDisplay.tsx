@@ -108,7 +108,7 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
       </button>
       {displayAspects(shard.tags).length > 0 && (
         <div className={styles.shardAspects}>
-          <AspectGlyphs tags={shard.tags} />
+          <AspectGlyphs tags={shard.tags} size='s' />
         </div>
       )}
 

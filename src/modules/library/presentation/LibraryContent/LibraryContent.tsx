@@ -11,7 +11,6 @@
  */
 
 import ClientRenderer from '@/app/[locale]/utils/clientRendererLazy';
-import StreamBootstrap from '@/lib/components/stream/StreamBootstrap';
 import { logger } from '@/lib/logging/logger';
 import { ArticleMetadataProvider } from '@/modules/library/application/context/ArticleMetadataContext';
 import {
@@ -22,6 +21,7 @@ import { DraftOverlay, EditPageButton } from '@/modules/mdx-editor';
 import { notFound, redirect } from 'next/navigation';
 import type { JSX } from 'react';
 import { HashNavigationProvider, SectionTrack } from '../components';
+import { KeywordShardProvider } from '../components/Keyword/KeywordShardContext';
 import { LibraryArticle } from '../LibraryArticle';
 import { MdRawPage } from '../MdRawPage';
 
@@ -105,10 +105,11 @@ export const LibraryContent = async ({
       <SectionTrack />
       <ArticleMetadataProvider metadata={resolved.articleMetadata}>
         <LibraryArticle streamText={resolved.streamText}>
-          {resolved.evalResult.content}
+          <KeywordShardProvider shards={resolved.shards ?? []}>
+            {resolved.evalResult.content}
+          </KeywordShardProvider>
         </LibraryArticle>
       </ArticleMetadataProvider>
-      <StreamBootstrap />
       <EditPageButton slug={resolved.slugPath} locale={locale} />
     </DraftOverlay>
   );

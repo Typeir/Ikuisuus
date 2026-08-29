@@ -25,7 +25,7 @@
   td {
     padding: 0.2rem 0.4rem;
     text-align: left;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: var(--border-width-xs) solid var(--color-border);
   }
 
   td {
@@ -38,7 +38,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    border-bottom: 1px solid var(--color-accent);
+    border-bottom: var(--border-width-xs) solid var(--color-accent);
   }
 
   tbody tr:hover {

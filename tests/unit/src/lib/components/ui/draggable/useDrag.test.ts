@@ -14,13 +14,19 @@
  */
 
 import {
+  KEY_STEP,
+  KEY_STEP_COARSE,
   MIN_HEIGHT,
   MIN_WIDTH,
   useDrag,
 } from '@/lib/components/ui/draggable/useDrag';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { PointerEvent as ReactPointerEvent, RefObject } from 'react';
+import type {
+  KeyboardEvent as ReactKeyboardEvent,
+  PointerEvent as ReactPointerEvent,
+  RefObject,
+} from 'react';
 
 /**
  * Builds an element with a fixed rect, optionally inside a bounding parent.
@@ -73,6 +79,21 @@ function pointer(x: number, y: number): ReactPointerEvent {
     stopPropagation: () => {},
     target: { setPointerCapture: () => {} },
   } as unknown as ReactPointerEvent;
+}
+
+/**
+ * Builds a keyboard event stub.
+ *
+ * @param {string} key - Key value
+ * @param {boolean} [shiftKey] - Whether Shift is held
+ * @returns {ReactKeyboardEvent} Event stub
+ */
+function arrow(key: string, shiftKey = false): ReactKeyboardEvent {
+  return {
+    key,
+    shiftKey,
+    preventDefault: () => {},
+  } as unknown as ReactKeyboardEvent;
 }
 
 describe('useDrag', () => {
@@ -198,6 +219,94 @@ describe('useDrag', () => {
     rerender({ pos: { x: 10, y: 10 } });
 
     expect(result.current.position).toEqual({ x: 35, y: 35 });
+  });
+
+  it('moves by arrow key, coarser with Shift', () => {
+    const { container, bounds } = refs(200, 100);
+    const { result } = renderHook(() =>
+      useDrag({
+        containerRef: container,
+        boundsRef: bounds,
+        initialPosition: { x: 100, y: 100 },
+      }),
+    );
+
+    act(() => result.current.dragHandleProps.onKeyDown(arrow('ArrowRight')));
+    expect(result.current.position).toEqual({ x: 100 + KEY_STEP, y: 100 });
+
+    act(() =>
+      result.current.dragHandleProps.onKeyDown(arrow('ArrowDown', true)),
+    );
+    expect(result.current.position).toEqual({
+      x: 100 + KEY_STEP,
+      y: 100 + KEY_STEP_COARSE,
+    });
+  });
+
+  it('ignores keys that are not arrows', () => {
+    const { container, bounds } = refs(200, 100);
+    const { result } = renderHook(() =>
+      useDrag({
+        containerRef: container,
+        boundsRef: bounds,
+        initialPosition: { x: 10, y: 10 },
+      }),
+    );
+
+    act(() => result.current.dragHandleProps.onKeyDown(arrow('Enter')));
+
+    expect(result.current.position).toEqual({ x: 10, y: 10 });
+  });
+
+  it('clamps a keyboard move inside the bounds', () => {
+    const { container, bounds } = refs(200, 100, 500, 400);
+    const { result } = renderHook(() =>
+      useDrag({
+        containerRef: container,
+        boundsRef: bounds,
+        initialPosition: { x: 0, y: 0 },
+      }),
+    );
+
+    act(() => result.current.dragHandleProps.onKeyDown(arrow('ArrowLeft')));
+
+    expect(result.current.position).toEqual({ x: 0, y: 0 });
+  });
+
+  it('resizes by arrow key, never below the minimum', () => {
+    const { container, bounds } = refs(300, 200);
+    const { result } = renderHook(() =>
+      useDrag({ containerRef: container, boundsRef: bounds }),
+    );
+
+    act(() => result.current.resizeHandleProps.onKeyDown(arrow('ArrowRight')));
+    expect(result.current.size).toEqual({
+      width: 300 + KEY_STEP,
+      height: 200,
+    });
+
+    act(() =>
+      result.current.resizeHandleProps.onKeyDown(arrow('ArrowUp', true)),
+    );
+    expect(result.current.size?.height).toBe(200 - KEY_STEP_COARSE);
+
+    /* Enough coarse steps to overshoot the floor, which must still hold. */
+    for (let i = 0; i < 10; i += 1) {
+      act(() =>
+        result.current.resizeHandleProps.onKeyDown(arrow('ArrowUp', true)),
+      );
+    }
+    expect(result.current.size?.height).toBe(MIN_HEIGHT);
+  });
+
+  it('exposes both handles to the tab order', () => {
+    const { container, bounds } = refs(200, 100);
+    const { result } = renderHook(() =>
+      useDrag({ containerRef: container, boundsRef: bounds }),
+    );
+
+    expect(result.current.dragHandleProps.tabIndex).toBe(0);
+    expect(result.current.resizeHandleProps.tabIndex).toBe(0);
   });
 
   it('resolves a positioning function against the bounds', () => {

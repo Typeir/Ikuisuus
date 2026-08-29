@@ -20,14 +20,12 @@
 
 .dotLg-filled,
 .dotLg-empty {
-  width: 28px;
-  height: 28px;
+  @include rhombus;
+  @include rhombus-size(28px * 0.8);
   padding: 0;
   border-radius: var(--border-round-circle);
-  border: 2px solid var(--color-accent);
+  border: var(--border-width-s) solid var(--color-accent);
   cursor: pointer;
-  /* Matches .deedPip in the encounter runner: the glyph inside is what makes
-     a filled pip read as filled rather than as a plain disc. */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,9 +40,6 @@
   }
 }
 
-/* Hover is stated per state. A shared hover rule outranks the filled
-   background it is meant to sit on top of, so a filled pip emptied out under
-   the cursor. */
 .dotLg-empty {
   background: var(--color-transparent);
 

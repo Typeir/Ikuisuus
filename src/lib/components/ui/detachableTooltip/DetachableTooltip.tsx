@@ -312,7 +312,7 @@ export function DetachableTooltip({
       ]
         .filter(Boolean)
         .join(' ')
-    : `${tooltipStyles.tooltip} ${tooltipStyles[actualPlacement]} ${exiting ? tooltipStyles.tooltipExiting : ''} ${className}`;
+    : `${tooltipStyles.tooltip} ${tooltipStyles[actualPlacement]} ${styles.hoverable} ${exiting ? tooltipStyles.tooltipExiting : ''} ${className}`;
 
   const surfaceStyle: CSSProperties = parked
     ? {
@@ -335,7 +335,9 @@ export function DetachableTooltip({
               role={parked ? 'region' : 'tooltip'}
               aria-label={parked ? title : undefined}
               className={surfaceClass}
-              style={surfaceStyle}>
+              style={surfaceStyle}
+              onMouseEnter={parked ? undefined : show}
+              onMouseLeave={parked ? undefined : hide}>
               {parked ? (
                 <CardChrome
                   dragHandleProps={dragHandleProps}

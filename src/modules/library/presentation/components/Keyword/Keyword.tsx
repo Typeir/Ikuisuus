@@ -17,7 +17,11 @@
 import type { DetachableTooltipProps } from '@/lib/components/ui/detachableTooltip';
 import { lookupKeyword } from '@/lib/md/keywordRegistry';
 import { useLocale } from 'next-intl';
-import React, { useEffect, useRef, useState, type ComponentType } from 'react';
+import type { compileRuntimeSync as CompileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
+import React, { useEffect, useMemo, useState, type ComponentType } from 'react';
+import DiceRoll from '../DiceRoll';
+import Unit from '../Unit';
+import { useKeywordShard } from './KeywordShardContext';
 import styles from './Keyword.module.scss';
 
 /**
@@ -56,6 +60,7 @@ function useDetachableTooltip(): ComponentType<DetachableTooltipProps> | null {
  * @property {string} [templateId] - Id of the baked `<template>` holding the shard prose
  * @property {string} [heading] - Heading text of the defining section, used as the card title
  * @property {boolean} [noLink] - When true, renders a `<span>` instead of an `<a>` to avoid nested anchors
+ * @property {boolean} [noCard] - When true, renders the term without a hover card
  */
 export interface KeywordProps {
   term: string;
@@ -65,39 +70,65 @@ export interface KeywordProps {
   templateId?: string;
   heading?: string;
   noLink?: boolean;
+  noCard?: boolean;
 }
 
 /**
  * Props for the shard body.
  *
  * @typedef {object} KeywordShardProps
- * @property {string} templateId - Id of the template to clone
+ * @property {string} templateId - Id of the shard to render
  */
 interface KeywordShardProps {
   templateId: string;
 }
 
 /**
- * Clones the baked shard into the card. Mounts only when the card opens, so the
- * clone happens on first hover and never during page render.
+ * Compiles the shard source when the card opens. `compileRuntimeSync` caches by
+ * source hash, so re-opening the same card costs nothing.
+ *
+ * Nested keywords render as plain links: a card inside a card would recurse
+ * into its own shard.
  *
  * @param {KeywordShardProps} props - Component props
- * @returns {React.ReactElement} Host element for the cloned fragment
+ * @returns {React.ReactElement | null} The rendered shard, or null when absent
  */
+const shardComponents = {
+  Unit,
+  DiceRoll,
+  Keyword: (props: KeywordProps) => <Keyword {...props} noCard />,
+};
+
 const KeywordShard: React.FC<KeywordShardProps> = ({ templateId }) => {
-  const host = useRef<HTMLDivElement>(null);
+  const shard = useKeywordShard(templateId);
+  const [compile, setCompile] = useState<typeof CompileRuntimeSync | null>(
+    null,
+  );
 
+  /* Loaded here rather than imported: this component mounts when a card opens,
+     so the MDX compiler stays out of the graph of every page that has a
+     keyword in it. */
   useEffect(() => {
-    const target = host.current;
-    if (!target) return;
+    let active = true;
+    void import(
+      '@/modules/library/infrastructure/compile/compileRuntime'
+    ).then((module) => {
+      if (active) setCompile(() => module.compileRuntimeSync);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
-    const template = document.getElementById(templateId);
-    if (!(template instanceof HTMLTemplateElement)) return;
+  const content = useMemo(() => {
+    if (!shard || !compile) return null;
+    return compile({ source: shard.source, components: shardComponents })
+      .content;
+  }, [compile, shard]);
 
-    target.replaceChildren(template.content.cloneNode(true));
-  }, [templateId]);
+  if (!content) return null;
 
-  return <div ref={host} className={styles.blurb} />;
+  return <div className={styles.blurb}>{content}</div>;
 };
 
 /**
@@ -139,6 +170,7 @@ export const Keyword: React.FC<KeywordProps> = ({
   templateId,
   heading,
   noLink = false,
+  noCard = false,
 }) => {
   const locale = useLocale();
   const DetachableTooltip = useDetachableTooltip();
@@ -172,7 +204,7 @@ export const Keyword: React.FC<KeywordProps> = ({
     </a>
   );
 
-  if (!body || !DetachableTooltip) {
+  if (!body || !DetachableTooltip || noCard) {
     return trigger;
   }
 

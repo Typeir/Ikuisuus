@@ -55,10 +55,6 @@ vi.mock('@/modules/mdx-editor', () => ({
   EditPageButton: () => null,
 }));
 
-vi.mock('@/lib/components/stream/StreamBootstrap', () => ({
-  default: () => null,
-}));
-
 vi.mock('@/app/[locale]/utils/clientRendererLazy', () => ({
   default: () => null,
 }));

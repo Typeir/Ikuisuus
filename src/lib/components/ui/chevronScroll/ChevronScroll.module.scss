@@ -12,9 +12,21 @@
   min-width: 0;
 }
 
+/* Two opt-in knobs set by the consumer on the wrapper:
+   `--chevron-scroll-max` caps the visible strip, so overflow (and the
+   chevrons) kicks in after a chosen number of items rather than at the
+   cell edge. `--chevron-scroll-bleed` pads the scrollport and pulls the
+   margin back by the same amount: a scroll container cannot show overflow
+   on either axis, so hover growth and rotated corners get room inside it
+   while the outer footprint stays put. `content-box` keeps the bleed out of
+   the cap. */
 .scroller {
   flex: 1;
   min-width: 0;
+  box-sizing: content-box;
+  max-width: var(--chevron-scroll-max, none);
+  padding: var(--chevron-scroll-bleed, 0);
+  margin: calc(-1 * var(--chevron-scroll-bleed, 0));
   display: flex;
   overflow-x: auto;
   overscroll-behavior-x: contain;
@@ -58,4 +70,10 @@
     opacity: 0.3;
     cursor: default;
   }
+}
+
+/* Single-text-row variant: the chevrons hug the strip and add no height. */
+.sm .chevron {
+  padding: 0 0.1rem;
+  line-height: 1;
 }

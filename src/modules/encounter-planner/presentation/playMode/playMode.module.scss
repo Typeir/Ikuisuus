@@ -18,7 +18,7 @@
   justify-content: space-between;
   gap: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid var(--color-secondary);
+  border-bottom: var(--border-width-s) solid var(--color-secondary);
   position: relative;
 
   h2 {
@@ -74,7 +74,7 @@
   .sessionOnlyInput {
     flex: 1;
     padding: 0.4rem 0.6rem;
-    border: 1px solid var(--color-secondary);
+    border: var(--border-width-xs) solid var(--color-secondary);
     border-radius: var(--border-round-s);
     background: var(--color-bg);
     color: var(--color-text);
@@ -105,7 +105,7 @@
 
   &.active {
     filter: drop-shadow(0px 0px 5px var(--color-accent));
-    border: var(--color-text) solid 1px;
+    border: var(--color-text) solid var(--border-width-xs);
     outline: var(--color-accent) solid 1px;
   }
 

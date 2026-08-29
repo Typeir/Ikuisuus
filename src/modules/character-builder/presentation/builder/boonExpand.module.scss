@@ -11,7 +11,7 @@
 
 .boonAspects {
   padding: 0.5rem 0.6rem 0.4rem;
-  border-top: 1px dashed var(--color-border-secondary);
+  border-top: var(--border-width-xs) dashed var(--color-border-secondary);
 }
 
 .boonActions {
@@ -26,7 +26,7 @@
   padding: 0 0.55rem;
   background: none;
   border: none;
-  border-left: 1px solid var(--color-border-secondary);
+  border-left: var(--border-width-xs) solid var(--color-border-secondary);
   border-radius: 0;
   cursor: pointer;
   color: var(--color-secondary);
@@ -44,7 +44,7 @@
 
 .boonExpandBody {
   padding: 0.5rem 0.75rem 0.75rem;
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: var(--border-width-xs) solid var(--color-border-secondary);
   background: transparent;
   font-size: 0.85rem;
   color: var(--color-text);

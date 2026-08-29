@@ -187,6 +187,34 @@ draws on has no rounded corners, and un-roundening tests flip these tokens.
 `0` and `inherit` stay literal. The only literal radius left in the tree is the
 `35%` squircle in `BlendedImage` — a deliberate shape, not a scale step.
 
+### Border and Outline Widths (`src/styles/globals/_tokens.scss`)
+
+Same idea for line weight: every border stroke reads from one scale, and the
+focus ring has its own token so it can be tuned without moving every border.
+
+```scss
+--border-width-xs       // 1px — hairline, the default stroke
+--border-width-s        // 2px — emphasis rings, dividers
+--border-width-m        // 3px — active-tab rules, gradient frames
+--border-width-l        // 4px — the heaviest rules
+--outline-width         // 2px — focus rings (`outline`)
+```
+
+```scss
+// ✅ Shorthand and longhand alike
+.card  { border: var(--border-width-xs) solid var(--color-border); }
+.tab   { border-bottom: var(--border-width-m) solid var(--color-accent); }
+.ring  { outline: var(--outline-width) solid var(--color-accent); }
+
+// ❌ Literal widths
+.bad { border: 1px solid var(--color-border); }
+.bad { outline: 2px solid var(--color-accent); }
+```
+
+`none`, `0` and inherited values stay literal. Nine-slice frame widths for
+`border-image` (`$border: 48px` in the mdx section mixins) are geometry, not
+strokes, and stay as Sass parameters.
+
 ---
 
 ## Adding New Tokens
@@ -244,6 +272,10 @@ grep -rn "style={{.*background.*#" src/ --include="*.tsx"
 
 # Find literal corner radii (expected: only BlendedImage's 35% squircle)
 grep -rnE "border(-[a-z]+)*-radius\s*:\s*[0-9.]+(px|rem|em|%)" src/ --include="*.scss" --include="*.css"
+
+# Find literal border strokes and outline widths (expected: none)
+grep -rnE "(^|[[:space:];{])border(-(top|right|bottom|left|inline|block))?(-width)?\s*:\s*[0-9.]+(px|pt|rem|em)" src/ --include="*.scss" --include="*.css"
+grep -rnE "(^|[[:space:];{])outline(-width)?\s*:\s*[0-9.]+(px|rem|em)" src/ --include="*.scss" --include="*.css"
 ```
 
 ---

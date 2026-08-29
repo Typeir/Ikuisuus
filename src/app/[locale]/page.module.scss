@@ -18,14 +18,8 @@
   position: relative;
   width: 100%;
 
-  &::after {
-    @include mdx.mdx-terminal-stream(left);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .streamSection::after {
-    animation: none;
+  > [data-stream-rail] {
+    @include mdx.mdx-stream-rail(left);
   }
 }
 

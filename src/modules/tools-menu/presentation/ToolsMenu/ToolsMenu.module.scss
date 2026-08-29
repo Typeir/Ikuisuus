@@ -21,7 +21,7 @@
   @include button-still;
   width: 100%;
   background: transparent;
-  border: 1px solid var(--color-transparent);
+  border: var(--border-width-xs) solid var(--color-transparent);
   padding: 0.5rem 0.75rem;
   cursor: pointer;
   color: var(--color-text);
@@ -77,7 +77,7 @@
   right: 0;
   margin-bottom: 0.25rem;
   background: var(--color-bg);
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-s);
   box-shadow: 0 -4px 12px rgb(var(--color-shadow-medium));
   z-index: 1000;
@@ -97,7 +97,7 @@
 
 .listRow {
   list-style: none !important;
-  border-bottom: 1px solid var(--color-secondary);
+  border-bottom: var(--border-width-xs) solid var(--color-secondary);
 
   &:last-child {
     border-bottom: none;

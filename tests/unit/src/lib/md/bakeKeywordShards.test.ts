@@ -1,7 +1,7 @@
 /**
- * @fileoverview bakeKeywordShards Unit Tests
- * @description Tests shard collection, deduplication, template emission, and
- * the cases that must bake nothing.
+ * @fileoverview collectKeywordShards Unit Tests
+ * @description Tests shard collection, deduplication, and the cases that must
+ * resolve nothing.
  *
  * @module tests/unit/lib/md/bakeKeywordShards
  * @version 1.0.0
@@ -18,7 +18,7 @@ const getFile = vi.fn();
 
 vi.mock('@/lib/db/content/fileTreeService', () => ({ getFile }));
 
-const { bakeKeywordShards, collectKeywordShards } = await import(
+const { collectKeywordShards } = await import(
   '@/lib/md/bakeKeywordShards'
 );
 const { contributeKeyword } = await import('@/lib/md/keywordIndex');
@@ -72,7 +72,7 @@ describe('collectKeywordShards', () => {
       id: 'kw-condition-blinded',
       heading: 'Blinded',
     });
-    expect(shards[0].html).toContain('A blinded creature can');
+    expect(shards[0].source).toContain('A blinded creature can');
   });
 
   it('should bake one shard however many times a term is referenced', async () => {
@@ -96,7 +96,7 @@ describe('collectKeywordShards', () => {
       'en',
     );
 
-    expect(shards[0].html).not.toContain('<h2');
+    expect(shards[0].source).not.toContain('## Blinded');
   });
 
   it('should strip a trailing thematic break', async () => {
@@ -106,7 +106,7 @@ describe('collectKeywordShards', () => {
       'en',
     );
 
-    expect(shards[0].html).not.toContain('<hr>');
+    expect(shards[0].source).not.toMatch(/-{3,}\s*$/);
   });
 
   it('should skip a reference that resolves to nothing', async () => {
@@ -130,75 +130,5 @@ describe('collectKeywordShards', () => {
     );
 
     expect(shards).toEqual([]);
-  });
-});
-
-describe('bakeKeywordShards', () => {
-  it('should append the templates tag when something resolves', async () => {
-    const source = 'Targets are [# kw:condition;blinded #].';
-
-    const { source: baked, shards } = await bakeKeywordShards(
-      source,
-      registryWithBlinded() as never,
-    );
-
-    expect(baked).toContain('<KeywordShardTemplates />');
-    expect(shards).toHaveLength(1);
-  });
-
-  it('should report the heading separately from the shard html', async () => {
-    const { shards } = await bakeKeywordShards(
-      '[# kw:condition;blinded #]',
-      registryWithBlinded() as never,
-    );
-
-    expect(shards[0].heading).toBe('Blinded');
-    expect(shards[0].html).not.toContain('<strong>Blinded</strong>');
-  });
-
-  it('should render markdown structure rather than a flat string', async () => {
-    const { shards } = await bakeKeywordShards(
-      '[# kw:condition;blinded #]',
-      registryWithBlinded() as never,
-    );
-
-    expect(shards[0].html).toContain('<ul>');
-    expect(shards[0].html).toContain('<li>');
-    expect(shards[0].html).toContain('<strong>advantage</strong>');
-  });
-
-  it('should leave the original source ahead of the tag', async () => {
-    const source = 'Targets are [# kw:condition;blinded #].';
-
-    const { source: baked } = await bakeKeywordShards(
-      source,
-      registryWithBlinded() as never,
-    );
-
-    expect(baked.startsWith(source)).toBe(true);
-  });
-
-  it('should return the source untouched when nothing resolves', async () => {
-    const source = 'Targets are [# kw:resist #].';
-
-    const { source: baked, shards } = await bakeKeywordShards(
-      source,
-      registryWithBlinded() as never,
-    );
-
-    expect(baked).toBe(source);
-    expect(shards).toEqual([]);
-  });
-
-  it('should return the source untouched when it has no references', async () => {
-    const source = 'Plain prose with no keywords.';
-
-    const { source: baked } = await bakeKeywordShards(
-      source,
-      registryWithBlinded() as never,
-    );
-
-    expect(baked).toBe(source);
-    expect(getFile).not.toHaveBeenCalled();
   });
 });

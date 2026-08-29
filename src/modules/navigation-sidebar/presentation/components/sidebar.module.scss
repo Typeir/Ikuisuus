@@ -34,7 +34,7 @@
 }
 
 .accordion.open {
-  border-bottom: 1px solid var(--color-text);
+  border-bottom: var(--border-width-xs) solid var(--color-text);
   padding-bottom: 1rem;
   margin-bottom: 1rem;
 }
@@ -76,7 +76,7 @@
 }
 
 .label.open {
-  border-bottom: 1px solid var(--color-text);
+  border-bottom: var(--border-width-xs) solid var(--color-text);
   margin-bottom: 1rem;
 }
 

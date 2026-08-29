@@ -44,7 +44,7 @@
   gap: 0.4rem;
   padding: 0.5rem 0.875rem 1rem;
   background: var(--color-bg);
-  border: 1px solid var(--color-surface);
+  border: var(--border-width-xs) solid var(--color-surface);
   border-bottom: none;
   border-radius: var(--border-round-m) var(--border-round-m) 0 0;
   color: var(--color-secondary);
@@ -106,7 +106,7 @@
   background: var(--color-surface);
   border-radius: 0 0 var(--border-round-m) var(--border-round-m);
   padding: 1.5rem;
-  border: 1px solid var(--color-surface);
+  border: var(--border-width-xs) solid var(--color-surface);
   animation: tabFadeIn 0.2s ease-in;
 
   &[hidden] {
@@ -124,8 +124,8 @@
      in this layer's colour — tabs emerge from the bottom of the frame. */
   .tabList {
     background: linear-gradient(0deg, var(--color-bg) 20%, transparent 30%);
-    border: 0.2rem solid var(--color-bg);
-    border-bottom-width: 1px;
+    border: var(--border-width-m) solid var(--color-bg);
+    border-bottom-width: var(--border-width-xs);
     border-radius: var(--border-round-xl) var(--border-round-xl) 0 0;
     padding: 1.25rem 0.125rem 0;
   }
@@ -183,8 +183,8 @@
       var(--color-surface) 20%,
       transparent 30%
     );
-    border: 0.2rem solid var(--color-surface);
-    border-bottom-width: 1px;
+    border: var(--border-width-m) solid var(--color-surface);
+    border-bottom-width: var(--border-width-xs);
     border-radius: var(--border-round-xl) var(--border-round-xl) 0 0;
     padding: 1.25rem 0.125rem 0;
   }
@@ -221,7 +221,7 @@
 
   .tabPanel {
     background: var(--color-surface);
-    border: 1px solid var(--color-surface);
+    border: var(--border-width-xs) solid var(--color-surface);
     border-radius: 0 var(--border-round-s) var(--border-round-s) var(--border-round-s);
     padding: 1rem;
   }

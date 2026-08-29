@@ -1,7 +1,7 @@
 .panel {
   width: 100%;
   min-width: min(320px, 100%);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-m);
   overflow: hidden;
   background: var(--color-surface);
@@ -15,7 +15,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-width-xs) solid var(--color-border);
   flex-shrink: 0;
   background: var(--color-bg);
 }

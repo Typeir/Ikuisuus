@@ -121,7 +121,42 @@ describe('rehypeSectionize', () => {
 
     it('does not add data-stream when streamText is absent', () => {
       const output = processWithOptions('<h2>Title</h2><p>Body</p>', {});
-      expect(output).not.toContain('data-stream');
+      expect(output).not.toContain('data-stream="');
+    });
+
+    it('adds a left rail right after the heading of every stamped section', () => {
+      const output = processWithOptions('<h2>Title</h2><p>Body</p>', {
+        streamText: 'FOO',
+      });
+      expect(output).toContain(
+        '<h2>Title</h2><span aria-hidden="true" data-stream-rail="left"></span><p>Body</p>',
+      );
+    });
+
+    it('adds a right rail only when the section has a direct-child list', () => {
+      const withList = processWithOptions('<h2>Title</h2><ul><li>A</li></ul>', {
+        streamText: 'FOO',
+      });
+      expect(withList).toContain('data-stream-rail="right"');
+      const withoutList = processWithOptions('<h2>Title</h2><p>Body</p>', {
+        streamText: 'FOO',
+      });
+      expect(withoutList).not.toContain('data-stream-rail="right"');
+    });
+
+    it('leads an anonymous section with its rail', () => {
+      const output = processWithOptions('<hr/><p>Between</p><hr/>', {
+        streamText: 'FOO',
+      });
+      expect(output).toContain(
+        '<section data-heading-level="0" data-stream="FOO"><span aria-hidden="true" data-stream-rail="left"></span><p>Between</p>',
+      );
+    });
+
+    it('adds rails without streamText, since the text is inherited from the host', () => {
+      const output = processWithOptions('<h2>Title</h2><p>Body</p>', {});
+      expect(output).toContain('data-stream-rail="left"');
+      expect(output).not.toContain('data-stream=');
     });
   });
 

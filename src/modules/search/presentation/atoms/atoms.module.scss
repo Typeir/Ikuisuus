@@ -106,7 +106,7 @@ a:hover .resultTitle {
   color: var(--color-accent);
   opacity: 0.7;
   padding-bottom: 1px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-width-xs) solid var(--color-border);
   cursor: default;
   @include btn.button-hover-scale(1.06);
 }
@@ -162,18 +162,18 @@ a:hover .resultTitle {
 
   /* A result list runs to hundreds of rows. The ticker below is invisible at
      rest, so it is paused and left off the compositor until a row is actually
-     hovered — otherwise every row pays for a masked, per-frame repaint it
-     never shows. Same reason there is no resting `will-change` on the row. */
-  &::after {
-    @include mdx.mdx-terminal-stream(right);
+     hovered — otherwise every row holds a promoted layer it never shows. Same
+     reason there is no resting `will-change` on the row. */
+  > [data-stream-rail] {
+    @include mdx.mdx-stream-rail(right);
+    max-height: 100%;
     color: var(--search-row-stream-color, var(--color-accent));
     opacity: 0;
     transition: opacity 150ms ease;
-    animation-play-state: paused;
-    will-change: auto;
 
-    @media (prefers-reduced-motion: reduce) {
-      animation: none;
+    &::after {
+      animation-play-state: paused;
+      will-change: auto;
     }
   }
 
@@ -184,17 +184,20 @@ a:hover .resultTitle {
     outline: none;
     z-index: 1;
 
-    &::after {
+    > [data-stream-rail] {
       opacity: 0.4;
-      animation-play-state: running;
-      will-change: transform, mask-position;
+
+      &::after {
+        animation-play-state: running;
+        will-change: transform;
+      }
     }
   }
 }
 
 .rowCard {
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-s);
   --row-scale: 1.02;
   --row-translate: 0.25rem;

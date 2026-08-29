@@ -6,7 +6,7 @@
  */
 
 @mixin focus-outline($offset: 2px) {
-  outline: 2px solid var(--color-accent);
+  outline: var(--outline-width) solid var(--color-accent);
   outline-offset: $offset;
 }
 
@@ -29,14 +29,14 @@
 
 @mixin focus-accent-outline($offset: 2px) {
   &:focus {
-    outline: 2px solid var(--color-accent);
+    outline: var(--outline-width) solid var(--color-accent);
     outline-offset: $offset;
   }
 }
 
 @mixin focus-visible-outline($color: var(--color-accent), $offset: 2px) {
   &:focus-visible {
-    outline: 2px solid $color;
+    outline: var(--outline-width) solid $color;
     outline-offset: $offset;
   }
 }

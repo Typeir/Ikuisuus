@@ -1,13 +1,23 @@
 /* Theme toggle. Moved here verbatim from responsiveLayoutShell so the
    sidebar, the mobile bar and the preferences panel share one definition. */
 
+@use '@/styles/mixins' as *;
+
 /* `button.` qualifier (0,1,1) reliably beats btn.tertiary (0,1,0) at the
    border-radius/border tie — a bare `.themeToggle` would lose on source order. */
 button.themeToggle {
-  border-radius: var(--border-round-pill);
-  border: 1px solid var(--color-border);
-  width: 2rem;
-  height: 2rem;
+  @include rhombus;
+  /* Square base: a pill radius under `corner-shape: bevel` is already a
+     diamond, and the rhombus rotation would turn that back into a square. */
+  border-radius: var(--border-round-s);
+
+  /* The glyph (moon/sun, sliders, hamburger) sits 10% under its icon size;
+     `scale` composes with the mixin's counter-rotation on the same child. */
+  > * {
+    scale: 0.9;
+  }
+  border: var(--border-width-xs) solid var(--color-border);
+  @include rhombus-size(2rem * 0.9);
   padding: 0;
   display: inline-flex;
   align-items: center;

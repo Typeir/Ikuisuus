@@ -29,7 +29,7 @@
 
 .record {
   margin-bottom: 1rem;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-s);
   padding: 0.5rem;
 }

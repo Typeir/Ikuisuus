@@ -29,6 +29,9 @@ import {
 /** Matches an ATX heading and captures its level and text. */
 const HEADING_REGEX = /^(#{1,6})\s+(.+?)\s*$/gm;
 
+/** Directory whose pages are keyword indexes without declaring themselves. */
+const RULES_DIR = 'rules';
+
 /** Cached discovery result, keyed by content root. */
 const cache = new Map<string, KeywordRegistry>();
 
@@ -116,17 +119,32 @@ export async function discoverKeywordIndexes(
         ? data.keywordIndex.trim().toLowerCase()
         : null;
     const terms = declaredTerms(data.keywords);
-    if (!namespace && terms.length === 0) continue;
 
     const relative = path
       .relative(contentRoot, filePath)
       .split(path.sep)
       .join('/');
+
+    /* Every rules page is a keyword index. A heading used by more than one
+       page resolves to nothing, so ambiguous terms stay plain links. */
+    const isRule = relative.startsWith(`${RULES_DIR}/`);
+    if (!namespace && terms.length === 0 && !isRule) continue;
+
     const headings = headingValues(content);
 
     if (namespace) {
       for (const [anchor, heading] of headings) {
         contributeKeyword(registry, namespace, {
+          anchor,
+          heading,
+          filePath: relative,
+        });
+      }
+    }
+
+    if (isRule) {
+      for (const [anchor, heading] of headings) {
+        contributeKeyword(registry, BARE_NAMESPACE, {
           anchor,
           heading,
           filePath: relative,

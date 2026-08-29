@@ -22,7 +22,7 @@
   width: 100%;
   padding: 0.5rem 0.75rem;
   border-radius: var(--border-round-s);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   background-color: var(--color-bg);
   color: var(--color-text);
   font-size: 0.8125rem;
@@ -85,7 +85,7 @@
   width: 100%;
   padding: 0.5rem 0.75rem;
   border-radius: var(--border-round-s);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   background-color: var(--color-bg);
   color: var(--color-text);
   font-size: 0.8125rem;

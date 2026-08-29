@@ -1,7 +1,7 @@
 /**
  * @fileoverview Machine text stream resolver for MDX section decorations.
  * @description Resolves a deterministic stream string from content metadata,
- * with the result doubled and separated. Falls back to an FNV-1a32 hash of the
+ * separator-wrapped and whitespace-normalised. Falls back to an FNV-1a32 hash of the
  * raw content when no metadata record exists for the slug path.
  *
  * @module lib/machineText
@@ -47,21 +47,20 @@ function wrapSegment(body: string): string {
 }
 
 /**
- * Doubles a stream string by appending a normalized copy.
+ * Collapses whitespace in a stream string. The rail repeats it for the loop.
  *
  * @param {string} segment - Single-pass stream string
- * @returns {string} Doubled stream string
+ * @returns {string} Normalized stream string
  */
-function doubleStream(segment: string): string {
-  const normalized = segment.replace(/\s+/g, ' ').trim();
-  return `${normalized} ${normalized}`;
+function normalizeStream(segment: string): string {
+  return segment.replace(/\s+/g, ' ').trim();
 }
 
 /**
  * Composes a stream string from a monster metadata record.
  *
  * @param {import('@/lib/db/content/schemas/monsterMetadata').MonsterMetadata} record - Monster metadata
- * @returns {string} Doubled stream string
+ * @returns {string} Stream segment
  */
 function fromMonster(
   record: import('@/lib/db/content/schemas/monsterMetadata').MonsterMetadata,
@@ -78,7 +77,7 @@ function fromMonster(
  * Composes a stream string from a spell metadata record.
  *
  * @param {import('@/lib/db/content/schemas/spellMetadata').SpellMetadata} record - Spell metadata
- * @returns {string} Doubled stream string
+ * @returns {string} Stream segment
  */
 function fromSpell(
   record: import('@/lib/db/content/schemas/spellMetadata').SpellMetadata,
@@ -94,7 +93,7 @@ function fromSpell(
  * Composes a stream string from a heirloom metadata record.
  *
  * @param {import('@/lib/db/content/schemas/heirloomMetadata').HeirloomMetadata} record - Heirloom metadata
- * @returns {string} Doubled stream string
+ * @returns {string} Stream segment
  */
 function fromHeirloom(
   record: import('@/lib/db/content/schemas/heirloomMetadata').HeirloomMetadata,
@@ -110,7 +109,7 @@ function fromHeirloom(
  * Composes a stream string from a trinket metadata record.
  *
  * @param {import('@/lib/db/content/schemas/trinketMetadata').TrinketMetadata} record - Trinket metadata
- * @returns {string} Doubled stream string
+ * @returns {string} Stream segment
  */
 function fromTrinket(
   record: import('@/lib/db/content/schemas/trinketMetadata').TrinketMetadata,
@@ -127,7 +126,7 @@ function fromTrinket(
  * Composes a stream string from a bloodline metadata record.
  *
  * @param {import('@/lib/db/content/schemas/bloodlineMetadata').BloodlineMetadata} record - Bloodline metadata
- * @returns {string} Doubled stream string
+ * @returns {string} Stream segment
  */
 function fromBloodline(
   record: import('@/lib/db/content/schemas/bloodlineMetadata').BloodlineMetadata,
@@ -144,7 +143,7 @@ function fromBloodline(
  * Composes a stream string from a vocation metadata record.
  *
  * @param {import('@/lib/db/content/schemas/vocationMetadata').VocationMetadata} record - Vocation metadata
- * @returns {string} Doubled stream string
+ * @returns {string} Stream segment
  */
 function fromVocation(
   record: import('@/lib/db/content/schemas/vocationMetadata').VocationMetadata,
@@ -158,7 +157,7 @@ function fromVocation(
  * Produces a fallback stream string from the raw file content hash.
  *
  * @param {string} rawContent - Raw MDX source content
- * @returns {string} Doubled stream string derived from FNV-1a32 hash
+ * @returns {string} Stream segment derived from the FNV-1a32 hash
  */
 function fromFallback(rawContent: string): string {
   const hash = fnv1a32(rawContent);
@@ -166,12 +165,12 @@ function fromFallback(rawContent: string): string {
 }
 
 /**
- * Resolves a deterministic single stream segment (NOT doubled) for a given page.
+ * Resolves a deterministic single stream segment for a given page.
  *
  * @param {string} locale - Content locale (e.g. "en", "es")
  * @param {string[]} slugSegments - Decoded slug path segments
  * @param {string} rawContent - Raw MDX source used as fallback seed
- * @returns {Promise<string>} Single stream segment (wrapped) without doubling
+ * @returns {Promise<string>} Single stream segment, separator-wrapped
  */
 export async function resolveStreamSegment(
   locale: string,
@@ -225,13 +224,13 @@ export async function resolveStreamSegment(
 }
 
 /**
- * Resolves a deterministic stream string for a given page, doubled.
+ * Resolves a deterministic stream string for a given page.
  * Falls back to an FNV-1a32 hash of the raw content.
  *
  * @param {string} locale - Content locale (e.g. "en", "es")
  * @param {string[]} slugSegments - Decoded slug path segments (e.g. ["monsters", "albedo"])
  * @param {string} rawContent - Raw MDX source used as fallback seed
- * @returns {Promise<string>} Doubled stream string for CSS `content: attr(data-stream)`
+ * @returns {Promise<string>} One copy of the stream string; the rail repeats it
  */
 export async function resolveStreamText(
   locale: string,
@@ -239,5 +238,5 @@ export async function resolveStreamText(
   rawContent: string,
 ): Promise<string> {
   const segment = await resolveStreamSegment(locale, slugSegments, rawContent);
-  return doubleStream(segment);
+  return normalizeStream(segment);
 }

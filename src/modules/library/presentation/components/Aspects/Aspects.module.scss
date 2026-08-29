@@ -1,6 +1,8 @@
 @use 'mixins-icon' as *;
 @use 'mixins-focus' as *;
 @use 'mixins-button' as *;
+@use 'mixins-rhombus' as *;
+@use 'variables' as *;
 
 .row {
   display: flex;
@@ -28,6 +30,26 @@
   min-width: 0;
 }
 
+/* Size steps. `data-size` re-points two inherited factors — the badge box
+   (`--pip-scale`) and the mark inside it (`--pip-icon-scale`) — so a single
+   attribute on a row scales every pill in it, and a lone pill can carry its
+   own. The mark shrinks less than its box on purpose: at small sizes the glyph
+   is the label, so it cedes less ground than the chrome around it. `m` is the
+   absence of the attribute. */
+.glyphs[data-size='s'],
+.aspect[data-size='s'],
+.glyph[data-size='s'] {
+  --pip-scale: #{$aspect-pip-scale-s};
+  --pip-icon-scale: #{$aspect-pip-icon-scale-s};
+}
+
+.glyphs[data-size='l'],
+.aspect[data-size='l'],
+.glyph[data-size='l'] {
+  --pip-scale: #{$aspect-pip-scale-l};
+  --pip-icon-scale: #{$aspect-pip-icon-scale-l};
+}
+
 /* `color` is forced because the glyph inherits it. A pill is an anchor inside
    prose, so `body a` and `body a:hover` both target it, and the SVG draws with
    `stroke: currentColor` — losing the cascade repaints the icon in link green,
@@ -44,8 +66,9 @@ span.aspect {
   cursor: pointer;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.14rem 0.42rem;
-  font-size: 0.7rem;
+  padding: calc(0.14rem * var(--pip-scale, 1))
+    calc(0.42rem * var(--pip-scale, 1) + var(--pill-chamfer-pad));
+  font-size: calc(0.7rem * var(--pip-scale, 1));
   font-weight: 400;
   line-height: 1.45;
   color: var(--aspect-fg) !important;
@@ -55,22 +78,28 @@ span.aspect {
      to inverse between themes. `--color-bg` flips with the theme, so one set of
      percentages darkens in dark mode and lightens in light mode by itself. */
   background: color-mix(in oklab, var(--aspect-fg) 14%, var(--color-bg));
-  border: 1px solid color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
+  border: var(--border-width-xs) solid color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
   border-radius: var(--border-round-pill);
+  corner-shape: var(--corner-shape-pill);
   /* The prose/link rules underline every anchor in an article; a pill is a
      chip, never underlined, in any display mode. */
   text-decoration: none !important;
   transition:
     background 0.14s ease,
-    border-color 0.14s ease;
+    border-color 0.14s ease,
+    scale 0.14s ease;
 
+  /* `button-still` pins `transform` so the pill never drifts inside prose; the
+     house hover growth (`button-hover-scale`, 1.08) rides the separate `scale`
+     property instead, which the pin does not touch. */
   &:hover {
     background: color-mix(in oklab, var(--aspect-fg) 26%, var(--color-bg));
     border-color: var(--aspect-fg);
+    scale: 1.08;
   }
 
   &:focus-visible {
-    outline: 2px solid var(--aspect-fg);
+    outline: var(--outline-width) solid var(--aspect-fg);
     outline-offset: 2px;
   }
 
@@ -96,11 +125,12 @@ span.aspect {
 /* Removal lives on the button inside, so the pill body is not a target. */
 .aspect.removable {
   cursor: default;
-  padding-right: 0.18rem;
+  padding-right: calc(0.18rem * var(--pip-scale, 1) + var(--pill-chamfer-pad));
 
   &:hover {
     background: color-mix(in oklab, var(--aspect-fg) 14%, var(--color-bg));
     border-color: color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
+    scale: 1;
   }
 }
 
@@ -118,8 +148,9 @@ span.aspect {
 .mark {
   position: relative;
   display: none;
-  width: 17px;
-  height: 17px;
+  /* 85% of the original 17px. */
+  width: calc(14.45px * var(--pip-icon-scale, 1));
+  height: calc(14.45px * var(--pip-icon-scale, 1));
   flex: none;
 }
 
@@ -137,35 +168,36 @@ span.aspect {
   overflow: visible;
 }
 
+/* Sub-marks and their overhangs scale with the mark (×0.85 of 10px / 6px / 5px). */
 .stratum {
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: calc(8.5px * var(--pip-icon-scale, 1));
+  height: calc(8.5px * var(--pip-icon-scale, 1));
   color: var(--badge-fg, currentColor);
 
   &[data-slot='top'] {
-    top: -6px;
+    top: calc(-5.1px * var(--pip-icon-scale, 1));
     left: 50%;
     transform: translateX(-50%);
   }
 
   &[data-slot='left'] {
-    bottom: -5px;
-    left: -6px;
+    bottom: calc(-4.25px * var(--pip-icon-scale, 1));
+    left: calc(-5.1px * var(--pip-icon-scale, 1));
   }
 
   &[data-slot='right'] {
-    bottom: -5px;
-    right: -6px;
+    bottom: calc(-4.25px * var(--pip-icon-scale, 1));
+    right: calc(-5.1px * var(--pip-icon-scale, 1));
   }
 }
 
 .badge {
   position: absolute;
-  right: -4px;
-  bottom: -4px;
-  width: 12px;
-  height: 12px;
+  right: calc(-3.4px * var(--pip-icon-scale, 1));
+  bottom: calc(-3.4px * var(--pip-icon-scale, 1));
+  width: calc(10.2px * var(--pip-icon-scale, 1));
+  height: calc(10.2px * var(--pip-icon-scale, 1));
   /* An element badge carries its own hue — fire stays orange under a defence
      shield. A severity chevron is part of the same mark, so it inherits. */
   color: var(--badge-fg, currentColor);
@@ -213,8 +245,24 @@ span.aspect {
   .label {
     display: none;
   }
+  /* PoC: the whole pill, mark included, rests at 90% and pops to full size on
+     hover; the layout box is untouched so the prose around it does not reflow. */
   .aspect {
+    @include rhombus;
+    /* Square base under the rotation; the bevelled pill of the text modes
+       would rotate back into a square here. */
+    border-radius: var(--border-round-xs);
+    scale: 0.8;
     padding: 0.22rem 0.32rem;
+    transition:
+      background 0.14s ease,
+      border-color 0.14s ease,
+      scale 0.14s ease;
+
+    &:hover,
+    &:focus-visible {
+      scale: 0.9;
+    }
   }
 }
 
@@ -266,7 +314,7 @@ span.aspect {
   width: 26px;
   height: 26px;
   border-radius: var(--border-round-circle);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   background: var(--color-surface) !important;
   cursor: pointer;
   transition:
@@ -309,10 +357,19 @@ span.aspect {
      button and the first glyph. */
   --inset: 6px;
 
+  /* A rhombus glyph is √2 taller than its slot, and the alternating offsets add
+     to that. `overflow-y: visible` cannot coexist with the horizontal scroll,
+     so the box bleeds vertically instead: padding gives the corners room inside
+     the scrollport and the matching negative margin keeps the outer footprint
+     at `--size + 8px`, so the row never grows. */
+  --bleed: 0.5rem;
+
   position: relative;
   flex: 1 1 auto;
   min-width: 0;
-  height: calc(var(--size) + 8px);
+  height: calc(var(--size) + 8px + 2 * var(--bleed));
+  padding-block: var(--bleed);
+  margin-block: calc(-1 * var(--bleed));
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -365,6 +422,16 @@ span.aspect {
   .carousel:focus-within & {
     transform: translate3d(calc(var(--index) * var(--step)), 0, 0) scale(1);
   }
+
+  /* PoC: alternate slots ride 0.15rem above and below the axis. `translate` is
+     its own property, so the packing transform above is untouched. */
+  &:nth-child(even) {
+    translate: 0 -0.15rem;
+  }
+
+  &:nth-child(odd) {
+    translate: 0 0.15rem;
+  }
 }
 
 /* Glyphs fill their carousel slot; a glyph in a plain row (`AspectGlyphs`)
@@ -374,6 +441,10 @@ button.glyph,
 span.glyph {
   --aspect-fg: var(--aspect-default);
 
+  @include rhombus;
+  /* PoC: the whole glyph, mark included, at 80%. `scale` leaves the layout box
+     alone, so the slot and the carousel keep their height. */
+  scale: 0.8;
   display: grid;
   place-items: center;
   box-sizing: border-box;
@@ -381,22 +452,24 @@ span.glyph {
   height: 100%;
   color: var(--aspect-fg) !important;
   background: color-mix(in oklab, var(--aspect-fg) 13%, var(--color-bg));
-  border: 2px solid color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
+  border: var(--border-width-s) solid color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
   border-radius: var(--border-round-circle);
   text-decoration: none;
   transition:
     background 0.18s ease,
-    border-color 0.18s ease;
+    border-color 0.18s ease,
+    scale 0.18s ease;
 
   .mark {
     display: block;
-    width: 18px;
-    height: 18px;
+    width: calc(15.3px * var(--pip-icon-scale, 1));
+    height: calc(15.3px * var(--pip-icon-scale, 1));
   }
 
   &:hover {
     background: color-mix(in oklab, var(--aspect-fg) 30%, var(--color-bg));
     border-color: var(--aspect-fg);
+    scale: 0.9;
   }
 
   /* The ring belongs to keyboard focus alone; folding it into the hover rule
@@ -404,7 +477,7 @@ span.glyph {
   &:focus-visible {
     background: color-mix(in oklab, var(--aspect-fg) 30%, var(--color-bg));
     border-color: var(--aspect-fg);
-    outline: 2px solid var(--aspect-fg);
+    outline: var(--outline-width) solid var(--aspect-fg);
     outline-offset: 2px;
   }
 }
@@ -457,15 +530,15 @@ span.glyph[data-group='myth'] {
 .glyphs {
   display: inline-flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: $aspect-glyph-gap;
   align-items: center;
   min-width: 0;
 
   > a,
   > button,
   > span:not(.glyphMore) {
-    width: 26px;
-    height: 26px;
+    width: calc(#{$aspect-glyph-slot} * var(--pip-scale, 1));
+    height: calc(#{$aspect-glyph-slot} * var(--pip-scale, 1));
     flex: none;
   }
 }
@@ -501,7 +574,8 @@ span.glyph[data-group='myth'] {
     height: auto;
     max-height: 1.55em;
     border-radius: var(--border-round-pill);
-    padding: 3px 0.45rem 4px 0.35rem;
+    corner-shape: var(--corner-shape-pill);
+    padding: 3px calc(0.45rem + var(--pill-chamfer-pad)) 4px calc(0.35rem + var(--pill-chamfer-pad));
     line-height: 1.2;
     font-size: 0.85em;
   }

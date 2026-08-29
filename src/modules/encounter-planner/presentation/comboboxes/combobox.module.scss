@@ -22,7 +22,7 @@
   top: 0;
   left: 0;
   background: var(--color-bg);
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-s);
   @include shadow-medium;
   z-index: 2000;
@@ -58,7 +58,7 @@
   padding: 0.75rem 1rem;
   cursor: pointer;
   transition: background-color 0.15s;
-  border-bottom: 1px solid var(--color-secondary);
+  border-bottom: var(--border-width-xs) solid var(--color-secondary);
 
   &:last-child {
     border-bottom: none;

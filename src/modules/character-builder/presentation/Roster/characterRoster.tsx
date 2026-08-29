@@ -20,7 +20,7 @@ import {
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
-import { ChevronLeft, ChevronRight, PlusCircle, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CharacterSheet } from '../CharacterSheet/characterSheet';
@@ -142,7 +142,9 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
           className={styles.createCharBtn}
           onClick={handleCreate}
           aria-label={t('ariaCreateCharacter')}>
-          <PlusCircle size={16} aria-hidden='true' />
+          <span className={styles.createCharGlyph} aria-hidden='true'>
+            <Plus size={11} />
+          </span>
           {t('newCharacter')}
         </button>
       </header>

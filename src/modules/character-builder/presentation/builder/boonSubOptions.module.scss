@@ -3,6 +3,8 @@
  * All colors via CSS variables — no color literals.
  */
 
+@use 'variables' as *;
+
 .subOptions {
   display: flex;
   flex-direction: column;
@@ -12,7 +14,7 @@
   min-inline-size: 0;
   margin-bottom: 0.25rem;
   padding: 0.25rem 0.4rem;
-  border-top: 1px solid var(--color-secondary);
+  border-top: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-xs);
 
   &:disabled {
@@ -20,18 +22,36 @@
   }
 }
 
+/* Three reserved columns: pip, text, aspects. In the old flex row the empty
+   pip button was the first thing squeezed once name + effect + glyphs
+   overflowed (a button's minimum width is 0), which stretched it into a
+   sliver. The grid gives the pip a fixed track, the text the remainder, and
+   the aspects at most 45% of the row — past that they scroll inside their
+   own cell. */
 .subOption {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1.1rem minmax(0, 1fr) fit-content(45%);
   align-items: center;
-  gap: 0.45rem;
+  column-gap: 0.45rem;
   font-size: 0.72rem;
   line-height: 1.4;
-  overflow: hidden;
+}
+
+.subOptionPip {
+  justify-self: center;
+}
+
+.subOptionText {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
 .subOptionName {
   font-weight: 600;
   color: var(--color-text);
+  flex-shrink: 0;
 }
 
 .subOptionCost {
@@ -48,9 +68,15 @@
   color: var(--color-secondary);
 }
 
+/* Two `s` glyph slots plus the row gap; a third glyph overflows and brings
+   the chevrons in. The bleed covers the rhombus corners and the hover scale
+   of the glyph inside. */
 .subOptionAspects {
-  margin-left: auto;
-  flex: none;
-  display: inline-flex;
-  align-items: center;
+  --chevron-scroll-max: calc(
+    2 * #{$aspect-glyph-slot * $aspect-pip-scale-s} + #{$aspect-glyph-gap}
+  );
+  --chevron-scroll-bleed: 0.3rem;
+
+  min-width: 0;
+  justify-self: end;
 }

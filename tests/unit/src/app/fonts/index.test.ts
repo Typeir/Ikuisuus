@@ -9,7 +9,7 @@ vi.mock('next/font/local', () => ({
   }),
 }));
 
-const { empyrean, fonts, grandCru, stropica } = await import('@/app/fonts');
+const { empyrean, fonts, junicode } = await import('@/app/fonts');
 
 type Registered = { options: Record<string, unknown> };
 const optionsOf = (font: unknown) => (font as unknown as Registered).options;
@@ -25,31 +25,18 @@ describe('app/fonts/index', () => {
     expect(empyrean).toHaveProperty('className');
   });
 
-  it('exports Stropica under its own variable', () => {
-    expect(stropica).toHaveProperty('variable', '--font-stropica');
-    expect(stropica).toHaveProperty('style');
-    expect(stropica).toHaveProperty('className');
-  });
-
-  it('compensates Stropica cap height so bold runs match body copy', () => {
-    expect(optionsOf(stropica).declarations).toEqual([
-      { prop: 'size-adjust', value: '141%' },
+  it('exports Junicode as a variable face under its own variable', () => {
+    expect(junicode).toHaveProperty('variable', '--font-junicode');
+    expect(optionsOf(junicode).src).toEqual([
+      expect.objectContaining({ weight: '300 700' }),
     ]);
-    expect(optionsOf(stropica).adjustFontFallback).toBe(false);
-  });
-
-  it('exports Grand Cru under its own variable at its true weight', () => {
-    expect(grandCru).toHaveProperty('variable', '--font-grandcru');
-    expect(optionsOf(grandCru).src).toEqual([
-      expect.objectContaining({ weight: '300' }),
-    ]);
-    expect(optionsOf(grandCru).declarations).toBeUndefined();
+    expect(optionsOf(junicode).declarations).toBeUndefined();
   });
 
   it('Exports an array of registered fonts', () => {
     expect(Array.isArray(fonts)).toBe(true);
     expect(fonts).toContain(empyrean);
-    expect(fonts).toContain(stropica);
-    expect(fonts).toContain(grandCru);
+    expect(fonts).toContain(junicode);
+    expect(fonts).toHaveLength(2);
   });
 });

@@ -44,7 +44,7 @@
 .numberInput {
   padding: 0.35rem 0.5rem;
   background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-s);
   color: var(--color-text);
   font-size: 0.9rem;
@@ -80,7 +80,7 @@
   width: 100%;
   height: 12px;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-m);
   overflow: hidden;
 }

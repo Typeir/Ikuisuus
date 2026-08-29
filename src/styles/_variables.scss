@@ -15,3 +15,14 @@ $bp-desktop: 1024px;
    --mobile-header-total (globals/_tokens.scss), so every sticky offset
    tracks the safe area without restating env(). */
 $mobile-header-height: var(--mobile-header-total);
+
+/* Aspect glyph geometry. The slot is the square an `AspectGlyphs` glyph
+   occupies; the size steps are the `data-size` factors for the badge box and
+   for the mark inside it. Consumers that size a rail in glyph counts read
+   these rather than restating the pixels. */
+$aspect-glyph-slot: 26px;
+$aspect-glyph-gap: 0.25rem;
+$aspect-pip-scale-s: 0.7;
+$aspect-pip-scale-l: 1.3;
+$aspect-pip-icon-scale-s: 0.8;
+$aspect-pip-icon-scale-l: 1.2;

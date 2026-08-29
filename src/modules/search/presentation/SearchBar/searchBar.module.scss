@@ -41,7 +41,7 @@
   gap: 0.375rem;
   padding-bottom: 0.375rem;
   background: transparent;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-width-xs) solid var(--color-border);
   /* The underline thickens as an inset shadow over the padding, so the box
      keeps its size and the sidebar below never shifts. */
   transition:
@@ -113,7 +113,7 @@
   max-height: min(60vh, var(--search-dropdown-max, 60vh));
   overflow-y: auto;
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-s);
   box-shadow:
     0 8px 24px var(--color-shadow),
@@ -139,7 +139,7 @@
   text-align: center;
   text-decoration: none;
   color: var(--color-primary);
-  border-top: 1px solid var(--color-border);
+  border-top: var(--border-width-xs) solid var(--color-border);
 
   &:hover,
   &:focus-visible {
@@ -150,7 +150,7 @@
 
 .dropdownRow {
   border-left: none !important;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-width-xs) solid var(--color-border);
   animation: dropdownEntry 250ms var(--springy-bezier) both;
 
   &:last-child {
@@ -200,7 +200,7 @@
   max-height: 60vh;
   overflow-y: auto;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-secondary);
+  border: var(--border-width-xs) solid var(--color-border-secondary);
   border-radius: var(--border-round-l);
   box-shadow: 0 8px 24px var(--color-shadow);
 }

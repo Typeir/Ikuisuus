@@ -7,7 +7,7 @@
  */
 'use client';
 
-import StreamBootstrap from '@/lib/components/stream/StreamBootstrap';
+import { StreamRail, streamStyle } from '@/lib/components/stream/StreamRail';
 import { cn } from '@/lib/utils/classNameMerge';
 import { useArchivistPick } from '@/modules/search/application/useArchivistPick';
 import { ArchivistPanel } from '@/modules/search/presentation/ArchivistPanel/ArchivistPanel';
@@ -74,19 +74,14 @@ const Home = () => {
       <div className={cn(styles.bentoIntro, 'prose max-w-5xl p-4 pr-8')}>
         <section
           className={styles.streamSection}
-          data-stream={STREAM_TEXT}
-          style={
-            {
-              '--stream-text': `'${STREAM_TEXT}'`,
-            } as React.CSSProperties
-          }>
+          style={streamStyle(STREAM_TEXT)}>
+          <StreamRail side='left' />
           <ArchiveIntro />
 
           <section className='py-6 not-prose'>
             <SearchBar onNavigate={() => {}} variant='hero' />
           </section>
         </section>
-        <StreamBootstrap />
       </div>
 
       {panelOpen && (

@@ -16,7 +16,6 @@
 @use 'mixins-focus' as *;
 
 .badge {
-  position: relative;
   flex-shrink: 0;
 }
 
@@ -25,14 +24,14 @@
 }
 
 .trigger {
+  @include rhombus;
+  @include rhombus-size(34px * 0.765);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
   padding: 0;
   border-radius: var(--border-round-circle);
-  border: 2px solid var(--color-transparent);
+  border: var(--border-width-s) solid var(--color-transparent);
   background: transparent;
   cursor: pointer;
   transition: border-color 0.2s ease;
@@ -44,6 +43,12 @@
     background: transparent;
     border-color: var(--color-accent);
     outline: none;
+
+    /* The placeholder's dashed edge sits a few px inside the lit border and
+       read as a second ring; it yields while the trigger is hot. */
+    .avatarEmpty {
+      border-color: var(--color-transparent);
+    }
   }
 
   &:focus-visible {
@@ -52,38 +57,48 @@
 }
 
 .avatar {
+  transform: rotate(-45deg) scale(0.9) !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 19px;
+  height: 19px;
   border-radius: var(--border-round-circle);
   background: var(--color-accent);
-  color: var(--color-bg);
-  font-size: 0.75rem;
+  font-size: 0.6rem;
   font-weight: 700;
   flex-shrink: 0;
+  > * {
+    transform: rotate(45deg) !important;
+    color: var(--color-bg);
+  }
 }
 
 .avatarEmpty {
   background: transparent;
-  border: 1px dashed var(--color-secondary);
+  border: var(--border-width-xs) dashed var(--color-secondary);
   color: var(--color-secondary);
 }
 
 .deselectWrap {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -6px;
+  right: -6px;
   z-index: 1;
+}
+
+/* Leading-corner variant, for a badge that sits at the end of a bar. */
+.deselectWrapStart {
+  right: auto;
+  left: -6px;
 }
 
 .deselect {
   @include icon-transparent(var(--color-danger, var(--color-emphasis)));
-  width: 20px;
-  height: 20px;
+  @include rhombus;
+  @include rhombus-size(20px * 0.7);
   border-radius: var(--border-round-circle);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   background: var(--color-surface) !important;
   display: flex;
   align-items: center;
@@ -99,10 +114,10 @@
   position: absolute;
   bottom: calc(100% + 0.25rem);
   right: 0;
-  min-width: min(220px, calc(100vw - 2rem));
-  max-width: calc(100vw - 2rem);
+  min-width: min(220px, 100%);
+  max-width: 100%;
   background: var(--color-bg);
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-s);
   box-shadow: 0 -4px 12px rgb(var(--color-shadow-medium));
   z-index: 1000;
@@ -139,7 +154,7 @@
   text-align: left;
   font-size: 0.875rem;
   transition: background-color 0.15s;
-  border-bottom: 1px solid var(--color-secondary);
+  border-bottom: var(--border-width-xs) solid var(--color-secondary);
 
   &:hover,
   &:focus {
@@ -153,15 +168,15 @@
 }
 
 .itemAvatar {
+  @include rhombus;
+  @include rhombus-size(24px * 0.5);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
   border-radius: var(--border-round-circle);
   background: var(--color-accent);
   color: var(--color-bg);
-  font-size: 0.7rem;
+  font-size: 0.55rem;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -191,5 +206,5 @@
   padding: 0.5rem 0.75rem;
   font-size: 0.8rem;
   opacity: 0.7;
-  border-bottom: 1px solid var(--color-secondary);
+  border-bottom: var(--border-width-xs) solid var(--color-secondary);
 }

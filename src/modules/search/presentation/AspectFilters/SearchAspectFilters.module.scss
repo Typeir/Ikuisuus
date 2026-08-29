@@ -29,9 +29,10 @@
   gap: 0.35rem;
   font: inherit;
   font-size: 0.75rem;
-  padding: 0.2rem 0.6rem;
-  border: 1px solid var(--color-border-secondary);
+  padding: 0.2rem calc(0.6rem + var(--pill-chamfer-pad));
+  border: var(--border-width-xs) solid var(--color-border-secondary);
   border-radius: var(--border-round-pill);
+  corner-shape: var(--corner-shape-pill);
   background: var(--color-bg-secondary);
   color: var(--color-text);
   cursor: pointer;

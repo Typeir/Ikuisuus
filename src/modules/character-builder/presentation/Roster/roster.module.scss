@@ -8,6 +8,7 @@
 @use '@/styles/mixins-focus' as *;
 @use '@/styles/mixins-icon' as *;
 @use '@/styles/mixins-responsive' as *;
+@use '@/styles/mixins-rhombus' as *;
 
 .rosterShell {
   display: grid;
@@ -23,7 +24,7 @@
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-width-xs) solid var(--color-border);
 }
 
 .characterRoster {
@@ -40,7 +41,7 @@
 }
 
 .rosterSidebar {
-  border-right: 1px solid var(--color-border);
+  border-right: var(--border-width-xs) solid var(--color-border);
   background: var(--color-surface);
   backdrop-filter: blur(6px);
   display: flex;
@@ -52,7 +53,7 @@
   display: flex;
   justify-content: flex-end;
   padding: 0.35rem 0.4rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-width-xs) solid var(--color-border);
 }
 
 .rosterCollapseBtn {
@@ -78,10 +79,22 @@
   letter-spacing: 0.06em;
 }
 
+/* The plus sits in its own small diamond; the lucide circle-plus it replaced
+   drew the ring itself. */
+.createCharGlyph {
+  @include rhombus;
+  @include rhombus-size(1.25rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border: var(--border-width-xs) solid currentColor;
+}
+
 .createCharBtn {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.4rem;
   font-size: 0.75rem;
   color: var(--color-accent);
   background: none;
@@ -128,7 +141,7 @@
 
 .rosterItemActive {
   background: var(--color-bg-tertiary);
-  border-left: 3px solid var(--color-accent);
+  border-left: var(--border-width-m) solid var(--color-accent);
 }
 
 .rosterItemBtn {
@@ -225,7 +238,7 @@
 
 .rosterConfirmCancel {
   background: transparent;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   color: var(--color-text);
   &:hover {
     background: var(--color-surface);
@@ -284,7 +297,7 @@
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     border-right: none;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: var(--border-width-xs) solid var(--color-border);
   }
 
   .rosterCollapseBar {
@@ -309,14 +322,14 @@
     justify-content: flex-start;
     gap: 0.25rem;
     padding: 0 0.4rem;
-    border-bottom: 3px solid var(--color-transparent);
+    border-bottom: var(--border-width-m) solid var(--color-transparent);
   }
 
   .characterRoster .rosterItemActive,
   .characterRoster[data-collapsed='true'] .rosterItemActive {
     background: var(--color-bg-tertiary);
     border-left: none;
-    border-bottom: 3px solid var(--color-accent);
+    border-bottom: var(--border-width-m) solid var(--color-accent);
   }
 
   .characterRoster .rosterItemBtn,

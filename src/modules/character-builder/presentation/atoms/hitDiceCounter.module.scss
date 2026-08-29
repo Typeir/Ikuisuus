@@ -20,7 +20,7 @@
  * Mixed hit dice variant — underlined to hint at interactive tooltip.
  */
 .mixed {
-  border-bottom: 1px dashed var(--color-secondary);
+  border-bottom: var(--border-width-xs) dashed var(--color-secondary);
   cursor: help;
 }
 
@@ -67,6 +67,6 @@
   margin-top: 0.3rem;
   font-size: 0.7rem;
   color: var(--color-text-secondary);
-  border-top: 1px solid var(--color-border);
+  border-top: var(--border-width-xs) solid var(--color-border);
   padding-top: 0.3rem;
 }

@@ -1,15 +1,15 @@
 /**
  * @fileoverview Unit tests for resolveStreamText.
  * @description Mocks the six repository adapters and fnv1a32. Asserts domain
- * fields appear in the output and that the string is doubled for the CSS loop.
+ * fields appear in the output as one whitespace-normalised copy.
  *
- * @module tests/unit/src/lib/machineText/index
+ * @module tests/unit/src/modules/library/presentation/components/utils/index
  * @version 1.0.0
  * @author Typeir
  * @since 2026-04-28
  *
  * @requires vitest - Test framework
- * @requires @/lib/machineText - Module under test
+ * @requires @/modules/library/presentation/components/utils - Module under test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -46,7 +46,7 @@ import { monsterRepository } from '@/lib/db/content/repositories/monsterReposito
 import { spellRepository } from '@/lib/db/content/repositories/spellRepository';
 import { trinketRepository } from '@/lib/db/content/repositories/trinketRepository';
 import { vocationRepository } from '@/lib/db/content/repositories/vocationRepository';
-import { resolveStreamText } from '@/lib/machineText';
+import { resolveStreamText } from '@/modules/library/presentation/components/utils';
 
 afterEach(() => {
   vi.clearAllMocks();
@@ -77,15 +77,14 @@ describe('resolveStreamText', () => {
       expect(result).toContain('HP:168');
     });
 
-    it('returns a doubled string for seamless CSS loop', async () => {
+    it('returns one whitespace-normalised copy; the rail repeats it', async () => {
       const result = await resolveStreamText(
         'en',
         ['monsters', 'wraithwarden'],
         '',
       );
-      const half = result.slice(0, Math.floor(result.length / 2)).trim();
-      const second = result.slice(Math.floor(result.length / 2)).trim();
-      expect(half).toBe(second);
+      expect(result).toBe(result.replace(/\s+/g, ' ').trim());
+      expect(result.indexOf('CR:14')).toBe(result.lastIndexOf('CR:14'));
     });
   });
 

@@ -16,6 +16,21 @@ import {
   parseKeywordReference,
 } from './keywordExpressionParser';
 
+/** Fenced blocks and inline spans, whose contents are shown rather than parsed. */
+const CODE_SPANS = /(```[\s\S]*?```|~~~[\s\S]*?~~~|`[^`\n]*`)/g;
+
+/**
+ * Blanks out code so a reference quoted as an example is not collected.
+ * `remarkKeyword` only rewrites text nodes, so anything in code renders
+ * literally; collecting it would bake a shard nothing ever clones.
+ *
+ * @param {string} source - Raw MDX source
+ * @returns {string} Source with code spans replaced by blanks of equal length
+ */
+function maskCode(source: string): string {
+  return source.replace(CODE_SPANS, (span) => ' '.repeat(span.length));
+}
+
 /**
  * Collects every keyword reference in a source document.
  *
@@ -28,9 +43,10 @@ import {
 export function extractKeywordRefs(source: string): string[] {
   const refs = new Set<string>();
   const pattern = new RegExp(KEYWORD_EXPR_REGEX.source, 'g');
+  const prose = maskCode(source);
 
   let match: RegExpExecArray | null;
-  while ((match = pattern.exec(source)) !== null) {
+  while ((match = pattern.exec(prose)) !== null) {
     const inner = match[1]?.trim();
     if (!inner) continue;
 

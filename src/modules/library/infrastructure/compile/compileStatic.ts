@@ -13,8 +13,7 @@ import remarkAspect from '@/lib/md/remarkAspect';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkKeyword from '@/lib/md/remarkKeyword';
 import remarkUnit from '@/lib/md/remarkUnit';
-import { bakeKeywordShards } from '@/lib/md/bakeKeywordShards';
-import { keywordShardTemplates } from '@/modules/library/presentation/components/Keyword/KeywordShardTemplates';
+import { collectKeywordShards } from '@/lib/md/bakeKeywordShards';
 import { resolveKeywordRegistry } from '@/lib/md/resolveKeywordRegistry';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import rehypeKatex from 'rehype-katex';
@@ -42,17 +41,12 @@ export async function compileStatic(opts: CompileOptions) {
   } = opts;
 
   const keywords = await resolveKeywordRegistry();
-  const { source: resolvedSource, shards } = await bakeKeywordShards(
-    await resolveReusableSource(source),
-    keywords,
-  );
-  const resolvedComponents = shards.length
-    ? { ...components, KeywordShardTemplates: keywordShardTemplates(shards) }
-    : components;
+  const resolvedSource = await resolveReusableSource(source);
+  const shards = await collectKeywordShards(resolvedSource, keywords, 'en');
 
   const result = await evaluate({
     source: resolvedSource,
-    components: resolvedComponents as any,
+    components: components as any,
     options: {
       parseFrontmatter,
       mdxOptions: buildMdxOptions(
@@ -73,5 +67,5 @@ export async function compileStatic(opts: CompileOptions) {
     } as unknown as EvaluateOptions,
   });
 
-  return result;
+  return { ...result, shards };
 }

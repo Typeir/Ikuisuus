@@ -33,7 +33,7 @@
 
 .gradientContainer {
   position: relative;
-  border: 0.2rem solid var(--gradient-tabs-surface, var(--color-surface));
+  border: var(--border-width-m) solid var(--gradient-tabs-surface, var(--color-surface));
   border-radius: var(--border-round-xl) var(--border-round-xl) 0 0;
   padding-top: 2rem;
 }
@@ -74,7 +74,7 @@
 
   button {
     padding: 0.5rem 0.875rem 1rem;
-    border: 1px solid var(--gradient-tabs-surface, var(--color-surface));
+    border: var(--border-width-xs) solid var(--gradient-tabs-surface, var(--color-surface));
     border-bottom: none;
     background: var(--gradient-tabs-well, var(--color-bg));
     color: var(--color-secondary);

@@ -18,13 +18,19 @@
   padding: 0;
 }
 
+/* Buttons in the slots are rhombus targets; they give up the rhombus surface
+   while the slot itself keeps the 2rem rhythm. */
 button.headerIconSlot {
-  width: 2rem;
-  height: 2rem;
+  @include rhombus-size(2rem * 0.9);
 }
 
 .headerSearchSlot > div {
   padding-top: 0;
+}
+
+/* The home link keeps a touch more clear of the theme/settings diamonds. */
+.mobileTitleBar > a.headerIconSlot {
+  margin-right: 0.25rem;
 }
 
 /* Main content clears the fixed title bar on mobile. */
@@ -156,12 +162,45 @@ h1.title {
 
 .headerControls {
   position: absolute;
-  top: 0.5rem;
+  top: 0.75rem;
   right: -0.5rem;
   z-index: 2;
   display: flex;
   align-items: center;
   gap: 0.25rem;
+
+  /* PoC: theme and settings alternate 0.5rem below and above the axis, like
+     the aspect carousel's slots at a smaller amplitude. */
+  > :nth-child(odd) {
+    translate: 0 0.5rem;
+  }
+
+  > :nth-child(even) {
+    translate: 0 -0.5rem;
+  }
+}
+
+/* Same alternation on the mobile bar, mirrored across the search bar: theme
+   (2nd) up, settings (3rd) down, character (5th) down, hamburger (6th) up.
+   The logo and the search stay on axis. */
+.mobileTitleBar > button.headerIconSlot:nth-child(2) {
+  translate: 0 -0.5rem;
+}
+
+.mobileTitleBar > button.headerIconSlot:nth-child(3) {
+  translate: 0 0.5rem;
+}
+
+/* The character slot's offset goes on the badge's trigger wrap, not the slot:
+   a transform makes its element the containing block for absolute
+   descendants, and the slot would capture the badge's dropdown (28px wide,
+   anchored to itself). The wrap holds the trigger and its deselect only. */
+.mobileTitleBar > div.headerIconSlot:nth-child(5) > div > div:first-child {
+  translate: 0 0.5rem;
+}
+
+.mobileTitleBar > button.headerIconSlot:nth-child(6) {
+  translate: 0 -0.5rem;
 }
 
 /* ── Embed Mode ──────────────────────────────────────────────── */

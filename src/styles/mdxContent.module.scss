@@ -212,6 +212,10 @@
         content: none !important;
         display: none !important;
       }
+
+      [data-stream-rail] {
+        display: none !important;
+      }
     }
   }
 
@@ -223,16 +227,14 @@
       @include mdx-nine-slice-base();
     }
 
-    &::after {
-      @include mdx-terminal-stream($side: left);
+    > [data-stream-rail='left'] {
+      @include mdx-stream-rail($side: left);
     }
 
-    > ul,
-    > ol {
-      --stream-x: calc(-2.5rem - (var(--depth, 1) - 1) * 1.5rem);
-      &::after {
-        @include mdx-terminal-stream($side: right);
-      }
+    /* Emitted only for sections with a direct-child list. */
+    > [data-stream-rail='right'] {
+      --stream-x: -1rem;
+      @include mdx-stream-rail($side: right);
     }
 
     &[data-heading-level='1']::before {
@@ -255,10 +257,13 @@
       --heading-level: 1;
       --stream-opacity: 0.2;
 
-      /* Ensure nested lists use the same frozen stream offset and depth */
+      > [data-stream-rail='right'] {
+        --stream-x: -1.4rem;
+      }
+
+      /* Ensure nested lists use the same frozen depth */
       & ul,
       & ol {
-        --stream-x: -1.4rem;
         --depth: 1;
       }
     }

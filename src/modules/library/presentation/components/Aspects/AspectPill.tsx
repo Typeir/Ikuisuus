@@ -24,6 +24,12 @@ import styles from './Aspects.module.scss';
 const STRATUM_SLOTS = ['top', 'left', 'right'] as const;
 
 /**
+ * Pill/glyph size step. `m` is the baseline; `s` shrinks the badge ~30% and
+ * the mark ~20%, `l` grows them by the same ratios.
+ */
+export type AspectSize = 's' | 'm' | 'l';
+
+/**
  * Aspect pill: icon mark plus label. Link by default, button with onSelect.
  *
  * @param {object} props - Component properties
@@ -36,6 +42,7 @@ const STRATUM_SLOTS = ['top', 'left', 'right'] as const;
  * @param {boolean} [props.disabled] - Button disabled state
  * @param {(aspect: ParsedAspect) => void} [props.onRemove] - Renders the chip remove button inside the pill
  * @param {string} [props.removeLabel] - Accessible label for the remove button
+ * @param {AspectSize} [props.size] - Size step; defaults to `m`
  * @returns {React.ReactElement} The pill
  */
 export const AspectPill: React.FC<{
@@ -48,6 +55,7 @@ export const AspectPill: React.FC<{
   inert?: boolean;
   onRemove?: (aspect: ParsedAspect) => void;
   removeLabel?: string;
+  size?: AspectSize;
 }> = ({
   aspect,
   locale,
@@ -58,6 +66,7 @@ export const AspectPill: React.FC<{
   inert,
   onRemove,
   removeLabel,
+  size,
 }) => {
   const { Icon, Badge, badgeVar, strata } = aspectMark(aspect);
   const name = `${aspect.group}: ${aspect.value}`;
@@ -109,6 +118,7 @@ export const AspectPill: React.FC<{
     'aria-label': name,
     title: name,
     'data-group': aspect.group,
+    'data-size': size && size !== 'm' ? size : undefined,
     style: { '--aspect-fg': aspectColour(aspect) } as React.CSSProperties,
   };
 

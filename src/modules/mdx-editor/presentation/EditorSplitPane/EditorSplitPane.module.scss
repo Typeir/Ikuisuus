@@ -16,7 +16,7 @@
 
 .editorPane {
   overflow: auto;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-s);
   background-color: var(--color-bg);
 }
@@ -105,7 +105,7 @@
   position: relative;
   overflow: auto;
   padding: 0.75rem 1.5rem;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-s);
   background-color: var(--color-bg);
   animation: fadeSlideIn 0.2s ease-out;
@@ -122,7 +122,7 @@
   height: 28px;
   padding: 0;
   border-radius: var(--border-round-s);
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   background-color: var(--color-bg);
   color: var(--color-text-secondary);
   cursor: pointer;

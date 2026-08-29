@@ -70,31 +70,31 @@
   &.Wounded {
     background: var(--color-phase-wounded);
     color: var(--color-phase-text-dark);
-    border: 1px solid var(--color-phase-wounded-border);
+    border: var(--border-width-xs) solid var(--color-phase-wounded-border);
   }
 
   &.Bloodied {
     background: var(--color-phase-bloodied);
     color: var(--color-phase-text-light);
-    border: 1px solid var(--color-phase-bloodied-border);
+    border: var(--border-width-xs) solid var(--color-phase-bloodied-border);
   }
 
   &.Dying {
     background: var(--color-phase-dying);
     color: var(--color-phase-text-light);
-    border: 1px solid var(--color-phase-dying-border);
+    border: var(--border-width-xs) solid var(--color-phase-dying-border);
   }
 
   &.Doomed {
     background: var(--color-phase-doomed);
     color: var(--color-phase-text-light);
-    border: 1px solid var(--color-phase-doomed-border);
+    border: var(--border-width-xs) solid var(--color-phase-doomed-border);
   }
 
   &.Slain {
     background: var(--color-phase-slain);
     color: var(--color-phase-text-light);
-    border: 1px solid var(--color-phase-slain-border);
+    border: var(--border-width-xs) solid var(--color-phase-slain-border);
   }
 } /** Moved to .nameBadgesWrapper */
 

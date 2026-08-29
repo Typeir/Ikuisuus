@@ -28,8 +28,9 @@
   justify-content: center;
   min-width: 0.9rem;
   height: 0.9rem;
-  padding: 0 0.15rem;
+  padding: 0 calc(0.15rem + var(--pill-chamfer-pad)) 0 calc(0.15rem + var(--pill-chamfer-pad));
   border-radius: var(--border-round-pill);
+  corner-shape: var(--corner-shape-pill);
   background: var(--color-accent);
   color: var(--color-bg);
   font-size: 0.55rem;
@@ -57,7 +58,7 @@
 .panelHeader {
   @include label-uppercase;
   padding: 0 0.75rem 0.35rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-width-xs) solid var(--color-border);
   margin-bottom: 0.25rem;
 }
 
@@ -78,7 +79,7 @@
   padding: 0.25rem 0;
 
   & + & {
-    border-top: 1px solid var(--color-border);
+    border-top: var(--border-width-xs) solid var(--color-border);
     margin-top: 0.25rem;
     padding-top: 0.35rem;
   }
@@ -126,7 +127,7 @@
   max-width: 50px;
   height: 1.4rem;
   padding: 0.15rem 0.25rem;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-xs);
   background: var(--color-bg-tertiary);
   color: var(--color-text);

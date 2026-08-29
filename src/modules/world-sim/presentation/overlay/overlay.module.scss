@@ -25,7 +25,7 @@
   flex-direction: column;
   align-items: center;
   padding: 4px 10px;
-  border: 1px solid var(--worldsim-label-bg);
+  border: var(--border-width-xs) solid var(--worldsim-label-bg);
   border-radius: var(--border-round-m);
   background: var(--worldsim-label-bg);
   backdrop-filter: blur(4px);
@@ -80,7 +80,7 @@
   width: 280px;
   max-height: calc(100% - 32px);
   padding: 16px;
-  border: 1px solid var(--worldsim-panel-border);
+  border: var(--border-width-xs) solid var(--worldsim-panel-border);
   border-radius: var(--border-round-xl);
   background: var(--worldsim-panel-bg);
   backdrop-filter: blur(8px);
@@ -102,7 +102,7 @@
   display: inline-flex;
   align-items: center;
   padding: 4px 8px;
-  border: 1px solid var(--worldsim-panel-border);
+  border: var(--border-width-xs) solid var(--worldsim-panel-border);
   border-radius: var(--border-round-s);
   background: transparent;
   color: var(--worldsim-panel-text);
@@ -146,7 +146,7 @@
 /* ── Region List ─────────────────────────────────────────────── */
 
 .regionList {
-  border-top: 1px solid var(--worldsim-panel-border);
+  border-top: var(--border-width-xs) solid var(--worldsim-panel-border);
   padding-top: 12px;
 
   ul {
@@ -169,7 +169,7 @@
 .regionButton {
   width: 100%;
   padding: 6px 10px;
-  border: 1px solid transparent;
+  border: var(--border-width-xs) solid transparent;
   border-radius: var(--border-round-s);
   background: transparent;
   color: var(--worldsim-panel-text);
@@ -201,7 +201,7 @@
   pointer-events: auto;
   z-index: 18;
   animation: contentPanelSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-  border: 1px solid var(--worldsim-panel-border);
+  border: var(--border-width-xs) solid var(--worldsim-panel-border);
   border-radius: var(--border-round-l);
   background: var(--worldsim-panel-bg);
   box-shadow: 0 8px 32px var(--worldsim-controls-shadow);
@@ -246,7 +246,7 @@
 .contentPanelSpinner {
   width: 24px;
   height: 24px;
-  border: 2px solid var(--worldsim-panel-border);
+  border: var(--border-width-s) solid var(--worldsim-panel-border);
   border-top-color: var(--worldsim-label-accent);
   border-radius: var(--border-round-circle);
   animation: contentPanelSpin 0.8s linear infinite;
@@ -266,7 +266,7 @@
   display: flex;
   gap: 10px;
   padding: 10px 18px;
-  border: 1px solid var(--worldsim-label-accent);
+  border: var(--border-width-xs) solid var(--worldsim-label-accent);
   border-radius: var(--border-round-xl);
   background: var(--worldsim-controls-bg);
   backdrop-filter: blur(10px);
@@ -277,7 +277,7 @@
 
 .controlButton {
   padding: 6px 14px;
-  border: 1px solid var(--worldsim-label-accent);
+  border: var(--border-width-xs) solid var(--worldsim-label-accent);
   border-radius: var(--border-round-m);
   background: var(--worldsim-controls-btn-bg);
   color: var(--worldsim-panel-text);

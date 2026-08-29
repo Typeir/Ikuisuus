@@ -12,6 +12,7 @@
 
 import type { JSX } from 'react';
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
+import { StreamRail, streamStyle } from '@/lib/components/stream/StreamRail';
 import { cn } from '@/lib/utils/classNameMerge';
 import { typeColorVar, type SearchResult } from '../../domain';
 import { MatchSnippet } from '../atoms/MatchSnippet';
@@ -57,7 +58,7 @@ export function SearchResultRow({
   const streamText = `${typeLabel}  ·  ${typeLabel}  //  ${typeLabel}  ·  ${typeLabel}`;
 
   const mergedStyle = {
-    '--stream-text': `'${streamText}'`,
+    ...streamStyle(streamText),
     '--search-row-stream-color': typeColorVar(record.type),
     '--sigil-color': typeColorVar(record.type),
     ...style,
@@ -97,6 +98,8 @@ export function SearchResultRow({
           <ResultThumb image={record.image} type={record.type} />
         </span>
       )}
+
+      <StreamRail side='right' />
     </LazyPrefetchLink>
   );
 }

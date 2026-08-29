@@ -54,8 +54,19 @@ describe('keywordIndexRegistry', () => {
   });
 
   describe('discoverKeywordIndexes', () => {
-    it('should ignore files that declare nothing', async () => {
+    it('should index a rules page that declares nothing', async () => {
       await write('rules/plain.rule.mdx', '---\ncontentType: rules\n---\n\n## Prone\n');
+
+      const registry = await discoverKeywordIndexes(root);
+
+      expect(registry.get(BARE_NAMESPACE)?.values.has('prone')).toBe(true);
+    });
+
+    it('should ignore a page outside rules that declares nothing', async () => {
+      await write(
+        'spells/plain.spell.mdx',
+        '---\ncontentType: spells\n---\n\n## Prone\n',
+      );
 
       const registry = await discoverKeywordIndexes(root);
 
@@ -91,7 +102,6 @@ describe('keywordIndexRegistry', () => {
       const registry = await discoverKeywordIndexes(root);
       const entry = registry.get('condition');
 
-      expect(registry.size).toBe(1);
       expect([...(entry?.values.keys() ?? [])].sort()).toEqual([
         'charmed',
         'prone',
@@ -107,7 +117,7 @@ describe('keywordIndexRegistry', () => {
 
       const registry = await discoverKeywordIndexes(root);
 
-      expect(registry.size).toBe(0);
+      expect(registry.has('condition')).toBe(false);
     });
 
     it('should ignore markup when slugging a heading', async () => {
@@ -191,13 +201,18 @@ describe('keywordIndexRegistry', () => {
         await discoverKeywordIndexes(root),
       );
 
-      expect(collisions).toEqual([
-        {
-          namespace: 'condition',
-          anchor: 'prone',
-          filePaths: ['rules/a.rule.mdx', 'rules/b.rule.mdx'],
-        },
-      ]);
+      /* Both pages are rules, so the anchor collides in its own namespace and
+         again in the bare one every rules page contributes to. */
+      expect(collisions).toContainEqual({
+        namespace: 'condition',
+        anchor: 'prone',
+        filePaths: ['rules/a.rule.mdx', 'rules/b.rule.mdx'],
+      });
+      expect(collisions).toContainEqual({
+        namespace: BARE_NAMESPACE,
+        anchor: 'prone',
+        filePaths: ['rules/a.rule.mdx', 'rules/b.rule.mdx'],
+      });
     });
 
     it('should report nothing when every value is unique', async () => {

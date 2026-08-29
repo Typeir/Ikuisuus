@@ -18,6 +18,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from 'react';
@@ -27,6 +28,20 @@ export const MIN_WIDTH = 200;
 
 /** Minimum resize height in pixels. */
 export const MIN_HEIGHT = 120;
+
+/** Pixels an arrow key moves or resizes by. */
+export const KEY_STEP = 8;
+
+/** Pixels an arrow key moves or resizes by with Shift held. */
+export const KEY_STEP_COARSE = 32;
+
+/** Arrow keys mapped to their unit vector. */
+const ARROWS: Record<string, PositionValue> = {
+  ArrowLeft: { x: -1, y: 0 },
+  ArrowRight: { x: 1, y: 0 },
+  ArrowUp: { x: 0, y: -1 },
+  ArrowDown: { x: 0, y: 1 },
+};
 
 /**
  * Position value as a simple coordinate pair.
@@ -59,11 +74,15 @@ export type PositionFromBounds = (parentBounds: {
  * @property {Function} onPointerDown - Starts the gesture
  * @property {Function} onPointerMove - Continues the gesture
  * @property {Function} onPointerUp - Ends the gesture
+ * @property {Function} onKeyDown - Moves or resizes by arrow key
+ * @property {number} tabIndex - Makes the handle reachable by tab
  */
 export interface HandleProps {
   onPointerDown: (event: ReactPointerEvent) => void;
   onPointerMove: (event: ReactPointerEvent) => void;
   onPointerUp: () => void;
+  onKeyDown: (event: ReactKeyboardEvent) => void;
+  tabIndex: number;
 }
 
 /**
@@ -188,6 +207,26 @@ export function useDrag({
 
   const onDragPointerUp = useCallback(() => setIsDragging(false), []);
 
+  /**
+   * Moves by arrow key, coarser with Shift. A `separator` handle is the ARIA
+   * window-splitter pattern, which is expected to be keyboard operable.
+   *
+   * @param {ReactKeyboardEvent} event - Key event from the handle
+   */
+  const onDragKeyDown = useCallback(
+    (event: ReactKeyboardEvent) => {
+      const arrow = ARROWS[event.key];
+      if (!arrow) return;
+
+      event.preventDefault();
+      const step = event.shiftKey ? KEY_STEP_COARSE : KEY_STEP;
+      setPosition((prev) =>
+        clampToBounds(prev.x + arrow.x * step, prev.y + arrow.y * step),
+      );
+    },
+    [clampToBounds],
+  );
+
   const onResizePointerDown = useCallback(
     (event: ReactPointerEvent) => {
       event.preventDefault();
@@ -220,6 +259,32 @@ export function useDrag({
   );
 
   const onResizePointerUp = useCallback(() => setIsResizing(false), []);
+
+  /**
+   * Resizes by arrow key, coarser with Shift.
+   *
+   * @param {ReactKeyboardEvent} event - Key event from the corner
+   */
+  const onResizeKeyDown = useCallback(
+    (event: ReactKeyboardEvent) => {
+      const arrow = ARROWS[event.key];
+      if (!arrow) return;
+
+      event.preventDefault();
+      const step = event.shiftKey ? KEY_STEP_COARSE : KEY_STEP;
+      const rect = containerRef.current?.getBoundingClientRect();
+      const base = size ?? {
+        width: rect?.width ?? MIN_WIDTH,
+        height: rect?.height ?? MIN_HEIGHT,
+      };
+
+      setSize({
+        width: Math.max(MIN_WIDTH, base.width + arrow.x * step),
+        height: Math.max(MIN_HEIGHT, base.height + arrow.y * step),
+      });
+    },
+    [containerRef, size],
+  );
 
   /** Resolves a positioning function once the parent is measurable. */
   const positionInitialized = useRef(typeof initialPosition !== 'function');
@@ -277,11 +342,15 @@ export function useDrag({
       onPointerDown: onDragPointerDown,
       onPointerMove: onDragPointerMove,
       onPointerUp: onDragPointerUp,
+      onKeyDown: onDragKeyDown,
+      tabIndex: 0,
     },
     resizeHandleProps: {
       onPointerDown: onResizePointerDown,
       onPointerMove: onResizePointerMove,
       onPointerUp: onResizePointerUp,
+      onKeyDown: onResizeKeyDown,
+      tabIndex: 0,
     },
   };
 }

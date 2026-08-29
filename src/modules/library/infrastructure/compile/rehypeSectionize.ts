@@ -1,8 +1,8 @@
 /**
- * @fileoverview Rehype plugin: wraps content between headings in sections, entries in articles. Adds anchors and slugs.
+ * @fileoverview Rehype plugin: wraps content between headings in sections, entries in articles. Adds anchors, slugs and stream rails.
  *
  * @module rehypeSectionize
- * @version 2.0.0
+ * @version 2.1.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -180,10 +180,55 @@ function sectionize(
   return result;
 }
 
+/* ─────────────────────────  Pass 3: stream rails  ───────────────────── */
+
+/**
+ * Rail element the stream text scrolls inside. Hidden from assistive tech;
+ * the text is ornament.
+ *
+ * @param {'left' | 'right'} side - Section edge the rail hugs
+ * @returns {Element} Rail element
+ */
+function streamRail(side: 'left' | 'right'): Element {
+  return (h as unknown as (t: string, p: object) => Element)('span', {
+    'aria-hidden': 'true',
+    'data-stream-rail': side,
+  });
+}
+
+/**
+ * Adds rails to every heading section: a left rail always, a right rail when
+ * the section has a direct-child list. The text comes from the host's
+ * inherited `--stream-text`, so no option gates this. Rails go after the
+ * heading so `children[0]` stays the heading for later passes.
+ *
+ * @param {Parent} node - Node whose subtree to walk
+ */
+function addStreamRails(node: Parent): void {
+  for (const c of node.children) {
+    if (!Array.isArray((c as unknown as Partial<Parent>).children)) continue;
+    const el = c as Element;
+    const level =
+      el.properties?.['data-heading-level'] ?? el.properties?.dataHeadingLevel;
+    const headed =
+      c.type === 'element' && el.tagName === 'section' && level !== undefined;
+    if (headed) {
+      const rails = [streamRail('left')];
+      const hasList = el.children.some(
+        (x) => x.type === 'element' && (x.tagName === 'ul' || x.tagName === 'ol'),
+      );
+      if (hasList) rails.push(streamRail('right'));
+      const lead = el.children[0];
+      el.children.splice(lead && isHeading(lead as RootContent) ? 1 : 0, 0, ...rails);
+    }
+    addStreamRails(c as unknown as Parent);
+  }
+}
+
 /* ────────────────────────────  Plugin  ─────────────────────────────── */
 
 /**
- * Plugin: sections, then articles.
+ * Plugin: sections, articles, then stream rails.
  *
  * @param {RehypeSectionizeOptions} [opts] - Plugin options
  * @returns {(tree: Root) => void} Transformer
@@ -197,6 +242,7 @@ const rehypeSectionize: Plugin<[RehypeSectionizeOptions?], Root> = (
     if (opts?.articles !== false) {
       articleize(tree as unknown as Parent, anchors, undefined, false, false, false);
     }
+    addStreamRails(tree as unknown as Parent);
   };
 };
 

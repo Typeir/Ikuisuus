@@ -11,7 +11,7 @@
 
 import { displayAspects } from '@/modules/library/domain/aspects';
 import { useLocale } from 'next-intl';
-import { AspectPill } from './AspectPill';
+import { AspectPill, type AspectSize } from './AspectPill';
 import styles from './Aspects.module.scss';
 
 /**
@@ -22,12 +22,14 @@ import styles from './Aspects.module.scss';
  * @property {boolean} [inert] - Render spans not links
  * @property {string} [ariaLabel] - Row label
  * @property {number} [max] - Max glyphs; rest fold into +n marker
+ * @property {AspectSize} [size] - Size step for the whole row; defaults to `m`
  */
 export interface AspectGlyphsProps {
   tags?: string[];
   inert?: boolean;
   ariaLabel?: string;
   max?: number;
+  size?: AspectSize;
 }
 
 /**
@@ -42,6 +44,7 @@ export const AspectGlyphs: React.FC<AspectGlyphsProps> = ({
   inert,
   ariaLabel,
   max,
+  size,
 }) => {
   const locale = useLocale();
   const parsed = displayAspects(tags);
@@ -51,6 +54,7 @@ export const AspectGlyphs: React.FC<AspectGlyphsProps> = ({
   return (
     <span
       className={max !== undefined ? `${styles.glyphs} ${styles.glyphsCapped}` : styles.glyphs}
+      data-size={size && size !== 'm' ? size : undefined}
       aria-label={ariaLabel}>
       {shown.map((aspect) => (
         <AspectPill

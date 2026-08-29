@@ -200,7 +200,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
       </div>
       {displayAspects(aspects).length > 0 && (
         <div className={expandStyles.boonAspects}>
-          <AspectGlyphs tags={aspects} />
+          <AspectGlyphs tags={aspects} size='s' />
         </div>
       )}
       {subOptions}

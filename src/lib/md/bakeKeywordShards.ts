@@ -1,14 +1,12 @@
 /**
  * Keyword Shard Baking
  *
- * @fileoverview Collects the prose of every keyword a document references and
- * renders it to HTML, ready to ship inside the page as an inert `<template>`.
- * A keyword hover then costs a clone rather than a request.
+ * @fileoverview Collects the prose of every keyword a document references, so a
+ * hover costs no request. Prose ships as source and the card compiles it, which
+ * keeps `Unit`, `DiceRoll` and nested keywords as live components.
  *
  * Sections are extracted with `resolveShards`, the same call the content shard
- * routes make. Shards are rendered to an HTML string rather than left as MDX
- * because React must not own a template's children: the HTML parser moves them
- * into `content`, so a React-managed template fails hydration.
+ * routes make.
  *
  * Server only.
  *
@@ -27,7 +25,6 @@ import {
   type KeywordRegistry,
   type KeywordValue,
 } from './keywordIndex';
-import { renderMarkdownToHtml } from './renderMarkdownToHtml';
 
 /** Splits a normalised reference back into its namespace and value. */
 const REF_PARTS = /^([^;]+);(.+)$/;
@@ -35,35 +32,20 @@ const REF_PARTS = /^([^;]+);(.+)$/;
 /** Trailing thematic break left behind by a section boundary. */
 const TRAILING_RULE = /\n+\s*(?:-{3,}|\*{3,}|_{3,})\s*$/;
 
-/** Tag appended to a document that references at least one resolvable keyword. */
-export const KEYWORD_SHARDS_TAG = 'KeywordShardTemplates';
-
 /**
- * A shard resolved and rendered, ready to bake.
+ * A resolved shard, carried as source.
  *
- * The heading stays out of `html` so the card owns its own title element.
+ * The heading stays out of `source` so the card owns its own title element.
  *
- * @interface BakedShard
- * @property {string} id - Template element id
+ * @interface KeywordShard
+ * @property {string} id - Shard key, derived from namespace and anchor
  * @property {string} heading - Heading text of the defining section
- * @property {string} html - Rendered section body, without the heading
+ * @property {string} source - Section body markdown, without the heading
  */
-export interface BakedShard {
+export interface KeywordShard {
   id: string;
   heading: string;
-  html: string;
-}
-
-/**
- * A document's source with its shards resolved.
- *
- * @interface BakeResult
- * @property {string} source - Source, with the templates tag appended when there is anything to bake
- * @property {BakedShard[]} shards - Shards the document references
- */
-export interface BakeResult {
   source: string;
-  shards: BakedShard[];
 }
 
 /**
@@ -107,20 +89,20 @@ async function readShard(
 }
 
 /**
- * Resolves every keyword a document references into a rendered shard.
- * Deduplicated by template id, so a term used many times bakes once.
+ * Resolves every keyword a document references into a shard.
+ * Deduplicated by id, so a term used many times resolves once.
  *
  * @param {string} source - Document source, after reusable regions are inlined
  * @param {KeywordRegistry} registry - Discovered namespaces
  * @param {string} locale - Content locale
- * @returns {Promise<BakedShard[]>} Shards to bake, in reference order
+ * @returns {Promise<KeywordShard[]>} Shards, in reference order
  */
 export async function collectKeywordShards(
   source: string,
   registry: KeywordRegistry,
   locale: string,
-): Promise<BakedShard[]> {
-  const shards = new Map<string, BakedShard>();
+): Promise<KeywordShard[]> {
+  const shards = new Map<string, KeywordShard>();
 
   for (const reference of extractKeywordRefs(source)) {
     const { namespace, value } = splitRef(reference);
@@ -133,28 +115,8 @@ export async function collectKeywordShards(
     const prose = await readShard(target, locale);
     if (!prose) continue;
 
-    const html = await renderMarkdownToHtml(prose);
-    shards.set(id, { id, heading: target.heading, html });
+    shards.set(id, { id, heading: target.heading, source: prose });
   }
 
   return [...shards.values()];
-}
-
-/**
- * Resolves a document's keyword shards and appends the tag that renders them.
- *
- * @param {string} source - Document source, after reusable regions are inlined
- * @param {KeywordRegistry} registry - Discovered namespaces
- * @param {string} [locale] - Content locale
- * @returns {Promise<BakeResult>} Source and the shards it references
- */
-export async function bakeKeywordShards(
-  source: string,
-  registry: KeywordRegistry,
-  locale = 'en',
-): Promise<BakeResult> {
-  const shards = await collectKeywordShards(source, registry, locale);
-  if (shards.length === 0) return { source, shards };
-
-  return { source: `${source}\n\n<${KEYWORD_SHARDS_TAG} />\n`, shards };
 }

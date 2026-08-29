@@ -22,9 +22,12 @@ export const empyrean = localFont({
 });
 
 /**
- * Stropica local font registration. Exposed as `--font-stropica`.
- * @type {ReturnType<import('next/font/local').default>}
+ * Stropica local font registration, parked. Nothing references
+ * `--font-stropica`, and a live `localFont()` call emits the file into the
+ * build regardless. The file lives in `.ignore/fonts/`; move it back to
+ * `public/fonts/`, uncomment, and add it to `fonts` to restore.
  */
+/**
 export const stropica = localFont({
   src: [{ path: '../../../public/fonts/Stropica.otf', weight: '400' }],
   variable: '--font-stropica',
@@ -34,16 +37,24 @@ export const stropica = localFont({
   adjustFontFallback: false,
   preload: true,
 });
+*/
 
 /**
- * Grand Cru local font registration. Exposed as `--font-grandcru`.
+ * Junicode 2 local font registration (variable Roman, SIL OFL). Exposed as
+ * `--font-junicode`; the heading role in `_tokens.scss` resolves to it.
  * @type {ReturnType<import('next/font/local').default>}
  */
-export const grandCru = localFont({
-  src: [{ path: '../../../public/fonts/GrandCru-LightS.otf', weight: '300' }],
-  variable: '--font-grandcru',
+export const junicode = localFont({
+  src: [
+    {
+      path: '../../../public/fonts/JunicodeVF-Roman.woff2',
+      weight: '300 700',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-junicode',
   display: 'swap',
-  fallback: ['system-ui', 'sans-serif'],
+  fallback: ['Times New Roman', 'Times', 'serif'],
   preload: true,
 });
 
@@ -51,4 +62,4 @@ export const grandCru = localFont({
  * Array of registered fonts for convenience imports.
  * @type {Array<ReturnType<import('next/font/local').default>>}
  */
-export const fonts = [empyrean, stropica, grandCru];
+export const fonts = [empyrean, junicode];

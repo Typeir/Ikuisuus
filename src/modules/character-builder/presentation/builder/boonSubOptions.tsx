@@ -13,6 +13,7 @@
 import type { BloodlineBoonSubOption } from '@/lib/db/content/schemas/bloodlineMetadata';
 import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';
 import { displayAspects } from '@/modules/library/domain/aspects';
+import { ChevronScroll } from '@/lib/components/ui/chevronScroll/ChevronScroll';
 import { AspectGlyphs } from '@/modules/library/presentation/components/Aspects/AspectGlyphs';
 import pipStyles from '../CharacterSheet/proficiencyTrack.module.scss';
 import styles from './boonSubOptions.module.scss';
@@ -91,24 +92,29 @@ export const BoonSubOptions: React.FC<BoonSubOptionsProps> = ({
               aria-checked={isSelected}
               aria-label={option.name}
               disabled={readOnly}
-              className={
+              className={`${
                 pipStyles[isSelected ? 'trackDot-filled' : 'trackDot-empty']
-              }
+              } ${styles.subOptionPip}`}
               onClick={() => onChange(option.name)}
             />
-            <span className={styles.subOptionName}>{option.name}</span>
-            <span className={styles.subOptionCost}>
-              {option.bpValue} {bpUnitLabel}
+            <span className={styles.subOptionText}>
+              <span className={styles.subOptionName}>{option.name}</span>
+              <span className={styles.subOptionCost}>
+                {option.bpValue} {bpUnitLabel}
+              </span>
+              {option.effect && (
+                <span className={styles.subOptionEffect}>
+                  {cleanEffect(option.effect)}
+                </span>
+              )}
             </span>
-            {option.effect && (
-              <span className={styles.subOptionEffect}>
-                {cleanEffect(option.effect)}
-              </span>
-            )}
             {displayAspects(option.tags).length > 0 && (
-              <span className={styles.subOptionAspects}>
-                <AspectGlyphs tags={option.tags} inert max={6} />
-              </span>
+              <ChevronScroll
+                className={styles.subOptionAspects}
+                chevrons='auto'
+                size='sm'>
+                <AspectGlyphs tags={option.tags} inert size='s' />
+              </ChevronScroll>
             )}
           </div>
         );

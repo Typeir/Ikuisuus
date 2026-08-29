@@ -12,7 +12,7 @@
 
 @mixin input-base($font-size: 0.875rem) {
   padding: 0.15rem 0.75rem;
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-m);
   background: var(--color-bg);
   color: var(--color-text);

@@ -8,7 +8,7 @@
 
   .crBadge {
     padding: 0.25rem 0.5rem;
-    border: 1px solid var(--color-accent);
+    border: var(--border-width-xs) solid var(--color-accent);
     border-radius: var(--border-round-s);
     background: var(--color-transparent);
     color: var(--color-accent);
@@ -21,7 +21,7 @@
     position: relative;
     display: inline-block;
     padding: 0.25rem 0.5rem;
-    border: 1px solid var(--color-stratagem);
+    border: var(--border-width-xs) solid var(--color-stratagem);
     border-radius: var(--border-round-s);
     background: rgb(var(--color-stratagem-a15));
     color: var(--color-stratagem);
@@ -42,7 +42,7 @@
     letter-spacing: 0.5px;
     background: var(--ha-badge-bg);
     color: var(--ha-badge-text);
-    border: 1px solid var(--ha-badge-border);
+    border: var(--border-width-xs) solid var(--ha-badge-border);
     white-space: nowrap;
   }
 
@@ -67,7 +67,7 @@
   padding: 0.75rem;
   background: var(--color-bg);
   border-radius: var(--border-round-m);
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
 }
 
 .legendaryDeedsTracker {
@@ -90,7 +90,7 @@
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 2px solid var(--color-accent);
+  border: var(--border-width-s) solid var(--color-accent);
   border-radius: var(--border-round-circle);
   background: var(--color-transparent);
   color: var(--color-accent);
@@ -139,7 +139,7 @@
 
 .resistButton {
   padding: 0.375rem 0.625rem;
-  border: 1px solid var(--color-emphasis);
+  border: var(--border-width-xs) solid var(--color-emphasis);
   border-radius: var(--border-round-s);
   background: var(--color-transparent);
   color: var(--color-emphasis);
@@ -164,7 +164,7 @@
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-s);
   background: var(--color-transparent);
   color: var(--color-secondary);
@@ -195,7 +195,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-s);
   color: var(--color-secondary);
   font-size: 0.875rem;

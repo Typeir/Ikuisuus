@@ -88,7 +88,7 @@ $sweep-duration: $skeleton-sweep-duration;
 
 .inputPlaceholder {
   padding: 0.75rem;
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   background-color: transparent;
   line-height: 1rem;
 
@@ -109,7 +109,7 @@ $sweep-duration: $skeleton-sweep-duration;
 
 .buttonPlaceholder {
   padding: 0.5rem 1rem;
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   background-color: transparent;
   opacity: 0.4;
   line-height: 1rem;
@@ -137,7 +137,7 @@ $sweep-duration: $skeleton-sweep-duration;
 @media (forced-colors: active) {
   .skeleton {
     background: Canvas;
-    border: 1px solid CanvasText; /* gradients are stripped; keep a shape */
+    border: var(--border-width-xs) solid CanvasText; /* gradients are stripped; keep a shape */
     -webkit-mask-image: none; /* an active mask would dice the border */
     mask-image: none;
   }

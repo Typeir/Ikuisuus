@@ -112,7 +112,7 @@
   min-width: 64px;
   min-height: 5.25rem;
   padding: 0.4rem 0.75rem;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-xs);
   background: var(--color-surface);
   backdrop-filter: blur(4px);
@@ -200,7 +200,7 @@
   justify-content: center;
   width: 1.2rem;
   height: 1.2rem;
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-xs);
   background: transparent;
   color: var(--color-text);

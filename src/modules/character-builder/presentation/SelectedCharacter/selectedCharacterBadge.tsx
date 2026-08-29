@@ -36,9 +36,12 @@ import styles from './selectedCharacterBadge.module.scss';
  * @interface SelectedCharacterBadgeProps
  * @property {'up' | 'down'} [dropDirection='up'] - Direction the picker
  * expands. Defaults to 'up'.
+ * @property {'start' | 'end'} [deselectSide='end'] - Corner the deselect
+ * control hangs off; `start` for a badge at the end of a bar.
  */
 interface SelectedCharacterBadgeProps {
   dropDirection?: 'up' | 'down';
+  deselectSide?: 'start' | 'end';
 }
 
 /**
@@ -48,10 +51,12 @@ interface SelectedCharacterBadgeProps {
  * @component
  * @param {SelectedCharacterBadgeProps} props - Component props
  * @param {'up' | 'down'} [props.dropDirection='up'] - Direction the picker expands. Defaults to 'up'.
+ * @param {'start' | 'end'} [props.deselectSide='end'] - Corner the deselect control hangs off
  * @returns {JSX.Element | null} Rendered badge or null pre-hydration
  */
 export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
   dropDirection = 'up',
+  deselectSide = 'end',
 }) => {
   const t = useTranslations('layout');
   const tCommon = useTranslations('common');
@@ -143,7 +148,7 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
           title={active ? activeName : t('characterBadge.ariaToggle')}>
           {active ? (
             <span className={styles.avatar} aria-hidden='true'>
-              {initial}
+              <p>{initial}</p>
             </span>
           ) : (
             <span
@@ -155,7 +160,10 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
         </button>
 
         {active && (
-          <span className={styles.deselectWrap}>
+          <span
+            className={`${styles.deselectWrap} ${
+              deselectSide === 'start' ? styles.deselectWrapStart : ''
+            }`}>
             <Tooltip
               content={t('characterBadge.deselect')}
               placement='top'
@@ -195,7 +203,7 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
                     }`}
                     onClick={() => handleSelect(char.id)}>
                     <span className={styles.itemAvatar} aria-hidden='true'>
-                      {name.charAt(0).toUpperCase()}
+                      <span>{name.charAt(0).toUpperCase()}</span>
                     </span>
                     <span className={styles.itemName}>{name}</span>
                     <span className={styles.itemMeta}>

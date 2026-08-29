@@ -22,7 +22,6 @@
 import btn from '@/styles/buttons.module.scss';
 import { EmbedLinkBridge, isEmbedPathname } from '@/lib/embed';
 import FlashlightLayer from '@/lib/components/flashlight/FlashlightLayer';
-import Icon from '@/lib/components/icon/icon';
 import { PreferencesModal } from '@/lib/components/preferences/PreferencesModal';
 import { ThemeToggleButton } from '@/lib/components/themeToggle/ThemeToggleButton';
 import themeToggleStyles from '@/lib/components/themeToggle/themeToggle.module.scss';
@@ -30,7 +29,6 @@ import { NotificationProvider } from '@/lib/components/ui';
 import {
   useSidebarMenuActions,
   useSidebarMenuState,
-  useThemeState,
 } from '@/lib/context/PersistentUiContext';
 import { SelectedCharacterBadge } from '@/modules/character-builder';
 import { SidebarShell } from '@/modules/navigation-sidebar';
@@ -44,11 +42,13 @@ import { SlidersHorizontal, Wrench } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type { JSX } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import cn from '../../../lib/utils/classNameMerge';
+import { MobileTitleBar } from './mobileTitleBar';
 import styles from './responsiveLayoutShell.module.scss';
+import { useThemeChangedEvent } from './useThemeChangedEvent';
 
 /**
  * Sidebar navigation item with optional nested children.
@@ -85,34 +85,16 @@ function BaseResponsiveLayoutShell({
   const { isOpen: open } = useSidebarMenuState();
   const { toggle: toggleSidebar, close: closeSidebar } =
     useSidebarMenuActions();
-  const { theme: currentTheme } = useThemeState();
-  const [mounted, setMounted] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const t = useTranslations('layout');
   const tPreferences = useTranslations('preferences');
-  const params = useParams();
   const router = useRouter();
-  const locale = params?.locale as string;
   const toolItems = useToolRegistry();
 
   const pathname = usePathname();
   const isEmbed = isEmbedPathname(pathname ?? '');
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  /**
-   * Dispatch `ik:theme-changed` CustomEvent on window with current theme.
-   */
-  useEffect(() => {
-    if (!mounted) return;
-    window.dispatchEvent(
-      new CustomEvent('ik:theme-changed', {
-        detail: { theme: currentTheme },
-      }),
-    );
-  }, [currentTheme, mounted]);
+  useThemeChangedEvent();
 
   /**
    * In embed mode, render only the bare page content — no sidebar, no header.
@@ -155,50 +137,19 @@ function BaseResponsiveLayoutShell({
         onClose={() => setPreferencesOpen(false)}
       />
       <div className='sidebar-container flex flex-col lg:flex-row min-h-screen relative max-w-full'>
-        {/* Sticky Mobile Title Bar: four equal icon slots flanking a
-            centered search bar — logo, theme, search, character, hamburger.
-            The search bar lives here on mobile; the sidebar's copy is
-            desktop-only. */}
-        <div
-          className={`mobile-title-bar solid lg:hidden fixed top-0 left-0 w-full z-40 flex items-center gap-1 px-2 border-b bg-background shadow-sm max-w-full ${styles.mobileTitleBar}`}
-        >
-          <Link
-            href='/'
-            className={styles.headerIconSlot}
-            aria-label={t('libraryTitle')}
-          >
-            <Image
-              src='/logo.png'
-              alt={t('libraryTitle')}
-              className='w-7 h-7'
-              width={32}
-              height={32}
-            />
-          </Link>
-          {themeToggle(styles.headerIconSlot)}
-          {preferencesButton(styles.headerIconSlot)}
-          <div className={`flex-1 min-w-0 px-1 ${styles.headerSearchSlot}`}>
-            <SearchBar onNavigate={closeSidebar} />
-          </div>
-          <div className={styles.headerIconSlot}>
-            <SelectedCharacterBadge dropDirection='down' />
-          </div>
-          <button
-            onClick={toggleSidebar}
-            className={cn(
-              btn.tertiary,
-              themeToggleStyles.themeToggle,
-              styles.headerIconSlot,
-            )}
-            aria-label={t('toggleSidebar')}
-          >
-            <Icon
-              type='hamburger'
-              className={`${styles.hamburger} ${open ? styles.isOpen : ''} w-4 h-4`}
-              aria-hidden='true'
-            />
-          </button>
-        </div>
+        {/* The search bar lives in the title bar on mobile; the sidebar's
+            copy is desktop-only. */}
+        <MobileTitleBar
+          open={open}
+          onToggle={toggleSidebar}
+          onNavigate={closeSidebar}
+          controls={
+            <>
+              {themeToggle(styles.headerIconSlot)}
+              {preferencesButton(styles.headerIconSlot)}
+            </>
+          }
+        />
 
         {/* Scrim: dims the page behind the open mobile menu and closes it on
             tap. Always mounted so it fades in and out. */}
@@ -282,7 +233,7 @@ function BaseResponsiveLayoutShell({
 
           {/* Footer Region: Non-scrolling Tools + Selected Character */}
           <div
-            className='sidebar-footer border-t px-3 lg:px-4 py-2'
+            className='sidebar-footer relative border-t px-3 lg:px-4 py-2'
             style={{ flexShrink: 0 }}
           >
             <div className={styles.footerRow}>
@@ -309,7 +260,10 @@ function BaseResponsiveLayoutShell({
         </aside>
 
         {/* Main Content */}
-        <main className={`flex-1 p-4 sm:p-10 ${styles.mainContent}`}>
+        {/* `min-w-0`: a flex item's automatic minimum is its content's
+            min-content width, so a wide scroller inside (an unpacked aspect
+            carousel, a table) would otherwise widen main and shove the page. */}
+        <main className={`flex-1 min-w-0 p-4 sm:p-10 ${styles.mainContent}`}>
           {children}
         </main>
       </div>

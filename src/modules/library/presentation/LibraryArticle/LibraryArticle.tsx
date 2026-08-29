@@ -6,7 +6,8 @@
  * @since 6.0.0
  */
 
-import type { JSX, CSSProperties, ReactNode } from 'react';
+import { streamStyle } from '@/lib/components/stream/StreamRail';
+import type { JSX, ReactNode } from 'react';
 import styles from './LibraryArticle.module.scss';
 
 /**
@@ -37,9 +38,7 @@ export function LibraryArticle({
   containerClassName,
 }: LibraryArticleProps): JSX.Element {
   const wrapperClassName = containerClassName ?? 'prose prose-invert mx-auto';
-  const wrapperStyle = streamText
-    ? ({ ['--stream-text' as string]: `'${streamText}'` } as CSSProperties)
-    : undefined;
+  const wrapperStyle = streamText ? streamStyle(streamText) : undefined;
 
   return (
     <div className={wrapperClassName} style={wrapperStyle}>

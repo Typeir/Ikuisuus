@@ -48,4 +48,22 @@ describe('extractKeywordRefs', () => {
     const source = 'line one [# kw:briefly #]\nline two [# kw:accuracy #]';
     expect(extractKeywordRefs(source)).toEqual(['accuracy', 'briefly']);
   });
+
+  it('skips a reference inside an inline code span', () => {
+    expect(
+      extractKeywordRefs('Write it as `[# kw:condition;blinded #]` in prose.'),
+    ).toEqual([]);
+  });
+
+  it('skips references inside a fenced block', () => {
+    const source = [
+      'Real one: [# kw:condition;prone #]',
+      '',
+      '```md',
+      '[# kw:condition;blinded #]',
+      '```',
+    ].join('\n');
+
+    expect(extractKeywordRefs(source)).toEqual(['condition;prone']);
+  });
 });

@@ -1,0 +1,43 @@
+/**
+ * Rhombus — a square control turned 45° with its content turned back, so the
+ * box reads as a diamond while icons and text stay upright. PoC for the
+ * un-roundened, terminal-and-Greek-architecture idiom: a square token scale
+ * plus this turns every circular control into a lozenge.
+ *
+ * Uses the individual `rotate` property rather than `transform`, so a
+ * consumer's own `transform` (hover scale, carousel translate) keeps
+ * composing with it. Only element children turn back; a control that holds
+ * bare text should wrap it.
+ *
+ * A square reads heavier than the circle it replaces, so rhombus boxes give
+ * up `$rhombus-area` of their surface — each side scales by its square root —
+ * while the sigil inside keeps its own size.
+ *
+ * @mixin rhombus
+ * @param {Angle} $angle - Turn applied to the box; direct children get the inverse
+ * @mixin rhombus-size
+ * @param {Length} $size - The box's unshrunk side; width and height come out scaled
+ */
+@use 'sass:math';
+
+/** Surface kept, as a fraction of the square box: 1 − 7.5%. */
+$rhombus-area: 0.925;
+
+/** Per-side scale that yields `$rhombus-area`. */
+$rhombus-side: math.sqrt($rhombus-area);
+
+/** Margin fraction that recentres a shrunk box inside its unshrunk slot. */
+$rhombus-inset: math.div(1 - $rhombus-side, 2);
+
+@mixin rhombus($angle: 45deg) {
+  rotate: $angle;
+
+  > * {
+    rotate: -$angle;
+  }
+}
+
+@mixin rhombus-size($size) {
+  width: $size * $rhombus-side;
+  height: $size * $rhombus-side;
+}

@@ -6,7 +6,7 @@
  */
 
 .shardCard {
-  border: 1px solid var(--color-border-secondary);
+  border: var(--border-width-xs) solid var(--color-border-secondary);
   border-radius: var(--border-round-m);
   overflow: hidden;
   background: var(--color-bg-secondary);
@@ -67,8 +67,9 @@
 .shardBpBadge,
 .shardLevelBadge {
   font-size: 0.65rem;
-  padding: 0.1rem 0.35rem;
+  padding: 0.1rem calc(0.35rem + var(--pill-chamfer-pad)) 0.1rem calc(0.35rem + var(--pill-chamfer-pad));
   border-radius: var(--border-round-pill);
+  corner-shape: var(--corner-shape-pill);
   background: var(--color-accent);
   color: var(--color-bg);
   font-weight: 700;
@@ -78,12 +79,12 @@
 
 .shardAspects {
   padding: 0.5rem 0.6rem 0.4rem;
-  border-top: 1px dashed var(--color-border-secondary);
+  border-top: var(--border-width-xs) dashed var(--color-border-secondary);
 }
 
 .shardBody {
   padding: 0.5rem 0.75rem 0.75rem;
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: var(--border-width-xs) solid var(--color-border-secondary);
 }
 
 .shardText {
@@ -129,7 +130,7 @@
   }
 
   blockquote {
-    border-left: 2px solid var(--color-border);
+    border-left: var(--border-width-s) solid var(--color-border);
     margin: 0.5rem 0;
     padding: 0.25rem 0.75rem;
     color: var(--color-secondary);
@@ -143,7 +144,7 @@
     margin: 0.5rem 0;
     border-collapse: separate;
     border-spacing: 0;
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-width-xs) solid var(--color-border-secondary);
     border-radius: var(--border-round-m);
     overflow: hidden;
     font-size: 0.8rem;
@@ -154,7 +155,7 @@
     padding: 0.3rem 0.5rem;
     text-align: left;
     vertical-align: top;
-    border-bottom: 1px solid var(--color-border-secondary);
+    border-bottom: var(--border-width-xs) solid var(--color-border-secondary);
   }
 
   th {
@@ -165,7 +166,7 @@
 
   th + th,
   td + td {
-    border-left: 1px solid var(--color-border-secondary);
+    border-left: var(--border-width-xs) solid var(--color-border-secondary);
   }
 
   tr:last-child td {

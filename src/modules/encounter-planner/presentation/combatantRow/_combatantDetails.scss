@@ -13,7 +13,7 @@
   min-width: 200px;
   padding: 0.75rem;
   background: var(--color-bg);
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-m);
   display: flex;
   flex-direction: column;
@@ -45,7 +45,7 @@
     .heroicAffix {
       padding: 0.25rem 0.5rem;
       background: var(--color-bg);
-      border: 1px solid var(--color-accent);
+      border: var(--border-width-xs) solid var(--color-accent);
       border-radius: var(--border-round-s);
       color: var(--color-accent);
       text-decoration: none;
@@ -83,7 +83,7 @@
   justify-content: flex-start;
   gap: 0.5rem;
   padding: 0.75rem;
-  border: 1px solid var(--color-secondary);
+  border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-m);
 
   .label {
@@ -128,7 +128,7 @@
 }
 
 .detailsSection {
-  border-top: 1px solid var(--color-secondary);
+  border-top: var(--border-width-xs) solid var(--color-secondary);
   padding-top: 0.75rem;
 
   > div {

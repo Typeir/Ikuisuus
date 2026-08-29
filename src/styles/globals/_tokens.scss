@@ -10,11 +10,11 @@
   --springy-bezier: #{$transition-ease-springy};
 }
 
-/* Typeface roles. `next/font` in `src/app/fonts` writes `--font-initialem`,
-   `--font-stropica` and `--font-grandcru` onto the root element. `--font-default`
-   is the body stack and the tail of every role's fallback chain; `--font-mono`
-   backs the code and data surfaces. Headings use the system Times face, whose glyphs
-   sit closest to the ornament lettering in Empyrean Initialem. */
+/* Typeface roles. `next/font` in `src/app/fonts` writes `--font-initialem` and
+   `--font-junicode` onto the root element. `--font-default` is the body stack
+   and the tail of every role's fallback chain; `--font-mono` backs the code
+   and data surfaces. Headings use Junicode, whose glyphs sit closest to the
+   ornament lettering in Empyrean Initialem. */
 :root {
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
@@ -22,7 +22,7 @@
   --font-default:
     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
-  --font-headings: 'Times New Roman', Times, serif;
+  --font-headings: var(--font-junicode), 'Times New Roman', Times, serif;
 }
 
 /* Safe-area insets. `env()` resolves to 0px wherever the UA does not expose
@@ -51,8 +51,36 @@
   --border-round-l: 0px;
   --border-round-xl: 0px;
   --border-round-2xl: 0px;
-  --border-round-pill: 0px;
+  --border-round-pill: 999px;
   --border-round-circle: 0%;
+  /* PoC: pills keep their radius but chamfer it — `bevel` cuts each corner
+     back by half the height, so a pill ends in points (<===>) instead of
+     arcs. Browsers without `corner-shape` ignore it and draw the round pill;
+     `round` here restores the arcs everywhere. */
+  --corner-shape-pill: bevel;
+  /* Extra inline padding a chamfered pill needs so its text clears the cut;
+     zero wherever `corner-shape` is unsupported and the pill stays round. */
+  --pill-chamfer-pad: 0px;
+}
+
+@supports (corner-shape: bevel) {
+  :root {
+    --pill-chamfer-pad: 0.45em;
+  }
+}
+
+/* Border widths. Same idea as the radii: one scale behind every border stroke
+   so line weight can be tuned site-wide from this block. Hairline is the
+   default stroke; `s` carries emphasis rings and dividers, `m`/`l` the few
+   heavy rules (active tabs, gradient frames). Focus rings draw with
+   `--outline-width`, kept apart so the ring can be tuned without moving
+   every border. */
+:root {
+  --border-width-xs: 1px;
+  --border-width-s: 2px;
+  --border-width-m: 3px;
+  --border-width-l: 4px;
+  --outline-width: 1px;
 }
 
 /* Media max-width tokens (px) — used for JS/CSS responsive helpers */

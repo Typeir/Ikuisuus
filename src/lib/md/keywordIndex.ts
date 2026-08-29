@@ -86,8 +86,16 @@ export function contributeKeyword(
   }
 
   const existing = entry.values.get(value.anchor);
-  if (existing) existing.push(value);
-  else entry.values.set(value.anchor, [value]);
+  if (!existing) {
+    entry.values.set(value.anchor, [value]);
+    return;
+  }
+
+  /* A page that both declares `keywords:` and is indexed wholesale would
+     otherwise claim the same anchor twice and read as a collision. */
+  if (existing.some((held) => held.filePath === value.filePath)) return;
+
+  existing.push(value);
 }
 
 /**

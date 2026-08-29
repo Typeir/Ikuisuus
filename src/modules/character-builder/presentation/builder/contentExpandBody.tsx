@@ -2,8 +2,8 @@
  * @fileoverview Content Expand Body
  * @description Renders the prose body of a content item (feat, boon, etc.)
  * inline below its picker row. Fetches the heading block via the DB-backed
- * `/api/content-shards/[type]/[slug]` endpoint lazily on mount and renders
- * it as HTML via the markdown renderer.
+ * `/api/content-shards/[type]/[slug]` endpoint lazily on mount and compiles it
+ * with the runtime MDX compiler, so units, dice and keywords stay live.
  * @module lib/components/characterSheet/builder/contentExpandBody
  * @version 1.0.0
  * @author Typeir
@@ -15,8 +15,10 @@
 import { FetchError } from '@/lib/fetch/fetcher';
 import { useContentShardSingle } from '@/lib/hooks/data/useContentShard';
 import type { ContentShardType } from '@/modules/character-builder/presentation/shards/contentShardPanel';
+import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
+import { mdxComponents } from '@/modules/library/presentation';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import expandStyles from './boonExpand.module.scss';
 
@@ -61,7 +63,6 @@ export const ContentExpandBody: React.FC<ContentExpandBodyProps> = ({
   const tCommon = useTranslations('common');
   const locale = useLocale();
   const [bodyText, setBodyText] = useState<string>(cachedText ?? '');
-  const [renderedHtml, setRenderedHtml] = useState<string>('');
   const haveText = bodyText.length > 0;
 
   const {
@@ -84,21 +85,14 @@ export const ContentExpandBody: React.FC<ContentExpandBodyProps> = ({
     }
   }, [shardData, haveText, contentKey]);
 
-  useEffect(() => {
-    if (!bodyText) {
-      setRenderedHtml('');
-      return;
+  const rendered = useMemo(() => {
+    if (!bodyText) return null;
+    try {
+      return compileRuntimeSync({ source: bodyText, components: mdxComponents })
+        .content;
+    } catch {
+      return bodyText;
     }
-    let cancelled = false;
-    void import('@/lib/md/renderMarkdownToHtml').then(
-      ({ renderMarkdownToHtml }) =>
-        renderMarkdownToHtml(bodyText).then((html) => {
-          if (!cancelled) setRenderedHtml(html);
-        }),
-    );
-    return () => {
-      cancelled = true;
-    };
   }, [bodyText]);
 
   return (
@@ -110,12 +104,7 @@ export const ContentExpandBody: React.FC<ContentExpandBodyProps> = ({
         </p>
       )}
       {!loading && !error && (
-        <div
-          className={styles.shardMarkdown}
-          dangerouslySetInnerHTML={{
-            __html: renderedHtml || (bodyText ? '' : '—'),
-          }}
-        />
+        <div className={styles.shardMarkdown}>{rendered ?? '—'}</div>
       )}
     </div>
   );

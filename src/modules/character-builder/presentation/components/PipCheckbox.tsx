@@ -92,7 +92,9 @@ export const PipCheckbox: React.FC<PipCheckboxProps> = ({
       disabled={disabled}
       className={pipDotClass(size, checked)}
       onClick={() => onChange(!checked)}>
-      {size === 'lg' ? (checked ? '●' : '○') : null}
+      {size === 'lg' ? (
+        <span aria-hidden='true'>{checked ? '⬧' : '⬨'}</span>
+      ) : null}
     </button>
     {label != null && <span className={styles.pipLabel}>{label}</span>}
   </span>

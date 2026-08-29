@@ -1,5 +1,5 @@
 .collapsible {
-  border: 1px solid var(--color-border);
+  border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-m);
   margin-bottom: 0.75rem;
   background: var(--color-surface);
@@ -55,7 +55,7 @@
 
 .content {
   padding: 0.5rem 1rem 1rem;
-  border-top: 1px solid var(--color-border);
+  border-top: var(--border-width-xs) solid var(--color-border);
   color: var(--color-text);
   --gradient-tabs-surface: var(--color-bg);
   --gradient-tabs-well: var(--color-transparent);

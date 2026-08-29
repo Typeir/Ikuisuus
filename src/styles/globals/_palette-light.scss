@@ -1,13 +1,13 @@
 html[data-theme='light'] {
-  --color-bg: #ffffff;
-  --color-bg-secondary: #f3f4f6;
-  --color-bg-tertiary: #e5e7eb;
+  --color-bg: #fdfdf7;
+  --color-bg-secondary: #e7eaef;
+  --color-bg-tertiary: #dbdee4;
   --color-text: #1f2937;
   --color-text-secondary: #6b7280;
   --color-accent: #0070f3;
   --color-accent-hover: #0056d6;
-  --color-surface: #f4f4f5;
-  --color-border: #e5e7eb;
+  --color-surface: #eeecec;
+  --color-border: #d1ceca;
   /* Light theme borders are already legible — no elevated variant needed. */
   --color-border-secondary: var(--color-border);
 
