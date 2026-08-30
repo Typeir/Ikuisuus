@@ -1,0 +1,50 @@
+/**
+ * IconLink atom. Ghost text with the glyph trailing; accent + glow on hover.
+ *
+ * @module lib/components/ui/iconLink/iconLink.module
+ */
+
+@use 'mixins' as *;
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1;
+  transition:
+    color 0.15s ease,
+    filter 0.15s ease;
+
+  svg {
+    flex: none;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-accent);
+    outline: none;
+    filter: drop-shadow(0 0 6px var(--color-accent));
+  }
+
+  @media (forced-colors: active) {
+    &:focus-visible {
+      outline: var(--outline-width) solid CanvasText;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.label {
+  font-weight: 600;
+}
+
+.s {
+  font-size: 0.7rem;
+}
+
+.m {
+  font-size: 0.75rem;
+}

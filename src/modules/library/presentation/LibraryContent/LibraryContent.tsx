@@ -91,10 +91,13 @@ export const LibraryContent = async ({
         <h1 className='text-4xl font-mono font-black mb-6'>
           {resolved.slugPath}
         </h1>
-        <LibraryArticle containerClassName='mx-auto'>
+        <LibraryArticle
+          containerClassName='mx-auto'
+          titleAction={
+            <EditPageButton slug={resolved.slugPath} locale={locale} />
+          }>
           <ClientRenderer locale={locale} slug={resolved.slugPath} />
         </LibraryArticle>
-        <EditPageButton slug={resolved.slugPath} locale={locale} />
       </div>
     );
   }
@@ -104,13 +107,16 @@ export const LibraryContent = async ({
       <HashNavigationProvider />
       <SectionTrack />
       <ArticleMetadataProvider metadata={resolved.articleMetadata}>
-        <LibraryArticle streamText={resolved.streamText}>
+        <LibraryArticle
+          streamText={resolved.streamText}
+          titleAction={
+            <EditPageButton slug={resolved.slugPath} locale={locale} />
+          }>
           <KeywordShardProvider shards={resolved.shards ?? []}>
             {resolved.evalResult.content}
           </KeywordShardProvider>
         </LibraryArticle>
       </ArticleMetadataProvider>
-      <EditPageButton slug={resolved.slugPath} locale={locale} />
     </DraftOverlay>
   );
 };

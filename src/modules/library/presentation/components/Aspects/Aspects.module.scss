@@ -134,6 +134,17 @@ span.aspect {
   }
 }
 
+/* Expand toggle. The rhombus IconButton keeps its glyph upright by counter-
+   rotating it; expanded, the plus stops counter-rotating and inherits the
+   box's 45°, so it reads as a cross. */
+.toggle > svg {
+  transition: rotate 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:global(html[data-aspect-expanded='true']) .toggle > svg {
+  rotate: 0deg;
+}
+
 /* The remove IconButton inherits the pill's own hue. */
 .removable {
   --icon-btn-tone: var(--aspect-fg);

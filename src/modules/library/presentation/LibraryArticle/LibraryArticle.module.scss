@@ -10,11 +10,23 @@
     color 0.2s ease;
 }
 
+/* The title rule: the h1 underlines the full prose measure and names itself as
+   an anchor so the title action can sit on the rule's right end. */
+$title-rule-gap: 0.35rem;
+
 .markdown {
   composes: mdxContent from '../../../../styles/mdxContent.module.scss';
+  position: relative;
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
+
+  h1 {
+    anchor-name: --article-title;
+    padding-bottom: $title-rule-gap;
+    border-bottom: var(--border-width-xs) solid var(--color-border);
+  }
+
   /* Measure, in characters — the only unit that holds a constant line length.
      A viewport width does not: 50vw ran 85 characters at 1280 and 170 at 2560,
      and drifted again with browser zoom. 100ch is the permissive end of the
@@ -144,4 +156,25 @@
       }
     }
   }
+}
+
+/* Sits on the rule at its right end; bottom edge meets the h1 text bottom. */
+.titleAction {
+  position: absolute;
+  right: 0;
+  top: calc(var(--title-bottom, 0px) - #{$title-rule-gap});
+  translate: 0 -100%;
+  visibility: var(--title-action-visibility, hidden);
+
+  @supports (anchor-name: --a) {
+    position-anchor: --article-title;
+    top: auto;
+    translate: none;
+    bottom: calc(anchor(bottom) + #{$title-rule-gap});
+    visibility: visible;
+  }
+}
+
+.markdown[style*='--title-bottom'] .titleAction {
+  --title-action-visibility: visible;
 }

@@ -73,6 +73,7 @@ const ExpandToggle: React.FC = () => {
       size='l'
       tone={expanded ? 'danger' : 'accent'}
       aria-pressed={expanded}
+      className={styles.toggle}
       label={expanded ? t('collapse') : t('expand')}
       onClick={() =>
         dispatch({
