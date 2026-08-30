@@ -12,7 +12,6 @@
  * @requires react React hooks for memos
  * @requires next-intl useTranslations for internationalized translations
  * @requires @/lib/components/ui Tooltip component
- * @requires @/lib/components/icon Icon component for lock icons
  * @requires @/modules/encounter-planner/domain/combat/inProgressCombat.types Combatant type definitions
  * @requires @/lib/utils/heroicAwakeningStyles Awakening class computation
  * @requires ../playMode/CombatantContext useCombatant hook for context
@@ -24,7 +23,6 @@
 
 'use client';
 
-import Icon from '@/lib/components/icon/icon';
 import { Tooltip } from '@/lib/components/ui';
 import {
     AwakeningClassResult,
@@ -34,7 +32,6 @@ import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useRef } from 'react';
 import styles from './combatantRow.module.scss';
-import btn from '@/styles/buttons.module.scss';
 import { useCombatant } from './utils/context/combatantContext';
 import { useEditableField } from './utils/useEditableField';
 
@@ -148,16 +145,12 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
           content={isStatsLocked ? t('unlockStats') : t('lockStats')}
           placement='top'
           showClickIcon={false}>
-          <button
+          <IconButton
+            kind={isStatsLocked ? 'lock' : 'unlock'}
+            label={isStatsLocked ? t('unlockStats') : t('lockStats')}
             onClick={() => onToggleLock('stats')}
-            className={`${btn.icon} ${styles.lockToggle}`}
-            aria-label={isStatsLocked ? t('unlockStats') : t('lockStats')}
-            data-testid='lock-toggle'>
-            <Icon
-              type={isStatsLocked ? 'lock' : 'unlock'}
-              className={styles.lockIcon}
-            />
-          </button>
+            className={styles.lockToggle}
+          />
         </Tooltip>
       )}
       <input

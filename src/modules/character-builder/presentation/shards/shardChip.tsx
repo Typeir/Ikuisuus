@@ -23,7 +23,7 @@ import type { ContentShardResponse } from '@/lib/types/api.d';
 import type { CharacterShard } from '@/lib/types/character';
 import { shardToPreview } from '@/modules/character-builder/lib/utils/shardToPreview';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
-import { cleanTruncatedMdx } from '@/modules/library/infrastructure/content/cleanTruncatedMdx';
+import { truncateMdxSource } from '@/lib/md/truncateMdx';
 import { mdxComponents } from '@/modules/library/presentation';
 import { useLocale } from 'next-intl';
 import type { ReactNode } from 'react';
@@ -96,15 +96,18 @@ const ShardChipImpl: React.FC<ShardChipProps> = ({
     ? COLOR_TO_VARIANT[color]
     : CATEGORY_TO_VARIANT[shard.category];
 
+/** Rendered characters a chip preview shows before it is cut. */
+const PREVIEW_CHARS = 150;
+
   const fetchContent = useCallback(async (): Promise<ReactNode> => {
     let source: string;
 
     if (shard.cachedText) {
       const raw = shard.cachedText;
-      source =
-        raw.length > 150
-          ? cleanTruncatedMdx(raw.slice(0, 150)) + '\u2026'
-          : cleanTruncatedMdx(raw);
+      source = truncateMdxSource(raw, {
+        maxChars: PREVIEW_CHARS,
+        ellipsis: true,
+      }).source;
     } else if (previewData) {
       const url = urlForContentShard(
         previewData.kind,
@@ -125,10 +128,10 @@ const ShardChipImpl: React.FC<ShardChipProps> = ({
         }
       }
       const raw = data?.shards.main ?? '';
-      source =
-        raw.length > 150
-          ? cleanTruncatedMdx(raw.slice(0, 150)) + '\u2026'
-          : cleanTruncatedMdx(raw);
+      source = truncateMdxSource(raw, {
+        maxChars: PREVIEW_CHARS,
+        ellipsis: true,
+      }).source;
       if (!source) return shard.heading;
     } else {
       return shard.heading;

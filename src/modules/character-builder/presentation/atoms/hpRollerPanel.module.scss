@@ -206,35 +206,6 @@
 }
 
 /**
- * Per-die icon action button (roll / average). Transparent — global button
- * fill guarded off.
- */
-.iconBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.15rem;
-  border: none;
-  border-radius: var(--border-round-xs);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: color 0.15s ease;
-
-  &:hover,
-  &:disabled {
-    background: transparent;
-  }
-
-  &:hover:not(:disabled),
-  &:focus-visible {
-    background: transparent;
-    color: var(--color-accent);
-  }
-}
-
-/**
  * Inline "set all" value row, revealed by the Set All action.
  */
 .setAllRow {

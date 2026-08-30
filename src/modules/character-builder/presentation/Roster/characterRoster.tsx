@@ -60,7 +60,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
       const stored = window.localStorage.getItem(ROSTER_COLLAPSED_KEY);
       if (stored === 'true') setCollapsed(true);
     } catch {
-      /** storage unavailable â€” non-fatal */
+      /** storage unavailable — non-fatal */
     }
   }, []);
 
@@ -70,7 +70,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
       try {
         window.localStorage.setItem(ROSTER_COLLAPSED_KEY, String(next));
       } catch {
-        /** storage unavailable â€” non-fatal */
+        /** storage unavailable — non-fatal */
       }
       return next;
     });

@@ -65,8 +65,7 @@
   color: var(--color-text-secondary);
 }
 
-// .logoutButton → btn.dangerOutline, .dismissButton → btn.iconDanger
-// (migrated to src/styles/buttons.module.scss)
+// .logoutButton → btn.dangerOutline, .dismissButton → IconButton atom
 
 .statusError {
   color: var(--color-error);

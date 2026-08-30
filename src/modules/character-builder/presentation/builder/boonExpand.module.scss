@@ -42,6 +42,19 @@
   }
 }
 
+.chevron {
+  display: inline-flex;
+  transition: transform 0.15s ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
 .boonExpandBody {
   padding: 0.5rem 0.75rem 0.75rem;
   border-top: var(--border-width-xs) solid var(--color-border-secondary);

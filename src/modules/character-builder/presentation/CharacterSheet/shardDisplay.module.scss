@@ -49,6 +49,16 @@
 
 .shardChevron {
   color: var(--color-secondary);
+  display: inline-flex;
+  transition: transform 0.15s ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.shardChevronOpen {
+  transform: rotate(90deg);
 }
 
 .shardHeading {

@@ -10,7 +10,7 @@
 
 'use client';
 
-import { Lock, LockOpen } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheet.module.scss';
@@ -29,15 +29,14 @@ export const LockBtn = memo(
   ({ isUnlocked, toggle, k }: LockBtnProps) => {
     const t = useTranslations('characterSheet');
     const unlocked = isUnlocked(k);
-    const Icon = unlocked ? LockOpen : Lock;
     return (
-      <button
-        type='button'
-        className={`${styles.lockToggle} ${unlocked ? styles.lockUnlocked : ''}`}
-        aria-label={unlocked ? t('lockUnlock') : t('lockLocked')}
-        onClick={() => toggle(k)}>
-        <Icon size={11} strokeWidth={2.5} aria-hidden='true' />
-      </button>
+      <IconButton
+        kind={unlocked ? 'unlock' : 'lock'}
+        size='xs'
+        label={unlocked ? t('lockUnlock') : t('lockLocked')}
+        onClick={() => toggle(k)}
+        className={styles.lockToggle}
+      />
     );
   },
 );

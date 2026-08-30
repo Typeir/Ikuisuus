@@ -12,12 +12,7 @@
 
 'use client';
 
-import {
-  ChevronDown,
-  ChevronRight,
-  Minus,
-  SquareArrowOutUpRight,
-} from 'lucide-react';
+import { ChevronRight, Minus, SquareArrowOutUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 import type { ContentShardType } from '../shards/contentShardPanel';
@@ -139,7 +134,6 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   multiSelect,
   aspects,
 }) => {
-  const Chevron = expanded ? ChevronDown : ChevronRight;
   const isSelected = multiSelect ? multiSelect.count > 0 : selected;
 
   const handlePrimary = () => {
@@ -194,7 +188,11 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
             aria-expanded={expanded}
             aria-controls={bodyId}
             aria-label={expandLabel}>
-            <Chevron size={14} aria-hidden='true' />
+            <span
+              className={`${expandStyles.chevron} ${expanded ? expandStyles.chevronOpen : ''}`}
+              aria-hidden='true'>
+              <ChevronRight size={14} />
+            </span>
           </button>
         </div>
       </div>

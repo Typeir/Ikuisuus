@@ -18,7 +18,7 @@ import type { CharacterShard } from '@/lib/types/character';
 import { shardToPreview } from '@/modules/character-builder/lib/utils/shardToPreview';
 import { ContentExpandBody } from '@/modules/character-builder/presentation/builder/contentExpandBody';
 import type { ContentShardType } from '@/modules/character-builder/presentation/shards/contentShardPanel';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
@@ -78,7 +78,6 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
   const expandLabel = expanded
     ? t('shardCollapseAria', { name: shard.heading })
     : t('shardExpandAria', { name: shard.heading });
-  const Chevron = expanded ? ChevronDown : ChevronRight;
 
   return (
     <div
@@ -90,8 +89,10 @@ export const ShardDisplay: React.FC<ShardDisplayProps> = ({
         aria-expanded={expanded}
         aria-controls={bodyId}
         aria-label={expandLabel}>
-        <span className={styles.shardChevron} aria-hidden='true'>
-          <Chevron size={14} />
+        <span
+          className={`${styles.shardChevron} ${expanded ? styles.shardChevronOpen : ''}`}
+          aria-hidden='true'>
+          <ChevronRight size={14} />
         </span>
         <span className={styles.shardHeading}>{shard.heading}</span>
         <span className={styles.shardCategory}>{categoryLabel}</span>

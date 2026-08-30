@@ -7,7 +7,7 @@
  * unless the call site inherits it from `--icon-btn-tone` on an ancestor.
  *
  * @module lib/components/ui/iconButton/IconButton
- * @version 1.3.0
+ * @version 1.5.0
  * @author Typeir
  * @since 3.1.0
  */
@@ -15,7 +15,21 @@
 'use client';
 
 import { cn } from '@/lib/utils/classNameMerge';
-import { Plus, Trash2, X } from 'lucide-react';
+import {
+  Braces,
+  Dices,
+  Eye,
+  EyeOff,
+  FileText,
+  Lock,
+  LockOpen,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Sigma,
+  Trash2,
+  X,
+} from 'lucide-react';
 import {
   forwardRef,
   type ButtonHTMLAttributes,
@@ -25,11 +39,26 @@ import {
 import styles from './iconButton.module.scss';
 
 /**
- * Glyph and default tone. `close` and `delete` glow danger, `add` glows accent.
+ * Glyph and default tone. `close` and `delete` glow danger; every other kind
+ * glows accent. Toggle sites swap the kind (`preview`/`previewOff`,
+ * `lock`/`unlock`, `meta`/`file`).
  *
- * @typedef {'close'|'delete'|'add'} IconButtonKind
+ * @typedef {'close'|'delete'|'add'|'edit'|'roll'|'avg'|'preview'|'previewOff'|'refresh'|'meta'|'file'|'lock'|'unlock'} IconButtonKind
  */
-export type IconButtonKind = 'close' | 'delete' | 'add';
+export type IconButtonKind =
+  | 'close'
+  | 'delete'
+  | 'add'
+  | 'edit'
+  | 'roll'
+  | 'avg'
+  | 'preview'
+  | 'previewOff'
+  | 'refresh'
+  | 'meta'
+  | 'file'
+  | 'lock'
+  | 'unlock';
 
 /**
  * Icon-only box. `plain` is the bare glyph; `square` and `rhombus` add the
@@ -65,12 +94,32 @@ const GLYPHS: Record<IconButtonKind, typeof X> = {
   close: X,
   delete: Trash2,
   add: Plus,
+  edit: Pencil,
+  roll: Dices,
+  avg: Sigma,
+  preview: Eye,
+  previewOff: EyeOff,
+  refresh: RefreshCw,
+  meta: Braces,
+  file: FileText,
+  lock: Lock,
+  unlock: LockOpen,
 };
 
 const DEFAULT_TONE: Record<IconButtonKind, IconButtonTone> = {
   close: 'danger',
   delete: 'danger',
   add: 'accent',
+  edit: 'accent',
+  roll: 'accent',
+  avg: 'accent',
+  preview: 'accent',
+  previewOff: 'accent',
+  refresh: 'accent',
+  meta: 'accent',
+  file: 'accent',
+  lock: 'accent',
+  unlock: 'accent',
 };
 
 const TONES: Record<IconButtonTone, string> = {
@@ -141,6 +190,7 @@ type IconButtonPassthrough = Pick<
  * @property {() => void} onClick - Activation handler
  * @property {IconButtonSize} [size] - Glyph scale (default `m`)
  * @property {IconButtonTone} [tone] - Hover colour; defaults from `kind`
+ * @property {boolean} [dashed] - Dashed emphasis outline — the create/add affordance; bordered chrome only
  * @property {boolean} [disabled] - Disabled state
  * @property {boolean} [stopPropagation] - Swallow the click so a clickable parent row stays put
  * @property {string} [title] - HTML title tooltip
@@ -151,6 +201,7 @@ interface IconButtonBaseProps extends IconButtonPassthrough {
   onClick: () => void;
   size?: IconButtonSize;
   tone?: IconButtonTone;
+  dashed?: boolean;
   disabled?: boolean;
   stopPropagation?: boolean;
   title?: string;
@@ -207,6 +258,7 @@ export type IconButtonProps = IconOnlyProps | LabelledProps;
  * @param {IconButtonShape} [props.shape='plain'] - Box shape, icon-only form only
  * @param {IconButtonSize} [props.size='m'] - Glyph scale
  * @param {IconButtonTone} [props.tone] - Hover colour; defaults from `kind`
+ * @param {boolean} [props.dashed=false] - Dashed emphasis outline on bordered chrome
  * @param {IconButtonGlyphSide} [props.glyph='left'] - Glyph side, labelled form only
  * @param {boolean} [props.disabled=false] - Disabled state
  * @param {boolean} [props.stopPropagation=false] - Swallow the click
@@ -226,6 +278,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       glyph,
       size = 'm',
       tone,
+      dashed = false,
       disabled = false,
       stopPropagation = false,
       title,
@@ -247,6 +300,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       TONES[tone ?? DEFAULT_TONE[kind]],
       SIZES[size],
       SHAPES[boxShape],
+      dashed && (labelled || boxShape !== 'plain') && styles.dashed,
       labelled && styles.labelled,
       glyphDiamond && styles.labelledRhombus,
       glyphRight && styles.glyphRight,

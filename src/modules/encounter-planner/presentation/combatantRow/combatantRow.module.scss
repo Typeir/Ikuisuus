@@ -84,21 +84,10 @@
     }
   }
 
-  /* Layout only: places the lock toggle first and spaces it. Chrome from btn.icon. */
+  /* Layout only: places the lock toggle first and spaces it. Chrome from the IconButton atom. */
   .lockToggle {
     order: -1;
     margin-right: 0.5rem;
-  }
-
-  .lockIcon {
-    width: 1.3rem;
-    height: 1.3rem;
-    color: var(--color-text-secondary);
-    transition: color 0.2s ease;
-  }
-
-  .lockToggle:has(svg[aria-label*='Lock']) .lockIcon {
-    color: var(--color-text);
   }
 
   .stratagemBadgeWrapper {

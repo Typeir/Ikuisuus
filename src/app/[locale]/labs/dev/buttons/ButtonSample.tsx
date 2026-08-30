@@ -1,8 +1,7 @@
 /**
  * @fileoverview Renders one canonical button variant with representative content.
- * @description Icon-only variants get an icon, `tabActive` composes with `tab`, and
- * `add` pairs a `Plus` with a label per the stylesheet contract. Unknown names fall
- * back to a text label so a newly added class still renders.
+ * @description Icon-only variants get an icon and `tabActive` composes with `tab`.
+ * Unknown names fall back to a text label so a newly added class still renders.
  *
  * @component ButtonSample
  * @version 1.0.0
@@ -12,7 +11,7 @@
  * @module app/[locale]/labs/dev/buttons/ButtonSample
  */
 
-import { ChevronDown, Plus, Settings, Trash2, X } from 'lucide-react';
+import { ChevronDown, Settings, X } from 'lucide-react';
 
 const ICON_SIZE = 16;
 
@@ -56,18 +55,6 @@ export function ButtonSample({
           <Settings size={ICON_SIZE} aria-hidden='true' />
         </button>
       );
-    case 'icon':
-      return (
-        <button type='button' className={btn.icon} aria-label='Close'>
-          <X size={ICON_SIZE} aria-hidden='true' />
-        </button>
-      );
-    case 'iconDanger':
-      return (
-        <button type='button' className={btn.iconDanger} aria-label='Delete'>
-          <Trash2 size={ICON_SIZE} aria-hidden='true' />
-        </button>
-      );
     case 'iconRound':
       return (
         <button type='button' className={btn.iconRound} aria-label='Close'>
@@ -100,13 +87,6 @@ export function ButtonSample({
         <button type='button' className={btn.fieldTrigger}>
           Choose an option
           <ChevronDown size={ICON_SIZE} aria-hidden='true' />
-        </button>
-      );
-    case 'add':
-      return (
-        <button type='button' className={btn.add}>
-          <Plus size={ICON_SIZE} aria-hidden='true' />
-          Add item
         </button>
       );
     default:

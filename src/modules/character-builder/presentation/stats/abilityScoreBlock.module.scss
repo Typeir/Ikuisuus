@@ -55,15 +55,6 @@
   text-align: center;
 }
 
-.abilityRollBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  @include button-secondary(0.15rem 0.25rem, inherit);
-  border-radius: var(--border-round-xs);
-  @include button-hover-scale(1.2);
-}
-
 /**
  * Saving throw row — small-caps label, proficiency pip track, computed
  * bonus. Divided from the score area by a hairline rule.

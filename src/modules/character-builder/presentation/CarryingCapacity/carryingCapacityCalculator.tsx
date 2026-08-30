@@ -18,6 +18,7 @@ import { useSheetData } from '@/modules/character-builder/application/context/ac
 import { useEquipmentContext } from '@/modules/character-builder/application/context/equipmentContext';
 import type { CreatureSize } from '@/modules/character-builder/domain/carrying-capacity';
 import { computeCapacity } from '@/modules/character-builder/infrastructure/carrying-capacity';
+import { PipCheckbox } from '@/modules/character-builder/presentation/components/PipCheckbox';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import styles from './carryingCapacityCalculator.module.scss';
@@ -101,18 +102,17 @@ export const CarryingCapacityCalculator: React.FC = () => {
             ))}
           </select>
         </label>
-        <label className={styles.controlField}>
+        <div className={styles.controlField}>
           <span className={styles.controlLabel}>
             {t('carryingCapacityQuadruped')}
           </span>
-          <input
-            type='checkbox'
-            className={styles.checkbox}
+          <PipCheckbox
             checked={isQuadruped}
-            onChange={(e) => setIsQuadruped(e.target.checked)}
-            aria-label={t('carryingCapacityQuadruped')}
+            onChange={setIsQuadruped}
+            ariaLabel={t('carryingCapacityQuadruped')}
+            size='lg'
           />
-        </label>
+        </div>
         <label className={styles.controlField}>
           <span className={styles.controlLabel}>
             {t('carryingCapacityCarried')}

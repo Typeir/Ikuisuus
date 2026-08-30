@@ -24,10 +24,8 @@ import {
 import { TypeSigil } from '@/modules/search/presentation/atoms/TypeSigil';
 import { HelpGlyph } from '@/lib/components/ui/helpGlyph';
 import { IconButton } from '@/lib/components/ui/iconButton';
-import { Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useCallback, useMemo } from 'react';
-import btn from '@/styles/buttons.module.scss';
 import styles from './abilities.module.scss';
 
 const KIND_MAP: Record<string, PreviewKind> = {
@@ -48,7 +46,7 @@ const ABILITY_TYPE_I18N: Record<string, string> = {
 };
 
 /**
- * Ability type â†’ search content type. `Feature` and `Other` have no search
+ * Ability type → search content type. `Feature` and `Other` have no search
  * taxonomy entry and use the closest sigil.
  */
 const ABILITY_SIGIL_TYPE: Record<string, SearchContentType> = {
@@ -143,7 +141,7 @@ export const AbilityCard: React.FC<AbilityCardProps> = ({
             showClickIcon={false}>
             <button
               type='button'
-              className={`${btn.icon} ${styles.sourceBtn} ${isOpen ? styles.sourceBtnActive : ''}`}
+              className={`${styles.sourceBtn} ${isOpen ? styles.sourceBtnActive : ''}`}
               onClick={(e) => {
                 e.stopPropagation();
                 handleSourceLookup();
@@ -157,16 +155,12 @@ export const AbilityCard: React.FC<AbilityCardProps> = ({
       {editing && (
         <div className={styles.cardActions}>
           {onEdit && (
-            <button
-              type='button'
-              className={btn.icon}
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit();
-              }}
-              aria-label={t('abilityEditAria', { name: ability.name })}>
-              <Pencil size={14} />
-            </button>
+            <IconButton
+              kind='edit'
+              label={t('abilityEditAria', { name: ability.name })}
+              onClick={onEdit}
+              stopPropagation
+            />
           )}
           {onDelete && (
             <IconButton

@@ -148,37 +148,18 @@
 }
 
 /**
- * Lock toggle — positioned top-right inside stat chips.
+ * Lock toggle slot — positions the IconButton top-right inside stat chips and
+ * dims it at rest so twelve locks don't shout on a dense sheet.
  */
 .lockToggle {
   position: absolute;
   top: 2px;
   right: 2px;
-  @include icon-transparent;
-  width: 1.15rem;
-  height: 1.15rem;
-  border-radius: var(--border-round-xs);
   opacity: 0.5;
 
   &:hover {
     opacity: 1;
-    color: var(--color-accent);
-    background: transparent !important;
   }
-
-  /* Invisible tap-area expansion — the glyph stays small, the target grows. */
-  @media (pointer: coarse) {
-    &::after {
-      content: '';
-      position: absolute;
-      inset: -12px;
-    }
-  }
-}
-
-.lockUnlocked {
-  opacity: 0.85;
-  color: var(--color-accent);
 }
 
 /**

@@ -269,6 +269,7 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
 
             <IconButton
               kind='add'
+              dashed
               size='s'
               onClick={handleAddVocation}
               className={styles.addVocationBtn}>

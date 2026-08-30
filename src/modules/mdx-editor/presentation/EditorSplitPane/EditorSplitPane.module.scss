@@ -111,30 +111,16 @@
   animation: fadeSlideIn 0.2s ease-out;
 }
 
+/* Layout-only slot for the pane-corner IconButtons — position and rest-dim. */
 .previewBadge {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border-radius: var(--border-round-s);
-  border: var(--border-width-xs) solid var(--color-border);
-  background-color: var(--color-bg);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  opacity: 0.6;
-  transition: all 0.15s ease;
   z-index: 2;
+  opacity: 0.6;
 
   &:hover {
     opacity: 1;
-    background-color: var(--color-bg);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
   }
 }
 

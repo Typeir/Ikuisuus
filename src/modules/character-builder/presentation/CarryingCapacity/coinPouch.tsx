@@ -248,6 +248,7 @@ export const CoinPouch: React.FC = () => {
               {editing && !system.builtIn && (
                 <IconButton
                   kind='add'
+                  dashed
                   size='s'
                   label={`Add denomination to ${h.systemName}`}
                   onClick={() => addDenomination(h.systemName)}>
@@ -259,7 +260,11 @@ export const CoinPouch: React.FC = () => {
         })}
       </div>
       {editing && (
-        <IconButton kind='add' label={t('addSystemAria')} onClick={addSystem}>
+        <IconButton
+          kind='add'
+          dashed
+          label={t('addSystemAria')}
+          onClick={addSystem}>
           {t('addSystem')}
         </IconButton>
       )}

@@ -75,7 +75,11 @@ const AbilitiesBody: React.FC = () => {
       right={
         <div className={styles.mainArea}>
           {editing && (
-            <IconButton kind='add' onClick={handleAdd} className={styles.addBtn}>
+            <IconButton
+              kind='add'
+              dashed
+              onClick={handleAdd}
+              className={styles.addBtn}>
               {t('abilityAdd')}
             </IconButton>
           )}

@@ -15,7 +15,7 @@ import { handleEditorKeyDown } from '@/modules/mdx-editor/domain/editorCommands'
 import { EditorToolbar } from '@/modules/mdx-editor/presentation/EditorToolbar/EditorToolbar';
 import { MdxPreview } from '@/modules/mdx-editor/presentation/MdxPreview/MdxPreview';
 import { MetadataPane } from '@/modules/mdx-editor/presentation/MetadataPane/MetadataPane';
-import { Braces, Eye, EyeOff, FileText, RefreshCw } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import type { JSX } from 'react';
 import { useCallback, useRef, useState } from 'react';
@@ -151,39 +151,33 @@ export function EditorSplitPane({
             onPointerUp={handleDividerUp}
           />
           <div className={styles.previewPane}>
-            <button
-              type='button'
-              className={styles.previewBadge}
-              onClick={() => setShowPreview(false)}
+            <IconButton
+              kind='previewOff'
+              shape='square'
+              label={t('hide')}
               title={t('hide')}
-              aria-label={t('hide')}>
-              <EyeOff size={14} />
-            </button>
-            <button
-              type='button'
-              className={styles.faceBadge}
+              onClick={() => setShowPreview(false)}
+              className={styles.previewBadge}
+            />
+            <IconButton
+              kind={previewFace === 'file' ? 'meta' : 'file'}
+              shape='square'
+              label={previewFace === 'file' ? t('showMetadata') : t('showFile')}
+              title={previewFace === 'file' ? t('showMetadata') : t('showFile')}
               onClick={() =>
                 setPreviewFace(previewFace === 'file' ? 'meta' : 'file')
               }
-              title={previewFace === 'file' ? t('showMetadata') : t('showFile')}
-              aria-label={
-                previewFace === 'file' ? t('showMetadata') : t('showFile')
-              }>
-              {previewFace === 'file' ? (
-                <Braces size={14} />
-              ) : (
-                <FileText size={14} />
-              )}
-            </button>
+              className={styles.faceBadge}
+            />
             {previewFace === 'meta' && (
-              <button
-                type='button'
-                className={styles.refreshBadge}
-                onClick={() => setMetaRefreshToken((n) => n + 1)}
+              <IconButton
+                kind='refresh'
+                shape='square'
+                label={t('refreshMetadata')}
                 title={t('refreshMetadata')}
-                aria-label={t('refreshMetadata')}>
-                <RefreshCw size={14} />
-              </button>
+                onClick={() => setMetaRefreshToken((n) => n + 1)}
+                className={styles.refreshBadge}
+              />
             )}
             {previewFace === 'file' ? (
               <MdxPreview source={content} />
@@ -199,14 +193,14 @@ export function EditorSplitPane({
       )}
 
       {!showPreview && (
-        <button
-          type='button'
-          className={styles.showPreviewBadge}
-          onClick={() => setShowPreview(true)}
+        <IconButton
+          kind='preview'
+          shape='square'
+          label={t('show')}
           title={t('show')}
-          aria-label={t('show')}>
-          <Eye size={14} />
-        </button>
+          onClick={() => setShowPreview(true)}
+          className={styles.showPreviewBadge}
+        />
       )}
     </div>
   );

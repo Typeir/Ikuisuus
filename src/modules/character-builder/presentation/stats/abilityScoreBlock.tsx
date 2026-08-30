@@ -20,7 +20,7 @@ import {
 } from '@/modules/character-builder/lib/utils/characterStorage';
 import { higherTier } from '@/modules/character-builder/lib/utils/grants';
 import { computeSaveBonus } from '@/modules/character-builder/lib/utils/proficiencyUtils';
-import { Dices } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import { ProficiencyTrack } from '../components/ProficiencyTrack';
@@ -106,14 +106,14 @@ export const AbilityScoreBlock: React.FC<AbilityScoreBlockProps> = ({
             ariaLabel={label}
             onChange={(v) => onChange?.(v ?? score)}
           />
-          <button
-            type='button'
-            className={styles.abilityRollBtn}
+          <IconButton
+            kind='roll'
+            shape='square'
+            size='s'
+            label={t('abilityRollAria', { label })}
             title={t('abilityRollTitle')}
-            aria-label={t('abilityRollAria', { label })}
-            onClick={handleRoll}>
-            <Dices size={14} aria-hidden='true' />
-          </button>
+            onClick={handleRoll}
+          />
         </div>
       ) : (
         <span className={styles.abilityScore}>{score}</span>

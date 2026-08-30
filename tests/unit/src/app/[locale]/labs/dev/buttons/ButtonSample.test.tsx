@@ -21,7 +21,7 @@ const btn = new Proxy({} as Record<string, string>, {
   get: (_target, key: string) => key,
 });
 
-const ICON_VARIANTS = ['tertiary', 'icon', 'iconDanger', 'iconRound'];
+const ICON_VARIANTS = ['tertiary', 'iconRound'];
 
 describe('ButtonSample', () => {
   it('renders the bare primary without a class', () => {
@@ -47,13 +47,6 @@ describe('ButtonSample', () => {
     expect(screen.getByRole('button', { name: 'Full-width row' })).toHaveClass(
       'row',
     );
-  });
-
-  it('labels the add affordance', () => {
-    render(<ButtonSample name='add' btn={btn} />);
-    expect(
-      screen.getByRole('button', { name: 'Add item' }),
-    ).toBeInTheDocument();
   });
 
   it('falls back to a labelled button for an unknown variant', () => {

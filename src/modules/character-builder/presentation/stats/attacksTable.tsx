@@ -159,7 +159,11 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
         </table>
       </div>
       {!readOnly && (
-        <IconButton kind='add' label={t('ariaAddAttack')} onClick={handleAdd}>
+        <IconButton
+          kind='add'
+          dashed
+          label={t('ariaAddAttack')}
+          onClick={handleAdd}>
           {t('addAttack')}
         </IconButton>
       )}

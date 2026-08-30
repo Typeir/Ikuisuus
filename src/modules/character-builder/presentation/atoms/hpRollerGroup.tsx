@@ -15,7 +15,6 @@ import { Tooltip } from '@/lib/components/ui/tooltip';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { formatDie } from '@/lib/utils/diceUtils';
 import { IconButton } from '@/lib/components/ui/iconButton';
-import { Dices, Sigma } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import styles from './hpRollerPanel.module.scss';
@@ -190,27 +189,25 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
               content={isMaxed ? t('hpRollerMaxedTooltip') : t('hpRollerRollTooltip')}
               placement='top'
               showClickIcon={false}>
-              <button
-                type='button'
-                className={styles.iconBtn}
+              <IconButton
+                kind='roll'
+                size='s'
+                label={t('hpRollerRollDieAria', { level: entry.levelIndex })}
                 onClick={() => onRoll(entry.id)}
                 disabled={isMaxed}
-                aria-label={t('hpRollerRollDieAria', { level: entry.levelIndex })}>
-                <Dices size={14} aria-hidden='true' />
-              </button>
+              />
             </Tooltip>
             <Tooltip
               content={t('hpRollerAvgTooltip')}
               placement='top'
               showClickIcon={false}>
-              <button
-                type='button'
-                className={styles.iconBtn}
+              <IconButton
+                kind='avg'
+                size='s'
+                label={t('hpRollerAvgDieAria', { level: entry.levelIndex })}
                 onClick={() => onAverage(entry.id)}
                 disabled={isMaxed}
-                aria-label={t('hpRollerAvgDieAria', { level: entry.levelIndex })}>
-                <Sigma size={14} aria-hidden='true' />
-              </button>
+              />
             </Tooltip>
             <NumericInput
               value={entry.result ?? undefined}

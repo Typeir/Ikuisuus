@@ -8,7 +8,8 @@
  * leaves stale prose everywhere it was baked. Revalidating the producer alone
  * fixes nothing downstream.
  *
- * Server only, since it reads the metadata mirror.
+ * Reads through `keywordLinkRepository`, so the graph follows whichever backend
+ * the deployment runs on. Server only.
  *
  * @module lib/db/content/keywordGraph
  * @version 1.0.0
@@ -16,23 +17,10 @@
  * @since 8.0.0
  */
 
-import { readMetadataFiles } from './adapters/fs/readMetadataFiles';
-
-/**
- * One metadata record, narrowed to the fields the graph needs.
- *
- * @interface KeywordGraphRecord
- * @property {string} [file] - Source path as the generator stamped it
- * @property {string} [link] - Route for the page, without the locale prefix
- * @property {string[]} [produces] - Shard ids the file defines
- * @property {string[]} [consumes] - Shard ids the file ingests
- */
-interface KeywordGraphRecord {
-  file?: string;
-  link?: string;
-  produces?: string[];
-  consumes?: string[];
-}
+import {
+  keywordLinkRepository,
+  type KeywordLink,
+} from './repositories/keywordLinkRepository';
 
 /**
  * The graph, keyed for both directions of the walk.
@@ -78,7 +66,8 @@ export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
   const cached = cache.get(locale);
   if (cached) return cached;
 
-  const records = await readMetadataFiles<KeywordGraphRecord>(locale, '');
+  const records: KeywordLink[] =
+    await keywordLinkRepository.listLinks(locale);
 
   const graph: KeywordGraph = {
     produces: new Map(),

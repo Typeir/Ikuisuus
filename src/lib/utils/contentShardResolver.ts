@@ -10,6 +10,7 @@
  */
 
 import { toPlainMeasure } from '@/lib/units/nativeMeasure';
+import { truncateMdxSource } from '@/lib/md/truncateMdx';
 import { anchorSlug } from '@/modules/library/domain/anchorSlug';
 
 /**
@@ -84,13 +85,16 @@ export function resolveShards(
  * Return all content that appears before the first `<Collapsible` tag.
  * If the file has no Collapsible components, the entire content is returned.
  *
+ * The cut is taken at the block boundary the parser reports, so it can never
+ * land inside a construct and leave the caller with source that will not
+ * compile.
+ *
  * @function extractMainSection
  * @param {string} content - Full normalised MDX content
  * @returns {string} Prose content before the first Collapsible block
  */
 function extractMainSection(content: string): string {
-  const idx = content.indexOf('<Collapsible');
-  return (idx === -1 ? content : content.slice(0, idx)).trim();
+  return truncateMdxSource(content, { stopAtComponent: 'Collapsible' }).source;
 }
 
 /**
@@ -113,11 +117,23 @@ function extractByLineRange(
   return lines.slice(startLine - 1, endLine).join('\n');
 }
 
+/** Fenced code block delimiter; markup inside one is shown, not parsed. */
+const FENCE = /^\s*(?:```|~~~)/;
+
+/** Opening, closing or self-closing MDX component tag. Components only: HTML void
+    elements carry no closing tag and would unbalance the count. */
+const JSX_TAG = /<(\/?)[A-Z][A-Za-z0-9]*(?:\s[^<>]*?)?(\/?)>/g;
+
 /**
  * Find a heading by case-insensitive text match and extract its block.
- * The block ends immediately before the next heading of the same or higher level.
+ * The block ends immediately before the next heading of the same or higher level,
+ * or where an element opened outside the block closes, whichever comes first.
  * Matches exact heading text or a heading suffix (e.g. `"Memorize Spell"` matches
  * `"5th Level – Memorize Spell"`).
+ *
+ * A heading nested inside a component runs past that component's closing tag on
+ * heading level alone, and the extracted source then carries a stray close and
+ * fails to compile. Tracking depth stops the block at its enclosing element.
  *
  * @function extractByHeadingText
  * @param {string[]} lines - File lines array
@@ -147,9 +163,33 @@ function extractByHeadingText(lines: string[], heading: string): string | null {
   if (startIdx < 0) return null;
 
   let endIdx = lines.length - 1;
+  let depth = 0;
+  let fenced = false;
+
   for (let i = startIdx + 1; i < lines.length; i++) {
-    const match = /^(#{1,6})\s+/.exec(lines[i]);
-    if (match && match[1].length <= headingLevel) {
+    const line = lines[i];
+
+    if (FENCE.test(line)) {
+      fenced = !fenced;
+      continue;
+    }
+    if (fenced) continue;
+
+    const match = /^(#{1,6})\s+/.exec(line);
+    if (match && match[1].length <= headingLevel && depth === 0) {
+      endIdx = i - 1;
+      break;
+    }
+
+    for (const tag of line.matchAll(JSX_TAG)) {
+      if (tag[1]) depth--;
+      else if (!tag[2]) depth++;
+    }
+
+    /* A close with no matching open inside the block means the heading sat
+       inside an element that ends here. Carrying on would take that stray
+       closing tag along and the extracted source would not compile. */
+    if (depth < 0) {
       endIdx = i - 1;
       break;
     }

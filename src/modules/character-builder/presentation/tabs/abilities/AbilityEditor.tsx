@@ -18,7 +18,7 @@ import type { AbilityType, CharacterAbility } from '@/lib/types/character';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { mdxComponents } from '@/modules/library/presentation';
-import { Eye, EyeOff } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import {
     type ReactNode,
@@ -213,15 +213,11 @@ export const AbilityEditor: React.FC<AbilityEditorProps> = ({
           }
           rows={6}
         />
-        <button
-          type='button'
-          className={styles.previewToggle}
+        <IconButton
+          kind={previewMechanics ? 'previewOff' : 'preview'}
           onClick={() => setPreviewMechanics((p) => !p)}>
-          {previewMechanics ? <EyeOff size={14} /> : <Eye size={14} />}
-          <span className={styles.previewToggleLabel}>
-            {t('abilityPreview')}
-          </span>
-        </button>
+          {t('abilityPreview')}
+        </IconButton>
         {mechanicsPreview && (
           <div className={styles.previewBox}>{mechanicsPreview}</div>
         )}
@@ -241,15 +237,11 @@ export const AbilityEditor: React.FC<AbilityEditorProps> = ({
           }
           rows={4}
         />
-        <button
-          type='button'
-          className={styles.previewToggle}
+        <IconButton
+          kind={previewDescription ? 'previewOff' : 'preview'}
           onClick={() => setPreviewDescription((p) => !p)}>
-          {previewDescription ? <EyeOff size={14} /> : <Eye size={14} />}
-          <span className={styles.previewToggleLabel}>
-            {t('abilityPreview')}
-          </span>
-        </button>
+          {t('abilityPreview')}
+        </IconButton>
         {descriptionPreview && (
           <div className={styles.previewBox}>{descriptionPreview}</div>
         )}

@@ -12,9 +12,11 @@
  * <button>Save</button>                              // primary (bare)
  * <button className={btn.secondary}>Add</button>
  * <button className={btn.dangerOutline}>Remove</button>
- * <button className={btn.icon}><X /></button>
  * <button className={`${btn.tab} ${active ? btn.tabActive : ''}`}>Tab</button>
  * ```
+ *
+ * Icon-glyph buttons (close, delete, add, roll, …) are NOT here — render the
+ * `IconButton` atom from `@/lib/components/ui/iconButton`.
  *
  * Every class fully owns its hover background, so applying one cleanly displaces
  * the global primary hover — the "light-text-on-green" bug is structurally
@@ -96,16 +98,6 @@
 
 /* ── Icon-only ──────────────────────────────────────────── */
 
-/** Transparent icon button — recolors to accent on hover. */
-.icon {
-  @include icon-transparent;
-}
-
-/** Transparent icon button — recolors to danger on hover. */
-.iconDanger {
-  @include icon-transparent(var(--color-danger, var(--color-emphasis)));
-}
-
 /** Rounded pill icon — fills accent on hover. */
 .iconRound {
   @include icon-rounded;
@@ -137,23 +129,4 @@
   &:hover:not(:disabled) {
     transform: none;
   }
-}
-
-/* ── Add affordance ─────────────────────────────────────── */
-
-/**
- * "Add X" button — dashed accent outline, icon + label, fills on hover.
- * The single consistent affordance for every create/add action (equipment,
- * attacks, currency, etc.). Always pair with a lucide `<Plus />` and a label.
- */
-.add {
-  @include button-secondary(0.4rem 0.85rem, 0.8rem);
-  display: inline-flex;
-  align-items: center;
-  align-self: flex-start; /* never stretch to fill a flex-column container */
-  width: fit-content;
-  gap: 0.35rem;
-  border-style: dashed;
-  border-radius: var(--border-round-m);
-  font-weight: 600;
 }

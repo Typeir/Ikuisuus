@@ -15,10 +15,12 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const readMetadataFiles = vi.fn();
+const listLinks = vi.fn();
 
-vi.mock('@/lib/db/content/adapters/fs/readMetadataFiles', () => ({
-  readMetadataFiles: (...args: unknown[]) => readMetadataFiles(...args),
+vi.mock('@/lib/db/content/repositories/keywordLinkRepository', () => ({
+  keywordLinkRepository: {
+    listLinks: (...args: unknown[]) => listLinks(...args),
+  },
 }));
 
 import {
@@ -56,7 +58,7 @@ const SPELL_B = {
 describe('keywordGraph', () => {
   beforeEach(() => {
     clearKeywordGraphCache();
-    readMetadataFiles.mockReset();
+    listLinks.mockReset();
   });
 
   afterEach(() => {
@@ -79,7 +81,7 @@ describe('keywordGraph', () => {
 
   describe('loadKeywordGraph', () => {
     it('should index producers, consumers and both route directions', async () => {
-      readMetadataFiles.mockResolvedValue([RULES, SPELL_A, SPELL_B]);
+      listLinks.mockResolvedValue([RULES, SPELL_A, SPELL_B]);
 
       const graph = await loadKeywordGraph('en');
 
@@ -92,17 +94,17 @@ describe('keywordGraph', () => {
       expect(graph.files.get('/library/spells/a')).toBe(SPELL_A.file);
     });
 
-    it('should read the metadata tree once per locale', async () => {
-      readMetadataFiles.mockResolvedValue([RULES]);
+    it('should ask the repository once per locale', async () => {
+      listLinks.mockResolvedValue([RULES]);
 
       await loadKeywordGraph('en');
       await loadKeywordGraph('en');
 
-      expect(readMetadataFiles).toHaveBeenCalledTimes(1);
+      expect(listLinks).toHaveBeenCalledTimes(1);
     });
 
     it('should skip a record with no file path', async () => {
-      readMetadataFiles.mockResolvedValue([
+      listLinks.mockResolvedValue([
         { link: '/library/orphan', consumes: ['kw--resist'] },
       ]);
 
@@ -114,7 +116,7 @@ describe('keywordGraph', () => {
 
   describe('consumersOf', () => {
     it('should collect every page holding a shard the file defines', async () => {
-      readMetadataFiles.mockResolvedValue([RULES, SPELL_A, SPELL_B]);
+      listLinks.mockResolvedValue([RULES, SPELL_A, SPELL_B]);
 
       const graph = await loadKeywordGraph('en');
 
@@ -125,7 +127,7 @@ describe('keywordGraph', () => {
     });
 
     it('should never return the file it started from', async () => {
-      readMetadataFiles.mockResolvedValue([RULES, SPELL_A]);
+      listLinks.mockResolvedValue([RULES, SPELL_A]);
 
       const graph = await loadKeywordGraph('en');
 
@@ -145,7 +147,7 @@ describe('keywordGraph', () => {
         produces: [],
         consumes: ['kw--middle'],
       };
-      readMetadataFiles.mockResolvedValue([RULES, middle, leaf]);
+      listLinks.mockResolvedValue([RULES, middle, leaf]);
 
       const graph = await loadKeywordGraph('en');
 
@@ -165,7 +167,7 @@ describe('keywordGraph', () => {
         produces: ['kw--b'],
         consumes: ['kw--a'],
       };
-      readMetadataFiles.mockResolvedValue([a, b]);
+      listLinks.mockResolvedValue([a, b]);
 
       const graph = await loadKeywordGraph('en');
 
@@ -173,7 +175,7 @@ describe('keywordGraph', () => {
     });
 
     it('should return nothing for a file that produces nothing', async () => {
-      readMetadataFiles.mockResolvedValue([RULES, SPELL_A]);
+      listLinks.mockResolvedValue([RULES, SPELL_A]);
 
       const graph = await loadKeywordGraph('en');
 
@@ -183,7 +185,7 @@ describe('keywordGraph', () => {
 
   describe('consumerRoutesFor', () => {
     it('should resolve a locale-prefixed route to its consumers', async () => {
-      readMetadataFiles.mockResolvedValue([RULES, SPELL_A, SPELL_B]);
+      listLinks.mockResolvedValue([RULES, SPELL_A, SPELL_B]);
 
       const routes = await consumerRoutesFor(
         'en',
@@ -197,7 +199,7 @@ describe('keywordGraph', () => {
     });
 
     it('should return nothing for a route the graph does not know', async () => {
-      readMetadataFiles.mockResolvedValue([RULES]);
+      listLinks.mockResolvedValue([RULES]);
 
       expect(await consumerRoutesFor('en', '/en/library/nope')).toEqual([]);
     });

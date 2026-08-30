@@ -11,12 +11,54 @@
  */
 
 import {
+  bloodlineRepository,
+  featRepository,
+  heirloomRepository,
+  monsterRepository,
+  ruleRepository,
+  specializationRepository,
+  spellRepository,
+  trinketRepository,
+  vocationRepository,
+  worldRepository,
+} from '@/lib/db/content/repositories';
+import type { BaseMetadata } from '@/lib/db/content/schemas/baseMetadata';
+import {
   CONTENT_SUBDIR,
   localizeLink,
   SUPPORTED_LOCALES,
   type SearchContentType,
 } from '@/modules/search/domain';
 import { NextResponse } from 'next/server';
+
+/**
+ * The card fields discovery reads. `image` is optional across the schemas and
+ * absent from the shared base, so it is named here rather than assumed.
+ *
+ * @typedef {object} DiscoverableRecord
+ */
+type DiscoverableRecord = BaseMetadata & { image?: string };
+
+/**
+ * Content type mapped to the repository that serves it. Reading through the
+ * ports keeps discovery on whichever backend the deployment runs, rather than
+ * assuming the sidecar mirror is on disk.
+ */
+const REPOSITORIES: Record<
+  SearchContentType,
+  { list(locale: string): Promise<DiscoverableRecord[]> }
+> = {
+  bloodlines: bloodlineRepository,
+  feats: featRepository,
+  heirlooms: heirloomRepository,
+  monsters: monsterRepository,
+  rules: ruleRepository,
+  specializations: specializationRepository,
+  spells: spellRepository,
+  trinkets: trinketRepository,
+  vocations: vocationRepository,
+  world: worldRepository,
+};
 
 /** Allowlisted locale codes. */
 const VALID_LOCALES = new Set<string>(SUPPORTED_LOCALES);
@@ -99,19 +141,7 @@ export async function GET(req: Request): Promise<NextResponse> {
     const result: Record<string, { featured: unknown; random: unknown }> = {};
 
     for (const type of types as SearchContentType[]) {
-      const { readMetadataFiles } =
-        await import('@/lib/db/content/adapters/fs/readMetadataFiles');
-
-      const subdir = CONTENT_SUBDIR[type];
-
-      const records = await readMetadataFiles<{
-        slug: string;
-        title: string;
-        link: string;
-        description?: string;
-        image?: string;
-        readingTime?: string;
-      }>(locale, subdir);
+      const records = await REPOSITORIES[type].list(locale);
 
       if (records.length === 0) {
         result[type] = { featured: null, random: null };

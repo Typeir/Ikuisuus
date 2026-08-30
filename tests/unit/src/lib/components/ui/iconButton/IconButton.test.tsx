@@ -150,6 +150,41 @@ describe('IconButton', () => {
     expect(button.className).not.toMatch(/accent|danger/);
   });
 
+  it.each([
+    'edit',
+    'roll',
+    'avg',
+    'preview',
+    'previewOff',
+    'refresh',
+    'meta',
+    'file',
+    'lock',
+    'unlock',
+  ] as const)('renders the %s kind with a glyph and accent tone', (kind) => {
+    render(<IconButton kind={kind} label='Act' onClick={() => {}} />);
+    const button = screen.getByRole('button', { name: 'Act' });
+    expect(button).toHaveAttribute('data-kind', kind);
+    expect(button.querySelector('svg')).not.toBeNull();
+    expect(button.className).toMatch(/accent/);
+  });
+
+  it('applies the dashed outline only on bordered chrome', () => {
+    const { rerender } = render(
+      <IconButton kind='add' onClick={() => {}} dashed>
+        Add item
+      </IconButton>,
+    );
+    expect(screen.getByRole('button', { name: 'Add item' }).className).toMatch(
+      /dashed/,
+    );
+
+    rerender(<IconButton kind='add' label='Add' onClick={() => {}} dashed />);
+    expect(
+      screen.getByRole('button', { name: 'Add' }).className,
+    ).not.toMatch(/dashed/);
+  });
+
   it('honours disabled', () => {
     const onClick = vi.fn();
     render(<IconButton kind='close' label='Close' onClick={onClick} disabled />);

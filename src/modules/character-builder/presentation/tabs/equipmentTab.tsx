@@ -166,6 +166,7 @@ export const EquipmentTab: React.FC = () => {
           {editing && (
             <IconButton
               kind='add'
+              dashed
               label={t('equipmentAddRowAria')}
               onClick={addRow}>
               {t('equipmentAddItem')}

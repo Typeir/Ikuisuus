@@ -152,6 +152,14 @@ $rhombus-side: math.sqrt($rhombus-area);
   }
 }
 
+/* Dashed emphasis outline — the create/add affordance on bordered chrome.
+   Glyph and label wear the border colour so the control reads as one piece. */
+.dashed {
+  border-style: dashed;
+  border-color: var(--color-emphasis);
+  color: var(--color-emphasis);
+}
+
 /* Labelled + rhombus: ghost label, the glyph carried in a currentColor diamond. */
 .labelledRhombus {
   border: none;

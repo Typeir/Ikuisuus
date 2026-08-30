@@ -77,8 +77,9 @@
 .cardSigil {
   flex-shrink: 0;
 }
-/* Layout-only companion to `btn.icon`. */
+/* Source-preview toggle wrapping a HelpGlyph — the one icon button not on the atom. */
 .sourceBtn {
+  @include icon-transparent;
   flex-shrink: 0;
 }
 .sourceBtnActive {
@@ -186,23 +187,6 @@
 .fieldTextarea {
   resize: vertical;
   min-height: 5rem;
-}
-.previewToggle {
-  @include button-ghost(0.75rem);
-  @include button-hover-scale;
-  color: var(--color-accent);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-top: 0.25rem;
-  padding: 0.125rem 0.5rem;
-  border-radius: var(--border-round-s);
-  &:hover {
-    background: var(--color-accent-muted);
-  }
-}
-.previewToggleLabel {
-  font-size: 0.75rem;
 }
 .previewBox {
   margin-top: 0.375rem;
