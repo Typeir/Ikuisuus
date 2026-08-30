@@ -20,11 +20,10 @@
 'use client';
 
 import type { ConditionEntry } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
-import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import detailStyles from '../creatureRow.module.scss';
-import btn from '@/styles/buttons.module.scss';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useCombatant } from './utils/context/combatantContext';
 
 /**
@@ -90,12 +89,11 @@ export const CombatantConditionsManager: React.FC<
         {conditions.map((condition) => (
           <div key={condition.id} className={detailStyles.chip}>
             {condition.text}
-            <button
+            <IconButton
+              kind='close'
+              label={t('removeCondition')}
               onClick={() => handleRemoveCondition(condition.id)}
-              className={btn.iconDanger}
-              aria-label={t('removeCondition')}>
-              <X size={12} aria-hidden='true' />
-            </button>
+            />
           </div>
         ))}
       </div>
@@ -108,11 +106,13 @@ export const CombatantConditionsManager: React.FC<
           onKeyDown={(e) => e.key === 'Enter' && handleAddCondition()}
           placeholder={t('addCondition')}
         />
-        <button
+        <IconButton
+          kind='add'
+          size='s'
+          label={t('addCondition')}
           onClick={handleAddCondition}
-          className={detailStyles.addConditionButton}>
-          +
-        </button>
+          className={detailStyles.addConditionSlot}
+        />
       </div>
     </>
   );

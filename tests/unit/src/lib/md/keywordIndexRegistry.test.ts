@@ -25,6 +25,7 @@ import {
 import {
   clearKeywordIndexCache,
   discoverKeywordIndexes,
+  extractProducedKeys,
 } from '@/lib/md/keywordIndexRegistry';
 
 let root: string;
@@ -54,12 +55,12 @@ describe('keywordIndexRegistry', () => {
   });
 
   describe('discoverKeywordIndexes', () => {
-    it('should index a rules page that declares nothing', async () => {
+    it('should ignore a rules page that declares nothing', async () => {
       await write('rules/plain.rule.mdx', '---\ncontentType: rules\n---\n\n## Prone\n');
 
       const registry = await discoverKeywordIndexes(root);
 
-      expect(registry.get(BARE_NAMESPACE)?.values.has('prone')).toBe(true);
+      expect(registry.size).toBe(0);
     });
 
     it('should ignore a page outside rules that declares nothing', async () => {
@@ -201,15 +202,8 @@ describe('keywordIndexRegistry', () => {
         await discoverKeywordIndexes(root),
       );
 
-      /* Both pages are rules, so the anchor collides in its own namespace and
-         again in the bare one every rules page contributes to. */
       expect(collisions).toContainEqual({
         namespace: 'condition',
-        anchor: 'prone',
-        filePaths: ['rules/a.rule.mdx', 'rules/b.rule.mdx'],
-      });
-      expect(collisions).toContainEqual({
-        namespace: BARE_NAMESPACE,
         anchor: 'prone',
         filePaths: ['rules/a.rule.mdx', 'rules/b.rule.mdx'],
       });
@@ -291,4 +285,65 @@ describe('keywordIndexRegistry', () => {
     });
   });
 
+  describe('extractProducedKeys', () => {
+    it('should key every declared term by its shard id', () => {
+      const source = [
+        '---',
+        'keywords:',
+        '  - briefly',
+        '  - resist',
+        '---',
+        '',
+        '### Briefly',
+        '',
+        '### Resist',
+      ].join('\n');
+
+      expect(extractProducedKeys(source)).toEqual(['kw--briefly', 'kw--resist']);
+    });
+
+    it('should key every heading under a declared namespace', () => {
+      const source = [
+        '---',
+        'keywordIndex: condition',
+        '---',
+        '',
+        '## Prone',
+        '',
+        '## Blinded',
+      ].join('\n');
+
+      expect(extractProducedKeys(source)).toEqual([
+        'kw-condition-blinded',
+        'kw-condition-prone',
+      ]);
+    });
+
+    it('should skip a declared term with no matching heading', () => {
+      const source = ['---', 'keywords:', '  - resist', '---', '', '### Briefly'].join(
+        '\n',
+      );
+
+      expect(extractProducedKeys(source)).toEqual([]);
+    });
+
+    it('should return nothing when the file declares nothing', () => {
+      const source = ['---', 'contentType: rules', '---', '', '## Prone'].join('\n');
+
+      expect(extractProducedKeys(source)).toEqual([]);
+    });
+
+    it('should meet a consumer key for a multi-word term', () => {
+      const source = [
+        '---',
+        'keywords:',
+        '  - damage bonus',
+        '---',
+        '',
+        '## Damage Bonus',
+      ].join('\n');
+
+      expect(extractProducedKeys(source)).toEqual(['kw--damage-bonus']);
+    });
+  });
 });

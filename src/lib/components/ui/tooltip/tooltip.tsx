@@ -10,7 +10,7 @@
 
 'use client';
 
-import { CircleHelp } from 'lucide-react';
+import { HelpGlyph } from '@/lib/components/ui/helpGlyph';
 import {
   Children,
   cloneElement,
@@ -35,8 +35,9 @@ export type { TooltipPlacement } from './useTooltipAnchor';
  * Configuration for Tooltip component
  * @property {ReactNode} content - Tooltip content (text or ReactNode)
  * @property {TooltipPlacement} [placement='top'] - Placement preference (will flip if insufficient space)
- * @property {number} [showDelay=0] - Delay before showing tooltip in ms
- * @property {number} [hideDelay=100] - Delay before hiding tooltip in ms
+ * @property {number} [showDelay=200] - Delay before showing tooltip in ms
+ * @property {number} [hideDelay=100] - Grace period before the exit starts, in ms.
+ * Long enough to cross the gap onto the surface, which holds itself open.
  * @property {number} [maxWidth=300] - Maximum width of tooltip in px
  * @property {boolean} [disabled=false] - Whether tooltip is disabled
  * @property {ReactElement} children - Trigger element (must accept ref and event handlers)
@@ -45,7 +46,7 @@ export type { TooltipPlacement } from './useTooltipAnchor';
  * @property {string} [id] - ID for ARIA relationship
  * @property {boolean} [clickable=false] - When true, adds help icon and enables click handler
  * @property {() => void} [onItemClick] - Callback when trigger is clicked in clickable mode
- * @property {boolean} [showClickIcon=true] - When clickable, whether to show CircleHelp icon (default true)
+ * @property {boolean} [showClickIcon=true] - When clickable, whether to show the rhombus `?` glyph (default true)
  * @property {boolean} [inline=false] - When true, attaches handlers directly to child via cloneElement
  *   instead of wrapping in a span. Use for absolutely-positioned triggers.
  * @property {boolean} [forceVisible=false] - When true, tooltip is shown regardless of hover state
@@ -86,7 +87,7 @@ export const Tooltip = memo(function Tooltip({
   content,
   placement = 'top',
   showDelay = 200,
-  hideDelay = 0,
+  hideDelay = 100,
   maxWidth = 250,
   disabled = false,
   children,
@@ -160,7 +161,9 @@ export const Tooltip = memo(function Tooltip({
       id={tooltipId}
       role='tooltip'
       className={`${styles.tooltip} ${styles[actualPlacement]} ${exiting ? styles.tooltipExiting : ''} ${className}`}
-      style={{ maxWidth, positionAnchor: anchorName } as CSSProperties}>
+      style={{ maxWidth, positionAnchor: anchorName } as CSSProperties}
+      onMouseEnter={show}
+      onMouseLeave={hide}>
       {content}
       {showArrow && <div className={styles.arrow} />}
     </div>
@@ -208,13 +211,7 @@ export const Tooltip = memo(function Tooltip({
         className={triggerClassName}
         aria-describedby={showPortal ? tooltipId : undefined}>
         {Children.only(children)}
-        {showClickIcon && (
-          <CircleHelp
-            size={14}
-            className={styles.clickIcon}
-            aria-hidden='true'
-          />
-        )}
+        {showClickIcon && <HelpGlyph className={styles.clickIcon} />}
       </span>
       {showPortal && createPortal(surface, document.body)}
     </>

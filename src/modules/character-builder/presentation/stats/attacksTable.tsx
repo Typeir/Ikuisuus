@@ -15,10 +15,9 @@
 import { TextInput } from '@/lib/components/ui/textInput';
 import type { CharacterAttack } from '@/lib/types/character';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
-import { Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
-import btn from '@/styles/buttons.module.scss';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import tbl from '@/styles/tables.module.scss';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
 
@@ -145,15 +144,13 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
               </td>
               {!readOnly && (
                 <td>
-                  <button
-                    type='button'
-                    className={styles.removeBtn}
-                    onClick={() => handleRemove(attack.id)}
-                    aria-label={t('ariaRemoveAttack', {
+                  <IconButton
+                    kind='close'
+                    label={t('ariaRemoveAttack', {
                       name: attack.name || tCommon('unnamed'),
-                    })}>
-                    <Trash2 size={14} aria-hidden='true' />
-                  </button>
+                    })}
+                    onClick={() => handleRemove(attack.id)}
+                  />
                 </td>
               )}
             </tr>
@@ -162,14 +159,9 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
         </table>
       </div>
       {!readOnly && (
-        <button
-          type='button'
-          className={btn.add}
-          onClick={handleAdd}
-          aria-label={t('ariaAddAttack')}>
-          <Plus size={14} aria-hidden='true' />
+        <IconButton kind='add' label={t('ariaAddAttack')} onClick={handleAdd}>
           {t('addAttack')}
-        </button>
+        </IconButton>
       )}
     </div>
   );

@@ -267,22 +267,6 @@
 /**
  * Remove/undo button for committed entries. Red danger style like roster delete.
  */
-.removeBtn {
-  @include button-icon;
-  background: transparent !important;
-  color: var(--color-secondary);
-  transition:
-    color 0.15s ease,
-    transform 0.15s ease,
-    filter 0.15s ease;
-  @include button-hover-scale;
-
-  &:hover {
-    color: var(--color-danger, var(--color-emphasis));
-    @include focus-glow(3px, var(--color-danger, var(--color-emphasis)));
-  }
-}
-
 /**
  * Committed entry styling (greyed out, read-only).
  */

@@ -25,12 +25,11 @@
 
 import { useSpellLinks } from '@/lib/hooks/data/useEncounterData';
 import type { SpellRef } from '@/modules/encounter-planner/domain/encounters/encounter.types';
-import { X } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useCallback } from 'react';
 import { SpellCombobox } from '../comboboxes';
 import styles from '../creatureRow.module.scss';
-import btn from '@/styles/buttons.module.scss';
+import { IconButton } from '@/lib/components/ui/iconButton';
 
 /**
  * @interface SpellListEditorProps
@@ -115,12 +114,11 @@ export const SpellListEditor: React.FC<SpellListEditorProps> = ({
                 <span>{spell.slug}</span>
               )}
               {!readOnly && (
-                <button
+                <IconButton
+                  kind='close'
+                  label={removeChipAriaLabel}
                   onClick={() => handleRemoveSpell(spell.slug)}
-                  className={btn.iconDanger}
-                  aria-label={removeChipAriaLabel}>
-                  <X size={12} aria-hidden='true' />
-                </button>
+                />
               )}
             </div>
           );

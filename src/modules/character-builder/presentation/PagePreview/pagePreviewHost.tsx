@@ -14,7 +14,8 @@
 import { GenericEmbedPanel } from '@/lib/components/ui/embedPanel/GenericEmbedPanel';
 import { buildEmbedUrl } from '@/lib/embed';
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import styles from './pagePreviewHost.module.scss';
@@ -137,13 +138,11 @@ export const PagePreviewHost: React.FC<PagePreviewHostProps> = () => {
             </div>
           )}
           <span className={styles.mobileTitle}>{entry.title}</span>
-          <button
-            type='button'
-            className={styles.mobileCloseBtn}
+          <IconButton
+            kind='close'
+            label={`Close preview: ${entry.title}`}
             onClick={() => close(entry.kind, entry.slug)}
-            aria-label={`Close preview: ${entry.title}`}>
-            <X size={18} aria-hidden='true' />
-          </button>
+          />
         </div>
         {contentPath ? (
           <iframe

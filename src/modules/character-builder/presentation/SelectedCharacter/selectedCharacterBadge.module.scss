@@ -80,34 +80,18 @@
   color: var(--color-secondary);
 }
 
+/* Centres the 16px rhombus IconButton on the badge corner. */
 .deselectWrap {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: -5px;
+  right: -5px;
   z-index: 1;
 }
 
 /* Leading-corner variant, for a badge that sits at the end of a bar. */
 .deselectWrapStart {
   right: auto;
-  left: -6px;
-}
-
-.deselect {
-  @include icon-transparent(var(--color-danger, var(--color-emphasis)));
-  @include rhombus;
-  @include rhombus-size(20px * 0.7);
-  border-radius: var(--border-round-circle);
-  border: var(--border-width-xs) solid var(--color-border);
-  background: var(--color-surface) !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover,
-  &:focus-visible {
-    @include focus-glow(3px, var(--color-danger, var(--color-emphasis)));
-  }
+  left: -5px;
 }
 
 .dropdown {

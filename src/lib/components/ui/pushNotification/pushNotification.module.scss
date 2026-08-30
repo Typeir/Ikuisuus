@@ -80,6 +80,7 @@
 // corner mark. Near-square corners, no coloured side bar.
 .notification {
   --level: var(--color-info);
+  --icon-btn-tone: var(--level);
   --fence-h: #{$skeleton-pitch};
 
   position: relative;
@@ -218,26 +219,11 @@
 // lift on hover), cut into the top-left corner of the fence. The block's
 // own background shows through the button so the lattice reads as broken
 // there rather than covered.
-.dismissButton {
-  @include icon-transparent(var(--level));
+.dismissSlot {
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(var(--fence-h) * 2);
-  height: calc(var(--fence-h) * 2);
-  padding: 0;
   z-index: 1;
-  background: var(--color-bg-secondary) !important;
-
-  svg {
-    width: calc(var(--fence-h) * 1.5);
-    height: calc(var(--fence-h) * 1.5);
-  }
-
-  &:focus-visible {
-    outline: var(--outline-width) solid var(--level);
-    outline-offset: -2px;
-  }
 }
 
 // Light theme
@@ -254,11 +240,6 @@
 
   .message {
     color: var(--color-text-secondary);
-  }
-
-  .dismissButton:hover {
-    background-color: var(--color-bg-secondary);
-    color: var(--color-text);
   }
 }
 

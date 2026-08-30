@@ -69,17 +69,9 @@
   @include disabled-state(0.4);
 }
 
+/* Colour and fill come from the variant blocks (`nested`, `inset`) — every
+   consumer passes one. Only the underline geometry lives here. */
 .active {
-  background: var(--color-surface);
-  color: var(--color-accent);
-
-  &:hover:not(:disabled) {
-    // Explicit hover bg guard (see .tab) — keeps the active surface fill.
-    background: var(--color-surface);
-    color: var(--color-accent);
-    filter: brightness(1.05);
-  }
-
   &::after {
     content: '';
     position: absolute;
@@ -87,7 +79,6 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--color-surface);
   }
 }
 

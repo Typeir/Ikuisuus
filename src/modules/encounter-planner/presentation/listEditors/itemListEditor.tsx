@@ -24,9 +24,8 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { X } from 'lucide-react';
 import styles from '../creatureRow.module.scss';
-import btn from '@/styles/buttons.module.scss';
+import { IconButton } from '@/lib/components/ui/iconButton';
 
 /**
  * Props for ItemListEditor component
@@ -96,12 +95,11 @@ export const ItemListEditor: React.FC<ItemListEditorProps> = ({
           <div key={idx} className={styles.chip}>
             {item}
             {!readOnly && (
-              <button
+              <IconButton
+                kind='close'
+                label={removeChipAriaLabel}
                 onClick={() => handleRemoveItem(idx)}
-                className={btn.iconDanger}
-                aria-label={removeChipAriaLabel}>
-                <X size={12} aria-hidden='true' />
-              </button>
+              />
             )}
           </div>
         ))}
@@ -116,11 +114,13 @@ export const ItemListEditor: React.FC<ItemListEditorProps> = ({
             onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
             placeholder={addItemLabel}
           />
-          <button
+          <IconButton
+            kind='add'
+            size='s'
+            label={addItemLabel}
             onClick={handleAddItem}
-            className={styles.addConditionButton}>
-            +
-          </button>
+            className={styles.addConditionSlot}
+          />
         </div>
       )}
     </>

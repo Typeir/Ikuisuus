@@ -1,11 +1,11 @@
 /**
  * @fileoverview Keyword MDX Component Tests
- * @description Tests that the Keyword component renders the display text,
- * links to the defining rule page, shows its blurb in the hover tooltip, and
- * degrades to plain text for unregistered terms.
+ * @description Tests that the Keyword component renders the display text, links
+ * to the route resolved for it at compile time, shows its shard in the hover
+ * card, and degrades to plain text when the index resolved nothing.
  *
  * @module tests/unit/modules/library/presentation/components/Keyword
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 2026-08-19
  *
@@ -26,24 +26,37 @@ vi.mock('react-dom', async (importOriginal) => {
 
 vi.mock('next-intl', () => ({
   useLocale: () => 'en',
+  useTranslations: () => (key: string, values?: Record<string, string>) =>
+    values ? `${key}:${Object.values(values).join(',')}` : key,
 }));
 
+import { KeywordShardProvider } from '@/modules/library/presentation/components/Keyword/KeywordShardContext';
 import Keyword from '@/modules/library/presentation/components/Keyword/Keyword';
+
+/** Route the compile step resolves for `damage bonus`, minus the locale. */
+const DAMAGE_BONUS_HREF =
+  'library/rules/steel-and-strife/making-an-attack#damage-bonus';
+
+/** Route the compile step resolves for `briefly`, minus the locale. */
+const BRIEFLY_HREF =
+  'library/rules/steel-and-strife/effects-and-enhancements#briefly';
 
 describe('Keyword', () => {
   describe('rendering', () => {
     it('should render the term as the label', () => {
-      render(<Keyword term='accuracy' />);
+      render(<Keyword term='accuracy' href='library/rules/x#accuracy' />);
       expect(screen.getByRole('link')).toHaveTextContent('accuracy');
     });
 
     it('should prefer the display text when given', () => {
-      render(<Keyword term='briefly' display='Briefly' />);
+      render(
+        <Keyword term='briefly' display='Briefly' href={BRIEFLY_HREF} />,
+      );
       expect(screen.getByRole('link')).toHaveTextContent('Briefly');
     });
 
     it('should expose the canonical term as a data attribute', () => {
-      render(<Keyword term='damage bonus' />);
+      render(<Keyword term='damage bonus' href={DAMAGE_BONUS_HREF} />);
       expect(screen.getByRole('link')).toHaveAttribute(
         'data-keyword',
         'damage bonus',
@@ -52,16 +65,18 @@ describe('Keyword', () => {
   });
 
   describe('linking', () => {
-    it('should link to the defining rule page', () => {
-      render(<Keyword term='briefly' />);
+    it('should link to the route resolved at compile time', () => {
+      render(<Keyword term='briefly' href={BRIEFLY_HREF} />);
       expect(screen.getByRole('link')).toHaveAttribute(
         'href',
-        '/en/library/rules/steel-and-strife/effects-and-enhancements',
+        `/en/${BRIEFLY_HREF}`,
       );
     });
 
     it('should render a span instead of a link with noLink', () => {
-      render(<Keyword term='accuracy' noLink />);
+      render(
+        <Keyword term='accuracy' href='library/rules/x#accuracy' noLink />,
+      );
       expect(screen.queryByRole('link')).not.toBeInTheDocument();
       expect(screen.getByText('accuracy')).toHaveAttribute(
         'data-keyword',
@@ -71,35 +86,60 @@ describe('Keyword', () => {
   });
 
   describe('hover definition', () => {
-    it('should show the blurb in the tooltip on hover', async () => {
-      render(<Keyword term='damage bonus' />);
+    it('should show the page shard in the card on hover', async () => {
+      render(
+        <KeywordShardProvider
+          shards={[
+            {
+              id: 'kw--damage-bonus',
+              heading: 'Damage Bonus',
+              source: 'The keyed ability alone, without the tier bonus.',
+            },
+          ]}>
+          <Keyword
+            term='damage bonus'
+            href={DAMAGE_BONUS_HREF}
+            templateId='kw--damage-bonus'
+            heading='Damage Bonus'
+          />
+        </KeywordShardProvider>,
+      );
 
-      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('region', { name: 'Damage Bonus' }),
+      ).not.toBeInTheDocument();
 
-      /* The card machinery is imported after mount, so the bare link renders
-         first and the hover handlers only exist once the swap has happened. */
+      /* The card machinery and the MDX compiler both load after mount, so the
+         bare link renders first and the handlers exist only once both land. */
       await act(async () => {
         await import('@/lib/components/ui/detachableTooltip');
+        await import(
+          '@/modules/library/infrastructure/compile/compileRuntime'
+        );
       });
 
       vi.useFakeTimers();
       try {
         fireEvent.mouseEnter(screen.getByRole('link'));
-        act(() => {
+        await act(async () => {
           vi.advanceTimersByTime(300);
         });
 
-        expect(screen.getByRole('tooltip')).toHaveTextContent(
-          'keyed ability alone',
-        );
+        /* The card mounts on that tick; its shard only compiles once the
+           compiler import the card's body starts has settled. */
+        await act(async () => {});
+
+        expect(
+          screen.getByRole('region', { name: 'Damage Bonus' }),
+        ).toHaveTextContent('keyed ability alone');
       } finally {
         vi.useRealTimers();
       }
     });
   });
 
-  describe('unregistered terms', () => {
-    it('should degrade to a plain span', () => {
+  describe('unresolved terms', () => {
+    it('should degrade to a plain span without an href', () => {
       render(<Keyword term='swiftness' />);
       expect(screen.queryByRole('link')).not.toBeInTheDocument();
       expect(screen.getByText('swiftness')).not.toHaveAttribute('data-keyword');

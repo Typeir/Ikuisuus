@@ -64,34 +64,14 @@
   text-overflow: ellipsis;
 }
 
-.removeBtn {
+/* The rhombus glyph is the control: it recolours, nothing fills behind it. */
+.infoBtn {
+  @include icon-transparent;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1rem;
-  height: 1rem;
   padding: 0;
-  border: none;
-  border-radius: var(--border-round-pill);
-  corner-shape: var(--corner-shape-pill);
-  background: transparent;
-  color: var(--color-secondary);
-  cursor: pointer;
   flex-shrink: 0;
-  transition:
-    background 0.15s ease,
-    color 0.15s ease;
-
-  @include focus-visible-outline();
-
-  &:hover {
-    background: var(--color-danger-subtle);
-    color: var(--color-danger);
-  }
-}
-
-.infoBtn {
-  @include icon-rounded;
   color: var(--color-text);
 }
 

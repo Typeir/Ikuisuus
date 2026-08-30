@@ -14,7 +14,7 @@
 import type { CharacterAbility } from '@/lib/types/character';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
-import btn from '@/styles/buttons.module.scss';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { BuilderSplitPane } from '../../builder/builderSplitPane';
 import styles from './abilities.module.scss';
 import { AbilitiesProvider, useAbilities } from './abilitiesContext';
@@ -75,12 +75,9 @@ const AbilitiesBody: React.FC = () => {
       right={
         <div className={styles.mainArea}>
           {editing && (
-            <button
-              type='button'
-              className={`${btn.secondary} ${styles.addBtn}`}
-              onClick={handleAdd}>
-              + {t('abilityAdd')}
-            </button>
+            <IconButton kind='add' onClick={handleAdd} className={styles.addBtn}>
+              {t('abilityAdd')}
+            </IconButton>
           )}
           <AbilityGrid
             abilities={abilities}

@@ -46,8 +46,17 @@ function refs(
   /* `clientWidth`/`clientHeight` are stubbed too: the positioning-function path
      measures the bounds with those rather than with the rect. */
   const stub = (w: number, h: number) => (el: HTMLElement) => {
-    el.getBoundingClientRect = () =>
-      ({ x: 0, y: 0, width: w, height: h, top: 0, left: 0, right: w, bottom: h, toJSON() { return this; } }) as DOMRect;
+    /* The rect follows the inline offsets a consumer writes, so a drag reads
+       the element's real place rather than the hook's last state. */
+    el.getBoundingClientRect = () => {
+      const left = Number.parseFloat(el.style.left) || 0;
+      const top = Number.parseFloat(el.style.top) || 0;
+      return {
+        x: left, y: top, width: w, height: h,
+        top, left, right: left + w, bottom: top + h,
+        toJSON() { return this; },
+      } as DOMRect;
+    };
     Object.defineProperty(el, 'clientWidth', { value: w, configurable: true });
     Object.defineProperty(el, 'clientHeight', { value: h, configurable: true });
     return el;
@@ -112,6 +121,8 @@ describe('useDrag', () => {
 
   it('moves by the pointer delta while dragging', () => {
     const { container, bounds } = refs(200, 100);
+    container.current!.style.left = '50px';
+    container.current!.style.top = '50px';
     const { result } = renderHook(() =>
       useDrag({
         containerRef: container,
@@ -201,6 +212,8 @@ describe('useDrag', () => {
 
   it('ignores a new object carrying the same coordinates', () => {
     const { container, bounds } = refs(200, 100);
+    container.current!.style.left = '10px';
+    container.current!.style.top = '10px';
     const { result, rerender } = renderHook(
       ({ pos }) =>
         useDrag({

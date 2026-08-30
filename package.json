@@ -29,7 +29,7 @@
     "build:only": "next build",
     "build:ci": "rm -rf .next/cache && npm run pre-init:ci && npm run test && next build",
     "fetch-content": "npx tsx --tsconfig tsconfig.scripts.json scripts/build/fetchContent.ts",
-    "build:vercel": "npm run fetch-content && rm -rf .next && npm run pre-init && next build",
+    "build:vercel": "npm run fetch-content && rm -rf .next && npm run db:migrate && npm run pre-init && next build",
     "generate-metadata": "npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/generateMetadata.ts",
     "generate-spell-lists": "npx tsx scripts/dev/generateSpellLists.ts",
     "fix-metadata": "npm run clean-metadata && npm run generate-metadata && npm run generate-spell-lists",

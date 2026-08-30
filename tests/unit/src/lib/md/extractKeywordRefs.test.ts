@@ -8,7 +8,7 @@
  * @since 8.0.0
  */
 
-import { extractKeywordRefs } from '@/lib/md/extractKeywordRefs';
+import { extractConsumedKeys, extractKeywordRefs } from '@/lib/md/extractKeywordRefs';
 import { describe, expect, it } from 'vitest';
 
 describe('extractKeywordRefs', () => {
@@ -65,5 +65,31 @@ describe('extractKeywordRefs', () => {
     ].join('\n');
 
     expect(extractKeywordRefs(source)).toEqual(['condition;prone']);
+  });
+
+  describe('extractConsumedKeys', () => {
+    it('should key a bare reference by its shard id', () => {
+      expect(extractConsumedKeys('a [# kw:resist #] b')).toEqual(['kw--resist']);
+    });
+
+    it('should key a namespaced reference under its namespace', () => {
+      expect(extractConsumedKeys('[# kw:condition;Prone #]')).toEqual([
+        'kw-condition-prone',
+      ]);
+    });
+
+    it('should collapse casing and separator noise onto one key', () => {
+      expect(
+        extractConsumedKeys('[# kw:Two-Weapon Fighting #] [# kw:two-weapon-fighting #]'),
+      ).toEqual(['kw--two-weapon-fighting']);
+    });
+
+    it('should ignore a reference quoted in code', () => {
+      expect(extractConsumedKeys('`[# kw:resist #]`')).toEqual([]);
+    });
+
+    it('should return nothing for source with no references', () => {
+      expect(extractConsumedKeys('plain prose')).toEqual([]);
+    });
   });
 });

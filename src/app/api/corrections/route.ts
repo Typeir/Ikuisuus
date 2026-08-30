@@ -12,6 +12,7 @@ import { isIpBanned } from '@/lib/security/bannedIps';
 import { getClientIp } from '@/lib/security/getClientIp';
 import { authenticateWithSession } from '@/modules/mdx-editor/application/use-cases/authenticateEditor';
 import { submitCorrection } from '@/modules/mdx-editor/application/use-cases/submitCorrection';
+import { consumerRoutesFor } from '@/lib/db/content/keywordGraph';
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -212,9 +213,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
 
     try {
-      revalidatePath(`/${result.locale}/library/${result.slugFromPath}`);
+      const edited = `/${result.locale}/library/${result.slugFromPath}`;
+      revalidatePath(edited);
       if (result.oldSlugFromPath) {
         revalidatePath(`/${result.locale}/library/${result.oldSlugFromPath}`);
+      }
+
+      /* Pages hold a baked copy of any shard this file defines, so revalidating
+         the edited page alone leaves that prose stale wherever it landed. */
+      const consumers = await consumerRoutesFor(result.locale, edited);
+      for (const route of consumers) revalidatePath(route);
+
+      if (consumers.length > 0) {
+        log.message('Revalidated keyword consumers', {
+          producer: edited,
+          count: consumers.length,
+        });
       }
     } catch {
       log.debug('ISR revalidation failed (non-blocking)', {

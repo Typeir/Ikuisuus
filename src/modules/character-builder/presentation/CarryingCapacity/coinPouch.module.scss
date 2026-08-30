@@ -136,30 +136,3 @@
   font-variant-numeric: tabular-nums;
 }
 
-.iconBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  background: transparent;
-  border: var(--border-width-xs) solid var(--color-border);
-  border-radius: var(--border-round-s);
-  color: var(--color-secondary);
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition:
-    color 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.15s ease;
-  @include button-hover-scale;
-
-  &:hover {
-    /* Explicit transparent hover bg → displaces the global primary-green fill. */
-    background: transparent;
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-  }
-
-  @include focus-visible-outline();
-  @include disabled-state(0.4);
-}

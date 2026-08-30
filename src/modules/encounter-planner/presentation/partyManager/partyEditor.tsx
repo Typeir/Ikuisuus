@@ -14,7 +14,7 @@
 import { useCharacters } from '@/lib/context/CharacterSheetContext';
 import type { SavedParty } from '@/modules/encounter-planner/domain/parties/party.types';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
-import { Trash2 } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import styles from './partyManager.module.scss';
@@ -157,12 +157,11 @@ export const PartyEditor: React.FC<PartyEditorProps> = ({
                 </select>
               </td>
               <td className={styles.memberTableCellAction}>
-                <button
-                  className={btn.iconDanger}
+                <IconButton
+                  kind='delete'
+                  label={`${t('removeMember')} ${member.name}`}
                   onClick={() => handleRemoveMember(member.id)}
-                  aria-label={`${t('removeMember')} ${member.name}`}>
-                  <Trash2 size={14} aria-hidden='true' />
-                </button>
+                />
               </td>
             </tr>
           ))}

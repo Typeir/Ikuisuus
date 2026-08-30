@@ -24,7 +24,8 @@ import {
   useCharacterSheetState,
 } from '@/lib/context/CharacterSheetContext';
 import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
-import { UserRound, X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
+import { UserRound } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -107,8 +108,7 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
   );
 
   const handleDeselect = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
+    () => {
       dispatch({
         type: CHARACTER_SHEET_ACTION_TYPES.SET_ACTIVE_ID,
         payload: { id: null },
@@ -169,13 +169,13 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
               placement='top'
               showDelay={300}
               showClickIcon={false}>
-              <button
-                type='button'
-                className={styles.deselect}
+              <IconButton
+                kind='close'
+                shape='rhombus'
+                label={t('characterBadge.deselect')}
                 onClick={handleDeselect}
-                aria-label={t('characterBadge.deselect')}>
-                <X size={12} strokeWidth={2.5} aria-hidden='true' />
-              </button>
+                stopPropagation
+              />
             </Tooltip>
           </span>
         )}

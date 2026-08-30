@@ -141,7 +141,7 @@ describe('EditorAuthSection (unauthenticated)', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: '\u2715' }));
+    await user.click(screen.getByRole('button', { name: 'close' }));
 
     expect(clearAuthError).toHaveBeenCalled();
   });

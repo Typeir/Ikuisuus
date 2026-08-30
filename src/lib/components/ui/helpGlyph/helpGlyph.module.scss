@@ -1,0 +1,46 @@
+/**
+ * HelpGlyph. A rhombus in `currentColor` with an upright `?` inside; the
+ * rhombus mixin turns the box and turns the mark back. Sizes set the
+ * unshrunk side; the mark scales with it.
+ *
+ * @module lib/components/ui/helpGlyph/helpGlyph.module
+ */
+
+@use 'sass:math';
+@use 'mixins' as *;
+
+$rhombus-side: math.sqrt(0.925);
+
+.glyph {
+  @include rhombus;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--help-glyph-box) * #{$rhombus-side});
+  height: calc(var(--help-glyph-box) * #{$rhombus-side});
+  flex-shrink: 0;
+  margin-inline: calc(var(--help-glyph-box) * 0.21);
+  border: var(--border-width-xs) solid currentColor;
+  border-radius: var(--border-round-circle);
+  color: inherit;
+  transition: color 0.15s ease;
+}
+
+.mark {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: calc(var(--help-glyph-box) * 0.68 + 1px);
+  line-height: 1;
+}
+
+.xs {
+  --help-glyph-box: 9px;
+}
+
+.s {
+  --help-glyph-box: 11.5px;
+}
+
+.m {
+  --help-glyph-box: 15px;
+}

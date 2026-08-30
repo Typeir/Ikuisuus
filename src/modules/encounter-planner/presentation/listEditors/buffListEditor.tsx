@@ -22,9 +22,8 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { X } from 'lucide-react';
 import styles from '../creatureRow.module.scss';
-import btn from '@/styles/buttons.module.scss';
+import { IconButton } from '@/lib/components/ui/iconButton';
 
 /**
  * @interface BuffListEditorProps
@@ -92,12 +91,11 @@ export const BuffListEditor: React.FC<BuffListEditorProps> = ({
           <div key={idx} className={styles.chip}>
             {buff}
             {!readOnly && (
-              <button
+              <IconButton
+                kind='close'
+                label={removeChipAriaLabel}
                 onClick={() => handleRemoveBuff(idx)}
-                className={btn.iconDanger}
-                aria-label={removeChipAriaLabel}>
-                <X size={12} aria-hidden='true' />
-              </button>
+              />
             )}
           </div>
         ))}
@@ -112,11 +110,13 @@ export const BuffListEditor: React.FC<BuffListEditorProps> = ({
             onKeyDown={(e) => e.key === 'Enter' && handleAddBuff()}
             placeholder={addBuffLabel}
           />
-          <button
+          <IconButton
+            kind='add'
+            size='s'
+            label={addBuffLabel}
             onClick={handleAddBuff}
-            className={styles.addConditionButton}>
-            +
-          </button>
+            className={styles.addConditionSlot}
+          />
         </div>
       )}
     </>

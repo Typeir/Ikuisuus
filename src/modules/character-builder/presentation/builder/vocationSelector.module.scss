@@ -292,43 +292,18 @@
   }
 }
 
-.removeBtn {
+/* Corner slot for the rhombus remove IconButton. Layout only. */
+.removeSlot {
   position: absolute;
   top: -0.35rem;
   right: -0.35rem;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem;
-  font-size: 0.7rem;
-  line-height: 1;
-  background: var(--color-surface) !important;
-  color: var(--color-secondary);
-  border: var(--border-width-xs) solid var(--color-border);
-  cursor: pointer;
-  transition:
-    color 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.15s ease,
-    filter 0.15s ease;
-  @include button-hover-scale;
-
-  &:hover {
-    color: var(--color-danger);
-    border-color: var(--color-danger);
-    @include focus-glow(3px, var(--color-danger));
-  }
 }
 
+/* Layout slot for the add IconButton. */
 .addVocationBtn {
   align-self: flex-start;
   margin-top: 0.2rem;
-  @include button-secondary(0.3rem 0.65rem, 0.7rem);
-  font-weight: 600;
-  border-radius: var(--border-round-xs);
-  @include button-hover-scale;
 }
 
 /** =====================================================================

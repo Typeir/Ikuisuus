@@ -20,7 +20,8 @@ import {
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
-import { ChevronLeft, ChevronRight, Plus, Trash2 } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CharacterSheet } from '../CharacterSheet/characterSheet';
@@ -59,7 +60,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
       const stored = window.localStorage.getItem(ROSTER_COLLAPSED_KEY);
       if (stored === 'true') setCollapsed(true);
     } catch {
-      /** storage unavailable — non-fatal */
+      /** storage unavailable â€” non-fatal */
     }
   }, []);
 
@@ -69,7 +70,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
       try {
         window.localStorage.setItem(ROSTER_COLLAPSED_KEY, String(next));
       } catch {
-        /** storage unavailable — non-fatal */
+        /** storage unavailable â€” non-fatal */
       }
       return next;
     });
@@ -137,16 +138,14 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
     <div className={styles.rosterShell}>
       <header className={styles.rosterTopBar}>
         <h2 className={styles.rosterTitle}>{t('rosterTitle')}</h2>
-        <button
-          type='button'
-          className={styles.createCharBtn}
-          onClick={handleCreate}
-          aria-label={t('ariaCreateCharacter')}>
-          <span className={styles.createCharGlyph} aria-hidden='true'>
-            <Plus size={11} />
-          </span>
+        <IconButton
+          kind='add'
+          size='s'
+          shape='rhombus'
+          label={t('ariaCreateCharacter')}
+          onClick={handleCreate}>
           {t('newCharacter')}
-        </button>
+        </IconButton>
       </header>
       <div
         className={styles.characterRoster}
@@ -200,15 +199,15 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
                         {tCommon('levelShort', { level: char.level })}
                       </span>
                     </button>
-                    <button
-                      type='button'
-                      className={styles.rosterDeleteBtn}
-                      onClick={() => handleDelete(char.id)}
-                      aria-label={t('ariaDeleteCharacter', {
+                    <IconButton
+                      kind='delete'
+                      size='s'
+                      label={t('ariaDeleteCharacter', {
                         name: displayName,
-                      })}>
-                      <Trash2 size={12} aria-hidden='true' />
-                    </button>
+                      })}
+                      onClick={() => handleDelete(char.id)}
+                      className={styles.rosterDeleteBtn}
+                    />
                   </li>
                 );
               })}

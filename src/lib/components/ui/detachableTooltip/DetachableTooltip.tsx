@@ -3,7 +3,8 @@
  * @description A draggable card that opens on hover. It is a card from the
  * first frame — there is no tooltip phase and no promotion, so nothing shifts
  * when it is kept. Leaving the trigger fades it out; leaving with Shift held,
- * or Shift+Enter, pins it.
+ * or Shift+Enter, pins it. On a coarse pointer a tap opens the card rather than
+ * following the trigger, since there is no hover to open it with.
  *
  * Placement is `useTooltipAnchor`, unchanged from the plain `Tooltip`: the
  * position is written straight to the DOM before paint and the card stays
@@ -115,11 +116,12 @@ export function DetachableTooltip({
 
   const layerRef = useRef<HTMLDivElement>(null);
 
-  const { showPortal, exiting, show, hide, hideNow } = useTooltipVisibility({
-    showDelay,
-    hideDelay,
-    disabled,
-  });
+  const { showPortal, exiting, show, showNow, hide, hideNow } =
+    useTooltipVisibility({
+      showDelay,
+      hideDelay,
+      disabled,
+    });
 
   const { triggerRef, surfaceRef, anchorName, actualPlacement, anchorId } =
     useTooltipAnchor(placement, showPortal && !moved);
@@ -206,6 +208,25 @@ export function DetachableTooltip({
     [dragHandleProps, surfaceRef],
   );
 
+  /**
+   * A tap opens the card instead of following the trigger. Without hover, a
+   * touch reader could otherwise only leave the page to read a definition; the
+   * card's own link is the way onward.
+   *
+   * @param {ReactMouseEvent} event - Click on the trigger
+   */
+  const handleClick = useCallback(
+    (event: ReactMouseEvent) => {
+      if (disabled) return;
+      if (!window.matchMedia?.('(pointer: coarse)').matches) return;
+
+      event.preventDefault();
+      setPinned(true);
+      showNow();
+    },
+    [disabled, showNow],
+  );
+
   useEscapeDismiss(showPortal, close);
 
   const child = isValidElement(children) ? Children.only(children) : null;
@@ -227,6 +248,7 @@ export function DetachableTooltip({
       if (!pinned) hide();
     },
     onKeyDown: handleKeyDown,
+    onClick: handleClick,
     'aria-describedby': showPortal ? cardId : undefined,
   });
 
@@ -246,8 +268,6 @@ export function DetachableTooltip({
     ? {
         left: position.x,
         top: position.y,
-        /* The opening cap stops applying once the reader sets a width, or the
-           card could never be resized wider than it opened. */
         maxWidth,
       }
     : ({

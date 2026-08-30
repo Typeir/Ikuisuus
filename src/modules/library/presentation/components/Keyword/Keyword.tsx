@@ -2,9 +2,10 @@
  * @fileoverview Keyword Inline MDX Component
  * @description Inline MDX component that renders a rules keyword linked to the
  * heading that defines it. The link target and the id of the baked shard both
- * arrive as props, resolved at compile time. Hover clones the shard out of its
- * inert `<template>`, so the definition costs no request. Leaving the keyword
- * with Shift held parks the card as a draggable panel.
+ * arrive as props, resolved at compile time. A reference the index cannot
+ * resolve renders as plain text. Hover compiles the shard the page already
+ * carries, so the definition costs no request. Leaving the keyword with Shift
+ * held parks the card as a draggable panel.
  *
  * @module modules/library/presentation/components/Keyword/Keyword
  * @version 4.0.0
@@ -15,8 +16,8 @@
 'use client';
 
 import type { DetachableTooltipProps } from '@/lib/components/ui/detachableTooltip';
-import { lookupKeyword } from '@/lib/md/keywordRegistry';
-import { useLocale } from 'next-intl';
+import { ExternalLink } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import type { compileRuntimeSync as CompileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import React, { useEffect, useMemo, useState, type ComponentType } from 'react';
 import DiceRoll from '../DiceRoll';
@@ -136,10 +137,14 @@ const KeywordShard: React.FC<KeywordShardProps> = ({ templateId }) => {
  *
  * @typedef {object} KeywordCardProps
  * @property {string} title - Card title, shown at heading size
+ * @property {string} href - Full rule page the title links to
+ * @property {string} linkLabel - Accessible name for the link
  * @property {React.ReactNode} children - Definition body
  */
 interface KeywordCardProps {
   title: string;
+  href: string;
+  linkLabel: string;
   children: React.ReactNode;
 }
 
@@ -149,9 +154,19 @@ interface KeywordCardProps {
  * @param {KeywordCardProps} props - Component props
  * @returns {React.ReactElement} The rendered card
  */
-const KeywordCard: React.FC<KeywordCardProps> = ({ title, children }) => (
+const KeywordCard: React.FC<KeywordCardProps> = ({
+  title,
+  href,
+  linkLabel,
+  children,
+}) => (
   <div className={styles.card}>
-    <h3 className={styles.cardTitle}>{title}</h3>
+    <div className={styles.cardHeading}>
+      <h3 className={styles.cardTitle}>{title}</h3>
+      <a className={styles.cardLink} href={href} aria-label={linkLabel}>
+        <ExternalLink size={14} aria-hidden='true' />
+      </a>
+    </div>
     {children}
   </div>
 );
@@ -173,20 +188,16 @@ export const Keyword: React.FC<KeywordProps> = ({
   noCard = false,
 }) => {
   const locale = useLocale();
+  const t = useTranslations('keywords');
   const DetachableTooltip = useDetachableTooltip();
-  const entry = lookupKeyword(term);
   const label = display ?? term;
-  const target = href ?? entry?.href;
+  const target = href;
 
   if (!target) {
     return <span>{label}</span>;
   }
 
-  const body = templateId ? (
-    <KeywordShard templateId={templateId} />
-  ) : entry?.blurb ? (
-    <span className={styles.blurb}>{entry.blurb}</span>
-  ) : null;
+  const body = templateId ? <KeywordShard templateId={templateId} /> : null;
 
   const className = body ? styles.defined : styles.keyword;
 
@@ -212,11 +223,18 @@ export const Keyword: React.FC<KeywordProps> = ({
 
   return (
     <DetachableTooltip
-      content={<KeywordCard title={title}>{body}</KeywordCard>}
+      content={
+        <KeywordCard
+          title={title}
+          href={`/${locale}/${target}`}
+          linkLabel={t('openRule', { term: title })}>
+          {body}
+        </KeywordCard>
+      }
       title={title}
       className={styles.tooltip}
       panelClassName={styles.panel}
-      closeLabel={`Close ${title}`}>
+      closeLabel={t('close', { term: title })}>
       {trigger}
     </DetachableTooltip>
   );

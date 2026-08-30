@@ -12,7 +12,8 @@
 
 'use client';
 
-import { HelpCircle, X } from 'lucide-react';
+import { HelpGlyph } from '@/lib/components/ui/helpGlyph';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import type { MouseEvent, ReactNode } from 'react';
 import styles from './chip.module.scss';
 
@@ -89,8 +90,7 @@ export const Chip: React.FC<ChipProps> = ({
     onInfo?.();
   };
 
-  const handleRemove = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  const handleRemove = () => {
     onRemove?.();
   };
 
@@ -109,17 +109,17 @@ export const Chip: React.FC<ChipProps> = ({
           className={styles.infoBtn}
           onClick={handleInfo}
           aria-label={infoLabel ?? `Info for ${label}`}>
-          <HelpCircle size={11} aria-hidden='true' />
+          <HelpGlyph size='xs' />
         </button>
       )}
       {onRemove && (
-        <button
-          type='button'
-          className={styles.removeBtn}
+        <IconButton
+          kind='close'
+          size='xs'
+          label={removeLabel ?? `Remove ${label}`}
           onClick={handleRemove}
-          aria-label={removeLabel ?? `Remove ${label}`}>
-          <X size={11} aria-hidden='true' />
-        </button>
+          stopPropagation
+        />
       )}
     </>
   );

@@ -23,35 +23,10 @@
   }
 }
 
-.addConditionButton {
+/* Layout slot for the add IconButton inside the input row. */
+.addConditionSlot {
   position: absolute;
   right: 0.25rem;
-  background: transparent !important;
-  border: none;
-  padding: 0.15rem 0.35rem;
-  color: var(--color-secondary);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  line-height: 1;
-  transition:
-    color 0.2s ease,
-    transform 0.15s ease,
-    filter 0.2s ease;
-
-  &:hover {
-    color: var(--color-accent);
-    transform: scale(1.25);
-    filter: drop-shadow(0px 0px 3px var(--color-accent));
-    background: transparent !important;
-  }
-
-  &:focus,
-  &:active {
-    outline: none;
-    background: transparent !important;
-    box-shadow: none;
-  }
 }
 
 .detailsGrid {

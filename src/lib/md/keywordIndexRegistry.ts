@@ -2,9 +2,13 @@
  * Keyword Index Registry
  *
  * @fileoverview Discovers content files that declare keyword definitions in
- * frontmatter. `keywordIndex: <name>` contributes every heading in the file to
- * that namespace. `keywords: [<term>, ...]` contributes named terms to the bare
- * namespace. Holds pointers only; shard prose is fetched separately.
+ * frontmatter. A file contributes nothing until it says so: `keywordIndex:
+ * <name>` contributes every heading in the file to that namespace, and
+ * `keywords: [<term>, ...]` contributes named terms to the bare namespace. A
+ * declared term with no matching heading throws, so a typo fails the build
+ * rather than dropping a keyword silently.
+ *
+ * Holds pointers only; shard prose is fetched separately.
  *
  * Server only, since discovery reads the content tree. Shapes and lookups live
  * in `keywordIndex`, which is safe to bundle for the client.
@@ -23,14 +27,12 @@ import { anchorSlug } from '@/modules/library/domain/anchorSlug';
 import {
   BARE_NAMESPACE,
   contributeKeyword,
+  keywordTemplateId,
   type KeywordRegistry,
 } from './keywordIndex';
 
 /** Matches an ATX heading and captures its level and text. */
 const HEADING_REGEX = /^(#{1,6})\s+(.+?)\s*$/gm;
-
-/** Directory whose pages are keyword indexes without declaring themselves. */
-const RULES_DIR = 'rules';
 
 /** Cached discovery result, keyed by content root. */
 const cache = new Map<string, KeywordRegistry>();
@@ -94,6 +96,55 @@ function declaredTerms(raw: unknown): string[] {
 }
 
 /**
+ * Collects the join keys for every keyword a document defines.
+ *
+ * Mirrors {@link extractConsumedKeys}: the same shard ids, from the other side
+ * of the reference. `keywordIndex` yields one key per heading; `keywords` yields
+ * one per declared term. A declared term with no matching heading is skipped
+ * here rather than thrown on, since stamping runs over every content file and
+ * discovery is where that check belongs.
+ *
+ * @param {string} source - Raw MDX source, frontmatter included
+ * @returns {string[]} Shard ids, deduplicated and sorted
+ *
+ * @example
+ * extractProducedKeys('---
+keywords:
+  - resist
+---
+
+### Resist
+');
+ * // ['kw--resist']
+ */
+export function extractProducedKeys(source: string): string[] {
+  const { data, content } = matter(source);
+
+  const namespace =
+    typeof data.keywordIndex === 'string'
+      ? data.keywordIndex.trim().toLowerCase()
+      : null;
+  const terms = declaredTerms(data.keywords);
+  if (!namespace && terms.length === 0) return [];
+
+  const headings = headingValues(content);
+  const keys = new Set<string>();
+
+  if (namespace) {
+    for (const anchor of headings.keys()) {
+      keys.add(keywordTemplateId(namespace, anchor));
+    }
+  }
+
+  for (const term of terms) {
+    const anchor = anchorSlug(term);
+    if (headings.has(anchor)) keys.add(keywordTemplateId(undefined, anchor));
+  }
+
+  return [...keys].sort();
+}
+
+/**
  * Discovers every declared keyword namespace beneath a content root. Several
  * files may declare the same namespace; their values merge.
  *
@@ -125,26 +176,13 @@ export async function discoverKeywordIndexes(
       .split(path.sep)
       .join('/');
 
-    /* Every rules page is a keyword index. A heading used by more than one
-       page resolves to nothing, so ambiguous terms stay plain links. */
-    const isRule = relative.startsWith(`${RULES_DIR}/`);
-    if (!namespace && terms.length === 0 && !isRule) continue;
+    if (!namespace && terms.length === 0) continue;
 
     const headings = headingValues(content);
 
     if (namespace) {
       for (const [anchor, heading] of headings) {
         contributeKeyword(registry, namespace, {
-          anchor,
-          heading,
-          filePath: relative,
-        });
-      }
-    }
-
-    if (isRule) {
-      for (const [anchor, heading] of headings) {
-        contributeKeyword(registry, BARE_NAMESPACE, {
           anchor,
           heading,
           filePath: relative,

@@ -148,24 +148,6 @@
 
 /* Matches the attacks-table remove treatment: borderless trash glyph
    that recolors to danger on hover — nothing to clip. */
-.equipmentRemoveBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent !important;
-  border: none;
-  cursor: pointer;
-  color: var(--color-secondary);
-  padding: 0.2rem;
-  transition:
-    color 0.15s ease,
-    transform 0.15s ease;
-
-  &:hover {
-    color: var(--color-danger);
-  }
-}
-
 .equipmentRow {
   display: flex;
   align-items: center;

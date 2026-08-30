@@ -45,7 +45,8 @@ describe('CardChrome', () => {
         dragHandleProps={drag.props}
         resizeHandleProps={resize.props}
         onClose={vi.fn()}
-        title='Blinded'>
+        title='Blinded'
+        resizable>
         <p>Definition body</p>
       </CardChrome>,
     );
@@ -75,6 +76,25 @@ describe('CardChrome', () => {
     expect(
       screen.getByRole('separator', { name: 'Drag handle' }),
     ).toBeInTheDocument();
+  });
+
+  it('omits the resize corner unless asked for one', () => {
+    const drag = handlers();
+    const resize = handlers();
+
+    render(
+      <CardChrome
+        dragHandleProps={drag.props}
+        resizeHandleProps={resize.props}
+        onClose={vi.fn()}
+        title='Blinded'>
+        <p>Body</p>
+      </CardChrome>,
+    );
+
+    expect(
+      screen.queryByRole('separator', { name: 'Resize handle' }),
+    ).not.toBeInTheDocument();
   });
 
   it('closes through its own control', () => {
@@ -107,7 +127,8 @@ describe('CardChrome', () => {
         dragHandleProps={drag.props}
         resizeHandleProps={resize.props}
         onClose={vi.fn()}
-        title='Blinded'>
+        title='Blinded'
+        resizable>
         <p>Body</p>
       </CardChrome>,
     );

@@ -3,7 +3,6 @@
  * Centered modal with backdrop overlay
  */
 
-@use 'mixins' as *;
 
 .overlay {
   position: fixed;
@@ -40,23 +39,6 @@
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--color-text);
-}
-
-.closeButton {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  color: var(--color-text-secondary);
-  transition: color 0.15s ease;
-
-  &:hover {
-    background: none;
-    color: var(--color-text);
-  }
-
-  @include focus-accent-outline;
 }
 
 .body {

@@ -22,7 +22,7 @@ import type { Root } from 'hast';
 import { fromHtml } from 'hast-util-from-html';
 import { describe, expect, it } from 'vitest';
 
-type Node = { type: string; name?: string; tagName?: string; attributes?: Array<{ name: string; value: string }>; children?: Node[] };
+type Node = { type: string; name?: string; tagName?: string; properties?: Record<string, unknown>; attributes?: Array<{ name: string; value: string }>; children?: Node[] };
 
 /**
  * Sectionizes then places rows; returns the tree.
@@ -40,6 +40,7 @@ function run(html: string, opts: RehypeAspectsOptions): Root {
 
 /**
  * Serialises a tree to a compact outline: tag names, `Aspects[key]` for rows.
+ * Sectionize's stream rails are ornament and are left out.
  *
  * @param {Node} node - Tree node
  * @returns {string} Outline
@@ -50,6 +51,10 @@ function outline(node: Node): string {
     return `${node.name}[${key}]`;
   }
   if (node.type === 'text') return '';
+  const props = node.properties ?? {};
+  if (props['data-stream-rail'] !== undefined || props.dataStreamRail !== undefined) {
+    return '';
+  }
   const kids = (node.children ?? []).map(outline).filter(Boolean).join(' ');
   return node.tagName ? `${node.tagName}(${kids})` : kids;
 }

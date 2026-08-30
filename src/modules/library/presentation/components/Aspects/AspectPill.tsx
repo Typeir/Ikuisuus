@@ -14,7 +14,7 @@ import {
   aspectMark,
   type ParsedAspect,
 } from '@/modules/library/domain/aspects';
-import { X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import React from 'react';
 import styles from './Aspects.module.scss';
 
@@ -133,14 +133,13 @@ export const AspectPill: React.FC<{
     return (
       <span {...shared} className={`${shared.className} ${styles.removable}`}>
         {body}
-        <button
-          type='button'
-          className={styles.removeBtn}
-          aria-label={removeLabel ?? `Remove ${name}`}
+        <IconButton
+          kind='close'
+          size='xs'
+          tone='inherit'
+          label={removeLabel ?? `Remove ${name}`}
           onClick={() => onRemove(aspect)}
-        >
-          <X size={11} aria-hidden='true' />
-        </button>
+        />
       </span>
     );
   }

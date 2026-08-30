@@ -67,7 +67,7 @@ export const FEATURE = {
  * @property {RegExp} spellSlotsLabel - "Spell Slots" table header
  * @property {RegExp} slotLevelLabel - "Slot Level" table header
  * @property {RegExp} alwaysPrepared - Domain/Oath/Circle always-prepared keywords
- * @property {RegExp} specHeading - Eldritch Knight/Arcane Trickster heading
+ * @property {RegExp} specHeading - Spellblade/Arcane Trickster heading
  */
 export const CASTING = {
   abilityBold: /\*\*Spellcasting Ability\*\*:\s*(\w+)/i,
@@ -83,7 +83,7 @@ export const CASTING = {
   alwaysPrepared:
     /(?:domain spells|oath spells|circle spells|expanded spell list|always.?prepared)/i,
   specHeading:
-    /##\s+(?:Eldritch Knight|Arcane Trickster|(?:\w+\s+)*Spellcasting)\s*$/m,
+    /##\s+(?:Spellblade|Arcane Trickster|(?:\w+\s+)*Spellcasting)\s*$/m,
 } as const;
 
 /**

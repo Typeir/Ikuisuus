@@ -119,30 +119,6 @@
 }
 
 .mobilePagerBtn,
-.mobileCloseBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  background: none;
-  border: var(--border-width-xs) solid var(--color-border);
-  border-radius: 0;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-
-  &:hover:not(:disabled),
-  &:focus-visible {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
-
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-}
-
 .mobileFrame {
   flex: 1;
   width: 100%;

@@ -20,6 +20,7 @@ import type { SpecOption, VocationOption } from '@/lib/types/vocations';
 import { VocationProficiencySummary } from './vocationProficiencySummary';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import styles from './vocationSelector.module.scss';
 
 /**
@@ -174,14 +175,14 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
           />
         )}
         {!isOnlyEntry && (
-          <button
-            type='button'
-            className={styles.removeBtn}
-            aria-label={t('ariaRemoveVocation')}
+          <IconButton
+            kind='close'
+            shape='rhombus'
+            label={t('ariaRemoveVocation')}
             disabled={showSkeleton || isAsyncLoading}
-            onClick={() => onRemove(index)}>
-            ✕
-          </button>
+            onClick={() => onRemove(index)}
+            className={styles.removeSlot}
+          />
         )}
       </div>
       <div className={styles.selectorRow}>

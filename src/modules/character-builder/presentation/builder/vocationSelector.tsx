@@ -31,6 +31,7 @@ import { BoonPicker } from './boonPicker';
 import { IdentityRows } from './identityRows';
 import { SummaryBar } from './summaryBar';
 import { VocationEntryBlock } from './vocationEntryBlock';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import styles from './vocationSelector.module.scss';
 
 /**
@@ -266,12 +267,13 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
               ))}
             </div>
 
-            <button
-              type='button'
-              className={styles.addVocationBtn}
-              onClick={handleAddVocation}>
+            <IconButton
+              kind='add'
+              size='s'
+              onClick={handleAddVocation}
+              className={styles.addVocationBtn}>
               {t('addVocation')}
-            </button>
+            </IconButton>
           </div>
         )}
       </div>

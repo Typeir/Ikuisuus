@@ -140,6 +140,9 @@ export class HeirloomEntity {
   tags: string[] = [];
 
   @OrmProperty({ type: 'string[]' })
+  produces: string[] = [];
+
+  @OrmProperty({ type: 'string[]' })
   consumes: string[] = [];
 
   @OrmProperty({ type: 'string[]' })

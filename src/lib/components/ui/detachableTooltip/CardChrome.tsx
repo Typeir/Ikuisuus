@@ -14,7 +14,7 @@
 
 import draggableStyles from '@/lib/components/ui/draggable/draggable.module.scss';
 import type { HandleProps } from '@/lib/components/ui/draggable/useDrag';
-import { X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import type { ReactNode } from 'react';
 import styles from './detachableTooltip.module.scss';
 
@@ -65,13 +65,11 @@ export function CardChrome({
         aria-label={title ?? 'Drag handle'}>
         <span className={draggableStyles.dragGrip} aria-hidden='true' />
         {title && <span className={draggableStyles.dragLabel}>{title}</span>}
-        <button
-          className={draggableStyles.closeButton}
+        <IconButton
+          kind='close'
+          label={closeLabel ?? 'Close panel'}
           onClick={onClose}
-          type='button'
-          aria-label={closeLabel ?? 'Close panel'}>
-          <X size={16} aria-hidden='true' />
-        </button>
+        />
       </div>
       <div className={styles.panelBody}>{children}</div>
       {resizable && (

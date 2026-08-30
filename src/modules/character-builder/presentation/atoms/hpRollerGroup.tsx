@@ -14,6 +14,7 @@ import { NumericInput } from '@/lib/components/ui/numericInput';
 import { Tooltip } from '@/lib/components/ui/tooltip';
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
 import { formatDie } from '@/lib/utils/diceUtils';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { Dices, Sigma } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -228,14 +229,12 @@ export const HpRollerGroup: React.FC<HpRollerGroupProps> = ({
                   + {conMod} = {(entry.result ?? 0) + conMod}
                 </span>
                 {!isMaxed && (
-                  <button
-                    type='button'
-                    className={styles.removeBtn}
-                    onClick={() => onRemove(entry.id)}
+                  <IconButton
+                    kind='close'
+                    label={t('hpRollerRemoveAria')}
                     title={t('hpRollerRemoveTitle')}
-                    aria-label={t('hpRollerRemoveAria')}>
-                    ✕
-                  </button>
+                    onClick={() => onRemove(entry.id)}
+                  />
                 )}
               </>
             ) : (

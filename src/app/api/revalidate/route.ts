@@ -10,6 +10,7 @@
  */
 
 import { contentCacheTag } from '@/lib/db/content/contentCacheTags';
+import { consumerRoutesFor } from '@/lib/db/content/keywordGraph';
 import {
   MAIN_INDEX_SLUG,
   REGEX_CONTENT_SUFFIX,
@@ -143,6 +144,28 @@ export async function POST(req: NextRequest) {
         } catch (err) {
           log.warning('Failed to revalidate variant', {
             path: v,
+            error: err instanceof Error ? err.message : String(err),
+          });
+        }
+      }
+
+      /* A shard is copied into every consuming page at compile, so the pages
+         holding this file's prose go stale with it. */
+      if (locale) {
+        try {
+          const consumers = await consumerRoutesFor(locale, p);
+          for (const route of consumers) {
+            revalidatePath(route, 'page');
+          }
+          if (consumers.length > 0) {
+            log.message('Revalidated keyword consumers', {
+              producer: p,
+              count: consumers.length,
+            });
+          }
+        } catch (err) {
+          log.warning('Consumer revalidation failed', {
+            path: p,
             error: err instanceof Error ? err.message : String(err),
           });
         }

@@ -15,7 +15,7 @@ import type {
     InProgressCombat,
     InProgressCombatant,
 } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
-import { X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CombatantRow } from '../combatantRow';
@@ -118,12 +118,12 @@ export const PlayMode: React.FC<PlayModeProps> = ({
             {combat.combatants.length}
           </span>
         </div>
-        <button
+        <IconButton
+          kind='close'
+          label={t('exitPlayMode')}
           onClick={onExit}
-          className={`${btn.icon} ${styles.exitButton}`}
-          aria-label={t('exitPlayMode')}>
-          <X size={18} aria-hidden='true' />
-        </button>
+          className={styles.exitButton}
+        />
       </div>
 
       <div className={styles.playModeControls}>

@@ -12,7 +12,7 @@
 'use client';
 
 import { Tooltip } from '@/lib/components/ui/tooltip';
-import { CircleHelp } from 'lucide-react';
+import { HelpGlyph } from '@/lib/components/ui/helpGlyph';
 import { useLocale } from 'next-intl';
 import type { MouseEvent } from 'react';
 import { usePagePreview, type PreviewKind } from './pagePreviewProvider';
@@ -83,7 +83,7 @@ export const PagePreviewTooltip: React.FC<PagePreviewTooltipProps> = ({
         aria-label={ariaLabel ?? `Preview ${title}`}
         aria-pressed={open}
         data-locale={locale}>
-        <CircleHelp size={14} aria-hidden='true' />
+        <HelpGlyph />
       </button>
     </Tooltip>
   );

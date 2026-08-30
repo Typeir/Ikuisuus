@@ -7,7 +7,6 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
     createUseTranslationsMock,
@@ -112,37 +111,6 @@ describe('FilteredSpellTable', () => {
     render(<FilteredSpellTable sources={['/api/spells']} />);
 
     expect(screen.getByText(/Network error/i)).toBeInTheDocument();
-  });
-
-  it('forwards Damocles-only toggle as a source neq basic filter expression', async () => {
-    const user = userEvent.setup();
-
-    mockHook.mockReturnValue({
-      spellData: [makeSpell({ title: 'Fireball', level: 1, source: null })],
-      loading: false,
-      refetching: false,
-      error: null,
-    });
-
-    render(<FilteredSpellTable sources={['/api/spells']} levels={[1]} />);
-
-    expect(mockHook).toHaveBeenLastCalledWith(
-      ['/api/spells'],
-      'en',
-      undefined,
-      undefined,
-      [],
-    );
-
-    await user.click(screen.getByLabelText(/damocles only/i));
-
-    expect(mockHook).toHaveBeenLastCalledWith(
-      ['/api/spells'],
-      'en',
-      undefined,
-      undefined,
-      [{ field: 'source', operator: 'neq', value: 'basic' }],
-    );
   });
 
 });

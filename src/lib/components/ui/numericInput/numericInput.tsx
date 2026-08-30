@@ -53,7 +53,8 @@ import {
   ChangeEvent,
   KeyboardEvent,
 } from 'react';
-import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import styles from './numericInput.module.scss';
 
 /**
@@ -271,15 +272,12 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(func
       />
 
       {showClear && value !== undefined && !disabled && (
-        <button
-          type="button"
-          className={styles.clearButton}
+        <IconButton
+          kind='close'
+          label='Clear value'
           onClick={handleClear}
-          aria-label="Clear value"
           tabIndex={-1}
-        >
-          <X size={14} aria-hidden='true' />
-        </button>
+        />
       )}
 
       {showButtons && (

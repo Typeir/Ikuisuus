@@ -12,6 +12,7 @@
 
 import type { JSX } from 'react';
 import { useState } from 'react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import btn from '@/styles/buttons.module.scss';
 import styles from './EditorAuthSection.module.scss';
 
@@ -128,12 +129,11 @@ export function EditorAuthSection({
         {authError && (
           <span className={styles.statusError}>
             {authError}{' '}
-            <button
-              type='button'
-              className={btn.iconDanger}
-              onClick={clearAuthError}>
-              ✕
-            </button>
+            <IconButton
+              kind='close'
+              label={t('close')}
+              onClick={clearAuthError}
+            />
           </span>
         )}
       </div>

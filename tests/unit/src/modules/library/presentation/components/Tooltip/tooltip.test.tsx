@@ -100,16 +100,19 @@ describe('Tooltip MDX Component', () => {
     });
   });
 
-  it('renders CircleHelp icon by default', () => {
+  it('renders the help glyph by default', () => {
     const { container } = render(
       <Tooltip>
         <span>Trigger</span>
         <span>Content</span>
       </Tooltip>,
     );
-    // Check that the CircleHelp icon is rendered (lucide-react renders SVG)
-    const svg = container.querySelector('svg');
-    expect(svg).toBeInTheDocument();
+
+    /* `HelpGlyph` draws the mark in CSS, so the hook is the decorative span
+       rather than an icon element. */
+    const glyph = container.querySelector('[aria-hidden="true"][data-size]');
+    expect(glyph).toBeInTheDocument();
+    expect(glyph).toHaveTextContent('?');
   });
 
   it('handles missing children gracefully', () => {

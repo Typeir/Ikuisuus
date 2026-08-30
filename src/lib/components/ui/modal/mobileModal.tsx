@@ -11,7 +11,7 @@
 
 'use client';
 
-import { X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { memo, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './mobileModal.module.scss';
@@ -100,13 +100,12 @@ export const MobileModal = memo(function MobileModal({
             {header ||
               (title && <h2 className={styles.mobileModalTitle}>{title}</h2>)}
             {showCloseButton && (
-              <button
+              <IconButton
+                kind='close'
+                label='Close modal'
                 onClick={onClose}
-                aria-label='Close modal'
-                type='button'
-                className={styles.mobileModalClose}>
-                <X size={24} aria-hidden='true' />
-              </button>
+                shape={variant === 'console' ? 'square' : 'plain'}
+              />
             )}
           </div>
         )}

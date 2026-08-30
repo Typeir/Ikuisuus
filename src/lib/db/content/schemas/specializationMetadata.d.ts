@@ -44,7 +44,7 @@ export interface AlwaysPreparedSpells {
 }
 
 /**
- * Spellcasting details for third-caster subclasses (e.g. Eldritch Knight, Arcane Trickster).
+ * Spellcasting details for third-caster subclasses (e.g. Spellblade, Arcane Trickster).
  *
  * @property {string} ability - Spellcasting ability (e.g. "Intelligence")
  * @property {string} progression - Caster classification (typically "Third")

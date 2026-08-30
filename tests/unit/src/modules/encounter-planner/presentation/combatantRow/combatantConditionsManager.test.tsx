@@ -246,7 +246,7 @@ describe('CombatantConditionsManager add condition', () => {
 
     const input = screen.getByPlaceholderText('addCondition');
     await user.type(input, 'Charmed');
-    const addButton = screen.getByRole('button', { name: '+' });
+    const addButton = screen.getByRole('button', { name: 'addCondition' });
     await user.click(addButton);
 
     expect(onUpdate).toHaveBeenCalledWith(

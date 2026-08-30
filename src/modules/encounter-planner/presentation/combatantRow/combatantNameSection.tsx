@@ -30,7 +30,7 @@ import {
     AwakeningClassResult,
     computeAwakeningClasses,
 } from '../utils/heroicAwakeningStyles';
-import { X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useRef } from 'react';
 import styles from './combatantRow.module.scss';
@@ -195,12 +195,12 @@ export const CombatantNameSection: React.FC<CombatantNameSectionProps> = ({
         )}
       </span>
       {onRemoveSessionOnly && (
-        <button
+        <IconButton
+          kind='close'
+          label={t('removeCombatant')}
+          title={t('removeCombatant')}
           onClick={onRemoveSessionOnly}
-          className={btn.iconDanger}
-          title={t('removeCombatant')}>
-          <X size={14} aria-hidden='true' />
-        </button>
+        />
       )}
     </div>
   );

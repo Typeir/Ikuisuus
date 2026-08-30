@@ -157,7 +157,7 @@ describe('Tooltip', () => {
 
     it('hides tooltip on mouse leave', async () => {
       render(
-        <Tooltip content='Tooltip text' showDelay={0}>
+        <Tooltip content='Tooltip text' showDelay={0} hideDelay={0}>
           <button>Hover me</button>
         </Tooltip>,
       );
@@ -199,7 +199,7 @@ describe('Tooltip', () => {
 
     it('hides tooltip on blur', async () => {
       render(
-        <Tooltip content='Tooltip text' showDelay={0}>
+        <Tooltip content='Tooltip text' showDelay={0} hideDelay={0}>
           <button>Focus me</button>
         </Tooltip>,
       );
@@ -383,15 +383,16 @@ describe('Tooltip', () => {
   });
 
   describe('Clickable Mode', () => {
-    it('shows CircleHelp icon when clickable=true', () => {
+    it('shows the help glyph when clickable=true', () => {
       const { container } = render(
         <Tooltip content='Tooltip text' clickable showDelay={0}>
           <button>Help me</button>
         </Tooltip>,
       );
 
-      const icon = container.querySelector('svg');
+      const icon = container.querySelector('[data-size][aria-hidden="true"]');
       expect(icon).toBeInTheDocument();
+      expect(icon?.textContent).toBe('?');
     });
 
     it('does NOT show icon when showClickIcon=false', () => {
@@ -401,7 +402,7 @@ describe('Tooltip', () => {
         </Tooltip>,
       );
 
-      const icon = container.querySelector('svg');
+      const icon = container.querySelector('[data-size][aria-hidden="true"]');
       expect(icon).not.toBeInTheDocument();
     });
 
@@ -474,7 +475,7 @@ describe('Tooltip', () => {
         </Tooltip>,
       );
 
-      const icon = container.querySelector('svg');
+      const icon = container.querySelector('[data-size][aria-hidden="true"]');
       expect(icon).not.toBeInTheDocument();
     });
 
@@ -485,8 +486,110 @@ describe('Tooltip', () => {
         </Tooltip>,
       );
 
-      const icon = container.querySelector('svg');
+      const icon = container.querySelector('[data-size][aria-hidden="true"]');
       expect(icon).toBeInTheDocument();
+    });
+  });
+
+  /* WCAG 2.1 SC 1.4.13: hover content stays reachable and readable. */
+  describe('hoverable', () => {
+    /**
+     * Opens a tooltip and returns its surface.
+     *
+     * @returns {HTMLElement} The open tooltip
+     */
+    const open = (): HTMLElement => {
+      fireEvent.mouseEnter(screen.getByRole('button'));
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+      return screen.getByRole('tooltip');
+    };
+
+    it('survives the gap between the trigger and the surface', () => {
+      render(
+        <Tooltip content='Reachable'>
+          <button>Hover me</button>
+        </Tooltip>,
+      );
+
+      const tooltip = open();
+      fireEvent.mouseLeave(screen.getByRole('button'));
+
+      /* Crossing the gap takes time; the exit must not have started yet. */
+      act(() => {
+        vi.advanceTimersByTime(50);
+      });
+      fireEvent.mouseEnter(tooltip);
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+
+    it('holds open while the pointer rests on it', () => {
+      render(
+        <Tooltip content='Readable'>
+          <button>Hover me</button>
+        </Tooltip>,
+      );
+
+      const tooltip = open();
+      fireEvent.mouseLeave(screen.getByRole('button'));
+      fireEvent.mouseEnter(tooltip);
+
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
+
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+
+    it('closes once the pointer leaves the surface too', () => {
+      render(
+        <Tooltip content='Dismissed'>
+          <button>Hover me</button>
+        </Tooltip>,
+      );
+
+      const tooltip = open();
+      fireEvent.mouseLeave(screen.getByRole('button'));
+      fireEvent.mouseEnter(tooltip);
+      fireEvent.mouseLeave(tooltip);
+
+      /* The grace period sets `exiting`; the exit transition is only scheduled
+         once that render commits, so it needs a tick of its own. */
+      act(() => {
+        vi.advanceTimersByTime(150);
+      });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('recovers when the pointer arrives after the exit has begun', () => {
+      render(
+        <Tooltip content='Recovered'>
+          <button>Hover me</button>
+        </Tooltip>,
+      );
+
+      const tooltip = open();
+      fireEvent.mouseLeave(screen.getByRole('button'));
+
+      /* Past the grace period, so the exit transition is already running. */
+      act(() => {
+        vi.advanceTimersByTime(120);
+      });
+      fireEvent.mouseEnter(tooltip);
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
     });
   });
 });

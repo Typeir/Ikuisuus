@@ -1,3 +1,5 @@
+@use 'mixins-rhombus' as *;
+
 .keyword {
   color: var(--color-accent);
   text-decoration: none;
@@ -44,6 +46,34 @@
     display: revert;
     color: var(--color-accent);
     content: '▹ ';
+  }
+}
+
+.cardHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* Same lozenge the theme and preference controls wear, so the one navigation
+   affordance on the card reads as a control rather than as body text. */
+.cardLink {
+  @include rhombus;
+  @include rhombus-size(1.6rem);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: var(--border-width-xs) solid var(--color-border);
+  border-radius: var(--border-round-s);
+  color: var(--color-accent);
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--color-accent);
   }
 }
 

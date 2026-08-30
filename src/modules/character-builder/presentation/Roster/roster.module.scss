@@ -81,44 +81,6 @@
 
 /* The plus sits in its own small diamond; the lucide circle-plus it replaced
    drew the ring itself. */
-.createCharGlyph {
-  @include rhombus;
-  @include rhombus-size(1.25rem);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  border: var(--border-width-xs) solid currentColor;
-}
-
-.createCharBtn {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.75rem;
-  color: var(--color-accent);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  transition: transform 0.15s ease;
-  @include button-hover-scale;
-
-  svg {
-    color: var(--color-secondary);
-    transition: color 0.15s ease;
-  }
-
-  &:hover {
-    background: none;
-    @include text-glow;
-    svg {
-      color: var(--color-accent);
-      filter: drop-shadow(0 0 6px var(--color-accent));
-    }
-  }
-}
-
 .rosterEmpty {
   color: var(--color-secondary);
   font-style: italic;
@@ -208,15 +170,6 @@
   .rosterItemMeta,
   .rosterDeleteBtn {
     display: none;
-  }
-}
-
-.rosterDeleteBtn {
-  @include icon-transparent(var(--color-danger, var(--color-emphasis)));
-
-  &:hover,
-  &:focus-visible {
-    @include focus-glow(3px, var(--color-danger, var(--color-emphasis)));
   }
 }
 

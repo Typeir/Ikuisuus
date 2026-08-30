@@ -31,6 +31,7 @@ import {
   MAX_XP_LEVEL,
   XP_THRESHOLDS,
 } from '@/modules/character-builder/lib/utils/xpProgression';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import btn from '@/styles/buttons.module.scss';
 import { useTranslations } from 'next-intl';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
@@ -173,13 +174,12 @@ export const CharacterSheetHeader: React.FC = () => {
                 content={t('clearUnassignedLevelsTooltip')}
                 placement='top'
                 showClickIcon={false}>
-                <button
-                  type='button'
-                  className={styles.clearLevelsBtn}
-                  aria-label={t('ariaClearUnassignedLevels')}
-                  onClick={() => patchExperience(getXPForLevel(vocationLevel))}>
-                  ✕
-                </button>
+                <IconButton
+                  kind='close'
+                  shape='rhombus'
+                  label={t('ariaClearUnassignedLevels')}
+                  onClick={() => patchExperience(getXPForLevel(vocationLevel))}
+                />
               </Tooltip>
             </div>
           )}

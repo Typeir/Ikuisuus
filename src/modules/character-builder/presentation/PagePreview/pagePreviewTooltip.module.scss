@@ -16,8 +16,6 @@
   height: 1.4rem;
   padding: 0;
   border: none;
-  border-radius: var(--border-round-pill);
-  corner-shape: var(--corner-shape-pill);
   background: transparent;
   color: var(--color-secondary);
   cursor: pointer;
@@ -28,9 +26,10 @@
 
   @include button-hover-scale(1.15);
 
+  /* The glyph is the whole control: it lights and glows, nothing fills. */
   &:hover {
-    background: var(--color-accent);
-    color: var(--color-bg);
+    background: transparent;
+    color: var(--color-accent);
     filter: drop-shadow(0 0 6px var(--color-accent));
   }
 

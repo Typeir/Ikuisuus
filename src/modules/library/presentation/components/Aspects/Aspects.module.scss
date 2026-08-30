@@ -134,12 +134,9 @@ span.aspect {
   }
 }
 
-/* The chip primitive's remove control, carrying the pill's own hue. */
-.removeBtn {
-  composes: removeBtn from '@/lib/components/ui/chip/chip.module.scss';
-  color: var(--aspect-fg);
-  width: 0.85rem;
-  height: 0.85rem;
+/* The remove IconButton inherits the pill's own hue. */
+.removable {
+  --icon-btn-tone: var(--aspect-fg);
 }
 
 /* A glyph that has to be squinted at is a worse label than the word it replaced,
@@ -306,48 +303,6 @@ span.aspect {
 /* Solid-surface icon button. `background` is forced because an unstyled button
    inherits the global primary fill, which lands green on a pill row and reads as
    a call to action rather than a control. The badge's deselect does the same. */
-.toggle {
-  @include icon-transparent(var(--color-accent));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: var(--border-round-circle);
-  border: var(--border-width-xs) solid var(--color-border);
-  background: var(--color-surface) !important;
-  cursor: pointer;
-  transition:
-    color 0.18s ease,
-    border-color 0.18s ease,
-    filter 0.18s ease;
-
-  &:hover,
-  &:focus-visible {
-    @include focus-glow(3px, var(--color-accent));
-  }
-
-  /* Expanded, the control cancels rather than reveals, so it takes the cancel
-     colour the character badge's deselect uses. */
-  :global(html[data-aspect-expanded='true']) & {
-    color: var(--color-danger, var(--color-emphasis));
-
-    &:hover,
-    &:focus-visible {
-      @include focus-glow(3px, var(--color-danger, var(--color-emphasis)));
-    }
-  }
-}
-
-.toggleIcon {
-  display: block;
-  transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-:global(html[data-aspect-expanded='true']) .toggleIcon {
-  transform: rotate(45deg);
-}
-
 .carousel {
   --step-packed: 7px;
   --step-open: 42px;
@@ -514,9 +469,7 @@ span.glyph[data-group='myth'] {
   .track,
   .slot,
   a.aspect,
-  a.glyph,
-  .toggle,
-  .toggleIcon {
+  a.glyph {
     transition: none;
   }
 

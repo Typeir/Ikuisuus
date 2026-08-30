@@ -44,23 +44,6 @@
   white-space: nowrap;
 }
 
-.mobileModalClose {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  color: var(--color-text-secondary);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  flex-shrink: 0;
-
-  &:hover {
-    color: var(--color-text);
-  }
-}
 
 .mobileModalBody {
   flex: 1;
@@ -91,16 +74,5 @@
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: var(--color-accent);
-  }
-
-  .mobileModalClose {
-    border: var(--border-width-xs) solid var(--color-border);
-    border-radius: 0;
-    color: var(--color-text-secondary);
-
-    &:hover {
-      border-color: var(--color-accent);
-      color: var(--color-accent);
-    }
   }
 }

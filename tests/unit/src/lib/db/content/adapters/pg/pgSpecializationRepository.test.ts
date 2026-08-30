@@ -78,8 +78,8 @@ const entityRow = {
 
 const casterEntityRow = {
   ...entityRow,
-  slug: 'eldritch-knight',
-  title: 'Eldritch Knight',
+  slug: 'spellblade',
+  title: 'Spellblade',
   vocation: 'Warrior',
   specializationType: 'Archetype',
   flavor: null,

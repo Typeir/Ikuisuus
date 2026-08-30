@@ -29,9 +29,9 @@ import {
   CircleX,
   Info,
   TriangleAlert,
-  X,
   type LucideIcon,
 } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import { logger } from '@/lib/logging/logger';
 import {
@@ -521,12 +521,14 @@ const NotificationItem = memo(function NotificationItem({
       </div>
 
       {notification.dismissible && (
-        <button
-          className={styles.dismissButton}
+        <IconButton
+          kind='close'
+          size='s'
+          tone='inherit'
+          label='Dismiss notification'
           onClick={handleDismiss}
-          aria-label='Dismiss notification'>
-          <X strokeWidth={2.5} aria-hidden='true' />
-        </button>
+          className={styles.dismissSlot}
+        />
       )}
     </div>
   );

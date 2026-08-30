@@ -25,7 +25,7 @@ import {
     useSheetEditing,
     useSheetMutators,
 } from '@/modules/character-builder/application/context/activeSheetContext';
-import { Plus, X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import {
@@ -41,7 +41,6 @@ import {
     updateCoinCount,
     updateDenominationMultiplier,
 } from '../../infrastructure/coinPouch/coinPouch.helpers';
-import btn from '@/styles/buttons.module.scss';
 import styles from './coinPouch.module.scss';
 
 /**
@@ -167,15 +166,14 @@ export const CoinPouch: React.FC = () => {
                   variant='neutral'
                 />
                 {editing && !system.builtIn && (
-                  <button
-                    type='button'
-                    className={styles.iconBtn}
-                    onClick={() => removeSystem(h.systemName)}
-                    aria-label={t('removeAria', {
+                  <IconButton
+                    kind='close'
+                    shape='rhombus'
+                    label={t('removeAria', {
                       name: h.systemName,
-                    })}>
-                    <X size={12} aria-hidden='true' />
-                  </button>
+                    })}
+                    onClick={() => removeSystem(h.systemName)}
+                  />
                 )}
               </div>
               <ul className={styles.denominationList}>
@@ -210,17 +208,16 @@ export const CoinPouch: React.FC = () => {
                             updateMultiplier(h.systemName, coin.name, v ?? 1)
                           }
                         />
-                        <button
-                          type='button'
-                          className={styles.iconBtn}
+                        <IconButton
+                          kind='close'
+                          shape='rhombus'
+                          label={t('removeAria', {
+                            name: coin.name,
+                          })}
                           onClick={() =>
                             removeDenomination(h.systemName, coin.name)
                           }
-                          aria-label={t('removeAria', {
-                            name: coin.name,
-                          })}>
-                          <X size={10} aria-hidden='true' />
-                        </button>
+                        />
                       </>
                     ) : (
                       <span className={styles.denominationName}>
@@ -249,28 +246,22 @@ export const CoinPouch: React.FC = () => {
                 ))}
               </ul>
               {editing && !system.builtIn && (
-                <button
-                  type='button'
-                  className={btn.add}
-                  onClick={() => addDenomination(h.systemName)}
-                  aria-label={`Add denomination to ${h.systemName}`}>
-                  <Plus size={12} aria-hidden='true' />
-                  <span>{t('addDenomination')}</span>
-                </button>
+                <IconButton
+                  kind='add'
+                  size='s'
+                  label={`Add denomination to ${h.systemName}`}
+                  onClick={() => addDenomination(h.systemName)}>
+                  {t('addDenomination')}
+                </IconButton>
               )}
             </div>
           );
         })}
       </div>
       {editing && (
-        <button
-          type='button'
-          className={btn.add}
-          onClick={addSystem}
-          aria-label={t('addSystemAria')}>
-          <Plus size={14} aria-hidden='true' />
-          <span>{t('addSystem')}</span>
-        </button>
+        <IconButton kind='add' label={t('addSystemAria')} onClick={addSystem}>
+          {t('addSystem')}
+        </IconButton>
       )}
     </div>
   );

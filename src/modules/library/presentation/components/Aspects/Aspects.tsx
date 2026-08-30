@@ -19,7 +19,7 @@ import {
   displayAspects,
   type ParsedAspect,
 } from '@/modules/library/domain/aspects';
-import { Plus } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useLocale, useTranslations } from 'next-intl';
 import React, { useEffect, useRef, useState } from 'react';
 import { AspectPill } from './AspectPill';
@@ -67,20 +67,20 @@ const ExpandToggle: React.FC = () => {
   const expanded = mounted && aspectExpanded;
 
   return (
-    <button
-      type='button'
-      className={styles.toggle}
+    <IconButton
+      kind='add'
+      shape='rhombus'
+      size='l'
+      tone={expanded ? 'danger' : 'accent'}
       aria-pressed={expanded}
-      aria-label={expanded ? t('collapse') : t('expand')}
+      label={expanded ? t('collapse') : t('expand')}
       onClick={() =>
         dispatch({
           type: PERSISTED_UI_ACTION_TYPES.SET_ASPECT_EXPANDED,
           payload: { expanded: !expanded },
         })
       }
-    >
-      <Plus className={styles.toggleIcon} size={14} aria-hidden='true' />
-    </button>
+    />
   );
 };
 

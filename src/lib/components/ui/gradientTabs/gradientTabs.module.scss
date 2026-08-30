@@ -191,14 +191,8 @@
     stroke-width: 2.75;
   }
 
-  /* Unconditional transparent guards — the global `button:hover` /
-     disabled styles paint a primary fill otherwise (specificity trap). */
-  &:hover,
-  &:disabled,
-  &:disabled:hover {
-    background: transparent;
-  }
-
+  /* Transparent guards below — the global `button:hover` / disabled styles
+     paint a primary fill otherwise (specificity trap). */
   &:hover:not(:disabled),
   &:focus-visible {
     background: transparent;

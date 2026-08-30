@@ -24,13 +24,12 @@ import {
   useSheetMutators,
 } from '@/modules/character-builder/application/context/activeSheetContext';
 import { EquipmentProvider } from '@/modules/character-builder/application/context/equipmentContext';
-import { Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { CarryingCapacityCalculator } from '../CarryingCapacity/carryingCapacityCalculator';
 import { CoinPouch } from '../CarryingCapacity/coinPouch';
 import { AttacksTable } from '../stats/attacksTable';
-import btn from '@/styles/buttons.module.scss';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import tbl from '@/styles/tables.module.scss';
 import styles from './tabs.module.scss';
 
@@ -150,15 +149,13 @@ export const EquipmentTab: React.FC = () => {
                   </td>
                   {editing && (
                     <td>
-                      <button
-                        type='button'
-                        className={styles.equipmentRemoveBtn}
-                        onClick={() => removeRow(idx)}
-                        aria-label={t('equipmentRemoveItemAria', {
+                      <IconButton
+                        kind='close'
+                        label={t('equipmentRemoveItemAria', {
                           name: item.name || 'item',
-                        })}>
-                        <Trash2 size={14} aria-hidden='true' />
-                      </button>
+                        })}
+                        onClick={() => removeRow(idx)}
+                      />
                     </td>
                   )}
                 </tr>
@@ -167,14 +164,12 @@ export const EquipmentTab: React.FC = () => {
             </table>
           </div>
           {editing && (
-            <button
-              type='button'
-              className={btn.add}
-              onClick={addRow}
-              aria-label={t('equipmentAddRowAria')}>
-              <Plus size={14} aria-hidden='true' />
+            <IconButton
+              kind='add'
+              label={t('equipmentAddRowAria')}
+              onClick={addRow}>
               {t('equipmentAddItem')}
-            </button>
+            </IconButton>
           )}
 
           <h3 className={styles.sectionTitle}>{t('equipmentNotesTitle')}</h3>

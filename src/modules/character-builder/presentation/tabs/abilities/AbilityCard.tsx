@@ -22,7 +22,9 @@ import {
   type SearchContentType,
 } from '@/modules/search/domain';
 import { TypeSigil } from '@/modules/search/presentation/atoms/TypeSigil';
-import { HelpCircle, Pencil, Trash2 } from 'lucide-react';
+import { HelpGlyph } from '@/lib/components/ui/helpGlyph';
+import { IconButton } from '@/lib/components/ui/iconButton';
+import { Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import btn from '@/styles/buttons.module.scss';
@@ -46,7 +48,7 @@ const ABILITY_TYPE_I18N: Record<string, string> = {
 };
 
 /**
- * Ability type → search content type. `Feature` and `Other` have no search
+ * Ability type â†’ search content type. `Feature` and `Other` have no search
  * taxonomy entry and use the closest sigil.
  */
 const ABILITY_SIGIL_TYPE: Record<string, SearchContentType> = {
@@ -147,7 +149,7 @@ export const AbilityCard: React.FC<AbilityCardProps> = ({
                 handleSourceLookup();
               }}
               aria-label={t('abilitySourceAria', { name: ability.name })}>
-              <HelpCircle size={14} />
+              <HelpGlyph />
             </button>
           </Tooltip>
         )}
@@ -167,16 +169,12 @@ export const AbilityCard: React.FC<AbilityCardProps> = ({
             </button>
           )}
           {onDelete && (
-            <button
-              type='button'
-              className={btn.iconDanger}
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete();
-              }}
-              aria-label={t('abilityDeleteAria', { name: ability.name })}>
-              <Trash2 size={14} />
-            </button>
+            <IconButton
+              kind='delete'
+              label={t('abilityDeleteAria', { name: ability.name })}
+              onClick={onDelete}
+              stopPropagation
+            />
           )}
         </div>
       )}

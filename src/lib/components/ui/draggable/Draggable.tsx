@@ -9,7 +9,7 @@
 
 'use client';
 
-import { X } from 'lucide-react';
+import { IconButton } from '@/lib/components/ui/iconButton';
 import { useRef, type CSSProperties, type ReactNode } from 'react';
 import styles from './draggable.module.scss';
 import {
@@ -143,13 +143,7 @@ export function Draggable({
         <span className={styles.dragGrip} aria-hidden='true' />
         {handleLabel && <span className={styles.dragLabel}>{handleLabel}</span>}
         {onClose && (
-          <button
-            className={styles.closeButton}
-            onClick={onClose}
-            type='button'
-            aria-label={closeLabel}>
-            <X size={16} aria-hidden='true' />
-          </button>
+          <IconButton kind='close' label={closeLabel} onClick={onClose} />
         )}
       </div>
       <div className={styles.dragContent}>{children}</div>

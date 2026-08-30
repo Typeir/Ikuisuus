@@ -185,31 +185,6 @@ input.nameInput {
 
 /* Inline companion to vocationSelector's `.removeBtn` — same surface/border
    look, danger on hover, but statically placed beside the warning chip. */
-.clearLevelsBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.2rem 0.4rem;
-  font-size: 0.65rem;
-  line-height: 1;
-  background: var(--color-surface);
-  color: var(--color-secondary);
-  border: var(--border-width-xs) solid var(--color-border);
-  border-radius: var(--border-round-xs);
-  cursor: pointer;
-  transition:
-    color 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.15s ease;
-
-  &:hover {
-    background-color: transparent;
-    color: var(--color-danger);
-    border-color: var(--color-danger);
-    transform: scale(1.1);
-  }
-}
-
 .xpCaption {
   align-self: flex-end;
   font-size: 0.65rem;
@@ -294,10 +269,6 @@ input.nameInput {
  * spans the whole sheet rather than just the header's own box.
  * Hidden entirely on desktop; the header itself stays sticky there.
  * ===================================================================== */
-
-.commandStrip {
-  display: none;
-}
 
 @include desktop {
   .header {

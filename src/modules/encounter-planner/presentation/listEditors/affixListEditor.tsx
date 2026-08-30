@@ -26,11 +26,10 @@
 'use client';
 
 import type { AffixEntry } from '@/modules/encounter-planner/domain/encounters/encounter.types';
-import { X } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { AffixCombobox } from '../comboboxes';
 import styles from '../creatureRow.module.scss';
-import btn from '@/styles/buttons.module.scss';
+import { IconButton } from '@/lib/components/ui/iconButton';
 
 /**
  * Props for AffixListEditor component
@@ -123,12 +122,11 @@ export const AffixListEditor: React.FC<AffixListEditorProps> = ({
                 <span>{affixEntry.text}</span>
               )}
               {!readOnly && (
-                <button
+                <IconButton
+                  kind='close'
+                  label={removeChipAriaLabel}
                   onClick={() => handleRemoveAffix(idx)}
-                  className={btn.iconDanger}
-                  aria-label={removeChipAriaLabel}>
-                  <X size={12} aria-hidden='true' />
-                </button>
+                />
               )}
             </div>
           );

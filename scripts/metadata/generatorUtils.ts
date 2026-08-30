@@ -11,7 +11,8 @@
 /* paw:gate:file-length ignore */
 
 import { createLogger } from '@/lib/logging/logger';
-import { extractKeywordRefs } from '@/lib/md/extractKeywordRefs';
+import { extractConsumedKeys } from '@/lib/md/extractKeywordRefs';
+import { extractProducedKeys } from '@/lib/md/keywordIndexRegistry';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { fnv1a32 } from '../../src/lib/metadata/contentHash';
@@ -209,18 +210,21 @@ export interface GeneratorConfig {
  * @param {unknown} metadata - Parsed metadata object, array, or null
  * @param {string} hash - Pre-computed version hash
  * @param {string} readingTime - Pre-computed reading time (e.g. "4 min read")
+ * @param {string[]} produces - Shard ids the file defines
+ * @param {string[]} consumes - Shard ids the file ingests
  * @returns {unknown} Metadata with shared fields populated for object records
  */
 function stampSharedFields(
   metadata: unknown,
   hash: string,
   readingTime: string,
+  produces: string[],
   consumes: string[],
 ): unknown {
   if (metadata === null || metadata === undefined) return metadata;
   if (Array.isArray(metadata)) {
     return metadata.map((item) =>
-      stampSharedFields(item, hash, readingTime, consumes),
+      stampSharedFields(item, hash, readingTime, produces, consumes),
     );
   }
   if (typeof metadata !== 'object') return metadata;
@@ -228,6 +232,7 @@ function stampSharedFields(
     readingTime,
     ...(metadata as Record<string, unknown>),
     versionHash: hash,
+    produces,
     consumes,
   };
 }
@@ -313,7 +318,8 @@ export async function runGenerator(config: GeneratorConfig): Promise<void> {
             processed.metadata,
             versionHash,
             calculateReadingTime(sourceContent, locale),
-            extractKeywordRefs(sourceContent),
+            extractProducedKeys(sourceContent),
+            extractConsumedKeys(sourceContent),
           );
 
           const metadataFilePath = resolveOutputPath
