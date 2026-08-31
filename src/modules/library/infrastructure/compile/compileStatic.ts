@@ -14,7 +14,10 @@ import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkKeyword from '@/lib/md/remarkKeyword';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { collectKeywordShards } from '@/lib/md/bakeKeywordShards';
-import { resolveKeywordRegistry } from '@/lib/md/resolveKeywordRegistry';
+import {
+  DEFAULT_KEYWORD_LOCALE,
+  resolveKeywordRegistry,
+} from '@/lib/md/resolveKeywordRegistry';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
@@ -40,9 +43,10 @@ export async function compileStatic(opts: CompileOptions) {
     aspects,
   } = opts;
 
-  const keywords = await resolveKeywordRegistry();
+  const locale = opts.locale ?? DEFAULT_KEYWORD_LOCALE;
+  const keywords = await resolveKeywordRegistry(locale);
   const resolvedSource = await resolveReusableSource(source);
-  const shards = await collectKeywordShards(resolvedSource, keywords, 'en');
+  const shards = await collectKeywordShards(resolvedSource, keywords, locale);
 
   const result = await evaluate({
     source: resolvedSource,

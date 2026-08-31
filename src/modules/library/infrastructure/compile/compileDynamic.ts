@@ -10,7 +10,10 @@
 
 import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
 import { collectKeywordShards } from '@/lib/md/bakeKeywordShards';
-import { resolveKeywordRegistry } from '@/lib/md/resolveKeywordRegistry';
+import {
+  DEFAULT_KEYWORD_LOCALE,
+  resolveKeywordRegistry,
+} from '@/lib/md/resolveKeywordRegistry';
 import type { EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import type { CompileOptions } from '../../domain/compileOptions';
 import { buildMdxOptions, importAllAsync } from './compileUtils';
@@ -45,9 +48,10 @@ export async function compileDynamic(opts: CompileOptions) {
     rehypeSectionize,
   } = await importAllAsync();
 
-  const keywords = await resolveKeywordRegistry();
+  const locale = opts.locale ?? DEFAULT_KEYWORD_LOCALE;
+  const keywords = await resolveKeywordRegistry(locale);
   const resolvedSource = await resolveReusableSource(source);
-  const shards = await collectKeywordShards(resolvedSource, keywords, 'en');
+  const shards = await collectKeywordShards(resolvedSource, keywords, locale);
 
   const result = await evaluate({
     source: resolvedSource,

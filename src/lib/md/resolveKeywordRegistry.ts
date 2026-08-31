@@ -2,9 +2,8 @@
  * Keyword Registry Resolution
  *
  * @fileoverview Loads the discovered keyword namespaces for a locale so the
- * compile paths can hand them to the remark plugin. Server only; the runtime
- * compiler has no filesystem and omits the registry, which leaves keywords
- * rendered but unlinked.
+ * compile paths can hand them to the remark plugin. Server only: the client
+ * compiler omits the registry, which leaves keywords rendered but unlinked.
  *
  * @module lib/md/resolveKeywordRegistry
  * @version 1.0.0
@@ -12,7 +11,6 @@
  * @since 8.0.0
  */
 
-import path from 'path';
 import type { KeywordRegistry } from './keywordIndex';
 import { discoverKeywordIndexes } from './keywordIndexRegistry';
 
@@ -30,6 +28,5 @@ export const DEFAULT_KEYWORD_LOCALE = 'en';
 export async function resolveKeywordRegistry(
   locale: string = DEFAULT_KEYWORD_LOCALE,
 ): Promise<KeywordRegistry> {
-  const root = path.join(process.cwd(), 'src/content', locale);
-  return discoverKeywordIndexes(root);
+  return discoverKeywordIndexes(locale);
 }

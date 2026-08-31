@@ -10,8 +10,9 @@
  *
  * Holds pointers only; shard prose is fetched separately.
  *
- * Server only, since discovery reads the content tree. Shapes and lookups live
- * in `keywordIndex`, which is safe to bundle for the client.
+ * Server only, since discovery reads the content tree through the content and
+ * directory ports. Shapes and lookups live in `keywordIndex`, which is safe to
+ * bundle for the client.
  *
  * @module lib/md/keywordIndexRegistry
  * @version 3.0.0
@@ -19,9 +20,8 @@
  * @since 8.0.0
  */
 
-import fs from 'fs/promises';
+import { getFile, listDirectory } from '@/lib/db/content/fileTreeService';
 import matter from 'gray-matter';
-import path from 'path';
 
 import { anchorSlug } from '@/modules/library/domain/anchorSlug';
 import {
@@ -34,7 +34,7 @@ import {
 /** Matches an ATX heading and captures its level and text. */
 const HEADING_REGEX = /^(#{1,6})\s+(.+?)\s*$/gm;
 
-/** Cached discovery result, keyed by content root. */
+/** Cached discovery result, keyed by locale. */
 const cache = new Map<string, KeywordRegistry>();
 
 /**
@@ -58,18 +58,22 @@ function headingValues(body: string): Map<string, string> {
 }
 
 /**
- * Recursively lists MDX files beneath a directory.
+ * Recursively lists MDX files beneath a content directory.
  *
- * @param {string} dir - Directory to walk
- * @returns {Promise<string[]>} Absolute paths of every .mdx file found
+ * Walks through the directory port, so discovery follows whichever content
+ * source the deployment runs rather than assuming a filesystem.
+ *
+ * @param {string} locale - Locale code
+ * @param {string} dir - Path relative to the locale root
+ * @returns {Promise<string[]>} Locale-relative paths of every .mdx file found
  */
-async function listMdxFiles(dir: string): Promise<string[]> {
-  const entries = await fs.readdir(dir, { withFileTypes: true });
+async function listMdxFiles(locale: string, dir = ''): Promise<string[]> {
+  const { entries } = await listDirectory(locale, dir);
 
   const nested = await Promise.all(
     entries.map((entry) => {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) return listMdxFiles(full);
+      const full = dir ? `${dir}/${entry.name}` : entry.name;
+      if (entry.isDirectory) return listMdxFiles(locale, full);
       return Promise.resolve(entry.name.endsWith('.mdx') ? [full] : []);
     }),
   );
@@ -148,33 +152,30 @@ export function extractProducedKeys(source: string): string[] {
  * Discovers every declared keyword namespace beneath a content root. Several
  * files may declare the same namespace; their values merge.
  *
- * @param {string} contentRoot - Locale root, e.g. `src/content/en`
+ * @param {string} locale - Locale code, e.g. `en`
  * @returns {Promise<KeywordRegistry>} Namespace mapped to its contents
  * @throws {Error} When a declared term has no matching heading in its file
  */
 export async function discoverKeywordIndexes(
-  contentRoot: string,
+  locale: string,
 ): Promise<KeywordRegistry> {
-  const cached = cache.get(contentRoot);
+  const cached = cache.get(locale);
   if (cached) return cached;
 
   const registry: KeywordRegistry = new Map();
-  const files = await listMdxFiles(contentRoot);
+  const files = await listMdxFiles(locale);
 
-  for (const filePath of files) {
-    const source = await fs.readFile(filePath, 'utf8');
-    const { data, content } = matter(source);
+  for (const relative of files) {
+    const file = await getFile(locale, relative);
+    if (!file) continue;
+
+    const { data, content } = matter(file.content);
 
     const namespace =
       typeof data.keywordIndex === 'string'
         ? data.keywordIndex.trim().toLowerCase()
         : null;
     const terms = declaredTerms(data.keywords);
-
-    const relative = path
-      .relative(contentRoot, filePath)
-      .split(path.sep)
-      .join('/');
 
     if (!namespace && terms.length === 0) continue;
 
@@ -206,7 +207,7 @@ export async function discoverKeywordIndexes(
     }
   }
 
-  cache.set(contentRoot, registry);
+  cache.set(locale, registry);
   return registry;
 }
 

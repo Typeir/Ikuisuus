@@ -12,7 +12,6 @@
  * @requires @/lib/md/resolveKeywordRegistry Module under test
  */
 
-import path from 'path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const discoverKeywordIndexes = vi.fn().mockResolvedValue(new Map());
@@ -34,27 +33,26 @@ describe('resolveKeywordRegistry', () => {
     expect(DEFAULT_KEYWORD_LOCALE).toBe('en');
   });
 
-  it('should scan the default locale directory', async () => {
+  it('should discover under the default locale', async () => {
     await resolveKeywordRegistry();
 
-    expect(discoverKeywordIndexes).toHaveBeenCalledWith(
-      path.join(process.cwd(), 'src/content', 'en'),
-    );
+    expect(discoverKeywordIndexes).toHaveBeenCalledWith('en');
   });
 
-  it('should scan the named locale directory', async () => {
+  it('should discover under the named locale', async () => {
     await resolveKeywordRegistry('es');
 
-    expect(discoverKeywordIndexes).toHaveBeenCalledWith(
-      path.join(process.cwd(), 'src/content', 'es'),
-    );
+    expect(discoverKeywordIndexes).toHaveBeenCalledWith('es');
   });
 
-  it('should never scan the content root itself', async () => {
+  /* Discovery addresses content by locale through the port. A filesystem path
+     would pin it to one backend. */
+  it('should pass a locale, not a filesystem path', async () => {
     await resolveKeywordRegistry();
 
     const scanned = discoverKeywordIndexes.mock.calls[0][0];
-    expect(scanned).not.toBe(path.join(process.cwd(), 'src/content'));
+    expect(scanned).toBe('en');
+    expect(scanned).not.toMatch(/[/\\]/);
   });
 
   it('should return what discovery produced', async () => {

@@ -150,6 +150,7 @@ export async function resolveAndCompileContent({
       baseUrl,
       parseFrontmatter: true,
       aspects: aspectIndexOf(articleMetadata),
+      locale,
     });
 
     return {

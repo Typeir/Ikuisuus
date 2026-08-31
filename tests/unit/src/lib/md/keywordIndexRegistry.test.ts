@@ -12,10 +12,37 @@
  * @requires @/lib/md/keywordIndexRegistry Module under test
  */
 
-import fs from 'fs/promises';
-import os from 'os';
-import path from 'path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+/* Discovery walks the content and directory ports, so the tree is declared here
+   rather than written to disk. */
+const tree = new Map<string, string>();
+
+vi.mock('@/lib/db/content/fileTreeService', () => ({
+  listDirectory: (_locale: string, dir = '') => {
+    const prefix = dir ? `${dir}/` : '';
+    const names = new Set<string>();
+
+    for (const filePath of tree.keys()) {
+      if (!filePath.startsWith(prefix)) continue;
+      const rest = filePath.slice(prefix.length);
+      const [head, ...tail] = rest.split('/');
+      if (head) names.add(tail.length > 0 ? `${head}/` : head);
+    }
+
+    return Promise.resolve({
+      entries: [...names].map((name) => ({
+        name: name.replace(/\/$/, ''),
+        isDirectory: name.endsWith('/'),
+      })),
+      total: names.size,
+    });
+  },
+  getFile: (_locale: string, filePath: string) => {
+    const content = tree.get(filePath);
+    return Promise.resolve(content === undefined ? null : { content, resolvedPath: filePath });
+  },
+}));
 
 import {
   BARE_NAMESPACE,
@@ -28,30 +55,29 @@ import {
   extractProducedKeys,
 } from '@/lib/md/keywordIndexRegistry';
 
-let root: string;
+/** Locale every test discovers under. */
+const root = 'en';
 
 /**
- * Writes a content file beneath the temporary root.
+ * Declares a content file in the virtual tree.
  *
- * @param {string} rel - Path relative to the root
+ * @param {string} rel - Path relative to the locale root
  * @param {string} body - File contents
  * @returns {Promise<void>}
  */
 async function write(rel: string, body: string): Promise<void> {
-  const target = path.join(root, rel);
-  await fs.mkdir(path.dirname(target), { recursive: true });
-  await fs.writeFile(target, body, 'utf8');
+  tree.set(rel, body);
 }
 
 describe('keywordIndexRegistry', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     clearKeywordIndexCache();
-    root = await fs.mkdtemp(path.join(os.tmpdir(), 'kwindex-'));
+    tree.clear();
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     clearKeywordIndexCache();
-    await fs.rm(root, { recursive: true, force: true });
+    tree.clear();
   });
 
   describe('discoverKeywordIndexes', () => {
