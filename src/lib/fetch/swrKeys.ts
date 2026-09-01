@@ -311,3 +311,15 @@ export function urlForContentShardSingle(
   params.append('keys[]', key);
   return `/api/content-shards/${contentType}/${slug}?${params.toString()}`;
 }
+
+/**
+ * Builds the API URL for a keyword shard, addressed by reference.
+ *
+ * @param {string} reference - Normalised reference, `namespace;value` or a bare value
+ * @param {string} locale - Content locale
+ * @returns {string} API URL
+ */
+export function urlForKeywordShard(reference: string, locale: string): string {
+  const params = new URLSearchParams({ locale });
+  return `/api/content-shards/keyword/${encodeURIComponent(reference)}?${params.toString()}`;
+}

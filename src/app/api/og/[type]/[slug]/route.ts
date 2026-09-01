@@ -103,7 +103,7 @@ export async function GET(
       backgroundImageUrl,
       description: data.description,
     });
-    return new Response(png as any, {
+    return new Response(png, {
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': CACHE_CONTROL,

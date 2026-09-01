@@ -100,10 +100,6 @@ export function WorldSimContentPanel(): React.ReactElement | null {
       url={contentPath}
       locale={locale}
       draggableClassName={styles.contentPanelDraggable}
-      contentClassName={styles.contentPanel}
-      loadingClassName={styles.contentPanelLoading}
-      spinnerClassName={styles.contentPanelSpinner}
-      iframeClassName={styles.contentPanelIframe}
       defaultWidth={CONTENT_PANEL_WIDTH}
       defaultHeight={`calc(100% - ${CONTENT_PANEL_TOP + 32}px)`}
       testId='content-panel-draggable'

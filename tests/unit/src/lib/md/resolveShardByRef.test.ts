@@ -32,6 +32,10 @@ import {
   resolveShardByRef,
   shardIdOf,
 } from '@/lib/md/resolveShardByRef';
+import {
+  extractConsumedKeys,
+  extractKeywordRefs,
+} from '@/lib/md/extractKeywordRefs';
 
 /** A rules file defining two sections. */
 const CONTENT = [
@@ -74,6 +78,17 @@ describe('shardIdOf', () => {
   it('should collapse casing and spacing onto one id', () => {
     expect(shardIdOf('Damage Bonus')).toBe(shardIdOf('damage-bonus'));
   });
+
+  it('should agree with the extractor on every normalised reference', () => {
+    const prose =
+      'Takes [# kw: condition;Prone #], gains [# kw: resist #] and [# kw: Two-Weapon Fighting #].';
+
+    const references = extractKeywordRefs(prose);
+    expect(references.length).toBe(3);
+    expect(references.map(shardIdOf).sort()).toEqual(
+      extractConsumedKeys(prose),
+    );
+  });
 });
 
 describe('resolveShardByRef', () => {
@@ -82,6 +97,7 @@ describe('resolveShardByRef', () => {
 
     expect(shard).toEqual({
       id: 'kw--resist',
+      key: 'resist',
       heading: 'Resist',
       source: 'Save against what imposed it.',
       href: 'library/rules/steel-and-strife/effects#resist',

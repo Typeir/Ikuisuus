@@ -63,6 +63,10 @@ vi.mock('@/lib/components/ui', () => ({
   ),
 }));
 
+vi.mock('@/modules/search/application/useScopedSearch', () => ({
+  useScopedSearch: () => ({ ranks: null, loading: false }),
+}));
+
 import type {
   ColumnConfig,
   MetadataRow,

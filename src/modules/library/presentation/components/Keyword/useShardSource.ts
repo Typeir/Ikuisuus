@@ -20,20 +20,10 @@
 'use client';
 
 import { fetcher } from '@/lib/fetch/fetcher';
-import type { ResolvedShard } from '@/lib/types/api';
+import { urlForKeywordShard } from '@/lib/fetch/swrKeys';
+import type { ContentShardResponse, ResolvedShard } from '@/lib/types/api';
 import { useEffect, useState } from 'react';
 import { useKeywordShard } from './KeywordShardContext';
-
-/**
- * Response from the keyword endpoint when asked for the next hop.
- *
- * @interface KeywordShardResponse
- * @extends ResolvedShard
- * @property {ResolvedShard[]} [keywordShards] - Shards for whatever this prose references
- */
-interface KeywordShardResponse extends ResolvedShard {
-  keywordShards?: ResolvedShard[];
-}
 
 /**
  * Shards already in hand, keyed by `locale:id`. Filled by a card's own request
@@ -60,18 +50,21 @@ async function fetchShard(
   const inFlight = pending.get(key);
   if (inFlight) return inFlight;
 
-  const url = `/api/keyword-shards?ref=${encodeURIComponent(reference)}&locale=${encodeURIComponent(locale)}&keywords=true`;
+  const url = urlForKeywordShard(reference, locale);
 
   /* A reference that resolves to nothing is a 404, which the fetcher throws on.
      That is an answer, not a failure: the card stays closed either way. */
-  const request = fetcher<KeywordShardResponse>(url)
+  const request = fetcher<ContentShardResponse>(url)
     .then((body) => {
-      for (const nested of body.keywordShards ?? []) {
+      const shard = body.shards[0];
+      if (!shard) return null;
+
+      for (const nested of body.keywordShards) {
         resolved.set(`${locale}:${nested.id}`, nested);
       }
-      resolved.set(`${locale}:${body.id}`, body);
+      resolved.set(`${locale}:${shard.id}`, shard);
 
-      return body as ResolvedShard;
+      return shard;
     })
     .catch(() => null);
 

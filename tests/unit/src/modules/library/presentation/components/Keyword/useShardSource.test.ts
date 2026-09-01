@@ -27,9 +27,16 @@ vi.mock(
 const BAKED = { id: 'kw--resist', heading: 'Resist', source: 'Save.' };
 const FETCHED = {
   id: 'kw-condition-blinded',
+  key: 'blinded',
   heading: 'Blinded',
   source: 'Cannot see.',
   href: 'library/rules/steel-and-strife/conditions#blinded',
+};
+const ENVELOPE = {
+  shardType: 'keyword',
+  shards: [FETCHED],
+  keywordShards: [],
+  resolutions: {},
 };
 
 let useShardSource: typeof import('@/modules/library/presentation/components/Keyword/useShardSource').useShardSource;
@@ -39,7 +46,7 @@ beforeEach(async () => {
   useKeywordShard.mockReset();
   vi.stubGlobal(
     'fetch',
-    vi.fn().mockResolvedValue({ ok: true, json: async () => FETCHED }),
+    vi.fn().mockResolvedValue({ ok: true, json: async () => ENVELOPE }),
   );
 
   const mod = await import(
@@ -83,7 +90,7 @@ describe('useShardSource', () => {
 
     await waitFor(() => expect(fetch).toHaveBeenCalled());
     expect(vi.mocked(fetch).mock.calls[0][0]).toBe(
-      '/api/keyword-shards?ref=condition%3Bblinded&locale=en&keywords=true',
+      '/api/content-shards/keyword/condition%3Bblinded?locale=en',
     );
   });
 

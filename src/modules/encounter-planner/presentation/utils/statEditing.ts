@@ -3,7 +3,7 @@
  * @description Shared utilities for parsing and formatting combat stat values.
  * Used by combatant stat editors across the encounter planner.
  *
- * @module statEditing
+ * @module modules/encounter-planner/presentation/utils/statEditing
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

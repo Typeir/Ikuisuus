@@ -79,7 +79,7 @@ export function worldSimReducer(
       return { ...state, labelsVisible: !state.labelsVisible };
 
     case WorldSimActionType.ToggleOrbits:
-      return { ...state, orbitsPaused: !state.orbitsPaused };
+      return { ...state, orbitsVisible: !state.orbitsVisible };
 
     case WorldSimActionType.Reset:
       return { ...INITIAL_WORLD_SIM_STATE, isInitialized: state.isInitialized };

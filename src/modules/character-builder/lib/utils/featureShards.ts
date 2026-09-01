@@ -10,6 +10,7 @@
 
 import { fetcher } from '@/lib/fetch/fetcher';
 import { urlForContentShard } from '@/lib/fetch/swrKeys';
+import { shardFor } from '@/lib/utils/contentShards';
 import { entryKey } from './shardKey';
 import type { ContentShardResponse } from '@/lib/types/api';
 import type { CharacterShard } from '@/lib/types/character';
@@ -64,7 +65,7 @@ export async function fetchFeatureShards(
       key: entryKey(f),
       category,
       level: f.level,
-      cachedText: data.shards[f.name],
+      cachedText: shardFor(data.shards, f.name)?.source,
       grants: f.grants,
       tags: f.tags,
     }));

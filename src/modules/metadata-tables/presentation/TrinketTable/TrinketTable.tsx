@@ -127,6 +127,7 @@ export default function TrinketTableWrapper({
 
   return (
     <MetadataTable
+      searchScope='trinkets'
       data={data}
       columns={columns}
       getRowSlug={(row) =>

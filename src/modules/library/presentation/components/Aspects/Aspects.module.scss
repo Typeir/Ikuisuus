@@ -90,12 +90,13 @@ span.aspect {
     scale 0.14s ease;
 
   /* `button-still` pins `transform` so the pill never drifts inside prose; the
-     house hover growth (`button-hover-scale`, 1.08) rides the separate `scale`
-     property instead, which the pin does not touch. */
+     hover growth rides the separate `scale` property instead, which the pin
+     does not touch. Gentler than the house 1.08 — a pill sits against the
+     marginalia, and the full growth collided with it horizontally. */
   &:hover {
     background: color-mix(in oklab, var(--aspect-fg) 26%, var(--color-bg));
     border-color: var(--aspect-fg);
-    scale: 1.08;
+    scale: 1.04;
   }
 
   &:focus-visible {

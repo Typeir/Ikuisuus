@@ -143,6 +143,7 @@ const FilteredSpellTable: React.FC<SpellTablesProps> = ({
         }`}>
         {visibleSpells.length > 0 ? (
           <MetadataTable
+            searchScope='spells'
             data={visibleSpells}
             columns={columns}
             getRowSlug={(row) => `${basePath}/${row.slug}`}

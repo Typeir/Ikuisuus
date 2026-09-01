@@ -2,7 +2,7 @@
  * @fileoverview Combat Stat Chips — HP, AC, Initiative, Speed, Tier, Grit.
  * Lock state is persisted on the character as `manualStatOverrides`.
  *
- * @module character-builder/presentation/stats/combatStatChips
+ * @module modules/character-builder/presentation/stats/combatStatChips
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

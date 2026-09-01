@@ -87,11 +87,11 @@ async function loadFonts(): Promise<import('satori').Font[]> {
  * Sharp compresses (compressionLevel 9, palette, effort 10). Target size < 600 KB.
  *
  * @param {OGTemplateProps} props - Data and optional image URL for the card
- * @returns {Promise<Uint8Array>} Compressed PNG image data (target: < 600 KB)
+ * @returns {Promise<Uint8Array<ArrayBuffer>>} Compressed PNG image data (target: < 600 KB)
  */
 export async function renderOgCard(
   props: OGTemplateProps,
-): Promise<Uint8Array> {
+): Promise<Uint8Array<ArrayBuffer>> {
   const fonts = await loadFonts();
 
   const element = React.createElement(OGTemplate, props);

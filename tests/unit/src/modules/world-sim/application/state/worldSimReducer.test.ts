@@ -136,13 +136,13 @@ describe('worldSimReducer', () => {
     expect(toggledBack.labelsVisible).toBe(true);
   });
 
-  it('toggles orbits paused', () => {
-    expect(INITIAL_WORLD_SIM_STATE.orbitsPaused).toBe(false);
+  it('toggles orbit visibility off from its on default', () => {
+    expect(INITIAL_WORLD_SIM_STATE.orbitsVisible).toBe(true);
 
     const toggled = worldSimReducer(INITIAL_WORLD_SIM_STATE, {
       type: WorldSimActionType.ToggleOrbits,
     });
-    expect(toggled.orbitsPaused).toBe(true);
+    expect(toggled.orbitsVisible).toBe(false);
   });
 
   it('resets to initial state but preserves isInitialized', () => {
@@ -153,7 +153,7 @@ describe('worldSimReducer', () => {
       isTransitioning: true,
       hoveredBodyId: 'kultharja',
       labelsVisible: false,
-      orbitsPaused: true,
+      orbitsVisible: false,
       isInitialized: true,
     };
 
@@ -166,7 +166,7 @@ describe('worldSimReducer', () => {
     expect(state.selectedRegionId).toBeNull();
     expect(state.zoomLevel).toBe(ZoomLevel.System);
     expect(state.labelsVisible).toBe(true);
-    expect(state.orbitsPaused).toBe(false);
+    expect(state.orbitsVisible).toBe(true);
   });
 
   it('returns same state for unknown action type', () => {

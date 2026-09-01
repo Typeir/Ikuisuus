@@ -4,7 +4,7 @@
  * @fileoverview Bundles all MDX files into JS using mdx-bundler + esbuild-sass-plugin.
  * This handles import/export and *.scss in MDX components.
  *
- * @module precompileMdx
+ * @module scripts/utils/precompileMdx
  * @version 1.0.0
  *
  * @example

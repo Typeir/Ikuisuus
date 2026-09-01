@@ -7,7 +7,6 @@
  */
 
 export { compileDynamic } from './compileDynamic';
-export { compileMdxToComponent } from './compileMdxToComponent';
 export {
     clearCompileRuntimeCache,
     compileRuntime,

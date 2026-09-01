@@ -17,6 +17,7 @@
 
 import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import { useContentShard } from '@/lib/hooks/data/useContentShard';
+import { mainShard } from '@/lib/utils/contentShards';
 import type { ContentShardType } from '@/lib/types/api';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { mdxComponents } from '@/modules/library/presentation';
@@ -113,7 +114,7 @@ export const ContentShardPanel: React.FC<ContentShardPanelProps> = ({
 
   useEffect(() => {
     if (!data) return;
-    const markdown = stripYamlFrontmatter(data.shards.main ?? '');
+    const markdown = stripYamlFrontmatter(mainShard(data.shards)?.source ?? '');
     let cancelled = false;
     try {
       const node = tryCompileMdxSync(markdown);

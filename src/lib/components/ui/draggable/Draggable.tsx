@@ -1,7 +1,7 @@
 /**
  * @fileoverview Draggable Container — Generic Moveable & Resizable Wrapper
  *
- * @module ui/draggable/Draggable
+ * @module lib/components/ui/draggable/Draggable
  * @author Typeir
  * @version 2.0.0
  * @since 2.0.0

@@ -17,11 +17,10 @@ html {
   overflow-x: hidden;
 
   @include scrollbar-custom(
-    $width: 8px,
-    $height: 8px,
+    $width: 6px,
+    $height: 6px,
     $thumb: var(--color-surface),
     $track: var(--color-transparent),
-    $thumb-radius: var(--border-round-s),
     $thumb-border: 1px solid var(--color-surface),
     $firefox-width: auto
   );

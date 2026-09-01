@@ -171,20 +171,10 @@ html[data-theme='light'] {
   --ha-ctx-button-text: #0070f3;
   --ha-ctx-button-border: #0070f3;
 
-  /* World Sim tokens - light theme */
+  /* World Sim tokens - light theme. Only the canvas color is its own value;
+     every UI token derives from theme tokens in the root palette and follows
+     the theme by itself. */
   --worldsim-bg: #0a0a10;
-  --worldsim-panel-bg: var(--color-surface);
-  --worldsim-panel-border: var(--color-border);
-  --worldsim-label-text: #ffffff;
-  --worldsim-label-accent: var(--color-accent);
-  --worldsim-label-bg: 0 0 0 / 0.75;
-  --worldsim-region-hover: rgba(0, 0, 0, 0.06);
-  --worldsim-panel-text: #1f2937;
-  --worldsim-controls-bg: rgba(255, 255, 255, 0.95);
-  --worldsim-controls-shadow: rgba(0, 0, 0, 0.08);
-  --worldsim-controls-btn-bg: rgba(0, 0, 0, 0.04);
-  --worldsim-controls-btn-hover: rgba(0, 0, 0, 0.08);
-  --worldsim-controls-btn-active: rgba(0, 0, 0, 0.1);
 
   /* Selection + autofill */
   --color-selection-bg: rgba(0, 112, 243, 0.2);

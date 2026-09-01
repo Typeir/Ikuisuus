@@ -40,6 +40,12 @@ button.headerIconSlot {
   @media (min-width: 1024px) {
     margin-top: 0;
   }
+
+  /* A page that declares itself full-bleed fills the main column edge to
+     edge; the shell's default padding belongs to prose pages. */
+  &:has([data-full-bleed]) {
+    padding: 0;
+  }
 }
 
 .hamburger {

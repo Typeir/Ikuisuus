@@ -47,7 +47,57 @@ More rage text here.
 When not wearing armor, your AC is better.
 `;
 
+/** A feature inside a Collapsible, with a metadata line range stamped past the
+    closing tag into the next Collapsible — the shape the generators produce. */
+const STRADDLING_MDX = `# Warrior of the Elements
+
+<Collapsible>
+## 3rd Level – Elemental Initiate
+
+You learn to manipulate the four elements.
+
+</Collapsible>
+
+<Collapsible open>
+## 6th Level – Elemental Burst
+
+You unleash a burst.
+
+</Collapsible>
+`;
+
 describe('resolveShards', () => {
+  describe('element boundaries', () => {
+    it('clamps a line range that runs across a Collapsible boundary', () => {
+      const result = resolveShards(
+        STRADDLING_MDX,
+        [{ name: 'Elemental Initiate', startLine: 4, endLine: 11 }],
+        ['Elemental Initiate'],
+      );
+      expect(result['Elemental Initiate']).toContain('four elements');
+      expect(result['Elemental Initiate']).not.toContain('Collapsible');
+    });
+
+    it('stops a heading walk at a close-then-reopen on one line', () => {
+      const oneLine = [
+        '<Collapsible>',
+        '## Rage',
+        '',
+        'Rage prose.',
+        '',
+        '</Collapsible> <Collapsible open>',
+        '',
+        'Next block prose.',
+        '</Collapsible>',
+      ].join('\n');
+
+      const result = resolveShards(oneLine, [{ name: 'Rage' }], ['Rage']);
+      expect(result['Rage']).toContain('Rage prose');
+      expect(result['Rage']).not.toContain('Collapsible');
+      expect(result['Rage']).not.toContain('Next block');
+    });
+  });
+
   describe('main key', () => {
     it('returns content before the first Collapsible', () => {
       const result = resolveShards(SAMPLE_MDX, [], ['main']);

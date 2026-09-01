@@ -18,11 +18,11 @@
  * @param {String}  $firefox-width - Firefox scrollbar-width keyword: "thin" | "auto" | "none" (default: "thin")
  */
 @mixin scrollbar-custom(
-  $width: 6px,
+  $width: 5px,
   $height: $width,
   $thumb: var(--color-surface),
   $track: transparent,
-  $thumb-radius: var(--border-round-s),
+  $thumb-radius: 0,
   $thumb-border: null,
   $firefox-width: thin
 ) {
@@ -54,11 +54,11 @@
 @mixin scrollbar-thin(
   $thumb: var(--color-surface),
   $track: transparent,
-  $height: 6px,
-  $thumb-radius: var(--border-round-s)
+  $height: 5px,
+  $thumb-radius: 0
 ) {
   @include scrollbar-custom(
-    $width: 6px,
+    $width: 5px,
     $height: $height,
     $thumb: $thumb,
     $track: $track,

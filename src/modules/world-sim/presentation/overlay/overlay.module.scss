@@ -24,9 +24,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 10px;
-  border: var(--border-width-xs) solid var(--worldsim-label-bg);
-  border-radius: var(--border-round-m);
+  padding: 4px calc(10px + var(--pill-chamfer-pad));
+  border: var(--border-width-xs) solid
+    color-mix(in oklab, var(--worldsim-label-accent) 55%, transparent);
+  border-radius: var(--border-round-pill);
+  corner-shape: var(--corner-shape-pill);
   background: var(--worldsim-label-bg);
   backdrop-filter: blur(4px);
   cursor: pointer;
@@ -212,48 +214,9 @@
   }
 }
 
-.contentPanel {
-  position: relative;
-  background: var(--color-bg);
-  overflow: hidden;
-  height: 100%;
-  @include scrollbar-thin;
-}
-
 @keyframes contentPanelSlideIn {
   from { --_: ov-contentPanelSlideIn-from; opacity: 0; transform: translateX(20px); }
   to { --_: ov-contentPanelSlideIn-to; opacity: 1; transform: translateX(0); }
-}
-
-.contentPanelIframe {
-  width: 100%;
-  height: 100%;
-  min-height: 300px;
-  border: none;
-  background: var(--color-bg);
-}
-
-.contentPanelLoading {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-bg);
-  z-index: 2;
-}
-
-.contentPanelSpinner {
-  width: 24px;
-  height: 24px;
-  border: var(--border-width-s) solid var(--worldsim-panel-border);
-  border-top-color: var(--worldsim-label-accent);
-  border-radius: var(--border-round-circle);
-  animation: contentPanelSpin 0.8s linear infinite;
-}
-
-@keyframes contentPanelSpin {
-  to { --_: ov-contentPanelSpin-to; transform: rotate(360deg); }
 }
 
 /* ── Controls Bar ────────────────────────────────────────────── */

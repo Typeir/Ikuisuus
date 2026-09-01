@@ -4,7 +4,7 @@
  * throw. In edit mode exposes a {@link NumericInput}, a 4d6-drop-lowest roll
  * button via {@link rollAbilityScore}, and clickable save pips.
  *
- * @module lib/components/characterSheet/abilityScoreBlock
+ * @module modules/character-builder/presentation/stats/abilityScoreBlock
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

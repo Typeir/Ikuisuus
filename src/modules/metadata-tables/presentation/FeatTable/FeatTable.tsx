@@ -111,6 +111,7 @@ export default function FeatTable({ locale: localeProp }: FeatTableProps = {}) {
 
   return (
     <MetadataTable
+      searchScope='feats'
       data={feats}
       columns={columns}
       getRowSlug={(row) => (row as FeatMetadata).slug}

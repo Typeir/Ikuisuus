@@ -163,9 +163,17 @@ describe('BoonPicker', () => {
       new Response(
         JSON.stringify({
           shardType: 'bloodline',
-          shards: {
-            'extended-reach': 'Your unarmed strikes gain +5 ft. reach.',
-          },
+          shards: [
+            {
+              id: 'extended-reach',
+              key: 'extended-reach',
+              heading: 'Extended Reach',
+              source: 'Your unarmed strikes gain +5 ft. reach.',
+              href: 'library/x#extended-reach',
+            },
+          ],
+          keywordShards: [],
+          resolutions: {},
         }),
         { status: 200 },
       ),
@@ -293,7 +301,17 @@ describe('BoonPicker', () => {
       new Response(
         JSON.stringify({
           shardType: 'bloodline',
-          shards: { 'Extended Reach': 'body' },
+          shards: [
+            {
+              id: 'extended-reach',
+              key: 'Extended Reach',
+              heading: 'Extended Reach',
+              source: 'body',
+              href: 'library/x#extended-reach',
+            },
+          ],
+          keywordShards: [],
+          resolutions: {},
         }),
         { status: 200 },
       ),

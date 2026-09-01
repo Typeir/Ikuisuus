@@ -1,16 +1,17 @@
 /**
- * @fileoverview Shard Resolution By Reference
- * @description Answers what prose defines a keyword, using the `produces` array
- * every metadata record already carries.
+ * @fileoverview Shard Resolution
+ * @description One pipeline for every shard address: a target names a file, a
+ * route, and how to derive its entries; resolution reads that one file and
+ * extracts the matching sections. Nothing walks the content tree.
  *
- * The reference names a shard id; the graph says which file defines that id;
- * that one file is read and its matching section extracted. Nothing walks the
- * content tree, so a resolution costs one read rather than a scan.
+ * A keyword reference is one kind of target: the graph's `produces` arrays say
+ * which file defines the shard id, and the entry is the heading whose slug
+ * matches the reference's anchor.
  *
  * Server only.
  *
  * @module lib/md/resolveShardByRef
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 8.0.0
  */
@@ -23,18 +24,22 @@ import {
   loadKeywordGraph,
   producerOf,
 } from '@/lib/db/content/keywordGraph';
-import { resolveShards } from '@/lib/utils/contentShardResolver';
+import {
+  resolveShards,
+  type ShardableEntry,
+} from '@/lib/utils/contentShardResolver';
 import { anchorSlug } from '@/modules/library/domain/anchorSlug';
+import { KW_NAMESPACED_REGEX } from './keywordExpressionParser';
 import { keywordTemplateId } from './keywordIndex';
-
-/** Splits a normalised reference into its namespace and value. */
-const REF_PARTS = /^([^;]+);(.+)$/;
 
 /** Trailing thematic break left behind by a section boundary. */
 const TRAILING_RULE = /\n+\s*(?:-{3,}|\*{3,}|_{3,})\s*$/;
 
 /** Matches an ATX heading and captures its level and text. */
 const HEADING = /^(#{1,6})\s+(.+?)\s*$/gm;
+
+/** The key that addresses a file's body rather than a section. */
+const MAIN_KEY = 'main';
 
 /**
  * Splits a reference into the parts resolution needs.
@@ -46,7 +51,7 @@ const HEADING = /^(#{1,6})\s+(.+?)\s*$/gm;
  * partsOf('condition;Blinded'); // { id: 'kw-condition-blinded', anchor: 'blinded' }
  */
 function partsOf(reference: string): { id: string; anchor: string } {
-  const match = reference.match(REF_PARTS);
+  const match = reference.match(KW_NAMESPACED_REGEX);
   const namespace = match ? match[1] : undefined;
   const anchor = anchorSlug(match ? match[2] : reference);
 
@@ -89,6 +94,111 @@ function headingFor(body: string, anchor: string): string | null {
 }
 
 /**
+ * A resolvable shard address: the file holding the prose, the route serving
+ * it, and how its entries derive from the content.
+ *
+ * @interface ShardTarget
+ * @property {string} file - Content file path as the metadata stamped it
+ * @property {string} route - Route of the page, without a locale prefix
+ * @property {(content: string) => ShardableEntry[]} entriesOf - Shardable entries; derived after the read so a target may match against the content itself
+ * @property {string[]} [keys] - Fixed keys this target resolves; callers' requested keys apply when omitted
+ * @property {(anchor: string) => string} [shardId] - Shard id for an anchor; the anchor itself when omitted
+ */
+export interface ShardTarget {
+  file: string;
+  route: string;
+  entriesOf: (content: string) => ShardableEntry[];
+  keys?: string[];
+  shardId?: (anchor: string) => string;
+}
+
+/**
+ * Resolves a target's shards from its one file.
+ *
+ * Reads the file, derives entries, extracts the requested sections, and wraps
+ * each in its identity: id, key, heading, and href. Empty extractions are
+ * dropped; a trailing thematic break left by a section boundary is trimmed.
+ *
+ * @param {ShardTarget} target - Address to resolve
+ * @param {string} locale - Content locale
+ * @param {string[]} [requestedKeys] - Keys to resolve when the target fixes none; all when omitted
+ * @returns {Promise<ResolvedShard[] | null>} Resolved shards, or null when the file is missing
+ *
+ * @example
+ * await resolveTargetShards(target, 'en', ['Rage']);
+ * // [{ id: 'rage', key: 'Rage', heading: 'Rage', source: '…', href: 'library/…#rage' }]
+ */
+export async function resolveTargetShards(
+  target: ShardTarget,
+  locale: string,
+  requestedKeys?: string[],
+): Promise<ResolvedShard[] | null> {
+  const file = await getFile(locale, target.file);
+  if (!file) return null;
+
+  const entries = target.entriesOf(file.content);
+  const prose = resolveShards(
+    file.content,
+    entries,
+    target.keys ?? requestedKeys,
+  );
+  const route = target.route.replace(/^\//, '');
+
+  const shards: ResolvedShard[] = [];
+  for (const [key, block] of Object.entries(prose)) {
+    const source = block.trim().replace(TRAILING_RULE, '').trimEnd();
+    if (!source) continue;
+
+    const entry =
+      entries.find((e) => e.anchor === key) ??
+      entries.find((e) => e.name === key);
+    const heading = entry?.name ?? key;
+    const anchor =
+      key === MAIN_KEY ? '' : (entry?.anchor ?? anchorSlug(heading));
+
+    shards.push({
+      id: anchor ? (target.shardId?.(anchor) ?? anchor) : MAIN_KEY,
+      key,
+      heading,
+      source,
+      href: anchor ? `${route}#${anchor}` : route,
+    });
+  }
+
+  return shards;
+}
+
+/**
+ * Target for a keyword reference: the graph names the producing file, and the
+ * entry is the heading whose slug matches the reference's anchor.
+ *
+ * @param {string} reference - Normalised reference, `namespace;value` or a bare value
+ * @param {string} locale - Content locale
+ * @returns {Promise<ShardTarget | null>} The target, or null when nothing produces the shard
+ */
+export async function keywordTarget(
+  reference: string,
+  locale: string,
+): Promise<ShardTarget | null> {
+  const { id, anchor } = partsOf(reference);
+
+  const graph = await loadKeywordGraph(locale);
+  const producer = producerOf(graph, id);
+  if (!producer) return null;
+
+  return {
+    file: producer.file,
+    route: producer.route,
+    entriesOf: (content) => {
+      const heading = headingFor(content, anchor);
+      return heading ? [{ name: heading, anchor }] : [];
+    },
+    keys: [anchor],
+    shardId: () => id,
+  };
+}
+
+/**
  * Resolves one reference to the prose that defines it.
  *
  * @param {string} reference - Normalised reference, `namespace;value` or a bare value
@@ -97,36 +207,17 @@ function headingFor(body: string, anchor: string): string | null {
  *
  * @example
  * await resolveShardByRef('condition;blinded', 'en');
- * // { id: 'kw-condition-blinded', heading: 'Blinded', source: '…', href: 'library/…#blinded' }
+ * // { id: 'kw-condition-blinded', key: 'blinded', heading: 'Blinded', source: '…', href: 'library/…#blinded' }
  */
 export async function resolveShardByRef(
   reference: string,
   locale: string,
 ): Promise<ResolvedShard | null> {
-  const { id, anchor } = partsOf(reference);
+  const target = await keywordTarget(reference, locale);
+  if (!target) return null;
 
-  const graph = await loadKeywordGraph(locale);
-  const producer = producerOf(graph, id);
-  if (!producer) return null;
-
-  const file = await getFile(locale, producer.file);
-  if (!file) return null;
-
-  const heading = headingFor(file.content, anchor);
-  if (!heading) return null;
-
-  const shards = resolveShards(file.content, [{ name: heading, anchor }], [
-    anchor,
-  ]);
-  const prose = shards[anchor]?.trim();
-  if (!prose) return null;
-
-  return {
-    id,
-    heading,
-    source: prose.replace(TRAILING_RULE, '').trimEnd(),
-    href: `${producer.route.replace(/^\//, '')}#${anchor}`,
-  };
+  const shards = await resolveTargetShards(target, locale);
+  return shards?.[0] ?? null;
 }
 
 /**

@@ -61,6 +61,19 @@ afterEach(() => {
 const jsonResponse = (body: unknown, status = 200): Response =>
   new Response(JSON.stringify(body), { status });
 
+/**
+ * Builds a shard envelope whose `main` shard carries the given source.
+ *
+ * @param {string} source - Main shard prose
+ * @returns {object} Content shard response body
+ */
+const mainShardsOf = (source: string) => ({
+  shardType: 'feat',
+  shards: [{ id: 'main', key: 'main', heading: 'main', source, href: 'library/x' }],
+  keywordShards: [],
+  resolutions: {},
+});
+
 describe('ContentShardPanel', () => {
   it('shows loading state immediately on mount', () => {
     mockFetch.mockReturnValue(new Promise(() => {}));
@@ -72,7 +85,7 @@ describe('ContentShardPanel', () => {
 
   it('renders the markdown returned from the API', async () => {
     mockFetch.mockResolvedValue(
-      jsonResponse({ shards: { main: 'You are always alert.' } }),
+      jsonResponse(mainShardsOf('You are always alert.')),
     );
     render(<ContentShardPanel contentType='feats' slug='alert' />);
 
@@ -86,7 +99,7 @@ describe('ContentShardPanel', () => {
       throw new Error('MDX compile error');
     });
     mockFetch.mockResolvedValue(
-      jsonResponse({ shards: { main: 'Fallback content.' } }),
+      jsonResponse(mainShardsOf('Fallback content.')),
     );
     render(<ContentShardPanel contentType='feats' slug='alert' />);
 
@@ -117,7 +130,7 @@ describe('ContentShardPanel', () => {
   });
 
   it('fetches from the correct URL with the locale', async () => {
-    mockFetch.mockResolvedValue(jsonResponse({ shards: { main: '' } }));
+    mockFetch.mockResolvedValue(jsonResponse(mainShardsOf('')));
     render(
       <ContentShardPanel contentType='specializations' slug='berserker' />,
     );
@@ -130,7 +143,7 @@ describe('ContentShardPanel', () => {
   });
 
   it('re-fetches when slug changes', async () => {
-    mockFetch.mockResolvedValue(jsonResponse({ shards: { main: 'Content' } }));
+    mockFetch.mockResolvedValue(jsonResponse(mainShardsOf('Content')));
     const { rerender } = render(
       <ContentShardPanel contentType='feats' slug='alert' />,
     );

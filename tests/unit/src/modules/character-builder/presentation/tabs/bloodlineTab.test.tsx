@@ -50,7 +50,20 @@ beforeEach(() => {
     const url = typeof input === 'string' ? input : input.toString();
     if (url.includes('/api/content-shards/')) {
       return new Response(
-        JSON.stringify({ shards: { main: 'Bloodline lore text.' } }),
+        JSON.stringify({
+          shardType: 'bloodline',
+          shards: [
+            {
+              id: 'main',
+              key: 'main',
+              heading: 'main',
+              source: 'Bloodline lore text.',
+              href: 'library/x',
+            },
+          ],
+          keywordShards: [],
+          resolutions: {},
+        }),
         { status: 200 },
       );
     }

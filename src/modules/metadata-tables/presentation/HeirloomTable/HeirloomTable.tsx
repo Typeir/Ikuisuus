@@ -124,6 +124,7 @@ export default function HeirloomTableWrapper({
 
   return (
     <MetadataTable
+      searchScope='heirlooms'
       data={data}
       columns={columns}
       getRowSlug={(row) =>

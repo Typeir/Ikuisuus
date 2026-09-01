@@ -3,7 +3,7 @@
  * @description Renders a table of tool proficiencies with cycling proficiency levels.
  * Mirrors SkillsTable but without ability scores (tools are independent).
  *
- * @module lib/components/characterSheet/toolsTable
+ * @module modules/character-builder/presentation/stats/toolsTable
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

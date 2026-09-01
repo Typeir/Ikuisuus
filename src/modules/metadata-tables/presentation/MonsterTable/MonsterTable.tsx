@@ -106,6 +106,7 @@ export default function MonsterTableWrapper({
 
   return (
     <MetadataTable
+      searchScope='monsters'
       data={data}
       columns={columns}
       getRowSlug={(row) => {

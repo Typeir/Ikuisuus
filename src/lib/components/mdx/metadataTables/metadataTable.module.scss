@@ -7,6 +7,9 @@
   margin-top: 0rem !important;
 
   .controls {
+    /* The table root pins margin-top to 0, so this is the only air between
+       the search field and the prose above it. */
+    padding-top: 0.75rem;
     margin-bottom: 1.5rem;
     display: flex;
     flex-direction: column;

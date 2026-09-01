@@ -11,7 +11,10 @@
 
 'use client';
 
-import { GenericEmbedPanel } from '@/lib/components/ui/embedPanel/GenericEmbedPanel';
+import {
+  EmbedSkeleton,
+  GenericEmbedPanel,
+} from '@/lib/components/ui/embedPanel/GenericEmbedPanel';
 import { buildEmbedUrl } from '@/lib/embed';
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import { IconButton } from '@/lib/components/ui/iconButton';
@@ -156,7 +159,7 @@ export const PagePreviewHost: React.FC<PagePreviewHostProps> = () => {
           />
         ) : (
           <div className={styles.loading}>
-            <span className={styles.spinner} />
+            <EmbedSkeleton />
           </div>
         )}
       </div>
@@ -181,11 +184,6 @@ export const PagePreviewHost: React.FC<PagePreviewHostProps> = () => {
             }
             url={contentPath}
             locale={locale}
-            draggableClassName={styles.draggable}
-            contentClassName={styles.content}
-            loadingClassName={styles.loading}
-            spinnerClassName={styles.spinner}
-            iframeClassName={styles.frame}
             resizable
             onClosed={() => close(entry.kind, entry.slug)}
             testId={`page-preview-${entry.kind}-${entry.slug}`}

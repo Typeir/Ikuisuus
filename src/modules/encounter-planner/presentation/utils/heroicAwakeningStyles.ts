@@ -3,7 +3,7 @@
  * @description Utilities for determining CSS classes and styling for Heroic Awakening combatants.
  * Maps affix text to CSS class names for visual styling in PlayMode.
  * 
- * @module heroicAwakeningStyles
+ * @module modules/encounter-planner/presentation/utils/heroicAwakeningStyles
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -30,7 +30,7 @@ export enum ZoomLevel {
  * @property {boolean} isTransitioning - Whether camera is mid-animation
  * @property {string | null} hoveredBodyId - Body currently under cursor
  * @property {boolean} labelsVisible - Whether floating labels are shown
- * @property {boolean} orbitsPaused - Whether orbital animation is paused
+ * @property {boolean} orbitsVisible - Whether orbit lines are shown
  * @property {boolean} isInitialized - Whether the Three.js scene has mounted
  */
 export interface WorldSimState {
@@ -40,7 +40,7 @@ export interface WorldSimState {
   isTransitioning: boolean;
   hoveredBodyId: string | null;
   labelsVisible: boolean;
-  orbitsPaused: boolean;
+  orbitsVisible: boolean;
   isInitialized: boolean;
 }
 
@@ -101,6 +101,6 @@ export const INITIAL_WORLD_SIM_STATE: WorldSimState = {
   isTransitioning: false,
   hoveredBodyId: null,
   labelsVisible: true,
-  orbitsPaused: false,
+  orbitsVisible: true,
   isInitialized: false,
 };

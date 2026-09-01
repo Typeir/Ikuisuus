@@ -93,6 +93,7 @@ const SpellTable: React.FC<SpellTablesProps> = ({
         onChange={(val) => setActiveTab(val === 'all' ? 'all' : Number(val))}>
         {visibleSpells.length > 0 ? (
           <MetadataTable
+            searchScope='spells'
             data={visibleSpells}
             columns={columns}
             getRowSlug={(row) => `${basePath}/${row.slug}`}

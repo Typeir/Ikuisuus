@@ -25,34 +25,45 @@ import type { DetachableTooltipProps } from '@/lib/components/ui/detachableToolt
 import type { compileRuntimeSync as CompileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { ExternalLink } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import React, { useEffect, useMemo, useState, type ComponentType } from 'react';
+import React, {
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import DiceRoll from '../DiceRoll';
 import Unit from '../Unit';
 import styles from './Keyword.module.scss';
 import { useShardSource } from './useShardSource';
 
 /**
- * Loads the card machinery after hydration, so the server and the first client
- * render both emit the bare link and `Draggable` stays out of the initial
- * bundle. Resolves once per page rather than once per keyword.
- *
- * @returns {ComponentType<DetachableTooltipProps> | null} The component, or null until loaded
+ * The card machinery, loaded on first use so `Draggable` stays out of the
+ * initial bundle. Module scope keeps its identity stable across renders; the
+ * hydration gate below keeps it out of the server and first client render.
  */
-function useDetachableTooltip(): ComponentType<DetachableTooltipProps> | null {
-  const [component, setComponent] =
-    useState<ComponentType<DetachableTooltipProps> | null>(null);
+const DetachableTooltip = React.lazy<
+  React.ComponentType<DetachableTooltipProps>
+>(async () => ({
+  default: (await import('@/lib/components/ui/detachableTooltip'))
+    .DetachableTooltip,
+}));
 
-  useEffect(() => {
-    let active = true;
-    void import('@/lib/components/ui/detachableTooltip').then((module) => {
-      if (active) setComponent(() => module.DetachableTooltip);
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
+/** Subscription with no updates; hydration state never changes once read. */
+const subscribeNever = () => () => {};
 
-  return component;
+/**
+ * Whether hydration has completed. False on the server and the hydration
+ * render, so both emit identical markup.
+ *
+ * @returns {boolean} True after hydration
+ */
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
 }
 
 /**
@@ -213,7 +224,7 @@ export const Keyword: React.FC<KeywordProps> = ({
 }) => {
   const locale = useLocale();
   const t = useTranslations('keywords');
-  const DetachableTooltip = useDetachableTooltip();
+  const hydrated = useHydrated();
   const label = display ?? term;
 
   /* A nested keyword carries no compile-time resolution, so its card is the
@@ -242,30 +253,32 @@ export const Keyword: React.FC<KeywordProps> = ({
       </a>
     );
 
-  if (!hasCard || !DetachableTooltip || noCard) {
+  if (!hasCard || !hydrated || noCard) {
     return trigger;
   }
 
   const title = heading ?? label;
 
   return (
-    <DetachableTooltip
-      content={
-        <KeywordCard
-          term={term}
-          namespace={namespace}
-          templateId={templateId}
-          heading={heading}
-          href={href}
-          fallbackTitle={label}
-        />
-      }
-      title={title}
-      className={styles.tooltip}
-      panelClassName={styles.panel}
-      closeLabel={t('close', { term: title })}>
-      {trigger}
-    </DetachableTooltip>
+    <Suspense fallback={trigger}>
+      <DetachableTooltip
+        content={
+          <KeywordCard
+            term={term}
+            namespace={namespace}
+            templateId={templateId}
+            heading={heading}
+            href={href}
+            fallbackTitle={label}
+          />
+        }
+        title={title}
+        className={styles.tooltip}
+        panelClassName={styles.panel}
+        closeLabel={t('close', { term: title })}>
+        {trigger}
+      </DetachableTooltip>
+    </Suspense>
   );
 };
 

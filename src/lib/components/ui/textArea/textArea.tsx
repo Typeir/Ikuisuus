@@ -2,7 +2,7 @@
  * @fileoverview Text Area Component
  * @description Styled accessible textarea with controlled value.
  *
- * @module lib/components/ui/textArea
+ * @module lib/components/ui/textArea/textArea
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

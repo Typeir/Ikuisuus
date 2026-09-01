@@ -3,7 +3,7 @@
  * @description Fate die rolling, affix determination, and tier resolution
  * for random heroic awakening applied during combat creation.
  *
- * @module heroicAwakeningApply
+ * @module modules/encounter-planner/domain/heroic/heroicAwakeningApply
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -9,14 +9,27 @@
 
 'use client';
 
-import { compileMdxToComponent } from '@/modules/library/infrastructure/compile/compileMdxToComponent';
+import { compileRuntime } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { mdxComponents } from '@/modules/library/presentation';
+import Keyword, {
+  type KeywordProps,
+} from '@/modules/library/presentation/components/Keyword';
 import contentStyles from '@/styles/mdxContent.module.scss';
 import { useTranslations } from 'next-intl';
-import type { JSX } from 'react';
+import type { JSX, ReactElement } from 'react';
 import { Suspense, useEffect, useRef, useState, useTransition } from 'react';
 import cn from '../../../../lib/utils/classNameMerge';
 import styles from './MdxPreview.module.scss';
+
+/**
+ * Components for the preview compile. A keyword in the editor carries no
+ * compile-time resolution, so it self-resolves through the shard endpoint the
+ * way one inside a shard does — the card works while authoring.
+ */
+const previewComponents = {
+  ...mdxComponents,
+  Keyword: (props: KeywordProps) => <Keyword {...props} nested />,
+};
 
 /**
  * @property {string} source - Raw MDX string to compile and preview
@@ -54,18 +67,18 @@ function PreviewFallback(): JSX.Element {
 }
 
 /**
- * Renders the compiled MDX component in a prose-styled container with a fade-in animation.
+ * Renders the compiled MDX in a prose-styled container with a fade-in animation.
  *
- * @param {{ Component: React.ComponentType<any>; renderKey: number }} props - Compiled MDX component and render key
- * @param {React.ComponentType<any>} props.Component - Compiled MDX component
+ * @param {{ content: ReactElement; renderKey: number }} props - Compiled MDX and render key
+ * @param {ReactElement} props.content - Compiled MDX element
  * @param {number} props.renderKey - Changes key to reset the fade-in animation
  * @returns {JSX.Element} Rendered MDX
  */
 function PreviewContent({
-  Component,
+  content,
   renderKey,
 }: {
-  Component: React.ComponentType<any>;
+  content: ReactElement;
   renderKey: number;
 }): JSX.Element {
   return (
@@ -78,7 +91,7 @@ function PreviewContent({
         styles.previewContainer,
         styles.previewFadeIn,
       )}>
-      <Component components={mdxComponents} />
+      {content}
     </div>
   );
 }
@@ -94,7 +107,7 @@ function PreviewContent({
  */
 export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
   const t = useTranslations('mdxEditor.preview');
-  const [Content, setContent] = useState<React.ComponentType<any> | null>(null);
+  const [content, setContent] = useState<ReactElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [renderKey, setRenderKey] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -113,9 +126,15 @@ export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
 
     debounceRef.current = setTimeout(async () => {
       try {
-        const Compiled = await compileMdxToComponent(body);
+        /* skipCache: every keystroke is a new source, so caching by hash would
+           only accumulate dead entries for the session. */
+        const compiled = await compileRuntime({
+          source: body,
+          components: previewComponents,
+          skipCache: true,
+        });
         startTransition(() => {
-          setContent(() => Compiled);
+          setContent(compiled.content);
           setRenderKey((k) => k + 1);
           setError(null);
         });
@@ -144,7 +163,7 @@ export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
     );
   }
 
-  if (!Content) {
+  if (!content) {
     return (
       <>
         {frontmatterBlock}
@@ -157,7 +176,7 @@ export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
     <>
       {frontmatterBlock}
       <Suspense fallback={<PreviewFallback />}>
-        <PreviewContent Component={Content} renderKey={renderKey} />
+        <PreviewContent content={content} renderKey={renderKey} />
       </Suspense>
     </>
   );

@@ -20,6 +20,7 @@ vi.mock('@/modules/library/application/use-cases', () => ({
 
 vi.mock('@/modules/library/presentation', () => ({
   LibraryContent: () => null,
+  mdxComponents: {},
 }));
 
 vi.mock('@/lib/logging/logger', () => ({

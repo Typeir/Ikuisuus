@@ -3,7 +3,7 @@
  * Skips when `src/content/en` is populated and not on Vercel. On Vercel,
  * removes existing content before re-cloning.
  *
- * @module build/fetchContent
+ * @module scripts/build/fetchContent
  * @version 1.1.0
  * @author Typeir
  * @since 2026-01-01

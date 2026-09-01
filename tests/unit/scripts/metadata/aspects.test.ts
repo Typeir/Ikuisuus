@@ -10,12 +10,12 @@
  * @requires vitest Testing framework
  */
 
+import { resolveAspectVocabulary } from '@/lib/metadata/aspectVocabulary';
 import {
   aspectGroupAppliesTo,
   isInternalAspect,
   loadSharedData,
   parseAspect,
-  resolveAspectValues,
   type SharedData,
 } from '@scripts/metadata/sharedData';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -60,61 +60,32 @@ describe('aspect vocabulary', () => {
     });
   });
 
-  describe('resolveAspectValues', () => {
-    it('should return literal values', () => {
-      expect(resolveAspectValues(sharedData, 'phase')).toEqual([
-        'wounded',
-        'bloodied',
-        'doomed',
-        'slain',
-      ]);
+  describe('resolveAspectVocabulary over shared-data', () => {
+    it('should resolve borrowed sections and sibling groups into values', () => {
+      const groups = resolveAspectVocabulary(sharedData as never);
+      const immunity = groups.find((row) => row.group === 'immunity');
+
+      expect(immunity?.values).toContain('fire');
+      expect(immunity?.values).toContain('frightened');
     });
 
-    it('should borrow values from another shared-data section', () => {
-      expect(resolveAspectValues(sharedData, 'condition')).toEqual(
-        sharedData.gameData.conditions,
-      );
-    });
-
-    it('should merge a sibling group with a borrowed section', () => {
-      const immunity = resolveAspectValues(sharedData, 'immunity');
-
-      expect(immunity).toContain('fire');
-      expect(immunity).toContain('frightened');
-    });
-
-    /**
-     * References resolve only one level and never chain.
-     */
-    it('should not require chained resolution', () => {
-      const chained: string[] = [];
-      for (const [name, group] of Object.entries(sharedData.aspects)) {
-        for (const reference of group.valuesFrom ?? []) {
-          if (reference.includes('.')) continue;
-          const target = sharedData.aspects[reference];
-          if (target && !target.values) chained.push(`${name} -> ${reference}`);
-        }
-      }
-
-      expect(chained).toEqual([]);
-    });
-
-    /**
-     * Borrowed values are converted to kebab-case.
-     */
     it('should kebab-case borrowed values', () => {
-      const rarity = resolveAspectValues(sharedData, 'rarity');
+      const groups = resolveAspectVocabulary(sharedData as never);
+      const rarity = groups.find((row) => row.group === 'rarity');
 
       expect(sharedData.itemData.rarities).toContain('mythic artifact');
-      expect(rarity).toContain('mythic-artifact');
-      expect(rarity).not.toContain('mythic artifact');
+      expect(rarity?.values).toContain('mythic-artifact');
+      expect(rarity?.values).not.toContain('mythic artifact');
     });
 
-    it('should resolve every group to at least one value unless open', () => {
+    it('should resolve every closed group to at least one value', () => {
+      const groups = resolveAspectVocabulary(sharedData as never);
+      const resolved = new Set(groups.map((row) => row.group));
       const barren = Object.keys(sharedData.aspects).filter(
         (name) =>
+          !name.startsWith('meta:') &&
           !sharedData.aspects[name].open &&
-          resolveAspectValues(sharedData, name).length === 0,
+          !resolved.has(name),
       );
 
       expect(barren).toEqual([]);

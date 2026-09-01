@@ -14,6 +14,7 @@
 
 import { FetchError } from '@/lib/fetch/fetcher';
 import { useContentShardSingle } from '@/lib/hooks/data/useContentShard';
+import { shardFor } from '@/lib/utils/contentShards';
 import type { ContentShardType } from '@/lib/types/api';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { mdxComponents } from '@/modules/library/presentation';
@@ -81,7 +82,7 @@ export const ContentExpandBody: React.FC<ContentExpandBodyProps> = ({
 
   useEffect(() => {
     if (shardData && !haveText) {
-      setBodyText(shardData.shards[contentKey] ?? '');
+      setBodyText(shardFor(shardData.shards, contentKey)?.source ?? '');
     }
   }, [shardData, haveText, contentKey]);
 

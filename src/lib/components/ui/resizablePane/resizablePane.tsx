@@ -5,7 +5,7 @@
  * and stacks vertically below 900px. Handle keyboard: ArrowLeft/ArrowRight
  * shift by ±2%, Home/End jump to min/max.
  *
- * @module ui/resizablePane
+ * @module lib/components/ui/resizablePane/resizablePane
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0

@@ -215,9 +215,11 @@
   --worldsim-bg: #050508;
   --worldsim-panel-bg: var(--color-surface);
   --worldsim-panel-border: var(--color-border);
+  /* Labels float over the space canvas, which stays dark in both themes, so
+     their text and scrim derive from the canvas rather than the page theme. */
   --worldsim-label-text: #ffffff;
   --worldsim-label-accent: var(--color-accent);
-  --worldsim-label-bg: 0 0 0 / 0.65;
+  --worldsim-label-bg: color-mix(in srgb, var(--worldsim-bg) 70%, transparent);
   --worldsim-star-emissive: #ffcc44;
   --worldsim-star-corona: #ff8800;
   --worldsim-atmosphere: #6fa8dc;
@@ -226,7 +228,7 @@
   --worldsim-everdark-glow: #cc4400;
   --worldsim-marker-bg: var(--color-accent);
   --worldsim-marker-pulse: rgb(var(--color-accent-a20));
-  --worldsim-region-hover: rgba(255, 255, 255, 0.08);
+  --worldsim-region-hover: color-mix(in oklab, var(--color-text) 8%, transparent);
   --worldsim-panel-text: var(--color-text);
   --worldsim-gas-band-1: #c4a882;
   --worldsim-gas-band-2: #8c7060;
@@ -235,11 +237,11 @@
   --worldsim-ring-inner: #2a2a3a;
   --worldsim-ring-outer: #1a1a2a;
   --worldsim-opaline-glow: #aaddff;
-  --worldsim-controls-bg: rgba(8, 8, 14, 0.85);
-  --worldsim-controls-shadow: rgba(0, 0, 0, 0.5);
-  --worldsim-controls-btn-bg: rgba(255, 255, 255, 0.06);
-  --worldsim-controls-btn-hover: rgba(255, 255, 255, 0.12);
-  --worldsim-controls-btn-active: rgba(255, 255, 255, 0.14);
+  --worldsim-controls-bg: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  --worldsim-controls-shadow: rgb(var(--color-shadow-medium));
+  --worldsim-controls-btn-bg: color-mix(in oklab, var(--color-text) 6%, transparent);
+  --worldsim-controls-btn-hover: color-mix(in oklab, var(--color-text) 12%, transparent);
+  --worldsim-controls-btn-active: color-mix(in oklab, var(--color-text) 14%, transparent);
   --worldsim-text-shadow: rgba(0, 0, 0, 0.6);
   --worldsim-text-shadow-light: rgba(0, 0, 0, 0.5);
 

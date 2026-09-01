@@ -42,7 +42,7 @@
  * Floating panel container — uses the project's canonical dropdown-panel style.
  */
 .panel {
-  @include dropdown-panel;
+  @include dropdown-surface;
   min-width: 240px;
   max-width: 320px;
   max-height: 360px;

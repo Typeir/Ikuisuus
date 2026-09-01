@@ -13,16 +13,57 @@
   box-shadow: 0 4px 12px rgb(var(--color-shadow));
 }
 
-@mixin dropdown-panel {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
+/**
+ * Visual chrome of a floating panel, with no layout. A portaled panel
+ * (DropdownPanel) is positioned by CSS anchors or useAnchoredPosition; any
+ * inset here would fight that positioning.
+ */
+@mixin dropdown-surface {
   background: var(--color-surface);
   border: var(--border-width-xs) solid var(--color-secondary);
   border-radius: var(--border-round-m);
   @include shadow-medium;
   z-index: 1000;
+}
+
+/**
+ * In-flow dropdown under a `position: relative` parent.
+ */
+@mixin dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  @include dropdown-surface;
+}
+
+/**
+ * Resting state of a skeleton overlay that fades out when content arrives.
+ */
+@mixin skeleton-fade {
+  transition: opacity 400ms ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+/**
+ * Faded-out state. content-visibility flips discretely at the end of the
+ * fade, which parks the shimmer instead of leaving it compositing behind the
+ * loaded content.
+ */
+@mixin skeleton-fade-done {
+  opacity: 0;
+  pointer-events: none;
+  content-visibility: hidden;
+  transition:
+    opacity 400ms ease,
+    content-visibility 400ms allow-discrete;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 @mixin transition-border-filter {

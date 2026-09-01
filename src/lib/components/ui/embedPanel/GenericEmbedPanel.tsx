@@ -11,12 +11,38 @@
 
 'use client';
 
+import { Skeleton } from '@/lib/components/skeleton';
 import { buildEmbedUrl } from '@/lib/embed';
+import { cn } from '@/lib/utils/classNameMerge';
 import type { JSX } from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Draggable } from '../draggable/Draggable';
+import styles from './embedPanel.module.scss';
 
 export { buildEmbedUrl };
+
+/** Prose line widths for the loading skeleton. */
+const SKELETON_PROSE = ['92%', '85%', '95%', '72%'];
+
+/**
+ * Page-shaped placeholder shown while an embed loads: a title line, prose
+ * lines, and one rectangle. The default loading content for
+ * {@link GenericEmbedPanel}; exported for hosts that render a loading state
+ * outside the panel.
+ *
+ * @returns {JSX.Element} The skeleton block
+ */
+export function EmbedSkeleton(): JSX.Element {
+  return (
+    <div className={styles.loadingSkeleton} aria-hidden='true'>
+      <Skeleton variant='text' width='58%' height='1.5rem' />
+      {SKELETON_PROSE.map((width) => (
+        <Skeleton key={width} variant='text' width={width} height='0.875rem' />
+      ))}
+      <Skeleton variant='rectangle' height='7rem' />
+    </div>
+  );
+}
 
 /**
  * @interface GenericEmbedPanelProps
@@ -29,11 +55,11 @@ export { buildEmbedUrl };
  * @property {string} handleLabel - Label displayed on the drag handle
  * @property {boolean} [resizable=true] - Whether the panel is resizable
  * @property {string} [testId] - Test identifier for the draggable element
- * @property {string} [draggableClassName] - CSS class for the Draggable wrapper
- * @property {string} [contentClassName] - CSS class for the content wrapper div
- * @property {string} [loadingClassName] - CSS class for the loading container
- * @property {string} [spinnerClassName] - CSS class for the loading spinner
- * @property {string} [iframeClassName] - CSS class for the iframe element
+ * @property {string} [draggableClassName] - Replaces the default Draggable chrome
+ * @property {string} [contentClassName] - Replaces the default content wrapper style
+ * @property {string} [loadingClassName] - Replaces the default loading overlay style
+ * @property {React.ReactNode} [loadingContent] - Replaces the default {@link EmbedSkeleton} loading content
+ * @property {string} [iframeClassName] - Replaces the default iframe style
  * @property {string} [contentRole='complementary'] - ARIA role for the content wrapper
  * @property {string} [contentAriaLabel] - ARIA label for the content wrapper
  * @property {string} [iframeTitle='Embed'] - Title attribute for the iframe
@@ -57,7 +83,7 @@ export interface GenericEmbedPanelProps {
   draggableClassName?: string;
   contentClassName?: string;
   loadingClassName?: string;
-  spinnerClassName?: string;
+  loadingContent?: React.ReactNode;
   iframeClassName?: string;
   contentRole?: string;
   contentAriaLabel?: string;
@@ -88,7 +114,7 @@ export function GenericEmbedPanel({
   draggableClassName,
   contentClassName,
   loadingClassName,
-  spinnerClassName,
+  loadingContent,
   iframeClassName,
   contentRole = 'complementary',
   contentAriaLabel,
@@ -132,25 +158,28 @@ export function GenericEmbedPanel({
     <Draggable
       handleLabel={handleLabel}
       initialPosition={initialPosition}
-      className={draggableClassName}
+      className={draggableClassName ?? styles.draggable}
       defaultWidth={defaultWidth}
       defaultHeight={defaultHeight}
       testId={testId}
       resizable={resizable}
       onClose={handleClose}>
       <div
-        className={contentClassName}
+        className={contentClassName ?? styles.content}
         role={contentRole}
         aria-label={contentAriaLabel}>
-        {isLoading && (
-          <div className={loadingClassName}>
-            <span className={spinnerClassName} />
-          </div>
-        )}
+        <div
+          className={cn(
+            loadingClassName ?? styles.loading,
+            !isLoading && styles.loadingDone,
+          )}
+          aria-hidden={!isLoading}>
+          {loadingContent ?? <EmbedSkeleton />}
+        </div>
         <iframe
           ref={iframeRef}
           src={embedUrl ?? undefined}
-          className={iframeClassName}
+          className={iframeClassName ?? styles.iframe}
           onLoad={handleLoad}
           title={iframeTitle}
           sandbox='allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox'

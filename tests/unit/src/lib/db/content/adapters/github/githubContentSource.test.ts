@@ -258,6 +258,40 @@ describe('githubContentSource', () => {
     );
   });
 
+  it('registers the content cache tag on the raw fetch', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(response(true, '# tagged'));
+    global.fetch = fetchMock as any;
+    listEntriesMock.mockResolvedValue([{ name: 'bane.mdx', isDirectory: false }]);
+
+    const { githubContentSource } = await import(
+      '@/lib/db/content/adapters/github/githubContentSource'
+    );
+    await githubContentSource.fetch('en', 'spells/bane');
+
+    expect(fetchMock.mock.calls[0][1]).toEqual({
+      cache: 'force-cache',
+      next: { tags: ['content-en-spells/bane'] },
+    });
+  });
+
+  it('tags a folder index fetch with the folder slug', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(response(true, '# index'));
+    global.fetch = fetchMock as any;
+    listEntriesMock
+      .mockResolvedValueOnce([{ name: 'conditions', isDirectory: true }])
+      .mockResolvedValueOnce([{ name: 'main.mdx', isDirectory: false }]);
+
+    const { githubContentSource } = await import(
+      '@/lib/db/content/adapters/github/githubContentSource'
+    );
+    await githubContentSource.fetch('en', 'rules/conditions');
+
+    expect(fetchMock.mock.calls[0][1]).toEqual({
+      cache: 'force-cache',
+      next: { tags: ['content-en-rules/conditions'] },
+    });
+  });
+
   it('fetches from the branch named by CONTENT_REPO_BRANCH', async () => {
     process.env.CONTENT_REPO_BRANCH = 'staging';
     const fetchMock = vi.fn().mockResolvedValue(response(true, '# staged'));

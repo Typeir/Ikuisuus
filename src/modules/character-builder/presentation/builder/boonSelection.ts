@@ -15,6 +15,7 @@ import {
   contentShardSingleKey,
   urlForContentShardSingle,
 } from '@/lib/fetch/swrKeys';
+import { shardFor } from '@/lib/utils/contentShards';
 import { entryKey, shardIs } from '../../lib/utils/shardKey';
 import type { ContentShardResponse } from '@/lib/types/api';
 import type { CharacterShard } from '@/lib/types/character';
@@ -151,7 +152,7 @@ export async function buildBoonShard(
     | ContentShardResponse
     | undefined;
   if (cached) {
-    cachedText = cached.shards[key];
+    cachedText = shardFor(cached.shards, key)?.source;
   } else {
     try {
       const data = (await swr.mutate(
@@ -162,7 +163,7 @@ export async function buildBoonShard(
           populateCache: true,
         },
       )) as ContentShardResponse | undefined;
-      cachedText = data?.shards[key];
+      cachedText = shardFor(data?.shards, key)?.source;
     } catch {
     }
   }

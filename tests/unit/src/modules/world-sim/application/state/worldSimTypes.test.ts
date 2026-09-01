@@ -71,6 +71,6 @@ describe('INITIAL_WORLD_SIM_STATE', () => {
   });
 
   it('starts with orbits not paused', () => {
-    expect(INITIAL_WORLD_SIM_STATE.orbitsPaused).toBe(false);
+    expect(INITIAL_WORLD_SIM_STATE.orbitsVisible).toBe(true);
   });
 });

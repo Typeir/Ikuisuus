@@ -10,6 +10,7 @@
  * @since 3.0.0
  */
 
+import { CONTENT_SUFFIXES } from '@/lib/constants/content';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,15 +26,7 @@ const ROOT = path.resolve(__dirname, '../..');
 
 const CONTENT_ROOT_REL = 'src/content';
 const SUPPORTED_TARGET_EXTENSIONS = ['.sheet.mdx', '.mdx', '.md'];
-const SEMANTIC_SUFFIXES = [
-  '.sheet',
-  '.specialization',
-  '.list',
-  '.heirloom',
-  '.trinket',
-  '.bloodline',
-  '.lore',
-];
+const SEMANTIC_SUFFIXES: readonly string[] = CONTENT_SUFFIXES;
 
 /**
  * Resolution state for a link target.
@@ -269,22 +262,47 @@ function resolveSlug(
   if (exact.has(slugPath)) return 'exact';
   if (exact.has(`${slugPath}/main`)) return 'main';
 
+  const slugLeaf = path.posix.basename(slugPath);
+
+  /* A folder-named index stands for its folder, the same rule the app's
+     resolveIndexFile follows: `berserker/berserker.vocation.mdx` answers
+     `…/vocations/berserker`. */
+  const nestedNames = index.fileNamesByLocaleDir.get(locale)?.get(slugPath) ?? [];
+  const hasFolderIndex = nestedNames.some((fileName) => {
+    const stem = stemOf(fileName);
+    if (stem === null) return false;
+    return (
+      stem === slugLeaf ||
+      SEMANTIC_SUFFIXES.some((suffix) => stem === `${slugLeaf}${suffix}`)
+    );
+  });
+  if (hasFolderIndex) return 'main';
+
   const slugDir = path.posix.dirname(slugPath);
   const dirKey = slugDir === '.' ? '' : slugDir;
-  const slugLeaf = path.posix.basename(slugPath);
   const fileNames = index.fileNamesByLocaleDir.get(locale)?.get(dirKey) ?? [];
 
   const semanticMatches = fileNames.filter((fileName) => {
-    const matchedExt = SUPPORTED_TARGET_EXTENSIONS.find((ext) =>
-      fileName.endsWith(ext),
-    );
-    if (!matchedExt) return false;
-    const stem = fileName.slice(0, -matchedExt.length);
+    const stem = stemOf(fileName);
+    if (stem === null) return false;
     return SEMANTIC_SUFFIXES.some((suffix) => stem === `${slugLeaf}${suffix}`);
   });
 
   if (semanticMatches.length === 1) return 'unique-semantic';
   return semanticMatches.length > 1 ? 'ambiguous' : 'missing';
+}
+
+/**
+ * File stem without its supported extension, or null for other files.
+ *
+ * @param {string} fileName - Base file name
+ * @returns {string | null} Stem, or null when the extension is unsupported
+ */
+function stemOf(fileName: string): string | null {
+  const matchedExt = SUPPORTED_TARGET_EXTENSIONS.find((ext) =>
+    fileName.endsWith(ext),
+  );
+  return matchedExt ? fileName.slice(0, -matchedExt.length) : null;
 }
 
 /**

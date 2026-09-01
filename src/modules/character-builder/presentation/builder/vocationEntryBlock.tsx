@@ -4,7 +4,7 @@
  * async loading via `asyncLoading`. Replaces selector inputs with skeletons while
  * loading.
  *
- * @module lib/components/characterSheet/vocationEntryBlock
+ * @module modules/character-builder/presentation/builder/vocationEntryBlock
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

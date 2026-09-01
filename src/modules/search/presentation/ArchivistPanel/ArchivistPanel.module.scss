@@ -1,3 +1,5 @@
+@use '@/styles/mixins' as *;
+
 .panel {
   width: 100%;
   min-width: min(320px, 100%);
@@ -73,27 +75,14 @@
   padding: 1.5rem;
   overflow: hidden;
   background: var(--color-surface);
-  transition: opacity 400ms ease;
+
+  @include skeleton-fade;
 
   > * {
     margin-bottom: 0 !important;
   }
 }
 
-/* content-visibility flips discretely at the end of the fade, which parks the
-   shimmer instead of leaving it compositing behind the loaded embed. */
 .bodySkeletonDone {
-  opacity: 0;
-  pointer-events: none;
-  content-visibility: hidden;
-  transition:
-    opacity 400ms ease,
-    content-visibility 400ms allow-discrete;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bodySkeleton,
-  .bodySkeletonDone {
-    transition: none;
-  }
+  @include skeleton-fade-done;
 }

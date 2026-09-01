@@ -3,7 +3,7 @@
  * @description Renders a full skills table with proficiency toggles, ability modifier,
  * and total bonus per skill. Each row can be clicked to cycle proficiency level.
  *
- * @module lib/components/characterSheet/skillsTable
+ * @module modules/character-builder/presentation/stats/skillsTable
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

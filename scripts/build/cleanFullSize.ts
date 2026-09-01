@@ -4,7 +4,7 @@
  * @fileoverview Removes the full-size image source folder after build completion.
  * Exits unless process.env.VERCEL === '1'.
  *
- * @module cleanFullSize
+ * @module scripts/build/cleanFullSize
  * @version 1.0.0
  * @since 1.0.0
  *

@@ -17,12 +17,16 @@ vi.mock('next-intl', async (importOriginal) => {
   );
 });
 
-vi.mock('@/modules/library/infrastructure/compile/compileMdxToComponent', () => ({
-  compileMdxToComponent: mockCompile,
+vi.mock('@/modules/library/infrastructure/compile/compileRuntime', () => ({
+  compileRuntime: mockCompile,
 }));
 
 vi.mock('@/modules/library/presentation/components', () => ({
   default: {},
+}));
+
+vi.mock('@/modules/library/presentation/components/Keyword', () => ({
+  default: () => null,
 }));
 
 vi.mock('@/modules/mdx-editor/presentation/MdxEditor/MdxEditor.module.scss', () => ({
@@ -70,9 +74,9 @@ describe('MdxPreview', () => {
 
   it('triggers compilation after debounce for non-empty source', async () => {
     vi.useFakeTimers();
-    mockCompile.mockResolvedValue(() => (
-      <div data-testid='compiled'>hello</div>
-    ));
+    mockCompile.mockResolvedValue({
+      content: <div data-testid='compiled'>hello</div>,
+    });
 
     render(<MdxPreview source='# Hello' />);
 
@@ -81,14 +85,16 @@ describe('MdxPreview', () => {
     });
     await act(async () => {});
 
-    expect(mockCompile).toHaveBeenCalledWith('# Hello');
+    expect(mockCompile).toHaveBeenCalledWith(
+      expect.objectContaining({ source: '# Hello', skipCache: true }),
+    );
   });
 
   it('renders compiled content after flush', async () => {
     vi.useFakeTimers();
-    mockCompile.mockResolvedValue(() => (
-      <div data-testid='compiled-output'>Result</div>
-    ));
+    mockCompile.mockResolvedValue({
+      content: <div data-testid='compiled-output'>Result</div>,
+    });
 
     render(<MdxPreview source='# Content' />);
 
@@ -110,9 +116,9 @@ describe('MdxPreview', () => {
 
   it('strips frontmatter from the compiled body and shows it separately', async () => {
     vi.useFakeTimers();
-    mockCompile.mockResolvedValue(() => (
-      <div data-testid='compiled-output'>Result</div>
-    ));
+    mockCompile.mockResolvedValue({
+      content: <div data-testid='compiled-output'>Result</div>,
+    });
 
     render(
       <MdxPreview source={'---\ncontentType: spells\n---\n\n# Content\n'} />,
@@ -123,7 +129,9 @@ describe('MdxPreview', () => {
     });
     await act(async () => {});
 
-    expect(mockCompile).toHaveBeenCalledWith('\n# Content\n');
+    expect(mockCompile).toHaveBeenCalledWith(
+      expect.objectContaining({ source: '\n# Content\n' }),
+    );
     expect(screen.getByLabelText('Frontmatter').textContent).toContain(
       'contentType: spells',
     );

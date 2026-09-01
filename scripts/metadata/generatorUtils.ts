@@ -2,7 +2,7 @@
  * @fileoverview Orchestrate metadata generators: backend detection, paths, run loop.
  * @description Detects backend, resolves directories, maps output paths.
  *
- * @module lib/metadata/generatorUtils
+ * @module scripts/metadata/generatorUtils
  * @version 1.0.1
  * @author Typeir
  * @since 3.0.0

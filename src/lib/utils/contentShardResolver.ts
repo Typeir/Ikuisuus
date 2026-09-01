@@ -67,7 +67,7 @@ export function resolveShards(
     if (entry?.startLine !== undefined && entry?.endLine !== undefined) {
       const block = extractByLineRange(lines, entry.startLine, entry.endLine);
       if (block !== null) {
-        result[key] = stripHeadingLine(block);
+        result[key] = stripHeadingLine(clampToElementBoundary(block));
         continue;
       }
     }
@@ -123,6 +123,46 @@ const FENCE = /^\s*(?:```|~~~)/;
 /** Opening, closing or self-closing MDX component tag. Components only: HTML void
     elements carry no closing tag and would unbalance the count. */
 const JSX_TAG = /<(\/?)[A-Z][A-Za-z0-9]*(?:\s[^<>]*?)?(\/?)>/g;
+
+/**
+ * Truncates a block where an element opened outside it closes.
+ *
+ * Metadata line ranges are stamped heading-to-next-heading with no JSX
+ * awareness, so a feature authored inside a `<Collapsible>` gets a range that
+ * runs across the closing tag and into the next component. Carrying that tail
+ * hands the client source that will not compile.
+ *
+ * @function clampToElementBoundary
+ * @param {string} block - Extracted block text
+ * @returns {string} The block, cut before the first unmatched closing tag
+ */
+function clampToElementBoundary(block: string): string {
+  const lines = block.split('\n');
+  let depth = 0;
+  let fenced = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (FENCE.test(line)) {
+      fenced = !fenced;
+      continue;
+    }
+    if (fenced) continue;
+
+    for (const tag of line.matchAll(JSX_TAG)) {
+      if (tag[1]) depth--;
+      else if (!tag[2]) depth++;
+      if (depth < 0) {
+        let end = i - 1;
+        while (end >= 0 && lines[end].trim() === '') end--;
+        return lines.slice(0, end + 1).join('\n');
+      }
+    }
+  }
+
+  return block;
+}
 
 /**
  * Find a heading by case-insensitive text match and extract its block.
@@ -181,14 +221,16 @@ function extractByHeadingText(lines: string[], heading: string): string | null {
       break;
     }
 
+    /* A close with no matching open inside the block means the heading sat
+       inside an element that ends here. Carrying on would take that stray
+       closing tag along and the extracted source would not compile. Checked
+       per tag, not per line: a close followed by a reopen on one line nets
+       zero and would slip past a line-level check. */
     for (const tag of line.matchAll(JSX_TAG)) {
       if (tag[1]) depth--;
       else if (!tag[2]) depth++;
+      if (depth < 0) break;
     }
-
-    /* A close with no matching open inside the block means the heading sat
-       inside an element that ends here. Carrying on would take that stray
-       closing tag along and the extracted source would not compile. */
     if (depth < 0) {
       endIdx = i - 1;
       break;

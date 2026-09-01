@@ -76,10 +76,10 @@ export function ControlsBar({
       </button>
 
       <button
-        className={`${styles.controlButton} ${state.orbitsPaused ? styles.active : ''}`}
+        className={`${styles.controlButton} ${state.orbitsVisible ? styles.active : ''}`}
         onClick={handleToggleOrbits}
         type='button'
-        aria-pressed={state.orbitsPaused}
+        aria-pressed={state.orbitsVisible}
         aria-label={t('controls.toggleOrbits')}>
         {t('controls.orbits')}
       </button>

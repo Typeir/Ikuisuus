@@ -39,7 +39,7 @@
  * Floating panel listing all bloodline movement modes.
  */
 .panel {
-  @include dropdown-panel;
+  @include dropdown-surface;
   min-width: 180px;
   padding: 0.35rem 0;
 }

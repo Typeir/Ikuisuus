@@ -2,7 +2,7 @@
  * @fileoverview Pure utility functions shared across the encounter-planner module.
  * Depends on the shared dice-rolling primitive.
  *
- * @module encounter-planner/domain/shared/utils
+ * @module modules/encounter-planner/domain/shared/utils
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

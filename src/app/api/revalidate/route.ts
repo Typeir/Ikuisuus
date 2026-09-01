@@ -121,7 +121,18 @@ export async function POST(req: NextRequest) {
 
       const locale = extractLocale(p);
       const slugPath = extractSlugPath(p);
-      const fetchTag = locale ? contentCacheTag(locale, slugPath) : null;
+
+      /* The fetch registers its tag under the suffix-stripped slug `getFile`
+         normalises to, so the tag busted here must drop the suffix too. */
+      const slugSegments = slugPath.split('/').filter(Boolean);
+      if (slugSegments.length > 0) {
+        slugSegments[slugSegments.length - 1] = stripContentSuffix(
+          slugSegments[slugSegments.length - 1],
+        );
+      }
+      const canonicalSlug = slugSegments.join('/');
+      const fetchTag =
+        locale && canonicalSlug ? contentCacheTag(locale, canonicalSlug) : null;
 
       log.message('Revalidating path variants', {
         path: p,

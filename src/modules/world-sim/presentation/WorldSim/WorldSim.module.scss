@@ -4,18 +4,18 @@
  * layout for the Three.js canvas container and header overlay.
  */
 
+@use 'variables' as *;
+
 .worldSimWrapper {
   position: relative;
   width: 100%;
-  height: calc(100vh - 64px);
+  height: 100dvh;
   min-height: 400px;
   background: var(--worldsim-bg);
   overflow: hidden;
-  border-radius: var(--border-round-l);
 
-  @media (max-width: 768px) {
-    height: calc(100vh - 56px);
-    border-radius: 0;
+  @media (max-width: 1023px) {
+    height: calc(100dvh - $mobile-header-height);
   }
 }
 

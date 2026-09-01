@@ -19,6 +19,7 @@ import type { ChipVariant } from '@/lib/components/ui/chip';
 import { Chip } from '@/lib/components/ui/chip';
 import { fetcher } from '@/lib/fetch/fetcher';
 import { contentShardKey, urlForContentShard } from '@/lib/fetch/swrKeys';
+import { mainShard } from '@/lib/utils/contentShards';
 import type { ContentShardResponse } from '@/lib/types/api';
 import type { CharacterShard } from '@/lib/types/character';
 import { shardToPreview } from '@/modules/character-builder/lib/utils/shardToPreview';
@@ -133,7 +134,7 @@ const PREVIEW_CHARS = 150;
           return shard.heading;
         }
       }
-      const raw = data?.shards.main ?? '';
+      const raw = mainShard(data?.shards)?.source ?? '';
       source = truncateMdxSource(raw, {
         maxChars: PREVIEW_CHARS,
         ellipsis: true,

@@ -27,12 +27,18 @@
 
 'use client';
 
-import { LIBRARY_SEGMENT } from '@/lib/constants/content';
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
+import { SearchField, useScopedSearch } from '@/modules/search';
 import { FilterSelect, NumericInput } from '../../ui';
 import styles from './metadataTable.module.scss';
+import {
+  filterOptionsFor,
+  getCellValue,
+  resolveRowHref,
+  rowMatchesColumnFilters,
+} from './metadataTableLogic';
 import { useAspectsColumn } from './useAspectsColumn';
 
 import type {
@@ -103,6 +109,7 @@ export default function MetadataTable({
   pageSize = 50,
   getRowSlug = (row) => row.slug,
   searchKeys = ['title'],
+  searchScope,
   onRowSelect,
   size = 'md',
   rowAction,
@@ -123,28 +130,20 @@ export default function MetadataTable({
   const [searchTerm, setSearchTerm] = useState('');
 
   /**
-   * Returns column.getValue(row) if defined, else row[column.key].
-   *
-   * @function getCellValue
-   * @param {MetadataRow} row - Data row
-   * @param {ColumnConfig} column - Column configuration
-   * @returns {*} Extracted value for filtering/sorting/display
-   *
-   * @example
-   * ```typescript
-   * // Without getValue - direct property access
-   * getCellValue({ name: 'Item' }, { key: 'name' }) // Returns: 'Item'
-   *
-   * // With getValue - nested property extraction
-   * getCellValue(
-   *   { stats: { ac: { value: 18 } } },
-   *   { key: 'ac', getValue: (row) => row.stats.ac.value }
-   * ) // Returns: 18
-   * ```
+   * Index-backed search scope: rows rank against the shared Pagefind index,
+   * intersected with the slugs this table owns. Null ranks fall back to the
+   * substring filter over `searchKeys`.
    */
-  const getCellValue = useCallback((row: MetadataRow, column: ColumnConfig) => {
-    return column.getValue ? column.getValue(row) : row[column.key];
-  }, []);
+  const slugOf = useCallback(
+    (row: MetadataRow) => getRowSlug(row).split('#')[0],
+    [getRowSlug],
+  );
+  const rowSlugs = useMemo(() => new Set(data.map(slugOf)), [data, slugOf]);
+  const { ranks, loading: searchLoading } = useScopedSearch(searchTerm, {
+    locale,
+    types: searchScope ? [searchScope] : undefined,
+    slugs: rowSlugs,
+  });
 
   /**
    * Applies global search and column-specific filters to the dataset.
@@ -152,56 +151,28 @@ export default function MetadataTable({
    * @function filteredData
    * @returns {MetadataRow[]} Filtered array of data rows
    *
-   * @description Global search: case-insensitive substring match on any searchKey.
-   * Column filters by filterType: 'text' substring, 'select' exact, 'range' numeric min/max, 'multiselect' array intersection.
+   * @description Global search: Pagefind slug ranks when the index answers,
+   * else case-insensitive substring match on any searchKey. Column filters
+   * delegate to `rowMatchesColumnFilters`.
    */
   const filteredData = useMemo(() => {
     return data.filter((row) => {
       if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase();
-        const matchesSearch = searchKeys.some((key) => {
-          const value = row[key];
-          return value && String(value).toLowerCase().includes(searchLower);
-        });
-        if (!matchesSearch) return false;
-      }
-
-      for (const [key, value] of Object.entries(filters)) {
-        if (!value || (Array.isArray(value) && value.length === 0)) continue;
-
-        const column = columns.find((c) => c.key === key);
-        if (!column) continue;
-
-        const cellValue = getCellValue(row, column);
-
-        if (column.filterType === 'multiselect') {
-          if (Array.isArray(cellValue) && Array.isArray(value)) {
-            const hasMatch = value.some((filterVal: string) =>
-              cellValue.some((cv) =>
-                String(cv).toLowerCase().includes(filterVal.toLowerCase()),
-              ),
-            );
-            if (!hasMatch) return false;
-          }
-        } else if (column.filterType === 'select') {
-          const cellValueStr = String(cellValue || '').toLowerCase();
-          const filterValueStr = String(value).toLowerCase();
-          if (cellValueStr !== filterValueStr) return false;
-        } else if (column.filterType === 'range') {
-          const numValue = parseFloat(String(cellValue));
-          if (isNaN(numValue)) return false;
-          if (value.min !== undefined && numValue < value.min) return false;
-          if (value.max !== undefined && numValue > value.max) return false;
-        } else if (column.filterType === 'text' || !column.filterType) {
-          const strValue = String(cellValue || '').toLowerCase();
-          const filterStr = String(value).toLowerCase();
-          if (!strValue.includes(filterStr)) return false;
+        if (ranks) {
+          if (!ranks.has(slugOf(row))) return false;
+        } else {
+          const searchLower = searchTerm.toLowerCase();
+          const matchesSearch = searchKeys.some((key) => {
+            const value = row[key];
+            return value && String(value).toLowerCase().includes(searchLower);
+          });
+          if (!matchesSearch) return false;
         }
       }
 
-      return true;
+      return rowMatchesColumnFilters(row, filters, columns);
     });
-  }, [data, filters, searchTerm, columns, searchKeys, getCellValue]);
+  }, [data, filters, searchTerm, ranks, slugOf, columns, searchKeys]);
 
   /**
    * Sorts filtered dataset by current sort state.
@@ -213,7 +184,16 @@ export default function MetadataTable({
    * null/undefined sort last. Uses sortDirection ('asc' or 'desc').
    */
   const sortedData = useMemo(() => {
-    if (!sortKey || !sortDirection) return filteredData;
+    if (!sortKey || !sortDirection) {
+      if (ranks && searchTerm) {
+        return [...filteredData].sort(
+          (a, b) =>
+            (ranks.get(slugOf(a)) ?? Number.MAX_SAFE_INTEGER) -
+            (ranks.get(slugOf(b)) ?? Number.MAX_SAFE_INTEGER),
+        );
+      }
+      return filteredData;
+    }
 
     const sortColumn = columns.find((c) => c.key === sortKey);
     if (!sortColumn) return filteredData;
@@ -233,7 +213,7 @@ export default function MetadataTable({
       const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-  }, [filteredData, sortKey, sortDirection, columns, getCellValue]);
+  }, [filteredData, sortKey, sortDirection, ranks, searchTerm, slugOf, columns]);
 
   /**
    * Pagination calculations.
@@ -285,103 +265,28 @@ export default function MetadataTable({
   };
 
   /**
-   * Resolves the navigation URL for a row.
+   * Resolves the navigation URL for a row via `resolveRowHref`.
    *
    * @function getRowHref
    * @param {MetadataRow} row - Data row to resolve
    * @returns {{ href: string; external: boolean }} Resolved href and whether it is external
-   *
-   * @description External http/https row.link returns external. Internal link returns
-   * /{locale}{link} (prefixes /library if not already). Otherwise builds
-   * /{locale}/library/{basePath}/{slug}, preserving any '#hash'.
-   *
-   * @example
-   * // Internal link: { link: "/library/spells/fireball" } → /en/library/spells/fireball
-   * // External link: { link: "http://dnd5e.wikidot.com/spell:fireball" } → external
-   * // Legacy slug: { slug: "fireball" } → /en/library/spells/fireball
    */
   const getRowHref = useCallback(
-    (row: MetadataRow): { href: string; external: boolean } => {
-      if (row.link) {
-        const isExternalLink =
-          row.link.startsWith('http://') || row.link.startsWith('https://');
-
-        if (isExternalLink) {
-          return { href: row.link, external: true };
-        }
-
-        const targetPath = row.link.startsWith(`/${LIBRARY_SEGMENT}`)
-          ? `/${locale}${row.link}`
-          : `/${locale}/library${row.link}`;
-
-        return { href: targetPath, external: false };
-      }
-
-      const slug = getRowSlug(row);
-      const [slugPath, hash] = slug.includes('#')
-        ? slug.split('#')
-        : [slug, null];
-
-      const targetPath = slugPath.startsWith('/')
-        ? `/${locale}/library${slugPath}`
-        : `/${locale}/library${basePath}/${slugPath}`;
-
-      const finalPath = hash ? `${targetPath}#${hash}` : targetPath;
-
-      return { href: finalPath, external: false };
-    },
+    (row: MetadataRow): { href: string; external: boolean } =>
+      resolveRowHref(row, { locale, basePath, getRowSlug }),
     [basePath, getRowSlug, locale],
   );
 
   /**
-   * Returns filter dropdown options for a column.
-   *
-   * @function getFilterOptions
-   * @param {ColumnConfig} column - Column configuration
-   * @returns {string[]} Sorted array of unique filter options
-   *
-   * @description Returns column.getFilterOptions(data) if defined. Otherwise derives
-   * unique string values from rows (flattening arrays) and sorts by column.filterSortOrder
-   * if provided, else alphabetically.
-   */
-  const getFilterOptions = useCallback(
-    (column: ColumnConfig): string[] => {
-      if (column.getFilterOptions) {
-        return column.getFilterOptions(data);
-      }
-
-      const uniqueValues = new Set<string>();
-      data.forEach((row) => {
-        const value = getCellValue(row, column);
-        if (Array.isArray(value)) {
-          value.forEach((v) => uniqueValues.add(String(v)));
-        } else if (value !== undefined && value !== null) {
-          uniqueValues.add(String(value));
-        }
-      });
-      const options = Array.from(uniqueValues);
-
-      if (column.filterSortOrder) {
-        return options.sort(
-          (a, b) =>
-            (column.filterSortOrder![a] ?? 999) -
-            (column.filterSortOrder![b] ?? 999),
-        );
-      }
-      return options.sort();
-    },
-    [data, getCellValue],
-  );
-
-  /**
-   * Maps filter options to { value, label } pairs for FilterSelect.
+   * Maps a column's filter options to { value, label } pairs for FilterSelect.
    */
   const getSelectOptions = useCallback(
-    (column: ColumnConfig) => {
-      const options = getFilterOptions(column);
-      return options.map((opt) => ({ value: opt, label: opt }));
-    },
-    [getFilterOptions],
+    (column: ColumnConfig) =>
+      filterOptionsFor(column, data).map((opt) => ({
+        value: opt,
+        label: opt,
+      })),
+    [data],
   );
 
   return (
@@ -389,15 +294,15 @@ export default function MetadataTable({
       className={`${styles.metadataTable} ${size === 's' ? styles.sizeS : ''}`}>
       <div className={styles.controls}>
         <div className={styles.searchBar}>
-          <input
-            type='text'
-            placeholder={t('searchPlaceholder')}
+          <SearchField
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
+            onChange={(value) => {
+              setSearchTerm(value);
               setCurrentPage(1);
             }}
-            className={styles.searchInput}
+            placeholder={t('searchPlaceholder')}
+            ariaLabel={t('searchPlaceholder')}
+            loading={searchLoading}
           />
         </div>
 

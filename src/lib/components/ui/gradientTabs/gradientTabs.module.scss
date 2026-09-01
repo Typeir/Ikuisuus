@@ -21,8 +21,7 @@
   @include scrollbar-thin(
     $thumb: var(--color-secondary),
     $track: var(--gradient-tabs-surface, var(--color-surface)),
-    $height: 8px,
-    $thumb-radius: var(--border-round-s)
+    $height: 6px
   );
   background: linear-gradient(
     0deg,

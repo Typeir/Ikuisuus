@@ -13,6 +13,7 @@ import { logger } from '@/lib/logging/logger';
 import path from 'path';
 
 import { resolveIndexFile } from '@/lib/constants/content';
+import { contentCacheTag } from '../../contentCacheTags';
 import type {
   ContentFetchResult,
   ContentSourceAdapter,
@@ -33,19 +34,26 @@ const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${CONTENT_REPO_OWNER}
 /**
  * Fetches a concrete file path from GitHub raw content.
  *
+ * The response enters the Next.js Data Cache under `tag`, so the entry lives
+ * until `/api/revalidate` busts that tag — never on a timer. A TTL here would
+ * let a revalidated route re-render against stale prose.
+ *
  * @param {string} locale - Content locale
  * @param {string} relativeFilePath - File path relative to locale root including extension
+ * @param {string} tag - Data Cache tag, from `contentCacheTag`
  * @returns {Promise<ContentFetchResult | null>} Resolved content result or null
  */
 const fetchConcreteFile = async (
   locale: string,
   relativeFilePath: string,
+  tag: string,
 ): Promise<ContentFetchResult | null> => {
   const url = `${GITHUB_RAW_BASE}/${locale}/${relativeFilePath}`;
 
   try {
     const res = await fetch(url, {
-      cache: 'no-store',
+      cache: 'force-cache',
+      next: { tags: [tag] },
     });
 
     if (!res.ok) {
@@ -67,8 +75,9 @@ const fetchConcreteFile = async (
 
 /**
  * GitHub raw-content-backed content source.
- * Fetches from `raw.githubusercontent.com` with no caching — ISR handles
- * page-level caching; the raw MDX must always be fresh.
+ * Fetches from `raw.githubusercontent.com` into the Data Cache, tagged
+ * `contentCacheTag(locale, slugPath)` so `/api/revalidate` busts the file
+ * entry and the routes it renders into on the same event.
  */
 export const githubContentSource: ContentSourceAdapter = {
   async fetch(
@@ -108,7 +117,11 @@ export const githubContentSource: ContentSourceAdapter = {
       );
 
       return indexFile
-        ? fetchConcreteFile(locale, `${slugPath}/${indexFile}`)
+        ? fetchConcreteFile(
+            locale,
+            `${slugPath}/${indexFile}`,
+            contentCacheTag(locale, slugPath),
+          )
         : null;
     }
 
@@ -116,6 +129,6 @@ export const githubContentSource: ContentSourceAdapter = {
       ? `${relativeDirectory}/${mdxFile.name}`
       : mdxFile.name;
 
-    return fetchConcreteFile(locale, filePath);
+    return fetchConcreteFile(locale, filePath, contentCacheTag(locale, slugPath));
   },
 };

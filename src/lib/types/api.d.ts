@@ -46,46 +46,54 @@ export interface BloodlineApiItem {
   boons: BloodlineBoon[];
 }
 
+import type { KeywordResolutions } from '@/lib/md/remarkKeyword';
+
 /**
  * Response shape for `/api/content-shards/[type]/[slug]`.
  *
  * @interface ContentShardResponse
- * @property {string} [shardType] - Singular content kind the route resolved, e.g. `'feat'`
- * @property {Record<string, string>} shards - Map of heading key to markdown body
- * @property {ResolvedShard[]} [keywordShards] - Definitions for the keywords that prose writes, resolved server-side because the client compiles it
+ * @property {string} shardType - Singular content kind the route resolved, e.g. `'feat'`
+ * @property {ResolvedShard[]} shards - Resolved prose, in requested key order
+ * @property {ResolvedShard[]} keywordShards - Definitions for the keywords that prose writes, resolved server-side because the client compiles it
+ * @property {KeywordResolutions} resolutions - Stamp targets for those references
  */
 export interface ContentShardResponse {
-  shardType?: string;
-  shards: Record<string, string>;
-  keywordShards?: ResolvedShard[];
+  shardType: string;
+  shards: ResolvedShard[];
+  keywordShards: ResolvedShard[];
+  resolutions: KeywordResolutions;
 }
 
 /**
- * A resolved keyword shard and where it came from.
+ * A resolved shard and where it came from — prose extracted from a file by
+ * metadata declaration, heading match, or line splice.
  *
  * @interface ResolvedShard
- * @property {string} id - Shard id, derived from namespace and anchor
+ * @property {string} id - Shard id: keyword template id, anchor slug, or `main`
+ * @property {string} key - Addressing key this shard answers (`main`, an entry key, or an anchor)
  * @property {string} heading - Heading text of the defining section
  * @property {string} source - Section body markdown, without the heading
  * @property {string} href - Locale-relative route and anchor of the defining heading
  */
 export interface ResolvedShard {
   id: string;
+  key: string;
   heading: string;
   source: string;
   href: string;
 }
 
 /**
- * API path segment accepted by the content-shard routes.
+ * API path segment accepted by the content-shard route.
  *
- * @typedef {'feats' | 'bloodlines' | 'vocations' | 'specializations'} ContentShardType
+ * @typedef {'feats' | 'bloodlines' | 'vocations' | 'specializations' | 'keyword'} ContentShardType
  */
 export type ContentShardType =
   | 'feats'
   | 'bloodlines'
   | 'vocations'
-  | 'specializations';
+  | 'specializations'
+  | 'keyword';
 
 /**
  * One candidate route returned by `/api/find-nearest-route`.

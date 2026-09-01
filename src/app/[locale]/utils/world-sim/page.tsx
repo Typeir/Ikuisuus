@@ -50,7 +50,7 @@ function WorldSimPageInner(): React.ReactElement {
 
   return (
     <WorldSimControlsProvider mediatorRef={mediatorRef}>
-      <div className={styles.worldSimWrapper}>
+      <div className={styles.worldSimWrapper} data-full-bleed>
         <div ref={containerRef} className={styles.canvasContainer} />
 
         {!state.isInitialized && (

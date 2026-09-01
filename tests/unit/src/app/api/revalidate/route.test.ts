@@ -202,6 +202,31 @@ describe('POST /api/revalidate', () => {
     expect(calls).toContain('/en/library/monsters/albedo/main');
   });
 
+  it('busts the fetch tag under the suffix-stripped slug', async () => {
+    await POST(
+      makeRequest(
+        { paths: ['/en/library/items/heirlooms/deep-dredge.heirloom'] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockRevalidateTag).toHaveBeenCalledWith(
+      'content:en:items/heirlooms/deep-dredge',
+      'max',
+    );
+  });
+
+  it('busts the fetch tag before revalidating any path', async () => {
+    await POST(
+      makeRequest(
+        { paths: ['/en/library/monsters/goblin'] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    const tagOrder = mockRevalidateTag.mock.invocationCallOrder[0];
+    const pathOrder = mockRevalidatePath.mock.invocationCallOrder[0];
+    expect(tagOrder).toBeLessThan(pathOrder);
+  });
+
   it('marks invalid path entries as errors', async () => {
     const res = await POST(
       makeRequest(

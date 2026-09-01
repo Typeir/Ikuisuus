@@ -29,7 +29,15 @@ describe('fetchFeatureShards', () => {
       ok: true,
       json: () =>
         Promise.resolve({
-          shards: { 'Fighting Style': 'Choose a fighting style.' },
+          shards: [
+            {
+              id: 'fighting-style',
+              key: 'Fighting Style',
+              heading: 'Fighting Style',
+              source: 'Choose a fighting style.',
+              href: 'library/x#fighting-style',
+            },
+          ],
         }),
     });
 
@@ -59,7 +67,15 @@ describe('fetchFeatureShards', () => {
       ok: true,
       json: () =>
         Promise.resolve({
-          shards: { 'Improved Critical': 'Your crits improve.' },
+          shards: [
+            {
+              id: 'improved-critical',
+              key: 'Improved Critical',
+              heading: 'Improved Critical',
+              source: 'Your crits improve.',
+              href: 'library/x#improved-critical',
+            },
+          ],
         }),
     });
 
@@ -111,7 +127,7 @@ describe('fetchFeatureShards', () => {
   it('maps cachedText as undefined when shard key is absent', async () => {
     mockFetch.mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ shards: {} }),
+      json: () => Promise.resolve({ shards: [] }),
     });
 
     const result = await fetchFeatureShards(

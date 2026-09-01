@@ -212,38 +212,6 @@ export function toAspectValue(value: string): string {
 }
 
 /**
- * Resolves a group's values, following `valuesFrom` one level.
- *
- * @param {SharedData} sharedData - Loaded shared data
- * @param {string} group - Group name without its trailing colon
- * @returns {string[]} Every value the group accepts, empty when the group is open or unknown
- */
-export function resolveAspectValues(
-  sharedData: SharedData,
-  group: string,
-): string[] {
-  const definition = sharedData.aspects[group];
-  if (!definition || definition.open) return [];
-
-  const values = [...(definition.values ?? [])];
-
-  for (const reference of definition.valuesFrom ?? []) {
-    const [section, key] = reference.split('.');
-    const borrowed = key
-      ? (sharedData as unknown as Record<string, Record<string, unknown>>)[
-          section
-        ]?.[key]
-      : sharedData.aspects[section]?.values;
-
-    if (Array.isArray(borrowed)) {
-      values.push(...(borrowed as string[]).map(toAspectValue));
-    }
-  }
-
-  return [...new Set(values)];
-}
-
-/**
  * Whether a group applies to a given content type.
  *
  * @param {SharedData} sharedData - Loaded shared data

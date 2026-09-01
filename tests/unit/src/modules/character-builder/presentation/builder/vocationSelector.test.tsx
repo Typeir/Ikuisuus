@@ -200,7 +200,17 @@ describe('VocationSelector — edit mode', () => {
       new Response(
         JSON.stringify({
           shardType: 'vocation',
-          shards: { 'Fighting Style': 'You gain a fighting style.' },
+          shards: [
+            {
+              id: 'fighting-style',
+              key: 'Fighting Style',
+              heading: 'Fighting Style',
+              source: 'You gain a fighting style.',
+              href: 'library/x#fighting-style',
+            },
+          ],
+          keywordShards: [],
+          resolutions: {},
         }),
         { status: 200 },
       ),
