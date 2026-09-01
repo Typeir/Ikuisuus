@@ -8,6 +8,8 @@
  * @since 3.0.0
  */
 
+import 'server-only';
+
 import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {

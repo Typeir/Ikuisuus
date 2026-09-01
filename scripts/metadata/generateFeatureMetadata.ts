@@ -15,11 +15,11 @@ import type { MonsterFeature } from '@/lib/types/feature';
 import { normalizeStatlet } from './extraction/statletNormalizer';
 import fs from 'fs/promises';
 import path from 'path';
+import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
 import {
     blankFrontmatter,
     endTimer,
     filePathToSlug,
-    getMatchingFiles,
     getMetadataBackend,
     readLines,
     runWithCli,

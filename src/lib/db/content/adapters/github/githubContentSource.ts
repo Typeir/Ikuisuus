@@ -9,6 +9,8 @@
  * @since 2.0.0
  */
 
+import 'server-only';
+
 import { logger } from '@/lib/logging/logger';
 import path from 'path';
 

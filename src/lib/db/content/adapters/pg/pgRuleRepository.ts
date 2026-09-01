@@ -9,6 +9,8 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
 import { RuleEntity } from '@/lib/db/orm/entities/RuleEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { RuleRepository } from '../../repositories/ruleRepository';

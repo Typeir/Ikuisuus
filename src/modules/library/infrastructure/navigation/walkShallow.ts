@@ -14,7 +14,6 @@ import {
     REGEX_CONTENT_SUFFIX,
     REGEX_EXTENSION,
 } from '@/lib/constants/content';
-import { deduplicateFiles } from '@/lib/utils/deduplicateFiles';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import { toTitleCase } from '@/lib/utils/toTitleCase';
 import type { WalkNode } from './types';
@@ -114,15 +113,10 @@ async function countRenderableChildren(
   );
 
   const directories = entries.filter((entry) => entry.isDirectory).length;
-  const files = deduplicateFiles(
-    entries
-      .filter(
-        (entry) =>
-          !entry.isDirectory &&
-          (entry.name.endsWith(FILE_EXT_MD) ||
-            entry.name.endsWith(FILE_EXT_MDX)),
-      )
-      .map((entry) => entry.name),
+  const files = entries.filter(
+    (entry) =>
+      !entry.isDirectory &&
+      (entry.name.endsWith(FILE_EXT_MD) || entry.name.endsWith(FILE_EXT_MDX)),
   ).length;
 
   return directories + files;
@@ -192,7 +186,6 @@ async function shallowWalkLevel(
     )
     .map((entry) => entry.name);
 
-  const deduplicatedFiles = deduplicateFiles(files);
   const nodes = await Promise.all(
     entries.map(async (entry) => {
       const fileName = entry.name.replace(REGEX_EXTENSION, '');
@@ -248,7 +241,7 @@ async function shallowWalkLevel(
       if (
         (entry.name.endsWith(FILE_EXT_MD) ||
           entry.name.endsWith(FILE_EXT_MDX)) &&
-        deduplicatedFiles.includes(entry.name)
+        files.includes(entry.name)
       ) {
         return {
           name: toTitleCase(baseFileName),

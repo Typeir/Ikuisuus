@@ -9,6 +9,8 @@
  * @since 3.0.0
  */
 
+import 'server-only';
+
 import path from 'path';
 import type { HeirloomRepository } from '../../repositories/heirloomRepository';
 import type { HeirloomMetadata } from '../../schemas/heirloomMetadata';

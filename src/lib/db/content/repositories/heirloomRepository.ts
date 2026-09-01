@@ -10,6 +10,8 @@
  * @since 3.0.0
  */
 
+import 'server-only';
+
 import { fsHeirloomRepository } from '../adapters/fs/fsHeirloomRepository';
 import { pgHeirloomRepository } from '../adapters/pg/pgHeirloomRepository';
 import type { HeirloomMetadata } from '../schemas/heirloomMetadata';

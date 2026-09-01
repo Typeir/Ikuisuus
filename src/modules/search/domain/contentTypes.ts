@@ -11,26 +11,36 @@
  */
 
 import { CONTENT_SUBDIRS } from '@/lib/constants/contentPaths';
+import { ContentType } from '@/lib/metadata/contentTypes';
 
 /**
- * Union of all searchable content types (10 groups).
+ * Content kinds that never surface as their own search type. Tools and boons
+ * are rules files with special metadata — a rule slapped onto another group —
+ * and index as `rules`; lists are ignored everywhere, since the pages they
+ * aggregate are indexed individually.
+ *
+ * @constant
+ */
+export const SEARCH_EXCLUDED_TYPES = [
+  ContentType.Tools,
+  ContentType.Lists,
+  ContentType.Boons,
+] as const;
+
+/**
+ * Union of all searchable content types: every {@link ContentType} except
+ * {@link SEARCH_EXCLUDED_TYPES}. Adding a content type forces either a
+ * {@link CONTENT_TYPE_META} entry or an explicit exclusion here.
  *
  * @typedef {(
  *   | 'monsters' | 'heirlooms' | 'spells' | 'trinkets' | 'bloodlines'
  *   | 'vocations' | 'specializations' | 'feats' | 'world' | 'rules'
  * )} SearchContentType
  */
-export type SearchContentType =
-  | 'monsters'
-  | 'heirlooms'
-  | 'spells'
-  | 'trinkets'
-  | 'bloodlines'
-  | 'vocations'
-  | 'specializations'
-  | 'feats'
-  | 'world'
-  | 'rules';
+export type SearchContentType = Exclude<
+  `${ContentType}`,
+  `${(typeof SEARCH_EXCLUDED_TYPES)[number]}`
+>;
 
 /**
  * Display metadata for a content type.

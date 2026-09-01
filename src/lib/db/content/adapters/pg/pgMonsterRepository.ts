@@ -11,6 +11,8 @@
  * @since 5.0.0
  */
 
+import 'server-only';
+
 import { MonsterEntity } from '@/lib/db/orm/entities/MonsterEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import { getEM } from '@/lib/db/orm/orm';

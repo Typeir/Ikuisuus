@@ -14,7 +14,6 @@ import {
     REGEX_CONTENT_SUFFIX,
     REGEX_EXTENSION,
 } from '@/lib/constants/content';
-import { deduplicateFiles } from '@/lib/utils/deduplicateFiles';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import { toTitleCase } from '@/lib/utils/toTitleCase';
 import type { WalkNode } from './types';
@@ -51,7 +50,6 @@ export async function walk(
     )
     .map((entry) => entry.name);
 
-  const deduplicatedFiles = deduplicateFiles(files);
   const nodes = await Promise.all(
     filteredEntries.map(async (entry) => {
       const fileName = entry.name.replace(REGEX_EXTENSION, '');
@@ -78,7 +76,7 @@ export async function walk(
       if (
         (entry.name.endsWith(FILE_EXT_MD) ||
           entry.name.endsWith(FILE_EXT_MDX)) &&
-        deduplicatedFiles.includes(entry.name)
+        files.includes(entry.name)
       ) {
         return {
           name: toTitleCase(baseFileName),

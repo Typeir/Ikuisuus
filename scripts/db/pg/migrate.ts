@@ -25,6 +25,7 @@ import { readFileSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import pg, { type PoolClient } from 'pg';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { guardDeployWrites } from './deployGuard';
 
 /**
  * Shape of a TypeScript migration module.
@@ -272,6 +273,8 @@ async function main(): Promise<void> {
     await pool.end();
   }
 }
+
+guardDeployWrites('schema migration');
 
 main().catch((err: Error) => {
   log.error('❌  Migration runner error:', { error: err.message });

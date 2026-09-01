@@ -11,6 +11,10 @@
  * @since 10.0.0
  */
 
+import {
+  RESIZABLE_PANE_STORAGE_PREFIX,
+  ROSTER_COLLAPSED_KEY,
+} from '@/lib/constants/persistentData';
 import { CHARACTER_SHEET_STORAGE_KEY } from '@/lib/types/characterSheet';
 import { EncounterStorage } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';
 import { fetchPersistentData } from './fetchPersistentData';
@@ -46,7 +50,38 @@ export const VERSIONED_STORAGE_KEYS: readonly string[] = [
   EncounterStorage.InProgressCombats,
   EncounterStorage.ActiveCombatId,
   EncounterStorage.SavedParties,
+  ROSTER_COLLAPSED_KEY,
 ];
+
+/**
+ * Key prefixes whose every match is dropped when the schema version moves on.
+ * Covers stores with dynamic per-instance keys.
+ *
+ * @constant VERSIONED_STORAGE_PREFIXES
+ * @type {readonly string[]}
+ */
+export const VERSIONED_STORAGE_PREFIXES: readonly string[] = [
+  RESIZABLE_PANE_STORAGE_PREFIX,
+];
+
+/**
+ * Keys in a web storage matching a versioned prefix.
+ *
+ * @function prefixedKeys
+ * @param {Storage} store - Web storage to scan
+ * @returns {string[]} Matching keys
+ */
+const prefixedKeys = (store: Storage): string[] => {
+  const keys: string[] = [];
+  for (let i = 0; i < store.length; i++) {
+    const key = store.key(i);
+    if (!key) continue;
+    if (VERSIONED_STORAGE_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+      keys.push(key);
+    }
+  }
+  return keys;
+};
 
 let checkedThisLoad = false;
 
@@ -58,6 +93,12 @@ let checkedThisLoad = false;
  */
 const purgeVersionedStorage = (): void => {
   for (const key of VERSIONED_STORAGE_KEYS) removePersistentData(key);
+
+  const stores = [window.sessionStorage, window.localStorage].filter(Boolean);
+  for (const store of stores) {
+    for (const key of prefixedKeys(store)) store.removeItem(key);
+  }
+
   storePersistentData(STORAGE_SCHEMA_KEY, String(STORAGE_SCHEMA_VERSION));
 };
 

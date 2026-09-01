@@ -19,3 +19,9 @@
 export enum PersistentData {
   Theme = 'data-theme',
 }
+
+/** Collapsed-state key for the character roster panel. */
+export const ROSTER_COLLAPSED_KEY = 'ikuisuus.characterRoster.collapsed';
+
+/** Key prefix for per-instance resizable-pane widths. */
+export const RESIZABLE_PANE_STORAGE_PREFIX = 'ikuisuus.resizablePane.';

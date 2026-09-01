@@ -12,7 +12,6 @@ export { runWithCli } from './cliRunner';
 export type { CliOptions } from './cliRunner';
 export {
   ensureDirectory,
-  getMatchingFiles,
   safeReadFile,
   safeWriteFile,
 } from './fileUtils';
@@ -71,7 +70,6 @@ export {
   plain,
   readLines,
   stripMarkdown,
-  toKebabCase,
 } from './textUtils';
 export type { ContentType, GeneratorModule } from './types';
 export {

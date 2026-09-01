@@ -86,6 +86,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 import { SUPPORTED_LOCALES } from '@/lib/constants/locales';
+import { guardDeployWrites } from './deployGuard';
 
 /* ─────────────────────  Filesystem helpers  ────────────────────────── */
 
@@ -190,6 +191,8 @@ async function main(): Promise<void> {
     await orm.close();
   }
 }
+
+guardDeployWrites('metadata seed');
 
 main().catch((err) => {
   console.error('❌  Seed failed:', err.message);

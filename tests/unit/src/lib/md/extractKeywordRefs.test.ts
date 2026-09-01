@@ -31,8 +31,14 @@ describe('extractKeywordRefs', () => {
 
   it('reports unregistered terms', () => {
     expect(extractKeywordRefs('[# kw:condition:frightened #]')).toEqual([
-      'condition:frightened',
+      'condition;frightened',
     ]);
+  });
+
+  it('drops a display override from the normalised reference', () => {
+    expect(
+      extractKeywordRefs('[# kw:condition:bleeding;the dog bleeds #]'),
+    ).toEqual(['condition;bleeding']);
   });
 
   it('ignores shortcodes that are not keywords', () => {
@@ -51,16 +57,16 @@ describe('extractKeywordRefs', () => {
 
   it('skips a reference inside an inline code span', () => {
     expect(
-      extractKeywordRefs('Write it as `[# kw:condition;blinded #]` in prose.'),
+      extractKeywordRefs('Write it as `[# kw:condition:blinded #]` in prose.'),
     ).toEqual([]);
   });
 
   it('skips references inside a fenced block', () => {
     const source = [
-      'Real one: [# kw:condition;prone #]',
+      'Real one: [# kw:condition:prone #]',
       '',
       '```md',
-      '[# kw:condition;blinded #]',
+      '[# kw:condition:blinded #]',
       '```',
     ].join('\n');
 
@@ -73,8 +79,14 @@ describe('extractKeywordRefs', () => {
     });
 
     it('should key a namespaced reference under its namespace', () => {
-      expect(extractConsumedKeys('[# kw:condition;Prone #]')).toEqual([
+      expect(extractConsumedKeys('[# kw:condition:Prone #]')).toEqual([
         'kw-condition-prone',
+      ]);
+    });
+
+    it('should key a display-overridden reference by its target alone', () => {
+      expect(extractConsumedKeys('[# kw:condition:bleeding;dog #]')).toEqual([
+        'kw-condition-bleeding',
       ]);
     });
 

@@ -9,6 +9,8 @@
  * @since 1.0.0
  */
 
+import 'server-only';
+
 import path from 'path';
 import type { FeatRepository } from '../../repositories/featRepository';
 import type { FeatMetadata } from '../../schemas/featMetadata';

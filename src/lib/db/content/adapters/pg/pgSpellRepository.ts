@@ -10,6 +10,8 @@
  * @since 5.0.0
  */
 
+import 'server-only';
+
 import {
     SpellEntity,
     SpellListEntity,

@@ -126,6 +126,38 @@ function buildTitle(routePath: string): string | undefined {
 }
 
 /**
+ * Ranks every library route against a slug query, best first.
+ *
+ * Similarity is taken against the route's final content segment, falling back
+ * to the full path when that scores higher, so `gobli` finds
+ * `/library/monsters/goblin` without the caller knowing the folder.
+ *
+ * @param {string} query - Fuzzy slug or path fragment, e.g. `gobli`
+ * @param {number} [limit] - Maximum matches returned (default 5)
+ * @returns {RouteMatch[]} Ranked locale-less matches; empty when no routes exist
+ */
+export function findNearestFiles(query: string, limit = 5): RouteMatch[] {
+  const routes = getAllRoutes();
+  const normalized = query.trim().toLowerCase();
+  if (!normalized || routes.length === 0) return [];
+
+  return routes
+    .map((route) => {
+      const segments = route.split('/').filter(Boolean);
+      const last = segments[segments.length - 1];
+      const slugSegment =
+        last === 'main' ? (segments[segments.length - 2] ?? last) : last;
+      const similarity = Math.max(
+        calculateSimilarity(normalized, slugSegment),
+        calculateSimilarity(normalized, route),
+      );
+      return { path: route, title: buildTitle(route), similarity };
+    })
+    .sort((a, b) => b.similarity - a.similarity)
+    .slice(0, limit);
+}
+
+/**
  * Finds the nearest matching route for a pathname.
  *
  * @param {string} pathname - Original pathname that failed to resolve.

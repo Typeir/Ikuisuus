@@ -10,6 +10,8 @@
  * @since 7.0.0
  */
 
+import 'server-only';
+
 import { fsSpecializationRepository } from '../adapters/fs/fsSpecializationRepository';
 import { pgSpecializationRepository } from '../adapters/pg/pgSpecializationRepository';
 import type { SpecializationMetadata } from '../schemas/specializationMetadata';

@@ -9,6 +9,8 @@
  * @since 7.1.0
  */
 
+import 'server-only';
+
 import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { EntityClass, FilterQuery } from '@mikro-orm/core';

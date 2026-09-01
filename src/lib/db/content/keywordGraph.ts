@@ -17,6 +17,12 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
+import {
+  ensureCachesFresh,
+  registerServerCache,
+} from '@/lib/cache/registry';
 import {
   keywordLinkRepository,
   type KeywordLink,
@@ -43,6 +49,8 @@ export interface KeywordGraph {
 /** Cached graph per locale. Cleared when metadata is regenerated. */
 const cache = new Map<string, KeywordGraph>();
 
+registerServerCache('keyword-graph', () => cache.clear());
+
 /**
  * Trims a route to the comparable form: no locale prefix, no trailing slash.
  *
@@ -65,6 +73,8 @@ export function normalizeRoute(route: string): string {
  * @returns {Promise<KeywordGraph>} The cached graph
  */
 export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
+  await ensureCachesFresh();
+
   const cached = cache.get(locale);
   if (cached) return cached;
 

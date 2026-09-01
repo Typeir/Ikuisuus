@@ -16,8 +16,11 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
 import { getFile } from '@/lib/db/content/fileTreeService';
 import { extractKeywordRefs } from './extractKeywordRefs';
+import { bearingAnchor } from './keywordIndexRegistry';
 import type { KeywordResolutions } from './remarkKeyword';
 import type { ResolvedShard } from '@/lib/types/api';
 import {
@@ -101,14 +104,14 @@ function headingFor(body: string, anchor: string): string | null {
  * @property {string} file - Content file path as the metadata stamped it
  * @property {string} route - Route of the page, without a locale prefix
  * @property {(content: string) => ShardableEntry[]} entriesOf - Shardable entries; derived after the read so a target may match against the content itself
- * @property {string[]} [keys] - Fixed keys this target resolves; callers' requested keys apply when omitted
+ * @property {string[] | ((entries: ShardableEntry[]) => string[])} [keys] - Fixed keys this target resolves, or keys derived from its own entries; callers' requested keys apply when omitted
  * @property {(anchor: string) => string} [shardId] - Shard id for an anchor; the anchor itself when omitted
  */
 export interface ShardTarget {
   file: string;
   route: string;
   entriesOf: (content: string) => ShardableEntry[];
-  keys?: string[];
+  keys?: string[] | ((entries: ShardableEntry[]) => string[]);
   shardId?: (anchor: string) => string;
 }
 
@@ -137,11 +140,14 @@ export async function resolveTargetShards(
   if (!file) return null;
 
   const entries = target.entriesOf(file.content);
-  const prose = resolveShards(
-    file.content,
-    entries,
-    target.keys ?? requestedKeys,
-  );
+  const keys =
+    typeof target.keys === 'function' ? target.keys(entries) : target.keys;
+
+  /* A target that names its keys and comes up empty resolves to nothing; the
+     extractor reads an empty list as "every entry" and would return the body. */
+  if (keys && keys.length === 0) return [];
+
+  const prose = resolveShards(file.content, entries, keys ?? requestedKeys);
   const route = target.route.replace(/^\//, '');
 
   const shards: ResolvedShard[] = [];
@@ -170,7 +176,12 @@ export async function resolveTargetShards(
 
 /**
  * Target for a keyword reference: the graph names the producing file, and the
- * entry is the heading whose slug matches the reference's anchor.
+ * entry is the heading bearing the reference's term.
+ *
+ * The bearing heading is usually titled after the term. A `term: Heading Text`
+ * declaration points elsewhere, so the entry keeps the heading's own anchor and
+ * the href lands on the section a reader would scroll to, while the shard keeps
+ * the id the reference computes.
  *
  * @param {string} reference - Normalised reference, `namespace;value` or a bare value
  * @param {string} locale - Content locale
@@ -190,10 +201,11 @@ export async function keywordTarget(
     file: producer.file,
     route: producer.route,
     entriesOf: (content) => {
-      const heading = headingFor(content, anchor);
-      return heading ? [{ name: heading, anchor }] : [];
+      const bearer = bearingAnchor(content, anchor);
+      const heading = headingFor(content, bearer);
+      return heading ? [{ name: heading, anchor: bearer }] : [];
     },
-    keys: [anchor],
+    keys: (entries) => entries.map((entry) => entry.anchor ?? entry.name),
     shardId: () => id,
   };
 }

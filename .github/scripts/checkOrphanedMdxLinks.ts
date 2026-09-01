@@ -11,6 +11,8 @@
  */
 
 import { CONTENT_SUFFIXES } from '@/lib/constants/content';
+import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
+import { expandLibraryUrl } from '@/lib/md/libraryUrl';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -92,38 +94,6 @@ function stripSupportedExtension(relativePath: string): string {
 }
 
 /**
- * Recursively collect files under a directory with selected extensions.
- *
- * @param {string} dir - Directory to scan
- * @param {string[]} extensions - Allowed extensions
- * @param {string[]} acc - Accumulator
- * @returns Absolute file paths
- */
-async function walkFiles(
-  dir: string,
-  extensions: string[],
-  acc: string[] = [],
-): Promise<string[]> {
-  let entries;
-  try {
-    entries = await fs.readdir(dir, { withFileTypes: true });
-  } catch {
-    return acc;
-  }
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      await walkFiles(fullPath, extensions, acc);
-    } else if (extensions.some((ext) => entry.name.endsWith(ext))) {
-      acc.push(fullPath);
-    }
-  }
-
-  return acc;
-}
-
-/**
  * Build a locale-aware index of content files for link resolution.
  *
  * @param {string} rootDir - Project root
@@ -131,7 +101,11 @@ async function walkFiles(
  */
 async function buildContentIndex(rootDir: string): Promise<ContentIndex> {
   const contentRoot = path.join(rootDir, CONTENT_ROOT_REL);
-  const allFiles = await walkFiles(contentRoot, SUPPORTED_TARGET_EXTENSIONS);
+  const allFiles = await getMatchingFiles(
+    contentRoot,
+    /(?:\.sheet\.mdx|\.mdx|\.md)$/,
+    true,
+  );
   const exactSlugsByLocale = new Map<string, Set<string>>();
   const fileNamesByLocaleDir = new Map<string, Map<string, string[]>>();
 
@@ -189,12 +163,15 @@ function parseLibraryTarget(
     };
   }
 
-  const directLibraryMatch = /^\/library\/(.+)$/i.exec(cleaned);
-  if (!directLibraryMatch) return null;
+  /* Shorthand: the renderer expands a bare root-relative path into a library
+     route, so the same link has to validate as one. */
+  const expanded = expandLibraryUrl(cleaned, sourceLocale);
+  const shorthandMatch = /^\/([a-z]{2})\/library\/(.+)$/i.exec(expanded);
+  if (!shorthandMatch) return null;
 
   return {
-    targetLocale: sourceLocale,
-    slugPath: directLibraryMatch[1].replace(/\/+$/, ''),
+    targetLocale: shorthandMatch[1].toLowerCase(),
+    slugPath: shorthandMatch[2].replace(/\/+$/, ''),
   };
 }
 
@@ -306,36 +283,6 @@ function stemOf(fileName: string): string | null {
 }
 
 /**
- * Recursively collect MDX files under a directory.
- *
- * @param {string} dir - Directory to scan
- * @param {string[]} results - Accumulator
- * @returns Absolute file paths
- */
-async function findMdxFiles(
-  dir: string,
-  results: string[] = [],
-): Promise<string[]> {
-  let entries;
-  try {
-    entries = await fs.readdir(dir, { withFileTypes: true });
-  } catch {
-    return results;
-  }
-
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      await findMdxFiles(full, results);
-    } else if (entry.name.endsWith('.mdx')) {
-      results.push(full);
-    }
-  }
-
-  return results;
-}
-
-/**
  * Execute the orphaned-mdx-links check and return a structured result.
  * When options.rootDir is provided, uses that instead of auto-detected ROOT.
  * When options.readFile is provided, uses that instead of fs.readFile.
@@ -352,7 +299,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
   const failures: CheckFailure[] = [];
 
   const index = await buildContentIndex(rootDir);
-  const allMdxFiles = await findMdxFiles(contentRoot);
+  const allMdxFiles = await getMatchingFiles(contentRoot, /\.mdx$/, true);
   const contentFiles = allMdxFiles
     .map((f) => toPosix(path.relative(rootDir, f)))
     .filter((f) => f.startsWith('src/content/'));

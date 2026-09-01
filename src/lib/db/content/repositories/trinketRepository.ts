@@ -9,6 +9,8 @@
  * @since 3.0.0
  */
 
+import 'server-only';
+
 import { fsTrinketRepository } from '../adapters/fs/fsTrinketRepository';
 import { pgTrinketRepository } from '../adapters/pg/pgTrinketRepository';
 import type { TrinketMetadata } from '../schemas/trinketMetadata';

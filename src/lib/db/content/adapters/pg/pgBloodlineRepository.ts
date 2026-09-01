@@ -9,6 +9,8 @@
  * @since 7.0.0
  */
 
+import 'server-only';
+
 import { BloodlineEntity } from '@/lib/db/orm/entities/BloodlineEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { BloodlineRepository } from '../../repositories/bloodlineRepository';

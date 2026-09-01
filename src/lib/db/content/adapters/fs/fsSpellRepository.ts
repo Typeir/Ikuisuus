@@ -9,6 +9,8 @@
  * @since 3.0.0
  */
 
+import 'server-only';
+
 import { logger } from '@/lib/logging/logger';
 import type { SpellRepository } from '../../repositories/spellRepository';
 import {

@@ -10,6 +10,8 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
 import type {
   KeywordLink,
   KeywordLinkRepository,

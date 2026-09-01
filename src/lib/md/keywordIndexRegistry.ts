@@ -44,21 +44,79 @@ function headingValues(body: string): Map<string, string> {
 }
 
 /**
+ * A term a document defines, and the heading that carries its prose.
+ *
+ * @interface DeclaredKeyword
+ * @property {string} term - Term references are written with
+ * @property {string} heading - Text of the heading bearing the definition
+ */
+export interface DeclaredKeyword {
+  term: string;
+  heading: string;
+}
+
+/**
  * Reads the declared terms from a `keywords` frontmatter value.
  *
- * @param {unknown} raw - Frontmatter value, a list or a comma-separated string
- * @returns {string[]} Declared terms, trimmed and non-empty
+ * A term is usually its own heading. A `term: Heading Text` entry names a
+ * different bearer, for a definition whose section is not titled after the term
+ * — a page-wide term borne by the `H1`, say.
+ *
+ * @param {unknown} raw - Frontmatter value: a list, a comma-separated string, or entries mapping a term to its heading
+ * @returns {DeclaredKeyword[]} Declared terms paired with their bearing heading
+ *
+ * @example
+ * declaredTerms(['resist', { disposition: 'Disposition, Reputation and Attitude' }]);
+ * // [{ term: 'resist', heading: 'resist' }, { term: 'disposition', heading: 'Disposition, …' }]
  */
-function declaredTerms(raw: unknown): string[] {
+export function declaredTerms(raw: unknown): DeclaredKeyword[] {
   const items = Array.isArray(raw)
     ? raw
     : typeof raw === 'string'
       ? raw.split(',')
       : [];
 
-  return items
-    .map((item) => String(item).trim())
-    .filter((item) => item.length > 0);
+  const declared: DeclaredKeyword[] = [];
+
+  for (const item of items) {
+    if (item && typeof item === 'object' && !Array.isArray(item)) {
+      for (const [term, heading] of Object.entries(item)) {
+        const key = term.trim();
+        const bearer = String(heading).trim();
+        if (key && bearer) declared.push({ term: key, heading: bearer });
+      }
+      continue;
+    }
+
+    const term = String(item).trim();
+    if (term) declared.push({ term, heading: term });
+  }
+
+  return declared;
+}
+
+/**
+ * Slug of the heading bearing a term, for a reference that already resolved to
+ * this document.
+ *
+ * Resolution addresses a shard by the term's own slug; extraction needs the
+ * heading's. The two differ only for a `term: Heading Text` declaration.
+ *
+ * @param {string} source - Raw MDX source, frontmatter included
+ * @param {string} anchor - Slug of the referenced term
+ * @returns {string} Slug of the bearing heading, the given anchor when nothing remaps it
+ *
+ * @example
+ * bearingAnchor(source, 'disposition'); // 'disposition-reputation-and-attitude'
+ */
+export function bearingAnchor(source: string, anchor: string): string {
+  const { data } = matter(source);
+
+  for (const { term, heading } of declaredTerms(data.keywords)) {
+    if (anchorSlug(term) === anchor) return anchorSlug(heading);
+  }
+
+  return anchor;
 }
 
 /**
@@ -101,9 +159,9 @@ export function extractProducedKeys(source: string): string[] {
     }
   }
 
-  for (const term of terms) {
-    const anchor = anchorSlug(term);
-    if (headings.has(anchor)) keys.add(keywordTemplateId(undefined, anchor));
+  for (const { term, heading } of terms) {
+    if (!headings.has(anchorSlug(heading))) continue;
+    keys.add(keywordTemplateId(undefined, anchorSlug(term)));
   }
 
   return [...keys].sort();

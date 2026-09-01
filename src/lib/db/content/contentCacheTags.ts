@@ -17,3 +17,9 @@
  */
 export const contentCacheTag = (locale: string, slugPath: string): string =>
   `content-${locale}-${slugPath}`;
+
+/**
+ * Tag on the GitHub repository tree listing. One tag for the whole tree: the
+ * listing is fetched repo-wide, and any push can add or rename files.
+ */
+export const CONTENT_TREE_CACHE_TAG = 'content-tree';

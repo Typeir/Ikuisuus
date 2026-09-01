@@ -9,6 +9,8 @@
  * @since 7.0.0
  */
 
+import 'server-only';
+
 import { fsVocationRepository } from '../adapters/fs/fsVocationRepository';
 import { pgVocationRepository } from '../adapters/pg/pgVocationRepository';
 import type { VocationMetadata } from '../schemas/vocationMetadata';

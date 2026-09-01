@@ -15,6 +15,7 @@
 
 import { createLogger } from '@/lib/logging/logger';
 import { getContentFolder } from '@/lib/utils/getContentFolder';
+import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
 import { sassPlugin } from 'esbuild-sass-plugin';
 import fs from 'fs/promises';
 import { bundleMDX } from 'mdx-bundler';
@@ -68,27 +69,6 @@ const precompileMdx = async (
 };
 
 /**
- * Recursively scans a directory for .mdx files.
- *
- * @param dir - Directory to scan
- * @returns Flat list of .mdx file paths
- */
-const walkDir = async (dir: string): Promise<string[]> => {
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-
-  const files = await Promise.all(
-    entries.map(async (entry) => {
-      const res = path.resolve(dir, entry.name);
-      if (entry.isDirectory()) return walkDir(res);
-      if (res.endsWith('.mdx')) return [res];
-      return [];
-    }),
-  );
-
-  return files.flat();
-};
-
-/**
  * Main script execution: precompile all MDX files in src/content into src/compiled-content.
  */
 const run = async (): Promise<void> => {
@@ -97,7 +77,7 @@ const run = async (): Promise<void> => {
 
   for (const locale of locales) {
     const contentDir = getContentFolder(locale);
-    const files = await walkDir(contentDir);
+    const files = await getMatchingFiles(contentDir, /\.mdx$/, true);
 
     for (const file of files) {
       const relativePath = path

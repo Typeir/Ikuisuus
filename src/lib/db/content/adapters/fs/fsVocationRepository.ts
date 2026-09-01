@@ -10,6 +10,8 @@
  * @since 7.0.0
  */
 
+import 'server-only';
+
 import path from 'path';
 import type { VocationRepository } from '../../repositories/vocationRepository';
 import type { VocationMetadata } from '../../schemas/vocationMetadata';

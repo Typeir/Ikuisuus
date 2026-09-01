@@ -9,7 +9,10 @@
  * @since 2.0.0
  */
 
-import { contentCacheTag } from '@/lib/db/content/contentCacheTags';
+import {
+  CONTENT_TREE_CACHE_TAG,
+  contentCacheTag,
+} from '@/lib/db/content/contentCacheTags';
 import { consumerRoutesFor } from '@/lib/db/content/keywordGraph';
 import {
   MAIN_INDEX_SLUG,
@@ -27,7 +30,8 @@ import {
   type RevalidateTarget,
 } from './revalidateHelpers';
 import crypto from 'crypto';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { cacheInvalidator } from '@/lib/cache/invalidator';
+import { clearServerCaches } from '@/lib/cache/registry';
 import { NextRequest, NextResponse } from 'next/server';
 import { LIBRARY_SEGMENT } from '@/lib/constants/content';
 
@@ -84,6 +88,13 @@ export async function POST(req: NextRequest) {
 
   const results: { path: string; status: 'ok' | 'error'; error?: string }[] =
     [];
+
+  /* Any push can add or rename files, so the repo tree listing goes stale
+     with the content. Busted — and the in-memory caches cleared — before the
+     loop, because this same request classifies paths by directory listing and
+     must not classify against the tree cached before the push. */
+  cacheInvalidator.invalidateTag(CONTENT_TREE_CACHE_TAG);
+  clearServerCaches();
 
   const pendingSync = new Map<string, Set<ContentType>>();
 
@@ -143,14 +154,14 @@ export async function POST(req: NextRequest) {
       });
 
       if (fetchTag) {
-        revalidateTag(fetchTag, 'max');
+        cacheInvalidator.invalidateTag(fetchTag);
         log.message('Invalidated fetch cache tag', { tag: fetchTag });
       }
 
       for (const v of variants) {
         try {
-          revalidatePath(v, 'page');
-          revalidatePath(v, 'layout');
+          cacheInvalidator.invalidateRoute(v, 'page');
+          cacheInvalidator.invalidateRoute(v, 'layout');
           log.message('Revalidated', { path: v });
         } catch (err) {
           log.warning('Failed to revalidate variant', {
@@ -166,7 +177,7 @@ export async function POST(req: NextRequest) {
         try {
           const consumers = await consumerRoutesFor(locale, p);
           for (const route of consumers) {
-            revalidatePath(route, 'page');
+            cacheInvalidator.invalidateRoute(route, 'page');
           }
           if (consumers.length > 0) {
             log.message('Revalidated keyword consumers', {
@@ -205,6 +216,11 @@ export async function POST(req: NextRequest) {
 
   const metadata = await syncMetadataForLocales(pendingSync);
 
+  /* The sync rewrote metadata, so every cache built from it — the keyword
+     graph above all — is now stale. Without this, consumer-page revalidation
+     reads a graph frozen at the first request of the process's life. */
+  clearServerCaches();
+
   log.message('ISR revalidation completed', {
     total: paths.length,
     ok: results.filter((r) => r.status === 'ok').length,
@@ -212,18 +228,6 @@ export async function POST(req: NextRequest) {
     metadataSynced: metadata.filter((m) => m.status === 'ok').length,
     metadataErrors: metadata.filter((m) => m.status === 'error').length,
   });
-
-  try {
-    const mod = await import('@/lib/db/content');
-    if (mod && typeof mod.clearCache === 'function') {
-      mod.clearCache();
-      log.message('Cleared file-tree cache after revalidation');
-    }
-  } catch (err) {
-    log.warning('Failed to clear file-tree cache after revalidation', {
-      error: err instanceof Error ? err.message : String(err),
-    });
-  }
 
   return NextResponse.json({ results, metadata }, { status: 200 });
 }

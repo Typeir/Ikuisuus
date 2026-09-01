@@ -77,7 +77,7 @@ export function extractKeywordRefs(source: string): string[] {
  * @returns {string[]} Shard ids, deduplicated and sorted
  *
  * @example
- * extractConsumedKeys('takes [# kw:condition;Prone #] and [# kw:resist #]');
+ * extractConsumedKeys('takes [# kw:condition:Prone #] and [# kw:resist #]');
  * // ['kw--resist', 'kw-condition-prone']
  */
 export function extractConsumedKeys(source: string): string[] {

@@ -12,6 +12,9 @@
 'use client';
 
 import { Modal } from '@/lib/components/ui';
+import { ROSTER_COLLAPSED_KEY } from '@/lib/constants/persistentData';
+import { fetchPersistentData } from '@/lib/utils/fetchPersistentData';
+import { storePersistentDataFallbackOnly } from '@/lib/utils/storePersistentData';
 import {
     useCharacters,
     useCharacterSheetDispatch,
@@ -26,8 +29,6 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CharacterSheet } from '../CharacterSheet/characterSheet';
 import styles from './roster.module.scss';
-
-const ROSTER_COLLAPSED_KEY = 'ikuisuus.characterRoster.collapsed';
 
 /**
  * Props for the CharacterRoster component.
@@ -57,7 +58,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
 
   useEffect(() => {
     try {
-      const stored = window.localStorage.getItem(ROSTER_COLLAPSED_KEY);
+      const stored = fetchPersistentData(ROSTER_COLLAPSED_KEY);
       if (stored === 'true') setCollapsed(true);
     } catch {
       /** storage unavailable — non-fatal */
@@ -68,7 +69,7 @@ export const CharacterRoster: React.FC<CharacterRosterProps> = () => {
     setCollapsed((prev) => {
       const next = !prev;
       try {
-        window.localStorage.setItem(ROSTER_COLLAPSED_KEY, String(next));
+        storePersistentDataFallbackOnly(ROSTER_COLLAPSED_KEY, String(next));
       } catch {
         /** storage unavailable — non-fatal */
       }

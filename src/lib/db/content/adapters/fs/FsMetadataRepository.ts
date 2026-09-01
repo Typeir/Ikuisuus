@@ -8,6 +8,8 @@
  * @since 7.1.0
  */
 
+import 'server-only';
+
 import { logger } from '@/lib/logging/logger';
 import { readMetadataFiles } from './readMetadataFiles';
 

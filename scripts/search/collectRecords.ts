@@ -18,11 +18,10 @@ import { stripContentSuffix } from '@/lib/constants/content';
 import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { CONTENT_SUBDIR } from '@/modules/search/domain/contentTypes';
 import { localizeLink } from '@/modules/search/domain/localizeLink';
-import { promises as fs, type Dirent } from 'fs';
+import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
+import { promises as fs } from 'fs';
 import path from 'path';
-import {
-  getMetaSubdir,
-} from '../metadata/generatorUtils';
+import { getMetaSubdir } from '../metadata/generatorUtils';
 import { extractProse } from './extractProse';
 
 /** File patterns per content type for identifying source MDX files. */
@@ -141,9 +140,7 @@ function deriveUrl(
   const contentIdx = normalized.indexOf(`/content/${locale}/`);
 
   if (contentIdx !== -1) {
-    let relative = normalized.slice(
-      contentIdx + `/content/${locale}/`.length,
-    );
+    let relative = normalized.slice(contentIdx + `/content/${locale}/`.length);
 
     relative = stripContentSuffix(relative.replace(/\.(?:md|mdx)$/, ''));
 
@@ -167,33 +164,11 @@ async function scanDir(
   pattern: RegExp,
   exclusions: RegExp[],
 ): Promise<string[]> {
-  const results: string[] = [];
-
-  async function walk(currentDir: string): Promise<void> {
-    let entries: Dirent[] = [];
-    try {
-      entries = await fs.readdir(currentDir, {
-        withFileTypes: true,
-      });
-    } catch {
-      return;
-    }
-
-    for (const entry of entries) {
-      const fullPath = path.join(currentDir, entry.name);
-      if (entry.isDirectory()) {
-        await walk(fullPath);
-      } else if (
-        pattern.test(entry.name) &&
-        !exclusions.some((ex) => ex.test(fullPath.replace(/\\/g, '/')))
-      ) {
-        results.push(fullPath);
-      }
-    }
-  }
-
-  await walk(dir);
-  return results;
+  const files = await getMatchingFiles(dir, pattern, true);
+  return files.filter(
+    (filePath) =>
+      !exclusions.some((ex) => ex.test(filePath.replace(/\\/g, '/'))),
+  );
 }
 
 /**
@@ -222,20 +197,13 @@ function sidecarCandidates(
 
   if (contentType === 'vocations') {
     const dir = path.dirname(filePath);
-    sourceAdjacent.push(
-      path.join(dir, `${path.basename(dir)}.metadata.json`),
-    );
+    sourceAdjacent.push(path.join(dir, `${path.basename(dir)}.metadata.json`));
   } else if (
     contentType === 'rules' &&
     path.basename(filePath).toLowerCase() === 'main.mdx'
   ) {
-    /* Rules section hubs are sidecar-named after their parent folder
-       (13 main.mdx files would otherwise collide in .meta/) —
-       see resolveRulesOutputPath in generateRulesMetadata.ts. */
     const dir = path.dirname(filePath);
-    sourceAdjacent.push(
-      path.join(dir, `${path.basename(dir)}.metadata.json`),
-    );
+    sourceAdjacent.push(path.join(dir, `${path.basename(dir)}.metadata.json`));
   } else if (contentType === 'world') {
     sourceAdjacent.push(filePath.replace(/\.mdx$/, '.metadata.json'));
     sourceAdjacent.push(filePath.replace(/\.lore\.mdx$/, '.metadata.json'));
@@ -388,10 +356,7 @@ function metadataToFilters(
   if (Array.isArray(metadata.features)) {
     for (const feature of metadata.features) {
       if (feature && typeof feature === 'object') {
-        assignAspectFilters(
-          (feature as Record<string, unknown>).tags,
-          filters,
-        );
+        assignAspectFilters((feature as Record<string, unknown>).tags, filters);
       }
     }
   }

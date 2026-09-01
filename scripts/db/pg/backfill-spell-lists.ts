@@ -23,6 +23,7 @@ import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import pg from 'pg';
 import { fileURLToPath } from 'url';
+import { guardDeployWrites } from './deployGuard';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '../../../');
@@ -246,6 +247,8 @@ async function main(): Promise<void> {
     await pool.end();
   }
 }
+
+guardDeployWrites('spell-list backfill');
 
 main().catch((err: unknown) => {
   const message = err instanceof Error ? err.message : String(err);

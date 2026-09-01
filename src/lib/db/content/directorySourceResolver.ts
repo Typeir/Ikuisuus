@@ -10,6 +10,8 @@
  * @since 2.0.0
  */
 
+import 'server-only';
+
 import { fsDirectorySource } from './adapters/fs/fsDirectorySource';
 import { githubDirectorySource } from './adapters/github/githubDirectorySource';
 import type { DirectorySourceAdapter } from './directorySourceAdapter';

@@ -18,6 +18,8 @@ const mockRevalidateTag = vi.fn();
 const mockArchive = vi.fn().mockResolvedValue(false);
 const mockSyncMetadata = vi.fn().mockResolvedValue(undefined);
 const mockListEntries = vi.fn().mockResolvedValue([]);
+const mockClearCache = vi.fn();
+const mockConsumerRoutesFor = vi.fn().mockResolvedValue([]);
 
 /**
  * Directory entries for a slug, as the suffixed file that would sit on disk.
@@ -39,6 +41,7 @@ vi.mock('next/cache', () => ({
 vi.mock('@/lib/db/content/contentCacheTags', () => ({
   contentCacheTag: (locale: string, slug: string) =>
     `content:${locale}:${slug}`,
+  CONTENT_TREE_CACHE_TAG: 'content-tree',
 }));
 
 vi.mock('@/lib/db/content/repositories/draftRepository', () => ({
@@ -53,6 +56,16 @@ vi.mock('@/lib/db/content/directorySourceResolver', () => ({
 
 vi.mock('@/lib/metadata/syncService', () => ({
   syncMetadata: (...args: unknown[]) => mockSyncMetadata(...args),
+}));
+
+vi.mock('@/lib/cache/registry', () => ({
+  clearServerCaches: (...args: unknown[]) => mockClearCache(...args),
+  registerServerCache: vi.fn(),
+  ensureCachesFresh: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('@/lib/db/content/keywordGraph', () => ({
+  consumerRoutesFor: (...args: unknown[]) => mockConsumerRoutesFor(...args),
 }));
 
 vi.mock('@/lib/logging/logger', () => ({
@@ -99,6 +112,8 @@ describe('POST /api/revalidate', () => {
     mockArchive.mockReset().mockResolvedValue(false);
     mockSyncMetadata.mockReset().mockResolvedValue(undefined);
     mockListEntries.mockReset().mockResolvedValue([]);
+    mockClearCache.mockReset();
+    mockConsumerRoutesFor.mockReset().mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -213,6 +228,47 @@ describe('POST /api/revalidate', () => {
       'content:en:items/heirlooms/deep-dredge',
       'max',
     );
+  });
+
+  it('clears listing caches before classifying any path by listing', async () => {
+    mockListEntries.mockResolvedValue(listingFor('bane', 'spell'));
+    await POST(
+      makeRequest(
+        { paths: ['/en/library/spells/bane'] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockClearCache).toHaveBeenCalled();
+    expect(mockListEntries).toHaveBeenCalled();
+    expect(mockClearCache.mock.invocationCallOrder[0]).toBeLessThan(
+      mockListEntries.mock.invocationCallOrder[0],
+    );
+  });
+
+  it('clears server caches again after the metadata sync', async () => {
+    await POST(
+      makeRequest(
+        { paths: [{ path: '/en/library/spells/bane', contentType: 'spells' }] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    const lastClear = Math.max(...mockClearCache.mock.invocationCallOrder);
+    expect(mockSyncMetadata.mock.invocationCallOrder[0]).toBeLessThan(
+      lastClear,
+    );
+  });
+
+  it('busts the tree listing tag once per request', async () => {
+    await POST(
+      makeRequest(
+        { paths: ['/en/library/monsters/goblin', '/en/library/spells/bane'] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    const treeBusts = mockRevalidateTag.mock.calls.filter(
+      (c: unknown[]) => c[0] === 'content-tree',
+    );
+    expect(treeBusts).toHaveLength(1);
   });
 
   it('busts the fetch tag before revalidating any path', async () => {

@@ -8,7 +8,7 @@
  */
 
 import { toNativeMeasure, toPlainMeasure } from '@/lib/units/nativeMeasure';
-import { stripDiceWrappers } from './diceExpressionUtils';
+import { stripDiceWrappers } from '@/lib/md/diceExpressionParser';
 import { GameData } from './gameData';
 import { CHARGES, HEADING, LIST, PROPERTIES } from './parsingPatterns';
 import type { SharedData } from './sharedData';

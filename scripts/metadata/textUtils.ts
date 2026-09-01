@@ -54,19 +54,6 @@ export function stripMarkdown(text: string): string {
 }
 
 /**
- * Converts text to kebab-case format.
- *
- * @param {string} text - Input string to convert
- * @returns {string} String in kebab-case format
- */
-export function toKebabCase(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(SLUG.nonAlpha, '-')
-    .replace(SLUG.edgeHyphens, '');
-}
-
-/**
  * Extracts slug from file path by removing extensions.
  *
  * @param {string} filePath - Path to the file

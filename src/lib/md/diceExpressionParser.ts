@@ -26,6 +26,40 @@ const DICE_REGEX = /^(\d+d\d+)/;
 /** Set of valid special roll type shortcodes. */
 const VALID_SPECIALS = new Set(['KH1', 'KL1', 'DL1', 'DH1']);
 
+/** Regex to match dice notation anywhere in text: NdM. */
+const INNER_DICE_REGEX = /(\d+d\d+)/;
+
+/**
+ * Strips `[% ... %]` delimiters, leaving the inner expression text.
+ *
+ * @param {string} text - Text that may contain wrapped dice expressions
+ * @returns {string} Text with delimiters removed
+ *
+ * @example
+ * stripDiceWrappers('[% 3d6 + 5 fire %] damage'); // '3d6 + 5 fire damage'
+ */
+export function stripDiceWrappers(text: string): string {
+  if (!text) return text;
+  const pattern = new RegExp(DICE_EXPR_REGEX.source, 'g');
+  return text.replace(pattern, (_full, inner: string) => inner.trim());
+}
+
+/**
+ * First dice notation in text, unwrapping `[% ... %]` delimiters first.
+ *
+ * @param {string} text - Raw text potentially containing wrapped dice
+ * @returns {string | null} Dice notation, or null when none found
+ *
+ * @example
+ * extractDiceFromExpression('[% 3d6 + 5 fire %]'); // '3d6'
+ * extractDiceFromExpression('no dice here'); // null
+ */
+export function extractDiceFromExpression(text: string): string | null {
+  if (!text) return null;
+  const match = stripDiceWrappers(text).match(INNER_DICE_REGEX);
+  return match ? match[1] : null;
+}
+
 /**
  * Parsed dice expression result.
  *

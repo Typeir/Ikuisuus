@@ -10,6 +10,7 @@ import {
     mdx,
     mdxSync,
 } from '@/modules/library/infrastructure/compile/compileRuntime';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('compileRuntime (async)', () => {
@@ -238,5 +239,52 @@ describe('component map is per call, not per cache entry', () => {
       (second.content.props as { components: Record<string, unknown> })
         .components,
     ).toHaveProperty('Unit', Unit);
+  });
+});
+
+describe('shorthand library links', () => {
+  beforeEach(() => {
+    clearCompileRuntimeCache();
+  });
+
+  /**
+   * Renders a compiled document to markup.
+   *
+   * @param {string} source - MDX source
+   * @param {string} [locale] - Locale to compile for
+   * @returns {string} Rendered markup
+   */
+  const markup = (source: string, locale?: string): string =>
+    renderToStaticMarkup(
+      compileRuntimeSync({ source, components: {}, locale }).content,
+    );
+
+  it('should expand a shorthand target through the real compiler', () => {
+    const html = markup('[Prone](/rules/steel-and-strife/conditions#prone)');
+
+    expect(html).toContain(
+      'href="/en/library/rules/steel-and-strife/conditions#prone"',
+    );
+  });
+
+  it('should leave a link that already carries its locale', () => {
+    const html = markup('[Prone](/en/library/rules/steel-and-strife/conditions)');
+
+    expect(html).toContain(
+      'href="/en/library/rules/steel-and-strife/conditions"',
+    );
+  });
+
+  it('should leave a reserved app path alone', () => {
+    const html = markup('[sigil](/images/sigil.png)');
+
+    expect(html).toContain('href="/images/sigil.png"');
+  });
+
+  it('should key the compile cache by locale', () => {
+    markup('[Prone](/rules/x)', 'en');
+    const other = markup('[Prone](/rules/x)', 'fi');
+
+    expect(other).toContain('href="/fi/library/rules/x"');
   });
 });

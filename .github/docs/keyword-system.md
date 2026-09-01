@@ -3,21 +3,28 @@
 Inline references from any content file to a rules definition, resolved at compile time and
 baked into the page.
 
-`[# kw:condition;blinded #]` in a spell renders as a link to the `## Blinded` heading in
+`[# kw:condition:blinded #]` in a spell renders as a link to the `## Blinded` heading in
 `conditions.rule.mdx`, and carries that section's prose with it so hover costs no network.
 
 ---
 
 ## Grammar
 
-| Form                         | Meaning                                          |
-| ---------------------------- | ------------------------------------------------ |
-| `[# kw:condition;blinded #]` | Namespaced. `condition` names an index.          |
-| `[# kw:accuracy #]`          | Bare. Resolved against the bare namespace.       |
-| `[# kw:condition;Blinded #]` | Display casing preserved, lookup is slug-folded. |
+| Form                                 | Meaning                                            |
+| ------------------------------------ | -------------------------------------------------- |
+| `[# kw:condition:blinded #]`         | Namespaced. `condition` names an index.            |
+| `[# kw:accuracy #]`                  | Bare. Resolved against the bare namespace.         |
+| `[# kw:condition:Blinded #]`         | Display casing preserved, lookup is slug-folded.   |
+| `[# kw:condition:bleeding;bleeds #]` | Display override: renders `bleeds`, links bleeding. |
 
-The separator is `;`. Namespace and value are both required when `;` is present; a stray
-semicolon in a bare reference is rejected rather than read as a term.
+The target comes first — `namespace:value`, colon-separated, or a bare value — and `;` cuts
+off an optional display override. The override is presentation only: it renders in place of
+the term but never enters the reference's identity, so `bleeding;bleeds` and `bleeding` are
+one keyword everywhere except the visible text. An empty half on either side of a separator
+is rejected rather than guessed at.
+
+The normalised internal form (extractor output, resolution keys, the shard URL) remains
+`namespace;value` — only the author grammar uses `:`.
 
 Values are matched by heading slug. `anchorSlug('Damage Bonus')` is `damage-bonus`, so the
 defining heading must be `### Damage Bonus`.

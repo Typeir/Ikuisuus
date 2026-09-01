@@ -35,7 +35,7 @@ export interface SyncTarget {
   readRecords: (
     locale: string,
     subdir: string,
-  ) => { records: Record<string, unknown>[]; sourceExists: boolean };
+  ) => Promise<{ records: Record<string, unknown>[]; sourceExists: boolean }>;
   naturalKey?: (row: Record<string, unknown>) => string;
 }
 
@@ -89,7 +89,7 @@ export async function syncTable(
   const className = (target.entityClass as { name: string }).name;
   const { records, sourceExists } = options.records
     ? { records: options.records, sourceExists: true }
-    : target.readRecords(locale, target.subdir);
+    : await target.readRecords(locale, target.subdir);
 
   const result: SyncResult = { inserted: 0, updated: 0, skipped: 0, deleted: 0 };
 

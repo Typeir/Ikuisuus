@@ -9,6 +9,8 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
 import { WorldEntity } from '@/lib/db/orm/entities/WorldEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { WorldRepository } from '../../repositories/worldRepository';

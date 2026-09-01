@@ -191,7 +191,7 @@ describe('remarkKeyword', () => {
 
   describe('resolution stamping', () => {
     it('should carry the namespace through as an attribute', () => {
-      const tree = rootWithText('[# kw:condition;Prone #]');
+      const tree = rootWithText('[# kw:condition:Prone #]');
       remarkKeyword()(tree);
 
       expect(attributesOf(tree.children[0])).toMatchObject({
@@ -202,10 +202,29 @@ describe('remarkKeyword', () => {
     });
 
     it('should omit href when no resolutions are supplied', () => {
-      const tree = rootWithText('[# kw:condition;prone #]');
+      const tree = rootWithText('[# kw:condition:prone #]');
       remarkKeyword()(tree);
 
       expect(attributesOf(tree.children[0])).not.toHaveProperty('href');
+    });
+
+    it('should render a display override while resolving the target', () => {
+      const resolutions = {
+        'condition;bleeding': {
+          href: 'library/rules/steel-and-strife/conditions#bleeding',
+          templateId: 'kw-condition-bleeding',
+          heading: 'Bleeding',
+        },
+      };
+      const tree = rootWithText('[# kw:condition:bleeding;the dog bleeds #]');
+      remarkKeyword({ resolutions })(tree);
+
+      expect(attributesOf(tree.children[0])).toMatchObject({
+        term: 'bleeding',
+        display: 'the dog bleeds',
+        namespace: 'condition',
+        templateId: 'kw-condition-bleeding',
+      });
     });
 
     it('should stamp the target it is handed', () => {
@@ -216,7 +235,7 @@ describe('remarkKeyword', () => {
           heading: 'Prone',
         },
       };
-      const tree = rootWithText('[# kw:condition;prone #]');
+      const tree = rootWithText('[# kw:condition:prone #]');
       remarkKeyword({ resolutions })(tree);
 
       expect(attributesOf(tree.children[0])).toMatchObject({
@@ -241,7 +260,7 @@ describe('remarkKeyword', () => {
     });
 
     it('should omit href for a reference nothing resolved', () => {
-      const tree = rootWithText('[# kw:condition;prone #]');
+      const tree = rootWithText('[# kw:condition:prone #]');
       remarkKeyword({ resolutions: {} })(tree);
 
       expect(attributesOf(tree.children[0])).not.toHaveProperty('href');

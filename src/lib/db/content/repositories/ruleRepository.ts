@@ -9,6 +9,8 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
 import { fsRuleRepository } from '../adapters/fs/fsRuleRepository';
 import { pgRuleRepository } from '../adapters/pg/pgRuleRepository';
 import type { RuleMetadata } from '../schemas/ruleMetadata';

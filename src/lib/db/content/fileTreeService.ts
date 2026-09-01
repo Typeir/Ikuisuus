@@ -9,8 +9,14 @@
  * @since 3.0.0
  */
 
+import 'server-only';
+
 import { cache } from 'react';
 
+import {
+    ensureCachesFresh,
+    registerServerCache,
+} from '@/lib/cache/registry';
 import {
     FILE_EXT_MDX,
     IGNORED_FOLDERS,
@@ -151,6 +157,8 @@ export const listDirectory = async (
   relativePath = '',
   opts: ListDirectoryOptions = {},
 ): Promise<ListDirectoryResult> => {
+  await ensureCachesFresh();
+
   const adapter: DirectorySourceAdapter = resolveDirectorySource();
   const normalized = normalizeRelativePath(relativePath);
   const cacheKey = `${locale}:${normalized}`;
@@ -259,11 +267,14 @@ export const statPath = async (
 };
 
 /**
- * Clears the in-memory directory listing cache.
+ * Clears this module's listing LRU. Cross-cache invalidation goes through
+ * `clearServerCaches` in the cache registry, which this is registered with.
  */
 export const clearCache = (): void => {
   lru.clear();
 };
+
+registerServerCache('file-tree-lru', clearCache);
 
 /** @type {{ listDirectory: typeof listDirectory; getFile: typeof getFile; statPath: typeof statPath; clearCache: typeof clearCache }} */
 const fileTreeService = {

@@ -10,7 +10,6 @@
 
 import {
     ensureDirectory,
-    getMatchingFiles,
     safeReadFile,
     safeWriteFile,
 } from '@scripts/metadata/fileUtils';
@@ -78,37 +77,6 @@ describe('safeWriteFile', () => {
     fsMock.writeFile.mockRejectedValue(new Error('EACCES'));
     const result = await safeWriteFile('/readonly.txt', 'x');
     expect(result).toBe(false);
-  });
-});
-
-describe('getMatchingFiles', () => {
-  it('should return matching files', async () => {
-    fsMock.readdir.mockResolvedValue([
-      { name: 'goblin.sheet.mdx', isFile: () => true },
-      { name: 'dragon.sheet.mdx', isFile: () => true },
-      { name: 'main.mdx', isFile: () => true },
-      { name: 'subdir', isFile: () => false },
-    ]);
-
-    const result = await getMatchingFiles('/content', /\.sheet\.mdx$/);
-    expect(result).toHaveLength(2);
-    expect(result[0]).toContain('goblin.sheet.mdx');
-    expect(result[1]).toContain('dragon.sheet.mdx');
-  });
-
-  it('should exclude main.mdx', async () => {
-    fsMock.readdir.mockResolvedValue([
-      { name: 'main.mdx', isFile: () => true },
-    ]);
-
-    const result = await getMatchingFiles('/content', /\.mdx$/);
-    expect(result).toEqual([]);
-  });
-
-  it('should return empty array on error', async () => {
-    fsMock.readdir.mockRejectedValue(new Error('ENOENT'));
-    const result = await getMatchingFiles('/missing', /\.mdx$/);
-    expect(result).toEqual([]);
   });
 });
 

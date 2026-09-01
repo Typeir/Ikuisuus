@@ -13,7 +13,6 @@ import {
     filePathToSlug,
     readLines,
     stripMarkdown,
-    toKebabCase,
 } from '@scripts/metadata/textUtils';
 import { describe, expect, it } from 'vitest';
 
@@ -58,30 +57,6 @@ describe('stripMarkdown', () => {
 
   it('should return falsy values unchanged', () => {
     expect(stripMarkdown('')).toBe('');
-  });
-});
-
-describe('toKebabCase', () => {
-  it('should convert spaces to hyphens', () => {
-    expect(toKebabCase('hello world')).toBe('hello-world');
-  });
-
-  it('should lowercase the result', () => {
-    expect(toKebabCase('Hello World')).toBe('hello-world');
-  });
-
-  it('should remove special characters', () => {
-    expect(toKebabCase('Albedo, the Bleak Bloom')).toBe(
-      'albedo-the-bleak-bloom',
-    );
-  });
-
-  it('should strip leading/trailing hyphens', () => {
-    expect(toKebabCase('  hello  ')).toBe('hello');
-  });
-
-  it('should collapse multiple non-alphanumeric chars', () => {
-    expect(toKebabCase('a---b___c')).toBe('a-b-c');
   });
 });
 

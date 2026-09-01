@@ -320,20 +320,6 @@ describe('walk', () => {
       expect(result[0].path).toBe('v20draft');
     });
 
-    it('should deduplicate .sheet.mdx and .mdx files with same base name', async () => {
-      const adapter = createMockAdapter({
-        '': [
-          { name: 'dragon.sheet.mdx', isDirectory: false },
-          { name: 'dragon.mdx', isDirectory: false },
-        ],
-      });
-
-      const result = await walkTree(adapter, 'en', '', '');
-
-      expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('dragon');
-    });
-
     it('should ignore .hidden. files', async () => {
       const adapter = createMockAdapter({
         '': [
@@ -457,15 +443,6 @@ describe('shallowWalk', () => {
       expect(result[0].name).toBe('Red Dragon');
     });
 
-    it('should deduplicate files with the same base name', async () => {
-      const adapter = adapterFromEntries([
-        { name: 'dragon.sheet.mdx', isDirectory: false },
-        { name: 'dragon.mdx', isDirectory: false },
-      ]);
-      const result = await shallowWalk(adapter, 'en');
-      expect(result).toHaveLength(1);
-      expect(result[0].path).toBe('dragon');
-    });
   });
 
   describe('directory handling', () => {

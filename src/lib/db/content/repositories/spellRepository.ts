@@ -8,6 +8,8 @@
  * @since 3.0.0
  */
 
+import 'server-only';
+
 import { fsSpellRepository } from '../adapters/fs/fsSpellRepository';
 import { pgSpellRepository } from '../adapters/pg/pgSpellRepository';
 import type { FilterExpression } from '../filters';

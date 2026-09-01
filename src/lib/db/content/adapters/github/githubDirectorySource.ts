@@ -9,8 +9,15 @@
  * @since 2.0.0
  */
 
-import { logger } from '@/lib/logging/logger';
+import 'server-only';
 
+import { logger } from '@/lib/logging/logger';
+import {
+  ensureCachesFresh,
+  registerServerCache,
+} from '@/lib/cache/registry';
+
+import { CONTENT_TREE_CACHE_TAG } from '../../contentCacheTags';
 import type {
     DirectoryEntry,
     DirectorySourceAdapter,
@@ -47,12 +54,17 @@ const CACHE_TTL_MS = 300_000;
 let treeCache: { promise: Promise<GitTreeEntry[]>; timestamp: number } | null =
   null;
 
+registerServerCache('github-tree', () => {
+  treeCache = null;
+});
+
 /**
  * Fetches the full recursive tree from the GitHub Git Trees API.
  *
- * @returns {Promise<GitTreeEntry[]>} Flat list of all tree entries
+ * @returns {Promise<GitTreeEntry[] | null>} Flat list of all tree entries;
+ *   empty when configuration is missing, null on an API error
  */
-async function fetchFullTree(): Promise<GitTreeEntry[]> {
+async function fetchFullTree(): Promise<GitTreeEntry[] | null> {
   if (!CONTENT_REPO_OWNER || !CONTENT_REPO_NAME || !GITHUB_PAT) {
     log.warning(
       'Missing GitHub configuration (CONTENT_REPO_OWNER, CONTENT_REPO_NAME, GITHUB_PAT)',
@@ -62,18 +74,22 @@ async function fetchFullTree(): Promise<GitTreeEntry[]> {
 
   const url = `https://api.github.com/repos/${encodeURIComponent(CONTENT_REPO_OWNER)}/${encodeURIComponent(CONTENT_REPO_NAME)}/git/trees/${encodeURIComponent(CONTENT_REPO_BRANCH)}?recursive=1`;
 
+  /* Tagged so a content push busts the Data Cache entry immediately; the
+     timer is the fallback for a missed webhook and for warm instances other
+     than the one that handled the revalidation, whose in-memory copy can
+     only age out. */
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${GITHUB_PAT}`,
       Accept: 'application/vnd.github.v3+json',
     },
-    next: { revalidate: 300 },
+    next: { revalidate: 300, tags: [CONTENT_TREE_CACHE_TAG] },
   });
 
   if (!res.ok) {
     const body = await res.text();
     log.error(`GitHub Trees API error ${res.status}: ${body}`);
-    return [];
+    return null;
   }
 
   const data = await res.json();
@@ -83,13 +99,31 @@ async function fetchFullTree(): Promise<GitTreeEntry[]> {
 /**
  * Returns the cached tree, refreshing if the TTL has expired.
  *
+ * A failed fetch — rejection or API error — never occupies the TTL window:
+ * its cache slot is dropped as it settles, so the next call retries instead
+ * of replaying the failure for five minutes.
+ *
  * @returns {Promise<GitTreeEntry[]>} Flat list of all tree entries
  */
 function getCachedTree(): Promise<GitTreeEntry[]> {
   if (treeCache && Date.now() - treeCache.timestamp < CACHE_TTL_MS) {
     return treeCache.promise;
   }
-  const promise = fetchFullTree();
+
+  const promise = fetchFullTree().then(
+    (tree) => {
+      if (tree === null) {
+        if (treeCache?.promise === promise) treeCache = null;
+        return [];
+      }
+      return tree;
+    },
+    (error: unknown) => {
+      if (treeCache?.promise === promise) treeCache = null;
+      throw error;
+    },
+  );
+
   treeCache = { promise, timestamp: Date.now() };
   return promise;
 }
@@ -103,6 +137,7 @@ export const githubDirectorySource: DirectorySourceAdapter = {
     locale: string,
     relativePath: string,
   ): Promise<DirectoryEntry[]> {
+    await ensureCachesFresh();
     const tree = await getCachedTree();
     const prefix = relativePath ? `${locale}/${relativePath}/` : `${locale}/`;
 

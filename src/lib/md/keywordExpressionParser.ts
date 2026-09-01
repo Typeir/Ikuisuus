@@ -25,7 +25,13 @@ export const KEYWORD_EXPR_REGEX = /\[#\s*(.*?)\s*#\]/g;
 /** Regex to match the `kw:` marker and capture the reference text. */
 export const KW_INNER_REGEX = /^kw:\s*(.+)$/;
 
-/** Regex splitting a namespaced reference into namespace and value on the semicolon. */
+/**
+ * Regex splitting a NORMALISED reference (`namespace;value`) into its parts.
+ * The normalised form is internal — extractor output, resolution keys, the
+ * shard URL — and keeps `;` as its separator. The author grammar is parsed by
+ * {@link parseKeywordReference} and uses `:` between namespace and value,
+ * with `;` cutting off a display override.
+ */
 export const KW_NAMESPACED_REGEX = /^([^;]+);(.+)$/;
 
 /**
@@ -46,35 +52,45 @@ export interface KeywordReference {
  * Splits the inner content of a `[# ... #]` block into its keyword parts.
  * Performs no registry lookup.
  *
+ * Grammar: `kw:` marker, then the target — `namespace:value` or a bare value —
+ * then an optional `;display` override. The target always comes first, so `;`
+ * is free to carry the rendered text; the override keeps its author casing and
+ * never enters the reference's identity.
+ *
  * @param {string} inner - The raw content between `[#` and `#]`
  * @returns {KeywordReference | null} Reference parts, or null when malformed
  *
  * @example
- * parseKeywordReference('kw:condition;Prone')
+ * parseKeywordReference('kw:condition:Prone')
  * // { namespace: 'condition', value: 'prone', display: 'Prone' }
+ * parseKeywordReference('kw:condition:bleeding;the dog bleeds')
+ * // { namespace: 'condition', value: 'bleeding', display: 'the dog bleeds' }
  * parseKeywordReference('kw:damage bonus')
  * // { value: 'damage bonus', display: 'damage bonus' }
- * parseKeywordReference('kw:;prone')
- * // null — a stray semicolon means a botched namespace
+ * parseKeywordReference('kw:bleeding;')
+ * // null — a display cut with nothing after it is a botched override
  */
 export function parseKeywordReference(inner: string): KeywordReference | null {
   const match = inner.trim().match(KW_INNER_REGEX);
   if (!match) return null;
 
   const reference = match[1].trim();
-  const namespaced = reference.match(KW_NAMESPACED_REGEX);
 
-  if (namespaced) {
-    const namespace = normalizeKeyword(namespaced[1]);
-    const display = namespaced[2].trim();
-    const value = normalizeKeyword(display);
+  const cut = reference.indexOf(';');
+  const target = (cut === -1 ? reference : reference.slice(0, cut)).trim();
+  const override = cut === -1 ? null : reference.slice(cut + 1).trim();
+  if (!target || (cut !== -1 && !override)) return null;
+
+  const namespaceCut = target.indexOf(':');
+  if (namespaceCut !== -1) {
+    const namespace = normalizeKeyword(target.slice(0, namespaceCut));
+    const valueText = target.slice(namespaceCut + 1).trim();
+    const value = normalizeKeyword(valueText);
     if (!namespace || !value) return null;
-    return { namespace, value, display };
+    return { namespace, value, display: override ?? valueText };
   }
 
-  if (reference.includes(';')) return null;
-
-  const value = normalizeKeyword(reference);
+  const value = normalizeKeyword(target);
   if (!value) return null;
-  return { value, display: reference };
+  return { value, display: override ?? target };
 }

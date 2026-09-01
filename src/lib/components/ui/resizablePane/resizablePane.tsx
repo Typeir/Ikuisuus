@@ -14,6 +14,9 @@
 'use client';
 
 import { cn } from '@/lib/utils/classNameMerge';
+import { RESIZABLE_PANE_STORAGE_PREFIX } from '@/lib/constants/persistentData';
+import { fetchPersistentData } from '@/lib/utils/fetchPersistentData';
+import { storePersistentDataFallbackOnly } from '@/lib/utils/storePersistentData';
 import { DragBar } from '@/lib/components/ui/dragBar/dragBar';
 import {
   useCallback,
@@ -52,11 +55,6 @@ export interface ResizablePaneProps {
 }
 
 /**
- * Storage key prefix for persisting per-pane widths.
- */
-const STORAGE_PREFIX = 'ikuisuus.resizablePane.';
-
-/**
  * Clamp a numeric value into the inclusive range `[min, max]`.
  *
  * @function clamp
@@ -72,8 +70,8 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 /**
- * Read a persisted percentage from localStorage. Returns null when the value
- * is missing, malformed, or out of range.
+ * Read a persisted percentage. Returns null when the value is missing,
+ * malformed, or out of range.
  *
  * @function readStoredPercent
  * @param {string} key - Storage key
@@ -87,8 +85,7 @@ function readStoredPercent(
   max: number,
 ): number | null {
   try {
-    if (typeof window === 'undefined') return null;
-    const raw = window.localStorage.getItem(key);
+    const raw = fetchPersistentData(key);
     if (!raw) return null;
     const parsed = Number.parseFloat(raw);
     if (!Number.isFinite(parsed)) return null;
@@ -100,8 +97,8 @@ function readStoredPercent(
 }
 
 /**
- * Persist a percentage to localStorage. Failures are swallowed (e.g. quota,
- * privacy mode).
+ * Persist a percentage through the cookie-free storage tier. Failures are
+ * swallowed (e.g. quota, privacy mode).
  *
  * @function writeStoredPercent
  * @param {string} key - Storage key
@@ -109,8 +106,7 @@ function readStoredPercent(
  */
 function writeStoredPercent(key: string, value: number): void {
   try {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem(key, String(value));
+    storePersistentDataFallbackOnly(key, String(value));
   } catch {
     /* storage unavailable — non-fatal */
   }
@@ -141,7 +137,7 @@ export const ResizablePane: React.FC<ResizablePaneProps> = ({
   ariaLabel,
   className,
 }) => {
-  const storageKey = `${STORAGE_PREFIX}${id}`;
+  const storageKey = `${RESIZABLE_PANE_STORAGE_PREFIX}${id}`;
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
 

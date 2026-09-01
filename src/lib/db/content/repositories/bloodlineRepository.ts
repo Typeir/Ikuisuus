@@ -9,6 +9,8 @@
  * @since 7.0.0
  */
 
+import 'server-only';
+
 import { fsBloodlineRepository } from '../adapters/fs/fsBloodlineRepository';
 import { pgBloodlineRepository } from '../adapters/pg/pgBloodlineRepository';
 import type { BloodlineMetadata } from '../schemas/bloodlineMetadata';

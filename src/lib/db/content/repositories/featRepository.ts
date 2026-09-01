@@ -9,6 +9,8 @@
  * @since 1.0.0
  */
 
+import 'server-only';
+
 import { fsFeatRepository } from '../adapters/fs/fsFeatRepository';
 import { pgFeatRepository } from '../adapters/pg/pgFeatRepository';
 import type { FeatMetadata } from '../schemas/featMetadata';

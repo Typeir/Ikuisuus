@@ -15,6 +15,14 @@ vi.mock('@/modules/library/infrastructure/content/fetchContent', () => ({
   fetchContent: (...args: any[]) => fetchContentMock(...args),
 }));
 
+const mockEpochCurrent = vi.fn().mockResolvedValue(null);
+vi.mock('@/lib/cache/epoch', () => ({
+  cacheEpochSource: {
+    current: (...args: unknown[]) => mockEpochCurrent(...args),
+    bump: vi.fn(),
+  },
+}));
+
 import {
     clearCache,
     getFile,
@@ -25,7 +33,25 @@ import {
 beforeEach(() => {
   adapter.listEntries.mockReset();
   fetchContentMock.mockReset();
+  mockEpochCurrent.mockReset().mockResolvedValue(null);
   clearCache();
+});
+
+describe('fileTreeService cache freshness', () => {
+  it('drops the listing LRU when the shared cache epoch moves', async () => {
+    adapter.listEntries.mockResolvedValue([
+      { name: 'a.mdx', isDirectory: false },
+    ]);
+    mockEpochCurrent.mockResolvedValue('e1');
+
+    await listDirectory('en', 'spells');
+    await listDirectory('en', 'spells');
+    expect(adapter.listEntries).toHaveBeenCalledTimes(1);
+
+    mockEpochCurrent.mockResolvedValue('e2');
+    await listDirectory('en', 'spells');
+    expect(adapter.listEntries).toHaveBeenCalledTimes(2);
+  });
 });
 
 describe('fileTreeService.listDirectory', () => {

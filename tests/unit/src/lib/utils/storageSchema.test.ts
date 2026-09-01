@@ -72,6 +72,18 @@ describe('ensureStorageSchema', () => {
     expect(localStorage.getItem(EncounterStorage.InProgressCombats)).toBeNull();
   });
 
+  it('purges the roster key and prefix-matched pane keys', () => {
+    localStorage.setItem('ikuisuus.resizablePane.editor', '42');
+    sessionStorage.setItem('ikuisuus.resizablePane.editor', '42');
+    localStorage.setItem('ikuisuus.characterRoster.collapsed', 'true');
+    ensureStorageSchema();
+    expect(localStorage.getItem('ikuisuus.resizablePane.editor')).toBeNull();
+    expect(sessionStorage.getItem('ikuisuus.resizablePane.editor')).toBeNull();
+    expect(
+      localStorage.getItem('ikuisuus.characterRoster.collapsed'),
+    ).toBeNull();
+  });
+
   it('records the current version after purging', () => {
     seedAllStores();
     ensureStorageSchema();

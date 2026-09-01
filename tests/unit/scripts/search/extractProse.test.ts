@@ -173,4 +173,69 @@ The **Ancient Dragon** of [Thule](/en/library/world/thule) is a fearsome creatur
       expect(result).not.toContain('BlendedImage');
     });
   });
+
+  describe('shortcodes', () => {
+    it('should index a bare keyword by its own text', () => {
+      const result = extractProse('You regain uses after a [# kw:Recovery #].');
+
+      expect(result).toBe('You regain uses after a Recovery.');
+    });
+
+    it('should index a namespaced keyword by its value', () => {
+      const result = extractProse('The target is [# kw:condition:Prone #].');
+
+      expect(result).toBe('The target is Prone.');
+    });
+
+    it('should index a keyword by its display override, not its target', () => {
+      const result = extractProse(
+        'All [# kw:displace;displacement #] is halved.',
+      );
+
+      expect(result).toBe('All displacement is halved.');
+      expect(result).not.toContain('displace ');
+    });
+
+    it('should unwrap a measure to its plain form', () => {
+      const result = extractProse('Reach [= 1 stride =] of you.');
+
+      expect(result).not.toContain('[=');
+      expect(result).toContain('stride');
+    });
+
+    it('should unwrap a measure whose unit is unknown', () => {
+      const result = extractProse('You carry [= 1 litre =] of water.');
+
+      expect(result).toBe('You carry 1 litre of water.');
+    });
+
+    it('should drop an adjectival marker from a measure', () => {
+      const result = extractProse('A [= 4 stride;ADJ =] radius.');
+
+      expect(result).not.toContain(';ADJ');
+      expect(result).not.toContain('[=');
+    });
+
+    it('should unwrap a dice expression to its notation', () => {
+      const result = extractProse('It takes [% 2d6 %] damage.');
+
+      expect(result).toBe('It takes 2d6 damage.');
+    });
+
+    it('should leave a malformed keyword expression alone', () => {
+      const result = extractProse('A [# not-a-keyword #] here.');
+
+      expect(result).toContain('not-a-keyword');
+    });
+
+    it('should leave no shortcode markup in mixed prose', () => {
+      const result = extractProse(
+        'Within [= 2 stride =], deal [% 1d8 %] and apply [# kw:condition:burning #] until a [# kw:Repose #].',
+      );
+
+      expect(result).not.toMatch(/\[[#=%]/);
+      expect(result).toContain('burning');
+      expect(result).toContain('Repose');
+    });
+  });
 });

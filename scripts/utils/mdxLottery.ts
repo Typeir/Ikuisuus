@@ -14,9 +14,9 @@
  * ```
  */
 
+import { walkDirectory } from '@/lib/utils/getMatchingFiles';
 import { createLogger } from '@/lib/logging/logger';
 import fsSync from 'node:fs';
-import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const log = createLogger({ script: 'mdxLottery' });
@@ -71,21 +71,12 @@ const norm = (s: string): string => s.replace(/\\/g, '/').toLowerCase();
  */
 const walk = async (dir: string, ignore: Set<string>): Promise<string[]> => {
   const out: string[] = [];
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-
-  for (const e of entries) {
-    if (e.isDirectory()) {
-      if (ignore.has(e.name)) continue;
-      out.push(...(await walk(path.join(dir, e.name), ignore)));
-      continue;
-    }
-
-    if (e.isFile() && e.name.endsWith('.mdx')) {
-      out.push(path.join(dir, e.name));
-    }
-  }
-
-  return out;
+  await walkDirectory(dir, /\.mdx$/, out);
+  if (ignore.size === 0) return out;
+  return out.filter((abs) => {
+    const rel = path.relative(dir, abs);
+    return !rel.split(/[\\/]/).some((seg) => ignore.has(seg));
+  });
 };
 
 /**

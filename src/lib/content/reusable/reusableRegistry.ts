@@ -14,6 +14,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { parseReusableRegions } from './parseReusableRegions';
+import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
 import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/constants/content';
 
 /** True when the file declares `reusable: true`. */
@@ -65,17 +66,7 @@ export function componentNameFromPath(filePath: string): string {
  * @returns {Promise<string[]>} Absolute paths of every .mdx file found
  */
 async function listMdxFiles(dir: string): Promise<string[]> {
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-
-  const nested = await Promise.all(
-    entries.map(async (entry) => {
-      const resolved = path.resolve(dir, entry.name);
-      if (entry.isDirectory()) return listMdxFiles(resolved);
-      return resolved.endsWith('.mdx') ? [resolved] : [];
-    }),
-  );
-
-  return nested.flat();
+  return getMatchingFiles(dir, /\.mdx$/, true);
 }
 
 /**

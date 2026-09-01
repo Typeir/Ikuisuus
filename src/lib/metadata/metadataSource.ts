@@ -1,21 +1,22 @@
 /**
- * @fileoverview Reads `.metadata.json` sidecars from `.meta/{locale}/{subdir}`,
- * falling back to `src/content/{locale}/{subdir}`.
+ * @fileoverview Reads `.metadata.json` sidecars for the sync layer.
+ * @description Thin wrapper over the fs adapter reader, adding the
+ * source-presence flag the sync targets consume. Reads recursively from
+ * `.meta/{locale}/{subdir}`, falling back to `src/content/{locale}/{subdir}`.
  *
  * @module lib/metadata/metadataSource
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 8.0.0
  */
 
-import { existsSync, readdirSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { readMetadataFiles as readMetadataRecords } from '@/lib/db/content/adapters/fs/readMetadataFiles';
 
 /**
  * Flattened sidecar records from one subdirectory.
  *
  * @property {Record<string, unknown>[]} records - Flattened sidecar records
- * @property {boolean} sourceExists - True when a populated source directory was found
+ * @property {boolean} sourceExists - True when any sidecar records were found
  */
 export interface MetadataSourceRead {
   records: Record<string, unknown>[];
@@ -23,51 +24,20 @@ export interface MetadataSourceRead {
 }
 
 /**
- * Returns the project root, three levels above this module.
- *
- * @returns {string} Absolute path to project root
- */
-export function getProjectRoot(): string {
-  return join(__dirname, '..', '..', '..');
-}
-
-/**
- * Reads and flattens every `.metadata.json` file in a locale subdirectory.
+ * Reads and flattens every `.metadata.json` file in a locale subdirectory,
+ * nested sidecars included.
  *
  * @param {string} locale - Locale code
  * @param {string} subdir - Content subdirectory, e.g. `spells` or `items/trinkets`
- * @returns {MetadataSourceRead} Flattened records and source presence flag
+ * @returns {Promise<MetadataSourceRead>} Flattened records and source presence flag
  */
-export function readMetadataFiles(
+export async function readMetadataFiles(
   locale: string,
   subdir: string,
-): MetadataSourceRead {
-  const root = getProjectRoot();
-  const metaDirPath = join(root, '.meta', locale, subdir);
-  const contentDirPath = join(
-    /*turbopackIgnore: true*/ root,
-    'src',
-    'content',
+): Promise<MetadataSourceRead> {
+  const records = await readMetadataRecords<Record<string, unknown>>(
     locale,
     subdir,
   );
-  const metaExists = existsSync(metaDirPath);
-  const contentExists = existsSync(contentDirPath);
-  const dir = metaExists ? metaDirPath : contentDirPath;
-  const sourceExists = metaExists || contentExists;
-
-  if (!sourceExists) return { records: [], sourceExists: false };
-
-  const metaFiles = readdirSync(dir).filter((f) =>
-    f.endsWith('.metadata.json'),
-  );
-
-  if (metaFiles.length === 0) return { records: [], sourceExists: false };
-
-  const records = metaFiles.flatMap((f) => {
-    const parsed = JSON.parse(readFileSync(join(dir, f), 'utf8'));
-    return Array.isArray(parsed) ? parsed : [parsed];
-  });
-
-  return { records, sourceExists: true };
+  return { records, sourceExists: records.length > 0 };
 }

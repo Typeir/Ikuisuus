@@ -14,7 +14,9 @@
 
 import {
     DICE_EXPR_REGEX,
-    parseDiceExpression
+    extractDiceFromExpression,
+    parseDiceExpression,
+    stripDiceWrappers,
 } from '@/lib/md/diceExpressionParser';
 import { describe, expect, it } from 'vitest';
 
@@ -222,6 +224,36 @@ describe('parseDiceExpression', () => {
       expect(result!.specials).toEqual(['KH1']);
       expect(result!.modifier).toBe('+5');
       expect(result!.damageType).toBe('fire');
+    });
+  });
+
+  describe('stripDiceWrappers', () => {
+    it('should strip delimiters and keep the inner expression', () => {
+      expect(stripDiceWrappers('[% 3d6 + 5 fire %] damage')).toBe(
+        '3d6 + 5 fire damage',
+      );
+    });
+
+    it('should leave unwrapped text unchanged', () => {
+      expect(stripDiceWrappers('2d20 attack')).toBe('2d20 attack');
+    });
+
+    it('should pass empty input through', () => {
+      expect(stripDiceWrappers('')).toBe('');
+    });
+  });
+
+  describe('extractDiceFromExpression', () => {
+    it('should extract dice from a wrapped expression', () => {
+      expect(extractDiceFromExpression('[% 3d6 + 5 fire %]')).toBe('3d6');
+    });
+
+    it('should extract bare dice notation', () => {
+      expect(extractDiceFromExpression('2d20')).toBe('2d20');
+    });
+
+    it('should return null when no dice are present', () => {
+      expect(extractDiceFromExpression('no dice here')).toBeNull();
     });
   });
 });

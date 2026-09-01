@@ -81,7 +81,7 @@ describe('shardIdOf', () => {
 
   it('should agree with the extractor on every normalised reference', () => {
     const prose =
-      'Takes [# kw: condition;Prone #], gains [# kw: resist #] and [# kw: Two-Weapon Fighting #].';
+      'Takes [# kw: condition:Prone #], gains [# kw: resist #] and [# kw: Two-Weapon Fighting #].';
 
     const references = extractKeywordRefs(prose);
     expect(references.length).toBe(3);
@@ -134,6 +134,49 @@ describe('resolveShardByRef', () => {
     const shard = await resolveShardByRef('resist', 'en');
 
     expect(shard?.source.endsWith('---')).toBe(false);
+  });
+
+  it('should follow a term to the heading declared to bear it', async () => {
+    getFile.mockResolvedValue({
+      content: [
+        '---',
+        'keywords:',
+        '  - disposition: Disposition, Reputation and Attitude',
+        '---',
+        '',
+        '# Disposition, Reputation and Attitude',
+        '',
+        'One mechanic, two names.',
+      ].join('\n'),
+    });
+
+    const shard = await resolveShardByRef('disposition', 'en');
+
+    expect(shard).toMatchObject({
+      id: 'kw--disposition',
+      heading: 'Disposition, Reputation and Attitude',
+      source: 'One mechanic, two names.',
+      href: 'library/rules/steel-and-strife/effects#disposition-reputation-and-attitude',
+    });
+  });
+
+  it('should keep the id the reference names, not the bearing heading', async () => {
+    getFile.mockResolvedValue({
+      content: [
+        '---',
+        'keywords:',
+        '  - disposition: Disposition, Reputation and Attitude',
+        '---',
+        '',
+        '# Disposition, Reputation and Attitude',
+        '',
+        'Body.',
+      ].join('\n'),
+    });
+
+    const shard = await resolveShardByRef('disposition', 'en');
+
+    expect(shard?.id).toBe(shardIdOf('disposition'));
   });
 });
 

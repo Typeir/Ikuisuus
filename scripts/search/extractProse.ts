@@ -11,6 +11,13 @@
 
 import matter from 'gray-matter';
 
+import { stripDiceWrappers } from '@/lib/md/diceExpressionParser';
+import {
+  KEYWORD_EXPR_REGEX,
+  parseKeywordReference,
+} from '@/lib/md/keywordExpressionParser';
+import { toPlainMeasure } from '@/lib/units/nativeMeasure';
+
 /**
  * Removes YAML frontmatter from raw MDX content and returns the body.
  *
@@ -121,6 +128,33 @@ function stripMarkdownSyntax(content: string): string {
 }
 
 /**
+ * Unwraps the authored shortcodes to the text a reader sees.
+ *
+ * A keyword yields its display text, a measure its plain form, a dice
+ * expression its notation. Left in place they would index as literal markup,
+ * so a search for the word inside one would miss the page carrying it.
+ *
+ * @param {string} content - Body content
+ * @returns {string} Content with shortcodes reduced to their rendered text
+ */
+function stripShortcodes(content: string): string {
+  const withoutKeywords = content.replace(
+    KEYWORD_EXPR_REGEX,
+    (whole: string, inner: string) =>
+      parseKeywordReference(inner)?.display ?? whole,
+  );
+
+  const withoutDice = stripDiceWrappers(toPlainMeasure(withoutKeywords));
+
+  /* A measure whose unit the converter does not know survives as markup, so
+     unwrap whatever is left to its inner text. */
+  return withoutDice.replace(
+    /\[=\s*(.*?)\s*=\]/g,
+    (_whole: string, inner: string) => inner.split(';')[0].trim(),
+  );
+}
+
+/**
  * Collapses whitespace to single spaces and trims.
  *
  * @param {string} content - Body content
@@ -146,6 +180,7 @@ export function extractProse(raw: string): string {
   content = stripMdxImports(content);
   content = stripJsx(content);
   content = stripCode(content);
+  content = stripShortcodes(content);
   content = stripMarkdownSyntax(content);
   return collapseWhitespace(content);
 }

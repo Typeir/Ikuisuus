@@ -13,6 +13,7 @@ import { execSync } from 'node:child_process';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
 import type { CheckOptions, CheckResult } from './health-check-types';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -68,25 +69,15 @@ function getChangedFiles(): string[] {
  *
  * @param {string} dir Directory to scan
  * @param {string} rootDir Root for relative path calculation
- * @param {string[]} results Accumulator
  * @returns Relative file paths
  */
 async function findAllSourceFiles(
   dir: string,
   rootDir?: string,
-  results: string[] = [],
 ): Promise<string[]> {
   const root = rootDir ?? ROOT;
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      await findAllSourceFiles(full, root, results);
-    } else if (/\.(ts|tsx)$/.test(entry.name)) {
-      results.push(path.relative(root, full));
-    }
-  }
-  return results;
+  const files = await getMatchingFiles(dir, /\.(ts|tsx)$/, true);
+  return files.map((full) => path.relative(root, full));
 }
 
 /**
@@ -107,38 +98,24 @@ async function buildImportIndex(
   ];
   const index = new Map<string, string[]>();
 
-  async function walk(dir: string): Promise<void> {
-    let entries: import('node:fs').Dirent[];
-    try {
-      entries = await fs.readdir(dir, { withFileTypes: true });
-    } catch {
-      return;
-    }
-    for (const entry of entries) {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        await walk(full);
-      } else if (/\.test\.(ts|tsx)$/.test(entry.name)) {
-        const content = await fs.readFile(full, 'utf-8').catch(() => '');
-        const importedNames = [...content.matchAll(/from\s+['"][^'"]+['"]/g)]
-          .map((m) => m[0].replace(/from\s+['"]/, '').replace(/['"]$/, ''))
-          .map((p) =>
-            path
-              .basename(p)
-              .replace(/\.(ts|tsx)$/, '')
-              .toLowerCase(),
-          );
-        for (const name of importedNames) {
-          const list = index.get(name) ?? [];
-          list.push(full);
-          index.set(name, list);
-        }
+  for (const root of testRoots) {
+    const files = await getMatchingFiles(root, /\.test\.(ts|tsx)$/, true);
+    for (const full of files) {
+      const content = await fs.readFile(full, 'utf-8').catch(() => '');
+      const importedNames = [...content.matchAll(/from\s+['"][^'"]+['"]/g)]
+        .map((m) => m[0].replace(/from\s+['"]/, '').replace(/['"]$/, ''))
+        .map((p) =>
+          path
+            .basename(p)
+            .replace(/\.(ts|tsx)$/, '')
+            .toLowerCase(),
+        );
+      for (const name of importedNames) {
+        const list = index.get(name) ?? [];
+        list.push(full);
+        index.set(name, list);
       }
     }
-  }
-
-  for (const root of testRoots) {
-    await walk(root);
   }
   return index;
 }

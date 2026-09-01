@@ -9,6 +9,8 @@
  * @since 7.0.0
  */
 
+import 'server-only';
+
 import { VocationEntity } from '@/lib/db/orm/entities/VocationEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { VocationRepository } from '../../repositories/vocationRepository';

@@ -10,6 +10,8 @@
  * @since 6.0.0
  */
 
+import 'server-only';
+
 import { DraftEntity } from '@/lib/db/orm/entities/DraftEntity';
 import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';

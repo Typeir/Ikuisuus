@@ -9,6 +9,8 @@
  * @since 7.0.0
  */
 
+import 'server-only';
+
 import path from 'path';
 import type { BloodlineRepository } from '../../repositories/bloodlineRepository';
 import type { BloodlineMetadata } from '../../schemas/bloodlineMetadata';

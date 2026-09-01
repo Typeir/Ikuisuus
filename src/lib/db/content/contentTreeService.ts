@@ -9,6 +9,8 @@
  * @since 2.0.0
  */
 
+import 'server-only';
+
 import { FILE_EXT_MDX, IGNORED_FOLDERS } from '@/lib/constants/content';
 
 import type { DirectorySourceAdapter } from './directorySourceAdapter';

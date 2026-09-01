@@ -8,6 +8,8 @@
  * @since 3.0.0
  */
 
+import 'server-only';
+
 import { fsMonsterRepository } from '../adapters/fs/fsMonsterRepository';
 import { pgMonsterRepository } from '../adapters/pg/pgMonsterRepository';
 import type {

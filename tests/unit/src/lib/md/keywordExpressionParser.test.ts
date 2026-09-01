@@ -43,8 +43,8 @@ describe('normalizeKeyword', () => {
 });
 
 describe('parseKeywordReference namespaced', () => {
-  it('should split a namespaced reference on the semicolon', () => {
-    expect(parseKeywordReference('kw:condition;prone')).toEqual({
+  it('should split a namespaced reference on the colon', () => {
+    expect(parseKeywordReference('kw:condition:prone')).toEqual({
       namespace: 'condition',
       value: 'prone',
       display: 'prone',
@@ -52,7 +52,7 @@ describe('parseKeywordReference namespaced', () => {
   });
 
   it('should preserve author casing in display', () => {
-    expect(parseKeywordReference('kw:condition;Prone')).toEqual({
+    expect(parseKeywordReference('kw:condition:Prone')).toEqual({
       namespace: 'condition',
       value: 'prone',
       display: 'Prone',
@@ -60,13 +60,13 @@ describe('parseKeywordReference namespaced', () => {
   });
 
   it('should lowercase the namespace', () => {
-    expect(parseKeywordReference('kw:Condition;prone')?.namespace).toBe(
+    expect(parseKeywordReference('kw:Condition:prone')?.namespace).toBe(
       'condition',
     );
   });
 
   it('should not require the value to be registered', () => {
-    expect(parseKeywordReference('kw:condition;unregistered-thing')).toEqual({
+    expect(parseKeywordReference('kw:condition:unregistered-thing')).toEqual({
       namespace: 'condition',
       value: 'unregistered-thing',
       display: 'unregistered-thing',
@@ -74,7 +74,7 @@ describe('parseKeywordReference namespaced', () => {
   });
 
   it('should tolerate whitespace around the separator', () => {
-    expect(parseKeywordReference('kw:  condition ; prone  ')).toEqual({
+    expect(parseKeywordReference('kw:  condition : prone  ')).toEqual({
       namespace: 'condition',
       value: 'prone',
       display: 'prone',
@@ -82,27 +82,54 @@ describe('parseKeywordReference namespaced', () => {
   });
 
   it('should keep multi-word values intact', () => {
-    expect(parseKeywordReference('kw:mechanic;damage bonus')).toEqual({
+    expect(parseKeywordReference('kw:mechanic:damage bonus')).toEqual({
       namespace: 'mechanic',
       value: 'damage bonus',
       display: 'damage bonus',
     });
   });
 
+  it('should split the namespace on the first colon only', () => {
+    expect(parseKeywordReference('kw:condition:a:b')).toEqual({
+      namespace: 'condition',
+      value: 'a:b',
+      display: 'a:b',
+    });
+  });
+
   it('should return null for an empty namespace', () => {
-    expect(parseKeywordReference('kw:;prone')).toBeNull();
+    expect(parseKeywordReference('kw::prone')).toBeNull();
   });
 
   it('should return null for an empty value', () => {
-    expect(parseKeywordReference('kw:condition;')).toBeNull();
+    expect(parseKeywordReference('kw:condition:')).toBeNull();
+  });
+});
+
+describe('parseKeywordReference display override', () => {
+  it('should carry the override as display, not identity', () => {
+    expect(parseKeywordReference('kw:condition:bleeding;the dog bleeds')).toEqual({
+      namespace: 'condition',
+      value: 'bleeding',
+      display: 'the dog bleeds',
+    });
   });
 
-  it('should split on the first separator only', () => {
-    expect(parseKeywordReference('kw:condition;a;b')).toEqual({
-      namespace: 'condition',
-      value: 'a;b',
-      display: 'a;b',
+  it('should override a bare reference', () => {
+    expect(parseKeywordReference('kw:bleeding;bleeds')).toEqual({
+      value: 'bleeding',
+      display: 'bleeds',
     });
+  });
+
+  it('should keep the override casing and inner spacing verbatim', () => {
+    expect(parseKeywordReference('kw:resist; Shrug It Off ')?.display).toBe(
+      'Shrug It Off',
+    );
+  });
+
+  it('should return null for a cut with no override after it', () => {
+    expect(parseKeywordReference('kw:condition:prone;')).toBeNull();
   });
 });
 

@@ -9,6 +9,8 @@
  * @since 5.0.0
  */
 
+import 'server-only';
+
 import { TrinketEntity } from '@/lib/db/orm/entities/TrinketEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { TrinketRepository } from '../../repositories/trinketRepository';

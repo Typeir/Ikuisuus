@@ -15,6 +15,7 @@ import remarkKeyword from '@/lib/md/remarkKeyword';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { DEFAULT_KEYWORD_LOCALE } from '@/lib/constants/locales';
 import { resolveDocumentKeywords } from '@/lib/md/resolveShardByRef';
+import remarkLibraryLink from '@/lib/md/remarkLibraryLink';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
@@ -56,6 +57,7 @@ export async function compileStatic(opts: CompileOptions) {
         mdxOptions,
         {
           remarkPlugins: [
+            [remarkLibraryLink, { locale }],
             remarkGfm,
             remarkMath,
             remarkAspect,

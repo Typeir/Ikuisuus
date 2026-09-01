@@ -14,6 +14,8 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
 import { fsKeywordLinkRepository } from '../adapters/fs/fsKeywordLinkRepository';
 import { pgKeywordLinkRepository } from '../adapters/pg/pgKeywordLinkRepository';
 

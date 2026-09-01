@@ -9,6 +9,8 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
 import type { WorldRepository } from '../../repositories/worldRepository';
 import type { WorldMetadata } from '../../schemas/worldMetadata';
 import { FsMetadataRepository } from './FsMetadataRepository';

@@ -10,6 +10,8 @@
  * @since 7.0.0
  */
 
+import 'server-only';
+
 import { SpecializationEntity } from '@/lib/db/orm/entities/SpecializationEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import { getEM } from '@/lib/db/orm/orm';

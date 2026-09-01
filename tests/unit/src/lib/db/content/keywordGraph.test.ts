@@ -16,10 +16,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const listLinks = vi.fn();
+const mockEpochCurrent = vi.fn().mockResolvedValue(null);
 
 vi.mock('@/lib/db/content/repositories/keywordLinkRepository', () => ({
   keywordLinkRepository: {
     listLinks: (...args: unknown[]) => listLinks(...args),
+  },
+}));
+
+vi.mock('@/lib/cache/epoch', () => ({
+  cacheEpochSource: {
+    current: (...args: unknown[]) => mockEpochCurrent(...args),
+    bump: vi.fn(),
   },
 }));
 
@@ -59,6 +67,7 @@ describe('keywordGraph', () => {
   beforeEach(() => {
     clearKeywordGraphCache();
     listLinks.mockReset();
+    mockEpochCurrent.mockReset().mockResolvedValue(null);
   });
 
   afterEach(() => {
@@ -80,6 +89,19 @@ describe('keywordGraph', () => {
   });
 
   describe('loadKeywordGraph', () => {
+    it('should rebuild when the shared cache epoch moves', async () => {
+      listLinks.mockResolvedValue([RULES]);
+      mockEpochCurrent.mockResolvedValue('e1');
+
+      await loadKeywordGraph('en');
+      await loadKeywordGraph('en');
+      expect(listLinks).toHaveBeenCalledTimes(1);
+
+      mockEpochCurrent.mockResolvedValue('e2');
+      await loadKeywordGraph('en');
+      expect(listLinks).toHaveBeenCalledTimes(2);
+    });
+
     it('should index producers, consumers and both route directions', async () => {
       listLinks.mockResolvedValue([RULES, SPELL_A, SPELL_B]);
 

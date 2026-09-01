@@ -11,6 +11,8 @@
  * @since 1.0.0
  */
 
+import 'server-only';
+
 import {
     FeatEntity,
     FeatFeatureEntity,

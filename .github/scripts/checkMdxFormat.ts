@@ -13,6 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
+import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
 import type {
   CheckFailure,
   CheckOptions,
@@ -308,33 +309,16 @@ function getIgnoredRules(content: string): Set<string> {
 }
 
 /**
- * Recursively find all MDX files under a directory.
+ * Recursively find all MDX files under a directory, skipping hidden folders.
  *
  * @param dir Directory to scan
- * @param results Accumulator
  * @returns Absolute file paths
  */
-async function findMdxFiles(
-  dir: string,
-  results: string[] = [],
-): Promise<string[]> {
-  let entries;
-  try {
-    entries = await fs.readdir(dir, { withFileTypes: true });
-  } catch {
-    return results;
-  }
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory() && !entry.name.startsWith('.')) {
-      await findMdxFiles(full, results);
-    } else if (entry.name.endsWith('.mdx')) {
-      results.push(full);
-    }
-  }
-  return results;
+async function findMdxFiles(dir: string): Promise<string[]> {
+  const files = await getMatchingFiles(dir, /\.mdx$/, true);
+  const hiddenSegment = /(^|[\\/])\.[^\\/]*[\\/]/;
+  return files.filter((file) => !hiddenSegment.test(file));
 }
-
 /**
  * Check all applicable rules against a single MDX file.
  *

@@ -10,58 +10,17 @@
  * @since 8.0.0
  */
 
-import {
-  bloodlineRepository,
-  featRepository,
-  heirloomRepository,
-  monsterRepository,
-  ruleRepository,
-  specializationRepository,
-  spellRepository,
-  trinketRepository,
-  vocationRepository,
-  worldRepository,
-} from '@/lib/db/content/repositories';
-import type { BaseMetadata } from '@/lib/db/content/schemas/baseMetadata';
 import { isSupportedLocale } from '@/lib/constants/locales';
+import { REPOSITORIES_BY_TYPE } from '@/lib/db/content/repositories/byContentType';
 import {
-  CONTENT_SUBDIR,
   localizeLink,
+  SEARCH_CONTENT_TYPES,
   type SearchContentType,
 } from '@/modules/search/domain';
 import { NextResponse } from 'next/server';
 
-/**
- * The card fields discovery reads. `image` is optional across the schemas and
- * absent from the shared base, so it is named here rather than assumed.
- *
- * @typedef {object} DiscoverableRecord
- */
-type DiscoverableRecord = BaseMetadata & { image?: string };
-
-/**
- * Content type mapped to the repository that serves it. Reading through the
- * ports keeps discovery on whichever backend the deployment runs, rather than
- * assuming the sidecar mirror is on disk.
- */
-const REPOSITORIES: Record<
-  SearchContentType,
-  { list(locale: string): Promise<DiscoverableRecord[]> }
-> = {
-  bloodlines: bloodlineRepository,
-  feats: featRepository,
-  heirlooms: heirloomRepository,
-  monsters: monsterRepository,
-  rules: ruleRepository,
-  specializations: specializationRepository,
-  spells: spellRepository,
-  trinkets: trinketRepository,
-  vocations: vocationRepository,
-  world: worldRepository,
-};
-
 /** All valid content type keys. */
-const VALID_TYPES = Object.keys(CONTENT_SUBDIR);
+const VALID_TYPES: readonly string[] = SEARCH_CONTENT_TYPES;
 
 /** Simple FNV-1a-like hash for deterministic daily seed. */
 function dailySeed(dateIso: string, type: string, locale: string): number {
@@ -138,7 +97,7 @@ export async function GET(req: Request): Promise<NextResponse> {
     const result: Record<string, { featured: unknown; random: unknown }> = {};
 
     for (const type of types as SearchContentType[]) {
-      const records = await REPOSITORIES[type].list(locale);
+      const records = await REPOSITORIES_BY_TYPE[type].list(locale);
 
       if (records.length === 0) {
         result[type] = { featured: null, random: null };

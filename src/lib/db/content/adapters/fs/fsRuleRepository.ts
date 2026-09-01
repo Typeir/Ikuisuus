@@ -9,6 +9,8 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
 import type { RuleRepository } from '../../repositories/ruleRepository';
 import type { RuleMetadata } from '../../schemas/ruleMetadata';
 import { FsMetadataRepository } from './FsMetadataRepository';

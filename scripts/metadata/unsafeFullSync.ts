@@ -11,6 +11,7 @@
 
 import { isContentType } from '@/lib/metadata/contentTypes';
 import { syncMetadata } from '@/lib/metadata/syncService';
+import { guardDeployWrites } from '../db/pg/deployGuard';
 
 /**
  * Parsed command line arguments.
@@ -91,6 +92,8 @@ async function main(): Promise<void> {
     );
   }
 }
+
+guardDeployWrites('full metadata sync');
 
 main().catch((error: unknown) => {
   process.stderr.write(

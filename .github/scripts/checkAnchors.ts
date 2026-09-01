@@ -11,6 +11,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
 import type {
   CheckFailure,
   CheckOptions,
@@ -37,29 +38,6 @@ const KINDS: Array<{ dir: string[]; suffix: RegExp; fields: string[] }> = [
   },
   { dir: ['character-creation', 'feats'], suffix: /\.mdx$/, fields: ['features'] },
 ];
-
-/**
- * Walks a directory for files matching a suffix.
- *
- * @param {string} dir - Directory to walk
- * @param {RegExp} suffix - File name test
- * @returns {Promise<string[]>} Absolute file paths
- */
-async function walk(dir: string, suffix: RegExp): Promise<string[]> {
-  const out: string[] = [];
-  let entries: import('node:fs').Dirent[];
-  try {
-    entries = await fs.readdir(dir, { withFileTypes: true });
-  } catch {
-    return out;
-  }
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...(await walk(full, suffix)));
-    else if (suffix.test(entry.name)) out.push(full);
-  }
-  return out;
-}
 
 /**
  * Sidecar path of a content file.
@@ -161,7 +139,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
 
   for (const kind of KINDS) {
     const dir = path.join(contentRoot, ...kind.dir);
-    for (const file of await walk(dir, kind.suffix)) {
+    for (const file of await getMatchingFiles(dir, kind.suffix, true)) {
       let sidecar: unknown;
       try {
         sidecar = JSON.parse(await fs.readFile(sidecarOf(file), 'utf8'));

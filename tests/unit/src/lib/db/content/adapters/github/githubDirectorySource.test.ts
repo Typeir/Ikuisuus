@@ -123,4 +123,96 @@ describe('githubDirectorySource', () => {
     expect(names).toContain('spells');
     expect(names).not.toContain('es/monsters');
   });
+
+  it('tags the tree fetch so revalidation can bust it', async () => {
+    process.env.CONTENT_REPO_OWNER = 'test-owner';
+    process.env.CONTENT_REPO_NAME = 'test-repo';
+    process.env.GITHUB_PAT = 'ghp_test_token';
+
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ tree: [] }),
+    });
+
+    const { githubDirectorySource } =
+      await import('@/lib/db/content/adapters/github/githubDirectorySource');
+    await githubDirectorySource.listEntries('en', '');
+
+    expect(mockFetch.mock.calls[0][1]).toMatchObject({
+      next: { revalidate: 300, tags: ['content-tree'] },
+    });
+  });
+
+  it('retries after a rejected fetch instead of caching the failure', async () => {
+    process.env.CONTENT_REPO_OWNER = 'test-owner';
+    process.env.CONTENT_REPO_NAME = 'test-repo';
+    process.env.GITHUB_PAT = 'ghp_test_token';
+
+    mockFetch
+      .mockRejectedValueOnce(new Error('network down'))
+      .mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ tree: [{ path: 'en/spells', type: 'tree' }] }),
+      });
+
+    const { githubDirectorySource } =
+      await import('@/lib/db/content/adapters/github/githubDirectorySource');
+
+    await expect(githubDirectorySource.listEntries('en', '')).rejects.toThrow(
+      'network down',
+    );
+
+    const entries = await githubDirectorySource.listEntries('en', '');
+    expect(entries.map((e) => e.name)).toContain('spells');
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('retries after an API error instead of caching the empty tree', async () => {
+    process.env.CONTENT_REPO_OWNER = 'test-owner';
+    process.env.CONTENT_REPO_NAME = 'test-repo';
+    process.env.GITHUB_PAT = 'ghp_test_token';
+
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        text: () => Promise.resolve('rate limited'),
+      })
+      .mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ tree: [{ path: 'en/spells', type: 'tree' }] }),
+      });
+
+    const { githubDirectorySource } =
+      await import('@/lib/db/content/adapters/github/githubDirectorySource');
+
+    expect(await githubDirectorySource.listEntries('en', '')).toEqual([]);
+
+    const entries = await githubDirectorySource.listEntries('en', '');
+    expect(entries.map((e) => e.name)).toContain('spells');
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('re-reads the tree after clearCache', async () => {
+    process.env.CONTENT_REPO_OWNER = 'test-owner';
+    process.env.CONTENT_REPO_NAME = 'test-repo';
+    process.env.GITHUB_PAT = 'ghp_test_token';
+
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ tree: [] }),
+    });
+
+    const { githubDirectorySource } =
+      await import('@/lib/db/content/adapters/github/githubDirectorySource');
+    const { clearServerCaches } = await import('@/lib/cache/registry');
+
+    await githubDirectorySource.listEntries('en', '');
+    await githubDirectorySource.listEntries('en', 'monsters');
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+
+    clearServerCaches();
+    await githubDirectorySource.listEntries('en', '');
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
 });

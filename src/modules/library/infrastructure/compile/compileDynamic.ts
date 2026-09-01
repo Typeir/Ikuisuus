@@ -39,6 +39,7 @@ export async function compileDynamic(opts: CompileOptions) {
     remarkDiceRoll,
     remarkUnit,
     remarkKeyword,
+    remarkLibraryLink,
     remarkGfm,
     remarkMath,
     rehypeKatex,
@@ -61,6 +62,7 @@ export async function compileDynamic(opts: CompileOptions) {
         mdxOptions,
         {
           remarkPlugins: [
+            [remarkLibraryLink, { locale }],
             remarkGfm,
             remarkMath,
             remarkAspect,

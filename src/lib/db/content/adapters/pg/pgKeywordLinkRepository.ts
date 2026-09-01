@@ -13,6 +13,8 @@
  * @since 8.0.0
  */
 
+import 'server-only';
+
 import { BloodlineEntity } from '@/lib/db/orm/entities/BloodlineEntity';
 import { FeatEntity } from '@/lib/db/orm/entities/FeatEntity';
 import { HeirloomEntity } from '@/lib/db/orm/entities/HeirloomEntity';

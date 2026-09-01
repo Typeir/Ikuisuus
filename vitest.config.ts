@@ -335,6 +335,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      'server-only': path.resolve(__dirname, './tests/setup/serverOnlyStub.ts'),
       '@': path.resolve(__dirname, './src'),
       '@/lib': path.resolve(__dirname, './src/lib'),
       '@/app': path.resolve(__dirname, './src/app'),

@@ -7,7 +7,6 @@
  */
 
 export { fetchContent } from './fetchContent';
-export { fetchSource } from './fetchSource';
 export { default as findAllMdxFiles } from './findAllMdxFiles';
 export { resolveContentFilePath } from './resolveContentFilePath';
 

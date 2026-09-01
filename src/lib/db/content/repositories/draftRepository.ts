@@ -8,6 +8,8 @@
  * @since 6.0.0
  */
 
+import 'server-only';
+
 import { pgDraftRepository } from '../adapters/pg/pgDraftRepository';
 import type {
   DraftConcurrencyExpectation,

@@ -98,7 +98,6 @@ export const TEXT = {
  * Slug and path generation patterns.
  *
  * @property {RegExp} nonAlpha - Non-alphanumeric characters → hyphens
- * @property {RegExp} edgeHyphens - Leading/trailing hyphens
  * @property {RegExp} mdxExtension - ".mdx" file extension
  * @property {RegExp} contentTypeSuffix - Content type suffixes, re-exported from `REGEX_CONTENT_SUFFIX`
  * @property {RegExp} nonAlphaKeepSpaces - Non-alpha preserving spaces and hyphens
@@ -113,7 +112,6 @@ export const TEXT = {
  */
 export const SLUG = {
   nonAlpha: /[^a-z0-9]+/g,
-  edgeHyphens: /^-+|-+$/g,
   mdxExtension: /\.mdx$/i,
   contentTypeSuffix: REGEX_CONTENT_SUFFIX,
   nonAlphaKeepSpaces: /[^a-z0-9\s-]/g,
@@ -148,17 +146,6 @@ export const LIST = {
   orPrefix: /^or\s+/i,
   andOrSplit: /,\s*|\s+and\s+/,
   commaWhitespace: /\s*,\s*/,
-} as const;
-
-/**
- * Dice expression patterns for `[% ... %]` wrapped roll syntax.
- *
- * @property {RegExp} wrapped - Match `[% ... %]` delimited dice expressions
- * @property {RegExp} innerDice - Extract dice notation from within a wrapped expression
- */
-export const DICE = {
-  wrapped: /\[%\s*(.*?)\s*%\]/g,
-  innerDice: /(\d+d\d+)/,
 } as const;
 
 /**

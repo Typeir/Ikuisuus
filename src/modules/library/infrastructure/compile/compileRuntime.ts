@@ -12,7 +12,9 @@
 import remarkAspect from '@/lib/md/remarkAspect';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkKeyword from '@/lib/md/remarkKeyword';
+import remarkLibraryLink from '@/lib/md/remarkLibraryLink';
 import remarkUnit from '@/lib/md/remarkUnit';
+import { DEFAULT_KEYWORD_LOCALE } from '@/lib/constants/locales';
 import { compile, compileSync, run, runSync } from '@mdx-js/mdx';
 import { createElement, type ReactElement } from 'react';
 import * as runtime from 'react/jsx-runtime';
@@ -58,12 +60,28 @@ function hashSource(source: string): string {
   return `h_${Math.abs(hash).toString(36)}`;
 }
 
-/** @internal Shared plugin options for all compile calls */
-const PLUGIN_OPTIONS = {
-  remarkPlugins: [remarkGfm, remarkMath, remarkAspect, remarkDiceRoll, remarkUnit, remarkKeyword],
-  rehypePlugins: [rehypeKatex],
-  outputFormat: 'function-body' as const,
-};
+/**
+ * Plugin options for a compile, bound to the locale whose routes shorthand
+ * links expand into.
+ *
+ * @param {string} locale - Locale of the document being compiled
+ * @returns {object} Options for `compile` and `compileSync`
+ */
+function pluginOptions(locale: string) {
+  return {
+    remarkPlugins: [
+      [remarkLibraryLink, { locale }],
+      remarkGfm,
+      remarkMath,
+      remarkAspect,
+      remarkDiceRoll,
+      remarkUnit,
+      remarkKeyword,
+    ],
+    rehypePlugins: [rehypeKatex],
+    outputFormat: 'function-body' as const,
+  };
+}
 
 /**
  * Compile MDX client-side async using @mdx-js/mdx compile + run.
@@ -77,13 +95,14 @@ export async function compileRuntime(
   opts: CompileOptions & { skipCache?: boolean },
 ): Promise<MdxCompileResult> {
   const { source, components, skipCache = false } = opts;
-  const sourceHash = hashSource(source);
+  const locale = opts.locale ?? DEFAULT_KEYWORD_LOCALE;
+  const sourceHash = `${locale}:${hashSource(source)}`;
 
   let MDXContent = skipCache ? undefined : asyncCache.get(sourceHash);
 
   if (!MDXContent) {
     const compiled = await compile(source, {
-      ...(PLUGIN_OPTIONS as any),
+      ...(pluginOptions(locale) as any),
     });
 
     const mod = await run(compiled, {
@@ -115,13 +134,14 @@ export function compileRuntimeSync(
   opts: CompileOptions & { skipCache?: boolean },
 ): MdxCompileResult {
   const { source, components, skipCache = false } = opts;
-  const sourceHash = hashSource(source);
+  const locale = opts.locale ?? DEFAULT_KEYWORD_LOCALE;
+  const sourceHash = `${locale}:${hashSource(source)}`;
 
   let MDXContent = skipCache ? undefined : syncCache.get(sourceHash);
 
   if (!MDXContent) {
     const compiled = compileSync(source, {
-      ...(PLUGIN_OPTIONS as any),
+      ...(pluginOptions(locale) as any),
     });
 
     MDXContent = runSync(compiled, {

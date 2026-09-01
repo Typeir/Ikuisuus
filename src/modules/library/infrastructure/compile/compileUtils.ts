@@ -65,6 +65,7 @@ export async function importAllAsync() {
     remarkDiceRollMod,
     remarkUnitMod,
     remarkKeywordMod,
+    remarkLibraryLinkMod,
     remarkGfmMod,
     remarkMathMod,
     rehypeKatexMod,
@@ -76,6 +77,7 @@ export async function importAllAsync() {
     import('@/lib/md/remarkDiceRoll'),
     import('@/lib/md/remarkUnit'),
     import('@/lib/md/remarkKeyword'),
+    import('@/lib/md/remarkLibraryLink'),
     import('remark-gfm'),
     import('remark-math'),
     import('rehype-katex'),
@@ -89,6 +91,9 @@ export async function importAllAsync() {
     remarkDiceRoll: (remarkDiceRollMod as any).default ?? remarkDiceRollMod,
     remarkUnit: (remarkUnitMod as any).default ?? remarkUnitMod,
     remarkKeyword: (remarkKeywordMod as any).default ?? remarkKeywordMod,
+    remarkLibraryLink:
+      (remarkLibraryLinkMod as { default?: unknown }).default ??
+      remarkLibraryLinkMod,
     remarkGfm: (remarkGfmMod as any).default ?? remarkGfmMod,
     remarkMath: (remarkMathMod as any).default ?? remarkMathMod,
     rehypeKatex: (rehypeKatexMod as any).default ?? rehypeKatexMod,

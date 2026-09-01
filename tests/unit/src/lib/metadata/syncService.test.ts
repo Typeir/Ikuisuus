@@ -37,6 +37,10 @@ vi.mock('fs', () => {
   return { ...mocks, default: mocks };
 });
 
+vi.mock('@/lib/db/content/adapters/fs/readMetadataFiles', () => ({
+  readMetadataFiles: vi.fn().mockResolvedValue([]),
+}));
+
 let syncMetadata: typeof import('@/lib/metadata/syncService').syncMetadata;
 let getEM: ReturnType<typeof vi.fn>;
 let fsMock: {

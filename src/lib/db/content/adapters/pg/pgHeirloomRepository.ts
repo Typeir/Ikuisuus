@@ -10,6 +10,8 @@
  * @since 5.0.0
  */
 
+import 'server-only';
+
 import { HeirloomEntity } from '@/lib/db/orm/entities/HeirloomEntity';
 import { nonEmpty, orUndef } from '@/lib/db/orm/helpers';
 import type { HeirloomRepository } from '../../repositories/heirloomRepository';

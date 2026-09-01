@@ -9,6 +9,8 @@
  * @since 3.0.0
  */
 
+import 'server-only';
+
 import path from 'path';
 import type { TrinketRepository } from '../../repositories/trinketRepository';
 import type { TrinketMetadata } from '../../schemas/trinketMetadata';

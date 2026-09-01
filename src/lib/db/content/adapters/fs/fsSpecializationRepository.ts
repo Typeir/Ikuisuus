@@ -9,6 +9,8 @@
  * @since 7.0.0
  */
 
+import 'server-only';
+
 import { logger } from '@/lib/logging/logger';
 import path from 'path';
 import type { SpecializationRepository } from '../../repositories/specializationRepository';

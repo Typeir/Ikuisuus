@@ -10,6 +10,7 @@
  * @since 7.0.0
  */
 
+import { clearServerCaches } from '@/lib/cache/registry';
 import { getEM } from '@/lib/db/orm/orm';
 import { createLogger } from '@/lib/logging/logger';
 import { syncTable } from './genericSync';
@@ -80,17 +81,9 @@ export async function syncMetadata(
   }
 
   log.message('Metadata sync complete', { locale, results });
-  try {
-    const mod = await import('@/lib/db/content');
-    if (mod && typeof mod.clearCache === 'function') {
-      mod.clearCache();
-      log.message('Cleared file-tree cache after metadata sync');
-    }
-  } catch (err) {
-    log.warning('Failed to clear file-tree cache after metadata sync', {
-      error: err instanceof Error ? err.message : String(err),
-    });
-  }
+
+  /* The sync rewrote metadata, so every server cache built from it is stale. */
+  clearServerCaches();
 
   return results;
 }

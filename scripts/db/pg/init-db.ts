@@ -56,6 +56,7 @@ import {
    VocationSkillProficienciesEmbed,
    VocationSpellcastingEmbed,
 } from '../../../src/lib/db/orm/entities/index';
+import { guardDeployWrites } from './deployGuard';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '../../../');
@@ -207,6 +208,8 @@ async function main(): Promise<void> {
     await orm.close(true);
   }
 }
+
+guardDeployWrites('database initialisation');
 
 main().catch((err: unknown) => {
   const message = err instanceof Error ? err.message : String(err);
