@@ -3,7 +3,7 @@
  * @description Skeleton loading state specifically for MetadataTable components.
  * Simple div-based placeholders with shimmer bars — no real form elements.
  *
- * @module MetadataTableSkeleton
+ * @module lib/components/mdx/metadataTables/metadataTableSkeleton
  * @version 3.1.0
  * @author Typeir
  * @since 1.0.0

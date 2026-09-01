@@ -4,7 +4,7 @@
  * @fileoverview Renders combatant name, CR badge, awakening badges, and action controls.
  * Handles lock toggle, wiki link, and remove button.
  *
- * @module combatantNameSection
+ * @module modules/encounter-planner/presentation/combatantRow/combatantNameSection
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

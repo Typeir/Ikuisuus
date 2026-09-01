@@ -24,9 +24,10 @@ import { calculateHeights } from '@/modules/navigation-sidebar/infrastructure/tr
 import dynamic from 'next/dynamic';
 import { useParams, usePathname } from 'next/navigation';
 import type { JSX } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import styles from './sidebar.module.scss';
-import { stripContentSuffix } from '@/lib/enums/constants';
+import { stripContentSuffix } from '@/lib/constants/content';
+import { useMounted } from '@/lib/hooks/useMounted';
 
 const SidebarClient = dynamic(
   () => import('./SidebarClient').then((mod) => ({ default: mod.default })),
@@ -270,12 +271,8 @@ export function SidebarShell({
     () => (path: string) => expandedPaths.has(path),
     [expandedPaths],
   );
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const handleNavigate = onNavigate ?? closeSidebar;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     for (const path of expandedPaths) {

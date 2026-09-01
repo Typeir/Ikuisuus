@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for useSidebarMenuActions hook
- * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useSidebarMenuActions
+ * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useSidebarMenuActions.test
  */
 
 import { useSidebarMenuActions } from '@/modules/navigation-sidebar/application/hooks/useSidebarMenuActions';

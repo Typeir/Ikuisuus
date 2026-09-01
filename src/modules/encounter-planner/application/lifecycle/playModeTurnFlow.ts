@@ -2,7 +2,7 @@
  * @fileoverview Play Mode Turn Transition Logic
  * @description Pure helpers that compute next combat state and lifecycle events for end-turn transitions.
  *
- * @module playModeTurnFlow
+ * @module modules/encounter-planner/application/lifecycle/playModeTurnFlow
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

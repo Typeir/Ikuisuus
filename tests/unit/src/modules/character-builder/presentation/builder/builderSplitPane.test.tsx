@@ -4,7 +4,7 @@
  * pass-through on desktop, single-pane + summoned bottom sheet on phone
  * viewports, controlled sheet state, and the mobilePrimary inversion.
  *
- * @module tests/unit/modules/character-builder/presentation/builder/builderSplitPane
+ * @module tests/unit/src/modules/character-builder/presentation/builder/builderSplitPane.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

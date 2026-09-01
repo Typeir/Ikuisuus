@@ -21,8 +21,10 @@
 'use client';
 
 import draggableStyles from '@/lib/components/ui/draggable/draggable.module.scss';
+import { cn } from '@/lib/utils/classNameMerge';
 import { useDrag } from '@/lib/components/ui/draggable/useDrag';
-import { useEscapeDismiss } from '@/lib/components/ui/tooltip/useEscapeDismiss';
+import { useEscapeDismiss } from '@/lib/hooks/useEscapeDismiss';
+import { useMounted } from '@/lib/hooks/useMounted';
 import {
   useTooltipAnchor,
   type TooltipPlacement,
@@ -33,7 +35,6 @@ import {
   cloneElement,
   isValidElement,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -109,7 +110,7 @@ export function DetachableTooltip({
   id,
   closeLabel,
 }: DetachableTooltipProps): React.ReactElement {
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useMounted();
   const [pinned, setPinned] = useState(false);
   const [moved, setMoved] = useState(false);
   const [frame, setFrame] = useState({ x: 0, y: 0 });
@@ -138,10 +139,6 @@ export function DetachableTooltip({
     });
 
   const cardId = id || `card-${anchorId}`;
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   /** Closes the card and forgets both that it was pinned and that it was moved. */
   const close = useCallback(() => {
@@ -252,7 +249,7 @@ export function DetachableTooltip({
     'aria-describedby': showPortal ? cardId : undefined,
   });
 
-  const cardClass = [
+  const cardClass = cn(
     styles.panel,
     moved ? styles.moved : styles.anchored,
     moved ? '' : styles[actualPlacement],
@@ -260,9 +257,7 @@ export function DetachableTooltip({
     isDragging ? draggableStyles.isDragging : '',
     className,
     panelClassName,
-  ]
-    .filter(Boolean)
-    .join(' ');
+  );
 
   const cardStyle: CSSProperties = moved
     ? {

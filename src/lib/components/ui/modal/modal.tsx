@@ -3,7 +3,7 @@
  * @description Renders a modal to document.body via portal with focus management,
  * keyboard navigation, and backdrop.
  *
- * @module ui/modal/modal
+ * @module lib/components/ui/modal/modal
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

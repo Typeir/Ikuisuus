@@ -4,7 +4,7 @@
  * @fileoverview Tests for the Trinket MikroORM entity and
  * the TrinketSavingThrowEmbed value object.
  *
- * @module tests/unit/lib/db/orm/entities/TrinketEntity
+ * @module tests/unit/src/lib/db/orm/entities/TrinketEntity.test
  */
 
 import {

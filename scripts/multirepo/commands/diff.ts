@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik diff` — Show changes in both repos.
- * @module multirepo/commands/diff
+ * @module scripts/multirepo/commands/diff
  */
 
 import type { CommandMeta } from '../../utils/cli-loader';

@@ -4,7 +4,7 @@
  * @fileoverview Shared helpers for reading positional values and boolean flags
  * from process argument arrays.
  *
- * @module core/cliArgs
+ * @module scripts/core/cliArgs
  * @version 1.0.0
  * @since 1.0.0
  */

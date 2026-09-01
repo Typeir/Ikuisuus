@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for fs-backed banned IP persistence.
  *
- * @module tests/unit/lib/security/adapters/fsBannedIpsAdapter
+ * @module tests/unit/src/lib/security/adapters/fsBannedIpsAdapter.test
  */
 
 import fs from 'fs';

@@ -3,7 +3,7 @@
  * @description Tests for the remark plugin that transforms `[= ... =]`
  * unit expressions in text nodes into `<Unit>` MDX JSX elements.
  *
- * @module tests/unit/lib/md/remarkUnit
+ * @module tests/unit/src/lib/md/remarkUnit.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-03

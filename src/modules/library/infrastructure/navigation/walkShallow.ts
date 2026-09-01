@@ -13,12 +13,12 @@ import {
     IGNORED_FOLDERS,
     REGEX_CONTENT_SUFFIX,
     REGEX_EXTENSION,
-} from '@/lib/enums/constants';
+} from '@/lib/constants/content';
 import { deduplicateFiles } from '@/lib/utils/deduplicateFiles';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import { toTitleCase } from '@/lib/utils/toTitleCase';
 import type { WalkNode } from './types';
-import { isMainIndexFile } from '@/lib/enums/constants';
+import { isMainIndexFile } from '@/lib/constants/content';
 
 /** Default recursion depth for shallow walk operations. */
 export const SHALLOW_WALK_DEPTH = 2;

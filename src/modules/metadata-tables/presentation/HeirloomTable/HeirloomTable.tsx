@@ -31,7 +31,7 @@ import { fetchHeirloomMetadata } from '@/modules/metadata-tables/infrastructure/
 import { buildHeirloomColumns } from '@/modules/metadata-tables/presentation/HeirloomTable/HeirloomTable.columns';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/enums/constants';
+import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/constants/content';
 
 /**
  * Heirloom metadata structure from API

@@ -6,7 +6,7 @@
  * `fileTreeService` (for `repositoryShallowWalk`) to verify adapter
  * wiring without filesystem access.
  *
- * @module tests/unit/lib/utils/repositoryWalk
+ * @module tests/unit/src/modules/library/infrastructure/navigation/repositoryWalk.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

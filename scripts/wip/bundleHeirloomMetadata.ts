@@ -4,7 +4,7 @@
  * @fileoverview Aggregates individual heirloom metadata JSON files into a single
  * bundle for client-side import.
  *
- * @module bundleHeirloomMetadata
+ * @module scripts/wip/bundleHeirloomMetadata
  * @version 1.0.0
  * @since 1.0.0
  *

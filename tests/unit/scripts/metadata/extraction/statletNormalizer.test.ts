@@ -4,7 +4,7 @@
  * paragraphs, headed colon-labels) all normalize to `## Section` +
  * `- **Name.** body` without changing the line count.
  *
- * @module tests/unit/scripts/metadata/extraction/statletNormalizer
+ * @module tests/unit/scripts/metadata/extraction/statletNormalizer.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

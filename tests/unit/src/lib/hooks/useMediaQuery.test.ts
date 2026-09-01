@@ -4,7 +4,7 @@
  * which matches `(max-width: Npx)` against window.innerWidth and re-evaluates
  * on window resize.
  *
- * @module tests/unit/lib/hooks/useMediaQuery
+ * @module tests/unit/src/lib/hooks/useMediaQuery.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

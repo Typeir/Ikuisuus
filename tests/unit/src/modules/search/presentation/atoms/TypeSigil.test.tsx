@@ -1,6 +1,6 @@
 /**
  * @fileoverview TypeSigil Atom Unit Tests
- * @module tests/unit/src/modules/search/presentation/atoms/TypeSigil
+ * @module tests/unit/src/modules/search/presentation/atoms/TypeSigil.test
  */
 
 import { SEARCH_CONTENT_TYPES } from '@/modules/search/domain';

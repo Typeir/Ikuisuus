@@ -4,7 +4,7 @@
  * @fileoverview Tests for the MikroORM-backed PostgreSQL user adapter.
  * `@/lib/db/orm/orm` (getEM) is mocked.
  *
- * @module tests/unit/lib/db/auth/postgresUserAdapter
+ * @module tests/unit/src/lib/db/auth/postgresUserAdapter.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

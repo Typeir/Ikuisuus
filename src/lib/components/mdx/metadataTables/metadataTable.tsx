@@ -2,7 +2,7 @@
  * @fileoverview Filterable, sortable, paginated table component for metadata display.
  * @description Accepts any JSON structure with configurable column definitions and value extraction.
  *
- * @module metadataTable
+ * @module lib/components/mdx/metadataTables/metadataTable
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -27,7 +27,7 @@
 
 'use client';
 
-import { LIBRARY_SEGMENT } from '@/lib/enums/constants';
+import { LIBRARY_SEGMENT } from '@/lib/constants/content';
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';

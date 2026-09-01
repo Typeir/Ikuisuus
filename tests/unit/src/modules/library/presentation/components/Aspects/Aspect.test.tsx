@@ -2,7 +2,7 @@
  * @fileoverview Inline Aspect Tests
  * @description Verbose default, display overrides, malformed fallback.
  *
- * @module tests/unit/src/modules/library/presentation/components/Aspects/Aspect
+ * @module tests/unit/src/modules/library/presentation/components/Aspects/Aspect.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

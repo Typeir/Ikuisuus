@@ -3,7 +3,7 @@
  *
  * @fileoverview Barrel export for the combatant row component and all sub-components.
  *
- * @module combatantRow
+ * @module modules/encounter-planner/presentation/combatantRow/index
  * @version 1.0.0
  * @author Typeir
  *

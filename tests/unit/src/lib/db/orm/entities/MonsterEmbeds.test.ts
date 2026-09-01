@@ -4,7 +4,7 @@
  * @fileoverview Tests for the value objects embedded into the monsters table,
  * and for their continued re-export from MonsterEntity.
  *
- * @module tests/unit/lib/db/orm/entities/MonsterEmbeds
+ * @module tests/unit/src/lib/db/orm/entities/MonsterEmbeds.test
  */
 
 import {

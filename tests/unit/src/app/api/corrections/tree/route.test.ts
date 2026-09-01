@@ -3,7 +3,7 @@
  * @description Validates the GET handler that returns the content directory tree
  * for a given locale.
  *
- * @module tests/unit/src/app/api/corrections/tree/route
+ * @module tests/unit/src/app/api/corrections/tree/route.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

@@ -8,25 +8,9 @@
  * @since 2.0.0
  */
 
+import { FetchError, fetcher } from '@/lib/fetch/fetcher';
 import { logger } from '@/lib/logging/logger';
-
-/**
- * Minimal monster index entry for combobox display.
- *
- * @interface MonsterIndexEntry
- * @property {string} slug - Unique identifier/URL slug for the monster
- * @property {string} title - Display name of the monster
- * @property {string} cr - Challenge rating (e.g., "23", "1/4")
- * @property {string} size - Size category (e.g., "medium", "gargantuan")
- * @property {string} creatureType - Type (e.g., "aberration", "dragon")
- */
-export interface MonsterIndexEntry {
-  slug: string;
-  title: string;
-  cr: string;
-  size: string;
-  creatureType: string;
-}
+import type { MonsterIndexEntry } from '@/lib/db/content/schemas/monsterMetadata';
 
 /**
  * Full monster data returned from individual monster API.
@@ -128,15 +112,9 @@ export async function getMonsterIndex(
 /** Internal fetch for monster index. */
 async function fetchMonsterIndex(locale: string): Promise<MonsterIndexEntry[]> {
   try {
-    const response = await fetch(`/api/monsters/index?locale=${locale}`);
-    if (!response.ok) {
-      logger.error('Failed to fetch monster index from API', {
-        status: response.status,
-        locale,
-      });
-      return [];
-    }
-    const data = await response.json();
+    const data = await fetcher<MonsterIndexEntry[]>(
+      `/api/monsters/index?locale=${locale}`,
+    );
     return Array.isArray(data) ? data : [];
   } catch (error) {
     logger.error('Error fetching monster index', {
@@ -191,20 +169,11 @@ async function fetchMonsterBySlug(
   locale: string,
 ): Promise<MonsterData | null> {
   try {
-    const response = await fetch(`/api/monsters/${slug}?locale=${locale}`);
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
-      logger.error('Failed to fetch monster', {
-        status: response.status,
-        slug,
-        locale,
-      });
-      return null;
-    }
-    return await response.json();
+    return await fetcher<MonsterData>(`/api/monsters/${slug}?locale=${locale}`);
   } catch (error) {
+    /* A missing monster is an answer, not a fault worth logging. */
+    if (error instanceof FetchError && error.status === 404) return null;
+
     logger.error('Error fetching monster', {
       error: error instanceof Error ? error.message : String(error),
       slug,

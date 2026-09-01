@@ -5,8 +5,15 @@
  */
 
 import { useMonsterIndex } from '@/modules/encounter-planner/presentation/importer/useMonsterIndex';
+import { fetcher } from '@/lib/fetch/fetcher';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('@/lib/fetch/fetcher', () => ({
+  fetcher: vi.fn(),
+}));
+
+const mockedFetcher = vi.mocked(fetcher);
 
 /** Sample monster data returned by the API */
 const MOCK_MONSTERS = [
@@ -28,11 +35,11 @@ const MOCK_MONSTERS = [
 
 describe('useMonsterIndex', () => {
   beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn());
+    mockedFetcher.mockReset();
   });
 
   afterEach(() => {
-    vi.unstubAllGlobals();
+    vi.clearAllMocks();
   });
 
   it('should start with empty index and not loading', () => {
@@ -43,11 +50,7 @@ describe('useMonsterIndex', () => {
   });
 
   it('should fetch monsters on loadIndex and map entries with id field', async () => {
-    const mockResponse = {
-      ok: true,
-      json: vi.fn().mockResolvedValue(MOCK_MONSTERS),
-    };
-    vi.mocked(fetch).mockResolvedValue(mockResponse as unknown as Response);
+    mockedFetcher.mockResolvedValue(MOCK_MONSTERS);
 
     const { result } = renderHook(() => useMonsterIndex('en'));
 
@@ -66,11 +69,7 @@ describe('useMonsterIndex', () => {
   });
 
   it('should pass locale to the fetch URL', async () => {
-    const mockResponse = {
-      ok: true,
-      json: vi.fn().mockResolvedValue([]),
-    };
-    vi.mocked(fetch).mockResolvedValue(mockResponse as unknown as Response);
+    mockedFetcher.mockResolvedValue([]);
 
     const { result } = renderHook(() => useMonsterIndex('es'));
 
@@ -78,11 +77,11 @@ describe('useMonsterIndex', () => {
       await result.current.loadIndex();
     });
 
-    expect(fetch).toHaveBeenCalledWith('/api/monsters/index?locale=es');
+    expect(mockedFetcher).toHaveBeenCalledWith('/api/monsters/index?locale=es');
   });
 
   it('should handle fetch errors gracefully', async () => {
-    vi.mocked(fetch).mockRejectedValue(new Error('Network error'));
+    mockedFetcher.mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() => useMonsterIndex('en'));
 

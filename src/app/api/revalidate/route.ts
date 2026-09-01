@@ -15,7 +15,7 @@ import {
   MAIN_INDEX_SLUG,
   REGEX_CONTENT_SUFFIX,
   stripContentSuffix,
-} from '@/lib/enums/constants';
+} from '@/lib/constants/content';
 import { logger } from '@/lib/logging/logger';
 import { contentTypeFromFrontmatter, type ContentType } from '@/lib/metadata/contentTypes';
 import {
@@ -29,7 +29,7 @@ import {
 import crypto from 'crypto';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
-import { LIBRARY_SEGMENT } from '@/lib/enums/constants';
+import { LIBRARY_SEGMENT } from '@/lib/constants/content';
 
 const log = logger.child({ module: 'API:Revalidate' });
 

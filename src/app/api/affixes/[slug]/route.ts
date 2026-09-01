@@ -2,7 +2,7 @@
  * @fileoverview Single Affix API Route
  * @description Returns metadata for a single heroic awakening affix by slug.
  *
- * @module /api/affixes/[slug]
+ * @module app/api/affixes/[slug]/route
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

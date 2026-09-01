@@ -1,7 +1,7 @@
 /**
  * @fileoverview CarryingCapacityCalculator Unit Tests
  *
- * @module tests/unit/lib/components/characterSheet/carryingCapacityCalculator
+ * @module tests/unit/src/modules/character-builder/presentation/CarryingCapacity/carryingCapacityCalculator.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

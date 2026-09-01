@@ -3,7 +3,7 @@
  * @description Manages encounter-level state and handlers. IO is delegated to useEncounterIO,
  * creature handlers to useCreatureHandlers.
  *
- * @module encounter-planner/presentation/EncounterPlanner/useEncounterPlannerState
+ * @module modules/encounter-planner/presentation/EncounterPlanner/useEncounterPlannerState
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

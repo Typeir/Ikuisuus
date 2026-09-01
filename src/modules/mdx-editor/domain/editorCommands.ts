@@ -1,7 +1,7 @@
 /**
  * @fileoverview Text mutation utilities via execCommand. Preserves native undo/redo.
  *
- * @module lib/components/mdxEditor/editorCommands
+ * @module modules/mdx-editor/domain/editorCommands
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

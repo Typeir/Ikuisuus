@@ -4,7 +4,7 @@
  * @fileoverview Validates that adapter implementations conform to the
  * BannedIpsAdapter contract by verifying the expected method signatures exist.
  *
- * @module tests/unit/lib/security/bannedIpsAdapter
+ * @module tests/unit/src/lib/security/bannedIpsAdapter.test
  */
 
 import type { BannedIpsAdapter } from '@/lib/security/bannedIpsAdapter';

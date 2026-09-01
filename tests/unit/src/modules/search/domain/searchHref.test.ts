@@ -2,7 +2,7 @@
  * @fileoverview searchHref Tests
  * @description URL shape for query + aspect filters.
  *
- * @module tests/unit/src/modules/search/domain/searchHref
+ * @module tests/unit/src/modules/search/domain/searchHref.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

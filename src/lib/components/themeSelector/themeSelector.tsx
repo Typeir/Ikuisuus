@@ -9,7 +9,7 @@
  * @since 1.0.0
  *
  * @requires react
- * @requires @/lib/enums/themes
+ * @requires @/lib/constants/themes
  * @requires @/lib/utils/rangeWrap
  * @requires ./themeSelector.module.scss
  *
@@ -28,7 +28,7 @@
 
 import type { JSX } from 'react';
 import { useState } from 'react';
-import { Theme } from '../../enums/themes';
+import { Theme } from '../../constants/themes';
 import { rangeWrap } from '../../utils/rangeWrap';
 import styles from './themeSelector.module.scss';
 

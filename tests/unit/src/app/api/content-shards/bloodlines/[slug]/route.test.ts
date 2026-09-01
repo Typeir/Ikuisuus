@@ -2,7 +2,7 @@
  * @fileoverview Bloodline Content Shards API Route Unit Tests
  * @description Tests for GET /api/content-shards/bloodlines/[slug].
  *
- * @module tests/unit/app/api/content-shards/bloodlines/route
+ * @module tests/unit/src/app/api/content-shards/bloodlines/[slug]/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -30,6 +30,10 @@ vi.mock('@/lib/logging/logger', () => ({
   logger: {
     child: () => ({ error: vi.fn(), debug: vi.fn() }),
   },
+}));
+
+vi.mock('@/app/api/content-shards/keywordShards', () => ({
+  keywordShardsFor: vi.fn().mockResolvedValue([]),
 }));
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -193,20 +197,13 @@ describe('GET /api/content-shards/bloodlines/[slug]', () => {
     );
   });
 
-  it('passes locale param to the repository', async () => {
-    vi.mocked(bloodlineRepository.getBySlug).mockResolvedValue(
-      MOCK_META as never,
+  it('rejects an unsupported locale before the repository', async () => {
+    vi.mocked(bloodlineRepository.getBySlug).mockClear();
+    const res = await BloodlineShardsRoute.GET(
+      ...makeArgs('empyrean', { locale: 'es' }),
     );
-    mockGetFile.mockResolvedValue({
-      content: SAMPLE_MDX,
-      resolvedPath: 'empyrean.bloodline.mdx',
-    });
-
-    await BloodlineShardsRoute.GET(...makeArgs('empyrean', { locale: 'es' }));
-    expect(bloodlineRepository.getBySlug).toHaveBeenCalledWith(
-      'es',
-      'empyrean',
-    );
+    expect(res.status).toBe(400);
+    expect(bloodlineRepository.getBySlug).not.toHaveBeenCalled();
   });
 
   it('returns 500 when the repository throws', async () => {

@@ -4,7 +4,7 @@
  * @fileoverview Mocks the trinket repository module and verifies exports,
  * locale handling, and error resilience.
  *
- * @module tests/unit/app/api/trinkets/route
+ * @module tests/unit/src/app/api/trinkets/route.test
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

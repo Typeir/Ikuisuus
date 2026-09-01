@@ -3,7 +3,7 @@
  * @description Smoke tests for the /{locale}/search page. `useSearch` and
  * `next/navigation` are mocked so no Pagefind bundle or router is needed.
  *
- * @module tests/unit/src/app/[locale]/search/page
+ * @module tests/unit/src/app/[locale]/search/page.test
  */
 
 import SearchPage from '@/app/[locale]/search/page';
@@ -29,7 +29,6 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/modules/search/application/useSearch', () => ({
   useSearch: () => searchState,
-  toSearchQuery: vi.fn(),
 }));
 
 describe('SearchPage', () => {

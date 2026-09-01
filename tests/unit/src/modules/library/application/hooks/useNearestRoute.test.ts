@@ -1,6 +1,6 @@
 /**
  * @fileoverview Gate-coverage unit test for useNearestRoute hook.
- * @module tests/unit/src/modules/library/application/hooks/useNearestRoute
+ * @module tests/unit/src/modules/library/application/hooks/useNearestRoute.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

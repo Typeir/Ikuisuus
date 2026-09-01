@@ -13,14 +13,15 @@ import {
   isIndexFile,
   REGEX_EXTENSION,
   stripContentSuffix,
-} from '@/lib/enums/constants';
+} from '@/lib/constants/content';
 import { resolveMetadataBase } from '@/lib/seo';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 import findAllMdxFiles from '@/modules/library/infrastructure/content/findAllMdxFiles';
 import type { MetadataRoute } from 'next';
 import path from 'path';
 
 /** Root path for English content files. */
-const CONTENT_ROOT = path.join(process.cwd(), 'src', 'content', 'en');
+const CONTENT_ROOT = getContentFolder('en');
 
 /**
  * Resolves a content file's slug path, pruning the extension and content-type

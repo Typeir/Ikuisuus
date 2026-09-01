@@ -5,7 +5,7 @@
  * strategy via storePersistentDataRef/fetchPersistentDataRef; scalar IDs use
  * storePersistentData/fetchPersistentData/removePersistentData.
  *
- * @module inProgressCombatPersistence
+ * @module modules/encounter-planner/infrastructure/persistence/combatRepository
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview SearchDropdown Unit Tests
- * @module tests/unit/src/modules/search/presentation/SearchBar/SearchDropdown
+ * @module tests/unit/src/modules/search/presentation/SearchBar/SearchDropdown.test
  */
 
 import type { SearchContentType, SearchResult } from '@/modules/search/domain';

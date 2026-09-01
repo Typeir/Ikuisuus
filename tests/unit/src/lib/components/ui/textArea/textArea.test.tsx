@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for TextArea component
  * @description Verifies rendering, onChange, disabled, readOnly, rows, and ariaLabel.
  *
- * @module tests/unit/lib/components/ui/textArea
+ * @module tests/unit/src/lib/components/ui/textArea/textArea.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Creature Handlers Hook
  * @description Provides creature-level CRUD callbacks for the EncounterPlanner.
  *
- * @module encounter-planner/presentation/EncounterPlanner/useCreatureHandlers
+ * @module modules/encounter-planner/presentation/EncounterPlanner/useCreatureHandlers
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

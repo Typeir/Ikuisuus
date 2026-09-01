@@ -4,7 +4,7 @@
  * character. Features with `level > characterLevel` are locked/dimmed. Shows a
  * "nothing selected" prompt when no selection exists.
  *
- * @module lib/components/characterSheet/vocationFeatureCard
+ * @module modules/character-builder/presentation/builder/vocationFeatureCard
  * @version 4.0.0
  * @author Typeir
  * @since 1.0.0

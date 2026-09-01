@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for domain/filenameDedup
- * @module tests/unit/src/modules/navigation-sidebar/domain/filenameDedup
+ * @module tests/unit/src/modules/navigation-sidebar/domain/filenameDedup.test
  */
 
 import { deduplicateFilenames } from '@/modules/navigation-sidebar/domain/filenameDedup';

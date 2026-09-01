@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik commit` — Commit content repo first, then main.
- * @module multirepo/commands/commit
+ * @module scripts/multirepo/commands/commit
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

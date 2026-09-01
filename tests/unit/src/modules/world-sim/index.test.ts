@@ -2,7 +2,7 @@
  * @fileoverview World Sim Barrel Export Tests
  * @description Verifies that all public re-exports from the barrel file are accessible.
  *
- * @module tests/unit/worldSim/index
+ * @module tests/unit/src/modules/world-sim/index.test
  */
 
 import { describe, expect, it, vi } from 'vitest';

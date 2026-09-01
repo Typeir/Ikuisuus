@@ -4,7 +4,7 @@
  * @fileoverview Tests for the /api/vocations endpoint. Verifies export structure,
  * locale handling, repository integration, and error resilience.
  *
- * @module tests/unit/app/api/vocations/route
+ * @module tests/unit/src/app/api/vocations/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0

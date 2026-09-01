@@ -5,7 +5,7 @@
  * update, installs content-repo git hooks, and runs `paw sync`. Idempotent;
  * re-running replaces sentinel-delimited rc blocks instead of duplicating.
  *
- * @module multirepo/commands/setup
+ * @module scripts/multirepo/commands/setup
  * @author Typeir
 
  * @version 1.0.0

@@ -3,7 +3,7 @@
  * @description Smoke test ensuring `Tabs`, `TabList`, `Tab`, `TabPanel` are
  * re-exported from the index module.
  *
- * @module tests/unit/lib/components/ui/tabs/index
+ * @module tests/unit/src/lib/components/ui/tabs/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the orUndef, nonEmpty, and formatDate helper functions.
  *
- * @module tests/unit/lib/db/orm/helpers
+ * @module tests/unit/src/lib/db/orm/helpers.test
  */
 
 import { formatDate, nonEmpty, orUndef } from '@/lib/db/orm/helpers';

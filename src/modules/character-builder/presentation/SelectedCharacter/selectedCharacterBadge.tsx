@@ -24,6 +24,7 @@ import {
   useCharacterSheetState,
 } from '@/lib/context/CharacterSheetContext';
 import { CHARACTER_SHEET_ACTION_TYPES } from '@/lib/types/characterSheet';
+import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
 import { IconButton } from '@/lib/components/ui/iconButton';
 import { UserRound } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -75,25 +76,18 @@ export const SelectedCharacterBadge: React.FC<SelectedCharacterBadgeProps> = ({
 
   const close = useCallback(() => setIsOpen(false), []);
 
+  useOutsideClick(rootRef, close, isOpen);
+
   useEffect(() => {
     if (!isOpen) return;
-    const handlePointerDown = (event: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
-        close();
-      }
-    };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         close();
         triggerRef.current?.focus();
       }
     };
-    document.addEventListener('mousedown', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, close]);
 
   const handleSelect = useCallback(

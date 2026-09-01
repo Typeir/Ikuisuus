@@ -259,12 +259,3 @@ export type {
   DisplayPrefsActions,
   DisplayPrefsState,
 } from '../hooks/useDisplayPrefs';
-
-export {
-  useCorrectionsTokenActions,
-  useCorrectionsTokenState,
-} from '../../modules/mdx-editor/application/hooks/useCorrectionsToken';
-export type {
-  CorrectionsTokenActions,
-  CorrectionsTokenState,
-} from '../../modules/mdx-editor/application/hooks/useCorrectionsToken';

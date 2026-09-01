@@ -3,7 +3,7 @@
  * for a vocation entry. Missing grants (or no vocation) render an em dash;
  * values are stripped of inline markdown.
  *
- * @module lib/components/characterSheet/builder/vocationProficiencySummary
+ * @module modules/character-builder/presentation/builder/vocationProficiencySummary
  * @version 2.0.0
  * @author Typeir
  * @since 7.0.0

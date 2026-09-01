@@ -2,7 +2,7 @@
  * @fileoverview DiceRoll component barrel export
  * @description Re-exports the DiceRoll interactive MDX component and its props type.
  *
- * @module modules/library/presentation/components/DiceRoll
+ * @module modules/library/presentation/components/DiceRoll/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -9,7 +9,7 @@
  */
 
 import type { DraftMetadata } from '@/lib/db/content/schemas/draftMetadata';
-import { getJson } from '@/lib/services/api/jsonClient';
+import { fetcher } from '@/lib/fetch/fetcher';
 import type { CorrectionsTreeNode } from '@/modules/mdx-editor/domain/types';
 
 /**
@@ -24,7 +24,7 @@ export async function fetchActiveDraft(
   slug: string,
 ): Promise<DraftMetadata | null> {
   try {
-    const payload = await getJson<{ draft?: DraftMetadata }>(
+    const payload = await fetcher<{ draft?: DraftMetadata }>(
       `/api/drafts?locale=${encodeURIComponent(locale)}&slug=${encodeURIComponent(slug)}`,
     );
     return payload.draft ?? null;
@@ -43,7 +43,7 @@ export async function fetchCorrectionsTree(
   locale: string,
 ): Promise<CorrectionsTreeNode[]> {
   try {
-    const payload = await getJson<{ tree?: CorrectionsTreeNode[] }>(
+    const payload = await fetcher<{ tree?: CorrectionsTreeNode[] }>(
       `/api/corrections/tree?locale=${encodeURIComponent(locale)}`,
     );
     return payload.tree ?? [];

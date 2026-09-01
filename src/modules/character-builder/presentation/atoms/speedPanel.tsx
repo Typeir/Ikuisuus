@@ -6,7 +6,7 @@
  *
  * Open/close state and portal rendering are delegated to {@link DropdownPanel}.
  *
- * @module lib/components/characterSheet/atoms/speedPanel
+ * @module modules/character-builder/presentation/atoms/speedPanel
  * @version 2.0.0
  * @author Typeir
  * @since 6.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for the LibraryArticle presentation wrapper.
- * @module tests/unit/src/modules/library/presentation/LibraryArticle/LibraryArticle
+ * @module tests/unit/src/modules/library/presentation/LibraryArticle/LibraryArticle.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

@@ -11,6 +11,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { toAspectValue } from '../../scripts/metadata/sharedData';
 import type {
   CheckFailure,
   CheckOptions,
@@ -88,9 +89,7 @@ function resolveValues(shared: SharedDataShape, group: string): Set<string> {
       : shared.aspects[section]?.values;
     if (Array.isArray(borrowed)) {
       values.push(
-        ...(borrowed as string[]).map((value) =>
-          value.trim().toLowerCase().replace(/\s+/g, '-'),
-        ),
+        ...(borrowed as string[]).map(toAspectValue),
       );
     }
   }

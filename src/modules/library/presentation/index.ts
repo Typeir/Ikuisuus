@@ -1,6 +1,6 @@
 ﻿/**
  * @fileoverview Presentation exports for the library module.
- * @module modules/library/presentation
+ * @module modules/library/presentation/index
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

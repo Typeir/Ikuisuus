@@ -2,14 +2,14 @@
  * @fileoverview Unit Tests — EditorPathSection
  * @description Validates path/slug input rendering in edit and new modes.
  *
- * @module tests/unit/lib/components/mdxEditor/editorPathSection
+ * @module tests/unit/src/modules/mdx-editor/presentation/EditorPathSection/EditorPathSection.test
  */
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/hooks/data/useDraftAndRouteData', () => ({
-  useCorrectionsTreeData: vi.fn(() => ({ tree: [], loading: false })),
+vi.mock('@/modules/mdx-editor/application/hooks/useCorrectionsTree', () => ({
+  useCorrectionsTree: vi.fn(() => ({ tree: [], loading: false })),
 }));
 
 vi.mock('@/modules/mdx-editor/presentation/FileTreeSelect/FileTreeSelect', () => ({

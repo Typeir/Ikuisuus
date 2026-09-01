@@ -13,6 +13,7 @@
 
 import type { TrinketMetadata } from '@/lib/db/content/schemas/trinketMetadata';
 import { fetcher } from '@/lib/fetch/fetcher';
+import { trinketsKey } from '@/lib/fetch/swrKeys';
 import useSWR, { type KeyedMutator } from 'swr';
 
 /**
@@ -56,7 +57,7 @@ export function useTrinketsForImport({
   enabled = true,
 }: UseTrinketsForImportOptions): UseTrinketsForImportResult {
   const { data, isLoading, error, mutate } = useSWR<TrinketMetadata[], Error>(
-    enabled ? ['trinkets-import', locale] : null,
+    enabled ? trinketsKey(locale) : null,
     () => fetcher<TrinketMetadata[]>(`/api/trinkets?locale=${locale}`),
   );
 

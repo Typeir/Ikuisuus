@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for useSidebarMenu hook
- * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useSidebarMenu
+ * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useSidebarMenu.test
  */
 
 import { usePersistentUiState } from '@/lib/context/PersistentUiContext';

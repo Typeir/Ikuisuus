@@ -33,18 +33,22 @@ export interface LoadContentResponse {
  * @returns {Promise<LoadContentResponse>} Resolved content payload.
  * @throws {Error} When request fails.
  */
+import { FetchError, fetcher } from '@/lib/fetch/fetcher';
 export async function loadContentForEditing(
   slug: string,
   locale: string,
 ): Promise<LoadContentResponse> {
-  const res = await fetch(
-    `/api/corrections/read?slug=${encodeURIComponent(slug)}&locale=${encodeURIComponent(locale)}`,
-  );
+  try {
+    return await fetcher<LoadContentResponse>(
+      `/api/corrections/read?slug=${encodeURIComponent(slug)}&locale=${encodeURIComponent(locale)}`,
+    );
+  } catch (err) {
+    /* The route explains itself in the body; surface that over the status. */
+    if (err instanceof FetchError) {
+      const body = err.body as { error?: string } | undefined;
+      throw new Error(body?.error || `HTTP ${err.status}`);
+    }
 
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({ error: 'Unknown error' }));
-    throw new Error(data.error || `HTTP ${res.status}`);
+    throw err;
   }
-
-  return (await res.json()) as LoadContentResponse;
 }

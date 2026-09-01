@@ -9,9 +9,11 @@
 import fs from 'fs';
 import path from 'path';
 
-import { MAIN_INDEX_FILE, REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
+import { MAIN_INDEX_FILE, REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/constants/locales';
 import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { calculateSimilarity } from './findNearestRoute.levenshtein';
+import { slugSegmentToTitle } from './buildLibraryMetadata';
 
 const ROUTE_MATCH_THRESHOLD = 0.6;
 
@@ -79,15 +81,18 @@ function getAllRoutes(): string[] {
   return collectRoutes(getContentFolder('en'));
 }
 
+/** Matches a single leading locale segment, derived from the locale list. */
+const LEADING_LOCALE = new RegExp(`^\\/(${SUPPORTED_LOCALES.join('|')})`);
+
 /**
  * Extracts locale from pathname.
  *
  * @param {string} pathname - Requested pathname.
- * @returns {string} Locale code or default `en`.
+ * @returns {string} Locale code or the default locale.
  */
 function getLocale(pathname: string): string {
-  const localeMatch = pathname.match(/^\/(en|es|fi)/);
-  return localeMatch ? localeMatch[1] : 'en';
+  const localeMatch = pathname.match(LEADING_LOCALE);
+  return localeMatch ? localeMatch[1] : DEFAULT_LOCALE;
 }
 
 /**
@@ -97,7 +102,7 @@ function getLocale(pathname: string): string {
  * @returns {string} Path normalized for matching.
  */
 function normalizePathname(pathname: string): string {
-  return pathname.replace(/^\/(en|es|fi)/, '');
+  return pathname.replace(LEADING_LOCALE, '');
 }
 
 /**
@@ -117,10 +122,7 @@ function buildTitle(routePath: string): string | undefined {
     return undefined;
   }
 
-  return cleanSegment
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+  return slugSegmentToTitle(cleanSegment);
 }
 
 /**

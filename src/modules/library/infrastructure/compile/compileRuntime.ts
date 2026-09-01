@@ -1,7 +1,7 @@
 /**
  * @fileoverview Client-side MDX compiler. Hash-caches by source, async and sync separate.
  *
- * @module lib/mdx/compileRuntime
+ * @module modules/library/infrastructure/compile/compileRuntime
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

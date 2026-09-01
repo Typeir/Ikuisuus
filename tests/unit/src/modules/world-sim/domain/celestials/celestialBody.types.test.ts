@@ -2,7 +2,7 @@
  * @fileoverview Smoke test for celestial body domain types.
  * @description Validates structural conformance of SceneContext and OrbitalParameters interfaces.
  *
- * @module tests/unit/src/modules/world-sim/domain/celestials/celestialBody.types
+ * @module tests/unit/src/modules/world-sim/domain/celestials/celestialBody.types.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

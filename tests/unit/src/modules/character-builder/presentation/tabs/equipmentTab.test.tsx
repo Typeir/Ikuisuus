@@ -2,7 +2,7 @@
  * @fileoverview EquipmentTab Tests
  * @description Smoke tests for the equipment tab.
  *
- * @module tests/unit/lib/components/characterSheet/tabs/equipmentTab
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/equipmentTab.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

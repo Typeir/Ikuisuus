@@ -4,7 +4,7 @@
  * faceted aspect vocabulary. These decide what a reader sees on a pill, so a
  * mistake here is silent — a wrong aspect looks exactly like a right one.
  *
- * @module tests/unit/src/modules/library/domain/aspects
+ * @module tests/unit/src/modules/library/domain/aspects.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-04

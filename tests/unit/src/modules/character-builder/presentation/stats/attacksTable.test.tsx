@@ -2,7 +2,7 @@
  * @fileoverview AttacksTable Unit Tests
  * @description Tests for the AttacksTable component.
  *
- * @module tests/unit/lib/components/characterSheet/attacksTable
+ * @module tests/unit/src/modules/character-builder/presentation/stats/attacksTable.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the Specialization MikroORM entity and its embeddables.
  *
- * @module tests/unit/lib/db/orm/entities/SpecializationEntity
+ * @module tests/unit/src/lib/db/orm/entities/SpecializationEntity.test
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0

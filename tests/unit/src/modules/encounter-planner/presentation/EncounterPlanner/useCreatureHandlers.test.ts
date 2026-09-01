@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for useCreatureHandlers hook
- * @module tests/encounter-planner/presentation/EncounterPlanner/useCreatureHandlers
+ * @module tests/unit/src/modules/encounter-planner/presentation/EncounterPlanner/useCreatureHandlers.test
  */
 
 import type { Encounter } from '@/modules/encounter-planner/domain/encounters/encounter.types';

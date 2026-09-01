@@ -4,7 +4,7 @@
  * gradient CanvasTexture. Texture is cached across instances. Also exports a
  * radial-gradient texture factory used by StarRenderer and GasGiantRenderer.
  *
- * @module worldSim/celestials/CelestialGlow
+ * @module modules/world-sim/infrastructure/effects/CelestialGlow
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0

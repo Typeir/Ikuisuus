@@ -6,7 +6,7 @@
  * strips direct writes to `level`/`tierBonus`. While editing, writes land on
  * the draft only; otherwise on the saved character with `dirty` set.
  *
- * @module lib/components/characterSheet/context/sheetReducer
+ * @module modules/character-builder/application/context/sheetReducer
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

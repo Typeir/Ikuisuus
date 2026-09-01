@@ -7,7 +7,7 @@
  * Specialization tab is disabled when an entry has no specialization. No
  * vocations renders an empty prompt.
  *
- * @module lib/components/characterSheet/tabs/vocationTab
+ * @module modules/character-builder/presentation/tabs/vocationTab
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

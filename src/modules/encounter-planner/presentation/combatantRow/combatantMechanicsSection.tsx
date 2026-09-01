@@ -1,7 +1,7 @@
 /**
  * @fileoverview Legendary deed and resist mechanics UI for combatants.
  *
- * @module combatantMechanicsSection
+ * @module modules/encounter-planner/presentation/combatantRow/combatantMechanicsSection
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

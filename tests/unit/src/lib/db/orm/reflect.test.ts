@@ -3,7 +3,7 @@
  * @description Tests `entityToRecord` and `recordToEntityInit` against a
  * mock of MikroORM's `MetadataStorage` supplying property descriptors only.
  *
- * @module tests/unit/lib/db/orm/reflect
+ * @module tests/unit/src/lib/db/orm/reflect.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

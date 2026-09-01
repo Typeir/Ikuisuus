@@ -11,6 +11,7 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
@@ -27,9 +28,6 @@ import {
 import { SLUG } from './parsingPatterns';
 
 const log = createLogger({ component: 'WorldMetadataGenerator' });
-
-/** Content subdirectory path segments relative to the project root for `en`. */
-const WORLD_DIR_SEGMENTS = ['src', 'content', 'en', 'world'];
 
 /**
  * Frontmatter field name → metadata key mapping.
@@ -190,7 +188,7 @@ async function main(
   const locale = options.locale ?? 'en';
 
   const defaultContentDir =
-    options.contentDir ?? path.resolve(process.cwd(), ...WORLD_DIR_SEGMENTS);
+    options.contentDir ?? path.join(getContentFolder(locale), 'world');
 
   await runGenerator({
     name: 'World / Lore Metadata Generator',

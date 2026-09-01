@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for mediatorEvents helpers
  * @description Tests for createInputHandler factory.
  *
- * @module tests/unit/src/modules/world-sim/application/mediator/mediatorEvents
+ * @module tests/unit/src/modules/world-sim/application/mediator/mediatorEvents.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

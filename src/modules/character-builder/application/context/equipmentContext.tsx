@@ -2,7 +2,7 @@
  * @fileoverview Equipment Context
  * @description React context exposing derived equipment totals.
  *
- * @module lib/components/characterSheet/context/equipmentContext
+ * @module modules/character-builder/application/context/equipmentContext
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

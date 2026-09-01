@@ -4,7 +4,7 @@
  * Escape keyboard navigation, form submit, Cmd/Ctrl-K shortcut, and
  * outside-click dismissal. `useSearch` is mocked.
  *
- * @module tests/unit/src/modules/search/presentation/SearchBar/SearchBar
+ * @module tests/unit/src/modules/search/presentation/SearchBar/SearchBar.test
  * @author Typeir
  * @version 1.0.0
  * @since 8.0.0
@@ -34,7 +34,6 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/modules/search/application/useSearch', () => ({
   useSearch: () => searchState,
-  toSearchQuery: vi.fn(),
 }));
 
 /**
@@ -165,12 +164,12 @@ describe('SearchBar', () => {
     expect(screen.queryByRole('listbox')).toBeNull();
   });
 
-  it('should close the dropdown on outside mousedown', () => {
+  it('should close the dropdown on outside pointerdown', () => {
     searchState.results = [mkResult('dragon', 'Ancient Dragon')];
     render(<SearchBar />);
     fireEvent.change(screen.getByRole('combobox'), { target: { value: 'dr' } });
     expect(screen.getByRole('listbox')).toBeTruthy();
-    fireEvent.mouseDown(document.body);
+    fireEvent.pointerDown(document.body);
     expect(screen.queryByRole('listbox')).toBeNull();
   });
 

@@ -3,7 +3,7 @@
  * @description Smoke tests for the sticky character-sheet header — name/edit
  * toggle, edit/save/cancel buttons.
  *
- * @module tests/unit/lib/components/characterSheet/characterSheetHeader
+ * @module tests/unit/src/modules/character-builder/presentation/Header/characterSheetHeader.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

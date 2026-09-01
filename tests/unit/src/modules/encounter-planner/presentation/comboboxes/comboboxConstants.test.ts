@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for comboboxConstants
- * @module tests/unit/src/modules/encounter-planner/presentation/comboboxes/comboboxConstants
+ * @module tests/unit/src/modules/encounter-planner/presentation/comboboxes/comboboxConstants.test
  * @version 1.0.0
  * @author Typeir
  */

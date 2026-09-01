@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for full navigation walker.
- * @module tests/unit/src/modules/library/infrastructure/navigation/walkFull
+ * @module tests/unit/src/modules/library/infrastructure/navigation/walkFull.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

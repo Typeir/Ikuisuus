@@ -3,7 +3,7 @@
  * @description Recursively disposes geometries, materials, and textures in a
  * Three.js scene graph subtree.
  *
- * @module worldSim/celestials/disposeUtils
+ * @module modules/world-sim/infrastructure/geometry/disposeUtils
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

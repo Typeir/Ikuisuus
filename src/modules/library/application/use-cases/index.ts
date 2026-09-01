@@ -1,6 +1,6 @@
 /**
  * @fileoverview Use-case exports for library application layer.
- * @module modules/library/application/use-cases
+ * @module modules/library/application/use-cases/index
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

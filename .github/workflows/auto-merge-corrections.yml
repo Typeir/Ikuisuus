@@ -83,7 +83,7 @@ jobs:
             LOCALE=$(echo "$file" | cut -d'/' -f1)
             REST=$(echo "$file" | cut -d'/' -f2-)
             STEM=$(echo "$REST" | sed -E "s/\.(md|mdx)$//")
-            SUFFIX=$(echo "$STEM" | sed -nE "s/.*\.([a-z]+)$//p")
+            SUFFIX=$(echo "$STEM" | sed -nE "s/.*\.([a-z]+)$/\1/p")
             CONTENT_PATH=$(echo "$STEM" | sed -E "s/\.(sheet|specialization|list|heirloom|trinket|bloodline|lore|spell|feat|tool|rule|boon)$//")
 
             case "$SUFFIX" in
@@ -92,7 +92,7 @@ jobs:
               trinket)   CONTENT_TYPE="trinkets" ;;
               bloodline) CONTENT_TYPE="bloodlines" ;;
               sheet)
-                CONTENT_TYPE=$(sed -nE "s/^contentType:[[:space:]]*([A-Za-z-]+).*//p" "$file" 2>/dev/null | head -1)
+                CONTENT_TYPE=$(sed -nE "s/^contentType:[[:space:]]*([A-Za-z-]+).*/\1/p" "$file" 2>/dev/null | head -1)
                 ;;
               *) CONTENT_TYPE="" ;;
             esac

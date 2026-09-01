@@ -3,7 +3,7 @@
  * @description Returns a lightweight index of all heroic awakening affixes with their wiki links.
  * Maps HeroicAffix enum values to wiki routes based on locale.
  * 
- * @module /api/affixes/index
+ * @module app/api/affixes/index/route
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  * @description Tests for the POST /api/metadata-sync endpoint including
  * auth, body validation, and sync invocation.
  *
- * @module tests/unit/app/api/metadata-sync/route
+ * @module tests/unit/src/app/api/metadata-sync/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

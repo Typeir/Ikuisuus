@@ -1,7 +1,7 @@
 /**
  * @fileoverview Maps renderer type strings to concrete ICelestialRenderer factories.
  *
- * @module worldSim/celestials/CelestialBodyFactory
+ * @module modules/world-sim/infrastructure/geometry/factories/CelestialBodyFactory
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

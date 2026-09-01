@@ -3,7 +3,7 @@
  * @description Tests target tracking, delta computation, and clear semantics
  * for the orbit-center follow system. Pure Three.js Vector3 math, no mocking.
  *
- * @module tests/unit/worldSim/camera/CameraFollowSystem
+ * @module tests/unit/src/modules/world-sim/infrastructure/input/CameraFollowSystem.test
  */
 
 import { CameraFollowSystem } from '@/modules/world-sim/infrastructure/input/CameraFollowSystem';

@@ -4,7 +4,7 @@
  * `WorldSimMediator`: body building, orbit lines, Everdark boundary, and
  * collision cloud assembly.
  *
- * @module tests/unit/worldSim/celestials/CelestialSceneBuilder
+ * @module tests/unit/src/modules/world-sim/infrastructure/geometry/factories/CelestialSceneBuilder.test
  */
 
 import { CelestialRegistry } from '@/modules/world-sim/domain/celestials/celestialRegistry';

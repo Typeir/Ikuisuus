@@ -3,7 +3,7 @@
  * @description Fetches `/api/feats` and renders a toggleable list of feats.
  * Selected feats are stored as `CharacterShard` entries with `category: 'feat'`.
  *
- * @module lib/components/characterSheet/featPicker
+ * @module modules/character-builder/presentation/builder/featPicker
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

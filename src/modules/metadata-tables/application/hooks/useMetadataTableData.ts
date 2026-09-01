@@ -3,7 +3,7 @@
  * @description Generic hook for locale-aware metadata table API loading.
  * Uses SWR for automatic caching, deduplication, and error handling.
  *
- * @module lib/hooks/data/useMetadataTableData
+ * @module modules/metadata-tables/application/hooks/useMetadataTableData
  * @author Typeir
  * @version 2.0.0
  * @since 2.0.0
@@ -32,16 +32,16 @@ const log = logger.child({ module: 'useMetadataTableData' });
 /**
  * Loads locale-specific metadata rows using a supplied service fetcher.
  * Results are cached and deduplicated by SWR across all consumers sharing
- * the same `fetcher` + `locale` combination.
+ * the same `fetchRows` + `locale` combination.
  *
  * @template T
- * @param {(locale: string) => Promise<T[]>} fetcher - Metadata service fetcher
+ * @param {(locale: string) => Promise<T[]>} fetchRows - Metadata service fetcher
  * @param {string} locale - Current locale
  * @param {string} entityName - Entity name for logs
  * @returns {MetadataTableDataState<T>} Metadata loading state
  */
 export function useMetadataTableData<T>(
-  fetcher: (locale: string) => Promise<T[]>,
+  fetchRows: (locale: string) => Promise<T[]>,
   locale: string,
   entityName: string,
 ): MetadataTableDataState<T> {
@@ -49,7 +49,7 @@ export function useMetadataTableData<T>(
     data,
     isLoading,
     error: swrError,
-  } = useSWR<T[], Error>([entityName, locale], () => fetcher(locale), {
+  } = useSWR<T[], Error>([entityName, locale], () => fetchRows(locale), {
     onSuccess: (result) => {
       log.debug(`Loaded ${entityName}`, { count: result.length, locale });
     },

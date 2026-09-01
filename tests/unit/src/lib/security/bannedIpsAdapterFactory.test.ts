@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the banned IP adapter factory resolution logic.
  *
- * @module tests/unit/lib/security/bannedIpsAdapterFactory
+ * @module tests/unit/src/lib/security/bannedIpsAdapterFactory.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

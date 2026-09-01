@@ -3,7 +3,7 @@
  * active tab body wrapped in a `<PagePreviewProvider>` so library-page
  * tooltips open draggable iframes inside the sheet.
  *
- * @module lib/components/characterSheet/characterSheet
+ * @module modules/character-builder/presentation/CharacterSheet/characterSheet
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

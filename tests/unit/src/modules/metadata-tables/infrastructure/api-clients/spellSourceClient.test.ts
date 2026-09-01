@@ -1,14 +1,14 @@
-import { postJson } from '@/lib/services/api/jsonClient';
+import { fetcher } from '@/lib/fetch/fetcher';
 import { fetchSpellSources } from '@/modules/metadata-tables/infrastructure/api-clients/spellSourceClient';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/lib/services/api/jsonClient', () => ({
-  postJson: vi.fn(),
+vi.mock('@/lib/fetch/fetcher', () => ({
+  fetcher: vi.fn(),
 }));
 
 describe('spellSourceClient', () => {
   it('fetches endpoint source and preserves inline source', async () => {
-    vi.mocked(postJson).mockResolvedValueOnce([
+    vi.mocked(fetcher).mockResolvedValueOnce([
       { slug: 'remote-spell', title: 'Remote', level: 1, school: 'evocation' },
     ] as never);
 
@@ -27,7 +27,11 @@ describe('spellSourceClient', () => {
       locale: 'en',
     });
 
-    expect(postJson).toHaveBeenCalledWith('/api/spells', { locale: 'en' });
+    expect(fetcher).toHaveBeenCalledWith('/api/spells', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locale: 'en' }),
+    });
     expect(result.map((spell) => spell.slug).sort()).toEqual([
       'inline-spell',
       'remote-spell',

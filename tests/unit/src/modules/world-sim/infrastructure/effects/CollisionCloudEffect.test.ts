@@ -3,7 +3,7 @@
  * @description Tests group construction, surface-gap proximity influence,
  * midpoint positioning, per-layer scaling, and resource disposal.
  *
- * @module tests/unit/worldSim/celestials/CollisionCloudEffect
+ * @module tests/unit/src/modules/world-sim/infrastructure/effects/CollisionCloudEffect.test
  */
 
 import { CollisionCloudEffect } from '@/modules/world-sim/infrastructure/effects/CollisionCloudEffect';

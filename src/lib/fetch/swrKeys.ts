@@ -77,33 +77,31 @@ export function featsKey(
 }
 
 /**
- * Builds the SWR cache key for the monsters metadata list.
- *
- * @param {string} locale - Content locale
- * @returns {readonly ['monsters', string]} Cache key
- */
-export function monstersKey(locale: string): readonly ['monsters', string] {
-  return ['monsters', locale] as const;
-}
-
-/**
  * Builds the SWR cache key for the heirlooms metadata list.
  *
  * @param {string} locale - Content locale
- * @returns {readonly ['heirlooms', string]} Cache key
+ * @param {boolean} [enabled] - When false, returns null to skip fetch (default true)
+ * @returns {readonly ['heirlooms', string] | null} Cache key or null
  */
-export function heirloomsKey(locale: string): readonly ['heirlooms', string] {
-  return ['heirlooms', locale] as const;
+export function heirloomsKey(
+  locale: string,
+  enabled: boolean = true,
+): readonly ['heirlooms', string] | null {
+  return enabled ? (['heirlooms', locale] as const) : null;
 }
 
 /**
  * Builds the SWR cache key for the trinkets metadata list.
  *
  * @param {string} locale - Content locale
- * @returns {readonly ['trinkets', string]} Cache key
+ * @param {boolean} [enabled] - When false, returns null to skip fetch (default true)
+ * @returns {readonly ['trinkets', string] | null} Cache key or null
  */
-export function trinketsKey(locale: string): readonly ['trinkets', string] {
-  return ['trinkets', locale] as const;
+export function trinketsKey(
+  locale: string,
+  enabled: boolean = true,
+): readonly ['trinkets', string] | null {
+  return enabled ? (['trinkets', locale] as const) : null;
 }
 
 /**
@@ -140,20 +138,6 @@ export function affixesIndexKey(
   locale: string,
 ): readonly ['affixes-index', string] {
   return ['affixes-index', locale] as const;
-}
-
-/**
- * Builds the SWR cache key for a single spell detail.
- *
- * @param {string} slug - Spell slug
- * @param {string} locale - Content locale
- * @returns {readonly ['spell', string, string]} Cache key
- */
-export function spellKey(
-  slug: string,
-  locale: string,
-): readonly ['spell', string, string] {
-  return ['spell', slug, locale] as const;
 }
 
 /**

@@ -4,17 +4,22 @@
  * entering edit mode, does not re-fetch once loaded or when editing is false,
  * passes the locale to each endpoint, and returns empty arrays on fetch failure.
  *
- * @module tests/unit/lib/hooks/data/useVocationMetadata
+ * @module tests/unit/src/lib/hooks/data/useVocationMetadata.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
 import { useVocationMetadata } from '@/lib/hooks/data/useVocationMetadata';
+import { fetcher } from '@/lib/fetch/fetcher';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { SWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('@/lib/fetch/fetcher', () => ({
+  fetcher: vi.fn(),
+}));
 
 const wrapper = ({ children }: { children: React.ReactNode }) =>
   React.createElement(
@@ -43,11 +48,10 @@ const MOCK_SPECS = [
 ];
 
 describe('useVocationMetadata', () => {
-  let mockFetch: ReturnType<typeof vi.fn>;
+  const fetcherMock = vi.mocked(fetcher);
 
   beforeEach(() => {
-    mockFetch = vi.fn();
-    vi.stubGlobal('fetch', mockFetch);
+    fetcherMock.mockReset();
   });
 
   afterEach(() => {
@@ -56,23 +60,14 @@ describe('useVocationMetadata', () => {
 
   it('does not fetch when editing is false', () => {
     renderHook(() => useVocationMetadata(false, 'en'), { wrapper });
-    expect(mockFetch).not.toHaveBeenCalled();
+    expect(fetcherMock).not.toHaveBeenCalled();
   });
 
   it('fetches all three endpoints on entering edit mode', async () => {
-    mockFetch
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(MOCK_BLOODLINES),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(MOCK_VOCATIONS),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(MOCK_SPECS),
-      });
+    fetcherMock
+      .mockResolvedValueOnce(MOCK_BLOODLINES)
+      .mockResolvedValueOnce(MOCK_VOCATIONS)
+      .mockResolvedValueOnce(MOCK_SPECS);
 
     const { result } = renderHook(() => useVocationMetadata(true, 'en'), {
       wrapper,
@@ -83,23 +78,14 @@ describe('useVocationMetadata', () => {
     expect(result.current.bloodlines).toHaveLength(1);
     expect(result.current.vocOptions[0].slug).toBe('warrior');
     expect(result.current.specs[0].slug).toBe('champion');
-    expect(mockFetch).toHaveBeenCalledTimes(3);
+    expect(fetcherMock).toHaveBeenCalledTimes(3);
   });
 
   it('does not re-fetch after metadata is already loaded', async () => {
-    mockFetch
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(MOCK_BLOODLINES),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(MOCK_VOCATIONS),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(MOCK_SPECS),
-      });
+    fetcherMock
+      .mockResolvedValueOnce(MOCK_BLOODLINES)
+      .mockResolvedValueOnce(MOCK_VOCATIONS)
+      .mockResolvedValueOnce(MOCK_SPECS);
 
     const { result, rerender } = renderHook(
       ({ editing }) => useVocationMetadata(editing, 'en'),
@@ -111,11 +97,11 @@ describe('useVocationMetadata', () => {
     rerender({ editing: false });
     rerender({ editing: true });
 
-    expect(mockFetch).toHaveBeenCalledTimes(3);
+    expect(fetcherMock).toHaveBeenCalledTimes(3);
   });
 
   it('returns empty arrays and sets isLoading false when fetch fails', async () => {
-    mockFetch.mockRejectedValue(new Error('Network error'));
+    fetcherMock.mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() => useVocationMetadata(true, 'en'), {
       wrapper,
@@ -129,10 +115,10 @@ describe('useVocationMetadata', () => {
   });
 
   it('passes the locale to each API endpoint', async () => {
-    mockFetch
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) });
+    fetcherMock
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([]);
 
     const { result } = renderHook(() => useVocationMetadata(true, 'es'), {
       wrapper,
@@ -140,8 +126,8 @@ describe('useVocationMetadata', () => {
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    expect(mockFetch).toHaveBeenCalledWith('/api/bloodlines?locale=es');
-    expect(mockFetch).toHaveBeenCalledWith('/api/vocations?locale=es');
-    expect(mockFetch).toHaveBeenCalledWith('/api/specializations?locale=es');
+    expect(fetcherMock).toHaveBeenCalledWith('/api/bloodlines?locale=es');
+    expect(fetcherMock).toHaveBeenCalledWith('/api/vocations?locale=es');
+    expect(fetcherMock).toHaveBeenCalledWith('/api/specializations?locale=es');
   });
 });

@@ -2,7 +2,7 @@
  * @fileoverview Tests for classifyEmbedLink.
  * @description Maps links to { ignore | internal | bubble } based on href and origin.
  *
- * @module tests/unit/src/lib/embed/classifyEmbedLink
+ * @module tests/unit/src/lib/embed/classifyEmbedLink.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

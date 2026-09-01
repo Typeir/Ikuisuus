@@ -4,7 +4,7 @@
  * the fragment shader via world-space noise sampling. Two concentric spheres —
  * an opaque base layer and a transparent overlay — provide parallax depth.
  *
- * @module worldSim/celestials/GasGiantRenderer
+ * @module modules/world-sim/infrastructure/renderers/GasGiantRenderer
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

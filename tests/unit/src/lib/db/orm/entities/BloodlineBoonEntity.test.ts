@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the BloodlineBoon MikroORM entity.
  *
- * @module tests/unit/lib/db/orm/entities/BloodlineBoonEntity
+ * @module tests/unit/src/lib/db/orm/entities/BloodlineBoonEntity.test
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0

@@ -2,7 +2,7 @@
  * BloodlineBoonOptionEntity Unit Tests
  *
  * @fileoverview Tests for the BloodlineBoonOption MikroORM entity.
- * @module tests/unit/lib/db/orm/entities/BloodlineBoonOptionEntity
+ * @module tests/unit/src/lib/db/orm/entities/BloodlineBoonOptionEntity.test
  */
 
 import { BloodlineBoonOptionEntity } from '@/lib/db/orm/entities/BloodlineBoonOptionEntity';

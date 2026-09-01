@@ -3,7 +3,7 @@
  * @description Tests recursive scene graph disposal of geometries, materials,
  * textures, and material arrays.
  *
- * @module tests/unit/worldSim/celestials/disposeUtils
+ * @module tests/unit/src/modules/world-sim/infrastructure/geometry/disposeUtils.test
  */
 
 import { disposeSceneGraph } from '@/modules/world-sim/infrastructure/geometry/disposeUtils';

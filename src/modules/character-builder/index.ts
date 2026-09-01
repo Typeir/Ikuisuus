@@ -2,7 +2,7 @@
  * @fileoverview Character Sheet Module Public API
  * @description Re-exports all public components from the characterSheet module.
  *
- * @module lib/components/characterSheet
+ * @module modules/character-builder/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -18,10 +18,8 @@ export { BoonPicker } from './presentation/builder/boonPicker';
 export type { BoonPickerProps } from './presentation/builder/boonPicker';
 
 export { ContentShardPanel } from './presentation/shards/contentShardPanel';
-export type {
-    ContentShardPanelProps,
-    ContentShardType
-} from './presentation/shards/contentShardPanel';
+export type { ContentShardPanelProps } from './presentation/shards/contentShardPanel';
+export type { ContentShardType } from '@/lib/types/api';
 
 export { CharacterRoster } from './presentation/Roster/characterRoster';
 export type { CharacterRosterProps } from './presentation/Roster/characterRoster';

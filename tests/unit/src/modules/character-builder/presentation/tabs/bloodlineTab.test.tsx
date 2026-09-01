@@ -3,7 +3,7 @@
  * @description Smoke tests for the bloodline tab — empty state and content
  * shard rendering (no iframe).
  *
- * @module tests/unit/lib/components/characterSheet/tabs/bloodlineTab
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/bloodlineTab.test
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0

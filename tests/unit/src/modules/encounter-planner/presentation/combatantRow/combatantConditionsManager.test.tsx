@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for CombatantConditionsManager component.
- * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantConditionsManager.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/combatantConditionsManager.test
  * @description Tests condition display and add/remove behavior.
  * Renders component inside CombatantProvider.
  *

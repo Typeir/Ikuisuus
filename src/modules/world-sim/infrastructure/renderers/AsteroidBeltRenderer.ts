@@ -4,7 +4,7 @@
  * orbiting Kultharja. Uses instanced points with varying sizes and a slow
  * collective rotation.
  *
- * @module worldSim/celestials/AsteroidBeltRenderer
+ * @module modules/world-sim/infrastructure/renderers/AsteroidBeltRenderer
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

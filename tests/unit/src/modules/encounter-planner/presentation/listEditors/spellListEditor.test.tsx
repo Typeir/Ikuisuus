@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Spell List Editor component
- * @module tests/unit/src/lib/components/encounterPlanner/listEditors/spellListEditor.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/listEditors/spellListEditor.test
  * @description Validates SpellListEditor export and component signature.
  * Tests list editor component for managing spells in encounter planner.
  * 

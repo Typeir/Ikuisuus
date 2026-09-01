@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Play Mode Combatant Row component
- * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantRow.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/combatantRow.test
  * @description Asserts CombatantRow export, sub-component exports, and resist/heroic-awakening rendering.
  *
  * @version 1.0.0

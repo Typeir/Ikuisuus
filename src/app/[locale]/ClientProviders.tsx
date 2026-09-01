@@ -2,7 +2,7 @@
  * Client-only providers for the app layout.
  *
  * @fileoverview Supplies client-only providers: internationalization and persistent UI state.
- * @module ClientProviders
+ * @module app/[locale]/ClientProviders
  * @version 2.1.0
  * @author Typeir
  * @since 1.0.0

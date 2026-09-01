@@ -2,7 +2,7 @@
  * @fileoverview Smoke test for party domain types.
  * @description Validates structural conformance of PartyMember and SavedParty interfaces.
  *
- * @module tests/unit/src/modules/encounter-planner/domain/parties/party.types
+ * @module tests/unit/src/modules/encounter-planner/domain/parties/party.types.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

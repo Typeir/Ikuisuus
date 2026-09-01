@@ -54,43 +54,44 @@ export interface SubmitEditResult {
  * @param {SubmitEditPayload} payload - Submission payload.
  * @returns {Promise<SubmitEditResult>} Submit result.
  */
+import { FetchError, fetcher } from '@/lib/fetch/fetcher';
 export async function submitEditFromClient(
   payload: SubmitEditPayload,
 ): Promise<SubmitEditResult> {
-  const res = await fetch('/api/corrections', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${payload.token.trim()}`,
-    },
-    body: JSON.stringify({
-      path: payload.path,
-      content: payload.content,
-      baseSha: payload.baseSha,
-      isNew: payload.isNew,
-      expectedDraftUpdatedAt: payload.expectedDraftUpdatedAt,
-      expectedDraftVersionHash: payload.expectedDraftVersionHash,
-      renameEnabled: payload.renameEnabled,
-      renameToPath: payload.renameToPath,
-    }),
-  });
+  try {
+    const data = await fetcher<{ prUrl?: string }>('/api/corrections', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.token.trim()}`,
+      },
+      body: JSON.stringify({
+        path: payload.path,
+        content: payload.content,
+        baseSha: payload.baseSha,
+        isNew: payload.isNew,
+        expectedDraftUpdatedAt: payload.expectedDraftUpdatedAt,
+        expectedDraftVersionHash: payload.expectedDraftVersionHash,
+        renameEnabled: payload.renameEnabled,
+        renameToPath: payload.renameToPath,
+      }),
+    });
 
-  const data = (await res.json().catch(() => ({}))) as {
-    prUrl?: string;
-    error?: string;
-  };
+    /* `status` is only read on the failure path, where it comes from the
+       rejection. A success reports 200 rather than claim a code it cannot see. */
+    return { ok: true, status: 200, prUrl: data.prUrl };
+  } catch (err) {
+    /* A conflict or a stale draft is reported in the body, and the caller
+       branches on the status, so both are carried through. */
+    if (err instanceof FetchError) {
+      const body = err.body as { error?: string } | undefined;
+      return {
+        ok: false,
+        status: err.status,
+        error: body?.error || `HTTP ${err.status}`,
+      };
+    }
 
-  if (!res.ok) {
-    return {
-      ok: false,
-      status: res.status,
-      error: data.error || `HTTP ${res.status}`,
-    };
+    throw err;
   }
-
-  return {
-    ok: true,
-    status: res.status,
-    prUrl: data.prUrl,
-  };
 }

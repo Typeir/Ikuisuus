@@ -2,7 +2,7 @@
  * @fileoverview Dice Utils Unit Tests
  * @description Tests for the shared rollDie utility.
  *
- * @module tests/unit/lib/utils/diceUtils
+ * @module tests/unit/src/lib/utils/diceUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 6.0.0

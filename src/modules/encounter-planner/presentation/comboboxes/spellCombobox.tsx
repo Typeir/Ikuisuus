@@ -3,7 +3,7 @@
  * @description Searchable spell dropdown. Fetches spell data from
  * /api/spells/index and renders each item with level and school.
  *
- * @module spellCombobox
+ * @module modules/encounter-planner/presentation/comboboxes/spellCombobox
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

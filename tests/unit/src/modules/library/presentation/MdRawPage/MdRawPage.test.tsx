@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for the MdRawPage renderer.
- * @module tests/unit/src/modules/library/presentation/MdRawPage/MdRawPage
+ * @module tests/unit/src/modules/library/presentation/MdRawPage/MdRawPage.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

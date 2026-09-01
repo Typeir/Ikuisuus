@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tests for Shard to Preview Utilities
  *
- * @module tests/unit/src/lib/utils/shardToPreview.test
+ * @module tests/unit/src/modules/character-builder/lib/utils/shardToPreview.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Combatant Mechanics Section component
- * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantMechanicsSection.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/combatantMechanicsSection.test
  * @description Validates CombatantMechanicsSection component rendering and interactions.
  * Tests legendary deed tracker and resist counter functionality.
  *

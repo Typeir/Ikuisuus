@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for the /api/discovery route exports, handler
  * signature, and input validation.
  *
- * @module tests/unit/app/api/discovery/route
+ * @module tests/unit/src/app/api/discovery/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

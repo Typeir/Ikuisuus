@@ -1,7 +1,7 @@
 /**
  * @fileoverview World Sim public barrel
  * @description Re-exports all public components and types from the World Sim module.
- * @module modules/world-sim
+ * @module modules/world-sim/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

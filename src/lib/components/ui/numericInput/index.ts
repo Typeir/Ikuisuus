@@ -1,6 +1,6 @@
 /**
  * @fileoverview Numeric Input Component Exports
- * @module ui/numericInput
+ * @module lib/components/ui/numericInput/index
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

@@ -11,10 +11,11 @@
 import matter from 'gray-matter';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 
 const ROOT = process.cwd();
 const LEDGER = path.join(ROOT, '.ignore', 'form-analysis-curated.md');
-const SPELLS = path.join(ROOT, 'src', 'content', 'en', 'spells');
+const SPELLS = path.join(getContentFolder('en'), 'spells');
 const SHARED = path.join(ROOT, 'scripts', 'core', 'shared-data.json');
 
 /**

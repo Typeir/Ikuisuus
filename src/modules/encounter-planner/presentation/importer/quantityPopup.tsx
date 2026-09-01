@@ -3,7 +3,7 @@
  * @description Modal dialog for selecting creature import quantity, rendered as a centered
  * overlay. Enter confirms, Escape cancels. Confirm button autofocuses on open.
  *
- * @module quantityPopup
+ * @module modules/encounter-planner/presentation/importer/quantityPopup
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

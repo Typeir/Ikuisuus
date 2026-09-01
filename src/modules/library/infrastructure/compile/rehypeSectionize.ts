@@ -1,7 +1,7 @@
 /**
  * @fileoverview Rehype plugin: wraps content between headings in sections, entries in articles. Adds anchors, slugs and stream rails.
  *
- * @module rehypeSectionize
+ * @module modules/library/infrastructure/compile/rehypeSectionize
  * @version 2.1.0
  * @author Typeir
  * @since 1.0.0

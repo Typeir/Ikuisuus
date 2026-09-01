@@ -2,7 +2,7 @@
  * @fileoverview Specialization Content Shards API Route Unit Tests
  * @description Tests for GET /api/content-shards/specializations/[slug].
  *
- * @module tests/unit/app/api/content-shards/specializations/route
+ * @module tests/unit/src/app/api/content-shards/specializations/[slug]/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -30,6 +30,10 @@ vi.mock('@/lib/logging/logger', () => ({
   logger: {
     child: () => ({ error: vi.fn(), debug: vi.fn() }),
   },
+}));
+
+vi.mock('@/app/api/content-shards/keywordShards', () => ({
+  keywordShardsFor: vi.fn().mockResolvedValue([]),
 }));
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -181,22 +185,13 @@ describe('GET /api/content-shards/specializations/[slug]', () => {
     );
   });
 
-  it('passes locale param to the repository', async () => {
-    vi.mocked(specializationRepository.getBySlug).mockResolvedValue(
-      MOCK_META as never,
-    );
-    mockGetFile.mockResolvedValue({
-      content: SAMPLE_MDX,
-      resolvedPath: 'path-of-the-berserker.mdx',
-    });
-
-    await SpecializationShardsRoute.GET(
+  it('rejects an unsupported locale before the repository', async () => {
+    vi.mocked(specializationRepository.getBySlug).mockClear();
+    const res = await SpecializationShardsRoute.GET(
       ...makeArgs('path-of-the-berserker', { locale: 'es' }),
     );
-    expect(specializationRepository.getBySlug).toHaveBeenCalledWith(
-      'es',
-      'path-of-the-berserker',
-    );
+    expect(res.status).toBe(400);
+    expect(specializationRepository.getBySlug).not.toHaveBeenCalled();
   });
 
   it('returns 500 when the repository throws', async () => {

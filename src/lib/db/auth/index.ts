@@ -3,7 +3,7 @@
  * @description Re-exports the auth service, schema types/validators, and the
  * user adapter type. Import from `@/lib/db/auth`.
  *
- * @module lib/db/auth
+ * @module lib/db/auth/index
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

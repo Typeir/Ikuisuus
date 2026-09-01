@@ -2,7 +2,7 @@
  * @fileoverview Pre-compiled regex patterns for tagging: movement, monster mechanic,
  * and item mechanic matching, grouped into constant dictionaries.
  *
- * @module lib/metadata/taggingPatterns
+ * @module scripts/metadata/taggingPatterns
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

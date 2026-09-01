@@ -2,7 +2,7 @@
  * @fileoverview Play Mode Lifecycle Notification Subscriptions
  * @description Registers lifecycle subscribers for round/lair and legendary deed reminders.
  *
- * @module playModeLifecycleNotifications
+ * @module modules/encounter-planner/application/lifecycle/playModeLifecycleNotifications
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

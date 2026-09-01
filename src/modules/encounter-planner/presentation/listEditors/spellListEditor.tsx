@@ -2,7 +2,7 @@
  * @fileoverview Spell List Editor Component
  * @description Renders spell chips with wiki links and a combobox for adding spells.
  *
- * @module spellListEditor
+ * @module modules/encounter-planner/presentation/listEditors/spellListEditor
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

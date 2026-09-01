@@ -3,7 +3,7 @@
  * @description Tests the useWorldSimCanvas React hook. Verifies subsystem
  * creation, animation start, cleanup on unmount, and projection subscription.
  *
- * @module tests/unit/worldSim/hooks/useWorldSimCanvas
+ * @module tests/unit/src/modules/world-sim/application/hooks/useWorldSimCanvas.test
  */
 
 import { renderHook } from '@testing-library/react';

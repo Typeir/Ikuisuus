@@ -10,7 +10,7 @@
  * @since 3.0.0
  */
 
-import { isIndexFile } from '@/lib/enums/constants';
+import { isIndexFile } from '@/lib/constants/content';
 import { createLogger } from '@/lib/logging/logger';
 import { formatDie } from '@/lib/utils/diceUtils';
 import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';

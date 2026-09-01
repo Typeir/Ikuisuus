@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Tooltip MDX component
- * @module tests/unit/src/lib/components/mdx/tooltip/tooltip.test
+ * @module tests/unit/src/modules/library/presentation/components/Tooltip/tooltip.test
  * @description Validates Tooltip MDX wrapper rendering, trigger interaction,
  * and correct defaults for showArrow and showClickIcon.
  *

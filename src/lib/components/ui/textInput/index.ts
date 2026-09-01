@@ -1,7 +1,7 @@
 /**
  * @fileoverview Text Input Component Exports
  *
- * @module lib/components/ui/textInput
+ * @module lib/components/ui/textInput/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

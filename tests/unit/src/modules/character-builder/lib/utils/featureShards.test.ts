@@ -3,7 +3,7 @@
  * @description Covers vocation and specialization endpoints, shard assembly,
  * and the empty-array fallback on failed fetches.
  *
- * @module tests/unit/lib/utils/featureShards
+ * @module tests/unit/src/modules/character-builder/lib/utils/featureShards.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

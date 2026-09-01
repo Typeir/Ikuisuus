@@ -10,8 +10,9 @@
 
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 
-const SPELLS = path.join(process.cwd(), 'src', 'content', 'en', 'spells');
+const SPELLS = path.join(getContentFolder('en'), 'spells');
 const SCHOOLS =
   '(?:abjuration|conjuration|divination|enchantment|evocation|illusion|necromancy|transmutation)';
 const dry = process.argv.includes('--dry');

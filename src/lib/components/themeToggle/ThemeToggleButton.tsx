@@ -16,12 +16,12 @@ import {
   useThemeActions,
   useThemeState,
 } from '@/lib/context/PersistentUiContext';
-import { Theme } from '@/lib/enums/themes';
+import { Theme } from '@/lib/constants/themes';
 import cn from '@/lib/utils/classNameMerge';
 import btn from '@/styles/buttons.module.scss';
 import { Moon, Sun } from 'lucide-react';
 import type { JSX } from 'react';
-import { useEffect, useState } from 'react';
+import { useMounted } from '@/lib/hooks/useMounted';
 import styles from './themeToggle.module.scss';
 
 /**
@@ -51,11 +51,7 @@ export function ThemeToggleButton({
 }: ThemeToggleButtonProps): JSX.Element {
   const { theme } = useThemeState();
   const { setTheme } = useThemeActions();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   return (
     <button

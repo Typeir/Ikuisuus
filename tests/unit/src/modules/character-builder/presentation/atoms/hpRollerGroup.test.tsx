@@ -1,7 +1,7 @@
 ﻿/**
  * @fileoverview Tests for HpRollerGroup component
  *
- * @module tests/unit/lib/components/characterSheet/atoms/hpRollerGroup
+ * @module tests/unit/src/modules/character-builder/presentation/atoms/hpRollerGroup.test
  * @version 2.0.0
  * @author Typeir
  * @since 6.0.0

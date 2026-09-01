@@ -2,7 +2,7 @@
  * @fileoverview Singleton notification manager with toast-style notifications.
  * Supports types (info/success/warning/error), auto-dismiss, stacking, live regions.
  *
- * @module pushNotification
+ * @module lib/components/ui/pushNotification/pushNotification
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
@@ -32,6 +32,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { IconButton } from '@/lib/components/ui/iconButton';
+import { useMounted } from '@/lib/hooks/useMounted';
 import { useTranslations } from 'next-intl';
 import { logger } from '@/lib/logging/logger';
 import {
@@ -272,16 +273,15 @@ export const NotificationProvider = memo(function NotificationProvider({
   maxNotifications = NOTIFICATION_MAX_VISIBLE,
 }: NotificationProviderProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useMounted();
 
   /** Map of notification IDs to their auto-dismiss timer IDs for cleanup */
   const timerMapRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
   /**
-   * Client-side-only initialization. Clears all timers on unmount.
+   * Clears all timers on unmount.
    */
   useEffect(() => {
-    setIsMounted(true);
     const timers = timerMapRef.current;
     return () => {
       timers.forEach((timerId) => clearTimeout(timerId));

@@ -3,7 +3,7 @@
  * @description Unit tests for {@link getTotalCharacterLevel} and
  * {@link getCharacterDerived}.
  *
- * @module tests/unit/src/lib/utils/characterDerivation
+ * @module tests/unit/src/modules/character-builder/lib/utils/characterDerivation.test
  * @version 1.0.0
  * @author Typeir
  * @since 5.0.0

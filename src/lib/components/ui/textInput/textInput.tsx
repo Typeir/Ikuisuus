@@ -12,6 +12,7 @@
 'use client';
 
 import { ChangeEvent } from 'react';
+import { cn } from '@/lib/utils/classNameMerge';
 import styles from './textInput.module.scss';
 
 /**
@@ -68,9 +69,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   };
 
   const sizeClass = size === 'sm' ? styles.sm : size === 'lg' ? styles.lg : '';
-  const classes = [styles.textInput, sizeClass, className]
-    .filter(Boolean)
-    .join(' ');
+  const classes = cn(styles.textInput, sizeClass, className);
 
   return (
     <input

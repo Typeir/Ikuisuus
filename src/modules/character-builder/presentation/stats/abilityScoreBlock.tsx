@@ -23,6 +23,7 @@ import { computeSaveBonus } from '@/modules/character-builder/lib/utils/proficie
 import { IconButton } from '@/lib/components/ui/iconButton';
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
+import { formatModifier } from '@/lib/utils/formatModifier';
 import { ProficiencyTrack } from '../components/ProficiencyTrack';
 import styles from './abilityScoreBlock.module.scss';
 
@@ -80,10 +81,10 @@ export const AbilityScoreBlock: React.FC<AbilityScoreBlockProps> = ({
 }) => {
   const t = useTranslations('characterSheet');
   const mod = computeAbilityModifier(score);
-  const modStr = mod >= 0 ? `+${mod}` : `${mod}`;
+  const modStr = formatModifier(mod);
   const effectiveSaveTier = higherTier(saveTier, saveFloor);
   const saveBonus = computeSaveBonus(effectiveSaveTier, score, tierBonus);
-  const saveStr = saveBonus >= 0 ? `+${saveBonus}` : `${saveBonus}`;
+  const saveStr = formatModifier(saveBonus);
 
   const handleRoll = useCallback(() => {
     onChange?.(rollAbilityScore());

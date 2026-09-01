@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the getORM singleton and getEM fork helper.
  *
- * @module tests/unit/lib/db/orm/orm
+ * @module tests/unit/src/lib/db/orm/orm.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

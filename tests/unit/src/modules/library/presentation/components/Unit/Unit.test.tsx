@@ -4,7 +4,7 @@
  * before hydration, converts once hydrated, links to the Measures rule page,
  * and carries every system in its accessible name.
  *
- * @module tests/unit/modules/library/presentation/components/Unit
+ * @module tests/unit/src/modules/library/presentation/components/Unit/Unit.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-03

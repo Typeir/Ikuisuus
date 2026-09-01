@@ -1,6 +1,6 @@
 /**
  * @fileoverview Shared prop types for spell table components.
- * @module src/lib/components/mdx/spellTable/spellTable.types
+ * @module src/modules/metadata-tables/domain/types
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

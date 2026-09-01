@@ -3,7 +3,7 @@
  * @description Centralizes magic numbers and default values used across World Sim
  * modules.
  *
- * @module worldSim/constants
+ * @module modules/world-sim/infrastructure/constants
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

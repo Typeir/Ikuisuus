@@ -5,7 +5,7 @@
  * structurally read-only; custom systems allow editing of denominations.
  * Falls back to a single `Gold Standard` row when no holdings are present.
  *
- * @module lib/components/characterSheet/coinPouch
+ * @module modules/character-builder/presentation/CarryingCapacity/coinPouch
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  * @description Guards against the tooltip painting at the viewport origin
  * before a position is written.
  *
- * @module tests/unit/src/lib/components/ui/tooltip/positionProbe
+ * @module tests/unit/src/lib/components/ui/tooltip/positionProbe.test
  * @version 1.0.0
  * @author Typeir
  * @since 9.0.0

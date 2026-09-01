@@ -14,7 +14,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { parseReusableRegions } from './parseReusableRegions';
-import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/enums/constants';
+import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/constants/content';
 
 /** True when the file declares `reusable: true`. */
 const HAS_FLAG = /^\s*reusable\s*:\s*true\s*$/m;

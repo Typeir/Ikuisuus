@@ -3,7 +3,7 @@
  * @description Tests for content directory resolution, output path mapping,
  * and metadata backend detection.
  *
- * @module tests/unit/lib/metadata/generatorUtils
+ * @module tests/unit/src/lib/metadata/generatorUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

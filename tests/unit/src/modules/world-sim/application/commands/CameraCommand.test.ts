@@ -3,7 +3,7 @@
  * @description Tests ZoomToBodyCommand, ZoomToRegionCommand, and ResetViewCommand
  * for transition execution, completion, and follow delta application.
  *
- * @module tests/unit/worldSim/camera/CameraCommand
+ * @module tests/unit/src/modules/world-sim/application/commands/CameraCommand.test
  */
 
 import {

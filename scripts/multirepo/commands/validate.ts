@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik validate` — Check for drift between repos.
- * @module multirepo/commands/validate
+ * @module scripts/multirepo/commands/validate
  */
 
 import { log } from '@clack/prompts';

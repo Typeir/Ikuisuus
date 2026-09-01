@@ -3,7 +3,7 @@
  * @description Generic virtualized list using react-window v2. Renders a
  * semantic `<ul>` with virtualized `<li>` rows. Only visible rows rendered.
  *
- * @module lib/components/ui/virtualList
+ * @module lib/components/ui/virtualList/virtualList
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

@@ -2,13 +2,14 @@
  * @fileoverview Tests for domain shared utilities
  * @description Unit tests for generateId, calculateInitiativeMod, and rollInitiative.
  *
- * @module encounter-planner/domain/shared/utils.test
+ * @module tests/unit/src/modules/encounter-planner/domain/shared/utils.test
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
  */
 
 import {
+    affixSlug,
     calculateInitiativeMod,
     generateId,
     rollInitiative,
@@ -50,5 +51,12 @@ describe('rollInitiative', () => {
       expect(result).toBeGreaterThanOrEqual(6);
       expect(result).toBeLessThanOrEqual(25);
     }
+  });
+});
+
+describe('affixSlug', () => {
+  it('lowercases and hyphenates whitespace', () => {
+    expect(affixSlug('Cursed Blade')).toBe('cursed-blade');
+    expect(affixSlug('Fire  on  Ice')).toBe('fire-on-ice');
   });
 });

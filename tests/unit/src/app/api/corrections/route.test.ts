@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for POST /api/corrections (branch + commit + PR workflow).
  *
- * @module tests/unit/app/api/corrections/route
+ * @module tests/unit/src/app/api/corrections/route.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

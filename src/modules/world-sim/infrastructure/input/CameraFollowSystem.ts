@@ -2,7 +2,7 @@
  * @fileoverview Follows a moving body as the camera orbit center.
  * @description Tracks a follow target so the orbit center moves with the body each frame.
  *
- * @module worldSim/camera/CameraFollowSystem
+ * @module modules/world-sim/infrastructure/input/CameraFollowSystem
  * @version 2.0.0
  * @author Typeir
  * @since 2.0.0

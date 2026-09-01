@@ -1,7 +1,7 @@
 /**
  * Unit tests for HorizontalSplit component
  *
- * @module horizontalSplit.test
+ * @module tests/unit/src/modules/library/presentation/components/HorizontalSplit/horizontalSplit.test
  */
 
 import { describe, it, expect } from 'vitest';

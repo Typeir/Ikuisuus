@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for MobileModal component
- * @module tests/ui/modal/mobileModal.test
+ * @module tests/unit/src/lib/components/ui/modal/mobileModal.test
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

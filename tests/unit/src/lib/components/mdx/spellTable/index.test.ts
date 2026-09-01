@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for Spell Table Barrel Export
- * @module tests/unit/src/lib/components/mdx/spellTable/index
+ * @module tests/unit/src/lib/components/mdx/spellTable/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

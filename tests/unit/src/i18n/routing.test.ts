@@ -4,7 +4,7 @@
  * @fileoverview Tests for the next-intl routing configuration that defines
  * supported locales and default locale for the application.
  *
- * @module tests/unit/i18n/routing
+ * @module tests/unit/src/i18n/routing.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -14,6 +14,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import { SUPPORTED_LOCALES } from '@/lib/constants/locales';
 import { routing } from '@/i18n/routing';
 
 describe('routing configuration', () => {
@@ -34,16 +35,8 @@ describe('routing configuration', () => {
       expect(routing.locales).toContain('en');
     });
 
-    it('should include Spanish locale', () => {
-      expect(routing.locales).toContain('es');
-    });
-
-    it('should include Finnish locale', () => {
-      expect(routing.locales).toContain('fi');
-    });
-
-    it('should have exactly three supported locales', () => {
-      expect(routing.locales).toHaveLength(3);
+    it('should mirror the supported locale constant exactly', () => {
+      expect(routing.locales).toEqual([...SUPPORTED_LOCALES]);
     });
   });
 

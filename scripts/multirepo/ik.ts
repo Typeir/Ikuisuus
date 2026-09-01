@@ -5,7 +5,7 @@
  * matching command in `./commands/*.ts`; unrecognised commands fall through to
  * a dual-repo git passthrough.
  *
- * @module ik
+ * @module scripts/multirepo/ik
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

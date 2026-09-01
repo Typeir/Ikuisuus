@@ -3,7 +3,7 @@
  * @description Searchable dropdown for switching between saved encounters.
  * Wraps GenericCombobox and keeps the input label in sync with the active encounter.
  *
- * @module encounterCombobox
+ * @module modules/encounter-planner/presentation/comboboxes/encounterCombobox
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

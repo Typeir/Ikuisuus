@@ -4,7 +4,7 @@
  * through a single fragment pass applying pixelation, chromatic aberration,
  * sharpening, and pseudo-emboss, with no extra render targets.
  *
- * @module worldSim/canvas/PixelatePass
+ * @module modules/world-sim/infrastructure/three-js/PixelatePass
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

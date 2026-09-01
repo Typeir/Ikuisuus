@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for library domain content tag guards.
- * @module tests/unit/src/lib/mdx/content-tags
+ * @module tests/unit/src/lib/mdx/content-tags.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

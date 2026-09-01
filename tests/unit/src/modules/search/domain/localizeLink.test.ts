@@ -1,6 +1,6 @@
 /**
  * @fileoverview localizeLink Unit Tests
- * @module tests/unit/src/modules/search/domain/localizeLink
+ * @module tests/unit/src/modules/search/domain/localizeLink.test
  */
 
 import { localizeLink } from '@/modules/search/domain/localizeLink';
@@ -50,8 +50,8 @@ describe('localizeLink', () => {
   });
 
   it('is idempotent', () => {
-    const once = localizeLink('/library/monsters/aboleth', 'es');
-    expect(localizeLink(once, 'es')).toBe(once);
+    const once = localizeLink('/library/monsters/aboleth', 'en');
+    expect(localizeLink(once, 'en')).toBe(once);
   });
 
   it('does not strip non-locale two-letter segments', () => {

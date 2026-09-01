@@ -3,7 +3,7 @@
  * @description Asserts search domain types are JSON-serializable and
  * `SearchQuery.locale` is required.
  *
- * @module tests/unit/modules/search/domain/types
+ * @module tests/unit/src/modules/search/domain/types.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

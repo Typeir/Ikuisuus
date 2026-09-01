@@ -4,7 +4,7 @@
  * skill/trade names camelize to `skills.<camel>` / `tools.<camel>`, trade links
  * resolve via their href slug, and wildcard/category tokens return null.
  *
- * @module tests/unit/src/modules/character-builder/lib/utils/proficiencyRowKey
+ * @module tests/unit/src/modules/character-builder/lib/utils/proficiencyRowKey.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

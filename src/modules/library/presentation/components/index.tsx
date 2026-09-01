@@ -1,6 +1,6 @@
 /**
  * @fileoverview Centralized export of MDX components and utilities.
- * @module src/lib/components/mdx/index
+ * @module src/modules/library/presentation/components/index
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

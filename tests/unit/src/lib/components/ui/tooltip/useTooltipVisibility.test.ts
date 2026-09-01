@@ -3,7 +3,7 @@
  * @description Covers the open/close lifecycle every hover surface shares:
  * delays, the held-open exit phase, and the immediate variants.
  *
- * @module tests/unit/src/lib/components/ui/tooltip/useTooltipVisibility
+ * @module tests/unit/src/lib/components/ui/tooltip/useTooltipVisibility.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

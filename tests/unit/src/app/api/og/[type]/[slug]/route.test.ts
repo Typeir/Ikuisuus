@@ -3,7 +3,7 @@
  *
  * Mocks the data layer and renderer. Validates 400 / 404 / 500 / 200 response paths.
  *
- * @module tests/unit/src/app/api/og/route.test
+ * @module tests/unit/src/app/api/og/[type]/[slug]/route.test
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest';

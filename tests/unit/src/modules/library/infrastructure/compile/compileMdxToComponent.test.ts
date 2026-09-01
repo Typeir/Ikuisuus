@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for MDX to Component Compiler
- * @module tests/unit/src/lib/components/mdx/compileMdxToComponent
+ * @module tests/unit/src/modules/library/infrastructure/compile/compileMdxToComponent.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

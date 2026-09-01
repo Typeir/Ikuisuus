@@ -3,7 +3,7 @@
  * @description Tests rendering, click and keyboard handling, CSS class
  * toggling, and ref forwarding.
  *
- * @module tests/unit/worldSim/overlay/CelestialLabel
+ * @module tests/unit/src/modules/world-sim/presentation/overlay/CelestialLabel/CelestialLabel.test
  */
 
 import { CelestialLabel } from '@/modules/world-sim/presentation/overlay/CelestialLabel/CelestialLabel';

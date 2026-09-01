@@ -3,7 +3,7 @@
  * @description Tests DEFAULT_CAMERA_POSITION and DEFAULT_CAMERA_LOOK_AT
  * are Vector3 instances with expected components.
  *
- * @module tests/unit/worldSim/constants
+ * @module tests/unit/src/modules/world-sim/infrastructure/constants.test
  */
 
 import {

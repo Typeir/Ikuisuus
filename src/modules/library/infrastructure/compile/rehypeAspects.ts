@@ -1,7 +1,7 @@
 /**
  * @fileoverview Rehype plugin inserting Aspects rows in sections and articles. Reads from rehypeSectionize.
  *
- * @module rehypeAspects
+ * @module modules/library/infrastructure/compile/rehypeAspects
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

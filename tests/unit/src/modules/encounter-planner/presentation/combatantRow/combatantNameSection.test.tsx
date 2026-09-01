@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for CombatantNameSection.
- * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantNameSection.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/combatantNameSection.test
  * @description Tests name display, CR badge, awakening badges, stratagem badge, and remove button.
  *
  * @version 2.0.0

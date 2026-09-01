@@ -4,7 +4,7 @@
  * @fileoverview Tests for the /api/specializations endpoint. Verifies export structure,
  * locale handling, vocation filtering, repository integration, and error resilience.
  *
- * @module tests/unit/app/api/specializations/route
+ * @module tests/unit/src/app/api/specializations/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0

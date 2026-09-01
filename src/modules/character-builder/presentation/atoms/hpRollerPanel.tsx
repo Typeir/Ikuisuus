@@ -5,7 +5,7 @@
  * clear actions. All state and operations live in {@link useHpRoller}; this
  * component only renders them.
  *
- * @module lib/components/characterSheet/atoms/hpRollerPanel
+ * @module modules/character-builder/presentation/atoms/hpRollerPanel
  * @version 3.0.0
  * @author Typeir
  * @since 6.0.0

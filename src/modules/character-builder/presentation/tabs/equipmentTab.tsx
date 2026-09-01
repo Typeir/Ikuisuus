@@ -3,7 +3,7 @@
  * @description Edits the equipment table (name, quantity, weight lb) and notes.
  * Provides `EquipmentProvider` with derived `totalWeight` and `totalCount`.
  *
- * @module lib/components/characterSheet/tabs/equipmentTab
+ * @module modules/character-builder/presentation/tabs/equipmentTab
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

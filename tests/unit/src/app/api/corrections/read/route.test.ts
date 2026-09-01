@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for GET /api/corrections/read.
  *
- * @module tests/unit/app/api/corrections/read/route
+ * @module tests/unit/src/app/api/corrections/read/route.test
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

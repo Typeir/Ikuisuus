@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for resolveAndCompileContent use-case.
- * @module tests/unit/src/modules/library/application/use-cases/resolveAndCompileContent
+ * @module tests/unit/src/modules/library/application/use-cases/resolveAndCompileContent.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

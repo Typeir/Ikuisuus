@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the profanity detection system.
  *
- * @module tests/unit/lib/security/profanityFilter
+ * @module tests/unit/src/lib/security/profanityFilter.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

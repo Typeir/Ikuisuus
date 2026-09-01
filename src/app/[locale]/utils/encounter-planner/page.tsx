@@ -3,7 +3,7 @@
  * @description Page component for /[locale]/utils/encounter-planner. Renders encounter
  * management, creature import, and combat tracking UI from encounter planner module parts.
  *
- * @module encounterPlannerPage
+ * @module app/[locale]/utils/encounter-planner/page
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

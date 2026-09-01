@@ -5,7 +5,7 @@
  * locale handling, slug filtering, repository integration, and error resilience
  * by mocking the spell repository module.
  *
- * @module tests/unit/app/api/spells/route
+ * @module tests/unit/src/app/api/spells/route.test
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

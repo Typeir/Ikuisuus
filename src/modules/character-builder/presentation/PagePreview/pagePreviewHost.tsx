@@ -3,7 +3,7 @@
  * @description Renders all open previews as `<GenericEmbedPanel>` iframes
  * pointed at the `/{locale}/embed/` route tree.
  *
- * @module lib/components/characterSheet/pagePreviewHost
+ * @module modules/character-builder/presentation/PagePreview/pagePreviewHost
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -16,6 +16,7 @@ import { buildEmbedUrl } from '@/lib/embed';
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import { IconButton } from '@/lib/components/ui/iconButton';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { fetcher } from '@/lib/fetch/fetcher';
 import { useLocale } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import styles from './pagePreviewHost.module.scss';
@@ -26,15 +27,17 @@ const pathCache = new Map<string, string>();
 async function fetchPath(kind: string, slug: string): Promise<string> {
   const key = `${kind}::${slug}`;
   if (pathCache.has(key)) return pathCache.get(key)!;
-  const res = await fetch('/api/resolve-preview-path', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ kind, slug }),
-  });
-  if (!res.ok) return `${kind}/${slug}`;
-  const data = await res.json();
-  pathCache.set(key, data.path);
-  return data.path;
+  try {
+    const data = await fetcher<{ path: string }>('/api/resolve-preview-path', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind, slug }),
+    });
+    pathCache.set(key, data.path);
+    return data.path;
+  } catch {
+    return `${kind}/${slug}`;
+  }
 }
 
 /**

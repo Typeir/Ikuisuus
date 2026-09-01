@@ -3,7 +3,7 @@
  * @description Two-panel view: left sidebar lists saved characters; the right panel
  * shows the active character's sheet. Provides create, delete, and select actions.
  *
- * @module lib/components/characterSheet/characterRoster
+ * @module modules/character-builder/presentation/Roster/characterRoster
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

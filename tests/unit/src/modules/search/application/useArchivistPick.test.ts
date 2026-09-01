@@ -1,6 +1,6 @@
 /**
  * @fileoverview useArchivistPick Hook Unit Tests
- * @module tests/unit/src/modules/search/application/useArchivistPick
+ * @module tests/unit/src/modules/search/application/useArchivistPick.test
  */
 
 import { useArchivistPick } from '@/modules/search/application/useArchivistPick';

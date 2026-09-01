@@ -12,6 +12,7 @@ import type {
     MetadataRow,
 } from '@/lib/components/mdx/metadataTables/metadataTable';
 import { toPlainSummary } from '@/lib/utils/plainSummary';
+import { capitalize } from '@/modules/metadata-tables/domain/format';
 
 /**
  * Builds localized column config for TrinketTable.
@@ -36,7 +37,7 @@ export function buildTrinketColumns(
       render: (value: unknown) => {
         if (!value) return '—';
         const str = String(value);
-        return str.charAt(0).toUpperCase() + str.slice(1);
+        return capitalize(str);
       },
       sortable: true,
       filterable: true,
@@ -73,7 +74,7 @@ export function buildTrinketColumns(
         const str = String(value);
         return str
           .split(', ')
-          .map((effect) => effect.charAt(0).toUpperCase() + effect.slice(1))
+          .map((effect) => capitalize(effect))
           .join(', ');
       },
       sortable: false,
@@ -89,10 +90,7 @@ export function buildTrinketColumns(
         const str = String(value);
         return str
           .split(', ')
-          .map(
-            (condition) =>
-              condition.charAt(0).toUpperCase() + condition.slice(1),
-          )
+          .map((condition) => capitalize(condition))
           .join(', ');
       },
       sortable: false,

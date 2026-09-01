@@ -2,7 +2,7 @@
  * @fileoverview VocationFeatureCard Unit Tests
  * @description Tests for the VocationFeatureCard component.
  *
- * @module tests/unit/lib/components/characterSheet/vocationFeatureCard
+ * @module tests/unit/src/modules/character-builder/presentation/builder/vocationFeatureCard.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Search presentation layer barrel
- * @module modules/search/presentation
+ * @module modules/search/presentation/index
  * @author Typeir
  * @version 1.0.0
  * @since 8.0.0
@@ -15,6 +15,8 @@ export { ResultThumb } from './atoms/ResultThumb';
 export { ResultTitle } from './atoms/ResultTitle';
 export { TypeSigil } from './atoms/TypeSigil';
 export { SearchBar } from './SearchBar/SearchBar';
+export { SearchField } from './SearchField/SearchField';
+export type { SearchFieldProps } from './SearchField/SearchField';
 export { SearchResultList } from './SearchResultList/SearchResultList';
 export { SearchResultRow } from './SearchResultRow/SearchResultRow';
 

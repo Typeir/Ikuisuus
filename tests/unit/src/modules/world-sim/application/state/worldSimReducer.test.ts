@@ -3,7 +3,7 @@
  * @description Exercises every action type: verifies state transitions and
  * immutability.
  *
- * @module tests/unit/worldSim/context/worldSimReducer
+ * @module tests/unit/src/modules/world-sim/application/state/worldSimReducer.test
  */
 
 import { worldSimReducer } from '@/modules/world-sim/application/state/worldSimReducer';

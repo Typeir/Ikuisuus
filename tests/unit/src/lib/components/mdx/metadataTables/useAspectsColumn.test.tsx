@@ -3,7 +3,7 @@
  * @description Appends the Aspects column only when rows carry tags and the
  * caller has not defined one.
  *
- * @module tests/unit/src/lib/components/mdx/metadataTables/useAspectsColumn
+ * @module tests/unit/src/lib/components/mdx/metadataTables/useAspectsColumn.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

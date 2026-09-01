@@ -2,7 +2,7 @@
  * @fileoverview assignableGrants tests
  * @description Tests collectAssignableGrants, countAssigned, and unassignedByCategory.
  *
- * @module tests/unit/src/modules/character-builder/lib/utils/assignableGrants
+ * @module tests/unit/src/modules/character-builder/lib/utils/assignableGrants.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

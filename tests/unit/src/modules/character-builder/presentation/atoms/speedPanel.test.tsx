@@ -2,7 +2,7 @@
  * @fileoverview SpeedPanel Unit Tests
  * @description Tests for the SpeedPanel atom component.
  *
- * @module tests/unit/lib/components/characterSheet/atoms/speedPanel
+ * @module tests/unit/src/modules/character-builder/presentation/atoms/speedPanel.test
  * @version 1.0.0
  * @author Typeir
  * @since 6.0.0

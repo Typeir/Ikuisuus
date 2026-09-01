@@ -2,7 +2,7 @@
  * BloodlineFeatureEntity Unit Tests
  *
  * @fileoverview Tests for the BloodlineFeature MikroORM entity.
- * @module tests/unit/lib/db/orm/entities/BloodlineFeatureEntity
+ * @module tests/unit/src/lib/db/orm/entities/BloodlineFeatureEntity.test
  */
 
 import { BloodlineFeatureEntity } from '@/lib/db/orm/entities/BloodlineFeatureEntity';

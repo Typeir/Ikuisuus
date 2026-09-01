@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — EditorSplitPane
  * @description Validates split-pane editor layout rendering and toggle behavior.
  *
- * @module tests/unit/lib/components/mdxEditor/editorSplitPane
+ * @module tests/unit/src/modules/mdx-editor/presentation/EditorSplitPane/EditorSplitPane.test
  */
 
 import { act, cleanup, render, screen } from '@testing-library/react';

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for GET/POST /api/auth/users.
  *
- * @module tests/unit/app/api/auth/users/route
+ * @module tests/unit/src/app/api/auth/users/route.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

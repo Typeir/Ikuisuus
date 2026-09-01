@@ -2,7 +2,7 @@
  * @file horizontalSplit.tsx
  * @description Two-column horizontal split layout for Wikipedia-style headers.
  *
- * @module horizontalSplit
+ * @module modules/library/presentation/components/HorizontalSplit/HorizontalSplit
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Metadata Preview API Route Unit Tests
  * @description Validation and dispatch tests for POST /api/metadata/preview.
  *
- * @module tests/unit/app/api/metadata/preview/route
+ * @module tests/unit/src/app/api/metadata/preview/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

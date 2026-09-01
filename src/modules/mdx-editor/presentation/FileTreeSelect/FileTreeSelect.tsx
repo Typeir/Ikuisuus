@@ -1,7 +1,7 @@
 /**
  * @fileoverview Combobox for folder path selection from tree.
  *
- * @module lib/components/mdxEditor/fileTreeSelect
+ * @module modules/mdx-editor/presentation/FileTreeSelect/FileTreeSelect
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0
@@ -11,6 +11,7 @@
 
 import type { TreeNode } from '@/modules/mdx-editor/domain/types';
 import { FileTreeSelectRow } from '@/modules/mdx-editor/presentation/FileTreeSelect/FileTreeSelectRow';
+import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { JSX } from 'react';
@@ -96,19 +97,7 @@ export function FileTreeSelect({
     [onSelect],
   );
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [isOpen]);
+  useOutsideClick(containerRef, () => setIsOpen(false), isOpen);
 
   useEffect(() => {
     if (!isOpen) return;

@@ -4,7 +4,7 @@
  * Tracks affixes as "not found" if no source link is available (dashed border styling).
  * Used in both CreatureRow (design mode) and PlayModeCombatantRow (play mode).
  *
- * @module affixListEditor
+ * @module modules/encounter-planner/presentation/listEditors/affixListEditor
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

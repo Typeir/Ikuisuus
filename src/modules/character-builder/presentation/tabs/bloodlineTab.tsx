@@ -3,7 +3,7 @@
  * @description Two-column bloodline editor: BoonPicker on the left, rendered
  * markdown content via the content-shards API on the right.
  *
- * @module lib/components/characterSheet/tabs/bloodlineTab
+ * @module modules/character-builder/presentation/tabs/bloodlineTab
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0

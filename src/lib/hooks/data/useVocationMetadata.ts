@@ -24,6 +24,7 @@ import type {
     SpecOption,
     VocationOption,
 } from '@/lib/types/vocations';
+import { fetcher } from '@/lib/fetch/fetcher';
 import useSWR from 'swr';
 
 /**
@@ -57,25 +58,19 @@ export function useVocationMetadata(
   const { data: bloodlines, isLoading: loadingBl } = useSWR<BloodlineOption[]>(
     bloodlinesKey(locale, editing),
     () =>
-      fetch(urlForBloodlines(locale)).then((r) =>
-        r.ok ? (r.json() as Promise<BloodlineOption[]>) : Promise.resolve([]),
-      ),
+      fetcher<BloodlineOption[]>(urlForBloodlines(locale)).catch(() => []),
   );
 
   const { data: vocOptions, isLoading: loadingVoc } = useSWR<VocationOption[]>(
     vocationsKey(locale, editing),
     () =>
-      fetch(urlForVocations(locale)).then((r) =>
-        r.ok ? (r.json() as Promise<VocationOption[]>) : Promise.resolve([]),
-      ),
+      fetcher<VocationOption[]>(urlForVocations(locale)).catch(() => []),
   );
 
   const { data: specs, isLoading: loadingSpec } = useSWR<SpecOption[]>(
     specializationsKey(locale, editing),
     () =>
-      fetch(urlForSpecializations(locale)).then((r) =>
-        r.ok ? (r.json() as Promise<SpecOption[]>) : Promise.resolve([]),
-      ),
+      fetcher<SpecOption[]>(urlForSpecializations(locale)).catch(() => []),
   );
 
   return {

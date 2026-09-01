@@ -3,7 +3,7 @@
  *
  * @fileoverview Unit tests for the ThemeSelector component.
  *
- * @module tests/unit/lib/components/themeSelector
+ * @module tests/unit/src/lib/components/themeSelector/themeSelector.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -16,7 +16,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeSelector } from '@/lib/components/themeSelector/themeSelector';
-import { Theme } from '@/lib/enums/themes';
+import { Theme } from '@/lib/constants/themes';
 
 describe('ThemeSelector', () => {
   describe('rendering', () => {

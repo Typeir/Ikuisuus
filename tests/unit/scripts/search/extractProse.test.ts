@@ -3,7 +3,7 @@
  * @description Tests for `scripts/search/extractProse.ts` covering MDX→text
  * stripping of frontmatter, JSX, code, markdown, imports, and whitespace.
  *
- * @module tests/unit/scripts/search/extractProse
+ * @module tests/unit/scripts/search/extractProse.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

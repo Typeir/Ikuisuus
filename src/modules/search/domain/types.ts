@@ -43,36 +43,6 @@ export interface SearchRecord {
 }
 
 /**
- * A single filter clause applied to a search query.
- *
- * @interface SearchFilter
- * @property {string} field - Filter field name (e.g. `type`, `tags`, `cr`, `level`)
- * @property {(string | number)[]} values - Allowed values (OR within a field)
- */
-export interface SearchFilter {
-  field: string;
-  values: (string | number)[];
-}
-
-/**
- * A search query; `locale` is required.
- *
- * @interface SearchQuery
- * @property {string} term - Raw search term
- * @property {string} locale - Locale code to search within
- * @property {SearchFilter[]} [filters] - Optional filter clauses (AND across fields)
- * @property {number} [page] - 1-based page number for pagination
- * @property {number} [pageSize] - Results per page
- */
-export interface SearchQuery {
-  term: string;
-  locale: string;
-  filters?: SearchFilter[];
-  page?: number;
-  pageSize?: number;
-}
-
-/**
  * A scored search result: a record plus relevance and match provenance.
  *
  * @interface SearchResult

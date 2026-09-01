@@ -3,7 +3,7 @@
  * @description Client-side banner showing the "DRAFT" badge and the created_at
  * and updated_at timestamps for draft content.
  *
- * @module lib/components/draftBanner/draftBanner
+ * @module modules/mdx-editor/presentation/DraftBanner/DraftBanner
  * @version 1.0.0
  * @author Typeir
  * @since 6.0.0

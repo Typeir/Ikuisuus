@@ -2,7 +2,7 @@
  * @fileoverview IdentityRows Smoke Tests
  * @description Verifies the identity rows component renders without crashing.
  *
- * @module tests/unit/src/modules/character-builder/presentation/builder/identityRows
+ * @module tests/unit/src/modules/character-builder/presentation/builder/identityRows.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

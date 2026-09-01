@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tag extraction utilities: mechanics, organizational, lore, and content tags.
- * @module lib/metadata/taggingUtils
+ * @module scripts/metadata/taggingUtils
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

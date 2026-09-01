@@ -4,7 +4,7 @@
  * Simple text-based list with inline input field for adding new items.
  * Used in both CreatureRow (design mode) and PlayModeCombatantRow (play mode).
  *
- * @module itemListEditor
+ * @module modules/encounter-planner/presentation/listEditors/itemListEditor
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -7,7 +7,7 @@
  * hooks. Writes are not gated on edit mode — see {@link sheetReducer}. Any
  * saved-character change is pushed to the outer roster context
  * (`@/lib/context/CharacterSheetContext`) by a single effect.
- * @module lib/components/characterSheet/context/activeSheetContext
+ * @module modules/character-builder/application/context/activeSheetContext
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

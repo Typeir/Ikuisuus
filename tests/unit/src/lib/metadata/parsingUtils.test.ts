@@ -2,7 +2,7 @@
  * @fileoverview Parsing Utilities Unit Tests
  * @description Tests for MDX content parsing functions.
  *
- * @module tests/unit/lib/metadata/parsingUtils
+ * @module tests/unit/src/lib/metadata/parsingUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — FlexRenderer
  * @description Validates FlexRenderer render output and child layout behavior.
  *
- * @module tests/unit/lib/components/mdx/flexRenderer
+ * @module tests/unit/src/modules/library/presentation/components/FlexRenderer/FlexRenderer.test
  */
 
 import Component from '@/modules/library/presentation/components/FlexRenderer';

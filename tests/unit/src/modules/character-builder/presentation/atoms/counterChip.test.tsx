@@ -3,7 +3,7 @@
  * @description Verifies the floating counter pill renders its text with a status
  * role when count > 0 and renders nothing when count <= 0.
  *
- * @module tests/unit/src/modules/character-builder/presentation/atoms/counterChip
+ * @module tests/unit/src/modules/character-builder/presentation/atoms/counterChip.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

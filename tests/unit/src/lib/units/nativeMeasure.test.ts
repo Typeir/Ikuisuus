@@ -2,7 +2,7 @@
  * @fileoverview Native Measure Tests
  * @description Converts stored markdown measures to native form.
  *
- * @module tests/unit/src/lib/units/nativeMeasure
+ * @module tests/unit/src/lib/units/nativeMeasure.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-05

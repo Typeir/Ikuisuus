@@ -1,6 +1,6 @@
 /**
  * @fileoverview Domain exports for the library module.
- * @module modules/library/domain
+ * @module modules/library/domain/index
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

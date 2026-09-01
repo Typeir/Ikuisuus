@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for PlayModeLifecycle
- * @module tests/unit/src/modules/encounter-planner/application/lifecycle/PlayModeLifecycle
+ * @module tests/unit/src/modules/encounter-planner/application/lifecycle/PlayModeLifecycle.test
  * @version 1.0.0
  * @author Typeir
  */

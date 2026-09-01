@@ -7,12 +7,12 @@
  * @author Typeir
  * @since 1.0.0
  * 
- * @requires @/lib/enums/tableConstants
+ * @requires @/modules/metadata-tables/domain/constants
  * 
  * @example
  * ```typescript
- * import { compareByOrder, parseChallengeRating } from '@/lib/utils/tableUtils';
- * import { SIZE_SORT_ORDER } from '@/lib/enums/tableConstants';
+ * import { compareByOrder, parseChallengeRating } from '@/modules/metadata-tables/domain/comparators';
+ * import { SIZE_SORT_ORDER } from '@/modules/metadata-tables/domain/constants';
  * 
  * // Use in table column configuration
  * const columns = [{
@@ -23,7 +23,7 @@
  * // Parse fractional CR values
  * const cr = parseChallengeRating('1/2'); // Returns 0.5
  * ```
- * @module src/lib/utils/tableUtils
+ * @module modules/metadata-tables/domain/comparators
  */
 
 /**

@@ -12,6 +12,7 @@
 
 import { ChangeEvent } from 'react';
 import styles from './textArea.module.scss';
+import { cn } from '@/lib/utils/classNameMerge';
 
 /**
  * Props for the TextArea component.
@@ -70,7 +71,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
     onChange(e.target.value);
   };
 
-  const classes = [styles.textArea, className].filter(Boolean).join(' ');
+  const classes = cn(styles.textArea, className);
 
   return (
     <textarea

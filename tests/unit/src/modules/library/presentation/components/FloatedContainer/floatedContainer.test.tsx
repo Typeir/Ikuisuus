@@ -1,7 +1,7 @@
 /**
  * Unit tests for FloatedContainer component
  *
- * @module floatedContainer.test
+ * @module tests/unit/src/modules/library/presentation/components/FloatedContainer/floatedContainer.test
  */
 
 import { FloatedContainer } from '@/modules/library/presentation/components/FloatedContainer';

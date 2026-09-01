@@ -3,7 +3,7 @@
  * @description Card-based grid with import panel (left) separated by a
  * draggable ResizablePane. Wraps in `AbilitiesProvider`.
  *
- * @module lib/components/characterSheet/tabs/abilities/AbilitiesTab
+ * @module modules/character-builder/presentation/tabs/abilities/AbilitiesTab
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

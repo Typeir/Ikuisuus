@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the auth adapter factory resolution logic.
  *
- * @module tests/unit/lib/db/auth/authAdapterFactory
+ * @module tests/unit/src/lib/db/auth/authAdapterFactory.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

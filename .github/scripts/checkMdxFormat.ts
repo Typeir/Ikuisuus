@@ -11,7 +11,8 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
+import { REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
+import { toKebabCase } from '@/lib/utils/toKebabCase';
 import type {
   CheckFailure,
   CheckOptions,
@@ -61,19 +62,6 @@ interface FormatRule {
   severity: 'critical' | 'warning';
   /** Content types this rule applies to — omit to apply to all */
   appliesTo?: string[];
-}
-
-/**
- * Convert a PascalCase or camelCase component name to kebab-case.
- *
- * @param value Component name
- * @returns Kebab-cased string
- */
-function toKebabCase(value: string): string {
-  return value
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
-    .toLowerCase();
 }
 
 /**

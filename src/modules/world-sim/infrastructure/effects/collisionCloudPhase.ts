@@ -3,7 +3,7 @@
  * @description Computes the collision cloud animation envelope: logarithmic
  *   unbounded `sizeNorm`, smoothstep opacity ramp (up to apex, down through
  *   fade), and capped sinusoidal jitter scaled by the opacity envelope.
- * @module worldSim/celestials/collisionCloudPhase
+ * @module modules/world-sim/infrastructure/effects/collisionCloudPhase
  * @version 1.0.0
  * @author Typeir
  * @since 2026-05-30

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Encounter Combobox component
- * @module tests/unit/src/lib/components/encounterPlanner/comboboxes/encounterCombobox.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/comboboxes/encounterCombobox.test
  * @description Validates the EncounterCombobox export and its component signature.
  *
  * @version 1.0.0

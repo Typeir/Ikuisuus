@@ -3,7 +3,7 @@
  * @description Tests namespace initialisation, module registration/unregistration,
  * and SSR safety (no window object).
  *
- * @module tests/unit/src/lib/debug/ik
+ * @module tests/unit/src/lib/debug/ik.test
  */
 
 import {

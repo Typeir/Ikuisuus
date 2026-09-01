@@ -2,7 +2,7 @@
  * @fileoverview Collapsible MDX Component
  * @description Collapsible details/summary block for MDX content. Uses native HTML details/summary.
  *
- * @module Collapsible
+ * @module modules/library/presentation/components/Collapsible/Collapsible
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

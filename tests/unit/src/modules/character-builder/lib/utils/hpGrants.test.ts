@@ -3,7 +3,7 @@
  * @description Verifies the `hp:<term>:<scope>` sub-grammar parser, the term
  * resolver registry, and live term resolution against a sheet.
  *
- * @module tests/unit/src/modules/character-builder/lib/utils/hpGrants
+ * @module tests/unit/src/modules/character-builder/lib/utils/hpGrants.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

@@ -3,7 +3,7 @@
  * @description Icon trigger, search-driven options, pick → editor slug,
  * keyboard navigation, and outside-click close.
  *
- * @module tests/unit/src/modules/mdx-editor/presentation/ContentPicker/ContentPicker
+ * @module tests/unit/src/modules/mdx-editor/presentation/ContentPicker/ContentPicker.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

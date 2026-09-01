@@ -3,7 +3,7 @@
  * Re-exports utilities for building Next.js Metadata objects for Open Graph
  * and Twitter Card social previews.
  *
- * @module lib/seo
+ * @module lib/seo/index
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

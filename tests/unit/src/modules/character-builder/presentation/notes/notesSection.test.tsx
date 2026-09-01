@@ -2,7 +2,7 @@
  * @fileoverview NotesSection Unit Tests
  * @description Tests for the NotesSection component.
  *
- * @module tests/unit/lib/components/characterSheet/notesSection
+ * @module tests/unit/src/modules/character-builder/presentation/notes/notesSection.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

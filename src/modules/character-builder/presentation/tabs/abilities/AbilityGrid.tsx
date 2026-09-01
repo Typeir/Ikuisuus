@@ -3,7 +3,7 @@
  * @description Responsive CSS Grid rendering `AbilityCard` components.
  * Shows empty state when no abilities exist.
  *
- * @module lib/components/characterSheet/tabs/abilities/AbilityGrid
+ * @module modules/character-builder/presentation/tabs/abilities/AbilityGrid
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

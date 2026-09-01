@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Affix List Editor component.
- * @module tests/unit/src/lib/components/encounterPlanner/listEditors/affixListEditor.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/listEditors/affixListEditor.test
  * @description Asserts AffixListEditor is exported, is a function, and is the module's only export.
  * 
  * @version 1.0.0

@@ -3,7 +3,7 @@
  * @description Table-based editor for party name and member list.
  * Each member renders as a table row with name, optional character link, and delete button.
  *
- * @module partyEditor
+ * @module modules/encounter-planner/presentation/partyManager/partyEditor
  * @version 2.1.0
  * @author Typeir
  * @since 1.0.0

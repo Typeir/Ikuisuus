@@ -3,7 +3,7 @@
  * @description Verifies the tooltip toggle interaction with the surrounding
  * provider state.
  *
- * @module tests/unit/src/lib/components/characterSheet/pagePreviewTooltip.test
+ * @module tests/unit/src/modules/character-builder/presentation/PagePreview/pagePreviewTooltip.test
  */
 
 import { PagePreviewProvider } from '@/modules/character-builder/presentation/PagePreview/pagePreviewProvider';

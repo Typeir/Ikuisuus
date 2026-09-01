@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for useFetchStubChildren hook
- * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useFetchStubChildren
+ * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useFetchStubChildren.test
  */
 
 import { useFetchStubChildren } from '@/modules/navigation-sidebar/application/hooks/useFetchStubChildren';

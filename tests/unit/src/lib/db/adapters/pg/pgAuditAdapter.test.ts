@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for pg-backed audit adapter using mocked ORM.
  *
- * @module tests/unit/lib/db/adapters/pg/pgAuditAdapter
+ * @module tests/unit/src/lib/db/adapters/pg/pgAuditAdapter.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

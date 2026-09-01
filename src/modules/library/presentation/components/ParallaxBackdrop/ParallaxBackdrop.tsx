@@ -4,7 +4,7 @@
  * Fixed, uninteractable, full-viewport parallax background component.
  * Renders an image as a background layer that shifts vertically with scroll.
  *
- * @module parallaxBackdrop
+ * @module modules/library/presentation/components/ParallaxBackdrop/ParallaxBackdrop
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

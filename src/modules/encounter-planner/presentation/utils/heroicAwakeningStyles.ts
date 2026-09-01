@@ -8,10 +8,12 @@
  * @author Typeir
  * @since 1.0.0
  * 
+ * @requires @/lib/utils/classNameMerge
  * @requires @/modules/encounter-planner/domain/combat/inProgressCombat.types
  * @requires @/modules/encounter-planner/domain/storage/encounterStorageKeys
  */
 
+import { cn } from '@/lib/utils/classNameMerge';
 import type { HeroicAwakeningState } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 import { HeroicAffix } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';
 
@@ -171,8 +173,5 @@ export function getAwakeningClassString(
   styles: Record<string, string>
 ): string {
   const { classNames } = computeAwakeningClasses(heroicAwakening);
-  return classNames
-    .map(className => styles[className] ?? className)
-    .filter(Boolean)
-    .join(' ');
+  return cn(...classNames.map(className => styles[className] ?? className));
 }

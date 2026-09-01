@@ -2,7 +2,7 @@
  * @fileoverview Validation Utilities Unit Tests
  * @description Tests for tag validation, CR-to-rarity mapping, and metadata schema checks.
  *
- * @module tests/unit/lib/metadata/validationUtils
+ * @module tests/unit/src/lib/metadata/validationUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

@@ -11,14 +11,32 @@
  * @requires @/modules/encounter-planner/lib/utils/monsterCache - Monster cache utilities
  */
 
+import { FetchError, fetcher } from '@/lib/fetch/fetcher';
 import { logger } from '@/lib/logging/logger';
-import type { MonsterData, MonsterIndexEntry } from '@/modules/encounter-planner/lib/utils/monsterCache';
+import type { MonsterIndexEntry } from '@/lib/db/content/schemas/monsterMetadata';
+import type { MonsterData } from '@/modules/encounter-planner/lib/utils/monsterCache';
 import {
     clearMonsterCache,
     getMonsterBySlug,
     getMonsterIndex,
 } from '@/modules/encounter-planner/lib/utils/monsterCache';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('@/lib/fetch/fetcher', () => ({
+  fetcher: vi.fn(),
+  FetchError: class FetchError extends Error {
+    status: number;
+    statusText?: string;
+    body?: unknown;
+    url?: string;
+    constructor(status: number, statusText?: string) {
+      super(`Request failed with status ${status}`);
+      this.name = 'FetchError';
+      this.status = status;
+      this.statusText = statusText;
+    }
+  },
+}));
 
 const mockMonsterIndex: MonsterIndexEntry[] = [
   { slug: 'goblin', title: 'Goblin', cr: '1/4' },
@@ -71,8 +89,8 @@ describe('monsterCache', () => {
 
   beforeEach(() => {
     clearMonsterCache();
-    mockFetch = vi.fn();
-    global.fetch = mockFetch;
+    mockFetch = fetcher as unknown as ReturnType<typeof vi.fn>;
+    mockFetch.mockReset();
   });
 
   afterEach(() => {
@@ -81,10 +99,7 @@ describe('monsterCache', () => {
 
   describe('getMonsterIndex', () => {
     it('should fetch monster index from API', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(mockMonsterIndex),
-      });
+      mockFetch.mockResolvedValueOnce(mockMonsterIndex);
 
       const result = await getMonsterIndex('en');
 
@@ -93,10 +108,7 @@ describe('monsterCache', () => {
     });
 
     it('should cache index for subsequent calls', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(mockMonsterIndex),
-      });
+      mockFetch.mockResolvedValueOnce(mockMonsterIndex);
 
       await getMonsterIndex('en');
       await getMonsterIndex('en');
@@ -106,15 +118,8 @@ describe('monsterCache', () => {
 
     it('should cache separately per locale', async () => {
       mockFetch
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve(mockMonsterIndex),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () =>
-            Promise.resolve([{ slug: 'goblin', title: 'Goblin', cr: '1/4' }]),
-        });
+        .mockResolvedValueOnce(mockMonsterIndex)
+        .mockResolvedValueOnce([{ slug: 'goblin', title: 'Goblin', cr: '1/4' }]);
 
       await getMonsterIndex('en');
       await getMonsterIndex('es');
@@ -137,10 +142,7 @@ describe('monsterCache', () => {
     });
 
     it('should return empty array on non-ok response', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-      });
+      mockFetch.mockRejectedValueOnce(new FetchError(500, 'Internal Server Error'));
       const loggerSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
 
       const result = await getMonsterIndex('en');
@@ -152,8 +154,8 @@ describe('monsterCache', () => {
     });
 
     it('should deduplicate concurrent requests', async () => {
-      let resolvePromise: (value: Response) => void;
-      const fetchPromise = new Promise<Response>((resolve) => {
+      let resolvePromise: (value: MonsterIndexEntry[]) => void;
+      const fetchPromise = new Promise<MonsterIndexEntry[]>((resolve) => {
         resolvePromise = resolve;
       });
       mockFetch.mockReturnValueOnce(fetchPromise);
@@ -161,10 +163,7 @@ describe('monsterCache', () => {
       const promise1 = getMonsterIndex('en');
       const promise2 = getMonsterIndex('en');
 
-      resolvePromise!({
-        ok: true,
-        json: () => Promise.resolve(mockMonsterIndex),
-      } as Response);
+      resolvePromise!(mockMonsterIndex);
 
       const [result1, result2] = await Promise.all([promise1, promise2]);
 
@@ -176,10 +175,7 @@ describe('monsterCache', () => {
 
   describe('getMonsterBySlug', () => {
     it('should fetch monster data from API', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(mockGoblinData),
-      });
+      mockFetch.mockResolvedValueOnce(mockGoblinData);
 
       const result = await getMonsterBySlug('goblin', 'en');
 
@@ -188,10 +184,7 @@ describe('monsterCache', () => {
     });
 
     it('should cache monster data for subsequent calls', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(mockGoblinData),
-      });
+      mockFetch.mockResolvedValueOnce(mockGoblinData);
 
       await getMonsterBySlug('goblin', 'en');
       await getMonsterBySlug('goblin', 'en');
@@ -201,14 +194,8 @@ describe('monsterCache', () => {
 
     it('should cache separately per slug', async () => {
       mockFetch
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve(mockGoblinData),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve(mockOrcData),
-        });
+        .mockResolvedValueOnce(mockGoblinData)
+        .mockResolvedValueOnce(mockOrcData);
 
       const goblin = await getMonsterBySlug('goblin', 'en');
       const orc = await getMonsterBySlug('orc', 'en');
@@ -220,14 +207,8 @@ describe('monsterCache', () => {
 
     it('should cache separately per locale', async () => {
       mockFetch
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve(mockGoblinData),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve({ ...mockGoblinData, title: 'Trasgo' }),
-        });
+        .mockResolvedValueOnce(mockGoblinData)
+        .mockResolvedValueOnce({ ...mockGoblinData, title: 'Trasgo' });
 
       await getMonsterBySlug('goblin', 'en');
       await getMonsterBySlug('goblin', 'es');
@@ -250,10 +231,7 @@ describe('monsterCache', () => {
     });
 
     it('should return null on 404 response without logging error', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      });
+      mockFetch.mockRejectedValueOnce(new FetchError(404, 'Not Found'));
       const loggerSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
 
       const result = await getMonsterBySlug('nonexistent', 'en');
@@ -265,10 +243,7 @@ describe('monsterCache', () => {
     });
 
     it('should return null on 500 response and log error', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-      });
+      mockFetch.mockRejectedValueOnce(new FetchError(500, 'Internal Server Error'));
       const loggerSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
 
       const result = await getMonsterBySlug('error-monster', 'en');
@@ -280,8 +255,8 @@ describe('monsterCache', () => {
     });
 
     it('should deduplicate concurrent requests for same slug', async () => {
-      let resolvePromise: (value: Response) => void;
-      const fetchPromise = new Promise<Response>((resolve) => {
+      let resolvePromise: (value: MonsterData) => void;
+      const fetchPromise = new Promise<MonsterData>((resolve) => {
         resolvePromise = resolve;
       });
       mockFetch.mockReturnValueOnce(fetchPromise);
@@ -289,10 +264,7 @@ describe('monsterCache', () => {
       const promise1 = getMonsterBySlug('goblin', 'en');
       const promise2 = getMonsterBySlug('goblin', 'en');
 
-      resolvePromise!({
-        ok: true,
-        json: () => Promise.resolve(mockGoblinData),
-      } as Response);
+      resolvePromise!(mockGoblinData);
 
       const [result1, result2] = await Promise.all([promise1, promise2]);
 
@@ -305,22 +277,10 @@ describe('monsterCache', () => {
   describe('clearMonsterCache', () => {
     it('should clear all cached data', async () => {
       mockFetch
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve(mockMonsterIndex),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve(mockGoblinData),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve(mockMonsterIndex),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve(mockGoblinData),
-        });
+        .mockResolvedValueOnce(mockMonsterIndex)
+        .mockResolvedValueOnce(mockGoblinData)
+        .mockResolvedValueOnce(mockMonsterIndex)
+        .mockResolvedValueOnce(mockGoblinData);
 
       await getMonsterIndex('en');
       await getMonsterBySlug('goblin', 'en');

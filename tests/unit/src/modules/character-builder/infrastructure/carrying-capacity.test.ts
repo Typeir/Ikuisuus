@@ -2,7 +2,7 @@
  * @fileoverview Carrying Capacity Infrastructure Tests
  * @description Unit tests for carrying capacity computation.
  *
- * @module tests/unit/modules/character-builder/infrastructure/carrying-capacity
+ * @module tests/unit/src/modules/character-builder/infrastructure/carrying-capacity.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

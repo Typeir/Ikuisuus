@@ -4,7 +4,7 @@
  * collisionCloudLayers.core have the expected numeric types and ranges.
  * Factory functions are untested.
  *
- * @module tests/unit/src/modules/world-sim/infrastructure/effects/collisionCloudLayers.core
+ * @module tests/unit/src/modules/world-sim/infrastructure/effects/collisionCloudLayers.core.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

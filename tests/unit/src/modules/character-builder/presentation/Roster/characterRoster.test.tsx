@@ -2,7 +2,7 @@
  * @fileoverview CharacterRoster Unit Tests
  * @description Tests for the CharacterRoster component.
  *
- * @module tests/unit/lib/components/characterSheet/characterRoster
+ * @module tests/unit/src/modules/character-builder/presentation/Roster/characterRoster.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

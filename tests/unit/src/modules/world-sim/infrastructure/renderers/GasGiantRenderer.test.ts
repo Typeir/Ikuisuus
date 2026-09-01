@@ -2,7 +2,7 @@
  * @fileoverview GasGiantRenderer Unit Tests
  * @description Tests mesh creation, storm animation update, and disposal.
  *
- * @module tests/unit/worldSim/celestials/GasGiantRenderer
+ * @module tests/unit/src/modules/world-sim/infrastructure/renderers/GasGiantRenderer.test
  */
 
 import { GasGiantRenderer } from '@/modules/world-sim/infrastructure/renderers/GasGiantRenderer';

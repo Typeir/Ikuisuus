@@ -2,7 +2,7 @@
  * @fileoverview Monster Importer Barrel Export
  * @description Exports all components and types from the importer module.
  * 
- * @module encounterPlanner/importer
+ * @module modules/encounter-planner/presentation/importer/index
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

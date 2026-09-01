@@ -2,7 +2,7 @@
  * @fileoverview React context exposing WorldSimMediator control methods.
  * @description Exposes WorldSimMediator methods as a stable React context for descendant components.
  *
- * @module worldSim/context/WorldSimControlsContext
+ * @module modules/world-sim/application/state/WorldSimControlsContext
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

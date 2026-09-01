@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the World MikroORM entity.
  *
- * @module tests/unit/lib/db/orm/entities/WorldEntity
+ * @module tests/unit/src/lib/db/orm/entities/WorldEntity.test
  */
 
 import { WorldEntity } from '@/lib/db/orm/entities/WorldEntity';

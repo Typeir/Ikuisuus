@@ -2,7 +2,7 @@
  * @fileoverview Tests for CharactersPage
  * @description Unit tests for the /[locale]/utils/characters page component.
  *
- * @module tests/unit/src/app/locale/utils/characters/page.test
+ * @module tests/unit/src/app/[locale]/utils/characters/page.test
  */
 
 import CharactersPage from '@/app/[locale]/utils/characters/page';

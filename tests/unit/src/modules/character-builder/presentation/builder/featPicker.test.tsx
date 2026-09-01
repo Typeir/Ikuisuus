@@ -2,7 +2,7 @@
  * @fileoverview FeatPicker Unit Tests
  * @description Tests for the FeatPicker component.
  *
- * @module tests/unit/lib/components/characterSheet/featPicker
+ * @module tests/unit/src/modules/character-builder/presentation/builder/featPicker.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

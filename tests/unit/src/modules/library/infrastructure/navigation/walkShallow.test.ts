@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for shallow navigation walker.
- * @module tests/unit/src/modules/library/infrastructure/navigation/walkShallow
+ * @module tests/unit/src/modules/library/infrastructure/navigation/walkShallow.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

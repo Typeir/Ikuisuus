@@ -2,7 +2,7 @@
  * @fileoverview Source Parser Dispatcher Tests
  * @description Kind detection and raw-source parsing without file reads.
  *
- * @module tests/unit/scripts/metadata/sourceParser
+ * @module tests/unit/scripts/metadata/sourceParser.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

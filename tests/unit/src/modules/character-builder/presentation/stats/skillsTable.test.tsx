@@ -2,7 +2,7 @@
  * @fileoverview SkillsTable Unit Tests
  * @description Tests for the SkillsTable component.
  *
- * @module tests/unit/lib/components/characterSheet/skillsTable
+ * @module tests/unit/src/modules/character-builder/presentation/stats/skillsTable.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

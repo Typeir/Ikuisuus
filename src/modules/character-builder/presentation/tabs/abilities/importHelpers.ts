@@ -9,6 +9,7 @@
  * @since 1.0.0
  */
 
+import { fetcher } from '@/lib/fetch/fetcher';
 import type { FeatMetadata } from '@/lib/db/content/schemas/featMetadata';
 import type { HeirloomMetadata } from '@/lib/db/content/schemas/heirloomMetadata';
 import type { SpellMetadata } from '@/lib/db/content/schemas/spellMetadata';
@@ -123,14 +124,13 @@ export async function fetchRawSource(
   locale: string,
 ): Promise<string | undefined> {
   try {
-    const res = await fetch('/api/raw-content', {
+    const json = await fetcher<{ content?: string }>('/api/raw-content', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type, slug, locale }),
     });
-    if (!res.ok) return undefined;
-    const json = await res.json();
-    return json.content as string;
+
+    return json.content;
   } catch {
     return undefined;
   }

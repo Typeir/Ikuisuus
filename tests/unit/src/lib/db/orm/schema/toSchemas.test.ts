@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for resolving decorated classes into EntitySchema instances.
  *
- * @module tests/unit/lib/db/orm/schema/toSchemas
+ * @module tests/unit/src/lib/db/orm/schema/toSchemas.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

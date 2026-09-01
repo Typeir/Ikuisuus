@@ -11,13 +11,13 @@
  *
  * @example
  * ```typescript
- * import { RARITY_SORT_ORDER } from '@/lib/enums/tableConstants';
- * import { compareByOrder } from '@/lib/utils/tableUtils';
+ * import { RARITY_SORT_ORDER } from '@/modules/metadata-tables/domain/constants';
+ * import { compareByOrder } from '@/modules/metadata-tables/domain/comparators';
  *
  * // Sort items by rarity
  * items.sort((a, b) => compareByOrder(a.rarity, b.rarity, RARITY_SORT_ORDER));
  * ```
- * @module src/lib/enums/tableConstants
+ * @module modules/metadata-tables/domain/constants
  */
 
 /**

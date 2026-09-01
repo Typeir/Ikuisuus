@@ -3,7 +3,7 @@
  * @description Tests label rendering, bind/unbind callbacks, click handling,
  * and visibility conditions based on WorldSim state.
  *
- * @module tests/unit/worldSim/overlay/OverlayContainer
+ * @module tests/unit/src/modules/world-sim/presentation/overlay/OverlayContainer/OverlayContainer.test
  */
 
 import {

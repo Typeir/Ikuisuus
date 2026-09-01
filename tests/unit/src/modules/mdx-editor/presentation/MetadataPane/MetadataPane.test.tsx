@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — MetadataPane
  * @description Record rendering, refresh behaviour, and failure states.
  *
- * @module tests/unit/src/modules/mdx-editor/presentation/MetadataPane/MetadataPane
+ * @module tests/unit/src/modules/mdx-editor/presentation/MetadataPane/MetadataPane.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

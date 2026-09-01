@@ -328,7 +328,7 @@ Quick reference for where key files are located:
 **Theme System**:
 
 - `src/app/[locale]/globals.scss` - CSS variables and cascade (single source for color literals)
-- `src/lib/enums/themes.ts` - Theme enum and constants
+- `src/lib/constants/themes.ts` - Theme enum and constants
 - `src/lib/utils/themeScript.ts` - FOUC prevention script
 
 **Foundry VTT Module**:

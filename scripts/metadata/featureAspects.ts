@@ -4,7 +4,7 @@
  * block. Returns facets from the feature's line range and, where present, the
  * parsed `trigger`, `target` and `saving_throw` shard fields.
  *
- * @module lib/metadata/featureAspects
+ * @module scripts/metadata/featureAspects
  * @version 1.0.0
  * @author Typeir
  * @since 3.1.0

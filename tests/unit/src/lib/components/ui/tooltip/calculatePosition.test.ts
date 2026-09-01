@@ -1,6 +1,6 @@
 /**
  * @fileoverview calculatePosition Unit Tests
- * @module tests/unit/src/lib/components/ui/tooltip/calculatePosition
+ * @module tests/unit/src/lib/components/ui/tooltip/calculatePosition.test
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0

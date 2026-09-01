@@ -3,7 +3,7 @@
  * @description Tests for the remark plugin that transforms `[# kw:... #]`
  * keyword expressions in text nodes into `<Keyword>` MDX JSX elements.
  *
- * @module tests/unit/lib/md/remarkKeyword
+ * @module tests/unit/src/lib/md/remarkKeyword.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-19
@@ -189,7 +189,7 @@ describe('remarkKeyword', () => {
     });
   });
 
-  describe('registry resolution', () => {
+  describe('resolution stamping', () => {
     it('should carry the namespace through as an attribute', () => {
       const tree = rootWithText('[# kw:condition;Prone #]');
       remarkKeyword()(tree);
@@ -201,52 +201,48 @@ describe('remarkKeyword', () => {
       });
     });
 
-    it('should omit href when no registry is supplied', () => {
+    it('should omit href when no resolutions are supplied', () => {
       const tree = rootWithText('[# kw:condition;prone #]');
       remarkKeyword()(tree);
 
       expect(attributesOf(tree.children[0])).not.toHaveProperty('href');
     });
 
-    it('should add href for a resolved reference', () => {
-      const registry = new Map([
-        [
-          'condition',
-          {
-            namespace: 'condition',
-            sources: ['rules/steel-and-strife/conditions.rule.mdx'],
-            values: new Map([
-              [
-                'prone',
-                [
-                  {
-                    anchor: 'prone',
-                    heading: 'Prone',
-                    filePath: 'rules/steel-and-strife/conditions.rule.mdx',
-                  },
-                ],
-              ],
-            ]),
-          },
-        ],
-      ]);
+    it('should stamp the target it is handed', () => {
+      const resolutions = {
+        'condition;prone': {
+          href: 'library/rules/steel-and-strife/conditions#prone',
+          templateId: 'kw-condition-prone',
+          heading: 'Prone',
+        },
+      };
       const tree = rootWithText('[# kw:condition;prone #]');
-      remarkKeyword({ registry })(tree);
+      remarkKeyword({ resolutions })(tree);
 
-      expect(attributesOf(tree.children[0]).href).toBe(
-        'library/rules/steel-and-strife/conditions#prone',
-      );
+      expect(attributesOf(tree.children[0])).toMatchObject({
+        href: 'library/rules/steel-and-strife/conditions#prone',
+        templateId: 'kw-condition-prone',
+        heading: 'Prone',
+      });
     });
 
-    it('should omit href when the registry cannot resolve the value', () => {
-      const registry = new Map([
-        [
-          'condition',
-          { namespace: 'condition', sources: [], values: new Map() },
-        ],
-      ]);
+    it('should key a bare reference without a namespace segment', () => {
+      const resolutions = {
+        resist: {
+          href: 'library/rules/steel-and-strife/effects-and-enhancements#resist',
+          templateId: 'kw--resist',
+          heading: 'Resist',
+        },
+      };
+      const tree = rootWithText('[# kw:Resist #]');
+      remarkKeyword({ resolutions })(tree);
+
+      expect(attributesOf(tree.children[0]).templateId).toBe('kw--resist');
+    });
+
+    it('should omit href for a reference nothing resolved', () => {
       const tree = rootWithText('[# kw:condition;prone #]');
-      remarkKeyword({ registry })(tree);
+      remarkKeyword({ resolutions: {} })(tree);
 
       expect(attributesOf(tree.children[0])).not.toHaveProperty('href');
     });

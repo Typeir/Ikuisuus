@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for IP banning functionality using adapter-backed persistence.
  *
- * @module tests/unit/lib/security/bannedIps
+ * @module tests/unit/src/lib/security/bannedIps.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

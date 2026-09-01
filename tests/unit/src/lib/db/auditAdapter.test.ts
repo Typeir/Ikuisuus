@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests that AuditAdapter and AuditRecord interfaces are usable.
  *
- * @module tests/unit/lib/db/auditAdapter
+ * @module tests/unit/src/lib/db/auditAdapter.test
  */
 
 import type { AuditAdapter, AuditRecord } from '@/lib/db/auditAdapter';

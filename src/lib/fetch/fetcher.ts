@@ -64,11 +64,25 @@ export class FetchError extends Error {
  * @returns {Promise<unknown>} Parsed body content
  */
 async function parseErrorBody(res: Response): Promise<unknown> {
-  try {
-    return await res.clone().json();
-  } catch {
-    return await res.text();
+  /* Cloning first leaves the original body readable; a response that cannot be
+     cloned is read directly, since a rejected request is not consumed again.
+     A body that cannot be read at all yields nothing rather than throwing — the
+     caller needs the status, and a read failure would replace it. */
+  const attempts = [
+    () => res.clone().json(),
+    () => res.json(),
+    () => res.text(),
+  ];
+
+  for (const read of attempts) {
+    try {
+      return await read();
+    } catch {
+      continue;
+    }
   }
+
+  return undefined;
 }
 
 /**

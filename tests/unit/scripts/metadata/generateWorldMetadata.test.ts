@@ -4,7 +4,7 @@
  * exports, parse function contract, and output shape validation against
  * real generated sidecar files.
  *
- * @module tests/unit/scripts/metadata/generateWorldMetadata
+ * @module tests/unit/scripts/metadata/generateWorldMetadata.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

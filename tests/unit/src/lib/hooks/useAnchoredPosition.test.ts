@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for useAnchoredPosition.
- * @module tests/unit/lib/hooks/useAnchoredPosition
+ * @module tests/unit/src/lib/hooks/useAnchoredPosition.test
  */
 
 import { useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';

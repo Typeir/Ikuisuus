@@ -3,7 +3,7 @@
  * @description Validates login form rendering, authenticated user display,
  * interaction callbacks, and error state display.
  *
- * @module tests/unit/lib/components/mdxEditor/editorAuthSection
+ * @module tests/unit/src/modules/mdx-editor/presentation/EditorAuthSection/EditorAuthSection.test
  */
 
 import { EditorAuthSection } from '@/modules/mdx-editor/presentation/EditorAuthSection/EditorAuthSection';

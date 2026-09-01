@@ -2,7 +2,7 @@
  * @fileoverview Game Data Accessor Unit Tests
  * @description Tests for GameData and ItemData static accessor classes.
  *
- * @module tests/unit/lib/metadata/gameData
+ * @module tests/unit/src/lib/metadata/gameData.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

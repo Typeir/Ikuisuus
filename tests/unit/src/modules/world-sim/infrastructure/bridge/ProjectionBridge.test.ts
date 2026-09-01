@@ -3,7 +3,7 @@
  * @description Tests tracking, untracking, subscription, bound element DOM updates,
  * occlusion, scale computation, and clear() cleanup.
  *
- * @module tests/unit/worldSim/bridge/ProjectionBridge
+ * @module tests/unit/src/modules/world-sim/infrastructure/bridge/ProjectionBridge.test
  */
 
 import { ProjectionBridge } from '@/modules/world-sim/infrastructure/bridge/ProjectionBridge';

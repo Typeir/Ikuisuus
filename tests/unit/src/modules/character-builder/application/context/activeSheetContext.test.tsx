@@ -2,7 +2,7 @@
  * @fileoverview Active Sheet Context Tests
  * @description Unit tests for the ActiveSheetProvider and its selector hooks.
  *
- * @module tests/unit/lib/components/characterSheet/context/activeSheetContext
+ * @module tests/unit/src/modules/character-builder/application/context/activeSheetContext.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

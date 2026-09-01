@@ -2,7 +2,7 @@
  * @fileoverview Directory Tree Size Reporter
  * @description Recursively walks a directory and prints size of each folder.
  *
- * @module treeSize
+ * @module scripts/utils/treeSize
  * @version 1.0.0
  *
  * @example

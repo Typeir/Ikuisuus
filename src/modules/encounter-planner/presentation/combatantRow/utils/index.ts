@@ -2,7 +2,7 @@
  * @fileoverview Play Mode Utilities Index
  * @description Re-exports all Play Mode utility functions and types.
  *
- * @module playMode/utils
+ * @module modules/encounter-planner/presentation/combatantRow/utils/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

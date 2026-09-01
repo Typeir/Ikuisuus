@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tests Navigation exports for the locale-aware Next.js navigation wrappers.
  *
- * @module tests/unit/i18n/navigation
+ * @module tests/unit/src/i18n/navigation.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

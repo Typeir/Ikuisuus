@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for Zod auth schemas validation.
  *
- * @module tests/unit/lib/db/auth/schemas
+ * @module tests/unit/src/lib/db/auth/schemas.test
  */
 
 import {

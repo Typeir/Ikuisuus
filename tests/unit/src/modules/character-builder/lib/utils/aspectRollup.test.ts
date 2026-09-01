@@ -2,7 +2,7 @@
  * @fileoverview aspectRollup Tests
  * @description Roll-up counts, available aspects and AND filtering.
  *
- * @module tests/unit/src/modules/character-builder/lib/utils/aspectRollup
+ * @module tests/unit/src/modules/character-builder/lib/utils/aspectRollup.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

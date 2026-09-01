@@ -14,6 +14,7 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { sassPlugin } from 'esbuild-sass-plugin';
 import fs from 'fs/promises';
 import { bundleMDX } from 'mdx-bundler';
@@ -92,11 +93,10 @@ const walkDir = async (dir: string): Promise<string[]> => {
  */
 const run = async (): Promise<void> => {
   const locales = ['en'];
-  const contentRoot = path.join(process.cwd(), 'src/content');
   const outRoot = path.join(process.cwd(), 'src/compiled-content');
 
   for (const locale of locales) {
-    const contentDir = path.join(contentRoot, locale);
+    const contentDir = getContentFolder(locale);
     const files = await walkDir(contentDir);
 
     for (const file of files) {

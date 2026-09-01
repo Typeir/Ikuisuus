@@ -3,7 +3,7 @@
  * @description Type definitions for the celestial body system, including renderer
  * strategy, camera command, and data interfaces.
  *
- * @module worldSim/celestials/interfaces
+ * @module modules/world-sim/domain/celestials/celestialBody.types
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

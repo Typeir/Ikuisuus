@@ -1,6 +1,6 @@
 /**
  * @fileoverview Selector exports for library application layer.
- * @module modules/library/application/selectors
+ * @module modules/library/application/selectors/index
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

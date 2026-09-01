@@ -1,7 +1,7 @@
 /**
  * @fileoverview Compiles MDX with file-scoped imports. Async. Used by library route.
  *
- * @module src/lib/mdx/compileStatic/compileStatic
+ * @module src/modules/library/infrastructure/compile/compileStatic
  *
  * @author Typeir
  * @version 0.1.0
@@ -13,11 +13,8 @@ import remarkAspect from '@/lib/md/remarkAspect';
 import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkKeyword from '@/lib/md/remarkKeyword';
 import remarkUnit from '@/lib/md/remarkUnit';
-import { collectKeywordShards } from '@/lib/md/bakeKeywordShards';
-import {
-  DEFAULT_KEYWORD_LOCALE,
-  resolveKeywordRegistry,
-} from '@/lib/md/resolveKeywordRegistry';
+import { DEFAULT_KEYWORD_LOCALE } from '@/lib/constants/locales';
+import { resolveDocumentKeywords } from '@/lib/md/resolveShardByRef';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
@@ -44,9 +41,11 @@ export async function compileStatic(opts: CompileOptions) {
   } = opts;
 
   const locale = opts.locale ?? DEFAULT_KEYWORD_LOCALE;
-  const keywords = await resolveKeywordRegistry(locale);
   const resolvedSource = await resolveReusableSource(source);
-  const shards = await collectKeywordShards(resolvedSource, keywords, locale);
+  const { shards, resolutions } = await resolveDocumentKeywords(
+    resolvedSource,
+    locale,
+  );
 
   const result = await evaluate({
     source: resolvedSource,
@@ -62,7 +61,7 @@ export async function compileStatic(opts: CompileOptions) {
             remarkAspect,
             remarkDiceRoll,
             remarkUnit,
-            [remarkKeyword, { registry: keywords }],
+            [remarkKeyword, { resolutions }],
           ],
           rehypePlugins: [rehypeKatex, rehypeSectionize, [rehypeAspects, aspects]],
         },

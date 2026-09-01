@@ -4,7 +4,7 @@
  * @fileoverview Tests for multi-layer persistent storage utility.
  * Validates cookie, sessionStorage, and localStorage operations.
  *
- * @module tests/unit/lib/utils/storePersistentData
+ * @module tests/unit/src/lib/utils/storePersistentData.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -16,7 +16,6 @@
 import {
     fetchPersistentDataRef,
     readCookie,
-    readPersistentDataCookieFirst,
     removePersistentData,
     storePersistentData,
     storePersistentDataCookieFirst,
@@ -324,71 +323,6 @@ describe('storePersistentDataFallbackOnly', () => {
   it('should be safe when window is undefined', () => {
     vi.stubGlobal('window', undefined);
     expect(() => storePersistentDataFallbackOnly('k', 'v')).not.toThrow();
-  });
-});
-
-describe('readPersistentDataCookieFirst', () => {
-  beforeEach(() => {
-    Object.defineProperty(document, 'cookie', { writable: true, value: '' });
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
-    vi.restoreAllMocks();
-  });
-
-  it('should return cookie value when present', () => {
-    Object.defineProperty(document, 'cookie', {
-      writable: true,
-      value: 'theme=light',
-    });
-    vi.stubGlobal('window', {
-      sessionStorage: { getItem: vi.fn(() => 'dark') },
-      localStorage: { getItem: vi.fn(() => 'dark') },
-    });
-
-    expect(readPersistentDataCookieFirst('theme')).toBe('light');
-  });
-
-  it('should fall back to sessionStorage when cookie missing', () => {
-    Object.defineProperty(document, 'cookie', { writable: true, value: '' });
-    vi.stubGlobal('window', {
-      sessionStorage: {
-        getItem: vi.fn((k: string) => (k === 'theme' ? 'session-val' : null)),
-      },
-      localStorage: { getItem: vi.fn(() => null) },
-    });
-
-    expect(readPersistentDataCookieFirst('theme')).toBe('session-val');
-  });
-
-  it('should fall back to localStorage when cookie and session missing', () => {
-    Object.defineProperty(document, 'cookie', { writable: true, value: '' });
-    vi.stubGlobal('window', {
-      sessionStorage: { getItem: vi.fn(() => null) },
-      localStorage: {
-        getItem: vi.fn((k: string) => (k === 'theme' ? 'local-val' : null)),
-      },
-    });
-
-    expect(readPersistentDataCookieFirst('theme')).toBe('local-val');
-  });
-
-  it('should return null when all layers empty', () => {
-    Object.defineProperty(document, 'cookie', { writable: true, value: '' });
-    vi.stubGlobal('window', {
-      sessionStorage: { getItem: vi.fn(() => null) },
-      localStorage: { getItem: vi.fn(() => null) },
-    });
-
-    expect(readPersistentDataCookieFirst('theme')).toBeNull();
-  });
-
-  it('should return null when window is undefined and cookie missing', () => {
-    Object.defineProperty(document, 'cookie', { writable: true, value: '' });
-    vi.stubGlobal('window', undefined);
-
-    expect(readPersistentDataCookieFirst('theme')).toBeNull();
   });
 });
 

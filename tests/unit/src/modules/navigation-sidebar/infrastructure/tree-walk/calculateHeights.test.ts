@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for infrastructure/tree-walk/calculateHeights
- * @module tests/unit/src/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights
+ * @module tests/unit/src/modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights.test
  */
 
 import { BASE_HEIGHT } from '@/modules/navigation-sidebar/domain/constants';

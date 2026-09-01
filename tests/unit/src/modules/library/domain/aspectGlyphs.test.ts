@@ -7,7 +7,7 @@
  * A missing entry is silent: the value falls back to its group's glyph and looks
  * like every other value in that group, which is indistinguishable from working.
  *
- * @module tests/unit/src/modules/library/domain/aspectGlyphs
+ * @module tests/unit/src/modules/library/domain/aspectGlyphs.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-04

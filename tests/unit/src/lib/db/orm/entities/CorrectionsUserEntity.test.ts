@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the CorrectionsUser MikroORM entity class.
  *
- * @module tests/unit/lib/db/orm/entities/CorrectionsUserEntity
+ * @module tests/unit/src/lib/db/orm/entities/CorrectionsUserEntity.test
  */
 
 import { CorrectionsUserEntity } from '@/lib/db/orm/entities/CorrectionsUserEntity';

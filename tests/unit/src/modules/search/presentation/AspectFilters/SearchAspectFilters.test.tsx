@@ -3,7 +3,7 @@
  * @description Active filters as pressed pills, removal, clear-all and the
  * editor trigger.
  *
- * @module tests/unit/src/modules/search/presentation/AspectFilters/SearchAspectFilters
+ * @module tests/unit/src/modules/search/presentation/AspectFilters/SearchAspectFilters.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

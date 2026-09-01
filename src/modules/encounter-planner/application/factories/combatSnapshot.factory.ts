@@ -2,7 +2,7 @@
  * @fileoverview In-Progress Combat Storage Utilities
  * @description Utilities for persisting and managing in-progress combat snapshots.
  *
- * @module inProgressCombatStorage
+ * @module modules/encounter-planner/application/factories/combatSnapshot.factory
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

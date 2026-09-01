@@ -3,7 +3,7 @@
  * @description Tests for POST /api/raw-content. Covers validation, type→dir
  * mapping, frontmatter stripping, 404 handling, and error handling.
  *
- * @module tests/unit/app/api/raw-content/route
+ * @module tests/unit/src/app/api/raw-content/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

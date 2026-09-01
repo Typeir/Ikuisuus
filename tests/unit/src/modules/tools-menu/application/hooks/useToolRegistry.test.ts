@@ -4,7 +4,7 @@
  * with ids in entry order and hrefs embedding the mocked locale. `NODE_ENV` is `test`
  * here, so `devOnly` entries are excluded. Uses global vitest mocks.
  *
- * @module tests/unit/src/modules/tools-menu/application/hooks/useToolRegistry
+ * @module tests/unit/src/modules/tools-menu/application/hooks/useToolRegistry.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the Three.js post-processing pixelation pass.
  *
- * @module tests/unit/lib/components/worldSim/canvas/PixelatePass
+ * @module tests/unit/src/modules/world-sim/infrastructure/three-js/PixelatePass.test
  */
 
 import { describe, expect, it, vi } from 'vitest';

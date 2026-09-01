@@ -1,6 +1,6 @@
 /**
  * @fileoverview navigation-sidebar module barrel
- * @module modules/navigation-sidebar
+ * @module modules/navigation-sidebar/index
  * @description Recursive library tree navigation. Public API surfaces presentation components,
  * state hooks, server-callable tree utilities, and domain types. Internal composition details,
  * infrastructure utilities, and deep application paths are not exported.

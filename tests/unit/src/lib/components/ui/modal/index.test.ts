@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for modal module barrel export
- * @module tests/ui/modal/index
+ * @module tests/unit/src/lib/components/ui/modal/index.test
  */
 
 import { describe, it, expect } from 'vitest';

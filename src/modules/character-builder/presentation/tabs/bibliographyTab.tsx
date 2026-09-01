@@ -4,7 +4,7 @@
  * notes, and narrative content. Uses the `notes` field from the character
  * sheet.
  *
- * @module lib/components/characterSheet/tabs/bibliographyTab
+ * @module modules/character-builder/presentation/tabs/bibliographyTab
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

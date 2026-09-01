@@ -4,13 +4,13 @@
  * @fileoverview Utility to expand sidebar ancestors based on the active route.
  * Provides deterministic baseline expansion for static pages.
  *
- * @module lib/utils/deriveExpandedPathsFromUrl
+ * @module modules/library/application/selectors/deriveExpandedPathsFromUrl
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
-import { stripContentSuffix } from '@/lib/enums/constants';
+import { stripContentSuffix } from '@/lib/constants/content';
 
 /**
  * Derives which sidebar paths should be expanded based on the current URL

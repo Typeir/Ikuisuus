@@ -2,7 +2,7 @@
  * @fileoverview Renders the Everdark as concentric inverted spheres with fire shaders.
  * @description Layered noise and opacity; GLSL shaders imported from .glsl files.
  *
- * @module worldSim/celestials/EverdarkRenderer
+ * @module modules/world-sim/infrastructure/renderers/EverdarkRenderer
  * @version 1.2.0
  * @author Typeir
  * @since 1.0.0

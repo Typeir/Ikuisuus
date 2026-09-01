@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for deleteFile GitHub operation.
- * @module tests/unit/src/modules/mdx-editor/infrastructure/github/deleteFile
+ * @module tests/unit/src/modules/mdx-editor/infrastructure/github/deleteFile.test
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

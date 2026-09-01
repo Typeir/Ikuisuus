@@ -5,7 +5,7 @@
  * levels/vocations, preserving deliberate rolls, hpMax/tierBonus derivation, and
  * idempotency.
  *
- * @module tests/unit/character-builder/lib/utils/hitDiceSync
+ * @module tests/unit/src/modules/character-builder/lib/utils/hitDiceSync.test
  * @version 1.0.0
  * @author Typeir
  * @since 9.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for ghFetch GitHub API wrapper.
- * @module tests/unit/src/modules/mdx-editor/infrastructure/github/ghFetch
+ * @module tests/unit/src/modules/mdx-editor/infrastructure/github/ghFetch.test
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

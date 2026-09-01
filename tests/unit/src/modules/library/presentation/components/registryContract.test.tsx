@@ -3,7 +3,7 @@
  * @description Asserts that components emitted by remark plugins and referenced
  * by content resolve through the live runtime registry.
  *
- * @module tests/unit/modules/library/presentation/components/registryContract
+ * @module tests/unit/src/modules/library/presentation/components/registryContract.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-03

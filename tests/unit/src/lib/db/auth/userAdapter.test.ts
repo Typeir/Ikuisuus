@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests that UserAdapter interface export is usable.
  *
- * @module tests/unit/lib/db/auth/userAdapter
+ * @module tests/unit/src/lib/db/auth/userAdapter.test
  */
 
 import type { UserAdapter } from '@/lib/db/auth/userAdapter';

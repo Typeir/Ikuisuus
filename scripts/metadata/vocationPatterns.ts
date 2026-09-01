@@ -4,7 +4,7 @@
  * metadata generators. Centralizes table parsing, feature extraction, and
  * spellcasting detection into grouped dictionaries.
  *
- * @module scripts/metadata/classPatterns
+ * @module scripts/metadata/vocationPatterns
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

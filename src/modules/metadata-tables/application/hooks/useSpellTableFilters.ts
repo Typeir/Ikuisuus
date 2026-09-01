@@ -1,7 +1,7 @@
 /**
  * @fileoverview Spell-table filter state and API payload.
  *
- * @module lib/hooks/data/useSpellTableFilters
+ * @module modules/metadata-tables/application/hooks/useSpellTableFilters
  * @author Typeir
  * @version 1.0.0
  * @since 7.2.0

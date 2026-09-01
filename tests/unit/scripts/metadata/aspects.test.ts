@@ -2,7 +2,7 @@
  * @fileoverview Aspect Vocabulary Tests
  * @description Tests the aspect vocabulary in `shared-data.json` and its reader helpers.
  *
- * @module tests/unit/scripts/metadata/aspects
+ * @module tests/unit/scripts/metadata/aspects.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-04

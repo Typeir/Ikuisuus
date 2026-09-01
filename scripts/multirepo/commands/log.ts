@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik log` — Show recent commits in both repos.
- * @module multirepo/commands/log
+ * @module scripts/multirepo/commands/log
  */
 
 import type { CommandMeta } from '../../utils/cli-loader';

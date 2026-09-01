@@ -3,7 +3,7 @@
  * @description Verifies the feature-grant asterisk renders with an accessible
  * label when shown and renders nothing when hidden.
  *
- * @module tests/unit/src/modules/character-builder/presentation/atoms/hintMarker
+ * @module tests/unit/src/modules/character-builder/presentation/atoms/hintMarker.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

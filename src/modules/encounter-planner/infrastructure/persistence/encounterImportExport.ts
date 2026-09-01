@@ -2,7 +2,7 @@
  * @fileoverview Encounter Import/Export
  * @description Serializes encounters to JSON strings and parses them back with validation and fresh IDs.
  *
- * @module encounter-planner/infrastructure/persistence/encounterImportExport
+ * @module modules/encounter-planner/infrastructure/persistence/encounterImportExport
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

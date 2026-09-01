@@ -2,13 +2,13 @@
  * @fileoverview Pre-compiled regex patterns for MDX content parsing.
  * @description Heading, properties, and charge-mechanic patterns centralized.
  *
- * @module lib/metadata/parsingPatterns
+ * @module scripts/metadata/parsingPatterns
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0
  */
 
-import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
+import { REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
 
 /**
  * Heading detection patterns.

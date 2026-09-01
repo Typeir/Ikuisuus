@@ -2,7 +2,7 @@
  * @fileoverview Shared Game Data Types and Loader
  * @description Typed interface for scripts/core/shared-data.json and a loader usable in build-time scripts and Next.js runtime.
  *
- * @module lib/metadata/sharedData
+ * @module scripts/metadata/sharedData
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0
@@ -207,7 +207,7 @@ export function clearSharedDataCache(): void {
  * @param {string} value - A value from a borrowed shared-data list
  * @returns {string} The kebab-case aspect form
  */
-function toAspectValue(value: string): string {
+export function toAspectValue(value: string): string {
   return value.trim().toLowerCase().replace(/\s+/g, '-');
 }
 

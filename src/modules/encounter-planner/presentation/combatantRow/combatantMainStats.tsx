@@ -5,7 +5,7 @@
  * and slain toggle for combatants. All numeric fields support keyboard behavior:
  * Enter commits, Escape cancels, blur commits.
  *
- * @module combatantMainStats
+ * @module modules/encounter-planner/presentation/combatantRow/combatantMainStats
  * @version 4.0.0
  * @author Typeir
  * @since 1.0.0

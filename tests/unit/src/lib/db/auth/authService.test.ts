@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the auth service (login, createUser, session tokens, etc.).
  *
- * @module tests/unit/lib/db/auth/authService
+ * @module tests/unit/src/lib/db/auth/authService.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

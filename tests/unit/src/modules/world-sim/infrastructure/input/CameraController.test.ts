@@ -2,7 +2,7 @@
  * @fileoverview CameraController unit tests.
  * @description Covers command execution, follow targeting, orbit, reset, update loop, and disposal.
  *
- * @module tests/unit/worldSim/camera/CameraController
+ * @module tests/unit/src/modules/world-sim/infrastructure/input/CameraController.test
  */
 
 import { SceneEventBus } from '@/modules/world-sim/domain/events/sceneEventBus';

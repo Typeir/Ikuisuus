@@ -3,7 +3,7 @@
  * @description Tests factory creation for all 7 renderer types and error
  * handling for unknown types.
  *
- * @module tests/unit/worldSim/celestials/CelestialBodyFactory
+ * @module tests/unit/src/modules/world-sim/infrastructure/geometry/factories/CelestialBodyFactory.test
  */
 
 import { CelestialBodyFactory } from '@/modules/world-sim/infrastructure/geometry/factories/CelestialBodyFactory';

@@ -5,12 +5,13 @@
  * @version 1.0.0
  * @since 2.0.0
  */
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/constants/locales';
 import { defineRouting } from 'next-intl/routing';
 
 export const routing = defineRouting({
   /** All supported locales */
-  locales: ['en', 'es', 'fi'],
+  locales: [...SUPPORTED_LOCALES],
 
   /** Fallback when no locale matches */
-  defaultLocale: 'en',
+  defaultLocale: DEFAULT_LOCALE,
 });

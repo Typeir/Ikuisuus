@@ -7,7 +7,7 @@
  * from the active-sheet context, so these assert the synced entries the context
  * ends up holding rather than a spy on a drilled callback.
  *
- * @module tests/unit/src/modules/character-builder/presentation/builder/useVocationBaseSync
+ * @module tests/unit/src/modules/character-builder/presentation/builder/useVocationBaseSync.test
  * @version 2.0.0
  * @author Typeir
  * @since 8.0.0

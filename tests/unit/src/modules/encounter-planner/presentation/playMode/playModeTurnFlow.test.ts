@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Play Mode turn transition helpers.
- * @module tests/unit/src/lib/components/encounterPlanner/playMode/playModeTurnFlow.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/playMode/playModeTurnFlow.test
  * @description Verifies event ordering and round/deed transition behavior.
  *
  * @version 1.0.0

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the Monster MikroORM entity and its embeddable VOs.
  *
- * @module tests/unit/lib/db/orm/entities/MonsterEntity
+ * @module tests/unit/src/lib/db/orm/entities/MonsterEntity.test
  */
 
 import {

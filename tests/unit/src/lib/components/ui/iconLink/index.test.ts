@@ -1,6 +1,6 @@
 /**
  * @fileoverview IconLink barrel re-export test
- * @module tests/unit/src/lib/components/ui/iconLink/index
+ * @module tests/unit/src/lib/components/ui/iconLink/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.1.0

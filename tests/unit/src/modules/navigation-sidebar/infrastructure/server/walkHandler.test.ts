@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for walkHandler orchestrator
- * @module tests/unit/src/modules/navigation-sidebar/infrastructure/server/walkHandler
+ * @module tests/unit/src/modules/navigation-sidebar/infrastructure/server/walkHandler.test
  */
 
 import {

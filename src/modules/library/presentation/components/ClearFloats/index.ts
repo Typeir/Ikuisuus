@@ -1,6 +1,6 @@
 /**
  * @fileoverview Barrel export for ClearFloats component.
- * @module modules/library/presentation/components/ClearFloats
+ * @module modules/library/presentation/components/ClearFloats/index
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

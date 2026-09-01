@@ -2,7 +2,7 @@
  * @fileoverview TierChip Unit Tests
  * @description Smoke tests for the Tier combat stat chip.
  *
- * @module tests/unit/character-builder/presentation/stats/tierChip
+ * @module tests/unit/src/modules/character-builder/presentation/stats/tierChip.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Embed Panel Module Exports
  * @description Barrel export for generic embed panel components.
  *
- * @module ui/embedPanel
+ * @module lib/components/ui/embedPanel/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -2,7 +2,7 @@
  * @fileoverview extractKeywordRefs Unit Tests
  * @description Tests keyword reference collection from MDX source.
  *
- * @module tests/unit/src/lib/md/extractKeywordRefs
+ * @module tests/unit/src/lib/md/extractKeywordRefs.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

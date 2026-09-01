@@ -3,7 +3,7 @@
  * @description Tests query methods using injected fixture data via
  * the customData constructor parameter.
  *
- * @module tests/unit/worldSim/celestials/CelestialRegistry
+ * @module tests/unit/src/modules/world-sim/domain/celestials/CelestialRegistry.test
  */
 
 import { CelestialRegistry } from '@/modules/world-sim/domain/celestials/celestialRegistry';

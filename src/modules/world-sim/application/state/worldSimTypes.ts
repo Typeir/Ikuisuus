@@ -2,7 +2,7 @@
  * @fileoverview World Sim State & Action Type Definitions
  * @description Defines the state shape and action union for the World Sim reducer.
  *
- * @module worldSim/context/worldSimTypes
+ * @module modules/world-sim/application/state/worldSimTypes
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

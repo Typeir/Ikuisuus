@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for fs-backed user persistence.
  *
- * @module tests/unit/lib/db/auth/fsUserAdapter
+ * @module tests/unit/src/lib/db/auth/fsUserAdapter.test
  */
 
 import fs from 'fs';

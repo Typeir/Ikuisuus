@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for useEncounterIO
- * @module tests/unit/src/modules/encounter-planner/presentation/EncounterPlanner/useEncounterIO
+ * @module tests/unit/src/modules/encounter-planner/presentation/EncounterPlanner/useEncounterIO.test
  * @version 1.0.0
  * @author Typeir
  */

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests that the entities barrel re-exports all expected classes.
  *
- * @module tests/unit/lib/db/orm/entities/index
+ * @module tests/unit/src/lib/db/orm/entities/index.test
  */
 
 import {

@@ -3,7 +3,7 @@
  * @description Validates tags against known categories/values and checks metadata
  * structure against expected schemas.
  *
- * @module lib/metadata/validationUtils
+ * @module scripts/metadata/validationUtils
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

@@ -3,7 +3,7 @@
  * @description Renders a floating control bar at the bottom of the scene with
  * toggle buttons for labels, orbit pause, and a reset view button.
  *
- * @module worldSim/overlay/ControlsBar
+ * @module modules/world-sim/presentation/overlay/ControlsBar/ControlsBar
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for pg-backed banned IP adapter using mocked ORM.
  *
- * @module tests/unit/lib/security/adapters/pgBannedIpsAdapter
+ * @module tests/unit/src/lib/security/adapters/pgBannedIpsAdapter.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

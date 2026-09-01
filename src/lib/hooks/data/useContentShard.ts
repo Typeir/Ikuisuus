@@ -18,8 +18,10 @@ import {
     urlForContentShard,
     urlForContentShardSingle,
 } from '@/lib/fetch/swrKeys';
-import type { ContentShardResponse } from '@/lib/types/api.d';
-import type { ContentShardType } from '@/modules/character-builder/presentation/shards/contentShardPanel';
+import type {
+    ContentShardResponse,
+    ContentShardType,
+} from '@/lib/types/api';
 import useSWR, { type KeyedMutator } from 'swr';
 
 /**
@@ -94,14 +96,14 @@ export function useContentShard({
  * `/api/content-shards/[type]/[slug]?keys[]=` endpoint.
  *
  * @interface UseContentShardSingleOptions
- * @property {string} contentType - API path segment (e.g. `'bloodlines'`, `'feats'`)
+ * @property {ContentShardType} contentType - API path segment (e.g. `'bloodlines'`, `'feats'`)
  * @property {string} slug - Content item slug
  * @property {string} key - Heading / shard name to fetch
  * @property {string} locale - Content locale
  * @property {boolean} [enabled] - Set to `false` to skip fetching (default `true`)
  */
 export interface UseContentShardSingleOptions {
-  contentType: string;
+  contentType: ContentShardType;
   slug: string;
   key: string;
   locale: string;

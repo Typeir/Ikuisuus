@@ -1,6 +1,6 @@
 /**
  * @fileoverview useSectionTrack Hook Unit Tests
- * @module tests/unit/modules/library/application/hooks/useSectionTrack
+ * @module tests/unit/src/modules/library/application/hooks/useSectionTrack.test
  * @author Typeir
  * @version 1.0.0
  * @since 7.0.0

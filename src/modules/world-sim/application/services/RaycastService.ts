@@ -4,7 +4,7 @@
  * Performs mouse-based body picking (click/hover) and camera-based occlusion
  * detection, and owns the Raycaster instance plus cached mesh arrays.
  *
- * @module worldSim/RaycastService
+ * @module modules/world-sim/application/services/RaycastService
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — EditorFooter
  * @description Tests status message rendering and submit button behavior.
  *
- * @module tests/unit/lib/components/mdxEditor/editorFooter
+ * @module tests/unit/src/modules/mdx-editor/presentation/EditorFooter/EditorFooter.test
  */
 
 import { EditorFooter } from '@/modules/mdx-editor/presentation/EditorFooter/EditorFooter';

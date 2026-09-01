@@ -1,6 +1,6 @@
 /**
  * @fileoverview Contract tests for generateHeirloomMetadata script metadata compliance.
- * @module tests/unit/scripts/metadata/generateHeirloomMetadata
+ * @module tests/unit/scripts/metadata/generateHeirloomMetadata.test
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

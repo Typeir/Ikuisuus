@@ -5,7 +5,7 @@
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * @module src/lib/types/inProgressCombat
+ * @module src/modules/encounter-planner/domain/combat/inProgressCombat.types
  */
 
 import type { AffixEntry, CreatureStats } from '../encounters/encounter.types';

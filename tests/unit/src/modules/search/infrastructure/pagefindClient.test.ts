@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pagefind Client Loader Unit Tests
- * @module tests/unit/src/modules/search/infrastructure/pagefindClient
+ * @module tests/unit/src/modules/search/infrastructure/pagefindClient.test
  */
 
 import { getPagefind } from '@/modules/search/infrastructure/pagefindClient';

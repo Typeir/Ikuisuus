@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for proficiency utilities
- * @module tests/unit/modules/character-builder/lib/utils/proficiencyUtils.test.ts
+ * @module tests/unit/src/modules/character-builder/lib/utils/proficiencyUtils.test
  */
 
 import { describe, it, expect } from 'vitest';

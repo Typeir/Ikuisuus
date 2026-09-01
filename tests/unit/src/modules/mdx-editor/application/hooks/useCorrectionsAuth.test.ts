@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the corrections auth hook.
  *
- * @module tests/unit/lib/hooks/useCorrectionsAuth
+ * @module tests/unit/src/modules/mdx-editor/application/hooks/useCorrectionsAuth.test
  */
 
 import { act, renderHook, waitFor } from '@testing-library/react';
@@ -23,9 +23,22 @@ vi.mock('@/lib/types/persistentUiState', () => ({
   PERSISTED_UI_ACTION_TYPES: { SET_CORRECTIONS_TOKEN: 'SET_CORRECTIONS_TOKEN' },
 }));
 
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
+const { mockFetcher } = vi.hoisted(() => ({
+  mockFetcher: vi.fn(),
+}));
 
+vi.mock('@/lib/fetch/fetcher', async () => {
+  const actual =
+    await vi.importActual<typeof import('@/lib/fetch/fetcher')>(
+      '@/lib/fetch/fetcher',
+    );
+  return {
+    fetcher: mockFetcher,
+    FetchError: actual.FetchError,
+  };
+});
+
+import { FetchError } from '@/lib/fetch/fetcher';
 import { useCorrectionsAuth } from '@/modules/mdx-editor/application/hooks/useCorrectionsAuth';
 
 beforeEach(() => {
@@ -46,12 +59,9 @@ describe('useCorrectionsAuth', () => {
   });
 
   it('should login successfully', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        token: 'session-abc',
-        user: { id: '1', username: 'editor', role: 'editor' },
-      }),
+    mockFetcher.mockResolvedValueOnce({
+      token: 'session-abc',
+      user: { id: '1', username: 'editor', role: 'editor' },
     });
 
     const { result } = renderHook(() => useCorrectionsAuth());
@@ -72,10 +82,14 @@ describe('useCorrectionsAuth', () => {
   });
 
   it('should set error on failed login', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      json: async () => ({ error: 'Invalid credentials' }),
-    });
+    mockFetcher.mockRejectedValueOnce(
+      new FetchError(
+        401,
+        'Unauthorized',
+        { error: 'Invalid credentials' },
+        '/api/auth/login',
+      ),
+    );
 
     const { result } = renderHook(() => useCorrectionsAuth());
 
@@ -89,10 +103,14 @@ describe('useCorrectionsAuth', () => {
   });
 
   it('should clear error on clearError', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      json: async () => ({ error: 'oops' }),
-    });
+    mockFetcher.mockRejectedValueOnce(
+      new FetchError(
+        500,
+        'Internal Server Error',
+        { error: 'oops' },
+        '/api/auth/login',
+      ),
+    );
 
     const { result } = renderHook(() => useCorrectionsAuth());
 
@@ -126,12 +144,9 @@ describe('useCorrectionsAuth', () => {
   it('should validate stored token on hydration', async () => {
     mockState.correctionsToken = 'stored-token';
 
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        valid: true,
-        session: { userId: '1', username: 'editor', role: 'editor' },
-      }),
+    mockFetcher.mockResolvedValueOnce({
+      valid: true,
+      session: { userId: '1', username: 'editor', role: 'editor' },
     });
 
     const { result } = renderHook(() => useCorrectionsAuth());
@@ -144,10 +159,7 @@ describe('useCorrectionsAuth', () => {
   it('should clear stale token on validation failure', async () => {
     mockState.correctionsToken = 'expired-token';
 
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ valid: false }),
-    });
+    mockFetcher.mockResolvedValueOnce({ valid: false });
 
     const { result } = renderHook(() => useCorrectionsAuth());
 

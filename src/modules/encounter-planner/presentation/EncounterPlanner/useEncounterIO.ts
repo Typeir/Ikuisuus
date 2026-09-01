@@ -1,7 +1,7 @@
 /**
  * @fileoverview Encounter IO handlers — export to clipboard/file, import from file.
  *
- * @module encounter-planner/presentation/EncounterPlanner/useEncounterIO
+ * @module modules/encounter-planner/presentation/EncounterPlanner/useEncounterIO
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

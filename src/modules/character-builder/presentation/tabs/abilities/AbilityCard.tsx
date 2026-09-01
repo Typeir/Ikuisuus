@@ -3,7 +3,7 @@
  * @description Card rendering ability mechanics + description as MDX.
  * Source lookup via (?) icon opens PagePreview draggable modal.
  *
- * @module lib/components/characterSheet/tabs/abilities/AbilityCard
+ * @module modules/character-builder/presentation/tabs/abilities/AbilityCard
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

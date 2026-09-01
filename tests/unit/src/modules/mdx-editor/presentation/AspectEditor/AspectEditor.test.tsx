@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — AspectEditor
  * @description Staging from the vocabulary, unstaging, commit on Apply only.
  *
- * @module tests/unit/src/modules/mdx-editor/presentation/AspectEditor/AspectEditor
+ * @module tests/unit/src/modules/mdx-editor/presentation/AspectEditor/AspectEditor.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

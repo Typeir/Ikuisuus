@@ -3,7 +3,7 @@
  * @description Tests for legendary deed act, stratagem, lair, and phase
  * extraction from classified monster sections.
  *
- * @module tests/unit/src/lib/utils/monsterDeedExtractor.test
+ * @module tests/unit/scripts/metadata/extraction/monsterDeedExtractor.test
  */
 
 import {

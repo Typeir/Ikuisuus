@@ -3,7 +3,7 @@
  * @description Tests rendering, button interactions, mediator method calls,
  * dispatch actions, aria attributes, and conditional visibility.
  *
- * @module tests/unit/worldSim/overlay/ControlsBar
+ * @module tests/unit/src/modules/world-sim/presentation/overlay/ControlsBar/ControlsBar.test
  */
 
 import {

@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik help` — Print CLI help text.
- * @module multirepo/commands/help
+ * @module scripts/multirepo/commands/help
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

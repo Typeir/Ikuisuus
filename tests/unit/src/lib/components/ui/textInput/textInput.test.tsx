@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for TextInput component
  * @description Verifies rendering, onChange, disabled, size variants, and className passthrough.
  *
- * @module tests/unit/lib/components/ui/textInput
+ * @module tests/unit/src/lib/components/ui/textInput/textInput.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  * @description Tests for the remark plugin that wraps Markdown image nodes
  * in a div with a custom CSS class.
  *
- * @module tests/unit/lib/md/remarkWrapImages
+ * @module tests/unit/src/lib/md/remarkWrapImages.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

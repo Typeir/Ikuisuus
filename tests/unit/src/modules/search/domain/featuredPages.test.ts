@@ -1,6 +1,6 @@
 /**
  * @fileoverview Featured Pages Unit Tests
- * @module tests/unit/src/modules/search/domain/featuredPages
+ * @module tests/unit/src/modules/search/domain/featuredPages.test
  */
 
 import {

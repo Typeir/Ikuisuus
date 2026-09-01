@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik push` — Push content-first, amend stale submodule ref.
- * @module multirepo/commands/push
+ * @module scripts/multirepo/commands/push
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

@@ -15,7 +15,7 @@
  * const spellKind: ContentKind = ContentKind.Spell;
  * const actionType: SpellActionType = 'bonus_action';
  * ```
- * @module src/lib/mdx/content-tags
+ * @module src/modules/library/domain/contentTags
  */
 
 /**

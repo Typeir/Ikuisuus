@@ -3,7 +3,7 @@
  * @description Validates BlendedImage render output, attribute forwarding, and
  * vignette container structure.
  *
- * @module tests/unit/lib/components/mdx/blendedImage
+ * @module tests/unit/src/modules/library/presentation/components/BlendedImage/BlendedImage.test
  */
 
 import Component from '@/modules/library/presentation/components/BlendedImage';

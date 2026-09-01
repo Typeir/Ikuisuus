@@ -2,7 +2,7 @@
  * @fileoverview Spell Table Skeleton Component
  * @description Skeleton loading state for SpellTable with tab navigation.
  *
- * @module SpellTableSkeleton
+ * @module modules/metadata-tables/presentation/SpellTableSkeleton/SpellTableSkeleton
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

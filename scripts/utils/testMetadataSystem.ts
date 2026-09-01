@@ -4,7 +4,7 @@
  * @fileoverview Verifies that the metadata table system is working correctly.
  * Checks directories, metadata files, and component files.
  *
- * @module testMetadataSystem
+ * @module scripts/utils/testMetadataSystem
  * @version 1.0.0
  *
  * @example

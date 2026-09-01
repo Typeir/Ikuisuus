@@ -4,7 +4,7 @@
  * Uses SWR for caching and deduplication; preserves the initial-load
  * vs. refetching distinction for spinner differentiation.
  *
- * @module lib/hooks/data/useSpellSources
+ * @module modules/metadata-tables/application/hooks/useSpellSources
  * @author Typeir
  * @version 2.0.0
  * @since 2.0.0

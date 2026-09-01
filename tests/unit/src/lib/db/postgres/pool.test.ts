@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the shared PostgreSQL connection pool.
  *
- * @module tests/unit/lib/db/postgres/pool
+ * @module tests/unit/src/lib/db/postgres/pool.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

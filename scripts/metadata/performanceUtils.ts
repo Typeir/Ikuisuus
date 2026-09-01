@@ -2,7 +2,7 @@
  * @fileoverview Performance Monitoring Utilities
  * @description Times operations and profiles memory for metadata generators.
  *
- * @module lib/metadata/performanceUtils
+ * @module scripts/metadata/performanceUtils
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

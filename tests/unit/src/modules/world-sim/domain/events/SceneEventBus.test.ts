@@ -3,7 +3,7 @@
  * @description Tests typed event subscription, emission, unsubscription,
  * clear, and listener counting for the World Sim pub/sub system.
  *
- * @module tests/unit/worldSim/bridge/SceneEventBus
+ * @module tests/unit/src/modules/world-sim/domain/events/SceneEventBus.test
  */
 
 import { SceneEventBus } from '@/modules/world-sim/domain/events/sceneEventBus';

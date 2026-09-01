@@ -3,7 +3,7 @@
  * @description Mocks ContentShardPanel fetch, MDX compilation, and markdown
  * rendering to verify its fetch, render, loading, error, and MDX fallback states.
  *
- * @module tests/unit/lib/components/characterSheet/contentShardPanel
+ * @module tests/unit/src/modules/character-builder/presentation/shards/contentShardPanel.test
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

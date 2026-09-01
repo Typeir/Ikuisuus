@@ -3,7 +3,7 @@
  * Opens closed {@code <details>} ancestors and scrolls targets to ~40% from
  * the viewport top.
  *
- * @module src/lib/hooks/useHashNavigation
+ * @module src/modules/library/application/hooks/useHashNavigation
  * @version 1.2.0
  * @author Typeir
  * @since 2.0.0

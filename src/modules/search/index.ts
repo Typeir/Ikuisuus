@@ -1,6 +1,6 @@
 /**
  * @fileoverview search module barrel
- * @module modules/search
+ * @module modules/search/index
  * @description Search over a build-time Pagefind full-prose index enriched with
  * structured metadata, for the sidebar SearchBar, the results page, and home-page
  * discovery (featured / of-the-day / random).
@@ -22,13 +22,13 @@ export type {
     SearchContentType,
     SearchFacet,
     SearchFacetValue,
-    SearchFilter,
-    SearchQuery,
     SearchRecord,
     SearchResponse,
     SearchResult
 } from './domain';
 
-export { toSearchQuery, useSearch, useSearchFacets } from './application';
-export { ArchivistPanel } from './presentation';
+export { useScopedSearch, useSearch, useSearchFacets } from './application';
+export type { ScopedSearchOptions, ScopedSearchState } from './application';
+export { ArchivistPanel, SearchField } from './presentation';
+export type { SearchFieldProps } from './presentation';
 

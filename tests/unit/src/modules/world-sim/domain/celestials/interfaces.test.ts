@@ -1,7 +1,7 @@
 /**
  * @fileoverview Verifies celestials public types/interfaces are importable.
  * @description Verifies all public types and interfaces can be used in structural type assertions.
- * @module tests/unit/worldSim/celestials/interfaces
+ * @module tests/unit/src/modules/world-sim/domain/celestials/interfaces.test
  */
 
 import type {

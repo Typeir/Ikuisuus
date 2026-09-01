@@ -2,7 +2,7 @@
  * @fileoverview Visual test for the CombatantRow slain checkbox.
  * @description Verifies the row's `slain` class tracks the slain flag.
  *
- * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/slainVisualTest
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/slainVisualTest.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

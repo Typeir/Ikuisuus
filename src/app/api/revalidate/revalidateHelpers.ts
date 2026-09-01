@@ -10,7 +10,7 @@
  */
 
 import { resolveDirectorySource } from '@/lib/db/content/directorySourceResolver';
-import { LIBRARY_SEGMENT } from '@/lib/enums/constants';
+import { LIBRARY_SEGMENT } from '@/lib/constants/content';
 import { draftRepository } from '@/lib/db/content/repositories/draftRepository';
 import { logger } from '@/lib/logging/logger';
 import { resolveContentType, type ContentType } from '@/lib/metadata/contentTypes';

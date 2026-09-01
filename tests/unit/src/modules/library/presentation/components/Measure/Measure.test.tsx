@@ -3,7 +3,7 @@
  * @description Renders stored measurements through the unit renderer while
  * preserving surrounding prose.
  *
- * @module tests/unit/src/modules/library/presentation/components/Measure/Measure
+ * @module tests/unit/src/modules/library/presentation/components/Measure/Measure.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-05

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the Bloodline MikroORM entity.
  *
- * @module tests/unit/lib/db/orm/entities/BloodlineEntity
+ * @module tests/unit/src/lib/db/orm/entities/BloodlineEntity.test
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0

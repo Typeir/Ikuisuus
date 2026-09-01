@@ -4,7 +4,7 @@
  * character and write API from the active-sheet context and takes only its lock
  * behaviour and commit callback as props.
  *
- * @module tests/unit/character-builder/presentation/stats/hpChip
+ * @module tests/unit/src/modules/character-builder/presentation/stats/hpChip.test
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

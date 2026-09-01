@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for compileRuntime
- * @module tests/unit/src/lib/mdx/compileRuntime.test
+ * @module tests/unit/src/modules/library/infrastructure/compile/compileRuntime.test
  */
 
 import {

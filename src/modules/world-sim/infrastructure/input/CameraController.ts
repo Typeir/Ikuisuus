@@ -4,7 +4,7 @@
  * execution. Orbit works relative to the current orbit center (target); follow moves
  * that center with a tracked body.
  *
- * @module worldSim/camera/CameraController
+ * @module modules/world-sim/infrastructure/input/CameraController
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

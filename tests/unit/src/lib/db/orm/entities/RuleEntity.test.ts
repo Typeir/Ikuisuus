@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the Rule MikroORM entity.
  *
- * @module tests/unit/lib/db/orm/entities/RuleEntity
+ * @module tests/unit/src/lib/db/orm/entities/RuleEntity.test
  */
 
 import { RuleEntity } from '@/lib/db/orm/entities/RuleEntity';

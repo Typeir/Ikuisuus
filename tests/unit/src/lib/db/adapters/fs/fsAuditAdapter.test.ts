@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for fs-backed audit record persistence.
  *
- * @module tests/unit/lib/db/adapters/fs/fsAuditAdapter
+ * @module tests/unit/src/lib/db/adapters/fs/fsAuditAdapter.test
  */
 
 import fs from 'fs';

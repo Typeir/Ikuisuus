@@ -2,7 +2,7 @@
  * @fileoverview useUnitSystem Hook Unit Tests
  * @description Tests state exposure, the hydration flag, and action dispatch.
  *
- * @module tests/unit/lib/hooks/useUnitSystem
+ * @module tests/unit/src/lib/hooks/useUnitSystem.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-03

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the Vocation MikroORM entity and its embeddables.
  *
- * @module tests/unit/lib/db/orm/entities/VocationEntity
+ * @module tests/unit/src/lib/db/orm/entities/VocationEntity.test
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0

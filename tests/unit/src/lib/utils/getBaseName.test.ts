@@ -4,7 +4,7 @@
  * @fileoverview Tests for filename base name extraction utility.
  * Validates extraction of file name portion before first extension.
  *
- * @module tests/unit/lib/utils/getBaseName
+ * @module tests/unit/src/lib/utils/getBaseName.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Mounts the Three.js canvas into a React ref, initializes all
  * subsystems, and cleans them up on unmount.
  *
- * @module worldSim/hooks/useWorldSimCanvas
+ * @module modules/world-sim/application/hooks/useWorldSimCanvas
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

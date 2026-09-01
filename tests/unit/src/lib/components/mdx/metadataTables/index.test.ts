@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for Metadata Tables Barrel Export
- * @module tests/unit/src/lib/components/mdx/metadataTables/index
+ * @module tests/unit/src/lib/components/mdx/metadataTables/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

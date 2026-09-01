@@ -1,7 +1,7 @@
 /**
  * Unit tests for the Meta MDX component.
  *
- * @module meta.test
+ * @module tests/unit/src/modules/library/presentation/components/Meta/meta.test
  */
 
 import Meta from '@/modules/library/presentation/components/Meta';

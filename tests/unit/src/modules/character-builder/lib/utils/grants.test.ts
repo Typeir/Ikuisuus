@@ -3,7 +3,7 @@
  * @description Verifies grant-tag parsing, tier resolution, derivation, and
  * active-grant collection from a character's features.
  *
- * @module tests/unit/src/modules/character-builder/lib/utils/grants
+ * @module tests/unit/src/modules/character-builder/lib/utils/grants.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

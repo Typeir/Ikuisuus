@@ -14,7 +14,8 @@
  * @since 8.0.0
  */
 
-import { stripContentSuffix } from '@/lib/enums/constants';
+import { stripContentSuffix } from '@/lib/constants/content';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { CONTENT_SUBDIR } from '@/modules/search/domain/contentTypes';
 import { localizeLink } from '@/modules/search/domain/localizeLink';
 import { promises as fs, type Dirent } from 'fs';
@@ -405,7 +406,7 @@ function metadataToFilters(
  * @returns {Promise<IndexRecord[]>} Flattened array of records ready for Pagefind
  */
 export async function collectRecords(locale: string): Promise<IndexRecord[]> {
-  const contentRoot = path.join(process.cwd(), 'src', 'content', locale);
+  const contentRoot = getContentFolder(locale);
   const allRecords: IndexRecord[] = [];
 
   for (const [contentType, relativeDir] of Object.entries(CONTENT_SUBDIR)) {

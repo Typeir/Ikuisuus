@@ -23,15 +23,14 @@ import {
 } from '@/lib/hooks/useAnchoredPosition';
 import {
   useCallback,
-  useEffect,
   useId,
   useLayoutEffect,
   useRef,
-  useState,
   type CSSProperties,
   type JSX,
   type RefObject,
 } from 'react';
+import { useMounted } from '@/lib/hooks/useMounted';
 import { createPortal } from 'react-dom';
 import styles from './searchBar.module.scss';
 
@@ -67,11 +66,7 @@ export function AspectSuggestions({
   const t = useTranslations('search');
   const locale = useLocale();
   const listRef = useRef<HTMLDivElement>(null);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useMounted();
 
   const compute = useCallback((rect: DOMRect, list: HTMLElement) => {
     list.style.minWidth = `${rect.width}px`;

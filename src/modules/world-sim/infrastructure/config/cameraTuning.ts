@@ -3,7 +3,7 @@
  * @description All numeric tuning values used by `CameraOrbitControls`,
  * `CameraCommand`, and `CameraController`.
  *
- * @module worldSim/config/cameraTuning
+ * @module modules/world-sim/infrastructure/config/cameraTuning
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

@@ -3,7 +3,7 @@
  * @description Verifies `selectVisibleTools` keeps declaration order, drops `devOnly`
  * entries outside development, and that the labs entry points at `/labs/dev`.
  *
- * @module tests/unit/src/modules/tools-menu/infrastructure/registry/toolRegistry.config
+ * @module tests/unit/src/modules/tools-menu/infrastructure/registry/toolRegistry.config.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

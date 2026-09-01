@@ -2,7 +2,7 @@
  * @fileoverview Parsing Utils Tests
  * @description Locale-aware reading time estimation.
  *
- * @module tests/unit/scripts/metadata/parsingUtils
+ * @module tests/unit/scripts/metadata/parsingUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

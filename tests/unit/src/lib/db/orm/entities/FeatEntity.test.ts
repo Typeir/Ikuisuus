@@ -3,7 +3,7 @@
  * @description Verifies that `FeatEntity` and `FeatAbilityIncreaseEmbed` have
  * the expected shape and are importable without side-effects.
  *
- * @module tests/unit/lib/db/orm/entities/FeatEntity
+ * @module tests/unit/src/lib/db/orm/entities/FeatEntity.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

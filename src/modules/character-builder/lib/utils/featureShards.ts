@@ -8,7 +8,10 @@
  * @since 1.0.0
  */
 
+import { fetcher } from '@/lib/fetch/fetcher';
+import { urlForContentShard } from '@/lib/fetch/swrKeys';
 import { entryKey } from './shardKey';
+import type { ContentShardResponse } from '@/lib/types/api';
 import type { CharacterShard } from '@/lib/types/character';
 import type { FeatureEntry } from '@/lib/types/vocations';
 
@@ -51,11 +54,9 @@ export async function fetchFeatureShards(
 ): Promise<CharacterShard[]> {
   const sourceFile = stripContentPrefix(file);
   try {
-    const res = await fetch(
-      `/api/content-shards/${endpoint}/${slug}?locale=${locale}`,
+    const data = await fetcher<ContentShardResponse>(
+      urlForContentShard(endpoint, slug, locale),
     );
-    if (!res.ok) return [];
-    const data = (await res.json()) as { shards: Record<string, string> };
     return features.map((f) => ({
       id: `${slug}::${f.level}::${f.name}`,
       sourceFile,

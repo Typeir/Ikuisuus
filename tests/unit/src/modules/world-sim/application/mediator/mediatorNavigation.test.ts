@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for mediatorNavigation helpers
  * @description Tests for zoomToBodyImpl, zoomToRegionImpl, and zoomToLocalCoordinateImpl.
  *
- * @module tests/unit/src/modules/world-sim/application/mediator/mediatorNavigation
+ * @module tests/unit/src/modules/world-sim/application/mediator/mediatorNavigation.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

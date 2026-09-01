@@ -3,7 +3,7 @@
  * @description Mobile bottom-sheet modal with focus trap, keyboard navigation,
  * and optional `console` variant. Renders to a portal for z-index stacking.
  *
- * @module ui/modal/mobileModal
+ * @module lib/components/ui/modal/mobileModal
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

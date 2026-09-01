@@ -2,7 +2,7 @@
  * @fileoverview HitDiceCounter Unit Tests
  * @description Tests for the HitDiceCounter atom component.
  *
- * @module tests/unit/lib/components/characterSheet/atoms/hitDiceCounter
+ * @module tests/unit/src/modules/character-builder/presentation/atoms/hitDiceCounter.test
  * @version 1.0.0
  * @author Typeir
  * @since 6.0.0

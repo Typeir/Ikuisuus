@@ -3,7 +3,7 @@
  * @description Config shared by `SceneManager`, `ProjectionBridge`, `RaycastService`,
  * `CelestialGlow`, and `WorldSimMediator`.
  *
- * @module worldSim/config/sceneTuning
+ * @module modules/world-sim/infrastructure/config/sceneTuning
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

@@ -3,7 +3,7 @@
  * @description Creates and edits MDX content files. With `?slug=...&locale=...`
  * query params, pre-loads a file for editing; without them, shows a blank editor for new files.
  *
- * @module mdxEditorPage
+ * @module app/[locale]/utils/mdx-editor/page
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

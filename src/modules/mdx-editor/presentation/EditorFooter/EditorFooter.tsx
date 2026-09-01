@@ -2,7 +2,7 @@
  * @fileoverview Editor Footer
  * @description Status text and submit button for the MDX editor.
  *
- * @module lib/components/mdxEditor/editorFooter
+ * @module modules/mdx-editor/presentation/EditorFooter/EditorFooter
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

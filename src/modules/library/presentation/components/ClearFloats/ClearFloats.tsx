@@ -2,7 +2,7 @@
  * @file clearFloats.tsx
  * @description A React component that clears floated elements on the specified side.
  *
- * @module clearFloats
+ * @module modules/library/presentation/components/ClearFloats/ClearFloats
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

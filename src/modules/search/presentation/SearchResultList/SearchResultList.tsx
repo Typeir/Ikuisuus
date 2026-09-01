@@ -18,9 +18,10 @@ import {
   VirtualList,
   type VirtualRowRange,
 } from '@/lib/components/ui/virtualList/virtualList';
+import { useRoomBelow } from '@/lib/hooks/useRoomBelow';
 import { useRootPx } from '@/lib/hooks/useRootPx';
-import type { JSX, RefObject } from 'react';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import type { JSX } from 'react';
+import { useCallback, useRef } from 'react';
 import type { SearchResult } from '../../domain';
 import { SearchResultRow } from '../SearchResultRow/SearchResultRow';
 import styles from './SearchResultList.module.scss';
@@ -75,32 +76,6 @@ export interface SearchResultListProps {
 }
 
 /**
- * Viewport room below the element's top edge, re-measured on resize.
- *
- * @param {RefObject<HTMLElement | null>} ref - Element whose top bounds the list
- * @returns {number} Pixel height available below the element's top edge
- */
-function useRoomBelow(ref: RefObject<HTMLElement | null>): number {
-  const [room, setRoom] = useState(MIN_LIST_HEIGHT);
-  const measure = useCallback(() => {
-    const node = ref.current;
-    if (!node) return;
-    const { top } = node.getBoundingClientRect();
-    setRoom(
-      Math.max(MIN_LIST_HEIGHT, window.innerHeight - top - BOTTOM_MARGIN),
-    );
-  }, [ref]);
-
-  useLayoutEffect(() => {
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [measure]);
-
-  return room;
-}
-
-/**
  * Virtualized list of search results that pulls the next batch near its tail.
  *
  * @param {SearchResultListProps} props - Component props
@@ -118,7 +93,12 @@ export function SearchResultList({
   const rootPx = useRootPx();
   const rowHeight = Math.round(rootPx * RESULT_ROW_REM);
   const pitch = Math.round(rootPx * (RESULT_ROW_REM + RESULT_ROW_GAP_REM));
-  const maxHeight = useRoomBelow(wrapRef);
+  const maxHeight =
+    useRoomBelow(wrapRef, {
+      edge: 'top',
+      min: MIN_LIST_HEIGHT,
+      margin: BOTTOM_MARGIN,
+    }) ?? MIN_LIST_HEIGHT;
 
   const handleRowsRendered = useCallback(
     (visible: VirtualRowRange) => {

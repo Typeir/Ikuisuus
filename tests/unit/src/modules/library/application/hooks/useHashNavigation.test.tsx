@@ -3,7 +3,7 @@
  * @description Unit tests for the useHashNavigation hook: hash navigation,
  * 40%-from-top smooth scroll, and collapsible auto-open.
  *
- * @module tests/unit/lib/hooks/useHashNavigation
+ * @module tests/unit/src/modules/library/application/hooks/useHashNavigation.test
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Contract tests for generateTrinketMetadata script metadata compliance.
- * @module tests/unit/scripts/metadata/generateTrinketMetadata
+ * @module tests/unit/scripts/metadata/generateTrinketMetadata.test
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Buff List Editor component
- * @module tests/unit/src/lib/components/encounterPlanner/listEditors/buffListEditor.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/listEditors/buffListEditor.test
  * @description Validates BuffListEditor export and component signature.
  * 
  * @version 1.0.0

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Smoke test for the ToolMenuItem domain type.
  * @description Validates that ToolMenuItem objects satisfy runtime structural checks.
- * @module tests/unit/src/modules/tools-menu/domain/toolMenuItem.types
+ * @module tests/unit/src/modules/tools-menu/domain/toolMenuItem.types.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

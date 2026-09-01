@@ -15,11 +15,12 @@
 import { createLogger } from '@/lib/logging/logger';
 import fs from 'fs';
 import path from 'path';
+import { getPublicFolder } from '@/lib/utils/getPublicFolder';
 
 const log = createLogger({ script: 'cleanFullSize' });
 
 /** Absolute path to the full-size source image folder */
-const fullSizePath = path.join(process.cwd(), 'public', 'full-size');
+const fullSizePath = path.join(getPublicFolder(), 'full-size');
 
 if (process.env.VERCEL !== '1') {
   log.message('🚫 Skipping cleanup: not running in Vercel');

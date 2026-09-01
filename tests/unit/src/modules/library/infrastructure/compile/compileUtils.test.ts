@@ -2,7 +2,7 @@
  * @fileoverview Compile Utils Tests
  * @description Covers the MDX compile helpers and the plugin bundle they load.
  *
- * @module tests/unit/src/modules/library/infrastructure/compile/compileUtils
+ * @module tests/unit/src/modules/library/infrastructure/compile/compileUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-04

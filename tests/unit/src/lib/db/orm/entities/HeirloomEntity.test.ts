@@ -4,7 +4,7 @@
  * @fileoverview Tests for the Heirloom MikroORM entity and
  * the HeirloomChargesEmbed value object.
  *
- * @module tests/unit/lib/db/orm/entities/HeirloomEntity
+ * @module tests/unit/src/lib/db/orm/entities/HeirloomEntity.test
  */
 
 import {

@@ -2,7 +2,7 @@
  * @fileoverview Aspect Vocabulary Resolver Tests
  * @description valuesFrom expansion, open/meta exclusion, empty-group drop.
  *
- * @module tests/unit/src/lib/metadata/aspectVocabulary
+ * @module tests/unit/src/lib/metadata/aspectVocabulary.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

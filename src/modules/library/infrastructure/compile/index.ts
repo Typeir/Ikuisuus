@@ -1,6 +1,6 @@
 /**
  * @fileoverview Compile infrastructure exports for the library module.
- * @module modules/library/infrastructure/compile
+ * @module modules/library/infrastructure/compile/index
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

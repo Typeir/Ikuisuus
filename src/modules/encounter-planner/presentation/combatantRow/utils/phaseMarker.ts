@@ -2,7 +2,7 @@
  * @fileoverview Phase Marker Utility
  * @description Determines combat phase from HP percentage thresholds.
  *
- * @module phaseMarker
+ * @module modules/encounter-planner/presentation/combatantRow/utils/phaseMarker
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -27,12 +27,14 @@ import {
  *
  * @interface KeywordGraph
  * @property {Map<string, string[]>} produces - File path mapped to the shard ids it defines
+ * @property {Map<string, string[]>} producers - Shard id mapped to the file paths defining it
  * @property {Map<string, string[]>} consumers - Shard id mapped to the file paths ingesting it
  * @property {Map<string, string>} links - File path mapped to its route
  * @property {Map<string, string>} files - Route mapped back to its file path
  */
 export interface KeywordGraph {
   produces: Map<string, string[]>;
+  producers: Map<string, string[]>;
   consumers: Map<string, string[]>;
   links: Map<string, string>;
   files: Map<string, string>;
@@ -71,6 +73,7 @@ export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
 
   const graph: KeywordGraph = {
     produces: new Map(),
+    producers: new Map(),
     consumers: new Map(),
     links: new Map(),
     files: new Map(),
@@ -86,7 +89,15 @@ export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
       graph.files.set(route, file);
     }
 
-    if (record.produces?.length) graph.produces.set(file, record.produces);
+    if (record.produces?.length) {
+      graph.produces.set(file, record.produces);
+
+      for (const key of record.produces) {
+        const definers = graph.producers.get(key);
+        if (definers) definers.push(file);
+        else graph.producers.set(key, [file]);
+      }
+    }
 
     for (const key of record.consumes ?? []) {
       const holders = graph.consumers.get(key);
@@ -97,6 +108,32 @@ export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
 
   cache.set(locale, graph);
   return graph;
+}
+
+/**
+ * The file that defines a shard, when exactly one does.
+ *
+ * A shard id claimed by two files resolves to nothing, the same rule heading
+ * slugs follow: an ambiguous reference points nowhere rather than somewhere
+ * arbitrary.
+ *
+ * @param {KeywordGraph} graph - Graph for the locale
+ * @param {string} shardId - Shard id, e.g. `kw-condition-blinded`
+ * @returns {{ file: string; route: string } | null} The defining file and its route, or null
+ *
+ * @example
+ * producerOf(graph, 'kw--resist');
+ * // { file: 'src/content/en/rules/…/effects-and-enhancements.rule.mdx', route: '/library/…' }
+ */
+export function producerOf(
+  graph: KeywordGraph,
+  shardId: string,
+): { file: string; route: string } | null {
+  const definers = graph.producers.get(shardId);
+  if (!definers || definers.length !== 1) return null;
+
+  const file = definers[0];
+  return { file, route: graph.links.get(file) ?? '' };
 }
 
 /**

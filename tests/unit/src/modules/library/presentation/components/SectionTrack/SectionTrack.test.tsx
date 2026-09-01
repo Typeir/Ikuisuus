@@ -1,6 +1,6 @@
 /**
  * @fileoverview SectionTrack Component Unit Tests
- * @module tests/unit/modules/library/presentation/components/SectionTrack
+ * @module tests/unit/src/modules/library/presentation/components/SectionTrack/SectionTrack.test
  * @author Typeir
  * @version 1.0.0
  * @since 7.0.0

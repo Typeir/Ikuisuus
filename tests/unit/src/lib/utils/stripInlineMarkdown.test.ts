@@ -3,7 +3,7 @@
  * @description Verifies inline markdown removal: paired emphasis/code/links and
  * stray unpaired bold markers split across values.
  *
- * @module tests/unit/src/lib/utils/stripInlineMarkdown
+ * @module tests/unit/src/lib/utils/stripInlineMarkdown.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

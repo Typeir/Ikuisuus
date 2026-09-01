@@ -2,7 +2,7 @@
  * @fileoverview Editor Auth Section
  * @description Login form and authenticated user status display for the MDX editor.
  *
- * @module lib/components/mdxEditor/editorAuthSection
+ * @module modules/mdx-editor/presentation/EditorAuthSection/EditorAuthSection
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

@@ -2,7 +2,7 @@
  * @fileoverview `ik run <name>` — registry-backed dispatcher for one-off scripts.
  * Spawns `npx tsx` (or `bash` for `.sh` files) with inherited stdio.
  *
- * @module multirepo/commands/run
+ * @module scripts/multirepo/commands/run
  * @author Typeir
 
  * @version 1.0.0

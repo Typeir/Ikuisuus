@@ -7,7 +7,7 @@
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * @module src/lib/types/party
+ * @module src/modules/encounter-planner/domain/parties/party.types
  */
 
 /**

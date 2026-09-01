@@ -5,7 +5,7 @@
  * Description (textarea + live MDX preview). Renders previews via
  * `compileRuntimeSync` + enriched component registry.
  *
- * @module lib/components/characterSheet/tabs/abilities/AbilityEditor
+ * @module modules/character-builder/presentation/tabs/abilities/AbilityEditor
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

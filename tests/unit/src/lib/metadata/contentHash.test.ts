@@ -2,7 +2,7 @@
  * @fileoverview Content Hash Unit Tests
  * @description Tests for FNV-1a 32-bit hash functions used for metadata change detection.
  *
- * @module tests/unit/lib/metadata/contentHash
+ * @module tests/unit/src/lib/metadata/contentHash.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

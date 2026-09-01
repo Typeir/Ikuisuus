@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for openPullRequest helper.
- * @module tests/unit/src/modules/mdx-editor/infrastructure/github/openPullRequest
+ * @module tests/unit/src/modules/mdx-editor/infrastructure/github/openPullRequest.test
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

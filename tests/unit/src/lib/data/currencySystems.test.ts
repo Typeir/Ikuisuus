@@ -2,7 +2,7 @@
  * @fileoverview currencySystems Unit Tests
  * @description Tests for built-in currency systems registry + migration helper.
  *
- * @module tests/unit/lib/data/currencySystems
+ * @module tests/unit/src/lib/data/currencySystems.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

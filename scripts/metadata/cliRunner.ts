@@ -3,7 +3,7 @@
  * @description Wraps generator main functions with `--persist` and `--file`
  * flag handling.
  *
- * @module lib/metadata/cliRunner
+ * @module scripts/metadata/cliRunner
  * @version 1.1.0
  * @author Typeir
  * @since 3.0.0

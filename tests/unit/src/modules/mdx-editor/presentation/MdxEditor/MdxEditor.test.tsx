@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the MdxEditor component state machine.
  *
- * @module tests/unit/lib/components/mdxEditor/mdxEditor
+ * @module tests/unit/src/modules/mdx-editor/presentation/MdxEditor/MdxEditor.test
  */
 
 import { act, cleanup, render, screen } from '@testing-library/react';

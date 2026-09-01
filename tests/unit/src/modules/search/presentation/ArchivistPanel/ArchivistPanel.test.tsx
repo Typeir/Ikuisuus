@@ -1,6 +1,6 @@
 /**
  * @fileoverview ArchivistPanel Unit Tests
- * @module tests/unit/src/modules/search/presentation/ArchivistPanel/ArchivistPanel
+ * @module tests/unit/src/modules/search/presentation/ArchivistPanel/ArchivistPanel.test
  */
 
 import type { FeaturedPage } from '@/modules/search/domain/featuredPages';

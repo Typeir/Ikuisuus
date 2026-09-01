@@ -1,6 +1,6 @@
 /**
  * @fileoverview SearchResultRow Unit Tests
- * @module tests/unit/src/modules/search/presentation/SearchResultRow/SearchResultRow
+ * @module tests/unit/src/modules/search/presentation/SearchResultRow/SearchResultRow.test
  */
 
 import type { SearchContentType, SearchResult } from '@/modules/search/domain';

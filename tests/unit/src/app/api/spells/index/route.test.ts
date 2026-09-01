@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for Spell Index API Route
- * @module tests/unit/src/app/api/spells/index/route
+ * @module tests/unit/src/app/api/spells/index/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

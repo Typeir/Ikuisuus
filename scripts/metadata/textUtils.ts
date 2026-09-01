@@ -2,7 +2,7 @@
  * @fileoverview Text processing utilities.
  * @description Common text manipulation; no Node.js or filesystem dependencies.
  *
- * @module lib/metadata/textUtils
+ * @module scripts/metadata/textUtils
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

@@ -3,7 +3,7 @@
  * @description Mocks the six repository adapters and fnv1a32. Asserts domain
  * fields appear in the output as one whitespace-normalised copy.
  *
- * @module tests/unit/src/modules/library/presentation/components/utils/index
+ * @module tests/unit/src/modules/library/presentation/components/utils/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-04-28

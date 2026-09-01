@@ -3,7 +3,7 @@
  * @description Tests for the AbilityScoreBlock component, including the
  * saving-throw row (pip track + computed bonus).
  *
- * @module tests/unit/lib/components/characterSheet/abilityScoreBlock
+ * @module tests/unit/src/modules/character-builder/presentation/stats/abilityScoreBlock.test
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

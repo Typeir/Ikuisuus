@@ -31,7 +31,7 @@ import { fetchTrinketMetadata } from '@/modules/metadata-tables/infrastructure/a
 import { buildTrinketColumns } from '@/modules/metadata-tables/presentation/TrinketTable/TrinketTable.columns';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/enums/constants';
+import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/constants/content';
 
 /**
  * Trinket metadata structure from API

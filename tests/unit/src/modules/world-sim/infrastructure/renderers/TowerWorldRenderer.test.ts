@@ -3,7 +3,7 @@
  * @description Tests tower mesh creation with cylinder segments and orbiter pivots,
  * rotation behaviour, and disposal.
  *
- * @module tests/unit/worldSim/celestials/TowerWorldRenderer
+ * @module tests/unit/src/modules/world-sim/infrastructure/renderers/TowerWorldRenderer.test
  */
 
 import { TowerWorldRenderer } from '@/modules/world-sim/infrastructure/renderers/TowerWorldRenderer';

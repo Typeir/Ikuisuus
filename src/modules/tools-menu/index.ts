@@ -2,7 +2,7 @@
  * @fileoverview Public API barrel for the tools-menu module.
  * @description Exports the ToolsMenu component, useToolRegistry hook, and ToolMenuItem type.
  *
- * @module src/modules/tools-menu
+ * @module src/modules/tools-menu/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

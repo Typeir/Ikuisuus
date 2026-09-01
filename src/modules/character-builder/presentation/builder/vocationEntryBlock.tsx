@@ -21,6 +21,7 @@ import { VocationProficiencySummary } from './vocationProficiencySummary';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { IconButton } from '@/lib/components/ui/iconButton';
+import { cn } from '@/lib/utils/classNameMerge';
 import styles from './vocationSelector.module.scss';
 
 /**
@@ -126,13 +127,11 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
     }
   };
 
-  const blockClassName = [
+  const blockClassName = cn(
     styles.vocationEntryBlock,
     isOnlyEntry ? styles.vocationEntryBlockSingle : '',
     isAsyncLoading ? styles.vocationEntryBlockLoading : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+  );
 
   return (
     <div className={blockClassName}>

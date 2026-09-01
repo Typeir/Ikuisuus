@@ -4,21 +4,20 @@ CSS custom properties with `data-theme` attribute switching. Inline script preve
 
 ## Files
 
-**`src/lib/enums/themes.ts`**
+**`src/lib/constants/themes.ts`**
 ```typescript
 export enum Theme { Dark = 'dark', Light = 'light' }
 ```
 
-**`src/lib/enums/persistentData.ts`**
+**`src/lib/constants/persistentData.ts`**
 ```typescript
 export enum PersistentData { Theme = 'data-theme' }
 ```
 
-**`src/lib/utils/themeScript.ts`** - Generates inline script for FOUC prevention:
+**`src/lib/utils/persistentUiScript.ts`** - Generates the inline script for FOUC prevention:
 ```typescript
-export const getThemeInitScript = () => {
-  // Returns IIFE that reads localStorage and sets data-theme before first paint
-  // Defaults to 'dark' if no valid theme found
+export const getPersistentUiInitScript = () => {
+  // Returns IIFE that reads cookie/storage and sets data-theme before first paint
 };
 ```
 
@@ -26,7 +25,7 @@ export const getThemeInitScript = () => {
 ```tsx
 <html lang={locale} suppressHydrationWarning>
   <body suppressHydrationWarning>
-    <script dangerouslySetInnerHTML={{ __html: getThemeInitScript() }} />
+    <script dangerouslySetInnerHTML={{ __html: getCombinedInitScript() }} />
     <NextIntlClientProvider locale={locale}>
       <ResponsiveLayoutShell tree={tree}>{children}</ResponsiveLayoutShell>
     </NextIntlClientProvider>
@@ -78,7 +77,7 @@ export default {
 **`src/lib/components/themeSelector/themeSelector.tsx`** - UI component:
 ```tsx
 export const ThemeSelector = ({ defaultTheme, onThemeChange }) => {
-  // Cycles through themes using circularClamp
+  // Cycles through themes using rangeWrap
   // Calls onThemeChange(newTheme) when clicked
   // Parent handles DOM updates and localStorage persistence
 };

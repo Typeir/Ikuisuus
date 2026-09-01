@@ -3,7 +3,7 @@
  * @description Covers global tier feats (ceil(L/3)-1), vocation ASI/Feat rows,
  * and earned/unspent totals.
  *
- * @module tests/unit/src/modules/character-builder/lib/utils/featProgression
+ * @module tests/unit/src/modules/character-builder/lib/utils/featProgression.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

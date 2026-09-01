@@ -3,7 +3,7 @@
  * @description Computes orbital positions for celestial bodies using Keplerian elements.
  * Supports elliptical orbits with inclination and eccentricity.
  *
- * @module worldSim/celestials/OrbitalMechanics
+ * @module modules/world-sim/domain/celestials/orbitalMechanics
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

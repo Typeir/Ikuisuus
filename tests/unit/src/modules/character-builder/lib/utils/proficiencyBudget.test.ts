@@ -4,7 +4,7 @@
  * countSpentSkillProficiencies, countUnspentSkillProficiencies, and
  * deriveProficiencyHints edge cases.
  *
- * @module tests/unit/src/modules/character-builder/lib/utils/proficiencyBudget
+ * @module tests/unit/src/modules/character-builder/lib/utils/proficiencyBudget.test
  * @version 2.0.0
  * @author Typeir
  * @since 8.0.0

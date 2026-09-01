@@ -2,7 +2,7 @@
  * @fileoverview File Utilities Unit Tests
  * @description Tests for safe file I/O helpers with mocked fs.
  *
- * @module tests/unit/lib/metadata/fileUtils
+ * @module tests/unit/src/lib/metadata/fileUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

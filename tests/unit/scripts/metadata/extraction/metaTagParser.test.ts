@@ -1,7 +1,7 @@
 /**
  * Unit tests for the Meta Tag Parser.
  *
- * @module metaTagParser.test
+ * @module tests/unit/scripts/metadata/extraction/metaTagParser.test
  */
 
 import {

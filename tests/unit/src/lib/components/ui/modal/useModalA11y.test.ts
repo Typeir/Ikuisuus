@@ -5,7 +5,7 @@
  * on close. Uses `createElement` (no JSX) so the file matches the enforced
  * `.test.ts` extension for a `.ts` source.
  *
- * @module tests/unit/src/lib/components/ui/modal/useModalA11y
+ * @module tests/unit/src/lib/components/ui/modal/useModalA11y.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

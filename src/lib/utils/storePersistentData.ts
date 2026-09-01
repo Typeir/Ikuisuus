@@ -151,7 +151,8 @@ export const storePersistentDataCookieFirst = (
  * @returns {void}
  *
  * @description
- * Writes to sessionStorage and localStorage only; cookies unchanged.
+ * Writes to sessionStorage and localStorage only; cookies unchanged. For
+ * values too large for the cookie size limit.
  */
 export const storePersistentDataFallbackOnly = (
   key: string,
@@ -161,29 +162,6 @@ export const storePersistentDataFallbackOnly = (
 
   window.sessionStorage?.setItem(key, value);
   window.localStorage?.setItem(key, value);
-};
-
-/**
- * Reads persistent data with cookie as priority source
- *
- * @function readPersistentDataCookieFirst
- * @param {string} key - Storage key
- * @returns {string | null} Found value or null
- *
- * @description
- * Read priority: cookie → sessionStorage → localStorage.
- */
-export const readPersistentDataCookieFirst = (key: string): string | null => {
-  const cookieValue = readCookie(key);
-  if (cookieValue != null) return cookieValue;
-
-  if (typeof window === 'undefined') return null;
-
-  const sessionValue = window.sessionStorage?.getItem(key) ?? null;
-  if (sessionValue != null) return sessionValue;
-
-  const localValue = window.localStorage?.getItem(key) ?? null;
-  return localValue;
 };
 
 /**

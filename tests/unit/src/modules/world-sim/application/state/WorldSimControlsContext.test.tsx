@@ -4,7 +4,7 @@
  * mediator ref, handles a null mediator gracefully, and that consuming
  * outside the provider throws.
  *
- * @module tests/unit/worldSim/context/WorldSimControlsContext
+ * @module tests/unit/src/modules/world-sim/application/state/WorldSimControlsContext.test
  */
 
 import {

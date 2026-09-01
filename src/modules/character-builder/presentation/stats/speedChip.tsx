@@ -2,7 +2,7 @@
  * @fileoverview Speed combat stat chip — movement speed with bloodline speed
  * panel and lockable edit mode.
  *
- * @module character-builder/presentation/stats/speedChip
+ * @module modules/character-builder/presentation/stats/speedChip
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

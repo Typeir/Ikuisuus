@@ -1,7 +1,7 @@
 /**
  * @fileoverview Text Area Component Exports
  *
- * @module lib/components/ui/textArea
+ * @module lib/components/ui/textArea/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

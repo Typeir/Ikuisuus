@@ -1,6 +1,6 @@
 /**
  * @fileoverview Raw markdown renderer for library pages.
- * @module modules/library/presentation/MdRawPage
+ * @module modules/library/presentation/MdRawPage/MdRawPage
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

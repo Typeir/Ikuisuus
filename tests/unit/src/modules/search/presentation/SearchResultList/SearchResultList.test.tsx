@@ -4,7 +4,7 @@
  * pitch exposed as a CSS variable, and the tail-triggered batch load.
  * `VirtualList` is mocked to render every row and report the full range.
  *
- * @module tests/unit/src/modules/search/presentation/SearchResultList/SearchResultList
+ * @module tests/unit/src/modules/search/presentation/SearchResultList/SearchResultList.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

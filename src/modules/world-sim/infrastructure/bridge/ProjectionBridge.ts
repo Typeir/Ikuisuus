@@ -1,6 +1,6 @@
 /**
  * @fileoverview Requires a three.js camera and canvas rect; projects 3D points to 2D.
- * @module worldSim/bridge/ProjectionBridge
+ * @module modules/world-sim/infrastructure/bridge/ProjectionBridge
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

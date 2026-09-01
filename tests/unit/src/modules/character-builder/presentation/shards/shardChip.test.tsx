@@ -3,7 +3,7 @@
  * @description Verifies rendering, color-to-variant mapping, and lazy fetch
  * behavior for the ShardChip component.
  *
- * @module tests/unit/src/lib/components/characterSheet/shardChip.test
+ * @module tests/unit/src/modules/character-builder/presentation/shards/shardChip.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

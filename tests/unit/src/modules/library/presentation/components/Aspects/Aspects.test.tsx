@@ -2,7 +2,7 @@
  * @fileoverview Aspects Component Tests
  * @description Covers rendering, density threshold carousel compression, and accessibility.
  *
- * @module tests/unit/src/modules/library/presentation/components/Aspects/Aspects
+ * @module tests/unit/src/modules/library/presentation/components/Aspects/Aspects.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-04

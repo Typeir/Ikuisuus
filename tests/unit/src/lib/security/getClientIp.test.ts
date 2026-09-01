@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the provider-agnostic getClientIp utility.
  *
- * @module tests/unit/lib/security/getClientIp
+ * @module tests/unit/src/lib/security/getClientIp.test
  */
 
 import { getClientIp } from '@/lib/security/getClientIp';

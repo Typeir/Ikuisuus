@@ -2,7 +2,7 @@
  * @fileoverview Play Mode Lifecycle Event Dispatcher
  * @description Event-driven lifecycle hooks for turn and round transitions.
  *
- * @module playModeLifecycle
+ * @module modules/encounter-planner/application/lifecycle/PlayModeLifecycle
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

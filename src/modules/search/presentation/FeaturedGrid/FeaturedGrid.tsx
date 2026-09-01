@@ -12,6 +12,7 @@
 
 'use client';
 
+import { fetcher } from '@/lib/fetch/fetcher';
 import { Skeleton } from '@/lib/components/skeleton';
 import { cn } from '@/lib/utils/classNameMerge';
 import { useTranslations } from 'next-intl';
@@ -64,15 +65,13 @@ export function FeaturedGrid({ locale }: FeaturedGridProps): JSX.Element {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/discovery?locale=${locale}`)
-      .then((r) => r.json())
+    fetcher<{ entries?: Record<string, { featured: DiscoveryEntry | null }> }>(
+      `/api/discovery?locale=${locale}`,
+    )
       .then((data) => {
         if (cancelled) return;
         const entries: Record<string, DiscoveryEntry | null> = {};
-        for (const [type, set] of Object.entries(data.entries || {}) as [
-          string,
-          { featured: DiscoveryEntry | null },
-        ][]) {
+        for (const [type, set] of Object.entries(data.entries ?? {})) {
           entries[type] = set.featured;
         }
         setFeatured(entries);

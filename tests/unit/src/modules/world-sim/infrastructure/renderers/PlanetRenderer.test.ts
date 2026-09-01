@@ -2,7 +2,7 @@
  * @fileoverview PlanetRenderer Unit Tests
  * @description Tests mesh creation, axial rotation update, and disposal.
  *
- * @module tests/unit/worldSim/celestials/PlanetRenderer
+ * @module tests/unit/src/modules/world-sim/infrastructure/renderers/PlanetRenderer.test
  */
 
 import { PlanetRenderer } from '@/modules/world-sim/infrastructure/renderers/PlanetRenderer';

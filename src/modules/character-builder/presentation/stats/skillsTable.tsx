@@ -12,6 +12,7 @@
 'use client';
 
 import type { CharacterSkill, TierLevel } from '@/lib/types/character';
+import { formatModifier } from '@/lib/utils/formatModifier';
 import { higherTier } from '@/modules/character-builder/lib/utils/grants';
 import { computeSkillBonus, updateItemTier } from '@/modules/character-builder/lib/utils/proficiencyUtils';
 import { useTranslations } from 'next-intl';
@@ -101,7 +102,7 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
             abilityScores,
             tierBonus,
           );
-          const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
+          const bonusStr = formatModifier(bonus);
           return (
             <tr
               key={`skill-${i}`}

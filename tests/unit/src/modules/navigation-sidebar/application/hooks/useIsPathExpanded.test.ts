@@ -3,7 +3,7 @@
  * @description Covers the per-path read and its re-render isolation: a
  * dispatch on one path leaves subscribers of other paths untouched.
  *
- * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useIsPathExpanded
+ * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useIsPathExpanded.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

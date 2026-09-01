@@ -2,7 +2,7 @@
  * @fileoverview StarRenderer — renders a sphere with noise-displaced surface,
  * corona glow sprite, and ring via GLSL shaders.
  *
- * @module worldSim/celestials/StarRenderer
+ * @module modules/world-sim/infrastructure/renderers/StarRenderer
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

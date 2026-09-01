@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik clean-branches` — Delete all non-main branches.
- * @module multirepo/commands/clean-branches
+ * @module scripts/multirepo/commands/clean-branches
  */
 
 import { log, spinner } from '@clack/prompts';

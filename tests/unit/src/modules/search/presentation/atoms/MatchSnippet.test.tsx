@@ -1,6 +1,6 @@
 /**
  * @fileoverview MatchSnippet Atom Unit Tests
- * @module tests/unit/src/modules/search/presentation/atoms/MatchSnippet
+ * @module tests/unit/src/modules/search/presentation/atoms/MatchSnippet.test
  */
 
 import { MatchSnippet } from '@/modules/search/presentation/atoms/MatchSnippet';

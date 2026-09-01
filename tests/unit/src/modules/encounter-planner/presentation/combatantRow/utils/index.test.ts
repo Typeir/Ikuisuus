@@ -8,7 +8,7 @@
  * @author Typeir
  * @since 1.0.0
  *
- * @module utils/index.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/utils/index.test
  * @requires vitest Test framework
  * @requires ../index Utilities barrel export
  */

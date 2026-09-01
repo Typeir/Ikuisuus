@@ -1,6 +1,6 @@
 /**
  * @fileoverview ResultTitle Atom Unit Tests
- * @module tests/unit/src/modules/search/presentation/atoms/ResultTitle
+ * @module tests/unit/src/modules/search/presentation/atoms/ResultTitle.test
  */
 
 import { ResultTitle } from '@/modules/search/presentation/atoms/ResultTitle';

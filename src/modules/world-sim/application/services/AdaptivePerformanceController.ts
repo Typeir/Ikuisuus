@@ -3,7 +3,7 @@
  * @description Tracks frame timing, computes smoothed FPS, and selects
  * runtime render-quality profiles with hysteresis.
  *
- * @module worldSim/optimization/AdaptivePerformanceController
+ * @module modules/world-sim/application/services/AdaptivePerformanceController
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

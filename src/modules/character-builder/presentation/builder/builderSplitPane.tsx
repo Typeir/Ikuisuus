@@ -5,7 +5,7 @@
  * pane full-width and the other in a console-skinned `MobileModal` bottom
  * sheet.
  *
- * @module lib/components/characterSheet/builder/builderSplitPane
+ * @module modules/character-builder/presentation/builder/builderSplitPane
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  *
  * @fileoverview Merges namespaced translation files into a single index.json per locale.
  *
- * @module mergeMessages
+ * @module scripts/i18n/mergeMessages
  * @version 1.0.1
  * @author Typeir
  * @since 1.0.0

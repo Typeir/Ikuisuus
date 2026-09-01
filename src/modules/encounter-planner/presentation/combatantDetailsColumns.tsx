@@ -4,7 +4,7 @@
  * Each column renders only if content is provided or showEmpty is true.
  * Used in CreatureRow (design mode) and PlayModeCombatantRow (play mode).
  *
- * @module combatantDetailsColumns
+ * @module modules/encounter-planner/presentation/combatantDetailsColumns
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

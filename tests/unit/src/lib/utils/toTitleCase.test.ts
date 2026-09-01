@@ -4,7 +4,7 @@
  * @fileoverview Tests for kebab-case to Title Case string conversion utility.
  * Validates dash replacement, word capitalization, and multiple dash handling.
  *
- * @module tests/unit/lib/utils/toTitleCase
+ * @module tests/unit/src/lib/utils/toTitleCase.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

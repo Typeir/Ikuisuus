@@ -15,7 +15,7 @@ import {
     FILE_EXT_MDX,
     IGNORED_FOLDERS,
     stripContentSuffix,
-} from '@/lib/enums/constants';
+} from '@/lib/constants/content';
 
 import { fetchContent } from '@/modules/library/infrastructure/content/fetchContent';
 import type { ContentFetchResult } from './contentSourceAdapter';

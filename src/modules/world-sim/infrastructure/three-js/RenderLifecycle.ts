@@ -4,7 +4,7 @@
  * Subscribers register for lifecycle phases and receive a shared FrameContext
  * with renderer, scene, camera, and frame timing. Phases execute each frame in
  * numeric order: PreUpdate, Update, PostUpdate, PreRender, PostRender.
- * @module worldSim/canvas/RenderLifecycle
+ * @module modules/world-sim/infrastructure/three-js/RenderLifecycle
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

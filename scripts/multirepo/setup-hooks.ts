@@ -8,7 +8,7 @@
  * Usage:
  *   tsx scripts/multirepo/setup-hooks.ts
  *
- * @module multirepo/setup-hooks
+ * @module scripts/multirepo/setup-hooks
  * @author Typeir
  * @version 1.2.0
  * @since 2.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for commitFile helper.
- * @module tests/unit/src/modules/mdx-editor/infrastructure/github/commitFile
+ * @module tests/unit/src/modules/mdx-editor/infrastructure/github/commitFile.test
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

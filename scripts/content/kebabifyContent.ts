@@ -13,6 +13,7 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import fs from 'fs';
 import path from 'path';
@@ -106,7 +107,7 @@ log.message('🔁 Kebabifying content folder...');
 
 try {
   ['en'].forEach((locale) =>
-    kebabifyDirectory(path.join(process.cwd(), 'src', 'content', locale)),
+    kebabifyDirectory(getContentFolder(locale)),
   );
   log.message('✅ All done.');
 } catch (err: unknown) {

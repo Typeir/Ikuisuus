@@ -3,7 +3,7 @@
  * @description Tests setQualityLevel swaps LOD geometry and toggles child
  * visibility across celestial renderers.
  *
- * @module tests/unit/worldSim/optimization/RendererQuality.performance
+ * @module tests/unit/src/modules/world-sim/infrastructure/renderers/RendererQuality.performance.test
  */
 
 import { GasGiantRenderer } from '@/modules/world-sim/infrastructure/renderers/GasGiantRenderer';

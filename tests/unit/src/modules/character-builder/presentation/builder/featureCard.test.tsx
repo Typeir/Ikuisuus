@@ -2,7 +2,7 @@
  * @fileoverview FeatureCard Tests
  * @description Smoke tests for the generic feature card component.
  *
- * @module tests/unit/lib/components/characterSheet/builder/featureCard
+ * @module tests/unit/src/modules/character-builder/presentation/builder/featureCard.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

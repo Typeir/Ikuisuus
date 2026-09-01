@@ -1,6 +1,6 @@
 /**
  * @fileoverview Modal components barrel export
- * @module ui/modal
+ * @module lib/components/ui/modal/index
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

@@ -3,7 +3,7 @@
  * @description MDX wrapper for the UI Tooltip component.
  * Accepts two children: trigger and content.
  *
- * @module lib/components/mdx/tooltip/tooltip
+ * @module modules/library/presentation/components/Tooltip/Tooltip
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

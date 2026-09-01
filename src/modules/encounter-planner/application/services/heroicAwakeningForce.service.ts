@@ -3,7 +3,7 @@
  * @description Functions for manually forcing heroic awakening tiers on combatants,
  * either by tier selection or by explicit affix list.
  *
- * @module heroicAwakeningForce
+ * @module modules/encounter-planner/application/services/heroicAwakeningForce.service
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

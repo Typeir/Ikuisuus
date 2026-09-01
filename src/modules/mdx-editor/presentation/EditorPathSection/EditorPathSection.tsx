@@ -1,7 +1,7 @@
 /**
  * @fileoverview Path/slug input section for MDX editor.
  *
- * @module lib/components/mdxEditor/editorPathSection
+ * @module modules/mdx-editor/presentation/EditorPathSection/EditorPathSection
  * @version 2.0.0
  * @author Typeir
  * @since 2.0.0
@@ -14,7 +14,7 @@ import { FileTreeSelect } from '@/modules/mdx-editor/presentation/FileTreeSelect
 import type { JSX } from 'react';
 import { useCallback, useState } from 'react';
 import styles from './EditorPathSection.module.scss';
-import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
+import { REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
 
 /**
  * @property {'edit' | 'new'} mode - Editor mode

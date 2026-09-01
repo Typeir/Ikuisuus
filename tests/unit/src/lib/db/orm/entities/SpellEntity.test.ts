@@ -4,7 +4,7 @@
  * @fileoverview Tests for the Spell MikroORM entity, SpellListEntity,
  * and the SpellComponentEmbed value object.
  *
- * @module tests/unit/lib/db/orm/entities/SpellEntity
+ * @module tests/unit/src/lib/db/orm/entities/SpellEntity.test
  */
 
 import {

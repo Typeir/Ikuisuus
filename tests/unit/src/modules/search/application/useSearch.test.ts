@@ -3,10 +3,10 @@
  * @description Covers idle/short-query state, a successful search with a
  * mocked Pagefind client, and the unavailable-bundle error path.
  *
- * @module tests/unit/src/modules/search/application/useSearch
+ * @module tests/unit/src/modules/search/application/useSearch.test
  */
 
-import { toSearchQuery, useSearch } from '@/modules/search/application/useSearch';
+import { useSearch } from '@/modules/search/application/useSearch';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -140,14 +140,5 @@ describe('useSearch', () => {
     const { result } = renderHook(() => useSearch('dragon', 'en', 0));
     await waitFor(() => expect(result.current.error).not.toBeNull());
     expect(result.current.results).toEqual([]);
-  });
-});
-
-describe('toSearchQuery', () => {
-  it('should build a typed query object', () => {
-    expect(toSearchQuery('dragon', 'en')).toEqual({
-      term: 'dragon',
-      locale: 'en',
-    });
   });
 });

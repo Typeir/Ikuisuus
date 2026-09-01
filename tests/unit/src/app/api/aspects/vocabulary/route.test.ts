@@ -1,6 +1,6 @@
 /**
  * @fileoverview Aspect Vocabulary Route Tests
- * @module tests/unit/src/app/api/aspects/vocabulary/route
+ * @module tests/unit/src/app/api/aspects/vocabulary/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

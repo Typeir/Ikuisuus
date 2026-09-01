@@ -1,6 +1,6 @@
 /**
  * @fileoverview anchorSlug Tests
- * @module tests/unit/src/modules/library/domain/anchorSlug
+ * @module tests/unit/src/modules/library/domain/anchorSlug.test
  * @version 2.0.0
  * @author Typeir
  * @since 8.0.0

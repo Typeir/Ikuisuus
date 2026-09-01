@@ -1,7 +1,7 @@
 /**
  * @fileoverview Page Preview Host Tests
  * @description Verifies the host renders one iframe per open preview.
- * @module tests/unit/src/lib/components/characterSheet/pagePreviewHost.test
+ * @module tests/unit/src/modules/character-builder/presentation/PagePreview/pagePreviewHost.test
  */
 
 import { PagePreviewHost } from '@/modules/character-builder/presentation/PagePreview/pagePreviewHost';
@@ -12,22 +12,19 @@ import {
 import { act, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+vi.mock('@/lib/fetch/fetcher', () => ({
+  fetcher: vi.fn(),
+}));
 
-/** Stub for `POST /api/resolve-preview-path`, returning the app's resolved path. */
-const mockFetch = vi.fn();
+import { fetcher } from '@/lib/fetch/fetcher';
+
+const mockFetch = vi.mocked(fetcher);
 
 beforeEach(() => {
-  vi.stubGlobal('fetch', mockFetch);
-  mockFetch.mockResolvedValue(
-    new Response(JSON.stringify({ path: 'character-creation/feats/tough' }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    }),
-  );
+  mockFetch.mockResolvedValue({ path: 'character-creation/feats/tough' });
 });
 
 afterEach(() => {
-  vi.unstubAllGlobals();
   vi.clearAllMocks();
 });
 

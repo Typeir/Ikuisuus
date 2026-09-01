@@ -6,7 +6,7 @@
  * content with a slide animation. A toggle button lets users dismiss the draft
  * to see the underlying ISR content.
  *
- * @module lib/components/draftOverlay/draftOverlay
+ * @module modules/mdx-editor/presentation/DraftOverlay/DraftOverlay
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

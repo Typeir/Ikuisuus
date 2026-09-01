@@ -2,7 +2,7 @@
  * @fileoverview Geometry LOD Budget Definitions
  * @description Segment-count budgets per quality tier for every celestial body type.
  *
- * @module worldSim/optimization/GeometryBudgets
+ * @module modules/world-sim/infrastructure/geometry/budgets/GeometryBudgets
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

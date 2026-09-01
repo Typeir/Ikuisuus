@@ -1,14 +1,20 @@
 /**
  * @fileoverview Keyword Inline MDX Component
  * @description Inline MDX component that renders a rules keyword linked to the
- * heading that defines it. The link target and the id of the baked shard both
- * arrive as props, resolved at compile time. A reference the index cannot
- * resolve renders as plain text. Hover compiles the shard the page already
- * carries, so the definition costs no request. Leaving the keyword with Shift
- * held parks the card as a draggable panel.
+ * heading that defines it. On a page compiled by the server, the link target and
+ * the shard id both arrive as props and the card opens from prose the page
+ * already carries, costing no request.
+ *
+ * A keyword written inside a shard has no such props: that prose is compiled in
+ * the browser, where there is no index to resolve against. Those resolve
+ * themselves from the keyword endpoint when their card opens, which keeps the
+ * bake to what a page literally writes instead of following each shard's own
+ * references onto the page.
+ *
+ * Leaving the keyword with Shift held parks the card as a draggable panel.
  *
  * @module modules/library/presentation/components/Keyword/Keyword
- * @version 4.0.0
+ * @version 5.0.0
  * @author Typeir
  * @since 2026-08-19
  */
@@ -16,14 +22,14 @@
 'use client';
 
 import type { DetachableTooltipProps } from '@/lib/components/ui/detachableTooltip';
+import type { compileRuntimeSync as CompileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { ExternalLink } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import type { compileRuntimeSync as CompileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import React, { useEffect, useMemo, useState, type ComponentType } from 'react';
 import DiceRoll from '../DiceRoll';
 import Unit from '../Unit';
-import { useKeywordShard } from './KeywordShardContext';
 import styles from './Keyword.module.scss';
+import { useShardSource } from './useShardSource';
 
 /**
  * Loads the card machinery after hydration, so the server and the first client
@@ -57,11 +63,12 @@ function useDetachableTooltip(): ComponentType<DetachableTooltipProps> | null {
  * @property {string} term - Canonical term, e.g. "damage bonus"
  * @property {string} [display] - Author-written text with casing preserved; falls back to the term
  * @property {string} [namespace] - Namespace the term was referenced through, e.g. "condition"
- * @property {string} [href] - Locale-relative route and anchor of the defining heading
- * @property {string} [templateId] - Id of the baked `<template>` holding the shard prose
+ * @property {string} [href] - Locale-relative route and anchor, stamped when the server resolved it
+ * @property {string} [templateId] - Id of the shard the page baked, when it baked one
  * @property {string} [heading] - Heading text of the defining section, used as the card title
  * @property {boolean} [noLink] - When true, renders a `<span>` instead of an `<a>` to avoid nested anchors
  * @property {boolean} [noCard] - When true, renders the term without a hover card
+ * @property {boolean} [nested] - Set for a keyword inside a shard, which resolves itself on open
  */
 export interface KeywordProps {
   term: string;
@@ -72,104 +79,120 @@ export interface KeywordProps {
   heading?: string;
   noLink?: boolean;
   noCard?: boolean;
+  nested?: boolean;
 }
 
 /**
- * Props for the shard body.
+ * Normalised reference for a term, matching what the extractor produces.
  *
- * @typedef {object} KeywordShardProps
- * @property {string} templateId - Id of the shard to render
+ * @param {string} term - Canonical term
+ * @param {string} [namespace] - Namespace, when the reference carried one
+ * @returns {string} `namespace;term`, or the bare term
  */
-interface KeywordShardProps {
-  templateId: string;
+function referenceOf(term: string, namespace?: string): string {
+  return namespace ? `${namespace};${term}` : term;
 }
 
 /**
- * Compiles the shard source when the card opens. `compileRuntimeSync` caches by
- * source hash, so re-opening the same card costs nothing.
+ * Components a shard's own prose may use. A keyword inside a shard is a keyword:
+ * it opens its own card, resolving itself rather than reading props the client
+ * compile could not have stamped.
  *
- * Nested keywords render as plain links: a card inside a card would recurse
- * into its own shard.
- *
- * @param {KeywordShardProps} props - Component props
- * @returns {React.ReactElement | null} The rendered shard, or null when absent
+ * @constant
  */
 const shardComponents = {
   Unit,
   DiceRoll,
-  Keyword: (props: KeywordProps) => <Keyword {...props} noCard />,
+  Keyword: (props: KeywordProps) => <Keyword {...props} nested />,
 };
 
-const KeywordShard: React.FC<KeywordShardProps> = ({ templateId }) => {
-  const shard = useKeywordShard(templateId);
+/**
+ * Props for the card.
+ *
+ * @typedef {object} KeywordCardProps
+ * @property {string} term - Canonical term, used to request the shard
+ * @property {string} [namespace] - Namespace the term was referenced through
+ * @property {string} [templateId] - Id of the shard the page baked, when it baked one
+ * @property {string} [heading] - Card title stamped at compile time
+ * @property {string} [href] - Route stamped at compile time
+ * @property {string} fallbackTitle - Title used until a heading is known
+ */
+interface KeywordCardProps {
+  term: string;
+  namespace?: string;
+  templateId?: string;
+  heading?: string;
+  href?: string;
+  fallbackTitle: string;
+}
+
+/**
+ * The card: a title, a link to the full rule, and the compiled definition.
+ *
+ * Resolution lives here rather than in the trigger, so nothing is requested
+ * until a card actually opens, and a nested keyword can take its title and link
+ * from the shard it fetches.
+ *
+ * @param {KeywordCardProps} props - Component props
+ * @returns {React.ReactElement | null} The card, or null until it resolves
+ */
+const KeywordCard: React.FC<KeywordCardProps> = ({
+  term,
+  namespace,
+  templateId,
+  heading,
+  href,
+  fallbackTitle,
+}) => {
+  const locale = useLocale();
+  const t = useTranslations('keywords');
+  const shard = useShardSource(templateId, referenceOf(term, namespace), locale);
   const [compile, setCompile] = useState<typeof CompileRuntimeSync | null>(
     null,
   );
 
-  /* Loaded here rather than imported: this component mounts when a card opens,
-     so the MDX compiler stays out of the graph of every page that has a
-     keyword in it. */
+  /* Loaded here rather than imported: this mounts when a card opens, so the MDX
+     compiler stays out of the graph of every page that has a keyword in it. */
   useEffect(() => {
     let active = true;
-    void import(
-      '@/modules/library/infrastructure/compile/compileRuntime'
-    ).then((module) => {
-      if (active) setCompile(() => module.compileRuntimeSync);
-    });
+    void import('@/modules/library/infrastructure/compile/compileRuntime').then(
+      (module) => {
+        if (active) setCompile(() => module.compileRuntimeSync);
+      },
+    );
     return () => {
       active = false;
     };
   }, []);
 
-  const content = useMemo(() => {
+  const body = useMemo(() => {
     if (!shard || !compile) return null;
     return compile({ source: shard.source, components: shardComponents })
       .content;
   }, [compile, shard]);
 
-  if (!content) return null;
+  if (!shard) return null;
 
-  return <div className={styles.blurb}>{content}</div>;
-};
+  const title = heading ?? shard.heading ?? fallbackTitle;
+  const target = href ?? shard.href;
 
-/**
- * Props for the card body.
- *
- * @typedef {object} KeywordCardProps
- * @property {string} title - Card title, shown at heading size
- * @property {string} href - Full rule page the title links to
- * @property {string} linkLabel - Accessible name for the link
- * @property {React.ReactNode} children - Definition body
- */
-interface KeywordCardProps {
-  title: string;
-  href: string;
-  linkLabel: string;
-  children: React.ReactNode;
-}
-
-/**
- * Titled definition card shared by the hover tooltip and the parked panel.
- *
- * @param {KeywordCardProps} props - Component props
- * @returns {React.ReactElement} The rendered card
- */
-const KeywordCard: React.FC<KeywordCardProps> = ({
-  title,
-  href,
-  linkLabel,
-  children,
-}) => (
-  <div className={styles.card}>
-    <div className={styles.cardHeading}>
-      <h3 className={styles.cardTitle}>{title}</h3>
-      <a className={styles.cardLink} href={href} aria-label={linkLabel}>
-        <ExternalLink size={14} aria-hidden='true' />
-      </a>
+  return (
+    <div className={styles.card}>
+      <div className={styles.cardHeading}>
+        <h3 className={styles.cardTitle}>{title}</h3>
+        {target && (
+          <a
+            className={styles.cardLink}
+            href={`/${locale}/${target}`}
+            aria-label={t('openRule', { term: title })}>
+            <ExternalLink size={14} aria-hidden='true' />
+          </a>
+        )}
+      </div>
+      {body && <div className={styles.blurb}>{body}</div>}
     </div>
-    {children}
-  </div>
-);
+  );
+};
 
 /**
  * Renders a rules keyword as a defined term with hover and lookup.
@@ -186,36 +209,40 @@ export const Keyword: React.FC<KeywordProps> = ({
   heading,
   noLink = false,
   noCard = false,
+  nested = false,
 }) => {
   const locale = useLocale();
   const t = useTranslations('keywords');
   const DetachableTooltip = useDetachableTooltip();
   const label = display ?? term;
-  const target = href;
 
-  if (!target) {
+  /* A nested keyword carries no compile-time resolution, so its card is the
+     only thing that can find one. Elsewhere a missing shard id means the index
+     resolved nothing, and the term stays plain text. */
+  const hasCard = Boolean(templateId) || nested;
+
+  if (!href && !hasCard) {
     return <span>{label}</span>;
   }
 
-  const body = templateId ? <KeywordShard templateId={templateId} /> : null;
+  const className = hasCard ? styles.defined : styles.keyword;
 
-  const className = body ? styles.defined : styles.keyword;
+  const trigger =
+    noLink || !href ? (
+      <span className={className} data-keyword={term} data-namespace={namespace}>
+        {label}
+      </span>
+    ) : (
+      <a
+        className={className}
+        href={`/${locale}/${href}`}
+        data-keyword={term}
+        data-namespace={namespace}>
+        {label}
+      </a>
+    );
 
-  const trigger = noLink ? (
-    <span className={className} data-keyword={term} data-namespace={namespace}>
-      {label}
-    </span>
-  ) : (
-    <a
-      className={className}
-      href={`/${locale}/${target}`}
-      data-keyword={term}
-      data-namespace={namespace}>
-      {label}
-    </a>
-  );
-
-  if (!body || !DetachableTooltip || noCard) {
+  if (!hasCard || !DetachableTooltip || noCard) {
     return trigger;
   }
 
@@ -225,11 +252,13 @@ export const Keyword: React.FC<KeywordProps> = ({
     <DetachableTooltip
       content={
         <KeywordCard
-          title={title}
-          href={`/${locale}/${target}`}
-          linkLabel={t('openRule', { term: title })}>
-          {body}
-        </KeywordCard>
+          term={term}
+          namespace={namespace}
+          templateId={templateId}
+          heading={heading}
+          href={href}
+          fallbackTitle={label}
+        />
       }
       title={title}
       className={styles.tooltip}

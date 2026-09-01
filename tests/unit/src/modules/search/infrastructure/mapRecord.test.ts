@@ -1,6 +1,6 @@
 /**
  * @fileoverview MapRecord Unit Tests
- * @module tests/unit/src/modules/search/infrastructure/mapRecord
+ * @module tests/unit/src/modules/search/infrastructure/mapRecord.test
  */
 
 import { mapPagefindResult } from '@/modules/search/infrastructure/mapRecord';

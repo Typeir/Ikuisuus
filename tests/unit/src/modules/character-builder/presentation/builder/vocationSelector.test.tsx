@@ -4,7 +4,7 @@
  * multi-vocation add/remove, and bloodline selection. Write assertions read
  * the sheet from the active-sheet context.
  *
- * @module tests/unit/lib/components/characterSheet/vocationSelector
+ * @module tests/unit/src/modules/character-builder/presentation/builder/vocationSelector.test
  * @version 4.0.0
  * @author Typeir
  * @since 1.0.0

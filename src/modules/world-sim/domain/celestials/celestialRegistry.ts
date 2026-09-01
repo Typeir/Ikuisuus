@@ -3,7 +3,7 @@
  * @description Wraps the static blackCradleRegistry.json data with typed query
  * methods for lookups by ID and type plus region and collision-pair retrieval.
  *
- * @module worldSim/celestials/CelestialRegistry
+ * @module modules/world-sim/domain/celestials/celestialRegistry
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

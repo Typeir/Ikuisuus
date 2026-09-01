@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for collisionCoronaShaders inline GLSL strings.
  *
- * @module tests/unit/worldSim/celestials/collisionCoronaShaders
+ * @module tests/unit/src/modules/world-sim/infrastructure/effects/collisionCoronaShaders.test
  */
 
 import {

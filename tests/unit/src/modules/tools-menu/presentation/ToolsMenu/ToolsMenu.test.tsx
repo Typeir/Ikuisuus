@@ -4,7 +4,7 @@
  * @fileoverview Tests for the ToolsMenu component including keyboard navigation,
  * click-outside behavior, and aria attributes.
  *
- * @module tests/unit/src/modules/tools-menu/ToolsMenu
+ * @module tests/unit/src/modules/tools-menu/presentation/ToolsMenu/ToolsMenu.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

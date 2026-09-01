@@ -4,7 +4,7 @@
  * Discovers command modules by scanning a commands/ directory. Each command
  * file exports `meta` and `run` conforming to the {@link CliCommand} interface.
  *
- * @module cli-loader
+ * @module scripts/utils/cli-loader
  * @author Typeir
  * @version 1.0.1
  * @since 3.0.0

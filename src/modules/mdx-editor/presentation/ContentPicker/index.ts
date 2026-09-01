@@ -1,6 +1,6 @@
 /**
  * @fileoverview Content Picker barrel
- * @module modules/mdx-editor/presentation/ContentPicker
+ * @module modules/mdx-editor/presentation/ContentPicker/index
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

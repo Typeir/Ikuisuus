@@ -2,7 +2,7 @@
  * @fileoverview withTooltip HOC Tests
  * @description Unit tests for the withTooltip higher-order component.
  *
- * @module tests/unit/src/lib/components/ui/tooltip/withTooltip
+ * @module tests/unit/src/lib/components/ui/tooltip/withTooltip.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

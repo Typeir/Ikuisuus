@@ -3,7 +3,7 @@
  * @description Tests multi-layer boundary shell creation, uTime uniform updates,
  * and disposal with materials cleanup.
  *
- * @module tests/unit/worldSim/celestials/EverdarkRenderer
+ * @module tests/unit/src/modules/world-sim/infrastructure/renderers/EverdarkRenderer.test
  */
 
 import { EverdarkRenderer } from '@/modules/world-sim/infrastructure/renderers/EverdarkRenderer';

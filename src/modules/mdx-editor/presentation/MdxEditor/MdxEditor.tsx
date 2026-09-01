@@ -1,7 +1,7 @@
 /**
  * @fileoverview Full-page MDX editor shell. Edit or New mode via ?slug.
  *
- * @module lib/components/mdxEditor/mdxEditor
+ * @module modules/mdx-editor/presentation/MdxEditor/MdxEditor
  * @version 3.0.0
  * @author Typeir
  * @since 2.0.0

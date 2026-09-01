@@ -46,7 +46,9 @@ export const clampNonNegative = (value: number | null): number | null => {
  * @param {number} score - Ability score (1-30)
  * @returns {string} Modifier string (e.g., "+2" or "-1")
  */
+import { formatModifier } from '@/lib/utils/formatModifier';
+
 export const getModifierString = (score: number): string => {
   const mod = Math.floor((score - 10) / 2);
-  return mod >= 0 ? `+${mod}` : `${mod}`;
+  return formatModifier(mod);
 };

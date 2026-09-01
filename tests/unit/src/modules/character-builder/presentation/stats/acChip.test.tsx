@@ -2,7 +2,7 @@
  * @fileoverview AcChip Unit Tests
  * @description Smoke tests for the AC combat stat chip.
  *
- * @module tests/unit/character-builder/presentation/stats/acChip
+ * @module tests/unit/src/modules/character-builder/presentation/stats/acChip.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

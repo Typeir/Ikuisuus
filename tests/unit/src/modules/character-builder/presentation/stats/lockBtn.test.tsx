@@ -2,7 +2,7 @@
  * @fileoverview LockBtn Unit Tests
  * @description Smoke tests for the lock toggle button.
  *
- * @module tests/unit/character-builder/presentation/stats/lockBtn
+ * @module tests/unit/src/modules/character-builder/presentation/stats/lockBtn.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

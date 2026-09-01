@@ -3,7 +3,7 @@
  * @description Tests phase-based subscriber registration, priority ordering,
  * phase isolation, convenience methods, subscriber counts, and cleanup.
  *
- * @module tests/unit/worldSim/canvas/RenderLifecycle
+ * @module tests/unit/src/modules/world-sim/infrastructure/three-js/RenderLifecycle.test
  */
 
 import {

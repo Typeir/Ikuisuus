@@ -1,7 +1,7 @@
 /**
  * @fileoverview Collapsible hierarchical content tree orchestrator
  *
- * @module lib/components/sidebar/sidebar
+ * @module modules/navigation-sidebar/presentation/components/sidebar
  * @author Typeir
  * @version 2.0.0
  * @since 2.0.0

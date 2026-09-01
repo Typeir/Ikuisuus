@@ -2,7 +2,7 @@
  * @fileoverview HpRollerPanel Unit Tests
  * @description Tests for the HpRollerPanel atom component.
  *
- * @module tests/unit/lib/components/characterSheet/atoms/hpRollerPanel
+ * @module tests/unit/src/modules/character-builder/presentation/atoms/hpRollerPanel.test
  * @version 2.0.0
  * @author Typeir
  * @since 6.0.0

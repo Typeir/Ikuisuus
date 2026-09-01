@@ -2,7 +2,7 @@
  * @fileoverview ORM Module Barrel Export
  * @description Re-exports the ORM instance accessors and configuration.
  *
- * @module lib/db/orm
+ * @module lib/db/orm/index
  * @version 1.0.0
  * @author Typeir
  * @since 5.0.0

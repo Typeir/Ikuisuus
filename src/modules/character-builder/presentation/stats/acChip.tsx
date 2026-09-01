@@ -1,7 +1,7 @@
 /**
  * @fileoverview AC combat stat chip — armour class with lockable edit mode.
  *
- * @module character-builder/presentation/stats/acChip
+ * @module modules/character-builder/presentation/stats/acChip
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  * @description Renders a terrestrial planet from procedural noise-driven
  * vertex displacement and a 5-band terrain colour ramp driven by the same noise mask.
  *
- * @module worldSim/celestials/PlanetRenderer
+ * @module modules/world-sim/infrastructure/renderers/PlanetRenderer
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

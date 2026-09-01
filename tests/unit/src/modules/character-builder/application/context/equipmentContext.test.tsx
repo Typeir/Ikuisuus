@@ -2,7 +2,7 @@
  * @fileoverview Equipment Context Tests
  * @description Unit tests for the equipment context provider and hook.
  *
- * @module tests/unit/lib/components/characterSheet/context/equipmentContext
+ * @module tests/unit/src/modules/character-builder/application/context/equipmentContext.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

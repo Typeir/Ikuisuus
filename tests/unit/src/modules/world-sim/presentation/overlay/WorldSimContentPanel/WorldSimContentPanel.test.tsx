@@ -4,7 +4,7 @@
  * loading state, close/reopen behavior, and integration with CelestialRegistry
  * for content path resolution.
  *
- * @module tests/unit/worldSim/overlay/WorldSimContentPanel
+ * @module tests/unit/src/modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel.test
  */
 
 import {

@@ -4,7 +4,10 @@
  * renders it with the full MDX component registry. Falls back to plain HTML
  * via `renderMarkdownToHtml` when the source is truncated or malformed.
  *
- * @module lib/components/characterSheet/contentShardPanel
+ * The response carries the keyword definitions that prose references, since
+ * compilation happens here in the browser where nothing can resolve them.
+ *
+ * @module modules/character-builder/presentation/shards/contentShardPanel
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
@@ -14,22 +17,13 @@
 
 import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import { useContentShard } from '@/lib/hooks/data/useContentShard';
+import type { ContentShardType } from '@/lib/types/api';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { mdxComponents } from '@/modules/library/presentation';
+import { KeywordShardProvider } from '@/modules/library/presentation/components/Keyword/KeywordShardContext';
 import { useLocale } from 'next-intl';
 import { type ReactNode, useEffect, useState } from 'react';
 import styles from './contentShardPanel.module.scss';
-
-/**
- * Content types that have a `/api/content-shards/[type]/[slug]` route.
- *
- * @typedef {'feats' | 'bloodlines' | 'vocations' | 'specializations'} ContentShardType
- */
-export type ContentShardType =
-  | 'feats'
-  | 'bloodlines'
-  | 'vocations'
-  | 'specializations';
 
 /**
  * Props for `<ContentShardPanel>`.
@@ -157,8 +151,10 @@ export const ContentShardPanel: React.FC<ContentShardPanelProps> = ({
   }
 
   return (
-    <div className={styles.panel}>
-      <div className={styles.body}>{renderedContent}</div>
-    </div>
+    <KeywordShardProvider shards={data?.keywordShards ?? []}>
+      <div className={styles.panel}>
+        <div className={styles.body}>{renderedContent}</div>
+      </div>
+    </KeywordShardProvider>
   );
 };

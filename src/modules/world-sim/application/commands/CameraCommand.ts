@@ -4,7 +4,7 @@
  * tracking is handled by CameraFollowSystem; commands lerp toward offsets from the
  * moving target.
  *
- * @module worldSim/camera/CameraCommand
+ * @module modules/world-sim/application/commands/CameraCommand
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

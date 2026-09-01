@@ -30,6 +30,7 @@
 
 'use client';
 
+import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
 import { isPlainLeftClick } from '@/lib/utils/isPlainLeftClick';
 import { ChevronUp } from 'lucide-react';
 import {
@@ -108,17 +109,7 @@ export function ToolsMenu({ items, onSelect, trigger, label }: ToolsMenuProps) {
     itemRefs.current[activeIndex]?.focus();
   }, [isOpen, activeIndex]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handlePointerDown = (event: PointerEvent) => {
-      if (containerRef.current?.contains(event.target as Node)) return;
-      setIsOpen(false);
-    };
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [isOpen]);
+  useOutsideClick(containerRef, () => setIsOpen(false), isOpen);
 
   const handleBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (containerRef.current?.contains(event.relatedTarget as Node | null)) {

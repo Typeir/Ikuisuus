@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for ProficiencyTrack component
- * @module tests/unit/src/modules/character-builder/presentation/components/ProficiencyTrack.test.tsx
+ * @module tests/unit/src/modules/character-builder/presentation/components/ProficiencyTrack.test
  */
 
 import { ProficiencyTrack } from '@/modules/character-builder/presentation/components/ProficiencyTrack';

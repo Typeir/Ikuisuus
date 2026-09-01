@@ -1,6 +1,6 @@
 /**
  * @fileoverview Height calculation utility for sidebar items
- * @module infrastructure/tree-walk/calculateHeights
+ * @module modules/navigation-sidebar/infrastructure/tree-walk/calculateHeights
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

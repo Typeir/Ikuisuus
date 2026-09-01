@@ -2,7 +2,7 @@
  * @fileoverview Determines if the current route is a statically generated MDX content route.
  * Static routes derive expansion from URL only; dynamic routes can restore from localStorage.
  *
- * @module lib/utils/isStaticContentRoute
+ * @module modules/library/application/selectors/isStaticContentRoute
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

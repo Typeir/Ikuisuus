@@ -2,7 +2,7 @@
  * @fileoverview Encounter Factory Utilities
  * @description Constructs creature and encounter objects.
  *
- * @module encounterFactory
+ * @module modules/encounter-planner/application/factories/encounter.factory
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

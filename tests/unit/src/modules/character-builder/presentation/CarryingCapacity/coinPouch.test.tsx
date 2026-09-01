@@ -3,7 +3,7 @@
  * @description Smoke tests for the CoinPouch component, which reads the
  * character, edit mode, and write API from the active-sheet context.
  *
- * @module tests/unit/lib/components/characterSheet/coinPouch
+ * @module tests/unit/src/modules/character-builder/presentation/CarryingCapacity/coinPouch.test
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

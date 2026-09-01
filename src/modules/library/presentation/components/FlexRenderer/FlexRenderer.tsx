@@ -2,7 +2,7 @@
  * @fileoverview Flex Renderer Component
  * @description Renders children in a horizontal flex row.
  *
- * @module flexRenderer
+ * @module modules/library/presentation/components/FlexRenderer/FlexRenderer
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

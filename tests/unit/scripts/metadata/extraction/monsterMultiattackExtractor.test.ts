@@ -3,7 +3,7 @@
  * @description Tests for multiattack parent/child splitting, feature ID
  * generation, and inline bold-label attack extraction.
  *
- * @module tests/unit/src/lib/utils/monsterMultiattackExtractor.test
+ * @module tests/unit/scripts/metadata/extraction/monsterMultiattackExtractor.test
  */
 
 import type { SubSection } from '@scripts/metadata/extraction/monsterFeatureExtractor';

@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for CombatantContext
  * @description Tests for the CombatantProvider and useCombatant hook.
  *
- * @module CombatantContext.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/utils/context/combatantContext.test
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

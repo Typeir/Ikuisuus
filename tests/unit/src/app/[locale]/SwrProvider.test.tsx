@@ -3,7 +3,7 @@
  * @description Verifies that SwrProvider renders children and that SWRConfig
  * is applied so descendant hooks can resolve configuration correctly.
  *
- * @module tests/unit/app/[locale]/SwrProvider
+ * @module tests/unit/src/app/[locale]/SwrProvider.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  * @description Modal for creating, editing, deleting, and importing saved parties.
  * Two views: party list and party editor.
  *
- * @module partyManager
+ * @module modules/encounter-planner/presentation/partyManager/partyManager
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

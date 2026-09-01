@@ -1,6 +1,6 @@
 /**
  * @fileoverview useSearchFacets Hook Unit Tests
- * @module tests/unit/src/modules/search/application/useSearchFacets
+ * @module tests/unit/src/modules/search/application/useSearchFacets.test
  */
 
 import { useSearchFacets } from '@/modules/search/application/useSearchFacets';

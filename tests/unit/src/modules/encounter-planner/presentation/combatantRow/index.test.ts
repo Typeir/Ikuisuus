@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for Combatant Row Module Barrel Exports
- * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/index
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/index.test
  * @description Validates all component and type exports from the combatantRow barrel.
  *
  * @version 1.0.0

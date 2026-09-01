@@ -1,6 +1,6 @@
 /**
  * @fileoverview Shared article wrapper for library content rendering.
- * @module modules/library/presentation/LibraryArticle
+ * @module modules/library/presentation/LibraryArticle/LibraryArticle
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

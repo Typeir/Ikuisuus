@@ -7,7 +7,7 @@
  * @author Typeir
  * @since 1.0.0
  *
- * @module phaseMarker.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/utils/phaseMarker.test
  * @requires vitest Test framework
  * @requires ../phaseMarker Phase marker utilities
  */

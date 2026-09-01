@@ -3,7 +3,7 @@
  * @description Searchable dropdown for importing creatures from the monster
  * library. Fetches monster data from /api/monsters/index and renders size/type/CR.
  *
- * @module creatureCombobox
+ * @module modules/encounter-planner/presentation/comboboxes/creatureCombobox
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

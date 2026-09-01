@@ -4,7 +4,7 @@
  * display systems, covering scaling, half-up rounding, pluralisation, and
  * attributive forms.
  *
- * @module tests/unit/lib/units/unitConversion
+ * @module tests/unit/src/lib/units/unitConversion.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-03

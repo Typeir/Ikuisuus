@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Spell Combobox component
- * @module tests/unit/src/lib/components/encounterPlanner/comboboxes/spellCombobox.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/comboboxes/spellCombobox.test
  * @description Validates SpellCombobox export and component signature.
  * 
  * @version 1.0.0

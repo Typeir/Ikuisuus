@@ -4,7 +4,7 @@
  * @fileoverview React hook for session-based authentication in the corrections module.
  * Session token is stored in PersistentUiState.
  *
- * @module lib/hooks/useCorrectionsAuth
+ * @module modules/mdx-editor/application/hooks/useCorrectionsAuth
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0
@@ -17,8 +17,52 @@ import {
     usePersistentUiState,
 } from '@/lib/context/PersistentUiContext';
 import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
+import { FetchError, fetcher } from '@/lib/fetch/fetcher';
 import type { AuthUser } from '@/modules/mdx-editor/domain/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
+/**
+ * Body of `/api/auth/validate`.
+ *
+ * @interface ValidateResponse
+ * @property {boolean} [valid] - Whether the token is still good
+ * @property {object} [session] - Session the token belongs to
+ */
+interface ValidateResponse {
+  valid?: boolean;
+  session?: { userId: string; username: string; role: AuthUser['role'] };
+}
+
+/**
+ * Body of `/api/auth/login`.
+ *
+ * @interface LoginResponse
+ * @property {string} token - Bearer token to persist
+ * @property {AuthUser} user - The signed-in user
+ */
+interface LoginResponse {
+  token: string;
+  user: AuthUser;
+}
+
+/**
+ * Message for a failed login, preferring what the server said.
+ *
+ * `fetcher` parses the error body, so a rejected sign-in still carries the
+ * reason the route gave rather than only its status.
+ *
+ * @param {unknown} err - Thrown value
+ * @returns {string} Message to show the user
+ */
+function loginErrorOf(err: unknown): string {
+  if (err instanceof FetchError) {
+    const body = err.body as { error?: string } | undefined;
+    return body?.error ?? `HTTP ${err.status}`;
+  }
+
+  return err instanceof Error ? err.message : 'Login failed';
+}
+
 
 /**
  * State returned by useCorrectionsAuth.
@@ -93,10 +137,9 @@ export function useCorrectionsAuth(): CorrectionsAuthState &
     if (!isHydrated || validated || !storedToken) return;
     setValidated(true);
 
-    fetch('/api/auth/validate', {
+    fetcher<ValidateResponse>('/api/auth/validate', {
       headers: { Authorization: `Bearer ${storedToken}` },
     })
-      .then((res) => res.json())
       .then((data) => {
         if (data.valid && data.session) {
           setUser({
@@ -104,14 +147,20 @@ export function useCorrectionsAuth(): CorrectionsAuthState &
             username: data.session.username,
             role: data.session.role,
           });
-        } else {
-          /** Token is stale — clear it */
-          persistToken(null);
-          setUser(null);
+          return;
         }
+
+        /** Token is stale — clear it */
+        persistToken(null);
+        setUser(null);
       })
-      .catch(() => {
-        /** Network error — keep token, user can retry */
+      .catch((err) => {
+        /** A rejection is the server saying no; anything else is the network,
+            where the token is kept so the user can retry. */
+        if (!(err instanceof FetchError)) return;
+
+        persistToken(null);
+        setUser(null);
       });
   }, [isHydrated, storedToken, validated, persistToken]);
 
@@ -121,23 +170,17 @@ export function useCorrectionsAuth(): CorrectionsAuthState &
       setIsLoggingIn(true);
       setError(null);
       try {
-        const res = await fetch('/api/auth/login', {
+        const data = await fetcher<LoginResponse>('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password }),
         });
-        const data = await res.json();
-
-        if (!res.ok) {
-          setError(data.error ?? `HTTP ${res.status}`);
-          return false;
-        }
 
         persistToken(data.token);
         setUser(data.user);
         return true;
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Login failed');
+        setError(loginErrorOf(err));
         return false;
       } finally {
         setIsLoggingIn(false);

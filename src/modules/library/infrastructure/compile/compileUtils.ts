@@ -1,6 +1,6 @@
 /**
  * @fileoverview Shared helpers for MDX compilation modules.
- * @module src/lib/mdx/compileUtils
+ * @module src/modules/library/infrastructure/compile/compileUtils
  *
  * @author Typeir
  * @version 0.1.0

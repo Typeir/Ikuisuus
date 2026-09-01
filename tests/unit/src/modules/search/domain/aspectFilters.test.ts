@@ -3,7 +3,7 @@
  * @description Covers the translation from `?aspect=` parameters into Pagefind
  * filters. Filter keys must match those written into the index.
  *
- * @module tests/unit/src/modules/search/domain/aspectFilters
+ * @module tests/unit/src/modules/search/domain/aspectFilters.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-05

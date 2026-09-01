@@ -2,13 +2,13 @@
  * @fileoverview Metadata Table Service
  * @description API service helpers for metadata table wrapper components.
  *
- * @module lib/services/api/metadataTableService
+ * @module modules/metadata-tables/infrastructure/api-clients/metadataTableClient
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0
  */
 
-import { getJson } from '@/lib/services/api/jsonClient';
+import { fetcher } from '@/lib/fetch/fetcher';
 
 /**
  * Fetches monster metadata rows for the given locale.
@@ -18,7 +18,7 @@ import { getJson } from '@/lib/services/api/jsonClient';
  * @returns {Promise<T[]>} Monster metadata rows
  */
 export function fetchMonsterMetadata<T>(locale: string): Promise<T[]> {
-  return getJson<T[]>(`/api/monsters?locale=${locale}`);
+  return fetcher<T[]>(`/api/monsters?locale=${locale}`);
 }
 
 /**
@@ -29,7 +29,7 @@ export function fetchMonsterMetadata<T>(locale: string): Promise<T[]> {
  * @returns {Promise<T[]>} Heirloom metadata rows
  */
 export function fetchHeirloomMetadata<T>(locale: string): Promise<T[]> {
-  return getJson<T[]>(`/api/heirlooms?locale=${locale}`);
+  return fetcher<T[]>(`/api/heirlooms?locale=${locale}`);
 }
 
 /**
@@ -40,5 +40,5 @@ export function fetchHeirloomMetadata<T>(locale: string): Promise<T[]> {
  * @returns {Promise<T[]>} Trinket metadata rows
  */
 export function fetchTrinketMetadata<T>(locale: string): Promise<T[]> {
-  return getJson<T[]>(`/api/trinkets?locale=${locale}`);
+  return fetcher<T[]>(`/api/trinkets?locale=${locale}`);
 }

@@ -11,7 +11,7 @@
  * <Meta target="generator" type="feature" featureId="war-godess-yskeia/faterender" customHandler="instant_death" />
  * ```
  *
- * @module src/lib/components/mdx/meta/meta
+ * @module src/modules/library/presentation/components/Meta/Meta
  * @version 1.0.0
  * @author Typeir
  * @since 4.0.0

@@ -4,7 +4,7 @@
  * start/stop, resize handling, and disposal. Mocks WebGLRenderer since
  * jsdom lacks actual WebGL support.
  *
- * @module tests/unit/worldSim/canvas/SceneManager
+ * @module tests/unit/src/modules/world-sim/infrastructure/three-js/SceneManager.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

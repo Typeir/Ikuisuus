@@ -8,8 +8,8 @@
  * @since 2.0.0
  */
 
-import { ApiRoutes } from '@/lib/enums/apiRoutes';
-import { postJson } from './jsonClient';
+import { fetcher } from '@/lib/fetch/fetcher';
+import { ApiRoutes } from '@/lib/constants/apiRoutes';
 
 /**
  * Nearest-route match payload.
@@ -34,10 +34,14 @@ export interface RouteMatch {
 export async function fetchNearestRoute(
   pathname: string,
 ): Promise<RouteMatch | null> {
-  const payload = await postJson<
-    { pathname: string },
-    { match: RouteMatch | null }
-  >(ApiRoutes.FindNearestRoute, { pathname });
+  const payload = await fetcher<{ match: RouteMatch | null }>(
+    ApiRoutes.FindNearestRoute,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pathname }),
+    },
+  );
 
   return payload.match;
 }

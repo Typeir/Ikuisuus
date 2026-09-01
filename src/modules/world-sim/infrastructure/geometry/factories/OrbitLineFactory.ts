@@ -4,7 +4,7 @@
  * `EllipseCurve` per celestial body. Supports inclined orbits and parent-relative
  * parenting.
  *
- * @module worldSim/celestials/OrbitLineFactory
+ * @module modules/world-sim/infrastructure/geometry/factories/OrbitLineFactory
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

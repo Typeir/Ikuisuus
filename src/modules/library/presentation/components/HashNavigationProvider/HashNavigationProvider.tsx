@@ -2,7 +2,7 @@
  * @fileoverview React component that calls useHashNavigation for MDX hash navigation.
  * @description Renders null; activates hash navigation for MDX content.
  *
- * @module HashNavigationProvider
+ * @module modules/library/presentation/components/HashNavigationProvider/HashNavigationProvider
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

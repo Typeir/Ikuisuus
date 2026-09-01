@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik pull` — Pull content-first, update submodule ref.
- * @module multirepo/commands/pull
+ * @module scripts/multirepo/commands/pull
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

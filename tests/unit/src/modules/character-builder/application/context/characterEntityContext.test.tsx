@@ -3,7 +3,7 @@
  * @description Unit tests for CharacterEntityProvider and its hooks,
  * including the bridge from ActiveSheetProvider.
  *
- * @module tests/unit/src/modules/character-builder/application/context/characterEntityContext
+ * @module tests/unit/src/modules/character-builder/application/context/characterEntityContext.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

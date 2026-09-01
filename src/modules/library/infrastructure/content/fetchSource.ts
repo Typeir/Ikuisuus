@@ -6,6 +6,8 @@
  * @since 6.0.0
  */
 
+import { fetcher } from '@/lib/fetch/fetcher';
+
 /**
  * Fetches raw MDX source text for a content file.
  *
@@ -19,13 +21,10 @@ export async function fetchSource(
 ): Promise<string> {
   try {
     const params = new URLSearchParams({ file, locale });
-    const response = await fetch(`/api/source?${params.toString()}`);
+    const data = await fetcher<{ content?: string }>(
+      `/api/source?${params.toString()}`,
+    );
 
-    if (!response.ok) {
-      return '';
-    }
-
-    const data = (await response.json()) as { content?: string };
     return data.content ?? '';
   } catch {
     return '';

@@ -2,7 +2,7 @@
  * @fileoverview Re-exports the metadata table component and its types.
  * @description Exports MetadataTable, MetadataRow, and ColumnConfig from metadataTable.
  * 
- * @module MetadataTable
+ * @module lib/components/mdx/metadataTables/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

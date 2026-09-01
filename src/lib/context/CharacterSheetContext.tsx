@@ -2,7 +2,7 @@
  * Character Sheet Context and Provider
  *
  * @fileoverview React context for character sheet state. Splits state and
- * dispatch contexts, persists via storePersistentDataFallbackOnly.
+ * dispatch contexts, persists via storePersistentDataRef.
  *
  * @module lib/context/CharacterSheetContext
  * @version 1.0.0

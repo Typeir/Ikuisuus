@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for useSidebarExpansion hook
- * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useSidebarExpansion
+ * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useSidebarExpansion.test
  */
 
 import { useSidebarExpansion } from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';

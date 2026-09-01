@@ -3,7 +3,7 @@
  * @description Covers the card opening on hover, fading out when the pointer
  * leaves, and staying when it is pinned by Shift, by Shift+Enter or by a drag.
  *
- * @module tests/unit/src/lib/components/ui/detachableTooltip/DetachableTooltip
+ * @module tests/unit/src/lib/components/ui/detachableTooltip/DetachableTooltip.test
  * @version 2.0.0
  * @author Typeir
  * @since 8.0.0

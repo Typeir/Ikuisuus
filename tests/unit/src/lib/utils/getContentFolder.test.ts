@@ -4,7 +4,7 @@
  * @fileoverview Tests for the getContentFolder utility that constructs
  * absolute paths to locale-specific content directories.
  *
- * @module tests/unit/lib/utils/getContentFolder
+ * @module tests/unit/src/lib/utils/getContentFolder.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

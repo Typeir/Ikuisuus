@@ -3,7 +3,7 @@
  * @description Unit tests for the open/close/isOpen API exposed by
  * `<PagePreviewProvider>`.
  *
- * @module tests/unit/src/lib/components/characterSheet/pagePreviewProvider.test
+ * @module tests/unit/src/modules/character-builder/presentation/PagePreview/pagePreviewProvider.test
  */
 
 import {

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for Skeleton Component Barrel Export
- * @module tests/unit/src/lib/components/skeleton/index
+ * @module tests/unit/src/lib/components/skeleton/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

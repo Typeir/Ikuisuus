@@ -3,7 +3,7 @@
  * @description Renders a tapered tower of stacked cylinder segments (no planet base)
  * surrounded by smaller pillars orbiting at random radii and heights.
  *
- * @module worldSim/celestials/TowerWorldRenderer
+ * @module modules/world-sim/infrastructure/renderers/TowerWorldRenderer
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

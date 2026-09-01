@@ -3,7 +3,7 @@
  * @description Typed interfaces for the metadata generation pipeline, used by
  * both script entrypoints and the runtime sync service.
  *
- * @module lib/metadata/types
+ * @module scripts/metadata/types
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

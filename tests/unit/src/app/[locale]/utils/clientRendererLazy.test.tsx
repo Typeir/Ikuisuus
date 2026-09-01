@@ -4,7 +4,7 @@
  * Asserts the loaded renderer receives locale and slug props and loads with
  * ssr disabled.
  *
- * @module tests/unit/src/app/[locale]/utils/clientRendererLazy
+ * @module tests/unit/src/app/[locale]/utils/clientRendererLazy.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-04

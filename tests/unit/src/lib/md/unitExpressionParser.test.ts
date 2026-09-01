@@ -3,7 +3,7 @@
  * @description Tests for the pure parser of `[= ... =]` unit expression syntax,
  * covering whole and fractional quantities, unit names, flags, and malformed input.
  *
- * @module tests/unit/lib/md/unitExpressionParser
+ * @module tests/unit/src/lib/md/unitExpressionParser.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-03

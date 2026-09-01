@@ -5,7 +5,7 @@
  * across the character sheet to share preview state so the same library page
  * is never opened twice and previews persist across tab switches.
  *
- * @module lib/components/characterSheet/pagePreviewProvider
+ * @module modules/character-builder/presentation/PagePreview/pagePreviewProvider
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

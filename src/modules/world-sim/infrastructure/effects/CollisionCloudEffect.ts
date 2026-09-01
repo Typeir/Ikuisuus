@@ -6,7 +6,7 @@
  *   opacity. Outer layers expand past apex and fade through alpha; core vertex
  *   displacement collapses with opacity.
  *
- * @module worldSim/celestials/CollisionCloudEffect
+ * @module modules/world-sim/infrastructure/effects/CollisionCloudEffect
  * @version 3.0.0
  * @author Typeir
  * @since 2026-05-21

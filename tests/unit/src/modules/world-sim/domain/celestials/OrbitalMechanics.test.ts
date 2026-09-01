@@ -3,7 +3,7 @@
  * @description Tests Keplerian orbit computations, Kepler's equation solver,
  * and surface-position-to-world conversion with known analytical results.
  *
- * @module tests/unit/worldSim/celestials/OrbitalMechanics
+ * @module tests/unit/src/modules/world-sim/domain/celestials/OrbitalMechanics.test
  */
 
 import {

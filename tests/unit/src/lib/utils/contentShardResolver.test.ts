@@ -2,7 +2,7 @@
  * @fileoverview Content Shard Resolver Unit Tests
  * @description Tests for `resolveShards` from contentShardResolver.ts.
  *
- * @module tests/unit/lib/utils/contentShardResolver
+ * @module tests/unit/src/lib/utils/contentShardResolver.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

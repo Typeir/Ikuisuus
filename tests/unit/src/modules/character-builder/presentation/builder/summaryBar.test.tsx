@@ -2,7 +2,7 @@
  * @fileoverview SummaryBar Smoke Tests
  * @description Verifies the summary bar component renders without crashing.
  *
- * @module tests/unit/src/modules/character-builder/presentation/builder/summaryBar
+ * @module tests/unit/src/modules/character-builder/presentation/builder/summaryBar.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

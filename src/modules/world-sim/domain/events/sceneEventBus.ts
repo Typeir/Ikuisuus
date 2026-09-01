@@ -1,7 +1,7 @@
 /**
  * @fileoverview Typed publish/subscribe bus for scene events.
  *
- * @module worldSim/bridge/SceneEventBus
+ * @module modules/world-sim/domain/events/sceneEventBus
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

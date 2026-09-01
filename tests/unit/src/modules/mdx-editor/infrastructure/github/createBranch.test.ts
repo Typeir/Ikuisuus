@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for createBranch helper.
- * @module tests/unit/src/modules/mdx-editor/infrastructure/github/createBranch
+ * @module tests/unit/src/modules/mdx-editor/infrastructure/github/createBranch.test
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

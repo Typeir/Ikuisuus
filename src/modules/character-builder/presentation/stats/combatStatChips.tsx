@@ -15,6 +15,7 @@ import {
   useSheetData,
   useSheetMutators,
 } from '@/modules/character-builder/application/context/activeSheetContext';
+import { formatModifier } from '@/lib/utils/formatModifier';
 import { deriveHitPoints } from '@/modules/character-builder/lib/utils/hitDiceUtils';
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
@@ -53,12 +54,8 @@ export const CombatStatChips: React.FC = () => {
     [patch, overrides],
   );
 
-  const initStr =
-    data.initiativeBonus >= 0
-      ? `+${data.initiativeBonus}`
-      : `${data.initiativeBonus}`;
-  const tierStr =
-    data.tierBonus >= 0 ? `+${data.tierBonus}` : `${data.tierBonus}`;
+  const initStr = formatModifier(data.initiativeBonus);
+  const tierStr = formatModifier(data.tierBonus);
   const speedDisplay =
     data.speedOverride !== null ? `${data.speedOverride} ft.` : '\u2014';
 

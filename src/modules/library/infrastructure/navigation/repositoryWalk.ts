@@ -5,7 +5,7 @@
  * {@link DirectorySourceAdapter} resolved from the runtime environment. The
  * shallow variant uses the LRU-cached {@link listDirectory} facade.
  *
- * @module repositoryWalk
+ * @module modules/library/infrastructure/navigation/repositoryWalk
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

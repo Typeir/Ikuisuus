@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for the useDebounce hook.
- * @module tests/unit/lib/hooks/useDebounce
+ * @module tests/unit/src/lib/hooks/useDebounce.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

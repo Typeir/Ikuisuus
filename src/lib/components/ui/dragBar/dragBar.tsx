@@ -3,7 +3,7 @@
  * @description Thin vertical drag handle for resizable split panes.
  * Keyboard-accessible (ArrowLeft/Right, Home/End).
  *
- * @module ui/dragBar
+ * @module lib/components/ui/dragBar/dragBar
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0

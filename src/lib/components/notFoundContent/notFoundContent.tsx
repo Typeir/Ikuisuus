@@ -2,7 +2,7 @@
  * @fileoverview Not Found Content Component
  * @description Renders the 404 page and a link to the nearest matching route.
  *
- * @module NotFoundContent
+ * @module lib/components/notFoundContent/notFoundContent
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -12,7 +12,7 @@
 
 import type { JSX } from 'react';
 import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
-import { useNearestRoute } from '@/lib/hooks/data/useDraftAndRouteData';
+import { useNearestRoute } from '@/modules/library/application/hooks/useNearestRoute';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

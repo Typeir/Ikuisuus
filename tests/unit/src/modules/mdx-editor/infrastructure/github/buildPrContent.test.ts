@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for branch/commit/PR content builders.
- * @module tests/unit/src/modules/mdx-editor/infrastructure/github/buildPrContent
+ * @module tests/unit/src/modules/mdx-editor/infrastructure/github/buildPrContent.test
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Vocation Content Shards API Route Unit Tests
  * @description Tests for GET /api/content-shards/vocations/[slug].
  *
- * @module tests/unit/app/api/content-shards/vocations/route
+ * @module tests/unit/src/app/api/content-shards/vocations/[slug]/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -30,6 +30,10 @@ vi.mock('@/lib/logging/logger', () => ({
   logger: {
     child: () => ({ error: vi.fn(), debug: vi.fn() }),
   },
+}));
+
+vi.mock('@/app/api/content-shards/keywordShards', () => ({
+  keywordShardsFor: vi.fn().mockResolvedValue([]),
 }));
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -181,20 +185,13 @@ describe('GET /api/content-shards/vocations/[slug]', () => {
     );
   });
 
-  it('passes locale param to the repository', async () => {
-    vi.mocked(vocationRepository.getBySlug).mockResolvedValue(
-      MOCK_META as never,
+  it('rejects an unsupported locale before the repository', async () => {
+    vi.mocked(vocationRepository.getBySlug).mockClear();
+    const res = await VocationShardsRoute.GET(
+      ...makeArgs('Berserker', { locale: 'es' }),
     );
-    mockGetFile.mockResolvedValue({
-      content: SAMPLE_MDX,
-      resolvedPath: 'Berserker.mdx',
-    });
-
-    await VocationShardsRoute.GET(...makeArgs('Berserker', { locale: 'es' }));
-    expect(vocationRepository.getBySlug).toHaveBeenCalledWith(
-      'es',
-      'Berserker',
-    );
+    expect(res.status).toBe(400);
+    expect(vocationRepository.getBySlug).not.toHaveBeenCalled();
   });
 
   it('returns 500 when the repository throws', async () => {

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Layout constants for the GenericCombobox dropdown positioner.
  *
- * @module encounter-planner/presentation/comboboxes/comboboxConstants
+ * @module modules/encounter-planner/presentation/comboboxes/comboboxConstants
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

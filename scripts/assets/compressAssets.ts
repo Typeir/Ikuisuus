@@ -3,7 +3,7 @@
  * writing mirrored files under `public/library`. Supports .png, .jpg, .jpeg.
  * Originals kept untouched.
  *
- * @module compressAssets
+ * @module scripts/assets/compressAssets
  * @version 1.0.0
  * @since 1.0.0
  * @author Typeir

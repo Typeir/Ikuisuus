@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for Single Monster API Route
- * @module tests/unit/src/app/api/monsters/[slug]/route
+ * @module tests/unit/src/app/api/monsters/[slug]/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

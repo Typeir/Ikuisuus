@@ -13,6 +13,7 @@
 
 'use client';
 
+import { cn } from '@/lib/utils/classNameMerge';
 import { DragBar } from '@/lib/components/ui/dragBar/dragBar';
 import {
   useCallback,
@@ -236,9 +237,7 @@ export const ResizablePane: React.FC<ResizablePaneProps> = ({
     ['--resizable-left-pct' as string]: `${leftPercent}%`,
   };
 
-  const wrapperClass = [styles.resizablePane, className]
-    .filter(Boolean)
-    .join(' ');
+  const wrapperClass = cn(styles.resizablePane, className);
 
   const valueNow = Math.round(leftPercent);
 

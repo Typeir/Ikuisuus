@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Heroic Awakening Styling Utilities
- * @module tests/unit/src/lib/utils/heroicAwakeningStyles.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/utils/heroicAwakeningStyles.test
  * @description Tests for affix normalization, tier calculation, and class computation.
  *
  * @version 1.0.0

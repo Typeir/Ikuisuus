@@ -12,7 +12,8 @@
 
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useMounted } from './useMounted';
 import {
   usePersistentUiDispatch,
   usePersistentUiStateOptional,
@@ -47,11 +48,7 @@ export interface UnitSystemState {
  */
 export function useUnitSystemState(): UnitSystemState {
   const state = usePersistentUiStateOptional();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   return {
     unitSystem: mounted ? state.unitSystem : DEFAULT_UNIT_SYSTEM,

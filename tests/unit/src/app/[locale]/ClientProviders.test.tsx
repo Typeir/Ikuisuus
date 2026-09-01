@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for ClientProviders wrapper component
  * @description Tests for client-only provider composition in layout
  *
- * @module tests/unit/app/[locale]/ClientProviders
+ * @module tests/unit/src/app/[locale]/ClientProviders.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

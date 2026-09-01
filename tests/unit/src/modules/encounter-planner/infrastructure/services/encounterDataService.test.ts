@@ -6,12 +6,15 @@ import {
 } from '@/modules/encounter-planner/infrastructure/services/encounterDataService';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('encounterDataService', () => {
-  let mockFetch: ReturnType<typeof vi.fn>;
+const mockFetcher = vi.fn();
 
+vi.mock('@/lib/fetch/fetcher', () => ({
+  fetcher: (...args: unknown[]) => mockFetcher(...args),
+}));
+
+describe('encounterDataService', () => {
   beforeEach(() => {
-    mockFetch = vi.fn();
-    vi.stubGlobal('fetch', mockFetch);
+    mockFetcher.mockReset();
   });
 
   afterEach(() => {
@@ -28,14 +31,11 @@ describe('encounterDataService', () => {
         creatureType: 'humanoid',
       },
     ];
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(payload),
-    });
+    mockFetcher.mockResolvedValue(payload);
 
     const result = await fetchMonsterIndex('en');
 
-    expect(mockFetch).toHaveBeenCalledWith('/api/monsters/index?locale=en');
+    expect(mockFetcher).toHaveBeenCalledWith('/api/monsters/index?locale=en');
     expect(result).toEqual(payload);
   });
 
@@ -43,14 +43,11 @@ describe('encounterDataService', () => {
     const payload = [
       { slug: 'fireball', title: 'Fireball', level: 3, school: 'Evocation' },
     ];
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(payload),
-    });
+    mockFetcher.mockResolvedValue(payload);
 
     const result = await fetchSpellIndex('fi');
 
-    expect(mockFetch).toHaveBeenCalledWith('/api/spells/index?locale=fi');
+    expect(mockFetcher).toHaveBeenCalledWith('/api/spells/index?locale=fi');
     expect(result).toEqual(payload);
   });
 
@@ -58,27 +55,21 @@ describe('encounterDataService', () => {
     const payload = [
       { slug: 'brutal', title: 'Brutal', link: '/world/brutal' },
     ];
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(payload),
-    });
+    mockFetcher.mockResolvedValue(payload);
 
     const result = await fetchAffixIndex('es');
 
-    expect(mockFetch).toHaveBeenCalledWith('/api/affixes/index?locale=es');
+    expect(mockFetcher).toHaveBeenCalledWith('/api/affixes/index?locale=es');
     expect(result).toEqual(payload);
   });
 
   it('fetchSpellBySlug should call spell detail endpoint with locale and slug', async () => {
     const payload = { link: '/spells/fireball' };
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(payload),
-    });
+    mockFetcher.mockResolvedValue(payload);
 
     const result = await fetchSpellBySlug('en', 'fireball');
 
-    expect(mockFetch).toHaveBeenCalledWith('/api/spells/fireball?locale=en');
+    expect(mockFetcher).toHaveBeenCalledWith('/api/spells/fireball?locale=en');
     expect(result).toEqual(payload);
   });
 });

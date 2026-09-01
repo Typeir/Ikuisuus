@@ -2,7 +2,7 @@
  * @fileoverview ToolsTable Unit Tests
  * @description Tests for the ToolsTable component.
  *
- * @module tests/unit/lib/components/characterSheet/toolsTable
+ * @module tests/unit/src/modules/character-builder/presentation/stats/toolsTable.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

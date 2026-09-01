@@ -19,6 +19,7 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 import fs from 'fs';
 import path from 'path';
 
@@ -52,5 +53,5 @@ function renameMarkdownToMdx(dir: string): void {
 }
 
 ['en'].forEach((locale) =>
-  renameMarkdownToMdx(path.join(process.cwd(), 'src', 'content', locale)),
+  renameMarkdownToMdx(getContentFolder(locale)),
 );

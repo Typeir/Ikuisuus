@@ -5,7 +5,7 @@
  * clamping, resize re-clamping, resize handle, close button, and
  * function-based initial positioning.
  *
- * @module tests/unit/draggable
+ * @module tests/unit/src/lib/components/ui/draggable/Draggable.test
  */
 
 import { Draggable } from '@/lib/components/ui/draggable/Draggable';

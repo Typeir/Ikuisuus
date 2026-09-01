@@ -5,7 +5,7 @@
  * focusing on buildBranchName which must produce valid ASCII branch names
  * even when the file path contains non-ASCII Unicode characters.
  *
- * @module tests/unit/app/api/corrections/corrections.service
+ * @module tests/unit/src/modules/mdx-editor/infrastructure/github/buildPrContent.legacy.test
  */
 
 import { buildBranchName } from '@/modules/mdx-editor/infrastructure/github/buildPrContent';

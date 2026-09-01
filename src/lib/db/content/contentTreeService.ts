@@ -9,7 +9,7 @@
  * @since 2.0.0
  */
 
-import { FILE_EXT_MDX, IGNORED_FOLDERS } from '@/lib/enums/constants';
+import { FILE_EXT_MDX, IGNORED_FOLDERS } from '@/lib/constants/content';
 
 import type { DirectorySourceAdapter } from './directorySourceAdapter';
 import { resolveDirectorySource } from './directorySourceResolver';

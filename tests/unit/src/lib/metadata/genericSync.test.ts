@@ -3,7 +3,7 @@
  * @description Tests definition-driven upserts, hash diffing, deletion, natural
  * keys, and child-row statics.
  *
- * @module tests/unit/src/lib/metadata/genericSync
+ * @module tests/unit/src/lib/metadata/genericSync.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Metadata Barrel Export Smoke Test
  * @description Verifies that the index barrel re-exports all expected symbols.
  *
- * @module tests/unit/lib/metadata/index
+ * @module tests/unit/src/lib/metadata/index.test
  * @version 2.0.0
  * @author Typeir
  * @since 3.0.0

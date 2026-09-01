@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests deduplicateFiles, which keeps longer variants of files sharing a base name.
  *
- * @module tests/unit/lib/utils/deduplicateFiles
+ * @module tests/unit/src/lib/utils/deduplicateFiles.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

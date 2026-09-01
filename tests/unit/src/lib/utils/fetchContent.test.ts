@@ -1,6 +1,6 @@
 /**
  * @fileoverview Temporary shim test for legacy fetchContent re-export.
- * @module tests/unit/src/lib/utils/fetchContent
+ * @module tests/unit/src/lib/utils/fetchContent.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

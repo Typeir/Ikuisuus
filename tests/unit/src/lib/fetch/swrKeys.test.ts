@@ -3,7 +3,7 @@
  * @description Verifies that key builder functions return the correct tuple
  * structures and that `enabled=false` / null inputs produce `null` keys.
  *
- * @module tests/unit/lib/fetch/swrKeys
+ * @module tests/unit/src/lib/fetch/swrKeys.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

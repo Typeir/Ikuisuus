@@ -3,7 +3,7 @@
  * @description The module is type-only; this verifies the exported types are
  * importable and that conforming objects satisfy their shapes.
  *
- * @module tests/unit/src/lib/components/mdx/metadataTables/metadataTable.types
+ * @module tests/unit/src/lib/components/mdx/metadataTables/metadataTable.types.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

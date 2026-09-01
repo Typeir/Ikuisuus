@@ -3,7 +3,7 @@
  * @description Validates structural conformance of ConditionEntry, SpellRef,
  * and CreatureStats interfaces from the encounter planner domain.
  *
- * @module tests/unit/src/modules/encounter-planner/domain/encounters/encounter.types
+ * @module tests/unit/src/modules/encounter-planner/domain/encounters/encounter.types.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

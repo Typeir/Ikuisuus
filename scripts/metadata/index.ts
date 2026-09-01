@@ -2,7 +2,7 @@
  * @fileoverview Metadata generation utilities barrel export.
  * @description Re-exports for build-time scripts and generators.
  *
- * @module scripts/metadata
+ * @module scripts/metadata/index
  * @version 2.0.0
  * @author Typeir
  * @since 3.0.0

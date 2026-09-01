@@ -3,7 +3,7 @@
  *
  * @fileoverview Unit tests for entity decorators and the minification regression.
  *
- * @module tests/unit/lib/db/orm/schema/decorators
+ * @module tests/unit/src/lib/db/orm/schema/decorators.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

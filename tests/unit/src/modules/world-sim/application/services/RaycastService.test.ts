@@ -3,7 +3,7 @@
  * @description Tests body picking via raycastBody, occlusion via computeOcclusion,
  * and mesh cache building.
  *
- * @module tests/unit/worldSim/RaycastService
+ * @module tests/unit/src/modules/world-sim/application/services/RaycastService.test
  */
 
 import { RaycastService } from '@/modules/world-sim/application/services/RaycastService';

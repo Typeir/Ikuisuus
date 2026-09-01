@@ -4,7 +4,7 @@
  * WEAPONS/TRADES row is always rendered, absent grants (or no vocation) show an
  * em dash, and inline markdown markers are stripped from grant values.
  *
- * @module tests/unit/modules/character-builder/presentation/builder/vocationProficiencySummary
+ * @module tests/unit/src/modules/character-builder/presentation/builder/vocationProficiencySummary.test
  * @version 2.0.0
  * @author Typeir
  * @since 7.0.0

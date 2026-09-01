@@ -1,7 +1,7 @@
 /**
  * @fileoverview CameraOrbitControls unit tests.
  * @description Exercises controls without real DOM input events.
- * @module tests/unit/worldSim/camera/CameraOrbitControls
+ * @module tests/unit/src/modules/world-sim/infrastructure/input/CameraOrbitControls.test
  */
 
 import { CameraOrbitControls } from '@/modules/world-sim/infrastructure/input/CameraOrbitControls';

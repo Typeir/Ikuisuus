@@ -2,7 +2,7 @@
  * @fileoverview Pre-compiled regex patterns for aspect detection.
  * @description Keyed by facet; excludes judgement-valued facets (source, myth, theme).
  *
- * @module lib/metadata/aspectPatterns
+ * @module scripts/metadata/aspectPatterns
  * @version 1.0.0
  * @author Typeir
  * @since 3.1.0

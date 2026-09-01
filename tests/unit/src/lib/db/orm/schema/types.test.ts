@@ -4,7 +4,7 @@
  * @fileoverview Compile-time assertions that the option shapes still accept the
  * decorator arguments the entity modules actually pass.
  *
- * @module tests/unit/lib/db/orm/schema/types
+ * @module tests/unit/src/lib/db/orm/schema/types.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

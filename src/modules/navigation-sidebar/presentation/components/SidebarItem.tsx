@@ -1,6 +1,6 @@
 /**
  * @fileoverview Recursive sidebar item component
- * @module lib/components/sidebar/SidebarItem
+ * @module modules/navigation-sidebar/presentation/components/SidebarItem
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

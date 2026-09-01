@@ -2,7 +2,7 @@
  * @fileoverview Authored Aspects Tests
  * @description Sheet vs feature scope parsing of `aspects:` / `denyAspects:`.
  *
- * @module tests/unit/scripts/metadata/authoredAspects
+ * @module tests/unit/scripts/metadata/authoredAspects.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

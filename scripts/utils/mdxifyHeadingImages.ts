@@ -3,7 +3,7 @@
  * @description Replace the first markdown image in .sheet.mdx files
  * with a JSX BlendedImage component.
  *
- * @module mdxifyHeadingImages
+ * @module scripts/utils/mdxifyHeadingImages
  * @version 1.0.0
  *
  * @example

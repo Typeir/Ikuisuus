@@ -6,7 +6,7 @@
  * already available. Integrates `usePagePreview` so clicking the tooltip opens
  * the draggable library page panel.
  *
- * @module lib/components/characterSheet/shardChip
+ * @module modules/character-builder/presentation/shards/shardChip
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -18,8 +18,8 @@ import { AsyncTooltip } from '@/lib/components/ui/asyncTooltip';
 import type { ChipVariant } from '@/lib/components/ui/chip';
 import { Chip } from '@/lib/components/ui/chip';
 import { fetcher } from '@/lib/fetch/fetcher';
-import { urlForContentShard } from '@/lib/fetch/swrKeys';
-import type { ContentShardResponse } from '@/lib/types/api.d';
+import { contentShardKey, urlForContentShard } from '@/lib/fetch/swrKeys';
+import type { ContentShardResponse } from '@/lib/types/api';
 import type { CharacterShard } from '@/lib/types/character';
 import { shardToPreview } from '@/modules/character-builder/lib/utils/shardToPreview';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
@@ -28,7 +28,7 @@ import { mdxComponents } from '@/modules/library/presentation';
 import { useLocale } from 'next-intl';
 import type { ReactNode } from 'react';
 import { memo, useCallback, useMemo } from 'react';
-import { useSWRConfig } from 'swr';
+import { unstable_serialize, useSWRConfig } from 'swr';
 import { usePagePreview } from '../PagePreview/pagePreviewProvider';
 
 /**
@@ -109,18 +109,24 @@ const PREVIEW_CHARS = 150;
         ellipsis: true,
       }).source;
     } else if (previewData) {
-      const url = urlForContentShard(
+      const key = contentShardKey(
         previewData.kind,
         previewData.slug,
         locale,
+        true,
       );
-      const cached = cache.get(url)?.data as ContentShardResponse | undefined;
+      if (!key) return shard.heading;
+      const cached = cache.get(unstable_serialize(key))?.data as
+        | ContentShardResponse
+        | undefined;
       let data: ContentShardResponse | undefined = cached;
       if (!data) {
         try {
           data = await mutate<ContentShardResponse>(
-            url,
-            fetcher<ContentShardResponse>(url),
+            key,
+            fetcher<ContentShardResponse>(
+              urlForContentShard(previewData.kind, previewData.slug, locale),
+            ),
             { revalidate: false, populateCache: true },
           );
         } catch {

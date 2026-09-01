@@ -2,7 +2,7 @@
  * @fileoverview CharacterSheet Unit Tests
  * @description Tests for the CharacterSheet and ActiveCharacterSheet components.
  *
- * @module tests/unit/src/modules/character-builder/presentation/CharacterSheet/characterSheet
+ * @module tests/unit/src/modules/character-builder/presentation/CharacterSheet/characterSheet.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

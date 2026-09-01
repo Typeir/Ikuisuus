@@ -5,7 +5,7 @@
  * loading states, client-side MDX compilation, rendering of draft content
  * over static children, and the toggle button that slides the draft panel.
  *
- * @module tests/unit/lib/components/draftOverlay/draftOverlay
+ * @module tests/unit/src/modules/mdx-editor/presentation/DraftOverlay/DraftOverlay.test
  */
 
 import { DraftOverlay } from '@/modules/mdx-editor/presentation/DraftOverlay/DraftOverlay';

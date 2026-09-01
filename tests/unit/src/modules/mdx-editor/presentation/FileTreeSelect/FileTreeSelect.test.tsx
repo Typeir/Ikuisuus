@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — FileTreeSelect
  * @description Validates tree dropdown rendering, expand/collapse, and selection.
  *
- * @module tests/unit/lib/components/mdxEditor/fileTreeSelect
+ * @module tests/unit/src/modules/mdx-editor/presentation/FileTreeSelect/FileTreeSelect.test
  */
 
 import { cleanup, render, screen } from '@testing-library/react';

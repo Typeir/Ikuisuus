@@ -2,31 +2,16 @@
  * @fileoverview Encounter Data Service
  * @description API service helpers for encounter planner index/search data.
  *
- * @module lib/services/api/encounterDataService
+ * @module modules/encounter-planner/infrastructure/services/encounterDataService
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0
  */
 
-import { getJson } from '@/lib/services/api/jsonClient';
+import { fetcher } from '@/lib/fetch/fetcher';
+import type { MonsterIndexEntry } from '@/lib/db/content/schemas/monsterMetadata';
 
-/**
- * Combobox-compatible monster index entry.
- *
- * @interface MonsterIndexEntry
- * @property {string} slug - Monster slug identifier
- * @property {string} title - Monster display title
- * @property {string} cr - Challenge rating text
- * @property {string} size - Creature size
- * @property {string} creatureType - Creature type
- */
-export interface MonsterIndexEntry {
-  slug: string;
-  title: string;
-  cr: string;
-  size: string;
-  creatureType: string;
-}
+export type { MonsterIndexEntry };
 
 /**
  * Combobox-compatible spell index entry.
@@ -77,7 +62,7 @@ export interface SpellDetail {
 export function fetchMonsterIndex(
   locale: string,
 ): Promise<MonsterIndexEntry[]> {
-  return getJson<MonsterIndexEntry[]>(`/api/monsters/index?locale=${locale}`);
+  return fetcher<MonsterIndexEntry[]>(`/api/monsters/index?locale=${locale}`);
 }
 
 /**
@@ -87,7 +72,7 @@ export function fetchMonsterIndex(
  * @returns {Promise<SpellIndexEntry[]>} Spell index entries
  */
 export function fetchSpellIndex(locale: string): Promise<SpellIndexEntry[]> {
-  return getJson<SpellIndexEntry[]>(`/api/spells/index?locale=${locale}`);
+  return fetcher<SpellIndexEntry[]>(`/api/spells/index?locale=${locale}`);
 }
 
 /**
@@ -97,7 +82,7 @@ export function fetchSpellIndex(locale: string): Promise<SpellIndexEntry[]> {
  * @returns {Promise<AffixIndexEntry[]>} Affix index entries
  */
 export function fetchAffixIndex(locale: string): Promise<AffixIndexEntry[]> {
-  return getJson<AffixIndexEntry[]>(`/api/affixes/index?locale=${locale}`);
+  return fetcher<AffixIndexEntry[]>(`/api/affixes/index?locale=${locale}`);
 }
 
 /**
@@ -111,5 +96,5 @@ export function fetchSpellBySlug(
   locale: string,
   slug: string,
 ): Promise<SpellDetail> {
-  return getJson<SpellDetail>(`/api/spells/${slug}?locale=${locale}`);
+  return fetcher<SpellDetail>(`/api/spells/${slug}?locale=${locale}`);
 }

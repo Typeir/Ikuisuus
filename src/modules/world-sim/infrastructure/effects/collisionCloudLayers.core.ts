@@ -4,7 +4,7 @@
  *   debris point cloud, opaque grey core, additive outer shells, corona shell.
  *   Each factory returns a `{ geometry, material, mesh }` triple.
  *
- * @module worldSim/celestials/collisionCloudLayers
+ * @module modules/world-sim/infrastructure/effects/collisionCloudLayers.core
  * @version 1.0.0
  * @author Typeir
  * @since 2026-05-30

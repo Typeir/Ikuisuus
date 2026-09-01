@@ -2,7 +2,7 @@
  * @fileoverview BoonPicker Unit Tests
  * @description Tests for the BoonPicker component.
  *
- * @module tests/unit/lib/components/characterSheet/boonPicker
+ * @module tests/unit/src/modules/character-builder/presentation/builder/boonPicker.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

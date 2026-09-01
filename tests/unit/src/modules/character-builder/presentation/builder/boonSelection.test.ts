@@ -3,7 +3,7 @@
  * @description Verifies the choose-one / pick-any BP math and shard lifecycle
  * for variable-cost boon sub-option selection.
  *
- * @module tests/unit/src/modules/character-builder/presentation/builder/boonSelection
+ * @module tests/unit/src/modules/character-builder/presentation/builder/boonSelection.test
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0

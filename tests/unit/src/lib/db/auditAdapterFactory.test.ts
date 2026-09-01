@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the audit adapter factory resolution logic.
  *
- * @module tests/unit/lib/db/auditAdapterFactory
+ * @module tests/unit/src/lib/db/auditAdapterFactory.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

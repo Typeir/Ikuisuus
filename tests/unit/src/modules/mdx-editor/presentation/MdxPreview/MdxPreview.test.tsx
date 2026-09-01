@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — MdxPreview
  * @description Validates rendering states of the live MDX preview panel.
  *
- * @module tests/unit/lib/components/mdxEditor/mdxPreview
+ * @module tests/unit/src/modules/mdx-editor/presentation/MdxPreview/MdxPreview.test
  */
 
 import { act, cleanup, render, screen } from '@testing-library/react';

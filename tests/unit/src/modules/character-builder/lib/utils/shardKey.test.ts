@@ -3,7 +3,7 @@
  * @description Anchor-based shard identity and the read-time backfill for
  * shards saved without a key.
  *
- * @module tests/unit/src/modules/character-builder/lib/utils/shardKey
+ * @module tests/unit/src/modules/character-builder/lib/utils/shardKey.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

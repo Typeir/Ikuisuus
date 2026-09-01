@@ -2,7 +2,7 @@
  * @fileoverview Repo paths, ANSI colour codes, child-process environment,
  * ASCII logo, and the `MenuOption` union type.
  *
- * @module multirepo/constants
+ * @module scripts/multirepo/constants
  */
 
 import { dirname, resolve } from 'path';

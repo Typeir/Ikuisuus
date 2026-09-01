@@ -3,7 +3,7 @@
  * @description Tests for heading classification, section splitting, and
  * heading-level-agnostic section detection.
  *
- * @module tests/unit/src/lib/utils/monsterSectionClassifier.test
+ * @module tests/unit/scripts/metadata/extraction/monsterSectionClassifier.test
  */
 
 import {

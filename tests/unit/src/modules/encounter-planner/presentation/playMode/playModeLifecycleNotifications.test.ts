@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Play Mode lifecycle notification subscriptions.
- * @module tests/unit/src/lib/components/encounterPlanner/playMode/playModeLifecycleNotifications.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/playMode/playModeLifecycleNotifications.test
  * @description Verifies round-start lair warnings and legendary deed reminders.
  *
  * @version 1.0.0

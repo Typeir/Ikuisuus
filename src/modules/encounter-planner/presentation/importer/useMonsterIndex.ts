@@ -2,7 +2,7 @@
  * @fileoverview Monster Index Hook
  * @description Custom hook for loading and caching the monster index from the API.
  *
- * @module useMonsterIndex
+ * @module modules/encounter-planner/presentation/importer/useMonsterIndex
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -10,28 +10,12 @@
 
 'use client';
 
+import type { MonsterIndexEntry } from '@/lib/db/content/schemas/monsterMetadata';
 import { logger } from '@/lib/logging/logger';
+import { fetcher } from '@/lib/fetch/fetcher';
 import { useCallback, useState } from 'react';
 
 const log = logger.child({ module: 'useMonsterIndex' });
-
-/**
- * Entry in the monster index
- *
- * @interface MonsterIndexEntry
- * @property {string} slug - URL-safe monster identifier
- * @property {string} title - Display name
- * @property {string} cr - Challenge rating
- * @property {string} size - Creature size category
- * @property {string} creatureType - Creature type classification
- */
-export interface MonsterIndexEntry {
-  slug: string;
-  title: string;
-  cr: string;
-  size: string;
-  creatureType: string;
-}
 
 /**
  * Hook for loading and querying the monster index.
@@ -50,8 +34,9 @@ export const useMonsterIndex = (locale: string) => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/monsters/index?locale=${locale}`);
-      const data = await response.json();
+      const data = await fetcher<MonsterIndexEntry[]>(
+        `/api/monsters/index?locale=${locale}`,
+      );
       setIndex(
         data.map((monster: MonsterIndexEntry) => ({
           ...monster,

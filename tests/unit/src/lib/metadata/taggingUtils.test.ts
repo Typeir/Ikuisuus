@@ -2,7 +2,7 @@
  * @fileoverview Tagging Utilities Unit Tests
  * @description Tests for all tag extraction functions.
  *
- * @module tests/unit/lib/metadata/taggingUtils
+ * @module tests/unit/src/lib/metadata/taggingUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Constants for sidebar layout and animation
- * @module lib/components/sidebar/constants
+ * @module modules/navigation-sidebar/domain/constants
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Barrel export for GradientTabs
- * @module lib/components/ui/gradientTabs
+ * @module lib/components/ui/gradientTabs/index
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0

@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for LOD budget constants and sphere LOD factory functions.
  *
- * @module tests/unit/lib/components/worldSim/optimization/GeometryBudgets
+ * @module tests/unit/src/modules/world-sim/infrastructure/geometry/budgets/GeometryBudgets.test
  */
 
 import { describe, expect, it, vi } from 'vitest';

@@ -20,6 +20,16 @@ import {
 import type { PagefindFragment } from './pagefindClient';
 
 /**
+ * Slug of a resolved fragment: indexed meta first, then the URL tail.
+ *
+ * @param {PagefindFragment} fragment - Resolved Pagefind fragment
+ * @returns {string} Record slug, empty when neither source carries one
+ */
+export function slugOfFragment(fragment: PagefindFragment): string {
+  return fragment.meta?.slug || fragment.url.split('/').pop() || '';
+}
+
+/**
  * Maps a resolved Pagefind fragment into a domain `SearchResult`.
  * Content type comes from `filters.type[0]`; `meta` maps to the flat shape.
  *
@@ -38,7 +48,7 @@ export function mapPagefindResult(
     ? (rawType as unknown as SearchContentType)
     : 'world';
 
-  const slug = fragment.meta?.slug || fragment.url.split('/').pop() || '';
+  const slug = slugOfFragment(fragment);
 
   const link = localizeLink(fragment.url.replace(/^\/+/, '/'), locale);
 

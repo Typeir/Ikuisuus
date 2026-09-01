@@ -5,7 +5,7 @@
  * `sense:darkvision`). Judgement facets — `source:`, `access:`, `myth:`,
  * `theme:` — are authored, with no extractor.
  *
- * @module lib/metadata/aspectExtractors
+ * @module scripts/metadata/aspectExtractors
  * @version 1.0.0
  * @author Typeir
  * @since 3.1.0

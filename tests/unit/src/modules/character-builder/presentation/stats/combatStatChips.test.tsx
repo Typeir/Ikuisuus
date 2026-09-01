@@ -3,7 +3,7 @@
  * @description Smoke tests for the combat stat chips component, which reads the
  * character and write API from the active-sheet context.
  *
- * @module tests/unit/character-builder/presentation/stats/combatStatChips
+ * @module tests/unit/src/modules/character-builder/presentation/stats/combatStatChips.test
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

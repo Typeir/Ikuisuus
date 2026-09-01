@@ -2,7 +2,7 @@
  * @fileoverview Sync Service Unit Tests
  * @description Tests for hash-based incremental metadata sync.
  *
- * @module tests/unit/lib/metadata/syncService
+ * @module tests/unit/src/lib/metadata/syncService.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

@@ -4,7 +4,7 @@
  * useWorldSimDispatch hooks including dispatch behavior and
  * context isolation.
  *
- * @module tests/unit/worldSim/context/WorldSimContext
+ * @module tests/unit/src/modules/world-sim/application/state/WorldSimContext.test
  */
 
 import {

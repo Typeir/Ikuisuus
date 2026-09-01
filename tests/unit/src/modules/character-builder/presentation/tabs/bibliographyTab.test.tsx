@@ -2,7 +2,7 @@
  * @fileoverview BibliographyTab Tests
  * @description Smoke tests for the bibliography tab.
  *
- * @module tests/unit/lib/components/characterSheet/tabs/bibliographyTab
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/bibliographyTab.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

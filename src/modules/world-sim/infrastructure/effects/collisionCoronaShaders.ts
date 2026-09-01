@@ -3,7 +3,7 @@
  * @description Inline GLSL shaders for the collision-cloud corona: per-fragment
  *   noise sampling and an inward fade on the outer silhouette.
  *
- * @module worldSim/celestials/collisionCoronaShaders
+ * @module modules/world-sim/infrastructure/effects/collisionCoronaShaders
  * @version 1.0.0
  * @author Typeir
  * @since 2026-05-30

@@ -2,7 +2,7 @@
  * @fileoverview WorldSimMediator Unit Tests
  * @description Unit tests for WorldSimMediator: initialize, zoomToBody, zoomToRegion, resetView, toggleOrbitLines, dispose.
  *
- * @module tests/unit/worldSim/WorldSimMediator
+ * @module tests/unit/src/modules/world-sim/application/mediator/WorldSimMediator.test
  */
 
 import { WorldSimMediator } from '@/modules/world-sim/application/mediator/WorldSimMediator';

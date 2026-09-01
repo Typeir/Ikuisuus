@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for MonsterImporter Component
- * @module tests/unit/src/lib/components/encounterPlanner/importer/monsterImporter.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/importer/monsterImporter.test
  * @description Tests creature selection, quantity popup flow, confirm/cancel behavior,
  * API integration via monsterCache, and multiple creature imports.
  *

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Asserts bundled `.glsl` imports resolve to raw shader source strings, not URLs, paths, or `undefined`.
  *
- * @module tests/unit/modules/world-sim/shaders/glslImports
+ * @module tests/unit/src/modules/world-sim/shaders/glslImports.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-08

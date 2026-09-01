@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for infrastructure/tree-walk/detectMainPath
- * @module tests/unit/src/modules/navigation-sidebar/infrastructure/tree-walk/detectMainPath
+ * @module tests/unit/src/modules/navigation-sidebar/infrastructure/tree-walk/detectMainPath.test
  */
 
 import type { Item } from '@/modules/navigation-sidebar/domain/types';

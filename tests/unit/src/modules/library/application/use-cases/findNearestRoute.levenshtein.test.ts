@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for nearest-route Levenshtein helpers.
- * @module tests/unit/src/modules/library/application/use-cases/findNearestRoute.levenshtein
+ * @module tests/unit/src/modules/library/application/use-cases/findNearestRoute.levenshtein.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

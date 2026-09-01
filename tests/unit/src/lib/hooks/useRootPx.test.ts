@@ -3,7 +3,7 @@
  * @description Covers root font-size measurement, the fallback when the value
  * cannot be read, and re-measurement when the root's style attribute changes.
  *
- * @module tests/unit/src/lib/hooks/useRootPx
+ * @module tests/unit/src/lib/hooks/useRootPx.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

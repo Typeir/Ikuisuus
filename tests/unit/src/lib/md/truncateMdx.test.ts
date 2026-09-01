@@ -3,7 +3,7 @@
  * @description Covers both cut modes and the property that motivates the
  * module: whatever comes back still compiles.
  *
- * @module tests/unit/src/lib/md/truncateMdx
+ * @module tests/unit/src/lib/md/truncateMdx.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

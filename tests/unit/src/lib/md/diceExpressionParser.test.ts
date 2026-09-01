@@ -3,7 +3,7 @@
  * @description Tests for the pure parser that extracts dice expressions
  * from `[% ... %]` syntax in MDX content.
  *
- * @module tests/unit/lib/md/diceExpressionParser
+ * @module tests/unit/src/lib/md/diceExpressionParser.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-07-10

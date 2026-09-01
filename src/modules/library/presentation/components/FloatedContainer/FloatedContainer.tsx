@@ -1,6 +1,6 @@
 /**
  * @fileoverview Floated Container Component
- * @module FloatedContainer
+ * @module modules/library/presentation/components/FloatedContainer/FloatedContainer
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

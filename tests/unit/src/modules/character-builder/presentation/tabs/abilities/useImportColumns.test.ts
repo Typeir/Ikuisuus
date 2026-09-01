@@ -3,7 +3,7 @@
  * @description Verifies the hook returns a non-empty MetadataTable column config
  * for each import tab.
  *
- * @module tests/unit/src/modules/character-builder/presentation/tabs/abilities/useImportColumns
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/abilities/useImportColumns.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

@@ -2,7 +2,7 @@
  * @fileoverview File Processing Utilities
  * @description File I/O helpers wrapping fs/promises, returning null/false on error.
  *
- * @module lib/metadata/fileUtils
+ * @module scripts/metadata/fileUtils
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

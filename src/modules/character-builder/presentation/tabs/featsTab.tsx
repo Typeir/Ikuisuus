@@ -4,7 +4,7 @@
  * cloud of currently selected feats. The right-hand column renders the most
  * recently selected feat's prose content via the content-shards API.
  *
- * @module lib/components/characterSheet/tabs/featsTab
+ * @module modules/character-builder/presentation/tabs/featsTab
  * @version 2.1.0
  * @author Typeir
  * @since 1.0.0
@@ -18,10 +18,8 @@ import {
   useSheetEditing,
   useSheetMutators,
 } from '@/modules/character-builder/application/context/activeSheetContext';
-import {
-  ContentShardPanel,
-  type ContentShardType,
-} from '@/modules/character-builder/presentation/shards/contentShardPanel';
+import { ContentShardPanel } from '@/modules/character-builder/presentation/shards/contentShardPanel';
+import type { ContentShardType } from '@/lib/types/api';
 import { ShardChip } from '@/modules/character-builder/presentation/shards/shardChip';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';

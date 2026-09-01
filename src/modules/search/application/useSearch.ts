@@ -19,7 +19,7 @@
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { hasFilters, type PagefindFilters } from '../domain/aspectFilters';
-import type { SearchQuery, SearchResponse } from '../domain/types';
+import type { SearchResponse } from '../domain/types';
 import { mapPagefindResult } from '../infrastructure/mapRecord';
 import {
   searchPagefind,
@@ -217,15 +217,4 @@ export function useSearch(
     hasMore: results.length < total,
     loadMore,
   };
-}
-
-/**
- * Builds a `SearchQuery` from the hook's parameters.
- *
- * @param {string} term - Search term
- * @param {string} locale - Locale code
- * @returns {SearchQuery} Typed query object
- */
-export function toSearchQuery(term: string, locale: string): SearchQuery {
-  return { term, locale };
 }

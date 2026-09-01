@@ -2,7 +2,7 @@
  * @fileoverview Grit combat stat chip — current/max grit with spend/restore
  * buttons and lockable edit mode.
  *
- * @module character-builder/presentation/stats/gritChip
+ * @module modules/character-builder/presentation/stats/gritChip
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

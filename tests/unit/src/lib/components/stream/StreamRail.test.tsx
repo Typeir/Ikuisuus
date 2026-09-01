@@ -3,7 +3,7 @@
  * @description The rail is an aria-hidden span keyed by side; streamStyle
  * quotes the text as a CSS string and derives a clamped loop duration.
  *
- * @module tests/unit/src/lib/components/stream/StreamRail
+ * @module tests/unit/src/lib/components/stream/StreamRail.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-28

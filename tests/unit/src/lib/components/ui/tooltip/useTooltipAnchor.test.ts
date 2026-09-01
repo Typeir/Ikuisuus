@@ -3,7 +3,7 @@
  * @description Covers anchor naming, placement reporting, and the rule that the
  * JavaScript fallback never writes a position the engine already resolved.
  *
- * @module tests/unit/src/lib/components/ui/tooltip/useTooltipAnchor
+ * @module tests/unit/src/lib/components/ui/tooltip/useTooltipAnchor.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

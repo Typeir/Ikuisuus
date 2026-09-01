@@ -3,7 +3,7 @@
  * @description Barrel export for play mode components.
  * Re-exports for convenient import from single module.
  *
- * @module encounterPlanner/playMode
+ * @module modules/encounter-planner/presentation/playMode/index
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

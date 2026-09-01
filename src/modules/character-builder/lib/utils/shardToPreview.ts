@@ -9,7 +9,7 @@
  */
 
 import type { PreviewKind } from '@/modules/character-builder/presentation/PagePreview/pagePreviewProvider';
-import { MAIN_INDEX_FILE } from '@/lib/enums/constants';
+import { MAIN_INDEX_FILE } from '@/lib/constants/content';
 
 /**
  * Preview entry data extracted from a shard.

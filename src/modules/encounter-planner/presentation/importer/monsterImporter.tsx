@@ -3,7 +3,7 @@
  * @description Importer selecting a monster and quantity. Combines CreatureCombobox
  * with QuantityPopup. Reads monster data from monsterCache.
  *
- * @module monsterImporter
+ * @module modules/encounter-planner/presentation/importer/monsterImporter
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

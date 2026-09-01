@@ -1,6 +1,6 @@
 /**
  * @fileoverview Embed module barrel
- * @module src/lib/embed
+ * @module src/lib/embed/index
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0

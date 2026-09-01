@@ -4,7 +4,7 @@
  * and spell data. All methods require the loaded SharedData object to be passed
  * explicitly (no side-loaded singletons).
  *
- * @module lib/metadata/gameData
+ * @module scripts/metadata/gameData
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

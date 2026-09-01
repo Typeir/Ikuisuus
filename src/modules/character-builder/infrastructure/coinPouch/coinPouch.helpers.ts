@@ -3,7 +3,7 @@
  * @description Pure data transforms for currency-system management in the
  * character sheet coin pouch.
  *
- * @module lib/components/characterSheet/coinPouch.helpers
+ * @module modules/character-builder/infrastructure/coinPouch/coinPouch.helpers
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

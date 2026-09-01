@@ -2,23 +2,17 @@
  * @fileoverview Preview Path API Route
  * @description Resolves a PreviewKind + slug into a library content path.
  *
- * @module app/api/resolve-preview-path
- * @version 1.0.0
+ * @module app/api/resolve-preview-path/route
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
  */
 
+import {
+  CONTENT_SUBDIRS,
+  type ContentKind,
+} from '@/lib/constants/contentPaths';
 import { NextResponse } from 'next/server';
-
-const PATH_MAP: Record<string, string> = {
-  spells: 'spells',
-  heirlooms: 'items/heirlooms',
-  trinkets: 'items/trinkets',
-  feats: 'character-creation/feats',
-  bloodlines: 'character-creation/bloodlines',
-  vocations: 'character-creation/vocations',
-  specializations: 'character-creation/specializations',
-};
 
 export async function POST(req: Request) {
   const { kind, slug } = await req.json().catch(() => ({}));
@@ -27,7 +21,7 @@ export async function POST(req: Request) {
       { error: 'kind and slug required' },
       { status: 400 },
     );
-  const prefix = PATH_MAP[kind];
+  const prefix = CONTENT_SUBDIRS[kind as ContentKind];
   if (!prefix)
     return NextResponse.json(
       { error: `Unknown kind: ${kind}` },

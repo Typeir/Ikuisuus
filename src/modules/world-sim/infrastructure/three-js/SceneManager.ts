@@ -4,7 +4,7 @@
  * and animation loop. Dispatches frame phases to RenderLifecycle
  * (PreUpdate → PostRender) with priority ordering.
  *
- * @module worldSim/canvas/SceneManager
+ * @module modules/world-sim/infrastructure/three-js/SceneManager
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

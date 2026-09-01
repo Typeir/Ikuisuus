@@ -4,7 +4,7 @@
  * (generators, parsers, tagging, etc.) live in scripts/metadata/ and are NOT
  * re-exported here.
  *
- * @module lib/metadata
+ * @module lib/metadata/index
  * @version 2.0.0
  * @author Typeir
  * @since 3.0.0

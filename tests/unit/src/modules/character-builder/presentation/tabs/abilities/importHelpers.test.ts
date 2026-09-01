@@ -3,7 +3,7 @@
  * @description Unit tests for the metadata → CharacterAbility mappers and the
  * raw-source fetch helper used by the Abilities tab import panel.
  *
- * @module tests/unit/src/modules/character-builder/presentation/tabs/abilities/importHelpers
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/abilities/importHelpers.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -22,7 +22,13 @@ import {
 } from '@/modules/character-builder/presentation/tabs/abilities/importHelpers';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mockFetch = vi.fn();
+const { fetcherMock } = vi.hoisted(() => ({
+  fetcherMock: vi.fn(),
+}));
+
+vi.mock('@/lib/fetch/fetcher', () => ({
+  fetcher: fetcherMock,
+}));
 
 describe('importHelpers', () => {
   describe('spellToAbility', () => {
@@ -209,42 +215,35 @@ describe('importHelpers', () => {
 
   describe('fetchRawSource', () => {
     beforeEach(() => {
-      vi.stubGlobal('fetch', mockFetch);
+      fetcherMock.mockClear();
     });
 
     afterEach(() => {
-      vi.unstubAllGlobals();
       vi.clearAllMocks();
     });
 
     it('posts the descriptor and returns the content field', async () => {
-      mockFetch.mockResolvedValue(
-        new Response(JSON.stringify({ content: '# Fireball' }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        }),
-      );
+      fetcherMock.mockResolvedValue({ content: '# Fireball' });
 
       const result = await fetchRawSource('spells', 'fireball', 'en');
 
       expect(result).toBe('# Fireball');
-      expect(mockFetch).toHaveBeenCalledWith(
-        '/api/raw-content',
-        expect.objectContaining({ method: 'POST' }),
-      );
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body as string);
-      expect(body).toEqual({ type: 'spells', slug: 'fireball', locale: 'en' });
+      expect(fetcherMock).toHaveBeenCalledWith('/api/raw-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'spells', slug: 'fireball', locale: 'en' }),
+      });
     });
 
     it('returns undefined on a non-ok response', async () => {
-      mockFetch.mockResolvedValue(new Response('', { status: 404 }));
+      fetcherMock.mockRejectedValue(new Error('HTTP 404'));
       await expect(fetchRawSource('spells', 'missing', 'en')).resolves.toBe(
         undefined,
       );
     });
 
     it('swallows network errors and returns undefined', async () => {
-      mockFetch.mockRejectedValue(new Error('offline'));
+      fetcherMock.mockRejectedValue(new Error('offline'));
       await expect(fetchRawSource('feats', 'tough', 'en')).resolves.toBe(
         undefined,
       );

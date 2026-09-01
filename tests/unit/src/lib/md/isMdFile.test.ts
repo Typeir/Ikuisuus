@@ -3,7 +3,7 @@
  * @description Tests for the isMdFile utility that checks if a file path
  * corresponds to a raw Markdown file (.md extension).
  *
- * @module tests/unit/lib/md/isMdFile
+ * @module tests/unit/src/lib/md/isMdFile.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

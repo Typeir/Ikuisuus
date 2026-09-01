@@ -3,7 +3,7 @@
  * @description Tests createRadialGradientTexture and createCelestialGlow.
  * Mocks canvas 2D context.
  *
- * @module tests/unit/worldSim/celestials/CelestialGlow
+ * @module tests/unit/src/modules/world-sim/infrastructure/effects/CelestialGlow.test
  */
 
 import {

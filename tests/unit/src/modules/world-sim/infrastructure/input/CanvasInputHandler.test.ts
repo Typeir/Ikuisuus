@@ -3,7 +3,7 @@
  * @description Tests pointer event binding and raycast dispatching for the
  * World Sim canvas input handler.
  *
- * @module tests/unit/worldSim/input/CanvasInputHandler
+ * @module tests/unit/src/modules/world-sim/infrastructure/input/CanvasInputHandler.test
  */
 
 import { CanvasInputHandler } from '@/modules/world-sim/infrastructure/input/CanvasInputHandler';

@@ -3,7 +3,7 @@
  * @description Quoted creature statlets and object blocks become sub-records
  * with their own features; sub-record tags roll up into the parent.
  *
- * @module tests/unit/scripts/metadata/generateMonsterMetadata.statlets
+ * @module tests/unit/scripts/metadata/generateMonsterMetadata.statlets.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

@@ -2,7 +2,7 @@
  * @fileoverview RingWorldRenderer Unit Tests
  * @description Tests mesh creation with core and rings, ring rotation, and disposal.
  *
- * @module tests/unit/worldSim/celestials/RingWorldRenderer
+ * @module tests/unit/src/modules/world-sim/infrastructure/renderers/RingWorldRenderer.test
  */
 
 import { RingWorldRenderer } from '@/modules/world-sim/infrastructure/renderers/RingWorldRenderer';

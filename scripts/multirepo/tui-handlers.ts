@@ -1,7 +1,7 @@
 /**
  * @fileoverview Handlers for the ik multirepo TUI.
  *
- * @module multirepo/tui-handlers
+ * @module scripts/multirepo/tui-handlers
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

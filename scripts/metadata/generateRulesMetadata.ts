@@ -11,7 +11,7 @@
  * @since 8.0.0
  */
 
-import { stripContentSuffix } from '@/lib/enums/constants';
+import { stripContentSuffix } from '@/lib/constants/content';
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';

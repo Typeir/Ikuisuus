@@ -85,7 +85,7 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-const SUPPORTED_LOCALES = ['en', 'es', 'fi'];
+import { SUPPORTED_LOCALES } from '@/lib/constants/locales';
 
 /* ─────────────────────  Filesystem helpers  ────────────────────────── */
 

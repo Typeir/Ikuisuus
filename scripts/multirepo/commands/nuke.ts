@@ -3,7 +3,7 @@
  * @description Accepts `ik nuke spell:<slug>`. Deletes the `spells` row; FK
  * cascade removes matching `spell_lists` rows.
  *
- * @module multirepo/commands/nuke
+ * @module scripts/multirepo/commands/nuke
  * @version 2.0.0
  * @author Typeir
  * @since 3.0.0

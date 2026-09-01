@@ -2,7 +2,7 @@
  * @fileoverview AspectSuggestions Tests
  * @description Portal listbox rendering, active row and pick.
  *
- * @module tests/unit/src/modules/search/presentation/SearchBar/AspectSuggestions
+ * @module tests/unit/src/modules/search/presentation/SearchBar/AspectSuggestions.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

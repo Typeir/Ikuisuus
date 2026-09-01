@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests that the auth barrel re-exports all expected symbols.
  *
- * @module tests/unit/lib/db/auth/index
+ * @module tests/unit/src/lib/db/auth/index.test
  */
 
 import { describe, expect, it, vi } from 'vitest';

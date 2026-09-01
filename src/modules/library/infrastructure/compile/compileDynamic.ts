@@ -1,7 +1,7 @@
 /**
  * @fileoverview MDX compiler that imports its evaluator and plugins at runtime
  * via dynamic imports.
- * @module src/lib/mdx/compileDynamic/compileDynamic
+ * @module src/modules/library/infrastructure/compile/compileDynamic
  *
  * @author Typeir
  * @version 0.1.0
@@ -9,11 +9,8 @@
  */
 
 import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
-import { collectKeywordShards } from '@/lib/md/bakeKeywordShards';
-import {
-  DEFAULT_KEYWORD_LOCALE,
-  resolveKeywordRegistry,
-} from '@/lib/md/resolveKeywordRegistry';
+import { DEFAULT_KEYWORD_LOCALE } from '@/lib/constants/locales';
+import { resolveDocumentKeywords } from '@/lib/md/resolveShardByRef';
 import type { EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import type { CompileOptions } from '../../domain/compileOptions';
 import { buildMdxOptions, importAllAsync } from './compileUtils';
@@ -49,9 +46,11 @@ export async function compileDynamic(opts: CompileOptions) {
   } = await importAllAsync();
 
   const locale = opts.locale ?? DEFAULT_KEYWORD_LOCALE;
-  const keywords = await resolveKeywordRegistry(locale);
   const resolvedSource = await resolveReusableSource(source);
-  const shards = await collectKeywordShards(resolvedSource, keywords, locale);
+  const { shards, resolutions } = await resolveDocumentKeywords(
+    resolvedSource,
+    locale,
+  );
 
   const result = await evaluate({
     source: resolvedSource,
@@ -67,7 +66,7 @@ export async function compileDynamic(opts: CompileOptions) {
             remarkAspect,
             remarkDiceRoll,
             remarkUnit,
-            [remarkKeyword, { registry: keywords }],
+            [remarkKeyword, { resolutions }],
           ],
           rehypePlugins: [rehypeKatex, rehypeSectionize, [rehypeAspects, aspects]],
         },

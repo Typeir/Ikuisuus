@@ -7,8 +7,7 @@
  * @since 8.0.0
  */
 
-/** Locale codes the app routes under (mirrors `src/i18n/routing.ts`). */
-export const SUPPORTED_LOCALES = ['en', 'es', 'fi'] as const;
+import { SUPPORTED_LOCALES } from '@/lib/constants/locales';
 
 /** Matches a single leading locale segment (e.g. `/en/` or `/en`). */
 const LEADING_LOCALE = new RegExp(`^/(?:${SUPPORTED_LOCALES.join('|')})(?=/|$)`);

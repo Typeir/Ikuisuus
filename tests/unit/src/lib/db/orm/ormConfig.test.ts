@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the ORM configuration shape and values.
  *
- * @module tests/unit/lib/db/orm/ormConfig
+ * @module tests/unit/src/lib/db/orm/ormConfig.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

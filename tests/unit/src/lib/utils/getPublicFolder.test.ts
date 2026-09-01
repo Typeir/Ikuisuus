@@ -4,7 +4,7 @@
  * @fileoverview Tests for the getPublicFolder utility that constructs the
  * absolute path to the project's `public/` directory.
  *
- * @module tests/unit/lib/utils/getPublicFolder
+ * @module tests/unit/src/lib/utils/getPublicFolder.test
  * @version 1.0.0
  * @author Typeir
  * @since 4.0.0

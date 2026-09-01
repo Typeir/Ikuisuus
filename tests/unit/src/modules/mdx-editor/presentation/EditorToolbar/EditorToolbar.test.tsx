@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — EditorToolbar
  * @description Validates toolbar button rendering and editor command dispatch.
  *
- * @module tests/unit/lib/components/mdxEditor/editorToolbar
+ * @module tests/unit/src/modules/mdx-editor/presentation/EditorToolbar/EditorToolbar.test
  */
 
 import { cleanup, render, screen } from '@testing-library/react';

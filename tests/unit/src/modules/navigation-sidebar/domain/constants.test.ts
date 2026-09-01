@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for domain/constants
- * @module tests/unit/src/modules/navigation-sidebar/domain/constants
+ * @module tests/unit/src/modules/navigation-sidebar/domain/constants.test
  */
 
 import {

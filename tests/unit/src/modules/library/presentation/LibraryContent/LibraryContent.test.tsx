@@ -3,7 +3,7 @@
  * @description Tests each resolution kind (md, mdx, redirect, not-found) and the
  * `basePath` hand-off. Invokes the async component directly and inspects the returned element.
  *
- * @module tests/unit/src/modules/library/presentation/LibraryContent/LibraryContent
+ * @module tests/unit/src/modules/library/presentation/LibraryContent/LibraryContent.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

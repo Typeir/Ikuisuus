@@ -2,7 +2,7 @@
  * @file toCss.ts
  * @description A utility function to convert values to CSS-compatible strings.
  *
- * @module toCss
+ * @module lib/utils/toCssValue
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

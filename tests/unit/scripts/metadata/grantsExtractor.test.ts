@@ -4,7 +4,7 @@
  * frontmatter override, which fully replaces the prose parse for any feature
  * it names (an empty list suppresses a misread feature).
  *
- * @module tests/unit/scripts/metadata/grantsExtractor
+ * @module tests/unit/scripts/metadata/grantsExtractor.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

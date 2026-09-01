@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for LazyPrefetchLink component.
- * @module tests/unit/src/lib/components/lazyPrefetchLink/LazyPrefetchLink
+ * @module tests/unit/src/lib/components/lazyPrefetchLink/LazyPrefetchLink.test
  * @author Typeir
  * @version 1.0.0
  * @since 2026-07-09

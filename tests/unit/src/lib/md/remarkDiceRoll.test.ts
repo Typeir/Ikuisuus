@@ -3,7 +3,7 @@
  * @description Tests for the remark plugin that transforms `[% ... %]`
  * dice expressions in text nodes into `<DiceRoll>` MDX JSX elements.
  *
- * @module tests/unit/lib/md/remarkDiceRoll
+ * @module tests/unit/src/lib/md/remarkDiceRoll.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-07-10

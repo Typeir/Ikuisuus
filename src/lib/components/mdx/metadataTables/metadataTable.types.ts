@@ -3,11 +3,13 @@
  * @description Row shape, column configuration, sort direction, filter state, and
  * component props for the generic MetadataTable.
  *
- * @module metadataTable.types
+ * @module lib/components/mdx/metadataTables/metadataTable.types
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0
  */
+
+import type { SearchContentType } from '@/modules/search/domain/contentTypes';
 
 /**
  * A single metadata row; any key mapped to any value.
@@ -65,7 +67,8 @@ export type SortDirection = 'asc' | 'desc' | null;
  * @property {string} [locale='en'] - Current locale for URL construction
  * @property {number} [pageSize=50] - Number of rows per page
  * @property {Function} [getRowSlug] - Function to extract slug from row data
- * @property {string[]} [searchKeys=['title']] - Row properties to search across
+ * @property {string[]} [searchKeys=['title']] - Row properties to search across; the fallback when the search index cannot answer
+ * @property {SearchContentType} [searchScope] - Content type the rows belong to; scopes the index-backed search
  * @property {Function} [onRowSelect] - When provided, rows render as buttons that call this with the row instead of navigating
  * @property {'md'|'s'} [size='md'] - Density variant; 's' renders a compact table (smaller font + tighter rows/columns) for embedded contexts
  * @property {{ label: string; icon?: React.ReactNode; onSelect: (row: MetadataRow) => void }} [rowAction] - Optional trailing per-row action button, rendered in its own cell
@@ -79,6 +82,7 @@ export type MetadataTableProps = {
   pageSize?: number;
   getRowSlug?: (row: MetadataRow) => string;
   searchKeys?: string[];
+  searchScope?: SearchContentType;
   onRowSelect?: (row: MetadataRow) => void;
   size?: 'md' | 's';
   rowAction?: {

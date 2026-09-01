@@ -2,7 +2,7 @@
  * @file compileMdxToComponent.ts
  * @description Compiles raw MDX source into a React component at runtime.
  *
- * @module compileMdxToComponent
+ * @module modules/library/infrastructure/compile/compileMdxToComponent
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for encounter import/export utilities
- * @module tests/encounter-planner/infrastructure/persistence/encounterImportExport
+ * @module tests/unit/src/modules/encounter-planner/infrastructure/persistence/encounterImportExport.test
  */
 
 import type { Encounter } from '@/modules/encounter-planner/domain/encounters/encounter.types';

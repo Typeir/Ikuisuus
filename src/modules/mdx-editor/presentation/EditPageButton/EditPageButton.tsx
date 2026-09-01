@@ -1,7 +1,7 @@
 /**
  * @fileoverview "Suggest edit" link to the MDX Editor with the current page's
  * slug pre-filled. Percent-encodes each slug segment individually.
- * @module lib/components/mdxEditor/editPageButton
+ * @module modules/mdx-editor/presentation/EditPageButton/EditPageButton
  * @version 3.0.0
  * @author Typeir
  * @since 2.0.0

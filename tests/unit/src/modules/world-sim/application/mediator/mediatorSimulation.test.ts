@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for mediatorSimulation helpers
  * @description Tests for runCelestialSimulation, runEverdarkSimulation, and runCollisionSimulation.
  *
- * @module tests/unit/src/modules/world-sim/application/mediator/mediatorSimulation
+ * @module tests/unit/src/modules/world-sim/application/mediator/mediatorSimulation.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

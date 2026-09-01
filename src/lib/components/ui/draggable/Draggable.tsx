@@ -10,6 +10,7 @@
 'use client';
 
 import { IconButton } from '@/lib/components/ui/iconButton';
+import { cn } from '@/lib/utils/classNameMerge';
 import { useRef, type CSSProperties, type ReactNode } from 'react';
 import styles from './draggable.module.scss';
 import {
@@ -107,14 +108,12 @@ export function Draggable({
     resizeHandleProps,
   } = useDrag({ containerRef, initialPosition, boundsRef });
 
-  const containerClass = [
+  const containerClass = cn(
     styles.draggable,
     isDragging ? styles.isDragging : '',
     isResizing ? styles.isResizing : '',
     className ?? '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+  );
 
   /** User resize overrides the default dimensions and any passed style. */
   const containerStyle: CSSProperties = {

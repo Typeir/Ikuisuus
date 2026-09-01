@@ -1,7 +1,7 @@
 /**
  * Unit tests for toCssValue utility
  *
- * @module toCssValue.test
+ * @module tests/unit/src/lib/utils/toCssValue.test
  */
 
 import { describe, it, expect } from 'vitest';

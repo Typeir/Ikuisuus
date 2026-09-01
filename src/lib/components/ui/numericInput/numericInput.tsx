@@ -4,7 +4,7 @@
  * @fileoverview Controlled numeric input. Clamps to min/max on blur; empties on non-finite
  * values; optional step buttons and clear button.
  * 
- * @module numericInput
+ * @module lib/components/ui/numericInput/numericInput
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0

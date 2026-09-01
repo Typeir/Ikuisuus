@@ -2,7 +2,7 @@
  * @file blendedImage.tsx
  * @description Wraps an image in a vignette container with blend mode styling.
  *
- * @module blendedImage
+ * @module modules/library/presentation/components/BlendedImage/BlendedImage
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

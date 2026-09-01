@@ -12,8 +12,9 @@
 
 'use client';
 
+import { useMounted } from '@/lib/hooks/useMounted';
 import { useThemeState } from '@/lib/context/PersistentUiContext';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 /**
  * Broadcasts the current theme as a `CustomEvent` with `detail.theme`.
@@ -22,11 +23,7 @@ import { useEffect, useState } from 'react';
  */
 export function useThemeChangedEvent(): void {
   const { theme } = useThemeState();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   useEffect(() => {
     if (!mounted) return;

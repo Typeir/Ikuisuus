@@ -2,7 +2,7 @@
  * @fileoverview Shared Data Loader Unit Tests
  * @description Tests for shared-data.json loading and caching.
  *
- * @module tests/unit/lib/metadata/sharedData
+ * @module tests/unit/src/lib/metadata/sharedData.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

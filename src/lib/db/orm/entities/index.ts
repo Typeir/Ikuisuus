@@ -2,7 +2,7 @@
  * @fileoverview Entity Barrel Export
  * @description Re-exports all MikroORM entity classes.
  *
- * @module lib/db/orm/entities
+ * @module lib/db/orm/entities/index
  * @version 2.0.0
  * @author Typeir
  * @since 5.0.0

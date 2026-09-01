@@ -1,7 +1,7 @@
 /**
  * Unit tests for ParallaxBackdrop component
  *
- * @module parallaxBackdrop.test
+ * @module tests/unit/src/modules/library/presentation/components/ParallaxBackdrop/parallaxBackdrop.test
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

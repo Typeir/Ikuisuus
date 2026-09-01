@@ -2,7 +2,7 @@
  * @fileoverview useIkUiHandle Tests
  * @description window.ik.ui registration, live getters, validated setters.
  *
- * @module tests/unit/src/lib/context/useIkUiHandle
+ * @module tests/unit/src/lib/context/useIkUiHandle.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

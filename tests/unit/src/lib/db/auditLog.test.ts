@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the writeAuditLog facade using adapter-backed persistence.
  *
- * @module tests/unit/lib/db/auditLog
+ * @module tests/unit/src/lib/db/auditLog.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

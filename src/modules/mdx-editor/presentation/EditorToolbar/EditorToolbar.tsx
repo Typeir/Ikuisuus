@@ -1,7 +1,7 @@
 /**
  * @fileoverview Toolbar with formatting buttons and shortcuts.
  *
- * @module lib/components/mdxEditor/editorToolbar
+ * @module modules/mdx-editor/presentation/EditorToolbar/EditorToolbar
  * @version 2.0.0
  * @author Typeir
  * @since 2.0.0

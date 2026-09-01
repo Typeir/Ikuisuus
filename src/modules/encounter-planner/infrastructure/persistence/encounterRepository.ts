@@ -4,7 +4,7 @@
  * Encounters array uses the ref strategy (storePersistentDataRef/fetchPersistentDataRef);
  * scalar IDs use storePersistentData.
  *
- * @module encounter-planner/infrastructure/persistence/encounterRepository
+ * @module modules/encounter-planner/infrastructure/persistence/encounterRepository
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

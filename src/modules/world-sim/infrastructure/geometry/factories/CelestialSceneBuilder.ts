@@ -3,7 +3,7 @@
  * @description Builds celestial body meshes, orbit lines, the Everdark
  * boundary, and collision cloud effects.
  *
- * @module worldSim/celestials/CelestialSceneBuilder
+ * @module modules/world-sim/infrastructure/geometry/factories/CelestialSceneBuilder
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

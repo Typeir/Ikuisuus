@@ -13,10 +13,6 @@ export { MdxEditor } from '@/modules/mdx-editor/presentation/MdxEditor/MdxEditor
 
 export { useActiveDraft } from '@/modules/mdx-editor/application/hooks/useActiveDraft';
 export { useCorrectionsAuth } from '@/modules/mdx-editor/application/hooks/useCorrectionsAuth';
-export {
-    useCorrectionsTokenActions,
-    useCorrectionsTokenState
-} from '@/modules/mdx-editor/application/hooks/useCorrectionsToken';
 export { useCorrectionsTree } from '@/modules/mdx-editor/application/hooks/useCorrectionsTree';
 
 export type {

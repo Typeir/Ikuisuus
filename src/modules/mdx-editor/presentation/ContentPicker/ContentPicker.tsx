@@ -12,6 +12,7 @@
 import { useSearch } from '@/modules/search/application/useSearch';
 import type { SearchRecord } from '@/modules/search/domain';
 import { typeIconMap } from '@/modules/search/presentation/atoms/iconMap';
+import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
 import { useLocale, useTranslations } from 'next-intl';
 import type { JSX, ReactNode } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -73,14 +74,7 @@ export function ContentPicker({
     setHighlight(0);
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (!containerRef.current?.contains(e.target as Node)) close();
-    };
-    document.addEventListener('mousedown', onDown);
-    return () => document.removeEventListener('mousedown', onDown);
-  }, [open, close]);
+  useOutsideClick(containerRef, close, open);
 
   useEffect(() => {
     if (open) inputRef.current?.focus();

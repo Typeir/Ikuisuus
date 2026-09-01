@@ -3,14 +3,14 @@
  * @description API service helpers for spell-table source loading from mixed
  * endpoint and inline data sources.
  *
- * @module lib/services/api/spellSourceService
+ * @module modules/metadata-tables/infrastructure/api-clients/spellSourceClient
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0
  */
 
 import type { FilterExpression } from '@/lib/db/content/filters';
-import { postJson } from '@/lib/services/api/jsonClient';
+import { fetcher } from '@/lib/fetch/fetcher';
 
 /**
  * Spell metadata shape consumed by spell table.
@@ -81,19 +81,15 @@ export async function fetchSpellSources(
 
   for (const source of sources) {
     if (typeof source === 'string') {
-      const payload = await postJson<
-        {
-          locale: string;
-          listSource?: string;
-          spells?: string[];
-          filters?: FilterExpression[];
-        },
-        SpellData[]
-      >(source, {
-        locale,
-        ...(listSource ? { listSource } : {}),
-        ...(!listSource && spells && spells.length > 0 ? { spells } : {}),
-        ...(filters && filters.length > 0 ? { filters } : {}),
+      const payload = await fetcher<SpellData[]>(source, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          locale,
+          ...(listSource ? { listSource } : {}),
+          ...(!listSource && spells && spells.length > 0 ? { spells } : {}),
+          ...(filters && filters.length > 0 ? { filters } : {}),
+        }),
       });
       allSpells.push(...payload);
     } else {

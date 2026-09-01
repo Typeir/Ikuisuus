@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the BannedIp MikroORM entity class.
  *
- * @module tests/unit/lib/db/orm/entities/BannedIpEntity
+ * @module tests/unit/src/lib/db/orm/entities/BannedIpEntity.test
  */
 
 import { BannedIpEntity } from '@/lib/db/orm/entities/BannedIpEntity';

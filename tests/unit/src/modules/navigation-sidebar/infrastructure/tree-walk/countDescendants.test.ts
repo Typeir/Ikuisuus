@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for infrastructure/tree-walk/countDescendants
- * @module tests/unit/src/modules/navigation-sidebar/infrastructure/tree-walk/countDescendants
+ * @module tests/unit/src/modules/navigation-sidebar/infrastructure/tree-walk/countDescendants.test
  */
 
 import type { Item } from '@/modules/navigation-sidebar/domain/types';

@@ -3,7 +3,7 @@
  * @description Renders the character note fields as labelled textareas.
  * Edits are passed to a single onChange callback.
  *
- * @module lib/components/characterSheet/notesSection
+ * @module modules/character-builder/presentation/notes/notesSection
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

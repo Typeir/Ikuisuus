@@ -9,7 +9,7 @@
  * @since 1.0.0
  *
  * @requires path
- * @requires @/lib/enums/constants
+ * @requires @/lib/constants/content
  *
  * @example
  * ```typescript

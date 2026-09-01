@@ -4,7 +4,7 @@
  * varying radii and tilt angles, each rotating at a different speed. Optionally
  * applies noise-displaced icy surface shaders to the core.
  *
- * @module worldSim/celestials/RingWorldRenderer
+ * @module modules/world-sim/infrastructure/renderers/RingWorldRenderer
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

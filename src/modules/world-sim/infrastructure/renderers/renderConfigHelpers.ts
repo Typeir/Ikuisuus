@@ -3,7 +3,7 @@
  * @description Helpers for reading optional fields off a celestial body's
  * `renderConfig` blob and building a Three.js `Color` from a named field.
  *
- * @module worldSim/celestials/renderConfigHelpers
+ * @module modules/world-sim/infrastructure/renderers/renderConfigHelpers
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

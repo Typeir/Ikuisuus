@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the MDX Editor tool page server component.
  *
- * @module tests/unit/app/[locale]/utils/mdx-editor/page
+ * @module tests/unit/src/app/[locale]/utils/mdx-editor/page.test
  */
 
 import { describe, expect, it, vi } from 'vitest';

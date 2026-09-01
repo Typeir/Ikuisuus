@@ -13,7 +13,6 @@
 'use client';
 
 import { cn } from '@/lib/utils/classNameMerge';
-import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import type { JSX } from 'react';
@@ -22,7 +21,10 @@ import { useSearch } from '../../application/useSearch';
 import { searchHref } from '../../domain/searchHref';
 import { AspectSuggestions } from './AspectSuggestions';
 import { useAspectSuggestions } from './useAspectSuggestions';
-import { useDropdownRoom, useFocusShortcut, useOutsideClick } from './useSearchBarChrome';
+import { SearchField } from '../SearchField/SearchField';
+import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
+import { useRoomBelow } from '@/lib/hooks/useRoomBelow';
+import { useFocusShortcut } from './useSearchBarChrome';
 import { MAX_DROPDOWN_RESULTS, SearchDropdown } from './SearchDropdown';
 import styles from './searchBar.module.scss';
 
@@ -224,11 +226,14 @@ export function SearchBar({
 
   useFocusShortcut(inputRef);
   const closeDropdown = useCallback(() => setOpen(false), []);
-  useOutsideClick(dropdownRef, inputRef, closeDropdown);
+  useOutsideClick([dropdownRef, inputRef], closeDropdown);
 
   const showDropdown = open && query.length >= 2 && !debouncing && !suggesting;
 
-  const dropdownMax = useDropdownRoom(dropdownRef, showDropdown);
+  const dropdownMax = useRoomBelow(dropdownRef, {
+    min: 160,
+    active: showDropdown,
+  });
 
   return (
     <div
@@ -244,35 +249,33 @@ export function SearchBar({
       }
       ref={dropdownRef}>
       <form onSubmit={handleSubmit} role='search'>
-        <div className={styles.inputWrapper}>
-          <input
-            ref={inputRef}
-            type='search'
-            className={styles.input}
-            placeholder={t('placeholder')}
-            value={query}
-            onChange={handleInput}
-            onFocus={handleFocus}
-            onKeyDown={handleKeyDown}
-            onKeyUp={handleCaret}
-            onClick={handleCaret}
-            onSelect={handleCaret}
-            role='combobox'
-            aria-expanded={showDropdown || suggesting}
-            aria-controls={suggesting ? 'search-aspect-suggestions' : 'search-dropdown'}
-            aria-activedescendant={
+        <SearchField
+          value={query}
+          variant={variant === 'hero' ? 'hero' : 'bar'}
+          placeholder={t('placeholder')}
+          ariaLabel={t('ariaLabel')}
+          hint={isMac ? '⌘K' : 'Ctrl+K'}
+          inputRef={inputRef}
+          inputProps={{
+            onChange: handleInput,
+            onFocus: handleFocus,
+            onKeyDown: handleKeyDown,
+            onKeyUp: handleCaret,
+            onClick: handleCaret,
+            onSelect: handleCaret,
+            role: 'combobox',
+            'aria-expanded': showDropdown || suggesting,
+            'aria-controls': suggesting
+              ? 'search-aspect-suggestions'
+              : 'search-dropdown',
+            'aria-activedescendant':
               suggesting && aspectIndex >= 0
                 ? `search-aspect-${aspectIndex}`
                 : showDropdown && activeIndex >= 0
                   ? `search-result-${activeIndex}`
-                  : undefined
-            }
-            aria-label={t('ariaLabel')}
-            autoComplete='off'
-          />
-          <span className={styles.shortcut}>{isMac ? '⌘K' : 'Ctrl+K'}</span>
-          <Search size={16} className={styles.searchIcon} aria-hidden='true' />
-        </div>
+                  : undefined,
+          }}
+        />
       </form>
 
       {suggesting && (

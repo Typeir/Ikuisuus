@@ -3,7 +3,7 @@
  * @description Tests extractStrataTags, which maps damage, resistance, immunity,
  * and vulnerability types to their damage stratum aspect.
  *
- * @module tests/unit/scripts/metadata/aspectExtractors
+ * @module tests/unit/scripts/metadata/aspectExtractors.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-04

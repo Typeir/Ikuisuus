@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Item List Editor component
- * @module tests/unit/src/lib/components/encounterPlanner/listEditors/itemListEditor.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/listEditors/itemListEditor.test
  * @description Asserts ItemListEditor is the module's sole function export.
  * 
  * @version 1.0.0

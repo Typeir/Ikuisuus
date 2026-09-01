@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for Client Renderer Component
- * @module tests/unit/src/app/[locale]/utils/clientRenderer
+ * @module tests/unit/src/app/[locale]/utils/clientRenderer.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

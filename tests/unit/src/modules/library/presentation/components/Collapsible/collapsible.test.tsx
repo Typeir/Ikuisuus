@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Collapsible MDX component
- * @module tests/unit/src/lib/components/mdx/collapsible/collapsible.test
+ * @module tests/unit/src/modules/library/presentation/components/Collapsible/collapsible.test
  * @description Validates Collapsible rendering, heading detection, cost extraction,
  * body content, and native details/summary behaviour.
  *

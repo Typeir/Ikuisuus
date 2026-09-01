@@ -4,7 +4,7 @@
  * @fileoverview Tests for the /api/find-nearest-route endpoint exports and structure.
  * Full integration testing is handled by e2e tests.
  *
- * @module tests/unit/app/api/find-nearest-route/route
+ * @module tests/unit/src/app/api/find-nearest-route/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

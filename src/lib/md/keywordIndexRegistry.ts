@@ -1,41 +1,27 @@
 /**
  * Keyword Index Registry
  *
- * @fileoverview Discovers content files that declare keyword definitions in
- * frontmatter. A file contributes nothing until it says so: `keywordIndex:
- * <name>` contributes every heading in the file to that namespace, and
- * `keywords: [<term>, ...]` contributes named terms to the bare namespace. A
- * declared term with no matching heading throws, so a typo fails the build
- * rather than dropping a keyword silently.
+ * @fileoverview Extracts the keyword join keys a content file produces from
+ * its frontmatter declarations: `keywordIndex: <name>` keys every heading in
+ * the file, `keywords: [<term>, ...]` keys named terms in the bare namespace.
+ * Build-time generators stamp `produces` arrays with these keys; runtime
+ * resolution reads them back through the keyword graph.
  *
- * Holds pointers only; shard prose is fetched separately.
- *
- * Server only, since discovery reads the content tree through the content and
- * directory ports. Shapes and lookups live in `keywordIndex`, which is safe to
- * bundle for the client.
+ * Server only.
  *
  * @module lib/md/keywordIndexRegistry
- * @version 3.0.0
+ * @version 4.0.0
  * @author Typeir
  * @since 8.0.0
  */
 
-import { getFile, listDirectory } from '@/lib/db/content/fileTreeService';
 import matter from 'gray-matter';
 
 import { anchorSlug } from '@/modules/library/domain/anchorSlug';
-import {
-  BARE_NAMESPACE,
-  contributeKeyword,
-  keywordTemplateId,
-  type KeywordRegistry,
-} from './keywordIndex';
+import { keywordTemplateId } from './keywordIndex';
 
 /** Matches an ATX heading and captures its level and text. */
 const HEADING_REGEX = /^(#{1,6})\s+(.+?)\s*$/gm;
-
-/** Cached discovery result, keyed by locale. */
-const cache = new Map<string, KeywordRegistry>();
 
 /**
  * Collects heading slugs from a document body.
@@ -55,30 +41,6 @@ function headingValues(body: string): Map<string, string> {
   }
 
   return values;
-}
-
-/**
- * Recursively lists MDX files beneath a content directory.
- *
- * Walks through the directory port, so discovery follows whichever content
- * source the deployment runs rather than assuming a filesystem.
- *
- * @param {string} locale - Locale code
- * @param {string} dir - Path relative to the locale root
- * @returns {Promise<string[]>} Locale-relative paths of every .mdx file found
- */
-async function listMdxFiles(locale: string, dir = ''): Promise<string[]> {
-  const { entries } = await listDirectory(locale, dir);
-
-  const nested = await Promise.all(
-    entries.map((entry) => {
-      const full = dir ? `${dir}/${entry.name}` : entry.name;
-      if (entry.isDirectory) return listMdxFiles(locale, full);
-      return Promise.resolve(entry.name.endsWith('.mdx') ? [full] : []);
-    }),
-  );
-
-  return nested.flat();
 }
 
 /**
@@ -104,9 +66,8 @@ function declaredTerms(raw: unknown): string[] {
  *
  * Mirrors {@link extractConsumedKeys}: the same shard ids, from the other side
  * of the reference. `keywordIndex` yields one key per heading; `keywords` yields
- * one per declared term. A declared term with no matching heading is skipped
- * here rather than thrown on, since stamping runs over every content file and
- * discovery is where that check belongs.
+ * one per declared term. A declared term with no matching heading contributes
+ * nothing.
  *
  * @param {string} source - Raw MDX source, frontmatter included
  * @returns {string[]} Shard ids, deduplicated and sorted
@@ -146,76 +107,4 @@ export function extractProducedKeys(source: string): string[] {
   }
 
   return [...keys].sort();
-}
-
-/**
- * Discovers every declared keyword namespace beneath a content root. Several
- * files may declare the same namespace; their values merge.
- *
- * @param {string} locale - Locale code, e.g. `en`
- * @returns {Promise<KeywordRegistry>} Namespace mapped to its contents
- * @throws {Error} When a declared term has no matching heading in its file
- */
-export async function discoverKeywordIndexes(
-  locale: string,
-): Promise<KeywordRegistry> {
-  const cached = cache.get(locale);
-  if (cached) return cached;
-
-  const registry: KeywordRegistry = new Map();
-  const files = await listMdxFiles(locale);
-
-  for (const relative of files) {
-    const file = await getFile(locale, relative);
-    if (!file) continue;
-
-    const { data, content } = matter(file.content);
-
-    const namespace =
-      typeof data.keywordIndex === 'string'
-        ? data.keywordIndex.trim().toLowerCase()
-        : null;
-    const terms = declaredTerms(data.keywords);
-
-    if (!namespace && terms.length === 0) continue;
-
-    const headings = headingValues(content);
-
-    if (namespace) {
-      for (const [anchor, heading] of headings) {
-        contributeKeyword(registry, namespace, {
-          anchor,
-          heading,
-          filePath: relative,
-        });
-      }
-    }
-
-    for (const term of terms) {
-      const anchor = anchorSlug(term);
-      const heading = headings.get(anchor);
-      if (!heading) {
-        throw new Error(
-          `keywords: "${term}" in ${relative} has no matching heading (expected #${anchor})`,
-        );
-      }
-      contributeKeyword(registry, BARE_NAMESPACE, {
-        anchor,
-        heading,
-        filePath: relative,
-      });
-    }
-  }
-
-  cache.set(locale, registry);
-  return registry;
-}
-
-/**
- * Clears the discovery cache.
- *
- * @returns {void}
- */
-export function clearKeywordIndexCache(): void {
-  cache.clear();
 }

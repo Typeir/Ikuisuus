@@ -4,7 +4,7 @@
  * @fileoverview Tests for the request configuration that provides locale detection
  * and message loading for next-intl server components.
  *
- * @module tests/unit/i18n/request
+ * @module tests/unit/src/i18n/request.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

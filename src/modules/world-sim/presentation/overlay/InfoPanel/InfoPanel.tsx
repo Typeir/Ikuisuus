@@ -4,7 +4,7 @@
  * celestial body, including its name, subtitle, lore origin, and region links.
  * Appears when a body is selected (zoom level = Body).
  *
- * @module worldSim/overlay/InfoPanel
+ * @module modules/world-sim/presentation/overlay/InfoPanel/InfoPanel
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

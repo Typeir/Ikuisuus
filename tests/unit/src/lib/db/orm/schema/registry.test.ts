@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the Symbol-keyed entity definition registry.
  *
- * @module tests/unit/lib/db/orm/schema/registry
+ * @module tests/unit/src/lib/db/orm/schema/registry.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

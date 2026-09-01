@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik status` — Short git status of both repos.
- * @module multirepo/commands/status
+ * @module scripts/multirepo/commands/status
  */
 
 import type { CommandMeta } from '../../utils/cli-loader';

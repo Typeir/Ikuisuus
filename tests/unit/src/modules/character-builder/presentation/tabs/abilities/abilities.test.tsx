@@ -2,7 +2,7 @@
  * @fileoverview Abilities Tab Tests
  * @description Smoke tests for the Abilities tab components.
  *
- * @module tests/unit/src/modules/character-builder/presentation/tabs/abilities
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/abilities/abilities.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

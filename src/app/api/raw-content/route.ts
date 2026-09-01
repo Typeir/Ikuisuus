@@ -9,17 +9,14 @@
  * @since 1.0.0
  */
 
+import {
+  CONTENT_SUBDIRS,
+  type ContentKind,
+} from '@/lib/constants/contentPaths';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { NextResponse } from 'next/server';
 import { join } from 'path';
-
-const TYPE_DIRS: Record<string, string> = {
-  spells: 'spells',
-  heirlooms: 'items/heirlooms',
-  trinkets: 'items/trinkets',
-  feats: 'character-creation/feats',
-};
 
 function stripFrontmatter(content: string): string {
   if (!content.startsWith('---')) return content;
@@ -36,7 +33,7 @@ export async function POST(req: Request) {
         { error: 'type and slug required' },
         { status: 400 },
       );
-    const dir = TYPE_DIRS[type];
+    const dir = CONTENT_SUBDIRS[type as ContentKind];
     if (!dir)
       return NextResponse.json(
         { error: `Unknown type: ${type}` },

@@ -3,7 +3,7 @@
  * @description Draggable split-pane layout with code editor on the left and
  * live MDX preview on the right.
  *
- * @module lib/components/mdxEditor/editorSplitPane
+ * @module modules/mdx-editor/presentation/EditorSplitPane/EditorSplitPane
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

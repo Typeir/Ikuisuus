@@ -3,7 +3,7 @@
  * @description Pure functions computing the next selected-boon shard array when a
  * variable-cost boon's sub-option is toggled.
  *
- * @module lib/components/characterSheet/builder/boonSelection
+ * @module modules/character-builder/presentation/builder/boonSelection
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0
@@ -11,8 +11,14 @@
 
 import type { BloodlineBoon } from '@/lib/db/content/schemas/bloodlineMetadata';
 import { fetcher } from '@/lib/fetch/fetcher';
+import {
+  contentShardSingleKey,
+  urlForContentShardSingle,
+} from '@/lib/fetch/swrKeys';
 import { entryKey, shardIs } from '../../lib/utils/shardKey';
+import type { ContentShardResponse } from '@/lib/types/api';
 import type { CharacterShard } from '@/lib/types/character';
+import { unstable_serialize, type Arguments } from 'swr';
 
 /**
  * Computes the next selected-boon array after toggling a sub-option of a
@@ -104,13 +110,13 @@ export function pickedOptionTags(
 /**
  * SWR handles a picker needs to warm a boon's prose into its shard.
  *
- * @property {{ get: (key: string) => { data?: unknown } | undefined }} cache - SWR cache
- * @property {(key: string, fetcher: Promise<unknown>, opts: { revalidate: boolean; populateCache: boolean }) => Promise<unknown>} mutate - SWR mutate
+ * @property {{ get: (key: string) => { data?: unknown } | undefined }} cache - SWR cache, keyed by serialized key
+ * @property {(key: Arguments, fetcher: Promise<unknown>, opts: { revalidate: boolean; populateCache: boolean }) => Promise<unknown>} mutate - SWR mutate, accepts tuple keys
  */
 export interface ShardCacheHandles {
   cache: { get: (key: string) => { data?: unknown } | undefined };
   mutate: (
-    key: string,
+    key: Arguments,
     fetcher: Promise<unknown>,
     opts: { revalidate: boolean; populateCache: boolean },
   ) => Promise<unknown>;
@@ -132,18 +138,30 @@ export async function buildBoonShard(
   swr: ShardCacheHandles,
 ): Promise<CharacterShard> {
   const key = entryKey(boon);
-  const url = `/api/content-shards/bloodlines/${bloodlineSlug}?keys[]=${encodeURIComponent(key)}&locale=${locale}`;
-  type BoonShardResponse = { shards: Record<string, string> };
+  const cacheKey = contentShardSingleKey(
+    'bloodlines',
+    bloodlineSlug,
+    key,
+    locale,
+    true,
+  );
+  const url = urlForContentShardSingle('bloodlines', bloodlineSlug, key, locale);
   let cachedText: string | undefined;
-  const cached = swr.cache.get(url)?.data as BoonShardResponse | undefined;
+  const cached = swr.cache.get(unstable_serialize(cacheKey))?.data as
+    | ContentShardResponse
+    | undefined;
   if (cached) {
     cachedText = cached.shards[key];
   } else {
     try {
-      const data = (await swr.mutate(url, fetcher<BoonShardResponse>(url), {
-        revalidate: false,
-        populateCache: true,
-      })) as BoonShardResponse | undefined;
+      const data = (await swr.mutate(
+        cacheKey,
+        fetcher<ContentShardResponse>(url),
+        {
+          revalidate: false,
+          populateCache: true,
+        },
+      )) as ContentShardResponse | undefined;
       cachedText = data?.shards[key];
     } catch {
     }

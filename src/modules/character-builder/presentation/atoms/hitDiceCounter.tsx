@@ -5,7 +5,7 @@
  * and as `Nd?` with a breakdown tooltip for mixed (multiclassing) characters.
  * Die type per vocation resolves from `hitDie` first, then from `hitDiceLog`;
  * else {@link UNKNOWN_DIE}. Skips vocations with empty slug.
- * @module lib/components/characterSheet/atoms/hitDiceCounter
+ * @module modules/character-builder/presentation/atoms/hitDiceCounter
  * @version 2.0.0
  * @author Typeir
  * @since 6.0.0

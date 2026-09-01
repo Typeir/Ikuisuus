@@ -4,7 +4,7 @@
  * locale-aware ToolMenuItem objects and guards against missing i18n keys. `NODE_ENV`
  * is `test` here, so `devOnly` entries are excluded.
  *
- * @module tests/unit/src/modules/tools-menu/useToolRegistry
+ * @module tests/unit/src/modules/tools-menu/useToolRegistry.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

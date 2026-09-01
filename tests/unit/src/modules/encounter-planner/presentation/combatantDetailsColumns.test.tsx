@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for CombatantDetailsColumns.
- * @module tests/unit/src/lib/components/encounterPlanner/combatantDetailsColumns.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantDetailsColumns.test
  * @description Verifies CombatantDetailsColumns export, React component type, and single-member module export.
  * 
  * @version 1.0.0

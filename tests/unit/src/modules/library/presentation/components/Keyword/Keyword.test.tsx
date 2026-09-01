@@ -4,7 +4,7 @@
  * to the route resolved for it at compile time, shows its shard in the hover
  * card, and degrades to plain text when the index resolved nothing.
  *
- * @module tests/unit/modules/library/presentation/components/Keyword
+ * @module tests/unit/src/modules/library/presentation/components/Keyword/Keyword.test
  * @version 2.0.0
  * @author Typeir
  * @since 2026-08-19

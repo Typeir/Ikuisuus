@@ -3,7 +3,7 @@
  * @description Verifies tag-only boon extraction and parsing of variable
  * cost + nested collapsible structures.
  *
- * @module tests/unit/scripts/metadata/generateBloodlineMetadata
+ * @module tests/unit/scripts/metadata/generateBloodlineMetadata.test
  */
 
 import { mkdtemp, rm, writeFile } from 'fs/promises';

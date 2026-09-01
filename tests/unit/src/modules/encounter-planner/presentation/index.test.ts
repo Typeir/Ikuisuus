@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for encounter-planner module public barrel exports.
- * @module tests/unit/src/modules/encounter-planner/presentation/index
+ * @module tests/unit/src/modules/encounter-planner/presentation/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

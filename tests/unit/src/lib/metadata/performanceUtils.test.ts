@@ -2,7 +2,7 @@
  * @fileoverview Performance Utilities Unit Tests
  * @description Tests for timer start/end lifecycle and elapsed measurement.
  *
- * @module tests/unit/lib/metadata/performanceUtils
+ * @module tests/unit/src/lib/metadata/performanceUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

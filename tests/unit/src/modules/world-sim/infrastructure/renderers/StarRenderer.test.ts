@@ -2,7 +2,7 @@
  * @fileoverview StarRenderer Unit Tests
  * @description Tests mesh creation, corona pulsation update, and disposal.
  *
- * @module tests/unit/worldSim/celestials/StarRenderer
+ * @module tests/unit/src/modules/world-sim/infrastructure/renderers/StarRenderer.test
  */
 
 import { StarRenderer } from '@/modules/world-sim/infrastructure/renderers/StarRenderer';

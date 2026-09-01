@@ -5,7 +5,7 @@
  * `scripts/build/glslRawLoader.cjs` under Turbopack and by the matching
  * `glsl-source` plugin in `vitest.config.ts` under test.
  *
- * @module worldSim/shaders/glsl
+ * @module modules/world-sim/shaders/glsl
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0

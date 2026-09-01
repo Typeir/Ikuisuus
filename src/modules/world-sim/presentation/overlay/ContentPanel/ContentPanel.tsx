@@ -2,7 +2,7 @@
  * @fileoverview DEPRECATED Content Panel. Refactored into WorldSimContentPanel and GenericEmbedPanel.
  * @description Use WorldSimContentPanel from '@/modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel' instead.
  *
- * @module worldSim/overlay/ContentPanel
+ * @module modules/world-sim/presentation/overlay/ContentPanel/ContentPanel
  * @deprecated Use WorldSimContentPanel from '@/modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel' instead
  * @version 1.0.0 (deprecated)
  * @author Typeir

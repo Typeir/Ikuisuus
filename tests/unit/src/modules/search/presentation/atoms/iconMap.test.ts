@@ -1,6 +1,6 @@
 /**
  * @fileoverview Icon Map Unit Tests
- * @module tests/unit/src/modules/search/presentation/atoms/iconMap
+ * @module tests/unit/src/modules/search/presentation/atoms/iconMap.test
  */
 
 import { SEARCH_CONTENT_TYPES } from '@/modules/search/domain';

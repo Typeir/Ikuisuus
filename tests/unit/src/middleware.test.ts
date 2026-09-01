@@ -4,7 +4,7 @@
  * @fileoverview Tests for the locale-enforcing middleware configuration and
  * the replaceFirstSegment helper function logic.
  *
- * @module tests/unit/middleware
+ * @module tests/unit/src/middleware.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

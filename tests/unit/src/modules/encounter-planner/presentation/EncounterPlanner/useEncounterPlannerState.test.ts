@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for useEncounterPlannerState hook
- * @module tests/encounter-planner/presentation/EncounterPlanner/useEncounterPlannerState
+ * @module tests/unit/src/modules/encounter-planner/presentation/EncounterPlanner/useEncounterPlannerState.test
  */
 
 import { useEncounterPlannerState } from '@/modules/encounter-planner/presentation/EncounterPlanner/useEncounterPlannerState';

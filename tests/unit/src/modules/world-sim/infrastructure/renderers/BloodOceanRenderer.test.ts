@@ -3,7 +3,7 @@
  * @description Tests mesh creation, ocean shell rotation update, time uniform
  * advancement, and resource disposal.
  *
- * @module tests/unit/worldSim/celestials/BloodOceanRenderer
+ * @module tests/unit/src/modules/world-sim/infrastructure/renderers/BloodOceanRenderer.test
  */
 
 import { BloodOceanRenderer } from '@/modules/world-sim/infrastructure/renderers/BloodOceanRenderer';

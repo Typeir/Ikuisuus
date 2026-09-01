@@ -3,7 +3,7 @@
  * @description Covers publishing a page's shards to the keywords inside it, and
  * the empty behaviour outside a provider.
  *
- * @module tests/unit/src/modules/library/presentation/components/Keyword/KeywordShardContext
+ * @module tests/unit/src/modules/library/presentation/components/Keyword/KeywordShardContext.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0
@@ -13,7 +13,7 @@
  * @requires @/modules/library/presentation/components/Keyword/KeywordShardContext Module under test
  */
 
-import type { KeywordShard } from '@/lib/md/bakeKeywordShards';
+import type { ResolvedShard as KeywordShard } from '@/lib/types/api';
 import {
   KeywordShardProvider,
   useKeywordShard,

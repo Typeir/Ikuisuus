@@ -9,11 +9,13 @@
  * @since 1.0.0
  */
 
+import { rollDie } from '@/lib/utils/diceUtils';
 import type {
     HeroicAwakeningState,
     InProgressCombatant,
 } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 import type { AffixEntry } from '@/modules/encounter-planner/domain/encounters/encounter.types';
+import { affixSlug } from '../shared/utils';
 import {
     getAffixFromRoll,
     getAffixLink,
@@ -29,7 +31,7 @@ import {
  * @returns {number} Result 1–20
  */
 const rollFateDie = (): number => {
-  return Math.floor(Math.random() * 20) + 1;
+  return rollDie(20);
 };
 
 /**
@@ -73,7 +75,7 @@ const rollAffixesAndDetermineTier = (
       affixes.push({
         text: affixName,
         source: {
-          slug: affixName.toLowerCase().replace(/\s+/g, '-'),
+          slug: affixSlug(affixName),
           href: getAffixLink(affixName, locale),
         },
       });

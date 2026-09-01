@@ -4,7 +4,7 @@
  * @fileoverview Tests for directory tree traversal utility with adapter pattern.
  * Uses a mock DirectorySourceAdapter to test tree-building logic in isolation.
  *
- * @module tests/unit/lib/utils/walk
+ * @module tests/unit/src/modules/library/infrastructure/navigation/walk.test
  * @version 2.1.0
  * @author Typeir
  * @since 1.0.0

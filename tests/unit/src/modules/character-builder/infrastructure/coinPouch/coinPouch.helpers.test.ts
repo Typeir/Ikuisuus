@@ -2,7 +2,7 @@
  * @fileoverview CoinPouch Helpers Tests
  * @description Unit tests for the coin pouch state transform helpers.
  *
- * @module tests/unit/lib/components/characterSheet/coinPouch.helpers
+ * @module tests/unit/src/modules/character-builder/infrastructure/coinPouch/coinPouch.helpers.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

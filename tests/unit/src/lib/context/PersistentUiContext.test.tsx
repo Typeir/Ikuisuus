@@ -12,7 +12,7 @@ import {
   useThemeActions,
   useThemeState,
 } from '@/lib/context/PersistentUiContext';
-import { Theme } from '@/lib/enums/themes';
+import { Theme } from '@/lib/constants/themes';
 import {
   PERSISTENT_UI_STORAGE_KEY
 } from '@/lib/types/persistentUiState';

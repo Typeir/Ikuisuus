@@ -3,7 +3,7 @@
  * @description Verifies enum values, initial state defaults, and type
  * contract compliance for the World Sim state system.
  *
- * @module tests/unit/worldSim/context/worldSimTypes
+ * @module tests/unit/src/modules/world-sim/application/state/worldSimTypes.test
  */
 
 import {

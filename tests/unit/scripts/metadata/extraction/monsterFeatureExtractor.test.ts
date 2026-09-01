@@ -3,7 +3,7 @@
  * @description Tests for action, trait, reaction, multiattack, recharge,
  * and spellcasting extraction from classified monster sections.
  *
- * @module tests/unit/src/lib/utils/monsterFeatureExtractor.test
+ * @module tests/unit/scripts/metadata/extraction/monsterFeatureExtractor.test
  */
 
 import {

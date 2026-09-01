@@ -4,7 +4,7 @@
  * @fileoverview Tests for semantic HTML heading components with auto-anchor generation.
  * Validates heading rendering, anchor slug generation, and heading level correctness.
  *
- * @module tests/unit/lib/components/mdx/heading/heading
+ * @module tests/unit/src/modules/library/presentation/components/Heading/heading.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

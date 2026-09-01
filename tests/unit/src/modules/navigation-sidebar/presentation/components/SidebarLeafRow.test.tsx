@@ -4,7 +4,7 @@
  * href, hover-prefetch link semantics, and the label-free structure the
  * sidebar stylesheet keys leaf styling on.
  *
- * @module tests/unit/src/modules/navigation-sidebar/presentation/components/SidebarLeafRow
+ * @module tests/unit/src/modules/navigation-sidebar/presentation/components/SidebarLeafRow.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Compile and render MDX preview. Debounces source changes.
  *
- * @module lib/components/mdxEditor/mdxPreview
+ * @module modules/mdx-editor/presentation/MdxPreview/MdxPreview
  * @version 2.0.0
  * @author Typeir
  * @since 2.0.0

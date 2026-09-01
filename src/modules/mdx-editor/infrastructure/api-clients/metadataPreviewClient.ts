@@ -7,7 +7,7 @@
  * @since 8.0.0
  */
 
-import { postJson } from '@/lib/services/api/jsonClient';
+import { fetcher } from '@/lib/fetch/fetcher';
 
 /**
  * Response of POST /api/metadata/preview.
@@ -34,10 +34,11 @@ export async function fetchMetadataPreview(
   content: string,
 ): Promise<MetadataPreviewResult | null> {
   try {
-    return await postJson<
-      { path: string; content: string },
-      MetadataPreviewResult
-    >('/api/metadata/preview', { path, content });
+    return await fetcher<MetadataPreviewResult>('/api/metadata/preview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path, content }),
+    });
   } catch {
     return null;
   }

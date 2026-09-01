@@ -9,7 +9,7 @@
  * window.ik.ws.fps                 // check instantaneous FPS
  * ```
  *
- * @module debug/ik
+ * @module lib/debug/ik
  * @version 1.0.0
  * @author Typeir
  * @since 2026-05-21

@@ -5,7 +5,7 @@
  * feat_features tables for row counts and rows with null line anchors
  * (start_line / end_line).
  *
- * @module check-shard-data
+ * @module scripts/db/pg/check-shard-data
  * @version 1.0.0
  * @since 1.0.0
  */

@@ -3,7 +3,10 @@
  *
  * @fileoverview Remark plugin replacing `[# kw:... #]` keyword expressions in
  * text nodes with `<Keyword>` MDX JSX elements. A reference is resolved against
- * a keyword registry when one is supplied, which adds the `href` attribute.
+ * the resolutions the caller supplies, which add the `href` attribute. The
+ * plugin resolves nothing itself: it has no filesystem and no index, so a
+ * document's targets are worked out before it runs and handed in.
+ *
  * Malformed expressions stay as plain text; a well-formed expression that
  * resolves to nothing still renders its display text, never its source markup.
  *
@@ -22,13 +25,6 @@ import {
   parseKeywordReference,
   type KeywordReference,
 } from './keywordExpressionParser';
-import {
-  keywordTemplateId,
-  resolveKeywordRef,
-  routeForFile,
-  type KeywordRegistry,
-} from './keywordIndex';
-
 /**
  * Name of the component this plugin emits.
  *
@@ -95,15 +91,30 @@ function attributeNode(name: string, value: string): MdxJsxAttributeNode {
 }
 
 /**
- * Builds an MDAST mdxJsxTextElement node for the `<Keyword>` component.
+ * Normalised lookup key for a reference, matching what the extractor emits.
  *
  * @param {KeywordReference} reference - Parsed reference parts
- * @param {KeywordRegistry} [registry] - Registry used to resolve the link target
+ * @returns {string} `namespace;value`, or the bare value
+ */
+function keyOf(reference: KeywordReference): string {
+  return reference.namespace
+    ? `${reference.namespace};${reference.value}`
+    : reference.value;
+}
+
+/**
+ * Builds an MDAST mdxJsxTextElement node for the `<Keyword>` component.
+ *
+ * Resolution is the caller's: this stamps what it is handed. An unresolved
+ * reference still renders its display text, never its source markup.
+ *
+ * @param {KeywordReference} reference - Parsed reference parts
+ * @param {KeywordResolutions} [resolutions] - Targets, keyed by normalised reference
  * @returns {MdxJsxTextElementNode} An MDAST JSX element node
  */
 function keywordNode(
   reference: KeywordReference,
-  registry?: KeywordRegistry,
+  resolutions?: KeywordResolutions,
 ): MdxJsxTextElementNode {
   const attributes = [
     attributeNode('term', reference.value),
@@ -114,20 +125,12 @@ function keywordNode(
     attributes.push(attributeNode('namespace', reference.namespace));
   }
 
-  const resolved = registry
-    ? resolveKeywordRef(registry, reference.namespace, reference.value)
-    : null;
+  const resolved = resolutions?.[keyOf(reference)];
 
   if (resolved) {
     attributes.push(
-      attributeNode(
-        'href',
-        `${routeForFile(resolved.filePath)}#${resolved.anchor}`,
-      ),
-      attributeNode(
-        'templateId',
-        keywordTemplateId(reference.namespace, resolved.anchor),
-      ),
+      attributeNode('href', resolved.href),
+      attributeNode('templateId', resolved.templateId),
       attributeNode('heading', resolved.heading),
     );
   }
@@ -148,12 +151,13 @@ function keywordNode(
  * @param {TextNode} node - The text node to process
  * @param {number | null} index - The node's index in its parent
  * @param {Parent | null} parent - The node's parent
+ * @param {KeywordResolutions} [resolutions] - Targets, keyed by normalised reference
  */
 function processTextNode(
   node: TextNode,
   index: number | null,
   parent: Parent | null,
-  registry?: KeywordRegistry,
+  resolutions?: KeywordResolutions,
 ): void {
   if (!parent || typeof index !== 'number') {
     return;
@@ -183,7 +187,7 @@ function processTextNode(
 
     const reference = parseKeywordReference(m[1]);
     if (reference) {
-      replacementNodes.push(keywordNode(reference, registry));
+      replacementNodes.push(keywordNode(reference, resolutions));
     } else {
       replacementNodes.push(textNode(m[0]));
     }
@@ -200,13 +204,30 @@ function processTextNode(
 }
 
 /**
+ * Where one reference points, once something has resolved it.
+ *
+ * @interface KeywordResolution
+ * @property {string} href - Locale-relative route and anchor of the defining heading
+ * @property {string} templateId - Id of the shard carrying that section's prose
+ * @property {string} heading - Heading text, used as the card title
+ */
+export interface KeywordResolution {
+  href: string;
+  templateId: string;
+  heading: string;
+}
+
+/** Resolutions keyed by normalised reference, `namespace;value` or a bare value. */
+export type KeywordResolutions = Record<string, KeywordResolution>;
+
+/**
  * Options accepted by the plugin.
  *
  * @interface RemarkKeywordOptions
- * @property {KeywordRegistry} [registry] - Discovered namespaces used to resolve link targets
+ * @property {KeywordResolutions} [resolutions] - Targets for the references this document writes
  */
 export interface RemarkKeywordOptions {
-  registry?: KeywordRegistry;
+  resolutions?: KeywordResolutions;
 }
 
 /**
@@ -223,7 +244,7 @@ const remarkKeyword: Plugin<[RemarkKeywordOptions?], Root> = (options) => {
         node as TextNode,
         idx ?? null,
         parent as Parent | null,
-        options?.registry,
+        options?.resolutions,
       );
     });
   };

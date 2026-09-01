@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for domain/sortItems
- * @module tests/unit/src/modules/navigation-sidebar/domain/sortItems
+ * @module tests/unit/src/modules/navigation-sidebar/domain/sortItems.test
  */
 
 import { sortItems } from '@/modules/navigation-sidebar/domain/sortItems';

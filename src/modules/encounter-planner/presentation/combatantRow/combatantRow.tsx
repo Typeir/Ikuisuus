@@ -2,7 +2,7 @@
  * @fileoverview Renders a combatant row for design and play mode. Wraps children in
  * CombatantProvider to supply shared state via React Context.
  *
- * @module combatantRow
+ * @module modules/encounter-planner/presentation/combatantRow/combatantRow
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

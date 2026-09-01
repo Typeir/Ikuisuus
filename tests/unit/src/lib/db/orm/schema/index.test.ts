@@ -3,7 +3,7 @@
  *
  * @fileoverview Verifies the schema layer's public surface stays intact.
  *
- * @module tests/unit/lib/db/orm/schema/index
+ * @module tests/unit/src/lib/db/orm/schema/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

@@ -4,7 +4,7 @@
  * click-outside-to-close, and viewport-aware positioning. Dropdown renders to
  * document.body via React Portal, escaping ancestor overflow clipping.
  *
- * @module genericCombobox
+ * @module modules/encounter-planner/presentation/comboboxes/genericCombobox
  * @version 2.1.0
  * @author Typeir
  * @since 1.0.0
@@ -33,13 +33,14 @@
 import {
   ReactNode,
   useCallback,
-  useEffect,
   useId,
   useRef,
   useState,
   type CSSProperties,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useMounted } from '@/lib/hooks/useMounted';
+import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
 import {
   toAnchorName,
   useAnchoredPosition,
@@ -124,13 +125,9 @@ export function GenericCombobox<T extends ComboboxItem>({
 }: GenericComboboxProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useMounted();
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const compute = useCallback((rect: DOMRect, dropdown: HTMLElement) => {
     const width = Math.max(rect.width, DROPDOWN_MIN_WIDTH);
@@ -168,21 +165,7 @@ export function GenericCombobox<T extends ComboboxItem>({
     ? items.filter((item) => filterFn(item, searchQuery))
     : items;
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        inputRef.current &&
-        !inputRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useOutsideClick([inputRef, dropdownRef], () => setIsOpen(false));
 
   const handleSelect = useCallback(
     (item: T) => {

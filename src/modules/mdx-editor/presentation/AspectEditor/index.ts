@@ -1,6 +1,6 @@
 /**
  * @fileoverview Aspect Editor barrel
- * @module modules/mdx-editor/presentation/AspectEditor
+ * @module modules/mdx-editor/presentation/AspectEditor/index
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

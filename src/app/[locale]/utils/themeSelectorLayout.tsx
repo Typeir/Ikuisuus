@@ -12,8 +12,8 @@ import {
     ThemeSelector,
     ThemeSelectorProps,
 } from "@/lib/components/themeSelector/themeSelector";
-import { PersistentData } from "@/lib/enums/persistentData";
-import { Theme } from "@/lib/enums/themes";
+import { PersistentData } from "@/lib/constants/persistentData";
+import { Theme } from "@/lib/constants/themes";
 import { storePersistentData } from "@/lib/utils/storePersistentData";
 import { useEffect } from "react";
 import { fetchPersistentData } from "../../../lib/utils/fetchPersistentData";

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Skeleton loading component for sidebar items
- * @module lib/components/sidebar/SkeletonSidebarItems
+ * @module modules/navigation-sidebar/presentation/components/SkeletonSidebarItems
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

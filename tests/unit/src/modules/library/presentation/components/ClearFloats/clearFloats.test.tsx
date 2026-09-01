@@ -1,7 +1,7 @@
 /**
  * Unit tests for ClearFloats component
  *
- * @module clearFloats.test
+ * @module tests/unit/src/modules/library/presentation/components/ClearFloats/clearFloats.test
  */
 
 import { describe, it, expect } from 'vitest';

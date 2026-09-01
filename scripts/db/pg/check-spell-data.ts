@@ -1,7 +1,7 @@
 /**
  * @fileoverview Diagnostic script to check spell and spell_list data in PostgreSQL
  *
- * @module check-spell-data
+ * @module scripts/db/pg/check-spell-data
  * @version 1.0.0
  * @since 1.0.0
  */

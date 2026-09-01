@@ -2,7 +2,7 @@
  * @fileoverview Article Metadata Context Tests
  * @description Tests section lookup and behaviour with missing or null metadata.
  *
- * @module tests/unit/src/modules/library/application/context/ArticleMetadataContext
+ * @module tests/unit/src/modules/library/application/context/ArticleMetadataContext.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-04

@@ -4,7 +4,7 @@
  * group the anchor owns (identified by their aria-labels), excludes categories it
  * does not own, and renders nothing when all is assigned.
  *
- * @module tests/unit/src/modules/character-builder/presentation/atoms/unassignedChips
+ * @module tests/unit/src/modules/character-builder/presentation/atoms/unassignedChips.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

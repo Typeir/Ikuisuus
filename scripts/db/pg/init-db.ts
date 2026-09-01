@@ -7,7 +7,7 @@
  *
  * Safe to run multiple times — all statements use IF NOT EXISTS.
  *
- * @module init-db
+ * @module scripts/db/pg/init-db
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0

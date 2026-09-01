@@ -4,7 +4,7 @@
  * @fileoverview Displays heroic awakening state, affixes, and force awakening controls.
  * Manages heroic awakening tier selection and unawakening.
  *
- * @module combatantHeroicSection
+ * @module modules/encounter-planner/presentation/combatantRow/combatantHeroicSection
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

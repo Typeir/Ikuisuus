@@ -4,7 +4,7 @@
  * the left; attacks, selected shard chips, and notes on the right. Phone
  * viewports use the tab strip layout in {@link MobileOverviewTab}.
  *
- * @module lib/components/characterSheet/tabs/overviewTab
+ * @module modules/character-builder/presentation/tabs/overviewTab
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

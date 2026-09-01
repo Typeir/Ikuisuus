@@ -4,7 +4,7 @@
  * and selection tracking. Resolves the selected celestial body or region into an
  * embed URL passed to GenericEmbedPanel.
  *
- * @module worldSim/overlay/WorldSimContentPanel
+ * @module modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

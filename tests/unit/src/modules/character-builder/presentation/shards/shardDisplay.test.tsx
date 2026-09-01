@@ -2,7 +2,7 @@
  * @fileoverview ShardDisplay Unit Tests
  * @description Tests for the ShardDisplay component.
  *
- * @module tests/unit/lib/components/characterSheet/shardDisplay
+ * @module tests/unit/src/modules/character-builder/presentation/shards/shardDisplay.test
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

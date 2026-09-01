@@ -3,7 +3,7 @@
  * @description Tests conditional rendering, body info display, back button,
  * region list rendering, and region click handling.
  *
- * @module tests/unit/worldSim/overlay/InfoPanel
+ * @module tests/unit/src/modules/world-sim/presentation/overlay/InfoPanel/InfoPanel.test
  */
 
 import {

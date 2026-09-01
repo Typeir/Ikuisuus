@@ -4,7 +4,7 @@
  * @description Each panel reads the character from context. Shard clouds omit
  * empty sections.
  *
- * @module tests/unit/src/modules/character-builder/presentation/tabs/overview/overviewPanels
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/overview/overviewPanels.test
  * @version 1.0.0
  * @author Typeir
  * @since 10.0.0

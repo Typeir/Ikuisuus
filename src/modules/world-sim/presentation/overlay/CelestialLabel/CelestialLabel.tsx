@@ -2,7 +2,7 @@
  * @fileoverview User-facing label for a celestial body.
  * @description Renders a positioned label tracking a body's 2D screen position.
  *
- * @module worldSim/overlay/CelestialLabel
+ * @module modules/world-sim/presentation/overlay/CelestialLabel/CelestialLabel
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

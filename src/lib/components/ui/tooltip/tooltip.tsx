@@ -2,7 +2,7 @@
  * @fileoverview Tooltip Component
  * @description Accessible tooltip with hover/focus activation, delay, and placement options.
  *
- * @module tooltip
+ * @module lib/components/ui/tooltip/tooltip
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
@@ -20,11 +20,11 @@ import {
   ReactNode,
   type CSSProperties,
   useEffect,
-  useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './tooltip.module.scss';
-import { useEscapeDismiss } from './useEscapeDismiss';
+import { useEscapeDismiss } from '@/lib/hooks/useEscapeDismiss';
+import { useMounted } from '@/lib/hooks/useMounted';
 import { useTooltipAnchor, type TooltipPlacement } from './useTooltipAnchor';
 import { useTooltipVisibility } from './useTooltipVisibility';
 
@@ -100,7 +100,7 @@ export const Tooltip = memo(function Tooltip({
   inline = false,
   forceVisible = false,
 }: TooltipProps) {
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useMounted();
 
   const { showPortal, exiting, show, hide, showNow, hideNow } =
     useTooltipVisibility({
@@ -119,11 +119,6 @@ export const Tooltip = memo(function Tooltip({
   } = useTooltipAnchor(placement, showPortal || forceVisible);
 
   const tooltipId = id || `tooltip-${anchorId}`;
-
-  /** Track client-side mounting for SSR compatibility */
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   /**
    * Escape dismisses the tooltip without moving the pointer, which content

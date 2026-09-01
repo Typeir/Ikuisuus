@@ -1,7 +1,7 @@
 /**
  * @fileoverview Initiative combat stat chip with lockable edit mode.
  *
- * @module character-builder/presentation/stats/initChip
+ * @module modules/character-builder/presentation/stats/initChip
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

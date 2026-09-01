@@ -47,12 +47,12 @@ keywords: # these named terms join the bare namespace
 ```
 
 `keywordIndex` is bulk: all headings, no list to maintain. `keywords` is explicit: only the
-terms named, and a term with no matching heading throws at discovery.
+terms named; a declared term with no matching heading contributes nothing.
 
-**Namespaces merge.** Several files may declare `keywordIndex: condition`; their values combine.
-A value claimed by two files is a collision, reported by `listKeywordCollisions` and resolved to
-`null` rather than guessed. Collisions are not thrown, so two files sharing an `## Overview`
-heading stay harmless until something references it.
+**Namespaces merge.** Several files may declare `keywordIndex: condition`; their keys combine.
+Runtime resolution reads the `produces` arrays the generators stamp on metadata records: the
+keyword graph maps a shard id to the file that defines it, and `resolveShardByRef` reads that
+one file to extract the section.
 
 ---
 
@@ -63,15 +63,15 @@ heading stay harmless until something references it.
 
 | Module                                                            | Side   | Holds                                                          |
 | ----------------------------------------------------------------- | ------ | -------------------------------------------------------------- |
-| [`keywordIndex.ts`](../../src/lib/md/keywordIndex.ts)             | Either | Shapes, `resolveKeywordRef`, `routeForFile`, collision listing  |
-| [`keywordIndexRegistry.ts`](../../src/lib/md/keywordIndexRegistry.ts) | Server | `discoverKeywordIndexes`, frontmatter parsing, `fs`, gray-matter |
-| [`resolveKeywordRegistry.ts`](../../src/lib/md/resolveKeywordRegistry.ts) | Server | Locale scoping, `process.cwd()` join                        |
+| [`keywordIndex.ts`](../../src/lib/md/keywordIndex.ts)             | Either | `keywordTemplateId`, bare-namespace key                         |
+| [`keywordIndexRegistry.ts`](../../src/lib/md/keywordIndexRegistry.ts) | Server | `extractProducedKeys`, frontmatter parsing, gray-matter          |
+| [`resolveShardByRef.ts`](../../src/lib/md/resolveShardByRef.ts)   | Server | Graph lookup, section extraction, document keyword resolution    |
 
 No re-export between the pure and server modules. Importing the wrong one puts `fs/promises` in
 the browser bundle.
 
-Discovery is scoped to one locale. Namespaces merge across files, so scanning `src/content`
-whole would let a second locale contest every shared value.
+Graph loading is scoped to one locale. Namespaces merge across files, so mixing locales would
+let a second locale contest every shared value.
 
 ---
 

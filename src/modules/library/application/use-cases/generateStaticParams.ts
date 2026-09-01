@@ -6,7 +6,8 @@
  * @since 6.0.0
  */
 
-import { REGEX_CONTENT_SUFFIX } from '@/lib/enums/constants';
+import { REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 import findAllMdxFiles from '@/modules/library/infrastructure/content/findAllMdxFiles';
 import path from 'path';
 
@@ -17,7 +18,7 @@ import path from 'path';
  * @returns {Promise<Array<{ slug: string[] }>>} Next.js static params.
  */
 export async function generateLibraryStaticParams(
-  contentRoot: string = path.join(process.cwd(), 'src', 'content', 'en'),
+  contentRoot: string = getContentFolder(),
 ): Promise<Array<{ slug: string[] }>> {
   const mdxFiles = await findAllMdxFiles(contentRoot);
 

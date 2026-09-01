@@ -4,7 +4,7 @@
  * size, and quadruped status. Computes load tier from carried weight and
  * total equipment weight; renders a load bar and tier label.
  *
- * @module lib/components/characterSheet/carryingCapacityCalculator
+ * @module modules/character-builder/presentation/CarryingCapacity/carryingCapacityCalculator
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

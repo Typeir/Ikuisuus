@@ -10,7 +10,7 @@
  * 3. Corona atmosphere — BackSide AdditiveBlending, depthWrite false
  * 4. Glow sprite — outer far glow, AdditiveBlending
  *
- * @module worldSim/celestials/BloodOceanRenderer
+ * @module modules/world-sim/infrastructure/renderers/BloodOceanRenderer
  * @version 1.0.0
  * @author Typeir
  * @since 2026-05-21

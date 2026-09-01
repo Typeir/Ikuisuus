@@ -3,7 +3,7 @@
  * @description Tests for splitting `[# kw:... #]` keyword blocks into their
  * namespace, value and display parts.
  *
- * @module tests/unit/lib/md/keywordExpressionParser
+ * @module tests/unit/src/lib/md/keywordExpressionParser.test
  * @version 2.0.0
  * @author Typeir
  * @since 2026-08-19

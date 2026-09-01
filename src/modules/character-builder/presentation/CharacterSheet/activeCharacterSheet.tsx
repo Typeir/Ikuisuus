@@ -3,7 +3,7 @@
  * @description Renders the full character sheet for the active character.
  * Returns null when no character is selected.
  *
- * @module lib/components/characterSheet/activeCharacterSheet
+ * @module modules/character-builder/presentation/CharacterSheet/activeCharacterSheet
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

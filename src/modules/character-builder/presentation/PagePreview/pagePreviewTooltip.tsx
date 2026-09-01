@@ -3,7 +3,7 @@
  * hover and toggles a shared `<Draggable>` iframe via `PagePreviewProvider` on
  * click.
  *
- * @module lib/components/characterSheet/pagePreviewTooltip
+ * @module modules/character-builder/presentation/PagePreview/pagePreviewTooltip
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

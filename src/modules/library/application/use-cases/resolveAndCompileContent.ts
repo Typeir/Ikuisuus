@@ -6,8 +6,8 @@
  * @since 6.0.0
  */
 
-import { stripContentSuffix } from '@/lib/enums/constants';
-import type { KeywordShard } from '@/lib/md/bakeKeywordShards';
+import { stripContentSuffix } from '@/lib/constants/content';
+import type { ResolvedShard } from '@/lib/types/api';
 import { isMdFile } from '@/lib/md/isMdFile';
 import type { ArticleMetadata } from '@/modules/library/application/context/ArticleMetadataContext';
 import {
@@ -55,7 +55,7 @@ export interface MdxResolution {
   streamText: string;
   articleMetadata: ArticleMetadata | null;
   evalResult?: EvaluateResult;
-  shards?: KeywordShard[];
+  shards?: ResolvedShard[];
   compileError?: unknown;
 }
 
@@ -160,7 +160,7 @@ export async function resolveAndCompileContent({
       streamText,
       articleMetadata,
       evalResult,
-      shards: (evalResult as { shards?: KeywordShard[] }).shards,
+      shards: (evalResult as { shards?: ResolvedShard[] }).shards,
     };
   } catch (compileError) {
     return {

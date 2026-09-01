@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the AuditRecord MikroORM entity class.
  *
- * @module tests/unit/lib/db/orm/entities/AuditRecordEntity
+ * @module tests/unit/src/lib/db/orm/entities/AuditRecordEntity.test
  */
 
 import { AuditRecordEntity } from '@/lib/db/orm/entities/AuditRecordEntity';

@@ -3,7 +3,7 @@
  * @description A context-agnostic Draggable wrapper that embeds iframe content,
  * handling drag, resize, close, and loading state.
  *
- * @module ui/embedPanel/GenericEmbedPanel
+ * @module lib/components/ui/embedPanel/GenericEmbedPanel
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -4,7 +4,7 @@
  * count, pitch, clamped height and the rendered-range callback. `List` is
  * stubbed so the assertions read props, not layout.
  *
- * @module tests/unit/src/lib/components/ui/virtualList/virtualList
+ * @module tests/unit/src/lib/components/ui/virtualList/virtualList.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

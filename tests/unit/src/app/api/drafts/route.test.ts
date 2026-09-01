@@ -3,7 +3,7 @@
  * @description Tests the GET and POST handlers: authentication, input
  * validation, and error handling.
  *
- * @module tests/unit/src/app/api/drafts/route
+ * @module tests/unit/src/app/api/drafts/route.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

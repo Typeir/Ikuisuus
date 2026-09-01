@@ -2,7 +2,7 @@
  * @fileoverview carryingCapacity Re-export Tests (backward compatibility)
  * @description Validates that lib/data/carryingCapacity re-exports work correctly.
  *
- * @module tests/unit/lib/data/carryingCapacity
+ * @module tests/unit/src/lib/data/carryingCapacity.test
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

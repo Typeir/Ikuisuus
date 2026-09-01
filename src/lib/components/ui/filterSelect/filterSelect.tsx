@@ -2,7 +2,7 @@
  * @fileoverview Filter Select Component
  * @description Dropdown select for table filters. Renders as a bottom sheet below 640px viewport width.
  *
- * @module filterSelect
+ * @module lib/components/ui/filterSelect/filterSelect
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -11,6 +11,7 @@
 'use client';
 
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
+import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
@@ -169,23 +170,14 @@ export const FilterSelect = forwardRef<HTMLButtonElement, FilterSelectProps>(
     }, [value, options, resolvedPlaceholder]);
 
     /** Close dropdown when clicking outside */
-    useEffect(() => {
-      if (!isOpen || useMobileModal) return;
-
-      const handleClickOutside = (e: MouseEvent) => {
-        if (
-          containerRef.current &&
-          !containerRef.current.contains(e.target as Node)
-        ) {
-          setIsOpen(false);
-          setSearchQuery('');
-        }
-      };
-
-      document.addEventListener('mousedown', handleClickOutside);
-      return () =>
-        document.removeEventListener('mousedown', handleClickOutside);
-    }, [isOpen, useMobileModal]);
+    useOutsideClick(
+      containerRef,
+      () => {
+        setIsOpen(false);
+        setSearchQuery('');
+      },
+      isOpen && !useMobileModal,
+    );
 
     /** Scroll highlighted option into view for keyboard navigation */
     useEffect(() => {

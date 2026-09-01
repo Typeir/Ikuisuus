@@ -19,7 +19,7 @@ import type {
   EquipmentItem,
   VocationEntry,
 } from '@/lib/types/character';
-import { UNKNOWN_DIE } from '@/lib/utils/diceUtils';
+import { rollDie, UNKNOWN_DIE } from '@/lib/utils/diceUtils';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 
 /**
@@ -173,7 +173,7 @@ export const computeAbilityModifier = (score: number): number =>
 export const rollAbilityScore = (): number => {
   const rolls = Array.from(
     { length: 4 },
-    () => Math.floor(Math.random() * 6) + 1,
+    () => rollDie(6),
   );
   rolls.sort((a, b) => a - b);
   return rolls[1] + rolls[2] + rolls[3];

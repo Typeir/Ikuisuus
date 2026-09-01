@@ -3,7 +3,7 @@
  * @description Covers pointer drag, corner resize, bounds clamping and the
  * value-compared repositioning that lets a caller move an element after mount.
  *
- * @module tests/unit/src/lib/components/ui/draggable/useDrag
+ * @module tests/unit/src/lib/components/ui/draggable/useDrag.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

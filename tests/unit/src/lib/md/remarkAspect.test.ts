@@ -3,7 +3,7 @@
  * @description `[( group:value )]` and `[( group:value;display )]` become
  * `<Aspect />` inline elements; malformed tokens stay as text.
  *
- * @module tests/unit/src/lib/md/remarkAspect
+ * @module tests/unit/src/lib/md/remarkAspect.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

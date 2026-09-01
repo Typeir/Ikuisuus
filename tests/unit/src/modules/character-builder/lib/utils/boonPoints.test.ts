@@ -2,7 +2,7 @@
  * @fileoverview Boon Points Unit Tests
  * @description Tests for `computeBpSpent` from boonPoints.ts.
  *
- * @module tests/unit/src/modules/character-builder/lib/utils/boonPoints
+ * @module tests/unit/src/modules/character-builder/lib/utils/boonPoints.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

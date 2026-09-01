@@ -1,6 +1,6 @@
 /**
  * @fileoverview MetaTrail Atom Unit Tests
- * @module tests/unit/src/modules/search/presentation/atoms/MetaTrail
+ * @module tests/unit/src/modules/search/presentation/atoms/MetaTrail.test
  */
 
 import { MetaTrail } from '@/modules/search/presentation/atoms/MetaTrail';

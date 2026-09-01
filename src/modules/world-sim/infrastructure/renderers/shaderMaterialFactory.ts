@@ -3,7 +3,7 @@
  * @description Constructs `ShaderMaterial` instances with a noise GLSL
  * snippet prepended to the vertex (and optionally fragment) shader.
  *
- * @module worldSim/celestials/shaderMaterialFactory
+ * @module modules/world-sim/infrastructure/renderers/shaderMaterialFactory
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

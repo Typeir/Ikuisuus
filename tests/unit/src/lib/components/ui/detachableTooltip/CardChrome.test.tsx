@@ -3,7 +3,7 @@
  * @description Covers the handle, title, close control and resize corner a
  * parked card wears, and that pointer handlers reach the right element.
  *
- * @module tests/unit/src/lib/components/ui/detachableTooltip/CardChrome
+ * @module tests/unit/src/lib/components/ui/detachableTooltip/CardChrome.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

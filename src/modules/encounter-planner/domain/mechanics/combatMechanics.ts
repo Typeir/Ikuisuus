@@ -16,6 +16,7 @@ import type {
   InProgressCombatant,
 } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 import { rollDie } from '@/lib/utils/diceUtils';
+import { affixSlug } from '../shared/utils';
 
 const heroic_dcs = { '0': 15, '5': 15, '10': 16, '15': 17, '20': 18 };
 
@@ -89,7 +90,7 @@ export const getAffixLink = (
   affixName: string,
   locale: string = 'en',
 ): string => {
-  const slug = affixName.toLowerCase().replace(/\s+/g, '-');
+  const slug = affixSlug(affixName);
   return `/${locale}/library/rules/heroic-awakening/${slug}`;
 };
 
@@ -219,7 +220,7 @@ export const generateUniqueAffixes = (
     affixes.push({
       text: affixName,
       source: {
-        slug: affixName.toLowerCase().replace(/\s+/g, '-'),
+        slug: affixSlug(affixName),
         href: getAffixLink(affixName, locale),
       },
     });

@@ -3,7 +3,7 @@
  * @description Re-exports the schema decorators, registry helpers, and type
  * options.
  *
- * @module lib/db/orm/schema
+ * @module lib/db/orm/schema/index
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

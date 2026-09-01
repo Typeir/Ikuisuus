@@ -4,7 +4,7 @@
  * `deriveHitPoints` / `perLevelGrantBonus` (the live fold: rolled dice + CON × N
  * + passive hp grants, minus the grievous-wound pool).
  *
- * @module tests/unit/modules/character-builder/lib/utils/hitDiceUtils
+ * @module tests/unit/src/modules/character-builder/lib/utils/hitDiceUtils.test
  * @version 2.0.0
  * @author Typeir
  * @since 7.0.0

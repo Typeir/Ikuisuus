@@ -3,7 +3,7 @@
  * @description Validates the POST handler for the content repo webhook including
  * secret validation, action dispatch, IP ban logic, and error handling.
  *
- * @module tests/unit/src/app/api/content-webhook/route
+ * @module tests/unit/src/app/api/content-webhook/route.test
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

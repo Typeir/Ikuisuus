@@ -3,7 +3,7 @@
  * Uses the shared `VirtualList` atom instead of the full recursive
  * `Sidebar` tree when the child count exceeds `VIRTUALIZE_THRESHOLD`.
  *
- * @module lib/components/sidebar/VirtualizedSidebar
+ * @module modules/navigation-sidebar/presentation/components/VirtualizedSidebar
  * @author Typeir
  * @version 3.0.0
  * @since 2.1.0

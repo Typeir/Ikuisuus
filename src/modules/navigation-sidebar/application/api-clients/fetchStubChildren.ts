@@ -6,6 +6,7 @@
  * @since 1.0.0
  */
 
+import { fetcher } from '@/lib/fetch/fetcher';
 import type { Item } from '@/modules/navigation-sidebar/domain/types';
 
 /**
@@ -20,11 +21,9 @@ export async function fetchStubChildren(
   locale: string,
 ): Promise<Item[]> {
   try {
-    const response = await fetch(
+    const nodes = await fetcher<unknown>(
       `/api/content/walk?locale=${encodeURIComponent(locale)}&path=${encodeURIComponent(itemPath)}`,
     );
-    if (!response.ok) return [];
-    const nodes: unknown = await response.json();
     return Array.isArray(nodes) ? (nodes as Item[]) : [];
   } catch {
     return [];

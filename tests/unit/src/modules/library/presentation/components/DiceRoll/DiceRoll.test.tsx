@@ -3,7 +3,7 @@
  * @description Tests DiceRoll MDX component rendering, click-to-roll, special
  * modifiers, and edge cases.
  *
- * @module tests/unit/modules/library/presentation/components/DiceRoll/DiceRoll
+ * @module tests/unit/src/modules/library/presentation/components/DiceRoll/DiceRoll.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-07-10

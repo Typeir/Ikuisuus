@@ -3,7 +3,7 @@
  * @description Tests for GET /api/source. Validates missing params, successful
  * content return, 404 handling, and locale forwarding.
  *
- * @module tests/unit/app/api/source/route
+ * @module tests/unit/src/app/api/source/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

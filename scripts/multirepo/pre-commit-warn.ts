@@ -3,7 +3,7 @@
  * @fileoverview Pre-commit hook that warns when the other repo in the
  * multirepo setup has uncommitted changes. Installed as
  * `.git/hooks/pre-commit` in the content submodule by `setup-hooks.ts`.
- * @module multirepo/pre-commit-warn
+ * @module scripts/multirepo/pre-commit-warn
  */
 import { spawnSync } from 'child_process';
 import { existsSync, statSync } from 'fs';

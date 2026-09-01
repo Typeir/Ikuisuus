@@ -4,7 +4,7 @@
  * inline below its picker row. Fetches the heading block via the DB-backed
  * `/api/content-shards/[type]/[slug]` endpoint lazily on mount and compiles it
  * with the runtime MDX compiler, so units, dice and keywords stay live.
- * @module lib/components/characterSheet/builder/contentExpandBody
+ * @module modules/character-builder/presentation/builder/contentExpandBody
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -14,7 +14,7 @@
 
 import { FetchError } from '@/lib/fetch/fetcher';
 import { useContentShardSingle } from '@/lib/hooks/data/useContentShard';
-import type { ContentShardType } from '@/modules/character-builder/presentation/shards/contentShardPanel';
+import type { ContentShardType } from '@/lib/types/api';
 import { compileRuntimeSync } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { mdxComponents } from '@/modules/library/presentation';
 import { useLocale, useTranslations } from 'next-intl';

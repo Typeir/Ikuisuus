@@ -4,7 +4,7 @@
  * Maintains spherical coordinates relative to an orbit center. Does not own
  * the target or camera; the CameraController reads these and applies positions.
  *
- * @module worldSim/camera/CameraOrbitControls
+ * @module modules/world-sim/infrastructure/input/CameraOrbitControls
  * @version 2.0.0
  * @author Typeir
  * @since 2.0.0

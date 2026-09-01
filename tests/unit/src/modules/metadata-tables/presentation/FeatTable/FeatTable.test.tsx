@@ -3,7 +3,7 @@
  * @description Verifies the feat library table renders loading, empty, and data
  * states and flags repeatable feats via the multiSelect column.
  *
- * @module tests/unit/src/modules/metadata-tables/presentation/FeatTable/FeatTable
+ * @module tests/unit/src/modules/metadata-tables/presentation/FeatTable/FeatTable.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

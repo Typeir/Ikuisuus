@@ -3,7 +3,7 @@
  *
  * @fileoverview Manages conditions on combatants. Renders condition chips and an input to add new conditions.
  *
- * @module combatantConditionsManager
+ * @module modules/encounter-planner/presentation/combatantRow/combatantConditionsManager
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

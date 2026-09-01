@@ -2,7 +2,7 @@
  * @fileoverview World Sim Page Unit Tests
  * @description Validates WorldSimPage default export and component signature.
  *
- * @module tests/unit/worldSimPage
+ * @module tests/unit/src/app/[locale]/utils/world-sim/page.test
  */
 
 import * as PageModule from '@/app/[locale]/utils/world-sim/page';

@@ -23,10 +23,10 @@ import {
   worldRepository,
 } from '@/lib/db/content/repositories';
 import type { BaseMetadata } from '@/lib/db/content/schemas/baseMetadata';
+import { isSupportedLocale } from '@/lib/constants/locales';
 import {
   CONTENT_SUBDIR,
   localizeLink,
-  SUPPORTED_LOCALES,
   type SearchContentType,
 } from '@/modules/search/domain';
 import { NextResponse } from 'next/server';
@@ -59,9 +59,6 @@ const REPOSITORIES: Record<
   vocations: vocationRepository,
   world: worldRepository,
 };
-
-/** Allowlisted locale codes. */
-const VALID_LOCALES = new Set<string>(SUPPORTED_LOCALES);
 
 /** All valid content type keys. */
 const VALID_TYPES = Object.keys(CONTENT_SUBDIR);
@@ -113,9 +110,9 @@ export async function GET(req: Request): Promise<NextResponse> {
     const today = new Date().toISOString().slice(0, 10);
 
     /** Block path traversal via locale param. */
-    if (!VALID_LOCALES.has(rawLocale)) {
+    if (!isSupportedLocale(rawLocale)) {
       return NextResponse.json(
-        { error: `Invalid locale: "${rawLocale}"` },
+        { error: `Unsupported locale: ${rawLocale}` },
         { status: 400 },
       );
     }

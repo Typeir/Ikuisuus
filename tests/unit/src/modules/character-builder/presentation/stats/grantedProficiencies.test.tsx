@@ -3,7 +3,7 @@
  * @description Verifies the strip groups feature/feat grants by category and
  * renders nothing when there are none.
  *
- * @module tests/unit/src/modules/character-builder/presentation/stats/grantedProficiencies
+ * @module tests/unit/src/modules/character-builder/presentation/stats/grantedProficiencies.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

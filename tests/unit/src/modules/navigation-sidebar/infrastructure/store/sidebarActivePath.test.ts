@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for SidebarActivePathStore
- * @module tests/unit/modules/navigation-sidebar/infrastructure/store/sidebarActivePath.test.ts
+ * @module tests/unit/src/modules/navigation-sidebar/infrastructure/store/sidebarActivePath.test
  */
 
 import SidebarActivePathStore from '@/modules/navigation-sidebar/infrastructure/store/sidebarActivePath';

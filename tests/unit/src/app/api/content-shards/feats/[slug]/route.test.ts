@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for /api/content-shards/feats/[slug].
  *
- * @module tests/unit/app/api/content-shards/feats/route
+ * @module tests/unit/src/app/api/content-shards/feats/[slug]/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -25,8 +25,17 @@ vi.mock('@/lib/utils/contentShardResolver', () => ({
 
 vi.mock('@/lib/logging/logger', () => ({
   logger: {
-    child: () => ({ error: vi.fn(), debug: vi.fn(), message: vi.fn() }),
+    child: () => ({
+      error: vi.fn(),
+      warning: vi.fn(),
+      debug: vi.fn(),
+      message: vi.fn(),
+    }),
   },
+}));
+
+vi.mock('@/app/api/content-shards/keywordShards', () => ({
+  keywordShardsFor: vi.fn().mockResolvedValue([]),
 }));
 
 let route: typeof import('@/app/api/content-shards/feats/[slug]/route');
@@ -72,7 +81,11 @@ describe('/api/content-shards/feats/[slug]', () => {
       makeContext('tough'),
     );
     const data = await response.json();
-    expect(data).toEqual({ shardType: 'feat', shards: { main: 'Body' } });
+    expect(data).toEqual({
+      shardType: 'feat',
+      shards: { main: 'Body' },
+      keywordShards: [],
+    });
   });
 
   it('returns 404 when the feat is missing', async () => {

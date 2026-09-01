@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Combatant Main Stats component
- * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/combatantMainStats.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/combatantMainStats.test
  * @description Validates CombatantMainStats component rendering and interactions.
  * Tests HP display, AC, ability scores, initiative, and slain checkbox.
  * All numeric fields (HP Max, AC, stats, initiative) are now editable with keyboard support.

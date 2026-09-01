@@ -3,7 +3,7 @@
  * @description Binds CelestialLabel DOM elements to the ProjectionBridge, applying
  * position, visibility, and scale transforms each frame without React re-renders.
  *
- * @module worldSim/overlay/OverlayContainer
+ * @module modules/world-sim/presentation/overlay/OverlayContainer/OverlayContainer
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

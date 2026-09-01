@@ -3,7 +3,7 @@
  * @description Verifies the {@link CONTENT_TYPE_META} registry is exhaustive over
  * {@link SearchContentType} and that every entry is well-formed.
  *
- * @module tests/unit/modules/search/domain/contentTypes
+ * @module tests/unit/src/modules/search/domain/contentTypes.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

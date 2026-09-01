@@ -11,7 +11,7 @@
 import createMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { LIBRARY_SEGMENT, MAIN_INDEX_SLUG } from './lib/enums/constants';
+import { LIBRARY_SEGMENT, MAIN_INDEX_SLUG } from './lib/constants/content';
 import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);

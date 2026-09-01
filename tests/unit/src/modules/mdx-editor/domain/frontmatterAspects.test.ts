@@ -2,7 +2,7 @@
  * @fileoverview Frontmatter Aspects Tests
  * @description Read/write of the `aspects:` list in YAML frontmatter.
  *
- * @module tests/unit/src/modules/mdx-editor/domain/frontmatterAspects
+ * @module tests/unit/src/modules/mdx-editor/domain/frontmatterAspects.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

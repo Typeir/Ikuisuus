@@ -5,7 +5,7 @@
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * @module src/lib/types/encounterPlanner
+ * @module src/modules/encounter-planner/domain/encounters/encounter.types
  */
 
 import type { HeroicAwakeningState } from '../combat/inProgressCombat.types';

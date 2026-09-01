@@ -3,7 +3,7 @@
  * @description Every sample must parse through the real metadata dispatcher to
  * its intended kind — "perfectly formatted" is enforced here, not by eye.
  *
- * @module tests/unit/src/modules/mdx-editor/domain/sampleTemplates
+ * @module tests/unit/src/modules/mdx-editor/domain/sampleTemplates.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

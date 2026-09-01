@@ -2,7 +2,7 @@
  * @fileoverview AdaptivePerformanceController Unit Tests
  * @description Tests frame-timing smoothing, quality-level transitions, and quality profile values.
  *
- * @module tests/unit/worldSim/optimization/AdaptivePerformanceController
+ * @module tests/unit/src/modules/world-sim/application/services/AdaptivePerformanceController.test
  */
 
 import { AdaptivePerformanceController } from '@/modules/world-sim/application/services/AdaptivePerformanceController';

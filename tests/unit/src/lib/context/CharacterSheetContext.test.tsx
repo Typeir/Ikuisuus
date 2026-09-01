@@ -1,6 +1,6 @@
 /**
  * @fileoverview Smoke tests for CharacterSheetContext
- * @module tests/unit/src/lib/context/CharacterSheetContext
+ * @module tests/unit/src/lib/context/CharacterSheetContext.test
  */
 
 import { CharacterSheetProvider } from '@/lib/context/CharacterSheetContext';

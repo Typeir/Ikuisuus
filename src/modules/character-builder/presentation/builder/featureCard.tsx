@@ -4,7 +4,7 @@
  * toggle button (select/deselect), an optional open-source button that focuses
  * the shard for the detail panel, an expand chevron, and an optional badge.
  *
- * @module lib/components/characterSheet/builder/featureCard
+ * @module modules/character-builder/presentation/builder/featureCard
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -15,7 +15,7 @@
 import { ChevronRight, Minus, SquareArrowOutUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import styles from '../CharacterSheet/characterSheetWidgets.module.scss';
-import type { ContentShardType } from '../shards/contentShardPanel';
+import type { ContentShardType } from '@/lib/types/api';
 import expandStyles from './boonExpand.module.scss';
 import { ContentExpandBody } from './contentExpandBody';
 import { displayAspects } from '@/modules/library/domain/aspects';

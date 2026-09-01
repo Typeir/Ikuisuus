@@ -10,6 +10,8 @@
  * @since 8.0.0
  */
 
+import { CONTENT_SUBDIRS } from '@/lib/constants/contentPaths';
+
 /**
  * Union of all searchable content types (10 groups).
  *
@@ -58,61 +60,61 @@ export const CONTENT_TYPE_META: Record<SearchContentType, ContentTypeMeta> = {
     label: 'Monsters',
     icon: 'Skull',
     colorTokenKey: '--search-type-monster',
-    urlSegment: 'monsters',
+    urlSegment: CONTENT_SUBDIRS.monsters,
   },
   heirlooms: {
     label: 'Heirlooms',
     icon: 'Gem',
     colorTokenKey: '--search-type-heirloom',
-    urlSegment: 'items/heirlooms',
+    urlSegment: CONTENT_SUBDIRS.heirlooms,
   },
   spells: {
     label: 'Spells',
     icon: 'Sparkles',
     colorTokenKey: '--search-type-spell',
-    urlSegment: 'spells',
+    urlSegment: CONTENT_SUBDIRS.spells,
   },
   trinkets: {
     label: 'Trinkets',
     icon: 'FlaskConical',
     colorTokenKey: '--search-type-trinket',
-    urlSegment: 'items/trinkets',
+    urlSegment: CONTENT_SUBDIRS.trinkets,
   },
   bloodlines: {
     label: 'Bloodlines',
     icon: 'Droplet',
     colorTokenKey: '--search-type-bloodline',
-    urlSegment: 'character-creation/bloodlines',
+    urlSegment: CONTENT_SUBDIRS.bloodlines,
   },
   vocations: {
     label: 'Vocations',
     icon: 'Swords',
     colorTokenKey: '--search-type-vocation',
-    urlSegment: 'character-creation/vocations',
+    urlSegment: CONTENT_SUBDIRS.vocations,
   },
   specializations: {
     label: 'Specializations',
     icon: 'Star',
     colorTokenKey: '--search-type-specialization',
-    urlSegment: 'character-creation/vocations',
+    urlSegment: CONTENT_SUBDIRS.specializations,
   },
   feats: {
     label: 'Feats',
     icon: 'Medal',
     colorTokenKey: '--search-type-feat',
-    urlSegment: 'character-creation/feats',
+    urlSegment: CONTENT_SUBDIRS.feats,
   },
   world: {
     label: 'World & Lore',
     icon: 'ScrollText',
     colorTokenKey: '--search-type-world',
-    urlSegment: 'world',
+    urlSegment: CONTENT_SUBDIRS.world,
   },
   rules: {
     label: 'Rules',
     icon: 'BookOpen',
     colorTokenKey: '--search-type-rule',
-    urlSegment: 'rules',
+    urlSegment: CONTENT_SUBDIRS.rules,
   },
 };
 
@@ -122,9 +124,7 @@ export const CONTENT_TYPE_META: Record<SearchContentType, ContentTypeMeta> = {
  * @type {Record<SearchContentType, string>}
  */
 export const CONTENT_SUBDIR: Record<SearchContentType, string> =
-  Object.fromEntries(
-    Object.entries(CONTENT_TYPE_META).map(([k, v]) => [k, v.urlSegment]),
-  ) as Record<SearchContentType, string>;
+  CONTENT_SUBDIRS;
 
 /**
  * CSS `var()` expression for a content type's accent color, resolved through

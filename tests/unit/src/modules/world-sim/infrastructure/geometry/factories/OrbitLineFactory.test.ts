@@ -3,7 +3,7 @@
  * @description Tests createOrbitRing and createAllOrbitLines for correct geometry,
  * material, naming, and parent-relative parenting.
  *
- * @module tests/unit/worldSim/celestials/OrbitLineFactory
+ * @module tests/unit/src/modules/world-sim/infrastructure/geometry/factories/OrbitLineFactory.test
  */
 
 import {

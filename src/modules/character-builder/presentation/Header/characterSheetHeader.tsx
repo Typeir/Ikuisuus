@@ -4,7 +4,7 @@
  * (editable in edit mode), level/XP meta, `<VocationSelector>` selectors only,
  * a BP counter, and edit/save/cancel buttons.
  *
- * @module lib/components/characterSheet/characterSheetHeader
+ * @module modules/character-builder/presentation/Header/characterSheetHeader
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

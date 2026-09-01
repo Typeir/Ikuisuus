@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * @fileoverview Post-commit hook that warns when the other repo is dirty.
- * @module multirepo/validate-sync
+ * @module scripts/multirepo/validate-sync
  */
 
 import { spawnSync } from 'child_process';

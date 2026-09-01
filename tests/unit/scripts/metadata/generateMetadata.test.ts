@@ -1,6 +1,6 @@
 /**
  * @fileoverview Contract tests for generateMetadata script metadata compliance.
- * @module tests/unit/scripts/metadata/generateMetadata
+ * @module tests/unit/scripts/metadata/generateMetadata.test
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

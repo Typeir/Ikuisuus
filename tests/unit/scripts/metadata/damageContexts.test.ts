@@ -3,7 +3,7 @@
  * @description Damage-type words are English words; a bare word is not
  * evidence of damage. Matching requires surrounding context.
  *
- * @module tests/unit/scripts/metadata/damageContexts
+ * @module tests/unit/scripts/metadata/damageContexts.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-05

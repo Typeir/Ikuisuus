@@ -5,7 +5,7 @@
  * heading and carries the enclosing element's closing tag with it, so the
  * extracted source no longer compiles.
  *
- * @module tests/unit/src/lib/utils/contentShardResolverNesting
+ * @module tests/unit/src/lib/utils/contentShardResolverNesting.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

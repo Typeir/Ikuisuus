@@ -6,7 +6,7 @@
  * selectors match both; `leafFade` is the one addition, fading each row in as
  * it scrolls into the virtual window.
  *
- * @module lib/components/sidebar/SidebarLeafRow
+ * @module modules/navigation-sidebar/presentation/components/SidebarLeafRow
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

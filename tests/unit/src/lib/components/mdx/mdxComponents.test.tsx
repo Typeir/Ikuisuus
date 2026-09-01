@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for MDX components registry
- * @module tests/unit/src/lib/components/mdx/mdxComponents.test.ts
+ * @module tests/unit/src/lib/components/mdx/mdxComponents.test
  */
 
 import { describe, it, expect } from 'vitest';

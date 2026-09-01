@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for PlayModeLifecycle event dispatcher.
- * @module tests/unit/src/lib/components/encounterPlanner/playMode/playModeLifecycle.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/playMode/playModeLifecycle.test
  * @description Verifies subscription, unsubscription, event emission, and clear behavior.
  *
  * @version 1.0.0

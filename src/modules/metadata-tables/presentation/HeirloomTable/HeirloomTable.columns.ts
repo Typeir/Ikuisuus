@@ -12,6 +12,7 @@ import type {
 } from '@/lib/components/mdx/metadataTables/metadataTable';
 import { compareByOrder } from '@/modules/metadata-tables/domain/comparators';
 import { RARITY_SORT_ORDER } from '@/modules/metadata-tables/domain/constants';
+import { capitalize } from '@/modules/metadata-tables/domain/format';
 
 /**
  * Builds localized column config for HeirloomTable.
@@ -35,10 +36,7 @@ export function buildHeirloomColumns(
       key: 'rarity',
       label: tColumns('rarity'),
       getValue: (row: MetadataRow) => row.rarity,
-      render: (value: unknown) => {
-        const str = String(value);
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-      },
+      render: (value: unknown) => capitalize(String(value)),
       compareValues: (a, b) => compareByOrder(a, b, RARITY_SORT_ORDER),
       filterSortOrder: RARITY_SORT_ORDER,
       sortable: true,
@@ -51,8 +49,7 @@ export function buildHeirloomColumns(
       getValue: (row: MetadataRow) => row.itemType,
       render: (value: unknown) => {
         if (!value) return '—';
-        const str = String(value);
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        return capitalize(String(value));
       },
       sortable: true,
       filterable: true,
@@ -64,8 +61,7 @@ export function buildHeirloomColumns(
       getValue: (row: MetadataRow) => row.weaponType || '—',
       render: (value: unknown) => {
         if (!value || value === '—') return '—';
-        const str = String(value);
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        return capitalize(String(value));
       },
       sortable: true,
       filterable: true,

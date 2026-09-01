@@ -3,7 +3,7 @@
  * @description Thin row rendering for imported party members in Play Mode.
  * Displays only name, initiative input, and slain toggle.
  *
- * @module partyMemberRow
+ * @module modules/encounter-planner/presentation/combatantRow/partyMemberRow
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

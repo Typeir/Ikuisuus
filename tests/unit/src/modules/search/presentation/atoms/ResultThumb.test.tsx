@@ -1,6 +1,6 @@
 /**
  * @fileoverview ResultThumb Atom Unit Tests
- * @module tests/unit/src/modules/search/presentation/atoms/ResultThumb
+ * @module tests/unit/src/modules/search/presentation/atoms/ResultThumb.test
  */
 
 import { ResultThumb } from '@/modules/search/presentation/atoms/ResultThumb';

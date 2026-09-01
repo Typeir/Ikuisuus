@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for Play Mode Components Barrel Export
- * @module tests/unit/src/lib/components/encounterPlanner/playMode/index
+ * @module tests/unit/src/modules/encounter-planner/presentation/playMode/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

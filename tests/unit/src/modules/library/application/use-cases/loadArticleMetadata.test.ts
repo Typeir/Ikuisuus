@@ -2,7 +2,7 @@
  * @fileoverview Article Metadata Loader Tests
  * @description Tests `loadArticleMetadata` and `aspectIndexOf`.
  *
- * @module tests/unit/src/modules/library/application/use-cases/loadArticleMetadata
+ * @module tests/unit/src/modules/library/application/use-cases/loadArticleMetadata.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-04

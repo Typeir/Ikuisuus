@@ -2,7 +2,7 @@
  * @fileoverview sectionizeArticles Tests
  * @description Anchor registry and entry helpers behind rehypeSectionize.
  *
- * @module tests/unit/src/modules/library/infrastructure/compile/sectionizeArticles
+ * @module tests/unit/src/modules/library/infrastructure/compile/sectionizeArticles.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

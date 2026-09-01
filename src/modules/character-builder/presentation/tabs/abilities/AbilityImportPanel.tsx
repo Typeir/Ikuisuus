@@ -6,7 +6,7 @@
  * buttons (`onRowSelect`) that import the item as a `CharacterAbility` through
  * the abilities context.
  *
- * @module lib/components/characterSheet/tabs/abilities/AbilityImportPanel
+ * @module modules/character-builder/presentation/tabs/abilities/AbilityImportPanel
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

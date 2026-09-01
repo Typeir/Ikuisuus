@@ -3,7 +3,7 @@
  * @description Verifies adaptive quality propagation to celestial renderers
  * and consistent per-frame update scheduling.
  *
- * @module tests/unit/worldSim/optimization/WorldSimMediator.performance
+ * @module tests/unit/src/modules/world-sim/application/mediator/WorldSimMediator.performance.test
  */
 
 import { WorldSimMediator } from '@/modules/world-sim/application/mediator/WorldSimMediator';

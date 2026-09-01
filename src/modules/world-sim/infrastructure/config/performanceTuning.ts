@@ -3,7 +3,7 @@
  * @description FPS thresholds, frame-time smoothing, and hysteresis windows
  * consumed by `AdaptivePerformanceController`.
  *
- * @module worldSim/config/performanceTuning
+ * @module modules/world-sim/infrastructure/config/performanceTuning
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

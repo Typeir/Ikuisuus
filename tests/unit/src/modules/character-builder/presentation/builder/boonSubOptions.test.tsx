@@ -4,7 +4,7 @@
  * checkbox by mode, cost/effect display, onChange wiring, readOnly disabling,
  * and dice-shortcode stripping.
  *
- * @module tests/unit/src/modules/character-builder/presentation/builder/boonSubOptions
+ * @module tests/unit/src/modules/character-builder/presentation/builder/boonSubOptions.test
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0

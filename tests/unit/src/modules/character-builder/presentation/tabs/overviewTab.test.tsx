@@ -2,7 +2,7 @@
  * @fileoverview OverviewTab Tests
  * @description Smoke test that the overview tab renders for an empty character.
  *
- * @module tests/unit/lib/components/characterSheet/tabs/overviewTab
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/overviewTab.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

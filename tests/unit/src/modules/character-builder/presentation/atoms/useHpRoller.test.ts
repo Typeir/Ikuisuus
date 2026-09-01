@@ -4,7 +4,7 @@
  * a die does not commit an unadded die but does re-commit an added one; adding
  * requires a value; set-all values every die; clear-all removes them.
  *
- * @module tests/unit/src/modules/character-builder/presentation/atoms/useHpRoller
+ * @module tests/unit/src/modules/character-builder/presentation/atoms/useHpRoller.test
  * @version 2.0.0
  * @author Typeir
  * @since 8.0.0

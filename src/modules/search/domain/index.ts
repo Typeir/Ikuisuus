@@ -1,6 +1,6 @@
 /**
  * @fileoverview search domain barrel
- * @module modules/search/domain
+ * @module modules/search/domain/index
  * @description Re-exports the search domain contracts and content-type taxonomy.
  *
  * @author Typeir
@@ -14,13 +14,11 @@ export {
     SEARCH_CONTENT_TYPES,
     typeColorVar
 } from './contentTypes';
-export { localizeLink, SUPPORTED_LOCALES } from './localizeLink';
+export { localizeLink } from './localizeLink';
 export type { ContentTypeMeta, SearchContentType } from './contentTypes';
 export type {
     SearchFacet,
     SearchFacetValue,
-    SearchFilter,
-    SearchQuery,
     SearchRecord,
     SearchResponse,
     SearchResult

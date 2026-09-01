@@ -13,6 +13,7 @@
 
 import type { HeirloomMetadata } from '@/lib/db/content/schemas/heirloomMetadata';
 import { fetcher } from '@/lib/fetch/fetcher';
+import { heirloomsKey } from '@/lib/fetch/swrKeys';
 import useSWR, { type KeyedMutator } from 'swr';
 
 /**
@@ -56,7 +57,7 @@ export function useHeirloomsForImport({
   enabled = true,
 }: UseHeirloomsForImportOptions): UseHeirloomsForImportResult {
   const { data, isLoading, error, mutate } = useSWR<HeirloomMetadata[], Error>(
-    enabled ? ['heirlooms-import', locale] : null,
+    heirloomsKey(locale, enabled),
     () => fetcher<HeirloomMetadata[]>(`/api/heirlooms?locale=${locale}`),
   );
 

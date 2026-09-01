@@ -6,7 +6,7 @@
  * Renders the shard heading, category badge, BP cost (if boon), level (if feature),
  * and collapsible body text.
  *
- * @module lib/components/characterSheet/shardDisplay
+ * @module modules/character-builder/presentation/shards/shardDisplay
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -17,7 +17,7 @@
 import type { CharacterShard } from '@/lib/types/character';
 import { shardToPreview } from '@/modules/character-builder/lib/utils/shardToPreview';
 import { ContentExpandBody } from '@/modules/character-builder/presentation/builder/contentExpandBody';
-import type { ContentShardType } from '@/modules/character-builder/presentation/shards/contentShardPanel';
+import type { ContentShardType } from '@/lib/types/api';
 import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';

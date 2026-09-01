@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the /api/feats endpoint.
  *
- * @module tests/unit/app/api/feats/route
+ * @module tests/unit/src/app/api/feats/route.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

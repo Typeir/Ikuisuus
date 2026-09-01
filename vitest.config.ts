@@ -308,7 +308,7 @@ export default defineConfig({
           name: 'unit:other',
           include: [
             'tests/unit/src/lib/types/**/*.test.{ts,tsx}',
-            'tests/unit/src/lib/enums/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/constants/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/context/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/reducers/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/services/**/*.test.{ts,tsx}',

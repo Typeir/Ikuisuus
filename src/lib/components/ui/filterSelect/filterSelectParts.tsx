@@ -2,7 +2,7 @@
  * @fileoverview Filter Select Parts
  * @description Option row renderer and mobile bottom-sheet modal for FilterSelect.
  *
- * @module filterSelectParts
+ * @module lib/components/ui/filterSelect/filterSelectParts
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Gate-coverage unit test for CompileOptions types.
- * @module tests/unit/src/modules/library/domain/compileOptions
+ * @module tests/unit/src/modules/library/domain/compileOptions.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

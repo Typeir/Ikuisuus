@@ -17,6 +17,7 @@
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import { getContentFolder } from '@/lib/utils/getContentFolder';
 import fs from 'fs';
 import path from 'path';
 
@@ -24,7 +25,7 @@ import { hasFlag } from '../core/cliArgs';
 
 const log = createLogger({ script: 'updateContentLinks' });
 
-const CONTENT_ROOT = path.resolve('src', 'content', 'en');
+const CONTENT_ROOT = getContentFolder('en');
 const DRY_RUN = hasFlag('dry');
 
 /** URL path prefix for the library route */

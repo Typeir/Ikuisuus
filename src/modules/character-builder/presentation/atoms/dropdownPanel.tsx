@@ -5,7 +5,7 @@
  * {@link https://react.dev/reference/react-dom/createPortal createPortal} at
  * `document.body`. Positioning derived from the trigger's bounding rect, applied
  * as a transform by {@link useAnchoredPosition}.
- * @module lib/components/characterSheet/atoms/dropdownPanel
+ * @module modules/character-builder/presentation/atoms/dropdownPanel
  * @version 1.0.0
  * @author Typeir
  * @since 6.0.0

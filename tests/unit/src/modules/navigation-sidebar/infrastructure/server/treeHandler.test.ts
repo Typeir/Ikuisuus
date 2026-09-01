@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for treeHandler orchestrator
- * @module tests/unit/src/modules/navigation-sidebar/infrastructure/server/treeHandler
+ * @module tests/unit/src/modules/navigation-sidebar/infrastructure/server/treeHandler.test
  */
 
 import {

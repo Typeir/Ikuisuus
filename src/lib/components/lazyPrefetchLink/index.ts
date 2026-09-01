@@ -1,6 +1,6 @@
 /**
  * @fileoverview Barrel export for LazyPrefetchLink component.
- * @module lib/components/lazyPrefetchLink
+ * @module lib/components/lazyPrefetchLink/index
  * @author Typeir
  * @version 1.0.0
  * @since 2026-07-09

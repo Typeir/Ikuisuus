@@ -4,7 +4,7 @@
  * separator-wrapped and whitespace-normalised. Falls back to an FNV-1a32 hash of the
  * raw content when no metadata record exists for the slug path.
  *
- * @module lib/machineText
+ * @module modules/library/presentation/components/utils/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

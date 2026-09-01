@@ -1,12 +1,14 @@
 /**
  * @fileoverview Pure utility functions shared across the encounter-planner module.
- * No external dependencies.
+ * Depends on the shared dice-rolling primitive.
  *
  * @module encounter-planner/domain/shared/utils
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  */
+
+import { rollDie } from '@/lib/utils/diceUtils';
 
 /**
  * Generate a unique ID for encounters or creatures.
@@ -49,6 +51,17 @@ export const calculateInitiativeMod = (dex: number): number => {
  * // Possible results: 4-23
  */
 export const rollInitiative = (initiativeMod: number): number => {
-  const d20 = Math.floor(Math.random() * 20) + 1;
+  const d20 = rollDie(20);
   return d20 + initiativeMod;
 };
+
+/**
+ * Slugify an affix name for use in URLs or keys.
+ *
+ * @function affixSlug
+ * @param {string} name - Affix display name
+ * @returns {string} Lowercase hyphen-separated slug
+ */
+export function affixSlug(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, '-');
+}

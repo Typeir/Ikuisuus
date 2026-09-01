@@ -4,7 +4,7 @@
  * storage abstraction (cookie pointer ref strategy for large-payload arrays).
  * Follows the same pattern as encounterStorage.ts for consistency.
  *
- * @module partyStorage
+ * @module modules/encounter-planner/infrastructure/persistence/partyRepository
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0

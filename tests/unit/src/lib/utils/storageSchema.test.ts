@@ -3,7 +3,7 @@
  * @description Tests that ensureStorageSchema drops stale or unversioned
  * storage, leaves current-version storage alone, and runs once per page load.
  *
- * @module tests/unit/src/lib/utils/storageSchema
+ * @module tests/unit/src/lib/utils/storageSchema.test
  * @version 1.0.0
  * @author Typeir
  * @since 10.0.0

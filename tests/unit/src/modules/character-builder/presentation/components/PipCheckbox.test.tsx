@@ -4,7 +4,7 @@
  * accessible name, reflects the checked state, and calls `onChange` with the
  * negated value on activation.
  *
- * @module tests/unit/src/modules/character-builder/presentation/components/PipCheckbox
+ * @module tests/unit/src/modules/character-builder/presentation/components/PipCheckbox.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

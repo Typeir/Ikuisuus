@@ -2,7 +2,7 @@
  * @fileoverview Radio (choose-one) or checkbox (pick-any) group for a variable-cost
  * bloodline boon's sub-options.
  *
- * @module lib/components/characterSheet/builder/boonSubOptions
+ * @module modules/character-builder/presentation/builder/boonSubOptions
  * @version 1.0.0
  * @author Typeir
  * @since 7.0.0

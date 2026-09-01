@@ -3,7 +3,7 @@
  * @description Verifies shortcode resolution + inline-markdown stripping +
  * whitespace collapse, and word-count truncation with an ellipsis.
  *
- * @module tests/unit/src/lib/utils/plainSummary
+ * @module tests/unit/src/lib/utils/plainSummary.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

@@ -4,7 +4,7 @@
  * adding, editing, and removing individual attacks. Each row shows name,
  * to-hit bonus, damage, and notes.
  *
- * @module lib/components/characterSheet/attacksTable
+ * @module modules/character-builder/presentation/stats/attacksTable
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  * @description Verifies the delegated listener routes library links in-frame
  * and opens everything else in a new window.
  *
- * @module tests/unit/src/lib/embed/EmbedLinkBridge
+ * @module tests/unit/src/lib/embed/EmbedLinkBridge.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

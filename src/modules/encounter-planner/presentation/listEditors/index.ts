@@ -2,7 +2,7 @@
  * @fileoverview List Editors Exports
  * @description Barrel export re-exporting all list editor components from one module.
  *
- * @module encounterPlanner/listEditors
+ * @module modules/encounter-planner/presentation/listEditors/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

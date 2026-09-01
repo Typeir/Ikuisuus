@@ -4,7 +4,7 @@
  * merges them into an in-progress combat. Handles replace-on-import by removing
  * existing party members before adding new ones.
  *
- * @module partyImporter
+ * @module modules/encounter-planner/application/services/partyImporter.service
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

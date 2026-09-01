@@ -1,7 +1,7 @@
 /**
  * @fileoverview Parsing functions for extracting structured data from MDX content.
  * Used by metadata generators for monsters, heirlooms, spells, and trinkets.
- * @module lib/metadata/parsingUtils
+ * @module scripts/metadata/parsingUtils
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

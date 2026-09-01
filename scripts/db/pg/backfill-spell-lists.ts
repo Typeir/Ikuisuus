@@ -7,7 +7,7 @@
  * Safe to run multiple times: deletes existing spell_lists for each vocation link
  * before re-inserting (no unique constraint exists on the table).
  *
- * @module backfill-spell-lists
+ * @module scripts/db/pg/backfill-spell-lists
  * @version 1.0.0
  * @since 1.0.0
  *

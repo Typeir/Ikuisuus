@@ -2,7 +2,7 @@
  * @fileoverview Encounter Planner Component Exports
  * @description Barrel export re-exporting encounter planner components.
  *
- * @module encounterPlanner/index
+ * @module modules/encounter-planner/presentation/EncounterPlanner/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

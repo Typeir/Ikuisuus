@@ -15,6 +15,7 @@ import {
     compareChallengeRating,
 } from '@/modules/metadata-tables/domain/comparators';
 import { SIZE_SORT_ORDER } from '@/modules/metadata-tables/domain/constants';
+import { capitalize } from '@/modules/metadata-tables/domain/format';
 
 /**
  * Monster metadata row used by monster table columns.
@@ -69,7 +70,7 @@ export function buildMonsterColumns(
       render: (value: unknown) => {
         if (!value) return '—';
         const str = String(value);
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        return capitalize(str);
       },
       compareValues: (a, b) => compareByOrder(a, b, SIZE_SORT_ORDER),
       sortable: true,
@@ -83,7 +84,7 @@ export function buildMonsterColumns(
       render: (value: unknown) => {
         if (!value) return '—';
         const str = String(value);
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        return capitalize(str);
       },
       sortable: true,
       filterable: true,
@@ -135,10 +136,7 @@ export function buildMonsterColumns(
         const str = String(value);
         return str
           .split(' ')
-          .map(
-            (word) =>
-              word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
-          )
+          .map((word) => capitalize(word))
           .join(' ');
       },
       sortable: true,

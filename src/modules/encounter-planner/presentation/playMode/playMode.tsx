@@ -2,7 +2,7 @@
  * @fileoverview Turn tracker and combat runner for in-progress encounters.
  * Displays combatants in initiative order with runtime editing and auto-scroll to active combatant.
  *
- * @module playMode
+ * @module modules/encounter-planner/presentation/playMode/playMode
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

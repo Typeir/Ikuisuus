@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests that the ORM barrel re-exports all expected symbols.
  *
- * @module tests/unit/lib/db/orm/index
+ * @module tests/unit/src/lib/db/orm/index.test
  */
 
 import { describe, expect, it, vi } from 'vitest';

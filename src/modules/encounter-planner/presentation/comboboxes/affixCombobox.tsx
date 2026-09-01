@@ -4,7 +4,7 @@
  * Built on top of GenericCombobox for consistent behavior. Fetches affix data
  * from /api/affixes/index and filters out already-selected affixes.
  *
- * @module affixCombobox
+ * @module modules/encounter-planner/presentation/comboboxes/affixCombobox
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -20,6 +20,7 @@ import {
   type ParsedAspect,
 } from '@/modules/library/domain/aspects';
 import { IconButton } from '@/lib/components/ui/iconButton';
+import { useMounted } from '@/lib/hooks/useMounted';
 import { useLocale, useTranslations } from 'next-intl';
 import React, { useEffect, useRef, useState } from 'react';
 import { AspectPill } from './AspectPill';
@@ -56,11 +57,7 @@ const ExpandToggle: React.FC = () => {
   const t = useTranslations('aspects');
   const dispatch = usePersistentUiDispatchOptional();
   const { aspectExpanded } = usePersistentUiStateOptional();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   if (!dispatch) return null;
 

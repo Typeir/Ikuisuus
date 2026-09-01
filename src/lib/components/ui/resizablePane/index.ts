@@ -1,6 +1,6 @@
 /**
  * @fileoverview ResizablePane Component Exports
- * @module ui/resizablePane
+ * @module lib/components/ui/resizablePane/index
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0

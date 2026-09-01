@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for playModeTurnFlow
- * @module tests/unit/src/modules/encounter-planner/application/lifecycle/playModeTurnFlow
+ * @module tests/unit/src/modules/encounter-planner/application/lifecycle/playModeTurnFlow.test
  * @version 1.0.0
  * @author Typeir
  */

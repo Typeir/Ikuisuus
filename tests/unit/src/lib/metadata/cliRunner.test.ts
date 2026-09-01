@@ -4,7 +4,7 @@
  * @fileoverview Tests for the CLI runner that wraps generator main functions
  * with --persist flag handling.
  *
- * @module tests/unit/lib/metadata/cliRunner
+ * @module tests/unit/src/lib/metadata/cliRunner.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

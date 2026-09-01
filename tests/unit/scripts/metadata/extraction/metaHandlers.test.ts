@@ -1,7 +1,7 @@
 /**
  * Unit tests for the Meta Handler Registry.
  *
- * @module metaHandlers.test
+ * @module tests/unit/scripts/metadata/extraction/metaHandlers.test
  */
 
 import type { MonsterFeature } from '@/lib/types/feature';

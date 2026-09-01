@@ -2,7 +2,7 @@
  * @fileoverview Combobox Components Exports
  * @description Barrel export of all combobox components.
  *
- * @module encounterPlanner/comboboxes
+ * @module modules/encounter-planner/presentation/comboboxes/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

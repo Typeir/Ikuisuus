@@ -5,7 +5,7 @@
  * filtering. On toggle, fetches the boon's full body from
  * `/api/content-shards/bloodlines/[slug]`.
  *
- * @module lib/components/characterSheet/boonPicker
+ * @module modules/character-builder/presentation/builder/boonPicker
  * @version 1.2.0
  * @author Typeir
  * @since 1.0.0

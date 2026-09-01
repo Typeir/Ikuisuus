@@ -2,7 +2,7 @@
  * @fileoverview Text Utilities Unit Tests
  * @description Tests for pure text processing functions used by metadata generators.
  *
- * @module tests/unit/lib/metadata/textUtils
+ * @module tests/unit/src/lib/metadata/textUtils.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

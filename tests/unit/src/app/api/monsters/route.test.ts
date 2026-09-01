@@ -5,7 +5,7 @@
  * locale handling, repository integration, and error resilience by mocking the
  * monster repository module.
  *
- * @module tests/unit/app/api/monsters/route
+ * @module tests/unit/src/app/api/monsters/route.test
  * @version 3.0.0
  * @author Typeir
  * @since 1.0.0

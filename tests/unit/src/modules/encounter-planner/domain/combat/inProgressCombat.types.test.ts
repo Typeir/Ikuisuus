@@ -3,7 +3,7 @@
  * @description Validates structural conformance of the ConditionEntry,
  * CombatantMechanics, and related runtime combat interfaces.
  *
- * @module tests/unit/src/modules/encounter-planner/domain/combat/inProgressCombat.types
+ * @module tests/unit/src/modules/encounter-planner/domain/combat/inProgressCombat.types.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -3,7 +3,7 @@
  * @description Verifies renderers swap geometry on quality-level changes,
  * stay within segment budgets per tier, and hide meshes to cut draw calls.
  *
- * @module tests/unit/worldSim/optimization/GeometryLOD
+ * @module tests/unit/src/modules/world-sim/infrastructure/geometry/GeometryLOD.test
  */
 
 import { EverdarkRenderer } from '@/modules/world-sim/infrastructure/renderers/EverdarkRenderer';

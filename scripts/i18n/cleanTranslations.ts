@@ -4,7 +4,7 @@
  * @fileoverview Removes individual namespace translation files after merging.
  * Only keeps index.json files. Runs exclusively in Vercel environment.
  *
- * @module cleanTranslations
+ * @module scripts/i18n/cleanTranslations
  * @version 1.0.0
  * @since 1.0.0
  *

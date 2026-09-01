@@ -3,7 +3,7 @@
  * @description Token detection under the caret, lazy vocabulary, and pick
  * resolution.
  *
- * @module tests/unit/src/modules/search/presentation/SearchBar/useAspectSuggestions
+ * @module tests/unit/src/modules/search/presentation/SearchBar/useAspectSuggestions.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

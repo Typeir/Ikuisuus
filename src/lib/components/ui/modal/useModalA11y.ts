@@ -1,8 +1,8 @@
 /**
  * @fileoverview Modal accessibility hook
- * @description Shared focus-trap, focus-restore, and modal-stacking behaviour for
- * `Modal` and `MobileModal`.s
- * @module ui/modal/useModalA11y
+ * @description Shared focus-trap, focus-restore, and modal-stacking behaviour
+ * for `Modal` and `MobileModal`. Escape rides the shared dismissal stack.
+ * @module lib/components/ui/modal/useModalA11y
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0
@@ -10,7 +10,9 @@
 
 'use client';
 
-import { useEffect, useId, useRef, type RefObject } from 'react';
+import { useCallback, useEffect, useId, useRef, type RefObject } from 'react';
+
+import { useEscapeDismiss } from '@/lib/hooks/useEscapeDismiss';
 
 const FOCUSABLE_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -109,8 +111,9 @@ export interface ModalA11y {
 
 /**
  * Wires modal accessibility for a controlled modal: focus trap, initial focus,
- * focus restore to the trigger, top-of-stack Escape handling, reference-counted
- * body scroll-lock, and `inert` gating of lower modals.
+ * focus restore to the trigger, Escape dismissal through the shared surface
+ * stack, reference-counted body scroll-lock, and `inert` gating of lower
+ * modals.
  *
  * @function useModalA11y
  * @param {boolean} isOpen - Whether the modal is currently open
@@ -123,6 +126,9 @@ export function useModalA11y(isOpen: boolean, onClose: () => void): ModalA11y {
   const contentRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+
+  const dismissTop = useCallback(() => onCloseRef.current(), []);
+  useEscapeDismiss(isOpen, dismissTop);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -138,11 +144,6 @@ export function useModalA11y(isOpen: boolean, onClose: () => void): ModalA11y {
 
     const handleKeyDown = (event: globalThis.KeyboardEvent) => {
       if (!isTopModal(id)) return;
-      if (event.key === 'Escape') {
-        event.stopPropagation();
-        onCloseRef.current();
-        return;
-      }
       if (event.key !== 'Tab' || !contentRef.current) return;
       const focusable =
         contentRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);

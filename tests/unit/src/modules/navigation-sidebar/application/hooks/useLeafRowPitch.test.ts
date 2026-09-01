@@ -3,7 +3,7 @@
  * @description Covers the rem-to-px resolution of the virtualized row pitch
  * against the root font size, and the fallback when it cannot be measured.
  *
- * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useLeafRowPitch
+ * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useLeafRowPitch.test
  * @version 1.0.0
  * @author Typeir
  * @since 3.0.0

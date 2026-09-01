@@ -1,7 +1,7 @@
 /**
  * @fileoverview Sectionize helpers: anchor registry, text helpers, entry→article pass. Wraps feature entries in articles.
  *
- * @module sectionizeArticles
+ * @module modules/library/infrastructure/compile/sectionizeArticles
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

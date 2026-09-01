@@ -2,7 +2,7 @@
  * @fileoverview AspectFilterBar Tests
  * @description Pressable pills, toggle/clear callbacks and overflow collapse.
  *
- * @module tests/unit/src/modules/character-builder/presentation/aspects/aspectFilterBar
+ * @module tests/unit/src/modules/character-builder/presentation/aspects/aspectFilterBar.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

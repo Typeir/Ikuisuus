@@ -6,33 +6,29 @@
  * @since 6.0.0
  */
 
+import { fetcher } from '@/lib/fetch/fetcher';
 import { fetchSource } from '@/modules/library/infrastructure/content/fetchSource';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('@/lib/fetch/fetcher', () => ({
+  fetcher: vi.fn(),
+}));
+
+const mockedFetcher = vi.mocked(fetcher);
+
 describe('fetchSource', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    mockedFetcher.mockReset();
   });
 
   it('returns content when API responds successfully', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({ content: '# Demo' }),
-      }),
-    );
+    mockedFetcher.mockResolvedValue({ content: '# Demo' });
 
     await expect(fetchSource('spells/demo.mdx', 'en')).resolves.toBe('# Demo');
   });
 
   it('returns empty string on failed response', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: false,
-      }),
-    );
+    mockedFetcher.mockRejectedValue(new Error('request failed'));
 
     await expect(fetchSource('spells/demo.mdx', 'en')).resolves.toBe('');
   });

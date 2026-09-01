@@ -6,7 +6,7 @@
  * scripts to import React components that depend on CSS modules without
  * a bundler.
  *
- * @module scssShim
+ * @module scripts/utils/scssShim
  * @author Typeir
  * @version 1.2.0
  * @since 2.0.0

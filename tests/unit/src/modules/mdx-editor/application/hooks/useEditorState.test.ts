@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — useEditorState
  * @description Validates the editor state machine, initial values, and state transitions.
  *
- * @module tests/unit/lib/components/mdxEditor/useEditorState
+ * @module tests/unit/src/modules/mdx-editor/application/hooks/useEditorState.test
  */
 
 import { act, renderHook } from '@testing-library/react';

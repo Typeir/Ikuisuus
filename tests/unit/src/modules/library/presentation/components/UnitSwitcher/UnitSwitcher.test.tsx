@@ -4,7 +4,7 @@
  * measurement family, marks the stored system active, and dispatches a change
  * scoped to a single family.
  *
- * @module tests/unit/modules/library/presentation/components/UnitSwitcher
+ * @module tests/unit/src/modules/library/presentation/components/UnitSwitcher/UnitSwitcher.test
  * @version 2.0.0
  * @author Typeir
  * @since 2026-08-03

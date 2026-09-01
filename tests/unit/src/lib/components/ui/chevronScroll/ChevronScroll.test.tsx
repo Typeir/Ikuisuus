@@ -3,7 +3,7 @@
  * @description Verifies children render in a labelled tablist scroller with two
  * chevron buttons, and that both chevrons disable when the strip cannot scroll.
  *
- * @module tests/unit/src/lib/components/ui/chevronScroll/ChevronScroll
+ * @module tests/unit/src/lib/components/ui/chevronScroll/ChevronScroll.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

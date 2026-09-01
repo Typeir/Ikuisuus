@@ -3,7 +3,7 @@
  * @description Unit tests for the sidebar-footer character badge: avatar
  * rendering, picker dropdown, selection dispatch, and manage navigation.
  *
- * @module tests/unit/src/modules/character-builder/presentation/SelectedCharacter/selectedCharacterBadge
+ * @module tests/unit/src/modules/character-builder/presentation/SelectedCharacter/selectedCharacterBadge.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

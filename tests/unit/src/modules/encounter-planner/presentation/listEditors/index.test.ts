@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tests for List Editors Barrel Export
- * @module tests/unit/src/lib/components/encounterPlanner/listEditors/index
+ * @module tests/unit/src/modules/encounter-planner/presentation/listEditors/index.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

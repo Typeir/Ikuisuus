@@ -4,7 +4,7 @@
  * `FetchError` with correct fields on non-OK responses, and handles both
  * JSON-body and plain-text error bodies.
  *
- * @module tests/unit/lib/fetch/fetcher
+ * @module tests/unit/src/lib/fetch/fetcher.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

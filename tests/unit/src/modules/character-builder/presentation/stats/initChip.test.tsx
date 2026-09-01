@@ -2,7 +2,7 @@
  * @fileoverview InitChip Unit Tests
  * @description Smoke tests for the Initiative combat stat chip.
  *
- * @module tests/unit/character-builder/presentation/stats/initChip
+ * @module tests/unit/src/modules/character-builder/presentation/stats/initChip.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

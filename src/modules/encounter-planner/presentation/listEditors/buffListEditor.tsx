@@ -2,7 +2,7 @@
  * @fileoverview Buff list editor component.
  * @description Renders a text list of buffs with add/remove controls.
  *
- * @module buffListEditor
+ * @module modules/encounter-planner/presentation/listEditors/buffListEditor
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

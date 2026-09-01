@@ -4,7 +4,7 @@
  * Multiclassing supported via multiple {@link VocationEntryBlock} rows.
  * Metadata loads via {@link useVocationMetadata}; skeletons shown while loading.
  *
- * @module lib/components/characterSheet/vocationSelector
+ * @module modules/character-builder/presentation/builder/vocationSelector
  * @version 7.0.0
  * @author Typeir
  * @since 1.0.0

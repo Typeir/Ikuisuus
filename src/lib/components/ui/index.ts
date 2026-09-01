@@ -2,7 +2,7 @@
  * @fileoverview UI components.
  * @description Barrel export for UI primitives.
  *
- * @module ui
+ * @module lib/components/ui/index
  * @author Typeir
  * @version 1.0.0
  * @since 2.0.0
@@ -29,11 +29,7 @@ export { Tooltip, WithTooltip, withTooltip } from './tooltip';
 export type { TooltipPlacement, TooltipProps } from './tooltip';
 
 /** Tooltip primitives — hover lifecycle and anchoring, for custom surfaces */
-export {
-  useEscapeDismiss,
-  useTooltipAnchor,
-  useTooltipVisibility,
-} from './tooltip';
+export { useTooltipAnchor, useTooltipVisibility } from './tooltip';
 export type { TooltipAnchor, TooltipVisibility } from './tooltip';
 
 /** DetachableTooltip — hover tooltip that parks as a draggable panel on shift-leave */

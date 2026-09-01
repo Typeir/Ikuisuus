@@ -3,7 +3,7 @@
  * @description Smoke tests for the feats tab, plus the focused-shard state that
  * belongs to this tab rather than to the character.
  *
- * @module tests/unit/lib/components/characterSheet/tabs/featsTab
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/featsTab.test
  * @version 2.0.0
  * @author Typeir
  * @since 1.0.0

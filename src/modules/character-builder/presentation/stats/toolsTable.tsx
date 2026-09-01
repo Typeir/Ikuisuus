@@ -15,6 +15,7 @@ import type { JSX } from 'react';
 import type { CharacterTool, TierLevel } from '@/lib/types/character';
 import { higherTier } from '@/modules/character-builder/lib/utils/grants';
 import { computeToolBonus, updateItemTier } from '@/modules/character-builder/lib/utils/proficiencyUtils';
+import { formatModifier } from '@/lib/utils/formatModifier';
 import { useTranslations } from 'next-intl';
 import tbl from '@/styles/tables.module.scss';
 import profRowStyles from '../CharacterSheet/proficiencyRow.module.scss';
@@ -86,7 +87,7 @@ export function ToolsTable({
           const floor = grantFloors?.[tool.name] ?? 'none';
           const effectiveTier = higherTier(tool.tier, floor);
           const bonus = computeToolBonus(effectiveTier, tierBonus);
-          const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
+          const bonusStr = formatModifier(bonus);
           return (
             <tr
               key={`tool-${i}`}

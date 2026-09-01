@@ -8,7 +8,6 @@
 
 export { Tooltip, WithTooltip, withTooltip } from './tooltip';
 export type { TooltipProps, TooltipPlacement } from './tooltip';
-export { useEscapeDismiss } from './useEscapeDismiss';
 export { useTooltipAnchor, type TooltipAnchor } from './useTooltipAnchor';
 export {
   TOOLTIP_EXIT_DURATION,

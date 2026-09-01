@@ -3,7 +3,7 @@
  * @description Tests for the Markdown to HTML conversion utility using remark
  * with GitHub-flavored markdown support.
  *
- * @module tests/unit/lib/md/renderMarkdownToHtml
+ * @module tests/unit/src/lib/md/renderMarkdownToHtml.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

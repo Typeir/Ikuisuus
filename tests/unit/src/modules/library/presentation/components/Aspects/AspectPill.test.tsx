@@ -2,7 +2,7 @@
  * @fileoverview Unit Tests — AspectPill
  * @description Link, button, inert and removable renderings of a single pill.
  *
- * @module tests/unit/src/modules/library/presentation/components/Aspects/AspectPill
+ * @module tests/unit/src/modules/library/presentation/components/Aspects/AspectPill.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-27

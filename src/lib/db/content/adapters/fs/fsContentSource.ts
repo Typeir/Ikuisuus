@@ -12,7 +12,7 @@
 import { logger } from '@/lib/logging/logger';
 import fs from 'fs/promises';
 import path from 'path';
-import { resolveIndexFile } from '@/lib/enums/constants';
+import { resolveIndexFile } from '@/lib/constants/content';
 
 import type {
   ContentFetchResult,

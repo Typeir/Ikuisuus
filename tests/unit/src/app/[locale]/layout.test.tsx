@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for RootLayout Server Component
  * @description Tests for server-side layout rendering and locale validation
  *
- * @module tests/unit/app/[locale]/layout
+ * @module tests/unit/src/app/[locale]/layout.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

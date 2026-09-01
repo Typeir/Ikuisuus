@@ -4,7 +4,7 @@
  * instance owns its editing state and shares a cancel-pending ref to
  * coordinate blur with Escape.
  *
- * @module useEditableField
+ * @module modules/encounter-planner/presentation/combatantRow/utils/useEditableField
  * @version 1.0.0
  * @author Typeir
  * @since 4.1.0

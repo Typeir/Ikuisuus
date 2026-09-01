@@ -4,7 +4,7 @@
  * transitively import server-only modules. Walks the import graph and names
  * the first path that crosses a server-only module.
  *
- * @module tests/unit/src/modules/library/presentation/serverOnlyBoundaries
+ * @module tests/unit/src/modules/library/presentation/serverOnlyBoundaries.test
  * @version 1.0.0
  * @author Typeir
  * @since 2026-08-05

@@ -3,7 +3,7 @@
  * @description Tests the modifier and button combinations isPlainLeftClick
  * must reject.
  *
- * @module tests/unit/src/lib/utils/isPlainLeftClick
+ * @module tests/unit/src/lib/utils/isPlainLeftClick.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

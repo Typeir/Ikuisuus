@@ -1,6 +1,6 @@
 /**
  * @fileoverview `ik add` — Stage files in both repos.
- * @module multirepo/commands/add
+ * @module scripts/multirepo/commands/add
  */
 
 import { log, spinner } from '@clack/prompts';

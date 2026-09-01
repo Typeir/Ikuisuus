@@ -2,7 +2,7 @@
  * @fileoverview DropdownPanel atom unit tests.
  * @description Tests open/close toggle, click-outside and Escape-key close, badge, and panel role.
  *
- * @module tests/unit/lib/components/characterSheet/atoms/dropdownPanel
+ * @module tests/unit/src/modules/character-builder/presentation/atoms/dropdownPanel.test
  * @version 1.0.0
  * @author Typeir
  * @since 6.0.0

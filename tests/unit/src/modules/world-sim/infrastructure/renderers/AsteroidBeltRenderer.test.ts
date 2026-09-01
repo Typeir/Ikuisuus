@@ -2,7 +2,7 @@
  * @fileoverview AsteroidBeltRenderer Unit Tests
  * @description Tests particle belt creation, rotation behaviour, and disposal.
  *
- * @module tests/unit/worldSim/celestials/AsteroidBeltRenderer
+ * @module tests/unit/src/modules/world-sim/infrastructure/renderers/AsteroidBeltRenderer.test
  */
 
 import { AsteroidBeltRenderer } from '@/modules/world-sim/infrastructure/renderers/AsteroidBeltRenderer';

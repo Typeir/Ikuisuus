@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for Affix Combobox component
- * @module tests/unit/src/lib/components/encounterPlanner/comboboxes/affixCombobox.test
+ * @module tests/unit/src/modules/encounter-planner/presentation/comboboxes/affixCombobox.test
  * @description Validates AffixCombobox export and component signature.
  * 
  * @version 1.0.0

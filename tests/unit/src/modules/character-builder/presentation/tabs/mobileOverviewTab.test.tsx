@@ -3,7 +3,7 @@
  * @description Verifies the mobile overview tab renders without crashing
  * for an empty character sheet.
  *
- * @module tests/unit/src/modules/character-builder/presentation/tabs/mobileOverviewTab
+ * @module tests/unit/src/modules/character-builder/presentation/tabs/mobileOverviewTab.test
  * @version 1.0.0
  * @author Typeir
  * @since 8.0.0

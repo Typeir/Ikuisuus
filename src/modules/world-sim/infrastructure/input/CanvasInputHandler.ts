@@ -3,7 +3,7 @@
  * @description Translates `MouseEvent`s into `onBodyClick` and `onHoverChange`
  * callbacks.
  *
- * @module worldSim/input/CanvasInputHandler
+ * @module modules/world-sim/infrastructure/input/CanvasInputHandler
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

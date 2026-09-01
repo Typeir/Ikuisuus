@@ -3,7 +3,7 @@
  *
  * @fileoverview Tests for the SchemaMigration MikroORM entity class.
  *
- * @module tests/unit/lib/db/orm/entities/SchemaMigrationEntity
+ * @module tests/unit/src/lib/db/orm/entities/SchemaMigrationEntity.test
  */
 
 import { SchemaMigrationEntity } from '@/lib/db/orm/entities/SchemaMigrationEntity';

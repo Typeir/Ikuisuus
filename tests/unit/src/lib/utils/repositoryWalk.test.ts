@@ -1,6 +1,6 @@
 /**
  * @fileoverview Unit tests for repositoryWalk and repositoryShallowWalk.
- * @module tests/unit/src/lib/utils/repositoryWalk
+ * @module tests/unit/src/lib/utils/repositoryWalk.test
  * @author Typeir
  * @version 1.0.0
  * @since 6.0.0

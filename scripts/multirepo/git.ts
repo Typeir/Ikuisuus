@@ -3,7 +3,7 @@
  * `git` child processes, dirty-state checks, submodule validation, and
  * summary helpers. All functions operate on absolute repo paths.
  *
- * @module multirepo/git
+ * @module scripts/multirepo/git
  * @author Typeir
  * @version 1.0.0
  * @since 3.0.0

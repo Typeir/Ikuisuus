@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tests slain checkbox render and click behavior in CombatantRow.
  * @description Verifies the slain checkbox renders, responds to clicks, and reflects slain state.
- * @module tests/unit/src/lib/components/encounterPlanner/combatantRow/slainCheckboxBasic
+ * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/slainCheckboxBasic.test
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

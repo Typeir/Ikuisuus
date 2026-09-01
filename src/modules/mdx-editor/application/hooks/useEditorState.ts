@@ -3,7 +3,7 @@
  * @description Encapsulates the MDX editor state machine, content loading, and
  * submission logic.
  *
- * @module lib/components/mdxEditor/useEditorState
+ * @module modules/mdx-editor/application/hooks/useEditorState
  * @version 1.0.0
  * @author Typeir
  * @since 2.0.0

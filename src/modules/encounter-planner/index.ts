@@ -3,7 +3,7 @@
  * @description All external consumers MUST import from this path only.
  * Internal sub-paths are not part of the public API.
  *
- * @module encounter-planner
+ * @module modules/encounter-planner/index
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
