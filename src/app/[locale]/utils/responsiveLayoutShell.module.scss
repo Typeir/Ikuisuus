@@ -160,7 +160,7 @@ h1.title {
 
 .headerControls {
   position: absolute;
-  top: 0.75rem;
+  top: 1rem;
   right: -0.5rem;
   z-index: 2;
   display: flex;
@@ -185,8 +185,11 @@ h1.title {
   translate: 0 -0.5rem;
 }
 
+/* -1px: tightens the theme/settings pair; the hamburger's -3px cancels the
+   character slot's unshrunk width so both pairs read one px tighter. */
 .mobileTitleBar > button.headerIconSlot:nth-child(3) {
   translate: 0 0.5rem;
+  margin-left: -1px;
 }
 
 /* The character slot's offset goes on the badge's trigger wrap, not the slot:
@@ -199,6 +202,7 @@ h1.title {
 
 .mobileTitleBar > button.headerIconSlot:nth-child(6) {
   translate: 0 -0.5rem;
+  margin-left: -3px;
 }
 
 /* ── Embed Mode ──────────────────────────────────────────────── */
