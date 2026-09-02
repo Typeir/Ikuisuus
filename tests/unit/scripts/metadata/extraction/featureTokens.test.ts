@@ -13,16 +13,16 @@
  */
 
 import {
-    recognizeAction,
-    recognizeDamage,
-    recognizeDC,
-    recognizeDice,
-    recognizeDuration,
-    recognizeRange,
-    recognizeRecharge,
-    recognizeResource,
-    recognizeSave,
-    recognizeTemplate,
+  recognizeAction,
+  recognizeDamage,
+  recognizeDC,
+  recognizeDice,
+  recognizeDuration,
+  recognizeRange,
+  recognizeRecharge,
+  recognizeResource,
+  recognizeSave,
+  recognizeTemplate,
 } from '@scripts/metadata/extraction/featureTokens';
 import { describe, expect, it } from 'vitest';
 
@@ -90,7 +90,7 @@ describe('shared token recognizers', () => {
     });
 
     it('should parse formula DC', () => {
-      const result = recognizeDC('DC = 8 + Prof + CHA mod)');
+      const result = recognizeDC('DC 10 + Prof + CHA mod)');
       expect(result).toEqual({ formula: '8 + Prof + CHA mod' });
     });
 

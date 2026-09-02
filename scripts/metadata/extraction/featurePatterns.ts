@@ -35,7 +35,7 @@ export const DICE = {
 /**
  * Pre-compiled patterns for Difficulty Class and saving throw expressions.
  *
- * @property {RegExp} dcFormula - "DC = 8 + Prof + CHA mod"
+ * @property {RegExp} dcFormula - "DC 10 + Prof + CHA mod"
  * @property {RegExp} dcFlat - "DC 16"
  * @property {RegExp} savingThrow - "Wisdom saving throw" or "DEX save"
  * @property {RegExp} savingThrowWithDC - "DC 16 Wisdom saving throw"

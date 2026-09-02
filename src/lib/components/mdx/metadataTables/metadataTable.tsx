@@ -215,7 +215,15 @@ export default function MetadataTable({
       const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-  }, [filteredData, sortKey, sortDirection, ranks, searchTerm, slugOf, columns]);
+  }, [
+    filteredData,
+    sortKey,
+    sortDirection,
+    ranks,
+    searchTerm,
+    slugOf,
+    columns,
+  ]);
 
   /**
    * Pagination calculations.
@@ -423,7 +431,10 @@ export default function MetadataTable({
                 </th>
               ))}
               {rowAction && (
-                <th className={styles.rowActionHead} aria-label={rowAction.label} />
+                <th
+                  className={styles.rowActionHead}
+                  aria-label={rowAction.label}
+                />
               )}
             </tr>
           </thead>
