@@ -63,8 +63,13 @@ vi.mock('@/lib/components/ui', () => ({
   ),
 }));
 
+const searchMock = vi.hoisted(() => ({
+  ranks: null as ReadonlyMap<string, number> | null,
+  loading: false,
+}));
+
 vi.mock('@/modules/search/application/useScopedSearch', () => ({
-  useScopedSearch: () => ({ ranks: null, loading: false }),
+  useScopedSearch: () => searchMock,
 }));
 
 import type {
@@ -110,6 +115,8 @@ describe('MetadataTable', () => {
   beforeEach(() => {
     mockPush.mockReset();
     mockOpen.mockReset();
+    searchMock.ranks = null;
+    searchMock.loading = false;
     Object.defineProperty(window, 'open', { value: mockOpen, writable: true });
   });
 
@@ -141,6 +148,38 @@ describe('MetadataTable', () => {
     );
     const search = screen.getByPlaceholderText('Search by title...');
     fireEvent.change(search, { target: { value: 'Item 3' } });
+    expect(screen.getByText('Item 3')).toBeInTheDocument();
+    expect(screen.queryByText('Item 0')).not.toBeInTheDocument();
+  });
+
+  it('falls back to substring filtering when the index returns no ranks', () => {
+    searchMock.ranks = new Map();
+    const data = makeRows(5);
+    render(
+      <MetadataTable
+        data={data}
+        columns={baseColumns}
+        searchKeys={['title']}
+      />,
+    );
+    const search = screen.getByPlaceholderText('Search by title...');
+    fireEvent.change(search, { target: { value: 'Item 3' } });
+    expect(screen.getByText('Item 3')).toBeInTheDocument();
+    expect(screen.queryByText('Item 0')).not.toBeInTheDocument();
+  });
+
+  it('keeps only index-ranked rows when the index returns ranks', () => {
+    searchMock.ranks = new Map([['item-3', 0]]);
+    const data = makeRows(5);
+    render(
+      <MetadataTable
+        data={data}
+        columns={baseColumns}
+        searchKeys={['title']}
+      />,
+    );
+    const search = screen.getByPlaceholderText('Search by title...');
+    fireEvent.change(search, { target: { value: 'Item' } });
     expect(screen.getByText('Item 3')).toBeInTheDocument();
     expect(screen.queryByText('Item 0')).not.toBeInTheDocument();
   });
