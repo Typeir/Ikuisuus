@@ -115,8 +115,10 @@ async function seedLocale(orm: MikroORM, locale: string): Promise<void> {
   await em.transactional(async (tx) => {
     const counts: string[] = [];
     for (const [type, target] of Object.entries(SYNC_TARGETS)) {
+      const started = Date.now();
       const n = await seedContent(tx as EntityManager, locale, target);
       counts.push(`${type}=${n}`);
+      console.log(`  ⏳  ${locale}: ${type}=${n} (${Date.now() - started}ms)`);
     }
     console.log(`  ✅  ${locale}:  ${counts.join('  ')}`);
   });

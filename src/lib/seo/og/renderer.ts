@@ -12,6 +12,8 @@
  */
 
 import { Resvg } from '@resvg/resvg-js';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import React from 'react';
 import satori from 'satori';
 import sharp from 'sharp';
@@ -19,13 +21,9 @@ import type { OGTemplateProps } from './OGTemplate';
 import { OGTemplate } from './OGTemplate';
 import { OG_HEIGHT, OG_WIDTH } from './tokens';
 
-/** Google Fonts CSS API v2 endpoint for Inter Bold (weight 700). */
-const INTER_BOLD_CSS_URL =
-  'https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap';
-
-/** Google Fonts CSS API v2 endpoint for Crimson Text Italic (weight 400). */
-const CRIMSON_ITALIC_CSS_URL =
-  'https://fonts.googleapis.com/css2?family=Crimson+Text:ital@1&display=swap';
+/** Google Fonts CSS API v2 endpoint for Inter Regular (weight 400). */
+const INTER_REGULAR_CSS_URL =
+  'https://fonts.googleapis.com/css2?family=Inter&display=swap';
 
 /** Resolves a single `.woff2` / `.woff` / `.ttf` src URL from a Google Fonts CSS response. */
 const FONT_SRC_RE = /url\(([^)]+)\)\s+format\(['"]?(woff2?|truetype)['"]?\)/;
@@ -63,20 +61,57 @@ async function loadFontBuffer(cssUrl: string): Promise<ArrayBuffer> {
   return buffer;
 }
 
+/** Module-level cache for local font binaries, keyed by file name. */
+const localFontCache = new Map<string, ArrayBuffer>();
+
 /**
- * Returns satori font descriptors for Inter Bold and Crimson Text Italic.
+ * Reads a font from `public/fonts`. Caches module-level.
+ *
+ * satori's opentype fork parses neither WOFF2 nor variable-font tables, and
+ * crashes on an `ltag` table. The `*OG*` files are therefore satori-safe
+ * derivatives of the site fonts, regenerated with Python fontTools:
+ * `instantiateVariableFont` with every fvar axis pinned (wght at 400/700),
+ * name records filtered to platform 3, and `ltag`/`STAT`/`meta` deleted.
+ * The browser-served originals stay untouched.
+ *
+ * @param {string} fileName - File name inside `public/fonts`
+ * @returns {Promise<ArrayBuffer>} Raw font binary satori can parse
+ */
+async function loadLocalFont(fileName: string): Promise<ArrayBuffer> {
+  const cached = localFontCache.get(fileName);
+  if (cached) return cached;
+
+  const bytes = await fs.readFile(
+    path.join(process.cwd(), 'public', 'fonts', fileName),
+  );
+  const buffer = bytes.buffer.slice(
+    bytes.byteOffset,
+    bytes.byteOffset + bytes.byteLength,
+  ) as ArrayBuffer;
+  localFontCache.set(fileName, buffer);
+  return buffer;
+}
+
+/**
+ * Returns satori font descriptors for the card: the site's Junicode heading
+ * face and Empyrean Initialem drop-cap read from `public/fonts`, plus Inter
+ * for body text.
  *
  * @returns {Promise<import('satori').Font[]>} Array of satori font configs
  */
 async function loadFonts(): Promise<import('satori').Font[]> {
-  const [interBold, crimsonItalic] = await Promise.all([
-    loadFontBuffer(INTER_BOLD_CSS_URL),
-    loadFontBuffer(CRIMSON_ITALIC_CSS_URL),
+  const [junicodeRegular, junicodeBold, empyrean, inter] = await Promise.all([
+    loadLocalFont('JunicodeOG-Regular.ttf'),
+    loadLocalFont('JunicodeOG-Bold.ttf'),
+    loadLocalFont('EmpyreanInitialemOG.otf'),
+    loadFontBuffer(INTER_REGULAR_CSS_URL),
   ]);
 
   return [
-    { name: 'Inter', data: interBold, weight: 700, style: 'normal' },
-    { name: 'Crimson Text', data: crimsonItalic, weight: 400, style: 'italic' },
+    { name: 'Junicode', data: junicodeRegular, weight: 400, style: 'normal' },
+    { name: 'Junicode', data: junicodeBold, weight: 700, style: 'normal' },
+    { name: 'Empyrean Initialem', data: empyrean, weight: 400, style: 'normal' },
+    { name: 'Inter', data: inter, weight: 400, style: 'normal' },
   ];
 }
 

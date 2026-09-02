@@ -156,7 +156,7 @@ describe('syncTable', () => {
     expect(existing.consumers).toEqual(['rules/x']);
   });
 
-  it('clears collections before recreating children', async () => {
+  it('clears collections on update, leaving the flush to the transaction', async () => {
     const removeAll = vi.fn();
     const em = makeEm([{ slug: 'a', versionHash: 'old', kids: { removeAll } }]);
     const target = makeTarget([{ slug: 'a', versionHash: 'new' }]);
@@ -164,7 +164,32 @@ describe('syncTable', () => {
     await syncTable(em as never, 'en', target);
 
     expect(removeAll).toHaveBeenCalledTimes(1);
-    expect(em.flush).toHaveBeenCalled();
+    expect(em.flush).not.toHaveBeenCalled();
+  });
+
+  /* The old child rows must delete before their replacements insert, but one
+     flush covers the whole table; per-record flushes made a remote-database
+     seed take minutes. */
+  it('flushes once before recreating children across every updated row', async () => {
+    const syncChildren = vi.fn();
+    (RowEntity as Record<string, unknown>).syncChildren = syncChildren;
+    const removeAll = vi.fn();
+    const em = makeEm([
+      { slug: 'a', versionHash: 'old', kids: { removeAll } },
+      { slug: 'b', versionHash: 'old', kids: { removeAll } },
+    ]);
+    const target = makeTarget([
+      { slug: 'a', versionHash: 'new' },
+      { slug: 'b', versionHash: 'new' },
+    ]);
+
+    await syncTable(em as never, 'en', target);
+
+    expect(em.flush).toHaveBeenCalledTimes(1);
+    expect(syncChildren).toHaveBeenCalledTimes(2);
+    expect(em.flush.mock.invocationCallOrder[0]).toBeLessThan(
+      syncChildren.mock.invocationCallOrder[0],
+    );
   });
 
   it('calls syncChildren on insert when the static exists', async () => {

@@ -54,9 +54,9 @@ describe('SYNC_TARGETS', () => {
     [
       ContentType.Specializations,
       'SpecializationEntity',
-      join('character-creation', 'vocations', 'specializations'),
+      join('character-creation', 'vocations'),
     ],
-  ])('maps %s to %s under its own directory', (type, entity, subdir) => {
+  ])('maps %s to %s under its directory', (type, entity, subdir) => {
     const target = SYNC_TARGETS[type];
 
     expect(target).toBeDefined();
@@ -64,16 +64,61 @@ describe('SYNC_TARGETS', () => {
     expect(target.subdir).toBe(subdir);
   });
 
-  it('reads every target through the metadata source', () => {
-    for (const target of Object.values(SYNC_TARGETS)) {
+  it('reads every unshared-directory target through the metadata source', () => {
+    for (const [type, target] of Object.entries(SYNC_TARGETS)) {
+      if (
+        type === ContentType.Vocations ||
+        type === ContentType.Specializations
+      ) {
+        continue;
+      }
       expect(target.readRecords).toBe(readMetadataFiles);
     }
   });
 
-  it('gives each target a distinct directory', () => {
-    const subdirs = Object.values(SYNC_TARGETS).map((t) => t.subdir);
+  /* The vocations tree holds vocation, specialization and spell-list sidecars
+     side by side; the two tables reading it discriminate by file suffix. */
+  it('keeps only records bearing each suffix for the shared vocations tree', async () => {
+    readMetadataFiles.mockResolvedValue({
+      records: [
+        { file: 'character-creation/vocations/scion/scion.vocation.mdx' },
+        {
+          file: 'character-creation/vocations/scion/aberrant-sorcery.specialization.mdx',
+        },
+        { file: 'character-creation/vocations/scion/spells.list.mdx' },
+      ],
+      sourceExists: true,
+    });
 
-    expect(new Set(subdirs).size).toBe(subdirs.length);
+    const vocations = await SYNC_TARGETS[ContentType.Vocations].readRecords(
+      'en',
+      'character-creation/vocations',
+    );
+    const specializations = await SYNC_TARGETS[
+      ContentType.Specializations
+    ].readRecords('en', 'character-creation/vocations');
+
+    expect(vocations.records.map((r) => r.file)).toEqual([
+      'character-creation/vocations/scion/scion.vocation.mdx',
+    ]);
+    expect(specializations.records.map((r) => r.file)).toEqual([
+      'character-creation/vocations/scion/aberrant-sorcery.specialization.mdx',
+    ]);
+  });
+
+  it('reports an absent source when no record bears the suffix', async () => {
+    readMetadataFiles.mockResolvedValue({
+      records: [{ file: 'character-creation/vocations/spells.list.mdx' }],
+      sourceExists: true,
+    });
+
+    const read = await SYNC_TARGETS[ContentType.Vocations].readRecords(
+      'en',
+      'character-creation/vocations',
+    );
+
+    expect(read.records).toEqual([]);
+    expect(read.sourceExists).toBe(false);
   });
 
   it('leaves the natural key implicit for every target but monsters', () => {

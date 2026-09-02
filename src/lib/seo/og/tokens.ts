@@ -16,6 +16,8 @@
  * @property {string} bg - Main background colour (`--color-bg`)
  * @property {string} bgSecondary - Secondary background (`--color-bg-secondary`)
  * @property {string} surface - Surface colour (`--color-surface`)
+ * @property {string} primary - Primary green (`--color-primary`)
+ * @property {string} actionable - Pale teal (`--color-actionable`)
  * @property {string} emphasis - Verdant teal accent (`--color-emphasis`)
  * @property {string} accent - Green accent (`--color-accent`)
  * @property {string} text - Primary text colour (`--color-text`)
@@ -26,6 +28,8 @@ export const OG_TOKENS = {
   bg: '#111217',
   bgSecondary: '#28303b',
   surface: '#1b1d23',
+  primary: '#7fc7a3',
+  actionable: '#b2dfdb',
   emphasis: '#8acfd4',
   accent: '#8fd3a1',
   text: '#c8ccc7',

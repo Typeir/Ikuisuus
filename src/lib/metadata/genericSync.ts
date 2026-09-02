@@ -110,6 +110,10 @@ export async function syncTable(
     (existing as Array<Record<string, unknown>>).map((e) => [keyOf(e), e]),
   );
   const incomingKeys = new Set<string>();
+  const pendingChildren: Array<{
+    entity: Record<string, unknown>;
+    record: Record<string, unknown>;
+  }> = [];
 
   for (const record of records) {
     incomingKeys.add(keyOf(record));
@@ -132,9 +136,8 @@ export async function syncTable(
         const collection = entity[name] as { removeAll?: () => void } | undefined;
         collection?.removeAll?.();
       }
-      await em.flush();
       if (hasChildSync(target.entityClass)) {
-        target.entityClass.syncChildren(ctx, entity, record);
+        pendingChildren.push({ entity, record });
       }
       result.updated++;
     } else {
@@ -143,6 +146,20 @@ export async function syncTable(
         target.entityClass.syncChildren(ctx, created, record);
       }
       result.inserted++;
+    }
+  }
+
+  /* One flush for the whole table before recreating updated rows' children:
+     the old child rows must be deleted before their replacements insert, or a
+     unique key on the child table collides. Flushing per record here instead
+     turned a remote-database seed from seconds into minutes — every updated
+     row paid its own network round trips. */
+  if (pendingChildren.length > 0) {
+    await em.flush();
+    for (const { entity, record } of pendingChildren) {
+      if (hasChildSync(target.entityClass)) {
+        target.entityClass.syncChildren(ctx, entity, record);
+      }
     }
   }
 

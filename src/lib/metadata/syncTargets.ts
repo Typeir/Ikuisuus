@@ -28,6 +28,27 @@ import type { SyncTarget } from './genericSync';
 import { readMetadataFiles } from './metadataSource';
 
 /**
+ * Reader keeping only records whose source file carries one content suffix.
+ *
+ * The vocations tree holds vocation, specialization and spell-list sidecars
+ * side by side, so the tables sharing it must discriminate by file, not by
+ * directory — a directory sweep would seed a specialization as a vocation.
+ *
+ * @param {string} suffix - Full file suffix, e.g. `.vocation.mdx`
+ * @returns {SyncTarget['readRecords']} Reader for records bearing the suffix
+ */
+const readMetadataFilesWithSuffix =
+  (suffix: string): SyncTarget['readRecords'] =>
+  async (locale, subdir) => {
+    const read = await readMetadataFiles(locale, subdir);
+    const records = read.records.filter(
+      (record) =>
+        typeof record.file === 'string' && record.file.endsWith(suffix),
+    );
+    return { records, sourceExists: records.length > 0 };
+  };
+
+/**
  * Sync target for every content type, keyed by {@link ContentType}.
  *
  * @constant
@@ -77,11 +98,11 @@ export const SYNC_TARGETS: Readonly<Record<string, SyncTarget>> = {
   [ContentType.Vocations]: {
     entityClass: VocationEntity,
     subdir: join('character-creation', 'vocations'),
-    readRecords: readMetadataFiles,
+    readRecords: readMetadataFilesWithSuffix('.vocation.mdx'),
   },
   [ContentType.Specializations]: {
     entityClass: SpecializationEntity,
-    subdir: join('character-creation', 'vocations', 'specializations'),
-    readRecords: readMetadataFiles,
+    subdir: join('character-creation', 'vocations'),
+    readRecords: readMetadataFilesWithSuffix('.specialization.mdx'),
   },
 };

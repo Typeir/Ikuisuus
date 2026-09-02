@@ -103,38 +103,6 @@ export function OGTemplate({
         />
       ) : null}
 
-      {/* Description watermark layered behind the entity image */}
-      {watermarkText ? (
-        <div
-          style={{
-            position: 'absolute',
-            left: 50,
-            top: 50,
-            width: 500,
-            height: OG_HEIGHT,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '40px 120px 40px 40px',
-            overflow: 'hidden',
-          }}>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              fontSize: 28,
-              fontFamily: '"Crimson Text"',
-              fontStyle: 'italic',
-              color: OG_TOKENS.text,
-              opacity: 0.5,
-              lineHeight: 1.6,
-              textAlign: 'center',
-            }}>
-            {watermarkText}
-          </div>
-        </div>
-      ) : null}
-
       {/* Radial glow behind entity image */}
       <div
         style={{
@@ -187,16 +155,105 @@ export function OGTemplate({
         </div>
       )}
 
-      {/* Left text panel — 40% width */}
+      {/* Left text panel */}
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          width: 480,
+          width: 620,
           padding: '56px 48px',
           gap: 20,
         }}>
+        {/* Title — Junicode heading face with the site's Empyrean Initialem
+            drop cap (gradient-clipped, sub-shifted), laid out as
+            baseline-aligned word spans because satori cannot flow mixed fonts
+            inside one text run. */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', columnGap: 6 }}>
+          {/* Drop cap column. Computed from font metrics, not eyeballed:
+              Empyrean is 1000upem, asc 800 / desc -440, and the A's ink spans
+              y 37..769 — all above the baseline, 95px tall at 130px. satori
+              clips ink outside the line box, and lineHeight below
+              (asc-desc)/upem = 1.24 puts the ink top outside it, so 1.24 is
+              the minimum uncut line height. Ink bottom then sits 99px from
+              the column top; Junicode 62px/1.1 puts its first baseline 48px
+              from the text column top, hence its paddingTop of 51. */}
+          <span
+            style={{
+              display: 'flex',
+              position: 'relative',
+              fontFamily: '"Empyrean Initialem"',
+              fontWeight: 400,
+              fontSize: 130,
+              lineHeight: 1.24,
+              /* The glyph's right side bearing and the line box's descender
+                 reserve pad the cap beyond its ink; both trimmed. */
+              marginRight: -12,
+              marginBottom: -12,
+            }}>
+            {/* CRT glow dot behind the glyph. Concentric circles at element
+                opacity stand in for the site's blurred radial: satori
+                composites gradient-alpha and shadow edges too dark, but
+                plain element opacity stays clean. */}
+            {[
+              [84, 0.05],
+              [68, 0.08],
+              [54, 0.12],
+              [42, 0.17],
+              [32, 0.24],
+              [22, 0.36],
+              [14, 0.6],
+              [8, 1],
+            ].map(([size, opacity]) => (
+              <span
+                key={size}
+                style={{
+                  position: 'absolute',
+                  left: 52 - size / 2,
+                  top: 52 - size / 2,
+                  width: size,
+                  height: size,
+                  borderRadius: 9999,
+                  backgroundColor: OG_TOKENS.primary,
+                  opacity,
+                }}
+              />
+            ))}
+            <span
+              style={{
+                backgroundImage: `linear-gradient(to bottom, ${OG_TOKENS.accent}, ${OG_TOKENS.actionable}, ${OG_TOKENS.accent})`,
+                backgroundClip: 'text',
+                color: 'transparent',
+              }}>
+              {data.title.slice(0, 1)}
+            </span>
+          </span>
+
+          {/* Remaining title text wraps beside the drop cap. */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'baseline',
+              alignContent: 'flex-start',
+              columnGap: 16,
+              paddingTop: 51,
+              fontSize: 62,
+              fontWeight: 700,
+              fontFamily: '"Junicode"',
+              color: OG_TOKENS.primary,
+              lineHeight: 1.1,
+            }}>
+            <span>{data.title.split(' ')[0].slice(1)}</span>
+            {data.title
+              .split(' ')
+              .slice(1)
+              .map((word, index) => (
+                <span key={index}>{word}</span>
+              ))}
+          </div>
+        </div>
+
         {/* Tag line (rarity, type, school…) */}
         {tagLine ? (
           <div
@@ -212,18 +269,23 @@ export function OGTemplate({
           </div>
         ) : null}
 
-        {/* Title */}
-        <div
-          style={{
-            display: 'flex',
-            fontSize: 62,
-            fontWeight: 700,
-            color: OG_TOKENS.text,
-            lineHeight: 1.1,
-            letterSpacing: '-0.02em',
-          }}>
-          {data.title}
-        </div>
+        {/* Description, faint over the artwork's edge. lineClamp keeps a long
+            blurb from colliding with the attribution whatever the title's
+            line count. */}
+        {watermarkText ? (
+          <div
+            style={{
+              display: 'block',
+              lineClamp: 5,
+              fontSize: 28,
+              fontFamily: '"Inter"',
+              color: OG_TOKENS.text,
+              opacity: 0.5,
+              lineHeight: 1.5,
+            }}>
+            {watermarkText}
+          </div>
+        ) : null}
 
         {/* Site attribution */}
         <div
