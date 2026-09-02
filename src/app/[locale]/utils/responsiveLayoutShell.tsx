@@ -166,7 +166,7 @@ function BaseResponsiveLayoutShell({
         <aside
           className={`${styles.mobileMenu} ${
             open ? styles.isOpen : ''
-          } lg:translate-x-0 lg:block w-full lg:w-80 border-r fixed lg:sticky top-0 h-screen solid bg-background z-30`}
+          } lg:translate-x-0 lg:block w-full lg:w-80 border-r fixed lg:sticky top-0 solid bg-background z-30`}
           style={{ display: 'flex', flexDirection: 'column' }}
         >
           {/* Header Region: desktop only — the mobile bar carries the
@@ -221,6 +221,7 @@ function BaseResponsiveLayoutShell({
               flex: 1,
               minHeight: 0,
               overflowY: 'auto',
+              overscrollBehavior: 'contain',
               scrollbarGutter: 'stable',
             }}
           >

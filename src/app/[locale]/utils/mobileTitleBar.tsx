@@ -56,7 +56,7 @@ export function MobileTitleBar({
 
   return (
     <div
-      className={`mobile-title-bar solid lg:hidden fixed top-0 inset-x-4 z-40 flex items-center gap-3 px-2 border-b bg-background shadow-sm max-w-full ${styles.mobileTitleBar}`}
+      className={`mobile-title-bar solid lg:hidden fixed top-0 inset-x-0 z-40 flex items-center gap-3 px-2 border-b bg-background shadow-sm max-w-full ${styles.mobileTitleBar}`}
     >
       <Link
         href='/'

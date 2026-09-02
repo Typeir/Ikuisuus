@@ -74,7 +74,11 @@ button.headerIconSlot {
   }
 }
 
+/* The menu owns its height: 100vh overshoots the visual viewport on phones
+   (URL bar), hiding the tools footer; dvh tracks it. */
 .mobileMenu {
+  height: 100vh;
+  height: 100dvh;
   transform: translateX(-100%);
   transition: transform 0.6s var(--springy-bezier) 0.1s;
   will-change: transform;
@@ -86,23 +90,16 @@ button.headerIconSlot {
 }
 
 @media (max-width: 1024px) {
-  .sidebar {
-    position: sticky;
-    width: 100%;
-    height: auto;
-    z-index: 50;
-    background-color: var(--background);
-    border-right: none;
-    padding: 1rem;
-    padding-top: 5rem;
-  }
-
+  /* touch-action blocks pans that begin on the menu's own chrome from
+     scrolling the page behind it; the nav scroller is its own scroll
+     container, so panning inside it is unaffected. Taps still land. */
   .mobileMenu {
     left: 0;
     padding-left: 24vw;
 
     padding-top: $mobile-header-height;
     padding-bottom: var(--safe-area-bottom);
+    touch-action: none;
 
     &.isOpen {
       transform: translateX(-20vw);
@@ -117,6 +114,7 @@ button.headerIconSlot {
   border: none;
   padding: 0;
   cursor: pointer;
+  touch-action: none;
   background: rgb(var(--color-overlay));
   opacity: 0;
   visibility: hidden;

@@ -10,7 +10,11 @@ import localFont from 'next/font/local';
 
 /**
  * Empyrean Initialem local font registration. Drop-cap face, applied only to
- * the first letter of a heading.
+ * the first letter of a heading. Glyph ink rises to 1.48em above the baseline
+ * but the face declares hhea ascent 0.8em, so platforms that honor hhea
+ * (Android, macOS) size the inline background box short and
+ * `background-clip: text` decapitates the glyph. The overrides pin every
+ * platform to the winAscent/winDescent (1.48em/0em) rendering.
  * @type {ReturnType<import('next/font/local').default>}
  */
 export const empyrean = localFont({
@@ -18,6 +22,11 @@ export const empyrean = localFont({
   variable: '--font-initialem',
   display: 'swap',
   fallback: ['serif'],
+  declarations: [
+    { prop: 'ascent-override', value: '148%' },
+    { prop: 'descent-override', value: '0%' },
+    { prop: 'line-gap-override', value: '0%' },
+  ],
   preload: true,
 });
 
