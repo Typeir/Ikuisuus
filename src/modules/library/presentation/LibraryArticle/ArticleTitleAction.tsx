@@ -1,8 +1,9 @@
 /**
- * @fileoverview Slot that sits on the article title's rule, right edge,
- * bottom aligned with the h1. CSS anchor positioning does the placement where
- * supported; elsewhere a ResizeObserver writes the h1's bottom edge into
- * `--title-bottom` and the stylesheet positions from that.
+ * @fileoverview Slot that sits on the article title's rule, right edge —
+ * bottom aligned with the h1 on desktop, hanging under the rule below lg.
+ * CSS anchor positioning does the placement where supported; elsewhere a
+ * ResizeObserver writes the h1's bottom edge into `--title-bottom` and the
+ * stylesheet positions from that.
  *
  * @module modules/library/presentation/LibraryArticle/ArticleTitleAction
  * @version 1.0.0
