@@ -43,7 +43,7 @@ Warm, pulsing light seeps into wounds, knitting torn flesh and staunching bleedi
 ---
 
 > **Cure Wounds**
-> _1st-level Evocation_
+> _1st-level Spell_
 > **Casting Time**: 1 Action
 > **Range**: Touch
 > **Components**: V, S
@@ -65,16 +65,20 @@ This spell appears on the following spell lists:
 
 ### YAML Frontmatter
 
-The frontmatter is optional but used to tag SRD-derived content:
+Setting spells carry aspects for form and school:
 
 ```yaml
 ---
-source: basic
+source: Ikuisuus
+contentType: spells
+aspects:
+  - form:companion
+  - form:swarm
+  - school:conjuration
 ---
 ```
 
-Omit the frontmatter for setting-specific or homebrew spells that are not
-part of the SRD-derived ruleset.
+SRD-derived content uses `source: basic` instead of the aspect block.
 
 ### Flavor Text
 
@@ -96,8 +100,8 @@ The spell's mechanical definition lives entirely inside a markdown blockquote
 > _Nth-level School_
 ```
 
-The level line format: `_Nth-level School_` (e.g., `_3rd-level Evocation_`,
-`_Cantrip Conjuration_`). For cantrips, use `_Cantrip SchoolName_`.
+The level line format: `_Nth-level Spell_` (e.g., `_3rd-level Spell_`,
+`_Cantrip`). School lives in the frontmatter as an aspect, not in the line.
 
 **Required property lines** (in this order):
 
@@ -130,6 +134,46 @@ If the spell scales with spell slot level, end the description with:
 
 The exact phrasing `**At Higher Levels.**` is required (period inside bold).
 The generator looks for this exact string to detect upcasting rules.
+Setting spells replace this with `**Overcast**` clauses (see below).
+
+### Overcast Clauses
+
+`**Overcast:**` scales per slot level; level gates and per-step gates use the
+following forms:
+
+```mdx
+> **Overcast:** the spell gains [% 1d8 %] damage.
+> **Overcast (4th+):** ...
+> **Overcast (4th+) (per +1):** ...
+```
+
+Cantrips scale with `**Progression (5th/11th/17th):**`, never Overcast.
+
+### Named Features (Modes)
+
+Spells with several modes name each mode as a feature:
+
+```mdx
+> **The Beam.**
+> **Targets**: ...
+> prose
+```
+
+- Bold name, period inside the bold: `**The Beam.**`
+- Own `**Targets**:` line whenever the mode changes target or area
+- Reference spells: `pyromancy`, `chill`, `lithomancy`, `leaping-fire`
+
+Overcasts that RESHAPE the spell into a new mode MUST use the same
+named-feature format — no "you may instead" lead-in:
+
+```mdx
+> **Overcast (5th+):** **Volley.**
+> **Targets**: ...
+> prose
+```
+
+Mechanical changes embedded in the reshape (e.g. a duration flip) go inside
+the named mode. Full analysis: `.github/docs/spell-overcast-shape-pattern.md`.
 
 ### Concentration
 
@@ -163,7 +207,7 @@ Fields extracted by `generateSpellMetadata.ts` into `.metadata.json`:
 | `slug`          | Filename (kebab-case, no extension)                          |
 | `title`         | `# Heading` and `> **Spell Name**` (should match)            |
 | `level`         | Parsed from `> _Nth-level School_` (numeric, 0 for cantrips) |
-| `school`        | Parsed from `> _Nth-level School_` (e.g., "Evocation")       |
+| `school`        | Frontmatter aspect `- school:x` (e.g., "evocation")          |
 | `castingTime`   | `> **Casting Time**: ...`                                    |
 | `range`         | `> **Range**: ...`                                           |
 | `components`    | `> **Components**: ...`                                      |
