@@ -12,7 +12,7 @@
  * @since 2026-09-03
  */
 
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import { ArticleMetadataProvider } from '@/modules/library/application/context/ArticleMetadataContext';
@@ -45,9 +45,24 @@ export const FIXTURE = path.resolve('tests/fixtures/slots', 'alfanjon.mdx');
 /**
  * Renders the heirloom fixture inside the article frame.
  *
- * @returns {Promise<React.ReactElement>} Rendered fixture
+ * `.vercelignore` keeps this whole route out of deployments, and strips
+ * `tests/` besides, so the fixture is a local-only file. The guard is the
+ * backstop for an environment that ships the route anyway: a missing fixture
+ * reports itself rather than failing the build that prerenders this page.
+ *
+ * @returns {Promise<React.ReactElement>} Rendered fixture, or a notice when
+ * the fixture did not ship
  */
 export async function SlotsPreview(): Promise<React.ReactElement> {
+  if (!existsSync(FIXTURE)) {
+    return (
+      <p data-slots-preview-unavailable>
+        The slot fixture is not part of this deployment. Run the site locally
+        to preview it.
+      </p>
+    );
+  }
+
   const source = readFileSync(FIXTURE, 'utf8');
 
   const streamText = await resolveStreamText('en', ARTICLE_SLUG, source);

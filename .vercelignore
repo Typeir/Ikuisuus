@@ -27,6 +27,10 @@ public/library/resources
 .env
 .env.*
 
+# Development-only routes. Labs reads fixtures and other local-only files, so
+# it has no business in a deployment and cannot break one it never reaches.
+**/labs/dev
+
 # Test and coverage outputs
 coverage
 tests
