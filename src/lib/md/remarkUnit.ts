@@ -14,7 +14,12 @@ import type { Root } from 'mdast';
 import type { Plugin } from 'unified';
 import type { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
-import { parseUnitExpression, UNIT_EXPR_REGEX } from './unitExpressionParser';
+import { rewriteAttributeShortcodes } from './rewriteAttributeShortcodes';
+import {
+  parseUnitExpression,
+  type ParsedUnitExpression,
+  UNIT_EXPR_REGEX,
+} from './unitExpressionParser';
 
 /**
  * Name of the component this plugin emits.
@@ -184,16 +189,38 @@ function processTextNode(
 }
 
 /**
+ * Options accepted by the plugin.
+ *
+ * @property {boolean} [attributes] - Also rewrite string attributes on JSX
+ * elements; off by default so attribute strings stay untouched
+ */
+export interface RemarkUnitOptions {
+  attributes?: boolean;
+}
+
+/**
  * Remark plugin factory that transforms `[= ... =]` unit expressions in text
  * nodes into `<Unit>` MDX JSX elements.
  *
- * @returns {Plugin<[], Root>} A unified plugin that transforms the MDAST
+ * @param {RemarkUnitOptions} [options] - Plugin options
+ * @returns {Plugin<[RemarkUnitOptions?], Root>} A unified plugin that transforms the MDAST
  */
-const remarkUnit: Plugin<[], Root> = () => {
+const remarkUnit: Plugin<[RemarkUnitOptions?], Root> = (options) => {
   return (tree: Root) => {
     visit(tree, 'text', (node, idx, parent) => {
       processTextNode(node as TextNode, idx ?? null, parent as Parent | null);
     });
+    if (options?.attributes) {
+      rewriteAttributeShortcodes(tree, UNIT_EXPR_REGEX, parseUnitExpression, (parsed) => {
+        const expression = parsed as ParsedUnitExpression;
+        return unitNode(
+          expression.numerator,
+          expression.denominator,
+          expression.unit,
+          expression.flags,
+        );
+      });
+    }
   };
 };
 

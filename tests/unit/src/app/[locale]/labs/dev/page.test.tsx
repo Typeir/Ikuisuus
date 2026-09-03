@@ -11,17 +11,23 @@
  * @requires @/app/[locale]/labs/dev/page
  */
 
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('@/app/[locale]/labs/dev/slots/SlotsPreview', () => ({
+  SlotsPreview: () => <div data-testid='slots-preview' />,
+}));
+
 import LabsDevPage, { generateMetadata } from '@/app/[locale]/labs/dev/page';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
 
 describe('LabsDevPage', () => {
-  it('renders an empty canvas region', () => {
+  it('mounts the slot card preview on the canvas', () => {
     render(<LabsDevPage />);
 
     const canvas = screen.getByTestId('labs-dev-canvas');
     expect(canvas).toBeInTheDocument();
-    expect(canvas.childNodes).toHaveLength(0);
+    expect(canvas.childNodes).toHaveLength(1);
+    expect(screen.getByTestId('slots-preview')).toBeInTheDocument();
   });
 
   it('labels the route in the corner tag', () => {

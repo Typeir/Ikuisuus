@@ -19,10 +19,12 @@ import type { Plugin } from 'unified';
  *
  * @property {string} [streamText] - Stream string for terminal-stream animation
  * @property {boolean} [articles=true] - Run entry → article pass
+ * @property {readonly string[]} [entryComponents] - MDX components that are entries: one that opens with a heading is wrapped in a section of that heading's level, beside its siblings, with its anchor claimed
  */
 export type RehypeSectionizeOptions = {
   streamText?: string;
   articles?: boolean;
+  entryComponents?: readonly string[];
 };
 
 
@@ -47,6 +49,17 @@ function headingLevel(node: Element): number {
 }
 
 /**
+ * Determines whether a HAST node is whitespace-only text, the newlines the
+ * converter leaves between an MDX component's block children.
+ *
+ * @param {RootContent} node - HAST node to test
+ * @returns {boolean} True for a text node with no visible content
+ */
+function isBlankText(node: RootContent): boolean {
+  return node.type === 'text' && node.value.trim().length === 0;
+}
+
+/**
  * Determines whether a HAST node is a thematic break / horizontal rule.
  *
  * @param {RootContent} node - HAST node to test
@@ -68,6 +81,20 @@ function isHr(node: RootContent): boolean {
 function isContainer(node: RootContent): node is RootContent & Parent {
   if (node.type === 'element') return (node as Element).tagName === 'blockquote';
   return (node.type as unknown as string) === 'mdxJsxFlowElement';
+}
+
+/**
+ * The heading an MDX component opens with, when its first non-blank child is
+ * one.
+ *
+ * @param {Parent} container - MDX flow element
+ * @returns {Element | null} The lead heading, or null
+ */
+function leadHeadingOf(container: Parent): Element | null {
+  const first = (container.children as RootContent[]).find(
+    (child) => !isBlankText(child),
+  );
+  return first && isHeading(first) ? first : null;
 }
 
 /**
@@ -106,7 +133,9 @@ function sectionize(
   const result: RootContent[] = [];
   const stack: StackItem[] = [];
   let pendingAnonymousSection = false;
-  /* MDX component's first heading is its summary; stays as direct child. */
+  /* A heading that opens an MDX component is its summary and stays a direct
+     child. Once any other content has come first, the component is a wrapper
+     and its headings section normally. */
   let leadHeadingPending = ownerHeading;
 
   const attach = (section: Element) => {
@@ -123,16 +152,58 @@ function sectionize(
   });
 
   for (const node of nodes) {
+    if (leadHeadingPending && !isHeading(node) && !isBlankText(node)) {
+      leadHeadingPending = false;
+    }
+
     if (isContainer(node)) {
       const owner = stack.length ? stack[stack.length - 1].anchor : parentAnchor;
       const isJsx = (node.type as unknown as string) === 'mdxJsxFlowElement';
       node.children = sectionize(node.children, opts, anchors, owner, isJsx);
+
+      const isEntry =
+        isJsx &&
+        (opts?.entryComponents ?? []).includes(
+          (node as unknown as { name?: string }).name ?? '',
+        );
+      const lead = isEntry ? leadHeadingOf(node) : null;
+      if (lead) {
+        /* An entry sections like a heading of its own level, beside its
+           siblings; the heading stays its first child so the component still
+           finds it, and both carry the claimed anchor. */
+        const level = headingLevel(lead);
+        pendingAnonymousSection = false;
+        while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+        const entryOwner = stack.length ? stack[stack.length - 1].anchor : parentAnchor;
+        const slug = headingAnchor(lead);
+        const anchor = anchors.claim(slug, entryOwner);
+        lead.properties = { ...lead.properties, 'data-anchor': anchor };
+        const section = (h as unknown as (t: string, p: object) => Element)(
+          'section',
+          props({
+            'data-heading-level': level,
+            'data-anchor': anchor,
+            'data-entry': true,
+          }),
+        );
+        section.data = { slug } as unknown as Element['data'];
+        section.children = [node as ElementContent];
+        attach(section);
+        stack.push({ level, section, anchor });
+        continue;
+      }
+
       append(node);
       continue;
     }
 
     if (isHeading(node) && leadHeadingPending) {
       leadHeadingPending = false;
+      /* Unclaimed on purpose: duplicate lead headings keep identical slugs. */
+      node.properties = {
+        ...node.properties,
+        'data-anchor': headingAnchor(node),
+      };
       result.push(node);
       continue;
     }
@@ -144,6 +215,7 @@ function sectionize(
       const owner = stack.length ? stack[stack.length - 1].anchor : parentAnchor;
       const slug = headingAnchor(node);
       const anchor = anchors.claim(slug, owner);
+      node.properties = { ...node.properties, 'data-anchor': anchor };
       const section = (h as unknown as (t: string, p: object) => Element)(
         'section',
         props({ 'data-heading-level': level, 'data-anchor': anchor }),
@@ -197,10 +269,26 @@ function streamRail(side: 'left' | 'right'): Element {
 }
 
 /**
+ * Whether a node is one of a section's entries: a list, or an entry component
+ * wrapped in its own section.
+ *
+ * @param {ElementContent} node - Child node of a section
+ * @returns {boolean} True when the node is an entry holder
+ */
+function isEntryChild(node: ElementContent): boolean {
+  if (node.type !== 'element') return false;
+  if (node.tagName === 'ul' || node.tagName === 'ol') return true;
+  return (
+    node.tagName === 'section' &&
+    (node.properties?.['data-entry'] ?? node.properties?.dataEntry) !== undefined
+  );
+}
+
+/**
  * Adds rails to every heading section: a left rail always, a right rail when
- * the section has a direct-child list. The text comes from the host's
- * inherited `--stream-text`, so no option gates this. Rails go after the
- * heading so `children[0]` stays the heading for later passes.
+ * the section holds entries. The text comes from the host's inherited
+ * `--stream-text`, so no option gates this. Rails go after the heading so
+ * `children[0]` stays the heading for later passes.
  *
  * @param {Parent} node - Node whose subtree to walk
  */
@@ -214,9 +302,7 @@ function addStreamRails(node: Parent): void {
       c.type === 'element' && el.tagName === 'section' && level !== undefined;
     if (headed) {
       const rails = [streamRail('left')];
-      const hasList = el.children.some(
-        (x) => x.type === 'element' && (x.tagName === 'ul' || x.tagName === 'ol'),
-      );
+      const hasList = el.children.some((x) => isEntryChild(x));
       if (hasList) rails.push(streamRail('right'));
       const lead = el.children[0];
       el.children.splice(lead && isHeading(lead as RootContent) ? 1 : 0, 0, ...rails);

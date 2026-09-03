@@ -5,7 +5,7 @@
    nine-slice frames and the vertical ticker. The frames are `::before`
    pseudo-elements and the ticker is a `[data-stream-rail]` element, both
    styled by the mixins in styles/_mixins-mdx-sections.scss, which take their
-   `display` from the custom properties below.
+   `display` and the frames' `opacity` from the custom properties below.
 
    The gate is a custom property. Those boxes are declared across the article
    stylesheet, the landing page and the search rows, each a CSS module with
@@ -18,6 +18,16 @@
 ============================================ */
 html[data-section-decor='false'] {
   --mdx-section-decor-display: none;
+}
+
+/* How present the frames are. The light ground gives them far more contrast
+   than the dark one, so they come down further there. */
+:root {
+  --mdx-section-decor-opacity: 0.75;
+}
+
+html[data-theme='light'] {
+  --mdx-section-decor-opacity: 0.6;
 }
 
 html[data-stream-text='false'] {

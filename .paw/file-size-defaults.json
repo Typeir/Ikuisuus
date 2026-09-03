@@ -1,0 +1,12 @@
+[
+  {
+    "extension": ".scss",
+    "maxLines": 500,
+    "justification": "SCSS module files often contain many small utility classes, responsive breakpoints, and state variants that are tightly coupled — 500 lines is a reasonable module ceiling."
+  },
+  {
+    "extension": ".css",
+    "maxLines": 500,
+    "justification": "Plain CSS files share the same structural characteristics as SCSS: many small rules, media queries, and state variants."
+  }
+]

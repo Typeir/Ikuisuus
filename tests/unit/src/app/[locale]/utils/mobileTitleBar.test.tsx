@@ -24,9 +24,12 @@ vi.mock('@/modules/search/presentation/SearchBar/SearchBar', () => ({
   ),
 }));
 
-vi.mock('@/modules/character-builder', () => ({
-  SelectedCharacterBadge: () => <span>badge</span>,
-}));
+vi.mock(
+  '@/modules/character-builder/presentation/SelectedCharacter/selectedCharacterBadge',
+  () => ({
+    SelectedCharacterBadge: () => <span>badge</span>,
+  }),
+);
 
 describe('MobileTitleBar', () => {
   afterEach(() => {

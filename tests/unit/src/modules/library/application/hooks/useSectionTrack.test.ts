@@ -86,6 +86,25 @@ describe('useSectionTrack', () => {
       expect(result.current.items[2].level).toBe(3);
     });
 
+    it('labels a heading by its marked title, leaving tag and cost out', async () => {
+      document.body.innerHTML = `
+        <h4 data-anchor="moon-step">
+          <span data-heading-title>Moon Step</span>
+          <span><span data-feature-tag>Technique</span><span data-feature-cost>forgo all movement</span></span>
+        </h4>
+        <h4 data-anchor="plain">Plain heading</h4>
+      `;
+
+      const { result } = renderHook(() => useSectionTrack());
+
+      await waitFor(() => {
+        expect(result.current.items).toHaveLength(2);
+      });
+
+      expect(result.current.items[0].label).toBe('Moon Step');
+      expect(result.current.items[1].label).toBe('Plain heading');
+    });
+
     it('should sort items by document position', async () => {
       document.body.innerHTML = `
         <h3 data-anchor="third">Third</h3>

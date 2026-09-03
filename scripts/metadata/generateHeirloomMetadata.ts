@@ -10,10 +10,20 @@
  */
 
 import { toNativeMeasure, toPlainMeasure } from '@/lib/units/nativeMeasure';
+import {
+  FEATURE_SLOT_NAMES,
+  FEATURE_SLOTS,
+  HEIRLOOM_SLOT_NAMES,
+  HEIRLOOM_SLOTS,
+} from '@/modules/library/domain/slots';
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
+import remarkGfm from 'remark-gfm';
+import remarkMdx from 'remark-mdx';
+import remarkParse from 'remark-parse';
+import { unified } from 'unified';
 import {
   applyAuthoredAspects,
   ItemData,
@@ -779,6 +789,260 @@ export function parseHeirloomSource(
     ...(description && { description }),
     ...(image && { image }),
   };
+}
+
+export interface HeirloomV2Feature {
+  name: string;
+  kind: string;
+  tag?: string;
+  cost?: string;
+  targets?: string;
+  recharge?: string;
+}
+
+/**
+ * Output shape of the slot card extractor.
+ */
+export interface HeirloomV2Result {
+  rarity: string;
+  attunement?: string;
+  base?: string;
+  quality?: string;
+  enchantment?: string;
+  damage?: string;
+  versatile?: string;
+  reach?: string;
+  range?: string;
+  armorClass?: string;
+  stealth?: string;
+  mastery?: string[];
+  masterfulBlow?: string;
+  charges?: string;
+  burden?: string;
+  focus?: string;
+  nullifying?: string;
+  features: HeirloomV2Feature[];
+}
+
+/**
+ * Loose mdast node shape the extractor walks.
+ */
+interface MdNode {
+  type: string;
+  name?: string;
+  value?: string;
+  attributes?: Array<{ name: string; value?: unknown }>;
+  children?: MdNode[];
+}
+
+/**
+ * Concatenated text of an mdast subtree.
+ *
+ * @param {MdNode | undefined} node - Node to flatten
+ * @returns {string} Text content
+ */
+function mdTextOf(node: MdNode | undefined): string {
+  if (!node) return '';
+  if (node.type === 'text') return node.value ?? '';
+  return (node.children ?? []).map(mdTextOf).join('');
+}
+
+/**
+ * Text of an mdast subtree without inline JSX elements.
+ *
+ * @param {MdNode} node - Node to flatten
+ * @returns {string} Text content excluding JSX
+ */
+function mdTextWithoutJsx(node: MdNode): string {
+  if (node.type === 'text') return node.value ?? '';
+  if (node.type === 'mdxJsxTextElement' || node.type === 'mdxJsxFlowElement') {
+    return '';
+  }
+  return (node.children ?? []).map(mdTextWithoutJsx).join('');
+}
+
+/**
+ * String value of a named attribute.
+ *
+ * @param {MdNode} node - JSX element node
+ * @param {string} name - Attribute name
+ * @returns {string | undefined} Attribute value
+ */
+function attrValueOf(node: MdNode, name: string): string | undefined {
+  for (const attr of node.attributes ?? []) {
+    if (attr.name === name && typeof attr.value === 'string') return attr.value;
+  }
+  return undefined;
+}
+
+/**
+ * Text of the first child slot element with the given name (form D). Slots
+ * sit directly or inside a paragraph of the host.
+ *
+ * @param {MdNode} node - Host element node
+ * @param {string} name - Slot element name
+ * @returns {string | undefined} Slot value
+ */
+function slotValueOf(node: MdNode, name: string): string | undefined {
+  const slotText = (child: MdNode): string | undefined =>
+    (child.type === 'mdxJsxTextElement' ||
+      child.type === 'mdxJsxFlowElement') &&
+    child.name === name
+      ? mdTextOf(child).trim()
+      : undefined;
+
+  for (const child of node.children ?? []) {
+    const direct = slotText(child);
+    if (direct !== undefined) return direct;
+    if (child.type === 'paragraph') {
+      for (const inner of child.children ?? []) {
+        const nested = slotText(inner);
+        if (nested !== undefined) return nested;
+      }
+    }
+  }
+  return undefined;
+}
+
+/**
+ * First flow element with the given name among children.
+ *
+ * @param {MdNode} node - Parent node
+ * @param {string} name - Element name
+ * @returns {MdNode | undefined} The element
+ */
+function findFlowElement(node: MdNode, name: string): MdNode | undefined {
+  return (node.children ?? []).find(
+    (child) => child.type === 'mdxJsxFlowElement' && child.name === name,
+  );
+}
+
+/**
+ * Lower-cases a slot value, split on commas and semicolons.
+ *
+ * @param {string | undefined} value - Slot value
+ * @returns {string[]} Normalised entries
+ */
+function normalizeListValue(value: string | undefined): string[] {
+  if (!value) return [];
+  return value
+    .split(/[,;]/)
+    .map((entry) => entry.trim().toLowerCase())
+    .filter((entry) => entry.length > 0);
+}
+
+/**
+ * Rarity word from an italic rarity line.
+ *
+ * @param {string} text - Rarity line text
+ * @returns {string} Lower-cased rarity
+ */
+function rarityFromText(text: string): string {
+  const match = text.trim().match(/^(.+?)\s+heirloom\s*$/i);
+  return (match ? match[1] : text).trim().toLowerCase();
+}
+
+/**
+ * Extracts name and tag from a feature heading node.
+ *
+ * @param {MdNode} heading - Heading element
+ * @returns {{ name: string; tag?: string }} Heading parts
+ */
+function headingPartsOf(heading: MdNode): { name: string; tag?: string } {
+  const name = mdTextWithoutJsx(heading).trim();
+  const span = (heading.children ?? []).find(
+    (child) => child.type === 'mdxJsxTextElement' && child.name === 'span',
+  );
+  const tag = span ? mdTextOf(span).trim() : undefined;
+  return tag ? { name, tag } : { name };
+}
+
+/**
+ * Extracts the header slots of the JSX forms from the Heirloom element.
+ *
+ * @param {MdNode} heirloom - Heirloom flow element
+ * @returns {Partial<HeirloomV2Result>} Header fields
+ */
+function parseJsxHeader(heirloom: MdNode): Partial<HeirloomV2Result> {
+  const out: Partial<HeirloomV2Result> = {};
+  for (const key of HEIRLOOM_SLOT_NAMES) {
+    const value =
+      attrValueOf(heirloom, key) ??
+      slotValueOf(heirloom, HEIRLOOM_SLOTS[key]);
+    if (value === undefined) continue;
+    if (key === 'mastery') {
+      out.mastery = normalizeListValue(value);
+    } else if (key === 'rarity') {
+      out.rarity = rarityFromText(value);
+    } else {
+      (out as unknown as Record<string, unknown>)[key] = value.trim();
+    }
+  }
+  return out;
+}
+
+/**
+ * Parses the JSX forms (C, D, E, F) from the Heirloom element.
+ *
+ * @param {MdNode} heirloom - Heirloom flow element
+ * @returns {HeirloomV2Result} Golden shape
+ */
+function parseJsxForm(heirloom: MdNode): HeirloomV2Result {
+  const result = parseJsxHeader(heirloom);
+
+  for (const child of heirloom.children ?? []) {
+    const featureNames = ['Feature', 'Trait', 'Curse'];
+    if (
+      child.type !== 'mdxJsxFlowElement' ||
+      !featureNames.includes(child.name ?? '')
+    ) {
+      continue;
+    }
+
+    const heading = (child.children ?? []).find(
+      (kid) => kid.type === 'heading',
+    );
+    if (!heading) continue;
+
+    const parts = headingPartsOf(heading);
+    const feature: HeirloomV2Feature = {
+      name: parts.name,
+      kind: (child.name ?? 'feature').toLowerCase(),
+    };
+    if (parts.tag) feature.tag = parts.tag;
+
+    for (const name of FEATURE_SLOT_NAMES) {
+      const value =
+        attrValueOf(child, name) ?? slotValueOf(child, FEATURE_SLOTS[name]);
+      const text = value?.trim();
+      if (!text || (name === 'targets' && text === '—')) continue;
+      feature[name] = text;
+    }
+
+    result.features = result.features ?? [];
+    result.features.push(feature);
+  }
+
+  return result as HeirloomV2Result;
+}
+
+/**
+ * Slot card extractor: reads the Heirloom element in either spelling,
+ * attributes or slot elements.
+ *
+ * @param {string} rawFile - Complete file text including frontmatter
+ * @returns {HeirloomV2Result} Golden shape with slot values as source text
+ */
+export function parseHeirloomV2(rawFile: string): HeirloomV2Result {
+  const { content } = matter(rawFile);
+  const tree = unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkMdx)
+    .parse(content) as unknown as MdNode;
+
+  const heirloom = findFlowElement(tree, 'Heirloom');
+  return heirloom ? parseJsxForm(heirloom) : { rarity: '', features: [] };
 }
 
 /**

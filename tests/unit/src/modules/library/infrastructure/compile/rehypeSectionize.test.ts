@@ -50,7 +50,7 @@ describe('rehypeSectionize', () => {
   it('wraps a heading and following content in a section', () => {
     const output = process('<h2>Title</h2><p>Body</p>');
     expect(output).toContain('<section data-heading-level="2" data-anchor="title">');
-    expect(output).toContain('<h2>Title</h2>');
+    expect(output).toContain('<h2 data-anchor="title">Title</h2>');
     expect(output).toContain('<p>Body</p>');
     expect(output).toContain('</section>');
   });
@@ -129,7 +129,7 @@ describe('rehypeSectionize', () => {
         streamText: 'FOO',
       });
       expect(output).toContain(
-        '<h2>Title</h2><span aria-hidden="true" data-stream-rail="left"></span><p>Body</p>',
+        '<h2 data-anchor="title">Title</h2><span aria-hidden="true" data-stream-rail="left"></span><p>Body</p>',
       );
     });
 
@@ -236,6 +236,90 @@ describe('rehypeSectionize', () => {
       expect(jsx.children[1].tagName).toBe('p');
       expect(jsx.children[2].tagName).toBe('section');
       expect(jsx.children[2].properties?.dataAnchor).toBe('sub');
+    });
+
+    it('wraps an entry component in a section of its lead heading\'s level, claiming the anchor', () => {
+      const tree = fromHtml('<h3>Traits</h3>', { fragment: true }) as unknown as import('hast').Root;
+      const entry = (name: string) => ({
+        type: 'mdxJsxFlowElement',
+        name: 'Trait',
+        attributes: [],
+        children: [
+          { type: 'element', tagName: 'h4', properties: {}, children: [{ type: 'text', value: name }] },
+          { type: 'element', tagName: 'p', properties: {}, children: [{ type: 'text', value: 'Body.' }] },
+        ],
+      });
+      (tree.children as unknown[]).push(entry('Glow'), entry('Glow'));
+      (rehypeSectionize as unknown as (o: unknown) => (t: unknown) => void)({
+        entryComponents: ['Trait'],
+      })(tree);
+      const group = tree.children[0] as import('hast').Element;
+      const wrappers = group.children.filter(
+        (c) => c.type === 'element' && c.tagName === 'section',
+      ) as import('hast').Element[];
+      expect(wrappers).toHaveLength(2);
+      expect(wrappers[0].properties?.dataHeadingLevel).toBe(4);
+      expect(wrappers[0].properties?.dataAnchor).toBe('glow');
+      expect(wrappers[1].properties?.dataAnchor).not.toBe('glow');
+      const inner = wrappers[0].children.find(
+        (c) => (c as { type: string }).type === 'mdxJsxFlowElement',
+      ) as unknown as {
+        children: Array<{ tagName?: string; properties?: Record<string, unknown> }>;
+      };
+      expect(inner).toBeTruthy();
+      expect(inner.children[0].tagName).toBe('h4');
+      expect(inner.children[0].properties?.['data-anchor']).toBe('glow');
+    });
+
+    it('gives a group holding entry sections the right rail, as a list would', () => {
+      const tree = fromHtml('<h3>Traits</h3>', { fragment: true }) as unknown as import('hast').Root;
+      (tree.children as unknown[]).push({
+        type: 'mdxJsxFlowElement',
+        name: 'Trait',
+        attributes: [],
+        children: [
+          { type: 'element', tagName: 'h4', properties: {}, children: [{ type: 'text', value: 'Glow' }] },
+          { type: 'element', tagName: 'p', properties: {}, children: [{ type: 'text', value: 'Body.' }] },
+        ],
+      });
+      (rehypeSectionize as unknown as (o: unknown) => (t: unknown) => void)({
+        entryComponents: ['Trait'],
+      })(tree);
+      const group = tree.children[0] as import('hast').Element;
+      const rails = group.children.filter(
+        (c) => c.type === 'element' && c.properties?.dataStreamRail !== undefined,
+      ) as import('hast').Element[];
+      expect(rails.map((r) => r.properties?.dataStreamRail)).toEqual([
+        'left',
+        'right',
+      ]);
+      const entry = group.children.find(
+        (c) => c.type === 'element' && c.tagName === 'section',
+      ) as import('hast').Element;
+      const entryRails = entry.children.filter(
+        (c) => c.type === 'element' && c.properties?.dataStreamRail !== undefined,
+      ) as import('hast').Element[];
+      expect(entryRails.map((r) => r.properties?.dataStreamRail)).toEqual(['left']);
+    });
+
+    it('leaves a component that is not an entry unwrapped', () => {
+      const tree = fromHtml('<h3>Traits</h3>', { fragment: true }) as unknown as import('hast').Root;
+      (tree.children as unknown[]).push({
+        type: 'mdxJsxFlowElement',
+        name: 'Collapsible',
+        attributes: [],
+        children: [
+          { type: 'element', tagName: 'h4', properties: {}, children: [{ type: 'text', value: 'Glow' }] },
+        ],
+      });
+      (rehypeSectionize as unknown as (o: unknown) => (t: unknown) => void)({
+        entryComponents: ['Trait'],
+      })(tree);
+      const group = tree.children[0] as import('hast').Element;
+      expect(
+        group.children.some((c) => (c as { type: string }).type === 'mdxJsxFlowElement'),
+      ).toBe(true);
+      expect(group.children.filter((c) => c.type === 'element' && c.tagName === 'section')).toHaveLength(0);
     });
 
     it('can skip the article pass', () => {

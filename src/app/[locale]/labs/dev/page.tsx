@@ -1,11 +1,12 @@
 /**
  * @fileoverview Dev scratch canvas at /[locale]/labs/dev.
- * @description Empty full-bleed surface for throwing components at while debugging.
+ * @description Full-bleed surface for throwing components at while debugging.
  * Mount whatever is under test inside `<main>`; nothing here is shipped, since the
- * `labs` segment layout 404s outside development. Discard edits before committing.
+ * `labs` segment layout 404s outside development. Currently mounts the slot card
+ * fixture preview while the heirloom page structure is worked on.
  *
  * @module app/[locale]/labs/dev/page
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  *
@@ -17,6 +18,7 @@
 
 import type { Metadata } from 'next';
 import styles from './page.module.scss';
+import { SlotsPreview } from './slots/SlotsPreview';
 
 /**
  * Page metadata for the dev canvas.
@@ -31,13 +33,15 @@ export const generateMetadata = (): Metadata => ({
  * Dev canvas page.
  *
  * @function LabsDevPage
- * @returns {React.ReactElement} Blank canvas surface.
+ * @returns {React.ReactElement} Canvas surface with the current subject mounted.
  */
 export default function LabsDevPage(): React.ReactElement {
   return (
     <div className={styles.page}>
       <span className={styles.tag}>labs/dev</span>
-      <main className={styles.canvas} data-testid='labs-dev-canvas' />
+      <main className={styles.canvas} data-testid='labs-dev-canvas'>
+        <SlotsPreview />
+      </main>
     </div>
   );
 }

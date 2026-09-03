@@ -17,7 +17,8 @@ import {
   resolveAndCompileContent,
   type LibraryBasePath,
 } from '@/modules/library/application/use-cases';
-import { DraftOverlay, EditPageButton } from '@/modules/mdx-editor';
+import { DraftOverlay } from '@/modules/mdx-editor/presentation/DraftOverlay/DraftOverlay';
+import { EditPageButton } from '@/modules/mdx-editor/presentation/EditPageButton/EditPageButton';
 import { notFound, redirect } from 'next/navigation';
 import type { JSX } from 'react';
 import { HashNavigationProvider, SectionTrack } from '../components';

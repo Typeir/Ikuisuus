@@ -11,6 +11,7 @@
 import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
 import { DEFAULT_KEYWORD_LOCALE } from '@/lib/constants/locales';
 import { resolveDocumentKeywords } from '@/lib/md/resolveShardByRef';
+import { BLOCK_COMPONENTS } from '@/modules/library/domain/slots';
 import type { EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import type { CompileOptions } from '../../domain/compileOptions';
 import { buildMdxOptions, importAllAsync } from './compileUtils';
@@ -70,7 +71,11 @@ export async function compileDynamic(opts: CompileOptions) {
             remarkUnit,
             [remarkKeyword, { resolutions }],
           ],
-          rehypePlugins: [rehypeKatex, rehypeSectionize, [rehypeAspects, aspects]],
+          rehypePlugins: [
+            rehypeKatex,
+            [rehypeSectionize, { entryComponents: BLOCK_COMPONENTS }],
+            [rehypeAspects, aspects],
+          ],
         },
         baseUrl,
       ),

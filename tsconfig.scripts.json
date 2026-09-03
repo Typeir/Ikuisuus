@@ -14,7 +14,8 @@
     "jsx": "react-jsx",
     "paths": {
       "@/*": ["./src/*"],
-      "@content/*": ["./src/content/*"]
+      "@content/*": ["./src/content/*"],
+      "server-only": ["./tests/setup/serverOnlyStub.ts"]
     }
   },
   "include": [

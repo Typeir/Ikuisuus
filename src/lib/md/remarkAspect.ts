@@ -12,6 +12,7 @@ import type { Root } from 'mdast';
 import type { Plugin } from 'unified';
 import type { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
+import { rewriteAttributeShortcodes } from './rewriteAttributeShortcodes';
 
 /**
  * Component name emitted by this plugin.
@@ -73,6 +74,22 @@ function aspectNode(
 }
 
 /**
+ * Parses a bare aspect shorthand inner content into value and display parts.
+ *
+ * @param {string} inner - Content between `[( ` and ` )]`
+ * @returns {{ value: string; display?: string } | null} Parsed parts, or null
+ */
+function parseAspectInner(
+  inner: string,
+): { value: string; display?: string } | null {
+  const match = inner
+    .trim()
+    .match(/^([a-z][a-z0-9-]*(?::[a-z0-9-]+)+)\s*(?:;\s*(verbose|compact|glyph)\s*)?$/);
+  if (!match) return null;
+  return { value: match[1], display: match[2] };
+}
+
+/**
  * Splits one text node around its shorthand tokens.
  *
  * @param {TextNode} node - Text node
@@ -106,15 +123,32 @@ function processTextNode(
 }
 
 /**
+ * Options accepted by the plugin.
+ *
+ * @property {boolean} [attributes] - Also rewrite string attributes on JSX
+ * elements; off by default so attribute strings stay untouched
+ */
+export interface RemarkAspectOptions {
+  attributes?: boolean;
+}
+
+/**
  * Remark plugin transformer.
  *
+ * @param {RemarkAspectOptions} [options] - Plugin options
  * @returns {(tree: Root) => void} Transformer
  */
-const remarkAspect: Plugin<[], Root> = () => {
+const remarkAspect: Plugin<[RemarkAspectOptions?], Root> = (options) => {
   return (tree: Root) => {
     visit(tree, 'text', (node, idx, parent) => {
       processTextNode(node as TextNode, idx ?? null, parent as Parent | null);
     });
+    if (options?.attributes) {
+      rewriteAttributeShortcodes(tree, ASPECT_EXPR_REGEX, parseAspectInner, (parsed) => {
+        const parts = parsed as { value: string; display?: string };
+        return aspectNode(parts.value, parts.display);
+      });
+    }
   };
 };
 

@@ -1,0 +1,31 @@
+{
+  "slots": {
+    "cost": "Cost",
+    "targets": "Targets",
+    "recharge": "Recharge",
+    "rarity": "Rarity",
+    "attunement": "Attunement",
+    "base": "Base",
+    "quality": "Quality",
+    "enchantment": "Enchantment",
+    "damage": "Damage",
+    "versatile": "Versatile",
+    "reach": "Reach",
+    "range": "Range",
+    "armorClass": "Armor Class",
+    "stealth": "Stealth",
+    "mastery": "Mastery",
+    "masterfulBlow": "Masterful Blow",
+    "charges": "Charges",
+    "burden": "Burden",
+    "focus": "Focus",
+    "nullifying": "Nullifying"
+  },
+  "heirloom": {
+    "kind": "Heirloom",
+    "requiresAttunement": "requires attunement",
+    "enchanted": "enchanted",
+    "focus": "focus",
+    "nullifying": "Nullifying"
+  }
+}

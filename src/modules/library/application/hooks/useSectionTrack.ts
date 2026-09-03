@@ -27,6 +27,19 @@ const MOBILE_IDLE_MS = 1_500;
 const MOBILE_BREAKPOINT = 768;
 
 /**
+ * Label of a heading: the part marked `[data-heading-title]` when the heading
+ * also carries a tag or cost, otherwise its whole text.
+ *
+ * @param {HTMLElement} el - Heading element
+ * @returns {string | null} Trimmed label, or null when empty
+ */
+function headingLabel(el: HTMLElement): string | null {
+  const title = el.querySelector<HTMLElement>('[data-heading-title]');
+  const text = (title ?? el).textContent?.trim();
+  return text ? text : null;
+}
+
+/**
  * Extracts H1–H6 `[data-anchor]` elements from the DOM, sorted by document position.
  *
  * @returns {SectionTrackItem[]} Ordered heading items.
@@ -51,7 +64,7 @@ function scanHeadings(): SectionTrackItem[] {
       level,
       top,
       height: rect.height,
-      label: el.textContent?.trim() ?? anchor,
+      label: headingLabel(el) ?? anchor,
     });
   }
 

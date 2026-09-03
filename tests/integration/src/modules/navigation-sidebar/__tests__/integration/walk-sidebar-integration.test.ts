@@ -151,22 +151,28 @@ describe('walk-sidebar integration', () => {
   });
 
   describe('deduplication behavior with .sheet files', () => {
-    it('should prefer .sheet.mdx over .mdx with same base name', async () => {
-      const dupDir = path.join(testDir, 'dedup-test');
-      fs.mkdirSync(dupDir, { recursive: true });
+    it('lists sheet and plain files when each lives in its own folder', async () => {
+      const sheetDir = path.join(testDir, 'dedup-sheet');
+      const plainDir = path.join(testDir, 'dedup-plain');
+      fs.mkdirSync(sheetDir, { recursive: true });
+      fs.mkdirSync(plainDir, { recursive: true });
 
       fs.writeFileSync(
-        path.join(dupDir, 'dragon.sheet.mdx'),
+        path.join(sheetDir, 'dragon.sheet.mdx'),
         '# Sheet version',
       );
-      fs.writeFileSync(path.join(dupDir, 'dragon.mdx'), '# Regular version');
+      fs.writeFileSync(path.join(plainDir, 'dragon.mdx'), '# Regular version');
 
       const result = await walkTree(adapter, 'en', '', '');
-      const dupFolder = result.find((r) => r.name === 'Dedup Test');
+      const sheetFolder = result.find((r) => r.name === 'Dedup Sheet');
+      const plainFolder = result.find((r) => r.name === 'Dedup Plain');
 
-      expect(dupFolder?.children).toHaveLength(1);
-      expect(dupFolder?.children?.[0].path).toBe('dedup-test/dragon');
-      expect(dupFolder?.children?.[0].name).toBe('Dragon');
+      expect(sheetFolder?.children).toHaveLength(1);
+      expect(sheetFolder?.children?.[0].path).toBe('dedup-sheet/dragon');
+      expect(sheetFolder?.children?.[0].name).toBe('Dragon');
+      expect(plainFolder?.children).toHaveLength(1);
+      expect(plainFolder?.children?.[0].path).toBe('dedup-plain/dragon');
+      expect(plainFolder?.children?.[0].name).toBe('Dragon');
     });
   });
 

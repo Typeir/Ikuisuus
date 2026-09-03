@@ -50,8 +50,11 @@ vi.mock('@/modules/library/application/context/ArticleMetadataContext', () => ({
   ArticleMetadataProvider: () => null,
 }));
 
-vi.mock('@/modules/mdx-editor', () => ({
+vi.mock('@/modules/mdx-editor/presentation/DraftOverlay/DraftOverlay', () => ({
   DraftOverlay: () => null,
+}));
+
+vi.mock('@/modules/mdx-editor/presentation/EditPageButton/EditPageButton', () => ({
   EditPageButton: () => null,
 }));
 
@@ -61,7 +64,7 @@ vi.mock('@/app/[locale]/utils/clientRendererLazy', () => ({
 
 import { LibraryContent } from '@/modules/library/presentation/LibraryContent/LibraryContent';
 import { MdRawPage } from '@/modules/library/presentation/MdRawPage';
-import { DraftOverlay } from '@/modules/mdx-editor';
+import { DraftOverlay } from '@/modules/mdx-editor/presentation/DraftOverlay/DraftOverlay';
 
 describe('LibraryContent', () => {
   beforeEach(() => {

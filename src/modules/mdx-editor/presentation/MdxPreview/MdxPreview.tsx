@@ -9,7 +9,6 @@
 
 'use client';
 
-import { compileRuntime } from '@/modules/library/infrastructure/compile/compileRuntime';
 import { mdxComponents } from '@/modules/library/presentation';
 import Keyword, {
   type KeywordProps,
@@ -126,8 +125,13 @@ export function MdxPreview({ source }: MdxPreviewProps): JSX.Element {
 
     debounceRef.current = setTimeout(async () => {
       try {
-        /* skipCache: every keystroke is a new source, so caching by hash would
+        /* Loaded on first compile: the compiler and its plugin graph (~280 KB)
+           stay out of every page that only imports this module's barrel.
+           skipCache: every keystroke is a new source, so caching by hash would
            only accumulate dead entries for the session. */
+        const { compileRuntime } = await import(
+          '@/modules/library/infrastructure/compile/compileRuntime'
+        );
         const compiled = await compileRuntime({
           source: body,
           components: previewComponents,

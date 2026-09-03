@@ -10,6 +10,7 @@
 
 import { ChevronRight } from 'lucide-react';
 import React, { ReactNode } from 'react';
+import { isHeadingNode, parseHeading } from '../headingParts';
 import styles from './Collapsible.module.scss';
 
 /**
@@ -21,99 +22,6 @@ import styles from './Collapsible.module.scss';
 export interface CollapsibleProps {
   open?: boolean;
   children?: ReactNode;
-}
-
-/**
- * Parsed heading payload for Collapsible summary rendering.
- *
- * @property {ReactNode[]} titleNodes - Summary title content nodes
- * @property {string | null} cost - Optional summary cost extracted from a span child
- * @property {string | null} anchor - Optional anchor id from heading element for hash navigation
- */
-interface ParsedHeading {
-  titleNodes: ReactNode[];
-  cost: string | null;
-  anchor: string | null;
-}
-
-/**
- * Returns true when a React node is a heading element.
- *
- * @param {ReactNode} node - Node to evaluate
- * @returns {boolean} True when the node is h1-h6 or mapped heading component
- */
-function isHeadingNode(node: ReactNode): boolean {
-  if (!React.isValidElement(node)) {
-    return false;
-  }
-
-  if (typeof node.type === 'string') {
-    return /^h[1-6]$/i.test(node.type);
-  }
-
-  if (typeof node.type === 'function') {
-    const fn = node.type as { displayName?: string; name?: string };
-    const fnName = fn.displayName || fn.name || '';
-    return /^H[1-6]$/i.test(fnName);
-  }
-
-  if (typeof node.type === 'object' && node.type !== null) {
-    const obj = node.type as { displayName?: string };
-    return /^H[1-6]$/i.test(obj.displayName || '');
-  }
-
-  return false;
-}
-
-/**
- * Splits heading children into title nodes, optional cost text, and anchor id.
- *
- * @param {ReactNode} headingNode - Heading element node
- * @returns {ParsedHeading} Parsed heading output with titleNodes, cost, and anchor
- */
-function parseHeading(headingNode: ReactNode): ParsedHeading {
-  if (!React.isValidElement(headingNode)) {
-    return {
-      titleNodes: [],
-      cost: null,
-      anchor: null,
-    };
-  }
-
-  const headingChildren = (headingNode.props as { children?: ReactNode }).children;
-  const headingId = (headingNode.props as { id?: string }).id || null;
-
-  const nodes = React.Children.toArray(headingChildren).filter((node) => {
-    if (typeof node === 'string') {
-      return node.trim().length > 0;
-    }
-
-    return true;
-  });
-
-  const lastNode = nodes[nodes.length - 1];
-  const hasCostSpan =
-    React.isValidElement<{ children?: React.ReactNode }>(lastNode) &&
-    typeof lastNode.type === 'string' &&
-    lastNode.type.toLowerCase() === 'span';
-
-  if (!hasCostSpan) {
-    return {
-      titleNodes: nodes,
-      cost: null,
-      anchor: headingId,
-    };
-  }
-
-  const costText = React.Children.toArray(lastNode.props.children)
-    .join('')
-    .trim();
-
-  return {
-    titleNodes: nodes.slice(0, -1),
-    cost: costText.length > 0 ? costText : null,
-    anchor: headingId,
-  };
 }
 
 /**

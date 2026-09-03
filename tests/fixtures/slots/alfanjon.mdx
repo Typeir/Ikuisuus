@@ -1,0 +1,109 @@
+---
+source: Ikuisuus
+contentType: heirlooms
+---
+
+# Alfanjón of the Crescent Moon
+
+<Heirloom
+  rarity="very rare"
+  attunement="required"
+  base="Curved longsword (Finesse, Versatile)"
+  quality="Enhanced"
+  enchantment="+1 accuracy, +1 damage"
+  damage="[% 1d10 slashing %]"
+  versatile="[% 1d12 %]"
+  mastery="Slow"
+  masterfulBlow="Mooncleave"
+  focus="spellcasting, while attuned"
+  burden="[= 2 burden =]">
+
+<ParallaxBackdrop
+  src='/library/images/heirlooms/alfanjon-of-the-crescent-moon-background.webp'
+  alt='Alfanjón of the Crescent Moon Backdrop'
+  blurPx={2}
+  opacity={0.15}
+/>
+
+<FloatedContainer side='right' width='35%'>
+  <Image
+    src='/library/images/heirlooms/alfanjon-of-the-crescent-moon.webp'
+    alt='Alfanjón of the Crescent Moon'
+  />
+</FloatedContainer>
+
+Forged from a sliver of condensed moonlight and the scale of a lunar wyrm, this
+crescent blade phases gently in and out of visibility, humming faintly under the
+stars. Its form is tailored for agile swordmasters whose grace intertwines with
+arcane instinct.
+
+> “Crescent is the blade that kills, full is the moon’s embrace.”
+
+---
+
+### Attributes
+
+### Traits
+
+<Trait>
+
+#### Blessing of Küütar
+
+The blade attunes at once, and only once, to anyone the corpse-goddess has blessed, willing or not.
+
+</Trait>
+
+<Trait>
+
+#### Moonlight Glow
+
+Under moonlight the blade sheds cerulean dim light in a [= 1 stride;ADJ =] radius.
+
+</Trait>
+
+### Features
+
+<Feature>
+
+#### Innate Cantrip – Lesser Mooncleave
+
+While Attuned to this weapon, you learn the following cantrip. **Charisma** is your spellcasting ability for it.
+
+<Collapsible open>
+  <LesserMooncleave />
+</Collapsible>
+
+If you lose attunement to this weapon, you lose **access** to this cantrip until you regain attunement.
+
+</Feature>
+
+<Feature cost="1 Minor Action">
+
+#### Lunar Dissolution
+
+The blade vanishes, or reappears in your hand, in a shimmer of silver mist.
+
+</Feature>
+
+<Feature>
+
+#### Moon Step
+
+When you are [# kw:steady #] you regain [% 1d6 %] hit points, and you gain +1 to Armor Class, saves and checks.
+During **Moon Step** You can make one cantrip attack as a Minor Action, using the blade as its focus.
+That cantrip gains +1 accuracy and damage.
+these benefits last until the start of your next turn.
+
+</Feature>
+
+<Feature cost="1 Major Action" targets="creatures within a [= 6 stride;ADJ =] cone">
+
+#### Mooncleave <span>Masterful Blow</span>
+
+You sweep the blade in a great lunar arc.
+Targets save Dexterity, halving [% 3d8 frost %] and [% 3d8 force %].
+The DC gains an accuracy bonus of 1.
+
+</Feature>
+
+</Heirloom>

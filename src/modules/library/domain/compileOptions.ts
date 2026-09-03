@@ -21,6 +21,7 @@ type EvaluateMdxOptions = EvaluateOptions['mdxOptions'];
  * @property {boolean} [parseFrontmatter=true] - Whether frontmatter should be parsed.
  * @property {{ keys: string[]; records: string[] }} [aspects] - Aspect index: section keys carrying aspects and record anchors; a row is placed under each matching section.
  * @property {string} [locale] - Locale whose keyword index and shard prose to read. Defaults to the keyword registry's own default.
+ * @property {boolean} [attributeRewrite] - Rewrite shortcodes in JSX string attributes; off keeps attribute strings raw.
  */
 export interface CompileOptions {
   source: string;
@@ -30,6 +31,7 @@ export interface CompileOptions {
   parseFrontmatter?: boolean;
   aspects?: { keys: string[]; records: string[] };
   locale?: string;
+  attributeRewrite?: boolean;
 }
 
 export type { EvaluateMdxOptions };

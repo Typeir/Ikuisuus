@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 /* ============================================
    MARKDOWN MODULE — Markdown.module.scss
    Styles markdown-rendered HTML with theming
@@ -11,7 +13,8 @@
 }
 
 /* The title rule: the h1 underlines the full prose measure and names itself as
-   an anchor so the title action can sit on the rule's right end. */
+   an anchor so the title action can sit on the rule's right end. The rule
+   itself is the shared heading rule the card blocks carry. */
 $title-rule-gap: 0.35rem;
 
 .markdown {
@@ -23,8 +26,7 @@ $title-rule-gap: 0.35rem;
 
   h1 {
     anchor-name: --article-title;
-    padding-bottom: $title-rule-gap;
-    border-bottom: var(--border-width-xs) solid var(--color-border);
+    @include mdx-heading-rule($title-rule-gap);
 
     /* Room for the title action hanging under the rule (~2rem) plus air
        before the first section. */

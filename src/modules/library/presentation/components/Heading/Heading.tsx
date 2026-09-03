@@ -125,12 +125,14 @@ function wrapFirstLetterInHeading(children: ReactNode): ReactNode {
  * @property {1 | 2 | 3 | 4 | 5 | 6} level - HTML heading level (h1-h6)
  * @property {ReactNode} children - Heading content (text or React elements)
  * @property {string} [anchor] - Custom anchor slug (auto-generated if omitted)
+ * @property {string} [data-anchor] - Compile-time anchor stamped by rehypeSectionize; used when no `anchor` prop is given
  * @property {string} [className] - Additional CSS classes to apply
  */
 interface HeadingProps {
   level: 1 | 2 | 3 | 4 | 5 | 6;
   children?: ReactNode;
   anchor?: string;
+  'data-anchor'?: string;
   className?: string;
 }
 
@@ -162,11 +164,12 @@ export function Heading({
   level,
   children,
   anchor,
+  'data-anchor': stampedAnchor,
   className,
 }: HeadingProps): JSX.Element {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
   const headingText = getTextFromChildren(children);
-  const headingAnchor = anchor || textToSlug(headingText);
+  const headingAnchor = anchor || stampedAnchor || textToSlug(headingText);
   const wrappedChildren = wrapFirstLetterInHeading(children);
 
   const props = {
@@ -195,8 +198,17 @@ function createHeadingComponent(
   level: 1 | 2 | 3 | 4 | 5 | 6,
 ): React.FC<Omit<HeadingProps, 'level'>> {
   const HeadingComponent = React.memo(
-    ({ children, anchor, className }: Omit<HeadingProps, 'level'>) => (
-      <Heading level={level} anchor={anchor} className={className}>
+    ({
+      children,
+      anchor,
+      'data-anchor': stampedAnchor,
+      className,
+    }: Omit<HeadingProps, 'level'>) => (
+      <Heading
+        level={level}
+        anchor={anchor}
+        data-anchor={stampedAnchor}
+        className={className}>
         {children}
       </Heading>
     ),

@@ -20,8 +20,8 @@ import type { JSX } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './SectionTrack.module.scss';
 
-/** Breakpoint below which the track moves to the right side. */
-const SMALL_SCREEN_BP = 768;
+/** Width below which the track sits on the right (the stylesheet's `max-width: 1023px`), so tooltips open leftward there. */
+const SMALL_SCREEN_BP = 1024;
 
 /**
  * Bar width base (rem) for heading level 1. Deeper levels are narrower.

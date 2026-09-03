@@ -30,7 +30,7 @@ import {
   useSidebarMenuActions,
   useSidebarMenuState,
 } from '@/lib/context/PersistentUiContext';
-import { SelectedCharacterBadge } from '@/modules/character-builder';
+import { SelectedCharacterBadge } from '@/modules/character-builder/presentation/SelectedCharacter/selectedCharacterBadge';
 import { SidebarShell } from '@/modules/navigation-sidebar';
 import { SearchBar } from '@/modules/search/presentation/SearchBar/SearchBar';
 import {

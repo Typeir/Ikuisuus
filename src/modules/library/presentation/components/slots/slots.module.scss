@@ -1,0 +1,77 @@
+@use 'mixins' as *;
+
+/**
+ * @fileoverview Slot row, brief, and feature heading layout.
+ * @description Layout-only styles for slot rows, the heirloom brief, and the
+ * feature heading bar: title at the left, tag and cost at the right, one rule
+ * under the whole bar. Slot runs render as paragraphs so the site's article
+ * rhythm owns every margin, matching the spell-card stat block. Colors come
+ * from theme tokens.
+ *
+ * @module modules/library/presentation/components/slots/slots.module
+ * @version 0.5.0
+ * @author Typeir
+ * @since 2026-09-02
+ */
+
+/* One slot row: its own line inside the slot-run paragraph. */
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+/* Slot label: the site's bold face, emphasis colour, and colon separator. */
+.label {
+  font-weight: 700;
+  font-family: var(--font-default);
+  font-synthesis-weight: none;
+  color: var(--color-emphasis);
+
+  &::after {
+    content: ':';
+  }
+}
+
+/* The italic brief under the title. */
+.brief {
+  line-height: 1.5;
+}
+
+/* Feature heading bar: title left, meta right, one rule under both. The
+   heading stays a plain block so its box runs the full prose width beside a
+   floated image; the rule is drawn from that box and painted under the image. */
+.heading {
+  display: block;
+  @include mdx-heading-rule;
+}
+
+/* The name, one span so the first-letter wrap stays inside it. */
+.headingTitle {
+  display: inline;
+}
+
+/* Tag and cost together at the right edge of the heading's first line. */
+.headingMeta {
+  float: right;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-left: 1rem;
+  white-space: nowrap;
+}
+
+/* Feature heading tag: subdued remark after the name, Collapsible's cost look. */
+.tag {
+  font-weight: 400;
+  font-style: italic;
+  font-size: 0.8em;
+  color: var(--color-accent);
+}
+
+/* Feature cost: the way boons print BP. */
+.cost {
+  font-weight: 400;
+  font-size: 0.8em;
+  color: var(--color-accent);
+}

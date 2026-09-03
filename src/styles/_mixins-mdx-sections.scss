@@ -45,7 +45,7 @@
   box-sizing: border-box;
   display: var(--mdx-section-decor-display, block);
   background-clip: padding-box;
-  opacity: 0.85;
+  opacity: var(--mdx-section-decor-opacity, 0.85);
 
   @include mdx--mask-image($mask-ellipse, $mask-position, $mask-linear);
 
@@ -330,5 +330,76 @@
   }
   to {
     transform: translate3d(0, -25%, 0);
+  }
+}
+
+/**
+ * Mixin: mdx-heading-rule
+ *
+ * The rule under a heading: a hairline in the heading's own colour, fading
+ * out at the right the way the blockquote's ground does. Drawn as a pseudo
+ * from the heading's own box, so it runs the element's full measure whatever
+ * the text does, and painted behind so floated art crosses over it.
+ *
+ * @param {number} $gap (default `0.2em`) — space between the text and the rule
+ */
+@mixin mdx-heading-rule($gap: 0.2em) {
+  position: relative;
+  padding-bottom: $gap;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--border-width-xs, 1px);
+    background: linear-gradient(
+      90deg,
+      currentColor 0%,
+      currentColor 85%,
+      var(--color-transparent) 97%
+    );
+    z-index: -1;
+    pointer-events: none;
+  }
+}
+
+/**
+ * Mixin: mdx-slot-card
+ *
+ * Heirloom slot card rhythm. Include on the card host (`[data-heirloom]`).
+ * The brief, the stats lines, and each block's slot lines hug their heading;
+ * the blocks carry no ornament of their own, the `###` group sections around
+ * them do.
+ */
+@mixin mdx-slot-card {
+  > p[data-heirloom-brief] {
+    margin-block: 0.25rem 1rem;
+  }
+
+  /* Bottom gap holds the next group heading off the numbers; the heading's
+     own top margin collapses into it. */
+  [data-heirloom-stats] {
+    margin-block: 0.5rem 1.5rem;
+  }
+
+  /* The rule closing the primer carries the site's 3rem section gap on both
+     sides, and `hr` is a formatting context, so those margins cannot collapse
+     through it. In the card the mechanical half opens right under it, so the
+     gap is spent once. */
+  > hr {
+    margin-block: 2rem 0;
+  }
+
+  article[data-kind] {
+    > :is(h1, h2, h3, h4, h5, h6) {
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    > p[data-slot-grid] {
+      margin-block: 0 0.75em;
+    }
   }
 }

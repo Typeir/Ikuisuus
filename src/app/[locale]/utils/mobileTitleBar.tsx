@@ -15,7 +15,7 @@
 import btn from '@/styles/buttons.module.scss';
 import Icon from '@/lib/components/icon/icon';
 import themeToggleStyles from '@/lib/components/themeToggle/themeToggle.module.scss';
-import { SelectedCharacterBadge } from '@/modules/character-builder';
+import { SelectedCharacterBadge } from '@/modules/character-builder/presentation/SelectedCharacter/selectedCharacterBadge';
 import { SearchBar } from '@/modules/search/presentation/SearchBar/SearchBar';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
