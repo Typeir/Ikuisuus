@@ -91,7 +91,12 @@ describe('shared token recognizers', () => {
 
     it('should parse formula DC', () => {
       const result = recognizeDC('DC 10 + Prof + CHA mod)');
-      expect(result).toEqual({ formula: '8 + Prof + CHA mod' });
+      expect(result).toEqual({ formula: '10 + Prof + CHA mod' });
+    });
+
+    it('should parse the legacy DC = form', () => {
+      const result = recognizeDC('saving throw (DC = spell save DC)');
+      expect(result).toEqual({ formula: 'spell save DC' });
     });
 
     it('should return null for no DC text', () => {

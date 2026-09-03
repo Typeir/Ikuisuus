@@ -73,10 +73,20 @@ describe('featurePatterns', () => {
   });
 
   describe('SAVES', () => {
-    it('dcFormula should capture formula after DC =', () => {
+    it('dcFormula should capture a formula written after DC', () => {
       const m = 'DC 10 + Prof + CHA mod)'.match(SAVES.dcFormula);
       expect(m).not.toBeNull();
-      expect(m![1]).toContain('8 + Prof');
+      expect(m![1]).toContain('10 + Prof');
+    });
+
+    it('dcFormula should still capture the legacy DC = form', () => {
+      const m = 'saving throw (DC = result)'.match(SAVES.dcFormula);
+      expect(m).not.toBeNull();
+      expect(m![1]).toBe('result');
+    });
+
+    it('dcFormula should not match a flat DC', () => {
+      expect('DC 16 Wisdom saving throw'.match(SAVES.dcFormula)).toBeNull();
     });
 
     it('dcFlat should capture numeric DC', () => {

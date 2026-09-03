@@ -13,10 +13,52 @@ import {
     IGNORED_FOLDERS,
     REGEX_CONTENT_SUFFIX,
     REGEX_EXTENSION,
+    stripContentSuffix,
 } from '@/lib/constants/content';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import { toTitleCase } from '@/lib/utils/toTitleCase';
 import type { WalkNode } from './types';
+
+/**
+ * Chooses one file per navigation slug, so that a suffixed content file and a
+ * bare one sharing a base name do not both become nodes.
+ *
+ * A content suffix wins over none: `dragon.sheet.mdx` is preferred to
+ * `dragon.mdx`, both of which resolve to the slug `dragon`. Where neither
+ * carries a suffix, or both do, the first name in the sorted list wins.
+ *
+ * @param {string[]} files - Content filenames in one directory, already sorted.
+ * @returns {Map<string, string>} Kebab-cased slug to the filename that owns it.
+ *
+ * @example
+ * selectPreferredFiles(['dragon.mdx', 'dragon.sheet.mdx'])
+ * // Map { 'dragon' => 'dragon.sheet.mdx' }
+ */
+export function selectPreferredFiles(files: string[]): Map<string, string> {
+  const preferred = new Map<string, string>();
+
+  for (const name of files) {
+    const stem = name.replace(REGEX_EXTENSION, '');
+    const hasSuffix = REGEX_CONTENT_SUFFIX.test(stem);
+    const kebabBase = toKebabCase(stripContentSuffix(stem));
+    const incumbent = preferred.get(kebabBase);
+
+    if (incumbent === undefined) {
+      preferred.set(kebabBase, name);
+      continue;
+    }
+
+    const incumbentHasSuffix = REGEX_CONTENT_SUFFIX.test(
+      incumbent.replace(REGEX_EXTENSION, ''),
+    );
+
+    if (hasSuffix && !incumbentHasSuffix) {
+      preferred.set(kebabBase, name);
+    }
+  }
+
+  return preferred;
+}
 
 /**
  * Recursively walks all visible content entries for navigation.
@@ -50,6 +92,8 @@ export async function walk(
     )
     .map((entry) => entry.name);
 
+  const preferredFiles = selectPreferredFiles(files);
+
   const nodes = await Promise.all(
     filteredEntries.map(async (entry) => {
       const fileName = entry.name.replace(REGEX_EXTENSION, '');
@@ -76,7 +120,7 @@ export async function walk(
       if (
         (entry.name.endsWith(FILE_EXT_MD) ||
           entry.name.endsWith(FILE_EXT_MDX)) &&
-        files.includes(entry.name)
+        preferredFiles.get(kebabBase) === entry.name
       ) {
         return {
           name: toTitleCase(baseFileName),
