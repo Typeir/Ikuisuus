@@ -10,32 +10,32 @@
  */
 
 import type {
-    ActionToken,
-    DamageToken,
-    DCToken,
-    DiceToken,
-    DurationToken,
-    RangeToken,
-    RechargeToken,
-    ResourceToken,
-    SaveToken,
-    TemplateToken,
+  ActionToken,
+  DamageToken,
+  DCToken,
+  DiceToken,
+  DurationToken,
+  RangeToken,
+  RechargeToken,
+  ResourceToken,
+  SaveToken,
+  TemplateToken,
 } from '@/lib/types/feature';
 import {
-    ABILITY_MAP,
-    ABILITY_SHORTS,
-    ACTIONS,
-    DAMAGE_TYPES,
-    DICE,
-    DISTANCE,
-    DURATION,
-    measureValue,
-    RECHARGE_TIMINGS,
-    RESOURCE_ENTRIES,
-    RESOURCES,
-    SAVES,
-    SHAPES,
-    TEMPLATES,
+  ABILITY_MAP,
+  ABILITY_SHORTS,
+  ACTIONS,
+  DAMAGE_TYPES,
+  DICE,
+  DISTANCE,
+  DURATION,
+  measureValue,
+  RECHARGE_TIMINGS,
+  RESOURCE_ENTRIES,
+  RESOURCES,
+  SAVES,
+  SHAPES,
+  TEMPLATES,
 } from './featurePatterns';
 
 /**
@@ -83,7 +83,7 @@ export function recognizeDamage(text: string): DamageToken | null {
 }
 
 /**
- * Recognizes a DC expression like "DC 16", "DC = 8 + Prof + CHA mod".
+ * Recognizes a DC expression like "DC 16", "DC 10 + Prof + CHA mod".
  *
  * @param {string} text - Input text
  * @returns {DCToken | null} Parsed DC token or null

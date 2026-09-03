@@ -12,22 +12,22 @@
  */
 
 import {
-    ABILITY_MAP,
-    ABILITY_SHORTS,
-    ACTIONS,
-    DAMAGE_TYPES,
-    DICE,
-    DISTANCE,
-    DURATION,
-    MONSTER,
-    RECHARGE_TIMINGS,
-    RESOURCE_ENTRIES,
-    RESOURCES,
-    SAVES,
-    SHAPES,
-    STRUCTURE,
-    TEMPLATES,
-    WORD_NUMBERS,
+  ABILITY_MAP,
+  ABILITY_SHORTS,
+  ACTIONS,
+  DAMAGE_TYPES,
+  DICE,
+  DISTANCE,
+  DURATION,
+  MONSTER,
+  RECHARGE_TIMINGS,
+  RESOURCE_ENTRIES,
+  RESOURCES,
+  SAVES,
+  SHAPES,
+  STRUCTURE,
+  TEMPLATES,
+  WORD_NUMBERS,
 } from '@scripts/metadata/extraction/featurePatterns';
 import { describe, expect, it } from 'vitest';
 
@@ -73,10 +73,20 @@ describe('featurePatterns', () => {
   });
 
   describe('SAVES', () => {
-    it('dcFormula should capture formula after DC =', () => {
-      const m = 'DC = 8 + Prof + CHA mod)'.match(SAVES.dcFormula);
+    it('dcFormula should capture a formula written after DC', () => {
+      const m = 'DC 10 + Prof + CHA mod)'.match(SAVES.dcFormula);
       expect(m).not.toBeNull();
-      expect(m![1]).toContain('8 + Prof');
+      expect(m![1]).toContain('10 + Prof');
+    });
+
+    it('dcFormula should still capture the legacy DC = form', () => {
+      const m = 'saving throw (DC = result)'.match(SAVES.dcFormula);
+      expect(m).not.toBeNull();
+      expect(m![1]).toBe('result');
+    });
+
+    it('dcFormula should not match a flat DC', () => {
+      expect('DC 16 Wisdom saving throw'.match(SAVES.dcFormula)).toBeNull();
     });
 
     it('dcFlat should capture numeric DC', () => {

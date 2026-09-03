@@ -35,14 +35,14 @@ export const DICE = {
 /**
  * Pre-compiled patterns for Difficulty Class and saving throw expressions.
  *
- * @property {RegExp} dcFormula - "DC = 8 + Prof + CHA mod"
+ * @property {RegExp} dcFormula - "DC 10 + Prof + CHA mod", or the legacy "DC = ..." form
  * @property {RegExp} dcFlat - "DC 16"
  * @property {RegExp} savingThrow - "Wisdom saving throw" or "DEX save"
  * @property {RegExp} savingThrowWithDC - "DC 16 Wisdom saving throw"
  * @property {RegExp} autoFail - "automatically fails saving throws"
  */
 export const SAVES = {
-  dcFormula: /DC\s*=\s*(.+?)(?:\)|,|$)/i,
+  dcFormula: /DC\s*(?:=\s*|(?=\d+\s*\+))(.+?)(?:\)|,|$)/i,
   dcFlat: /DC\s+(\d+)/i,
   savingThrow:
     /(?:(strength|dexterity|constitution|intelligence|wisdom|charisma|str|dex|con|int|wis|cha))\s+sav(?:ing\s+throw|e)/i,

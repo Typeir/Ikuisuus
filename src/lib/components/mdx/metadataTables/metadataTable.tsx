@@ -151,14 +151,16 @@ export default function MetadataTable({
    * @function filteredData
    * @returns {MetadataRow[]} Filtered array of data rows
    *
-   * @description Global search: Pagefind slug ranks when the index answers,
-   * else case-insensitive substring match on any searchKey. Column filters
-   * delegate to `rowMatchesColumnFilters`.
+   * @description Global search: Pagefind slug ranks when the index answers
+   * with hits, else case-insensitive substring match on any searchKey. An
+   * empty rank map is not authoritative — a stale or partial index must not
+   * veto rows the table data can match. Column filters delegate to
+   * `rowMatchesColumnFilters`.
    */
   const filteredData = useMemo(() => {
     return data.filter((row) => {
       if (searchTerm) {
-        if (ranks) {
+        if (ranks && ranks.size > 0) {
           if (!ranks.has(slugOf(row))) return false;
         } else {
           const searchLower = searchTerm.toLowerCase();
@@ -185,7 +187,7 @@ export default function MetadataTable({
    */
   const sortedData = useMemo(() => {
     if (!sortKey || !sortDirection) {
-      if (ranks && searchTerm) {
+      if (ranks && ranks.size > 0 && searchTerm) {
         return [...filteredData].sort(
           (a, b) =>
             (ranks.get(slugOf(a)) ?? Number.MAX_SAFE_INTEGER) -
@@ -213,7 +215,15 @@ export default function MetadataTable({
       const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-  }, [filteredData, sortKey, sortDirection, ranks, searchTerm, slugOf, columns]);
+  }, [
+    filteredData,
+    sortKey,
+    sortDirection,
+    ranks,
+    searchTerm,
+    slugOf,
+    columns,
+  ]);
 
   /**
    * Pagination calculations.
@@ -421,7 +431,10 @@ export default function MetadataTable({
                 </th>
               ))}
               {rowAction && (
-                <th className={styles.rowActionHead} aria-label={rowAction.label} />
+                <th
+                  className={styles.rowActionHead}
+                  aria-label={rowAction.label}
+                />
               )}
             </tr>
           </thead>
