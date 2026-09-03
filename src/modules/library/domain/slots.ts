@@ -38,27 +38,38 @@ export const HEIRLOOM_SLOTS = {
   burden: 'Burden',
   focus: 'Focus',
   nullifying: 'Nullifying',
+  saveDc: 'SaveDc',
 } as const;
 
 /**
  * Components that are entries of an heirloom: each opens with its own heading
  * and sectionizes as a nested section of the group around it.
  */
-export const BLOCK_COMPONENTS = ['Feature', 'Trait', 'Curse'] as const;
+export const BLOCK_COMPONENTS = ['Feature', 'Trait', 'Curse', 'Pool'] as const;
 
 /**
- * Anchor of the group heading the stats list is filed under. An author who
- * writes that heading claims the numbers; the heirloom fills the section in.
- * Without it the list follows the rule that closes the primer.
- */
-export const STATS_SECTION_ANCHOR = 'attributes';
-
-/**
- * Slots of a feature, trait, or curse, in display order.
+ * Slots of a feature, trait, or curse, in display order, which is the order a
+ * use resolves in: what it costs, whether a use is left, who it reaches, and
+ * how the uses come back. Charges and recharge are separate because a thing
+ * can have uses that never come back, and a thing that recharges need not
+ * count charges.
  */
 export const FEATURE_SLOTS = {
+  mastery: 'Mastery',
+  deed: 'Deed',
   cost: 'Cost',
+  charges: 'Charges',
   targets: 'Targets',
+  recharge: 'Recharge',
+} as const;
+
+/**
+ * Slots of a pool: how much it holds and how it refills. A pool is a number
+ * the host owns and its blocks spend from, so it belongs to no one host —
+ * trinkets, monsters and vocations can carry one on the same terms.
+ */
+export const POOL_SLOTS = {
+  max: 'Max',
   recharge: 'Recharge',
 } as const;
 
@@ -73,16 +84,22 @@ export type HeirloomSlotName = keyof typeof HEIRLOOM_SLOTS;
 export type FeatureSlotName = keyof typeof FEATURE_SLOTS;
 
 /**
+ * Pool slot names.
+ */
+export type PoolSlotName = keyof typeof POOL_SLOTS;
+
+/**
  * Every slot name.
  */
-export type SlotName = HeirloomSlotName | FeatureSlotName;
+export type SlotName = HeirloomSlotName | FeatureSlotName | PoolSlotName;
 
 /**
  * Every authored element name.
  */
 export type SlotElementName =
   | (typeof HEIRLOOM_SLOTS)[HeirloomSlotName]
-  | (typeof FEATURE_SLOTS)[FeatureSlotName];
+  | (typeof FEATURE_SLOTS)[FeatureSlotName]
+  | (typeof POOL_SLOTS)[PoolSlotName];
 
 /**
  * A slot value as MDX hands it to the parent: a string attribute, the
@@ -102,6 +119,7 @@ export type SlotProps<N extends SlotName> = Partial<Record<N, SlotValue>>;
 export const SLOT_ELEMENT_NAMES: Record<SlotName, SlotElementName> = {
   ...HEIRLOOM_SLOTS,
   ...FEATURE_SLOTS,
+  ...POOL_SLOTS,
 };
 
 /**
@@ -119,11 +137,21 @@ export const FEATURE_SLOT_NAMES = Object.keys(
 ) as FeatureSlotName[];
 
 /**
- * Every slot name, heirloom slots first.
+ * Pool slot names in display order.
+ */
+export const POOL_SLOT_NAMES = Object.keys(POOL_SLOTS) as PoolSlotName[];
+
+/**
+ * Every slot name, heirloom slots first. A name both hosts accept, such as
+ * `charges`, is listed once: it carries one label and one element wherever it
+ * is written, and only the host decides where the value lands.
  */
 export const SLOT_NAMES: SlotName[] = [
-  ...HEIRLOOM_SLOT_NAMES,
-  ...FEATURE_SLOT_NAMES,
+  ...new Set<SlotName>([
+    ...HEIRLOOM_SLOT_NAMES,
+    ...FEATURE_SLOT_NAMES,
+    ...POOL_SLOT_NAMES,
+  ]),
 ];
 
 /**
@@ -147,8 +175,24 @@ export const STAT_SLOTS: readonly HeirloomSlotName[] = [
   'mastery',
   'masterfulBlow',
   'charges',
+  'saveDc',
   'burden',
 ];
+
+/**
+ * Which slots each component accepts, as slot name to authored element name.
+ * The compile pipeline reads this to move a slot attribute that carries
+ * markup into its element form.
+ */
+export const SLOT_HOSTS: Readonly<
+  Record<string, Readonly<Record<string, string>>>
+> = {
+  Heirloom: HEIRLOOM_SLOTS,
+  Feature: FEATURE_SLOTS,
+  Trait: FEATURE_SLOTS,
+  Curse: FEATURE_SLOTS,
+  Pool: POOL_SLOTS,
+};
 
 /**
  * Message-catalogue key of a slot's label, under the `library` namespace.

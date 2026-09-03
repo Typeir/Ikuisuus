@@ -65,9 +65,13 @@ describe('T3 keyword href in slots', () => {
     expect(anchor?.[0] ?? '').toMatch(/href="[^"]*#repose"/);
   });
 
-  it('attributes: the fixture carries no keyword after the cadence moved to the chapter', async () => {
+  it('attributes: the fixture resolves the keyword its charges slot writes', async () => {
     const html = await renderFixture();
-    expect(html).not.toContain('data-keyword="repose"');
+    const charges = html.match(
+      /<span[^>]*data-slot="charges"[^>]*>[\s\S]*?<\/span><\/span>/,
+    )?.[0] ?? '';
+    expect(charges).toMatch(/<a [^>]*data-keyword="repose"[^>]*>/);
+    expect(charges).toMatch(/href="[^"]*#repose"/);
   });
 
   it('elements: the keyword in the Cost element resolves with href', async () => {

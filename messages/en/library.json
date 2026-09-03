@@ -19,7 +19,10 @@
     "charges": "Charges",
     "burden": "Burden",
     "focus": "Focus",
-    "nullifying": "Nullifying"
+    "nullifying": "Nullifying",
+    "saveDc": "Save DC",
+    "deed": "Deed",
+    "max": "Maximum"
   },
   "heirloom": {
     "kind": "Heirloom",
@@ -27,5 +30,16 @@
     "enchanted": "enchanted",
     "focus": "focus",
     "nullifying": "Nullifying"
+  },
+  "feature": {
+    "masteryAny": "Requires mastery with this weapon",
+    "masteryWith": "Requires mastery with {kind}",
+    "deed": {
+      "stratagem": "Declared at the end of your turn, resolving at the start of your next",
+      "act": "Taken at the end of another creature's turn",
+      "resist": "Taken when you fail a saving throw",
+      "lair": "Taken at the top of the initiative ladder",
+      "phase": "Taken when hit points cross a threshold"
+    }
   }
 }

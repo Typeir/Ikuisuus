@@ -79,7 +79,7 @@ describe('T5 aspects row placement', () => {
       aspects: ASPECTS,
     });
     const article = html.match(
-      /<article data-kind="feature" data-anchor="mooncleave">[\s\S]*?<\/article>/,
+      /<article [^>]*data-anchor="mooncleave"[^>]*>[\s\S]*?<\/article>/,
     );
     expect(article?.[0] ?? '').toContain('data-aspects-section="mooncleave"');
     expect(article?.[0] ?? '').not.toContain(
@@ -94,9 +94,9 @@ describe('T5 aspects row placement', () => {
       aspects: ASPECTS,
     });
     const markup = renderToStaticMarkup(content);
-    expect(markup).not.toMatch(/<article data-kind="feature" data-anchor=/);
+    expect(markup).not.toMatch(/<article [^>]*data-anchor="mooncleave"/);
     expect(markup).toMatch(
-      /<article data-kind="feature">[\s\S]*<section data-heading-level="4" data-anchor="mooncleave">[\s\S]*data-aspects-section="mooncleave"/,
+      /<article [^>]*data-kind="feature"[^>]*>[\s\S]*<section data-heading-level="4" data-anchor="mooncleave">[\s\S]*data-aspects-section="mooncleave"/,
     );
   });
 });

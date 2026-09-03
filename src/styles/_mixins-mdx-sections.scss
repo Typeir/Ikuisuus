@@ -392,10 +392,29 @@
     margin-block: 2rem 0;
   }
 
+  /* Glyphs say what a heading introduces: a group of blocks, or a block by
+     what using it costs. Drawn, not typed, so a heading's text stays its
+     name and the mark cannot drift from the cost beside it. */
+  > section[data-heading-level] > :is(h1, h2, h3, h4, h5, h6)::before {
+    content: '❖ ';
+  }
+
   article[data-kind] {
     > :is(h1, h2, h3, h4, h5, h6) {
       margin-top: 0.25rem;
       margin-bottom: 0.25rem;
+
+      &::before {
+        content: '◇ ';
+      }
+    }
+
+    &[data-mark='minor'] > :is(h1, h2, h3, h4, h5, h6)::before {
+      content: '⬖ ';
+    }
+
+    &[data-mark='major'] > :is(h1, h2, h3, h4, h5, h6)::before {
+      content: '◆ ';
     }
 
     > p[data-slot-grid] {

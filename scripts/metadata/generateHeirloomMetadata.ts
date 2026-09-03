@@ -795,7 +795,10 @@ export interface HeirloomV2Feature {
   name: string;
   kind: string;
   tag?: string;
+  mastery?: string;
+  deed?: string;
   cost?: string;
+  charges?: string;
   targets?: string;
   recharge?: string;
 }
@@ -943,13 +946,23 @@ function rarityFromText(text: string): string {
 }
 
 /**
+ * A heading's ornament: the glyphs some headings open with, which name
+ * nothing and would otherwise break the join between a feature's name and a
+ * slot that refers to it.
+ */
+const HEADING_ORNAMENT = /^[^\p{L}\p{N}]+/u;
+
+/**
  * Extracts name and tag from a feature heading node.
  *
  * @param {MdNode} heading - Heading element
  * @returns {{ name: string; tag?: string }} Heading parts
  */
 function headingPartsOf(heading: MdNode): { name: string; tag?: string } {
-  const name = mdTextWithoutJsx(heading).trim();
+  const name = mdTextWithoutJsx(heading)
+    .trim()
+    .replace(HEADING_ORNAMENT, '')
+    .trim();
   const span = (heading.children ?? []).find(
     (child) => child.type === 'mdxJsxTextElement' && child.name === 'span',
   );

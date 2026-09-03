@@ -10,6 +10,7 @@
 import {
   FEATURE_SLOT_NAMES,
   HEIRLOOM_SLOT_NAMES,
+  POOL_SLOT_NAMES,
   SLOT_ELEMENT_NAMES,
   SLOT_NAME_BY_ELEMENT,
   SLOT_NAMES,
@@ -18,12 +19,51 @@ import {
 import { describe, expect, it } from 'vitest';
 
 describe('slots schema', () => {
-  it('lists heirloom slots before feature slots, without overlap', () => {
-    expect(SLOT_NAMES).toEqual([...HEIRLOOM_SLOT_NAMES, ...FEATURE_SLOT_NAMES]);
+  it('lists heirloom slots before feature slots, each name once', () => {
     expect(new Set(SLOT_NAMES).size).toBe(SLOT_NAMES.length);
-    expect(HEIRLOOM_SLOT_NAMES).toHaveLength(17);
+    expect(SLOT_NAMES.slice(0, HEIRLOOM_SLOT_NAMES.length)).toEqual(
+      HEIRLOOM_SLOT_NAMES,
+    );
+    for (const name of FEATURE_SLOT_NAMES) {
+      expect(SLOT_NAMES, name).toContain(name);
+    }
+    expect(HEIRLOOM_SLOT_NAMES).toHaveLength(18);
     expect(HEIRLOOM_SLOT_NAMES[0]).toBe('rarity');
-    expect(FEATURE_SLOT_NAMES).toEqual(['cost', 'targets', 'recharge']);
+  });
+
+  it('resolves a feature in the order a use resolves', () => {
+    expect(FEATURE_SLOT_NAMES).toEqual([
+      'mastery',
+      'deed',
+      'cost',
+      'charges',
+      'targets',
+      'recharge',
+    ]);
+  });
+
+  it('puts availability before cost, since a gate decides whether a use happens', () => {
+    expect(FEATURE_SLOT_NAMES.indexOf('mastery')).toBeLessThan(
+      FEATURE_SLOT_NAMES.indexOf('cost'),
+    );
+    expect(FEATURE_SLOT_NAMES.indexOf('deed')).toBeLessThan(
+      FEATURE_SLOT_NAMES.indexOf('cost'),
+    );
+  });
+
+  it('gives a pool its own slots, sharing recharge with a feature', () => {
+    expect(POOL_SLOT_NAMES).toEqual(['max', 'recharge']);
+    expect(SLOT_NAMES.filter((name) => name === 'recharge')).toHaveLength(1);
+  });
+
+  it('shares one element and label for a name both hosts accept', () => {
+    expect(HEIRLOOM_SLOT_NAMES).toContain('charges');
+    expect(FEATURE_SLOT_NAMES).toContain('charges');
+    expect(SLOT_ELEMENT_NAMES.charges).toBe('Charges');
+    expect(SLOT_NAMES.filter((name) => name === 'charges')).toHaveLength(1);
+    expect(HEIRLOOM_SLOT_NAMES).toContain('mastery');
+    expect(FEATURE_SLOT_NAMES).toContain('mastery');
+    expect(SLOT_NAMES.filter((name) => name === 'mastery')).toHaveLength(1);
   });
 
   it('maps element names back to slot names one to one', () => {

@@ -58,7 +58,6 @@ export async function SlotsPreview(): Promise<React.ReactElement> {
     components: { ...enrichedComponents, ...slotComponents },
     baseUrl: pathToFileURL(FIXTURE).toString(),
     aspects: aspectIndexOf(articleMetadata),
-    attributeRewrite: true,
     locale: 'en',
   });
 

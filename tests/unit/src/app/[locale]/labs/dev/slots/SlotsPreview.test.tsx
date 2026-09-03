@@ -71,7 +71,7 @@ describe('SlotsPreview', () => {
     expect(FIXTURE.replace(/\\/g, '/')).toMatch(/tests\/fixtures\/slots\/alfanjon\.mdx$/);
     const call = compileStatic.mock.calls[0]?.[0] as Record<string, unknown>;
     expect(call.source).toContain('<Heirloom');
-    expect(call.attributeRewrite).toBe(true);
+    expect(call.locale).toBe('en');
     expect(call.locale).toBe('en');
     expect(call.aspects).toEqual({ keys: ['probe'], records: [] });
     expect(Object.keys(call.components as object)).toEqual(

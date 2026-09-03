@@ -69,7 +69,7 @@ describe('parseHeirloomV2', () => {
       '',
       '<Feature>',
       '',
-      '#### Probe <span>Tag</span>',
+      '#### ◆ Probe <span>Tag</span>',
       '',
       '<Cost>1 Minor Action</Cost>',
       '<Targets>you</Targets>',

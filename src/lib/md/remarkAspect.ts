@@ -12,7 +12,6 @@ import type { Root } from 'mdast';
 import type { Plugin } from 'unified';
 import type { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
-import { rewriteAttributeShortcodes } from './rewriteAttributeShortcodes';
 
 /**
  * Component name emitted by this plugin.
@@ -123,32 +122,15 @@ function processTextNode(
 }
 
 /**
- * Options accepted by the plugin.
- *
- * @property {boolean} [attributes] - Also rewrite string attributes on JSX
- * elements; off by default so attribute strings stay untouched
- */
-export interface RemarkAspectOptions {
-  attributes?: boolean;
-}
-
-/**
  * Remark plugin transformer.
  *
- * @param {RemarkAspectOptions} [options] - Plugin options
  * @returns {(tree: Root) => void} Transformer
  */
-const remarkAspect: Plugin<[RemarkAspectOptions?], Root> = (options) => {
+const remarkAspect: Plugin<[], Root> = () => {
   return (tree: Root) => {
     visit(tree, 'text', (node, idx, parent) => {
       processTextNode(node as TextNode, idx ?? null, parent as Parent | null);
     });
-    if (options?.attributes) {
-      rewriteAttributeShortcodes(tree, ASPECT_EXPR_REGEX, parseAspectInner, (parsed) => {
-        const parts = parsed as { value: string; display?: string };
-        return aspectNode(parts.value, parts.display);
-      });
-    }
   };
 };
 

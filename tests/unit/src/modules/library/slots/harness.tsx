@@ -54,12 +54,10 @@ export function registry(
  *
  * @property {Record<string, unknown>} [components] - Registry overrides
  * @property {{ keys: string[]; records: string[] }} [aspects] - Aspect index
- * @property {boolean} [attributeRewrite=true] - Rewrite shortcodes in string attributes
  */
 export interface HarnessOptions {
   components?: Record<string, unknown>;
   aspects?: { keys: string[]; records: string[] };
-  attributeRewrite?: boolean;
 }
 
 /**
@@ -76,7 +74,6 @@ export async function compileSource(
   const result = await compileStatic({
     source,
     components: registry(opts.components),
-    attributeRewrite: opts.attributeRewrite ?? true,
     locale: 'en',
     aspects: opts.aspects,
   });

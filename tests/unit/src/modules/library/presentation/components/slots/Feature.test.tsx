@@ -108,6 +108,28 @@ describe('Feature', () => {
     expect(curseBox.querySelector('h6')?.textContent).toBe('Omen');
   });
 
+  it('marks a block by what using it costs, and takes the author\'s word over that', () => {
+    const marks = (cost?: string, mark?: 'major' | 'minor' | 'other') => {
+      const { container } = render(
+        <Feature cost={cost} mark={mark}>
+          <h4>Probe</h4>
+          <p>Body.</p>
+        </Feature>,
+      );
+      return container.querySelector('article')?.getAttribute('data-mark');
+    };
+
+    expect(marks('1 Major Action')).toBe('major');
+    expect(marks('1 Minor Action')).toBe('minor');
+    expect(marks('forgo all movement on your turn, in combat')).toBe('other');
+    expect(marks()).toBe('other');
+    expect(marks('1 Major Action', 'other')).toBe('other');
+
+    /* The cost is free text: only the action counts, not the word. */
+    expect(marks('1 Reaction, taken when a major threat appears')).toBe('other');
+    expect(marks('none, when a minor wound closes')).toBe('other');
+  });
+
   it('a feature is a plain article carrying its anchor, with no section of its own', () => {
     const { container } = render(
       <Feature cost='1 Minor Action'>

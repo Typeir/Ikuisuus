@@ -11,7 +11,8 @@
 import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSource';
 import { DEFAULT_KEYWORD_LOCALE } from '@/lib/constants/locales';
 import { resolveDocumentKeywords } from '@/lib/md/resolveShardByRef';
-import { BLOCK_COMPONENTS } from '@/modules/library/domain/slots';
+import desugarSlotAttributes from '@/lib/md/desugarSlotAttributes';
+import { BLOCK_COMPONENTS, SLOT_HOSTS } from '@/modules/library/domain/slots';
 import type { EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import type { CompileOptions } from '../../domain/compileOptions';
 import { buildMdxOptions, importAllAsync } from './compileUtils';
@@ -63,6 +64,7 @@ export async function compileDynamic(opts: CompileOptions) {
         mdxOptions,
         {
           remarkPlugins: [
+            [desugarSlotAttributes, { hosts: SLOT_HOSTS }],
             [remarkLibraryLink, { locale }],
             remarkGfm,
             remarkMath,

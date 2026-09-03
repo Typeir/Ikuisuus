@@ -10,6 +10,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
+import Attributes from '@/modules/library/presentation/components/slots/Attributes';
 import Heirloom from '@/modules/library/presentation/components/slots/Heirloom';
 import {
   Attunement,
@@ -73,63 +74,61 @@ describe('Heirloom', () => {
     ]);
   });
 
-  it('emits the stats list after the rule, only for the slots the item carries', () => {
+  it('prints the numbers where the marker sits, and nowhere on its own', () => {
     render(
       <Heirloom rarity='rare' base='Plate' armorClass='18' stealth='disadvantage' burden='4'>
         <p>Primer.</p>
         <hr />
-        <p>Feature prose.</p>
-      </Heirloom>,
-    );
-    const section = document.querySelector('[data-heirloom]');
-    const children = Array.from(section?.children ?? []).map(
-      (node) => `${node.tagName.toLowerCase()}${node.hasAttribute('data-heirloom-stats') ? '.stats' : ''}`,
-    );
-    expect(children).toEqual(['p', 'p', 'hr', 'ul.stats', 'p']);
-    const rows = Array.from(
-      document.querySelectorAll('[data-heirloom-stats] > li > [data-slot]'),
-    ).map((row) => row.getAttribute('data-slot'));
-    expect(rows).toEqual(['armorClass', 'stealth', 'burden']);
-    expect(
-      document.querySelector('[data-slot="armorClass"] [data-slot-value]')
-        ?.textContent,
-    ).toBe('18');
-    expect(document.querySelector('table')).toBeNull();
-  });
-
-  it('files the stats under the author\'s Attributes section when there is one', () => {
-    render(
-      <Heirloom rarity='rare' base='Plate' armorClass='18'>
-        <p>Primer.</p>
-        <hr />
         <section data-heading-level={3} data-anchor='attributes'>
           <h3>Attributes</h3>
+          <Attributes />
         </section>
-        <section data-heading-level={3} data-anchor='traits'>
-          <h3>Traits</h3>
-        </section>
+        <p>Feature prose.</p>
       </Heirloom>,
     );
     const filed = document.querySelector(
       'section[data-anchor="attributes"] [data-heirloom-stats]',
     );
     expect(filed).not.toBeNull();
-    expect(filed?.querySelector('[data-slot="armorClass"]')).not.toBeNull();
+    const rows = Array.from(
+      filed?.querySelectorAll(':scope > li > [data-slot]') ?? [],
+    ).map((row) => row.getAttribute('data-slot'));
+    expect(rows).toEqual(['armorClass', 'stealth', 'burden']);
+    expect(
+      document.querySelector('[data-slot="armorClass"] [data-slot-value]')
+        ?.textContent,
+    ).toBe('18');
     expect(
       document.querySelector('[data-heirloom] > [data-heirloom-stats]'),
     ).toBeNull();
-    expect(
-      document.querySelector('section[data-anchor="traits"] [data-heirloom-stats]'),
-    ).toBeNull();
-    expect(document.querySelector('section[data-anchor="attributes"] h3')?.textContent).toBe(
-      'Attributes',
+  });
+
+  it('prints nothing without a marker', () => {
+    render(
+      <Heirloom rarity='rare' base='Plate' armorClass='18'>
+        <p>Primer.</p>
+        <hr />
+      </Heirloom>,
     );
+    expect(document.querySelector('[data-heirloom-stats]')).toBeNull();
+  });
+
+  it('the marker can ask for particular slots', () => {
+    render(
+      <Heirloom rarity='rare' base='Plate' armorClass='18' stealth='disadvantage' burden='4'>
+        <Attributes only='burden armorClass' />
+      </Heirloom>,
+    );
+    const rows = Array.from(
+      document.querySelectorAll('[data-heirloom-stats] > li > [data-slot]'),
+    ).map((row) => row.getAttribute('data-slot'));
+    expect(rows).toEqual(['armorClass', 'burden']);
   });
 
   it('prints the versatile die inside the damage line', () => {
     render(
       <Heirloom rarity='rare' base='Longsword' damage='1d8 slashing' versatile='1d10'>
-        <hr />
+        <Attributes />
       </Heirloom>,
     );
     expect(

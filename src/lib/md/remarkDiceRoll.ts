@@ -21,7 +21,6 @@ import {
   parseDiceExpression,
   type ParsedDiceExpression,
 } from './diceExpressionParser';
-import { rewriteAttributeShortcodes } from './rewriteAttributeShortcodes';
 
 /** MDAST node type for an inline MDX JSX element. */
 const MDX_JSX_TEXT_ELEMENT = 'mdxJsxTextElement' as const;
@@ -185,38 +184,16 @@ function processTextNode(
 }
 
 /**
- * Options accepted by the plugin.
- *
- * @property {boolean} [attributes] - Also rewrite string attributes on JSX
- * elements; off by default so attribute strings stay untouched
- */
-export interface RemarkDiceRollOptions {
-  attributes?: boolean;
-}
-
-/**
  * Remark plugin factory that transforms `[% ... %]` dice expressions in text
  * nodes into `<DiceRoll>` MDX JSX elements.
  *
- * @param {RemarkDiceRollOptions} [options] - Plugin options
- * @returns {Plugin<[RemarkDiceRollOptions?], Root>} A unified plugin that transforms the MDAST
+ * @returns {Plugin<[], Root>} A unified plugin that transforms the MDAST
  */
-const remarkDiceRoll: Plugin<[RemarkDiceRollOptions?], Root> = (options) => {
+const remarkDiceRoll: Plugin<[], Root> = () => {
   return (tree: Root) => {
     visit(tree, 'text', (node, idx, parent) => {
       processTextNode(node as TextNode, idx ?? null, parent as Parent | null);
     });
-    if (options?.attributes) {
-      rewriteAttributeShortcodes(tree, DICE_EXPR_REGEX, parseDiceExpression, (parsed) => {
-        const expression = parsed as ParsedDiceExpression;
-        return diceRollNode(
-          expression.dice,
-          expression.specials,
-          expression.modifier,
-          expression.damageType,
-        );
-      });
-    }
   };
 };
 

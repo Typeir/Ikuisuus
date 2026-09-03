@@ -25,7 +25,6 @@ import {
   parseKeywordReference,
   type KeywordReference,
 } from './keywordExpressionParser';
-import { rewriteAttributeShortcodes } from './rewriteAttributeShortcodes';
 /**
  * Name of the component this plugin emits.
  *
@@ -226,12 +225,9 @@ export type KeywordResolutions = Record<string, KeywordResolution>;
  *
  * @interface RemarkKeywordOptions
  * @property {KeywordResolutions} [resolutions] - Targets for the references this document writes
- * @property {boolean} [attributes] - Also rewrite string attributes on JSX
- * elements; off by default so attribute strings stay untouched
  */
 export interface RemarkKeywordOptions {
   resolutions?: KeywordResolutions;
-  attributes?: boolean;
 }
 
 /**
@@ -251,11 +247,6 @@ const remarkKeyword: Plugin<[RemarkKeywordOptions?], Root> = (options) => {
         options?.resolutions,
       );
     });
-    if (options?.attributes) {
-      rewriteAttributeShortcodes(tree, KEYWORD_EXPR_REGEX, parseKeywordReference, (reference) =>
-        keywordNode(reference as KeywordReference, options?.resolutions),
-      );
-    }
   };
 };
 

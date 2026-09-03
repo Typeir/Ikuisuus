@@ -14,6 +14,7 @@
 
 'use client';
 
+import { SLOT_NAME_ATTRIBUTE } from '@/lib/md/desugarSlotAttributes';
 import {
   SLOT_ELEMENT_NAMES,
   SLOT_NAME_BY_ELEMENT,
@@ -37,6 +38,16 @@ export type { SlotName } from '@/modules/library/domain/slots';
  */
 export function slotNameOf(node: ReactNode): SlotName | null {
   if (!React.isValidElement(node)) return null;
+
+  /* The compile step stamps the slot name, because a client reference hides
+     the component's identity from a server render. */
+  const stamped = (node.props as Record<string, unknown>)?.[
+    SLOT_NAME_ATTRIBUTE
+  ];
+  if (typeof stamped === 'string' && stamped in SLOT_ELEMENT_NAMES) {
+    return stamped as SlotName;
+  }
+
   const type = node.type as { displayName?: string; name?: string } | string;
   if (typeof type === 'string') return null;
   const displayName = type.displayName || type.name || '';
@@ -66,6 +77,17 @@ export function cleanChildren(children: ReactNode): ReactNode[] {
     }
     return true;
   });
+}
+
+/**
+ * Renders a slot value as it arrived: a string trimmed, anything the compile
+ * step parsed into nodes as given.
+ *
+ * @param {ReactNode} value - Slot value
+ * @returns {ReactNode} Value ready to print
+ */
+export function inlineValue(value: ReactNode): ReactNode {
+  return typeof value === 'string' ? value.trim() : value;
 }
 
 /**
@@ -247,7 +269,10 @@ export const {
   Burden,
   Focus,
   Nullifying,
+  SaveDc,
+  Deed,
   Cost,
   Targets,
   Recharge,
+  Max,
 } = slotElements;

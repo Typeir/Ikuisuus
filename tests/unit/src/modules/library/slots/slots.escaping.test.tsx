@@ -61,18 +61,19 @@ describe('T13 escaping probe', () => {
     }
   }, 120000);
 
-  it('links render in the element, stay raw in the attribute', async () => {
-    const element = await renderSource(probeSource('element', CASES.link));
-    expect(element, 'element link').toMatch(/Bane<\/em><\/a>/);
-    const attribute = await renderSource(probeSource('attr', CASES.link));
-    expect(attribute, 'attr raw link').toContain('[_Bane_](/en/library/spells/bane)');
+  it('links render in both spellings, since a slot attribute is desugared to its element', async () => {
+    for (const spelling of ['attr', 'element']) {
+      const html = await renderSource(probeSource(spelling, CASES.link));
+      expect(html, `${spelling} link`).toMatch(/Bane<\/em><\/a>/);
+      expect(html, `${spelling} link source`).not.toContain('](/en/library');
+    }
   }, 120000);
 
-  it('emphasis renders in the element, stays raw in the attribute', async () => {
-    const element = await renderSource(probeSource('element', CASES.emphasis));
-    expect(element, 'element emphasis').toMatch(/<em>Repose<\/em>/);
-    const attribute = await renderSource(probeSource('attr', CASES.emphasis));
-    expect(attribute, 'attr raw emphasis').toContain('_Repose_');
+  it('emphasis renders in both spellings', async () => {
+    for (const spelling of ['attr', 'element']) {
+      const html = await renderSource(probeSource(spelling, CASES.emphasis));
+      expect(html, `${spelling} emphasis`).toMatch(/<em>Repose<\/em>/);
+    }
   }, 120000);
 
   it('a literal brace survives the attribute and breaks the element', async () => {

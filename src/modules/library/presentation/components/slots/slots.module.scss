@@ -51,7 +51,7 @@
   display: inline;
 }
 
-/* Tag and cost together at the right edge of the heading's first line. */
+/* The cost at the right edge of the heading's first line. */
 .headingMeta {
   float: right;
   display: inline-flex;
@@ -61,12 +61,15 @@
   white-space: nowrap;
 }
 
-/* Feature heading tag: subdued remark after the name, Collapsible's cost look. */
+/* Feature heading tag: reads with the name, since it says what the block is.
+   Collapsible's cost look, one space along from the title. */
 .tag {
   font-weight: 400;
   font-style: italic;
   font-size: 0.8em;
   color: var(--color-accent);
+  margin-left: 0.5rem;
+  white-space: nowrap;
 }
 
 /* Feature cost: the way boons print BP. */

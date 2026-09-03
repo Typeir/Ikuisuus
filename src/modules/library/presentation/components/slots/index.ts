@@ -14,7 +14,8 @@
  */
 
 import { SLOT_ELEMENT_NAMES } from '@/modules/library/domain/slots';
-import Feature, { Curse, Trait } from './Feature';
+import Attributes from './Attributes';
+import Feature, { Curse, Pool, Trait } from './Feature';
 import Heirloom from './Heirloom';
 import * as slotModule from './slotElements';
 
@@ -23,9 +24,11 @@ import * as slotModule from './slotElements';
  */
 export const slotComponents: Record<string, unknown> = {
   Heirloom,
+  Attributes,
   Feature,
   Trait,
   Curse,
+  Pool,
   ...Object.fromEntries(
     Object.values(SLOT_ELEMENT_NAMES).map((elementName) => [
       elementName,

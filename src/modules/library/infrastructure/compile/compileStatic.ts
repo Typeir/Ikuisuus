@@ -14,7 +14,8 @@ import remarkDiceRoll from '@/lib/md/remarkDiceRoll';
 import remarkKeyword from '@/lib/md/remarkKeyword';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { DEFAULT_KEYWORD_LOCALE } from '@/lib/constants/locales';
-import { BLOCK_COMPONENTS } from '@/modules/library/domain/slots';
+import desugarSlotAttributes from '@/lib/md/desugarSlotAttributes';
+import { BLOCK_COMPONENTS, SLOT_HOSTS } from '@/modules/library/domain/slots';
 import { resolveDocumentKeywords } from '@/lib/md/resolveShardByRef';
 import remarkLibraryLink from '@/lib/md/remarkLibraryLink';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
@@ -40,7 +41,6 @@ export async function compileStatic(opts: CompileOptions) {
     baseUrl,
     parseFrontmatter = true,
     aspects,
-    attributeRewrite = false,
   } = opts;
 
   const locale = opts.locale ?? DEFAULT_KEYWORD_LOCALE;
@@ -59,13 +59,14 @@ export async function compileStatic(opts: CompileOptions) {
         mdxOptions,
         {
           remarkPlugins: [
+            [desugarSlotAttributes, { hosts: SLOT_HOSTS }],
             [remarkLibraryLink, { locale }],
             remarkGfm,
             remarkMath,
-            [remarkAspect, { attributes: attributeRewrite }],
-            [remarkDiceRoll, { attributes: attributeRewrite }],
-            [remarkUnit, { attributes: attributeRewrite }],
-            [remarkKeyword, { resolutions, attributes: attributeRewrite }],
+            remarkAspect,
+            remarkDiceRoll,
+            remarkUnit,
+            [remarkKeyword, { resolutions }],
           ],
           rehypePlugins: [
             rehypeKatex,
