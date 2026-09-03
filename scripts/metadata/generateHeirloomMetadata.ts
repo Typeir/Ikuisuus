@@ -798,6 +798,7 @@ export interface HeirloomV2Feature {
   mastery?: string;
   deed?: string;
   cost?: string;
+  trigger?: string;
   charges?: string;
   targets?: string;
   recharge?: string;

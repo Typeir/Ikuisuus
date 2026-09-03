@@ -48,19 +48,27 @@ export const HEIRLOOM_SLOTS = {
 export const BLOCK_COMPONENTS = ['Feature', 'Trait', 'Curse', 'Pool'] as const;
 
 /**
- * Slots of a feature, trait, or curse, in display order, which is the order a
- * use resolves in: what it costs, whether a use is left, who it reaches, and
- * how the uses come back. Charges and recharge are separate because a thing
- * can have uses that never come back, and a thing that recharges need not
- * count charges.
+ * Slots of a feature, trait, or curse, in display order: whether it is
+ * available at all, what a use costs, what opens the window, how many uses
+ * there are, how they come back, when the use resolves, and who it reaches.
+ * Charges sits next to recharge because the two read together. Charges and
+ * recharge stay separate because a thing can have uses that never come back,
+ * and a thing that recharges need not count charges.
+ *
+ * `cost` prints at the heading's right edge rather than in the slot line, and
+ * carries the token spent and nothing else, so the right edge of every card
+ * reads as one column. A block that costs no token and waits on something
+ * carries `trigger` alone, which leads the rendered row: trigger, charges,
+ * recharge, deed, targets.
  */
 export const FEATURE_SLOTS = {
   mastery: 'Mastery',
-  deed: 'Deed',
   cost: 'Cost',
+  trigger: 'Trigger',
   charges: 'Charges',
-  targets: 'Targets',
   recharge: 'Recharge',
+  deed: 'Deed',
+  targets: 'Targets',
 } as const;
 
 /**

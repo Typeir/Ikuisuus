@@ -272,6 +272,7 @@ export const {
   SaveDc,
   Deed,
   Cost,
+  Trigger,
   Targets,
   Recharge,
   Max,

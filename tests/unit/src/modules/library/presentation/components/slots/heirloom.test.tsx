@@ -116,7 +116,7 @@ describe('Heirloom', () => {
   it('the marker can ask for particular slots', () => {
     render(
       <Heirloom rarity='rare' base='Plate' armorClass='18' stealth='disadvantage' burden='4'>
-        <Attributes only='burden armorClass' />
+        <Attributes burden armorClass />
       </Heirloom>,
     );
     const rows = Array.from(

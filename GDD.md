@@ -24,12 +24,12 @@ mechanical philosophy, and tonal identity.
 Every design decision — mechanical, narrative, or aesthetic — MUST be traceable
 to at least one of these pillars:
 
-| Pillar          | Definition                                                          | Manifestation                                                                                           |
-| --------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Tragedy**     | The world is already dead. The player characters are ghosts of ancient myth that struggled against fate. | Loss is permanent. Victory is temporary. Hope is a choice, not a guarantee.                             |
-| **Myth**        | The setting operates on mythic logic, not simulationist logic.      | Names carry weight. Actions have cosmic consequence. The world is authored, not generated.              |
-| **Dichotomy**   | "The vile and beautiful lands of Damocles."                         | Beauty and horror coexist. Grace and rot are inseparable. The sublime is found in the grotesque.        |
-| **Post-Mortem** | The universe has already ended. This is a tale of its demise.              | The world ended. This is archaeology. Ruin is the default state. Recovery is possible but costly. The further back you go into the past, the more advanced everything is. |
+| Pillar          | Definition                                                                                               | Manifestation                                                                                                                                                             |
+| --------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tragedy**     | The world is already dead. The player characters are ghosts of ancient myth that struggled against fate. | Loss is permanent. Victory is temporary. Hope is a choice, not a guarantee.                                                                                               |
+| **Myth**        | The setting operates on mythic logic, not simulationist logic.                                           | Names carry weight. Actions have cosmic consequence. The world is authored, not generated.                                                                                |
+| **Dichotomy**   | "The vile and beautiful lands of Damocles."                                                              | Beauty and horror coexist. Grace and rot are inseparable. The sublime is found in the grotesque.                                                                          |
+| **Post-Mortem** | The universe has already ended. This is a tale of its demise.                                            | The world ended. This is archaeology. Ruin is the default state. Recovery is possible but costly. The further back you go into the past, the more advanced everything is. |
 
 ### 1.3 Tonal Anchors
 
@@ -1012,6 +1012,75 @@ All internal links MUST be absolute paths:
 
 Verify target exists before adding. If not, flag: `[NEEDS SOURCE: target page does
 not yet exist]`.
+
+### 3.6 Tempo Declaration
+
+Every entry that resolves during play MUST declare what it spends. The declared
+cost carries one currency and nothing else.
+
+| Currency         | Budget                                             |
+| ---------------- | -------------------------------------------------- |
+| **Major Action** | One per turn, drawn from the pool of two actions.  |
+| **Minor Action** | Drawn from the same pool of two actions.           |
+| **Reaction**     | One per round, restored at the start of your turn. |
+| **Reflex**       | Unlimited. A reflex spends no tempo.               |
+| **Interaction**  | One free per turn; a second costs a Minor Action.  |
+
+A response that waits on a trigger and spends no tempo is declared **Reflex**.
+Saving throws and imposed checks are reflexes. A reflex may be declined, and
+declining carries the consequence of failing the effect that triggered it.
+
+**Cost and trigger are separate axes.** The cost states the currency. The
+trigger states what opens the window.
+
+| DO                                                               | DON'T                                                    |
+| ---------------------------------------------------------------- | -------------------------------------------------------- |
+| `cost="1 Reaction" trigger="when a creature hits you"`           | `cost="1 Reaction, taken when a creature hits you"`      |
+| `cost="1 Reflex" trigger="when you deal fire damage"`            | `cost="when you deal fire damage"`                       |
+| Declare a resource where it is spent, beside the tempo currency. | Fold points, uses, charges or slots into the tempo cost. |
+
+**Pillar:** Tragedy. Every act has a price, and the price is legible at the
+point of use.
+
+### 3.7 Resolution Notation
+
+Resolution spread across several attempts is written **Chained(successes/failures)**.
+`Chained(3/3)` completes on three successes and fails on three failures. Successes
+and failures need not be consecutive, and either count may be reached first. The
+entry states what failing the chain does.
+
+A state that other entries reference MUST be declared as a condition, with its own
+heading in `conditions.rule.mdx`.
+its procedure remains there; the condition carries what other entries need to name.
+
+| DO                                                         | DON'T                                                          |
+| ---------------------------------------------------------- | -------------------------------------------------------------- |
+| `[# kw:chained #](3/1)` for a resolution that repeats.     | "the check is repeated until it succeeds or the subject dies." |
+| Give a referenced state a condition heading, then link it. | Describe a state only inside the chapter that governs it.      |
+
+**Pillar:** Myth. The world is authored; a rule that other rules invoke carries a
+name they can invoke it by.
+
+### 3.8 No Taxonomic Rules
+
+Taxonomy is a mental map. A rule MUST NOT grant or deny anything on the strength
+of what a thing is called. Resistances, immunities, vulnerabilities and features
+are properties of the individual entity, declared where that entity is declared.
+
+A brain in a jar is an object that feels psychic damage. An artificial lung is an
+object that can be poisoned. The category never decides.
+
+| DO                                                              | DON'T                                                      |
+| --------------------------------------------------------------- | ---------------------------------------------------------- |
+| State an entity's immunities in its own entry.                  | "Objects are immune to poison and psychic damage."         |
+| Let each area declare the population it touches.                | Derive what an effect reaches from the kind of its target. |
+| Key a rule to a state — a condition, a formation, a stance.     | Key a rule to a standing type.                             |
+
+Monster entries already follow this: each declares its own immunities, and none
+derives them from a creature type.
+
+**Pillar:** Myth. The world is authored entity by entity. Mythic logic grants a
+thing its properties by what it is, one entity at a time.
 
 ---
 

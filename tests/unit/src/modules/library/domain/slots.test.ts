@@ -34,21 +34,21 @@ describe('slots schema', () => {
   it('resolves a feature in the order a use resolves', () => {
     expect(FEATURE_SLOT_NAMES).toEqual([
       'mastery',
-      'deed',
       'cost',
+      'trigger',
       'charges',
-      'targets',
       'recharge',
+      'deed',
+      'targets',
     ]);
   });
 
-  it('puts availability before cost, since a gate decides whether a use happens', () => {
-    expect(FEATURE_SLOT_NAMES.indexOf('mastery')).toBeLessThan(
-      FEATURE_SLOT_NAMES.indexOf('cost'),
-    );
-    expect(FEATURE_SLOT_NAMES.indexOf('deed')).toBeLessThan(
-      FEATURE_SLOT_NAMES.indexOf('cost'),
-    );
+  it('puts availability first, and reads charges next to recharge', () => {
+    const at = (name: string) => FEATURE_SLOT_NAMES.indexOf(name as never);
+    expect(at('mastery')).toBe(0);
+    expect(at('recharge')).toBe(at('charges') + 1);
+    expect(at('targets')).toBe(FEATURE_SLOT_NAMES.length - 1);
+    expect(at('deed')).toBeGreaterThan(at('recharge'));
   });
 
   it('gives a pool its own slots, sharing recharge with a feature', () => {

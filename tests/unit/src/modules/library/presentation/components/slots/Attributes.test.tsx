@@ -12,6 +12,7 @@ import React from 'react';
 import { describe, expect, it } from 'vitest';
 import Attributes, {
   HeirloomValuesContext,
+  type AttributesProps,
   type HeirloomValues,
 } from '@/modules/library/presentation/components/slots/Attributes';
 
@@ -19,13 +20,16 @@ import Attributes, {
  * Renders the marker inside an heirloom carrying the given values.
  *
  * @param {HeirloomValues} values - Header slot values
- * @param {string} [only] - Slot names to narrow to
+ * @param {AttributesProps} [props] - Slot names to narrow to, or `except`
  * @returns {HTMLElement} The container
  */
-function renderIn(values: HeirloomValues, only?: string): HTMLElement {
+function renderIn(
+  values: HeirloomValues,
+  props: AttributesProps = {},
+): HTMLElement {
   const { container } = render(
     <HeirloomValuesContext.Provider value={values}>
-      <Attributes only={only} />
+      <Attributes {...props} />
     </HeirloomValuesContext.Provider>,
   );
   return container;
@@ -71,25 +75,39 @@ describe('Attributes', () => {
     expect(damage?.textContent).toContain('1d12');
   });
 
-  it('narrows to the requested slots, keeping schema order', () => {
+  it('narrows to the slots named as bare attributes, keeping schema order', () => {
     const values: HeirloomValues = {
       damage: '1d10',
       reach: '[= 1 stride =]',
       mastery: 'Slow',
       burden: '[= 2 burden =]',
     };
-    expect(printed(renderIn(values, 'burden damage'))).toEqual([
-      'damage',
-      'burden',
-    ]);
-    expect(printed(renderIn(values, 'burden, damage'))).toEqual([
+    expect(printed(renderIn(values, { burden: true, damage: true }))).toEqual([
       'damage',
       'burden',
     ]);
   });
 
-  it('ignores a requested slot the item does not carry', () => {
-    const container = renderIn({ damage: '1d10' }, 'damage stealth');
+  it('withholds the slots except names, keeping the rest', () => {
+    const values: HeirloomValues = {
+      damage: '1d10',
+      reach: '[= 1 stride =]',
+      burden: '[= 2 burden =]',
+    };
+    expect(printed(renderIn(values, { except: 'reach' }))).toEqual([
+      'damage',
+      'burden',
+    ]);
+    expect(printed(renderIn(values, { except: 'reach, burden' }))).toEqual([
+      'damage',
+    ]);
+  });
+
+  it('ignores a named slot the item does not carry', () => {
+    const container = renderIn({ damage: '1d10' }, {
+      damage: true,
+      stealth: true,
+    });
     expect(printed(container)).toEqual(['damage']);
   });
 });

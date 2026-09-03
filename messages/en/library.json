@@ -1,6 +1,7 @@
 {
   "slots": {
     "cost": "Cost",
+    "trigger": "Trigger",
     "targets": "Targets",
     "recharge": "Recharge",
     "rarity": "Rarity",

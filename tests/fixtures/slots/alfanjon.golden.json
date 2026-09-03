@@ -40,7 +40,7 @@
       "kind": "feature",
       "tag": "Masterful Blow",
       "cost": "1 Major Action",
-      "charges": "1/[# kw:Repose #], or 3/[# kw:Repose #] if the wielder has mastery with Longswords",
+      "charges": "1/[# kw:Repose #], or 3/[# kw:Repose #] with mastery",
       "targets": "creatures within a [= 6 stride;ADJ =] cone"
     }
   ]

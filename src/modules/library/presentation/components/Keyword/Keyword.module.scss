@@ -1,4 +1,4 @@
-@use 'mixins-rhombus' as *;
+@use 'mixins' as *;
 
 .keyword {
   color: var(--color-accent);
@@ -97,5 +97,25 @@
 
   :last-child {
     margin-bottom: 0;
+  }
+
+  /* The frame prints its body at 0.8125rem, and a bare heading takes the
+     browser's `em` step from that, landing a shard's own sections a hair
+     above the prose they head. Sized off the root instead, and given the
+     rule and the emphasis colour so they read as headings rather than as
+     bold prose. */
+  :is(h1, h2, h3, h4, h5, h6) {
+    @include mdx-heading-rule;
+
+    margin: 0.9rem 0 0.4rem;
+    font-family: var(--font-headings), var(--font-default);
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-emphasis);
+  }
+
+  > :first-child {
+    margin-top: 0;
   }
 }
