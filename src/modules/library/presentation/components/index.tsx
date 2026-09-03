@@ -34,11 +34,13 @@ import Keyword from './Keyword';
 import Meta from './Meta';
 import ParallaxBackdrop from './ParallaxBackdrop';
 import { SectionTrack } from './SectionTrack';
+import { slotComponents } from './slots';
 import Tooltip from './Tooltip';
 import Unit from './Unit';
 import UnitSwitcher from './UnitSwitcher';
 
 export const components = {
+  ...slotComponents,
   Aspect,
   Aspects,
   BlendedImage,

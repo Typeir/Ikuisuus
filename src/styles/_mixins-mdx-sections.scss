@@ -422,3 +422,56 @@
     }
   }
 }
+
+/**
+ * Closing clasps on a sheet's sections.
+ *
+ * A section that closes its parent opens nothing. The one closing a closing
+ * parent ends the sheet, so it draws both clasps: the knot on the right and
+ * the geometric one on the left, as a list's last item does. Only the
+ * outermost of those closes — a closing section inside another ends at the
+ * same edge, so its pair would stack on the outer one's.
+ *
+ * Two levels is all a selector can ask for; a deeper chain would have to be
+ * marked at compile time.
+ */
+@mixin mdx-section-clasps {
+  & > section[data-heading-level]:not(:last-child)::before {
+    @include mdx-nine-slice-nested();
+  }
+
+  & > section:last-child::before {
+    @include mdx-hide-before();
+  }
+
+  &:last-child > section:last-child {
+    &::before {
+      @include mdx-nine-slice-nested();
+    }
+
+    &::after {
+      @include mdx-nine-slice-nested(
+        $image: '/render/terminalKnotworkGeometric9slice.png',
+        $mask-position: bottom left,
+        $left: calc(-2rem + (var(--depth, 0) * -2rem))
+      );
+    }
+  }
+
+  &:last-child
+    > section:last-child
+    section[data-heading-level]:last-child
+    > section:last-child {
+    &::before,
+    &::after {
+      @include mdx-hide-before();
+    }
+  }
+
+  /* A list closes with the geometric clasp at its owner's lower left, and the
+     next section opens with one at its upper left; back to back the two sit
+     almost on top of each other, so the section after a list gets air. */
+  &:has(> ul, > ol) + section[data-heading-level] {
+    margin-top: 2.5rem;
+  }
+}

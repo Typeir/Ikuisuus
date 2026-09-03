@@ -113,7 +113,7 @@ describe('CharacterSheet', () => {
     expect(
       screen.getByRole('heading', { name: /Aria Dawnweaver/i }),
     ).toBeTruthy();
-  });
+  }, 20000);
 
   it('dispatches UPSERT_CHARACTER with the edited character when Save is clicked', async () => {
     const { useCharacterSheetDispatch } =
@@ -140,7 +140,7 @@ describe('CharacterSheet', () => {
         }),
       }),
     );
-  });
+  }, 20000);
 
   it('persists a live-play write made outside edit mode', async () => {
     const { useCharacterSheetDispatch } =

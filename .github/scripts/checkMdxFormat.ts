@@ -33,6 +33,24 @@ const ROOT = path.resolve(__dirname, '../..');
  * Path segments relative to the project root that registry content renders
  * through.
  */
+const SLOT_SCHEMA_SEGMENTS = [
+  'src',
+  'modules',
+  'library',
+  'domain',
+  'slots.ts',
+];
+
+const SLOT_REGISTRY_SEGMENTS = [
+  'src',
+  'modules',
+  'library',
+  'presentation',
+  'components',
+  'slots',
+  'index.ts',
+];
+
 const MDX_REGISTRY_SEGMENTS = [
   'src',
   'modules',
@@ -213,6 +231,60 @@ const RULES: FormatRule[] = [
     appliesTo: ['spells'],
   },
 ];
+
+/**
+ * Component names the slot schema generates. The registry spreads
+ * `slotComponents`, whose keys are derived from the slot tables at runtime, so
+ * a regex over the registry cannot see them. Reading the schema is how those
+ * names become visible to a static check.
+ *
+ * @param {string} schemaFile - Path to the slot schema
+ * @param {string} registryFile - Path to the slot component registry
+ * @returns Set of element and block component names, empty when unreadable
+ */
+async function loadSlotComponents(
+  schemaFile: string,
+  registryFile: string,
+): Promise<Set<string>> {
+  const names = new Set<string>();
+
+  let registry = '';
+  try {
+    registry = await fs.readFile(registryFile, 'utf-8');
+  } catch {
+    registry = '';
+  }
+  const registryBlock = registry.match(
+    /slotComponents:\s*Record<string,\s*unknown>\s*=\s*\{([\s\S]*?)^\};/m,
+  );
+  for (const match of (registryBlock?.[1] ?? '').matchAll(
+    /^\s*([A-Z][\w$]*)\s*,\s*$/gm,
+  )) {
+    names.add(match[1]);
+  }
+
+  let content: string;
+  try {
+    content = await fs.readFile(schemaFile, 'utf-8');
+  } catch {
+    return names;
+  }
+
+  /* Every slot table maps a slot name to its authored element name, and the
+     schema file holds nothing else shaped that way. */
+  for (const match of content.matchAll(/:\s*'([A-Z][\w$]*)'/g)) {
+    names.add(match[1]);
+  }
+
+  const blocks = content.match(
+    /BLOCK_COMPONENTS\s*=\s*\[([\s\S]*?)\]/,
+  );
+  for (const match of (blocks?.[1] ?? '').matchAll(/'([A-Z][\w$]*)'/g)) {
+    names.add(match[1]);
+  }
+
+  return names;
+}
 
 /**
  * Load registered MDX component names from `export const components = { ... }`
@@ -399,6 +471,12 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
   const allComponents = await loadRegisteredComponents(
     path.join(rootDir, ...MDX_REGISTRY_SEGMENTS),
   );
+  for (const name of await loadSlotComponents(
+    path.join(rootDir, ...SLOT_SCHEMA_SEGMENTS),
+    path.join(rootDir, ...SLOT_REGISTRY_SEGMENTS),
+  )) {
+    allComponents.add(name);
+  }
 
   const files = await findMdxFiles(contentDir);
   const contentBasenames = buildContentBasenameSet(files);

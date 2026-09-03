@@ -4,8 +4,8 @@
  * component name. Slot elements are picked off the element module's named
  * exports by schema, so the registry follows the schema; picking named
  * exports keeps each element a client reference when a server component
- * consumes this map. Registered in the labs preview only until the format
- * check learns these components.
+ * consumes this map. Spread into the library's component registry, so content
+ * can use these tags directly.
  *
  * @module modules/library/presentation/components/slots
  * @version 0.4.0
