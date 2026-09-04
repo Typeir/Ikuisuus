@@ -10,7 +10,7 @@
  */
 
 import type { Metadata } from 'next';
-import { SlotsPreview } from './SlotsPreview';
+import { CONTENT_V2_FIXTURES, SlotsPreview } from './SlotsPreview';
 
 /**
  * Page metadata for the fixture preview.
@@ -28,5 +28,12 @@ export const generateMetadata = (): Metadata => ({
  * @returns {React.ReactElement} Rendered fixture
  */
 export default function SlotsLabsPage(): React.ReactElement {
-  return <SlotsPreview />;
+  return (
+    <>
+      <SlotsPreview />
+      {CONTENT_V2_FIXTURES.map((fixture) => (
+        <SlotsPreview key={fixture} fixture={fixture} />
+      ))}
+    </>
+  );
 }

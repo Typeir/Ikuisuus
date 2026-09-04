@@ -795,6 +795,7 @@ export interface HeirloomV2Feature {
   name: string;
   kind: string;
   tag?: string;
+  level?: string;
   mastery?: string;
   deed?: string;
   cost?: string;

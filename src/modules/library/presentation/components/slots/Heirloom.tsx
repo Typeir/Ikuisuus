@@ -1,5 +1,5 @@
 /**
- * @fileoverview Heirloom wrapper.
+ * @fileoverview Item card: heirlooms and trinkets.
  * @description Holds the whole item, story included. Renders the italic brief
  * from its identity slots first, then the children in source order, and hands
  * the number slots down for `<Attributes />` to print wherever the author
@@ -7,6 +7,12 @@
  * (Attributes, Traits, Features); sectionize nests the blocks beneath them.
  * Header slots arrive as attributes by default, or as a paragraph of slot
  * elements; slot props derive from the slot schema.
+ *
+ * A trinket is the same card with a shorter brief and no `<Attributes />`
+ * marker: it leads with its category rather than its rarity, and prints its
+ * numbers itself, because a trinket is one block where an heirloom is a page.
+ * Both draw from one slot table, so a slot cannot mean two things depending on
+ * which tag wrote it.
  *
  * @module modules/library/presentation/components/slots/Heirloom
  * @version 0.5.0
@@ -18,6 +24,7 @@
 
 import {
   HEIRLOOM_SLOT_NAMES,
+  STAT_SLOTS,
   type HeirloomSlotName,
   type SlotProps,
 } from '@/modules/library/domain/slots';
@@ -28,8 +35,10 @@ import {
   cleanChildren,
   collectSlotEntries,
   inlineValue,
+  SlotRow,
   splitSlotRuns,
 } from './slotElements';
+import { capitalize, lowerFirst } from './text';
 import styles from './slots.module.scss';
 
 /**
@@ -37,33 +46,50 @@ import styles from './slots.module.scss';
  * art, primer, `---`, and features as children.
  */
 export type HeirloomProps = SlotProps<HeirloomSlotName> & {
+  kind?: ItemKind;
   children?: ReactNode;
 };
+
+/**
+ * Which item card to render.
+ */
+export type ItemKind = 'heirloom' | 'trinket';
+
+/**
+ * Slots the item card prints as rows, in display order.
+ *
+ * A trinket takes the whole list, because it is one block with no room for an
+ * `<Attributes />` marker. An heirloom takes only what the marker does not
+ * already print — `STAT_SLOTS` covers its numbers — so nothing appears twice
+ * and a slot an heirloom carries is never silently dropped.
+ */
+const ITEM_ROWS: readonly HeirloomSlotName[] = [
+  'cost',
+  'charges',
+  'recharge',
+  'damage',
+  'range',
+  'properties',
+  'burden',
+  'price',
+];
+
+/**
+ * Rows an item of this kind prints for itself.
+ *
+ * @param {ItemKind} kind - Which item card
+ * @returns {readonly HeirloomSlotName[]} Slot names to print
+ */
+function rowsFor(kind: ItemKind): readonly HeirloomSlotName[] {
+  return kind === 'trinket'
+    ? ITEM_ROWS
+    : ITEM_ROWS.filter((name) => !STAT_SLOTS.includes(name));
+}
 
 /**
  * Enchantment attribute of the form `+N accuracy, +N damage`.
  */
 const PAIRED_ENCHANTMENT = /^\+(\d+)\s+accuracy,\s*\+(\d+)\s+damage$/i;
-
-/**
- * Upper-cases the first character.
- *
- * @param {string} text - Text
- * @returns {string} Text with a capital first letter
- */
-function capitalize(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-/**
- * Lower-cases the first character.
- *
- * @param {string} text - Text
- * @returns {string} Text with a lower-case first letter
- */
-function lowerFirst(text: string): string {
-  return text.charAt(0).toLowerCase() + text.slice(1);
-}
 
 /**
  * Enchantment clause: equal accuracy and damage bonuses collapse into one
@@ -161,12 +187,48 @@ function briefLines(
 }
 
 /**
- * Heirloom wrapper component.
+ * A trinket's brief: its category, then rarity and attunement where it carries
+ * them. Most trinkets are mundane and name only a category.
+ *
+ * @param {HeirloomValues} values - Header slot values
+ * @param {(key: string) => string} t - Translator for the heirloom namespace
+ * @returns {ReactNode[][]} Lines, each a list of fragments
+ */
+function trinketBrief(
+  values: HeirloomValues,
+  t: (key: string) => string,
+): ReactNode[][] {
+  const line: ReactNode[] = [];
+  if (values.category !== undefined) {
+    const category = inlineValue(values.category);
+    line.push(typeof category === 'string' ? capitalize(category) : category);
+  }
+  if (values.rarity !== undefined) {
+    const rarity = inlineValue(values.rarity);
+    line.push(
+      line.length ? ', ' : '',
+      typeof rarity === 'string' && !line.length ? capitalize(rarity) : rarity,
+    );
+  }
+  if (values.attunement !== undefined) {
+    const attunement = inlineValue(values.attunement);
+    line.push(line.length ? ', ' : '', t('requiresAttunement'));
+    if (attunement !== 'required') line.push(' ', attunement);
+  }
+  return line.length ? [line] : [];
+}
+
+/**
+ * Item card component.
  *
  * @param {HeirloomProps} props - Wrapper props
  * @returns {JSX.Element} The heirloom section
  */
-const Heirloom: React.FC<HeirloomProps> = ({ children, ...slots }) => {
+const Heirloom: React.FC<HeirloomProps> = ({
+  kind = 'heirloom',
+  children,
+  ...slots
+}) => {
   const t = useTranslations('library.heirloom');
   const nodes = cleanChildren(children);
   const { entries, kept } = splitSlotRuns(nodes, HEIRLOOM_SLOT_NAMES);
@@ -177,11 +239,13 @@ const Heirloom: React.FC<HeirloomProps> = ({ children, ...slots }) => {
     ]),
   );
 
-  const lines = briefLines(values, t);
+  const lines =
+    kind === 'trinket' ? trinketBrief(values, t) : briefLines(values, t);
+  const rows = rowsFor(kind).filter((name) => values[name] !== undefined);
 
   return (
     <HeirloomValuesContext.Provider value={values}>
-      <section data-heirloom>
+      <section data-heirloom data-item-kind={kind}>
         {lines.length > 0 && (
           <p className={styles.brief} data-heirloom-brief>
             {lines.map((line, index) => (
@@ -192,6 +256,15 @@ const Heirloom: React.FC<HeirloomProps> = ({ children, ...slots }) => {
             ))}
           </p>
         )}
+        {rows.length > 0 && (
+          <p data-slot-grid data-item-stats>
+            {rows.map((name) => (
+              <SlotRow key={name} name={name} host='Trinket'>
+                {inlineValue(values[name])}
+              </SlotRow>
+            ))}
+          </p>
+        )}
         {kept}
       </section>
     </HeirloomValuesContext.Provider>
@@ -199,5 +272,17 @@ const Heirloom: React.FC<HeirloomProps> = ({ children, ...slots }) => {
 };
 
 Heirloom.displayName = 'Heirloom';
+
+/**
+ * Trinket kind wrapper around the item card.
+ *
+ * @param {Omit<HeirloomProps, 'kind'>} props - Card props
+ * @returns {JSX.Element} The trinket section
+ */
+export const Trinket: React.FC<Omit<HeirloomProps, 'kind'>> = (props) => (
+  <Heirloom kind='trinket' {...props} />
+);
+
+Trinket.displayName = 'Trinket';
 
 export default Heirloom;

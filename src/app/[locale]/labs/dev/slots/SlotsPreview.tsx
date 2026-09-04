@@ -43,6 +43,23 @@ const ARTICLE_SLUG = ['items', 'heirlooms', 'alfanjon-of-the-crescent-moon'];
 export const FIXTURE = path.resolve('tests/fixtures/slots', 'alfanjon.mdx');
 
 /**
+ * Content-v2 fixtures, one per card host, in reading order.
+ */
+export const CONTENT_V2_FIXTURES = [
+  'spell.mdx',
+  'spell-overcast.mdx',
+  'trinket.mdx',
+  'monster.mdx',
+  'vocation.mdx',
+  'feat.mdx',
+] as const;
+
+/**
+ * Fixture directory.
+ */
+const FIXTURE_DIR = path.resolve('tests/fixtures/slots');
+
+/**
  * Renders the heirloom fixture inside the article frame.
  *
  * `.vercelignore` keeps this whole route out of deployments, and strips
@@ -50,11 +67,18 @@ export const FIXTURE = path.resolve('tests/fixtures/slots', 'alfanjon.mdx');
  * backstop for an environment that ships the route anyway: a missing fixture
  * reports itself rather than failing the build that prerenders this page.
  *
+ * @param {object} [props] - Component props
+ * @param {string} [props.fixture] - Fixture file name to render
  * @returns {Promise<React.ReactElement>} Rendered fixture, or a notice when
  * the fixture did not ship
  */
-export async function SlotsPreview(): Promise<React.ReactElement> {
-  if (!existsSync(FIXTURE)) {
+export async function SlotsPreview({
+  fixture = 'alfanjon.mdx',
+}: {
+  fixture?: string;
+} = {}): Promise<React.ReactElement> {
+  const file = path.join(FIXTURE_DIR, fixture);
+  if (!existsSync(file)) {
     return (
       <p data-slots-preview-unavailable>
         The slot fixture is not part of this deployment. Run the site locally
@@ -63,7 +87,7 @@ export async function SlotsPreview(): Promise<React.ReactElement> {
     );
   }
 
-  const source = readFileSync(FIXTURE, 'utf8');
+  const source = readFileSync(file, 'utf8');
 
   const streamText = await resolveStreamText('en', ARTICLE_SLUG, source);
   const articleMetadata = await loadArticleMetadata(ARTICLE_SLUG, 'en');
@@ -71,7 +95,7 @@ export async function SlotsPreview(): Promise<React.ReactElement> {
   const result = await compileStatic({
     source,
     components: { ...enrichedComponents, ...slotComponents },
-    baseUrl: pathToFileURL(FIXTURE).toString(),
+    baseUrl: pathToFileURL(file).toString(),
     aspects: aspectIndexOf(articleMetadata),
     locale: 'en',
   });

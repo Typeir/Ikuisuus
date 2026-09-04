@@ -12,7 +12,10 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/app/[locale]/labs/dev/slots/SlotsPreview', () => ({
-  SlotsPreview: () => <div data-testid='slots-preview' />,
+  CONTENT_V2_FIXTURES: ['spell.mdx', 'trinket.mdx', 'monster.mdx'],
+  SlotsPreview: ({ fixture }: { fixture?: string }) => (
+    <div data-testid='slots-preview' data-fixture={fixture ?? 'alfanjon.mdx'} />
+  ),
 }));
 
 import SlotsLabsPage, {
@@ -20,9 +23,15 @@ import SlotsLabsPage, {
 } from '@/app/[locale]/labs/dev/slots/page';
 
 describe('slots labs page', () => {
-  it('renders the fixture preview', () => {
-    const { getByTestId } = render(<SlotsLabsPage />);
-    expect(getByTestId('slots-preview')).toBeInTheDocument();
+  it('renders the heirloom fixture and every content-v2 fixture', () => {
+    const { getAllByTestId } = render(<SlotsLabsPage />);
+    const previews = getAllByTestId('slots-preview');
+    expect(previews.map((node) => node.getAttribute('data-fixture'))).toEqual([
+      'alfanjon.mdx',
+      'spell.mdx',
+      'trinket.mdx',
+      'monster.mdx',
+    ]);
   });
 
   it('keeps the labs route out of search engines', () => {

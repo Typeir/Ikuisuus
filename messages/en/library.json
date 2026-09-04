@@ -23,7 +23,47 @@
     "nullifying": "Nullifying",
     "saveDc": "Save DC",
     "deed": "Deed",
-    "max": "Maximum"
+    "max": "Maximum",
+    "level": "Level",
+    "school": "School",
+    "components": "Components",
+    "duration": "Duration",
+    "save": "Save",
+    "overcast": "Overcast",
+    "category": "Category",
+    "properties": "Properties",
+    "price": "Price",
+    "size": "Size",
+    "type": "Type",
+    "alignment": "Alignment",
+    "hitPoints": "Hit Points",
+    "speed": "Speed",
+    "str": "STR",
+    "dex": "DEX",
+    "con": "CON",
+    "int": "INT",
+    "wis": "WIS",
+    "cha": "CHA",
+    "saves": "Saving Throws",
+    "skills": "Skills",
+    "resistances": "Resistances",
+    "immunities": "Immunities",
+    "senses": "Senses",
+    "languages": "Languages",
+    "challenge": "Challenge",
+    "tierBonus": "Tier Bonus",
+    "primaryAbility": "Primary Ability",
+    "hitDie": "Hit Point Die",
+    "trades": "Trades",
+    "weapons": "Weapons",
+    "armor": "Armor Training",
+    "equipment": "Starting Equipment",
+    "prerequisite": "Prerequisite",
+    "ability": "Ability",
+    "repeatable": "Repeatable",
+    "castingTime": "Casting Time",
+    "ritual": "Ritual",
+    "xp": "XP"
   },
   "heirloom": {
     "kind": "Heirloom",
@@ -41,6 +81,24 @@
       "resist": "Taken when you fail a saving throw",
       "lair": "Taken at the top of the initiative ladder",
       "phase": "Taken when hit points cross a threshold"
+    },
+    "level": "Level {level}"
+  },
+  "spell": {
+    "kind": "spell",
+    "cantrip": "Cantrip",
+    "ritual": "Ritual"
+  },
+  "trinket": {
+    "requiresAttunement": "requires attunement"
+  },
+  "feat": {
+    "repeatable": "repeatable",
+    "increase": "Increase your {ability} score by 1.",
+    "category": {
+      "general": "General",
+      "origin": "Origin",
+      "epicBoon": "Epic Boon"
     }
   }
 }

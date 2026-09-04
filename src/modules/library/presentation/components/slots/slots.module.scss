@@ -78,3 +78,49 @@
   font-size: 0.8em;
   color: var(--color-accent);
 }
+
+/* Stat-block table: the defence row and the ability row a monster sheet opens
+   with. Columns size to their content and the block scrolls rather than
+   forcing the article wider on a narrow screen. */
+.statTable {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-block: 0.75rem;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.25rem 0.9rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  th {
+    font-family: var(--font-default);
+    font-weight: 700;
+    font-synthesis-weight: none;
+    color: var(--color-emphasis);
+  }
+
+  /* A value the card worked out rather than read, marked so a reviewer can
+     see which numbers no longer live in the source. */
+  [data-derived-from] {
+    border-bottom: var(--border-width-xs) dotted var(--color-border);
+  }
+}
+
+/* Overcast written as a block: the label sits above its own content, taking
+   the same weight and colour a slot row's label takes. */
+.overcastLabel {
+  margin: 1rem 0 0.35rem;
+  font-weight: 700;
+  font-family: var(--font-default);
+  font-synthesis-weight: none;
+  color: var(--color-emphasis);
+
+  &::after {
+    content: ':';
+  }
+}

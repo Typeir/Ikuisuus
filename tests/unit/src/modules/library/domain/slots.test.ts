@@ -27,12 +27,13 @@ describe('slots schema', () => {
     for (const name of FEATURE_SLOT_NAMES) {
       expect(SLOT_NAMES, name).toContain(name);
     }
-    expect(HEIRLOOM_SLOT_NAMES).toHaveLength(18);
+    expect(HEIRLOOM_SLOT_NAMES).toHaveLength(23);
     expect(HEIRLOOM_SLOT_NAMES[0]).toBe('rarity');
   });
 
   it('resolves a feature in the order a use resolves', () => {
     expect(FEATURE_SLOT_NAMES).toEqual([
+      'level',
       'mastery',
       'cost',
       'trigger',
@@ -45,7 +46,8 @@ describe('slots schema', () => {
 
   it('puts availability first, and reads charges next to recharge', () => {
     const at = (name: string) => FEATURE_SLOT_NAMES.indexOf(name as never);
-    expect(at('mastery')).toBe(0);
+    expect(at('level')).toBe(0);
+    expect(at('mastery')).toBe(1);
     expect(at('recharge')).toBe(at('charges') + 1);
     expect(at('targets')).toBe(FEATURE_SLOT_NAMES.length - 1);
     expect(at('deed')).toBeGreaterThan(at('recharge'));

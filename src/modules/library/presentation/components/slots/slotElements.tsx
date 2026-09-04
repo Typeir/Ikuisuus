@@ -193,25 +193,69 @@ export function collectSlotEntries<N extends SlotName>(
  *
  * @param {object} props - Row props
  * @param {SlotName} props.name - Slot name, drives label key and data attribute
+ * @param {string} [props.host] - Host component name, when it renames the slot
+ * @param {string} [props.label] - Label already resolved, where a slot builds its own
  * @param {ReactNode} [props.children] - Slot value
  * @returns {JSX.Element} The row
  */
 export function SlotRow({
   name,
+  host,
+  label,
   children,
 }: {
   name: SlotName;
+  host?: string;
+  label?: string;
   children?: ReactNode;
 }): React.JSX.Element {
   const t = useTranslations('library');
   return (
     <span className={styles.row} data-slot={name}>
       <span className={styles.label} data-slot-label>
-        {t(slotLabelKey(name))}
+        {label ?? t(slotLabelKey(name, host))}
       </span>
       <span data-slot-value>{children}</span>
     </span>
   );
+}
+
+/**
+ * A host's slot values keyed by slot name, and the children that remain once
+ * element-form slot paragraphs are lifted out.
+ *
+ * @property {Partial<Record<N, ReactNode>>} values - Slot values by name
+ * @property {ReactNode[]} kept - Body nodes
+ */
+export interface SlotReading<N extends SlotName> {
+  values: Partial<Record<N, ReactNode>>;
+  kept: ReactNode[];
+}
+
+/**
+ * Reads a host's slots from both spellings at once: attributes on the tag and
+ * element-form slot paragraphs among the children. Every card host does this
+ * identically, so it lives here rather than in each of them.
+ *
+ * @param {ReactNode} children - The host's children
+ * @param {readonly N[]} names - Slot names the host accepts, in display order
+ * @param {Partial<Record<N, SlotValue>>} props - The host's slot props
+ * @returns {SlotReading<N>} Values and remaining body
+ */
+export function readSlots<N extends SlotName>(
+  children: ReactNode,
+  names: readonly N[],
+  props: Partial<Record<N, SlotValue>>,
+): SlotReading<N> {
+  const nodes = cleanChildren(children);
+  const { entries, kept } = splitSlotRuns(nodes, names);
+  const values = Object.fromEntries(
+    collectSlotEntries(names, props, entries).map((entry) => [
+      entry.name,
+      entry.value,
+    ]),
+  ) as Partial<Record<N, ReactNode>>;
+  return { values, kept };
 }
 
 /**
@@ -270,10 +314,49 @@ export const {
   Focus,
   Nullifying,
   SaveDc,
-  Deed,
+  Category,
+  Properties,
+  Price,
   Cost,
-  Trigger,
-  Targets,
   Recharge,
+  Level,
+  Trigger,
+  Deed,
+  Targets,
   Max,
+  School,
+  Ritual,
+  Components,
+  Duration,
+  Save,
+  Overcast,
+  Size,
+  Type,
+  Alignment,
+  HitPoints,
+  Speed,
+  Str,
+  Dex,
+  Con,
+  Int,
+  Wis,
+  Cha,
+  Saves,
+  Skills,
+  Resistances,
+  Immunities,
+  Senses,
+  Languages,
+  Challenge,
+  Xp,
+  TierBonus,
+  PrimaryAbility,
+  HitDie,
+  Trades,
+  Weapons,
+  Armor,
+  Equipment,
+  Prerequisite,
+  Ability,
+  Repeatable,
 } = slotElements;

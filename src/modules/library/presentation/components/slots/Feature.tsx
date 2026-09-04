@@ -47,7 +47,12 @@ import styles from './slots.module.scss';
 /**
  * Feature kind values.
  */
-export type FeatureKind = 'feature' | 'trait' | 'curse' | 'pool';
+export type FeatureKind =
+  | 'feature'
+  | 'trait'
+  | 'curse'
+  | 'action'
+  | 'pool';
 
 /**
  * Props for the Feature component: one optional prop per feature slot, the
@@ -72,6 +77,7 @@ const SLOT_NAMES_BY_KIND: Record<FeatureKind, readonly SlotName[]> = {
   feature: FEATURE_SLOT_NAMES,
   trait: FEATURE_SLOT_NAMES,
   curse: FEATURE_SLOT_NAMES,
+  action: FEATURE_SLOT_NAMES,
   pool: POOL_SLOT_NAMES,
 };
 
@@ -135,6 +141,10 @@ function constructed(
     return text
       ? t('feature.masteryWith', { kind: text })
       : t('feature.masteryAny');
+  }
+
+  if (name === 'level') {
+    return text ? t('feature.level', { level: text }) : value;
   }
 
   if (name === 'deed') {
@@ -255,6 +265,19 @@ export const Curse: React.FC<Omit<FeatureProps, 'kind'>> = (props) => (
 );
 
 Curse.displayName = 'Curse';
+
+/**
+ * Action block: what a creature does on its turn. A monster sheet groups these
+ * under `## Actions`; the block itself is a feature by another name.
+ *
+ * @param {Omit<FeatureProps, 'kind'>} props - Block props
+ * @returns {JSX.Element} The action article
+ */
+export const Action: React.FC<Omit<FeatureProps, 'kind'>> = (props) => (
+  <Feature kind='action' {...props} />
+);
+
+Action.displayName = 'Action';
 
 /**
  * Pool block: a number the host owns and its blocks spend from. Nothing about

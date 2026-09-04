@@ -38,6 +38,30 @@ export function fixtureSource(): string {
 }
 
 /**
+ * Reads any fixture in the slot fixture directory.
+ *
+ * @param {string} name - Fixture file name
+ * @returns {string} Fixture source
+ */
+export function fixtureNamed(name: string): string {
+  return readFileSync(path.join(FIXTURE_DIR, name), 'utf8');
+}
+
+/**
+ * Renders a named fixture to static markup.
+ *
+ * @param {string} name - Fixture file name
+ * @param {HarnessOptions} [opts] - Options
+ * @returns {Promise<string>} Static markup
+ */
+export async function renderNamed(
+  name: string,
+  opts: HarnessOptions = {},
+): Promise<string> {
+  return renderSource(fixtureNamed(name), opts);
+}
+
+/**
  * Component registry: production components plus the slot card components.
  *
  * @param {Record<string, unknown>} [overrides] - Registry overrides

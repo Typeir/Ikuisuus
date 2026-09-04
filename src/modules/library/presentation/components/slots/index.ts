@@ -15,8 +15,13 @@
 
 import { SLOT_ELEMENT_NAMES } from '@/modules/library/domain/slots';
 import Attributes from './Attributes';
-import Feature, { Curse, Pool, Trait } from './Feature';
-import Heirloom from './Heirloom';
+import Feat from './Feat';
+import Feature, { Action, Curse, Pool, Trait } from './Feature';
+import Heirloom, { Trinket } from './Heirloom';
+import Monster from './Monster';
+import Overcast from './Overcast';
+import Spell from './Spell';
+import Vocation from './Vocation';
 import * as slotModule from './slotElements';
 
 /**
@@ -28,11 +33,20 @@ export const slotComponents: Record<string, unknown> = {
   Feature,
   Trait,
   Curse,
+  Action,
   Pool,
+  Spell,
+  Trinket,
+  Monster,
+  Vocation,
+  Feat,
   ...Object.fromEntries(
     Object.values(SLOT_ELEMENT_NAMES).map((elementName) => [
       elementName,
       (slotModule as Record<string, unknown>)[elementName],
     ]),
   ),
+  /* Overcast renders either as a row or as a titled block, so it replaces the
+     generated inline element rather than sitting beside it. */
+  Overcast,
 };

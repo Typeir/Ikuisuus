@@ -9,7 +9,10 @@
  * @since 2026-09-02
  */
 
-import { SLOT_NAMES } from '@/modules/library/domain/slots';
+import {
+  SLOT_LABEL_OVERRIDES,
+  SLOT_NAMES,
+} from '@/modules/library/domain/slots';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { describe, expect, it } from 'vitest';
@@ -36,7 +39,21 @@ describe('T12 labels out of content', () => {
     for (const key of SLOT_NAMES) {
       expect(slots[key], `en slots.${key}`).toBeTruthy();
     }
-    expect(Object.keys(slots)).toHaveLength(SLOT_NAMES.length);
+  });
+
+  it('carries a label for every host override, and no orphans', () => {
+    const slots = (messagesOf('en').slots ?? {}) as Record<string, string>;
+    const overrides = Object.values(SLOT_LABEL_OVERRIDES).flatMap((host) =>
+      Object.values(host),
+    ) as string[];
+    for (const key of overrides) {
+      expect(slots[key], `en slots.${key}`).toBeTruthy();
+    }
+    const expected = new Set<string>([...SLOT_NAMES, ...overrides]);
+    for (const key of Object.keys(slots)) {
+      expect(expected.has(key), `orphan label slots.${key}`).toBe(true);
+    }
+    expect(Object.keys(slots)).toHaveLength(expected.size);
   });
 
   it('rendered slot labels come from the catalogue key, not the content', async () => {
