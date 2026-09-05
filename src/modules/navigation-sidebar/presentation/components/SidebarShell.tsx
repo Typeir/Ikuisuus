@@ -10,6 +10,7 @@
 
 import Icon from '@/lib/components/icon/icon';
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
+import { isIndexRoute } from '@/lib/constants/content';
 import {
     usePersistentUiDispatch,
     useSidebarMenuActions,
@@ -106,8 +107,8 @@ function StaticItem({
   isExpanded,
 }: StaticItemProps): JSX.Element | null {
   const open = isExpanded(item.path);
-  const index = item?.children?.findIndex(
-    (child) => child.name.toLowerCase() === 'main',
+  const index = item?.children?.findIndex((child) =>
+    isIndexRoute(item.path, child.path),
   );
 
   if (item.children) {
@@ -115,8 +116,8 @@ function StaticItem({
     const folderChildren = hasIndex
       ? (() => {
           const c = [...(item.children as LayoutItem[])];
-          const main = c.splice(index as number, 1)[0];
-          return { items: c, mainPath: main.path };
+          c.splice(index as number, 1);
+          return { items: c, mainPath: item.path };
         })()
       : { items: item.children as LayoutItem[], mainPath: null };
 

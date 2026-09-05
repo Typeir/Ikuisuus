@@ -9,7 +9,11 @@
 import fs from 'fs';
 import path from 'path';
 
-import { MAIN_INDEX_FILE, REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
+import {
+  isNamedIndexFile,
+  MAIN_INDEX_FILE,
+  REGEX_CONTENT_SUFFIX,
+} from '@/lib/constants/content';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/constants/locales';
 import { getContentFolder } from '@/lib/utils/getContentFolder';
 import { calculateSimilarity } from './findNearestRoute.levenshtein';
@@ -59,6 +63,12 @@ function collectRoutes(dir: string, basePath = ''): string[] {
       }
 
       if (entry.name.endsWith('.mdx')) {
+        /* A file named after its folder is the folder's index and is served at
+           the folder's own route. */
+        if (isNamedIndexFile(entry.name, path.basename(dir))) {
+          routes.push(`/library/${basePath.replace(/\\/g, '/')}`);
+          continue;
+        }
         const slug = entry.name
           .replace(/\.mdx$/, '')
           .replace(REGEX_CONTENT_SUFFIX, '');

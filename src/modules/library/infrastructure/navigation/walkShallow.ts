@@ -17,7 +17,7 @@ import {
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import { toTitleCase } from '@/lib/utils/toTitleCase';
 import type { WalkNode } from './types';
-import { isMainIndexFile } from '@/lib/constants/content';
+import { isIndexFile, MAIN_INDEX_SLUG } from '@/lib/constants/content';
 
 /** Default recursion depth for shallow walk operations. */
 export const SHALLOW_WALK_DEPTH = 2;
@@ -123,13 +123,15 @@ async function countRenderableChildren(
 }
 
 /**
- * Detects whether a directory includes main content file and returns its route.
+ * Detects whether a directory carries an index file — `main`, or a file named
+ * after the folder — and returns the route that serves it. A folder with an
+ * index is served at its own route, so that is what a stub links to.
  *
  * @param {DirectorySourceAdapter} adapter - Directory source adapter.
  * @param {string} locale - Locale code.
  * @param {string} relativePath - Relative path from content root.
  * @param {string} basePath - Kebab-case route path.
- * @returns {Promise<string | undefined>} Main route path when present.
+ * @returns {Promise<string | undefined>} Index route when present.
  */
 async function detectMainPath(
   adapter: DirectorySourceAdapter,
@@ -138,17 +140,16 @@ async function detectMainPath(
   basePath: string,
 ): Promise<string | undefined> {
   const entries = await adapter.listEntries(locale, relativePath);
-  const hasMain = entries.some(
-    (entry) =>
-      !entry.isDirectory &&
-      isMainIndexFile(entry.name),
+  const folderName = relativePath.split('/').filter(Boolean).pop() ?? '';
+  const hasIndex = entries.some(
+    (entry) => !entry.isDirectory && isIndexFile(entry.name, folderName),
   );
 
-  if (!hasMain) {
+  if (!hasIndex) {
     return undefined;
   }
 
-  return basePath ? `${basePath}/main` : 'main';
+  return basePath || MAIN_INDEX_SLUG;
 }
 
 /**

@@ -120,4 +120,61 @@ describe('walkShallow', () => {
     expect(result).toHaveLength(STUB_CHILD_THRESHOLD + 1);
     expect(result[0].isStub).toBeUndefined();
   });
+
+  it('points a stub at its own route when the folder has a named index', async () => {
+    const adapter: DirectorySourceAdapter = {
+      async listEntries(_locale, relativePath) {
+        if (relativePath === 'vocations') {
+          return [{ name: 'paladin', isDirectory: true }];
+        }
+        if (relativePath === 'vocations/paladin') {
+          return [
+            { name: 'paladin.vocation.mdx', isDirectory: false },
+            { name: 'spells.list.mdx', isDirectory: false },
+          ];
+        }
+        return [];
+      },
+    };
+
+    const result = await shallowWalk(adapter, 'en', 'vocations', 'vocations', 1);
+
+    expect(result[0]).toMatchObject({
+      path: 'vocations/paladin',
+      isStub: true,
+      mainPath: 'vocations/paladin',
+    });
+  });
+
+  it('points a stub at its own route when the folder has a main index', async () => {
+    const adapter: DirectorySourceAdapter = {
+      async listEntries(_locale, relativePath) {
+        if (!relativePath) return [{ name: 'rules', isDirectory: true }];
+        if (relativePath === 'rules') {
+          return [{ name: 'main.mdx', isDirectory: false }];
+        }
+        return [];
+      },
+    };
+
+    const result = await shallowWalk(adapter, 'en', '', '', 1);
+
+    expect(result[0]).toMatchObject({ path: 'rules', isStub: true, mainPath: 'rules' });
+  });
+
+  it('leaves a stub without an index unlinked', async () => {
+    const adapter: DirectorySourceAdapter = {
+      async listEntries(_locale, relativePath) {
+        if (!relativePath) return [{ name: 'spells', isDirectory: true }];
+        if (relativePath === 'spells') {
+          return [{ name: 'bane.spell.mdx', isDirectory: false }];
+        }
+        return [];
+      },
+    };
+
+    const result = await shallowWalk(adapter, 'en', '', '', 1);
+
+    expect(result[0].mainPath).toBeUndefined();
+  });
 });

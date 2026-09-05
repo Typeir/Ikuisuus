@@ -109,6 +109,28 @@ export function resolveIndexFile(
 }
 
 /**
+ * True when a route is the index of the folder directly above it: the `main`
+ * leaf, or a leaf that repeats the folder's own name.
+ *
+ * @param {string} folderPath - Folder route, slash-separated, no locale
+ * @param {string} childPath - Candidate child route
+ * @returns {boolean} True for `spells/main` under `spells` and
+ * `vocations/paladin/paladin` under `vocations/paladin`
+ *
+ * @example
+ * isIndexRoute('vocations/paladin', 'vocations/paladin/paladin') // true
+ * isIndexRoute('vocations/paladin', 'vocations/paladin/spells')  // false
+ */
+export function isIndexRoute(folderPath: string, childPath: string): boolean {
+  const folder = folderPath.split('/').filter(Boolean);
+  const child = childPath.split('/').filter(Boolean);
+  if (child.length !== folder.length + 1) return false;
+  if (!folder.every((segment, index) => segment === child[index])) return false;
+  const leaf = child[child.length - 1];
+  return leaf === MAIN_INDEX_SLUG || leaf === folder[folder.length - 1];
+}
+
+/**
  * Strips any recognized content-type suffix from a slug or filename stem.
  *
  * @param {string} slug - Slug or filename stem that may contain a content suffix

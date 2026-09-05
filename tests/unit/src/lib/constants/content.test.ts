@@ -23,6 +23,7 @@ import {
   REGEX_SHEET_SUFFIX,
   RegexPatterns,
   isIndexFile,
+  isIndexRoute,
   isNamedIndexFile,
   resolveIndexFile,
   stripContentSuffix,
@@ -252,5 +253,36 @@ describe('resolveIndexFile', () => {
     expect(
       resolveIndexFile(['spells.list.mdx', 'bane.spell.mdx'], 'bard'),
     ).toBeUndefined();
+  });
+});
+
+describe('isIndexRoute', () => {
+  it('accepts main directly under the folder', () => {
+    expect(isIndexRoute('spells', 'spells/main')).toBe(true);
+    expect(isIndexRoute('', 'main')).toBe(true);
+  });
+
+  it('accepts a leaf that repeats the folder name', () => {
+    expect(
+      isIndexRoute(
+        'character-creation/vocations/paladin',
+        'character-creation/vocations/paladin/paladin',
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects an ordinary sibling', () => {
+    expect(
+      isIndexRoute(
+        'character-creation/vocations/paladin',
+        'character-creation/vocations/paladin/spells',
+      ),
+    ).toBe(false);
+  });
+
+  it('rejects a match at the wrong depth or under another folder', () => {
+    expect(isIndexRoute('spells', 'spells/fire/main')).toBe(false);
+    expect(isIndexRoute('spells', 'monsters/main')).toBe(false);
+    expect(isIndexRoute('vocations/paladin', 'vocations/paladin')).toBe(false);
   });
 });

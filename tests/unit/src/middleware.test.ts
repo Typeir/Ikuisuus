@@ -205,5 +205,27 @@ describe('middleware function behavior', () => {
         '/en/something',
       );
     });
+
+    it('should redirect a folder-named index to its folder', () => {
+      const res = middleware(
+        createMockRequest(
+          '/en/library/character-creation/vocations/paladin/paladin',
+        ),
+      );
+      expect(res.status).toBe(308);
+      expect(res.headers.get('location')).toContain(
+        '/en/library/character-creation/vocations/paladin',
+      );
+      expect(res.headers.get('location')).not.toContain('/paladin/paladin');
+    });
+
+    it('should leave an ordinary leaf alone', () => {
+      const res = middleware(
+        createMockRequest(
+          '/en/library/character-creation/vocations/paladin/spells',
+        ),
+      );
+      expect(res?.headers?.get('location') ?? '').toBe('');
+    });
   });
 });

@@ -29,4 +29,23 @@ describe('generateLibraryStaticParams', () => {
       { slug: ['world', 'black-cradle'] },
     ]);
   });
+
+  it('emits the folder route for a folder index, named or main', async () => {
+    const mockedFindAllMdxFiles = vi.mocked(findAllMdxFiles);
+    mockedFindAllMdxFiles.mockResolvedValue([
+      '/repo/src/content/en/character-creation/vocations/paladin/paladin.vocation.mdx',
+      '/repo/src/content/en/character-creation/vocations/paladin/spells.list.mdx',
+      '/repo/src/content/en/rules/main.mdx',
+    ]);
+
+    const params = await generateLibraryStaticParams('/repo/src/content/en');
+
+    expect(params).toEqual([
+      { slug: ['character-creation', 'vocations', 'paladin', 'paladin'] },
+      { slug: ['character-creation', 'vocations', 'paladin'] },
+      { slug: ['character-creation', 'vocations', 'paladin', 'spells'] },
+      { slug: ['rules', 'main'] },
+      { slug: ['rules'] },
+    ]);
+  });
 });

@@ -41,15 +41,20 @@ const replaceFirstSegment = (parts: string[], replacement: string): string => {
 };
 
 /**
- * Strips a trailing `main` segment from library paths.
+ * Strips a trailing index segment from library paths: `main`, or a leaf that
+ * repeats the folder above it (`…/paladin/paladin`). Either file is the
+ * folder's index, and the folder route is where it is served.
  *
  * @param {string[]} parts - Path segments, empty segments excluded
  * @returns {string | null} Canonical pathname, or null when already canonical
  */
 const canonicalIndexPath = (parts: string[]): string | null => {
   if (parts.length < 3) return null;
-  if (parts[parts.length - 1] !== MAIN_INDEX_SLUG) return null;
   if (parts[1] !== LIBRARY_SEGMENT) return null;
+  const leaf = parts[parts.length - 1];
+  const isMain = leaf === MAIN_INDEX_SLUG;
+  const isNamed = parts.length >= 4 && leaf === parts[parts.length - 2];
+  if (!isMain && !isNamed) return null;
   return `/${parts.slice(0, -1).join('/')}`;
 };
 

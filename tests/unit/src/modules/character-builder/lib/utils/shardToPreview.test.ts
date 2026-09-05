@@ -41,6 +41,20 @@ describe('shardToPreview', () => {
       );
       expect(result).toEqual({ kind: 'vocations', slug: 'battle-mage' });
     });
+
+    it('reads a folder-named index as the vocation', () => {
+      const result = shardToPreview(
+        'character-creation/vocations/paladin/paladin.vocation.mdx',
+      );
+      expect(result).toEqual({ kind: 'vocations', slug: 'paladin' });
+    });
+
+    it('leaves a sibling file in the vocation folder alone', () => {
+      const result = shardToPreview(
+        'character-creation/vocations/paladin/spells.list.mdx',
+      );
+      expect(result).not.toEqual({ kind: 'vocations', slug: 'paladin' });
+    });
   });
 
   describe('Specialization Pattern', () => {

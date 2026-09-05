@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils/classNameMerge';
 import { useFetchStubChildren } from '@/modules/navigation-sidebar/application/hooks/useFetchStubChildren';
 import { useIsPathExpanded } from '@/modules/navigation-sidebar/application/hooks/useIsPathExpanded';
 import { useSidebarExpansionDispatch } from '@/modules/navigation-sidebar/application/hooks/useSidebarExpansion';
+import { isIndexRoute } from '@/lib/constants/content';
 import { SIDEBAR_CLOSE_ANIMATION_MS } from '@/modules/navigation-sidebar/domain/constants';
 import type {
     LayoutItem,
@@ -65,8 +66,10 @@ export const SidebarItem = ({
     return item.children ?? [];
   }, [item.isStub, item.children, stubChildren]);
 
-  const index = effectiveChildren.findIndex(
-    (child) => child.name.toLowerCase() === 'main',
+  /* A folder's index is `main` or a child named after the folder; either way
+     the folder itself is the route that serves it. */
+  const index = effectiveChildren.findIndex((child) =>
+    isIndexRoute(item.path, child.path),
   );
 
   useEffect(() => {
@@ -133,8 +136,8 @@ export const SidebarItem = ({
     if (!hasIndex || index === -1)
       return { items: effectiveChildren as LayoutItem[], mainPath: null };
     const c = [...(effectiveChildren as LayoutItem[])];
-    const main = c.splice(index, 1)[0];
-    return { items: c, mainPath: main.path };
+    c.splice(index, 1);
+    return { items: c, mainPath: item.path };
   }, [
     effectiveChildren,
     hasIndex,
