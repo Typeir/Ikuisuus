@@ -15,6 +15,7 @@
     "compress-assets": "npx tsx --tsconfig tsconfig.scripts.json scripts/assets/compressAssets.ts",
     "kebabify-content": "npx tsx --tsconfig tsconfig.scripts.json scripts/content/kebabifyContent.ts",
     "md-to-mdx": "npx tsx --tsconfig tsconfig.scripts.json scripts/content/mdToMdx.ts",
+    "stale-prose": "node scripts/content/check-stale-prose.mjs",
     "clean-fullsize-forced": "rm -rf public/full-size",
     "clean-fullsize": "npx tsx --tsconfig tsconfig.scripts.json scripts/build/cleanFullSize.ts",
     "merge-locales": "npx tsx --tsconfig tsconfig.scripts.json scripts/i18n/mergeMessages.ts",

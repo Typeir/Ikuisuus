@@ -28,7 +28,7 @@ import {
 import { useTranslations } from 'next-intl';
 import React, { type ReactNode } from 'react';
 import { inlineValue, readSlots, SlotRow } from './slotElements';
-import { capitalize } from './text';
+import { capitalize, flagOf } from './text';
 import styles from './slots.module.scss';
 
 /**
@@ -49,7 +49,6 @@ const ROW_SLOTS: readonly SpellSlotName[] = [
   'targets',
   'duration',
   'components',
-  'save',
   'overcast',
 ];
 
@@ -90,7 +89,7 @@ function briefLine(
   /* The corpus writes this as a parenthetical on the level line, and writes it
      two ways — `(Ritual)` and `(ritual)`. The slot holds the fact and the card
      spells it, so the casing cannot drift again. */
-  if (parts.length > 0 && ritual !== undefined && ritual !== 'false') {
+  if (parts.length > 0 && flagOf(ritual) !== false) {
     parts.push(` (${t('ritual')})`);
   }
   return parts;

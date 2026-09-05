@@ -28,7 +28,6 @@
     "school": "School",
     "components": "Components",
     "duration": "Duration",
-    "save": "Save",
     "overcast": "Overcast",
     "category": "Category",
     "properties": "Properties",
@@ -48,6 +47,7 @@
     "skills": "Skills",
     "resistances": "Resistances",
     "immunities": "Immunities",
+    "conditionImmunities": "Condition Immunities",
     "senses": "Senses",
     "languages": "Languages",
     "challenge": "Challenge",
@@ -88,6 +88,11 @@
     "kind": "spell",
     "cantrip": "Cantrip",
     "ritual": "Ritual"
+  },
+  "monster": {
+    "size": "Medium",
+    "type": "creature",
+    "alignment": "Unaligned"
   },
   "trinket": {
     "requiresAttunement": "requires attunement"

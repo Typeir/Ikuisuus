@@ -4,25 +4,32 @@
  * with; defences and ability scores print as the two tables a reader expects;
  * the rest print as labelled rows.
  *
- * Challenge rating and XP are separate values that print as one line, so a
- * sheet no longer carries `3 (700 XP)` as a single string with a number buried
- * in it.
+ * Challenge rating and XP are two values that print as one line. Either alone
+ * is enough: the XP table fixes one from the other, so a sheet that writes only
+ * a rating still shows its XP, and a sheet that writes only XP still shows its
+ * rating. The identity line likewise fills what a sheet leaves out — a creature
+ * with no stated size is Medium, with no stated type is a creature, with no
+ * stated alignment is Unaligned — so the line always reads whole.
  *
- * Two numbers are worked out rather than read. An ability score prints its own
- * modifier, so no sheet carries `18 (+4)` where the `(+4)` can fall out of step
- * with the 18. A tier bonus follows from the challenge rating by the table in
- * `Monster Stat Blocks`, so it is written only where a sheet means to override
- * it — and a sheet that does is marked, so the exception is visible.
+ * Every number the card works out rather than reads is marked with the slot it
+ * came from, so a reviewer can see which figures no longer live in the source.
  *
  * @module modules/library/presentation/components/slots/Monster
- * @version 0.1.0
+ * @version 0.2.0
  * @author Typeir
  * @since 2026-09-04
  */
 
 'use client';
 
-import { abilityCell, signed, tierBonusFor } from '@/modules/library/domain/derive';
+import {
+  abilityCell,
+  challengeFor,
+  challengeLabel,
+  signed,
+  tierBonusFor,
+  xpFor,
+} from '@/modules/library/domain/derive';
 import {
   ABILITY_SLOTS,
   MONSTER_LIST_SLOTS,
@@ -51,6 +58,29 @@ const DEFENCE_SLOTS: readonly MonsterSlotName[] = [
   'hitPoints',
   'speed',
 ];
+
+/**
+ * Identity slots, in the order the opening line speaks them.
+ */
+const IDENTITY_SLOTS: readonly MonsterSlotName[] = [
+  'size',
+  'type',
+  'alignment',
+];
+
+/**
+ * A slot value as text, for the values the card does arithmetic on.
+ *
+ * @param {ReactNode} value - Slot value
+ * @returns {string | null} Trimmed text, or null when the slot was not written
+ */
+function textOf(value: ReactNode): string | null {
+  if (value === undefined) return null;
+  const inline = inlineValue(value);
+  return typeof inline === 'string' || typeof inline === 'number'
+    ? String(inline)
+    : null;
+}
 
 /**
  * A table of slot columns: labels across the head, values across the body.
@@ -106,40 +136,54 @@ function SlotTable({
  * @returns {JSX.Element} The monster section
  */
 const Monster: React.FC<MonsterProps> = ({ children, ...slots }) => {
+  const defaults = useTranslations('library.monster');
   const { values, kept } = readSlots(children, MONSTER_SLOT_NAMES, slots);
 
-  const identity = (['size', 'type', 'alignment'] as MonsterSlotName[])
-    .filter((name) => values[name] !== undefined)
-    .map((name) => inlineValue(values[name]));
+  const hasIdentity = IDENTITY_SLOTS.some((name) => values[name] !== undefined);
+  const identity = (name: MonsterSlotName): ReactNode =>
+    values[name] === undefined ? (
+      <span data-derived-from='default'>{defaults(name)}</span>
+    ) : (
+      inlineValue(values[name])
+    );
+
+  const writtenChallenge = textOf(values.challenge);
+  const writtenXp = textOf(values.xp);
+  const derivedChallenge =
+    writtenChallenge === null && writtenXp !== null
+      ? challengeFor(writtenXp)
+      : null;
+  const derivedXp =
+    writtenXp === null && writtenChallenge !== null
+      ? xpFor(writtenChallenge)
+      : null;
+  const challenge =
+    writtenChallenge ??
+    (derivedChallenge === null ? null : challengeLabel(derivedChallenge));
 
   const derivedTier =
-    values.tierBonus === undefined && values.challenge !== undefined
-      ? tierBonusFor(String(inlineValue(values.challenge)))
+    values.tierBonus === undefined && challenge !== null
+      ? tierBonusFor(challenge)
       : null;
 
-  /* Challenge and XP are two values; the card sets them beside each other so
-     the sheet no longer hides one inside the other's string. */
-  const xp = values.xp === undefined ? null : inlineValue(values.xp);
-
-  const listSlots = MONSTER_LIST_SLOTS.filter((name) => name !== 'xp').filter(
-    (name) =>
-      values[name] !== undefined ||
-      (name === 'tierBonus' && derivedTier !== null),
-  );
+  const listSlots = MONSTER_LIST_SLOTS.filter((name) => {
+    if (name === 'xp') return false;
+    if (name === 'challenge') return challenge !== null;
+    if (name === 'tierBonus') {
+      return values.tierBonus !== undefined || derivedTier !== null;
+    }
+    return values[name] !== undefined;
+  });
 
   const hasDefences = DEFENCE_SLOTS.some((n) => values[n] !== undefined);
   const hasAbilities = ABILITY_SLOTS.some((n) => values[n] !== undefined);
 
   return (
     <section data-monster>
-      {identity.length > 0 && (
+      {hasIdentity && (
         <p className={styles.brief} data-monster-identity>
           <em>
-            {identity[0]}
-            {identity.length > 1 && ' '}
-            {identity[1]}
-            {identity.length > 2 && ', '}
-            {identity[2]}
+            {identity('size')} {identity('type')}, {identity('alignment')}
           </em>
         </p>
       )}
@@ -173,10 +217,19 @@ const Monster: React.FC<MonsterProps> = ({ children, ...slots }) => {
             <SlotRow key={name} name={name} host='Monster'>
               {name === 'tierBonus' && derivedTier !== null ? (
                 <span data-derived-from='challenge'>{signed(derivedTier)}</span>
-              ) : name === 'challenge' && xp !== null ? (
+              ) : name === 'challenge' ? (
                 <>
-                  {inlineValue(values.challenge)}
-                  <span data-monster-xp> ({xp} XP)</span>
+                  {writtenChallenge ?? (
+                    <span data-derived-from='xp'>{challenge}</span>
+                  )}
+                  {writtenXp !== null ? (
+                    <span data-monster-xp> ({writtenXp} XP)</span>
+                  ) : derivedXp !== null ? (
+                    <span data-monster-xp data-derived-from='challenge'>
+                      {' '}
+                      ({derivedXp} XP)
+                    </span>
+                  ) : null}
                 </>
               ) : (
                 inlineValue(values[name])

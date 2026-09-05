@@ -31,7 +31,7 @@ import {
 import { useTranslations } from 'next-intl';
 import React, { type ReactNode } from 'react';
 import { inlineValue, readSlots, SlotRow } from './slotElements';
-import { capitalize } from './text';
+import { capitalize, flagOf } from './text';
 import styles from './slots.module.scss';
 
 /**
@@ -77,12 +77,10 @@ const Feat: React.FC<FeatProps> = ({ children, ...slots }) => {
     const category = inlineValue(values.category);
     brief.push(categoryLabel(category, t));
   }
-  if (values.repeatable !== undefined) {
-    const repeatable = inlineValue(values.repeatable);
+  const repeatable = flagOf(values.repeatable);
+  if (repeatable !== false) {
     brief.push(brief.length ? ', ' : '');
-    brief.push(
-      repeatable === 'true' || repeatable === '' ? t('repeatable') : repeatable,
-    );
+    brief.push(repeatable === true ? t('repeatable') : (repeatable as ReactNode));
   }
 
   const rows: FeatSlotName[] = (['prerequisite'] as FeatSlotName[]).filter(

@@ -417,6 +417,12 @@
       content: '◆ ';
     }
 
+    /* A deed is spent from a pool the whole encounter shares, so it is marked
+       apart from the action costs rather than among them. */
+    &[data-mark='deed'] > :is(h1, h2, h3, h4, h5, h6)::before {
+      content: '◈ ';
+    }
+
     > p[data-slot-grid] {
       margin-block: 0 0.75em;
     }

@@ -36,12 +36,7 @@ import {
   parseHeading,
   textOfNodes,
 } from '../headingParts';
-import {
-  cleanChildren,
-  collectSlotEntries,
-  slotElementOf,
-  splitSlotRuns,
-} from './slotElements';
+import { cleanChildren, readSlots, slotElementOf } from './slotElements';
 import styles from './slots.module.scss';
 
 /**
@@ -67,7 +62,7 @@ export type FeatureProps = SlotProps<FeatureSlotName | PoolSlotName> & {
 /**
  * What a block costs to use, as the heading's glyph reports it.
  */
-export type FeatureMark = 'major' | 'minor' | 'other';
+export type FeatureMark = 'major' | 'minor' | 'deed' | 'other';
 
 /**
  * Slot names each kind accepts. A pool holds a number rather than doing
@@ -89,11 +84,13 @@ const DEED_TYPES = ['stratagem', 'act', 'resist', 'lair', 'phase'] as const;
 /**
  * Marks read off a cost. The cost names an action or it does not, so the
  * pattern asks for the action and not the bare word: a cost that merely
- * mentions a major threat costs no Major Action.
+ * mentions a major threat costs no Major Action. A deed is the exception —
+ * nothing else in a cost is called a deed — so the bare word is enough.
  */
 const COST_MARKS: ReadonlyArray<readonly [RegExp, FeatureMark]> = [
   [/\bmajor\s+action\b/i, 'major'],
   [/\bminor\s+action\b/i, 'minor'],
+  [/\bdeeds?\b/i, 'deed'],
 ];
 
 /**
@@ -188,13 +185,10 @@ const Feature: React.FC<FeatureProps> = ({
       : nodes;
 
   const slotNames = SLOT_NAMES_BY_KIND[kind];
-  const { entries: childSlots, kept: body } = splitSlotRuns(
-    bodyNodes,
-    slotNames,
-  );
-  const entries = collectSlotEntries(slotNames, slots, childSlots).map(
-    (entry) => ({ ...entry, value: constructed(entry.name, entry.value, t) }),
-  );
+  const { values, kept: body } = readSlots(bodyNodes, slotNames, slots);
+  const entries = slotNames
+    .filter((name) => values[name] !== undefined)
+    .map((name) => ({ name, value: constructed(name, values[name], t) }));
   const cost = entries.find((entry) => entry.name === 'cost')?.value;
   const rows = entries.filter((entry) => entry.name !== 'cost');
 

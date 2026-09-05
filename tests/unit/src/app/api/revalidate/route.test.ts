@@ -230,6 +230,59 @@ describe('POST /api/revalidate', () => {
     );
   });
 
+  it('busts the folder tag and route for a folder-named index', async () => {
+    await POST(
+      makeRequest(
+        {
+          paths: [
+            '/en/library/character-creation/vocations/scion/scion.vocation',
+          ],
+        },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockRevalidateTag).toHaveBeenCalledWith(
+      'content:en:character-creation/vocations/scion/scion',
+      'max',
+    );
+    expect(mockRevalidateTag).toHaveBeenCalledWith(
+      'content:en:character-creation/vocations/scion',
+      'max',
+    );
+    const calls = mockRevalidatePath.mock.calls.map((c: unknown[]) => c[0]);
+    expect(calls).toContain('/en/library/character-creation/vocations/scion');
+    expect(calls).toContain(
+      '/en/library/character-creation/vocations/scion/scion',
+    );
+  });
+
+  it('busts the folder tag and route for a main index', async () => {
+    await POST(
+      makeRequest(
+        { paths: ['/en/library/monsters/main'] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockRevalidateTag).toHaveBeenCalledWith('content:en:monsters', 'max');
+    const calls = mockRevalidatePath.mock.calls.map((c: unknown[]) => c[0]);
+    expect(calls).toContain('/en/library/monsters');
+  });
+
+  it('leaves the folder alone for an ordinary leaf', async () => {
+    await POST(
+      makeRequest(
+        { paths: ['/en/library/monsters/albedo.sheet'] },
+        { 'x-revalidation-secret': SECRET },
+      ),
+    );
+    expect(mockRevalidateTag).not.toHaveBeenCalledWith(
+      'content:en:monsters',
+      'max',
+    );
+    const calls = mockRevalidatePath.mock.calls.map((c: unknown[]) => c[0]);
+    expect(calls).not.toContain('/en/library/monsters');
+  });
+
   it('clears listing caches before classifying any path by listing', async () => {
     mockListEntries.mockResolvedValue(listingFor('bane', 'spell'));
     await POST(

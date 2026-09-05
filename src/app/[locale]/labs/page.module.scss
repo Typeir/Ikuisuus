@@ -1,0 +1,79 @@
+/**
+ * @fileoverview Lab index styles.
+ * @description A plain list of scratch routes. Rows carry their own rule
+ * rather than sitting in cards, since nothing here is a separate object — it
+ * is one list of links.
+ *
+ * @module app/[locale]/labs/page.module
+ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2.5rem 0;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-headings), var(--font-default);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.blurb {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--color-text-secondary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--border-width-xs) solid var(--color-border);
+}
+
+.item {
+  border-bottom: var(--border-width-xs) solid var(--color-border);
+
+  &::marker {
+    content: '';
+  }
+}
+
+.link {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.7rem 0.25rem;
+  color: var(--color-text);
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-accent);
+    background: var(--color-bg-secondary);
+  }
+}
+
+/* The lab's own name, which is the last segment of its route. */
+.name {
+  font-weight: 600;
+}
+
+/* The route it lives at, in the face a path deserves. */
+.route {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}

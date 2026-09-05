@@ -158,6 +158,26 @@ export async function POST(req: NextRequest) {
         log.message('Invalidated fetch cache tag', { tag: fetchTag });
       }
 
+      /* A folder-named index (`scion/scion.vocation.mdx`) and `main.mdx` both
+         answer for their folder's route, and the fetch for that route is
+         tagged under the folder slug, so the folder page outlives the push
+         unless its tag and route are busted as well. */
+      const leaf = slugSegments[slugSegments.length - 1];
+      const folderSegments = slugSegments.slice(0, -1);
+      const isFolderIndex =
+        folderSegments.length > 0 &&
+        (leaf === MAIN_INDEX_SLUG ||
+          leaf === folderSegments[folderSegments.length - 1]);
+      if (isFolderIndex) {
+        const folderSlug = folderSegments.join('/');
+        if (locale) {
+          const folderTag = contentCacheTag(locale, folderSlug);
+          cacheInvalidator.invalidateTag(folderTag);
+          log.message('Invalidated folder fetch cache tag', { tag: folderTag });
+        }
+        pushVariant('/' + parts.slice(0, -1).join('/'));
+      }
+
       for (const v of variants) {
         try {
           cacheInvalidator.invalidateRoute(v, 'page');

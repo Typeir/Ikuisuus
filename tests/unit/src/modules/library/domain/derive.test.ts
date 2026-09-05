@@ -9,13 +9,18 @@
 
 import { describe, expect, it } from 'vitest';
 import {
+  XP_BY_CHALLENGE,
   abilityCell,
   abilityModifier,
+  challengeFor,
+  challengeLabel,
   challengeValue,
   ordinal,
   signed,
   spellLevelPhrase,
   tierBonusFor,
+  xpFor,
+  xpValue,
 } from '@/modules/library/domain/derive';
 
 describe('abilityModifier', () => {
@@ -98,6 +103,81 @@ describe('tierBonusFor', () => {
 
   it('gives up on an unreadable rating', () => {
     expect(tierBonusFor('—')).toBeNull();
+  });
+});
+
+describe('XP_BY_CHALLENGE', () => {
+  it('rises with the rating, so every XP value falls in exactly one band', () => {
+    for (let i = 1; i < XP_BY_CHALLENGE.length; i++) {
+      expect(XP_BY_CHALLENGE[i][0]).toBeGreaterThan(XP_BY_CHALLENGE[i - 1][0]);
+      expect(XP_BY_CHALLENGE[i][1]).toBeGreaterThan(XP_BY_CHALLENGE[i - 1][1]);
+    }
+  });
+});
+
+describe('xpFor', () => {
+  it('reads the XP a rating awards', () => {
+    expect(xpFor(3)).toBe(700);
+    expect(xpFor('13')).toBe(10000);
+    expect(xpFor('1/4')).toBe(50);
+    expect(xpFor(0)).toBe(10);
+    expect(xpFor(31)).toBe(325000);
+    expect(xpFor(35)).toBe(425000);
+  });
+
+  it('gives up on a rating that is not on the table', () => {
+    expect(xpFor('—')).toBeNull();
+    expect(xpFor(2.5)).toBeNull();
+    expect(xpFor(99)).toBeNull();
+  });
+});
+
+describe('xpValue', () => {
+  it('reads XP with or without thousands separators', () => {
+    expect(xpValue('700')).toBe(700);
+    expect(xpValue('10,000')).toBe(10000);
+    expect(xpValue(450)).toBe(450);
+  });
+
+  it('gives up on anything else', () => {
+    expect(xpValue('700 XP')).toBeNull();
+    expect(xpValue('')).toBeNull();
+  });
+});
+
+describe('challengeFor', () => {
+  it('returns the rating whose XP band the value falls in', () => {
+    expect(challengeFor(700)).toBe(3);
+    expect(challengeFor('10,000')).toBe(13);
+    expect(challengeFor(800)).toBe(3);
+    expect(challengeFor(1099)).toBe(3);
+    expect(challengeFor(1100)).toBe(4);
+    expect(challengeFor(50)).toBe(0.25);
+  });
+
+  it('floors below the table and caps above it', () => {
+    expect(challengeFor(1)).toBe(0);
+    expect(challengeFor(999999)).toBe(35);
+  });
+
+  it('gives up on unreadable XP', () => {
+    expect(challengeFor('lots')).toBeNull();
+  });
+
+  it('inverts xpFor at every rating on the table', () => {
+    for (const [rating, xp] of XP_BY_CHALLENGE) {
+      expect(challengeFor(xp), String(rating)).toBe(rating);
+    }
+  });
+});
+
+describe('challengeLabel', () => {
+  it('writes the low ratings as fractions', () => {
+    expect(challengeLabel(0.125)).toBe('1/8');
+    expect(challengeLabel(0.25)).toBe('1/4');
+    expect(challengeLabel(0.5)).toBe('1/2');
+    expect(challengeLabel(0)).toBe('0');
+    expect(challengeLabel(13)).toBe('13');
   });
 });
 

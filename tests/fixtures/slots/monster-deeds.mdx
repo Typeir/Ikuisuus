@@ -1,0 +1,139 @@
+---
+source: Ikuisuus
+contentType: monsters
+---
+
+# Tombsteel Wizard-Construct
+
+<BlendedImage
+  src='/library/images/monsters/tombsteel-wizard-construct.webp'
+  alt='Tombsteel Wizard-Construct'
+/>
+
+<Monster
+  size="Large"
+  type="Construct"
+  alignment="Neutral"
+  armorClass="16 (natural armor)"
+  hitPoints="153 ([% 18d10 +54 %])"
+  speed="[= 10 stride =]"
+  str="18"
+  dex="10"
+  con="16"
+  int="3"
+  wis="12"
+  cha="11"
+  immunities="Bludgeoning, Piercing, Slashing, Poison"
+  conditionImmunities="[# kw:condition:exhaustion #], [# kw:condition:frightened #], [# kw:condition:charmed #], [# kw:condition:paralyzed #], [# kw:condition:petrified #], [# kw:condition:poisoned #]"
+  senses="Darkvision [= 12 stride =], Passive Perception 10"
+  languages="Understands the languages of its creator but can't speak"
+  challenge="13"
+  xp="10000"
+  saveDc="16">
+
+---
+
+## Traits
+
+<Trait trigger="when the construct takes bludgeoning or slashing damage" targets="everything within [= 2 stride =]">
+
+#### Choking Dust
+
+A cloud of choking mold and dust explodes [= 2 stride =] in all directions. Targets save Constitution against DC 16 or become [# kw:condition:poisoned #]. A creature poisoned in this way and not cured within 24 hours saves Constitution against DC 16 or contracts [# kw:black rot #].
+
+</Trait>
+
+<Trait>
+
+#### Immutable Form
+
+The golem is immune to any spell or effect that would alter its form.
+
+</Trait>
+
+<Trait trigger="when a Tombsteel Construct is killed" targets="anyone examining the remains">
+
+#### Maddening Remains
+
+Anyone examining the strips of scroll parchment and tome pages comprising much of the creature's body saves Wisdom against DC 16 or becomes cursed with insanity. The victim becomes convinced that the parchment contains a lost arcane secret pertaining infinite life, that can only be revealed by reassembling the pieces. The victim becomes obsessed and dedicates every waking hour to this task, suffering [% 1d8 psychic %] upon activation of the curse and [% 1d8 psychic %] every hour thereafter. They have disadvantage on all checks if they do not attempt one Intelligence (Arcana) [# kw:deliberate roll #] to uncover it's secretes per round. The DC equals 10 plus the number of days the affliction has lasted. On a failure, the victim takes a level of [# kw:condition:exhaustion #]. The victim can [# kw:resist #] at the end of each hour.
+
+</Trait>
+
+<Trait>
+
+#### Magic Resistance
+
+The Tombsteel Construct has advantage on saving throws against spells and other magical effects.
+
+</Trait>
+
+<Trait>
+
+#### Magic Weapons
+
+The Tombsteel Construct's weapon attacks are magical.
+
+</Trait>
+
+---
+
+## Deeds
+
+<Action cost="1 Deed">
+
+#### Grave Recitation
+
+The construct casts one of its innate spells, spending its use for the day as normal.
+
+</Action>
+
+<Action cost="2 Deeds" targets="everything in a [= 12 stride;ADJ =] long, [= 2 stride;ADJ =] wide line">
+
+#### Pungent Mist
+
+Rot-thick vapour pours from the construct's seams and hangs where it falls. As a [# kw:persistent #] effect, targets save Constitution against DC 16, halving [% 8d8 poison %].
+
+Failing targets save Constitution against DC 20 or contract [# kw:black rot #].
+
+</Action>
+
+<Action cost="3 Deeds" trigger="when the construct is destroyed" targets="everything within a [= 4 stride;ADJ =] radius">
+
+#### Bitter, Cold, End
+
+The corpse comes apart. Targets save Constitution against DC 16, halving [% 5d8 poison %].
+
+Every creature that can see the remains saves Intelligence against DC 21 or is taken by **Maddening Remains**.
+
+</Action>
+
+---
+
+## Actions
+
+<Action cost="1 Major Action">
+
+#### Multiattack
+
+The Tombsteel Construct makes two Slam attacks.
+
+- **Slam.** Accuracy +9, reach [= 1 stride =], one creature. On a hit, 8 ([% 1d8 +4 bludgeoning %]) plus 10 ([% 3d6 frost %]), and the target saves Constitution against DC 16 or is [# kw:condition:paralyzed #] for 1 minute. The target can [# kw:resist #] at the end of each of its turns.
+
+</Action>
+
+<Action>
+
+#### Innate Spellcasting
+
+A Tombsteel Construct is created with the ability to innately cast spells once each per day. The Tombsteel Construct's innate spellcasting ability is Constitution (spell save DC 16, +8 to hit with spell attacks). It requires no material components for these spells. A typical Tombsteel Construct can cast the following spells:
+
+- **1st level (1/day)**: [_Shield_](/en/library/spells/shield)
+- **2nd level (1/day each)**: [_Hold_](/en/library/spells/hold), [_Invisibility_](/en/library/spells/invisibility), [_Mirror Image_](/en/library/spells/mirror-image)
+- **3rd level (1/day each)**: [_Pyroblast_](/en/library/spells/pyroblast), [_Vampiric Touch_](/en/library/spells/vampiric-touch)
+- **4th level (1/day)**: [_Dimension Door_](/en/library/spells/dimension-door)
+- **5th level (1/day each)**: [_Cone of Cold_](/en/library/spells/cone-of-cold)
+- **6th level (1/day)**: [_Chained Lightning_](/en/library/spells/chained-lightning)
+
+</Action>
+
+</Monster>

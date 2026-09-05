@@ -614,9 +614,39 @@ export function parseHeirloomSource(
   const baseSlug = filePathToSlug(filePath);
 
   const title = parseTitle(lines);
-  const { rarity, requiresAttunement, attunementRequirements, weaponInfo } =
-    parseRarityAndAttunement(lines, sharedData);
-  const itemType = ItemData.detectItemType(lines, sharedData);
+  const italic = parseRarityAndAttunement(lines, sharedData);
+
+  /* A slot-form heirloom states rarity and attunement on the element, where
+     the italic parser cannot see them; the element is read only for what the
+     italic lines did not say. */
+  const header = /<Heirloom\b/.test(raw) ? parseHeirloomV2(rawFile) : null;
+  const rarityVocabulary = ItemData.getRarities(sharedData);
+  const headerRarity = header?.rarity
+    ? (rarityVocabulary.find(
+        (candidate) => String(candidate).toLowerCase() === header.rarity,
+      ) ?? header.rarity)
+    : undefined;
+  const rarity = italic.rarity ?? headerRarity;
+  const requiresAttunement =
+    italic.requiresAttunement || header?.attunement !== undefined;
+  const attunementRequirements =
+    italic.attunementRequirements ??
+    (header?.attunement && header.attunement !== 'required'
+      ? header.attunement
+      : undefined);
+  const { weaponInfo } = italic;
+  /* The detector reads italic header lines, so the element's identity slots
+     are offered to it in that spelling. */
+  const headerLines = [
+    header?.base,
+    (header as Partial<Record<string, string>> | null)?.category,
+  ]
+    .filter((value): value is string => typeof value === 'string')
+    .map((value) => `_${value}_`);
+  const itemType = ItemData.detectItemType(
+    [...headerLines, ...lines],
+    sharedData,
+  );
   const properties = parseProperties(raw) ?? {};
 
   const typeInfo = parseTypeProperty(properties, sharedData);

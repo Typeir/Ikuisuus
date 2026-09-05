@@ -194,13 +194,14 @@ function desugarHost(node: MdxJsxElementNode, slots: SlotElementMap): void {
     Object.entries(slots).map(([slot, element]) => [element, slot]),
   );
 
-  for (const child of node.children) {
-    stampAuthoredSlot(child, elementSlots);
-    for (const inner of (child as unknown as { children?: RootContent[] })
-      .children ?? []) {
-      stampAuthoredSlot(inner, elementSlots);
+  const stampAll = (children: RootContent[]): void => {
+    for (const child of children) {
+      stampAuthoredSlot(child, elementSlots);
+      const inner = (child as unknown as { children?: RootContent[] }).children;
+      if (inner) stampAll(inner);
     }
-  }
+  };
+  stampAll(node.children);
 
   for (const attribute of node.attributes) {
     const name = attribute.name ?? '';

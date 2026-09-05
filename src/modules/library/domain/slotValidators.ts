@@ -32,6 +32,12 @@ export interface SlotRule {
 /** A whole number, with no sign. */
 const COUNT = /^\d+$/;
 
+/** A whole number, with the thousands separators a sheet writes. */
+const GROUPED_COUNT = /^(?:\d+|\d{1,3}(?:,\d{3})+)$/;
+
+/** Hit points as a sheet writes them: the total, then the dice in parentheses. */
+const HIT_POINTS = /^\d+(?:\s*\(.+\))?$/;
+
 /** A challenge rating: a whole number or one of the low fractions. */
 const CHALLENGE = /^(?:\d+|1\/(?:8|4|2))$/;
 
@@ -56,9 +62,12 @@ export const SLOT_RULES: Readonly<Partial<Record<SlotName, SlotRule>>> = {
     pattern: CHALLENGE,
     expects: 'a whole number or 1/8, 1/4, 1/2 — XP belongs in its own slot',
   },
-  xp: { pattern: COUNT, expects: 'a whole number of XP, digits only' },
+  xp: { pattern: GROUPED_COUNT, expects: 'a whole number of XP, such as 10000' },
   tierBonus: { pattern: BONUS, expects: 'a signed bonus, such as +4' },
-  hitPoints: { pattern: COUNT, expects: 'a whole number of hit points' },
+  hitPoints: {
+    pattern: HIT_POINTS,
+    expects: 'a whole number of hit points, with the dice in parentheses if you like',
+  },
   level: { pattern: /^\d{1,2}$/, expects: 'a whole number' },
 };
 
@@ -73,6 +82,12 @@ export const HOST_SLOT_RULES: Readonly<
     level: {
       pattern: SPELL_LEVEL,
       expects: 'a level from 0 to 12, or the word cantrip',
+    },
+  },
+  Monster: {
+    saveDc: {
+      pattern: COUNT,
+      expects: 'a fixed DC, digits only — a DC that is a formula stays in the prose',
     },
   },
 };

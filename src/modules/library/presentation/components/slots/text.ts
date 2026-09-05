@@ -29,3 +29,27 @@ export function capitalize(text: string): string {
 export function lowerFirst(text: string): string {
   return text.charAt(0).toLowerCase() + text.slice(1);
 }
+
+/**
+ * Reads a slot written as a flag. MDX hands a bare attribute
+ * (`<Feat repeatable>`) to the card as the boolean `true` and a quoted one as
+ * a string, so both spellings have to mean the same thing.
+ *
+ * @param {unknown} value - Slot value as MDX delivered it
+ * @returns {boolean | unknown} `true` when the flag is set with nothing more to
+ * say, `false` when absent or negated, otherwise the detail as given
+ *
+ * @example
+ * flagOf(true); // true
+ * flagOf('false'); // false
+ * flagOf('once per tier'); // 'once per tier'
+ */
+export function flagOf(value: unknown): boolean | unknown {
+  if (value === undefined || value === false) return false;
+  if (value === true || value === null) return true;
+  if (typeof value !== 'string') return value;
+  const text = value.trim();
+  if (text === '' || /^(?:true|yes)$/i.test(text)) return true;
+  if (/^(?:false|no)$/i.test(text)) return false;
+  return text;
+}

@@ -109,7 +109,6 @@ export const SPELL_SLOTS = {
   duration: 'Duration',
   range: 'Range',
   targets: 'Targets',
-  save: 'Save',
   overcast: 'Overcast',
 } as const;
 
@@ -124,7 +123,9 @@ export const TRINKET_SLOTS = HEIRLOOM_SLOTS;
  * Header slots of a monster. The six ability scores are written as scores
  * alone; the card derives each modifier, so no sheet hand-maintains a number
  * arithmetic already knows. `tierBonus` derives from `challenge` on the same
- * principle and is written only where a sheet overrides it.
+ * principle and is written only where a sheet overrides it. `saveDc` is the
+ * one fixed DC a sheet's effects share, and it is a number: a DC that is a
+ * formula belongs in the prose of the block that uses it.
  */
 export const MONSTER_SLOTS = {
   size: 'Size',
@@ -143,8 +144,10 @@ export const MONSTER_SLOTS = {
   skills: 'Skills',
   resistances: 'Resistances',
   immunities: 'Immunities',
+  conditionImmunities: 'ConditionImmunities',
   senses: 'Senses',
   languages: 'Languages',
+  saveDc: 'SaveDc',
   challenge: 'Challenge',
   xp: 'Xp',
   tierBonus: 'TierBonus',
@@ -362,8 +365,10 @@ export const MONSTER_LIST_SLOTS: readonly MonsterSlotName[] = [
   'skills',
   'resistances',
   'immunities',
+  'conditionImmunities',
   'senses',
   'languages',
+  'saveDc',
   'challenge',
   'xp',
   'tierBonus',
@@ -394,22 +399,7 @@ export const SLOT_NAME_BY_ELEMENT: Record<string, SlotName> =
     SLOT_NAMES.map((name) => [SLOT_ELEMENT_NAMES[name], name]),
   );
 
-/**
- * Header slots that form the stats row, in column order. A column prints only
- * when the item carries the slot; `versatile` rides inside the damage cell.
- */
-export const STAT_SLOTS: readonly HeirloomSlotName[] = [
-  'damage',
-  'reach',
-  'range',
-  'armorClass',
-  'stealth',
-  'mastery',
-  'masterfulBlow',
-  'charges',
-  'saveDc',
-  'burden',
-];
+export { ITEM_BRIEF_SLOTS, ITEM_ROW_SLOTS, STAT_SLOTS } from './itemLayout';
 
 /**
  * Which slots each component accepts, as slot name to authored element name.

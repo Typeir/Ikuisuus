@@ -14,6 +14,9 @@ import { fileURLToPath } from 'node:url';
 import { REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
+import { xpFor, xpValue } from '@/modules/library/domain/derive';
+import { SLOT_HOSTS, type SlotName } from '@/modules/library/domain/slots';
+import { slotFailure } from '@/modules/library/domain/slotValidators';
 import type {
   CheckFailure,
   CheckOptions,
@@ -101,6 +104,55 @@ function buildContentBasenameSet(files: string[]): Set<string> {
     basenames.add(base.toLowerCase());
   }
   return basenames;
+}
+
+/**
+ * Opening tag of a slot host with everything up to its `>`, across lines.
+ */
+const HOST_TAG = new RegExp(
+  `<(${Object.keys(SLOT_HOSTS).join('|')})\\b([^>]*)>`,
+  'g',
+);
+
+/**
+ * One quoted attribute inside a tag.
+ */
+const ATTRIBUTE = /([A-Za-z]\w*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+
+/**
+ * Every slot attribute whose value fails its shape rule, and every monster
+ * whose written XP disagrees with the XP table for its rating. The cards derive
+ * from these values without complaint — a rating that will not parse simply
+ * drops its tier — so this is the one place the typo is named.
+ *
+ * @param {string} content - MDX file content
+ * @returns {string | false} The failures joined, or false when every value passes
+ */
+export function slotValueFailures(content: string): string | false {
+  const problems: string[] = [];
+  for (const tag of content.matchAll(HOST_TAG)) {
+    const host = tag[1];
+    const slots = SLOT_HOSTS[host];
+    const written: Record<string, string> = {};
+    for (const attribute of tag[2].matchAll(ATTRIBUTE)) {
+      const name = attribute[1];
+      if (!(name in slots)) continue;
+      const value = attribute[2] ?? attribute[3] ?? '';
+      written[name] = value;
+      const why = slotFailure(name as SlotName, value, host);
+      if (why) problems.push(`<${host} ${name}="${value}"> expects ${why}`);
+    }
+    if (host === 'Monster' && written.challenge && written.xp) {
+      const expected = xpFor(written.challenge);
+      const actual = xpValue(written.xp);
+      if (expected !== null && actual !== null && expected !== actual) {
+        problems.push(
+          `<Monster challenge="${written.challenge}" xp="${written.xp}"> — the XP table gives ${expected} for that rating`,
+        );
+      }
+    }
+  }
+  return problems.length > 0 ? problems.join('; ') : false;
 }
 
 const RULES: FormatRule[] = [
@@ -204,22 +256,38 @@ const RULES: FormatRule[] = [
   },
   {
     name: 'monster-sheet-missing-stat-table',
+    /* A sheet states its scores either way: the authored markdown table, or
+       the ability slots on `<Monster>`, from which the card builds the table
+       and each modifier. Both are complete; neither is a missing table. */
     check: (content: string, rel: string) =>
       rel.endsWith('.sheet.mdx') &&
-      !content.match(/\|\s*\*{0,2}STR\*{0,2}\s*\|/),
+      !content.match(/\|\s*\*{0,2}STR\*{0,2}\s*\|/) &&
+      !/<Monster\b[^>]*\bstr=["'][^"']+["']/.test(content),
     message: 'Monster sheet missing ability score table (| STR | DEX | ...)',
-    suggestion: 'Add the standard 6-ability stat table',
+    suggestion:
+      'Add the standard 6-ability stat table, or the ability slots on <Monster>',
     severity: 'critical',
     appliesTo: ['monsters'],
   },
   {
     name: 'monster-sheet-missing-cr',
     check: (content: string, rel: string) =>
-      rel.endsWith('.sheet.mdx') && !content.match(/\*\*Challenge\*\*.*\d/),
+      rel.endsWith('.sheet.mdx') &&
+      !content.match(/\*\*Challenge\*\*.*\d/) &&
+      !/<Monster\b[^>]*\b(?:challenge|xp)=["'][^"']+["']/.test(content),
     message: 'Monster sheet missing Challenge line',
-    suggestion: 'Add **Challenge**: X (Y XP) line',
+    suggestion:
+      'Add **Challenge**: X (Y XP) line, or a challenge or xp slot on <Monster>',
     severity: 'warning',
     appliesTo: ['monsters'],
+  },
+  {
+    name: 'slot-value-shape',
+    check: slotValueFailures,
+    message: 'A slot value is not the shape its card derives from',
+    suggestion:
+      'Write the value the way the slot expects; the card works its derived numbers out from it',
+    severity: 'warning',
   },
   {
     name: 'spell-missing-blockquote-stat-block',

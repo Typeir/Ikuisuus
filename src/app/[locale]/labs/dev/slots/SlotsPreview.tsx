@@ -32,10 +32,20 @@ import { LibraryArticle } from '@/modules/library/presentation/LibraryArticle';
 import { resolveStreamText } from '@/modules/library/presentation/components/utils';
 
 /**
- * Slug of the production article the fixture restructures; the preview borrows
- * its metadata, aspects, and stream text so the frame matches the live page.
+ * The production article each fixture borrows its frame from — metadata,
+ * aspects, stream text — so a monster fixture sits in a monster's page and a
+ * spell fixture in a spell's.
  */
-const ARTICLE_SLUG = ['items', 'heirlooms', 'alfanjon-of-the-crescent-moon'];
+const FRAME_ARTICLES: Readonly<Record<string, readonly string[]>> = {
+  'alfanjon.mdx': ['items', 'heirlooms', 'alfanjon-of-the-crescent-moon'],
+  'spell.mdx': ['spells', 'magic-missile'],
+  'spell-overcast.mdx': ['spells', 'imbue-weapon'],
+  'trinket.mdx': ['items', 'trinkets', 'potion-of-healing'],
+  'monster.mdx': ['monsters', 'rotworm'],
+  'monster-deeds.mdx': ['monsters', 'tombsteel-wizard-construct'],
+  'vocation.mdx': ['character-creation', 'vocations', 'monk', 'monk'],
+  'feat.mdx': ['character-creation', 'feats', 'chef'],
+};
 
 /**
  * Fixture path.
@@ -88,9 +98,12 @@ export async function SlotsPreview({
   }
 
   const source = readFileSync(file, 'utf8');
+  const articleSlug = [
+    ...(FRAME_ARTICLES[fixture] ?? FRAME_ARTICLES['alfanjon.mdx']),
+  ];
 
-  const streamText = await resolveStreamText('en', ARTICLE_SLUG, source);
-  const articleMetadata = await loadArticleMetadata(ARTICLE_SLUG, 'en');
+  const streamText = await resolveStreamText('en', articleSlug, source);
+  const articleMetadata = await loadArticleMetadata(articleSlug, 'en');
 
   const result = await compileStatic({
     source,

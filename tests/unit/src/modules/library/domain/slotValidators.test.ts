@@ -34,10 +34,10 @@ describe('slotFailure', () => {
     expect(slotFailure('challenge', '3 (700 XP)')).toContain('own slot');
   });
 
-  it('wants digits alone for XP', () => {
+  it('wants a whole number of XP, thousands separators allowed', () => {
     expect(slotFailure('xp', '700')).toBeNull();
-    expect(slotFailure('xp', '5,900')).toContain('digits only');
-    expect(slotFailure('xp', '700 XP')).toContain('digits only');
+    expect(slotFailure('xp', '5,900')).toBeNull();
+    expect(slotFailure('xp', '700 XP')).toContain('whole number');
   });
 
   it('wants a sign on a tier bonus', () => {

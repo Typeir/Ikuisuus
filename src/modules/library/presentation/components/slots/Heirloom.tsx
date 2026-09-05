@@ -24,6 +24,7 @@
 
 import {
   HEIRLOOM_SLOT_NAMES,
+  ITEM_ROW_SLOTS,
   STAT_SLOTS,
   type HeirloomSlotName,
   type SlotProps,
@@ -38,7 +39,7 @@ import {
   SlotRow,
   splitSlotRuns,
 } from './slotElements';
-import { capitalize, lowerFirst } from './text';
+import { capitalize, flagOf, lowerFirst } from './text';
 import styles from './slots.module.scss';
 
 /**
@@ -56,34 +57,47 @@ export type HeirloomProps = SlotProps<HeirloomSlotName> & {
 export type ItemKind = 'heirloom' | 'trinket';
 
 /**
- * Slots the item card prints as rows, in display order.
- *
- * A trinket takes the whole list, because it is one block with no room for an
- * `<Attributes />` marker. An heirloom takes only what the marker does not
- * already print — `STAT_SLOTS` covers its numbers — so nothing appears twice
- * and a slot an heirloom carries is never silently dropped.
- */
-const ITEM_ROWS: readonly HeirloomSlotName[] = [
-  'cost',
-  'charges',
-  'recharge',
-  'damage',
-  'range',
-  'properties',
-  'burden',
-  'price',
-];
-
-/**
  * Rows an item of this kind prints for itself.
+ *
+ * A trinket prints every row slot, because it is one block with no room for
+ * an `<Attributes />` marker. An heirloom prints only what the marker does not
+ * already show: `STAT_SLOTS` covers its numbers and `versatile` rides inside
+ * the damage cell there.
  *
  * @param {ItemKind} kind - Which item card
  * @returns {readonly HeirloomSlotName[]} Slot names to print
  */
 function rowsFor(kind: ItemKind): readonly HeirloomSlotName[] {
   return kind === 'trinket'
-    ? ITEM_ROWS
-    : ITEM_ROWS.filter((name) => !STAT_SLOTS.includes(name));
+    ? ITEM_ROW_SLOTS
+    : ITEM_ROW_SLOTS.filter(
+        (name) => !STAT_SLOTS.includes(name) && name !== 'versatile',
+      );
+}
+
+/**
+ * The phrase the card already prints before an attunement value, so a value
+ * that repeats it is read as the bare flag.
+ */
+const REQUIRES_ATTUNEMENT = /^(?:requires?\s+attunement|required)\b[\s,:]*/i;
+
+/**
+ * What an attunement slot adds after "requires attunement": nothing for the
+ * bare flag or a value that only restates it, otherwise the condition.
+ *
+ * @param {ReactNode} value - Attunement slot value
+ * @returns {ReactNode | null} Condition to print, or null
+ *
+ * @example
+ * attunementDetail('required'); // null
+ * attunementDetail('requires attunement by a spellcaster'); // 'by a spellcaster'
+ */
+function attunementDetail(value: ReactNode): ReactNode | null {
+  const flag = flagOf(value);
+  if (flag === false || flag === true) return null;
+  if (typeof flag !== 'string') return flag as ReactNode;
+  const detail = flag.replace(REQUIRES_ATTUNEMENT, '').trim();
+  return detail === '' ? null : detail;
 }
 
 /**
@@ -131,11 +145,9 @@ function briefLines(
     first.push(values.rarity, ` ${t('kind')}`);
   }
   if (values.attunement !== undefined) {
-    const attunement = inlineValue(values.attunement);
+    const attunement = attunementDetail(inlineValue(values.attunement));
     first.push(first.length ? ', ' : '', t('requiresAttunement'));
-    if (attunement !== 'required') {
-      first.push(' ', attunement);
-    }
+    if (attunement !== null) first.push(' ', attunement);
   }
   if (first.length) lines.push(first);
 
@@ -211,9 +223,9 @@ function trinketBrief(
     );
   }
   if (values.attunement !== undefined) {
-    const attunement = inlineValue(values.attunement);
+    const attunement = attunementDetail(inlineValue(values.attunement));
     line.push(line.length ? ', ' : '', t('requiresAttunement'));
-    if (attunement !== 'required') line.push(' ', attunement);
+    if (attunement !== null) line.push(' ', attunement);
   }
   return line.length ? [line] : [];
 }
